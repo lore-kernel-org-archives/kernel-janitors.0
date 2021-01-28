@@ -1,45 +1,60 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 21 Jan 2021 00:05:34 +0000
-Subject: Re: [PATCH] ASoC: topology: Fix memory corruption in soc_tplg_denum_create_values()
-Message-Id: <161118753484.45718.1419483152294927470.b4-ty@kernel.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 28 Jan 2021 09:35:23 +0000
+Subject: [PATCH] USB: serial: mos7720: Fix error code in mos7720_write()
+Message-Id: <YBKFW60qMJbtjvum@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <YAf+8QZoOv+ct526@mwanda>
-In-Reply-To: <YAf+8QZoOv+ct526@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Dan Carpenter <dan.carpenter@oracle.com>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>
+To: Johan Hovold <johan@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, 20 Jan 2021 12:59:13 +0300, Dan Carpenter wrote:
-> The allocation uses sizeof(u32) when it should use sizeof(unsigned long)
-> so it leads to memory corruption later in the function when the data is
-> initialized.
+This code should return -ENOMEM if the kmalloc() fails but instead
+it returns success.
 
-Applied to
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+The first error path is probably wrong as well?
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+drivers/usb/serial/mos7720.c
+  1077          /* try to find a free urb in the list */
+  1078          urb = NULL;
+  1079  
+  1080          for (i = 0; i < NUM_URBS; ++i) {
+  1081                  if (mos7720_port->write_urb_pool[i] &&
+  1082                      mos7720_port->write_urb_pool[i]->status != -EINPROGRESS) {
+  1083                          urb = mos7720_port->write_urb_pool[i];
+  1084                          dev_dbg(&port->dev, "URB:%d\n", i);
+  1085                          break;
+  1086                  }
+  1087          }
+  1088  
+  1089          if (urb = NULL) {
+  1090                  dev_dbg(&port->dev, "%s - no more free urbs\n", __func__);
+  1091                  goto exit;
 
-Thanks!
+Should return -ENODEV?
 
-[1/1] ASoC: topology: Fix memory corruption in soc_tplg_denum_create_values()
-      commit: 543466ef3571069b8eb13a8ff7c7cfc8d8a75c43
+  1092          }
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+ drivers/usb/serial/mos7720.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/drivers/usb/serial/mos7720.c b/drivers/usb/serial/mos7720.c
+index ed347a6d50ba..aa55169796a3 100644
+--- a/drivers/usb/serial/mos7720.c
++++ b/drivers/usb/serial/mos7720.c
+@@ -1094,8 +1094,10 @@ static int mos7720_write(struct tty_struct *tty, struct usb_serial_port *port,
+ 	if (urb->transfer_buffer = NULL) {
+ 		urb->transfer_buffer = kmalloc(URB_TRANSFER_BUFFER_SIZE,
+ 					       GFP_ATOMIC);
+-		if (!urb->transfer_buffer)
++		if (!urb->transfer_buffer) {
++			bytes_sent = -ENOMEM;
+ 			goto exit;
++		}
+ 	}
+ 	transfer_size = min(count, URB_TRANSFER_BUFFER_SIZE);
+ 
+-- 
+2.29.2
