@@ -1,38 +1,37 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 28 Jan 2021 17:37:02 +0000
-Subject: [PATCH] staging: net: wimax: i2400m: fw: remove redundant initialization of variable result
-Message-Id: <20210128173703.645328-1-colin.king@canonical.com>
+From: Joe Perches <joe@perches.com>
+Date: Thu, 28 Jan 2021 20:51:35 +0000
+Subject: Re: [PATCH] staging: net: wimax: i2400m: fw: remove redundant initialization of variable result
+Message-Id: <4feb2701856a0a05ce22f27adf1ade679695cfe5.camel@perches.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20210128173703.645328-1-colin.king@canonical.com>
+In-Reply-To: <20210128173703.645328-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Lee Jones <lee.jones@linaro.org>, devel@driverdev.osuosl.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Colin King <colin.king@canonical.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Lee Jones <lee.jones@linaro.org>, devel@driverdev.osuosl.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Thu, 2021-01-28 at 17:37 +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>=20
+> The variable result is being initialized with a value that is never
+> read and it is being updated later with a new value.  The initialization
+> is redundant and can be removed.
 
-The variable result is being initialized with a value that is never
-read and it is being updated later with a new value.  The initialization
-is redundant and can be removed.
-
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Isn't WIMAX dead?  Shouldn't it be marked ORPHAN in MAINTAINERS?
 ---
- drivers/staging/wimax/i2400m/fw.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/staging/wimax/i2400m/fw.c b/drivers/staging/wimax/i2400m/fw.c
-index edb5eba0898b..b2fd4bd2c5f9 100644
---- a/drivers/staging/wimax/i2400m/fw.c
-+++ b/drivers/staging/wimax/i2400m/fw.c
-@@ -583,7 +583,7 @@ ssize_t i2400m_bm_cmd(struct i2400m *i2400m,
- 		      struct i2400m_bootrom_header *ack, size_t ack_size,
- 		      int flags)
- {
--	ssize_t result = -ENOMEM, rx_bytes;
-+	ssize_t result, rx_bytes;
- 	struct device *dev = i2400m_dev(i2400m);
- 	int opcode = cmd = NULL ? -1 : i2400m_brh_get_opcode(cmd);
- 
--- 
-2.29.2
+diff --git a/MAINTAINERS b/MAINTAINERS
+index caac09a3c5c9..922afd393cb6 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -19201,6 +19201,10 @@ S:     Supported
+ W:	https://wireless.wiki.kernel.org/en/users/Drivers/wil6210
+ F:	drivers/net/wireless/ath/wil6210/
+=20
++WIMAX
++S:	Orphan
++F:	drivers/staging/wimax/
++
+ WINBOND CIR DRIVER
+ M:	David H=E4rdeman <david@hardeman.nu>
+ S:	Maintained
