@@ -1,34 +1,41 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 27 Jan 2021 05:25:59 +0000
-Subject: [PATCH] crypto: octeontx2 - fix signedness bug in cptvf_register_interrupts()
-Message-Id: <YBD5Z11GeYlJGuTh@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 28 Jan 2021 17:59:23 +0000
+Subject: [PATCH] netfilter: nf_tables: remove redundant assignment of variable err
+Message-Id: <20210128175923.645865-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Boris Brezillon <bbrezillon@kernel.org>
-Cc: Arnaud Ebalard <arno@natisbad.org>, Srujana Challa <schalla@marvell.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, Suheil Chandran <schandran@marvell.com>, Lukasz Bartosik <lbartosik@marvell.com>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Pablo Neira Ayuso <pablo@netfilter.org>, Jozsef Kadlecsik <kadlec@netfilter.org>, Florian Westphal <fw@strlen.de>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The "num_vec" has to be signed for the error handling to work.
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: 19d8e8c7be15 ("crypto: octeontx2 - add virtual function driver support")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The variable err is being assigned a value that is never read,
+the same error number is being returned at the error return
+path via label err1.  Clean up the code by removing the assignment.
+
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/crypto/marvell/octeontx2/otx2_cptvf_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/netfilter/nft_cmp.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/crypto/marvell/octeontx2/otx2_cptvf_main.c b/drivers/crypto/marvell/octeontx2/otx2_cptvf_main.c
-index 9663be38ee40..47f378731024 100644
---- a/drivers/crypto/marvell/octeontx2/otx2_cptvf_main.c
-+++ b/drivers/crypto/marvell/octeontx2/otx2_cptvf_main.c
-@@ -34,7 +34,7 @@ static void cptvf_disable_pfvf_mbox_intrs(struct otx2_cptvf_dev *cptvf)
- static int cptvf_register_interrupts(struct otx2_cptvf_dev *cptvf)
- {
- 	int ret, irq;
--	u32 num_vec;
-+	int num_vec;
+diff --git a/net/netfilter/nft_cmp.c b/net/netfilter/nft_cmp.c
+index 00e563a72d3d..acbabffefebb 100644
+--- a/net/netfilter/nft_cmp.c
++++ b/net/netfilter/nft_cmp.c
+@@ -268,10 +268,8 @@ nft_cmp_select_ops(const struct nft_ctx *ctx, const struct nlattr * const tb[])
+ 	if (err < 0)
+ 		return ERR_PTR(err);
  
- 	num_vec = pci_msix_vec_count(cptvf->pdev);
- 	if (num_vec <= 0)
+-	if (desc.type != NFT_DATA_VALUE) {
+-		err = -EINVAL;
++	if (desc.type != NFT_DATA_VALUE)
+ 		goto err1;
+-	}
+ 
+ 	if (desc.len <= sizeof(u32) && (op = NFT_CMP_EQ || op = NFT_CMP_NEQ))
+ 		return &nft_cmp_fast_ops;
 -- 
 2.29.2
