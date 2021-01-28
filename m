@@ -1,36 +1,39 @@
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
-Date: Tue, 26 Jan 2021 08:51:43 +0000
-Subject: Re: [PATCH v2 1/2 net-next] net: mscc: ocelot: fix error handling bugs in mscc_ocelot_init_ports()
-Message-Id: <20210126085142.rrr6jbm6hj6ijjzq@skbuf>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 28 Jan 2021 12:19:03 +0000
+Subject: [PATCH][next] Input: iqs5xx: Ensure error_bl is initialized on error exit path
+Message-Id: <20210128121903.636652-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210125081940.GK20820@kadam> <YA6EW9SPE4q6x7d3@mwanda>
- <20210125161806.q5rmiqj6r3yvp3ke@skbuf> <20210126072753.GU2696@kadam>
-In-Reply-To: <20210126072753.GU2696@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Claudiu Manoil <claudiu.manoil@nxp.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, "UNGLinuxDriver@microchip.com" <UNGLinuxDriver@microchip.com>, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jeff LaBundy <jeff@labundy.com>, linux-input@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Jan 26, 2021 at 10:27:53AM +0300, Dan Carpenter wrote:
-> > If you resend, can you please squash this diff on top of your patch?
->
-> Yep.  I will resend.  Thanks for basically writing v2 for me.  Your
-> review comments were very clear but code is always 100% clear so that's
-> really great.
+From: Colin Ian King <colin.king@canonical.com>
 
-Until the code is wrong :)
+Currently if the call to qs5xx_fw_file_parse fails the error return
+exit path will read the uninitialized variable error_bl. Fix this
+by ensuring error_bl is initialized to zero.
 
-> I've never seen anyone do that before.  I should copy
-> that for my own reviews and hopefully it's a new trend.
+Addresses-Coverity: ("Uninitialized scalar variable")
+Fixes: 2539da6677b6 ("Input: iqs5xx - preserve bootloader errors")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/input/touchscreen/iqs5xx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I took that from Florian, it was helpful to me when I wasn't minding my
-own business and touching code I couldn't test:
-https://patchwork.kernel.org/project/netdevbpf/patch/20201218223852.2717102-4-vladimir.oltean@nxp.com/#23858835
-
-> > Also, it's strange but I don't see the v2 patches in patchwork. Did you
-> > send them in-reply-to v1 or something?
->
-> I did send them as a reply to v1.  Patchwork doesn't like that?
-
-Nope.
+diff --git a/drivers/input/touchscreen/iqs5xx.c b/drivers/input/touchscreen/iqs5xx.c
+index 05e0c6ff217b..54f30038dca4 100644
+--- a/drivers/input/touchscreen/iqs5xx.c
++++ b/drivers/input/touchscreen/iqs5xx.c
+@@ -852,7 +852,7 @@ static int iqs5xx_fw_file_parse(struct i2c_client *client,
+ static int iqs5xx_fw_file_write(struct i2c_client *client, const char *fw_file)
+ {
+ 	struct iqs5xx_private *iqs5xx = i2c_get_clientdata(client);
+-	int error, error_bl;
++	int error, error_bl = 0;
+ 	u8 *pmap;
+ 
+ 	if (iqs5xx->bl_status = IQS5XX_BL_STATUS_NONE)
+-- 
+2.29.2
