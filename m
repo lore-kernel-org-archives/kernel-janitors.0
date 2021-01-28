@@ -1,27 +1,34 @@
-From: Vinod Koul <vkoul@kernel.org>
-Date: Tue, 12 Jan 2021 12:42:57 +0000
-Subject: Re: [PATCH 1/2] dmaengine: fsldma: Fix a resource leak in the remove function
-Message-Id: <20210112123057.GS2771@vkoul-mobl>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 28 Jan 2021 09:36:17 +0000
+Subject: [PATCH] Input: sur40 - Fix an error code in sur40_probe()
+Message-Id: <YBKFkbATXa5fA3xj@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20201212160516.92515-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20201212160516.92515-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: leoyang.li@nxp.com, zw@zh-kernel.org, dan.j.williams@intel.com, timur@freescale.com, linuxppc-dev@lists.ozlabs.org, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Nick Desaulniers <ndesaulniers@google.com>, Kees Cook <keescook@chromium.org>, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Florian Echtler <floe@butterbrot.org>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 12-12-20, 17:05, Christophe JAILLET wrote:
-> A 'irq_dispose_mapping()' call is missing in the remove function.
-> Add it.
-> 
-> This is needed to undo the 'irq_of_parse_and_map() call from the probe
-> function and already part of the error handling path of the probe function.
-> 
-> It was added in the probe function only in commit d3f620b2c4fe ("fsldma:
-> simplify IRQ probing and handling")
+If v4l2_ctrl_handler_setup() fails then probe() should return an error
+code instead of returning success.
 
-Applied both, thanks
+Fixes: cee1e3e2ef39 ("media: add video control handlers using V4L2 control framework")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/input/touchscreen/sur40.c | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/drivers/input/touchscreen/sur40.c b/drivers/input/touchscreen/sur40.c
+index 620cdd7d214a..12f2562b0141 100644
+--- a/drivers/input/touchscreen/sur40.c
++++ b/drivers/input/touchscreen/sur40.c
+@@ -787,6 +787,7 @@ static int sur40_probe(struct usb_interface *interface,
+ 		dev_err(&interface->dev,
+ 			"Unable to register video controls.");
+ 		v4l2_ctrl_handler_free(&sur40->hdl);
++		error = sur40->hdl.error;
+ 		goto err_unreg_v4l2;
+ 	}
+ 
 -- 
-~Vinod
+2.29.2
