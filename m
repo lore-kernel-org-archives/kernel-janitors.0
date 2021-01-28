@@ -1,33 +1,39 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Wed, 13 Jan 2021 05:48:53 +0000
-Subject: Re: [PATCH -next] scsi: docs: ABI: sysfs-driver-ufs: rectify table formatting
-Message-Id: <161051681546.32710.5582070513683033836.b4-ty@oracle.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 28 Jan 2021 14:49:35 +0000
+Subject: [PATCH][next] nfsd: fix check of statid returned from call to find_stateid_by_type
+Message-Id: <20210128144935.640026-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210111102212.19377-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20210111102212.19377-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-scsi@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>, Adrian Hunter <adrian.hunter@intel.com>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>, kernel-janitors@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "J . Bruce Fields" <bfields@fieldses.org>, Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 11 Jan 2021 11:22:12 +0100, Lukas Bulwahn wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> Commit 0b2894cd0fdf ("scsi: docs: ABI: sysfs-driver-ufs: Add DeepSleep
-> power mode") adds new entries in tables of sysfs-driver-ufs ABI
-> documentation, but formatted the table incorrectly.
-> 
-> Hence, make htmldocs warns:
-> 
->   ./Documentation/ABI/testing/sysfs-driver-ufs:{915,956}:
->   WARNING: Malformed table. Text in column margin in table line 15.
-> 
-> [...]
+The call to find_stateid_by_type is setting the return value in *stid
+yet the NULL check of the return is checking stid instead of *stid.
+Fix this by adding in the missing pointer * operator.
 
-Applied to 5.11/scsi-fixes, thanks!
+Addresses-Coverity: ("Dereference before null check")
+Fixes: 6cdaa72d4dde ("nfsd: find_cpntf_state cleanup")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/nfsd/nfs4state.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-[1/1] scsi: docs: ABI: sysfs-driver-ufs: rectify table formatting
-      https://git.kernel.org/mkp/scsi/c/f2cb4b2397ca
-
+diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+index f554e3480bb1..423fd6683f3a 100644
+--- a/fs/nfsd/nfs4state.c
++++ b/fs/nfsd/nfs4state.c
+@@ -5824,7 +5824,7 @@ static __be32 find_cpntf_state(struct nfsd_net *nn, stateid_t *st,
+ 
+ 	*stid = find_stateid_by_type(found, &cps->cp_p_stateid,
+ 			NFS4_DELEG_STID|NFS4_OPEN_STID|NFS4_LOCK_STID);
+-	if (stid)
++	if (*stid)
+ 		status = nfs_ok;
+ 	else
+ 		status = nfserr_bad_stateid;
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.29.2
