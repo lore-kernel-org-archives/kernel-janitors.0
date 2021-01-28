@@ -1,64 +1,56 @@
-From: Saurav Kashyap <skashyap@marvell.com>
-Date: Mon, 25 Jan 2021 09:52:27 +0000
-Subject: RE: [EXT] [PATCH] scsi: qla2xxx: fix some memory corruption
-Message-Id: <DM6PR18MB303455B3BC025E7F82469A4AD2BD9@DM6PR18MB3034.namprd18.prod.outlook.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Thu, 28 Jan 2021 20:22:34 +0000
+Subject: [PATCH v2] media: venus: core: Fix some resource leaks in the error path of 'venus_probe()'
+Message-Id: <20210128202234.747048-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <YA6E0geUlL9Hs04A@mwanda>
-In-Reply-To: <YA6E0geUlL9Hs04A@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Nilesh Javali <njavali@marvell.com>
-Cc: GR-QLogic-Storage-Upstream <GR-QLogic-Storage-Upstream@marvell.com>, "James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Himanshu Madhani <himanshu.madhani@oracle.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: stanimir.varbanov@linaro.org, agross@kernel.org, bjorn.andersson@linaro.org, mchehab@kernel.org, georgi.djakov@linaro.org
+Cc: linux-media@vger.kernel.org, linux-arm-msm@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Hi Dan,
-Thanks for a patch.
+If an error occurs after a successful 'of_icc_get()' call, it must be
+undone.
 
-> -----Original Message-----
-> From: Dan Carpenter <dan.carpenter@oracle.com>
-> Sent: Monday, January 25, 2021 2:14 PM
-> To: Nilesh Javali <njavali@marvell.com>
-> Cc: GR-QLogic-Storage-Upstream <GR-QLogic-Storage-
-> Upstream@marvell.com>; James E.J. Bottomley <jejb@linux.ibm.com>;
-> Martin K. Petersen <martin.petersen@oracle.com>; Himanshu Madhani
-> <himanshu.madhani@oracle.com>; Saurav Kashyap
-> <skashyap@marvell.com>; linux-scsi@vger.kernel.org; linux-
-> kernel@vger.kernel.org; kernel-janitors@vger.kernel.org
-> Subject: [EXT] [PATCH] scsi: qla2xxx: fix some memory corruption
-> 
-> External Email
-> 
-> ----------------------------------------------------------------------
-> This was supposed to be "data" instead of "&data".  The current code
-> will corrupt the stack.
-> 
-> Fixes: dbf1f53cfd23 ("scsi: qla2xxx: Implementation to get and manage host,
-> target stats and initiator port")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/scsi/qla2xxx/qla_bsg.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/scsi/qla2xxx/qla_bsg.c b/drivers/scsi/qla2xxx/qla_bsg.c
-> index e45da05383cd..bee8cf9f8123 100644
-> --- a/drivers/scsi/qla2xxx/qla_bsg.c
-> +++ b/drivers/scsi/qla2xxx/qla_bsg.c
-> @@ -2667,7 +2667,7 @@ qla2x00_get_tgt_stats(struct bsg_job *bsg_job)
-> 
->  		bsg_reply->reply_payload_rcv_len =
->  			sg_copy_from_buffer(bsg_job-
-> >reply_payload.sg_list,
-> -					    bsg_job->reply_payload.sg_cnt,
-> &data,
-> +					    bsg_job->reply_payload.sg_cnt,
-> data,
->  					    sizeof(struct
-> ql_vnd_tgt_stats_resp));
-> 
->  		bsg_reply->result = DID_OK;
-> --
+Use 'devm_of_icc_get()' instead of 'of_icc_get()' to avoid the leak.
+Update the remove function accordingly and axe the now unneeded
+'icc_put()' calls.
 
-Acked-by: Saurav Kashyap <skashyap@marvell.com>
+Fixes: 32f0a6ddc8c9 ("media: venus: Use on-chip interconnect API")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+v1->v2: use managed resources instead of expanding the error handling path.
+---
+ drivers/media/platform/qcom/venus/core.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-
-> 2.29.2
+diff --git a/drivers/media/platform/qcom/venus/core.c b/drivers/media/platform/qcom/venus/core.c
+index 0bde19edac86..c2458dee794b 100644
+--- a/drivers/media/platform/qcom/venus/core.c
++++ b/drivers/media/platform/qcom/venus/core.c
+@@ -195,11 +195,11 @@ static int venus_probe(struct platform_device *pdev)
+ 	if (IS_ERR(core->base))
+ 		return PTR_ERR(core->base);
+ 
+-	core->video_path = of_icc_get(dev, "video-mem");
++	core->video_path = devm_of_icc_get(dev, "video-mem");
+ 	if (IS_ERR(core->video_path))
+ 		return PTR_ERR(core->video_path);
+ 
+-	core->cpucfg_path = of_icc_get(dev, "cpu-cfg");
++	core->cpucfg_path = devm_of_icc_get(dev, "cpu-cfg");
+ 	if (IS_ERR(core->cpucfg_path))
+ 		return PTR_ERR(core->cpucfg_path);
+ 
+@@ -334,9 +334,6 @@ static int venus_remove(struct platform_device *pdev)
+ 
+ 	hfi_destroy(core);
+ 
+-	icc_put(core->video_path);
+-	icc_put(core->cpucfg_path);
+-
+ 	v4l2_device_unregister(&core->v4l2_dev);
+ 	mutex_destroy(&core->pm_lock);
+ 	mutex_destroy(&core->lock);
+-- 
+2.27.0
