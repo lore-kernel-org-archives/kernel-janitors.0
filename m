@@ -1,73 +1,49 @@
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Thu, 28 Jan 2021 14:01:40 +0000
-Subject: Re: [PATCH][V2][next] media: uvcvideo: Fix memory leak when gpiod_to_irq fails
-Message-Id: <CANiDSCuBc1iSLUZzP1=h912EVCyzP0XGzmemw7q5hXYdYZszTw@mail.gmail.com>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Fri, 29 Jan 2021 05:28:29 +0000
+Subject: [PATCH] MAINTAINERS: adjust to gdth scsi driver removal
+Message-Id: <20210129052829.13642-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210128135923.638480-1-colin.king@canonical.com>
-In-Reply-To: <20210128135923.638480-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Linux Media Mailing List <linux-media@vger.kernel.org>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Hannes Reinecke <hare@suse.de>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
+Cc: Joe Perches <joe@perches.com>, Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>, Pia Eichinger <pia.eichinger@st.oth-regensburg.de>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-Thanks for the fix!
+Commit 0653c358d2dc ("scsi: Drop gdth driver") misses to adjust MAINTAINERS.
 
-On Thu, Jan 28, 2021 at 2:59 PM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Currently when the call to gpiod_to_irq fails the error return
-> path does not kfree the recently allocated object 'unit'. Fix this
-> swapping the order of the irq call and the allocation of unit.
->
-> Thanks to Ricardo Ribalda for suggesting this fix.
->
-> Addresses-Coverity: ("Resource leak")
-> Fixes: 2886477ff987 ("media: uvcvideo: Implement UVC_EXT_GPIO_UNIT")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains:
 
-Reviewed-by: Ricardo Ribalda <ribalda@chromium.org>
+  warning: no file matches F:    drivers/scsi/gdt*
 
-> ---
->
-> V2: swap order of gpiod_to_irq call and allocation of unit to simplify
->     error cleanup.
->
-> ---
->  drivers/media/usb/uvc/uvc_driver.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-> index 1abc122a0977..f62e6cb66daf 100644
-> --- a/drivers/media/usb/uvc/uvc_driver.c
-> +++ b/drivers/media/usb/uvc/uvc_driver.c
-> @@ -1534,10 +1534,6 @@ static int uvc_gpio_parse(struct uvc_device *dev)
->         if (IS_ERR_OR_NULL(gpio_privacy))
->                 return PTR_ERR_OR_ZERO(gpio_privacy);
->
-> -       unit = uvc_alloc_entity(UVC_EXT_GPIO_UNIT, UVC_EXT_GPIO_UNIT_ID, 0, 1);
-> -       if (!unit)
-> -               return -ENOMEM;
-> -
->         irq = gpiod_to_irq(gpio_privacy);
->         if (irq < 0) {
->                 if (irq != EPROBE_DEFER)
-> @@ -1546,6 +1542,10 @@ static int uvc_gpio_parse(struct uvc_device *dev)
->                 return irq;
->         }
->
-> +       unit = uvc_alloc_entity(UVC_EXT_GPIO_UNIT, UVC_EXT_GPIO_UNIT_ID, 0, 1);
-> +       if (!unit)
-> +               return -ENOMEM;
-> +
->         unit->gpio.gpio_privacy = gpio_privacy;
->         unit->gpio.irq = irq;
->         unit->gpio.bControlSize = 1;
-> --
-> 2.29.2
->
+Remove the GDT SCSI DISK ARRAY CONTROLLER DRIVER section as well, as the
+driver is removed now.
 
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+applies cleanly on next-20210128
 
+Hannes, Martin, please pick this minor fix-up on your scsi-next tree.
+
+ MAINTAINERS | 7 -------
+ 1 file changed, 7 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index dfb1f1af32bb..5e1fec71f21b 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7363,13 +7363,6 @@ M:	Kieran Bingham <kbingham@kernel.org>
+ S:	Supported
+ F:	scripts/gdb/
+ 
+-GDT SCSI DISK ARRAY CONTROLLER DRIVER
+-M:	Achim Leubner <achim_leubner@adaptec.com>
+-L:	linux-scsi@vger.kernel.org
+-S:	Supported
+-W:	http://www.icp-vortex.com/
+-F:	drivers/scsi/gdt*
+-
+ GEMTEK FM RADIO RECEIVER DRIVER
+ M:	Hans Verkuil <hverkuil@xs4all.nl>
+ L:	linux-media@vger.kernel.org
 -- 
-Ricardo Ribalda
+2.17.1
