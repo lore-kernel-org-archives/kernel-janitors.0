@@ -1,79 +1,26 @@
-From: "Nguyen, Anthony L" <anthony.l.nguyen@intel.com>
-Date: Thu, 28 Jan 2021 21:45:02 +0000
+From: Jakub Kicinski <kuba@kernel.org>
+Date: Fri, 29 Jan 2021 02:33:43 +0000
 Subject: Re: [PATCH resend] e100: switch from 'pci_' to 'dma_' API
-Message-Id: <268fcfd4dbd929948e8cdb58457ede1efa3898c6.camel@intel.com>
+Message-Id: <20210128183343.06762fc6@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20210128210736.749724-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20210128210736.749724-1-christophe.jaillet@wanadoo.fr>
+        <268fcfd4dbd929948e8cdb58457ede1efa3898c6.camel@intel.com>
+In-Reply-To: <268fcfd4dbd929948e8cdb58457ede1efa3898c6.camel@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "christophe.jaillet@wanadoo.fr" <christophe.jaillet@wanadoo.fr>, "davem@davemloft.net" <davem@davemloft.net>, "Brandeburg, Jesse" <jesse.brandeburg@intel.com>, "kuba@kernel.org" <kuba@kernel.org>, "Brown, Aaron F" <aaron.f.brown@intel.com>
-Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: "Nguyen, Anthony L" <anthony.l.nguyen@intel.com>
+Cc: "christophe.jaillet@wanadoo.fr" <christophe.jaillet@wanadoo.fr>, "davem@davemloft.net" <davem@davemloft.net>, "Brandeburg, Jesse" <jesse.brandeburg@intel.com>, "Brown, Aaron F" <aaron.f.brown@intel.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-T24gVGh1LCAyMDIxLTAxLTI4IGF0IDIyOjA3ICswMTAwLCBDaHJpc3RvcGhlIEpBSUxMRVQgd3Jv
-dGU6DQo+IFRoZSB3cmFwcGVycyBpbiBpbmNsdWRlL2xpbnV4L3BjaS1kbWEtY29tcGF0Lmggc2hv
-dWxkIGdvIGF3YXkuDQo+IA0KPiBUaGUgcGF0Y2ggaGFzIGJlZW4gZ2VuZXJhdGVkIHdpdGggdGhl
-IGNvY2NpbmVsbGUgc2NyaXB0IGJlbG93IGFuZCBoYXMNCj4gYmVlbg0KPiBoYW5kIG1vZGlmaWVk
-IHRvIHJlcGxhY2UgR0ZQXyB3aXRoIGEgY29ycmVjdCBmbGFnLg0KPiBJdCBoYXMgYmVlbiBjb21w
-aWxlIHRlc3RlZC4NCj4gDQo+IFdoZW4gbWVtb3J5IGlzIGFsbG9jYXRlZCBpbiAnZTEwMF9hbGxv
-YygpJywgR0ZQX0tFUk5FTCBjYW4gYmUgdXNlZA0KPiBiZWNhdXNlDQo+IGl0IGlzIG9ubHkgY2Fs
-bGVkIGZyb20gdGhlIHByb2JlIGZ1bmN0aW9uIGFuZCBubyBsb2NrIGlzIGFjcXVpcmVkLg0KPiAN
-Cj4gDQo+IEBADQo+IEBADQo+IC0gICAgUENJX0RNQV9CSURJUkVDVElPTkFMDQo+ICsgICAgRE1B
-X0JJRElSRUNUSU9OQUwNCj4gDQo+IEBADQo+IEBADQo+IC0gICAgUENJX0RNQV9UT0RFVklDRQ0K
-PiArICAgIERNQV9UT19ERVZJQ0UNCj4gDQo+IEBADQo+IEBADQo+IC0gICAgUENJX0RNQV9GUk9N
-REVWSUNFDQo+ICsgICAgRE1BX0ZST01fREVWSUNFDQo+IA0KPiBAQA0KPiBAQA0KPiAtICAgIFBD
-SV9ETUFfTk9ORQ0KPiArICAgIERNQV9OT05FDQo+IA0KPiBAQA0KPiBleHByZXNzaW9uIGUxLCBl
-MiwgZTM7DQo+IEBADQo+IC0gICAgcGNpX2FsbG9jX2NvbnNpc3RlbnQoZTEsIGUyLCBlMykNCj4g
-KyAgICBkbWFfYWxsb2NfY29oZXJlbnQoJmUxLT5kZXYsIGUyLCBlMywgR0ZQXykNCj4gDQo+IEBA
-DQo+IGV4cHJlc3Npb24gZTEsIGUyLCBlMzsNCj4gQEANCj4gLSAgICBwY2lfemFsbG9jX2NvbnNp
-c3RlbnQoZTEsIGUyLCBlMykNCj4gKyAgICBkbWFfYWxsb2NfY29oZXJlbnQoJmUxLT5kZXYsIGUy
-LCBlMywgR0ZQXykNCj4gDQo+IEBADQo+IGV4cHJlc3Npb24gZTEsIGUyLCBlMywgZTQ7DQo+IEBA
-DQo+IC0gICAgcGNpX2ZyZWVfY29uc2lzdGVudChlMSwgZTIsIGUzLCBlNCkNCj4gKyAgICBkbWFf
-ZnJlZV9jb2hlcmVudCgmZTEtPmRldiwgZTIsIGUzLCBlNCkNCj4gDQo+IEBADQo+IGV4cHJlc3Np
-b24gZTEsIGUyLCBlMywgZTQ7DQo+IEBADQo+IC0gICAgcGNpX21hcF9zaW5nbGUoZTEsIGUyLCBl
-MywgZTQpDQo+ICsgICAgZG1hX21hcF9zaW5nbGUoJmUxLT5kZXYsIGUyLCBlMywgZTQpDQo+IA0K
-PiBAQA0KPiBleHByZXNzaW9uIGUxLCBlMiwgZTMsIGU0Ow0KPiBAQA0KPiAtICAgIHBjaV91bm1h
-cF9zaW5nbGUoZTEsIGUyLCBlMywgZTQpDQo+ICsgICAgZG1hX3VubWFwX3NpbmdsZSgmZTEtPmRl
-diwgZTIsIGUzLCBlNCkNCj4gDQo+IEBADQo+IGV4cHJlc3Npb24gZTEsIGUyLCBlMywgZTQsIGU1
-Ow0KPiBAQA0KPiAtICAgIHBjaV9tYXBfcGFnZShlMSwgZTIsIGUzLCBlNCwgZTUpDQo+ICsgICAg
-ZG1hX21hcF9wYWdlKCZlMS0+ZGV2LCBlMiwgZTMsIGU0LCBlNSkNCj4gDQo+IEBADQo+IGV4cHJl
-c3Npb24gZTEsIGUyLCBlMywgZTQ7DQo+IEBADQo+IC0gICAgcGNpX3VubWFwX3BhZ2UoZTEsIGUy
-LCBlMywgZTQpDQo+ICsgICAgZG1hX3VubWFwX3BhZ2UoJmUxLT5kZXYsIGUyLCBlMywgZTQpDQo+
-IA0KPiBAQA0KPiBleHByZXNzaW9uIGUxLCBlMiwgZTMsIGU0Ow0KPiBAQA0KPiAtICAgIHBjaV9t
-YXBfc2coZTEsIGUyLCBlMywgZTQpDQo+ICsgICAgZG1hX21hcF9zZygmZTEtPmRldiwgZTIsIGUz
-LCBlNCkNCj4gDQo+IEBADQo+IGV4cHJlc3Npb24gZTEsIGUyLCBlMywgZTQ7DQo+IEBADQo+IC0g
-ICAgcGNpX3VubWFwX3NnKGUxLCBlMiwgZTMsIGU0KQ0KPiArICAgIGRtYV91bm1hcF9zZygmZTEt
-PmRldiwgZTIsIGUzLCBlNCkNCj4gDQo+IEBADQo+IGV4cHJlc3Npb24gZTEsIGUyLCBlMywgZTQ7
-DQo+IEBADQo+IC0gICAgcGNpX2RtYV9zeW5jX3NpbmdsZV9mb3JfY3B1KGUxLCBlMiwgZTMsIGU0
-KQ0KPiArICAgIGRtYV9zeW5jX3NpbmdsZV9mb3JfY3B1KCZlMS0+ZGV2LCBlMiwgZTMsIGU0KQ0K
-PiANCj4gQEANCj4gZXhwcmVzc2lvbiBlMSwgZTIsIGUzLCBlNDsNCj4gQEANCj4gLSAgICBwY2lf
-ZG1hX3N5bmNfc2luZ2xlX2Zvcl9kZXZpY2UoZTEsIGUyLCBlMywgZTQpDQo+ICsgICAgZG1hX3N5
-bmNfc2luZ2xlX2Zvcl9kZXZpY2UoJmUxLT5kZXYsIGUyLCBlMywgZTQpDQo+IA0KPiBAQA0KPiBl
-eHByZXNzaW9uIGUxLCBlMiwgZTMsIGU0Ow0KPiBAQA0KPiAtICAgIHBjaV9kbWFfc3luY19zZ19m
-b3JfY3B1KGUxLCBlMiwgZTMsIGU0KQ0KPiArICAgIGRtYV9zeW5jX3NnX2Zvcl9jcHUoJmUxLT5k
-ZXYsIGUyLCBlMywgZTQpDQo+IA0KPiBAQA0KPiBleHByZXNzaW9uIGUxLCBlMiwgZTMsIGU0Ow0K
-PiBAQA0KPiAtICAgIHBjaV9kbWFfc3luY19zZ19mb3JfZGV2aWNlKGUxLCBlMiwgZTMsIGU0KQ0K
-PiArICAgIGRtYV9zeW5jX3NnX2Zvcl9kZXZpY2UoJmUxLT5kZXYsIGUyLCBlMywgZTQpDQo+IA0K
-PiBAQA0KPiBleHByZXNzaW9uIGUxLCBlMjsNCj4gQEANCj4gLSAgICBwY2lfZG1hX21hcHBpbmdf
-ZXJyb3IoZTEsIGUyKQ0KPiArICAgIGRtYV9tYXBwaW5nX2Vycm9yKCZlMS0+ZGV2LCBlMikNCj4g
-DQo+IEBADQo+IGV4cHJlc3Npb24gZTEsIGUyOw0KPiBAQA0KPiAtICAgIHBjaV9zZXRfZG1hX21h
-c2soZTEsIGUyKQ0KPiArICAgIGRtYV9zZXRfbWFzaygmZTEtPmRldiwgZTIpDQo+IA0KPiBAQA0K
-PiBleHByZXNzaW9uIGUxLCBlMjsNCj4gQEANCj4gLSAgICBwY2lfc2V0X2NvbnNpc3RlbnRfZG1h
-X21hc2soZTEsIGUyKQ0KPiArICAgIGRtYV9zZXRfY29oZXJlbnRfbWFzaygmZTEtPmRldiwgZTIp
-DQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBDaHJpc3RvcGhlIEpBSUxMRVQgPGNocmlzdG9waGUuamFp
-bGxldEB3YW5hZG9vLmZyPg0KPiBUZXN0ZWQtYnk6IEFhcm9uIEJyb3duIDxhYXJvbi5mLmJyb3du
-QGludGVsLmNvbT4NCj4gLS0tDQo+IElmIG5lZWRlZCwgc2VlIHBvc3QgZnJvbSBDaHJpc3RvcGgg
-SGVsbHdpZyBvbiB0aGUga2VybmVsLWphbml0b3JzIE1MOg0KPiAgICBodHRwczovL21hcmMuaW5m
-by8/bD1rZXJuZWwtamFuaXRvcnMmbT0xNTg3NDU2NzgzMDcxODYmdz00DQo+IA0KPiBGaXJzdCBz
-ZW50IG9uIDE4IEp1bC4gMjAyMCwgc2VlOg0KPiAgICAgDQo+IGh0dHBzOi8vbG9yZS5rZXJuZWwu
-b3JnL2xrbWwvMjAyMDA3MTgxMTU1NDYuMzU4MjQwLTEtY2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFk
-b28uZnIvDQo+IEl0IHN0aWxsIGFwcGxpZXMgY2xlYW5seSB3aXRoIGxhdGVzdCBsaW51eC1uZXh0
-DQo+IA0KPiBUZXN0ZWQgdGFnLCBzZWU6DQo+ICAgIA0KPiBodHRwczovL2xvcmUua2VybmVsLm9y
-Zy9sa21sL0RNNlBSMTFNQjI4OTAwMUU1NTM4RTUzNkYwQ0I2MEExRkJDMDcwQERNNlBSMTFNQjI4
-OTAubmFtcHJkMTEucHJvZC5vdXRsb29rLmNvbS8NCj4gDQo+IC0tLQ0KPiAgZHJpdmVycy9uZXQv
-ZXRoZXJuZXQvaW50ZWwvZTEwMC5jIHwgOTIgKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0N
-Cj4gLS0NCg0KTXkgYXBvbG9naWVzLCB0aGlzIHBhdGNoIHNsaXBwZWQgdGhyb3VnaCB0aGUgY3Jh
-Y2tzIGZvciBtZS4gSSB3aWxsIHNlbmQNCml0IGluIG15IG5leHQgbmV0LW5leHQgMUdiRSBzZXJp
-ZXMgb3IgSmFrdWIgeW91IGNhbiB0YWtlIGl0IGRpcmVjdGx5IGlmDQp5b3UnZCBsaWtlLg0KDQpU
-aGFua3MsDQpUb255DQo
+On Thu, 28 Jan 2021 21:45:02 +0000 Nguyen, Anthony L wrote:
+> >  drivers/net/ethernet/intel/e100.c | 92 ++++++++++++++++-------------
+> 
+> My apologies, this patch slipped through the cracks for me. I will send
+> it in my next net-next 1GbE series or Jakub you can take it directly if
+> you'd like.
+
+No preference but since I have to type a response either way let me say:
+
+Applied, thanks!
+
+;)
