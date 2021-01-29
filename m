@@ -1,49 +1,34 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Date: Tue, 05 Jan 2021 03:55:02 +0000
-Subject: Re: [PATCH][next] cpufreq: powernow-k8: add null check to policy to avoid null pointer dereference
-Message-Id: <20210105035404.c47atgdsiqoa2wuc@vireshk-i7>
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 29 Jan 2021 10:30:42 +0000
+Subject: [PATCH][next] net/mlx5e: Fix spelling mistake "Unknouwn" -> "Unknown"
+Message-Id: <20210129103042.12217-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210104130227.35354-1-colin.king@canonical.com>
-In-Reply-To: <20210104130227.35354-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Stephen Warren <swarren@nvidia.com>, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On 04-01-21, 13:02, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently there is an unlikely case where cpufreq_cpu_get returns a
-> null policy and this will cause a null pointer dereference later on.
-> Fix this by adding a null check and adding an error return.
-> 
-> Addresses-Coverity: ("Dereference null return")
-> Fixes: b43a7ffbf33b ("cpufreq: Notify all policy->cpus in cpufreq_notify_transition()")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/cpufreq/powernow-k8.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/cpufreq/powernow-k8.c b/drivers/cpufreq/powernow-k8.c
-> index 0acc9e241cd7..c5368545ba1f 100644
-> --- a/drivers/cpufreq/powernow-k8.c
-> +++ b/drivers/cpufreq/powernow-k8.c
-> @@ -913,6 +913,8 @@ static int transition_frequency_fidvid(struct powernow_k8_data *data,
+From: Colin Ian King <colin.king@canonical.com>
 
-The caller already has a pointer to the policy, you should rather pass
-that here instead of doing cpufreq_cpu_get/put.
+There is a spelling mistake in a netdev_warn message. Fix it.
 
->  	freqs.new = find_khz_freq_from_fid(fid);
->  
->  	policy = cpufreq_cpu_get(smp_processor_id());
-> +	if (!policy)
-> +		return 1;
->  	cpufreq_cpu_put(policy);
->  
->  	cpufreq_freq_transition_begin(policy, &freqs);
-> -- 
-> 2.29.2
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/mellanox/mlx5/core/en_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+index aad3887e3c1a..cc3f5ac17e19 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+@@ -223,7 +223,7 @@ static int blocking_event(struct notifier_block *nb, unsigned long event, void *
+ 		err = mlx5e_handle_trap_event(priv, data);
+ 		break;
+ 	default:
+-		netdev_warn(priv->netdev, "Sync event: Unknouwn event %ld\n", event);
++		netdev_warn(priv->netdev, "Sync event: Unknown event %ld\n", event);
+ 		err = -EINVAL;
+ 	}
+ 	return err;
 -- 
-viresh
+2.29.2
