@@ -1,37 +1,42 @@
-From: Colin King <colin.king@canonical.com>
-Date: Thu, 28 Jan 2021 16:59:11 +0000
-Subject: [PATCH] media: drxj: remove redundant assignments to variable image_to_select
-Message-Id: <20210128165911.644307-1-colin.king@canonical.com>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Fri, 29 Jan 2021 05:01:51 +0000
+Subject: [PATCH] block: drop removed argument from kernel-doc of blk_execute_rq()
+Message-Id: <20210129050151.26926-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
+Cc: Guoqing Jiang <guoqing.jiang@cloud.ionos.com>, Jonathan Corbet <corbet@lwn.net>, Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-From: Colin Ian King <colin.king@canonical.com>
+Commit 684da7628d93 ("block: remove unnecessary argument from
+blk_execute_rq") changes the signature of blk_execute_rq(), but misses
+to adjust its kernel-doc.
 
-The variable image_to_select is being initialized with a value that
-is never read and it is being updated later with a new value.  The
-initialization is redundant and can be removed.
+Hence, make htmldocs warns on ./block/blk-exec.c:78:
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+  warning: Excess function parameter 'q' description in 'blk_execute_rq'
+
+Drop removed argument from kernel-doc of blk_execute_rq() as well.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- drivers/media/dvb-frontends/drx39xyj/drxj.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Jens, please pick this minor fix on your block-next tree.
 
-diff --git a/drivers/media/dvb-frontends/drx39xyj/drxj.c b/drivers/media/dvb-frontends/drx39xyj/drxj.c
-index 37b32d9b398d..bf9e4ef35684 100644
---- a/drivers/media/dvb-frontends/drx39xyj/drxj.c
-+++ b/drivers/media/dvb-frontends/drx39xyj/drxj.c
-@@ -4775,7 +4775,7 @@ set_frequency(struct drx_demod_instance *demod,
- 	bool select_pos_image = false;
- 	bool rf_mirror;
- 	bool tuner_mirror;
--	bool image_to_select = true;
-+	bool image_to_select;
- 	s32 fm_frequency_shift = 0;
+ block/blk-exec.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/block/blk-exec.c b/block/blk-exec.c
+index 0ab873f10133..beae70a0e5e5 100644
+--- a/block/blk-exec.c
++++ b/block/blk-exec.c
+@@ -65,7 +65,6 @@ EXPORT_SYMBOL_GPL(blk_execute_rq_nowait);
  
- 	rf_mirror = (ext_attr->mirror = DRX_MIRROR_YES) ? true : false;
+ /**
+  * blk_execute_rq - insert a request into queue for execution
+- * @q:		queue to insert the request in
+  * @bd_disk:	matching gendisk
+  * @rq:		request to insert
+  * @at_head:    insert request at head or tail of queue
 -- 
-2.29.2
+2.17.1
