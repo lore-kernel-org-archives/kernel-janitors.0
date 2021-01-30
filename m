@@ -1,39 +1,277 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 15 Jan 2021 10:11:26 +0000
-Subject: [PATCH][next] media: venus: Fix uninitialized variable count being checked for zero
-Message-Id: <20210115101126.9668-1-colin.king@canonical.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 30 Jan 2021 06:32:00 +0000
+Subject: [PATCH resend] media: ngene: switch from 'pci_' to 'dma_' API
+Message-Id: <20210130063200.752615-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Stanimir Varbanov <stanimir.varbanov@linaro.org>, Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: mchehab@kernel.org, hverkuil-cisco@xs4all.nl, romain.perier@gmail.com, allen.lkml@gmail.com
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Colin Ian King <colin.king@canonical.com>
+The wrappers in include/linux/pci-dma-compat.h should go away.
 
-In the case where plat->codecs is NULL the variable count is uninitialized
-but is being checked to see if it is 0. Fix this by initializing
-count to 0.
+The patch has been generated with the coccinelle script below and has been
+hand modified to replace GFP_ with a correct flag.
+It has been compile tested.
 
-Addresses-Coverity: ("Uninitialized scalar variable")
-Fixes: e29929266be1 ("media: venus: Get codecs and capabilities from hfi platform")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+When memory is allocated, GFP_KERNEL can be used because in all cases,
+it is called from a probe function and no lock is taken in the between.
+
+The call chain is:
+  ngene_probe                       (probe function, used in ngene-cards.c)
+    --> ngene_get_buffers
+      --> AllocCommonBuffers                  (call dma_alloc_coherent)
+        --> create_ring_buffer                (call dma_alloc_coherent)
+        --> AllocateRingBuffers               (call dma_alloc_coherent)
+
+
+@@
+@@
+-    PCI_DMA_BIDIRECTIONAL
++    DMA_BIDIRECTIONAL
+
+@@
+@@
+-    PCI_DMA_TODEVICE
++    DMA_TO_DEVICE
+
+@@
+@@
+-    PCI_DMA_FROMDEVICE
++    DMA_FROM_DEVICE
+
+@@
+@@
+-    PCI_DMA_NONE
++    DMA_NONE
+
+@@
+expression e1, e2, e3;
+@@
+-    pci_alloc_consistent(e1, e2, e3)
++    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
+
+@@
+expression e1, e2, e3;
+@@
+-    pci_zalloc_consistent(e1, e2, e3)
++    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_free_consistent(e1, e2, e3, e4)
++    dma_free_coherent(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_map_single(e1, e2, e3, e4)
++    dma_map_single(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_single(e1, e2, e3, e4)
++    dma_unmap_single(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4, e5;
+@@
+-    pci_map_page(e1, e2, e3, e4, e5)
++    dma_map_page(&e1->dev, e2, e3, e4, e5)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_page(e1, e2, e3, e4)
++    dma_unmap_page(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_map_sg(e1, e2, e3, e4)
++    dma_map_sg(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_sg(e1, e2, e3, e4)
++    dma_unmap_sg(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_single_for_cpu(e1, e2, e3, e4)
++    dma_sync_single_for_cpu(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_single_for_device(e1, e2, e3, e4)
++    dma_sync_single_for_device(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_sg_for_cpu(e1, e2, e3, e4)
++    dma_sync_sg_for_cpu(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_sg_for_device(e1, e2, e3, e4)
++    dma_sync_sg_for_device(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2;
+@@
+-    pci_dma_mapping_error(e1, e2)
++    dma_mapping_error(&e1->dev, e2)
+
+@@
+expression e1, e2;
+@@
+-    pci_set_dma_mask(e1, e2)
++    dma_set_mask(&e1->dev, e2)
+
+@@
+expression e1, e2;
+@@
+-    pci_set_consistent_dma_mask(e1, e2)
++    dma_set_coherent_mask(&e1->dev, e2)
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/media/platform/qcom/venus/hfi_parser.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+If needed, see post from Christoph Hellwig on the kernel-janitors ML:
+   https://marc.info/?l=kernel-janitors&m8745678307186&w=4
+---
+ drivers/media/pci/ngene/ngene-core.c | 56 ++++++++++++++--------------
+ 1 file changed, 28 insertions(+), 28 deletions(-)
 
-diff --git a/drivers/media/platform/qcom/venus/hfi_parser.c b/drivers/media/platform/qcom/venus/hfi_parser.c
-index 2c63988cb321..7263c0c32695 100644
---- a/drivers/media/platform/qcom/venus/hfi_parser.c
-+++ b/drivers/media/platform/qcom/venus/hfi_parser.c
-@@ -232,7 +232,7 @@ static int hfi_platform_parser(struct venus_core *core, struct venus_inst *inst)
- {
- 	const struct hfi_platform *plat;
- 	const struct hfi_plat_caps *caps = NULL;
--	u32 enc_codecs, dec_codecs, count;
-+	u32 enc_codecs, dec_codecs, count = 0;
- 	unsigned int entries;
+diff --git a/drivers/media/pci/ngene/ngene-core.c b/drivers/media/pci/ngene/ngene-core.c
+index f9f94f47d76b..07f342db6701 100644
+--- a/drivers/media/pci/ngene/ngene-core.c
++++ b/drivers/media/pci/ngene/ngene-core.c
+@@ -763,23 +763,22 @@ static void free_ringbuffer(struct ngene *dev, struct SRingBufferDescriptor *rb)
  
- 	if (inst)
+ 	for (j = 0; j < rb->NumBuffers; j++, Cur = Cur->Next) {
+ 		if (Cur->Buffer1)
+-			pci_free_consistent(dev->pci_dev,
+-					    rb->Buffer1Length,
+-					    Cur->Buffer1,
+-					    Cur->scList1->Address);
++			dma_free_coherent(&dev->pci_dev->dev,
++					  rb->Buffer1Length, Cur->Buffer1,
++					  Cur->scList1->Address);
+ 
+ 		if (Cur->Buffer2)
+-			pci_free_consistent(dev->pci_dev,
+-					    rb->Buffer2Length,
+-					    Cur->Buffer2,
+-					    Cur->scList2->Address);
++			dma_free_coherent(&dev->pci_dev->dev,
++					  rb->Buffer2Length, Cur->Buffer2,
++					  Cur->scList2->Address);
+ 	}
+ 
+ 	if (rb->SCListMem)
+-		pci_free_consistent(dev->pci_dev, rb->SCListMemSize,
+-				    rb->SCListMem, rb->PASCListMem);
++		dma_free_coherent(&dev->pci_dev->dev, rb->SCListMemSize,
++				  rb->SCListMem, rb->PASCListMem);
+ 
+-	pci_free_consistent(dev->pci_dev, rb->MemSize, rb->Head, rb->PAHead);
++	dma_free_coherent(&dev->pci_dev->dev, rb->MemSize, rb->Head,
++			  rb->PAHead);
+ }
+ 
+ static void free_idlebuffer(struct ngene *dev,
+@@ -813,15 +812,13 @@ static void free_common_buffers(struct ngene *dev)
+ 	}
+ 
+ 	if (dev->OverflowBuffer)
+-		pci_free_consistent(dev->pci_dev,
+-				    OVERFLOW_BUFFER_SIZE,
+-				    dev->OverflowBuffer, dev->PAOverflowBuffer);
++		dma_free_coherent(&dev->pci_dev->dev, OVERFLOW_BUFFER_SIZE,
++				  dev->OverflowBuffer, dev->PAOverflowBuffer);
+ 
+ 	if (dev->FWInterfaceBuffer)
+-		pci_free_consistent(dev->pci_dev,
+-				    4096,
+-				    dev->FWInterfaceBuffer,
+-				    dev->PAFWInterfaceBuffer);
++		dma_free_coherent(&dev->pci_dev->dev, 4096,
++				  dev->FWInterfaceBuffer,
++				  dev->PAFWInterfaceBuffer);
+ }
+ 
+ /****************************************************************************/
+@@ -848,7 +845,7 @@ static int create_ring_buffer(struct pci_dev *pci_dev,
+ 	if (MemSize < 4096)
+ 		MemSize = 4096;
+ 
+-	Head = pci_alloc_consistent(pci_dev, MemSize, &tmp);
++	Head = dma_alloc_coherent(&pci_dev->dev, MemSize, &tmp, GFP_KERNEL);
+ 	PARingBufferHead = tmp;
+ 
+ 	if (!Head)
+@@ -899,7 +896,8 @@ static int AllocateRingBuffers(struct pci_dev *pci_dev,
+ 	if (SCListMemSize < 4096)
+ 		SCListMemSize = 4096;
+ 
+-	SCListMem = pci_alloc_consistent(pci_dev, SCListMemSize, &tmp);
++	SCListMem = dma_alloc_coherent(&pci_dev->dev, SCListMemSize, &tmp,
++				       GFP_KERNEL);
+ 
+ 	PASCListMem = tmp;
+ 	if (SCListMem = NULL)
+@@ -918,8 +916,8 @@ static int AllocateRingBuffers(struct pci_dev *pci_dev,
+ 	for (i = 0; i < pRingBuffer->NumBuffers; i += 1, Cur = Cur->Next) {
+ 		u64 PABuffer;
+ 
+-		void *Buffer = pci_alloc_consistent(pci_dev, Buffer1Length,
+-						    &tmp);
++		void *Buffer = dma_alloc_coherent(&pci_dev->dev,
++						  Buffer1Length, &tmp, GFP_KERNEL);
+ 		PABuffer = tmp;
+ 
+ 		if (Buffer = NULL)
+@@ -951,7 +949,8 @@ static int AllocateRingBuffers(struct pci_dev *pci_dev,
+ 		if (!Buffer2Length)
+ 			continue;
+ 
+-		Buffer = pci_alloc_consistent(pci_dev, Buffer2Length, &tmp);
++		Buffer = dma_alloc_coherent(&pci_dev->dev, Buffer2Length,
++					    &tmp, GFP_KERNEL);
+ 		PABuffer = tmp;
+ 
+ 		if (Buffer = NULL)
+@@ -1040,17 +1039,18 @@ static int AllocCommonBuffers(struct ngene *dev)
+ {
+ 	int status = 0, i;
+ 
+-	dev->FWInterfaceBuffer = pci_alloc_consistent(dev->pci_dev, 4096,
+-						     &dev->PAFWInterfaceBuffer);
++	dev->FWInterfaceBuffer = dma_alloc_coherent(&dev->pci_dev->dev, 4096,
++						    &dev->PAFWInterfaceBuffer,
++						    GFP_KERNEL);
+ 	if (!dev->FWInterfaceBuffer)
+ 		return -ENOMEM;
+ 	dev->hosttongene = dev->FWInterfaceBuffer;
+ 	dev->ngenetohost = dev->FWInterfaceBuffer + 256;
+ 	dev->EventBuffer = dev->FWInterfaceBuffer + 512;
+ 
+-	dev->OverflowBuffer = pci_zalloc_consistent(dev->pci_dev,
+-						    OVERFLOW_BUFFER_SIZE,
+-						    &dev->PAOverflowBuffer);
++	dev->OverflowBuffer = dma_alloc_coherent(&dev->pci_dev->dev,
++						 OVERFLOW_BUFFER_SIZE,
++						 &dev->PAOverflowBuffer, GFP_KERNEL);
+ 	if (!dev->OverflowBuffer)
+ 		return -ENOMEM;
+ 
 -- 
-2.29.2
+2.25.1
