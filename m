@@ -1,17 +1,17 @@
-From: Pavel Begunkov <asml.silence@gmail.com>
-Date: Mon, 01 Feb 2021 18:34:04 +0000
+From: Jens Axboe <axboe@kernel.dk>
+Date: Mon, 01 Feb 2021 18:57:16 +0000
 Subject: Re: [PATCH] io_uring: Fix NULL dereference in error in io_sqe_files_register()
-Message-Id: <71e8a8a4-5189-4ac1-b885-1b1a60403452@gmail.com>
+Message-Id: <76165fad-a61a-a59c-6b6f-d8ae151bed86@kernel.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <YBfyzmcP1N6jpDjo@mwanda>
 In-Reply-To: <YBfyzmcP1N6jpDjo@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Jens Axboe <axboe@kernel.dk>, Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
-Cc: io-uring@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>, Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
+Cc: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 01/02/2021 12:23, Dan Carpenter wrote:
+On 2/1/21 5:23 AM, Dan Carpenter wrote:
 > If we hit a "goto out_free;" before the "ctx->file_data" pointer has
 > been assigned then it leads to a NULL derefence when we call:
 > 
@@ -19,38 +19,7 @@ On 01/02/2021 12:23, Dan Carpenter wrote:
 > 
 > We can fix this by moving the assignment earlier.
 
-looks good, thanks
-
-Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
-
-> 
-> Fixes: 3cfb739c561e ("io_uring: create common fixed_rsrc_data allocation routines")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  fs/io_uring.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 03748faa5295..8e8b74dd7d9b 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -7869,6 +7869,7 @@ static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
->  	file_data = alloc_fixed_rsrc_data(ctx);
->  	if (!file_data)
->  		return -ENOMEM;
-> +	ctx->file_data = file_data;
->  
->  	nr_tables = DIV_ROUND_UP(nr_args, IORING_MAX_FILES_TABLE);
->  	file_data->table = kcalloc(nr_tables, sizeof(*file_data->table),
-> @@ -7878,7 +7879,6 @@ static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
->  
->  	if (io_sqe_alloc_file_tables(file_data, nr_tables, nr_args))
->  		goto out_free;
-> -	ctx->file_data = file_data;
->  
->  	for (i = 0; i < nr_args; i++, ctx->nr_user_files++) {
->  		struct fixed_rsrc_table *table;
-> 
+Applied, thanks Dan.
 
 -- 
-Pavel Begunkov
+Jens Axboe
