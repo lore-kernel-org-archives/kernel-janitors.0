@@ -1,42 +1,37 @@
-From: Lee Jones <lee.jones@linaro.org>
-Date: Fri, 12 Feb 2021 10:02:56 +0000
-Subject: Re: [PATCH] video: use getter/setter functions
-Message-Id: <20210212100256.GB179940@dell>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 01 Feb 2021 12:28:54 +0000
+Subject: [PATCH] bus: fsl-mc: Fix test for end of loop
+Message-Id: <YBf0Br9obNGZTcNI@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210209211325.1261842-1-Julia.Lawall@inria.fr>
-In-Reply-To: <20210209211325.1261842-1-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Julia Lawall <Julia.Lawall@inria.fr>
-Cc: Daniel Thompson <daniel.thompson@linaro.org>, linux-kernel@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>, Jingoo Han <jingoohan1@gmail.com>, Sascha Hauer <s.hauer@pengutronix.de>, kernel-janitors@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>, dri-devel@lists.freedesktop.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Andy Gross <agross@kernel.org>, NXP Linux Team <linux-imx@nxp.com>, linux-fbdev@vger.kernel.org, linux-arm-msm@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Stuart Yoder <stuyoder@gmail.com>, Ioana Ciornei <ioana.ciornei@nxp.com>
+Cc: Laurentiu Tudor <laurentiu.tudor@nxp.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, 09 Feb 2021, Julia Lawall wrote:
+The "desc" pointer can't possibly be NULL here.  If we can't find the
+correct "desc" then tt points to the last element of the
+fsl_mc_accepted_cmds[] array.  Fix this by testing if
+"i = FSL_MC_NUM_ACCEPTED_CMDS" instead.
 
-> Use getter and setter functions, for platform_device structures and a
-> spi_device structure.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-> 
-> ---
->  drivers/video/backlight/qcom-wled.c                                  |    2 +-
->  drivers/video/fbdev/amifb.c                                          |    4 ++--
->  drivers/video/fbdev/da8xx-fb.c                                       |    4 ++--
->  drivers/video/fbdev/imxfb.c                                          |    2 +-
->  drivers/video/fbdev/omap2/omapfb/displays/panel-lgphilips-lb035q02.c |    6 +++---
->  drivers/video/fbdev/omap2/omapfb/dss/dpi.c                           |    4 ++--
->  drivers/video/fbdev/omap2/omapfb/dss/dsi.c                           |    4 ++--
->  drivers/video/fbdev/omap2/omapfb/dss/hdmi4.c                         |    2 +-
->  drivers/video/fbdev/omap2/omapfb/dss/hdmi5.c                         |    2 +-
->  drivers/video/fbdev/xilinxfb.c                                       |    2 +-
->  10 files changed, 16 insertions(+), 16 deletions(-)
+Fixes: 2cf1e703f066 ("bus: fsl-mc: add fsl-mc userspace support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/bus/fsl-mc/fsl-mc-uapi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I fixed-up the subject line and commit message a bit and applied.
-
-Thanks.
-
+diff --git a/drivers/bus/fsl-mc/fsl-mc-uapi.c b/drivers/bus/fsl-mc/fsl-mc-uapi.c
+index eeb988c9f4bb..bdcd9d983a78 100644
+--- a/drivers/bus/fsl-mc/fsl-mc-uapi.c
++++ b/drivers/bus/fsl-mc/fsl-mc-uapi.c
+@@ -338,7 +338,7 @@ static int fsl_mc_command_check(struct fsl_mc_device *mc_dev,
+ 		if ((cmdid & desc->cmdid_mask) = desc->cmdid_value)
+ 			break;
+ 	}
+-	if (!desc) {
++	if (i = FSL_MC_NUM_ACCEPTED_CMDS) {
+ 		dev_err(&mc_dev->dev, "MC command 0x%04x: cmdid not accepted\n", cmdid);
+ 		return -EACCES;
+ 	}
 -- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.29.2
