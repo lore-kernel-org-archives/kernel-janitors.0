@@ -1,58 +1,49 @@
 From: Desmond Yan <desmond.yan@broadcom.com>
-Date: Mon, 01 Feb 2021 18:31:49 +0000
+Date: Mon, 01 Feb 2021 18:32:19 +0000
 Subject: Re: [PATCH] misc: bcm-vk: unlock on error in bcm_to_h_msg_dequeue()
-Message-Id: <CAEuuh2-uNkbK6wsJVBUEXMv2TQdhQaRCqtM0GdULWgVHU+JDnQ@mail.gmail.com>
+Message-Id: <CAEuuh2_BH4_7bm7tTZ2VSKNv7eCjj-ZU=zcV3vKbD1H_tJRLcQ@mail.gmail.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="000000000000d2c21d05ba4a9179"
+Content-Type: multipart/mixed; boundary="000000000000a1044805ba4a9343"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <YBfyb+jU5lDUe+5g@mwanda> <cf899c97-2c26-afc4-f0ea-4976a074a05e@broadcom.com>
-In-Reply-To: <cf899c97-2c26-afc4-f0ea-4976a074a05e@broadcom.com>
-To: Scott Branden <scott.branden@broadcom.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Olof Johansson <olof@lixom.net>, bcm-kernel-feedback-list@broadcom.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <YBfyb+jU5lDUe+5g@mwanda>
+In-Reply-To: <YBfyb+jU5lDUe+5g@mwanda>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Scott Branden <scott.branden@broadcom.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Olof Johansson <olof@lixom.net>, bcm-kernel-feedback-list@broadcom.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
---000000000000d2c21d05ba4a9179
+--000000000000a1044805ba4a9343
 Content-Type: text/plain; charset="UTF-8"
 
-Yes, in this situation, it is fatal and we would turn off processing
-anyway.  But, Dan's change seems more appropriate and proper practice
-(thxs for the patch).
+Acked-by: Desmond Yan <desmond.yan@broadcom.com>
 
-Des
-
-On Mon, Feb 1, 2021 at 9:31 AM Scott Branden <scott.branden@broadcom.com> wrote:
+On Mon, Feb 1, 2021 at 4:24 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
 >
+> Unlock before returning on this error path.
 >
+> Fixes: 111d746bb476 ("misc: bcm-vk: add VK messaging support")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  drivers/misc/bcm-vk/bcm_vk_msg.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 >
-> On 2021-02-01 4:22 a.m., Dan Carpenter wrote:
-> > Unlock before returning on this error path.
-> >
-> > Fixes: 111d746bb476 ("misc: bcm-vk: add VK messaging support")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> >  drivers/misc/bcm-vk/bcm_vk_msg.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/misc/bcm-vk/bcm_vk_msg.c b/drivers/misc/bcm-vk/bcm_vk_msg.c
-> > index eec90494777d..fc972e43258a 100644
-> > --- a/drivers/misc/bcm-vk/bcm_vk_msg.c
-> > +++ b/drivers/misc/bcm-vk/bcm_vk_msg.c
-> > @@ -849,7 +849,8 @@ s32 bcm_to_h_msg_dequeue(struct bcm_vk *vk)
-> >                                * that is fatal.
-> >                                */
-> >                               dev_crit(dev, "Kernel mem allocation failure.\n");
-> > -                             return -ENOMEM;
-> > +                             total = -ENOMEM;
-> > +                             goto idx_err;
-> >                       }
-> >
-> This is a pretty fatal case if we fail to allocate memory here.
-> Will let Desmond respond if we wanted to keep the mutex locked forever in this
-> case or if we do want to return and keep mutex locked if it is fatal and there is
-> no real recovery path.
-> >                       /* flush rd pointer after a message is dequeued */
+> diff --git a/drivers/misc/bcm-vk/bcm_vk_msg.c b/drivers/misc/bcm-vk/bcm_vk_msg.c
+> index eec90494777d..fc972e43258a 100644
+> --- a/drivers/misc/bcm-vk/bcm_vk_msg.c
+> +++ b/drivers/misc/bcm-vk/bcm_vk_msg.c
+> @@ -849,7 +849,8 @@ s32 bcm_to_h_msg_dequeue(struct bcm_vk *vk)
+>                                  * that is fatal.
+>                                  */
+>                                 dev_crit(dev, "Kernel mem allocation failure.\n");
+> -                               return -ENOMEM;
+> +                               total = -ENOMEM;
+> +                               goto idx_err;
+>                         }
+>
+>                         /* flush rd pointer after a message is dequeued */
+> --
+> 2.29.2
 >
 
---000000000000d2c21d05ba4a9179
+--000000000000a1044805ba4a9343
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -122,14 +113,14 @@ kQkyrew0cHrPRSHhE0qx+BLKJF2SQbb1cH/Ra7JhcLfXeJA/eBw1b9Ss/yfnSj3z/TAKOpYsicFX
 b+ynK9BBF17HGsWw/7TOms5t0Qk1P6+IBbzUxeh5s4cDAMsDfE1xvUvUVu/2ASpap+hXkoss+Vcc
 G2gxggJvMIICawIBATBtMF0xCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNh
 MTMwMQYDVQQDEypHbG9iYWxTaWduIFBlcnNvbmFsU2lnbiAyIENBIC0gU0hBMjU2IC0gRzMCDFJS
-0nbv//4itGuVqDANBglghkgBZQMEAgEFAKCB1DAvBgkqhkiG9w0BCQQxIgQgCMsT0WNSM66IvgdT
-1XlKWLEVp/VpuFMmWhXCS+AOgbQwGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0B
-CQUxDxcNMjEwMjAxMTgzMjAwWjBpBgkqhkiG9w0BCQ8xXDBaMAsGCWCGSAFlAwQBKjALBglghkgB
+0nbv//4itGuVqDANBglghkgBZQMEAgEFAKCB1DAvBgkqhkiG9w0BCQQxIgQgt0bttFoAZbEReWIE
+KbLWCX6DSvO1MhqnWN6S+j+MLR4wGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0B
+CQUxDxcNMjEwMjAxMTgzMjMwWjBpBgkqhkiG9w0BCQ8xXDBaMAsGCWCGSAFlAwQBKjALBglghkgB
 ZQMEARYwCwYJYIZIAWUDBAECMAoGCCqGSIb3DQMHMAsGCSqGSIb3DQEBCjALBgkqhkiG9w0BAQcw
-CwYJYIZIAWUDBAIBMA0GCSqGSIb3DQEBAQUABIIBAL2MJ8i+E+/KaYoJbLFjsAEYR+0TOvCn0oop
-/F3WX14+50bpvqdeoi+VgP8BkbajRrs/YtUX7RuCJsBlYsDIBuIrMWeVpqimItexR0Ve4nXtrcSG
-/uCuHpZz4gxLmNyV/GWxqxQAVSNkq3weSD5yIJEYQtllDHdqUdn/OnatqmSPhBwaHQGpJzUmOcBq
-tMurxYlhQVxeBs0pTD01wmTTWPMIgUC04H+UH/sfm9nsvr780chuX+ODAGFRp4Dx9f7ESRSdmLsP
-yf8K41gAsWOHNpTvwlRUva1it3FdoyLbWEFP3CuYsEf6ZRi5ttpYT7n/Ll7CnH+kSjrdjpdrcZox
-FNY=
---000000000000d2c21d05ba4a9179--
+CwYJYIZIAWUDBAIBMA0GCSqGSIb3DQEBAQUABIIBACy9AbWdTQXCiqqRNWd5cYtuFBW8/i0u2eCb
+Ekpb8YFDTj7o4vq6DGxaUo3xtIaCis6AKEAk2/Jg+8nRcl7ISb7EKWvsQeJXnNCTVSNQibUpVVUP
+SbzbM+F+eS4HSL68d454M1Q5ffZQgfy+BIaLPL1sHxYy0QfTEw24VCvHa4i25LgtLqdRq6SNJJHJ
+Q65SxFv2KWC5GuVgP9GrpkwSI+HA2m8cxmkCWjMQWuqiMjgw/UyjbH5FUB8laovkuA8DtaHbGnFJ
+QRjslDAuRLSJglJK+g/uDiWzXrpukX9tyUvgSfRO7gKKhtHKhZJxQ6LzAeayoOGC8CK3tNnOI9E+
+yAk=
+--000000000000a1044805ba4a9343--
