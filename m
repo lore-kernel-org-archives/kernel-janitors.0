@@ -1,40 +1,188 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Tue, 16 Feb 2021 14:05:09 +0000
-Subject: NACK: [PATCH][next] tracing/tools: fix spelling mistake "functionph" -> "graph"
-Message-Id: <87d92a26-ae1c-e76b-76b1-315e4cf759fc@canonical.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Date: Mon, 01 Feb 2021 00:33:00 +0000
+Subject: Re: [PATCH for -next] docs: hwmon: rectify table in max16601.rst
+Message-Id: <fc93b27b-f223-7af1-51f7-c510ce6fbb63@roeck-us.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210216140112.159926-1-colin.king@canonical.com>
-In-Reply-To: <20210216140112.159926-1-colin.king@canonical.com>
+References: <20210131075445.21222-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20210131075445.21222-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Steven Rostedt <rostedt@goodmis.org>, Viktor Rosendahl <Viktor.Rosendahl@bmw.de>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Lukas Bulwahn <lukas.bulwahn@gmail.com>, linux-hwmon@vger.kernel.org
+Cc: Jonathan Corbet <corbet@lwn.net>, Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 16/02/2021 14:01, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On 1/30/21 11:54 PM, Lukas Bulwahn wrote:
+> Commit 90b0f71d62df ("hwmon: (pmbus/max16601) Determine and use number of
+> populated phases") adjusts content in the table of
+> ./Documentation/hwmon/max16601.rst, but one row went beyond the column's
+> length.
 > 
-> There is a spelling mistake in the -g help option, I believe
-> it should be "graph". Fix it.
+> Hence, make htmldocs warns:
 > 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>   Documentation/hwmon/max16601.rst:94: WARNING: Malformed table.
+> 
+> Adjust the column length of that table for this longer row to fit.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 > ---
->  tools/tracing/latency/latency-collector.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> applies cleanly on next-20210129
 > 
-> diff --git a/tools/tracing/latency/latency-collector.c b/tools/tracing/latency/latency-collector.c
-> index 57b20802e71b..8d28234cd6fb 100644
-> --- a/tools/tracing/latency/latency-collector.c
-> +++ b/tools/tracing/latency/latency-collector.c
-> @@ -1711,7 +1711,7 @@ static void show_usage(void)
->  "\t\t\tbeginning, end, and backtrace.\n\n"
->  
->  "-g, --graph\t\tEnable the display-graph option in trace_option. This\n"
-> -"\t\t\toption causes ftrace to show the functionph of how\n"
-> +"\t\t\toption causes ftrace to show the graph of how\n"
->  "\t\t\tfunctions are calling other functions.\n\n"
->  
->  "-c, --policy POL\tRun the program with scheduling policy POL. POL can be\n"
-> 
+> Guenter, please pick this minor fixup for your hwmon-next tree.
 
-Found another spelling mistake, sending a V2 soon.
+I already made the same change and squashed it into the original patch.
+
+Thanks,
+Guenter
+
+> 
+>  Documentation/hwmon/max16601.rst | 143 +++++++++++++++----------------
+>  1 file changed, 71 insertions(+), 72 deletions(-)
+> 
+> diff --git a/Documentation/hwmon/max16601.rst b/Documentation/hwmon/max16601.rst
+> index d16792be7533..d265a2224354 100644
+> --- a/Documentation/hwmon/max16601.rst
+> +++ b/Documentation/hwmon/max16601.rst
+> @@ -53,75 +53,74 @@ Sysfs entries
+>  
+>  The following attributes are supported.
+>  
+> -============ ===========================> -in1_label		"vin1"
+> -in1_input		VCORE input voltage.
+> -in1_alarm		Input voltage alarm.
+> -
+> -in2_label		"vout1"
+> -in2_input		VCORE output voltage.
+> -in2_alarm		Output voltage alarm.
+> -
+> -curr1_label		"iin1"
+> -curr1_input		VCORE input current, derived from duty cycle and output
+> -			current.
+> -curr1_max		Maximum input current.
+> -curr1_max_alarm		Current high alarm.
+> -
+> -curr[P+2]_label		"iin1.P"
+> -curr[P+2]_input		VCORE phase P input current.
+> -
+> -curr[N+2]_label		"iin2"
+> -curr[N+2]_input		VCORE input current, derived from sensor element.
+> -			'N' is the number of enabled/populated phases.
+> -
+> -curr[N+3]_label		"iin3"
+> -curr[N+3]_input		VSA input current.
+> -
+> -curr[N+4]_label		"iout1"
+> -curr[N+4]_input		VCORE output current.
+> -curr[N+4]_crit		Critical output current.
+> -curr[N+4]_crit_alarm	Output current critical alarm.
+> -curr[N+4]_max		Maximum output current.
+> -curr[N+4]_max_alarm	Output current high alarm.
+> -
+> -curr[N+P+5]_label	"iout1.P"
+> -curr[N+P+5]_input	VCORE phase P output current.
+> -
+> -curr[2*N+5]_label	"iout3"
+> -curr[2*N+5]_input	VSA output current.
+> -curr[2*N+5]_highest	Historical maximum VSA output current.
+> -curr[2*N+5]_reset_history
+> -			Write any value to reset curr21_highest.
+> -curr[2*N+5]_crit	Critical output current.
+> -curr[2*N+5]_crit_alarm	Output current critical alarm.
+> -curr[2*N+5]_max		Maximum output current.
+> -curr[2*N+5]_max_alarm	Output current high alarm.
+> -
+> -power1_label		"pin1"
+> -power1_input		Input power, derived from duty cycle and output current.
+> -power1_alarm		Input power alarm.
+> -
+> -power2_label		"pin2"
+> -power2_input		Input power, derived from input current sensor.
+> -
+> -power3_label		"pout"
+> -power3_input		Output power.
+> -
+> -temp1_input		VCORE temperature.
+> -temp1_crit		Critical high temperature.
+> -temp1_crit_alarm	Chip temperature critical high alarm.
+> -temp1_max		Maximum temperature.
+> -temp1_max_alarm		Chip temperature high alarm.
+> -
+> -temp2_input		TSENSE_0 temperature
+> -temp3_input		TSENSE_1 temperature
+> -temp4_input		TSENSE_2 temperature
+> -temp5_input		TSENSE_3 temperature
+> -
+> -temp6_input		VSA temperature.
+> -temp6_crit		Critical high temperature.
+> -temp6_crit_alarm	Chip temperature critical high alarm.
+> -temp6_max		Maximum temperature.
+> -temp6_max_alarm		Chip temperature high alarm.
+> -============ ===========================> +============= ===========================> +in1_label		  "vin1"
+> +in1_input		  VCORE input voltage.
+> +in1_alarm		  Input voltage alarm.
+> +
+> +in2_label		  "vout1"
+> +in2_input		  VCORE output voltage.
+> +in2_alarm		  Output voltage alarm.
+> +
+> +curr1_label		  "iin1"
+> +curr1_input		  VCORE input current, derived from duty cycle and output
+> +			  current.
+> +curr1_max		  Maximum input current.
+> +curr1_max_alarm		  Current high alarm.
+> +
+> +curr[P+2]_label		  "iin1.P"
+> +curr[P+2]_input		  VCORE phase P input current.
+> +
+> +curr[N+2]_label		  "iin2"
+> +curr[N+2]_input		  VCORE input current, derived from sensor element.
+> +			  'N' is the number of enabled/populated phases.
+> +
+> +curr[N+3]_label		  "iin3"
+> +curr[N+3]_input		  VSA input current.
+> +
+> +curr[N+4]_label		  "iout1"
+> +curr[N+4]_input		  VCORE output current.
+> +curr[N+4]_crit		  Critical output current.
+> +curr[N+4]_crit_alarm	  Output current critical alarm.
+> +curr[N+4]_max		  Maximum output current.
+> +curr[N+4]_max_alarm	  Output current high alarm.
+> +
+> +curr[N+P+5]_label	  "iout1.P"
+> +curr[N+P+5]_input	  VCORE phase P output current.
+> +
+> +curr[2*N+5]_label	  "iout3"
+> +curr[2*N+5]_input	  VSA output current.
+> +curr[2*N+5]_highest	  Historical maximum VSA output current.
+> +curr[2*N+5]_reset_history Write any value to reset curr21_highest.
+> +curr[2*N+5]_crit	  Critical output current.
+> +curr[2*N+5]_crit_alarm	  Output current critical alarm.
+> +curr[2*N+5]_max		  Maximum output current.
+> +curr[2*N+5]_max_alarm	  Output current high alarm.
+> +
+> +power1_label		  "pin1"
+> +power1_input		  Input power, derived from duty cycle and output current.
+> +power1_alarm		  Input power alarm.
+> +
+> +power2_label		  "pin2"
+> +power2_input		  Input power, derived from input current sensor.
+> +
+> +power3_label		  "pout"
+> +power3_input		  Output power.
+> +
+> +temp1_input		  VCORE temperature.
+> +temp1_crit		  Critical high temperature.
+> +temp1_crit_alarm	  Chip temperature critical high alarm.
+> +temp1_max		  Maximum temperature.
+> +temp1_max_alarm		  Chip temperature high alarm.
+> +
+> +temp2_input		  TSENSE_0 temperature
+> +temp3_input		  TSENSE_1 temperature
+> +temp4_input		  TSENSE_2 temperature
+> +temp5_input		  TSENSE_3 temperature
+> +
+> +temp6_input		  VSA temperature.
+> +temp6_crit		  Critical high temperature.
+> +temp6_crit_alarm	  Chip temperature critical high alarm.
+> +temp6_max		  Maximum temperature.
+> +temp6_max_alarm		  Chip temperature high alarm.
+> +============= ===========================> 
