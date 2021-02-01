@@ -1,41 +1,46 @@
-From: Ioana Ciornei <ioana.ciornei@nxp.com>
-Date: Mon, 08 Feb 2021 15:49:16 +0000
-Subject: Re: [PATCH] bus: fsl-mc: Fix test for end of loop
-Message-Id: <20210208154914.h6lunbjxwmdb2bvu@skbuf>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 01 Feb 2021 12:23:42 +0000
+Subject: [PATCH] io_uring: Fix NULL dereference in error in io_sqe_files_register()
+Message-Id: <YBfyzmcP1N6jpDjo@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <YBf0Br9obNGZTcNI@mwanda> <20210208141803.bqbnbgvprtlo3vs6@skbuf>
- <20210208151129.GJ2696@kadam>
-In-Reply-To: <20210208151129.GJ2696@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Stuart Yoder <stuyoder@gmail.com>, Laurentiu Tudor <laurentiu.tudor@nxp.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Jens Axboe <axboe@kernel.dk>, Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
+Cc: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Feb 08, 2021 at 06:11:29PM +0300, Dan Carpenter wrote:
-> On Mon, Feb 08, 2021 at 02:18:04PM +0000, Ioana Ciornei wrote:
-> > On Mon, Feb 01, 2021 at 03:28:54PM +0300, Dan Carpenter wrote:
-> > > The "desc" pointer can't possibly be NULL here.  If we can't find the
-> > > correct "desc" then tt points to the last element of the
-> > > fsl_mc_accepted_cmds[] array.  Fix this by testing if
-> > > "i == FSL_MC_NUM_ACCEPTED_CMDS" instead.
-> > > 
-> > > Fixes: 2cf1e703f066 ("bus: fsl-mc: add fsl-mc userspace support")
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > 
-> > Hi,
-> > 
-> > I just noticed that Greg wasn't copied on the initial email.
-> > 
-> > If you don't mind I will re-submit your patch along with other updates
-> > to the fsl-mc bus so that you don't have to bother.
-> > 
-> 
-> Thanks for doing that!
-> 
-> Was Greg supposed to have been copied, though?  He's not listed in the
-> ./scripts/get_maintainer.pl output.
-> 
+If we hit a "goto out_free;" before the "ctx->file_data" pointer has
+been assigned then it leads to a NULL derefence when we call:
 
-Huh, he's not listed indeed. I didn't check this before since the fsl-mc
-bus changes have always been pushed through Greg's char-misc tree.
+	free_fixed_rsrc_data(ctx->file_data);
+
+We can fix this by moving the assignment earlier.
+
+Fixes: 3cfb739c561e ("io_uring: create common fixed_rsrc_data allocation routines")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ fs/io_uring.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 03748faa5295..8e8b74dd7d9b 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -7869,6 +7869,7 @@ static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
+ 	file_data = alloc_fixed_rsrc_data(ctx);
+ 	if (!file_data)
+ 		return -ENOMEM;
++	ctx->file_data = file_data;
+ 
+ 	nr_tables = DIV_ROUND_UP(nr_args, IORING_MAX_FILES_TABLE);
+ 	file_data->table = kcalloc(nr_tables, sizeof(*file_data->table),
+@@ -7878,7 +7879,6 @@ static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
+ 
+ 	if (io_sqe_alloc_file_tables(file_data, nr_tables, nr_args))
+ 		goto out_free;
+-	ctx->file_data = file_data;
+ 
+ 	for (i = 0; i < nr_args; i++, ctx->nr_user_files++) {
+ 		struct fixed_rsrc_table *table;
+-- 
+2.29.2
