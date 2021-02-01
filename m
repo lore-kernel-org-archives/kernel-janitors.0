@@ -1,53 +1,48 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Mon, 08 Feb 2021 15:07:33 +0000
-Subject: Re: [PATCH] HID: logitech-dj: fix unintentional integer overflow on left shift
-Message-Id: <7f79107a-93ad-251d-33bd-9a2cf2748aa9@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 01 Feb 2021 12:25:43 +0000
+Subject: [PATCH] ocfs2: Fix a use after free on error
+Message-Id: <YBfzR7AbZZ4Pp6sq@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210207232120.8885-1-colin.king@canonical.com>
- <20210208150610.GI2696@kadam>
-In-Reply-To: <20210208150610.GI2696@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, Nestor Lopez Casado <nlopezcasad@logitech.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mark Fasheh <mark@fasheh.com>, Jiri Slaby <jirislaby@kernel.org>
+Cc: Joel Becker <jlbec@evilplan.org>, Joseph Qi <joseph.qi@linux.alibaba.com>, Andrew Morton <akpm@linux-foundation.org>, Alex Shi <alex.shi@linux.alibaba.com>, Jens Axboe <axboe@kernel.dk>, ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 08/02/2021 15:06, Dan Carpenter wrote:
-> On Sun, Feb 07, 2021 at 11:21:20PM +0000, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> Shifting the integer value 1 is evaluated using 32-bit rithmetic
->> and then used in an expression that expects a 64-bit value, so
->> there is potentially an integer overflow. Fix this by using th
->> BIT_ULL macro to perform the shift and avoid the overflow.
->>
->> Addresses-Coverity: ("Uninitentional integer overflow")
->> Fixes: 534a7b8e10ec ("HID: Add full support for Logitech Unifying receivers")
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>  drivers/hid/hid-logitech-dj.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/hid/hid-logitech-dj.c b/drivers/hid/hid-logitech-dj.c
->> index 45e7e0bdd382..747f41be0603 100644
->> --- a/drivers/hid/hid-logitech-dj.c
->> +++ b/drivers/hid/hid-logitech-dj.c
->> @@ -1035,7 +1035,7 @@ static void logi_dj_recv_forward_null_report(struct dj_receiver_dev *djrcv_dev,
->>  	memset(reportbuffer, 0, sizeof(reportbuffer));
->>  
->>  	for (i = 0; i < NUMBER_OF_HID_REPORTS; i++) {
->                         ^^^^^^^^^^^^^^^^^^^^^
-> This is 32, so it can't be undefined.
+The error handling in this function frees "reg" but it is still on the
+"o2hb_all_regions" list so it will lead to a use after free.  The fix
+for this is to only add it to the list after everything has succeeded.
 
-Urgh, looks like coverity is being overly pedantic here. :-(
+Fixes: 1cf257f51191 ("ocfs2: fix memory leak")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This is from static analysis and hasn't been tested.
 
-> 
->> -		if (djdev->reports_supported & (1 << i)) {
->> +		if (djdev->reports_supported & BIT_ULL(i)) {
->>  			reportbuffer[0] = i;
->>  			if (hid_input_report(djdev->hdev,
->>  					     HID_INPUT_REPORT,
-> 
-> regards,
-> dan carpenter
-> 
+ fs/ocfs2/cluster/heartbeat.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/fs/ocfs2/cluster/heartbeat.c b/fs/ocfs2/cluster/heartbeat.c
+index 0179a73a3fa2..92af4dc813e7 100644
+--- a/fs/ocfs2/cluster/heartbeat.c
++++ b/fs/ocfs2/cluster/heartbeat.c
+@@ -2025,7 +2025,6 @@ static struct config_item *o2hb_heartbeat_group_make_item(struct config_group *g
+ 		}
+ 		set_bit(reg->hr_region_num, o2hb_region_bitmap);
+ 	}
+-	list_add_tail(&reg->hr_all_item, &o2hb_all_regions);
+ 	spin_unlock(&o2hb_live_lock);
+ 
+ 	config_item_init_type_name(&reg->hr_item, name, &o2hb_region_type);
+@@ -2053,6 +2052,10 @@ static struct config_item *o2hb_heartbeat_group_make_item(struct config_group *g
+ 
+ 	o2hb_debug_region_init(reg, o2hb_debug_dir);
+ 
++	spin_lock(&o2hb_live_lock);
++	list_add_tail(&reg->hr_all_item, &o2hb_all_regions);
++	spin_unlock(&o2hb_live_lock);
++
+ 	return &reg->hr_item;
+ 
+ unregister_handler:
+-- 
+2.29.2
