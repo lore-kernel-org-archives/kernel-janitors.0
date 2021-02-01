@@ -1,37 +1,35 @@
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 09 Feb 2021 11:48:48 +0000
-Subject: [PATCH][next] drm/i915/display: Fix spelling mistake "Couldnt" -> "Couldn't"
-Message-Id: <20210209114848.444859-1-colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 01 Feb 2021 12:22:07 +0000
+Subject: [PATCH] misc: bcm-vk: unlock on error in bcm_to_h_msg_dequeue()
+Message-Id: <YBfyb+jU5lDUe+5g@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210203110803.17894-1-colin.king@canonical.com>
-In-Reply-To: <20210203110803.17894-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Scott Branden <scott.branden@broadcom.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Olof Johansson <olof@lixom.net>, Desmond Yan <desmond.yan@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Unlock before returning on this error path.
 
-There is a spelling mistake in a drm_dbg message. Fix it.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 111d746bb476 ("misc: bcm-vk: add VK messaging support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/gpu/drm/i915/display/intel_dp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/misc/bcm-vk/bcm_vk_msg.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/i915/display/intel_dp.c b/drivers/gpu/drm/i915/display/intel_dp.c
-index 8c12d5375607..a338720cee2e 100644
---- a/drivers/gpu/drm/i915/display/intel_dp.c
-+++ b/drivers/gpu/drm/i915/display/intel_dp.c
-@@ -2650,7 +2650,7 @@ void intel_dp_check_frl_training(struct intel_dp *intel_dp)
- 	if (intel_dp_pcon_start_frl_training(intel_dp) < 0) {
- 		int ret, mode;
+diff --git a/drivers/misc/bcm-vk/bcm_vk_msg.c b/drivers/misc/bcm-vk/bcm_vk_msg.c
+index eec90494777d..fc972e43258a 100644
+--- a/drivers/misc/bcm-vk/bcm_vk_msg.c
++++ b/drivers/misc/bcm-vk/bcm_vk_msg.c
+@@ -849,7 +849,8 @@ s32 bcm_to_h_msg_dequeue(struct bcm_vk *vk)
+ 				 * that is fatal.
+ 				 */
+ 				dev_crit(dev, "Kernel mem allocation failure.\n");
+-				return -ENOMEM;
++				total = -ENOMEM;
++				goto idx_err;
+ 			}
  
--		drm_dbg(&dev_priv->drm, "Couldnt set FRL mode, continuing with TMDS mode\n");
-+		drm_dbg(&dev_priv->drm, "Couldn't set FRL mode, continuing with TMDS mode\n");
- 		ret = drm_dp_pcon_reset_frl_config(&intel_dp->aux);
- 		mode = drm_dp_pcon_hdmi_link_mode(&intel_dp->aux, NULL);
- 
+ 			/* flush rd pointer after a message is dequeued */
 -- 
-2.30.0
+2.29.2
