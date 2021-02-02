@@ -1,32 +1,52 @@
-From: "Milan P. Gandhi" <mgandhi@redhat.com>
-Date: Thu, 11 Feb 2021 13:15:12 +0000
-Subject: Re: [PATCH] scsi: qla2xxx: Removed extra space in variable declaration.
-Message-Id: <6266f3b1-1890-d69b-eeed-cb60ee8d02bb@redhat.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 02 Feb 2021 11:31:38 +0000
+Subject: [PATCH v2] ath11k: fix a locking bug in ath11k_mac_op_start()
+Message-Id: <YBk4GoeE+yc0wlJH@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210211093552.GA5375@machine1>
-In-Reply-To: <20210211093552.GA5375@machine1>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: GR-QLogic-Storage-Upstream@marvell.com, linux-scsi@vger.kernel.org, njavali@marvell.com, jejb@linux.ibm.com, martin.petersen@oracle.com
+To: Kalle Valo <kvalo@codeaurora.org>, Peter Oh <peter.oh@eero.com>
+Cc: kernel-janitors@vger.kernel.org, Carl Huang <cjhuang@codeaurora.org>, linux-wireless@vger.kernel.org, ath11k@lists.infradead.org
 
-Apologies for missing a note about change. Will correct it now and send updated version.
+This error path leads to a Smatch warning:
 
-On 2/11/21 3:05 PM, Milan P. Gandhi wrote:
-> Signed-off-by: Milan P. Gandhi <mgandhi@redhat.com>
-> ---
-> diff --git a/drivers/scsi/qla2xxx/qla_attr.c b/drivers/scsi/qla2xxx/qla_attr.c
-> index ab45ac1e5a72..7f2db8badb6d 100644
-> --- a/drivers/scsi/qla2xxx/qla_attr.c
-> +++ b/drivers/scsi/qla2xxx/qla_attr.c
-> @@ -226,7 +226,7 @@ qla2x00_sysfs_write_nvram(struct file *filp, struct kobject *kobj,
->  	struct scsi_qla_host *vha = shost_priv(dev_to_shost(container_of(kobj,
->  	    struct device, kobj)));
->  	struct qla_hw_data *ha = vha->hw;
-> -	uint16_t	cnt;
-> +	uint16_t cnt;
->  
->  	if (!capable(CAP_SYS_ADMIN) || off != 0 || count != ha->nvram_size ||
->  	    !ha->isp_ops->write_nvram)
-> 
+	drivers/net/wireless/ath/ath11k/mac.c:4269 ath11k_mac_op_start()
+	error: double unlocked '&ar->conf_mutex' (orig line 4251)
+
+We're not holding the lock when we do the "goto err;" so it leads to a
+double unlock.  The fix is to hold the lock for a little longer.
+
+Fixes: c83c500b55b6 ("ath11k: enable idle power save mode")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: reviewers were concern that v1 was racy
+
+ drivers/net/wireless/ath/ath11k/mac.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/wireless/ath/ath11k/mac.c b/drivers/net/wireless/ath/ath11k/mac.c
+index c1608f64ea95..464d3425488b 100644
+--- a/drivers/net/wireless/ath/ath11k/mac.c
++++ b/drivers/net/wireless/ath/ath11k/mac.c
+@@ -4248,8 +4248,6 @@ static int ath11k_mac_op_start(struct ieee80211_hw *hw)
+ 	/* Configure the hash seed for hash based reo dest ring selection */
+ 	ath11k_wmi_pdev_lro_cfg(ar, ar->pdev->pdev_id);
+ 
+-	mutex_unlock(&ar->conf_mutex);
+-
+ 	rcu_assign_pointer(ab->pdevs_active[ar->pdev_idx],
+ 			   &ab->pdevs[ar->pdev_idx]);
+ 
+@@ -4262,6 +4260,9 @@ static int ath11k_mac_op_start(struct ieee80211_hw *hw)
+ 			goto err;
+ 		}
+ 	}
++
++	mutex_unlock(&ar->conf_mutex);
++
+ 	return 0;
+ 
+ err:
+-- 
+2.30.0
