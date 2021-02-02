@@ -1,24 +1,70 @@
-From: <januskad@auroraoh.com>
-Date: Tue, 09 Feb 2021 07:44:47 +0000
-Subject: We are a registered Private Loan Investment Company in the United Kingdom, we also registered with t
-Message-Id: <04dad0e2-2f3b-46a3-bb30-cab23ca007d4@COASRV-MAIL2.auroraoh.loc>
+From: Hans de Goede <hdegoede@redhat.com>
+Date: Tue, 02 Feb 2021 14:05:14 +0000
+Subject: Re: [PATCH] platform/x86: thinkpad_acpi: rectify length of title underline
+Message-Id: <3b91a535-b818-09be-456b-c728838612dc@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20210129040849.26740-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20210129040849.26740-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Nitin Joshi <njoshi1@lenovo.com>, platform-driver-x86@vger.kernel.org
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Jonathan Corbet <corbet@lwn.net>, Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-We are seeking for beneficiaries who source for fund to expand/relocating their business interest abroad. We are ready to fund projects outside Turkey and United Kingdom in the form of Soft Loan. We grant loans to both corporate and private entities at a low interest rate of 2% R.O.I per annul.
+Hi,
 
-We like to grant loan in the following sectors: oil/Gas, banking, real estate, stock speculation and mining, transportation, health sector and tobacco, Communication Services, Agriculture Forestry & Fishing, thus any sector. The terms are very flexible and interesting.
+On 1/29/21 5:08 AM, Lukas Bulwahn wrote:
+> Commit d7cbe2773aed ("platform/x86: thinkpad_acpi: set keyboard language")
+> adds information on keyboard setting to the thinkpad documentation, but
+> made the subsection title underline too short.
+> 
+> Hence, make htmldocs warns:
+> 
+>   Documentation/admin-guide/laptops/thinkpad-acpi.rst:1472: \
+>     WARNING: Title underline too short.
+> 
+> Rectify length of subsection title underline.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-Please contact us for more details;
+Thank you for your patch, I've applied this patch to my review-hans 
+branch:
+https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
+
+Note it will show up in my review-hans branch once I've pushed my
+local branch there, which might take a while.
+
+Once I've run some tests on this branch the patches there will be
+added to the platform-drivers-x86/for-next branch and eventually
+will be included in the pdx86 pull-request to Linus for the next
+merge-window.
+
+Regards,
+
+Hans
 
 
-Kind regards,
-
-Paul McCann
-
--- 
-This email has been checked for viruses by Avast antivirus software.
-https://www.avast.com/antivirus
+> ---
+> applies cleanly on next-20210128
+> 
+> Nitin, please ack.
+> 
+> Hans, please pick this minor fixup for your platform/x86 -next tree.
+> 
+>  Documentation/admin-guide/laptops/thinkpad-acpi.rst | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/admin-guide/laptops/thinkpad-acpi.rst b/Documentation/admin-guide/laptops/thinkpad-acpi.rst
+> index b1188f05a99a..0e4c5bb7fb70 100644
+> --- a/Documentation/admin-guide/laptops/thinkpad-acpi.rst
+> +++ b/Documentation/admin-guide/laptops/thinkpad-acpi.rst
+> @@ -1469,7 +1469,7 @@ Sysfs notes
+>  
+>  
+>  Setting keyboard language
+> --------------------
+> +-------------------------
+>  
+>  sysfs: keyboard_lang
+>  
+> 
