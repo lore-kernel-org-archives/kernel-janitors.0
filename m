@@ -1,38 +1,52 @@
-From: patchwork-bot+netdevbpf@kernel.org
-Date: Mon, 15 Feb 2021 23:20:09 +0000
-Subject: Re: [PATCH] i40e: Fix incorrect use of ip6src due to copy-paste coding error
-Message-Id: <161343120902.10830.1258291646017278044.git-patchwork-notify@kernel.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 02 Feb 2021 11:32:03 +0000
+Subject: [PATCH v2] ocfs2: Fix a use after free on error
+Message-Id: <YBk4M6HUG8jB/jc7@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210215161923.83682-1-colin.king@canonical.com>
-In-Reply-To: <20210215161923.83682-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: jesse.brandeburg@intel.com, anthony.l.nguyen@intel.com, davem@davemloft.net, kuba@kernel.org, przemyslawx.patynowski@intel.com, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mark Fasheh <mark@fasheh.com>
+Cc: Joel Becker <jlbec@evilplan.org>, Joseph Qi <joseph.qi@linux.alibaba.com>, Andrew Morton <akpm@linux-foundation.org>, Takashi Iwai <tiwai@suse.de>, Jens Axboe <axboe@kernel.dk>, Alex Shi <alex.shi@linux.alibaba.com>, Jiri Slaby <jirislaby@kernel.org>, ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hello:
+The error handling in this function frees "reg" but it is still on the
+"o2hb_all_regions" list so it will lead to a use after freew.  Joseph Qi
+points out that we need to clear the bit in the "o2hb_region_bitmap" as
+well
 
-This patch was applied to netdev/net-next.git (refs/heads/master):
+Fixes: 1cf257f51191 ("ocfs2: fix memory leak")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: The first version didn't clear the bit.
 
-On Mon, 15 Feb 2021 16:19:23 +0000 you wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> It appears that the call of ipv6_add_any for the destination address
-> is using ip6src instead of ip6dst, this looks like a copy-paste
-> coding error. Fix this by replacing ip6src with ip6dst.
-> 
-> Addresses-Coverity: ("Copy-paste error")
-> Fixes: efca91e89b67 ("i40e: Add flow director support for IPv6")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> 
-> [...]
+ fs/ocfs2/cluster/heartbeat.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-Here is the summary with links:
-  - i40e: Fix incorrect use of ip6src due to copy-paste coding error
-    https://git.kernel.org/netdev/net-next/c/7f76963b692d
-
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+diff --git a/fs/ocfs2/cluster/heartbeat.c b/fs/ocfs2/cluster/heartbeat.c
+index 0179a73a3fa2..12a7590601dd 100644
+--- a/fs/ocfs2/cluster/heartbeat.c
++++ b/fs/ocfs2/cluster/heartbeat.c
+@@ -2042,7 +2042,7 @@ static struct config_item *o2hb_heartbeat_group_make_item(struct config_group *g
+ 			o2hb_nego_timeout_handler,
+ 			reg, NULL, &reg->hr_handler_list);
+ 	if (ret)
+-		goto free;
++		goto remove_item;
+ 
+ 	ret = o2net_register_handler(O2HB_NEGO_APPROVE_MSG, reg->hr_key,
+ 			sizeof(struct o2hb_nego_msg),
+@@ -2057,6 +2057,12 @@ static struct config_item *o2hb_heartbeat_group_make_item(struct config_group *g
+ 
+ unregister_handler:
+ 	o2net_unregister_handler_list(&reg->hr_handler_list);
++remove_item:
++	spin_lock(&o2hb_live_lock);
++	list_del(&reg->hr_all_item);
++	if (o2hb_global_heartbeat_active())
++		clear_bit(reg->hr_region_num, o2hb_region_bitmap);
++	spin_unlock(&o2hb_live_lock);
+ free:
+ 	kfree(reg);
+ 	return ERR_PTR(ret);
+-- 
+2.30.0
