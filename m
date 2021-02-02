@@ -1,58 +1,49 @@
-From: Joseph Qi <joseph.qi@linux.alibaba.com>
-Date: Tue, 02 Feb 2021 01:48:11 +0000
-Subject: Re: [PATCH] ocfs2: Fix a use after free on error
-Message-Id: <2809e2b1-fcb4-bd91-d855-9812ede19447@linux.alibaba.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 02 Feb 2021 05:56:36 +0000
+Subject: [PATCH] drm/amdgpu: Prevent shift wrapping in amdgpu_read_mask()
+Message-Id: <YBjplLOof9J1E2o5@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <YBfzR7AbZZ4Pp6sq@mwanda>
-In-Reply-To: <YBfzR7AbZZ4Pp6sq@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Mark Fasheh <mark@fasheh.com>, Jiri Slaby <jirislaby@kernel.org>
-Cc: Joel Becker <jlbec@evilplan.org>, Andrew Morton <akpm@linux-foundation.org>, Alex Shi <alex.shi@linux.alibaba.com>, Jens Axboe <axboe@kernel.dk>, ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alex Deucher <alexander.deucher@amd.com>
+Cc: Xiaojian Du <Xiaojian.Du@amd.com>, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, Kevin Wang <kevin1.wang@amd.com>, Huang Rui <ray.huang@amd.com>, amd-gfx@lists.freedesktop.org, Nirmoy Das <nirmoy.das@amd.com>, Daniel Vetter <daniel@ffwll.ch>, Eric Huang <JinHuiEric.Huang@amd.com>, Evan Quan <evan.quan@amd.com>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
 
+If the user passes a "level" value which is higher than 31 then that
+leads to shift wrapping.  The undefined behavior will lead to a
+syzkaller stack dump.
 
+Fixes: 5632708f4452 ("drm/amd/powerplay: add dpm force multiple levels on cz/tonga/fiji/polaris (v2)")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/gpu/drm/amd/pm/amdgpu_pm.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-On 2/1/21 8:25 PM, Dan Carpenter wrote:
-> The error handling in this function frees "reg" but it is still on the
-> "o2hb_all_regions" list so it will lead to a use after free.  The fix
-> for this is to only add it to the list after everything has succeeded.
-> 
-Seems we have to clear the bitmap as well in error case.
-So how about add a new error label and handle them both?
-
-Thanks,
-Joseph
-
-> Fixes: 1cf257f51191 ("ocfs2: fix memory leak")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> This is from static analysis and hasn't been tested.
-> 
->  fs/ocfs2/cluster/heartbeat.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/ocfs2/cluster/heartbeat.c b/fs/ocfs2/cluster/heartbeat.c
-> index 0179a73a3fa2..92af4dc813e7 100644
-> --- a/fs/ocfs2/cluster/heartbeat.c
-> +++ b/fs/ocfs2/cluster/heartbeat.c
-> @@ -2025,7 +2025,6 @@ static struct config_item *o2hb_heartbeat_group_make_item(struct config_group *g
->  		}
->  		set_bit(reg->hr_region_num, o2hb_region_bitmap);
->  	}
-> -	list_add_tail(&reg->hr_all_item, &o2hb_all_regions);
->  	spin_unlock(&o2hb_live_lock);
->  
->  	config_item_init_type_name(&reg->hr_item, name, &o2hb_region_type);
-> @@ -2053,6 +2052,10 @@ static struct config_item *o2hb_heartbeat_group_make_item(struct config_group *g
->  
->  	o2hb_debug_region_init(reg, o2hb_debug_dir);
->  
-> +	spin_lock(&o2hb_live_lock);
-> +	list_add_tail(&reg->hr_all_item, &o2hb_all_regions);
-> +	spin_unlock(&o2hb_live_lock);
-> +
->  	return &reg->hr_item;
->  
->  unregister_handler:
-> 
+diff --git a/drivers/gpu/drm/amd/pm/amdgpu_pm.c b/drivers/gpu/drm/amd/pm/amdgpu_pm.c
+index e9b569b76716..1a4010fcf561 100644
+--- a/drivers/gpu/drm/amd/pm/amdgpu_pm.c
++++ b/drivers/gpu/drm/amd/pm/amdgpu_pm.c
+@@ -1094,7 +1094,7 @@ static ssize_t amdgpu_get_pp_dpm_sclk(struct device *dev,
+ static ssize_t amdgpu_read_mask(const char *buf, size_t count, uint32_t *mask)
+ {
+ 	int ret;
+-	long level;
++	unsigned long level;
+ 	char *sub_str = NULL;
+ 	char *tmp;
+ 	char buf_cpy[AMDGPU_MASK_BUF_MAX + 1];
+@@ -1109,9 +1109,9 @@ static ssize_t amdgpu_read_mask(const char *buf, size_t count, uint32_t *mask)
+ 	tmp = buf_cpy;
+ 	while (tmp[0]) {
+ 		sub_str = strsep(&tmp, delimiter);
+-		if (strlen(sub_str)) {
+-			ret = kstrtol(sub_str, 0, &level);
+-			if (ret)
++		if (sub_str[0]) {
++			ret = kstrtoul(sub_str, 0, &level);
++			if (ret || level > 31)
+ 				return -EINVAL;
+ 			*mask |= 1 << level;
+ 		} else
+-- 
+2.29.2
