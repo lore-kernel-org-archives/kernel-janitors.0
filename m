@@ -1,33 +1,35 @@
-From: Vinod Koul <vkoul@kernel.org>
-Date: Sat, 06 Feb 2021 10:15:31 +0000
-Subject: Re: [PATCH] phy: qcom-qmp: make a const array static, makes object smaller
-Message-Id: <20210206100331.GK2656@vkoul-mobl.Dlink>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 03 Feb 2021 11:08:03 +0000
+Subject: [PATCH][next] drm/i915/display: fix spelling mistake "Couldnt" -> "Couldn't"
+Message-Id: <20210203110803.17894-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210204180313.108876-1-colin.king@canonical.com>
-In-Reply-To: <20210204180313.108876-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, linux-arm-msm@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 04-02-21, 18:03, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Don't populate the const array cfg1_settings on the stack but instead make
-> it static. Makes the object code smaller by 24 bytes:
-> 
-> Before:
->    text	   data	    bss	    dec	    hex	filename
->   73585	  20240	     64	  93889	  16ec1	drivers/phy/qualcomm/phy-qcom-qmp.o
-> 
-> After:
->    text	   data	    bss	    dec	    hex	filename
->   73465	  20336	     64	  93865	  16ea9	drivers/phy/qualcomm/phy-qcom-qmp.o
-> 
-> (gcc version 10.2.0)
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks
+There is a spelling mistake in a drm_dbg message. Fix it.
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/i915/display/intel_dp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/i915/display/intel_dp.c b/drivers/gpu/drm/i915/display/intel_dp.c
+index 8c12d5375607..a338720cee2e 100644
+--- a/drivers/gpu/drm/i915/display/intel_dp.c
++++ b/drivers/gpu/drm/i915/display/intel_dp.c
+@@ -2650,7 +2650,7 @@ void intel_dp_check_frl_training(struct intel_dp *intel_dp)
+ 	if (intel_dp_pcon_start_frl_training(intel_dp) < 0) {
+ 		int ret, mode;
+ 
+-		drm_dbg(&dev_priv->drm, "Couldnt set FRL mode, continuing with TMDS mode\n");
++		drm_dbg(&dev_priv->drm, "Couldn't set FRL mode, continuing with TMDS mode\n");
+ 		ret = drm_dp_pcon_reset_frl_config(&intel_dp->aux);
+ 		mode = drm_dp_pcon_hdmi_link_mode(&intel_dp->aux, NULL);
+ 
 -- 
-~Vinod
+2.29.2
