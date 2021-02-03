@@ -1,51 +1,31 @@
-From: Julia Lawall <Julia.Lawall@inria.fr>
-Date: Sat, 13 Feb 2021 10:19:04 +0000
-Subject: [PATCH 1/4] ASoC: mmp-sspa: drop unneeded snd_soc_dai_set_drvdata
-Message-Id: <20210213101907.1318496-2-Julia.Lawall@inria.fr>
+From: Michael Ellerman <patch-notifications@ellerman.id.au>
+Date: Wed, 03 Feb 2021 11:40:37 +0000
+Subject: Re: [PATCH 0/2] PowerPC-pSeries: Adjustments for dlpar_store()
+Message-Id: <161235200944.1516112.5674406874820012967.b4-ty@ellerman.id.au>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210213101907.1318496-1-Julia.Lawall@inria.fr>
-In-Reply-To: <20210213101907.1318496-1-Julia.Lawall@inria.fr>
+References: <db28c84d-ac07-6d9a-a371-c97ab72bf763@web.de>
+In-Reply-To: <db28c84d-ac07-6d9a-a371-c97ab72bf763@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Daniel Mack <daniel@zonque.org>
-Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, Mark Brown <broonie@kernel.org>, Robert Jarzmik <robert.jarzmik@free.fr>, linux-arm-kernel@lists.infradead.org
+To: linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Frank Rowand <frank.rowand@sony.com>, Michael Ellerman <mpe@ellerman.id.au>, Allison Randal <allison@lohutok.net>, Markus Elfring <Markus.Elfring@web.de>, Oliver O'Halloran <oohall@gmail.com>, Nathan Lynch <nathanl@linux.ibm.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Paul Mackerras <paulus@samba.org>, Gen Zhang <blackgod016574@gmail.com>, Nathan Fontenot <nfont@linux.vnet.ibm.com>, Thomas Gleixner <tglx@linutronix.de>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-snd_soc_dai_set_drvdata is not needed when the set data comes from
-snd_soc_dai_get_drvdata or dev_get_drvdata.  The problem was fixed
-usingthe following semantic patch: (http://coccinelle.lip6.fr/)
+On Tue, 27 Aug 2019 14:40:42 +0200, Markus Elfring wrote:
+> Two update suggestions were taken into account
+> from static source code analysis.
+> 
+> Markus Elfring (2):
+>   Delete an unnecessary kfree() call
+>   Delete an error message for a failed string duplication
+> 
+> [...]
 
-// <smpl>
-@@
-expression x,y,e;
-@@
-	x = dev_get_drvdata(y->dev)
-	... when != x = e
--	snd_soc_dai_set_drvdata(y,x);
+Applied to powerpc/next.
 
-@@
-expression x,y,e;
-@@
-	x = snd_soc_dai_get_drvdata(y)
-	... when != x = e
--	snd_soc_dai_set_drvdata(y,x);
-// </smpl>
+[1/2] powerpc/pseries: Delete an unnecessary kfree() call in dlpar_store()
+      https://git.kernel.org/powerpc/c/de060ac83e5c1fe5fb8c505a4e99c1fe4f70ff94
+[2/2] powerpc/pseries: Delete an error message for a failed string duplication in dlpar_store()
+      https://git.kernel.org/powerpc/c/6e7a4da754f3087fa1f0839c1128aac233c21442
 
-Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-
----
- sound/soc/pxa/mmp-sspa.c |    1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/sound/soc/pxa/mmp-sspa.c b/sound/soc/pxa/mmp-sspa.c
-index 4803972ee655..7e39210a0b38 100644
---- a/sound/soc/pxa/mmp-sspa.c
-+++ b/sound/soc/pxa/mmp-sspa.c
-@@ -330,7 +330,6 @@ static int mmp_sspa_probe(struct snd_soc_dai *dai)
- 				&sspa->playback_dma_data,
- 				&sspa->capture_dma_data);
- 
--	snd_soc_dai_set_drvdata(dai, sspa);
- 	return 0;
- }
- 
+cheers
