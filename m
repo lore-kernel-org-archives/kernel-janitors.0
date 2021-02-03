@@ -1,124 +1,42 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Wed, 10 Feb 2021 13:11:14 +0000
-Subject: Re: [PATCH] drm: use getter/setter functions
-Message-Id: <YCPbctaFCApnwOmT@phenom.ffwll.local>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 03 Feb 2021 13:10:40 +0000
+Subject: [PATCH][next] net: hns3: remove redundant null check of an array
+Message-Id: <20210203131040.21656-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210209211304.1261740-1-Julia.Lawall@inria.fr>
-In-Reply-To: <20210209211304.1261740-1-Julia.Lawall@inria.fr>
+References: <20190831072949.7505-1-colin.king@canonical.com>
+In-Reply-To: <20190831072949.7505-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@inria.fr>
-Cc: Jernej Skrabec <jernej.skrabec@siol.net>, linux-aspeed@lists.ozlabs.org, Neil Armstrong <narmstrong@baylibre.com>, David Airlie <airlied@linux.ie>, Andrew Jeffery <andrew@aj.id.au>, Jonas Karlman <jonas@kwiboo.se>, kernel-janitors@vger.kernel.org, Sandy Huang <hjc@rock-chips.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, linux-rockchip@lists.infradead.org, Sam Ravnborg <sam@ravnborg.org>, linux-arm-kernel@lists.infradead.org, Joel Stanley <joel@jms.id.au>
+To: Yisen Zhuang <yisen.zhuang@huawei.com>, Salil Mehta <salil.mehta@huawei.com>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Huazhong Tan <tanhuazhong@huawei.com>, Guangbin Huang <huangguangbin2@huawei.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Feb 09, 2021 at 10:13:04PM +0100, Julia Lawall wrote:
-> Use getter and setter functions, for platform_device structures and a
-> mipi_dsi_device structure.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to drm-misc-next, thanks for the patch.
--Daniel
-> 
-> ---
->  drivers/gpu/drm/aspeed/aspeed_gfx_drv.c             |    2 +-
->  drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c |    2 +-
->  drivers/gpu/drm/panel/panel-lvds.c                  |    2 +-
->  drivers/gpu/drm/panel/panel-seiko-43wvf1g.c         |    4 ++--
->  drivers/gpu/drm/panel/panel-simple.c                |    2 +-
->  drivers/gpu/drm/rockchip/rockchip_lvds.c            |    2 +-
->  6 files changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-> index 4e2dad314c79..9858079f9e14 100644
-> --- a/drivers/gpu/drm/panel/panel-simple.c
-> +++ b/drivers/gpu/drm/panel/panel-simple.c
-> @@ -4800,7 +4800,7 @@ static int panel_simple_dsi_probe(struct mipi_dsi_device *dsi)
->  
->  	err = mipi_dsi_attach(dsi);
->  	if (err) {
-> -		struct panel_simple *panel = dev_get_drvdata(&dsi->dev);
-> +		struct panel_simple *panel = mipi_dsi_get_drvdata(dsi);
->  
->  		drm_panel_remove(&panel->base);
->  	}
-> diff --git a/drivers/gpu/drm/panel/panel-seiko-43wvf1g.c b/drivers/gpu/drm/panel/panel-seiko-43wvf1g.c
-> index 0ee508576231..3939b25e6666 100644
-> --- a/drivers/gpu/drm/panel/panel-seiko-43wvf1g.c
-> +++ b/drivers/gpu/drm/panel/panel-seiko-43wvf1g.c
-> @@ -267,7 +267,7 @@ static int seiko_panel_probe(struct device *dev,
->  
->  static int seiko_panel_remove(struct platform_device *pdev)
->  {
-> -	struct seiko_panel *panel = dev_get_drvdata(&pdev->dev);
-> +	struct seiko_panel *panel = platform_get_drvdata(pdev);
->  
->  	drm_panel_remove(&panel->base);
->  	drm_panel_disable(&panel->base);
-> @@ -277,7 +277,7 @@ static int seiko_panel_remove(struct platform_device *pdev)
->  
->  static void seiko_panel_shutdown(struct platform_device *pdev)
->  {
-> -	struct seiko_panel *panel = dev_get_drvdata(&pdev->dev);
-> +	struct seiko_panel *panel = platform_get_drvdata(pdev);
->  
->  	drm_panel_disable(&panel->base);
->  }
-> diff --git a/drivers/gpu/drm/rockchip/rockchip_lvds.c b/drivers/gpu/drm/rockchip/rockchip_lvds.c
-> index 654bc52d9ff3..bd5ba10822c2 100644
-> --- a/drivers/gpu/drm/rockchip/rockchip_lvds.c
-> +++ b/drivers/gpu/drm/rockchip/rockchip_lvds.c
-> @@ -725,7 +725,7 @@ static int rockchip_lvds_probe(struct platform_device *pdev)
->  
->  static int rockchip_lvds_remove(struct platform_device *pdev)
->  {
-> -	struct rockchip_lvds *lvds = dev_get_drvdata(&pdev->dev);
-> +	struct rockchip_lvds *lvds = platform_get_drvdata(pdev);
->  
->  	component_del(&pdev->dev, &rockchip_lvds_component_ops);
->  	clk_unprepare(lvds->pclk);
-> diff --git a/drivers/gpu/drm/aspeed/aspeed_gfx_drv.c b/drivers/gpu/drm/aspeed/aspeed_gfx_drv.c
-> index 457ec04950f7..c7707338bfdb 100644
-> --- a/drivers/gpu/drm/aspeed/aspeed_gfx_drv.c
-> +++ b/drivers/gpu/drm/aspeed/aspeed_gfx_drv.c
-> @@ -284,7 +284,7 @@ static int aspeed_gfx_probe(struct platform_device *pdev)
->  	if (ret)
->  		return ret;
->  
-> -	dev_set_drvdata(&pdev->dev, priv);
-> +	platform_set_drvdata(pdev, priv);
->  
->  	ret = sysfs_create_group(&pdev->dev.kobj, &aspeed_sysfs_attr_group);
->  	if (ret)
-> diff --git a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
-> index d0c65610ebb5..989a05bc8197 100644
-> --- a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
-> +++ b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
-> @@ -2457,7 +2457,7 @@ static int cdns_mhdp_probe(struct platform_device *pdev)
->  
->  static int cdns_mhdp_remove(struct platform_device *pdev)
->  {
-> -	struct cdns_mhdp_device *mhdp = dev_get_drvdata(&pdev->dev);
-> +	struct cdns_mhdp_device *mhdp = platform_get_drvdata(pdev);
->  	unsigned long timeout = msecs_to_jiffies(100);
->  	bool stop_fw = false;
->  	int ret;
-> diff --git a/drivers/gpu/drm/panel/panel-lvds.c b/drivers/gpu/drm/panel/panel-lvds.c
-> index 66c7d765b8f7..59a8d99e777d 100644
-> --- a/drivers/gpu/drm/panel/panel-lvds.c
-> +++ b/drivers/gpu/drm/panel/panel-lvds.c
-> @@ -244,7 +244,7 @@ static int panel_lvds_probe(struct platform_device *pdev)
->  
->  static int panel_lvds_remove(struct platform_device *pdev)
->  {
-> -	struct panel_lvds *lvds = dev_get_drvdata(&pdev->dev);
-> +	struct panel_lvds *lvds = platform_get_drvdata(pdev);
->  
->  	drm_panel_remove(&lvds->panel);
->  
-> 
+The null check of filp->f_path.dentry->d_iname is redundant because
+it is an array of DNAME_INLINE_LEN chars and cannot be a null. Fix
+this by removing the null check.
 
+Addresses-Coverity: ("Array compared against 0")
+Fixes: 04987ca1b9b6 ("net: hns3: add debugfs support for tm nodes, priority and qset info")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c b/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
+index 6978304f1ac5..c5958754f939 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
+@@ -494,9 +494,6 @@ static ssize_t hns3_dbg_read(struct file *filp, char __user *buffer,
+ 	ssize_t size = 0;
+ 	int ret = 0;
+ 
+-	if (!filp->f_path.dentry->d_iname)
+-		return -EINVAL;
+-
+ 	read_buf = kzalloc(HNS3_DBG_READ_LEN, GFP_KERNEL);
+ 	if (!read_buf)
+ 		return -ENOMEM;
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+2.29.2
