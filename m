@@ -1,57 +1,37 @@
-From: Stephen Boyd <sboyd@kernel.org>
-Date: Thu, 11 Feb 2021 19:05:14 +0000
-Subject: Re: [PATCH][next] soc: xilinx: vcu: remove deadcode on null divider check
-Message-Id: <161307031421.1254594.40010291545314425@swboyd.mtv.corp.google.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 03 Feb 2021 11:10:49 +0000
+Subject: [PATCH][next] net/mlx5e: Fix spelling mistake "Unknouwn" -> "Unknown"
+Message-Id: <20210203111049.18125-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210210184938.146124-1-colin.king@canonical.com>
- <161301409895.1254594.6980739457487251623@swboyd.mtv.corp.google.com>
- <20210211073906.GC30300@pengutronix.de>
-In-Reply-To: <20210211073906.GC30300@pengutronix.de>
+References: <20210129103042.12217-1-colin.king@canonical.com>
+In-Reply-To: <20210129103042.12217-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Michael Tretter <m.tretter@pengutronix.de>
-Cc: Michael Turquette <mturquette@baylibre.com>, kernel-janitors@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>, linux-kernel@vger.kernel.org, Colin King <colin.king@canonical.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Quoting Michael Tretter (2021-02-10 23:39:06)
-> On Wed, 10 Feb 2021 19:28:18 -0800, Stephen Boyd wrote:
-> > Quoting Colin King (2021-02-10 10:49:38)
-> > > From: Colin Ian King <colin.king@canonical.com>
-> > > 
-> > > The pointer 'divider' has previously been null checked followed by
-> > > a return, hence the subsequent null check is redundant deadcode
-> > > that can be removed.  Clean up the code and remove it.
-> > > 
-> > > Fixes: 9c789deea206 ("soc: xilinx: vcu: implement clock provider for output clocks")
-> > > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > > ---
-> > >  drivers/clk/xilinx/xlnx_vcu.c | 3 ---
-> > >  1 file changed, 3 deletions(-)
-> > > 
-> > > diff --git a/drivers/clk/xilinx/xlnx_vcu.c b/drivers/clk/xilinx/xlnx_vcu.c
-> > > index d66b1315114e..607936d7a413 100644
-> > > --- a/drivers/clk/xilinx/xlnx_vcu.c
-> > > +++ b/drivers/clk/xilinx/xlnx_vcu.c
-> > > @@ -512,9 +512,6 @@ static void xvcu_clk_hw_unregister_leaf(struct clk_hw *hw)
-> > >  
-> > >         mux = clk_hw_get_parent(divider);
-> > >         clk_hw_unregister_mux(mux);
-> > > -       if (!divider)
-> > > -               return;
-> > > -
-> > 
-> > This code is pretty confusing. Waiting for m.tretter@pengutronix.de to
-> > reply
-> 
-> Can you elaborate what you find confusing about this code. I would gladly try
-> to clarify and improve the code.
+From: Colin Ian King <colin.king@canonical.com>
 
-The fact that pointers are being checked and then bailing out of the
-function early, vs. doing something if the pointer is non-NULL.
+There is a spelling mistake in a netdev_warn message. Fix it.
 
-> 
-> What happens here is that the driver registers a mux -> divider -> gate chain
-> for each output clock, but only stores the gate clock. When unregistering the
-> clocks, the driver starts at the gate and walks up to the mux while
-> unregistering the clocks.
->
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/mellanox/mlx5/core/en_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+index f5f8165fd3d4..c54e72916693 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+@@ -223,7 +223,7 @@ static int blocking_event(struct notifier_block *nb, unsigned long event, void *
+ 		err = mlx5e_handle_trap_event(priv, data);
+ 		break;
+ 	default:
+-		netdev_warn(priv->netdev, "Sync event: Unknouwn event %ld\n", event);
++		netdev_warn(priv->netdev, "Sync event: Unknown event %ld\n", event);
+ 		err = -EINVAL;
+ 	}
+ 	return err;
+-- 
+2.29.2
