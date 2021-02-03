@@ -1,60 +1,46 @@
-From: Joseph Qi <joseph.qi@linux.alibaba.com>
-Date: Tue, 02 Feb 2021 12:08:28 +0000
-Subject: Re: [PATCH v2] ocfs2: Fix a use after free on error
-Message-Id: <56634c6b-1c68-83dc-e372-09fd4bda3c7d@linux.alibaba.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 03 Feb 2021 13:38:34 +0000
+Subject: [PATCH][next] staging: qlge: fix read of an uninitialized pointer
+Message-Id: <20210203133834.22388-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <YBk4M6HUG8jB/jc7@mwanda>
-In-Reply-To: <YBk4M6HUG8jB/jc7@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Mark Fasheh <mark@fasheh.com>
-Cc: Joel Becker <jlbec@evilplan.org>, Andrew Morton <akpm@linux-foundation.org>, Takashi Iwai <tiwai@suse.de>, Jens Axboe <axboe@kernel.dk>, Alex Shi <alex.shi@linux.alibaba.com>, Jiri Slaby <jirislaby@kernel.org>, ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Manish Chopra <manishc@marvell.com>, GR-Linux-NIC-Dev@marvell.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Coiby Xu <coiby.xu@gmail.com>, netdev@vger.kernel.org, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+Currently the pointer 'reporter' is not being initialized and is
+being read in a netdev_warn message.  The pointer is not used
+and is redundant, fix this by removing it and replacing the reference
+to it with priv->reporter instead.
 
-On 2/2/21 7:32 PM, Dan Carpenter wrote:
-> The error handling in this function frees "reg" but it is still on the
-> "o2hb_all_regions" list so it will lead to a use after freew.  Joseph Qi
-> points out that we need to clear the bit in the "o2hb_region_bitmap" as
-> well
-> 
-> Fixes: 1cf257f51191 ("ocfs2: fix memory leak")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Addresses-Coverity: ("Uninitialized pointer read")
+Fixes: 1053c27804df ("staging: qlge: coredump via devlink health reporter")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/qlge/qlge_devlink.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Looks good.
-Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
-
-> ---
-> v2: The first version didn't clear the bit.
-> 
->  fs/ocfs2/cluster/heartbeat.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/ocfs2/cluster/heartbeat.c b/fs/ocfs2/cluster/heartbeat.c
-> index 0179a73a3fa2..12a7590601dd 100644
-> --- a/fs/ocfs2/cluster/heartbeat.c
-> +++ b/fs/ocfs2/cluster/heartbeat.c
-> @@ -2042,7 +2042,7 @@ static struct config_item *o2hb_heartbeat_group_make_item(struct config_group *g
->  			o2hb_nego_timeout_handler,
->  			reg, NULL, &reg->hr_handler_list);
->  	if (ret)
-> -		goto free;
-> +		goto remove_item;
->  
->  	ret = o2net_register_handler(O2HB_NEGO_APPROVE_MSG, reg->hr_key,
->  			sizeof(struct o2hb_nego_msg),
-> @@ -2057,6 +2057,12 @@ static struct config_item *o2hb_heartbeat_group_make_item(struct config_group *g
->  
->  unregister_handler:
->  	o2net_unregister_handler_list(&reg->hr_handler_list);
-> +remove_item:
-> +	spin_lock(&o2hb_live_lock);
-> +	list_del(&reg->hr_all_item);
-> +	if (o2hb_global_heartbeat_active())
-> +		clear_bit(reg->hr_region_num, o2hb_region_bitmap);
-> +	spin_unlock(&o2hb_live_lock);
->  free:
->  	kfree(reg);
->  	return ERR_PTR(ret);
-> 
+diff --git a/drivers/staging/qlge/qlge_devlink.c b/drivers/staging/qlge/qlge_devlink.c
+index c6ef5163e241..86834d96cebf 100644
+--- a/drivers/staging/qlge/qlge_devlink.c
++++ b/drivers/staging/qlge/qlge_devlink.c
+@@ -150,7 +150,6 @@ static const struct devlink_health_reporter_ops qlge_reporter_ops = {
+ 
+ void qlge_health_create_reporters(struct qlge_adapter *priv)
+ {
+-	struct devlink_health_reporter *reporter;
+ 	struct devlink *devlink;
+ 
+ 	devlink = priv_to_devlink(priv);
+@@ -160,5 +159,5 @@ void qlge_health_create_reporters(struct qlge_adapter *priv)
+ 	if (IS_ERR(priv->reporter))
+ 		netdev_warn(priv->ndev,
+ 			    "Failed to create reporter, err = %ld\n",
+-			    PTR_ERR(reporter));
++			    PTR_ERR(priv->reporter));
+ }
+-- 
+2.29.2
