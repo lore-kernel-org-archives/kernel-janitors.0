@@ -1,27 +1,41 @@
-From: Jakub Kicinski <kuba@kernel.org>
-Date: Tue, 02 Feb 2021 16:47:46 +0000
-Subject: Re: [PATCH net] net: ipa: pass correct dma_handle to dma_free_coherent()
-Message-Id: <20210202084746.28c12d20@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 03 Feb 2021 13:46:52 +0000
+Subject: [PATCH][next] dmaengine: dw-axi-dmac: remove redundant null check on desc
+Message-Id: <20210203134652.22618-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <YBjpTU2oejkNIULT@mwanda>
-        <cc689bd3-90d8-5ad5-661b-e2c3b76c7341@ieee.org>
-In-Reply-To: <cc689bd3-90d8-5ad5-661b-e2c3b76c7341@ieee.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alex Elder <elder@ieee.org>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Alex Elder <elder@kernel.org>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>, Vinod Koul <vkoul@kernel.org>, Sia Jee Heng <jee.heng.sia@intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, dmaengine@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 2 Feb 2021 05:48:11 -0600 Alex Elder wrote:
-> On 2/1/21 11:55 PM, Dan Carpenter wrote:
-> > The "ring->addr = addr;" assignment is done a few lines later so we
-> > can't use "ring->addr" yet.  The correct dma_handle is "addr".
-> > 
-> > Fixes: 650d1603825d ("soc: qcom: ipa: the generic software interface")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>  
-> 
-> Yikes.  Thank you for the fix.
-> 
-> Reviewed-by: Alex Elder <elder@linaro.org>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks!
+The pointer desc is being null checked twice, the second null check
+is redundant because desc has not been re-assigned between the
+checks. Remove the redundant second null check on desc.
+
+Addresses-Coverity: ("Logically dead code")
+Fixes: ef6fb2d6f1ab ("dmaengine: dw-axi-dmac: simplify descriptor management")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c b/drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c
+index ac3d81b72a15..d9e4ac3edb4e 100644
+--- a/drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c
++++ b/drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c
+@@ -919,10 +919,6 @@ dma_chan_prep_dma_memcpy(struct dma_chan *dchan, dma_addr_t dst_adr,
+ 		num++;
+ 	}
+ 
+-	/* Total len of src/dest sg = 0, so no descriptor were allocated */
+-	if (unlikely(!desc))
+-		return NULL;
+-
+ 	/* Set end-of-link to the last link descriptor of list */
+ 	set_desc_last(&desc->hw_desc[num - 1]);
+ 	/* Managed transfer list */
+-- 
+2.29.2
