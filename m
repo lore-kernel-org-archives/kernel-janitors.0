@@ -1,39 +1,37 @@
 From: Colin King <colin.king@canonical.com>
-Date: Mon, 15 Feb 2021 20:05:01 +0000
-Subject: [PATCH][next] ASoC: codecs: lpass-rx-macro: remove redundant initialization of variable hph_pwr_mode
-Message-Id: <20210215200501.90697-1-colin.king@canonical.com>
+Date: Wed, 03 Feb 2021 11:12:39 +0000
+Subject: [PATCH][next] usb: cdnsp: Fix spelling mistake "delagete" -> "delegate"
+Message-Id: <20210203111239.18313-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210215163313.84026-1-colin.king@canonical.com>
-In-Reply-To: <20210215163313.84026-1-colin.king@canonical.com>
+References: <20201214222813.82727-1-colin.king@canonical.com>
+In-Reply-To: <20201214222813.82727-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, alsa-devel@alsa-project.org
+To: Pawel Laszczak <pawell@cadence.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The variable hph_pwr_mode is being initialized with a value that is
-never read and it is being updated later with a new value.  The
-initialization is redundant and can be removed.
+There is a spelling mistake in a literal string. Fix it.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- sound/soc/codecs/lpass-rx-macro.c | 2 +-
+ drivers/usb/cdns3/cdnsp-ep0.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/lpass-rx-macro.c b/sound/soc/codecs/lpass-rx-macro.c
-index 8c04b3b2c907..76909c50d7b9 100644
---- a/sound/soc/codecs/lpass-rx-macro.c
-+++ b/sound/soc/codecs/lpass-rx-macro.c
-@@ -2038,7 +2038,7 @@ static int rx_macro_load_compander_coeff(struct snd_soc_component *component,
+diff --git a/drivers/usb/cdns3/cdnsp-ep0.c b/drivers/usb/cdns3/cdnsp-ep0.c
+index e2b1bcb3f80e..e30931ebc870 100644
+--- a/drivers/usb/cdns3/cdnsp-ep0.c
++++ b/drivers/usb/cdns3/cdnsp-ep0.c
+@@ -45,7 +45,7 @@ static int cdnsp_ep0_delegate_req(struct cdnsp_device *pdev,
  {
- 	u16 comp_coeff_lsb_reg, comp_coeff_msb_reg;
- 	int i;
--	int hph_pwr_mode = HPH_LOHIFI;
-+	int hph_pwr_mode;
+ 	int ret;
  
- 	if (!rx->comp_enabled[comp])
- 		return 0;
+-	trace_cdnsp_ep0_request("delagete");
++	trace_cdnsp_ep0_request("delegate");
+ 
+ 	spin_unlock(&pdev->lock);
+ 	ret = pdev->gadget_driver->setup(&pdev->gadget, ctrl);
 -- 
-2.30.0
+2.29.2
