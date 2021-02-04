@@ -1,67 +1,50 @@
 From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Thu, 04 Feb 2021 18:00:59 +0000
-Subject: [PATCH 5/5] fs: update kernel-doc for new mnt_userns argument
-Message-Id: <20210204180059.28360-6-lukas.bulwahn@gmail.com>
+Date: Thu, 04 Feb 2021 07:56:24 +0000
+Subject: [PATCH] fscache: rectify minor kernel-doc issues
+Message-Id: <20210204075624.27915-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210204180059.28360-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20210204180059.28360-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christian Brauner <christian.brauner@ubuntu.com>, linux-fsdevel@vger.kernel.org
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To: David Howells <dhowells@redhat.com>, linux-cachefs@redhat.com, linux-kernel@vger.kernel.org
+Cc: Jonathan Corbet <corbet@lwn.net>, Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-Commit 549c7297717c ("fs: make helpers idmap mount aware") and commit
-c7c7a1a18af4 ("xattr: handle idmapped mounts") refactor the inode methods
-with mount-user-namespace arguments, but did not adjust the kernel-doc of
-some functions.
+The command './scripts/kernel-doc -none include/linux/fscache.h' reports
+some minor mismatches of the kernel-doc and function signature, which are
+easily resolved.
 
-Hence, make htmldocs warns:
-
-  ./fs/libfs.c:498: warning: Function parameter or member 'mnt_userns' not described in 'simple_setattr'
-  ./fs/xattr.c:257: warning: Function parameter or member 'mnt_userns' not described in '__vfs_setxattr_locked'
-  ./fs/xattr.c:485: warning: Function parameter or member 'mnt_userns' not described in '__vfs_removexattr_locked'
-
-Copy the existing kernel-doc description for that new argument from
-__vfs_setxattr_noperm() to the other functions as well.
+Rectify the kernel-doc, such that no issues remain for fscache.h.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- fs/libfs.c | 1 +
- fs/xattr.c | 2 ++
- 2 files changed, 3 insertions(+)
+applies cleanly on current master and next-20210202
 
-diff --git a/fs/libfs.c b/fs/libfs.c
-index e2de5401abca..61c684014392 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -481,6 +481,7 @@ EXPORT_SYMBOL(simple_rename);
+David, please pick the quick kernel-doc fix.
+
+ include/linux/fscache.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/fscache.h b/include/linux/fscache.h
+index 3f177faa0ac2..7e1f12e52baf 100644
+--- a/include/linux/fscache.h
++++ b/include/linux/fscache.h
+@@ -418,7 +418,7 @@ int fscache_pin_cookie(struct fscache_cookie *cookie)
+ }
  
  /**
-  * simple_setattr - setattr for simple filesystem
-+ * @mnt_userns: user namespace of the mount the inode was found from
-  * @dentry: dentry
-  * @iattr: iattr structure
+- * fscache_pin_cookie - Unpin a data-storage cache object in its cache
++ * fscache_unpin_cookie - Unpin a data-storage cache object in its cache
+  * @cookie: The cookie representing the cache object
   *
-diff --git a/fs/xattr.c b/fs/xattr.c
-index b3444e06cded..57f47f0caf22 100644
---- a/fs/xattr.c
-+++ b/fs/xattr.c
-@@ -242,6 +242,7 @@ int __vfs_setxattr_noperm(struct user_namespace *mnt_userns,
-  * __vfs_setxattr_locked - set an extended attribute while holding the inode
-  * lock
+  * Permit data-storage cache objects to be unpinned from the cache.
+@@ -490,7 +490,7 @@ void fscache_wait_on_invalidate(struct fscache_cookie *cookie)
+ /**
+  * fscache_reserve_space - Reserve data space for a cached object
+  * @cookie: The cookie representing the cache object
+- * @i_size: The amount of space to be reserved
++ * @size: The amount of space to be reserved
   *
-+ *  @mnt_userns: user namespace of the mount the inode was found from
-  *  @dentry: object to perform setxattr on
-  *  @name: xattr name to set
-  *  @value: value to set @name to
-@@ -473,6 +474,7 @@ EXPORT_SYMBOL(__vfs_removexattr);
-  * __vfs_removexattr_locked - set an extended attribute while holding the inode
-  * lock
-  *
-+ *  @mnt_userns: user namespace of the mount the inode was found from
-  *  @dentry: object to perform setxattr on
-  *  @name: name of xattr to remove
-  *  @delegated_inode: on return, will contain an inode pointer that
+  * Reserve an amount of space in the cache for the cache object attached to a
+  * cookie so that a write to that object within the space can always be
 -- 
 2.17.1
