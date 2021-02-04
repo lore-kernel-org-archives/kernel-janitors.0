@@ -1,36 +1,62 @@
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 12 Feb 2021 11:38:57 +0000
-Subject: [PATCH][next] octeontx2-af: Fix spelling mistake "recievd" -> "received"
-Message-Id: <20210212113857.213008-1-colin.king@canonical.com>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Thu, 04 Feb 2021 18:00:55 +0000
+Subject: [PATCH 1/5] fs: turn some comments into kernel-doc
+Message-Id: <20210204180059.28360-2-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20210204180059.28360-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20210204180059.28360-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sunil Goutham <sgoutham@marvell.com>, Linu Cherian <lcherian@marvell.com>, Geetha sowjanya <gakula@marvell.com>, Jerin Jacob <jerinj@marvell.com>, hariprasad <hkelam@marvell.com>, Subbaraya Sundeep <sbhatta@marvell.com>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Christian Brauner <christian.brauner@ubuntu.com>, linux-fsdevel@vger.kernel.org
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-From: Colin Ian King <colin.king@canonical.com>
+While reviewing ./include/linux/fs.h, I noticed that three comments can
+actually be turned into kernel-doc comments. This allows to check the
+consistency between the descriptions and the functions' signatures in
+case they may change in the future.
 
-There is a spelling mistake in the text in array rpm_rx_stats_fields,
-fix it.
+A quick validation with the consistency check:
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+  ./scripts/kernel-doc -none include/linux/fs.h
+
+currently reports no issues in this file.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/fs.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c
-index dfeea587a27e..48a84c65804c 100644
---- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c
-@@ -121,7 +121,7 @@ static char *rpm_rx_stats_fields[] = {
- 	"Packets received with FrameCheckSequenceErrors",
- 	"Packets received with VLAN header",
- 	"Error packets",
--	"Packets recievd with unicast DMAC",
-+	"Packets received with unicast DMAC",
- 	"Packets received with multicast DMAC",
- 	"Packets received with broadcast DMAC",
- 	"Dropped packets",
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 3482146b11b0..04b6b142dfcf 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1739,7 +1739,7 @@ static inline void sb_start_pagefault(struct super_block *sb)
+ 	__sb_start_write(sb, SB_FREEZE_PAGEFAULT);
+ }
+ 
+-/*
++/**
+  * sb_start_intwrite - get write access to a superblock for internal fs purposes
+  * @sb: the super we write to
+  *
+@@ -3162,7 +3162,7 @@ static inline ssize_t blockdev_direct_IO(struct kiocb *iocb,
+ 
+ void inode_dio_wait(struct inode *inode);
+ 
+-/*
++/**
+  * inode_dio_begin - signal start of a direct I/O requests
+  * @inode: inode the direct I/O happens on
+  *
+@@ -3174,7 +3174,7 @@ static inline void inode_dio_begin(struct inode *inode)
+ 	atomic_inc(&inode->i_dio_count);
+ }
+ 
+-/*
++/**
+  * inode_dio_end - signal finish of a direct I/O requests
+  * @inode: inode the direct I/O happens on
+  *
 -- 
-2.30.0
+2.17.1
