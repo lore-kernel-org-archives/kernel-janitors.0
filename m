@@ -1,40 +1,34 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 01 Feb 2021 12:26:31 +0000
-Subject: [PATCH] media: atomisp: double free in atomisp_alloc_css_stat_bufs()
-Message-Id: <YBfzd3XtDl/r9KUC@mwanda>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Thu, 04 Feb 2021 18:00:54 +0000
+Subject: [PATCH 0/5] kernel-doc fixes to latest fs changes
+Message-Id: <20210204180059.28360-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, Sakari Ailus <sakari.ailus@linux.intel.com>, Alan Cox <alan@linux.intel.com>, linux-media@vger.kernel.org
+To: Christian Brauner <christian.brauner@ubuntu.com>, linux-fsdevel@vger.kernel.org
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-The "s3a_buf" has already been added to the "&asd->s3a_stats" list
-and it gets cleaned up in the error handling code at the end of
-the function.  This kfree() leads to a use after free and a double
-free.  Delete it.
+this patchset was motivated by new warnings with make htmldocs appearing on
+linux-next in the last week.
 
-Fixes: a49d25364dfb ("staging/atomisp: Add support for the Intel IPU v2")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/staging/media/atomisp/pci/atomisp_ioctl.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Please apply this on top of your latest work in fs on top of the mount user
+namespace refactoring, cf. the commits referred in the individual commit
+messages.
 
-diff --git a/drivers/staging/media/atomisp/pci/atomisp_ioctl.c b/drivers/staging/media/atomisp/pci/atomisp_ioctl.c
-index 2ae50decfc8b..9da82855552d 100644
---- a/drivers/staging/media/atomisp/pci/atomisp_ioctl.c
-+++ b/drivers/staging/media/atomisp/pci/atomisp_ioctl.c
-@@ -948,10 +948,8 @@ int atomisp_alloc_css_stat_bufs(struct atomisp_sub_device *asd,
- 		dev_dbg(isp->dev, "allocating %d dis buffers\n", count);
- 		while (count--) {
- 			dis_buf = kzalloc(sizeof(struct atomisp_dis_buf), GFP_KERNEL);
--			if (!dis_buf) {
--				kfree(s3a_buf);
-+			if (!dis_buf)
- 				goto error;
--			}
- 			if (atomisp_css_allocate_stat_buffers(
- 				asd, stream_id, NULL, dis_buf, NULL)) {
- 				kfree(dis_buf);
+
+Lukas Bulwahn (5):
+  fs: turn some comments into kernel-doc
+  fs: update kernel-doc for vfs_rename()
+  fs: update kernel-doc for may_create_in_sticky()
+  fs: update kernel-doc for vfs_tmpfile()
+  fs: update kernel-doc for new mnt_userns argument
+
+ fs/libfs.c         |  1 +
+ fs/namei.c         | 13 ++-----------
+ fs/xattr.c         |  2 ++
+ include/linux/fs.h | 17 ++++++++++++++---
+ 4 files changed, 19 insertions(+), 14 deletions(-)
+
 -- 
-2.29.2
+2.17.1
