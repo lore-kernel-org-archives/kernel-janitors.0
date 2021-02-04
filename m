@@ -1,226 +1,67 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 10 Feb 2021 12:43:18 +0000
-Subject: [PATCH][next] scripts/spelling.txt: add more spellings to spelling.txt
-Message-Id: <20210210124318.55082-1-colin.king@canonical.com>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Thu, 04 Feb 2021 18:00:59 +0000
+Subject: [PATCH 5/5] fs: update kernel-doc for new mnt_userns argument
+Message-Id: <20210204180059.28360-6-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20210204180059.28360-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20210204180059.28360-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>, Colin Ian King <colin.king@canonical.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Christian Brauner <christian.brauner@ubuntu.com>, linux-fsdevel@vger.kernel.org
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-From: Colin Ian King <colin.king@canonical.com>
+Commit 549c7297717c ("fs: make helpers idmap mount aware") and commit
+c7c7a1a18af4 ("xattr: handle idmapped mounts") refactor the inode methods
+with mount-user-namespace arguments, but did not adjust the kernel-doc of
+some functions.
 
-Here are some of the more common spelling mistakes and typos that I've
-found while fixing up spelling mistakes in the kernel since September 2020
+Hence, make htmldocs warns:
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+  ./fs/libfs.c:498: warning: Function parameter or member 'mnt_userns' not described in 'simple_setattr'
+  ./fs/xattr.c:257: warning: Function parameter or member 'mnt_userns' not described in '__vfs_setxattr_locked'
+  ./fs/xattr.c:485: warning: Function parameter or member 'mnt_userns' not described in '__vfs_removexattr_locked'
+
+Copy the existing kernel-doc description for that new argument from
+__vfs_setxattr_noperm() to the other functions as well.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- scripts/spelling.txt | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ fs/libfs.c | 1 +
+ fs/xattr.c | 2 ++
+ 2 files changed, 3 insertions(+)
 
-diff --git a/scripts/spelling.txt b/scripts/spelling.txt
-index a47006de990e..2e3ba91a5072 100644
---- a/scripts/spelling.txt
-+++ b/scripts/spelling.txt
-@@ -340,6 +340,7 @@ comppatible||compatible
- compres||compress
- compresion||compression
- comression||compression
-+comunicate||communicate
- comunication||communication
- conbination||combination
- conditionaly||conditionally
-@@ -467,6 +468,7 @@ developpment||development
- deveolpment||development
- devided||divided
- deviece||device
-+devision||division
- diable||disable
- dicline||decline
- dictionnary||dictionary
-@@ -480,6 +482,7 @@ difinition||definition
- digial||digital
- dimention||dimension
- dimesions||dimensions
-+diconnected||disconnected
- disgest||digest
- dispalying||displaying
- diplay||display
-@@ -519,6 +522,7 @@ downlads||downloads
- droped||dropped
- droput||dropout
- druing||during
-+dyanmic||dynamic
- dynmaic||dynamic
- eanable||enable
- eanble||enable
-@@ -543,6 +547,7 @@ encrupted||encrypted
- encrypiton||encryption
- encryptio||encryption
- endianess||endianness
-+enpoint||endpoint
- enhaced||enhanced
- enlightnment||enlightenment
- enqueing||enqueuing
-@@ -644,6 +649,7 @@ forwardig||forwarding
- frambuffer||framebuffer
- framming||framing
- framwork||framework
-+frequence||frequency
- frequncy||frequency
- frequancy||frequency
- frome||from
-@@ -686,10 +692,12 @@ handfull||handful
- hanlde||handle
- hanled||handled
- happend||happened
-+hardare||hardware
- harware||hardware
- havind||having
- heirarchically||hierarchically
- helpfull||helpful
-+heterogenous||heterogeneous
- hexdecimal||hexadecimal
- hybernate||hibernate
- hierachy||hierarchy
-@@ -734,6 +742,7 @@ inconsistant||inconsistent
- increas||increase
- incremeted||incremented
- incrment||increment
-+incuding||including
- inculde||include
- indendation||indentation
- indended||intended
-@@ -744,6 +753,7 @@ indiate||indicate
- indicat||indicate
- inexpect||inexpected
- inferface||interface
-+infinit||infinite
- infomation||information
- informatiom||information
- informations||information
-@@ -774,6 +784,7 @@ instace||instance
- instal||install
- instanciate||instantiate
- instanciated||instantiated
-+instuments||instruments
- insufficent||insufficient
- inteface||interface
- integreated||integrated
-@@ -872,6 +883,7 @@ mailformed||malformed
- malplaced||misplaced
- malplace||misplace
- managable||manageable
-+managament||management
- managment||management
- mangement||management
- manger||manager
-@@ -890,6 +902,7 @@ meetign||meeting
- memeory||memory
- memmber||member
- memoery||memory
-+memroy||memory
- ment||meant
- mergable||mergeable
- mesage||message
-@@ -1003,6 +1016,7 @@ overlaping||overlapping
- overide||override
- overrided||overridden
- overriden||overridden
-+overrrun||overrun
- overun||overrun
- overwritting||overwriting
- overwriten||overwritten
-@@ -1039,6 +1053,7 @@ peforming||performing
- peice||piece
- pendantic||pedantic
- peprocessor||preprocessor
-+perfomance||performance
- perfoming||performing
- perfomring||performing
- periperal||peripheral
-@@ -1104,6 +1119,7 @@ prodecure||procedure
- progamming||programming
- progams||programs
- progess||progress
-+programable||programmable
- programers||programmers
- programm||program
- programms||programs
-@@ -1148,6 +1164,7 @@ recieved||received
- recieve||receive
- reciever||receiver
- recieves||receives
-+recieving||receiving
- recogniced||recognised
- recognizeable||recognizable
- recommanded||recommended
-@@ -1251,6 +1268,7 @@ searchs||searches
- secquence||sequence
- secund||second
- segement||segment
-+seleted||selected
- semaphone||semaphore
- senario||scenario
- senarios||scenarios
-@@ -1267,6 +1285,7 @@ seqeunce||sequence
- seqeuncer||sequencer
- seqeuencer||sequencer
- sequece||sequence
-+sequemce||sequence
- sequencial||sequential
- serivce||service
- serveral||several
-@@ -1337,6 +1356,7 @@ suble||subtle
- substract||subtract
- submited||submitted
- submition||submission
-+succeded||succeeded
- suceed||succeed
- succesfully||successfully
- succesful||successful
-@@ -1357,6 +1377,7 @@ supportin||supporting
- suppoted||supported
- suppported||supported
- suppport||support
-+supprot||support
- supress||suppress
- surpressed||suppressed
- surpresses||suppresses
-@@ -1405,6 +1426,7 @@ thresold||threshold
- throught||through
- trackling||tracking
- troughput||throughput
-+trys||tries
- thses||these
- tiggers||triggers
- tiggered||triggered
-@@ -1418,7 +1440,9 @@ traking||tracking
- tramsmitted||transmitted
- tramsmit||transmit
- tranasction||transaction
-+tranceiver||transceiver
- tranfer||transfer
-+tranmission||transmission
- transcevier||transceiver
- transciever||transceiver
- transferd||transferred
-@@ -1472,6 +1496,7 @@ unnecesary||unnecessary
- unneedingly||unnecessarily
- unnsupported||unsupported
- unmached||unmatched
-+unprecise||imprecise
- unregester||unregister
- unresgister||unregister
- unrgesiter||unregister
-@@ -1507,6 +1532,7 @@ varient||variant
- vaule||value
- verbse||verbose
- veify||verify
-+veriosn||version
- verisons||versions
- verison||version
- verson||version
+diff --git a/fs/libfs.c b/fs/libfs.c
+index e2de5401abca..61c684014392 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -481,6 +481,7 @@ EXPORT_SYMBOL(simple_rename);
+ 
+ /**
+  * simple_setattr - setattr for simple filesystem
++ * @mnt_userns: user namespace of the mount the inode was found from
+  * @dentry: dentry
+  * @iattr: iattr structure
+  *
+diff --git a/fs/xattr.c b/fs/xattr.c
+index b3444e06cded..57f47f0caf22 100644
+--- a/fs/xattr.c
++++ b/fs/xattr.c
+@@ -242,6 +242,7 @@ int __vfs_setxattr_noperm(struct user_namespace *mnt_userns,
+  * __vfs_setxattr_locked - set an extended attribute while holding the inode
+  * lock
+  *
++ *  @mnt_userns: user namespace of the mount the inode was found from
+  *  @dentry: object to perform setxattr on
+  *  @name: xattr name to set
+  *  @value: value to set @name to
+@@ -473,6 +474,7 @@ EXPORT_SYMBOL(__vfs_removexattr);
+  * __vfs_removexattr_locked - set an extended attribute while holding the inode
+  * lock
+  *
++ *  @mnt_userns: user namespace of the mount the inode was found from
+  *  @dentry: object to perform setxattr on
+  *  @name: name of xattr to remove
+  *  @delegated_inode: on return, will contain an inode pointer that
 -- 
-2.30.0
+2.17.1
