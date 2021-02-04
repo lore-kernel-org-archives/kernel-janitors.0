@@ -1,69 +1,113 @@
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-Date: Tue, 09 Feb 2021 13:58:19 +0000
-Subject: Re: [PATCH] media: i2c: imx334: Fix an error message
-Message-Id: <20210209135819.GE32460@paasikivi.fi.intel.com>
+From: Pawel Laszczak <pawell@cadence.com>
+Date: Thu, 04 Feb 2021 09:20:35 +0000
+Subject: [PATCH] usb: cdnsp: Removes some useless trace events
+Message-Id: <20210204092035.32424-1-pawell@cadence.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <YCJsUCngklBkJMgw@mwanda>
- <20210209120804.GD32460@paasikivi.fi.intel.com>
- <20210209134938.GP2696@kadam>
-In-Reply-To: <20210209134938.GP2696@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "Paul J. Murphy" <paul.j.murphy@intel.com>, Martina Krasteva <martinax.krasteva@intel.com>, Daniele Alessandrelli <daniele.alessandrelli@intel.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Jacopo Mondi <jacopo@jmondi.org>, Gjorgji Rosikopulos <gjorgjix.rosikopulos@intel.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: peter.chen@nxp.com
+Cc: dan.carpenter@oracle.com, colin.king@canonical.com, gregkh@linuxfoundation.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, kurahul@cadence.com, Pawel Laszczak <pawell@cadence.com>
 
-On Tue, Feb 09, 2021 at 04:49:39PM +0300, Dan Carpenter wrote:
-> On Tue, Feb 09, 2021 at 02:08:04PM +0200, Sakari Ailus wrote:
-> > Hi Dan,
-> > 
-> > On Tue, Feb 09, 2021 at 02:04:48PM +0300, Dan Carpenter wrote:
-> > > The "ret" variable is uninitialized in this error message.
-> > > 
-> > > Fixes: 9746b11715c3 ("media: i2c: Add imx334 camera sensor driver")
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > 
-> > Thanks for the patch. This has been already addressed by a patch from Hans
-> > (but not merged yet):
-> > 
-> > <URL:https://patchwork.linuxtv.org/project/linux-media/patch/917ccfef-b93e-4d90-0b5a-4974145ab187@xs4all.nl/>
-> > 
-> > > ---
-> > > When new drivers are merged into the kernel, then could we use the
-> > > driver prefix?  In other words something like this:
-> > > 
-> > > media: i2c/imx334: Add imx334 camera sensor driver
-> > 
-> > We've usually had driver's name and Mauro's scripts add media: prefix ---
-> > unless it's already there. Are you suggesting also the bus should be part
-> > of it?
-> 
-> No, what I'm saying is when people add a new driver they do:
-> 
-> [PATCH] subsystem: Add new driver for foo345
-> 
-> But it would be better if they added "foo345" to the prefix.
-> 
-> [PATCH] subsystem: foo345: Add new driver for foo345
+Patch removes some useless trace events that can
+be replaced by ftrace.
 
-Ah, yes. I also prefer this but I guess this hasn't been consistently
-enforced nor documented (or is it?) and can be easily missed in review.
-Then there are patches that touch a number of drivers at the same time...
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Pawel Laszczak <pawell@cadence.com>
+---
+ drivers/usb/cdns3/cdnsp-ep0.c    |  5 -----
+ drivers/usb/cdns3/cdnsp-gadget.c |  2 --
+ drivers/usb/cdns3/cdnsp-ring.c   |  1 -
+ drivers/usb/cdns3/cdnsp-trace.h  | 10 ----------
+ 4 files changed, 18 deletions(-)
 
-> 
-> Doing it the way that I'm suggesting has become more common for the past
-> four years.  Four years ago was when I started complaining that I can't
-> guess the correct prefix for new drivers.  That was also the last time
-> that someone complained to me that I had used the incorrect patch prefix.
-> I would argue that Hans used the wrong patch prefix for his patch so
-> maybe we have just become more mellow these days.
-> 
-> And also I'm surprised that Mauro adds the media: prefix for you instead
-> of making everyone do it themselves...  He's the only person who does
-> this that I know of.
-
-It's possible since Mauro picks the patches from the pull request instead
-of pulling it.
-
+diff --git a/drivers/usb/cdns3/cdnsp-ep0.c b/drivers/usb/cdns3/cdnsp-ep0.c
+index e2b1bcb3f80e..9b8325f82499 100644
+--- a/drivers/usb/cdns3/cdnsp-ep0.c
++++ b/drivers/usb/cdns3/cdnsp-ep0.c
+@@ -24,13 +24,11 @@ static void cdnsp_ep0_stall(struct cdnsp_device *pdev)
+ 	preq = next_request(&pep->pending_list);
+ 
+ 	if (pdev->three_stage_setup) {
+-		trace_cdnsp_ep0_data_stage("send stall");
+ 		cdnsp_halt_endpoint(pdev, pep, true);
+ 
+ 		if (preq)
+ 			cdnsp_gadget_giveback(pep, preq, -ECONNRESET);
+ 	} else {
+-		trace_cdnsp_ep0_status_stage("send stall");
+ 		pep->ep_state |= EP0_HALTED_STATUS;
+ 
+ 		if (preq)
+@@ -45,8 +43,6 @@ static int cdnsp_ep0_delegate_req(struct cdnsp_device *pdev,
+ {
+ 	int ret;
+ 
+-	trace_cdnsp_ep0_request("delagete");
+-
+ 	spin_unlock(&pdev->lock);
+ 	ret = pdev->gadget_driver->setup(&pdev->gadget, ctrl);
+ 	spin_lock(&pdev->lock);
+@@ -130,7 +126,6 @@ static int cdnsp_ep0_set_address(struct cdnsp_device *pdev,
+ 
+ int cdnsp_status_stage(struct cdnsp_device *pdev)
+ {
+-	trace_cdnsp_ep0_status_stage("preparing");
+ 	pdev->ep0_stage = CDNSP_STATUS_STAGE;
+ 	pdev->ep0_preq.request.length = 0;
+ 
+diff --git a/drivers/usb/cdns3/cdnsp-gadget.c b/drivers/usb/cdns3/cdnsp-gadget.c
+index f28f1508f049..f2ebbacd932e 100644
+--- a/drivers/usb/cdns3/cdnsp-gadget.c
++++ b/drivers/usb/cdns3/cdnsp-gadget.c
+@@ -237,8 +237,6 @@ static int cdnsp_start(struct cdnsp_device *pdev)
+ 	temp |= (CMD_R_S | CMD_DEVEN);
+ 	writel(temp, &pdev->op_regs->command);
+ 
+-	trace_cdnsp_init("Turn on controller");
+-
+ 	pdev->cdnsp_state = 0;
+ 
+ 	/*
+diff --git a/drivers/usb/cdns3/cdnsp-ring.c b/drivers/usb/cdns3/cdnsp-ring.c
+index e15e13ba27dc..f9170d177a89 100644
+--- a/drivers/usb/cdns3/cdnsp-ring.c
++++ b/drivers/usb/cdns3/cdnsp-ring.c
+@@ -266,7 +266,6 @@ static void cdnsp_force_l0_go(struct cdnsp_device *pdev)
+ /* Ring the doorbell after placing a command on the ring. */
+ void cdnsp_ring_cmd_db(struct cdnsp_device *pdev)
+ {
+-	trace_cdnsp_cmd_drbl("Ding Dong");
+ 	writel(DB_VALUE_CMD, &pdev->dba->cmd_db);
+ }
+ 
+diff --git a/drivers/usb/cdns3/cdnsp-trace.h b/drivers/usb/cdns3/cdnsp-trace.h
+index a9de1daadf07..5aa88ca012de 100644
+--- a/drivers/usb/cdns3/cdnsp-trace.h
++++ b/drivers/usb/cdns3/cdnsp-trace.h
+@@ -158,11 +158,6 @@ DEFINE_EVENT(cdnsp_log_simple, cdnsp_slot_id,
+ 	TP_ARGS(msg)
+ );
+ 
+-DEFINE_EVENT(cdnsp_log_simple, cdnsp_cmd_drbl,
+-	TP_PROTO(char *msg),
+-	TP_ARGS(msg)
+-);
+-
+ DEFINE_EVENT(cdnsp_log_simple, cdnsp_no_room_on_ring,
+ 	TP_PROTO(char *msg),
+ 	TP_ARGS(msg)
+@@ -173,11 +168,6 @@ DEFINE_EVENT(cdnsp_log_simple, cdnsp_ep0_status_stage,
+ 	TP_ARGS(msg)
+ );
+ 
+-DEFINE_EVENT(cdnsp_log_simple, cdnsp_ep0_data_stage,
+-	TP_PROTO(char *msg),
+-	TP_ARGS(msg)
+-);
+-
+ DEFINE_EVENT(cdnsp_log_simple, cdnsp_ep0_request,
+ 	TP_PROTO(char *msg),
+ 	TP_ARGS(msg)
 -- 
-Sakari Ailus
+2.25.1
