@@ -1,38 +1,57 @@
-From: patchwork-bot+netdevbpf@kernel.org
-Date: Fri, 05 Feb 2021 03:00:08 +0000
-Subject: Re: [PATCH][next] net: hns3: remove redundant null check of an array
-Message-Id: <161249400835.18283.15622720081111992226.git-patchwork-notify@kernel.org>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 04 Feb 2021 19:11:56 +0000
+Subject: [PATCH][V2] drm/mgag200: make a const array static, makes object smaller
+Message-Id: <20210204191156.110778-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210203131040.21656-1-colin.king@canonical.com>
-In-Reply-To: <20210203131040.21656-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: yisen.zhuang@huawei.com, salil.mehta@huawei.com, davem@davemloft.net, kuba@kernel.org, tanhuazhong@huawei.com, huangguangbin2@huawei.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dave Airlie <airlied@redhat.com>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello:
+From: Colin Ian King <colin.king@canonical.com>
 
-This patch was applied to netdev/net-next.git (refs/heads/master):
+Don't populate the const array m_div_val on the stack but instead make
+it static. Makes the object code smaller by 29 bytes:
 
-On Wed,  3 Feb 2021 13:10:40 +0000 you wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The null check of filp->f_path.dentry->d_iname is redundant because
-> it is an array of DNAME_INLINE_LEN chars and cannot be a null. Fix
-> this by removing the null check.
-> 
-> Addresses-Coverity: ("Array compared against 0")
-> Fixes: 04987ca1b9b6 ("net: hns3: add debugfs support for tm nodes, priority and qset info")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> 
-> [...]
+Before:
+   text	   data	  bss   dec    hex filename
+  34736	   4552	    0 39288   9978 drivers/gpu/drm/mgag200/mgag200_mode.o
 
-Here is the summary with links:
-  - [next] net: hns3: remove redundant null check of an array
-    https://git.kernel.org/netdev/net-next/c/8f8a42ff003a
+After:
+   text	   data	  bss   dec    hex filename
+  34625	   4616	    0 39241   9949 drivers/gpu/drm/mgag200/mgag200_mode.o
 
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+(gcc version 10.2.0)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+---
+
+V2: move static declaration to the top of the declarations
+
+---
+ drivers/gpu/drm/mgag200/mgag200_mode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/mgag200/mgag200_mode.c b/drivers/gpu/drm/mgag200/mgag200_mode.c
+index 1dfc42170059..c3dfde8cad25 100644
+--- a/drivers/gpu/drm/mgag200/mgag200_mode.c
++++ b/drivers/gpu/drm/mgag200/mgag200_mode.c
+@@ -706,13 +706,13 @@ static int mga_g200eh_set_plls(struct mga_device *mdev, long clock)
+ 
+ static int mga_g200er_set_plls(struct mga_device *mdev, long clock)
+ {
++	static const unsigned int m_div_val[] = { 1, 2, 4, 8 };
+ 	unsigned int vcomax, vcomin, pllreffreq;
+ 	unsigned int delta, tmpdelta;
+ 	int testr, testn, testm, testo;
+ 	unsigned int p, m, n;
+ 	unsigned int computed, vco;
+ 	int tmp;
+-	const unsigned int m_div_val[] = { 1, 2, 4, 8 };
+ 
+ 	m = n = p = 0;
+ 	vcomax = 1488000;
+-- 
+2.29.2
