@@ -1,39 +1,46 @@
-From: Joerg Roedel <joro@8bytes.org>
-Date: Mon, 08 Feb 2021 08:13:01 +0000
-Subject: Re: [PATCH] MAINTAINERS: repair file pattern in MEDIATEK IOMMU DRIVER
-Message-Id: <20210208081301.GB7302@8bytes.org>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 04 Feb 2021 17:27:48 +0000
+Subject: [PATCH] HID: lg-g15: make a const array static, makes object smaller
+Message-Id: <20210204172748.107406-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210208061025.29198-1-lukas.bulwahn@gmail.com>
- <1612766125.19482.3.camel@mhfsdcap03>
-In-Reply-To: <1612766125.19482.3.camel@mhfsdcap03>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Yong Wu <yong.wu@mediatek.com>
-Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>, iommu@lists.linux-foundation.org, linux-mediatek@lists.infradead.org, Joe Perches <joe@perches.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, Pia Eichinger <pia.eichinger@st.oth-regensburg.de>, Will Deacon <will@kernel.org>
+To: Hans de Goede <hdegoede@redhat.com>, Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Feb 08, 2021 at 02:35:25PM +0800, Yong Wu wrote:
-> On Mon, 2021-02-08 at 07:10 +0100, Lukas Bulwahn wrote:
-> > Commit 6af4873852c4 ("MAINTAINERS: Add entry for MediaTek IOMMU") mentions
-> > the pattern 'drivers/iommu/mtk-iommu*', but the files are actually named
-> > with an underscore, not with a hyphen.
-> > 
-> > Hence, ./scripts/get_maintainer.pl --self-test=patterns complains:
-> > 
-> >   warning: no file matches  F:    drivers/iommu/mtk-iommu*
-> > 
-> > Repair this minor typo in the file pattern.
-> > 
-> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> > ---
-> > applies cleanly on next-20210205
-> > 
-> > Yong, please ack.
-> 
-> +Joerg.
-> 
-> sorry for the typo.
-> 
-> Acked-by: Yong Wu <yong.wu@mediatek.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks.
+Don't populate the const array led_names on the stack but instead make
+it static. Makes the object code smaller by 79 bytes:
+
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  19686	   7952	    256	  27894	   6cf6	drivers/hid/hid-lg-g15.o
+
+After:
+   text	   data	    bss	    dec	    hex	filename
+  19543	   8016	    256	  27815	   6ca7	drivers/hid/hid-lg-g15.o
+
+(gcc version 10.2.0)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/hid/hid-lg-g15.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/hid/hid-lg-g15.c b/drivers/hid/hid-lg-g15.c
+index fcaf8466e627..bfbba0d41933 100644
+--- a/drivers/hid/hid-lg-g15.c
++++ b/drivers/hid/hid-lg-g15.c
+@@ -647,7 +647,7 @@ static void lg_g15_input_close(struct input_dev *dev)
+ 
+ static int lg_g15_register_led(struct lg_g15_data *g15, int i)
+ {
+-	const char * const led_names[] = {
++	static const char * const led_names[] = {
+ 		"g15::kbd_backlight",
+ 		"g15::lcd_backlight",
+ 		"g15::macro_preset1",
+-- 
+2.29.2
