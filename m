@@ -1,122 +1,46 @@
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Date: Thu, 04 Feb 2021 18:27:58 +0000
-Subject: Re: [PATCH] drm/mgag200: make a const array static, makes object smaller
-Message-Id: <9e979113-1b38-66e5-efe7-8bef22087117@suse.de>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="FpOESbSdYx0dqA2LtKG8SO3T02tTbekVw"
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 04 Feb 2021 18:03:13 +0000
+Subject: [PATCH] phy: qcom-qmp: make a const array static, makes object smaller
+Message-Id: <20210204180313.108876-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210204181756.109549-1-colin.king@canonical.com>
-In-Reply-To: <20210204181756.109549-1-colin.king@canonical.com>
-To: Colin King <colin.king@canonical.com>, Dave Airlie <airlied@redhat.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---FpOESbSdYx0dqA2LtKG8SO3T02tTbekVw
-Content-Type: multipart/mixed; boundary="I99QvtZ93b7MT1gv8uK1TeHqhr6sWOiWb";
- protected-headers="v1"
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: Colin King <colin.king@canonical.com>, Dave Airlie <airlied@redhat.com>,
- David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
- dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-ID: <9e979113-1b38-66e5-efe7-8bef22087117@suse.de>
-Subject: Re: [PATCH] drm/mgag200: make a const array static, makes object
- smaller
-References: <20210204181756.109549-1-colin.king@canonical.com>
-In-Reply-To: <20210204181756.109549-1-colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
---I99QvtZ93b7MT1gv8uK1TeHqhr6sWOiWb
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+Don't populate the const array cfg1_settings on the stack but instead make
+it static. Makes the object code smaller by 24 bytes:
 
-Hi
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  73585	  20240	     64	  93889	  16ec1	drivers/phy/qualcomm/phy-qcom-qmp.o
 
-Am 04.02.21 um 19:17 schrieb Colin King:
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> Don't populate the const array m_div_val on the stack but instead make
-> it static. Makes the object code smaller by 29 bytes:
->=20
-> Before:
->     text	   data	  bss   dec    hex filename
->    34736	   4552	    0 39288   9978 drivers/gpu/drm/mgag200/mgag200_mod=
-e.o
->=20
-> After:
->     text	   data	  bss   dec    hex filename
->    34625	   4616	    0 39241   9949 drivers/gpu/drm/mgag200/mgag200_mod=
-e.o
->=20
-> (gcc version 10.2.0)
->=20
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+After:
+   text	   data	    bss	    dec	    hex	filename
+  73465	  20336	     64	  93865	  16ea9	drivers/phy/qualcomm/phy-qcom-qmp.o
 
-Very nice. I'm actually surprised that the compiler doesn't figure this=20
-out automatically. When I once tested this (in userspace) it did so.=20
-Maybe the kernel is different?
+(gcc version 10.2.0)
 
-For style reasons, I would have moved the static definition to the top=20
-of the function; before the variable declarations. In any case:
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/phy/qualcomm/phy-qcom-qmp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
-
-If I don't here from you, I'll merge the patch soonish.
-
-Best regards
-Thomas
-
-> ---
->   drivers/gpu/drm/mgag200/mgag200_mode.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/gpu/drm/mgag200/mgag200_mode.c b/drivers/gpu/drm/m=
-gag200/mgag200_mode.c
-> index 1dfc42170059..27f33af09798 100644
-> --- a/drivers/gpu/drm/mgag200/mgag200_mode.c
-> +++ b/drivers/gpu/drm/mgag200/mgag200_mode.c
-> @@ -712,7 +712,7 @@ static int mga_g200er_set_plls(struct mga_device *m=
-dev, long clock)
->   	unsigned int p, m, n;
->   	unsigned int computed, vco;
->   	int tmp;
-> -	const unsigned int m_div_val[] =3D { 1, 2, 4, 8 };
-> +	static const unsigned int m_div_val[] =3D { 1, 2, 4, 8 };
->  =20
->   	m =3D n =3D p =3D 0;
->   	vcomax =3D 1488000;
->=20
-
---=20
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-(HRB 36809, AG N=C3=BCrnberg)
-Gesch=C3=A4ftsf=C3=BChrer: Felix Imend=C3=B6rffer
-
-
---I99QvtZ93b7MT1gv8uK1TeHqhr6sWOiWb--
-
---FpOESbSdYx0dqA2LtKG8SO3T02tTbekVw
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature"
-
------BEGIN PGP SIGNATURE-----
-
-wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmAcPK4FAwAAAAAACgkQlh/E3EQov+Cx
-zhAAqVcT8R0Tx8DNGHI0CEr7QmJbo4UmV/vUC5eGo8TG1JAwZ9hmk++WTZa9yU8/aQnBvKcOg5vJ
-zHNs9VJ7eb9NKAsXMbLFK4wv9HLhpeqVMJvawKSFpvgWopyVl8kqSiTVrIqjwdI0vHRifw7d5IPB
-VGJwkwqx8tyhKzE7q5G7si3UcN/soYi/4O8DC9n8v5K01T2hKJCLH0cargbjFzCDKsn/cGw61W5w
-FEVPHZO1R5r3MtE0r6Kg5dNQ9hq/dMgONWU8ss4N8fsbq7sNx4S9YIPQqAdsT2SRgPQH+1JlX/0W
-sHLfNqxeXhZjoM4RefrG2ZiDF3XNPcAaZ9wC1T9Ie8GdqPLJhcyKbVSo0z5PpOxhUYk8XswPtdg0
-tzTjGWk638JjvU85nE5g4y0+sF0mYntp2/JrsuSc9A8O8XgJDS/KumwZ/tppGQ5JomnL7fOao9Iw
-x2HslwW1bsps1EJ/g+UlJCau4F791l2hQx3JQXE7Dp1cnWJwh4dxHpEMo01D0RcqM3XcGuC1id+B
-P2FRIjH9A8ElTUgT4zCKZHvLS1czTtw6741st3FKXPT0PdFwtfhPFwtzt+Q8nVV3RcaOTWZRseG/
-ONM5aptTefpTmAavlhGvwJjoNfV5limnekXDXvf9dnhE5wnVIF1VF/6XT6Zw2ebwu75Zuqi72/xp
-dRM=
-=Ppb5
------END PGP SIGNATURE-----
-
---FpOESbSdYx0dqA2LtKG8SO3T02tTbekVw--
+diff --git a/drivers/phy/qualcomm/phy-qcom-qmp.c b/drivers/phy/qualcomm/phy-qcom-qmp.c
+index a679b5fb7b48..d0dfb6743965 100644
+--- a/drivers/phy/qualcomm/phy-qcom-qmp.c
++++ b/drivers/phy/qualcomm/phy-qcom-qmp.c
+@@ -3421,7 +3421,7 @@ static int qcom_qmp_phy_configure_dp_phy(struct qmp_phy *qphy)
+ static int qcom_qmp_dp_phy_calibrate(struct phy *phy)
+ {
+ 	struct qmp_phy *qphy = phy_get_drvdata(phy);
+-	const u8 cfg1_settings[] = { 0x13, 0x23, 0x1d };
++	static const u8 cfg1_settings[] = { 0x13, 0x23, 0x1d };
+ 	u8 val;
+ 
+ 	qphy->dp_aux_cfg++;
+-- 
+2.29.2
