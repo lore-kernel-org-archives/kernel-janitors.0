@@ -1,38 +1,43 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 10 Feb 2021 17:45:55 +0000
-Subject: [PATCH][next] media: uvcvideo: remove duplicated dma_dev assignment
-Message-Id: <20210210174555.144128-1-colin.king@canonical.com>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Thu, 04 Feb 2021 18:00:58 +0000
+Subject: [PATCH 4/5] fs: update kernel-doc for vfs_tmpfile()
+Message-Id: <20210204180059.28360-5-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20210204180059.28360-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20210204180059.28360-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Ricardo Ribalda <ribalda@chromium.org>, Tomasz Figa <tfiga@chromium.org>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Christian Brauner <christian.brauner@ubuntu.com>, linux-fsdevel@vger.kernel.org
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-From: Colin Ian King <colin.king@canonical.com>
+Commit 6521f8917082 ("namei: prepare for idmapped mounts") adds kernel-doc
+for vfs_tmpfile(), but with a small typo in one argument name.
 
-The assignment to dma_dev has been performed twice in one
-statement. Fix this by removing the extraneous assignment.
+Hence, make htmldocs warns on ./fs/namei.c:3396:
 
-Addresses-Coverity: ("Evaluation order violation")
-Fixes: fdcd02a641e2 ("media: uvcvideo: Use dma_alloc_noncontiguos API")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+  warning: Function parameter or member 'open_flag' not described in 'vfs_tmpfile'
+  warning: Excess function parameter 'open_flags' description in 'vfs_tmpfile'
+
+Fix this typo in kernel-doc of vfs_tmpfile().
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- drivers/media/usb/uvc/uvc_video.c | 2 +-
+ fs/namei.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
-index dc81f9a86eca..edf451a956d8 100644
---- a/drivers/media/usb/uvc/uvc_video.c
-+++ b/drivers/media/usb/uvc/uvc_video.c
-@@ -1105,7 +1105,7 @@ static inline struct device *stream_to_dmadev(struct uvc_streaming *stream)
- 
- static void uvc_urb_dma_sync(struct uvc_urb *uvc_urb, bool for_device)
- {
--	struct device *dma_dev = dma_dev = stream_to_dmadev(uvc_urb->stream);
-+	struct device *dma_dev = stream_to_dmadev(uvc_urb->stream);
- 
- 	if (for_device) {
- 		dma_sync_sgtable_for_device(dma_dev, uvc_urb->sgt,
+diff --git a/fs/namei.c b/fs/namei.c
+index 64a841dfbb3e..9f7d260ffb4b 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -3379,7 +3379,7 @@ static int do_open(struct nameidata *nd,
+  * @mnt_userns:	user namespace of the mount the inode was found from
+  * @dentry:	pointer to dentry of the base directory
+  * @mode:	mode of the new tmpfile
+- * @open_flags:	flags
++ * @open_flag:	flags
+  *
+  * Create a temporary file.
+  *
 -- 
-2.30.0
+2.17.1
