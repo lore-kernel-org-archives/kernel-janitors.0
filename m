@@ -1,38 +1,35 @@
-From: Colin King <colin.king@canonical.com>
-Date: Wed, 03 Feb 2021 13:59:36 +0000
-Subject: [PATCH][next] iommu/mediatek: Fix unsigned domid comparison with less than zero
-Message-Id: <20210203135936.23016-1-colin.king@canonical.com>
+From: Yong Wu <yong.wu@mediatek.com>
+Date: Thu, 04 Feb 2021 01:11:09 +0000
+Subject: Re: [PATCH][next] iommu/mediatek: Fix unsigned domid comparison with less than zero
+Message-Id: <1612401069.2524.14.camel@mhfsdcap03>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20210203135936.23016-1-colin.king@canonical.com>
+In-Reply-To: <20210203135936.23016-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Anan sun <anan.sun@mediatek.com>, Yong Wu <yong.wu@mediatek.com>, Chao Hao <chao.hao@mediatek.com>, Tomasz Figa <tfiga@chromium.org>, iommu@lists.linux-foundation.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Anan sun <anan.sun@mediatek.com>, Joerg Roedel <joro@8bytes.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tomasz Figa <tfiga@chromium.org>, Chao Hao <chao.hao@mediatek.com>, iommu@lists.linux-foundation.org, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org
 
-From: Colin Ian King <colin.king@canonical.com>
-
-Currently the check for domid < 0 is always false because domid
-is unsigned.  Fix this by making it signed.
-
-Addresses-CoverityL ("Unsigned comparison against 0")
-Fixes: ab1d5281a62b ("iommu/mediatek: Add iova reserved function")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/iommu/mtk_iommu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
-index 0ad14a7604b1..823d719945b2 100644
---- a/drivers/iommu/mtk_iommu.c
-+++ b/drivers/iommu/mtk_iommu.c
-@@ -640,7 +640,7 @@ static void mtk_iommu_get_resv_regions(struct device *dev,
- 				       struct list_head *head)
- {
- 	struct mtk_iommu_data *data = dev_iommu_priv_get(dev);
--	unsigned int domid = mtk_iommu_get_domain_id(dev, data->plat_data), i;
-+	int domid = mtk_iommu_get_domain_id(dev, data->plat_data), i;
- 	const struct mtk_iommu_iova_region *resv, *curdom;
- 	struct iommu_resv_region *region;
- 	int prot = IOMMU_WRITE | IOMMU_READ;
--- 
-2.29.2
+T24gV2VkLCAyMDIxLTAyLTAzIGF0IDEzOjU5ICswMDAwLCBDb2xpbiBLaW5nIHdyb3RlOg0KPiBG
+cm9tOiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPiANCj4gQ3Vy
+cmVudGx5IHRoZSBjaGVjayBmb3IgZG9taWQgPCAwIGlzIGFsd2F5cyBmYWxzZSBiZWNhdXNlIGRv
+bWlkDQo+IGlzIHVuc2lnbmVkLiAgRml4IHRoaXMgYnkgbWFraW5nIGl0IHNpZ25lZC4NCj4gDQo+
+IEFkZHJlc3Nlcy1Db3Zlcml0eUwgKCJVbnNpZ25lZCBjb21wYXJpc29uIGFnYWluc3QgMCIpDQo+
+IEZpeGVzOiBhYjFkNTI4MWE2MmIgKCJpb21tdS9tZWRpYXRlazogQWRkIGlvdmEgcmVzZXJ2ZWQg
+ZnVuY3Rpb24iKQ0KPiBTaWduZWQtb2ZmLWJ5OiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0Bj
+YW5vbmljYWwuY29tPg0KDQpUaGFua3MgZm9yIHRoZSBmaXguDQoNClJldmlld2VkLWJ5OiBZb25n
+IFd1IDx5b25nLnd1QG1lZGlhdGVrLmNvbT4NCg0KPiAtLS0NCj4gIGRyaXZlcnMvaW9tbXUvbXRr
+X2lvbW11LmMgfCAyICstDQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVs
+ZXRpb24oLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2lvbW11L210a19pb21tdS5jIGIv
+ZHJpdmVycy9pb21tdS9tdGtfaW9tbXUuYw0KPiBpbmRleCAwYWQxNGE3NjA0YjEuLjgyM2Q3MTk5
+NDViMiAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9pb21tdS9tdGtfaW9tbXUuYw0KPiArKysgYi9k
+cml2ZXJzL2lvbW11L210a19pb21tdS5jDQo+IEBAIC02NDAsNyArNjQwLDcgQEAgc3RhdGljIHZv
+aWQgbXRrX2lvbW11X2dldF9yZXN2X3JlZ2lvbnMoc3RydWN0IGRldmljZSAqZGV2LA0KPiAgCQkJ
+CSAgICAgICBzdHJ1Y3QgbGlzdF9oZWFkICpoZWFkKQ0KPiAgew0KPiAgCXN0cnVjdCBtdGtfaW9t
+bXVfZGF0YSAqZGF0YSA9IGRldl9pb21tdV9wcml2X2dldChkZXYpOw0KPiAtCXVuc2lnbmVkIGlu
+dCBkb21pZCA9IG10a19pb21tdV9nZXRfZG9tYWluX2lkKGRldiwgZGF0YS0+cGxhdF9kYXRhKSwg
+aTsNCj4gKwlpbnQgZG9taWQgPSBtdGtfaW9tbXVfZ2V0X2RvbWFpbl9pZChkZXYsIGRhdGEtPnBs
+YXRfZGF0YSksIGk7DQo+ICAJY29uc3Qgc3RydWN0IG10a19pb21tdV9pb3ZhX3JlZ2lvbiAqcmVz
+diwgKmN1cmRvbTsNCj4gIAlzdHJ1Y3QgaW9tbXVfcmVzdl9yZWdpb24gKnJlZ2lvbjsNCj4gIAlp
+bnQgcHJvdCA9IElPTU1VX1dSSVRFIHwgSU9NTVVfUkVBRDsNCg0K
