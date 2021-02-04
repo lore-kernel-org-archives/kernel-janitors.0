@@ -1,39 +1,43 @@
-From: patchwork-bot+netdevbpf@kernel.org
-Date: Mon, 15 Feb 2021 20:50:07 +0000
-Subject: Re: [PATCH] b43: N-PHY: Fix the update of coef for the PHY revision >= 3case
-Message-Id: <161342220742.9745.8382671351408094694.git-patchwork-notify@kernel.org>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 04 Feb 2021 15:00:01 +0000
+Subject: [PATCH][next][V2] iommu/mediatek: Fix unsigned domid comparison with less than zero
+Message-Id: <20210204150001.102672-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210215120532.76889-1-colin.king@canonical.com>
-In-Reply-To: <20210215120532.76889-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: kvalo@codeaurora.org, davem@davemloft.net, kuba@kernel.org, zajec5@gmail.com, linville@tuxdriver.com, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, iommu@lists.linux-foundation.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello:
+From: Colin Ian King <colin.king@canonical.com>
 
-This patch was applied to netdev/net.git (refs/heads/master):
+Currently the check for domid < 0 is always false because domid
+is unsigned. Fix this by casting domid to an int before making
+the comparison.
 
-On Mon, 15 Feb 2021 12:05:32 +0000 you wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The documentation for the PHY update [1] states:
-> 
-> Loop 4 times with index i
-> 
->     If PHY Revision >= 3
->         Copy table[i] to coef[i]
->     Otherwise
->         Set coef[i] to 0
-> 
-> [...]
+Addresses-Coverity: ("Unsigned comparison against 0")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
 
-Here is the summary with links:
-  - b43: N-PHY: Fix the update of coef for the PHY revision >= 3case
-    https://git.kernel.org/netdev/net/c/4773acf3d4b5
+V2: cast domid rather than making it an int. Replace L with : in
+    the commit message.
 
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+---
+ drivers/iommu/mtk_iommu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
+index 0ad14a7604b1..1f262621ef19 100644
+--- a/drivers/iommu/mtk_iommu.c
++++ b/drivers/iommu/mtk_iommu.c
+@@ -645,7 +645,7 @@ static void mtk_iommu_get_resv_regions(struct device *dev,
+ 	struct iommu_resv_region *region;
+ 	int prot = IOMMU_WRITE | IOMMU_READ;
+ 
+-	if (domid < 0)
++	if ((int)domid < 0)
+ 		return;
+ 	curdom = data->plat_data->iova_region + domid;
+ 	for (i = 0; i < data->plat_data->iova_region_nr; i++) {
+-- 
+2.29.2
