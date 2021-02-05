@@ -1,42 +1,27 @@
-From: Colin Ian King <colin.king@canonical.com>
-Date: Wed, 10 Feb 2021 19:15:04 +0000
-Subject: NAK: [PATCH][next] media: uvcvideo: remove duplicated dma_dev assignment
-Message-Id: <1d50eb5e-bed3-50dd-6eaf-b055e188dcf8@canonical.com>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Fri, 05 Feb 2021 03:38:24 +0000
+Subject: Re: [PATCH] crypto: octeontx2 - fix signedness bug in cptvf_register_interrupts()
+Message-Id: <20210205033824.GA14594@gondor.apana.org.au>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210210174555.144128-1-colin.king@canonical.com>
-In-Reply-To: <20210210174555.144128-1-colin.king@canonical.com>
+References: <YBD5Z11GeYlJGuTh@mwanda>
+In-Reply-To: <YBD5Z11GeYlJGuTh@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Ricardo Ribalda <ribalda@chromium.org>, Tomasz Figa <tfiga@chromium.org>, linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Boris Brezillon <bbrezillon@kernel.org>, Arnaud Ebalard <arno@natisbad.org>, Srujana Challa <schalla@marvell.com>, "David S. Miller" <davem@davemloft.net>, Suheil Chandran <schandran@marvell.com>, Lukasz Bartosik <lbartosik@marvell.com>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 10/02/2021 17:45, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On Wed, Jan 27, 2021 at 08:25:59AM +0300, Dan Carpenter wrote:
+> The "num_vec" has to be signed for the error handling to work.
 > 
-> The assignment to dma_dev has been performed twice in one
-> statement. Fix this by removing the extraneous assignment.
-> 
-> Addresses-Coverity: ("Evaluation order violation")
-> Fixes: fdcd02a641e2 ("media: uvcvideo: Use dma_alloc_noncontiguos API")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Fixes: 19d8e8c7be15 ("crypto: octeontx2 - add virtual function driver support")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > ---
->  drivers/media/usb/uvc/uvc_video.c | 2 +-
+>  drivers/crypto/marvell/octeontx2/otx2_cptvf_main.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
-> index dc81f9a86eca..edf451a956d8 100644
-> --- a/drivers/media/usb/uvc/uvc_video.c
-> +++ b/drivers/media/usb/uvc/uvc_video.c
-> @@ -1105,7 +1105,7 @@ static inline struct device *stream_to_dmadev(struct uvc_streaming *stream)
->  
->  static void uvc_urb_dma_sync(struct uvc_urb *uvc_urb, bool for_device)
->  {
-> -	struct device *dma_dev = dma_dev = stream_to_dmadev(uvc_urb->stream);
-> +	struct device *dma_dev = stream_to_dmadev(uvc_urb->stream);
->  
->  	if (for_device) {
->  		dma_sync_sgtable_for_device(dma_dev, uvc_urb->sgt,
-> 
 
-there are some other occurrences of this, I'll send a V2.
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
