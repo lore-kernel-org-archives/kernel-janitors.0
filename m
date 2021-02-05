@@ -1,59 +1,51 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Date: Thu, 04 Feb 2021 19:09:53 +0000
-Subject: Re: [PATCH] drm/bridge: make a const array static, makes object smaller
-Message-Id: <YBxGgRh4ckgbI0Z/@pendragon.ideasonboard.com>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Fri, 05 Feb 2021 09:55:06 +0000
+Subject: [PATCH] net/mlx5: docs: correct section reference in table of contents
+Message-Id: <20210205095506.29146-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210204183344.110078-1-colin.king@canonical.com>
-In-Reply-To: <20210204183344.110078-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Jernej Skrabec <jernej.skrabec@siol.net>, Jonas Karlman <jonas@kwiboo.se>, David Airlie <airlied@linux.ie>, Neil Armstrong <narmstrong@baylibre.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>
+To: Parav Pandit <parav@nvidia.com>, Saeed Mahameed <saeedm@nvidia.com>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org
+Cc: Leon Romanovsky <leon@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-Hi Colin,
+Commit 142d93d12dc1 ("net/mlx5: Add devlink subfunction port
+documentation") refers to a section 'mlx5 port function' in the table of
+contents, but includes a section 'mlx5 function attributes' instead.
 
-Thank you for the patch.
+Hence, make htmldocs warns:
 
-On Thu, Feb 04, 2021 at 06:33:44PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Don't populate the const array frs_limits on the stack but instead make
-> it static. Makes the object code smaller by 128 bytes:
-> 
-> Before:
->    text    data     bss     dec     hex filename
->   24845    7440      64   32349    7e5d ./drivers/gpu/drm/bridge/tc358768.o
-> 
-> After:
->    text    data     bss     dec     hex filename
->   24749    7408      64   32221    7ddd ./drivers/gpu/drm/bridge/tc358768.o
-> 
-> (gcc version 10.2.0)
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+  mlx5.rst:16: WARNING: Unknown target name: "mlx5 port function".
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Correct the section reference in table of contents to the actual name of
+section in the documentation.
 
-> ---
->  drivers/gpu/drm/bridge/tc358768.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/tc358768.c b/drivers/gpu/drm/bridge/tc358768.c
-> index 8ed8302d6bbb..2495ea46b091 100644
-> --- a/drivers/gpu/drm/bridge/tc358768.c
-> +++ b/drivers/gpu/drm/bridge/tc358768.c
-> @@ -291,7 +291,7 @@ static int tc358768_calc_pll(struct tc358768_priv *priv,
->  			     const struct drm_display_mode *mode,
->  			     bool verify_only)
->  {
-> -	const u32 frs_limits[] = {
-> +	static const u32 frs_limits[] = {
->  		1000000000,
->  		500000000,
->  		250000000,
+Also, tune another section underline while visiting this document.
 
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Saeed, please pick this patch for your -next tree on top of the commit above.
+
+ .../networking/device_drivers/ethernet/mellanox/mlx5.rst      | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/networking/device_drivers/ethernet/mellanox/mlx5.rst b/Documentation/networking/device_drivers/ethernet/mellanox/mlx5.rst
+index a1b32fcd0d76..1b7e32d8a61b 100644
+--- a/Documentation/networking/device_drivers/ethernet/mellanox/mlx5.rst
++++ b/Documentation/networking/device_drivers/ethernet/mellanox/mlx5.rst
+@@ -13,12 +13,12 @@ Contents
+ - `Devlink info`_
+ - `Devlink parameters`_
+ - `mlx5 subfunction`_
+-- `mlx5 port function`_
++- `mlx5 function attributes`_
+ - `Devlink health reporters`_
+ - `mlx5 tracepoints`_
+ 
+ Enabling the driver and kconfig options
+-========================
++=================== 
+ | mlx5 core is modular and most of the major mlx5 core driver features can be selected (compiled in/out)
+ | at build time via kernel Kconfig flags.
 -- 
-Regards,
-
-Laurent Pinchart
+2.17.1
