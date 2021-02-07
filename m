@@ -1,25 +1,40 @@
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-Date: Wed, 03 Feb 2021 23:58:27 +0000
-Subject: Re: [PATCH] netfilter: nf_tables: remove redundant assignment of variable err
-Message-Id: <20210203235827.GA21793@salvia>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 07 Feb 2021 23:21:20 +0000
+Subject: [PATCH] HID: logitech-dj: fix unintentional integer overflow on left shift
+Message-Id: <20210207232120.8885-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210128175923.645865-1-colin.king@canonical.com>
- <20210203230421.GA18404@salvia>
-In-Reply-To: <20210203230421.GA18404@salvia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Jozsef Kadlecsik <kadlec@netfilter.org>, Florian Westphal <fw@strlen.de>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, Nestor Lopez Casado <nlopezcasad@logitech.com>, linux-input@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Feb 04, 2021 at 12:04:21AM +0100, Pablo Neira Ayuso wrote:
-> On Thu, Jan 28, 2021 at 05:59:23PM +0000, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > The variable err is being assigned a value that is never read,
-> > the same error number is being returned at the error return
-> > path via label err1.  Clean up the code by removing the assignment.
-> 
-> Applied to nf, thanks.
+From: Colin Ian King <colin.king@canonical.com>
 
-Sorry, I meant, nf-next
+Shifting the integer value 1 is evaluated using 32-bit rithmetic
+and then used in an expression that expects a 64-bit value, so
+there is potentially an integer overflow. Fix this by using th
+BIT_ULL macro to perform the shift and avoid the overflow.
+
+Addresses-Coverity: ("Uninitentional integer overflow")
+Fixes: 534a7b8e10ec ("HID: Add full support for Logitech Unifying receivers")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/hid/hid-logitech-dj.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/hid/hid-logitech-dj.c b/drivers/hid/hid-logitech-dj.c
+index 45e7e0bdd382..747f41be0603 100644
+--- a/drivers/hid/hid-logitech-dj.c
++++ b/drivers/hid/hid-logitech-dj.c
+@@ -1035,7 +1035,7 @@ static void logi_dj_recv_forward_null_report(struct dj_receiver_dev *djrcv_dev,
+ 	memset(reportbuffer, 0, sizeof(reportbuffer));
+ 
+ 	for (i = 0; i < NUMBER_OF_HID_REPORTS; i++) {
+-		if (djdev->reports_supported & (1 << i)) {
++		if (djdev->reports_supported & BIT_ULL(i)) {
+ 			reportbuffer[0] = i;
+ 			if (hid_input_report(djdev->hdev,
+ 					     HID_INPUT_REPORT,
+-- 
+2.29.2
