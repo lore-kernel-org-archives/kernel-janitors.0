@@ -1,36 +1,40 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 03 Feb 2021 20:05:29 +0000
-Subject: Re: [PATCH] misc: bcm-vk: Fix a couple error codes in probe()
-Message-Id: <20210203200529.GH20820@kadam>
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 07 Feb 2021 23:07:51 +0000
+Subject: [PATCH] drm/amdgpu: fix potential integer overflow on shift of a int
+Message-Id: <20210207230751.8576-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <YBpyEbmz00rjvT9S@mwanda>
- <55880105-a097-0268-de54-478d7dbae084@broadcom.com>
-In-Reply-To: <55880105-a097-0268-de54-478d7dbae084@broadcom.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Scott Branden <scott.branden@broadcom.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Desmond Yan <desmond.yan@broadcom.com>, Olof Johansson <olof@lixom.net>, James Hu <james.hu@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Huang Rui <ray.huang@amd.com>, Junwei Zhang <Jerry.Zhang@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Feb 03, 2021 at 11:15:35AM -0800, Scott Branden wrote:
-> Thanks Dan,
-> 
-> On 2021-02-03 6:42 a.m., Dan Carpenter wrote:
-> > These errors should return negative error codes instead of returning
-> > success.
-> Do you have a script running to report such issues or just manually reviewing
-> to find such paths?
+From: Colin Ian King <colin.king@canonical.com>
 
-Yeah.  This is a new Smatch check.  The heuristic is this:
+The left shift of int 32 bit integer constant 1 is evaluated using 32
+bit arithmetic and then assigned to an unsigned 64 bit integer. In the
+case where *frag is 32 or more this can lead to an oveflow.  Avoid this
+by shifting 1ULL.
 
-	<-- ret is not set within 3 lines of the goto
-	goto label;  <-- we hit a goto
+Addresses-Coverity: ("Unintentional integer overflow")
+Fixes: dfcd99f6273e ("drm/amdgpu: meld together VM fragment and huge page handling")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-	return 0;  <-- success path right before the cleanup block
-
-label:	<-- labels
-	return ret;  <-- This return has to sometimes returns negatives
-
-regards,
-dan carpenter
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
+index 9d19078246c8..53a925600510 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
+@@ -1412,7 +1412,7 @@ static void amdgpu_vm_fragment(struct amdgpu_vm_update_params *params,
+ 		*frag = max_frag;
+ 		*frag_end = end & ~((1ULL << max_frag) - 1);
+ 	} else {
+-		*frag_end = start + (1 << *frag);
++		*frag_end = start + (1ULL << *frag);
+ 	}
+ }
+ 
+-- 
+2.29.2
