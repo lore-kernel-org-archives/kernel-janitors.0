@@ -1,37 +1,33 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 05 Feb 2021 12:46:17 +0000
-Subject: [PATCH] iommu/mediatek: Fix error code in probe()
-Message-Id: <YB0+GU5akSdu29Vu@mwanda>
+From: Yong Wu <yong.wu@mediatek.com>
+Date: Sun, 07 Feb 2021 01:45:19 +0000
+Subject: Re: [PATCH] iommu/mediatek: Fix error code in probe()
+Message-Id: <1612662319.2524.16.camel@mhfsdcap03>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <YB0+GU5akSdu29Vu@mwanda>
+In-Reply-To: <YB0+GU5akSdu29Vu@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joerg Roedel <joro@8bytes.org>, Yong Wu <yong.wu@mediatek.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tomasz Figa <tfiga@chromium.org>, iommu@lists.linux-foundation.org, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Joerg Roedel <joro@8bytes.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tomasz Figa <tfiga@chromium.org>, iommu@lists.linux-foundation.org, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org
 
-This error path is supposed to return -EINVAL.  It used to return
-directly but we added some clean up and accidentally removed the
-error code.  Also I fixed a typo in the error message.
-
-Fixes: c0b57581b73b ("iommu/mediatek: Add power-domain operation")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/iommu/mtk_iommu.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
-index 0ad14a7604b1..5f78ac0dc30e 100644
---- a/drivers/iommu/mtk_iommu.c
-+++ b/drivers/iommu/mtk_iommu.c
-@@ -886,7 +886,8 @@ static int mtk_iommu_probe(struct platform_device *pdev)
- 	link = device_link_add(data->smicomm_dev, dev,
- 			DL_FLAG_STATELESS | DL_FLAG_PM_RUNTIME);
- 	if (!link) {
--		dev_err(dev, "Unable link %s.\n", dev_name(data->smicomm_dev));
-+		dev_err(dev, "Unable to link %s.\n", dev_name(data->smicomm_dev));
-+		ret = -EINVAL;
- 		goto out_runtime_disable;
- 	}
- 
--- 
-2.30.0
+T24gRnJpLCAyMDIxLTAyLTA1IGF0IDE1OjQ2ICswMzAwLCBEYW4gQ2FycGVudGVyIHdyb3RlOg0K
+PiBUaGlzIGVycm9yIHBhdGggaXMgc3VwcG9zZWQgdG8gcmV0dXJuIC1FSU5WQUwuICBJdCB1c2Vk
+IHRvIHJldHVybg0KPiBkaXJlY3RseSBidXQgd2UgYWRkZWQgc29tZSBjbGVhbiB1cCBhbmQgYWNj
+aWRlbnRhbGx5IHJlbW92ZWQgdGhlDQo+IGVycm9yIGNvZGUuICBBbHNvIEkgZml4ZWQgYSB0eXBv
+IGluIHRoZSBlcnJvciBtZXNzYWdlLg0KPiANCj4gRml4ZXM6IGMwYjU3NTgxYjczYiAoImlvbW11
+L21lZGlhdGVrOiBBZGQgcG93ZXItZG9tYWluIG9wZXJhdGlvbiIpDQo+IFNpZ25lZC1vZmYtYnk6
+IERhbiBDYXJwZW50ZXIgPGRhbi5jYXJwZW50ZXJAb3JhY2xlLmNvbT4NCg0KUmV2aWV3ZWQtYnk6
+IFlvbmcgV3UgPHlvbmcud3VAbWVkaWF0ZWsuY29tPg0KDQo+IC0tLQ0KPiAgZHJpdmVycy9pb21t
+dS9tdGtfaW9tbXUuYyB8IDMgKystDQo+ICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCsp
+LCAxIGRlbGV0aW9uKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9pb21tdS9tdGtfaW9t
+bXUuYyBiL2RyaXZlcnMvaW9tbXUvbXRrX2lvbW11LmMNCj4gaW5kZXggMGFkMTRhNzYwNGIxLi41
+Zjc4YWMwZGMzMGUgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvaW9tbXUvbXRrX2lvbW11LmMNCj4g
+KysrIGIvZHJpdmVycy9pb21tdS9tdGtfaW9tbXUuYw0KPiBAQCAtODg2LDcgKzg4Niw4IEBAIHN0
+YXRpYyBpbnQgbXRrX2lvbW11X3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQo+
+ICAJbGluayA9IGRldmljZV9saW5rX2FkZChkYXRhLT5zbWljb21tX2RldiwgZGV2LA0KPiAgCQkJ
+RExfRkxBR19TVEFURUxFU1MgfCBETF9GTEFHX1BNX1JVTlRJTUUpOw0KPiAgCWlmICghbGluaykg
+ew0KPiAtCQlkZXZfZXJyKGRldiwgIlVuYWJsZSBsaW5rICVzLlxuIiwgZGV2X25hbWUoZGF0YS0+
+c21pY29tbV9kZXYpKTsNCj4gKwkJZGV2X2VycihkZXYsICJVbmFibGUgdG8gbGluayAlcy5cbiIs
+IGRldl9uYW1lKGRhdGEtPnNtaWNvbW1fZGV2KSk7DQo+ICsJCXJldCA9IC1FSU5WQUw7DQo+ICAJ
+CWdvdG8gb3V0X3J1bnRpbWVfZGlzYWJsZTsNCj4gIAl9DQo+ICANCg0K
