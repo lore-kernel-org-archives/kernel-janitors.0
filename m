@@ -1,33 +1,33 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 02 Feb 2021 14:20:45 +0000
-Subject: Re: [PATCH] ceph: fix an oops in error handling in ceph_netfs_issue_op
-Message-Id: <20210202142045.GD20820@kadam>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Mon, 08 Feb 2021 10:39:32 +0000
+Subject: Re: [PATCH] rtlwifi: rtl8192se: remove redundant initialization of variable rtstatus
+Message-Id: <20210208103932.CF51AC43464@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210202131041.43977-1-jlayton@kernel.org>
-In-Reply-To: <20210202131041.43977-1-jlayton@kernel.org>
+References: <20210128171048.644669-1-colin.king@canonical.com>
+In-Reply-To: <20210128171048.644669-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jeff Layton <jlayton@kernel.org>
-Cc: dhowells@redhat.com, idryomov@gmail.com, ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Ping-Ke Shih <pkshih@realtek.com>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Feb 02, 2021 at 08:10:41AM -0500, Jeff Layton wrote:
-> Dan reported a potential oops in the cleanup if ceph_osdc_new_request
-> returns an error. Eliminate the unneeded initialization of "req" and
-> then just set it to NULL in the case where it holds an ERR_PTR.
+Colin King <colin.king@canonical.com> wrote:
+
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Also, drop the unneeded NULL check before calling
-> ceph_osdc_put_request.
+> The variable rtstatu is being initialized with a value that is never
+> read and it is being updated later with a new value.  The initialization
+> is redundant and can be removed.
 > 
-> Fixes: 1cf7fdf52d5a ("ceph: convert readpage to fscache read helper")
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Suggested-by: Ilya Dryomov <idryomov@gmail.com>
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Acked-by: Willem de Bruijn <willemb@google.com>
 
+Patch applied to wireless-drivers-next.git, thanks.
 
-Looks good.
+711fa16f1dfe rtlwifi: rtl8192se: remove redundant initialization of variable rtstatus
 
-Acked-by: Dan Carpenter <dan.carpenter@oracle.com>
+-- 
+https://patchwork.kernel.org/project/linux-wireless/patch/20210128171048.644669-1-colin.king@canonical.com/
 
-regards,
-dan carpenter
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
