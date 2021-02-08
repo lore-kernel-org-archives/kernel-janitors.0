@@ -1,7 +1,7 @@
 From: Ioana Ciornei <ioana.ciornei@nxp.com>
-Date: Tue, 02 Feb 2021 12:36:55 +0000
+Date: Mon, 08 Feb 2021 14:18:04 +0000
 Subject: Re: [PATCH] bus: fsl-mc: Fix test for end of loop
-Message-Id: <20210202123654.yf5qx3k6lfkiiqru@skbuf>
+Message-Id: <20210208141803.bqbnbgvprtlo3vs6@skbuf>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <YBf0Br9obNGZTcNI@mwanda>
 In-Reply-To: <YBf0Br9obNGZTcNI@mwanda>
@@ -19,9 +19,15 @@ On Mon, Feb 01, 2021 at 03:28:54PM +0300, Dan Carpenter wrote:
 > 
 > Fixes: 2cf1e703f066 ("bus: fsl-mc: add fsl-mc userspace support")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Ioana Ciornei <ioana.ciornei@nxp.com>
 
-Thanks!
+Hi,
+
+I just noticed that Greg wasn't copied on the initial email.
+
+If you don't mind I will re-submit your patch along with other updates
+to the fsl-mc bus so that you don't have to bother.
+
+Ioana
 
 > ---
 >  drivers/bus/fsl-mc/fsl-mc-uapi.c | 2 +-
