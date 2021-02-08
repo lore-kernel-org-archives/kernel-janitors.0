@@ -1,62 +1,32 @@
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Thu, 04 Feb 2021 18:00:55 +0000
-Subject: [PATCH 1/5] fs: turn some comments into kernel-doc
-Message-Id: <20210204180059.28360-2-lukas.bulwahn@gmail.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Mon, 08 Feb 2021 11:16:02 +0000
+Subject: Re: [PATCH] libertas: remove redundant initialization of variable ret
+Message-Id: <20210208111602.D6703C433ED@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210204180059.28360-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20210204180059.28360-1-lukas.bulwahn@gmail.com>
+References: <20210128162202.642848-1-colin.king@canonical.com>
+In-Reply-To: <20210128162202.642848-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christian Brauner <christian.brauner@ubuntu.com>, linux-fsdevel@vger.kernel.org
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To: Colin King <colin.king@canonical.com>
+Cc: "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-While reviewing ./include/linux/fs.h, I noticed that three comments can
-actually be turned into kernel-doc comments. This allows to check the
-consistency between the descriptions and the functions' signatures in
-case they may change in the future.
+Colin King <colin.king@canonical.com> wrote:
 
-A quick validation with the consistency check:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The variable ret is being initialized with a value that is never read
+> and it is being updated later with a new value.  The initialization is
+> redundant and can be removed.
+> 
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-  ./scripts/kernel-doc -none include/linux/fs.h
+Patch applied to wireless-drivers-next.git, thanks.
 
-currently reports no issues in this file.
+1d5248882d64 libertas: remove redundant initialization of variable ret
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- include/linux/fs.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 3482146b11b0..04b6b142dfcf 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1739,7 +1739,7 @@ static inline void sb_start_pagefault(struct super_block *sb)
- 	__sb_start_write(sb, SB_FREEZE_PAGEFAULT);
- }
- 
--/*
-+/**
-  * sb_start_intwrite - get write access to a superblock for internal fs purposes
-  * @sb: the super we write to
-  *
-@@ -3162,7 +3162,7 @@ static inline ssize_t blockdev_direct_IO(struct kiocb *iocb,
- 
- void inode_dio_wait(struct inode *inode);
- 
--/*
-+/**
-  * inode_dio_begin - signal start of a direct I/O requests
-  * @inode: inode the direct I/O happens on
-  *
-@@ -3174,7 +3174,7 @@ static inline void inode_dio_begin(struct inode *inode)
- 	atomic_inc(&inode->i_dio_count);
- }
- 
--/*
-+/**
-  * inode_dio_end - signal finish of a direct I/O requests
-  * @inode: inode the direct I/O happens on
-  *
 -- 
-2.17.1
+https://patchwork.kernel.org/project/linux-wireless/patch/20210128162202.642848-1-colin.king@canonical.com/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
