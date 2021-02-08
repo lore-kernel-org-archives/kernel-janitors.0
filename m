@@ -1,7 +1,7 @@
-From: Yong Wu <yong.wu@mediatek.com>
-Date: Sun, 07 Feb 2021 01:45:19 +0000
+From: Joerg Roedel <joro@8bytes.org>
+Date: Mon, 08 Feb 2021 08:11:30 +0000
 Subject: Re: [PATCH] iommu/mediatek: Fix error code in probe()
-Message-Id: <1612662319.2524.16.camel@mhfsdcap03>
+Message-Id: <20210208081130.GA7302@8bytes.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <YB0+GU5akSdu29Vu@mwanda>
 In-Reply-To: <YB0+GU5akSdu29Vu@mwanda>
@@ -9,25 +9,10 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Joerg Roedel <joro@8bytes.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tomasz Figa <tfiga@chromium.org>, iommu@lists.linux-foundation.org, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tomasz Figa <tfiga@chromium.org>, iommu@lists.linux-foundation.org, linux-mediatek@lists.infradead.org, Yong Wu <yong.wu@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>, Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org
 
-T24gRnJpLCAyMDIxLTAyLTA1IGF0IDE1OjQ2ICswMzAwLCBEYW4gQ2FycGVudGVyIHdyb3RlOg0K
-PiBUaGlzIGVycm9yIHBhdGggaXMgc3VwcG9zZWQgdG8gcmV0dXJuIC1FSU5WQUwuICBJdCB1c2Vk
-IHRvIHJldHVybg0KPiBkaXJlY3RseSBidXQgd2UgYWRkZWQgc29tZSBjbGVhbiB1cCBhbmQgYWNj
-aWRlbnRhbGx5IHJlbW92ZWQgdGhlDQo+IGVycm9yIGNvZGUuICBBbHNvIEkgZml4ZWQgYSB0eXBv
-IGluIHRoZSBlcnJvciBtZXNzYWdlLg0KPiANCj4gRml4ZXM6IGMwYjU3NTgxYjczYiAoImlvbW11
-L21lZGlhdGVrOiBBZGQgcG93ZXItZG9tYWluIG9wZXJhdGlvbiIpDQo+IFNpZ25lZC1vZmYtYnk6
-IERhbiBDYXJwZW50ZXIgPGRhbi5jYXJwZW50ZXJAb3JhY2xlLmNvbT4NCg0KUmV2aWV3ZWQtYnk6
-IFlvbmcgV3UgPHlvbmcud3VAbWVkaWF0ZWsuY29tPg0KDQo+IC0tLQ0KPiAgZHJpdmVycy9pb21t
-dS9tdGtfaW9tbXUuYyB8IDMgKystDQo+ICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCsp
-LCAxIGRlbGV0aW9uKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9pb21tdS9tdGtfaW9t
-bXUuYyBiL2RyaXZlcnMvaW9tbXUvbXRrX2lvbW11LmMNCj4gaW5kZXggMGFkMTRhNzYwNGIxLi41
-Zjc4YWMwZGMzMGUgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvaW9tbXUvbXRrX2lvbW11LmMNCj4g
-KysrIGIvZHJpdmVycy9pb21tdS9tdGtfaW9tbXUuYw0KPiBAQCAtODg2LDcgKzg4Niw4IEBAIHN0
-YXRpYyBpbnQgbXRrX2lvbW11X3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQo+
-ICAJbGluayA9IGRldmljZV9saW5rX2FkZChkYXRhLT5zbWljb21tX2RldiwgZGV2LA0KPiAgCQkJ
-RExfRkxBR19TVEFURUxFU1MgfCBETF9GTEFHX1BNX1JVTlRJTUUpOw0KPiAgCWlmICghbGluaykg
-ew0KPiAtCQlkZXZfZXJyKGRldiwgIlVuYWJsZSBsaW5rICVzLlxuIiwgZGV2X25hbWUoZGF0YS0+
-c21pY29tbV9kZXYpKTsNCj4gKwkJZGV2X2VycihkZXYsICJVbmFibGUgdG8gbGluayAlcy5cbiIs
-IGRldl9uYW1lKGRhdGEtPnNtaWNvbW1fZGV2KSk7DQo+ICsJCXJldCA9IC1FSU5WQUw7DQo+ICAJ
-CWdvdG8gb3V0X3J1bnRpbWVfZGlzYWJsZTsNCj4gIAl9DQo+ICANCg0K
+On Fri, Feb 05, 2021 at 03:46:17PM +0300, Dan Carpenter wrote:
+>  drivers/iommu/mtk_iommu.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+
+Applied, thanks.
