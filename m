@@ -1,36 +1,39 @@
-From: Yong Wu <yong.wu@mediatek.com>
-Date: Mon, 08 Feb 2021 06:35:25 +0000
+From: Joerg Roedel <joro@8bytes.org>
+Date: Mon, 08 Feb 2021 08:13:01 +0000
 Subject: Re: [PATCH] MAINTAINERS: repair file pattern in MEDIATEK IOMMU DRIVER
-Message-Id: <1612766125.19482.3.camel@mhfsdcap03>
+Message-Id: <20210208081301.GB7302@8bytes.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20210208061025.29198-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20210208061025.29198-1-lukas.bulwahn@gmail.com>
+ <1612766125.19482.3.camel@mhfsdcap03>
+In-Reply-To: <1612766125.19482.3.camel@mhfsdcap03>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Joerg Roedel <joro@8bytes.org>
-Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>, iommu@lists.linux-foundation.org, linux-mediatek@lists.infradead.org, Joe Perches <joe@perches.com>, Pia Eichinger <pia.eichinger@st.oth-regensburg.de>, Will Deacon <will@kernel.org>
+To: Yong Wu <yong.wu@mediatek.com>
+Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>, iommu@lists.linux-foundation.org, linux-mediatek@lists.infradead.org, Joe Perches <joe@perches.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, Pia Eichinger <pia.eichinger@st.oth-regensburg.de>, Will Deacon <will@kernel.org>
 
-T24gTW9uLCAyMDIxLTAyLTA4IGF0IDA3OjEwICswMTAwLCBMdWthcyBCdWx3YWhuIHdyb3RlOg0K
-PiBDb21taXQgNmFmNDg3Mzg1MmM0ICgiTUFJTlRBSU5FUlM6IEFkZCBlbnRyeSBmb3IgTWVkaWFU
-ZWsgSU9NTVUiKSBtZW50aW9ucw0KPiB0aGUgcGF0dGVybiAnZHJpdmVycy9pb21tdS9tdGstaW9t
-bXUqJywgYnV0IHRoZSBmaWxlcyBhcmUgYWN0dWFsbHkgbmFtZWQNCj4gd2l0aCBhbiB1bmRlcnNj
-b3JlLCBub3Qgd2l0aCBhIGh5cGhlbi4NCj4gDQo+IEhlbmNlLCAuL3NjcmlwdHMvZ2V0X21haW50
-YWluZXIucGwgLS1zZWxmLXRlc3Q9cGF0dGVybnMgY29tcGxhaW5zOg0KPiANCj4gICB3YXJuaW5n
-OiBubyBmaWxlIG1hdGNoZXMgIEY6ICAgIGRyaXZlcnMvaW9tbXUvbXRrLWlvbW11Kg0KPiANCj4g
-UmVwYWlyIHRoaXMgbWlub3IgdHlwbyBpbiB0aGUgZmlsZSBwYXR0ZXJuLg0KPiANCj4gU2lnbmVk
-LW9mZi1ieTogTHVrYXMgQnVsd2FobiA8bHVrYXMuYnVsd2FobkBnbWFpbC5jb20+DQo+IC0tLQ0K
-PiBhcHBsaWVzIGNsZWFubHkgb24gbmV4dC0yMDIxMDIwNQ0KPiANCj4gWW9uZywgcGxlYXNlIGFj
-ay4NCg0KK0pvZXJnLg0KDQpzb3JyeSBmb3IgdGhlIHR5cG8uDQoNCkFja2VkLWJ5OiBZb25nIFd1
-IDx5b25nLnd1QG1lZGlhdGVrLmNvbT4NCg0KPiBXaWxsLCBwbGVhc2UgcGljayB0aGlzIG1pbm9y
-IGZpeHVwIGZvciB5b3VyIGlvbW11LW5leHQgdHJlZS4NCj4gDQo+ICBNQUlOVEFJTkVSUyB8IDIg
-Ky0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KPiAN
-Cj4gZGlmZiAtLWdpdCBhL01BSU5UQUlORVJTIGIvTUFJTlRBSU5FUlMNCj4gaW5kZXggNjc0ZjQy
-Mzc1YWNmLi42YjUwN2U4ZDc4MjggMTAwNjQ0DQo+IC0tLSBhL01BSU5UQUlORVJTDQo+ICsrKyBi
-L01BSU5UQUlORVJTDQo+IEBAIC0xMTIwMCw3ICsxMTIwMCw3IEBAIEw6CWlvbW11QGxpc3RzLmxp
-bnV4LWZvdW5kYXRpb24ub3JnDQo+ICBMOglsaW51eC1tZWRpYXRla0BsaXN0cy5pbmZyYWRlYWQu
-b3JnIChtb2RlcmF0ZWQgZm9yIG5vbi1zdWJzY3JpYmVycykNCj4gIFM6CVN1cHBvcnRlZA0KPiAg
-RjoJRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2lvbW11L21lZGlhdGVrKg0KPiAt
-RjoJZHJpdmVycy9pb21tdS9tdGstaW9tbXUqDQo+ICtGOglkcml2ZXJzL2lvbW11L210a19pb21t
-dSoNCj4gIEY6CWluY2x1ZGUvZHQtYmluZGluZ3MvbWVtb3J5L210Ki1wb3J0LmgNCj4gIA0KPiAg
-TUVESUFURUsgSlBFRyBEUklWRVINCg0K
+On Mon, Feb 08, 2021 at 02:35:25PM +0800, Yong Wu wrote:
+> On Mon, 2021-02-08 at 07:10 +0100, Lukas Bulwahn wrote:
+> > Commit 6af4873852c4 ("MAINTAINERS: Add entry for MediaTek IOMMU") mentions
+> > the pattern 'drivers/iommu/mtk-iommu*', but the files are actually named
+> > with an underscore, not with a hyphen.
+> > 
+> > Hence, ./scripts/get_maintainer.pl --self-test=patterns complains:
+> > 
+> >   warning: no file matches  F:    drivers/iommu/mtk-iommu*
+> > 
+> > Repair this minor typo in the file pattern.
+> > 
+> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> > ---
+> > applies cleanly on next-20210205
+> > 
+> > Yong, please ack.
+> 
+> +Joerg.
+> 
+> sorry for the typo.
+> 
+> Acked-by: Yong Wu <yong.wu@mediatek.com>
+
+Applied, thanks.
