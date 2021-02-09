@@ -1,82 +1,112 @@
-From: Pavel Machek <pavel@ucw.cz>
-Date: Mon, 08 Feb 2021 07:54:43 +0000
-Subject: Re: [PATCH] PM / Domains: Fix integer overflows on u32 bit multiplies
-Message-Id: <20210208075442.GA13982@amd>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="XsQoSWH+UP9D9v3l"
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Tue, 09 Feb 2021 21:13:04 +0000
+Subject: [PATCH] drm: use getter/setter functions
+Message-Id: <20210209211304.1261740-1-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210207224648.8137-1-colin.king@canonical.com>
-In-Reply-To: <20210207224648.8137-1-colin.king@canonical.com>
-To: Colin King <colin.king@canonical.com>
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Len Brown <len.brown@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Marc Titinger <mtitinger+renesas@baylibre.com>, Lina Iyer <lina.iyer@linaro.org>, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: David Airlie <airlied@linux.ie>
+Cc: Jernej Skrabec <jernej.skrabec@siol.net>, linux-aspeed@lists.ozlabs.org, Neil Armstrong <narmstrong@baylibre.com>, Andrew Jeffery <andrew@aj.id.au>, Jonas Karlman <jonas@kwiboo.se>, kernel-janitors@vger.kernel.org, Sandy Huang <hjc@rock-chips.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-rockchip@lists.infradead.org, Sam Ravnborg <sam@ravnborg.org>, linux-arm-kernel@lists.infradead.org, Joel Stanley <joel@jms.id.au>
 
+Use getter and setter functions, for platform_device structures and a
+mipi_dsi_device structure.
 
---XsQoSWH+UP9D9v3l
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
-On Sun 2021-02-07 22:46:48, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> There are three occurrances of u32 variables being multiplied by
-> 1000 using 32 bit multiplies and the result being assigned to a
-> 64 bit signed integer.  These can potentially lead to a 32 bit
-> overflows, so fix this by casting 1000 to a UL first to force
-> a 64 bit multiply hence avoiding the overflow.
+---
+ drivers/gpu/drm/aspeed/aspeed_gfx_drv.c             |    2 +-
+ drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c |    2 +-
+ drivers/gpu/drm/panel/panel-lvds.c                  |    2 +-
+ drivers/gpu/drm/panel/panel-seiko-43wvf1g.c         |    4 ++--
+ drivers/gpu/drm/panel/panel-simple.c                |    2 +-
+ drivers/gpu/drm/rockchip/rockchip_lvds.c            |    2 +-
+ 6 files changed, 7 insertions(+), 7 deletions(-)
 
-Ummm. No?
-
-a) Can you imagine any situation where they result in overflow?
-
-b) How does casting to UL help on 32 bit system?
-
-Best regards,
-
-								Pavel
-
-> Addresses-Coverity: ("Unintentional integer overflow")
-> Fixes: 30f604283e05 ("PM / Domains: Allow domain power states to be read =
-=66rom DT")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/base/power/domain.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-> index aaf6c83b5cf6..ddeff69126ff 100644
-> --- a/drivers/base/power/domain.c
-> +++ b/drivers/base/power/domain.c
-> @@ -2831,10 +2831,10 @@ static int genpd_parse_state(struct genpd_power_s=
-tate *genpd_state,
-> =20
->  	err =3D of_property_read_u32(state_node, "min-residency-us", &residency=
-);
->  	if (!err)
-> -		genpd_state->residency_ns =3D 1000 * residency;
-> +		genpd_state->residency_ns =3D 1000UL * residency;
-> =20
-> -	genpd_state->power_on_latency_ns =3D 1000 * exit_latency;
-> -	genpd_state->power_off_latency_ns =3D 1000 * entry_latency;
-> +	genpd_state->power_on_latency_ns =3D 1000UL * exit_latency;
-> +	genpd_state->power_off_latency_ns =3D 1000UL * entry_latency;
->  	genpd_state->fwnode =3D &state_node->fwnode;
-> =20
->  	return 0;
-
---=20
-http://www.livejournal.com/~pavelmachek
-
---XsQoSWH+UP9D9v3l
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAmAg7kIACgkQMOfwapXb+vKDiQCgkJZyxGlRaw1dIv7Thley0C+0
-qkIAn3HsqdmQXesDf9whJPhztRMkU4lx
-=WTDB
------END PGP SIGNATURE-----
-
---XsQoSWH+UP9D9v3l--
+diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
+index 4e2dad314c79..9858079f9e14 100644
+--- a/drivers/gpu/drm/panel/panel-simple.c
++++ b/drivers/gpu/drm/panel/panel-simple.c
+@@ -4800,7 +4800,7 @@ static int panel_simple_dsi_probe(struct mipi_dsi_device *dsi)
+ 
+ 	err = mipi_dsi_attach(dsi);
+ 	if (err) {
+-		struct panel_simple *panel = dev_get_drvdata(&dsi->dev);
++		struct panel_simple *panel = mipi_dsi_get_drvdata(dsi);
+ 
+ 		drm_panel_remove(&panel->base);
+ 	}
+diff --git a/drivers/gpu/drm/panel/panel-seiko-43wvf1g.c b/drivers/gpu/drm/panel/panel-seiko-43wvf1g.c
+index 0ee508576231..3939b25e6666 100644
+--- a/drivers/gpu/drm/panel/panel-seiko-43wvf1g.c
++++ b/drivers/gpu/drm/panel/panel-seiko-43wvf1g.c
+@@ -267,7 +267,7 @@ static int seiko_panel_probe(struct device *dev,
+ 
+ static int seiko_panel_remove(struct platform_device *pdev)
+ {
+-	struct seiko_panel *panel = dev_get_drvdata(&pdev->dev);
++	struct seiko_panel *panel = platform_get_drvdata(pdev);
+ 
+ 	drm_panel_remove(&panel->base);
+ 	drm_panel_disable(&panel->base);
+@@ -277,7 +277,7 @@ static int seiko_panel_remove(struct platform_device *pdev)
+ 
+ static void seiko_panel_shutdown(struct platform_device *pdev)
+ {
+-	struct seiko_panel *panel = dev_get_drvdata(&pdev->dev);
++	struct seiko_panel *panel = platform_get_drvdata(pdev);
+ 
+ 	drm_panel_disable(&panel->base);
+ }
+diff --git a/drivers/gpu/drm/rockchip/rockchip_lvds.c b/drivers/gpu/drm/rockchip/rockchip_lvds.c
+index 654bc52d9ff3..bd5ba10822c2 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_lvds.c
++++ b/drivers/gpu/drm/rockchip/rockchip_lvds.c
+@@ -725,7 +725,7 @@ static int rockchip_lvds_probe(struct platform_device *pdev)
+ 
+ static int rockchip_lvds_remove(struct platform_device *pdev)
+ {
+-	struct rockchip_lvds *lvds = dev_get_drvdata(&pdev->dev);
++	struct rockchip_lvds *lvds = platform_get_drvdata(pdev);
+ 
+ 	component_del(&pdev->dev, &rockchip_lvds_component_ops);
+ 	clk_unprepare(lvds->pclk);
+diff --git a/drivers/gpu/drm/aspeed/aspeed_gfx_drv.c b/drivers/gpu/drm/aspeed/aspeed_gfx_drv.c
+index 457ec04950f7..c7707338bfdb 100644
+--- a/drivers/gpu/drm/aspeed/aspeed_gfx_drv.c
++++ b/drivers/gpu/drm/aspeed/aspeed_gfx_drv.c
+@@ -284,7 +284,7 @@ static int aspeed_gfx_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
+-	dev_set_drvdata(&pdev->dev, priv);
++	platform_set_drvdata(pdev, priv);
+ 
+ 	ret = sysfs_create_group(&pdev->dev.kobj, &aspeed_sysfs_attr_group);
+ 	if (ret)
+diff --git a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
+index d0c65610ebb5..989a05bc8197 100644
+--- a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
++++ b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
+@@ -2457,7 +2457,7 @@ static int cdns_mhdp_probe(struct platform_device *pdev)
+ 
+ static int cdns_mhdp_remove(struct platform_device *pdev)
+ {
+-	struct cdns_mhdp_device *mhdp = dev_get_drvdata(&pdev->dev);
++	struct cdns_mhdp_device *mhdp = platform_get_drvdata(pdev);
+ 	unsigned long timeout = msecs_to_jiffies(100);
+ 	bool stop_fw = false;
+ 	int ret;
+diff --git a/drivers/gpu/drm/panel/panel-lvds.c b/drivers/gpu/drm/panel/panel-lvds.c
+index 66c7d765b8f7..59a8d99e777d 100644
+--- a/drivers/gpu/drm/panel/panel-lvds.c
++++ b/drivers/gpu/drm/panel/panel-lvds.c
+@@ -244,7 +244,7 @@ static int panel_lvds_probe(struct platform_device *pdev)
+ 
+ static int panel_lvds_remove(struct platform_device *pdev)
+ {
+-	struct panel_lvds *lvds = dev_get_drvdata(&pdev->dev);
++	struct panel_lvds *lvds = platform_get_drvdata(pdev);
+ 
+ 	drm_panel_remove(&lvds->panel);
+ 
