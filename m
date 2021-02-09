@@ -1,7 +1,7 @@
-From: Joerg Roedel <joro@8bytes.org>
-Date: Thu, 04 Feb 2021 13:31:48 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 09 Feb 2021 09:19:23 +0000
 Subject: Re: [PATCH][next] iommu/mediatek: Fix unsigned domid comparison with less than zero
-Message-Id: <20210204133148.GA27686@8bytes.org>
+Message-Id: <20210209091923.GO2696@kadam>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20210203135936.23016-1-colin.king@canonical.com>
  <20210204092558.GA20244@willie-the-truck>
@@ -10,7 +10,7 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Will Deacon <will@kernel.org>
-Cc: Anan sun <anan.sun@mediatek.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tomasz Figa <tfiga@chromium.org>, Chao Hao <chao.hao@mediatek.com>, iommu@lists.linux-foundation.org, linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, Colin King <colin.king@canonical.com>, Yong Wu <yong.wu@mediatek.com>
+Cc: Anan sun <anan.sun@mediatek.com>, Joerg Roedel <joro@8bytes.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tomasz Figa <tfiga@chromium.org>, Chao Hao <chao.hao@mediatek.com>, iommu@lists.linux-foundation.org, linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, Colin King <colin.king@canonical.com>, Yong Wu <yong.wu@mediatek.com>
 
 On Thu, Feb 04, 2021 at 09:25:58AM +0000, Will Deacon wrote:
 > On Wed, Feb 03, 2021 at 01:59:36PM +0000, Colin King wrote:
@@ -44,9 +44,16 @@ On Thu, Feb 04, 2021 at 09:25:58AM +0000, Will Deacon wrote:
 > should remain 'unsigned' to match 'iova_region_nr' in
 > 'struct mtk_iommu_plat_data'.
 
-Yes, 'i' should stay unsigned. Colin, can you please fix that up and
-re-send?
 
-Thanks,
+iova_region_nr is either 1 or 5 so unsigned doesn't matter.
 
-	Joerg
+I once almost introduced a bug where the iterator was supposed to be
+size_t.  I fixed a bug by making it signed but I ended up introducing a
+new bug.  But generally that's pretty rare.  The more common case is
+that making iterators unsigned introduces bugs.
+
+It's better to default to "int i;" and if more complicated types are
+required that should stand out.  "size_t pg_idx;" or whatever.
+
+regards,
+dan carpenter
