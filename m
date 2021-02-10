@@ -1,42 +1,38 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 02 Feb 2021 09:13:44 +0000
-Subject: [PATCH v3 2/2 net-next] net: mscc: ocelot: fix error code in mscc_ocelot_probe()
-Message-Id: <YBkXyFIl4V9hgxYM@mwanda>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 10 Feb 2021 17:45:55 +0000
+Subject: [PATCH][next] media: uvcvideo: remove duplicated dma_dev assignment
+Message-Id: <20210210174555.144128-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <YBkXhqRxHtRGzSnJ@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: Claudiu Manoil <claudiu.manoil@nxp.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, UNGLinuxDriver@microchip.com, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Ricardo Ribalda <ribalda@chromium.org>, Tomasz Figa <tfiga@chromium.org>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Probe should return an error code if platform_get_irq_byname() fails
-but it returns success instead.
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: 6c30384eb1de ("net: mscc: ocelot: register devlink ports")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+The assignment to dma_dev has been performed twice in one
+statement. Fix this by removing the extraneous assignment.
+
+Addresses-Coverity: ("Evaluation order violation")
+Fixes: fdcd02a641e2 ("media: uvcvideo: Use dma_alloc_noncontiguos API")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
-v3: rebase
+ drivers/media/usb/uvc/uvc_video.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/net/ethernet/mscc/ocelot_vsc7514.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/mscc/ocelot_vsc7514.c b/drivers/net/ethernet/mscc/ocelot_vsc7514.c
-index b52e24826b10..6b6eb92149ba 100644
---- a/drivers/net/ethernet/mscc/ocelot_vsc7514.c
-+++ b/drivers/net/ethernet/mscc/ocelot_vsc7514.c
-@@ -1300,8 +1300,10 @@ static int mscc_ocelot_probe(struct platform_device *pdev)
- 		goto out_free_devlink;
+diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
+index dc81f9a86eca..edf451a956d8 100644
+--- a/drivers/media/usb/uvc/uvc_video.c
++++ b/drivers/media/usb/uvc/uvc_video.c
+@@ -1105,7 +1105,7 @@ static inline struct device *stream_to_dmadev(struct uvc_streaming *stream)
  
- 	irq_xtr = platform_get_irq_byname(pdev, "xtr");
--	if (irq_xtr < 0)
-+	if (irq_xtr < 0) {
-+		err = irq_xtr;
- 		goto out_free_devlink;
-+	}
+ static void uvc_urb_dma_sync(struct uvc_urb *uvc_urb, bool for_device)
+ {
+-	struct device *dma_dev = dma_dev = stream_to_dmadev(uvc_urb->stream);
++	struct device *dma_dev = stream_to_dmadev(uvc_urb->stream);
  
- 	err = devm_request_threaded_irq(&pdev->dev, irq_xtr, NULL,
- 					ocelot_xtr_irq_handler, IRQF_ONESHOT,
+ 	if (for_device) {
+ 		dma_sync_sgtable_for_device(dma_dev, uvc_urb->sgt,
 -- 
 2.30.0
