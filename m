@@ -1,23 +1,66 @@
-From: Julia Lawall <Julia.Lawall@inria.fr>
-Date: Sat, 13 Feb 2021 10:19:03 +0000
-Subject: [PATCH 0/4] drop unneeded snd_soc_dai_set_drvdata
-Message-Id: <20210213101907.1318496-1-Julia.Lawall@inria.fr>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Wed, 10 Feb 2021 07:59:47 +0000
+Subject: [PATCH] MAINTAINERS: replace non-matching patterns for loongson{2,3}
+Message-Id: <20210210075947.15604-1-lukas.bulwahn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, NXP Linux Team <linux-imx@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, linux-arm-kernel@lists.infradead.org
+To: Keguang Zhang <keguang.zhang@gmail.com>, Huacai Chen <chenhc@lemote.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, linux-mips@linux-mips.org
+Cc: Joe Perches <joe@perches.com>, Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>, Pia Eichinger <pia.eichinger@st.oth-regensburg.de>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-snd_soc_dai_set_drvdata is not needed when the set data comes from
-snd_soc_dai_get_drvdata or dev_get_drvdata.  
+Commit ffe1f9356fbe ("MAINTAINERS: Add Loongson-2/Loongson-3 maintainers")
+adds quite generic file entries for drivers/*/*loongson{2,3}* and
+drivers/*/*/*loongson{2,3}* to be informed on changes to all loongson{2,3}
+files in drivers.
 
+However, only the pattern 'drivers/*/*loongson2*' matches to one file in
+the repository, i.e., drivers/cpufreq/loongson2_cpufreq.c; all other
+patterns have no file matches.
+
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains:
+
+  warning: no file matches    F:    drivers/*/*/*loongson2*
+  warning: no file matches    F:    drivers/*/*/*loongson3*
+  warning: no file matches    F:    drivers/*/*loongson3*
+
+As in the last two and half years, no further files and drivers have
+showed up to match those patterns, just name the one file that matches
+explicitly and delete the others without a match.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
+applies cleanly on current master and next-20201102
 
- sound/soc/fsl/fsl_micfil.c  |    2 --
- sound/soc/fsl/fsl_sai.c     |    2 --
- sound/soc/fsl/fsl_xcvr.c    |    1 -
- sound/soc/mxs/mxs-saif.c    |   10 ----------
- sound/soc/pxa/mmp-sspa.c    |    1 -
- sound/soc/sunxi/sun4i-i2s.c |    2 --
- 6 files changed, 18 deletions(-)
+Keguang, Huacai, Jiaxun, please ack.
+
+Thomas, please pick this minor non-urgent cleanup patch.
+
+ MAINTAINERS | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index b4197e9da495..fc08f628e196 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11719,8 +11719,7 @@ L:	linux-mips@vger.kernel.org
+ S:	Maintained
+ F:	arch/mips/include/asm/mach-loongson2ef/
+ F:	arch/mips/loongson2ef/
+-F:	drivers/*/*/*loongson2*
+-F:	drivers/*/*loongson2*
++F:	drivers/cpufreq/loongson2_cpufreq.c
+ 
+ MIPS/LOONGSON64 ARCHITECTURE
+ M:	Huacai Chen <chenhc@lemote.com>
+@@ -11729,8 +11728,6 @@ L:	linux-mips@vger.kernel.org
+ S:	Maintained
+ F:	arch/mips/include/asm/mach-loongson64/
+ F:	arch/mips/loongson64/
+-F:	drivers/*/*/*loongson3*
+-F:	drivers/*/*loongson3*
+ F:	drivers/irqchip/irq-loongson*
+ F:	drivers/platform/mips/cpu_hwmon.c
+ 
+-- 
+2.17.1
