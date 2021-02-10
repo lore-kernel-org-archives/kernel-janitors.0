@@ -1,63 +1,39 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Tue, 02 Feb 2021 16:38:48 +0000
-Subject: Re: [PATCH] drm/amdgpu: Prevent shift wrapping in amdgpu_read_mask()
-Message-Id: <CADnq5_Mw+wjzRLhNaGUC7VFS92=GeZ0UwvrhiHMjnXpF1=nMHw@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 10 Feb 2021 18:49:38 +0000
+Subject: [PATCH][next] soc: xilinx: vcu: remove deadcode on null divider check
+Message-Id: <20210210184938.146124-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <YBjplLOof9J1E2o5@mwanda>
-In-Reply-To: <YBjplLOof9J1E2o5@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Xiaojian Du <Xiaojian.Du@amd.com>, David Airlie <airlied@linux.ie>, Kevin Wang <kevin1.wang@amd.com>, kernel-janitors@vger.kernel.org, Nirmoy Das <nirmoy.das@amd.com>, amd-gfx list <amd-gfx@lists.freedesktop.org>, Eric Huang <JinHuiEric.Huang@amd.com>, Huang Rui <ray.huang@amd.com>, Daniel Vetter <daniel@ffwll.ch>, Alex Deucher <alexander.deucher@amd.com>, Evan Quan <evan.quan@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Michal Simek <michal.simek@xilinx.com>, Michael Tretter <m.tretter@pengutronix.de>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Feb 2, 2021 at 12:57 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> If the user passes a "level" value which is higher than 31 then that
-> leads to shift wrapping.  The undefined behavior will lead to a
-> syzkaller stack dump.
->
-> Fixes: 5632708f4452 ("drm/amd/powerplay: add dpm force multiple levels on cz/tonga/fiji/polaris (v2)")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied.  Thanks!
+The pointer 'divider' has previously been null checked followed by
+a return, hence the subsequent null check is redundant deadcode
+that can be removed.  Clean up the code and remove it.
 
-Alex
+Fixes: 9c789deea206 ("soc: xilinx: vcu: implement clock provider for output clocks")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/clk/xilinx/xlnx_vcu.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-> ---
->  drivers/gpu/drm/amd/pm/amdgpu_pm.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/pm/amdgpu_pm.c b/drivers/gpu/drm/amd/pm/amdgpu_pm.c
-> index e9b569b76716..1a4010fcf561 100644
-> --- a/drivers/gpu/drm/amd/pm/amdgpu_pm.c
-> +++ b/drivers/gpu/drm/amd/pm/amdgpu_pm.c
-> @@ -1094,7 +1094,7 @@ static ssize_t amdgpu_get_pp_dpm_sclk(struct device *dev,
->  static ssize_t amdgpu_read_mask(const char *buf, size_t count, uint32_t *mask)
->  {
->         int ret;
-> -       long level;
-> +       unsigned long level;
->         char *sub_str = NULL;
->         char *tmp;
->         char buf_cpy[AMDGPU_MASK_BUF_MAX + 1];
-> @@ -1109,9 +1109,9 @@ static ssize_t amdgpu_read_mask(const char *buf, size_t count, uint32_t *mask)
->         tmp = buf_cpy;
->         while (tmp[0]) {
->                 sub_str = strsep(&tmp, delimiter);
-> -               if (strlen(sub_str)) {
-> -                       ret = kstrtol(sub_str, 0, &level);
-> -                       if (ret)
-> +               if (sub_str[0]) {
-> +                       ret = kstrtoul(sub_str, 0, &level);
-> +                       if (ret || level > 31)
->                                 return -EINVAL;
->                         *mask |= 1 << level;
->                 } else
-> --
-> 2.29.2
->
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
+diff --git a/drivers/clk/xilinx/xlnx_vcu.c b/drivers/clk/xilinx/xlnx_vcu.c
+index d66b1315114e..607936d7a413 100644
+--- a/drivers/clk/xilinx/xlnx_vcu.c
++++ b/drivers/clk/xilinx/xlnx_vcu.c
+@@ -512,9 +512,6 @@ static void xvcu_clk_hw_unregister_leaf(struct clk_hw *hw)
+ 
+ 	mux = clk_hw_get_parent(divider);
+ 	clk_hw_unregister_mux(mux);
+-	if (!divider)
+-		return;
+-
+ 	clk_hw_unregister_divider(divider);
+ }
+ 
+-- 
+2.30.0
