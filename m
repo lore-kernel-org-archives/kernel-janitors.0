@@ -1,35 +1,38 @@
-From: Florian Fainelli <f.fainelli@gmail.com>
-Date: Mon, 08 Feb 2021 21:19:58 +0000
-Subject: Re: [PATCH] MAINTAINERS: rectify BROADCOM PMB (POWER MANAGEMENT BUS) DRIVER
-Message-Id: <f29d6d17-2524-ad13-6d0c-a4320a2c50a9@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 10 Feb 2021 11:06:28 +0000
+Subject: [PATCH net-next] net/mlx5: Fix a NULL vs IS_ERR() check
+Message-Id: <YCO+NCjissLTG1H6@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210208071619.3234-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20210208071619.3234-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, Florian Fainelli <f.fainelli@gmail.com>, bcm-kernel-feedback-list@broadcom.com, linux-pm@vger.kernel.org
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>, Pia Eichinger <pia.eichinger@st.oth-regensburg.de>, Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Saeed Mahameed <saeedm@nvidia.com>, Vlad Buslov <vladbu@nvidia.com>
+Cc: Leon Romanovsky <leon@kernel.org>, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Dmytro Linkin <dlinkin@nvidia.com>, Roi Dayan <roid@nvidia.com>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 2/7/21 11:16 PM, Lukas Bulwahn wrote:
-> Commit 8bcac4011ebe ("soc: bcm: add PM driver for Broadcom's PMB") includes
-> a new MAINTAINERS section BROADCOM PMB (POWER MANAGEMENT BUS) DRIVER with
-> 'drivers/soc/bcm/bcm-pmb.c', but the file was actually added at
-> 'drivers/soc/bcm/bcm63xx/bcm-pmb.c'.
-> 
-> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains:
-> 
->   warning: no file matches  F:    drivers/soc/bcm/bcm-pmb.c
-> 
-> Point the file entry to the right location.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> applies cleanly on next-20210205
-> 
-> Rafal, please ack.
-> Florian, please pick this minor fixup patch for soc next tree.
+The mlx5_chains_get_table() function doesn't return NULL, it returns
+error pointers so we need to fix this condition.
 
-Applied, thanks Lukas.
+Fixes: 34ca65352ddf ("net/mlx5: E-Switch, Indirect table infrastructure")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This applies to net-next but it might actually go through a different
+tree before going to net?  I don't know how this works...
+
+ drivers/net/ethernet/mellanox/mlx5/core/esw/indir_table.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/esw/indir_table.c b/drivers/net/ethernet/mellanox/mlx5/core/esw/indir_table.c
+index b7d00c4c7046..6f6772bf61a2 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/esw/indir_table.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/esw/indir_table.c
+@@ -216,7 +216,7 @@ static int mlx5_esw_indir_table_rule_get(struct mlx5_eswitch *esw,
+ 	flow_act.flags = FLOW_ACT_IGNORE_FLOW_LEVEL | FLOW_ACT_NO_APPEND;
+ 	dest.type = MLX5_FLOW_DESTINATION_TYPE_FLOW_TABLE;
+ 	dest.ft = mlx5_chains_get_table(chains, 0, 1, 0);
+-	if (!dest.ft) {
++	if (IS_ERR(dest.ft)) {
+ 		err = PTR_ERR(dest.ft);
+ 		goto err_table;
+ 	}
 -- 
-Florian
+2.30.0
