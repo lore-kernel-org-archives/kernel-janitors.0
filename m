@@ -1,36 +1,48 @@
-From: Peter Chen <peter.chen@kernel.org>
-Date: Sat, 06 Feb 2021 07:46:10 +0000
-Subject: Re: [PATCH] usb: cdnsp: Removes some useless trace events
-Message-Id: <20210206074610.GA2648@b29397-desktop>
+From: Colin King <colin.king@canonical.com>
+Date: Wed, 10 Feb 2021 15:26:44 +0000
+Subject: [PATCH][next] net: hns3: Fix uninitialized return from function
+Message-Id: <20210210152644.137770-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210204092035.32424-1-pawell@cadence.com>
- <YBvMENpo3OTp5vrj@kroah.com>
-In-Reply-To: <YBvMENpo3OTp5vrj@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Pawel Laszczak <pawell@cadence.com>, peter.chen@nxp.com, dan.carpenter@oracle.com, colin.king@canonical.com, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, kurahul@cadence.com
+To: Yisen Zhuang <yisen.zhuang@huawei.com>, Salil Mehta <salil.mehta@huawei.com>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Huazhong Tan <tanhuazhong@huawei.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 21-02-04 11:27:28, Greg KH wrote:
-> On Thu, Feb 04, 2021 at 10:20:35AM +0100, Pawel Laszczak wrote:
-> > Patch removes some useless trace events that can
-> > be replaced by ftrace.
-> > 
-> > Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > Signed-off-by: Pawel Laszczak <pawell@cadence.com>
-> > ---
-> >  drivers/usb/cdns3/cdnsp-ep0.c    |  5 -----
-> >  drivers/usb/cdns3/cdnsp-gadget.c |  2 --
-> >  drivers/usb/cdns3/cdnsp-ring.c   |  1 -
-> >  drivers/usb/cdns3/cdnsp-trace.h  | 10 ----------
-> >  4 files changed, 18 deletions(-)
-> 
-> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks Pawel.
+Currently function hns3_reset_notify_uninit_enet is returning
+the contents of the uninitialized variable ret.  Fix this by
+removing ret (since it is no longer used) and replace it with
+a return of the literal value 0.
 
+Addresses-Coverity: ("Uninitialized scalar variable")
+Fixes: 64749c9c38a9 ("net: hns3: remove redundant return value of hns3_uninit_all_ring()")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+index 9565b7999426..bf4302a5cf95 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+@@ -4640,7 +4640,6 @@ static int hns3_reset_notify_uninit_enet(struct hnae3_handle *handle)
+ {
+ 	struct net_device *netdev = handle->kinfo.netdev;
+ 	struct hns3_nic_priv *priv = netdev_priv(netdev);
+-	int ret;
+ 
+ 	if (!test_and_clear_bit(HNS3_NIC_STATE_INITED, &priv->state)) {
+ 		netdev_warn(netdev, "already uninitialized\n");
+@@ -4662,7 +4661,7 @@ static int hns3_reset_notify_uninit_enet(struct hnae3_handle *handle)
+ 
+ 	hns3_put_ring_config(priv);
+ 
+-	return ret;
++	return 0;
+ }
+ 
+ static int hns3_reset_notify(struct hnae3_handle *handle,
 -- 
-
-Thanks,
-Peter Chen
+2.30.0
