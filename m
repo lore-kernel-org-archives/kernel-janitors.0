@@ -1,17 +1,17 @@
-From: Stephen Boyd <sboyd@kernel.org>
-Date: Thu, 11 Feb 2021 03:28:18 +0000
+From: Michael Tretter <m.tretter@pengutronix.de>
+Date: Thu, 11 Feb 2021 07:31:56 +0000
 Subject: Re: [PATCH][next] soc: xilinx: vcu: remove deadcode on null divider check
-Message-Id: <161301409895.1254594.6980739457487251623@swboyd.mtv.corp.google.com>
+Message-Id: <20210211073156.GB30300@pengutronix.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20210210184938.146124-1-colin.king@canonical.com>
 In-Reply-To: <20210210184938.146124-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Michael Tretter <m.tretter@pengutronix.de>, Michael Turquette <mturquette@baylibre.com>, Michal Simek <michal.simek@xilinx.com>, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, kernel-janitors@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Quoting Colin King (2021-02-10 10:49:38)
+On Wed, 10 Feb 2021 18:49:38 +0000, Colin King wrote:
 > From: Colin Ian King <colin.king@canonical.com>
 > 
 > The pointer 'divider' has previously been null checked followed by
@@ -30,15 +30,29 @@ Quoting Colin King (2021-02-10 10:49:38)
 > +++ b/drivers/clk/xilinx/xlnx_vcu.c
 > @@ -512,9 +512,6 @@ static void xvcu_clk_hw_unregister_leaf(struct clk_hw *hw)
 >  
->         mux = clk_hw_get_parent(divider);
->         clk_hw_unregister_mux(mux);
-> -       if (!divider)
-> -               return;
+>  	mux = clk_hw_get_parent(divider);
+>  	clk_hw_unregister_mux(mux);
+> -	if (!divider)
+> -		return;
 > -
+>  	clk_hw_unregister_divider(divider);
 
-This code is pretty confusing. Waiting for m.tretter@pengutronix.de to
-reply
+Thanks for pointing this out. There is actually a different bug there.
 
->         clk_hw_unregister_divider(divider);
+There should have been a check for !mux before unregistering the mux:
+
+	mux = clk_hw_get_parent(divider);
+	clk_hw_unregister_divider(divider);
+	if (!mux)
+		return;
+
+	clk_hw_unregister_mux(mux);
+
+Michael
+
 >  }
->
+>  
+> -- 
+> 2.30.0
+> 
+> 
