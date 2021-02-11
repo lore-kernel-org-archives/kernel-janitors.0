@@ -1,53 +1,46 @@
-From: Dave Kleikamp <dave.kleikamp@oracle.com>
-Date: Thu, 11 Feb 2021 17:49:59 +0000
-Subject: Re: [PATCH][next][V2] fs/jfs: fix potential integer overflow on shift of a int
-Message-Id: <5225934e-c3ea-9481-ba66-5a70dca8ba53@oracle.com>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 11 Feb 2021 09:57:00 +0000
+Subject: [PATCH][next][V2] soc: xilinx: vcu: fix error check on clk_hw_get_parent call
+Message-Id: <20210211095700.158960-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210211130108.171493-1-colin.king@canonical.com>
-In-Reply-To: <20210211130108.171493-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, jfs-discussion@lists.sourceforge.net
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Michal Simek <michal.simek@xilinx.com>, Michael Tretter <m.tretter@pengutronix.de>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 2/11/21 7:01 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The left shift of int 32 bit integer constant 1 is evaluated using 32 bit
-> arithmetic and then assigned to a signed 64 bit integer. In the case where
-> l2nb is 32 or more this can lead to an overflow.  Avoid this by shifting
-> the value 1LL instead.
-> 
-> Addresses-Coverity: ("Uninitentional integer overflow")
-> Fixes: b40c2e665cd5 ("fs/jfs: TRIM support for JFS Filesystem")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Looks good. I'll include it in the next jfs drop.
+Currently the check for failur on the call to clk_hw_get_parent
+is checking for a null return in the divider pointer instead of
+checking the mux pointer. Fix this.
 
-Thanks,
-Shaggy
+Thanks to Michael Tretter for suggesting the correct fix.
 
-> ---
-> 
-> V2: shift 1LL rather than using BIT_ULL macro as suggested by
->      Dave Kleikamp.
-> 
-> ---
->   fs/jfs/jfs_dmap.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/jfs/jfs_dmap.c b/fs/jfs/jfs_dmap.c
-> index 94b7c1cb5ceb..7aee15608619 100644
-> --- a/fs/jfs/jfs_dmap.c
-> +++ b/fs/jfs/jfs_dmap.c
-> @@ -1656,7 +1656,7 @@ s64 dbDiscardAG(struct inode *ip, int agno, s64 minlen)
->   		} else if (rc = -ENOSPC) {
->   			/* search for next smaller log2 block */
->   			l2nb = BLKSTOL2(nblocks) - 1;
-> -			nblocks = 1 << l2nb;
-> +			nblocks = 1LL << l2nb;
->   		} else {
->   			/* Trim any already allocated blocks */
->   			jfs_error(bmp->db_ipbmap->i_sb, "-EIO\n");
-> 
+Addresses-Coverity: ("Logically Dead Code")
+Fixes: 9c789deea206 ("soc: xilinx: vcu: implement clock provider for output clocks")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+
+V2: Check on mux pointer rather than removing deadcode that wasn't
+    actually really dead code.
+
+---
+ drivers/clk/xilinx/xlnx_vcu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/xilinx/xlnx_vcu.c b/drivers/clk/xilinx/xlnx_vcu.c
+index d66b1315114e..256b8c4b9ee4 100644
+--- a/drivers/clk/xilinx/xlnx_vcu.c
++++ b/drivers/clk/xilinx/xlnx_vcu.c
+@@ -512,7 +512,7 @@ static void xvcu_clk_hw_unregister_leaf(struct clk_hw *hw)
+ 
+ 	mux = clk_hw_get_parent(divider);
+ 	clk_hw_unregister_mux(mux);
+-	if (!divider)
++	if (!mux)
+ 		return;
+ 
+ 	clk_hw_unregister_divider(divider);
+-- 
+2.30.0
