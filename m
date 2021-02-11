@@ -1,60 +1,45 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Tue, 02 Feb 2021 04:32:44 +0000
-Subject: Re: [PATCH] ath11k: fix a locking bug in ath11k_mac_op_start()
-Message-Id: <875z3b84yb.fsf@codeaurora.org>
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 11 Feb 2021 13:01:08 +0000
+Subject: [PATCH][next][V2] fs/jfs: fix potential integer overflow on shift of a int
+Message-Id: <20210211130108.171493-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <YBfy+zc3XkiyIe6t@mwanda>
- <896a68dd-02ec-4fe3-3fbf-ec1bd2decefe@eero.com>
-In-Reply-To: <896a68dd-02ec-4fe3-3fbf-ec1bd2decefe@eero.com> (Peter Oh's
- message of "Mon, 1 Feb 2021 13:47:27 -0800")
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Peter Oh <peter.oh@eero.com>
-Cc: linux-wireless@vger.kernel.org, Carl Huang <cjhuang@codeaurora.org>, kernel-janitors@vger.kernel.org, ath11k@lists.infradead.org, Dan Carpenter <dan.carpenter@oracle.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dave Kleikamp <shaggy@kernel.org>, jfs-discussion@lists.sourceforge.net
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Peter Oh <peter.oh@eero.com> writes:
+From: Colin Ian King <colin.king@canonical.com>
 
-> On 2/1/21 4:24 AM, Dan Carpenter wrote:
->> This error path leads to a Smatch warning:
->>
->>      drivers/net/wireless/ath/ath11k/mac.c:4269 ath11k_mac_op_start()
->>      error: double unlocked '&ar->conf_mutex' (orig line 4251)
->>
->> We're not holding the lock when we do the "goto err;" so it leads to a
->> double unlock.  We should hold the lock because the error path sets
->> "ar->state" so the right fix is to take the lock before doing the goto.
->>
->> Fixes: c83c500b55b6 ("ath11k: enable idle power save mode")
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->> ---
->>   drivers/net/wireless/ath/ath11k/mac.c | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/net/wireless/ath/ath11k/mac.c b/drivers/net/wireles=
-s/ath/ath11k/mac.c
->> index c1608f64ea95..12e981e9e3d7 100644
->> --- a/drivers/net/wireless/ath/ath11k/mac.c
->> +++ b/drivers/net/wireless/ath/ath11k/mac.c
->> @@ -4259,6 +4259,7 @@ static int ath11k_mac_op_start(struct ieee80211_hw=
- *hw)
->>   						1, pdev->pdev_id);
->>   		if (ret) {
->>   			ath11k_err(ab, "failed to enable idle ps: %d\n", ret);
->> +			mutex_lock(&ar->conf_mutex);
->>   			goto err;
->>   		}
->>   	}
->
-> It seems moving idle_ps condition in between ath11k_wmi_pdev_lro_cfg()
-> and mutex_unlock()
-> =C2=A0is a better way in this case.
+The left shift of int 32 bit integer constant 1 is evaluated using 32 bit
+arithmetic and then assigned to a signed 64 bit integer. In the case where
+l2nb is 32 or more this can lead to an overflow.  Avoid this by shifting
+the value 1LL instead.
 
-I agree. In Dan's approach I'm worried about the race when we unlock and
-lock again, the state can change in that case.
+Addresses-Coverity: ("Uninitentional integer overflow")
+Fixes: b40c2e665cd5 ("fs/jfs: TRIM support for JFS Filesystem")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
 
---=20
-https://patchwork.kernel.org/project/linux-wireless/list/
+V2: shift 1LL rather than using BIT_ULL macro as suggested by
+    Dave Kleikamp.
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatc=
-hes
+---
+ fs/jfs/jfs_dmap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/jfs/jfs_dmap.c b/fs/jfs/jfs_dmap.c
+index 94b7c1cb5ceb..7aee15608619 100644
+--- a/fs/jfs/jfs_dmap.c
++++ b/fs/jfs/jfs_dmap.c
+@@ -1656,7 +1656,7 @@ s64 dbDiscardAG(struct inode *ip, int agno, s64 minlen)
+ 		} else if (rc = -ENOSPC) {
+ 			/* search for next smaller log2 block */
+ 			l2nb = BLKSTOL2(nblocks) - 1;
+-			nblocks = 1 << l2nb;
++			nblocks = 1LL << l2nb;
+ 		} else {
+ 			/* Trim any already allocated blocks */
+ 			jfs_error(bmp->db_ipbmap->i_sb, "-EIO\n");
+-- 
+2.30.0
