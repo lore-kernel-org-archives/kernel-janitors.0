@@ -1,32 +1,23 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Mon, 08 Feb 2021 11:16:02 +0000
-Subject: Re: [PATCH] libertas: remove redundant initialization of variable ret
-Message-Id: <20210208111602.D6703C433ED@smtp.codeaurora.org>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Sat, 13 Feb 2021 10:19:03 +0000
+Subject: [PATCH 0/4] drop unneeded snd_soc_dai_set_drvdata
+Message-Id: <20210213101907.1318496-1-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210128162202.642848-1-colin.king@canonical.com>
-In-Reply-To: <20210128162202.642848-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, NXP Linux Team <linux-imx@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, linux-arm-kernel@lists.infradead.org
 
-Colin King <colin.king@canonical.com> wrote:
+snd_soc_dai_set_drvdata is not needed when the set data comes from
+snd_soc_dai_get_drvdata or dev_get_drvdata.  
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable ret is being initialized with a value that is never read
-> and it is being updated later with a new value.  The initialization is
-> redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
 
-Patch applied to wireless-drivers-next.git, thanks.
-
-1d5248882d64 libertas: remove redundant initialization of variable ret
-
--- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20210128162202.642848-1-colin.king@canonical.com/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+ sound/soc/fsl/fsl_micfil.c  |    2 --
+ sound/soc/fsl/fsl_sai.c     |    2 --
+ sound/soc/fsl/fsl_xcvr.c    |    1 -
+ sound/soc/mxs/mxs-saif.c    |   10 ----------
+ sound/soc/pxa/mmp-sspa.c    |    1 -
+ sound/soc/sunxi/sun4i-i2s.c |    2 --
+ 6 files changed, 18 deletions(-)
