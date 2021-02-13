@@ -1,28 +1,51 @@
-From: Joe Perches <joe@perches.com>
-Date: Wed, 10 Feb 2021 08:18:27 +0000
-Subject: Re: [PATCH] MAINTAINERS: replace non-matching patterns for loongson{2,3}
-Message-Id: <aeaa56b9a50444c571a5ab34914d9b4590a9d629.camel@perches.com>
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Sat, 13 Feb 2021 10:19:04 +0000
+Subject: [PATCH 1/4] ASoC: mmp-sspa: drop unneeded snd_soc_dai_set_drvdata
+Message-Id: <20210213101907.1318496-2-Julia.Lawall@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210210075947.15604-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20210210075947.15604-1-lukas.bulwahn@gmail.com>
+References: <20210213101907.1318496-1-Julia.Lawall@inria.fr>
+In-Reply-To: <20210213101907.1318496-1-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Keguang Zhang <keguang.zhang@gmail.com>, Huacai Chen <chenhc@lemote.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, linux-mips@linux-mips.org
-Cc: Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>, Pia Eichinger <pia.eichinger@st.oth-regensburg.de>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Daniel Mack <daniel@zonque.org>
+Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, Mark Brown <broonie@kernel.org>, Robert Jarzmik <robert.jarzmik@free.fr>, linux-arm-kernel@lists.infradead.org
 
-On Wed, 2021-02-10 at 08:59 +0100, Lukas Bulwahn wrote:
-> Commit ffe1f9356fbe ("MAINTAINERS: Add Loongson-2/Loongson-3 maintainers")
-> adds quite generic file entries for drivers/*/*loongson{2,3}* and
-> drivers/*/*/*loongson{2,3}* to be informed on changes to all loongson{2,3}
-> files in drivers.
-> 
-> However, only the pattern 'drivers/*/*loongson2*' matches to one file in
-> the repository, i.e., drivers/cpufreq/loongson2_cpufreq.c; all other
-> patterns have no file matches.
+snd_soc_dai_set_drvdata is not needed when the set data comes from
+snd_soc_dai_get_drvdata or dev_get_drvdata.  The problem was fixed
+usingthe following semantic patch: (http://coccinelle.lip6.fr/)
 
-Thank you.  I hope one day it gets applied...
+// <smpl>
+@@
+expression x,y,e;
+@@
+	x = dev_get_drvdata(y->dev)
+	... when != x = e
+-	snd_soc_dai_set_drvdata(y,x);
 
-https://lore.kernel.org/linux-mips/20190325212717.27044-1-joe@perches.com/
-https://lore.kernel.org/linux-mips/20180928215928.30611-1-joe@perches.com/
-https://lore.kernel.org/linux-mips/20180928220034.30697-1-joe@perches.com/
+@@
+expression x,y,e;
+@@
+	x = snd_soc_dai_get_drvdata(y)
+	... when != x = e
+-	snd_soc_dai_set_drvdata(y,x);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+
+---
+ sound/soc/pxa/mmp-sspa.c |    1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/sound/soc/pxa/mmp-sspa.c b/sound/soc/pxa/mmp-sspa.c
+index 4803972ee655..7e39210a0b38 100644
+--- a/sound/soc/pxa/mmp-sspa.c
++++ b/sound/soc/pxa/mmp-sspa.c
+@@ -330,7 +330,6 @@ static int mmp_sspa_probe(struct snd_soc_dai *dai)
+ 				&sspa->playback_dma_data,
+ 				&sspa->capture_dma_data);
+ 
+-	snd_soc_dai_set_drvdata(dai, sspa);
+ 	return 0;
+ }
+ 
