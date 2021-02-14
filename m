@@ -1,27 +1,42 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Fri, 05 Feb 2021 03:38:24 +0000
-Subject: Re: [PATCH] crypto: octeontx2 - fix signedness bug in cptvf_register_interrupts()
-Message-Id: <20210205033824.GA14594@gondor.apana.org.au>
+From: Nigel Christian <nigel.l.christian@gmail.com>
+Date: Sun, 14 Feb 2021 03:02:37 +0000
+Subject: [PATCH] mt76: mt7921: remove unnecessary variable
+Message-Id: <YCiSzfUQi2YtC+l4@fedora>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <YBD5Z11GeYlJGuTh@mwanda>
-In-Reply-To: <YBD5Z11GeYlJGuTh@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Boris Brezillon <bbrezillon@kernel.org>, Arnaud Ebalard <arno@natisbad.org>, Srujana Challa <schalla@marvell.com>, "David S. Miller" <davem@davemloft.net>, Suheil Chandran <schandran@marvell.com>, Lukasz Bartosik <lbartosik@marvell.com>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Felix Fietkau <nbd@nbd.name>, Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>, Ryder Lee <ryder.lee@mediatek.com>, Kalle Valo <kvalo@codeaurora.org>, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org
 
-On Wed, Jan 27, 2021 at 08:25:59AM +0300, Dan Carpenter wrote:
-> The "num_vec" has to be signed for the error handling to work.
-> 
-> Fixes: 19d8e8c7be15 ("crypto: octeontx2 - add virtual function driver support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/crypto/marvell/octeontx2/otx2_cptvf_main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+In mt7921_pm_set() the variable "ret" is initialized to zero
+and then returned. Remove it and return zero.
 
-Patch applied.  Thanks.
+Signed-off-by: Nigel Christian <nigel.l.christian@gmail.com>
+---
+ drivers/net/wireless/mediatek/mt76/mt7921/debugfs.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7921/debugfs.c b/drivers/net/wireless/mediatek/mt76/mt7921/debugfs.c
+index 0dc8e25e18e4..4bc3dd99bd14 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7921/debugfs.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7921/debugfs.c
+@@ -164,7 +164,6 @@ mt7921_pm_set(void *data, u64 val)
+ {
+ 	struct mt7921_dev *dev = data;
+ 	struct mt76_phy *mphy = dev->phy.mt76;
+-	int ret = 0;
+ 
+ 	mt7921_mutex_acquire(dev);
+ 
+@@ -175,7 +174,7 @@ mt7921_pm_set(void *data, u64 val)
+ 					    mt7921_pm_interface_iter, mphy->priv);
+ 	mt7921_mutex_release(dev);
+ 
+-	return ret;
++	return 0;
+ }
+ 
+ static int
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.29.2
