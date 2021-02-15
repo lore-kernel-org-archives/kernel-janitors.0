@@ -1,35 +1,38 @@
-From: "Ms. Reem" <stefy@macrometrica.com.br>
-Date: Mon, 08 Feb 2021 01:33:16 +0000
-Subject: Re:reply
-Message-Id: <20210208013316.C183D607234A@smtp-18.smtp.mandic.prv>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 15 Feb 2021 16:11:39 +0000
+Subject: [PATCH][next] i40e: Fix uninitialized variable mfs_max
+Message-Id: <20210215161139.83432-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Jesse Brandeburg <jesse.brandeburg@intel.com>, Tony Nguyen <anthony.l.nguyen@intel.com>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>, Aleksandr Loktionov <aleksandr.loktionov@intel.com>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello,
+From: Colin Ian King <colin.king@canonical.com>
 
-My name is Ms. Reem Ebrahim Al-Hashimi, I am the "Minister of state
-and Petroleum" also "Minister of State for International Cooperation"
-in UAE. I write to you on behalf of my other "three (3) colleagues"
-who has approved me to solicit for your "partnership in claiming of
-{us$47=Million}" from a Financial Home in Cambodia on their behalf and
-for our "Mutual Benefits".
+The variable mfs_max is not initialized and is being compared to find
+the maximum value. Fix this by initializing it to 0.
 
-The Fund {us$47=Million} is our share from the (over-invoiced) Oil/Gas
-deal with Cambodian/Vietnam Government within 2013/2014, however, we
-don't want our government to know about the fund. If this proposal
-interests you, let me know, by sending me an email and I will send to
-you detailed information on how this business would be successfully
-transacted. Be informed that nobody knows about the secret of this
-fund except us, and we know how to carry out the entire transaction.
-So I am compelled to ask, that you will stand on our behalf and
-receive this fund into any account that is solely controlled by you.
+Addresses-Coverity: ("Uninitialized scalar variable")
+Fixes: 90bc8e003be2 ("i40e: Add hardware configuration for software based DCB")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/intel/i40e/i40e_dcb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-We will compensate you with 15% of the total amount involved as
-gratification for being our partner in this transaction. Reply to:
-ms.reem@yandex.com
-
-Regards,
-Ms. Reem.
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_dcb.c b/drivers/net/ethernet/intel/i40e/i40e_dcb.c
+index 7b73a279d46e..243b0d2b7b72 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_dcb.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_dcb.c
+@@ -1636,7 +1636,7 @@ void i40e_dcb_hw_calculate_pool_sizes(struct i40e_hw *hw,
+ 	u32 total_pool_size = 0;
+ 	int shared_pool_size; /* Need signed variable */
+ 	u32 port_pb_size;
+-	u32 mfs_max;
++	u32 mfs_max = 0;
+ 	u32 pcirtt;
+ 	u8 i;
+ 
+-- 
+2.30.0
