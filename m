@@ -1,8 +1,10 @@
 From: Colin King <colin.king@canonical.com>
-Date: Mon, 15 Feb 2021 16:33:13 +0000
-Subject: [PATCH][next] ASoC: codecs: lpass-rx-macro: Fix uninitialized variable ec_tx
-Message-Id: <20210215163313.84026-1-colin.king@canonical.com>
+Date: Mon, 15 Feb 2021 20:05:01 +0000
+Subject: [PATCH][next] ASoC: codecs: lpass-rx-macro: remove redundant initialization of variable hph_pwr_mode
+Message-Id: <20210215200501.90697-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20210215163313.84026-1-colin.king@canonical.com>
+In-Reply-To: <20210215163313.84026-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -11,30 +13,27 @@ Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-There is potential read of the uninitialized variable ec_tx if the call
-to snd_soc_component_read fails or returns an unrecognized w->name. To
-avoid this corner case, initialize ec_tx to -1 so that it is caught
-later when ec_tx is bounds checked.
+The variable hph_pwr_mode is being initialized with a value that is
+never read and it is being updated later with a new value.  The
+initialization is redundant and can be removed.
 
-Addresses-Coverity: ("Uninitialized scalar variable")
-Fixes: 4f692926f562 ("ASoC: codecs: lpass-rx-macro: add dapm widgets and route")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
  sound/soc/codecs/lpass-rx-macro.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/sound/soc/codecs/lpass-rx-macro.c b/sound/soc/codecs/lpass-rx-macro.c
-index c9c21d22c2c4..8c04b3b2c907 100644
+index 8c04b3b2c907..76909c50d7b9 100644
 --- a/sound/soc/codecs/lpass-rx-macro.c
 +++ b/sound/soc/codecs/lpass-rx-macro.c
-@@ -2895,7 +2895,7 @@ static int rx_macro_enable_echo(struct snd_soc_dapm_widget *w,
+@@ -2038,7 +2038,7 @@ static int rx_macro_load_compander_coeff(struct snd_soc_component *component,
  {
- 	struct snd_soc_component *component = snd_soc_dapm_to_component(w->dapm);
- 	u16 val, ec_hq_reg;
--	int ec_tx;
-+	int ec_tx = -1;
+ 	u16 comp_coeff_lsb_reg, comp_coeff_msb_reg;
+ 	int i;
+-	int hph_pwr_mode = HPH_LOHIFI;
++	int hph_pwr_mode;
  
- 	val = snd_soc_component_read(component,
- 			CDC_RX_INP_MUX_RX_MIX_CFG4);
+ 	if (!rx->comp_enabled[comp])
+ 		return 0;
 -- 
 2.30.0
