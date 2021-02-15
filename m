@@ -1,57 +1,50 @@
-From: Michael Tretter <m.tretter@pengutronix.de>
-Date: Thu, 11 Feb 2021 11:30:21 +0000
-Subject: Re: [PATCH][next][V2] soc: xilinx: vcu: fix error check on clk_hw_get_parent call
-Message-Id: <20210211113021.GE30300@pengutronix.de>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 15 Feb 2021 12:05:32 +0000
+Subject: [PATCH] b43: N-PHY: Fix the update of coef for the PHY revision >= 3case
+Message-Id: <20210215120532.76889-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210211095700.158960-1-colin.king@canonical.com>
-In-Reply-To: <20210211095700.158960-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, kernel-janitors@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Kalle Valo <kvalo@codeaurora.org>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>, "John W . Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 11 Feb 2021 09:57:00 +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently the check for failur on the call to clk_hw_get_parent
-> is checking for a null return in the divider pointer instead of
-> checking the mux pointer. Fix this.
-> 
-> Thanks to Michael Tretter for suggesting the correct fix.
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks!
+The documentation for the PHY update [1] states:
 
-> 
-> Addresses-Coverity: ("Logically Dead Code")
-> Fixes: 9c789deea206 ("soc: xilinx: vcu: implement clock provider for output clocks")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
-> 
-> V2: Check on mux pointer rather than removing deadcode that wasn't
->     actually really dead code.
-> 
-> ---
->  drivers/clk/xilinx/xlnx_vcu.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/xilinx/xlnx_vcu.c b/drivers/clk/xilinx/xlnx_vcu.c
-> index d66b1315114e..256b8c4b9ee4 100644
-> --- a/drivers/clk/xilinx/xlnx_vcu.c
-> +++ b/drivers/clk/xilinx/xlnx_vcu.c
-> @@ -512,7 +512,7 @@ static void xvcu_clk_hw_unregister_leaf(struct clk_hw *hw)
->  
->  	mux = clk_hw_get_parent(divider);
->  	clk_hw_unregister_mux(mux);
+Loop 4 times with index i
 
-The mux should be unregistered after the check
+    If PHY Revision >= 3
+        Copy table[i] to coef[i]
+    Otherwise
+        Set coef[i] to 0
 
-> -	if (!divider)
-> +	if (!mux)
->  		return;
->  
->  	clk_hw_unregister_divider(divider);
+the copy of the table to coef is currently implemented the wrong way
+around, table is being updated from uninitialized values in coeff.
+Fix this by swapping the assignment around.
 
-and the divider before the check.
+[1] https://bcm-v4.sipsolutions.net/802.11/PHY/N/RestoreCal/
 
-Michael
+Fixes: 2f258b74d13c ("b43: N-PHY: implement restoring general configuration")
+Addresses-Coverity: ("Uninitialized scalar variable")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/broadcom/b43/phy_n.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/broadcom/b43/phy_n.c b/drivers/net/wireless/broadcom/b43/phy_n.c
+index b669dff24b6e..665b737fbb0d 100644
+--- a/drivers/net/wireless/broadcom/b43/phy_n.c
++++ b/drivers/net/wireless/broadcom/b43/phy_n.c
+@@ -5311,7 +5311,7 @@ static void b43_nphy_restore_cal(struct b43_wldev *dev)
+ 
+ 	for (i = 0; i < 4; i++) {
+ 		if (dev->phy.rev >= 3)
+-			table[i] = coef[i];
++			coef[i] = table[i];
+ 		else
+ 			coef[i] = 0;
+ 	}
+-- 
+2.30.0
