@@ -1,28 +1,40 @@
-From: Jessica Yu <jeyu@kernel.org>
-Date: Wed, 10 Feb 2021 16:17:56 +0000
-Subject: Re: [PATCH] module: potential uninitialized return in module_kallsyms_on_each_symbol()
-Message-Id: <YCQHNI3bowhhnRD+@gunter>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 15 Feb 2021 16:33:13 +0000
+Subject: [PATCH][next] ASoC: codecs: lpass-rx-macro: Fix uninitialized variable ec_tx
+Message-Id: <20210215163313.84026-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <YCO8AwE57IzaMamG@mwanda>
-In-Reply-To: <YCO8AwE57IzaMamG@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Christoph Hellwig <hch@lst.de>, Petr Mladek <pmladek@suse.com>, Miroslav Benes <mbenes@suse.cz>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-+++ Dan Carpenter [10/02/21 13:57 +0300]:
->Smatch complains that:
->
->	kernel/module.c:4472 module_kallsyms_on_each_symbol()
->        error: uninitialized symbol 'ret'.
->
->This warning looks like it could be correct if the &modules list is
->empty.
->
->Fixes: 013c1667cf78 ("kallsyms: refactor {,module_}kallsyms_on_each_symbol")
->Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks!
+There is potential read of the uninitialized variable ec_tx if the call
+to snd_soc_component_read fails or returns an unrecognized w->name. To
+avoid this corner case, initialize ec_tx to -1 so that it is caught
+later when ec_tx is bounds checked.
 
-Jessica
+Addresses-Coverity: ("Uninitialized scalar variable")
+Fixes: 4f692926f562 ("ASoC: codecs: lpass-rx-macro: add dapm widgets and route")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/soc/codecs/lpass-rx-macro.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/codecs/lpass-rx-macro.c b/sound/soc/codecs/lpass-rx-macro.c
+index c9c21d22c2c4..8c04b3b2c907 100644
+--- a/sound/soc/codecs/lpass-rx-macro.c
++++ b/sound/soc/codecs/lpass-rx-macro.c
+@@ -2895,7 +2895,7 @@ static int rx_macro_enable_echo(struct snd_soc_dapm_widget *w,
+ {
+ 	struct snd_soc_component *component = snd_soc_dapm_to_component(w->dapm);
+ 	u16 val, ec_hq_reg;
+-	int ec_tx;
++	int ec_tx = -1;
+ 
+ 	val = snd_soc_component_read(component,
+ 			CDC_RX_INP_MUX_RX_MIX_CFG4);
+-- 
+2.30.0
