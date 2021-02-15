@@ -1,40 +1,39 @@
 From: Colin King <colin.king@canonical.com>
-Date: Fri, 05 Feb 2021 17:53:52 +0000
-Subject: [PATCH] mac80211: fix potential overflow when multiplying to u32 integers
-Message-Id: <20210205175352.208841-1-colin.king@canonical.com>
+Date: Mon, 15 Feb 2021 19:53:13 +0000
+Subject: [PATCH][next] cxl/mem: remove redundant initialization of variable rc
+Message-Id: <20210215195313.90231-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Johannes Berg <johannes@sipsolutions.net>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, "John W . Linville" <linville@tuxdriver.com>, Luis Carlos Cobo <luisca@cozybit.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+To: Alison Schofield <alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Ben Widawsky <ben.widawsky@intel.com>, Dan Williams <dan.j.williams@intel.com>, linux-cxl@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The multiplication of the u32 variables tx_time and estimated_retx is
-performed using a 32 bit multiplication and the result is stored in
-a u64 result. This has a potential u32 overflow issue, so avoid this
-by casting tx_time to a u64 to force a 64 bit multiply.
+The variable rc is being initialized with a value that is never read
+and it is being updated later with a new value.  The initialization is
+redundant and can be removed.
 
-Addresses-Coverity: ("Unintentional integer overflow")
-Fixes: 050ac52cbe1f ("mac80211: code for on-demand Hybrid Wireless Mesh Protocol")
+Addresses-Coverity: ("Unused value")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- net/mac80211/mesh_hwmp.c | 2 +-
+ drivers/cxl/mem.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/mac80211/mesh_hwmp.c b/net/mac80211/mesh_hwmp.c
-index 313eee12410e..3db514c4c63a 100644
---- a/net/mac80211/mesh_hwmp.c
-+++ b/net/mac80211/mesh_hwmp.c
-@@ -356,7 +356,7 @@ u32 airtime_link_metric_get(struct ieee80211_local *local,
- 	 */
- 	tx_time = (device_constant + 10 * test_frame_len / rate);
- 	estimated_retx = ((1 << (2 * ARITH_SHIFT)) / (s_unit - err));
--	result = (tx_time * estimated_retx) >> (2 * ARITH_SHIFT);
-+	result = ((u64)tx_time * estimated_retx) >> (2 * ARITH_SHIFT);
- 	return (u32)result;
- }
+diff --git a/drivers/cxl/mem.c b/drivers/cxl/mem.c
+index 3bca8451348a..81e557a54fa4 100644
+--- a/drivers/cxl/mem.c
++++ b/drivers/cxl/mem.c
+@@ -383,8 +383,8 @@ static int __cxl_mem_mbox_send_cmd(struct cxl_mem *cxlm,
+ static int cxl_mem_mbox_get(struct cxl_mem *cxlm)
+ {
+ 	struct device *dev = &cxlm->pdev->dev;
+-	int rc = -EBUSY;
+ 	u64 md_status;
++	int rc;
+ 
+ 	mutex_lock_io(&cxlm->mbox_mutex);
  
 -- 
-2.29.2
+2.30.0
