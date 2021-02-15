@@ -1,58 +1,39 @@
-From: Sun Ke <sunke32@huawei.com>
-Date: Mon, 01 Feb 2021 06:43:00 +0000
-Subject: Re: [PATCH] nbd: Fix NULL pointer in flush_workqueue
-Message-Id: <28c83b00-7d0b-ee0d-640b-017c9f8410eb@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Date: Mon, 15 Feb 2021 16:39:21 +0000
+Subject: [PATCH][next] HID: playstation: fix array size comparison (off-by-one)
+Message-Id: <20210215163921.84283-1-colin.king@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210128074153.1633374-1-sunke32@huawei.com>
- <1739e522-5980-f86e-cb90-19b61539a5cf@web.de>
-In-Reply-To: <1739e522-5980-f86e-cb90-19b61539a5cf@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Markus Elfring <Markus.Elfring@web.de>, linux-block@vger.kernel.org, nbd@other.debian.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, Josef Bacik <josef@toxicpanda.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Roderick Colenbrander <roderick.colenbrander@sony.com>, Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, =?UTF-8?q?Barnab=C3=A1s=20P=C5=91cze?= <pobrn@protonmail.com>, linux-input@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-hi，Markus
+From: Colin Ian King <colin.king@canonical.com>
 
-在 2021/1/29 3:42, Markus Elfring 写道:
-> …
->> +++ b/drivers/block/nbd.c
->> @@ -2011,12 +2011,20 @@ static int nbd_genl_disconnect(struct sk_buff *skb, struct genl_info *info)
->>   		       index);
->>   		return -EINVAL;
->>   	}
->> +	mutex_lock(&nbd->config_lock);
->>   	if (!refcount_inc_not_zero(&nbd->refs)) {
->>   		mutex_unlock(&nbd_index_mutex);
->> +		mutex_unlock(&nbd->config_lock);
-> Can an other function call order become relevant for the unlocking of these mutexes?
-Do you think the nbd->config_lock  mutex here is useless?
->
->
->>   		printk(KERN_ERR "nbd: device at index %d is going down\n",
->>   		       index);
-> May such an error message be moved into the lock scope?
-Sure.
->
->
->>   		return -EINVAL;
->>   	}
->> +	if (!nbd->recv_workq) {
->> +		mutex_unlock(&nbd->config_lock);
->> +		mutex_unlock(&nbd_index_mutex);
->> +		return -EINVAL;
->> +	}
-> How do you think about to connect the code from this if branch
-> with a jump target like “unlock” so that such statements would be shareable
-> for the desired exception handling?
-OK, I will improve it in V2 patch.
->
->
->> +	mutex_unlock(&nbd->config_lock);
->>   	mutex_unlock(&nbd_index_mutex);
->>   	if (!refcount_inc_not_zero(&nbd->config_refs)) {
->>   		nbd_put(nbd);
->
-> Regards,
-> Markus
-> .
+The comparison of value with the array size ps_gamepad_hat_mapping
+appears to be off-by-one. Fix this by using >= rather than > for the
+size comparison.
+
+Addresses-Coverity: ("Out-of-bounds read")
+Fixes: bc2e15a9a022 ("HID: playstation: initial DualSense USB support.")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/hid/hid-playstation.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/hid/hid-playstation.c b/drivers/hid/hid-playstation.c
+index 408b651174cf..568a3a067c88 100644
+--- a/drivers/hid/hid-playstation.c
++++ b/drivers/hid/hid-playstation.c
+@@ -1064,7 +1064,7 @@ static int dualsense_parse_report(struct ps_device *ps_dev, struct hid_report *r
+ 	input_report_abs(ds->gamepad, ABS_RZ, ds_report->rz);
+ 
+ 	value = ds_report->buttons[0] & DS_BUTTONS0_HAT_SWITCH;
+-	if (value > ARRAY_SIZE(ps_gamepad_hat_mapping))
++	if (value >= ARRAY_SIZE(ps_gamepad_hat_mapping))
+ 		value = 8; /* center */
+ 	input_report_abs(ds->gamepad, ABS_HAT0X, ps_gamepad_hat_mapping[value].x);
+ 	input_report_abs(ds->gamepad, ABS_HAT0Y, ps_gamepad_hat_mapping[value].y);
+-- 
+2.30.0
