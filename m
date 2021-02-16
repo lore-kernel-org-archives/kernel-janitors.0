@@ -2,131 +2,111 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 406DFC433E0
-	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Feb 2021 19:53:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFB5CC433E9
+	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Feb 2021 20:53:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F170364D7F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Feb 2021 19:53:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A484964EAD
+	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Feb 2021 20:53:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230009AbhBPTxu (ORCPT
+        id S230302AbhBPUxj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 16 Feb 2021 14:53:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36480 "EHLO
+        Tue, 16 Feb 2021 15:53:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229862AbhBPTxr (ORCPT
+        with ESMTP id S230267AbhBPUxi (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 16 Feb 2021 14:53:47 -0500
-Received: from mail-ot1-x334.google.com (mail-ot1-x334.google.com [IPv6:2607:f8b0:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9279C06174A
-        for <kernel-janitors@vger.kernel.org>; Tue, 16 Feb 2021 11:53:06 -0800 (PST)
-Received: by mail-ot1-x334.google.com with SMTP id r21so9996636otk.13
-        for <kernel-janitors@vger.kernel.org>; Tue, 16 Feb 2021 11:53:06 -0800 (PST)
+        Tue, 16 Feb 2021 15:53:38 -0500
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F794C061574
+        for <kernel-janitors@vger.kernel.org>; Tue, 16 Feb 2021 12:52:57 -0800 (PST)
+Received: by mail-ej1-x62c.google.com with SMTP id g5so15288443ejt.2
+        for <kernel-janitors@vger.kernel.org>; Tue, 16 Feb 2021 12:52:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=UZp8ADXCpc0dXj7RsCg8M6HjeMcefwEksP0hVPDSKnM=;
-        b=P2nrAaUh2Lly6HJ+TGoS40h96slMiKUgaoqSze1wOKkB4PueibsW0kXk7GLfNfTS9X
-         rjdbtuAz0vyLTYTjKwTSGdxi31mskLLQpwa7cGgxaJL2ut2xf7o6BzQ4qptynzzPNV8E
-         QbcOi19fo3xQ0dwJuffVq8dHvPyjiVeulCuzfIzX4gMd6qJoOCd/JHlPKlIwIRAaAVYJ
-         Vpfg2PBIi346Fu87eeLpgjoQsEcExfLHKkmMlhmisAj6khaKCyGqA+zeU20dsp4vGh0a
-         O8sGjEX+6UQNeNrRxL5JA1+vy4miEe9MXqQ9IKTBbnwRmYM7Aln6kSr65axDuKFlNPyu
-         PbCg==
+        bh=YFshz0e56kZ+qQSxqouSNCJV43gofQ0AnIxpI0Z2FsM=;
+        b=BhUw3SJkYjGoMCMl/NP6DA3khVYOouIHGxo9KByiOKCADD2ds440N2P1NZ6Zhyl0Au
+         1FnlyPFmkZFoayIO9K3JEFGfjoE2B+7GZKsTBxe+HPRxQm44NaGEgPBUt5xDAxbWJ2qm
+         EA4ucRuGXcJGtTCJgL7ioctJc6SPahzKXFpS/i7d9TQoAa54QKf24Z18Fj9slVMHb6Cn
+         UEGmTU6U9CKFWnE0/4Ujz/bk82BFUf9F/H0cBTgknKtzAOWdHdCUOoVHp9pjSdHLGGCa
+         7+PNchMClFu+MM2n7AbPWzLfIRp8SFt75WUv4f5S+C0Lf+Q4B2KvAKjh3qCjHxVxCib1
+         ikEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=UZp8ADXCpc0dXj7RsCg8M6HjeMcefwEksP0hVPDSKnM=;
-        b=JA/S5LyIyx305H0a2TffAqZSLki7nupWqfXXfiBalHFIHuuQfMzgPcO1OG40hRJtf8
-         vLrya9QZSOynN2zVbJ3tz4C2mug5CP8wLheL7G0U5By8mC+DI5HJ/fzo9wyBENI0jyFf
-         txRsHWP+/3TKXCQyG5kcxT9QYhaHcOLZ9tyWYdPYe6O2SVEDUi6vZAlFbKcChjtroN+G
-         kjSh8zcffiWvkZgUdSQMGtw2rFX1xXgRLi+Z5/+f6bhC9bwZwQJoECNJZQS72/AQP2hp
-         cZJrsqbT/sxMiD2im3vpoH/U4K6/vr1T1QqEwwKkmDdnz988GUUiUj5x7EU2u+iWRCIW
-         nK7A==
-X-Gm-Message-State: AOAM532AL7Fh/aIDVXstCgj9G5VY3ehMGwOWCXwmuR7p4iypNq5vApWq
-        LGTdNjiuhSqvn+8JMpmWOHO41KqViAmILJadZko=
-X-Google-Smtp-Source: ABdhPJxZxFIbZ1+2WCWsMnlrDu1asIs+eb4n1R0BaRDeLkqA8w6R3gE5/ygpp4HNaI5X2SOocpnS20JsQZtu+0PPoYk=
-X-Received: by 2002:a9d:ec7:: with SMTP id 65mr15750189otj.311.1613505186195;
- Tue, 16 Feb 2021 11:53:06 -0800 (PST)
+        bh=YFshz0e56kZ+qQSxqouSNCJV43gofQ0AnIxpI0Z2FsM=;
+        b=C2v2sj+MRIFV0p0kqzj3bDH/qxazwoen9k8PAlHQQihl48+S7hm91NgbtuJIU4SFgw
+         FXkEi1il2qlWMRfO+oejte3TTzBegC75j4m/lDSPn7SmVaUqMGO/2n8YjdfILDwxSEMY
+         NwJwg8YGYQy+/uPo1AFZkR/W9a4Te8T/1A66Fazto8tWAhy7uCMX9wnb7W0tht8w9jqg
+         WiTYlGjBCR69qfOrDaORu56iDo0hqRLD8hMEIBWccKzCfsCSDoiBEH0srbf1y4UmdIdO
+         kXpLCU2ACI+fNoJsDofeBRo8fKLLpn0nzb8U6K6Nz/hUMxvKMd/OG+3um6chqdZ6EsWy
+         fUMw==
+X-Gm-Message-State: AOAM530rM/MofwINR0jIVDt8DCsLz+0VY3kcugnglE+Z3tYXlv0O7mft
+        PqbN9ddh0e3NEGOppHxKfzOC60cnASvX6iDna97XWQ==
+X-Google-Smtp-Source: ABdhPJzM7peO8ohllzmQBORMfOZqGf2IYJVv2j8uOsEwFR7TCY/QIkxO7ZTDOkUbS0Eaf1rQsGC9Z0dXaXtdkFey1Us=
+X-Received: by 2002:a17:906:fad4:: with SMTP id lu20mr11327016ejb.341.1613508776303;
+ Tue, 16 Feb 2021 12:52:56 -0800 (PST)
 MIME-Version: 1.0
-References: <YCwefEWbsHeME7vQ@mwanda>
-In-Reply-To: <YCwefEWbsHeME7vQ@mwanda>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Tue, 16 Feb 2021 14:52:55 -0500
-Message-ID: <CADnq5_NUk+t46Phbfm6H5wFjaTxkrbM49Hd5py-NtTr+v76vgw@mail.gmail.com>
-Subject: Re: [PATCH] drm/amdgpu: fix an error code in init_pmu_entry_by_type_and_add()
+References: <YCwaIGPd9ktMoYPu@mwanda>
+In-Reply-To: <YCwaIGPd9ktMoYPu@mwanda>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Tue, 16 Feb 2021 12:52:46 -0800
+Message-ID: <CAPcyv4jKL7J0XoXE=uz-DOowYg888A5ajhQUxuFC2x8x5JoL3g@mail.gmail.com>
+Subject: Re: [PATCH] cxl/mem: Fix an error code in cxl_mem_mbox_get()
 To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Alex Deucher <alexander.deucher@amd.com>,
-        Jonathan Kim <jonathan.kim@amd.com>,
-        David Airlie <airlied@linux.ie>,
+Cc:     Alison Schofield <alison.schofield@intel.com>,
+        Ben Widawsky <ben.widawsky@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>, linux-cxl@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         kernel-janitors@vger.kernel.org,
-        Harish Kasiviswanathan <harish.kasiviswanathan@amd.com>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Luben Tuikov <luben.tuikov@amd.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+        Colin King <colin.king@canonical.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Feb 16, 2021 at 2:35 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+On Tue, Feb 16, 2021 at 11:17 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
 >
-> If the kmemdup() fails then this should return a negative error code
-> but it currently returns success.
+> Smatch complains that sometimes when we return success we are holding
+> the mutex and sometimes we have released the mutex.  It turns out that
+> the bug is a missing error code if the mbox is not ready.  It should
+> return -EBUSY instead of success.
 >
-> Fixes: b4a7db71ea06 ("drm/amdgpu: add per device user friendly xgmi events for vega20")
+> Fixes: cc1967ac93ab ("cxl/mem: Find device capabilities")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c     | 4 +++-
->  drivers/gpu/drm/nouveau/nouveau_backlight.c | 1 +
->  2 files changed, 4 insertions(+), 1 deletion(-)
+>  drivers/cxl/mem.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 >
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
-> index 19c0a3655228..82e9ecf84352 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
-> @@ -519,8 +519,10 @@ static int init_pmu_entry_by_type_and_add(struct amdgpu_pmu_entry *pmu_entry,
->         pmu_entry->pmu.attr_groups = kmemdup(attr_groups, sizeof(attr_groups),
->                                                                 GFP_KERNEL);
+> diff --git a/drivers/cxl/mem.c b/drivers/cxl/mem.c
+> index 3bca8451348a..2ebc84e4d202 100644
+> --- a/drivers/cxl/mem.c
+> +++ b/drivers/cxl/mem.c
+> @@ -383,8 +383,8 @@ static int __cxl_mem_mbox_send_cmd(struct cxl_mem *cxlm,
+>  static int cxl_mem_mbox_get(struct cxl_mem *cxlm)
+>  {
+>         struct device *dev = &cxlm->pdev->dev;
+> -       int rc = -EBUSY;
+>         u64 md_status;
+> +       int rc;
 >
-> -       if (!pmu_entry->pmu.attr_groups)
-> +       if (!pmu_entry->pmu.attr_groups) {
-> +               ret = -ENOMEM;
->                 goto err_attr_group;
-> +       }
+>         mutex_lock_io(&cxlm->mbox_mutex);
 >
->         snprintf(pmu_name, PMU_NAME_SIZE, "%s_%d", pmu_entry->pmu_file_prefix,
->                                 adev_to_drm(pmu_entry->adev)->primary->index);
-> diff --git a/drivers/gpu/drm/nouveau/nouveau_backlight.c b/drivers/gpu/drm/nouveau/nouveau_backlight.c
-> index 72f35a2babcb..3786b1c85182 100644
-> --- a/drivers/gpu/drm/nouveau/nouveau_backlight.c
-> +++ b/drivers/gpu/drm/nouveau/nouveau_backlight.c
-> @@ -274,6 +274,7 @@ nouveau_backlight_init(struct drm_connector *connector)
->
->         if (!nouveau_get_backlight_name(backlight_name, bl)) {
->                 NV_ERROR(drm, "Failed to retrieve a unique name for the backlight interface\n");
-> +               ret = -ENOMEM;
->                 goto fail_alloc;
->         }
+> @@ -414,6 +414,7 @@ static int cxl_mem_mbox_get(struct cxl_mem *cxlm)
+>         md_status = readq(cxlm->memdev_regs + CXLMDEV_STATUS_OFFSET);
+>         if (!(md_status & CXLMDEV_MBOX_IF_READY && CXLMDEV_READY(md_status))) {
+>                 dev_err(dev, "mbox: reported doorbell ready, but not mbox ready\n");
+> +               rc = -EBUSY;
+>                 goto out;
 
-This hunk looks unrelated?
+Hey, Smatch gave a more thorough report than Coverity:
 
-Alex
-
-
->
-> --
-> 2.30.0
->
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
+http://lore.kernel.org/r/20210215195313.90231-1-colin.king@canonical.com
