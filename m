@@ -1,95 +1,107 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 15 Feb 2021 08:30:51 +0000
+From: Saeed Mahameed <saeedm@nvidia.com>
+Date: Tue, 16 Feb 2021 21:37:51 +0000
 Subject: Re: [PATCH 1/2 net-next] net/mlx5e: TC: Fix IS_ERR() vs NULL checks
-Message-Id: <20210215083050.GA2222@kadam>
+Message-Id: <90552f255570173e43948c058185c6c60c2fd855.camel@nvidia.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20200928174153.GA446008@mwanda>
- <3F057952-3C88-452F-BFC5-4DC2B87FAD67@nvidia.com>
-In-Reply-To: <3F057952-3C88-452F-BFC5-4DC2B87FAD67@nvidia.com>
+         <3F057952-3C88-452F-BFC5-4DC2B87FAD67@nvidia.com>
+         <20210215083050.GA2222@kadam>
+In-Reply-To: <20210215083050.GA2222@kadam>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Ariel Levkovich <lariel@nvidia.com>
-Cc: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Roi Dayan <roid@mellanox.com>, Ariel Levkovich <lariel@mellanox.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>, Ariel Levkovich <lariel@nvidia.com>
+Cc: "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "davem@davemloft.net" <davem@davemloft.net>, "kuba@kernel.org" <kuba@kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Roi Dayan <roid@nvidia.com>, "leon@kernel.org" <leon@kernel.org>
 
-On Mon, Sep 28, 2020 at 06:31:04PM +0000, Ariel Levkovich wrote:
-> On Sep 28, 2020, at 13:42, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> > 
-> > ﻿The mlx5_tc_ct_init() function doesn't return error pointers it returns
-> > NULL.  Also we need to set the error codes on this path.
-> > 
-> > Fixes: aedd133d17bc ("net/mlx5e: Support CT offload for tc nic flows")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> > drivers/net/ethernet/mellanox/mlx5/core/en_tc.c | 8 ++++++--
-> > 1 file changed, 6 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c b/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
-> > index 104b1c339de0..438fbcf478d1 100644
-> > --- a/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
-> > +++ b/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
-> > @@ -5224,8 +5224,10 @@ int mlx5e_tc_nic_init(struct mlx5e_priv *priv)
-> > 
-> >    tc->ct = mlx5_tc_ct_init(priv, tc->chains, &priv->fs.tc.mod_hdr,
-> >                 MLX5_FLOW_NAMESPACE_KERNEL);
-> > -    if (IS_ERR(tc->ct))
-> > +    if (!tc->ct) {
-> > +        err = -ENOMEM;
-> >        goto err_ct;
-> > +    }
-> 
-> Hi Dan,
-> That was implement like that on purpose. If mlx5_tc_init_ct returns NULL it means the device doesn’t support CT offload which can happen with older devices or old FW on the devices.
-> However, in this case we want to continue with the rest of the Tc initialization because we can still support other TC offloads. No need to fail the entire TC init in this case. Only if mlx5_tc_init_ct return err_ptr that means the tc init failed not because of lack of support but due to a real error and only then we want to fail the rest of the tc init.
-> 
-> Your change will break compatibility for devices/FW versions that don’t have CT offload support.
-> 
-
-When we have a function like this which is optional then returning NULL
-is a special kind of success as you say.  Returning NULL should not
-generate a warning message.  At the same time, if the user enables the
-option and the code fails because we are low on memory then returning an
-error pointer is the correct behavior.  Just because the feature is
-optional does not mean we should ignore what the user told us to do.
-
-This code never returns error pointers.  It always returns NULL/success
-when an allocation fails.  That triggers the first static checker
-warning from last year.  Now Smatch is complaining about a new static
-checker warning:
-
-drivers/net/ethernet/mellanox/mlx5/core/en_tc.c:4754
-mlx5e_tc_esw_init() warn: missing error code here? 'IS_ERR()' failed. 'err' = '0'
-
-  4708  int mlx5e_tc_esw_init(struct rhashtable *tc_ht)
-  4709  {
-  4710          const size_t sz_enc_opts = sizeof(struct tunnel_match_enc_opts);
-  4711          struct mlx5_rep_uplink_priv *uplink_priv;
-  4712          struct mlx5e_rep_priv *rpriv;
-  4713          struct mapping_ctx *mapping;
-  4714          struct mlx5_eswitch *esw;
-  4715          struct mlx5e_priv *priv;
-  4716          int err = 0;
-  4717  
-  4718          uplink_priv = container_of(tc_ht, struct mlx5_rep_uplink_priv, tc_ht);
-  4719          rpriv = container_of(uplink_priv, struct mlx5e_rep_priv, uplink_priv);
-  4720          priv = netdev_priv(rpriv->netdev);
-  4721          esw = priv->mdev->priv.eswitch;
-  4722  
-  4723          uplink_priv->ct_priv = mlx5_tc_ct_init(netdev_priv(priv->netdev),
-  4724                                                 esw_chains(esw),
-  4725                                                 &esw->offloads.mod_hdr,
-  4726                                                 MLX5_FLOW_NAMESPACE_FDB);
-  4727          if (IS_ERR(uplink_priv->ct_priv))
-  4728                  goto err_ct;
-
-If mlx5_tc_ct_init() fails, which it should do if kmalloc() fails but
-currently it does not, then the error should be propagated all the way
-back.  So this code should preserve the error code instead of returning
-success.
-
-  4729  
-  4730          mapping = mapping_create(sizeof(struct tunnel_match_key),
-  4731                                   TUNNEL_INFO_BITS_MASK, true);
-
-regards,
-dan carpenter
+T24gTW9uLCAyMDIxLTAyLTE1IGF0IDExOjMwICswMzAwLCBEYW4gQ2FycGVudGVyIHdyb3RlOg0K
+PiBPbiBNb24sIFNlcCAyOCwgMjAyMCBhdCAwNjozMTowNFBNICswMDAwLCBBcmllbCBMZXZrb3Zp
+Y2ggd3JvdGU6DQo+ID4gT24gU2VwIDI4LCAyMDIwLCBhdCAxMzo0MiwgRGFuIENhcnBlbnRlciA8
+ZGFuLmNhcnBlbnRlckBvcmFjbGUuY29tPg0KPiA+IHdyb3RlOg0KPiA+ID4gDQo+ID4gPiDvu79U
+aGUgbWx4NV90Y19jdF9pbml0KCkgZnVuY3Rpb24gZG9lc24ndCByZXR1cm4gZXJyb3IgcG9pbnRl
+cnMgaXQNCj4gPiA+IHJldHVybnMNCj4gPiA+IE5VTEwuwqAgQWxzbyB3ZSBuZWVkIHRvIHNldCB0
+aGUgZXJyb3IgY29kZXMgb24gdGhpcyBwYXRoLg0KPiA+ID4gDQo+ID4gPiBGaXhlczogYWVkZDEz
+M2QxN2JjICgibmV0L21seDVlOiBTdXBwb3J0IENUIG9mZmxvYWQgZm9yIHRjIG5pYw0KPiA+ID4g
+Zmxvd3MiKQ0KPiA+ID4gU2lnbmVkLW9mZi1ieTogRGFuIENhcnBlbnRlciA8ZGFuLmNhcnBlbnRl
+ckBvcmFjbGUuY29tPg0KPiA+ID4gLS0tDQo+ID4gPiBkcml2ZXJzL25ldC9ldGhlcm5ldC9tZWxs
+YW5veC9tbHg1L2NvcmUvZW5fdGMuYyB8IDggKysrKysrLS0NCj4gPiA+IDEgZmlsZSBjaGFuZ2Vk
+LCA2IGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pDQo+ID4gPiANCj4gPiA+IGRpZmYgLS1n
+aXQgYS9kcml2ZXJzL25ldC9ldGhlcm5ldC9tZWxsYW5veC9tbHg1L2NvcmUvZW5fdGMuYw0KPiA+
+ID4gYi9kcml2ZXJzL25ldC9ldGhlcm5ldC9tZWxsYW5veC9tbHg1L2NvcmUvZW5fdGMuYw0KPiA+
+ID4gaW5kZXggMTA0YjFjMzM5ZGUwLi40MzhmYmNmNDc4ZDEgMTAwNjQ0DQo+ID4gPiAtLS0gYS9k
+cml2ZXJzL25ldC9ldGhlcm5ldC9tZWxsYW5veC9tbHg1L2NvcmUvZW5fdGMuYw0KPiA+ID4gKysr
+IGIvZHJpdmVycy9uZXQvZXRoZXJuZXQvbWVsbGFub3gvbWx4NS9jb3JlL2VuX3RjLmMNCj4gPiA+
+IEBAIC01MjI0LDggKzUyMjQsMTAgQEAgaW50IG1seDVlX3RjX25pY19pbml0KHN0cnVjdCBtbHg1
+ZV9wcml2DQo+ID4gPiAqcHJpdikNCj4gPiA+IA0KPiA+ID4gwqDCoCB0Yy0+Y3QgPSBtbHg1X3Rj
+X2N0X2luaXQocHJpdiwgdGMtPmNoYWlucywgJnByaXYtDQo+ID4gPiA+ZnMudGMubW9kX2hkciwN
+Cj4gPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBNTFg1X0ZMT1dfTkFNRVNQQUNF
+X0tFUk5FTCk7DQo+ID4gPiAtwqDCoMKgIGlmIChJU19FUlIodGMtPmN0KSkNCj4gPiA+ICvCoMKg
+wqAgaWYgKCF0Yy0+Y3QpIHsNCj4gPiA+ICvCoMKgwqDCoMKgwqDCoCBlcnIgPSAtRU5PTUVNOw0K
+PiA+ID4gwqDCoMKgwqDCoMKgIGdvdG8gZXJyX2N0Ow0KPiA+ID4gK8KgwqDCoCB9DQo+ID4gDQo+
+ID4gSGkgRGFuLA0KPiA+IFRoYXQgd2FzIGltcGxlbWVudCBsaWtlIHRoYXQgb24gcHVycG9zZS4g
+SWYgbWx4NV90Y19pbml0X2N0IHJldHVybnMNCj4gPiBOVUxMIGl0IG1lYW5zIHRoZSBkZXZpY2Ug
+ZG9lc27igJl0IHN1cHBvcnQgQ1Qgb2ZmbG9hZCB3aGljaCBjYW4NCj4gPiBoYXBwZW4gd2l0aCBv
+bGRlciBkZXZpY2VzIG9yIG9sZCBGVyBvbiB0aGUgZGV2aWNlcy4NCj4gPiBIb3dldmVyLCBpbiB0
+aGlzIGNhc2Ugd2Ugd2FudCB0byBjb250aW51ZSB3aXRoIHRoZSByZXN0IG9mIHRoZSBUYw0KPiA+
+IGluaXRpYWxpemF0aW9uIGJlY2F1c2Ugd2UgY2FuIHN0aWxsIHN1cHBvcnQgb3RoZXIgVEMgb2Zm
+bG9hZHMuIE5vDQo+ID4gbmVlZCB0byBmYWlsIHRoZSBlbnRpcmUgVEMgaW5pdCBpbiB0aGlzIGNh
+c2UuIE9ubHkgaWYNCj4gPiBtbHg1X3RjX2luaXRfY3QgcmV0dXJuIGVycl9wdHIgdGhhdCBtZWFu
+cyB0aGUgdGMgaW5pdCBmYWlsZWQgbm90DQo+ID4gYmVjYXVzZSBvZiBsYWNrIG9mIHN1cHBvcnQg
+YnV0IGR1ZSB0byBhIHJlYWwgZXJyb3IgYW5kIG9ubHkgdGhlbiB3ZQ0KPiA+IHdhbnQgdG8gZmFp
+bCB0aGUgcmVzdCBvZiB0aGUgdGMgaW5pdC4NCj4gPiANCj4gPiBZb3VyIGNoYW5nZSB3aWxsIGJy
+ZWFrIGNvbXBhdGliaWxpdHkgZm9yIGRldmljZXMvRlcgdmVyc2lvbnMgdGhhdA0KPiA+IGRvbuKA
+mXQgaGF2ZSBDVCBvZmZsb2FkIHN1cHBvcnQuDQo+ID4gDQo+IA0KPiBXaGVuIHdlIGhhdmUgYSBm
+dW5jdGlvbiBsaWtlIHRoaXMgd2hpY2ggaXMgb3B0aW9uYWwgdGhlbiByZXR1cm5pbmcNCj4gTlVM
+TA0KPiBpcyBhIHNwZWNpYWwga2luZCBvZiBzdWNjZXNzIGFzIHlvdSBzYXkuwqAgUmV0dXJuaW5n
+IE5VTEwgc2hvdWxkIG5vdA0KPiBnZW5lcmF0ZSBhIHdhcm5pbmcgbWVzc2FnZS7CoCBBdCB0aGUg
+c2FtZSB0aW1lLCBpZiB0aGUgdXNlciBlbmFibGVzDQo+IHRoZQ0KPiBvcHRpb24gYW5kIHRoZSBj
+b2RlIGZhaWxzIGJlY2F1c2Ugd2UgYXJlIGxvdyBvbiBtZW1vcnkgdGhlbiByZXR1cm5pbmcNCj4g
+YW4NCj4gZXJyb3IgcG9pbnRlciBpcyB0aGUgY29ycmVjdCBiZWhhdmlvci7CoCBKdXN0IGJlY2F1
+c2UgdGhlIGZlYXR1cmUgaXMNCj4gb3B0aW9uYWwgZG9lcyBub3QgbWVhbiB3ZSBzaG91bGQgaWdu
+b3JlIHdoYXQgdGhlIHVzZXIgdG9sZCB1cyB0byBkby4NCj4gDQo+IFRoaXMgY29kZSBuZXZlciBy
+ZXR1cm5zIGVycm9yIHBvaW50ZXJzLsKgIEl0IGFsd2F5cyByZXR1cm5zDQo+IE5VTEwvc3VjY2Vz
+cw0KPiB3aGVuIGFuIGFsbG9jYXRpb24gZmFpbHMuwqAgVGhhdCB0cmlnZ2VycyB0aGUgZmlyc3Qg
+c3RhdGljIGNoZWNrZXINCj4gd2FybmluZyBmcm9tIGxhc3QgeWVhci7CoCBOb3cgU21hdGNoIGlz
+IGNvbXBsYWluaW5nIGFib3V0IGEgbmV3IHN0YXRpYw0KPiBjaGVja2VyIHdhcm5pbmc6DQo+IA0K
+PiBkcml2ZXJzL25ldC9ldGhlcm5ldC9tZWxsYW5veC9tbHg1L2NvcmUvZW5fdGMuYzo0NzU0DQo+
+IG1seDVlX3RjX2Vzd19pbml0KCkgd2FybjogbWlzc2luZyBlcnJvciBjb2RlIGhlcmU/ICdJU19F
+UlIoKScgZmFpbGVkLg0KPiAnZXJyJyA9ICcwJw0KPiANCj4gwqAgNDcwOMKgIGludCBtbHg1ZV90
+Y19lc3dfaW5pdChzdHJ1Y3Qgcmhhc2h0YWJsZSAqdGNfaHQpDQo+IMKgIDQ3MDnCoCB7DQo+IMKg
+IDQ3MTDCoMKgwqDCoMKgwqDCoMKgwqAgY29uc3Qgc2l6ZV90IHN6X2VuY19vcHRzID0gc2l6ZW9m
+KHN0cnVjdA0KPiB0dW5uZWxfbWF0Y2hfZW5jX29wdHMpOw0KPiDCoCA0NzExwqDCoMKgwqDCoMKg
+wqDCoMKgIHN0cnVjdCBtbHg1X3JlcF91cGxpbmtfcHJpdiAqdXBsaW5rX3ByaXY7DQo+IMKgIDQ3
+MTLCoMKgwqDCoMKgwqDCoMKgwqAgc3RydWN0IG1seDVlX3JlcF9wcml2ICpycHJpdjsNCj4gwqAg
+NDcxM8KgwqDCoMKgwqDCoMKgwqDCoCBzdHJ1Y3QgbWFwcGluZ19jdHggKm1hcHBpbmc7DQo+IMKg
+IDQ3MTTCoMKgwqDCoMKgwqDCoMKgwqAgc3RydWN0IG1seDVfZXN3aXRjaCAqZXN3Ow0KPiDCoCA0
+NzE1wqDCoMKgwqDCoMKgwqDCoMKgIHN0cnVjdCBtbHg1ZV9wcml2ICpwcml2Ow0KPiDCoCA0NzE2
+wqDCoMKgwqDCoMKgwqDCoMKgIGludCBlcnIgPSAwOw0KPiDCoCA0NzE3wqAgDQo+IMKgIDQ3MTjC
+oMKgwqDCoMKgwqDCoMKgwqAgdXBsaW5rX3ByaXYgPSBjb250YWluZXJfb2YodGNfaHQsIHN0cnVj
+dA0KPiBtbHg1X3JlcF91cGxpbmtfcHJpdiwgdGNfaHQpOw0KPiDCoCA0NzE5wqDCoMKgwqDCoMKg
+wqDCoMKgIHJwcml2ID0gY29udGFpbmVyX29mKHVwbGlua19wcml2LCBzdHJ1Y3QNCj4gbWx4NWVf
+cmVwX3ByaXYsIHVwbGlua19wcml2KTsNCj4gwqAgNDcyMMKgwqDCoMKgwqDCoMKgwqDCoCBwcml2
+ID0gbmV0ZGV2X3ByaXYocnByaXYtPm5ldGRldik7DQo+IMKgIDQ3MjHCoMKgwqDCoMKgwqDCoMKg
+wqAgZXN3ID0gcHJpdi0+bWRldi0+cHJpdi5lc3dpdGNoOw0KPiDCoCA0NzIywqAgDQo+IMKgIDQ3
+MjPCoMKgwqDCoMKgwqDCoMKgwqAgdXBsaW5rX3ByaXYtPmN0X3ByaXYgPQ0KPiBtbHg1X3RjX2N0
+X2luaXQobmV0ZGV2X3ByaXYocHJpdi0+bmV0ZGV2KSwNCj4gwqAgNDcyNMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoA0KPiBlc3dfY2hhaW5zKGVzdyksDQo+IMKgIDQ3MjXC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgJmVzdy0NCj4gPm9mZmxvYWRz
+Lm1vZF9oZHIsDQo+IMKgIDQ3MjbCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqANCj4gTUxYNV9GTE9XX05BTUVTUEFDRV9GREIpOw0KPiDCoCA0NzI3wqDCoMKgwqDCoMKgwqDC
+oMKgIGlmIChJU19FUlIodXBsaW5rX3ByaXYtPmN0X3ByaXYpKQ0KPiDCoCA0NzI4wqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBnb3RvIGVycl9jdDsNCj4gDQoNClRoZSBkcml2ZXIg
+aXMgZGVzaWduZWQgdG8gdG9sZXJhdGVkIGZhaWx1cmUgaW4gbWx4NV90Y19jdF9pbml0IGFuZCBp
+cw0Kc3VwcG9zZWQgdG8gY29udGludWUgaGVyZSBhbmQgbm90IGFib3J0IHdpdGggcmV0dXJuIDAu
+Lg0KDQpzbyBlaXRoZXIgcmV0dXJuIHByb3BlciBlcnJubyBvciBjb250aW51ZSBpbml0aWFsaXpp
+bmcsIHRoZSBjb2RlDQpjdXJyZW50bHkgaGFzIGEgYnVnLiANCg0KVGhhbmtzIERhbiBmb3IgcG9p
+bnRpbmcgdGhhdCBvdXQuDQoNCj4gSWYgbWx4NV90Y19jdF9pbml0KCkgZmFpbHMsIHdoaWNoIGl0
+IHNob3VsZCBkbyBpZiBrbWFsbG9jKCkgZmFpbHMgYnV0DQo+IGN1cnJlbnRseSBpdCBkb2VzIG5v
+dCwgdGhlbiB0aGUgZXJyb3Igc2hvdWxkIGJlIHByb3BhZ2F0ZWQgYWxsIHRoZQ0KPiB3YXkNCj4g
+YmFjay7CoCBTbyB0aGlzIGNvZGUgc2hvdWxkIHByZXNlcnZlIHRoZSBlcnJvciBjb2RlIGluc3Rl
+YWQgb2YNCj4gcmV0dXJuaW5nDQo+IHN1Y2Nlc3MuDQo+IA0KPiDCoCA0NzI5wqAgDQo+IMKgIDQ3
+MzDCoMKgwqDCoMKgwqDCoMKgwqAgbWFwcGluZyA9IG1hcHBpbmdfY3JlYXRlKHNpemVvZihzdHJ1
+Y3QNCj4gdHVubmVsX21hdGNoX2tleSksDQo+IMKgIDQ3MzHCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBUVU5ORUxfSU5G
+T19CSVRTX01BU0ssDQo+IHRydWUpOw0KPiANCj4gcmVnYXJkcywNCj4gZGFuIGNhcnBlbnRlcg0K
+PiANCg0K
