@@ -2,89 +2,85 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 493B5C433E0
-	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Feb 2021 15:19:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFBCFC433E0
+	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Feb 2021 15:31:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0443A64E0F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Feb 2021 15:19:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B52364E10
+	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Feb 2021 15:31:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229913AbhBPPTh (ORCPT
+        id S229880AbhBPPbH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 16 Feb 2021 10:19:37 -0500
-Received: from esa6.hc324-48.eu.iphmx.com ([207.54.71.69]:25868 "EHLO
-        esa6.hc324-48.eu.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229628AbhBPPTf (ORCPT
+        Tue, 16 Feb 2021 10:31:07 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:53822 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229585AbhBPPbG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 16 Feb 2021 10:19:35 -0500
-X-Greylist: delayed 401 seconds by postgrey-1.27 at vger.kernel.org; Tue, 16 Feb 2021 10:19:34 EST
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=bmw.de; i=@bmw.de; q=dns/txt; s=mailing1;
-  t=1613488775; x=1645024775;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=tPSLFw/CyQ8Jly77v8wfyVnxBocD9UPp4vZzyS05VVc=;
-  b=DWxrYUou53tFthm975LinY45clIEDlIt1CjJgBWBkU09/rAAaBFjHza4
-   hPevTahqPnny0QNo+Y+XOc8ud9E0T1iswbZwwmUIRaoqC71xrQ7W1oGGj
-   fXoyYB4oJP5HnIOqtWQRHT2Pe7OE79o+4KstITs8EiMGh25veL1LJ/nuc
-   8=;
-Received: from esagw3.bmwgroup.com (HELO esagw3.muc) ([160.46.252.35]) by
- esa6.hc324-48.eu.iphmx.com with ESMTP/TLS; 16 Feb 2021 16:11:07 +0100
-Received: from esabb5.muc ([160.50.100.47])  by esagw3.muc with ESMTP/TLS;
- 16 Feb 2021 16:10:55 +0100
-Received: from smucm10m.bmwgroup.net (HELO smucm10m.europe.bmw.corp) ([160.48.96.49])
- by esabb5.muc with ESMTP/TLS; 16 Feb 2021 16:10:55 +0100
-Received: from smucm10m.europe.bmw.corp (160.48.96.49) by smucm10m.europe.bmw.corp
- (160.48.96.49) with Microsoft SMTP Server (TLS;
- Tue, 16 Feb 2021 16:10:55 +0100
-Received: from smucm10m.europe.bmw.corp ([160.48.96.49]) by
- smucm10m.europe.bmw.corp ([160.48.96.49]) with mapi id 15.00.1497.010; Tue,
- 16 Feb 2021 16:10:55 +0100
-From:   <Viktor.Rosendahl@bmw.de>
-To:     <colin.king@canonical.com>
-CC:     <rostedt@goodmis.org>, <kernel-janitors@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] tracing/tools: fix a couple of spelling mistakes
-Thread-Topic: [PATCH] tracing/tools: fix a couple of spelling mistakes
-Thread-Index: AQHXBHXsW67nQO2JSk2CuqB8wOiyGg==
-Date:   Tue, 16 Feb 2021 15:10:55 +0000
-Message-ID: <d2b31974527bc27cda4272e16ed40575ddc9764a.camel@bmw.de>
-References: <20210216140844.160499-1-colin.king@canonical.com>
-In-Reply-To: <20210216140844.160499-1-colin.king@canonical.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-messagesentrepresentingtype: 1
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <814E42483CD13440818D43E63C72276A@bmwmail.corp>
-Content-Transfer-Encoding: base64
+        Tue, 16 Feb 2021 10:31:06 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lC2Ix-0006Ys-FG; Tue, 16 Feb 2021 15:30:23 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Viktor Rosendahl <Viktor.Rosendahl@bmw.de>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next][V3] tracing/tools: fix a couple of spelling mistakes
+Date:   Tue, 16 Feb 2021 15:30:23 +0000
+Message-Id: <20210216153023.163488-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.30.0
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-SGksDQoNClRoYW5rcyBmb3IgZmluZGluZyB0aGVzZSBtaXN0YWtlcy4NCg0KT24gVHVlLCAyMDIx
-LTAyLTE2IGF0IDE0OjA4ICswMDAwLCBDb2xpbiBLaW5nIHdyb3RlOg0KDQo+ICAJCQlwcmludGYo
-DQo+IC0iV2FybmluZyEgVXNpbmcgdHJpdmlhbCByYW5kb20gbnVtbWVyIHNlZWQsIHNpbmNlICVz
-IG5vdCBhdmFpbGFibGVcbiIsDQo+ICsiV2FybmluZyEgVXNpbmcgdHJpdmlhbCByYW5kb20gbnVt
-YmVyIHNlZWQsIHNpbmNlICVzIG5vdCBhdmFpbGFibGVcbiIsDQo+ICAJCQlERVZfVVJBTkRPTSk7
-DQo+ICAJCQlmZmx1c2goc3Rkb3V0KTsNCj4gIAkJCSpzZWVkID0gaTsNCj4gQEAgLTE3MTEsNyAr
-MTcxMSw3IEBAIHN0YXRpYyB2b2lkIHNob3dfdXNhZ2Uodm9pZCkNCj4gICJcdFx0XHRiZWdpbm5p
-bmcsIGVuZCwgYW5kIGJhY2t0cmFjZS5cblxuIg0KPiAgDQo+ICAiLWcsIC0tZ3JhcGhcdFx0RW5h
-YmxlIHRoZSBkaXNwbGF5LWdyYXBoIG9wdGlvbiBpbiB0cmFjZV9vcHRpb24uIFRoaXNcbiINCj4g
-LSJcdFx0XHRvcHRpb24gY2F1c2VzIGZ0cmFjZSB0byBzaG93IHRoZSBmdW5jdGlvbnBoIG9mIGhv
-d1xuIg0KPiArIlx0XHRcdG9wdGlvbiBjYXVzZXMgZnRyYWNlIHRvIHNob3cgdGhlIGdyYXBoIG9m
-IGhvd1xuIg0KPiAgIlx0XHRcdGZ1bmN0aW9ucyBhcmUgY2FsbGluZyBvdGhlciBmdW5jdGlvbnMu
-XG5cbiINCg0KVGhpcyBpcyBhIGxhcmdlIGltcHJvdmVtZW50IGJ1dCBzaW5jZSB0aGUgY29ycmVj
-dGVkIHdvcmQgaXMgc28gbXVjaCBzaG9ydGVyLCB3ZQ0Kd291bGQgaWRlYWxseSBtb3ZlIHRoZSBm
-aXJzdCB3b3JkIG9mIHRoZSBuZXh0IGxpbmUgdG8gdGhpcyBsaW5lIGFzIHdlbGw6DQoNCiJcdFx0
-XHRvcHRpb24gY2F1c2VzIGZ0cmFjZSB0byBzaG93IHRoZSBncmFwaCBvZiBob3cgZnVuY3Rpb25z
-XG4iDQoiXHRcdFx0YXJlIGNhbGxpbmcgb3RoZXIgZnVuY3Rpb25zLlxuXG4iDQoNCmJlc3QgcmVn
-YXJkcywNCg0KVmlrdG9yDQoNCj4gIA0KPiAgIi1jLCAtLXBvbGljeSBQT0xcdFJ1biB0aGUgcHJv
-Z3JhbSB3aXRoIHNjaGVkdWxpbmcgcG9saWN5IFBPTC4gUE9MIGNhbiBiZVxuIg0K
+From: Colin Ian King <colin.king@canonical.com>
+
+There is a spelling mistake in the -g help option, I believe
+it should be "graph".  There is also a spelling mistake in a
+warning message. Fix both mistakes.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+
+V2: Also fix "nummer" spelling mistake.
+V3: re-format text, as suggested by Viktor
+
+---
+ tools/tracing/latency/latency-collector.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/tools/tracing/latency/latency-collector.c b/tools/tracing/latency/latency-collector.c
+index 57b20802e71b..b69de9263ee6 100644
+--- a/tools/tracing/latency/latency-collector.c
++++ b/tools/tracing/latency/latency-collector.c
+@@ -1650,7 +1650,7 @@ static void start_printthread(void)
+ 		if (ufd <  0 ||
+ 		    read(ufd, seed, sizeof(*seed)) != sizeof(*seed)) {
+ 			printf(
+-"Warning! Using trivial random nummer seed, since %s not available\n",
++"Warning! Using trivial random number seed, since %s not available\n",
+ 			DEV_URANDOM);
+ 			fflush(stdout);
+ 			*seed = i;
+@@ -1711,8 +1711,8 @@ static void show_usage(void)
+ "\t\t\tbeginning, end, and backtrace.\n\n"
+ 
+ "-g, --graph\t\tEnable the display-graph option in trace_option. This\n"
+-"\t\t\toption causes ftrace to show the functionph of how\n"
+-"\t\t\tfunctions are calling other functions.\n\n"
++"\t\t\toption causes ftrace to show the graph of how functions\n"
++"\t\t\tare calling other functions.\n\n"
+ 
+ "-c, --policy POL\tRun the program with scheduling policy POL. POL can be\n"
+ "\t\t\tother, batch, idle, rr or fifo. The default is rr. When\n"
+-- 
+2.30.0
+
