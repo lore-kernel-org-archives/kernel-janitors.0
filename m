@@ -2,97 +2,89 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 563B7C433E6
-	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Feb 2021 15:17:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 493B5C433E0
+	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Feb 2021 15:19:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 182B764E63
-	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Feb 2021 15:17:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0443A64E0F
+	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Feb 2021 15:19:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230001AbhBPPRM (ORCPT
+        id S229913AbhBPPTh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 16 Feb 2021 10:17:12 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:53329 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229946AbhBPPRL (ORCPT
+        Tue, 16 Feb 2021 10:19:37 -0500
+Received: from esa6.hc324-48.eu.iphmx.com ([207.54.71.69]:25868 "EHLO
+        esa6.hc324-48.eu.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229628AbhBPPTf (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 16 Feb 2021 10:17:11 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1lC25S-0005ar-ML; Tue, 16 Feb 2021 15:16:26 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] thermal: qcom: Fix comparison with uninitialized variable channels_available
-Date:   Tue, 16 Feb 2021 15:16:26 +0000
-Message-Id: <20210216151626.162996-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.30.0
-MIME-Version: 1.0
+        Tue, 16 Feb 2021 10:19:35 -0500
+X-Greylist: delayed 401 seconds by postgrey-1.27 at vger.kernel.org; Tue, 16 Feb 2021 10:19:34 EST
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=bmw.de; i=@bmw.de; q=dns/txt; s=mailing1;
+  t=1613488775; x=1645024775;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=tPSLFw/CyQ8Jly77v8wfyVnxBocD9UPp4vZzyS05VVc=;
+  b=DWxrYUou53tFthm975LinY45clIEDlIt1CjJgBWBkU09/rAAaBFjHza4
+   hPevTahqPnny0QNo+Y+XOc8ud9E0T1iswbZwwmUIRaoqC71xrQ7W1oGGj
+   fXoyYB4oJP5HnIOqtWQRHT2Pe7OE79o+4KstITs8EiMGh25veL1LJ/nuc
+   8=;
+Received: from esagw3.bmwgroup.com (HELO esagw3.muc) ([160.46.252.35]) by
+ esa6.hc324-48.eu.iphmx.com with ESMTP/TLS; 16 Feb 2021 16:11:07 +0100
+Received: from esabb5.muc ([160.50.100.47])  by esagw3.muc with ESMTP/TLS;
+ 16 Feb 2021 16:10:55 +0100
+Received: from smucm10m.bmwgroup.net (HELO smucm10m.europe.bmw.corp) ([160.48.96.49])
+ by esabb5.muc with ESMTP/TLS; 16 Feb 2021 16:10:55 +0100
+Received: from smucm10m.europe.bmw.corp (160.48.96.49) by smucm10m.europe.bmw.corp
+ (160.48.96.49) with Microsoft SMTP Server (TLS;
+ Tue, 16 Feb 2021 16:10:55 +0100
+Received: from smucm10m.europe.bmw.corp ([160.48.96.49]) by
+ smucm10m.europe.bmw.corp ([160.48.96.49]) with mapi id 15.00.1497.010; Tue,
+ 16 Feb 2021 16:10:55 +0100
+From:   <Viktor.Rosendahl@bmw.de>
+To:     <colin.king@canonical.com>
+CC:     <rostedt@goodmis.org>, <kernel-janitors@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] tracing/tools: fix a couple of spelling mistakes
+Thread-Topic: [PATCH] tracing/tools: fix a couple of spelling mistakes
+Thread-Index: AQHXBHXsW67nQO2JSk2CuqB8wOiyGg==
+Date:   Tue, 16 Feb 2021 15:10:55 +0000
+Message-ID: <d2b31974527bc27cda4272e16ed40575ddc9764a.camel@bmw.de>
+References: <20210216140844.160499-1-colin.king@canonical.com>
+In-Reply-To: <20210216140844.160499-1-colin.king@canonical.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-ID: <814E42483CD13440818D43E63C72276A@bmwmail.corp>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
-
-Currently the check of chip->channels[i].channel is against an the
-uninitialized variable channels_available.  I believe the variable
-channels_available needs to be fetched first by the call to adc_tm5_read
-before the channels check. Fix the issue swapping the order of the
-channels check loop with the call to adc_tm5_read.
-
-Addresses-Coverity: ("Uninitialized scalar variable")
-Fixes: ca66dca5eda6 ("thermal: qcom: add support for adc-tm5 PMIC thermal monitor")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/thermal/qcom/qcom-spmi-adc-tm5.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/thermal/qcom/qcom-spmi-adc-tm5.c b/drivers/thermal/qcom/qcom-spmi-adc-tm5.c
-index a2014375587d..b460b56e981c 100644
---- a/drivers/thermal/qcom/qcom-spmi-adc-tm5.c
-+++ b/drivers/thermal/qcom/qcom-spmi-adc-tm5.c
-@@ -375,13 +375,6 @@ static int adc_tm5_init(struct adc_tm5_chip *chip)
- 	int ret;
- 	unsigned int i;
- 
--	for (i = 0; i < chip->nchannels; i++) {
--		if (chip->channels[i].channel >= channels_available) {
--			dev_err(chip->dev, "Invalid channel %d\n", chip->channels[i].channel);
--			return -EINVAL;
--		}
--	}
--
- 	ret = adc_tm5_read(chip, ADC_TM5_NUM_BTM,
- 			   &channels_available, sizeof(channels_available));
- 	if (ret) {
-@@ -389,6 +382,13 @@ static int adc_tm5_init(struct adc_tm5_chip *chip)
- 		return ret;
- 	}
- 
-+	for (i = 0; i < chip->nchannels; i++) {
-+		if (chip->channels[i].channel >= channels_available) {
-+			dev_err(chip->dev, "Invalid channel %d\n", chip->channels[i].channel);
-+			return -EINVAL;
-+		}
-+	}
-+
- 	buf[0] = chip->decimation;
- 	buf[1] = chip->avg_samples | ADC_TM5_FAST_AVG_EN;
- 	buf[2] = ADC_TM5_TIMER1;
--- 
-2.30.0
-
+SGksDQoNClRoYW5rcyBmb3IgZmluZGluZyB0aGVzZSBtaXN0YWtlcy4NCg0KT24gVHVlLCAyMDIx
+LTAyLTE2IGF0IDE0OjA4ICswMDAwLCBDb2xpbiBLaW5nIHdyb3RlOg0KDQo+ICAJCQlwcmludGYo
+DQo+IC0iV2FybmluZyEgVXNpbmcgdHJpdmlhbCByYW5kb20gbnVtbWVyIHNlZWQsIHNpbmNlICVz
+IG5vdCBhdmFpbGFibGVcbiIsDQo+ICsiV2FybmluZyEgVXNpbmcgdHJpdmlhbCByYW5kb20gbnVt
+YmVyIHNlZWQsIHNpbmNlICVzIG5vdCBhdmFpbGFibGVcbiIsDQo+ICAJCQlERVZfVVJBTkRPTSk7
+DQo+ICAJCQlmZmx1c2goc3Rkb3V0KTsNCj4gIAkJCSpzZWVkID0gaTsNCj4gQEAgLTE3MTEsNyAr
+MTcxMSw3IEBAIHN0YXRpYyB2b2lkIHNob3dfdXNhZ2Uodm9pZCkNCj4gICJcdFx0XHRiZWdpbm5p
+bmcsIGVuZCwgYW5kIGJhY2t0cmFjZS5cblxuIg0KPiAgDQo+ICAiLWcsIC0tZ3JhcGhcdFx0RW5h
+YmxlIHRoZSBkaXNwbGF5LWdyYXBoIG9wdGlvbiBpbiB0cmFjZV9vcHRpb24uIFRoaXNcbiINCj4g
+LSJcdFx0XHRvcHRpb24gY2F1c2VzIGZ0cmFjZSB0byBzaG93IHRoZSBmdW5jdGlvbnBoIG9mIGhv
+d1xuIg0KPiArIlx0XHRcdG9wdGlvbiBjYXVzZXMgZnRyYWNlIHRvIHNob3cgdGhlIGdyYXBoIG9m
+IGhvd1xuIg0KPiAgIlx0XHRcdGZ1bmN0aW9ucyBhcmUgY2FsbGluZyBvdGhlciBmdW5jdGlvbnMu
+XG5cbiINCg0KVGhpcyBpcyBhIGxhcmdlIGltcHJvdmVtZW50IGJ1dCBzaW5jZSB0aGUgY29ycmVj
+dGVkIHdvcmQgaXMgc28gbXVjaCBzaG9ydGVyLCB3ZQ0Kd291bGQgaWRlYWxseSBtb3ZlIHRoZSBm
+aXJzdCB3b3JkIG9mIHRoZSBuZXh0IGxpbmUgdG8gdGhpcyBsaW5lIGFzIHdlbGw6DQoNCiJcdFx0
+XHRvcHRpb24gY2F1c2VzIGZ0cmFjZSB0byBzaG93IHRoZSBncmFwaCBvZiBob3cgZnVuY3Rpb25z
+XG4iDQoiXHRcdFx0YXJlIGNhbGxpbmcgb3RoZXIgZnVuY3Rpb25zLlxuXG4iDQoNCmJlc3QgcmVn
+YXJkcywNCg0KVmlrdG9yDQoNCj4gIA0KPiAgIi1jLCAtLXBvbGljeSBQT0xcdFJ1biB0aGUgcHJv
+Z3JhbSB3aXRoIHNjaGVkdWxpbmcgcG9saWN5IFBPTC4gUE9MIGNhbiBiZVxuIg0K
