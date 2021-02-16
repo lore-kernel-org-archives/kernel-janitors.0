@@ -1,44 +1,40 @@
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Thu, 04 Feb 2021 18:00:57 +0000
-Subject: [PATCH 3/5] fs: update kernel-doc for may_create_in_sticky()
-Message-Id: <20210204180059.28360-4-lukas.bulwahn@gmail.com>
+From: Colin Ian King <colin.king@canonical.com>
+Date: Tue, 16 Feb 2021 14:05:09 +0000
+Subject: NACK: [PATCH][next] tracing/tools: fix spelling mistake "functionph" -> "graph"
+Message-Id: <87d92a26-ae1c-e76b-76b1-315e4cf759fc@canonical.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210204180059.28360-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20210204180059.28360-1-lukas.bulwahn@gmail.com>
+References: <20210216140112.159926-1-colin.king@canonical.com>
+In-Reply-To: <20210216140112.159926-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christian Brauner <christian.brauner@ubuntu.com>, linux-fsdevel@vger.kernel.org
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To: Steven Rostedt <rostedt@goodmis.org>, Viktor Rosendahl <Viktor.Rosendahl@bmw.de>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Commit ba73d98745be ("namei: handle idmapped mounts in may_*() helpers")
-refactors may_create_in_sticky(), adds kernel-doc for the new argument,
-but missed to drop the kernel-doc for the removed arguments.
+On 16/02/2021 14:01, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> There is a spelling mistake in the -g help option, I believe
+> it should be "graph". Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  tools/tracing/latency/latency-collector.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/tracing/latency/latency-collector.c b/tools/tracing/latency/latency-collector.c
+> index 57b20802e71b..8d28234cd6fb 100644
+> --- a/tools/tracing/latency/latency-collector.c
+> +++ b/tools/tracing/latency/latency-collector.c
+> @@ -1711,7 +1711,7 @@ static void show_usage(void)
+>  "\t\t\tbeginning, end, and backtrace.\n\n"
+>  
+>  "-g, --graph\t\tEnable the display-graph option in trace_option. This\n"
+> -"\t\t\toption causes ftrace to show the functionph of how\n"
+> +"\t\t\toption causes ftrace to show the graph of how\n"
+>  "\t\t\tfunctions are calling other functions.\n\n"
+>  
+>  "-c, --policy POL\tRun the program with scheduling policy POL. POL can be\n"
+> 
 
-Hence, make htmldocs warns on ./fs/namei.c:1149:
-
-  warning: Excess function parameter 'dir_mode' description in 'may_create_in_sticky'
-  warning: Excess function parameter 'dir_uid' description in 'may_create_in_sticky'
-
-Drop removed arguments from kernel-doc of may_create_in_sticky().
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- fs/namei.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/fs/namei.c b/fs/namei.c
-index 98ea56ebcaf0..64a841dfbb3e 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -1121,8 +1121,6 @@ int may_linkat(struct user_namespace *mnt_userns, struct path *link)
-  *			  should be allowed, or not, on files that already
-  *			  exist.
-  * @mnt_userns:	user namespace of the mount the inode was found from
-- * @dir_mode: mode bits of directory
-- * @dir_uid: owner of directory
-  * @inode: the inode of the file to open
-  *
-  * Block an O_CREAT open of a FIFO (or a regular file) when:
--- 
-2.17.1
+Found another spelling mistake, sending a V2 soon.
