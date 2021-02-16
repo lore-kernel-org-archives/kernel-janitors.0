@@ -1,30 +1,41 @@
-From: Saeed Mahameed <saeed@kernel.org>
-Date: Fri, 05 Feb 2021 06:46:43 +0000
-Subject: Re: [PATCH][next] net/mlx5e: Fix spelling mistake "Unknouwn" -> "Unknown"
-Message-Id: <1dd5bf9ec89a753fedd767d8503f5573b75ed1e1.camel@kernel.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 16 Feb 2021 10:12:56 +0000
+Subject: [bug report] octeontx2-af: cn10k: MAC internal loopback support
+Message-Id: <YCuaqPZw9V8HeCrU@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20210203111049.18125-1-colin.king@canonical.com>
-         <20210203145736.00005b7b@intel.com>
-In-Reply-To: <20210203145736.00005b7b@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jesse Brandeburg <jesse.brandeburg@intel.com>, Colin King <colin.king@canonical.com>
-Cc: Leon Romanovsky <leon@kernel.org>, "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Wed, 2021-02-03 at 14:57 -0800, Jesse Brandeburg wrote:
-> Colin King wrote:
-> 
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > There is a spelling mistake in a netdev_warn message. Fix it.
-> > 
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial patch, looks fine!
-> 
-> Reviewed-by: Jesse Brandeburg <jesse.brandeburg@intel.com>
+Hello Hariprasad Kelam,
 
-Applied to net-next-mlx5.
+The patch 3ad3f8f93c81: "octeontx2-af: cn10k: MAC internal loopback
+support" from Feb 11, 2021, leads to the following static checker
+warning:
 
-Thanks!
+	drivers/net/ethernet/marvell/octeontx2/af/rvu_cgx.c:731 rvu_cgx_config_intlbk()
+	error: uninitialized symbol 'cgx_id'.
+
+drivers/net/ethernet/marvell/octeontx2/af/rvu_cgx.c
+   723  static int rvu_cgx_config_intlbk(struct rvu *rvu, u16 pcifunc, bool en)
+   724  {
+   725          struct mac_ops *mac_ops;
+   726          u8 cgx_id, lmac_id;
+                   ^^^^^^
+
+   727  
+   728          if (!is_cgx_config_permitted(rvu, pcifunc))
+   729                  return -EPERM;
+   730  
+   731          mac_ops = get_mac_ops(rvu_cgx_pdata(cgx_id, rvu));
+                                                    ^^^^^^
+Uninitialized.  This code probably hasn't been tested very well.
+
+   732  
+   733          return mac_ops->mac_lmac_intl_lbk(rvu_cgx_pdata(cgx_id, rvu),
+   734                                            lmac_id, en);
+   735  }
+
+regards,
+dan carpenter
