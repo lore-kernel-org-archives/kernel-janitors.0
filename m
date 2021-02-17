@@ -7,108 +7,108 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0CBAC433DB
-	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Feb 2021 06:19:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9C69C433E6
+	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Feb 2021 07:43:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B2D2B64DE9
-	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Feb 2021 06:19:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AAAC264E04
+	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Feb 2021 07:43:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231444AbhBQGTQ (ORCPT
+        id S231589AbhBQHnU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 17 Feb 2021 01:19:16 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:35056 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231341AbhBQGTO (ORCPT
+        Wed, 17 Feb 2021 02:43:20 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:54338 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231717AbhBQHmn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 17 Feb 2021 01:19:14 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 11H6FAOM179844;
-        Wed, 17 Feb 2021 06:18:19 GMT
+        Wed, 17 Feb 2021 02:42:43 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 11H7eO8e139423;
+        Wed, 17 Feb 2021 07:41:55 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
  : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=uDCLPCIO9dcfZ98mvYluRmR2Vohmodd48NPFEiMAni8=;
- b=piZQNv6h3IQYetmyQvDOQXxJq2RTvNC7YIW1x6QNluVQeWnw7W1v5xm0vOkZmbMZb+7A
- JtmTrkfTwb8Of5Z7TECqm/H+7cFUlKGNF2xnPAO08hMi+ox4AnmFZTqljTWeuLlu0aTa
- bc/dkBvEnN8OPdOqSGts5M8HryEPmbxPWbKvV3mVa0E0e6BjCyhLXCSrAn75Rh6LdGZa
- jOCkkK/hbXfLXn/h/JgXBNRr9VshydzhnbqeEmRVzrPoNKivVbQLGyKjb2LHaG4XLqtG
- M9QZyp7xYt6uJ5slx3U1oevnlhbADLMobQ2qJRhTeMsT5wD499pDAR5XLLzRRXbkz/OZ iw== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 36p66r16r7-1
+ bh=KmoPNcfBoIAItQ0vdnpjsq6lT+zRNAvWYjSnYMsqvxQ=;
+ b=BV5W+kGucNywexJM/c9e17hWOXAVpZY55kdsmlMniIH3FisIYRBVGlankJCcJGlq39sm
+ B4fPg99Qc5GFKUACgEWptYpk0oFIScd3BvRpg9ZzFpYYqtSpXAYJ2tNkp0XFwsYUMbsk
+ fAoWxrMw6+8HHIrM3GPq2LoX/O76I89+z2xu8Tiuc1zosWjLVy6BBvnwsYxh9F+7o41S
+ 9DfGE4KW64OBMU/n9y2WsQUHeOchraBhiaFGxAjyv6+Oyb53uMKFJdNZWHfyqVYa1lkZ
+ LUIXEv32jtH+PHcUWcKz0AgEeY79uWouP/UKfPErVVWPM19XT4aSo2FQH3D7hp8TagKq 3Q== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 36p7dnh9we-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 17 Feb 2021 06:18:19 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 11H6G51i172317;
-        Wed, 17 Feb 2021 06:18:17 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3030.oracle.com with ESMTP id 36prpxr3hq-1
+        Wed, 17 Feb 2021 07:41:55 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 11H7eMop177400;
+        Wed, 17 Feb 2021 07:41:53 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3030.oracle.com with ESMTP id 36prbp5vef-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 17 Feb 2021 06:18:17 +0000
-Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 11H6I8DP024672;
-        Wed, 17 Feb 2021 06:18:08 GMT
+        Wed, 17 Feb 2021 07:41:53 +0000
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 11H7fmeQ016695;
+        Wed, 17 Feb 2021 07:41:49 GMT
 Received: from mwanda (/102.36.221.92)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 16 Feb 2021 22:18:07 -0800
-Date:   Wed, 17 Feb 2021 09:17:59 +0300
+        with ESMTP ; Wed, 17 Feb 2021 07:41:48 +0000
+Date:   Wed, 17 Feb 2021 10:41:39 +0300
 From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Andrew Lunn <andrew@lunn.ch>, Michael Walle <michael@walle.cc>
-Cc:     Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
+To:     Sunil Goutham <sgoutham@marvell.com>,
+        hariprasad <hkelam@marvell.com>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Christina Jacob <cjacob@marvell.com>
+Cc:     Geetha sowjanya <gakula@marvell.com>,
+        Subbaraya Sundeep <sbhatta@marvell.com>,
         "David S. Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: [PATCH net-next] net: phy: icplus: Call phy_restore_page() when
- phy_select_page() fails
-Message-ID: <YCy1F5xKFJAaLBFw@mwanda>
+Subject: [PATCH net-next] octeontx2-pf: Fix otx2_get_fecparam()
+Message-ID: <YCzIsxW3B70g7lea@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 X-Proofpoint-IMR: 1
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9897 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxlogscore=999
- phishscore=0 adultscore=0 mlxscore=0 suspectscore=0 malwarescore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2102170047
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9897 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 suspectscore=0
- impostorscore=0 priorityscore=1501 clxscore=1011 spamscore=0 mlxscore=0
- phishscore=0 malwarescore=0 bulkscore=0 adultscore=0 mlxlogscore=999
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 spamscore=0 mlxscore=0
+ phishscore=0 adultscore=0 bulkscore=0 mlxlogscore=999 suspectscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2102170047
+ definitions=main-2102170055
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9897 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 suspectscore=0 mlxscore=0
+ phishscore=0 spamscore=0 adultscore=0 clxscore=1015 impostorscore=0
+ priorityscore=1501 lowpriorityscore=0 malwarescore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2102170055
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Smatch warns that there is a locking issue in this function:
+Static checkers complained about an off by one read overflow in
+otx2_get_fecparam() and we applied two conflicting fixes for it.
 
-drivers/net/phy/icplus.c:273 ip101a_g_config_intr_pin()
-warn: inconsistent returns '&phydev->mdio.bus->mdio_lock'.
-  Locked on  : 242
-  Unlocked on: 273
+Correct: b0aae0bde26f ("octeontx2: Fix condition.")
+  Wrong: 93efb0c65683 ("octeontx2-pf: Fix out-of-bounds read in otx2_get_fecparam()")
 
-It turns out that the comments in phy_select_page() say we have to call
-phy_restore_page() even if the call to phy_select_page() fails.
+Revert the incorrect fix.
 
-Fixes: f9bc51e6cce2 ("net: phy: icplus: fix paged register access")
+Fixes: 93efb0c65683 ("octeontx2-pf: Fix out-of-bounds read in otx2_get_fecparam()")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/net/phy/icplus.c | 2 +-
+ drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/phy/icplus.c b/drivers/net/phy/icplus.c
-index 4e15d4d02488..015b7b5aa776 100644
---- a/drivers/net/phy/icplus.c
-+++ b/drivers/net/phy/icplus.c
-@@ -239,7 +239,7 @@ static int ip101a_g_config_intr_pin(struct phy_device *phydev)
- 
- 	oldpage = phy_select_page(phydev, IP101G_DEFAULT_PAGE);
- 	if (oldpage < 0)
--		return oldpage;
-+		goto out;
- 
- 	/* configure the RXER/INTR_32 pin of the 32-pin IP101GR if needed: */
- 	switch (priv->sel_intr32) {
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c
+index 5fe74036a611..f4962a97a075 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c
+@@ -968,7 +968,7 @@ static int otx2_get_fecparam(struct net_device *netdev,
+ 		if (!rsp->fwdata.supported_fec)
+ 			fecparam->fec = ETHTOOL_FEC_NONE;
+ 		else
+-			fecparam->fec = fec[rsp->fwdata.supported_fec - 1];
++			fecparam->fec = fec[rsp->fwdata.supported_fec];
+ 	}
+ 	return 0;
+ }
 -- 
 2.30.0
 
