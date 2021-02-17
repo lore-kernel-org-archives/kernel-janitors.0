@@ -2,121 +2,141 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C7C3C433DB
-	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Feb 2021 04:39:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E7CDC433DB
+	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Feb 2021 06:06:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 701BB64E04
-	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Feb 2021 04:39:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DD3464E28
+	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Feb 2021 06:06:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231150AbhBQEix (ORCPT
+        id S231587AbhBQGFx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 16 Feb 2021 23:38:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35380 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229787AbhBQEic (ORCPT
+        Wed, 17 Feb 2021 01:05:53 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:35386 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231566AbhBQGFp (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 16 Feb 2021 23:38:32 -0500
-Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D19F4C061574;
-        Tue, 16 Feb 2021 20:37:35 -0800 (PST)
-Received: by mail-pf1-x42b.google.com with SMTP id b145so7648213pfb.4;
-        Tue, 16 Feb 2021 20:37:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=44ShtG5WJ+pqs/ArcKyFGnYEiuuIxdNBPE7wV3aeDwc=;
-        b=gpCCGIddm/B6rmV2KiGKKhOyTyGmKO8Rf3M46vVJUJktaxCP341TMqZqyowgsbEU0k
-         MhVEoT/mH7EvAfKJ98e0XKALYQCYYYA98XmNJo5s1Xu6g/uZkGG3UJdEXfDFLSJ3GvCx
-         ZDeYeZUR5yJXj6Hxvbbb2T32/Gqb86SfRhK5XTMn9DJDNgt9yZ3YLVWBaAmIxXsXuUEg
-         gc943cCjChgOhnk6GavWx/uGBgbyf1aO0pozaoyS3GL6RvAOo3GXd38QiYt7vP8VtNiK
-         2aUFpsf/C1gjzTSD0c5QoI7X3+cvuZ0ozPHhnJy5/gP4IcOSFd2q4jmSp6Y1v7G/whh4
-         efIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=44ShtG5WJ+pqs/ArcKyFGnYEiuuIxdNBPE7wV3aeDwc=;
-        b=ZRmu/F5ZNWIAB8N/iiU1BdMjv1x2SZhicXIzAASTSzlKwKxYcenF4batQ+YIODFBHL
-         poF1822BC9BD+x34TmuM9C4prHBhEroavJIeQV7QHbnClE+ReP4/V0gjD5JCSaZgH2V6
-         sBq1oZDz7DfeWMxS8AHRJIU1iLRB+kqKPgKVxYgSQ6ZRV85+VoyMgwwYz5vjc0gblth0
-         zPCa/Usil9ZzjFZIjsLK6TdQXY94X4NhBJa/SpwcfTIZ8WmptEzL7Tbk8BZPsRDhxY2e
-         OjCMQ4VcyWfODiWC0/4ocDQ0KIrJaWzmmqsCg/xD4GXPLe2o1Vq0IeLILjtDVWF5FMPi
-         jG8A==
-X-Gm-Message-State: AOAM530XUr12ow1YIoyooUHu2p/iZSJfD0XJAV7ebiQaPDNj4oSoTUc9
-        lOtdYknYZU3IjTVIicJKcBM=
-X-Google-Smtp-Source: ABdhPJy2PvurZVvJhZ1T4WQy9t31Imb9+EiUQLw8xeER4wgKDn7/uXQvRPpdN+MJMWTv/ZgDfq/2SQ==
-X-Received: by 2002:a62:5bc4:0:b029:1e7:5b23:1d59 with SMTP id p187-20020a625bc40000b02901e75b231d59mr23231877pfb.0.1613536654732;
-        Tue, 16 Feb 2021 20:37:34 -0800 (PST)
-Received: from google.com ([2620:15c:202:201:21d3:2abc:ad8c:8b3a])
-        by smtp.gmail.com with ESMTPSA id t4sm527239pfe.161.2021.02.16.20.37.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Feb 2021 20:37:33 -0800 (PST)
-Date:   Tue, 16 Feb 2021 20:37:31 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        Shaun Jackman <sjackman@gmail.com>,
-        linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] Input: elo - fix an error code in elo_connect()
-Message-ID: <YCydi5tfV/l0NGHw@google.com>
-References: <YBKFd5CvDu+jVmfW@mwanda>
+        Wed, 17 Feb 2021 01:05:45 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 11H60GlI005907;
+        Wed, 17 Feb 2021 06:04:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
+ bh=IV9DUOBZsJgn3sW/ZDjfRk2u64J3qZbzCRAclBjXrAQ=;
+ b=hTxcesg4JEE2Qd0fLfHoeo3VNzobykQKOF3sAhuHbiqX59rG4Zwww2/TlrPeRe1vFYq+
+ PqmEzf611uGWn4InyMP22M5DbxiqTIlXFW2EMu/ZSx/XniS3TtmN0hO9XJ510JHRFsBW
+ CVcpA9z+O7lLnJnL56G+5bCJXS6y8JmKQgjaY/bt96apsMxRJi5oJnwIOFE6ehWJbg8k
+ mxf/miwKTuubopTtR81YyG0M6jv3yVNXuvmqfWBD4VBwhbSVLS6LjwdF/VLmaqON/lyD
+ KBNBnZZItpB1goWjPJ7NJP+R8kZJ9CxNDc6/MBjUXccLuCY8YQKZgxycVmEh4tPQZ9qp tg== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 36p7dnh38n-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 17 Feb 2021 06:04:46 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 11H60DRa177255;
+        Wed, 17 Feb 2021 06:04:44 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 36prnyu6wv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 17 Feb 2021 06:04:44 +0000
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 11H64g3R006439;
+        Wed, 17 Feb 2021 06:04:42 GMT
+Received: from mwanda (/102.36.221.92)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 16 Feb 2021 22:04:41 -0800
+Date:   Wed, 17 Feb 2021 09:04:34 +0300
+From:   Dan Carpenter <dancarpenter@oracle.com>
+To:     Chris Mason <clm@fb.com>, Arne Jansen <sensille@gmx.net>
+Cc:     Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] btrfs: prevent potential out of bounds in
+ btrfs_ioctl_snap_create_v2()
+Message-ID: <YCyx8u40HaplP7a+@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YBKFd5CvDu+jVmfW@mwanda>
+X-Mailer: git-send-email haha only kidding
+X-Proofpoint-IMR: 1
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9897 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxlogscore=999
+ bulkscore=0 suspectscore=0 spamscore=0 malwarescore=0 mlxscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2102170046
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9897 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 suspectscore=0 mlxscore=0
+ phishscore=0 spamscore=0 adultscore=0 clxscore=1011 impostorscore=0
+ priorityscore=1501 lowpriorityscore=0 malwarescore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2102170046
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Dan,
+The problem is we're copying "inherit" from user space but we don't
+necessarily know that we're copying enough data for a 64 byte
+struct.  Then the next problem is that "inherit" has a variable size
+array at the end, and we have to verify that array is the size we
+expected.
 
-On Thu, Jan 28, 2021 at 12:35:51PM +0300, Dan Carpenter wrote:
-> If elo_setup_10() fails then this should return an error code instead
-> of success.
+Fixes: 6f72c7e20dba: ("Btrfs: add qgroup inheritance")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Presumably only root can create snapshots.  Anyway, I have not tested
+this fix.  I believe it is correct, of course.  But perhaps it's best
+to check.
 
-Thank you for the patch.
+The calculation for the number of elements in the array was copied from
+btrfs_qgroup_inherit().
 
-> 
-> Fixes: fae3006e4b42 ("Input: elo - add support for non-pressure-sensitive touchscreens")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/input/touchscreen/elo.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/input/touchscreen/elo.c b/drivers/input/touchscreen/elo.c
-> index e0bacd34866a..4b2fb73da5e2 100644
-> --- a/drivers/input/touchscreen/elo.c
-> +++ b/drivers/input/touchscreen/elo.c
-> @@ -341,8 +341,10 @@ static int elo_connect(struct serio *serio, struct serio_driver *drv)
->  	switch (elo->id) {
->  
->  	case 0: /* 10-byte protocol */
-> -		if (elo_setup_10(elo))
-> +		if (elo_setup_10(elo)) {
-> +			err = -EINVAL;
+ fs/btrfs/ioctl.c | 21 ++++++++++++++++++++-
+ 1 file changed, 20 insertions(+), 1 deletion(-)
 
-Ideally we'd propagate error from elo_setup_10() and underlying code,
-but we are not ready for it, as most serio code simply uses -1 for
-errors. However I think that -EIO would suit better here. Please let me
-know if you disagree, otherwise I'll fix it up on my side.
-
-Thanks!
-
->  			goto fail3;
-> +		}
->  
->  		break;
->  
-> -- 
-> 2.29.2
-> 
-
+diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
+index 384d33ab02c7..9d7b24d3e3bd 100644
+--- a/fs/btrfs/ioctl.c
++++ b/fs/btrfs/ioctl.c
+@@ -1941,15 +1941,34 @@ static noinline int btrfs_ioctl_snap_create_v2(struct file *file,
+ 	if (vol_args->flags & BTRFS_SUBVOL_RDONLY)
+ 		readonly = true;
+ 	if (vol_args->flags & BTRFS_SUBVOL_QGROUP_INHERIT) {
+-		if (vol_args->size > PAGE_SIZE) {
++		u64 nums;
++
++		if (vol_args->size < sizeof(*inherit) ||
++		    vol_args->size > PAGE_SIZE) {
+ 			ret = -EINVAL;
+ 			goto free_args;
+ 		}
++
+ 		inherit = memdup_user(vol_args->qgroup_inherit, vol_args->size);
+ 		if (IS_ERR(inherit)) {
+ 			ret = PTR_ERR(inherit);
+ 			goto free_args;
+ 		}
++
++		/* quick and dirty checks to prevent integer overflows */
++		if (inherit->num_qgroups > PAGE_SIZE ||
++		    inherit->num_ref_copies > PAGE_SIZE ||
++		    inherit->num_excl_copies > PAGE_SIZE) {
++			ret = -EINVAL;
++			goto free_inherit;
++		}
++
++		nums = inherit->num_qgroups + 2 * inherit->num_ref_copies +
++		       2 * inherit->num_excl_copies;
++		if (vol_args->size != struct_size(inherit, qgroups, nums)) {
++			ret = -EINVAL;
++			goto free_inherit;
++		}
+ 	}
+ 
+ 	ret = __btrfs_ioctl_snap_create(file, vol_args->name, vol_args->fd,
 -- 
-Dmitry
+2.30.0
+
