@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
 	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 841B5C433E0
-	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Feb 2021 22:44:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEF1CC433DB
+	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Feb 2021 22:44:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 496BF60241
-	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Feb 2021 22:44:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BADC864DD7
+	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Feb 2021 22:44:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231976AbhBQWoU (ORCPT
+        id S232683AbhBQWoe (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 17 Feb 2021 17:44:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39292 "EHLO mail.kernel.org"
+        Wed, 17 Feb 2021 17:44:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39284 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233192AbhBQWks (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 17 Feb 2021 17:40:48 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPS id 7C2D364E33;
+        id S233025AbhBQWky (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 17 Feb 2021 17:40:54 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPS id 6648360241;
         Wed, 17 Feb 2021 22:40:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1613601607;
-        bh=lIUTKaglPT8wurrZqMgRv3Hp6yZEXH2GYUyqCpREIag=;
+        bh=sWubiTSTGUbhgj9QmN8/B6LZjzkciGgIHXvXLX+YjE8=;
         h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=U+KapueP+KgbfTy2KY3WH2xCaTlhtB+/tO0wVCeVpSc/qSGSvBWvxUjCweggvY7ji
-         /k8aICPvv1vCCK+RPhXdOYEUL+AJgsfmt24PevKvnlBesqkbZa2EW70KssiFob+zaG
-         g94QnQ8ZVPpBcdCja/PIoo9BYffTzOoKY42YApIiEuIaDzbtpLWcD+HDd8K5Z1TPxM
-         ZMMnPFGl90WyXgXeqQkL/zKCm+1YJh0188eF+GnXj+XUPyh3pLX301aGKx98eVYb8L
-         x/ZqUy0gRLNYK1xgL6evLucdgt/etNWrVRsXmMGF2dxB+LAM2TWYnD6kn8cfTUHsfS
-         4gv1MB+xux/Yg==
+        b=M0Ypie6tZzTkR/mIF5ZMaOk/i3SJC2GLNbnMZ0WN8M2e8N9k4q4vVwC16mS5KGHmL
+         eNBoZ8ozVXviPLPR7LpNT3zYN0bvAj+TiOs6RHGi7Km/pBBh1ulPbekZ6RzN9rbcQb
+         +sg7LBrzS23SA8EjLkPJYniIxDcsEUYX2fTsQgxg5nt658nQs5L1eJ5c5oIOu2H/es
+         P1NGJ7QiRYIJHyoFvD/Vgyh3n9UadQ+8NoXSI/ol9XhLAFRLiLp6OfntmYu8RzSnxM
+         3j2uPV/mDetJ1BVrE5c3OyDZyhgXzEmndwmsrL6XrgjzYiNCD/4gGDnNL+lLWANXql
+         1aEwcyrZkwQEA==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] cteontx2-pf: cn10k: Prevent harmless double shift
- bugs
+Subject: Re: [PATCH net-next] octeontx2-pf: Fix otx2_get_fecparam()
 From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <161360160743.1867.14294526201297817960.git-patchwork-notify@kernel.org>
+Message-Id: <161360160734.1867.9120165404237124929.git-patchwork-notify@kernel.org>
 Date:   Wed, 17 Feb 2021 22:40:07 +0000
-References: <YCy0tPmgaHL1U2Le@mwanda>
-In-Reply-To: <YCy0tPmgaHL1U2Le@mwanda>
+References: <YCzIsxW3B70g7lea@mwanda>
+In-Reply-To: <YCzIsxW3B70g7lea@mwanda>
 To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     sgoutham@marvell.com, gakula@marvell.com, sbhatta@marvell.com,
-        hkelam@marvell.com, davem@davemloft.net, kuba@kernel.org,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc:     sgoutham@marvell.com, hkelam@marvell.com, gustavoars@kernel.org,
+        cjacob@marvell.com, gakula@marvell.com, sbhatta@marvell.com,
+        davem@davemloft.net, kuba@kernel.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -53,20 +53,20 @@ Hello:
 
 This patch was applied to netdev/net-next.git (refs/heads/master):
 
-On Wed, 17 Feb 2021 09:16:20 +0300 you wrote:
-> These defines are used with set_bit() and test_bit() which take a bit
-> number.  In other words, the code is doing:
+On Wed, 17 Feb 2021 10:41:39 +0300 you wrote:
+> Static checkers complained about an off by one read overflow in
+> otx2_get_fecparam() and we applied two conflicting fixes for it.
 > 
-> 	if (BIT(BIT(1)) & pf->hw.cap_flag) {
+> Correct: b0aae0bde26f ("octeontx2: Fix condition.")
+>   Wrong: 93efb0c65683 ("octeontx2-pf: Fix out-of-bounds read in otx2_get_fecparam()")
 > 
-> This was done consistently so it did not cause a problem at runtime but
-> it's still worth fixing.
+> Revert the incorrect fix.
 > 
 > [...]
 
 Here is the summary with links:
-  - [net-next] cteontx2-pf: cn10k: Prevent harmless double shift bugs
-    https://git.kernel.org/netdev/net-next/c/c77662605d8d
+  - [net-next] octeontx2-pf: Fix otx2_get_fecparam()
+    https://git.kernel.org/netdev/net-next/c/38b5133ad607
 
 You are awesome, thank you!
 --
