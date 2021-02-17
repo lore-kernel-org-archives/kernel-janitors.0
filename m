@@ -2,118 +2,104 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58C82C433DB
-	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Feb 2021 14:16:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6442C433E0
+	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Feb 2021 14:30:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2120764DBD
-	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Feb 2021 14:16:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4D3364DF3
+	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Feb 2021 14:30:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233314AbhBQOPk (ORCPT
+        id S233509AbhBQOaR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 17 Feb 2021 09:15:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45308 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232699AbhBQOPf (ORCPT
+        Wed, 17 Feb 2021 09:30:17 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:38600 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233507AbhBQOaG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 17 Feb 2021 09:15:35 -0500
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D2AFC061574
-        for <kernel-janitors@vger.kernel.org>; Wed, 17 Feb 2021 06:14:55 -0800 (PST)
-Received: by mail-wr1-x42f.google.com with SMTP id u14so17576607wri.3
-        for <kernel-janitors@vger.kernel.org>; Wed, 17 Feb 2021 06:14:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=UDFCRTsuiZ3IiAm76Fu7UKNR+ruV15r3mLWBUKSRUYk=;
-        b=FMzIj+DJ25ZBr9XVddM/3sw4Ehs2ShlUSy4+IsWMKw5/EiywQmPWCY+BijAzt40ZEf
-         Mtyzv7WTU5/nktwY9Li/Lc9lCgMCkXMjgfWGtKroR5kUH8iVwslpgv/lVOUl7bwQw8Sj
-         HjbciOmOvBoNm9YhGrNvkeSMLLl+0gKuN7RzSB0/6qXuykp+ZY9vZjJTI5S5kGgtBIYy
-         NgoPxH4wFk7lo+xQoYpv80b1F4KqgwDFrMEcxqJbDcEwnSyF3JNhtEsMFX6kBP8e8g2r
-         OBi8707/VxQnfjF4L3NU9A1iMG3vJGXS2V5ICBiRn2xFO1CYcyx7Oh2BMmTxioXRD3eK
-         BiIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=UDFCRTsuiZ3IiAm76Fu7UKNR+ruV15r3mLWBUKSRUYk=;
-        b=iNj3ya1aIz1+TryS/enX9VDkwq3pXnP09iW4O+YsezCwHaw4xFMrKyh5nWja8LyzbE
-         cKCy+luZb3+0/xHmZKby5BH5k4y8hYanB0+3k7voECxGTXk5KB1wzKfrFjNfkpZWgHiS
-         ShKYDhnY8ey3mTGkLClxqzYJk1OMCYpvIeHA6M+a2kkUtDgOAFTpf+g5zNe42UvaHvIa
-         EIAq13MOURgcLQaFF9yBxRRxU1vhp04KNsoH0g6nfX8XlYXaG3gHTOQQOGrdK9KlTvav
-         4xCcUJDougNpmDTXnXpexG8oFEQ6C6yrRPFHmajnm7W9nut71gHzgDDoX3407dvxGTd9
-         YAwA==
-X-Gm-Message-State: AOAM531pfWA7+iTjptk01bnBsW9d8k05F7uLX/tuNpD9RghV4av44q6g
-        kUtUoLJms5P4mVRQoONey9+xtA==
-X-Google-Smtp-Source: ABdhPJwNxrY3w7dpix3j+g9HhjNKICiJJZam+Eh0j5KukroXDcYynUnVCkkLPfAbhQS67/4wu1zBxg==
-X-Received: by 2002:a5d:4850:: with SMTP id n16mr29797243wrs.296.1613571292946;
-        Wed, 17 Feb 2021 06:14:52 -0800 (PST)
-Received: from [192.168.86.34] (cpc86377-aztw32-2-0-cust226.18-1.cable.virginm.net. [92.233.226.227])
-        by smtp.googlemail.com with ESMTPSA id m17sm3083820wmq.5.2021.02.17.06.14.52
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 17 Feb 2021 06:14:52 -0800 (PST)
-Subject: Re: [PATCH][next] ASoC: codecs: lpass-rx-macro: remove redundant
- initialization of variable hph_pwr_mode
-To:     Colin King <colin.king@canonical.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210215200501.90697-1-colin.king@canonical.com>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <4e261a11-4577-4568-8ab3-f2ef1a9a8474@linaro.org>
-Date:   Wed, 17 Feb 2021 14:14:51 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Wed, 17 Feb 2021 09:30:06 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 11HEOuHW123468;
+        Wed, 17 Feb 2021 14:29:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=VvKlgYlVOYtS4OI7T3yN1e+q9Tl67gJogc0P5PctqGc=;
+ b=O9FsFRC3ZoeNiAc8cHxWwkrtxtzmtRM0Y7hTFqYnlnA5/SgPEpBQsBYTGK5mqEzAv/1Y
+ 0VRN2lA/46FfNThnJkh7x9AN8zpH47ecKyy+mFj9VUqHuUx5+/J2m5xVS0f+XOMVptxi
+ chfsirJ1ODH9Cxl22bZ0AbVeDekocRpNMwcWQJ9ZUH319ZzooVQcCgYxQpDfYAnje6j4
+ GxEJSUQooSnHGcJ8c6dFTnVfXPwrXpyhrrIkHuBxjgqHoTrxBA2VAW9tdqbPEeNLFe9I
+ rBlmuatUVNZWdUVR5AYPScbTnHHornHwNXfyOkgbLsvX1Bz33oO3QN/jpQ6ImKPvh8Ek ew== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 36p66r2jjj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 17 Feb 2021 14:29:09 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 11HEQ5Jc172023;
+        Wed, 17 Feb 2021 14:28:58 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 36prpy6uwc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 17 Feb 2021 14:28:58 +0000
+Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 11HESp0I018684;
+        Wed, 17 Feb 2021 14:28:51 GMT
+Received: from kadam (/102.36.221.92)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 17 Feb 2021 06:28:50 -0800
+Date:   Wed, 17 Feb 2021 17:28:38 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Andrew Lunn <andrew@lunn.ch>, Michael Walle <michael@walle.cc>
+Cc:     Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net-next] net: phy: icplus: Call phy_restore_page() when
+ phy_select_page() fails
+Message-ID: <20210217142838.GM2222@kadam>
+References: <YCy1F5xKFJAaLBFw@mwanda>
 MIME-Version: 1.0
-In-Reply-To: <20210215200501.90697-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YCy1F5xKFJAaLBFw@mwanda>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-IMR: 1
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9897 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxlogscore=999
+ phishscore=0 adultscore=0 mlxscore=0 suspectscore=0 malwarescore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2102170112
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9897 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 suspectscore=0
+ impostorscore=0 priorityscore=1501 clxscore=1015 spamscore=0 mlxscore=0
+ phishscore=0 malwarescore=0 bulkscore=0 adultscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2102170112
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-
-
-On 15/02/2021 20:05, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On Wed, Feb 17, 2021 at 09:17:59AM +0300, Dan Carpenter wrote:
+> Smatch warns that there is a locking issue in this function:
 > 
-> The variable hph_pwr_mode is being initialized with a value that is
-> never read and it is being updated later with a new value.  The
-> initialization is redundant and can be removed.
+> drivers/net/phy/icplus.c:273 ip101a_g_config_intr_pin()
+> warn: inconsistent returns '&phydev->mdio.bus->mdio_lock'.
+>   Locked on  : 242
+>   Unlocked on: 273
 > 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
-Thanks for the patch!
-
-LGTM,
-
-
-Reviewed-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-
->   sound/soc/codecs/lpass-rx-macro.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> It turns out that the comments in phy_select_page() say we have to call
+> phy_restore_page() even if the call to phy_select_page() fails.
 > 
-> diff --git a/sound/soc/codecs/lpass-rx-macro.c b/sound/soc/codecs/lpass-rx-macro.c
-> index 8c04b3b2c907..76909c50d7b9 100644
-> --- a/sound/soc/codecs/lpass-rx-macro.c
-> +++ b/sound/soc/codecs/lpass-rx-macro.c
-> @@ -2038,7 +2038,7 @@ static int rx_macro_load_compander_coeff(struct snd_soc_component *component,
->   {
->   	u16 comp_coeff_lsb_reg, comp_coeff_msb_reg;
->   	int i;
-> -	int hph_pwr_mode = HPH_LOHIFI;
-> +	int hph_pwr_mode;
->   
->   	if (!rx->comp_enabled[comp])
->   		return 0;
-> 
+> Fixes: f9bc51e6cce2 ("net: phy: icplus: fix paged register access")
+
+Don't apply this patch.  I have created a new Smatch warning for the
+phy_select_page() behavior and it catches a couple similar bugs in the
+same file.  I will send a v2 that fixes those as well.
+
+regards,
+dan carpenter
+
