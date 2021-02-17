@@ -2,93 +2,89 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1ABAC433E9
-	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Feb 2021 00:38:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2D1EC433E0
+	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Feb 2021 04:39:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C7F4464E7A
-	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Feb 2021 00:38:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BB0D64E13
+	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Feb 2021 04:39:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230179AbhBQAi3 (ORCPT
+        id S230453AbhBQEim (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 16 Feb 2021 19:38:29 -0500
-Received: from www62.your-server.de ([213.133.104.62]:55278 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229581AbhBQAi2 (ORCPT
+        Tue, 16 Feb 2021 23:38:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35438 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230315AbhBQEid (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 16 Feb 2021 19:38:28 -0500
-Received: from sslproxy06.your-server.de ([78.46.172.3])
-        by www62.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
-        (Exim 4.92.3)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1lCAqZ-00029N-B4; Wed, 17 Feb 2021 01:37:39 +0100
-Received: from [85.7.101.30] (helo=pc-9.home)
-        by sslproxy06.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1lCAqZ-00099q-38; Wed, 17 Feb 2021 01:37:39 +0100
-Subject: Re: [PATCH] bpf: fix a warning message in mark_ptr_not_null_reg()
-To:     KP Singh <kpsingh@kernel.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Dmitrii Banshchikov <me@ubique.spb.ru>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        bpf <bpf@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-References: <YCwewjRBJIBm0sew@mwanda>
- <CACYkzJ55Ze+aA+qKA8bf=iqNY01H=MuDCKVmn44fLVW1670RxA@mail.gmail.com>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <04c60ed2-1a96-2835-9ae1-0ba84f482362@iogearbox.net>
-Date:   Wed, 17 Feb 2021 01:37:38 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Tue, 16 Feb 2021 23:38:33 -0500
+Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFBFAC06174A;
+        Tue, 16 Feb 2021 20:37:52 -0800 (PST)
+Received: by mail-pf1-x435.google.com with SMTP id j12so7620427pfj.12;
+        Tue, 16 Feb 2021 20:37:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=BhmsuKnH0E52H/9hYZJn/H63hbz5gesZzSHL5lPaF+k=;
+        b=JNgqrAxGKINEujyV5xnygACyy/PSSR7vRSklUAJ6pmQsEtakziusaHQbnNMb0FJWcx
+         HUQir+nv8Ks8Skx03XXgKXUZe9DtiH4j23xqwZWegg3ufl3NvTXCYesbnHeYpvzvoMc8
+         hVUnA9MhA/syHJsHgGBvkKXWJY5v2jqLIBN4Ht2cvA9J84PIJkBzg7BVq0ItfvkAHpFZ
+         JBSbcm9QkEheDl/GHXolFZiJkzlFbJ4ARgdqZo+Sygduw6xvmtHogGmn3EtwHsizq0s5
+         dDNsVxPGsQH4jGzZVRy56CiVefBco0EKMzce7NCZEapAzJhIZKjuFH3K8+LkuJRdC1Cv
+         jJvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=BhmsuKnH0E52H/9hYZJn/H63hbz5gesZzSHL5lPaF+k=;
+        b=U3P4PM3xBDiL1T5QhYELx4SmFu3tG0p0uEUD/nlS0gLV/XDm7s5jFTywziB+s/0aAZ
+         ADlbRxM2jmIU1HTWH/IJMnAyvls6zbDRYHHypVYyeT6Naj6/KxhCI0a6B6DL8+dkbZm+
+         3g1hjlyA9/bjpNwIX3+WCMzpOdnEIOI/BRspYJJY6LwJvkuYnHIBf+6OoQ2r1iGgUYtm
+         wm6tlPFuKuh7rWUhySy3Hv1XIWJItWe7MuiaIcMf1C7lODLJUduHEjGbePWWQa88E8HS
+         fY50bnCgBazlNwK2incNy45hMmQzimxFoXprA6J220uaM5c8lziL71DqbFN+rawYMfEL
+         2hJQ==
+X-Gm-Message-State: AOAM5302MaDcaDi4N+iK2Ai0G7t4Z3DN3T/2YSisUHq1Wkxd6igsPO16
+        tsvgHG+UIczJWaLImooY8Mc=
+X-Google-Smtp-Source: ABdhPJxgYAkmzaGKK6Rmlt9BuDNilTzv10gEyDILo7x0iWSyVhw41CHQizuqLxgIAzFFEa5r+TODtQ==
+X-Received: by 2002:a63:c44d:: with SMTP id m13mr22321252pgg.64.1613536672447;
+        Tue, 16 Feb 2021 20:37:52 -0800 (PST)
+Received: from google.com ([2620:15c:202:201:21d3:2abc:ad8c:8b3a])
+        by smtp.gmail.com with ESMTPSA id 143sm543848pfv.134.2021.02.16.20.37.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Feb 2021 20:37:51 -0800 (PST)
+Date:   Tue, 16 Feb 2021 20:37:49 -0800
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Florian Echtler <floe@butterbrot.org>,
+        linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] Input: sur40 - Fix an error code in sur40_probe()
+Message-ID: <YCydnRcGmhWYw8Mp@google.com>
+References: <YBKFkbATXa5fA3xj@mwanda>
 MIME-Version: 1.0
-In-Reply-To: <CACYkzJ55Ze+aA+qKA8bf=iqNY01H=MuDCKVmn44fLVW1670RxA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.102.4/26082/Tue Feb 16 13:17:58 2021)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YBKFkbATXa5fA3xj@mwanda>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 2/16/21 10:10 PM, KP Singh wrote:
-> On Tue, Feb 16, 2021 at 8:37 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->>
->> The WARN_ON() argument is a condition, and it generates a stack trace
->> but it doesn't print the warning.
->>
->> Fixes: 4ddb74165ae5 ("bpf: Extract nullable reg type conversion into a helper function")
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->> ---
->>   kernel/bpf/verifier.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
->> index 056df6be3e30..bd4d1dfca73c 100644
->> --- a/kernel/bpf/verifier.c
->> +++ b/kernel/bpf/verifier.c
->> @@ -1120,7 +1120,7 @@ static void mark_ptr_not_null_reg(struct bpf_reg_state *reg)
->>                  reg->type = PTR_TO_RDWR_BUF;
->>                  break;
->>          default:
->> -               WARN_ON("unknown nullable register type");
->> +               WARN(1, "unknown nullable register type");
+On Thu, Jan 28, 2021 at 12:36:17PM +0300, Dan Carpenter wrote:
+> If v4l2_ctrl_handler_setup() fails then probe() should return an error
+> code instead of returning success.
 > 
-> Should we use WARN_ONCE here? Also, I think the fix should be targeted
-> for bpf-next as
-> the patch that introduced this hasn't made it to bpf yet.
-> 
-> [...]
+> Fixes: cee1e3e2ef39 ("media: add video control handlers using V4L2 control framework")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Usually we have something like `verbose(env, "kernel subsystem misconfigured verifier\n")`,
-but in this case we'd need to drag env all the way to here. :/ I agree with WARN_ONCE().
+Applied, thank you.
+
+-- 
+Dmitry
