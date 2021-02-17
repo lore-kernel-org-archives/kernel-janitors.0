@@ -2,46 +2,50 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.0 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6FC2C433E6
-	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Feb 2021 10:13:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9E79C433DB
+	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Feb 2021 10:23:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7BD7764E02
-	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Feb 2021 10:13:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 613A864E6B
+	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Feb 2021 10:23:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232283AbhBQKNW (ORCPT
+        id S232363AbhBQKWy (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 17 Feb 2021 05:13:22 -0500
-Received: from ssl.serverraum.org ([176.9.125.105]:54173 "EHLO
-        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232158AbhBQKM6 (ORCPT
+        Wed, 17 Feb 2021 05:22:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52036 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232322AbhBQKWp (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 17 Feb 2021 05:12:58 -0500
-Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id 11A7F22234;
-        Wed, 17 Feb 2021 11:12:13 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1613556734;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ksN8/hBq42TOuayBOXgGsNoQBvzs2QEmWrrStLVkPX4=;
-        b=ZqYEKdnVRHk8glAWxz/RBNMtQXug4lDaV2FMmLMTbPea0mQDKHmc/zax3Os1aD8OqqB0J/
-        JWE47y7Su+UK9OcBL0cGHp2n6bdpMEZEURUl2CUvPCVQLoiumbcxjDe5S912eSsn/t/JCv
-        jVay5a+r7eCn20WkCtZH4TAAin6MA2U=
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 17 Feb 2021 11:12:11 +0100
-From:   Michael Walle <michael@walle.cc>
-To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
+        Wed, 17 Feb 2021 05:22:45 -0500
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [IPv6:2001:4d48:ad52:32c8:5054:ff:fe00:142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14C40C061574;
+        Wed, 17 Feb 2021 02:22:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=moQ0K1ybjmFAChqM3PVggT6XITk45iTZJYuoxQXEgdo=; b=v/6b0cej0F9Ox3+XoClr3+x/2
+        Vrm3miaNkzAGaywJwwFU5E7HzCQnv8K5IR8DVYZv0BZD/IFl1CLEdXjKQIrPKT+u9t+NT1/LKg0CN
+        fE6hfg8xF1A8BJFjHz3ACXveWYjw42tED0FtGX/c71zCgw6+MdM1LttQ/FpcYq4CukN+/ECgnFbYF
+        mQYkKMt06atEEKCvKvSVOLjqVd9ZWgxOBtNYwxHQuupcJ4n7sGDfwsBbpcFN7YB4othFtxE3tgkm5
+        aMkRMZZhFMeFCznmsRnqJboRvyaik6K+Y5i6yKWAV+5sfgmrPygt86+2YkrJ+dA+uLLpjH6/FHBjo
+        PhhhEH+Pg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:44558)
+        by pandora.armlinux.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1lCJy3-0002WT-N5; Wed, 17 Feb 2021 10:21:59 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1lCJy2-0003fD-TX; Wed, 17 Feb 2021 10:21:58 +0000
+Date:   Wed, 17 Feb 2021 10:21:58 +0000
+From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
+To:     Michael Walle <michael@walle.cc>
 Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
         Andrew Lunn <andrew@lunn.ch>,
         Heiner Kallweit <hkallweit1@gmail.com>,
@@ -50,40 +54,53 @@ Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
         kernel-janitors@vger.kernel.org
 Subject: Re: [PATCH net-next] net: phy: icplus: Call phy_restore_page() when
  phy_select_page() fails
-In-Reply-To: <20210217100420.GD1463@shell.armlinux.org.uk>
+Message-ID: <20210217102158.GE1463@shell.armlinux.org.uk>
 References: <YCy1F5xKFJAaLBFw@mwanda>
  <20210217100420.GD1463@shell.armlinux.org.uk>
-User-Agent: Roundcube Webmail/1.4.10
-Message-ID: <6a7032cea19b8798176012f128f4977a@walle.cc>
-X-Sender: michael@walle.cc
+ <6a7032cea19b8798176012f128f4977a@walle.cc>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6a7032cea19b8798176012f128f4977a@walle.cc>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+Sender: Russell King - ARM Linux admin <linux@armlinux.org.uk>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Am 2021-02-17 11:04, schrieb Russell King - ARM Linux admin:
-> On Wed, Feb 17, 2021 at 09:17:59AM +0300, Dan Carpenter wrote:
->> Smatch warns that there is a locking issue in this function:
->> 
->> drivers/net/phy/icplus.c:273 ip101a_g_config_intr_pin()
->> warn: inconsistent returns '&phydev->mdio.bus->mdio_lock'.
->>   Locked on  : 242
->>   Unlocked on: 273
->> 
->> It turns out that the comments in phy_select_page() say we have to 
->> call
->> phy_restore_page() even if the call to phy_select_page() fails.
+On Wed, Feb 17, 2021 at 11:12:11AM +0100, Michael Walle wrote:
+> Am 2021-02-17 11:04, schrieb Russell King - ARM Linux admin:
+> > On Wed, Feb 17, 2021 at 09:17:59AM +0300, Dan Carpenter wrote:
+> > > Smatch warns that there is a locking issue in this function:
+> > > 
+> > > drivers/net/phy/icplus.c:273 ip101a_g_config_intr_pin()
+> > > warn: inconsistent returns '&phydev->mdio.bus->mdio_lock'.
+> > >   Locked on  : 242
+> > >   Unlocked on: 273
+> > > 
+> > > It turns out that the comments in phy_select_page() say we have to
+> > > call
+> > > phy_restore_page() even if the call to phy_select_page() fails.
+> > 
+> > It seems it's a total waste of time documenting functions...
 > 
-> It seems it's a total waste of time documenting functions...
+> You once said
+> 
+> """
+> Kernel development is fundamentally a difficult, frustrating and
+> depressing activity.
+> """
+> 
+> But really this comment doesn't make it much better. Yes I've made
+> a mistake although I _read_ the function documentation. So shame on
+> me.
 
-You once said
+It wasn't aimed at you - it was more pointing out that in the normal
+process of kernel development, reading documentation is fairly low,
+yet we spend time creating it. So, does writing documentation actually
+help, or does it just slow down the development cycle? Does it have a
+net positive value? Personally, I don't think it does.
 
-"""
-Kernel development is fundamentally a difficult, frustrating and
-depressing activity.
-"""
-
-But really this comment doesn't make it much better. Yes I've made
-a mistake although I _read_ the function documentation. So shame on
-me.
-
--michael
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 40Mbps down 10Mbps up. Decent connectivity at last!
