@@ -7,57 +7,55 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E7CDC433DB
-	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Feb 2021 06:06:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D442EC433DB
+	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Feb 2021 06:11:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3DD3464E28
-	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Feb 2021 06:06:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A288964E2B
+	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Feb 2021 06:11:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231587AbhBQGFx (ORCPT
+        id S231490AbhBQGLV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 17 Feb 2021 01:05:53 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:35386 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231566AbhBQGFp (ORCPT
+        Wed, 17 Feb 2021 01:11:21 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:56058 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229814AbhBQGLU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 17 Feb 2021 01:05:45 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 11H60GlI005907;
-        Wed, 17 Feb 2021 06:04:47 GMT
+        Wed, 17 Feb 2021 01:11:20 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 11H5xF8o156818;
+        Wed, 17 Feb 2021 06:10:29 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
  : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=IV9DUOBZsJgn3sW/ZDjfRk2u64J3qZbzCRAclBjXrAQ=;
- b=hTxcesg4JEE2Qd0fLfHoeo3VNzobykQKOF3sAhuHbiqX59rG4Zwww2/TlrPeRe1vFYq+
- PqmEzf611uGWn4InyMP22M5DbxiqTIlXFW2EMu/ZSx/XniS3TtmN0hO9XJ510JHRFsBW
- CVcpA9z+O7lLnJnL56G+5bCJXS6y8JmKQgjaY/bt96apsMxRJi5oJnwIOFE6ehWJbg8k
- mxf/miwKTuubopTtR81YyG0M6jv3yVNXuvmqfWBD4VBwhbSVLS6LjwdF/VLmaqON/lyD
- KBNBnZZItpB1goWjPJ7NJP+R8kZJ9CxNDc6/MBjUXccLuCY8YQKZgxycVmEh4tPQZ9qp tg== 
+ bh=vgy0GNxkRxaEgv8Y0pHIpFvkBEdF/BICto+PmglPrSc=;
+ b=Pqh1D/IyWPxBbWai+bAiBuVdljY7N3vMu66cdXv3SAz8HMwNh90zy3gMJUVqFzsvz9ON
+ +rstLgV9yPks7clsrBW3IQKlJjGaUMJvOGSNNTbnsJrk9YL1maGxFLklJYMbtGOJemjF
+ MIEs3+6xEFHW0IeXndzpj1qBWMoxndOCT2JFB6BSe2lMnvkZjhcqr5ql+vWBtya5Bk2J
+ 8DW2gx/I7rAn/tA0Y7Xy45CNDf6TbyaEIrlm38sA0WS8DaQDwDYg4gbftHCtu3/qoSrk
+ hHhwCvju6ciKhYTsoW+ZEhGNl0D1ibZJ3Tbbl1TLmosVWYUQDQ3AwlyjgAZ7/NOQKHiU EQ== 
 Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2120.oracle.com with ESMTP id 36p7dnh38n-1
+        by userp2130.oracle.com with ESMTP id 36p66r15xq-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 17 Feb 2021 06:04:46 +0000
+        Wed, 17 Feb 2021 06:10:28 +0000
 Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 11H60DRa177255;
-        Wed, 17 Feb 2021 06:04:44 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3020.oracle.com with ESMTP id 36prnyu6wv-1
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 11H60CxE177068;
+        Wed, 17 Feb 2021 06:10:27 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 36prnyuc6n-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 17 Feb 2021 06:04:44 +0000
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 11H64g3R006439;
-        Wed, 17 Feb 2021 06:04:42 GMT
+        Wed, 17 Feb 2021 06:10:27 +0000
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 11H6AOrV018381;
+        Wed, 17 Feb 2021 06:10:24 GMT
 Received: from mwanda (/102.36.221.92)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 16 Feb 2021 22:04:41 -0800
-Date:   Wed, 17 Feb 2021 09:04:34 +0300
-From:   Dan Carpenter <dancarpenter@oracle.com>
-To:     Chris Mason <clm@fb.com>, Arne Jansen <sensille@gmx.net>
-Cc:     Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] btrfs: prevent potential out of bounds in
- btrfs_ioctl_snap_create_v2()
-Message-ID: <YCyx8u40HaplP7a+@mwanda>
+        with ESMTP ; Tue, 16 Feb 2021 22:10:23 -0800
+Date:   Wed, 17 Feb 2021 09:10:15 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Stephen Kitt <steve@sk2.org>
+Cc:     linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] Input: joydev - prevent potential read overflow in ioctl
+Message-ID: <YCyzR8WvFRw4HWw6@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -69,74 +67,46 @@ X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxl
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2009150000 definitions=main-2102170046
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9897 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 suspectscore=0 mlxscore=0
- phishscore=0 spamscore=0 adultscore=0 clxscore=1011 impostorscore=0
- priorityscore=1501 lowpriorityscore=0 malwarescore=0 mlxlogscore=999
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 suspectscore=0
+ impostorscore=0 priorityscore=1501 clxscore=1011 spamscore=0 mlxscore=0
+ phishscore=0 malwarescore=0 bulkscore=0 adultscore=0 mlxlogscore=999
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
  definitions=main-2102170046
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The problem is we're copying "inherit" from user space but we don't
-necessarily know that we're copying enough data for a 64 byte
-struct.  Then the next problem is that "inherit" has a variable size
-array at the end, and we have to verify that array is the size we
-expected.
+The problem here is that "len" might be less than "joydev->nabs" so the
+loops which verfy abspam[i] and keypam[] might read beyond the buffer.
 
-Fixes: 6f72c7e20dba: ("Btrfs: add qgroup inheritance")
+Fixes: 999b874f4aa3 ("Input: joydev - validate axis/button maps before clobbering current ones")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-Presumably only root can create snapshots.  Anyway, I have not tested
-this fix.  I believe it is correct, of course.  But perhaps it's best
-to check.
+ drivers/input/joydev.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-The calculation for the number of elements in the array was copied from
-btrfs_qgroup_inherit().
-
- fs/btrfs/ioctl.c | 21 ++++++++++++++++++++-
- 1 file changed, 20 insertions(+), 1 deletion(-)
-
-diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-index 384d33ab02c7..9d7b24d3e3bd 100644
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -1941,15 +1941,34 @@ static noinline int btrfs_ioctl_snap_create_v2(struct file *file,
- 	if (vol_args->flags & BTRFS_SUBVOL_RDONLY)
- 		readonly = true;
- 	if (vol_args->flags & BTRFS_SUBVOL_QGROUP_INHERIT) {
--		if (vol_args->size > PAGE_SIZE) {
-+		u64 nums;
-+
-+		if (vol_args->size < sizeof(*inherit) ||
-+		    vol_args->size > PAGE_SIZE) {
- 			ret = -EINVAL;
- 			goto free_args;
- 		}
-+
- 		inherit = memdup_user(vol_args->qgroup_inherit, vol_args->size);
- 		if (IS_ERR(inherit)) {
- 			ret = PTR_ERR(inherit);
- 			goto free_args;
- 		}
-+
-+		/* quick and dirty checks to prevent integer overflows */
-+		if (inherit->num_qgroups > PAGE_SIZE ||
-+		    inherit->num_ref_copies > PAGE_SIZE ||
-+		    inherit->num_excl_copies > PAGE_SIZE) {
-+			ret = -EINVAL;
-+			goto free_inherit;
-+		}
-+
-+		nums = inherit->num_qgroups + 2 * inherit->num_ref_copies +
-+		       2 * inherit->num_excl_copies;
-+		if (vol_args->size != struct_size(inherit, qgroups, nums)) {
-+			ret = -EINVAL;
-+			goto free_inherit;
-+		}
- 	}
+diff --git a/drivers/input/joydev.c b/drivers/input/joydev.c
+index a2b5fbba2d3b..750f4513fe20 100644
+--- a/drivers/input/joydev.c
++++ b/drivers/input/joydev.c
+@@ -456,7 +456,7 @@ static int joydev_handle_JSIOCSAXMAP(struct joydev *joydev,
+ 	if (IS_ERR(abspam))
+ 		return PTR_ERR(abspam);
  
- 	ret = __btrfs_ioctl_snap_create(file, vol_args->name, vol_args->fd,
+-	for (i = 0; i < joydev->nabs; i++) {
++	for (i = 0; i < len && i < joydev->nabs; i++) {
+ 		if (abspam[i] > ABS_MAX) {
+ 			retval = -EINVAL;
+ 			goto out;
+@@ -487,7 +487,7 @@ static int joydev_handle_JSIOCSBTNMAP(struct joydev *joydev,
+ 	if (IS_ERR(keypam))
+ 		return PTR_ERR(keypam);
+ 
+-	for (i = 0; i < joydev->nkey; i++) {
++	for (i = 0; i < (len / 2) && i < joydev->nkey; i++) {
+ 		if (keypam[i] > KEY_MAX || keypam[i] < BTN_MISC) {
+ 			retval = -EINVAL;
+ 			goto out;
 -- 
 2.30.0
 
