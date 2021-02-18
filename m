@@ -2,60 +2,83 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87B2AC433E6
-	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Feb 2021 20:06:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0953FC433DB
+	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Feb 2021 20:30:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2FEDB6023B
-	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Feb 2021 20:06:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9799564EB2
+	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Feb 2021 20:30:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232313AbhBRUGF (ORCPT
+        id S230104AbhBRUaP (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 18 Feb 2021 15:06:05 -0500
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:18906 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231243AbhBRUEB (ORCPT
+        Thu, 18 Feb 2021 15:30:15 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:46572 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230125AbhBRU3h (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 18 Feb 2021 15:04:01 -0500
-X-IronPort-AV: E=Sophos;i="5.81,187,1610406000"; 
-   d="scan'208";a="493774975"
-Received: from 173.121.68.85.rev.sfr.net (HELO hadrien) ([85.68.121.173])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Feb 2021 21:03:17 +0100
-Date:   Thu, 18 Feb 2021 21:03:16 +0100 (CET)
-From:   Julia Lawall <julia.lawall@inria.fr>
-X-X-Sender: jll@hadrien
-To:     Markus Elfring <Markus.Elfring@web.de>
-cc:     Denis Efremov <efremov@linux.com>, cocci@systeme.lip6.fr,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] coccinelle: misc: add swap script
-In-Reply-To: <50eb8319-a552-c749-6143-7e24a8778a04@web.de>
-Message-ID: <alpine.DEB.2.22.394.2102182102500.2748@hadrien>
-References: <alpine.DEB.2.22.394.2102181114380.2748@hadrien> <50eb8319-a552-c749-6143-7e24a8778a04@web.de>
-User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
+        Thu, 18 Feb 2021 15:29:37 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lCpuf-0001h7-QC; Thu, 18 Feb 2021 20:28:37 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][V2] drivers/base/cpu: remove redundant assignment of variable retval
+Date:   Thu, 18 Feb 2021 20:28:37 +0000
+Message-Id: <20210218202837.516231-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.30.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+The variable retval is being initialized with a value that is never read
+and it is being updated later with a new value.  Clean this up by
+initializing retval to -ENOMEM and remove the assignment to retval
+on the !dev failure path.
 
-On Thu, 18 Feb 2021, Markus Elfring wrote:
+Kudos to Rafael for the improved fix suggestion.
 
-> > A disjunction basically says "at this node in the cfg, can I match the
-> > first patter, or can I match the second pattern, etc."  Unfortunately in
-> > this case the two branches start matching at different nodes, so the short
-> > circuit aspect of a disjunction isn't used, and it matches both patterns.
-> >
-> > The solution is to just make two rules.  The first for the if case and the
-> > second for everything else.
->
-> Will such feedback trigger further software development considerations?
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+V1: Remove initialization of retval
+V2: Initialiation of retval with -ENOMEM and remove assignment in
+    !dev failure path.
+---
+ drivers/base/cpu.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-No.  This is never going to change, until someone completely redesigns
-Coccinelle.
+diff --git a/drivers/base/cpu.c b/drivers/base/cpu.c
+index 8f1d6569564c..2b9e41377a07 100644
+--- a/drivers/base/cpu.c
++++ b/drivers/base/cpu.c
+@@ -409,13 +409,11 @@ __cpu_device_create(struct device *parent, void *drvdata,
+ 		    const char *fmt, va_list args)
+ {
+ 	struct device *dev = NULL;
+-	int retval = -ENODEV;
++	int retval = -ENOMEM;
+ 
+ 	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
+-	if (!dev) {
+-		retval = -ENOMEM;
++	if (!dev)
+ 		goto error;
+-	}
+ 
+ 	device_initialize(dev);
+ 	dev->parent = parent;
+-- 
+2.30.0
 
-julia
