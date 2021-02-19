@@ -2,84 +2,103 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84685C433E0
-	for <kernel-janitors@archiver.kernel.org>; Fri, 19 Feb 2021 11:38:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9991C433E0
+	for <kernel-janitors@archiver.kernel.org>; Fri, 19 Feb 2021 13:47:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3365064E67
-	for <kernel-janitors@archiver.kernel.org>; Fri, 19 Feb 2021 11:38:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B70AB64E76
+	for <kernel-janitors@archiver.kernel.org>; Fri, 19 Feb 2021 13:47:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230261AbhBSLh7 (ORCPT
+        id S230091AbhBSNrD (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 19 Feb 2021 06:37:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34494 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230237AbhBSLh4 (ORCPT
+        Fri, 19 Feb 2021 08:47:03 -0500
+Received: from mail-ot1-f46.google.com ([209.85.210.46]:38175 "EHLO
+        mail-ot1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229958AbhBSNrB (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 19 Feb 2021 06:37:56 -0500
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [IPv6:2001:4d48:ad52:32c8:5054:ff:fe00:142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E10CC061574;
-        Fri, 19 Feb 2021 03:37:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=CvYM9Xv/GTgYHR498cfIR4pFKJC4ax2Wjc7Cx2QMJf8=; b=WDqN3KxIEiOBH0eonvQFNCT3t
-        EkvonffqzDJZ+p11BexcQ3QC5Vl0wpeCx99iLOVlAtjS7g2Pm9T2QHMzKOhvUly+DGG0Ihitd++zk
-        W4Z8D3GYfWd6dai1EO3pCXo4brczKBfqEewWtOEzwtMaNPNOrOP8RqPk/NcnB7qtsKjCzP0b1ZQ/w
-        KUBSd/8IMNPQaRMehTJNZkHrMVsVBPHgS8PXdcgu4AueXvNOeN/q2+HFa5VIYWWz4Cdhe9WMjtAyQ
-        4sEci3QHSgxWOGB7KtrDDA1OuUMFab/nrtAvzYeLu8uhEsdufLGtn/PeOewMzJwzwDIVqSWgc5SAo
-        U2AjfNKcA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:45424)
-        by pandora.armlinux.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1lD45X-0004Ag-5l; Fri, 19 Feb 2021 11:36:47 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1lD45U-0007T8-Fs; Fri, 19 Feb 2021 11:36:44 +0000
-Date:   Fri, 19 Feb 2021 11:36:44 +0000
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Andrew Lunn <andrew@lunn.ch>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Michael Walle <michael@walle.cc>, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2 net-next] net: phy: icplus: call phy_restore_page()
- when phy_select_page() fails
-Message-ID: <20210219113644.GK1463@shell.armlinux.org.uk>
-References: <YC+OpFGsDPXPnXM5@mwanda>
+        Fri, 19 Feb 2021 08:47:01 -0500
+Received: by mail-ot1-f46.google.com with SMTP id s3so1927063otg.5;
+        Fri, 19 Feb 2021 05:46:45 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=N87u3s4tu/lot3REjHTTkliSBZT6KlVyweiixUFivig=;
+        b=LRRTAnZzOkrk8OAXNFBvsxT+sOKCiKmSp9rZRXzLVs6TlIkahGYYTa2MVkLLbZFLPW
+         hAr6EjFsk6f3VSOBu0huZL/uG3wdFOYSLseAQYxgFri6gfIx12knIFpCXGKjMsmE7g7L
+         9PVkN61qCtzwGDPVkRSWtpCh+WY7mhu1gwXit/FK50cUj9busSGbgFMerk/SAeq7ujrK
+         syDBZaFSUdE4L8PaNTztSqjrMq9LMPECEUF6K2Og2+oZg8hiKXtBKhq4wmUBpbV2b6tm
+         s6ACJ6UFztugvpdpAa5jfsL4xZG3lSW6y8gzm3L0C4V1mqKW3fkilrs9vVY5s30ipxzM
+         VFuQ==
+X-Gm-Message-State: AOAM533LUfsMn+ddT45HxgraHB0kjjSFa3m4AhCpW9zrLFgw9URLR9Or
+        Fz6kWTByKCYB1gSxAb74nFGlGJnneju0FxLZPtk=
+X-Google-Smtp-Source: ABdhPJxII/q4/GNmq5MAWnP8pwaesn/5iH3kJjObe4JJa517d72g2yY+hEP7Dkrw6hLE7jGwlZAmN9frgTqniK3cSZ8=
+X-Received: by 2002:a05:6830:2106:: with SMTP id i6mr6825709otc.260.1613742380552;
+ Fri, 19 Feb 2021 05:46:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YC+OpFGsDPXPnXM5@mwanda>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-Sender: Russell King - ARM Linux admin <linux@armlinux.org.uk>
+References: <20210218202837.516231-1-colin.king@canonical.com>
+In-Reply-To: <20210218202837.516231-1-colin.king@canonical.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Fri, 19 Feb 2021 14:46:08 +0100
+Message-ID: <CAJZ5v0johrMqzCpu7jYtJX8OFWcw+yrNaQo0BKh-CZvsuVkHGw@mail.gmail.com>
+Subject: Re: [PATCH][V2] drivers/base/cpu: remove redundant assignment of
+ variable retval
+To:     Colin King <colin.king@canonical.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Feb 19, 2021 at 01:10:44PM +0300, Dan Carpenter wrote:
-> The comments to phy_select_page() say that "phy_restore_page() must
-> always be called after this, irrespective of success or failure of this
-> call."  If we don't call phy_restore_page() then we are still holding
-> the phy_lock_mdio_bus() so it eventually leads to a dead lock.
-> 
-> Fixes: 32ab60e53920 ("net: phy: icplus: add MDI/MDIX support for IP101A/G")
-> Fixes: f9bc51e6cce2 ("net: phy: icplus: fix paged register access")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+On Thu, Feb 18, 2021 at 9:28 PM Colin King <colin.king@canonical.com> wrote:
+>
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> The variable retval is being initialized with a value that is never read
+> and it is being updated later with a new value.  Clean this up by
+> initializing retval to -ENOMEM and remove the assignment to retval
+> on the !dev failure path.
+>
+> Kudos to Rafael for the improved fix suggestion.
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Reviewed-by: Russell King <rmk+kernel@armlinux.org.uk>
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Thanks.
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 40Mbps down 10Mbps up. Decent connectivity at last!
+> ---
+> V1: Remove initialization of retval
+> V2: Initialiation of retval with -ENOMEM and remove assignment in
+>     !dev failure path.
+> ---
+>  drivers/base/cpu.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/base/cpu.c b/drivers/base/cpu.c
+> index 8f1d6569564c..2b9e41377a07 100644
+> --- a/drivers/base/cpu.c
+> +++ b/drivers/base/cpu.c
+> @@ -409,13 +409,11 @@ __cpu_device_create(struct device *parent, void *drvdata,
+>                     const char *fmt, va_list args)
+>  {
+>         struct device *dev = NULL;
+> -       int retval = -ENODEV;
+> +       int retval = -ENOMEM;
+>
+>         dev = kzalloc(sizeof(*dev), GFP_KERNEL);
+> -       if (!dev) {
+> -               retval = -ENOMEM;
+> +       if (!dev)
+>                 goto error;
+> -       }
+>
+>         device_initialize(dev);
+>         dev->parent = parent;
+> --
+> 2.30.0
+>
