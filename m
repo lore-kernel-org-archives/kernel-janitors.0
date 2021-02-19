@@ -2,125 +2,130 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A029C433E0
-	for <kernel-janitors@archiver.kernel.org>; Fri, 19 Feb 2021 03:18:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12B9DC433DB
+	for <kernel-janitors@archiver.kernel.org>; Fri, 19 Feb 2021 08:33:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 396FE64ED7
-	for <kernel-janitors@archiver.kernel.org>; Fri, 19 Feb 2021 03:18:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C922064E4B
+	for <kernel-janitors@archiver.kernel.org>; Fri, 19 Feb 2021 08:33:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229649AbhBSDSa (ORCPT
+        id S229952AbhBSId3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 18 Feb 2021 22:18:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41124 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229553AbhBSDS3 (ORCPT
+        Fri, 19 Feb 2021 03:33:29 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:33430 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229916AbhBSIdV (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 18 Feb 2021 22:18:29 -0500
-Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D046C061574;
-        Thu, 18 Feb 2021 19:17:49 -0800 (PST)
-Received: by mail-pl1-x633.google.com with SMTP id b8so2561106plh.12;
-        Thu, 18 Feb 2021 19:17:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=OwNV1ruvrzmTZHtKgrE8lgFC0d23DBddIr+rAQj3fCA=;
-        b=mQVOnq7krNIwtuspcWotiXg5heQPESU1irjCJKrU1ZtWJvLEO6jBJeWwIUIORpQ6tH
-         7D+TeDxnfet25IIiZr0F1aAgjoZTMHeK8qsviNcF3zyBdjodrClDssx8AI8ixMKZZo42
-         otffnoTunn14v3Zh5pxhuOdzB5eoAhXL1TBcLTqJkoGPkpJdcgjGVQsRLu6MgBpFNbAA
-         n5mk4y26kht2t/OmXeehMcFdBp1fnxflbwsv/3slI2X2Kz9xDcO4aozgwA18RSix9s5D
-         j58yYanvC8U/qwaMdIspKo8NmBZxm2JbidJVcn64Oyw5cVIYotXgRp7tbcYIWd73ugm0
-         RYlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=OwNV1ruvrzmTZHtKgrE8lgFC0d23DBddIr+rAQj3fCA=;
-        b=bFIiKP2DiPIxyJqGvcbVqjr0RKvsI9D23vVOBbqffx4v7iBCbYQQV6yAkRUX1EMVru
-         tQq0b73IipZ1NaAXRxPtcAmI/JWekN2Sr/APzv6jFpzygNN1/71BZk7r/7252TyfE21b
-         KKKedqzjqvO/PlJpHNP+QMZfHUsKHgzeiPYlLHILvvipqYqqjWsrVglxuMIJguTfxdnt
-         JzTiGzwLVNhPff1W1WRr9527534UnNCd3/QzfHVrkyPQ5q9O+syIcj+Fn02oOjEkHgIt
-         fLxLfDBZTucwcopmh4CisEXZ22+CME0X21JdGS7NeVss2QDoO0yGKBOJ3CrD0gNkgiYN
-         R37w==
-X-Gm-Message-State: AOAM53256Av7LCPvsFKtJvP/+Zwxt7GTEM8gdFeGGfmE7rzxALggoj0T
-        UH/+WWM3fqndmHCQcqyRKUk=
-X-Google-Smtp-Source: ABdhPJxcaFa410Ckz6MrT2jZ1L/de+5zRk4l6zVCRdamgk6nWQVdwrJsbyrFtsvXY7xe/3XJYmvRRg==
-X-Received: by 2002:a17:90b:1093:: with SMTP id gj19mr6909241pjb.40.1613704668174;
-        Thu, 18 Feb 2021 19:17:48 -0800 (PST)
-Received: from google.com ([2620:15c:202:201:8d20:87b2:91b7:7f7b])
-        by smtp.gmail.com with ESMTPSA id b15sm3521500pgg.85.2021.02.18.19.17.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Feb 2021 19:17:47 -0800 (PST)
-Date:   Thu, 18 Feb 2021 19:17:44 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
+        Fri, 19 Feb 2021 03:33:21 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 11J8T1ZW043449;
+        Fri, 19 Feb 2021 08:32:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=tjcNLqtLu/b7aJEdrTuj+F8IAW+3ntodIDrfkGUdp1A=;
+ b=KEAqLaGFQxvnneDFThteW0YJ0ylb15Jjw3eEQWi9trojfAatNgbm6FBfY0a/O3e0diPm
+ KiSVyl6EyEQSDdNUwlCDNs3r40661kXj6bgkYqForRsx/F5WrXFsNHu9f4aAy3W9ouuf
+ b5BRGZuUAwbexQyhr6Ir+OklBlng6WKAtTBEO5fod3KnRIuPY/GQr4TxQPpFIkyIvpXh
+ vKKxGtFbfjyjJtQq7vipzqbLKhZd0sWRKLXYIOCP9rM2JS1x60VGkA9ITpxjm5SWbqRK
+ Ap+b1XicMCPQOVXGaQRdg5MLKsXq10eyJBY6h1PK9xs4ilSn1PBVvZ5wQtIjP2vJtPKh xA== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 36p66r8nda-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 19 Feb 2021 08:32:28 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 11J8Pk1S062140;
+        Fri, 19 Feb 2021 08:32:26 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3020.oracle.com with ESMTP id 36prhvcyt6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 19 Feb 2021 08:32:26 +0000
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 11J8WNvZ014607;
+        Fri, 19 Feb 2021 08:32:23 GMT
+Received: from kadam (/102.36.221.92)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 19 Feb 2021 00:32:22 -0800
+Date:   Fri, 19 Feb 2021 11:32:15 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Cc:     Stephen Kitt <steve@sk2.org>, linux-input@vger.kernel.org,
         kernel-janitors@vger.kernel.org
 Subject: Re: [PATCH] Input: joydev - prevent potential read overflow in ioctl
-Message-ID: <YC8t2EHKRSF7DwmF@google.com>
+Message-ID: <20210219083215.GS2087@kadam>
 References: <YCyzR8WvFRw4HWw6@mwanda>
+ <YC8t2EHKRSF7DwmF@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YCyzR8WvFRw4HWw6@mwanda>
+In-Reply-To: <YC8t2EHKRSF7DwmF@google.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-IMR: 1
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9899 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0 mlxscore=0
+ bulkscore=0 suspectscore=0 malwarescore=0 spamscore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2102190065
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9899 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 suspectscore=0
+ impostorscore=0 priorityscore=1501 clxscore=1015 spamscore=0 mlxscore=0
+ phishscore=0 malwarescore=0 bulkscore=0 adultscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2102190065
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Dan,
-
-On Wed, Feb 17, 2021 at 09:10:15AM +0300, Dan Carpenter wrote:
-> The problem here is that "len" might be less than "joydev->nabs" so the
-> loops which verfy abspam[i] and keypam[] might read beyond the buffer.
+On Thu, Feb 18, 2021 at 07:17:44PM -0800, Dmitry Torokhov wrote:
+> Hi Dan,
 > 
-> Fixes: 999b874f4aa3 ("Input: joydev - validate axis/button maps before clobbering current ones")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Thank you for the patch.
-
-> ---
->  drivers/input/joydev.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> On Wed, Feb 17, 2021 at 09:10:15AM +0300, Dan Carpenter wrote:
+> > The problem here is that "len" might be less than "joydev->nabs" so the
+> > loops which verfy abspam[i] and keypam[] might read beyond the buffer.
+> > 
+> > Fixes: 999b874f4aa3 ("Input: joydev - validate axis/button maps before clobbering current ones")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > 
-> diff --git a/drivers/input/joydev.c b/drivers/input/joydev.c
-> index a2b5fbba2d3b..750f4513fe20 100644
-> --- a/drivers/input/joydev.c
-> +++ b/drivers/input/joydev.c
-> @@ -456,7 +456,7 @@ static int joydev_handle_JSIOCSAXMAP(struct joydev *joydev,
->  	if (IS_ERR(abspam))
->  		return PTR_ERR(abspam);
->  
-> -	for (i = 0; i < joydev->nabs; i++) {
-> +	for (i = 0; i < len && i < joydev->nabs; i++) {
->  		if (abspam[i] > ABS_MAX) {
->  			retval = -EINVAL;
->  			goto out;
-> @@ -487,7 +487,7 @@ static int joydev_handle_JSIOCSBTNMAP(struct joydev *joydev,
->  	if (IS_ERR(keypam))
->  		return PTR_ERR(keypam);
->  
-> -	for (i = 0; i < joydev->nkey; i++) {
-> +	for (i = 0; i < (len / 2) && i < joydev->nkey; i++) {
-
-
-I think we also need to make sure that len is even. Do you mind if I add
-the check at the top of the function to return -EINVAL if it is odd?
-
->  		if (keypam[i] > KEY_MAX || keypam[i] < BTN_MISC) {
->  			retval = -EINVAL;
->  			goto out;
-> -- 
-> 2.30.0
+> Thank you for the patch.
 > 
+> > ---
+> >  drivers/input/joydev.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/input/joydev.c b/drivers/input/joydev.c
+> > index a2b5fbba2d3b..750f4513fe20 100644
+> > --- a/drivers/input/joydev.c
+> > +++ b/drivers/input/joydev.c
+> > @@ -456,7 +456,7 @@ static int joydev_handle_JSIOCSAXMAP(struct joydev *joydev,
+> >  	if (IS_ERR(abspam))
+> >  		return PTR_ERR(abspam);
+> >  
+> > -	for (i = 0; i < joydev->nabs; i++) {
+> > +	for (i = 0; i < len && i < joydev->nabs; i++) {
+> >  		if (abspam[i] > ABS_MAX) {
+> >  			retval = -EINVAL;
+> >  			goto out;
+> > @@ -487,7 +487,7 @@ static int joydev_handle_JSIOCSBTNMAP(struct joydev *joydev,
+> >  	if (IS_ERR(keypam))
+> >  		return PTR_ERR(keypam);
+> >  
+> > -	for (i = 0; i < joydev->nkey; i++) {
+> > +	for (i = 0; i < (len / 2) && i < joydev->nkey; i++) {
+> 
+> 
+> I think we also need to make sure that len is even. Do you mind if I add
+> the check at the top of the function to return -EINVAL if it is odd?
 
-Thanks.
+Yes.  You are right.
 
--- 
-Dmitry
+Btw, thank you for fixing my patches, but feel free to just ask me to
+resend if that's easier for you.
+
+regards,
+dan carpenter
+
