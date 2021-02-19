@@ -5,106 +5,131 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7046C433DB
-	for <kernel-janitors@archiver.kernel.org>; Fri, 19 Feb 2021 18:36:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AE73C433E9
+	for <kernel-janitors@archiver.kernel.org>; Fri, 19 Feb 2021 18:55:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9296A64E77
-	for <kernel-janitors@archiver.kernel.org>; Fri, 19 Feb 2021 18:36:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B961264E77
+	for <kernel-janitors@archiver.kernel.org>; Fri, 19 Feb 2021 18:55:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229766AbhBSSg4 (ORCPT
+        id S229919AbhBSSzD (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 19 Feb 2021 13:36:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39928 "EHLO
+        Fri, 19 Feb 2021 13:55:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43774 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229658AbhBSSgz (ORCPT
+        with ESMTP id S229546AbhBSSzB (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 19 Feb 2021 13:36:55 -0500
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12E20C061574;
-        Fri, 19 Feb 2021 10:36:15 -0800 (PST)
-Received: by mail-ed1-x52d.google.com with SMTP id v22so11448699edx.13;
-        Fri, 19 Feb 2021 10:36:14 -0800 (PST)
+        Fri, 19 Feb 2021 13:55:01 -0500
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AECFC061786;
+        Fri, 19 Feb 2021 10:54:21 -0800 (PST)
+Received: by mail-pj1-x102c.google.com with SMTP id cx11so2092096pjb.4;
+        Fri, 19 Feb 2021 10:54:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GFIKisuNYIZcd2THlE/+uNrOu3IJ01P8tkbxwPNZpwc=;
-        b=hlwAhiya/QLH4uEfZx9AXp/fj8kKoZbDGwSFPLi7dZc7WoT8PwSPUiv26G5JnLkFfn
-         CJr751m3SmVXRpFxFNwa/tK8XxHPRGV1Yjlcdv4eFpWRv529CnUG2syKJkheQg/RLfk1
-         ByGWLmF2XW1vkkXJwfqy8Ib+8+Q9C9K2wDlQ0A28jy1xsgzCfqa/J+lE1AAwHqGZS+Nt
-         JT8Z1GJgk/LshASt2wHlPco/Fh0WhV6h6cOlsG3fKutW5jAFu52RYreNHMLMNU3S3ckY
-         sgMpJHrIG08AlO3Y6TkMCHJCkz7Bc9uSlPXG33sJ5lpcOC3uK1A2PIsnLRPGQlc4Jd8Q
-         EKug==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=a+41YRbSFzDZao2tp+3iHIh4EoYU6eQKRVaEr2sAmnQ=;
+        b=TbTKtUuA3ET4Twe/V+AK9n/JpKdx5d+g5GfJLB/0+JRbGvuWNXTtS+ita16i2+wtrC
+         jfLCe1xN0y6adBtHMePRGV6lB5tSm1u0BSMbDy7shu3hTjflMDJcnNT2MrimRK97bL7u
+         NG99Bn0wuTbVwJoMQWrK7HoAin0LA0KhzdlD5zRb5BsZ+5N972qYes1ri8S8paQ0hJKr
+         Cf/JqLKpv/vhzpCOjVdxPwJTuCWHD2YJ38APRkBP48/goGHpGVnX+KVpqGV7wqBTawPJ
+         72rIqL10ug4lzf9wlhz6RXach7OLWtaaGQPI6OpQJWD3uTsKhwHjrygPU2GMzAZPV3oH
+         z8fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GFIKisuNYIZcd2THlE/+uNrOu3IJ01P8tkbxwPNZpwc=;
-        b=MNOlNfjsCb3i2Ff5LDpKEulN+9mHCBpePOvr3BUx58DOv7oliCb7NqSzbVVziNLMtq
-         69WZnmAUAGOP+sRNjaItLL7Xrp8VRdKGdRSRZlyh7D67O0G3M3cSz/+fCbt+3g3mEC4U
-         6bu804lILejmUl+L2bRYESCIaPwtUxO6pNLVLyPR32X+BEeyQuCRTq+uOVR5DTCkOoZ8
-         tlnrE94Dn5iST0vU6+FM+bpBnj+pO8QwU9Lb5IRWyZSRsOv5NdCcauRdHid2mkjlm7EI
-         AEysSZs7UZFWSM1kG64kFfeEZs28evUHvPN88Doir3XmhV/mkgAk0o/+1MAFTFvHsTdV
-         O12g==
-X-Gm-Message-State: AOAM530gqHmftqABdsQrUjhvmcodmX4P05n/SY1WaUg+bQx5KbFR/gS7
-        laAhlsas58rpCcUWIlga9IC/OQqbxfY7sx/qFYM=
-X-Google-Smtp-Source: ABdhPJxHDZf4WqfSFsWqPMGCnkXrO9XmU2eTsYqR/1Bs7VZ+j8g7OiIzt74ubsUQabShs5utmdu7L9+3cjBgGQmATEQ=
-X-Received: by 2002:a05:6402:293:: with SMTP id l19mr10715421edv.4.1613759773834;
- Fri, 19 Feb 2021 10:36:13 -0800 (PST)
-MIME-Version: 1.0
-References: <YC+LUJ0YhF1Yutaw@mwanda>
-In-Reply-To: <YC+LUJ0YhF1Yutaw@mwanda>
-From:   Sunil Kovvuri <sunil.kovvuri@gmail.com>
-Date:   Sat, 20 Feb 2021 00:06:01 +0530
-Message-ID: <CA+sq2CdeKDq6=jDk=mZeSaOVa9N25WvQU8V-k61bYp6ZyN8q-w@mail.gmail.com>
-Subject: Re: [PATCH net] octeontx2-af: Fix an off by one in rvu_dbg_qsize_write()
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=a+41YRbSFzDZao2tp+3iHIh4EoYU6eQKRVaEr2sAmnQ=;
+        b=an5RU0BYHvxzMrSNfzBDh9XGBCDDPBx2vbq3tkU0DOzhCGz8FJdKCROz7xYIHxuBVz
+         aPgfyjelcnYdieHteuzuETYRxGmgAy/tUU3Z99WVywAOcvD9Z20Gmj941GMB9XbLTMQ4
+         7teFWvVRQGI6ddNat5szb+SnAliw9jXMlDXauT8rINk9i6525NbPd4oiJP/IqCrHphNY
+         gO3SV1QLCRsdXwvdTnpjALaiJclSdDXrWl6f5G65tnZIc4jv0eGE7xm+BY1GR3FoC2Y7
+         sMp7k5XDEi0ddYxdYIfVmhJTnraWDebOxFo+pGXy+3T+3mNVUFzswB2vyfbrr7hYDMNb
+         yURQ==
+X-Gm-Message-State: AOAM531P1f9gfmjZLxSuOvg+1R9KkdVztbuCwcFTxgUMABuvTfz17L3R
+        CJnJxi530SQPlmn3G8SQz3Gnf/nIbRA=
+X-Google-Smtp-Source: ABdhPJxDPncVehyuKQeCQGkDb0C5q6KmbJ18G9TAEA/s3id0M+lY18mdgQXWJ6nvySdEYJG6B6SPNA==
+X-Received: by 2002:a17:902:ba92:b029:e3:8358:34c5 with SMTP id k18-20020a170902ba92b02900e3835834c5mr10708873pls.9.1613760860620;
+        Fri, 19 Feb 2021 10:54:20 -0800 (PST)
+Received: from google.com ([2620:15c:202:201:7d43:dae1:3b24:51b7])
+        by smtp.gmail.com with ESMTPSA id 74sm10429950pfw.53.2021.02.19.10.54.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Feb 2021 10:54:19 -0800 (PST)
+Date:   Fri, 19 Feb 2021 10:54:16 -0800
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
 To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Sunil Goutham <sgoutham@marvell.com>,
-        Christina Jacob <cjacob@marvell.com>,
-        Linu Cherian <lcherian@marvell.com>,
-        Geetha sowjanya <gakula@marvell.com>,
-        Jerin Jacob <jerinj@marvell.com>,
-        hariprasad <hkelam@marvell.com>,
-        Subbaraya Sundeep <sbhatta@marvell.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Prakash Brahmajyosyula <bprakash@marvell.com>,
-        Linux Netdev List <netdev@vger.kernel.org>,
+Cc:     Stephen Kitt <steve@sk2.org>, linux-input@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH] Input: joydev - prevent potential read overflow in ioctl
+Message-ID: <YDAJWC11RW9Wa3K8@google.com>
+References: <YCyzR8WvFRw4HWw6@mwanda>
+ <YC8t2EHKRSF7DwmF@google.com>
+ <20210219083215.GS2087@kadam>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210219083215.GS2087@kadam>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Feb 19, 2021 at 3:31 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> This code does not allocate enough memory for the NUL terminator so it
-> ends up putting it one character beyond the end of the buffer.
->
-> Fixes: 8756828a8148 ("octeontx2-af: Add NPA aura and pool contexts to debugfs")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c
-> index 48a84c65804c..d5f3ad660588 100644
-> --- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c
-> +++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c
-> @@ -385,7 +385,7 @@ static ssize_t rvu_dbg_qsize_write(struct file *filp,
->         u16 pcifunc;
->         int ret, lf;
->
-> -       cmd_buf = memdup_user(buffer, count);
-> +       cmd_buf = memdup_user(buffer, count + 1);
->         if (IS_ERR(cmd_buf))
->                 return -ENOMEM;
->
-> --
-> 2.30.0
->
+On Fri, Feb 19, 2021 at 11:32:15AM +0300, Dan Carpenter wrote:
+> On Thu, Feb 18, 2021 at 07:17:44PM -0800, Dmitry Torokhov wrote:
+> > Hi Dan,
+> > 
+> > On Wed, Feb 17, 2021 at 09:10:15AM +0300, Dan Carpenter wrote:
+> > > The problem here is that "len" might be less than "joydev->nabs" so the
+> > > loops which verfy abspam[i] and keypam[] might read beyond the buffer.
+> > > 
+> > > Fixes: 999b874f4aa3 ("Input: joydev - validate axis/button maps before clobbering current ones")
+> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > 
+> > Thank you for the patch.
+> > 
+> > > ---
+> > >  drivers/input/joydev.c | 4 ++--
+> > >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/drivers/input/joydev.c b/drivers/input/joydev.c
+> > > index a2b5fbba2d3b..750f4513fe20 100644
+> > > --- a/drivers/input/joydev.c
+> > > +++ b/drivers/input/joydev.c
+> > > @@ -456,7 +456,7 @@ static int joydev_handle_JSIOCSAXMAP(struct joydev *joydev,
+> > >  	if (IS_ERR(abspam))
+> > >  		return PTR_ERR(abspam);
+> > >  
+> > > -	for (i = 0; i < joydev->nabs; i++) {
+> > > +	for (i = 0; i < len && i < joydev->nabs; i++) {
+> > >  		if (abspam[i] > ABS_MAX) {
+> > >  			retval = -EINVAL;
+> > >  			goto out;
+> > > @@ -487,7 +487,7 @@ static int joydev_handle_JSIOCSBTNMAP(struct joydev *joydev,
+> > >  	if (IS_ERR(keypam))
+> > >  		return PTR_ERR(keypam);
+> > >  
+> > > -	for (i = 0; i < joydev->nkey; i++) {
+> > > +	for (i = 0; i < (len / 2) && i < joydev->nkey; i++) {
+> > 
+> > 
+> > I think we also need to make sure that len is even. Do you mind if I add
+> > the check at the top of the function to return -EINVAL if it is odd?
+> 
+> Yes.  You are right.
+> 
+> Btw, thank you for fixing my patches, but feel free to just ask me to
+> resend if that's easier for you.
 
-Thanks for the fix.
+It is not really fixing your patch, rather addressing another issue
+while we are there. Some might even say it could have been a separate
+patch.
+
+Anyway, for small fixups like this I feel it's less noise on the lists
+without extra resubmissions, that is why I often do them on my side.
+
+Thanks!
+
+-- 
+Dmitry
