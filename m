@@ -2,87 +2,65 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89218C433E6
-	for <kernel-janitors@archiver.kernel.org>; Fri, 19 Feb 2021 17:48:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DAADC433E0
+	for <kernel-janitors@archiver.kernel.org>; Fri, 19 Feb 2021 18:29:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5478964E15
-	for <kernel-janitors@archiver.kernel.org>; Fri, 19 Feb 2021 17:48:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47F3C64E77
+	for <kernel-janitors@archiver.kernel.org>; Fri, 19 Feb 2021 18:29:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229840AbhBSRsL (ORCPT
+        id S229649AbhBSS31 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 19 Feb 2021 12:48:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39196 "EHLO mail.kernel.org"
+        Fri, 19 Feb 2021 13:29:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47018 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229527AbhBSRsJ (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 19 Feb 2021 12:48:09 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id AFD3964E15;
-        Fri, 19 Feb 2021 17:47:28 +0000 (UTC)
+        id S229587AbhBSS30 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 19 Feb 2021 13:29:26 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id EAD0264DA8;
+        Fri, 19 Feb 2021 18:28:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1613756849;
-        bh=m6rAWAFgOM3ef0SD8I84idRS7AgJL+jWbMk1gCQij+o=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bGHuD922XC1b45O1tiaggLTuMTRp7NKr7H1mV4tmsmPqeQr4B2pw2FVTl9kmO9MHF
-         xGROBgGp1QL6pu43GCxIyU/02C3EERLfWmpSxCyexdKsAXpPJh2FHwD+p+34tFKOw7
-         8a433nSSRoFXaSMSKA0xuu8mrHxOq4cydZw/Qh7/NiPD4ofijUxSpwoidpWHVZnwao
-         Y57cxop8pYJzwcQneiL3e+pDahWhNBdX7MUNvi6uwrnprnquULBpuS/AVHTkPdxC9/
-         pdtBMNeQXUy5b2i4M8wUCqLSMRrCxPG2bO5KeEddECdZs8oA7gbSgXilwDc0upM9HL
-         o8r+f2mFf1cVQ==
-Date:   Fri, 19 Feb 2021 19:47:14 +0200
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org, corbet@lwn.net,
-        mchehab+huawei@kernel.org, linux-doc@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] watch_queue: rectify kernel-doc for init_watch()
-Message-ID: <YC/5ojC2fwkY5Y9T@kernel.org>
-References: <161373161298.2157082.10755433120775444271.stgit@warthog.procyon.org.uk>
+        s=k20201202; t=1613759326;
+        bh=kp5plKBOewCK12rmpAp8zDCTtI6fbfhCRCrstcJ+rHQ=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=cMjUYaFOp9BNBam+hNuz5sW2d68vFr31ZqeDHtqII6N5UaTqxsLAlAi1GC76GPry/
+         40TSwtkaGwK5F2ltqpzTcQcuChXbG3RIQuY1XJJ4CRPq8cGo/vnsTMLaEXuqKptsyI
+         uvgfv2MRxlYSqqZrlsEIKTN4Hhprg6ROWRNG4wQu99aEXW03kHX6D+nCN6y7qNtMZU
+         DDin4U1yehiFFXn/niIvoF82C89Znlh98h58DX9BjP6NAskB6srSE4WmB1PByXvuOt
+         qxCtESZUkz8dgo5bFG/AzsXiceeEfUAP3vzIhHWn0QEQ4ZlaU2GIegynyzCfDeoQ0r
+         CKtP3Bt2pZTcw==
+Date:   Fri, 19 Feb 2021 10:28:44 -0800
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Sunil Goutham <sgoutham@marvell.com>,
+        Christina Jacob <cjacob@marvell.com>,
+        Linu Cherian <lcherian@marvell.com>,
+        Geetha sowjanya <gakula@marvell.com>,
+        Jerin Jacob <jerinj@marvell.com>,
+        hariprasad <hkelam@marvell.com>,
+        Subbaraya Sundeep <sbhatta@marvell.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Prakash Brahmajyosyula <bprakash@marvell.com>,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net] octeontx2-af: Fix an off by one in
+ rvu_dbg_qsize_write()
+Message-ID: <20210219102844.1ecf1d25@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+In-Reply-To: <YC+LUJ0YhF1Yutaw@mwanda>
+References: <YC+LUJ0YhF1Yutaw@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <161373161298.2157082.10755433120775444271.stgit@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Feb 19, 2021 at 10:46:53AM +0000, David Howells wrote:
-> From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+On Fri, 19 Feb 2021 12:56:32 +0300 Dan Carpenter wrote:
+> This code does not allocate enough memory for the NUL terminator so it
+> ends up putting it one character beyond the end of the buffer.
 > 
-> The command './scripts/kernel-doc -none kernel/watch_queue.c'
-> reported a mismatch in the kernel-doc of init_watch().
-> 
-> Rectify the kernel-doc, such that no issues remain for watch_queue.c.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> Link: https://lore.kernel.org/lkml/20210125161409.8478-1-lukas.bulwahn@gmail.com
-> ---
-> 
->  kernel/watch_queue.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/watch_queue.c b/kernel/watch_queue.c
-> index 0ef8f65bd2d7..9c9eb20dd2c5 100644
-> --- a/kernel/watch_queue.c
-> +++ b/kernel/watch_queue.c
-> @@ -413,7 +413,7 @@ static void put_watch(struct watch *watch)
->  }
->  
->  /**
-> - * init_watch_queue - Initialise a watch
-> + * init_watch - Initialise a watch
->   * @watch: The watch to initialise.
->   * @wqueue: The queue to assign.
->   *
-> 
-> 
-> 
+> Fixes: 8756828a8148 ("octeontx2-af: Add NPA aura and pool contexts to debugfs")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-
-/Jarkko
+Fix looks correct, thanks! The interface itself is another matter..
