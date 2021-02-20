@@ -4,40 +4,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D899C433DB
-	for <kernel-janitors@archiver.kernel.org>; Sat, 20 Feb 2021 09:41:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE174C433E0
+	for <kernel-janitors@archiver.kernel.org>; Sat, 20 Feb 2021 14:31:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 045F764EDB
-	for <kernel-janitors@archiver.kernel.org>; Sat, 20 Feb 2021 09:41:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8224864EE0
+	for <kernel-janitors@archiver.kernel.org>; Sat, 20 Feb 2021 14:31:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229789AbhBTJlu (ORCPT
+        id S229658AbhBTOb2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 20 Feb 2021 04:41:50 -0500
-Received: from smtp05.smtpout.orange.fr ([80.12.242.127]:36985 "EHLO
+        Sat, 20 Feb 2021 09:31:28 -0500
+Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:32060 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229863AbhBTJle (ORCPT
+        with ESMTP id S229643AbhBTOb1 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 20 Feb 2021 04:41:34 -0500
+        Sat, 20 Feb 2021 09:31:27 -0500
 Received: from localhost.localdomain ([90.126.17.6])
-        by mwinf5d81 with ME
-        id XMfs2400107rLVE03MfsbN; Sat, 20 Feb 2021 10:39:52 +0100
+        by mwinf5d57 with ME
+        id XSVe2400507rLVE03SVehE; Sat, 20 Feb 2021 15:29:45 +0100
 X-ME-Helo: localhost.localdomain
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 20 Feb 2021 10:39:52 +0100
+X-ME-Date: Sat, 20 Feb 2021 15:29:45 +0100
 X-ME-IP: 90.126.17.6
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     sathya.prakash@broadcom.com, sreekanth.reddy@broadcom.com,
-        suganath-prabu.subramani@broadcom.com, jejb@linux.ibm.com,
-        martin.petersen@oracle.com, linux-scsi@vger.kernel.org
-Cc:     MPT-FusionLinux.pdl@broadcom.com, linux-kernel@vger.kernel.org,
+To:     ulf.hansson@linaro.org, wsa+renesas@sang-engineering.com,
+        yoshihiro.shimoda.uh@renesas.com, kernel@esmil.dk,
+        dianders@chromium.org, yamada.masahiro@socionext.com,
+        linux-arm-kernel@lists.infradead.org
+Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] scsi: mpt3sas: Do not use GFP_KERNEL in atomic context
-Date:   Sat, 20 Feb 2021 10:39:51 +0100
-Message-Id: <20210220093951.905362-1-christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 1/2] mmc: uniphier-sd: Fix an error handling path in uniphier_sd_probe()
+Date:   Sat, 20 Feb 2021 15:29:35 +0100
+Message-Id: <20210220142935.918554-1-christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -45,34 +46,40 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-'mpt3sas_get_port_by_id()' can be called when a spinlock is hold. So use
-GFP_ATOMIC instead of GFP_KERNEL when allocating memory.
+A 'uniphier_sd_clk_enable()' call should be balanced by a corresponding
+'uniphier_sd_clk_disable()' call.
+This is done in the remove function, but not in the error handling path of
+the probe.
 
-Issue spotted by call_kern.cocci:
-./drivers/scsi/mpt3sas/mpt3sas_scsih.c:416:42-52: ERROR: function mpt3sas_get_port_by_id called on line 7125 inside lock on line 7123 but uses GFP_KERNEL
-./drivers/scsi/mpt3sas/mpt3sas_scsih.c:416:42-52: ERROR: function mpt3sas_get_port_by_id called on line 6842 inside lock on line 6839 but uses GFP_KERNEL
-./drivers/scsi/mpt3sas/mpt3sas_scsih.c:416:42-52: ERROR: function mpt3sas_get_port_by_id called on line 6854 inside lock on line 6851 but uses GFP_KERNEL
-./drivers/scsi/mpt3sas/mpt3sas_scsih.c:416:42-52: ERROR: function mpt3sas_get_port_by_id called on line 7706 inside lock on line 7702 but uses GFP_KERNEL
-./drivers/scsi/mpt3sas/mpt3sas_scsih.c:416:42-52: ERROR: function mpt3sas_get_port_by_id called on line 10260 inside lock on line 10256 but uses GFP_KERNEL
+Add the missing call.
 
-Fixes: 324c122fc0a4 ("scsi: mpt3sas: Add module parameter multipath_on_hba")
+Fixes: 3fd784f745dd ("mmc: uniphier-sd: add UniPhier SD/eMMC controller driver")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/scsi/mpt3sas/mpt3sas_scsih.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mmc/host/uniphier-sd.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/mpt3sas/mpt3sas_scsih.c b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-index ffca03064797..6aa6de729187 100644
---- a/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-@@ -413,7 +413,7 @@ mpt3sas_get_port_by_id(struct MPT3SAS_ADAPTER *ioc,
- 	 * And add this object to port_table_list.
- 	 */
- 	if (!ioc->multipath_on_hba) {
--		port = kzalloc(sizeof(struct hba_port), GFP_KERNEL);
-+		port = kzalloc(sizeof(struct hba_port), GFP_ATOMIC);
- 		if (!port)
- 			return NULL;
+diff --git a/drivers/mmc/host/uniphier-sd.c b/drivers/mmc/host/uniphier-sd.c
+index 2413b6750cec..6f0f05466917 100644
+--- a/drivers/mmc/host/uniphier-sd.c
++++ b/drivers/mmc/host/uniphier-sd.c
+@@ -635,7 +635,7 @@ static int uniphier_sd_probe(struct platform_device *pdev)
+ 
+ 	ret = tmio_mmc_host_probe(host);
+ 	if (ret)
+-		goto free_host;
++		goto disable_clk;
+ 
+ 	ret = devm_request_irq(dev, irq, tmio_mmc_irq, IRQF_SHARED,
+ 			       dev_name(dev), host);
+@@ -646,6 +646,8 @@ static int uniphier_sd_probe(struct platform_device *pdev)
+ 
+ remove_host:
+ 	tmio_mmc_host_remove(host);
++disable_clk:
++	uniphier_sd_clk_disable(host);
+ free_host:
+ 	tmio_mmc_host_free(host);
  
 -- 
 2.27.0
