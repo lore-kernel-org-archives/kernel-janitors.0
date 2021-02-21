@@ -2,75 +2,125 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-21.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D68BBC433E6
-	for <kernel-janitors@archiver.kernel.org>; Sun, 21 Feb 2021 06:12:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44969C433DB
+	for <kernel-janitors@archiver.kernel.org>; Sun, 21 Feb 2021 07:43:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9377364E76
-	for <kernel-janitors@archiver.kernel.org>; Sun, 21 Feb 2021 06:12:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0894E64F04
+	for <kernel-janitors@archiver.kernel.org>; Sun, 21 Feb 2021 07:43:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232233AbhBUGMX (ORCPT
+        id S229702AbhBUHnC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 21 Feb 2021 01:12:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48308 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229777AbhBUGMX (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 21 Feb 2021 01:12:23 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id DF2EC64EB4;
-        Sun, 21 Feb 2021 06:11:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1613887902;
-        bh=EEU0w1b40Cz+bhOACpKtWV1r+Gem+0S1XIa7M+XT4MM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=q7K1Rw4MoZQ3r9xV0pveWtuICLEDZT3SAYj45vqxTpJ/l4oeYuc8uct5qT/AAjury
-         6czGx2sCF7rrVUV/UcDr6AayT49PXBu6l1VyhpLG3/cOSL2kysqzbhi8qDj7oq0MO2
-         pQSWxySGR7s4wA7fvpuZaaHqcDuHjWy3wnJ8Dcdk2P8tr9NN9nctNKVoKog2Mj9C3n
-         toY7AL9aJBP7MmLkdLP7DWP2+MQpWZXRk73ewco/R9NsxlvFlL52NqAsrXGa7rnAjw
-         cmZQw2DhzNhpGPDPOJz0V0KjJdXIFdtYuZaYI1F7Fm4Xz0ssrAOn4ghXu68/NrX1Pj
-         KRs1SgW0cbUjA==
-Date:   Sun, 21 Feb 2021 08:11:38 +0200
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Saeed Mahameed <saeedm@nvidia.com>, Aya Levin <ayal@nvidia.com>,
-        Eran Ben Elisha <eranbe@mellanox.com>,
-        Moshe Shemesh <moshe@mellanox.com>,
-        Ariel Levkovich <lariel@mellanox.com>,
-        "Pavel Machek (CIP)" <pavel@denx.de>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH mellanox-tree] net/mlx5: prevent an integer underflow in
- mlx5_perout_configure()
-Message-ID: <YDH5muwFJB9eyDhL@unreal>
-References: <YC+LoAcvcQSWLLKX@mwanda>
+        Sun, 21 Feb 2021 02:43:02 -0500
+Received: from smtp07.smtpout.orange.fr ([80.12.242.129]:33422 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229664AbhBUHnB (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Sun, 21 Feb 2021 02:43:01 -0500
+Received: from localhost.localdomain ([90.126.17.6])
+        by mwinf5d65 with ME
+        id XjhJ2400507rLVE03jhJqX; Sun, 21 Feb 2021 08:41:19 +0100
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 21 Feb 2021 08:41:19 +0100
+X-ME-IP: 90.126.17.6
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     balbi@kernel.org, gregkh@linuxfoundation.org, krzk@kernel.org,
+        nathan@kernel.org, ndesaulniers@google.com, arnd@arndb.de,
+        gustavoars@kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 1/2] usb: gadget: s3c: Fix incorrect resources releasing
+Date:   Sun, 21 Feb 2021 08:41:17 +0100
+Message-Id: <20210221074117.937965-1-christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YC+LoAcvcQSWLLKX@mwanda>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Feb 19, 2021 at 12:57:52PM +0300, Dan Carpenter wrote:
-> The value of "sec" comes from the user.  Negative values will lead to
-> shift wrapping inside the perout_conf_real_time() function and triggger
-> a UBSan warning.
->
-> Add a check and return -EINVAL to prevent that from happening.
->
-> Fixes: 432119de33d9 ("net/mlx5: Add cyc2time HW translation mode support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> Saeed, I think this goes through your git tree and you will send a pull
-> request to the networking?
->
-> From static analysis.  Not tested.
->
->  drivers/net/ethernet/mellanox/mlx5/core/lib/clock.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
+Since commit fe0f8e5c9ba8 ("usb: gadget: s3c: use platform resources"),
+'request_mem_region()' and 'ioremap()' are no more used, so they don't need
+to be undone in the error handling path of the probe and in the removre
+function.
 
-Thanks,
-Reviewed-by: Leon Romanovsky <leonro@nvidia.com>
+Remove these calls and the unneeded 'rsrc_start' and 'rsrc_len' global
+variables.
+
+Fixes: fe0f8e5c9ba8 ("usb: gadget: s3c: use platform resources")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+the 'err' label is used only to reduce the diff size of this patch. It is
+removed in the following patch.
+
+checkpatch reports:
+WARNING: Unknown commit id 'fe0f8e5c9ba8', maybe rebased or not pulled?
+According to https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/drivers/usb/gadget/udc/s3c2410_udc.c?id=188db4435ac64f0918def7ba0593d408700ecc4b
+the commit ID looks correct to me. Maybe something should be tweaked somewhere
+before applying, but I don't know what!
+---
+ drivers/usb/gadget/udc/s3c2410_udc.c | 14 +++-----------
+ 1 file changed, 3 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/usb/gadget/udc/s3c2410_udc.c b/drivers/usb/gadget/udc/s3c2410_udc.c
+index f1ea51476add..3fc436286bad 100644
+--- a/drivers/usb/gadget/udc/s3c2410_udc.c
++++ b/drivers/usb/gadget/udc/s3c2410_udc.c
+@@ -54,8 +54,6 @@ static struct clk		*udc_clock;
+ static struct clk		*usb_bus_clock;
+ static void __iomem		*base_addr;
+ static int			irq_usbd;
+-static u64			rsrc_start;
+-static u64			rsrc_len;
+ static struct dentry		*s3c2410_udc_debugfs_root;
+ 
+ static inline u32 udc_read(u32 reg)
+@@ -1775,7 +1773,7 @@ static int s3c2410_udc_probe(struct platform_device *pdev)
+ 	base_addr = devm_platform_ioremap_resource(pdev, 0);
+ 	if (!base_addr) {
+ 		retval = -ENOMEM;
+-		goto err_mem;
++		goto err;
+ 	}
+ 
+ 	the_controller = udc;
+@@ -1793,7 +1791,7 @@ static int s3c2410_udc_probe(struct platform_device *pdev)
+ 	if (retval != 0) {
+ 		dev_err(dev, "cannot get irq %i, err %d\n", irq_usbd, retval);
+ 		retval = -EBUSY;
+-		goto err_map;
++		goto err;
+ 	}
+ 
+ 	dev_dbg(dev, "got irq %i\n", irq_usbd);
+@@ -1864,10 +1862,7 @@ static int s3c2410_udc_probe(struct platform_device *pdev)
+ 		gpio_free(udc_info->vbus_pin);
+ err_int:
+ 	free_irq(irq_usbd, udc);
+-err_map:
+-	iounmap(base_addr);
+-err_mem:
+-	release_mem_region(rsrc_start, rsrc_len);
++err:
+ 
+ 	return retval;
+ }
+@@ -1899,9 +1894,6 @@ static int s3c2410_udc_remove(struct platform_device *pdev)
+ 
+ 	free_irq(irq_usbd, udc);
+ 
+-	iounmap(base_addr);
+-	release_mem_region(rsrc_start, rsrc_len);
+-
+ 	if (!IS_ERR(udc_clock) && udc_clock != NULL) {
+ 		clk_disable_unprepare(udc_clock);
+ 		clk_put(udc_clock);
+-- 
+2.27.0
+
