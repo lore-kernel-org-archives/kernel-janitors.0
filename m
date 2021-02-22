@@ -2,108 +2,68 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0DE0C433DB
-	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Feb 2021 11:53:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFC2AC433DB
+	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Feb 2021 13:51:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 50A2364DFD
-	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Feb 2021 11:53:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75FDA64E76
+	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Feb 2021 13:51:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229959AbhBVLxU (ORCPT
+        id S230110AbhBVNv3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 22 Feb 2021 06:53:20 -0500
-Received: from condef-06.nifty.com ([202.248.20.71]:23304 "EHLO
-        condef-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230105AbhBVLxI (ORCPT
+        Mon, 22 Feb 2021 08:51:29 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:36335 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230367AbhBVNub (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 22 Feb 2021 06:53:08 -0500
-Received: from conssluserg-02.nifty.com ([10.126.8.81])by condef-06.nifty.com with ESMTP id 11MBljUD028238;
-        Mon, 22 Feb 2021 20:47:45 +0900
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id 11MBkeTB016598;
-        Mon, 22 Feb 2021 20:46:40 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com 11MBkeTB016598
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1613994400;
-        bh=OtISAtkJ9mbtgcPz90LjKAYDel3mXKzEg/nMsg1GTeQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=aND6dYBQYOzz87Qyydccf51cdx9Gqc9gViHf4kv4Uqw97Pd7c3OVecOpjmYg79dfW
-         pd/mg2DL2yje/d2//LnKkIUpxgV9CKGeRAmPQM7R2WSCANhj4cyab0GxdmbvKtojc0
-         soDN1JVE6zmeg6JDLWnDR3HvpFGoSOo2ortyvjFbBZmeOkM4Ak0t7VfBeVvDRQV940
-         eG2P3h7RK/daru2JQm+wXar5afxqVqIQ8YRg21hSDH0UJvACHhxiMYwnUAdFItpLom
-         c+0xdhD0bzhqW7AWyq3EhYKH2Bx0sWmWgTpZYSpzIsuviEzNQliXmrFHs5UDVkRLv4
-         0Y9410srdEJ3w==
-X-Nifty-SrcIP: [209.85.216.45]
-Received: by mail-pj1-f45.google.com with SMTP id e9so8872254pjj.0;
-        Mon, 22 Feb 2021 03:46:40 -0800 (PST)
-X-Gm-Message-State: AOAM530mPM0C83T7bLiALjvBH68BGrcyZ9oPWdHQQC+l9oyWupLVeUOl
-        03j8kUTMOOZkmLzGSqUniLV3J02ZDfhoQwHQ8+8=
-X-Google-Smtp-Source: ABdhPJxXjM3iaClmcPKGi6JvZex/D/Qp7gqlV13AP90Lg9gGgDLgn86FciVS5BjPsX6nAjS0+pf0VRninMdzmX8XNZQ=
-X-Received: by 2002:a17:90a:609:: with SMTP id j9mr23494118pjj.198.1613994399749;
- Mon, 22 Feb 2021 03:46:39 -0800 (PST)
+        Mon, 22 Feb 2021 08:50:31 -0500
+Received: from cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net ([80.193.200.194] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lEBal-00017E-Pu; Mon, 22 Feb 2021 13:49:39 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        Amireddy Mallikarjuna <mallikarjunax.reddy@linux.intel.com>,
+        linux-leds@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] leds: lgm: Fix spelling mistake "prepate" -> "prepare"
+Date:   Mon, 22 Feb 2021 13:49:39 +0000
+Message-Id: <20210222134939.1510720-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.30.0
 MIME-Version: 1.0
-References: <20210220142953.918608-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20210220142953.918608-1-christophe.jaillet@wanadoo.fr>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Mon, 22 Feb 2021 20:46:02 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQuuaZxKqcS5t7jW_P8jwFJ83jKEMcyQ0h9hw54gAfxDQ@mail.gmail.com>
-Message-ID: <CAK7LNAQuuaZxKqcS5t7jW_P8jwFJ83jKEMcyQ0h9hw54gAfxDQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] mmc: uniphier-sd: Fix a resource leak in the remove function
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        kernel@esmil.dk, Douglas Anderson <dianders@chromium.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, Feb 20, 2021 at 11:31 PM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> A 'tmio_mmc_host_free()' call is missing in the remove function, in order
-> to balance a 'tmio_mmc_host_alloc()' call in the probe.
-> This is done in the error handling path of the probe, but not in the remove
-> function.
->
-> Add the missing call.
->
-> Fixes: 3fd784f745dd ("mmc: uniphier-sd: add UniPhier SD/eMMC controller driver")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Colin Ian King <colin.king@canonical.com>
 
+There is a spelling mistake in a dev_err error message. Fix it.
 
-Reviewed-by: Masahiro Yamada <masahiroy@kernel.org>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/leds/blink/leds-lgm-sso.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-> ---
->  drivers/mmc/host/uniphier-sd.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/mmc/host/uniphier-sd.c b/drivers/mmc/host/uniphier-sd.c
-> index 6f0f05466917..ccbf9885a52b 100644
-> --- a/drivers/mmc/host/uniphier-sd.c
-> +++ b/drivers/mmc/host/uniphier-sd.c
-> @@ -660,6 +660,7 @@ static int uniphier_sd_remove(struct platform_device *pdev)
->
->         tmio_mmc_host_remove(host);
->         uniphier_sd_clk_disable(host);
-> +       tmio_mmc_host_free(host);
->
->         return 0;
->  }
-> --
-> 2.27.0
->
-
-
+diff --git a/drivers/leds/blink/leds-lgm-sso.c b/drivers/leds/blink/leds-lgm-sso.c
+index 7d5c9ca007d6..6a63846d10b5 100644
+--- a/drivers/leds/blink/leds-lgm-sso.c
++++ b/drivers/leds/blink/leds-lgm-sso.c
+@@ -793,7 +793,7 @@ static int intel_sso_led_probe(struct platform_device *pdev)
+ 
+ 	ret = clk_prepare_enable(priv->gclk);
+ 	if (ret) {
+-		dev_err(dev, "Failed to prepate/enable sso gate clock!\n");
++		dev_err(dev, "Failed to prepare/enable sso gate clock!\n");
+ 		return ret;
+ 	}
+ 
 -- 
-Best Regards
-Masahiro Yamada
+2.30.0
+
