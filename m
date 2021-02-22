@@ -2,76 +2,92 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-21.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3977C433DB
-	for <kernel-janitors@archiver.kernel.org>; Sun, 21 Feb 2021 21:40:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5820CC433E0
+	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Feb 2021 06:04:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8B24A64EBE
-	for <kernel-janitors@archiver.kernel.org>; Sun, 21 Feb 2021 21:40:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 238C164E61
+	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Feb 2021 06:04:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230223AbhBUVks (ORCPT
+        id S229959AbhBVGEV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 21 Feb 2021 16:40:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46668 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230177AbhBUVks (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 21 Feb 2021 16:40:48 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPS id 7114660295;
-        Sun, 21 Feb 2021 21:40:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1613943607;
-        bh=LLlqcfsHxmYKYRCb4EI0tj/NUfG5wOi/VhSNNDcO/0k=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=amkMxveI4gvUX9HxumP7oW/UTJJaKfbf5q1k8gpCEj0wYOtSIdQUMb5r4o/RkdTUH
-         57lCsHHl/l2NCS1g8IOXQIShfwwsugMyX33HtmldvEXNCLCBKhXriFcGUfpi4ZBLgk
-         PjTQfpE09KgqOTpY+PNUj4rcBqT7qXGxxv9jpWBJcvchFfZdDTLuGHeadcVdpvA1s8
-         lvp+/LfYGoOUuWDWsArru15VABDnOzwWyIIlkwtvkEQ9Dxr8yzzQRNv1nIzxeK5zft
-         vAAQULvoV0iZuZnxEZdz6V/DiKftkI7TRET081AKyBFOvB2Ce2kGP1XUSlBKfaZUwz
-         Jsb6H7CnoNtjg==
-Content-Type: text/plain; charset="utf-8"
+        Mon, 22 Feb 2021 01:04:21 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:45006 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229953AbhBVGER (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 22 Feb 2021 01:04:17 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 11M5wOq3147408;
+        Mon, 22 Feb 2021 06:03:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=A1UELqL1BspiLQToozAhp0VlUUTUJUEMj22TOJGavrI=;
+ b=NU20WW8JxBpeGanOVSdifZkKjLNYWZQKkddVfOcjf6oMmZUDqAvCFu5s3s0Pb1xAGZ2N
+ vyTlN+6WWAh45UJg8J1zOeXVcKSULMT9Pb3+j41AE76vhrjtzDHQVEVFtEwKaiWS/V0f
+ 9FmIqW5hmeY9UIOUjMhFPdkDcDtkxQg64D/UCmxnGnUgSR0QTlzLERfSWDsq2C/FGvYI
+ 7B6neYhbGlNMa9lK72QP1iBUVbV1B9PZbayuTHmrkdKt64wHKuBm7iZyw7liwbmzA3ow
+ YbDj87VsAjRS7MRuty8QvkJygaB7G+nZgSOygWQCeSGacNMkBG6QdQ+tSGtur/fhiPLK fA== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 36ugq39a1v-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 22 Feb 2021 06:03:21 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 11M5sd9C049366;
+        Mon, 22 Feb 2021 06:03:19 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3030.oracle.com with ESMTP id 36uc0kusj0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 22 Feb 2021 06:03:19 +0000
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 11M63C8J010574;
+        Mon, 22 Feb 2021 06:03:12 GMT
+Received: from kadam (/102.36.221.92)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Sun, 21 Feb 2021 22:03:12 -0800
+Date:   Mon, 22 Feb 2021 09:03:03 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     balbi@kernel.org, gregkh@linuxfoundation.org, krzk@kernel.org,
+        nathan@kernel.org, ndesaulniers@google.com, arnd@arndb.de,
+        gustavoars@kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 1/2] usb: gadget: s3c: Fix incorrect resources releasing
+Message-ID: <20210222060302.GI2087@kadam>
+References: <20210221074117.937965-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] octeontx2-af: Fix an off by one in rvu_dbg_qsize_write()
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <161394360738.30147.9858725192425932627.git-patchwork-notify@kernel.org>
-Date:   Sun, 21 Feb 2021 21:40:07 +0000
-References: <YC+LUJ0YhF1Yutaw@mwanda>
-In-Reply-To: <YC+LUJ0YhF1Yutaw@mwanda>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     sgoutham@marvell.com, cjacob@marvell.com, lcherian@marvell.com,
-        gakula@marvell.com, jerinj@marvell.com, hkelam@marvell.com,
-        sbhatta@marvell.com, davem@davemloft.net, kuba@kernel.org,
-        bprakash@marvell.com, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210221074117.937965-1-christophe.jaillet@wanadoo.fr>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-IMR: 1
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9902 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 adultscore=0
+ mlxscore=0 mlxlogscore=999 bulkscore=0 malwarescore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2102220054
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9902 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0
+ malwarescore=0 spamscore=0 mlxscore=0 suspectscore=0 priorityscore=1501
+ clxscore=1011 impostorscore=0 lowpriorityscore=0 mlxlogscore=999
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2102220054
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+On Sun, Feb 21, 2021 at 08:41:17AM +0100, Christophe JAILLET wrote:
+> Since commit fe0f8e5c9ba8 ("usb: gadget: s3c: use platform resources"),
 
-This patch was applied to netdev/net.git (refs/heads/master):
+This the wrong hash.  It should be 188db4435ac6 from the URL you posted
+below.
 
-On Fri, 19 Feb 2021 12:56:32 +0300 you wrote:
-> This code does not allocate enough memory for the NUL terminator so it
-> ends up putting it one character beyond the end of the buffer.
-> 
-> Fixes: 8756828a8148 ("octeontx2-af: Add NPA aura and pool contexts to debugfs")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-
-Here is the summary with links:
-  - [net] octeontx2-af: Fix an off by one in rvu_dbg_qsize_write()
-    https://git.kernel.org/netdev/net/c/3a2eb515d136
-
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+regards,
+dan carpenter
 
