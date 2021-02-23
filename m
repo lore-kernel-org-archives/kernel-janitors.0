@@ -3,88 +3,76 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF798C433E9
-	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Feb 2021 01:21:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D21E8C433DB
+	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Feb 2021 03:01:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9FF3E64E4B
-	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Feb 2021 01:21:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62CF964E4B
+	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Feb 2021 03:01:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230209AbhBWBVB (ORCPT
+        id S231196AbhBWDAu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 22 Feb 2021 20:21:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37488 "EHLO mail.kernel.org"
+        Mon, 22 Feb 2021 22:00:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47314 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229967AbhBWBU5 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 22 Feb 2021 20:20:57 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 1AC6960232;
-        Tue, 23 Feb 2021 01:20:17 +0000 (UTC)
+        id S230053AbhBWDAr (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 22 Feb 2021 22:00:47 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPS id 0DD2564E02;
+        Tue, 23 Feb 2021 03:00:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1614043217;
-        bh=DrhhhxquQa9mMMAlVDZt621WhowL2G0QRwZ1oprjFoY=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=n0L7HNxZpkuc4vsHzjuYh7yIaejq5QIw6JuRdXjNKD0/Gn64F21CXixIszhcuYx9y
-         ED1+P/xk5eOPdiGNKServB7o6OGs4Vint0c1D2M0rYi/ssdYNQsz5DsM+bShMlJx9x
-         YOIOhGkTkNs/ygf+H06eHctMm2t0Saw0axjPJ/J9KHcM9j2YqzuL8b61dasurDDAnd
-         xI9snoLrknDGPxkBtAkNy605tiJeidtTsOujz4Mt2hepw+usuCUzx+tgbcQ35jw0Z4
-         fCSx4hKrSVbRkrwMZ0D/GNq9ADPx3l0S865ekxn065Xv8BitJX2EfuB4moYa5zCSbi
-         h8+peInvB92/A==
-Received: by mail-io1-f46.google.com with SMTP id u8so15378153ior.13;
-        Mon, 22 Feb 2021 17:20:17 -0800 (PST)
-X-Gm-Message-State: AOAM532pXArxnXvabKWs7aB0fS/BWzdVtb68JnpHDf45B3n4oH9dFumu
-        VrjZ3AoL/J93jMlHDgnpftGOge9ovwmEPayfOOw=
-X-Google-Smtp-Source: ABdhPJyTSKQB8sQM5y9f2DjeXYE9RykFsxqlJ4lMOwJSXDAOHhRiNVZL1/oDf9dXcqwVBFhbmtT4cpVfkilz/86CfdQ=
-X-Received: by 2002:a6b:6603:: with SMTP id a3mr17360502ioc.148.1614043216618;
- Mon, 22 Feb 2021 17:20:16 -0800 (PST)
+        s=k20201202; t=1614049207;
+        bh=Uao1CP+xp3jznWKuvtnApRdpBS7S45yfOn76RN1A6q8=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=ZeA0DoyhUrVnrN1nsEQEWguS/x7shT37NASIgjfDjDE85cQ6NeWtto1cgTUjrNHoa
+         Sw3Pzic4nqZwG0aIx0yucrmzCKwJ6Q8rv3L9WDmGS1PFReR/X8syTlNWiDz3/CEz8Y
+         acZ1e33kSRXn6UukzNhUdkTzyVpeNZTKPdhhYIM/eagtaat7NGPXrpY2e4bKXMKcBQ
+         6Gb1mI+6GdwcDFUwTjRhsmCddwOiBzz3+5stZO6twToQbNsufhdT/L9eN7zs5mFQur
+         sWHefcwL+T0v9bqFQDPuYnjTNUwzhYyK4TV07FoYCipmTIOjxb6WI+q86xpD2GCbA5
+         b5zxExd6udOsg==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20210222161905.1153-1-lukas.bulwahn@gmail.com> <20210222161905.1153-6-lukas.bulwahn@gmail.com>
-In-Reply-To: <20210222161905.1153-6-lukas.bulwahn@gmail.com>
-From:   Huacai Chen <chenhuacai@kernel.org>
-Date:   Tue, 23 Feb 2021 09:20:04 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H5rmym9_5X9uxAHvAJasNrVCgQSE23tv3XULE60iwMnUw@mail.gmail.com>
-Message-ID: <CAAhV-H5rmym9_5X9uxAHvAJasNrVCgQSE23tv3XULE60iwMnUw@mail.gmail.com>
-Subject: Re: [PATCH 5/5] MIPS: SGI-IP27: fix spelling in Copyright
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        "open list:MIPS" <linux-mips@vger.kernel.org>,
-        "Maciej W . Rozycki" <macro@orcam.me.uk>,
-        Tiezhu Yang <yangtiezhu@loongson.cn>, Willy Tarreau <w@1wt.eu>,
-        linux-edac@vger.kernel.org, linux-hams@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2 net-next] net: phy: icplus: call phy_restore_page() when
+ phy_select_page() fails
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <161404920700.2731.2936896600905361791.git-patchwork-notify@kernel.org>
+Date:   Tue, 23 Feb 2021 03:00:07 +0000
+References: <YC+OpFGsDPXPnXM5@mwanda>
+In-Reply-To: <YC+OpFGsDPXPnXM5@mwanda>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
+        davem@davemloft.net, kuba@kernel.org, michael@walle.cc,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Reviewed-by: Huacai Chen <chenhuacai@kernel.org>
+Hello:
 
-On Tue, Feb 23, 2021 at 12:22 AM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
->
-> This is a Copyright line, and just a typo slipped through.
->
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
->  arch/mips/sgi-ip27/ip27-timer.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/mips/sgi-ip27/ip27-timer.c b/arch/mips/sgi-ip27/ip27-timer.c
-> index 79c434fece52..444b5e0e935f 100644
-> --- a/arch/mips/sgi-ip27/ip27-timer.c
-> +++ b/arch/mips/sgi-ip27/ip27-timer.c
-> @@ -1,7 +1,7 @@
->  // SPDX-License-Identifier: GPL-2.0
->  /*
-> - * Copytight (C) 1999, 2000, 05, 06 Ralf Baechle (ralf@linux-mips.org)
-> - * Copytight (C) 1999, 2000 Silicon Graphics, Inc.
-> + * Copyright (C) 1999, 2000, 05, 06 Ralf Baechle (ralf@linux-mips.org)
-> + * Copyright (C) 1999, 2000 Silicon Graphics, Inc.
->   */
->  #include <linux/bcd.h>
->  #include <linux/clockchips.h>
-> --
-> 2.17.1
->
+This patch was applied to netdev/net.git (refs/heads/master):
+
+On Fri, 19 Feb 2021 13:10:44 +0300 you wrote:
+> The comments to phy_select_page() say that "phy_restore_page() must
+> always be called after this, irrespective of success or failure of this
+> call."  If we don't call phy_restore_page() then we are still holding
+> the phy_lock_mdio_bus() so it eventually leads to a dead lock.
+> 
+> Fixes: 32ab60e53920 ("net: phy: icplus: add MDI/MDIX support for IP101A/G")
+> Fixes: f9bc51e6cce2 ("net: phy: icplus: fix paged register access")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> [...]
+
+Here is the summary with links:
+  - [v2,net-next] net: phy: icplus: call phy_restore_page() when phy_select_page() fails
+    https://git.kernel.org/netdev/net/c/4e9d9d1f4880
+
+You are awesome, thank you!
+--
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
