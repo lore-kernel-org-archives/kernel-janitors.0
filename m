@@ -2,47 +2,44 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB923C433DB
-	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Feb 2021 14:12:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C761DC433DB
+	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Feb 2021 19:21:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8A1BB64E58
-	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Feb 2021 14:12:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B4C064E09
+	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Feb 2021 19:21:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232173AbhBWOM1 (ORCPT
+        id S232420AbhBWTVR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 23 Feb 2021 09:12:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44022 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230268AbhBWOM0 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 23 Feb 2021 09:12:26 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 33FE364DE9;
-        Tue, 23 Feb 2021 14:11:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1614089505;
-        bh=+JINFj2BPE5byrIfpTw8QQ0mFPqOXrcYF+2MPu/X51E=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=nYNLclt3aYnXo/uXYJYUbO3DNeNcflGBYWd5imEIlyGObH400D0zesBoG83XECPSZ
-         rLeo2Nw8EO7a9fjrpLzrAfDqjmNoxEJpUUkfPEaZk1CGBWgHPZmljZ8tWEzIpTIbnP
-         TfYbyjoq8aqOygl1fsXOrVRRXBYE2/LzAEGTgiRqrFTXgUxixcM2eI7TS+EsNfHQvV
-         dCy6N4Zdq+7DXxmDKw78pIgsxKuAYRo9UNvPBSlhCDjJJje2XbWvciaH4uJxq/Il/E
-         e1pUyRi0eZrMZ3cMcUrl1wA8GB/duBXa0DFl9Gde5mf0eIqVr+0Z082g+axgx4x4nL
-         eT+puUbDHkghg==
-From:   Mark Brown <broonie@kernel.org>
-To:     Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Colin King <colin.king@canonical.com>
+        Tue, 23 Feb 2021 14:21:17 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:55181 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231895AbhBWTUD (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 23 Feb 2021 14:20:03 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lEdDC-0007ll-2R; Tue, 23 Feb 2021 19:19:10 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Ramalingam C <ramalingam.c@intel.com>,
+        Anshuman Gupta <anshuman.gupta@intel.com>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20210215163313.84026-1-colin.king@canonical.com>
-References: <20210215163313.84026-1-colin.king@canonical.com>
-Subject: Re: [PATCH][next] ASoC: codecs: lpass-rx-macro: Fix uninitialized variable ec_tx
-Message-Id: <161408943852.48131.13240298966962769896.b4-ty@kernel.org>
-Date:   Tue, 23 Feb 2021 14:10:38 +0000
+Subject: [PATCH][next] drm/i915/hdcp: Fix null pointer dereference of connector->encoder
+Date:   Tue, 23 Feb 2021 19:19:09 +0000
+Message-Id: <20210223191909.16682-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.30.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -50,36 +47,44 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, 15 Feb 2021 16:33:13 +0000, Colin King wrote:
-> There is potential read of the uninitialized variable ec_tx if the call
-> to snd_soc_component_read fails or returns an unrecognized w->name. To
-> avoid this corner case, initialize ec_tx to -1 so that it is caught
-> later when ec_tx is bounds checked.
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to
+The recent commit 6c63e6e14da7 ("drm/i915/hdcp: No HDCP when encoder
+is't initialized") added a null pointer check on connector->encoder
+hence implying that it could potentially be null.  This means that
+the initialization of dig_port via the call intel_attached_dig_port
+may cause a null pointer dereference on connector->encoder. Fix
+this by only assigning dig_port after a null check has been performed
+on connector->encoder.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+Addresses-Coverity: ("Dereference before null check")
+Fixes: 36e5e7042b20 ("drm/i915: Don't fully disable HDCP on a port if multiple pipes are using it")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/i915/display/intel_hdcp.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Thanks!
+diff --git a/drivers/gpu/drm/i915/display/intel_hdcp.c b/drivers/gpu/drm/i915/display/intel_hdcp.c
+index ae1371c36a32..7525ea31766c 100644
+--- a/drivers/gpu/drm/i915/display/intel_hdcp.c
++++ b/drivers/gpu/drm/i915/display/intel_hdcp.c
+@@ -2260,7 +2260,7 @@ int intel_hdcp_enable(struct intel_connector *connector,
+ 		      const struct intel_crtc_state *pipe_config, u8 content_type)
+ {
+ 	struct drm_i915_private *dev_priv = to_i915(connector->base.dev);
+-	struct intel_digital_port *dig_port = intel_attached_dig_port(connector);
++	struct intel_digital_port *dig_port;
+ 	struct intel_hdcp *hdcp = &connector->hdcp;
+ 	unsigned long check_link_interval = DRM_HDCP_CHECK_PERIOD_MS;
+ 	int ret = -EINVAL;
+@@ -2274,6 +2274,7 @@ int intel_hdcp_enable(struct intel_connector *connector,
+ 		return -ENODEV;
+ 	}
+ 
++	dig_port = intel_attached_dig_port(connector);
+ 	mutex_lock(&hdcp->mutex);
+ 	mutex_lock(&dig_port->hdcp_mutex);
+ 	drm_WARN_ON(&dev_priv->drm,
+-- 
+2.30.0
 
-[1/1] ASoC: codecs: lpass-rx-macro: Fix uninitialized variable ec_tx
-      commit: 2d003ec15396cc8ffa2a887605c98a967de3078d
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
