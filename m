@@ -2,73 +2,112 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-21.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12DDFC433E9
-	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Feb 2021 19:36:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11C75C433E9
+	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Feb 2021 01:17:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CD98364E41
-	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Feb 2021 19:36:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C531064E4A
+	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Feb 2021 01:17:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233312AbhBVTfw (ORCPT
+        id S230232AbhBWBRd (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 22 Feb 2021 14:35:52 -0500
-Received: from mx2.suse.de ([195.135.220.15]:49044 "EHLO mx2.suse.de"
+        Mon, 22 Feb 2021 20:17:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36912 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233313AbhBVTfo (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 22 Feb 2021 14:35:44 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 3C028ADE3;
-        Mon, 22 Feb 2021 19:35:02 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id 3BB45DA7FF; Mon, 22 Feb 2021 20:33:03 +0100 (CET)
-Date:   Mon, 22 Feb 2021 20:33:03 +0100
-From:   David Sterba <dsterba@suse.cz>
-To:     Dan Carpenter <dancarpenter@oracle.com>
-Cc:     Chris Mason <clm@fb.com>, Arne Jansen <sensille@gmx.net>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] btrfs: prevent potential out of bounds in
- btrfs_ioctl_snap_create_v2()
-Message-ID: <20210222193302.GT1993@suse.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Dan Carpenter <dancarpenter@oracle.com>,
-        Chris Mason <clm@fb.com>, Arne Jansen <sensille@gmx.net>,
-        Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
-        linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <YCyx8u40HaplP7a+@mwanda>
+        id S229863AbhBWBRa (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 22 Feb 2021 20:17:30 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id A40E960232;
+        Tue, 23 Feb 2021 01:16:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1614043009;
+        bh=kDwba0vVgoevzJZ1ejp9aIx55kGXux65+VE5+XPArvQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=dA0KMovrh4BCRgSKtyWZoXGvYaCHiHdqidrfcXpCsgCrKKGraOYgOGjlR87xeK9qV
+         w9kDmHR0Wgs1Hclsrb0kvsQTHtLGB/XGkgZF5cKW07ejaibXyE6Kgif5hGJvZrmhht
+         rUpJ8+IJBD8cBEYpwp472yOW71w9lomxM4kSoBttML7MiRDODkvV1/YFVPQSn9I5Pw
+         YHY3tJPjXtMI2DObywS+ZHRVjMQ5NT5CD5eVKOwZA9DaZYcPJD6g+KQ0v87UdsXxBW
+         jBaQIxpw6JKXvG9iEVtPlMxMCW+ljIV3M0v1IgOxIv7hdzYaol45Fy8YhZtyZNooLK
+         pjtKMQW08QPSg==
+Received: by mail-io1-f49.google.com with SMTP id k17so7582216ioc.5;
+        Mon, 22 Feb 2021 17:16:49 -0800 (PST)
+X-Gm-Message-State: AOAM531TNgWIYBpib6uTfp/JobczAEA/lQ3GzFHf3jGURHI5b0g92W49
+        yR9WHGbUqwlxCzNs/Gx6+hUlHYKNm1LtToDLTjM=
+X-Google-Smtp-Source: ABdhPJz7+GwyctOMH/oDlyMU8gM2QH44bFdcRoMYUvEOB/ALHXlwc5LneLHjIs6q9qKW0qDTbUKcXjoS+cBpMdiJhb8=
+X-Received: by 2002:a6b:6603:: with SMTP id a3mr17348843ioc.148.1614043009025;
+ Mon, 22 Feb 2021 17:16:49 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YCyx8u40HaplP7a+@mwanda>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+References: <20210222161905.1153-1-lukas.bulwahn@gmail.com> <20210222161905.1153-3-lukas.bulwahn@gmail.com>
+In-Reply-To: <20210222161905.1153-3-lukas.bulwahn@gmail.com>
+From:   Huacai Chen <chenhuacai@kernel.org>
+Date:   Tue, 23 Feb 2021 09:16:37 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H5aKEOFr32G3BZJofUQaRtqM7zsy6fX-gPCwxFhKBqa2w@mail.gmail.com>
+Message-ID: <CAAhV-H5aKEOFr32G3BZJofUQaRtqM7zsy6fX-gPCwxFhKBqa2w@mail.gmail.com>
+Subject: Re: [PATCH 2/5] MAINTAINERS: remove linux-mips.org references
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        "open list:MIPS" <linux-mips@vger.kernel.org>,
+        "Maciej W . Rozycki" <macro@orcam.me.uk>,
+        Tiezhu Yang <yangtiezhu@loongson.cn>, Willy Tarreau <w@1wt.eu>,
+        linux-edac@vger.kernel.org, linux-hams@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Feb 17, 2021 at 09:04:34AM +0300, Dan Carpenter wrote:
-> The problem is we're copying "inherit" from user space but we don't
-> necessarily know that we're copying enough data for a 64 byte
-> struct.  Then the next problem is that "inherit" has a variable size
-> array at the end, and we have to verify that array is the size we
-> expected.
-> 
-> Fixes: 6f72c7e20dba: ("Btrfs: add qgroup inheritance")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Huacai Chen <chenhuacai@kernel.org>
+
+On Tue, Feb 23, 2021 at 12:22 AM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+>
+> The domain lookup for linux-mips.org fails for quite some time now. Hence,
+> webpages, the patchwork instance and Ralf Baechle's email there is not
+> reachable anymore.
+>
+> Remove all references of webpages from linux-mips.org in MAINTAINERS, and
+> refer to the kernel.org's linux-mips patchwork instance instead.
+>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 > ---
-> Presumably only root can create snapshots.
-
-Well, no. After first analysis there are some "interesting memory access
-patterns" possible, with a crafted data in the inherit member.
-
-> Anyway, I have not tested
-> this fix.  I believe it is correct, of course.  But perhaps it's best
-> to check.
-
-Yeah I'll write a test also to see where exactly the issues are. Thanks
-for the report/fix.
+>  MAINTAINERS | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index e949e561867d..703a50183301 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -4980,7 +4980,6 @@ DECSTATION PLATFORM SUPPORT
+>  M:     "Maciej W. Rozycki" <macro@orcam.me.uk>
+>  L:     linux-mips@vger.kernel.org
+>  S:     Maintained
+> -W:     http://www.linux-mips.org/wiki/DECstation
+>  F:     arch/mips/dec/
+>  F:     arch/mips/include/asm/dec/
+>  F:     arch/mips/include/asm/mach-dec/
+> @@ -11932,7 +11931,6 @@ MIPS
+>  M:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+>  L:     linux-mips@vger.kernel.org
+>  S:     Maintained
+> -W:     http://www.linux-mips.org/
+>  Q:     https://patchwork.kernel.org/project/linux-mips/list/
+>  T:     git git://git.kernel.org/pub/scm/linux/kernel/git/mips/linux.git
+>  F:     Documentation/devicetree/bindings/mips/
+> @@ -18248,10 +18246,9 @@ F:     arch/um/os-Linux/drivers/
+>
+>  TURBOCHANNEL SUBSYSTEM
+>  M:     "Maciej W. Rozycki" <macro@orcam.me.uk>
+> -M:     Ralf Baechle <ralf@linux-mips.org>
+>  L:     linux-mips@vger.kernel.org
+>  S:     Maintained
+> -Q:     http://patchwork.linux-mips.org/project/linux-mips/list/
+> +Q:     https://patchwork.kernel.org/project/linux-mips/list/
+>  F:     drivers/tc/
+>  F:     include/linux/tc.h
+>
+> --
+> 2.17.1
+>
