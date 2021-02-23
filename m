@@ -2,88 +2,84 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE2A1C433E0
-	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Feb 2021 13:34:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB923C433DB
+	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Feb 2021 14:12:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 94BFD64E3F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Feb 2021 13:34:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A1BB64E58
+	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Feb 2021 14:12:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232864AbhBWNeh convert rfc822-to-8bit (ORCPT
+        id S232173AbhBWOM1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 23 Feb 2021 08:34:37 -0500
-Received: from mail-ot1-f51.google.com ([209.85.210.51]:43757 "EHLO
-        mail-ot1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232599AbhBWNeg (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 23 Feb 2021 08:34:36 -0500
-Received: by mail-ot1-f51.google.com with SMTP id l23so15508657otn.10;
-        Tue, 23 Feb 2021 05:34:20 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=W1FTBNiyBbbmPU7r9FwLGrJDR2sXQdMfcOeR069zcPk=;
-        b=TRwmgpdFuphVAuVf8CMl9ZH9MMr1gOHJheBmTtHHAbcUk6jYOIp4TrUhiKKXjTAtmM
-         EIE3SvWgnTNu5cizvinWqpsz5V+Z9Jp5QJVrElp6CNRq6cvAJJoSnq3/pl78FoEKx6Fi
-         vcojHUO62BybC3KZRlDPf9rziLd4W7KlDRU1Z6B3Kb4pZjPjwRddo8NROxR0n7ZhUERY
-         SoWxmCe2UohR3YtVwSi++N3t4eQtJrCsoay51XS/aYNdf345267FDa2dNWHLdc9eheJm
-         pGv9YVW1F22DTiHjDg28nX/6FQkWPUA7V3/KndhvTNKNczdtfcGPtaEDXfS6V4Vp5nzy
-         3qrQ==
-X-Gm-Message-State: AOAM532OSytx5N8Qld6OzZ2DyMUPmIc+sSZlROP3mJzM/+IUjXh0brfO
-        xYyAvNN2NAHiFPdLLsZJl8cG9kjLHK2ySfEYlDg=
-X-Google-Smtp-Source: ABdhPJxjkNrWvxSoaC7JsMeEuhHWcisA7wpJjF/HrLOxSfP7dHYrKwtA5+I3iEpYSkzSOYmRV5MKU5jJZwIg36sU74U=
-X-Received: by 2002:a9d:4a8e:: with SMTP id i14mr20834879otf.37.1614087235498;
- Tue, 23 Feb 2021 05:33:55 -0800 (PST)
+        Tue, 23 Feb 2021 09:12:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44022 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230268AbhBWOM0 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 23 Feb 2021 09:12:26 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 33FE364DE9;
+        Tue, 23 Feb 2021 14:11:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1614089505;
+        bh=+JINFj2BPE5byrIfpTw8QQ0mFPqOXrcYF+2MPu/X51E=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=nYNLclt3aYnXo/uXYJYUbO3DNeNcflGBYWd5imEIlyGObH400D0zesBoG83XECPSZ
+         rLeo2Nw8EO7a9fjrpLzrAfDqjmNoxEJpUUkfPEaZk1CGBWgHPZmljZ8tWEzIpTIbnP
+         TfYbyjoq8aqOygl1fsXOrVRRXBYE2/LzAEGTgiRqrFTXgUxixcM2eI7TS+EsNfHQvV
+         dCy6N4Zdq+7DXxmDKw78pIgsxKuAYRo9UNvPBSlhCDjJJje2XbWvciaH4uJxq/Il/E
+         e1pUyRi0eZrMZ3cMcUrl1wA8GB/duBXa0DFl9Gde5mf0eIqVr+0Z082g+axgx4x4nL
+         eT+puUbDHkghg==
+From:   Mark Brown <broonie@kernel.org>
+To:     Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Colin King <colin.king@canonical.com>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20210215163313.84026-1-colin.king@canonical.com>
+References: <20210215163313.84026-1-colin.king@canonical.com>
+Subject: Re: [PATCH][next] ASoC: codecs: lpass-rx-macro: Fix uninitialized variable ec_tx
+Message-Id: <161408943852.48131.13240298966962769896.b4-ty@kernel.org>
+Date:   Tue, 23 Feb 2021 14:10:38 +0000
 MIME-Version: 1.0
-References: <20210222161905.1153-1-lukas.bulwahn@gmail.com>
- <20210222161905.1153-6-lukas.bulwahn@gmail.com> <CAAdtpL5yU0-0hR76zV5hDHWd7NOxa1E0g5=eteHvman1f7cWhQ@mail.gmail.com>
- <alpine.DEB.2.21.2102231330410.1900@angie.orcam.me.uk>
-In-Reply-To: <alpine.DEB.2.21.2102231330410.1900@angie.orcam.me.uk>
-From:   =?UTF-8?Q?Philippe_Mathieu=2DDaud=C3=A9?= <f4bug@amsat.org>
-Date:   Tue, 23 Feb 2021 14:33:44 +0100
-Message-ID: <CAAdtpL4M68ton_YkEYPZPL-+Onm5+LL35pbtpRA4U6oA2gC-TA@mail.gmail.com>
-Subject: Re: [PATCH 5/5] MIPS: SGI-IP27: fix spelling in Copyright
-To:     "Maciej W. Rozycki" <macro@orcam.me.uk>
-Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
-        Tiezhu Yang <yangtiezhu@loongson.cn>, Willy Tarreau <w@1wt.eu>,
-        linux-edac@vger.kernel.org, linux-hams@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Feb 23, 2021 at 1:33 PM Maciej W. Rozycki <macro@orcam.me.uk> wrote:
-> On Tue, 23 Feb 2021, Philippe Mathieu-Daudé wrote:
->
-> > > diff --git a/arch/mips/sgi-ip27/ip27-timer.c b/arch/mips/sgi-ip27/ip27-timer.c
-> > > index 79c434fece52..444b5e0e935f 100644
-> > > --- a/arch/mips/sgi-ip27/ip27-timer.c
-> > > +++ b/arch/mips/sgi-ip27/ip27-timer.c
-> > > @@ -1,7 +1,7 @@
-> > >  // SPDX-License-Identifier: GPL-2.0
-> > >  /*
-> > > - * Copytight (C) 1999, 2000, 05, 06 Ralf Baechle (ralf@linux-mips.org)
-> > > - * Copytight (C) 1999, 2000 Silicon Graphics, Inc.
-> > > + * Copyright (C) 1999, 2000, 05, 06 Ralf Baechle (ralf@linux-mips.org)
-> >
-> > If the email isn't valid anymore, why keep it?
->
->  As I noted in an earlier reply and Kurt further confirmed site recovery
-> is under way.
+On Mon, 15 Feb 2021 16:33:13 +0000, Colin King wrote:
+> There is potential read of the uninitialized variable ec_tx if the call
+> to snd_soc_component_read fails or returns an unrecognized w->name. To
+> avoid this corner case, initialize ec_tx to -1 so that it is caught
+> later when ec_tx is bounds checked.
 
-Great. Alternatively the authorship is preserved without the author
-email (but IANAL):
+Applied to
 
-Copyright (C) 1999, 2000, 05, 06 Ralf Baechle
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
->
->   Maciej
+Thanks!
+
+[1/1] ASoC: codecs: lpass-rx-macro: Fix uninitialized variable ec_tx
+      commit: 2d003ec15396cc8ffa2a887605c98a967de3078d
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
