@@ -2,45 +2,45 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF7DAC433E6
-	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Feb 2021 13:25:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE2BDC433E6
+	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Feb 2021 13:26:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 88507600CF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Feb 2021 13:25:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B86B614A7
+	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Feb 2021 13:26:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232755AbhBWNZT (ORCPT
+        id S232834AbhBWN0F (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 23 Feb 2021 08:25:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43412 "EHLO
+        Tue, 23 Feb 2021 08:26:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232671AbhBWNZS (ORCPT
+        with ESMTP id S232801AbhBWN0E (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 23 Feb 2021 08:25:18 -0500
+        Tue, 23 Feb 2021 08:26:04 -0500
 Received: from angie.orcam.me.uk (angie.orcam.me.uk [IPv6:2001:4190:8020::4])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 3E14BC061574;
-        Tue, 23 Feb 2021 05:24:37 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8615DC061574;
+        Tue, 23 Feb 2021 05:25:24 -0800 (PST)
 Received: by angie.orcam.me.uk (Postfix, from userid 500)
-        id 2425092009C; Tue, 23 Feb 2021 14:24:36 +0100 (CET)
+        id DBE6B92009E; Tue, 23 Feb 2021 14:25:23 +0100 (CET)
 Received: from localhost (localhost [127.0.0.1])
-        by angie.orcam.me.uk (Postfix) with ESMTP id 1671092009B;
-        Tue, 23 Feb 2021 14:24:36 +0100 (CET)
-Date:   Tue, 23 Feb 2021 14:24:36 +0100 (CET)
+        by angie.orcam.me.uk (Postfix) with ESMTP id CD90392009D;
+        Tue, 23 Feb 2021 14:25:23 +0100 (CET)
+Date:   Tue, 23 Feb 2021 14:25:23 +0100 (CET)
 From:   "Maciej W. Rozycki" <macro@orcam.me.uk>
-To:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+cc:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
         linux-mips@vger.kernel.org, Tiezhu Yang <yangtiezhu@loongson.cn>,
         Willy Tarreau <w@1wt.eu>, linux-edac@vger.kernel.org,
         linux-hams@vger.kernel.org, kernel-janitors@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/5] arch: mips: update references to current linux-mips
- list
-In-Reply-To: <20210223122928.GD7765@alpha.franken.de>
-Message-ID: <alpine.DEB.2.21.2102231423070.1900@angie.orcam.me.uk>
-References: <20210222161905.1153-1-lukas.bulwahn@gmail.com> <20210222161905.1153-4-lukas.bulwahn@gmail.com> <20210223122928.GD7765@alpha.franken.de>
+Subject: Re: [PATCH 5/5] MIPS: SGI-IP27: fix spelling in Copyright
+In-Reply-To: <20210222161905.1153-6-lukas.bulwahn@gmail.com>
+Message-ID: <alpine.DEB.2.21.2102231424490.1900@angie.orcam.me.uk>
+References: <20210222161905.1153-1-lukas.bulwahn@gmail.com> <20210222161905.1153-6-lukas.bulwahn@gmail.com>
 User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -48,12 +48,13 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, 23 Feb 2021, Thomas Bogendoerfer wrote:
+On Mon, 22 Feb 2021, Lukas Bulwahn wrote:
 
-> For the other patches I'll wait for how the resolution for linux-mips.org
-> looks like.
+> This is a Copyright line, and just a typo slipped through.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
 
- FWIW I think the typo fix in 5/5 is obviously correct and can go in right 
-away.  We can deal with the LMO reference later on should it be needed.
+Reviewed-by: Maciej W. Rozycki <macro@orcam.me.uk>
 
   Maciej
