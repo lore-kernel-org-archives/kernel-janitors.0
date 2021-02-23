@@ -2,68 +2,69 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A66CC433E6
-	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Feb 2021 12:34:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B598AC43381
+	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Feb 2021 12:58:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 28B8064E5C
-	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Feb 2021 12:34:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81E8664E2E
+	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Feb 2021 12:58:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232621AbhBWMd7 (ORCPT
+        id S232662AbhBWM5y (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 23 Feb 2021 07:33:59 -0500
-Received: from angie.orcam.me.uk ([157.25.102.26]:36822 "EHLO
-        angie.orcam.me.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232529AbhBWMdz (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 23 Feb 2021 07:33:55 -0500
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-        id BF3F592009E; Tue, 23 Feb 2021 13:33:11 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by angie.orcam.me.uk (Postfix) with ESMTP id B143092009D;
-        Tue, 23 Feb 2021 13:33:11 +0100 (CET)
-Date:   Tue, 23 Feb 2021 13:33:11 +0100 (CET)
-From:   "Maciej W. Rozycki" <macro@orcam.me.uk>
-To:     =?UTF-8?Q?Philippe_Mathieu-Daud=C3=A9?= <f4bug@amsat.org>
-cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
+        Tue, 23 Feb 2021 07:57:54 -0500
+Received: from elvis.franken.de ([193.175.24.41]:49451 "EHLO elvis.franken.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232601AbhBWM5v (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 23 Feb 2021 07:57:51 -0500
+Received: from uucp (helo=alpha)
+        by elvis.franken.de with local-bsmtp (Exim 3.36 #1)
+        id 1lEXFU-0002LK-03; Tue, 23 Feb 2021 13:57:08 +0100
+Received: by alpha.franken.de (Postfix, from userid 1000)
+        id 28562C07B1; Tue, 23 Feb 2021 13:29:28 +0100 (CET)
+Date:   Tue, 23 Feb 2021 13:29:28 +0100
+From:   Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     linux-mips@vger.kernel.org,
+        "Maciej W . Rozycki" <macro@orcam.me.uk>,
         Tiezhu Yang <yangtiezhu@loongson.cn>, Willy Tarreau <w@1wt.eu>,
         linux-edac@vger.kernel.org, linux-hams@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 5/5] MIPS: SGI-IP27: fix spelling in Copyright
-In-Reply-To: <CAAdtpL5yU0-0hR76zV5hDHWd7NOxa1E0g5=eteHvman1f7cWhQ@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.2102231330410.1900@angie.orcam.me.uk>
-References: <20210222161905.1153-1-lukas.bulwahn@gmail.com> <20210222161905.1153-6-lukas.bulwahn@gmail.com> <CAAdtpL5yU0-0hR76zV5hDHWd7NOxa1E0g5=eteHvman1f7cWhQ@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/5] arch: mips: update references to current linux-mips
+ list
+Message-ID: <20210223122928.GD7765@alpha.franken.de>
+References: <20210222161905.1153-1-lukas.bulwahn@gmail.com>
+ <20210222161905.1153-4-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210222161905.1153-4-lukas.bulwahn@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, 23 Feb 2021, Philippe Mathieu-Daudé wrote:
-
-> > diff --git a/arch/mips/sgi-ip27/ip27-timer.c b/arch/mips/sgi-ip27/ip27-timer.c
-> > index 79c434fece52..444b5e0e935f 100644
-> > --- a/arch/mips/sgi-ip27/ip27-timer.c
-> > +++ b/arch/mips/sgi-ip27/ip27-timer.c
-> > @@ -1,7 +1,7 @@
-> >  // SPDX-License-Identifier: GPL-2.0
-> >  /*
-> > - * Copytight (C) 1999, 2000, 05, 06 Ralf Baechle (ralf@linux-mips.org)
-> > - * Copytight (C) 1999, 2000 Silicon Graphics, Inc.
-> > + * Copyright (C) 1999, 2000, 05, 06 Ralf Baechle (ralf@linux-mips.org)
+On Mon, Feb 22, 2021 at 05:19:03PM +0100, Lukas Bulwahn wrote:
+> The linux-mips mailing list now lives at kernel.org. Update all references
+> in the kernel tree.
 > 
-> If the email isn't valid anymore, why keep it?
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+>  arch/mips/kernel/r4k-bugs64.c | 2 +-
+>  arch/mips/lib/iomap-pci.c     | 2 +-
+>  arch/mips/sgi-ip32/ip32-irq.c | 2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
 
- As I noted in an earlier reply and Kurt further confirmed site recovery 
-is under way.
+applied only this patch to mips-next.
 
-  Maciej
+For the other patches I'll wait for how the resolution for linux-mips.org
+looks like.
+
+Thomas.
+
+-- 
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
