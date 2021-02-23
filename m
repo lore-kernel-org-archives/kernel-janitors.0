@@ -2,77 +2,91 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D21E8C433DB
-	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Feb 2021 03:01:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC606C4332B
+	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Feb 2021 09:51:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 62CF964E4B
-	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Feb 2021 03:01:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B8C964E02
+	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Feb 2021 09:51:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231196AbhBWDAu (ORCPT
+        id S232156AbhBWJvc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 22 Feb 2021 22:00:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47314 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230053AbhBWDAr (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 22 Feb 2021 22:00:47 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPS id 0DD2564E02;
-        Tue, 23 Feb 2021 03:00:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1614049207;
-        bh=Uao1CP+xp3jznWKuvtnApRdpBS7S45yfOn76RN1A6q8=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=ZeA0DoyhUrVnrN1nsEQEWguS/x7shT37NASIgjfDjDE85cQ6NeWtto1cgTUjrNHoa
-         Sw3Pzic4nqZwG0aIx0yucrmzCKwJ6Q8rv3L9WDmGS1PFReR/X8syTlNWiDz3/CEz8Y
-         acZ1e33kSRXn6UukzNhUdkTzyVpeNZTKPdhhYIM/eagtaat7NGPXrpY2e4bKXMKcBQ
-         6Gb1mI+6GdwcDFUwTjRhsmCddwOiBzz3+5stZO6twToQbNsufhdT/L9eN7zs5mFQur
-         sWHefcwL+T0v9bqFQDPuYnjTNUwzhYyK4TV07FoYCipmTIOjxb6WI+q86xpD2GCbA5
-         b5zxExd6udOsg==
-Content-Type: text/plain; charset="utf-8"
+        Tue, 23 Feb 2021 04:51:32 -0500
+Received: from mail-oi1-f172.google.com ([209.85.167.172]:39588 "EHLO
+        mail-oi1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230429AbhBWJtZ (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 23 Feb 2021 04:49:25 -0500
+Received: by mail-oi1-f172.google.com with SMTP id z126so1359707oiz.6;
+        Tue, 23 Feb 2021 01:49:10 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UAweoN6eUtAsuvPXmS5XNF8LZggD1kVsY6H4x3efuu4=;
+        b=fZv1OMHHRl3grwGBdFtw7n2yDshUqcSE3T7zO1kDi6miwEczZ0eL2xHqkQYHDuLaC5
+         beevs9VyGB/rSkkxPrWtyCh0KmqRSpxQNHq+La9y14UMQiILoJGU7ZbbQnWdpO4V/DSs
+         iGL/fzvXoGbP//YhdD9keRvfEolu42cJHHwduks9m39fHaRdneL+rvSs9Ql9tBv1aBxn
+         dPmMae/ZnER4Wedws77aDEVNxT6X3az451BuLs/0DaVbaYh8OmSX9X/Ku6r8IiPBDEOt
+         iYNXCa8ojAcjC7ZTlWYpA4qeP2WRib/GyXCV+J0zIy6Gzd7cm639X0tVuVf2s33h7OuZ
+         RG8g==
+X-Gm-Message-State: AOAM5330OadTDp5Iq0X3e+RrplJOkt0sR4DpmOwdVUqrIYdSHWyXw4S3
+        xK2390J0d/Qs8Wb3WF69mp47fbMOvJRmIeJLV/M=
+X-Google-Smtp-Source: ABdhPJwU9GCzduzw7dt7nUQZfXrlBnfCpmG43OLUcL8UJ9UtQa8drjZtHc3yDw24+LDKbQIv0j4WKI6HX5iVRNJlMmQ=
+X-Received: by 2002:aca:5e84:: with SMTP id s126mr18807216oib.175.1614073717156;
+ Tue, 23 Feb 2021 01:48:37 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2 net-next] net: phy: icplus: call phy_restore_page() when
- phy_select_page() fails
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <161404920700.2731.2936896600905361791.git-patchwork-notify@kernel.org>
-Date:   Tue, 23 Feb 2021 03:00:07 +0000
-References: <YC+OpFGsDPXPnXM5@mwanda>
-In-Reply-To: <YC+OpFGsDPXPnXM5@mwanda>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
-        davem@davemloft.net, kuba@kernel.org, michael@walle.cc,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20210222161905.1153-1-lukas.bulwahn@gmail.com> <20210222161905.1153-3-lukas.bulwahn@gmail.com>
+In-Reply-To: <20210222161905.1153-3-lukas.bulwahn@gmail.com>
+From:   =?UTF-8?Q?Philippe_Mathieu=2DDaud=C3=A9?= <f4bug@amsat.org>
+Date:   Tue, 23 Feb 2021 10:48:26 +0100
+Message-ID: <CAAdtpL4egZYCGS+2K5FQSFYcPKomosuvvrunpDskkiif5Ma5Uw@mail.gmail.com>
+Subject: Re: [PATCH 2/5] MAINTAINERS: remove linux-mips.org references
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
+        "Maciej W . Rozycki" <macro@orcam.me.uk>,
+        Tiezhu Yang <yangtiezhu@loongson.cn>, Willy Tarreau <w@1wt.eu>,
+        linux-edac@vger.kernel.org, linux-hams@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+On Mon, Feb 22, 2021 at 5:22 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+>
+> The domain lookup for linux-mips.org fails for quite some time now. Hence,
+> webpages, the patchwork instance and Ralf Baechle's email there is not
+> reachable anymore.
+>
+> Remove all references of webpages from linux-mips.org in MAINTAINERS, and
+> refer to the kernel.org's linux-mips patchwork instance instead.
+>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+>  MAINTAINERS | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index e949e561867d..703a50183301 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -4980,7 +4980,6 @@ DECSTATION PLATFORM SUPPORT
+>  M:     "Maciej W. Rozycki" <macro@orcam.me.uk>
+>  L:     linux-mips@vger.kernel.org
+>  S:     Maintained
+> -W:     http://www.linux-mips.org/wiki/DECstation
 
-This patch was applied to netdev/net.git (refs/heads/master):
+Why not use the web archive? The information is still valuable.
+https://web.archive.org/web/20190704000315/https://www.linux-mips.org/wiki/DECstation
 
-On Fri, 19 Feb 2021 13:10:44 +0300 you wrote:
-> The comments to phy_select_page() say that "phy_restore_page() must
-> always be called after this, irrespective of success or failure of this
-> call."  If we don't call phy_restore_page() then we are still holding
-> the phy_lock_mdio_bus() so it eventually leads to a dead lock.
-> 
-> Fixes: 32ab60e53920 ("net: phy: icplus: add MDI/MDIX support for IP101A/G")
-> Fixes: f9bc51e6cce2 ("net: phy: icplus: fix paged register access")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> [...]
-
-Here is the summary with links:
-  - [v2,net-next] net: phy: icplus: call phy_restore_page() when phy_select_page() fails
-    https://git.kernel.org/netdev/net/c/4e9d9d1f4880
-
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+>  F:     arch/mips/dec/
+>  F:     arch/mips/include/asm/dec/
+>  F:     arch/mips/include/asm/mach-dec/
+...
