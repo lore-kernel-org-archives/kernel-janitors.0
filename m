@@ -2,43 +2,39 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C761DC433DB
-	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Feb 2021 19:21:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1088C433E0
+	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Feb 2021 19:39:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8B4C064E09
-	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Feb 2021 19:21:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2C4F64E6C
+	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Feb 2021 19:39:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232420AbhBWTVR (ORCPT
+        id S230142AbhBWTjH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 23 Feb 2021 14:21:17 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:55181 "EHLO
+        Tue, 23 Feb 2021 14:39:07 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:55698 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231895AbhBWTUD (ORCPT
+        with ESMTP id S231795AbhBWTjG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 23 Feb 2021 14:20:03 -0500
+        Tue, 23 Feb 2021 14:39:06 -0500
 Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <colin.king@canonical.com>)
-        id 1lEdDC-0007ll-2R; Tue, 23 Feb 2021 19:19:10 +0000
+        id 1lEdVm-0001MK-3Z; Tue, 23 Feb 2021 19:38:22 +0000
 From:   Colin King <colin.king@canonical.com>
-To:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Ramalingam C <ramalingam.c@intel.com>,
-        Anshuman Gupta <anshuman.gupta@intel.com>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+To:     Roger Quadros <rogerq@kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-omap@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/i915/hdcp: Fix null pointer dereference of connector->encoder
-Date:   Tue, 23 Feb 2021 19:19:09 +0000
-Message-Id: <20210223191909.16682-1-colin.king@canonical.com>
+Subject: [PATCH] memory: gpmc: fix out of bounds read and dereference on gpmc_cs[]
+Date:   Tue, 23 Feb 2021 19:38:21 +0000
+Message-Id: <20210223193821.17232-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.30.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -49,42 +45,43 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The recent commit 6c63e6e14da7 ("drm/i915/hdcp: No HDCP when encoder
-is't initialized") added a null pointer check on connector->encoder
-hence implying that it could potentially be null.  This means that
-the initialization of dig_port via the call intel_attached_dig_port
-may cause a null pointer dereference on connector->encoder. Fix
-this by only assigning dig_port after a null check has been performed
-on connector->encoder.
+Currently the array gpmc_cs is indexed by cs before it cs is range checked
+and the pointer read from this out-of-index read is dereferenced. Fix this
+by performing the range check on cs before the read and the following
+pointer dereference.
 
-Addresses-Coverity: ("Dereference before null check")
-Fixes: 36e5e7042b20 ("drm/i915: Don't fully disable HDCP on a port if multiple pipes are using it")
+Addresses-Coverity: ("Negative array index read")
+Fixes: 186401937927 ("memory: gpmc: Move omap gpmc code to live under drivers")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/gpu/drm/i915/display/intel_hdcp.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/memory/omap-gpmc.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/i915/display/intel_hdcp.c b/drivers/gpu/drm/i915/display/intel_hdcp.c
-index ae1371c36a32..7525ea31766c 100644
---- a/drivers/gpu/drm/i915/display/intel_hdcp.c
-+++ b/drivers/gpu/drm/i915/display/intel_hdcp.c
-@@ -2260,7 +2260,7 @@ int intel_hdcp_enable(struct intel_connector *connector,
- 		      const struct intel_crtc_state *pipe_config, u8 content_type)
- {
- 	struct drm_i915_private *dev_priv = to_i915(connector->base.dev);
--	struct intel_digital_port *dig_port = intel_attached_dig_port(connector);
-+	struct intel_digital_port *dig_port;
- 	struct intel_hdcp *hdcp = &connector->hdcp;
- 	unsigned long check_link_interval = DRM_HDCP_CHECK_PERIOD_MS;
- 	int ret = -EINVAL;
-@@ -2274,6 +2274,7 @@ int intel_hdcp_enable(struct intel_connector *connector,
- 		return -ENODEV;
- 	}
+diff --git a/drivers/memory/omap-gpmc.c b/drivers/memory/omap-gpmc.c
+index cfa730cfd145..f80c2ea39ca4 100644
+--- a/drivers/memory/omap-gpmc.c
++++ b/drivers/memory/omap-gpmc.c
+@@ -1009,8 +1009,8 @@ EXPORT_SYMBOL(gpmc_cs_request);
  
-+	dig_port = intel_attached_dig_port(connector);
- 	mutex_lock(&hdcp->mutex);
- 	mutex_lock(&dig_port->hdcp_mutex);
- 	drm_WARN_ON(&dev_priv->drm,
+ void gpmc_cs_free(int cs)
+ {
+-	struct gpmc_cs_data *gpmc = &gpmc_cs[cs];
+-	struct resource *res = &gpmc->mem;
++	struct gpmc_cs_data *gpmc;
++	struct resource *res;
+ 
+ 	spin_lock(&gpmc_mem_lock);
+ 	if (cs >= gpmc_cs_num || cs < 0 || !gpmc_cs_reserved(cs)) {
+@@ -1018,6 +1018,9 @@ void gpmc_cs_free(int cs)
+ 		spin_unlock(&gpmc_mem_lock);
+ 		return;
+ 	}
++	gpmc = &gpmc_cs[cs];
++	res = &gpmc->mem;
++
+ 	gpmc_cs_disable_mem(cs);
+ 	if (res->flags)
+ 		release_resource(res);
 -- 
 2.30.0
 
