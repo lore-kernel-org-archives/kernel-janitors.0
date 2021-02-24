@@ -2,69 +2,117 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3E51C433DB
-	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Feb 2021 21:29:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC959C433E0
+	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Feb 2021 07:56:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9560264E89
-	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Feb 2021 21:29:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5ECC464EDB
+	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Feb 2021 07:56:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233805AbhBWV31 (ORCPT
+        id S230001AbhBXH44 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 23 Feb 2021 16:29:27 -0500
-Received: from smtp12.smtpout.orange.fr ([80.12.242.134]:31949 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234057AbhBWV3S (ORCPT
+        Wed, 24 Feb 2021 02:56:56 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:51230 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230459AbhBXH4x (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 23 Feb 2021 16:29:18 -0500
-Received: from [192.168.1.18] ([90.126.17.6])
-        by mwinf5d35 with ME
-        id YlTY2400B07rLVE03lTZkE; Tue, 23 Feb 2021 22:27:36 +0100
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 23 Feb 2021 22:27:36 +0100
-X-ME-IP: 90.126.17.6
-Subject: Re: [PATCH 1/2] usb: gadget: s3c: Fix incorrect resources releasing
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     balbi@kernel.org, gregkh@linuxfoundation.org, krzk@kernel.org,
-        nathan@kernel.org, ndesaulniers@google.com, arnd@arndb.de,
-        gustavoars@kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Newsgroups: gmane.linux.kernel.samsung-soc,gmane.linux.ports.arm.kernel,gmane.linux.usb.general,gmane.linux.kernel,gmane.linux.kernel.janitors
-References: <20210221074117.937965-1-christophe.jaillet@wanadoo.fr>
- <20210222060302.GI2087@kadam>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Message-ID: <6135522c-11e9-a2ba-2d5e-b46068aa6d3f@wanadoo.fr>
-Date:   Tue, 23 Feb 2021 22:27:30 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
+        Wed, 24 Feb 2021 02:56:53 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 11O7o6E9167503;
+        Wed, 24 Feb 2021 07:56:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=B3Rx9g/G1eftg47QpZJeIvSXopnPcakmqucJsFsfr00=;
+ b=r/OXgbigBvJqnM9DBMdYJ0EmYbxZIaaAxKHiEBdekd416odgZGdgG5SiTgLQTOkrXSkb
+ quHG8Fo9niEs0v/Ru8D7kvPuDVI/bJT8ZaeEKaE9pUVqlBl0Xqqvw+Kb0lLID2cIum1X
+ 96bMcJqyyTA/OGdJPc+kNKodOwvNmq+AyuAPRv+FD3qvC91gNCDTENkrOrxSMC59xGV6
+ WLHZvhYN5hWY8QHlG6HFbT3TrRN3Kwi3q0OFq1LVIKzZLWsHiQq0nwDd6zcfnw6BylUw
+ NRcFgVAvM3vct+ceYFFk/Ol9LM//AfZG0GGH+8nnadCl6td5EzSr9if65cCZ0Wb/M910 PA== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 36ttcm9yky-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 24 Feb 2021 07:56:04 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 11O7odE0084378;
+        Wed, 24 Feb 2021 07:56:02 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 36ucb0dpmq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 24 Feb 2021 07:56:02 +0000
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 11O7u0LC017071;
+        Wed, 24 Feb 2021 07:56:01 GMT
+Received: from kadam (/102.36.221.92)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 24 Feb 2021 07:56:00 +0000
+Date:   Wed, 24 Feb 2021 10:55:52 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Roger Quadros <rogerq@kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-omap@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] memory: gpmc: fix out of bounds read and dereference on
+ gpmc_cs[]
+Message-ID: <20210224075552.GS2087@kadam>
+References: <20210223193821.17232-1-colin.king@canonical.com>
 MIME-Version: 1.0
-In-Reply-To: <20210222060302.GI2087@kadam>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210223193821.17232-1-colin.king@canonical.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-IMR: 1
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9904 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=0
+ malwarescore=0 mlxlogscore=999 adultscore=0 bulkscore=0 mlxscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2102240062
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9904 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
+ lowpriorityscore=0 spamscore=0 mlxscore=0 bulkscore=0 clxscore=1011
+ priorityscore=1501 malwarescore=0 impostorscore=0 suspectscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2102240062
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 22/02/2021 à 07:03, Dan Carpenter a écrit :
-> On Sun, Feb 21, 2021 at 08:41:17AM +0100, Christophe JAILLET wrote:
->> Since commit fe0f8e5c9ba8 ("usb: gadget: s3c: use platform resources"),
+On Tue, Feb 23, 2021 at 07:38:21PM +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> This the wrong hash.  It should be 188db4435ac6 from the URL you posted
-> below.
+> Currently the array gpmc_cs is indexed by cs before it cs is range checked
+> and the pointer read from this out-of-index read is dereferenced. Fix this
+> by performing the range check on cs before the read and the following
+> pointer dereference.
 > 
-> regards,
-> dan carpenter
+> Addresses-Coverity: ("Negative array index read")
+> Fixes: 186401937927 ("memory: gpmc: Move omap gpmc code to live under drivers")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/memory/omap-gpmc.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
 > 
-> 
-Ouch!
+> diff --git a/drivers/memory/omap-gpmc.c b/drivers/memory/omap-gpmc.c
+> index cfa730cfd145..f80c2ea39ca4 100644
+> --- a/drivers/memory/omap-gpmc.c
+> +++ b/drivers/memory/omap-gpmc.c
+> @@ -1009,8 +1009,8 @@ EXPORT_SYMBOL(gpmc_cs_request);
+>  
+>  void gpmc_cs_free(int cs)
+>  {
+> -	struct gpmc_cs_data *gpmc = &gpmc_cs[cs];
+> -	struct resource *res = &gpmc->mem;
 
-Thx for spotting this so stupid and so trivial little error!
-I'll send a v2 when -rc1 is out.
+There is no actual dereferencing going on here, it just taking the
+addresses.  But the patch is also harmless and improves readability.
 
-CJ
+regards,
+dan carpenter
+
