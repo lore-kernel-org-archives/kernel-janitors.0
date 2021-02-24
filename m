@@ -2,103 +2,110 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8EB6C433E6
-	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Feb 2021 08:12:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31161C433DB
+	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Feb 2021 08:48:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8869364EDB
-	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Feb 2021 08:12:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD45364EF1
+	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Feb 2021 08:48:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234128AbhBXIL4 (ORCPT
+        id S232296AbhBXIsS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 24 Feb 2021 03:11:56 -0500
-Received: from mail-ej1-f45.google.com ([209.85.218.45]:41746 "EHLO
-        mail-ej1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234088AbhBXILs (ORCPT
+        Wed, 24 Feb 2021 03:48:18 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:46328 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234536AbhBXIrL (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 24 Feb 2021 03:11:48 -0500
-Received: by mail-ej1-f45.google.com with SMTP id lr13so1480396ejb.8;
-        Wed, 24 Feb 2021 00:11:32 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=cKcwbmz/5GIyCZkFjA0Zr9oqhuUGRUYNtVSX/VVqwR0=;
-        b=Hsw+EtzJRaY8lb2ZjK9P39Jo7jtoWLknzWv4eyhWNO4V11PC6S/yPsS6iEFmIaDBJN
-         JM0OJ7ocUMj3yDlmNkipMAdReH6yMw87+JiWSTmh6FFjlFjIUVu4QJiTpU5HEHT3+QQW
-         bRDQvgcNi5YDzZk9x628rd9FLZxj7qD0lUgTi0O929KIPN/Oc/FKWloC4FgVykZNPs60
-         K8Gw5/ZJDoUJB0Ng/BUhixKVjGGyPOCGd2IwR/VbZPaw4fdA3tNyFtUoj0lcxC4U/Let
-         qACLH1E2IUhTVoC5ilwpL1ZuTf1MA+9mkW14CTYNRLezMhW7G9Wol6t7ALqJUs61QCOm
-         EcjA==
-X-Gm-Message-State: AOAM533IwyO4nwe2dt6P9kKodizpl8LbX9Vk4NiqVOLSFT3kZo4NI8/F
-        TLQ1u40D1tPuWlpitNo/SPbeOtRhq+I=
-X-Google-Smtp-Source: ABdhPJx5lWuNw74rrR8knAvnqBe3sSDBK9FAf5Xk4b4fiKTq1IQwijVJNRiYHz9x/628/+URRYtWZA==
-X-Received: by 2002:a17:906:7d87:: with SMTP id v7mr26685834ejo.214.1614154266284;
-        Wed, 24 Feb 2021 00:11:06 -0800 (PST)
-Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
-        by smtp.googlemail.com with ESMTPSA id q2sm854846edv.93.2021.02.24.00.11.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Feb 2021 00:11:05 -0800 (PST)
-Date:   Wed, 24 Feb 2021 09:11:04 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Colin King <colin.king@canonical.com>,
-        Roger Quadros <rogerq@kernel.org>,
-        Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] memory: gpmc: fix out of bounds read and dereference on
- gpmc_cs[]
-Message-ID: <20210224081104.rw6amjl6p5so5cq7@kozik-lap>
-References: <20210223193821.17232-1-colin.king@canonical.com>
- <20210224075552.GS2087@kadam>
+        Wed, 24 Feb 2021 03:47:11 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 11O8eqNb166954;
+        Wed, 24 Feb 2021 08:46:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
+ bh=ZtzMk5uBWu0YY0uHNXu5wD8ZlNbT4CAotv2RuoZhd+M=;
+ b=fzgzIB34XzmKozJbR0nU/wH+HRmcxPGjdgmDJ6WDawQYFl4ql6Tp7kFBvnZcWWbXQ156
+ ap54uAc8OLGeB1jPRqzDeS2J0RY3oI4tpIzXcO1FdB8GVT4zvatFqMOJCjfUEK9Hx46i
+ mAiv6lr63B/izeJZr1bSit5KnJbfXcWWfzR85vyu/Xy4YxnTR/3cRiQpZRT4mV3Q5RXB
+ D4WCMOysdcYVRycone/PYsDXmVjHRlSeK3xFPVJUwyYmfV0yG1SWgLOBczI7D80J9Pjv
+ rhklh1WMYp2KOv7NrOehQJi0Frb5F7BMLt8++bK+4TvT6UrL04IuFItZGqHB2JqewOj0 VA== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 36ugq3gyx7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 24 Feb 2021 08:46:14 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 11O8k9l2196145;
+        Wed, 24 Feb 2021 08:46:12 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3020.oracle.com with ESMTP id 36uc6suppw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 24 Feb 2021 08:46:12 +0000
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 11O8k8q3007112;
+        Wed, 24 Feb 2021 08:46:10 GMT
+Received: from mwanda (/102.36.221.92)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 24 Feb 2021 00:46:08 -0800
+Date:   Wed, 24 Feb 2021 11:45:59 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Larry Finger <Larry.Finger@lwfinger.net>
+Cc:     Florian Schilhabel <florian.c.schilhabel@googlemail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Michael Straube <straube.linux@gmail.com>,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        Pascal Terjan <pterjan@google.com>,
+        Ankit Baluni <b18007@students.iitmandi.ac.in>,
+        Mauro Dreissig <mukadr@gmail.com>,
+        Ali Bahar <ali@internetdog.org>, devel@driverdev.osuosl.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] staging: rtl8712: unterminated string leads to read overflow
+Message-ID: <YDYSR+1rj26NRhvb@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210224075552.GS2087@kadam>
+X-Mailer: git-send-email haha only kidding
+X-Proofpoint-IMR: 1
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9904 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 mlxscore=0 spamscore=0
+ mlxlogscore=999 adultscore=0 bulkscore=0 malwarescore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2102240068
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9904 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0
+ malwarescore=0 spamscore=0 mlxscore=0 suspectscore=0 priorityscore=1501
+ clxscore=1011 impostorscore=0 lowpriorityscore=0 mlxlogscore=999
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2102240067
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Feb 24, 2021 at 10:55:52AM +0300, Dan Carpenter wrote:
-> On Tue, Feb 23, 2021 at 07:38:21PM +0000, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > Currently the array gpmc_cs is indexed by cs before it cs is range checked
-> > and the pointer read from this out-of-index read is dereferenced. Fix this
-> > by performing the range check on cs before the read and the following
-> > pointer dereference.
-> > 
-> > Addresses-Coverity: ("Negative array index read")
-> > Fixes: 186401937927 ("memory: gpmc: Move omap gpmc code to live under drivers")
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
-> >  drivers/memory/omap-gpmc.c | 7 +++++--
-> >  1 file changed, 5 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/memory/omap-gpmc.c b/drivers/memory/omap-gpmc.c
-> > index cfa730cfd145..f80c2ea39ca4 100644
-> > --- a/drivers/memory/omap-gpmc.c
-> > +++ b/drivers/memory/omap-gpmc.c
-> > @@ -1009,8 +1009,8 @@ EXPORT_SYMBOL(gpmc_cs_request);
-> >  
-> >  void gpmc_cs_free(int cs)
-> >  {
-> > -	struct gpmc_cs_data *gpmc = &gpmc_cs[cs];
-> > -	struct resource *res = &gpmc->mem;
-> 
-> There is no actual dereferencing going on here, it just taking the
-> addresses.  But the patch is also harmless and improves readability.
+The memdup_user() function does not necessarily return a NUL terminated
+string so this can lead to a read overflow.  Switch from memdup_user()
+to strndup_user() to fix this bug.
 
-Hm, in the second line indeed the compiler will just calculate the
-offset of "mem" field against the "gpmc_cs+cs" and return it's probable
-address.
+Fixes: c6dc001f2add ("staging: r8712u: Merging Realtek's latest (v2.6.6). Various fixes.")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/staging/rtl8712/rtl871x_ioctl_linux.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-To me still the code is a little bit non-obvious or obfuscated - first
-you play with the array[index] and then you check the validity of index.
-
-Best regards,
-Krzysztof
+diff --git a/drivers/staging/rtl8712/rtl871x_ioctl_linux.c b/drivers/staging/rtl8712/rtl871x_ioctl_linux.c
+index 81de5a9e6b67..60dd798a6e51 100644
+--- a/drivers/staging/rtl8712/rtl871x_ioctl_linux.c
++++ b/drivers/staging/rtl8712/rtl871x_ioctl_linux.c
+@@ -924,7 +924,7 @@ static int r871x_wx_set_priv(struct net_device *dev,
+ 	struct iw_point *dwrq = (struct iw_point *)awrq;
+ 
+ 	len = dwrq->length;
+-	ext = memdup_user(dwrq->pointer, len);
++	ext = strndup_user(dwrq->pointer, len);
+ 	if (IS_ERR(ext))
+ 		return PTR_ERR(ext);
+ 
+-- 
+2.30.0
 
