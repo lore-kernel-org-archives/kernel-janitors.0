@@ -7,33 +7,36 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 237EBC43381
-	for <kernel-janitors@archiver.kernel.org>; Thu, 25 Feb 2021 15:44:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 864F2C433DB
+	for <kernel-janitors@archiver.kernel.org>; Thu, 25 Feb 2021 18:35:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E352264F17
-	for <kernel-janitors@archiver.kernel.org>; Thu, 25 Feb 2021 15:44:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 417DD64F26
+	for <kernel-janitors@archiver.kernel.org>; Thu, 25 Feb 2021 18:35:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231160AbhBYPog (ORCPT
+        id S233688AbhBYSfH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 25 Feb 2021 10:44:36 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:41816 "EHLO
+        Thu, 25 Feb 2021 13:35:07 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:47412 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232949AbhBYPoO (ORCPT
+        with ESMTP id S233671AbhBYSd3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 25 Feb 2021 10:44:14 -0500
+        Thu, 25 Feb 2021 13:33:29 -0500
 Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <colin.king@canonical.com>)
-        id 1lFInX-0008CH-Ee; Thu, 25 Feb 2021 15:43:27 +0000
+        id 1lFLRJ-0002oE-GG; Thu, 25 Feb 2021 18:32:41 +0000
 From:   Colin King <colin.king@canonical.com>
-To:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org
+To:     Jakub Kicinski <kubakici@wp.pl>, Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] media: vivid: fix assignment of dev->fbuf_out_flags
-Date:   Thu, 25 Feb 2021 15:43:27 +0000
-Message-Id: <20210225154327.975877-1-colin.king@canonical.com>
+Subject: [PATCH] mt7601u: fix always true expression
+Date:   Thu, 25 Feb 2021 18:32:41 +0000
+Message-Id: <20210225183241.1002129-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.30.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -44,31 +47,37 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Currently the chroma_flags and alpha_flags are being zero'd with a bit-wise
-mask and the following statement should be bit-wise or'ing in the new flag
-bits but instead is making a direct assignment.  Fix this by using the |=
-operator rather than an assignment.
+Currently the expression ~nic_conf1 is always true because nic_conf1
+is a u16 and according to 6.5.3.3 of the C standard the ~ operator
+promotes the u16 to an integer before flipping all the bits. Thus
+the top 16 bits of the integer result are all set so the expression
+is always true.  If the intention was to flip all the bits of nic_conf1
+then casting the integer result back to a u16 is a suitabel fix.
 
-Addresses-Coverity: ("Unused value")
-Fixes: ef834f7836ec ("[media] vivid: add the video capture and output parts")
+Interestingly static analyzers seem to thing a bitwise ! should be
+used instead of ~ for this scenario, so I think the original intent
+of the expression may need some extra consideration.
+
+Addresses-Coverity: ("Logical vs. bitwise operator")
+Fixes: c869f77d6abb ("add mt7601u driver")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/media/test-drivers/vivid/vivid-vid-out.c | 2 +-
+ drivers/net/wireless/mediatek/mt7601u/eeprom.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/test-drivers/vivid/vivid-vid-out.c b/drivers/media/test-drivers/vivid/vivid-vid-out.c
-index ac1e981e8342..9f731f085179 100644
---- a/drivers/media/test-drivers/vivid/vivid-vid-out.c
-+++ b/drivers/media/test-drivers/vivid/vivid-vid-out.c
-@@ -1021,7 +1021,7 @@ int vivid_vid_out_s_fbuf(struct file *file, void *fh,
- 		return -EINVAL;
- 	}
- 	dev->fbuf_out_flags &= ~(chroma_flags | alpha_flags);
--	dev->fbuf_out_flags = a->flags & (chroma_flags | alpha_flags);
-+	dev->fbuf_out_flags |= a->flags & (chroma_flags | alpha_flags);
- 	return 0;
+diff --git a/drivers/net/wireless/mediatek/mt7601u/eeprom.c b/drivers/net/wireless/mediatek/mt7601u/eeprom.c
+index c868582c5d22..aa3b64902cf9 100644
+--- a/drivers/net/wireless/mediatek/mt7601u/eeprom.c
++++ b/drivers/net/wireless/mediatek/mt7601u/eeprom.c
+@@ -99,7 +99,7 @@ mt7601u_has_tssi(struct mt7601u_dev *dev, u8 *eeprom)
+ {
+ 	u16 nic_conf1 = get_unaligned_le16(eeprom + MT_EE_NIC_CONF_1);
+ 
+-	return ~nic_conf1 && (nic_conf1 & MT_EE_NIC_CONF_1_TX_ALC_EN);
++	return (u16)~nic_conf1 && (nic_conf1 & MT_EE_NIC_CONF_1_TX_ALC_EN);
  }
  
+ static void
 -- 
 2.30.0
 
