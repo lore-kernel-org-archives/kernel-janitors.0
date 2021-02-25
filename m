@@ -2,75 +2,87 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F3FEC433DB
-	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Feb 2021 16:54:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A864DC433E0
+	for <kernel-janitors@archiver.kernel.org>; Thu, 25 Feb 2021 12:38:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4312564F06
-	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Feb 2021 16:54:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45C6764F0F
+	for <kernel-janitors@archiver.kernel.org>; Thu, 25 Feb 2021 12:38:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235745AbhBXQyO (ORCPT
+        id S232412AbhBYMiP (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 24 Feb 2021 11:54:14 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:34355 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235825AbhBXQxA (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 24 Feb 2021 11:53:00 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1lExOJ-0002jT-Go; Wed, 24 Feb 2021 16:51:59 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Lijun Ou <oulijun@huawei.com>, Wei Hu <huwei87@hisilicon.com>,
-        Weihang Li <liweihang@huawei.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Xi Wang <wangxi11@huawei.com>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] RDMA/hns: Fix uninitialized return value in ret
-Date:   Wed, 24 Feb 2021 16:51:59 +0000
-Message-Id: <20210224165159.205259-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.30.0
+        Thu, 25 Feb 2021 07:38:15 -0500
+Received: from muru.com ([72.249.23.125]:37194 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231833AbhBYMiO (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 25 Feb 2021 07:38:14 -0500
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 37C2E807A;
+        Thu, 25 Feb 2021 12:38:05 +0000 (UTC)
+Date:   Thu, 25 Feb 2021 14:37:30 +0200
+From:   Tony Lindgren <tony@atomide.com>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Colin King <colin.king@canonical.com>,
+        Roger Quadros <rogerq@kernel.org>, linux-omap@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] memory: gpmc: fix out of bounds read and dereference on
+ gpmc_cs[]
+Message-ID: <YDeaCk5zoAfgEuF6@atomide.com>
+References: <20210223193821.17232-1-colin.king@canonical.com>
+ <20210224075552.GS2087@kadam>
+ <20210224081104.rw6amjl6p5so5cq7@kozik-lap>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210224081104.rw6amjl6p5so5cq7@kozik-lap>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+* Krzysztof Kozlowski <krzk@kernel.org> [210224 08:11]:
+> On Wed, Feb 24, 2021 at 10:55:52AM +0300, Dan Carpenter wrote:
+> > On Tue, Feb 23, 2021 at 07:38:21PM +0000, Colin King wrote:
+> > > From: Colin Ian King <colin.king@canonical.com>
+> > > 
+> > > Currently the array gpmc_cs is indexed by cs before it cs is range checked
+> > > and the pointer read from this out-of-index read is dereferenced. Fix this
+> > > by performing the range check on cs before the read and the following
+> > > pointer dereference.
+> > > 
+> > > Addresses-Coverity: ("Negative array index read")
+> > > Fixes: 186401937927 ("memory: gpmc: Move omap gpmc code to live under drivers")
+> > > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> > > ---
+> > >  drivers/memory/omap-gpmc.c | 7 +++++--
+> > >  1 file changed, 5 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/drivers/memory/omap-gpmc.c b/drivers/memory/omap-gpmc.c
+> > > index cfa730cfd145..f80c2ea39ca4 100644
+> > > --- a/drivers/memory/omap-gpmc.c
+> > > +++ b/drivers/memory/omap-gpmc.c
+> > > @@ -1009,8 +1009,8 @@ EXPORT_SYMBOL(gpmc_cs_request);
+> > >  
+> > >  void gpmc_cs_free(int cs)
+> > >  {
+> > > -	struct gpmc_cs_data *gpmc = &gpmc_cs[cs];
+> > > -	struct resource *res = &gpmc->mem;
+> > 
+> > There is no actual dereferencing going on here, it just taking the
+> > addresses.  But the patch is also harmless and improves readability.
+> 
+> Hm, in the second line indeed the compiler will just calculate the
+> offset of "mem" field against the "gpmc_cs+cs" and return it's probable
+> address.
+> 
+> To me still the code is a little bit non-obvious or obfuscated - first
+> you play with the array[index] and then you check the validity of index.
 
-Currently if !r->hopnum is true in the for-loop and later on
-mapped_cnt < page_cnt is false we end up with an uninitialized value
-in ret being returned at the end of the function hns_roce_mtr_map.
-Fix this by keeping the original intent and ensure ret is zero by
-initializing ret at the start of the function.
+To me it seems the fixes tag is not ideal.. Seems this issue was there
+earlier too before moving the code. In any case:
 
-Addresses-Coverity: ("Uninitialized scalar variable")
-Fixes: 9ea9a53ea93b ("RDMA/hns: Add mapped page count checking for MTR")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/infiniband/hw/hns/hns_roce_mr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/infiniband/hw/hns/hns_roce_mr.c b/drivers/infiniband/hw/hns/hns_roce_mr.c
-index 79b3c3023fe7..b8454dcb0318 100644
---- a/drivers/infiniband/hw/hns/hns_roce_mr.c
-+++ b/drivers/infiniband/hw/hns/hns_roce_mr.c
-@@ -776,7 +776,7 @@ int hns_roce_mtr_map(struct hns_roce_dev *hr_dev, struct hns_roce_mtr *mtr,
- 	struct ib_device *ibdev = &hr_dev->ib_dev;
- 	struct hns_roce_buf_region *r;
- 	unsigned int i, mapped_cnt;
--	int ret;
-+	int ret = 0;
- 
- 	/*
- 	 * Only use the first page address as root ba when hopnum is 0, this
--- 
-2.30.0
-
+Reviewed-by: Tony Lindgren <tony@atomide.com>
