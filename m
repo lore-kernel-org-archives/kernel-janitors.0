@@ -2,129 +2,123 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F37EC433E0
-	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Feb 2021 05:01:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45F16C433E6
+	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Feb 2021 08:30:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B1B5E64ED2
-	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Feb 2021 05:01:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7D1664EE3
+	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Feb 2021 08:30:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229550AbhBZFBw (ORCPT
+        id S230018AbhBZIab (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 26 Feb 2021 00:01:52 -0500
-Received: from mga17.intel.com ([192.55.52.151]:3350 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229526AbhBZFBw (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 26 Feb 2021 00:01:52 -0500
-IronPort-SDR: glmBWjdXDGKkkqOZdH8Zc4anoRqY11xp0FIbz7nOMoWWHB1cQF9akKNKKlhizg1s6UfmobVAiZ
- kg9v9WY8XXMg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9906"; a="165641726"
-X-IronPort-AV: E=Sophos;i="5.81,207,1610438400"; 
-   d="scan'208";a="165641726"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2021 21:01:09 -0800
-IronPort-SDR: MwUHK9Y/FNDbll/XnPZ49GjXvdQWmatbO8ziam9+t6CxyKyRwggiv877l1ZAgxmteTO0Igfd2+
- A3yoEK9AEBYQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.81,207,1610438400"; 
-   d="scan'208";a="516384038"
-Received: from fmsmsx604.amr.corp.intel.com ([10.18.126.84])
-  by orsmga004.jf.intel.com with ESMTP; 25 Feb 2021 21:01:09 -0800
-Received: from bgsmsx602.gar.corp.intel.com (10.109.78.81) by
- fmsmsx604.amr.corp.intel.com (10.18.126.84) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2106.2; Thu, 25 Feb 2021 21:01:08 -0800
-Received: from bgsmsx604.gar.corp.intel.com (10.67.234.6) by
- BGSMSX602.gar.corp.intel.com (10.109.78.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2106.2; Fri, 26 Feb 2021 10:31:06 +0530
-Received: from bgsmsx604.gar.corp.intel.com ([10.67.234.6]) by
- BGSMSX604.gar.corp.intel.com ([10.67.234.6]) with mapi id 15.01.2106.002;
- Fri, 26 Feb 2021 10:31:06 +0530
-From:   "Gupta, Anshuman" <anshuman.gupta@intel.com>
-To:     Colin King <colin.king@canonical.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        "Vivi, Rodrigo" <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        "C, Ramalingam" <ramalingam.c@intel.com>,
-        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-CC:     "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH][next] drm/i915/hdcp: Fix null pointer dereference of
- connector->encoder
-Thread-Topic: [PATCH][next] drm/i915/hdcp: Fix null pointer dereference of
- connector->encoder
-Thread-Index: AQHXChjJmIv7gDW21UG5hJXtQsGn1Kpp5AuQ
-Date:   Fri, 26 Feb 2021 05:01:06 +0000
-Message-ID: <acbf924a09544030966f95c750b1bfa7@intel.com>
-References: <20210223191909.16682-1-colin.king@canonical.com>
-In-Reply-To: <20210223191909.16682-1-colin.king@canonical.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.5.1.3
-dlp-reaction: no-action
-x-originating-ip: [10.223.10.1]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Fri, 26 Feb 2021 03:30:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59136 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229449AbhBZIaa (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 26 Feb 2021 03:30:30 -0500
+Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D255C061574;
+        Fri, 26 Feb 2021 00:29:45 -0800 (PST)
+Received: by mail-io1-xd29.google.com with SMTP id a7so8809010iok.12;
+        Fri, 26 Feb 2021 00:29:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=wv9SyvXPStH1HbSiyrd6dLJkIu8R0cmO6gcv4tLTSvQ=;
+        b=Rhl08QI0pfGUZYq6eTciDwuN89KLIIALSh8uKopiHPcUrfyNcHVdR0Y6PGJQ1Aw1Xp
+         vPXZjJhOIbKvkPRAco2v2VKNnyYBYI7anNnDxXs0xiSFo7fx91n4XiggVGMHNhhKvu4k
+         VOo44XIZnSglXqVUOvLckvmbXB7NqIerp5578rZZ7Kkq5DtCOVgLsBTzfYkva3pS5MmR
+         BAfHatL1uy5ftOMq0kGxA8XxXWQPdMPnpdScblfP9jVupdhUCn3EriJZ5//VUNid5wyo
+         f/ATH0swlnaPmd0JLN4HAMbgaAspgJBsV4EsG8vx1D8YainfyvDQL/PiOgyXGYZppUzS
+         m9qA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=wv9SyvXPStH1HbSiyrd6dLJkIu8R0cmO6gcv4tLTSvQ=;
+        b=eB7w4SrEh/UrtC8zeHrlQCVjDDWFPyXAvn1IO1w4ABpiJk9vUEQXrt5WzCYYQ15iij
+         VPbaWpiB+Fo0eF2cBVXkkpIv756TpG2ufOSV/DZ55llt95nN2sPSOS4Rn4K/yagiPdE/
+         b6+a+sPAuqxtgEZOt5eA+8VncJFssTLrutXC3N9HGzm0yf2uzEan7OLdI2EuMOna8ZFO
+         T+VLBcWiM41u/d2xg+CFwUGTvIN/SVLgEH0i4IfYbDw2rkSRmeWzgCYXrcTKJZxt66Ln
+         p+ZTEuSvHVmzb9ZV3hADIfmAABObMB0G2GslzUYE5LclhZ5l/hr4zVTZfXlZQgpwSKkk
+         zT2A==
+X-Gm-Message-State: AOAM531uSRRNbprZ5yxFh0qKgEsdXrMmXHI8gXuiO2bb+jvwjWLlpr/I
+        7yOWLs36t3mOaoQ9MHHxr6TbpvDXBn6CEzOTuZXLu9BVCxA=
+X-Google-Smtp-Source: ABdhPJzPdTp9oMZ+w5xch1v6D5+MMN1OxBLOqz/HNnorcjnd11QqrnQ4bhDhT4DYAfQxcYgPBGykY+glXt4wVghUZ0A=
+X-Received: by 2002:a05:6602:2bd5:: with SMTP id s21mr1906817iov.189.1614328185042;
+ Fri, 26 Feb 2021 00:29:45 -0800 (PST)
 MIME-Version: 1.0
+References: <20210222161905.1153-1-lukas.bulwahn@gmail.com>
+ <20210222161905.1153-3-lukas.bulwahn@gmail.com> <CAAdtpL4egZYCGS+2K5FQSFYcPKomosuvvrunpDskkiif5Ma5Uw@mail.gmail.com>
+In-Reply-To: <CAAdtpL4egZYCGS+2K5FQSFYcPKomosuvvrunpDskkiif5Ma5Uw@mail.gmail.com>
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date:   Fri, 26 Feb 2021 09:29:34 +0100
+Message-ID: <CAKXUXMygO2caTv9D1dMv9dxJSgC8=CpcT3hYsNm_ko4HXdNmeg@mail.gmail.com>
+Subject: Re: [PATCH 2/5] MAINTAINERS: remove linux-mips.org references
+To:     =?UTF-8?Q?Philippe_Mathieu=2DDaud=C3=A9?= <f4bug@amsat.org>
+Cc:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
+        "Maciej W . Rozycki" <macro@orcam.me.uk>,
+        Tiezhu Yang <yangtiezhu@loongson.cn>, Willy Tarreau <w@1wt.eu>,
+        linux-edac@vger.kernel.org, linux-hams@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQ29saW4gS2luZyA8Y29s
-aW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPiBTZW50OiBXZWRuZXNkYXksIEZlYnJ1YXJ5IDI0LCAy
-MDIxIDEyOjQ5IEFNDQo+IFRvOiBKYW5pIE5pa3VsYSA8amFuaS5uaWt1bGFAbGludXguaW50ZWwu
-Y29tPjsgSm9vbmFzIExhaHRpbmVuDQo+IDxqb29uYXMubGFodGluZW5AbGludXguaW50ZWwuY29t
-PjsgVml2aSwgUm9kcmlnbyA8cm9kcmlnby52aXZpQGludGVsLmNvbT47DQo+IERhdmlkIEFpcmxp
-ZSA8YWlybGllZEBsaW51eC5pZT47IERhbmllbCBWZXR0ZXIgPGRhbmllbEBmZndsbC5jaD47IEMs
-IFJhbWFsaW5nYW0NCj4gPHJhbWFsaW5nYW0uY0BpbnRlbC5jb20+OyBHdXB0YSwgQW5zaHVtYW4g
-PGFuc2h1bWFuLmd1cHRhQGludGVsLmNvbT47DQo+IGludGVsLWdmeEBsaXN0cy5mcmVlZGVza3Rv
-cC5vcmc7IGRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcNCj4gQ2M6IGtlcm5lbC1qYW5p
-dG9yc0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4gU3Vi
-amVjdDogW1BBVENIXVtuZXh0XSBkcm0vaTkxNS9oZGNwOiBGaXggbnVsbCBwb2ludGVyIGRlcmVm
-ZXJlbmNlIG9mDQo+IGNvbm5lY3Rvci0+ZW5jb2Rlcg0KPiANCj4gRnJvbTogQ29saW4gSWFuIEtp
-bmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCj4gDQo+IFRoZSByZWNlbnQgY29tbWl0IDZj
-NjNlNmUxNGRhNyAoImRybS9pOTE1L2hkY3A6IE5vIEhEQ1Agd2hlbiBlbmNvZGVyIGlzJ3QNCj4g
-aW5pdGlhbGl6ZWQiKSBhZGRlZCBhIG51bGwgcG9pbnRlciBjaGVjayBvbiBjb25uZWN0b3ItPmVu
-Y29kZXIgaGVuY2UgaW1wbHlpbmcNCj4gdGhhdCBpdCBjb3VsZCBwb3RlbnRpYWxseSBiZSBudWxs
-LiAgVGhpcyBtZWFucyB0aGF0IHRoZSBpbml0aWFsaXphdGlvbiBvZiBkaWdfcG9ydCB2aWENCj4g
-dGhlIGNhbGwgaW50ZWxfYXR0YWNoZWRfZGlnX3BvcnQgbWF5IGNhdXNlIGEgbnVsbCBwb2ludGVy
-IGRlcmVmZXJlbmNlIG9uDQo+IGNvbm5lY3Rvci0+ZW5jb2Rlci4gRml4IHRoaXMgYnkgb25seSBh
-c3NpZ25pbmcgZGlnX3BvcnQgYWZ0ZXIgYSBudWxsIGNoZWNrIGhhcw0KPiBiZWVuIHBlcmZvcm1l
-ZCBvbiBjb25uZWN0b3ItPmVuY29kZXIuDQo+IA0KPiBBZGRyZXNzZXMtQ292ZXJpdHk6ICgiRGVy
-ZWZlcmVuY2UgYmVmb3JlIG51bGwgY2hlY2siKQ0KPiBGaXhlczogMzZlNWU3MDQyYjIwICgiZHJt
-L2k5MTU6IERvbid0IGZ1bGx5IGRpc2FibGUgSERDUCBvbiBhIHBvcnQgaWYgbXVsdGlwbGUNCj4g
-cGlwZXMgYXJlIHVzaW5nIGl0IikNCj4gU2lnbmVkLW9mZi1ieTogQ29saW4gSWFuIEtpbmcgPGNv
-bGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCkxvb2tzIGdvb2QgdG8gbWUuDQpSZXZpZXdlZC1ieTog
-QW5zaHVtYW4gR3VwdGEgPGFuc2h1bWFuLmd1cHRhQGludGVsLmNvbT4NCj4gLS0tDQo+ICBkcml2
-ZXJzL2dwdS9kcm0vaTkxNS9kaXNwbGF5L2ludGVsX2hkY3AuYyB8IDMgKystDQo+ICAxIGZpbGUg
-Y2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pDQo+IA0KPiBkaWZmIC0tZ2l0
-IGEvZHJpdmVycy9ncHUvZHJtL2k5MTUvZGlzcGxheS9pbnRlbF9oZGNwLmMNCj4gYi9kcml2ZXJz
-L2dwdS9kcm0vaTkxNS9kaXNwbGF5L2ludGVsX2hkY3AuYw0KPiBpbmRleCBhZTEzNzFjMzZhMzIu
-Ljc1MjVlYTMxNzY2YyAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2k5MTUvZGlzcGxh
-eS9pbnRlbF9oZGNwLmMNCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2k5MTUvZGlzcGxheS9pbnRl
-bF9oZGNwLmMNCj4gQEAgLTIyNjAsNyArMjI2MCw3IEBAIGludCBpbnRlbF9oZGNwX2VuYWJsZShz
-dHJ1Y3QgaW50ZWxfY29ubmVjdG9yDQo+ICpjb25uZWN0b3IsDQo+ICAJCSAgICAgIGNvbnN0IHN0
-cnVjdCBpbnRlbF9jcnRjX3N0YXRlICpwaXBlX2NvbmZpZywgdTggY29udGVudF90eXBlKQ0KPiB7
-DQo+ICAJc3RydWN0IGRybV9pOTE1X3ByaXZhdGUgKmRldl9wcml2ID0gdG9faTkxNShjb25uZWN0
-b3ItPmJhc2UuZGV2KTsNCj4gLQlzdHJ1Y3QgaW50ZWxfZGlnaXRhbF9wb3J0ICpkaWdfcG9ydCA9
-DQo+IGludGVsX2F0dGFjaGVkX2RpZ19wb3J0KGNvbm5lY3Rvcik7DQo+ICsJc3RydWN0IGludGVs
-X2RpZ2l0YWxfcG9ydCAqZGlnX3BvcnQ7DQo+ICAJc3RydWN0IGludGVsX2hkY3AgKmhkY3AgPSAm
-Y29ubmVjdG9yLT5oZGNwOw0KPiAgCXVuc2lnbmVkIGxvbmcgY2hlY2tfbGlua19pbnRlcnZhbCA9
-IERSTV9IRENQX0NIRUNLX1BFUklPRF9NUzsNCj4gIAlpbnQgcmV0ID0gLUVJTlZBTDsNCj4gQEAg
-LTIyNzQsNiArMjI3NCw3IEBAIGludCBpbnRlbF9oZGNwX2VuYWJsZShzdHJ1Y3QgaW50ZWxfY29u
-bmVjdG9yDQo+ICpjb25uZWN0b3IsDQo+ICAJCXJldHVybiAtRU5PREVWOw0KPiAgCX0NCj4gDQo+
-ICsJZGlnX3BvcnQgPSBpbnRlbF9hdHRhY2hlZF9kaWdfcG9ydChjb25uZWN0b3IpOw0KPiAgCW11
-dGV4X2xvY2soJmhkY3AtPm11dGV4KTsNCj4gIAltdXRleF9sb2NrKCZkaWdfcG9ydC0+aGRjcF9t
-dXRleCk7DQo+ICAJZHJtX1dBUk5fT04oJmRldl9wcml2LT5kcm0sDQo+IC0tDQo+IDIuMzAuMA0K
-DQo=
+On Tue, Feb 23, 2021 at 10:48 AM Philippe Mathieu-Daud=C3=A9 <f4bug@amsat.o=
+rg> wrote:
+>
+> On Mon, Feb 22, 2021 at 5:22 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> w=
+rote:
+> >
+> > The domain lookup for linux-mips.org fails for quite some time now. Hen=
+ce,
+> > webpages, the patchwork instance and Ralf Baechle's email there is not
+> > reachable anymore.
+> >
+> > Remove all references of webpages from linux-mips.org in MAINTAINERS, a=
+nd
+> > refer to the kernel.org's linux-mips patchwork instance instead.
+> >
+> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> > ---
+> >  MAINTAINERS | 5 +----
+> >  1 file changed, 1 insertion(+), 4 deletions(-)
+> >
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index e949e561867d..703a50183301 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -4980,7 +4980,6 @@ DECSTATION PLATFORM SUPPORT
+> >  M:     "Maciej W. Rozycki" <macro@orcam.me.uk>
+> >  L:     linux-mips@vger.kernel.org
+> >  S:     Maintained
+> > -W:     http://www.linux-mips.org/wiki/DECstation
+>
+> Why not use the web archive? The information is still valuable.
+> https://web.archive.org/web/20190704000315/https://www.linux-mips.org/wik=
+i/DECstation
+>
+
+If that information is valuable, how about adding that into the kernel
+documentation page?
+
+If linux-mips.org wiki is back, we will keep this link; if not, we
+should get a copy of that information into the documentation (where it
+can survive some time) or we simply drop it.
+
+Putting a web.archive.org link into MAINTAINERS sounds like a really
+bad idea to me.
+
+Lukas
