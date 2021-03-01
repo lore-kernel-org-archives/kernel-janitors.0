@@ -2,121 +2,108 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1770C433DB
-	for <kernel-janitors@archiver.kernel.org>; Mon,  1 Mar 2021 07:13:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3C67C433E0
+	for <kernel-janitors@archiver.kernel.org>; Mon,  1 Mar 2021 10:13:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C2E0B64E45
-	for <kernel-janitors@archiver.kernel.org>; Mon,  1 Mar 2021 07:13:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59C0F64E40
+	for <kernel-janitors@archiver.kernel.org>; Mon,  1 Mar 2021 10:13:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232391AbhCAHMh (ORCPT
+        id S232438AbhCAKN3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 1 Mar 2021 02:12:37 -0500
-Received: from mga07.intel.com ([134.134.136.100]:24872 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232378AbhCAHM2 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 1 Mar 2021 02:12:28 -0500
-IronPort-SDR: Q8aSsrMocQFKD9cYWi8+Z8Qo/ORr6YXw8C4SXRBYNzQtNgU02muMpcWLbfdgr/HirsiKEWpbLw
- c1u1aHroKnTw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9909"; a="250432278"
-X-IronPort-AV: E=Sophos;i="5.81,214,1610438400"; 
-   d="scan'208";a="250432278"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2021 23:10:41 -0800
-IronPort-SDR: /OugGBR8rq5lqEjdZkAUSg9yc1F4w7ipJkCTgTmnf3ciFPsl1O78JsfAcuoQjOoHABUNi24xuH
- nTBUd5pH2URA==
-X-IronPort-AV: E=Sophos;i="5.81,214,1610438400"; 
-   d="scan'208";a="517326248"
-Received: from paasikivi.fi.intel.com ([10.237.72.42])
-  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2021 23:10:39 -0800
-Received: from paasikivi.fi.intel.com (localhost [127.0.0.1])
-        by paasikivi.fi.intel.com (Postfix) with SMTP id C065C202DD;
-        Mon,  1 Mar 2021 09:10:37 +0200 (EET)
-Date:   Mon, 1 Mar 2021 09:10:37 +0200
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Colin King <colin.king@canonical.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: i2c: adp1653: fix error handling from a call to
- adp1653_get_fault
-Message-ID: <20210301071037.GP3@paasikivi.fi.intel.com>
-References: <20210226232229.1076199-1-colin.king@canonical.com>
- <20210227101719.GG2087@kadam>
+        Mon, 1 Mar 2021 05:13:29 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:15335 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231545AbhCAKN2 (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 1 Mar 2021 05:13:28 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B603cbe1c0001>; Mon, 01 Mar 2021 02:12:44 -0800
+Received: from [172.27.13.126] (172.20.145.6) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Mon, 1 Mar
+ 2021 10:12:40 +0000
+Subject: Re: [PATCH mellanox-tree] net/mlx5: prevent an integer underflow in
+ mlx5_perout_configure()
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Saeed Mahameed <saeedm@nvidia.com>, Aya Levin <ayal@nvidia.com>
+CC:     Leon Romanovsky <leon@kernel.org>,
+        Eran Ben Elisha <eranbe@mellanox.com>,
+        Moshe Shemesh <moshe@mellanox.com>,
+        Ariel Levkovich <lariel@mellanox.com>,
+        "Pavel Machek (CIP)" <pavel@denx.de>, <netdev@vger.kernel.org>,
+        <linux-rdma@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+References: <YC+LoAcvcQSWLLKX@mwanda>
+From:   Eran Ben Elisha <eranbe@nvidia.com>
+Message-ID: <e9beab47-4f32-4aa4-cdb6-6fa7402e55de@nvidia.com>
+Date:   Mon, 1 Mar 2021 12:12:34 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210227101719.GG2087@kadam>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <YC+LoAcvcQSWLLKX@mwanda>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [172.20.145.6]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1614593564; bh=raZLqvnuMhG0ehI3YhI7h7P4P5aKBO0bR7+sg545DEM=;
+        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
+         MIME-Version:In-Reply-To:Content-Type:Content-Language:
+         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
+        b=mVtTMM5x28YZhU6aqf8fwXrUwJHi2HKr3t79MnqlTVatZj7HEKv9wCZNSvo5UEAis
+         SvL3/IWki9ltMiTwvkHonhAC/VE2PZLGhluj0wIH20zzfcxNa3EgvmJ2Cq/KP+OBYQ
+         odu6//96YMe0xKtEgw6z0v/bURV+L/V5KU5li+PzCTODdOHoAiWriVlStev+kXOm28
+         eV84ZZJM47FTbkEYYH1dXlnUlI6Rg0Q4oEwSPsGw6yEaY4SyQEXteGDECT614M8jau
+         cK7tWlh8M7n6v8N/NId7OiMf/X5TUVvGHOLUUbZyETWKW4jLla9sufwSvRbYlpjtl6
+         78nimEfsg64Pg==
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Dan, Colin,
 
-On Sat, Feb 27, 2021 at 01:17:20PM +0300, Dan Carpenter wrote:
-> On Fri, Feb 26, 2021 at 11:22:29PM +0000, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > The error check on rval from the call to adp1653_get_fault currently
-> > returns if rval is non-zero. This appears to be incorrect as the
-> > following if statement checks for various bit settings in rval so
-> > clearly rval is expected to be non-zero at that point. Coverity
-> > flagged the if statement up as deadcode.  Fix this so the error
-> > return path only occurs when rval is negative.
-> > 
-> > Addresses-Coverity: ("Logically dead code")
-> > Fixes: 287980e49ffc ("remove lots of IS_ERR_VALUE abuses")
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
-> >  drivers/media/i2c/adp1653.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/media/i2c/adp1653.c b/drivers/media/i2c/adp1653.c
-> > index 522a0b10e415..1a4878385394 100644
-> > --- a/drivers/media/i2c/adp1653.c
-> > +++ b/drivers/media/i2c/adp1653.c
-> > @@ -170,7 +170,7 @@ static int adp1653_set_ctrl(struct v4l2_ctrl *ctrl)
-> >  	int rval;
-> >  
-> >  	rval = adp1653_get_fault(flash);
-> > -	if (rval)
-> > +	if (rval < 0)
-> >  		return rval;
+
+On 2/19/2021 11:57 AM, Dan Carpenter wrote:
+> The value of "sec" comes from the user.  Negative values will lead to
+> shift wrapping inside the perout_conf_real_time() function and triggger
+> a UBSan warning.
 > 
-> This is good, but all the other callers need to fixed as well:
+> Add a check and return -EINVAL to prevent that from happening.
 > 
+> Fixes: 432119de33d9 ("net/mlx5: Add cyc2time HW translation mode support")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> Saeed, I think this goes through your git tree and you will send a pull
+> request to the networking?
 > 
->    140  static int adp1653_get_ctrl(struct v4l2_ctrl *ctrl)
->    141  {
->    142          struct adp1653_flash *flash =
->    143                  container_of(ctrl->handler, struct adp1653_flash, ctrls);
->    144          int rval;
->    145  
->    146          rval = adp1653_get_fault(flash);
->    147          if (rval)
->    148                  return rval;
->    149  
->    150          ctrl->cur.val = 0;
->    151  
->    152          if (flash->fault & ADP1653_REG_FAULT_FLT_SCP)
->                     ^^^^^^^^^^^^
-> flash->fault is the equivalent of "rval" for non-negative returns so
-> this condition can never be true.  We should never be returning these
-> weird firmware ADP1653_REG_FAULT_FLT_SCP fault codes to the v4l2 layers.
+>  From static analysis.  Not tested.
+> 
+>   drivers/net/ethernet/mellanox/mlx5/core/lib/clock.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/lib/clock.c b/drivers/net/ethernet/mellanox/mlx5/core/lib/clock.c
+> index b0e129d0f6d8..286824ca62b5 100644
+> --- a/drivers/net/ethernet/mellanox/mlx5/core/lib/clock.c
+> +++ b/drivers/net/ethernet/mellanox/mlx5/core/lib/clock.c
+> @@ -516,7 +516,7 @@ static int mlx5_perout_configure(struct ptp_clock_info *ptp,
+>   		nsec = rq->perout.start.nsec;
+>   		sec = rq->perout.start.sec;
+>   
+> -		if (rt_mode && sec > U32_MAX)
 
-I think this could be fixed and cleaned up by always retuning zero on
-success, and checking for flash->faults while holding the mutex in
-adp1653_init_device. I could fix that, too, just let me know...
+This if clause was set to reject perout time start sec bigger than 
+U32_MAX, as rt mode specifically doesn't support it.
 
--- 
-Regards,
+A user negative values protection should be generic for all netdev 
+drivers, inside the caller ioctl func, and not part of any driver code.
 
-Sakari Ailus
+> +		if (rt_mode && (sec < 0 || sec > U32_MAX))
+>   			return -EINVAL;
+>   
+>   		time_stamp = rt_mode ? perout_conf_real_time(sec, nsec) :
+> 
