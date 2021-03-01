@@ -6,44 +6,46 @@ X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
 	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CCB7C433DB
-	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Mar 2021 13:17:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F32AFC433DB
+	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Mar 2021 13:18:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BDE2964F2C
-	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Mar 2021 13:17:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB06264F37
+	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Mar 2021 13:18:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1442966AbhCBNAy (ORCPT
+        id S1351013AbhCBNCA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 2 Mar 2021 08:00:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60936 "EHLO mail.kernel.org"
+        Tue, 2 Mar 2021 08:02:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60952 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1346154AbhCAXiY (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        id S1346155AbhCAXiY (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
         Mon, 1 Mar 2021 18:38:24 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 023B5600CD;
-        Mon,  1 Mar 2021 23:36:40 +0000 (UTC)
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 6DE0560C3E;
+        Mon,  1 Mar 2021 23:36:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1614641801;
-        bh=dg6BeBGISWGF0gV3iR/jlBIXrHb5RFxCFDTOZcWhzpQ=;
+        s=k20201202; t=1614641807;
+        bh=mwsay5s5eqahx5ekc52x1LsK1xRv62c49/5yZJhJD1Y=;
         h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=feHCcUT4vETo/jlSM0CULkHV1p6YmCQqv2co759EbmZjUppRf62tip3GnWKaSpSak
-         ju/LHU8rFlEqHJWAo8kLNr+vMKiibKHLVLbp/XFZ3/hjoIe1TyK70Feiwnw1ngZ1QX
-         6BRDdf/7O6y7m12tqVokxAP73uanIX1MymcXYBqOUWVdZcMiPF5DrbUYTzF47hJRcW
-         l59bckpzuMQ10OeW/dI9FUNGtLG7lel2fg7ZUToOXRagI8FfEsLJofvwYQYR+OHYe2
-         ECVloriWDG/jEAdZyzdKnvYXoV4b4TE4JBvd23t3FgGm1hpbMzqdVxLvfuJYmhUSxI
-         BSC8AWLB2Bqgw==
+        b=utsnrD+uYaKXVnROaqQ2X+dMagsOxB/5oBHugEZimKr6ZBxwBLSOTjfcHrAMWpu5G
+         gY0tDIRe3DHLcLSvWgHsMDTZ32vhyxSFc+JXAMMOtRQPl9zf8A1dZE2FoGV/KQqcZk
+         xvlM/Di+sq0l4BYTHSWCqGYDJCVTKPs8txGE52qYxpLKywtz/6+U3LxfKsnGljdbtv
+         /9PcXFmL0+D6/+mm3ShrFKeBBxFpz6Yf2zqMdeNN0MBRirPm6erklg6HtO9cbDq2OA
+         vBiiPHoq7/gSFlh7V7F/07FIa0mKCrKTVvyG8gaxrwyJAPze9LtILDwR8l4n7+d7C4
+         6gMasxszOtWew==
 From:   Mark Brown <broonie@kernel.org>
-To:     alsa-devel@alsa-project.org, Jie Yang <yang.jie@linux.intel.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+To:     Julia Lawall <Julia.Lawall@inria.fr>,
+        Jernej Skrabec <jernej.skrabec@siol.net>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
         Takashi Iwai <tiwai@suse.com>,
-        Colin King <colin.king@canonical.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Cezary Rojewski <cezary.rojewski@intel.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <20210226185653.1071321-1-colin.king@canonical.com>
-References: <20210226185653.1071321-1-colin.king@canonical.com>
-Subject: Re: [PATCH] ASoC: Intel: boards: sof-wm8804: add check for PLL setting
-Message-Id: <161464168097.31144.7451844470598305958.b4-ty@kernel.org>
+        NXP Linux Team <linux-imx@nxp.com>,
+        kernel-janitors@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Fabio Estevam <festevam@gmail.com>,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+In-Reply-To: <20210213101907.1318496-1-Julia.Lawall@inria.fr>
+References: <20210213101907.1318496-1-Julia.Lawall@inria.fr>
+Subject: Re: [PATCH 0/4] drop unneeded snd_soc_dai_set_drvdata
+Message-Id: <161464168096.31144.9397377400950127725.b4-ty@kernel.org>
 Date:   Mon, 01 Mar 2021 23:34:40 +0000
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -52,11 +54,9 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 26 Feb 2021 18:56:53 +0000, Colin King wrote:
-> Currently the return from snd_soc_dai_set_pll is not checking for
-> failure, this is the only driver in the kernel that ignores this,
-> so it probably should be added for sake of completeness.  Fix this
-> by adding an error return check.
+On Sat, 13 Feb 2021 11:19:03 +0100, Julia Lawall wrote:
+> snd_soc_dai_set_drvdata is not needed when the set data comes from
+> snd_soc_dai_get_drvdata or dev_get_drvdata.
 
 Applied to
 
@@ -64,8 +64,14 @@ Applied to
 
 Thanks!
 
-[1/1] ASoC: Intel: boards: sof-wm8804: add check for PLL setting
-      commit: e067855b814600248234a2a7283a7a9006e5aadc
+[1/4] ASoC: mmp-sspa: drop unneeded snd_soc_dai_set_drvdata
+      commit: 131036ffae211a9cc3bfb053fadce87484e13fc5
+[2/4] ASoC: mxs-saif: drop unneeded snd_soc_dai_set_drvdata
+      commit: 7150186f1edb2fa94554be1bec26aa65a7df3388
+[3/4] ASoC: sun4i-i2s: drop unneeded snd_soc_dai_set_drvdata
+      commit: 0c34af2d5c9ba5103637c33c4f52d658172b991d
+[4/4] ASoC: fsl: drop unneeded snd_soc_dai_set_drvdata
+      commit: eb9db3066cdb57dbfd1fb3d85ca143ad5d719bfb
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
