@@ -2,124 +2,85 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FD08C433E0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF5FBC433E6
 	for <kernel-janitors@archiver.kernel.org>; Wed,  3 Mar 2021 06:14:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5915A64E86
+	by mail.kernel.org (Postfix) with ESMTP id 85C2664EC4
 	for <kernel-janitors@archiver.kernel.org>; Wed,  3 Mar 2021 06:14:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238863AbhCCGFj (ORCPT
+        id S238048AbhCCGF5 convert rfc822-to-8bit (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 3 Mar 2021 01:05:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53596 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344629AbhCBRwJ (ORCPT
+        Wed, 3 Mar 2021 01:05:57 -0500
+Received: from mslow2.mail.gandi.net ([217.70.178.242]:54725 "EHLO
+        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1575183AbhCBSVM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 2 Mar 2021 12:52:09 -0500
-Received: from mail-ot1-x336.google.com (mail-ot1-x336.google.com [IPv6:2607:f8b0:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AD54C061221;
-        Tue,  2 Mar 2021 09:51:17 -0800 (PST)
-Received: by mail-ot1-x336.google.com with SMTP id s3so20830316otg.5;
-        Tue, 02 Mar 2021 09:51:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wbXZh+y7Wwg/hAULiKSl5XcTTJtTCwhI9jiu/kuN7UU=;
-        b=TpxZtlx9zhSj5DDnDsYDla0q4cE4cGz3bke3+P6NzMosLpXoRLfFhOR+4q1q4iNdt9
-         Us/EyQ3dq9wGSQK3IXeDBbioRv8i366HWBIfEMxDQ4mXNhhzhb0WC27LQ/omHh4k8+jz
-         KWjh8/3Wfjr47eA+kvLj//+JNSZux8xNyLLKIcSDdFMMaSfgUnMwXxKMC1IStHsBWno2
-         hD6cYKKOyvZItGEhPwErlJGvycxSTS9ycmdRowc9KvOZ5X5IfEjt69DFpySEfUqwmX/L
-         moGAb6FhFwY9GcmNI5XSCW9lcI53YETfrgtHcZNye2VyW10iFdtK/EhLL8TuWLDJBFt2
-         JFug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wbXZh+y7Wwg/hAULiKSl5XcTTJtTCwhI9jiu/kuN7UU=;
-        b=jjgpD2BdKiWp7JERDV1inkmUiin4qFIabmUexsx5bzTHb9/5pbKtOf6syrmgXjmpg1
-         PTcu9ZSwwf+wmbcUhZCD498eWhFXa2XHmQ2gYE8Bj5iYv97yPG36/u6CeF9QYCDx5vT1
-         4gCKj8QUzv8NH6pESM9dh2LuEtjzocF05RPv49Vo99mHqiTShtd6b3kS/1QTV8NLiB6y
-         BxZWStzBK8oIwA0YFaBlEObSkmZn7fA80QJHVW8Ys12+0QS3De3GCjwokExlczpGRNDs
-         4JQzkSybm48eulr0SGW6luFsXAdJxw3kQbKe8+23w+v4bv7n3OZ3IYBXpFaQd0ubskml
-         cvNw==
-X-Gm-Message-State: AOAM533D/iO7cp096XRefKX+wILjX0EzI7HBgwsRlcc928iV36o7S+S4
-        JtKVDiRmHfZ6ALlwuJMkm3hDCdGU6fEeofAeTvQ=
-X-Google-Smtp-Source: ABdhPJyiLqxx0zpTF7yD/rJdXT8zQnIclm83GIlN1LSHj9qFzjDCbyr3HFtAZ/1Q1a4kGUf8K0Cr8EnDa0ewPwwwXnQ=
-X-Received: by 2002:a9d:20c3:: with SMTP id x61mr8005751ota.311.1614707476945;
- Tue, 02 Mar 2021 09:51:16 -0800 (PST)
+        Tue, 2 Mar 2021 13:21:12 -0500
+Received: from relay6-d.mail.gandi.net (unknown [217.70.183.198])
+        by mslow2.mail.gandi.net (Postfix) with ESMTP id 429213ADF36;
+        Tue,  2 Mar 2021 14:52:02 +0000 (UTC)
+X-Originating-IP: 86.206.8.148
+Received: from xps13 (lfbn-tou-1-491-148.w86-206.abo.wanadoo.fr [86.206.8.148])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 1F8F2C000E;
+        Tue,  2 Mar 2021 14:47:39 +0000 (UTC)
+Date:   Tue, 2 Mar 2021 15:47:38 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Conor Culhane <conor.culhane@silvaco.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-i3c@lists.infradead.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] i3c: master: svc: remove redundant assignment to
+ cmd->read_len
+Message-ID: <20210302154739.00cd4a22@xps13>
+In-Reply-To: <20210224151349.202332-1-colin.king@canonical.com>
+References: <20210224151349.202332-1-colin.king@canonical.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20210302140509.8466-1-colin.king@canonical.com> <b9a11c62-f469-8f5b-9585-74b73cd5a9db@amd.com>
-In-Reply-To: <b9a11c62-f469-8f5b-9585-74b73cd5a9db@amd.com>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Tue, 2 Mar 2021 12:51:05 -0500
-Message-ID: <CADnq5_Nrg_L+9vFhsxbbeimSvWM2xkD7Og8aARmYGSMUE9rx+Q@mail.gmail.com>
-Subject: Re: [PATCH][next] drm/amd/display: fix the return of the
- uninitialized value in ret
-To:     Harry Wentland <harry.wentland@amd.com>
-Cc:     Colin King <colin.king@canonical.com>, Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Anson Jacob <Anson.Jacob@amd.com>,
-        Mikita Lipski <Mikita.Lipski@amd.com>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>, kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Applied.  Thanks!
 
-Alex
+Colin King <colin.king@canonical.com> wrote on Wed, 24 Feb 2021
+15:13:49 +0000:
 
-On Tue, Mar 2, 2021 at 10:03 AM Harry Wentland <harry.wentland@amd.com> wrote:
->
-> On 2021-03-02 9:05 a.m., Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> >
-> > Currently if stream->signal is neither SIGNAL_TYPE_DISPLAY_PORT_MST or
-> > SIGNAL_TYPE_DISPLAY_PORT then variable ret is uninitialized and this is
-> > checked for > 0 at the end of the function.  Ret should be initialized,
-> > I believe setting it to zero is a correct default.
-> >
-> > Addresses-Coverity: ("Uninitialized scalar variable")
-> > Fixes: bd0c064c161c ("drm/amd/display: Add return code instead of boolean for future use")
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
->
-> Reviewed-by: Harry Wentland <harry.wentland@amd.com>
->
-> Harry
->
-> > ---
-> >   drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c
-> > index 5159399f8239..5750818db8f6 100644
-> > --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c
-> > +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c
-> > @@ -530,7 +530,7 @@ bool dm_helpers_dp_write_dsc_enable(
-> >   {
-> >       uint8_t enable_dsc = enable ? 1 : 0;
-> >       struct amdgpu_dm_connector *aconnector;
-> > -     uint8_t ret;
-> > +     uint8_t ret = 0;
-> >
-> >       if (!stream)
-> >               return false;
-> >
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The assignment of xfer_len to cmd->read_len appears to be redundant
+> as the next statement re-assigns the value 0 to it.  Clean up the
+> code by removing the redundant first assignment.
+> 
+> Addresses-Coverity: ("Unused value")
+> Fixes: dd3c52846d59 ("i3c: master: svc: Add Silvaco I3C master driver")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/i3c/master/svc-i3c-master.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/i3c/master/svc-i3c-master.c b/drivers/i3c/master/svc-i3c-master.c
+> index 8d990696676e..1f6ba4221817 100644
+> --- a/drivers/i3c/master/svc-i3c-master.c
+> +++ b/drivers/i3c/master/svc-i3c-master.c
+> @@ -1124,7 +1124,6 @@ static int svc_i3c_master_send_direct_ccc_cmd(struct svc_i3c_master *master,
+>  	cmd->in = NULL;
+>  	cmd->out = &ccc->id;
+>  	cmd->len = 1;
+> -	cmd->read_len = xfer_len;
+>  	cmd->read_len = 0;
+>  	cmd->continued = true;
+>  
+
+Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+
+Thanks,
+Miquèl
