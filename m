@@ -2,114 +2,152 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9560DC433DB
-	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Mar 2021 13:19:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA3ADC433DB
+	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Mar 2021 13:19:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 52BBA60231
-	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Mar 2021 13:19:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7088560231
+	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Mar 2021 13:19:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1446091AbhCBNJj (ORCPT
+        id S1445610AbhCBNLQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 2 Mar 2021 08:09:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44950 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244095AbhCBKk0 (ORCPT
+        Tue, 2 Mar 2021 08:11:16 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:49874 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1442182AbhCBLRw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 2 Mar 2021 05:40:26 -0500
-Received: from mail-vs1-xe2e.google.com (mail-vs1-xe2e.google.com [IPv6:2607:f8b0:4864:20::e2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E68E0C061221
-        for <kernel-janitors@vger.kernel.org>; Tue,  2 Mar 2021 02:39:36 -0800 (PST)
-Received: by mail-vs1-xe2e.google.com with SMTP id l192so10343649vsd.5
-        for <kernel-janitors@vger.kernel.org>; Tue, 02 Mar 2021 02:39:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9y/OLbMdtDESdX9cxpVBPkgzPGOeodSxawca/q+mpKk=;
-        b=lF7i96mD7IhEXlug+vEnfPbJSPNTmN975tD3fkSobYZjokRjMZLrk7stkm6jNfWpw2
-         9gSJ8D/tzPavPFvpWknhwzjiN+v7in2gbRvy50dxYRvBI0iTIOTmWVGy/XT2Reg1kzGx
-         xFf/Dglm+AZjuA2xp2bfwu+VrynvHw2e6nGoxSuQJ6MY4m/SrEOKsRCmcsnKwXrPG9Qs
-         +X14rJ6nPzVwAu3FyEu2E4RaAzVQ80Vu+pT2v31xTxuzPnoNtqnkM13xAh9Qnb6p5sec
-         xWsApc6FW3Qa3efI0r8tSTZw/QSQH8JQy2z2o4qENU6ECC/9Kw0cWK0IMYe/NM0BnlTH
-         0JvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9y/OLbMdtDESdX9cxpVBPkgzPGOeodSxawca/q+mpKk=;
-        b=AtdUwcpwaV47PE+Dxl0i1yhWtha5K9tMK+uKQygwLn3iB/oQus67chCAJXsm8zPo/t
-         1dceNao5W/ap8oqQ3G34JFbb3nps31MrfU7yQjXQENizJHq7iqvJqn0PdcTKSr/AoQp0
-         yBhov5bWHzDXqcOh/YU2PtC+czJnCeAmEYZ1G5LWixqu44lm4d/76Gxl8efJrlPlC+x4
-         2rkPbuhLsXo60XnJcLRrUarZ6zZWaxeJP0ZX2f22duh0dJJiosrtU9T4h77kOgblfMOP
-         3zwzybc3yiPnSUcFII7vs7yJY1/eL1rhtVoKYZo8FqbmG7YggpVDKi51a/injACclgqZ
-         xy7w==
-X-Gm-Message-State: AOAM530J6Yg3eXfFTGSFuTPGF7ernZ765ymwY4L5YTXDwVRvb5pyCS+E
-        4z8iYQADMVrJDflqxsxVW/jGK+qXvvnAdd71UHKKXg==
-X-Google-Smtp-Source: ABdhPJwX80Q9SU3s5pG9sH20LwYNls+0ukRvdY+lJRo0x+xCw/4R/wLkzDCaJrl8uxcmAJ4SIsXJfn/wHbxIkF1eJ/E=
-X-Received: by 2002:a67:ec7:: with SMTP id 190mr1803896vso.42.1614681576170;
- Tue, 02 Mar 2021 02:39:36 -0800 (PST)
-MIME-Version: 1.0
-References: <20210220142953.918608-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20210220142953.918608-1-christophe.jaillet@wanadoo.fr>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 2 Mar 2021 11:38:59 +0100
-Message-ID: <CAPDyKFozVZ9PR1JeQ6F8Ua-YcdpK-rS9TLDe6BW71avpiF5f4w@mail.gmail.com>
-Subject: Re: [PATCH 2/2] mmc: uniphier-sd: Fix a resource leak in the remove function
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "Shimoda, Yoshihiro" <yoshihiro.shimoda.uh@renesas.com>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        Doug Anderson <dianders@chromium.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Tue, 2 Mar 2021 06:17:52 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 122BF2UZ177266;
+        Tue, 2 Mar 2021 11:16:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
+ bh=7H28G1DxFeZh+yvnNT1Eq47Y3dZE6uU2Z6ZfhdPef3o=;
+ b=DsuxZLeXBxVfSVyErd3TFruHmqBWTVC4/zQ6FzmNhmWCFC5vG3GuVytYhx9criqsu+W4
+ kL7+LfNMU61CWpQ/3h4rwGPuKGROgrvwO6q04TSS39kxk8WYkZWlXWR57aLClHz8kWPq
+ NO2MIJfdOQIDGVy/vN9s0G6M0SMPpdLlrbxC9XEKXxotgjofvd0PklQVGcT5p8Lfn+7g
+ CaVoeZ53Z0Pi9P1onEbLUhadbxGGcY8c298z/r5AnuLQpUQEF+Xvyy0sKcB9bVwIsmf9
+ 14nQB4JnEHiaQg13r753pv728Mjz4rhbvZssHXpP27NF5+IgraJaiGFCssnjm9rLOYjm 9g== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2130.oracle.com with ESMTP id 36ybkb7a6c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 02 Mar 2021 11:16:13 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 122BAWsZ063870;
+        Tue, 2 Mar 2021 11:16:11 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3020.oracle.com with ESMTP id 36yyuruxv8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 02 Mar 2021 11:16:11 +0000
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 122BFwIQ026362;
+        Tue, 2 Mar 2021 11:16:02 GMT
+Received: from mwanda (/102.36.221.92)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 02 Mar 2021 03:15:58 -0800
+Date:   Tue, 2 Mar 2021 14:15:48 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Harry Wentland <harry.wentland@amd.com>,
+        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
+Cc:     Leo Li <sunpeng.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
+        Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
+        Wenjing Liu <Wenjing.Liu@amd.com>,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Subject: [PATCH] drm/amd/display: Fix off by one in
+ hdmi_14_process_transaction()
+Message-ID: <YD4eZLCFU+fbTGIp@mwanda>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+X-Proofpoint-IMR: 1
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9910 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 spamscore=0 suspectscore=0
+ mlxlogscore=999 bulkscore=0 adultscore=0 phishscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2103020093
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9910 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 impostorscore=0
+ suspectscore=0 phishscore=0 bulkscore=0 mlxscore=0 lowpriorityscore=0
+ clxscore=1011 mlxlogscore=999 adultscore=0 malwarescore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2103020094
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, 20 Feb 2021 at 15:29, Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> A 'tmio_mmc_host_free()' call is missing in the remove function, in order
-> to balance a 'tmio_mmc_host_alloc()' call in the probe.
-> This is done in the error handling path of the probe, but not in the remove
-> function.
->
-> Add the missing call.
->
-> Fixes: 3fd784f745dd ("mmc: uniphier-sd: add UniPhier SD/eMMC controller driver")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+The hdcp_i2c_offsets[] array did not have an entry for
+HDCP_MESSAGE_ID_WRITE_CONTENT_STREAM_TYPE so it led to an off by one
+read overflow.  I added an entry and copied the 0x0 value for the offset
+from similar code in drivers/gpu/drm/amd/display/modules/hdcp/hdcp_ddc.c.
 
-Applied for next and by adding a stable tag, thanks!
+I also declared several of these arrays as having HDCP_MESSAGE_ID_MAX
+entries.  This doesn't change the code, but it's just a belt and
+suspenders approach to try future proof the code.
 
-Kind regards
-Uffe
+Fixes: 4c283fdac08a ("drm/amd/display: Add HDCP module")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+From static analysis, as mentioned in the commit message the offset
+is basically an educated guess.
 
+I reported this bug on Apr 16, 2020 but I guess we lost take of it.
 
-> ---
->  drivers/mmc/host/uniphier-sd.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/mmc/host/uniphier-sd.c b/drivers/mmc/host/uniphier-sd.c
-> index 6f0f05466917..ccbf9885a52b 100644
-> --- a/drivers/mmc/host/uniphier-sd.c
-> +++ b/drivers/mmc/host/uniphier-sd.c
-> @@ -660,6 +660,7 @@ static int uniphier_sd_remove(struct platform_device *pdev)
->
->         tmio_mmc_host_remove(host);
->         uniphier_sd_clk_disable(host);
-> +       tmio_mmc_host_free(host);
->
->         return 0;
->  }
-> --
-> 2.27.0
->
+ drivers/gpu/drm/amd/display/dc/hdcp/hdcp_msg.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/display/dc/hdcp/hdcp_msg.c b/drivers/gpu/drm/amd/display/dc/hdcp/hdcp_msg.c
+index 5e384a8a83dc..51855a2624cf 100644
+--- a/drivers/gpu/drm/amd/display/dc/hdcp/hdcp_msg.c
++++ b/drivers/gpu/drm/amd/display/dc/hdcp/hdcp_msg.c
+@@ -39,7 +39,7 @@
+ #define HDCP14_KSV_SIZE 5
+ #define HDCP14_MAX_KSV_FIFO_SIZE 127*HDCP14_KSV_SIZE
+ 
+-static const bool hdcp_cmd_is_read[] = {
++static const bool hdcp_cmd_is_read[HDCP_MESSAGE_ID_MAX] = {
+ 	[HDCP_MESSAGE_ID_READ_BKSV] = true,
+ 	[HDCP_MESSAGE_ID_READ_RI_R0] = true,
+ 	[HDCP_MESSAGE_ID_READ_PJ] = true,
+@@ -75,7 +75,7 @@ static const bool hdcp_cmd_is_read[] = {
+ 	[HDCP_MESSAGE_ID_WRITE_CONTENT_STREAM_TYPE] = false
+ };
+ 
+-static const uint8_t hdcp_i2c_offsets[] = {
++static const uint8_t hdcp_i2c_offsets[HDCP_MESSAGE_ID_MAX] = {
+ 	[HDCP_MESSAGE_ID_READ_BKSV] = 0x0,
+ 	[HDCP_MESSAGE_ID_READ_RI_R0] = 0x8,
+ 	[HDCP_MESSAGE_ID_READ_PJ] = 0xA,
+@@ -106,7 +106,8 @@ static const uint8_t hdcp_i2c_offsets[] = {
+ 	[HDCP_MESSAGE_ID_WRITE_REPEATER_AUTH_SEND_ACK] = 0x60,
+ 	[HDCP_MESSAGE_ID_WRITE_REPEATER_AUTH_STREAM_MANAGE] = 0x60,
+ 	[HDCP_MESSAGE_ID_READ_REPEATER_AUTH_STREAM_READY] = 0x80,
+-	[HDCP_MESSAGE_ID_READ_RXSTATUS] = 0x70
++	[HDCP_MESSAGE_ID_READ_RXSTATUS] = 0x70,
++	[HDCP_MESSAGE_ID_WRITE_CONTENT_STREAM_TYPE] = 0x0,
+ };
+ 
+ struct protection_properties {
+@@ -184,7 +185,7 @@ static const struct protection_properties hdmi_14_protection = {
+ 	.process_transaction = hdmi_14_process_transaction
+ };
+ 
+-static const uint32_t hdcp_dpcd_addrs[] = {
++static const uint32_t hdcp_dpcd_addrs[HDCP_MESSAGE_ID_MAX] = {
+ 	[HDCP_MESSAGE_ID_READ_BKSV] = 0x68000,
+ 	[HDCP_MESSAGE_ID_READ_RI_R0] = 0x68005,
+ 	[HDCP_MESSAGE_ID_READ_PJ] = 0xFFFFFFFF,
+-- 
+2.30.1
+
