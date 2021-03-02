@@ -2,92 +2,81 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F32AFC433DB
-	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Mar 2021 13:18:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64FF9C433DB
+	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Mar 2021 13:18:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AB06264F37
-	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Mar 2021 13:18:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21E9264F15
+	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Mar 2021 13:18:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351013AbhCBNCA (ORCPT
+        id S1351039AbhCBNDj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 2 Mar 2021 08:02:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60952 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1346155AbhCAXiY (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 1 Mar 2021 18:38:24 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 6DE0560C3E;
-        Mon,  1 Mar 2021 23:36:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1614641807;
-        bh=mwsay5s5eqahx5ekc52x1LsK1xRv62c49/5yZJhJD1Y=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=utsnrD+uYaKXVnROaqQ2X+dMagsOxB/5oBHugEZimKr6ZBxwBLSOTjfcHrAMWpu5G
-         gY0tDIRe3DHLcLSvWgHsMDTZ32vhyxSFc+JXAMMOtRQPl9zf8A1dZE2FoGV/KQqcZk
-         xvlM/Di+sq0l4BYTHSWCqGYDJCVTKPs8txGE52qYxpLKywtz/6+U3LxfKsnGljdbtv
-         /9PcXFmL0+D6/+mm3ShrFKeBBxFpz6Yf2zqMdeNN0MBRirPm6erklg6HtO9cbDq2OA
-         vBiiPHoq7/gSFlh7V7F/07FIa0mKCrKTVvyG8gaxrwyJAPze9LtILDwR8l4n7+d7C4
-         6gMasxszOtWew==
-From:   Mark Brown <broonie@kernel.org>
-To:     Julia Lawall <Julia.Lawall@inria.fr>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Takashi Iwai <tiwai@suse.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        kernel-janitors@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Fabio Estevam <festevam@gmail.com>,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-In-Reply-To: <20210213101907.1318496-1-Julia.Lawall@inria.fr>
-References: <20210213101907.1318496-1-Julia.Lawall@inria.fr>
-Subject: Re: [PATCH 0/4] drop unneeded snd_soc_dai_set_drvdata
-Message-Id: <161464168096.31144.9397377400950127725.b4-ty@kernel.org>
-Date:   Mon, 01 Mar 2021 23:34:40 +0000
+        Tue, 2 Mar 2021 08:03:39 -0500
+Received: from mail-wm1-f52.google.com ([209.85.128.52]:40678 "EHLO
+        mail-wm1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1377912AbhCBIpn (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 2 Mar 2021 03:45:43 -0500
+Received: by mail-wm1-f52.google.com with SMTP id o2so1274482wme.5;
+        Tue, 02 Mar 2021 00:44:30 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=GAhLBbf8ZlSFNBx4M5no+EdybG1cs4984X+1+9hKO1g=;
+        b=ItSA5ro3TXqfVM5e5djg7Q9H20/2IIX10+1n4xjXXve4rXzXPkp68qzID3EDvS1Puv
+         cuhwgBgSxRVQ8vJJggR0hAmy4OolN75oYHH+qRF3yc+LXQGJ0Z0PLiEe6nGLa7xhp2Ca
+         BW4TMP+wPcHw8SKM+7zKWu7F8cDC/2Fp/Di0HV4iZuKzSjB1OKa3cbDY8s26Eo8m+/AG
+         5XTBc9rtXypnnQG7oRj23yW62357qKgwCL3uhuJ5C+zB0Ar3yo9fCwjor5Mo2bbGLvuI
+         delRebYEs+UY3xrHQxIXILrDHuWFaZlJaeZI2ZXnc42MoAhi9AsAuJb3o7ZYh+FCcgBR
+         U7AA==
+X-Gm-Message-State: AOAM531m+rqpF3w6+EHsKjq2T6kgAXF9FFmDdPo+lmy5Ds6FBj4IIspU
+        eRPlLhEJJ1GZW4AywdiMf3IGGKEgXRE=
+X-Google-Smtp-Source: ABdhPJx1/WK/3xpuhIFqxu52CKbU7Su9ci/Mc1E21C2pUzv+kmese+U83CsR6azy0Zs53usMShavRA==
+X-Received: by 2002:a7b:c353:: with SMTP id l19mr2885236wmj.147.1614674644673;
+        Tue, 02 Mar 2021 00:44:04 -0800 (PST)
+Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
+        by smtp.googlemail.com with ESMTPSA id x13sm27119661wrt.75.2021.03.02.00.44.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Mar 2021 00:44:03 -0800 (PST)
+Date:   Tue, 2 Mar 2021 09:44:02 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Roger Quadros <rogerq@kernel.org>,
+        Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] memory: gpmc: fix out of bounds read and dereference on
+ gpmc_cs[]
+Message-ID: <20210302084402.4qw7ltj4ivcoxs4t@kozik-lap>
+References: <20210223193821.17232-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20210223193821.17232-1-colin.king@canonical.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, 13 Feb 2021 11:19:03 +0100, Julia Lawall wrote:
-> snd_soc_dai_set_drvdata is not needed when the set data comes from
-> snd_soc_dai_get_drvdata or dev_get_drvdata.
+On Tue, Feb 23, 2021 at 07:38:21PM +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Currently the array gpmc_cs is indexed by cs before it cs is range checked
+> and the pointer read from this out-of-index read is dereferenced. Fix this
+> by performing the range check on cs before the read and the following
+> pointer dereference.
+> 
+> Addresses-Coverity: ("Negative array index read")
+> Fixes: 186401937927 ("memory: gpmc: Move omap gpmc code to live under drivers")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/memory/omap-gpmc.c | 7 +++++--
 
-Applied to
+Thanks, applied with Tony's ack and changed Fixes to 9ed7a776eb50 ("ARM:
+OMAP2+: Fix support for multiple devices on a GPMC chip select"). 
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+Best regards,
+Krzysztof
 
-Thanks!
-
-[1/4] ASoC: mmp-sspa: drop unneeded snd_soc_dai_set_drvdata
-      commit: 131036ffae211a9cc3bfb053fadce87484e13fc5
-[2/4] ASoC: mxs-saif: drop unneeded snd_soc_dai_set_drvdata
-      commit: 7150186f1edb2fa94554be1bec26aa65a7df3388
-[3/4] ASoC: sun4i-i2s: drop unneeded snd_soc_dai_set_drvdata
-      commit: 0c34af2d5c9ba5103637c33c4f52d658172b991d
-[4/4] ASoC: fsl: drop unneeded snd_soc_dai_set_drvdata
-      commit: eb9db3066cdb57dbfd1fb3d85ca143ad5d719bfb
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
