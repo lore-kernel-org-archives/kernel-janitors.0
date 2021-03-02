@@ -2,103 +2,79 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79827C433DB
-	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Mar 2021 13:22:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF5A1C433E0
+	for <kernel-janitors@archiver.kernel.org>; Wed,  3 Mar 2021 06:04:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 25F79601FB
-	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Mar 2021 13:22:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7625A64EBD
+	for <kernel-janitors@archiver.kernel.org>; Wed,  3 Mar 2021 06:04:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1446116AbhCBNMM (ORCPT
+        id S237122AbhCCFzx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 2 Mar 2021 08:12:12 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:57058 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1838813AbhCBLTf (ORCPT
+        Wed, 3 Mar 2021 00:55:53 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:55628 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1376934AbhCBOYw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 2 Mar 2021 06:19:35 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 122BF7vd146712;
-        Tue, 2 Mar 2021 11:18:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=814zCU+jbtYbxBBfpFjuVjzIdDrMYHR5u+Tdz4KtzyA=;
- b=WHnM18Pv9MMbBNIweEMKyRoYOxGZ6EoRlOraoOXC5f2rMQPZ1E2xV+0OI1Mo+D5R0cRJ
- mc4Xyy2Nd/rV3tyqlEwXx8Hp4dVFHrUTwILsO+L8uwp2R5c8icHzXfVj25iNy593LwIR
- SlgpPa0NZYJr357NTY2FOoo56PbbB5gmxcMTUbpdbptrN2I6mfCwNivRM7fyNsdT1jY6
- nFa5p4WDpciRwSekqaKiFNTbtldUfzIrMmODt6lK70l9zLpkXe1xE46Yee7oSQjCmnOY
- rZsnjzLWMX/O4JaUYBVkDnc5oQHvUwhrZlOg0Hcjs3wdxWgGYAXQ00DUuslJWRJCdKp4 Cw== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2120.oracle.com with ESMTP id 36yeqmy5bq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 02 Mar 2021 11:18:25 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 122BEwnv011942;
-        Tue, 2 Mar 2021 11:18:23 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3030.oracle.com with ESMTP id 36yynp0jju-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 02 Mar 2021 11:18:23 +0000
-Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 122BILGP005022;
-        Tue, 2 Mar 2021 11:18:21 GMT
-Received: from mwanda (/102.36.221.92)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 02 Mar 2021 03:18:20 -0800
-Date:   Tue, 2 Mar 2021 14:18:13 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Stefan Richter <stefanr@s5r6.in-berlin.de>
-Cc:     linux1394-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] firewire: prevent integer overflow on 32bit systems
-Message-ID: <YD4e9XOD8JPlJzxW@mwanda>
+        Tue, 2 Mar 2021 09:24:52 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lH5e9-0005J7-TI; Tue, 02 Mar 2021 14:05:09 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Harry Wentland <harry.wentland@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Anson Jacob <Anson.Jacob@amd.com>,
+        Mikita Lipski <Mikita.Lipski@amd.com>,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] drm/amd/display: fix the return of the uninitialized value in ret
+Date:   Tue,  2 Mar 2021 14:05:09 +0000
+Message-Id: <20210302140509.8466-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.30.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-X-Proofpoint-IMR: 1
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9910 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxscore=0 spamscore=0
- bulkscore=0 suspectscore=0 mlxlogscore=999 phishscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2103020094
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9910 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 clxscore=1011
- priorityscore=1501 mlxlogscore=999 suspectscore=0 malwarescore=0
- impostorscore=0 bulkscore=0 adultscore=0 mlxscore=0 phishscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2103020094
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-In TCODE_STREAM_DATA mode, on 32bit systems, the "sizeof(*e) +
-request->length" operation can overflow leading to memory corruption.
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: 18e9b10fcdc0 ("firewire: cdev: add closure to async stream ioctl")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Currently if stream->signal is neither SIGNAL_TYPE_DISPLAY_PORT_MST or
+SIGNAL_TYPE_DISPLAY_PORT then variable ret is uninitialized and this is
+checked for > 0 at the end of the function.  Ret should be initialized,
+I believe setting it to zero is a correct default.
+
+Addresses-Coverity: ("Uninitialized scalar variable")
+Fixes: bd0c064c161c ("drm/amd/display: Add return code instead of boolean for future use")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/firewire/core-cdev.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/firewire/core-cdev.c b/drivers/firewire/core-cdev.c
-index fb6c651214f3..314de0384035 100644
---- a/drivers/firewire/core-cdev.c
-+++ b/drivers/firewire/core-cdev.c
-@@ -587,6 +587,9 @@ static int init_request(struct client *client,
- 	    request->length < 4)
- 		return -EINVAL;
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c
+index 5159399f8239..5750818db8f6 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c
+@@ -530,7 +530,7 @@ bool dm_helpers_dp_write_dsc_enable(
+ {
+ 	uint8_t enable_dsc = enable ? 1 : 0;
+ 	struct amdgpu_dm_connector *aconnector;
+-	uint8_t ret;
++	uint8_t ret = 0;
  
-+	if (request->length > ULONG_MAX - sizeof(*e))
-+		return -EINVAL;
-+
- 	e = kmalloc(sizeof(*e) + request->length, GFP_KERNEL);
- 	if (e == NULL)
- 		return -ENOMEM;
+ 	if (!stream)
+ 		return false;
 -- 
-2.30.1
+2.30.0
 
