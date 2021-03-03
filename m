@@ -2,119 +2,130 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-23.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3F25C433E0
-	for <kernel-janitors@archiver.kernel.org>; Thu,  4 Mar 2021 00:21:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85250C433E0
+	for <kernel-janitors@archiver.kernel.org>; Thu,  4 Mar 2021 00:21:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ACA5464E12
-	for <kernel-janitors@archiver.kernel.org>; Thu,  4 Mar 2021 00:21:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 643FC64E6C
+	for <kernel-janitors@archiver.kernel.org>; Thu,  4 Mar 2021 00:21:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355249AbhCDAVr (ORCPT
+        id S1355264AbhCDAVv (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 3 Mar 2021 19:21:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56618 "EHLO
+        Wed, 3 Mar 2021 19:21:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40278 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231736AbhCCQL5 (ORCPT
+        with ESMTP id S1388968AbhCCVaV (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 3 Mar 2021 11:11:57 -0500
-Received: from mail-il1-x12b.google.com (mail-il1-x12b.google.com [IPv6:2607:f8b0:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F939C061760
-        for <kernel-janitors@vger.kernel.org>; Wed,  3 Mar 2021 08:03:04 -0800 (PST)
-Received: by mail-il1-x12b.google.com with SMTP id c10so21821666ilo.8
-        for <kernel-janitors@vger.kernel.org>; Wed, 03 Mar 2021 08:03:04 -0800 (PST)
+        Wed, 3 Mar 2021 16:30:21 -0500
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C49A4C06175F;
+        Wed,  3 Mar 2021 13:29:36 -0800 (PST)
+Received: by mail-wm1-x335.google.com with SMTP id e23so6296152wmh.3;
+        Wed, 03 Mar 2021 13:29:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LlCoHdrHwzFyKrGMLRWyNUHIOyPdF/GbZeImGDz8wq0=;
-        b=cjQNm2CYodjavO8DTOBBmNVCObrgXF1DrthYCbp5n7yaDb5GFnh4C75DJT863fC6p5
-         /q/7FAQCECdCA2YfWzpr4ivpCYy9ssaptU0g/GE5fhyusrfyB2U03unAMlvBMIY0H3zF
-         Qze4WC0h9kaPldZaAbiuG1vJVKsp6SNIjFO9CEoruKp+VXjwozWuKsLDRfwGM1SHfTnr
-         b/DSF6lu7uTo+MgrkQtNujqDztM2dh4JgBTqE/jrk+k/QkjyMSZ5Ufksc6DRf/XlFKwV
-         fI9jX0yIww9a8md5w11AsfLgx2SuzaSbCAF31efbshqYO20fGHOHIR9nPra5XCKInpBm
-         idvQ==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=RHWM5gQcenxuOkY0x6Td3acOXwhJs3a6wdM3qoJf5Qc=;
+        b=Mpk2VE/skjGqPta3MrNp4DGLqRCWE+N099GW6R9jUTt3MKKuG7njT6vskx8DWMwZ1p
+         oTZq96hWm5zSX9nKgrKRpOU2JG8vt79w6z8fS8zkMnJC0di66MK6SZ8k8DKfi3iWXIYh
+         qBAfI9gQWlDcJUvAiBFOzjSk0tuhjjdTWru7g6yrWiW9FGEWIdJpnjeX2eOeehK/Ekut
+         Wl53XQ9kAuLaDB8Yy+iSfNXn+4U9yUAEhWqLQ2FOVmI50B+JTx2/ZlmRLFW/X5m40DBU
+         uQHSFAsR84DRjjXdNSTeyW2WP0uniy86GzZOfmLi4HHdw0Oh9J9ijdnYT2H2ziWJm8CL
+         in5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LlCoHdrHwzFyKrGMLRWyNUHIOyPdF/GbZeImGDz8wq0=;
-        b=KtTNDo0EDUCGn74hXwtWIWnOlt7z/S4Bees9FMKjOWzxq4EKp+H6+Ht4sPWR1sqBY6
-         f9J4IdQZnHy82vD8+cVy8lcZpBERtzciRf+jLr2rA+XvAW84P0tz9WD8lWdU/VTl14L+
-         aD6+GIn+8E5BAm/kIJhilOWubrvbjEXD7RQvbEau4onTSlySVTqJ/tuB3L8jgjKLxR91
-         OFcTPx0yMCq6nVRtdqrwSaR2V3Gl4W8l5dSjUsNtRCRqkqkENfJ0x6dGr68+Nn3WeN9w
-         I3rlhOlaKD0wcCDn+ApYvQKj9yht65wNNbN+3WqH2wuhmf0PwSB5pQ8S8BiqLlh5/zhV
-         JvvQ==
-X-Gm-Message-State: AOAM530kx4XVXqO2DoRFcp9B0Es78FKdptatNEclKk/i/OZA+xDCq78G
-        Lw/+f3jtwlo/Yi6Yf9QQWT6PEO3SpeGz+KaPpzGqug==
-X-Google-Smtp-Source: ABdhPJzWkHyxJe0NzceF7XETf16b9fqLN4/ttrAqSVQHhs60VadqEDCFHTCSwfAGtHcxxc863jggycnhWNNy/tkOA40=
-X-Received: by 2002:a05:6e02:e87:: with SMTP id t7mr22630570ilj.211.1614787383623;
- Wed, 03 Mar 2021 08:03:03 -0800 (PST)
-MIME-Version: 1.0
-References: <20210303095826.6143-1-colin.king@canonical.com>
-In-Reply-To: <20210303095826.6143-1-colin.king@canonical.com>
-From:   Ray Chi <raychi@google.com>
-Date:   Thu, 4 Mar 2021 00:02:51 +0800
-Message-ID: <CAPBYUsCPj12enyMp9AMzFEAgd5MdKh7dYN5DNFpZwofBYnjG8A@mail.gmail.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=RHWM5gQcenxuOkY0x6Td3acOXwhJs3a6wdM3qoJf5Qc=;
+        b=WnBbTlSUWyvVxXI9p73sR/wbwmf4/Xu7W/Wk4CaK9J0aixYW/RQpVusQem8gFDf3ci
+         JN0waxmbWqV9M2+y92wOfCFqlVCcTMe/i+3PPTUrmZEi7SoPMgCmNSNoS1vfy9hAQJbk
+         8WSRZFJ7PWJWBi3eA15pRJMpDKqrahy7BqQm9M9xHtT0ZBwOjOKveFmgrWZJohWQbMfv
+         X85nww9eIUxIcAD24bAEO9Gs1oCTCY0DfSjZ/38EaHBrrL3UnrjGaMpwcpQMx0BDnIKg
+         9upTB5x/9D2XOHRgNt5+XHPZ5mk+1O94sX6eij0+mMwHrrQxgOrGUBurUe+nshChtNiy
+         ceLA==
+X-Gm-Message-State: AOAM531WYYgEX0Ym0ljHzCA0rzvVGp1BTT9reaPfyZEVdbl8EYUHe6m6
+        fg4SkRDl+weY0KJhQhHABGY=
+X-Google-Smtp-Source: ABdhPJzJhJzmLR3kVCrW+NRdh4CAxVetKaZCJTPOZjiMUgdhly7FLobuGadSCdUJrL3lBpUFQkw2Jw==
+X-Received: by 2002:a05:600c:2ca:: with SMTP id 10mr831328wmn.40.1614806975516;
+        Wed, 03 Mar 2021 13:29:35 -0800 (PST)
+Received: from hthiery.fritz.box (ip1f1322f8.dynamic.kabel-deutschland.de. [31.19.34.248])
+        by smtp.gmail.com with ESMTPSA id s23sm6950088wmc.35.2021.03.03.13.29.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Mar 2021 13:29:35 -0800 (PST)
+From:   Heiko Thiery <heiko.thiery@gmail.com>
+To:     raychi@google.com
+Cc:     balbi@kernel.org, colin.king@canonical.com,
+        gregkh@linuxfoundation.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        Heiko Thiery <heiko.thiery@gmail.com>
 Subject: Re: [PATCH] usb: dwc3: Fix dereferencing of null dwc->usb_psy
-To:     Colin King <colin.king@canonical.com>
-Cc:     Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Date:   Wed,  3 Mar 2021 22:29:25 +0100
+Message-Id: <20210303212924.19733-1-heiko.thiery@gmail.com>
+X-Mailer: git-send-email 2.30.0
+In-Reply-To: <CAPBYUsCPj12enyMp9AMzFEAgd5MdKh7dYN5DNFpZwofBYnjG8A@mail.gmail.com>
+References: <CAPBYUsCPj12enyMp9AMzFEAgd5MdKh7dYN5DNFpZwofBYnjG8A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Mar 3, 2021 at 6:00 PM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Currently the null check logic on dwc->usb_psy is inverted as it allows
-> calls to power_supply_put with a null dwc->usb_psy causing a null
-> pointer dereference. Fix this by removing the ! operator.
->
-> Addresses-Coverity: ("Dereference after null check")
-> Fixes: 59fa3def35de ("usb: dwc3: add a power supply for current control")
+Hi all,
 
-Acked-by: Ray Chi <raychi@google.com>
+> On Wed, Mar 3, 2021 at 6:00 PM Colin King <colin.king@canonical.com> wrote:
+>>
+>> From: Colin Ian King <colin.king@canonical.com>
+>>
+>> Currently the null check logic on dwc->usb_psy is inverted as it allows
+>> calls to power_supply_put with a null dwc->usb_psy causing a null
+>> pointer dereference. Fix this by removing the ! operator.
+>>
+>> Addresses-Coverity: ("Dereference after null check")
+>> Fixes: 59fa3def35de ("usb: dwc3: add a power supply for current control")
+>
+> Acked-by: Ray Chi <raychi@google.com>
+>
+>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/usb/dwc3/core.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-> index d15f065849cd..94fdbe502ce9 100644
-> --- a/drivers/usb/dwc3/core.c
-> +++ b/drivers/usb/dwc3/core.c
-> @@ -1628,7 +1628,7 @@ static int dwc3_probe(struct platform_device *pdev)
->  assert_reset:
->         reset_control_assert(dwc->reset);
->
-> -       if (!dwc->usb_psy)
-> +       if (dwc->usb_psy)
->                 power_supply_put(dwc->usb_psy);
->
->         return ret;
-> @@ -1653,7 +1653,7 @@ static int dwc3_remove(struct platform_device *pdev)
->         dwc3_free_event_buffers(dwc);
->         dwc3_free_scratch_buffers(dwc);
->
-> -       if (!dwc->usb_psy)
-> +       if (dwc->usb_psy)
->                 power_supply_put(dwc->usb_psy);
->
->         return 0;
-> --
-> 2.30.0
->
+Tested-by: Heiko Thiery <heiko.thiery@gmail.com>
 
-Thanks for fixing this bug!
+>> ---
+>>  drivers/usb/dwc3/core.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+>> index d15f065849cd..94fdbe502ce9 100644
+>> --- a/drivers/usb/dwc3/core.c
+>> +++ b/drivers/usb/dwc3/core.c
+>> @@ -1628,7 +1628,7 @@ static int dwc3_probe(struct platform_device *pdev)
+>>  assert_reset:
+>>         reset_control_assert(dwc->reset);
+>>
+>> -       if (!dwc->usb_psy)
+>> +       if (dwc->usb_psy)
+>>                 power_supply_put(dwc->usb_psy);
+>>
+>>         return ret;
+>> @@ -1653,7 +1653,7 @@ static int dwc3_remove(struct platform_device *pdev)
+>>         dwc3_free_event_buffers(dwc);
+>>         dwc3_free_scratch_buffers(dwc);
+>>
+>> -       if (!dwc->usb_psy)
+>> +       if (dwc->usb_psy)
+>>                 power_supply_put(dwc->usb_psy);
+>>
+>>         return 0;
+>> --
+>> 2.30.0
+>>
 
-Regards,
-Ray
+Thank you.
+
+-- 
+Heiko
