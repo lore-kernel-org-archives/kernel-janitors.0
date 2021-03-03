@@ -4,36 +4,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 149ECC433E9
-	for <kernel-janitors@archiver.kernel.org>; Thu,  4 Mar 2021 00:21:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6E70C4332B
+	for <kernel-janitors@archiver.kernel.org>; Thu,  4 Mar 2021 00:21:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CC0E664E56
-	for <kernel-janitors@archiver.kernel.org>; Thu,  4 Mar 2021 00:21:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1CE764EA4
+	for <kernel-janitors@archiver.kernel.org>; Thu,  4 Mar 2021 00:21:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355225AbhCDAVV (ORCPT
+        id S235900AbhCDAVZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 3 Mar 2021 19:21:21 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:58334 "EHLO
+        Wed, 3 Mar 2021 19:21:25 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:35796 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240078AbhCCK2b (ORCPT
+        with ESMTP id S1359113AbhCCNo7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 3 Mar 2021 05:28:31 -0500
+        Wed, 3 Mar 2021 08:44:59 -0500
 Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <colin.king@canonical.com>)
-        id 1lHOGw-00021a-Nu; Wed, 03 Mar 2021 09:58:26 +0000
+        id 1lHRmt-0000MV-AT; Wed, 03 Mar 2021 13:43:39 +0000
 From:   Colin King <colin.king@canonical.com>
-To:     Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ray Chi <raychi@google.com>, linux-usb@vger.kernel.org
+To:     "Michael S . Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        netdev@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] usb: dwc3: Fix dereferencing of null dwc->usb_psy
-Date:   Wed,  3 Mar 2021 09:58:26 +0000
-Message-Id: <20210303095826.6143-1-colin.king@canonical.com>
+Subject: [PATCH] scsi: target: vhost-scsi: remove redundant initialization of variable ret
+Date:   Wed,  3 Mar 2021 13:43:39 +0000
+Message-Id: <20210303134339.67339-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.30.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -44,39 +47,29 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Currently the null check logic on dwc->usb_psy is inverted as it allows
-calls to power_supply_put with a null dwc->usb_psy causing a null
-pointer dereference. Fix this by removing the ! operator.
+The variable ret is being initialized with a value that is never read
+and it is being updated later with a new value.  The initialization is
+redundant and can be removed.
 
-Addresses-Coverity: ("Dereference after null check")
-Fixes: 59fa3def35de ("usb: dwc3: add a power supply for current control")
+Addresses-Coverity: ("Unused value")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/usb/dwc3/core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/vhost/scsi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-index d15f065849cd..94fdbe502ce9 100644
---- a/drivers/usb/dwc3/core.c
-+++ b/drivers/usb/dwc3/core.c
-@@ -1628,7 +1628,7 @@ static int dwc3_probe(struct platform_device *pdev)
- assert_reset:
- 	reset_control_assert(dwc->reset);
+diff --git a/drivers/vhost/scsi.c b/drivers/vhost/scsi.c
+index d16c04dcc144..9129ab8187fd 100644
+--- a/drivers/vhost/scsi.c
++++ b/drivers/vhost/scsi.c
+@@ -2465,7 +2465,7 @@ static const struct target_core_fabric_ops vhost_scsi_ops = {
  
--	if (!dwc->usb_psy)
-+	if (dwc->usb_psy)
- 		power_supply_put(dwc->usb_psy);
+ static int __init vhost_scsi_init(void)
+ {
+-	int ret = -ENOMEM;
++	int ret;
  
- 	return ret;
-@@ -1653,7 +1653,7 @@ static int dwc3_remove(struct platform_device *pdev)
- 	dwc3_free_event_buffers(dwc);
- 	dwc3_free_scratch_buffers(dwc);
- 
--	if (!dwc->usb_psy)
-+	if (dwc->usb_psy)
- 		power_supply_put(dwc->usb_psy);
- 
- 	return 0;
+ 	pr_debug("TCM_VHOST fabric module %s on %s/%s"
+ 		" on "UTS_RELEASE"\n", VHOST_SCSI_VERSION, utsname()->sysname,
 -- 
 2.30.0
 
