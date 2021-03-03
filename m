@@ -2,116 +2,96 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18FF2C433DB
-	for <kernel-janitors@archiver.kernel.org>; Wed,  3 Mar 2021 06:15:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E25C8C433E0
+	for <kernel-janitors@archiver.kernel.org>; Wed,  3 Mar 2021 06:15:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D9DD764ECE
+	by mail.kernel.org (Postfix) with ESMTP id B07F164EC0
 	for <kernel-janitors@archiver.kernel.org>; Wed,  3 Mar 2021 06:15:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354907AbhCCGII (ORCPT
+        id S1354893AbhCCGHv (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 3 Mar 2021 01:08:08 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:54438 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236446AbhCCFYK (ORCPT
+        Wed, 3 Mar 2021 01:07:51 -0500
+Received: from smtprelay0018.hostedemail.com ([216.40.44.18]:46190 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S232490AbhCCCtC (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 3 Mar 2021 00:24:10 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 1235L2ke112284;
-        Wed, 3 Mar 2021 05:22:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=6sJkNvGHrVmMtI/AqoNEU4T1AjvVLS5rr4NaMFJNQx0=;
- b=Ys8UiwK9LsCq+zVpWUiV33OpRLsjVP3Ys53b7o9lE/6Tz+tGKzaODeXPqcVBf3Tu68wq
- z/ZEhl8/+beHoJcbR966tIkMtgHNCD08Qfyt8estb9xs7XUIKpIfnwwHb1FmrDxQKH1u
- T3Y13le4oNwE0WlsM+LFiQi5DBTpANSUVnVOcaBIUS1e2oDb/KwoCP+vqhasLg2p+tFL
- PWjYj+BcLI6+ECEAZ9lwTo8OwTcafiIDvHJhjlOBqOtIZzGxGZui6DMxns5RVpa+2b75
- Kmmr4gR1RxJcp9tu0WdPOxM9r8qlk320Ki4b1fBcz558ka5/dI4JTggRB8mTTFlOxRYs /w== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2120.oracle.com with ESMTP id 36ye1ma0wc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 03 Mar 2021 05:22:51 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 1235L3L0118668;
-        Wed, 3 Mar 2021 05:22:48 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 370000tn26-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 03 Mar 2021 05:22:48 +0000
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 1235Ml3B023460;
-        Wed, 3 Mar 2021 05:22:47 GMT
-Received: from kadam (/102.36.221.92)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 02 Mar 2021 21:22:46 -0800
-Date:   Wed, 3 Mar 2021 08:22:40 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Stefan Richter <stefanr@s5r6.in-berlin.de>
-Cc:     linux1394-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] firewire: prevent integer overflow on 32bit systems
-Message-ID: <20210303052239.GY2222@kadam>
-References: <YD4e9XOD8JPlJzxW@mwanda>
- <20210302221911.6c1582e2@kant>
+        Tue, 2 Mar 2021 21:49:02 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 42E2418225631;
+        Wed,  3 Mar 2021 02:47:53 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: tin16_1602863276c1
+X-Filterd-Recvd-Size: 2532
+Received: from [192.168.1.159] (unknown [47.151.137.21])
+        (Authenticated sender: joe@perches.com)
+        by omf07.hostedemail.com (Postfix) with ESMTPA;
+        Wed,  3 Mar 2021 02:47:52 +0000 (UTC)
+Message-ID: <6b8b250a06a98ce42120a14824531a8641f5e8aa.camel@perches.com>
+Subject: Re: [Cocci] linux-kernel janitorial RFP: Mark static arrays as const
+From:   Joe Perches <joe@perches.com>
+To:     Julia Lawall <julia.lawall@inria.fr>
+Cc:     kernelnewbies <kernelnewbies@kernelnewbies.org>,
+        kernel-janitors <kernel-janitors@vger.kernel.org>,
+        cocci <cocci@systeme.lip6.fr>,
+        LKML <linux-kernel@vger.kernel.org>
+Date:   Tue, 02 Mar 2021 18:47:51 -0800
+In-Reply-To: <alpine.DEB.2.22.394.2103022241050.2906@hadrien>
+References: <053b06c47f08631675c295b5c893b90be4248347.camel@perches.com>
+         <alpine.DEB.2.22.394.2103022241050.2906@hadrien>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.38.1-1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210302221911.6c1582e2@kant>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-IMR: 1
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9911 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=999
- phishscore=0 bulkscore=0 mlxscore=0 spamscore=0 suspectscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2103030039
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9911 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 priorityscore=1501
- mlxlogscore=999 impostorscore=0 suspectscore=0 adultscore=0 malwarescore=0
- mlxscore=0 spamscore=0 bulkscore=0 lowpriorityscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2103030039
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Mar 02, 2021 at 10:19:11PM +0100, Stefan Richter wrote:
-> On Mar 02 Dan Carpenter wrote:
-> > In TCODE_STREAM_DATA mode, on 32bit systems, the "sizeof(*e) +
-> > request->length" operation can overflow leading to memory corruption.
-> > 
-> > Fixes: 18e9b10fcdc0 ("firewire: cdev: add closure to async stream ioctl")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> >  drivers/firewire/core-cdev.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> > 
-> > diff --git a/drivers/firewire/core-cdev.c b/drivers/firewire/core-cdev.c
-> > index fb6c651214f3..314de0384035 100644
-> > --- a/drivers/firewire/core-cdev.c
-> > +++ b/drivers/firewire/core-cdev.c
-> > @@ -587,6 +587,9 @@ static int init_request(struct client *client,
-> >  	    request->length < 4)
-> >  		return -EINVAL;
-> >  
-> > +	if (request->length > ULONG_MAX - sizeof(*e))
-> > +		return -EINVAL;
-> > +
-> >  	e = kmalloc(sizeof(*e) + request->length, GFP_KERNEL);
-> >  	if (e == NULL)
-> >  		return -ENOMEM;
+On Tue, 2021-03-02 at 22:41 +0100, Julia Lawall wrote:
 > 
-> There is already a length check for asynchronous stream requests.
-> It happens in ioctl_send_stream_packet().
+> On Tue, 2 Mar 2021, Joe Perches wrote:
+> 
+> > Here is a possible opportunity to reduce data usage in the kernel.
+> 
+> Does it actually reduce data usage?
 
-Oh, yeah.  You're right.  I should have looked more carefully.  Sorry.
+Yes, at least for gcc.  For instance:
 
-regards,
-dan carpenter
+$ gcc --version
+gcc (Ubuntu 10.2.0-13ubuntu1) 10.2.0
+
+And with the diff below (x86-64 defconfig with hwmon/pmbus and max20730)
+
+$ diff --git a/drivers/hwmon/pmbus/max20730.c b/drivers/hwmon/pmbus/max20730.c
+index 9dd3dd79bc18..b824eab95456 100644
+--- a/drivers/hwmon/pmbus/max20730.c
++++ b/drivers/hwmon/pmbus/max20730.c
+@@ -434,7 +434,7 @@ static long direct_to_val(u16 w, enum pmbus_sensor_classes >
+        return d;
+ }
+ 
+-static u32 max_current[][5] = {
++static const u32 max_current[][5] = {
+        [max20710] = { 6200, 8000, 9700, 11600 },
+        [max20730] = { 13000, 16600, 20100, 23600 },
+        [max20734] = { 21000, 27000, 32000, 38000 },
+
+$ size drivers/hwmon/pmbus/max20730.o*
+   text	   data	    bss	    dec	    hex	filename
+   9245	    256	      0	   9501	   251d	drivers/hwmon/pmbus/max20730.o.gcc.new
+   9149	    352	      0	   9501	   251d	drivers/hwmon/pmbus/max20730.o.gcc.old
+
+with clang-11 it doesn't seem to make a difference:
+
+$ /usr/bin/clang --version
+Ubuntu clang version 11.0.0-2
+
+$ size drivers/hwmon/pmbus/max20730.o*
+   text	   data	    bss	    dec	    hex	filename
+   9166	    256	      1	   9423	   24cf	drivers/hwmon/pmbus/max20730.o.clang-11.new
+   9166	    256	      1	   9423	   24cf	drivers/hwmon/pmbus/max20730.o.clang-11.old
+
 
