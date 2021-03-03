@@ -2,130 +2,119 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-23.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00873C433E0
-	for <kernel-janitors@archiver.kernel.org>; Thu,  4 Mar 2021 00:21:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3F25C433E0
+	for <kernel-janitors@archiver.kernel.org>; Thu,  4 Mar 2021 00:21:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D00FA60C41
-	for <kernel-janitors@archiver.kernel.org>; Thu,  4 Mar 2021 00:21:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACA5464E12
+	for <kernel-janitors@archiver.kernel.org>; Thu,  4 Mar 2021 00:21:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355180AbhCDAVp (ORCPT
+        id S1355249AbhCDAVr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 3 Mar 2021 19:21:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42200 "EHLO
+        Wed, 3 Mar 2021 19:21:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1447549AbhCCPEV (ORCPT
+        with ESMTP id S231736AbhCCQL5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 3 Mar 2021 10:04:21 -0500
-Received: from mail-oi1-x22a.google.com (mail-oi1-x22a.google.com [IPv6:2607:f8b0:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 612C5C061760;
-        Wed,  3 Mar 2021 07:03:33 -0800 (PST)
-Received: by mail-oi1-x22a.google.com with SMTP id m25so13242783oie.12;
-        Wed, 03 Mar 2021 07:03:33 -0800 (PST)
+        Wed, 3 Mar 2021 11:11:57 -0500
+Received: from mail-il1-x12b.google.com (mail-il1-x12b.google.com [IPv6:2607:f8b0:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F939C061760
+        for <kernel-janitors@vger.kernel.org>; Wed,  3 Mar 2021 08:03:04 -0800 (PST)
+Received: by mail-il1-x12b.google.com with SMTP id c10so21821666ilo.8
+        for <kernel-janitors@vger.kernel.org>; Wed, 03 Mar 2021 08:03:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=UFdmdGIL0QMCEr5PKkU9AQdIZLVV8WmqiWX3bdKwEO8=;
-        b=QQauQWBbvUN9iU7ZIBR5QfpryPCDaxW5eGXds6qSe28kjr/VQDd1TFN796AY2l+wEf
-         QzwToGQJPogy9LWjlpAnFUKI3DowbWVkql+8QFSwkamByG9wl/+NzjoEkIop+f7HjvNN
-         EdYxpRj2DXXcwtdY1I2r00QeUix0enLHaYcsPwVpr830DEL8iruObLGMAc8fTJ4cTG/d
-         //DaE22CAK8yoMZaA3yze89IAonfl7zg6EXf2cuWIIuVou7NQNcXQ2P736Mwc9JMqmkI
-         Igep49NceowL4SLIWSHK/UiyPuf/d8SgmDJgZoRB/bkIaLOvAEyXhstbdRE3HdNji3p7
-         DbVw==
+         :cc;
+        bh=LlCoHdrHwzFyKrGMLRWyNUHIOyPdF/GbZeImGDz8wq0=;
+        b=cjQNm2CYodjavO8DTOBBmNVCObrgXF1DrthYCbp5n7yaDb5GFnh4C75DJT863fC6p5
+         /q/7FAQCECdCA2YfWzpr4ivpCYy9ssaptU0g/GE5fhyusrfyB2U03unAMlvBMIY0H3zF
+         Qze4WC0h9kaPldZaAbiuG1vJVKsp6SNIjFO9CEoruKp+VXjwozWuKsLDRfwGM1SHfTnr
+         b/DSF6lu7uTo+MgrkQtNujqDztM2dh4JgBTqE/jrk+k/QkjyMSZ5Ufksc6DRf/XlFKwV
+         fI9jX0yIww9a8md5w11AsfLgx2SuzaSbCAF31efbshqYO20fGHOHIR9nPra5XCKInpBm
+         idvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=UFdmdGIL0QMCEr5PKkU9AQdIZLVV8WmqiWX3bdKwEO8=;
-        b=pz3/Ry+HqN5Lwlc7Blc2aqACHWo/EHPVwwbNiwzNZxQxDpZMBrpAhX35820HYEnH3/
-         sSxYUkpoDA+ycrocQNaji7pD37sWYxhuXZprVY/6UkrfkckXTbe9fO6gwuhu2AsAGExk
-         b0yMSBz2JJR2fFEjU/1PR1Xo6uWiR0qeEyZrk2vZCk2cFCQ/lC2a32iv5Hm//4HahL2x
-         uesrj8eBQpNR0KxRy7jhLyOmCqUFHpM398HR4WIG7xJ43pad0Clv7qk8INE/aGA26n2T
-         //U4+7A6zxCC4nouFFHuiklhEqcNlcqZIh9D0JbFSVp34ZrwdSbvyVb8g7CNGyh/K72i
-         iABQ==
-X-Gm-Message-State: AOAM530nDX9xjAgd5FA1TW9IigCclD1OAq3PlaNH8tGuIL8upqkATIEa
-        2Z8u7Lo7776CSzAMDopIImVbGjUa9w+Rw6eoaAc=
-X-Google-Smtp-Source: ABdhPJy/Z9v1e0H8KZp7WiXlPIQST+M+l00Z0J29yDOyNADm4PL6rAXPb5X74je0lpVPYXZgHf57Nj4bXaIqH3IfYWw=
-X-Received: by 2002:aca:f485:: with SMTP id s127mr7604275oih.120.1614783812744;
- Wed, 03 Mar 2021 07:03:32 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=LlCoHdrHwzFyKrGMLRWyNUHIOyPdF/GbZeImGDz8wq0=;
+        b=KtTNDo0EDUCGn74hXwtWIWnOlt7z/S4Bees9FMKjOWzxq4EKp+H6+Ht4sPWR1sqBY6
+         f9J4IdQZnHy82vD8+cVy8lcZpBERtzciRf+jLr2rA+XvAW84P0tz9WD8lWdU/VTl14L+
+         aD6+GIn+8E5BAm/kIJhilOWubrvbjEXD7RQvbEau4onTSlySVTqJ/tuB3L8jgjKLxR91
+         OFcTPx0yMCq6nVRtdqrwSaR2V3Gl4W8l5dSjUsNtRCRqkqkENfJ0x6dGr68+Nn3WeN9w
+         I3rlhOlaKD0wcCDn+ApYvQKj9yht65wNNbN+3WqH2wuhmf0PwSB5pQ8S8BiqLlh5/zhV
+         JvvQ==
+X-Gm-Message-State: AOAM530kx4XVXqO2DoRFcp9B0Es78FKdptatNEclKk/i/OZA+xDCq78G
+        Lw/+f3jtwlo/Yi6Yf9QQWT6PEO3SpeGz+KaPpzGqug==
+X-Google-Smtp-Source: ABdhPJzWkHyxJe0NzceF7XETf16b9fqLN4/ttrAqSVQHhs60VadqEDCFHTCSwfAGtHcxxc863jggycnhWNNy/tkOA40=
+X-Received: by 2002:a05:6e02:e87:: with SMTP id t7mr22630570ilj.211.1614787383623;
+ Wed, 03 Mar 2021 08:03:03 -0800 (PST)
 MIME-Version: 1.0
-References: <20210303002759.28752-1-colin.king@canonical.com> <490409f2-9fcb-d402-a6ae-b45c80bae3d2@amd.com>
-In-Reply-To: <490409f2-9fcb-d402-a6ae-b45c80bae3d2@amd.com>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Wed, 3 Mar 2021 10:03:21 -0500
-Message-ID: <CADnq5_N9P5AHF3PFTyR-k_s23sofvATCGbER=Q9qbNzQFp66UA@mail.gmail.com>
-Subject: Re: [PATCH] drm/radeon: fix copy of uninitialized variable back to userspace
-To:     =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Cc:     Colin King <colin.king@canonical.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        =?UTF-8?B?TWFyZWsgT2zFocOhaw==?= <marek.olsak@amd.com>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>, kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
+References: <20210303095826.6143-1-colin.king@canonical.com>
+In-Reply-To: <20210303095826.6143-1-colin.king@canonical.com>
+From:   Ray Chi <raychi@google.com>
+Date:   Thu, 4 Mar 2021 00:02:51 +0800
+Message-ID: <CAPBYUsCPj12enyMp9AMzFEAgd5MdKh7dYN5DNFpZwofBYnjG8A@mail.gmail.com>
+Subject: Re: [PATCH] usb: dwc3: Fix dereferencing of null dwc->usb_psy
+To:     Colin King <colin.king@canonical.com>
+Cc:     Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Applied.  Thanks!
+On Wed, Mar 3, 2021 at 6:00 PM Colin King <colin.king@canonical.com> wrote:
+>
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> Currently the null check logic on dwc->usb_psy is inverted as it allows
+> calls to power_supply_put with a null dwc->usb_psy causing a null
+> pointer dereference. Fix this by removing the ! operator.
+>
+> Addresses-Coverity: ("Dereference after null check")
+> Fixes: 59fa3def35de ("usb: dwc3: add a power supply for current control")
 
-Alex
+Acked-by: Ray Chi <raychi@google.com>
 
-On Wed, Mar 3, 2021 at 2:42 AM Christian K=C3=B6nig <christian.koenig@amd.c=
-om> wrote:
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/usb/dwc3/core.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 >
-> Am 03.03.21 um 01:27 schrieb Colin King:
-> > From: Colin Ian King <colin.king@canonical.com>
-> >
-> > Currently the ioctl command RADEON_INFO_SI_BACKEND_ENABLED_MASK can
-> > copy back uninitialised data in value_tmp that pointer *value points
-> > to. This can occur when rdev->family is less than CHIP_BONAIRE and
-> > less than CHIP_TAHITI.  Fix this by adding in a missing -EINVAL
-> > so that no invalid value is copied back to userspace.
-> >
-> > Addresses-Coverity: ("Uninitialized scalar variable)
-> > Cc: stable@vger.kernel.org # 3.13+
-> > Fixes: 439a1cfffe2c ("drm/radeon: expose render backend mask to the use=
-rspace")
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+> index d15f065849cd..94fdbe502ce9 100644
+> --- a/drivers/usb/dwc3/core.c
+> +++ b/drivers/usb/dwc3/core.c
+> @@ -1628,7 +1628,7 @@ static int dwc3_probe(struct platform_device *pdev)
+>  assert_reset:
+>         reset_control_assert(dwc->reset);
 >
-> Reviewed-by: Christian K=C3=B6nig <christian.koenig@amd.com>
+> -       if (!dwc->usb_psy)
+> +       if (dwc->usb_psy)
+>                 power_supply_put(dwc->usb_psy);
 >
-> Let's hope that this doesn't break UAPI.
+>         return ret;
+> @@ -1653,7 +1653,7 @@ static int dwc3_remove(struct platform_device *pdev)
+>         dwc3_free_event_buffers(dwc);
+>         dwc3_free_scratch_buffers(dwc);
 >
-> Christian.
+> -       if (!dwc->usb_psy)
+> +       if (dwc->usb_psy)
+>                 power_supply_put(dwc->usb_psy);
 >
-> > ---
-> >   drivers/gpu/drm/radeon/radeon_kms.c | 1 +
-> >   1 file changed, 1 insertion(+)
-> >
-> > diff --git a/drivers/gpu/drm/radeon/radeon_kms.c b/drivers/gpu/drm/rade=
-on/radeon_kms.c
-> > index 2479d6ab7a36..58876bb4ef2a 100644
-> > --- a/drivers/gpu/drm/radeon/radeon_kms.c
-> > +++ b/drivers/gpu/drm/radeon/radeon_kms.c
-> > @@ -518,6 +518,7 @@ int radeon_info_ioctl(struct drm_device *dev, void =
-*data, struct drm_file *filp)
-> >                       *value =3D rdev->config.si.backend_enable_mask;
-> >               } else {
-> >                       DRM_DEBUG_KMS("BACKEND_ENABLED_MASK is si+ only!\=
-n");
-> > +                     return -EINVAL;
-> >               }
-> >               break;
-> >       case RADEON_INFO_MAX_SCLK:
+>         return 0;
+> --
+> 2.30.0
 >
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
+
+Thanks for fixing this bug!
+
+Regards,
+Ray
