@@ -2,86 +2,77 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C652C433DB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FA07C433E6
 	for <kernel-janitors@archiver.kernel.org>; Thu,  4 Mar 2021 00:21:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3999B64DDA
+	by mail.kernel.org (Postfix) with ESMTP id 6CCEF64E56
 	for <kernel-janitors@archiver.kernel.org>; Thu,  4 Mar 2021 00:21:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351468AbhCDAVM (ORCPT
+        id S1355220AbhCDAVS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 3 Mar 2021 19:21:12 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:28727 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239666AbhCCK0y (ORCPT
+        Wed, 3 Mar 2021 19:21:18 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:58334 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240329AbhCCK1x (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 3 Mar 2021 05:26:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1614767128;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=CV3tkp8merYe5w3jgDlwc9oNvGcc86ob13BJ0IDLoJA=;
-        b=WPOSR0s6vxIqyUXXbbSd8UfI2PC8mW9SzmPDgmv9hPHyggY7FdSe4AiMtxzYWtpiSEjd9g
-        hmv9omeXVOwY6r8EctKiRy7Rum513t8VzyCqdwUqbhSbanRF6B7ikwh4jDuXVZ+MpGSKSI
-        v1KuWi1YLtHcWeLrnyiDTp80gpC4Mio=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-45-_nJ8wJuPNCmgdVZduZEvbQ-1; Wed, 03 Mar 2021 03:23:25 -0500
-X-MC-Unique: _nJ8wJuPNCmgdVZduZEvbQ-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7E991100962A;
-        Wed,  3 Mar 2021 08:23:24 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-119-68.rdu2.redhat.com [10.10.119.68])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 356AE60BFA;
-        Wed,  3 Mar 2021 08:23:23 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20210303064028.895953-1-weiyongjun1@huawei.com>
-References: <20210303064028.895953-1-weiyongjun1@huawei.com>
-To:     Wei Yongjun <weiyongjun1@huawei.com>
-Cc:     dhowells@redhat.com, Hulk Robot <hulkci@huawei.com>,
-        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH -next] afs: Remove unused variable in afs_req_issue_op()
+        Wed, 3 Mar 2021 05:27:53 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212])
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lHOij-000445-Ev; Wed, 03 Mar 2021 10:27:09 +0000
+Subject: Re: [PATCH][next] mtd: nand: Fix error handling in nand_prog_page_op
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20210303094246.5724-1-colin.king@canonical.com>
+ <20210303104651.2d49fb2c@xps13>
+From:   Colin Ian King <colin.king@canonical.com>
+Message-ID: <e7893539-9510-e149-f02b-f88c33f8175b@canonical.com>
+Date:   Wed, 3 Mar 2021 10:27:09 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2025007.1614759802.1@warthog.procyon.org.uk>
-Date:   Wed, 03 Mar 2021 08:23:22 +0000
-Message-ID: <2025008.1614759802@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+In-Reply-To: <20210303104651.2d49fb2c@xps13>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Wei Yongjun <weiyongjun1@huawei.com> wrote:
-
-> GCC reports the following warning with W=1:
+On 03/03/2021 09:46, Miquel Raynal wrote:
+> Hi Colin,
 > 
-> fs/afs/file.c:291:6: warning:
->  unused variable 'ret' [-Wunused-variable]
->   291 |  int ret;
->       |      ^~~
+> Colin King <colin.king@canonical.com> wrote on Wed,  3 Mar 2021
+> 09:42:46 +0000:
 > 
-> After commit 799fbdf96cd51, this variable is not used in function
-> afs_req_issue_op(), so this commit remove it to fix the warning.
+>> From: Colin Ian King <colin.king@canonical.com>
+>>
+>> The less than zero comparison with status is always false because status
+>> is a u8. Fix this by using ret as the return check for the call to
+>> chip->legacy.waitfunc() and checking on this and assigning status to ret
+>> if it is OK.
+>>
+>> Addresses-Coverity: ("Unsigned compared against 0")
+>> Fixes: 52f67def97f1 ("mtd: nand: fix error handling in nand_prog_page_op() #1")
+>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > 
-> Fixes: 799fbdf96cd51 ("afs: Use new fscache read helper API")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> Thanks for the fix, but this has been handled just an hour ago :)
 
-I've already fixed that and updated my branch, thanks.  linux-next should pick
-it up on the next merging.
+Ah, missed that. Glad to know it's fixed.
 
-David
+> 
+> Cheers,
+> Miquèl
+> 
 
