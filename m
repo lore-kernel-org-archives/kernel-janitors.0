@@ -2,75 +2,75 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D138C43331
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47529C4332E
 	for <kernel-janitors@archiver.kernel.org>; Thu,  4 Mar 2021 00:21:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 368A564E6C
+	by mail.kernel.org (Postfix) with ESMTP id 25F2464E90
 	for <kernel-janitors@archiver.kernel.org>; Thu,  4 Mar 2021 00:21:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351256AbhCDAVm (ORCPT
+        id S1355231AbhCDAVY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 3 Mar 2021 19:21:42 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:36491 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241562AbhCCOI5 (ORCPT
+        Wed, 3 Mar 2021 19:21:24 -0500
+Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:3599 "EHLO
+        mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234197AbhCCL3c (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 3 Mar 2021 09:08:57 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1lHS9O-0001sJ-Qq; Wed, 03 Mar 2021 14:06:54 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Harry Wentland <harry.wentland@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/amd/display: remove redundant initialization of variable status
-Date:   Wed,  3 Mar 2021 14:06:54 +0000
-Message-Id: <20210303140654.67950-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.30.0
+        Wed, 3 Mar 2021 06:29:32 -0500
+X-IronPort-AV: E=Sophos;i="5.81,219,1610406000"; 
+   d="scan'208";a="374603122"
+Received: from 173.121.68.85.rev.sfr.net (HELO hadrien) ([85.68.121.173])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Mar 2021 09:36:19 +0100
+Date:   Wed, 3 Mar 2021 09:36:19 +0100 (CET)
+From:   Julia Lawall <julia.lawall@inria.fr>
+X-X-Sender: jll@hadrien
+To:     Bernd Petrovitsch <bernd@petrovitsch.priv.at>
+cc:     Joe Perches <joe@perches.com>, cocci <cocci@systeme.lip6.fr>,
+        kernel-janitors <kernel-janitors@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernelnewbies <kernelnewbies@kernelnewbies.org>
+Subject: Re: [Cocci] linux-kernel janitorial RFP: Mark static arrays as
+ const
+In-Reply-To: <22d22edd-4213-0f57-d801-1c570f04ec05@petrovitsch.priv.at>
+Message-ID: <alpine.DEB.2.22.394.2103030935020.2980@hadrien>
+References: <053b06c47f08631675c295b5c893b90be4248347.camel@perches.com> <22d22edd-4213-0f57-d801-1c570f04ec05@petrovitsch.priv.at>
+User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-The variable status is being initialized with a value that is never read
-and it is being updated later with a new value.  The initialization is
-redundant and can be removed.
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpu/drm/amd/display/dc/dce/dmub_psr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Tue, 2 Mar 2021, Bernd Petrovitsch wrote:
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dce/dmub_psr.c b/drivers/gpu/drm/amd/display/dc/dce/dmub_psr.c
-index 03741e170b61..15ed09b7a452 100644
---- a/drivers/gpu/drm/amd/display/dc/dce/dmub_psr.c
-+++ b/drivers/gpu/drm/amd/display/dc/dce/dmub_psr.c
-@@ -81,7 +81,7 @@ static void dmub_psr_get_state(struct dmub_psr *dmub, enum dc_psr_state *state)
- {
- 	struct dmub_srv *srv = dmub->ctx->dmub_srv->dmub;
- 	uint32_t raw_state;
--	enum dmub_status status = DMUB_STATUS_INVALID;
-+	enum dmub_status status;
- 
- 	// Send gpint command and wait for ack
- 	status = dmub_srv_send_gpint_command(srv, DMUB_GPINT__GET_PSR_STATE, 0, 30);
--- 
-2.30.0
+> Hi all!
+>
+> On 02/03/2021 18:42, Joe Perches wrote:
+> [...]
+> > ------------- For instance: (head -10 of the git grep for file statics)
+> >
+> > drivers/accessibility/speakup/keyhelp.c:18:static u_short masks[] = { 32, 16, 8, 4, 2, 1 };
+> > drivers/accessibility/speakup/keyhelp.c:26:static u_char funcvals[] = {
+> > drivers/accessibility/speakup/main.c:2059:static spkup_hand spkup_handler[] = {
+> > drivers/accessibility/speakup/speakup_acntpc.c:35:static unsigned int synth_portlist[] = { 0x2a8, 0 };
+> > drivers/accessibility/speakup/speakup_decpc.c:133:static int synth_portlist[] = { 0x340, 0x350, 0x240, 0x250, 0 };
+> > drivers/accessibility/speakup/speakup_dectlk.c:110:static int ap_defaults[] = {122, 89, 155, 110, 208, 240, 200, 106, 306};
+> > drivers/accessibility/speakup/speakup_dectlk.c:111:static int g5_defaults[] = {86, 81, 86, 84, 81, 80, 83, 83, 73};
+> > drivers/accessibility/speakup/speakup_dtlk.c:34:static unsigned int synth_portlist[] = {
+> > drivers/accessibility/speakup/speakup_keypc.c:34:static unsigned int synth_portlist[] = { 0x2a8, 0 };
+> > drivers/acpi/ac.c:137:static enum power_supply_property ac_props[] = {
+> >
+> > For drivers/accessibility/speakup/keyhelp.c:18:static u_short masks[] = { 32, 16, 8, 4, 2, 1 };
+>
+> Looking at the examples: Just s/^static /static const / in the lines
+> reported by the grep's above and see if it compiles (and save space)?
 
+There is a small risk with compiling that there may be a problem for a
+configuration you haven't considered.
+
+julia
