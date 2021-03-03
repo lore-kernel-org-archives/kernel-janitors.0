@@ -2,77 +2,116 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6520C433DB
-	for <kernel-janitors@archiver.kernel.org>; Wed,  3 Mar 2021 06:15:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18FF2C433DB
+	for <kernel-janitors@archiver.kernel.org>; Wed,  3 Mar 2021 06:15:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 99F4464E86
-	for <kernel-janitors@archiver.kernel.org>; Wed,  3 Mar 2021 06:15:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9DD764ECE
+	for <kernel-janitors@archiver.kernel.org>; Wed,  3 Mar 2021 06:15:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354892AbhCCGHm (ORCPT
+        id S1354907AbhCCGII (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 3 Mar 2021 01:07:42 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:43815 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238945AbhCCA2p (ORCPT
+        Wed, 3 Mar 2021 01:08:08 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:54438 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236446AbhCCFYK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 2 Mar 2021 19:28:45 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1lHFMt-0005Cd-En; Wed, 03 Mar 2021 00:27:59 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        =?UTF-8?q?Marek=20Ol=C5=A1=C3=A1k?= <marek.olsak@amd.com>,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/radeon: fix copy of uninitialized variable back to userspace
-Date:   Wed,  3 Mar 2021 00:27:59 +0000
-Message-Id: <20210303002759.28752-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.30.0
+        Wed, 3 Mar 2021 00:24:10 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 1235L2ke112284;
+        Wed, 3 Mar 2021 05:22:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=6sJkNvGHrVmMtI/AqoNEU4T1AjvVLS5rr4NaMFJNQx0=;
+ b=Ys8UiwK9LsCq+zVpWUiV33OpRLsjVP3Ys53b7o9lE/6Tz+tGKzaODeXPqcVBf3Tu68wq
+ z/ZEhl8/+beHoJcbR966tIkMtgHNCD08Qfyt8estb9xs7XUIKpIfnwwHb1FmrDxQKH1u
+ T3Y13le4oNwE0WlsM+LFiQi5DBTpANSUVnVOcaBIUS1e2oDb/KwoCP+vqhasLg2p+tFL
+ PWjYj+BcLI6+ECEAZ9lwTo8OwTcafiIDvHJhjlOBqOtIZzGxGZui6DMxns5RVpa+2b75
+ Kmmr4gR1RxJcp9tu0WdPOxM9r8qlk320Ki4b1fBcz558ka5/dI4JTggRB8mTTFlOxRYs /w== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 36ye1ma0wc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 03 Mar 2021 05:22:51 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 1235L3L0118668;
+        Wed, 3 Mar 2021 05:22:48 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 370000tn26-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 03 Mar 2021 05:22:48 +0000
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 1235Ml3B023460;
+        Wed, 3 Mar 2021 05:22:47 GMT
+Received: from kadam (/102.36.221.92)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 02 Mar 2021 21:22:46 -0800
+Date:   Wed, 3 Mar 2021 08:22:40 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Stefan Richter <stefanr@s5r6.in-berlin.de>
+Cc:     linux1394-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] firewire: prevent integer overflow on 32bit systems
+Message-ID: <20210303052239.GY2222@kadam>
+References: <YD4e9XOD8JPlJzxW@mwanda>
+ <20210302221911.6c1582e2@kant>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210302221911.6c1582e2@kant>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-IMR: 1
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9911 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=999
+ phishscore=0 bulkscore=0 mlxscore=0 spamscore=0 suspectscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2103030039
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9911 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 priorityscore=1501
+ mlxlogscore=999 impostorscore=0 suspectscore=0 adultscore=0 malwarescore=0
+ mlxscore=0 spamscore=0 bulkscore=0 lowpriorityscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2103030039
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Tue, Mar 02, 2021 at 10:19:11PM +0100, Stefan Richter wrote:
+> On Mar 02 Dan Carpenter wrote:
+> > In TCODE_STREAM_DATA mode, on 32bit systems, the "sizeof(*e) +
+> > request->length" operation can overflow leading to memory corruption.
+> > 
+> > Fixes: 18e9b10fcdc0 ("firewire: cdev: add closure to async stream ioctl")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > ---
+> >  drivers/firewire/core-cdev.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/drivers/firewire/core-cdev.c b/drivers/firewire/core-cdev.c
+> > index fb6c651214f3..314de0384035 100644
+> > --- a/drivers/firewire/core-cdev.c
+> > +++ b/drivers/firewire/core-cdev.c
+> > @@ -587,6 +587,9 @@ static int init_request(struct client *client,
+> >  	    request->length < 4)
+> >  		return -EINVAL;
+> >  
+> > +	if (request->length > ULONG_MAX - sizeof(*e))
+> > +		return -EINVAL;
+> > +
+> >  	e = kmalloc(sizeof(*e) + request->length, GFP_KERNEL);
+> >  	if (e == NULL)
+> >  		return -ENOMEM;
+> 
+> There is already a length check for asynchronous stream requests.
+> It happens in ioctl_send_stream_packet().
 
-Currently the ioctl command RADEON_INFO_SI_BACKEND_ENABLED_MASK can
-copy back uninitialised data in value_tmp that pointer *value points
-to. This can occur when rdev->family is less than CHIP_BONAIRE and
-less than CHIP_TAHITI.  Fix this by adding in a missing -EINVAL
-so that no invalid value is copied back to userspace.
+Oh, yeah.  You're right.  I should have looked more carefully.  Sorry.
 
-Addresses-Coverity: ("Uninitialized scalar variable)
-Cc: stable@vger.kernel.org # 3.13+
-Fixes: 439a1cfffe2c ("drm/radeon: expose render backend mask to the userspace")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpu/drm/radeon/radeon_kms.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/gpu/drm/radeon/radeon_kms.c b/drivers/gpu/drm/radeon/radeon_kms.c
-index 2479d6ab7a36..58876bb4ef2a 100644
---- a/drivers/gpu/drm/radeon/radeon_kms.c
-+++ b/drivers/gpu/drm/radeon/radeon_kms.c
-@@ -518,6 +518,7 @@ int radeon_info_ioctl(struct drm_device *dev, void *data, struct drm_file *filp)
- 			*value = rdev->config.si.backend_enable_mask;
- 		} else {
- 			DRM_DEBUG_KMS("BACKEND_ENABLED_MASK is si+ only!\n");
-+			return -EINVAL;
- 		}
- 		break;
- 	case RADEON_INFO_MAX_SCLK:
--- 
-2.30.0
+regards,
+dan carpenter
 
