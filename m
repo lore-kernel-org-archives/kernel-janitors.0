@@ -2,86 +2,77 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 255F7C433DB
-	for <kernel-janitors@archiver.kernel.org>; Thu,  4 Mar 2021 01:14:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD3FDC433E0
+	for <kernel-janitors@archiver.kernel.org>; Thu,  4 Mar 2021 04:52:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0394864F1D
-	for <kernel-janitors@archiver.kernel.org>; Thu,  4 Mar 2021 01:14:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A254664EF8
+	for <kernel-janitors@archiver.kernel.org>; Thu,  4 Mar 2021 04:52:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235881AbhCDBO2 (ORCPT
+        id S233870AbhCDEvf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 3 Mar 2021 20:14:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59712 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1379090AbhCDAzz (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 3 Mar 2021 19:55:55 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 9EEDB64EBB;
-        Thu,  4 Mar 2021 00:55:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1614819314;
-        bh=CrZ0LDgVarSQYHBMvLY+6qReNahMDrXe3e1rU8uL/Ig=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=HMFRWOfDclSs8FrbyU1RN/2lbPp4xkyNj20DJGWDpPXL4eu5faNFoq07sOhXOQOUp
-         3t4WpR3X9ikdW0+qPkzy6K9SQ5urNkdx0yKSCM8w3COVIyu9oafxLJ81yXIl2SShM8
-         1jbC6wctxXcXsouiSJrR0sDwuNzAKIW0yJ3NESc+WeFB63XUkAbsQJoHEU3jxDNcO0
-         HeLSHnfgIrFByRFpIYhhjB9yiKHy5ro0y9H1hhuYD2LodvwO/p6syY/oeIhEd9yF82
-         BDfdBaqWy2Ft66X82cVKdpFdizNZ138PZZWFDsM4gHxOwdJO6JcuTcVc2vFv1pYHUs
-         sxWtzF/Nre1yA==
-From:   Mark Brown <broonie@kernel.org>
-To:     Jaroslav Kysela <perex@perex.cz>,
-        Wei Yongjun <weiyongjun1@huawei.com>,
-        Hulk Robot <hulkci@huawei.com>,
-        Shuming Fan <shumingf@realtek.com>,
-        Oder Chiou <oder_chiou@realtek.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Takashi Iwai <tiwai@suse.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        alsa-devel@alsa-project.org
-In-Reply-To: <20210303064041.898281-1-weiyongjun1@huawei.com>
-References: <20210303064041.898281-1-weiyongjun1@huawei.com>
-Subject: Re: [PATCH -next] ASoC: rt1316: Fix return value check in rt1316_sdw_probe()
-Message-Id: <161481924070.9553.12740264453488013918.b4-ty@kernel.org>
-Date:   Thu, 04 Mar 2021 00:54:00 +0000
+        Wed, 3 Mar 2021 23:51:35 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:13051 "EHLO
+        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234047AbhCDEvD (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 3 Mar 2021 23:51:03 -0500
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
+        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4DrdfL2XlKzMfbV;
+        Thu,  4 Mar 2021 12:48:10 +0800 (CST)
+Received: from localhost.localdomain (10.175.102.38) by
+ DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
+ 14.3.498.0; Thu, 4 Mar 2021 12:50:11 +0800
+From:   'Wei Yongjun <weiyongjun1@huawei.com>
+To:     <weiyongjun1@huawei.com>, Paul Cercueil <paul@crapouillou.net>,
+        "Wim Van Sebroeck" <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>
+CC:     <linux-mips@vger.kernel.org>, <linux-watchdog@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH -next] watchdog: jz4740: Fix return value check in jz4740_wdt_probe()
+Date:   Thu, 4 Mar 2021 04:59:09 +0000
+Message-ID: <20210304045909.945799-1-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.102.38]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 3 Mar 2021 06:40:41 +0000, Wei Yongjun wrote:
-> In case of error, the function devm_regmap_init_sdw() returns ERR_PTR()
-> and never returns NULL. The NULL test in the return value check should
-> be replaced with IS_ERR().
+From: Wei Yongjun <weiyongjun1@huawei.com>
 
-Applied to
+In case of error, the function device_node_to_regmap() returns
+ERR_PTR() and never returns NULL. The NULL test in the return
+value check should be replaced with IS_ERR().
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+Fixes: 6d532143c915 ("watchdog: jz4740: Use regmap provided by TCU driver")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/watchdog/jz4740_wdt.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks!
+diff --git a/drivers/watchdog/jz4740_wdt.c b/drivers/watchdog/jz4740_wdt.c
+index bdf9564efa29..395bde79e292 100644
+--- a/drivers/watchdog/jz4740_wdt.c
++++ b/drivers/watchdog/jz4740_wdt.c
+@@ -176,9 +176,9 @@ static int jz4740_wdt_probe(struct platform_device *pdev)
+ 	watchdog_set_drvdata(jz4740_wdt, drvdata);
+ 
+ 	drvdata->map = device_node_to_regmap(dev->parent->of_node);
+-	if (!drvdata->map) {
++	if (IS_ERR(drvdata->map)) {
+ 		dev_err(dev, "regmap not found\n");
+-		return -EINVAL;
++		return PTR_ERR(drvdata->map);
+ 	}
+ 
+ 	return devm_watchdog_register_device(dev, &drvdata->wdt);
 
-[1/1] ASoC: rt1316: Fix return value check in rt1316_sdw_probe()
-      commit: f87aec4585c3cf0853ba20637bb8c6bdd2689c46
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
