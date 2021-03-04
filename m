@@ -7,35 +7,38 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD3FDC433E0
-	for <kernel-janitors@archiver.kernel.org>; Thu,  4 Mar 2021 04:52:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4B4DC433DB
+	for <kernel-janitors@archiver.kernel.org>; Thu,  4 Mar 2021 06:39:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A254664EF8
-	for <kernel-janitors@archiver.kernel.org>; Thu,  4 Mar 2021 04:52:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B017C64F09
+	for <kernel-janitors@archiver.kernel.org>; Thu,  4 Mar 2021 06:39:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233870AbhCDEvf (ORCPT
+        id S235317AbhCDGiY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 3 Mar 2021 23:51:35 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:13051 "EHLO
+        Thu, 4 Mar 2021 01:38:24 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:13468 "EHLO
         szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234047AbhCDEvD (ORCPT
+        with ESMTP id S235202AbhCDGhy (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 3 Mar 2021 23:51:03 -0500
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
-        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4DrdfL2XlKzMfbV;
-        Thu,  4 Mar 2021 12:48:10 +0800 (CST)
+        Thu, 4 Mar 2021 01:37:54 -0500
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
+        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Drh295s9czjW5g;
+        Thu,  4 Mar 2021 14:35:29 +0800 (CST)
 Received: from localhost.localdomain (10.175.102.38) by
- DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
- 14.3.498.0; Thu, 4 Mar 2021 12:50:11 +0800
+ DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
+ 14.3.498.0; Thu, 4 Mar 2021 14:37:03 +0800
 From:   'Wei Yongjun <weiyongjun1@huawei.com>
-To:     <weiyongjun1@huawei.com>, Paul Cercueil <paul@crapouillou.net>,
-        "Wim Van Sebroeck" <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>
-CC:     <linux-mips@vger.kernel.org>, <linux-watchdog@vger.kernel.org>,
+To:     <weiyongjun1@huawei.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>
+CC:     <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
         <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH -next] watchdog: jz4740: Fix return value check in jz4740_wdt_probe()
-Date:   Thu, 4 Mar 2021 04:59:09 +0000
-Message-ID: <20210304045909.945799-1-weiyongjun1@huawei.com>
+Subject: [PATCH -next] mtd: parsers: ofpart: make symbol 'bcm4908_partitions_quirks' static
+Date:   Thu, 4 Mar 2021 06:46:00 +0000
+Message-ID: <20210304064600.3279138-1-weiyongjun1@huawei.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Type:   text/plain; charset=US-ASCII
@@ -48,31 +51,32 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Wei Yongjun <weiyongjun1@huawei.com>
 
-In case of error, the function device_node_to_regmap() returns
-ERR_PTR() and never returns NULL. The NULL test in the return
-value check should be replaced with IS_ERR().
+The sparse tool complains as follows:
 
-Fixes: 6d532143c915 ("watchdog: jz4740: Use regmap provided by TCU driver")
+drivers/mtd/parsers/ofpart_core.c:25:32: warning:
+ symbol 'bcm4908_partitions_quirks' was not declared. Should it be static?
+
+This symbol is not used outside of ofpart_core.c, so this
+commit marks it static.
+
+Fixes: 457da931b608 ("mtd: parsers: ofpart: support BCM4908 fixed partitions")
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/watchdog/jz4740_wdt.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/mtd/parsers/ofpart_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/watchdog/jz4740_wdt.c b/drivers/watchdog/jz4740_wdt.c
-index bdf9564efa29..395bde79e292 100644
---- a/drivers/watchdog/jz4740_wdt.c
-+++ b/drivers/watchdog/jz4740_wdt.c
-@@ -176,9 +176,9 @@ static int jz4740_wdt_probe(struct platform_device *pdev)
- 	watchdog_set_drvdata(jz4740_wdt, drvdata);
+diff --git a/drivers/mtd/parsers/ofpart_core.c b/drivers/mtd/parsers/ofpart_core.c
+index 258c06a42283..e9cb9ca28813 100644
+--- a/drivers/mtd/parsers/ofpart_core.c
++++ b/drivers/mtd/parsers/ofpart_core.c
+@@ -22,7 +22,7 @@ struct fixed_partitions_quirks {
+ 	int (*post_parse)(struct mtd_info *mtd, struct mtd_partition *parts, int nr_parts);
+ };
  
- 	drvdata->map = device_node_to_regmap(dev->parent->of_node);
--	if (!drvdata->map) {
-+	if (IS_ERR(drvdata->map)) {
- 		dev_err(dev, "regmap not found\n");
--		return -EINVAL;
-+		return PTR_ERR(drvdata->map);
- 	}
+-struct fixed_partitions_quirks bcm4908_partitions_quirks = {
++static struct fixed_partitions_quirks bcm4908_partitions_quirks = {
+ 	.post_parse = bcm4908_partitions_post_parse,
+ };
  
- 	return devm_watchdog_register_device(dev, &drvdata->wdt);
 
