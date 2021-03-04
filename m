@@ -7,76 +7,72 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4B4DC433DB
-	for <kernel-janitors@archiver.kernel.org>; Thu,  4 Mar 2021 06:39:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A69D5C433DB
+	for <kernel-janitors@archiver.kernel.org>; Thu,  4 Mar 2021 09:22:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B017C64F09
-	for <kernel-janitors@archiver.kernel.org>; Thu,  4 Mar 2021 06:39:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78D4D64EBB
+	for <kernel-janitors@archiver.kernel.org>; Thu,  4 Mar 2021 09:22:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235317AbhCDGiY (ORCPT
+        id S237430AbhCDJWG (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 4 Mar 2021 01:38:24 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:13468 "EHLO
-        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235202AbhCDGhy (ORCPT
+        Thu, 4 Mar 2021 04:22:06 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:38458 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237428AbhCDJWC (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 4 Mar 2021 01:37:54 -0500
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Drh295s9czjW5g;
-        Thu,  4 Mar 2021 14:35:29 +0800 (CST)
-Received: from localhost.localdomain (10.175.102.38) by
- DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
- 14.3.498.0; Thu, 4 Mar 2021 14:37:03 +0800
-From:   'Wei Yongjun <weiyongjun1@huawei.com>
-To:     <weiyongjun1@huawei.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>
-CC:     <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH -next] mtd: parsers: ofpart: make symbol 'bcm4908_partitions_quirks' static
-Date:   Thu, 4 Mar 2021 06:46:00 +0000
-Message-ID: <20210304064600.3279138-1-weiyongjun1@huawei.com>
-X-Mailer: git-send-email 2.25.1
+        Thu, 4 Mar 2021 04:22:02 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lHkAY-0001W7-J6; Thu, 04 Mar 2021 09:21:18 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] f2fs: fix a redundant call to f2fs_balance_fs if an error occurs
+Date:   Thu,  4 Mar 2021 09:21:18 +0000
+Message-Id: <20210304092118.2279879-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.30.0
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.102.38]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-The sparse tool complains as follows:
+The  uninitialized variable dn.node_changed does not get set when a
+call to f2fs_get_node_page fails.  This uninitialized value gets used
+in the call to f2fs_balance_fs() that may or not may not balances
+dirty node and dentry pages depending on the uninitialized state of
+the variable. Fix this by only calling f2fs_balance_fs if err is
+not set.
 
-drivers/mtd/parsers/ofpart_core.c:25:32: warning:
- symbol 'bcm4908_partitions_quirks' was not declared. Should it be static?
+Thanks to Jaegeuk Kim for suggesting an appropriate fix.
 
-This symbol is not used outside of ofpart_core.c, so this
-commit marks it static.
-
-Fixes: 457da931b608 ("mtd: parsers: ofpart: support BCM4908 fixed partitions")
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Addresses-Coverity: ("Uninitialized scalar variable")
+Fixes: 2a3407607028 ("f2fs: call f2fs_balance_fs only when node was changed")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/mtd/parsers/ofpart_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/f2fs/inline.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mtd/parsers/ofpart_core.c b/drivers/mtd/parsers/ofpart_core.c
-index 258c06a42283..e9cb9ca28813 100644
---- a/drivers/mtd/parsers/ofpart_core.c
-+++ b/drivers/mtd/parsers/ofpart_core.c
-@@ -22,7 +22,7 @@ struct fixed_partitions_quirks {
- 	int (*post_parse)(struct mtd_info *mtd, struct mtd_partition *parts, int nr_parts);
- };
+diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+index 993caefcd2bb..92652ca7a7c8 100644
+--- a/fs/f2fs/inline.c
++++ b/fs/f2fs/inline.c
+@@ -219,7 +219,8 @@ int f2fs_convert_inline_inode(struct inode *inode)
  
--struct fixed_partitions_quirks bcm4908_partitions_quirks = {
-+static struct fixed_partitions_quirks bcm4908_partitions_quirks = {
- 	.post_parse = bcm4908_partitions_post_parse,
- };
+ 	f2fs_put_page(page, 1);
  
+-	f2fs_balance_fs(sbi, dn.node_changed);
++	if (!err)
++		f2fs_balance_fs(sbi, dn.node_changed);
+ 
+ 	return err;
+ }
+-- 
+2.30.0
 
