@@ -2,119 +2,126 @@ Return-Path: <SRS0=g6hj=ID=vger.kernel.org=kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FAD7C433E0
-	for <kernel-janitors@archiver.kernel.org>; Fri,  5 Mar 2021 19:10:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07272C433E0
+	for <kernel-janitors@archiver.kernel.org>; Fri,  5 Mar 2021 21:10:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5A250650A3
-	for <kernel-janitors@archiver.kernel.org>; Fri,  5 Mar 2021 19:10:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C784B6507A
+	for <kernel-janitors@archiver.kernel.org>; Fri,  5 Mar 2021 21:10:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229512AbhCETKM (ORCPT
+        id S229563AbhCEVKC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 5 Mar 2021 14:10:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38506 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229562AbhCETKC (ORCPT
+        Fri, 5 Mar 2021 16:10:02 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:41086 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229446AbhCEVJc (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 5 Mar 2021 14:10:02 -0500
-Received: from mail-ot1-x333.google.com (mail-ot1-x333.google.com [IPv6:2607:f8b0:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F692C061574;
-        Fri,  5 Mar 2021 11:10:02 -0800 (PST)
-Received: by mail-ot1-x333.google.com with SMTP id j8so2862311otc.0;
-        Fri, 05 Mar 2021 11:10:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=iXzxwkzjLPM7KiJlrDFoXaEopVztroSTDc/T8EMHkyA=;
-        b=MHFhF1jy/arRNMe+nRyOQC57EQvTOsY6xXLgEOXZBFd9dqdRZIVlBWIC3S97NIQwtQ
-         iDuxd2SYi6D5XyPg6ecwKwFK4V7+/3FnqrNOtHmvpAkgcbm3Tmeap4lZh4OLtlEFugHi
-         Y8xiHkhEjmUq9D9igDgXhvovqcXUTS25i0s39z0sYCvqDJzfvHoiJlbs3Ag9RHvyh1s5
-         RvidPRO0ZNshH3OQQ9y+t6prDNk4K7SWqtf5+UpJa91klgQIrIx45TZqHL8+KGNc9Tnt
-         6J2EYeav9hkbRjCUmC0MQuq5T5MqzH6ELwBol9e12fXYY1/x42Can0cE348oscPRuDGw
-         zdow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iXzxwkzjLPM7KiJlrDFoXaEopVztroSTDc/T8EMHkyA=;
-        b=dBd5IRzcVF18KP8Yo/mION5z4cbMHaqns9fOi3DttltOfl2tvZ31TCYBhbPRBJgYok
-         hQ8/nzj2/7JM3B/olMmUt701Vk95C49qUxgD99fSD6tJh4uHLEPRJ5fBm7yxiNf8Y/nF
-         RgBq4lUY1avX/HWwnbzkDiIrO6T7wYrJrfhqgdgYPoiYv0h3Kd5rR2yzi/q1x2vfi8+t
-         bUIeMB/wMM82a6FKNcEcZHiSR9HAo4IWjOHODQx+yMO7d0UbWVPDGbFfGT7zTQzn1Nxt
-         Fhk2IKTAXG0eVRxyfvMK+48zhBK8m+b9fGwaXbKffRyoDuO6iz34VL/RTAhtJZt8GP41
-         xsAA==
-X-Gm-Message-State: AOAM530a09shdz3+RIWCCZbIIw8alT4Gddw0u+e8K8ph4IXtV0zRxe/j
-        1ncCErFOvIYLHhZIaO9PlmLs/Mc+gpdexTGw0dM=
-X-Google-Smtp-Source: ABdhPJx2hSgeK+Yqg7IMRFfwiaPsKVqALRblWQSXFF33Bri5Jv38Yca6XaIqX4fmYVUvCMVExpkjIb4XO50ayw6IDFg=
-X-Received: by 2002:a9d:20c3:: with SMTP id x61mr9318715ota.311.1614971401734;
- Fri, 05 Mar 2021 11:10:01 -0800 (PST)
+        Fri, 5 Mar 2021 16:09:32 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 125IJEsi119068;
+        Fri, 5 Mar 2021 18:33:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=1yb3IR7uMrDNVMX1fCrWykaocz129UynNSH37KKQI3A=;
+ b=zpMTnBRto5B8/nSPt8FzzeKsDB2q9xw7n4BZFRjDMOBLOtyPC77hJT8BRPmPJ81jSoQO
+ ecUoL4f15tFzco6mZ1h8R1vxdNlp3RvidXG3enesWbE29TQHcWJ+Wj2yxQzc/3pX85RH
+ gCJz3jxn3YZs52py6WYk/Ji8cnNm7dxHdOXvryHJ1GGRXMBNaM3Kv3XNgZl5jXQdB6BP
+ 1VC7ELc8aYAodCVrvTec3JeLd+apsciQ2w/V0VVwzLfZnP5Z2+8dtaYDR2w6ciQTtjyt
+ 2bPF7A4km+2FmWr/47so/gsFUPlf7KisN99ggKChsYe2TlHh6L6aHF37+UboW9V1Up9y zg== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2130.oracle.com with ESMTP id 36ybkbkhj4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 05 Mar 2021 18:33:12 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 125ILF53138731;
+        Fri, 5 Mar 2021 18:33:10 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 370004b3d4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 05 Mar 2021 18:33:10 +0000
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 125IX7o4016278;
+        Fri, 5 Mar 2021 18:33:07 GMT
+Received: from kadam (/102.36.221.92)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 05 Mar 2021 18:33:07 +0000
+Date:   Fri, 5 Mar 2021 21:32:59 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Edmundo Carmona Antoranz <eantoranz@gmail.com>
+Cc:     devel@driverdev.osuosl.org, Ivan Safonov <insafonov@gmail.com>,
+        Takashi Iwai <tiwai@suse.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        kernel-janitors@vger.kernel.org,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        Larry Finger <Larry.Finger@lwfinger.net>
+Subject: Re: [PATCH] staging: rtl8188eu: prevent ->ssid overflow in
+ rtw_wx_set_scan()
+Message-ID: <20210305183259.GE2087@kadam>
+References: <YEHymwsnHewzoam7@mwanda>
+ <CAOc6etYqu_SJPjZtZdp4xDX=MVB0XY67tJ-EYoDYWuLfEyjnrw@mail.gmail.com>
 MIME-Version: 1.0
-References: <20210303132510.66904-1-colin.king@canonical.com>
-In-Reply-To: <20210303132510.66904-1-colin.king@canonical.com>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Fri, 5 Mar 2021 14:09:50 -0500
-Message-ID: <CADnq5_Pqd0J_VpSkK_hAd9mUg2YgBLcZCEo3u7pXADPAW0_Zkg@mail.gmail.com>
-Subject: Re: [PATCH][next] drm/amdgpu/display: remove redundant continue statement
-To:     Colin King <colin.king@canonical.com>
-Cc:     Harry Wentland <harry.wentland@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Aurabindo Pillai <aurabindo.pillai@amd.com>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>, kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOc6etYqu_SJPjZtZdp4xDX=MVB0XY67tJ-EYoDYWuLfEyjnrw@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-IMR: 1
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9914 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=999
+ phishscore=0 bulkscore=0 mlxscore=0 spamscore=0 suspectscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2103050094
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9914 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 impostorscore=0
+ suspectscore=0 phishscore=0 bulkscore=0 mlxscore=0 lowpriorityscore=0
+ clxscore=1011 mlxlogscore=999 adultscore=0 malwarescore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2103050094
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Applied.  thanks.
+On Fri, Mar 05, 2021 at 10:58:17AM -0600, Edmundo Carmona Antoranz wrote:
+> On Fri, Mar 5, 2021 at 2:59 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> > -                                       if (sec_len > 0 && sec_len <= len) {
+> > +                                       if (sec_len > 0 &&
+> > +                                           sec_len <= len &&
+> > +                                           sec_len <= 32) {
+> 
+> I wonder if this could be reduced to (sec_len > 0 && sec_len <=
+> min(len, 32)) from a stylistic POV?
 
-Alex
+I kind of prefer it the way I wrote it.  I prefer conditions split
+apart and done ploddingly, one at a time...  You'll notice how I could
+have written it like:
 
-On Wed, Mar 3, 2021 at 8:25 AM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The continue statement in a for-loop is redudant and can be removed.
-> Clean up the code to address this.
->
-> Addresses-Coverity: ("Continue as no effect")
-> Fixes: b6f91fc183f7 ("drm/amdgpu/display: buffer INTERRUPT_LOW_IRQ_CONTEXT interrupt work")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_irq.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_irq.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_irq.c
-> index 8ce10d0973c5..d3c687d07ee6 100644
-> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_irq.c
-> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_irq.c
-> @@ -520,9 +520,7 @@ static void amdgpu_dm_irq_schedule_work(struct amdgpu_device *adev,
->                 return;
->
->         list_for_each_entry (handler_data, handler_list, list) {
-> -               if (!queue_work(system_highpri_wq, &handler_data->work)) {
-> -                       continue;
-> -               } else {
-> +               if (queue_work(system_highpri_wq, &handler_data->work)) {
->                         work_queued = true;
->                         break;
->                 }
-> --
-> 2.30.0
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+					if (sec_len > 0 && sec_len <= len &&
+					    sec_len <= 32) {
+
+But I really like my conditions to be spelled out so the "sec_len" is
+perfectly aligned in each part of the condition.  Your way would be to
+combine two conditions into one part of a line and seems sneaky.
+
+> 
+> First attempt at something kernel related so I know there's plenty of
+> things to learn (including patterns for problems like this and
+> etiquette).
+
+It's good that you're reviewing code...  We try to be predictable though
+and no one would have predicted your response.  Ideally patch review
+should be like, "Ugh!  Why didn't I think of that?  Of course, we should
+propagate the error code."  Or "Oh, I didn't know checkpatch warns about
+that."
+
+The truth is that I don't always agree with all of Greg's reviews.  He
+is more strict than I am about breaking up patches into multiple things.
+(It's a tricky line to define for me).  But I can always predict what
+Greg will say in a review so that saves time when I know which patches
+he will accept and which he won't.
+
+regards,
+dan carpenter
