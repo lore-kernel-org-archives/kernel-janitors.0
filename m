@@ -2,93 +2,119 @@ Return-Path: <SRS0=g6hj=ID=vger.kernel.org=kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C945C433DB
-	for <kernel-janitors@archiver.kernel.org>; Fri,  5 Mar 2021 18:56:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FAD7C433E0
+	for <kernel-janitors@archiver.kernel.org>; Fri,  5 Mar 2021 19:10:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 066DD65090
-	for <kernel-janitors@archiver.kernel.org>; Fri,  5 Mar 2021 18:56:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A250650A3
+	for <kernel-janitors@archiver.kernel.org>; Fri,  5 Mar 2021 19:10:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229526AbhCESzc (ORCPT
+        id S229512AbhCETKM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 5 Mar 2021 13:55:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35368 "EHLO
+        Fri, 5 Mar 2021 14:10:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229512AbhCESz3 (ORCPT
+        with ESMTP id S229562AbhCETKC (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 5 Mar 2021 13:55:29 -0500
-Received: from mail-il1-x133.google.com (mail-il1-x133.google.com [IPv6:2607:f8b0:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69A71C061574
-        for <kernel-janitors@vger.kernel.org>; Fri,  5 Mar 2021 10:55:29 -0800 (PST)
-Received: by mail-il1-x133.google.com with SMTP id b5so2926095ilq.10
-        for <kernel-janitors@vger.kernel.org>; Fri, 05 Mar 2021 10:55:29 -0800 (PST)
+        Fri, 5 Mar 2021 14:10:02 -0500
+Received: from mail-ot1-x333.google.com (mail-ot1-x333.google.com [IPv6:2607:f8b0:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F692C061574;
+        Fri,  5 Mar 2021 11:10:02 -0800 (PST)
+Received: by mail-ot1-x333.google.com with SMTP id j8so2862311otc.0;
+        Fri, 05 Mar 2021 11:10:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=wTEQ3liBaU2QUGIl3WUEaeyjObjubIWkSzWM7RalQH4=;
-        b=uWPUA5bcT2kgl7CfVs+cz7k+i/utjJ8Kx4lwYEBIdDXWbRSepO5yGt3GlTDJZj29i7
-         7jPN/XQgkjXzkJ+GdtNWQ9/wJ+X9opo6Co1qrx3t6LvzkE8PUphixqpJGoiYbqBLV9iL
-         Vs7i+GN57PjZTmDDr0FywG502N+nV1StSMfljsm+5uqP4x1i+ZfYLr0DhC0cI6LdC1fU
-         1kgeax+xHzvqH2em7fojG6AcfkHf1u+IYnbCbLI6ZPVA9JfvSFKu19T5TZ7gf/HCy/ye
-         UN5STA0kCZUMC+Nu8++S7oze9fwx5sq+Oj7HLEH9CeTZce2d3u9oaLBbd7UmlvYgPo06
-         nOhg==
+        bh=iXzxwkzjLPM7KiJlrDFoXaEopVztroSTDc/T8EMHkyA=;
+        b=MHFhF1jy/arRNMe+nRyOQC57EQvTOsY6xXLgEOXZBFd9dqdRZIVlBWIC3S97NIQwtQ
+         iDuxd2SYi6D5XyPg6ecwKwFK4V7+/3FnqrNOtHmvpAkgcbm3Tmeap4lZh4OLtlEFugHi
+         Y8xiHkhEjmUq9D9igDgXhvovqcXUTS25i0s39z0sYCvqDJzfvHoiJlbs3Ag9RHvyh1s5
+         RvidPRO0ZNshH3OQQ9y+t6prDNk4K7SWqtf5+UpJa91klgQIrIx45TZqHL8+KGNc9Tnt
+         6J2EYeav9hkbRjCUmC0MQuq5T5MqzH6ELwBol9e12fXYY1/x42Can0cE348oscPRuDGw
+         zdow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=wTEQ3liBaU2QUGIl3WUEaeyjObjubIWkSzWM7RalQH4=;
-        b=NkRZVtUVhuOGMtCJovSkNFuVazPqlSgoWuXeTI+vsEqbNiYIv4TD6vV5kfSsoLoKs8
-         EnJipPxF7mrkXLuFSYMhGySlB2OQbtGLlFUhnejOW9SdlOEZ4+MnYb2g3FqSQzRMjyLR
-         rPq+KUJnHP4DL7pxVMKdsK3XCD60ingh8JlO5N0OTqb6dy3n4QyrcAGsusMCs3nUB/ft
-         +cncJJOjz/MezSBoVt34BT3GDN1T4QXWD3xmSA7RPNNcsz9xpc3IAG8eTvPRAD68DOGK
-         s0s1QH4dB8awsxCT+36n4pffV8cyq1AjCrQUhe2ihUDNdmS+QiU0/6QbH0QzObNPHTF+
-         Vk0Q==
-X-Gm-Message-State: AOAM5321o4exzfZN8Kj5vxKtymP6KHRFbWezrWiYoYGH6kKDrjSg91pm
-        EBpvMtQeYrNx9pM5iXaf0jnOLgMYKVIlZyj8ing=
-X-Google-Smtp-Source: ABdhPJz8s/H6fe+euee/Fq4KkEckWTTD+Yvz0+tLF1gKuT8WlN+8zfV3rx7w3jlP14pm5O//glta3dEh/kNDVedte98=
-X-Received: by 2002:a92:c5cf:: with SMTP id s15mr10044836ilt.149.1614970528943;
- Fri, 05 Mar 2021 10:55:28 -0800 (PST)
+        bh=iXzxwkzjLPM7KiJlrDFoXaEopVztroSTDc/T8EMHkyA=;
+        b=dBd5IRzcVF18KP8Yo/mION5z4cbMHaqns9fOi3DttltOfl2tvZ31TCYBhbPRBJgYok
+         hQ8/nzj2/7JM3B/olMmUt701Vk95C49qUxgD99fSD6tJh4uHLEPRJ5fBm7yxiNf8Y/nF
+         RgBq4lUY1avX/HWwnbzkDiIrO6T7wYrJrfhqgdgYPoiYv0h3Kd5rR2yzi/q1x2vfi8+t
+         bUIeMB/wMM82a6FKNcEcZHiSR9HAo4IWjOHODQx+yMO7d0UbWVPDGbFfGT7zTQzn1Nxt
+         Fhk2IKTAXG0eVRxyfvMK+48zhBK8m+b9fGwaXbKffRyoDuO6iz34VL/RTAhtJZt8GP41
+         xsAA==
+X-Gm-Message-State: AOAM530a09shdz3+RIWCCZbIIw8alT4Gddw0u+e8K8ph4IXtV0zRxe/j
+        1ncCErFOvIYLHhZIaO9PlmLs/Mc+gpdexTGw0dM=
+X-Google-Smtp-Source: ABdhPJx2hSgeK+Yqg7IMRFfwiaPsKVqALRblWQSXFF33Bri5Jv38Yca6XaIqX4fmYVUvCMVExpkjIb4XO50ayw6IDFg=
+X-Received: by 2002:a9d:20c3:: with SMTP id x61mr9318715ota.311.1614971401734;
+ Fri, 05 Mar 2021 11:10:01 -0800 (PST)
 MIME-Version: 1.0
-References: <YEHymwsnHewzoam7@mwanda> <CAOc6etYqu_SJPjZtZdp4xDX=MVB0XY67tJ-EYoDYWuLfEyjnrw@mail.gmail.com>
- <20210305183259.GE2087@kadam>
-In-Reply-To: <20210305183259.GE2087@kadam>
-From:   Edmundo Carmona Antoranz <eantoranz@gmail.com>
-Date:   Fri, 5 Mar 2021 12:55:16 -0600
-Message-ID: <CAOc6etaxjfTdTG4s6F+OR6rybXBAk259S_XC2i4BruhbQJDrug@mail.gmail.com>
-Subject: Re: [PATCH] staging: rtl8188eu: prevent ->ssid overflow in rtw_wx_set_scan()
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     devel@driverdev.osuosl.org, Ivan Safonov <insafonov@gmail.com>,
-        Takashi Iwai <tiwai@suse.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        kernel-janitors@vger.kernel.org,
-        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-        Larry Finger <Larry.Finger@lwfinger.net>
+References: <20210303132510.66904-1-colin.king@canonical.com>
+In-Reply-To: <20210303132510.66904-1-colin.king@canonical.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Fri, 5 Mar 2021 14:09:50 -0500
+Message-ID: <CADnq5_Pqd0J_VpSkK_hAd9mUg2YgBLcZCEo3u7pXADPAW0_Zkg@mail.gmail.com>
+Subject: Re: [PATCH][next] drm/amdgpu/display: remove redundant continue statement
+To:     Colin King <colin.king@canonical.com>
+Cc:     Harry Wentland <harry.wentland@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Aurabindo Pillai <aurabindo.pillai@amd.com>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>, kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Mar 5, 2021 at 12:33 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+Applied.  thanks.
+
+Alex
+
+On Wed, Mar 3, 2021 at 8:25 AM Colin King <colin.king@canonical.com> wrote:
 >
-> It's good that you're reviewing code...
-
-Right now watching the patches flow feels like I'm just shadowing.
-Later, when I get the hang of it, I might try providing something on
-my own. I'll just watch things from a distance for the time being
-perhaps making questions here or there (like I just did).
-
-Just in case, my main point was to use a min() (or MIN? whatever way
-it's provided in the standard) to have only two conditions instead of
-three... .to keep them on separate lines, it could be done like this:
-
-    if (sec_len > 0 &&
-        sec_len <= min(len, 32)) {
-
-_but_ I understand if you would rather keep the 3 conditions.
-
-Thanks for your comment.
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> The continue statement in a for-loop is redudant and can be removed.
+> Clean up the code to address this.
+>
+> Addresses-Coverity: ("Continue as no effect")
+> Fixes: b6f91fc183f7 ("drm/amdgpu/display: buffer INTERRUPT_LOW_IRQ_CONTEXT interrupt work")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_irq.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_irq.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_irq.c
+> index 8ce10d0973c5..d3c687d07ee6 100644
+> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_irq.c
+> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_irq.c
+> @@ -520,9 +520,7 @@ static void amdgpu_dm_irq_schedule_work(struct amdgpu_device *adev,
+>                 return;
+>
+>         list_for_each_entry (handler_data, handler_list, list) {
+> -               if (!queue_work(system_highpri_wq, &handler_data->work)) {
+> -                       continue;
+> -               } else {
+> +               if (queue_work(system_highpri_wq, &handler_data->work)) {
+>                         work_queued = true;
+>                         break;
+>                 }
+> --
+> 2.30.0
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
