@@ -2,82 +2,109 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-20.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E885C433E0
-	for <kernel-janitors@archiver.kernel.org>; Fri,  5 Mar 2021 09:40:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D30CAC433DB
+	for <kernel-janitors@archiver.kernel.org>; Fri,  5 Mar 2021 10:06:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 199B664FE2
-	for <kernel-janitors@archiver.kernel.org>; Fri,  5 Mar 2021 09:40:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9321E65028
+	for <kernel-janitors@archiver.kernel.org>; Fri,  5 Mar 2021 10:06:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229552AbhCEJkK (ORCPT
+        id S229660AbhCEKGE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 5 Mar 2021 04:40:10 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:32229 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229464AbhCEJkB (ORCPT
+        Fri, 5 Mar 2021 05:06:04 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:49136 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229576AbhCEKFy (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 5 Mar 2021 04:40:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1614937200;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Q6N/JHvwR3DDe0EEB+dV0FhguwPKEzi443GmKZ0bZ4c=;
-        b=GjdkFIN7ENSy6+Y8eq9bXUFN/bt5mCO5OPKgq/QEy5VV8abqGEHkyaw63ohvRd351aggtV
-        jomPZ8+9OQQN1zlRj/jeDpp/mIxREgs/sUugRuBC9nbSseiKgOcWpwXdXIzh9GFvtgpgHf
-        3uEdyoS8tb5AxyEY8R+ZJUFo/dQoODo=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-256-dgJAmS8ZNp2A4lgOGFa89w-1; Fri, 05 Mar 2021 04:39:56 -0500
-X-MC-Unique: dgJAmS8ZNp2A4lgOGFa89w-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 26F4B108BD06;
-        Fri,  5 Mar 2021 09:39:55 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-114-10.ams2.redhat.com [10.36.114.10])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 54E051002382;
-        Fri,  5 Mar 2021 09:39:54 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 5BEA018000AE; Fri,  5 Mar 2021 09:22:41 +0100 (CET)
-Date:   Fri, 5 Mar 2021 09:22:41 +0100
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Dave Airlie <airlied@redhat.com>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        virtualization@lists.linux-foundation.org,
-        spice-devel@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] qxl: Fix uninitialised struct field head.surface_id
-Message-ID: <20210305082241.dt53hczrvds3qoz2@sirius.home.kraxel.org>
-References: <20210304094928.2280722-1-colin.king@canonical.com>
+        Fri, 5 Mar 2021 05:05:54 -0500
+Received: from mail-wm1-f69.google.com ([209.85.128.69])
+        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <krzysztof.kozlowski@canonical.com>)
+        id 1lI7LF-0005MZ-Ab
+        for kernel-janitors@vger.kernel.org; Fri, 05 Mar 2021 10:05:53 +0000
+Received: by mail-wm1-f69.google.com with SMTP id b62so567025wmc.5
+        for <kernel-janitors@vger.kernel.org>; Fri, 05 Mar 2021 02:05:53 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=PGmg5dV7hVfKn04C67/ajk1oG+EyMbudwGnFqSTHrxs=;
+        b=klBYbWyf3nug43pztmC+NeXVHp3jYwPQ81vSxoHldStAdz0hYaDFN/gdCYGaN1vas+
+         3rLMf807GomqL4j19/RmHg4f4Pt/PoGlP/MJi2X4dodkU4DL81v3na5qD2jieGAOFffD
+         l0W1YOlf7MZIF8JF3BLHMzOUyWn7us0plUkGv009G74St1BibJQCld+QyOY5ON4ySuAt
+         EIdvyUDa3QP83BlXtzEu+/pGk+U8Z3mXhMo0lEjWYx+GGSf5UPLv9i1pJz5/1WNoj/Z0
+         7y6e9mOXspsk3VqUPtQvUNrS+u0jEHRZs+gNAMmh8Lfi8yx4akpJ3tN5xknDyC0gpU+Y
+         G/4Q==
+X-Gm-Message-State: AOAM530Ii1F8ON66a6gDWpxg4nirYx4UdXIlzv2hO0fIYu/54e9ONFQr
+        +S6w+aedw2CVAqlHqt4f+NOm4rdSgiuhkzNqZ47d2GJD98yK+J4YQ3J1vLnTymdr1vIi72u027B
+        lwKYa/W4kY60g2YmqGHC9CBQArt9guS8Mh3URcl5kHRSU9w==
+X-Received: by 2002:a05:6000:1081:: with SMTP id y1mr8313816wrw.347.1614938752890;
+        Fri, 05 Mar 2021 02:05:52 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJyGQBsfEHk5+RMowmVgMf1LBys7tnSPKD2v5PbIRXo+DrvJkDFUeI/t+g3t3bBx2KsrWxtLFQ==
+X-Received: by 2002:a05:6000:1081:: with SMTP id y1mr8313799wrw.347.1614938752771;
+        Fri, 05 Mar 2021 02:05:52 -0800 (PST)
+Received: from [192.168.1.116] (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
+        by smtp.gmail.com with ESMTPSA id p16sm4197316wrt.54.2021.03.05.02.05.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Mar 2021 02:05:52 -0800 (PST)
+Subject: Re: [PATCH 1/2] usb: gadget: s3c: Fix incorrect resources releasing
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        balbi@kernel.org, gregkh@linuxfoundation.org, nathan@kernel.org,
+        ndesaulniers@google.com, arnd@arndb.de, gustavoars@kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20210221074117.937965-1-christophe.jaillet@wanadoo.fr>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Message-ID: <f63496f6-f894-2a86-0328-0f8dadbd28cc@canonical.com>
+Date:   Fri, 5 Mar 2021 11:05:51 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210304094928.2280722-1-colin.king@canonical.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+In-Reply-To: <20210221074117.937965-1-christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Mar 04, 2021 at 09:49:28AM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On 21/02/2021 08:41, Christophe JAILLET wrote:
+> Since commit fe0f8e5c9ba8 ("usb: gadget: s3c: use platform resources"),
+> 'request_mem_region()' and 'ioremap()' are no more used, so they don't need
+> to be undone in the error handling path of the probe and in the removre
+
+s/removre/remove/
+
+> function.
 > 
-> The surface_id struct field in head is not being initialized and
-> static analysis warns that this is being passed through to
-> dev->monitors_config->heads[i] on an assignment. Clear up this
-> warning by initializing it to zero.
+> Remove these calls and the unneeded 'rsrc_start' and 'rsrc_len' global
+> variables.
 > 
-> Addresses-Coverity: ("Uninitialized scalar variable")
-> Fixes: a6d3c4d79822 ("qxl: hook monitors_config updates into crtc, not encoder.")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Fixes: fe0f8e5c9ba8 ("usb: gadget: s3c: use platform resources")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> the 'err' label is used only to reduce the diff size of this patch. It is
+> removed in the following patch.
+> 
+> checkpatch reports:
+> WARNING: Unknown commit id 'fe0f8e5c9ba8', maybe rebased or not pulled?
+> According to https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/drivers/usb/gadget/udc/s3c2410_udc.c?id=188db4435ac64f0918def7ba0593d408700ecc4b
+> the commit ID looks correct to me. Maybe something should be tweaked somewhere
+> before applying, but I don't know what!
+> ---
+>  drivers/usb/gadget/udc/s3c2410_udc.c | 14 +++-----------
+>  1 file changed, 3 insertions(+), 11 deletions(-)
 
-Pushed to drm-misc-fixes.
+With fixing of commit sha:
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 
-thanks,
-  Gerd
 
+Best regards,
+Krzysztof
