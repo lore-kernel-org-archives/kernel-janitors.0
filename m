@@ -2,108 +2,77 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2619C4332B
-	for <kernel-janitors@archiver.kernel.org>; Fri,  5 Mar 2021 08:13:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02202C433E0
+	for <kernel-janitors@archiver.kernel.org>; Fri,  5 Mar 2021 08:30:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CE9E964F0B
-	for <kernel-janitors@archiver.kernel.org>; Fri,  5 Mar 2021 08:13:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B351F65014
+	for <kernel-janitors@archiver.kernel.org>; Fri,  5 Mar 2021 08:30:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229609AbhCEINJ (ORCPT
+        id S229559AbhCEIaB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 5 Mar 2021 03:13:09 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:40752 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229520AbhCEINI (ORCPT
+        Fri, 5 Mar 2021 03:30:01 -0500
+Received: from 10.mo7.mail-out.ovh.net ([178.33.250.56]:55008 "EHLO
+        10.mo7.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229558AbhCEI3c (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 5 Mar 2021 03:13:08 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12585B3h065091;
-        Fri, 5 Mar 2021 08:13:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=thJbeMQoSGAdNvh1/MCjpLoM4c4zEqtINa8N7nrM+eA=;
- b=h5AAj613kDkzssehxDBFqyYVa1Ef212bAwF3Xx5+hHYtebHiU+tM8yTk3wL9SZkYv86N
- 6zS9gitLUadS/zmL1RrLcSmcKBUhLN8CC/zn76BweQKgKrYFzh3jKI8eKGaSl5zyMmep
- BF1t0ud00oVU1rlIYqrk1NKIxfV+hfeSUdq6II6Yf3ToDfsEr8rR7yG4iAJCzI24+AwL
- h3HIDvRwxteAEEi4HSLc/oVGLLMjL5scCBwpR/0Y0XSW163/CopiuUTGJJ4zvJbP5r0v
- 3C1at/6cj5sG8S1C9a73k2Ddm1EomHXIiwOLC7pfAuS3im+s5wKPdyUEX6V5f/eQxb1M Yw== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2120.oracle.com with ESMTP id 36yeqn9jqr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 05 Mar 2021 08:13:01 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12585CnQ008640;
-        Fri, 5 Mar 2021 08:12:59 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3020.oracle.com with ESMTP id 370003q0mf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 05 Mar 2021 08:12:59 +0000
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 1258Cu7k024654;
-        Fri, 5 Mar 2021 08:12:57 GMT
-Received: from mwanda (/102.36.221.92)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 05 Mar 2021 00:12:56 -0800
-Date:   Fri, 5 Mar 2021 11:12:49 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Michael Straube <straube.linux@gmail.com>,
-        Simone Serra <serrazimone@gmail.com>,
-        Lourdes Pedrajas <lu@pplo.net>, devel@driverdev.osuosl.org,
-        kernel-janitors@vger.kernel.org, Lee Gibson <leegib@gmail.com>
-Subject: [PATCH] staging: rtl8192u: fix ->ssid overflow in r8192_wx_set_scan()
-Message-ID: <YEHoAWMOSZBUw91F@mwanda>
+        Fri, 5 Mar 2021 03:29:32 -0500
+X-Greylist: delayed 4203 seconds by postgrey-1.27 at vger.kernel.org; Fri, 05 Mar 2021 03:29:32 EST
+Received: from player794.ha.ovh.net (unknown [10.108.16.108])
+        by mo7.mail-out.ovh.net (Postfix) with ESMTP id C568D18BC11
+        for <kernel-janitors@vger.kernel.org>; Fri,  5 Mar 2021 07:00:15 +0100 (CET)
+Received: from milecki.pl (ip-194-187-74-233.konfederacka.maverick.com.pl [194.187.74.233])
+        (Authenticated sender: rafal@milecki.pl)
+        by player794.ha.ovh.net (Postfix) with ESMTPSA id 7305E1892CCB8;
+        Fri,  5 Mar 2021 06:00:06 +0000 (UTC)
+Authentication-Results: garm.ovh; auth=pass (GARM-99G0034e6da37e-df57-45f4-80b0-8599f816782c,
+                    4F7D11A3904BD8E553EC742B87CBB6774FEDAA0F) smtp.auth=rafal@milecki.pl
+X-OVh-ClientIp: 194.187.74.233
+Subject: Re: [PATCH -next] mtd: parsers: ofpart: make symbol
+ 'bcm4908_partitions_quirks' static
+To:     'Wei Yongjun <weiyongjun1@huawei.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Boris Brezillon <bbrezillon@kernel.org>
+Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+References: <20210304064600.3279138-1-weiyongjun1@huawei.com>
+From:   =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>
+Message-ID: <99ecfde1-c176-7454-c273-df46d3620015@milecki.pl>
+Date:   Fri, 5 Mar 2021 07:00:03 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-X-Proofpoint-IMR: 1
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9913 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=999
- phishscore=0 bulkscore=0 mlxscore=0 spamscore=0 suspectscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2103050038
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9913 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 clxscore=1011
- priorityscore=1501 mlxlogscore=999 suspectscore=0 malwarescore=0
- impostorscore=0 bulkscore=0 adultscore=0 mlxscore=0 phishscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2103050038
+In-Reply-To: <20210304064600.3279138-1-weiyongjun1@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Ovh-Tracer-Id: 14478791329403997808
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeduledruddthedgkeeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepuffvfhfhkffffgggjggtgfesthejredttdefjeenucfhrhhomheptfgrfhgrlhcuofhilhgvtghkihcuoehrrghfrghlsehmihhlvggtkhhirdhplheqnecuggftrfgrthhtvghrnhepkeekgeefieeuhfdujeefgeektddujeekledvheehfeelfffhfeekjefhfeehuefhnecukfhppedtrddtrddtrddtpdduleegrddukeejrdejgedrvdeffeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhhouggvpehsmhhtphdqohhuthdphhgvlhhopehplhgrhigvrhejleegrdhhrgdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomheprhgrfhgrlhesmhhilhgvtghkihdrphhlpdhrtghpthhtohepkhgvrhhnvghlqdhjrghnihhtohhrshesvhhgvghrrdhkvghrnhgvlhdrohhrgh
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-We need to cap len at IW_ESSID_MAX_SIZE (32) to avoid memory corruption.
-This can be controlled by the user via the ioctl.
+On 04.03.2021 07:46, 'Wei Yongjun wrote:
+> From: Wei Yongjun <weiyongjun1@huawei.com>
+> 
+> The sparse tool complains as follows:
+> 
+> drivers/mtd/parsers/ofpart_core.c:25:32: warning:
+>   symbol 'bcm4908_partitions_quirks' was not declared. Should it be static?
+> 
+> This symbol is not used outside of ofpart_core.c, so this
+> commit marks it static.
+> 
+> Fixes: 457da931b608 ("mtd: parsers: ofpart: support BCM4908 fixed partitions")
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 
-Fixes: 5f53d8ca3d5d ("Staging: add rtl8192SU wireless usb driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/staging/rtl8192u/r8192U_wx.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/staging/rtl8192u/r8192U_wx.c b/drivers/staging/rtl8192u/r8192U_wx.c
-index 175bb8b15389..5211b2005763 100644
---- a/drivers/staging/rtl8192u/r8192U_wx.c
-+++ b/drivers/staging/rtl8192u/r8192U_wx.c
-@@ -331,8 +331,10 @@ static int r8192_wx_set_scan(struct net_device *dev, struct iw_request_info *a,
- 		struct iw_scan_req *req = (struct iw_scan_req *)b;
- 
- 		if (req->essid_len) {
--			ieee->current_network.ssid_len = req->essid_len;
--			memcpy(ieee->current_network.ssid, req->essid, req->essid_len);
-+			int len = min_t(int, req->essid_len, IW_ESSID_MAX_SIZE);
-+
-+			ieee->current_network.ssid_len = len;
-+			memcpy(ieee->current_network.ssid, req->essid, len);
- 		}
- 	}
- 
--- 
-2.30.1
-
+Looks good ofc, thanks.
