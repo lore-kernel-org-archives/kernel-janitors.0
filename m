@@ -2,59 +2,70 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03EE5C433DB
-	for <kernel-janitors@archiver.kernel.org>; Thu,  4 Mar 2021 17:45:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE2D1C433E0
+	for <kernel-janitors@archiver.kernel.org>; Fri,  5 Mar 2021 01:19:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C52A064F4C
-	for <kernel-janitors@archiver.kernel.org>; Thu,  4 Mar 2021 17:45:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7EA2F64F51
+	for <kernel-janitors@archiver.kernel.org>; Fri,  5 Mar 2021 01:19:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234081AbhCDRnR (ORCPT
+        id S229467AbhCEBT6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 4 Mar 2021 12:43:17 -0500
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:55171 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232304AbhCDRm4 (ORCPT
+        Thu, 4 Mar 2021 20:19:58 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:13058 "EHLO
+        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229458AbhCEBT6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 4 Mar 2021 12:42:56 -0500
-X-Originating-IP: 90.65.108.55
-Received: from localhost (lfbn-lyo-1-1676-55.w90-65.abo.wanadoo.fr [90.65.108.55])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id C8DBB20005;
-        Thu,  4 Mar 2021 17:42:04 +0000 (UTC)
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        linux-i3c@lists.infradead.org,
-        Conor Culhane <conor.culhane@silvaco.com>,
-        Colin King <colin.king@canonical.com>
-Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH][next] i3c: master: svc: remove redundant assignment to cmd->read_len
-Date:   Thu,  4 Mar 2021 18:42:04 +0100
-Message-Id: <161487966787.3455951.17740404517515431971.b4-ty@bootlin.com>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210224151349.202332-1-colin.king@canonical.com>
-References: <20210224151349.202332-1-colin.king@canonical.com>
+        Thu, 4 Mar 2021 20:19:58 -0500
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
+        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Ds8x31fxdzMjGY;
+        Fri,  5 Mar 2021 09:17:43 +0800 (CST)
+Received: from [10.136.110.154] (10.136.110.154) by smtp.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server (TLS) id 14.3.498.0; Fri, 5 Mar 2021
+ 09:19:48 +0800
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix a redundant call to f2fs_balance_fs
+ if an error occurs
+To:     Colin King <colin.king@canonical.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>
+CC:     <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20210304092118.2279879-1-colin.king@canonical.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <a67cbd86-0e44-490a-95fa-cf300e005d2e@huawei.com>
+Date:   Fri, 5 Mar 2021 09:19:47 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210304092118.2279879-1-colin.king@canonical.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.136.110.154]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 24 Feb 2021 15:13:49 +0000, Colin King wrote:
-> The assignment of xfer_len to cmd->read_len appears to be redundant
-> as the next statement re-assigns the value 0 to it.  Clean up the
-> code by removing the redundant first assignment.
+On 2021/3/4 17:21, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The  uninitialized variable dn.node_changed does not get set when a
+> call to f2fs_get_node_page fails.  This uninitialized value gets used
+> in the call to f2fs_balance_fs() that may or not may not balances
+> dirty node and dentry pages depending on the uninitialized state of
+> the variable. Fix this by only calling f2fs_balance_fs if err is
+> not set.
+> 
+> Thanks to Jaegeuk Kim for suggesting an appropriate fix.
+> 
+> Addresses-Coverity: ("Uninitialized scalar variable")
+> Fixes: 2a3407607028 ("f2fs: call f2fs_balance_fs only when node was changed")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks!
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-[1/1] i3c: master: svc: remove redundant assignment to cmd->read_len
-      commit: 437f5e2af73081ec08ec5d73d82c650377a4bb17
-
-Best regards,
--- 
-Alexandre Belloni <alexandre.belloni@bootlin.com>
+Thanks,
