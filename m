@@ -2,79 +2,92 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CDA8C433E0
-	for <kernel-janitors@archiver.kernel.org>; Fri,  5 Mar 2021 03:40:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A80A8C433DB
+	for <kernel-janitors@archiver.kernel.org>; Fri,  5 Mar 2021 04:59:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3902465000
-	for <kernel-janitors@archiver.kernel.org>; Fri,  5 Mar 2021 03:40:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 544F86500C
+	for <kernel-janitors@archiver.kernel.org>; Fri,  5 Mar 2021 04:59:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229673AbhCEDku (ORCPT
+        id S229503AbhCEE7t (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 4 Mar 2021 22:40:50 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:13862 "EHLO
-        szxga07-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229601AbhCEDkt (ORCPT
+        Thu, 4 Mar 2021 23:59:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53428 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229463AbhCEE7s (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 4 Mar 2021 22:40:49 -0500
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
-        by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4DsD475xxtz8srs;
-        Fri,  5 Mar 2021 11:39:03 +0800 (CST)
-Received: from localhost.localdomain (10.175.102.38) by
- DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
- 14.3.498.0; Fri, 5 Mar 2021 11:40:37 +0800
-From:   'Wei Yongjun <weiyongjun1@huawei.com>
-To:     <weiyongjun1@huawei.com>, Kishon Vijay Abraham I <kishon@ti.com>,
-        "Vinod Koul" <vkoul@kernel.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= 
-        <zhouyanjie@wanyeetech.com>,
-        =?UTF-8?q?=E6=BC=86=E9=B9=8F=E6=8C=AF=20=28Qi=20Pengzhen=29?= 
-        <aric.pzqi@ingenic.com>
-CC:     <linux-phy@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH -next] phy: ingenic: Fix a typo in ingenic_usb_phy_probe()
-Date:   Fri, 5 Mar 2021 03:49:33 +0000
-Message-ID: <20210305034933.3240914-1-weiyongjun1@huawei.com>
-X-Mailer: git-send-email 2.25.1
+        Thu, 4 Mar 2021 23:59:48 -0500
+Received: from mail-ot1-x32c.google.com (mail-ot1-x32c.google.com [IPv6:2607:f8b0:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81C45C061574;
+        Thu,  4 Mar 2021 20:59:48 -0800 (PST)
+Received: by mail-ot1-x32c.google.com with SMTP id v12so624290ott.10;
+        Thu, 04 Mar 2021 20:59:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=g0Mk72avpHdhSJAjqBV5Yll3WvB1xqe8t3SVT3h8H5k=;
+        b=CI9w0x4SKtGImgBFfj3etYWLTG9vsxvaMEKVO9F8GmvkuYUUwkJyLXahEl/PpwnIXX
+         4orQ0SHxLHw0+CtH2+vJNdD3np6x0FAywYPKM1jiusFpC546N3cofuwUlLOM9kE84lYo
+         Sm01CW3imaRgyg4tN8HZExpfGfII5+itgs396aV88zF7D5dnHC20Kaels8rsA05eIvJL
+         ehSUBPHrO9v85hNGXlmVS6rzOpaU90fOcjdNsbiUBDL+SopPnNDkKKPUkD39fAf/ReOv
+         Sn3yv17JytDJ0bmDx3osG8r3vL4gCAXNrMD7zra1z4Fz0Ams2upy8kGO/eQ3Tcy4WJxa
+         GIIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=g0Mk72avpHdhSJAjqBV5Yll3WvB1xqe8t3SVT3h8H5k=;
+        b=SRtaDWik+JV4SsRQmUa3l4LZ7O0hjKcMPfDlg+chj/8ppO2lE11QUUSQsF6rpGpjXA
+         mzax3iVJG+kdYXt28Ddo6ScL1C0KAHLsgRvgsbujijur+xWPxv7kvWR7c6mdcU6ulY/S
+         cmxGDbmAYUxLW+ZSJtz5n17tv+z/JBJDhuMtbymxdYfQldTIg+pq+psTDQFz3SwcekyL
+         5uwjgeZGrACwnxTN4AApKANZ6z6TB7wez3H4E/HVMPokXRmnVZ0V1IK9h2jrXKPpRZkK
+         7RsGoLNOiHbfKHjz4u1wZP/CCKhsRP0w0Xm7V6oJbqy3MnmU8MQa+I5wbzhJOVm0D8pM
+         dJpw==
+X-Gm-Message-State: AOAM533B6U+zIvk/avikGNvFIV+zOsswm4s+laoGga9/tZQVVDSh8jWx
+        4jwnyAuScBgpdnScAuhsqVVL1e7NIEmumQ5eakw=
+X-Google-Smtp-Source: ABdhPJw9g001D7R/evptKBtMKwJyyDDxQePDW9srrI1add9OteIESjKLHzaOl6RFJ9mLGuVmNoOrcNNMMRCBhZST/Oc=
+X-Received: by 2002:a9d:6e01:: with SMTP id e1mr6552620otr.74.1614920387915;
+ Thu, 04 Mar 2021 20:59:47 -0800 (PST)
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.102.38]
-X-CFilter-Loop: Reflected
+References: <20210305034931.3237558-1-weiyongjun1@huawei.com>
+In-Reply-To: <20210305034931.3237558-1-weiyongjun1@huawei.com>
+From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Date:   Fri, 5 Mar 2021 05:59:36 +0100
+Message-ID: <CAMhs-H_0wPa+sFSs4hEx+52e3gMYm=xDVjOEnv2A6v6nSs-JUg@mail.gmail.com>
+Subject: Re: [PATCH -next] phy: ralink: phy-mt7621-pci: fix return value check
+ in mt7621_pci_phy_probe()
+To:     "'Wei Yongjun" <weiyongjun1@huawei.com>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-phy@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
+On Fri, Mar 5, 2021 at 4:40 AM 'Wei Yongjun <weiyongjun1@huawei.com> wrote:
+>
+> From: Wei Yongjun <weiyongjun1@huawei.com>
+>
+> Fix the return value check which testing the wrong variable
+> in mt7621_pci_phy_probe().
+>
+> Fixes: d87da32372a0 ("phy: ralink: Add PHY driver for MT7621 PCIe PHY")
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ---
+>  drivers/phy/ralink/phy-mt7621-pci.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Fix the return value check typo which testing the wrong variable
-in ingenic_usb_phy_probe().
-
-Fixes: 31de313dfdcf ("PHY: Ingenic: Add USB PHY driver using generic PHY framework.")
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/phy/ingenic/phy-ingenic-usb.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/phy/ingenic/phy-ingenic-usb.c b/drivers/phy/ingenic/phy-ingenic-usb.c
-index ea127b177f46..28c28d816484 100644
---- a/drivers/phy/ingenic/phy-ingenic-usb.c
-+++ b/drivers/phy/ingenic/phy-ingenic-usb.c
-@@ -352,8 +352,8 @@ static int ingenic_usb_phy_probe(struct platform_device *pdev)
- 	}
- 
- 	priv->phy = devm_phy_create(dev, NULL, &ingenic_usb_phy_ops);
--	if (IS_ERR(priv))
--		return PTR_ERR(priv);
-+	if (IS_ERR(priv->phy))
-+		return PTR_ERR(priv->phy);
- 
- 	phy_set_drvdata(priv->phy, priv);
- 
-
+Reviewed-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
