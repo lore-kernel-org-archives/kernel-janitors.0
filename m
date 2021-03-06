@@ -2,61 +2,122 @@ Return-Path: <SRS0=552U=IE=vger.kernel.org=kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEFF2C433E6
-	for <kernel-janitors@archiver.kernel.org>; Sat,  6 Mar 2021 13:57:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96FA2C433E6
+	for <kernel-janitors@archiver.kernel.org>; Sat,  6 Mar 2021 14:22:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8602265028
-	for <kernel-janitors@archiver.kernel.org>; Sat,  6 Mar 2021 13:57:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53B286501E
+	for <kernel-janitors@archiver.kernel.org>; Sat,  6 Mar 2021 14:22:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230493AbhCFN5B (ORCPT
+        id S230259AbhCFOVg (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 6 Mar 2021 08:57:01 -0500
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:10943 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230481AbhCFN4k (ORCPT
+        Sat, 6 Mar 2021 09:21:36 -0500
+Received: from smtp05.smtpout.orange.fr ([80.12.242.127]:27151 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230322AbhCFOVT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 6 Mar 2021 08:56:40 -0500
-X-IronPort-AV: E=Sophos;i="5.81,228,1610406000"; 
-   d="scan'208";a="496488757"
-Received: from palace.lip6.fr ([132.227.105.202])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-SHA; 06 Mar 2021 14:56:38 +0100
-From:   Julia Lawall <Julia.Lawall@inria.fr>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] media: flexcop-usb: delete unneeded return
-Date:   Sat,  6 Mar 2021 14:42:25 +0100
-Message-Id: <20210306134225.1659307-1-Julia.Lawall@inria.fr>
-X-Mailer: git-send-email 2.25.1
+        Sat, 6 Mar 2021 09:21:19 -0500
+Received: from localhost.localdomain ([90.126.17.6])
+        by mwinf5d10 with ME
+        id d2MA2400207rLVE032MAlN; Sat, 06 Mar 2021 15:21:17 +0100
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 06 Mar 2021 15:21:17 +0100
+X-ME-IP: 90.126.17.6
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     balbi@kernel.org, gregkh@linuxfoundation.org, krzk@kernel.org,
+        nathan@kernel.org, gustavoars@kernel.org, arnd@arndb.de,
+        ben-linux@fluff.org
+Cc:     linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 1/2 V2] usb: gadget: s3c: Fix incorrect resources releasing
+Date:   Sat,  6 Mar 2021 15:21:08 +0100
+Message-Id: <20210306142108.3429-1-christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-No need for a return after a break;
+Since commit 188db4435ac6 ("usb: gadget: s3c: use platform resources"),
+'request_mem_region()' and 'ioremap()' are no more used, so they don't need
+to be undone in the error handling path of the probe and in the removre
+function.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+Remove these calls and the unneeded 'rsrc_start' and 'rsrc_len' global
+variables.
 
+Fixes: 188db4435ac6 ("usb: gadget: s3c: use platform resources")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/media/usb/b2c2/flexcop-usb.c |    1 -
- 1 file changed, 1 deletion(-)
+the 'err' label is used only to reduce the diff size of this patch. It is
+removed in the following patch.
 
-diff --git a/drivers/media/usb/b2c2/flexcop-usb.c b/drivers/media/usb/b2c2/flexcop-usb.c
-index e731243267e4..01d22834f4ac 100644
---- a/drivers/media/usb/b2c2/flexcop-usb.c
-+++ b/drivers/media/usb/b2c2/flexcop-usb.c
-@@ -195,7 +195,6 @@ static int flexcop_usb_memory_req(struct flexcop_usb *fc_usb,
- 		break;
- 	default:
- 		return -EINVAL;
--		break;
+v2: Fix a stupid error in the hash in Fixes:
+---
+ drivers/usb/gadget/udc/s3c2410_udc.c | 14 +++-----------
+ 1 file changed, 3 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/usb/gadget/udc/s3c2410_udc.c b/drivers/usb/gadget/udc/s3c2410_udc.c
+index f1ea51476add..3fc436286bad 100644
+--- a/drivers/usb/gadget/udc/s3c2410_udc.c
++++ b/drivers/usb/gadget/udc/s3c2410_udc.c
+@@ -54,8 +54,6 @@ static struct clk		*udc_clock;
+ static struct clk		*usb_bus_clock;
+ static void __iomem		*base_addr;
+ static int			irq_usbd;
+-static u64			rsrc_start;
+-static u64			rsrc_len;
+ static struct dentry		*s3c2410_udc_debugfs_root;
+ 
+ static inline u32 udc_read(u32 reg)
+@@ -1775,7 +1773,7 @@ static int s3c2410_udc_probe(struct platform_device *pdev)
+ 	base_addr = devm_platform_ioremap_resource(pdev, 0);
+ 	if (!base_addr) {
+ 		retval = -ENOMEM;
+-		goto err_mem;
++		goto err;
  	}
- 	for (i = 0; i < len;) {
- 		pagechunk =
+ 
+ 	the_controller = udc;
+@@ -1793,7 +1791,7 @@ static int s3c2410_udc_probe(struct platform_device *pdev)
+ 	if (retval != 0) {
+ 		dev_err(dev, "cannot get irq %i, err %d\n", irq_usbd, retval);
+ 		retval = -EBUSY;
+-		goto err_map;
++		goto err;
+ 	}
+ 
+ 	dev_dbg(dev, "got irq %i\n", irq_usbd);
+@@ -1864,10 +1862,7 @@ static int s3c2410_udc_probe(struct platform_device *pdev)
+ 		gpio_free(udc_info->vbus_pin);
+ err_int:
+ 	free_irq(irq_usbd, udc);
+-err_map:
+-	iounmap(base_addr);
+-err_mem:
+-	release_mem_region(rsrc_start, rsrc_len);
++err:
+ 
+ 	return retval;
+ }
+@@ -1899,9 +1894,6 @@ static int s3c2410_udc_remove(struct platform_device *pdev)
+ 
+ 	free_irq(irq_usbd, udc);
+ 
+-	iounmap(base_addr);
+-	release_mem_region(rsrc_start, rsrc_len);
+-
+ 	if (!IS_ERR(udc_clock) && udc_clock != NULL) {
+ 		clk_disable_unprepare(udc_clock);
+ 		clk_put(udc_clock);
+-- 
+2.27.0
 
