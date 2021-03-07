@@ -2,85 +2,109 @@ Return-Path: <SRS0=oJxl=IF=vger.kernel.org=kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42373C433E0
-	for <kernel-janitors@archiver.kernel.org>; Sun,  7 Mar 2021 15:56:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D78AC433DB
+	for <kernel-janitors@archiver.kernel.org>; Sun,  7 Mar 2021 19:15:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0F868650E6
-	for <kernel-janitors@archiver.kernel.org>; Sun,  7 Mar 2021 15:56:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2DF5660230
+	for <kernel-janitors@archiver.kernel.org>; Sun,  7 Mar 2021 19:15:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232306AbhCGP4O convert rfc822-to-8bit (ORCPT
+        id S232258AbhCGTOZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 7 Mar 2021 10:56:14 -0500
-Received: from aposti.net ([89.234.176.197]:34344 "EHLO aposti.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232294AbhCGPzt (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 7 Mar 2021 10:55:49 -0500
-Date:   Sun, 07 Mar 2021 15:55:36 +0000
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH -next] watchdog: jz4740: Fix return value check in
- jz4740_wdt_probe()
-To:     'Wei Yongjun <weiyongjun1@huawei.com>
-Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>, linux-mips@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Hulk Robot <hulkci@huawei.com>
-Message-Id: <O8WLPQ.PW3WC815EH61@crapouillou.net>
-In-Reply-To: <20210304045909.945799-1-weiyongjun1@huawei.com>
-References: <20210304045909.945799-1-weiyongjun1@huawei.com>
+        Sun, 7 Mar 2021 14:14:25 -0500
+Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:19632
+        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232246AbhCGTOO (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Sun, 7 Mar 2021 14:14:14 -0500
+X-IronPort-AV: E=Sophos;i="5.81,230,1610406000"; 
+   d="scan'208";a="375022443"
+Received: from 173.121.68.85.rev.sfr.net (HELO hadrien) ([85.68.121.173])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Mar 2021 20:14:12 +0100
+Date:   Sun, 7 Mar 2021 20:14:11 +0100 (CET)
+From:   Julia Lawall <julia.lawall@inria.fr>
+X-X-Sender: jll@hadrien
+To:     Joe Perches <joe@perches.com>
+cc:     Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
+        kernelnewbies <kernelnewbies@kernelnewbies.org>,
+        kernel-janitors <kernel-janitors@vger.kernel.org>,
+        cocci <cocci@systeme.lip6.fr>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: linux-kernel janitorial RFP: Mark static arrays as const
+In-Reply-To: <a186c9d063663ac6de66db944d1925146393bec5.camel@perches.com>
+Message-ID: <alpine.DEB.2.22.394.2103072011480.2930@hadrien>
+References: <053b06c47f08631675c295b5c893b90be4248347.camel@perches.com>         <a15e5c4d-a60f-14b9-90e5-4e600771aa9d@prevas.dk> <a186c9d063663ac6de66db944d1925146393bec5.camel@perches.com>
+User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/mixed; boundary="8323329-1189131414-1615144452=:2930"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--8323329-1189131414-1615144452=:2930
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8BIT
 
 
-Le jeu. 4 mars 2021 à 4:59, 'Wei Yongjun <weiyongjun1@huawei.com> a 
-écrit :
-> From: Wei Yongjun <weiyongjun1@huawei.com>
-> 
-> In case of error, the function device_node_to_regmap() returns
-> ERR_PTR() and never returns NULL. The NULL test in the return
-> value check should be replaced with IS_ERR().
-> 
-> Fixes: 6d532143c915 ("watchdog: jz4740: Use regmap provided by TCU 
-> driver")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 
-Acked-by: Paul Cercueil <paul@crapouillou.net>
+On Wed, 3 Mar 2021, Joe Perches wrote:
 
-Cheers,
--Paul
+> On Wed, 2021-03-03 at 10:41 +0100, Rasmus Villemoes wrote:
+> > On 02/03/2021 18.42, Joe Perches wrote:
+> > > Here is a possible opportunity to reduce data usage in the kernel.
+> > >
+> > > $ git grep -P -n '^static\s+(?!const|struct)(?:\w+\s+){1,3}\w+\s*\[\s*\]' drivers/ | \
+> > >   grep -v __initdata | \
+> > >   wc -l
+> > > 3250
+> > >
+> > > Meaning there are ~3000 declarations of arrays with what appears to be
+> > > file static const content that are not marked const.
+> > >
+> > > So there are many static arrays that could be marked const to move the
+> > > compiled object code from data to text minimizing the total amount of
+> > > exposed r/w data.
+> >
+> > You can add const if you like, but it will rarely change the generated
+> > code. gcc is already smart enough to take a static array whose contents
+> > are provably never modified within the TU and put it in .rodata:
+>
+> At least some or perhaps even most of the time, true, but the gcc compiler
+> from v5 through at least v10 seems inconsistent about when it does the
+> appropriate conversion.
+>
+> See the example I posted:
+> https://lore.kernel.org/lkml/6b8b250a06a98ce42120a14824531a8641f5e8aa.camel@perches.com/
+>
+> It was a randomly chosen source file conversion btw, I had no prior
+> knowledge of whether the text/data use would change.
+>
+> I'm unsure about clang consistently moving static but provably const arrays
+> from data to text.  I rarely use clang.  At least for v11 it seems to be
+> better though.  I didn't try 10.1.
 
-> ---
->  drivers/watchdog/jz4740_wdt.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/watchdog/jz4740_wdt.c 
-> b/drivers/watchdog/jz4740_wdt.c
-> index bdf9564efa29..395bde79e292 100644
-> --- a/drivers/watchdog/jz4740_wdt.c
-> +++ b/drivers/watchdog/jz4740_wdt.c
-> @@ -176,9 +176,9 @@ static int jz4740_wdt_probe(struct 
-> platform_device *pdev)
->  	watchdog_set_drvdata(jz4740_wdt, drvdata);
-> 
->  	drvdata->map = device_node_to_regmap(dev->parent->of_node);
-> -	if (!drvdata->map) {
-> +	if (IS_ERR(drvdata->map)) {
->  		dev_err(dev, "regmap not found\n");
-> -		return -EINVAL;
-> +		return PTR_ERR(drvdata->map);
->  	}
-> 
->  	return devm_watchdog_register_device(dev, &drvdata->wdt);
-> 
+I tried the relevnt drivers in drivers/input/joystick.  I got only one
+driver that changed with gcc 9.3, which was
+drivers/input/joystick/analog.c.  It actually got larger:
 
+original:
 
+   text    data     bss     dec     hex filename
+  22607   10560     320   33487    82cf drivers/input/joystick/analog.o
+
+after adding const:
+
+   text    data     bss     dec     hex filename
+  22728   10816     320   33864    8448 drivers/input/joystick/analog.o
+
+This was the only case where bss was not 0, but I don't know if there is a
+connection.
+
+julia
+--8323329-1189131414-1615144452=:2930--
