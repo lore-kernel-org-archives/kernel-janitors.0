@@ -7,35 +7,36 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF9D3C433E0
-	for <kernel-janitors@archiver.kernel.org>; Mon,  8 Mar 2021 12:20:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 717CBC433E9
+	for <kernel-janitors@archiver.kernel.org>; Mon,  8 Mar 2021 12:22:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8CDF0651CF
-	for <kernel-janitors@archiver.kernel.org>; Mon,  8 Mar 2021 12:20:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 445C8651C9
+	for <kernel-janitors@archiver.kernel.org>; Mon,  8 Mar 2021 12:22:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230179AbhCHMUU (ORCPT
+        id S231902AbhCHMV4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 8 Mar 2021 07:20:20 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:13482 "EHLO
+        Mon, 8 Mar 2021 07:21:56 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:13483 "EHLO
         szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230169AbhCHMUT (ORCPT
+        with ESMTP id S231971AbhCHMVt (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 8 Mar 2021 07:20:19 -0500
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
-        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4DvHS475GVzjTYN;
-        Mon,  8 Mar 2021 20:18:28 +0800 (CST)
+        Mon, 8 Mar 2021 07:21:49 -0500
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
+        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4DvHTs5WxVzrSCc;
+        Mon,  8 Mar 2021 20:20:01 +0800 (CST)
 Received: from localhost.localdomain (10.175.102.38) by
- DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.498.0; Mon, 8 Mar 2021 20:20:06 +0800
+ DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
+ 14.3.498.0; Mon, 8 Mar 2021 20:21:41 +0800
 From:   'Wei Yongjun <weiyongjun1@huawei.com>
 To:     <weiyongjun1@huawei.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Lauri Kasanen <cand@gmx.com>
-CC:     <linux-input@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Maarten ter Huurne <maarten@treewalker.org>
+CC:     <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
         "Hulk Robot" <hulkci@huawei.com>
-Subject: [PATCH -next] Input: n64joy - Fix return value check in n64joy_probe()
-Date:   Mon, 8 Mar 2021 12:28:56 +0000
-Message-ID: <20210308122856.2177071-1-weiyongjun1@huawei.com>
+Subject: [PATCH -next] clocksource/drivers/ingenic_ost: Fix return value check in ingenic_ost_probe()
+Date:   Mon, 8 Mar 2021 12:30:31 +0000
+Message-ID: <20210308123031.2285083-1-weiyongjun1@huawei.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Type:   text/plain; charset=US-ASCII
@@ -48,30 +49,31 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Wei Yongjun <weiyongjun1@huawei.com>
 
-In case of error, the function devm_platform_ioremap_resource()
-returns ERR_PTR() and never returns NULL. The NULL test in the
-return value check should be replaced with IS_ERR().
+In case of error, the function device_node_to_regmap() returns
+ERR_PTR() and never returns NULL. The NULL test in the return
+value check should be replaced with IS_ERR().
 
-Fixes: 3bdffa8ffb45 ("Input: Add N64 controller driver")
+Fixes: ca7b72b5a5f2 ("clocksource: Add driver for the Ingenic JZ47xx OST")
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/input/joystick/n64joy.c | 4 ++--
+ drivers/clocksource/ingenic-ost.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/input/joystick/n64joy.c b/drivers/input/joystick/n64joy.c
-index 8bcc529942bc..9dbca366613e 100644
---- a/drivers/input/joystick/n64joy.c
-+++ b/drivers/input/joystick/n64joy.c
-@@ -252,8 +252,8 @@ static int __init n64joy_probe(struct platform_device *pdev)
- 	mutex_init(&priv->n64joy_mutex);
+diff --git a/drivers/clocksource/ingenic-ost.c b/drivers/clocksource/ingenic-ost.c
+index 029efc2731b4..6af2470136bd 100644
+--- a/drivers/clocksource/ingenic-ost.c
++++ b/drivers/clocksource/ingenic-ost.c
+@@ -88,9 +88,9 @@ static int __init ingenic_ost_probe(struct platform_device *pdev)
+ 		return PTR_ERR(ost->regs);
  
- 	priv->reg_base = devm_platform_ioremap_resource(pdev, 0);
--	if (!priv->reg_base) {
--		err = -EINVAL;
-+	if (IS_ERR(priv->reg_base)) {
-+		err = PTR_ERR(priv->reg_base);
- 		goto fail;
+ 	map = device_node_to_regmap(dev->parent->of_node);
+-	if (!map) {
++	if (IS_ERR(map)) {
+ 		dev_err(dev, "regmap not found");
+-		return -EINVAL;
++		return PTR_ERR(map);
  	}
  
+ 	ost->clk = devm_clk_get(dev, "ost");
 
