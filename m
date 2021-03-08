@@ -2,102 +2,91 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FD77C433DB
-	for <kernel-janitors@archiver.kernel.org>; Mon,  8 Mar 2021 16:34:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFDAEC433DB
+	for <kernel-janitors@archiver.kernel.org>; Mon,  8 Mar 2021 19:41:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DC7C56522B
-	for <kernel-janitors@archiver.kernel.org>; Mon,  8 Mar 2021 16:34:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D319652B5
+	for <kernel-janitors@archiver.kernel.org>; Mon,  8 Mar 2021 19:41:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229737AbhCHQeW (ORCPT
+        id S231153AbhCHTlD (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 8 Mar 2021 11:34:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55800 "EHLO
+        Mon, 8 Mar 2021 14:41:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230125AbhCHQeH (ORCPT
+        with ESMTP id S230299AbhCHTku (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 8 Mar 2021 11:34:07 -0500
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 904ABC06174A;
-        Mon,  8 Mar 2021 08:34:06 -0800 (PST)
-Received: by mail-pj1-x102a.google.com with SMTP id t9so3318225pjl.5;
-        Mon, 08 Mar 2021 08:34:06 -0800 (PST)
+        Mon, 8 Mar 2021 14:40:50 -0500
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DE4CC06174A;
+        Mon,  8 Mar 2021 11:40:50 -0800 (PST)
+Received: by mail-pj1-x1030.google.com with SMTP id nh23-20020a17090b3657b02900c0d5e235a8so3750407pjb.0;
+        Mon, 08 Mar 2021 11:40:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=IML5DiqUHffn2Up5773/YfnCyGbJ41/cNu36kai1zJc=;
-        b=AUZd5gWW/Qwf38+7Cc99ZPkQyyX9PBPzawi6N6skWt9u0dPJXA+cWAw+yyWsLkJrgx
-         Z95PBw519DR7DldFwwCULLClaD9zPcPlYIpnT6vU8x2AqyEjajdfgFM/bHUUjFmS9gWp
-         oO3yJcNJc9jrw6ln11GNp6PEbODhLhQXxH5YtZxoSGY41KTGfA0G8cKzYaL/Oweun2ZN
-         z3eZT4qvNKy7UBKsBA1UsJQcrk5DbEX2JDOofcpATD/LUuU/QTG6zSOHF89lij1wUhtq
-         Agh6qHK9s6o2aQlMHPE//dgOETto0NrMg3VheUx4LLE2MDm+MBvOMzt3Fd1lPdHt0psq
-         kWzQ==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=FX3JvV2x234PQm7yAoaVpeGYnaHDVKU4FehRSM1ykkg=;
+        b=HCz1A039NrYgPV8+0rLFTJmiKz7gnvaC3IDWeFdU2kzeuWoOB1hB7gfGchIWhuPdAM
+         1BjJ8dDuvdaRSQcKtuK7Hjpc5gPoDEAbdP2tphtWGHGklAaK+vofASIl5eUF1+s3xZSy
+         gGD8iV3gRWfRxtyqfCenbDl/UozMImS9am74zNslfe7kw+Wf6ARRbNks5oq/rItFw/zp
+         Ni9CIVtDqXvKMd4M+lNZcu7cv1xbQcC6Y4vDbfyWIeQYfVqmG2SYgpEHpFnSMPXgFHVA
+         bxO86WnbelgX2bGcAZWjAQZQO3JuX6jEFMVuyVm/SUnW+lAvqVuoeb9vHmH4ky6PMMea
+         m/vg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=IML5DiqUHffn2Up5773/YfnCyGbJ41/cNu36kai1zJc=;
-        b=kTg39afYOlC4s8zInPZlYdXm3/Lh5pSyNOB/zuhMQcBQw1OtTWHq54RbkCpQSFz8L+
-         N9Gl/OSdrwk2c447jLljMzvie7tL+a/P7322hDvwnu3UcQ7VkNzONdfdb0CKGAXG02ck
-         A8qL+hHFnZ+gg71SkJXbgkpF1mPheJmMt9RGzgLz14rbcxJsqvPiqvjIPMSGVbSZPUSg
-         KbvOqWsZdK1VnPWAukXwjiJSIIes3Pi/k5l+bb3NLqPrXTgg+TPC8SlyP+gWBnFF6pi5
-         eQeR+B5Y7OgU/Nx7TcVoZjRLgFGdHcHM4gOaLEh3d9e2XhB9K3vrYgBscD0ZCinHPLJ3
-         QXNg==
-X-Gm-Message-State: AOAM531VVQDQBzcsC8ZJ+7IB8pt4ghX8gBHNCw/zUwLM8DT7glzxYkDZ
-        /bksbD1PLBADKX6oRWYppIA=
-X-Google-Smtp-Source: ABdhPJxLCZF482keMb/dq1tFjFcWD/m9XmiNb0nSh9FRDCk8vh+oEkky7ZodVxGrVsB1qTXYP/kG4w==
-X-Received: by 2002:a17:902:8ec9:b029:e6:c5e:cf18 with SMTP id x9-20020a1709028ec9b02900e60c5ecf18mr9934345plo.47.1615221245976;
-        Mon, 08 Mar 2021 08:34:05 -0800 (PST)
-Received: from [10.230.29.30] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 6sm2177562pfv.179.2021.03.08.08.34.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Mar 2021 08:34:05 -0800 (PST)
-Subject: Re: [PATCH -next] PCI: brcmstb: Fix error return code in
- brcm_pcie_probe()
-To:     'Wei Yongjun <weiyongjun1@huawei.com>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>
-Cc:     linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=FX3JvV2x234PQm7yAoaVpeGYnaHDVKU4FehRSM1ykkg=;
+        b=KvgIpjtR66GT6r7L3/5+HW0eF9XffXVDKD8cNURBfmbX3DXxiTQFACAzq3ekfxBVy2
+         v2Of+sswtExeJZjdFsOe0Txccok2araGVVHID+WtNS6PStXMfs7fsCsJYkF0rOSOMPfo
+         /I6VyGKgRksrCYcCmy8luysAffRXMWTHccfuqpJIKZ8eoIVtv8ihB5M/+r6E4MFaFuHa
+         povT3h4b7Q+Km7/XIrwrOyNPk1hoqwzd+6/WEe2MtrJM7q+IbBIYLa60nANHtAq87gzV
+         7Ikfu1nn+vmOMXEgWe9voVnfqEqgi7yibO3ffme1v8vijUp7/d9BFJJDjyYYBT5pSPb1
+         JG1w==
+X-Gm-Message-State: AOAM533QGNzbV/Zid+0E9VMA9z58+gEv1nRfA4C17qT903nTe2LKdU2a
+        bvRKyE+X61Y/yFt9kpYtcuAGa0ZzuMs=
+X-Google-Smtp-Source: ABdhPJyU4SXQ2Z/p9G7DKhEo8sZ9i5FjYpjaLu/IhhM5mRczjSLn3ZOgDxpjjtIi2QfNQiBlPOOvnw==
+X-Received: by 2002:a17:903:2301:b029:e4:700b:6d91 with SMTP id d1-20020a1709032301b02900e4700b6d91mr22670501plh.19.1615232449568;
+        Mon, 08 Mar 2021 11:40:49 -0800 (PST)
+Received: from google.com ([2620:15c:202:201:39e0:7b5c:9fa7:f6e0])
+        by smtp.gmail.com with ESMTPSA id u17sm10171740pgl.80.2021.03.08.11.40.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Mar 2021 11:40:48 -0800 (PST)
+Date:   Mon, 8 Mar 2021 11:40:46 -0800
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     'Wei Yongjun <weiyongjun1@huawei.com>
+Cc:     Lauri Kasanen <cand@gmx.com>, linux-input@vger.kernel.org,
         kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
-References: <20210308135619.19133-1-weiyongjun1@huawei.com>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <6f4024c5-41d8-df15-c00f-c2a491705176@gmail.com>
-Date:   Mon, 8 Mar 2021 08:34:02 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Firefox/78.0 Thunderbird/78.8.0
+Subject: Re: [PATCH -next] Input: n64joy - Fix return value check in
+ n64joy_probe()
+Message-ID: <YEZ9vkue/E1yPeIS@google.com>
+References: <20210308122856.2177071-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20210308135619.19133-1-weiyongjun1@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210308122856.2177071-1-weiyongjun1@huawei.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-
-
-On 3/8/2021 5:56 AM, 'Wei Yongjun wrote:
+On Mon, Mar 08, 2021 at 12:28:56PM +0000, 'Wei Yongjun wrote:
 > From: Wei Yongjun <weiyongjun1@huawei.com>
 > 
-> Fix to return negative error code -ENODEV from the unsupported revision
-> error handling case instead of 0, as done elsewhere in this function.
+> In case of error, the function devm_platform_ioremap_resource()
+> returns ERR_PTR() and never returns NULL. The NULL test in the
+> return value check should be replaced with IS_ERR().
 > 
-> Fixes: 0cdfaceb9889 ("PCI: brcmstb: support BCM4908 with external PERST# signal controller")
+> Fixes: 3bdffa8ffb45 ("Input: Add N64 controller driver")
 > Reported-by: Hulk Robot <hulkci@huawei.com>
 > Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 
-Acked-by: Florian Fainelli <f.fainelli@gmail.com>
+Applied, thank you.
+
 -- 
-Florian
+Dmitry
