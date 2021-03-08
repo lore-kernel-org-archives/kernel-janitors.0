@@ -2,82 +2,102 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEED1C433DB
-	for <kernel-janitors@archiver.kernel.org>; Mon,  8 Mar 2021 16:10:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FD77C433DB
+	for <kernel-janitors@archiver.kernel.org>; Mon,  8 Mar 2021 16:34:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 84FA865229
-	for <kernel-janitors@archiver.kernel.org>; Mon,  8 Mar 2021 16:10:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC7C56522B
+	for <kernel-janitors@archiver.kernel.org>; Mon,  8 Mar 2021 16:34:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230442AbhCHQJg (ORCPT
+        id S229737AbhCHQeW (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 8 Mar 2021 11:09:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41912 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230111AbhCHQJc (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 8 Mar 2021 11:09:32 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id BFFE465210;
-        Mon,  8 Mar 2021 16:09:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1615219772;
-        bh=k3GA1CL+qZuU8ub0oPFI+MA3exml0cTuKZCxQnKSyqE=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=YMQL1d/UlRXO73hTX3sbZm5r0q0+9363/lqaPN9VG/IRr5NJOzsWtXRqVFelZgQdZ
-         uBGiMbB6aQVfDWtCMMvktuEo6NZKEaJuNRWw4+SsKgxWvbLEbJaTUjgJeASIz4ZRCn
-         fuK8xnBvBcg9T+khs87X63QV7LFMN0orm0bta1Hu5QTiDbLUttexKvvY204P+tVvqR
-         CtYf4e5nRDtOu/25IjY4+z2tXJOHhcyoR1I1fPYe+i9ALyJS5ztcm7vpv0rNnTtwUC
-         p7Jq65iInpoUTbEC60V+CXQr3o3DAofJUheq8wovRtw1eDd4ZD1GQ9K1gfK0g0ilh5
-         C3kft/lY1kyUQ==
-From:   Mark Brown <broonie@kernel.org>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        ChiYuan Huang <cy_huang@richtek.com>,
-        'Wei Yongjun <weiyongjun1@huawei.com>
-Cc:     Hulk Robot <hulkci@huawei.com>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-In-Reply-To: <20210305034930.3236099-1-weiyongjun1@huawei.com>
-References: <20210305034930.3236099-1-weiyongjun1@huawei.com>
-Subject: Re: [PATCH -next] regulator: rt4831: Fix return value check in rt4831_regulator_probe()
-Message-Id: <161521970194.10009.1692126803551238706.b4-ty@kernel.org>
-Date:   Mon, 08 Mar 2021 16:08:21 +0000
+        Mon, 8 Mar 2021 11:34:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55800 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230125AbhCHQeH (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 8 Mar 2021 11:34:07 -0500
+Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 904ABC06174A;
+        Mon,  8 Mar 2021 08:34:06 -0800 (PST)
+Received: by mail-pj1-x102a.google.com with SMTP id t9so3318225pjl.5;
+        Mon, 08 Mar 2021 08:34:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=IML5DiqUHffn2Up5773/YfnCyGbJ41/cNu36kai1zJc=;
+        b=AUZd5gWW/Qwf38+7Cc99ZPkQyyX9PBPzawi6N6skWt9u0dPJXA+cWAw+yyWsLkJrgx
+         Z95PBw519DR7DldFwwCULLClaD9zPcPlYIpnT6vU8x2AqyEjajdfgFM/bHUUjFmS9gWp
+         oO3yJcNJc9jrw6ln11GNp6PEbODhLhQXxH5YtZxoSGY41KTGfA0G8cKzYaL/Oweun2ZN
+         z3eZT4qvNKy7UBKsBA1UsJQcrk5DbEX2JDOofcpATD/LUuU/QTG6zSOHF89lij1wUhtq
+         Agh6qHK9s6o2aQlMHPE//dgOETto0NrMg3VheUx4LLE2MDm+MBvOMzt3Fd1lPdHt0psq
+         kWzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=IML5DiqUHffn2Up5773/YfnCyGbJ41/cNu36kai1zJc=;
+        b=kTg39afYOlC4s8zInPZlYdXm3/Lh5pSyNOB/zuhMQcBQw1OtTWHq54RbkCpQSFz8L+
+         N9Gl/OSdrwk2c447jLljMzvie7tL+a/P7322hDvwnu3UcQ7VkNzONdfdb0CKGAXG02ck
+         A8qL+hHFnZ+gg71SkJXbgkpF1mPheJmMt9RGzgLz14rbcxJsqvPiqvjIPMSGVbSZPUSg
+         KbvOqWsZdK1VnPWAukXwjiJSIIes3Pi/k5l+bb3NLqPrXTgg+TPC8SlyP+gWBnFF6pi5
+         eQeR+B5Y7OgU/Nx7TcVoZjRLgFGdHcHM4gOaLEh3d9e2XhB9K3vrYgBscD0ZCinHPLJ3
+         QXNg==
+X-Gm-Message-State: AOAM531VVQDQBzcsC8ZJ+7IB8pt4ghX8gBHNCw/zUwLM8DT7glzxYkDZ
+        /bksbD1PLBADKX6oRWYppIA=
+X-Google-Smtp-Source: ABdhPJxLCZF482keMb/dq1tFjFcWD/m9XmiNb0nSh9FRDCk8vh+oEkky7ZodVxGrVsB1qTXYP/kG4w==
+X-Received: by 2002:a17:902:8ec9:b029:e6:c5e:cf18 with SMTP id x9-20020a1709028ec9b02900e60c5ecf18mr9934345plo.47.1615221245976;
+        Mon, 08 Mar 2021 08:34:05 -0800 (PST)
+Received: from [10.230.29.30] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id 6sm2177562pfv.179.2021.03.08.08.34.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Mar 2021 08:34:05 -0800 (PST)
+Subject: Re: [PATCH -next] PCI: brcmstb: Fix error return code in
+ brcm_pcie_probe()
+To:     'Wei Yongjun <weiyongjun1@huawei.com>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>
+Cc:     linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+References: <20210308135619.19133-1-weiyongjun1@huawei.com>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Message-ID: <6f4024c5-41d8-df15-c00f-c2a491705176@gmail.com>
+Date:   Mon, 8 Mar 2021 08:34:02 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Firefox/78.0 Thunderbird/78.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210308135619.19133-1-weiyongjun1@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 5 Mar 2021 03:49:30 +0000, 'Wei Yongjun wrote:
-> In case of error, the function dev_get_regmap() returns NULL
-> pointer not ERR_PTR(). The IS_ERR() test in the return value
-> check should be replaced with NULL test.
 
-Applied to
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+On 3/8/2021 5:56 AM, 'Wei Yongjun wrote:
+> From: Wei Yongjun <weiyongjun1@huawei.com>
+> 
+> Fix to return negative error code -ENODEV from the unsupported revision
+> error handling case instead of 0, as done elsewhere in this function.
+> 
+> Fixes: 0cdfaceb9889 ("PCI: brcmstb: support BCM4908 with external PERST# signal controller")
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 
-Thanks!
-
-[1/1] regulator: rt4831: Fix return value check in rt4831_regulator_probe()
-      commit: 2a105d168e74eedbccd9b040c3ee8b8b00604a33
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+Acked-by: Florian Fainelli <f.fainelli@gmail.com>
+-- 
+Florian
