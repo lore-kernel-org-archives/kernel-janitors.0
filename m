@@ -5,37 +5,37 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EC2FC433E6
-	for <kernel-janitors@archiver.kernel.org>; Mon,  8 Mar 2021 12:20:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF9D3C433E0
+	for <kernel-janitors@archiver.kernel.org>; Mon,  8 Mar 2021 12:20:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 07040651C7
-	for <kernel-janitors@archiver.kernel.org>; Mon,  8 Mar 2021 12:20:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CDF0651CF
+	for <kernel-janitors@archiver.kernel.org>; Mon,  8 Mar 2021 12:20:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229960AbhCHMTr (ORCPT
+        id S230179AbhCHMUU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 8 Mar 2021 07:19:47 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:13072 "EHLO
+        Mon, 8 Mar 2021 07:20:20 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:13482 "EHLO
         szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230242AbhCHMTZ (ORCPT
+        with ESMTP id S230169AbhCHMUT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 8 Mar 2021 07:19:25 -0500
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
-        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4DvHQX5TN7zMkVB;
-        Mon,  8 Mar 2021 20:17:08 +0800 (CST)
+        Mon, 8 Mar 2021 07:20:19 -0500
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
+        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4DvHS475GVzjTYN;
+        Mon,  8 Mar 2021 20:18:28 +0800 (CST)
 Received: from localhost.localdomain (10.175.102.38) by
- DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
- 14.3.498.0; Mon, 8 Mar 2021 20:19:12 +0800
+ DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
+ 14.3.498.0; Mon, 8 Mar 2021 20:20:06 +0800
 From:   'Wei Yongjun <weiyongjun1@huawei.com>
-To:     <weiyongjun1@huawei.com>, Antti Palosaari <crope@iki.fi>,
-        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
-        Brad Love <brad@nextdimension.cc>
-CC:     <linux-media@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+To:     <weiyongjun1@huawei.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Lauri Kasanen <cand@gmx.com>
+CC:     <linux-input@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
         "Hulk Robot" <hulkci@huawei.com>
-Subject: [PATCH -next] media: m88ds3103: fix return value check in m88ds3103_probe()
-Date:   Mon, 8 Mar 2021 12:28:02 +0000
-Message-ID: <20210308122802.2112645-1-weiyongjun1@huawei.com>
+Subject: [PATCH -next] Input: n64joy - Fix return value check in n64joy_probe()
+Date:   Mon, 8 Mar 2021 12:28:56 +0000
+Message-ID: <20210308122856.2177071-1-weiyongjun1@huawei.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Type:   text/plain; charset=US-ASCII
@@ -48,30 +48,30 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Wei Yongjun <weiyongjun1@huawei.com>
 
-In case of error, the function i2c_new_dummy_device() returns
-ERR_PTR() and never returns NULL. The NULL test in the return
-value check should be replaced with IS_ERR().
+In case of error, the function devm_platform_ioremap_resource()
+returns ERR_PTR() and never returns NULL. The NULL test in the
+return value check should be replaced with IS_ERR().
 
-Fixes: e6089feca460 ("media: m88ds3103: Add support for ds3103b demod")
+Fixes: 3bdffa8ffb45 ("Input: Add N64 controller driver")
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/media/dvb-frontends/m88ds3103.c | 4 ++--
+ drivers/input/joystick/n64joy.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/dvb-frontends/m88ds3103.c b/drivers/media/dvb-frontends/m88ds3103.c
-index cfa4cdde99d8..02e8aa11e36e 100644
---- a/drivers/media/dvb-frontends/m88ds3103.c
-+++ b/drivers/media/dvb-frontends/m88ds3103.c
-@@ -1904,8 +1904,8 @@ static int m88ds3103_probe(struct i2c_client *client,
+diff --git a/drivers/input/joystick/n64joy.c b/drivers/input/joystick/n64joy.c
+index 8bcc529942bc..9dbca366613e 100644
+--- a/drivers/input/joystick/n64joy.c
++++ b/drivers/input/joystick/n64joy.c
+@@ -252,8 +252,8 @@ static int __init n64joy_probe(struct platform_device *pdev)
+ 	mutex_init(&priv->n64joy_mutex);
  
- 		dev->dt_client = i2c_new_dummy_device(client->adapter,
- 						      dev->dt_addr);
--		if (!dev->dt_client) {
--			ret = -ENODEV;
-+		if (IS_ERR(dev->dt_client)) {
-+			ret = PTR_ERR(dev->dt_client);
- 			goto err_kfree;
- 		}
+ 	priv->reg_base = devm_platform_ioremap_resource(pdev, 0);
+-	if (!priv->reg_base) {
+-		err = -EINVAL;
++	if (IS_ERR(priv->reg_base)) {
++		err = PTR_ERR(priv->reg_base);
+ 		goto fail;
  	}
+ 
 
