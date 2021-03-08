@@ -1,80 +1,88 @@
-Return-Path: <SRS0=t3v2=IG=vger.kernel.org=kernel-janitors-owner@kernel.org>
+Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DA56C433E0
-	for <kernel-janitors@archiver.kernel.org>; Mon,  8 Mar 2021 13:48:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B3BCC433E6
+	for <kernel-janitors@archiver.kernel.org>; Mon,  8 Mar 2021 14:50:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E054E651D1
-	for <kernel-janitors@archiver.kernel.org>; Mon,  8 Mar 2021 13:48:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F281650F5
+	for <kernel-janitors@archiver.kernel.org>; Mon,  8 Mar 2021 14:50:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229591AbhCHNr7 (ORCPT
+        id S230272AbhCHOuD (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 8 Mar 2021 08:47:59 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:13485 "EHLO
-        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229829AbhCHNrm (ORCPT
+        Mon, 8 Mar 2021 09:50:03 -0500
+Received: from mail-lj1-f180.google.com ([209.85.208.180]:34520 "EHLO
+        mail-lj1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230521AbhCHOtn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 8 Mar 2021 08:47:42 -0500
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4DvKNv03mhzrSL0;
-        Mon,  8 Mar 2021 21:45:51 +0800 (CST)
-Received: from localhost.localdomain (10.175.102.38) by
- DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
- 14.3.498.0; Mon, 8 Mar 2021 21:47:29 +0800
-From:   'Wei Yongjun <weiyongjun1@huawei.com>
-To:     <weiyongjun1@huawei.com>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Mon, 8 Mar 2021 09:49:43 -0500
+Received: by mail-lj1-f180.google.com with SMTP id i26so4776666ljn.1;
+        Mon, 08 Mar 2021 06:49:42 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=uP1fIZmfDtQZr61LMQHQQSmFTjaTdGRRkSa9BlpzgAc=;
+        b=npzg+/GnhQYMf3B3ETD8KAP/LnYIamkVlXZ7yCxDT5MjavHQzO1cDre90oXHAsMBR/
+         iCV1QocnRQRxwHLsSN1sNkd6qlUsaA32/155czMXigv4k6auuvPZmJr8uKIICmjssfYm
+         6a5hCq6jI6VKJr8KRkXdqiGkLU03NPXhUeHh5NJVtJiwJniz7BMRHechCq/Qcghb1anH
+         sNi2TWyD6WD5v4hfmHBmsUb3gAxnKmu8TRhnnxC+vwRtQiqfkUHLN3yv+CEDFLDUk9hn
+         F9C+GBj6D3abawtgKSUMfglZ0rM7BSSd1T3DPhlg+cAyUnqbp4NM20liHYcdDOvJjBkr
+         YwwA==
+X-Gm-Message-State: AOAM5336FaIRwctwPwa6S6KCV5zV7ufPLQ/FGtu3/YkfDnE1syvjpnSi
+        +/74bS1SoC/7m8jSu2p3l+E=
+X-Google-Smtp-Source: ABdhPJyP8ZPxW8ct3ipsXj51uD/e3cOpusqCx9So2VJw63k1aQJmuyqgCaSZmZRJaLmj3fUZZmD62g==
+X-Received: by 2002:a2e:320c:: with SMTP id y12mr14582266ljy.360.1615214981904;
+        Mon, 08 Mar 2021 06:49:41 -0800 (PST)
+Received: from rocinante ([95.155.85.46])
+        by smtp.gmail.com with ESMTPSA id 28sm1517926ljv.125.2021.03.08.06.49.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Mar 2021 06:49:41 -0800 (PST)
+Date:   Mon, 8 Mar 2021 15:49:40 +0100
+From:   Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To:     'Wei Yongjun <weiyongjun1@huawei.com>
+Cc:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
+        Bjorn Helgaas <helgaas@kernel.org>,
         Florian Fainelli <f.fainelli@gmail.com>,
-        <bcm-kernel-feedback-list@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
         Philipp Zabel <p.zabel@pengutronix.de>,
-        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>
-CC:     <linux-rpi-kernel@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-pci@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH -next] PCI: brcmstb: Fix error return code in brcm_pcie_probe()
-Date:   Mon, 8 Mar 2021 13:56:19 +0000
-Message-ID: <20210308135619.19133-1-weiyongjun1@huawei.com>
-X-Mailer: git-send-email 2.25.1
+        =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+Subject: Re: [PATCH -next] PCI: brcmstb: Fix error return code in
+ brcm_pcie_probe()
+Message-ID: <YEY5hLEAqnI23DSW@rocinante>
+References: <20210308135619.19133-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.102.38]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210308135619.19133-1-weiyongjun1@huawei.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
+Hi,
 
-Fix to return negative error code -ENODEV from the unsupported revision
-error handling case instead of 0, as done elsewhere in this function.
+[...]
+>  	if (pcie->type == BCM4908 && pcie->hw_rev >= BRCM_PCIE_HW_REV_3_20) {
+>  		dev_err(pcie->dev, "hardware revision with unsupported PERST# setup\n");
+> +		ret = -ENODEV;
+>  		goto fail;
+[...]
 
-Fixes: 0cdfaceb9889 ("PCI: brcmstb: support BCM4908 with external PERST# signal controller")
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/pci/controller/pcie-brcmstb.c | 1 +
- 1 file changed, 1 insertion(+)
+Nice catch!
 
-diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
-index e330e6811f0b..69c999222cc8 100644
---- a/drivers/pci/controller/pcie-brcmstb.c
-+++ b/drivers/pci/controller/pcie-brcmstb.c
-@@ -1296,6 +1296,7 @@ static int brcm_pcie_probe(struct platform_device *pdev)
- 	pcie->hw_rev = readl(pcie->base + PCIE_MISC_REVISION);
- 	if (pcie->type == BCM4908 && pcie->hw_rev >= BRCM_PCIE_HW_REV_3_20) {
- 		dev_err(pcie->dev, "hardware revision with unsupported PERST# setup\n");
-+		ret = -ENODEV;
- 		goto fail;
- 	}
- 
+Reviewed-by: Krzysztof Wilczyński <kw@linux.com>
 
+Thank you!
+
+Krzysztof
