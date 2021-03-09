@@ -2,128 +2,81 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05978C433E0
-	for <kernel-janitors@archiver.kernel.org>; Tue,  9 Mar 2021 06:46:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67DF2C433E0
+	for <kernel-janitors@archiver.kernel.org>; Tue,  9 Mar 2021 08:06:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C511065287
-	for <kernel-janitors@archiver.kernel.org>; Tue,  9 Mar 2021 06:46:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B2CA652AB
+	for <kernel-janitors@archiver.kernel.org>; Tue,  9 Mar 2021 08:06:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229740AbhCIGqC (ORCPT
+        id S229636AbhCIIG0 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 9 Mar 2021 01:46:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42828 "EHLO
+        Tue, 9 Mar 2021 03:06:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60078 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229637AbhCIGqA (ORCPT
+        with ESMTP id S229689AbhCIIGF (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 9 Mar 2021 01:46:00 -0500
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EFD0C06174A;
-        Mon,  8 Mar 2021 22:46:00 -0800 (PST)
-Received: by mail-wr1-x433.google.com with SMTP id l12so13972562wry.2;
-        Mon, 08 Mar 2021 22:46:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=HSvFlw53ZQJ3UGmAhTTbZ6eZK5u9qhEy+Nh7KExbccc=;
-        b=fy29+zfeZNIkS+o2CIi1qqh67fyRSIUwPGasxaXHbIs1vlhVx7gySfrZ+K0eFbadlf
-         zVLHFAAHorvgDakN77jc+PQ19hU883vh3XcFLWHj7YE85LlfWIOArDAfSn0Nb3f0sWCM
-         9pBaipmXlVkS/8KYbssiaNZoA20jxxYeEoFzBBCfpmLfpiaqJSSeyBVCntTmm4tupAla
-         ZQ3l4N11Yn//zKlIWyYcS23CAcYgaaC1T5PtGnmEUM+emhvWdxGai7eXPHoHIOl71HUY
-         9agn4bqkO+X4hmVXjrxyyKIfKRoCqdebXJm3KxV7dkeq6BAdGrJsNET8BueHiTTdeIZE
-         TG0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=HSvFlw53ZQJ3UGmAhTTbZ6eZK5u9qhEy+Nh7KExbccc=;
-        b=tY+Dm50klBacBZ5iHrhsy/wAmWyyQ+v9PSkWLuds6k8D4HBrwIQRFZ9xYAhQwO7I5f
-         j1uu4p1Zj/xssi67noS/dTmWKwSILcSvt8PQPwJJc1glQomkuOO7vnDRxquj0iAuJrRj
-         TdUSBVjTWrkt0DskzQtmts1j1U/h/4mQeNKKBgLoKUuUU1oCD3djbT9F9qAOfpS+Ggvp
-         vnGJ9+CZhEHeS/C43SE58M36VN0nLlMyEXb0nYpzLcNAxwKH+sv1w8IqKH3R+s9US+7i
-         wdbOQsxA8D3gDOuUajTLQjVVp84RuepzOiidS4dsrMnG3Gz/aPK2xdeTmCipgSDLCow1
-         eezw==
-X-Gm-Message-State: AOAM531StwEm5oVVvndmpc/o2BDtFp//0Pc7cQjFnV9fb5CB9MGtUK+O
-        tBULK9ZuYkyE1OjaDMlqkXQ=
-X-Google-Smtp-Source: ABdhPJzUHnqLkbm99mxf5QOHQ/QZEt2V1WJETLm9RyVeVyR3yjzlOIJJysXauA9TXWSPw+wEDKUPEA==
-X-Received: by 2002:a05:6000:1547:: with SMTP id 7mr26513480wry.301.1615272359215;
-        Mon, 08 Mar 2021 22:45:59 -0800 (PST)
-Received: from Red ([2a01:cb1d:3d5:a100:264b:feff:fe03:2806])
-        by smtp.googlemail.com with ESMTPSA id c128sm2414351wma.37.2021.03.08.22.45.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Mar 2021 22:45:58 -0800 (PST)
-Date:   Tue, 9 Mar 2021 07:45:57 +0100
-From:   Corentin Labbe <clabbe.montjoie@gmail.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] crypto: sun8i-ss: Fix memory leak of object d when
- dma_iv fails to map
-Message-ID: <YEcZpUg1WJBm2/1S@Red>
-References: <20210302163446.21047-1-colin.king@canonical.com>
+        Tue, 9 Mar 2021 03:06:05 -0500
+Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5191C06174A
+        for <kernel-janitors@vger.kernel.org>; Tue,  9 Mar 2021 00:06:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=tXpi0NRLZeg1R8l9AxenkCU2b1Q8oXCDiadae4FElB8=; b=mpL4i2M6asT8b06BbY7HjgmfX4
+        Vb/1KeWznP04Mn33RmadmjdtbeUoJuiGSIakfr3ZbJ5k98Y5VY49fYfVLXU7d0MlYC9FA2EPmkev8
+        slZiP+zwbWzBpqXGKcafoFRayaycjdZoo9gIuoCmmIRH248uLepF3TS/G66GaI4X3Sw4XeQA6MHYb
+        S8SS/UA5Sgs2eycIGldLP3FnlWSUCgrQe6R69Y4lNZEm6WUGDFVY0dR2n06FgDX12ePqJTc4DuGTB
+        r+OFvD3h+3QX+VDUq2luwDtrCzXPzn8PTJrB7SqLYOy0vD/zkyxZpeXpKjtfC/1F4Mp5kgprwVmdI
+        66JUu7Ew==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by desiato.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
+        id 1lJXNS-0040N0-Pt; Tue, 09 Mar 2021 08:06:03 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 36356304BAE;
+        Tue,  9 Mar 2021 09:06:02 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 1A48620541634; Tue,  9 Mar 2021 09:06:02 +0100 (CET)
+Date:   Tue, 9 Mar 2021 09:06:02 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Edmundo Carmona Antoranz <eantoranz@gmail.com>
+Cc:     kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] kernel: sched: remove unnecessary variable from
+ schedule_tail()
+Message-ID: <YEcsav6fvYzdRfDL@hirez.programming.kicks-ass.net>
+References: <20210306210739.1370486-1-eantoranz@gmail.com>
+ <YEXenIKhyY2GCqT7@hirez.programming.kicks-ass.net>
+ <CAOc6etbrW15DWRdJ=wP-R_TXzKDqAKAjzB5oVLwWfT7sOAbY_A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210302163446.21047-1-colin.king@canonical.com>
+In-Reply-To: <CAOc6etbrW15DWRdJ=wP-R_TXzKDqAKAjzB5oVLwWfT7sOAbY_A@mail.gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le Tue, Mar 02, 2021 at 04:34:46PM +0000, Colin King a écrit :
-> From: Colin Ian King <colin.king@canonical.com>
+On Mon, Mar 08, 2021 at 07:52:11PM -0600, Edmundo Carmona Antoranz wrote:
+> On Mon, Mar 8, 2021 at 2:21 AM Peter Zijlstra <peterz@infradead.org> wrote:
+> >
+> > Thanks!
 > 
-> In the case where the dma_iv mapping fails, the return error path leaks
-> the memory allocated to object d.  Fix this by adding a new error return
-> label and jumping to this to ensure d is free'd before the return.
-> 
-> Addresses-Coverity: ("Resource leak")
-> Fixes: ac2614d721de ("crypto: sun8i-ss - Add support for the PRNG")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/crypto/allwinner/sun8i-ss/sun8i-ss-prng.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/crypto/allwinner/sun8i-ss/sun8i-ss-prng.c b/drivers/crypto/allwinner/sun8i-ss/sun8i-ss-prng.c
-> index 08a1473b2145..3191527928e4 100644
-> --- a/drivers/crypto/allwinner/sun8i-ss/sun8i-ss-prng.c
-> +++ b/drivers/crypto/allwinner/sun8i-ss/sun8i-ss-prng.c
-> @@ -103,7 +103,8 @@ int sun8i_ss_prng_generate(struct crypto_rng *tfm, const u8 *src,
->  	dma_iv = dma_map_single(ss->dev, ctx->seed, ctx->slen, DMA_TO_DEVICE);
->  	if (dma_mapping_error(ss->dev, dma_iv)) {
->  		dev_err(ss->dev, "Cannot DMA MAP IV\n");
-> -		return -EFAULT;
-> +		err = -EFAULT;
-> +		goto err_free;
->  	}
->  
->  	dma_dst = dma_map_single(ss->dev, d, todo, DMA_FROM_DEVICE);
-> @@ -167,6 +168,7 @@ int sun8i_ss_prng_generate(struct crypto_rng *tfm, const u8 *src,
->  		memcpy(ctx->seed, d + dlen, ctx->slen);
->  	}
->  	memzero_explicit(d, todo);
-> +err_free:
->  	kfree(d);
->  
->  	return err;
-> -- 
-> 2.30.0
-> 
-Hello
+> You're welcome... but I still have no idea if this baby will make it to
+> orbit or if it will have to be included in a revision of the theory of
+> tectonic plates. I guess I will be learning the flows of how patches move
+> around as time goes by. I will be posting a couple of questions (not
+> related to this patch) today or tomorrow, probably.
 
-Tested-by: Corentin Labbe <clabbe.montjoie@gmail.com>
-Acked-by: Corentin Labbe <clabbe.montjoie@gmail.com>
+It found its way here:
 
-Thanks
+  https://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git/log/?h=sched/core
+
+And soon, today or tomorrow (provided the robots don't hate on anything
+I stick in that branch), I'll push it into tip at which point you'll get
+an email.
