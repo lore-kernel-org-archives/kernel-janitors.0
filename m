@@ -4,40 +4,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF2B5C433E0
-	for <kernel-janitors@archiver.kernel.org>; Tue,  9 Mar 2021 13:07:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B2B3C43381
+	for <kernel-janitors@archiver.kernel.org>; Tue,  9 Mar 2021 13:07:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7B4496526C
+	by mail.kernel.org (Postfix) with ESMTP id D5B70652B1
 	for <kernel-janitors@archiver.kernel.org>; Tue,  9 Mar 2021 13:07:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231223AbhCINGr (ORCPT
+        id S230394AbhCINGs (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 9 Mar 2021 08:06:47 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:13891 "EHLO
-        szxga06-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230394AbhCINGS (ORCPT
+        Tue, 9 Mar 2021 08:06:48 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:13588 "EHLO
+        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231211AbhCINGU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 9 Mar 2021 08:06:18 -0500
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
-        by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4DvwR44WbBzjWmK;
-        Tue,  9 Mar 2021 21:04:48 +0800 (CST)
+        Tue, 9 Mar 2021 08:06:20 -0500
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4DvwQm2CpRz17HZC;
+        Tue,  9 Mar 2021 21:04:32 +0800 (CST)
 Received: from localhost.localdomain (10.175.102.38) by
- DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
- 14.3.498.0; Tue, 9 Mar 2021 21:06:07 +0800
+ DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
+ 14.3.498.0; Tue, 9 Mar 2021 21:06:11 +0800
 From:   'Wei Yongjun <weiyongjun1@huawei.com>
-To:     <weiyongjun1@huawei.com>, Oder Chiou <oder_chiou@realtek.com>,
-        "Liam Girdwood" <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        "Jaroslav Kysela" <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Jack Yu <jack.yu@realtek.com>
-CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
+To:     <weiyongjun1@huawei.com>, Maximilian Luz <luzmaximilian@gmail.com>,
+        "Hans de Goede" <hdegoede@redhat.com>,
+        Mark Gross <mgross@linux.intel.com>
+CC:     <platform-driver-x86@vger.kernel.org>,
         <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH -next] ASoC: rt715-sdca: Remove unused including <linux/version.h>
-Date:   Tue, 9 Mar 2021 13:14:55 +0000
-Message-ID: <20210309131455.1883120-1-weiyongjun1@huawei.com>
+Subject: [PATCH -next] platform/surface: aggregator_registry: Make symbol 'ssam_base_hub_group' static
+Date:   Tue, 9 Mar 2021 13:15:00 +0000
+Message-ID: <20210309131500.1885772-1-weiyongjun1@huawei.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Type:   text/plain; charset=US-ASCII
@@ -50,24 +48,32 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Wei Yongjun <weiyongjun1@huawei.com>
 
-Remove including <linux/version.h> that don't need it.
+The sparse tool complains as follows:
 
+drivers/platform/surface/surface_aggregator_registry.c:355:30: warning:
+ symbol 'ssam_base_hub_group' was not declared. Should it be static?
+
+This symbol is not used outside of surface_aggregator_registry.c, so this
+commit marks it static.
+
+Fixes: 797e78564634 ("platform/surface: aggregator_registry: Add base device hub")
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- sound/soc/codecs/rt715-sdca.c | 1 -
- 1 file changed, 1 deletion(-)
+ .../platform/surface/surface_aggregator_registry.c  | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/rt715-sdca.c b/sound/soc/codecs/rt715-sdca.c
-index 92ad6fa408ec..20528afbdc57 100644
---- a/sound/soc/codecs/rt715-sdca.c
-+++ b/sound/soc/codecs/rt715-sdca.c
-@@ -9,7 +9,6 @@
+diff --git a/drivers/platform/surface/surface_aggregator_registry.c b/drivers/platform/surface/surface_aggregator_registry.c
+index cdb4a95af3e8..86cff5fce3cd 100644
+--- a/drivers/platform/surface/surface_aggregator_registry.c
++++ b/drivers/platform/surface/surface_aggregator_registry.c
+@@ -352,7 +352,7 @@ static struct attribute *ssam_base_hub_attrs[] = {
+ 	NULL,
+ };
  
- #include <linux/module.h>
- #include <linux/moduleparam.h>
--#include <linux/version.h>
- #include <linux/kernel.h>
- #include <linux/init.h>
- #include <linux/pm_runtime.h>
+-const struct attribute_group ssam_base_hub_group = {
++static const struct attribute_group ssam_base_hub_group = {
+ 	.attrs = ssam_base_hub_attrs,
+ };
+ 
 
