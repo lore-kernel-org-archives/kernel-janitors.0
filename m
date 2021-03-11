@@ -4,92 +4,81 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA74AC433E0
-	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Mar 2021 17:18:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AC72C433E0
+	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Mar 2021 17:23:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A0FE264FE9
-	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Mar 2021 17:18:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5E4964FE2
+	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Mar 2021 17:23:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229775AbhCKRRm (ORCPT
+        id S229530AbhCKRWb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 11 Mar 2021 12:17:42 -0500
-Received: from mail-1.ca.inter.net ([208.85.220.69]:42557 "EHLO
-        mail-1.ca.inter.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229657AbhCKRRc (ORCPT
+        Thu, 11 Mar 2021 12:22:31 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:38401 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229605AbhCKRWR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 11 Mar 2021 12:17:32 -0500
-Received: from localhost (offload-3.ca.inter.net [208.85.220.70])
-        by mail-1.ca.inter.net (Postfix) with ESMTP id BFFBB2EA2D9;
-        Thu, 11 Mar 2021 12:17:31 -0500 (EST)
-Received: from mail-1.ca.inter.net ([208.85.220.69])
-        by localhost (offload-3.ca.inter.net [208.85.220.70]) (amavisd-new, port 10024)
-        with ESMTP id 7dcAuVDwxokd; Thu, 11 Mar 2021 12:00:29 -0500 (EST)
-Received: from [192.168.48.23] (host-45-58-219-4.dyn.295.ca [45.58.219.4])
-        (using TLSv1 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: dgilbert@interlog.com)
-        by mail-1.ca.inter.net (Postfix) with ESMTPSA id 2C5382EA2E9;
-        Thu, 11 Mar 2021 12:17:31 -0500 (EST)
-Reply-To: dgilbert@interlog.com
-Subject: Re: [PATCH][next] scsi: sg: Fix use of pointer sfp after it has been
- kfree'd
-To:     Colin King <colin.king@canonical.com>,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Hannes Reinecke <hare@suse.de>, linux-scsi@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210311103717.7523-1-colin.king@canonical.com>
-From:   Douglas Gilbert <dgilbert@interlog.com>
-Message-ID: <a1e80cea-a1b3-9471-8022-2e25eb6c635c@interlog.com>
-Date:   Thu, 11 Mar 2021 12:17:30 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Thu, 11 Mar 2021 12:22:17 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212])
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lKP0p-00061H-P8; Thu, 11 Mar 2021 17:22:15 +0000
+Subject: Re: [PATCH][next] nvmem: core: Fix unintentional sign extension issue
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+References: <20210311095316.6480-1-colin.king@canonical.com>
+ <CAD=FV=V5+GvMpD1FdX0-TJ=BFyyvST+oLR08pO7jL+h38G8PCw@mail.gmail.com>
+From:   Colin Ian King <colin.king@canonical.com>
+Message-ID: <a3ce5632-e06a-827e-7f60-e5a4b01301ad@canonical.com>
+Date:   Thu, 11 Mar 2021 17:22:15 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.0
 MIME-Version: 1.0
-In-Reply-To: <20210311103717.7523-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-CA
+In-Reply-To: <CAD=FV=V5+GvMpD1FdX0-TJ=BFyyvST+oLR08pO7jL+h38G8PCw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 2021-03-11 5:37 a.m., Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On 11/03/2021 17:12, Doug Anderson wrote:
+> Hi,
 > 
-> Currently SG_LOG is referencing sfp after it has been kfree'd which
-> is probably a bad thing to do. Fix this by kfree'ing sfp after
-> SG_LOG.
+> On Thu, Mar 11, 2021 at 1:53 AM Colin King <colin.king@canonical.com> wrote:
+>>
+>> From: Colin Ian King <colin.king@canonical.com>
+>>
+>> The shifting of the u8 integer buf[3] by 24 bits to the left will
+>> be promoted to a 32 bit signed int and then sign-extended to a
+>> u64. In the event that the top bit of buf[3] is set then all
+>> then all the upper 32 bits of the u64 end up as also being set
+>> because of the sign-extension. Fix this by casting buf[i] to
+>> a u64 before the shift.
+>>
+>> Addresses-Coverity: ("Unintended sign extension")
+>> Fixes: 097eb1136ebb ("nvmem: core: Add functions to make number reading easy")
+>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>> ---
+>>  drivers/nvmem/core.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Addresses-Coverity: ("Use after free")
-> Fixes: af1fc95db445 ("scsi: sg: Replace rq array with xarray")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Thanks! I had only tested the "u64" version to read smaller data and
+> store it in a u64. From my understanding of C rules, without your
+> patch it would have been even worse than just a sign extension though,
+> right? Shifting "buf[i]" by more than 32 bits would just not have
+> worked right.
 
-Acked-by: Douglas Gilbert <dgilbert@interlog.com>
+yep, that's correct, I forgot to mention that issue too :-/
 
-Thanks.
-
-> ---
->   drivers/scsi/sg.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/scsi/sg.c b/drivers/scsi/sg.c
-> index 2d4bbc1a1727..79f05afa4407 100644
-> --- a/drivers/scsi/sg.c
-> +++ b/drivers/scsi/sg.c
-> @@ -3799,10 +3799,10 @@ sg_add_sfp(struct sg_device *sdp)
->   	if (rbuf_len > 0) {
->   		srp = sg_build_reserve(sfp, rbuf_len);
->   		if (IS_ERR(srp)) {
-> -			kfree(sfp);
->   			err = PTR_ERR(srp);
->   			SG_LOG(1, sfp, "%s: build reserve err=%ld\n", __func__,
->   			       -err);
-> +			kfree(sfp);
->   			return ERR_PTR(err);
->   		}
->   		if (srp->sgat_h.buflen < rbuf_len) {
+> In any case:
+> 
+> Reviewed-by: Douglas Anderson <dianders@chromium.org>
 > 
 
