@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA0F1C433E6
-	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Mar 2021 10:38:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE4F4C433E6
+	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Mar 2021 10:45:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 548A864FC4
-	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Mar 2021 10:38:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8145464FC1
+	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Mar 2021 10:45:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232254AbhCKKhw (ORCPT
+        id S232508AbhCKKos (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 11 Mar 2021 05:37:52 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:53822 "EHLO
+        Thu, 11 Mar 2021 05:44:48 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:53961 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232001AbhCKKhW (ORCPT
+        with ESMTP id S232001AbhCKKor (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 11 Mar 2021 05:37:22 -0500
+        Thu, 11 Mar 2021 05:44:47 -0500
 Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <colin.king@canonical.com>)
-        id 1lKIgv-0007Zv-Og; Thu, 11 Mar 2021 10:37:17 +0000
+        id 1lKIo9-0007xc-6u; Thu, 11 Mar 2021 10:44:45 +0000
 From:   Colin King <colin.king@canonical.com>
-To:     Doug Gilbert <dgilbert@interlog.com>,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Hannes Reinecke <hare@suse.de>, linux-scsi@vger.kernel.org
+To:     Valentina Manea <valentina.manea.m@gmail.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] scsi: sg: Fix use of pointer sfp after it has been kfree'd
-Date:   Thu, 11 Mar 2021 10:37:17 +0000
-Message-Id: <20210311103717.7523-1-colin.king@canonical.com>
+Subject: [PATCH][next] usbip: Fix incorrect double assignment to udc->ud.tcp_rx
+Date:   Thu, 11 Mar 2021 10:44:45 +0000
+Message-Id: <20210311104445.7811-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -45,33 +45,29 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Currently SG_LOG is referencing sfp after it has been kfree'd which
-is probably a bad thing to do. Fix this by kfree'ing sfp after
-SG_LOG.
+Currently udc->ud.tcp_rx is being assigned twice, the second assignment
+is incorrect, it should be to udc->ud.tcp_tx instead of rx. Fix this.
 
-Addresses-Coverity: ("Use after free")
-Fixes: af1fc95db445 ("scsi: sg: Replace rq array with xarray")
+Addresses-Coverity: ("Unused value")
+Fixes: 46613c9dfa96 ("usbip: fix vudc usbip_sockfd_store races leading to gpf")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/scsi/sg.c | 2 +-
+ drivers/usb/usbip/vudc_sysfs.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/sg.c b/drivers/scsi/sg.c
-index 2d4bbc1a1727..79f05afa4407 100644
---- a/drivers/scsi/sg.c
-+++ b/drivers/scsi/sg.c
-@@ -3799,10 +3799,10 @@ sg_add_sfp(struct sg_device *sdp)
- 	if (rbuf_len > 0) {
- 		srp = sg_build_reserve(sfp, rbuf_len);
- 		if (IS_ERR(srp)) {
--			kfree(sfp);
- 			err = PTR_ERR(srp);
- 			SG_LOG(1, sfp, "%s: build reserve err=%ld\n", __func__,
- 			       -err);
-+			kfree(sfp);
- 			return ERR_PTR(err);
- 		}
- 		if (srp->sgat_h.buflen < rbuf_len) {
+diff --git a/drivers/usb/usbip/vudc_sysfs.c b/drivers/usb/usbip/vudc_sysfs.c
+index a3ec39fc6177..7383a543c6d1 100644
+--- a/drivers/usb/usbip/vudc_sysfs.c
++++ b/drivers/usb/usbip/vudc_sysfs.c
+@@ -174,7 +174,7 @@ static ssize_t usbip_sockfd_store(struct device *dev,
+ 
+ 		udc->ud.tcp_socket = socket;
+ 		udc->ud.tcp_rx = tcp_rx;
+-		udc->ud.tcp_rx = tcp_tx;
++		udc->ud.tcp_tx = tcp_tx;
+ 		udc->ud.status = SDEV_ST_USED;
+ 
+ 		spin_unlock_irq(&udc->ud.lock);
 -- 
 2.30.2
 
