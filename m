@@ -4,36 +4,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB824C433E6
-	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Mar 2021 09:32:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBFD2C433DB
+	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Mar 2021 09:34:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8A86B64FB8
-	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Mar 2021 09:32:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F2CD64EB6
+	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Mar 2021 09:34:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231953AbhCKJb2 (ORCPT
+        id S232031AbhCKJdh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 11 Mar 2021 04:31:28 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:51802 "EHLO
+        Thu, 11 Mar 2021 04:33:37 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:51898 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231826AbhCKJa6 (ORCPT
+        with ESMTP id S232021AbhCKJdI (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 11 Mar 2021 04:30:58 -0500
+        Thu, 11 Mar 2021 04:33:08 -0500
 Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <colin.king@canonical.com>)
-        id 1lKHeg-0002ZS-C0; Thu, 11 Mar 2021 09:30:54 +0000
+        id 1lKHgn-0002l7-3v; Thu, 11 Mar 2021 09:33:05 +0000
 From:   Colin King <colin.king@canonical.com>
-To:     Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>, linux-pm@vger.kernel.org
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ross Schmidt <ross.schm.dev@gmail.com>,
+        devel@driverdev.osuosl.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] thermal: Fix spelling mistake "disabed" -> "disabled"
-Date:   Thu, 11 Mar 2021 09:30:54 +0000
-Message-Id: <20210311093054.5338-1-colin.king@canonical.com>
+Subject: [PATCH] staging: rtl8723bs: Fix spelling mistake "disabed" -> "disabled"
+Date:   Thu, 11 Mar 2021 09:33:04 +0000
+Message-Id: <20210311093304.5573-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -48,22 +48,22 @@ There is a spelling mistake in a comment, fix it.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- include/uapi/linux/thermal.h | 2 +-
+ drivers/staging/rtl8723bs/include/wifi.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/uapi/linux/thermal.h b/include/uapi/linux/thermal.h
-index c105054cbb57..9aa2fedfa309 100644
---- a/include/uapi/linux/thermal.h
-+++ b/include/uapi/linux/thermal.h
-@@ -60,7 +60,7 @@ enum thermal_genl_event {
- 	THERMAL_GENL_EVENT_UNSPEC,
- 	THERMAL_GENL_EVENT_TZ_CREATE,		/* Thermal zone creation */
- 	THERMAL_GENL_EVENT_TZ_DELETE,		/* Thermal zone deletion */
--	THERMAL_GENL_EVENT_TZ_DISABLE,		/* Thermal zone disabed */
-+	THERMAL_GENL_EVENT_TZ_DISABLE,		/* Thermal zone disabled */
- 	THERMAL_GENL_EVENT_TZ_ENABLE,		/* Thermal zone enabled */
- 	THERMAL_GENL_EVENT_TZ_TRIP_UP,		/* Trip point crossed the way up */
- 	THERMAL_GENL_EVENT_TZ_TRIP_DOWN,	/* Trip point crossed the way down */
+diff --git a/drivers/staging/rtl8723bs/include/wifi.h b/drivers/staging/rtl8723bs/include/wifi.h
+index fe984fcb66a9..4080803d9b1b 100644
+--- a/drivers/staging/rtl8723bs/include/wifi.h
++++ b/drivers/staging/rtl8723bs/include/wifi.h
+@@ -719,7 +719,7 @@ struct ADDBA_request {
+ 
+ #define	P2P_WILDCARD_SSID_LEN				7
+ 
+-#define	P2P_FINDPHASE_EX_NONE				0	/*  default value, used when: (1)p2p disabed or (2)p2p enabled but only do 1 scan phase */
++#define	P2P_FINDPHASE_EX_NONE				0	/*  default value, used when: (1)p2p disabled or (2)p2p enabled but only do 1 scan phase */
+ #define	P2P_FINDPHASE_EX_FULL				1	/*  used when p2p enabled and want to do 1 scan phase and P2P_FINDPHASE_EX_MAX-1 find phase */
+ #define	P2P_FINDPHASE_EX_SOCIAL_FIRST		(P2P_FINDPHASE_EX_FULL+1)
+ #define	P2P_FINDPHASE_EX_MAX					4
 -- 
 2.30.2
 
