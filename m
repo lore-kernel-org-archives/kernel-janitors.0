@@ -2,73 +2,74 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2BABC433DB
-	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Mar 2021 16:27:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD5CCC433DB
+	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Mar 2021 16:35:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 86B9C64FF3
-	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Mar 2021 16:27:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7DC3C64F9F
+	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Mar 2021 16:35:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234499AbhCKQ0y (ORCPT
+        id S229568AbhCKQey (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 11 Mar 2021 11:26:54 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:52164 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234236AbhCKQ0o (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 11 Mar 2021 11:26:44 -0500
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94)
-        (envelope-from <andrew@lunn.ch>)
-        id 1lKO8w-00ANdX-Vz; Thu, 11 Mar 2021 17:26:34 +0100
-Date:   Thu, 11 Mar 2021 17:26:34 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     stable@vger.kernel.org, netdev@vger.kernel.org,
-        Calvin Johnson <calvin.johnson@oss.nxp.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Ioana Ciornei <ioana.ciornei@nxp.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        Masahiro Yamada <masahiroy@kernel.org>
-Subject: Re: of_mdio: Checking build dependencies
-Message-ID: <YEpEuoRGh0KoWoGa@lunn.ch>
-References: <a1a749e7-48be-d0ab-8fb5-914daf512ae9@web.de>
+        Thu, 11 Mar 2021 11:34:54 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:36946 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229624AbhCKQeW (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 11 Mar 2021 11:34:22 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lKOGP-0002rH-Sv; Thu, 11 Mar 2021 16:34:18 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Harry Wentland <harry.wentland@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/amd/display: remove redundant initialization of variable result
+Date:   Thu, 11 Mar 2021 16:34:17 +0000
+Message-Id: <20210311163417.59967-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <a1a749e7-48be-d0ab-8fb5-914daf512ae9@web.de>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Mar 10, 2021 at 09:31:07PM +0100, Markus Elfring wrote:
-> Hello,
-> 
-> I would like to build the Linux version “5.11.5” for my needs.
-> But I stumbled on the following information.
-> 
-> …
->   AR      drivers/built-in.a
->   LD [M]  drivers/visorbus/visorbus.o
->   GEN     .version
->   CHK     include/generated/compile.h
-> error: the following would cause module name conflict:
->   drivers/net/mdio/of_mdio.ko
->   drivers/of/of_mdio.ko
+From: Colin Ian King <colin.king@canonical.com>
 
-Hi Markus
+The variable result is being initialized with a value that is
+never read and it is being updated later with a new value.  The
+initialization is redundant and can be removed.
 
-Something wrong here. There should not be any of_mdio.ko in
-drivers/of. That was the whole point of the patch you referenced, it
-moved this file to drivers/net/mdio/. Please check where your
-drivers/of/of_mdio.ko comes from. Has there been a bad merge conflict
-resolution? Or is it left over from an older build?
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-   Andrew
+diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c b/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
+index 099f43709060..47e6c33f73cb 100644
+--- a/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
++++ b/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
+@@ -4281,7 +4281,7 @@ void dp_set_panel_mode(struct dc_link *link, enum dp_panel_mode panel_mode)
+ 
+ 		if (edp_config_set.bits.PANEL_MODE_EDP
+ 			!= panel_mode_edp) {
+-			enum dc_status result = DC_ERROR_UNEXPECTED;
++			enum dc_status result;
+ 
+ 			edp_config_set.bits.PANEL_MODE_EDP =
+ 			panel_mode_edp;
+-- 
+2.30.2
+
