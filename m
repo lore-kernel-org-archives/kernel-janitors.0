@@ -2,111 +2,73 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C95C3C433DB
-	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Mar 2021 15:39:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2BABC433DB
+	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Mar 2021 16:27:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 68FC464FDE
-	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Mar 2021 15:39:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86B9C64FF3
+	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Mar 2021 16:27:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234182AbhCKPjO (ORCPT
+        id S234499AbhCKQ0y (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 11 Mar 2021 10:39:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46216 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234176AbhCKPjK (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 11 Mar 2021 10:39:10 -0500
-Received: from mail-ot1-x333.google.com (mail-ot1-x333.google.com [IPv6:2607:f8b0:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 377EAC061574;
-        Thu, 11 Mar 2021 07:39:10 -0800 (PST)
-Received: by mail-ot1-x333.google.com with SMTP id r24so1824162otp.12;
-        Thu, 11 Mar 2021 07:39:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=k8nU3otkqKDGoLnXZ+AyQvf2Qyce9hWCQRz5CGYNTV8=;
-        b=YcOESLcl6A0DxELmb4Q3UlWuPIwjY/Gi64vBCZUBHVthOHA1c7hZbJ5ZyFx1ShfPX+
-         UDBXkbf0bBJ69IdKKvHxGPdrz94adaGRFXEZvmClR/gYFpmJUxiTPatMLAMUwl0Kr2ew
-         YImXGZF2QV8Kc0Sdr7//IBmcxMeUp74q1MOdPi4NRzbJnpMT9jd9k2yrBRmOk7Kj3rLI
-         VGaEkR4caadslizFgAO2MX86IwC42yJjj6TD53EJBd1ndKHqxOsbQCJY0HagwDv6NK/V
-         o29f/1sAPK23OLr1chPlFfl7NN6ki+6ZutXKq9c+JDqMqxex2FEAucpqibpFp1RX3FPO
-         1S5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=k8nU3otkqKDGoLnXZ+AyQvf2Qyce9hWCQRz5CGYNTV8=;
-        b=mLVK+0P7/XMQ9McEt/+0ucLEzq+zsS10FwwTRzTD1AZvZvGx0HJdXBk3I5zI4xFeaL
-         ZkInNlYJR0vXL32mV01N7sNcCplwdXvvTa/ksWmd1jSebjBlD7hbQ2334lV/DsnG69Id
-         1XnBWuzri/sdQqcoGpxMYpizXSpaG6XkSPYeGrd4uXVv+UW7XjygfRZryk2k/bhVEKuY
-         u86s3u4uHPw1IFINvQ7AWMW77k6JNku+nRreWCrA63MxhKWECGnC/ZWNFdTI/C46VAE6
-         dRdWup3fPnJT3BeLiAxFHblVlJUkJW0U80vbscMTSrCmM6+vTBtTqDJLqdDzUsN8JPdJ
-         AdtQ==
-X-Gm-Message-State: AOAM530iVeCr9X+uL/o7qqdgfXyIkBg7zwSc6dFTUUQTN9wGAdKxhEhF
-        1MfTiflA3tBnZL3ZDCd8yMoF5fAzhox6W0c57u+mWSzx
-X-Google-Smtp-Source: ABdhPJxOjP/JafiPMC5iAxWgHzxV7klk0G1enHWcpJxnjDmEpaJAZVjHHfOQIxpKPQnRhz+jSKit4DzGCNRjuClDMsk=
-X-Received: by 2002:a9d:20c3:: with SMTP id x61mr7279798ota.311.1615477149643;
- Thu, 11 Mar 2021 07:39:09 -0800 (PST)
+        Thu, 11 Mar 2021 11:26:54 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:52164 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234236AbhCKQ0o (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 11 Mar 2021 11:26:44 -0500
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94)
+        (envelope-from <andrew@lunn.ch>)
+        id 1lKO8w-00ANdX-Vz; Thu, 11 Mar 2021 17:26:34 +0100
+Date:   Thu, 11 Mar 2021 17:26:34 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     stable@vger.kernel.org, netdev@vger.kernel.org,
+        Calvin Johnson <calvin.johnson@oss.nxp.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Ioana Ciornei <ioana.ciornei@nxp.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        Masahiro Yamada <masahiroy@kernel.org>
+Subject: Re: of_mdio: Checking build dependencies
+Message-ID: <YEpEuoRGh0KoWoGa@lunn.ch>
+References: <a1a749e7-48be-d0ab-8fb5-914daf512ae9@web.de>
 MIME-Version: 1.0
-References: <20210311092830.5106-1-colin.king@canonical.com>
-In-Reply-To: <20210311092830.5106-1-colin.king@canonical.com>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Thu, 11 Mar 2021 10:38:58 -0500
-Message-ID: <CADnq5_PNgWJPjV-kny7pfRZZ7pS8FhpHxWYPBKbyGd7kVqW2Fg@mail.gmail.com>
-Subject: Re: [PATCH][next] drm/amdgpu: Fix spelling mistake "disabed" -> "disabled"
-To:     Colin King <colin.king@canonical.com>
-Cc:     Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>, kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a1a749e7-48be-d0ab-8fb5-914daf512ae9@web.de>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Applied.  Thanks!
+On Wed, Mar 10, 2021 at 09:31:07PM +0100, Markus Elfring wrote:
+> Hello,
+> 
+> I would like to build the Linux version “5.11.5” for my needs.
+> But I stumbled on the following information.
+> 
+> …
+>   AR      drivers/built-in.a
+>   LD [M]  drivers/visorbus/visorbus.o
+>   GEN     .version
+>   CHK     include/generated/compile.h
+> error: the following would cause module name conflict:
+>   drivers/net/mdio/of_mdio.ko
+>   drivers/of/of_mdio.ko
 
-Alex
+Hi Markus
 
-On Thu, Mar 11, 2021 at 4:28 AM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> There is a spelling mistake in a drm debug message. Fix it.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-> index 617e62e1eff9..dcbae9237cfa 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-> @@ -3464,7 +3464,7 @@ int amdgpu_device_init(struct amdgpu_device *adev,
->                                       adev->ip_blocks[i].version->type == AMD_IP_BLOCK_TYPE_COMMON ||
->                                       adev->ip_blocks[i].version->type == AMD_IP_BLOCK_TYPE_IH ||
->                                       adev->ip_blocks[i].version->type == AMD_IP_BLOCK_TYPE_SMC)) {
-> -                                       DRM_DEBUG("IP %s disabed for hw_init.\n",
-> +                                       DRM_DEBUG("IP %s disabled for hw_init.\n",
->                                                 adev->ip_blocks[i].version->funcs->name);
->                                         adev->ip_blocks[i].status.hw = true;
->                                 }
-> --
-> 2.30.2
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+Something wrong here. There should not be any of_mdio.ko in
+drivers/of. That was the whole point of the patch you referenced, it
+moved this file to drivers/net/mdio/. Please check where your
+drivers/of/of_mdio.ko comes from. Has there been a bad merge conflict
+resolution? Or is it left over from an older build?
+
+   Andrew
