@@ -2,83 +2,123 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AC72C433E0
-	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Mar 2021 17:23:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90195C433E6
+	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Mar 2021 17:31:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C5E4964FE2
-	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Mar 2021 17:23:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FA1264FE5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Mar 2021 17:31:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229530AbhCKRWb (ORCPT
+        id S229743AbhCKRbN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 11 Mar 2021 12:22:31 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:38401 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229605AbhCKRWR (ORCPT
+        Thu, 11 Mar 2021 12:31:13 -0500
+Received: from condef-08.nifty.com ([202.248.20.73]:39413 "EHLO
+        condef-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229578AbhCKRaq (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 11 Mar 2021 12:22:17 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212])
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1lKP0p-00061H-P8; Thu, 11 Mar 2021 17:22:15 +0000
-Subject: Re: [PATCH][next] nvmem: core: Fix unintentional sign extension issue
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Thu, 11 Mar 2021 12:30:46 -0500
+Received: from conssluserg-06.nifty.com ([10.126.8.85])by condef-08.nifty.com with ESMTP id 12BHPjCR002831;
+        Fri, 12 Mar 2021 02:25:45 +0900
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51]) (authenticated)
+        by conssluserg-06.nifty.com with ESMTP id 12BHPUIR024578;
+        Fri, 12 Mar 2021 02:25:31 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com 12BHPUIR024578
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1615483531;
+        bh=PXJt6D8qnKY8szVqGBkNLxIg6+eK0InYeixeUSx4Lhs=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Qb4NHPOdreQxZNopchu3iYo/9GCNDjinFt5dgXgg7/NB9pUl5M32rRvqbInAxN9Ec
+         8RVARmmJ8RCOCDfV+DCPa8VFdntwzEDh2mJ3SicXe1F3Xiu3DUOTbhqLUb1B/H0SK+
+         fGNb7CiPQtjZ6n+NCbBDBpadYu+LBbGz/MB5pG67+F8JaWY9LC7Z9U4QX2w+QrMemP
+         XqPtWbxM96G/FK5zFVCqGSe4eeey81GfS/sSKIAeuNwOuBX8qIPCM+zyiq+vfORO0A
+         VNKcYJGkmxwnb7nKeQFsKmBV+bNlsAOahEwri2PtUf6YBmkq3jfdIsOP1JSEJ61uxn
+         diVOHH2nZw5/Q==
+X-Nifty-SrcIP: [209.85.216.51]
+Received: by mail-pj1-f51.google.com with SMTP id x7-20020a17090a2b07b02900c0ea793940so9413076pjc.2;
+        Thu, 11 Mar 2021 09:25:31 -0800 (PST)
+X-Gm-Message-State: AOAM532FnJM5d+t3pXEVYwsEglymDgs2Y+moFP1qSHMePAgNC8zPJNLn
+        XwKJfuoXyluJ6tx4girlgO9pUi7B7fnptwvrYvU=
+X-Google-Smtp-Source: ABdhPJxPcnVso4Em3gdaU2xvNMRrfF43T4ctrqiyqNN0sGobXOGU9+yOVbhG2axf6IP41vq7Mu+axhdDnGBjOdY7abI=
+X-Received: by 2002:a17:90a:3b0e:: with SMTP id d14mr10135971pjc.198.1615483530413;
+ Thu, 11 Mar 2021 09:25:30 -0800 (PST)
+MIME-Version: 1.0
+References: <a1a749e7-48be-d0ab-8fb5-914daf512ae9@web.de> <YEpEuoRGh0KoWoGa@lunn.ch>
+In-Reply-To: <YEpEuoRGh0KoWoGa@lunn.ch>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Fri, 12 Mar 2021 02:24:52 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASPRUdvy8go5Cn6C+8j2O5AGJje1h-uKiTCFyVOmZwcUw@mail.gmail.com>
+Message-ID: <CAK7LNASPRUdvy8go5Cn6C+8j2O5AGJje1h-uKiTCFyVOmZwcUw@mail.gmail.com>
+Subject: Re: of_mdio: Checking build dependencies
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     Markus Elfring <Markus.Elfring@web.de>,
+        stable <stable@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>,
+        Calvin Johnson <calvin.johnson@oss.nxp.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Ioana Ciornei <ioana.ciornei@nxp.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
         LKML <linux-kernel@vger.kernel.org>,
         kernel-janitors@vger.kernel.org
-References: <20210311095316.6480-1-colin.king@canonical.com>
- <CAD=FV=V5+GvMpD1FdX0-TJ=BFyyvST+oLR08pO7jL+h38G8PCw@mail.gmail.com>
-From:   Colin Ian King <colin.king@canonical.com>
-Message-ID: <a3ce5632-e06a-827e-7f60-e5a4b01301ad@canonical.com>
-Date:   Thu, 11 Mar 2021 17:22:15 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.0
-MIME-Version: 1.0
-In-Reply-To: <CAD=FV=V5+GvMpD1FdX0-TJ=BFyyvST+oLR08pO7jL+h38G8PCw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 11/03/2021 17:12, Doug Anderson wrote:
-> Hi,
-> 
-> On Thu, Mar 11, 2021 at 1:53 AM Colin King <colin.king@canonical.com> wrote:
->>
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> The shifting of the u8 integer buf[3] by 24 bits to the left will
->> be promoted to a 32 bit signed int and then sign-extended to a
->> u64. In the event that the top bit of buf[3] is set then all
->> then all the upper 32 bits of the u64 end up as also being set
->> because of the sign-extension. Fix this by casting buf[i] to
->> a u64 before the shift.
->>
->> Addresses-Coverity: ("Unintended sign extension")
->> Fixes: 097eb1136ebb ("nvmem: core: Add functions to make number reading easy")
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>  drivers/nvmem/core.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> Thanks! I had only tested the "u64" version to read smaller data and
-> store it in a u64. From my understanding of C rules, without your
-> patch it would have been even worse than just a sign extension though,
-> right? Shifting "buf[i]" by more than 32 bits would just not have
-> worked right.
+On Fri, Mar 12, 2021 at 1:26 AM Andrew Lunn <andrew@lunn.ch> wrote:
+>
+> On Wed, Mar 10, 2021 at 09:31:07PM +0100, Markus Elfring wrote:
+> > Hello,
+> >
+> > I would like to build the Linux version =E2=80=9C5.11.5=E2=80=9D for my=
+ needs.
+> > But I stumbled on the following information.
+> >
+> > =E2=80=A6
+> >   AR      drivers/built-in.a
+> >   LD [M]  drivers/visorbus/visorbus.o
+> >   GEN     .version
+> >   CHK     include/generated/compile.h
+> > error: the following would cause module name conflict:
+> >   drivers/net/mdio/of_mdio.ko
+> >   drivers/of/of_mdio.ko
+>
+> Hi Markus
+>
+> Something wrong here. There should not be any of_mdio.ko in
+> drivers/of. That was the whole point of the patch you referenced, it
+> moved this file to drivers/net/mdio/. Please check where your
+> drivers/of/of_mdio.ko comes from. Has there been a bad merge conflict
+> resolution? Or is it left over from an older build?
+>
+>    Andrew
 
-yep, that's correct, I forgot to mention that issue too :-/
 
-> 
-> In any case:
-> 
-> Reviewed-by: Douglas Anderson <dianders@chromium.org>
-> 
+modules.order may include both
+drivers/of/of_mdio.ko  and
+drivers/net/mdio/of_mdio.c
 
+But, I do not know how this could happen.
+
+I checked out 14b26b127c098bba^,
+and built modules with CONFIG_OF_MDIO=3Dm.
+Then, I checked out 14b26b127c098bba
+and rebuilt.
+
+I did not see such an error.
+
+I also checked the Kbuild code,
+and it looks good too.
+
+Please let me know if you find steps
+to reproduce it.
+
+--
+Best Regards
+Masahiro Yamada
