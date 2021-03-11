@@ -2,117 +2,121 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4595CC433E0
-	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Mar 2021 17:51:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E163BC433DB
+	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Mar 2021 18:58:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E9CDE64FE2
-	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Mar 2021 17:51:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A60564FDE
+	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Mar 2021 18:58:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229578AbhCKRvF (ORCPT
+        id S230127AbhCKS5u (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 11 Mar 2021 12:51:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46516 "EHLO
+        Thu, 11 Mar 2021 13:57:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229483AbhCKRui (ORCPT
+        with ESMTP id S229699AbhCKSzd (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 11 Mar 2021 12:50:38 -0500
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5620AC061760
-        for <kernel-janitors@vger.kernel.org>; Thu, 11 Mar 2021 09:50:38 -0800 (PST)
-Received: by mail-wm1-x329.google.com with SMTP id r10-20020a05600c35cab029010c946c95easo13395324wmq.4
-        for <kernel-janitors@vger.kernel.org>; Thu, 11 Mar 2021 09:50:38 -0800 (PST)
+        Thu, 11 Mar 2021 13:55:33 -0500
+Received: from mail-io1-xd2b.google.com (mail-io1-xd2b.google.com [IPv6:2607:f8b0:4864:20::d2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5501C061574
+        for <kernel-janitors@vger.kernel.org>; Thu, 11 Mar 2021 10:55:32 -0800 (PST)
+Received: by mail-io1-xd2b.google.com with SMTP id a7so23033133iok.12
+        for <kernel-janitors@vger.kernel.org>; Thu, 11 Mar 2021 10:55:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=linuxfoundation.org; s=google;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=HthGmN6OoEPOkH3BUjgeaUShU2h31+ENbwr8NaXHKZ4=;
-        b=nyz24We35BGpHCczqy7X4dlSaTal3kCH6WmbMotRZv8th6gh9Mx010oWwScQbSt3Nk
-         5OCCxe83VgW99MUBnVuNBYe92Z7KFWJVtcTpv/ZbnCPlgclkGuZrDIYwlNSmvICQD34O
-         E8hyH5YWCeU/wocbV5w/Qf/bNPCrLAi0ztM+cyecnKU+g74B731lpvf2Iabd7pMi2SNa
-         pFnPzC+FL4tF6W3mrivdtJ6hBCdONz0QvFhs3sMmv4NZYlmPTQaxrHyi4lAAstQMrMl1
-         FRSZuZk/tII5v6mkQdGx3tBQngYLp1QDeJi7G3dlU9mBY0c+dcr3LoU94rjBQBBjZKzf
-         X/nQ==
+        bh=stRVno9z/DCS0wZx7I98P8EWMS6yZuT8s6v7jBQ49hM=;
+        b=BMoGUsO4GNIbTwMGxgFtKIi3ncJzrgl+1h85yF0gmLnayDHFLpLPkhRm6g3mxSD7xL
+         +E6IVqxRiF49V91lnMdlLbzeDKbqvcmBoEz3F9tFSCrzgK0f7cd2Y6G/AU3DZqFcJ67M
+         Q+73CxlhW5rv7fcbNMQhEHe2fvGcle/qvBlzc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=HthGmN6OoEPOkH3BUjgeaUShU2h31+ENbwr8NaXHKZ4=;
-        b=cVZss4k98RZWTUAm40S9+/+UuQvdJkJ41UBxL8sErRdo9gdSh6Q96XQs6g8wxRJ4ts
-         LteDnGD1UpjsU9ZQ2chYdAl+4/iZ9LP836fy1bxWg8Om4CtyiairZy7fsl/HMIE2eEmS
-         bUSw1pxbydFa1oSqc6ahPuhtRdB6g00uINp+zrAXxQu6Edp//JMM4WPGiXV+XX+LGQh+
-         vuwbpcgpq1ygGdcb9S2vMt7eeHuTtwte6OiYOM0OK9Ds7NN12hASMCYt8D3MDlP0SoPj
-         WaBwZ/pNeEPYKdRcjKMvLfbagTVwF7EzKsoDwPaGQH38KdKzU5oSpPUbOrtWMD1Rx3Kd
-         AXnA==
-X-Gm-Message-State: AOAM530EEB5MPZhx9zKNa2s3x1NwldDnujMvD+4duu1NL1L3CY+0sVmJ
-        vg4jcKKqC5rFHQeHre+rtnrKpIyiAIFXQw==
-X-Google-Smtp-Source: ABdhPJxT6GAKDrraNaBEENyQ6zcJio4amNKi9uZm5C0XC3l5j4HTKLluXN7nY0KmqRu4CKB1MPgbXQ==
-X-Received: by 2002:a05:600c:2d42:: with SMTP id a2mr9431760wmg.77.1615485036685;
-        Thu, 11 Mar 2021 09:50:36 -0800 (PST)
-Received: from [192.168.86.34] (cpc86377-aztw32-2-0-cust226.18-1.cable.virginm.net. [92.233.226.227])
-        by smtp.googlemail.com with ESMTPSA id g202sm4559157wme.20.2021.03.11.09.50.35
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 11 Mar 2021 09:50:35 -0800 (PST)
-Subject: Re: [PATCH][next] nvmem: core: Fix unintentional sign extension issue
+        bh=stRVno9z/DCS0wZx7I98P8EWMS6yZuT8s6v7jBQ49hM=;
+        b=Yj2qSRP43J2V/TMR9cRcC1adapZdNhtf5hCy7gchPXnGxDSPhruWUh2ZAD3DXg33ua
+         BDaKXWO3sGJFO7jtl1sla3MR8X78bAjADaSrHpg8oaaIxf4Sv3Eg5Ypq5vvjZ6Pv4FFH
+         rt2WICjtUKJBStT9mL4WX+9Ygy3yMwCRCuUl5PFp0dlNGD03X8qLIyzO22JZ0bmxPb4e
+         XTr4+ze0Hs3ak9AvG05+uC6IEgOH6bfe2IkNpPYAt5wRUgyz2+HZG7U5GtGZZOS7DnoD
+         BNXZD2JzIuVvm6sbXHd/staoF5oCZKBR70kMQ+RRl+/DMvch7d9yJXQKhVcdS+OFHQ6S
+         g8CA==
+X-Gm-Message-State: AOAM531Uto7NAMExv2JLqs41xA8c1EG4duOEe++D/wCvsUZrg92zpGEX
+        AxURX5n7pqKTK4Hhphcjg+P5IA==
+X-Google-Smtp-Source: ABdhPJw4udqsFDFZUWvVbNULF5TWf0ztq74YOCcgDSPWaVveOnaqhlFTiqS51B7eMoc+nsI6kywBog==
+X-Received: by 2002:a6b:1415:: with SMTP id 21mr7585518iou.147.1615488932245;
+        Thu, 11 Mar 2021 10:55:32 -0800 (PST)
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
+        by smtp.gmail.com with ESMTPSA id v4sm1691239ilo.26.2021.03.11.10.55.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Mar 2021 10:55:31 -0800 (PST)
+Subject: Re: [PATCH][next] usbip: Fix incorrect double assignment to
+ udc->ud.tcp_rx
 To:     Colin King <colin.king@canonical.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        linux-kernel@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org
-References: <20210311095316.6480-1-colin.king@canonical.com>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <e0c2b730-7ec2-590d-975c-f515c5b48e2e@linaro.org>
-Date:   Thu, 11 Mar 2021 17:50:35 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Valentina Manea <valentina.manea.m@gmail.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210311104445.7811-1-colin.king@canonical.com>
+ <8862cf33-dc2b-1d62-d7ef-56f34c5b358d@linuxfoundation.org>
+From:   Shuah Khan <skhan@linuxfoundation.org>
+Message-ID: <89eb8a32-8d43-cf0c-d460-9c25655141b4@linuxfoundation.org>
+Date:   Thu, 11 Mar 2021 11:55:30 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.1
 MIME-Version: 1.0
-In-Reply-To: <20210311095316.6480-1-colin.king@canonical.com>
+In-Reply-To: <8862cf33-dc2b-1d62-d7ef-56f34c5b358d@linuxfoundation.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-
-
-On 11/03/2021 09:53, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On 3/11/21 7:16 AM, Shuah Khan wrote:
+> On 3/11/21 3:44 AM, Colin King wrote:
+>> From: Colin Ian King <colin.king@canonical.com>
+>>
+>> Currently udc->ud.tcp_rx is being assigned twice, the second assignment
+>> is incorrect, it should be to udc->ud.tcp_tx instead of rx. Fix this.
+>>
+>> Addresses-Coverity: ("Unused value")
+>> Fixes: 46613c9dfa96 ("usbip: fix vudc usbip_sockfd_store races leading 
+>> to gpf")
+>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>> ---
+>>   drivers/usb/usbip/vudc_sysfs.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/usb/usbip/vudc_sysfs.c 
+>> b/drivers/usb/usbip/vudc_sysfs.c
+>> index a3ec39fc6177..7383a543c6d1 100644
+>> --- a/drivers/usb/usbip/vudc_sysfs.c
+>> +++ b/drivers/usb/usbip/vudc_sysfs.c
+>> @@ -174,7 +174,7 @@ static ssize_t usbip_sockfd_store(struct device *dev,
+>>           udc->ud.tcp_socket = socket;
+>>           udc->ud.tcp_rx = tcp_rx;
+>> -        udc->ud.tcp_rx = tcp_tx;
+>> +        udc->ud.tcp_tx = tcp_tx;
+>>           udc->ud.status = SDEV_ST_USED;
+>>           spin_unlock_irq(&udc->ud.lock);
+>>
 > 
-> The shifting of the u8 integer buf[3] by 24 bits to the left will
-> be promoted to a 32 bit signed int and then sign-extended to a
-> u64. In the event that the top bit of buf[3] is set then all
-> then all the upper 32 bits of the u64 end up as also being set
-> because of the sign-extension. Fix this by casting buf[i] to
-> a u64 before the shift.
+> Thank you for finding and fixing this. This is my bad.
 > 
-> Addresses-Coverity: ("Unintended sign extension")
-> Fixes: 097eb1136ebb ("nvmem: core: Add functions to make number reading easy")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
-
-Applied thanks,
-
---srini
-
->   drivers/nvmem/core.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> Acked-by: Shuah Khan <skhan@linuxfoundation.org>
 > 
-> diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-> index 635e3131eb5f..bca671ff4e54 100644
-> --- a/drivers/nvmem/core.c
-> +++ b/drivers/nvmem/core.c
-> @@ -1693,7 +1693,7 @@ int nvmem_cell_read_variable_le_u64(struct device *dev, const char *cell_id,
->   	/* Copy w/ implicit endian conversion */
->   	*val = 0;
->   	for (i = 0; i < len; i++)
-> -		*val |= buf[i] << (8 * i);
-> +		*val |= (uint64_t)buf[i] << (8 * i);
->   
->   	kfree(buf);
->   
-> 
+
+Applies to stables as well since the 46613c9dfa96 is marked for
+stables.
+
+thanks,
+-- Shuah
+
