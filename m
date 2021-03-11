@@ -4,36 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41165C433E0
-	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Mar 2021 09:54:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA0F1C433E6
+	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Mar 2021 10:38:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E5F7964E05
-	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Mar 2021 09:53:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 548A864FC4
+	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Mar 2021 10:38:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232178AbhCKJx1 (ORCPT
+        id S232254AbhCKKhw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 11 Mar 2021 04:53:27 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:52429 "EHLO
+        Thu, 11 Mar 2021 05:37:52 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:53822 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231882AbhCKJxS (ORCPT
+        with ESMTP id S232001AbhCKKhW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 11 Mar 2021 04:53:18 -0500
+        Thu, 11 Mar 2021 05:37:22 -0500
 Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <colin.king@canonical.com>)
-        id 1lKI0K-0004EF-Up; Thu, 11 Mar 2021 09:53:17 +0000
+        id 1lKIgv-0007Zv-Og; Thu, 11 Mar 2021 10:37:17 +0000
 From:   Colin King <colin.king@canonical.com>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        linux-kernel@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org
-Subject: [PATCH][next] nvmem: core: Fix unintentional sign extension issue
-Date:   Thu, 11 Mar 2021 09:53:16 +0000
-Message-Id: <20210311095316.6480-1-colin.king@canonical.com>
+To:     Doug Gilbert <dgilbert@interlog.com>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Hannes Reinecke <hare@suse.de>, linux-scsi@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] scsi: sg: Fix use of pointer sfp after it has been kfree'd
+Date:   Thu, 11 Mar 2021 10:37:17 +0000
+Message-Id: <20210311103717.7523-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -44,33 +45,33 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The shifting of the u8 integer buf[3] by 24 bits to the left will
-be promoted to a 32 bit signed int and then sign-extended to a
-u64. In the event that the top bit of buf[3] is set then all
-then all the upper 32 bits of the u64 end up as also being set
-because of the sign-extension. Fix this by casting buf[i] to
-a u64 before the shift.
+Currently SG_LOG is referencing sfp after it has been kfree'd which
+is probably a bad thing to do. Fix this by kfree'ing sfp after
+SG_LOG.
 
-Addresses-Coverity: ("Unintended sign extension")
-Fixes: 097eb1136ebb ("nvmem: core: Add functions to make number reading easy")
+Addresses-Coverity: ("Use after free")
+Fixes: af1fc95db445 ("scsi: sg: Replace rq array with xarray")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/nvmem/core.c | 2 +-
+ drivers/scsi/sg.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index 635e3131eb5f..bca671ff4e54 100644
---- a/drivers/nvmem/core.c
-+++ b/drivers/nvmem/core.c
-@@ -1693,7 +1693,7 @@ int nvmem_cell_read_variable_le_u64(struct device *dev, const char *cell_id,
- 	/* Copy w/ implicit endian conversion */
- 	*val = 0;
- 	for (i = 0; i < len; i++)
--		*val |= buf[i] << (8 * i);
-+		*val |= (uint64_t)buf[i] << (8 * i);
- 
- 	kfree(buf);
- 
+diff --git a/drivers/scsi/sg.c b/drivers/scsi/sg.c
+index 2d4bbc1a1727..79f05afa4407 100644
+--- a/drivers/scsi/sg.c
++++ b/drivers/scsi/sg.c
+@@ -3799,10 +3799,10 @@ sg_add_sfp(struct sg_device *sdp)
+ 	if (rbuf_len > 0) {
+ 		srp = sg_build_reserve(sfp, rbuf_len);
+ 		if (IS_ERR(srp)) {
+-			kfree(sfp);
+ 			err = PTR_ERR(srp);
+ 			SG_LOG(1, sfp, "%s: build reserve err=%ld\n", __func__,
+ 			       -err);
++			kfree(sfp);
+ 			return ERR_PTR(err);
+ 		}
+ 		if (srp->sgat_h.buflen < rbuf_len) {
 -- 
 2.30.2
 
