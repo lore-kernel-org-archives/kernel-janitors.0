@@ -7,33 +7,39 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBFD2C433DB
-	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Mar 2021 09:34:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BE1FC433DB
+	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Mar 2021 09:41:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6F2CD64EB6
-	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Mar 2021 09:34:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE3DF64F95
+	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Mar 2021 09:41:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232031AbhCKJdh (ORCPT
+        id S232048AbhCKJlK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 11 Mar 2021 04:33:37 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:51898 "EHLO
+        Thu, 11 Mar 2021 04:41:10 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:52087 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232021AbhCKJdI (ORCPT
+        with ESMTP id S232033AbhCKJkn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 11 Mar 2021 04:33:08 -0500
+        Thu, 11 Mar 2021 04:40:43 -0500
 Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <colin.king@canonical.com>)
-        id 1lKHgn-0002l7-3v; Thu, 11 Mar 2021 09:33:05 +0000
+        id 1lKHnq-0003Fh-7B; Thu, 11 Mar 2021 09:40:22 +0000
 From:   Colin King <colin.king@canonical.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ross Schmidt <ross.schm.dev@gmail.com>,
-        devel@driverdev.osuosl.org
+To:     Guo Ren <guoren@kernel.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-csky@vger.kernel.org, linux-riscv@lists.infradead.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: rtl8723bs: Fix spelling mistake "disabed" -> "disabled"
-Date:   Thu, 11 Mar 2021 09:33:04 +0000
-Message-Id: <20210311093304.5573-1-colin.king@canonical.com>
+Subject: [PATCH] ftrace: Fix spelling mistake "disabed" -> "disabled"
+Date:   Thu, 11 Mar 2021 09:40:22 +0000
+Message-Id: <20210311094022.5978-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -48,22 +54,50 @@ There is a spelling mistake in a comment, fix it.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/staging/rtl8723bs/include/wifi.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/csky/kernel/probes/ftrace.c  | 2 +-
+ arch/riscv/kernel/probes/ftrace.c | 2 +-
+ arch/x86/kernel/kprobes/ftrace.c  | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/rtl8723bs/include/wifi.h b/drivers/staging/rtl8723bs/include/wifi.h
-index fe984fcb66a9..4080803d9b1b 100644
---- a/drivers/staging/rtl8723bs/include/wifi.h
-+++ b/drivers/staging/rtl8723bs/include/wifi.h
-@@ -719,7 +719,7 @@ struct ADDBA_request {
+diff --git a/arch/csky/kernel/probes/ftrace.c b/arch/csky/kernel/probes/ftrace.c
+index ae2b1c7b3b5c..ef2bb9bd9605 100644
+--- a/arch/csky/kernel/probes/ftrace.c
++++ b/arch/csky/kernel/probes/ftrace.c
+@@ -9,7 +9,7 @@ int arch_check_ftrace_location(struct kprobe *p)
+ 	return 0;
+ }
  
- #define	P2P_WILDCARD_SSID_LEN				7
+-/* Ftrace callback handler for kprobes -- called under preepmt disabed */
++/* Ftrace callback handler for kprobes -- called under preepmt disabled */
+ void kprobe_ftrace_handler(unsigned long ip, unsigned long parent_ip,
+ 			   struct ftrace_ops *ops, struct ftrace_regs *fregs)
+ {
+diff --git a/arch/riscv/kernel/probes/ftrace.c b/arch/riscv/kernel/probes/ftrace.c
+index 2dfb33fdac74..17ca5e923bb0 100644
+--- a/arch/riscv/kernel/probes/ftrace.c
++++ b/arch/riscv/kernel/probes/ftrace.c
+@@ -2,7 +2,7 @@
  
--#define	P2P_FINDPHASE_EX_NONE				0	/*  default value, used when: (1)p2p disabed or (2)p2p enabled but only do 1 scan phase */
-+#define	P2P_FINDPHASE_EX_NONE				0	/*  default value, used when: (1)p2p disabled or (2)p2p enabled but only do 1 scan phase */
- #define	P2P_FINDPHASE_EX_FULL				1	/*  used when p2p enabled and want to do 1 scan phase and P2P_FINDPHASE_EX_MAX-1 find phase */
- #define	P2P_FINDPHASE_EX_SOCIAL_FIRST		(P2P_FINDPHASE_EX_FULL+1)
- #define	P2P_FINDPHASE_EX_MAX					4
+ #include <linux/kprobes.h>
+ 
+-/* Ftrace callback handler for kprobes -- called under preepmt disabed */
++/* Ftrace callback handler for kprobes -- called under preepmt disabled */
+ void kprobe_ftrace_handler(unsigned long ip, unsigned long parent_ip,
+ 			   struct ftrace_ops *ops, struct ftrace_regs *fregs)
+ {
+diff --git a/arch/x86/kernel/kprobes/ftrace.c b/arch/x86/kernel/kprobes/ftrace.c
+index 373e5fa3ce1f..51c7f5271aee 100644
+--- a/arch/x86/kernel/kprobes/ftrace.c
++++ b/arch/x86/kernel/kprobes/ftrace.c
+@@ -12,7 +12,7 @@
+ 
+ #include "common.h"
+ 
+-/* Ftrace callback handler for kprobes -- called under preepmt disabed */
++/* Ftrace callback handler for kprobes -- called under preepmt disabled */
+ void kprobe_ftrace_handler(unsigned long ip, unsigned long parent_ip,
+ 			   struct ftrace_ops *ops, struct ftrace_regs *fregs)
+ {
 -- 
 2.30.2
 
