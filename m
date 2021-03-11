@@ -5,36 +5,37 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96B23C433E6
-	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Mar 2021 09:26:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93BD3C433DB
+	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Mar 2021 09:29:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4968C64FBB
-	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Mar 2021 09:26:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3EEFB64FB5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Mar 2021 09:29:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231844AbhCKJZh (ORCPT
+        id S232017AbhCKJ2t (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 11 Mar 2021 04:25:37 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:51684 "EHLO
+        Thu, 11 Mar 2021 04:28:49 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:51748 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231639AbhCKJZc (ORCPT
+        with ESMTP id S231683AbhCKJ2e (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 11 Mar 2021 04:25:32 -0500
+        Thu, 11 Mar 2021 04:28:34 -0500
 Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <colin.king@canonical.com>)
-        id 1lKHZR-0002Ad-Ob; Thu, 11 Mar 2021 09:25:29 +0000
+        id 1lKHcN-0002PC-3z; Thu, 11 Mar 2021 09:28:31 +0000
 From:   Colin King <colin.king@canonical.com>
-To:     Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
+To:     Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] usb: mtu3: Fix spelling mistake "disabed" -> "disabled"
-Date:   Thu, 11 Mar 2021 09:25:29 +0000
-Message-Id: <20210311092529.4898-1-colin.king@canonical.com>
+Subject: [PATCH][next] drm/amdgpu: Fix spelling mistake "disabed" -> "disabled"
+Date:   Thu, 11 Mar 2021 09:28:30 +0000
+Message-Id: <20210311092830.5106-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -45,49 +46,26 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The variable u3_ports_disabed contains a spelling mistake,
-rename it to u3_ports_disabled.
+There is a spelling mistake in a drm debug message. Fix it.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/usb/mtu3/mtu3_host.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/mtu3/mtu3_host.c b/drivers/usb/mtu3/mtu3_host.c
-index c871b94f3e6f..41a5675ac5ca 100644
---- a/drivers/usb/mtu3/mtu3_host.c
-+++ b/drivers/usb/mtu3/mtu3_host.c
-@@ -109,7 +109,7 @@ int ssusb_host_enable(struct ssusb_mtk *ssusb)
- 	void __iomem *ibase = ssusb->ippc_base;
- 	int num_u3p = ssusb->u3_ports;
- 	int num_u2p = ssusb->u2_ports;
--	int u3_ports_disabed;
-+	int u3_ports_disabled;
- 	u32 check_clk;
- 	u32 value;
- 	int i;
-@@ -118,10 +118,10 @@ int ssusb_host_enable(struct ssusb_mtk *ssusb)
- 	mtu3_clrbits(ibase, U3D_SSUSB_IP_PW_CTRL1, SSUSB_IP_HOST_PDN);
- 
- 	/* power on and enable u3 ports except skipped ones */
--	u3_ports_disabed = 0;
-+	u3_ports_disabled = 0;
- 	for (i = 0; i < num_u3p; i++) {
- 		if ((0x1 << i) & ssusb->u3p_dis_msk) {
--			u3_ports_disabed++;
-+			u3_ports_disabled++;
- 			continue;
- 		}
- 
-@@ -140,7 +140,7 @@ int ssusb_host_enable(struct ssusb_mtk *ssusb)
- 	}
- 
- 	check_clk = SSUSB_XHCI_RST_B_STS;
--	if (num_u3p > u3_ports_disabed)
-+	if (num_u3p > u3_ports_disabled)
- 		check_clk = SSUSB_U3_MAC_RST_B_STS;
- 
- 	return ssusb_check_clocks(ssusb, check_clk);
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+index 617e62e1eff9..dcbae9237cfa 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+@@ -3464,7 +3464,7 @@ int amdgpu_device_init(struct amdgpu_device *adev,
+ 				      adev->ip_blocks[i].version->type == AMD_IP_BLOCK_TYPE_COMMON ||
+ 				      adev->ip_blocks[i].version->type == AMD_IP_BLOCK_TYPE_IH ||
+ 				      adev->ip_blocks[i].version->type == AMD_IP_BLOCK_TYPE_SMC)) {
+-					DRM_DEBUG("IP %s disabed for hw_init.\n",
++					DRM_DEBUG("IP %s disabled for hw_init.\n",
+ 						adev->ip_blocks[i].version->funcs->name);
+ 					adev->ip_blocks[i].status.hw = true;
+ 				}
 -- 
 2.30.2
 
