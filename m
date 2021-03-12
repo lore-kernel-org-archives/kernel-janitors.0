@@ -2,88 +2,113 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3394C433E6
-	for <kernel-janitors@archiver.kernel.org>; Fri, 12 Mar 2021 02:33:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89D7CC433E0
+	for <kernel-janitors@archiver.kernel.org>; Fri, 12 Mar 2021 05:44:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B154F64F87
-	for <kernel-janitors@archiver.kernel.org>; Fri, 12 Mar 2021 02:33:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D1C764F2C
+	for <kernel-janitors@archiver.kernel.org>; Fri, 12 Mar 2021 05:44:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231473AbhCLCdF (ORCPT
+        id S229925AbhCLFoW (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 11 Mar 2021 21:33:05 -0500
-Received: from mail-1.ca.inter.net ([208.85.220.69]:50883 "EHLO
-        mail-1.ca.inter.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229664AbhCLCcp (ORCPT
+        Fri, 12 Mar 2021 00:44:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58690 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229558AbhCLFn5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 11 Mar 2021 21:32:45 -0500
-Received: from localhost (offload-3.ca.inter.net [208.85.220.70])
-        by mail-1.ca.inter.net (Postfix) with ESMTP id B3B052EA45F;
-        Thu, 11 Mar 2021 21:32:44 -0500 (EST)
-Received: from mail-1.ca.inter.net ([208.85.220.69])
-        by localhost (offload-3.ca.inter.net [208.85.220.70]) (amavisd-new, port 10024)
-        with ESMTP id BfnoFxK84qvP; Thu, 11 Mar 2021 21:15:41 -0500 (EST)
-Received: from [192.168.48.23] (host-45-58-219-4.dyn.295.ca [45.58.219.4])
-        (using TLSv1 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: dgilbert@interlog.com)
-        by mail-1.ca.inter.net (Postfix) with ESMTPSA id E79F12EA3A7;
-        Thu, 11 Mar 2021 21:32:43 -0500 (EST)
-Reply-To: dgilbert@interlog.com
-Subject: Re: [PATCH][next] scsi: sg: return -ENOMEM on out of memory error
-To:     Colin King <colin.king@canonical.com>,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210311233359.81305-1-colin.king@canonical.com>
-From:   Douglas Gilbert <dgilbert@interlog.com>
-Message-ID: <90e260c2-34f7-e156-0c36-6ff00c91311b@interlog.com>
-Date:   Thu, 11 Mar 2021 21:32:43 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Fri, 12 Mar 2021 00:43:57 -0500
+Received: from mail-vs1-xe2a.google.com (mail-vs1-xe2a.google.com [IPv6:2607:f8b0:4864:20::e2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E91F6C061574
+        for <kernel-janitors@vger.kernel.org>; Thu, 11 Mar 2021 21:43:56 -0800 (PST)
+Received: by mail-vs1-xe2a.google.com with SMTP id w76so11939568vsw.10
+        for <kernel-janitors@vger.kernel.org>; Thu, 11 Mar 2021 21:43:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hNZ6zPF3bFreaqUvLgJ3QL9jFhrBQtGUItEnZtcgyxw=;
+        b=VtLk0do76Mz22ErsrWosikZs4jUQ7kGXhTejAHOUzOyWP3UWfo7Gf7vKE5wwxGARBi
+         VR3q6jGHqk4YO3j+YGIalKz7S6c8ST+FMiQSX2vLWzNdE9k4duCFHjLUTFTI6mu8lSzh
+         2wcfwPp2zl3WRl8ZodHP3gqTwxjiR3BYORCLAj8zjd2+339Cc93DcuVfHS/+AHvH2ac+
+         ExekYjL5mzagqJqRuLi0Cmzkm6G3eEH7ZTK7zJne5iBp4HADo3LISooSrJRzevvB7Ls9
+         eHmkohkpzTtiQ8TAfKh+qKuVoGtqCc/VOR6GcyZCqx3rUEzJFw5AqlBwiuHqF2wyHDDW
+         yyzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hNZ6zPF3bFreaqUvLgJ3QL9jFhrBQtGUItEnZtcgyxw=;
+        b=lXK0xDUwc8N/JZcuf4Z3au6RJ06/dcTSOZ/ti9Cgr8QXlUvStcGaDv54ngH0NADCE/
+         mpSdhxvDmJpkVwOxQslkhGpguIVBXm3Cz9U/7OgqESS/bOd2sjBXAxlKYBTy/jEIh1Y8
+         fpeeCU25o0NYfko3Wc8kg3IE8UGtc5mjyHvOY9ovRYlTSYNpMjracs6CzhBht6b9ZHsg
+         I0Pse+zub9WQS6vuj7El0jUS9kdgaeyt/829yh/s/xIw+MKv+d4QlzPQqeWaARnBl5mS
+         BKBe6iF7V9Ujn4MBkOqhDYEKpQH7EEo1EcdQ+hszmN7/QoJ0G8yymKSP8sLI+CQKkqCi
+         16aQ==
+X-Gm-Message-State: AOAM531uZXaI3LqeZToH7avVPiOWP1BaLwCHf9fM9XKxgEG7enC8J9/v
+        7Udkd4wE/SBH0ELlDSE57QFzzoX3TWnqZA==
+X-Google-Smtp-Source: ABdhPJyNRX08T43ZGSJH3dbn3JiuulL8lEgICGjk70FDdI/Z4opPy17Fwq1q18msohjx8yjcU95RNA==
+X-Received: by 2002:a67:2dc1:: with SMTP id t184mr7376398vst.56.1615527835820;
+        Thu, 11 Mar 2021 21:43:55 -0800 (PST)
+Received: from linuxerio.localdomain ([186.32.194.42])
+        by smtp.gmail.com with ESMTPSA id r5sm680062vkf.43.2021.03.11.21.43.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Mar 2021 21:43:55 -0800 (PST)
+From:   Edmundo Carmona Antoranz <eantoranz@gmail.com>
+To:     kernel-janitors@vger.kernel.org
+Cc:     arnd@arndb.de, Edmundo Carmona Antoranz <eantoranz@gmail.com>
+Subject: [PATCH] staging: vt665x: fix alignment constraints
+Date:   Thu, 11 Mar 2021 23:43:25 -0600
+Message-Id: <20210312054325.1706332-1-eantoranz@gmail.com>
+X-Mailer: git-send-email 2.30.1
 MIME-Version: 1.0
-In-Reply-To: <20210311233359.81305-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 2021-03-11 6:33 p.m., Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The sg_proc_seq_show_debug should return -ENOMEM on an
-> out of memory error rather than -1. Fix this.
-> 
-> Fixes: 94cda6cf2e44 ("scsi: sg: Rework debug info")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Removing 2 instances of alignment warnings
 
-Acked-by: Douglas Gilbert <dgilbert@interlog.com>
+drivers/staging/vt6655/rxtx.h:153:1: warning: alignment 1 of ‘struct vnt_cts’ is less than 2 [-Wpacked-not-aligned]
+drivers/staging/vt6655/rxtx.h:163:1: warning: alignment 1 of ‘struct vnt_cts_fb’ is less than 2 [-Wpacked-not-aligned]
 
-Thanks.
+This patch is related to 2faf12c57ef (staging: vt665x: fix alignment constraints, 2021-02-04)
 
-> ---
->   drivers/scsi/sg.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/scsi/sg.c b/drivers/scsi/sg.c
-> index 79f05afa4407..85e86cbc6891 100644
-> --- a/drivers/scsi/sg.c
-> +++ b/drivers/scsi/sg.c
-> @@ -4353,7 +4353,7 @@ sg_proc_seq_show_debug(struct seq_file *s, void *v)
->   	if (!bp) {
->   		seq_printf(s, "%s: Unable to allocate %d on heap, finish\n",
->   			   __func__, bp_len);
-> -		return -1;
-> +		return -ENOMEM;
->   	}
->   	read_lock_irqsave(&sg_index_lock, iflags);
->   	sdp = it ? sg_lookup_dev(it->index) : NULL;
-> 
+The root cause seems to be that _because_ struct ieee80211_cts is marked as __aligned(2),
+this requires any encapsulating struct to also have an alignment of 2.
+
+Signed-off-by: Edmundo Carmona Antoranz <eantoranz@gmail.com>
+---
+ drivers/staging/vt6655/rxtx.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/staging/vt6655/rxtx.h b/drivers/staging/vt6655/rxtx.h
+index e7061d383306..c3c2c1566882 100644
+--- a/drivers/staging/vt6655/rxtx.h
++++ b/drivers/staging/vt6655/rxtx.h
+@@ -150,7 +150,7 @@ struct vnt_cts {
+ 	u16 reserved;
+ 	struct ieee80211_cts data;
+ 	u16 reserved2;
+-} __packed;
++} __packed __aligned(2);
+ 
+ struct vnt_cts_fb {
+ 	struct vnt_phy_field b;
+@@ -160,7 +160,7 @@ struct vnt_cts_fb {
+ 	__le16 cts_duration_ba_f1;
+ 	struct ieee80211_cts data;
+ 	u16 reserved2;
+-} __packed;
++} __packed __aligned(2);
+ 
+ struct vnt_tx_fifo_head {
+ 	u8 tx_key[WLAN_KEY_LEN_CCMP];
+-- 
+2.30.1
 
