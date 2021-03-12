@@ -2,113 +2,86 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89D7CC433E0
-	for <kernel-janitors@archiver.kernel.org>; Fri, 12 Mar 2021 05:44:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66B74C433DB
+	for <kernel-janitors@archiver.kernel.org>; Fri, 12 Mar 2021 05:51:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5D1C764F2C
-	for <kernel-janitors@archiver.kernel.org>; Fri, 12 Mar 2021 05:44:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C72364F7A
+	for <kernel-janitors@archiver.kernel.org>; Fri, 12 Mar 2021 05:51:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229925AbhCLFoW (ORCPT
+        id S230475AbhCLFuw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 12 Mar 2021 00:44:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58690 "EHLO
+        Fri, 12 Mar 2021 00:50:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60128 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229558AbhCLFn5 (ORCPT
+        with ESMTP id S230331AbhCLFun (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 12 Mar 2021 00:43:57 -0500
-Received: from mail-vs1-xe2a.google.com (mail-vs1-xe2a.google.com [IPv6:2607:f8b0:4864:20::e2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E91F6C061574
-        for <kernel-janitors@vger.kernel.org>; Thu, 11 Mar 2021 21:43:56 -0800 (PST)
-Received: by mail-vs1-xe2a.google.com with SMTP id w76so11939568vsw.10
-        for <kernel-janitors@vger.kernel.org>; Thu, 11 Mar 2021 21:43:56 -0800 (PST)
+        Fri, 12 Mar 2021 00:50:43 -0500
+Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57BE0C061574
+        for <kernel-janitors@vger.kernel.org>; Thu, 11 Mar 2021 21:50:43 -0800 (PST)
+Received: by mail-io1-xd33.google.com with SMTP id u8so24483460ior.13
+        for <kernel-janitors@vger.kernel.org>; Thu, 11 Mar 2021 21:50:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=hNZ6zPF3bFreaqUvLgJ3QL9jFhrBQtGUItEnZtcgyxw=;
-        b=VtLk0do76Mz22ErsrWosikZs4jUQ7kGXhTejAHOUzOyWP3UWfo7Gf7vKE5wwxGARBi
-         VR3q6jGHqk4YO3j+YGIalKz7S6c8ST+FMiQSX2vLWzNdE9k4duCFHjLUTFTI6mu8lSzh
-         2wcfwPp2zl3WRl8ZodHP3gqTwxjiR3BYORCLAj8zjd2+339Cc93DcuVfHS/+AHvH2ac+
-         ExekYjL5mzagqJqRuLi0Cmzkm6G3eEH7ZTK7zJne5iBp4HADo3LISooSrJRzevvB7Ls9
-         eHmkohkpzTtiQ8TAfKh+qKuVoGtqCc/VOR6GcyZCqx3rUEzJFw5AqlBwiuHqF2wyHDDW
-         yyzQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2r5+HpYMcrFK52PYRpaLgZR5qSglJDpc68xEq9qPVek=;
+        b=KOt+fF2+U8ZYchpHrW4B87WZB0SVhGVNRfjV1khQB3D22+LORttlLiljcVN037hkn6
+         kq0to12GARcE9L4whU0P/U7DwiWj5UQmjkQtWNxXIc/CRvzryOH+CobxndiucOIeqWG9
+         oKPfDLp0ABI0rSwZoFMxeqhr5JNQo1JFp+xAKWZAyimUnIoRJXxsDSbLU4FSZd0N374B
+         /Lf8coVRKxDPyOVtTGSl6zFA66POED3EH1QezWwqCAq44bQLfODRIMuhu9H4VCxUOHqF
+         eiFRpAt+/hvcnh+0Ic0PC3+/U058ZzIjzObCDKSPqGDlz9wQX1yMR0oUK/rbjhLJXwCJ
+         gnAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=hNZ6zPF3bFreaqUvLgJ3QL9jFhrBQtGUItEnZtcgyxw=;
-        b=lXK0xDUwc8N/JZcuf4Z3au6RJ06/dcTSOZ/ti9Cgr8QXlUvStcGaDv54ngH0NADCE/
-         mpSdhxvDmJpkVwOxQslkhGpguIVBXm3Cz9U/7OgqESS/bOd2sjBXAxlKYBTy/jEIh1Y8
-         fpeeCU25o0NYfko3Wc8kg3IE8UGtc5mjyHvOY9ovRYlTSYNpMjracs6CzhBht6b9ZHsg
-         I0Pse+zub9WQS6vuj7El0jUS9kdgaeyt/829yh/s/xIw+MKv+d4QlzPQqeWaARnBl5mS
-         BKBe6iF7V9Ujn4MBkOqhDYEKpQH7EEo1EcdQ+hszmN7/QoJ0G8yymKSP8sLI+CQKkqCi
-         16aQ==
-X-Gm-Message-State: AOAM531uZXaI3LqeZToH7avVPiOWP1BaLwCHf9fM9XKxgEG7enC8J9/v
-        7Udkd4wE/SBH0ELlDSE57QFzzoX3TWnqZA==
-X-Google-Smtp-Source: ABdhPJyNRX08T43ZGSJH3dbn3JiuulL8lEgICGjk70FDdI/Z4opPy17Fwq1q18msohjx8yjcU95RNA==
-X-Received: by 2002:a67:2dc1:: with SMTP id t184mr7376398vst.56.1615527835820;
-        Thu, 11 Mar 2021 21:43:55 -0800 (PST)
-Received: from linuxerio.localdomain ([186.32.194.42])
-        by smtp.gmail.com with ESMTPSA id r5sm680062vkf.43.2021.03.11.21.43.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Mar 2021 21:43:55 -0800 (PST)
-From:   Edmundo Carmona Antoranz <eantoranz@gmail.com>
-To:     kernel-janitors@vger.kernel.org
-Cc:     arnd@arndb.de, Edmundo Carmona Antoranz <eantoranz@gmail.com>
-Subject: [PATCH] staging: vt665x: fix alignment constraints
-Date:   Thu, 11 Mar 2021 23:43:25 -0600
-Message-Id: <20210312054325.1706332-1-eantoranz@gmail.com>
-X-Mailer: git-send-email 2.30.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2r5+HpYMcrFK52PYRpaLgZR5qSglJDpc68xEq9qPVek=;
+        b=hiveEGSkZKddxU0FaBPuP+a7fChULWmRvd132uS8RxMCJI73guXrzDC3qt/HnCx4Ow
+         fVv1ht5JfYjjk/7NVpdZ4Mf5oG7am8x+EsIYfZ3OWdT1Qc0jHRNUYkLISS86yqwkv70M
+         E483ZcQ8LL2vbeNEliPnOfGWwVrPDWndM5wow9eH8RN4ooF73HqfFEu3tXOzJu7bpeko
+         3HjFUrapuYGONfwYQxGvRJloh3S4Z2nxm+8pDFIThaFpkqwj2mjgNN9WARqv+01g+wPo
+         hoPAanUkPcrHDxaTBCb2qGPeGEWyELxta/lwC4a1l70puLQfppLfF1FNh7JuYVd6QkmB
+         zQDw==
+X-Gm-Message-State: AOAM531oN6H97lBF9FXi9sQ3MzAmymIMFh6PZ7wpRpUxeElLcF6Pqrxf
+        6gN8uH671vn/rZJRrHADuZROmwvJEvay6Dtuw7YtJHCt46g=
+X-Google-Smtp-Source: ABdhPJzGFT130/mw4ROn8GThI4qO/hvC1TC74ZQQb1OWFLeNPs/0SUxOjR+wO9byb5/fsrcj8kjqGXYfNAYbjvutoPo=
+X-Received: by 2002:a02:cb8f:: with SMTP id u15mr6862620jap.45.1615528242201;
+ Thu, 11 Mar 2021 21:50:42 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20210312054325.1706332-1-eantoranz@gmail.com>
+In-Reply-To: <20210312054325.1706332-1-eantoranz@gmail.com>
+From:   Edmundo Carmona Antoranz <eantoranz@gmail.com>
+Date:   Thu, 11 Mar 2021 23:50:31 -0600
+Message-ID: <CAOc6etaN0XZhXT7Dji0+aWHsQL5C10YO1RnnDHSjP=_eUTOT8A@mail.gmail.com>
+Subject: Re: [PATCH] staging: vt665x: fix alignment constraints
+To:     kernel-janitors@vger.kernel.org
+Cc:     arnd@arndb.de
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Removing 2 instances of alignment warnings
+On Thu, Mar 11, 2021 at 11:43 PM Edmundo Carmona Antoranz
+<eantoranz@gmail.com> wrote:
+>
+> The root cause seems to be that _because_ struct ieee80211_cts is marked as __aligned(2),
+> this requires any encapsulating struct to also have an alignment of 2.
+>
 
-drivers/staging/vt6655/rxtx.h:153:1: warning: alignment 1 of ‘struct vnt_cts’ is less than 2 [-Wpacked-not-aligned]
-drivers/staging/vt6655/rxtx.h:163:1: warning: alignment 1 of ‘struct vnt_cts_fb’ is less than 2 [-Wpacked-not-aligned]
+To make sure of this, I played with an empty struct.
 
-This patch is related to 2faf12c57ef (staging: vt665x: fix alignment constraints, 2021-02-04)
+struct a {} __packed __aligned(2);
 
-The root cause seems to be that _because_ struct ieee80211_cts is marked as __aligned(2),
-this requires any encapsulating struct to also have an alignment of 2.
+struct structb {
+    struct a blah;
+} __packed; <--- got a warning about alignment not being 2.
 
-Signed-off-by: Edmundo Carmona Antoranz <eantoranz@gmail.com>
----
- drivers/staging/vt6655/rxtx.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/staging/vt6655/rxtx.h b/drivers/staging/vt6655/rxtx.h
-index e7061d383306..c3c2c1566882 100644
---- a/drivers/staging/vt6655/rxtx.h
-+++ b/drivers/staging/vt6655/rxtx.h
-@@ -150,7 +150,7 @@ struct vnt_cts {
- 	u16 reserved;
- 	struct ieee80211_cts data;
- 	u16 reserved2;
--} __packed;
-+} __packed __aligned(2);
- 
- struct vnt_cts_fb {
- 	struct vnt_phy_field b;
-@@ -160,7 +160,7 @@ struct vnt_cts_fb {
- 	__le16 cts_duration_ba_f1;
- 	struct ieee80211_cts data;
- 	u16 reserved2;
--} __packed;
-+} __packed __aligned(2);
- 
- struct vnt_tx_fifo_head {
- 	u8 tx_key[WLAN_KEY_LEN_CCMP];
--- 
-2.30.1
-
+I would guess that setting the encapsulating struct to be __aligned(4)
+or higher would also work fine, don't know if I should be more
+thorough in that regard in the patch comment.
