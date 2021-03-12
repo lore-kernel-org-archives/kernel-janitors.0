@@ -2,91 +2,89 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E63CCC433E6
-	for <kernel-janitors@archiver.kernel.org>; Fri, 12 Mar 2021 08:40:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCC3CC433DB
+	for <kernel-janitors@archiver.kernel.org>; Fri, 12 Mar 2021 09:19:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BF24C64FD9
-	for <kernel-janitors@archiver.kernel.org>; Fri, 12 Mar 2021 08:40:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3E3A64FE0
+	for <kernel-janitors@archiver.kernel.org>; Fri, 12 Mar 2021 09:19:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232499AbhCLIkL (ORCPT
+        id S232506AbhCLJTH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 12 Mar 2021 03:40:11 -0500
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:35863 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S232417AbhCLIjt (ORCPT
+        Fri, 12 Mar 2021 04:19:07 -0500
+Received: from mout.kundenserver.de ([212.227.17.24]:48439 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232552AbhCLJTB (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 12 Mar 2021 03:39:49 -0500
-X-UUID: 71576485641142e5aa9ab042a458adeb-20210312
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=ooolB54WEfgbIJQeSEoMg6RBJbHlc/MSHt7sIJf1I14=;
-        b=dtgSGVVf2N0DxciA1yLPF8jCfRPP1t8MKi1K4RMRuB1gHARw6Nx4baw4XlQhkEWqQhvL6SDIEHez8Ng3GO/hmnghHDSaXVKoyvVO1nWVOb0dqTxz8uhVDJkvBawdpkAIsbcQJxox1qtjsrp3TPjbhlcxSGhBp6Wa1bjStIVK9YE=;
-X-UUID: 71576485641142e5aa9ab042a458adeb-20210312
-Received: from mtkcas34.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
-        (envelope-from <chunfeng.yun@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1216615318; Fri, 12 Mar 2021 16:39:41 +0800
-Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS32N1.mediatek.inc
- (172.27.4.71) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Fri, 12 Mar
- 2021 16:39:39 +0800
-Received: from [10.17.3.153] (10.17.3.153) by MTKCAS32.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Fri, 12 Mar 2021 16:39:38 +0800
-Message-ID: <1615538378.26498.8.camel@mhfsdcap03>
-Subject: Re: [PATCH][next] usb: mtu3: Fix spelling mistake "disabed" ->
- "disabled"
-From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
-To:     Colin King <colin.king@canonical.com>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-usb@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Date:   Fri, 12 Mar 2021 16:39:38 +0800
-In-Reply-To: <20210311092529.4898-1-colin.king@canonical.com>
-References: <20210311092529.4898-1-colin.king@canonical.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Fri, 12 Mar 2021 04:19:01 -0500
+Received: from mail-oi1-f175.google.com ([209.85.167.175]) by
+ mrelayeu.kundenserver.de (mreue108 [213.165.67.113]) with ESMTPSA (Nemesis)
+ id 1MN5aF-1l3wZi2gJJ-00J0YE for <kernel-janitors@vger.kernel.org>; Fri, 12
+ Mar 2021 10:18:59 +0100
+Received: by mail-oi1-f175.google.com with SMTP id v192so18598821oia.5
+        for <kernel-janitors@vger.kernel.org>; Fri, 12 Mar 2021 01:18:59 -0800 (PST)
+X-Gm-Message-State: AOAM533ImMtHDqLwCJ2GhSJpZeXOEIXtMd1deoYxRO7X6hcw/RvtPSrx
+        ppR6sBXC7vruP7L7CTzcf1w4BEVFPVXF7SKYE00=
+X-Google-Smtp-Source: ABdhPJyKYvraqs2g1WG+/kCHeeBoT0Frb5/zEGex8iIqocSzXvk7WuCUGyY8GHNC/j735LkgzRkZwvnsaTRlewSt29o=
+X-Received: by 2002:a05:6808:313:: with SMTP id i19mr622887oie.67.1615540738416;
+ Fri, 12 Mar 2021 01:18:58 -0800 (PST)
 MIME-Version: 1.0
-X-TM-SNTS-SMTP: 487E2A8EC44F9185C890BAA7B2219ED185BF448F8161F73B2E49435334052B482000:8
-X-MTK:  N
-Content-Transfer-Encoding: base64
+References: <20210312054325.1706332-1-eantoranz@gmail.com> <CAOc6etaN0XZhXT7Dji0+aWHsQL5C10YO1RnnDHSjP=_eUTOT8A@mail.gmail.com>
+In-Reply-To: <CAOc6etaN0XZhXT7Dji0+aWHsQL5C10YO1RnnDHSjP=_eUTOT8A@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 12 Mar 2021 10:18:42 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a15Af-Ncit0g2bGFzPS9fyxgHv9=LE_=ioHOYwBTxhkhA@mail.gmail.com>
+Message-ID: <CAK8P3a15Af-Ncit0g2bGFzPS9fyxgHv9=LE_=ioHOYwBTxhkhA@mail.gmail.com>
+Subject: Re: [PATCH] staging: vt665x: fix alignment constraints
+To:     Edmundo Carmona Antoranz <eantoranz@gmail.com>
+Cc:     kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:9jrsV+j9+oVsSgKuvTGdkbrdCxbJscmWd2XvWKj6cLO0nzwtgbK
+ 9fGg7nrz3rx1pIyXw7bU53Zjtfw9DQZM7hBuwwLrFFR8sj2x0sqxpF/2lcVL21N0V3SPvBC
+ tVZgRcb6jEsvNWPI+4aFDpj0RdVNOIounO+6S5GCzqxPaQccdoQrxVG5oErEpiHkfaMrjBk
+ 0l4d8fNRCf1zk+mWOmrHA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:mVJHz86O6uk=:gVUGdily8B6ulJnCmlPOM5
+ t0YNPoriisp7wGNd7gnE8/i3fnQbppHga41cd5YcVj05fohUC0FKwuEAz+5nWdHBN2hWI+v8z
+ 2fVJNcvda0frPHj122tf5ViJeEkyUiFU80UkOGLfutrPnWa++wHo3cpHKYgqt1bv6M0ZXFZmf
+ 3UoFeoAVV7YD0X/Y8Q3HiJC9NbK+bfN8rwY+qIGn1myWEaXPPfuGAeaoFO+Wz1QOrgRAV4Vha
+ LkTIuwPK87Ny8pY+XY8chsOzlN6tSNAZ0McKHh4T4TaOcNP6DXu07OFJDjnxyKiIK65QhVpmX
+ YTuHVCFrNIuJDepK4z7eaj+/W10A9tfkTrjlhafduhpClntbPP8bEstaTjxs5QpJssqtpQTMn
+ tcYTZpdqNQViWbyDrNgdRCWAhYjMnHIKm3KX44K9JdGwVtjmCZwOLIKkHUASBiAG/Hs4uy5vv
+ /aD40qqd8Z92LPLJK+n0skf0fZLvNX4a5sKpOt8tWmW0j6dNxcB5547NBED4ceffJPXFNdyhR
+ YKL34bMbbE6PMK+pNgD9hgsfNK9NSQxK1py3/FY6uMevG2ZJihKPC+WqaxPDUuWYQ==
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-T24gVGh1LCAyMDIxLTAzLTExIGF0IDA5OjI1ICswMDAwLCBDb2xpbiBLaW5nIHdyb3RlOg0KPiBG
-cm9tOiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPiANCj4gVGhl
-IHZhcmlhYmxlIHUzX3BvcnRzX2Rpc2FiZWQgY29udGFpbnMgYSBzcGVsbGluZyBtaXN0YWtlLA0K
-PiByZW5hbWUgaXQgdG8gdTNfcG9ydHNfZGlzYWJsZWQuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBD
-b2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPiAtLS0NCj4gIGRyaXZl
-cnMvdXNiL210dTMvbXR1M19ob3N0LmMgfCA4ICsrKystLS0tDQo+ICAxIGZpbGUgY2hhbmdlZCwg
-NCBpbnNlcnRpb25zKCspLCA0IGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZl
-cnMvdXNiL210dTMvbXR1M19ob3N0LmMgYi9kcml2ZXJzL3VzYi9tdHUzL210dTNfaG9zdC5jDQo+
-IGluZGV4IGM4NzFiOTRmM2U2Zi4uNDFhNTY3NWFjNWNhIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJz
-L3VzYi9tdHUzL210dTNfaG9zdC5jDQo+ICsrKyBiL2RyaXZlcnMvdXNiL210dTMvbXR1M19ob3N0
-LmMNCj4gQEAgLTEwOSw3ICsxMDksNyBAQCBpbnQgc3N1c2JfaG9zdF9lbmFibGUoc3RydWN0IHNz
-dXNiX210ayAqc3N1c2IpDQo+ICAJdm9pZCBfX2lvbWVtICppYmFzZSA9IHNzdXNiLT5pcHBjX2Jh
-c2U7DQo+ICAJaW50IG51bV91M3AgPSBzc3VzYi0+dTNfcG9ydHM7DQo+ICAJaW50IG51bV91MnAg
-PSBzc3VzYi0+dTJfcG9ydHM7DQo+IC0JaW50IHUzX3BvcnRzX2Rpc2FiZWQ7DQo+ICsJaW50IHUz
-X3BvcnRzX2Rpc2FibGVkOw0KPiAgCXUzMiBjaGVja19jbGs7DQo+ICAJdTMyIHZhbHVlOw0KPiAg
-CWludCBpOw0KPiBAQCAtMTE4LDEwICsxMTgsMTAgQEAgaW50IHNzdXNiX2hvc3RfZW5hYmxlKHN0
-cnVjdCBzc3VzYl9tdGsgKnNzdXNiKQ0KPiAgCW10dTNfY2xyYml0cyhpYmFzZSwgVTNEX1NTVVNC
-X0lQX1BXX0NUUkwxLCBTU1VTQl9JUF9IT1NUX1BETik7DQo+ICANCj4gIAkvKiBwb3dlciBvbiBh
-bmQgZW5hYmxlIHUzIHBvcnRzIGV4Y2VwdCBza2lwcGVkIG9uZXMgKi8NCj4gLQl1M19wb3J0c19k
-aXNhYmVkID0gMDsNCj4gKwl1M19wb3J0c19kaXNhYmxlZCA9IDA7DQo+ICAJZm9yIChpID0gMDsg
-aSA8IG51bV91M3A7IGkrKykgew0KPiAgCQlpZiAoKDB4MSA8PCBpKSAmIHNzdXNiLT51M3BfZGlz
-X21zaykgew0KPiAtCQkJdTNfcG9ydHNfZGlzYWJlZCsrOw0KPiArCQkJdTNfcG9ydHNfZGlzYWJs
-ZWQrKzsNCj4gIAkJCWNvbnRpbnVlOw0KPiAgCQl9DQo+ICANCj4gQEAgLTE0MCw3ICsxNDAsNyBA
-QCBpbnQgc3N1c2JfaG9zdF9lbmFibGUoc3RydWN0IHNzdXNiX210ayAqc3N1c2IpDQo+ICAJfQ0K
-PiAgDQo+ICAJY2hlY2tfY2xrID0gU1NVU0JfWEhDSV9SU1RfQl9TVFM7DQo+IC0JaWYgKG51bV91
-M3AgPiB1M19wb3J0c19kaXNhYmVkKQ0KPiArCWlmIChudW1fdTNwID4gdTNfcG9ydHNfZGlzYWJs
-ZWQpDQo+ICAJCWNoZWNrX2NsayA9IFNTVVNCX1UzX01BQ19SU1RfQl9TVFM7DQpSZXZpZXdlZC1i
-eTogQ2h1bmZlbmcgWXVuIDxjaHVuZmVuZy55dW5AbWVkaWF0ZWsuY29tPg0KDQpUaGFua3MgYSBs
-b3QNCg0KDQo+ICANCj4gIAlyZXR1cm4gc3N1c2JfY2hlY2tfY2xvY2tzKHNzdXNiLCBjaGVja19j
-bGspOw0KDQo=
+On Fri, Mar 12, 2021 at 6:50 AM Edmundo Carmona Antoranz
+<eantoranz@gmail.com> wrote:
+>
+> On Thu, Mar 11, 2021 at 11:43 PM Edmundo Carmona Antoranz
+> <eantoranz@gmail.com> wrote:
+> >
+> > The root cause seems to be that _because_ struct ieee80211_cts is marked as __aligned(2),
+> > this requires any encapsulating struct to also have an alignment of 2.
+> >
+>
+> To make sure of this, I played with an empty struct.
+>
+> struct a {} __packed __aligned(2);
+>
+> struct structb {
+>     struct a blah;
+> } __packed; <--- got a warning about alignment not being 2.
+>
+> I would guess that setting the encapsulating struct to be __aligned(4)
+> or higher would also work fine, don't know if I should be more
+> thorough in that regard in the patch comment.
 
+I think the patch description is clear enough, but it would help to include
+a reference to my earlier patch that tried to fix the problem before. I don't
+know why this came back now, maybe my patch was incomplete to start
+with, or an extra alignment constraint was added to a second indirectly
+included structure.
+
+      Arnd
