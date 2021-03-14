@@ -2,106 +2,110 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 056FFC433DB
-	for <kernel-janitors@archiver.kernel.org>; Sun, 14 Mar 2021 00:25:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 081F8C433DB
+	for <kernel-janitors@archiver.kernel.org>; Sun, 14 Mar 2021 08:23:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B9D7464ECE
-	for <kernel-janitors@archiver.kernel.org>; Sun, 14 Mar 2021 00:25:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B282164EBE
+	for <kernel-janitors@archiver.kernel.org>; Sun, 14 Mar 2021 08:22:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231756AbhCNAY4 (ORCPT
+        id S234831AbhCNIW1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 13 Mar 2021 19:24:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43218 "EHLO
+        Sun, 14 Mar 2021 04:22:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231205AbhCNAYW (ORCPT
+        with ESMTP id S234489AbhCNIV4 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 13 Mar 2021 19:24:22 -0500
-Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DCE4C061574
-        for <kernel-janitors@vger.kernel.org>; Sat, 13 Mar 2021 16:24:22 -0800 (PST)
-Received: by mail-io1-xd33.google.com with SMTP id g27so29774456iox.2
-        for <kernel-janitors@vger.kernel.org>; Sat, 13 Mar 2021 16:24:22 -0800 (PST)
+        Sun, 14 Mar 2021 04:21:56 -0400
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 971E3C061574
+        for <kernel-janitors@vger.kernel.org>; Sun, 14 Mar 2021 00:21:56 -0800 (PST)
+Received: by mail-pj1-x102d.google.com with SMTP id q2-20020a17090a2e02b02900bee668844dso12781122pjd.3
+        for <kernel-janitors@vger.kernel.org>; Sun, 14 Mar 2021 00:21:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=ReIXOI7ID+5dMLHOOwSqWVS3vQ7siH5vvy0MxuD5RWk=;
-        b=l538CwIVdDwscAwwEmimocGw5hoqgkSjmhP1ZAknG4D0D0EefJ0J+SYzLYivtils4s
-         WX6H1Xzh5M8xRm0e9F37OpAP72S2NVUJY9nQp47tGPzoY5seMcUpT7BuY1EEbftk6Lsu
-         zJysUf5hmIEjq42mx1/llzwuFgCKTdK+6f02K02nw6CNZh1PGrEGzH011j1ZS60pMu06
-         K3HoPfjfFU9QfKxcALnwd/x+KcHwNYUtrzTo6rGiLKC/3MaMmPsjPtvm/Qs1CbTef6Je
-         n70IVchD2luozwOFdIgCuP21B1ABcWlOFlwVtfJnl5jZFK3l8zHECcFxsmjc1bj4tCTj
-         Rqhg==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=F7t5K6FQXwh1AvOAKrcjxJNmhozmlop1jrckC1EZ5MY=;
+        b=uJBxXfBYuYuOyW+AQhAvtgzqhiuH4OIi9AB3CTF7gMF52wmijJ7NBiTJbv1blSxJwc
+         OmlflovO4PiSMnIAmh60kpFvuoysCIuK7QShQ/XBl2FJwZmMiWhygyP/xdHYOEC2/tEf
+         1lLR7w8NhLmAKGwxEn6isD1Ph1ZSXHwj9MpvFUcIa/m7slYvUjvdHDEwDT/VGErlBdNr
+         ph1GTP96fkWsZ7g+4wAwJ6UfWKXZ+5wfpLPzyxPwIfqROoxUVw82iB/3d5R61En2Cpa+
+         NcUTDw5ZP4dnDWTmK/V4MrJe6sVYrr1Uwkvp7HAUG4wG5WvN3L3Yu6Fc13OpS3LS6bw7
+         tlpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=ReIXOI7ID+5dMLHOOwSqWVS3vQ7siH5vvy0MxuD5RWk=;
-        b=GlFPUTyrIYNiKcquGWslkKhWSl8uV0VFmpOqa5EpeDZyMeO6oje2/l+Qjcj6LCFrNM
-         /4J0JvK1KFx/njWMYSGLfT6l9MC6byBueQcoNZ+AOztyif0Yi892fcJpERL5UqYMKrNw
-         36IzNaP39FuSMLdJRmqTOLc0LR+r8ceB3SN2nfiAhgYG0jt1/QFu0eZcuC+z8DsecfXz
-         DKxRbkSOK4p/JH9xmIZDMyTT6PWVyjXv+wNJbxjjFIe1VRs0c9xpji3woCT0BebdkaJR
-         OXAI+PY/whJAyE4Ky18P2BfYDURY9R8cQgZCXKXIlNgHb7ChoTJRO4LOMGNlkCaJ84jT
-         45Ig==
-X-Gm-Message-State: AOAM530Bz1SkKUNxJ8K2PiT/1KbisZYGGqMu23I1QZhJ6FFNKw3AX2y4
-        pSt5gkqDXRP9tzg+Dvq0atxLD/k8Efa4w/91cnQAWZEx4j8=
-X-Google-Smtp-Source: ABdhPJx9re2ndBzmYho0pIsbroBg+zD4QAQ+o7ZyNZrxj8/zyW5INYzFI3kMSj/3LVCrH9/JiyC/1+/oaxbps1t5Gfc=
-X-Received: by 2002:a6b:5c0d:: with SMTP id z13mr3581859ioh.6.1615681461873;
- Sat, 13 Mar 2021 16:24:21 -0800 (PST)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=F7t5K6FQXwh1AvOAKrcjxJNmhozmlop1jrckC1EZ5MY=;
+        b=F8C69BBw/daFPV/Q21TsUTzLQHBBNV27DJA47Rbq1mSRl1NhdtXwH8cbm0JPP/b0tf
+         tFkVINdTE2WEJWa/bn0NDTf+pCF8BYWaMt9uuih9dM56Chxig/KCG9OB3glLE0rrHein
+         SmjIGTTcz3C+Qa9eEsSPDt2ZEUYNL3F9cRvVCNoINvyi8Vl69PoPNofFwT8S2u5G06iT
+         1Mauy4Sp6puVRYcyNXrPNYKvsVIqwC/56Hef8szbYj20uAf7Pu1oioThwF4OugIRGcpB
+         lJh9YS2tvWllnYCwK2Qn11MYwb+2X1zwe7/DHU5GNb5Q01sCxI7xc1c3x2iO/ox8ns3F
+         opMA==
+X-Gm-Message-State: AOAM531X4rBIdzO2L+wxOcSEY6LW2Ww8NYZ0KWwpoh7jnA/xFFZnVRzl
+        MYYO0ovhSb2DXkYZ3fzV1yHUxJ77ppZcvRfLPZzF6cmmj4aPDg==
+X-Google-Smtp-Source: ABdhPJxv+W9HT+9fyyp/Do5HvczoqOvvPhNyTLOAvGmvL7geCSdoqZ1QAxsz95mOWtBGftCeKpM/K996tx2H9qONpAY=
+X-Received: by 2002:a17:902:b210:b029:e6:33b4:cd9e with SMTP id
+ t16-20020a170902b210b02900e633b4cd9emr6006219plr.67.1615710115931; Sun, 14
+ Mar 2021 00:21:55 -0800 (PST)
 MIME-Version: 1.0
-From:   Edmundo Carmona Antoranz <eantoranz@gmail.com>
-Date:   Sat, 13 Mar 2021 18:24:11 -0600
-Message-ID: <CAOc6etbXM7rCSovO0A0Ye+ZQ8=JUkNM_p=L_3HL2k9UASNfHkg@mail.gmail.com>
-Subject: Is it ok to propose more complex code changes?
-To:     kernel-janitors@vger.kernel.org
+References: <20210311111727.8433-1-colin.king@canonical.com>
+In-Reply-To: <20210311111727.8433-1-colin.king@canonical.com>
+From:   Loic Poulain <loic.poulain@linaro.org>
+Date:   Sun, 14 Mar 2021 09:21:19 +0100
+Message-ID: <CAMZdPi_GWq8RsoQ6nN3W4hivc4UK+Kkru7C7S-CViyKLmjqOGw@mail.gmail.com>
+Subject: Re: [PATCH][next] bus: mhi: core: remove redundant initialization of
+ variables state and ee
+To:     Colin King <colin.king@canonical.com>
+Cc:     Manivannan Sadhasivam <mani@kernel.org>,
+        Jeffrey Hugo <jhugo@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello!
+On Thu, 11 Mar 2021 at 12:18, Colin King <colin.king@canonical.com> wrote:
+>
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> The variables state and ee are being initialized with values that
+> are never read and are being updated later with a new values. The
+> initializations are redundant and can be removed.
+>
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-I just found a piece of code that I think can be improved somewhat (in
-drivers/staging/vt6655/channel.c)
+Reviewed-by: Loic Poulain <loic.poulain@linaro.org>
 
-switch (priv->byRFType) {
-case RF_AIROHA7230:
-case RF_UW2452:
-case RF_NOTHING:
-default:
-       ch = vnt_channels_5ghz;
-
-       for (i = 0; i < ARRAY_SIZE(vnt_channels_5ghz); i++) {
-               ch[i].max_power = 0x3f;
-               ch[i].flags = IEEE80211_CHAN_NO_HT40;
-       }
-
-       priv->hw->wiphy->bands[NL80211_BAND_5GHZ] =
-                                       &vnt_supported_5ghz_band;
-       fallthrough;
-case RF_RFMD2959:
-case RF_AIROHA:
-case RF_AL2230S:
-case RF_UW2451:
-case RF_VT3226:
-       ch = vnt_channels_2ghz;
-
-       for (i = 0; i < ARRAY_SIZE(vnt_channels_2ghz); i++) {
-               ch[i].max_power = 0x3f;
-               ch[i].flags = IEEE80211_CHAN_NO_HT40;
-       }
-
-       priv->hw->wiphy->bands[NL80211_BAND_2GHZ] =
-                                       &vnt_supported_2ghz_band;
-       break;
-}
-
-There are two sections of code that could be turned into a function or
-macro so that duplication can be avoided. Is it within our "Scope of
-Work" as janitors to make this kind of proposal or it's better if we
-avoid it and start easy at first?
-
-Thanks!
+> ---
+>  drivers/bus/mhi/core/main.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/bus/mhi/core/main.c b/drivers/bus/mhi/core/main.c
+> index 2c61dfd01353..3faf8bade520 100644
+> --- a/drivers/bus/mhi/core/main.c
+> +++ b/drivers/bus/mhi/core/main.c
+> @@ -428,9 +428,9 @@ irqreturn_t mhi_intvec_threaded_handler(int irq_number, void *priv)
+>  {
+>         struct mhi_controller *mhi_cntrl = priv;
+>         struct device *dev = &mhi_cntrl->mhi_dev->dev;
+> -       enum mhi_state state = MHI_STATE_MAX;
+> +       enum mhi_state state;
+>         enum mhi_pm_state pm_state = 0;
+> -       enum mhi_ee_type ee = MHI_EE_MAX;
+> +       enum mhi_ee_type ee;
+>
+>         write_lock_irq(&mhi_cntrl->pm_lock);
+>         if (!MHI_REG_ACCESS_VALID(mhi_cntrl->pm_state)) {
+> --
+> 2.30.2
+>
