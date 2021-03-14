@@ -2,110 +2,103 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 081F8C433DB
-	for <kernel-janitors@archiver.kernel.org>; Sun, 14 Mar 2021 08:23:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E522C433E0
+	for <kernel-janitors@archiver.kernel.org>; Sun, 14 Mar 2021 09:23:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B282164EBE
-	for <kernel-janitors@archiver.kernel.org>; Sun, 14 Mar 2021 08:22:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3505964EBD
+	for <kernel-janitors@archiver.kernel.org>; Sun, 14 Mar 2021 09:23:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234831AbhCNIW1 (ORCPT
+        id S234904AbhCNJWT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 14 Mar 2021 04:22:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59940 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234489AbhCNIV4 (ORCPT
+        Sun, 14 Mar 2021 05:22:19 -0400
+Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:15151 "EHLO
+        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229539AbhCNJVl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 14 Mar 2021 04:21:56 -0400
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 971E3C061574
-        for <kernel-janitors@vger.kernel.org>; Sun, 14 Mar 2021 00:21:56 -0800 (PST)
-Received: by mail-pj1-x102d.google.com with SMTP id q2-20020a17090a2e02b02900bee668844dso12781122pjd.3
-        for <kernel-janitors@vger.kernel.org>; Sun, 14 Mar 2021 00:21:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=F7t5K6FQXwh1AvOAKrcjxJNmhozmlop1jrckC1EZ5MY=;
-        b=uJBxXfBYuYuOyW+AQhAvtgzqhiuH4OIi9AB3CTF7gMF52wmijJ7NBiTJbv1blSxJwc
-         OmlflovO4PiSMnIAmh60kpFvuoysCIuK7QShQ/XBl2FJwZmMiWhygyP/xdHYOEC2/tEf
-         1lLR7w8NhLmAKGwxEn6isD1Ph1ZSXHwj9MpvFUcIa/m7slYvUjvdHDEwDT/VGErlBdNr
-         ph1GTP96fkWsZ7g+4wAwJ6UfWKXZ+5wfpLPzyxPwIfqROoxUVw82iB/3d5R61En2Cpa+
-         NcUTDw5ZP4dnDWTmK/V4MrJe6sVYrr1Uwkvp7HAUG4wG5WvN3L3Yu6Fc13OpS3LS6bw7
-         tlpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=F7t5K6FQXwh1AvOAKrcjxJNmhozmlop1jrckC1EZ5MY=;
-        b=F8C69BBw/daFPV/Q21TsUTzLQHBBNV27DJA47Rbq1mSRl1NhdtXwH8cbm0JPP/b0tf
-         tFkVINdTE2WEJWa/bn0NDTf+pCF8BYWaMt9uuih9dM56Chxig/KCG9OB3glLE0rrHein
-         SmjIGTTcz3C+Qa9eEsSPDt2ZEUYNL3F9cRvVCNoINvyi8Vl69PoPNofFwT8S2u5G06iT
-         1Mauy4Sp6puVRYcyNXrPNYKvsVIqwC/56Hef8szbYj20uAf7Pu1oioThwF4OugIRGcpB
-         lJh9YS2tvWllnYCwK2Qn11MYwb+2X1zwe7/DHU5GNb5Q01sCxI7xc1c3x2iO/ox8ns3F
-         opMA==
-X-Gm-Message-State: AOAM531X4rBIdzO2L+wxOcSEY6LW2Ww8NYZ0KWwpoh7jnA/xFFZnVRzl
-        MYYO0ovhSb2DXkYZ3fzV1yHUxJ77ppZcvRfLPZzF6cmmj4aPDg==
-X-Google-Smtp-Source: ABdhPJxv+W9HT+9fyyp/Do5HvczoqOvvPhNyTLOAvGmvL7geCSdoqZ1QAxsz95mOWtBGftCeKpM/K996tx2H9qONpAY=
-X-Received: by 2002:a17:902:b210:b029:e6:33b4:cd9e with SMTP id
- t16-20020a170902b210b02900e633b4cd9emr6006219plr.67.1615710115931; Sun, 14
- Mar 2021 00:21:55 -0800 (PST)
+        Sun, 14 Mar 2021 05:21:41 -0400
+IronPort-HdrOrdr: =?us-ascii?q?A9a23=3A8+ymea6n7+m5C91gIQPXwZqBI+orLtY04lQ7?=
+ =?us-ascii?q?vn1ZYhpIdcaVjYSymp0gpH3JoRwWX2wtns3FBbmYTRrnlaJdzKswGfOZXAfgsH?=
+ =?us-ascii?q?a1N40K1+CJ/xTMEzDzn9QtsptIXKRzBdb5B1o/reuS2njAL/8O29+CmZrEuc77?=
+ =?us-ascii?q?71NACT5ncLth6QARMGemO2l7XhNPC5Z8NLf03KV6jgGtc3gWcci3b0NtN9Trnc?=
+ =?us-ascii?q?HBl57tfHc9aSIP1Q/mt1+VwY+/Ozyx7TE4Fxdm4ZJnykThuzy825Wbn5iAu3zh?=
+ =?us-ascii?q?/l6Wx7B/q/3Hjv9uOeSgovU8Qw+c7zqAVcBGQL2NvDc8paWK5EwxmNfBgzpIBb?=
+ =?us-ascii?q?UW11rhOluYm1/KxxTv1jYo5RbZuDmlvUc=3D?=
+X-IronPort-AV: E=Sophos;i="5.81,245,1610406000"; 
+   d="scan'208";a="497797467"
+Received: from 173.121.68.85.rev.sfr.net (HELO hadrien) ([85.68.121.173])
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Mar 2021 10:21:39 +0100
+Date:   Sun, 14 Mar 2021 10:21:39 +0100 (CET)
+From:   Julia Lawall <julia.lawall@inria.fr>
+X-X-Sender: jll@hadrien
+To:     Edmundo Carmona Antoranz <eantoranz@gmail.com>
+cc:     kernel-janitors@vger.kernel.org
+Subject: Re: Is it ok to propose more complex code changes?
+In-Reply-To: <CAOc6etbXM7rCSovO0A0Ye+ZQ8=JUkNM_p=L_3HL2k9UASNfHkg@mail.gmail.com>
+Message-ID: <alpine.DEB.2.22.394.2103141018490.2986@hadrien>
+References: <CAOc6etbXM7rCSovO0A0Ye+ZQ8=JUkNM_p=L_3HL2k9UASNfHkg@mail.gmail.com>
+User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
 MIME-Version: 1.0
-References: <20210311111727.8433-1-colin.king@canonical.com>
-In-Reply-To: <20210311111727.8433-1-colin.king@canonical.com>
-From:   Loic Poulain <loic.poulain@linaro.org>
-Date:   Sun, 14 Mar 2021 09:21:19 +0100
-Message-ID: <CAMZdPi_GWq8RsoQ6nN3W4hivc4UK+Kkru7C7S-CViyKLmjqOGw@mail.gmail.com>
-Subject: Re: [PATCH][next] bus: mhi: core: remove redundant initialization of
- variables state and ee
-To:     Colin King <colin.king@canonical.com>
-Cc:     Manivannan Sadhasivam <mani@kernel.org>,
-        Jeffrey Hugo <jhugo@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 11 Mar 2021 at 12:18, Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The variables state and ee are being initialized with values that
-> are never read and are being updated later with a new values. The
-> initializations are redundant and can be removed.
->
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Reviewed-by: Loic Poulain <loic.poulain@linaro.org>
 
-> ---
->  drivers/bus/mhi/core/main.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+On Sat, 13 Mar 2021, Edmundo Carmona Antoranz wrote:
+
+> Hello!
 >
-> diff --git a/drivers/bus/mhi/core/main.c b/drivers/bus/mhi/core/main.c
-> index 2c61dfd01353..3faf8bade520 100644
-> --- a/drivers/bus/mhi/core/main.c
-> +++ b/drivers/bus/mhi/core/main.c
-> @@ -428,9 +428,9 @@ irqreturn_t mhi_intvec_threaded_handler(int irq_number, void *priv)
->  {
->         struct mhi_controller *mhi_cntrl = priv;
->         struct device *dev = &mhi_cntrl->mhi_dev->dev;
-> -       enum mhi_state state = MHI_STATE_MAX;
-> +       enum mhi_state state;
->         enum mhi_pm_state pm_state = 0;
-> -       enum mhi_ee_type ee = MHI_EE_MAX;
-> +       enum mhi_ee_type ee;
+> I just found a piece of code that I think can be improved somewhat (in
+> drivers/staging/vt6655/channel.c)
 >
->         write_lock_irq(&mhi_cntrl->pm_lock);
->         if (!MHI_REG_ACCESS_VALID(mhi_cntrl->pm_state)) {
-> --
-> 2.30.2
+> switch (priv->byRFType) {
+> case RF_AIROHA7230:
+> case RF_UW2452:
+> case RF_NOTHING:
+> default:
+>        ch = vnt_channels_5ghz;
 >
+>        for (i = 0; i < ARRAY_SIZE(vnt_channels_5ghz); i++) {
+>                ch[i].max_power = 0x3f;
+>                ch[i].flags = IEEE80211_CHAN_NO_HT40;
+>        }
+>
+>        priv->hw->wiphy->bands[NL80211_BAND_5GHZ] =
+>                                        &vnt_supported_5ghz_band;
+>        fallthrough;
+> case RF_RFMD2959:
+> case RF_AIROHA:
+> case RF_AL2230S:
+> case RF_UW2451:
+> case RF_VT3226:
+>        ch = vnt_channels_2ghz;
+>
+>        for (i = 0; i < ARRAY_SIZE(vnt_channels_2ghz); i++) {
+>                ch[i].max_power = 0x3f;
+>                ch[i].flags = IEEE80211_CHAN_NO_HT40;
+>        }
+>
+>        priv->hw->wiphy->bands[NL80211_BAND_2GHZ] =
+>                                        &vnt_supported_2ghz_band;
+>        break;
+> }
+>
+> There are two sections of code that could be turned into a function or
+> macro so that duplication can be avoided. Is it within our "Scope of
+> Work" as janitors to make this kind of proposal or it's better if we
+> avoid it and start easy at first?
+
+In principle, you can do whatever you like in staging.  If the maintainer
+doesn't like your suggestion, they can reject it.  This looks not entirely
+trivial, because the thing you want to abstract over is used once as a
+variable and once for its address.  I guess you can pass in the address
+and then dereference it, but you would have to check that that works ok
+with ARRAY_SIZE, which is also a macro.  You would also need to understand
+the code well enough to give this new function a resonable name.
+
+julia
