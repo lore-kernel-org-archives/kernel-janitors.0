@@ -2,106 +2,64 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0935C433E6
-	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Mar 2021 09:24:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D98B9C433E0
+	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Mar 2021 10:18:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6474A64EB2
-	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Mar 2021 09:24:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9985364E64
+	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Mar 2021 10:18:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229607AbhCOJYS (ORCPT
+        id S229955AbhCOKSV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 15 Mar 2021 05:24:18 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:47528 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229634AbhCOJX6 (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 15 Mar 2021 05:23:58 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12F98uDI029713;
-        Mon, 15 Mar 2021 09:23:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=s9DhrO9uH8gUV9s+eQAL8ndad6+WRFuEKy/GLRVpLz8=;
- b=VASFXSXih63jUvTq0rnxe2gTefl0anjOLM/NK0zWhN/cYqSEF35pBMgdpE/71Z834i7r
- JgmbaczBWR2pnNPEoq8HdbO35hbDQAHJsD8BzsjxXMXcjd5fi926l+TZFW/JA/FkyLR8
- +Pjqdegyh1u1S0Bod2uUpnv1Ayw4KxPtWJ5y911+00RUxFB15SRmdBF17K55pAi7Ymj4
- qba33q63UiDcqyLDOC9rpEnSWfh1wq4Np4tyW+Dfx/J4z/16/M3FxQcFVWHeNPjsCsDu
- h0U+yksLM7yC7V81gBD48iWx8jk4Wi+mx484lk7R9jGq+f8rElbzj56jYzdrmSxwFhV1 Iw== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2120.oracle.com with ESMTP id 378nbm34d2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 15 Mar 2021 09:23:49 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12F99iIB182825;
-        Mon, 15 Mar 2021 09:23:47 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3030.oracle.com with ESMTP id 3797axdxar-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 15 Mar 2021 09:23:47 +0000
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 12F9NjkI023768;
-        Mon, 15 Mar 2021 09:23:45 GMT
-Received: from mwanda (/102.36.221.92)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 15 Mar 2021 02:23:45 -0700
-Date:   Mon, 15 Mar 2021 12:23:37 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Yan-Hsuan Chuang <tony0620emma@gmail.com>
-Cc:     Kalle Valo <kvalo@codeaurora.org>,
-        Tzu-En Huang <tehuang@realtek.com>,
-        linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH v2] rtw88: Fix an error code in rtw_debugfs_set_rsvd_page()
-Message-ID: <YE8nmatMDBDDWkjq@mwanda>
+        Mon, 15 Mar 2021 06:18:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36358 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229494AbhCOKSM (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 15 Mar 2021 06:18:12 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id E78C964E20;
+        Mon, 15 Mar 2021 10:18:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1615803491;
+        bh=ztjFnSOab3cV+QvMlWw4cQyrFbAfKoySuSingAe7PWo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CriePN21pXzt27lJKRwsNzeZG2D32OdMximKQQOJn299UKT/IrWzURTlXoOu8qhyr
+         QRo3rtv23QkzPIwLhU2DnqPBBf4iCtyTznIwRCVZ5kVQgCyhqNRvpNGdHk+QVYAZW/
+         6KBj5eZd7jQrXMFq8BQrB2xOVjPquiGt8Bg/bmjV2WZVcnMe71UiPseXsgoZLUPJVh
+         D7fCYHXns7++I0BWpLEBVuRDpRQdcxizxnj/UcrPFA/uePVA84TjxajHPSqAppJRqG
+         Vktz8QjduBqy5aPQJQSD8Pv3WIkAtzVKgSI/AANPq6/Gn3V8Yesgjc53Dse01B85vR
+         1tAEcdApbKawQ==
+Date:   Mon, 15 Mar 2021 15:48:07 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     'Wei Yongjun <weiyongjun1@huawei.com>
+Cc:     Sergio Paracuellos <sergio.paracuellos@gmail.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-phy@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+Subject: Re: [PATCH -next] phy: ralink: phy-mt7621-pci: fix return value
+ check in mt7621_pci_phy_probe()
+Message-ID: <YE80X9uGCEsnuR3F@vkoul-mobl>
+References: <20210305034931.3237558-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-X-Proofpoint-IMR: 1
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9923 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 spamscore=0 bulkscore=0
- malwarescore=0 adultscore=0 mlxscore=0 mlxlogscore=999 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2103150064
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9923 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 impostorscore=0
- malwarescore=0 adultscore=0 mlxscore=0 clxscore=1015 mlxlogscore=999
- lowpriorityscore=0 phishscore=0 priorityscore=1501 spamscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2103150064
+In-Reply-To: <20210305034931.3237558-1-weiyongjun1@huawei.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The sscanf() function returns the number of matches (0 or 1 in this
-case).  It doesn't return error codes.  We should return -EINVAL if the
-string is invalid
+On 05-03-21, 03:49, 'Wei Yongjun wrote:
+> From: Wei Yongjun <weiyongjun1@huawei.com>
+> 
+> Fix the return value check which testing the wrong variable
+> in mt7621_pci_phy_probe().
 
-Fixes: c376c1fc87b7 ("rtw88: add h2c command in debugfs")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-v2: Style change.  Keep "num" variable.
+Applied, thanks
 
- drivers/net/wireless/realtek/rtw88/debug.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/wireless/realtek/rtw88/debug.c b/drivers/net/wireless/realtek/rtw88/debug.c
-index 948cb79050ea..e7d51ac9b689 100644
---- a/drivers/net/wireless/realtek/rtw88/debug.c
-+++ b/drivers/net/wireless/realtek/rtw88/debug.c
-@@ -270,7 +270,7 @@ static ssize_t rtw_debugfs_set_rsvd_page(struct file *filp,
- 
- 	if (num != 2) {
- 		rtw_warn(rtwdev, "invalid arguments\n");
--		return num;
-+		return -EINVAL;
- 	}
- 
- 	debugfs_priv->rsvd_page.page_offset = offset;
 -- 
-2.30.1
-
+~Vinod
