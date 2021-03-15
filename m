@@ -2,116 +2,84 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAD12C433E9
-	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Mar 2021 18:21:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B47FBC433E0
+	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Mar 2021 18:43:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9ED8564F4D
-	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Mar 2021 18:21:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72F2864F3F
+	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Mar 2021 18:43:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231289AbhCOSUl (ORCPT
+        id S231289AbhCOSme (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 15 Mar 2021 14:20:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45362 "EHLO
+        Mon, 15 Mar 2021 14:42:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232013AbhCOSU2 (ORCPT
+        with ESMTP id S231213AbhCOSmK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 15 Mar 2021 14:20:28 -0400
-Received: from mail-ot1-x331.google.com (mail-ot1-x331.google.com [IPv6:2607:f8b0:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0365FC06174A;
-        Mon, 15 Mar 2021 11:20:28 -0700 (PDT)
-Received: by mail-ot1-x331.google.com with SMTP id 101-20020a9d04ee0000b02901b506659320so5594623otm.7;
-        Mon, 15 Mar 2021 11:20:27 -0700 (PDT)
+        Mon, 15 Mar 2021 14:42:10 -0400
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B99FC06174A
+        for <kernel-janitors@vger.kernel.org>; Mon, 15 Mar 2021 11:42:10 -0700 (PDT)
+Received: by mail-lf1-x130.google.com with SMTP id 18so58443896lff.6
+        for <kernel-janitors@vger.kernel.org>; Mon, 15 Mar 2021 11:42:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=qgTmUjpAgS3oY88pdR8n43/ojqKRMNQdI1zf/7d2y7M=;
-        b=lsQmoe0RiNR+jpApt3STJZDJUtuFImFAiD9QoNiIYO6y20pPJBBar89/PeF1lajqvL
-         PE7PckeqNmolEc+09hLVnPOND3Za2nv2LkTxqd6t3zH06khxIPHswaeCyIczUsgedHsz
-         tPVgkgaXNewd5XxYvAXYPUSLy76NwaYlMKXLtiZz9Q+npnXLheUux0fBJ0LojMSSrf+x
-         RB1UFaGgSlaKkf2hbUz6Ij6zYbm6cdvJMN6gfbG29PGUAJ0zjJ+XWLG2o6k6jWTg9/x8
-         sy1+PSc1bdle27kJf40dpjWGmx3A0CBvObWwJeUS7mER2VPdWKy1M9X+JVISVC39gL9U
-         ZZlQ==
+        bh=8V+rz6dHaPmJOhTso7qaASysVmTy2044POg4ldMfuo4=;
+        b=jRLwWt7H0Pi4ZkUjPDCFeT16PhziKfzVweJicDH6BGT2nG7Cy/kRDUnJPioZ/JnWAn
+         bwgHa+chUnQvk59xxIJpUbENzw99d0R9GTDLDRPnq7XHtxvvh3s8n3EEsGXJXEYlq4et
+         hqPq8AqYf1iKq9yb7kfKB8SBpScpb+CMlOGq43zaknms2PxRynqWw9cnj6tOZeMOT/OZ
+         S+yqa58GRS2ncCJBI4rmykPvMeuhGIZ2yVsPGzrLNG/8dlSApnPsJSZAnMtr+s8t+P89
+         QdohGlPsG8m0y7+qonqrmrEV7aad2z3vPHEkCLlF91M5LRQEe63Df/Tq1qlBqlp2pPGp
+         8J5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=qgTmUjpAgS3oY88pdR8n43/ojqKRMNQdI1zf/7d2y7M=;
-        b=gB0ySSvOFWd6lUlurqsAV558ug0YzhGWChAp1J+MbmV+EDiPcCZuOl56A4YS+rgpbx
-         KcSJX1qUpLPErxwhfzFiHUsmrHq52WYqs6x2+1/yq7g5nUh5TNVfay+CCWGlQ823bmoh
-         JUDeVuxOfk42RwQX3DNQrHQ3WabVz7riOAlfVd3YJlG5wiXhF3FHqV8AJ+5MYgUIXEXz
-         h/oyDNaKsWjsCOqeZk67NAbh4+QEOtAbMveM4iarf/paVcB5P8ZB2qEEne9mFvrO7SGj
-         8KnUFB1IWZYBRKHBAMXUtnD/1rnGKnHL4o9MLvjFO0mUToByAvlKOfGcqd+x6UKqHAhW
-         57IQ==
-X-Gm-Message-State: AOAM533ye2y17DrQBYf0fHrOESrIKm3Ex1zooTUANUbdW/VM6oy2tZVK
-        p96baNBOYj6bNNtVrK6HPJ8MMQg93HQA5AxAIsU=
-X-Google-Smtp-Source: ABdhPJx5cwRZYD3x24+Y5vxu1axyhaBEq/xyonkkb7s5PsBur0DZqElaGFhhHFoWwp6u9qxGfa8lqI29fRn0xWQV1J0=
-X-Received: by 2002:a9d:20c3:: with SMTP id x61mr309400ota.311.1615832427497;
- Mon, 15 Mar 2021 11:20:27 -0700 (PDT)
+        bh=8V+rz6dHaPmJOhTso7qaASysVmTy2044POg4ldMfuo4=;
+        b=CcLxLt9xdGnov9nw/lytkphMumPAhomDAnWhoZorS4Z/MMKMylnauPi8ipz/rvrgOO
+         id2wmZFq+zta1gMX5Tl/qO/BXqTonAWyTbqrdO2mbgNs6Te7PIvv85I5YzBlRMXyVJ02
+         c8EjsQ3ho6KoufeGYL7IfVa7/lMGER/8ye4Iu0Rm8MneRQBvwoEFCgTy9QAyZ+V8O6NK
+         GvAMdqo3kKGdVbUD8izlmd/ZVJ103sBJ0DD6IzfzPRhuhjf41I1hqpJ0khEEBWrtwYii
+         6jnAhgDthAD60A8D0SiH+PBew1lvbuAlZ1E1iDUIZwHwalEG7EHGBdeaIwhxqeVVc+Rf
+         QCJw==
+X-Gm-Message-State: AOAM530tHQxLrzr4P8rY1VXuwpR6MbZXc6nJgHXi+1eFkJmzCc8YQDEN
+        EoOCqjPLRTOPjIMAREADK1WzGEL8RJZv0c7FPzDeBA==
+X-Google-Smtp-Source: ABdhPJz2wKAyWfvmM0JOI48gzt1V0Qdip+vbLcJCzgXWjWu8sJ4chylMWs3OtOsW0Qw0gKwjeJnLXJ3gpBLK9eXKm2M=
+X-Received: by 2002:ac2:549c:: with SMTP id t28mr8490298lfk.7.1615833728903;
+ Mon, 15 Mar 2021 11:42:08 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210311163417.59967-1-colin.king@canonical.com>
-In-Reply-To: <20210311163417.59967-1-colin.king@canonical.com>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Mon, 15 Mar 2021 14:20:16 -0400
-Message-ID: <CADnq5_PH0q+mAAjSyL5_067aT0gqVMO1XZHBP_zsG41WY89Reg@mail.gmail.com>
-Subject: Re: [PATCH] drm/amd/display: remove redundant initialization of
- variable result
+References: <20210315123303.10218-1-colin.king@canonical.com>
+In-Reply-To: <20210315123303.10218-1-colin.king@canonical.com>
+From:   John Stultz <john.stultz@linaro.org>
+Date:   Mon, 15 Mar 2021 11:41:58 -0700
+Message-ID: <CALAqxLW1VaMTVx3piKnLcEqWxMcQFG9LujH1ijHP2dbXBQaxqA@mail.gmail.com>
+Subject: Re: [PATCH] selftests/timers: Fix spelling mistake "clocksourc" -> "clocksource"
 To:     Colin King <colin.king@canonical.com>
-Cc:     Harry Wentland <harry.wentland@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>, kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>, Shuah Khan <shuah@kernel.org>,
+        linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        lkml <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Applied.  Thanks!
-
-Alex
-
-On Thu, Mar 11, 2021 at 11:34 AM Colin King <colin.king@canonical.com> wrote:
+On Mon, Mar 15, 2021 at 5:33 AM Colin King <colin.king@canonical.com> wrote:
 >
 > From: Colin Ian King <colin.king@canonical.com>
 >
-> The variable result is being initialized with a value that is
-> never read and it is being updated later with a new value.  The
-> initialization is redundant and can be removed.
+> There is a spelling mistake in a comment. Fix it.
 >
-> Addresses-Coverity: ("Unused value")
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c b/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
-> index 099f43709060..47e6c33f73cb 100644
-> --- a/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
-> +++ b/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
-> @@ -4281,7 +4281,7 @@ void dp_set_panel_mode(struct dc_link *link, enum dp_panel_mode panel_mode)
->
->                 if (edp_config_set.bits.PANEL_MODE_EDP
->                         != panel_mode_edp) {
-> -                       enum dc_status result = DC_ERROR_UNEXPECTED;
-> +                       enum dc_status result;
->
->                         edp_config_set.bits.PANEL_MODE_EDP =
->                         panel_mode_edp;
-> --
-> 2.30.2
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+Akcde-yb: John Stultz <john.stultz@linaro.org>
+
+I kid, I kid!  My apologies and thanks!
+
+Acked-by: John Stultz <john.stultz@linaro.org>
