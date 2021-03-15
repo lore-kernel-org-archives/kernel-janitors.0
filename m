@@ -2,84 +2,102 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F460C433DB
-	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Mar 2021 08:08:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21F79C433E0
+	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Mar 2021 09:12:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D954864E3F
-	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Mar 2021 08:08:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DFC9064EB2
+	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Mar 2021 09:12:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230171AbhCOII0 (ORCPT
+        id S229548AbhCOJLs (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 15 Mar 2021 04:08:26 -0400
-Received: from m42-2.mailgun.net ([69.72.42.2]:52584 "EHLO m42-2.mailgun.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229964AbhCOIIZ (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 15 Mar 2021 04:08:25 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1615795705; h=Date: Message-Id: Cc: To: References:
- In-Reply-To: From: Subject: Content-Transfer-Encoding: MIME-Version:
- Content-Type: Sender; bh=TTFfeyZWEswLJBSG7E/dJlIStoDFomBMP35/D+YPgo8=;
- b=INrv0hxUfytbEyAt0rJt1z56mOn4CUXZJ3GKxmyLTBNO4lIXGkuhVql4cp00InJx0ZTz0DVI
- dAF8DmPAfDmeWNonn9UgnC21OtjSjgv6Vxgjj7VA5FwIw3XhJY1LteJjR5ZuNFNJrcUcP/bV
- qeQPJIf2YB+RhHoYo4PH9B5ZOW0=
-X-Mailgun-Sending-Ip: 69.72.42.2
-X-Mailgun-Sid: WyI5NDExNyIsICJrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n06.prod.us-east-1.postgun.com with SMTP id
- 604f15f26dc1045b7dbcba7b (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Mon, 15 Mar 2021 08:08:18
- GMT
-Sender: kvalo=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id D04F3C43462; Mon, 15 Mar 2021 08:08:17 +0000 (UTC)
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 022C3C433CA;
-        Mon, 15 Mar 2021 08:08:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 022C3C433CA
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] rtw88: Fix an error code in rtw_debugfs_set_rsvd_page()
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <YCwgb/4F4Y+tyE56@mwanda>
-References: <YCwgb/4F4Y+tyE56@mwanda>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
+        Mon, 15 Mar 2021 05:11:48 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:34042 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229467AbhCOJLf (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 15 Mar 2021 05:11:35 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12F9A6B9073804;
+        Mon, 15 Mar 2021 09:11:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=TyGg+uKj5swceqnF7ADrAAvVI400/7/tNo98mRFkVRE=;
+ b=vkpLBY1amFW28s74cLLzH8XTDwxCpvezENWmtyyvCHl/WAQ3FqbrgHJfcoXa87YXQqgf
+ NmsXOf2xoAKB4K8iNIvpXurMAnAyKUJEUglWQSQsjZ6zqCgrdIwMFnmrx7cev4uKMR4Q
+ W3gKh460xEkymW9kR45p0UoZ49oA6+PTTqsx5M0agvBHtlwDcVlz3h12ociwhsAHs3Xj
+ W5KyzxEenxT1p+3BIOwG9GX8/xNLLHsMnNeSLaPWBSU4yZmlhYQ3Wjcz0xEcGpQAi6tn
+ f0wWJ9+2rFw3NsP4w1fJyP0LzCmifkQpihfaiRDMetqxU98BI1GROo2h1sIGGhMtLNEC xQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 378p1nk1p9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 15 Mar 2021 09:11:22 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12F9B3qD108285;
+        Mon, 15 Mar 2021 09:11:21 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3020.oracle.com with ESMTP id 37a4er8kt7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 15 Mar 2021 09:11:21 +0000
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 12F9BIlU022840;
+        Mon, 15 Mar 2021 09:11:18 GMT
+Received: from kadam (/102.36.221.92)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 15 Mar 2021 02:11:18 -0700
+Date:   Mon, 15 Mar 2021 12:11:07 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Kalle Valo <kvalo@codeaurora.org>
 Cc:     Yan-Hsuan Chuang <tony0620emma@gmail.com>,
         Tzu-En Huang <tehuang@realtek.com>,
         linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
-User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.5.2
-Message-Id: <20210315080817.D04F3C43462@smtp.codeaurora.org>
-Date:   Mon, 15 Mar 2021 08:08:17 +0000 (UTC)
+Subject: Re: [PATCH] rtw88: Fix an error code in rtw_debugfs_set_rsvd_page()
+Message-ID: <20210315091107.GO21246@kadam>
+References: <YCwgb/4F4Y+tyE56@mwanda>
+ <20210315080817.A3975C43461@smtp.codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210315080817.A3975C43461@smtp.codeaurora.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-IMR: 1
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9923 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=0
+ malwarescore=0 phishscore=0 bulkscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2103150064
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9923 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 suspectscore=0 adultscore=0
+ spamscore=0 clxscore=1011 phishscore=0 malwarescore=0 priorityscore=1501
+ bulkscore=0 mlxlogscore=999 lowpriorityscore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2103150064
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
-
-> The sscanf() function returns either 0 or 1 here.  It doesn't return
-> error codes.  We should return -EINVAL if the string is invalid.
+On Mon, Mar 15, 2021 at 08:08:17AM +0000, Kalle Valo wrote:
+> Dan Carpenter <dan.carpenter@oracle.com> wrote:
 > 
-> Fixes: c376c1fc87b7 ("rtw88: add h2c command in debugfs")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > The sscanf() function returns either 0 or 1 here.  It doesn't return
+> > error codes.  We should return -EINVAL if the string is invalid.
+> > 
+> > Fixes: c376c1fc87b7 ("rtw88: add h2c command in debugfs")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> Why do you remove the num variable? I think the code is more readable with it.
+> 
 
-Why do you remove the num variable? I think the code is more readable with it.
+The way I wrote it is slightly more normal (457 vs 333) and we don't use
+"num" except for the one if statement.  But I can write the other way.
+I'll resend.
 
-(Sorry, I'm not able to quote the code as I'm replying from patchwork script
-and it doesn't support that yet.)
-
--- 
-https://patchwork.kernel.org/project/linux-wireless/patch/YCwgb/4F4Y+tyE56@mwanda/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+regards,
+dan carpenter
 
