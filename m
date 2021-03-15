@@ -2,84 +2,95 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B47FBC433E0
-	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Mar 2021 18:43:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B63C3C433E0
+	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Mar 2021 20:15:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 72F2864F3F
-	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Mar 2021 18:43:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 862F064F4D
+	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Mar 2021 20:15:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231289AbhCOSme (ORCPT
+        id S232116AbhCOUPZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 15 Mar 2021 14:42:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50054 "EHLO
+        Mon, 15 Mar 2021 16:15:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41808 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231213AbhCOSmK (ORCPT
+        with ESMTP id S230443AbhCOUPC (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 15 Mar 2021 14:42:10 -0400
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B99FC06174A
-        for <kernel-janitors@vger.kernel.org>; Mon, 15 Mar 2021 11:42:10 -0700 (PDT)
-Received: by mail-lf1-x130.google.com with SMTP id 18so58443896lff.6
-        for <kernel-janitors@vger.kernel.org>; Mon, 15 Mar 2021 11:42:10 -0700 (PDT)
+        Mon, 15 Mar 2021 16:15:02 -0400
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E66CC06174A;
+        Mon, 15 Mar 2021 13:15:02 -0700 (PDT)
+Received: by mail-ed1-x530.google.com with SMTP id u4so18838867edv.9;
+        Mon, 15 Mar 2021 13:15:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8V+rz6dHaPmJOhTso7qaASysVmTy2044POg4ldMfuo4=;
-        b=jRLwWt7H0Pi4ZkUjPDCFeT16PhziKfzVweJicDH6BGT2nG7Cy/kRDUnJPioZ/JnWAn
-         bwgHa+chUnQvk59xxIJpUbENzw99d0R9GTDLDRPnq7XHtxvvh3s8n3EEsGXJXEYlq4et
-         hqPq8AqYf1iKq9yb7kfKB8SBpScpb+CMlOGq43zaknms2PxRynqWw9cnj6tOZeMOT/OZ
-         S+yqa58GRS2ncCJBI4rmykPvMeuhGIZ2yVsPGzrLNG/8dlSApnPsJSZAnMtr+s8t+P89
-         QdohGlPsG8m0y7+qonqrmrEV7aad2z3vPHEkCLlF91M5LRQEe63Df/Tq1qlBqlp2pPGp
-         8J5w==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Et3bGj7NRUnGYZkgSJXXctmKtTjvcq/IEumqCLrdZqM=;
+        b=f65y33FUsrBB5rR2HTKHwiOJcYCIF/Z9KKaxelMcE59WPl0A9th93ojz24HKXhdJtB
+         ZW26+Lh3FEiPFYTnOU9lHyOQD2CXxJBU6zxE1EcCk6k/IuPccSgXGblmVkVXxIHUPZvm
+         /xVSyjQaisI2UR2nNGp/YkrVoHxNTy1ttDKiThbTyWk4ilQjwQAObDTSPmgGQIFBdepb
+         guyjB3JjD75CJrfRH+Vm9sE1KUqeCQYZC7OtqOGbII3+RxUQdG1fLxjQ90fUv2n2zNL4
+         T1+Fw8Oh1kaowekT2HvlsPP+yGLC2Oi5spZFm5IA9j+4/t7XelW00frnuN25aetKByXo
+         gf1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8V+rz6dHaPmJOhTso7qaASysVmTy2044POg4ldMfuo4=;
-        b=CcLxLt9xdGnov9nw/lytkphMumPAhomDAnWhoZorS4Z/MMKMylnauPi8ipz/rvrgOO
-         id2wmZFq+zta1gMX5Tl/qO/BXqTonAWyTbqrdO2mbgNs6Te7PIvv85I5YzBlRMXyVJ02
-         c8EjsQ3ho6KoufeGYL7IfVa7/lMGER/8ye4Iu0Rm8MneRQBvwoEFCgTy9QAyZ+V8O6NK
-         GvAMdqo3kKGdVbUD8izlmd/ZVJ103sBJ0DD6IzfzPRhuhjf41I1hqpJ0khEEBWrtwYii
-         6jnAhgDthAD60A8D0SiH+PBew1lvbuAlZ1E1iDUIZwHwalEG7EHGBdeaIwhxqeVVc+Rf
-         QCJw==
-X-Gm-Message-State: AOAM530tHQxLrzr4P8rY1VXuwpR6MbZXc6nJgHXi+1eFkJmzCc8YQDEN
-        EoOCqjPLRTOPjIMAREADK1WzGEL8RJZv0c7FPzDeBA==
-X-Google-Smtp-Source: ABdhPJz2wKAyWfvmM0JOI48gzt1V0Qdip+vbLcJCzgXWjWu8sJ4chylMWs3OtOsW0Qw0gKwjeJnLXJ3gpBLK9eXKm2M=
-X-Received: by 2002:ac2:549c:: with SMTP id t28mr8490298lfk.7.1615833728903;
- Mon, 15 Mar 2021 11:42:08 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Et3bGj7NRUnGYZkgSJXXctmKtTjvcq/IEumqCLrdZqM=;
+        b=qvgb5x2MAXCZUhc30AQlWrLWvMqWm8FBodyZxTZLtu3RGA3xJMXnzE0Z7lTWIJa9T3
+         +E0KlvJh18cqNkVUhYDBidS6ephyRuTkBgtIyJ5w415VVWQrR6Q3dz6J1FxPyLfQdEiS
+         Jgk8CjUKSvNbU1lL4BnwS3LyA6kpSuTUVa/tsmmnXF8+HPDzEGclSA5Gvlt8Y51pDQz7
+         0Dmv/KYMb1PGPXx1ZZ6ppbfH7xFBsTIDJqEq8I4d/CTdZ0UbjLUPBqnec+qkFvAaiNBW
+         Onz7CBsftTgTpQtN//58+dC7P33Vr2xZLIwHzxZbwZ6rAGrrd40uRuoyBcdOUPQewbW5
+         KhqA==
+X-Gm-Message-State: AOAM53107eHgd9I9NlmHO2EM0UsIhSZ+x7B7aZmbXnpQFIrtKDQ+vgxI
+        tMCoAUeU5+9egj/zNeOiafw=
+X-Google-Smtp-Source: ABdhPJxiY21xokc16EePJATVpAqxEBxUu5/cho/QaM5eIiVQdEIEpGB19T5Tfpqf440nVgTv4kngbA==
+X-Received: by 2002:aa7:c345:: with SMTP id j5mr31126866edr.338.1615839300869;
+        Mon, 15 Mar 2021 13:15:00 -0700 (PDT)
+Received: from skbuf ([188.25.219.167])
+        by smtp.gmail.com with ESMTPSA id h10sm9380114edk.17.2021.03.15.13.15.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Mar 2021 13:15:00 -0700 (PDT)
+Date:   Mon, 15 Mar 2021 22:14:59 +0200
+From:   Vladimir Oltean <olteanv@gmail.com>
+To:     'w00385741 <weiyongjun1@huawei.com>
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Baowen Zheng <baowen.zheng@corigine.com>,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Hulk Robot <hulkci@huawei.com>
+Subject: Re: [PATCH net-next] net: dsa: sja1105: fix error return code in
+ sja1105_cls_flower_add()
+Message-ID: <20210315201459.6crxixnuw4jyje7q@skbuf>
+References: <20210315144323.4110640-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
-References: <20210315123303.10218-1-colin.king@canonical.com>
-In-Reply-To: <20210315123303.10218-1-colin.king@canonical.com>
-From:   John Stultz <john.stultz@linaro.org>
-Date:   Mon, 15 Mar 2021 11:41:58 -0700
-Message-ID: <CALAqxLW1VaMTVx3piKnLcEqWxMcQFG9LujH1ijHP2dbXBQaxqA@mail.gmail.com>
-Subject: Re: [PATCH] selftests/timers: Fix spelling mistake "clocksourc" -> "clocksource"
-To:     Colin King <colin.king@canonical.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>, Shuah Khan <shuah@kernel.org>,
-        linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210315144323.4110640-1-weiyongjun1@huawei.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Mar 15, 2021 at 5:33 AM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> There is a spelling mistake in a comment. Fix it.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+On Mon, Mar 15, 2021 at 02:43:23PM +0000, 'w00385741 wrote:
+> From: Wei Yongjun <weiyongjun1@huawei.com>
+> 
+> The return value 'rc' maybe overwrite to 0 in the flow_action_for_each
+> loop, the error code from the offload not support error handling will
+> not set. This commit fix it to return -EOPNOTSUPP.
+> 
+> Fixes: 6a56e19902af ("flow_offload: reject configuration of packet-per-second policing in offload drivers")
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ---
 
-Akcde-yb: John Stultz <john.stultz@linaro.org>
+Thank you for the patch, Yongjun.
 
-I kid, I kid!  My apologies and thanks!
-
-Acked-by: John Stultz <john.stultz@linaro.org>
+Reviewed-by: Vladimir Oltean <vladimir.oltean@nxp.com>
