@@ -7,64 +7,79 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DE38C433E6
-	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Mar 2021 12:34:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CAF1C433E6
+	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Mar 2021 14:35:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 231D164EB3
-	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Mar 2021 12:34:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1FC064F64
+	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Mar 2021 14:35:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229614AbhCOMdW (ORCPT
+        id S236016AbhCOOfV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 15 Mar 2021 08:33:22 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:33036 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229559AbhCOMdH (ORCPT
+        Mon, 15 Mar 2021 10:35:21 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:13616 "EHLO
+        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236226AbhCOOe4 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 15 Mar 2021 08:33:07 -0400
-Received: from cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net ([80.193.200.194] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1lLmPA-0003z6-0b; Mon, 15 Mar 2021 12:33:04 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     John Stultz <john.stultz@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>, Shuah Khan <shuah@kernel.org>,
-        linux-kselftest@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] selftests/timers: Fix spelling mistake "clocksourc" -> "clocksource"
-Date:   Mon, 15 Mar 2021 12:33:03 +0000
-Message-Id: <20210315123303.10218-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.30.2
+        Mon, 15 Mar 2021 10:34:56 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Dzf641P8kz17Lgh;
+        Mon, 15 Mar 2021 22:33:00 +0800 (CST)
+Received: from localhost.localdomain (10.175.102.38) by
+ DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
+ 14.3.498.0; Mon, 15 Mar 2021 22:34:45 +0800
+From:   'w00385741 <weiyongjun1@huawei.com>
+To:     <weiyongjun1@huawei.com>, Vladimir Oltean <olteanv@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Baowen Zheng <baowen.zheng@corigine.com>
+CC:     <netdev@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH net-next] net: dsa: sja1105: fix error return code in sja1105_cls_flower_add()
+Date:   Mon, 15 Mar 2021 14:43:23 +0000
+Message-ID: <20210315144323.4110640-1-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.102.38]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
 
-There is a spelling mistake in a comment. Fix it.
+The return value 'rc' maybe overwrite to 0 in the flow_action_for_each
+loop, the error code from the offload not support error handling will
+not set. This commit fix it to return -EOPNOTSUPP.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 6a56e19902af ("flow_offload: reject configuration of packet-per-second policing in offload drivers")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- tools/testing/selftests/timers/clocksource-switch.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/dsa/sja1105/sja1105_flower.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/timers/clocksource-switch.c b/tools/testing/selftests/timers/clocksource-switch.c
-index bfc974b4572d..2d66abd877e6 100644
---- a/tools/testing/selftests/timers/clocksource-switch.c
-+++ b/tools/testing/selftests/timers/clocksource-switch.c
-@@ -3,7 +3,7 @@
-  *		(C) Copyright IBM 2012
-  *		Licensed under the GPLv2
-  *
-- *  NOTE: This is a meta-test which quickly changes the clocksourc and
-+ *  NOTE: This is a meta-test which quickly changes the clocksource and
-  *  then uses other tests to detect problems. Thus this test requires
-  *  that the inconsistency-check and nanosleep tests be present in the
-  *  same directory it is run from.
--- 
-2.30.2
+diff --git a/drivers/net/dsa/sja1105/sja1105_flower.c b/drivers/net/dsa/sja1105/sja1105_flower.c
+index f78b767f86ee..973761132fc3 100644
+--- a/drivers/net/dsa/sja1105/sja1105_flower.c
++++ b/drivers/net/dsa/sja1105/sja1105_flower.c
+@@ -317,14 +317,13 @@ int sja1105_cls_flower_add(struct dsa_switch *ds, int port,
+ 	if (rc)
+ 		return rc;
+ 
+-	rc = -EOPNOTSUPP;
+-
+ 	flow_action_for_each(i, act, &rule->action) {
+ 		switch (act->id) {
+ 		case FLOW_ACTION_POLICE:
+ 			if (act->police.rate_pkt_ps) {
+ 				NL_SET_ERR_MSG_MOD(extack,
+ 						   "QoS offload not support packets per second");
++				rc = -EOPNOTSUPP;
+ 				goto out;
+ 			}
+ 
 
