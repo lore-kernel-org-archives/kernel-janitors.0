@@ -2,64 +2,70 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E398DC433E6
-	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Mar 2021 10:31:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7E15C433E6
+	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Mar 2021 12:31:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8E15F64EB6
-	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Mar 2021 10:31:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7C9D64ED2
+	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Mar 2021 12:31:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229663AbhCOKbW (ORCPT
+        id S229717AbhCOMal (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 15 Mar 2021 06:31:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38050 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229868AbhCOKbJ (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 15 Mar 2021 06:31:09 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C4F2A60295;
-        Mon, 15 Mar 2021 10:31:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1615804268;
-        bh=+7Gzy2h60gtU8dKM6TRRNJoI2wPB8/yaqzkEGaQ5Jok=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UVOQJANYIhWZb/KKDsj/HXdBmLQJsCokhyQDGoRLHzB8O2gTkBcOE/hb9HlaJwD30
-         5bgW1vKWUNlSE+qN7p9xEQz0+JeTowLVlv4/REFrg9EKdm0VD47dUS9NYe1vI/GyMa
-         NUDjtH2aTVD0VyAe0sUC0UpEb9ojBC5X02nln7W0jb6C63xi/go77+BhwTek1JxnY4
-         4tcu18mSnr+EaQ9jQ1YqX6eS0/7G6uT5pD33ydF2JPmAbkhASVzERLsX8WjaGeYkml
-         dlNr9Gi9grE996J1xKQNBJF4oi3omx1ayyvNRps+a5If1NlQoeY305cyOgwOU45pLw
-         gHxPXjZV0QHrQ==
-Date:   Mon, 15 Mar 2021 16:01:04 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     'Wei Yongjun <weiyongjun1@huawei.com>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        =?utf-8?B?5ZGo55Cw5p2wIChaaG91IFlhbmppZSk=?= 
-        <zhouyanjie@wanyeetech.com>,
-        =?utf-8?B?5ryG6bmP5oyvIChRaSBQZW5nemhlbik=?= 
-        <aric.pzqi@ingenic.com>, linux-phy@lists.infradead.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Hulk Robot <hulkci@huawei.com>
-Subject: Re: [PATCH -next] phy: ingenic: Fix a typo in ingenic_usb_phy_probe()
-Message-ID: <YE83aN32WhcS7nuo@vkoul-mobl>
-References: <20210305034933.3240914-1-weiyongjun1@huawei.com>
+        Mon, 15 Mar 2021 08:30:41 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:32955 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229663AbhCOMaJ (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 15 Mar 2021 08:30:09 -0400
+Received: from cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net ([80.193.200.194] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lLmMG-0003l3-Uc; Mon, 15 Mar 2021 12:30:05 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Saeed Mahameed <saeedm@nvidia.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] net/mlx5: Fix spelling mistakes in mlx5_core_info message
+Date:   Mon, 15 Mar 2021 12:30:04 +0000
+Message-Id: <20210315123004.9957-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210305034933.3240914-1-weiyongjun1@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 05-03-21, 03:49, 'Wei Yongjun wrote:
-> From: Wei Yongjun <weiyongjun1@huawei.com>
-> 
-> Fix the return value check typo which testing the wrong variable
-> in ingenic_usb_phy_probe().
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks
+There are two spelling mistakes in a mlx5_core_info message. Fix them.
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/mellanox/mlx5/core/health.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/health.c b/drivers/net/ethernet/mellanox/mlx5/core/health.c
+index a0a851640804..9ff163c5bcde 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/health.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/health.c
+@@ -340,7 +340,7 @@ static int mlx5_health_try_recover(struct mlx5_core_dev *dev)
+ 		return -EIO;
+ 	}
+ 
+-	mlx5_core_info(dev, "health revovery succeded\n");
++	mlx5_core_info(dev, "health recovery succeeded\n");
+ 	return 0;
+ }
+ 
 -- 
-~Vinod
+2.30.2
+
