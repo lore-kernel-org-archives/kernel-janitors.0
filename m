@@ -2,85 +2,88 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B067AC433DB
-	for <kernel-janitors@archiver.kernel.org>; Sun, 14 Mar 2021 16:02:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FDCFC433E0
+	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Mar 2021 04:06:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7E52264EB2
-	for <kernel-janitors@archiver.kernel.org>; Sun, 14 Mar 2021 16:02:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B6EB64E64
+	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Mar 2021 04:06:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234277AbhCNQBo (ORCPT
+        id S229548AbhCOEFq (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 14 Mar 2021 12:01:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48078 "EHLO mail.kernel.org"
+        Mon, 15 Mar 2021 00:05:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54138 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234519AbhCNQB1 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 14 Mar 2021 12:01:27 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B0C4264EB3;
-        Sun, 14 Mar 2021 16:01:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1615737687;
-        bh=+kh3fb1ANVI+FCnv50sRJTlbkHOhA4nUAh4oOjOsrj8=;
+        id S229722AbhCOEFl (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 15 Mar 2021 00:05:41 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 09D9264E3F;
+        Mon, 15 Mar 2021 04:05:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1615781141;
+        bh=NP4gX/7kY+mDxqIuuLyrMr0pZfLGy0RRE6/sizVfms4=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=nU6f/VcUjMXaQEmANcPDsUAYfd730u9tINQYuKzJpkWr0fWVu9eE1E5UE45pyK9NY
-         p/q0imqcz9F9Y8WWH1lvbl0fB7hQGwJl95s+Jnk5OV18H9f9pE49stFOQ7PZspTxgH
-         cB676GsGfUGw4T5M5sYRUNu1kCMTqxSTaT3Vaap0=
-Date:   Sun, 14 Mar 2021 17:01:24 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Edmundo Carmona Antoranz <eantoranz@gmail.com>
-Cc:     kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH -next 1/3] staging: vt6655: remove unused variable
-Message-ID: <YE4zVDlsYzB/CqkW@kroah.com>
-References: <20210314145943.1933245-1-eantoranz@gmail.com>
+        b=o3Y7UQUZ/eWfoTaZNvFTr4Xlxn2IuWHlKBoJ62A6m6BljT6aedAKDvA+Pq65IS5+D
+         2L18FsDgWD0RsGXZlxb4QCbVeCs9QnZcbllKinIt0I1Elrt4UYy9BW6xUx+2aThgcU
+         1DbJyVUZUNsql8I3vMt+c7lBD/zuuNTV03HXGe58wjPpwbPXdvIWFOqgZTFwHFsx8f
+         7y9a73WHpFTpEKq4CrfQYH+mytW+J1y5T04PZH68GzXRMUj7cVF474tT1ZrpFbrOKd
+         SXt4dTAbt1fDoRulWckkmRK4espBo2TlvO2momk7bBPv4XBH8bedBViasTVLcCIlCf
+         /0ASQqVea+vOw==
+Date:   Mon, 15 Mar 2021 09:35:34 +0530
+From:   Manivannan Sadhasivam <mani@kernel.org>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Jeffrey Hugo <jhugo@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] bus: mhi: core: remove redundant initialization of
+ variables state and ee
+Message-ID: <20210315040534.GA80095@thinkpad>
+References: <20210311111727.8433-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210314145943.1933245-1-eantoranz@gmail.com>
+In-Reply-To: <20210311111727.8433-1-colin.king@canonical.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, Mar 14, 2021 at 08:59:41AM -0600, Edmundo Carmona Antoranz wrote:
-> Since its introduction in 5449c685a4b3 (Staging: Add pristine
-> upstream vt6655 driver sources, 2009-04-25), the values
-> stored in variable byData have never been read in the macro
-> PCAvDelayByIO. By removing it, we are getting rid of a warning:
+On Thu, Mar 11, 2021 at 11:17:27AM +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> drivers/staging/vt6655/upc.h:45:16: warning: variable ‘byData’ set but not used [-Wunused-but-set-variable]
+> The variables state and ee are being initialized with values that
+> are never read and are being updated later with a new values. The
+> initializations are redundant and can be removed.
 > 
-> Signed-off-by: Edmundo Carmona Antoranz <eantoranz@gmail.com>
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+Reviewed-by: Manivannan Sadhasivam <mani@kernel.org>
+
+Thanks,
+Mani
+
 > ---
->  drivers/staging/vt6655/upc.h | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+>  drivers/bus/mhi/core/main.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/staging/vt6655/upc.h b/drivers/staging/vt6655/upc.h
-> index e086ec6e77f7..f00d0fd90003 100644
-> --- a/drivers/staging/vt6655/upc.h
-> +++ b/drivers/staging/vt6655/upc.h
-> @@ -42,14 +42,13 @@
+> diff --git a/drivers/bus/mhi/core/main.c b/drivers/bus/mhi/core/main.c
+> index 2c61dfd01353..3faf8bade520 100644
+> --- a/drivers/bus/mhi/core/main.c
+> +++ b/drivers/bus/mhi/core/main.c
+> @@ -428,9 +428,9 @@ irqreturn_t mhi_intvec_threaded_handler(int irq_number, void *priv)
+>  {
+>  	struct mhi_controller *mhi_cntrl = priv;
+>  	struct device *dev = &mhi_cntrl->mhi_dev->dev;
+> -	enum mhi_state state = MHI_STATE_MAX;
+> +	enum mhi_state state;
+>  	enum mhi_pm_state pm_state = 0;
+> -	enum mhi_ee_type ee = MHI_EE_MAX;
+> +	enum mhi_ee_type ee;
 >  
->  #define PCAvDelayByIO(uDelayUnit)				\
->  do {								\
-> -	unsigned char byData;					\
->  	unsigned long ii;					\
->  								\
->  	if (uDelayUnit <= 50) {					\
->  		udelay(uDelayUnit);				\
->  	} else {						\
->  		for (ii = 0; ii < (uDelayUnit); ii++)		\
-> -			byData = inb(0x61);			\
-> +			inb(0x61);				\
-
-Are you sure that the compiler does not make the inb() now go away?
-
-This is being done like this for a very specific reason, the value read
-does not matter, but you have to read something.
-
-thanks,
-
-greg k-h
+>  	write_lock_irq(&mhi_cntrl->pm_lock);
+>  	if (!MHI_REG_ACCESS_VALID(mhi_cntrl->pm_state)) {
+> -- 
+> 2.30.2
+> 
