@@ -2,84 +2,112 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 184F3C433E9
-	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Mar 2021 16:59:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8067EC433E0
+	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Mar 2021 18:20:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D60F264DE2
-	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Mar 2021 16:59:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 522D564F4D
+	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Mar 2021 18:20:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234676AbhCOQ6m (ORCPT
+        id S231543AbhCOSUJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 15 Mar 2021 12:58:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58868 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234613AbhCOQ6W (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 15 Mar 2021 12:58:22 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id AE68264F35;
-        Mon, 15 Mar 2021 16:58:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1615827501;
-        bh=RZJ/BoC2jUBBFMz79wrOVEsQvUMqjv4DwmpvkzK5orc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uhf154C2I1XkSel11y5cTJZpPLm475E5dg1Qt/+NI1QamnYSSta64HC0TSP6DTafN
-         fy4LSmXC71/aU89mecC7LVP+0pKCcBk8T1RuUI9+2TeBSKeWNmMZH3PHb+EOehRyYj
-         FbzuDpImIhQsOzvM7NWsYWj44TnZxZTIgoWrV+ygfqqK0YfbRB36y/7aj7VUuX1aK8
-         FUtuKHAoSvUR2bQb/OJP9Y9+hf9DupfeAWvqKohwo9YQjOrU7Olv/wI6oy+qA44QNV
-         8Uzwji50PMZHfGxs5n9V8naLSPm6oryWTjAYbYzOT2z3dWAmAjG52TFvd9jPQxrBhG
-         8b4B348dn/dig==
-From:   Mark Brown <broonie@kernel.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        kernel-janitors@vger.kernel.org, linux-power@fi.rohmeurope.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] regulator: bd9576: Fix return from bd957x_probe()
-Date:   Mon, 15 Mar 2021 16:57:03 +0000
-Message-Id: <161582739233.20279.17042133398382526901.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <YEsbfLJfEWtnRpoU@mwanda>
-References: <YEsbfLJfEWtnRpoU@mwanda>
+        Mon, 15 Mar 2021 14:20:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45174 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231981AbhCOSTi (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 15 Mar 2021 14:19:38 -0400
+Received: from mail-ot1-x335.google.com (mail-ot1-x335.google.com [IPv6:2607:f8b0:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61C1EC06174A;
+        Mon, 15 Mar 2021 11:19:38 -0700 (PDT)
+Received: by mail-ot1-x335.google.com with SMTP id v24-20020a9d69d80000b02901b9aec33371so5600487oto.2;
+        Mon, 15 Mar 2021 11:19:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=JeDHtCDxywj9r6bA/2S0wPWpH9Q9pfJGq85V9QGOnw8=;
+        b=TF7MqunSHLZhiqjjd5eKS6a1ZWsfyx6blhMKMqPybtS5JPw4NzQcK2xItEXkpphYPJ
+         8QWlhHoSOyzKbsUYUrrJ8yHht6KEqZrPPGtbwD5vToVHROi8GIgPXOsTOd91WY4e1f1w
+         4dj7qN2iBYJ/+ATjMLTpc+Cd0PZSe4yCx+UkRyBpQrdLKcZBlvac67lr3gUbQksGfNZe
+         obIT8L8nKImSEVfNCG/qXXqb5HIOC1JKKJyaqEEExdW3l/qu1sO96+BI0qs5nrTte4rF
+         MraIQVxq0DmDE4LXZFC+Qfacc+wu3XVpX6PVV5O/9IEdRCE5UULjnCCNRpKeAvJ0PE76
+         3c1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JeDHtCDxywj9r6bA/2S0wPWpH9Q9pfJGq85V9QGOnw8=;
+        b=R8K0lSfAv+zjx+RoPAKF0HrX0YyVoZro4uvep+Yb0uKIiOwYdznd7FiGJl5+zAcqm1
+         2PY1nXV+WsHCC1ioZiCxSyKsywxTBk8AzjbFsr3CS9bAZquT5PoxeqAPLESeS7AUnl0W
+         X89Gza861EJ3TFW33Tb3CtRFkutBYXE+Xbm/fPfCexZomBC4EZJc+TkbIfWE//33BMk0
+         tvH39IQI2NCEUIkMkMvn/SP00es0BFc8FDfZiIrh8sB0Qh+NK6O9VHCHV2uEnGoAVVmr
+         Z9dhvXh5+d3ZoS/1/SnIBtonHNHtXfkoNROD6S/r6t+oTNYXI9gy+kM1se+F5S/auk8n
+         Dg2w==
+X-Gm-Message-State: AOAM531bA/9zOohSMAJtmOTcx7w22YmASJJy18CTWfUJL3o5I4NS9Sqs
+        oo2861BBE4PmBaV5xBKimRSlMX+f76ksEnsJDRY=
+X-Google-Smtp-Source: ABdhPJyAxg+bB/x4V9sYZuqgUOEM6BOJkUKpErYFa5jBJaxeSIB/YQj4BCsKJcWuMzSE93UQTMd/eX9jCImPxzpIB5k=
+X-Received: by 2002:a9d:760a:: with SMTP id k10mr333800otl.23.1615832377776;
+ Mon, 15 Mar 2021 11:19:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20210312100842.127242-1-colin.king@canonical.com>
+In-Reply-To: <20210312100842.127242-1-colin.king@canonical.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Mon, 15 Mar 2021 14:19:26 -0400
+Message-ID: <CADnq5_PUo9cLui_B81Kn2LB8jmyZG2HsgWLQ=WqOWP+_wqcfsw@mail.gmail.com>
+Subject: Re: [PATCH][next] drm/amd/pm: Fix spelling mistake "disble" -> "disable"
+To:     Colin King <colin.king@canonical.com>
+Cc:     Evan Quan <evan.quan@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>, kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 12 Mar 2021 10:42:52 +0300, Dan Carpenter wrote:
-> The probe() function returns an uninitialized variable in the success
-> path.  There is no need for the "err" variable at all, just delete it.
+Applied.  Thanks!
 
-Applied to
+Alex
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
-
-Thanks!
-
-[1/1] regulator: bd9576: Fix return from bd957x_probe()
-      commit: 320fcd6bbd2b500923db518902c2c640242d2b50
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+On Fri, Mar 12, 2021 at 5:08 AM Colin King <colin.king@canonical.com> wrote:
+>
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> There is a spelling mistake in an assert message. Fix it.
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/gpu/drm/amd/pm/powerplay/hwmgr/smu7_hwmgr.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/amd/pm/powerplay/hwmgr/smu7_hwmgr.c b/drivers/gpu/drm/amd/pm/powerplay/hwmgr/smu7_hwmgr.c
+> index 0d725b66fb78..7edafef095a3 100644
+> --- a/drivers/gpu/drm/amd/pm/powerplay/hwmgr/smu7_hwmgr.c
+> +++ b/drivers/gpu/drm/amd/pm/powerplay/hwmgr/smu7_hwmgr.c
+> @@ -1300,7 +1300,7 @@ static int smu7_start_dpm(struct pp_hwmgr *hwmgr)
+>                                 (0 == smum_send_msg_to_smc(hwmgr,
+>                                                 PPSMC_MSG_PCIeDPM_Disable,
+>                                                 NULL)),
+> -                               "Failed to disble pcie DPM during DPM Start Function!",
+> +                               "Failed to disable pcie DPM during DPM Start Function!",
+>                                 return -EINVAL);
+>         }
+>
+> --
+> 2.30.2
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
