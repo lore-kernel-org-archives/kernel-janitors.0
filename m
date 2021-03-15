@@ -2,136 +2,99 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED323C433E0
-	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Mar 2021 05:29:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A3ACC28E88
+	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Mar 2021 05:39:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B4D5A61481
-	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Mar 2021 05:29:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52CA864E1F
+	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Mar 2021 05:39:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229809AbhCOF1y (ORCPT
+        id S230028AbhCOFil (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 15 Mar 2021 01:27:54 -0400
-Received: from mail-lj1-f170.google.com ([209.85.208.170]:42822 "EHLO
-        mail-lj1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229851AbhCOF1h (ORCPT
+        Mon, 15 Mar 2021 01:38:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49494 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229664AbhCOFiK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 15 Mar 2021 01:27:37 -0400
-Received: by mail-lj1-f170.google.com with SMTP id 184so14705060ljf.9;
-        Sun, 14 Mar 2021 22:27:36 -0700 (PDT)
+        Mon, 15 Mar 2021 01:38:10 -0400
+Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FDC5C061574
+        for <kernel-janitors@vger.kernel.org>; Sun, 14 Mar 2021 22:38:10 -0700 (PDT)
+Received: by mail-pl1-x636.google.com with SMTP id f8so1210827plg.10
+        for <kernel-janitors@vger.kernel.org>; Sun, 14 Mar 2021 22:38:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=user-agent:from:to:subject:date:message-id:mime-version;
+        bh=6Ixs3cJqEL9ZhQcEDI908Q1nCbq86cR2Bx4Np0rfFkA=;
+        b=mCVsLOZgK9g5dzxzkZA0RQM0t1lWvDtQzaSajfITXmJ7t8MvfzThTOcEWtILeCsWAr
+         1Ejv0TKK9UTv7sCG7tSdIqQYrBWkI8PlNuEeYORbvTVBmAaBmfqphxacVT10xC8tAC0G
+         baAPvEY/FMliSJydZG6Od2ze690ZK4m+o9WzEawlsCt//SL3K6VQCekFsO11QlF6FLGn
+         C733VmrBTW1xtDtYpWadtUhIx3Y8AZm3ekJVGjpRVjWRXH1TQuuuFtIlxmWc2y4M+n7O
+         IC/qHEA//UdbbK4tBa6/hbTluAUwlyFOXFS5pC03P8TTen9z5qCqa5v0ud3NVPcp1Tbt
+         qe5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:reply-to:to:cc
-         :in-reply-to:references:mime-version:date:user-agent
-         :content-transfer-encoding;
-        bh=wOKNiBuyV2EBb5bEXF6m0Zu6EfHeC7lgHHf+sekEJJM=;
-        b=byd3KCAfm2cKjDIW6fWihG1DsTg71uONWxtwq9IcBHvwxbJ7sxHGuAo78fsg5thgSj
-         UXDQpImBsqaIaAxpm+BUWNiD2zaLOD6mNuTQ6rv7kdq091k3pDySqoFQGnKYYqh+k1gw
-         Hms2zWQCjaPVeCnnWACRMNA1UmW7gq4uHDW/xgk+eFTBg45cfFMyNrf/FUH+l0jrrWP2
-         1ZKewFhP+umSrudIdrhrrohJu2jWKNnyWabAOdm63bdnbFYCI2MVZmIFfFFWRzwF6WGT
-         fzog384I8d4Rv5klPtBMt8p+s0txGKPua6qePBKoXUdrPOi9KIT5PFgb2Tw7NQK634UN
-         3aoQ==
-X-Gm-Message-State: AOAM530oh4x8aZpgM2r2Fw4Wb5NkHinjJtwf2rAgjgTiSoZfS1cUG2Vw
-        8eeR1UpNBNRGPv22W+3HvrdddzowsBY=
-X-Google-Smtp-Source: ABdhPJzy77AmdCgrI712x2ZghN5JBTxRTVJcDmEL731Vu4qs2tt98XBeq4lW93Od1QGmaMX9kzSzfw==
-X-Received: by 2002:a05:651c:118a:: with SMTP id w10mr9296774ljo.431.1615786055762;
-        Sun, 14 Mar 2021 22:27:35 -0700 (PDT)
-Received: from dc7vkhyyyyyyyyyyyyycy-3.rev.dnainternet.fi (dc7vkhyyyyyyyyyyyyycy-3.rev.dnainternet.fi. [2001:14ba:16e2:8300::4])
-        by smtp.gmail.com with ESMTPSA id v11sm2757386ljp.63.2021.03.14.22.27.34
+        h=x-gm-message-state:user-agent:from:to:subject:date:message-id
+         :mime-version;
+        bh=6Ixs3cJqEL9ZhQcEDI908Q1nCbq86cR2Bx4Np0rfFkA=;
+        b=c9S8gohgZ/bJOgzQpEdzrKxM7G4TcIiwd08toJKcWz7iKUrQkFF1NxQ3iu6PEFCK6o
+         xP1gHTgBUsG3DIAWd6aRxR8Od2gN1GjaIVO62muVO1KKtZWX+9xj0TfpZS12HAbO7/wc
+         NIvJIDDX08PJ4mX3Fu0/q5PgA8/Oo+feg8NLG2L8AJoXJT2D3PjfGnCrWxsXRk+n7a96
+         tXMbZLQW/ZisheWSVM+npPyruNNzeT1TETfTizt3vyyjKsJ43tHpZ39pxgjyfdaHXwIK
+         qVveWoxlOW6SID4jmqiwOVkZ9kCwIvGLYBg66yq/A/j7MC8n6TbT4/Bh+hhbIIU4NnVo
+         p6jg==
+X-Gm-Message-State: AOAM532Cl1/BxyMe5S5BS+qbDd4mos7x2eWlImPDYe2jdqfxNVjfgNSK
+        zExr8g7M/I0c8AiVLIPCMaHNMKsBq1k=
+X-Google-Smtp-Source: ABdhPJwVE+TaWkN9yPah7TsXGbG/Z/BtY+7mpFj98cAoHgp8ek4Gsfq4yKewaYM0IyeOhfA4MTVzqg==
+X-Received: by 2002:a17:90a:9f4a:: with SMTP id q10mr11064559pjv.129.1615786689938;
+        Sun, 14 Mar 2021 22:38:09 -0700 (PDT)
+Received: from pop-os ([1.234.154.110])
+        by smtp.gmail.com with ESMTPSA id j10sm9203808pjs.11.2021.03.14.22.38.08
+        for <kernel-janitors@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Mar 2021 22:27:34 -0700 (PDT)
-Message-ID: <0d1bdcff83fcd875a968cc4fe5c4943e08e44a6b.camel@fi.rohmeurope.com>
-Subject: Re: [PATCH] regulator: bd9576: Fix return from bd957x_probe()
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Reply-To: matti.vaittinen@fi.rohmeurope.com
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, linux-power@fi.rohmeurope.com,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <YEsbfLJfEWtnRpoU@mwanda>
-References: <YEsbfLJfEWtnRpoU@mwanda>
-Content-Type: text/plain; charset="UTF-8"
+        Sun, 14 Mar 2021 22:38:09 -0700 (PDT)
+User-agent: mu4e 1.5.7; emacs 28.0.50
+From:   Junyeong Jeong <esrse.jeong@gmail.com>
+To:     kernel-janitors@vger.kernel.org
+Subject: /sys/devices/system/cpu/possible can be changed during runtime?
+Date:   Mon, 15 Mar 2021 14:35:06 +0900
+Message-ID: <87o8fl0yf4.fsf@gmail.com>
 MIME-Version: 1.0
-Date:   Mon, 15 Mar 2021 07:27:25 +0200
-User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Hello everyone :D
 
-On Fri, 2021-03-12 at 10:42 +0300, Dan Carpenter wrote:
-> The probe() function returns an uninitialized variable in the success
-> path.  There is no need for the "err" variable at all, just delete
-> it.
-> 
-> Fixes: b014e9fae7e7 ("regulator: Support ROHM BD9576MUF and
-> BD9573MUF")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+I wonder that possible-CPU-mask(/sys/devices/system/cpu/possible) can be
+changed during runtime. I read that it is fixed at boot time, but I am
+not sure that it is really immutable even if some cgroup or
+virtualization magic is used.
 
-Thanks for killing the bug Dan! Very much appreciated.
+I am referring to /sys/devices/system/cpu/possible file to get to know
+the number of per-cpu areas. In userspace, I call `bpf_lookup_elem()` to
+get values at index from BPF array map of which type is
+BPF_MAP_TYPE_PERCPU_ARRAY.  And the length of the gained values is the
+same with the number of per-cpu areas and in turn it is the same with
+the number of possible CPUs.
 
-By the way, this is going to conflict with the regulator notification
-extension RFC series. I will rebase the RFC when this gets in tree.
+I am anxious that this varies from time to time under some
+circumstances. So I checked some cgroup and virtualization use-cases
+which did not affect the possible-CPU-mask.
 
-Reviewed-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+$ docker run --cpuset-cpus=0-3 -it ubuntu:20.10 bash  # cgroup cpuset
+$ virsh setvcpus --current ubuntu20.10 5  # hotplug cpu while guest os is running..
 
-> ---
->  drivers/regulator/bd9576-regulator.c | 11 ++++-------
->  1 file changed, 4 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/regulator/bd9576-regulator.c
-> b/drivers/regulator/bd9576-regulator.c
-> index a8b5832a5a1b..204a2da054f5 100644
-> --- a/drivers/regulator/bd9576-regulator.c
-> +++ b/drivers/regulator/bd9576-regulator.c
-> @@ -206,7 +206,7 @@ static int bd957x_probe(struct platform_device
-> *pdev)
->  {
->  	struct regmap *regmap;
->  	struct regulator_config config = { 0 };
-> -	int i, err;
-> +	int i;
->  	bool vout_mode, ddr_sel;
->  	const struct bd957x_regulator_data *reg_data =
-> &bd9576_regulators[0];
->  	unsigned int num_reg_data = ARRAY_SIZE(bd9576_regulators);
-> @@ -279,8 +279,7 @@ static int bd957x_probe(struct platform_device
-> *pdev)
->  		break;
->  	default:
->  		dev_err(&pdev->dev, "Unsupported chip type\n");
-> -		err = -EINVAL;
-> -		goto err;
-> +		return -EINVAL;
->  	}
->  
->  	config.dev = pdev->dev.parent;
-> @@ -300,8 +299,7 @@ static int bd957x_probe(struct platform_device
-> *pdev)
->  			dev_err(&pdev->dev,
->  				"failed to register %s regulator\n",
->  				desc->name);
-> -			err = PTR_ERR(rdev);
-> -			goto err;
-> +			return PTR_ERR(rdev);
->  		}
->  		/*
->  		 * Clear the VOUT1 GPIO setting - rest of the
-> regulators do not
-> @@ -310,8 +308,7 @@ static int bd957x_probe(struct platform_device
-> *pdev)
->  		config.ena_gpiod = NULL;
->  	}
->  
-> -err:
-> -	return err;
-> +	return 0;
->  }
->  
->  static const struct platform_device_id bd957x_pmic_id[] = {
+But while conducting this I realized that it's not possible to prove the
+immutability of possible-CPU-mask using inductive method.
 
+Can anyone explain that it will not happen that possible-CPU-mask
+changes after boot-time even with cgroup magic or some tricks from
+outside of hypervisors?
+
+Thanks,
