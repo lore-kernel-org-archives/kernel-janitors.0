@@ -7,33 +7,36 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6B5BC433E0
-	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Mar 2021 09:52:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBAFEC433DB
+	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Mar 2021 10:05:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 77E2264F6D
-	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Mar 2021 09:52:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 866686501C
+	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Mar 2021 10:05:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236348AbhCPJvr (ORCPT
+        id S236236AbhCPKEn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 16 Mar 2021 05:51:47 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:40699 "EHLO
+        Tue, 16 Mar 2021 06:04:43 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:40942 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236330AbhCPJvV (ORCPT
+        with ESMTP id S236203AbhCPKEk (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 16 Mar 2021 05:51:21 -0400
+        Tue, 16 Mar 2021 06:04:40 -0400
 Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <colin.king@canonical.com>)
-        id 1lM6M9-000548-IN; Tue, 16 Mar 2021 09:51:17 +0000
+        id 1lM6Yz-0005p6-G2; Tue, 16 Mar 2021 10:04:33 +0000
 From:   Colin King <colin.king@canonical.com>
-To:     Leon Romanovsky <leon@kernel.org>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Minchan Kim <minchan@kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-mm@kvack.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] RDMA/mlx5: Fix missing assignment of rc when calling mlx5_ib_dereg_mr
-Date:   Tue, 16 Mar 2021 09:51:17 +0000
-Message-Id: <20210316095117.17089-1-colin.king@canonical.com>
+Subject: [PATCH] mm: cma: Fix potential null dereference on pointer cma
+Date:   Tue, 16 Mar 2021 10:04:33 +0000
+Message-Id: <20210316100433.17665-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -44,30 +47,33 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The assignment of the return code to rc when calling mlx5_ib_dereg_mr is
-missing and there is an error check on an uninitialized rc. Fix this by
-adding in the assignment.
+At the start of the function there is a null pointer check on cma
+and then branch to error handling label 'out'.  The subsequent call
+to cma_sysfs_fail_pages_count dereferences cma, hence there is a
+potential null pointer deference issue.  Fix this by only calling
+cma_sysfs_fail_pages_count if cma is not null.
 
-Addresses-Coverity: ("Uninitialized scalar variable")
-Fixes: e6fb246ccafb ("RDMA/mlx5: Consolidate MR destruction to mlx5_ib_dereg_mr()")
+Addresses-Coverity: ("Dereference after null check")
+Fixes: dc4764f7e9ac ("mm: cma: support sysfs")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/infiniband/hw/mlx5/mr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ mm/cma.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/hw/mlx5/mr.c b/drivers/infiniband/hw/mlx5/mr.c
-index 86ffc7e5ef96..9dcb9fb4eeaa 100644
---- a/drivers/infiniband/hw/mlx5/mr.c
-+++ b/drivers/infiniband/hw/mlx5/mr.c
-@@ -1946,7 +1946,7 @@ int mlx5_ib_dereg_mr(struct ib_mr *ibmr, struct ib_udata *udata)
- 			mr->mtt_mr = NULL;
- 		}
- 		if (mr->klm_mr) {
--			mlx5_ib_dereg_mr(&mr->klm_mr->ibmr, NULL);
-+			rc = mlx5_ib_dereg_mr(&mr->klm_mr->ibmr, NULL);
- 			if (rc)
- 				return rc;
- 			mr->klm_mr = NULL;
+diff --git a/mm/cma.c b/mm/cma.c
+index 6d4dbafdb318..90e27458ddb7 100644
+--- a/mm/cma.c
++++ b/mm/cma.c
+@@ -512,7 +512,8 @@ struct page *cma_alloc(struct cma *cma, size_t count, unsigned int align,
+ 		cma_sysfs_alloc_pages_count(cma, count);
+ 	} else {
+ 		count_vm_event(CMA_ALLOC_FAIL);
+-		cma_sysfs_fail_pages_count(cma, count);
++		if (cma)
++			cma_sysfs_fail_pages_count(cma, count);
+ 	}
+ 
+ 	return page;
 -- 
 2.30.2
 
