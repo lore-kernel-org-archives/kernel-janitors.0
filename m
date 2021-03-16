@@ -2,84 +2,128 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9133C433DB
-	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Mar 2021 07:35:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 587DCC433E6
+	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Mar 2021 09:11:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 906AA64FC3
-	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Mar 2021 07:35:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2FD926500B
+	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Mar 2021 09:11:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231593AbhCPHee (ORCPT
+        id S229692AbhCPJK5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 16 Mar 2021 03:34:34 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:13543 "EHLO
-        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231215AbhCPHeN (ORCPT
+        Tue, 16 Mar 2021 05:10:57 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:45172 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231979AbhCPJKa (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 16 Mar 2021 03:34:13 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
-        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4F04jc0hjbzNmvV;
-        Tue, 16 Mar 2021 15:31:48 +0800 (CST)
-Received: from localhost.localdomain (10.175.102.38) by
- DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
- 14.3.498.0; Tue, 16 Mar 2021 15:34:01 +0800
-From:   'w00385741 <weiyongjun1@huawei.com>
-To:     <weiyongjun1@huawei.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
+        Tue, 16 Mar 2021 05:10:30 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12G9ACNO162669;
+        Tue, 16 Mar 2021 09:10:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=5n3Z4Pl8NfHLesDCmcdXVOo6ZdVwctaPEOzF6XZitW8=;
+ b=sDCAsQbEvMmyTmZyFqXujPh3R3HZPKH9dqKbcFXysxFi1CejyTvgW9nLkI6X/iCaUum5
+ loS7xYVUwAhR+oNOz+UFScxr5vflPtEYtuv2Y6p9tiysjnS2TMEBIRvQFBaai7ei8a7x
+ Txc7EK/lwtSX15S92QfbHmAtEjj8fk78Yes2O7ixKl8JI118lExcv6wgewM1makBYTZ5
+ xjVvs3IxFwpSVJM/pMDV5FDHoXemULR0IfcH3RRaF+HANxOGLhJK3it8Hv5fmK+P+zAG
+ OBCiB1Ndc/catUjmcPqY2qKFQQEKkzGkqcnS6G3RlKeNVI6pAAjF3Jw5/YWidBqGDJr0 7A== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 378p1npwq7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 16 Mar 2021 09:10:15 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12G99gB7186545;
+        Tue, 16 Mar 2021 09:10:14 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 3797a0xfyu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 16 Mar 2021 09:10:14 +0000
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 12G9A9fc011784;
+        Tue, 16 Mar 2021 09:10:09 GMT
+Received: from kadam (/102.36.221.92)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 16 Mar 2021 09:10:08 +0000
+Date:   Tue, 16 Mar 2021 12:10:00 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     "'w00385741" <weiyongjun1@huawei.com>
+Cc:     Vladimir Oltean <olteanv@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
         Jakub Kicinski <kuba@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "Russell King" <linux@armlinux.org.uk>,
-        Joakim Zhang <qiangqing.zhang@nxp.com>
-CC:     <netdev@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH net-next] net: stmmac: fix missing unlock on error in stmmac_suspend()
-Date:   Tue, 16 Mar 2021 07:42:39 +0000
-Message-ID: <20210316074239.2010897-1-weiyongjun1@huawei.com>
-X-Mailer: git-send-email 2.25.1
+        Baowen Zheng <baowen.zheng@corigine.com>,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Hulk Robot <hulkci@huawei.com>
+Subject: Re: [PATCH net-next] net: dsa: sja1105: fix error return code in
+ sja1105_cls_flower_add()
+Message-ID: <20210316090959.GS2087@kadam>
+References: <20210315144323.4110640-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.102.38]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210315144323.4110640-1-weiyongjun1@huawei.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-IMR: 1
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9924 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 adultscore=0 spamscore=0
+ mlxlogscore=999 bulkscore=0 malwarescore=0 phishscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2103160064
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9924 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 suspectscore=0 adultscore=0
+ spamscore=0 clxscore=1011 phishscore=0 malwarescore=0 priorityscore=1501
+ bulkscore=0 mlxlogscore=999 lowpriorityscore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2103160064
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
+On Mon, Mar 15, 2021 at 02:43:23PM +0000, 'w00385741 wrote:
+> From: Wei Yongjun <weiyongjun1@huawei.com>
+> 
+> The return value 'rc' maybe overwrite to 0 in the flow_action_for_each
+> loop, the error code from the offload not support error handling will
+> not set. This commit fix it to return -EOPNOTSUPP.
+> 
+> Fixes: 6a56e19902af ("flow_offload: reject configuration of packet-per-second policing in offload drivers")
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ---
+>  drivers/net/dsa/sja1105/sja1105_flower.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/net/dsa/sja1105/sja1105_flower.c b/drivers/net/dsa/sja1105/sja1105_flower.c
+> index f78b767f86ee..973761132fc3 100644
+> --- a/drivers/net/dsa/sja1105/sja1105_flower.c
+> +++ b/drivers/net/dsa/sja1105/sja1105_flower.c
+> @@ -317,14 +317,13 @@ int sja1105_cls_flower_add(struct dsa_switch *ds, int port,
+>  	if (rc)
+>  		return rc;
+>  
+> -	rc = -EOPNOTSUPP;
+> -
+>  	flow_action_for_each(i, act, &rule->action) {
+>  		switch (act->id) {
+>  		case FLOW_ACTION_POLICE:
+>  			if (act->police.rate_pkt_ps) {
+>  				NL_SET_ERR_MSG_MOD(extack,
+>  						   "QoS offload not support packets per second");
+> +				rc = -EOPNOTSUPP;
+>  				goto out;
 
-Add the missing unlock before return from function
-stmmac_suspend() in the error handling case.
+Yep.  The goto out is a do nothing goto and "forgot the error code" is
+the traditional bug introduced by do nothing gotos.
 
-Fixes: 5ec55823438e ("net: stmmac: add clocks management for gmac driver")
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index a10704d8e3c6..d50df998d3aa 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -5400,8 +5400,10 @@ int stmmac_suspend(struct device *dev)
- 		/* Disable clock in case of PWM is off */
- 		clk_disable_unprepare(priv->plat->clk_ptp_ref);
- 		ret = pm_runtime_force_suspend(dev);
--		if (ret)
-+		if (ret) {
-+			mutex_unlock(&priv->lock);
- 			return ret;
-+		}
- 	}
- 	mutex_unlock(&priv->lock);
- 
+regards,
+dan carpenter
 
