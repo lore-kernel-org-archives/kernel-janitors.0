@@ -2,97 +2,72 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B95D0C433E0
-	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Mar 2021 09:32:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6B5BC433E0
+	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Mar 2021 09:52:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6E99C65010
-	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Mar 2021 09:32:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77E2264F6D
+	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Mar 2021 09:52:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233520AbhCPJbb (ORCPT
+        id S236348AbhCPJvr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 16 Mar 2021 05:31:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43622 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233620AbhCPJbC (ORCPT
+        Tue, 16 Mar 2021 05:51:47 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:40699 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236330AbhCPJvV (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 16 Mar 2021 05:31:02 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98B26C06174A;
-        Tue, 16 Mar 2021 02:31:01 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id p8so70926360ejb.10;
-        Tue, 16 Mar 2021 02:31:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=mKyD04bglr1Sf3KcK5qmVWfIuzVPHE5LxLl4KNgB9Hk=;
-        b=GZ3Kt6bBjGkStAnyLKXXvKyyYGjZoQTUobzOi2CLdoKJlaxbQOHQ1D3ZB5JgJO8rdJ
-         oce6ew3Z82zlghC4+f8sCeVQ2awNrMrgFVmP8ooNFeTZJtT+VQXhY0ZwxW7fq36bCKJk
-         2QPFmlUB8CnU77AB8BX/3xQt3C3eMxX5rVNHyKIVl09F275O0ZgZPNSNkqnH6iWtPd1k
-         GbCZOJ2GC0pQEssrd3z5nUCT/znzaXcYDTnrGGXpaiV6dGoZ+IMMz/bgQWhBgzKR0bV5
-         hiDMYKX/tJ19sDRuuXZi/cG8ESXC7YCAUTuWEQ3sq3Cnq6cdbYuv7fWng2CbrL4k8cd8
-         RzfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=mKyD04bglr1Sf3KcK5qmVWfIuzVPHE5LxLl4KNgB9Hk=;
-        b=p2WLgC4EbFB2TEYQb273z8QkDoZ8Sy2MYcsNbHTvRzy93mEDMGX9+TyLbYC59w7S2B
-         kN+O6TZNyfW39PTf3xm7j/ep0EXl7GB47U6vCowrlmEz9QBfpR3EJ49iNZ2FKmngMWzE
-         nafxnsD9MZotwryNUdmmtOz4ueIirA2v+/3vqM0nREexv61Fnz9/FuZyys0GFkKtaRGr
-         oem0HKLt1nR4AHyEdEfKmRhDBcGRpezRaghFl/Cl2rZTNmJqfDejupS8uiFmEB1NIyiu
-         XrDep8ZHCQFurJs/9TXQU1zFFv82DTLTxg5htgodlsljmz3V9aO0eLrST3IKINGdUYu2
-         MMPg==
-X-Gm-Message-State: AOAM5322iZMn027hijXmsc6eIOB0027nq7Lsidi47lxypGpzjVcqybxw
-        cs8NnySGoT9G/d6K1RFvPKw=
-X-Google-Smtp-Source: ABdhPJyGC82p29PYH/4Aj46qdXhM0kD2BUKFUFNMkxLnTByq+zAVsDmSgc8Z2uVDcNMDCffcZJtjiQ==
-X-Received: by 2002:a17:906:4d18:: with SMTP id r24mr28021342eju.493.1615887060439;
-        Tue, 16 Mar 2021 02:31:00 -0700 (PDT)
-Received: from LEGION ([27.255.58.138])
-        by smtp.gmail.com with ESMTPSA id a9sm6340486eds.33.2021.03.16.02.30.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Mar 2021 02:31:00 -0700 (PDT)
-Date:   Tue, 16 Mar 2021 14:30:54 +0500
-From:   Muhammad Usama Anjum <musamaanjum@gmail.com>
-To:     Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>
-Cc:     musamaanjum@gmail.com, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] riscv: Fix spelling mistake "initialisation" ->
- "initialization
-Message-ID: <20210316093054.GA1081018@LEGION>
+        Tue, 16 Mar 2021 05:51:21 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lM6M9-000548-IN; Tue, 16 Mar 2021 09:51:17 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Leon Romanovsky <leon@kernel.org>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] RDMA/mlx5: Fix missing assignment of rc when calling mlx5_ib_dereg_mr
+Date:   Tue, 16 Mar 2021 09:51:17 +0000
+Message-Id: <20210316095117.17089-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a comment. Fix it.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Muhammad Usama Anjum <musamaanjum@gmail.com>
+The assignment of the return code to rc when calling mlx5_ib_dereg_mr is
+missing and there is an error check on an uninitialized rc. Fix this by
+adding in the assignment.
+
+Addresses-Coverity: ("Uninitialized scalar variable")
+Fixes: e6fb246ccafb ("RDMA/mlx5: Consolidate MR destruction to mlx5_ib_dereg_mr()")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- arch/riscv/kernel/smp.c | 2 +-
+ drivers/infiniband/hw/mlx5/mr.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/riscv/kernel/smp.c b/arch/riscv/kernel/smp.c
-index ea028d9e0d24..1ec014067855 100644
---- a/arch/riscv/kernel/smp.c
-+++ b/arch/riscv/kernel/smp.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * SMP initialisation and IPI support
-+ * SMP initialization and IPI support
-  * Based on arch/arm64/kernel/smp.c
-  *
-  * Copyright (C) 2012 ARM Ltd.
+diff --git a/drivers/infiniband/hw/mlx5/mr.c b/drivers/infiniband/hw/mlx5/mr.c
+index 86ffc7e5ef96..9dcb9fb4eeaa 100644
+--- a/drivers/infiniband/hw/mlx5/mr.c
++++ b/drivers/infiniband/hw/mlx5/mr.c
+@@ -1946,7 +1946,7 @@ int mlx5_ib_dereg_mr(struct ib_mr *ibmr, struct ib_udata *udata)
+ 			mr->mtt_mr = NULL;
+ 		}
+ 		if (mr->klm_mr) {
+-			mlx5_ib_dereg_mr(&mr->klm_mr->ibmr, NULL);
++			rc = mlx5_ib_dereg_mr(&mr->klm_mr->ibmr, NULL);
+ 			if (rc)
+ 				return rc;
+ 			mr->klm_mr = NULL;
 -- 
-2.25.1
+2.30.2
 
