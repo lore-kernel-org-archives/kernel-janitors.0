@@ -2,115 +2,98 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8632AC433DB
-	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Mar 2021 11:44:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04D90C433DB
+	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Mar 2021 13:56:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 583116502A
-	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Mar 2021 11:44:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDEAF65067
+	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Mar 2021 13:56:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237449AbhCPLoC (ORCPT
+        id S235638AbhCPN43 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 16 Mar 2021 07:44:02 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:33824 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237426AbhCPLng (ORCPT
+        Tue, 16 Mar 2021 09:56:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44116 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232683AbhCPN4E (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 16 Mar 2021 07:43:36 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12GBdaPH160273;
-        Tue, 16 Mar 2021 11:43:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=qV1Rq+2H1o2CbC83Mj76nXd65U3V69TV6d/S19mcjpc=;
- b=fpcLUJHxkujAMjYRWLKXvBPuG8Dq4yC+zwwbbyRV2gyfhWiv128eF1brBs28gxnQRzYl
- aNz+TXi7ZvSOFDL1Pxns9s++CqI2PenpKiOvRuIQV8iN8SIDqK73lgWZFLStvPksAamd
- CbiukjlZTcbNsi37ms/GqCPZHMN/bxOKYqfTAy3j8NDKSdxZgN10hWBgL7UTuWXugDWy
- 4Z87OBnQ1PFvYohcinoSce4avaQZVYy6/1dIsfLhtHF8dUahEwzxB3motl4MdAb37LS9
- yDAWbTm1MGyKSWZ5ryblQqTAoL2uNO2PsWdfWzDbuD3GdR/cx6zpj1Ao/3EEpfUR+IOk Ew== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2120.oracle.com with ESMTP id 378nbm7cmd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 16 Mar 2021 11:43:27 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12GBacCf004230;
-        Tue, 16 Mar 2021 11:43:25 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3030.oracle.com with ESMTP id 3796ytb1pm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 16 Mar 2021 11:43:25 +0000
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 12GBhOKl013102;
-        Tue, 16 Mar 2021 11:43:25 GMT
-Received: from mwanda (/102.36.221.92)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 16 Mar 2021 04:43:24 -0700
-Date:   Tue, 16 Mar 2021 14:43:16 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Ralph Campbell <rcampbell@nvidia.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] lib/test_hmm.c: fix harmless shift wrapping bug
-Message-ID: <YFCZ1NNfMoixOjWP@mwanda>
+        Tue, 16 Mar 2021 09:56:04 -0400
+Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4399C06174A;
+        Tue, 16 Mar 2021 06:56:03 -0700 (PDT)
+Received: by mail-io1-xd31.google.com with SMTP id 81so37195031iou.11;
+        Tue, 16 Mar 2021 06:56:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+46g674RBma+ciBzuJpVGTzQLL8+JCKCJVBU3dFl0nU=;
+        b=JA7icuejqFeeyZ/IOIMpnOI+hFshDRZOSH4fBbyaemq7qfkwoNIv/qx4mVwll7lXU3
+         tjN9Us2sp5TSrTsKVgS4PtP6LZpRnbepFzLciXfKlq4zdF6HqV7ebKC15/nJrYYQ7fY7
+         +U4Y8Yy4HiKWLqILRjUmFhESbgzDPKdh/zXyP39x8JaRZwJUXGu9bMxzmpmZr3r5rPdF
+         t1WbrEO1e/iGMbayLrT+uU2iURngEG0cGSIha1fgr4K5r/bzN/fWLChJDtpHwgUHWn6W
+         rt61kcK1rhZiqwa76VL/1121io2iwwWQ7V2C+59VFPRTEUa7r4hC+Rgf86Cj5WtSZzTe
+         A7Vg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+46g674RBma+ciBzuJpVGTzQLL8+JCKCJVBU3dFl0nU=;
+        b=DKqmJMX+N6SgsmHPEcGRGFsy1hhY9Jl8t0xy06vK55ndjsF6soM9/hKH6mb93pYVHK
+         SjWvU1YGoQa64mJ6djH6EXIeRptI5ELfhkiSFNDn++Cg6osR+ocAZ+xEBJ2yd0dMbGOL
+         BTvi4s6uXzEFHUpKoVJc4xEu5i2P4SQDEJqey5pW1TnsRRSp0Za9jGgSM908HW6mNb2a
+         AR9r5cOYx8An2upEl3YaeBPDNLgDEm+e/9+gcfk8KGXxLqCo03j3WMowDe4+XZm6YJ2C
+         LYPVS6WXq/xKhnFT4RwX/irnWz0qHNPdglD1gVfTtKl/TrhDLEtMcTJYN7L+GQDZUBUi
+         0MVw==
+X-Gm-Message-State: AOAM533khKG9dvPTVJF7h0GpRxEbMjjUHkgfB23/mXP0Cj6GtKyeu1ui
+        9d0Z90HUzjuJvPKZBXOnp4tguCd2X/4ddppdcIc=
+X-Google-Smtp-Source: ABdhPJxsQTVIidXXPM7aMIJVsw3A2CX7qX6qFM4TJR8DsZi2gn8eJ682nAaU6vckx6geePwgdiehZqOFuqwusFqi4nE=
+X-Received: by 2002:a05:6602:1689:: with SMTP id s9mr3265333iow.171.1615902963396;
+ Tue, 16 Mar 2021 06:56:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-X-Proofpoint-IMR: 1
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9924 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 malwarescore=0 spamscore=0
- bulkscore=0 mlxlogscore=999 mlxscore=0 suspectscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2103160081
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9924 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 impostorscore=0
- malwarescore=0 adultscore=0 mlxscore=0 clxscore=1011 mlxlogscore=999
- lowpriorityscore=0 phishscore=0 priorityscore=1501 spamscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2103160081
+References: <20210316074239.2010897-1-weiyongjun1@huawei.com> <CAOc6etYcE-0wbcWxgTH49h1Odepg=Esc_gmfDoUioHOsnNj33Q@mail.gmail.com>
+In-Reply-To: <CAOc6etYcE-0wbcWxgTH49h1Odepg=Esc_gmfDoUioHOsnNj33Q@mail.gmail.com>
+From:   Edmundo Carmona Antoranz <eantoranz@gmail.com>
+Date:   Tue, 16 Mar 2021 07:55:51 -0600
+Message-ID: <CAOc6eta+QttyE_TJwLSTietCE2WiHEYgd-q8Bp-Xu1kdVDfnew@mail.gmail.com>
+Subject: Re: [PATCH net-next] net: stmmac: fix missing unlock on error in stmmac_suspend()
+To:     "'w00385741" <weiyongjun1@huawei.com>
+Cc:     Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Joakim Zhang <qiangqing.zhang@nxp.com>, netdev@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org,
+        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The "cmd.npages" variable is a u64 that comes from the user.  I noticed
-during review that it could have a shift wrapping bug when it is used
-in the integer overflow test on the next line.
+On Tue, Mar 16, 2021 at 7:50 AM Edmundo Carmona Antoranz
+<eantoranz@gmail.com> wrote:
 
-It turns out this is harmless.  The users all do:
+> I think you can let it go and check ret after unlocking:
+>
+>                 /* Disable clock in case of PWM is off */
+>                clk_disable_unprepare(priv->plat->clk_ptp_ref);
+>                ret = pm_runtime_force_suspend(dev);
+>        }
+>        mutex_unlock(&priv->lock);
+>        if (ret)
+>                return ret;
 
-	unsigned long size = cmd->npages << PAGE_SHIFT;
+Oh, I C. It would require ret to be set to 0 before starting to use
+it, right? Maybe it's worth it?
 
-and after that "size" is used consistently and "cmd->npages" is never
-used again.  So even when there is an integer overflow, everything works
-fine.
-
-Even though this is harmless, I believe syzbot will complain and fixing
-it makes the code easier to read.
-
-Fixes: b2ef9f5a5cb3 ("mm/hmm/test: add selftest driver for HMM")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- lib/test_hmm.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/lib/test_hmm.c b/lib/test_hmm.c
-index 80a78877bd93..541466034a6b 100644
---- a/lib/test_hmm.c
-+++ b/lib/test_hmm.c
-@@ -930,6 +930,8 @@ static long dmirror_fops_unlocked_ioctl(struct file *filp,
- 
- 	if (cmd.addr & ~PAGE_MASK)
- 		return -EINVAL;
-+	if (cmd.npages > ULONG_MAX >> PAGE_SHIFT)
-+		return -EINVAL;
- 	if (cmd.addr >= (cmd.addr + (cmd.npages << PAGE_SHIFT)))
- 		return -EINVAL;
- 
--- 
-2.30.1
-
+>
+>        priv->speed = SPEED_UNKNOWN;
+>        return 0;
+>
