@@ -2,95 +2,88 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B64CC433DB
-	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Mar 2021 16:41:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0667AC433E0
+	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Mar 2021 16:42:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5A4626510C
-	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Mar 2021 16:41:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6CBF65101
+	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Mar 2021 16:42:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238768AbhCPQkz (ORCPT
+        id S238849AbhCPQmA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 16 Mar 2021 12:40:55 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:44210 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238154AbhCPQkZ (ORCPT
+        Tue, 16 Mar 2021 12:42:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52282 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238816AbhCPQlq (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 16 Mar 2021 12:40:25 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12GGdFep139719;
-        Tue, 16 Mar 2021 16:40:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=GPR2cvZm/Wh5AycsMX92FTIHkGZ6p96q9eQXOhWRrlg=;
- b=j/q2kgysvrF8FFbC12L9V4QRtdzVExLPQSJ1LduzGxGo+YRmYs0RDylkI7mHoWACgxO2
- sVXpWDf8huNM0tg3aVHDOR0uVPdGQ1QKHBuAhYUO3otBNXDfr3sFeOqNUgfdCcYiUgOT
- zZf9aJFQHYQ8UK/2ZteHcaeEN/836e1LLmCEs4X2/ci0gfDU0FGnqlW5xvvJ2LQ8jPfI
- buqiC46wpXKgznQra3SN8v7LICvUKvO3qTyQIqWWepf9Ax2eMvqJ23UegV6ShEQKAzeL
- 5hheiLmeN0FqziJxtY2XdbQKrla8kKEJk+SPc5WKsQ+OcEcXQP2fxbCS4lJyiW7ir7pq cw== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 378nbm8x50-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 16 Mar 2021 16:40:22 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12GGLaTh125478;
-        Tue, 16 Mar 2021 16:40:20 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3020.oracle.com with ESMTP id 37a4et650r-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 16 Mar 2021 16:40:20 +0000
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 12GGeJH7026599;
-        Tue, 16 Mar 2021 16:40:19 GMT
-Received: from kadam (/102.36.221.92)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 16 Mar 2021 16:40:18 +0000
-Date:   Tue, 16 Mar 2021 19:40:12 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Edmundo Carmona Antoranz <eantoranz@gmail.com>
-Cc:     kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v2] staging: vt665x: fix alignment constraints
-Message-ID: <20210316164012.GU2087@kadam>
-References: <20210312145941.1721627-1-eantoranz@gmail.com>
- <CAOc6etaLJdGJHk7F6Vm3iCVW=OzKiWZ2vCFAc_sZn7VAGM4Dyg@mail.gmail.com>
+        Tue, 16 Mar 2021 12:41:46 -0400
+Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1234::107])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41412C06174A;
+        Tue, 16 Mar 2021 09:41:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description;
+        bh=fp851wafBMSyp+A1XTVUbYnllw6+VPptuI+8gjmb6n8=; b=STxmi+g1NdHNPpMQiJKSmZZn1l
+        Xvocf1dcyqBccJ+ZQlZiZneUFIkoQFaGDlTQmA9qA2tBdaFMq9mBBga0sidukp6g5GPnB8xAwvg2z
+        cyp2RlBARE62O8shJaeCO6ON4Y3ImtIEcD08oHgE7ZIlc2P+YixBCqE7xUAr4e53ogmXC2J+QdwhG
+        mm0/fvOXUA7rs03yQ6pLnHMfk/zTKP41kv0JSOBEPw4yI4bW/Suzljhq8v+BWNvjNpiVUaA2NT0ua
+        GbkALsaEOEebvvnWcu4p91lSw1eBji1KTbRA3iHlteuJ2gii3ISHcBgsTOrsldtKuslctFW69T27G
+        6QMtotcA==;
+Received: from [2601:1c0:6280:3f0::9757]
+        by merlin.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
+        id 1lMClL-001UBG-1Q; Tue, 16 Mar 2021 16:41:43 +0000
+Subject: Re: [PATCH] riscv: Fix spelling mistake "initialisation" ->
+ "initialization
+To:     Muhammad Usama Anjum <musamaanjum@gmail.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210316093054.GA1081018@LEGION>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <f59f5c57-ff37-6e53-93ef-bcedf8dd7193@infradead.org>
+Date:   Tue, 16 Mar 2021 09:41:39 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOc6etaLJdGJHk7F6Vm3iCVW=OzKiWZ2vCFAc_sZn7VAGM4Dyg@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-IMR: 1
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9925 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=0
- malwarescore=0 phishscore=0 bulkscore=0 mlxscore=0 mlxlogscore=963
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2103160107
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9925 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 impostorscore=0
- malwarescore=0 adultscore=0 mlxscore=0 clxscore=1015 mlxlogscore=915
- lowpriorityscore=0 phishscore=0 priorityscore=1501 spamscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2103160108
+In-Reply-To: <20210316093054.GA1081018@LEGION>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Mar 16, 2021 at 08:30:26AM -0600, Edmundo Carmona Antoranz wrote:
-> On Fri, Mar 12, 2021 at 9:00 AM Edmundo Carmona Antoranz
-> <eantoranz@gmail.com> wrote:
-> >
+On 3/16/21 2:30 AM, Muhammad Usama Anjum wrote:
+> There is a spelling mistake in a comment. Fix it.
 > 
-> I wonder if this patch will be picked up if I don't include Greg in
-> the conversation. Should I send the patch again looping him in?
+> Signed-off-by: Muhammad Usama Anjum <musamaanjum@gmail.com>
+> ---
+>  arch/riscv/kernel/smp.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
+> diff --git a/arch/riscv/kernel/smp.c b/arch/riscv/kernel/smp.c
+> index ea028d9e0d24..1ec014067855 100644
+> --- a/arch/riscv/kernel/smp.c
+> +++ b/arch/riscv/kernel/smp.c
+> @@ -1,6 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0-only
+>  /*
+> - * SMP initialisation and IPI support
+> + * SMP initialization and IPI support
+>   * Based on arch/arm64/kernel/smp.c
+>   *
+>   * Copyright (C) 2012 ARM Ltd.
 
-Yes.  And you need to include the driver-devel mailing list from
-get_maintainer.pl.  You can leave lkml out if you want.
+Hi--
 
-regards,
-dan carpenter
+We accept British or American spellings, so it's OK as it was.
+
+-- 
+~Randy
 
