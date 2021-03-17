@@ -2,123 +2,105 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB555C433E0
-	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Mar 2021 08:32:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C64EC433E6
+	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Mar 2021 09:37:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7E37964FA7
-	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Mar 2021 08:32:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0612064F5E
+	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Mar 2021 09:37:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229688AbhCQIbu (ORCPT
+        id S229508AbhCQJhF (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 17 Mar 2021 04:31:50 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:37436 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229673AbhCQIbj (ORCPT
+        Wed, 17 Mar 2021 05:37:05 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:48959 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229708AbhCQJhB (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 17 Mar 2021 04:31:39 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12H8UZxv128112;
-        Wed, 17 Mar 2021 08:31:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=GzgspRdwBgkoOp643xFkyrPHucv2bbNqWJaL7RaM9io=;
- b=PrIGeD38KvPr64cxVCZZPJ8GoQsX/cS1wQxlyI980+KAGR8E49lfHf4NgvXlzflU8V3/
- WLKiuMPWrGdGyn1bbErfepF1MD6lCFFhsj2pBZtwPvLz5gZgioivdiXgSuMLBe50hiov
- NxKyHQXCMmq/papd+5kIdo9FzcorOmDec8gbcYm5totH5gQr163xjFjmA8de5FP5eu6s
- o933QbhRNcbgpUXXjm8gDKOps4JZfhyL4sd+CJbndwslBjb5Et29IH0XY151kYKK8km+
- mLZNuZI7/6Wf8LZ+LaUamW0So6gmNMhIMxCWsaGeDe/aQ+DQPxQg0a3woUfC6Lj5mXot qg== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2130.oracle.com with ESMTP id 378jwbk9ar-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 17 Mar 2021 08:31:38 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12H8VOBW098031;
-        Wed, 17 Mar 2021 08:31:36 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3020.oracle.com with ESMTP id 37a4eu31kt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 17 Mar 2021 08:31:36 +0000
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 12H8VZXw006167;
-        Wed, 17 Mar 2021 08:31:35 GMT
-Received: from kadam (/102.36.221.92)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 17 Mar 2021 01:31:35 -0700
-Date:   Wed, 17 Mar 2021 11:31:28 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Junyeong Jeong <esrse.jeong@gmail.com>
-Cc:     kernel-janitors@vger.kernel.org
-Subject: Re: /sys/devices/system/cpu/possible can be changed during runtime?
-Message-ID: <20210317083128.GZ2087@kadam>
-References: <87o8fl0yf4.fsf@gmail.com>
+        Wed, 17 Mar 2021 05:37:01 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lMSbr-0005OC-22; Wed, 17 Mar 2021 09:36:59 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Namjae Jeon <namjae.jeon@samsung.com>,
+        Hyunchul Lee <hyc.lee@gmail.com>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] cifsd: Fix a handful of spelling mistakes
+Date:   Wed, 17 Mar 2021 09:36:58 +0000
+Message-Id: <20210317093658.5370-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87o8fl0yf4.fsf@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-IMR: 1
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9925 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=0
- malwarescore=0 phishscore=0 bulkscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2103170064
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9925 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxlogscore=999
- spamscore=0 mlxscore=0 bulkscore=0 suspectscore=0 priorityscore=1501
- lowpriorityscore=0 clxscore=1011 adultscore=0 phishscore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2103170064
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Mar 15, 2021 at 02:35:06PM +0900, Junyeong Jeong wrote:
-> Hello everyone :D
-> 
-> I wonder that possible-CPU-mask(/sys/devices/system/cpu/possible) can be
-> changed during runtime. I read that it is fixed at boot time, but I am
-> not sure that it is really immutable even if some cgroup or
-> virtualization magic is used.
-> 
-> I am referring to /sys/devices/system/cpu/possible file to get to know
-> the number of per-cpu areas. In userspace, I call `bpf_lookup_elem()` to
-> get values at index from BPF array map of which type is
-> BPF_MAP_TYPE_PERCPU_ARRAY.  And the length of the gained values is the
-> same with the number of per-cpu areas and in turn it is the same with
-> the number of possible CPUs.
-> 
-> I am anxious that this varies from time to time under some
-> circumstances. So I checked some cgroup and virtualization use-cases
-> which did not affect the possible-CPU-mask.
-> 
-> $ docker run --cpuset-cpus=0-3 -it ubuntu:20.10 bash  # cgroup cpuset
-> $ virsh setvcpus --current ubuntu20.10 5  # hotplug cpu while guest os is running..
-> 
-> But while conducting this I realized that it's not possible to prove the
-> immutability of possible-CPU-mask using inductive method.
-> 
-> Can anyone explain that it will not happen that possible-CPU-mask
-> changes after boot-time even with cgroup magic or some tricks from
-> outside of hypervisors?
-> 
-> Thanks,
+From: Colin Ian King <colin.king@canonical.com>
 
-Kernel janitors is mostly about fixing and updating kernel API, not
-discussing how the kernel works.
+There are several spelling mistakes in various ksmbd_err and
+ksmbd_debug messages. Fix these.
 
-You can't write to that sysfs file.
--r--r--r-- 1 root root 4096 Mar 17 11:28 /sys/devices/system/cpu/possible
-But we do allow people to add and remove CPUs while the system is
-running (CPU hotplug).  The number of CPUs is not necessarily fixed at
-boot time.  It's not immutable.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/cifsd/ndr.c            | 2 +-
+ fs/cifsd/smb2pdu.c        | 4 ++--
+ fs/cifsd/transport_rdma.c | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
-I'm not sure if this helps?
+diff --git a/fs/cifsd/ndr.c b/fs/cifsd/ndr.c
+index d96dcd9e43c6..aa0cb8fc555d 100644
+--- a/fs/cifsd/ndr.c
++++ b/fs/cifsd/ndr.c
+@@ -325,7 +325,7 @@ int ndr_decode_v4_ntacl(struct ndr *n, struct xattr_ntacl *acl)
+ 
+ 	ndr_read_bytes(n, acl->desc, 10);
+ 	if (strncmp(acl->desc, "posix_acl", 9)) {
+-		ksmbd_err("Invalid acl desciption : %s\n", acl->desc);
++		ksmbd_err("Invalid acl description : %s\n", acl->desc);
+ 		return -EINVAL;
+ 	}
+ 
+diff --git a/fs/cifsd/smb2pdu.c b/fs/cifsd/smb2pdu.c
+index 3da96ebeae8b..4cda7df3bd70 100644
+--- a/fs/cifsd/smb2pdu.c
++++ b/fs/cifsd/smb2pdu.c
+@@ -2508,7 +2508,7 @@ int smb2_open(struct ksmbd_work *work)
+ 	if (req->NameLength) {
+ 		if ((req->CreateOptions & FILE_DIRECTORY_FILE_LE) &&
+ 			*(char *)req->Buffer == '\\') {
+-			ksmbd_err("not allow directory name included leadning slash\n");
++			ksmbd_err("not allow directory name included leading slash\n");
+ 			rc = -EINVAL;
+ 			goto err_out1;
+ 		}
+@@ -2636,7 +2636,7 @@ int smb2_open(struct ksmbd_work *work)
+ 	}
+ 
+ 	if (!(req->DesiredAccess & DESIRED_ACCESS_MASK)) {
+-		ksmbd_err("Invalid disired access : 0x%x\n",
++		ksmbd_err("Invalid desired access : 0x%x\n",
+ 			le32_to_cpu(req->DesiredAccess));
+ 		rc = -EACCES;
+ 		goto err_out1;
+diff --git a/fs/cifsd/transport_rdma.c b/fs/cifsd/transport_rdma.c
+index 1698f7ed9c2f..4f4806d67ab0 100644
+--- a/fs/cifsd/transport_rdma.c
++++ b/fs/cifsd/transport_rdma.c
+@@ -485,7 +485,7 @@ static int smb_direct_check_recvmsg(struct smb_direct_recvmsg *recvmsg)
+ 		struct smb2_hdr *hdr = (struct smb2_hdr *) (recvmsg->packet
+ 				+ le32_to_cpu(req->data_offset) - 4);
+ 		ksmbd_debug(RDMA,
+-				"CreditGranted: %u, CreditRequested: %u, DataLength: %u, RemaingDataLength: %u, SMB: %x, Command: %u\n",
++				"CreditGranted: %u, CreditRequested: %u, DataLength: %u, RemainingDataLength: %u, SMB: %x, Command: %u\n",
+ 				le16_to_cpu(req->credits_granted),
+ 				le16_to_cpu(req->credits_requested),
+ 				req->data_length, req->remaining_data_length,
+-- 
+2.30.2
 
-regards,
-dan carpenter
