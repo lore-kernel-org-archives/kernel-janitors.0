@@ -2,70 +2,66 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA73DC433DB
-	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Mar 2021 09:42:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96523C433DB
+	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Mar 2021 11:52:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6B00264F6C
-	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Mar 2021 09:42:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47D7064F6A
+	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Mar 2021 11:52:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229890AbhCQJm0 (ORCPT
+        id S231301AbhCQLv4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 17 Mar 2021 05:42:26 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:49123 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229862AbhCQJmG (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 17 Mar 2021 05:42:06 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1lMSgh-0005in-5F; Wed, 17 Mar 2021 09:41:59 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] mm: slab: Fix spelling mistake "disired" -> "desired"
-Date:   Wed, 17 Mar 2021 09:41:58 +0000
-Message-Id: <20210317094158.5762-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.30.2
+        Wed, 17 Mar 2021 07:51:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52712 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231368AbhCQLvX (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 17 Mar 2021 07:51:23 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id BAD3164F6B;
+        Wed, 17 Mar 2021 11:51:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1615981882;
+        bh=NPq4u2l1f+23kOYUCiTwv95sdXqk+USJtP07Jz8mjHA=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=eooErSJ6K1Zu0uwoXnc7dExqT0dnzC2R5RYivrApyYB+7KLR5pTAXmIHsWKQ/6Bhq
+         u/ABg7Rg+uc7crguWJgr73PvcX9aVfug1gNkOSANOloOHqrP2qGG/ximwK7BTMhVjK
+         j7LjzFp8FipbvV0xFbSFfx2qP9UFQA40DKfXro4UsEmxmHWgMNZgH3QTluVVKUmGEU
+         VTA9d/gdEOor0un+Y2eTB+EsM+ISRbMiR4FHk3J115z5Ftv6ISo5Td83EwEBM6d7gB
+         n8+NwaoLv3zFOepZU3nrTuY8Ukhktr7piTTPLvasJHKid6vQJ4Z+hQevMWEcqKe6BQ
+         hKeKNncd4p4qw==
+Received: by mail-oi1-f171.google.com with SMTP id o22so31755251oic.3;
+        Wed, 17 Mar 2021 04:51:22 -0700 (PDT)
+X-Gm-Message-State: AOAM530rzDawciiJ8HoGsXPs/Ln/WzDjn3Tia96NYrCaR7QFZ0PEB6TH
+        /P7sJm3rIPL3QRHUE6r514ahqOKcecRZUhSKn0U=
+X-Google-Smtp-Source: ABdhPJymH8BAGvuTGTD684QFZl7/VRQdde+NgiT4xcGP8fp9qKEHToCpMN+URa5hhEQ2BZMJrCL7sbPcTQtgJJf2s00=
+X-Received: by 2002:a05:6808:f12:: with SMTP id m18mr2317376oiw.62.1615981881960;
+ Wed, 17 Mar 2021 04:51:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Received: by 2002:ac9:4793:0:0:0:0:0 with HTTP; Wed, 17 Mar 2021 04:51:21
+ -0700 (PDT)
+In-Reply-To: <20210317093658.5370-1-colin.king@canonical.com>
+References: <20210317093658.5370-1-colin.king@canonical.com>
+From:   Namjae Jeon <linkinjeon@kernel.org>
+Date:   Wed, 17 Mar 2021 20:51:21 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd--pk3eo5X0hsUjfPRuSHXFyrtw9yNDSCAjqZ7OSwCLqQ@mail.gmail.com>
+Message-ID: <CAKYAXd--pk3eo5X0hsUjfPRuSHXFyrtw9yNDSCAjqZ7OSwCLqQ@mail.gmail.com>
+Subject: Re: [PATCH][next] cifsd: Fix a handful of spelling mistakes
+To:     Colin King <colin.king@canonical.com>
+Cc:     Namjae Jeon <namjae.jeon@samsung.com>,
+        Hyunchul Lee <hyc.lee@gmail.com>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
-
-There is a spelling mistake in a comment. Fix it.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- mm/slab.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/mm/slab.c b/mm/slab.c
-index df45c437b394..d56607a80fa6 100644
---- a/mm/slab.c
-+++ b/mm/slab.c
-@@ -2284,7 +2284,7 @@ void __kmem_cache_release(struct kmem_cache *cachep)
-  * Because if it is the case, that means we defer the creation of
-  * the kmalloc_{dma,}_cache of size sizeof(slab descriptor) to this point.
-  * And we eventually call down to __kmem_cache_create(), which
-- * in turn looks up in the kmalloc_{dma,}_caches for the disired-size one.
-+ * in turn looks up in the kmalloc_{dma,}_caches for the desired-size one.
-  * This is a "chicken-and-egg" problem.
-  *
-  * So the off-slab slab descriptor shall come from the kmalloc_{dma,}_caches,
--- 
-2.30.2
-
+2021-03-17 18:36 GMT+09:00, Colin King <colin.king@canonical.com>:
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> There are several spelling mistakes in various ksmbd_err and
+> ksmbd_debug messages. Fix these.
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Applied. Thanks for your patch!
