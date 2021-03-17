@@ -2,79 +2,130 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE107C433E0
-	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Mar 2021 18:31:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3A00C433E0
+	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Mar 2021 04:22:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6DFDA65139
-	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Mar 2021 18:31:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87C1D64E12
+	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Mar 2021 04:22:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237035AbhCPSbT convert rfc822-to-8bit (ORCPT
+        id S229482AbhCQEVb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 16 Mar 2021 14:31:19 -0400
-Received: from mout.kundenserver.de ([217.72.192.73]:37745 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236992AbhCPSaz (ORCPT
+        Wed, 17 Mar 2021 00:21:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35194 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229756AbhCQEVJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 16 Mar 2021 14:30:55 -0400
-Received: from mail-ot1-f46.google.com ([209.85.210.46]) by
- mrelayeu.kundenserver.de (mreue107 [213.165.67.113]) with ESMTPSA (Nemesis)
- id 1MPoPd-1l0yQ30Do3-00Mu0P for <kernel-janitors@vger.kernel.org>; Tue, 16
- Mar 2021 19:30:52 +0100
-Received: by mail-ot1-f46.google.com with SMTP id t16so9085513ott.3
-        for <kernel-janitors@vger.kernel.org>; Tue, 16 Mar 2021 11:30:51 -0700 (PDT)
-X-Gm-Message-State: AOAM532HHEqz30Obo5u3deknlNXRX7zSs8wq6AziCiOGGlfSAtpxJiWA
-        RuVqFMluzV3dY0hISW9H45Y1IVuwUMn1FxJYDCI=
-X-Google-Smtp-Source: ABdhPJy7zf/nwXCQeopMtr6VLSjP61d4PF+is99tvboBdN67xZV3noxqUb+4ubWjTpASNmkEsYVdKhVcDoCNuseYwho=
-X-Received: by 2002:a05:6830:14c1:: with SMTP id t1mr78328otq.305.1615919450777;
- Tue, 16 Mar 2021 11:30:50 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210316181736.2553318-1-eantoranz@gmail.com>
-In-Reply-To: <20210316181736.2553318-1-eantoranz@gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 16 Mar 2021 19:30:34 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a0aBauNqKRyzZ6d4kPGBPcMYqWUWrmmLXwbROFLkBf0nw@mail.gmail.com>
-Message-ID: <CAK8P3a0aBauNqKRyzZ6d4kPGBPcMYqWUWrmmLXwbROFLkBf0nw@mail.gmail.com>
-Subject: Re: [PATCH] staging: vt665x: fix alignment constraints
-To:     Edmundo Carmona Antoranz <eantoranz@gmail.com>
-Cc:     forest@alittletooquiet.net, gregkh <gregkh@linuxfoundation.org>,
-        driverdevel <devel@driverdev.osuosl.org>,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-X-Provags-ID: V03:K1:SOfk6CzGZDRiBm73n8Vi0w1RaOOpJj3u96eYMoYIynFFuFijIzD
- A8rKow+UK8b7GQHu4uawDzNaZ1cQP55gULE0Xzr/OtpTXZS4TiQ3Cp+sVJXXsKeYMO/Gyid
- vWwqUc26gkkwWH2+3uY8wM8um61zoehBK1+oNNniPDU7cSQIE0Ks0LtB42PoURwvD2KQ+Nk
- BHl4jHGBR3bWDoryyIjAw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:UboySpslTVw=:BSQstz2xe3ymRwTu49xyct
- Z6U+AxvDuIDvOSKcU8G9rFZI4BFu5K9ORw8Jham1rld2BIufkXp686vXhz9oaT4XnOAJfkPEx
- sDOS0udBi8ZG55pvU4bIFfj9orm9KJaLP33ISQEPUuCjGFVSigP5ArRWuR+Mb65aA8SIbmXt3
- Jr409F2sGJQ2kWHX4X/3hNW27T/ptdqWKHEtPMo91yySsKntFJuKxCNkllnUT5ZOINGHcEK+I
- eF4i+u74GALaeafp47Y5A5USsYV2PLmE7RTb9FoAa6K299WNjjCZDeSiH8a4sXZyLvo5xNG5o
- 9H8Hq4RlIfkONRkjHte2sboah8CNT+44FNcEyjjs168pEinJ3ZztCDPlBNAa9x0nOBP6pGneZ
- avomj69uaSpL+yVzDg06Qvu2HxmLVYtbVusv/klEVHeToNAEpurkhVMj8SOipBSbySOii13gW
- ameTBM72kgPh2pE7w13g4uhprJRDacN/9LWnf7V7jIp0KDEREN1qevEvbxiPEJPe/4KN767Hb
- u7gGeTspqIABM24YPHpGWds8UA+O/RDoFHzW8Im2dMG
+        Wed, 17 Mar 2021 00:21:09 -0400
+Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 208E6C06174A
+        for <kernel-janitors@vger.kernel.org>; Tue, 16 Mar 2021 21:21:09 -0700 (PDT)
+Received: by mail-pg1-x52b.google.com with SMTP id q5so11366060pgk.5
+        for <kernel-janitors@vger.kernel.org>; Tue, 16 Mar 2021 21:21:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dabbelt-com.20150623.gappssmtp.com; s=20150623;
+        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tqygHtIF9C1t29D6guUTjM28SV0efTFg8Sgvi9tq11E=;
+        b=J0Ymz3qqRL/XDEColeHiskhkUudo7yCDzTrMfSli/8EJ0MyWbKw0dmPrQV15VgoqrN
+         z6cmsFBhCAZ1vpXc4gbFeIRLPpmOPNtDesOJwKVKM3JJrPseT+t7CX1mhofT01A/pSW5
+         reO1Wd4CHcxUuPrs+fKjk2FvCWrA/Z3oFSdiIkbjAs9QbQ+AXppXNIFTibNw/oWe4ZVo
+         7p/l/nfJEvu4yslpm6sj6CRpHfKaLkIZFQBqxcUzsKfOnw7X4gd/vJtaBHuyyvsfBiOB
+         0VNSZuQtmJl+RMoQ49XacSpRl46sV46eGn4NFy37zXgBTLTR+q6oI9lOIR96CY734DRK
+         Mi/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=tqygHtIF9C1t29D6guUTjM28SV0efTFg8Sgvi9tq11E=;
+        b=qd80DSnVrfSGEoEjbiwgkQMQLNFrtadiwxvNGQow8csSsm1TOmfCGhXTitmMdHFU6n
+         RcAVagJYmCUN324hEJ6w7vI5yrMn6GNmmVbTDkQjIPFlmB0gJvDvL+l/qZ+7J4zt2Pht
+         H7LavhCC0Vq8Pefx850COxC15f3KsfMlCmfYjARLMZw7OfaTJbA7Ax6kGDhsiDJhhQ8z
+         OuwQMZp3QYccduSRLXkWVs37Y7JHBEbCovO1KctkrLbo8+tZ/1ChoqUw+or28Fa/CW9r
+         65NEDpurm5fKq0zMChNhV3k3ugmB5nffxdHY2HsFYq/y6TMfxKb33RP8l6yGtMojsypd
+         /GDQ==
+X-Gm-Message-State: AOAM530d2FwdbCmPVOMpltjoUSOo7X+kyIdBOgIXK5KqUTiOWBeAoiRd
+        bYlZ8lZQeJ4CORJxQuZ0eewVSw==
+X-Google-Smtp-Source: ABdhPJyesXfARSvCLvmz8y7QSMQQJ0byeO/pyhC6hJcjwk2HlOZbgELJgKE99SMicIv/QiBfvRGBuA==
+X-Received: by 2002:aa7:9ecf:0:b029:1f4:f737:12d6 with SMTP id r15-20020aa79ecf0000b02901f4f73712d6mr2614833pfq.8.1615954868646;
+        Tue, 16 Mar 2021 21:21:08 -0700 (PDT)
+Received: from localhost (76-210-143-223.lightspeed.sntcca.sbcglobal.net. [76.210.143.223])
+        by smtp.gmail.com with ESMTPSA id s22sm835188pjs.42.2021.03.16.21.21.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Mar 2021 21:21:08 -0700 (PDT)
+Date:   Tue, 16 Mar 2021 21:21:08 -0700 (PDT)
+X-Google-Original-Date: Tue, 16 Mar 2021 21:19:54 PDT (-0700)
+Subject:     Re: [PATCH] ftrace: Fix spelling mistake "disabed" -> "disabled"
+In-Reply-To: <20210311094022.5978-1-colin.king@canonical.com>
+CC:     guoren@kernel.org, Paul Walmsley <paul.walmsley@sifive.com>,
+        aou@eecs.berkeley.edu, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, x86@kernel.org, hpa@zytor.com, rostedt@goodmis.org,
+        linux-csky@vger.kernel.org, linux-riscv@lists.infradead.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+From:   Palmer Dabbelt <palmer@dabbelt.com>
+To:     colin.king@canonical.com
+Message-ID: <mhng-9cd288c7-8f95-4e86-9b2b-bb405e3f74fe@palmerdabbelt-glaptop>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Mar 16, 2021 at 7:17 PM Edmundo Carmona Antoranz
-<eantoranz@gmail.com> wrote:
+On Thu, 11 Mar 2021 01:40:22 PST (-0800), colin.king@canonical.com wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 >
-> Removing 2 instances of alignment warnings
+> There is a spelling mistake in a comment, fix it.
 >
-> drivers/staging/vt6655/rxtx.h:153:1: warning: alignment 1 of ‘struct vnt_cts’ is less than 2 [-Wpacked-not-aligned]
-> drivers/staging/vt6655/rxtx.h:163:1: warning: alignment 1 of ‘struct vnt_cts_fb’ is less than 2 [-Wpacked-not-aligned]
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  arch/csky/kernel/probes/ftrace.c  | 2 +-
+>  arch/riscv/kernel/probes/ftrace.c | 2 +-
+>  arch/x86/kernel/kprobes/ftrace.c  | 2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
 >
-> The root cause seems to be that _because_ struct ieee80211_cts is marked as __aligned(2),
-> this requires any encapsulating struct to also have an alignment of 2.
+> diff --git a/arch/csky/kernel/probes/ftrace.c b/arch/csky/kernel/probes/ftrace.c
+> index ae2b1c7b3b5c..ef2bb9bd9605 100644
+> --- a/arch/csky/kernel/probes/ftrace.c
+> +++ b/arch/csky/kernel/probes/ftrace.c
+> @@ -9,7 +9,7 @@ int arch_check_ftrace_location(struct kprobe *p)
+>  	return 0;
+>  }
 >
-> Fixes: 2faf12c57efe ("staging: vt665x: fix alignment constraints")
-> Signed-off-by: Edmundo Carmona Antoranz <eantoranz@gmail.com>
+> -/* Ftrace callback handler for kprobes -- called under preepmt disabed */
+> +/* Ftrace callback handler for kprobes -- called under preepmt disabled */
+>  void kprobe_ftrace_handler(unsigned long ip, unsigned long parent_ip,
+>  			   struct ftrace_ops *ops, struct ftrace_regs *fregs)
+>  {
+> diff --git a/arch/riscv/kernel/probes/ftrace.c b/arch/riscv/kernel/probes/ftrace.c
+> index 2dfb33fdac74..17ca5e923bb0 100644
+> --- a/arch/riscv/kernel/probes/ftrace.c
+> +++ b/arch/riscv/kernel/probes/ftrace.c
+> @@ -2,7 +2,7 @@
+>
+>  #include <linux/kprobes.h>
+>
+> -/* Ftrace callback handler for kprobes -- called under preepmt disabed */
+> +/* Ftrace callback handler for kprobes -- called under preepmt disabled */
+>  void kprobe_ftrace_handler(unsigned long ip, unsigned long parent_ip,
+>  			   struct ftrace_ops *ops, struct ftrace_regs *fregs)
+>  {
+> diff --git a/arch/x86/kernel/kprobes/ftrace.c b/arch/x86/kernel/kprobes/ftrace.c
+> index 373e5fa3ce1f..51c7f5271aee 100644
+> --- a/arch/x86/kernel/kprobes/ftrace.c
+> +++ b/arch/x86/kernel/kprobes/ftrace.c
+> @@ -12,7 +12,7 @@
+>
+>  #include "common.h"
+>
+> -/* Ftrace callback handler for kprobes -- called under preepmt disabed */
+> +/* Ftrace callback handler for kprobes -- called under preepmt disabled */
+>  void kprobe_ftrace_handler(unsigned long ip, unsigned long parent_ip,
+>  			   struct ftrace_ops *ops, struct ftrace_regs *fregs)
+>  {
 
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+Thanks, this is on fixes.
