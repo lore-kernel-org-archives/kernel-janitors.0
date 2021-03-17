@@ -2,80 +2,61 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC8CFC433E0
-	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Mar 2021 13:42:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31520C433E6
+	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Mar 2021 13:43:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9B2AB64F6E
-	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Mar 2021 13:42:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D464364F70
+	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Mar 2021 13:43:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231197AbhCQNl7 (ORCPT
+        id S231365AbhCQNmc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 17 Mar 2021 09:41:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40456 "EHLO mail.kernel.org"
+        Wed, 17 Mar 2021 09:42:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40594 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230330AbhCQNlm (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 17 Mar 2021 09:41:42 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 8340464DFF;
-        Wed, 17 Mar 2021 13:41:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1615988502;
-        bh=YbODQsKROeQrRlteUONt+KwDn47LMp1qB7GsHBk2lgo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mOu55MoQzWIg3Nu0N4Wv+q/7hPk73dAZqw9OhLzaG27UHmxhyNi5Jztozo3TL/oUH
-         njmmHxt/tu3RVSIIhpyvE1UPtkkySVTpdmhQixxhjoXWlyUcD3gQpuKK0C/MFYuqyu
-         qqQcl8zv9vNTkRuTKp14WMx9OUVG2wJE83H2rwwdsMYYgIQocGjbyShDh98p1Uj9+k
-         w/OvOVM9kxayUxU1SRj48TPU1eyffCIhrQeXLH5knm04pfLl82lmK22kwD6XG2t++o
-         9Uf0r4ANB2YDa490REENGT29keNzpxVd/BjwGzwC3liczLBwjUbHKxibiA2iuyXXfF
-         X8fMmlgshITgw==
-From:   Mark Brown <broonie@kernel.org>
-To:     Colin King <colin.king@canonical.com>, linux-spi@vger.kernel.org
-Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH][next] spi: Fix spelling mistake "softwade" -> "software"
-Date:   Wed, 17 Mar 2021 13:41:36 +0000
-Message-Id: <161598843909.8643.16208027141094463560.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20210317093936.5572-1-colin.king@canonical.com>
-References: <20210317093936.5572-1-colin.king@canonical.com>
+        id S230434AbhCQNm2 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 17 Mar 2021 09:42:28 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DFD2364DFF;
+        Wed, 17 Mar 2021 13:42:24 +0000 (UTC)
+Date:   Wed, 17 Mar 2021 09:42:23 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Palmer Dabbelt <palmer@dabbelt.com>
+Cc:     colin.king@canonical.com, guoren@kernel.org,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        aou@eecs.berkeley.edu, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        linux-csky@vger.kernel.org, linux-riscv@lists.infradead.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ftrace: Fix spelling mistake "disabed" -> "disabled"
+Message-ID: <20210317094223.34797d5d@gandalf.local.home>
+In-Reply-To: <mhng-9cd288c7-8f95-4e86-9b2b-bb405e3f74fe@palmerdabbelt-glaptop>
+References: <20210311094022.5978-1-colin.king@canonical.com>
+        <mhng-9cd288c7-8f95-4e86-9b2b-bb405e3f74fe@palmerdabbelt-glaptop>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 17 Mar 2021 09:39:36 +0000, Colin King wrote:
-> There is a spelling mistake in a dev_err message. Fix it.
+On Tue, 16 Mar 2021 21:21:08 -0700 (PDT)
+Palmer Dabbelt <palmer@dabbelt.com> wrote:
 
-Applied to
+> Thanks, this is on fixes.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+What does this mean? Is there a tree that spelling fixes go through now?
 
-Thanks!
+I had already pulled this patch into my queue for the next merge window
+(and it's still in the testing phase with other patches before going to
+linux-next).
 
-[1/1] spi: Fix spelling mistake "softwade" -> "software"
-      commit: 9d902c2a9a258e1e17cfcce7ea558b1c427b2757
+Should I drop it?
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+-- Steve
