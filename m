@@ -2,61 +2,80 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31520C433E6
-	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Mar 2021 13:43:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4EBEC433DB
+	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Mar 2021 14:45:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D464364F70
-	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Mar 2021 13:43:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6CFE064E21
+	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Mar 2021 14:45:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231365AbhCQNmc (ORCPT
+        id S231961AbhCQOom (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 17 Mar 2021 09:42:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40594 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230434AbhCQNm2 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 17 Mar 2021 09:42:28 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DFD2364DFF;
-        Wed, 17 Mar 2021 13:42:24 +0000 (UTC)
-Date:   Wed, 17 Mar 2021 09:42:23 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Palmer Dabbelt <palmer@dabbelt.com>
-Cc:     colin.king@canonical.com, guoren@kernel.org,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        aou@eecs.berkeley.edu, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        linux-csky@vger.kernel.org, linux-riscv@lists.infradead.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ftrace: Fix spelling mistake "disabed" -> "disabled"
-Message-ID: <20210317094223.34797d5d@gandalf.local.home>
-In-Reply-To: <mhng-9cd288c7-8f95-4e86-9b2b-bb405e3f74fe@palmerdabbelt-glaptop>
-References: <20210311094022.5978-1-colin.king@canonical.com>
-        <mhng-9cd288c7-8f95-4e86-9b2b-bb405e3f74fe@palmerdabbelt-glaptop>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+        Wed, 17 Mar 2021 10:44:42 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:14079 "EHLO
+        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231877AbhCQOoO (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 17 Mar 2021 10:44:14 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4F0tCs1gLFz19GZ3;
+        Wed, 17 Mar 2021 22:42:17 +0800 (CST)
+Received: from localhost.localdomain (10.175.102.38) by
+ DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
+ 14.3.498.0; Wed, 17 Mar 2021 22:43:59 +0800
+From:   'w00385741 <weiyongjun1@huawei.com>
+To:     <weiyongjun1@huawei.com>,
+        Jesse Brandeburg <jesse.brandeburg@intel.com>,
+        Tony Nguyen <anthony.l.nguyen@intel.com>,
+        Jakub Kicinski <kuba@kernel.org>, Chen Yu <yu.c.chen@intel.com>
+CC:     <intel-wired-lan@lists.osuosl.org>, <netdev@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH net-next] e1000e: Mark e1000e_pm_prepare() as __maybe_unused
+Date:   Wed, 17 Mar 2021 14:52:34 +0000
+Message-ID: <20210317145234.3171021-1-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.102.38]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, 16 Mar 2021 21:21:08 -0700 (PDT)
-Palmer Dabbelt <palmer@dabbelt.com> wrote:
+From: Wei Yongjun <weiyongjun1@huawei.com>
 
-> Thanks, this is on fixes.
+The function e1000e_pm_prepare() may have no callers depending
+on configuration, so it must be marked __maybe_unused to avoid
+harmless warning:
 
-What does this mean? Is there a tree that spelling fixes go through now?
+drivers/net/ethernet/intel/e1000e/netdev.c:6926:12:
+ warning: 'e1000e_pm_prepare' defined but not used [-Wunused-function]
+ 6926 | static int e1000e_pm_prepare(struct device *dev)
+      |            ^~~~~~~~~~~~~~~~~
 
-I had already pulled this patch into my queue for the next merge window
-(and it's still in the testing phase with other patches before going to
-linux-next).
+Fixes: ccf8b940e5fd ("e1000e: Leverage direct_complete to speed up s2ram")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/net/ethernet/intel/e1000e/netdev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Should I drop it?
+diff --git a/drivers/net/ethernet/intel/e1000e/netdev.c b/drivers/net/ethernet/intel/e1000e/netdev.c
+index f1c9debd9f3b..d2e4653536c5 100644
+--- a/drivers/net/ethernet/intel/e1000e/netdev.c
++++ b/drivers/net/ethernet/intel/e1000e/netdev.c
+@@ -6923,7 +6923,7 @@ static int __e1000_resume(struct pci_dev *pdev)
+ 	return 0;
+ }
+ 
+-static int e1000e_pm_prepare(struct device *dev)
++static __maybe_unused int e1000e_pm_prepare(struct device *dev)
+ {
+ 	return pm_runtime_suspended(dev) &&
+ 		pm_suspend_via_firmware();
 
--- Steve
