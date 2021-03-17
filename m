@@ -2,152 +2,123 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC766C433DB
-	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Mar 2021 07:14:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB555C433E0
+	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Mar 2021 08:32:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A684464F3E
-	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Mar 2021 07:14:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E37964FA7
+	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Mar 2021 08:32:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230026AbhCQHOF (ORCPT
+        id S229688AbhCQIbu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 17 Mar 2021 03:14:05 -0400
-Received: from mail-mw2nam12on2076.outbound.protection.outlook.com ([40.107.244.76]:41697
-        "EHLO NAM12-MW2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S229613AbhCQHNt (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 17 Mar 2021 03:13:49 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fuoAnUv2AQJYmb0tcLxUUTlNTMEMHqSt4bo5lQyCjc2bCK4T7wq2oPBP14VGqd/d6K82XGlm9yr4CH9curf3yhnous70EHvveIN3Ll2zE+hZoHGbHs7grf6nKFv3oX1mTZ6SQbpqSobqT20Q1DXYw378JbJQ8DLqNvQE03Hz54CSevLXsTICj4Zn3ZsjLAsgEue1CsRxAJIkw2tp8LrBZwOB+nBzj4+ph6MVqF2AF0Y2UCY5pY+XSDC0FO7apgErLIlCgrJNnFXlIZ4i3ztLkg44It7fQbzPr9OvQv9GvohVtiOUcmG+1AbnJs0UowGcfktlsMUMmgM3WTxRsKbwrQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=f60tpCnGSFr4GSsWBg6jb073WSHjsrb1Wlbbkol7ing=;
- b=f8mHAo2P9PeQtfCFKPOz0tW0xtLfi5HGJjA0EvGOFIPe3u/+n9TXKb5iOkTHlF3tAFQ6Hfiit+isWyF6fzEYbzPIot3TLq+ZDGWHPXEYwFV62xFlts/G3KCdB9Sqh8WvOeX6Ov1xUwoAripz/c1Qymn62/YAk0I1gK6lSrXQGWq2PvoVE+wVnU8KyerT3au/Z2+Qpdh6Qk1C/TDTC//3Ao0vucY1TRF3VswKvw2VrO/yQy8qqPwrK+s5n1qISWoM1cw0JLbloAh8CM9yeZJ/3+bYHt0ktQ3jkd61ZvDpdUQWvh20g2znmQlvzf7F6ZWhvwwj3USCm+0p7HTVcjJyUw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.112.34) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=f60tpCnGSFr4GSsWBg6jb073WSHjsrb1Wlbbkol7ing=;
- b=iJm3fkunu1m1huSDvD27PnQSoKzW6UNg0CIvposh0PHojM4bJdr3QTo945GJ3j6FoOn9LMs3hNY8dLu8uqYnMRAyUiWIXyPgbmDFdDZNH0P3XWD5NDkiJhP9+BKfUS7BzXu44qDaz5LL0h7Xxo45I+uMLmhtGkRZlEXNt9sWzmSq2adK5baya6Dc6aJkA4TVskkHif9ugBMX/reM7k/mHkJpvOW9+3dkL8Tms8RCRsR7TLPHMa+n87GXNB9cu5OulFagW6WUqrAmUYXCP+1vHJUqa9zBH8zCIQuw7PMOoZVHhSB76AkapXaX2pv2In18IDRJS9fo4h4/WYW56DXadA==
-Received: from MW3PR05CA0029.namprd05.prod.outlook.com (2603:10b6:303:2b::34)
- by DM6PR12MB4957.namprd12.prod.outlook.com (2603:10b6:5:20d::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3933.31; Wed, 17 Mar
- 2021 07:13:45 +0000
-Received: from CO1NAM11FT043.eop-nam11.prod.protection.outlook.com
- (2603:10b6:303:2b:cafe::e9) by MW3PR05CA0029.outlook.office365.com
- (2603:10b6:303:2b::34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3977.9 via Frontend
- Transport; Wed, 17 Mar 2021 07:13:45 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
- smtp.mailfrom=nvidia.com; kernel.org; dkim=none (message not signed)
- header.d=none;kernel.org; dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.112.34; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (216.228.112.34) by
- CO1NAM11FT043.mail.protection.outlook.com (10.13.174.193) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.3955.18 via Frontend Transport; Wed, 17 Mar 2021 07:13:45 +0000
-Received: from [10.2.48.16] (172.20.145.6) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Wed, 17 Mar
- 2021 07:13:44 +0000
-Subject: Re: [PATCH] mm: cma: Fix potential null dereference on pointer cma
-To:     Colin King <colin.king@canonical.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Minchan Kim <minchan@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-mm@kvack.org>
-CC:     <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20210316100433.17665-1-colin.king@canonical.com>
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <c2881c32-4354-437d-749c-d6dd419e5a4d@nvidia.com>
-Date:   Wed, 17 Mar 2021 00:13:31 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        Wed, 17 Mar 2021 04:31:50 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:37436 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229673AbhCQIbj (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 17 Mar 2021 04:31:39 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12H8UZxv128112;
+        Wed, 17 Mar 2021 08:31:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=GzgspRdwBgkoOp643xFkyrPHucv2bbNqWJaL7RaM9io=;
+ b=PrIGeD38KvPr64cxVCZZPJ8GoQsX/cS1wQxlyI980+KAGR8E49lfHf4NgvXlzflU8V3/
+ WLKiuMPWrGdGyn1bbErfepF1MD6lCFFhsj2pBZtwPvLz5gZgioivdiXgSuMLBe50hiov
+ NxKyHQXCMmq/papd+5kIdo9FzcorOmDec8gbcYm5totH5gQr163xjFjmA8de5FP5eu6s
+ o933QbhRNcbgpUXXjm8gDKOps4JZfhyL4sd+CJbndwslBjb5Et29IH0XY151kYKK8km+
+ mLZNuZI7/6Wf8LZ+LaUamW0So6gmNMhIMxCWsaGeDe/aQ+DQPxQg0a3woUfC6Lj5mXot qg== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2130.oracle.com with ESMTP id 378jwbk9ar-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 17 Mar 2021 08:31:38 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12H8VOBW098031;
+        Wed, 17 Mar 2021 08:31:36 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 37a4eu31kt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 17 Mar 2021 08:31:36 +0000
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 12H8VZXw006167;
+        Wed, 17 Mar 2021 08:31:35 GMT
+Received: from kadam (/102.36.221.92)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 17 Mar 2021 01:31:35 -0700
+Date:   Wed, 17 Mar 2021 11:31:28 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Junyeong Jeong <esrse.jeong@gmail.com>
+Cc:     kernel-janitors@vger.kernel.org
+Subject: Re: /sys/devices/system/cpu/possible can be changed during runtime?
+Message-ID: <20210317083128.GZ2087@kadam>
+References: <87o8fl0yf4.fsf@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20210316100433.17665-1-colin.king@canonical.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.20.145.6]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 8ee14521-9ffb-409c-09e6-08d8e9143414
-X-MS-TrafficTypeDiagnostic: DM6PR12MB4957:
-X-Microsoft-Antispam-PRVS: <DM6PR12MB49576532D879B45719B315A9A86A9@DM6PR12MB4957.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:2803;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: qOd91svkMcFhen3vJ40q1fgi71QAk1efqwA+OW3PIV9aeNVOclZbv3JQWvDUGfAnb1e/La+sPSvnQwGrWdf1PirSeYZ53qG9gShMJNCL2hFxoYNX3j5XHgqQOy0978T7UtUTpN3QlPAbxh+lEk5lqC2zFScM+vYCx8Doy/wuZ3XnfRJZDMJd+kc5SwRY7HfxL5GPDahqkt946kIuuqHtYU1kIB3eSNG1Hv6euus4pULKyX2Yh2vrBx8U1i7DQMAZdH5M9N0P5dcYY+tG90gmdGIyP0vbbFCt/BJd13j3wR4gvZqW9rkWliBi0MjuG9q1U8M9XuIdJTmZRHVBYujBk92CJKh7SmtyQPLN+RNAvB7tVDUzEaBMUA0EmkhneC37yW7GI5PGRGqErC4+5mLT0EbOB9vcKIu0vWnYdkkwD6JgfUXcZ0H7euhgR1/hMie1CV54wII1Kb7VEj1PIKOSke7O22E6m+e1req6I9TEcoy08d7/IDqTEe1h48W8g4MF6N6mmrFn9SNbl4paZewOwfhVVVEC6Ky0DEwQota1BRlfFOJV1LgOYW5+Zp5wXllGX1Ln1HmSz0shxBjkhEg7CDPjJhyNj+MCfDNEXzuSllKzP5sAsKPRfWk4v899Tf7DUBK+TnGpodCOagtmeU+KcGoh/DVwwsSPiMxYafpeBxVIp7ecqBCGmUtR0LdyXzeGmit8Pq2/gvTjT59Bxle0Fg==
-X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(376002)(39860400002)(136003)(396003)(346002)(36840700001)(46966006)(70586007)(478600001)(34020700004)(53546011)(356005)(31696002)(4326008)(6666004)(16576012)(54906003)(26005)(186003)(16526019)(2906002)(110136005)(8936002)(36906005)(83380400001)(36756003)(70206006)(2616005)(426003)(336012)(31686004)(8676002)(47076005)(86362001)(82740400003)(36860700001)(5660300002)(7636003)(316002)(82310400003)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Mar 2021 07:13:45.1583
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8ee14521-9ffb-409c-09e6-08d8e9143414
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT043.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4957
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87o8fl0yf4.fsf@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-IMR: 1
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9925 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=0
+ malwarescore=0 phishscore=0 bulkscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2103170064
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9925 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxlogscore=999
+ spamscore=0 mlxscore=0 bulkscore=0 suspectscore=0 priorityscore=1501
+ lowpriorityscore=0 clxscore=1011 adultscore=0 phishscore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2103170064
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 3/16/21 3:04 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On Mon, Mar 15, 2021 at 02:35:06PM +0900, Junyeong Jeong wrote:
+> Hello everyone :D
 > 
-> At the start of the function there is a null pointer check on cma
-> and then branch to error handling label 'out'.  The subsequent call
-> to cma_sysfs_fail_pages_count dereferences cma, hence there is a
-> potential null pointer deference issue.  Fix this by only calling
-
-As far as I can tell, it's not possible to actually cause that null
-failure with the existing kernel code paths.  *Might* be worth mentioning
-that here (unless I'm wrong), but either way, looks good, so:
-
-Reviewed-by: John Hubbard <jhubbard@nvidia.com>
-
-thanks,
--- 
-John Hubbard
-NVIDIA
-
-> cma_sysfs_fail_pages_count if cma is not null.
+> I wonder that possible-CPU-mask(/sys/devices/system/cpu/possible) can be
+> changed during runtime. I read that it is fixed at boot time, but I am
+> not sure that it is really immutable even if some cgroup or
+> virtualization magic is used.
 > 
-> Addresses-Coverity: ("Dereference after null check")
-> Fixes: dc4764f7e9ac ("mm: cma: support sysfs")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->   mm/cma.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
+> I am referring to /sys/devices/system/cpu/possible file to get to know
+> the number of per-cpu areas. In userspace, I call `bpf_lookup_elem()` to
+> get values at index from BPF array map of which type is
+> BPF_MAP_TYPE_PERCPU_ARRAY.  And the length of the gained values is the
+> same with the number of per-cpu areas and in turn it is the same with
+> the number of possible CPUs.
 > 
-> diff --git a/mm/cma.c b/mm/cma.c
-> index 6d4dbafdb318..90e27458ddb7 100644
-> --- a/mm/cma.c
-> +++ b/mm/cma.c
-> @@ -512,7 +512,8 @@ struct page *cma_alloc(struct cma *cma, size_t count, unsigned int align,
->   		cma_sysfs_alloc_pages_count(cma, count);
->   	} else {
->   		count_vm_event(CMA_ALLOC_FAIL);
-> -		cma_sysfs_fail_pages_count(cma, count);
-> +		if (cma)
-> +			cma_sysfs_fail_pages_count(cma, count);
->   	}
->   
->   	return page;
+> I am anxious that this varies from time to time under some
+> circumstances. So I checked some cgroup and virtualization use-cases
+> which did not affect the possible-CPU-mask.
 > 
+> $ docker run --cpuset-cpus=0-3 -it ubuntu:20.10 bash  # cgroup cpuset
+> $ virsh setvcpus --current ubuntu20.10 5  # hotplug cpu while guest os is running..
+> 
+> But while conducting this I realized that it's not possible to prove the
+> immutability of possible-CPU-mask using inductive method.
+> 
+> Can anyone explain that it will not happen that possible-CPU-mask
+> changes after boot-time even with cgroup magic or some tricks from
+> outside of hypervisors?
+> 
+> Thanks,
 
+Kernel janitors is mostly about fixing and updating kernel API, not
+discussing how the kernel works.
+
+You can't write to that sysfs file.
+-r--r--r-- 1 root root 4096 Mar 17 11:28 /sys/devices/system/cpu/possible
+But we do allow people to add and remove CPUs while the system is
+running (CPU hotplug).  The number of CPUs is not necessarily fixed at
+boot time.  It's not immutable.
+
+I'm not sure if this helps?
+
+regards,
+dan carpenter
