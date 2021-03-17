@@ -7,32 +7,31 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C64EC433E6
-	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Mar 2021 09:37:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C15AC433DB
+	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Mar 2021 09:40:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0612064F5E
-	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Mar 2021 09:37:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5EA764F6B
+	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Mar 2021 09:40:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229508AbhCQJhF (ORCPT
+        id S229634AbhCQJjp (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 17 Mar 2021 05:37:05 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:48959 "EHLO
+        Wed, 17 Mar 2021 05:39:45 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:49034 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229708AbhCQJhB (ORCPT
+        with ESMTP id S229549AbhCQJji (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 17 Mar 2021 05:37:01 -0400
+        Wed, 17 Mar 2021 05:39:38 -0400
 Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <colin.king@canonical.com>)
-        id 1lMSbr-0005OC-22; Wed, 17 Mar 2021 09:36:59 +0000
+        id 1lMSeP-0005aZ-3i; Wed, 17 Mar 2021 09:39:37 +0000
 From:   Colin King <colin.king@canonical.com>
-To:     Namjae Jeon <namjae.jeon@samsung.com>,
-        Hyunchul Lee <hyc.lee@gmail.com>
+To:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] cifsd: Fix a handful of spelling mistakes
-Date:   Wed, 17 Mar 2021 09:36:58 +0000
-Message-Id: <20210317093658.5370-1-colin.king@canonical.com>
+Subject: [PATCH][next] spi: Fix spelling mistake "softwade" -> "software"
+Date:   Wed, 17 Mar 2021 09:39:36 +0000
+Message-Id: <20210317093936.5572-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -43,64 +42,26 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-There are several spelling mistakes in various ksmbd_err and
-ksmbd_debug messages. Fix these.
+There is a spelling mistake in a dev_err message. Fix it.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- fs/cifsd/ndr.c            | 2 +-
- fs/cifsd/smb2pdu.c        | 4 ++--
- fs/cifsd/transport_rdma.c | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/spi/spi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/cifsd/ndr.c b/fs/cifsd/ndr.c
-index d96dcd9e43c6..aa0cb8fc555d 100644
---- a/fs/cifsd/ndr.c
-+++ b/fs/cifsd/ndr.c
-@@ -325,7 +325,7 @@ int ndr_decode_v4_ntacl(struct ndr *n, struct xattr_ntacl *acl)
- 
- 	ndr_read_bytes(n, acl->desc, 10);
- 	if (strncmp(acl->desc, "posix_acl", 9)) {
--		ksmbd_err("Invalid acl desciption : %s\n", acl->desc);
-+		ksmbd_err("Invalid acl description : %s\n", acl->desc);
- 		return -EINVAL;
- 	}
- 
-diff --git a/fs/cifsd/smb2pdu.c b/fs/cifsd/smb2pdu.c
-index 3da96ebeae8b..4cda7df3bd70 100644
---- a/fs/cifsd/smb2pdu.c
-+++ b/fs/cifsd/smb2pdu.c
-@@ -2508,7 +2508,7 @@ int smb2_open(struct ksmbd_work *work)
- 	if (req->NameLength) {
- 		if ((req->CreateOptions & FILE_DIRECTORY_FILE_LE) &&
- 			*(char *)req->Buffer == '\\') {
--			ksmbd_err("not allow directory name included leadning slash\n");
-+			ksmbd_err("not allow directory name included leading slash\n");
- 			rc = -EINVAL;
- 			goto err_out1;
+diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+index 0706832bffda..2fe3c3a50866 100644
+--- a/drivers/spi/spi.c
++++ b/drivers/spi/spi.c
+@@ -679,7 +679,7 @@ struct spi_device *spi_new_device(struct spi_controller *ctlr,
+ 	if (chip->swnode) {
+ 		status = device_add_software_node(&proxy->dev, chip->swnode);
+ 		if (status) {
+-			dev_err(&ctlr->dev, "failed to add softwade node to '%s': %d\n",
++			dev_err(&ctlr->dev, "failed to add software node to '%s': %d\n",
+ 				chip->modalias, status);
+ 			goto err_dev_put;
  		}
-@@ -2636,7 +2636,7 @@ int smb2_open(struct ksmbd_work *work)
- 	}
- 
- 	if (!(req->DesiredAccess & DESIRED_ACCESS_MASK)) {
--		ksmbd_err("Invalid disired access : 0x%x\n",
-+		ksmbd_err("Invalid desired access : 0x%x\n",
- 			le32_to_cpu(req->DesiredAccess));
- 		rc = -EACCES;
- 		goto err_out1;
-diff --git a/fs/cifsd/transport_rdma.c b/fs/cifsd/transport_rdma.c
-index 1698f7ed9c2f..4f4806d67ab0 100644
---- a/fs/cifsd/transport_rdma.c
-+++ b/fs/cifsd/transport_rdma.c
-@@ -485,7 +485,7 @@ static int smb_direct_check_recvmsg(struct smb_direct_recvmsg *recvmsg)
- 		struct smb2_hdr *hdr = (struct smb2_hdr *) (recvmsg->packet
- 				+ le32_to_cpu(req->data_offset) - 4);
- 		ksmbd_debug(RDMA,
--				"CreditGranted: %u, CreditRequested: %u, DataLength: %u, RemaingDataLength: %u, SMB: %x, Command: %u\n",
-+				"CreditGranted: %u, CreditRequested: %u, DataLength: %u, RemainingDataLength: %u, SMB: %x, Command: %u\n",
- 				le16_to_cpu(req->credits_granted),
- 				le16_to_cpu(req->credits_requested),
- 				req->data_length, req->remaining_data_length,
 -- 
 2.30.2
 
