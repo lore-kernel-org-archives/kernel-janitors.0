@@ -2,80 +2,85 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4EBEC433DB
-	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Mar 2021 14:45:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0059C433E0
+	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Mar 2021 17:05:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6CFE064E21
-	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Mar 2021 14:45:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A54F364EB3
+	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Mar 2021 17:05:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231961AbhCQOom (ORCPT
+        id S229826AbhCQREc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 17 Mar 2021 10:44:42 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:14079 "EHLO
-        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231877AbhCQOoO (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 17 Mar 2021 10:44:14 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
-        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4F0tCs1gLFz19GZ3;
-        Wed, 17 Mar 2021 22:42:17 +0800 (CST)
-Received: from localhost.localdomain (10.175.102.38) by
- DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
- 14.3.498.0; Wed, 17 Mar 2021 22:43:59 +0800
-From:   'w00385741 <weiyongjun1@huawei.com>
-To:     <weiyongjun1@huawei.com>,
-        Jesse Brandeburg <jesse.brandeburg@intel.com>,
-        Tony Nguyen <anthony.l.nguyen@intel.com>,
-        Jakub Kicinski <kuba@kernel.org>, Chen Yu <yu.c.chen@intel.com>
-CC:     <intel-wired-lan@lists.osuosl.org>, <netdev@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH net-next] e1000e: Mark e1000e_pm_prepare() as __maybe_unused
-Date:   Wed, 17 Mar 2021 14:52:34 +0000
-Message-ID: <20210317145234.3171021-1-weiyongjun1@huawei.com>
-X-Mailer: git-send-email 2.25.1
+        Wed, 17 Mar 2021 13:04:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40946 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229545AbhCQRET (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 17 Mar 2021 13:04:19 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id C73BA64E90;
+        Wed, 17 Mar 2021 17:04:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1616000658;
+        bh=YecZ1+74PL0EiJdVgEbcbAb4OOfTrH7w3uHot9RGdq4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Lu//GtLnTgjXYhm9esClHt8hR8sh/TVP6pNKtWo+MI7yVxrTMiA0sNuR7XVlOgdJc
+         tz6Sd/GmVSnhirzXjrKY40U5Y2Z8zE/homaXsGzUDnRZlbZK3Ui0I9r6VxXlFL6fFC
+         cgK3YsNXD+C5lw9byeBxwJBSG79kJQ4txCw34WEHi5q3eQK8571ufwpH61HNVpz4L7
+         n9gj1PaVUuebEKDk0JV5MisibcOpL+dDmgsjhlfu2Tw8uUr4hDmFNy+2v9Nh7JC25y
+         /cr3F1ah42VAX7J1ZOb5cfbT6eJqLDUsUpnf59PzVxL649yi1MaJKFIkcqC0p+3jbZ
+         V1fkgNvRm/v2A==
+Date:   Wed, 17 Mar 2021 19:04:14 +0200
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] RDMA/mlx5: Fix missing assignment of rc when
+ calling mlx5_ib_dereg_mr
+Message-ID: <YFI2jt/nTpn//Zc0@unreal>
+References: <20210316095117.17089-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.102.38]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210316095117.17089-1-colin.king@canonical.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
+On Tue, Mar 16, 2021 at 09:51:17AM +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> The assignment of the return code to rc when calling mlx5_ib_dereg_mr is
+> missing and there is an error check on an uninitialized rc. Fix this by
+> adding in the assignment.
+>
+> Addresses-Coverity: ("Uninitialized scalar variable")
+> Fixes: e6fb246ccafb ("RDMA/mlx5: Consolidate MR destruction to mlx5_ib_dereg_mr()")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/infiniband/hw/mlx5/mr.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-The function e1000e_pm_prepare() may have no callers depending
-on configuration, so it must be marked __maybe_unused to avoid
-harmless warning:
+It was already sent, thanks.
+https://lore.kernel.org/linux-rdma/20210314082250.10143-1-leon@kernel.org/
 
-drivers/net/ethernet/intel/e1000e/netdev.c:6926:12:
- warning: 'e1000e_pm_prepare' defined but not used [-Wunused-function]
- 6926 | static int e1000e_pm_prepare(struct device *dev)
-      |            ^~~~~~~~~~~~~~~~~
-
-Fixes: ccf8b940e5fd ("e1000e: Leverage direct_complete to speed up s2ram")
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/net/ethernet/intel/e1000e/netdev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/intel/e1000e/netdev.c b/drivers/net/ethernet/intel/e1000e/netdev.c
-index f1c9debd9f3b..d2e4653536c5 100644
---- a/drivers/net/ethernet/intel/e1000e/netdev.c
-+++ b/drivers/net/ethernet/intel/e1000e/netdev.c
-@@ -6923,7 +6923,7 @@ static int __e1000_resume(struct pci_dev *pdev)
- 	return 0;
- }
- 
--static int e1000e_pm_prepare(struct device *dev)
-+static __maybe_unused int e1000e_pm_prepare(struct device *dev)
- {
- 	return pm_runtime_suspended(dev) &&
- 		pm_suspend_via_firmware();
-
+>
+> diff --git a/drivers/infiniband/hw/mlx5/mr.c b/drivers/infiniband/hw/mlx5/mr.c
+> index 86ffc7e5ef96..9dcb9fb4eeaa 100644
+> --- a/drivers/infiniband/hw/mlx5/mr.c
+> +++ b/drivers/infiniband/hw/mlx5/mr.c
+> @@ -1946,7 +1946,7 @@ int mlx5_ib_dereg_mr(struct ib_mr *ibmr, struct ib_udata *udata)
+>  			mr->mtt_mr = NULL;
+>  		}
+>  		if (mr->klm_mr) {
+> -			mlx5_ib_dereg_mr(&mr->klm_mr->ibmr, NULL);
+> +			rc = mlx5_ib_dereg_mr(&mr->klm_mr->ibmr, NULL);
+>  			if (rc)
+>  				return rc;
+>  			mr->klm_mr = NULL;
+> --
+> 2.30.2
+>
