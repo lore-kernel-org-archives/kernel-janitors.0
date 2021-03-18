@@ -2,156 +2,103 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C258C433E0
-	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Mar 2021 18:57:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99544C433E6
+	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Mar 2021 18:58:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BB47664E90
-	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Mar 2021 18:57:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5037F64F1F
+	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Mar 2021 18:58:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231590AbhCRS5Q (ORCPT
+        id S232732AbhCRS5s (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 18 Mar 2021 14:57:16 -0400
-Received: from esa.microchip.iphmx.com ([68.232.153.233]:42676 "EHLO
-        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232696AbhCRS5A (ORCPT
+        Thu, 18 Mar 2021 14:57:48 -0400
+Received: from mail-oi1-f179.google.com ([209.85.167.179]:41518 "EHLO
+        mail-oi1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232674AbhCRS50 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 18 Mar 2021 14:57:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1616093821; x=1647629821;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=/hnLRqx6NLOgaf2jzoAU/O96+VWdPTGbbLKhxbbMuhA=;
-  b=F5EK6KYc1AEhdFphUL2nltKDK6BEEgOFHhBztS9DinMtPlS2eX5khK2J
-   KadQgLihCNuO4nNQWaJ/64/7eF5IYbSQKUobcrzIBANjPBlhssS0u5Y0u
-   KJJ7k/rvD7QD8ljm38XMKh7cwJGp+8egjFea6tZ/7pAH5rI/iTR+kYQIE
-   PH5mv71sDwIIDTymhP5oQxAt+ue/h1EdDUgph2zRNFfajQ5A/TA6s36op
-   HMpOWObYkE6/dFDp/uRzeHNMJXkVsr1rTnXWp1k+NszSpFCHQ81PevHIU
-   4OsvhGOxz4MmPohyvYfvqalgrI6frSOrEbDYd+3m6MdHZb8hkiEcuNQWY
-   A==;
-IronPort-SDR: 8TQzuXzz/8mJyr/azurBrlfthpxyyoTTxIu05ufEn02nRgkanca6YK7cG7w1M6fVRVKWH8ntZ1
- jOqsB30idvlw1GF21boaQpvnP7PUgRMhGXzZS/GPRM/xJhDhFTTyYfpF08zIA48eAX2u2WlCb+
- z0sANrLy3b+vqolyB7RudlthnLhQ/aEFOzgTN2qzpbEKd68ipfrd1kwwShUUODpH6xrTLc6dDQ
- MtN1oz2ri4C15phAhdzaYuEgx7z7znK26SiKpJqFuhvLGL8u+39hA9oBhykTFrEc6QxxOcNTqP
- 6ug=
-X-IronPort-AV: E=Sophos;i="5.81,259,1610434800"; 
-   d="scan'208";a="113292920"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 18 Mar 2021 11:56:58 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Thu, 18 Mar 2021 11:56:58 -0700
-Received: from localhost (10.10.115.15) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.2176.2 via Frontend
- Transport; Thu, 18 Mar 2021 11:56:57 -0700
-Date:   Thu, 18 Mar 2021 19:57:12 +0100
-From:   Horatiu Vultur <horatiu.vultur@microchip.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-CC:     <kernel-janitors@vger.kernel.org>
-Subject: Re: [bug report] net: ocelot: Extend MRP
-Message-ID: <20210318185712.sti3dgni7k725slr@soft-dev3-1.localhost>
-References: <YFNChN/C6JwVAV2t@mwanda>
- <20210318121128.GA21246@kadam>
+        Thu, 18 Mar 2021 14:57:26 -0400
+Received: by mail-oi1-f179.google.com with SMTP id z15so2048420oic.8;
+        Thu, 18 Mar 2021 11:57:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ndTWQxWMaQ8uWEc77N/kRP4OQQx2E++l4s9Oim2oRcU=;
+        b=RCAfxJD8I6uJ659FMEmGiLLlMgjBemPAymZUdNYUMlwFoFdkn4noS+M/H4+as5feDB
+         fmhH1tmfZAIisk5K2TFaA3vbcuHQqVcWmGTW1NCPhGfAaxv4/MVIArUcBOZopso0Vb3s
+         Zy2S/Di3qjgmp9aCLbRo9odjbCsA9ByIpVyVoyl0KO2FGwt9BnVc/jn+3R/iNnjkmtFl
+         kgOiHpC5uYbGh7zKTKmC1lACGob9OK4fpuYNo5+Bsu1fMhtmuKkphCfwCciE4V+FRKL2
+         yZJJm/oxrKXldGjDYYrGYO1CXltkCHQYobG4DBYWv9+7rP6a9r7dgrpGOoRH6cGKYmRA
+         m1vA==
+X-Gm-Message-State: AOAM531jT4m/HcszVbAhdHxc+nzpkw7elWHfJsMJWYhDc3EzTCXDCuFA
+        uWgC4lGtC/0bDhYK5zj/4Lm0xe6hMb5vSzJOreMsfIhJ
+X-Google-Smtp-Source: ABdhPJyBz0jBzMa2nMYKm228ff0yu8NZjN7i2Z/l2AHysD7tXUljAB4QtS/+5uM1uF86sVxSkb09YhJRlM7x1p6lOTo=
+X-Received: by 2002:aca:5fc3:: with SMTP id t186mr3977844oib.69.1616093846293;
+ Thu, 18 Mar 2021 11:57:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-In-Reply-To: <20210318121128.GA21246@kadam>
+References: <20210207224648.8137-1-colin.king@canonical.com>
+In-Reply-To: <20210207224648.8137-1-colin.king@canonical.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 18 Mar 2021 19:57:14 +0100
+Message-ID: <CAJZ5v0ix3iOwe=9X0_RiJ=FT_Qo2dJG14j2LuptK20H1mGYpsw@mail.gmail.com>
+Subject: Re: [PATCH] PM / Domains: Fix integer overflows on u32 bit multiplies
+To:     Colin King <colin.king@canonical.com>
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Marc Titinger <mtitinger+renesas@baylibre.com>,
+        Lina Iyer <lina.iyer@linaro.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The 03/18/2021 15:11, Dan Carpenter wrote:
+On Sun, Feb 7, 2021 at 11:47 PM Colin King <colin.king@canonical.com> wrote:
+>
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> There are three occurrances of u32 variables being multiplied by
+> 1000 using 32 bit multiplies and the result being assigned to a
+> 64 bit signed integer.  These can potentially lead to a 32 bit
+> overflows, so fix this by casting 1000 to a UL first to force
+> a 64 bit multiply hence avoiding the overflow.
+>
+> Addresses-Coverity: ("Unintentional integer overflow")
+> Fixes: 30f604283e05 ("PM / Domains: Allow domain power states to be read from DT")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/base/power/domain.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+> index aaf6c83b5cf6..ddeff69126ff 100644
+> --- a/drivers/base/power/domain.c
+> +++ b/drivers/base/power/domain.c
+> @@ -2831,10 +2831,10 @@ static int genpd_parse_state(struct genpd_power_state *genpd_state,
+>
+>         err = of_property_read_u32(state_node, "min-residency-us", &residency);
+>         if (!err)
+> -               genpd_state->residency_ns = 1000 * residency;
+> +               genpd_state->residency_ns = 1000UL * residency;
 
-Hi Dan,
+Wouldn't it be better to use NSEC_PER_USEC here and below?
 
-> 
-> See also:
-> 
-> drivers/net/ethernet/mscc/ocelot_mrp.c:254 ocelot_mrp_del_ring_role() error: we previously assumed 'ocelot_port' could be null (see line 247)
-> 
-> regards,
-> dan carpenter
-> 
-> On Thu, Mar 18, 2021 at 03:07:32PM +0300, Dan Carpenter wrote:
-> > Hello Horatiu Vultur,
-> >
-> > This is a semi-automatic email about new static checker warnings.
-> >
-> > The patch 7c588c3e96e9: "net: ocelot: Extend MRP" from Mar 16, 2021,
-> > leads to the following Smatch complaint:
-> >
-> >     drivers/net/ethernet/mscc/ocelot_mrp.c:180 ocelot_mrp_del()
-> >     error: we previously assumed 'ocelot_port' could be null (see line 173)
-> >
-> > drivers/net/ethernet/mscc/ocelot_mrp.c
-> >    153  int ocelot_mrp_del(struct ocelot *ocelot, int port,
-> >    154                     const struct switchdev_obj_mrp *mrp)
-> >    155  {
-> >    156          struct ocelot_port *ocelot_port = ocelot->ports[port];
-> >    157          int i;
-> >    158
-> >    159          if (!ocelot_port)
-> >    160                  return -EOPNOTSUPP;
-> >    161
-> >    162          if (ocelot_port->mrp_ring_id != mrp->ring_id)
-> >    163                  return 0;
-> >    164
-> >    165          ocelot_mrp_del_vcap(ocelot, port);
-> >    166          ocelot_mrp_del_vcap(ocelot, port + ocelot->num_phys_ports);
-> >    167
-> >    168          ocelot_port->mrp_ring_id = 0;
-> >    169
-> >    170          for (i = 0; i < ocelot->num_phys_ports; ++i) {
-> >
-> > This loop tries to verify that all the ports have ring_id == 0 otherwise
-> > we return.  It's slightly confusing why this matters.
-
-It is trying to detect if there is any existing MRP ring active on the
-node. A port is part of a MRP ring if mrp_ring_id != 0. If there is no
-MRP ring then we need to remove the entry in the MAC table otherwise
-keep it there.
-
-> >
-> >    171                  ocelot_port = ocelot->ports[i];
-> >    172
-> >    173                        if (!ocelot_port)
-> >                              ^^^^^^^^^^^
-> > Assume the last element of the array is NULL
-> >
-> >    174                                continue;
-> >    175
-> >    176                        if (ocelot_port->mrp_ring_id != 0)
-> >    177                                goto out;
-> >
-> > This would be more clear if instead of a "goto out;" it just did a
-> > direct "return 0;"
-
-I can change this.
-
-> >
-> >    178                }
-> >    179
-> >    180                ocelot_mrp_del_mac(ocelot, ocelot_port);
-> >
-> > We delete the last mac address of all the ring_ids are zero but if the
-> > last port is zero it will crash.
-
-Yep, it should be ocelot->ports[port] as I have done it in the first
-version.
-
-I will send a patch for this.
-
-> >
-> >    181        out:
-> >    182                return 0;
-> >
-> > regards,
-> > dan carpenter
-
--- 
-/Horatiu
+>
+> -       genpd_state->power_on_latency_ns = 1000 * exit_latency;
+> -       genpd_state->power_off_latency_ns = 1000 * entry_latency;
+> +       genpd_state->power_on_latency_ns = 1000UL * exit_latency;
+> +       genpd_state->power_off_latency_ns = 1000UL * entry_latency;
+>         genpd_state->fwnode = &state_node->fwnode;
+>
+>         return 0;
+> --
+> 2.29.2
+>
