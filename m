@@ -5,44 +5,37 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE708C433E6
-	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Mar 2021 13:49:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 094ECC433E0
+	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Mar 2021 13:49:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 921CC64F38
+	by mail.kernel.org (Postfix) with ESMTP id C231964F1B
 	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Mar 2021 13:49:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230293AbhCRNsv (ORCPT
+        id S230190AbhCRNsu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 18 Mar 2021 09:48:51 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:13574 "EHLO
-        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230097AbhCRNs1 (ORCPT
+        Thu, 18 Mar 2021 09:48:50 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:13196 "EHLO
+        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230182AbhCRNsZ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 18 Mar 2021 09:48:27 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
-        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4F1SwP4MpbzQj9Z;
-        Thu, 18 Mar 2021 21:45:57 +0800 (CST)
+        Thu, 18 Mar 2021 09:48:25 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4F1SwR06clzmXWF;
+        Thu, 18 Mar 2021 21:45:59 +0800 (CST)
 Received: from localhost.localdomain (10.175.102.38) by
- DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
- 14.3.498.0; Thu, 18 Mar 2021 21:48:14 +0800
+ DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
+ 14.3.498.0; Thu, 18 Mar 2021 21:48:15 +0800
 From:   'w00385741 <weiyongjun1@huawei.com>
-To:     <weiyongjun1@huawei.com>, Kishon Vijay Abraham I <kishon@ti.com>,
-        "Vinod Koul" <vkoul@kernel.org>,
-        Lars Povlsen <lars.povlsen@microchip.com>,
-        "Steen Hegelund" <Steen.Hegelund@microchip.com>,
-        <UNGLinuxDriver@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Bjarni Jonasson <bjarni.jonasson@microchip.com>,
-        Andrew Lunn <andrew@lunn.ch>
-CC:     <linux-phy@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+To:     <weiyongjun1@huawei.com>, Tony Lindgren <tony@atomide.com>,
+        Russell King <linux@armlinux.org.uk>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-omap@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
         Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH -next] phy: sparx5_serdes: Fix return value check in sparx5_serdes_probe()
-Date:   Thu, 18 Mar 2021 13:56:47 +0000
-Message-ID: <20210318135647.1286295-1-weiyongjun1@huawei.com>
+Subject: [PATCH -next] ARM: OMAP2+: Make symbol 'pdata_quirks_init_clocks' static
+Date:   Thu, 18 Mar 2021 13:56:49 +0000
+Message-ID: <20210318135649.1286347-1-weiyongjun1@huawei.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Type:   text/plain; charset=US-ASCII
@@ -55,32 +48,32 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Wei Yongjun <weiyongjun1@huawei.com>
 
-In case of error, the function devm_ioremap() returns NULL
-pointer not ERR_PTR(). The IS_ERR() test in the return value
-check should be replaced with NULL test.
+The sparse tool complains as follows:
 
-Fixes: 2ff8a1eeb5aa ("phy: Add Sparx5 ethernet serdes PHY driver")
+arch/arm/mach-omap2/pdata-quirks.c:578:1: warning:
+ symbol 'pdata_quirks_init_clocks' was not declared. Should it be static?
+
+This symbol is not used outside of pdata-quirks.c, so this
+commit marks it static.
+
+Fixes: a15de032a72d ("ARM: OMAP2+: Init both prm and prcm nodes early for clocks")
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/phy/microchip/sparx5_serdes.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/mach-omap2/pdata-quirks.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/phy/microchip/sparx5_serdes.c b/drivers/phy/microchip/sparx5_serdes.c
-index 06bcf0c166cf..dd854d825000 100644
---- a/drivers/phy/microchip/sparx5_serdes.c
-+++ b/drivers/phy/microchip/sparx5_serdes.c
-@@ -2438,10 +2438,10 @@ static int sparx5_serdes_probe(struct platform_device *pdev)
+diff --git a/arch/arm/mach-omap2/pdata-quirks.c b/arch/arm/mach-omap2/pdata-quirks.c
+index 3405aa815a24..765809b214e7 100644
+--- a/arch/arm/mach-omap2/pdata-quirks.c
++++ b/arch/arm/mach-omap2/pdata-quirks.c
+@@ -574,7 +574,7 @@ static const char * const pdata_quirks_init_nodes[] = {
+ 	"prm",
+ };
  
- 	iores = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	iomem = devm_ioremap(priv->dev, iores->start, iores->end - iores->start + 1);
--	if (IS_ERR(iomem)) {
-+	if (!iomem) {
- 		dev_err(priv->dev, "Unable to get serdes registers: %s\n",
- 			iores->name);
--		return PTR_ERR(iomem);
-+		return -ENOMEM;
- 	}
- 	for (idx = 0; idx < ARRAY_SIZE(sparx5_serdes_iomap); idx++) {
- 		struct sparx5_serdes_io_resource *iomap = &sparx5_serdes_iomap[idx];
+-void __init
++static void __init
+ pdata_quirks_init_clocks(const struct of_device_id *omap_dt_match_table)
+ {
+ 	struct device_node *np;
 
