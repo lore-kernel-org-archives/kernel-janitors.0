@@ -2,103 +2,113 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99544C433E6
-	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Mar 2021 18:58:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B83C0C433DB
+	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Mar 2021 19:19:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5037F64F1F
-	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Mar 2021 18:58:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90B0564F10
+	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Mar 2021 19:19:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232732AbhCRS5s (ORCPT
+        id S232807AbhCRTTN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 18 Mar 2021 14:57:48 -0400
-Received: from mail-oi1-f179.google.com ([209.85.167.179]:41518 "EHLO
-        mail-oi1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232674AbhCRS50 (ORCPT
+        Thu, 18 Mar 2021 15:19:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33418 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232764AbhCRTSw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 18 Mar 2021 14:57:26 -0400
-Received: by mail-oi1-f179.google.com with SMTP id z15so2048420oic.8;
-        Thu, 18 Mar 2021 11:57:26 -0700 (PDT)
+        Thu, 18 Mar 2021 15:18:52 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 163AAC06174A;
+        Thu, 18 Mar 2021 12:18:52 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id 61so6703911wrm.12;
+        Thu, 18 Mar 2021 12:18:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=/j676tkAgUS/O5dhTPZRodCa+qnUzcgFpT3mbEwnEO8=;
+        b=OK38Ka2J2ptk8WcFkgt1LrbAif1N99+zipc9tGVIg30IwmbnDeYWlzUod0QedwoO9E
+         8uJgkzrJ6ay/82ilO4iQq7kL7RkVI1ULbD2sk5iTVYCSO0DyacQKk4RR2af6QXatwQQG
+         AoPxYNSu3xutbWtwXHC3BGbjeWtxjPI5tynzIQsUwzMOpTKb5PZVTD6IRR93TukyGKcE
+         yn8nopmVhiB5am74Gm9v6m2GH+sae4aDtAtaaIzaWJJI4f6Jg5rI1+oIlVD8/hK5k6oH
+         Gf02pR1dg/nPXiobhIgwD/+uAIAx2Jz8oB03vumeLnupRCK2bxnnjZ8x3hOQCq2jzDeR
+         5MAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ndTWQxWMaQ8uWEc77N/kRP4OQQx2E++l4s9Oim2oRcU=;
-        b=RCAfxJD8I6uJ659FMEmGiLLlMgjBemPAymZUdNYUMlwFoFdkn4noS+M/H4+as5feDB
-         fmhH1tmfZAIisk5K2TFaA3vbcuHQqVcWmGTW1NCPhGfAaxv4/MVIArUcBOZopso0Vb3s
-         Zy2S/Di3qjgmp9aCLbRo9odjbCsA9ByIpVyVoyl0KO2FGwt9BnVc/jn+3R/iNnjkmtFl
-         kgOiHpC5uYbGh7zKTKmC1lACGob9OK4fpuYNo5+Bsu1fMhtmuKkphCfwCciE4V+FRKL2
-         yZJJm/oxrKXldGjDYYrGYO1CXltkCHQYobG4DBYWv9+7rP6a9r7dgrpGOoRH6cGKYmRA
-         m1vA==
-X-Gm-Message-State: AOAM531jT4m/HcszVbAhdHxc+nzpkw7elWHfJsMJWYhDc3EzTCXDCuFA
-        uWgC4lGtC/0bDhYK5zj/4Lm0xe6hMb5vSzJOreMsfIhJ
-X-Google-Smtp-Source: ABdhPJyBz0jBzMa2nMYKm228ff0yu8NZjN7i2Z/l2AHysD7tXUljAB4QtS/+5uM1uF86sVxSkb09YhJRlM7x1p6lOTo=
-X-Received: by 2002:aca:5fc3:: with SMTP id t186mr3977844oib.69.1616093846293;
- Thu, 18 Mar 2021 11:57:26 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210207224648.8137-1-colin.king@canonical.com>
-In-Reply-To: <20210207224648.8137-1-colin.king@canonical.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 18 Mar 2021 19:57:14 +0100
-Message-ID: <CAJZ5v0ix3iOwe=9X0_RiJ=FT_Qo2dJG14j2LuptK20H1mGYpsw@mail.gmail.com>
-Subject: Re: [PATCH] PM / Domains: Fix integer overflows on u32 bit multiplies
-To:     Colin King <colin.king@canonical.com>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Marc Titinger <mtitinger+renesas@baylibre.com>,
-        Lina Iyer <lina.iyer@linaro.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=/j676tkAgUS/O5dhTPZRodCa+qnUzcgFpT3mbEwnEO8=;
+        b=DjecK14S0b5WfkqFWeN+6Pi36eNSEj06u6OA+R8uVLtT3txoXDhRA8Na1L+sfdH6sk
+         q44fQgqfW9sWOI1qC7uK+UO3jBSFBmfpOdtnub9xMrUiUXPj42+L880O4pU0QNSl5teE
+         nj6XCFhDNMJpBrEqLE00TEL0pRHHB5Ann0+pyP8OzEHIzpqo5tUMZA1UWK9+E6rpAzcJ
+         SmxH55WOsiYnJKVTWYgJjEeXtw+T+sJ1RAhJXV1r6zyPDXWchjjvkBlMga56Ln+WFXe3
+         P4zvpKrdVYS5Hte/Btq/i8eDig1G99u2GngpDVAx6JZm39FTpDvWrSLEYqutZAQstHXX
+         N/eg==
+X-Gm-Message-State: AOAM532Dgmx5zHkpz/JYmSk1WK2di7FQG8yf1OCAGtd4x7rjiYW9llMd
+        MO1DUwxWro6W7qtbu2VcpBw=
+X-Google-Smtp-Source: ABdhPJyjMqFvq1mhgVW6jYL8JDgcCGNjgp2h7ACbK2MoWMoDBFZSVlZTe92JwYay2y0GZuUhhUTHww==
+X-Received: by 2002:adf:eb8e:: with SMTP id t14mr831861wrn.20.1616095130864;
+        Thu, 18 Mar 2021 12:18:50 -0700 (PDT)
+Received: from LEGION ([111.119.187.17])
+        by smtp.gmail.com with ESMTPSA id c2sm3256411wme.15.2021.03.18.12.18.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Mar 2021 12:18:50 -0700 (PDT)
+Message-ID: <2f7b725b755350136b0ba8cedd3e342f8234834c.camel@gmail.com>
+Subject: Re: [PATCH][next] loop: Fix missing max_active argument in
+ alloc_workqueue call
+From:   Muhammad Usama Anjum <musamaanjum@gmail.com>
+To:     Colin King <colin.king@canonical.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Dan Schatzberg <schatzberg.dan@gmail.com>,
+        linux-block@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 19 Mar 2021 00:18:25 +0500
+In-Reply-To: <20210318151626.17442-1-colin.king@canonical.com>
+References: <20210318151626.17442-1-colin.king@canonical.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.4-0ubuntu1 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, Feb 7, 2021 at 11:47 PM Colin King <colin.king@canonical.com> wrote:
->
+On Thu, 2021-03-18 at 15:16 +0000, Colin King wrote:
 > From: Colin Ian King <colin.king@canonical.com>
->
-> There are three occurrances of u32 variables being multiplied by
-> 1000 using 32 bit multiplies and the result being assigned to a
-> 64 bit signed integer.  These can potentially lead to a 32 bit
-> overflows, so fix this by casting 1000 to a UL first to force
-> a 64 bit multiply hence avoiding the overflow.
->
-> Addresses-Coverity: ("Unintentional integer overflow")
-> Fixes: 30f604283e05 ("PM / Domains: Allow domain power states to be read from DT")
+> 
+> The 3rd argument to alloc_workqueue should be the max_active count,
+> however currently it is the lo->lo_number that is intended for the
+> loop%d number. Fix this by adding in the missing max_active count.
+> 
+> Addresses-Coverity: ("Missing argument to printf")
+> Fixes: 08ad7f822739 ("loop: Use worker per cgroup instead of kworker")
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
->  drivers/base/power/domain.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-> index aaf6c83b5cf6..ddeff69126ff 100644
-> --- a/drivers/base/power/domain.c
-> +++ b/drivers/base/power/domain.c
-> @@ -2831,10 +2831,10 @@ static int genpd_parse_state(struct genpd_power_state *genpd_state,
->
->         err = of_property_read_u32(state_node, "min-residency-us", &residency);
->         if (!err)
-> -               genpd_state->residency_ns = 1000 * residency;
-> +               genpd_state->residency_ns = 1000UL * residency;
+>  drivers/block/loop.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+> index f2f9e4127847..ee2a6c1bc093 100644
+> --- a/drivers/block/loop.c
+> +++ b/drivers/block/loop.c
+> @@ -1192,7 +1192,7 @@ static int loop_configure(struct loop_device *lo, fmode_t mode,
+>  	lo->workqueue = alloc_workqueue("loop%d",
+>  					WQ_UNBOUND | WQ_FREEZABLE |
+>  					WQ_MEM_RECLAIM,
+> -					lo->lo_number);
+> +					1, lo->lo_number);
+>  	if (!lo->workqueue) {
+>  		error = -ENOMEM;
+>  		goto out_unlock;
 
-Wouldn't it be better to use NSEC_PER_USEC here and below?
+Nice catch.
 
->
-> -       genpd_state->power_on_latency_ns = 1000 * exit_latency;
-> -       genpd_state->power_off_latency_ns = 1000 * entry_latency;
-> +       genpd_state->power_on_latency_ns = 1000UL * exit_latency;
-> +       genpd_state->power_off_latency_ns = 1000UL * entry_latency;
->         genpd_state->fwnode = &state_node->fwnode;
->
->         return 0;
-> --
-> 2.29.2
->
+Reviewed-by: Muhammad Usama Anjum <musamaanjum@gmail.com>
+
+
+
