@@ -2,150 +2,72 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3954C433E6
-	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Mar 2021 14:45:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04C89C433DB
+	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Mar 2021 15:17:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6DB2B64F24
-	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Mar 2021 14:45:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0D6264E90
+	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Mar 2021 15:17:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231153AbhCROob (ORCPT
+        id S231533AbhCRPQy (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 18 Mar 2021 10:44:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57782 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230118AbhCROoV (ORCPT
+        Thu, 18 Mar 2021 11:16:54 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:41979 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230282AbhCRPQ2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 18 Mar 2021 10:44:21 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54353C06174A
-        for <kernel-janitors@vger.kernel.org>; Thu, 18 Mar 2021 07:44:21 -0700 (PDT)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mtr@pengutronix.de>)
-        id 1lMtsl-0006HQ-CO; Thu, 18 Mar 2021 15:44:15 +0100
-Received: from mtr by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <mtr@pengutronix.de>)
-        id 1lMtsk-00064n-R6; Thu, 18 Mar 2021 15:44:14 +0100
-Date:   Thu, 18 Mar 2021 15:44:14 +0100
-From:   Michael Tretter <m.tretter@pengutronix.de>
-To:     Colin Ian King <colin.king@canonical.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] soc: xilinx: vcu: remove deadcode on null divider
- check
-Message-ID: <20210318144414.GQ12621@pengutronix.de>
-References: <20210210184938.146124-1-colin.king@canonical.com>
- <161301409895.1254594.6980739457487251623@swboyd.mtv.corp.google.com>
- <20210211073906.GC30300@pengutronix.de>
- <161307031421.1254594.40010291545314425@swboyd.mtv.corp.google.com>
- <eef269e5-e16d-90ef-d765-8f50d7e2176a@canonical.com>
+        Thu, 18 Mar 2021 11:16:28 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lMuNv-0001rJ-15; Thu, 18 Mar 2021 15:16:27 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Dan Schatzberg <schatzberg.dan@gmail.com>,
+        linux-block@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] loop: Fix missing max_active argument in alloc_workqueue call
+Date:   Thu, 18 Mar 2021 15:16:26 +0000
+Message-Id: <20210318151626.17442-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <eef269e5-e16d-90ef-d765-8f50d7e2176a@canonical.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 15:03:16 up 28 days, 17:27, 89 users,  load average: 0.47, 0.29,
- 0.15
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: mtr@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 18 Mar 2021 12:48:06 +0000, Colin Ian King wrote:
-> On 11/02/2021 19:05, Stephen Boyd wrote:
-> > Quoting Michael Tretter (2021-02-10 23:39:06)
-> >> On Wed, 10 Feb 2021 19:28:18 -0800, Stephen Boyd wrote:
-> >>> Quoting Colin King (2021-02-10 10:49:38)
-> >>>> From: Colin Ian King <colin.king@canonical.com>
-> >>>>
-> >>>> The pointer 'divider' has previously been null checked followed by
-> >>>> a return, hence the subsequent null check is redundant deadcode
-> >>>> that can be removed.  Clean up the code and remove it.
-> >>>>
-> >>>> Fixes: 9c789deea206 ("soc: xilinx: vcu: implement clock provider for output clocks")
-> >>>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> >>>> ---
-> >>>>  drivers/clk/xilinx/xlnx_vcu.c | 3 ---
-> >>>>  1 file changed, 3 deletions(-)
-> >>>>
-> >>>> diff --git a/drivers/clk/xilinx/xlnx_vcu.c b/drivers/clk/xilinx/xlnx_vcu.c
-> >>>> index d66b1315114e..607936d7a413 100644
-> >>>> --- a/drivers/clk/xilinx/xlnx_vcu.c
-> >>>> +++ b/drivers/clk/xilinx/xlnx_vcu.c
-> >>>> @@ -512,9 +512,6 @@ static void xvcu_clk_hw_unregister_leaf(struct clk_hw *hw)
-> >>>>  
-> >>>>         mux = clk_hw_get_parent(divider);
-> >>>>         clk_hw_unregister_mux(mux);
-> >>>> -       if (!divider)
-> >>>> -               return;
-> >>>> -
-> >>>
-> >>> This code is pretty confusing. Waiting for m.tretter@pengutronix.de to
-> >>> reply
-> >>
-> >> Can you elaborate what you find confusing about this code. I would gladly try
-> >> to clarify and improve the code.
-> > 
-> > The fact that pointers are being checked and then bailing out of the
-> > function early, vs. doing something if the pointer is non-NULL.
-> > 
-> >>
-> >> What happens here is that the driver registers a mux -> divider -> gate chain
-> >> for each output clock, but only stores the gate clock. When unregistering the
-> >> clocks, the driver starts at the gate and walks up to the mux while
-> >> unregistering the clocks.
-> >>
-> 
-> OK, so I think I understand this better, should the order of
-> unregisteration be as follows:
-> 
-> diff --git a/drivers/clk/xilinx/xlnx_vcu.c b/drivers/clk/xilinx/xlnx_vcu.c
-> index d66b1315114e..66bac8421460 100644
-> --- a/drivers/clk/xilinx/xlnx_vcu.c
-> +++ b/drivers/clk/xilinx/xlnx_vcu.c
-> @@ -511,11 +511,11 @@ static void xvcu_clk_hw_unregister_leaf(struct
-> clk_hw *hw)
->                 return;
-> 
->         mux = clk_hw_get_parent(divider);
-> -       clk_hw_unregister_mux(mux);
-> -       if (!divider)
-> +       clk_hw_unregister_mux(divider);
+From: Colin Ian King <colin.king@canonical.com>
 
-The order is correct, but this must be:
+The 3rd argument to alloc_workqueue should be the max_active count,
+however currently it is the lo->lo_number that is intended for the
+loop%d number. Fix this by adding in the missing max_active count.
 
-	clk_hw_unregister_divider(divider);
+Addresses-Coverity: ("Missing argument to printf")
+Fixes: 08ad7f822739 ("loop: Use worker per cgroup instead of kworker")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/block/loop.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> +       if (!mux)
->                 return;
-> 
-> -       clk_hw_unregister_divider(divider);
-> +       clk_hw_unregister_divider(mux);
-> 
+diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+index f2f9e4127847..ee2a6c1bc093 100644
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -1192,7 +1192,7 @@ static int loop_configure(struct loop_device *lo, fmode_t mode,
+ 	lo->workqueue = alloc_workqueue("loop%d",
+ 					WQ_UNBOUND | WQ_FREEZABLE |
+ 					WQ_MEM_RECLAIM,
+-					lo->lo_number);
++					1, lo->lo_number);
+ 	if (!lo->workqueue) {
+ 		error = -ENOMEM;
+ 		goto out_unlock;
+-- 
+2.30.2
 
-	clk_hw_unregister_mux(mux);
-
-Taking the confusion expressed by Stephen into account, I rewrote the entire
-function to clarify what is happening in this function. Please take a look
-that patch [0] and tell me, if it is now easier to understand.
-
-[0] 20210318144230.3438009-1-m.tretter@pengutronix.de
-
-Michael
