@@ -2,117 +2,107 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF29DC433DB
-	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Mar 2021 12:49:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40CECC433E9
+	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Mar 2021 13:10:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B2E6964F53
-	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Mar 2021 12:49:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03C3F64EED
+	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Mar 2021 13:10:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231270AbhCRMsk (ORCPT
+        id S231354AbhCRNKY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 18 Mar 2021 08:48:40 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:36890 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231316AbhCRMsI (ORCPT
+        Thu, 18 Mar 2021 09:10:24 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:37604 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231220AbhCRNJz (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 18 Mar 2021 08:48:08 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212])
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1lMs4M-0007re-NI; Thu, 18 Mar 2021 12:48:06 +0000
-Subject: Re: [PATCH][next] soc: xilinx: vcu: remove deadcode on null divider
- check
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Tretter <m.tretter@pengutronix.de>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210210184938.146124-1-colin.king@canonical.com>
- <161301409895.1254594.6980739457487251623@swboyd.mtv.corp.google.com>
- <20210211073906.GC30300@pengutronix.de>
- <161307031421.1254594.40010291545314425@swboyd.mtv.corp.google.com>
-From:   Colin Ian King <colin.king@canonical.com>
-Message-ID: <eef269e5-e16d-90ef-d765-8f50d7e2176a@canonical.com>
-Date:   Thu, 18 Mar 2021 12:48:06 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.0
+        Thu, 18 Mar 2021 09:09:55 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12ID4QcE065919;
+        Thu, 18 Mar 2021 13:09:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
+ bh=qhivaSffjcPONjbtNTtUJv8Md5/DStyaFkCE2sLu96s=;
+ b=wISeVLclV+h9kAkrAuA4YbGccKorpd1oMg3pfgwkoaz6rjR6rlZeJNCYD0rV0niFz8pK
+ peREuocj0aOiJNlSnG/kRzxelbAfyxcp2iPEfOgu27qW8msLhNov1wVNUkxj4ropBjOG
+ KpOAQJOeu3s2oHVsMxRIh8gukSIoKnMoOopwBwlXa7bazMOwwCZgdMNLontey2gX0Uma
+ OY4O9FsEVfHTJkB7LK90iJNReCL5H8HeCtC21ztUAd8vmEsRjsIxs6Mzt8mxGyYg6iyQ
+ aizU2YKhPkCPyqnuEa5Lm41FiVwMG/lKntU7dG6qD7RcmvNetKe12LGWakjAtyUVlM1T aw== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 37a4ekvbu5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 18 Mar 2021 13:09:48 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12ID67hj027727;
+        Thu, 18 Mar 2021 13:09:46 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3030.oracle.com with ESMTP id 3797b2wju1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 18 Mar 2021 13:09:46 +0000
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 12ID9jKJ031311;
+        Thu, 18 Mar 2021 13:09:45 GMT
+Received: from mwanda (/102.36.221.92)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 18 Mar 2021 06:09:44 -0700
+Date:   Thu, 18 Mar 2021 16:09:37 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Namjae Jeon <namjae.jeon@samsung.com>
+Cc:     Hyunchul Lee <hyc.lee@gmail.com>,
+        Steve French <stfrench@microsoft.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] cifsd: fix a IS_ERR() vs NULL bug
+Message-ID: <YFNREQvcyecq3NMp@mwanda>
 MIME-Version: 1.0
-In-Reply-To: <161307031421.1254594.40010291545314425@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+X-Proofpoint-IMR: 1
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9926 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 spamscore=0 bulkscore=0
+ malwarescore=0 adultscore=0 mlxscore=0 mlxlogscore=999 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2103180097
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9926 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 malwarescore=0 bulkscore=0
+ impostorscore=0 lowpriorityscore=0 mlxlogscore=999 spamscore=0
+ priorityscore=1501 adultscore=0 phishscore=0 suspectscore=0 clxscore=1011
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2103180097
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 11/02/2021 19:05, Stephen Boyd wrote:
-> Quoting Michael Tretter (2021-02-10 23:39:06)
->> On Wed, 10 Feb 2021 19:28:18 -0800, Stephen Boyd wrote:
->>> Quoting Colin King (2021-02-10 10:49:38)
->>>> From: Colin Ian King <colin.king@canonical.com>
->>>>
->>>> The pointer 'divider' has previously been null checked followed by
->>>> a return, hence the subsequent null check is redundant deadcode
->>>> that can be removed.  Clean up the code and remove it.
->>>>
->>>> Fixes: 9c789deea206 ("soc: xilinx: vcu: implement clock provider for output clocks")
->>>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->>>> ---
->>>>  drivers/clk/xilinx/xlnx_vcu.c | 3 ---
->>>>  1 file changed, 3 deletions(-)
->>>>
->>>> diff --git a/drivers/clk/xilinx/xlnx_vcu.c b/drivers/clk/xilinx/xlnx_vcu.c
->>>> index d66b1315114e..607936d7a413 100644
->>>> --- a/drivers/clk/xilinx/xlnx_vcu.c
->>>> +++ b/drivers/clk/xilinx/xlnx_vcu.c
->>>> @@ -512,9 +512,6 @@ static void xvcu_clk_hw_unregister_leaf(struct clk_hw *hw)
->>>>  
->>>>         mux = clk_hw_get_parent(divider);
->>>>         clk_hw_unregister_mux(mux);
->>>> -       if (!divider)
->>>> -               return;
->>>> -
->>>
->>> This code is pretty confusing. Waiting for m.tretter@pengutronix.de to
->>> reply
->>
->> Can you elaborate what you find confusing about this code. I would gladly try
->> to clarify and improve the code.
-> 
-> The fact that pointers are being checked and then bailing out of the
-> function early, vs. doing something if the pointer is non-NULL.
-> 
->>
->> What happens here is that the driver registers a mux -> divider -> gate chain
->> for each output clock, but only stores the gate clock. When unregistering the
->> clocks, the driver starts at the gate and walks up to the mux while
->> unregistering the clocks.
->>
+The smb_direct_alloc_sendmsg() function never returns NULL, it only
+returns error pointers so the check needs to be updated.
 
-OK, so I think I understand this better, should the order of
-unregisteration be as follows:
+Fixes: cabcebc31de4 ("cifsd: introduce SMB3 kernel server")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ fs/cifsd/transport_rdma.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/xilinx/xlnx_vcu.c b/drivers/clk/xilinx/xlnx_vcu.c
-index d66b1315114e..66bac8421460 100644
---- a/drivers/clk/xilinx/xlnx_vcu.c
-+++ b/drivers/clk/xilinx/xlnx_vcu.c
-@@ -511,11 +511,11 @@ static void xvcu_clk_hw_unregister_leaf(struct
-clk_hw *hw)
-                return;
+diff --git a/fs/cifsd/transport_rdma.c b/fs/cifsd/transport_rdma.c
+index 1698f7ed9c2f..638b551019a1 100644
+--- a/fs/cifsd/transport_rdma.c
++++ b/fs/cifsd/transport_rdma.c
+@@ -997,8 +997,8 @@ static int smb_direct_create_header(struct smb_direct_transport *t,
+ 	int ret;
+ 
+ 	sendmsg = smb_direct_alloc_sendmsg(t);
+-	if (!sendmsg)
+-		return -ENOMEM;
++	if (IS_ERR(sendmsg))
++		return PTR_ERR(sendmsg);
+ 
+ 	/* Fill in the packet header */
+ 	packet = (struct smb_direct_data_transfer *)sendmsg->packet;
+-- 
+2.30.2
 
-        mux = clk_hw_get_parent(divider);
--       clk_hw_unregister_mux(mux);
--       if (!divider)
-+       clk_hw_unregister_mux(divider);
-+       if (!mux)
-                return;
-
--       clk_hw_unregister_divider(divider);
-+       clk_hw_unregister_divider(mux);
