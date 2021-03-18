@@ -2,113 +2,93 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B83C0C433DB
-	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Mar 2021 19:19:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73848C433E6
+	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Mar 2021 20:12:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 90B0564F10
-	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Mar 2021 19:19:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22C2A64F18
+	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Mar 2021 20:12:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232807AbhCRTTN (ORCPT
+        id S233014AbhCRUMT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 18 Mar 2021 15:19:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33418 "EHLO
+        Thu, 18 Mar 2021 16:12:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44954 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232764AbhCRTSw (ORCPT
+        with ESMTP id S233069AbhCRUMN (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 18 Mar 2021 15:18:52 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 163AAC06174A;
-        Thu, 18 Mar 2021 12:18:52 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id 61so6703911wrm.12;
-        Thu, 18 Mar 2021 12:18:52 -0700 (PDT)
+        Thu, 18 Mar 2021 16:12:13 -0400
+Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 799F6C06175F
+        for <kernel-janitors@vger.kernel.org>; Thu, 18 Mar 2021 13:12:12 -0700 (PDT)
+Received: by mail-io1-xd2a.google.com with SMTP id n21so3662832ioa.7
+        for <kernel-janitors@vger.kernel.org>; Thu, 18 Mar 2021 13:12:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=/j676tkAgUS/O5dhTPZRodCa+qnUzcgFpT3mbEwnEO8=;
-        b=OK38Ka2J2ptk8WcFkgt1LrbAif1N99+zipc9tGVIg30IwmbnDeYWlzUod0QedwoO9E
-         8uJgkzrJ6ay/82ilO4iQq7kL7RkVI1ULbD2sk5iTVYCSO0DyacQKk4RR2af6QXatwQQG
-         AoPxYNSu3xutbWtwXHC3BGbjeWtxjPI5tynzIQsUwzMOpTKb5PZVTD6IRR93TukyGKcE
-         yn8nopmVhiB5am74Gm9v6m2GH+sae4aDtAtaaIzaWJJI4f6Jg5rI1+oIlVD8/hK5k6oH
-         Gf02pR1dg/nPXiobhIgwD/+uAIAx2Jz8oB03vumeLnupRCK2bxnnjZ8x3hOQCq2jzDeR
-         5MAg==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=fE3QA5oVISAeniCnc22I06REx88dvUk/H2NhLG/WPYo=;
+        b=wULFbTjKPWg+ouVh7oEGiL4gc4ocuk2ih3Of1Twrp/HfdqdikFV9eMhCQ41D/DIPIN
+         UUgWZxBPZl5QZrBKvJCB42RpsfSao/OD5syRUWEvqWOPNxBOW7oEmbdbmENHbPwdH01/
+         T/b9pUYv+Kdgz7YbrsnM6fQy9kjOypiw1decRFdA/oFGaA2Y2by5QzhS2HueBguixCWn
+         uSI2CiFYE+fsV5WnnN9iKf7V3vo/WdPVQ7rEdhoL0jVUvi7MGcn3D4+WV8x4XE5bfYEI
+         VM2ulO8gK2DsZUeTaEGjIXaDiVzlefBAhMgG65/s5yymMBsEdplA7Tbrzg+kmWW8RSeq
+         DmLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=/j676tkAgUS/O5dhTPZRodCa+qnUzcgFpT3mbEwnEO8=;
-        b=DjecK14S0b5WfkqFWeN+6Pi36eNSEj06u6OA+R8uVLtT3txoXDhRA8Na1L+sfdH6sk
-         q44fQgqfW9sWOI1qC7uK+UO3jBSFBmfpOdtnub9xMrUiUXPj42+L880O4pU0QNSl5teE
-         nj6XCFhDNMJpBrEqLE00TEL0pRHHB5Ann0+pyP8OzEHIzpqo5tUMZA1UWK9+E6rpAzcJ
-         SmxH55WOsiYnJKVTWYgJjEeXtw+T+sJ1RAhJXV1r6zyPDXWchjjvkBlMga56Ln+WFXe3
-         P4zvpKrdVYS5Hte/Btq/i8eDig1G99u2GngpDVAx6JZm39FTpDvWrSLEYqutZAQstHXX
-         N/eg==
-X-Gm-Message-State: AOAM532Dgmx5zHkpz/JYmSk1WK2di7FQG8yf1OCAGtd4x7rjiYW9llMd
-        MO1DUwxWro6W7qtbu2VcpBw=
-X-Google-Smtp-Source: ABdhPJyjMqFvq1mhgVW6jYL8JDgcCGNjgp2h7ACbK2MoWMoDBFZSVlZTe92JwYay2y0GZuUhhUTHww==
-X-Received: by 2002:adf:eb8e:: with SMTP id t14mr831861wrn.20.1616095130864;
-        Thu, 18 Mar 2021 12:18:50 -0700 (PDT)
-Received: from LEGION ([111.119.187.17])
-        by smtp.gmail.com with ESMTPSA id c2sm3256411wme.15.2021.03.18.12.18.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Mar 2021 12:18:50 -0700 (PDT)
-Message-ID: <2f7b725b755350136b0ba8cedd3e342f8234834c.camel@gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=fE3QA5oVISAeniCnc22I06REx88dvUk/H2NhLG/WPYo=;
+        b=O2mErCT5kgoLdpw6Cbywi8WcEct6cd4B+/D99KE41wB4P/+2GOUjVdu0Tnq6gnosPI
+         hUbH1EMNfa7jqFxxpk0Uc0sm6sxLPkbawv3VwjKJDOgb7IEHzugysDTCTMfw5Up/UGwB
+         lMTiCDLlF4ui+34ojJH2ikh89jThbaaRAdE2/l/fEyRJTHl/LrP8utAkDeDXNvyJsVaD
+         Cmci/4i7ey+ukPLhhSJhwtY/CLOfz4XSeJQWhwLnlvAM1md4QnJVilt9CDOuphzDReL1
+         YYaZWsD1QyZmUlng/NXF6JGwTDi9XbIOyy0hvLFBxb937E768KOfZ284WiCy5ZHAdK0+
+         qvjQ==
+X-Gm-Message-State: AOAM533dEiPh5hxo/2Kqy/YDNGLmejtADA0fD0f9VDZmdpS2NQTBXjZQ
+        sbveOHYRavi4lfc7mlsRfUUBtw==
+X-Google-Smtp-Source: ABdhPJyZGUS1QzyLSU5oGUZFvE13ExXRv25cksaZq2RdSXMBwp4hgAYBpiZvjWMNRU0K6YCiiXA1gA==
+X-Received: by 2002:a05:6638:3399:: with SMTP id h25mr8490761jav.15.1616098331905;
+        Thu, 18 Mar 2021 13:12:11 -0700 (PDT)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id c9sm1580785ili.34.2021.03.18.13.12.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 18 Mar 2021 13:12:11 -0700 (PDT)
 Subject: Re: [PATCH][next] loop: Fix missing max_active argument in
  alloc_workqueue call
-From:   Muhammad Usama Anjum <musamaanjum@gmail.com>
 To:     Colin King <colin.king@canonical.com>,
-        Jens Axboe <axboe@kernel.dk>,
         Dan Schatzberg <schatzberg.dan@gmail.com>,
         linux-block@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 19 Mar 2021 00:18:25 +0500
-In-Reply-To: <20210318151626.17442-1-colin.king@canonical.com>
 References: <20210318151626.17442-1-colin.king@canonical.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.4-0ubuntu1 
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <13a1d187-4d6d-9e06-b94a-553d872de756@kernel.dk>
+Date:   Thu, 18 Mar 2021 14:12:10 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
+In-Reply-To: <20210318151626.17442-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 2021-03-18 at 15:16 +0000, Colin King wrote:
+On 3/18/21 9:16 AM, Colin King wrote:
 > From: Colin Ian King <colin.king@canonical.com>
 > 
 > The 3rd argument to alloc_workqueue should be the max_active count,
 > however currently it is the lo->lo_number that is intended for the
 > loop%d number. Fix this by adding in the missing max_active count.
-> 
-> Addresses-Coverity: ("Missing argument to printf")
-> Fixes: 08ad7f822739 ("loop: Use worker per cgroup instead of kworker")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/block/loop.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-> index f2f9e4127847..ee2a6c1bc093 100644
-> --- a/drivers/block/loop.c
-> +++ b/drivers/block/loop.c
-> @@ -1192,7 +1192,7 @@ static int loop_configure(struct loop_device *lo, fmode_t mode,
->  	lo->workqueue = alloc_workqueue("loop%d",
->  					WQ_UNBOUND | WQ_FREEZABLE |
->  					WQ_MEM_RECLAIM,
-> -					lo->lo_number);
-> +					1, lo->lo_number);
->  	if (!lo->workqueue) {
->  		error = -ENOMEM;
->  		goto out_unlock;
 
-Nice catch.
+Dan, please fold this (or something similar) in when you're redoing the
+series.
 
-Reviewed-by: Muhammad Usama Anjum <musamaanjum@gmail.com>
-
-
+-- 
+Jens Axboe
 
