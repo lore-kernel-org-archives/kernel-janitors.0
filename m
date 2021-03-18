@@ -2,104 +2,134 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DA0CC433E0
-	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Mar 2021 10:40:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9F71C433E0
+	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Mar 2021 12:08:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B59C364F40
-	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Mar 2021 10:40:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C76A64E89
+	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Mar 2021 12:08:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230170AbhCRKj7 (ORCPT
+        id S229747AbhCRMIN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 18 Mar 2021 06:39:59 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:51640 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230163AbhCRKjt (ORCPT
+        Thu, 18 Mar 2021 08:08:13 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:52088 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229745AbhCRMHo (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 18 Mar 2021 06:39:49 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12IAYPZY034662;
-        Thu, 18 Mar 2021 10:39:45 GMT
+        Thu, 18 Mar 2021 08:07:44 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12IC5Z4Y053534;
+        Thu, 18 Mar 2021 12:07:42 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
  : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=GD8WYS+iipNBOR8UEjBiCP0s/hMSdX/AjNN8eYeXovs=;
- b=NxtqH075myWPN900Z475TgFevSXeGtboWFXpON74LxUnlljtkQzj2VBeJC7XmO1aUxVO
- jjNWS317YoPc73bcB5QyULew+opWHbC9lHhcKiNWx1YJBiOMKNH6d45+/hoRO1ABbYbn
- mS5/hbbKkLxOvshONM4FcF8KGt/MBLwXjmm8fB6vE6jB7TSW77Z6Gr+ynz4aSYOS0/N3
- yj9BOupBah7PTCOTLMAc20ixdnpFNN2olFMaqusFdAqJq4s2gQZkHamC5aSzsP2lHkRx
- h2Di7ybTo+vJUf00KcJlOOFg8tHNscWPtsbvLLm8VYFknc/W7eOeJhe4q3sfZdB2B2rK sA== 
+ bh=JCJ0C2eYxUhyo1Loq0IHU2gZfUe2B2CX20eWKKywjzE=;
+ b=smCZdvvwLY70939p1uBL3mWNrMtN+wyYN8M9v8BJ/D96OQty7QKDZyH0GvwdE/73MXDm
+ +b75kuaEnIwf/Q0vishqPEkbTCq2GLcnKWsj6sxqXWr0vswu2hXWtPOuyfaMJ/k2ooPQ
+ WU+3hhmfr88Pqd8xwAy844u+KcbHNN3qaH7Hpiz5QpEdv0HDLX64Chmg1pN9NJyL/v2b
+ a/bf8ThHZijbh30jPZN0JmgXPtHZYpL8YYFKzqb27pnZSZmzMDUM+Sz5HRD9RxDpszYz
+ xHu4iaquO3b8Xd9JakKVh8fX27KBol4FsKD8uyUMY9Spf1uk2W9kKahcSsy6ITn8Sfg5 fQ== 
 Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2130.oracle.com with ESMTP id 37a4ekuygc-1
+        by aserp2120.oracle.com with ESMTP id 378nbmf8mb-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 18 Mar 2021 10:39:45 +0000
+        Thu, 18 Mar 2021 12:07:42 +0000
 Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12IAYm9G093049;
-        Thu, 18 Mar 2021 10:39:43 GMT
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12IC6noK019643;
+        Thu, 18 Mar 2021 12:07:40 GMT
 Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3030.oracle.com with ESMTP id 3796yw1hw9-1
+        by aserp3030.oracle.com with ESMTP id 3796yw48x4-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 18 Mar 2021 10:39:43 +0000
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 12IAdfl9017260;
-        Thu, 18 Mar 2021 10:39:42 GMT
-Received: from mwanda (/10.175.214.245)
+        Thu, 18 Mar 2021 12:07:40 +0000
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 12IC7dE1019203;
+        Thu, 18 Mar 2021 12:07:39 GMT
+Received: from mwanda (/102.36.221.92)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 18 Mar 2021 10:39:41 +0000
-Date:   Thu, 18 Mar 2021 13:39:34 +0300
+        with ESMTP ; Thu, 18 Mar 2021 12:07:38 +0000
+Date:   Thu, 18 Mar 2021 15:07:32 +0300
 From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Michael Zaidman <michael.zaidman@gmail.com>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-i2c@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] HID: ft260: fix an error message in ft260_i2c_write_read()
-Message-ID: <YFMt5pml1voGQkUy@mwanda>
+To:     horatiu.vultur@microchip.com
+Cc:     kernel-janitors@vger.kernel.org
+Subject: [bug report] net: ocelot: Extend MRP
+Message-ID: <YFNChN/C6JwVAV2t@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
 X-Proofpoint-IMR: 1
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9926 signatures=668683
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 malwarescore=0 spamscore=0
  bulkscore=0 mlxlogscore=999 mlxscore=0 suspectscore=0 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2103180078
+ definitions=main-2103180093
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9926 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 malwarescore=0 bulkscore=0
- impostorscore=0 lowpriorityscore=0 mlxlogscore=999 spamscore=0
- priorityscore=1501 adultscore=0 phishscore=0 suspectscore=0 clxscore=1011
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 impostorscore=0
+ malwarescore=0 adultscore=0 mlxscore=0 clxscore=1011 mlxlogscore=984
+ lowpriorityscore=0 phishscore=0 priorityscore=1501 spamscore=0 bulkscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2103180078
+ definitions=main-2103180093
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The "len" variable is uninitialize.
+Hello Horatiu Vultur,
 
-Fixes: 6a82582d9fa4 ("HID: ft260: add usb hid to i2c host bridge driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/hid/hid-ft260.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+This is a semi-automatic email about new static checker warnings.
 
-diff --git a/drivers/hid/hid-ft260.c b/drivers/hid/hid-ft260.c
-index 047aa85a7c83..a5751607ce24 100644
---- a/drivers/hid/hid-ft260.c
-+++ b/drivers/hid/hid-ft260.c
-@@ -512,7 +512,8 @@ static int ft260_i2c_write_read(struct ft260_device *dev, struct i2c_msg *msgs)
- 	struct hid_device *hdev = dev->hdev;
- 
- 	if (msgs[0].len > 2) {
--		hid_err(hdev, "%s: unsupported wr len: %d\n", __func__, len);
-+		hid_err(hdev, "%s: unsupported wr len: %d\n", __func__,
-+			msgs[0].len);
- 		return -EOPNOTSUPP;
- 	}
- 
--- 
-2.30.2
+The patch 7c588c3e96e9: "net: ocelot: Extend MRP" from Mar 16, 2021,
+leads to the following Smatch complaint:
 
+    drivers/net/ethernet/mscc/ocelot_mrp.c:180 ocelot_mrp_del()
+    error: we previously assumed 'ocelot_port' could be null (see line 173)
+
+drivers/net/ethernet/mscc/ocelot_mrp.c
+   153  int ocelot_mrp_del(struct ocelot *ocelot, int port,
+   154                     const struct switchdev_obj_mrp *mrp)
+   155  {
+   156          struct ocelot_port *ocelot_port = ocelot->ports[port];
+   157          int i;
+   158  
+   159          if (!ocelot_port)
+   160                  return -EOPNOTSUPP;
+   161  
+   162          if (ocelot_port->mrp_ring_id != mrp->ring_id)
+   163                  return 0;
+   164  
+   165          ocelot_mrp_del_vcap(ocelot, port);
+   166          ocelot_mrp_del_vcap(ocelot, port + ocelot->num_phys_ports);
+   167  
+   168          ocelot_port->mrp_ring_id = 0;
+   169  
+   170          for (i = 0; i < ocelot->num_phys_ports; ++i) {
+
+This loop tries to verify that all the ports have ring_id == 0 otherwise
+we return.  It's slightly confusing why this matters.
+
+   171                  ocelot_port = ocelot->ports[i];
+   172	
+   173			if (!ocelot_port)
+                             ^^^^^^^^^^^
+Assume the last element of the array is NULL
+
+   174				continue;
+   175	
+   176			if (ocelot_port->mrp_ring_id != 0)
+   177				goto out;
+
+This would be more clear if instead of a "goto out;" it just did a
+direct "return 0;"
+
+   178		}
+   179	
+   180		ocelot_mrp_del_mac(ocelot, ocelot_port);
+
+We delete the last mac address of all the ring_ids are zero but if the
+last port is zero it will crash.
+
+   181	out:
+   182		return 0;
+
+regards,
+dan carpenter
