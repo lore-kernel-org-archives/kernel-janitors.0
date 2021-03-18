@@ -2,84 +2,115 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45201C433E0
-	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Mar 2021 16:46:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3D96C433DB
+	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Mar 2021 17:26:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1183264EED
-	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Mar 2021 16:46:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81BA164F1D
+	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Mar 2021 17:26:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232064AbhCRQpp (ORCPT
+        id S230057AbhCRR0E (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 18 Mar 2021 12:45:45 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:44745 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231279AbhCRQpT (ORCPT
+        Thu, 18 Mar 2021 13:26:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36400 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232307AbhCRRZb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 18 Mar 2021 12:45:19 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1lMvlq-0007pz-5X; Thu, 18 Mar 2021 16:45:14 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Arend van Spriel <aspriel@gmail.com>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Chi-hsien Lin <chi-hsien.lin@infineon.com>,
-        Wright Feng <wright.feng@infineon.com>,
-        Chung-hsien Hsu <chung-hsien.hsu@infineon.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        linux-wireless@vger.kernel.org,
-        brcm80211-dev-list.pdl@broadcom.com,
-        SHA-cyfmac-dev-list@infineon.com, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] brcmsmac: fix shift on 4 bit masked value
-Date:   Thu, 18 Mar 2021 16:45:13 +0000
-Message-Id: <20210318164513.19600-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.30.2
+        Thu, 18 Mar 2021 13:25:31 -0400
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 981A3C06174A;
+        Thu, 18 Mar 2021 10:25:30 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id m20-20020a7bcb940000b029010cab7e5a9fso5894729wmi.3;
+        Thu, 18 Mar 2021 10:25:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=yePH7Dz7vnTvSGJ2LwIoy0u/VCi64JSI/odbm0wR6PU=;
+        b=CjzOw2RfqeH91rOohFhuSwVaGsb86pe+DcX0oIp5tQUzHqbS/iIi50SpbvahNTfC2E
+         wmtxsqWMoVi7Z1S1YXDDqz2Ss/Icx4r2lKgD63KMjEZdDCFph0u1LYo0bLJJ/KwIuDVI
+         2zt+tGwtGaVuC1qR48RlR/PtfsaAsDw9I4W+qXOT8NsjspGcdUPeFxv8tgS9zVMnPFMC
+         8dIMzOcIHamvAmFN4xwCJO0ZEaZ1y5c2AR+OScIZeQpOMb/xA8g/g5N4i6Au9JWQ0bTu
+         c6VypFB6f6PejSg5BXvB/wZiCJCORl0B/002BsfHDNV+1sp9nb29LsWqqQpqi8ffFaNU
+         8ZnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=yePH7Dz7vnTvSGJ2LwIoy0u/VCi64JSI/odbm0wR6PU=;
+        b=YbwHCNV0vuXofBWR+x4apCtkFI7vlC2URSM7ljxre30JgIahOvXQV4PbL8K5gON9bA
+         lMGgkPeN0hSvCSY9a9vB6WRIuBAR6BufRQrW6CRfyWRBUfvICLAZm/N9/q+89hsA3vNB
+         ezPCCFgDo1w7UYi7QdZJmMTWeJyhWI6WQqrjqTdDaqIWX63dqFNlp7ZsjZlYGfF+6BVC
+         Bk9zzOn8TOqoyLcBzYxVQuAs39hSihJC0ZeH90iwvwu1UGGUYp0TAFBx3AYgEz7ySUzU
+         hxcARE72jYxIhns3dY2oJ4rm3pup/NutLXtH4yux5akhZUNNX/8m6+xCbwLAlEMzwTPd
+         KZZA==
+X-Gm-Message-State: AOAM530Rws6CQ9QW2X/LVEwDhEcCZa6KxrBWPYIEOmO8LnKMZLrJbF7S
+        /4J6XvnlwkldgEZPw8GvJM4=
+X-Google-Smtp-Source: ABdhPJx8ug+g6DJxm8IQG6h5q/JFKwekL8hYuY/6r1MUNg5gy6XbF5ze/U53e9or1E/Lmx7ugrI1cQ==
+X-Received: by 2002:a05:600c:4ba2:: with SMTP id e34mr203945wmp.121.1616088329314;
+        Thu, 18 Mar 2021 10:25:29 -0700 (PDT)
+Received: from felia.fritz.box ([2001:16b8:2d02:9b00:d45f:dc09:8cff:b64d])
+        by smtp.gmail.com with ESMTPSA id n1sm4511240wro.36.2021.03.18.10.25.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Mar 2021 10:25:28 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Tony Lindgren <tony@atomide.com>,
+        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
+        linux-omap@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Joe Perches <joe@perches.com>,
+        Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: remove obsolete OMAP HWMOD DATA FOR OMAP4-BASED DEVICES
+Date:   Thu, 18 Mar 2021 18:25:20 +0100
+Message-Id: <20210318172520.6634-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Commit 2584d7e7f87a ("ARM: OMAP2+: Drop legacy platform data for omap4
+hwmod") drops the file ./arch/arm/mach-omap2/omap_hwmod_44xx_data.c, but
+misses to drop the now obsolete OMAP HWMOD DATA FOR OMAP4-BASED DEVICES
+section in MAINTAINERS, which refers to only that file.
 
-The calculation of offtune_val seems incorrect, the u16 value in
-pi->tx_rx_cal_radio_saveregs[2] is being masked with 0xf0 and then
-shifted 8 places right so that always ends up as a zero result. I
-believe the intended shift was 4 bits to the right. Fix this.
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains:
 
-[Note: not tested, I don't have the H/W]
+  warning: no file matches  F:  arch/arm/mach-omap2/omap_hwmod_44xx_data.c
 
-Addresses-Coverity: ("Operands don't affect result")
-Fixes: 5b435de0d786 ("net: wireless: add brcm80211 drivers")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Remove the obsolete OMAP HWMOD DATA FOR OMAP4-BASED DEVICES section.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ MAINTAINERS | 6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c
-index 8580a2754789..2c04bae6e21c 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c
-@@ -26329,7 +26329,7 @@ static void wlc_phy_rxcal_radio_setup_nphy(struct brcms_phy *pi, u8 rx_core)
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 19707dc45e0a..bf219411d4eb 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -13080,12 +13080,6 @@ L:	linux-omap@vger.kernel.org
+ S:	Maintained
+ F:	arch/arm/mach-omap2/omap_hwmod*data*
  
- 					offtune_val =
- 						(pi->tx_rx_cal_radio_saveregs
--						 [2] & 0xF0) >> 8;
-+						 [2] & 0xF0) >> 4;
- 					offtune_val =
- 						(offtune_val <= 0x7) ? 0xF : 0;
- 
+-OMAP HWMOD DATA FOR OMAP4-BASED DEVICES
+-M:	Benoît Cousson <bcousson@baylibre.com>
+-L:	linux-omap@vger.kernel.org
+-S:	Maintained
+-F:	arch/arm/mach-omap2/omap_hwmod_44xx_data.c
+-
+ OMAP HWMOD SUPPORT
+ M:	Benoît Cousson <bcousson@baylibre.com>
+ M:	Paul Walmsley <paul@pwsan.com>
 -- 
-2.30.2
+2.17.1
 
