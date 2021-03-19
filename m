@@ -2,121 +2,82 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-17.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 696AFC433E0
-	for <kernel-janitors@archiver.kernel.org>; Fri, 19 Mar 2021 13:06:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4785C433E6
+	for <kernel-janitors@archiver.kernel.org>; Fri, 19 Mar 2021 13:27:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 30E9264ED7
-	for <kernel-janitors@archiver.kernel.org>; Fri, 19 Mar 2021 13:06:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AEA4764F04
+	for <kernel-janitors@archiver.kernel.org>; Fri, 19 Mar 2021 13:27:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229956AbhCSNF5 (ORCPT
+        id S229844AbhCSN0y (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 19 Mar 2021 09:05:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37064 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229866AbhCSNF2 (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 19 Mar 2021 09:05:28 -0400
-Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A931CC06174A
-        for <kernel-janitors@vger.kernel.org>; Fri, 19 Mar 2021 06:05:28 -0700 (PDT)
-Received: by mail-pg1-x52c.google.com with SMTP id r17so3641984pgi.0
-        for <kernel-janitors@vger.kernel.org>; Fri, 19 Mar 2021 06:05:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=hTdKyQIaqcPxeY5I/JNuY5Iz2ypiwcneaqLgnosgVlo=;
-        b=UNj2P9IBDWWQbYgV+zqNzk4pmN8wQaCSYpXS3X8sD3YmagQFQVliE0NfG9tI7t+BK4
-         ZwbMJJBXmLjnDl1d87FVrB3hZMyK65KVQXkEVp+iukrBiVMt02MMwW9WhcqPKNn2tSbH
-         vLwbjiSe+KXMNVln8mresYY3I9p50YKWv6kJkBXyYJyA+oPEqJkkRRSAxd6KPkAevrze
-         mBYlaUForng5fMTkr1ZSI7274P3oTT01anF7I4oWDLttYlAr4IKK73Y8S0LX/SVAJ1RM
-         jryQtdAm6+YCLlrqGxc8S7rokR2a/KCPrrmP1Gw+BXOmWgMt+s9nP8+vzZjn2ccRDjba
-         SlwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=hTdKyQIaqcPxeY5I/JNuY5Iz2ypiwcneaqLgnosgVlo=;
-        b=UUEpbKDMQ0qamW47wvwhJ5N6ov76xEaYHUZYctEVePX/jVSoGf6m04uPaz749z5aAo
-         unaKW6vmWb4UexEtTDcaIP3wucxxa09gDg+qNYrwbEfj4K99fcorsYTH/YGfHuJ3W4/X
-         ZESEWjOSAK8XqKYMf0jTxoUWIDVMtLsVhEaNkDZtt9J9XdTg/PCQ0E+SeFkQ6Z4PxP5H
-         mH+Cvm14KYC8ZbfXmkt84UEFti9+mMrhqGh1CvmtKdJjSIXvWr+HiWdqZLkALGjpws/6
-         sCLJyLtQM2JjCXrjtjbpB9iJdeW22g/if9bCdncW93FuYFt8kBp3MiXdNUEbMkKVh6OB
-         dEbQ==
-X-Gm-Message-State: AOAM533tuVJYb77dsJlOcaKDi5gY3/sW3eA3chsGvhw/NbIDYzwyhS6o
-        mh9CtnX7tNkJQ8mDIrB+P4OQBw==
-X-Google-Smtp-Source: ABdhPJwWtDdhAR39TFmz2Vco5mNCA9DtfWjlNWpxR55AOve7NcxFRH65z/6LP65chsjDyb7zTAJGhw==
-X-Received: by 2002:a63:460e:: with SMTP id t14mr11149637pga.230.1616159127805;
-        Fri, 19 Mar 2021 06:05:27 -0700 (PDT)
-Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id c12sm5948967pfp.17.2021.03.19.06.05.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Mar 2021 06:05:27 -0700 (PDT)
-Subject: Re: [PATCH][next] loop: Fix missing max_active argument in
- alloc_workqueue call
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Colin Ian King <colin.king@canonical.com>,
-        Dan Schatzberg <schatzberg.dan@gmail.com>,
-        linux-block@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210318151626.17442-1-colin.king@canonical.com>
- <13a1d187-4d6d-9e06-b94a-553d872de756@kernel.dk>
- <62cd71bc-86e1-412d-b2b9-716c0f8021be@canonical.com>
- <d32641ca-e34a-2bfd-9b86-28c95546f434@kernel.dk>
- <a99533a9-d96e-4e45-502b-066fe9286a42@kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <d9b0f7c7-6954-407d-1bd5-ff738ff72ec2@kernel.dk>
-Date:   Fri, 19 Mar 2021 07:05:26 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Fri, 19 Mar 2021 09:26:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46642 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229784AbhCSN0q (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 19 Mar 2021 09:26:46 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id CF69E64EF2;
+        Fri, 19 Mar 2021 13:26:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1616160406;
+        bh=+fFLKenKDfFeW/qha9ZQ83ZON/mz8Oj9IJEDQuJvrCc=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=k20QHGRlxLhsxwVdeGjZTYuDtCq3g/9WW0Etj1eZALfIaJqpydHHN5V0QHaua20UN
+         uJNYfcvgYwJXh1A9xlScmNYEdxgxeXkU0eiwKSabHMpd8jKDLMElFs4Bi28kL0T5Pk
+         8iLsvknlWjAJCW4AVOZoVGEojkPrQePvopUx0+wLxB0no7DHC5sYQ5Vbn+TDxDbsWV
+         t0HOa2hTWJtSmlqCeCJHVY+Hx19xGmYbQa4JJxaqMbHn3Wz1Yn6Bvmd8IZVCD5+xwH
+         oLv+N9pTavFf2m2UOIw1Kvw27TinpQHYSJzbbWiZVc8rCDewWwRhyeljrElD2cKoG2
+         seyGZoC6EUHYg==
+Date:   Fri, 19 Mar 2021 14:26:43 +0100 (CET)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+cc:     Michael Zaidman <michael.zaidman@gmail.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-i2c@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] HID: ft260: fix an error message in
+ ft260_i2c_write_read()
+In-Reply-To: <YFMt5pml1voGQkUy@mwanda>
+Message-ID: <nycvar.YFH.7.76.2103191426350.12405@cbobk.fhfr.pm>
+References: <YFMt5pml1voGQkUy@mwanda>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <a99533a9-d96e-4e45-502b-066fe9286a42@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 3/19/21 3:59 AM, Krzysztof Kozlowski wrote:
-> On 18/03/2021 21:42, Jens Axboe wrote:
->> On 3/18/21 2:24 PM, Colin Ian King wrote:
->>> On 18/03/2021 20:12, Jens Axboe wrote:
->>>> On 3/18/21 9:16 AM, Colin King wrote:
->>>>> From: Colin Ian King <colin.king@canonical.com>
->>>>>
->>>>> The 3rd argument to alloc_workqueue should be the max_active count,
->>>>> however currently it is the lo->lo_number that is intended for the
->>>>> loop%d number. Fix this by adding in the missing max_active count.
->>>>
->>>> Dan, please fold this (or something similar) in when you're redoing the
->>>> series.
->>>>
->>> Appreciate this fix being picked up. Are we going to lose the SoB?
->>
->> If it's being redone, would be silly to have that error in there. Do
->> we have a tag that's appropriate for this? I often wonder when I'm
->> folding in a fix. Ala Fixes-by: or something like that.
-> 
-> Why it is being redone if it was put into next? And even then, several
-> other maintainers just apply a fix on top (I think Andrew Morton, Greg
-> KH, Mark Brown) to avoid rebasing, preserve the history and also give
-> credits to the fixer.
+On Thu, 18 Mar 2021, Dan Carpenter wrote:
 
-linux-next doesn't have continual history, and I rebase my for-next
-all the time. Since the series was going to be re-done and applied to
-a different tree even, it would be silly to retain a bug _just_ so that
-we can have credits to the fixer separately. For this case, it's
-rebased anyway, and there's honestly not any history to preserve here.
-The only downside is losing the fixer attribution, which I do agree is
-annoying and hence why I asked/lobbied in a fixes-by kind of tag.
+> The "len" variable is uninitialize.
+> 
+> Fixes: 6a82582d9fa4 ("HID: ft260: add usb hid to i2c host bridge driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  drivers/hid/hid-ft260.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/hid/hid-ft260.c b/drivers/hid/hid-ft260.c
+> index 047aa85a7c83..a5751607ce24 100644
+> --- a/drivers/hid/hid-ft260.c
+> +++ b/drivers/hid/hid-ft260.c
+> @@ -512,7 +512,8 @@ static int ft260_i2c_write_read(struct ft260_device *dev, struct i2c_msg *msgs)
+>  	struct hid_device *hdev = dev->hdev;
+>  
+>  	if (msgs[0].len > 2) {
+> -		hid_err(hdev, "%s: unsupported wr len: %d\n", __func__, len);
+> +		hid_err(hdev, "%s: unsupported wr len: %d\n", __func__,
+> +			msgs[0].len);
+>  		return -EOPNOTSUPP;
+>  	}
+
+Applied, thanks Dan.
 
 -- 
-Jens Axboe
+Jiri Kosina
+SUSE Labs
 
