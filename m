@@ -2,111 +2,92 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F549C433E4
-	for <kernel-janitors@archiver.kernel.org>; Fri, 19 Mar 2021 15:08:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77F36C433E9
+	for <kernel-janitors@archiver.kernel.org>; Fri, 19 Mar 2021 15:52:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6D4C46191A
-	for <kernel-janitors@archiver.kernel.org>; Fri, 19 Mar 2021 15:08:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41A5161962
+	for <kernel-janitors@archiver.kernel.org>; Fri, 19 Mar 2021 15:52:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231154AbhCSPHk (ORCPT
+        id S230393AbhCSPwO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 19 Mar 2021 11:07:40 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:37980 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230505AbhCSPHV (ORCPT
+        Fri, 19 Mar 2021 11:52:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44864 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230118AbhCSPwB (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 19 Mar 2021 11:07:21 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12JEtSjN152543;
-        Fri, 19 Mar 2021 15:07:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=xZv2sgU3JpKBRV6q+XFwQ/3xh6eIohSkj5YX7kUD0wk=;
- b=pnL7K/u+aoxKwgmzJGD6GYq6jzg4G6xnQu90W+jhKsDBFITyz1sVlkquKPGweH7djvgu
- crwSmW18VdSfO2NRS4ycJwjFWQNFhIRThzOMeuXqwZiml+AL7SvwLDXFpemztOIJ6mjQ
- OM/hxCZKPUVFLmPOGbRPjPInBx5pMYSgLVMzNY/rMG1KDYEkLle1etljtWSS3Cr1CSM8
- lJiYBMv2CVAY4OHI+9rMhoiwIDW+GDu5WLSpBZa7TMG3wkcEfv3XsUa2VpiXy/XEEuup
- 9BeIyeWVXx0gYtZbo9Wn23d1a3+Iyfo22G/jVu+ioXouIe5qGrUlHGEELLCrosNb2wG8 Eg== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2120.oracle.com with ESMTP id 378nbmkbjy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 19 Mar 2021 15:07:15 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12JEuD5d136976;
-        Fri, 19 Mar 2021 15:07:13 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3030.oracle.com with ESMTP id 3797b4c97f-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 19 Mar 2021 15:07:13 +0000
-Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 12JF7Bgr008971;
-        Fri, 19 Mar 2021 15:07:11 GMT
-Received: from kadam (/102.36.221.92)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 19 Mar 2021 15:07:11 +0000
-Date:   Fri, 19 Mar 2021 18:07:02 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Ricardo Ribalda <ribalda@chromium.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        linux-media <linux-media@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] media: uvcvideo: fix GFP_ flags in uvc_submit_urb()
-Message-ID: <20210319150702.GJ2087@kadam>
-References: <YFS5axzOQEJN6fHI@mwanda>
- <CAPybu_1tZgCY6NKnbH+MovHGNEUzGeN=4oF-dG407H0wQ7oSWA@mail.gmail.com>
+        Fri, 19 Mar 2021 11:52:01 -0400
+Received: from mail-qk1-x72f.google.com (mail-qk1-x72f.google.com [IPv6:2607:f8b0:4864:20::72f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23358C06174A;
+        Fri, 19 Mar 2021 08:52:01 -0700 (PDT)
+Received: by mail-qk1-x72f.google.com with SMTP id y5so1779456qkl.9;
+        Fri, 19 Mar 2021 08:52:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=kMjEDPbpygnC4Zgi7zZrR1DkHP0YbRZnHQE2aFdwmCU=;
+        b=mS5zw8Oe01ntEFj6jOCIzJO5fCGguYLRvG33EOKUjDHhWRPAzsPS7zPWWuk8wm+kIF
+         VEiinXvyfr+0//VQOES7tV0CCW1ygzZn7yqOuO5/FcZyRhFBVQxn00utV6zHJGry9o/3
+         5fdHlpfeitvN7sPd//kY6N9N7ua1e7JMjSoqmcyz0R+AO5Vh/kcwoLU09BDodvIpsZpx
+         wGWtpwxlNPa0xXruw7FwaTcG9Vbidy2k20bgYQ211E5IA6SgHS9qyfuyTkWxZhowyktn
+         L7CfTfy60IQJayYRFAEXiehOpMyBdb04GAwUyHD6QEhbobKnWliXF7gSkHRfJAK/50yW
+         axzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=kMjEDPbpygnC4Zgi7zZrR1DkHP0YbRZnHQE2aFdwmCU=;
+        b=JV6aR1wpuyr+VEbvgydY39ZC/UMnYM1NRUTkg7ncB7qRxN423dJtuzE9zuWfO12cbD
+         2rcSPIgfRt9xdCwCmY3rqIAm9G1rFnTpR6Tb84B9u9Y+kcdO55a9cnbZGToHMMtWabZR
+         j84YGMczxR1vOYHOCJz1HYi+HHwa3NjkCOAualNDeqdc1In/6Sbz0sGStT6YGD9dPEON
+         vazACvZLhOMzQS6B5WqWiQnTe+qHfono72AAWUK2CJEB4jBIf1yVkuEpEwR4cZrjSVeM
+         f+Tujfm7P9NrDiTo8l30YTS9wQsRDR4RTy3l4+ONugNXD0008oqskwXnu3PwT/v2PqgJ
+         m67w==
+X-Gm-Message-State: AOAM532JQ0TqPLbXOYFoSTlhguPX6+UlxlilF+HSSOmfQHfMLeEKpzFp
+        AhIe5Dm50RnRgri/jlyN9KI=
+X-Google-Smtp-Source: ABdhPJwD8WFIjbeMufyINYoEA0x03j4g3xSoNVdNodVntJh36Ck1kzsQePadXpXJ+Yl8a9Xyhhdajg==
+X-Received: by 2002:a05:620a:1235:: with SMTP id v21mr10018945qkj.305.1616169120455;
+        Fri, 19 Mar 2021 08:52:00 -0700 (PDT)
+Received: from dschatzberg-fedora-PC0Y6AEN.dhcp.thefacebook.com ([2620:10d:c091:480::1:41da])
+        by smtp.gmail.com with ESMTPSA id j26sm4017062qtp.30.2021.03.19.08.51.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Mar 2021 08:52:00 -0700 (PDT)
+Date:   Fri, 19 Mar 2021 11:51:58 -0400
+From:   Dan Schatzberg <schatzberg.dan@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Colin King <colin.king@canonical.com>, linux-block@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] loop: Fix missing max_active argument in
+ alloc_workqueue call
+Message-ID: <YFTInvfk0vE4VFvW@dschatzberg-fedora-PC0Y6AEN.dhcp.thefacebook.com>
+References: <20210318151626.17442-1-colin.king@canonical.com>
+ <13a1d187-4d6d-9e06-b94a-553d872de756@kernel.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAPybu_1tZgCY6NKnbH+MovHGNEUzGeN=4oF-dG407H0wQ7oSWA@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-IMR: 1
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9928 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 spamscore=0 bulkscore=0
- malwarescore=0 adultscore=0 mlxscore=0 mlxlogscore=999 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2103190107
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9928 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 impostorscore=0
- malwarescore=0 adultscore=0 mlxscore=0 clxscore=1011 mlxlogscore=999
- lowpriorityscore=0 phishscore=0 priorityscore=1501 spamscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2103190107
+In-Reply-To: <13a1d187-4d6d-9e06-b94a-553d872de756@kernel.dk>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Mar 19, 2021 at 03:57:44PM +0100, Ricardo Ribalda Delgado wrote:
-> Hi Dan
+On Thu, Mar 18, 2021 at 02:12:10PM -0600, Jens Axboe wrote:
+> On 3/18/21 9:16 AM, Colin King wrote:
+> > From: Colin Ian King <colin.king@canonical.com>
+> > 
+> > The 3rd argument to alloc_workqueue should be the max_active count,
+> > however currently it is the lo->lo_number that is intended for the
+> > loop%d number. Fix this by adding in the missing max_active count.
 > 
-> On Fri, Mar 19, 2021 at 3:48 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> >
-> > The uvc_submit_urb() function is supposed to use the passed in GFP_
-> > flags but this code accidentally uses GFP_KERNEL instead.  Some of
-> > the callers are passing GFP_ATOMIC so presumably this can lead to
-> > sleeping in atomic context.
-> >
-> > Fixes: b20f917f84e6 ("media: uvcvideo: Use dma_alloc_noncontiguous API")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Dan, please fold this (or something similar) in when you're redoing the
+> series.
 > 
-> I reported the same issue just some minutes ago. Christoph has already
-> fixed the patch in his tree.
+> -- 
+> Jens Axboe
 > 
-> Where did you get the patchset? from next? from linus? or directly
-> from Chirstoph tree?
 
-From linux-next.  I'm not sure if it was from yesterday's linux-next or
-from a couple days ago.
-
-regards,
-dan carpenter
-
+Will do.
