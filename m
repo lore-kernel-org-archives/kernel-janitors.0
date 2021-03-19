@@ -2,210 +2,118 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49023C433E0
-	for <kernel-janitors@archiver.kernel.org>; Fri, 19 Mar 2021 14:54:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF3CFC433E1
+	for <kernel-janitors@archiver.kernel.org>; Fri, 19 Mar 2021 14:59:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1E3B864F18
-	for <kernel-janitors@archiver.kernel.org>; Fri, 19 Mar 2021 14:54:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD58461874
+	for <kernel-janitors@archiver.kernel.org>; Fri, 19 Mar 2021 14:59:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230231AbhCSOyH (ORCPT
+        id S230232AbhCSO61 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 19 Mar 2021 10:54:07 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:57932 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230256AbhCSOxz (ORCPT
+        Fri, 19 Mar 2021 10:58:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33146 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229880AbhCSO6C (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 19 Mar 2021 10:53:55 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12JEZZt3123864;
-        Fri, 19 Mar 2021 14:53:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=BWXto+UUvr3DdgDjFvv39n0TvZFBcOJ4PNd9Bj9/zpE=;
- b=M32wRX1Ri44Oq4GFGs5mLOhdc4FNIoeHR3pDXA/QazweGOvoJWAR1N1Qd6FA4R6ggNRu
- 7XODqNG8BeBK+rPi8qSVOGsoOGnwBs9JcRBI5HyHs9nTPpFUREiYAp9r7c5C9hngeixK
- 4hiqSBiejWREwG7Tir8vFSWBg24gR94sGtkKjS59RTULhVWIPKq3aLfDLL5R3qL0L8dY
- DxjM4w3ASOIZB3s1PiInXd41tB8vgUWBUuuVgMLd14FFXnSy6i8Y5oiE6zhaRrpX64lo
- D4vQQdixup3hrWuQ0gCAVj6fNeHZ/vXzriYcezOM9jk7qvofNf68kQVMF/EaGsHBZYXR 5w== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 378nbmka4b-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 19 Mar 2021 14:53:43 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12JEZhLP174294;
-        Fri, 19 Mar 2021 14:53:41 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3020.oracle.com with ESMTP id 37cf2bv6qg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 19 Mar 2021 14:53:41 +0000
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 12JErde7014309;
-        Fri, 19 Mar 2021 14:53:39 GMT
-Received: from mwanda (/102.36.221.92)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 19 Mar 2021 14:53:38 +0000
-Date:   Fri, 19 Mar 2021 17:53:28 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Namjae Jeon <namjae.jeon@samsung.com>
-Cc:     Hyunchul Lee <hyc.lee@gmail.com>,
-        Steve French <stfrench@microsoft.com>,
-        Ronnie Sahlberg <lsahlber@redhat.com>,
-        Fredrik Ternerot <fredrikt@axis.com>,
-        Marios Makassikis <mmakassikis@freebox.fr>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] cifsd: fix error handling in ksmbd_server_init()
-Message-ID: <YFS66J9CjCQYR0xi@mwanda>
+        Fri, 19 Mar 2021 10:58:02 -0400
+Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B616FC06174A;
+        Fri, 19 Mar 2021 07:58:01 -0700 (PDT)
+Received: by mail-lj1-x235.google.com with SMTP id 184so12327978ljf.9;
+        Fri, 19 Mar 2021 07:58:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=sJ2ckBr8rG842/p9pJHQAcXTu2nNfk05eIBdMt46NV4=;
+        b=dExJvHBiQv5jcST0Eh+JScdKY3e0WXzCe0vIMEOkknbRHQPrkV3wedn4bgGVkp+PqK
+         HLwzF135D+P7NZuvlTWmCCQZrrtzsPuKNVJwr0ONDYxdP8erAUB6t5hEVc+pJu59jHrl
+         +LOcoRURACGvzBMiUMJEjSvMeysSbf+sp5uhqyIoDuejFVhsVMhfP37EEs1zgF32YZMb
+         h8TlsM2oohBifwMSoPACgqtv8mhT5aJi2ctSxGHclRq5jvqjZhKlYK0WduSfSZD5jCHl
+         Yl382BjpGEIx85wIaVyHyq3s59eYxxahP6K0XVRkAxNF7fovSKrFNLcv/BtaqO63Fos3
+         gKsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=sJ2ckBr8rG842/p9pJHQAcXTu2nNfk05eIBdMt46NV4=;
+        b=cn2huTPmUP2+0V/rbWN3TNF1tPx1O4Fc38RBdpGpPiP1SRHH92YvxTqEeNdumWnQbg
+         uGftfl/EQvb3lb6s5dP+iDIwmD2YHO9JcUfWreP+r1z/xeohE+aQEG/vP8Wh97zKCe3i
+         yWzZ+UF/an73dvVhseRONKaqNXwKABCrywzTIi8Zi+BlQ5eO194FTS2rV2/B4uQMbkF0
+         qWWKGp+rDe5GZAjqoClfWqmftC8rqH7Kky1Aq8j/5v02IdJsRZHAfbCUIb9NJ/N3jUdP
+         E/PI7rHTFOx1qwbwo7o5Wb6WEgvUgoxUuk3Tn5T6YVzJ950uMRc6VJipOBxbw4OhTPpD
+         q/nA==
+X-Gm-Message-State: AOAM531w8t4KqTE4Ddd7dYz2UP376y6bygsCDUo4DlWLRg+ahNqrVPkX
+        i4hMm9D58OqmCc18MpaaW5nP/DYhio67KDSa9+lKW7P77rk=
+X-Google-Smtp-Source: ABdhPJwHXUEPP6QO+XZjPd83uf3JxuPwHArbre0cdfrEbUTfh2zIbyT6R+4u8IYpemlkEDKahdi7YYbXePWqspTmZRA=
+X-Received: by 2002:a2e:878c:: with SMTP id n12mr1239111lji.58.1616165880247;
+ Fri, 19 Mar 2021 07:58:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-X-Proofpoint-IMR: 1
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9928 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 suspectscore=0
- adultscore=0 bulkscore=0 mlxlogscore=999 phishscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2103190106
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9928 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 impostorscore=0
- malwarescore=0 adultscore=0 mlxscore=0 clxscore=1011 mlxlogscore=999
- lowpriorityscore=0 phishscore=0 priorityscore=1501 spamscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2103190106
+References: <YFS5axzOQEJN6fHI@mwanda>
+In-Reply-To: <YFS5axzOQEJN6fHI@mwanda>
+From:   Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Date:   Fri, 19 Mar 2021 15:57:44 +0100
+Message-ID: <CAPybu_1tZgCY6NKnbH+MovHGNEUzGeN=4oF-dG407H0wQ7oSWA@mail.gmail.com>
+Subject: Re: [PATCH] media: uvcvideo: fix GFP_ flags in uvc_submit_urb()
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Ricardo Ribalda <ribalda@chromium.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        linux-media <linux-media@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The error handling in ksmbd_server_init() uses "one function to free
-everything style" which is impossible to audit and leads to several
-canonical bugs.  When we free something that wasn't allocated it may be
-uninitialized, an error pointer, freed in a different function or we
-try freeing "foo->bar" when "foo" is a NULL pointer.  And since the
-code is impossible to audit then it leads to memory leaks.
+Hi Dan
 
-In the ksmbd_server_init() function, every goto will lead to a crash
-because we have not allocated the work queue but we call
-ksmbd_workqueue_destroy() which tries to flush a NULL work queue.
-Another bug is if ksmbd_init_buffer_pools() fails then it leads to a
-double free because we free "work_cache" twice.  A third type of bug is
-that we forgot to call ksmbd_release_inode_hash() so that is a resource
-leak.
+On Fri, Mar 19, 2021 at 3:48 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+>
+> The uvc_submit_urb() function is supposed to use the passed in GFP_
+> flags but this code accidentally uses GFP_KERNEL instead.  Some of
+> the callers are passing GFP_ATOMIC so presumably this can lead to
+> sleeping in atomic context.
+>
+> Fixes: b20f917f84e6 ("media: uvcvideo: Use dma_alloc_noncontiguous API")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-A better way to write error handling is for every function to clean up
-after itself and never leave things partially allocated.  Then we can
-use "free the last successfully allocated resource" style.  That way
-when someone is reading the code they can just track the last resource
-in their head and verify that the goto matches what they expect.
+I reported the same issue just some minutes ago. Christoph has already
+fixed the patch in his tree.
 
-In this patch I modified ksmbd_ipc_init() to clean up after itself and
-then I converted ksmbd_server_init() to use gotos to clean up.
+Where did you get the patchset? from next? from linus? or directly
+from Chirstoph tree?
 
-Fixes: cabcebc31de4 ("cifsd: introduce SMB3 kernel server")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- fs/cifsd/server.c        | 33 +++++++++++++++++++++++----------
- fs/cifsd/transport_ipc.c | 14 +++++++++++---
- 2 files changed, 34 insertions(+), 13 deletions(-)
+Thanks!
 
-diff --git a/fs/cifsd/server.c b/fs/cifsd/server.c
-index b9e114f8a5d2..aea7b6788cac 100644
---- a/fs/cifsd/server.c
-+++ b/fs/cifsd/server.c
-@@ -569,39 +569,52 @@ static int __init ksmbd_server_init(void)
- 
- 	ret = server_conf_init();
- 	if (ret)
--		return ret;
-+		goto err_unregister;
- 
- 	ret = ksmbd_init_buffer_pools();
- 	if (ret)
--		return ret;
-+		goto err_unregister;
- 
- 	ret = ksmbd_init_session_table();
- 	if (ret)
--		goto error;
-+		goto err_destroy_pools;
- 
- 	ret = ksmbd_ipc_init();
- 	if (ret)
--		goto error;
-+		goto err_free_session_table;
- 
- 	ret = ksmbd_init_global_file_table();
- 	if (ret)
--		goto error;
-+		goto err_ipc_release;
- 
- 	ret = ksmbd_inode_hash_init();
- 	if (ret)
--		goto error;
-+		goto err_destroy_file_table;
- 
- 	ret = ksmbd_crypto_create();
- 	if (ret)
--		goto error;
-+		goto err_release_inode_hash;
- 
- 	ret = ksmbd_workqueue_init();
- 	if (ret)
--		goto error;
-+		goto err_crypto_destroy;
- 	return 0;
- 
--error:
--	ksmbd_server_shutdown();
-+err_crypto_destroy:
-+	ksmbd_crypto_destroy();
-+err_release_inode_hash:
-+	ksmbd_release_inode_hash();
-+err_destroy_file_table:
-+	ksmbd_free_global_file_table();
-+err_ipc_release:
-+	ksmbd_ipc_release();
-+err_free_session_table:
-+	ksmbd_free_session_table();
-+err_destroy_pools:
-+	ksmbd_destroy_buffer_pools();
-+err_unregister:
-+	class_unregister(&ksmbd_control_class);
-+
- 	return ret;
- }
- 
-diff --git a/fs/cifsd/transport_ipc.c b/fs/cifsd/transport_ipc.c
-index b91fa265f85d..d2432f656635 100644
---- a/fs/cifsd/transport_ipc.c
-+++ b/fs/cifsd/transport_ipc.c
-@@ -890,11 +890,19 @@ int ksmbd_ipc_init(void)
- 	if (ret) {
- 		ksmbd_err("Failed to register KSMBD netlink interface %d\n",
- 				ret);
--		return ret;
-+		goto cancel_work;
- 	}
- 
- 	ida = ksmbd_ida_alloc();
--	if (!ida)
--		return -ENOMEM;
-+	if (!ida) {
-+		ret = -ENOMEM;
-+		goto unregister;
-+	}
- 	return 0;
-+
-+unregister:
-+	genl_unregister_family(&ksmbd_genl_family);
-+cancel_work:
-+	cancel_delayed_work_sync(&ipc_timer_work);
-+	return ret;
- }
+> ---
+>  drivers/media/usb/uvc/uvc_video.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
+> index cdd8eb500bb7..a777b389a66e 100644
+> --- a/drivers/media/usb/uvc/uvc_video.c
+> +++ b/drivers/media/usb/uvc/uvc_video.c
+> @@ -1119,7 +1119,7 @@ static int uvc_submit_urb(struct uvc_urb *uvc_urb, gfp_t mem_flags)
+>         dma_sync_sgtable_for_device(uvc_stream_to_dmadev(uvc_urb->stream),
+>                                     uvc_urb->sgt,
+>                                     uvc_stream_dir(uvc_urb->stream));
+> -       return usb_submit_urb(uvc_urb->urb, GFP_KERNEL);
+> +       return usb_submit_urb(uvc_urb->urb, mem_flags);
+>  }
+>
+>  /*
+> --
+> 2.30.2
+>
+
+
 -- 
-2.30.2
-
+Ricardo Ribalda
