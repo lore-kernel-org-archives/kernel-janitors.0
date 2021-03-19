@@ -2,118 +2,111 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF3CFC433E1
-	for <kernel-janitors@archiver.kernel.org>; Fri, 19 Mar 2021 14:59:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F549C433E4
+	for <kernel-janitors@archiver.kernel.org>; Fri, 19 Mar 2021 15:08:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CD58461874
-	for <kernel-janitors@archiver.kernel.org>; Fri, 19 Mar 2021 14:59:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D4C46191A
+	for <kernel-janitors@archiver.kernel.org>; Fri, 19 Mar 2021 15:08:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230232AbhCSO61 (ORCPT
+        id S231154AbhCSPHk (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 19 Mar 2021 10:58:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33146 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229880AbhCSO6C (ORCPT
+        Fri, 19 Mar 2021 11:07:40 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:37980 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230505AbhCSPHV (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 19 Mar 2021 10:58:02 -0400
-Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B616FC06174A;
-        Fri, 19 Mar 2021 07:58:01 -0700 (PDT)
-Received: by mail-lj1-x235.google.com with SMTP id 184so12327978ljf.9;
-        Fri, 19 Mar 2021 07:58:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=sJ2ckBr8rG842/p9pJHQAcXTu2nNfk05eIBdMt46NV4=;
-        b=dExJvHBiQv5jcST0Eh+JScdKY3e0WXzCe0vIMEOkknbRHQPrkV3wedn4bgGVkp+PqK
-         HLwzF135D+P7NZuvlTWmCCQZrrtzsPuKNVJwr0ONDYxdP8erAUB6t5hEVc+pJu59jHrl
-         +LOcoRURACGvzBMiUMJEjSvMeysSbf+sp5uhqyIoDuejFVhsVMhfP37EEs1zgF32YZMb
-         h8TlsM2oohBifwMSoPACgqtv8mhT5aJi2ctSxGHclRq5jvqjZhKlYK0WduSfSZD5jCHl
-         Yl382BjpGEIx85wIaVyHyq3s59eYxxahP6K0XVRkAxNF7fovSKrFNLcv/BtaqO63Fos3
-         gKsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=sJ2ckBr8rG842/p9pJHQAcXTu2nNfk05eIBdMt46NV4=;
-        b=cn2huTPmUP2+0V/rbWN3TNF1tPx1O4Fc38RBdpGpPiP1SRHH92YvxTqEeNdumWnQbg
-         uGftfl/EQvb3lb6s5dP+iDIwmD2YHO9JcUfWreP+r1z/xeohE+aQEG/vP8Wh97zKCe3i
-         yWzZ+UF/an73dvVhseRONKaqNXwKABCrywzTIi8Zi+BlQ5eO194FTS2rV2/B4uQMbkF0
-         qWWKGp+rDe5GZAjqoClfWqmftC8rqH7Kky1Aq8j/5v02IdJsRZHAfbCUIb9NJ/N3jUdP
-         E/PI7rHTFOx1qwbwo7o5Wb6WEgvUgoxUuk3Tn5T6YVzJ950uMRc6VJipOBxbw4OhTPpD
-         q/nA==
-X-Gm-Message-State: AOAM531w8t4KqTE4Ddd7dYz2UP376y6bygsCDUo4DlWLRg+ahNqrVPkX
-        i4hMm9D58OqmCc18MpaaW5nP/DYhio67KDSa9+lKW7P77rk=
-X-Google-Smtp-Source: ABdhPJwHXUEPP6QO+XZjPd83uf3JxuPwHArbre0cdfrEbUTfh2zIbyT6R+4u8IYpemlkEDKahdi7YYbXePWqspTmZRA=
-X-Received: by 2002:a2e:878c:: with SMTP id n12mr1239111lji.58.1616165880247;
- Fri, 19 Mar 2021 07:58:00 -0700 (PDT)
-MIME-Version: 1.0
-References: <YFS5axzOQEJN6fHI@mwanda>
-In-Reply-To: <YFS5axzOQEJN6fHI@mwanda>
-From:   Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Date:   Fri, 19 Mar 2021 15:57:44 +0100
-Message-ID: <CAPybu_1tZgCY6NKnbH+MovHGNEUzGeN=4oF-dG407H0wQ7oSWA@mail.gmail.com>
-Subject: Re: [PATCH] media: uvcvideo: fix GFP_ flags in uvc_submit_urb()
-To:     Dan Carpenter <dan.carpenter@oracle.com>
+        Fri, 19 Mar 2021 11:07:21 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12JEtSjN152543;
+        Fri, 19 Mar 2021 15:07:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=xZv2sgU3JpKBRV6q+XFwQ/3xh6eIohSkj5YX7kUD0wk=;
+ b=pnL7K/u+aoxKwgmzJGD6GYq6jzg4G6xnQu90W+jhKsDBFITyz1sVlkquKPGweH7djvgu
+ crwSmW18VdSfO2NRS4ycJwjFWQNFhIRThzOMeuXqwZiml+AL7SvwLDXFpemztOIJ6mjQ
+ OM/hxCZKPUVFLmPOGbRPjPInBx5pMYSgLVMzNY/rMG1KDYEkLle1etljtWSS3Cr1CSM8
+ lJiYBMv2CVAY4OHI+9rMhoiwIDW+GDu5WLSpBZa7TMG3wkcEfv3XsUa2VpiXy/XEEuup
+ 9BeIyeWVXx0gYtZbo9Wn23d1a3+Iyfo22G/jVu+ioXouIe5qGrUlHGEELLCrosNb2wG8 Eg== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 378nbmkbjy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 19 Mar 2021 15:07:15 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12JEuD5d136976;
+        Fri, 19 Mar 2021 15:07:13 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 3797b4c97f-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 19 Mar 2021 15:07:13 +0000
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 12JF7Bgr008971;
+        Fri, 19 Mar 2021 15:07:11 GMT
+Received: from kadam (/102.36.221.92)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 19 Mar 2021 15:07:11 +0000
+Date:   Fri, 19 Mar 2021 18:07:02 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         Ricardo Ribalda <ribalda@chromium.org>,
         Tomasz Figa <tfiga@chromium.org>,
         linux-media <linux-media@vger.kernel.org>,
         kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH] media: uvcvideo: fix GFP_ flags in uvc_submit_urb()
+Message-ID: <20210319150702.GJ2087@kadam>
+References: <YFS5axzOQEJN6fHI@mwanda>
+ <CAPybu_1tZgCY6NKnbH+MovHGNEUzGeN=4oF-dG407H0wQ7oSWA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPybu_1tZgCY6NKnbH+MovHGNEUzGeN=4oF-dG407H0wQ7oSWA@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-IMR: 1
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9928 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 spamscore=0 bulkscore=0
+ malwarescore=0 adultscore=0 mlxscore=0 mlxlogscore=999 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2103190107
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9928 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 impostorscore=0
+ malwarescore=0 adultscore=0 mlxscore=0 clxscore=1011 mlxlogscore=999
+ lowpriorityscore=0 phishscore=0 priorityscore=1501 spamscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2103190107
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Dan
+On Fri, Mar 19, 2021 at 03:57:44PM +0100, Ricardo Ribalda Delgado wrote:
+> Hi Dan
+> 
+> On Fri, Mar 19, 2021 at 3:48 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> >
+> > The uvc_submit_urb() function is supposed to use the passed in GFP_
+> > flags but this code accidentally uses GFP_KERNEL instead.  Some of
+> > the callers are passing GFP_ATOMIC so presumably this can lead to
+> > sleeping in atomic context.
+> >
+> > Fixes: b20f917f84e6 ("media: uvcvideo: Use dma_alloc_noncontiguous API")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> I reported the same issue just some minutes ago. Christoph has already
+> fixed the patch in his tree.
+> 
+> Where did you get the patchset? from next? from linus? or directly
+> from Chirstoph tree?
 
-On Fri, Mar 19, 2021 at 3:48 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> The uvc_submit_urb() function is supposed to use the passed in GFP_
-> flags but this code accidentally uses GFP_KERNEL instead.  Some of
-> the callers are passing GFP_ATOMIC so presumably this can lead to
-> sleeping in atomic context.
->
-> Fixes: b20f917f84e6 ("media: uvcvideo: Use dma_alloc_noncontiguous API")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From linux-next.  I'm not sure if it was from yesterday's linux-next or
+from a couple days ago.
 
-I reported the same issue just some minutes ago. Christoph has already
-fixed the patch in his tree.
+regards,
+dan carpenter
 
-Where did you get the patchset? from next? from linus? or directly
-from Chirstoph tree?
-
-Thanks!
-
-> ---
->  drivers/media/usb/uvc/uvc_video.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
-> index cdd8eb500bb7..a777b389a66e 100644
-> --- a/drivers/media/usb/uvc/uvc_video.c
-> +++ b/drivers/media/usb/uvc/uvc_video.c
-> @@ -1119,7 +1119,7 @@ static int uvc_submit_urb(struct uvc_urb *uvc_urb, gfp_t mem_flags)
->         dma_sync_sgtable_for_device(uvc_stream_to_dmadev(uvc_urb->stream),
->                                     uvc_urb->sgt,
->                                     uvc_stream_dir(uvc_urb->stream));
-> -       return usb_submit_urb(uvc_urb->urb, GFP_KERNEL);
-> +       return usb_submit_urb(uvc_urb->urb, mem_flags);
->  }
->
->  /*
-> --
-> 2.30.2
->
-
-
--- 
-Ricardo Ribalda
