@@ -2,192 +2,96 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA4F3C433DB
-	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Mar 2021 07:24:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FA1FC433DB
+	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Mar 2021 07:54:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7C2F361970
-	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Mar 2021 07:24:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D17DC60230
+	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Mar 2021 07:54:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229993AbhCVHYX (ORCPT
+        id S229972AbhCVHxc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 22 Mar 2021 03:24:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41848 "EHLO
+        Mon, 22 Mar 2021 03:53:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48092 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230006AbhCVHX6 (ORCPT
+        with ESMTP id S229829AbhCVHw7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 22 Mar 2021 03:23:58 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42C1CC061574;
-        Mon, 22 Mar 2021 00:23:57 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id x16so15491313wrn.4;
-        Mon, 22 Mar 2021 00:23:57 -0700 (PDT)
+        Mon, 22 Mar 2021 03:52:59 -0400
+Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A57BEC061756;
+        Mon, 22 Mar 2021 00:52:58 -0700 (PDT)
+Received: by mail-io1-xd33.google.com with SMTP id x16so12917853iob.1;
+        Mon, 22 Mar 2021 00:52:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=HlKn4dGfq7EGRrc/VNPdo+z1r+GB1vodbHKH3VbdTc0=;
-        b=Rkv1qAqalFOK1BUrAKOnyJShC4/WWZPoxaXhF1SqBTmUcVCBCxNQd9b7MY9YYVpEhx
-         CZ5sYIiTKjQhnHqoG7g3y96tQCj7VJ1ViFTrM3aM5ZJAvhTnzHhzbfMttLNg+MeS3Nsa
-         RUWjSG5H0lEhDEGu7VdgmXfbDNdefIp0m9PXvBIUxAR3mlW2eFTr2ReMin6ptWVKNBnf
-         8juW/VCHpqOjZkh8Jo2XhPEWZPkzLVnlHvvE/TbtNAPsGOYd1Xnw4OeVxk4nGb8Guf4A
-         QiYrunjv4Aikt6GG5LvAR++YquVH2z6J8OQBuw4uxCd3I/ZrYHej7DDAoKscff4v8KqU
-         H9ZQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=mfyVLjNNTM8+/QZpvr999C+UF8zqwK2EPElm0pDtBJ0=;
+        b=CcqdTMUTKrb4AvlfL5F86RnWHr7dikqWnsnt++WGOTFFhLvFhWyLQXi1TDqd94AvNz
+         UF7UCcrBER1FSVE1xS8/NOGI5weafoyQC8enHc/FHbMClsW4MkIffccmGqJ69jjdsFp4
+         p1C/EoUXyfwsjdSgv7H0MIkL7PDD7IXzlrBuyv9O2GpJp6S3w7gF0AVbOs8Oy2ovXHX7
+         dUQSsa5Eh8dhF1e7tPAYaiwRSuO5gU/3VyNiVLLI10YKE7xDHLH8BcBVTF6RdmggqIuy
+         rl/0YYpQDxDntpFdw2yIgmVbH/nwo7naYbZNhbhALjtfmCrJ205ipLEP10ZnidarFlKl
+         u8Sw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=HlKn4dGfq7EGRrc/VNPdo+z1r+GB1vodbHKH3VbdTc0=;
-        b=QHv9J8UY8ftB40A9L8KsPMv/27OzWuu7DApGVZPlhwBHntaWoM84Kg6lTVsQfJK/JG
-         FIw1cfFC2Sf1LHQPwZ0vpOEjvQePCRy2m0dyxEDBgkmkEGXNFghW5PJdq/ZmjXuc58Er
-         hrV+r8XEh+rmK9uW9ZtI0Df8UfSldF5JJMWyZdmhR4AfXrWPMPAqAV6YY8f9Uy5U+UnA
-         5f5B3txin0n1485Gu6i/cvvn3Q7QzDtVgZ5AjRogEWS8qGQEExjas/ArpI/R/yXGfkeJ
-         uu/VEUS1k6oviaxOM/kKhboSpcLmndR/XUAaBQz3sVa6qSFaKLbBswu9CVL7UuWIL6+Q
-         KVrg==
-X-Gm-Message-State: AOAM532opvgO5Y2zuz79ptEnc8M5PKIaS7NJfEwqkjEC5+t+ugYycvP6
-        bLwQbBEvAUDBnzcsfXJPTnA=
-X-Google-Smtp-Source: ABdhPJy/ZukVjppUeIZkDMajZGUbgqLJ7V86peDRPgwwIroxU7jfRTTmLSz3UEvWf4SkbaEv09JU9g==
-X-Received: by 2002:adf:fb87:: with SMTP id a7mr16878004wrr.58.1616397833622;
-        Mon, 22 Mar 2021 00:23:53 -0700 (PDT)
-Received: from felia.fritz.box ([2001:16b8:2d8a:8e00:f0d7:9c83:eaad:b065])
-        by smtp.gmail.com with ESMTPSA id i8sm15698129wmi.6.2021.03.22.00.23.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Mar 2021 00:23:53 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=mfyVLjNNTM8+/QZpvr999C+UF8zqwK2EPElm0pDtBJ0=;
+        b=Gp4pguA/x0GnPB6L2UviB2n+icZO0t6K0+FnbVsqAf+LpWuZ0UnWVra8ffKDKn+QHX
+         YsBv7hKg8vaHIeiEsXnHgGnkcY6rXYc9aFy8HoYDKeRl6GErctE3ulsmQyL7MFasRhiy
+         +tTlGgI6F+SVUq+iNh+r0jEoMIP7kMvh96fMuAjOTOSm3+zTvd3CjsFMARwkLUxKai0/
+         SGFDfNcb9f1hlDw9IlwjT6wDQYIRAwMxFvF/yOOYM1zaandyzHuf+z7eqtN5uAco2c9h
+         c2zyXvIRuC/Fw37dIkxKtOj/Y1blh8R2Ae2cpMijMEDGyzcWZAgTbH3mZPgWjjktvVkm
+         /MMQ==
+X-Gm-Message-State: AOAM530QxQFsjeaUJ9Bt2kJ/P+v9nQT4ojLnTc+rDG6JrztgylxX+d0K
+        u4Ov99Ru+e9ccA8HKtDCzo2V2g8KcmubRPqLwaUsM+z5
+X-Google-Smtp-Source: ABdhPJwFfT/k4yUVHgU6P7QHyKrSqrki69jZ0SZYDWK0aq9VANjury8vtw1oS/s7/aM1vvH4KmdL4y1cmdz4CKD6Q5M=
+X-Received: by 2002:a5e:8d05:: with SMTP id m5mr9777547ioj.114.1616399578170;
+ Mon, 22 Mar 2021 00:52:58 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210222161905.1153-1-lukas.bulwahn@gmail.com>
+ <alpine.DEB.2.21.2102221836030.1900@angie.orcam.me.uk> <BY5PR22MB1841658D64FB8D8B619BC870C7819@BY5PR22MB1841.namprd22.prod.outlook.com>
+In-Reply-To: <BY5PR22MB1841658D64FB8D8B619BC870C7819@BY5PR22MB1841.namprd22.prod.outlook.com>
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
-Cc:     Aditya Srivastava <yashsri421@gmail.com>,
-        Wei Xu <xuwei5@hisilicon.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] devicetree: replace invalid kernel-doc comment headers
-Date:   Mon, 22 Mar 2021 08:23:43 +0100
-Message-Id: <20210322072343.19993-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+Date:   Mon, 22 Mar 2021 08:52:47 +0100
+Message-ID: <CAKXUXMxOXCZyG3cw0NrNYfWjoTPuBahbT-sZo1N90PDvSJakZQ@mail.gmail.com>
+Subject: Re: [EXTERNAL]Re: [PATCH 0/5] Remove dead linux-mips.org references
+To:     Kurt Martin <kmartin@wavecomp.com>
+Cc:     "Maciej W. Rozycki" <macro@orcam.me.uk>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        Tiezhu Yang <yangtiezhu@loongson.cn>, Willy Tarreau <w@1wt.eu>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-hams@vger.kernel.org" <linux-hams@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The opening comment mark '/**' is used for indicating the beginning of
-kernel-doc comments.
+On Mon, Feb 22, 2021 at 7:19 PM Kurt Martin <kmartin@wavecomp.com> wrote:
+>
+> Hi Everybody,
+>
+> This is Kurt Martin.  I'm part of the MIPS Customer Engineering team at W=
+ave Computing.  Some of you may remember me.  I have just established conta=
+ct with Ralf, and I will be working with him to restore linux-mips.org back=
+ to life.  I just got the account and login information for the linux-mips.=
+org hosting account at Hetzner from Chris Dearman.
+>
+> So as Maciej says, please hold off any actions at this time, and I will a=
+ttempt to get linux-mips.org working again as quickly as possible.  Thanks!
+>
 
-Replace uses of '/**' for invalid cases in dt-binding headers and dts.
+It has been a month by now... I just wanted to check if linux-mips.org
+is back on its way to be available. Or should Thomas pick up the
+remaining patches of this series?
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-Rob, please pick this quick kernel-doc cleanup patch.
-
- arch/arm64/boot/dts/hisilicon/hip05-d02.dts    | 2 +-
- arch/arm64/boot/dts/hisilicon/hip05.dtsi       | 2 +-
- arch/arm64/boot/dts/hisilicon/hip06-d03.dts    | 2 +-
- arch/arm64/boot/dts/hisilicon/hip06.dtsi       | 4 ++--
- arch/arm64/boot/dts/hisilicon/hip07-d05.dts    | 2 +-
- arch/arm64/boot/dts/hisilicon/hip07.dtsi       | 2 +-
- include/dt-bindings/reset/hisi,hi6220-resets.h | 2 +-
- include/dt-bindings/reset/snps,hsdk-reset.h    | 2 +-
- 8 files changed, 9 insertions(+), 9 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/hisilicon/hip05-d02.dts b/arch/arm64/boot/dts/hisilicon/hip05-d02.dts
-index 369b69b17b91..3d3d52bf41f5 100644
---- a/arch/arm64/boot/dts/hisilicon/hip05-d02.dts
-+++ b/arch/arm64/boot/dts/hisilicon/hip05-d02.dts
-@@ -1,5 +1,5 @@
- // SPDX-License-Identifier: GPL-2.0-only
--/**
-+/*
-  * dts file for Hisilicon D02 Development Board
-  *
-  * Copyright (C) 2014,2015 Hisilicon Ltd.
-diff --git a/arch/arm64/boot/dts/hisilicon/hip05.dtsi b/arch/arm64/boot/dts/hisilicon/hip05.dtsi
-index 4aed8d440b3a..5161e3476531 100644
---- a/arch/arm64/boot/dts/hisilicon/hip05.dtsi
-+++ b/arch/arm64/boot/dts/hisilicon/hip05.dtsi
-@@ -1,5 +1,5 @@
- // SPDX-License-Identifier: GPL-2.0-only
--/**
-+/*
-  * dts file for Hisilicon D02 Development Board
-  *
-  * Copyright (C) 2014,2015 Hisilicon Ltd.
-diff --git a/arch/arm64/boot/dts/hisilicon/hip06-d03.dts b/arch/arm64/boot/dts/hisilicon/hip06-d03.dts
-index 9f4a930e734d..97aa42a86fd9 100644
---- a/arch/arm64/boot/dts/hisilicon/hip06-d03.dts
-+++ b/arch/arm64/boot/dts/hisilicon/hip06-d03.dts
-@@ -1,5 +1,5 @@
- // SPDX-License-Identifier: GPL-2.0-only
--/**
-+/*
-  * dts file for Hisilicon D03 Development Board
-  *
-  * Copyright (C) 2016 Hisilicon Ltd.
-diff --git a/arch/arm64/boot/dts/hisilicon/hip06.dtsi b/arch/arm64/boot/dts/hisilicon/hip06.dtsi
-index 7deca5f763d5..d86ee1d25ab8 100644
---- a/arch/arm64/boot/dts/hisilicon/hip06.dtsi
-+++ b/arch/arm64/boot/dts/hisilicon/hip06.dtsi
-@@ -1,5 +1,5 @@
- // SPDX-License-Identifier: GPL-2.0-only
--/**
-+/*
-  * dts file for Hisilicon D03 Development Board
-  *
-  * Copyright (C) 2016 Hisilicon Ltd.
-@@ -315,7 +315,7 @@
- 		};
- 	};
- 
--	/**
-+	/*
- 	 *  HiSilicon erratum 161010801: This describes the limitation
- 	 *  of HiSilicon platforms hip06/hip07 to support the SMMUv3
- 	 *  mappings for PCIe MSI transactions.
-diff --git a/arch/arm64/boot/dts/hisilicon/hip07-d05.dts b/arch/arm64/boot/dts/hisilicon/hip07-d05.dts
-index 81a2312c8a26..57debca7b1ac 100644
---- a/arch/arm64/boot/dts/hisilicon/hip07-d05.dts
-+++ b/arch/arm64/boot/dts/hisilicon/hip07-d05.dts
-@@ -1,5 +1,5 @@
- // SPDX-License-Identifier: GPL-2.0-only
--/**
-+/*
-  * dts file for Hisilicon D05 Development Board
-  *
-  * Copyright (C) 2016 Hisilicon Ltd.
-diff --git a/arch/arm64/boot/dts/hisilicon/hip07.dtsi b/arch/arm64/boot/dts/hisilicon/hip07.dtsi
-index 2172d8071181..553f7c5209ad 100644
---- a/arch/arm64/boot/dts/hisilicon/hip07.dtsi
-+++ b/arch/arm64/boot/dts/hisilicon/hip07.dtsi
-@@ -1,5 +1,5 @@
- // SPDX-License-Identifier: GPL-2.0-only
--/**
-+/*
-  * dts file for Hisilicon D05 Development Board
-  *
-  * Copyright (C) 2016 Hisilicon Ltd.
-diff --git a/include/dt-bindings/reset/hisi,hi6220-resets.h b/include/dt-bindings/reset/hisi,hi6220-resets.h
-index 63aff7d8aa45..c67f479eede7 100644
---- a/include/dt-bindings/reset/hisi,hi6220-resets.h
-+++ b/include/dt-bindings/reset/hisi,hi6220-resets.h
-@@ -1,5 +1,5 @@
- /* SPDX-License-Identifier: GPL-2.0 */
--/**
-+/*
-  * This header provides index for the reset controller
-  * based on hi6220 SoC.
-  */
-diff --git a/include/dt-bindings/reset/snps,hsdk-reset.h b/include/dt-bindings/reset/snps,hsdk-reset.h
-index e1a643e4bc91..6a331c8d834d 100644
---- a/include/dt-bindings/reset/snps,hsdk-reset.h
-+++ b/include/dt-bindings/reset/snps,hsdk-reset.h
-@@ -1,4 +1,4 @@
--/**
-+/*
-  * This header provides index for the HSDK reset controller.
-  */
- #ifndef _DT_BINDINGS_RESET_CONTROLLER_SNPS_HSDK
--- 
-2.17.1
-
+Lukas
