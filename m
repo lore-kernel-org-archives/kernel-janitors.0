@@ -2,189 +2,205 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19B64C433C1
-	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Mar 2021 18:49:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCB11C433DB
+	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Mar 2021 18:54:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D925961994
-	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Mar 2021 18:49:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC5FA619A2
+	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Mar 2021 18:54:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231332AbhCVSsr (ORCPT
+        id S231533AbhCVSxg (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 22 Mar 2021 14:48:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48982 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231414AbhCVSsQ (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 22 Mar 2021 14:48:16 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A37B0C061574;
-        Mon, 22 Mar 2021 11:48:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description;
-        bh=1bXBxLjsd8gmmpt9JoINY3mS7WqLO90NR1EkxxG5W+s=; b=MX/Zo3zPmaBavFnRNBIyCoEE0Z
-        KGC0Qbqopibj/GZOpudJnYv+dRNJxJ6SDXTTokiit9VQyiSI4ULarBt1Gj6vOv72gY/eL8QDnYI3X
-        geON5IyE6D9Ev8rj4zx0fF8U6gtUooaPEub7eOYpz3+SGqHfHjpEeBu98x3dzb9EbqeoTT64xri+d
-        3F0BXeVa5E7AfxSybexCusDSYV5fX1IyXz9hXuoLeGsn4Gb7SRoQLwlEG9BzAb+C0oLqpFN3sUu/2
-        I0Dclb/N3/PbdkJz8gGtiLcWIe/xdsB+ftttUU3ujK+Ayb4giG3h9UEGzQps0035diCg9a4AZjb7F
-        jgVKchyA==;
-Received: from [2601:1c0:6280:3f0::3ba4]
-        by casper.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
-        id 1lOPZa-008w1V-IR; Mon, 22 Mar 2021 18:47:02 +0000
-Subject: Re: [PATCH] devicetree: replace invalid kernel-doc comment headers
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
-Cc:     Aditya Srivastava <yashsri421@gmail.com>,
-        Wei Xu <xuwei5@hisilicon.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210322072343.19993-1-lukas.bulwahn@gmail.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <ba94e5f1-8219-716d-2a6b-9cb2dd434ed8@infradead.org>
-Date:   Mon, 22 Mar 2021 11:46:38 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.0
-MIME-Version: 1.0
-In-Reply-To: <20210322072343.19993-1-lukas.bulwahn@gmail.com>
-Content-Type: text/plain; charset=utf-8
+        Mon, 22 Mar 2021 14:53:36 -0400
+Received: from mga07.intel.com ([134.134.136.100]:33864 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231240AbhCVSx2 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 22 Mar 2021 14:53:28 -0400
+IronPort-SDR: sX6Mwp74qqn29OXuB+9uO4ZFTCWlFFQp89XIJLMwe4pMhCJXtEB/ZgCs/RvrN5vRv4ajXagEuL
+ zYJ4OGOWIRzQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9931"; a="254327900"
+X-IronPort-AV: E=Sophos;i="5.81,269,1610438400"; 
+   d="scan'208";a="254327900"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Mar 2021 11:53:26 -0700
+IronPort-SDR: af/hKHDzvfHkYRX+mNeCe2kEG7oqnh3lSxj3DoGOVighvJ/kufegAhj+Vj+q1FtPj9BYgFxCKY
+ QwsS9DBg/JEg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.81,269,1610438400"; 
+   d="scan'208";a="604031885"
+Received: from fmsmsx605.amr.corp.intel.com ([10.18.126.85])
+  by fmsmga006.fm.intel.com with ESMTP; 22 Mar 2021 11:53:26 -0700
+Received: from lcsmsx602.ger.corp.intel.com (10.109.210.11) by
+ fmsmsx605.amr.corp.intel.com (10.18.126.85) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2106.2; Mon, 22 Mar 2021 11:53:25 -0700
+Received: from hasmsx602.ger.corp.intel.com (10.184.107.142) by
+ LCSMSX602.ger.corp.intel.com (10.109.210.11) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2106.2; Mon, 22 Mar 2021 20:53:23 +0200
+Received: from hasmsx602.ger.corp.intel.com ([10.184.107.142]) by
+ HASMSX602.ger.corp.intel.com ([10.184.107.142]) with mapi id 15.01.2106.013;
+ Mon, 22 Mar 2021 20:53:23 +0200
+From:   "Winkler, Tomas" <tomas.winkler@intel.com>
+To:     Guenter Roeck <linux@roeck-us.net>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>
+CC:     "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] watchdog: fix syntactic kernel-doc issues
+Thread-Topic: [PATCH] watchdog: fix syntactic kernel-doc issues
+Thread-Index: AQHXHyQ8oBrLlx2GoUu0DdXCGph+1KqQWt3A
+Date:   Mon, 22 Mar 2021 18:53:23 +0000
+Message-ID: <55cdc6aa3ef140c0b1e3d6f89f673609@intel.com>
+References: <20210322065337.617-1-lukas.bulwahn@gmail.com>
+ <473d7675-f630-63e1-47b7-cefbb0b113e7@roeck-us.net>
+In-Reply-To: <473d7675-f630-63e1-47b7-cefbb0b113e7@roeck-us.net>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-reaction: no-action
+dlp-version: 11.5.1.3
+x-originating-ip: [10.184.70.1]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 3/22/21 12:23 AM, Lukas Bulwahn wrote:
-> The opening comment mark '/**' is used for indicating the beginning of
-> kernel-doc comments.
-> 
-> Replace uses of '/**' for invalid cases in dt-binding headers and dts.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
-
-Thanks.
-
-> ---
-> Rob, please pick this quick kernel-doc cleanup patch.
-> 
->  arch/arm64/boot/dts/hisilicon/hip05-d02.dts    | 2 +-
->  arch/arm64/boot/dts/hisilicon/hip05.dtsi       | 2 +-
->  arch/arm64/boot/dts/hisilicon/hip06-d03.dts    | 2 +-
->  arch/arm64/boot/dts/hisilicon/hip06.dtsi       | 4 ++--
->  arch/arm64/boot/dts/hisilicon/hip07-d05.dts    | 2 +-
->  arch/arm64/boot/dts/hisilicon/hip07.dtsi       | 2 +-
->  include/dt-bindings/reset/hisi,hi6220-resets.h | 2 +-
->  include/dt-bindings/reset/snps,hsdk-reset.h    | 2 +-
->  8 files changed, 9 insertions(+), 9 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/hisilicon/hip05-d02.dts b/arch/arm64/boot/dts/hisilicon/hip05-d02.dts
-> index 369b69b17b91..3d3d52bf41f5 100644
-> --- a/arch/arm64/boot/dts/hisilicon/hip05-d02.dts
-> +++ b/arch/arm64/boot/dts/hisilicon/hip05-d02.dts
-> @@ -1,5 +1,5 @@
->  // SPDX-License-Identifier: GPL-2.0-only
-> -/**
-> +/*
->   * dts file for Hisilicon D02 Development Board
->   *
->   * Copyright (C) 2014,2015 Hisilicon Ltd.
-> diff --git a/arch/arm64/boot/dts/hisilicon/hip05.dtsi b/arch/arm64/boot/dts/hisilicon/hip05.dtsi
-> index 4aed8d440b3a..5161e3476531 100644
-> --- a/arch/arm64/boot/dts/hisilicon/hip05.dtsi
-> +++ b/arch/arm64/boot/dts/hisilicon/hip05.dtsi
-> @@ -1,5 +1,5 @@
->  // SPDX-License-Identifier: GPL-2.0-only
-> -/**
-> +/*
->   * dts file for Hisilicon D02 Development Board
->   *
->   * Copyright (C) 2014,2015 Hisilicon Ltd.
-> diff --git a/arch/arm64/boot/dts/hisilicon/hip06-d03.dts b/arch/arm64/boot/dts/hisilicon/hip06-d03.dts
-> index 9f4a930e734d..97aa42a86fd9 100644
-> --- a/arch/arm64/boot/dts/hisilicon/hip06-d03.dts
-> +++ b/arch/arm64/boot/dts/hisilicon/hip06-d03.dts
-> @@ -1,5 +1,5 @@
->  // SPDX-License-Identifier: GPL-2.0-only
-> -/**
-> +/*
->   * dts file for Hisilicon D03 Development Board
->   *
->   * Copyright (C) 2016 Hisilicon Ltd.
-> diff --git a/arch/arm64/boot/dts/hisilicon/hip06.dtsi b/arch/arm64/boot/dts/hisilicon/hip06.dtsi
-> index 7deca5f763d5..d86ee1d25ab8 100644
-> --- a/arch/arm64/boot/dts/hisilicon/hip06.dtsi
-> +++ b/arch/arm64/boot/dts/hisilicon/hip06.dtsi
-> @@ -1,5 +1,5 @@
->  // SPDX-License-Identifier: GPL-2.0-only
-> -/**
-> +/*
->   * dts file for Hisilicon D03 Development Board
->   *
->   * Copyright (C) 2016 Hisilicon Ltd.
-> @@ -315,7 +315,7 @@
->  		};
->  	};
->  
-> -	/**
-> +	/*
->  	 *  HiSilicon erratum 161010801: This describes the limitation
->  	 *  of HiSilicon platforms hip06/hip07 to support the SMMUv3
->  	 *  mappings for PCIe MSI transactions.
-> diff --git a/arch/arm64/boot/dts/hisilicon/hip07-d05.dts b/arch/arm64/boot/dts/hisilicon/hip07-d05.dts
-> index 81a2312c8a26..57debca7b1ac 100644
-> --- a/arch/arm64/boot/dts/hisilicon/hip07-d05.dts
-> +++ b/arch/arm64/boot/dts/hisilicon/hip07-d05.dts
-> @@ -1,5 +1,5 @@
->  // SPDX-License-Identifier: GPL-2.0-only
-> -/**
-> +/*
->   * dts file for Hisilicon D05 Development Board
->   *
->   * Copyright (C) 2016 Hisilicon Ltd.
-> diff --git a/arch/arm64/boot/dts/hisilicon/hip07.dtsi b/arch/arm64/boot/dts/hisilicon/hip07.dtsi
-> index 2172d8071181..553f7c5209ad 100644
-> --- a/arch/arm64/boot/dts/hisilicon/hip07.dtsi
-> +++ b/arch/arm64/boot/dts/hisilicon/hip07.dtsi
-> @@ -1,5 +1,5 @@
->  // SPDX-License-Identifier: GPL-2.0-only
-> -/**
-> +/*
->   * dts file for Hisilicon D05 Development Board
->   *
->   * Copyright (C) 2016 Hisilicon Ltd.
-> diff --git a/include/dt-bindings/reset/hisi,hi6220-resets.h b/include/dt-bindings/reset/hisi,hi6220-resets.h
-> index 63aff7d8aa45..c67f479eede7 100644
-> --- a/include/dt-bindings/reset/hisi,hi6220-resets.h
-> +++ b/include/dt-bindings/reset/hisi,hi6220-resets.h
-> @@ -1,5 +1,5 @@
->  /* SPDX-License-Identifier: GPL-2.0 */
-> -/**
-> +/*
->   * This header provides index for the reset controller
->   * based on hi6220 SoC.
->   */
-> diff --git a/include/dt-bindings/reset/snps,hsdk-reset.h b/include/dt-bindings/reset/snps,hsdk-reset.h
-> index e1a643e4bc91..6a331c8d834d 100644
-> --- a/include/dt-bindings/reset/snps,hsdk-reset.h
-> +++ b/include/dt-bindings/reset/snps,hsdk-reset.h
-> @@ -1,4 +1,4 @@
-> -/**
-> +/*
->   * This header provides index for the HSDK reset controller.
->   */
->  #ifndef _DT_BINDINGS_RESET_CONTROLLER_SNPS_HSDK
-> 
-
-
--- 
-~Randy
-
+PiBPbiAzLzIxLzIxIDExOjUzIFBNLCBMdWthcyBCdWx3YWhuIHdyb3RlOg0KPiA+IFRoZSBjb21t
+YW5kICdmaW5kIGRyaXZlcnMvd2F0Y2hkb2cgfCB4YXJncyAuL3NjcmlwdHMva2VybmVsLWRvYyAt
+bm9uZScNCj4gPiByZXBvcnRzIGEgbnVtYmVyIG9mIGtlcm5lbC1kb2Mgd2FybmluZ3MgaW4gdGhl
+IHdhdGNoZG9nIHN1YnN5c3RlbS4NCj4gPg0KPiA+IEFkZHJlc3MgdGhlIGtlcm5lbC1kb2Mgd2Fy
+bmluZ3MgdGhhdCB3ZXJlIHB1cmVseSBzeW50YWN0aWMgaXNzdWVzIHdpdGgNCj4gPiBrZXJuZWwt
+ZG9jIGNvbW1lbnRzLg0KPiA+DQo+ID4gVGhlIHJlbWFpbmluZyBrZXJuZWwtZG9jIHdhcm5pbmdz
+IGFyZSBvZiB0eXBlICJFeGNlc3MgZnVuY3Rpb24NCj4gcGFyYW1ldGVyIg0KPiA+IGFuZCAiRnVu
+Y3Rpb24gcGFyYW1ldGVyIG9yIG1lbWJlciBub3QgZGVzY3JpYmVkIi4gVGhlc2Ugd2FybmluZ3MN
+Cj4gd291bGQNCj4gPiBuZWVkIHRvIGJlIGFkZHJlc3NlZCBpbiBhIHNlY29uZCBwYXNzIHdpdGgg
+YSBiaXQgbW9yZSBpbnNpZ2h0IGludG8gdGhlDQo+ID4gQVBJcyBhbmQgcHVycG9zZSBvZiB0aGUg
+ZnVuY3Rpb25zIGluIHRoZSB3YXRjaGRvZyBzdWJzeXN0ZW0uDQo+ID4NCj4gPiBTaWduZWQtb2Zm
+LWJ5OiBMdWthcyBCdWx3YWhuIDxsdWthcy5idWx3YWhuQGdtYWlsLmNvbT4NCj4gDQo+IFJldmll
+d2VkLWJ5OiBHdWVudGVyIFJvZWNrIDxsaW51eEByb2Vjay11cy5uZXQ+DQpBY2sgZm9yIG1laV93
+ZHQgDQpUb21hcw0KDQo+IA0KPiA+IC0tLQ0KPiA+IEd1ZW50ZXIsIFdpbSwgcGxlYXNlIHBpY2sg
+dGhpcyBtaW5vciBjbGVhbi11cCBwYXRjaC4NCj4gPg0KPiA+ICBkcml2ZXJzL3dhdGNoZG9nL2Jv
+b2tlX3dkdC5jICAgICAgIHwgIDIgKy0NCj4gPiAgZHJpdmVycy93YXRjaGRvZy9ldXJvdGVjaHdk
+dC5jICAgICB8ICAyICstDQo+ID4gIGRyaXZlcnMvd2F0Y2hkb2cvbWVpX3dkdC5jICAgICAgICAg
+fCAgOCArKysrLS0tLQ0KPiA+ICBkcml2ZXJzL3dhdGNoZG9nL29jdGVvbi13ZHQtbWFpbi5jIHwg
+MTIgKysrKysrKy0tLS0tDQo+ID4gIGRyaXZlcnMvd2F0Y2hkb2cvcGM4NzQxM193ZHQuYyAgICAg
+fCAgMiArLQ0KPiA+ICBkcml2ZXJzL3dhdGNoZG9nL3dkdC5jICAgICAgICAgICAgIHwgIDQgKyst
+LQ0KPiA+ICBkcml2ZXJzL3dhdGNoZG9nL3dkdF9wY2kuYyAgICAgICAgIHwgIDIgKy0NCj4gPiAg
+NyBmaWxlcyBjaGFuZ2VkLCAxNyBpbnNlcnRpb25zKCspLCAxNSBkZWxldGlvbnMoLSkNCj4gPg0K
+PiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3dhdGNoZG9nL2Jvb2tlX3dkdC5jDQo+ID4gYi9kcml2
+ZXJzL3dhdGNoZG9nL2Jvb2tlX3dkdC5jIGluZGV4IDc4MTdmYjk3NmY5Yy4uNWU0ZGMxYTBmMmM2
+DQo+IDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvd2F0Y2hkb2cvYm9va2Vfd2R0LmMNCj4gPiAr
+KysgYi9kcml2ZXJzL3dhdGNoZG9nL2Jvb2tlX3dkdC5jDQo+ID4gQEAgLTE0OCw3ICsxNDgsNyBA
+QCBzdGF0aWMgdm9pZCBfX2Jvb2tlX3dkdF9lbmFibGUodm9pZCAqZGF0YSkgIH0NCj4gPg0KPiA+
+ICAvKioNCj4gPiAtICogYm9va2Vfd2R0X2Rpc2FibGUgLSBkaXNhYmxlIHRoZSB3YXRjaGRvZyBv
+biB0aGUgZ2l2ZW4gQ1BVDQo+ID4gKyAqIF9fYm9va2Vfd2R0X2Rpc2FibGUgLSBkaXNhYmxlIHRo
+ZSB3YXRjaGRvZyBvbiB0aGUgZ2l2ZW4gQ1BVDQo+ID4gICAqDQo+ID4gICAqIFRoaXMgZnVuY3Rp
+b24gaXMgY2FsbGVkIG9uIGVhY2ggQ1BVLiAgSXQgZGlzYWJsZXMgdGhlIHdhdGNoZG9nIG9uIHRo
+YXQNCj4gQ1BVLg0KPiA+ICAgKg0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3dhdGNoZG9nL2V1
+cm90ZWNod2R0LmMNCj4gPiBiL2RyaXZlcnMvd2F0Y2hkb2cvZXVyb3RlY2h3ZHQuYyBpbmRleCAy
+NDE4ZWJiNzA3YmQuLmNlNjgyOTQyNjYyYw0KPiA+IDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMv
+d2F0Y2hkb2cvZXVyb3RlY2h3ZHQuYw0KPiA+ICsrKyBiL2RyaXZlcnMvd2F0Y2hkb2cvZXVyb3Rl
+Y2h3ZHQuYw0KPiA+IEBAIC0zOTIsNyArMzkyLDcgQEAgc3RhdGljIHN0cnVjdCBub3RpZmllcl9i
+bG9jayBldXJ3ZHRfbm90aWZpZXIgPSB7DQo+ID4gfTsNCj4gPg0KPiA+ICAvKioNCj4gPiAtICog
+Y2xlYW51cF9tb2R1bGU6DQo+ID4gKyAqIGV1cndkdF9leGl0Og0KPiA+ICAgKg0KPiA+ICAgKiBV
+bmxvYWQgdGhlIHdhdGNoZG9nLiBZb3UgY2Fubm90IGRvIHRoaXMgd2l0aCBhbnkgZmlsZSBoYW5k
+bGVzIG9wZW4uDQo+ID4gICAqIElmIHlvdXIgd2F0Y2hkb2cgaXMgc2V0IHRvIGNvbnRpbnVlIHRp
+Y2tpbmcgb24gY2xvc2UgYW5kIHlvdQ0KPiA+IHVubG9hZCBkaWZmIC0tZ2l0IGEvZHJpdmVycy93
+YXRjaGRvZy9tZWlfd2R0LmMNCj4gPiBiL2RyaXZlcnMvd2F0Y2hkb2cvbWVpX3dkdC5jIGluZGV4
+IGUwMjNkN2Q5MGQ2Ni4uYzdhNzIzNWU2MjI0IDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvd2F0
+Y2hkb2cvbWVpX3dkdC5jDQo+ID4gKysrIGIvZHJpdmVycy93YXRjaGRvZy9tZWlfd2R0LmMNCj4g
+PiBAQCAtMTA1LDcgKzEwNSw3IEBAIHN0cnVjdCBtZWlfd2R0IHsNCj4gPiAgI2VuZGlmIC8qIENP
+TkZJR19ERUJVR19GUyAqLw0KPiA+ICB9Ow0KPiA+DQo+ID4gLS8qDQo+ID4gKy8qKg0KPiA+ICAg
+KiBzdHJ1Y3QgbWVpX21jX2hkciAtIE1hbmFnZW1lbnQgQ29udHJvbCBDb21tYW5kIEhlYWRlcg0K
+PiA+ICAgKg0KPiA+ICAgKiBAY29tbWFuZDogTWFuYWdlbWVudCBDb250cm9sICgweDIpIEBAIC0x
+MjEsNyArMTIxLDcgQEAgc3RydWN0DQo+ID4gbWVpX21jX2hkciB7ICB9Ow0KPiA+DQo+ID4gIC8q
+Kg0KPiA+IC0gKiBzdHJ1Y3QgbWVpX3dkdF9zdGFydF9yZXF1ZXN0IHdhdGNoZG9nIHN0YXJ0L3Bp
+bmcNCj4gPiArICogc3RydWN0IG1laV93ZHRfc3RhcnRfcmVxdWVzdCAtIHdhdGNoZG9nIHN0YXJ0
+L3BpbmcNCj4gPiAgICoNCj4gPiAgICogQGhkcjogTWFuYWdlbWVudCBDb250cm9sIENvbW1hbmQg
+SGVhZGVyDQo+ID4gICAqIEB0aW1lb3V0OiB0aW1lb3V0IHZhbHVlDQo+ID4gQEAgLTEzNCw3ICsx
+MzQsNyBAQCBzdHJ1Y3QgbWVpX3dkdF9zdGFydF9yZXF1ZXN0IHsgIH0gX19wYWNrZWQ7DQo+ID4N
+Cj4gPiAgLyoqDQo+ID4gLSAqIHN0cnVjdCBtZWlfd2R0X3N0YXJ0X3Jlc3BvbnNlIHdhdGNoZG9n
+IHN0YXJ0L3BpbmcgcmVzcG9uc2UNCj4gPiArICogc3RydWN0IG1laV93ZHRfc3RhcnRfcmVzcG9u
+c2UgLSB3YXRjaGRvZyBzdGFydC9waW5nIHJlc3BvbnNlDQo+ID4gICAqDQo+ID4gICAqIEBoZHI6
+IE1hbmFnZW1lbnQgQ29udHJvbCBDb21tYW5kIEhlYWRlcg0KPiA+ICAgKiBAc3RhdHVzOiBvcGVy
+YXRpb24gc3RhdHVzDQo+ID4gQEAgLTQ3NCw3ICs0NzQsNyBAQCBzdGF0aWMgdm9pZCBtZWlfd2R0
+X3J4KHN0cnVjdCBtZWlfY2xfZGV2aWNlICpjbGRldikNCj4gPiAgCQljb21wbGV0ZSgmd2R0LT5y
+ZXNwb25zZSk7DQo+ID4gIH0NCj4gPg0KPiA+IC0vKg0KPiA+ICsvKioNCj4gPiAgICogbWVpX3dk
+dF9ub3RpZiAtIGNhbGxiYWNrIGZvciBldmVudCBub3RpZmljYXRpb24NCj4gPiAgICoNCj4gPiAg
+ICogQGNsZGV2OiBidXMgZGV2aWNlDQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvd2F0Y2hkb2cv
+b2N0ZW9uLXdkdC1tYWluLmMNCj4gPiBiL2RyaXZlcnMvd2F0Y2hkb2cvb2N0ZW9uLXdkdC1tYWlu
+LmMNCj4gPiBpbmRleCBmZGU5ZTczOWI0MzYuLjI5OGMwNzA4ODRjNCAxMDA2NDQNCj4gPiAtLS0g
+YS9kcml2ZXJzL3dhdGNoZG9nL29jdGVvbi13ZHQtbWFpbi5jDQo+ID4gKysrIGIvZHJpdmVycy93
+YXRjaGRvZy9vY3Rlb24td2R0LW1haW4uYw0KPiA+IEBAIC0xMTksNyArMTE5LDcgQEAgc3RhdGlj
+IGludCBjcHUyY29yZShpbnQgY3B1KSAgfQ0KPiA+DQo+ID4gIC8qKg0KPiA+IC0gKiBQb2tlIHRo
+ZSB3YXRjaGRvZyB3aGVuIGFuIGludGVycnVwdCBpcyByZWNlaXZlZA0KPiA+ICsgKiBvY3Rlb25f
+d2R0X3Bva2VfaXJxIC0gUG9rZSB0aGUgd2F0Y2hkb2cgd2hlbiBhbiBpbnRlcnJ1cHQgaXMNCj4g
+PiArIHJlY2VpdmVkDQo+ID4gICAqDQo+ID4gICAqIEBjcGw6DQo+ID4gICAqIEBkZXZfaWQ6DQo+
+ID4gQEAgLTE1Myw3ICsxNTMsNyBAQCBzdGF0aWMgaXJxcmV0dXJuX3Qgb2N0ZW9uX3dkdF9wb2tl
+X2lycShpbnQgY3BsLA0KPiA+IHZvaWQgKmRldl9pZCkgIGV4dGVybiBpbnQgcHJvbV9wdXRjaGFy
+KGNoYXIgYyk7DQo+ID4NCj4gPiAgLyoqDQo+ID4gLSAqIFdyaXRlIGEgc3RyaW5nIHRvIHRoZSB1
+YXJ0DQo+ID4gKyAqIG9jdGVvbl93ZHRfd3JpdGVfc3RyaW5nIC0gV3JpdGUgYSBzdHJpbmcgdG8g
+dGhlIHVhcnQNCj4gPiAgICoNCj4gPiAgICogQHN0cjogICAgICAgIFN0cmluZyB0byB3cml0ZQ0K
+PiA+ICAgKi8NCj4gPiBAQCAtMTY1LDcgKzE2NSw3IEBAIHN0YXRpYyB2b2lkIG9jdGVvbl93ZHRf
+d3JpdGVfc3RyaW5nKGNvbnN0IGNoYXINCj4gPiAqc3RyKSAgfQ0KPiA+DQo+ID4gIC8qKg0KPiA+
+IC0gKiBXcml0ZSBhIGhleCBudW1iZXIgb3V0IG9mIHRoZSB1YXJ0DQo+ID4gKyAqIG9jdGVvbl93
+ZHRfd3JpdGVfaGV4KCkgLSBXcml0ZSBhIGhleCBudW1iZXIgb3V0IG9mIHRoZSB1YXJ0DQo+ID4g
+ICAqDQo+ID4gICAqIEB2YWx1ZTogICAgICBOdW1iZXIgdG8gZGlzcGxheQ0KPiA+ICAgKiBAZGln
+aXRzOiAgICAgTnVtYmVyIG9mIGRpZ2l0cyB0byBwcmludCAoMSB0byAxNikNCj4gPiBAQCAtMTky
+LDYgKzE5Miw4IEBAIHN0YXRpYyBjb25zdCBjaGFyIHJlZ19uYW1lW11bM10gPSB7ICB9Ow0KPiA+
+DQo+ID4gIC8qKg0KPiA+ICsgKiBvY3Rlb25fd2R0X25taV9zdGFnZTM6DQo+ID4gKyAqDQo+ID4g
+ICAqIE5NSSBzdGFnZSAzIGhhbmRsZXIuIE5NSXMgYXJlIGhhbmRsZWQgaW4gdGhlIGZvbGxvd2lu
+ZyBtYW5uZXI6DQo+ID4gICAqIDEpIFRoZSBmaXJzdCBOTUkgaGFuZGxlciBlbmFibGVzIENWTVNF
+RyBhbmQgdHJhbnNmZXJzIGZyb20NCj4gPiAgICogdGhlIGJvb3RidXMgcmVnaW9uIGludG8gbm9y
+bWFsIG1lbW9yeS4gSXQgaXMgY2FyZWZ1bCB0byBub3QgQEANCj4gPiAtNTEzLDcgKzUxNSw3IEBA
+IHN0YXRpYyBzdHJ1Y3Qgd2F0Y2hkb2dfZGV2aWNlIG9jdGVvbl93ZHQgPSB7DQo+ID4NCj4gPiAg
+c3RhdGljIGVudW0gY3B1aHBfc3RhdGUgb2N0ZW9uX3dkdF9vbmxpbmU7DQo+ID4gIC8qKg0KPiA+
+IC0gKiBNb2R1bGUvIGRyaXZlciBpbml0aWFsaXphdGlvbi4NCj4gPiArICogb2N0ZW9uX3dkdF9p
+bml0IC0gTW9kdWxlLyBkcml2ZXIgaW5pdGlhbGl6YXRpb24uDQo+ID4gICAqDQo+ID4gICAqIFJl
+dHVybnMgWmVybyBvbiBzdWNjZXNzDQo+ID4gICAqLw0KPiA+IEBAIC01ODUsNyArNTg3LDcgQEAg
+c3RhdGljIGludCBfX2luaXQgb2N0ZW9uX3dkdF9pbml0KHZvaWQpICB9DQo+ID4NCj4gPiAgLyoq
+DQo+ID4gLSAqIE1vZHVsZSAvIGRyaXZlciBzaHV0ZG93bg0KPiA+ICsgKiBvY3Rlb25fd2R0X2Ns
+ZWFudXAgLSBNb2R1bGUgLyBkcml2ZXIgc2h1dGRvd24NCj4gPiAgICovDQo+ID4gIHN0YXRpYyB2
+b2lkIF9fZXhpdCBvY3Rlb25fd2R0X2NsZWFudXAodm9pZCkgIHsgZGlmZiAtLWdpdA0KPiA+IGEv
+ZHJpdmVycy93YXRjaGRvZy9wYzg3NDEzX3dkdC5jIGIvZHJpdmVycy93YXRjaGRvZy9wYzg3NDEz
+X3dkdC5jDQo+ID4gaW5kZXggMmQ0NTA0MzAyYzllLi45ZjlhMzQwNDI3ZmMgMTAwNjQ0DQo+ID4g
+LS0tIGEvZHJpdmVycy93YXRjaGRvZy9wYzg3NDEzX3dkdC5jDQo+ID4gKysrIGIvZHJpdmVycy93
+YXRjaGRvZy9wYzg3NDEzX3dkdC5jDQo+ID4gQEAgLTQ0NSw3ICs0NDUsNyBAQCBzdGF0aWMgbG9u
+ZyBwYzg3NDEzX2lvY3RsKHN0cnVjdCBmaWxlICpmaWxlLA0KPiA+IHVuc2lnbmVkIGludCBjbWQs
+DQo+ID4gIC8qIC0tIE5vdGlmaWVyIGZ1bnRpb25zIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tKi8NCj4gPg0KPiA+ICAvKioNCj4gPiAtICoJbm90aWZ5X3N5czoNCj4g
+PiArICoJcGM4NzQxM19ub3RpZnlfc3lzOg0KPiA+ICAgKglAdGhpczogb3VyIG5vdGlmaWVyIGJs
+b2NrDQo+ID4gICAqCUBjb2RlOiB0aGUgZXZlbnQgYmVpbmcgcmVwb3J0ZWQNCj4gPiAgICoJQHVu
+dXNlZDogdW51c2VkDQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvd2F0Y2hkb2cvd2R0LmMgYi9k
+cml2ZXJzL3dhdGNoZG9nL3dkdC5jIGluZGV4DQo+ID4gYTllNDBiNWM2MzNlLi4xODM4NzYxNTYy
+NDMgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy93YXRjaGRvZy93ZHQuYw0KPiA+ICsrKyBiL2Ry
+aXZlcnMvd2F0Y2hkb2cvd2R0LmMNCj4gPiBAQCAtNDk0LDcgKzQ5NCw3IEBAIHN0YXRpYyBpbnQg
+d2R0X3RlbXBfcmVsZWFzZShzdHJ1Y3QgaW5vZGUgKmlub2RlLA0KPiA+IHN0cnVjdCBmaWxlICpm
+aWxlKSAgfQ0KPiA+DQo+ID4gIC8qKg0KPiA+IC0gKglub3RpZnlfc3lzOg0KPiA+ICsgKgl3ZHRf
+bm90aWZ5X3N5czoNCj4gPiAgICoJQHRoaXM6IG91ciBub3RpZmllciBibG9jaw0KPiA+ICAgKglA
+Y29kZTogdGhlIGV2ZW50IGJlaW5nIHJlcG9ydGVkDQo+ID4gICAqCUB1bnVzZWQ6IHVudXNlZA0K
+PiA+IEBAIC01NTgsNyArNTU4LDcgQEAgc3RhdGljIHN0cnVjdCBub3RpZmllcl9ibG9jayB3ZHRf
+bm90aWZpZXIgPSB7ICB9Ow0KPiA+DQo+ID4gIC8qKg0KPiA+IC0gKgljbGVhbnVwX21vZHVsZToN
+Cj4gPiArICoJd2R0X2V4aXQ6DQo+ID4gICAqDQo+ID4gICAqCVVubG9hZCB0aGUgd2F0Y2hkb2cu
+IFlvdSBjYW5ub3QgZG8gdGhpcyB3aXRoIGFueSBmaWxlIGhhbmRsZXMgb3Blbi4NCj4gPiAgICoJ
+SWYgeW91ciB3YXRjaGRvZyBpcyBzZXQgdG8gY29udGludWUgdGlja2luZyBvbiBjbG9zZSBhbmQg
+eW91IHVubG9hZA0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3dhdGNoZG9nL3dkdF9wY2kuYyBi
+L2RyaXZlcnMvd2F0Y2hkb2cvd2R0X3BjaS5jDQo+ID4gaW5kZXggYzMyNTRiYTVhY2U2Li5kNWU1
+NmI2MDEzNTEgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy93YXRjaGRvZy93ZHRfcGNpLmMNCj4g
+PiArKysgYi9kcml2ZXJzL3dhdGNoZG9nL3dkdF9wY2kuYw0KPiA+IEBAIC01MzcsNyArNTM3LDcg
+QEAgc3RhdGljIGludCB3ZHRwY2lfdGVtcF9yZWxlYXNlKHN0cnVjdCBpbm9kZQ0KPiA+ICppbm9k
+ZSwgc3RydWN0IGZpbGUgKmZpbGUpICB9DQo+ID4NCj4gPiAgLyoqDQo+ID4gLSAqCW5vdGlmeV9z
+eXM6DQo+ID4gKyAqCXdkdHBjaV9ub3RpZnlfc3lzOg0KPiA+ICAgKglAdGhpczogb3VyIG5vdGlm
+aWVyIGJsb2NrDQo+ID4gICAqCUBjb2RlOiB0aGUgZXZlbnQgYmVpbmcgcmVwb3J0ZWQNCj4gPiAg
+ICoJQHVudXNlZDogdW51c2VkDQo+ID4NCg0K
