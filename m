@@ -2,96 +2,139 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FA1FC433DB
-	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Mar 2021 07:54:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84087C433DB
+	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Mar 2021 12:14:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D17DC60230
-	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Mar 2021 07:54:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51B036198D
+	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Mar 2021 12:14:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229972AbhCVHxc (ORCPT
+        id S229482AbhCVMOV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 22 Mar 2021 03:53:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48092 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229829AbhCVHw7 (ORCPT
+        Mon, 22 Mar 2021 08:14:21 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:14061 "EHLO
+        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229930AbhCVMOM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 22 Mar 2021 03:52:59 -0400
-Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A57BEC061756;
-        Mon, 22 Mar 2021 00:52:58 -0700 (PDT)
-Received: by mail-io1-xd33.google.com with SMTP id x16so12917853iob.1;
-        Mon, 22 Mar 2021 00:52:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=mfyVLjNNTM8+/QZpvr999C+UF8zqwK2EPElm0pDtBJ0=;
-        b=CcqdTMUTKrb4AvlfL5F86RnWHr7dikqWnsnt++WGOTFFhLvFhWyLQXi1TDqd94AvNz
-         UF7UCcrBER1FSVE1xS8/NOGI5weafoyQC8enHc/FHbMClsW4MkIffccmGqJ69jjdsFp4
-         p1C/EoUXyfwsjdSgv7H0MIkL7PDD7IXzlrBuyv9O2GpJp6S3w7gF0AVbOs8Oy2ovXHX7
-         dUQSsa5Eh8dhF1e7tPAYaiwRSuO5gU/3VyNiVLLI10YKE7xDHLH8BcBVTF6RdmggqIuy
-         rl/0YYpQDxDntpFdw2yIgmVbH/nwo7naYbZNhbhALjtfmCrJ205ipLEP10ZnidarFlKl
-         u8Sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=mfyVLjNNTM8+/QZpvr999C+UF8zqwK2EPElm0pDtBJ0=;
-        b=Gp4pguA/x0GnPB6L2UviB2n+icZO0t6K0+FnbVsqAf+LpWuZ0UnWVra8ffKDKn+QHX
-         YsBv7hKg8vaHIeiEsXnHgGnkcY6rXYc9aFy8HoYDKeRl6GErctE3ulsmQyL7MFasRhiy
-         +tTlGgI6F+SVUq+iNh+r0jEoMIP7kMvh96fMuAjOTOSm3+zTvd3CjsFMARwkLUxKai0/
-         SGFDfNcb9f1hlDw9IlwjT6wDQYIRAwMxFvF/yOOYM1zaandyzHuf+z7eqtN5uAco2c9h
-         c2zyXvIRuC/Fw37dIkxKtOj/Y1blh8R2Ae2cpMijMEDGyzcWZAgTbH3mZPgWjjktvVkm
-         /MMQ==
-X-Gm-Message-State: AOAM530QxQFsjeaUJ9Bt2kJ/P+v9nQT4ojLnTc+rDG6JrztgylxX+d0K
-        u4Ov99Ru+e9ccA8HKtDCzo2V2g8KcmubRPqLwaUsM+z5
-X-Google-Smtp-Source: ABdhPJwFfT/k4yUVHgU6P7QHyKrSqrki69jZ0SZYDWK0aq9VANjury8vtw1oS/s7/aM1vvH4KmdL4y1cmdz4CKD6Q5M=
-X-Received: by 2002:a5e:8d05:: with SMTP id m5mr9777547ioj.114.1616399578170;
- Mon, 22 Mar 2021 00:52:58 -0700 (PDT)
+        Mon, 22 Mar 2021 08:14:12 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
+        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4F3tdl4ypNzNq5d;
+        Mon, 22 Mar 2021 20:11:39 +0800 (CST)
+Received: from localhost.localdomain (10.175.102.38) by
+ DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
+ 14.3.498.0; Mon, 22 Mar 2021 20:14:03 +0800
+From:   'w00385741 <weiyongjun1@huawei.com>
+To:     <weiyongjun1@huawei.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "Russell King" <linux@armlinux.org.uk>,
+        Joakim Zhang <qiangqing.zhang@nxp.com>
+CC:     <netdev@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH net-next] net: stmmac: platform: fix build error with !CONFIG_PM_SLEEP
+Date:   Mon, 22 Mar 2021 12:23:59 +0000
+Message-ID: <20210322122359.2980197-1-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20210222161905.1153-1-lukas.bulwahn@gmail.com>
- <alpine.DEB.2.21.2102221836030.1900@angie.orcam.me.uk> <BY5PR22MB1841658D64FB8D8B619BC870C7819@BY5PR22MB1841.namprd22.prod.outlook.com>
-In-Reply-To: <BY5PR22MB1841658D64FB8D8B619BC870C7819@BY5PR22MB1841.namprd22.prod.outlook.com>
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date:   Mon, 22 Mar 2021 08:52:47 +0100
-Message-ID: <CAKXUXMxOXCZyG3cw0NrNYfWjoTPuBahbT-sZo1N90PDvSJakZQ@mail.gmail.com>
-Subject: Re: [EXTERNAL]Re: [PATCH 0/5] Remove dead linux-mips.org references
-To:     Kurt Martin <kmartin@wavecomp.com>
-Cc:     "Maciej W. Rozycki" <macro@orcam.me.uk>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        Tiezhu Yang <yangtiezhu@loongson.cn>, Willy Tarreau <w@1wt.eu>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-hams@vger.kernel.org" <linux-hams@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.102.38]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Feb 22, 2021 at 7:19 PM Kurt Martin <kmartin@wavecomp.com> wrote:
->
-> Hi Everybody,
->
-> This is Kurt Martin.  I'm part of the MIPS Customer Engineering team at W=
-ave Computing.  Some of you may remember me.  I have just established conta=
-ct with Ralf, and I will be working with him to restore linux-mips.org back=
- to life.  I just got the account and login information for the linux-mips.=
-org hosting account at Hetzner from Chris Dearman.
->
-> So as Maciej says, please hold off any actions at this time, and I will a=
-ttempt to get linux-mips.org working again as quickly as possible.  Thanks!
->
+From: Wei Yongjun <weiyongjun1@huawei.com>
 
-It has been a month by now... I just wanted to check if linux-mips.org
-is back on its way to be available. Or should Thomas pick up the
-remaining patches of this series?
+Get rid of the CONFIG_PM_SLEEP ifdefery to fix the build error
+and use __maybe_unused for the suspend()/resume() hooks to avoid
+build warning:
 
-Lukas
+drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c:769:21:
+ error: 'stmmac_runtime_suspend' undeclared here (not in a function); did you mean 'stmmac_suspend'?
+  769 |  SET_RUNTIME_PM_OPS(stmmac_runtime_suspend, stmmac_runtime_resume, NULL)
+      |                     ^~~~~~~~~~~~~~~~~~~~~~
+./include/linux/pm.h:342:21: note: in definition of macro 'SET_RUNTIME_PM_OPS'
+  342 |  .runtime_suspend = suspend_fn, \
+      |                     ^~~~~~~~~~
+drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c:769:45:
+ error: 'stmmac_runtime_resume' undeclared here (not in a function)
+  769 |  SET_RUNTIME_PM_OPS(stmmac_runtime_suspend, stmmac_runtime_resume, NULL)
+      |                                             ^~~~~~~~~~~~~~~~~~~~~
+./include/linux/pm.h:343:20: note: in definition of macro 'SET_RUNTIME_PM_OPS'
+  343 |  .runtime_resume = resume_fn, \
+      |                    ^~~~~~~~~
+
+Fixes: 5ec55823438e ("net: stmmac: add clocks management for gmac driver")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ .../stmicro/stmmac/stmmac_platform.c       | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+index a70b0bc84b2a..5a1e018884e6 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+@@ -704,7 +704,6 @@ int stmmac_pltfr_remove(struct platform_device *pdev)
+ }
+ EXPORT_SYMBOL_GPL(stmmac_pltfr_remove);
+ 
+-#ifdef CONFIG_PM_SLEEP
+ /**
+  * stmmac_pltfr_suspend
+  * @dev: device pointer
+@@ -712,7 +711,7 @@ EXPORT_SYMBOL_GPL(stmmac_pltfr_remove);
+  * call the main suspend function and then, if required, on some platform, it
+  * can call an exit helper.
+  */
+-static int stmmac_pltfr_suspend(struct device *dev)
++static int __maybe_unused stmmac_pltfr_suspend(struct device *dev)
+ {
+ 	int ret;
+ 	struct net_device *ndev = dev_get_drvdata(dev);
+@@ -733,7 +732,7 @@ static int stmmac_pltfr_suspend(struct device *dev)
+  * the main resume function, on some platforms, it can call own init helper
+  * if required.
+  */
+-static int stmmac_pltfr_resume(struct device *dev)
++static int __maybe_unused stmmac_pltfr_resume(struct device *dev)
+ {
+ 	struct net_device *ndev = dev_get_drvdata(dev);
+ 	struct stmmac_priv *priv = netdev_priv(ndev);
+@@ -745,7 +744,7 @@ static int stmmac_pltfr_resume(struct device *dev)
+ 	return stmmac_resume(dev);
+ }
+ 
+-static int stmmac_runtime_suspend(struct device *dev)
++static int __maybe_unused stmmac_runtime_suspend(struct device *dev)
+ {
+ 	struct net_device *ndev = dev_get_drvdata(dev);
+ 	struct stmmac_priv *priv = netdev_priv(ndev);
+@@ -755,14 +754,13 @@ static int stmmac_runtime_suspend(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int stmmac_runtime_resume(struct device *dev)
++static int __maybe_unused stmmac_runtime_resume(struct device *dev)
+ {
+ 	struct net_device *ndev = dev_get_drvdata(dev);
+ 	struct stmmac_priv *priv = netdev_priv(ndev);
+ 
+ 	return stmmac_bus_clks_config(priv, true);
+ }
+-#endif /* CONFIG_PM_SLEEP */
+ 
+ const struct dev_pm_ops stmmac_pltfr_pm_ops = {
+ 	SET_SYSTEM_SLEEP_PM_OPS(stmmac_pltfr_suspend, stmmac_pltfr_resume)
+
