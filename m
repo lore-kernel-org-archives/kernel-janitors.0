@@ -2,119 +2,189 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E70BC433DB
-	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Mar 2021 18:42:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19B64C433C1
+	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Mar 2021 18:49:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 606696199F
-	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Mar 2021 18:42:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D925961994
+	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Mar 2021 18:49:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231161AbhCVSm1 (ORCPT
+        id S231332AbhCVSsr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 22 Mar 2021 14:42:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47666 "EHLO
+        Mon, 22 Mar 2021 14:48:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232158AbhCVSmH (ORCPT
+        with ESMTP id S231414AbhCVSsQ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 22 Mar 2021 14:42:07 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14951C061574;
-        Mon, 22 Mar 2021 11:42:07 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id o16so18262924wrn.0;
-        Mon, 22 Mar 2021 11:42:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=NDKS9bjDkSd8pyAADwHG0veM+Jj9ek5ktbAJaPyPQgc=;
-        b=emIMhnyCmYiLn4PObMyhcg2fhCLigz+fBkhgy0+aFcI3EPJ3FRvS7C4UHcIdwVxtuM
-         Hynhkh/RozexhQ9rnv8mDb8nFZF+99Gpf66DTi3VANzzZadiVk5DRMshYKacz/7aWvmr
-         kigEp1Dia7ZVb7btg371ph4jCCacQqnPq7mnIlTVfj+CbKCIGiTTrpFROod2gPHryY1t
-         DgQONC+TEshODeDBdfd6E1dUviDOuqcGCxCMP8KQMaIMqnrn9KLUp/fFZW+B5cwdQqBM
-         3q300E0NWGRWozZRHaJDh6y5PN6s/Lnk3UWMyd2+QEA52VxPeeBng1UC6dbj7nB+U2wF
-         9BjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=NDKS9bjDkSd8pyAADwHG0veM+Jj9ek5ktbAJaPyPQgc=;
-        b=G+D6VnSHAbp13ZauKZcgLI4BSW2KvzcoY++8PjizhU6pq07LG5MII27bcQwnrd2OzR
-         Z7WsJu3sspnvqU98rvm+i3OmrwtXJ5RGW+chSIdgE3RzfnFo0HiyOyMImIfFMW2ZdRcc
-         X/fUgD2uc3UF6Fj8MY2r6+TzvoPtR3OrhbvYtrTw6ooxHMVE5M2VP/w+UdEbtRVYKF+i
-         icmnaBoZBqoafWY1NIiJeKoYSTlThB81UsL9hxiftVDtwFyL3vKQqf61+YusyhqkP6ZL
-         tfLglNtvXP9Th2Hz3Oy1aWNFTELH4zoJwcN206vVVA9T4GmeN87sM/fG6wvXXyF7asm8
-         LTXg==
-X-Gm-Message-State: AOAM533AD4hFbIG/XJynQEXCwtTNvr+8NEw9K7zEJX+iRaOSvmwesa1c
-        p7zHuv/pv5CTU7v+lRwGT9s=
-X-Google-Smtp-Source: ABdhPJwuVapglcJc4ltYexF/7Sif9Q08VJfCe1k1gPwDscYvvPZJHxzLANP0CG8UOT8s73OkKojbyw==
-X-Received: by 2002:adf:fbcc:: with SMTP id d12mr897295wrs.151.1616438525814;
-        Mon, 22 Mar 2021 11:42:05 -0700 (PDT)
-Received: from LEGION ([111.119.187.31])
-        by smtp.gmail.com with ESMTPSA id g5sm21178867wrq.30.2021.03.22.11.42.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Mar 2021 11:42:05 -0700 (PDT)
-Date:   Mon, 22 Mar 2021 23:41:58 +0500
-From:   Muhammad Usama Anjum <musamaanjum@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        colin.king@canonical.com, dan.carpenter@oracle.com
-Cc:     musamaanjum@gmail.com
-Subject: [PATCH] io_uring: Initialize variable before use
-Message-ID: <20210322184158.GA2095479@LEGION>
+        Mon, 22 Mar 2021 14:48:16 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A37B0C061574;
+        Mon, 22 Mar 2021 11:48:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description;
+        bh=1bXBxLjsd8gmmpt9JoINY3mS7WqLO90NR1EkxxG5W+s=; b=MX/Zo3zPmaBavFnRNBIyCoEE0Z
+        KGC0Qbqopibj/GZOpudJnYv+dRNJxJ6SDXTTokiit9VQyiSI4ULarBt1Gj6vOv72gY/eL8QDnYI3X
+        geON5IyE6D9Ev8rj4zx0fF8U6gtUooaPEub7eOYpz3+SGqHfHjpEeBu98x3dzb9EbqeoTT64xri+d
+        3F0BXeVa5E7AfxSybexCusDSYV5fX1IyXz9hXuoLeGsn4Gb7SRoQLwlEG9BzAb+C0oLqpFN3sUu/2
+        I0Dclb/N3/PbdkJz8gGtiLcWIe/xdsB+ftttUU3ujK+Ayb4giG3h9UEGzQps0035diCg9a4AZjb7F
+        jgVKchyA==;
+Received: from [2601:1c0:6280:3f0::3ba4]
+        by casper.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
+        id 1lOPZa-008w1V-IR; Mon, 22 Mar 2021 18:47:02 +0000
+Subject: Re: [PATCH] devicetree: replace invalid kernel-doc comment headers
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
+Cc:     Aditya Srivastava <yashsri421@gmail.com>,
+        Wei Xu <xuwei5@hisilicon.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210322072343.19993-1-lukas.bulwahn@gmail.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <ba94e5f1-8219-716d-2a6b-9cb2dd434ed8@infradead.org>
+Date:   Mon, 22 Mar 2021 11:46:38 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+In-Reply-To: <20210322072343.19993-1-lukas.bulwahn@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-1) Initialize the struct msghdr msg in the start of the function
-2) Uninitialized variable msg.msg_flags can get used if branch happens to
-out_free before initialization.
+On 3/22/21 12:23 AM, Lukas Bulwahn wrote:
+> The opening comment mark '/**' is used for indicating the beginning of
+> kernel-doc comments.
+> 
+> Replace uses of '/**' for invalid cases in dt-binding headers and dts.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-So initialize variable in question in the start of the function for
-simplicity in logic and use.
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
 
-Addresses-Coverity: ("Uninitialized variable")
-Addresses-Coverity: ("Uninitialized variable read")
-Signed-off-by: Muhammad Usama Anjum <musamaanjum@gmail.com>
----
- fs/io_uring.c | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
+Thanks.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index bba74631954b..d5f83326abff 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -4677,7 +4677,8 @@ static int io_recv(struct io_kiocb *req, unsigned int issue_flags)
- {
- 	struct io_buffer *kbuf;
- 	struct io_sr_msg *sr = &req->sr_msg;
--	struct msghdr msg;
-+	struct msghdr msg = {.msg_name = NULL, .msg_control = NULL, .msg_controllen = 0,
-+			     .msg_namelen = 0, .msg_iocb = NULL, .msg_flags = 0};
- 	void __user *buf = sr->buf;
- 	struct socket *sock;
- 	struct iovec iov;
-@@ -4701,13 +4702,6 @@ static int io_recv(struct io_kiocb *req, unsigned int issue_flags)
- 	if (unlikely(ret))
- 		goto out_free;
- 
--	msg.msg_name = NULL;
--	msg.msg_control = NULL;
--	msg.msg_controllen = 0;
--	msg.msg_namelen = 0;
--	msg.msg_iocb = NULL;
--	msg.msg_flags = 0;
--
- 	flags = req->sr_msg.msg_flags | MSG_NOSIGNAL;
- 	if (flags & MSG_DONTWAIT)
- 		req->flags |= REQ_F_NOWAIT;
+> ---
+> Rob, please pick this quick kernel-doc cleanup patch.
+> 
+>  arch/arm64/boot/dts/hisilicon/hip05-d02.dts    | 2 +-
+>  arch/arm64/boot/dts/hisilicon/hip05.dtsi       | 2 +-
+>  arch/arm64/boot/dts/hisilicon/hip06-d03.dts    | 2 +-
+>  arch/arm64/boot/dts/hisilicon/hip06.dtsi       | 4 ++--
+>  arch/arm64/boot/dts/hisilicon/hip07-d05.dts    | 2 +-
+>  arch/arm64/boot/dts/hisilicon/hip07.dtsi       | 2 +-
+>  include/dt-bindings/reset/hisi,hi6220-resets.h | 2 +-
+>  include/dt-bindings/reset/snps,hsdk-reset.h    | 2 +-
+>  8 files changed, 9 insertions(+), 9 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/hisilicon/hip05-d02.dts b/arch/arm64/boot/dts/hisilicon/hip05-d02.dts
+> index 369b69b17b91..3d3d52bf41f5 100644
+> --- a/arch/arm64/boot/dts/hisilicon/hip05-d02.dts
+> +++ b/arch/arm64/boot/dts/hisilicon/hip05-d02.dts
+> @@ -1,5 +1,5 @@
+>  // SPDX-License-Identifier: GPL-2.0-only
+> -/**
+> +/*
+>   * dts file for Hisilicon D02 Development Board
+>   *
+>   * Copyright (C) 2014,2015 Hisilicon Ltd.
+> diff --git a/arch/arm64/boot/dts/hisilicon/hip05.dtsi b/arch/arm64/boot/dts/hisilicon/hip05.dtsi
+> index 4aed8d440b3a..5161e3476531 100644
+> --- a/arch/arm64/boot/dts/hisilicon/hip05.dtsi
+> +++ b/arch/arm64/boot/dts/hisilicon/hip05.dtsi
+> @@ -1,5 +1,5 @@
+>  // SPDX-License-Identifier: GPL-2.0-only
+> -/**
+> +/*
+>   * dts file for Hisilicon D02 Development Board
+>   *
+>   * Copyright (C) 2014,2015 Hisilicon Ltd.
+> diff --git a/arch/arm64/boot/dts/hisilicon/hip06-d03.dts b/arch/arm64/boot/dts/hisilicon/hip06-d03.dts
+> index 9f4a930e734d..97aa42a86fd9 100644
+> --- a/arch/arm64/boot/dts/hisilicon/hip06-d03.dts
+> +++ b/arch/arm64/boot/dts/hisilicon/hip06-d03.dts
+> @@ -1,5 +1,5 @@
+>  // SPDX-License-Identifier: GPL-2.0-only
+> -/**
+> +/*
+>   * dts file for Hisilicon D03 Development Board
+>   *
+>   * Copyright (C) 2016 Hisilicon Ltd.
+> diff --git a/arch/arm64/boot/dts/hisilicon/hip06.dtsi b/arch/arm64/boot/dts/hisilicon/hip06.dtsi
+> index 7deca5f763d5..d86ee1d25ab8 100644
+> --- a/arch/arm64/boot/dts/hisilicon/hip06.dtsi
+> +++ b/arch/arm64/boot/dts/hisilicon/hip06.dtsi
+> @@ -1,5 +1,5 @@
+>  // SPDX-License-Identifier: GPL-2.0-only
+> -/**
+> +/*
+>   * dts file for Hisilicon D03 Development Board
+>   *
+>   * Copyright (C) 2016 Hisilicon Ltd.
+> @@ -315,7 +315,7 @@
+>  		};
+>  	};
+>  
+> -	/**
+> +	/*
+>  	 *  HiSilicon erratum 161010801: This describes the limitation
+>  	 *  of HiSilicon platforms hip06/hip07 to support the SMMUv3
+>  	 *  mappings for PCIe MSI transactions.
+> diff --git a/arch/arm64/boot/dts/hisilicon/hip07-d05.dts b/arch/arm64/boot/dts/hisilicon/hip07-d05.dts
+> index 81a2312c8a26..57debca7b1ac 100644
+> --- a/arch/arm64/boot/dts/hisilicon/hip07-d05.dts
+> +++ b/arch/arm64/boot/dts/hisilicon/hip07-d05.dts
+> @@ -1,5 +1,5 @@
+>  // SPDX-License-Identifier: GPL-2.0-only
+> -/**
+> +/*
+>   * dts file for Hisilicon D05 Development Board
+>   *
+>   * Copyright (C) 2016 Hisilicon Ltd.
+> diff --git a/arch/arm64/boot/dts/hisilicon/hip07.dtsi b/arch/arm64/boot/dts/hisilicon/hip07.dtsi
+> index 2172d8071181..553f7c5209ad 100644
+> --- a/arch/arm64/boot/dts/hisilicon/hip07.dtsi
+> +++ b/arch/arm64/boot/dts/hisilicon/hip07.dtsi
+> @@ -1,5 +1,5 @@
+>  // SPDX-License-Identifier: GPL-2.0-only
+> -/**
+> +/*
+>   * dts file for Hisilicon D05 Development Board
+>   *
+>   * Copyright (C) 2016 Hisilicon Ltd.
+> diff --git a/include/dt-bindings/reset/hisi,hi6220-resets.h b/include/dt-bindings/reset/hisi,hi6220-resets.h
+> index 63aff7d8aa45..c67f479eede7 100644
+> --- a/include/dt-bindings/reset/hisi,hi6220-resets.h
+> +++ b/include/dt-bindings/reset/hisi,hi6220-resets.h
+> @@ -1,5 +1,5 @@
+>  /* SPDX-License-Identifier: GPL-2.0 */
+> -/**
+> +/*
+>   * This header provides index for the reset controller
+>   * based on hi6220 SoC.
+>   */
+> diff --git a/include/dt-bindings/reset/snps,hsdk-reset.h b/include/dt-bindings/reset/snps,hsdk-reset.h
+> index e1a643e4bc91..6a331c8d834d 100644
+> --- a/include/dt-bindings/reset/snps,hsdk-reset.h
+> +++ b/include/dt-bindings/reset/snps,hsdk-reset.h
+> @@ -1,4 +1,4 @@
+> -/**
+> +/*
+>   * This header provides index for the HSDK reset controller.
+>   */
+>  #ifndef _DT_BINDINGS_RESET_CONTROLLER_SNPS_HSDK
+> 
+
+
 -- 
-2.25.1
+~Randy
 
