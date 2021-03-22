@@ -5,45 +5,37 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84087C433DB
-	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Mar 2021 12:14:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCCCBC433E1
+	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Mar 2021 12:17:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 51B036198D
-	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Mar 2021 12:14:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E0386196F
+	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Mar 2021 12:17:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229482AbhCVMOV (ORCPT
+        id S230354AbhCVMQa (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 22 Mar 2021 08:14:21 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:14061 "EHLO
-        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229930AbhCVMOM (ORCPT
+        Mon, 22 Mar 2021 08:16:30 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:14424 "EHLO
+        szxga06-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230292AbhCVMQN (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 22 Mar 2021 08:14:12 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4F3tdl4ypNzNq5d;
-        Mon, 22 Mar 2021 20:11:39 +0800 (CST)
+        Mon, 22 Mar 2021 08:16:13 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
+        by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4F3tj73tjSzkcrG;
+        Mon, 22 Mar 2021 20:14:35 +0800 (CST)
 Received: from localhost.localdomain (10.175.102.38) by
- DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
- 14.3.498.0; Mon, 22 Mar 2021 20:14:03 +0800
+ DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
+ 14.3.498.0; Mon, 22 Mar 2021 20:16:04 +0800
 From:   'w00385741 <weiyongjun1@huawei.com>
 To:     <weiyongjun1@huawei.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "Russell King" <linux@armlinux.org.uk>,
-        Joakim Zhang <qiangqing.zhang@nxp.com>
-CC:     <netdev@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH net-next] net: stmmac: platform: fix build error with !CONFIG_PM_SLEEP
-Date:   Mon, 22 Mar 2021 12:23:59 +0000
-Message-ID: <20210322122359.2980197-1-weiyongjun1@huawei.com>
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>
+CC:     <linux-serial@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "Hulk Robot" <hulkci@huawei.com>
+Subject: [PATCH -next] serial: pch_uart: fix build error with !CONFIG_DEBUG_FS
+Date:   Mon, 22 Mar 2021 12:26:01 +0000
+Message-ID: <20210322122601.2980258-1-weiyongjun1@huawei.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Type:   text/plain; charset=US-ASCII
@@ -56,85 +48,42 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Wei Yongjun <weiyongjun1@huawei.com>
 
-Get rid of the CONFIG_PM_SLEEP ifdefery to fix the build error
-and use __maybe_unused for the suspend()/resume() hooks to avoid
-build warning:
+Fix the build error with CONFIG_DEBUG_FS is not set:
 
-drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c:769:21:
- error: 'stmmac_runtime_suspend' undeclared here (not in a function); did you mean 'stmmac_suspend'?
-  769 |  SET_RUNTIME_PM_OPS(stmmac_runtime_suspend, stmmac_runtime_resume, NULL)
-      |                     ^~~~~~~~~~~~~~~~~~~~~~
-./include/linux/pm.h:342:21: note: in definition of macro 'SET_RUNTIME_PM_OPS'
-  342 |  .runtime_suspend = suspend_fn, \
-      |                     ^~~~~~~~~~
-drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c:769:45:
- error: 'stmmac_runtime_resume' undeclared here (not in a function)
-  769 |  SET_RUNTIME_PM_OPS(stmmac_runtime_suspend, stmmac_runtime_resume, NULL)
-      |                                             ^~~~~~~~~~~~~~~~~~~~~
-./include/linux/pm.h:343:20: note: in definition of macro 'SET_RUNTIME_PM_OPS'
-  343 |  .runtime_resume = resume_fn, \
-      |                    ^~~~~~~~~
+drivers/tty/serial/pch_uart.c: In function 'pch_uart_init_port':
+drivers/tty/serial/pch_uart.c:1815:9: error: 'port_regs_ops' undeclared (first use in this function)
+ 1815 |        &port_regs_ops);
+      |         ^~~~~~~~~~~~~
 
-Fixes: 5ec55823438e ("net: stmmac: add clocks management for gmac driver")
+This commit get rid of the CONFIG_PM_SLEEP ifdefery to
+fix the build error.
+
+Fixes: 1f8a51ee3242 ("tty: serial: pch_uart.c: remove debugfs dentry pointer")
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- .../stmicro/stmmac/stmmac_platform.c       | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ drivers/tty/serial/pch_uart.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-index a70b0bc84b2a..5a1e018884e6 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-@@ -704,7 +704,6 @@ int stmmac_pltfr_remove(struct platform_device *pdev)
- }
- EXPORT_SYMBOL_GPL(stmmac_pltfr_remove);
+diff --git a/drivers/tty/serial/pch_uart.c b/drivers/tty/serial/pch_uart.c
+index e9e79d181f0e..f0351e6f0ef6 100644
+--- a/drivers/tty/serial/pch_uart.c
++++ b/drivers/tty/serial/pch_uart.c
+@@ -291,8 +291,6 @@ static const int trigger_level_64[4] = { 1, 16, 32, 56 };
+ static const int trigger_level_16[4] = { 1, 4, 8, 14 };
+ static const int trigger_level_1[4] = { 1, 1, 1, 1 };
  
--#ifdef CONFIG_PM_SLEEP
- /**
-  * stmmac_pltfr_suspend
-  * @dev: device pointer
-@@ -712,7 +711,7 @@ EXPORT_SYMBOL_GPL(stmmac_pltfr_remove);
-  * call the main suspend function and then, if required, on some platform, it
-  * can call an exit helper.
-  */
--static int stmmac_pltfr_suspend(struct device *dev)
-+static int __maybe_unused stmmac_pltfr_suspend(struct device *dev)
- {
- 	int ret;
- 	struct net_device *ndev = dev_get_drvdata(dev);
-@@ -733,7 +732,7 @@ static int stmmac_pltfr_suspend(struct device *dev)
-  * the main resume function, on some platforms, it can call own init helper
-  * if required.
-  */
--static int stmmac_pltfr_resume(struct device *dev)
-+static int __maybe_unused stmmac_pltfr_resume(struct device *dev)
- {
- 	struct net_device *ndev = dev_get_drvdata(dev);
- 	struct stmmac_priv *priv = netdev_priv(ndev);
-@@ -745,7 +744,7 @@ static int stmmac_pltfr_resume(struct device *dev)
- 	return stmmac_resume(dev);
- }
+-#ifdef CONFIG_DEBUG_FS
+-
+ #define PCH_REGS_BUFSIZE	1024
  
--static int stmmac_runtime_suspend(struct device *dev)
-+static int __maybe_unused stmmac_runtime_suspend(struct device *dev)
- {
- 	struct net_device *ndev = dev_get_drvdata(dev);
- 	struct stmmac_priv *priv = netdev_priv(ndev);
-@@ -755,14 +754,13 @@ static int stmmac_runtime_suspend(struct device *dev)
- 	return 0;
- }
  
--static int stmmac_runtime_resume(struct device *dev)
-+static int __maybe_unused stmmac_runtime_resume(struct device *dev)
- {
- 	struct net_device *ndev = dev_get_drvdata(dev);
- 	struct stmmac_priv *priv = netdev_priv(ndev);
+@@ -352,7 +350,6 @@ static const struct file_operations port_regs_ops = {
+ 	.read		= port_show_regs,
+ 	.llseek		= default_llseek,
+ };
+-#endif	/* CONFIG_DEBUG_FS */
  
- 	return stmmac_bus_clks_config(priv, true);
- }
--#endif /* CONFIG_PM_SLEEP */
- 
- const struct dev_pm_ops stmmac_pltfr_pm_ops = {
- 	SET_SYSTEM_SLEEP_PM_OPS(stmmac_pltfr_suspend, stmmac_pltfr_resume)
+ static const struct dmi_system_id pch_uart_dmi_table[] = {
+ 	{
 
