@@ -2,104 +2,116 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2724C433E0
-	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Mar 2021 14:53:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C42E0C433DB
+	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Mar 2021 15:08:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5C0176197F
-	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Mar 2021 14:53:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7103B6198B
+	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Mar 2021 15:08:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229854AbhCVOxF (ORCPT
+        id S231176AbhCVPHv (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 22 Mar 2021 10:53:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54468 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230477AbhCVOwa (ORCPT
+        Mon, 22 Mar 2021 11:07:51 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:35998 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231673AbhCVPHZ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 22 Mar 2021 10:52:30 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA897C061762
-        for <kernel-janitors@vger.kernel.org>; Mon, 22 Mar 2021 07:52:29 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id u9so21753561ejj.7
-        for <kernel-janitors@vger.kernel.org>; Mon, 22 Mar 2021 07:52:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=t3gPxllU5mvJHQrjHbauoFIiAOe+NDL6oN+LzAey6V8=;
-        b=sjH9p+UuSallMkR4SpRTUbjft+fsLuUDwA1MjkXbCf5CN9AqHlCh6caKVntYKdIWkk
-         1JRFp8EjExBnVR4TKkEBU0eY+LPWQd5YIDQ7/5WmEd0/dm4DgPrqaDckcinVxBgx3F/T
-         jOdEYRBf6scpxx/kSha1gWNtwYewyMmhWOeVLllmI5ypBi3wpVv1RSxFfrht8rNCakVa
-         ZNwM4gmVL+iVl5XT2QAGChnt87ciDMZOkNVou4V0ZepvUJIv+l6tZsnfqp7H2/9uyl32
-         MGtpPMME6cvvZlXQSgvQGrlu7RpdWfoqBxPIUKTFmdNqrSsyL/evmANbntb5rnTH6SfA
-         HDng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=t3gPxllU5mvJHQrjHbauoFIiAOe+NDL6oN+LzAey6V8=;
-        b=gZzp1tDXOEa9obTZKoXnfkYcPZD85XK0dI1tU/j1rhiXeHnceKyM3d9loTXfBSi6lV
-         0CEsF+IEPX1hnFq6+XVaHn84BjGH6u7oM6z9TNRp8wa9kf/GpEWOYYXjISazduJ+wbk8
-         ZRBSCWfeJbfAcOBgKBlznK10Bc4RQmUJl6l2yXitLRccpoOTC/II9TIwr8YrWVUHAafI
-         pO6ChoN0BuZL1tnWWOjDgVrjGs4hEK11sSSyEgZD3/QWm4DeoEPp51HEgJlnSsaRO0X0
-         GqBYyqanSIkuxnarfYFvWtuR50n7qeJxu7bWl8eJiZpWQCnUgg5MrlQFManZe7FYC0dQ
-         cf/w==
-X-Gm-Message-State: AOAM533vnuBrlo0bi9BXTR7pnc4Gfp+K87X3quWfOvRDcwHr9IGHzq1G
-        gm45zTbrsKrxqiaNSdNAu/ggRg==
-X-Google-Smtp-Source: ABdhPJwKLjll+CJ3xCqUU+yWGptTPOZKXWCKcZgONpfprHFHNe+nB5P+Yyi5QKdRXZPlJj0vOu/JGg==
-X-Received: by 2002:a17:906:9509:: with SMTP id u9mr108444ejx.225.1616424748490;
-        Mon, 22 Mar 2021 07:52:28 -0700 (PDT)
-Received: from dell ([91.110.221.180])
-        by smtp.gmail.com with ESMTPSA id v15sm11450545edw.28.2021.03.22.07.52.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Mar 2021 07:52:28 -0700 (PDT)
-Date:   Mon, 22 Mar 2021 14:52:26 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     'Wei Yongjun <weiyongjun1@huawei.com>
-Cc:     Manivannan Sadhasivam <mani@kernel.org>,
-        Cristian Ciocaltea <cristian.ciocaltea@gmail.com>,
-        linux-actions@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
-Subject: Re: [PATCH -next] mfd: Make symbol 'atc260x_i2c_of_match' static
-Message-ID: <20210322145226.GX2916463@dell>
-References: <20210311131507.1902008-1-weiyongjun1@huawei.com>
+        Mon, 22 Mar 2021 11:07:25 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12MExIxc040244;
+        Mon, 22 Mar 2021 15:07:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
+ bh=ywu7PyqFTIuSjcHWouBKSIGMmmCyhnNSnVi8w+rnj7I=;
+ b=luftmhc1GMkDnZorlwaJ1p2eGTDypjL3rNs3dKqkF54/rP79NsSmvGjbl8x4cCsT6tk/
+ DuVEtdzzYpil7ShWORJh3QvRU0lE4n3LSW0rhsp1fYr7l3REm5uhuqLz9d+dqqtraU3V
+ dLZpDAHCEzSCeAUsONQK3F1G/rYzivlGRtrNWYaq9OY654R0RUx2mtTheg/FwQGzN159
+ HpfA3OSr2CwOCqygod2rADaJxpMA0RcZ0RT7xn7fUjY4GZZY+k737TP8/RRbQOjmfQ7u
+ YUkOhzPuaIjJ7nGhgihPhIcJe19dl7tBhUrHH5PpfFqftGJbwuzTMNyKijl+fkvAhkZ3 OA== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 37d90mbt0q-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 22 Mar 2021 15:07:19 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12MF0c3P079308;
+        Mon, 22 Mar 2021 15:07:17 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 37dtyw703p-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 22 Mar 2021 15:07:17 +0000
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 12MF6uQW016166;
+        Mon, 22 Mar 2021 15:06:57 GMT
+Received: from mwanda (/10.175.191.120)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 22 Mar 2021 15:06:55 +0000
+Date:   Mon, 22 Mar 2021 18:06:49 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Manish Chopra <manishc@marvell.com>, Coiby Xu <coiby.xu@gmail.com>
+Cc:     GR-Linux-NIC-Dev@marvell.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org
+Subject: [PATCH] staging: qlge: fix an error code in probe()
+Message-ID: <YFiyicHI189PXrha@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210311131507.1902008-1-weiyongjun1@huawei.com>
+X-Mailer: git-send-email haha only kidding
+X-Proofpoint-IMR: 1
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9931 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 phishscore=0
+ mlxlogscore=999 suspectscore=0 spamscore=0 malwarescore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2103220109
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9931 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0 mlxscore=0
+ priorityscore=1501 bulkscore=0 impostorscore=0 lowpriorityscore=0
+ phishscore=0 mlxlogscore=999 suspectscore=0 clxscore=1011 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2103220109
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 11 Mar 2021, 'Wei Yongjun wrote:
+If alloc_etherdev_mq() fails then return -ENOMEM instead of success.
+The "err = 0;" triggers an unused assignment now so remove that as
+well.
 
-> From: Wei Yongjun <weiyongjun1@huawei.com>
-> 
-> The sparse tool complains as follows:
-> 
-> drivers/mfd/atc260x-i2c.c:45:27: warning:
->  symbol 'atc260x_i2c_of_match' was not declared. Should it be static?
-> 
-> This symbol is not used outside of atc260x-i2c.c, so this
-> commit marks it static.
-> 
-> Fixes: f7cb7fe34db9 ("mfd: Add MFD driver for ATC260x PMICs")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  drivers/mfd/atc260x-i2c.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Fixes: 953b94009377 ("staging: qlge: Initialize devlink health dump framework")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/staging/qlge/qlge_main.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Applied, thanks.
-
+diff --git a/drivers/staging/qlge/qlge_main.c b/drivers/staging/qlge/qlge_main.c
+index 2682a0e474bd..e11470910ef3 100644
+--- a/drivers/staging/qlge/qlge_main.c
++++ b/drivers/staging/qlge/qlge_main.c
+@@ -4549,7 +4549,7 @@ static int qlge_probe(struct pci_dev *pdev,
+ 	struct net_device *ndev = NULL;
+ 	struct devlink *devlink;
+ 	static int cards_found;
+-	int err = 0;
++	int err;
+ 
+ 	devlink = devlink_alloc(&qlge_devlink_ops, sizeof(struct qlge_adapter));
+ 	if (!devlink)
+@@ -4560,8 +4560,10 @@ static int qlge_probe(struct pci_dev *pdev,
+ 	ndev = alloc_etherdev_mq(sizeof(struct qlge_netdev_priv),
+ 				 min(MAX_CPUS,
+ 				     netif_get_num_default_rss_queues()));
+-	if (!ndev)
++	if (!ndev) {
++		err = -ENOMEM;
+ 		goto devlink_free;
++	}
+ 
+ 	ndev_priv = netdev_priv(ndev);
+ 	ndev_priv->qdev = qdev;
 -- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.30.2
+
