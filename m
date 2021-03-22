@@ -2,88 +2,113 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCCCBC433E1
-	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Mar 2021 12:17:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09171C433E3
+	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Mar 2021 12:26:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9E0386196F
-	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Mar 2021 12:17:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C29C56198E
+	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Mar 2021 12:26:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230354AbhCVMQa (ORCPT
+        id S229879AbhCVM0e (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 22 Mar 2021 08:16:30 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:14424 "EHLO
-        szxga06-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230292AbhCVMQN (ORCPT
+        Mon, 22 Mar 2021 08:26:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50674 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230012AbhCVMZx (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 22 Mar 2021 08:16:13 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
-        by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4F3tj73tjSzkcrG;
-        Mon, 22 Mar 2021 20:14:35 +0800 (CST)
-Received: from localhost.localdomain (10.175.102.38) by
- DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
- 14.3.498.0; Mon, 22 Mar 2021 20:16:04 +0800
-From:   'w00385741 <weiyongjun1@huawei.com>
-To:     <weiyongjun1@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>
-CC:     <linux-serial@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        "Hulk Robot" <hulkci@huawei.com>
-Subject: [PATCH -next] serial: pch_uart: fix build error with !CONFIG_DEBUG_FS
-Date:   Mon, 22 Mar 2021 12:26:01 +0000
-Message-ID: <20210322122601.2980258-1-weiyongjun1@huawei.com>
-X-Mailer: git-send-email 2.25.1
-MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.102.38]
-X-CFilter-Loop: Reflected
+        Mon, 22 Mar 2021 08:25:53 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58F90C061574;
+        Mon, 22 Mar 2021 05:25:52 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id n11-20020a05600c4f8bb029010e5cf86347so11099247wmq.1;
+        Mon, 22 Mar 2021 05:25:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=LOMTMUV/x85LsCPs4gPFUtmz8oNiKQ4g1MCpJALdrNc=;
+        b=h23X+iafnBgO3cnGvZfeiDg84UGZYLcGqxh1D7fZNVic8vdWLnIQPRMVK42ZPf8o9N
+         +K26B+14EB/6s0m9osJUsNjYzpbDuRf/7piB9JM4/q/UzSPB/U96FdLPbGlTUpPGvzOw
+         1hWUG56Xt4gBGdWCQOoAREVM2ewYnA0y6TVzNc+Q9mrB7CaQJrCObm8phOzqeAfJWR4p
+         v2mbPrgNEOYDbzbt7Uw7F9RZUBTMzbr175Orz62+zqqqrEBfYgpc24vLlP1F8YafQ7A4
+         DtnwAxRPtNvi9UitVE2DyIcFIDEGhwT9Qsh+ZsSjRXHvV38GxS1sMiiu/mHnCcrOVCyn
+         tehg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=LOMTMUV/x85LsCPs4gPFUtmz8oNiKQ4g1MCpJALdrNc=;
+        b=Z5NCMaj3kjNyGhB5ybGQoGXN1PMf/bTYwWE01ti4C21lUVBXxTKM9bpxBFX0/EhGZZ
+         ta3EJrtqDFXOJqL/6nsf0zUh/iNXdlJ5N5rTZQU+uCffFj4NWowRGv8roNMWgXJ1xsVj
+         mb36V5YhskDsAvoX8k6dINzWvxAkDYqYWqEXQ9UfbtA96x+u/9X3Lct28mq7auDpSSRa
+         Zb5n+ANhYRbI9ZIeFI6Yp/CNE0fDyFaKqxdupXU2IeaxAAOrneQQ0MUgdrLJ3qJMCEbC
+         aLt8sFKpOZxGtdimhS96MyMZa13S/RvmbtixpdUgIC1Nembx2tu00LFxVbcRXI0OJ4NA
+         5kzQ==
+X-Gm-Message-State: AOAM532A8DEgQENcb+pHK85C+pi+XIW7dsjesvkT9i281rQzvR4Gsdl6
+        5Lwp8lkvMVNPI8LmtOZ67Es=
+X-Google-Smtp-Source: ABdhPJzt258rnp+NSla7apvIQE3tvvBvTpjWmYXSMVgriDFOrOqXSTatqWQQ26RLdAxRvgCu6jDioQ==
+X-Received: by 2002:a05:600c:290b:: with SMTP id i11mr16282819wmd.129.1616415950882;
+        Mon, 22 Mar 2021 05:25:50 -0700 (PDT)
+Received: from felia.fritz.box ([2001:16b8:2d8a:8e00:5079:bba3:3b0:9023])
+        by smtp.gmail.com with ESMTPSA id u17sm19088558wrw.51.2021.03.22.05.25.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Mar 2021 05:25:50 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
+Cc:     Joe Perches <joe@perches.com>,
+        Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
+        linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH 0/2] kernel-doc and MAINTAINERS clean-up
+Date:   Mon, 22 Mar 2021 13:25:40 +0100
+Message-Id: <20210322122542.15072-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
+Roughly 900 warnings of about 21.000 kernel-doc warnings in the kernel tree
+warn with 'cannot understand function prototype:', i.e., the kernel-doc parser
+cannot parse the function's signature. The majority, about 600 cases of those,
+are just struct definitions following the kernel-doc description. Further,
+spot-check investigations suggest that the authors of the specific kernel-doc
+descriptions simply were not aware that the general format for a kernel-doc
+description for a structure requires to prefix the struct name with the keyword
+'struct', as in 'struct struct_name - Brief description.'. Details on
+kernel-doc are at the Link below.
 
-Fix the build error with CONFIG_DEBUG_FS is not set:
+Without the struct keyword, kernel-doc does not check if the kernel-doc
+description fits to the actual struct definition in the source code.
+Fortunately, in roughly a quarter of these cases, the kernel-doc description is
+actually complete wrt. its corresponding struct definition. So, the trivial
+change adding the struct keyword will allow us to keep the kernel-doc
+descriptions more consistent for future changes, by checking for new kernel-doc
+warnings.
 
-drivers/tty/serial/pch_uart.c: In function 'pch_uart_init_port':
-drivers/tty/serial/pch_uart.c:1815:9: error: 'port_regs_ops' undeclared (first use in this function)
- 1815 |        &port_regs_ops);
-      |         ^~~~~~~~~~~~~
+Also, some of the files in ./include/ are not assigned to a specific
+MAINTAINERS section and hence have no dedicated maintainer. So, if needed, the
+files in ./include/ are also assigned to the fitting MAINTAINERS section, as I
+need to identify whom to send the clean-up patch anyway.
 
-This commit get rid of the CONFIG_PM_SLEEP ifdefery to
-fix the build error.
+Here is the change from this kernel-doc janitorial work in the ./include/
+directory for MEMORY MANAGEMENT.
 
-Fixes: 1f8a51ee3242 ("tty: serial: pch_uart.c: remove debugfs dentry pointer")
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/tty/serial/pch_uart.c | 3 ---
- 1 file changed, 3 deletions(-)
+Andrew, please pick this clean-up patch series for mm.
 
-diff --git a/drivers/tty/serial/pch_uart.c b/drivers/tty/serial/pch_uart.c
-index e9e79d181f0e..f0351e6f0ef6 100644
---- a/drivers/tty/serial/pch_uart.c
-+++ b/drivers/tty/serial/pch_uart.c
-@@ -291,8 +291,6 @@ static const int trigger_level_64[4] = { 1, 16, 32, 56 };
- static const int trigger_level_16[4] = { 1, 4, 8, 14 };
- static const int trigger_level_1[4] = { 1, 1, 1, 1 };
- 
--#ifdef CONFIG_DEBUG_FS
--
- #define PCH_REGS_BUFSIZE	1024
- 
- 
-@@ -352,7 +350,6 @@ static const struct file_operations port_regs_ops = {
- 	.read		= port_show_regs,
- 	.llseek		= default_llseek,
- };
--#endif	/* CONFIG_DEBUG_FS */
- 
- static const struct dmi_system_id pch_uart_dmi_table[] = {
- 	{
+Link: https://www.kernel.org/doc/html/latest/doc-guide/kernel-doc.html
+
+
+Lukas Bulwahn (2):
+  MAINTAINERS: assign pagewalk.h to MEMORY MANAGEMENT
+  pagewalk: prefix struct kernel-doc descriptions
+
+ MAINTAINERS              | 1 +
+ include/linux/pagewalk.h | 4 ++--
+ 2 files changed, 3 insertions(+), 2 deletions(-)
+
+-- 
+2.17.1
 
