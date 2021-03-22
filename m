@@ -2,96 +2,93 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6634C433C1
-	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Mar 2021 19:20:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12A4CC433E0
+	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Mar 2021 20:40:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5D95F61984
-	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Mar 2021 19:20:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4F0E619A8
+	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Mar 2021 20:40:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231301AbhCVTU0 (ORCPT
+        id S229920AbhCVUk1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 22 Mar 2021 15:20:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55890 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230338AbhCVTT5 (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 22 Mar 2021 15:19:57 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FDA7C061574;
-        Mon, 22 Mar 2021 12:19:57 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id v11so18337048wro.7;
-        Mon, 22 Mar 2021 12:19:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=XQseG+vS6FVhRx/oQta3S0usw68fkincPFQ5bP01yH4=;
-        b=jxRk5NHzUembvmgk1WfSORNIUqkmesKAjcNciwMeOvBqtFZE6oBWFcMH12wRDqNQSW
-         dWOFZM+nHs/Bdui2xUFDh0eRsBr7rNs5rz5LEeuw1shbvwnbYkycagdNcCDH++7JRyLN
-         2VNKwpto9bVsBSeJXeykXpYmlmBtTFKbHm5CXlex+sYjH09xlTOn1IjPMLmDTgJLunFY
-         V1VViKgQVbwnNXJRVKqo0xsL7uMHmUCJzgNvjM7kTfjhPqzy7AVFnMx9QQ1eMyjl0R0t
-         YOvfMzKkfuWQnBXHXyllC4oDTx96tHVFLPUXWjFcmxoy+nD9UkGZUkfYQOCOXz7g20AF
-         Tc+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=XQseG+vS6FVhRx/oQta3S0usw68fkincPFQ5bP01yH4=;
-        b=VzYvxCEUKCu/ep8LIXsR2Y3k895p/snq0c/rkq90EwLhUn1PS1C1Bm7BNxETWE02Cg
-         CeGPb/UKT8WVNp7nV64FEH7T6Kr4kEKWbB+AsHzG1Sa4A/Yr/iDzer/K8eVFJdEjxoOM
-         Xf1gi1rIPVNd2gXtgCCnLWIB8yI2uFctMA4/qVN7suBt3s4ve/oJ7SdyGF3fC92mn+E+
-         HNSUlBKjHccm1E3UmtPZoOQ4Ad0XxHNqFjyPdhhfMLln3XXop+3CIulBlH/OY7BHCyeX
-         q+PEmnbEKda4wvKnrxN0cZG1lZz2WHF2Njffk9wsYC8rh+qHbAMSVl6btpkABgVjYfXG
-         uNCA==
-X-Gm-Message-State: AOAM530C+1DAvT9TQ5KDdHD1mV/6HwAPr5AYBZdpPIEPGfBCdqx+dEGE
-        Ar0VpyGGEzJLHmWYkDXDxJI=
-X-Google-Smtp-Source: ABdhPJyWA8nDg2lWTNgP9luWb/6mtZX1inEaC3NW7cCw6JG/Q4v6l1WG6IrJgaPvz+pvhodfep4guA==
-X-Received: by 2002:a05:6000:1547:: with SMTP id 7mr69306wry.365.1616440795875;
-        Mon, 22 Mar 2021 12:19:55 -0700 (PDT)
-Received: from 192.168.8.101 ([111.119.187.31])
-        by smtp.gmail.com with ESMTPSA id o15sm15253100wra.93.2021.03.22.12.19.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Mar 2021 12:19:55 -0700 (PDT)
-Message-ID: <959e827d3407bfee9a367d8a68aa9aed184ddcf5.camel@gmail.com>
-Subject: Re: [PATCH] thermal/core: avoid memory leak
-From:   Muhammad Usama Anjum <musamaanjum@gmail.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        colin.king@canonical.com
-Date:   Tue, 23 Mar 2021 00:19:50 +0500
-In-Reply-To: <20210322191817.GG1717@kadam>
-References: <20210322191204.GA2122573@LEGION> <20210322191817.GG1717@kadam>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.4-0ubuntu1 
+        Mon, 22 Mar 2021 16:40:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39272 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229730AbhCVUkI (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 22 Mar 2021 16:40:08 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPS id D516961878;
+        Mon, 22 Mar 2021 20:40:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1616445607;
+        bh=uOeMl8pGHKXuKl95ml116zP4b3bwod87xUannPmtFbo=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=IhZarDGyPWKpokrFvuaSTUpEp8CMJ7ny8mTVePUmFj2cylNnz/44P2ZcRrAd3jJ96
+         IoD56R6OYTpp7vmp3FUag8PlnS3I2Ilxs0srKEY1RKBO7GcGwrGOmAH+qrlREVclK/
+         Izs/7crq0CQ5w9YHi4qo0OnE7wVLouEU/HSeB7g4XsOgLzPt8jJoSSO9G9AgUwp/2+
+         RLw6eyzlPK2Ce5mL7GcTqpppqJ3a8bSGR7tFx3t8NTSNMc4lQrQh2I3WK+I10JUGvI
+         KciO8GcQhlqNY+VNQGUT6KP6X/CzOp76jWkmpLha1uZhHHMdW2WRq/m12yqypt34uN
+         w1EfHLf07BgEA==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] net: stmmac: platform: fix build error with
+ !CONFIG_PM_SLEEP
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <161644560778.2928.15414100425036462948.git-patchwork-notify@kernel.org>
+Date:   Mon, 22 Mar 2021 20:40:07 +0000
+References: <20210322122359.2980197-1-weiyongjun1@huawei.com>
+In-Reply-To: <20210322122359.2980197-1-weiyongjun1@huawei.com>
+To:     'w00385741 <weiyongjun1@huawei.com>
+Cc:     peppe.cavallaro@st.com, alexandre.torgue@foss.st.com,
+        joabreu@synopsys.com, kuba@kernel.org, mcoquelin.stm32@gmail.com,
+        p.zabel@pengutronix.de, linux@armlinux.org.uk,
+        qiangqing.zhang@nxp.com, netdev@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org,
+        kernel-janitors@vger.kernel.org, hulkci@huawei.com
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, 2021-03-22 at 22:18 +0300, Dan Carpenter wrote:
-> On Tue, Mar 23, 2021 at 12:12:04AM +0500, Muhammad Usama Anjum wrote:
-> > When memory allocation for cdev is successful but ida_simple_get fails,
-> > branch to out_kfree_cdev label happens and cdev isn't freed. There are
-> > other some other branches in which the memory can leaked. Fix it by
-> > freeing cdev.
-> > 
-> 
-> The patch is correct, but Daniel already sent a fix for it.
-> 
-Got it. Thank you.
+Hello:
 
-Thanks,
-Usama
-> regards,
-> dan carpenter
+This patch was applied to netdev/net-next.git (refs/heads/master):
+
+On Mon, 22 Mar 2021 12:23:59 +0000 you wrote:
+> From: Wei Yongjun <weiyongjun1@huawei.com>
 > 
+> Get rid of the CONFIG_PM_SLEEP ifdefery to fix the build error
+> and use __maybe_unused for the suspend()/resume() hooks to avoid
+> build warning:
+> 
+> drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c:769:21:
+>  error: 'stmmac_runtime_suspend' undeclared here (not in a function); did you mean 'stmmac_suspend'?
+>   769 |  SET_RUNTIME_PM_OPS(stmmac_runtime_suspend, stmmac_runtime_resume, NULL)
+>       |                     ^~~~~~~~~~~~~~~~~~~~~~
+> ./include/linux/pm.h:342:21: note: in definition of macro 'SET_RUNTIME_PM_OPS'
+>   342 |  .runtime_suspend = suspend_fn, \
+>       |                     ^~~~~~~~~~
+> drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c:769:45:
+>  error: 'stmmac_runtime_resume' undeclared here (not in a function)
+>   769 |  SET_RUNTIME_PM_OPS(stmmac_runtime_suspend, stmmac_runtime_resume, NULL)
+>       |                                             ^~~~~~~~~~~~~~~~~~~~~
+> ./include/linux/pm.h:343:20: note: in definition of macro 'SET_RUNTIME_PM_OPS'
+>   343 |  .runtime_resume = resume_fn, \
+>       |                    ^~~~~~~~~
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next] net: stmmac: platform: fix build error with !CONFIG_PM_SLEEP
+    https://git.kernel.org/netdev/net-next/c/7ec05a603548
+
+You are awesome, thank you!
+--
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
