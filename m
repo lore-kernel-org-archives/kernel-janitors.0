@@ -5,127 +5,239 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no version=3.4.0
+	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10B01C433E3
-	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Mar 2021 13:20:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51058C433C1
+	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Mar 2021 13:28:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C7E27619C3
-	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Mar 2021 13:20:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C8BE619B9
+	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Mar 2021 13:28:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231485AbhCWNU2 (ORCPT
+        id S229693AbhCWN2X (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 23 Mar 2021 09:20:28 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:49148 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231645AbhCWNUU (ORCPT
+        Tue, 23 Mar 2021 09:28:23 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:41568 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231404AbhCWN1w (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 23 Mar 2021 09:20:20 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12NDKEts133624;
-        Tue, 23 Mar 2021 13:20:14 GMT
+        Tue, 23 Mar 2021 09:27:52 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12NDKCfh056190;
+        Tue, 23 Mar 2021 13:27:19 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
  : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=GRh5VjC7KX+AhodzilCiXRQmjLUkaOmy1TDSen1Tafk=;
- b=uKStWlWeIL0+YwBp3mvkjS1P0aod81QEVZfq5qeGD3NLNzvIlm66xxiyiv2C5muG0SXS
- u08ROZMQN9BN6TfDvLVrG8yowPPnjMMyzHHG9xfDuAjOZflxm8dOi3ekLnIvpnqNvLcG
- 831A01FaFSfqqpswgR4mhY6V3Pf7u1aEp11InSXD35tvi3l+RateZN03+WA+GdPXHFXa
- 5yPNjOjKJEv7nHWzupCtOdsIemAu2BablxYpSRDr4OXNKlNqLWaKABkDWqDQmYuTfUEx
- XlSxhb+uM3rU0wk/ZSIJXW8eArViz3xOaSfjxxBi5idt6OxRNbMv2/I3j2iFadzAZGNF Wg== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2130.oracle.com with ESMTP id 37d6jbf223-1
+ bh=MVqQ7s2WzKyNtpCuABtLdT6Z2dI4JW+Zqkq8SQ4aBn4=;
+ b=UDBguXtNg73Q5KnKkZyvpPSRVRwVG+/N6jIoeGlYovfhgqyHpnY07csmQ5j2KRb3g8uY
+ 4IZVmjZVUwKfAI41PBsfoINE68ZXqvjySBb4rT+NszRTb+L3MIeyjaf3A45+cMCEAe39
+ xFumwdkDCe7S2CxWWS86uwTRD/eo6TF0Q0qUzBos4YHraMVNli9Ai/tn8Sz2lbp2FJrv
+ h3IAQD3FYZpl2zk38J7pJ8/7zJYjP0UyOsd6PY+I4mWMrJGAf7fPBlCgTRPgo1wmccmg
+ yCkPTayQf0SqXu6dqaoiJqlndebOandF7rek8l8n1T1c0/06qEbaYywuX3VyPdNRSnmv fw== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 37d9pmxwxs-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 23 Mar 2021 13:20:14 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12NDKAaa054364;
-        Tue, 23 Mar 2021 13:20:12 GMT
+        Tue, 23 Mar 2021 13:27:19 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12NDQiXp179991;
+        Tue, 23 Mar 2021 13:27:17 GMT
 Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3020.oracle.com with ESMTP id 37dttrx2p7-1
+        by userp3030.oracle.com with ESMTP id 37dtyxecmh-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 23 Mar 2021 13:20:11 +0000
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 12NDK5m0001588;
-        Tue, 23 Mar 2021 13:20:06 GMT
+        Tue, 23 Mar 2021 13:27:17 +0000
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 12NDRC2D005969;
+        Tue, 23 Mar 2021 13:27:12 GMT
 Received: from mwanda (/102.36.221.92)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 23 Mar 2021 06:20:05 -0700
-Date:   Tue, 23 Mar 2021 16:19:59 +0300
+        with ESMTP ; Tue, 23 Mar 2021 06:27:11 -0700
+Date:   Tue, 23 Mar 2021 16:27:04 +0300
 From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Logan Gunthorpe <logang@deltatee.com>
-Cc:     Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] dmaengine: plx_dma: add a missing put_device() on error path
-Message-ID: <YFnq/0IQzixtAbC1@mwanda>
+To:     Namjae Jeon <namjae.jeon@samsung.com>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steve French <sfrench@samba.org>,
+        Hyunchul Lee <hyc.lee@gmail.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        linux-cifs@vger.kernel.org,
+        linux-cifsd-devel@lists.sourceforge.net,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH v2] cifsd: fix error handling in ksmbd_server_init()
+Message-ID: <YFnsqPphqvItA3z2@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 X-Proofpoint-IMR: 1
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9931 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0 spamscore=0
- mlxscore=0 phishscore=0 suspectscore=0 mlxlogscore=999 bulkscore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 phishscore=0
+ mlxlogscore=999 suspectscore=0 spamscore=0 malwarescore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2103230099
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9931 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 phishscore=0
+ mlxlogscore=999 priorityscore=1501 impostorscore=0 bulkscore=0 spamscore=0
+ adultscore=0 clxscore=1015 malwarescore=0 mlxscore=0 suspectscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
  definitions=main-2103230098
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9931 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 phishscore=0
- lowpriorityscore=0 suspectscore=0 clxscore=1011 priorityscore=1501
- spamscore=0 adultscore=0 impostorscore=0 mlxlogscore=999 mlxscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2103230098
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Add a missing put_device(&pdev->dev) if the call to
-dma_async_device_register(dma); fails.
+The error handling in ksmbd_server_init() uses "one function to free
+everything style" which is impossible to audit and leads to several
+canonical bugs.  When we free something that wasn't allocated it may be
+uninitialized, an error pointer, freed in a different function or we
+try freeing "foo->bar" when "foo" is a NULL pointer.  And since the
+code is impossible to audit then it leads to memory leaks.
 
-Fixes: 905ca51e63be ("dmaengine: plx-dma: Introduce PLX DMA engine PCI driver skeleton")
+In the ksmbd_server_init() function, every goto will lead to a crash
+because we have not allocated the work queue but we call
+ksmbd_workqueue_destroy() which tries to flush a NULL work queue.
+Another bug is if ksmbd_init_buffer_pools() fails then it leads to a
+double free because we free "work_cache" twice.  A third type of bug is
+that we forgot to call ksmbd_release_inode_hash() so that is a resource
+leak.
+
+A better way to write error handling is for every function to clean up
+after itself and never leave things partially allocated.  Then we can
+use "free the last successfully allocated resource" style.  That way
+when someone is reading the code they can just track the last resource
+in their head and verify that the goto matches what they expect.
+
+In this patch I modified ksmbd_ipc_init() to clean up after itself and
+then I converted ksmbd_server_init() to use gotos to clean up.
+
+Fixes: cabcebc31de4 ("cifsd: introduce SMB3 kernel server")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/dma/plx_dma.c | 18 +++++++++++-------
- 1 file changed, 11 insertions(+), 7 deletions(-)
+v2: remove __exit annotation from ksmbd_release_inode_hash() as detected
+by the kbuild-bot
 
-diff --git a/drivers/dma/plx_dma.c b/drivers/dma/plx_dma.c
-index f387c5bbc170..166934544161 100644
---- a/drivers/dma/plx_dma.c
-+++ b/drivers/dma/plx_dma.c
-@@ -507,10 +507,8 @@ static int plx_dma_create(struct pci_dev *pdev)
+ fs/cifsd/server.c        | 33 +++++++++++++++++++++++----------
+ fs/cifsd/transport_ipc.c | 14 +++++++++++---
+ fs/cifsd/vfs_cache.c     |  2 +-
+ fs/cifsd/vfs_cache.h     |  2 +-
+ 4 files changed, 36 insertions(+), 15 deletions(-)
+
+diff --git a/fs/cifsd/server.c b/fs/cifsd/server.c
+index 85862c3ea7c0..31e454cb3ce2 100644
+--- a/fs/cifsd/server.c
++++ b/fs/cifsd/server.c
+@@ -567,39 +567,52 @@ static int __init ksmbd_server_init(void)
  
- 	rc = request_irq(pci_irq_vector(pdev, 0), plx_dma_isr, 0,
- 			 KBUILD_MODNAME, plxdev);
--	if (rc) {
--		kfree(plxdev);
--		return rc;
--	}
-+	if (rc)
-+		goto free_plx;
+ 	ret = server_conf_init();
+ 	if (ret)
+-		return ret;
++		goto err_unregister;
  
- 	spin_lock_init(&plxdev->ring_lock);
- 	tasklet_setup(&plxdev->desc_task, plx_dma_desc_task);
-@@ -540,14 +538,20 @@ static int plx_dma_create(struct pci_dev *pdev)
- 	rc = dma_async_device_register(dma);
- 	if (rc) {
- 		pci_err(pdev, "Failed to register dma device: %d\n", rc);
--		free_irq(pci_irq_vector(pdev, 0),  plxdev);
--		kfree(plxdev);
--		return rc;
-+		goto put_device;
- 	}
+ 	ret = ksmbd_init_buffer_pools();
+ 	if (ret)
+-		return ret;
++		goto err_unregister;
  
- 	pci_set_drvdata(pdev, plxdev);
+ 	ret = ksmbd_init_session_table();
+ 	if (ret)
+-		goto error;
++		goto err_destroy_pools;
  
+ 	ret = ksmbd_ipc_init();
+ 	if (ret)
+-		goto error;
++		goto err_free_session_table;
+ 
+ 	ret = ksmbd_init_global_file_table();
+ 	if (ret)
+-		goto error;
++		goto err_ipc_release;
+ 
+ 	ret = ksmbd_inode_hash_init();
+ 	if (ret)
+-		goto error;
++		goto err_destroy_file_table;
+ 
+ 	ret = ksmbd_crypto_create();
+ 	if (ret)
+-		goto error;
++		goto err_release_inode_hash;
+ 
+ 	ret = ksmbd_workqueue_init();
+ 	if (ret)
+-		goto error;
++		goto err_crypto_destroy;
  	return 0;
+ 
+-error:
+-	ksmbd_server_shutdown();
++err_crypto_destroy:
++	ksmbd_crypto_destroy();
++err_release_inode_hash:
++	ksmbd_release_inode_hash();
++err_destroy_file_table:
++	ksmbd_free_global_file_table();
++err_ipc_release:
++	ksmbd_ipc_release();
++err_free_session_table:
++	ksmbd_free_session_table();
++err_destroy_pools:
++	ksmbd_destroy_buffer_pools();
++err_unregister:
++	class_unregister(&ksmbd_control_class);
 +
-+put_device:
-+	put_device(&pdev->dev);
-+	free_irq(pci_irq_vector(pdev, 0),  plxdev);
-+free_plx:
-+	kfree(plxdev);
-+
-+	return rc;
+ 	return ret;
  }
  
- static int plx_dma_probe(struct pci_dev *pdev,
+diff --git a/fs/cifsd/transport_ipc.c b/fs/cifsd/transport_ipc.c
+index c49e46fda9b1..e5f4d97b2924 100644
+--- a/fs/cifsd/transport_ipc.c
++++ b/fs/cifsd/transport_ipc.c
+@@ -887,11 +887,19 @@ int ksmbd_ipc_init(void)
+ 	if (ret) {
+ 		ksmbd_err("Failed to register KSMBD netlink interface %d\n",
+ 				ret);
+-		return ret;
++		goto cancel_work;
+ 	}
+ 
+ 	ida = ksmbd_ida_alloc();
+-	if (!ida)
+-		return -ENOMEM;
++	if (!ida) {
++		ret = -ENOMEM;
++		goto unregister;
++	}
+ 	return 0;
++
++unregister:
++	genl_unregister_family(&ksmbd_genl_family);
++cancel_work:
++	cancel_delayed_work_sync(&ipc_timer_work);
++	return ret;
+ }
+diff --git a/fs/cifsd/vfs_cache.c b/fs/cifsd/vfs_cache.c
+index af92fab5b7ae..34e045f27230 100644
+--- a/fs/cifsd/vfs_cache.c
++++ b/fs/cifsd/vfs_cache.c
+@@ -236,7 +236,7 @@ int __init ksmbd_inode_hash_init(void)
+ 	return 0;
+ }
+ 
+-void __exit ksmbd_release_inode_hash(void)
++void ksmbd_release_inode_hash(void)
+ {
+ 	vfree(inode_hashtable);
+ }
+diff --git a/fs/cifsd/vfs_cache.h b/fs/cifsd/vfs_cache.h
+index 7d23657c86c6..04ab5967a9ae 100644
+--- a/fs/cifsd/vfs_cache.h
++++ b/fs/cifsd/vfs_cache.h
+@@ -194,7 +194,7 @@ void ksmbd_set_fd_limit(unsigned long limit);
+  */
+ 
+ int __init ksmbd_inode_hash_init(void);
+-void __exit ksmbd_release_inode_hash(void);
++void ksmbd_release_inode_hash(void);
+ 
+ enum KSMBD_INODE_STATUS {
+ 	KSMBD_INODE_STATUS_OK,
 -- 
 2.30.2
+
 
