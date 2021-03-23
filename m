@@ -4,74 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD0B1C433C1
-	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Mar 2021 11:21:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E0C8C433DB
+	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Mar 2021 12:33:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AD2A9619BB
-	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Mar 2021 11:21:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D3A860C3D
+	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Mar 2021 12:33:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230228AbhCWLUi (ORCPT
+        id S230417AbhCWMdH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 23 Mar 2021 07:20:38 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:14846 "EHLO
-        szxga07-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230450AbhCWLUM (ORCPT
+        Tue, 23 Mar 2021 08:33:07 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:59026 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230011AbhCWMcy (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 23 Mar 2021 07:20:12 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
-        by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4F4TPb1kWQz92t4;
-        Tue, 23 Mar 2021 19:18:11 +0800 (CST)
-Received: from localhost.localdomain (10.175.102.38) by
- DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
- 14.3.498.0; Tue, 23 Mar 2021 19:20:00 +0800
-From:   'w00385741 <weiyongjun1@huawei.com>
-To:     <weiyongjun1@huawei.com>, Adrian Hunter <adrian.hunter@intel.com>,
-        "Ulf Hansson" <ulf.hansson@linaro.org>,
-        Shawn Lin <shawn.lin@rock-chips.com>
-CC:     <linux-mmc@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH -next] mmc: sdhci-of-dwcmshc: fix error return code in dwcmshc_probe()
-Date:   Tue, 23 Mar 2021 11:29:56 +0000
-Message-ID: <20210323112956.1016884-1-weiyongjun1@huawei.com>
-X-Mailer: git-send-email 2.25.1
+        Tue, 23 Mar 2021 08:32:54 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lOgDF-0007Om-UZ; Tue, 23 Mar 2021 12:32:46 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Sunil Goutham <sgoutham@marvell.com>,
+        Linu Cherian <lcherian@marvell.com>,
+        Geetha sowjanya <gakula@marvell.com>,
+        Jerin Jacob <jerinj@marvell.com>,
+        hariprasad <hkelam@marvell.com>,
+        Subbaraya Sundeep <sbhatta@marvell.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Rakesh Babu <rsaladi2@marvell.com>, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] octeontx2-af: Fix memory leak of object buf
+Date:   Tue, 23 Mar 2021 12:32:45 +0000
+Message-Id: <20210323123245.346491-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.102.38]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Fix to return negative error code -ENOMEM from the error handling
-case instead of 0, as done elsewhere in this function.
+Currently the error return path when lfs fails to allocate is not free'ing
+the memory allocated to buf. Fix this by adding the missing kfree.
 
-Fixes: c2c4da37837e ("mmc: sdhci-of-dwcmshc: add rockchip platform support")
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Addresses-Coverity: ("Resource leak")
+Fixes: f7884097141b ("octeontx2-af: Formatting debugfs entry rsrc_alloc.")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/mmc/host/sdhci-of-dwcmshc.c | 4 +++-
+ drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c | 4 +++-
  1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/sdhci-of-dwcmshc.c b/drivers/mmc/host/sdhci-of-dwcmshc.c
-index 06873686d5e9..e96c628aeeeb 100644
---- a/drivers/mmc/host/sdhci-of-dwcmshc.c
-+++ b/drivers/mmc/host/sdhci-of-dwcmshc.c
-@@ -383,8 +383,10 @@ static int dwcmshc_probe(struct platform_device *pdev)
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c
+index 8ec17ee72b5d..9bf8eaabf9ab 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c
++++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c
+@@ -253,8 +253,10 @@ static ssize_t rvu_dbg_rsrc_attach_status(struct file *filp,
+ 		return -ENOSPC;
  
- 	if (pltfm_data == &sdhci_dwcmshc_rk3568_pdata) {
- 		rk_priv = devm_kzalloc(&pdev->dev, sizeof(struct rk3568_priv), GFP_KERNEL);
--		if (!rk_priv)
-+		if (!rk_priv) {
-+			err = -ENOMEM;
- 			goto err_clk;
-+		}
- 
- 		priv->priv = rk_priv;
- 
+ 	lfs = kzalloc(lf_str_size, GFP_KERNEL);
+-	if (!lfs)
++	if (!lfs) {
++		kfree(buf);
+ 		return -ENOMEM;
++	}
+ 	off +=	scnprintf(&buf[off], buf_size - 1 - off, "%-*s", lf_str_size,
+ 			  "pcifunc");
+ 	for (index = 0; index < BLK_COUNT; index++)
+-- 
+2.30.2
 
