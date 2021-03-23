@@ -2,82 +2,81 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DDB3C433E0
-	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Mar 2021 14:16:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A1D2C433DB
+	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Mar 2021 14:23:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 53C3361585
-	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Mar 2021 14:16:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53DDB619B1
+	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Mar 2021 14:23:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232139AbhCWOQT (ORCPT
+        id S232170AbhCWOWm (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 23 Mar 2021 10:16:19 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:34228 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232228AbhCWOPo (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 23 Mar 2021 10:15:44 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1lOhor-0008LE-Be; Tue, 23 Mar 2021 14:15:41 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Harry Wentland <harry.wentland@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Lee Jones <lee.jones@linaro.org>,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/amd/display/dc/calcs/dce_calcs: Fix allocation size for dceip and vbios
-Date:   Tue, 23 Mar 2021 14:15:41 +0000
-Message-Id: <20210323141541.348376-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.30.2
+        Tue, 23 Mar 2021 10:22:42 -0400
+Received: from mga14.intel.com ([192.55.52.115]:46471 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231438AbhCWOW3 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 23 Mar 2021 10:22:29 -0400
+IronPort-SDR: GjEfadTcBpJQTJyChi7xpR3yDx97Ijk39zZsWjfdp8hLUps3gQsqz8ZynzHM35VtqaUWNba0dR
+ LVmsq0NverNA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9931"; a="189886665"
+X-IronPort-AV: E=Sophos;i="5.81,271,1610438400"; 
+   d="scan'208";a="189886665"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Mar 2021 07:22:12 -0700
+IronPort-SDR: iv+HvTurjOnEkDLuhu8g2pBp4rv9JtBbVxD/AQB5x/EDymNpe9Q1GjpFxkl0iT2HQz07X9zoQJ
+ mxiNKD+QJn7w==
+X-IronPort-AV: E=Sophos;i="5.81,271,1610438400"; 
+   d="scan'208";a="513758880"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
+  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Mar 2021 07:22:02 -0700
+Received: by lahna (sSMTP sendmail emulation); Tue, 23 Mar 2021 16:21:54 +0200
+Date:   Tue, 23 Mar 2021 16:21:54 +0200
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        Richard Weinberger <richard@nod.at>, linux-usb@vger.kernel.org,
+        linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org,
+        Julia Lawall <julia.lawall@inria.fr>
+Subject: Re: [PATCH] thunderbolt: unlock on error path in tb_domain_add()
+Message-ID: <20210323142154.GW2542@lahna.fi.intel.com>
+References: <YFnqyqDzSHenVN9O@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YFnqyqDzSHenVN9O@mwanda>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Tue, Mar 23, 2021 at 04:19:06PM +0300, Dan Carpenter wrote:
+> We accidentally deleted this unlock on the error path.  Undelete it.
+> 
+> Fixes: 7f0a34d7900b ("thunderbolt: Decrease control channel timeout for software connection manager")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Currently the allocations for dceip and vbios are based on the size of
-the pointer rather than the size of the data structures, causing heap
-issues. Fix this by using the correct allocation sizes.
+Julia also reported this yesterday and I was just about to send a patch
+that fixes it too :) Applied this one now, thanks!
 
-Addresses-Coverity: ("Wrong size of argument")
-Fixes: a2a855772210 ("drm/amd/display/dc/calcs/dce_calcs: Remove some large variables from the stack")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpu/drm/amd/display/dc/calcs/dce_calcs.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/amd/display/dc/calcs/dce_calcs.c b/drivers/gpu/drm/amd/display/dc/calcs/dce_calcs.c
-index 556ecfabc8d2..1244fcb0f446 100644
---- a/drivers/gpu/drm/amd/display/dc/calcs/dce_calcs.c
-+++ b/drivers/gpu/drm/amd/display/dc/calcs/dce_calcs.c
-@@ -2051,11 +2051,11 @@ void bw_calcs_init(struct bw_calcs_dceip *bw_dceip,
- 
- 	enum bw_calcs_version version = bw_calcs_version_from_asic_id(asic_id);
- 
--	dceip = kzalloc(sizeof(dceip), GFP_KERNEL);
-+	dceip = kzalloc(sizeof(*dceip), GFP_KERNEL);
- 	if (!dceip)
- 		return;
- 
--	vbios = kzalloc(sizeof(vbios), GFP_KERNEL);
-+	vbios = kzalloc(sizeof(*vbios), GFP_KERNEL);
- 	if (!vbios) {
- 		kfree(dceip);
- 		return;
--- 
-2.30.2
-
+> ---
+>  drivers/thunderbolt/domain.c | 1 +
+>  1 files changed, 1 insertions(+), 0 deletion(-)
+> 
+> diff --git a/drivers/thunderbolt/domain.c b/drivers/thunderbolt/domain.c
+> index a7d83eec3d15..98f4056f89ff 100644
+> --- a/drivers/thunderbolt/domain.c
+> +++ b/drivers/thunderbolt/domain.c
+> @@ -493,6 +493,7 @@ int tb_domain_add(struct tb *tb)
+>  	device_del(&tb->dev);
+>  err_ctl_stop:
+>  	tb_ctl_stop(tb->ctl);
+> +	mutex_unlock(&tb->lock);
+>  
+>  	return ret;
+>  }
