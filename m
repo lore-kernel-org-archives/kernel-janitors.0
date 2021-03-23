@@ -7,67 +7,76 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C82E6C433C1
-	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Mar 2021 09:22:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93915C433E0
+	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Mar 2021 11:20:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 78697619C3
-	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Mar 2021 09:22:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6749B619A0
+	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Mar 2021 11:20:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229669AbhCWJWI (ORCPT
+        id S230304AbhCWLTe (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 23 Mar 2021 05:22:08 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:52880 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229949AbhCWJVp (ORCPT
+        Tue, 23 Mar 2021 07:19:34 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:14013 "EHLO
+        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229482AbhCWLTL (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 23 Mar 2021 05:21:45 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1lOdEM-0008PZ-3G; Tue, 23 Mar 2021 09:21:42 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Mirela Rabulea <mirela.rabulea@nxp.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Tue, 23 Mar 2021 07:19:11 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4F4TNQ5x8jzwQ8Z;
+        Tue, 23 Mar 2021 19:17:10 +0800 (CST)
+Received: from localhost.localdomain (10.175.102.38) by
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.498.0; Tue, 23 Mar 2021 19:18:59 +0800
+From:   'w00385741 <weiyongjun1@huawei.com>
+To:     <weiyongjun1@huawei.com>, Mirela Rabulea <mirela.rabulea@nxp.com>,
+        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
         Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] media: imx-jpeg: Fix spelling mistake "Canot" -> "Cannot"
-Date:   Tue, 23 Mar 2021 09:21:41 +0000
-Message-Id: <20210323092141.231744-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.30.2
+        "Sascha Hauer" <s.hauer@pengutronix.de>
+CC:     <linux-media@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH -next] media: imx-jpeg: Fix error return code in mxc_jpeg_probe()
+Date:   Tue, 23 Mar 2021 11:28:55 +0000
+Message-ID: <20210323112855.1016779-1-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.102.38]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
 
-There is a spelling mistake in a dev_err message. Fix it.
+Fix to return negative error code from the error handling
+case instead of 0, as done elsewhere in this function.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 2db16c6ed72c ("media: imx-jpeg: Add V4L2 driver for i.MX8 JPEG Encoder/Decoder")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/media/platform/imx-jpeg/mxc-jpeg.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/platform/imx-jpeg/mxc-jpeg.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/drivers/media/platform/imx-jpeg/mxc-jpeg.c b/drivers/media/platform/imx-jpeg/mxc-jpeg.c
-index 2d29558f1864..adb1715c75d7 100644
+index 2d29558f1864..70b9b61fbf88 100644
 --- a/drivers/media/platform/imx-jpeg/mxc-jpeg.c
 +++ b/drivers/media/platform/imx-jpeg/mxc-jpeg.c
-@@ -947,7 +947,7 @@ static void mxc_jpeg_device_run(void *priv)
- 		goto end;
- 	}
- 	if (!mxc_jpeg_alloc_slot_data(jpeg, ctx->slot)) {
--		dev_err(dev, "Canot allocate slot data\n");
-+		dev_err(dev, "Cannot allocate slot data\n");
- 		goto end;
+@@ -2022,12 +2022,14 @@ static int mxc_jpeg_probe(struct platform_device *pdev)
+ 	jpeg->m2m_dev = v4l2_m2m_init(&mxc_jpeg_m2m_ops);
+ 	if (IS_ERR(jpeg->m2m_dev)) {
+ 		dev_err(dev, "failed to register v4l2 device\n");
++		ret = PTR_ERR(jpeg->m2m_dev);
+ 		goto err_m2m;
  	}
  
--- 
-2.30.2
+ 	jpeg->dec_vdev = video_device_alloc();
+ 	if (!jpeg->dec_vdev) {
+ 		dev_err(dev, "failed to register v4l2 device\n");
++		ret = -ENOMEM;
+ 		goto err_vdev_alloc;
+ 	}
+ 	if (mode == MXC_JPEG_ENCODE)
 
