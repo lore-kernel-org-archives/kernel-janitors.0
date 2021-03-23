@@ -2,114 +2,75 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F24CC433DB
-	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Mar 2021 14:25:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2902CC433E0
+	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Mar 2021 16:49:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E40FD619BA
-	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Mar 2021 14:25:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2405619B8
+	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Mar 2021 16:49:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232191AbhCWOYr (ORCPT
+        id S233300AbhCWQsr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 23 Mar 2021 10:24:47 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:34545 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232037AbhCWOY0 (ORCPT
+        Tue, 23 Mar 2021 12:48:47 -0400
+Received: from ale.deltatee.com ([204.191.154.188]:35984 "EHLO
+        ale.deltatee.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233276AbhCWQsa (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 23 Mar 2021 10:24:26 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1lOhxF-0000jQ-Pj; Tue, 23 Mar 2021 14:24:21 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Mirela Rabulea <mirela.rabulea@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] media: imx-jpeg: Pass the v4l2_jpeg_header header argument by reference
-Date:   Tue, 23 Mar 2021 14:24:21 +0000
-Message-Id: <20210323142421.348695-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.30.2
+        Tue, 23 Mar 2021 12:48:30 -0400
+X-Greylist: delayed 1607 seconds by postgrey-1.27 at vger.kernel.org; Tue, 23 Mar 2021 12:48:30 EDT
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=deltatee.com; s=20200525; h=Subject:In-Reply-To:MIME-Version:Date:
+        Message-ID:From:References:Cc:To:content-disposition;
+        bh=uvFq+Kc5ZBHy3S9lipYlZNBR57AfmiflcCRMDFpDWAw=; b=KL1e3lBgC4m9cW7SgdHDBgaqVI
+        WhQyyoiX8DB8RF50zbxPc1W3GoBOkrF3Og5waUB9spSRTigwH1VE72RO8Z7nqybyc2TeNht9wcmcf
+        c2CAIl0dEVF9dRZpVNTR0hHEbjwZ7dvyuUv9Gx6MzzfeMK7nMYaHoUls2B1FZeAYt3L8yZnLMwM5U
+        bvk3zYfTW03exmO/l8WXys4Cno2XVWuAXXTM/0Dua2xOXbVn/ObETyXcNOm9D9AHrZxctuJBcZvaE
+        GSMx3g+7AxW+bC5AbRTonGKg+gtKf+mFEXzDAQcTz4xmaonJJDo5btZBS8PcZua61RlA2EZum8eIU
+        8WlkBVPw==;
+Received: from guinness.priv.deltatee.com ([172.16.1.162])
+        by ale.deltatee.com with esmtp (Exim 4.92)
+        (envelope-from <logang@deltatee.com>)
+        id 1lOjmk-0005cx-BB; Tue, 23 Mar 2021 10:21:39 -0600
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <YFnq/0IQzixtAbC1@mwanda>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <603f6cf3-ed7b-ae5c-6689-f13390385037@deltatee.com>
+Date:   Tue, 23 Mar 2021 10:21:37 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <YFnq/0IQzixtAbC1@mwanda>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org, vkoul@kernel.org, dan.carpenter@oracle.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH] dmaengine: plx_dma: add a missing put_device() on error
+ path
+X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-Currently the header argument is being passed by value, so a copy of 256
-byte structure on the stack is potentially occurring. Fix this by passing
-by reference to avoid any large stack copies.
 
-Addresses-Coverity: ("Big parameter passed by value")
-Fixes: 2db16c6ed72c ("media: imx-jpeg: Add V4L2 driver for i.MX8 JPEG Encoder/Decoder")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/media/platform/imx-jpeg/mxc-jpeg.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+On 2021-03-23 7:19 a.m., Dan Carpenter wrote:
+> Add a missing put_device(&pdev->dev) if the call to
+> dma_async_device_register(dma); fails.
+> 
+> Fixes: 905ca51e63be ("dmaengine: plx-dma: Introduce PLX DMA engine PCI driver skeleton")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/media/platform/imx-jpeg/mxc-jpeg.c b/drivers/media/platform/imx-jpeg/mxc-jpeg.c
-index adb1715c75d7..f13a8efc35ad 100644
---- a/drivers/media/platform/imx-jpeg/mxc-jpeg.c
-+++ b/drivers/media/platform/imx-jpeg/mxc-jpeg.c
-@@ -1114,21 +1114,21 @@ static int mxc_jpeg_valid_comp_id(struct device *dev,
- }
- 
- static u32 mxc_jpeg_get_image_format(struct device *dev,
--				     const struct v4l2_jpeg_header header)
-+				     const struct v4l2_jpeg_header *header)
- {
- 	int i;
- 	u32 fourcc = 0;
- 
- 	for (i = 0; i < MXC_JPEG_NUM_FORMATS; i++)
--		if (mxc_formats[i].subsampling == header.frame.subsampling &&
--		    mxc_formats[i].nc == header.frame.num_components) {
-+		if (mxc_formats[i].subsampling == header->frame.subsampling &&
-+		    mxc_formats[i].nc == header->frame.num_components) {
- 			fourcc = mxc_formats[i].fourcc;
- 			break;
- 		}
- 	if (fourcc == 0) {
- 		dev_err(dev, "Could not identify image format nc=%d, subsampling=%d\n",
--			header.frame.num_components,
--			header.frame.subsampling);
-+			header->frame.num_components,
-+			header->frame.subsampling);
- 		return fourcc;
- 	}
- 	/*
-@@ -1137,7 +1137,7 @@ static u32 mxc_jpeg_get_image_format(struct device *dev,
- 	 * ITU-T T.872 chapter 6.5.3 APP14 marker segment for colour encoding
- 	 */
- 	if (fourcc == V4L2_PIX_FMT_YUV24 || fourcc == V4L2_PIX_FMT_RGB24) {
--		if (header.app14_tf == V4L2_JPEG_APP14_TF_CMYK_RGB)
-+		if (header->app14_tf == V4L2_JPEG_APP14_TF_CMYK_RGB)
- 			fourcc = V4L2_PIX_FMT_RGB24;
- 		else
- 			fourcc = V4L2_PIX_FMT_YUV24;
-@@ -1258,7 +1258,7 @@ static int mxc_jpeg_parse(struct mxc_jpeg_ctx *ctx,
- 	if (!mxc_jpeg_valid_comp_id(dev, psof, psos))
- 		dev_warn(dev, "JPEG component ids should be 0-3 or 1-4");
- 
--	fourcc = mxc_jpeg_get_image_format(dev, header);
-+	fourcc = mxc_jpeg_get_image_format(dev, &header);
- 	if (fourcc == 0)
- 		return -EINVAL;
- 
--- 
-2.30.2
+Good catch. Thanks Dan!
 
+Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
+
+Logan
