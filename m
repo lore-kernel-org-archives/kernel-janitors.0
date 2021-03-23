@@ -2,80 +2,100 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E0C8C433DB
-	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Mar 2021 12:33:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6D48C433C1
+	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Mar 2021 13:20:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0D3A860C3D
-	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Mar 2021 12:33:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7AE8C61920
+	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Mar 2021 13:20:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230417AbhCWMdH (ORCPT
+        id S231301AbhCWNU0 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 23 Mar 2021 08:33:07 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:59026 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230011AbhCWMcy (ORCPT
+        Tue, 23 Mar 2021 09:20:26 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:51654 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231548AbhCWNTn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 23 Mar 2021 08:32:54 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1lOgDF-0007Om-UZ; Tue, 23 Mar 2021 12:32:46 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Sunil Goutham <sgoutham@marvell.com>,
-        Linu Cherian <lcherian@marvell.com>,
-        Geetha sowjanya <gakula@marvell.com>,
-        Jerin Jacob <jerinj@marvell.com>,
-        hariprasad <hkelam@marvell.com>,
-        Subbaraya Sundeep <sbhatta@marvell.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Rakesh Babu <rsaladi2@marvell.com>, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] octeontx2-af: Fix memory leak of object buf
-Date:   Tue, 23 Mar 2021 12:32:45 +0000
-Message-Id: <20210323123245.346491-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.30.2
+        Tue, 23 Mar 2021 09:19:43 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12NDJLl5091112;
+        Tue, 23 Mar 2021 13:19:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
+ bh=6dgzOb3CiJkSySCZ1RJQwzXP6iqC3Xa1CHOUgaq1Sfs=;
+ b=x68fuZoDGFxy7KTLaXZjjHqKFkvcP1MNi0ZPVJjcOC5p7//5jP9YIrfKsTV1FNeeTpvl
+ j8ORf976vy30ygvzg577RRJYqyrbuJ17zaAmzivWm8Yjq/ji4dzWaTSNtB+rRs3Ug6ba
+ RwiPNumWcu7sefP9BmFVcX6gGIK97+pRYIBNO8mF6nsUmHxNvEZFYTsVWQquXzXQAjMY
+ RqV/LNbjD9tiPjgwe+DcPE96z/RJsX9MN08CCyJR0NcL5KwyYL/xxwjCVIxxzRGA1CCA
+ iWZoZ7IB78mvlIAqVBkCsmE1ojauSW+3L26rc0BItl8E4mVWKHWQrLJWV+RjjAkmBTPd mQ== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 37d90mex1b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 23 Mar 2021 13:19:21 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12NDEjGt133981;
+        Tue, 23 Mar 2021 13:19:16 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3030.oracle.com with ESMTP id 37dtyxe4ph-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 23 Mar 2021 13:19:16 +0000
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 12NDJEKh026480;
+        Tue, 23 Mar 2021 13:19:15 GMT
+Received: from mwanda (/102.36.221.92)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 23 Mar 2021 13:19:14 +0000
+Date:   Tue, 23 Mar 2021 16:19:06 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Andreas Noever <andreas.noever@gmail.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        Richard Weinberger <richard@nod.at>, linux-usb@vger.kernel.org,
+        linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] thunderbolt: unlock on error path in tb_domain_add()
+Message-ID: <YFnqyqDzSHenVN9O@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+X-Proofpoint-IMR: 1
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9931 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 phishscore=0
+ mlxlogscore=999 suspectscore=0 spamscore=0 malwarescore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2103230097
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9931 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0 mlxscore=0
+ priorityscore=1501 bulkscore=0 impostorscore=0 lowpriorityscore=0
+ phishscore=0 mlxlogscore=999 suspectscore=0 clxscore=1011 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2103230098
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+We accidentally deleted this unlock on the error path.  Undelete it.
 
-Currently the error return path when lfs fails to allocate is not free'ing
-the memory allocated to buf. Fix this by adding the missing kfree.
-
-Addresses-Coverity: ("Resource leak")
-Fixes: f7884097141b ("octeontx2-af: Formatting debugfs entry rsrc_alloc.")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 7f0a34d7900b ("thunderbolt: Decrease control channel timeout for software connection manager")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/thunderbolt/domain.c | 1 +
+ 1 files changed, 1 insertions(+), 0 deletion(-)
 
-diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c
-index 8ec17ee72b5d..9bf8eaabf9ab 100644
---- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c
-@@ -253,8 +253,10 @@ static ssize_t rvu_dbg_rsrc_attach_status(struct file *filp,
- 		return -ENOSPC;
+diff --git a/drivers/thunderbolt/domain.c b/drivers/thunderbolt/domain.c
+index a7d83eec3d15..98f4056f89ff 100644
+--- a/drivers/thunderbolt/domain.c
++++ b/drivers/thunderbolt/domain.c
+@@ -493,6 +493,7 @@ int tb_domain_add(struct tb *tb)
+ 	device_del(&tb->dev);
+ err_ctl_stop:
+ 	tb_ctl_stop(tb->ctl);
++	mutex_unlock(&tb->lock);
  
- 	lfs = kzalloc(lf_str_size, GFP_KERNEL);
--	if (!lfs)
-+	if (!lfs) {
-+		kfree(buf);
- 		return -ENOMEM;
-+	}
- 	off +=	scnprintf(&buf[off], buf_size - 1 - off, "%-*s", lf_str_size,
- 			  "pcifunc");
- 	for (index = 0; index < BLK_COUNT; index++)
--- 
-2.30.2
-
+ 	return ret;
+ }
