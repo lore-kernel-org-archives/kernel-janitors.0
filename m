@@ -5,38 +5,41 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A8D9C433E3
-	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Mar 2021 14:33:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC6CDC433C1
+	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Mar 2021 14:36:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 005C061A0C
-	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Mar 2021 14:33:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C71BF61A1B
+	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Mar 2021 14:36:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236351AbhCXOdZ convert rfc822-to-8bit (ORCPT
+        id S236230AbhCXOfa convert rfc822-to-8bit (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 24 Mar 2021 10:33:25 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:13681 "EHLO
-        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236346AbhCXOdL (ORCPT
+        Wed, 24 Mar 2021 10:35:30 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:14462 "EHLO
+        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236289AbhCXOfX (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 24 Mar 2021 10:33:11 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
-        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4F59dB1dRqznW2v;
-        Wed, 24 Mar 2021 22:30:38 +0800 (CST)
+        Wed, 24 Mar 2021 10:35:23 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
+        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4F59hH0XkmzwQQp;
+        Wed, 24 Mar 2021 22:33:19 +0800 (CST)
 Received: from localhost.localdomain (10.175.102.38) by
- DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
- 14.3.498.0; Wed, 24 Mar 2021 22:33:03 +0800
+ DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
+ 14.3.498.0; Wed, 24 Mar 2021 22:35:08 +0800
 From:   'Wei Yongjun <weiyongjun1@huawei.com>
-To:     <weiyongjun1@huawei.com>, Dan Williams <dan.j.williams@intel.com>,
-        "Vishal Verma" <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        "Ira Weiny" <ira.weiny@intel.com>
-CC:     <linux-nvdimm@lists.01.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH -next] libnvdimm/security: Make symbol '__nvdimm_security_overwrite_query' static
-Date:   Wed, 24 Mar 2021 14:42:57 +0000
-Message-ID: <20210324144257.1014160-1-weiyongjun1@huawei.com>
+To:     <weiyongjun1@huawei.com>, Thomas Gleixner <tglx@linutronix.de>,
+        "Ingo Molnar" <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        <x86@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Mike Rapoport <rppt@kernel.org>, Jiri Olsa <jolsa@redhat.com>
+CC:     <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "Hulk Robot" <hulkci@huawei.com>
+Subject: [PATCH -next] x86/kprobes: Fix old-style-declaration warning
+Date:   Wed, 24 Mar 2021 14:45:02 +0000
+Message-ID: <20210324144502.1154883-1-weiyongjun1@huawei.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"
@@ -49,31 +52,33 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Wei Yongjun <weiyongjun1@huawei.com>
 
-The sparse tool complains as follows:
+Gcc reports build warning as follows:
 
-drivers/nvdimm/security.c:416:6: warning:
- symbol '__nvdimm_security_overwrite_query' was not declared. Should it be static?
+arch/x86/kernel/kprobes/core.c:940:1:
+ warning: 'inline' is not at beginning of declaration [-Wold-style-declaration]
+  940 | static int nokprobe_inline kprobe_is_ss(struct kprobe_ctlblk *kcb)
+      | ^~~~~~
 
-This symbol is not used outside of security.c, so this
-commit marks it static.
+This commit fix it by moving nokprobe_inline to the beginning
+of declaration.
 
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/nvdimm/security.c | 2 +-
+ arch/x86/kernel/kprobes/core.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/nvdimm/security.c b/drivers/nvdimm/security.c
-index 4b80150e4afa..d3e782662bf4 100644
---- a/drivers/nvdimm/security.c
-+++ b/drivers/nvdimm/security.c
-@@ -413,7 +413,7 @@ static int security_overwrite(struct nvdimm *nvdimm, unsigned int keyid)
- 	return rc;
+diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
+index 89d9f26785c7..5abf251f12ec 100644
+--- a/arch/x86/kernel/kprobes/core.c
++++ b/arch/x86/kernel/kprobes/core.c
+@@ -937,7 +937,7 @@ static int reenter_kprobe(struct kprobe *p, struct pt_regs *regs,
  }
+ NOKPROBE_SYMBOL(reenter_kprobe);
  
--void __nvdimm_security_overwrite_query(struct nvdimm *nvdimm)
-+static void __nvdimm_security_overwrite_query(struct nvdimm *nvdimm)
+-static int nokprobe_inline kprobe_is_ss(struct kprobe_ctlblk *kcb)
++static nokprobe_inline int kprobe_is_ss(struct kprobe_ctlblk *kcb)
  {
- 	struct nvdimm_bus *nvdimm_bus = walk_to_nvdimm_bus(&nvdimm->dev);
- 	int rc;
+ 	return (kcb->kprobe_status == KPROBE_HIT_SS ||
+ 		kcb->kprobe_status == KPROBE_REENTER);
 
