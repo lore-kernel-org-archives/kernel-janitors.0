@@ -5,36 +5,40 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3CC8C433E0
-	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Mar 2021 14:33:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B618FC433C1
+	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Mar 2021 14:33:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ADB9961A11
-	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Mar 2021 14:33:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FAF261A07
+	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Mar 2021 14:33:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236317AbhCXOcv (ORCPT
+        id S236226AbhCXOdX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 24 Mar 2021 10:32:51 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:14576 "EHLO
-        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236342AbhCXOcj (ORCPT
+        Wed, 24 Mar 2021 10:33:23 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:14861 "EHLO
+        szxga07-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236337AbhCXOdA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 24 Mar 2021 10:32:39 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
-        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4F59d913s2z19Hrb;
-        Wed, 24 Mar 2021 22:30:37 +0800 (CST)
+        Wed, 24 Mar 2021 10:33:00 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
+        by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4F59dW2Q1Kz8ywv;
+        Wed, 24 Mar 2021 22:30:55 +0800 (CST)
 Received: from localhost.localdomain (10.175.102.38) by
- DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
- 14.3.498.0; Wed, 24 Mar 2021 22:32:25 +0800
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.498.0; Wed, 24 Mar 2021 22:32:45 +0800
 From:   'Wei Yongjun <weiyongjun1@huawei.com>
-To:     <weiyongjun1@huawei.com>, Jakub Kicinski <kuba@kernel.org>,
-        Jiri Pirko <jiri@mellanox.com>
-CC:     <netdev@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH net-next] netdevsim: switch to memdup_user_nul()
-Date:   Wed, 24 Mar 2021 14:42:20 +0000
-Message-ID: <20210324144220.974575-1-weiyongjun1@huawei.com>
+To:     <weiyongjun1@huawei.com>, Herbert Xu <herbert@gondor.apana.org.au>,
+        "Zaibo Xu" <xuzaibo@huawei.com>, Weili Qian <qianweili@huawei.com>,
+        Meng Yu <yumeng18@huawei.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Shukun Tan <tanshukun1@huawei.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+CC:     <linux-crypto@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "Hulk Robot" <hulkci@huawei.com>
+Subject: [PATCH -next] crypto: hisilicon/hpre - fix build error without CONFIG_CRYPTO_ECDH
+Date:   Wed, 24 Mar 2021 14:42:39 +0000
+Message-ID: <20210324144239.997757-1-weiyongjun1@huawei.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Type:   text/plain; charset=US-ASCII
@@ -47,36 +51,29 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Wei Yongjun <weiyongjun1@huawei.com>
 
-Use memdup_user_nul() helper instead of open-coding to
-simplify the code.
+GCC reports build error as following:
+
+x86_64-linux-gnu-ld: drivers/crypto/hisilicon/hpre/hpre_crypto.o: in function `hpre_ecdh_set_secret':
+hpre_crypto.c:(.text+0x269c): undefined reference to `crypto_ecdh_decode_key'
+
+Fix it by selecting CRYPTO_ECDH.
 
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/net/netdevsim/health.c | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+ drivers/crypto/hisilicon/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/netdevsim/health.c b/drivers/net/netdevsim/health.c
-index 21e2974660e7..04aebdf85747 100644
---- a/drivers/net/netdevsim/health.c
-+++ b/drivers/net/netdevsim/health.c
-@@ -235,15 +235,10 @@ static ssize_t nsim_dev_health_break_write(struct file *file,
- 	char *break_msg;
- 	int err;
- 
--	break_msg = kmalloc(count + 1, GFP_KERNEL);
--	if (!break_msg)
--		return -ENOMEM;
-+	break_msg = memdup_user_nul(data, count);
-+	if (IS_ERR(break_msg))
-+		return PTR_ERR(break_msg);
- 
--	if (copy_from_user(break_msg, data, count)) {
--		err = -EFAULT;
--		goto out;
--	}
--	break_msg[count] = '\0';
- 	if (break_msg[count - 1] == '\n')
- 		break_msg[count - 1] = '\0';
- 
+diff --git a/drivers/crypto/hisilicon/Kconfig b/drivers/crypto/hisilicon/Kconfig
+index c45adb15ce8d..bb327d6e365a 100644
+--- a/drivers/crypto/hisilicon/Kconfig
++++ b/drivers/crypto/hisilicon/Kconfig
+@@ -69,6 +69,7 @@ config CRYPTO_DEV_HISI_HPRE
+ 	select CRYPTO_DEV_HISI_QM
+ 	select CRYPTO_DH
+ 	select CRYPTO_RSA
++	select CRYPTO_ECDH
+ 	help
+ 	  Support for HiSilicon HPRE(High Performance RSA Engine)
+ 	  accelerator, which can accelerate RSA and DH algorithms.
 
