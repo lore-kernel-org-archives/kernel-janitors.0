@@ -2,95 +2,97 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2FA6C433C1
-	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Mar 2021 16:03:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CD26C433E3
+	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Mar 2021 16:12:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B152B61A17
-	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Mar 2021 16:03:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3438A61A12
+	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Mar 2021 16:12:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236916AbhCXQCn (ORCPT
+        id S232944AbhCXQM1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 24 Mar 2021 12:02:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42016 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236923AbhCXQCe (ORCPT
+        Wed, 24 Mar 2021 12:12:27 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:48748 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234228AbhCXQMK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 24 Mar 2021 12:02:34 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53599C061763;
-        Wed, 24 Mar 2021 09:02:32 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id hq27so33749432ejc.9;
-        Wed, 24 Mar 2021 09:02:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=p0h1I2tU40MVEe/iq0GPb6BvRGF0+jimshHBcD8Y96o=;
-        b=UYxL1aPIIPS7dZJFvNFh6Gi7rWcPCnq0LT08QW+F6/HZXq6mbwF8gr9DEQ2z8ZgO7r
-         dZ31Oe2JgNLZIf9KX+4S0UvQ7V8y9v2n7/jYvHfNHjm2k15HIuaVceJG3qkJg1EqLtPB
-         LkJ96zui76hJkuznZNalH0tvK4QFSp9k7YTqifqDGJAnCze1bamfgvt+N2oHMM8ldjPu
-         Ibf1rMbmngk1Gbhy79F6gTXVORnLsE2VieIu639CP+HpZeC19nu8SkRsMO9cIKc/fXhr
-         HaXgNOl1e9UXZKneUfj9dHbbQG9e7QOTVv8j6soU7b+hOIsDZOXsCYmgAqip8RCJmcy3
-         ZAGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=p0h1I2tU40MVEe/iq0GPb6BvRGF0+jimshHBcD8Y96o=;
-        b=gfw81uvtx1dEaEV1PKTswviesaNawjfHlt+SNfYOmqpOOJOwHfFP6iQZAlOYC5Z1dO
-         oC7stNdbR20J6RRloF4jn7rjhYsywgxA0W9qxymbiBGXd1MiQz7m/Ktz+ikAoho+vo3n
-         yAToG1Wn5YhF/hq14d5/U6HKHcXbXqIOW1OT4rlJAD8KYGDLYs0ZZV8BQU8Wxf7H1x5X
-         8lNAeN73sHHg7pCFKwFq24sZV9iYuwYpU2RHkDvJuEaXjqQFfdl/Mi9lI7ghslvTg0yG
-         6fyLb0BrZ6kmKPVDtWVP9rRmfGBhwdzX4AAGIfnrfzCIC+VgUFQrbCOdEUzFfeh3yoD/
-         WcjA==
-X-Gm-Message-State: AOAM530uQpkOjUYIR7VDRr+ClzmYVUociimcfy+Kc6J/iVqqNUvz3lSK
-        TCeIrEaBr36HN+75vTwP5j4=
-X-Google-Smtp-Source: ABdhPJwpUavXt4EHnTzT+ae8zvQSOiy4MHaEHtHWR/X63xNd+NtmzaX78oG8X3nz4lj7OuTgsBJ6zQ==
-X-Received: by 2002:a17:906:9888:: with SMTP id zc8mr4575571ejb.310.1616601750960;
-        Wed, 24 Mar 2021 09:02:30 -0700 (PDT)
-Received: from skbuf (5-12-16-165.residential.rdsnet.ro. [5.12.16.165])
-        by smtp.gmail.com with ESMTPSA id si7sm1131470ejb.84.2021.03.24.09.02.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Mar 2021 09:02:30 -0700 (PDT)
-Date:   Wed, 24 Mar 2021 18:02:29 +0200
-From:   Vladimir Oltean <olteanv@gmail.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Roopa Prabhu <roopa@nvidia.com>,
-        Nikolay Aleksandrov <nikolay@nvidia.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Vladimir Oltean <vladimir.oltean@nxp.com>,
-        bridge@lists.linux-foundation.org, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] net: bridge: Fix missing return assignment from
- br_vlan_replay_one call
-Message-ID: <20210324160229.cyzepir5fnfnfeox@skbuf>
-References: <20210324150950.253698-1-colin.king@canonical.com>
+        Wed, 24 Mar 2021 12:12:10 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212])
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lP676-0006jy-Ok; Wed, 24 Mar 2021 16:12:08 +0000
+Subject: Re: [PATCH][next] staging: rtl8188eu: Fix null pointer dereference on
+ free_netdev call
+To:     Martin Kaiser <martin@kaiser.cx>
+Cc:     Larry Finger <Larry.Finger@lwfinger.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20210324152135.254152-1-colin.king@canonical.com>
+ <20210324161107.m7gbexp4e7e5vf77@viti.kaiser.cx>
+From:   Colin Ian King <colin.king@canonical.com>
+Message-ID: <028e75cd-6229-6004-84bb-ca751346420d@canonical.com>
+Date:   Wed, 24 Mar 2021 16:12:08 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210324150950.253698-1-colin.king@canonical.com>
+In-Reply-To: <20210324161107.m7gbexp4e7e5vf77@viti.kaiser.cx>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Mar 24, 2021 at 03:09:50PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On 24/03/2021 16:11, Martin Kaiser wrote:
+> Hello Colin,
 > 
-> The call to br_vlan_replay_one is returning an error return value but
-> this is not being assigned to err and the following check on err is
-> currently always false because err was initialized to zero. Fix this
-> by assigning err.
+> Thus wrote Colin King (colin.king@canonical.com):
 > 
-> Addresses-Coverity: ("'Constant' variable guards dead code")
-> Fixes: 22f67cdfae6a ("net: bridge: add helper to replay VLANs installed on port")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
+>> From: Colin Ian King <colin.king@canonical.com>
+> 
+>> An unregister_netdev call checks if pnetdev is null, hence a later
+>> call to free_netdev can potentially be passing a null pointer, causing
+>> a null pointer dereference. Avoid this by adding a null pointer check
+>> on pnetdev before calling free_netdev.
+> 
+>> Fixes: 1665c8fdffbb ("staging: rtl8188eu: use netdev routines for private data")
+>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>> ---
+>>  drivers/staging/rtl8188eu/os_dep/usb_intf.c | 3 ++-
+>>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+>> diff --git a/drivers/staging/rtl8188eu/os_dep/usb_intf.c b/drivers/staging/rtl8188eu/os_dep/usb_intf.c
+>> index 518e9feb3f46..91a3d34a1050 100644
+>> --- a/drivers/staging/rtl8188eu/os_dep/usb_intf.c
+>> +++ b/drivers/staging/rtl8188eu/os_dep/usb_intf.c
+>> @@ -446,7 +446,8 @@ static void rtw_usb_if1_deinit(struct adapter *if1)
+>>  	pr_debug("+r871xu_dev_remove, hw_init_completed=%d\n",
+>>  		 if1->hw_init_completed);
+>>  	rtw_free_drv_sw(if1);
+>> -	free_netdev(pnetdev);
+>> +	if (pnetdev)
+>> +		free_netdev(pnetdev);
+>>  }
+> 
+>>  static int rtw_drv_init(struct usb_interface *pusb_intf, const struct usb_device_id *pdid)
+>> -- 
+>> 2.30.2
+> 
+> you're right. I removed the NULL check that was part of rtw_free_netdev.
+> Sorry for the mistake and thanks for your fix.
 
-Reviewed-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+Thank static analysis :-)
+
+> 
+> Reviewed-by: Martin Kaiser <martin@kaiser.cx>
+> 
+> Best regards,
+> Martin
+> 
+
