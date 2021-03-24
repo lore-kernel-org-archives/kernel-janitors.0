@@ -2,83 +2,114 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC6CDC433C1
-	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Mar 2021 14:36:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8559CC433E0
+	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Mar 2021 14:43:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C71BF61A1B
-	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Mar 2021 14:36:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B50D61A07
+	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Mar 2021 14:43:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236230AbhCXOfa convert rfc822-to-8bit (ORCPT
+        id S236247AbhCXOnF (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 24 Mar 2021 10:35:30 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:14462 "EHLO
-        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236289AbhCXOfX (ORCPT
+        Wed, 24 Mar 2021 10:43:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52806 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236115AbhCXOmq (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 24 Mar 2021 10:35:23 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
-        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4F59hH0XkmzwQQp;
-        Wed, 24 Mar 2021 22:33:19 +0800 (CST)
-Received: from localhost.localdomain (10.175.102.38) by
- DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
- 14.3.498.0; Wed, 24 Mar 2021 22:35:08 +0800
-From:   'Wei Yongjun <weiyongjun1@huawei.com>
-To:     <weiyongjun1@huawei.com>, Thomas Gleixner <tglx@linutronix.de>,
-        "Ingo Molnar" <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        <x86@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Mike Rapoport <rppt@kernel.org>, Jiri Olsa <jolsa@redhat.com>
-CC:     <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        "Hulk Robot" <hulkci@huawei.com>
-Subject: [PATCH -next] x86/kprobes: Fix old-style-declaration warning
-Date:   Wed, 24 Mar 2021 14:45:02 +0000
-Message-ID: <20210324144502.1154883-1-weiyongjun1@huawei.com>
-X-Mailer: git-send-email 2.25.1
+        Wed, 24 Mar 2021 10:42:46 -0400
+Received: from mail-ot1-x332.google.com (mail-ot1-x332.google.com [IPv6:2607:f8b0:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 537B7C061763;
+        Wed, 24 Mar 2021 07:42:45 -0700 (PDT)
+Received: by mail-ot1-x332.google.com with SMTP id 68-20020a9d0f4a0000b02901b663e6258dso23205219ott.13;
+        Wed, 24 Mar 2021 07:42:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=wn3HpUWzPyv1Ui1ekyYWiurgraBbjaCW7hb/S6r7tVM=;
+        b=bn2kB1kUDxFJdkDR1XUxFGDxYuj33LopXQee8iRGvS4cg+xU7BsYq7Vu1jXbIjg/zd
+         7b3hc/zo1J6frWp+8pJcHLL6Axe0EOaHjEW50dQsa9qD3ED6hYnyCGXBgFD9GGR0RkCS
+         WsEs818Mw3IjdgHcW5sDAugLtOr8pM8HaRJawR2M3hSpST6zt0eSIQdwvxyDnaJm3hUD
+         C9u4XNVdFOkcbmgux0OigKL8g++33BsyAzq5r13o1mVG+WUDwb5bIllRDPcviQEhVvXO
+         lz+AswXTgPTilSZSPmLMzZga/JlI7cZChwoZI4vE94+ClFpdJmook9R+xyPHfcKb0ves
+         Nvpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=wn3HpUWzPyv1Ui1ekyYWiurgraBbjaCW7hb/S6r7tVM=;
+        b=pUBF6yinZ+Qq4hvOXQB1IQMMivp+ET/oYonuWqxiv4cLR7jgP2db2024ebvGwy/DH5
+         Wh1UpfXv8cNYJARVedpxYDfedfW3/IrGCpkP8cCavjnllDdLC5wAhJpM0jiS/lZSbhJj
+         OJyd6trRlsM1RQ2KvIyJ8SKkdYCiQuD2Z40fplRGwyeprJ119JZApGU//Tx++LjWED1E
+         v1BHGLD8FdhPh3+j/20O8awv06oAfm6gDhD18fhT9sLnOYqn1DOOrrqFysyGuiECyQDN
+         wnfBhf1GLxgiR3BOBc1RR9bnnb5LxFgeeqnLs136UDmGPd1m9TfYo6snAJ9jolePXcKj
+         HhnQ==
+X-Gm-Message-State: AOAM5311Tj8I4+24t00zkBjcujVdjo0Xb0MWuifi8l0d7EME716OKJAV
+        3pLiKvezgEL+Kv/RiZoe0d8=
+X-Google-Smtp-Source: ABdhPJxDhJJRf/fvpqHD2v9BISuYJB2TUlgfklD3XlvN4D6cz1jqB3qegvwljT9chDIfyOY+lQHnNA==
+X-Received: by 2002:a9d:70ce:: with SMTP id w14mr3470947otj.183.1616596964823;
+        Wed, 24 Mar 2021 07:42:44 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id i25sm585708otf.37.2021.03.24.07.42.43
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 24 Mar 2021 07:42:44 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date:   Wed, 24 Mar 2021 07:42:43 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     'Wei Yongjun <weiyongjun1@huawei.com>
+Cc:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Badhri Jagan Sridharan <badhri@google.com>,
+        linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Hulk Robot <hulkci@huawei.com>
+Subject: Re: [PATCH -next] usb: typec: tcpci_maxim: Make symbol
+ 'max_tcpci_tcpci_write_table' static
+Message-ID: <20210324144243.GB224108@roeck-us.net>
+References: <20210324144253.1011234-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [10.175.102.38]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210324144253.1011234-1-weiyongjun1@huawei.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
+On Wed, Mar 24, 2021 at 02:42:53PM +0000, 'Wei Yongjun wrote:
+> From: Wei Yongjun <weiyongjun1@huawei.com>
+> 
+> The sparse tool complains as follows:
+> 
+> drivers/usb/typec/tcpm/tcpci_maxim.c:55:34: warning:
+>  symbol 'max_tcpci_tcpci_write_table' was not declared. Should it be static?
+> 
+> This symbol is not used outside of tcpci_maxim.c, so this
+> commit marks it static.
+> 
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 
-Gcc reports build warning as follows:
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-arch/x86/kernel/kprobes/core.c:940:1:
- warning: 'inline' is not at beginning of declaration [-Wold-style-declaration]
-  940 | static int nokprobe_inline kprobe_is_ss(struct kprobe_ctlblk *kcb)
-      | ^~~~~~
-
-This commit fix it by moving nokprobe_inline to the beginning
-of declaration.
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- arch/x86/kernel/kprobes/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
-index 89d9f26785c7..5abf251f12ec 100644
---- a/arch/x86/kernel/kprobes/core.c
-+++ b/arch/x86/kernel/kprobes/core.c
-@@ -937,7 +937,7 @@ static int reenter_kprobe(struct kprobe *p, struct pt_regs *regs,
- }
- NOKPROBE_SYMBOL(reenter_kprobe);
- 
--static int nokprobe_inline kprobe_is_ss(struct kprobe_ctlblk *kcb)
-+static nokprobe_inline int kprobe_is_ss(struct kprobe_ctlblk *kcb)
- {
- 	return (kcb->kprobe_status == KPROBE_HIT_SS ||
- 		kcb->kprobe_status == KPROBE_REENTER);
-
+> ---
+>  drivers/usb/typec/tcpm/tcpci_maxim.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/typec/tcpm/tcpci_maxim.c b/drivers/usb/typec/tcpm/tcpci_maxim.c
+> index 041a1c393594..df2505570f07 100644
+> --- a/drivers/usb/typec/tcpm/tcpci_maxim.c
+> +++ b/drivers/usb/typec/tcpm/tcpci_maxim.c
+> @@ -52,7 +52,7 @@ static const struct regmap_range max_tcpci_tcpci_range[] = {
+>  	regmap_reg_range(0x00, 0x95)
+>  };
+>  
+> -const struct regmap_access_table max_tcpci_tcpci_write_table = {
+> +static const struct regmap_access_table max_tcpci_tcpci_write_table = {
+>  	.yes_ranges = max_tcpci_tcpci_range,
+>  	.n_yes_ranges = ARRAY_SIZE(max_tcpci_tcpci_range),
+>  };
+> 
