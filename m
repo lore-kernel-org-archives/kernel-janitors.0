@@ -7,40 +7,40 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD9FFC433DB
-	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Mar 2021 14:33:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A8D9C433E3
+	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Mar 2021 14:33:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B7C2F61A0C
+	by mail.kernel.org (Postfix) with ESMTP id 005C061A0C
 	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Mar 2021 14:33:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236344AbhCXOdY (ORCPT
+        id S236351AbhCXOdZ convert rfc822-to-8bit (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 24 Mar 2021 10:33:24 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:14886 "EHLO
-        szxga06-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236345AbhCXOdM (ORCPT
+        Wed, 24 Mar 2021 10:33:25 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:13681 "EHLO
+        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236346AbhCXOdL (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 24 Mar 2021 10:33:12 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
-        by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4F59f85k65zkdVX;
-        Wed, 24 Mar 2021 22:31:28 +0800 (CST)
+        Wed, 24 Mar 2021 10:33:11 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4F59dB1dRqznW2v;
+        Wed, 24 Mar 2021 22:30:38 +0800 (CST)
 Received: from localhost.localdomain (10.175.102.38) by
- DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
- 14.3.498.0; Wed, 24 Mar 2021 22:32:59 +0800
+ DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
+ 14.3.498.0; Wed, 24 Mar 2021 22:33:03 +0800
 From:   'Wei Yongjun <weiyongjun1@huawei.com>
-To:     <weiyongjun1@huawei.com>, Guenter Roeck <linux@roeck-us.net>,
-        "Heikki Krogerus" <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Badhri Jagan Sridharan <badhri@google.com>
-CC:     <linux-usb@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH -next] usb: typec: tcpci_maxim: Make symbol 'max_tcpci_tcpci_write_table' static
-Date:   Wed, 24 Mar 2021 14:42:53 +0000
-Message-ID: <20210324144253.1011234-1-weiyongjun1@huawei.com>
+To:     <weiyongjun1@huawei.com>, Dan Williams <dan.j.williams@intel.com>,
+        "Vishal Verma" <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        "Ira Weiny" <ira.weiny@intel.com>
+CC:     <linux-nvdimm@lists.01.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH -next] libnvdimm/security: Make symbol '__nvdimm_security_overwrite_query' static
+Date:   Wed, 24 Mar 2021 14:42:57 +0000
+Message-ID: <20210324144257.1014160-1-weiyongjun1@huawei.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 8BIT
 X-Originating-IP: [10.175.102.38]
 X-CFilter-Loop: Reflected
 Precedence: bulk
@@ -51,29 +51,29 @@ From: Wei Yongjun <weiyongjun1@huawei.com>
 
 The sparse tool complains as follows:
 
-drivers/usb/typec/tcpm/tcpci_maxim.c:55:34: warning:
- symbol 'max_tcpci_tcpci_write_table' was not declared. Should it be static?
+drivers/nvdimm/security.c:416:6: warning:
+ symbol '__nvdimm_security_overwrite_query' was not declared. Should it be static?
 
-This symbol is not used outside of tcpci_maxim.c, so this
+This symbol is not used outside of security.c, so this
 commit marks it static.
 
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/usb/typec/tcpm/tcpci_maxim.c | 2 +-
+ drivers/nvdimm/security.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/typec/tcpm/tcpci_maxim.c b/drivers/usb/typec/tcpm/tcpci_maxim.c
-index 041a1c393594..df2505570f07 100644
---- a/drivers/usb/typec/tcpm/tcpci_maxim.c
-+++ b/drivers/usb/typec/tcpm/tcpci_maxim.c
-@@ -52,7 +52,7 @@ static const struct regmap_range max_tcpci_tcpci_range[] = {
- 	regmap_reg_range(0x00, 0x95)
- };
+diff --git a/drivers/nvdimm/security.c b/drivers/nvdimm/security.c
+index 4b80150e4afa..d3e782662bf4 100644
+--- a/drivers/nvdimm/security.c
++++ b/drivers/nvdimm/security.c
+@@ -413,7 +413,7 @@ static int security_overwrite(struct nvdimm *nvdimm, unsigned int keyid)
+ 	return rc;
+ }
  
--const struct regmap_access_table max_tcpci_tcpci_write_table = {
-+static const struct regmap_access_table max_tcpci_tcpci_write_table = {
- 	.yes_ranges = max_tcpci_tcpci_range,
- 	.n_yes_ranges = ARRAY_SIZE(max_tcpci_tcpci_range),
- };
+-void __nvdimm_security_overwrite_query(struct nvdimm *nvdimm)
++static void __nvdimm_security_overwrite_query(struct nvdimm *nvdimm)
+ {
+ 	struct nvdimm_bus *nvdimm_bus = walk_to_nvdimm_bus(&nvdimm->dev);
+ 	int rc;
 
