@@ -5,38 +5,35 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19D6EC433E0
-	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Mar 2021 15:10:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B8B7C433DB
+	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Mar 2021 15:22:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E187661A09
-	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Mar 2021 15:10:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CEB83619F8
+	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Mar 2021 15:22:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236512AbhCXPKB (ORCPT
+        id S236605AbhCXPVs (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 24 Mar 2021 11:10:01 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:45737 "EHLO
+        Wed, 24 Mar 2021 11:21:48 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:46398 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236491AbhCXPJ5 (ORCPT
+        with ESMTP id S236497AbhCXPVl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 24 Mar 2021 11:09:57 -0400
+        Wed, 24 Mar 2021 11:21:41 -0400
 Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <colin.king@canonical.com>)
-        id 1lP58o-000209-D7; Wed, 24 Mar 2021 15:09:50 +0000
+        id 1lP5KB-0002zn-T7; Wed, 24 Mar 2021 15:21:35 +0000
 From:   Colin King <colin.king@canonical.com>
-To:     Roopa Prabhu <roopa@nvidia.com>,
-        Nikolay Aleksandrov <nikolay@nvidia.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Vladimir Oltean <vladimir.oltean@nxp.com>,
-        bridge@lists.linux-foundation.org, netdev@vger.kernel.org
+To:     Larry Finger <Larry.Finger@lwfinger.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Martin Kaiser <martin@kaiser.cx>, linux-staging@lists.linux.dev
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] net: bridge: Fix missing return assignment from br_vlan_replay_one call
-Date:   Wed, 24 Mar 2021 15:09:50 +0000
-Message-Id: <20210324150950.253698-1-colin.king@canonical.com>
+Subject: [PATCH][next] staging: rtl8188eu: Fix null pointer dereference on free_netdev call
+Date:   Wed, 24 Mar 2021 15:21:35 +0000
+Message-Id: <20210324152135.254152-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -47,31 +44,31 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The call to br_vlan_replay_one is returning an error return value but
-this is not being assigned to err and the following check on err is
-currently always false because err was initialized to zero. Fix this
-by assigning err.
+An unregister_netdev call checks if pnetdev is null, hence a later
+call to free_netdev can potentially be passing a null pointer, causing
+a null pointer dereference. Avoid this by adding a null pointer check
+on pnetdev before calling free_netdev.
 
-Addresses-Coverity: ("'Constant' variable guards dead code")
-Fixes: 22f67cdfae6a ("net: bridge: add helper to replay VLANs installed on port")
+Fixes: 1665c8fdffbb ("staging: rtl8188eu: use netdev routines for private data")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- net/bridge/br_vlan.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/rtl8188eu/os_dep/usb_intf.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/net/bridge/br_vlan.c b/net/bridge/br_vlan.c
-index ca8daccff217..7422691230b1 100644
---- a/net/bridge/br_vlan.c
-+++ b/net/bridge/br_vlan.c
-@@ -1815,7 +1815,7 @@ int br_vlan_replay(struct net_device *br_dev, struct net_device *dev,
- 		if (!br_vlan_should_use(v))
- 			continue;
+diff --git a/drivers/staging/rtl8188eu/os_dep/usb_intf.c b/drivers/staging/rtl8188eu/os_dep/usb_intf.c
+index 518e9feb3f46..91a3d34a1050 100644
+--- a/drivers/staging/rtl8188eu/os_dep/usb_intf.c
++++ b/drivers/staging/rtl8188eu/os_dep/usb_intf.c
+@@ -446,7 +446,8 @@ static void rtw_usb_if1_deinit(struct adapter *if1)
+ 	pr_debug("+r871xu_dev_remove, hw_init_completed=%d\n",
+ 		 if1->hw_init_completed);
+ 	rtw_free_drv_sw(if1);
+-	free_netdev(pnetdev);
++	if (pnetdev)
++		free_netdev(pnetdev);
+ }
  
--		br_vlan_replay_one(nb, dev, &vlan, extack);
-+		err = br_vlan_replay_one(nb, dev, &vlan, extack);
- 		if (err)
- 			return err;
- 	}
+ static int rtw_drv_init(struct usb_interface *pusb_intf, const struct usb_device_id *pdid)
 -- 
 2.30.2
 
