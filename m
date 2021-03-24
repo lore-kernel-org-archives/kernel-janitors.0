@@ -2,88 +2,127 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B76DBC433DB
-	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Mar 2021 20:01:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71038C433DB
+	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Mar 2021 20:25:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5E0C761A1F
-	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Mar 2021 20:01:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36269619B8
+	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Mar 2021 20:25:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238124AbhCXUBE (ORCPT
+        id S238085AbhCXUYy (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 24 Mar 2021 16:01:04 -0400
-Received: from mail-il1-f173.google.com ([209.85.166.173]:45779 "EHLO
-        mail-il1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238105AbhCXUA7 (ORCPT
+        Wed, 24 Mar 2021 16:24:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42712 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237868AbhCXUYb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 24 Mar 2021 16:00:59 -0400
-Received: by mail-il1-f173.google.com with SMTP id v3so110538ilj.12;
-        Wed, 24 Mar 2021 13:00:58 -0700 (PDT)
+        Wed, 24 Mar 2021 16:24:31 -0400
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C577C06174A;
+        Wed, 24 Mar 2021 13:24:31 -0700 (PDT)
+Received: by mail-ej1-x629.google.com with SMTP id l4so35015048ejc.10;
+        Wed, 24 Mar 2021 13:24:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=+q8Gd1+pbo1oAawe9rmDsOu0NCdQjASjyNmuKAHwY/4=;
+        b=RIOzvg9ymCE0uJfI54wYuyV/8UDc9u3knm+uSsN0TbeeZqAaF98ooNjdeiJZnoDBgB
+         11BO25F1qP9tjGntYxMYxGU7ImduC5+0D0VXIrJhwJ0N4GtOReiOqIY4bag/wJzfsyYo
+         bZwA+v9D3Vx//tlbmp1fqlK5FAlKrxD8P4ngjFaMGsGNlHIqBmHAa2Ezv4h2mxzOu2z5
+         Z2r3wxc6gs7AlcOUMcRTV5FCLgOz139icPAe1rLXvOZ5oQNoFqRsfzkd0rN1BI8xoWve
+         wgTBO4DqlLxmAzYTQBI8x1b9ckvtybgoTV/jQbpXWiUAd3NA6kVUBFbCvSFSs+/9zPZb
+         Ntdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=o9BolycY1dk1oCMqG/ECsDRoRL4IdcIFZl4NfEXb4YM=;
-        b=q8DbnM28oA4FQk/lBQR6VijXEs/v8KNwwh7qh6HRy/DqGMrBvxO/bKLTQZGWznOUF0
-         4o1ajg3KIEwVg80mnEkDX7YEpOZIDHM/T5FwIm2GC7ksX5Re1VzGIsVPuysTbjXjQcxW
-         NZldicLOyen7Rhu5ruu4W4vZulkhIeauZnZPBZlUv0gDDXYyDQbmsne3fxo8E7uwgNwm
-         jfCykQzqQqFP1Be4DP2hDsJ3GYa1wvGYK7x28HRBsCU7BvYM7QmNBNRw933+FFgeFGKn
-         4uneuJw2iw2dLU/UjSjeNGrdvb4VXVSfIyQNFbcD10lWUupYdYAMtG2eWPttb3frc3El
-         7tBA==
-X-Gm-Message-State: AOAM531CUUmNLaiceSJ2DLzSbpKXoIGkCj+Y45dFWwXJo/VrbTzwirLo
-        b+11fmCthNYoGfqcADSu3w==
-X-Google-Smtp-Source: ABdhPJxezF3J929dadMtRF7dZwAzTNxltAgx4npaqaJ7XUZo+rKBIOxckvfxo6x2n9ViPDQllfgmjA==
-X-Received: by 2002:a92:d6c8:: with SMTP id z8mr3903944ilp.162.1616616058476;
-        Wed, 24 Mar 2021 13:00:58 -0700 (PDT)
-Received: from robh.at.kernel.org ([64.188.179.253])
-        by smtp.gmail.com with ESMTPSA id 74sm1504924iob.43.2021.03.24.13.00.57
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=+q8Gd1+pbo1oAawe9rmDsOu0NCdQjASjyNmuKAHwY/4=;
+        b=QN5mChEY95axsp6hhKJbEnmLL3t1lxULQdPAo9o6CJmfcidhF8Oz7lcZQZnrOkUv3c
+         y1SmXTFZDIZIk2cS5CKY/fIor0Hk6hSjPiBLvuIyNyi5aBRGs1w6kdxNSFsS+7AsIPcj
+         ISQVzPcrpdz9+XHWoMyac8Rcex6n933ycRJziptXPytqp+PCn/EMuj8spMzo/5d+oP7y
+         CN4bTxx22/8dJJszztoMXZzqeCqKBrhISxE4TBYHmff9WgxAP9ChQP6Wh6lxB0U+m7MM
+         P8Y8ao5rETqnNmkNgcU1D3DnuBZj8O8im8DxHklUP1IcxdhsHXnj4nQ7EsiQiFek2KGA
+         B1mA==
+X-Gm-Message-State: AOAM531QlZd2066lfN8e2rr9HEo9klExD0gOt2eXg66tQCmHLzBbD//e
+        9Uy/xnaxbmGxqUG2Iw1PrDc=
+X-Google-Smtp-Source: ABdhPJyYI3yjerlWh21l+V1Vqkxtk4mAP1KFJWD9PVTrNJeHNGzT1kNDfcJoaHaC+Y2d7wCROjB+oQ==
+X-Received: by 2002:a17:907:2093:: with SMTP id pv19mr5773430ejb.134.1616617469891;
+        Wed, 24 Mar 2021 13:24:29 -0700 (PDT)
+Received: from LEGION ([111.119.187.22])
+        by smtp.gmail.com with ESMTPSA id cw14sm1689338edb.8.2021.03.24.13.24.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Mar 2021 13:00:57 -0700 (PDT)
-Received: (nullmailer pid 3527925 invoked by uid 1000);
-        Wed, 24 Mar 2021 19:59:51 -0000
-Date:   Wed, 24 Mar 2021 13:59:51 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     devicetree@vger.kernel.org,
-        Aditya Srivastava <yashsri421@gmail.com>,
-        Wei Xu <xuwei5@hisilicon.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] devicetree: replace invalid kernel-doc comment headers
-Message-ID: <20210324195951.GA3526633@robh.at.kernel.org>
-References: <20210322072343.19993-1-lukas.bulwahn@gmail.com>
+        Wed, 24 Mar 2021 13:24:29 -0700 (PDT)
+Message-ID: <abc46d0ad37b9e59ac71288d04e43c9911f71072.camel@gmail.com>
+Subject: Re: [PATCH] ALSA: usb-audio: Fix missing return assignment
+From:   Muhammad Usama Anjum <musamaanjum@gmail.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, colin.king@canonical.com
+Date:   Thu, 25 Mar 2021 01:24:23 +0500
+In-Reply-To: <20210324185047.GP1667@kadam>
+References: <20210324172604.GA380592@LEGION> <20210324185047.GP1667@kadam>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.4-0ubuntu1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210322072343.19993-1-lukas.bulwahn@gmail.com>
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Mar 22, 2021 at 08:23:43AM +0100, Lukas Bulwahn wrote:
-> The opening comment mark '/**' is used for indicating the beginning of
-> kernel-doc comments.
+On Wed, 2021-03-24 at 21:50 +0300, Dan Carpenter wrote:
+> On Wed, Mar 24, 2021 at 10:26:04PM +0500, Muhammad Usama Anjum wrote:
+> > Return value of usb_driver_claim_interface should not be ignored.
+> > Instead it should be stored in err variable and returned from
+> > this function.
+> > 
+> > Signed-off-by: Muhammad Usama Anjum <musamaanjum@gmail.com>
+> > ---
+> >  sound/usb/quirks.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/sound/usb/quirks.c b/sound/usb/quirks.c
+> > index 9e5e37eff10e..dd32ceaef18a 100644
+> > --- a/sound/usb/quirks.c
+> > +++ b/sound/usb/quirks.c
+> > @@ -427,10 +427,10 @@ static int create_autodetect_quirks(struct snd_usb_audio *chip,
+> >  
+> >  		err = create_autodetect_quirk(chip, iface, driver);
+> >  		if (err >= 0)
 > 
-> Replace uses of '/**' for invalid cases in dt-binding headers and dts.
+> create_autodetect_quirk() never returns positive values.  Flip this
+> condition.  (Always do error handling, don't do success handling).
 > 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> Rob, please pick this quick kernel-doc cleanup patch.
+> 		if (err)
+> 			continue;
 
-dts files don't go thru my tree. Please split this into 2 patches.
-
+Got it. I'll send a patch.
 > 
->  arch/arm64/boot/dts/hisilicon/hip05-d02.dts    | 2 +-
->  arch/arm64/boot/dts/hisilicon/hip05.dtsi       | 2 +-
->  arch/arm64/boot/dts/hisilicon/hip06-d03.dts    | 2 +-
->  arch/arm64/boot/dts/hisilicon/hip06.dtsi       | 4 ++--
->  arch/arm64/boot/dts/hisilicon/hip07-d05.dts    | 2 +-
->  arch/arm64/boot/dts/hisilicon/hip07.dtsi       | 2 +-
->  include/dt-bindings/reset/hisi,hi6220-resets.h | 2 +-
->  include/dt-bindings/reset/snps,hsdk-reset.h    | 2 +-
->  8 files changed, 9 insertions(+), 9 deletions(-)
+> 
+> > -			usb_driver_claim_interface(driver, iface, (void *)-1L);
+> > +			err = usb_driver_claim_interface(driver, iface, (void *)-1L);
+> 
+> This is in a loop so only the last return value is used.  Which seems
+> sort of weird and pointless that the last value would matter more than
+> the others.
+> 
+Correct. Lets not store the return value. To stop the static analyzers
+to report the missing return assignment, can we add (void) in start of
+this function call? I've not seen use of (void) this way in the
+kernel. Is there any other way used in the kernel?
+
+> >  	}
+> >  
+> > -	return 0;
+> > +	return err;
+> 
+> regards,
+> dan carpenter
+> 
+
