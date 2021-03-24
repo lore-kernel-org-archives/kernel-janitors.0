@@ -2,116 +2,76 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96F57C433C1
-	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Mar 2021 07:08:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E34F6C433DB
+	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Mar 2021 08:34:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6919C619F6
-	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Mar 2021 07:08:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8E88619D5
+	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Mar 2021 08:34:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235681AbhCXHHy (ORCPT
+        id S233892AbhCXIeY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 24 Mar 2021 03:07:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38376 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235692AbhCXHH3 (ORCPT
+        Wed, 24 Mar 2021 04:34:24 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:13678 "EHLO
+        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233837AbhCXIeB (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 24 Mar 2021 03:07:29 -0400
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C98F2C061763;
-        Wed, 24 Mar 2021 00:07:28 -0700 (PDT)
-Received: by mail-wm1-x335.google.com with SMTP id r10-20020a05600c35cab029010c946c95easo557930wmq.4;
-        Wed, 24 Mar 2021 00:07:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LknztGgqkN///91+7Wug8dejmfXPPMToN8QWuG2wkMU=;
-        b=dgAtPKFUuWUjQ37dOc0OLRQ0W9XnjH6AH5XU+e3dkmMhR8GOQCP+fNdliZAZiSlf9Q
-         6VULApcmccdCtUVHvey5bDGWLcozs2T2kLB5K0suVa6Rxk4KCMfdgQhtzsnLIyGAbzXy
-         ccZ6FAg6rHsVUfTlG6/E7kTWzbnR+IQffaThyQH3U4k0Q8Wqkl1v31MMmFamw+HJ0Msy
-         XA+77Z/l7ctIY7ZCK7Kz6xqZx2IvGq56aBKu8A4QXEYVwMI6bOszq4b0WLhFRhMV5HoI
-         wt9+wjNbDoP6KBFVlhn/rAKoD5WQlQ3hfdVoGXHgpFlrNr2W6xiwR/5qEXCN7LxAv9DM
-         dsiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LknztGgqkN///91+7Wug8dejmfXPPMToN8QWuG2wkMU=;
-        b=ID3sI41Dk3JOkqzcR8RrlZTXcY65EzknE/4vFePnhbgbirVmeEAbx8PAzFfcnbBBGh
-         HYeOz5VSvVMgVygaGg0p23V9wyLSiSVn3lcr/qi+SwzPOp2ActfuNRvS2O6akR/Wajli
-         DeIa20/i/zqYNRewJ1y/NWN4s9KSz7ljfbMIXe02y55H48xpv67wqkA1If9WGPYdpF0N
-         3n8ezqEr4xKLoTEDIMJA07uNjS/n+xKEP4SoSqJsVkT6tLNwoXMMgKl/VXRAC5eceXR3
-         j+H4MdoWugvXg6Z341srE4nPNsRKpuP3SG15xx1Y07ktfOB5MY76k9JajYZ9rEUVsImh
-         xJnw==
-X-Gm-Message-State: AOAM5319hDQeEjwbhzvWwRglHhwOQ5DBKcaG5vwEwiffsuvRF0zP8hrt
-        jHJUa2rXjDBh4YTbZjNVeY3c1JlcEW276uKx+G3ESX7yYeM=
-X-Google-Smtp-Source: ABdhPJy0wnrY40S+myN8rvn+oXVBzTkCjecFMbUqih6KehEfQvOmvYIj8UWdYmlrUNybkx14OeUW0Xe9NcHgLb5GPQQ=
-X-Received: by 2002:a05:600c:47d7:: with SMTP id l23mr1421587wmo.155.1616569647596;
- Wed, 24 Mar 2021 00:07:27 -0700 (PDT)
+        Wed, 24 Mar 2021 04:34:01 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4F51fl6KcwznVPZ;
+        Wed, 24 Mar 2021 16:31:27 +0800 (CST)
+Received: from huawei.com (10.175.104.82) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.498.0; Wed, 24 Mar 2021
+ 16:33:53 +0800
+From:   Xu Jia <xujia39@huawei.com>
+To:     <stefanr@s5r6.in-berlin.de>
+CC:     <linux1394-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] firewire: net: remove unused variable 'dev'
+Date:   Wed, 24 Mar 2021 16:47:47 +0800
+Message-ID: <20210324084747.957759-1-xujia39@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20210323123245.346491-1-colin.king@canonical.com>
-In-Reply-To: <20210323123245.346491-1-colin.king@canonical.com>
-From:   Sunil Kovvuri <sunil.kovvuri@gmail.com>
-Date:   Wed, 24 Mar 2021 12:37:15 +0530
-Message-ID: <CA+sq2CekDZgxec43sBOZ4nLJwVE=PdGdHwYogWAPvyCNwZ0Wnw@mail.gmail.com>
-Subject: Re: [PATCH] octeontx2-af: Fix memory leak of object buf
-To:     Colin King <colin.king@canonical.com>
-Cc:     Sunil Goutham <sgoutham@marvell.com>,
-        Linu Cherian <lcherian@marvell.com>,
-        Geetha sowjanya <gakula@marvell.com>,
-        Jerin Jacob <jerinj@marvell.com>,
-        hariprasad <hkelam@marvell.com>,
-        Subbaraya Sundeep <sbhatta@marvell.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Rakesh Babu <rsaladi2@marvell.com>,
-        Linux Netdev List <netdev@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.104.82]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Mar 23, 2021 at 6:07 PM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Currently the error return path when lfs fails to allocate is not free'ing
-> the memory allocated to buf. Fix this by adding the missing kfree.
->
-> Addresses-Coverity: ("Resource leak")
-> Fixes: f7884097141b ("octeontx2-af: Formatting debugfs entry rsrc_alloc.")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c
-> index 8ec17ee72b5d..9bf8eaabf9ab 100644
-> --- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c
-> +++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c
-> @@ -253,8 +253,10 @@ static ssize_t rvu_dbg_rsrc_attach_status(struct file *filp,
->                 return -ENOSPC;
->
->         lfs = kzalloc(lf_str_size, GFP_KERNEL);
-> -       if (!lfs)
-> +       if (!lfs) {
-> +               kfree(buf);
->                 return -ENOMEM;
-> +       }
->         off +=  scnprintf(&buf[off], buf_size - 1 - off, "%-*s", lf_str_size,
->                           "pcifunc");
->         for (index = 0; index < BLK_COUNT; index++)
-> --
-> 2.30.2
->
+The variable 'dev' is not used in function, remove it to fix the warning.
 
-Thanks for the fix,
-Acked-by: Sunil Goutham <sgoutham@marvell.com>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Xu Jia <xujia39@huawei.com>
+---
+ drivers/firewire/net.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/firewire/net.c b/drivers/firewire/net.c
+index 28785642a5c5..4c3fd2eed1da 100644
+--- a/drivers/firewire/net.c
++++ b/drivers/firewire/net.c
+@@ -488,7 +488,6 @@ static int fwnet_finish_incoming_packet(struct net_device *net,
+ 					struct sk_buff *skb, u16 source_node_id,
+ 					bool is_broadcast, u16 ether_type)
+ {
+-	struct fwnet_device *dev;
+ 	int status;
+ 
+ 	switch (ether_type) {
+@@ -502,7 +501,6 @@ static int fwnet_finish_incoming_packet(struct net_device *net,
+ 		goto err;
+ 	}
+ 
+-	dev = netdev_priv(net);
+ 	/* Write metadata, and then pass to the receive level */
+ 	skb->dev = net;
+ 	skb->ip_summed = CHECKSUM_NONE;
+-- 
+2.25.1
+
