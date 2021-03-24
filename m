@@ -2,123 +2,78 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D03BC433C1
-	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Mar 2021 18:53:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F421C433C1
+	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Mar 2021 19:40:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 53FDD61A10
-	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Mar 2021 18:53:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 28BF061A1B
+	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Mar 2021 19:40:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237587AbhCXSw2 (ORCPT
+        id S237939AbhCXTkZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 24 Mar 2021 14:52:28 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:58614 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230442AbhCXSwN (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 24 Mar 2021 14:52:13 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12OIiHrC145718;
-        Wed, 24 Mar 2021 18:51:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=it5Jx4mfOUvPNC0feT8uQU3Wr784UnyNfdgedmnfFKg=;
- b=w1L/wZbGEqS6URcwn2AwPXHaJ9xHwh9CD3FqRgVxEnAOQvUoi4MpQfFOIy+eUgEuscPx
- ths8WRQZqjw5DGUb1RMDzdCnaFGKwPGhKMV0m4ix/EkQ2T+w/vdo5MOwkRxhG6ShYZYy
- EeoFKRq6aNtK3QWcas9Hf+9hM/XHE9rTXICMn7iBUnJxzkgLfC7KtF5nr5d5mW5lvhbH
- Jt7r/B3xE3Or01nAwpOju8bF/LRuapw4FWmxfNe7OVNvfuFnQnBNvHSe9iea53xFkrJM
- qrBXStSYm5iwHpA9eptV7AO250DZOYCZsfif4Hubcd1y8kprVkoahiqxdPYgDqYR6+Ls /g== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2130.oracle.com with ESMTP id 37d6jbm068-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 24 Mar 2021 18:51:17 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12OIpC82188179;
-        Wed, 24 Mar 2021 18:51:16 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3030.oracle.com with ESMTP id 37dtmr6yrb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 24 Mar 2021 18:51:16 +0000
-Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 12OIoufO016250;
-        Wed, 24 Mar 2021 18:50:59 GMT
-Received: from kadam (/102.36.221.92)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 24 Mar 2021 11:50:55 -0700
-Date:   Wed, 24 Mar 2021 21:50:47 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Muhammad Usama Anjum <musamaanjum@gmail.com>
-Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, colin.king@canonical.com
-Subject: Re: [PATCH] ALSA: usb-audio: Fix missing return assignment
-Message-ID: <20210324185047.GP1667@kadam>
-References: <20210324172604.GA380592@LEGION>
+        Wed, 24 Mar 2021 15:40:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42110 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S237888AbhCXTkI (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 24 Mar 2021 15:40:08 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPS id 7CB7661A1D;
+        Wed, 24 Mar 2021 19:40:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1616614808;
+        bh=Zz1CsYFdzAfuhuMUMv/0V2zv9+h1ESONLaa6Ji/jV68=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=Y48W//4T/rbDAbfaao7QRltZI2DL8LufuotMexFAz4cLQN71DFGBP5aOlWdf/qAbt
+         kz9eVIv+ZYUXW8y/PfBw6uo4DPniVa2KDdaLrNqX+6ijdtD4soA9W4bveTxOEOM0dH
+         ir1SuaT1urXHIxBUC5DxprYLXUdj8vJ72fhO++Cuz92vs1OD9VWi7yppygkuqo2H3T
+         5URBYnWfAYwctisY6hRO3RmC0GAkm3i7DKxGXRNfAeXrK9DHigVGnqW0XHeqH9e8aB
+         fgTY0macwHsju1bi914n5Swqldtt7XvfCm6GyA1fj9uw+5J5spRYWLEZrAIdnDl4zA
+         rdSYYQiPWCcrA==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210324172604.GA380592@LEGION>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-IMR: 1
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9933 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxscore=0 phishscore=0
- bulkscore=0 suspectscore=0 malwarescore=0 mlxlogscore=999 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2103240135
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9933 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 phishscore=0
- lowpriorityscore=0 suspectscore=0 clxscore=1015 priorityscore=1501
- spamscore=0 adultscore=0 impostorscore=0 mlxlogscore=999 mlxscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2103240134
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] octeontx2-af: Fix memory leak of object buf
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <161661480843.20893.18393670218397108988.git-patchwork-notify@kernel.org>
+Date:   Wed, 24 Mar 2021 19:40:08 +0000
+References: <20210323123245.346491-1-colin.king@canonical.com>
+In-Reply-To: <20210323123245.346491-1-colin.king@canonical.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     sgoutham@marvell.com, lcherian@marvell.com, gakula@marvell.com,
+        jerinj@marvell.com, hkelam@marvell.com, sbhatta@marvell.com,
+        davem@davemloft.net, kuba@kernel.org, rsaladi2@marvell.com,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Mar 24, 2021 at 10:26:04PM +0500, Muhammad Usama Anjum wrote:
-> Return value of usb_driver_claim_interface should not be ignored.
-> Instead it should be stored in err variable and returned from
-> this function.
+Hello:
+
+This patch was applied to netdev/net.git (refs/heads/master):
+
+On Tue, 23 Mar 2021 12:32:45 +0000 you wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Signed-off-by: Muhammad Usama Anjum <musamaanjum@gmail.com>
-> ---
->  sound/usb/quirks.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> Currently the error return path when lfs fails to allocate is not free'ing
+> the memory allocated to buf. Fix this by adding the missing kfree.
 > 
-> diff --git a/sound/usb/quirks.c b/sound/usb/quirks.c
-> index 9e5e37eff10e..dd32ceaef18a 100644
-> --- a/sound/usb/quirks.c
-> +++ b/sound/usb/quirks.c
-> @@ -427,10 +427,10 @@ static int create_autodetect_quirks(struct snd_usb_audio *chip,
->  
->  		err = create_autodetect_quirk(chip, iface, driver);
->  		if (err >= 0)
+> Addresses-Coverity: ("Resource leak")
+> Fixes: f7884097141b ("octeontx2-af: Formatting debugfs entry rsrc_alloc.")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> 
+> [...]
 
-create_autodetect_quirk() never returns positive values.  Flip this
-condition.  (Always do error handling, don't do success handling).
+Here is the summary with links:
+  - octeontx2-af: Fix memory leak of object buf
+    https://git.kernel.org/netdev/net/c/9e0a537d06fc
 
-		if (err)
-			continue;
+You are awesome, thank you!
+--
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-
-> -			usb_driver_claim_interface(driver, iface, (void *)-1L);
-> +			err = usb_driver_claim_interface(driver, iface, (void *)-1L);
-
-This is in a loop so only the last return value is used.  Which seems
-sort of weird and pointless that the last value would matter more than
-the others.
-
->  	}
->  
-> -	return 0;
-> +	return err;
-
-regards,
-dan carpenter
 
