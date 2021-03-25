@@ -7,72 +7,70 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBECFC433DB
-	for <kernel-janitors@archiver.kernel.org>; Thu, 25 Mar 2021 02:59:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7ED5C433C1
+	for <kernel-janitors@archiver.kernel.org>; Thu, 25 Mar 2021 03:16:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8903561A1F
-	for <kernel-janitors@archiver.kernel.org>; Thu, 25 Mar 2021 02:59:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 764D061A1E
+	for <kernel-janitors@archiver.kernel.org>; Thu, 25 Mar 2021 03:16:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230222AbhCYC7R (ORCPT
+        id S231656AbhCYDPs (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 24 Mar 2021 22:59:17 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:14465 "EHLO
-        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229508AbhCYC7M (ORCPT
+        Wed, 24 Mar 2021 23:15:48 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:14889 "EHLO
+        szxga06-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229908AbhCYDPr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 24 Mar 2021 22:59:12 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
-        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4F5VBZ57zLzwQll;
-        Thu, 25 Mar 2021 10:57:10 +0800 (CST)
-Received: from localhost.localdomain (10.175.102.38) by
- DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.498.0; Thu, 25 Mar 2021 10:59:04 +0800
-From:   'Wei Yongjun <weiyongjun1@huawei.com>
-To:     <weiyongjun1@huawei.com>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        "Mathieu Poirier" <mathieu.poirier@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Govind Singh <govinds@codeaurora.org>
-CC:     <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
+        Wed, 24 Mar 2021 23:15:47 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
+        by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4F5VZ73ckYzkfWh;
+        Thu, 25 Mar 2021 11:14:07 +0800 (CST)
+Received: from localhost.localdomain (10.175.104.82) by
+ DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
+ 14.3.498.0; Thu, 25 Mar 2021 11:15:35 +0800
+From:   'Zheng Yongjun <zhengyongjun3@huawei.com>
+To:     <zhengyongjun3@huawei.com>, Ariel Elior <aelior@marvell.com>,
+        <GR-everest-linux-l2@marvell.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        "Daniel Borkmann" <daniel@iogearbox.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Andrii Nakryiko <andrii@kernel.org>
+CC:     <netdev@vger.kernel.org>, <bpf@vger.kernel.org>,
         <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH -next] remoteproc: qcom: wcss: Fix wrong pointer passed to PTR_ERR()
-Date:   Thu, 25 Mar 2021 03:08:57 +0000
-Message-ID: <20210325030857.3978824-1-weiyongjun1@huawei.com>
+Subject: [PATCH net-next] qede: remove unused including <linux/version.h>
+Date:   Thu, 25 Mar 2021 11:29:28 +0800
+Message-ID: <20210325032928.1550157-1-zhengyongjun3@huawei.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Type:   text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.102.38]
+X-Originating-IP: [10.175.104.82]
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
+From: Zheng Yongjun <zhengyongjun3@huawei.com>
 
-PTR_ERR should access the value just tested by IS_ERR, otherwise
-the wrong error code will be returned.
+Remove including <linux/version.h> that don't need it.
 
-Fixes: 0af65b9b915e ("remoteproc: qcom: wcss: Add non pas wcss Q6 support for QCS404")
 Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Signed-off-by: Zheng Yongjun <zhengyongjun3@huawei.com>
 ---
- drivers/remoteproc/qcom_q6v5_wcss.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
-index 71ec1a451e35..eda64f86d7b0 100644
---- a/drivers/remoteproc/qcom_q6v5_wcss.c
-+++ b/drivers/remoteproc/qcom_q6v5_wcss.c
-@@ -972,7 +972,7 @@ static int q6v5_wcss_init_clock(struct q6v5_wcss *wcss)
- 		ret = PTR_ERR(wcss->qdsp6ss_axim_cbcr);
- 		if (ret != -EPROBE_DEFER)
- 			dev_err(wcss->dev, "failed to get axim cbcr clk\n");
--		return PTR_ERR(wcss->qdsp6ss_abhm_cbcr);
-+		return PTR_ERR(wcss->qdsp6ss_axim_cbcr);
- 	}
- 
- 	wcss->lcc_bcr_sleep = devm_clk_get(wcss->dev, "lcc_bcr_sleep");
+ drivers/net/ethernet/qlogic/qede/qede_main.c | 1 -
+ 1 file changed, 1 deletion(-)
+diff --git a/drivers/net/ethernet/qlogic/qede/qede_main.c b/drivers/net/ethernet/qlogic/qede/qede_main.c
+index 4d952036ba82..01ac1e93d27a 100644
+--- a/drivers/net/ethernet/qlogic/qede/qede_main.c
++++ b/drivers/net/ethernet/qlogic/qede/qede_main.c
+@@ -7,7 +7,6 @@
+ #include <linux/crash_dump.h>
+ #include <linux/module.h>
+ #include <linux/pci.h>
+-#include <linux/version.h>
+ #include <linux/device.h>
+ #include <linux/netdevice.h>
+ #include <linux/etherdevice.h>
 
