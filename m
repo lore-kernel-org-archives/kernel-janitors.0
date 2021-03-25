@@ -4,73 +4,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8232C433C1
-	for <kernel-janitors@archiver.kernel.org>; Thu, 25 Mar 2021 02:43:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBECFC433DB
+	for <kernel-janitors@archiver.kernel.org>; Thu, 25 Mar 2021 02:59:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A60E7619B6
-	for <kernel-janitors@archiver.kernel.org>; Thu, 25 Mar 2021 02:43:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8903561A1F
+	for <kernel-janitors@archiver.kernel.org>; Thu, 25 Mar 2021 02:59:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232782AbhCYCnO (ORCPT
+        id S230222AbhCYC7R (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 24 Mar 2021 22:43:14 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:14582 "EHLO
-        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235098AbhCYCmk (ORCPT
+        Wed, 24 Mar 2021 22:59:17 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:14465 "EHLO
+        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229508AbhCYC7M (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 24 Mar 2021 22:42:40 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
-        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4F5TqT5mR6z19J2S;
-        Thu, 25 Mar 2021 10:40:37 +0800 (CST)
-Received: from localhost.localdomain (10.175.113.32) by
- DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
- 14.3.498.0; Thu, 25 Mar 2021 10:42:30 +0800
-From:   'Qinglang Miao <miaoqinglang@huawei.com>
-To:     <miaoqinglang@huawei.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        "Alexander A. Klimov" <grandmaster@al2klimov.de>,
-        Wei Yongjun <weiyongjun1@huawei.com>
-CC:     <linux-usb@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH -next] usb: typec: tipd: Remove duplicated include from core.c
-Date:   Thu, 25 Mar 2021 11:12:55 +0800
-Message-ID: <20210325031255.120479-1-miaoqinglang@huawei.com>
+        Wed, 24 Mar 2021 22:59:12 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
+        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4F5VBZ57zLzwQll;
+        Thu, 25 Mar 2021 10:57:10 +0800 (CST)
+Received: from localhost.localdomain (10.175.102.38) by
+ DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
+ 14.3.498.0; Thu, 25 Mar 2021 10:59:04 +0800
+From:   'Wei Yongjun <weiyongjun1@huawei.com>
+To:     <weiyongjun1@huawei.com>, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        "Mathieu Poirier" <mathieu.poirier@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Govind Singh <govinds@codeaurora.org>
+CC:     <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH -next] remoteproc: qcom: wcss: Fix wrong pointer passed to PTR_ERR()
+Date:   Thu, 25 Mar 2021 03:08:57 +0000
+Message-ID: <20210325030857.3978824-1-weiyongjun1@huawei.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Type:   text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.113.32]
+X-Originating-IP: [10.175.102.38]
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Qinglang Miao <miaoqinglang@huawei.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
 
-Remove duplicated include.
+PTR_ERR should access the value just tested by IS_ERR, otherwise
+the wrong error code will be returned.
 
+Fixes: 0af65b9b915e ("remoteproc: qcom: wcss: Add non pas wcss Q6 support for QCS404")
 Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Qinglang Miao <miaoqinglang@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/usb/typec/tipd/core.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/remoteproc/qcom_q6v5_wcss.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/typec/tipd/core.c b/drivers/usb/typec/tipd/core.c
-index d8212b15f6f9..938219bc1b4b 100644
---- a/drivers/usb/typec/tipd/core.c
-+++ b/drivers/usb/typec/tipd/core.c
-@@ -6,8 +6,6 @@
-  * Author: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-  */
+diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
+index 71ec1a451e35..eda64f86d7b0 100644
+--- a/drivers/remoteproc/qcom_q6v5_wcss.c
++++ b/drivers/remoteproc/qcom_q6v5_wcss.c
+@@ -972,7 +972,7 @@ static int q6v5_wcss_init_clock(struct q6v5_wcss *wcss)
+ 		ret = PTR_ERR(wcss->qdsp6ss_axim_cbcr);
+ 		if (ret != -EPROBE_DEFER)
+ 			dev_err(wcss->dev, "failed to get axim cbcr clk\n");
+-		return PTR_ERR(wcss->qdsp6ss_abhm_cbcr);
++		return PTR_ERR(wcss->qdsp6ss_axim_cbcr);
+ 	}
  
--#include "tps6598x.h"
--
- #include <linux/i2c.h>
- #include <linux/acpi.h>
- #include <linux/module.h>
+ 	wcss->lcc_bcr_sleep = devm_clk_get(wcss->dev, "lcc_bcr_sleep");
 
