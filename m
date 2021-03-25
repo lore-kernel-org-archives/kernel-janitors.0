@@ -4,38 +4,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59623C433E1
-	for <kernel-janitors@archiver.kernel.org>; Thu, 25 Mar 2021 14:39:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EEC3C433DB
+	for <kernel-janitors@archiver.kernel.org>; Thu, 25 Mar 2021 14:58:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 27DC361A2F
-	for <kernel-janitors@archiver.kernel.org>; Thu, 25 Mar 2021 14:39:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E034161A01
+	for <kernel-janitors@archiver.kernel.org>; Thu, 25 Mar 2021 14:58:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230115AbhCYOjU (ORCPT
+        id S230416AbhCYO5b (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 25 Mar 2021 10:39:20 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:14545 "EHLO
+        Thu, 25 Mar 2021 10:57:31 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:14546 "EHLO
         szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231208AbhCYOjP (ORCPT
+        with ESMTP id S230248AbhCYO5F (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 25 Mar 2021 10:39:15 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
-        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4F5njT3QJyzPlvv;
-        Thu, 25 Mar 2021 22:36:29 +0800 (CST)
+        Thu, 25 Mar 2021 10:57:05 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
+        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4F5p6G0hD8zPlHS;
+        Thu, 25 Mar 2021 22:54:30 +0800 (CST)
 Received: from DESKTOP-EFRLNPK.china.huawei.com (10.174.177.129) by
- DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
- 14.3.498.0; Thu, 25 Mar 2021 22:38:54 +0800
+ DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
+ 14.3.498.0; Thu, 25 Mar 2021 22:56:52 +0800
 From:   'Qiheng Lin <linqiheng@huawei.com>
-To:     <linqiheng@huawei.com>, Johannes Berg <johannes@sipsolutions.net>,
+To:     <linqiheng@huawei.com>, Petko Manolov <petkan@nucleusys.com>,
         "David S. Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>
-CC:     <linux-wireless@vger.kernel.org>, <netdev@vger.kernel.org>,
+CC:     <linux-usb@vger.kernel.org>, <netdev@vger.kernel.org>,
         <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH net-next] cfg80211: regulatory: use DEFINE_SPINLOCK() for spinlock
-Date:   Thu, 25 Mar 2021 22:38:54 +0800
-Message-ID: <20210325143854.13186-1-linqiheng@huawei.com>
+Subject: [PATCH net-next] net: usb: pegasus: Remove duplicated include from pegasus.c
+Date:   Thu, 25 Mar 2021 22:56:52 +0800
+Message-ID: <20210325145652.13469-1-linqiheng@huawei.com>
 X-Mailer: git-send-email 2.31.0
 MIME-Version: 1.0
 Content-Type:   text/plain; charset=US-ASCII
@@ -48,51 +48,32 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Qiheng Lin <linqiheng@huawei.com>
 
-spinlock can be initialized automatically with DEFINE_SPINLOCK()
-rather than explicitly calling spin_lock_init().
+Remove duplicated include.
 
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: Qiheng Lin <linqiheng@huawei.com>
 ---
- net/wireless/reg.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ drivers/net/usb/pegasus.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/net/wireless/reg.c b/net/wireless/reg.c
-index 21536c48deec..1c14f4d30344 100644
---- a/net/wireless/reg.c
-+++ b/net/wireless/reg.c
-@@ -126,7 +126,7 @@ static int reg_num_devs_support_basehint;
-  * is relevant for all registered devices.
-  */
- static bool reg_is_indoor;
--static spinlock_t reg_indoor_lock;
-+static DEFINE_SPINLOCK(reg_indoor_lock);
- 
- /* Used to track the userspace process controlling the indoor setting */
- static u32 reg_is_indoor_portid;
-@@ -210,11 +210,11 @@ static struct regulatory_request *get_last_request(void)
- 
- /* Used to queue up regulatory hints */
- static LIST_HEAD(reg_requests_list);
--static spinlock_t reg_requests_lock;
-+static DEFINE_SPINLOCK(reg_requests_lock);
- 
- /* Used to queue up beacon hints for review */
- static LIST_HEAD(reg_pending_beacons);
--static spinlock_t reg_pending_beacons_lock;
-+static DEFINE_SPINLOCK(reg_pending_beacons_lock);
- 
- /* Used to keep track of processed beacon hints */
- static LIST_HEAD(reg_beacon_list);
-@@ -4262,10 +4262,6 @@ int __init regulatory_init(void)
- 	if (IS_ERR(reg_pdev))
- 		return PTR_ERR(reg_pdev);
- 
--	spin_lock_init(&reg_requests_lock);
--	spin_lock_init(&reg_pending_beacons_lock);
--	spin_lock_init(&reg_indoor_lock);
--
- 	rcu_assign_pointer(cfg80211_regdomain, cfg80211_world_regdom);
- 
- 	user_alpha2[0] = '9';
+diff --git a/drivers/net/usb/pegasus.c b/drivers/net/usb/pegasus.c
+index 9a907182569c..e0ee5c096396 100644
+--- a/drivers/net/usb/pegasus.c
++++ b/drivers/net/usb/pegasus.c
+@@ -65,7 +65,6 @@ static struct usb_eth_dev usb_dev_id[] = {
+ 	{.name = pn, .vendor = vid, .device = pid, .private = flags},
+ #define PEGASUS_DEV_CLASS(pn, vid, pid, dclass, flags) \
+ 	PEGASUS_DEV(pn, vid, pid, flags)
+-#include "pegasus.h"
+ #undef	PEGASUS_DEV
+ #undef	PEGASUS_DEV_CLASS
+ 	{NULL, 0, 0, 0},
+@@ -84,7 +83,6 @@ static struct usb_device_id pegasus_ids[] = {
+ #define PEGASUS_DEV_CLASS(pn, vid, pid, dclass, flags) \
+ 	{.match_flags = (USB_DEVICE_ID_MATCH_DEVICE | USB_DEVICE_ID_MATCH_DEV_CLASS), \
+ 	.idVendor = vid, .idProduct = pid, .bDeviceClass = dclass},
+-#include "pegasus.h"
+ #undef	PEGASUS_DEV
+ #undef	PEGASUS_DEV_CLASS
+ 	{},
 
