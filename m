@@ -2,83 +2,81 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97D97C433E0
-	for <kernel-janitors@archiver.kernel.org>; Thu, 25 Mar 2021 09:32:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C57AC433C1
+	for <kernel-janitors@archiver.kernel.org>; Thu, 25 Mar 2021 10:09:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5981E61A2E
-	for <kernel-janitors@archiver.kernel.org>; Thu, 25 Mar 2021 09:32:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C25361A0D
+	for <kernel-janitors@archiver.kernel.org>; Thu, 25 Mar 2021 10:09:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229991AbhCYJcQ (ORCPT
+        id S229898AbhCYKIg (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 25 Mar 2021 05:32:16 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:14533 "EHLO
-        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229866AbhCYJcK (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 25 Mar 2021 05:32:10 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
-        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4F5fvM0CJMzPlJ7;
-        Thu, 25 Mar 2021 17:29:35 +0800 (CST)
-Received: from DESKTOP-EFRLNPK.china.huawei.com (10.174.177.129) by
- DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
- 14.3.498.0; Thu, 25 Mar 2021 17:32:00 +0800
-From:   Qiheng Lin <linqiheng@huawei.com>
-To:     Felix Fietkau <nbd@nbd.name>, John Crispin <john@phrozen.org>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Mark Lee <Mark-MC.Lee@mediatek.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-CC:     Qiheng Lin <linqiheng@huawei.com>, <netdev@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH net-next] net: ethernet: mtk_eth_soc: remove unused variable 'count'
-Date:   Thu, 25 Mar 2021 17:31:51 +0800
-Message-ID: <20210325093151.5913-1-linqiheng@huawei.com>
-X-Mailer: git-send-email 2.31.0
+        Thu, 25 Mar 2021 06:08:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48190 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229617AbhCYKI0 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 25 Mar 2021 06:08:26 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 5370161A28;
+        Thu, 25 Mar 2021 10:08:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1616666906;
+        bh=qBh9X3Ibv4fOJ4Pd4E80u6UTOYvNfnLHnBNTdIn7CGE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=GgpAzCC29LtjBRbRo0SPkb5kO8fsvhRQa+qxx3cyUJwRCiMIygdXpwjcUec8l00gv
+         O4TNPpjmQfR8msA9U8CvNOgrbxKRcVOws8WLtHMAn6lbTKBPzhZXZOItxKhtoJldVL
+         nOi7CWn4yhGdr/UgHPvWLlipCnV9LZkeHgce3QZrf1pCaKDLXAAWBzLY/+jxis6fMx
+         OtlNoohp2uqNgtT1TMXVQeRu3D0xCaNi4uWSs1JaovJV2hnFKvFIq2RoxvF69Cba/f
+         1r36k1cCGJzY9fFUfk1wFZgfK7ygLtWkHcn+TNFdsW4WV6V7mZF/IozIztLhhQuP5t
+         MpKRc3kDHi4YQ==
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Colin Ian King <colin.king@canonical.com>,
+        dan.carpenter@oracle.com,
+        Muhammad Usama Anjum <musamaanjum@gmail.com>
+Subject: [PATCH -tip 0/2] x86/kprobes: Fix and cleanup can_boost()
+Date:   Thu, 25 Mar 2021 19:08:20 +0900
+Message-Id: <161666690060.1120877.4569379871114610764.stgit@devnote2>
+X-Mailer: git-send-email 2.25.1
+User-Agent: StGit/0.19
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.174.177.129]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-GCC reports the following warning with W=1:
+Hi,
 
-drivers/net/ethernet/mediatek/mtk_ppe_debugfs.c:80:9: warning:
- variable 'count' set but not used [-Wunused-but-set-variable]
-   80 |  int i, count;
-      |         ^~~~~
+Here are 2 bugfixes for the x86/kprobes, [1/2] fixes an old bug which tries to find
+instruction prefixes in insn->opcode (which should be never found) and misusing
+insn->attr. [2/2] fixes a new bug found by Coverity in the recent commit 6256e668b7
+("x86/kprobes: Use int3 instead of debug trap for single-step").
+To fix the 2nd one, [2/2] also cleanup the switch-case with range cases, because
+that is much more clear what is not boostable.
 
-This variable is not used in function , this commit
-remove it to fix the warning.
+Thank you,
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Qiheng Lin <linqiheng@huawei.com>
 ---
- drivers/net/ethernet/mediatek/mtk_ppe_debugfs.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/mediatek/mtk_ppe_debugfs.c b/drivers/net/ethernet/mediatek/mtk_ppe_debugfs.c
-index 8ae9efab6d02..98b1d3577bcd 100644
---- a/drivers/net/ethernet/mediatek/mtk_ppe_debugfs.c
-+++ b/drivers/net/ethernet/mediatek/mtk_ppe_debugfs.c
-@@ -77,9 +77,9 @@ static int
- mtk_ppe_debugfs_foe_show(struct seq_file *m, void *private, bool bind)
- {
- 	struct mtk_ppe *ppe = m->private;
--	int i, count;
-+	int i;
- 
--	for (i = 0, count = 0; i < MTK_PPE_ENTRIES; i++) {
-+	for (i = 0; i < MTK_PPE_ENTRIES; i++) {
- 		struct mtk_foe_entry *entry = &ppe->foe_table[i];
- 		struct mtk_foe_mac_info *l2;
- 		struct mtk_flow_addr_info ai = {};
+Masami Hiramatsu (2):
+      x86/kprobes: Fix to check non boostable prefixes correctly
+      x86/kprobes: Fix to identify indirect jmp and others using range case
+
+
+ arch/x86/kernel/kprobes/core.c |   57 +++++++++++++++++++++-------------------
+ 1 file changed, 30 insertions(+), 27 deletions(-)
+
+--
+Masami Hiramatsu (Linaro) <mhiramat@kernel.org>
