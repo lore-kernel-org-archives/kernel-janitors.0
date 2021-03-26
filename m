@@ -2,98 +2,94 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=BAYES_00,
-	CHARSET_FARAWAY_HEADER,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3127AC433C1
-	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Mar 2021 06:44:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18CE5C433DB
+	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Mar 2021 07:05:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 02C34619F9
-	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Mar 2021 06:44:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB04561A18
+	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Mar 2021 07:05:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230006AbhCZGnd (ORCPT
+        id S229889AbhCZHFY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 26 Mar 2021 02:43:33 -0400
-Received: from szxga01-in.huawei.com ([45.249.212.187]:5114 "EHLO
-        szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229889AbhCZGnO (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 26 Mar 2021 02:43:14 -0400
-Received: from dggeme760-chm.china.huawei.com (unknown [172.30.72.53])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4F6C6j58QQzYPK2;
-        Fri, 26 Mar 2021 14:41:17 +0800 (CST)
-Received: from dggeme760-chm.china.huawei.com (10.3.19.106) by
- dggeme760-chm.china.huawei.com (10.3.19.106) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2106.2; Fri, 26 Mar 2021 14:43:08 +0800
-Received: from dggeme760-chm.china.huawei.com ([10.6.80.70]) by
- dggeme760-chm.china.huawei.com ([10.6.80.70]) with mapi id 15.01.2106.013;
- Fri, 26 Mar 2021 14:43:08 +0800
-From:   zhengyongjun <zhengyongjun3@huawei.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Andrey Konovalov <andreyknvl@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        "Sebastian Andrzej Siewior" <bigeasy@linutronix.de>,
-        "Ahmed S. Darwish" <a.darwish@linutronix.de>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        Sasha Levin <sashal@kernel.org>,
-        Allen Pais <allen.lkml@gmail.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        pmail_hulkci <hulkci@huawei.com>
-Subject: =?gb2312?B?tPC4tDogW1BBVENIIC1uZXh0XSB1c2I6IHJlbW92ZSB1bnVzZWQgaW5jbHVk?=
- =?gb2312?Q?ing_<linux/version.h>?=
-Thread-Topic: [PATCH -next] usb: remove unused including <linux/version.h>
-Thread-Index: AQHXIgU2sYEdRQeVBkqcMFC7ZCHYeaqVSxWAgACGsnA=
-Date:   Fri, 26 Mar 2021 06:43:08 +0000
-Message-ID: <14b5f1093ccb42798653360d10757e93@huawei.com>
-References: <20210326061326.3234377-1-zhengyongjun3@huawei.com>
- <YF2BX7Ps9DcQe5tu@kroah.com>
-In-Reply-To: <YF2BX7Ps9DcQe5tu@kroah.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.174.178.249]
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+        Fri, 26 Mar 2021 03:05:24 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:21150 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230164AbhCZHE6 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 26 Mar 2021 03:04:58 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 4F6Cdz4fhSz9tykG;
+        Fri, 26 Mar 2021 08:04:55 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id Z58WxS2xMeos; Fri, 26 Mar 2021 08:04:55 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 4F6Cdz3Dg6z9tykF;
+        Fri, 26 Mar 2021 08:04:55 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 29E918B834;
+        Fri, 26 Mar 2021 08:04:56 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id p6eUKttqYihi; Fri, 26 Mar 2021 08:04:56 +0100 (CET)
+Received: from [192.168.4.90] (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 8ACC78B766;
+        Fri, 26 Mar 2021 08:04:54 +0100 (CET)
+Subject: Re: [PATCH -next] treewide: Remove duplicated include from
+ tm-vmx-unavail.c
+To:     Zheng Yongjun <zhengyongjun3@huawei.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Shuah Khan <shuah@kernel.org>
+Cc:     kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kselftest@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+References: <20210326064812.3262659-1-zhengyongjun3@huawei.com>
+From:   Christophe Leroy <christophe.leroy@csgroup.eu>
+Message-ID: <05c34150-1a30-0abe-87c1-5b9a2aa82f0b@csgroup.eu>
+Date:   Fri, 26 Mar 2021 08:04:55 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.9.0
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+In-Reply-To: <20210326064812.3262659-1-zhengyongjun3@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-U29ycnksIEkgd2lsbCBjaGVjayBhbGwgbXkgcGF0Y2ggbGF0ZXIgYmVmb3JlIEkgc2VuZCB0byBt
-YWludGFpbmVyIGFuZCBJIHdpbGwgc3RvcCB0aGlzIHBhdGNoIHNlcmllcy4NCg0KLS0tLS3Tyrz+
-1K28/i0tLS0tDQq3orz+yMs6IEdyZWcgS3JvYWgtSGFydG1hbiBbbWFpbHRvOmdyZWdraEBsaW51
-eGZvdW5kYXRpb24ub3JnXSANCreiy83KsbzkOiAyMDIxxOoz1MIyNsjVIDE0OjM4DQrK1bz+yMs6
-IHpoZW5neW9uZ2p1biA8emhlbmd5b25nanVuM0BodWF3ZWkuY29tPg0Ks63LzTogQW5kcmV5IEtv
-bm92YWxvdiA8YW5kcmV5a252bEBnb29nbGUuY29tPjsgRG1pdHJ5IFZ5dWtvdiA8ZHZ5dWtvdkBn
-b29nbGUuY29tPjsgTWFzYWhpcm8gWWFtYWRhIDxtYXNhaGlyb3lAa2VybmVsLm9yZz47IFNlYmFz
-dGlhbiBBbmRyemVqIFNpZXdpb3IgPGJpZ2Vhc3lAbGludXRyb25peC5kZT47IEFobWVkIFMuIERh
-cndpc2ggPGEuZGFyd2lzaEBsaW51dHJvbml4LmRlPjsgR3VzdGF2byBBLiBSLiBTaWx2YSA8Z3Vz
-dGF2b2Fyc0BrZXJuZWwub3JnPjsgU2FzaGEgTGV2aW4gPHNhc2hhbEBrZXJuZWwub3JnPjsgQWxs
-ZW4gUGFpcyA8YWxsZW4ubGttbEBnbWFpbC5jb20+OyBsaW51eC11c2JAdmdlci5rZXJuZWwub3Jn
-OyBrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnOyBwbWFpbF9odWxrY2kgPGh1bGtjaUBo
-dWF3ZWkuY29tPg0K1vfM4jogUmU6IFtQQVRDSCAtbmV4dF0gdXNiOiByZW1vdmUgdW51c2VkIGlu
-Y2x1ZGluZyA8bGludXgvdmVyc2lvbi5oPg0KDQpPbiBGcmksIE1hciAyNiwgMjAyMSBhdCAwMjox
-MzoyNlBNICswODAwLCBaaGVuZyBZb25nanVuIHdyb3RlOg0KPiBSZW1vdmUgaW5jbHVkaW5nIDxs
-aW51eC92ZXJzaW9uLmg+IHRoYXQgZG9uJ3QgbmVlZCBpdC4NCj4gDQo+IFJlcG9ydGVkLWJ5OiBI
-dWxrIFJvYm90IDxodWxrY2lAaHVhd2VpLmNvbT4NCj4gU2lnbmVkLW9mZi1ieTogWmhlbmcgWW9u
-Z2p1biA8emhlbmd5b25nanVuM0BodWF3ZWkuY29tPg0KPiAtLS0NCj4gIGRyaXZlcnMvdXNiL2Nv
-cmUvaGNkLmMgfCAxIC0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGRlbGV0aW9uKC0pDQo+IGRpZmYg
-LS1naXQgYS9kcml2ZXJzL3VzYi9jb3JlL2hjZC5jIGIvZHJpdmVycy91c2IvY29yZS9oY2QuYyBp
-bmRleCANCj4gM2YwMzgxMzQ0MjIxLi41M2JjOTNkNmViMGMgMTAwNjQ0DQo+IC0tLSBhL2RyaXZl
-cnMvdXNiL2NvcmUvaGNkLmMNCj4gKysrIGIvZHJpdmVycy91c2IvY29yZS9oY2QuYw0KPiBAQCAt
-MTEsNyArMTEsNiBAQA0KPiAgI2luY2x1ZGUgPGxpbnV4L2JjZC5oPg0KPiAgI2luY2x1ZGUgPGxp
-bnV4L21vZHVsZS5oPg0KPiAtI2luY2x1ZGUgPGxpbnV4L3ZlcnNpb24uaD4NCj4gICNpbmNsdWRl
-IDxsaW51eC9rZXJuZWwuaD4NCj4gICNpbmNsdWRlIDxsaW51eC9zY2hlZC90YXNrX3N0YWNrLmg+
-DQo+ICAjaW5jbHVkZSA8bGludXgvc2xhYi5oPg0KPiANCg0KWW91ciB0b29sIGlzIFZFUlkgYnJv
-a2VuLiAgUGxlYXNlIHN0b3Agc2VuZGluZyBwYXRjaGVzIHRoYXQgeW91IG9idmlvdXNseSBkbyBu
-b3QgZXZlbiB0ZXN0IGJlZm9yZSBzdWJtaXR0aW5nOg0KCWh0dHBzOi8vbG9yZS5rZXJuZWwub3Jn
-L3IvMTYxNDczMzc1Mi01NjU0MS0xLWdpdC1zZW5kLWVtYWlsLXRpYW50YW82QGhpc2lsaWNvbi5j
-b20NCg0KSXQncyBhIHN1cmUgd2F5IHRvIG1ha2UgbWFpbnRhaW5lcnMgdmVyeSBncnVtcHkuDQoN
-CmdyZWcgay1oDQo=
+Le 26/03/2021 à 07:48, Zheng Yongjun a écrit :
+> Remove duplicated include.
+> 
+
+Why is that flagged "treewide" ?
+
+Can you please combine all similar changes to tools/testing/selftests/powerpc/ into a single patch 
+please ?
+
+Thanks
+Christophe
+
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Zheng Yongjun <zhengyongjun3@huawei.com>
+> ---
+>   tools/testing/selftests/powerpc/tm/tm-vmx-unavail.c | 1 -
+>   1 file changed, 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/powerpc/tm/tm-vmx-unavail.c b/tools/testing/selftests/powerpc/tm/tm-vmx-unavail.c
+> index e2a0c07e8362..9ef37a9836ac 100644
+> --- a/tools/testing/selftests/powerpc/tm/tm-vmx-unavail.c
+> +++ b/tools/testing/selftests/powerpc/tm/tm-vmx-unavail.c
+> @@ -17,7 +17,6 @@
+>   #include <pthread.h>
+>   #include <sys/mman.h>
+>   #include <unistd.h>
+> -#include <pthread.h>
+>   
+>   #include "tm.h"
+>   #include "utils.h"
+> 
