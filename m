@@ -7,62 +7,65 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3925C433C1
-	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Mar 2021 02:26:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8C20C433DB
+	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Mar 2021 02:27:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9C235619F7
-	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Mar 2021 02:26:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A34A8619BB
+	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Mar 2021 02:27:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230501AbhCZCZe (ORCPT
+        id S230378AbhCZC1K (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 25 Mar 2021 22:25:34 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:14139 "EHLO
+        Thu, 25 Mar 2021 22:27:10 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:14140 "EHLO
         szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231213AbhCZCZa (ORCPT
+        with ESMTP id S231317AbhCZC1E (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 25 Mar 2021 22:25:30 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
-        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4F65NZ08gcznWp3;
-        Fri, 26 Mar 2021 10:22:54 +0800 (CST)
-Received: from localhost.localdomain (10.175.113.32) by
- DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
- 14.3.498.0; Fri, 26 Mar 2021 10:25:19 +0800
-From:   Qinglang Miao <miaoqinglang@huawei.com>
-To:     <miaoqinglang@huawei.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-CC:     <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH -next] mm/page_alloc: remove duplicated include from page_alloc.c
-Date:   Fri, 26 Mar 2021 10:55:42 +0800
-Message-ID: <20210326025542.3565329-1-miaoqinglang@huawei.com>
+        Thu, 25 Mar 2021 22:27:04 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4F65QQ2bdsznWpc;
+        Fri, 26 Mar 2021 10:24:30 +0800 (CST)
+Received: from huawei.com (10.175.104.82) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.498.0; Fri, 26 Mar 2021
+ 10:26:53 +0800
+From:   Xu Jia <xujia39@huawei.com>
+To:     <nbd@nbd.name>, <sean.wang@mediatek.com>, <kuba@kernel.org>,
+        <matthias.bgg@gmail.com>
+CC:     <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <kernel-janitors@vger.kernel.org>, <hulkcommits@huawei.com>
+Subject: [PATCH net-next] net: ethernet: remove duplicated include
+Date:   Fri, 26 Mar 2021 10:40:46 +0800
+Message-ID: <20210326024046.2800216-1-xujia39@huawei.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.113.32]
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.104.82]
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Remove duplicated include.
+Remove duplicated include from mtk_ppe_offload.c.
 
 Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Qinglang Miao <miaoqinglang@huawei.com>
+Signed-off-by: Xu Jia <xujia39@huawei.com>
 ---
- mm/page_alloc.c | 1 -
+ drivers/net/ethernet/mediatek/mtk_ppe_offload.c | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index c53fe4fa10bf..e51826c87a0b 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -72,7 +72,6 @@
- #include <linux/padata.h>
- #include <linux/khugepaged.h>
- #include <linux/buffer_head.h>
--#include <linux/vmalloc.h>
+diff --git a/drivers/net/ethernet/mediatek/mtk_ppe_offload.c b/drivers/net/ethernet/mediatek/mtk_ppe_offload.c
+index d0c46786571f..4975106fbc42 100644
+--- a/drivers/net/ethernet/mediatek/mtk_ppe_offload.c
++++ b/drivers/net/ethernet/mediatek/mtk_ppe_offload.c
+@@ -5,7 +5,6 @@
  
- #include <asm/sections.h>
- #include <asm/tlbflush.h>
+ #include <linux/if_ether.h>
+ #include <linux/rhashtable.h>
+-#include <linux/if_ether.h>
+ #include <linux/ip.h>
+ #include <net/flow_offload.h>
+ #include <net/pkt_cls.h>
+-- 
+2.25.1
 
