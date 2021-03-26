@@ -2,109 +2,77 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33994C433E0
-	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Mar 2021 08:13:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEAC0C433C1
+	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Mar 2021 08:19:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EAB4A61A54
-	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Mar 2021 08:13:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1BB461A48
+	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Mar 2021 08:19:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230026AbhCZIMv (ORCPT
+        id S229892AbhCZISx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 26 Mar 2021 04:12:51 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:58038 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230007AbhCZIMt (ORCPT
+        Fri, 26 Mar 2021 04:18:53 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:15317 "EHLO
+        szxga07-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229590AbhCZISt (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 26 Mar 2021 04:12:49 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12Q84opY175031;
-        Fri, 26 Mar 2021 08:12:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=sst2tKBKgYuv4Lz0DarDYV6i6MKcwVcBTIWBVplgT2A=;
- b=qa+1jWTRIeRkqCSNyXLBhG3H0BJVpJxNn/RkjWkmR13alsb4BcjsdFw8fqHG734dNm1t
- obHj00H1I4OiK2Q9q5p54LE8DECpO5rARaUn0Qjhmc/nsLVJ0hsRRUkZjvxXCFOf8gqZ
- OkNSHk41j6w9C/DxKBEhMrFUkl3Upsp1sPoeNzKKmbxjHyYR4WsS3/Tmo8QHF+4Jqnxz
- BipNmClcGonwaefPsTwDN5XrEMrNC3gLFjr1VwJqnyR/Q97EpnEknX6tbiyiBA4JzlJ1
- Mfzd5vfS4ECZX4oFy9JSdkG89wlRPoOLnZte8MRMYeQNwQaL1mjYyWoc1pZwmOTzBgup 4Q== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2130.oracle.com with ESMTP id 37h13rs692-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 26 Mar 2021 08:12:31 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12Q8BKmE008381;
-        Fri, 26 Mar 2021 08:12:30 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3030.oracle.com with ESMTP id 37h1413ux5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 26 Mar 2021 08:12:30 +0000
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 12Q8CR69029129;
-        Fri, 26 Mar 2021 08:12:27 GMT
-Received: from kadam (/102.36.221.92)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 26 Mar 2021 01:12:27 -0700
-Date:   Fri, 26 Mar 2021 11:12:17 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Wei Yongjun <weiyongjun1@huawei.com>
-Cc:     Govind Singh <govinds@codeaurora.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
-Subject: Re: [PATCH -next v2] remoteproc: qcom: wcss: Fix wrong pointer
- passed to PTR_ERR()
-Message-ID: <20210326081217.GX1667@kadam>
-References: <20210326024741.841267-1-weiyongjun1@huawei.com>
+        Fri, 26 Mar 2021 04:18:49 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
+        by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4F6FDq6hbkz9tm1;
+        Fri, 26 Mar 2021 16:16:43 +0800 (CST)
+Received: from [10.174.177.149] (10.174.177.149) by
+ DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
+ 14.3.498.0; Fri, 26 Mar 2021 16:18:38 +0800
+Subject: Re: [PATCH -next] mm/page_alloc: remove duplicated include from
+ page_alloc.c
+To:     Matthew Wilcox <willy@infradead.org>
+CC:     Andrew Morton <akpm@linux-foundation.org>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        Hulk Robot <hulkci@huawei.com>
+References: <20210326025542.3565329-1-miaoqinglang@huawei.com>
+ <20210326034208.GC1719932@casper.infradead.org>
+From:   Qinglang Miao <miaoqinglang@huawei.com>
+Message-ID: <d3a42312-397d-e7e7-0aa8-819a7b3731db@huawei.com>
+Date:   Fri, 26 Mar 2021 16:18:38 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210326024741.841267-1-weiyongjun1@huawei.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-IMR: 1
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9934 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 malwarescore=0 mlxscore=0
- spamscore=0 mlxlogscore=999 adultscore=0 phishscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2103250000
- definitions=main-2103260059
-X-Proofpoint-ORIG-GUID: cG-oKy_dxTRWpJdMEHH_HUqYXxIOQllD
-X-Proofpoint-GUID: cG-oKy_dxTRWpJdMEHH_HUqYXxIOQllD
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9934 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 malwarescore=0
- suspectscore=0 adultscore=0 phishscore=0 mlxscore=0 mlxlogscore=999
- impostorscore=0 priorityscore=1501 clxscore=1015 spamscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2103250000
- definitions=main-2103260058
+In-Reply-To: <20210326034208.GC1719932@casper.infradead.org>
+Content-Type: text/plain; charset="gbk"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.174.177.149]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Mar 26, 2021 at 02:47:41AM +0000, Wei Yongjun wrote:
-> PTR_ERR should access the value just tested by IS_ERR, otherwise
-> the wrong error code will be returned.
+Hey, Matthew
+
+Thanks for your advice towards hulk robot. We'd like to improve the 
+capbility of hulk robot whole the time.
+
+This patch is just a small cleanup reported by hulk robot, But the robot 
+can do more than this. For example, it finds crucial and useful bugs as 
+well.
+
+As for 'Untangle the mass of header includes' you mentioned, could you 
+please offer more details? Because I didn't find pagemap.h in 
+net/ipv4/tcp.c in -next like what you said.
+
+
+ÔÚ 2021/3/26 11:42, Matthew Wilcox Ð´µÀ:
+> On Fri, Mar 26, 2021 at 10:55:42AM +0800, Qinglang Miao wrote:
+>> Remove duplicated include.
+>>
+>> Reported-by: Hulk Robot <hulkci@huawei.com>
+>> Signed-off-by: Qinglang Miao <miaoqinglang@huawei.com>
 > 
-> This commit fix it by return 'ret' directly.
+> can't you make hulk robot do something useful, like untangle the
+> mass of header includes?  For example, in -next, net/ipv4/tcp.c
+> has a dependency on pagemap.h.  Why?
+> .
 > 
-> Fixes: 0af65b9b915e ("remoteproc: qcom: wcss: Add non pas wcss Q6 support for QCS404")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
-> v1 -> v2: just return ret as Dan's suggestion.
-
-Thanks!
-
-Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-regards,
-dan carpenter
-
