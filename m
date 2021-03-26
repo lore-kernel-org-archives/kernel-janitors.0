@@ -2,98 +2,80 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C67AC433DB
-	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Mar 2021 20:19:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3013BC433C1
+	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Mar 2021 22:15:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 09C0961A13
-	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Mar 2021 20:19:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E16061A2A
+	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Mar 2021 22:15:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230003AbhCZUTN (ORCPT
+        id S230472AbhCZWPZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 26 Mar 2021 16:19:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37960 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230315AbhCZUSt (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 26 Mar 2021 16:18:49 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id DF87761A18;
-        Fri, 26 Mar 2021 20:18:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1616789929;
-        bh=YeUAbMrfYLccfT1TYuQJEoCSYO9J3nb1QDCeP7Kj8fg=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=h40wmvBjIvEqaCo9M3nMUHArljlVK1B7BFhAqSLB61Ic5AaSTodUqEre/DQjjx5kQ
-         1CwcxQIaHfFvcg3T2hhuzvcz4pLziHEI4mWXekIUPd2LTUQviEi2U5eM/eo6FPSq+g
-         r1sXvvlW5XrnNSaDAyxZD9rxIZ4/3+nyZGlXTPRXPuCIhMTHKHtzWoj543PdrwRy9m
-         u0nemSp1DaQyA0txvKXV+an3sXagO4IYy95sqV2cxaTPJuP/9kmU3fY6mX2coH9AYN
-         PP5Z8O5tsIeFni/3cBTP8l3lTTBbTrpE3CCs0M7j+zJ8ns/5Y38xnb9EQn+LKa8rtI
-         HDv+hREv6xXsQ==
-Received: by mail-lj1-f171.google.com with SMTP id a1so8832425ljp.2;
-        Fri, 26 Mar 2021 13:18:48 -0700 (PDT)
-X-Gm-Message-State: AOAM532IlfCZUrEkINZXQGnJ0T+KVWY6+arCV5S9pwuC1UZ4MSJGCtAn
-        6q+So3StPyGThaNyxhBXYqfoWLDlrSjVZzFeFI4=
-X-Google-Smtp-Source: ABdhPJyHW/TMpw7vCpfb3a3D5bXtj9kaHjI/akwGLbFYxpG0Yl9+BNlkH5wT/flKOFG/f2ilBdENgyncIjgpR6vdKPQ=
-X-Received: by 2002:a2e:8508:: with SMTP id j8mr10035208lji.270.1616789927107;
- Fri, 26 Mar 2021 13:18:47 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210326194348.623782-1-colin.king@canonical.com>
-In-Reply-To: <20210326194348.623782-1-colin.king@canonical.com>
-From:   Song Liu <song@kernel.org>
-Date:   Fri, 26 Mar 2021 13:18:36 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW4K1RB-kz-Wu32eOFYE=ZwQr7Wr20zuEhhtzK_hr9YGUw@mail.gmail.com>
-Message-ID: <CAPhsuW4K1RB-kz-Wu32eOFYE=ZwQr7Wr20zuEhhtzK_hr9YGUw@mail.gmail.com>
-Subject: Re: [PATCH] bpf: remove redundant assignment of variable id
+        Fri, 26 Mar 2021 18:15:25 -0400
+Received: from mail-wm1-f52.google.com ([209.85.128.52]:41506 "EHLO
+        mail-wm1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230202AbhCZWPR (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 26 Mar 2021 18:15:17 -0400
+Received: by mail-wm1-f52.google.com with SMTP id t5-20020a1c77050000b029010e62cea9deso3742396wmi.0;
+        Fri, 26 Mar 2021 15:15:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=quVE0WXN2dW3u57qVidMnV0S6DB+ccRjTK3ulEhufMY=;
+        b=AHnh5zExfyYh53uct4ePYJiX+Wg1eUXhG1ftOhOu0ASa/ibpTkLsAcJYHi3BqNR5Ij
+         1cWzUQ/NDV86jkvPJSdgjRVb4tzZ9dfPeRK8VtWLVqGO4QHUMxl2hpRbXxbueJiIq+2t
+         YOtJ4OnRd75jIoyM/iGdnij7rsIOsKwiJvVWLmCtSdKKMKkHhuZ1AANreGTYkw96oJIG
+         V7cZKXdNeMZf84Kwvo14tg6xzx66XuCP3j8Vsmn9PRa/w5iEzb7OOQqjZvTyK5plgt3d
+         sLMFIjcv+RPCc7q/bdvIhoHbCmWMXPZ+OMB8N6o446oBIpl+9FzSTaPiK8EUcSVQvWpi
+         FtGQ==
+X-Gm-Message-State: AOAM531wv5s5yMWmYywixBxWIWr4reQjH2H8KYhgwIwX3kJHzc0BFNZP
+        G10gnGVmJxVUjaVRL3cH3NI=
+X-Google-Smtp-Source: ABdhPJwJpYYpKJJ7WbVu79dOT5V+3IC/DDkoERx73/BdpL2XjCPIix6QqssL2u068fu7izd+l4conA==
+X-Received: by 2002:a05:600c:224e:: with SMTP id a14mr14685630wmm.57.1616796916105;
+        Fri, 26 Mar 2021 15:15:16 -0700 (PDT)
+Received: from rocinante ([95.155.85.46])
+        by smtp.gmail.com with ESMTPSA id o2sm4441658wmr.10.2021.03.26.15.15.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Mar 2021 15:15:15 -0700 (PDT)
+Date:   Fri, 26 Mar 2021 23:15:14 +0100
+From:   Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
 To:     Colin King <colin.king@canonical.com>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>,
-        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: endpoint: remove redundant initialization of
+ pointer dev
+Message-ID: <YF5c8gVi6fOnfiv3@rocinante>
+References: <20210326190909.622369-1-colin.king@canonical.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210326190909.622369-1-colin.king@canonical.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Mar 26, 2021 at 12:45 PM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The variable id is being assigned a value that is never
-> read, the assignment is redundant and can be removed.
->
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Hi Colin,
 
-Acked-by: Song Liu <songliubraving@fb.com>
+> The pointer dev is being initialized with a value that is
+> never read and it is being updated later with a new value.  The
+> initialization is redundant and can be removed.
+[...]
+> -	struct device *dev = epf->epc->dev.parent;
+> +	struct device *dev;
+>  	struct pci_epf_bar *epf_bar;
+>  	struct pci_epc *epc;
 
-For future patches, please prefix it as [PATCH bpf-next] for
-[PATCH bpf], based on which tree the patch should apply to.
+Thank you!
 
-> ---
->  kernel/bpf/btf.c | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
-> index 369faeddf1df..b22fb29347c0 100644
-> --- a/kernel/bpf/btf.c
-> +++ b/kernel/bpf/btf.c
-> @@ -789,7 +789,6 @@ static const struct btf_type *btf_type_skip_qualifiers(const struct btf *btf,
->
->         while (btf_type_is_modifier(t) &&
->                BTF_INFO_KIND(t->info) != BTF_KIND_TYPEDEF) {
-> -               id = t->type;
->                 t = btf_type_by_id(btf, t->type);
->         }
->
-> --
-> 2.30.2
->
+Reviewed-by: Krzysztof Wilczyński <kw@linux.com>
+
+Krzysztof
