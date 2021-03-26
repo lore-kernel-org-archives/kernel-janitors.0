@@ -5,42 +5,37 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0B85C433DB
-	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Mar 2021 02:38:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F937C433DB
+	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Mar 2021 02:39:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A049F61A44
-	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Mar 2021 02:38:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15BAC61A38
+	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Mar 2021 02:39:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230345AbhCZCiI (ORCPT
+        id S230391AbhCZCjN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 25 Mar 2021 22:38:08 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:14907 "EHLO
-        szxga06-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230222AbhCZCiA (ORCPT
+        Thu, 25 Mar 2021 22:39:13 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:14610 "EHLO
+        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230452AbhCZCjA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 25 Mar 2021 22:38:00 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
-        by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4F65h31P1qzkgGs;
-        Fri, 26 Mar 2021 10:36:19 +0800 (CST)
+        Thu, 25 Mar 2021 22:39:00 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4F65hp1cJ7z19JhS;
+        Fri, 26 Mar 2021 10:36:58 +0800 (CST)
 Received: from localhost.localdomain (10.175.102.38) by
- DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
- 14.3.498.0; Fri, 26 Mar 2021 10:37:49 +0800
+ DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
+ 14.3.498.0; Fri, 26 Mar 2021 10:38:51 +0800
 From:   Wei Yongjun <weiyongjun1@huawei.com>
-To:     <weiyongjun1@huawei.com>, Govind Singh <govinds@codeaurora.org>,
-        "Andy Gross" <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        "Ohad Ben-Cohen" <ohad@wizery.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-CC:     <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
+To:     <weiyongjun1@huawei.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        "Jakub Kicinski" <kuba@kernel.org>
+CC:     <linux-wireless@vger.kernel.org>, <netdev@vger.kernel.org>,
         <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH -next v2] remoteproc: qcom: wcss: Fix wrong pointer passed to PTR_ERR()
-Date:   Fri, 26 Mar 2021 02:47:41 +0000
-Message-ID: <20210326024741.841267-1-weiyongjun1@huawei.com>
+Subject: [PATCH -next] mac80211: minstrel_ht: remove unused variable 'mg' in minstrel_ht_next_jump_rate()
+Date:   Fri, 26 Mar 2021 02:48:43 +0000
+Message-ID: <20210326024843.987941-1-weiyongjun1@huawei.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Type:   text/plain; charset=US-ASCII
@@ -51,31 +46,40 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-PTR_ERR should access the value just tested by IS_ERR, otherwise
-the wrong error code will be returned.
+GCC reports the following warning with W=1:
 
-This commit fix it by return 'ret' directly.
+net/mac80211/rc80211_minstrel_ht.c:871:34: warning:
+ variable 'mg' set but not used [-Wunused-but-set-variable]
+  871 |  struct minstrel_mcs_group_data *mg;
+      |                                  ^~
 
-Fixes: 0af65b9b915e ("remoteproc: qcom: wcss: Add non pas wcss Q6 support for QCS404")
+This variable is not used in function , this commit
+remove it to fix the warning.
+
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
-v1 -> v2: just return ret as Dan's suggestion.
----
- drivers/remoteproc/qcom_q6v5_wcss.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/mac80211/rc80211_minstrel_ht.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
-index 71ec1a451e35..7dea0585bbb6 100644
---- a/drivers/remoteproc/qcom_q6v5_wcss.c
-+++ b/drivers/remoteproc/qcom_q6v5_wcss.c
-@@ -972,7 +972,7 @@ static int q6v5_wcss_init_clock(struct q6v5_wcss *wcss)
- 		ret = PTR_ERR(wcss->qdsp6ss_axim_cbcr);
- 		if (ret != -EPROBE_DEFER)
- 			dev_err(wcss->dev, "failed to get axim cbcr clk\n");
--		return PTR_ERR(wcss->qdsp6ss_abhm_cbcr);
-+		return ret;
- 	}
+diff --git a/net/mac80211/rc80211_minstrel_ht.c b/net/mac80211/rc80211_minstrel_ht.c
+index ecad9b10984f..f21c85eb906a 100644
+--- a/net/mac80211/rc80211_minstrel_ht.c
++++ b/net/mac80211/rc80211_minstrel_ht.c
+@@ -868,7 +868,6 @@ static u16
+ minstrel_ht_next_jump_rate(struct minstrel_ht_sta *mi, u32 fast_rate_dur,
+ 			   u32 slow_rate_dur, int *slow_rate_ofs)
+ {
+-	struct minstrel_mcs_group_data *mg;
+ 	struct minstrel_rate_stats *mrs;
+ 	u32 max_duration = slow_rate_dur;
+ 	int i, index, offset;
+@@ -886,7 +885,6 @@ minstrel_ht_next_jump_rate(struct minstrel_ht_sta *mi, u32 fast_rate_dur,
+ 		u8 type;
  
- 	wcss->lcc_bcr_sleep = devm_clk_get(wcss->dev, "lcc_bcr_sleep");
+ 		group = (group + 1) % ARRAY_SIZE(minstrel_mcs_groups);
+-		mg = &mi->groups[group];
+ 
+ 		supported = mi->supported[group];
+ 		if (!supported)
 
