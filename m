@@ -2,105 +2,78 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8473C433DB
-	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Mar 2021 12:30:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2864EC433E3
+	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Mar 2021 12:31:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 68A5661971
-	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Mar 2021 12:30:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8DBB61971
+	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Mar 2021 12:31:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230107AbhCZM3f (ORCPT
+        id S229871AbhCZMaj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 26 Mar 2021 08:29:35 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:37024 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230070AbhCZM3C (ORCPT
+        Fri, 26 Mar 2021 08:30:39 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:15321 "EHLO
+        szxga07-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230289AbhCZMaZ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 26 Mar 2021 08:29:02 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12QCDuq3054633;
-        Fri, 26 Mar 2021 12:28:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=L34Rx1F6HLO9QBVu5OH6foragy9rRs6PFAH5WpxP7ZU=;
- b=INd21cbVmhTYjj5b28Wh2iEIT8Uw7FaWd1vNhJiPTfjcoH/Hsg5R23lSvdpm6/e3fzMV
- Z0orEPlguTAOBpdYqRPnQGtuZwwCKPeSS2I/GPIXFF9EIBj91F2w6WsmCi9bPtlvrOxV
- qU7aBFiwP8XTTJWhDReNpifHo6jHW8dTjmr4HmfBB/nm/GT4mKp7hgZZ7zK62Kz7hlXC
- lKN5OjwFZimUkcfms4tnHoEjJlYW9Gen1A4q8YrloNdsLhicvm6WKTLg0rdQm1WbaK96
- qbZCoyNwWu+SjGN8CcS6ZSjTrcA3Glr8w0ytVjMP6c6zde5a891MvYJPFFu7FRX6wQTy Qg== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2120.oracle.com with ESMTP id 37h1421w9f-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 26 Mar 2021 12:28:58 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12QCAYOh189373;
-        Fri, 26 Mar 2021 12:28:56 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3020.oracle.com with ESMTP id 37h14n3dsp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 26 Mar 2021 12:28:56 +0000
-Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 12QCSt2v003719;
-        Fri, 26 Mar 2021 12:28:55 GMT
-Received: from mwanda (/102.36.221.92)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 26 Mar 2021 05:28:55 -0700
-Date:   Fri, 26 Mar 2021 15:28:48 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Maximilian Luz <luzmaximilian@gmail.com>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <mgross@linux.intel.com>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] platform/surface: clean up a variable in surface_dtx_read()
-Message-ID: <YF3TgCcpcCYl3a//@mwanda>
+        Fri, 26 Mar 2021 08:30:25 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
+        by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4F6Lq80fCBz9vHR;
+        Fri, 26 Mar 2021 20:28:20 +0800 (CST)
+Received: from huawei.com (10.175.101.6) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.498.0; Fri, 26 Mar 2021
+ 20:30:14 +0800
+From:   'Liu Jian <liujian56@huawei.com>
+To:     <liujian56@huawei.com>, Kevin Curtis <kevin.curtis@farsite.co.uk>,
+        "Jakub Kicinski" <kuba@kernel.org>
+CC:     <netdev@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: [PATCH net-next] farsync: use DEFINE_SPINLOCK() for spinlock
+Date:   Fri, 26 Mar 2021 20:31:38 +0800
+Message-ID: <20210326123138.159616-1-liujian56@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-X-Proofpoint-IMR: 1
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9934 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 suspectscore=0
- mlxlogscore=999 spamscore=0 adultscore=0 malwarescore=0 mlxscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2103250000 definitions=main-2103260093
-X-Proofpoint-GUID: mD1bNPFzzB62i_GSnsDbqxl32biRC8Zq
-X-Proofpoint-ORIG-GUID: mD1bNPFzzB62i_GSnsDbqxl32biRC8Zq
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9934 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 mlxscore=0
- clxscore=1011 impostorscore=0 spamscore=0 malwarescore=0 adultscore=0
- phishscore=0 suspectscore=0 mlxlogscore=999 lowpriorityscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2103250000
- definitions=main-2103260093
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.175.101.6]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The "&client->ddev->lock" and "&ddev->lock" are the same thing.  Let's
-use "&ddev->lock" consistently.
+From: Liu Jian <liujian56@huawei.com>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+spinlock can be initialized automatically with DEFINE_SPINLOCK()
+rather than explicitly calling spin_lock_init().
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Liu Jian <liujian56@huawei.com>
 ---
- drivers/platform/surface/surface_dtx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wan/farsync.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/platform/surface/surface_dtx.c b/drivers/platform/surface/surface_dtx.c
-index 1fedacf74050..63ce587e79e3 100644
---- a/drivers/platform/surface/surface_dtx.c
-+++ b/drivers/platform/surface/surface_dtx.c
-@@ -487,7 +487,7 @@ static ssize_t surface_dtx_read(struct file *file, char __user *buf, size_t coun
- 			if (status < 0)
- 				return status;
+diff --git a/drivers/net/wan/farsync.c b/drivers/net/wan/farsync.c
+index 686a25d3b512..5de71e44fc5a 100644
+--- a/drivers/net/wan/farsync.c
++++ b/drivers/net/wan/farsync.c
+@@ -573,7 +573,7 @@ static DECLARE_TASKLET(fst_tx_task, fst_process_tx_work_q);
+ static DECLARE_TASKLET(fst_int_task, fst_process_int_work_q);
  
--			if (down_read_killable(&client->ddev->lock))
-+			if (down_read_killable(&ddev->lock))
- 				return -ERESTARTSYS;
+ static struct fst_card_info *fst_card_array[FST_MAX_CARDS];
+-static spinlock_t fst_work_q_lock;
++static DEFINE_SPINLOCK(fst_work_q_lock);
+ static u64 fst_work_txq;
+ static u64 fst_work_intq;
  
- 			/* Need to check that we're not shut down again. */
--- 
-2.30.2
+@@ -2648,7 +2648,6 @@ fst_init(void)
+ 
+ 	for (i = 0; i < FST_MAX_CARDS; i++)
+ 		fst_card_array[i] = NULL;
+-	spin_lock_init(&fst_work_q_lock);
+ 	return pci_register_driver(&fst_driver);
+ }
+ 
 
