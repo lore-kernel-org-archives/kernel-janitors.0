@@ -2,124 +2,105 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49EBAC433C1
-	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Mar 2021 12:28:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8473C433DB
+	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Mar 2021 12:30:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1285961950
-	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Mar 2021 12:28:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68A5661971
+	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Mar 2021 12:30:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229773AbhCZM16 (ORCPT
+        id S230107AbhCZM3f (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 26 Mar 2021 08:27:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53454 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229744AbhCZM1l (ORCPT
+        Fri, 26 Mar 2021 08:29:35 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:37024 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230070AbhCZM3C (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 26 Mar 2021 08:27:41 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 175C0C0613AA;
-        Fri, 26 Mar 2021 05:27:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description;
-        bh=QxJHG67cnzAtp1qB+aYyj2WZtARO+XJmoqLkBw1fYTc=; b=L4C7D/iPJwNEbqcG8xy4WpMw5n
-        BDecPJA0uQZuls/0/G6uBNfjaVsne8JK4g9DymhDULa+eE/btqy5hDts7uILquN4NfBruQ7m6EygX
-        uWFIPixKNNiLamhYLsHw1z2qRKsswDbAFiY8guxFj1j7+XhVZ/+Ne3MKO0lrFlLhviJk0ieIkb5iw
-        nTTZrkFH6Vb3euOOrFUWyGvV9L7lPH4LKeEy/tDHKU7wlaS6J37Ny5jh7srf6YMpq6M2SVKHchBie
-        +F9XhvGqXqFXL+7/CYEpUX4V3YRUzD3SLO2iT79Z0cqJgDLw0j4ODKCeGop1vldaRMNCK4PGzPKGi
-        IpW8DCOQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lPlYb-00En34-Ov; Fri, 26 Mar 2021 12:27:25 +0000
-Date:   Fri, 26 Mar 2021 12:27:17 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Qinglang Miao <miaoqinglang@huawei.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Hulk Robot <hulkci@huawei.com>
-Subject: Re: [PATCH -next] mm/page_alloc: remove duplicated include from
- page_alloc.c
-Message-ID: <20210326122717.GE1719932@casper.infradead.org>
-References: <20210326025542.3565329-1-miaoqinglang@huawei.com>
- <20210326034208.GC1719932@casper.infradead.org>
- <d3a42312-397d-e7e7-0aa8-819a7b3731db@huawei.com>
+        Fri, 26 Mar 2021 08:29:02 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12QCDuq3054633;
+        Fri, 26 Mar 2021 12:28:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
+ bh=L34Rx1F6HLO9QBVu5OH6foragy9rRs6PFAH5WpxP7ZU=;
+ b=INd21cbVmhTYjj5b28Wh2iEIT8Uw7FaWd1vNhJiPTfjcoH/Hsg5R23lSvdpm6/e3fzMV
+ Z0orEPlguTAOBpdYqRPnQGtuZwwCKPeSS2I/GPIXFF9EIBj91F2w6WsmCi9bPtlvrOxV
+ qU7aBFiwP8XTTJWhDReNpifHo6jHW8dTjmr4HmfBB/nm/GT4mKp7hgZZ7zK62Kz7hlXC
+ lKN5OjwFZimUkcfms4tnHoEjJlYW9Gen1A4q8YrloNdsLhicvm6WKTLg0rdQm1WbaK96
+ qbZCoyNwWu+SjGN8CcS6ZSjTrcA3Glr8w0ytVjMP6c6zde5a891MvYJPFFu7FRX6wQTy Qg== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 37h1421w9f-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 26 Mar 2021 12:28:58 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12QCAYOh189373;
+        Fri, 26 Mar 2021 12:28:56 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3020.oracle.com with ESMTP id 37h14n3dsp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 26 Mar 2021 12:28:56 +0000
+Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 12QCSt2v003719;
+        Fri, 26 Mar 2021 12:28:55 GMT
+Received: from mwanda (/102.36.221.92)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 26 Mar 2021 05:28:55 -0700
+Date:   Fri, 26 Mar 2021 15:28:48 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Maximilian Luz <luzmaximilian@gmail.com>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <mgross@linux.intel.com>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] platform/surface: clean up a variable in surface_dtx_read()
+Message-ID: <YF3TgCcpcCYl3a//@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d3a42312-397d-e7e7-0aa8-819a7b3731db@huawei.com>
+X-Mailer: git-send-email haha only kidding
+X-Proofpoint-IMR: 1
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9934 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 suspectscore=0
+ mlxlogscore=999 spamscore=0 adultscore=0 malwarescore=0 mlxscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2103250000 definitions=main-2103260093
+X-Proofpoint-GUID: mD1bNPFzzB62i_GSnsDbqxl32biRC8Zq
+X-Proofpoint-ORIG-GUID: mD1bNPFzzB62i_GSnsDbqxl32biRC8Zq
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9934 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 mlxscore=0
+ clxscore=1011 impostorscore=0 spamscore=0 malwarescore=0 adultscore=0
+ phishscore=0 suspectscore=0 mlxlogscore=999 lowpriorityscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2103250000
+ definitions=main-2103260093
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Mar 26, 2021 at 04:18:38PM +0800, Qinglang Miao wrote:
-> Hey, Matthew
-> 
-> Thanks for your advice towards hulk robot. We'd like to improve the
-> capbility of hulk robot whole the time.
-> 
-> This patch is just a small cleanup reported by hulk robot, But the robot can
-> do more than this. For example, it finds crucial and useful bugs as well.
+The "&client->ddev->lock" and "&ddev->lock" are the same thing.  Let's
+use "&ddev->lock" consistently.
 
-I'll have to take your word for it.  Most of what I see from Hulk Robot
-is trivialities.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/platform/surface/surface_dtx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> As for 'Untangle the mass of header includes' you mentioned, could you
-> please offer more details? Because I didn't find pagemap.h in net/ipv4/tcp.c
-> in -next like what you said.
+diff --git a/drivers/platform/surface/surface_dtx.c b/drivers/platform/surface/surface_dtx.c
+index 1fedacf74050..63ce587e79e3 100644
+--- a/drivers/platform/surface/surface_dtx.c
++++ b/drivers/platform/surface/surface_dtx.c
+@@ -487,7 +487,7 @@ static ssize_t surface_dtx_read(struct file *file, char __user *buf, size_t coun
+ 			if (status < 0)
+ 				return status;
+ 
+-			if (down_read_killable(&client->ddev->lock))
++			if (down_read_killable(&ddev->lock))
+ 				return -ERESTARTSYS;
+ 
+ 			/* Need to check that we're not shut down again. */
+-- 
+2.30.2
 
-Exactly!  But check net/ipv4/.tcp.o.d -- you'll see include/linux/pagemap.h
-in its dependencies.  So it's being pulled in through another file that is
-included by tcp.c, either directly or indirectly.
-
-You can run a file through the preprocessor:
-
-$ make net/ipv4/tcp.i
-  CPP     net/ipv4/tcp.i
-
-and then look to see what included it:
-
-# 12 "../include/linux/swap.h" 2
-
-# 1 "../include/linux/pagemap.h" 1
-
-So the question then becomes _either_ "Does swap.h need pagemap.h?",
-_or_ "Does tcp.c need swap.h"
-
-So we can try both things, first deleting the include of pagemap.h from
-swap.h (compilation fails) and then deleting the include of swap.h from
-tcp.c (compilation also fails).  This is a simple example because swap.h
-is included directly from tcp.c; the chain can be quite long.
-
-Some human intervention at this point might be possible.  For example,
-nr_free_buffer_pages could be exposed through mm.h instead of swap.h,
-and then tcp.c wouldn't need swap.h.  Or find_get_incore_page() could be
-moved from swap.h to pagemap.h and then swap.h wouldn't need pagemap.h.
-But then pagemap.h would acquire a dependency on CONFIG_SWAP (if it
-doesn't have that already).  I don't think those are reasonable solutions
-for a bot to find.  Or are they?
-
-Anyway, I'm sure there are a lot of obsolete includes.  I have a patch
-sitting in my tree which removed pagemap.h from mempolicy.h.  That causes
-a build failure in fs/aio.c, so the same patch adds pagemap.h to aio.c.
-It's not a particularly large win; only 5 files lose a dependency on
-pagemap.h, so I haven't decided what to do with it yet.
-
-> 在 2021/3/26 11:42, Matthew Wilcox 写道:
-> > On Fri, Mar 26, 2021 at 10:55:42AM +0800, Qinglang Miao wrote:
-> > > Remove duplicated include.
-> > > 
-> > > Reported-by: Hulk Robot <hulkci@huawei.com>
-> > > Signed-off-by: Qinglang Miao <miaoqinglang@huawei.com>
-> > 
-> > can't you make hulk robot do something useful, like untangle the
-> > mass of header includes?  For example, in -next, net/ipv4/tcp.c
-> > has a dependency on pagemap.h.  Why?
-> > .
-> > 
-> 
