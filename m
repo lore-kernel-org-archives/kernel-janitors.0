@@ -2,102 +2,131 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9795C433E0
-	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Mar 2021 17:52:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D808CC433DB
+	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Mar 2021 18:15:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6525861A0D
-	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Mar 2021 17:52:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B839619C2
+	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Mar 2021 18:15:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230152AbhCZRvj (ORCPT
+        id S230231AbhCZSPV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 26 Mar 2021 13:51:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39068 "EHLO
+        Fri, 26 Mar 2021 14:15:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230106AbhCZRv0 (ORCPT
+        with ESMTP id S230304AbhCZSOx (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 26 Mar 2021 13:51:26 -0400
-Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECFE2C0613B1
-        for <kernel-janitors@vger.kernel.org>; Fri, 26 Mar 2021 10:51:25 -0700 (PDT)
-Received: by mail-il1-x12d.google.com with SMTP id d2so5691156ilm.10
-        for <kernel-janitors@vger.kernel.org>; Fri, 26 Mar 2021 10:51:25 -0700 (PDT)
+        Fri, 26 Mar 2021 14:14:53 -0400
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE422C0613B1;
+        Fri, 26 Mar 2021 11:14:52 -0700 (PDT)
+Received: by mail-ed1-x532.google.com with SMTP id o19so7353258edc.3;
+        Fri, 26 Mar 2021 11:14:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=euxpSkKZsbBi+wcR3rfJjwiU7iLCyXxn3SXHsO4EML4=;
-        b=DSU8OH7FvYaqdnYyVDG0rgompnvNDC46skuht74sguikXGrjPmrNT0eYhffkOTEfs7
-         AJ2L27+8Uq1q9pwjhsX9eI866Y7HDEO3phsvuip5p5AizAdnzxnQXlkVm/czMc4eAXx/
-         ZZf84l9QpxvVvnZ3/l7mVhWNJJttaTKnpoI60=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=7OwN9sCDoll1kfeOV96JvARjVXcCMVl5pE1420CYpOw=;
+        b=grFMxIfnyiOWnB9RplEKcznwJgBk59Dlw9m/Qd10lgjvSNTNyzIknJNEsP1Iwd8yNr
+         HRPlwIIiJtJjlO56hyU+aj25+jJzjSuEL6e8XvtMnonsZO+DF3p2//gSHa0AgfmAKhSK
+         lUvmNgqIUyOGCWYRIocMdwhD4n8gQlW56XzgqdVjVKtK362IkPsTOi6dKFyDylOD1njO
+         FWZFFFKwXsoV+F6LURvZ9bXSfQhbbFRI3ivclSqPkze8Gu3nrm0G29dikRKZoDblCDNH
+         mmcPUn1iQxeZmfWhELA4i+As9kT/iYgE+Dlk3135pa+uE/d6S+bfjxf9Ej1F62aWDSBg
+         Swlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=euxpSkKZsbBi+wcR3rfJjwiU7iLCyXxn3SXHsO4EML4=;
-        b=g5UnZiFInzcCQ3XCG3JHCkl2Z6NsajEu8t4fIy6URXy0r4dwbD9myonJ6fK+PN16qh
-         oCgxWj6IIR31T5qvzFMxMK9JzqXA1KojqNSdxRTlRm7SDn6VzrtUhTZLttTKdmEzcyS4
-         OXNb30AMBsqp481xrUaTWfh2iCA4bKilzKmL39P1VqQMsQM+3RpinBxCXMPEh4F7GXQS
-         IawAuXB09AWIGuNZn9V5HYVghom9omDB7h2a9t12dT3raZFTF/JQ1kIj2bCes/yTzhsJ
-         YKp0galt7x4OpU84oT5sE6Va2dcLYH+ZZrdvryEhm/hmJuZ5FNNGfvtOuHy1qqGukHb8
-         dAWQ==
-X-Gm-Message-State: AOAM531OsKROkUM7a+a+lsyC0EVY0iX1fs9qCGpKsN/ReBqjq+TfdpHD
-        +SXCj8HEtMQs2QihoSJIAAfsLQ==
-X-Google-Smtp-Source: ABdhPJzOJwAKgsZnIvfpcWuFy6OwqYGvXMYKA4jujrHo34M9jWp49zAnbxULyebzbh45m04J7Y/rvQ==
-X-Received: by 2002:a92:2c04:: with SMTP id t4mr11726344ile.99.1616781085287;
-        Fri, 26 Mar 2021 10:51:25 -0700 (PDT)
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
-        by smtp.gmail.com with ESMTPSA id e195sm4667537iof.51.2021.03.26.10.51.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Mar 2021 10:51:24 -0700 (PDT)
-Subject: Re: [PATCH] selftests/timers: Fix spelling mistake "clocksourc" ->
- "clocksource"
-To:     John Stultz <john.stultz@linaro.org>,
-        Colin King <colin.king@canonical.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>, Shuah Khan <shuah@kernel.org>,
-        linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        lkml <linux-kernel@vger.kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>
-References: <20210315123303.10218-1-colin.king@canonical.com>
- <CALAqxLW1VaMTVx3piKnLcEqWxMcQFG9LujH1ijHP2dbXBQaxqA@mail.gmail.com>
-From:   Shuah Khan <skhan@linuxfoundation.org>
-Message-ID: <60bb110d-799c-e4cf-6107-d5dff72187fc@linuxfoundation.org>
-Date:   Fri, 26 Mar 2021 11:51:23 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=7OwN9sCDoll1kfeOV96JvARjVXcCMVl5pE1420CYpOw=;
+        b=eAAlZNX4HUkdBSJ/m34k4UTQoWa4UUBgNsCFqZUsMGGQf/v8tcWx+AgCIWCQH7eT2F
+         f29lkVptJJd9aslON21aqkcDHedYwcSMtIEwd3eXr8zyKmjrOT4HOMintgV95fZNJwlF
+         4ElZLOte88XyTp9lr0G4zxWL0MMmcWLxyJ1UGQpf89n/9oDH2mP3LwxfhS52fBDEk9nf
+         Ii5LSQW4yJRcQlea+LooyQoHq403H9deS2/du6tK9MAuUUbafIwUAEYlf+KWBC41P3Z+
+         YZ18lTjB8nf3a+T0H3+ZUdrQfaU946By171kr3H9M4+wBDZbsz3xnK6sFVcs0iDqC/fW
+         NoFg==
+X-Gm-Message-State: AOAM533wWz21cIOhC43+N8isffYFfN6yr1albm249qLqCjT+TEEClqFx
+        fC8xQ4rGH/FRTD6N7niVA6o=
+X-Google-Smtp-Source: ABdhPJxuA8CArC7vp83Y/bQZyxiB/zWeAqtySapkwLOjb+muwylYkJwlFNtddIpQu548xwd6Df9rEw==
+X-Received: by 2002:a05:6402:1545:: with SMTP id p5mr16503433edx.155.1616782491559;
+        Fri, 26 Mar 2021 11:14:51 -0700 (PDT)
+Received: from LEGION ([111.119.187.49])
+        by smtp.gmail.com with ESMTPSA id gj26sm4087570ejb.67.2021.03.26.11.14.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Mar 2021 11:14:50 -0700 (PDT)
+Date:   Fri, 26 Mar 2021 23:14:42 +0500
+From:   Muhammad Usama Anjum <musamaanjum@gmail.com>
+To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        "moderated list:XEN HYPERVISOR INTERFACE" 
+        <xen-devel@lists.xenproject.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org, colin.king@canonical.com,
+        dan.carpenter@oracle.com
+Cc:     musamaanjum@gmail.com
+Subject: [PATCH] xen/pciback: Fix incorrect type warnings
+Message-ID: <20210326181442.GA1735905@LEGION>
 MIME-Version: 1.0
-In-Reply-To: <CALAqxLW1VaMTVx3piKnLcEqWxMcQFG9LujH1ijHP2dbXBQaxqA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 3/15/21 12:41 PM, John Stultz wrote:
-> On Mon, Mar 15, 2021 at 5:33 AM Colin King <colin.king@canonical.com> wrote:
->>
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> There is a spelling mistake in a comment. Fix it.
->>
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> 
-> Akcde-yb: John Stultz <john.stultz@linaro.org>
-> 
-> I kid, I kid!  My apologies and thanks!
-> 
-> Acked-by: John Stultz <john.stultz@linaro.org>
-> 
+Correct enum pci_channel_io_normal should be used instead of putting
+integer value 1.
 
-Thank you both. Applied now for 5.13-rc1
+Fix following smatch warnings:
+drivers/xen/xen-pciback/pci_stub.c:805:40: warning: incorrect type in argument 2 (different base types)
+drivers/xen/xen-pciback/pci_stub.c:805:40:    expected restricted pci_channel_state_t [usertype] state
+drivers/xen/xen-pciback/pci_stub.c:805:40:    got int
+drivers/xen/xen-pciback/pci_stub.c:862:40: warning: incorrect type in argument 2 (different base types)
+drivers/xen/xen-pciback/pci_stub.c:862:40:    expected restricted pci_channel_state_t [usertype] state
+drivers/xen/xen-pciback/pci_stub.c:862:40:    got int
+drivers/xen/xen-pciback/pci_stub.c:973:31: warning: incorrect type in argument 2 (different base types)
+drivers/xen/xen-pciback/pci_stub.c:973:31:    expected restricted pci_channel_state_t [usertype] state
+drivers/xen/xen-pciback/pci_stub.c:973:31:    got int
 
-thanks,
--- Shuah
+Signed-off-by: Muhammad Usama Anjum <musamaanjum@gmail.com>
+---
+ drivers/xen/xen-pciback/pci_stub.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/xen/xen-pciback/pci_stub.c b/drivers/xen/xen-pciback/pci_stub.c
+index cb904ac83006..f8e4faa96ad6 100644
+--- a/drivers/xen/xen-pciback/pci_stub.c
++++ b/drivers/xen/xen-pciback/pci_stub.c
+@@ -802,7 +802,7 @@ static pci_ers_result_t xen_pcibk_slot_reset(struct pci_dev *dev)
+ 			"guest with no AER driver should have been killed\n");
+ 		goto end;
+ 	}
+-	result = common_process(psdev, 1, XEN_PCI_OP_aer_slotreset, result);
++	result = common_process(psdev, pci_channel_io_normal, XEN_PCI_OP_aer_slotreset, result);
+ 
+ 	if (result == PCI_ERS_RESULT_NONE ||
+ 		result == PCI_ERS_RESULT_DISCONNECT) {
+@@ -859,7 +859,7 @@ static pci_ers_result_t xen_pcibk_mmio_enabled(struct pci_dev *dev)
+ 			"guest with no AER driver should have been killed\n");
+ 		goto end;
+ 	}
+-	result = common_process(psdev, 1, XEN_PCI_OP_aer_mmio, result);
++	result = common_process(psdev, pci_channel_io_normal, XEN_PCI_OP_aer_mmio, result);
+ 
+ 	if (result == PCI_ERS_RESULT_NONE ||
+ 		result == PCI_ERS_RESULT_DISCONNECT) {
+@@ -970,7 +970,7 @@ static void xen_pcibk_error_resume(struct pci_dev *dev)
+ 		kill_domain_by_device(psdev);
+ 		goto end;
+ 	}
+-	common_process(psdev, 1, XEN_PCI_OP_aer_resume,
++	common_process(psdev, pci_channel_io_normal, XEN_PCI_OP_aer_resume,
+ 		       PCI_ERS_RESULT_RECOVERED);
+ end:
+ 	if (psdev)
+-- 
+2.25.1
+
