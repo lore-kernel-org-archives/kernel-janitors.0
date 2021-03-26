@@ -2,75 +2,90 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-21.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69FB1C433E4
-	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Mar 2021 23:01:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B13F6C433C1
+	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Mar 2021 23:08:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5ACF961A36
-	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Mar 2021 23:01:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CB6F61A2A
+	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Mar 2021 23:08:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230294AbhCZXAj (ORCPT
+        id S230236AbhCZXHj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 26 Mar 2021 19:00:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35304 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229986AbhCZXAN (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 26 Mar 2021 19:00:13 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 9449461A21;
-        Fri, 26 Mar 2021 23:00:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1616799612;
-        bh=6WtEF5UlVkpKu1h/9A8YKlArvdpJ5cgCBFw+HVMUQFE=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=G4bH1F5506Eyg8ElIAcFrP2cylwjH+/EVw8bE3A90S8XCAFkieq71zGxslWUzvhd0
-         sqLMiouDHizpwmw3f8V4UGxoUDVPFzuMwrcPYxikMGPAYDfhACOvqS3EJ8YE9faCDS
-         Oc+YzhJhhaSvlWCAFSb0O14mqJRppiwloVsOzPAQHp69XHOkJxZkuPY4qPiuDsG/4g
-         thgpQRflFFWwoUQhmjyaBvG7DR5AIUYP2hjxtt/piu8sRnSViTBFrM2pRRDtztZwiN
-         5/4cSoEWwho+PDz7/3EfFIcsQ24vCvcC89ikC4BeNEv4fjshmR6VTuug3w0uPUxdle
-         cDZVo6l+muzww==
-Content-Type: text/plain; charset="utf-8"
+        Fri, 26 Mar 2021 19:07:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50466 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230134AbhCZXHc (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 26 Mar 2021 19:07:32 -0400
+Received: from mail-pf1-x436.google.com (mail-pf1-x436.google.com [IPv6:2607:f8b0:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE2DFC0613AA
+        for <kernel-janitors@vger.kernel.org>; Fri, 26 Mar 2021 16:07:31 -0700 (PDT)
+Received: by mail-pf1-x436.google.com with SMTP id v10so498565pfn.5
+        for <kernel-janitors@vger.kernel.org>; Fri, 26 Mar 2021 16:07:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=8dMGW3NNPH6KeBSqsN/4K5vPXVK2n7GhMJaRLYoxTdI=;
+        b=pwgm2iRdYyFSmvOtjVPPj2gT1kT1WR47rTSofebDXFr2+VpIUhAOxMDECLSjAzKOe/
+         M/3nVSt2OO+hH6LASlmFnX5p2KsZqEfL7im3rcaVapF3jftZF9VWQolqah+7O1xPwr6N
+         MwxXK+ER5jHsmNLBOydf5wBmWEPleJk9bMyW6LBGrpZuYSqjz+z7LFpKDDtAzLgPGbpq
+         YsxpJtKiF06Mbsu80XIMhCFjs5V6cvdtUQX4tn7TWgdWRe9FVFpAfWiLvSWBzORjqpv6
+         m4uf/UAPZ6Z8N8rf85/eCb/80cb8hK2WzQdL3DFLEeNbq29hV88siFplUORQEF1c09XB
+         t/Tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=8dMGW3NNPH6KeBSqsN/4K5vPXVK2n7GhMJaRLYoxTdI=;
+        b=Xw7RqZ2NWhNMxiBtW7H+oqkpGKpTAt6SNk6YBO5TqeRfXUA9WHyVCkARhKD37Sjbhq
+         FThY1F7Uzal0VrnJ4rPpNa4NrRNL6vZys0eE3uzGbeNEfnHkB1bUvhaoO1C26dNaqgf8
+         xb7AgdtFirOwG2Dltn1XhtwnB1/LY2fiIiIn1IvY7yfNI7/EPeN5RblVpsJlCWMf8Tce
+         rq1KvSoBLhG3QImEe9TLYoqTzplPOhga8ZZoaeBa+tE4allBPjpv86iQxG9jQsFT0gC2
+         LpWRhs2WFBY+DxqJUsBHYxYt1i6Shv/7bBpIkn/Alx2rMS9HA8Mhk+BlS2NMAsz0Su+l
+         RmPQ==
+X-Gm-Message-State: AOAM533q1dRGtfkDBZdbR9F/hddKAUkls8GXcPB18U68fiGsv+Uinth6
+        unqlKZnJH8vsiIPFsFayDi3z5g==
+X-Google-Smtp-Source: ABdhPJyMs1TfN0Oz89SmCYz4go0u4i6QTlAdW5Mak2N/gkuqkWc0/joe8Ju/qqG4/my5p7XWfht/aA==
+X-Received: by 2002:a63:485b:: with SMTP id x27mr8478635pgk.0.1616800051305;
+        Fri, 26 Mar 2021 16:07:31 -0700 (PDT)
+Received: from ?IPv6:2620:10d:c085:21cf::141d? ([2620:10d:c090:400::5:4d27])
+        by smtp.gmail.com with ESMTPSA id l25sm10410526pgu.72.2021.03.26.16.07.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 26 Mar 2021 16:07:30 -0700 (PDT)
+Subject: Re: [PATCH] io_uring: remove unsued assignment to pointer io
+To:     Colin King <colin.king@canonical.com>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210326195251.624139-1-colin.king@canonical.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <88e590c4-8174-73fe-ebca-de879b21b317@kernel.dk>
+Date:   Fri, 26 Mar 2021 17:07:29 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] net: ethernet: remove duplicated include
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <161679961248.14639.5462729926726566402.git-patchwork-notify@kernel.org>
-Date:   Fri, 26 Mar 2021 23:00:12 +0000
-References: <20210326024046.2800216-1-xujia39@huawei.com>
-In-Reply-To: <20210326024046.2800216-1-xujia39@huawei.com>
-To:     Xu Jia <xujia39@huawei.com>
-Cc:     nbd@nbd.name, sean.wang@mediatek.com, kuba@kernel.org,
-        matthias.bgg@gmail.com, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        kernel-janitors@vger.kernel.org, hulkcommits@huawei.com
+In-Reply-To: <20210326195251.624139-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
-
-This patch was applied to netdev/net-next.git (refs/heads/master):
-
-On Fri, 26 Mar 2021 10:40:46 +0800 you wrote:
-> Remove duplicated include from mtk_ppe_offload.c.
+On 3/26/21 1:52 PM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Xu Jia <xujia39@huawei.com>
-> ---
->  drivers/net/ethernet/mediatek/mtk_ppe_offload.c | 1 -
->  1 file changed, 1 deletion(-)
+> There is an assignment to io that is never read after the assignment,
+> the assignment is redundant and can be removed.
 
-Here is the summary with links:
-  - [net-next] net: ethernet: remove duplicated include
-    https://git.kernel.org/netdev/net-next/c/aeab5cfbc8c7
+Thanks, applied.
 
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+-- 
+Jens Axboe
 
