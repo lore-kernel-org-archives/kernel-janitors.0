@@ -5,38 +5,36 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24DD2C433E5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45026C433EA
 	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Mar 2021 06:35:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E906261A36
-	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Mar 2021 06:35:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 11DE761A4D
+	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Mar 2021 06:35:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230203AbhCZGet (ORCPT
+        id S230191AbhCZGes (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 26 Mar 2021 02:34:49 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:14557 "EHLO
-        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229994AbhCZGec (ORCPT
+        Fri, 26 Mar 2021 02:34:48 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:14147 "EHLO
+        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229889AbhCZGe0 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 26 Mar 2021 02:34:32 -0400
+        Fri, 26 Mar 2021 02:34:26 -0400
 Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
-        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4F6Bvx1SPMzNpyN;
-        Fri, 26 Mar 2021 14:31:57 +0800 (CST)
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4F6Bvr3sWsznWnR;
+        Fri, 26 Mar 2021 14:31:52 +0800 (CST)
 Received: from localhost.localdomain (10.175.104.82) by
  DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
- 14.3.498.0; Fri, 26 Mar 2021 14:34:22 +0800
+ 14.3.498.0; Fri, 26 Mar 2021 14:34:18 +0800
 From:   Zheng Yongjun <zhengyongjun3@huawei.com>
-To:     <zhengyongjun3@huawei.com>, Russell King <linux@armlinux.org.uk>,
-        "Andrew Morton" <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@kernel.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH -next] ARM: sa11x0: remove duplicated include from hackkit.c
-Date:   Fri, 26 Mar 2021 14:48:15 +0800
-Message-ID: <20210326064815.3262750-1-zhengyongjun3@huawei.com>
+To:     <zhengyongjun3@huawei.com>, Michael Ellerman <mpe@ellerman.id.au>,
+        "Shuah Khan" <shuah@kernel.org>
+CC:     <linuxppc-dev@lists.ozlabs.org>, <linux-kselftest@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH -next] treewide: Remove duplicated include from tm-vmx-unavail.c
+Date:   Fri, 26 Mar 2021 14:48:12 +0800
+Message-ID: <20210326064812.3262659-1-zhengyongjun3@huawei.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Type:   text/plain; charset=US-ASCII
@@ -52,19 +50,19 @@ Remove duplicated include.
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: Zheng Yongjun <zhengyongjun3@huawei.com>
 ---
- arch/arm/mach-sa1100/hackkit.c | 1 -
+ tools/testing/selftests/powerpc/tm/tm-vmx-unavail.c | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/arch/arm/mach-sa1100/hackkit.c b/arch/arm/mach-sa1100/hackkit.c
-index 3085f1c2e586..3fe34ee7c0ab 100644
---- a/arch/arm/mach-sa1100/hackkit.c
-+++ b/arch/arm/mach-sa1100/hackkit.c
-@@ -18,7 +18,6 @@
- #include <linux/serial_core.h>
- #include <linux/mtd/mtd.h>
- #include <linux/mtd/partitions.h>
--#include <linux/tty.h>
- #include <linux/gpio.h>
- #include <linux/leds.h>
- #include <linux/platform_device.h>
+diff --git a/tools/testing/selftests/powerpc/tm/tm-vmx-unavail.c b/tools/testing/selftests/powerpc/tm/tm-vmx-unavail.c
+index e2a0c07e8362..9ef37a9836ac 100644
+--- a/tools/testing/selftests/powerpc/tm/tm-vmx-unavail.c
++++ b/tools/testing/selftests/powerpc/tm/tm-vmx-unavail.c
+@@ -17,7 +17,6 @@
+ #include <pthread.h>
+ #include <sys/mman.h>
+ #include <unistd.h>
+-#include <pthread.h>
+ 
+ #include "tm.h"
+ #include "utils.h"
 
