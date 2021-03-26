@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C452FC433E4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4EE3C433E3
 	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Mar 2021 06:35:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A365161A4A
+	by mail.kernel.org (Postfix) with ESMTP id BC2FB61A43
 	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Mar 2021 06:35:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230156AbhCZGer (ORCPT
+        id S230155AbhCZGer (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
         Fri, 26 Mar 2021 02:34:47 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:14556 "EHLO
-        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229812AbhCZGe1 (ORCPT
+Received: from szxga06-in.huawei.com ([45.249.212.32]:14909 "EHLO
+        szxga06-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229580AbhCZGeV (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 26 Mar 2021 02:34:27 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
-        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4F6Bvq71pKzNqWc;
-        Fri, 26 Mar 2021 14:31:51 +0800 (CST)
+        Fri, 26 Mar 2021 02:34:21 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4F6Bwn60DVzkggH;
+        Fri, 26 Mar 2021 14:32:41 +0800 (CST)
 Received: from localhost.localdomain (10.175.104.82) by
  DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
- 14.3.498.0; Fri, 26 Mar 2021 14:34:15 +0800
+ 14.3.498.0; Fri, 26 Mar 2021 14:34:11 +0800
 From:   Zheng Yongjun <zhengyongjun3@huawei.com>
-To:     <zhengyongjun3@huawei.com>, Michael Ellerman <mpe@ellerman.id.au>,
-        "Shuah Khan" <shuah@kernel.org>
-CC:     <linuxppc-dev@lists.ozlabs.org>, <linux-kselftest@vger.kernel.org>,
+To:     <zhengyongjun3@huawei.com>, Damien Le Moal <damien.lemoal@wdc.com>,
+        "Linus Walleij" <linus.walleij@linaro.org>
+CC:     <linux-riscv@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
         <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH -next] selftests/powerpc: Remove duplicated include from tm-poison.c
-Date:   Fri, 26 Mar 2021 14:48:08 +0800
-Message-ID: <20210326064808.3262568-1-zhengyongjun3@huawei.com>
+Subject: [PATCH -next] pinctrl: Remove duplicated include from pinctrl-k210.c
+Date:   Fri, 26 Mar 2021 14:48:04 +0800
+Message-ID: <20210326064804.3262477-1-zhengyongjun3@huawei.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Type:   text/plain; charset=US-ASCII
@@ -50,19 +50,19 @@ Remove duplicated include.
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: Zheng Yongjun <zhengyongjun3@huawei.com>
 ---
- tools/testing/selftests/powerpc/tm/tm-poison.c | 1 -
+ drivers/pinctrl/pinctrl-k210.c | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/tools/testing/selftests/powerpc/tm/tm-poison.c b/tools/testing/selftests/powerpc/tm/tm-poison.c
-index 29e5f26af7b9..27c083a03d1f 100644
---- a/tools/testing/selftests/powerpc/tm/tm-poison.c
-+++ b/tools/testing/selftests/powerpc/tm/tm-poison.c
-@@ -20,7 +20,6 @@
- #include <sched.h>
- #include <sys/types.h>
- #include <signal.h>
--#include <inttypes.h>
+diff --git a/drivers/pinctrl/pinctrl-k210.c b/drivers/pinctrl/pinctrl-k210.c
+index 8a733cf77ba0..f831526d06ff 100644
+--- a/drivers/pinctrl/pinctrl-k210.c
++++ b/drivers/pinctrl/pinctrl-k210.c
+@@ -15,7 +15,6 @@
+ #include <linux/pinctrl/pinmux.h>
+ #include <linux/pinctrl/pinconf.h>
+ #include <linux/pinctrl/pinconf-generic.h>
+-#include <linux/io.h>
  
- #include "tm.h"
+ #include <dt-bindings/pinctrl/k210-fpioa.h>
  
 
