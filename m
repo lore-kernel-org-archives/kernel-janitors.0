@@ -4,112 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3599BC433DB
-	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Mar 2021 07:39:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D6FEC433DB
+	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Mar 2021 08:00:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D84CD619FF
-	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Mar 2021 07:39:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5EBF2619F3
+	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Mar 2021 08:00:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231187AbhC0HjC (ORCPT
+        id S230420AbhC0IAM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 27 Mar 2021 03:39:02 -0400
-Received: from smtp06.smtpout.orange.fr ([80.12.242.128]:50433 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230195AbhC0Hi5 (ORCPT
+        Sat, 27 Mar 2021 04:00:12 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:15349 "EHLO
+        szxga07-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230315AbhC0IAL (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 27 Mar 2021 03:38:57 -0400
-Received: from localhost.localdomain ([90.126.11.170])
-        by mwinf5d29 with ME
-        id lKev2400K3g7mfN03KevSj; Sat, 27 Mar 2021 08:38:56 +0100
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 27 Mar 2021 08:38:56 +0100
-X-ME-IP: 90.126.11.170
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     balbi@kernel.org, gregkh@linuxfoundation.org,
-        krzysztof.kozlowski@canonical.com, nathan@kernel.org,
-        arnd@arndb.de, gustavoars@kernel.org, weiyongjun1@huawei.com
-Cc:     linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH v3 2/2] usb: gadget: s3c: Fix the error handling path in 's3c2410_udc_probe()'
-Date:   Sat, 27 Mar 2021 08:38:53 +0100
-Message-Id: <2bee52e4ce968f48b4c32545cf8f3b2ab825ba82.1616830026.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <b317638464f188159bd8eea44427dd359e480625.1616830026.git.christophe.jaillet@wanadoo.fr>
-References: <b317638464f188159bd8eea44427dd359e480625.1616830026.git.christophe.jaillet@wanadoo.fr>
+        Sat, 27 Mar 2021 04:00:11 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
+        by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4F6rmt1fK3z93yw;
+        Sat, 27 Mar 2021 15:58:06 +0800 (CST)
+Received: from huawei.com (10.175.113.32) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.498.0; Sat, 27 Mar 2021
+ 16:00:01 +0800
+From:   Shixin Liu <liushixin2@huawei.com>
+To:     Russell King <linux@armlinux.org.uk>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        Shixin Liu <liushixin2@huawei.com>
+Subject: [PATCH] arm: kprobes: Make some symbols static
+Date:   Sat, 27 Mar 2021 16:30:21 +0800
+Message-ID: <20210327083021.1922640-1-liushixin2@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.32]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Some 'clk_prepare_enable()' and 'clk_get()' must be undone in the error
-handling path of the probe function, as already done in the remove
-function.
+These two symbols are not used outside of test-core.c,
+so we can marks them static.
 
-Fixes: 3fc154b6b813 ("USB Gadget driver for Samsung s3c2410 ARM SoC")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Signed-off-by: Shixin Liu <liushixin2@huawei.com>
 ---
-v2: Fix a stupid error in the hash in Fixes:
-v3: Add Reviewed-by:
----
- drivers/usb/gadget/udc/s3c2410_udc.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+ arch/arm/probes/kprobes/test-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/gadget/udc/s3c2410_udc.c b/drivers/usb/gadget/udc/s3c2410_udc.c
-index b81979b3bdb6..b154b62abefa 100644
---- a/drivers/usb/gadget/udc/s3c2410_udc.c
-+++ b/drivers/usb/gadget/udc/s3c2410_udc.c
-@@ -1750,7 +1750,8 @@ static int s3c2410_udc_probe(struct platform_device *pdev)
- 	udc_clock = clk_get(NULL, "usb-device");
- 	if (IS_ERR(udc_clock)) {
- 		dev_err(dev, "failed to get udc clock source\n");
--		return PTR_ERR(udc_clock);
-+		retval = PTR_ERR(udc_clock);
-+		goto err_usb_bus_clk;
- 	}
+diff --git a/arch/arm/probes/kprobes/test-core.c b/arch/arm/probes/kprobes/test-core.c
+index c562832b8627..171c7076b89f 100644
+--- a/arch/arm/probes/kprobes/test-core.c
++++ b/arch/arm/probes/kprobes/test-core.c
+@@ -720,7 +720,7 @@ static const char coverage_register_lookup[16] = {
+ 	[REG_TYPE_NOSPPCX]	= COVERAGE_ANY_REG | COVERAGE_SP,
+ };
  
- 	clk_prepare_enable(udc_clock);
-@@ -1773,7 +1774,7 @@ static int s3c2410_udc_probe(struct platform_device *pdev)
- 	base_addr = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(base_addr)) {
- 		retval = PTR_ERR(base_addr);
--		goto err;
-+		goto err_udc_clk;
- 	}
- 
- 	the_controller = udc;
-@@ -1791,7 +1792,7 @@ static int s3c2410_udc_probe(struct platform_device *pdev)
- 	if (retval != 0) {
- 		dev_err(dev, "cannot get irq %i, err %d\n", irq_usbd, retval);
- 		retval = -EBUSY;
--		goto err;
-+		goto err_udc_clk;
- 	}
- 
- 	dev_dbg(dev, "got irq %i\n", irq_usbd);
-@@ -1862,7 +1863,14 @@ static int s3c2410_udc_probe(struct platform_device *pdev)
- 		gpio_free(udc_info->vbus_pin);
- err_int:
- 	free_irq(irq_usbd, udc);
--err:
-+err_udc_clk:
-+	clk_disable_unprepare(udc_clock);
-+	clk_put(udc_clock);
-+	udc_clock = NULL;
-+err_usb_bus_clk:
-+	clk_disable_unprepare(usb_bus_clock);
-+	clk_put(usb_bus_clock);
-+	usb_bus_clock = NULL;
- 
- 	return retval;
- }
+-unsigned coverage_start_registers(const struct decode_header *h)
++static unsigned coverage_start_registers(const struct decode_header *h)
+ {
+ 	unsigned regs = 0;
+ 	int i;
 -- 
-2.27.0
+2.25.1
 
