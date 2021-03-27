@@ -2,90 +2,72 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB12EC433E0
-	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Mar 2021 04:33:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 449FFC433E0
+	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Mar 2021 05:43:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 74CFB619CB
-	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Mar 2021 04:33:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E608361A1A
+	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Mar 2021 05:43:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229697AbhC0EdH (ORCPT
+        id S229881AbhC0Fme (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 27 Mar 2021 00:33:07 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:14154 "EHLO
-        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229650AbhC0Eca (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 27 Mar 2021 00:32:30 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
-        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4F6m8b0LRDznc6C;
-        Sat, 27 Mar 2021 12:29:51 +0800 (CST)
-Received: from huawei.com (10.175.101.6) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.498.0; Sat, 27 Mar 2021
- 12:32:17 +0800
-From:   'Liu Jian <liujian56@huawei.com>
-To:     <liujian56@huawei.com>, Yisen Zhuang <yisen.zhuang@huawei.com>,
-        "Salil Mehta" <salil.mehta@huawei.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        "Huazhong Tan" <tanhuazhong@huawei.com>,
-        Jian Shen <shenjian15@huawei.com>,
-        "Guangbin Huang" <huangguangbin2@huawei.com>,
-        GuoJia Liao <liaoguojia@huawei.com>,
-        Yufeng Mo <moyufeng@huawei.com>
-CC:     <netdev@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: [PATCH net-next] net: hns3: no return statement in hclge_clear_arfs_rules
-Date:   Sat, 27 Mar 2021 12:33:39 +0800
-Message-ID: <20210327043339.148050-1-liujian56@huawei.com>
-X-Mailer: git-send-email 2.17.1
+        Sat, 27 Mar 2021 01:42:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47456 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229620AbhC0Fmd (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Sat, 27 Mar 2021 01:42:33 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 282B161A1E;
+        Sat, 27 Mar 2021 05:42:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1616823753;
+        bh=loaJcrol/PTRVMRrsww1gLT50nDJ8omknyueW0Pevuk=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=DzV1szVcasJX5KBkovy9pnJvfQVw3rx/z5xQOT2C8Dei+lW9UITUAVapAFTENymXn
+         Mf7DW9BnhTrjeLrXw1aMATkiBOwblGGD+kp2LDK6Qo/aAfa7Z7MsMD6Pzy9YbtjBCW
+         aEr/VwSg1EeZaiWQ0UOxv7W7kmEqcsyThfIymufeMiNLI2+QagnvfIJRMNz2oCmEmU
+         U2S659OMtVBW6nAG31W3cnDIERaR3MjUeeXkXpRnqDjTM4sX5SivWoyC6kpCk99oIO
+         R6b+ETVQxEk0IgXH4iL96HMXb3/5Hf5lDFDTENIAtca8qV/S0gkBGiyTULpHSYf/Ol
+         UiE4FkKdUhEcA==
+Received: by mail-oi1-f170.google.com with SMTP id n140so7888117oig.9;
+        Fri, 26 Mar 2021 22:42:33 -0700 (PDT)
+X-Gm-Message-State: AOAM530c+ujf9rCio6u2vtJNwYAMRAvl6k+MkSZoEaef/9cBA7SaJ1Mq
+        8q2RSCKLpwNE6EmV/K3b+vWaoVuYaonmLme6+q0=
+X-Google-Smtp-Source: ABdhPJyvRS6aynjHHQh55zHTQ+0rKLujRGaTPDJMYHWtytR3lW7/FhxKm2w9LM3ja1dm8hur3M7RhkKrW1VvJM3fwBY=
+X-Received: by 2002:aca:f4ce:: with SMTP id s197mr12125327oih.94.1616823752543;
+ Fri, 26 Mar 2021 22:42:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.175.101.6]
-X-CFilter-Loop: Reflected
+Received: by 2002:ac9:5ed4:0:0:0:0:0 with HTTP; Fri, 26 Mar 2021 22:42:31
+ -0700 (PDT)
+In-Reply-To: <20210325173538.485917-1-colin.king@canonical.com>
+References: <20210325173538.485917-1-colin.king@canonical.com>
+From:   Namjae Jeon <linkinjeon@kernel.org>
+Date:   Sat, 27 Mar 2021 14:42:31 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd9Zq8FJ6sZZTTSBxuMpSdQ9rzeb_JEnOx+kQnXENHxhtg@mail.gmail.com>
+Message-ID: <CAKYAXd9Zq8FJ6sZZTTSBxuMpSdQ9rzeb_JEnOx+kQnXENHxhtg@mail.gmail.com>
+Subject: Re: [Linux-cifsd-devel] [PATCH][next] cifsd: remove redundant
+ assignment to variable err
+To:     Colin King <colin.king@canonical.com>
+Cc:     Namjae Jeon <namjae.jeon@samsung.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steve French <sfrench@samba.org>,
+        Hyunchul Lee <hyc.lee@gmail.com>, linux-cifs@vger.kernel.org,
+        linux-cifsd-devel@lists.sourceforge.net,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Liu Jian <liujian56@huawei.com>
-
-drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c: In function 'hclge_clear_arfs_rules':
-drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c:7173:1: error: no return statement in function returning non-void [-Werror=return-type]
- 7173 | }
-      | ^
-cc1: some warnings being treated as errors
-make[6]: *** [scripts/Makefile.build:273: drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.o] Error 1
-make[5]: *** [scripts/Makefile.build:534: drivers/net/ethernet/hisilicon/hns3/hns3pf] Error 2
-make[4]: *** [scripts/Makefile.build:534: drivers/net/ethernet/hisilicon/hns3] Error 2
-make[4]: *** Waiting for unfinished jobs....
-make[3]: *** [scripts/Makefile.build:534: drivers/net/ethernet/hisilicon] Error 2
-make[2]: *** [scripts/Makefile.build:534: drivers/net/ethernet] Error 2
-make[1]: *** [scripts/Makefile.build:534: drivers/net] Error 2
-make[1]: *** Waiting for unfinished jobs....
-make: *** [Makefile:1980: drivers] Error 2
-
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Liu Jian <liujian56@huawei.com>
----
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index 058317ce579c..84c70974c80b 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -7168,8 +7168,8 @@ static int hclge_clear_arfs_rules(struct hclge_dev *hdev)
- 	}
- 	hclge_sync_fd_state(hdev);
- 
--	return 0;
- #endif
-+	return 0;
- }
- 
- static void hclge_get_cls_key_basic(const struct flow_rule *flow,
-
+2021-03-26 2:35 GMT+09:00, Colin King <colin.king@canonical.com>:
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> The variable err is being initialized with a value that is never read
+> and it is being updated later with a new value.  The initialization is
+> redundant and can be removed.
+>
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+I will apply. Thanks for your patch!
