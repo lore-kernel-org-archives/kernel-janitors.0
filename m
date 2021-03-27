@@ -4,34 +4,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A01FC433C1
-	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Mar 2021 22:42:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11766C433C1
+	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Mar 2021 23:01:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5374261981
-	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Mar 2021 22:42:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5C9B61954
+	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Mar 2021 23:01:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231182AbhC0Wld (ORCPT
+        id S230509AbhC0XA0 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 27 Mar 2021 18:41:33 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:47721 "EHLO
+        Sat, 27 Mar 2021 19:00:26 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:47906 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231136AbhC0Wlc (ORCPT
+        with ESMTP id S230442AbhC0XAV (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 27 Mar 2021 18:41:32 -0400
+        Sat, 27 Mar 2021 19:00:21 -0400
 Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <colin.king@canonical.com>)
-        id 1lQHcZ-00041U-Jx; Sat, 27 Mar 2021 22:41:31 +0000
+        id 1lQHug-0004s7-AN; Sat, 27 Mar 2021 23:00:14 +0000
 From:   Colin King <colin.king@canonical.com>
-To:     Lee Jones <lee.jones@linaro.org>
+To:     Ping-Ke Shih <pkshih@realtek.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] mfd: timberdale: remove redundant assignment to variable err
-Date:   Sat, 27 Mar 2021 22:41:31 +0000
-Message-Id: <20210327224131.25180-1-colin.king@canonical.com>
+Subject: [PATCH] rtlwifi: remove redundant assignment to variable err
+Date:   Sat, 27 Mar 2021 23:00:14 +0000
+Message-Id: <20210327230014.25554-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -43,27 +47,28 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 From: Colin Ian King <colin.king@canonical.com>
 
 Variable err is assigned -ENODEV followed by an error return path
-via label err_mfd that does not access the variable and returns
+via label error_out that does not access the variable and returns
 with the -ENODEV error return code. The assignment to err is
 redundant and can be removed.
 
+Addresses-Coverity: ("Unused value")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/mfd/timberdale.c | 1 -
+ drivers/net/wireless/realtek/rtlwifi/usb.c | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/drivers/mfd/timberdale.c b/drivers/mfd/timberdale.c
-index faecbca6dba3..0a9872ed722f 100644
---- a/drivers/mfd/timberdale.c
-+++ b/drivers/mfd/timberdale.c
-@@ -766,7 +766,6 @@ static int timb_probe(struct pci_dev *dev,
- 	default:
- 		dev_err(&dev->dev, "Unknown IP setup: %d.%d.%d\n",
- 			priv->fw.major, priv->fw.minor, ip_setup);
+diff --git a/drivers/net/wireless/realtek/rtlwifi/usb.c b/drivers/net/wireless/realtek/rtlwifi/usb.c
+index 6c5e242b1bc5..37a9a03123f3 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/usb.c
++++ b/drivers/net/wireless/realtek/rtlwifi/usb.c
+@@ -1070,7 +1070,6 @@ int rtl_usb_probe(struct usb_interface *intf,
+ 	err = ieee80211_register_hw(hw);
+ 	if (err) {
+ 		pr_err("Can't register mac80211 hw.\n");
 -		err = -ENODEV;
- 		goto err_mfd;
+ 		goto error_out;
  	}
- 
+ 	rtlpriv->mac80211.mac80211_registered = 1;
 -- 
 2.30.2
 
