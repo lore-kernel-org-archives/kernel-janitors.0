@@ -4,80 +4,80 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91E3FC433E5
-	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Mar 2021 09:53:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7841C433E0
+	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Mar 2021 09:57:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6851961A02
-	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Mar 2021 09:53:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA2E961976
+	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Mar 2021 09:57:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231404AbhC0JxJ (ORCPT
+        id S231329AbhC0J44 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 27 Mar 2021 05:53:09 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:15357 "EHLO
-        szxga07-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231403AbhC0Jww (ORCPT
+        Sat, 27 Mar 2021 05:56:56 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:15074 "EHLO
+        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231420AbhC0J4k (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 27 Mar 2021 05:52:52 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
-        by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4F6vGk5Jd3z8y9b;
-        Sat, 27 Mar 2021 17:50:38 +0800 (CST)
-Received: from huawei.com (10.67.174.78) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.498.0; Sat, 27 Mar 2021
- 17:52:30 +0800
-From:   Chen Lifu <chenlifu@huawei.com>
-To:     <chenlifu@huawei.com>, Sekhar Nori <nsekhar@ti.com>,
-        Russell King <linux@armlinux.org.uk>
-CC:     <heying24@huawei.com>, <yuehaibing@huawei.com>,
-        <weiyongjun1@huawei.com>, <johnny.chenyi@huawei.com>,
+        Sat, 27 Mar 2021 05:56:40 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4F6vMJ4QHWz1BH6C;
+        Sat, 27 Mar 2021 17:54:36 +0800 (CST)
+Received: from mdc.localdomain (10.175.104.57) by
+ DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
+ 14.3.498.0; Sat, 27 Mar 2021 17:56:28 +0800
+From:   Huang Guobin <huangguobin4@huawei.com>
+To:     <huangguobin4@huawei.com>, Felix Fietkau <nbd@nbd.name>,
+        Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "Jakub Kicinski" <kuba@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "Markus Elfring" <elfring@users.sourceforge.net>,
+        "David S. Miller" <davem@davemloft.net>
+CC:     <linux-wireless@vger.kernel.org>, <netdev@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] ARM: davinci: dm646x-evm: use DEFINE_SPINLOCK() for spinlock
-Date:   Sat, 27 Mar 2021 17:52:26 +0800
-Message-ID: <20210327095226.105039-1-chenlifu@huawei.com>
-X-Mailer: git-send-email 2.17.1
+        <linux-mediatek@lists.infradead.org>,
+        <kernel-janitors@vger.kernel.org>
+Subject: [PATCH net-next] mt76: mt7615: remove redundant dev_err call in mt7622_wmac_probe()
+Date:   Sat, 27 Mar 2021 17:56:18 +0800
+Message-ID: <1616838978-6420-1-git-send-email-huangguobin4@huawei.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.174.78]
+X-Originating-IP: [10.175.104.57]
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Lifu Chen <chenlifu@huawei.com>
+From: Guobin Huang <huangguobin4@huawei.com>
 
-spinlock can be initialized automatically with DEFINE_SPINLOCK()
-rather than explicitly calling spin_lock_init().
+There is a error message within devm_ioremap_resource
+already, so remove the dev_err call to avoid redundant
+error message.
 
 Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Lifu Chen <chenlifu@huawei.com>
+Signed-off-by: Guobin Huang <huangguobin4@huawei.com>
 ---
- arch/arm/mach-davinci/board-dm646x-evm.c | 4 +---
+ drivers/net/wireless/mediatek/mt76/mt7615/soc.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/arch/arm/mach-davinci/board-dm646x-evm.c b/arch/arm/mach-davinci/board-dm646x-evm.c
-index 952ddabc743e..a07b5f83a373 100644
---- a/arch/arm/mach-davinci/board-dm646x-evm.c
-+++ b/arch/arm/mach-davinci/board-dm646x-evm.c
-@@ -470,7 +470,7 @@ static struct davinci_i2c_platform_data i2c_pdata = {
- #define TVP5147_CH1		"tvp514x-1"
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/soc.c b/drivers/net/wireless/mediatek/mt76/mt7615/soc.c
+index 9aa5183c7a56..be9a69fe1b38 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7615/soc.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7615/soc.c
+@@ -40,10 +40,8 @@ static int mt7622_wmac_probe(struct platform_device *pdev)
+ 		return irq;
  
- /* spin lock for updating above registers */
--static spinlock_t vpif_reg_lock;
-+static DEFINE_SPINLOCK(vpif_reg_lock);
+ 	mem_base = devm_ioremap_resource(&pdev->dev, res);
+-	if (IS_ERR(mem_base)) {
+-		dev_err(&pdev->dev, "Failed to get memory resource\n");
++	if (IS_ERR(mem_base))
+ 		return PTR_ERR(mem_base);
+-	}
  
- static int set_vpif_clock(int mux_mode, int hd)
- {
-@@ -746,8 +746,6 @@ static struct vpif_capture_config dm646x_vpif_capture_cfg = {
- 
- static void __init evm_init_video(void)
- {
--	spin_lock_init(&vpif_reg_lock);
--
- 	dm646x_setup_vpif(&dm646x_vpif_display_config,
- 			  &dm646x_vpif_capture_cfg);
+ 	return mt7615_mmio_probe(&pdev->dev, mem_base, irq, mt7615e_reg_map);
  }
 
