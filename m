@@ -2,72 +2,117 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 449FFC433E0
-	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Mar 2021 05:43:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 579B9C433E2
+	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Mar 2021 06:57:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E608361A1A
-	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Mar 2021 05:43:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26AA761A1E
+	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Mar 2021 06:57:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229881AbhC0Fme (ORCPT
+        id S231338AbhC0G5N (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 27 Mar 2021 01:42:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47456 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229620AbhC0Fmd (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 27 Mar 2021 01:42:33 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 282B161A1E;
-        Sat, 27 Mar 2021 05:42:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1616823753;
-        bh=loaJcrol/PTRVMRrsww1gLT50nDJ8omknyueW0Pevuk=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=DzV1szVcasJX5KBkovy9pnJvfQVw3rx/z5xQOT2C8Dei+lW9UITUAVapAFTENymXn
-         Mf7DW9BnhTrjeLrXw1aMATkiBOwblGGD+kp2LDK6Qo/aAfa7Z7MsMD6Pzy9YbtjBCW
-         aEr/VwSg1EeZaiWQ0UOxv7W7kmEqcsyThfIymufeMiNLI2+QagnvfIJRMNz2oCmEmU
-         U2S659OMtVBW6nAG31W3cnDIERaR3MjUeeXkXpRnqDjTM4sX5SivWoyC6kpCk99oIO
-         R6b+ETVQxEk0IgXH4iL96HMXb3/5Hf5lDFDTENIAtca8qV/S0gkBGiyTULpHSYf/Ol
-         UiE4FkKdUhEcA==
-Received: by mail-oi1-f170.google.com with SMTP id n140so7888117oig.9;
-        Fri, 26 Mar 2021 22:42:33 -0700 (PDT)
-X-Gm-Message-State: AOAM530c+ujf9rCio6u2vtJNwYAMRAvl6k+MkSZoEaef/9cBA7SaJ1Mq
-        8q2RSCKLpwNE6EmV/K3b+vWaoVuYaonmLme6+q0=
-X-Google-Smtp-Source: ABdhPJyvRS6aynjHHQh55zHTQ+0rKLujRGaTPDJMYHWtytR3lW7/FhxKm2w9LM3ja1dm8hur3M7RhkKrW1VvJM3fwBY=
-X-Received: by 2002:aca:f4ce:: with SMTP id s197mr12125327oih.94.1616823752543;
- Fri, 26 Mar 2021 22:42:32 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:ac9:5ed4:0:0:0:0:0 with HTTP; Fri, 26 Mar 2021 22:42:31
- -0700 (PDT)
-In-Reply-To: <20210325173538.485917-1-colin.king@canonical.com>
-References: <20210325173538.485917-1-colin.king@canonical.com>
-From:   Namjae Jeon <linkinjeon@kernel.org>
-Date:   Sat, 27 Mar 2021 14:42:31 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd9Zq8FJ6sZZTTSBxuMpSdQ9rzeb_JEnOx+kQnXENHxhtg@mail.gmail.com>
-Message-ID: <CAKYAXd9Zq8FJ6sZZTTSBxuMpSdQ9rzeb_JEnOx+kQnXENHxhtg@mail.gmail.com>
-Subject: Re: [Linux-cifsd-devel] [PATCH][next] cifsd: remove redundant
- assignment to variable err
-To:     Colin King <colin.king@canonical.com>
-Cc:     Namjae Jeon <namjae.jeon@samsung.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steve French <sfrench@samba.org>,
-        Hyunchul Lee <hyc.lee@gmail.com>, linux-cifs@vger.kernel.org,
-        linux-cifsd-devel@lists.sourceforge.net,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Sat, 27 Mar 2021 02:57:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37426 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230111AbhC0G4z (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Sat, 27 Mar 2021 02:56:55 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E28DDC0613AA;
+        Fri, 26 Mar 2021 23:56:54 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id w18so8798476edc.0;
+        Fri, 26 Mar 2021 23:56:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=/nrHAis2P0dzTZHAmJMrftoMP2h0cNOfMK41ddHP2/g=;
+        b=C5IEoc74WXY/u4vf0C6XQshmwLzJw4CBBfLwWWB6ovJtW/9RSA95bSPB+UE7Hgk4xn
+         MoDB/Tg4B//mB5PWUofFsfly5uWRI6azEaekxsBwhJ9TU/1qwf3WsL98MqOrl6lNayT6
+         ZoX0ztN08FMpQPGG/0EhmXhaIZZV5qMh5BJUxIHaHpJhD7ExaZJ5A9/bO/dpTh4PnIH1
+         FHZZJVcU5PRUfayMgBK3Y9BRT0IS3LsvjPz8X8pmTyJRsujnt9BINr51UpY2LL5pKvLu
+         1FSas9QPZcU1WPKCs6SM7WJSpJOWohQzs0reW+t0hDJCB1frG10T8VwS/FWncNqYqKCr
+         LirA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=/nrHAis2P0dzTZHAmJMrftoMP2h0cNOfMK41ddHP2/g=;
+        b=Jkl/HAiXfbKR3dToUjAt+TOCGOVnIaaiZ7jdyD6ZGXxiqe5ydVTtPSfQYGpjJ4+coj
+         RbEeywKIWUHSq+bInYu+R7h7fBRTHMA4pFuqzHNWuwJAgSQyccRMtOTMK2qEbZ0fP3uD
+         KFWBibYlItOfVZ50uZ4gfZcTI6nfDg12Hy37yiCNcxthuTpCliUe7oP4cYIC46gdPCqD
+         mrSWa5L0uKlwX+Vj+Uy5lhpplW/tkYLaUxdn+u529hRMJ+TjHp01J/hj8SoSGTWQl2QD
+         koaShzZsUR8p1T/UTyndTs+Tvu+5A2RCdf69NPMFXl+UdbAtM5y5SnPL6JCTP8eEYrLs
+         lhRA==
+X-Gm-Message-State: AOAM530/ftUx1YnhJw98JUobEuUl6o7zkeAnDe55TrT4IO61sCuRKS1B
+        YaT3lhdhDo40yOTT2V/kv5k=
+X-Google-Smtp-Source: ABdhPJyWImLozKgeuzDkNlFnXnyHXhJtADkkuGj20j+FlbB4dM/I91CEEbQdxt1v9O5UaC/r7bdErA==
+X-Received: by 2002:a05:6402:254f:: with SMTP id l15mr19045252edb.189.1616828213567;
+        Fri, 26 Mar 2021 23:56:53 -0700 (PDT)
+Received: from felia.fritz.box ([2001:16b8:2de6:9900:7d51:74f6:ebfb:3cdc])
+        by smtp.gmail.com with ESMTPSA id i11sm4774005ejc.101.2021.03.26.23.56.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Mar 2021 23:56:52 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
+        linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH 0/2] kernel-doc and MAINTAINERS clean-up
+Date:   Sat, 27 Mar 2021 07:56:40 +0100
+Message-Id: <20210327065642.11969-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-2021-03-26 2:35 GMT+09:00, Colin King <colin.king@canonical.com>:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The variable err is being initialized with a value that is never read
-> and it is being updated later with a new value.  The initialization is
-> redundant and can be removed.
->
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-I will apply. Thanks for your patch!
+Roughly 900 warnings of about 21.000 kernel-doc warnings in the kernel tree
+warn with 'cannot understand function prototype:', i.e., the kernel-doc parser
+cannot parse the function's signature. The majority, about 600 cases of those,
+are just struct definitions following the kernel-doc description. Further,
+spot-check investigations suggest that the authors of the specific kernel-doc
+descriptions simply were not aware that the general format for a kernel-doc
+description for a structure requires to prefix the struct name with the keyword
+'struct', as in 'struct struct_name - Brief description.'. Details on
+kernel-doc are at the Link below.
+
+Without the struct keyword, kernel-doc does not check if the kernel-doc
+description fits to the actual struct definition in the source code.
+Fortunately, in roughly a quarter of these cases, the kernel-doc description is
+actually complete wrt. its corresponding struct definition. So, the trivial
+change adding the struct keyword will allow us to keep the kernel-doc
+descriptions more consistent for future changes, by checking for new kernel-doc
+warnings.
+
+Also, some of the files in ./include/ are not assigned to a specific
+MAINTAINERS section and hence have no dedicated maintainer. So, if needed, the
+files in ./include/ are also assigned to the fitting MAINTAINERS section, as I
+need to identify whom to send the clean-up patch anyway.
+
+Here is the change from this kernel-doc janitorial work in the ./include/
+directory for ARM/QUALCOMM SUPPORT.
+
+Andy, Bjorn, please pick this clean-up patch series for your tree.
+
+Link: https://www.kernel.org/doc/html/latest/doc-guide/kernel-doc.html
+
+
+Lukas Bulwahn (2):
+  MAINTAINERS: add another entry for ARM/QUALCOMM SUPPORT
+  soc: qcom: address kernel-doc warnings
+
+ MAINTAINERS                        | 1 +
+ include/linux/soc/qcom/apr.h       | 2 +-
+ include/linux/soc/qcom/irq.h       | 2 +-
+ include/linux/soc/qcom/llcc-qcom.h | 6 +++---
+ include/linux/soc/qcom/qmi.h       | 4 ++--
+ 5 files changed, 8 insertions(+), 7 deletions(-)
+
+-- 
+2.17.1
+
