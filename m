@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D6FEC433DB
-	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Mar 2021 08:00:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF5E9C433DB
+	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Mar 2021 08:01:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5EBF2619F3
-	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Mar 2021 08:00:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AAEAE619FF
+	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Mar 2021 08:01:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230420AbhC0IAM (ORCPT
+        id S231483AbhC0IAx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 27 Mar 2021 04:00:12 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:15349 "EHLO
-        szxga07-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230315AbhC0IAL (ORCPT
+        Sat, 27 Mar 2021 04:00:53 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:14163 "EHLO
+        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230323AbhC0IAM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 27 Mar 2021 04:00:11 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
-        by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4F6rmt1fK3z93yw;
-        Sat, 27 Mar 2021 15:58:06 +0800 (CST)
-Received: from huawei.com (10.175.113.32) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.498.0; Sat, 27 Mar 2021
- 16:00:01 +0800
+        Sat, 27 Mar 2021 04:00:12 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4F6rmH3QpqznWQv;
+        Sat, 27 Mar 2021 15:57:35 +0800 (CST)
+Received: from huawei.com (10.175.113.32) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.498.0; Sat, 27 Mar 2021
+ 15:59:59 +0800
 From:   Shixin Liu <liushixin2@huawei.com>
 To:     Russell King <linux@armlinux.org.uk>
 CC:     <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
         Shixin Liu <liushixin2@huawei.com>
-Subject: [PATCH] arm: kprobes: Make some symbols static
-Date:   Sat, 27 Mar 2021 16:30:21 +0800
-Message-ID: <20210327083021.1922640-1-liushixin2@huawei.com>
+Subject: [PATCH] arm: kprobes: fix an old-style function definition
+Date:   Sat, 27 Mar 2021 16:30:20 +0800
+Message-ID: <20210327083020.1922590-1-liushixin2@huawei.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
@@ -45,27 +45,32 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-These two symbols are not used outside of test-core.c,
-so we can marks them static.
+I got a warning when compile kernel:
+
+arch/arm/probes/kprobes/core.c:465:12: warning: old-style function definition [-Wold-style-definition]
+  465 | int __init arch_init_kprobes()
+      |            ^~~~~~~~~~~~~~~~~
+
+Fix it by add parameter 'void'.
 
 Signed-off-by: Shixin Liu <liushixin2@huawei.com>
 ---
- arch/arm/probes/kprobes/test-core.c | 2 +-
+ arch/arm/probes/kprobes/core.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/probes/kprobes/test-core.c b/arch/arm/probes/kprobes/test-core.c
-index c562832b8627..171c7076b89f 100644
---- a/arch/arm/probes/kprobes/test-core.c
-+++ b/arch/arm/probes/kprobes/test-core.c
-@@ -720,7 +720,7 @@ static const char coverage_register_lookup[16] = {
- 	[REG_TYPE_NOSPPCX]	= COVERAGE_ANY_REG | COVERAGE_SP,
- };
+diff --git a/arch/arm/probes/kprobes/core.c b/arch/arm/probes/kprobes/core.c
+index a9653117ca0d..e513d8a46776 100644
+--- a/arch/arm/probes/kprobes/core.c
++++ b/arch/arm/probes/kprobes/core.c
+@@ -462,7 +462,7 @@ static struct undef_hook kprobes_arm_break_hook = {
  
--unsigned coverage_start_registers(const struct decode_header *h)
-+static unsigned coverage_start_registers(const struct decode_header *h)
+ #endif /* !CONFIG_THUMB2_KERNEL */
+ 
+-int __init arch_init_kprobes()
++int __init arch_init_kprobes(void)
  {
- 	unsigned regs = 0;
- 	int i;
+ 	arm_probes_decode_init();
+ #ifdef CONFIG_THUMB2_KERNEL
 -- 
 2.25.1
 
