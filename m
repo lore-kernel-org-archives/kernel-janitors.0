@@ -8,68 +8,66 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97F19C433E1
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78F5BC433E0
 	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Mar 2021 00:19:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 78760619F3
+	by mail.kernel.org (Postfix) with ESMTP id 6642861A1E
 	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Mar 2021 00:19:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231201AbhC0ASY (ORCPT
+        id S231191AbhC0ASX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 26 Mar 2021 20:18:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37460 "EHLO
+        Fri, 26 Mar 2021 20:18:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230134AbhC0ASP (ORCPT
+        with ESMTP id S229969AbhC0ASM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 26 Mar 2021 20:18:15 -0400
-Received: from mail-qt1-x82c.google.com (mail-qt1-x82c.google.com [IPv6:2607:f8b0:4864:20::82c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C861C0613AA
-        for <kernel-janitors@vger.kernel.org>; Fri, 26 Mar 2021 17:18:15 -0700 (PDT)
-Received: by mail-qt1-x82c.google.com with SMTP id s2so5480872qtx.10
-        for <kernel-janitors@vger.kernel.org>; Fri, 26 Mar 2021 17:18:15 -0700 (PDT)
+        Fri, 26 Mar 2021 20:18:12 -0400
+Received: from mail-qv1-xf2b.google.com (mail-qv1-xf2b.google.com [IPv6:2607:f8b0:4864:20::f2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34320C0613AA
+        for <kernel-janitors@vger.kernel.org>; Fri, 26 Mar 2021 17:18:11 -0700 (PDT)
+Received: by mail-qv1-xf2b.google.com with SMTP id dc12so3854558qvb.4
+        for <kernel-janitors@vger.kernel.org>; Fri, 26 Mar 2021 17:18:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=pcT/zDnZmKWZEkcWU1Fdw2ETNdguhtXtEAWsERVGPz8=;
-        b=Oh/YN8VSH0mjmWJlRzWWHSrachEnaiJZBXtXfGYhG0B9u/RWYkZ+/gN+HlTfX6Dze7
-         /4sFNF9PFIq1mGJ2Y3k6wz4YqSLDQdh7mfZgnfsrd4iB95lWdGm/7Vpl/ysChn2RV0LL
-         nYBA+apwXYbyjjvhED/P7bbq4CjQEyhHpCf6/m/SWuJlJNBTvMTE7pztE99lSVDxTDpA
-         /GQpUBg2nWkhszHa5c9TC9vozQc8pNfLAu9SpUBbwq7ybLkbMH1bCvQ7qwRa7jebt1a4
-         YLPyrkzxMchwlxQ/h+WbrCzy/KWbqesGYz4fXZkdGKf3cxz4P87GyayqVIpf+gg5cfyy
-         bPIQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=xqBa11K+t3yJo64JHPBL4xG7apvJbEXnUnLncnKDQMA=;
+        b=NIt0T9RXfaESkCQkTRUHfIEMw/MB5myfMUFUQ/Y2gNALTg7EinJnNXNyK16+tSo7l0
+         q1565/xhUhqsf0cajIPToAx6MHgRngWeI0aZdHURR4/sf4GPr/7D1//Rgrg+7JAlNQL2
+         GY4oArBZEMNBLTjuSAaahPBvu18TUMOksSZ+iZYPWEPaPaNKQQkoNCxHGwfCZ/VT4W3t
+         nIvM/kNubA0RyaWdxVtjaZLu/UxJrhCDKSBOMiAx9I/wUoNW+qZiPtKgBMMx5Ea/U+g/
+         XB2WbVvTGzY92I4Lj3E2VsLIdiCQaLWoEmbEHhqZiI3vRDAv57qh9jH+L1m8u09kterk
+         3ybw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=pcT/zDnZmKWZEkcWU1Fdw2ETNdguhtXtEAWsERVGPz8=;
-        b=IFQq4+KVt5RGzSKVRh85sbBy5+YA10MUMlEviJMA0dON4MtOQb+doeP0s9dwFa1pLk
-         rbjKF3X0iU7B1eM4jsbY2rIpu65TgaC2IkheWY1YeMVck6bSIa7m9KZ6kumte9PUfFcs
-         rNjoRCGieeS7MTxjpDzzW3lUkbdDWzhy9rlRvew3l2kH36IyTs9yitMhLnwBYQJ5eMsL
-         rku67Rsh25Ydp71ybF9eEPypTiiHlScQRqmcMK2o79dEHvQkLy4jlZrwAAvaPIEZAhpl
-         Ts4ZgJm/6dz5g3o4fLG77bEtCyYGMPBjF5Rclkdi7asL/Wv5EMIgD6iDcnCArrs/uHKF
-         pYTQ==
-X-Gm-Message-State: AOAM533UJcMrpmAVn7ln29FCJvxLcwfl1bJPdqiUXpEKoXk0Tchs9Wsg
-        Jiwg2vdH93YmIU3i1F3/hNk=
-X-Google-Smtp-Source: ABdhPJx3pGvGTjzF7gSrHxGU58iUHo1oumXLECb05hM0HOimIYQIYMEshFim1BePtHwxKbL6IQfmNQ==
-X-Received: by 2002:a05:622a:110c:: with SMTP id e12mr14714926qty.350.1616804293602;
-        Fri, 26 Mar 2021 17:18:13 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=xqBa11K+t3yJo64JHPBL4xG7apvJbEXnUnLncnKDQMA=;
+        b=Q13BJU27BF/Kuv6nLqye4GmZ3/ReDtOGwJYo8/U0aidZ02Ix4+IdbbEKTZIPvYAEJy
+         xh8LVBs15slbC5ARar5B2nY4hVodzc/60CVfDMNfwGylE3aY69slreiIgWYzEaZYfKLQ
+         i7CozgfsAk7cIa7fHUr71MYhWJH3rVmvUm/CnxD8X0ZYRdWi6mrh8Kjw3UpdfFiQwuSF
+         aqoUTFUB5mbD2hNseh4rA+IfbuLQcXVNJbN41t/Zd4qSQD5gGA3ct8QQHEiPgyz/oA47
+         H7rLbyNNLCx+h9lpXh0QnUKcI0eQzicHyc4D2foarzOkNrxBQaanYIevN+f0jMGl7Q44
+         ybmQ==
+X-Gm-Message-State: AOAM5330dULR79658ctyjBDgO6pfS/MQd2sm6kNJUEHbyo6InbJvrQJc
+        nIcRX+iBXnENA4K8fn86yKs=
+X-Google-Smtp-Source: ABdhPJwNFRvBFgM9rN9qoxreJmFNMEl10dp5kOUd7xtpm2y6ZU4sHjL6q6qAwjXPZgOuzj0e8dK2lw==
+X-Received: by 2002:a0c:e148:: with SMTP id c8mr7780071qvl.18.1616804290258;
+        Fri, 26 Mar 2021 17:18:10 -0700 (PDT)
 Received: from linuxerio.localdomain ([186.32.194.42])
-        by smtp.gmail.com with ESMTPSA id z2sm8213531qkg.22.2021.03.26.17.18.12
+        by smtp.gmail.com with ESMTPSA id z2sm8213531qkg.22.2021.03.26.17.18.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Mar 2021 17:18:13 -0700 (PDT)
+        Fri, 26 Mar 2021 17:18:09 -0700 (PDT)
 From:   Edmundo Carmona Antoranz <eantoranz@gmail.com>
 To:     gregkh@linuxfoundation.org, marcocesati@gmail.com,
         dan.carpenter@oracle.com, ross.schm.dev@gmail.com,
         fabioaiuto83@gmail.com, linux-staging@lists.linux.dev
 Cc:     kernel-janitors@vger.kernel.org,
         Edmundo Carmona Antoranz <eantoranz@gmail.com>
-Subject: [PATCH -next 3/6] staging: rtl8723bs: hal: remove unused variable in HalBtc8723b1Ant.c
-Date:   Fri, 26 Mar 2021 18:17:33 -0600
-Message-Id: <20210327001736.180881-3-eantoranz@gmail.com>
+Subject: [PATCH -next 1/6] staging: rtl8723bs: ieee80211: remove unused variable
+Date:   Fri, 26 Mar 2021 18:17:31 -0600
+Message-Id: <20210327001736.180881-1-eantoranz@gmail.com>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210327001736.180881-1-eantoranz@gmail.com>
-References: <20210327001736.180881-1-eantoranz@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -77,34 +75,96 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable btRssiState in halbtc8723b1ant_ActionWifiConnectedBtAclBusy()
-is set but never read. Removing it.
+sec_idx in rtw_get_sec_ie() is set to 0 and never changes value. Also,
+it is only used for debugging messages. Therefore the variable is
+removed and the debug messages are adjusted. Adjusting debug messages
+forced style changes. Taking the opportunity to adjust indentation
+of those sections of the code.
 
 Removing this warning:
 
-drivers/staging/rtl8723bs/hal/HalBtc8723b1Ant.c:2093:5: warning: variable ‘btRssiState’ set but not used [-Wunused-but-set-variable]
+drivers/staging/rtl8723bs/core/rtw_ieee80211.c:657:15: warning: variable ‘sec_idx’ set but not used [-Wunused-but-set-variable]
 
 Signed-off-by: Edmundo Carmona Antoranz <eantoranz@gmail.com>
 ---
- drivers/staging/rtl8723bs/hal/HalBtc8723b1Ant.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ .../staging/rtl8723bs/core/rtw_ieee80211.c    | 43 +++++++++++--------
+ 1 file changed, 25 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/staging/rtl8723bs/hal/HalBtc8723b1Ant.c b/drivers/staging/rtl8723bs/hal/HalBtc8723b1Ant.c
-index 621f8181f46d..3e794093092b 100644
---- a/drivers/staging/rtl8723bs/hal/HalBtc8723b1Ant.c
-+++ b/drivers/staging/rtl8723bs/hal/HalBtc8723b1Ant.c
-@@ -2090,10 +2090,8 @@ static void halbtc8723b1ant_ActionWifiConnectedBtAclBusy(
- 	struct btc_coexist *pBtCoexist, u8 wifiStatus
- )
- {
--	u8 btRssiState;
--
- 	struct btc_bt_link_info *pBtLinkInfo = &pBtCoexist->btLinkInfo;
--	btRssiState = halbtc8723b1ant_BtRssiState(2, 28, 0);
-+	halbtc8723b1ant_BtRssiState(2, 28, 0);
+diff --git a/drivers/staging/rtl8723bs/core/rtw_ieee80211.c b/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
+index cccbea555a32..ec065d924fbb 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
++++ b/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
+@@ -654,7 +654,7 @@ int rtw_get_wapi_ie(u8 *in_ie, uint in_len, u8 *wapi_ie, u16 *wapi_len)
  
- 	if ((pCoexSta->lowPriorityRx >= 1000) && (pCoexSta->lowPriorityRx != 65535))
- 		pBtLinkInfo->bSlaveRole = true;
+ void rtw_get_sec_ie(u8 *in_ie, uint in_len, u8 *rsn_ie, u16 *rsn_len, u8 *wpa_ie, u16 *wpa_len)
+ {
+-	u8 authmode, sec_idx, i;
++	u8 authmode, i;
+ 	u8 wpa_oui[4] = {0x0, 0x50, 0xf2, 0x01};
+ 	uint	cnt;
+ 
+@@ -662,37 +662,44 @@ void rtw_get_sec_ie(u8 *in_ie, uint in_len, u8 *rsn_ie, u16 *rsn_len, u8 *wpa_ie
+ 
+ 	cnt = (_TIMESTAMP_ + _BEACON_ITERVAL_ + _CAPABILITY_);
+ 
+-	sec_idx = 0;
+-
+ 	while (cnt < in_len) {
+ 		authmode = in_ie[cnt];
+ 
+ 		if ((authmode == WLAN_EID_VENDOR_SPECIFIC) && (!memcmp(&in_ie[cnt+2], &wpa_oui[0], 4))) {
+-				RT_TRACE(_module_rtl871x_mlme_c_, _drv_info_, ("\n rtw_get_wpa_ie: sec_idx =%d in_ie[cnt+1]+2 =%d\n", sec_idx, in_ie[cnt+1]+2));
++			RT_TRACE(_module_rtl871x_mlme_c_, _drv_info_,
++				 ("\n rtw_get_wpa_ie: in_ie[cnt+1]+2 =%d\n", in_ie[cnt + 1] + 2));
+ 
+-				if (wpa_ie) {
++			if (wpa_ie) {
+ 				memcpy(wpa_ie, &in_ie[cnt], in_ie[cnt+1]+2);
+ 
+ 				for (i = 0; i < (in_ie[cnt+1]+2); i = i+8) {
+-						RT_TRACE(_module_rtl871x_mlme_c_, _drv_info_, ("\n %2x,%2x,%2x,%2x,%2x,%2x,%2x,%2x\n",
+-									wpa_ie[i], wpa_ie[i+1], wpa_ie[i+2], wpa_ie[i+3], wpa_ie[i+4],
+-									wpa_ie[i+5], wpa_ie[i+6], wpa_ie[i+7]));
+-					}
++					RT_TRACE(_module_rtl871x_mlme_c_, _drv_info_,
++						 ("\n %2x,%2x,%2x,%2x,%2x,%2x,%2x,%2x\n",
++						  wpa_ie[i], wpa_ie[i + 1], wpa_ie[i + 2],
++						  wpa_ie[i + 3], wpa_ie[i + 4],
++						  wpa_ie[i + 5], wpa_ie[i + 6],
++						  wpa_ie[i + 7]));
+ 				}
++			}
+ 
+-				*wpa_len = in_ie[cnt+1]+2;
+-				cnt += in_ie[cnt+1]+2;  /* get next */
++			*wpa_len = in_ie[cnt + 1] + 2;
++			cnt += in_ie[cnt + 1] + 2;  /* get next */
+ 		} else {
+ 			if (authmode == WLAN_EID_RSN) {
+-				RT_TRACE(_module_rtl871x_mlme_c_, _drv_info_, ("\n get_rsn_ie: sec_idx =%d in_ie[cnt+1]+2 =%d\n", sec_idx, in_ie[cnt+1]+2));
++				RT_TRACE(_module_rtl871x_mlme_c_, _drv_info_,
++					 ("\n get_rsn_ie: in_ie[cnt+1]+2 =%d\n",
++					  in_ie[cnt + 1] + 2));
+ 
+ 				if (rsn_ie) {
+-				memcpy(rsn_ie, &in_ie[cnt], in_ie[cnt+1]+2);
+-
+-				for (i = 0; i < (in_ie[cnt+1]+2); i = i+8) {
+-						RT_TRACE(_module_rtl871x_mlme_c_, _drv_info_, ("\n %2x,%2x,%2x,%2x,%2x,%2x,%2x,%2x\n",
+-									rsn_ie[i], rsn_ie[i+1], rsn_ie[i+2], rsn_ie[i+3], rsn_ie[i+4],
+-									rsn_ie[i+5], rsn_ie[i+6], rsn_ie[i+7]));
++					memcpy(rsn_ie, &in_ie[cnt], in_ie[cnt + 1] + 2);
++
++					for (i = 0; i < (in_ie[cnt + 1] + 2); i = i + 8) {
++						RT_TRACE(_module_rtl871x_mlme_c_, _drv_info_,
++							 ("\n %2x,%2x,%2x,%2x,%2x,%2x,%2x,%2x\n",
++							  rsn_ie[i], rsn_ie[i + 1], rsn_ie[i + 2],
++							  rsn_ie[i + 3], rsn_ie[i + 4],
++							  rsn_ie[i + 5], rsn_ie[i + 6],
++							  rsn_ie[i + 7]));
+ 					}
+ 				}
+ 
 -- 
 2.30.2
 
