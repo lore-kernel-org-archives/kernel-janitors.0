@@ -2,82 +2,90 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86293C433DB
-	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Mar 2021 00:24:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB12EC433E0
+	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Mar 2021 04:33:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 642A06193C
-	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Mar 2021 00:24:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 74CFB619CB
+	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Mar 2021 04:33:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230378AbhC0AYU (ORCPT
+        id S229697AbhC0EdH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 26 Mar 2021 20:24:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38714 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230236AbhC0AYH (ORCPT
+        Sat, 27 Mar 2021 00:33:07 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:14154 "EHLO
+        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229650AbhC0Eca (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 26 Mar 2021 20:24:07 -0400
-Received: from mail-io1-xd36.google.com (mail-io1-xd36.google.com [IPv6:2607:f8b0:4864:20::d36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F1B6C0613AA
-        for <kernel-janitors@vger.kernel.org>; Fri, 26 Mar 2021 17:24:07 -0700 (PDT)
-Received: by mail-io1-xd36.google.com with SMTP id k25so7153933iob.6
-        for <kernel-janitors@vger.kernel.org>; Fri, 26 Mar 2021 17:24:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kWcmqDNjSgMeYn5Nyg6J1/NYCGWlgfXicWyx1OhC3R0=;
-        b=fquED2wSUv+ch67CdubGSg9f3jFh3Ancb7wrovx0Mrm+9Ggnl0IkSRmnTwHEbHWAdA
-         bqC6Ww+oq2UTHbSfdNo+9sd25RJ04Q+7RaXWC61DG/pNRNaa0KocZC6ekNem/SSQvuJl
-         RwU+NcmNjOxUbGevJ/gkoVb+cIudsZU2IgADFYPk28IPnVOvNCcIXrC2Gj3sWssvJtrQ
-         2tqh7b3fS7P7gZGVTA3Nxi1qMsmirjED1/UARMgp2Q4miOqzBrPFNPqCsgRALuZd8pKI
-         7JRt+X4OaOr3r3ABP1v2YvQL4qw+yeGaDjagZf3FJnH0ZDsrbYe+NLyd1WgR7q3HKHmF
-         surw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kWcmqDNjSgMeYn5Nyg6J1/NYCGWlgfXicWyx1OhC3R0=;
-        b=YBgP9Fd+oDk/1dXpsOw7Prumul8GGN69RQnUepDvgiqWn+qI0Lz7MxQF9D9+Dg63ub
-         QgTN9oXusDTbJHcb0juInEbMnrWrITughlYPpCrfjpH0dZ2OCUoXpyCuo8RAcimo4E6j
-         IQ1MGvum+hJcekaH90r+bEbULeoAIAe1DTrOo5MGUdKemBiWxtFC1ZUrXdBv9MdSWR5o
-         9GDWBSavLHoufs6/ZwQaZrV1cSv2Ba+qagGpA+CUhErcgh4vTOGL6yPyUBhgmKTJVRDe
-         a8CtkdOAdMpkh1HsNkhWnpMx3hQ4l0xjsXfJTpZt/9oYev59YguZUqWDEJ2PZkt7UeT6
-         6itQ==
-X-Gm-Message-State: AOAM5318LXytt1xYz+V9x6x9W+0VKFPqPCm23bfVmnFEuZXglIyk3jBW
-        mMfu2OvfkXuHNZ54RkK6Kmt2nsE+WqECQpn+ng4=
-X-Google-Smtp-Source: ABdhPJzu7X7HTviVbHkO5+zIcPCigw6WEAd8ddThIawVm1vOGA1G3GM5EznMV/T1gx0+zvz6xyc79nvVfFF1qMD+4KY=
-X-Received: by 2002:a05:6602:1689:: with SMTP id s9mr11811345iow.171.1616804646661;
- Fri, 26 Mar 2021 17:24:06 -0700 (PDT)
+        Sat, 27 Mar 2021 00:32:30 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4F6m8b0LRDznc6C;
+        Sat, 27 Mar 2021 12:29:51 +0800 (CST)
+Received: from huawei.com (10.175.101.6) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.498.0; Sat, 27 Mar 2021
+ 12:32:17 +0800
+From:   'Liu Jian <liujian56@huawei.com>
+To:     <liujian56@huawei.com>, Yisen Zhuang <yisen.zhuang@huawei.com>,
+        "Salil Mehta" <salil.mehta@huawei.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        "Huazhong Tan" <tanhuazhong@huawei.com>,
+        Jian Shen <shenjian15@huawei.com>,
+        "Guangbin Huang" <huangguangbin2@huawei.com>,
+        GuoJia Liao <liaoguojia@huawei.com>,
+        Yufeng Mo <moyufeng@huawei.com>
+CC:     <netdev@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: [PATCH net-next] net: hns3: no return statement in hclge_clear_arfs_rules
+Date:   Sat, 27 Mar 2021 12:33:39 +0800
+Message-ID: <20210327043339.148050-1-liujian56@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-References: <20210327001736.180881-1-eantoranz@gmail.com> <20210327001736.180881-6-eantoranz@gmail.com>
-In-Reply-To: <20210327001736.180881-6-eantoranz@gmail.com>
-From:   Edmundo Carmona Antoranz <eantoranz@gmail.com>
-Date:   Fri, 26 Mar 2021 18:23:55 -0600
-Message-ID: <CAOc6etY0QruhUJtEQqD8sx1zn4SNAw3rGpMiyS+kDz=uYcBLDw@mail.gmail.com>
-Subject: Re: [PATCH -next 6/6] staging: rtl8723bs: sta_mgt: return _FAIL if
- there is an error
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Marco Cesati <marcocesati@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Ross Schmidt <ross.schm.dev@gmail.com>, fabioaiuto83@gmail.com,
-        linux-staging@lists.linux.dev
-Cc:     kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.175.101.6]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Mar 26, 2021 at 6:18 PM Edmundo Carmona Antoranz
-<eantoranz@gmail.com> wrote:
->
-> If there is an error when calling rtw_init_bcmc_stainfo() inside
-> rtw_init_bcmc_stainfo(), variable res is set to _FAIL. However, when
+From: Liu Jian <liujian56@huawei.com>
+
+drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c: In function 'hclge_clear_arfs_rules':
+drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c:7173:1: error: no return statement in function returning non-void [-Werror=return-type]
+ 7173 | }
+      | ^
+cc1: some warnings being treated as errors
+make[6]: *** [scripts/Makefile.build:273: drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.o] Error 1
+make[5]: *** [scripts/Makefile.build:534: drivers/net/ethernet/hisilicon/hns3/hns3pf] Error 2
+make[4]: *** [scripts/Makefile.build:534: drivers/net/ethernet/hisilicon/hns3] Error 2
+make[4]: *** Waiting for unfinished jobs....
+make[3]: *** [scripts/Makefile.build:534: drivers/net/ethernet/hisilicon] Error 2
+make[2]: *** [scripts/Makefile.build:534: drivers/net/ethernet] Error 2
+make[1]: *** [scripts/Makefile.build:534: drivers/net] Error 2
+make[1]: *** Waiting for unfinished jobs....
+make: *** [Makefile:1980: drivers] Error 2
 
 
-I must have been half-asleep when I was writing that. :-D Sorry. I
-don't think it's that bad that it should be taken back, though.
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Liu Jian <liujian56@huawei.com>
+---
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+index 058317ce579c..84c70974c80b 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+@@ -7168,8 +7168,8 @@ static int hclge_clear_arfs_rules(struct hclge_dev *hdev)
+ 	}
+ 	hclge_sync_fd_state(hdev);
+ 
+-	return 0;
+ #endif
++	return 0;
+ }
+ 
+ static void hclge_get_cls_key_basic(const struct flow_rule *flow,
+
