@@ -2,156 +2,153 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C589BC433C1
-	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Mar 2021 14:40:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03EBAC433C1
+	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Mar 2021 14:45:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9A15C619A3
-	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Mar 2021 14:40:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3DD3619AB
+	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Mar 2021 14:45:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230015AbhC0Ojo (ORCPT
+        id S230114AbhC0Oom (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 27 Mar 2021 10:39:44 -0400
-Received: from mail-db8eur05on2086.outbound.protection.outlook.com ([40.107.20.86]:35776
-        "EHLO EUR05-DB8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S229901AbhC0Oj1 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 27 Mar 2021 10:39:27 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=CXUEwHIV5U0mGDSjAAr/lWeImdDNM+kP1x98DbShJrSPm5RP+W60YmD7Cknk+kGUtikRTridKnCSdxV97nSGoLVidAi9h2gOir5hiesyBZiU/1yIAbHzOyPoJM5raqwFKT5+YsHBiAw4EOqRIkaJvTtsMX+JsjZ5CCRetbLI2LIHIxgUUMlktrcne2yzZpq1fcg/jvf5TjIjUgpUd2eXfz0HdGsKm9QAAVP4ZstUMohFsZJGv5uWm+QgOhPpTZQ9vHpKlVo05kmsmNJUIHGfh3jdIbwqTGU6YFhRN62JA/ywctZjNt3gi/b/Os9ZK/9xLQumjccJnMqqP+ObpzfAMA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TLd2KfyAnPtWwydnta2YNE3EunYZWhxLsVug4x+Wj78=;
- b=hQE9VOhzwQS3N1gDEWWjC+Evu3I+aaCDMcHeBgxiSTCz9uiKJA3WuBiwtGzc+4uH2IdH7g2vXTvWR6XNx19mGQTboZ/KyS/FZ5XTENgM9m5YzJH6z+TaDUv7LcvFIgo/Rhvx6vzq//sa/McRmX2ICXAOGZVXCbCAjagKxYL82Mz9GW4GhGeIgzUWCSn6ukTuvJJxk+5SO/WT+IPAxMrVBPHZD3ot04gxNkFe3jCSjDPYJkWC1Vnn3N2Z1mFiln24eEhJ6zOAGkxuOdbiH19KzVS5+cBcuj+j69S/wU5Kqj+G4vQntv1lRrBkgv8Sz3tceRglNzvJyhh5CQlVromUzQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TLd2KfyAnPtWwydnta2YNE3EunYZWhxLsVug4x+Wj78=;
- b=mawD/voQu56qS4OiDemmFlTU2OBXhG4UH1q0WBEhbNBADMj9hbO+Q+8ev8bO/jSFHuT2mYT6/RKJXKiguigmKqrgTUlYhgBNMmdKNyxo9l/aosz4Kfo2xJrK7b75lQsaJsSNoqHhn1yPBWN5ZtsKPXFbCqFOy07gEoXZzCZyHws=
-Received: from AM5PR04MB3137.eurprd04.prod.outlook.com (2603:10a6:206:c::18)
- by AM6PR04MB4359.eurprd04.prod.outlook.com (2603:10a6:209:3f::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3977.26; Sat, 27 Mar
- 2021 14:39:24 +0000
-Received: from AM5PR04MB3137.eurprd04.prod.outlook.com
- ([fe80::15d6:e539:4f60:d7df]) by AM5PR04MB3137.eurprd04.prod.outlook.com
- ([fe80::15d6:e539:4f60:d7df%6]) with mapi id 15.20.3955.027; Sat, 27 Mar 2021
- 14:39:24 +0000
-From:   Mirela Rabulea <mirela.rabulea@nxp.com>
-To:     "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "mchehab@kernel.org" <mchehab@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "weiyongjun1@huawei.com" <weiyongjun1@huawei.com>
-CC:     "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "hulkci@huawei.com" <hulkci@huawei.com>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH -next] media: imx-jpeg: Fix return value check in
- mxc_jpeg_attach_pm_domains()
-Thread-Topic: [PATCH -next] media: imx-jpeg: Fix return value check in
- mxc_jpeg_attach_pm_domains()
-Thread-Index: AQHXH9ZgUycnOre3+0GVHoPF1+LoNaqX7kiA
-Date:   Sat, 27 Mar 2021 14:39:24 +0000
-Message-ID: <8464449300167d9313170697787834be45fee115.camel@nxp.com>
-References: <20210323112903.1016831-1-weiyongjun1@huawei.com>
-In-Reply-To: <20210323112903.1016831-1-weiyongjun1@huawei.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
-authentication-results: pengutronix.de; dkim=none (message not signed)
- header.d=none;pengutronix.de; dmarc=none action=none header.from=nxp.com;
-x-originating-ip: [86.124.171.30]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 789514d0-39ce-4805-d683-08d8f12e1dc2
-x-ms-traffictypediagnostic: AM6PR04MB4359:
-x-microsoft-antispam-prvs: <AM6PR04MB4359B84786910F0B07B9870B8F609@AM6PR04MB4359.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2399;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: Z1O2+UF+2eTmmpBuyhCOoAyv2zIifxyKE1FVyzbG52WaXkIzzNBM1cCIBN8C0aYBumAFsnJ+vCeJ6k63i2qVSfPR5FGi6iwkBJdPNJvrAITj2ZyAaozbrPk4KJWgtoM48cuUWO29L1zqLF2SHSd8gu48kDRmYnnuJQfckSWtdj48ce9VJUJ3GicW3comZyvBDqsGR37CT8+6KQz6S42sXueS5E4uNog/IKpIMgHq5OqcUf8nl4vucD96C/uFCFNQSGDfSMY1upoJ9ocADRYU/gOlvB5QF8mpo/TQgetyNIxmyZ0IQT5lWgU/mcNH6LKA0J3FSNSIErWth6ajKO2GUX8+1gasbT5h2oeuHenEgdztPxF+hLzOxmIxldnwyRqqCt2e6ZUxx2qDzu16MGri5n2XvoJhzobeCD4arudDQIBj7Vc04SQnoSSaZvGfHlWeC78fvelT0MJDn6Y0e0DgVHIRpqNwPfV2a4P6bb4DTeSDXfpqiRS/cH91d9hOYMTujiTD56mW/IQ4bVbOquOu3p72MDlK4PGtev8FCb/NjLJpptNQnrk+sVJrS+HWjlRV6wRUmd9Ta73KcWQ/FKXoDXbYftLkMTVfVjzIfpdjKSUdNE49Z0T/dKgx2dciYbS2kHm39WLo3otJt2tQtr1HfKMxgkKygC7Y/Pq71dCLy6nHgJrbWUZ4YkaZMw7Fenh6
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM5PR04MB3137.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(39860400002)(366004)(346002)(396003)(136003)(376002)(86362001)(8676002)(6486002)(2906002)(38100700001)(8936002)(36756003)(4326008)(66446008)(66946007)(186003)(5660300002)(76116006)(6512007)(66556008)(91956017)(83380400001)(44832011)(2616005)(71200400001)(478600001)(316002)(54906003)(64756008)(110136005)(66476007)(26005)(6506007)(99106002);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata: =?utf-8?B?SkMxZ0h2T1paOEZuVmQ5YnhFTXJBNHdseEVBQlFSb3dmTHdUcDJsT1lUYlFE?=
- =?utf-8?B?ZWt1Tng2WlFEemlIcDFxQy8wMk9oZ2tyYVdQdlNuTjRaRUN1NU5CWXo5MmE2?=
- =?utf-8?B?Tk1pV1pPb2JOL3Y0U2N1Y3NyNHFhd3dkb3Zhcm80TXVmdG9qaVNZL0pHYXJJ?=
- =?utf-8?B?cnYzQlZERnJmZklDdVFHZGY4YU0vQklBOExTQ000SlRlVldWWHc2KzEzcUhS?=
- =?utf-8?B?WW8rd1Q2cnh6ODNpSTI5L01KNEFXODFyMWU3Y2lacTZxRFNNOW1yaHRaZEVk?=
- =?utf-8?B?dGdDVWJpZkFIRXk3ZWlYRGJ5c0k1QnFqYVpJUnFZa1VRK1k1Vk1EM3hWTml4?=
- =?utf-8?B?OFNFa0crL2YweUxSNk5HV3Z4L20yNC9oYTQ4WWFMQm9SU0hzb2tQTk5RcVNi?=
- =?utf-8?B?SzFhODJIWG9yOEs1TDlnWmJVZWNuWnlwMWNVczFIRXc5RDZvOTI3VkxUdENl?=
- =?utf-8?B?T0l6YXJ1eXRBMi9hNGppTWZaSGZycWN6T1BBR25OdkZMMm4xRkxVMklGUXdT?=
- =?utf-8?B?N3V1ODk4dFZTbnNpOHk2dGFOdzJBaWxzSkJhTmtZNDFtYVZ6SWVmY3dQSEwz?=
- =?utf-8?B?V3JFOXhvblNhTXE0REgzVzNrb01PQWtKZEt4ZENNc2hPU0FhWkhJYWZXbnVS?=
- =?utf-8?B?cFZFTjA5Y2lFYUJ6VXF1UmtjSHp5eXdmeGhTNW41bkRPYXpQK0lDeU1TaTV2?=
- =?utf-8?B?Z2IwQndsMU40V0dhbVFkSSs4VjFIOFZUOXE2dWl6aW4rOGNvNzIxajhYT3JU?=
- =?utf-8?B?VElzQ0hZVUUxcTBoc2dRVms4K2ptMDBuaDB4Wk02U2c4U0ZodnhVa3ZrSnQ4?=
- =?utf-8?B?Zk9OdSttdVZoNlRGZTcrRmpJNGZNWTFnRXU1WXdyNFJkTUcrcmlNMjFFUTlG?=
- =?utf-8?B?cDh5NTQ3ZDVFZURta0dzZkdCZlZ2V2FydmtkUmRCZ2MrR1N0emFMRHJDQ0Nw?=
- =?utf-8?B?N0J5OHFqZVBFbTFhNXMzMm9nVExlZkdjd3JFTUFJVC9XemFNNndZUWNITHgv?=
- =?utf-8?B?TjZtVHBuM2U1b1NHbEZlbTBpdkNNVFpWenplVmdSdVVnSGNKdkoxa01zMFpa?=
- =?utf-8?B?T2JObXdJZVVxUzUvZ0NORG9kLzRjMXJmckhWTHJDL2Rna3BydkxrUzkwaE4r?=
- =?utf-8?B?YVFYVk1URTBRN05mSGlpSFByM3FYdHlMZDRSK2JYa0pCVmJoUHNQVWt5VWV1?=
- =?utf-8?B?b0p4TzNVVTFWc1pIUGJvbHNRTUFicjJiWnNHNEpPMWlFRWVKU2pVRENTZlZE?=
- =?utf-8?B?ZVQxbW9DLzJIWVpNcXdvSWxxMDRscFdZMnhWUmN4ZXdTSUJvQ0F0azZoRUJN?=
- =?utf-8?B?K1l2L0J2RHZLK0ROZkU5N3U2M0xjOG5IbG1lSVpMOHROYTRYRnhEQk9FaXFI?=
- =?utf-8?B?UXBRR3psWmpmNVBDeTZGTFNvaGVYNzdsb3pCZzBaaHFQaTlsWFBVUTdMRXFI?=
- =?utf-8?B?R2I3MkxPckk4QlE1QlVJRWVraGJkYUpEU3J2YzBlbUtyazAyMmpBL0tPeWx3?=
- =?utf-8?B?WFBHblRhb2tKVUpmL2ExUlFrbUtjdkVXVDVhcCsyRjF4elRRekVOczR6QTJB?=
- =?utf-8?B?MEFENmJnMlkzRWtpOGQzNDZ4d3hJVU4vTFJ0YUZQU0lwZUJwaEdOSW1sRHpU?=
- =?utf-8?B?dSt2RTdXcUozQmFJdG10MUQ2L2FMWmVGTEVCWDlGbmxQbUUrSGdiNk1kUkN1?=
- =?utf-8?B?T0c2SXBNcjk2a0V6ckpPYVdTclZOcXFWWnVTeHRlaGd1aEdxVFVDMlhkVWlX?=
- =?utf-8?Q?jeTcrGZSJDXYJKj+qxf6f0qFBxWEsrsh9llNncL?=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <F76996D151863248B7EEFBCB3E2807CE@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Sat, 27 Mar 2021 10:44:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52482 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229582AbhC0Oom (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Sat, 27 Mar 2021 10:44:42 -0400
+Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDCBFC0613B1
+        for <kernel-janitors@vger.kernel.org>; Sat, 27 Mar 2021 07:44:41 -0700 (PDT)
+Received: by mail-il1-x12d.google.com with SMTP id j11so7475250ilu.13
+        for <kernel-janitors@vger.kernel.org>; Sat, 27 Mar 2021 07:44:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BXtzfODoTNZz35d2SUT5fneEA+e5CsUTfnR6fOoZbTQ=;
+        b=dP0XHt8kftvgIuKnyjyto4iaY2A73qxMmyjLXoCp2FEgahARSrbNcVYdj0yJzPqLQn
+         xjlmmYRyXllTO5iumiOOreUxaqycOuRIrmQmdW4PF8Rkpae6kmayo8xHdq96pSI2FzXE
+         nzNguQdG912tQ6k0KTnpm9Eu2RFSKlB0JXKXLpIRAgChyPQBP8aLyn5w8azEbp5g6sYP
+         d6xwDWdRVedMx80ImxIQ0ekdbJ/Dj3clivDT7sb2w8S8ro8Qi+28KnSYxPRBM3t7ujiT
+         ss0XLoopGDLxLlmC9D2If8MFV5LtihuSaXvKeJ94n4lTi5C8WJ/nwAGVTrw9jaT4tGGK
+         NQhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BXtzfODoTNZz35d2SUT5fneEA+e5CsUTfnR6fOoZbTQ=;
+        b=ke6xusThzleWkCOPwpF3G00qHJ7K7V8SuEY+ht6og6T8zt8vli9/SERWJ4B6cjFKAW
+         tKN6ROZpJqkEmgT7iknpogJ6K7cqjVOB1C/vnsZuabCDnQLQwezpV4rEQHno3z+u+6MT
+         6VXjF14p/H9Jux37KWa2g5dn/FXoKUFARLbqIT6zOiXrm4vmomdB8tPTHEwBguy4202w
+         0zm3dAqEdOAaemV6JoA+94Dw8aPqRiN2oXh9IHVam8xgM5E2EvKr1p+LFNo8xshljCKx
+         a/BTPfRYkdjaOf6BEIh5cS0Ju553pDGbYalYXRE9dRpjfpgmvBNjKE5Hl36JITkxaOV5
+         MeAA==
+X-Gm-Message-State: AOAM530svCy8p2rucnTfaKgqjjr2Eu37GW2WSLrNOl/sJOYxYJKOcdQ2
+        GXXKMXeFx3HOCiIyBcUP26z2u9b2N9mb+MnLyEY=
+X-Google-Smtp-Source: ABdhPJyeoXNRGaZpD87mDIphQzar9i9dcf55V704fpQ38WqRChCjHfd5FQ5LksqW3js5uvdFp1AWHbEJCm9E+rBNuOU=
+X-Received: by 2002:a05:6e02:b2b:: with SMTP id e11mr5673970ilu.149.1616856281261;
+ Sat, 27 Mar 2021 07:44:41 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AM5PR04MB3137.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 789514d0-39ce-4805-d683-08d8f12e1dc2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Mar 2021 14:39:24.1743
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: B4KB7uKwR2MtZT1uq2FTDFxNm01bVAeYwmUVYQUFPCLTTcPoAAwe93jHhKNba128A+Ta8PxQWD4ixk2Qzg6P4w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB4359
+References: <20210327001736.180881-1-eantoranz@gmail.com> <20210327001736.180881-5-eantoranz@gmail.com>
+ <20210327081758.GJ1667@kadam>
+In-Reply-To: <20210327081758.GJ1667@kadam>
+From:   Edmundo Carmona Antoranz <eantoranz@gmail.com>
+Date:   Sat, 27 Mar 2021 08:44:29 -0600
+Message-ID: <CAOc6etZaqnDXU4dgBmx_qd8iwpmEjDhs=7JnLuCUFxs65=TRHQ@mail.gmail.com>
+Subject: Re: [PATCH -next 5/6] staging: rtl8723bs: mark some variables as __maybe_unused
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Marco Cesati <marcocesati@gmail.com>,
+        Ross Schmidt <ross.schm.dev@gmail.com>, fabioaiuto83@gmail.com,
+        linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-SGksDQpPbiBUdWUsIDIwMjEtMDMtMjMgYXQgMTE6MjkgKzAwMDAsICd3MDAzODU3NDEgd3JvdGU6
-DQo+IEZyb206IFdlaSBZb25nanVuIDx3ZWl5b25nanVuMUBodWF3ZWkuY29tPg0KPiANCj4gSW4g
-Y2FzZSBvZiBlcnJvciwgdGhlIGZ1bmN0aW9uIGRldmljZV9saW5rX2FkZCgpIHJldHVybnMgTlVM
-TA0KPiBwb2ludGVyIG5vdCBFUlJfUFRSKCkuIFRoZSBJU19FUlIoKSB0ZXN0IGluIHRoZSByZXR1
-cm4gdmFsdWUNCj4gY2hlY2sgc2hvdWxkIGJlIHJlcGxhY2VkIHdpdGggTlVMTCB0ZXN0Lg0KPiAN
-Cj4gRml4ZXM6IDJkYjE2YzZlZDcyYyAoIm1lZGlhOiBpbXgtanBlZzogQWRkIFY0TDIgZHJpdmVy
-IGZvciBpLk1YOCBKUEVHDQo+IEVuY29kZXIvRGVjb2RlciIpDQo+IFJlcG9ydGVkLWJ5OiBIdWxr
-IFJvYm90IDxodWxrY2lAaHVhd2VpLmNvbT4NCj4gU2lnbmVkLW9mZi1ieTogV2VpIFlvbmdqdW4g
-PHdlaXlvbmdqdW4xQGh1YXdlaS5jb20+DQo+IC0tLQ0KPiAgZHJpdmVycy9tZWRpYS9wbGF0Zm9y
-bS9pbXgtanBlZy9teGMtanBlZy5jIHwgNCArKy0tDQo+ICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNl
-cnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbWVk
-aWEvcGxhdGZvcm0vaW14LWpwZWcvbXhjLWpwZWcuYw0KPiBiL2RyaXZlcnMvbWVkaWEvcGxhdGZv
-cm0vaW14LWpwZWcvbXhjLWpwZWcuYw0KPiBpbmRleCAyZDI5NTU4ZjE4NjQuLjk1MDllYjlkOTM5
-YSAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS9pbXgtanBlZy9teGMtanBl
-Zy5jDQo+ICsrKyBiL2RyaXZlcnMvbWVkaWEvcGxhdGZvcm0vaW14LWpwZWcvbXhjLWpwZWcuYw0K
-PiBAQCAtMTk0Myw4ICsxOTQzLDggQEAgc3RhdGljIGludCBteGNfanBlZ19hdHRhY2hfcG1fZG9t
-YWlucyhzdHJ1Y3QNCj4gbXhjX2pwZWdfZGV2ICpqcGVnKQ0KPiAgCQkJCQkJICAgRExfRkxBR19T
-VEFURUxFU1MgfA0KPiAgCQkJCQkJICAgRExfRkxBR19QTV9SVU5USU1FIHwNCj4gIAkJCQkJCSAg
-IERMX0ZMQUdfUlBNX0FDVElWRSk7DQo+IC0JCWlmIChJU19FUlIoanBlZy0+cGRfbGlua1tpXSkp
-IHsNCj4gLQkJCXJldCA9IFBUUl9FUlIoanBlZy0+cGRfbGlua1tpXSk7DQo+ICsJCWlmICghanBl
-Zy0+cGRfbGlua1tpXSkgew0KPiArCQkJcmV0ID0gLUVJTlZBTDsNCj4gIAkJCWdvdG8gZmFpbDsN
-Cj4gIAkJfQ0KPiAgCX0NCj4gDQpUaGFua3MgZm9yIHRoZSBwYXRjaC4NCg0KUmV2aWV3ZWQtYnk6
-IE1pcmVsYSBSYWJ1bGVhIDxtaXJlbGEucmFidWxlYUBueHAuY29tPg0KDQpSZWdhcmRzLA0KTWly
-ZWxhDQo=
+On Sat, Mar 27, 2021 at 2:18 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+>
+> This is just papering over badness.  Leave the warnings as is so someone
+> will notice it and fix it properly in the future.
+>
+
+Interesting.... I wonder what the right way to handle this would be
+then. Is it a more appropriate solution defining the debug macros
+_only_ if we are debugging and then also use #ifs in code to define
+the variables and handle them?
+
+So, currently, in rtw_debug.h, we have this (lines ~134-140):
+
+#define RT_TRACE(_Comp, _Level, Fmt) do {} while (0)
+#define RT_PRINT_DATA(_Comp, _Level, _TitleString, _HexData,
+_HexDataLen) do {} while (0)
+
+#define DBG_871X(x, ...) do {} while (0)
+#define MSG_8192C(x, ...) do {} while (0)
+#define DBG_8192C(x, ...) do {} while (0)
+#define DBG_871X_LEVEL(x, ...) do {} while (0)
+
+
+And then, a bit further down the road in the same file:
+#ifdef DEBUG
+#if defined(_dbgdump)
+    #undef DBG_871X
+    #define DBG_871X(...)     do {\
+        _dbgdump(DRIVER_PREFIX __VA_ARGS__);\
+    } while (0)
+
+    #undef MSG_8192C
+    #define MSG_8192C(...)     do {\
+        _dbgdump(DRIVER_PREFIX __VA_ARGS__);\
+    } while (0)
+
+    #undef DBG_8192C
+    #define DBG_8192C(...)     do {\
+        _dbgdump(DRIVER_PREFIX __VA_ARGS__);\
+    } while (0)
+#endif /* defined(_dbgdump) */
+#endif /* DEBUG */
+
+If we remove the definition of the macros that were around line 134,
+we need to make sure that those macros are not used in code if the
+same conditions are not met... so, it might mean that we control if we
+define the variables we are using... one of the examples from this
+patch:
+
+
+    unsigned char *p, *pos, *wpa_ie;
+#ifdef DEBUG && defined(_dbgdump)
+    unsigned char * reassoc;
+#endif
+    unsigned char WMM_IE[] = {0x00, 0x50, 0xf2, 0x02, 0x00, 0x01};
+.
+.
+.
+    if (frame_type == WIFI_ASSOCREQ) {
+#ifdef DEBUG && defined(_dbgdump)
+        reassoc = 0;
+#endif
+        ie_offset = _ASOCREQ_IE_OFFSET_;
+    } else { /*  WIFI_REASSOCREQ */
+#ifdef DEBUG && defined(_dbgdump)
+        reassoc = 1;
+#endif
+        ie_offset = _REASOCREQ_IE_OFFSET_;
+    }
+
+    if (pkt_len < sizeof(struct ieee80211_hdr_3addr) + ie_offset) {
+#ifdef DEBUG && defined(_dbgdump)
+        DBG_871X("handle_assoc(reassoc =%d) - too short payload (len =%lu)"
+             "\n", reassoc, (unsigned long)pkt_len);
+#endif
+        return _FAIL;
+    }
+
+> regards,
+> dan carpenter
+>
