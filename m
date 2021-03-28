@@ -7,80 +7,93 @@ X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C832CC433DB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED57AC433C1
 	for <kernel-janitors@archiver.kernel.org>; Sun, 28 Mar 2021 12:34:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7D35F6188B
+	by mail.kernel.org (Postfix) with ESMTP id B6E5B61968
 	for <kernel-janitors@archiver.kernel.org>; Sun, 28 Mar 2021 12:34:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229950AbhC1Mdo (ORCPT
+        id S230092AbhC1Mdo (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
         Sun, 28 Mar 2021 08:33:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49810 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:49752 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229577AbhC1MdZ (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 28 Mar 2021 08:33:25 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id DECE56192D;
-        Sun, 28 Mar 2021 12:33:17 +0000 (UTC)
+        id S230437AbhC1MdB (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Sun, 28 Mar 2021 08:33:01 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 8EB066188B;
+        Sun, 28 Mar 2021 12:32:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1616934798;
-        bh=pdQRUpZ1Av2+lJEcYllJX2Tydj9H56i/I6uC16wmCWs=;
+        s=korg; t=1616934773;
+        bh=1tW6EgqS3GwDVKr8tt00RSBb137BBQAM9LEQ4HLlngY=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QPOchp5lrSIPyjWUct7Dwia853m6sPQVQPTG1uXD55+6irAdV65MiWvwEMtff52S2
-         Tf7K9Q2A3FPj27EGGz4QfAlLZCJpCfTDv/FI0YVQeHJEcfDaQmCXJ7wsW2wvPF7ZOg
-         jVlFqIpi8n3FoMdDHS0nCxzcTtSLL+9qzJGE1/Sg=
-Date:   Sun, 28 Mar 2021 14:33:15 +0200
+        b=nFKg8wiJWhDItAcrr89mIT9h+RLLL7khcM8WQdUADbmT0SzCeUkNZsoFmhLih3HHf
+         PUeN874b2vVtJqVpQYAmJRzINpkmwFYpy/YSaxyYz6XSG6lXBOKEfI0T3ewMVr3b2T
+         6k+/h3H60OVcrTK1cnRQPj72ArS47Ou29YP+NEEY=
+Date:   Sun, 28 Mar 2021 14:32:50 +0200
 From:   Greg KH <gregkh@linuxfoundation.org>
 To:     Edmundo Carmona Antoranz <eantoranz@gmail.com>
 Cc:     marcocesati@gmail.com, dan.carpenter@oracle.com,
         ross.schm.dev@gmail.com, fabioaiuto83@gmail.com,
         linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH -next 2/6] staging: rtl8723bs: mlme: remove unused
- variables
-Message-ID: <YGB3i1qYdvJtGpIz@kroah.com>
+Subject: Re: [PATCH -next 1/6] staging: rtl8723bs: ieee80211: remove unused
+ variable
+Message-ID: <YGB3chK5o9+udlWt@kroah.com>
 References: <20210327001736.180881-1-eantoranz@gmail.com>
- <20210327001736.180881-2-eantoranz@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210327001736.180881-2-eantoranz@gmail.com>
+In-Reply-To: <20210327001736.180881-1-eantoranz@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Mar 26, 2021 at 06:17:32PM -0600, Edmundo Carmona Antoranz wrote:
-> The variable *pframe in rtw_build_wmm_ie_ht() and rtw_restructure_ht_ie()
-> is set but never read. Both instances are getting removed.
+On Fri, Mar 26, 2021 at 06:17:31PM -0600, Edmundo Carmona Antoranz wrote:
+> sec_idx in rtw_get_sec_ie() is set to 0 and never changes value. Also,
+> it is only used for debugging messages. Therefore the variable is
+> removed and the debug messages are adjusted. Adjusting debug messages
+> forced style changes. Taking the opportunity to adjust indentation
+> of those sections of the code.
 > 
-> Removing these warning:
+> Removing this warning:
 > 
-> drivers/staging/rtl8723bs/core/rtw_mlme.c:2560:6: warning: variable ‘pframe’ set but not used [-Wunused-but-set-variable]
-> drivers/staging/rtl8723bs/core/rtw_mlme.c:2576:21: warning: variable ‘pframe’ set but not used [-Wunused-but-set-variable]
+> drivers/staging/rtl8723bs/core/rtw_ieee80211.c:657:15: warning: variable ‘sec_idx’ set but not used [-Wunused-but-set-variable]
 > 
 > Signed-off-by: Edmundo Carmona Antoranz <eantoranz@gmail.com>
 > ---
->  drivers/staging/rtl8723bs/core/rtw_mlme.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
+>  .../staging/rtl8723bs/core/rtw_ieee80211.c    | 43 +++++++++++--------
+>  1 file changed, 25 insertions(+), 18 deletions(-)
 > 
-> diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme.c b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-> index 29d4b7493784..83fbd415d766 100644
-> --- a/drivers/staging/rtl8723bs/core/rtw_mlme.c
-> +++ b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-> @@ -2555,12 +2555,11 @@ void rtw_build_wmm_ie_ht(struct adapter *padapter, u8 *out_ie, uint *pout_len)
->  {
->  	unsigned char WMM_IE[] = {0x00, 0x50, 0xf2, 0x02, 0x00, 0x01, 0x00};
->  	int out_len;
-> -	u8 *pframe;
+> diff --git a/drivers/staging/rtl8723bs/core/rtw_ieee80211.c b/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
+> index cccbea555a32..ec065d924fbb 100644
+> --- a/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
+> +++ b/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
+> @@ -654,7 +654,7 @@ int rtw_get_wapi_ie(u8 *in_ie, uint in_len, u8 *wapi_ie, u16 *wapi_len)
 >  
->  	if (padapter->mlmepriv.qospriv.qos_option == 0) {
->  		out_len = *pout_len;
-> -		pframe = rtw_set_ie(out_ie+out_len, WLAN_EID_VENDOR_SPECIFIC,
-> -							_WMM_IE_Length_, WMM_IE, pout_len);
-> +		rtw_set_ie(out_ie + out_len, WLAN_EID_VENDOR_SPECIFIC,
-> +			   _WMM_IE_Length_, WMM_IE, pout_len);
+>  void rtw_get_sec_ie(u8 *in_ie, uint in_len, u8 *rsn_ie, u16 *rsn_len, u8 *wpa_ie, u16 *wpa_len)
+>  {
+> -	u8 authmode, sec_idx, i;
+> +	u8 authmode, i;
+>  	u8 wpa_oui[4] = {0x0, 0x50, 0xf2, 0x01};
+>  	uint	cnt;
+>  
+> @@ -662,37 +662,44 @@ void rtw_get_sec_ie(u8 *in_ie, uint in_len, u8 *rsn_ie, u16 *rsn_len, u8 *wpa_ie
+>  
+>  	cnt = (_TIMESTAMP_ + _BEACON_ITERVAL_ + _CAPABILITY_);
+>  
+> -	sec_idx = 0;
+> -
+>  	while (cnt < in_len) {
+>  		authmode = in_ie[cnt];
+>  
+>  		if ((authmode == WLAN_EID_VENDOR_SPECIFIC) && (!memcmp(&in_ie[cnt+2], &wpa_oui[0], 4))) {
+> -				RT_TRACE(_module_rtl871x_mlme_c_, _drv_info_, ("\n rtw_get_wpa_ie: sec_idx =%d in_ie[cnt+1]+2 =%d\n", sec_idx, in_ie[cnt+1]+2));
+> +			RT_TRACE(_module_rtl871x_mlme_c_, _drv_info_,
+> +				 ("\n rtw_get_wpa_ie: in_ie[cnt+1]+2 =%d\n", in_ie[cnt + 1] + 2));
 
-Why not check the error value?
+These "RT_TRACE" things need to all be removed or use the real in-kernel
+api instead.  Please do not hide the problems with them by trying to
+clean them up.
 
 thanks,
 
