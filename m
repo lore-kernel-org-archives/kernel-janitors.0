@@ -7,287 +7,62 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD73BC433C1
-	for <kernel-janitors@archiver.kernel.org>; Sun, 28 Mar 2021 17:03:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AB77C433E1
+	for <kernel-janitors@archiver.kernel.org>; Sun, 28 Mar 2021 17:53:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8EA9F6196B
-	for <kernel-janitors@archiver.kernel.org>; Sun, 28 Mar 2021 17:03:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49BB0619A0
+	for <kernel-janitors@archiver.kernel.org>; Sun, 28 Mar 2021 17:53:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231342AbhC1RC2 (ORCPT
+        id S230451AbhC1Rwh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 28 Mar 2021 13:02:28 -0400
-Received: from smtp04.smtpout.orange.fr ([80.12.242.126]:54504 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231355AbhC1RCY (ORCPT
+        Sun, 28 Mar 2021 13:52:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60190 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230144AbhC1Rwc (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 28 Mar 2021 13:02:24 -0400
-Received: from localhost.localdomain ([90.126.11.170])
-        by mwinf5d59 with ME
-        id lt2L2400H3g7mfN03t2MTN; Sun, 28 Mar 2021 19:02:22 +0200
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 28 Mar 2021 19:02:22 +0200
-X-ME-IP: 90.126.11.170
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     ezequiel@vanguardiasur.com.ar, mchehab@kernel.org
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] media: tw686x: switch from 'pci_' to 'dma_' API
-Date:   Sun, 28 Mar 2021 19:02:18 +0200
-Message-Id: <c5b0537f3471d16279ad6e36b2e446ecf2ea20dd.1616950871.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.27.0
+        Sun, 28 Mar 2021 13:52:32 -0400
+Received: from viti.kaiser.cx (viti.kaiser.cx [IPv6:2a01:238:43fe:e600:cd0c:bd4a:7a3:8e9f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EABBC061756;
+        Sun, 28 Mar 2021 10:52:28 -0700 (PDT)
+Received: from ipservice-092-217-065-008.092.217.pools.vodafone-ip.de ([92.217.65.8] helo=martin-debian-2.paytec.ch)
+        by viti.kaiser.cx with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <martin@kaiser.cx>)
+        id 1lQZaH-00032y-CK; Sun, 28 Mar 2021 19:52:21 +0200
+From:   Martin Kaiser <martin@kaiser.cx>
+To:     Larry Finger <Larry.Finger@lwfinger.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Martin Kaiser <martin@kaiser.cx>
+Subject: [PATCH] staging: rtl8188eu: (trivial) remove a duplicate comment
+Date:   Sun, 28 Mar 2021 19:52:00 +0200
+Message-Id: <20210328175200.27069-1-martin@kaiser.cx>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The wrappers in include/linux/pci-dma-compat.h should go away.
+Keep the one that shows the wakeup capability.
 
-The patch has been generated with the coccinelle script below and has been
-hand modified to replace GFP_ with a correct flag.
-It has been compile tested.
-
-When memory is allocated in 'tw686x_audio_dma_alloc()' (tw686x-audio.c)
-GFP_KERNEL can be used because it is only called from a probe function
-and no spinlock is taken in the between.
-The call chain is:
-  tw686x_probe					(tw686x-core.c)
-    --> tw686x_audio_init					(tw686x-audio.c)
-      --> tw686x_audio_dma_alloc					(tw686x-audio.c)
-
-When memory is allocated in 'tw686x_memcpy_dma_alloc()' and in
-'tw686x_sg_dma_alloc()' (tw686x-video.c) GFP_KERNEL can be used because
-these functions are .alloc functions from a tw686x_dma_ops structure.
-
-
-@@
-@@
--    PCI_DMA_BIDIRECTIONAL
-+    DMA_BIDIRECTIONAL
-
-@@
-@@
--    PCI_DMA_TODEVICE
-+    DMA_TO_DEVICE
-
-@@
-@@
--    PCI_DMA_FROMDEVICE
-+    DMA_FROM_DEVICE
-
-@@
-@@
--    PCI_DMA_NONE
-+    DMA_NONE
-
-@@
-expression e1, e2, e3;
-@@
--    pci_alloc_consistent(e1, e2, e3)
-+    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
-
-@@
-expression e1, e2, e3;
-@@
--    pci_zalloc_consistent(e1, e2, e3)
-+    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_free_consistent(e1, e2, e3, e4)
-+    dma_free_coherent(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_map_single(e1, e2, e3, e4)
-+    dma_map_single(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_unmap_single(e1, e2, e3, e4)
-+    dma_unmap_single(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4, e5;
-@@
--    pci_map_page(e1, e2, e3, e4, e5)
-+    dma_map_page(&e1->dev, e2, e3, e4, e5)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_unmap_page(e1, e2, e3, e4)
-+    dma_unmap_page(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_map_sg(e1, e2, e3, e4)
-+    dma_map_sg(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_unmap_sg(e1, e2, e3, e4)
-+    dma_unmap_sg(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_dma_sync_single_for_cpu(e1, e2, e3, e4)
-+    dma_sync_single_for_cpu(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_dma_sync_single_for_device(e1, e2, e3, e4)
-+    dma_sync_single_for_device(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_dma_sync_sg_for_cpu(e1, e2, e3, e4)
-+    dma_sync_sg_for_cpu(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_dma_sync_sg_for_device(e1, e2, e3, e4)
-+    dma_sync_sg_for_device(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2;
-@@
--    pci_dma_mapping_error(e1, e2)
-+    dma_mapping_error(&e1->dev, e2)
-
-@@
-expression e1, e2;
-@@
--    pci_set_dma_mask(e1, e2)
-+    dma_set_mask(&e1->dev, e2)
-
-@@
-expression e1, e2;
-@@
--    pci_set_consistent_dma_mask(e1, e2)
-+    dma_set_coherent_mask(&e1->dev, e2)
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Martin Kaiser <martin@kaiser.cx>
 ---
-If needed, see post from Christoph Hellwig on the kernel-janitors ML:
-   https://marc.info/?l=kernel-janitors&m=158745678307186&w=4
----
- drivers/media/pci/tw686x/tw686x-audio.c | 13 +++++++------
- drivers/media/pci/tw686x/tw686x-core.c  |  2 +-
- drivers/media/pci/tw686x/tw686x-video.c | 17 ++++++++---------
- 3 files changed, 16 insertions(+), 16 deletions(-)
+ drivers/staging/rtl8188eu/os_dep/usb_intf.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/media/pci/tw686x/tw686x-audio.c b/drivers/media/pci/tw686x/tw686x-audio.c
-index 54144e23a487..74cba1368cfa 100644
---- a/drivers/media/pci/tw686x/tw686x-audio.c
-+++ b/drivers/media/pci/tw686x/tw686x-audio.c
-@@ -300,9 +300,9 @@ static void tw686x_audio_dma_free(struct tw686x_dev *dev,
- 	for (pb = 0; pb < 2; pb++) {
- 		if (!ac->dma_descs[pb].virt)
- 			continue;
--		pci_free_consistent(dev->pci_dev, ac->dma_descs[pb].size,
--				    ac->dma_descs[pb].virt,
--				    ac->dma_descs[pb].phys);
-+		dma_free_coherent(&dev->pci_dev->dev, ac->dma_descs[pb].size,
-+				  ac->dma_descs[pb].virt,
-+				  ac->dma_descs[pb].phys);
- 		ac->dma_descs[pb].virt = NULL;
+diff --git a/drivers/staging/rtl8188eu/os_dep/usb_intf.c b/drivers/staging/rtl8188eu/os_dep/usb_intf.c
+index 91a3d34a1050..e18f1fff59ca 100644
+--- a/drivers/staging/rtl8188eu/os_dep/usb_intf.c
++++ b/drivers/staging/rtl8188eu/os_dep/usb_intf.c
+@@ -377,7 +377,6 @@ static struct adapter *rtw_usb_if1_init(struct dvobj_priv *dvobj,
+ 		dvobj->pusbdev->do_remote_wakeup = 1;
+ 		pusb_intf->needs_remote_wakeup = 1;
+ 		device_init_wakeup(&pusb_intf->dev, 1);
+-		pr_debug("\n  padapter->pwrctrlpriv.bSupportRemoteWakeup~~~~~~\n");
+ 		pr_debug("\n  padapter->pwrctrlpriv.bSupportRemoteWakeup~~~[%d]~~~\n",
+ 			 device_may_wakeup(&pusb_intf->dev));
  	}
- }
-@@ -313,7 +313,7 @@ static int tw686x_audio_dma_alloc(struct tw686x_dev *dev,
- 	int pb;
- 
- 	/*
--	 * In the memcpy DMA mode we allocate a consistent buffer
-+	 * In the memcpy DMA mode we allocate a coherent buffer
- 	 * and use it for the DMA capture. Otherwise, DMA
- 	 * acts on the ALSA buffers as received in pcm_prepare.
- 	 */
-@@ -324,8 +324,9 @@ static int tw686x_audio_dma_alloc(struct tw686x_dev *dev,
- 		u32 reg = pb ? ADMA_B_ADDR[ac->ch] : ADMA_P_ADDR[ac->ch];
- 		void *virt;
- 
--		virt = pci_alloc_consistent(dev->pci_dev, AUDIO_DMA_SIZE_MAX,
--					    &ac->dma_descs[pb].phys);
-+		virt = dma_alloc_coherent(&dev->pci_dev->dev,
-+					  AUDIO_DMA_SIZE_MAX,
-+					  &ac->dma_descs[pb].phys, GFP_KERNEL);
- 		if (!virt) {
- 			dev_err(&dev->pci_dev->dev,
- 				"dma%d: unable to allocate audio DMA %s-buffer\n",
-diff --git a/drivers/media/pci/tw686x/tw686x-core.c b/drivers/media/pci/tw686x/tw686x-core.c
-index 74ae4f0dcee7..6676e069b515 100644
---- a/drivers/media/pci/tw686x/tw686x-core.c
-+++ b/drivers/media/pci/tw686x/tw686x-core.c
-@@ -276,7 +276,7 @@ static int tw686x_probe(struct pci_dev *pci_dev,
- 	}
- 
- 	pci_set_master(pci_dev);
--	err = pci_set_dma_mask(pci_dev, DMA_BIT_MASK(32));
-+	err = dma_set_mask(&pci_dev->dev, DMA_BIT_MASK(32));
- 	if (err) {
- 		dev_err(&pci_dev->dev, "32-bit PCI DMA not supported\n");
- 		err = -EIO;
-diff --git a/drivers/media/pci/tw686x/tw686x-video.c b/drivers/media/pci/tw686x/tw686x-video.c
-index 1ced2b0ddb24..b227e9e78ebd 100644
---- a/drivers/media/pci/tw686x/tw686x-video.c
-+++ b/drivers/media/pci/tw686x/tw686x-video.c
-@@ -92,8 +92,8 @@ static void tw686x_memcpy_dma_free(struct tw686x_video_channel *vc,
- 	}
- 
- 	if (desc->virt) {
--		pci_free_consistent(dev->pci_dev, desc->size,
--				    desc->virt, desc->phys);
-+		dma_free_coherent(&dev->pci_dev->dev, desc->size, desc->virt,
-+				  desc->phys);
- 		desc->virt = NULL;
- 	}
- }
-@@ -110,8 +110,8 @@ static int tw686x_memcpy_dma_alloc(struct tw686x_video_channel *vc,
- 	     "Allocating buffer but previous still here\n");
- 
- 	len = (vc->width * vc->height * vc->format->depth) >> 3;
--	virt = pci_alloc_consistent(dev->pci_dev, len,
--				    &vc->dma_descs[pb].phys);
-+	virt = dma_alloc_coherent(&dev->pci_dev->dev, len,
-+				  &vc->dma_descs[pb].phys, GFP_KERNEL);
- 	if (!virt) {
- 		v4l2_err(&dev->v4l2_dev,
- 			 "dma%d: unable to allocate %s-buffer\n",
-@@ -258,8 +258,8 @@ static void tw686x_sg_dma_free(struct tw686x_video_channel *vc,
- 	struct tw686x_dev *dev = vc->dev;
- 
- 	if (desc->size) {
--		pci_free_consistent(dev->pci_dev, desc->size,
--				    desc->virt, desc->phys);
-+		dma_free_coherent(&dev->pci_dev->dev, desc->size, desc->virt,
-+				  desc->phys);
- 		desc->virt = NULL;
- 	}
- 
-@@ -276,9 +276,8 @@ static int tw686x_sg_dma_alloc(struct tw686x_video_channel *vc,
- 	void *virt;
- 
- 	if (desc->size) {
--
--		virt = pci_alloc_consistent(dev->pci_dev, desc->size,
--					    &desc->phys);
-+		virt = dma_alloc_coherent(&dev->pci_dev->dev, desc->size,
-+					  &desc->phys, GFP_KERNEL);
- 		if (!virt) {
- 			v4l2_err(&dev->v4l2_dev,
- 				 "dma%d: unable to allocate %s-buffer\n",
 -- 
-2.27.0
+2.20.1
 
