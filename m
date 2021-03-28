@@ -4,84 +4,273 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07C7DC433E1
-	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Mar 2021 23:34:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38F2EC433E1
+	for <kernel-janitors@archiver.kernel.org>; Sun, 28 Mar 2021 08:09:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D155F61999
-	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Mar 2021 23:34:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 121036198F
+	for <kernel-janitors@archiver.kernel.org>; Sun, 28 Mar 2021 08:09:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231210AbhC0X2O (ORCPT
+        id S231216AbhC1IIp (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 27 Mar 2021 19:28:14 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:48440 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230512AbhC0X1q (ORCPT
+        Sun, 28 Mar 2021 04:08:45 -0400
+Received: from out05.smtpout.orange.fr ([193.252.22.214]:36693 "EHLO
+        out.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230280AbhC1II1 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 27 Mar 2021 19:27:46 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1lQILI-0006kl-8g; Sat, 27 Mar 2021 23:27:44 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Johan Hovold <johan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] USB: serial: iuu_phoenix: remove redundant variable 'error'
-Date:   Sat, 27 Mar 2021 23:27:44 +0000
-Message-Id: <20210327232744.26237-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.30.2
+        Sun, 28 Mar 2021 04:08:27 -0400
+Received: from localhost.localdomain ([90.126.11.170])
+        by mwinf5d19 with ME
+        id lk8M2400E3g7mfN03k8NsB; Sun, 28 Mar 2021 10:08:24 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 28 Mar 2021 10:08:24 +0200
+X-ME-IP: 90.126.11.170
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
+        m.szyprowski@samsung.com, brad@nextdimension.cc,
+        vaibhavgupta40@gmail.com, daniel.lee.kruse@protonmail.com,
+        tglx@linutronix.de
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] media: cx23885: switch from 'pci_' to 'dma_' API
+Date:   Sun, 28 Mar 2021 10:08:19 +0200
+Message-Id: <7870058f8c345153e53a9ceef1c49c1f313c3c3f.1616918733.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The wrappers in include/linux/pci-dma-compat.h should go away.
 
-The variable error is initialized to 0 and is set to 1 this
-value is never read as it is on an immediate return path. The
-only read of error is to check it is 0 and this check is always
-true at that point of the code. The variable is redundant and
-can be removed.
+The patch has been generated with the coccinelle script below and has been
+hand modified to replace GFP_ with a correct flag.
+It has been compile tested.
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+When memory is allocated in 'cx23885_risc_buffer()' GFP_KERNEL can be used
+because this function is only called from a vb2_ops buf_prepare function.
+The call chain is:
+  cx23885_video_qops.buf_prepare        (cx23885-video.c)
+    --> buffer_prepare                  (cx23885-video.c)
+      --> cx23885_risc_buffer
+
+When memory is allocated in 'cx23885_risc_databuffer()' GFP_KERNEL can be
+used because this function is only called from a function that already uses
+GFP_KERNEL or from a vb2_ops buf_prepare
+function.
+The call chains are:
+  snd_cx23885_hw_params                 (cx23885-alsa.c) --> use GFP_KERNEL
+    --> cx23885_risc_databuffer
+
+  cx23885_qops.buffer_prepare           (cx23885-417.c)
+     or
+  dvb_qops.buffer_prepare               (cx23885-dvb.c)
+    --> cx23885_buf_prepare
+      --> cx23885_risc_databuffer
+
+When memory is allocated in 'cx23885_risc_vbibuffer()' GFP_KERNEL can be
+used because this function is only called from a vb2_ops buf_prepare
+function.
+The call chains are:
+  cx23885_vbi_qops.buffer_prepare       (cx23885-vbi.c)
+    --> cx23885_risc_vbibuffer
+
+
+@@
+@@
+-    PCI_DMA_BIDIRECTIONAL
++    DMA_BIDIRECTIONAL
+
+@@
+@@
+-    PCI_DMA_TODEVICE
++    DMA_TO_DEVICE
+
+@@
+@@
+-    PCI_DMA_FROMDEVICE
++    DMA_FROM_DEVICE
+
+@@
+@@
+-    PCI_DMA_NONE
++    DMA_NONE
+
+@@
+expression e1, e2, e3;
+@@
+-    pci_alloc_consistent(e1, e2, e3)
++    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
+
+@@
+expression e1, e2, e3;
+@@
+-    pci_zalloc_consistent(e1, e2, e3)
++    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_free_consistent(e1, e2, e3, e4)
++    dma_free_coherent(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_map_single(e1, e2, e3, e4)
++    dma_map_single(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_single(e1, e2, e3, e4)
++    dma_unmap_single(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4, e5;
+@@
+-    pci_map_page(e1, e2, e3, e4, e5)
++    dma_map_page(&e1->dev, e2, e3, e4, e5)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_page(e1, e2, e3, e4)
++    dma_unmap_page(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_map_sg(e1, e2, e3, e4)
++    dma_map_sg(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_sg(e1, e2, e3, e4)
++    dma_unmap_sg(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_single_for_cpu(e1, e2, e3, e4)
++    dma_sync_single_for_cpu(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_single_for_device(e1, e2, e3, e4)
++    dma_sync_single_for_device(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_sg_for_cpu(e1, e2, e3, e4)
++    dma_sync_sg_for_cpu(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_sg_for_device(e1, e2, e3, e4)
++    dma_sync_sg_for_device(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2;
+@@
+-    pci_dma_mapping_error(e1, e2)
++    dma_mapping_error(&e1->dev, e2)
+
+@@
+expression e1, e2;
+@@
+-    pci_set_dma_mask(e1, e2)
++    dma_set_mask(&e1->dev, e2)
+
+@@
+expression e1, e2;
+@@
+-    pci_set_consistent_dma_mask(e1, e2)
++    dma_set_coherent_mask(&e1->dev, e2)
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/usb/serial/iuu_phoenix.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+If needed, see post from Christoph Hellwig on the kernel-janitors ML:
+   https://marc.info/?l=kernel-janitors&m=158745678307186&w=4
+---
+ drivers/media/pci/cx23885/cx23885-alsa.c |  2 +-
+ drivers/media/pci/cx23885/cx23885-core.c | 13 ++++++++-----
+ 2 files changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/usb/serial/iuu_phoenix.c b/drivers/usb/serial/iuu_phoenix.c
-index 093afd67a664..19753611e7b0 100644
---- a/drivers/usb/serial/iuu_phoenix.c
-+++ b/drivers/usb/serial/iuu_phoenix.c
-@@ -643,7 +643,6 @@ static void iuu_uart_read_callback(struct urb *urb)
- 	struct iuu_private *priv = usb_get_serial_port_data(port);
- 	unsigned long flags;
- 	int status = urb->status;
--	int error = 0;
- 	int len = 0;
- 	unsigned char *data = urb->transfer_buffer;
- 	priv->poll++;
-@@ -660,12 +659,11 @@ static void iuu_uart_read_callback(struct urb *urb)
- 	if (urb->actual_length > 1) {
- 		dev_dbg(&port->dev, "%s - urb->actual_length = %i\n", __func__,
- 		    urb->actual_length);
--		error = 1;
- 		return;
- 	}
- 	/* if len > 0 call readbuf */
+diff --git a/drivers/media/pci/cx23885/cx23885-alsa.c b/drivers/media/pci/cx23885/cx23885-alsa.c
+index 13689c5dd47f..ab14d35214aa 100644
+--- a/drivers/media/pci/cx23885/cx23885-alsa.c
++++ b/drivers/media/pci/cx23885/cx23885-alsa.c
+@@ -266,7 +266,7 @@ static int dsp_buffer_free(struct cx23885_audio_dev *chip)
+ 	cx23885_alsa_dma_unmap(chip);
+ 	cx23885_alsa_dma_free(chip->buf);
+ 	risc = &chip->buf->risc;
+-	pci_free_consistent(chip->pci, risc->size, risc->cpu, risc->dma);
++	dma_free_coherent(&chip->pci->dev, risc->size, risc->cpu, risc->dma);
+ 	kfree(chip->buf);
  
--	if (len > 0 && error == 0) {
-+	if (len > 0) {
- 		dev_dbg(&port->dev, "%s - call read buf - len to read is %i\n",
- 			__func__, len);
- 		status = iuu_read_buf(port, len);
+ 	chip->buf = NULL;
+diff --git a/drivers/media/pci/cx23885/cx23885-core.c b/drivers/media/pci/cx23885/cx23885-core.c
+index d0ca260ecf70..f8f2ff3b00c3 100644
+--- a/drivers/media/pci/cx23885/cx23885-core.c
++++ b/drivers/media/pci/cx23885/cx23885-core.c
+@@ -1218,7 +1218,8 @@ int cx23885_risc_buffer(struct pci_dev *pci, struct cx23885_riscmem *risc,
+ 		/ PAGE_SIZE + lines);
+ 	instructions += 5;
+ 	risc->size = instructions * 12;
+-	risc->cpu = pci_alloc_consistent(pci, risc->size, &risc->dma);
++	risc->cpu = dma_alloc_coherent(&pci->dev, risc->size, &risc->dma,
++				       GFP_KERNEL);
+ 	if (risc->cpu == NULL)
+ 		return -ENOMEM;
+ 
+@@ -1255,7 +1256,8 @@ int cx23885_risc_databuffer(struct pci_dev *pci,
+ 	instructions += 4;
+ 
+ 	risc->size = instructions * 12;
+-	risc->cpu = pci_alloc_consistent(pci, risc->size, &risc->dma);
++	risc->cpu = dma_alloc_coherent(&pci->dev, risc->size, &risc->dma,
++				       GFP_KERNEL);
+ 	if (risc->cpu == NULL)
+ 		return -ENOMEM;
+ 
+@@ -1293,7 +1295,8 @@ int cx23885_risc_vbibuffer(struct pci_dev *pci, struct cx23885_riscmem *risc,
+ 		/ PAGE_SIZE + lines);
+ 	instructions += 5;
+ 	risc->size = instructions * 12;
+-	risc->cpu = pci_alloc_consistent(pci, risc->size, &risc->dma);
++	risc->cpu = dma_alloc_coherent(&pci->dev, risc->size, &risc->dma,
++				       GFP_KERNEL);
+ 	if (risc->cpu == NULL)
+ 		return -ENOMEM;
+ 	/* write risc instructions */
+@@ -1322,7 +1325,7 @@ void cx23885_free_buffer(struct cx23885_dev *dev, struct cx23885_buffer *buf)
+ {
+ 	struct cx23885_riscmem *risc = &buf->risc;
+ 
+-	pci_free_consistent(dev->pci, risc->size, risc->cpu, risc->dma);
++	dma_free_coherent(&dev->pci->dev, risc->size, risc->cpu, risc->dma);
+ }
+ 
+ static void cx23885_tsport_reg_dump(struct cx23885_tsport *port)
+@@ -2159,7 +2162,7 @@ static int cx23885_initdev(struct pci_dev *pci_dev,
+ 		(unsigned long long)pci_resource_start(pci_dev, 0));
+ 
+ 	pci_set_master(pci_dev);
+-	err = pci_set_dma_mask(pci_dev, 0xffffffff);
++	err = dma_set_mask(&pci_dev->dev, 0xffffffff);
+ 	if (err) {
+ 		pr_err("%s/0: Oops: no 32bit PCI DMA ???\n", dev->name);
+ 		goto fail_ctrl;
 -- 
-2.30.2
+2.27.0
 
