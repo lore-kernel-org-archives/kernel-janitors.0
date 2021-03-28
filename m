@@ -5,36 +5,36 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B0E6C433C1
-	for <kernel-janitors@archiver.kernel.org>; Sun, 28 Mar 2021 21:38:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFD76C433E0
+	for <kernel-janitors@archiver.kernel.org>; Sun, 28 Mar 2021 21:47:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 37E666194A
-	for <kernel-janitors@archiver.kernel.org>; Sun, 28 Mar 2021 21:38:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F4EC6194B
+	for <kernel-janitors@archiver.kernel.org>; Sun, 28 Mar 2021 21:47:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231372AbhC1Vhx (ORCPT
+        id S231142AbhC1VrI (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 28 Mar 2021 17:37:53 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:41798 "EHLO
+        Sun, 28 Mar 2021 17:47:08 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:41964 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230184AbhC1Vhe (ORCPT
+        with ESMTP id S231521AbhC1Vqw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 28 Mar 2021 17:37:34 -0400
+        Sun, 28 Mar 2021 17:46:52 -0400
 Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <colin.king@canonical.com>)
-        id 1lQd6A-0005bJ-3e; Sun, 28 Mar 2021 21:37:30 +0000
+        id 1lQdFA-0006bn-8y; Sun, 28 Mar 2021 21:46:48 +0000
 From:   Colin King <colin.king@canonical.com>
-To:     Johannes Berg <johannes@sipsolutions.net>,
+To:     Bryan Whitehead <bryan.whitehead@microchip.com>,
+        UNGLinuxDriver@microchip.com,
         "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] mac80211: remove redundant assignment of variable result
-Date:   Sun, 28 Mar 2021 22:37:29 +0100
-Message-Id: <20210328213729.65819-1-colin.king@canonical.com>
+Subject: [PATCH] lan743x: remove redundant intializations of pointers adapter and phydev
+Date:   Sun, 28 Mar 2021 22:46:47 +0100
+Message-Id: <20210328214647.66220-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -45,29 +45,31 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The variable result is being assigned a value that is never
-read and it is being updated later with a new value. The
+The pointers adapter and phydev are being initialized with values that
+are never read and are being updated later with a new value. The
 initialization is redundant and can be removed.
 
 Addresses-Coverity: ("Unused value")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- net/mac80211/tx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/microchip/lan743x_ethtool.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/net/mac80211/tx.c b/net/mac80211/tx.c
-index 5d06de61047a..2fba9db56e47 100644
---- a/net/mac80211/tx.c
-+++ b/net/mac80211/tx.c
-@@ -1684,7 +1684,7 @@ static bool __ieee80211_tx(struct ieee80211_local *local,
- 	struct ieee80211_sub_if_data *sdata;
- 	struct ieee80211_vif *vif;
- 	struct sk_buff *skb;
--	bool result = true;
-+	bool result;
- 	__le16 fc;
+diff --git a/drivers/net/ethernet/microchip/lan743x_ethtool.c b/drivers/net/ethernet/microchip/lan743x_ethtool.c
+index c5de8f46cdd3..91a755efe2e6 100644
+--- a/drivers/net/ethernet/microchip/lan743x_ethtool.c
++++ b/drivers/net/ethernet/microchip/lan743x_ethtool.c
+@@ -730,8 +730,8 @@ static int lan743x_ethtool_get_eee(struct net_device *netdev,
+ static int lan743x_ethtool_set_eee(struct net_device *netdev,
+ 				   struct ethtool_eee *eee)
+ {
+-	struct lan743x_adapter *adapter = netdev_priv(netdev);
+-	struct phy_device *phydev = NULL;
++	struct lan743x_adapter *adapter;
++	struct phy_device *phydev;
+ 	u32 buf = 0;
+ 	int ret = 0;
  
- 	if (WARN_ON(skb_queue_empty(skbs)))
 -- 
 2.30.2
 
