@@ -7,72 +7,70 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8918FC433DB
-	for <kernel-janitors@archiver.kernel.org>; Mon, 29 Mar 2021 13:48:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 670ECC433DB
+	for <kernel-janitors@archiver.kernel.org>; Mon, 29 Mar 2021 13:58:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5F5D86191C
-	for <kernel-janitors@archiver.kernel.org>; Mon, 29 Mar 2021 13:48:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35B766191B
+	for <kernel-janitors@archiver.kernel.org>; Mon, 29 Mar 2021 13:58:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231979AbhC2NsO (ORCPT
+        id S229502AbhC2N5t (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 29 Mar 2021 09:48:14 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:36521 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232048AbhC2NsI (ORCPT
+        Mon, 29 Mar 2021 09:57:49 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:14187 "EHLO
+        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230319AbhC2N5W (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 29 Mar 2021 09:48:08 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1lQsBL-0005rm-1s; Mon, 29 Mar 2021 13:43:51 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] i915: Fix uninitialized variable err
-Date:   Mon, 29 Mar 2021 14:43:50 +0100
-Message-Id: <20210329134350.94536-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.30.2
+        Mon, 29 Mar 2021 09:57:22 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4F8DbR0bRRzmbfb;
+        Mon, 29 Mar 2021 21:54:43 +0800 (CST)
+Received: from localhost.localdomain (10.175.102.38) by
+ DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
+ 14.3.498.0; Mon, 29 Mar 2021 21:57:10 +0800
+From:   Wei Yongjun <weiyongjun1@huawei.com>
+To:     <weiyongjun1@huawei.com>, Al Cooper <alcooperx@gmail.com>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>
+CC:     <linux-serial@vger.kernel.org>,
+        <bcm-kernel-feedback-list@broadcom.com>,
+        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH -next] serial: 8250_bcm7271: Fix return value check in brcmuart_probe()
+Date:   Mon, 29 Mar 2021 14:06:59 +0000
+Message-ID: <20210329140659.1832950-1-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.102.38]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+In case of error, the function devm_ioremap() returns NULL
+pointer not ERR_PTR(). The IS_ERR() test in the return value
+check should be replaced with NULL test.
 
-In the case where !sg_dma_len(sgl) breaks out of the do-while loop
-on the first iteration, error variable err has not been assigned
-any value and will contain garbage. Fix this by ensuring err is
-initialized to zero.
-
-Addresses-Coverity: ("Uninitialized scalar variable")
-Fixes: 204302d90503 ("i915: fix remap_io_sg to verify the pgprot")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 41a469482de2 ("serial: 8250: Add new 8250-core based Broadcom STB driver")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/gpu/drm/i915/i915_mm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/tty/serial/8250/8250_bcm7271.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/i915/i915_mm.c b/drivers/gpu/drm/i915/i915_mm.c
-index 4c8cd08c672d..25576fa73ff0 100644
---- a/drivers/gpu/drm/i915/i915_mm.c
-+++ b/drivers/gpu/drm/i915/i915_mm.c
-@@ -47,7 +47,7 @@ int remap_io_sg(struct vm_area_struct *vma,
- 		struct scatterlist *sgl, resource_size_t iobase)
- {
- 	unsigned long pfn, len, remapped = 0;
--	int err;
-+	int err = 0;
- 
- 	/* We rely on prevalidation of the io-mapping to skip track_pfn(). */
- 	GEM_BUG_ON((vma->vm_flags & EXPECTED_FLAGS) != EXPECTED_FLAGS);
--- 
-2.30.2
+diff --git a/drivers/tty/serial/8250/8250_bcm7271.c b/drivers/tty/serial/8250/8250_bcm7271.c
+index 63883185fccd..a4f3f6301d4f 100644
+--- a/drivers/tty/serial/8250/8250_bcm7271.c
++++ b/drivers/tty/serial/8250/8250_bcm7271.c
+@@ -974,8 +974,8 @@ static int brcmuart_probe(struct platform_device *pdev)
+ 			break;
+ 		priv->regs[x] =	devm_ioremap(dev, regs->start,
+ 					     resource_size(regs));
+-		if (IS_ERR(priv->regs[x]))
+-			return PTR_ERR(priv->regs[x]);
++		if (!priv->regs[x])
++			return -ENOMEM;
+ 		if (x == REGS_8250) {
+ 			mapbase = regs->start;
+ 			membase = priv->regs[x];
 
