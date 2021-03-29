@@ -2,108 +2,77 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 904FFC433E0
-	for <kernel-janitors@archiver.kernel.org>; Mon, 29 Mar 2021 15:06:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98FA9C433DB
+	for <kernel-janitors@archiver.kernel.org>; Mon, 29 Mar 2021 17:08:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5CA2D61970
-	for <kernel-janitors@archiver.kernel.org>; Mon, 29 Mar 2021 15:06:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6120C6196E
+	for <kernel-janitors@archiver.kernel.org>; Mon, 29 Mar 2021 17:08:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229822AbhC2PGY (ORCPT
+        id S229515AbhC2RIB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 29 Mar 2021 11:06:24 -0400
-Received: from mga07.intel.com ([134.134.136.100]:46836 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230286AbhC2PGP (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 29 Mar 2021 11:06:15 -0400
-IronPort-SDR: PKtnDDvBDJR80BaLe4+MJ6AfmDrhrYmiFhUAKzJpTHxJhiRrIKjaiJ055WWX8178VmpeEuRsO+
- MT6mf0sFVxaw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9938"; a="255562071"
-X-IronPort-AV: E=Sophos;i="5.81,288,1610438400"; 
-   d="scan'208";a="255562071"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Mar 2021 08:06:13 -0700
-IronPort-SDR: 545zvjtY9dG69WL9Ut7H/wMK+vDtjZmeAt2GKqPonMpv8o8JoGWp7DhNbafFxL0OqS+jLIAsQz
- asQHcfWxs7fg==
-X-IronPort-AV: E=Sophos;i="5.81,288,1610438400"; 
-   d="scan'208";a="417704531"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Mar 2021 08:06:10 -0700
-Received: by lahna (sSMTP sendmail emulation); Mon, 29 Mar 2021 18:06:07 +0300
-Date:   Mon, 29 Mar 2021 18:06:07 +0300
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Jason Gunthorpe <jgg@nvidia.com>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Kranthi Kuntala <kranthi.kuntala@intel.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 1/2] thunderbolt: Fix a leak in tb_retimer_add()
-Message-ID: <20210329150607.GJ2542@lahna.fi.intel.com>
-References: <YGFulvAa5Kz6HTsd@mwanda>
- <20210329130220.GY2356281@nvidia.com>
- <20210329144323.GI2542@lahna.fi.intel.com>
- <20210329145405.GD2356281@nvidia.com>
+        Mon, 29 Mar 2021 13:08:01 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:43417 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230298AbhC2RHj (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 29 Mar 2021 13:07:39 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lQvMQ-0005B7-AN; Mon, 29 Mar 2021 17:07:30 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Nicholas Piggin <npiggin@gmail.com>, linux-mm@kvack.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] mm/vmalloc: Fix read of pointer area after it has been free'd
+Date:   Mon, 29 Mar 2021 18:07:30 +0100
+Message-Id: <20210329170730.121943-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210329145405.GD2356281@nvidia.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Mar 29, 2021 at 11:54:05AM -0300, Jason Gunthorpe wrote:
-> On Mon, Mar 29, 2021 at 05:43:23PM +0300, Mika Westerberg wrote:
-> 
-> > The nvm is a separate (physical Linux) device that gets added under this
-> > one. It cannot be added before AFAICT.
-> 
-> Hum, yes, but then it is odd that a parent is holding sysfs attributes
-> that refer to a child.
+From: Colin Ian King <colin.king@canonical.com>
 
-Well the child (NVMem) comes from completely different subsystem that
-does not have a concept of "authentication" or anythin similar. This is
-what we add on top. We actually exposer two NVMem devices under each
-retimer: one that is the current active one, and then the one that is
-used to write the new firmware image.
+Currently the memory pointed to by area is being freed by the
+free_vm_area call and then area->nr_pages is referencing the
+free'd object. Fix this swapping the order of the warn_alloc
+message and the free.
 
-> > The code you refer actually looks like this:
-> > 
-> > static ssize_t nvm_authenticate_store(struct device *dev,
-> >  	struct device_attribute *attr, const char *buf, size_t count)
-> > {
-> > 	...
-> >         if (!mutex_trylock(&rt->tb->lock)) {
-> >                 ret = restart_syscall();
-> >                 goto exit_rpm;
-> >         }
-> 
-> Is that lock held during tb_retimer_nvm_add() I looked for a bit and
-> didn't find something. So someplace more than 4 call site above
-> mandatory locking is being held?
+Addresses-Coverity: ("Read from pointer after free")
+Fixes: 014ccf9b888d ("mm/vmalloc: improve allocation failure error messages")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ mm/vmalloc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Yes it is. It is called from tb_scan_port() where that lock is held.
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index b73e4e715e0d..7936405749e4 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -2790,11 +2790,11 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
+ 	}
+ 
+ 	if (!pages) {
+-		free_vm_area(area);
+ 		warn_alloc(gfp_mask, NULL,
+ 			   "vmalloc size %lu allocation failure: "
+ 			   "page array size %lu allocation failed",
+ 			   area->nr_pages * PAGE_SIZE, array_size);
++		free_vm_area(area);
+ 		return NULL;
+ 	}
+ 
+-- 
+2.30.2
 
-> static void tb_retimer_remove(struct tb_retimer *rt)
-> {
-> 	dev_info(&rt->dev, "retimer disconnected\n");
-> 	tb_nvm_free(rt->nvm);
-> 	device_unregister(&rt->dev);
-> }
-> 
-> Here too?
-
-Yes.
-
-> And this is why it is all trylock because it deadlocks with unregister
-> otherwise?
-
-I tried to explain it in 09f11b6c99fe ("thunderbolt: Take domain lock in
-switch sysfs attribute callbacks"), except that at that time we did not
-have retimers exposed but the same applies here too.
