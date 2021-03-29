@@ -2,75 +2,79 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 670ECC433DB
-	for <kernel-janitors@archiver.kernel.org>; Mon, 29 Mar 2021 13:58:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55EEAC433C1
+	for <kernel-janitors@archiver.kernel.org>; Mon, 29 Mar 2021 14:15:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 35B766191B
-	for <kernel-janitors@archiver.kernel.org>; Mon, 29 Mar 2021 13:58:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F059E6192F
+	for <kernel-janitors@archiver.kernel.org>; Mon, 29 Mar 2021 14:15:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229502AbhC2N5t (ORCPT
+        id S230247AbhC2OOz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 29 Mar 2021 09:57:49 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:14187 "EHLO
-        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230319AbhC2N5W (ORCPT
+        Mon, 29 Mar 2021 10:14:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42300 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230488AbhC2OOp (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 29 Mar 2021 09:57:22 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
-        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4F8DbR0bRRzmbfb;
-        Mon, 29 Mar 2021 21:54:43 +0800 (CST)
-Received: from localhost.localdomain (10.175.102.38) by
- DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
- 14.3.498.0; Mon, 29 Mar 2021 21:57:10 +0800
-From:   Wei Yongjun <weiyongjun1@huawei.com>
-To:     <weiyongjun1@huawei.com>, Al Cooper <alcooperx@gmail.com>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>
-CC:     <linux-serial@vger.kernel.org>,
-        <bcm-kernel-feedback-list@broadcom.com>,
-        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH -next] serial: 8250_bcm7271: Fix return value check in brcmuart_probe()
-Date:   Mon, 29 Mar 2021 14:06:59 +0000
-Message-ID: <20210329140659.1832950-1-weiyongjun1@huawei.com>
-X-Mailer: git-send-email 2.25.1
+        Mon, 29 Mar 2021 10:14:45 -0400
+Received: from mail-vs1-xe2e.google.com (mail-vs1-xe2e.google.com [IPv6:2607:f8b0:4864:20::e2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52890C061574
+        for <kernel-janitors@vger.kernel.org>; Mon, 29 Mar 2021 07:14:45 -0700 (PDT)
+Received: by mail-vs1-xe2e.google.com with SMTP id l13so6422421vst.8
+        for <kernel-janitors@vger.kernel.org>; Mon, 29 Mar 2021 07:14:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9FAOlOuUwiYBAUiqr+s35YBAOEyEXtqLSoM/MErzdBM=;
+        b=Icdl1OFpALPb1uL2jd9S2RjXoYKdtv9CtYeKUNLZFsa9Ox8M3IsUupWowYEX++4T2x
+         fviwxKR/SCPC8tLrPrHjL88s7sU4Aqi+zXzCbMkVjOey97Nb/MbV8sWFUB8Tg6Z1bze+
+         rpm5W61vCEorOshbr3m06WcE89p4o7Cg0ST3c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9FAOlOuUwiYBAUiqr+s35YBAOEyEXtqLSoM/MErzdBM=;
+        b=fdaryYY4y1XfjJ5Se8zCMoM6AsdJJ3dDOBDblQ92imaXnyTaWJvx1jw+J1AzunykNk
+         VdC8/CrOf3H+9vKw3GXrttFVuY45JmVQrpEPVJ3+LNy1fAnQ+GGgtj1FKecqwoMVLpEn
+         SIK7n5ISoH73hVv1RYlQ8FIi5EGlQWQCKQqV1TZDJRN+9WsqiQBlOm/mgT4eAl9PKKS0
+         KXWGAxlJWZCjSvrnGYBtmaJmO/W64dXAPzO9kmSFi3ajPVqPcFAWudALZVT8BzGhnYEQ
+         jYG0DRJw0DgeECxpEIu/ldPi1wyaHLoY0tR9TZMMPcrjtUtSIHiOW5kzwgHtQNUWoT4/
+         lkeg==
+X-Gm-Message-State: AOAM532OgzpsQjXnkHYC2+AJnVbic7H8Xcbz6pB3ptI4OaKMGw0wTtPB
+        AdKOmSAJKrp/xUxD+kv38ojlW3aBI6asZTdnzo8tGg==
+X-Google-Smtp-Source: ABdhPJxtNB7YKlHTnESe5LN5qnWdUUOtrY2Ko2VRyrY9C+PqHQWfch+yKKkdB2pD20n0/8w0WW97EXCwtELNZHzaIFo=
+X-Received: by 2002:a67:8793:: with SMTP id j141mr14585247vsd.7.1617027284475;
+ Mon, 29 Mar 2021 07:14:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.102.38]
-X-CFilter-Loop: Reflected
+References: <YFnq5wHUQgnw4Rga@mwanda>
+In-Reply-To: <YFnq5wHUQgnw4Rga@mwanda>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 29 Mar 2021 16:14:33 +0200
+Message-ID: <CAJfpegshpuwp7+SFUX_x6599w+M9vrH2Xn5xRMrRZ6pYf9iUFg@mail.gmail.com>
+Subject: Re: [PATCH] ovl: fix missing revert_creds() on error path
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-In case of error, the function devm_ioremap() returns NULL
-pointer not ERR_PTR(). The IS_ERR() test in the return value
-check should be replaced with NULL test.
+On Tue, Mar 23, 2021 at 2:19 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+>
+> Smatch complains about missing that the ovl_override_creds() doesn't
+> have a matching revert_creds() if the dentry is disconnected.  Fix this
+> by moving the ovl_override_creds() until after the disconnected check.
+>
+> Fixes: aa3ff3c152ff ("ovl: copy up of disconnected dentries")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Fixes: 41a469482de2 ("serial: 8250: Add new 8250-core based Broadcom STB driver")
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/tty/serial/8250/8250_bcm7271.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Thanks, applied.
 
-diff --git a/drivers/tty/serial/8250/8250_bcm7271.c b/drivers/tty/serial/8250/8250_bcm7271.c
-index 63883185fccd..a4f3f6301d4f 100644
---- a/drivers/tty/serial/8250/8250_bcm7271.c
-+++ b/drivers/tty/serial/8250/8250_bcm7271.c
-@@ -974,8 +974,8 @@ static int brcmuart_probe(struct platform_device *pdev)
- 			break;
- 		priv->regs[x] =	devm_ioremap(dev, regs->start,
- 					     resource_size(regs));
--		if (IS_ERR(priv->regs[x]))
--			return PTR_ERR(priv->regs[x]);
-+		if (!priv->regs[x])
-+			return -ENOMEM;
- 		if (x == REGS_8250) {
- 			mapbase = regs->start;
- 			membase = priv->regs[x];
-
+Miklos
