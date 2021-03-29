@@ -4,48 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AFF3C433E0
-	for <kernel-janitors@archiver.kernel.org>; Mon, 29 Mar 2021 01:01:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D8F4C433C1
+	for <kernel-janitors@archiver.kernel.org>; Mon, 29 Mar 2021 01:11:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 48C516193A
-	for <kernel-janitors@archiver.kernel.org>; Mon, 29 Mar 2021 01:01:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFA0A6193A
+	for <kernel-janitors@archiver.kernel.org>; Mon, 29 Mar 2021 01:11:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231675AbhC2BAs (ORCPT
+        id S231237AbhC2BK1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 28 Mar 2021 21:00:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46074 "EHLO mail.kernel.org"
+        Sun, 28 Mar 2021 21:10:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47814 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231640AbhC2BAS (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 28 Mar 2021 21:00:18 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 74A3C6195F;
-        Mon, 29 Mar 2021 01:00:11 +0000 (UTC)
+        id S229861AbhC2BKK (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Sun, 28 Mar 2021 21:10:10 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPS id B544361878;
+        Mon, 29 Mar 2021 01:10:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1616979611;
-        bh=0g2W3XZM+hVSI30lbBAHhkb1BfpORb1FMZpfAKttWSI=;
+        s=k20201202; t=1616980209;
+        bh=7ZpGTszKHp/HTdmdSRY3sy5MYneNTgNrftTkGvrMlh0=;
         h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=lyHLyKRSWVPsBSM0yuiuGzKc0uTelkPujTKedHTUHtDjEwACt3PG+ghL9qZKCXPdl
-         JaIjVmaW9OyoAEBG+Nd3ShCbn5IGCXBqVDLv/BN0dINyCq1QONPEdtwArt36FXwdra
-         K0fPjuLt8Gok5H81EEjTYMtzcukEcWOy19qig95zvdGYHIVBhm/fA65XBefqEeuduJ
-         XpjS4EOAsMH6lC5ZPpQkucnE3fI6xHNL2Vk+/AvCg/XuARYhBHdfRwn9vTPYF8JFoP
-         aNyvxGMgm0oOxsj7lEyFR7INvEhnmSz+evAg8xiowZMRxcMETAHvfk0e6F+uYE54yq
-         bem42WxFHQQBQ==
+        b=e8g2Tgs5GUYKG4u+HXmBRnNreEUAsZtIOydjHygAkt2UGkP6d8SFB/FGEi9gfhCIr
+         jRSLPFhXZmZQ/Y8NCFWwHTEtk0SZ8GNfiJH1oymg/gng7VDPVZeGpq/Y2Z4Rlxfa8k
+         Ld0hEx21DRFLs6UL//ZOpkva2EyeXhKWrYWMBeOX0H/H9K2l4QyOxU+Z+zKMBvcS3C
+         SlD52tdRP2xT0wAHmczljWxvaIfysM68OdlWIqr/1s+jNd+gJ3K7h5mK+zXgGKMHMn
+         /skOy/vFOQ34k5oR5p11V+LkOjFS7YesxNNGP5poVpEa1y6Nr80x04e4ABBUaDnix2
+         fDPmbj7kuBlGg==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] drivers: net: smc91x: remove redundant initialization of
- pointer gpio
+Subject: Re: [PATCH net-next] mt76: mt7615: remove redundant dev_err call in
+ mt7622_wmac_probe()
 From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <161697961143.31306.10566372729407399026.git-patchwork-notify@kernel.org>
-Date:   Mon, 29 Mar 2021 01:00:11 +0000
-References: <20210326192847.623376-1-colin.king@canonical.com>
-In-Reply-To: <20210326192847.623376-1-colin.king@canonical.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     nico@fluxnic.net, davem@davemloft.net, kuba@kernel.org,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+Message-Id: <161698020967.2631.17916389081654027279.git-patchwork-notify@kernel.org>
+Date:   Mon, 29 Mar 2021 01:10:09 +0000
+References: <1616838978-6420-1-git-send-email-huangguobin4@huawei.com>
+In-Reply-To: <1616838978-6420-1-git-send-email-huangguobin4@huawei.com>
+To:     Huang Guobin <huangguobin4@huawei.com>
+Cc:     nbd@nbd.name, lorenzo.bianconi83@gmail.com, kvalo@codeaurora.org,
+        kuba@kernel.org, matthias.bgg@gmail.com,
+        elfring@users.sourceforge.net, davem@davemloft.net,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -54,21 +57,21 @@ Hello:
 
 This patch was applied to netdev/net-next.git (refs/heads/master):
 
-On Fri, 26 Mar 2021 19:28:47 +0000 you wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On Sat, 27 Mar 2021 17:56:18 +0800 you wrote:
+> From: Guobin Huang <huangguobin4@huawei.com>
 > 
-> The pointer gpio is being initialized with a value that is
-> never read and it is being updated later with a new value. The
-> initialization is redundant and can be removed.
+> There is a error message within devm_ioremap_resource
+> already, so remove the dev_err call to avoid redundant
+> error message.
 > 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Guobin Huang <huangguobin4@huawei.com>
 > 
 > [...]
 
 Here is the summary with links:
-  - drivers: net: smc91x: remove redundant initialization of pointer gpio
-    https://git.kernel.org/netdev/net-next/c/214037a146ff
+  - [net-next] mt76: mt7615: remove redundant dev_err call in mt7622_wmac_probe()
+    https://git.kernel.org/netdev/net-next/c/8e99ca3fdb31
 
 You are awesome, thank you!
 --
