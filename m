@@ -2,80 +2,117 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D8F4C433C1
-	for <kernel-janitors@archiver.kernel.org>; Mon, 29 Mar 2021 01:11:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E237C433E0
+	for <kernel-janitors@archiver.kernel.org>; Mon, 29 Mar 2021 05:57:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CFA0A6193A
-	for <kernel-janitors@archiver.kernel.org>; Mon, 29 Mar 2021 01:11:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66F5961964
+	for <kernel-janitors@archiver.kernel.org>; Mon, 29 Mar 2021 05:57:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231237AbhC2BK1 (ORCPT
+        id S230233AbhC2F4h (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 28 Mar 2021 21:10:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47814 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229861AbhC2BKK (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 28 Mar 2021 21:10:10 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id B544361878;
-        Mon, 29 Mar 2021 01:10:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1616980209;
-        bh=7ZpGTszKHp/HTdmdSRY3sy5MYneNTgNrftTkGvrMlh0=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=e8g2Tgs5GUYKG4u+HXmBRnNreEUAsZtIOydjHygAkt2UGkP6d8SFB/FGEi9gfhCIr
-         jRSLPFhXZmZQ/Y8NCFWwHTEtk0SZ8GNfiJH1oymg/gng7VDPVZeGpq/Y2Z4Rlxfa8k
-         Ld0hEx21DRFLs6UL//ZOpkva2EyeXhKWrYWMBeOX0H/H9K2l4QyOxU+Z+zKMBvcS3C
-         SlD52tdRP2xT0wAHmczljWxvaIfysM68OdlWIqr/1s+jNd+gJ3K7h5mK+zXgGKMHMn
-         /skOy/vFOQ34k5oR5p11V+LkOjFS7YesxNNGP5poVpEa1y6Nr80x04e4ABBUaDnix2
-         fDPmbj7kuBlGg==
-Content-Type: text/plain; charset="utf-8"
+        Mon, 29 Mar 2021 01:56:37 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:59584 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230280AbhC2F4T (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 29 Mar 2021 01:56:19 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12T5s3gM107989;
+        Mon, 29 Mar 2021 05:55:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=3edm75IWAc+zuu0G5xQYVx5YuLw3zNP6q0YuJG4uQug=;
+ b=Ofu9Z1Gr3IsReMY6uL5trKOQoo9stje/0+IYwfyji+xPndR3dTk410vMDc25rQyiSXhA
+ W8Iu5lE2bIFTiIxdLwTUtPMLhwfmF2eWmwvYVY0cyWko+gDxR41SOok/1otqKPng/I3t
+ JJpZaJDOEOxVqdvJAJVbDHwe5G3PZdyblkHgviqzTeMdAxV2yCvZ/odxwZ0Zw8cCmD+G
+ XkHA6bHUJGdVoqVC8Xcssn1qyFUoEfAc2Gie/mXiaUI8/hDIFZUHRRK5xtkjY7FlbkFb
+ R3++D3CzsK+73FIcKt3nvbxvbU847z6LW7B0SzRHZWLvFpJ2DKu/5Ti3VVbwyFUEfAtT HQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 37hvnm2avg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 29 Mar 2021 05:55:47 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12T5shs3037071;
+        Mon, 29 Mar 2021 05:55:46 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 37jekwqejg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 29 Mar 2021 05:55:46 +0000
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 12T5thHZ024472;
+        Mon, 29 Mar 2021 05:55:43 GMT
+Received: from kadam (/102.36.221.92)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Sun, 28 Mar 2021 22:55:42 -0700
+Date:   Mon, 29 Mar 2021 08:55:33 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Song Liu <song@kernel.org>
+Cc:     Colin King <colin.king@canonical.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>,
+        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] bpf: remove redundant assignment of variable id
+Message-ID: <20210329055532.GH1717@kadam>
+References: <20210326194348.623782-1-colin.king@canonical.com>
+ <CAPhsuW4K1RB-kz-Wu32eOFYE=ZwQr7Wr20zuEhhtzK_hr9YGUw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] mt76: mt7615: remove redundant dev_err call in
- mt7622_wmac_probe()
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <161698020967.2631.17916389081654027279.git-patchwork-notify@kernel.org>
-Date:   Mon, 29 Mar 2021 01:10:09 +0000
-References: <1616838978-6420-1-git-send-email-huangguobin4@huawei.com>
-In-Reply-To: <1616838978-6420-1-git-send-email-huangguobin4@huawei.com>
-To:     Huang Guobin <huangguobin4@huawei.com>
-Cc:     nbd@nbd.name, lorenzo.bianconi83@gmail.com, kvalo@codeaurora.org,
-        kuba@kernel.org, matthias.bgg@gmail.com,
-        elfring@users.sourceforge.net, davem@davemloft.net,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPhsuW4K1RB-kz-Wu32eOFYE=ZwQr7Wr20zuEhhtzK_hr9YGUw@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-IMR: 1
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9937 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 malwarescore=0 mlxscore=0
+ phishscore=0 suspectscore=0 mlxlogscore=999 adultscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2103250000
+ definitions=main-2103290047
+X-Proofpoint-GUID: TmF5Z4G1P92__m9qvJwvO_Itb1MrUHLQ
+X-Proofpoint-ORIG-GUID: TmF5Z4G1P92__m9qvJwvO_Itb1MrUHLQ
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9937 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 impostorscore=0 mlxlogscore=999
+ clxscore=1011 priorityscore=1501 phishscore=0 spamscore=0 bulkscore=0
+ lowpriorityscore=0 suspectscore=0 mlxscore=0 malwarescore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2103250000
+ definitions=main-2103290047
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
-
-This patch was applied to netdev/net-next.git (refs/heads/master):
-
-On Sat, 27 Mar 2021 17:56:18 +0800 you wrote:
-> From: Guobin Huang <huangguobin4@huawei.com>
+On Fri, Mar 26, 2021 at 01:18:36PM -0700, Song Liu wrote:
+> On Fri, Mar 26, 2021 at 12:45 PM Colin King <colin.king@canonical.com> wrote:
+> >
+> > From: Colin Ian King <colin.king@canonical.com>
+> >
+> > The variable id is being assigned a value that is never
+> > read, the assignment is redundant and can be removed.
+> >
+> > Addresses-Coverity: ("Unused value")
+> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > 
-> There is a error message within devm_ioremap_resource
-> already, so remove the dev_err call to avoid redundant
-> error message.
+> Acked-by: Song Liu <songliubraving@fb.com>
 > 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Guobin Huang <huangguobin4@huawei.com>
+> For future patches, please prefix it as [PATCH bpf-next] for
+> [PATCH bpf], based on which tree the patch should apply to.
 > 
-> [...]
 
-Here is the summary with links:
-  - [net-next] mt76: mt7615: remove redundant dev_err call in mt7622_wmac_probe()
-    https://git.kernel.org/netdev/net-next/c/8e99ca3fdb31
+You can keep asking us to do that but it's never going to happen... :P
+I do this for networking but it's a massive pain in the butt and I get
+it wrong 20% of the time.
 
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+regards,
+dan carpenter
 
