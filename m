@@ -2,84 +2,83 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A166C433C1
-	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 10:30:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE5ADC433C1
+	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 12:18:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B0B3B61987
-	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 10:30:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A19406192E
+	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 12:18:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234936AbhCaK3h (ORCPT
+        id S235321AbhCaMR7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 31 Mar 2021 06:29:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38640 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234666AbhCaK3T (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 31 Mar 2021 06:29:19 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D449E60C3D;
-        Wed, 31 Mar 2021 10:29:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1617186559;
-        bh=aTogiyWjaMiJg208imNhC5f3kuX3jCk6wK/jS2Fdq4Q=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VEUIZekY8pMbJqwgwsM1hTq6732F91r63dDVHv49xMIKTNLT42DOHVptSZNTGmitM
-         o2vn8d3MWUdCRZ7Cx4HlDykAjW/Et9uN4tbqSl727uzJGUxjh8MXMQ8rwwstE1/Ogy
-         aWJzvzVyZqp5cT2Ktl2o5EblmV6q2qGSEv5iBSnM=
-Date:   Wed, 31 Mar 2021 12:29:16 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Xu Jia <xujia39@huawei.com>
-Cc:     Ross Schmidt <ross.schm.dev@gmail.com>,
-        Amarjargal Gundjalam <amarjargal16@gmail.com>,
-        Jason Yan <yanaijie@huawei.com>, linux-staging@lists.linux.dev,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH -next] staging: rtl8723bs: core: Remove unused variable
- 'res'
-Message-ID: <YGRO/JzEvCgt9I0M@kroah.com>
-References: <1617178363-34193-1-git-send-email-xujia39@huawei.com>
+        Wed, 31 Mar 2021 08:17:59 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:15413 "EHLO
+        szxga06-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235019AbhCaMRd (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 31 Mar 2021 08:17:33 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
+        by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4F9QJN6b5nzlWsM;
+        Wed, 31 Mar 2021 20:15:48 +0800 (CST)
+Received: from localhost.localdomain (10.175.102.38) by
+ DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
+ 14.3.498.0; Wed, 31 Mar 2021 20:17:23 +0800
+From:   Wei Yongjun <weiyongjun1@huawei.com>
+To:     <weiyongjun1@huawei.com>, Peng Fan <peng.fan@nxp.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        "Mathieu Poirier" <mathieu.poirier@linaro.org>
+CC:     <linux-remoteproc@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH -next] remoteproc: imx_rproc: fix build error without CONFIG_MAILBOX
+Date:   Wed, 31 Mar 2021 12:27:09 +0000
+Message-ID: <20210331122709.3935521-1-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1617178363-34193-1-git-send-email-xujia39@huawei.com>
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.102.38]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Mar 31, 2021 at 04:12:43PM +0800, Xu Jia wrote:
-> The variable 'res' is not used in function, this commit
-> remove it to fix the warning.
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Xu Jia <xujia39@huawei.com>
-> ---
->  drivers/staging/rtl8723bs/core/rtw_sta_mgt.c | 6 +-----
->  1 file changed, 1 insertion(+), 5 deletions(-)
-> 
-> diff --git a/drivers/staging/rtl8723bs/core/rtw_sta_mgt.c b/drivers/staging/rtl8723bs/core/rtw_sta_mgt.c
-> index f96dd0b40e04..00b83919a9a3 100644
-> --- a/drivers/staging/rtl8723bs/core/rtw_sta_mgt.c
-> +++ b/drivers/staging/rtl8723bs/core/rtw_sta_mgt.c
-> @@ -533,7 +533,6 @@ struct sta_info *rtw_get_stainfo(struct sta_priv *pstapriv, u8 *hwaddr)
->  u32 rtw_init_bcmc_stainfo(struct adapter *padapter)
->  {
->  	struct sta_info *psta;
-> -	u32 res = _SUCCESS;
->  	NDIS_802_11_MAC_ADDRESS	bcast_addr = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
->  
->  	struct	sta_priv *pstapriv = &padapter->stapriv;
-> @@ -542,15 +541,12 @@ u32 rtw_init_bcmc_stainfo(struct adapter *padapter)
->  	psta = rtw_alloc_stainfo(pstapriv, bcast_addr);
->  
->  	if (!psta) {
-> -		res = _FAIL;
->  		RT_TRACE(_module_rtl871x_sta_mgt_c_, _drv_err_, ("rtw_alloc_stainfo fail"));
-> -		goto exit;
-> +		return _FAIL;
+Fix build error when CONFIG_MAILBOX is not set:
 
-You just changed the logic here, that's not a good thing for a "robot"
-to be doing at all.
+arm-linux-gnueabi-ld: drivers/remoteproc/imx_rproc.o: in function `imx_rproc_kick':
+imx_rproc.c:(.text+0x328): undefined reference to `mbox_send_message'
+arm-linux-gnueabi-ld: drivers/remoteproc/imx_rproc.o: in function `imx_rproc_probe':
+imx_rproc.c:(.text+0x52c): undefined reference to `mbox_request_channel_byname'
+arm-linux-gnueabi-ld: imx_rproc.c:(.text+0x548): undefined reference to `mbox_request_channel_byname'
+arm-linux-gnueabi-ld: imx_rproc.c:(.text+0x76c): undefined reference to `mbox_free_channel'
+arm-linux-gnueabi-ld: imx_rproc.c:(.text+0x774): undefined reference to `mbox_free_channel'
+arm-linux-gnueabi-ld: imx_rproc.c:(.text+0x7c4): undefined reference to `mbox_free_channel'
+arm-linux-gnueabi-ld: drivers/remoteproc/imx_rproc.o: in function `imx_rproc_remove':
+imx_rproc.c:(.text+0x86c): undefined reference to `mbox_free_channel'
+arm-linux-gnueabi-ld: imx_rproc.c:(.text+0x874): undefined reference to `mbox_free_channel'
+make: *** [Makefile:1292: vmlinux] Error 1
 
-greg k-h
+Fixes: 2df7062002d0 ("remoteproc: imx_proc: enable virtio/mailbox")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/remoteproc/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+index 7cf3d1b40c55..e68fcedc999c 100644
+--- a/drivers/remoteproc/Kconfig
++++ b/drivers/remoteproc/Kconfig
+@@ -26,6 +26,7 @@ config REMOTEPROC_CDEV
+ config IMX_REMOTEPROC
+ 	tristate "i.MX remoteproc support"
+ 	depends on ARCH_MXC
++	select MAILBOX
+ 	help
+ 	  Say y here to support iMX's remote processors via the remote
+ 	  processor framework.
+
