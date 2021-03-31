@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 816AFC433B4
-	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 12:45:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A7D7C433ED
+	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 12:47:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4E9816195D
-	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 12:45:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53DCF61969
+	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 12:47:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235140AbhCaMo4 (ORCPT
+        id S235647AbhCaMrG (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 31 Mar 2021 08:44:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42144 "EHLO mail.kernel.org"
+        Wed, 31 Mar 2021 08:47:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42598 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235434AbhCaMoe (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 31 Mar 2021 08:44:34 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 9AEFA61959;
-        Wed, 31 Mar 2021 12:44:33 +0000 (UTC)
+        id S235625AbhCaMqp (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 31 Mar 2021 08:46:45 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 4D00861959;
+        Wed, 31 Mar 2021 12:46:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617194674;
-        bh=zu5+7E3FlVx1B02C+X7ZBz7+D9LN8HEMJnjE1Je3NZo=;
+        s=k20201202; t=1617194804;
+        bh=5dsan0ndrXUIqy53+oo57Q3YAilOJBB0JkfIOMsN35Q=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ivif8rLiEpy+yTQbX5AQrdpFree1FdwAVyRpOZwQyWuOr7yJ0OvozGPzO6OxzoWh5
-         BUsDrcq5ZR8R5euuGOtk0eX7ibhoq50adYQU1A+ZD8U8/6zFGmS3hMt92tsIuiExn5
-         6nE2sIaEgSEZUxkwG3dNjjxByFGbpdqIzwQLMB3dWkh8ZJF1gHN0jCHMR8ALRdAcym
-         4kQZPcpv1ntbTS6iMjGzYGqP72OXRh4/xb6fpgAFEN/Y9z8jrmU/hmBYE3YMfjtyL+
-         IyNAuqJh2KhAnOAhZySyVkkBbtltARa/XVIyi13XPbZuOfYZkReX3IW4AfOceCogVe
-         yjvgCqPM+nRRA==
-Date:   Wed, 31 Mar 2021 13:44:19 +0100
+        b=WvD7Ur3aG34dAIIV3x8Ep36vwkt/PVipw5fzhcrVagpmzfdHtQ5KPdiRpnXTXa5Ee
+         N5HeHEcnaATBhnNfgGxMWUCZ70xxa/KdLbUFjYitonL9zuz/uVGMOSqlelQ9JDjFrC
+         x1p8JELeQoinINo/caQyDTmEwpFu3tV2MfWy4e8U7/CbXFG9vqmfulRtsQo4vAR1Qh
+         9lh3OdN5jNUTdB9DevHlGLf8pchl9vlJokB5uQRh/YJc7yukmRhRUZeyY1k8g33jmy
+         nmmqwNVchp1S37LWivGJ25psBmGv5mjOCsj0Z7J5jcZ8HQVmhp+8ZiILsJseIqfxHE
+         ocSrHbIR5GNAQ==
+Date:   Wed, 31 Mar 2021 13:46:32 +0100
 From:   Mark Brown <broonie@kernel.org>
 To:     Zheng Yongjun <zhengyongjun3@huawei.com>
 Cc:     James Schulman <james.schulman@cirrus.com>,
@@ -41,52 +41,52 @@ Cc:     James Schulman <james.schulman@cirrus.com>,
         Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
         patches@opensource.cirrus.com, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
-Subject: Re: [PATCH -next] ASoC: cs42l42: Remove unused including
+Subject: Re: [PATCH -next] ASoC: cs35l35: Remove unused including
  <linux/version.h>
-Message-ID: <20210331124419.GA12878@sirena.org.uk>
-References: <20210326061335.3234571-1-zhengyongjun3@huawei.com>
+Message-ID: <20210331124632.GA13402@sirena.org.uk>
+References: <20210326061331.3234485-1-zhengyongjun3@huawei.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="82I3+IH0IqGh5yIs"
+        protocol="application/pgp-signature"; boundary="yrj/dFKFPuw6o+aM"
 Content-Disposition: inline
-In-Reply-To: <20210326061335.3234571-1-zhengyongjun3@huawei.com>
-X-Cookie: I'm rated PG-34!!
+In-Reply-To: <20210326061331.3234485-1-zhengyongjun3@huawei.com>
+X-Cookie: Never trust an operating system.
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 
---82I3+IH0IqGh5yIs
+--yrj/dFKFPuw6o+aM
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Fri, Mar 26, 2021 at 02:13:35PM +0800, Zheng Yongjun wrote:
+On Fri, Mar 26, 2021 at 02:13:31PM +0800, Zheng Yongjun wrote:
 > Remove including <linux/version.h> that don't need it.
 
 This doesn't apply against current code, please check and resend:
 
-Applying: ASoC: cs42l42: Remove unused including <linux/version.h>
+Applying: ASoC: cs35l35: Remove unused including <linux/version.h>
 Using index info to reconstruct a base tree...
-error: patch failed: sound/soc/codecs/cs42l42.c:11
-error: sound/soc/codecs/cs42l42.c: patch does not apply
+error: patch failed: sound/soc/codecs/cs35l35.c:9
+error: sound/soc/codecs/cs35l35.c: patch does not apply
 error: Did you hand edit your patch?
 It does not apply to blobs recorded in its index.
-Patch failed at 0006 ASoC: cs42l42: Remove unused including <linux/version.h>
+Patch failed at 0006 ASoC: cs35l35: Remove unused including <linux/version.h>
 
---82I3+IH0IqGh5yIs
+--yrj/dFKFPuw6o+aM
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmBkbqIACgkQJNaLcl1U
-h9CoJwf/QAjGb6XA/wFK32XB2wDQQzeicvhjhNfxqPyxmO/wmoYc805JcqgbOLTx
-i+fBFtquaB5YgPCNDF7Qx+tXsVbLcRsE6IB9Wh5A24qOBZySbh9JzwIB74QkJri8
-1Kdd+pblf5HHjreotAi0WRtvFEE0654Q/QK5Llb2sWF/9qTbj8j77AOmT6akewnn
-0qzN2K9+LtTYdIa8muL3cLFGVeN6ab7M05jWqUnlCn4yRww26+y4/zhwmcSbMpLH
-BGmwc4/r8J7aFTWFG0x+/Tg/GnmYUtvA+oBrF2zCa9ps5Uxbt+TNrBAO5yQvmJvw
-Zqy95Udm0SRXT5rOcWzZHQoHrFiFMg==
-=QE6g
+iQEyBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmBkbycACgkQJNaLcl1U
+h9BQPAf2LsQP1f+PG5zYRfgPSGavlopGgeKfjprn3O75A5oiJlzvm6qtBoDQfd36
+3Ie6NJeYqSbZxPeoparIMdoehrOPqfLiZloLHr1kubQqxSzIuesasZv5vsoGMh3F
+NQkJ96QANzEC3TxzldAoZ+hjoISN1K9rLjk+Wo/fNIVhV3gHadQ3Sfc/aUO+aFuk
+Yhl4JpCOLjv5C9im4PIsc2LtTZRnMIXxDUb77gldP++BpWbwE2TGP3yApoxEIUnP
+yowqZe/4ISSFsto4+zLw2PudWRRhCNyFb6IbZxi/qYGswR+0XvtuCWAB7WDxd38U
+eo6yb5SZPwIDWiPka5SyHKJGLLcX
+=RbL7
 -----END PGP SIGNATURE-----
 
---82I3+IH0IqGh5yIs--
+--yrj/dFKFPuw6o+aM--
