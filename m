@@ -2,73 +2,89 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F5EBC433C1
-	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 09:33:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3462BC433DB
+	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 09:40:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F3FBB6190A
-	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 09:33:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0038619BB
+	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 09:40:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234661AbhCaJdU (ORCPT
+        id S234697AbhCaJjt (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 31 Mar 2021 05:33:20 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:15054 "EHLO
-        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233912AbhCaJcy (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 31 Mar 2021 05:32:54 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
-        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4F9LdK3x8CzNrHZ;
-        Wed, 31 Mar 2021 17:30:13 +0800 (CST)
-Received: from DESKTOP-EFRLNPK.china.huawei.com (10.174.177.129) by
- DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
- 14.3.498.0; Wed, 31 Mar 2021 17:32:45 +0800
-From:   Qiheng Lin <linqiheng@huawei.com>
-To:     <linqiheng@huawei.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-CC:     <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        "Hulk Robot" <hulkci@huawei.com>
-Subject: [PATCH -next] memory: fsl-corenet-cf: Remove redundant dev_err call in ccf_probe()
-Date:   Wed, 31 Mar 2021 17:32:44 +0800
-Message-ID: <20210331093244.3238-1-linqiheng@huawei.com>
-X-Mailer: git-send-email 2.31.1
+        Wed, 31 Mar 2021 05:39:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50234 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234689AbhCaJjo (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 31 Mar 2021 05:39:44 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id C399E61954;
+        Wed, 31 Mar 2021 09:39:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1617183583;
+        bh=f+fwWDGLY+gVOzJtajN7go3Pyscihbt/vp3GyZITTT0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=fVw2zSj1KYLYpU1NanCuviovXBPPaQW53oxlVvKT4kv+NXQU56Os/FC0jiSRN3Xbe
+         ieiKPEgtSx3/ECd4q9QdYNPjy8fltYD5QR0BqGhPg9ZF2dzk8IrafRXk1wBcHuwlGV
+         W5v1vPItC6bMtnRmSybyGhPBofiUJB9nlhNMhP59aUfFzErWJB8w436TGHwdHzErrF
+         BWYr40/g1YRP+LJemrmvVhAiCBqT1lbG/ZStqAVio9909B9rrZXFfvAnqt6Pg3dHvF
+         T4fwnmKaEu9eqzhEj/d6m4qNEUsJLoxQ5PXX5cPgAoxkhwZETHr1j+wwR6ER424rZq
+         gcHglVtHEddug==
+Date:   Wed, 31 Mar 2021 12:39:36 +0300
+From:   Mike Rapoport <rppt@kernel.org>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        Joe Perches <joe@perches.com>,
+        Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
+        linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] MAINTAINERS: assign pagewalk.h to MEMORY MANAGEMENT
+Message-ID: <YGRDWLUea442tV7f@kernel.org>
+References: <20210322122542.15072-1-lukas.bulwahn@gmail.com>
+ <20210322122542.15072-2-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.174.177.129]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210322122542.15072-2-lukas.bulwahn@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a error message within devm_ioremap_resource
-already, so remove the dev_err call to avoid redundant
-error message.
+On Mon, Mar 22, 2021 at 01:25:41PM +0100, Lukas Bulwahn wrote:
+> Commit a520110e4a15 ("mm: split out a new pagewalk.h header from mm.h")
+> adds a new file in ./include/linux, but misses to update MAINTAINERS
+> accordingly. Hence, ./scripts/get_maintainers.pl ./include/linux/pagewalk.h
+> points only to lkml as general fallback for all files, whereas the original
+> ./include/linux/mm.h clearly marks this file part of MEMORY MANAGEMENT.
+> 
+> Assign ./include/linux/pagewalk.h to MEMORY MANAGEMENT.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+>  MAINTAINERS | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 728216e3919c..46a1eddbc3e4 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -11622,6 +11622,7 @@ F:	include/linux/gfp.h
+>  F:	include/linux/memory_hotplug.h
+>  F:	include/linux/mm.h
+>  F:	include/linux/mmzone.h
+> +F:	include/linux/pagewalk.h
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Qiheng Lin <linqiheng@huawei.com>
----
- drivers/memory/fsl-corenet-cf.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+I'd say that we miss all include/linux/page* here, not only pagewalk.h
 
-diff --git a/drivers/memory/fsl-corenet-cf.c b/drivers/memory/fsl-corenet-cf.c
-index 0309bd5a1800..e15c962d4540 100644
---- a/drivers/memory/fsl-corenet-cf.c
-+++ b/drivers/memory/fsl-corenet-cf.c
-@@ -192,10 +192,8 @@ static int ccf_probe(struct platform_device *pdev)
- 	}
- 
- 	ccf->regs = devm_ioremap_resource(&pdev->dev, r);
--	if (IS_ERR(ccf->regs)) {
--		dev_err(&pdev->dev, "%s: can't map mem resource\n", __func__);
-+	if (IS_ERR(ccf->regs))
- 		return PTR_ERR(ccf->regs);
--	}
- 
- 	ccf->dev = &pdev->dev;
- 	ccf->info = match->data;
+>  F:	include/linux/vmalloc.h
+>  F:	mm/
+>  
+> -- 
+> 2.17.1
+> 
 
+-- 
+Sincerely yours,
+Mike.
