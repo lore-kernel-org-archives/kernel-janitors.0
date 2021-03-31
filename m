@@ -2,117 +2,84 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4A6FC433C1
-	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 09:58:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A166C433C1
+	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 10:30:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ABA8061920
-	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 09:58:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0B3B61987
+	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 10:30:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234375AbhCaJ5g (ORCPT
+        id S234936AbhCaK3h (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 31 Mar 2021 05:57:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43532 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234545AbhCaJ5d (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 31 Mar 2021 05:57:33 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7486C061574;
-        Wed, 31 Mar 2021 02:57:32 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id e18so19023717wrt.6;
-        Wed, 31 Mar 2021 02:57:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=HhzP497JwzE7qBvkLi1PWy+Oq7YyictUjri7Hz/xGfs=;
-        b=L5dNcFuSepOYJgqrnPW7GToj4Rnlj7T/Vtn4sgMAZcbX2LVi9snLxsUQxLaFzljbAD
-         +K9E9/ecIB8wXz1iHX1AY9yhDPyl1Mc6+3EFhIuifBb99xkPd7bewGlk21s4fS0SE7BL
-         4WKA98Wg54SXDgAHfUD+raOvPy91W/Hk7cw1RT7xNi9TS6RWbft2oVJjVQ3zeKZDRloC
-         AGk2mY9XFiJMEv00wl9oIXKNT2ryAy47sQuAuxd6QaVQtLX3VU+Gl4vB0gLkErE3jg39
-         W1+iYILcmSlgUkc8yfjNW3vAEkv3AoiTvS+cK2S8pCI8LebS57mOWQk84nAUBuiQCmB4
-         1JHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=HhzP497JwzE7qBvkLi1PWy+Oq7YyictUjri7Hz/xGfs=;
-        b=QFPebW6hTbb+Fgdt6PKnDulYQtbG8TV/Jx8KKPzDCSDsmYd0GVAFRtT3A6jRHD8Cvh
-         TqqSE7xjedDEsLaUSO2canUsh36hPHAvOSYIpjuUEFymBaAVKAa0bE94UoQaa2vav9b0
-         GF+2A6SKR0L4a9rla0gnLdd/PaN4wiiIwD1lwAS8fwaJN4o2Z6I6pdSRS3c+eE+0YyHi
-         76EsQLbhmwAiKXbkCngDGC5urEI5tORWmEzgsQ/szCgjPd/+zVFt1zAhnxrLVV4gqrmg
-         P0UocmULTKtO3avnDY6J581Frd490aBGobMztUmhOREsCgqR3tkb6xR/2sXnQax9fNry
-         VhUA==
-X-Gm-Message-State: AOAM532G5uxJIi+vTq5ZFRz1fVklpd7vxAsmzR3W0Fccnn2FQJ3ywVa3
-        Ab/vkZLtu3IhIp+DM/obkEHURKyOXAiFTQ==
-X-Google-Smtp-Source: ABdhPJyCf3FgfMWHQ1jN0VCnK4Rern3F7ble6Fyqori+YpHKxyOA9VTpXs7GWKHJHDZ7uxrNLEG8Vg==
-X-Received: by 2002:adf:d851:: with SMTP id k17mr2752514wrl.254.1617184651468;
-        Wed, 31 Mar 2021 02:57:31 -0700 (PDT)
-Received: from 192.168.10.5 ([39.46.7.73])
-        by smtp.gmail.com with ESMTPSA id c2sm3232775wme.15.2021.03.31.02.57.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Mar 2021 02:57:30 -0700 (PDT)
-Message-ID: <d58921603fb8adf3bb335a9986c8c89348ab0985.camel@gmail.com>
-Subject: Re: [PATCH] io_uring: Initialize variable before use
-From:   Muhammad Usama Anjum <musamaanjum@gmail.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        colin.king@canonical.com
-Date:   Wed, 31 Mar 2021 14:57:25 +0500
-In-Reply-To: <20210331084817.GH2088@kadam>
-References: <20210322184158.GA2095479@LEGION> <20210331084817.GH2088@kadam>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.4-0ubuntu1 
+        Wed, 31 Mar 2021 06:29:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38640 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234666AbhCaK3T (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 31 Mar 2021 06:29:19 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D449E60C3D;
+        Wed, 31 Mar 2021 10:29:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1617186559;
+        bh=aTogiyWjaMiJg208imNhC5f3kuX3jCk6wK/jS2Fdq4Q=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=VEUIZekY8pMbJqwgwsM1hTq6732F91r63dDVHv49xMIKTNLT42DOHVptSZNTGmitM
+         o2vn8d3MWUdCRZ7Cx4HlDykAjW/Et9uN4tbqSl727uzJGUxjh8MXMQ8rwwstE1/Ogy
+         aWJzvzVyZqp5cT2Ktl2o5EblmV6q2qGSEv5iBSnM=
+Date:   Wed, 31 Mar 2021 12:29:16 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Xu Jia <xujia39@huawei.com>
+Cc:     Ross Schmidt <ross.schm.dev@gmail.com>,
+        Amarjargal Gundjalam <amarjargal16@gmail.com>,
+        Jason Yan <yanaijie@huawei.com>, linux-staging@lists.linux.dev,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH -next] staging: rtl8723bs: core: Remove unused variable
+ 'res'
+Message-ID: <YGRO/JzEvCgt9I0M@kroah.com>
+References: <1617178363-34193-1-git-send-email-xujia39@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1617178363-34193-1-git-send-email-xujia39@huawei.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 2021-03-31 at 11:48 +0300, Dan Carpenter wrote:
-> On Mon, Mar 22, 2021 at 11:41:58PM +0500, Muhammad Usama Anjum wrote:
-> > 1) Initialize the struct msghdr msg in the start of the function
-> > 2) Uninitialized variable msg.msg_flags can get used if branch happens to
-> > out_free before initialization.
-> > 
-> > So initialize variable in question in the start of the function for
-> > simplicity in logic and use.
-> > 
-> > Addresses-Coverity: ("Uninitialized variable")
-> > Addresses-Coverity: ("Uninitialized variable read")
+On Wed, Mar 31, 2021 at 04:12:43PM +0800, Xu Jia wrote:
+> The variable 'res' is not used in function, this commit
+> remove it to fix the warning.
 > 
-> This bug is a false positive.
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Xu Jia <xujia39@huawei.com>
+> ---
+>  drivers/staging/rtl8723bs/core/rtw_sta_mgt.c | 6 +-----
+>  1 file changed, 1 insertion(+), 5 deletions(-)
 > 
-> When msg.msg_flags is uninitialized then ret is negative and min_ret is
-> zero.
-> 
-> fs/io_uring.c
->   4666                  ret = -EINTR;
->   4667  out_free:
->   4668          if (req->flags & REQ_F_BUFFER_SELECTED)
->   4669                  cflags = io_put_recv_kbuf(req);
->   4670          if (ret < min_ret || ((flags & MSG_WAITALL) && (msg.msg_flags & (MSG_TRUNC | MSG_CTRUNC))))
->                     ^^^^^^^^^^^^^                               ^^^^^^^^^^^^^
-> The first part of the condition is true so the second part is not used.
-> 
->   4671                  req_set_fail_links(req);
->   4672          __io_req_complete(req, issue_flags, ret, cflags);
->   4673          return 0;
->   4674  }
-> 
-Understood. Thank you so much!
+> diff --git a/drivers/staging/rtl8723bs/core/rtw_sta_mgt.c b/drivers/staging/rtl8723bs/core/rtw_sta_mgt.c
+> index f96dd0b40e04..00b83919a9a3 100644
+> --- a/drivers/staging/rtl8723bs/core/rtw_sta_mgt.c
+> +++ b/drivers/staging/rtl8723bs/core/rtw_sta_mgt.c
+> @@ -533,7 +533,6 @@ struct sta_info *rtw_get_stainfo(struct sta_priv *pstapriv, u8 *hwaddr)
+>  u32 rtw_init_bcmc_stainfo(struct adapter *padapter)
+>  {
+>  	struct sta_info *psta;
+> -	u32 res = _SUCCESS;
+>  	NDIS_802_11_MAC_ADDRESS	bcast_addr = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+>  
+>  	struct	sta_priv *pstapriv = &padapter->stapriv;
+> @@ -542,15 +541,12 @@ u32 rtw_init_bcmc_stainfo(struct adapter *padapter)
+>  	psta = rtw_alloc_stainfo(pstapriv, bcast_addr);
+>  
+>  	if (!psta) {
+> -		res = _FAIL;
+>  		RT_TRACE(_module_rtl871x_sta_mgt_c_, _drv_err_, ("rtw_alloc_stainfo fail"));
+> -		goto exit;
+> +		return _FAIL;
 
-Thanks,
-Usama
+You just changed the logic here, that's not a good thing for a "robot"
+to be doing at all.
 
-> regards,
-> dan carpenter
-> 
-
+greg k-h
