@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FC16C433B4
-	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 13:38:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC227C433B4
+	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 14:10:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4EBC761990
-	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 13:38:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0A2E60FE6
+	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 14:10:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235748AbhCaNhs (ORCPT
+        id S235842AbhCaOKM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 31 Mar 2021 09:37:48 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:53808 "EHLO
+        Wed, 31 Mar 2021 10:10:12 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:54713 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235834AbhCaNhk (ORCPT
+        with ESMTP id S235865AbhCaOJs (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 31 Mar 2021 09:37:40 -0400
+        Wed, 31 Mar 2021 10:09:48 -0400
 Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <colin.king@canonical.com>)
-        id 1lRb2O-0004hj-MQ; Wed, 31 Mar 2021 13:37:36 +0000
+        id 1lRbXU-0006zX-82; Wed, 31 Mar 2021 14:09:44 +0000
 From:   Colin King <colin.king@canonical.com>
-To:     Harry Wentland <harry.wentland@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Bard Liao <yung-chuan.liao@linux.intel.com>,
+        Sanyog Kale <sanyog.r.kale@intel.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/amd/display: remove redundant initialization of variable status
-Date:   Wed, 31 Mar 2021 14:37:36 +0100
-Message-Id: <20210331133736.1420943-1-colin.king@canonical.com>
+Subject: [PATCH][next] soundwire: qcom: Fix a u8 comparison with less than zero
+Date:   Wed, 31 Mar 2021 15:09:44 +0100
+Message-Id: <20210331140944.1421940-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -48,38 +48,32 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The variable status is being initialized with a value that is
-never read and it is being updated later with a new value.
-The initialization is redundant and can be removed. Also clean
-up an indentation.
+Variable devnum is being checked for a less than zero error return
+however the comparison will always be false because devnum is an 8 bit
+unsigned integer. Fix this by making devnum an int.  Also there is no
+need to iniitialize devnum with zero as this value is no read, so
+remove the redundant assignment.
 
-Addresses-Coverity: ("Unused value")
+Addresses-Coverity: ("Unsigned compared against 0")
+Fixes: c7d49c76d1d5 ("soundwire: qcom: add support to new interrupts")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/soundwire/qcom.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c b/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
-index b092627bd661..4c226db777dc 100644
---- a/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
-+++ b/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
-@@ -1729,12 +1729,11 @@ bool perform_link_training_with_retries(
- 			dc_link_dp_perform_link_training_skip_aux(link, link_setting);
- 			return true;
- 		} else {
--			enum link_training_result status = LINK_TRAINING_CR_FAIL_LANE0;
-+			enum link_training_result status;
+diff --git a/drivers/soundwire/qcom.c b/drivers/soundwire/qcom.c
+index b08ecb9b418c..ec86c4e53fdb 100644
+--- a/drivers/soundwire/qcom.c
++++ b/drivers/soundwire/qcom.c
+@@ -428,7 +428,7 @@ static irqreturn_t qcom_swrm_irq_handler(int irq, void *dev_id)
+ 	struct qcom_swrm_ctrl *swrm = dev_id;
+ 	u32 value, intr_sts, intr_sts_masked, slave_status;
+ 	u32 i;
+-	u8 devnum = 0;
++	int devnum;
+ 	int ret = IRQ_HANDLED;
  
--				status = dc_link_dp_perform_link_training(
--										link,
--										link_setting,
--										skip_video_pattern);
-+			status = dc_link_dp_perform_link_training(link,
-+								  link_setting,
-+								  skip_video_pattern);
- 			if (status == LINK_TRAINING_SUCCESS)
- 				return true;
- 		}
+ 	swrm->reg_read(swrm, SWRM_INTERRUPT_STATUS, &intr_sts);
 -- 
 2.30.2
 
