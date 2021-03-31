@@ -7,79 +7,67 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 479E5C433DB
-	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 08:56:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EA06C433DB
+	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 08:59:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1B13F619AB
-	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 08:56:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52A0A619B9
+	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 08:59:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234389AbhCaI4A (ORCPT
+        id S234375AbhCaI7T (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 31 Mar 2021 04:56:00 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:15120 "EHLO
-        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229832AbhCaIz0 (ORCPT
+        Wed, 31 Mar 2021 04:59:19 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:15053 "EHLO
+        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230080AbhCaI6r (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 31 Mar 2021 04:55:26 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
-        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4F9Kpk0BkKz1BFS4;
-        Wed, 31 Mar 2021 16:53:18 +0800 (CST)
-Received: from mdc.localdomain (10.175.104.57) by
- DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
- 14.3.498.0; Wed, 31 Mar 2021 16:55:13 +0800
-From:   Xu Jia <xujia39@huawei.com>
-To:     <xujia39@huawei.com>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        WANG Xuerui <git@xen0n.name>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Liangliang Huang <huanglllzu@gmail.com>,
-        Xingxing Su <suxingxing@loongson.cn>,
-        Huang Pei <huangpei@loongson.cn>
-CC:     <linux-mips@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] mips: remove unused variable 'prev_state'
-Date:   Wed, 31 Mar 2021 16:54:58 +0800
-Message-ID: <1617180898-36838-1-git-send-email-xujia39@huawei.com>
-X-Mailer: git-send-email 2.7.4
+        Wed, 31 Mar 2021 04:58:47 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
+        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4F9Ksz0XZmzPmHD;
+        Wed, 31 Mar 2021 16:56:07 +0800 (CST)
+Received: from DESKTOP-EFRLNPK.china.huawei.com (10.174.177.129) by
+ DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
+ 14.3.498.0; Wed, 31 Mar 2021 16:58:35 +0800
+From:   Qiheng Lin <linqiheng@huawei.com>
+To:     <linqiheng@huawei.com>, Michael Ellerman <mpe@ellerman.id.au>,
+        "Nicholas Piggin" <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Ingo Molnar <mingo@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Frederic Weisbecker <frederic@kernel.org>
+CC:     <linuxppc-dev@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH -next] powerpc: Remove duplicated include from time.c
+Date:   Wed, 31 Mar 2021 16:58:35 +0800
+Message-ID: <20210331085835.3032-1-linqiheng@huawei.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.175.104.57]
+X-Originating-IP: [10.174.177.129]
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-GCC reports the following warning with W=1:
-
-arch/mips/kernel/traps.c:1593:17: warning:
- variable 'prev_state' set but not used [-Wunused-but-set-variable]
- 1593 |  enum ctx_state prev_state;
-      |                 ^~~~~~~~~~
-
-This variable is not used in function , this commit
-remove it to fix the warning.
+Remove duplicated include.
 
 Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Xu Jia <xujia39@huawei.com>
+Signed-off-by: Qiheng Lin <linqiheng@huawei.com>
 ---
- arch/mips/kernel/traps.c | 2 --
- 1 file changed, 2 deletions(-)
+ arch/powerpc/kernel/time.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/mips/kernel/traps.c b/arch/mips/kernel/traps.c
-index 808b8b61ded1..d1f23ddf0c8c 100644
---- a/arch/mips/kernel/traps.c
-+++ b/arch/mips/kernel/traps.c
-@@ -1590,10 +1590,8 @@ asmlinkage void do_watch(struct pt_regs *regs)
- asmlinkage void do_mcheck(struct pt_regs *regs)
- {
- 	int multi_match = regs->cp0_status & ST0_TS;
--	enum ctx_state prev_state;
- 	mm_segment_t old_fs = get_fs();
+diff --git a/arch/powerpc/kernel/time.c b/arch/powerpc/kernel/time.c
+index b67d93a609a2..2c8762002b21 100644
+--- a/arch/powerpc/kernel/time.c
++++ b/arch/powerpc/kernel/time.c
+@@ -53,7 +53,6 @@
+ #include <linux/of_clk.h>
+ #include <linux/suspend.h>
+ #include <linux/sched/cputime.h>
+-#include <linux/sched/clock.h>
+ #include <linux/processor.h>
+ #include <asm/trace.h>
  
--	prev_state = exception_enter();
- 	show_regs(regs);
- 
- 	if (multi_match) {
 
