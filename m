@@ -2,93 +2,84 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEEC0C433E2
-	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 08:51:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 479E5C433DB
+	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 08:56:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 73F0161996
-	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 08:51:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B13F619AB
+	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 08:56:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234426AbhCaIuf (ORCPT
+        id S234389AbhCaI4A (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 31 Mar 2021 04:50:35 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:50466 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234349AbhCaIu3 (ORCPT
+        Wed, 31 Mar 2021 04:56:00 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:15120 "EHLO
+        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229832AbhCaIz0 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 31 Mar 2021 04:50:29 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12V8o751184531;
-        Wed, 31 Mar 2021 08:50:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=etggik+6nyW56bNpiaKLu/fEPgt6EYeuNCnDSjwetdw=;
- b=gjfzl0EKRsjgpWsiTAiOLBkceU/t5krLRgV11xlpnIwRcmjPz8/Qcd/UWpApB6T/zy2o
- tXYRzuUJDqTHEjfmIusq0XnUf5CUmZbfXOFPH/eNDGILiw+tuXoWGxwqZocYD1GqAX75
- kj2uQKc5aOgpRLYhqPfA37n2Fnp5kP0iwVtACLPcnglxT0fWsIHCVHArk5ITe/dVHkjv
- JorEDrlzkSJQpUN63Nc9ef9xFKo3rR5xW2laP0u5fjmtQ3aSXwks0Hdjva/06Ud1R4JD
- bnD7HNDtr13n+v7MWj+1ECibzsUukkHzUB9TGjpjRbmh1mR5mdj+Ni3A/HkNTVUuA4G4 7A== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2120.oracle.com with ESMTP id 37mabqsgp3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 31 Mar 2021 08:50:12 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12V8eqY7181513;
-        Wed, 31 Mar 2021 08:50:10 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 37mac8d55e-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 31 Mar 2021 08:50:10 +0000
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 12V8o936010009;
-        Wed, 31 Mar 2021 08:50:09 GMT
-Received: from kadam (/102.36.221.92)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 31 Mar 2021 01:50:09 -0700
-Date:   Wed, 31 Mar 2021 11:49:59 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Xu Jia <xujia39@huawei.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ross Schmidt <ross.schm.dev@gmail.com>,
-        Amarjargal Gundjalam <amarjargal16@gmail.com>,
-        Jason Yan <yanaijie@huawei.com>, linux-staging@lists.linux.dev,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH -next] staging: rtl8723bs: core: Remove unused variable
- 'res'
-Message-ID: <20210331084959.GH2065@kadam>
-References: <1617178363-34193-1-git-send-email-xujia39@huawei.com>
+        Wed, 31 Mar 2021 04:55:26 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4F9Kpk0BkKz1BFS4;
+        Wed, 31 Mar 2021 16:53:18 +0800 (CST)
+Received: from mdc.localdomain (10.175.104.57) by
+ DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
+ 14.3.498.0; Wed, 31 Mar 2021 16:55:13 +0800
+From:   Xu Jia <xujia39@huawei.com>
+To:     <xujia39@huawei.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        WANG Xuerui <git@xen0n.name>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Liangliang Huang <huanglllzu@gmail.com>,
+        Xingxing Su <suxingxing@loongson.cn>,
+        Huang Pei <huangpei@loongson.cn>
+CC:     <linux-mips@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] mips: remove unused variable 'prev_state'
+Date:   Wed, 31 Mar 2021 16:54:58 +0800
+Message-ID: <1617180898-36838-1-git-send-email-xujia39@huawei.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1617178363-34193-1-git-send-email-xujia39@huawei.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-IMR: 1
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9939 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 mlxscore=0 adultscore=0
- spamscore=0 malwarescore=0 phishscore=0 suspectscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2103300000
- definitions=main-2103310063
-X-Proofpoint-ORIG-GUID: c1BmgHjkHjmPqhY6O_AWiJVv0XSe3goY
-X-Proofpoint-GUID: c1BmgHjkHjmPqhY6O_AWiJVv0XSe3goY
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9939 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 impostorscore=0 priorityscore=1501
- lowpriorityscore=0 malwarescore=0 suspectscore=0 adultscore=0 mlxscore=0
- bulkscore=0 spamscore=0 clxscore=1011 mlxlogscore=999 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2103300000
- definitions=main-2103310064
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.175.104.57]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-I've been rejecting these patches until someone updates the callers to
-check the return.  This patch just silences the warning but the code is
-still totally buggy.
+GCC reports the following warning with W=1:
 
-regards,
-dan carpenter
+arch/mips/kernel/traps.c:1593:17: warning:
+ variable 'prev_state' set but not used [-Wunused-but-set-variable]
+ 1593 |  enum ctx_state prev_state;
+      |                 ^~~~~~~~~~
+
+This variable is not used in function , this commit
+remove it to fix the warning.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Xu Jia <xujia39@huawei.com>
+---
+ arch/mips/kernel/traps.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/arch/mips/kernel/traps.c b/arch/mips/kernel/traps.c
+index 808b8b61ded1..d1f23ddf0c8c 100644
+--- a/arch/mips/kernel/traps.c
++++ b/arch/mips/kernel/traps.c
+@@ -1590,10 +1590,8 @@ asmlinkage void do_watch(struct pt_regs *regs)
+ asmlinkage void do_mcheck(struct pt_regs *regs)
+ {
+ 	int multi_match = regs->cp0_status & ST0_TS;
+-	enum ctx_state prev_state;
+ 	mm_segment_t old_fs = get_fs();
+ 
+-	prev_state = exception_enter();
+ 	show_regs(regs);
+ 
+ 	if (multi_match) {
 
