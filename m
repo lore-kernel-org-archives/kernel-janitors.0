@@ -2,88 +2,74 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9848C433DB
-	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 08:13:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A15B9C433DB
+	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 08:19:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9BB6261874
-	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 08:13:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77024619D7
+	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 08:19:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234346AbhCaINO (ORCPT
+        id S234321AbhCaITW (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 31 Mar 2021 04:13:14 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:15052 "EHLO
-        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234386AbhCaINK (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 31 Mar 2021 04:13:10 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
-        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4F9JsK3L2BzPmMB;
-        Wed, 31 Mar 2021 16:10:29 +0800 (CST)
-Received: from mdc.localdomain (10.175.104.57) by
- DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
- 14.3.498.0; Wed, 31 Mar 2021 16:12:59 +0800
-From:   Xu Jia <xujia39@huawei.com>
-To:     <xujia39@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ross Schmidt <ross.schm.dev@gmail.com>,
-        Amarjargal Gundjalam <amarjargal16@gmail.com>,
-        Jason Yan <yanaijie@huawei.com>
-CC:     <linux-staging@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] staging: rtl8723bs: core: Remove unused variable 'res'
-Date:   Wed, 31 Mar 2021 16:12:43 +0800
-Message-ID: <1617178363-34193-1-git-send-email-xujia39@huawei.com>
-X-Mailer: git-send-email 2.7.4
+        Wed, 31 Mar 2021 04:19:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58528 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233838AbhCaISs (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 31 Mar 2021 04:18:48 -0400
+Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 282F861883;
+        Wed, 31 Mar 2021 08:18:48 +0000 (UTC)
+Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=hot-poop.lan)
+        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94)
+        (envelope-from <maz@kernel.org>)
+        id 1lRW3q-004qqx-54; Wed, 31 Mar 2021 09:18:46 +0100
+From:   Marc Zyngier <maz@kernel.org>
+To:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Xu Jia <xujia39@huawei.com>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        kernel-janitors@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] KVM: arm64: Make symbol '_kvm_host_prot_finalize' static
+Date:   Wed, 31 Mar 2021 09:18:42 +0100
+Message-Id: <161717868791.3935399.17356180043799496626.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.30.0
+In-Reply-To: <1617176179-31931-1-git-send-email-xujia39@huawei.com>
+References: <1617176179-31931-1-git-send-email-xujia39@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.175.104.57]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 62.31.163.78
+X-SA-Exim-Rcpt-To: catalin.marinas@arm.com, will@kernel.org, xujia39@huawei.com, linux-arm-kernel@lists.infradead.org, kernel-janitors@vger.kernel.org, kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The variable 'res' is not used in function, this commit
-remove it to fix the warning.
+On Wed, 31 Mar 2021 15:36:19 +0800, Xu Jia wrote:
+> The sparse tool complains as follows:
+> 
+> arch/arm64/kvm/arm.c:1900:6: warning:
+>  symbol '_kvm_host_prot_finalize' was not declared. Should it be static?
+> 
+> This symbol is not used outside of arm.c, so this
+> commit marks it static.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Xu Jia <xujia39@huawei.com>
----
- drivers/staging/rtl8723bs/core/rtw_sta_mgt.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+Applied to kvm-arm64/host-stage2, thanks!
 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_sta_mgt.c b/drivers/staging/rtl8723bs/core/rtw_sta_mgt.c
-index f96dd0b40e04..00b83919a9a3 100644
---- a/drivers/staging/rtl8723bs/core/rtw_sta_mgt.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_sta_mgt.c
-@@ -533,7 +533,6 @@ struct sta_info *rtw_get_stainfo(struct sta_priv *pstapriv, u8 *hwaddr)
- u32 rtw_init_bcmc_stainfo(struct adapter *padapter)
- {
- 	struct sta_info *psta;
--	u32 res = _SUCCESS;
- 	NDIS_802_11_MAC_ADDRESS	bcast_addr = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
- 
- 	struct	sta_priv *pstapriv = &padapter->stapriv;
-@@ -542,15 +541,12 @@ u32 rtw_init_bcmc_stainfo(struct adapter *padapter)
- 	psta = rtw_alloc_stainfo(pstapriv, bcast_addr);
- 
- 	if (!psta) {
--		res = _FAIL;
- 		RT_TRACE(_module_rtl871x_sta_mgt_c_, _drv_err_, ("rtw_alloc_stainfo fail"));
--		goto exit;
-+		return _FAIL;
- 	}
- 
- 	/*  default broadcast & multicast use macid 1 */
- 	psta->mac_id = 1;
--
--exit:
- 	return _SUCCESS;
- }
- 
+[1/1] KVM: arm64: Make symbol '_kvm_host_prot_finalize' static
+      commit: b1306fef1f48c0af1d659c18c53cf275fdcc94be
+
+Cheers,
+
+	M.
+-- 
+Without deviation from the norm, progress is not possible.
+
 
