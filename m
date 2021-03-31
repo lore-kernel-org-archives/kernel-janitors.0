@@ -2,82 +2,88 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8A37C433DB
-	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 08:26:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 091FEC433DB
+	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 08:49:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 79D7C619CF
-	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 08:26:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D00BB61964
+	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 08:49:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232035AbhCaIZr (ORCPT
+        id S234378AbhCaIs7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 31 Mar 2021 04:25:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51662 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232663AbhCaIZn (ORCPT
+        Wed, 31 Mar 2021 04:48:59 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:57548 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231375AbhCaIsf (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 31 Mar 2021 04:25:43 -0400
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D347BC061574;
-        Wed, 31 Mar 2021 01:25:42 -0700 (PDT)
-Received: by mail-wm1-x32f.google.com with SMTP id 12so9710090wmf.5;
-        Wed, 31 Mar 2021 01:25:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=QKFnYdgxCTs9FGGNMYff7ZI05Y1mnMJJCeghzxi1wSk=;
-        b=qQRvPY4UJHmk29rpzNOc1Ns1R5raZhpNSxiACGDXuxaeVsNUw5d0IROLvR/PTKeubA
-         fxVIGhLEnqzY97DL6nlbHzM9k2K5v2JrbEgiEYTRsOpgYoDqRP5ChkDvmcXTWSITqntC
-         iVMZ40GkYBABn86vJN1Xo2D5fiI5a3g1H4ItolXfFkhiA7x3+XZ6YcCAMRBYpnRUBYhL
-         qn099CPWet80p8qKDMj+lcciK+5Q0VubtRpIFmN8ORI/StVgcYtIk4qhLiLfxFQO448O
-         F2/RSySLbC/5M+HcdPVI79fnDH/LhhJiycfA+23JZfDb4JfGhlE086QNtyrg4pmy4bCy
-         AACg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=QKFnYdgxCTs9FGGNMYff7ZI05Y1mnMJJCeghzxi1wSk=;
-        b=BHhvhZjotYQarEbnK3+eu/qBXnsc2ubupNVV1cFcLinm/eGcIMUhlwhoQUtmLa39AI
-         iqE9IeQVr6LlH1GvA/BDL+0KG3BTSRUfTcNXd4Im2sMq0UHYMcMtGaOhiGOUEbod8MUA
-         +RgZizRuM+QrUyHYRfcjCP2wWoWgss+wVsfQBGCZuenv3caTnZbW3rSGmUJdhtPd/Pv0
-         tT95auiNLPGf4SLKFOPExNaIeuRtd+er5iSe67QGmu2g1vpI6G22WJSUhfLkAb3gL6vG
-         w9PY2EFFP88ecgP+2X8MENWgmSc908O1/1NzZPa8V6cVRgdEcmfGIMJLNwrVR8hBx0Ka
-         bnRw==
-X-Gm-Message-State: AOAM530ir1B++bHUi6v/l5kMl047DzhVB9+wbsYvb1q6Fq6RsHSeYzrb
-        r0cvvhskVA1fyNh9NTRiA54=
-X-Google-Smtp-Source: ABdhPJzvsSIcCDvyjhMbOrngpcXKCqPlZhBnOo4C1/IjObcsdQd8Slw4UEqTL/seqDz2GuVeQ2yAoQ==
-X-Received: by 2002:a1c:e18b:: with SMTP id y133mr2102174wmg.22.1617179141616;
-        Wed, 31 Mar 2021 01:25:41 -0700 (PDT)
-Received: from 192.168.10.5 ([39.46.7.73])
-        by smtp.gmail.com with ESMTPSA id b131sm2842550wmb.34.2021.03.31.01.25.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Mar 2021 01:25:41 -0700 (PDT)
-Message-ID: <39d9d56afe1418861aeb09d0b555b79bcd227e45.camel@gmail.com>
-Subject: Re: [PATCH] io_uring: Initialize variable before use
-From:   Muhammad Usama Anjum <musamaanjum@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>,
+        Wed, 31 Mar 2021 04:48:35 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12V8mVSW017955;
+        Wed, 31 Mar 2021 08:48:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=+oc1CtFc57IVSoTNJ+wtqCopJ0F9XhVs7KCPIzeefuY=;
+ b=FwLRlxN0enoo1TJQ0aRPClp2si4X+bRnyIiZHxPrvBWsuRDfkOayx1mt2IDZr525sISy
+ H0jdaW+VJp2X3jPaUZdPtOkMa/xL510S+HCr193Sv8w2WJ/sHCU+EZaenBat7NEE4utu
+ 5Ph3bmHbk2Iq+nR4QqGDgzjy+n0mm6LCA2UK31wFVRFx/KT+XJa/zN3CEu+yDsx8HcrY
+ tjU1aRGDo9GVKj1LcbDov5JZCBiwKaEGxa5PBoQTqGqS8AJwScXPhxymOo3mE2Y08o15
+ kkPj+7pt7dbZT+u6G/pOFaMJNKUQdQcmD/lECQ3a1NJ2Gu3wP/QvvASyX9D6RaBT4l6h 3Q== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 37mab3hgyb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 31 Mar 2021 08:48:31 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12V8epmK181419;
+        Wed, 31 Mar 2021 08:48:29 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 37mac8d3g8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 31 Mar 2021 08:48:29 +0000
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 12V8mPUO014479;
+        Wed, 31 Mar 2021 08:48:25 GMT
+Received: from kadam (/102.36.221.92)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 31 Mar 2021 01:48:24 -0700
+Date:   Wed, 31 Mar 2021 11:48:17 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Muhammad Usama Anjum <musamaanjum@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
         Pavel Begunkov <asml.silence@gmail.com>,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        colin.king@canonical.com, dan.carpenter@oracle.com
-Cc:     musamaanjum@gmail.com
-Date:   Wed, 31 Mar 2021 13:25:35 +0500
-In-Reply-To: <20210322184158.GA2095479@LEGION>
+        colin.king@canonical.com
+Subject: Re: [PATCH] io_uring: Initialize variable before use
+Message-ID: <20210331084817.GH2088@kadam>
 References: <20210322184158.GA2095479@LEGION>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.4-0ubuntu1 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210322184158.GA2095479@LEGION>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-IMR: 1
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9939 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 mlxscore=0 adultscore=0
+ spamscore=0 malwarescore=0 phishscore=0 suspectscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2103300000
+ definitions=main-2103310063
+X-Proofpoint-ORIG-GUID: jIREcGX6vfH5-BUdG9Bo4chJpod9k4PI
+X-Proofpoint-GUID: jIREcGX6vfH5-BUdG9Bo4chJpod9k4PI
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9939 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 lowpriorityscore=0
+ spamscore=0 priorityscore=1501 phishscore=0 malwarescore=0 suspectscore=0
+ clxscore=1011 impostorscore=0 adultscore=0 bulkscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2103300000
+ definitions=main-2103310064
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, 2021-03-22 at 23:41 +0500, Muhammad Usama Anjum wrote:
+On Mon, Mar 22, 2021 at 11:41:58PM +0500, Muhammad Usama Anjum wrote:
 > 1) Initialize the struct msghdr msg in the start of the function
 > 2) Uninitialized variable msg.msg_flags can get used if branch happens to
 > out_free before initialization.
@@ -87,40 +93,26 @@ On Mon, 2021-03-22 at 23:41 +0500, Muhammad Usama Anjum wrote:
 > 
 > Addresses-Coverity: ("Uninitialized variable")
 > Addresses-Coverity: ("Uninitialized variable read")
-> Signed-off-by: Muhammad Usama Anjum <musamaanjum@gmail.com>
-> ---
->  fs/io_uring.c | 10 ++--------
->  1 file changed, 2 insertions(+), 8 deletions(-)
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index bba74631954b..d5f83326abff 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -4677,7 +4677,8 @@ static int io_recv(struct io_kiocb *req, unsigned int issue_flags)
->  {
->  	struct io_buffer *kbuf;
->  	struct io_sr_msg *sr = &req->sr_msg;
-> -	struct msghdr msg;
-> +	struct msghdr msg = {.msg_name = NULL, .msg_control = NULL, .msg_controllen = 0,
-> +			     .msg_namelen = 0, .msg_iocb = NULL, .msg_flags = 0};
->  	void __user *buf = sr->buf;
->  	struct socket *sock;
->  	struct iovec iov;
-> @@ -4701,13 +4702,6 @@ static int io_recv(struct io_kiocb *req, unsigned int issue_flags)
->  	if (unlikely(ret))
->  		goto out_free;
->  
-> -	msg.msg_name = NULL;
-> -	msg.msg_control = NULL;
-> -	msg.msg_controllen = 0;
-> -	msg.msg_namelen = 0;
-> -	msg.msg_iocb = NULL;
-> -	msg.msg_flags = 0;
-> -
->  	flags = req->sr_msg.msg_flags | MSG_NOSIGNAL;
->  	if (flags & MSG_DONTWAIT)
->  		req->flags |= REQ_F_NOWAIT;
 
-Reminder. Does anybody has any comments on it?
+This bug is a false positive.
 
+When msg.msg_flags is uninitialized then ret is negative and min_ret is
+zero.
+
+fs/io_uring.c
+  4666                  ret = -EINTR;
+  4667  out_free:
+  4668          if (req->flags & REQ_F_BUFFER_SELECTED)
+  4669                  cflags = io_put_recv_kbuf(req);
+  4670          if (ret < min_ret || ((flags & MSG_WAITALL) && (msg.msg_flags & (MSG_TRUNC | MSG_CTRUNC))))
+                    ^^^^^^^^^^^^^                               ^^^^^^^^^^^^^
+The first part of the condition is true so the second part is not used.
+
+  4671                  req_set_fail_links(req);
+  4672          __io_req_complete(req, issue_flags, ret, cflags);
+  4673          return 0;
+  4674  }
+
+regards,
+dan carpenter
 
