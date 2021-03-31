@@ -2,83 +2,91 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE5ADC433C1
-	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 12:18:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 816AFC433B4
+	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 12:45:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A19406192E
-	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 12:18:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E9816195D
+	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 12:45:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235321AbhCaMR7 (ORCPT
+        id S235140AbhCaMo4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 31 Mar 2021 08:17:59 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:15413 "EHLO
-        szxga06-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235019AbhCaMRd (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 31 Mar 2021 08:17:33 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
-        by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4F9QJN6b5nzlWsM;
-        Wed, 31 Mar 2021 20:15:48 +0800 (CST)
-Received: from localhost.localdomain (10.175.102.38) by
- DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
- 14.3.498.0; Wed, 31 Mar 2021 20:17:23 +0800
-From:   Wei Yongjun <weiyongjun1@huawei.com>
-To:     <weiyongjun1@huawei.com>, Peng Fan <peng.fan@nxp.com>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        "Mathieu Poirier" <mathieu.poirier@linaro.org>
-CC:     <linux-remoteproc@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH -next] remoteproc: imx_rproc: fix build error without CONFIG_MAILBOX
-Date:   Wed, 31 Mar 2021 12:27:09 +0000
-Message-ID: <20210331122709.3935521-1-weiyongjun1@huawei.com>
-X-Mailer: git-send-email 2.25.1
+        Wed, 31 Mar 2021 08:44:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42144 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235434AbhCaMoe (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 31 Mar 2021 08:44:34 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9AEFA61959;
+        Wed, 31 Mar 2021 12:44:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1617194674;
+        bh=zu5+7E3FlVx1B02C+X7ZBz7+D9LN8HEMJnjE1Je3NZo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ivif8rLiEpy+yTQbX5AQrdpFree1FdwAVyRpOZwQyWuOr7yJ0OvozGPzO6OxzoWh5
+         BUsDrcq5ZR8R5euuGOtk0eX7ibhoq50adYQU1A+ZD8U8/6zFGmS3hMt92tsIuiExn5
+         6nE2sIaEgSEZUxkwG3dNjjxByFGbpdqIzwQLMB3dWkh8ZJF1gHN0jCHMR8ALRdAcym
+         4kQZPcpv1ntbTS6iMjGzYGqP72OXRh4/xb6fpgAFEN/Y9z8jrmU/hmBYE3YMfjtyL+
+         IyNAuqJh2KhAnOAhZySyVkkBbtltARa/XVIyi13XPbZuOfYZkReX3IW4AfOceCogVe
+         yjvgCqPM+nRRA==
+Date:   Wed, 31 Mar 2021 13:44:19 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Zheng Yongjun <zhengyongjun3@huawei.com>
+Cc:     James Schulman <james.schulman@cirrus.com>,
+        David Rhodes <david.rhodes@cirrus.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        patches@opensource.cirrus.com, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+Subject: Re: [PATCH -next] ASoC: cs42l42: Remove unused including
+ <linux/version.h>
+Message-ID: <20210331124419.GA12878@sirena.org.uk>
+References: <20210326061335.3234571-1-zhengyongjun3@huawei.com>
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.102.38]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="82I3+IH0IqGh5yIs"
+Content-Disposition: inline
+In-Reply-To: <20210326061335.3234571-1-zhengyongjun3@huawei.com>
+X-Cookie: I'm rated PG-34!!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Fix build error when CONFIG_MAILBOX is not set:
 
-arm-linux-gnueabi-ld: drivers/remoteproc/imx_rproc.o: in function `imx_rproc_kick':
-imx_rproc.c:(.text+0x328): undefined reference to `mbox_send_message'
-arm-linux-gnueabi-ld: drivers/remoteproc/imx_rproc.o: in function `imx_rproc_probe':
-imx_rproc.c:(.text+0x52c): undefined reference to `mbox_request_channel_byname'
-arm-linux-gnueabi-ld: imx_rproc.c:(.text+0x548): undefined reference to `mbox_request_channel_byname'
-arm-linux-gnueabi-ld: imx_rproc.c:(.text+0x76c): undefined reference to `mbox_free_channel'
-arm-linux-gnueabi-ld: imx_rproc.c:(.text+0x774): undefined reference to `mbox_free_channel'
-arm-linux-gnueabi-ld: imx_rproc.c:(.text+0x7c4): undefined reference to `mbox_free_channel'
-arm-linux-gnueabi-ld: drivers/remoteproc/imx_rproc.o: in function `imx_rproc_remove':
-imx_rproc.c:(.text+0x86c): undefined reference to `mbox_free_channel'
-arm-linux-gnueabi-ld: imx_rproc.c:(.text+0x874): undefined reference to `mbox_free_channel'
-make: *** [Makefile:1292: vmlinux] Error 1
+--82I3+IH0IqGh5yIs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Fixes: 2df7062002d0 ("remoteproc: imx_proc: enable virtio/mailbox")
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/remoteproc/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+On Fri, Mar 26, 2021 at 02:13:35PM +0800, Zheng Yongjun wrote:
+> Remove including <linux/version.h> that don't need it.
 
-diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index 7cf3d1b40c55..e68fcedc999c 100644
---- a/drivers/remoteproc/Kconfig
-+++ b/drivers/remoteproc/Kconfig
-@@ -26,6 +26,7 @@ config REMOTEPROC_CDEV
- config IMX_REMOTEPROC
- 	tristate "i.MX remoteproc support"
- 	depends on ARCH_MXC
-+	select MAILBOX
- 	help
- 	  Say y here to support iMX's remote processors via the remote
- 	  processor framework.
+This doesn't apply against current code, please check and resend:
 
+Applying: ASoC: cs42l42: Remove unused including <linux/version.h>
+Using index info to reconstruct a base tree...
+error: patch failed: sound/soc/codecs/cs42l42.c:11
+error: sound/soc/codecs/cs42l42.c: patch does not apply
+error: Did you hand edit your patch?
+It does not apply to blobs recorded in its index.
+Patch failed at 0006 ASoC: cs42l42: Remove unused including <linux/version.h>
+
+--82I3+IH0IqGh5yIs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmBkbqIACgkQJNaLcl1U
+h9CoJwf/QAjGb6XA/wFK32XB2wDQQzeicvhjhNfxqPyxmO/wmoYc805JcqgbOLTx
+i+fBFtquaB5YgPCNDF7Qx+tXsVbLcRsE6IB9Wh5A24qOBZySbh9JzwIB74QkJri8
+1Kdd+pblf5HHjreotAi0WRtvFEE0654Q/QK5Llb2sWF/9qTbj8j77AOmT6akewnn
+0qzN2K9+LtTYdIa8muL3cLFGVeN6ab7M05jWqUnlCn4yRww26+y4/zhwmcSbMpLH
+BGmwc4/r8J7aFTWFG0x+/Tg/GnmYUtvA+oBrF2zCa9ps5Uxbt+TNrBAO5yQvmJvw
+Zqy95Udm0SRXT5rOcWzZHQoHrFiFMg==
+=QE6g
+-----END PGP SIGNATURE-----
+
+--82I3+IH0IqGh5yIs--
