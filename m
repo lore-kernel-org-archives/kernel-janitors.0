@@ -4,114 +4,113 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B95DC43460
-	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 17:01:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA9E1C433ED
+	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 18:33:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 43A536024A
-	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 17:01:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C17B60FF3
+	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 18:33:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233977AbhCaRAg (ORCPT
+        id S234627AbhCaSci (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 31 Mar 2021 13:00:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50292 "EHLO
+        Wed, 31 Mar 2021 14:32:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233999AbhCaRA3 (ORCPT
+        with ESMTP id S233934AbhCaScU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 31 Mar 2021 13:00:29 -0400
-Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B205C06174A
-        for <kernel-janitors@vger.kernel.org>; Wed, 31 Mar 2021 10:00:29 -0700 (PDT)
-Received: by mail-pg1-x531.google.com with SMTP id f10so14600752pgl.9
-        for <kernel-janitors@vger.kernel.org>; Wed, 31 Mar 2021 10:00:29 -0700 (PDT)
+        Wed, 31 Mar 2021 14:32:20 -0400
+Received: from mail-oi1-x22e.google.com (mail-oi1-x22e.google.com [IPv6:2607:f8b0:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B7B7C06174A
+        for <kernel-janitors@vger.kernel.org>; Wed, 31 Mar 2021 11:32:19 -0700 (PDT)
+Received: by mail-oi1-x22e.google.com with SMTP id n140so20920139oig.9
+        for <kernel-janitors@vger.kernel.org>; Wed, 31 Mar 2021 11:32:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=8CMJJPY1glfR3cYmba+zIjKonSJ1PODjzUQOl2feUs8=;
-        b=VjXc29thg91cjrIfM0fANgIorC+5VjaHmISJnH5Sv3fRe1hpvfBsoZ+VjVz3dWVCs7
-         cZpB13IBcAE6xhJmFdQL8JZHOtoC8SAF0liQYJLCHvujoKuLyq3QHPMXYgmowYmEP5LL
-         91Y3DpcRMAIjrrX+ZMz65y6onIom51Fz6C4kSOC80j9CsoXnUI8C26rzAsXYUAtXvX16
-         Nj5VQ0/yigwcQGrxnYmNzVajdsxk0WbpQIuaEC5OXlm3y/2/Xa3Fo2M5M6uEHuHtXEOw
-         5TfEpabHQPKI0uWBEooilEjXrMU5JemFCy7rNtzIfcS2gLnhxS4UF/FeVo1OVHK2Wfed
-         ymyQ==
+        bh=qpDJgLSf+XhBZgWjOA4HUIRo8TMIOMt4qQN8xcUT7Yc=;
+        b=RtkjC0li+ibQ4Jqa4lRUa7G264zhtqFQ0ippTOexSIit4u0rgqCjWmvEi59FLRlMJw
+         C5hGgoCAT+8X5Kekza3SlgPOZrermppqx8iclo+ZGv4pOiGm8ijyOryQEWcdaDvg3HHM
+         7HNknHiNiQ8NGjA6BRXHp3flO7hmlITbC7q+UWXljyawBsgHl+vIId6wnt4wSzuMNrxi
+         XA9Hkdm9GBzSRo0BqVo0CMtXFewl6RpbRQAY6N4lZF5d1/eaz5rXGKzogaFHVggYOmbT
+         yv95yUjZ+5Qj3sNovTijK8saN4Mm3GpY7Jm93T88BLJToE9P3dMchHidaBzTdz8l7MKT
+         PtKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=8CMJJPY1glfR3cYmba+zIjKonSJ1PODjzUQOl2feUs8=;
-        b=qth8dRhcFOjLliNnqfEQV1FzNiNQMpSd1NiPXaXiWTkNu4f/4whLeLEluTNOEhAm79
-         IPTHCbIHWyyZWF2qHM2MVQf+raQoGayWooYgRFuh1V2J4a1eDg/H1YDDi+ibRvS91OfX
-         I///zKtvBxj69N1zOYzjzhzYEU7PnOhwcAbxGDFFWU2IRWq1ReJKK5IWcVjsCCVkDCi2
-         +jY/xPT3dx13xafSleDIexEhCtPAd0wpnv+OC0AYESaPtV/8BMWLEPJiJq9w1CPS1PUd
-         ZgQl/R/1rpP8h1oTvwanRS/tovBiv9bod345mpjP22L3Wj8oWiZH4jVnnbom90LQe3aj
-         RX+Q==
-X-Gm-Message-State: AOAM531qgR9WCcjgWQdzj9I3Gm2zXomjQXHc+pvvup5RoZ5lIhwjQUSN
-        6IVRNbaoXU6gDbcBbcOMpP2bKg==
-X-Google-Smtp-Source: ABdhPJwJp5wnQFXbGr0scI1am/x3JHOdvVvk/xAi3xIN2+AT4FbkoxAK98YwxHf7re61kTL0m9LqZg==
-X-Received: by 2002:a62:6101:0:b029:215:3a48:4e6e with SMTP id v1-20020a6261010000b02902153a484e6emr3946608pfb.2.1617210028415;
-        Wed, 31 Mar 2021 10:00:28 -0700 (PDT)
-Received: from xps15 (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id l22sm3000443pfd.145.2021.03.31.10.00.27
+        bh=qpDJgLSf+XhBZgWjOA4HUIRo8TMIOMt4qQN8xcUT7Yc=;
+        b=Aq5LcsLXAlk08oY/5yV97o/l6XIvFTIUGDVNXXmTBXXpcEodaBe4o62xzUiA5k58nF
+         tuM4WIDMt3n7au9JcNpJd+R6iLJdpaw+9GqWqYgiL7yKeU8IuThYCjUAiH++skdOX6A4
+         L4NJs1rpfWS1FH0GGBfD8uAzOdpVCHqRVaB+St0da273O+MVrVCoO1DcHocKG6pwkqQX
+         tMZwr4d+AT1WMSu+h/DwH+shPsxSN9IDlthyI7Ho7lg65InrDFj22xm4lOXTxaOxy+E2
+         ZhIybt3pvWpaiE2GYDBnGFTVT+a78RnL3ysgD9vIHRebNPSeWnkex/rcvCVI31GKLYRJ
+         9n3A==
+X-Gm-Message-State: AOAM530u4tNyaHP84BQODvu6ZRiBIsrgyY8sy53yEh4lJ9RBUpXoSzR3
+        qnM5xUU/kT389lSi/aNeTQREqg==
+X-Google-Smtp-Source: ABdhPJw9aZIIFK4bl49eSq1vxFZv/ytgNjkVTf40RbmdsFrI/AGg7PHyskOnmBX5Uo3IKDlviOZN8g==
+X-Received: by 2002:aca:d442:: with SMTP id l63mr3114260oig.49.1617215538553;
+        Wed, 31 Mar 2021 11:32:18 -0700 (PDT)
+Received: from yoga (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id d1sm577516oop.0.2021.03.31.11.32.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Mar 2021 10:00:27 -0700 (PDT)
-Date:   Wed, 31 Mar 2021 11:00:25 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Wei Yongjun <weiyongjun1@huawei.com>
-Cc:     Peng Fan <peng.fan@nxp.com>, Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-remoteproc@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Hulk Robot <hulkci@huawei.com>
-Subject: Re: [PATCH -next] remoteproc: imx_rproc: fix build error without
- CONFIG_MAILBOX
-Message-ID: <20210331170025.GA2371491@xps15>
-References: <20210331122709.3935521-1-weiyongjun1@huawei.com>
+        Wed, 31 Mar 2021 11:32:18 -0700 (PDT)
+Date:   Wed, 31 Mar 2021 13:32:16 -0500
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Andy Gross <agross@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Bard Liao <yung-chuan.liao@linux.intel.com>,
+        Sanyog Kale <sanyog.r.kale@intel.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] soundwire: qcom: Fix a u8 comparison with less
+ than zero
+Message-ID: <20210331183216.GM904837@yoga>
+References: <20210331140944.1421940-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210331122709.3935521-1-weiyongjun1@huawei.com>
+In-Reply-To: <20210331140944.1421940-1-colin.king@canonical.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Mar 31, 2021 at 12:27:09PM +0000, Wei Yongjun wrote:
-> Fix build error when CONFIG_MAILBOX is not set:
-> 
-> arm-linux-gnueabi-ld: drivers/remoteproc/imx_rproc.o: in function `imx_rproc_kick':
-> imx_rproc.c:(.text+0x328): undefined reference to `mbox_send_message'
-> arm-linux-gnueabi-ld: drivers/remoteproc/imx_rproc.o: in function `imx_rproc_probe':
-> imx_rproc.c:(.text+0x52c): undefined reference to `mbox_request_channel_byname'
-> arm-linux-gnueabi-ld: imx_rproc.c:(.text+0x548): undefined reference to `mbox_request_channel_byname'
-> arm-linux-gnueabi-ld: imx_rproc.c:(.text+0x76c): undefined reference to `mbox_free_channel'
-> arm-linux-gnueabi-ld: imx_rproc.c:(.text+0x774): undefined reference to `mbox_free_channel'
-> arm-linux-gnueabi-ld: imx_rproc.c:(.text+0x7c4): undefined reference to `mbox_free_channel'
-> arm-linux-gnueabi-ld: drivers/remoteproc/imx_rproc.o: in function `imx_rproc_remove':
-> imx_rproc.c:(.text+0x86c): undefined reference to `mbox_free_channel'
-> arm-linux-gnueabi-ld: imx_rproc.c:(.text+0x874): undefined reference to `mbox_free_channel'
-> make: *** [Makefile:1292: vmlinux] Error 1
-> 
-> Fixes: 2df7062002d0 ("remoteproc: imx_proc: enable virtio/mailbox")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  drivers/remoteproc/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
->
+On Wed 31 Mar 09:09 CDT 2021, Colin King wrote:
 
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
- 
-> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-> index 7cf3d1b40c55..e68fcedc999c 100644
-> --- a/drivers/remoteproc/Kconfig
-> +++ b/drivers/remoteproc/Kconfig
-> @@ -26,6 +26,7 @@ config REMOTEPROC_CDEV
->  config IMX_REMOTEPROC
->  	tristate "i.MX remoteproc support"
->  	depends on ARCH_MXC
-> +	select MAILBOX
->  	help
->  	  Say y here to support iMX's remote processors via the remote
->  	  processor framework.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Variable devnum is being checked for a less than zero error return
+> however the comparison will always be false because devnum is an 8 bit
+> unsigned integer. Fix this by making devnum an int.  Also there is no
+> need to iniitialize devnum with zero as this value is no read, so
+> remove the redundant assignment.
+> 
+> Addresses-Coverity: ("Unsigned compared against 0")
+> Fixes: c7d49c76d1d5 ("soundwire: qcom: add support to new interrupts")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+> ---
+>  drivers/soundwire/qcom.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/soundwire/qcom.c b/drivers/soundwire/qcom.c
+> index b08ecb9b418c..ec86c4e53fdb 100644
+> --- a/drivers/soundwire/qcom.c
+> +++ b/drivers/soundwire/qcom.c
+> @@ -428,7 +428,7 @@ static irqreturn_t qcom_swrm_irq_handler(int irq, void *dev_id)
+>  	struct qcom_swrm_ctrl *swrm = dev_id;
+>  	u32 value, intr_sts, intr_sts_masked, slave_status;
+>  	u32 i;
+> -	u8 devnum = 0;
+> +	int devnum;
+>  	int ret = IRQ_HANDLED;
+>  
+>  	swrm->reg_read(swrm, SWRM_INTERRUPT_STATUS, &intr_sts);
+> -- 
+> 2.30.2
 > 
