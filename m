@@ -2,163 +2,116 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1028C433B4
-	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 16:14:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B95DC43460
+	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 17:01:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AD0D661005
-	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 16:14:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43A536024A
+	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 17:01:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232319AbhCaQNv (ORCPT
+        id S233977AbhCaRAg (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 31 Mar 2021 12:13:51 -0400
-Received: from mail-wr1-f48.google.com ([209.85.221.48]:46902 "EHLO
-        mail-wr1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231676AbhCaQNi (ORCPT
+        Wed, 31 Mar 2021 13:00:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50292 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233999AbhCaRA3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 31 Mar 2021 12:13:38 -0400
-Received: by mail-wr1-f48.google.com with SMTP id v4so20222654wrp.13
-        for <kernel-janitors@vger.kernel.org>; Wed, 31 Mar 2021 09:13:38 -0700 (PDT)
+        Wed, 31 Mar 2021 13:00:29 -0400
+Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B205C06174A
+        for <kernel-janitors@vger.kernel.org>; Wed, 31 Mar 2021 10:00:29 -0700 (PDT)
+Received: by mail-pg1-x531.google.com with SMTP id f10so14600752pgl.9
+        for <kernel-janitors@vger.kernel.org>; Wed, 31 Mar 2021 10:00:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=8CMJJPY1glfR3cYmba+zIjKonSJ1PODjzUQOl2feUs8=;
+        b=VjXc29thg91cjrIfM0fANgIorC+5VjaHmISJnH5Sv3fRe1hpvfBsoZ+VjVz3dWVCs7
+         cZpB13IBcAE6xhJmFdQL8JZHOtoC8SAF0liQYJLCHvujoKuLyq3QHPMXYgmowYmEP5LL
+         91Y3DpcRMAIjrrX+ZMz65y6onIom51Fz6C4kSOC80j9CsoXnUI8C26rzAsXYUAtXvX16
+         Nj5VQ0/yigwcQGrxnYmNzVajdsxk0WbpQIuaEC5OXlm3y/2/Xa3Fo2M5M6uEHuHtXEOw
+         5TfEpabHQPKI0uWBEooilEjXrMU5JemFCy7rNtzIfcS2gLnhxS4UF/FeVo1OVHK2Wfed
+         ymyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:reply-to:subject:to:cc:references:from
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=i9krFiQbDcpBdYtkSgOhV2VBqoEqvjb7HmSp8nCDAE4=;
-        b=UyhNHSKAuaiPUS9uec5FED/eN5PBMMGDUw6K6abmmbtLLDuYK+bFG1DZicBURTzLPj
-         LR7VKmics30fwgQLMHw2+zb5rlrVz2XG9xOu2LfFUqxo3st8OMTfuVj6A5UKL5NaFqA3
-         hNaXALAa6vz+zxr4p9i1aaU7c6f+05Ssj54uG/0IXPwgkO8ybxOMha5j5t33ypFT1k3G
-         S1HazurW0wsS9FpFYaZ9EyErqsN2ujJcOp5rzGeezlYAW8p65kNZnZwDZfFRLq1Qy4qS
-         QUrpAy3M+fzE5os03JqV0/5fFKh0Sl5iJ4HknuzojelyJAuys0XOnbflwua0YhFSaXl2
-         rgYw==
-X-Gm-Message-State: AOAM531Nc10uKB6dO0QO38t5vxL0SSRCD/0zAkccPXuo9j9QMSOOdxjy
-        KnFv7MyTeN2ttG6uX8QRrHE=
-X-Google-Smtp-Source: ABdhPJygoy9s6ljUbg8cgpf4W9+WBP0DtVHmgJmhEDXxJSkKf4dK6cOsFlmLCFI9Th+f0hQQC11slg==
-X-Received: by 2002:adf:ea47:: with SMTP id j7mr4442694wrn.377.1617207217485;
-        Wed, 31 Mar 2021 09:13:37 -0700 (PDT)
-Received: from [10.9.0.22] ([46.166.128.205])
-        by smtp.gmail.com with ESMTPSA id j6sm4304191wmq.16.2021.03.31.09.13.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 31 Mar 2021 09:13:36 -0700 (PDT)
-Reply-To: alex.popov@linux.com
-Subject: Re: Exploitable bugs in AF_VSOCK implementation
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     kernel-janitors@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Julia Lawall <Julia.Lawall@inria.fr>
-References: <b57de8d1-e62b-cf74-89b8-c7a3b73b9cc0@linux.com>
- <20210331152600.GQ2088@kadam>
-From:   Alexander Popov <alex.popov@linux.com>
-Message-ID: <3284e8d9-0788-664a-a66b-f65861eee13d@linux.com>
-Date:   Wed, 31 Mar 2021 19:13:33 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=8CMJJPY1glfR3cYmba+zIjKonSJ1PODjzUQOl2feUs8=;
+        b=qth8dRhcFOjLliNnqfEQV1FzNiNQMpSd1NiPXaXiWTkNu4f/4whLeLEluTNOEhAm79
+         IPTHCbIHWyyZWF2qHM2MVQf+raQoGayWooYgRFuh1V2J4a1eDg/H1YDDi+ibRvS91OfX
+         I///zKtvBxj69N1zOYzjzhzYEU7PnOhwcAbxGDFFWU2IRWq1ReJKK5IWcVjsCCVkDCi2
+         +jY/xPT3dx13xafSleDIexEhCtPAd0wpnv+OC0AYESaPtV/8BMWLEPJiJq9w1CPS1PUd
+         ZgQl/R/1rpP8h1oTvwanRS/tovBiv9bod345mpjP22L3Wj8oWiZH4jVnnbom90LQe3aj
+         RX+Q==
+X-Gm-Message-State: AOAM531qgR9WCcjgWQdzj9I3Gm2zXomjQXHc+pvvup5RoZ5lIhwjQUSN
+        6IVRNbaoXU6gDbcBbcOMpP2bKg==
+X-Google-Smtp-Source: ABdhPJwJp5wnQFXbGr0scI1am/x3JHOdvVvk/xAi3xIN2+AT4FbkoxAK98YwxHf7re61kTL0m9LqZg==
+X-Received: by 2002:a62:6101:0:b029:215:3a48:4e6e with SMTP id v1-20020a6261010000b02902153a484e6emr3946608pfb.2.1617210028415;
+        Wed, 31 Mar 2021 10:00:28 -0700 (PDT)
+Received: from xps15 (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id l22sm3000443pfd.145.2021.03.31.10.00.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Mar 2021 10:00:27 -0700 (PDT)
+Date:   Wed, 31 Mar 2021 11:00:25 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Wei Yongjun <weiyongjun1@huawei.com>
+Cc:     Peng Fan <peng.fan@nxp.com>, Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-remoteproc@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Hulk Robot <hulkci@huawei.com>
+Subject: Re: [PATCH -next] remoteproc: imx_rproc: fix build error without
+ CONFIG_MAILBOX
+Message-ID: <20210331170025.GA2371491@xps15>
+References: <20210331122709.3935521-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20210331152600.GQ2088@kadam>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210331122709.3935521-1-weiyongjun1@huawei.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 31.03.2021 18:26, Dan Carpenter wrote:
-> Hi Alexander,
+On Wed, Mar 31, 2021 at 12:27:09PM +0000, Wei Yongjun wrote:
+> Fix build error when CONFIG_MAILBOX is not set:
 > 
-> I enjoyed reading your blog entries for CVE-2017-2636 and CVE-2019-18683.
-
-Hello Dan, thanks!
-
-> https://lore.kernel.org/lkml/20210201084719.2257066-1-alex.popov@linux.com/
+> arm-linux-gnueabi-ld: drivers/remoteproc/imx_rproc.o: in function `imx_rproc_kick':
+> imx_rproc.c:(.text+0x328): undefined reference to `mbox_send_message'
+> arm-linux-gnueabi-ld: drivers/remoteproc/imx_rproc.o: in function `imx_rproc_probe':
+> imx_rproc.c:(.text+0x52c): undefined reference to `mbox_request_channel_byname'
+> arm-linux-gnueabi-ld: imx_rproc.c:(.text+0x548): undefined reference to `mbox_request_channel_byname'
+> arm-linux-gnueabi-ld: imx_rproc.c:(.text+0x76c): undefined reference to `mbox_free_channel'
+> arm-linux-gnueabi-ld: imx_rproc.c:(.text+0x774): undefined reference to `mbox_free_channel'
+> arm-linux-gnueabi-ld: imx_rproc.c:(.text+0x7c4): undefined reference to `mbox_free_channel'
+> arm-linux-gnueabi-ld: drivers/remoteproc/imx_rproc.o: in function `imx_rproc_remove':
+> imx_rproc.c:(.text+0x86c): undefined reference to `mbox_free_channel'
+> arm-linux-gnueabi-ld: imx_rproc.c:(.text+0x874): undefined reference to `mbox_free_channel'
+> make: *** [Makefile:1292: vmlinux] Error 1
 > 
-> My understanding is that you were able to write a privilege escalataion
-> bug for this?  Are you going to do a write up for this one as well?
+> Fixes: 2df7062002d0 ("remoteproc: imx_proc: enable virtio/mailbox")
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ---
+>  drivers/remoteproc/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+>
 
-Yes, I will give a talk about my exploit for CVE-2021-26708 at Zer0Con and
-publish the article next week:
-https://zer0con.org/#speaker-section
-
-I'm finishing the article right now.
-
-> Was the trick to exploiting it to use the free in vsock_deassign_transport()?
-
-Yes!
-
-> I've wanted to look for these in Smatch (my static analysis tool) for a
-> long time.  I wrote a very naive first draft implementation.  What it
-> looks for is when we access struct sock members before calling
-> lock_sock().  It generated 8 warnings.  Six were false positives but I
-> think that two were probably real bugs.
-
-Cool!
-
-> net/nfc/llcp_sock.c:313 nfc_llcp_getsockopt() warn: unlocked access 'llcp_sock->local' expected lock '&sk->sk_lock.slock'
-> net/nfc/llcp_sock.c:597 llcp_sock_release() warn: unlocked access 'llcp_sock->local' expected lock '&sk->sk_lock.slock'
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+ 
+> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+> index 7cf3d1b40c55..e68fcedc999c 100644
+> --- a/drivers/remoteproc/Kconfig
+> +++ b/drivers/remoteproc/Kconfig
+> @@ -26,6 +26,7 @@ config REMOTEPROC_CDEV
+>  config IMX_REMOTEPROC
+>  	tristate "i.MX remoteproc support"
+>  	depends on ARCH_MXC
+> +	select MAILBOX
+>  	help
+>  	  Say y here to support iMX's remote processors via the remote
+>  	  processor framework.
 > 
-> But I think it would be hard to exploit those because the race is very
-> tiny.
-
-I can't say about these two cases, but for CVE-2021-26708 the race window is huge.
-
-To hit the race condition I have two pthreads that work in parallel:
- - 1st pthread calls lock_sock() and performs some work with the virtual socket;
- - 2nd pthread saves the value to a local variable and hangs on lock_sock(),
-since the lock is already acquired.
-
-When the first pthread finishes the work and releases the lock, the second
-pthread is able to finish lock_sock() and proceed with the out-of-date value in
-the local variable.
-
-Maybe this strategy can be used in the cases that you detected.
-
-> Several people (maybe most recently Lukas Bulwahn but someone else at
-> Linux Plumbers) suggested that a way to find race conditions is to look
-> at the line directly after taking a lock.  So if you have:
-> 
-> 	mutex_lock(&dsp->pwr_lock);
-> 	if (!dsp->wmfw_file_name || !dsp->booted)
-> 
-> Then that means that the ->pwr_lock is protecting ->wmfw_file_name and
-> ->booted.  So I wrote a check that made a list of these sorts of
-> pairings.  Then I wrote a check that said:
-> 
-> If you take save a "protected" struct member and then take the lock
-> print a warning that the access should have been inside the lock.  So a
-> warning looks like this:
-> 
-> sound/pci/cs46xx/cs46xx_lib.c:2148 snd_cs46xx_spdif_default_get() warn: unlocked access 'ins' (line 2146) expected lock '&chip->spos_mutex'
->   2142  static int snd_cs46xx_spdif_default_get(struct snd_kcontrol *kcontrol,
->   2143                                          struct snd_ctl_elem_value *ucontrol)
->   2144  {
->   2145          struct snd_cs46xx *chip = snd_kcontrol_chip(kcontrol);
->   2146          struct dsp_spos_instance * ins = chip->dsp_spos_instance;
->                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> Smatch is saying this assignment should have been done
-> 
->   2147  
->   2148          mutex_lock(&chip->spos_mutex);
->                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> inside this lock.
-> 
->   2149          ucontrol->value.iec958.status[0] = _wrap_all_bits((ins->spdif_csuv_default >> 24) & 0xff);
->   2150          ucontrol->value.iec958.status[1] = _wrap_all_bits((ins->spdif_csuv_default >> 16) & 0xff);
->   2151          ucontrol->value.iec958.status[2] = 0;
->   2152          ucontrol->value.iec958.status[3] = _wrap_all_bits((ins->spdif_csuv_default) & 0xff);
->   2153          mutex_unlock(&chip->spos_mutex);
->   2154  
->   2155          return 0;
->   2156  }
-> 
-> That seems probably true but also a pretty harmless.  I've attached a
-> sample of the output just in case you're curious.
-> 
-> Do you have any idea how I could get more worthwhile results than this?
-
-I would also propose to use your approach and search for access to "protected"
-struct fields after UNlock functions.
-
-Best regards,
-Alexander
