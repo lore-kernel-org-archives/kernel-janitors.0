@@ -2,69 +2,58 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BC02C433E1
-	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 06:09:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0449DC433DB
+	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 06:42:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 022BD619B1
-	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 06:09:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD089619C2
+	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 06:42:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233744AbhCaGH4 (ORCPT
+        id S233815AbhCaGlx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 31 Mar 2021 02:07:56 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:15049 "EHLO
-        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233716AbhCaGG7 (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 31 Mar 2021 02:06:59 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
-        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4F9G3h69z6zNrXH;
-        Wed, 31 Mar 2021 14:04:16 +0800 (CST)
-Received: from DESKTOP-EFRLNPK.china.huawei.com (10.174.177.129) by
- DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
- 14.3.498.0; Wed, 31 Mar 2021 14:06:46 +0800
-From:   Qiheng Lin <linqiheng@huawei.com>
-To:     <linqiheng@huawei.com>, "K. Y. Srinivasan" <kys@microsoft.com>,
-        "Haiyang Zhang" <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Wei Liu <wei.liu@kernel.org>
-CC:     <linux-hyperv@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        "Hulk Robot" <hulkci@huawei.com>
-Subject: [PATCH -next] Drivers: hv: vmbus: Remove unused including <linux/version.h>
-Date:   Wed, 31 Mar 2021 14:06:46 +0800
-Message-ID: <20210331060646.2471-1-linqiheng@huawei.com>
-X-Mailer: git-send-email 2.31.1
+        Wed, 31 Mar 2021 02:41:53 -0400
+Received: from muru.com ([72.249.23.125]:49186 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233814AbhCaGld (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 31 Mar 2021 02:41:33 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id AEF9D80C3;
+        Wed, 31 Mar 2021 06:42:34 +0000 (UTC)
+Date:   Wed, 31 Mar 2021 09:41:28 +0300
+From:   Tony Lindgren <tony@atomide.com>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
+        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Joe Perches <joe@perches.com>,
+        Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: remove obsolete OMAP HWMOD DATA FOR
+ OMAP4-BASED DEVICES
+Message-ID: <YGQZmIsbXnuIX5S4@atomide.com>
+References: <20210318172520.6634-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.174.177.129]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210318172520.6634-1-lukas.bulwahn@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Remove including <linux/version.h> that don't need it.
+* Lukas Bulwahn <lukas.bulwahn@gmail.com> [210318 19:26]:
+> Commit 2584d7e7f87a ("ARM: OMAP2+: Drop legacy platform data for omap4
+> hwmod") drops the file ./arch/arm/mach-omap2/omap_hwmod_44xx_data.c, but
+> misses to drop the now obsolete OMAP HWMOD DATA FOR OMAP4-BASED DEVICES
+> section in MAINTAINERS, which refers to only that file.
+> 
+> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains:
+> 
+>   warning: no file matches  F:  arch/arm/mach-omap2/omap_hwmod_44xx_data.c
+> 
+> Remove the obsolete OMAP HWMOD DATA FOR OMAP4-BASED DEVICES section.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Qiheng Lin <linqiheng@huawei.com>
----
- drivers/hv/hv.c | 1 -
- 1 file changed, 1 deletion(-)
+Thanks applying into omap-for-v5.13/genpd-cleanup.
 
-diff --git a/drivers/hv/hv.c b/drivers/hv/hv.c
-index 917b29e873c5..3e6ff83adff4 100644
---- a/drivers/hv/hv.c
-+++ b/drivers/hv/hv.c
-@@ -13,7 +13,6 @@
- #include <linux/slab.h>
- #include <linux/vmalloc.h>
- #include <linux/hyperv.h>
--#include <linux/version.h>
- #include <linux/random.h>
- #include <linux/clockchips.h>
- #include <linux/interrupt.h>
-
+Tony
