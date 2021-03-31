@@ -2,89 +2,117 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3462BC433DB
-	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 09:40:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4A6FC433C1
+	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 09:58:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E0038619BB
-	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 09:40:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABA8061920
+	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 09:58:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234697AbhCaJjt (ORCPT
+        id S234375AbhCaJ5g (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 31 Mar 2021 05:39:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50234 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234689AbhCaJjo (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 31 Mar 2021 05:39:44 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C399E61954;
-        Wed, 31 Mar 2021 09:39:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617183583;
-        bh=f+fwWDGLY+gVOzJtajN7go3Pyscihbt/vp3GyZITTT0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fVw2zSj1KYLYpU1NanCuviovXBPPaQW53oxlVvKT4kv+NXQU56Os/FC0jiSRN3Xbe
-         ieiKPEgtSx3/ECd4q9QdYNPjy8fltYD5QR0BqGhPg9ZF2dzk8IrafRXk1wBcHuwlGV
-         W5v1vPItC6bMtnRmSybyGhPBofiUJB9nlhNMhP59aUfFzErWJB8w436TGHwdHzErrF
-         BWYr40/g1YRP+LJemrmvVhAiCBqT1lbG/ZStqAVio9909B9rrZXFfvAnqt6Pg3dHvF
-         T4fwnmKaEu9eqzhEj/d6m4qNEUsJLoxQ5PXX5cPgAoxkhwZETHr1j+wwR6ER424rZq
-         gcHglVtHEddug==
-Date:   Wed, 31 Mar 2021 12:39:36 +0300
-From:   Mike Rapoport <rppt@kernel.org>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        Joe Perches <joe@perches.com>,
-        Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
-        linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] MAINTAINERS: assign pagewalk.h to MEMORY MANAGEMENT
-Message-ID: <YGRDWLUea442tV7f@kernel.org>
-References: <20210322122542.15072-1-lukas.bulwahn@gmail.com>
- <20210322122542.15072-2-lukas.bulwahn@gmail.com>
+        Wed, 31 Mar 2021 05:57:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43532 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234545AbhCaJ5d (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 31 Mar 2021 05:57:33 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7486C061574;
+        Wed, 31 Mar 2021 02:57:32 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id e18so19023717wrt.6;
+        Wed, 31 Mar 2021 02:57:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=HhzP497JwzE7qBvkLi1PWy+Oq7YyictUjri7Hz/xGfs=;
+        b=L5dNcFuSepOYJgqrnPW7GToj4Rnlj7T/Vtn4sgMAZcbX2LVi9snLxsUQxLaFzljbAD
+         +K9E9/ecIB8wXz1iHX1AY9yhDPyl1Mc6+3EFhIuifBb99xkPd7bewGlk21s4fS0SE7BL
+         4WKA98Wg54SXDgAHfUD+raOvPy91W/Hk7cw1RT7xNi9TS6RWbft2oVJjVQ3zeKZDRloC
+         AGk2mY9XFiJMEv00wl9oIXKNT2ryAy47sQuAuxd6QaVQtLX3VU+Gl4vB0gLkErE3jg39
+         W1+iYILcmSlgUkc8yfjNW3vAEkv3AoiTvS+cK2S8pCI8LebS57mOWQk84nAUBuiQCmB4
+         1JHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=HhzP497JwzE7qBvkLi1PWy+Oq7YyictUjri7Hz/xGfs=;
+        b=QFPebW6hTbb+Fgdt6PKnDulYQtbG8TV/Jx8KKPzDCSDsmYd0GVAFRtT3A6jRHD8Cvh
+         TqqSE7xjedDEsLaUSO2canUsh36hPHAvOSYIpjuUEFymBaAVKAa0bE94UoQaa2vav9b0
+         GF+2A6SKR0L4a9rla0gnLdd/PaN4wiiIwD1lwAS8fwaJN4o2Z6I6pdSRS3c+eE+0YyHi
+         76EsQLbhmwAiKXbkCngDGC5urEI5tORWmEzgsQ/szCgjPd/+zVFt1zAhnxrLVV4gqrmg
+         P0UocmULTKtO3avnDY6J581Frd490aBGobMztUmhOREsCgqR3tkb6xR/2sXnQax9fNry
+         VhUA==
+X-Gm-Message-State: AOAM532G5uxJIi+vTq5ZFRz1fVklpd7vxAsmzR3W0Fccnn2FQJ3ywVa3
+        Ab/vkZLtu3IhIp+DM/obkEHURKyOXAiFTQ==
+X-Google-Smtp-Source: ABdhPJyCf3FgfMWHQ1jN0VCnK4Rern3F7ble6Fyqori+YpHKxyOA9VTpXs7GWKHJHDZ7uxrNLEG8Vg==
+X-Received: by 2002:adf:d851:: with SMTP id k17mr2752514wrl.254.1617184651468;
+        Wed, 31 Mar 2021 02:57:31 -0700 (PDT)
+Received: from 192.168.10.5 ([39.46.7.73])
+        by smtp.gmail.com with ESMTPSA id c2sm3232775wme.15.2021.03.31.02.57.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Mar 2021 02:57:30 -0700 (PDT)
+Message-ID: <d58921603fb8adf3bb335a9986c8c89348ab0985.camel@gmail.com>
+Subject: Re: [PATCH] io_uring: Initialize variable before use
+From:   Muhammad Usama Anjum <musamaanjum@gmail.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        colin.king@canonical.com
+Date:   Wed, 31 Mar 2021 14:57:25 +0500
+In-Reply-To: <20210331084817.GH2088@kadam>
+References: <20210322184158.GA2095479@LEGION> <20210331084817.GH2088@kadam>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.4-0ubuntu1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210322122542.15072-2-lukas.bulwahn@gmail.com>
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Mar 22, 2021 at 01:25:41PM +0100, Lukas Bulwahn wrote:
-> Commit a520110e4a15 ("mm: split out a new pagewalk.h header from mm.h")
-> adds a new file in ./include/linux, but misses to update MAINTAINERS
-> accordingly. Hence, ./scripts/get_maintainers.pl ./include/linux/pagewalk.h
-> points only to lkml as general fallback for all files, whereas the original
-> ./include/linux/mm.h clearly marks this file part of MEMORY MANAGEMENT.
+On Wed, 2021-03-31 at 11:48 +0300, Dan Carpenter wrote:
+> On Mon, Mar 22, 2021 at 11:41:58PM +0500, Muhammad Usama Anjum wrote:
+> > 1) Initialize the struct msghdr msg in the start of the function
+> > 2) Uninitialized variable msg.msg_flags can get used if branch happens to
+> > out_free before initialization.
+> > 
+> > So initialize variable in question in the start of the function for
+> > simplicity in logic and use.
+> > 
+> > Addresses-Coverity: ("Uninitialized variable")
+> > Addresses-Coverity: ("Uninitialized variable read")
 > 
-> Assign ./include/linux/pagewalk.h to MEMORY MANAGEMENT.
+> This bug is a false positive.
 > 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
->  MAINTAINERS | 1 +
->  1 file changed, 1 insertion(+)
+> When msg.msg_flags is uninitialized then ret is negative and min_ret is
+> zero.
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 728216e3919c..46a1eddbc3e4 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -11622,6 +11622,7 @@ F:	include/linux/gfp.h
->  F:	include/linux/memory_hotplug.h
->  F:	include/linux/mm.h
->  F:	include/linux/mmzone.h
-> +F:	include/linux/pagewalk.h
+> fs/io_uring.c
+>   4666                  ret = -EINTR;
+>   4667  out_free:
+>   4668          if (req->flags & REQ_F_BUFFER_SELECTED)
+>   4669                  cflags = io_put_recv_kbuf(req);
+>   4670          if (ret < min_ret || ((flags & MSG_WAITALL) && (msg.msg_flags & (MSG_TRUNC | MSG_CTRUNC))))
+>                     ^^^^^^^^^^^^^                               ^^^^^^^^^^^^^
+> The first part of the condition is true so the second part is not used.
+> 
+>   4671                  req_set_fail_links(req);
+>   4672          __io_req_complete(req, issue_flags, ret, cflags);
+>   4673          return 0;
+>   4674  }
+> 
+Understood. Thank you so much!
 
-I'd say that we miss all include/linux/page* here, not only pagewalk.h
+Thanks,
+Usama
 
->  F:	include/linux/vmalloc.h
->  F:	mm/
->  
-> -- 
-> 2.17.1
+> regards,
+> dan carpenter
 > 
 
--- 
-Sincerely yours,
-Mike.
