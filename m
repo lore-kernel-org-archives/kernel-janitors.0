@@ -7,36 +7,37 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6F98C433DB
-	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 07:37:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9848C433DB
+	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 08:13:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 91169619DE
-	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 07:37:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9BB6261874
+	for <kernel-janitors@archiver.kernel.org>; Wed, 31 Mar 2021 08:13:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234111AbhCaHhK (ORCPT
+        id S234346AbhCaINO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 31 Mar 2021 03:37:10 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:15050 "EHLO
+        Wed, 31 Mar 2021 04:13:14 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:15052 "EHLO
         szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234104AbhCaHgt (ORCPT
+        with ESMTP id S234386AbhCaINK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 31 Mar 2021 03:36:49 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
-        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4F9J3M0D0tzPmjQ;
-        Wed, 31 Mar 2021 15:34:07 +0800 (CST)
+        Wed, 31 Mar 2021 04:13:10 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
+        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4F9JsK3L2BzPmMB;
+        Wed, 31 Mar 2021 16:10:29 +0800 (CST)
 Received: from mdc.localdomain (10.175.104.57) by
- DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
- 14.3.498.0; Wed, 31 Mar 2021 15:36:34 +0800
+ DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
+ 14.3.498.0; Wed, 31 Mar 2021 16:12:59 +0800
 From:   Xu Jia <xujia39@huawei.com>
-To:     <xujia39@huawei.com>, Marc Zyngier <maz@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <kvmarm@lists.cs.columbia.edu>, <linux-kernel@vger.kernel.org>,
+To:     <xujia39@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ross Schmidt <ross.schm.dev@gmail.com>,
+        Amarjargal Gundjalam <amarjargal16@gmail.com>,
+        Jason Yan <yanaijie@huawei.com>
+CC:     <linux-staging@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
         <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] KVM: arm64: Make symbol '_kvm_host_prot_finalize' static
-Date:   Wed, 31 Mar 2021 15:36:19 +0800
-Message-ID: <1617176179-31931-1-git-send-email-xujia39@huawei.com>
+Subject: [PATCH -next] staging: rtl8723bs: core: Remove unused variable 'res'
+Date:   Wed, 31 Mar 2021 16:12:43 +0800
+Message-ID: <1617178363-34193-1-git-send-email-xujia39@huawei.com>
 X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"
@@ -47,31 +48,42 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The sparse tool complains as follows:
-
-arch/arm64/kvm/arm.c:1900:6: warning:
- symbol '_kvm_host_prot_finalize' was not declared. Should it be static?
-
-This symbol is not used outside of arm.c, so this
-commit marks it static.
+The variable 'res' is not used in function, this commit
+remove it to fix the warning.
 
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: Xu Jia <xujia39@huawei.com>
 ---
- arch/arm64/kvm/arm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/rtl8723bs/core/rtw_sta_mgt.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
-index 2835400fd298..76a7de16e5a6 100644
---- a/arch/arm64/kvm/arm.c
-+++ b/arch/arm64/kvm/arm.c
-@@ -1897,7 +1897,7 @@ static int init_hyp_mode(void)
- 	return err;
+diff --git a/drivers/staging/rtl8723bs/core/rtw_sta_mgt.c b/drivers/staging/rtl8723bs/core/rtw_sta_mgt.c
+index f96dd0b40e04..00b83919a9a3 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_sta_mgt.c
++++ b/drivers/staging/rtl8723bs/core/rtw_sta_mgt.c
+@@ -533,7 +533,6 @@ struct sta_info *rtw_get_stainfo(struct sta_priv *pstapriv, u8 *hwaddr)
+ u32 rtw_init_bcmc_stainfo(struct adapter *padapter)
+ {
+ 	struct sta_info *psta;
+-	u32 res = _SUCCESS;
+ 	NDIS_802_11_MAC_ADDRESS	bcast_addr = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+ 
+ 	struct	sta_priv *pstapriv = &padapter->stapriv;
+@@ -542,15 +541,12 @@ u32 rtw_init_bcmc_stainfo(struct adapter *padapter)
+ 	psta = rtw_alloc_stainfo(pstapriv, bcast_addr);
+ 
+ 	if (!psta) {
+-		res = _FAIL;
+ 		RT_TRACE(_module_rtl871x_sta_mgt_c_, _drv_err_, ("rtw_alloc_stainfo fail"));
+-		goto exit;
++		return _FAIL;
+ 	}
+ 
+ 	/*  default broadcast & multicast use macid 1 */
+ 	psta->mac_id = 1;
+-
+-exit:
+ 	return _SUCCESS;
  }
  
--void _kvm_host_prot_finalize(void *discard)
-+static void _kvm_host_prot_finalize(void *discard)
- {
- 	WARN_ON(kvm_call_hyp_nvhe(__pkvm_prot_finalize));
- }
 
