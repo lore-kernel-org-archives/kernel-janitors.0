@@ -2,92 +2,107 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04BA6C433ED
-	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Apr 2021 03:39:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24C30C433B4
+	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Apr 2021 07:35:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CED44610A0
-	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Apr 2021 03:39:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD33161029
+	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Apr 2021 07:34:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232951AbhDADjH (ORCPT
+        id S229612AbhDAHe2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 31 Mar 2021 23:39:07 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:15129 "EHLO
-        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232800AbhDADil (ORCPT
+        Thu, 1 Apr 2021 03:34:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40998 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230291AbhDAHdx (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 31 Mar 2021 23:38:41 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
-        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4F9pkp2MK8z19K4Y;
-        Thu,  1 Apr 2021 11:36:34 +0800 (CST)
-Received: from [10.67.100.236] (10.67.100.236) by
- DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
- 14.3.498.0; Thu, 1 Apr 2021 11:38:30 +0800
-Subject: Re: [PATCH -next] i2c: gpio: use DEFINE_SPINLOCK() for spinlock
-To:     Russell King <linux@armlinux.org.uk>
-CC:     <heying24@huawei.com>, <yuehaibing@huawei.com>,
-        <weiyongjun1@huawei.com>, <johnny.chenyi@huawei.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-References: <20210327095228.105123-1-chenlifu@huawei.com>
-From:   chenlifu <chenlifu@huawei.com>
-Message-ID: <fec9295e-c5d6-13ee-23f5-13b593d2fd2e@huawei.com>
-Date:   Thu, 1 Apr 2021 11:38:30 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.9.0
+        Thu, 1 Apr 2021 03:33:53 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81CA7C0613E6;
+        Thu,  1 Apr 2021 00:33:52 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id z2so775422wrl.5;
+        Thu, 01 Apr 2021 00:33:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=message-id:subject:from:to:cc:date:user-agent:mime-version
+         :content-transfer-encoding;
+        bh=M4Vn2x7LYFvskShVgkHnVYDSST8AZ5E8PRowpdD+Pys=;
+        b=lSrU7eCkawm4nCmeM2S51RbGiglSJQ98+QDe42WUxlLGsBrYIYquS87IhyUcdQv/Vu
+         YCENXL95Tr/OVrkJqEfDg+dbdlHRRII/uHs92Pjck858KHG/dH9eBtNE5P6nFG9MW4e3
+         cjiYTZxhpwrWNWJzbfvTVJADYDGAa/I25IqnOOgtGft8hZKCXNdCV88f5sa/SMRe0VbY
+         z5+Cbb+/EGrjv22rNzB11wye9hUkSIy0BK4D85dkS3Yx7viW1iYhDI0HFYD/oOvR4bq5
+         YH/8lkhhp4Bgu+VAUmK360FvZpkJ0YjAduUzhrRcQOf7Jyvs1i+59Jwt65d+j2qDf8kF
+         xzFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:user-agent
+         :mime-version:content-transfer-encoding;
+        bh=M4Vn2x7LYFvskShVgkHnVYDSST8AZ5E8PRowpdD+Pys=;
+        b=CapSFZ+U7v7KcKtd0jBPBTZMsWtlnPIDoukj4RtXiSWzD1JOLDyplM4aLyRN3HUuBK
+         PihpQY9X3ljiEkOjRZ43hN/W1g13rxhJnYitUV0FMTYBOwkA7K1lKpaG0rDzFzOG/Rs5
+         Ne6fuRcdMy7uX1NX/mzqr0UmbQMg+zwQEp4mIXASvSU2GJEZo4thBF9zRhZYQQtlkv7V
+         HzlIGJ3UKSkPU2l4fcgqu1DMo2JISzDQ4zv6fNYzZkCHmSk4brEKjYW8oxAeVGGWVmYw
+         DRp6VWyhzCT022x3PSNbkYbl0FFYtdmKL9UapIyUfpDwwH7Xwa6Vj6JSoebU3VFRUrWN
+         kplg==
+X-Gm-Message-State: AOAM533AWFL+M/ZEN58+SEHNkMw2C517Ct11xMogDPp+AJHatvZ7BOzA
+        Kiz5SygfL5aFTtKJ9j+Jv8I=
+X-Google-Smtp-Source: ABdhPJwlEJpAlk8h3VfXuVCgX2VnNFUIeLlr6LQfCIxL2291eR/i95pLgC7UsFY8/1hjoqNueTZGTQ==
+X-Received: by 2002:adf:f841:: with SMTP id d1mr7911879wrq.36.1617262431345;
+        Thu, 01 Apr 2021 00:33:51 -0700 (PDT)
+Received: from 192.168.10.5 ([39.46.7.73])
+        by smtp.gmail.com with ESMTPSA id f126sm6899718wmf.17.2021.04.01.00.33.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Apr 2021 00:33:50 -0700 (PDT)
+Message-ID: <943b92c6ac291726cf0e6bd92e88f2110c14b74c.camel@gmail.com>
+Subject: [Discussion] Uninitialized variable in wiz_mode_select()
+From:   Muhammad Usama Anjum <musamaanjum@gmail.com>
+To:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        "open list:GENERIC PHY FRAMEWORK" <linux-phy@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org, colin.king@canonical.com,
+        dan.carpenter@oracle.com
+Cc:     musamaanjum@gmail.com
+Date:   Thu, 01 Apr 2021 12:33:46 +0500
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.4-0ubuntu1 
 MIME-Version: 1.0
-In-Reply-To: <20210327095228.105123-1-chenlifu@huawei.com>
-Content-Type: text/plain; charset="gbk"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.67.100.236]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Kindly pinging ...
+Hi,
 
-Best Regards,
-Chen Lifu
+`mode` remains uninitialized when `lane_phy_type` isn't PHY_TYPE_DP
+or 
+PHY_TYPE_QSGMII. I've checked the dtsi (k3-j721e-common-proc-
+board.dts) 
+and possible values of `lane_phy_type` are justPHY_TYPE_USB3 and 
+PHY_TYPE_PCIE. If this is correct, the mode will remain uninitialized with
+garbage value. `mode` should be initialized to what? It seems like it is highly 
+implementation dependent.
 
-ÔÚ 2021/3/27 17:52, Chen Lifu Ð´µÀ:
-> From: Lifu Chen <chenlifu@huawei.com>
-> 
-> spinlock can be initialized automatically with DEFINE_SPINLOCK()
-> rather than explicitly calling spin_lock_init().
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Lifu Chen <chenlifu@huawei.com>
-> ---
->   arch/arm/mach-sa1100/simpad.c | 4 +---
->   1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/arch/arm/mach-sa1100/simpad.c b/arch/arm/mach-sa1100/simpad.c
-> index c7fb9a73e4c5..c183432880d3 100644
-> --- a/arch/arm/mach-sa1100/simpad.c
-> +++ b/arch/arm/mach-sa1100/simpad.c
-> @@ -45,7 +45,7 @@
->    */
->   
->   static long cs3_shadow;
-> -static spinlock_t cs3_lock;
-> +static DEFINE_SPINLOCK(cs3_lock);
->   static struct gpio_chip cs3_gpio;
->   
->   long simpad_get_cs3_ro(void)
-> @@ -379,8 +379,6 @@ static int __init simpad_init(void)
->   {
->   	int ret;
->   
-> -	spin_lock_init(&cs3_lock);
-> -
->   	cs3_gpio.label = "simpad_cs3";
->   	cs3_gpio.base = SIMPAD_CS3_GPIO_BASE;
->   	cs3_gpio.ngpio = 24;
-> 
-> .
-> 
+/drivers/phy/ti/phy-j721e-wiz.c: 344 in wiz_mode_select()
+338             for (i = 0; i < num_lanes; i++) {
+339                     if (wiz->lane_phy_type[i] == PHY_TYPE_DP)
+340                             mode = LANE_MODE_GEN1;
+341                     else if (wiz->lane_phy_type[i] == PHY_TYPE_QSGMII)
+342                             mode = LANE_MODE_GEN2;
+343     
+>>>     CID 1503592:  Uninitialized variables  (UNINIT)
+>>>     Using uninitialized value "mode" when calling "regmap_field_write".
+344                     ret = regmap_field_write(wiz->p_standard_mode[i], mode);
+345                     if (ret)
+346                             return ret;
+347             }
+348     
+349             return 0;
+
+Thanks,
+Usama
+
