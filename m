@@ -2,126 +2,225 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7205BC433ED
-	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Apr 2021 09:01:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28885C433ED
+	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Apr 2021 09:09:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D7589610A5
-	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Apr 2021 09:01:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC11E610C7
+	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Apr 2021 09:09:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233629AbhDAJBP (ORCPT
+        id S233588AbhDAJJX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 1 Apr 2021 05:01:15 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:43052 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233024AbhDAJAz (ORCPT
+        Thu, 1 Apr 2021 05:09:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33400 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233702AbhDAJI6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 1 Apr 2021 05:00:55 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 1318wouB071849;
-        Thu, 1 Apr 2021 09:00:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=CGkPXPPHpmlF1CktlWv/KooP+Kf2+sLKW+hJlQZ63QM=;
- b=uQWRsIQecYnbeUwf+EBYy4ejFKeyZTeLbpVEgV8ZCKSpg53yxi5xSNjokSwQGMmEuXa3
- nUq0JyGpklpqrRuDqNuU6pDTbHsa4JdHsyjwYm94QOq7KfuHHIHS6445XOvshB8sdiOJ
- L2r8jDL8tWmlFBPinrAhqlePD157yeKA667JdBtznjiO8MSDMEqv+C1ki7Dkmr/y1zZt
- CXqzepE8PUiaWQAB8FEIWoDxpMC5xRrawY3/g4cCIOrNHB5/8Dh8e1Jcg6121DjL9B6j
- bLHsHGWqwdzcnUdJtZuYsfoE3+y0XwPpzo9JdSDGfzWfmaD7OEFJJv/yzyyke8t4GoJr mg== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2130.oracle.com with ESMTP id 37n33ds1eq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 01 Apr 2021 09:00:50 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 1318ti4b043749;
-        Thu, 1 Apr 2021 09:00:49 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3030.oracle.com with ESMTP id 37n2aryxdh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 01 Apr 2021 09:00:49 +0000
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 13190mNd027839;
-        Thu, 1 Apr 2021 09:00:48 GMT
-Received: from mwanda (/102.36.221.92)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 01 Apr 2021 02:00:48 -0700
-Date:   Thu, 1 Apr 2021 12:00:39 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     kbusch@kernel.org
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Jason Gunthorpe <jgg@nvidia.com>
-Subject: [bug report] node: Add memory-side caching attributes
-Message-ID: <YGWLtzMLqSW4cxma@mwanda>
+        Thu, 1 Apr 2021 05:08:58 -0400
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9908AC0613E6;
+        Thu,  1 Apr 2021 02:08:57 -0700 (PDT)
+Received: by mail-wr1-x42c.google.com with SMTP id j7so1062031wrd.1;
+        Thu, 01 Apr 2021 02:08:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=zfLEgiVPM1EK9I/Nt42wOScERsBlthcf9kfWnVgYF2Q=;
+        b=fHOJMypWJhhdilZSqgus776bitjj+6ECd25ljjjUUgd/L3W2gUzr1RaQFXaoNGZ8q/
+         08ohAbHbg28YHIs7dUH+nZRVhUwicJ96HqiSCMrWaFNAcfRpxgosz4BFrxMaU9Ml7WcG
+         PIPLOfMVcHONaoXT9lb8ME2dqqnJVgDjjAn4upV4/KtoDlCYG3kHrmQd/ax24n80hnId
+         dq0V9qXcp38humOfzkzGVDzRvxwTNVpeUaQhOvme9OilkTwP4OahpmQ2bDqgvEANnGGV
+         lZgqSYEeFbHvI7093cMKti9e87KDn/pBSPZP9u6UURbGnCu0MiHZ5B+pwQkUzSCnT4Fo
+         xPCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=zfLEgiVPM1EK9I/Nt42wOScERsBlthcf9kfWnVgYF2Q=;
+        b=rfVWl0j9EpOikp9H97MQ8dTmMrSZJMMOhOyuRWHYI+v8xGrDGIOztfM3dJ4MaLd/QJ
+         h/om0kGjd6VUdGL96kPFm19z1f4Q5DOQXI6yjHJmdqgfh1S80nQlKpz8P5/99zx4zhuz
+         sk15t2SxWUGKBa30It5HBbTdCAf7rxIw3Z5OFjiQEk7/6Ggqx8Gd+e7/RkDnrhRi5tXL
+         /yicvLKyFwwRKKFKh3aEVrUJmRWfmGeA2HAstCNMnVKFtMJLRkvY0+XQxoVookzJCU1d
+         FJ0v+AEb+KAB/rEKMKeH2AhrQeZil7n3sQ1AuaR/K3AgiBqCSjB55clcSMbkF+C7MawY
+         BA7Q==
+X-Gm-Message-State: AOAM532hPbkcgNjHnKPjVGsqH4nPd3AII7SBq8CjJBv5nKK0Thu5XXv2
+        hvdlWJsrEJO0vzQVeOapSw4=
+X-Google-Smtp-Source: ABdhPJy3wsTTqmFumyzlT5bNJa58quMPVPj3Zo4eKzUSD/gEAxlpRvKnIyhg5WvQqFSWW3otqvDeuw==
+X-Received: by 2002:adf:b1c9:: with SMTP id r9mr8594838wra.51.1617268136402;
+        Thu, 01 Apr 2021 02:08:56 -0700 (PDT)
+Received: from LEGION ([39.46.7.73])
+        by smtp.gmail.com with ESMTPSA id f16sm8880603wrt.21.2021.04.01.02.08.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Apr 2021 02:08:55 -0700 (PDT)
+Date:   Thu, 1 Apr 2021 14:08:50 +0500
+From:   Muhammad Usama Anjum <musamaanjum@gmail.com>
+To:     Namjae Jeon <namjae.jeon@samsung.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steve French <sfrench@samba.org>,
+        Hyunchul Lee <hyc.lee@gmail.com>,
+        "open list:COMMON INTERNET FILE SYSTEM SERVER (CIFSD)" 
+        <linux-cifs@vger.kernel.org>,
+        "open list:COMMON INTERNET FILE SYSTEM SERVER (CIFSD)" 
+        <linux-cifsd-devel@lists.sourceforge.net>,
+        open list <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org, colin.king@canonical.com,
+        dan.carpenter@oracle.com
+Cc:     musamaanjum@gmail.com
+Subject: [PATCH] cifsd: use kfree to free memory allocated by kmalloc or
+ kzalloc
+Message-ID: <20210401090850.GA2779473@LEGION>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Proofpoint-IMR: 1
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9940 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 spamscore=0
- suspectscore=0 bulkscore=0 mlxscore=0 adultscore=0 malwarescore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2103310000 definitions=main-2104010063
-X-Proofpoint-GUID: vqzIBXprIwB4fcWmwErknLt8mEbyDy8v
-X-Proofpoint-ORIG-GUID: vqzIBXprIwB4fcWmwErknLt8mEbyDy8v
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9940 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=999 mlxscore=0
- lowpriorityscore=0 suspectscore=0 priorityscore=1501 phishscore=0
- clxscore=1011 impostorscore=0 malwarescore=0 bulkscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2103310000
- definitions=main-2104010063
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Keith,
+kfree should be used to free memory allocated by kmalloc or kzalloc to
+avoid any overhead and for maintaining consistency.
 
-I've been trying to figure out ways Smatch can check for device managed
-resources.  Like adding rules that if we call dev_set_name(&foo->bar)
-then it's device managaged and if there is a kfree(foo) without calling
-device_put(&foo->bar) then that's a resource leak.
+Fixes: 5dfeb6d945 ("cifsd: use kmalloc() for small allocations")
+Signed-off-by: Muhammad Usama Anjum <musamaanjum@gmail.com>
+---
+ fs/cifsd/buffer_pool.c       | 4 ++--
+ fs/cifsd/mgmt/share_config.c | 2 +-
+ fs/cifsd/mgmt/user_config.c  | 8 ++++----
+ fs/cifsd/mgmt/user_session.c | 6 +++---
+ fs/cifsd/smb2pdu.c           | 4 ++--
+ fs/cifsd/vfs_cache.c         | 2 +-
+ 6 files changed, 13 insertions(+), 13 deletions(-)
 
-Of course one of the rules is that if you call device_register(dev) then
-you can't kfree(dev), it has to released with device_put(dev) and that's
-true even if the register fails.  But this code here feels very
-intentional so maybe there is an exception to the rule?
+diff --git a/fs/cifsd/buffer_pool.c b/fs/cifsd/buffer_pool.c
+index ad2a2c885a2c..a9ef3e703232 100644
+--- a/fs/cifsd/buffer_pool.c
++++ b/fs/cifsd/buffer_pool.c
+@@ -78,7 +78,7 @@ static int register_wm_size_class(size_t sz)
+ 	list_for_each_entry(l, &wm_lists, list) {
+ 		if (l->sz == sz) {
+ 			write_unlock(&wm_lists_lock);
+-			kvfree(nl);
++			kfree(nl);
+ 			return 0;
+ 		}
+ 	}
+@@ -181,7 +181,7 @@ static void wm_list_free(struct wm_list *l)
+ 		list_del(&wm->list);
+ 		kvfree(wm);
+ 	}
+-	kvfree(l);
++	kfree(l);
+ }
+ 
+ static void wm_lists_destroy(void)
+diff --git a/fs/cifsd/mgmt/share_config.c b/fs/cifsd/mgmt/share_config.c
+index db780febd692..e3d459c4dbb2 100644
+--- a/fs/cifsd/mgmt/share_config.c
++++ b/fs/cifsd/mgmt/share_config.c
+@@ -102,7 +102,7 @@ static int parse_veto_list(struct ksmbd_share_config *share,
+ 
+ 		p->pattern = kstrdup(veto_list, GFP_KERNEL);
+ 		if (!p->pattern) {
+-			ksmbd_free(p);
++			kfree(p);
+ 			return -ENOMEM;
+ 		}
+ 
+diff --git a/fs/cifsd/mgmt/user_config.c b/fs/cifsd/mgmt/user_config.c
+index f0c2f8994a6b..c31e2c4d2d6f 100644
+--- a/fs/cifsd/mgmt/user_config.c
++++ b/fs/cifsd/mgmt/user_config.c
+@@ -46,8 +46,8 @@ struct ksmbd_user *ksmbd_alloc_user(struct ksmbd_login_response *resp)
+ 
+ 	if (!user->name || !user->passkey) {
+ 		kfree(user->name);
+-		ksmbd_free(user->passkey);
+-		ksmbd_free(user);
++		kfree(user->passkey);
++		kfree(user);
+ 		user = NULL;
+ 	}
+ 	return user;
+@@ -57,8 +57,8 @@ void ksmbd_free_user(struct ksmbd_user *user)
+ {
+ 	ksmbd_ipc_logout_request(user->name);
+ 	kfree(user->name);
+-	ksmbd_free(user->passkey);
+-	ksmbd_free(user);
++	kfree(user->passkey);
++	kfree(user);
+ }
+ 
+ int ksmbd_anonymous_user(struct ksmbd_user *user)
+diff --git a/fs/cifsd/mgmt/user_session.c b/fs/cifsd/mgmt/user_session.c
+index 5a2113bf18ef..fa2140d4755a 100644
+--- a/fs/cifsd/mgmt/user_session.c
++++ b/fs/cifsd/mgmt/user_session.c
+@@ -53,7 +53,7 @@ static void __session_rpc_close(struct ksmbd_session *sess,
+ 
+ 	ksmbd_free(resp);
+ 	ksmbd_rpc_id_free(entry->id);
+-	ksmbd_free(entry);
++	kfree(entry);
+ }
+ 
+ static void ksmbd_session_rpc_clear_list(struct ksmbd_session *sess)
+@@ -119,7 +119,7 @@ int ksmbd_session_rpc_open(struct ksmbd_session *sess, char *rpc_name)
+ 	return entry->id;
+ error:
+ 	list_del(&entry->list);
+-	ksmbd_free(entry);
++	kfree(entry);
+ 	return -EINVAL;
+ }
+ 
+@@ -174,7 +174,7 @@ void ksmbd_session_destroy(struct ksmbd_session *sess)
+ 	ksmbd_release_id(session_ida, sess->id);
+ 
+ 	ksmbd_ida_free(sess->tree_conn_ida);
+-	ksmbd_free(sess);
++	kfree(sess);
+ }
+ 
+ static struct ksmbd_session *__session_lookup(unsigned long long id)
+diff --git a/fs/cifsd/smb2pdu.c b/fs/cifsd/smb2pdu.c
+index 139041768f65..a4bcf6a85f02 100644
+--- a/fs/cifsd/smb2pdu.c
++++ b/fs/cifsd/smb2pdu.c
+@@ -1611,7 +1611,7 @@ int smb2_sess_setup(struct ksmbd_work *work)
+ 
+ 			ksmbd_conn_set_good(work);
+ 			sess->state = SMB2_SESSION_VALID;
+-			ksmbd_free(sess->Preauth_HashValue);
++			kfree(sess->Preauth_HashValue);
+ 			sess->Preauth_HashValue = NULL;
+ 		} else if (conn->preferred_auth_mech == KSMBD_AUTH_NTLMSSP) {
+ 			rc = generate_preauth_hash(work);
+@@ -1637,7 +1637,7 @@ int smb2_sess_setup(struct ksmbd_work *work)
+ 
+ 				ksmbd_conn_set_good(work);
+ 				sess->state = SMB2_SESSION_VALID;
+-				ksmbd_free(sess->Preauth_HashValue);
++				kfree(sess->Preauth_HashValue);
+ 				sess->Preauth_HashValue = NULL;
+ 			}
+ 		} else {
+diff --git a/fs/cifsd/vfs_cache.c b/fs/cifsd/vfs_cache.c
+index ec631dc6f1fb..f2a863542dc7 100644
+--- a/fs/cifsd/vfs_cache.c
++++ b/fs/cifsd/vfs_cache.c
+@@ -829,6 +829,6 @@ void ksmbd_destroy_file_table(struct ksmbd_file_table *ft)
+ 
+ 	__close_file_table_ids(ft, NULL, session_fd_check);
+ 	idr_destroy(ft->idr);
+-	ksmbd_free(ft->idr);
++	kfree(ft->idr);
+ 	ft->idr = NULL;
+ }
+-- 
+2.25.1
 
-The patch acc02a109b04: "node: Add memory-side caching attributes"
-from Mar 11, 2019, leads to the following static checker warning:
-
-	drivers/base/node.c:285 node_init_cache_dev()
-	error: kfree after device_register(): 'dev'
-
-drivers/base/node.c
-   263  static void node_init_cache_dev(struct node *node)
-   264  {
-   265          struct device *dev;
-   266  
-   267          dev = kzalloc(sizeof(*dev), GFP_KERNEL);
-   268          if (!dev)
-   269                  return;
-   270  
-   271          dev->parent = &node->dev;
-   272          dev->release = node_cache_release;
-   273          if (dev_set_name(dev, "memory_side_cache"))
-   274                  goto free_dev;
-   275  
-   276          if (device_register(dev))
-                    ^^^^^^^^^^^^^^^^^^^
-   277                  goto free_name;
-   278  
-   279          pm_runtime_no_callbacks(dev);
-   280          node->cache_dev = dev;
-   281          return;
-   282  free_name:
-   283          kfree_const(dev->kobj.name);
-   284  free_dev:
-   285          kfree(dev);
-                ^^^^^^^^^^
-   286  }
-
-regards,
-dan carpenter
