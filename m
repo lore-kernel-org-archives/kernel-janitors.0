@@ -2,135 +2,126 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72994C433ED
-	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Apr 2021 08:18:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7205BC433ED
+	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Apr 2021 09:01:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3AB63610A5
-	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Apr 2021 08:18:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7589610A5
+	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Apr 2021 09:01:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233283AbhDAIRa (ORCPT
+        id S233629AbhDAJBP (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 1 Apr 2021 04:17:30 -0400
-Received: from mailout2.samsung.com ([203.254.224.25]:45130 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233050AbhDAIRR (ORCPT
+        Thu, 1 Apr 2021 05:01:15 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:43052 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233024AbhDAJAz (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 1 Apr 2021 04:17:17 -0400
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20210401081715epoutp02c2a82d186a86b9349a2281f426272295~xrfscsQdy0146201462epoutp02Y
-        for <kernel-janitors@vger.kernel.org>; Thu,  1 Apr 2021 08:17:15 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20210401081715epoutp02c2a82d186a86b9349a2281f426272295~xrfscsQdy0146201462epoutp02Y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1617265035;
-        bh=vgbPXoR2wLvBR7QZ88GMHoPZAHxfQlH41VOC/Czif9g=;
-        h=From:To:In-Reply-To:Subject:Date:References:From;
-        b=Hvj54Vdw77qFxPIbwOqZM4WJ1bjFsqFn6hNbGApgo/3pEL3p7vRVoUW1rs5o7ufVW
-         qbGb7H87rI7Oywh2aFzQr0y8fcKqmoeYmUG65HF4QAIV+EqC8+BvRJeBwWYtIX/ur0
-         DNgWLu7rXjT/cEjA8P5e8U7MK0SxyyJWShCRlKas=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20210401081714epcas1p3d04cef095c860f8d0fca63940df1e2c4~xrfr8_lVe1503215032epcas1p33;
-        Thu,  1 Apr 2021 08:17:14 +0000 (GMT)
-Received: from epsmges1p2.samsung.com (unknown [182.195.40.160]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4F9wyd5lsXz4x9Q2; Thu,  1 Apr
-        2021 08:17:13 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        CA.45.02277.98185606; Thu,  1 Apr 2021 17:17:13 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20210401081713epcas1p3aee989bb7fdfb07918cafe96ab6be33c~xrfqnQLhi1504115041epcas1p3t;
-        Thu,  1 Apr 2021 08:17:13 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20210401081713epsmtrp248a9eb5cfb39cb2fe6be4e61d6b8e9e4~xrfqmcNSP2201922019epsmtrp2T;
-        Thu,  1 Apr 2021 08:17:13 +0000 (GMT)
-X-AuditID: b6c32a36-4d7ff700000108e5-b0-606581897d8c
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        F3.A2.08745.98185606; Thu,  1 Apr 2021 17:17:13 +0900 (KST)
-Received: from namjaejeon01 (unknown [10.88.104.63]) by epsmtip1.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20210401081712epsmtip1f1cb5e77e7f1ca84725115f2c061b3da~xrfqXktBa0332003320epsmtip11;
-        Thu,  1 Apr 2021 08:17:12 +0000 (GMT)
-From:   "Namjae Jeon" <namjae.jeon@samsung.com>
-To:     "'Muhammad Usama Anjum'" <musamaanjum@gmail.com>,
-        "'Sergey Senozhatsky'" <sergey.senozhatsky@gmail.com>,
-        "'Steve French'" <sfrench@samba.org>,
-        "'Hyunchul Lee'" <hyc.lee@gmail.com>,
-        "'open list:COMMON INTERNET FILE SYSTEM SERVER \(CIFSD\)'" 
-        <linux-cifs@vger.kernel.org>,
-        "'open list:COMMON INTERNET FILE SYSTEM SERVER \(CIFSD\)'" 
-        <linux-cifsd-devel@lists.sourceforge.net>,
-        "'open list'" <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>, <colin.king@canonical.com>,
-        <dan.carpenter@oracle.com>
-In-Reply-To: <20210401075531.GA2766105@LEGION>
-Subject: RE: [PATCH] cifsd: fix memory leak when loop ends
-Date:   Thu, 1 Apr 2021 17:17:13 +0900
-Message-ID: <003901d726cf$6b75d890$426189b0$@samsung.com>
+        Thu, 1 Apr 2021 05:00:55 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 1318wouB071849;
+        Thu, 1 Apr 2021 09:00:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
+ bh=CGkPXPPHpmlF1CktlWv/KooP+Kf2+sLKW+hJlQZ63QM=;
+ b=uQWRsIQecYnbeUwf+EBYy4ejFKeyZTeLbpVEgV8ZCKSpg53yxi5xSNjokSwQGMmEuXa3
+ nUq0JyGpklpqrRuDqNuU6pDTbHsa4JdHsyjwYm94QOq7KfuHHIHS6445XOvshB8sdiOJ
+ L2r8jDL8tWmlFBPinrAhqlePD157yeKA667JdBtznjiO8MSDMEqv+C1ki7Dkmr/y1zZt
+ CXqzepE8PUiaWQAB8FEIWoDxpMC5xRrawY3/g4cCIOrNHB5/8Dh8e1Jcg6121DjL9B6j
+ bLHsHGWqwdzcnUdJtZuYsfoE3+y0XwPpzo9JdSDGfzWfmaD7OEFJJv/yzyyke8t4GoJr mg== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2130.oracle.com with ESMTP id 37n33ds1eq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 01 Apr 2021 09:00:50 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 1318ti4b043749;
+        Thu, 1 Apr 2021 09:00:49 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 37n2aryxdh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 01 Apr 2021 09:00:49 +0000
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 13190mNd027839;
+        Thu, 1 Apr 2021 09:00:48 GMT
+Received: from mwanda (/102.36.221.92)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 01 Apr 2021 02:00:48 -0700
+Date:   Thu, 1 Apr 2021 12:00:39 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     kbusch@kernel.org
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Jason Gunthorpe <jgg@nvidia.com>
+Subject: [bug report] node: Add memory-side caching attributes
+Message-ID: <YGWLtzMLqSW4cxma@mwanda>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQG8FoHjOwNMvoZKP6UmJNrFtYqTewIzYq1UqsPWbrA=
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNJsWRmVeSWpSXmKPExsWy7bCmgW5nY2qCwdZ36ha/V/eyWbz+N53F
-        4tr99+wWW29JW7z4v4vZ4uf/74wWl3fNYbPY27qN0WLt58fsFh0vjzI7cHnMauhl89g56y67
-        x+4Fn5k8Pj69xeIxd1cfo8fnTXIBbFE5NhmpiSmpRQqpecn5KZl56bZK3sHxzvGmZgaGuoaW
-        FuZKCnmJuam2Si4+AbpumTlAlykplCXmlAKFAhKLi5X07WyK8ktLUhUy8otLbJVSC1JyCgwN
-        CvSKE3OLS/PS9ZLzc60MDQyMTIEqE3Iy2k6eZiqYwVwxZdZMlgbG00xdjBwcEgImEidWmnYx
-        cnEICexglFj9sIsFwvnEKLGocxk7hPOZUWL7unVsXYycYB2L77yAqtrFKLFm8ylmCOclo8S6
-        +VPAqtgEdCX+/dnPBpIQEehlkXj/9wgTSIJTQE9i4ocfzCC2sICVxP8ta1hAbBYBFYl362Yx
-        gti8ApYSh6/dYoGwBSVOznwCZjMLyEtsfzuHGeIMBYmfT5exgtgiQHNWLJ/ODFEjIjG7sw3s
-        IgmBlRwSD9a/Y4JocJHo7fzHCmELS7w6voUdwpaS+PxuLxskNKolPu6Hmt/BKPHiuy2EbSxx
-        c/0GVpASZgFNifW79CHCihI7f89lhFjLJ/Huaw8rxBReiY42IYgSVYm+S4ehDpCW6Gr/ALXU
-        Q6Lj9gXmCYyKs5A8OQvJk7OQPDMLYfECRpZVjGKpBcW56anFhgVGyJG9iRGcarXMdjBOevtB
-        7xAjEwfjIUYJDmYlEV7hA4kJQrwpiZVVqUX58UWlOanFhxhNgcE+kVlKNDkfmOzzSuINTY2M
-        jY0tTMzMzUyNlcR5Ew0exAsJpCeWpGanphakFsH0MXFwSjUwhZ6RCt8+Iy/TZNunO1wHbwWk
-        P2ysbdBb8nqO6psJxvLzrwcfue/kGSsYUr3q+Rq12JqQTmVe3/u6N/ZfYGD8da373tWjPwUt
-        TzmeNfHV1t9SueRtKcMK0ZgIxzsdfVHPOydcYLgmGvv3/QNdJZO4MkXBW67HAw/eVHY+enGC
-        cN3Js49EBC5pluWs1QxIcpUOUnr4Kn5Nt2/LIz23pWkT1vKe9HRYmKu9KaQgnPfntG8Peg8w
-        ZG8LD5w5X9U402JmvbjJjMe5v7Z9X82pLBg0I5Qtb8XWAxkWq/zPpYZn9L4+86xtpulPUaEn
-        8Qd4Rf8aP+tsqy6Q+TP/XtPa8+ttFF8X3tCbdJzhAEv78ac8SizFGYmGWsxFxYkAT2wuwD4E
-        AAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupgkeLIzCtJLcpLzFFi42LZdlhJTrezMTXB4Nomdovfq3vZLF7/m85i
-        ce3+e3aLrbekLV7838Vs8fP/d0aLy7vmsFnsbd3GaLH282N2i46XR5kduDxmNfSyeeycdZfd
-        Y/eCz0weH5/eYvGYu6uP0ePzJrkAtigum5TUnMyy1CJ9uwSujLaTp5kKZjBXTJk1k6WB8TRT
-        FyMnh4SAicTiOy9Yuhi5OIQEdjBKbNn3jR0iIS1x7MQZ5i5GDiBbWOLw4WKImueMEu+3vgGr
-        YRPQlfj3Zz8bSEJEYCKLxLcFF8ESQgL1Emumv2UDsTkF9CQmfvjBDGILC1hJ/N+yhgXEZhFQ
-        kXi3bhYjiM0rYClx+NotFghbUOLkzCcsIIuZgXrbNoKVMAvIS2x/O4cZ4jYFiZ9Pl7GC2CJA
-        I1csn84MUSMiMbuzjXkCo9AsJJNmIUyahWTSLCQdCxhZVjFKphYU56bnFhsWGOWllusVJ+YW
-        l+al6yXn525iBEeWltYOxj2rPugdYmTiYDzEKMHBrCTCK3wgMUGINyWxsiq1KD++qDQntfgQ
-        ozQHi5I474Wuk/FCAumJJanZqakFqUUwWSYOTqkGJr2zEb8XPVu3t8oy511Zadj6SK53gZVF
-        Tk5TPorabWZiTlBVdgvZyP5w7RfFt4s/xvKvnPtwu+Tlc68UVyXJ1TvO+a4h5iDGOW850+9/
-        3Rfl9JaqxS9+LWx7PjyCqeFkYZCibTn7588BhhuvTfLO/b+6Xz5YNnfRxolmXz3LC/5NNRTf
-        /HiT5aNLvp3ZmhuL/D8UHPy6TSNroaVWXCWz1Bz2rN/tlzZ0FCsUdm89I7zW0u/T1bvPVN3D
-        mRMYhF7fevBj0gyOv7qfE94lC/xnLRbwybTacYi9dUZWtgPbr7jZJvsyZ4ql3rl2ib3yUcGU
-        H1a/f971cT7iovrDybbwDJPZNPtdT3Yau73O+MnBqMRSnJFoqMVcVJwIAHtoyzcbAwAA
-X-CMS-MailID: 20210401081713epcas1p3aee989bb7fdfb07918cafe96ab6be33c
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20210401075539epcas1p3b7cb52923217b212c80185aab135fe22
-References: <CGME20210401075539epcas1p3b7cb52923217b212c80185aab135fe22@epcas1p3.samsung.com>
-        <20210401075531.GA2766105@LEGION>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Proofpoint-IMR: 1
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9940 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 spamscore=0
+ suspectscore=0 bulkscore=0 mlxscore=0 adultscore=0 malwarescore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2103310000 definitions=main-2104010063
+X-Proofpoint-GUID: vqzIBXprIwB4fcWmwErknLt8mEbyDy8v
+X-Proofpoint-ORIG-GUID: vqzIBXprIwB4fcWmwErknLt8mEbyDy8v
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9940 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=999 mlxscore=0
+ lowpriorityscore=0 suspectscore=0 priorityscore=1501 phishscore=0
+ clxscore=1011 impostorscore=0 malwarescore=0 bulkscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2103310000
+ definitions=main-2104010063
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-> 
-> Memory is being allocated and if veto_list is zero, the loop breaks without cleaning up the allocated
-> memory. In this patch, the length check has been moved before allocation. If loop breaks, the memory
-> isn't allocated in the first place. Thus the memory is being protected from leaking.
-> 
-> Signed-off-by: Muhammad Usama Anjum <musamaanjum@gmail.com>
-I will apply. Thanks for your patch!
+Hi Keith,
 
+I've been trying to figure out ways Smatch can check for device managed
+resources.  Like adding rules that if we call dev_set_name(&foo->bar)
+then it's device managaged and if there is a kfree(foo) without calling
+device_put(&foo->bar) then that's a resource leak.
+
+Of course one of the rules is that if you call device_register(dev) then
+you can't kfree(dev), it has to released with device_put(dev) and that's
+true even if the register fails.  But this code here feels very
+intentional so maybe there is an exception to the rule?
+
+The patch acc02a109b04: "node: Add memory-side caching attributes"
+from Mar 11, 2019, leads to the following static checker warning:
+
+	drivers/base/node.c:285 node_init_cache_dev()
+	error: kfree after device_register(): 'dev'
+
+drivers/base/node.c
+   263  static void node_init_cache_dev(struct node *node)
+   264  {
+   265          struct device *dev;
+   266  
+   267          dev = kzalloc(sizeof(*dev), GFP_KERNEL);
+   268          if (!dev)
+   269                  return;
+   270  
+   271          dev->parent = &node->dev;
+   272          dev->release = node_cache_release;
+   273          if (dev_set_name(dev, "memory_side_cache"))
+   274                  goto free_dev;
+   275  
+   276          if (device_register(dev))
+                    ^^^^^^^^^^^^^^^^^^^
+   277                  goto free_name;
+   278  
+   279          pm_runtime_no_callbacks(dev);
+   280          node->cache_dev = dev;
+   281          return;
+   282  free_name:
+   283          kfree_const(dev->kobj.name);
+   284  free_dev:
+   285          kfree(dev);
+                ^^^^^^^^^^
+   286  }
+
+regards,
+dan carpenter
