@@ -2,136 +2,182 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,
+	SPF_NONE autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45940C433ED
-	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Apr 2021 09:19:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DE64C04FE5
+	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Apr 2021 17:46:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0FD846108B
-	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Apr 2021 09:19:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F02BF61399
+	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Apr 2021 17:46:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233327AbhDAJSn (ORCPT
+        id S236602AbhDARqC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 1 Apr 2021 05:18:43 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:12546 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233780AbhDAJSV (ORCPT
+        Thu, 1 Apr 2021 13:46:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57200 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234639AbhDARii (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 1 Apr 2021 05:18:21 -0400
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20210401091819epoutp039f6c09b5f503b6237984c61994b0e80d~xsVBMc4pW2763427634epoutp03B
-        for <kernel-janitors@vger.kernel.org>; Thu,  1 Apr 2021 09:18:19 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20210401091819epoutp039f6c09b5f503b6237984c61994b0e80d~xsVBMc4pW2763427634epoutp03B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1617268699;
-        bh=b9IPwcKsm2C3n9PXMZFOeCKKX6wHbwjJy1ULphl8cio=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=ULBVfcaY5Kgerrg1kzft3A/w4oqVquMI+em5/MzgSZ6EUCB8v4jONcA6S6lndW4Yj
-         uVswPSV+hjdJcNleaSBlgegWdsIPETx5psckrT+z+mWkJ/e/1Zd9pFcQbFdfsOlx2T
-         3SZFrqbJW0dfd0fYentCZiXT4InRMus8tRRLW22w=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20210401091819epcas1p4a9a9f94d65f6b73a019fab675ef99f2f~xsVA0Nwbv0415804158epcas1p4V;
-        Thu,  1 Apr 2021 09:18:19 +0000 (GMT)
-Received: from epsmges1p2.samsung.com (unknown [182.195.40.159]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4F9yK56pP8z4x9Q9; Thu,  1 Apr
-        2021 09:18:17 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        32.B9.02277.9DF85606; Thu,  1 Apr 2021 18:18:17 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20210401091817epcas1p4d4afc08a87993ff719a16be8647d60f3~xsU-M1gPs0415804158epcas1p4E;
-        Thu,  1 Apr 2021 09:18:17 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20210401091817epsmtrp2396429f28f1f3843ab5b2ac0cbb5524c~xsU-L8vgX2156921569epsmtrp2f;
-        Thu,  1 Apr 2021 09:18:17 +0000 (GMT)
-X-AuditID: b6c32a36-4edff700000108e5-9d-60658fd9838d
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        BE.C8.08745.9DF85606; Thu,  1 Apr 2021 18:18:17 +0900 (KST)
-Received: from namjaejeon01 (unknown [10.88.104.63]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20210401091817epsmtip290bcb67977fd68ca8c281437dd894131~xsU_9mdDz3106231062epsmtip2a;
-        Thu,  1 Apr 2021 09:18:17 +0000 (GMT)
-From:   "Namjae Jeon" <namjae.jeon@samsung.com>
-To:     "'Muhammad Usama Anjum'" <musamaanjum@gmail.com>
-Cc:     "'Sergey Senozhatsky'" <sergey.senozhatsky@gmail.com>,
-        "'Steve French'" <sfrench@samba.org>,
-        "'Hyunchul Lee'" <hyc.lee@gmail.com>,
-        "'open list:COMMON INTERNET FILE SYSTEM SERVER \(CIFSD\)'" 
-        <linux-cifs@vger.kernel.org>,
-        "'open list:COMMON INTERNET FILE SYSTEM SERVER \(CIFSD\)'" 
-        <linux-cifsd-devel@lists.sourceforge.net>,
-        "'open list'" <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>, <colin.king@canonical.com>,
-        <dan.carpenter@oracle.com>
-In-Reply-To: <20210401090850.GA2779473@LEGION>
-Subject: RE: [PATCH] cifsd: use kfree to free memory allocated by kmalloc or
- kzalloc
-Date:   Thu, 1 Apr 2021 18:18:17 +0900
-Message-ID: <004601d726d7$f3798310$da6c8930$@samsung.com>
+        Thu, 1 Apr 2021 13:38:38 -0400
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on20616.outbound.protection.outlook.com [IPv6:2a01:111:f400:fe5b::616])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 854ACC05BD30;
+        Thu,  1 Apr 2021 06:03:11 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=YDa6tAxlEibaaxxkyQAVVtxfdOEz2uvZdSKhQIUwj8AXTp1LhXZmvBIgpqDTMdtPHhFJQTiyWvbPGgdwbvhPjj4mUhyvJAWLjyMuhqJU/Nt9oF7UM2dkcuyUqu1zHNse4ISFBiZjk0LAegzE7033y+gBsTz1l94SzeD4vbAEaa+ZB1myF6vLG0iNlOZN6ryXrmA7gX1/jQ1WwWE9OUZ0dINbHQMBZQaqiR2jnTlEFLyvr+0CisFNwd+lPTkJsIMlM7OHYfJY9X3TRTBfdaByO+oqLgwl1JUi6V83i6FfkSgnXjEXq6Yr3NM9OR+N58O+0HOYlszUL0+53pGi9xolnw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=m+Ualula6cZURnqRGKcb4Xa3gs6XcXPqiGJQSNghHZQ=;
+ b=SAjLjHyMYtqcJd2GrCzQt6gjF0QZbMaIbRo0xxxksiy6PbmI1wV03weyPimKk/dMc3Ku7qTKWYxPvQFNJcZK3qj8EynuhyrI9pwwt4Mi77kXh65AKOYxD3BxueUGE7NstEX8F81XUodgjspUwM2ldvq9NbBCMnxSROjEyu0OnJyxNq73vdHvCkq3VWK/riVpzUfhM2kWFzj0VW55unFdjtUhLhb5BbAgd8orX7fuLfgqHIHKICPSk/ifJZatY6D1ozO644wvN3YTTxYvPVmtq3YskKoJM6AdODYodrF2RygEdjoEn0aFX+WrZRO2tSXAjx6y68TMfM2BIRFb14fhqA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=m+Ualula6cZURnqRGKcb4Xa3gs6XcXPqiGJQSNghHZQ=;
+ b=lObAt72rzTBvfjv0qO5xJLY092lRGdCXEvcVE2nDeY879E6yt0l/XLkyhOPj9wluwghE9gog7Wko5UmUzIVBfCCaR+r8wGNY/f6b7RsCZSwqTOxrexv/tl4s3MRW3tmxuYuqz7nRqBGZWh1vqyIiI3HkmTPTrwomoOXq/JN64KuGbenUwJ5pGKS5ZNCela9tcZjZNggo4IoHR1fpBKJUW6H0TOaVoz2oS+mn09gVUpVZUXTQd1TQAzX078q7QtVN1wRnJqX4RwdhCrWFbjtMa271yIWgppENzR1QvBDnWLgKz8gqd1RDM6L7I/07q5HbsFMy04CVA+n6aSWMhwse4w==
+Authentication-Results: oracle.com; dkim=none (message not signed)
+ header.d=none;oracle.com; dmarc=none action=none header.from=nvidia.com;
+Received: from DM6PR12MB3834.namprd12.prod.outlook.com (2603:10b6:5:14a::12)
+ by DM6PR12MB3596.namprd12.prod.outlook.com (2603:10b6:5:3e::27) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3999.27; Thu, 1 Apr
+ 2021 11:25:14 +0000
+Received: from DM6PR12MB3834.namprd12.prod.outlook.com
+ ([fe80::1c62:7fa3:617b:ab87]) by DM6PR12MB3834.namprd12.prod.outlook.com
+ ([fe80::1c62:7fa3:617b:ab87%6]) with mapi id 15.20.3999.028; Thu, 1 Apr 2021
+ 11:25:13 +0000
+Date:   Thu, 1 Apr 2021 08:25:11 -0300
+From:   Jason Gunthorpe <jgg@nvidia.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     kbusch@kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [bug report] node: Add memory-side caching attributes
+Message-ID: <20210401112511.GV1463678@nvidia.com>
+References: <YGWLtzMLqSW4cxma@mwanda>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YGWLtzMLqSW4cxma@mwanda>
+X-Originating-IP: [142.162.115.133]
+X-ClientProxiedBy: BL0PR02CA0045.namprd02.prod.outlook.com
+ (2603:10b6:207:3d::22) To DM6PR12MB3834.namprd12.prod.outlook.com
+ (2603:10b6:5:14a::12)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHE1YfbJKWSfn21hU+sU4uf/CNVewIuWIugqrKR2PA=
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrJJsWRmVeSWpSXmKPExsWy7bCmru7N/tQEg1OLTS1+r+5ls3j9bzqL
-        xbX779kttt6Stnjxfxezxc//3xktLu+aw2axt3Ubo8Xaz4/ZLTpeHmV24PKY1dDL5rFz1l12
-        j90LPjN5fHx6i8Vj7q4+Ro/Pm+QC2KJybDJSE1NSixRS85LzUzLz0m2VvIPjneNNzQwMdQ0t
-        LcyVFPISc1NtlVx8AnTdMnOALlNSKEvMKQUKBSQWFyvp29kU5ZeWpCpk5BeX2CqlFqTkFBga
-        FOgVJ+YWl+al6yXn51oZGhgYmQJVJuRk/Nv+kKXgAFPF7sutzA2MrUxdjJwcEgImEpe2NrCB
-        2EICOxglnl6KhLA/MUrMXxLQxcgFZH9mlNg6ZzsLTMPsc61sEIldjBK/1uxih+h4ySix4oMJ
-        iM0moCvx789+sKkiQA3H73QxgTQwC9xklpjaexRsEqeAnsTFv+8ZQWxhgTCJxxe6mUFsFgEV
-        ia6mPlYQm1fAUmL6rG1QtqDEyZlPwHqZBeQltr+dwwxxkYLEz6fLWCGWWUnsXT0fqkZEYnZn
-        GzPIYgmBHRwSm7vOQf3sIrFxzQYoW1ji1fEt7BC2lMTnd3uBruYAsqslPu6Hmt/BKPHiuy2E
-        bSxxc/0GVpASZgFNifW79CHCihI7f89lhFjLJ/Huaw8rxBReiY42IYgSVYm+S4ehlkpLdLV/
-        YJ/AqDQLyWOzkDw2C8kDsxCWLWBkWcUollpQnJueWmxYYIQc1ZsYwWlWy2wH46S3H/QOMTJx
-        MB5ilOBgVhLhFT6QmCDEm5JYWZValB9fVJqTWnyI0RQY1BOZpUST84GJPq8k3tDUyNjY2MLE
-        zNzM1FhJnDfR4EG8kEB6YklqdmpqQWoRTB8TB6dUA5Plkyfi88pOsAkEu3xe897e1HRp4Rdh
-        udUr8g/vulz/XoH/eYN1qOnqTW/W/tsZ8/h8TfWtZ8sO9QQHfE8teXo47HTy6e45MdUnfkQ9
-        djlmzZHv4rZxkpQJp0vw/E9etQ5e1zbv2sedWMeWd2qxe77I7Funfe3vPHO9ysjjN+tr754j
-        MYxiYf9+KF+Z+HrJfDH5NnGh/RsmXVq4xPj/5Ds7T28R+XCG588cg7w0fjMm/pVynFbbNy5e
-        fO/QPsXt3x4qle28bc+7/Kvb/9NrtCISSq5ECs1WzVpi+kHzo1ppmZPKls8zL/26nRLQLfKv
-        XTpD/ve7+29fips2P2x3+iox0W5Hh7B/4e6rLTPf9da8UGIpzkg01GIuKk4EANk2ALY8BAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprMIsWRmVeSWpSXmKPExsWy7bCSvO7N/tQEg+lPRC1+r+5ls3j9bzqL
-        xbX779kttt6Stnjxfxezxc//3xktLu+aw2axt3Ubo8Xaz4/ZLTpeHmV24PKY1dDL5rFz1l12
-        j90LPjN5fHx6i8Vj7q4+Ro/Pm+QC2KK4bFJSczLLUov07RK4Mv5tf8hScICpYvflVuYGxlam
-        LkZODgkBE4nZ51rZuhi5OIQEdjBKLPt1ghkiIS1x7MQZIJsDyBaWOHy4GKLmOaPErYYdbCA1
-        bAK6Ev/+7AezRYAGHb/TxQRSxCxwl1niycIFLCAJIYF6ibOz94AN5RTQk7j49z0jyFBhgRCJ
-        yUudQcIsAioSXU19rCA2r4ClxPRZ26BsQYmTM5+wgJQzA7W2bWQECTMLyEtsfzsH6kwFiZ9P
-        l7FCnGAlsXf1fBaIGhGJ2Z1tzBMYhWchmTQLYdIsJJNmIelYwMiyilEytaA4Nz232LDAKC+1
-        XK84Mbe4NC9dLzk/dxMjON60tHYw7ln1Qe8QIxMH4yFGCQ5mJRFe4QOJCUK8KYmVValF+fFF
-        pTmpxYcYpTlYlMR5L3SdjBcSSE8sSc1OTS1ILYLJMnFwSjUwLbC7nBPcW7SZ8fsMZb7wu+UZ
-        M/o2+orvWSfn3rNsJtPftZe+LWS2edUcHDA//WDjr7ZzX1d7vuF5w3JSSfyo1F+Z/3ZhUU3K
-        joolDZXP2y8cmFfz5ccFjmV7l+Xx54jFP485ETFNR6tD3WN3694XW3efPL5S9nLqMaVVXsqn
-        r72KWzBdV3pH7NyzRosf2kefeeR9c/Ovr/Fm6tfUsvT9+pkPS3SXTv96/Mb5b++7e3tnaHTr
-        9fLN6rw61eOl/6pbX2uvBzzVjrm15U3qg/VTOaZm/dabFWfcyTK9dnlh+KldUT8POE6W+GM2
-        Mz6RtS93lmRIVknT/ayNnueLW5hrn552jpGSsvw9Yer9GYs2aSuxFGckGmoxFxUnAgC4xBiT
-        JgMAAA==
-X-CMS-MailID: 20210401091817epcas1p4d4afc08a87993ff719a16be8647d60f3
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20210401090901epcas1p49be3384fda4e000a6e9f40af63833f3a
-References: <CGME20210401090901epcas1p49be3384fda4e000a6e9f40af63833f3a@epcas1p4.samsung.com>
-        <20210401090850.GA2779473@LEGION>
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from mlx.ziepe.ca (142.162.115.133) by BL0PR02CA0045.namprd02.prod.outlook.com (2603:10b6:207:3d::22) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3999.26 via Frontend Transport; Thu, 1 Apr 2021 11:25:13 +0000
+Received: from jgg by mlx with local (Exim 4.94)        (envelope-from <jgg@nvidia.com>)        id 1lRvRn-006ilV-NW; Thu, 01 Apr 2021 08:25:11 -0300
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 10c02ae6-9e78-4661-3cc4-08d8f500d15f
+X-MS-TrafficTypeDiagnostic: DM6PR12MB3596:
+X-Microsoft-Antispam-PRVS: <DM6PR12MB3596F208CB9D6A26D2994685C27B9@DM6PR12MB3596.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:1775;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: mWpvs1dfIO2H9ZwCkCdccdOjO35fC1jOgvzPw6w3HN6BeBlPWQNe54uvBlMHAZuNE9zdgD1RsKiuQm964/ZAb8tVRWQwlxVBtiKkjUdhuLjaSv5RF/nmBGY7nUYwOWrFXxYRoKv7Q9ot+2i4+HPmQ5STeZbbgXz8u0o+2BIdIBlyWYAT3pRazDIPNsqoLPVtl3tE7iV2JuqgRXvKa4jZApP7ohRq5EOEcuhH84ynTAJ/w8P5GIvt3bXGCg2GiZJ4OrtWBZrZraDsJ/W4EMvGzUZmPZgyhexFrnAhhcQqN8XeiSRk++ktqv4NraTkw6BNGclBueSt75VdrS8dOdIu8c2Izg9iU2Ef1YVskBoEkHOh5/YREV49ggs8Xi8q2xjHY0EaCXQosO+/HedE0PJYN79FxTsnjT7JgGo/mybV/5bruGmyreDDlzyVWCu+3R4s9OL4wklIYb4H08pJANCjsCi4OjR/hJcvc8UJbnQUbwVkdZgP0WBPCPl5dF21O2QgTrT1M9045XzFV2Jr68/eGaam/jc0wYMVBFA2eWAUHzUHjDgEETfEOEYAyWM6EsVsyYIUYoEhHljUohiJL/ibACq+bPbDiFvkojyJQW7Cru3on8VtTl+KxxSqoaGwUmRFqCgtGUMPcr4EWS2YP8XKZVR2tL0Ka2qpuJ71D2hfPoM=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3834.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(346002)(396003)(366004)(39860400002)(136003)(376002)(2616005)(66946007)(9746002)(66556008)(66476007)(316002)(426003)(478600001)(6916009)(186003)(1076003)(83380400001)(9786002)(36756003)(2906002)(5660300002)(8936002)(4326008)(33656002)(26005)(86362001)(8676002)(38100700001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?+QotSRA3eWMUy9I/h2xuQ8ep1MI1ZYmN9zY9PxXseHQx9NyY/qHgxPfDcfEm?=
+ =?us-ascii?Q?BEg4S+so6r5HVuwiGgtEMbKUYxAXil/+ihWXkGiN03/IMIPtcbX7ZciZc2DO?=
+ =?us-ascii?Q?QRdGLEwHdYKImZQfJYMwoLHbnJ2n25hu//O5ET2phwK/5+28y7Nn5DpbTeUa?=
+ =?us-ascii?Q?YCufCdmkkLELy1eFMxUgdspucnp2jH7s2tauYaYGA/q2R1UtfYZnp2Lezpez?=
+ =?us-ascii?Q?kJHZ/Ze5TYIGgP9jfVzxGussy9eyghw60gSZS6/xU3dUu3V8bEEobe9i91EU?=
+ =?us-ascii?Q?lgJIqSsST51oFpqw5WwEcZK9CbcWTYvFfXqAezlhycR3RcC616mQVsg32+mX?=
+ =?us-ascii?Q?e/iEVMDfdeAufpmalQ3hPFh4Gfkhj+G0HcJ/J7v7WrCIjQ5kAulLegD3+iV+?=
+ =?us-ascii?Q?OtABhlEpT5pX0IC22DGUKJiSyA+LHlLlqv3QfUxqfgT0GOmly1f1gEWitbLU?=
+ =?us-ascii?Q?r3Num2tP84ApCaDCDZNIjRE2svj15r5lviM0Agm2WwVvcnBxKjdeLot+WjjX?=
+ =?us-ascii?Q?dMGvHgzka8qbjY+LxP5QCl9lrdzZJyLEFbfwBUo//p4TwlWcRmkRpGVvk5kO?=
+ =?us-ascii?Q?NdahM5cKdjeqGYBf4wctkwl0T0OiR+GOSVkahuIGdV3bUozfIoO31Y7Rdlgb?=
+ =?us-ascii?Q?WrjTp2rVWlAliZFWKB5EzT0qeD2W8trcDMvp32+VNPThMGm3YbCgsEmBcvw+?=
+ =?us-ascii?Q?uCKKHs1Yyk1bzbShPoLzrsPTFiWjIU8fxif3F6U6d0ZgN22K9p+nYDFs4Trr?=
+ =?us-ascii?Q?wXPU/jNS41giBfp9Rvn/EEbzP3rxyhmGXBjXhXQieLoRs2nmgwFO2Zc4dYA9?=
+ =?us-ascii?Q?G1wfqME05ATRxuXrWiSlH9KtkTqSA5oM9lyw12yd2vgoa8PwgKWPtooqt5n5?=
+ =?us-ascii?Q?a56EcT54IQ94+leNPdqrSBZIrmKwv1p7KKfIl4izeTMCDMM5gVMS6vcFwbu+?=
+ =?us-ascii?Q?jKohjyz3Mk8aH1uHVhiWHvMTQVgQg9IQfXEabBb1Odhzn+YAEX8mrRfbAfEF?=
+ =?us-ascii?Q?BMmLhvSvqhQ6rdax89xL5mo0w2XWzTUhO72fUliavls46sTVQgqLR+E/sr67?=
+ =?us-ascii?Q?3CxTwgC/JmZHMhnePYJiOSOIIgZoMPXIOPKIKWj/E1qokZ30R1P0MiGrpZc+?=
+ =?us-ascii?Q?v7/PYUe9aQyn9xrPvto043eZhg8BZW3Ca8sHA8Pgz39RZC8TByhm/jSMHPPc?=
+ =?us-ascii?Q?51tHeh7/rU2xFvSrLUsnEmbrFXrBnVaisZjdcxYoyOe0raYtpLm7lbNycIi+?=
+ =?us-ascii?Q?00fdCt+VLS9Kr3jHhuKYHYPDrfu7LLzgtFn0wHtWtiUlDdgOT0al2T8FZUDq?=
+ =?us-ascii?Q?EOJI0j1vYyPM5zEPOug5ALWQ?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 10c02ae6-9e78-4661-3cc4-08d8f500d15f
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3834.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Apr 2021 11:25:13.8177
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2IWoTcxukYrqWKMkoUQalcfKJB3DFTM6kxht+hldOc2qNhTcE677Nz2XcAEK+4Ut
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB3596
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On Thu, Apr 01, 2021 at 12:00:39PM +0300, Dan Carpenter wrote:
+> Hi Keith,
 > 
-> kfree should be used to free memory allocated by kmalloc or kzalloc to avoid any overhead and for
-> maintaining consistency.
-> 
-> Fixes: 5dfeb6d945 ("cifsd: use kmalloc() for small allocations")
-> Signed-off-by: Muhammad Usama Anjum <musamaanjum@gmail.com>
-Looks good. I will apply. Thanks for your patch!
+> I've been trying to figure out ways Smatch can check for device managed
+> resources.  Like adding rules that if we call dev_set_name(&foo->bar)
+> then it's device managaged and if there is a kfree(foo) without calling
+> device_put(&foo->bar) then that's a resource leak.
 
+It seems to be working from what I can see
+
+Also I wasn't able to convince myself that any locking around
+node->cache_attrs exist..
+
+> Of course one of the rules is that if you call device_register(dev) then
+> you can't kfree(dev), it has to released with device_put(dev) and that's
+> true even if the register fails.  But this code here feels very
+> intentional so maybe there is an exception to the rule?
+
+There is no exception. Open coding this:
+
+>    282  free_name:
+>    283          kfree_const(dev->kobj.name);
+
+To avoid leaking memory from dev_set_name is a straight up layering
+violation, WTF?
+
+node_cacheinfo_release() is just kfree(), so there is no need.
+Instead (please feel free to send this Dan):
+
+diff --git a/drivers/base/node.c b/drivers/base/node.c
+index f449dbb2c74666..89c28952863977 100644
+--- a/drivers/base/node.c
++++ b/drivers/base/node.c
+@@ -319,25 +319,24 @@ void node_add_cache(unsigned int nid, struct node_cache_attrs *cache_attrs)
+ 		return;
+ 
+ 	dev = &info->dev;
++	device_initialize(dev)
+ 	dev->parent = node->cache_dev;
+ 	dev->release = node_cacheinfo_release;
+ 	dev->groups = cache_groups;
+ 	if (dev_set_name(dev, "index%d", cache_attrs->level))
+-		goto free_cache;
++		goto put_device;
+ 
+ 	info->cache_attrs = *cache_attrs;
+-	if (device_register(dev)) {
++	if (device_add(dev)) {
+ 		dev_warn(&node->dev, "failed to add cache level:%d\n",
+ 			 cache_attrs->level);
+-		goto free_name;
++		goto put_device
+ 	}
+ 	pm_runtime_no_callbacks(dev);
+ 	list_add_tail(&info->node, &node->cache_attrs);
+ 	return;
+-free_name:
+-	kfree_const(dev->kobj.name);
+-free_cache:
+-	kfree(info);
++put_device:
++	put_device(dev);
+ }
+ 
+ static void node_remove_caches(struct node *node)
