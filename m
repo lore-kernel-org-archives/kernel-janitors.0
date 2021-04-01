@@ -2,103 +2,135 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D997C433B4
-	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Apr 2021 08:02:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72994C433ED
+	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Apr 2021 08:18:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 29F31601FA
-	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Apr 2021 08:02:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3AB63610A5
+	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Apr 2021 08:18:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233394AbhDAIBf (ORCPT
+        id S233283AbhDAIRa (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 1 Apr 2021 04:01:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44462 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229612AbhDAIBd (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 1 Apr 2021 04:01:33 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 80CBB601FA;
-        Thu,  1 Apr 2021 08:01:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617264093;
-        bh=Mq39K3+LAF97oI/GCfA+BJgXkBEWc8OJfLC8NFrrFmM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=U38w/jppE4U80LMU0eTPKdD0Q1xwYUuzr5tVlGCmRWhJHF2AqILRO/deV1RMPPllL
-         QxNrQDGBqJcDo15xr9h+eZ9ClYqQjbB9JJME76TbZhdJTSfGbRAheGYFXN7fUa6JQj
-         4/sivFnPspRku+jX2rhRL62DbbcFlRwXmPK75p+NJ8jP1uf7arOpiwN3JgH9JzKHp6
-         nk/DA+AU3QUJDKmUKR6amIit8TwdI1TGUFHPqzTLulat3OIh+WOY57z11Z9Xlnpxo/
-         U+pSLsOWV9NDjGRt0BZhq7aPEHMywTlGW03EyHp+7bzYZdGg57b5LGAe182IQexycN
-         eFyo1gN6etMeQ==
-Received: from johan by xi.lan with local (Exim 4.93.0.4)
-        (envelope-from <johan@kernel.org>)
-        id 1lRsGh-0004FK-5C; Thu, 01 Apr 2021 10:01:31 +0200
-Date:   Thu, 1 Apr 2021 10:01:31 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] USB: serial: iuu_phoenix: remove redundant variable
- 'error'
-Message-ID: <YGV923BQBelY1vnu@hovoldconsulting.com>
-References: <20210327232744.26237-1-colin.king@canonical.com>
+        Thu, 1 Apr 2021 04:17:30 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:45130 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233050AbhDAIRR (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 1 Apr 2021 04:17:17 -0400
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20210401081715epoutp02c2a82d186a86b9349a2281f426272295~xrfscsQdy0146201462epoutp02Y
+        for <kernel-janitors@vger.kernel.org>; Thu,  1 Apr 2021 08:17:15 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20210401081715epoutp02c2a82d186a86b9349a2281f426272295~xrfscsQdy0146201462epoutp02Y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1617265035;
+        bh=vgbPXoR2wLvBR7QZ88GMHoPZAHxfQlH41VOC/Czif9g=;
+        h=From:To:In-Reply-To:Subject:Date:References:From;
+        b=Hvj54Vdw77qFxPIbwOqZM4WJ1bjFsqFn6hNbGApgo/3pEL3p7vRVoUW1rs5o7ufVW
+         qbGb7H87rI7Oywh2aFzQr0y8fcKqmoeYmUG65HF4QAIV+EqC8+BvRJeBwWYtIX/ur0
+         DNgWLu7rXjT/cEjA8P5e8U7MK0SxyyJWShCRlKas=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20210401081714epcas1p3d04cef095c860f8d0fca63940df1e2c4~xrfr8_lVe1503215032epcas1p33;
+        Thu,  1 Apr 2021 08:17:14 +0000 (GMT)
+Received: from epsmges1p2.samsung.com (unknown [182.195.40.160]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4F9wyd5lsXz4x9Q2; Thu,  1 Apr
+        2021 08:17:13 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        CA.45.02277.98185606; Thu,  1 Apr 2021 17:17:13 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20210401081713epcas1p3aee989bb7fdfb07918cafe96ab6be33c~xrfqnQLhi1504115041epcas1p3t;
+        Thu,  1 Apr 2021 08:17:13 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20210401081713epsmtrp248a9eb5cfb39cb2fe6be4e61d6b8e9e4~xrfqmcNSP2201922019epsmtrp2T;
+        Thu,  1 Apr 2021 08:17:13 +0000 (GMT)
+X-AuditID: b6c32a36-4d7ff700000108e5-b0-606581897d8c
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        F3.A2.08745.98185606; Thu,  1 Apr 2021 17:17:13 +0900 (KST)
+Received: from namjaejeon01 (unknown [10.88.104.63]) by epsmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20210401081712epsmtip1f1cb5e77e7f1ca84725115f2c061b3da~xrfqXktBa0332003320epsmtip11;
+        Thu,  1 Apr 2021 08:17:12 +0000 (GMT)
+From:   "Namjae Jeon" <namjae.jeon@samsung.com>
+To:     "'Muhammad Usama Anjum'" <musamaanjum@gmail.com>,
+        "'Sergey Senozhatsky'" <sergey.senozhatsky@gmail.com>,
+        "'Steve French'" <sfrench@samba.org>,
+        "'Hyunchul Lee'" <hyc.lee@gmail.com>,
+        "'open list:COMMON INTERNET FILE SYSTEM SERVER \(CIFSD\)'" 
+        <linux-cifs@vger.kernel.org>,
+        "'open list:COMMON INTERNET FILE SYSTEM SERVER \(CIFSD\)'" 
+        <linux-cifsd-devel@lists.sourceforge.net>,
+        "'open list'" <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, <colin.king@canonical.com>,
+        <dan.carpenter@oracle.com>
+In-Reply-To: <20210401075531.GA2766105@LEGION>
+Subject: RE: [PATCH] cifsd: fix memory leak when loop ends
+Date:   Thu, 1 Apr 2021 17:17:13 +0900
+Message-ID: <003901d726cf$6b75d890$426189b0$@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210327232744.26237-1-colin.king@canonical.com>
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQG8FoHjOwNMvoZKP6UmJNrFtYqTewIzYq1UqsPWbrA=
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNJsWRmVeSWpSXmKPExsWy7bCmgW5nY2qCwdZ36ha/V/eyWbz+N53F
+        4tr99+wWW29JW7z4v4vZ4uf/74wWl3fNYbPY27qN0WLt58fsFh0vjzI7cHnMauhl89g56y67
+        x+4Fn5k8Pj69xeIxd1cfo8fnTXIBbFE5NhmpiSmpRQqpecn5KZl56bZK3sHxzvGmZgaGuoaW
+        FuZKCnmJuam2Si4+AbpumTlAlykplCXmlAKFAhKLi5X07WyK8ktLUhUy8otLbJVSC1JyCgwN
+        CvSKE3OLS/PS9ZLzc60MDQyMTIEqE3Iy2k6eZiqYwVwxZdZMlgbG00xdjBwcEgImEidWmnYx
+        cnEICexglFj9sIsFwvnEKLGocxk7hPOZUWL7unVsXYycYB2L77yAqtrFKLFm8ylmCOclo8S6
+        +VPAqtgEdCX+/dnPBpIQEehlkXj/9wgTSIJTQE9i4ocfzCC2sICVxP8ta1hAbBYBFYl362Yx
+        gti8ApYSh6/dYoGwBSVOznwCZjMLyEtsfzuHGeIMBYmfT5exgtgiQHNWLJ/ODFEjIjG7sw3s
+        IgmBlRwSD9a/Y4JocJHo7fzHCmELS7w6voUdwpaS+PxuLxskNKolPu6Hmt/BKPHiuy2EbSxx
+        c/0GVpASZgFNifW79CHCihI7f89lhFjLJ/Huaw8rxBReiY42IYgSVYm+S4ehDpCW6Gr/ALXU
+        Q6Lj9gXmCYyKs5A8OQvJk7OQPDMLYfECRpZVjGKpBcW56anFhgVGyJG9iRGcarXMdjBOevtB
+        7xAjEwfjIUYJDmYlEV7hA4kJQrwpiZVVqUX58UWlOanFhxhNgcE+kVlKNDkfmOzzSuINTY2M
+        jY0tTMzMzUyNlcR5Ew0exAsJpCeWpGanphakFsH0MXFwSjUwhZ6RCt8+Iy/TZNunO1wHbwWk
+        P2ysbdBb8nqO6psJxvLzrwcfue/kGSsYUr3q+Rq12JqQTmVe3/u6N/ZfYGD8da373tWjPwUt
+        TzmeNfHV1t9SueRtKcMK0ZgIxzsdfVHPOydcYLgmGvv3/QNdJZO4MkXBW67HAw/eVHY+enGC
+        cN3Js49EBC5pluWs1QxIcpUOUnr4Kn5Nt2/LIz23pWkT1vKe9HRYmKu9KaQgnPfntG8Peg8w
+        ZG8LD5w5X9U402JmvbjJjMe5v7Z9X82pLBg0I5Qtb8XWAxkWq/zPpYZn9L4+86xtpulPUaEn
+        8Qd4Rf8aP+tsqy6Q+TP/XtPa8+ttFF8X3tCbdJzhAEv78ac8SizFGYmGWsxFxYkAT2wuwD4E
+        AAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupgkeLIzCtJLcpLzFFi42LZdlhJTrezMTXB4Nomdovfq3vZLF7/m85i
+        ce3+e3aLrbekLV7838Vs8fP/d0aLy7vmsFnsbd3GaLH282N2i46XR5kduDxmNfSyeeycdZfd
+        Y/eCz0weH5/eYvGYu6uP0ePzJrkAtigum5TUnMyy1CJ9uwSujLaTp5kKZjBXTJk1k6WB8TRT
+        FyMnh4SAicTiOy9Yuhi5OIQEdjBKbNn3jR0iIS1x7MQZ5i5GDiBbWOLw4WKImueMEu+3vgGr
+        YRPQlfj3Zz8bSEJEYCKLxLcFF8ESQgL1Emumv2UDsTkF9CQmfvjBDGILC1hJ/N+yhgXEZhFQ
+        kXi3bhYjiM0rYClx+NotFghbUOLkzCcsIIuZgXrbNoKVMAvIS2x/O4cZ4jYFiZ9Pl7GC2CJA
+        I1csn84MUSMiMbuzjXkCo9AsJJNmIUyahWTSLCQdCxhZVjFKphYU56bnFhsWGOWllusVJ+YW
+        l+al6yXn525iBEeWltYOxj2rPugdYmTiYDzEKMHBrCTCK3wgMUGINyWxsiq1KD++qDQntfgQ
+        ozQHi5I474Wuk/FCAumJJanZqakFqUUwWSYOTqkGJr2zEb8XPVu3t8oy511Zadj6SK53gZVF
+        Tk5TPorabWZiTlBVdgvZyP5w7RfFt4s/xvKvnPtwu+Tlc68UVyXJ1TvO+a4h5iDGOW850+9/
+        3Rfl9JaqxS9+LWx7PjyCqeFkYZCibTn7588BhhuvTfLO/b+6Xz5YNnfRxolmXz3LC/5NNRTf
+        /HiT5aNLvp3ZmhuL/D8UHPy6TSNroaVWXCWz1Bz2rN/tlzZ0FCsUdm89I7zW0u/T1bvPVN3D
+        mRMYhF7fevBj0gyOv7qfE94lC/xnLRbwybTacYi9dUZWtgPbr7jZJvsyZ4ql3rl2ib3yUcGU
+        H1a/f971cT7iovrDybbwDJPZNPtdT3Yau73O+MnBqMRSnJFoqMVcVJwIAHtoyzcbAwAA
+X-CMS-MailID: 20210401081713epcas1p3aee989bb7fdfb07918cafe96ab6be33c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20210401075539epcas1p3b7cb52923217b212c80185aab135fe22
+References: <CGME20210401075539epcas1p3b7cb52923217b212c80185aab135fe22@epcas1p3.samsung.com>
+        <20210401075531.GA2766105@LEGION>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, Mar 27, 2021 at 11:27:44PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
 > 
-> The variable error is initialized to 0 and is set to 1 this
-> value is never read as it is on an immediate return path. The
-> only read of error is to check it is 0 and this check is always
-> true at that point of the code. The variable is redundant and
-> can be removed.
+> Memory is being allocated and if veto_list is zero, the loop breaks without cleaning up the allocated
+> memory. In this patch, the length check has been moved before allocation. If loop breaks, the memory
+> isn't allocated in the first place. Thus the memory is being protected from leaking.
 > 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/usb/serial/iuu_phoenix.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/usb/serial/iuu_phoenix.c b/drivers/usb/serial/iuu_phoenix.c
-> index 093afd67a664..19753611e7b0 100644
-> --- a/drivers/usb/serial/iuu_phoenix.c
-> +++ b/drivers/usb/serial/iuu_phoenix.c
-> @@ -643,7 +643,6 @@ static void iuu_uart_read_callback(struct urb *urb)
->  	struct iuu_private *priv = usb_get_serial_port_data(port);
->  	unsigned long flags;
->  	int status = urb->status;
-> -	int error = 0;
->  	int len = 0;
->  	unsigned char *data = urb->transfer_buffer;
->  	priv->poll++;
-> @@ -660,12 +659,11 @@ static void iuu_uart_read_callback(struct urb *urb)
->  	if (urb->actual_length > 1) {
->  		dev_dbg(&port->dev, "%s - urb->actual_length = %i\n", __func__,
->  		    urb->actual_length);
-> -		error = 1;
->  		return;
+> Signed-off-by: Muhammad Usama Anjum <musamaanjum@gmail.com>
+I will apply. Thanks for your patch!
 
-Heh, I guess the author at some point intended not return here, but who
-knows. The rest of this function is about as esoteric.
-
->  	}
->  	/* if len > 0 call readbuf */
->  
-> -	if (len > 0 && error == 0) {
-> +	if (len > 0) {
->  		dev_dbg(&port->dev, "%s - call read buf - len to read is %i\n",
->  			__func__, len);
->  		status = iuu_read_buf(port, len);
-
-Now applied, thanks.
-
-Johan
