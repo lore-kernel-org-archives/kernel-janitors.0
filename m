@@ -2,93 +2,102 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38258C433B4
-	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Apr 2021 21:11:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEED0C433ED
+	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Apr 2021 21:28:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E4A62610F8
-	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Apr 2021 21:11:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C0276100A
+	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Apr 2021 21:28:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234409AbhDAVLf (ORCPT
+        id S233974AbhDAV17 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 1 Apr 2021 17:11:35 -0400
-Received: from p3plsmtpa11-08.prod.phx3.secureserver.net ([68.178.252.109]:35265
-        "EHLO p3plsmtpa11-08.prod.phx3.secureserver.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233710AbhDAVLf (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 1 Apr 2021 17:11:35 -0400
-X-Greylist: delayed 438 seconds by postgrey-1.27 at vger.kernel.org; Thu, 01 Apr 2021 17:11:35 EDT
-Received: from [192.168.0.116] ([71.184.94.153])
-        by :SMTPAUTH: with ESMTPSA
-        id S4U2lEyTI8I0QS4U4l1juh; Thu, 01 Apr 2021 14:04:14 -0700
-X-CMAE-Analysis: v=2.4 cv=SeEyytdu c=1 sm=1 tr=0 ts=6066354e
- a=vbvdVb1zh1xTTaY8rfQfKQ==:117 a=vbvdVb1zh1xTTaY8rfQfKQ==:17
- a=IkcTkHD0fZMA:10 a=hGzw-44bAAAA:8 a=DWtuyDPq4Y-VP7XYPBwA:9 a=QEXdDO2ut3YA:10
- a=HvKuF1_PTVFglORKqfwH:22
-X-SECURESERVER-ACCT: tom@talpey.com
-Subject: Re: [Linux-cifsd-devel] [PATCH] cifsd: use kfree to free memory
- allocated by kzalloc
-To:     Namjae Jeon <linkinjeon@kernel.org>, Ralph Boehme <slow@samba.org>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        COMMON INTERNET FILE SYSTEM SERVER 
-        <linux-cifs@vger.kernel.org>,
-        COMMON INTERNET FILE SYSTEM SERVER 
-        <linux-cifsd-devel@lists.sourceforge.net>,
-        kernel-janitors@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>,
-        Steve French <sfrench@samba.org>, colin.king@canonical.com,
-        Muhammad Usama Anjum <musamaanjum@gmail.com>
-References: <20210401113933.GA2828895@LEGION> <20210401115008.GS2088@kadam>
- <CAKYAXd-ou4-jf7_8xa4jDQ_otyQ9ffKhwD7WZrmrna1P3b_W8Q@mail.gmail.com>
- <ca1b9b0c-55f9-025d-558b-1b2b6c866d12@samba.org>
- <CAKYAXd-ScM9i9Ln_FL8pWyEnPO_0n8t1BLH8MJ=b4NkqEbhZ=Q@mail.gmail.com>
- <2b758812-f00b-9465-c24e-763912748809@samba.org>
- <CAKYAXd_p1MrB2G25_p52OfppfSUcEWQEVxgJbBikAe3GZrJFhw@mail.gmail.com>
-From:   Tom Talpey <tom@talpey.com>
-Message-ID: <46e67316-58f3-435d-458c-11968499d4ee@talpey.com>
-Date:   Thu, 1 Apr 2021 17:04:07 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.1
+        Thu, 1 Apr 2021 17:27:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52870 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233588AbhDAV17 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 1 Apr 2021 17:27:59 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id DE73A610F8;
+        Thu,  1 Apr 2021 21:27:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1617312479;
+        bh=3Y8IHyeyNgtYWxflsGZGyDyumCRblrORTkW7c6t9Id4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=sCNlrFTBsd2t6T4pRn0wAlwhHcX8cosB5MR7xPMMYP3FmAnty7fnBzx3CU6pAmzxM
+         EWumOw76rN2SSz+ZJGkRJkqaHx1+XkpEpmlqk04Dc7rCa9Fr2GR4qyu0dZEZZm3kDI
+         DlKnbOQTosVX4o4mLTasmdGDsSMor3kXJUl6tQYywrcPLLOoNfpeIjNYT/dm6DZRXj
+         DtX6KftCwieFNYHcEco7U3Pzr/ARdmENMKDT6PElJhTvzqT09OAI9Xi2n6lbuHgH76
+         PKG1ZB8tvKHMV0IZO05YarK3XXf6JDzsvnVkkTkMlqP/tq8jWz1zGrmfAXqX4j+xme
+         iAeC6R5syoEhA==
+Date:   Fri, 2 Apr 2021 06:27:53 +0900
+From:   Keith Busch <kbusch@kernel.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Jason Gunthorpe <jgg@nvidia.com>
+Subject: Re: [bug report] node: Add memory-side caching attributes
+Message-ID: <20210401212753.GB31698@redsun51.ssa.fujisawa.hgst.com>
+References: <YGWLtzMLqSW4cxma@mwanda>
 MIME-Version: 1.0
-In-Reply-To: <CAKYAXd_p1MrB2G25_p52OfppfSUcEWQEVxgJbBikAe3GZrJFhw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4xfCTebwSLG0O7CVyJx0MSZc8RdyOjwuZI/CluYpCmzCTBYDnswFAGGwB2pTKJ74GlIi9KJC0EnCvFsKN4kKsYIpgzKsfp3ssVCbRCmPFTnQUChE5x7Grk
- 8HoUqTXT9frKqAA8BFTBaji1CzdTk/oAxgjAn9ZGDSrPECP+BmxbUaWoD/p5nkIcVHhp4zYWe8lU/pnMenMRn3h4GpQuHA36qrpU22xo6N9KuU2HxXgiQG+w
- LUwvWCnYnh9lOSR2KJJMPUlxU7X1HB+MZ/vOdijkMkRwO9vpmeJ7cpqdza0x4Ou6Lvm+mYpiLQVgwJ/VW33kYq/sz59vkeV0O/E8aIS8bjTRd9Km4YyD+m50
- 5Sav0aGJ5VNH3ubwid3KMjoQQ7NUn7/4s9uUPIhY7n1VE0VjDhjA3oKN4OC+LYxiFqp26/uy3BGY1+oqfyQ4AQCZtvOV7ga3Kuou6nltOYR7wrRR624SBJnM
- RatNJKN2AOAGE8k43+EeqYasuGAAHQJpuSbZqdYHpRUDIb+vem7eLgF7UGk=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YGWLtzMLqSW4cxma@mwanda>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 4/1/2021 9:36 AM, Namjae Jeon wrote:
-> 2021-04-01 22:14 GMT+09:00, Ralph Boehme <slow@samba.org>:
->> Am 4/1/21 um 2:59 PM schrieb Namjae Jeon:
->>> 2021-04-01 21:50 GMT+09:00, Ralph Boehme <slow@samba.org>:
->>>> fwiw, while at it what about renaming everything that still references
->>>> "cifs" to "smb" ? This is not the 90's... :)
->>> It is also used with the name "ksmbd". So function and variable prefix
->>> are used with ksmbd.
->>
->> well, I was thinking of this:
->>
->>   > +++ b/fs/cifsd/...
->>
->> We should really stop using the name cifs for modern implementation of
->> SMB{23} and the code should not be added as fs/cifsd/ to the kernel.
-> As I know, currently "cifs" is being used for the subdirectory name
-> for historical reasons and to avoid confusions, even though the CIFS
-> (SMB1) dialect is no longer recommended.
+On Thu, Apr 01, 2021 at 12:00:39PM +0300, Dan Carpenter wrote:
+> Hi Keith,
+> 
+> I've been trying to figure out ways Smatch can check for device managed
+> resources.  Like adding rules that if we call dev_set_name(&foo->bar)
+> then it's device managaged and if there is a kfree(foo) without calling
+> device_put(&foo->bar) then that's a resource leak.
+> 
+> Of course one of the rules is that if you call device_register(dev) then
+> you can't kfree(dev), it has to released with device_put(dev) and that's
+> true even if the register fails.  But this code here feels very
+> intentional so maybe there is an exception to the rule?
 
-I'm with Ralph. CIFS is history that we need to relegate to the past.
-
-I also agree that wrappers around core memory allocators are to
-be avoided.
-
-Tom.
+Thanks for the notice. There was no intentional use of this, so I
+think it was a mistake. The proposal in the follow on replies looks much
+better.
+ 
+> The patch acc02a109b04: "node: Add memory-side caching attributes"
+> from Mar 11, 2019, leads to the following static checker warning:
+> 
+> 	drivers/base/node.c:285 node_init_cache_dev()
+> 	error: kfree after device_register(): 'dev'
+> 
+> drivers/base/node.c
+>    263  static void node_init_cache_dev(struct node *node)
+>    264  {
+>    265          struct device *dev;
+>    266  
+>    267          dev = kzalloc(sizeof(*dev), GFP_KERNEL);
+>    268          if (!dev)
+>    269                  return;
+>    270  
+>    271          dev->parent = &node->dev;
+>    272          dev->release = node_cache_release;
+>    273          if (dev_set_name(dev, "memory_side_cache"))
+>    274                  goto free_dev;
+>    275  
+>    276          if (device_register(dev))
+>                     ^^^^^^^^^^^^^^^^^^^
+>    277                  goto free_name;
+>    278  
+>    279          pm_runtime_no_callbacks(dev);
+>    280          node->cache_dev = dev;
+>    281          return;
+>    282  free_name:
+>    283          kfree_const(dev->kobj.name);
+>    284  free_dev:
+>    285          kfree(dev);
+>                 ^^^^^^^^^^
+>    286  }
+> 
+> regards,
+> dan carpenter
