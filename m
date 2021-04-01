@@ -2,143 +2,83 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D8D0C433B4
-	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Apr 2021 17:57:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BE7AC43460
+	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Apr 2021 17:58:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 700E9610CE
-	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Apr 2021 17:57:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 11857610CE
+	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Apr 2021 17:58:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236390AbhDAR5y (ORCPT
+        id S235794AbhDAR56 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 1 Apr 2021 13:57:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32872 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236477AbhDARyg (ORCPT
+        Thu, 1 Apr 2021 13:57:58 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:16318 "EHLO
+        szxga07-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236825AbhDARzW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 1 Apr 2021 13:54:36 -0400
-Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BCBFC05BD3C;
-        Thu,  1 Apr 2021 06:14:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-         s=42; h=Date:Message-ID:From:Cc:To;
-        bh=swE4EoXhPqkyGwf/uAOVfbrSwIidE9gVg5cqYOpgPAo=; b=3lrdxniK3kF3wA04GvkVUuOub4
-        VVFHcWNG2S3EZMbN5Bu/S7hNO7QvN6LJj8Weud8NMEPnAsfdrYWjgKQGXe5boy88s5T0y9iK+WGhc
-        vKFTrt2J1+BsqbsWwau4TyzjqyxwNI1vIwNRAStSUnZAoxL9TQD6VChybC055r9zFWlXvZlV/1Z9l
-        vV+pBuyKhqifnIp3L97gPHmVJ+jCbLiulp9Quirn6CPu+gPUka+Z2l+KbQ6KzhMH/0Vh8yrUp8GFV
-        Tm/lqCGkXUFU3eK0WxUOCZyy04LZfjCtH2XJEKg+N+ufYsETdSGptZpMRdVprui7D1IZol1AmOuDL
-        1aRLT2rjt9ujh3/t14AkoQT3+GRs+MOdMUSWzSJlmCy9qoXJp4wTwNhtug5aqn+hTurBXTNlfkRph
-        LvrmTmdrhQMO3yyUnnAEquN/IdqbpB4Mgdrp1I3FJy4j7KqCouRzfH5QKrviVeoitBD3GGZJLs4JW
-        Qp33zgc6fgU8UYWvA9QmDqKP;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
-        (Exim)
-        id 1lRx9f-0006gn-38; Thu, 01 Apr 2021 13:14:35 +0000
-Subject: Re: [Linux-cifsd-devel] [PATCH] cifsd: use kfree to free memory
- allocated by kzalloc
-To:     Namjae Jeon <linkinjeon@kernel.org>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        COMMON INTERNET FILE SYSTEM SERVER 
-        <linux-cifs@vger.kernel.org>,
-        COMMON INTERNET FILE SYSTEM SERVER 
-        <linux-cifsd-devel@lists.sourceforge.net>,
-        kernel-janitors@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>,
-        Steve French <sfrench@samba.org>, colin.king@canonical.com,
-        Muhammad Usama Anjum <musamaanjum@gmail.com>
-References: <20210401113933.GA2828895@LEGION> <20210401115008.GS2088@kadam>
- <CAKYAXd-ou4-jf7_8xa4jDQ_otyQ9ffKhwD7WZrmrna1P3b_W8Q@mail.gmail.com>
- <ca1b9b0c-55f9-025d-558b-1b2b6c866d12@samba.org>
- <CAKYAXd-ScM9i9Ln_FL8pWyEnPO_0n8t1BLH8MJ=b4NkqEbhZ=Q@mail.gmail.com>
-From:   Ralph Boehme <slow@samba.org>
-Message-ID: <2b758812-f00b-9465-c24e-763912748809@samba.org>
-Date:   Thu, 1 Apr 2021 15:14:34 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.0
+        Thu, 1 Apr 2021 13:55:22 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
+        by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4FB3MS0z2cz9420;
+        Thu,  1 Apr 2021 21:05:40 +0800 (CST)
+Received: from huawei.com (10.175.112.125) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.498.0; Thu, 1 Apr 2021
+ 21:07:42 +0800
+From:   Yongqiang Liu <liuyongqiang13@huawei.com>
+To:     <tony@atomide.com>, <linux@armlinux.org.uk>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-omap@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] ARM: OMAP2+: Fix build warning when mmc_omap is not built
+Date:   Thu, 1 Apr 2021 13:15:33 +0000
+Message-ID: <20210401131533.998767-1-liuyongqiang13@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <CAKYAXd-ScM9i9Ln_FL8pWyEnPO_0n8t1BLH8MJ=b4NkqEbhZ=Q@mail.gmail.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="6irsXNVLH7MyZpMBP8hna9kRQTHVFnfUe"
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.112.125]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---6irsXNVLH7MyZpMBP8hna9kRQTHVFnfUe
-Content-Type: multipart/mixed; boundary="SqtiD885B9gtfv0UMVgrlVyDDXnfdCI9q";
- protected-headers="v1"
-From: Ralph Boehme <slow@samba.org>
-To: Namjae Jeon <linkinjeon@kernel.org>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>,
- COMMON INTERNET FILE SYSTEM SERVER <linux-cifs@vger.kernel.org>,
- COMMON INTERNET FILE SYSTEM SERVER
- <linux-cifsd-devel@lists.sourceforge.net>, kernel-janitors@vger.kernel.org,
- open list <linux-kernel@vger.kernel.org>, Steve French <sfrench@samba.org>,
- colin.king@canonical.com, Muhammad Usama Anjum <musamaanjum@gmail.com>
-Message-ID: <2b758812-f00b-9465-c24e-763912748809@samba.org>
-Subject: Re: [Linux-cifsd-devel] [PATCH] cifsd: use kfree to free memory
- allocated by kzalloc
-References: <20210401113933.GA2828895@LEGION> <20210401115008.GS2088@kadam>
- <CAKYAXd-ou4-jf7_8xa4jDQ_otyQ9ffKhwD7WZrmrna1P3b_W8Q@mail.gmail.com>
- <ca1b9b0c-55f9-025d-558b-1b2b6c866d12@samba.org>
- <CAKYAXd-ScM9i9Ln_FL8pWyEnPO_0n8t1BLH8MJ=b4NkqEbhZ=Q@mail.gmail.com>
-In-Reply-To: <CAKYAXd-ScM9i9Ln_FL8pWyEnPO_0n8t1BLH8MJ=b4NkqEbhZ=Q@mail.gmail.com>
+GCC reports the following warning with W=1:
 
---SqtiD885B9gtfv0UMVgrlVyDDXnfdCI9q
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+arch/arm/mach-omap2/board-n8x0.c:325:19: warning:
+variable 'index' set but not used [-Wunused-but-set-variable]
+325 |  int bit, *openp, index;
+    |                   ^~~~~
 
-Am 4/1/21 um 2:59 PM schrieb Namjae Jeon:
-> 2021-04-01 21:50 GMT+09:00, Ralph Boehme <slow@samba.org>:
->> fwiw, while at it what about renaming everything that still references=
+Fix this by moving CONFIG_MMC_OMAP to cover the rest codes
+in the n8x0_mmc_callback().
 
->> "cifs" to "smb" ? This is not the 90's... :)
-> It is also used with the name "ksmbd". So function and variable prefix
-> are used with ksmbd.
+Signed-off-by: Yongqiang Liu <liuyongqiang13@huawei.com>
+---
+ arch/arm/mach-omap2/board-n8x0.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-well, I was thinking of this:
+diff --git a/arch/arm/mach-omap2/board-n8x0.c b/arch/arm/mach-omap2/board-n8x0.c
+index 418a61ecb827..5e86145db0e2 100644
+--- a/arch/arm/mach-omap2/board-n8x0.c
++++ b/arch/arm/mach-omap2/board-n8x0.c
+@@ -322,6 +322,7 @@ static int n8x0_mmc_get_cover_state(struct device *dev, int slot)
+ 
+ static void n8x0_mmc_callback(void *data, u8 card_mask)
+ {
++#ifdef CONFIG_MMC_OMAP
+ 	int bit, *openp, index;
+ 
+ 	if (board_is_n800()) {
+@@ -339,7 +340,6 @@ static void n8x0_mmc_callback(void *data, u8 card_mask)
+ 	else
+ 		*openp = 0;
+ 
+-#ifdef CONFIG_MMC_OMAP
+ 	omap_mmc_notify_cover_event(mmc_device, index, *openp);
+ #else
+ 	pr_warn("MMC: notify cover event not available\n");
+-- 
+2.25.1
 
- > +++ b/fs/cifsd/...
-
-We should really stop using the name cifs for modern implementation of=20
-SMB{23} and the code should not be added as fs/cifsd/ to the kernel.
-
-Cheers!
--slow
-
---=20
-Ralph Boehme, Samba Team                https://samba.org/
-Samba Developer, SerNet GmbH   https://sernet.de/en/samba/
-GPG-Fingerprint   FAE2C6088A24252051C559E4AA1E9B7126399E46
-
-
---SqtiD885B9gtfv0UMVgrlVyDDXnfdCI9q--
-
---6irsXNVLH7MyZpMBP8hna9kRQTHVFnfUe
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature"
-
------BEGIN PGP SIGNATURE-----
-
-wsF5BAABCAAjFiEE+uLGCIokJSBRxVnkqh6bcSY5nkYFAmBlxzoFAwAAAAAACgkQqh6bcSY5nkbd
-jxAAuax6KSBUKQJmbu4BTGwgRnPllPkOT6IkynAfeq/NPMoU4nb6uPTYoMQtf69nASUuYOxIZ4rP
-CsRYkpmM9Z29nw6wOFEstlkB5WmKUfj9dnL5Lh9MwI3RVr21IZbD0oXyFAIs6FFlLRU3cF/czGrU
-9Zvq5h5qbkLccoKw4++s2XYFkVg4G1eS/oy0pcYLQ1VatltAmVpQzsH4dUkk6HB1S6xdh3rCvTlX
-oEfmd05OyNCqUJ6kD+sCsymBlxCpk8wYWVqsjiVGhN/30LWAXy3LEZe0OCBP3eKIC4sOo2F4tp/b
-Jveb0VHm0p3ZLq3o51wxAIFgvuY2eb6hfzS6JRdQpBcja8NGKmjCV1q1a5P4LGSy8mqBNpRKQEAd
-U3UL1lQYEeNrg+vo05V6w2IxanD/EKufFtQNh1zjsYlWX4P1XyvnDqOrbMoZDnxC0KUEhCpVQ0AX
-I7QR2EHtFZ1mroej7NwVx2ED21JwTpEMRFp8rWuEIVjxmj7lzmQQrE3TGMiZ/MCyeDh1w5l8s8XC
-Ptovwz5oBMig8seSG7DoVYbDdIlbzCD5/QOVrbcrYIi997Agis0/LExKU8miTVlDHRhI82WolBHs
-mvUjOp7OAbVXbNghZTI1kvb0fVH/9zC1ZchNLp3mxJAvMTUzvLaEo0V80bZhfDKfzJIF4p3bADR5
-7WQ=
-=Guqt
------END PGP SIGNATURE-----
-
---6irsXNVLH7MyZpMBP8hna9kRQTHVFnfUe--
