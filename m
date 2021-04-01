@@ -2,112 +2,102 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,PDS_TONAME_EQ_TOLOCAL_SHORT,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF2E5C433ED
-	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Apr 2021 07:41:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16D54C433ED
+	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Apr 2021 07:50:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AC4C761029
-	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Apr 2021 07:41:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3C2660BD3
+	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Apr 2021 07:50:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232310AbhDAHki (ORCPT
+        id S233529AbhDAHuR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 1 Apr 2021 03:40:38 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:38854 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233151AbhDAHjx (ORCPT
+        Thu, 1 Apr 2021 03:50:17 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:35086 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233383AbhDAHt4 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 1 Apr 2021 03:39:53 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 1317db29023664;
-        Thu, 1 Apr 2021 02:39:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1617262777;
-        bh=9fskxeDKcFwVRSaKpjEcEev7N/dbj8ubzqBdyCt3hDI=;
-        h=Subject:From:To:References:Date:In-Reply-To;
-        b=v+bYs0YG4R2cmwX/Ti7eIlny+UGUEFj8cIoItLPvg4UUiYwj+O1xOEgont4eFNydD
-         M8q9szqkcQHKttasOS6Ol3TpFE7RhIr0Dk0HhMGLvRkE9AKlXsinjAFtOAFvMyh3ZH
-         f+mR+PoyQD46CFpxHXiA041AgwmYGelzEN3VgQN0=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 1317dbAi056025
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 1 Apr 2021 02:39:37 -0500
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Thu, 1 Apr
- 2021 02:39:37 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2 via
- Frontend Transport; Thu, 1 Apr 2021 02:39:37 -0500
-Received: from [10.250.234.178] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 1317dYvP009919;
-        Thu, 1 Apr 2021 02:39:35 -0500
-Subject: Re: [Discussion] Uninitialized variable in wiz_mode_select()
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-To:     Muhammad Usama Anjum <musamaanjum@gmail.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        "open list:GENERIC PHY FRAMEWORK" <linux-phy@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>, <colin.king@canonical.com>,
-        <dan.carpenter@oracle.com>
-References: <943b92c6ac291726cf0e6bd92e88f2110c14b74c.camel@gmail.com>
- <aaa035d2-95a7-00b3-ef76-1aa61c7f8da9@ti.com>
-Message-ID: <0ac860d1-15b5-b314-c694-750db6274aa5@ti.com>
-Date:   Thu, 1 Apr 2021 13:09:34 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Thu, 1 Apr 2021 03:49:56 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 1317nCoJ087870;
+        Thu, 1 Apr 2021 07:49:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ content-transfer-encoding : in-reply-to; s=corp-2020-01-29;
+ bh=SA7wCCNN+mAeWw8tOf7p23ED4+d4WG2ymIuZDIXJ7Xw=;
+ b=x+yzm4tYG06gGnAwPrBDLz/1BJhaIPEtOVe3cAPBdiWcbZc7yxugtQm5Fh2wOW/TnzBv
+ HUXHrOYZA+FvM3LKbyPPmUr5eCHXlEgbeDD2inUfisFY5VosH7UFW9ZkfPT/4MARBY5n
+ Solv6vumnpD3a6ZEA4mq3w2g+rCm088rml8zwO42IIMvwQAEt2eR1M899UCewvu70u33
+ +LOG07a6R806G4aS7hQmYXkE/Xcvx7ZV+fqcfaeMOkerUMxOdbXJdHlggkEHq+CjAR2I
+ tW22K7ahNAIKa+SyyNt2Tm7NbhaxigEFt3Ax5L43yc2L7gsGE03JSnSx8WNL8Up8LEYZ ew== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 37n30s8s18-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 01 Apr 2021 07:49:23 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 1317egNm082688;
+        Thu, 1 Apr 2021 07:49:21 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3020.oracle.com with ESMTP id 37n2pa5msv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 01 Apr 2021 07:49:21 +0000
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 1317nEsA005753;
+        Thu, 1 Apr 2021 07:49:18 GMT
+Received: from kadam (/102.36.221.92)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 01 Apr 2021 00:49:14 -0700
+Date:   Thu, 1 Apr 2021 10:49:05 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     chenlifu <chenlifu@huawei.com>
+Cc:     Russell King <linux@armlinux.org.uk>, heying24@huawei.com,
+        yuehaibing@huawei.com, weiyongjun1@huawei.com,
+        johnny.chenyi@huawei.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH -next] i2c: gpio: use DEFINE_SPINLOCK() for spinlock
+Message-ID: <20210401074905.GQ2065@kadam>
+References: <20210327095228.105123-1-chenlifu@huawei.com>
+ <fec9295e-c5d6-13ee-23f5-13b593d2fd2e@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <aaa035d2-95a7-00b3-ef76-1aa61c7f8da9@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <fec9295e-c5d6-13ee-23f5-13b593d2fd2e@huawei.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-IMR: 1
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9940 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 mlxlogscore=999
+ adultscore=0 bulkscore=0 mlxscore=0 spamscore=0 malwarescore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2103310000 definitions=main-2104010053
+X-Proofpoint-GUID: SGcL9X88jdvImiMwP0_StNqprF49Esev
+X-Proofpoint-ORIG-GUID: SGcL9X88jdvImiMwP0_StNqprF49Esev
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9940 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 impostorscore=0
+ bulkscore=0 priorityscore=1501 suspectscore=0 mlxscore=0 spamscore=0
+ clxscore=1011 mlxlogscore=999 malwarescore=0 adultscore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2103310000
+ definitions=main-2104010054
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi,
-
-On 01/04/21 1:08 pm, Kishon Vijay Abraham I wrote:
-> Hi Usama,
+On Thu, Apr 01, 2021 at 11:38:30AM +0800, chenlifu wrote:
+> Kindly pinging ...
 > 
-> On 01/04/21 1:03 pm, Muhammad Usama Anjum wrote:
->> Hi,
->>
->> `mode` remains uninitialized when `lane_phy_type` isn't PHY_TYPE_DP
->> or 
->> PHY_TYPE_QSGMII. I've checked the dtsi (k3-j721e-common-proc-
->> board.dts) 
->> and possible values of `lane_phy_type` are justPHY_TYPE_USB3 and 
->> PHY_TYPE_PCIE. If this is correct, the mode will remain uninitialized with
->> garbage value. `mode` should be initialized to what? It seems like it is highly 
->> implementation dependent.
->>
->> /drivers/phy/ti/phy-j721e-wiz.c: 344 in wiz_mode_select()
->> 338             for (i = 0; i < num_lanes; i++) {
->> 339                     if (wiz->lane_phy_type[i] == PHY_TYPE_DP)
->> 340                             mode = LANE_MODE_GEN1;
->> 341                     else if (wiz->lane_phy_type[i] == PHY_TYPE_QSGMII)
->> 342                             mode = LANE_MODE_GEN2;
->> 343     
->>>>>     CID 1503592:  Uninitialized variables  (UNINIT)
->>>>>     Using uninitialized value "mode" when calling "regmap_field_write".
->> 344                     ret = regmap_field_write(wiz->p_standard_mode[i], mode);
->> 345                     if (ret)
->> 346                             return ret;
->> 347             }
->> 348     
->> 349             return 0;
+> Best Regards,
+> Chen Lifu
 > 
-> I've sent a follow-up patch fixing this.
-> http://lor.kernel.org/r/20210331131417.15596-1-kishon@ti.com
+> 在 2021/3/27 17:52, Chen Lifu 写道:
 
-Fixed a typo in the link
-https://lore.kernel.org/linux-phy/20210331131417.15596-1-kishon@ti.com/
+It's to early to start asking for a response.  Please wait at least two
+weeks.  (Probably four weeks if the merge window was open).
 
-Thanks
-Kishon
+regards,
+dan carpenter
+
+
