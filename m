@@ -2,102 +2,118 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,PDS_TONAME_EQ_TOLOCAL_SHORT,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16D54C433ED
-	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Apr 2021 07:50:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B426C433B4
+	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Apr 2021 07:56:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D3C2660BD3
-	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Apr 2021 07:50:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72A81610CA
+	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Apr 2021 07:56:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233529AbhDAHuR (ORCPT
+        id S233024AbhDAHzn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 1 Apr 2021 03:50:17 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:35086 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233383AbhDAHt4 (ORCPT
+        Thu, 1 Apr 2021 03:55:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45694 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230291AbhDAHzi (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 1 Apr 2021 03:49:56 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 1317nCoJ087870;
-        Thu, 1 Apr 2021 07:49:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- content-transfer-encoding : in-reply-to; s=corp-2020-01-29;
- bh=SA7wCCNN+mAeWw8tOf7p23ED4+d4WG2ymIuZDIXJ7Xw=;
- b=x+yzm4tYG06gGnAwPrBDLz/1BJhaIPEtOVe3cAPBdiWcbZc7yxugtQm5Fh2wOW/TnzBv
- HUXHrOYZA+FvM3LKbyPPmUr5eCHXlEgbeDD2inUfisFY5VosH7UFW9ZkfPT/4MARBY5n
- Solv6vumnpD3a6ZEA4mq3w2g+rCm088rml8zwO42IIMvwQAEt2eR1M899UCewvu70u33
- +LOG07a6R806G4aS7hQmYXkE/Xcvx7ZV+fqcfaeMOkerUMxOdbXJdHlggkEHq+CjAR2I
- tW22K7ahNAIKa+SyyNt2Tm7NbhaxigEFt3Ax5L43yc2L7gsGE03JSnSx8WNL8Up8LEYZ ew== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 37n30s8s18-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 01 Apr 2021 07:49:23 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 1317egNm082688;
-        Thu, 1 Apr 2021 07:49:21 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3020.oracle.com with ESMTP id 37n2pa5msv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 01 Apr 2021 07:49:21 +0000
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 1317nEsA005753;
-        Thu, 1 Apr 2021 07:49:18 GMT
-Received: from kadam (/102.36.221.92)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 01 Apr 2021 00:49:14 -0700
-Date:   Thu, 1 Apr 2021 10:49:05 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     chenlifu <chenlifu@huawei.com>
-Cc:     Russell King <linux@armlinux.org.uk>, heying24@huawei.com,
-        yuehaibing@huawei.com, weiyongjun1@huawei.com,
-        johnny.chenyi@huawei.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH -next] i2c: gpio: use DEFINE_SPINLOCK() for spinlock
-Message-ID: <20210401074905.GQ2065@kadam>
-References: <20210327095228.105123-1-chenlifu@huawei.com>
- <fec9295e-c5d6-13ee-23f5-13b593d2fd2e@huawei.com>
+        Thu, 1 Apr 2021 03:55:38 -0400
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E259C0613E6;
+        Thu,  1 Apr 2021 00:55:38 -0700 (PDT)
+Received: by mail-wr1-x42e.google.com with SMTP id x7so815031wrw.10;
+        Thu, 01 Apr 2021 00:55:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=7AcUn3xoZZEmyhZhPx7msf+G6yuROMfX+4IPdOsLIXM=;
+        b=RxBg1fbvLeuXaeUg1huVHZRHjz94Qh4n1oGBKmxL3+O4hVrFP/QZLEaMJJtuWx5peS
+         C86Gs4KAR3AfFUhlo7TnuBHygbYOqQ2EDFgJt5/nmAvu+X4bEo8ZUYGJQHHMtrA3IbbA
+         J98bVLid0BscpINMXFNQpNfwU7ZJqwwFjbBhUOFO1zuHN9oHEq67r+k/SdwqR4InY+AZ
+         CEQDNg3cd2ogv18xq1wlEKEfaGjVOjSSCSS11huLMiiK3bw/EViUa0lbKc7uoUxPkGcf
+         qt0hfVYh1ZT4DWuTe/NXQ3/xmJSRu8axOwQZl3xATHkgT8mrXxgvDwvry6acqY/gcwl2
+         uP9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=7AcUn3xoZZEmyhZhPx7msf+G6yuROMfX+4IPdOsLIXM=;
+        b=IT4Qj2N6DFfR6kGIp6SRpgKtHmnfcZuPXZYmbJc6V/hrNf0K1Y2oAohG/neJ1LSARn
+         MENpcJKyIC5tpcTYqnQ5LI+s9YraGs17oXzZYBWENrO3N6q3gKgkC9cHpjO2mnlw+Qvp
+         MgCEyV0uhu8RHKkPBelcxx2HeMx/d1VitaO+vpBbykrJdE+nYpXJGCwwZyCgdb6Xzg5k
+         sP3HZqmmdrZC+M8/Sx7BCQl0Ab2TrKzNyzs38UmX3Jn73xRypAP5KfWPO5YMCArYc0S0
+         DOBv+oLFnWprQN4TxCEEYbwZd+4Yf544PpqvTZAHHMmuBrb9URFKhyNGIU8STstSpjQ4
+         YPsg==
+X-Gm-Message-State: AOAM530j0hlzbUfBL059k5d+mBkGVIurr+fiTrad3i+i2ZNg3gJHha47
+        ctG4Rx8wKQ0RID2E4berY/s=
+X-Google-Smtp-Source: ABdhPJx2C+wSabSmL2kcvpy9eih/c6S2z6hMIMNLJtkMOgRseCk3g0CVYiJYoYZ2Stgf6DbUilowuQ==
+X-Received: by 2002:a5d:6945:: with SMTP id r5mr7936051wrw.367.1617263737158;
+        Thu, 01 Apr 2021 00:55:37 -0700 (PDT)
+Received: from LEGION ([39.46.7.73])
+        by smtp.gmail.com with ESMTPSA id j136sm7565881wmj.35.2021.04.01.00.55.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Apr 2021 00:55:36 -0700 (PDT)
+Date:   Thu, 1 Apr 2021 12:55:31 +0500
+From:   Muhammad Usama Anjum <musamaanjum@gmail.com>
+To:     Namjae Jeon <namjae.jeon@samsung.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steve French <sfrench@samba.org>,
+        Hyunchul Lee <hyc.lee@gmail.com>,
+        "open list:COMMON INTERNET FILE SYSTEM SERVER (CIFSD)" 
+        <linux-cifs@vger.kernel.org>,
+        "open list:COMMON INTERNET FILE SYSTEM SERVER (CIFSD)" 
+        <linux-cifsd-devel@lists.sourceforge.net>,
+        open list <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org, colin.king@canonical.com,
+        dan.carpenter@oracle.com
+Cc:     musamaanjum@gmail.com
+Subject: [PATCH] cifsd: fix memory leak when loop ends
+Message-ID: <20210401075531.GA2766105@LEGION>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <fec9295e-c5d6-13ee-23f5-13b593d2fd2e@huawei.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-IMR: 1
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9940 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 mlxlogscore=999
- adultscore=0 bulkscore=0 mlxscore=0 spamscore=0 malwarescore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2103310000 definitions=main-2104010053
-X-Proofpoint-GUID: SGcL9X88jdvImiMwP0_StNqprF49Esev
-X-Proofpoint-ORIG-GUID: SGcL9X88jdvImiMwP0_StNqprF49Esev
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9940 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 impostorscore=0
- bulkscore=0 priorityscore=1501 suspectscore=0 mlxscore=0 spamscore=0
- clxscore=1011 mlxlogscore=999 malwarescore=0 adultscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2103310000
- definitions=main-2104010054
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Apr 01, 2021 at 11:38:30AM +0800, chenlifu wrote:
-> Kindly pinging ...
-> 
-> Best Regards,
-> Chen Lifu
-> 
-> 在 2021/3/27 17:52, Chen Lifu 写道:
+Memory is being allocated and if veto_list is zero, the loop breaks
+without cleaning up the allocated memory. In this patch, the length
+check has been moved before allocation. If loop breaks, the memory isn't
+allocated in the first place. Thus the memory is being protected from
+leaking.
 
-It's to early to start asking for a response.  Please wait at least two
-weeks.  (Probably four weeks if the merge window was open).
+Signed-off-by: Muhammad Usama Anjum <musamaanjum@gmail.com>
+---
+ fs/cifsd/mgmt/share_config.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-regards,
-dan carpenter
-
+diff --git a/fs/cifsd/mgmt/share_config.c b/fs/cifsd/mgmt/share_config.c
+index db780febd692..b2bd789af945 100644
+--- a/fs/cifsd/mgmt/share_config.c
++++ b/fs/cifsd/mgmt/share_config.c
+@@ -92,14 +92,14 @@ static int parse_veto_list(struct ksmbd_share_config *share,
+ 	while (veto_list_sz > 0) {
+ 		struct ksmbd_veto_pattern *p;
+ 
+-		p = kzalloc(sizeof(struct ksmbd_veto_pattern), GFP_KERNEL);
+-		if (!p)
+-			return -ENOMEM;
+-
+ 		sz = strlen(veto_list);
+ 		if (!sz)
+ 			break;
+ 
++		p = kzalloc(sizeof(struct ksmbd_veto_pattern), GFP_KERNEL);
++		if (!p)
++			return -ENOMEM;
++
+ 		p->pattern = kstrdup(veto_list, GFP_KERNEL);
+ 		if (!p->pattern) {
+ 			ksmbd_free(p);
+-- 
+2.25.1
 
