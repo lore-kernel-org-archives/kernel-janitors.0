@@ -2,101 +2,74 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1401C433B4
-	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Apr 2021 18:06:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2077DC433B4
+	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Apr 2021 21:30:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 93FE16115B
-	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Apr 2021 18:06:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8D3E61181
+	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Apr 2021 21:30:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235836AbhDBSGV (ORCPT
+        id S235241AbhDBVaQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 2 Apr 2021 14:06:21 -0400
-Received: from mail1.perex.cz ([77.48.224.245]:55518 "EHLO mail1.perex.cz"
+        Fri, 2 Apr 2021 17:30:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35726 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234628AbhDBSGV (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 2 Apr 2021 14:06:21 -0400
-Received: from mail1.perex.cz (localhost [127.0.0.1])
-        by smtp1.perex.cz (Perex's E-mail Delivery System) with ESMTP id A592BA0046;
-        Fri,  2 Apr 2021 19:57:25 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.perex.cz A592BA0046
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=perex.cz; s=default;
-        t=1617386245; bh=RVleIpY/mLf83IbsmzQeD3t+vKouLd0KP0S9kGC+PyI=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=ZO3ELAp+9aTtTlksGGNOMC/vhBK/6WQIH3zM4exTvo7pDYqIUbjsSpO4VrY32CnCv
-         R3o2OI9le8BGs/DOeWGDSakT0tphzDuP+/CrVk2tNmvNhUq7zlLFTe2YVbrzHCfb5l
-         c0sKHQT/ybGAeSH6V0QCFNzRtFAuIDduZNdL5auQ=
-Received: from p1gen2.localdomain (unknown [192.168.100.98])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: perex)
-        by mail1.perex.cz (Perex's E-mail Delivery System) with ESMTPSA;
-        Fri,  2 Apr 2021 19:57:21 +0200 (CEST)
-Subject: Re: [PATCH 1/2] ALSA: control - fix a leak in snd_ctl_led_init()
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        kernel-janitors@vger.kernel.org
-References: <YGcDETcdqVUIl1+y@mwanda>
-From:   Jaroslav Kysela <perex@perex.cz>
-Message-ID: <ec7285f6-a257-d7a4-5cae-b36c95ef9efd@perex.cz>
-Date:   Fri, 2 Apr 2021 19:57:21 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.0
+        id S234821AbhDBVaO (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 2 Apr 2021 17:30:14 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPS id B0A6961185;
+        Fri,  2 Apr 2021 21:30:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1617399012;
+        bh=tGJnlXXLwsH1rKOWBpmfiU6/kTfA9l5AiZGTI1R1pP4=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=hGHdZEBjjOoArq45HZ/Ns0rItOYrzU+tZ/MoSx4HKTopl09xDj9t3LBFAfiLytzr8
+         BKM8KURW+3hrNMmmyZDvMbpfquHfjVJFOAM6IUA+SoJURveuzbRGIBRYuwGE0zJIFi
+         Qp334tFSUlFXxTNQA1V0u7YwIyJLcG37JCB+r14Su9J8dyS0Ru93zaoP9MSQ3uQ32l
+         PhWj+7jDqGPHxFLWZppbmxAH6QjoJHysKidoZfMCLC731dWonFBPqCnFbY9fO/8ap6
+         B4QW3l3egiDv+kfrgcBO8S5o+DtBRFaoM/a58E/zkhnv85+bdXwZ4zb4c+B4NkoU3m
+         QnDcJuloBiCvg==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <YGcDETcdqVUIl1+y@mwanda>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] nfc: pn533: prevent potential memory corruption
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <161739901265.1946.17798019048869981183.git-patchwork-notify@kernel.org>
+Date:   Fri, 02 Apr 2021 21:30:12 +0000
+References: <YGcDqkN1v/NVZA9z@mwanda>
+In-Reply-To: <YGcDqkN1v/NVZA9z@mwanda>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     kuba@kernel.org, sameo@linux.intel.com, linville@tuxdriver.com,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Dne 02. 04. 21 v 13:42 Dan Carpenter napsal(a):
-> This unwind loop needs to free snd_ctl_leds[0] as well.
+Hello:
+
+This patch was applied to netdev/net-next.git (refs/heads/master):
+
+On Fri, 2 Apr 2021 14:44:42 +0300 you wrote:
+> If the "type_a->nfcid_len" is too large then it would lead to memory
+> corruption in pn533_target_found_type_a() when we do:
 > 
-> Fixes: cb17fe0045aa ("ALSA: control - add sysfs support to the LED trigger module")
+> 	memcpy(nfc_tgt->nfcid1, tgt_type_a->nfcid_data, nfc_tgt->nfcid1_len);
+> 
+> Fixes: c3b1e1e8a76f ("NFC: Export NFCID1 from pn533")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  sound/core/control_led.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/sound/core/control_led.c b/sound/core/control_led.c
-> index d4fb8b873f34..202b475d0bf3 100644
-> --- a/sound/core/control_led.c
-> +++ b/sound/core/control_led.c
-> @@ -712,7 +712,7 @@ static struct snd_ctl_layer_ops snd_ctl_led_lops = {
->  static int __init snd_ctl_led_init(void)
->  {
->  	struct snd_ctl_led *led;
-> -	unsigned int group;
-> +	int group;
->  
->  	device_initialize(&snd_ctl_led_dev);
->  	snd_ctl_led_dev.class = sound_class;
-> @@ -730,7 +730,7 @@ static int __init snd_ctl_led_init(void)
->  		dev_set_name(&led->dev, led->name);
->  		if (device_add(&led->dev)) {
->  			put_device(&led->dev);
-> -			for (; group > 0; group--) {
-> +			for (; group >= 0; group--) {
->  				led = &snd_ctl_leds[group];
+> [...]
 
-It's not correct. This assignent should be 'led = &snd_ctl_leds[group - 1];'
-without other changes, because the put_device() is enough when device_add() fails.
+Here is the summary with links:
+  - [net-next] nfc: pn533: prevent potential memory corruption
+    https://git.kernel.org/netdev/net-next/c/ca4d4c34ae9a
 
-Could you resend the correction?
-
-					Jaroslav
-
->  				device_del(&led->dev);
->  			}
-> 
+You are awesome, thank you!
+--
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
--- 
-Jaroslav Kysela <perex@perex.cz>
-Linux Sound Maintainer; ALSA Project; Red Hat, Inc.
