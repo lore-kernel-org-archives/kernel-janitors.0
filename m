@@ -2,108 +2,107 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C3F4C433ED
-	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Apr 2021 11:47:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DFD9C433B4
+	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Apr 2021 15:57:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F2637610CF
-	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Apr 2021 11:47:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5566F61155
+	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Apr 2021 15:57:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234981AbhDBLrl (ORCPT
+        id S235366AbhDBP5e (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 2 Apr 2021 07:47:41 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:53146 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229722AbhDBLrk (ORCPT
+        Fri, 2 Apr 2021 11:57:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36994 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229553AbhDBP5e (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 2 Apr 2021 07:47:40 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 132BcklS108604;
-        Fri, 2 Apr 2021 11:47:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=s86nNGXjuQO3BIkeVvSlQRzc9bKAV2oQ8jed6Z2e3HU=;
- b=XizUMFnRdxrvpdhLZZDNaT9Vr14PnUnxWqXc9xaUE8ob/WhP9XBptaWf4WiyKtM0+USM
- HV5pubFSSvTikTyTjnjqaHTdpKjyMiMH+ukDbbe6m4Ols7Bp9MC5JOXaYrGTM7C2ro63
- IDsIM4LEhtFadLDZeTlWavJhKygz631O8NbGLAK/MpWi+0526fvnLUHJSraLiaCiRtwk
- Eq00wVUQm0KYJwotwEhBwy2YfaK/bqIaZ4HRkZx6zd42T/walynPP8wzF01vAzmT8Xj9
- g//r0KY+28WVQeOfgGW6Yx0Aers6RNk9I/roHusQSd3U7hUoe+6nrIGk88VvN36+L4CA xg== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2130.oracle.com with ESMTP id 37n33dve46-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 02 Apr 2021 11:47:34 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 132Bdg3a037341;
-        Fri, 2 Apr 2021 11:47:32 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3030.oracle.com with ESMTP id 37n2atyu24-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 02 Apr 2021 11:47:32 +0000
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 132BlVAO014148;
-        Fri, 2 Apr 2021 11:47:31 GMT
-Received: from mwanda (/102.36.221.92)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 02 Apr 2021 11:47:30 +0000
-Date:   Fri, 2 Apr 2021 14:47:23 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Doug Ledford <dledford@redhat.com>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
-        Mark Bloch <markb@mellanox.com>, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] RDMA/addr: potential uninitialized variable in
- ib_nl_process_good_ip_rsep()
-Message-ID: <YGcES6MsXGnh83qi@mwanda>
+        Fri, 2 Apr 2021 11:57:34 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE4B1C0613E6
+        for <kernel-janitors@vger.kernel.org>; Fri,  2 Apr 2021 08:57:32 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id b7so8021807ejv.1
+        for <kernel-janitors@vger.kernel.org>; Fri, 02 Apr 2021 08:57:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NjT54jtHRWKb63cV3/hvdT10b8Uf7zTQ4kkn5xjn2aM=;
+        b=FUjZ/sKKfq/dlrPz8u+SJ62Ga8K959fAd5BunVNKzOn/gAZ6fJYs27mZwf6RJOZTQn
+         dpHYSItXJjJC4A0ekocKCMtK5C4EvS/dAZAWewVW3h/TYBK4GFz24XBY2b0WxPuQJWAX
+         CP3RKFN8yGf5jO9TEtGkevkavP9D9upUCvyneOr9XN57RMLIw437TuLJ3utLEF0eTxrl
+         mzioT1k8en4NqqkZohpKdOUz6qkg660nxewtJxaG9eECxpsZ3Uqg3VWmhM9Up8n2AOl5
+         nYUs2vu42noqZnTT7DjlPNFU5348frOLqWe9eU+jtoNw/ah8JDTH2qBkkWj9Qk3jOwEr
+         uBbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NjT54jtHRWKb63cV3/hvdT10b8Uf7zTQ4kkn5xjn2aM=;
+        b=F7sImafG5qHEfdLjPDrzJ0FfLmLfnUjmypPZrK/MD6dNUnO9BssEVKhnuS9EEKQTyE
+         JDrDSr+fuW7pXn9i4DndAszlEsh2qZBDWloErSxoKnh8osLwR4xjQXm7gcgVjVh1HnPd
+         /XS5L2tyBuRdZKQrf6fEZuJ++9s6vS0xe7uTgrYagw5F/YdZjFXJp+AlvRW7kAk0HGxD
+         2KFtzIVonQgV+bNssztvSVfvIdHtxx42CrGHr987MyfwmjRyUW6Z5UuFCQZpYFrsMYfx
+         IwTf9XAN0I08JRonaLoEUqo2xlsz2XCs9DA/pcKqDuS7n6Uot0GaHNfHidbmwjNf3pGm
+         c76g==
+X-Gm-Message-State: AOAM5318R0jmcXitwyL7WLWJIRLleAGJ8ZCSjTV9l88J+FGiux1LA0SP
+        kxWUV3l+RQNyRLyi9bwwjmaCTdiVZvdot7knA7JbAKqZJw==
+X-Google-Smtp-Source: ABdhPJzHGKOWAt5592FR69/C4RRWwtwIrfzvGzE/+gvH00fewfB4eOPn+6tpjVTvpOEP4zkXW11lI7AjMOKwnvxyvso=
+X-Received: by 2002:a17:906:3d62:: with SMTP id r2mr14487188ejf.488.1617379051355;
+ Fri, 02 Apr 2021 08:57:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-X-Proofpoint-IMR: 1
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9941 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 phishscore=0 spamscore=0
- mlxscore=0 mlxlogscore=999 bulkscore=0 adultscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2103310000
- definitions=main-2104020086
-X-Proofpoint-GUID: x-PxymaAPF3LEccK0jkXjXt0TExl6ZHs
-X-Proofpoint-ORIG-GUID: x-PxymaAPF3LEccK0jkXjXt0TExl6ZHs
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9941 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=999 mlxscore=0
- lowpriorityscore=0 suspectscore=0 priorityscore=1501 phishscore=0
- clxscore=1011 impostorscore=0 malwarescore=0 bulkscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2103310000
- definitions=main-2104020086
+References: <YGcD6HO8tiX7G4OJ@mwanda>
+In-Reply-To: <YGcD6HO8tiX7G4OJ@mwanda>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 2 Apr 2021 11:57:20 -0400
+Message-ID: <CAHC9VhQ4D25kvzjXyvk8eJFXCOAaxuzUkSyNTePSrBHONxXZwQ@mail.gmail.com>
+Subject: Re: [PATCH] netfilter: nftables: fix a warning message in nf_tables_commit_audit_collect()
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Pablo Neira Ayuso <pablo@netfilter.org>,
+        Richard Guy Briggs <rgb@redhat.com>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        Florian Westphal <fw@strlen.de>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The nla_len() is less than or equal to 16.  If it's less than 16 then
-end of the "gid" buffer is uninitialized.
+On Fri, Apr 2, 2021 at 7:46 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> The first argument of a WARN_ONCE() is a condition.  This WARN_ONCE()
+> will only print the table name, and is potentially problematic if the
+> table name has a %s in it.
+>
+> Fixes: bb4052e57b5b ("audit: log nftables configuration change events once per table")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  net/netfilter/nf_tables_api.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Fixes: ae43f8286730 ("IB/core: Add IP to GID netlink offload")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-I just spotted this in review.  I think it's a bug but I'm not 100%.
+Thanks Dan.
 
- drivers/infiniband/core/addr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Paul Moore <paul@paul-moore.com>
 
-diff --git a/drivers/infiniband/core/addr.c b/drivers/infiniband/core/addr.c
-index 0abce004a959..a037ba4424bf 100644
---- a/drivers/infiniband/core/addr.c
-+++ b/drivers/infiniband/core/addr.c
-@@ -98,7 +98,7 @@ static inline bool ib_nl_is_good_ip_resp(const struct nlmsghdr *nlh)
- static void ib_nl_process_good_ip_rsep(const struct nlmsghdr *nlh)
- {
- 	const struct nlattr *head, *curr;
--	union ib_gid gid;
-+	union ib_gid gid = {};
- 	struct addr_req *req;
- 	int len, rem;
- 	int found = 0;
+> diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
+> index 42bf3e15065a..2fb2ccf87011 100644
+> --- a/net/netfilter/nf_tables_api.c
+> +++ b/net/netfilter/nf_tables_api.c
+> @@ -8022,7 +8022,7 @@ static void nf_tables_commit_audit_collect(struct list_head *adl,
+>                 if (adp->table == table)
+>                         goto found;
+>         }
+> -       WARN_ONCE("table=%s not expected in commit list", table->name);
+> +       WARN_ONCE(1, "table=%s not expected in commit list", table->name);
+>         return;
+>  found:
+>         adp->entries++;
+> --
+> 2.30.2
+
 -- 
-2.30.2
-
+paul moore
+www.paul-moore.com
