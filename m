@@ -2,72 +2,65 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0C05C43460
-	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Apr 2021 22:12:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B6B4C433ED
+	for <kernel-janitors@archiver.kernel.org>; Sat,  3 Apr 2021 18:19:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 834FB6117A
-	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Apr 2021 22:12:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B0206124C
+	for <kernel-janitors@archiver.kernel.org>; Sat,  3 Apr 2021 18:19:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234161AbhDBWMQ (ORCPT
+        id S236736AbhDCSTI (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 2 Apr 2021 18:12:16 -0400
-Received: from mail-wr1-f44.google.com ([209.85.221.44]:37638 "EHLO
-        mail-wr1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231406AbhDBWMP (ORCPT
+        Sat, 3 Apr 2021 14:19:08 -0400
+Received: from mail.netfilter.org ([217.70.188.207]:57122 "EHLO
+        mail.netfilter.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236866AbhDCSS5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 2 Apr 2021 18:12:15 -0400
-Received: by mail-wr1-f44.google.com with SMTP id x16so5753114wrn.4;
-        Fri, 02 Apr 2021 15:12:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=9+8JeSS0odf4uG4Rtk112oLXdTErcuKdR3I5mU+HNh8=;
-        b=BUc+DRQRzgFvy1RdyvHf371pqlvWaOiSDCK7ZGYemUZVjyoARtYSIbfrmnlLwzJmVI
-         uT0aemKqsnxTnLMlK6nyLY6Bs+zlpN0BGRYPcr+NaH3xrQFw8kheZq13Y6bz9xQ5k7Wh
-         21dcV7errZXs6ErJgYg4Wrg3YKRRDkD49tSmip5K3uq0otHcbcBcs3l4botH6TzrSX3d
-         BBVwN1LWawrt5whS2GPGasYKQs9IT/SsKCc2MpXzBQcE8zCz17D3yYAS8i7ULHLImanG
-         BCwb5JwLCLMv87u5eRYVor0rwepxubuMqCoNSSJ2DXmLDypQaGjAWoz1pwoGQhcFWl3m
-         9cuQ==
-X-Gm-Message-State: AOAM533GxI1HgkAqS864FvtVCGqT3uFwE17GQyCdaiAWNBKO0NhBpeHR
-        bjtu5TGifHjtB4Krg1q5pmfqeYl5LN8=
-X-Google-Smtp-Source: ABdhPJwXHb7vxHcYqCtUIx1COO9M/vU5ZRr7Qy8sMoFAocUeSVsPY3eUZa2PNSdimdB9Z7Il8ooPlQ==
-X-Received: by 2002:adf:c449:: with SMTP id a9mr5397121wrg.146.1617401531652;
-        Fri, 02 Apr 2021 15:12:11 -0700 (PDT)
-Received: from liuwe-devbox-debian-v2 ([51.145.34.42])
-        by smtp.gmail.com with ESMTPSA id u63sm13792011wmg.24.2021.04.02.15.12.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Apr 2021 15:12:11 -0700 (PDT)
-Date:   Fri, 2 Apr 2021 22:12:10 +0000
-From:   Wei Liu <wei.liu@kernel.org>
-To:     Qiheng Lin <linqiheng@huawei.com>
-Cc:     "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Wei Liu <wei.liu@kernel.org>, linux-hyperv@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
-Subject: Re: [PATCH -next] Drivers: hv: vmbus: Remove unused including
- <linux/version.h>
-Message-ID: <20210402221210.subx4dlivfo7ui7q@liuwe-devbox-debian-v2>
-References: <20210331060646.2471-1-linqiheng@huawei.com>
+        Sat, 3 Apr 2021 14:18:57 -0400
+Received: from us.es (unknown [90.77.255.23])
+        by mail.netfilter.org (Postfix) with ESMTPSA id 1AB0163E42;
+        Sat,  3 Apr 2021 20:18:36 +0200 (CEST)
+Date:   Sat, 3 Apr 2021 20:18:50 +0200
+From:   Pablo Neira Ayuso <pablo@netfilter.org>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Richard Guy Briggs <rgb@redhat.com>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        Florian Westphal <fw@strlen.de>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] netfilter: nftables: fix a warning message in
+ nf_tables_commit_audit_collect()
+Message-ID: <20210403181850.GA4976@salvia>
+References: <YGcD6HO8tiX7G4OJ@mwanda>
+ <CAHC9VhQ4D25kvzjXyvk8eJFXCOAaxuzUkSyNTePSrBHONxXZwQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20210331060646.2471-1-linqiheng@huawei.com>
+In-Reply-To: <CAHC9VhQ4D25kvzjXyvk8eJFXCOAaxuzUkSyNTePSrBHONxXZwQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Mar 31, 2021 at 02:06:46PM +0800, Qiheng Lin wrote:
-> Remove including <linux/version.h> that don't need it.
+On Fri, Apr 02, 2021 at 11:57:20AM -0400, Paul Moore wrote:
+> On Fri, Apr 2, 2021 at 7:46 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> > The first argument of a WARN_ONCE() is a condition.  This WARN_ONCE()
+> > will only print the table name, and is potentially problematic if the
+> > table name has a %s in it.
+> >
+> > Fixes: bb4052e57b5b ("audit: log nftables configuration change events once per table")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > ---
+> >  net/netfilter/nf_tables_api.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Qiheng Lin <linqiheng@huawei.com>
+> Thanks Dan.
+> 
+> Reviewed-by: Paul Moore <paul@paul-moore.com>
 
-Commit message adjusted and queued for hyperv-next. Thanks.
-
-Wei.
+Applied, thanks.
