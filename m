@@ -2,99 +2,111 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AC38C433B4
-	for <kernel-janitors@archiver.kernel.org>; Sun,  4 Apr 2021 13:15:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB97CC433B4
+	for <kernel-janitors@archiver.kernel.org>; Sun,  4 Apr 2021 20:12:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3360B6128A
-	for <kernel-janitors@archiver.kernel.org>; Sun,  4 Apr 2021 13:15:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9264761205
+	for <kernel-janitors@archiver.kernel.org>; Sun,  4 Apr 2021 20:12:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230168AbhDDNPo (ORCPT
+        id S231475AbhDDUMh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 4 Apr 2021 09:15:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36582 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229665AbhDDNPn (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 4 Apr 2021 09:15:43 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A63DD61210;
-        Sun,  4 Apr 2021 13:15:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617542139;
-        bh=F5BU3c8ulrHcngMnkVKeevAYqz8+ly+plYwNP3IB6/o=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=A95bpsJLF1e1zeYJritmas9caa2EDZ7d05RQ62dppYaJzCri14JpYc+j9Yri/VXgF
-         2km8HtKKbQa1D12E4IeAnCcNenUoqC3vsYwiuZ3oppJR8IJBfZQJb41eMpDikQizeH
-         CWPlZTN5fRrT/lCt7ewOV1eGnze5vaqocLgMDCvcW/LRhOsG2jDLQNPQ+eAwmStj7M
-         jyo9oiycs1SwbWLPxVEXi5ZFWWvaaKr4TVGCVotQsRaTMcVr1vCqtgCC4L3xfm3LDS
-         A+q9FssaN9GLk5GTukkAuckzpdOq+WETXuG/c/UkqEaGFcuvtAo6PpcZSI/4P51Lni
-         3B04ALmRsUjvw==
-Date:   Sun, 4 Apr 2021 16:15:35 +0300
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Mark Bloch <mbloch@nvidia.com>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Mark Bloch <markb@mellanox.com>, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] RDMA/addr: potential uninitialized variable in
- ib_nl_process_good_ip_rsep()
-Message-ID: <YGm798Im61n+2/mb@unreal>
-References: <YGcES6MsXGnh83qi@mwanda>
- <YGmWB4fT/8IFeiZf@unreal>
- <1b21be94-bf14-9e73-68a3-c503bb79f683@nvidia.com>
+        Sun, 4 Apr 2021 16:12:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58706 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231438AbhDDUMW (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Sun, 4 Apr 2021 16:12:22 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C272C061788
+        for <kernel-janitors@vger.kernel.org>; Sun,  4 Apr 2021 13:12:17 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id v4so9219060wrp.13
+        for <kernel-janitors@vger.kernel.org>; Sun, 04 Apr 2021 13:12:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=oyHxbO3PUNNiO9rpGkiDw/KLrdxxFq2h9NV2xELqAZI=;
+        b=qhRLFfFI3kt0wDjaLQK4K06CrUrjQt0wOzmG1OBXj+KCe2Kfbfa8Q3ZaCOv2U0jyLj
+         q/yHkhYKUnyb1gMWQMvJfzK/D4W7Xl3Dxb3e7mvr0kQkuvXmha4bGVXYu2B5sxz9mXVi
+         bOx45c1f88gJC6iBp7Jz1basoQ0DfxdFkVUpi10TGy6LcJrVdN9IlVuCbHayBPATqEcP
+         Dla+HKiJdo+CLPrO1RwaWkZcuJ2C8CZ35ztcLJZhkVCY+jgGD6RrHztG3H6ZtJVhAdQr
+         Ol2ob46wvz3NsyhLe46wBWrupVGMhWSXZq9QxH47LPpLd+pxuqnJa1Cne4+UnXNGLkIc
+         OmfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=oyHxbO3PUNNiO9rpGkiDw/KLrdxxFq2h9NV2xELqAZI=;
+        b=l8ZzWKKi4ovguKQvHpJVyLZn0NUkHzdHIlVk5VhV0U10hOGAUEhdeRZmVs8PHMO5Zs
+         yoLKhBQIagR0Wzu1ZUfisFdCclVdKMjejgqQljUqQstEfVXJRbDcvOTBPqsATHwVsxSP
+         lC4fEYC0j0+Mvo3byCrwH9Jr0F6aiQTTtJuySdbxL8mUAN+UqyMkTcvV5zFPk0Toev53
+         XUaKE445nEovGEe6JQQBwTPr7xHMDCt6qmH0n/XHPKXKQVZuuwqb0hL3bIE0Bi7/wF7J
+         lu47n3uuGsFF25IlEHDIyV0By/KWGJMAdoaa5rTMHTzMT493DMShsnx6GOU7AKw/eYPC
+         DXWg==
+X-Gm-Message-State: AOAM530ctOrOkYBwVGQyzBIdOvkYGMqFjVf3Zy7UAb9VBQ6TiY5wrUty
+        39DWYKxC45sOiEY3LP6Bo5/gJw==
+X-Google-Smtp-Source: ABdhPJyhO8r8scHjRFIav4WlBDVzxSBbX4cqENuJU1BEdQ9L9gMjYA4KXNY7MjY0BqyrkKCwGCJHrw==
+X-Received: by 2002:a05:6000:108b:: with SMTP id y11mr26758160wrw.196.1617567135377;
+        Sun, 04 Apr 2021 13:12:15 -0700 (PDT)
+Received: from ?IPv6:2a01:e34:ed2f:f020:6d68:6b9a:7a3c:4a9f? ([2a01:e34:ed2f:f020:6d68:6b9a:7a3c:4a9f])
+        by smtp.googlemail.com with ESMTPSA id 21sm21237319wme.6.2021.04.04.13.12.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 04 Apr 2021 13:12:14 -0700 (PDT)
+Subject: Re: [PATCH][next] thermal/drivers/devfreq_cooling: Fix error return
+ if kasprintf returns NULL
+To:     Colin King <colin.king@canonical.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Amit Kucheria <amitk@kernel.org>,
+        Lukasz Luba <lukasz.luba@arm.com>, linux-pm@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210325172148.485259-1-colin.king@canonical.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <101b8460-6488-88f7-9ccc-3af2c694cb48@linaro.org>
+Date:   Sun, 4 Apr 2021 22:12:13 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1b21be94-bf14-9e73-68a3-c503bb79f683@nvidia.com>
+In-Reply-To: <20210325172148.485259-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, Apr 04, 2021 at 04:13:17PM +0300, Mark Bloch wrote:
-> On 4/4/21 1:33 PM, Leon Romanovsky wrote:
-> > On Fri, Apr 02, 2021 at 02:47:23PM +0300, Dan Carpenter wrote:
-> >> The nla_len() is less than or equal to 16.  If it's less than 16 then
-> >> end of the "gid" buffer is uninitialized.
-> >>
-> >> Fixes: ae43f8286730 ("IB/core: Add IP to GID netlink offload")
-> >> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> >> ---
-> >> I just spotted this in review.  I think it's a bug but I'm not 100%.
-> > 
-> > I tend to agree with you, that it is a bug.
-> > 
-> > LS_NLA_TYPE_DGID is declared as NLA_BINARY which doesn't complain if
-> > data is less than declared ".len". However, the fix needs to be in
-> > ib_nl_is_good_ip_resp(), it shouldn't return "true" if length not equal
-> > to 16.
-> 
-> What about just updating the policy? The bellow diff should work I believe.
 
-I didn't know about ".validation_type", but yes this change will be enough.
+Hi Colin,
 
+
+On 25/03/2021 18:21, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> diff --git a/drivers/infiniband/core/addr.c b/drivers/infiniband/core/addr.c
-> index 0abce004a959..65e3e7df8a4b 100644
-> --- a/drivers/infiniband/core/addr.c
-> +++ b/drivers/infiniband/core/addr.c
-> @@ -76,7 +76,9 @@ static struct workqueue_struct *addr_wq;
->  
->  static const struct nla_policy ib_nl_addr_policy[LS_NLA_TYPE_MAX] = {
->         [LS_NLA_TYPE_DGID] = {.type = NLA_BINARY,
-> -               .len = sizeof(struct rdma_nla_ls_gid)},
-> +               .len = sizeof(struct rdma_nla_ls_gid),
-> +               .validation_type = NLA_VALIDATE_MIN,
-> +               .min = sizeof(struct rdma_nla_ls_gid)},
->  };
->  
->  static inline bool ib_nl_is_good_ip_resp(const struct nlmsghdr *nlh)
+> Currently when kasprintf fails and returns NULL, the error return -ENOMEM
+> is being assigned to cdev instead of err causing the return via the label
+> remove_qos_re to return the incorrect error code. Fix this by explicitly
+> setting err before taking the error return path.
 > 
-> > 
-> > Thanks
-> > 
-> 
-> Mark
+> Addresses-Coverity: ("Unused valued")
+> Fixes: f8d354e821b2 ("thermal/drivers/devfreq_cooling: Use device name instead of auto-numbering")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+
+Thanks for your patch. It was already fixed after being reported by
+kbuild-test.
+
+  -- Daniel
+
+
+
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
