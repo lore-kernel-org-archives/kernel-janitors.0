@@ -2,92 +2,67 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1AD2C433ED
-	for <kernel-janitors@archiver.kernel.org>; Sun,  4 Apr 2021 09:45:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BC56C433ED
+	for <kernel-janitors@archiver.kernel.org>; Sun,  4 Apr 2021 10:33:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ABA2C61368
-	for <kernel-janitors@archiver.kernel.org>; Sun,  4 Apr 2021 09:45:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3ACF461350
+	for <kernel-janitors@archiver.kernel.org>; Sun,  4 Apr 2021 10:33:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230240AbhDDJpU (ORCPT
+        id S230397AbhDDKdv (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 4 Apr 2021 05:45:20 -0400
-Received: from smtp13.smtpout.orange.fr ([80.12.242.135]:22041 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S229550AbhDDJpT (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 4 Apr 2021 05:45:19 -0400
-Received: from localhost.localdomain ([90.126.11.170])
-        by mwinf5d76 with ME
-        id oZlD2400B3g7mfN03ZlDM8; Sun, 04 Apr 2021 11:45:14 +0200
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 04 Apr 2021 11:45:14 +0200
-X-ME-IP: 90.126.11.170
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     ecree.xilinx@gmail.com, habetsm.xilinx@gmail.com,
-        davem@davemloft.net, kuba@kernel.org
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] sfc: Use 'skb_add_rx_frag()' instead of hand coding it
-Date:   Sun,  4 Apr 2021 11:45:11 +0200
-Message-Id: <6fadc5ae05b05d9d8ab545e51ee3dcbdaa561393.1617529446.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.27.0
+        Sun, 4 Apr 2021 06:33:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53584 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230381AbhDDKdv (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Sun, 4 Apr 2021 06:33:51 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 4833D61350;
+        Sun,  4 Apr 2021 10:33:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1617532427;
+        bh=/pslLDMEifIhDTuDQfSd6iPM/XLOWHSaWiw1i09FpeY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=NG0CeWleRlSf2LKg1lZ85FlqYf/JEyvvyhqMKfsbCZxITPGT+mEEsJOJCOVOnpwkn
+         CZ0JqN5JFtkiyPgDWzOERdNMCEGteQZtZ0QYf6+i72ZogMbKaJUGQpM8IUXuffNxab
+         AKN/u+NY3uHqUy62aNXVLV+IE085KJ9bQpqN01V4Yc71toBoYxrXqBpdip0tLngy46
+         VKYX3b6GmASvxIeRUtaM6OUz88G8Wh+tC+zUS9lp6K6lSkER8KCSl5bRde63ZVsUO8
+         pe7FE5g/MEJ42zUj9R0YnR/yfh5ddRAxiyEKSxLgEMMLq/ar5vX4nCJkUOafcp9iHk
+         flj5Zdltjd+fA==
+Date:   Sun, 4 Apr 2021 13:33:43 +0300
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Mark Bloch <markb@mellanox.com>, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] RDMA/addr: potential uninitialized variable in
+ ib_nl_process_good_ip_rsep()
+Message-ID: <YGmWB4fT/8IFeiZf@unreal>
+References: <YGcES6MsXGnh83qi@mwanda>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YGcES6MsXGnh83qi@mwanda>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Some lines of code can be merged into an equivalent 'skb_add_rx_frag()'
-call which is less verbose.
+On Fri, Apr 02, 2021 at 02:47:23PM +0300, Dan Carpenter wrote:
+> The nla_len() is less than or equal to 16.  If it's less than 16 then
+> end of the "gid" buffer is uninitialized.
+> 
+> Fixes: ae43f8286730 ("IB/core: Add IP to GID netlink offload")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> I just spotted this in review.  I think it's a bug but I'm not 100%.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-UNTESTED. Compile tested only
+I tend to agree with you, that it is a bug.
 
-The 'skb->truesize' computation is likely to be slightly slower (n
-additions hidden in 'skb_add_rx_frag' instead of 1 multiplication), but I
-don't think that it is an issue here.
----
- drivers/net/ethernet/sfc/rx.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+LS_NLA_TYPE_DGID is declared as NLA_BINARY which doesn't complain if
+data is less than declared ".len". However, the fix needs to be in
+ib_nl_is_good_ip_resp(), it shouldn't return "true" if length not equal
+to 16.
 
-diff --git a/drivers/net/ethernet/sfc/rx.c b/drivers/net/ethernet/sfc/rx.c
-index 89c5c75f479f..17b8119c48e5 100644
---- a/drivers/net/ethernet/sfc/rx.c
-+++ b/drivers/net/ethernet/sfc/rx.c
-@@ -94,12 +94,11 @@ static struct sk_buff *efx_rx_mk_skb(struct efx_channel *channel,
- 		rx_buf->len -= hdr_len;
- 
- 		for (;;) {
--			skb_fill_page_desc(skb, skb_shinfo(skb)->nr_frags,
--					   rx_buf->page, rx_buf->page_offset,
--					   rx_buf->len);
-+			skb_add_rx_frag(skb, skb_shinfo(skb)->nr_frags,
-+					rx_buf->page, rx_buf->page_offset,
-+					rx_buf->len, efx->rx_buffer_truesize);
- 			rx_buf->page = NULL;
--			skb->len += rx_buf->len;
--			skb->data_len += rx_buf->len;
-+
- 			if (skb_shinfo(skb)->nr_frags == n_frags)
- 				break;
- 
-@@ -111,8 +110,6 @@ static struct sk_buff *efx_rx_mk_skb(struct efx_channel *channel,
- 		n_frags = 0;
- 	}
- 
--	skb->truesize += n_frags * efx->rx_buffer_truesize;
--
- 	/* Move past the ethernet header */
- 	skb->protocol = eth_type_trans(skb, efx->net_dev);
- 
--- 
-2.27.0
-
+Thanks
