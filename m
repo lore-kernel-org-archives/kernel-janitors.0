@@ -2,65 +2,80 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B6B4C433ED
-	for <kernel-janitors@archiver.kernel.org>; Sat,  3 Apr 2021 18:19:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B0A0C43460
+	for <kernel-janitors@archiver.kernel.org>; Sun,  4 Apr 2021 06:33:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5B0206124C
-	for <kernel-janitors@archiver.kernel.org>; Sat,  3 Apr 2021 18:19:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 290D56137A
+	for <kernel-janitors@archiver.kernel.org>; Sun,  4 Apr 2021 06:33:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236736AbhDCSTI (ORCPT
+        id S230039AbhDDGd4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 3 Apr 2021 14:19:08 -0400
-Received: from mail.netfilter.org ([217.70.188.207]:57122 "EHLO
-        mail.netfilter.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236866AbhDCSS5 (ORCPT
+        Sun, 4 Apr 2021 02:33:56 -0400
+Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:54362 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229571AbhDDGdz (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 3 Apr 2021 14:18:57 -0400
-Received: from us.es (unknown [90.77.255.23])
-        by mail.netfilter.org (Postfix) with ESMTPSA id 1AB0163E42;
-        Sat,  3 Apr 2021 20:18:36 +0200 (CEST)
-Date:   Sat, 3 Apr 2021 20:18:50 +0200
-From:   Pablo Neira Ayuso <pablo@netfilter.org>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Richard Guy Briggs <rgb@redhat.com>,
-        Jozsef Kadlecsik <kadlec@netfilter.org>,
-        Florian Westphal <fw@strlen.de>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] netfilter: nftables: fix a warning message in
- nf_tables_commit_audit_collect()
-Message-ID: <20210403181850.GA4976@salvia>
-References: <YGcD6HO8tiX7G4OJ@mwanda>
- <CAHC9VhQ4D25kvzjXyvk8eJFXCOAaxuzUkSyNTePSrBHONxXZwQ@mail.gmail.com>
+        Sun, 4 Apr 2021 02:33:55 -0400
+Received: from localhost.localdomain ([90.126.11.170])
+        by mwinf5d04 with ME
+        id oWZo240023g7mfN03WZoWv; Sun, 04 Apr 2021 08:33:49 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 04 Apr 2021 08:33:49 +0200
+X-ME-IP: 90.126.11.170
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     chris.snook@gmail.com, davem@davemloft.net, kuba@kernel.org
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] net: ag71xx: Slightly simplify 'ag71xx_rx_packets()'
+Date:   Sun,  4 Apr 2021 08:33:44 +0200
+Message-Id: <7fadf8e80b7fea5e5bc8ce606f3aec8cd7bd60e8.1617517935.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhQ4D25kvzjXyvk8eJFXCOAaxuzUkSyNTePSrBHONxXZwQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Apr 02, 2021 at 11:57:20AM -0400, Paul Moore wrote:
-> On Fri, Apr 2, 2021 at 7:46 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> > The first argument of a WARN_ONCE() is a condition.  This WARN_ONCE()
-> > will only print the table name, and is potentially problematic if the
-> > table name has a %s in it.
-> >
-> > Fixes: bb4052e57b5b ("audit: log nftables configuration change events once per table")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> >  net/netfilter/nf_tables_api.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> Thanks Dan.
-> 
-> Reviewed-by: Paul Moore <paul@paul-moore.com>
+There is no need to use 'list_for_each_entry_safe' here, as nothing is
+removed from the list in the 'for' loop.
+Use 'list_for_each_entry' instead, it is slightly less verbose.
 
-Applied, thanks.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/ethernet/atheros/ag71xx.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/atheros/ag71xx.c b/drivers/net/ethernet/atheros/ag71xx.c
+index a60ce9030581..7352f98123c7 100644
+--- a/drivers/net/ethernet/atheros/ag71xx.c
++++ b/drivers/net/ethernet/atheros/ag71xx.c
+@@ -1658,9 +1658,9 @@ static int ag71xx_rx_packets(struct ag71xx *ag, int limit)
+ 	struct net_device *ndev = ag->ndev;
+ 	int ring_mask, ring_size, done = 0;
+ 	unsigned int pktlen_mask, offset;
+-	struct sk_buff *next, *skb;
+ 	struct ag71xx_ring *ring;
+ 	struct list_head rx_list;
++	struct sk_buff *skb;
+ 
+ 	ring = &ag->rx_ring;
+ 	pktlen_mask = ag->dcfg->desc_pktlen_mask;
+@@ -1725,7 +1725,7 @@ static int ag71xx_rx_packets(struct ag71xx *ag, int limit)
+ 
+ 	ag71xx_ring_rx_refill(ag);
+ 
+-	list_for_each_entry_safe(skb, next, &rx_list, list)
++	list_for_each_entry(skb, &rx_list, list)
+ 		skb->protocol = eth_type_trans(skb, ndev);
+ 	netif_receive_skb_list(&rx_list);
+ 
+-- 
+2.27.0
+
