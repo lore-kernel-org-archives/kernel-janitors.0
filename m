@@ -2,75 +2,114 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A271C433ED
-	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Apr 2021 20:00:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FAA1C433ED
+	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Apr 2021 20:52:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 02FA0613BD
-	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Apr 2021 20:00:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FC9B613CB
+	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Apr 2021 20:52:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240306AbhDEUAS (ORCPT
+        id S237262AbhDEUwf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 5 Apr 2021 16:00:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44230 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232726AbhDEUAQ (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 5 Apr 2021 16:00:16 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 9B8B261041;
-        Mon,  5 Apr 2021 20:00:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617652809;
-        bh=5ZH+jTqVwO2mzTpSHW0hmmnk47NXBHM6PwZt0uj3Osw=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=fhDWMEE1/a/p/EtmsUQvID9ZZi0M/NDckl3QxwjpNVMxgSPbXXhnP87hQ+BU27S1z
-         BTC9ytUOzcQaxuRLfQlwHy9kaOQcu+rG12mEvYWQQ/hChNEYzQBXdSG2gn9etUictj
-         PJgxDpMHlhiyz/g3YKxB9XKjcwQBzqqBDz2N3ylnzaRIHdULESqtpZhUJEDJfPffuP
-         4EmwrQeFZIVwaqbSeHnzGna2tV8CrLrC765+jPiqiA9tKW+3WMZHP56SoU22n8v5iA
-         ADObInvXelZLhfgHZE8mQox9Om7+QO8BC0dR7BiPKlGT1ylwfDZBD43UM+FMMwwDnY
-         tBnPxdgRITUVg==
-Content-Type: text/plain; charset="utf-8"
+        Mon, 5 Apr 2021 16:52:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39342 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237144AbhDEUwe (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 5 Apr 2021 16:52:34 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70C88C061756;
+        Mon,  5 Apr 2021 13:52:26 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id a6so5973581wrw.8;
+        Mon, 05 Apr 2021 13:52:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=7C13XlUdOgzQF9sLGdJgUoIrOgcp/sITEfTitDZiIdc=;
+        b=Rb0mNRmGnTqpOkvNQ3ypJ//C+oH+JTE77MmLtNerx1gz8lpqfS3w/FpotN9eMElTK1
+         5s1YM9rg69RanWIoObVijLEX2ZXvtS3xh3s7gXl/0Wpwi/ka9gaDgbIw968Nupzdg+s8
+         0meS+b2N5AmzOuGK8e9Aj3uzxD5WsGnebHbLuMmqEV/dTEZEizGNRmcaPXCK2J3YMYf/
+         5QdnalUNF+IEHJpKvhNpTD3fVkrwgfnfBV/mknETE13sjBXBo/hmdiOLY4iWnj7mZyM+
+         sujyhmJx/sqhwn9VxTPFlITbOnGrRscCoTEAwJYMez8ePvgt1IYCMUjaZcYCZyj3RTkV
+         HWIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=7C13XlUdOgzQF9sLGdJgUoIrOgcp/sITEfTitDZiIdc=;
+        b=sbD3XifXb3B+xz1Rhlx0iuA5CdMF3aOKT1T+f1f1dCJgeLYN30bRmSA8BHGDsX1LCD
+         OMAHEUnM8QIw/T5DnEDK8t57NdDeVaEDMMEdYZ6dbiTK27yAPuoZXtQEvdqLM4tAg05g
+         1hN5TbSb+Sbxwtom94g0T0/yt99YBw8h3EW5Igc4P4lmk6P4m+NAl/0s0ftVikurNtmH
+         oim+pHNG00iulq9iYpIunCcfX951/Pzw7VRNLWDHIP+MtUNULccB+Hc8xRUYGPniKrTL
+         r7AsIpNyAKYfEp5Aq2XUCjXifoXc/PWoF1qvYjTKYgc951RI0tavBn1oFZkSZucOKP1D
+         8hbA==
+X-Gm-Message-State: AOAM532hGr5PVK6K2EA9mLGRF2q1ulQ+dOH0GXBuKt6HCUxgSc6Cjm8h
+        0Nq1YE0yOZ95P1jKc/dWUYZ8FDK1i2q5Hg==
+X-Google-Smtp-Source: ABdhPJxSaXmM69ki950ZgNjz250o54xGZUeAdsgGMVuD5hSefBTuPhvsiW+81TLLy1bZ+hHNZYQrUw==
+X-Received: by 2002:a05:6000:181:: with SMTP id p1mr30779028wrx.73.1617655945220;
+        Mon, 05 Apr 2021 13:52:25 -0700 (PDT)
+Received: from LEGION ([39.46.7.73])
+        by smtp.gmail.com with ESMTPSA id x11sm674939wmi.3.2021.04.05.13.52.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Apr 2021 13:52:24 -0700 (PDT)
+Date:   Tue, 6 Apr 2021 01:52:19 +0500
+From:   Muhammad Usama Anjum <musamaanjum@gmail.com>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "open list:SIANO DVB DRIVER" <linux-media@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        zhengyongjun3@huawei.com, kernel-janitors@vger.kernel.org,
+        colin.king@canonical.com, dan.carpenter@oracle.com
+Cc:     musamaanjum@gmail.com
+Subject: [PATCH] media: siano: use DEFINE_MUTEX() for mutex lock
+Message-ID: <20210405205219.GA687366@LEGION>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH 1/2] qede: Remove a erroneous ++ in 'qede_rx_build_jumbo()'
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <161765280958.6353.3809782901793052721.git-patchwork-notify@kernel.org>
-Date:   Mon, 05 Apr 2021 20:00:09 +0000
-References: <1c27abb938a430e58bd644729597015b3414d4aa.1617540100.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <1c27abb938a430e58bd644729597015b3414d4aa.1617540100.git.christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     aelior@marvell.com, GR-everest-linux-l2@marvell.com,
-        davem@davemloft.net, kuba@kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+mutex lock can be initialized with DEFINE_MUTEX() rather than
+explicitly calling mutex_init().
 
-This series was applied to netdev/net-next.git (refs/heads/master):
+Signed-off-by: Muhammad Usama Anjum <musamaanjum@gmail.com>
+---
+ drivers/media/common/siano/smscoreapi.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-On Sun,  4 Apr 2021 14:42:44 +0200 you wrote:
-> This ++ is confusing. It looks duplicated with the one already performed in
-> 'skb_fill_page_desc()'.
-> 
-> In fact, it is harmless. 'nr_frags' is written twice with the same value.
-> Once, because of the nr_frags++, and once because of the 'nr_frags = i + 1'
-> in 'skb_fill_page_desc()'.
-> 
-> [...]
-
-Here is the summary with links:
-  - [1/2] qede: Remove a erroneous ++ in 'qede_rx_build_jumbo()'
-    https://git.kernel.org/netdev/net-next/c/1ec3d02f9cdf
-  - [2/2] qede: Use 'skb_add_rx_frag()' instead of hand coding it
-    https://git.kernel.org/netdev/net-next/c/7190e9d8e131
-
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+diff --git a/drivers/media/common/siano/smscoreapi.c b/drivers/media/common/siano/smscoreapi.c
+index 410cc3ac6f94..7f5b638d2458 100644
+--- a/drivers/media/common/siano/smscoreapi.c
++++ b/drivers/media/common/siano/smscoreapi.c
+@@ -414,10 +414,10 @@ struct smscore_registry_entry_t {
+ 
+ static struct list_head g_smscore_notifyees;
+ static struct list_head g_smscore_devices;
+-static struct mutex g_smscore_deviceslock;
++static DEFINE_MUTEX(g_smscore_deviceslock);
+ 
+ static struct list_head g_smscore_registry;
+-static struct mutex g_smscore_registrylock;
++static DEFINE_MUTEX(g_smscore_registrylock);
+ 
+ static int default_mode = DEVICE_MODE_NONE;
+ 
+@@ -2123,10 +2123,7 @@ static int __init smscore_module_init(void)
+ {
+ 	INIT_LIST_HEAD(&g_smscore_notifyees);
+ 	INIT_LIST_HEAD(&g_smscore_devices);
+-	mutex_init(&g_smscore_deviceslock);
+-
+ 	INIT_LIST_HEAD(&g_smscore_registry);
+-	mutex_init(&g_smscore_registrylock);
+ 
+ 	return 0;
+ }
+-- 
+2.25.1
 
