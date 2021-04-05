@@ -2,66 +2,122 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58191C433ED
-	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Apr 2021 05:52:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCFC0C43460
+	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Apr 2021 07:57:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1894E61395
-	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Apr 2021 05:52:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 970B06139C
+	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Apr 2021 07:57:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231830AbhDEFwv (ORCPT
+        id S232450AbhDEH52 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 5 Apr 2021 01:52:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35590 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231590AbhDEFwv (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 5 Apr 2021 01:52:51 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A4F3961393;
-        Mon,  5 Apr 2021 05:52:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617601965;
-        bh=1fySX/wpQNMOAvlx875E/VNopNCCqH+BRivsyhOXwi8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qnQVshEVT5SnOo+BZywVVWwoCHQDluQE77pqGDqBzLmPEa6kcO7LwFsBRtAeZo6vr
-         ezETajiFrIH9tslLPHyou0bOaLW9YmS1sYRvYmxFa2gog/MUympm/y4Apy1NFN0tlM
-         Ub84t/G97NlV4ljd+S49I938+XbD8/wSAVlGjTZfy6wIOj9Sm70e91lm0hOw8lsCks
-         bb+Gn3u7dXX4PX+9LFuUuGbQsdzihYPZempudREbedNeiFnaFshkXzg9tLNGG1CjWg
-         EIyhMio0U0qiPLiShl9KhG3nSFTcaGK2f0mR4FdWDjUEAguoitGwTL/lnRc0lhcttH
-         dVmxVI5u95PmQ==
-Date:   Mon, 5 Apr 2021 08:52:41 +0300
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Mark Bloch <mbloch@nvidia.com>, Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Mark Bloch <markb@mellanox.com>, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] RDMA/addr: potential uninitialized variable in
- ib_nl_process_good_ip_rsep()
-Message-ID: <YGqlqQyhM5kpar9U@unreal>
-References: <YGcES6MsXGnh83qi@mwanda>
- <YGmWB4fT/8IFeiZf@unreal>
- <1b21be94-bf14-9e73-68a3-c503bb79f683@nvidia.com>
- <20210405054140.GY2065@kadam>
+        Mon, 5 Apr 2021 03:57:28 -0400
+Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:31072 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232441AbhDEH50 (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 5 Apr 2021 03:57:26 -0400
+Received: from localhost.localdomain ([90.126.11.170])
+        by mwinf5d68 with ME
+        id ovxG240053g7mfN03vxGo5; Mon, 05 Apr 2021 09:57:18 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 05 Apr 2021 09:57:18 +0200
+X-ME-IP: 90.126.11.170
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     pkshih@realtek.com, kvalo@codeaurora.org, davem@davemloft.net,
+        kuba@kernel.org
+Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] rtlwifi: Simplify locking of a skb list accesses
+Date:   Mon,  5 Apr 2021 09:57:14 +0200
+Message-Id: <99cf8894fd52202cb7ce2ec6e3200eef400bc071.1617609346.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210405054140.GY2065@kadam>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Apr 05, 2021 at 08:41:41AM +0300, Dan Carpenter wrote:
-> Could you send that and give me a reported-by?  I'm going AFK for a
-> week.
+The 'c2hcmd_lock' spinlock is only used to protect some __skb_queue_tail()
+and __skb_dequeue() calls.
+Use the lock provided in the skb itself and call skb_queue_tail() and
+skb_dequeue(). These functions already include the correct locking.
 
-Sure, we will handle it.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/wireless/realtek/rtlwifi/base.c | 15 ++-------------
+ drivers/net/wireless/realtek/rtlwifi/wifi.h |  1 -
+ 2 files changed, 2 insertions(+), 14 deletions(-)
 
-Thanks for the report.
+diff --git a/drivers/net/wireless/realtek/rtlwifi/base.c b/drivers/net/wireless/realtek/rtlwifi/base.c
+index 6e8bd99e8911..2a7ee90a3f54 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/base.c
++++ b/drivers/net/wireless/realtek/rtlwifi/base.c
+@@ -551,7 +551,6 @@ int rtl_init_core(struct ieee80211_hw *hw)
+ 	spin_lock_init(&rtlpriv->locks.rf_lock);
+ 	spin_lock_init(&rtlpriv->locks.waitq_lock);
+ 	spin_lock_init(&rtlpriv->locks.entry_list_lock);
+-	spin_lock_init(&rtlpriv->locks.c2hcmd_lock);
+ 	spin_lock_init(&rtlpriv->locks.scan_list_lock);
+ 	spin_lock_init(&rtlpriv->locks.cck_and_rw_pagea_lock);
+ 	spin_lock_init(&rtlpriv->locks.fw_ps_lock);
+@@ -2269,7 +2268,6 @@ static bool rtl_c2h_fast_cmd(struct ieee80211_hw *hw, struct sk_buff *skb)
+ void rtl_c2hcmd_enqueue(struct ieee80211_hw *hw, struct sk_buff *skb)
+ {
+ 	struct rtl_priv *rtlpriv = rtl_priv(hw);
+-	unsigned long flags;
+ 
+ 	if (rtl_c2h_fast_cmd(hw, skb)) {
+ 		rtl_c2h_content_parsing(hw, skb);
+@@ -2278,11 +2276,7 @@ void rtl_c2hcmd_enqueue(struct ieee80211_hw *hw, struct sk_buff *skb)
+ 	}
+ 
+ 	/* enqueue */
+-	spin_lock_irqsave(&rtlpriv->locks.c2hcmd_lock, flags);
+-
+-	__skb_queue_tail(&rtlpriv->c2hcmd_queue, skb);
+-
+-	spin_unlock_irqrestore(&rtlpriv->locks.c2hcmd_lock, flags);
++	skb_queue_tail(&rtlpriv->c2hcmd_queue, skb);
+ 
+ 	/* wake up wq */
+ 	queue_delayed_work(rtlpriv->works.rtl_wq, &rtlpriv->works.c2hcmd_wq, 0);
+@@ -2340,16 +2334,11 @@ void rtl_c2hcmd_launcher(struct ieee80211_hw *hw, int exec)
+ {
+ 	struct rtl_priv *rtlpriv = rtl_priv(hw);
+ 	struct sk_buff *skb;
+-	unsigned long flags;
+ 	int i;
+ 
+ 	for (i = 0; i < 200; i++) {
+ 		/* dequeue a task */
+-		spin_lock_irqsave(&rtlpriv->locks.c2hcmd_lock, flags);
+-
+-		skb = __skb_dequeue(&rtlpriv->c2hcmd_queue);
+-
+-		spin_unlock_irqrestore(&rtlpriv->locks.c2hcmd_lock, flags);
++		skb = skb_dequeue(&rtlpriv->c2hcmd_queue);
+ 
+ 		/* do it */
+ 		if (!skb)
+diff --git a/drivers/net/wireless/realtek/rtlwifi/wifi.h b/drivers/net/wireless/realtek/rtlwifi/wifi.h
+index 9119144bb5a3..877ed6a1589f 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/wifi.h
++++ b/drivers/net/wireless/realtek/rtlwifi/wifi.h
+@@ -2450,7 +2450,6 @@ struct rtl_locks {
+ 	spinlock_t waitq_lock;
+ 	spinlock_t entry_list_lock;
+ 	spinlock_t usb_lock;
+-	spinlock_t c2hcmd_lock;
+ 	spinlock_t scan_list_lock; /* lock for the scan list */
+ 
+ 	/*FW clock change */
+-- 
+2.27.0
 
-> 
-> regards,
-> dan carpenter
-> 
