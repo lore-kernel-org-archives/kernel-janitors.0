@@ -2,111 +2,94 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB97CC433B4
-	for <kernel-janitors@archiver.kernel.org>; Sun,  4 Apr 2021 20:12:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46BB9C433B4
+	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Apr 2021 05:42:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9264761205
-	for <kernel-janitors@archiver.kernel.org>; Sun,  4 Apr 2021 20:12:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DEAD7613B0
+	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Apr 2021 05:42:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231475AbhDDUMh (ORCPT
+        id S229867AbhDEFmH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 4 Apr 2021 16:12:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58706 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231438AbhDDUMW (ORCPT
+        Mon, 5 Apr 2021 01:42:07 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:35882 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229454AbhDEFmH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 4 Apr 2021 16:12:22 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C272C061788
-        for <kernel-janitors@vger.kernel.org>; Sun,  4 Apr 2021 13:12:17 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id v4so9219060wrp.13
-        for <kernel-janitors@vger.kernel.org>; Sun, 04 Apr 2021 13:12:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=oyHxbO3PUNNiO9rpGkiDw/KLrdxxFq2h9NV2xELqAZI=;
-        b=qhRLFfFI3kt0wDjaLQK4K06CrUrjQt0wOzmG1OBXj+KCe2Kfbfa8Q3ZaCOv2U0jyLj
-         q/yHkhYKUnyb1gMWQMvJfzK/D4W7Xl3Dxb3e7mvr0kQkuvXmha4bGVXYu2B5sxz9mXVi
-         bOx45c1f88gJC6iBp7Jz1basoQ0DfxdFkVUpi10TGy6LcJrVdN9IlVuCbHayBPATqEcP
-         Dla+HKiJdo+CLPrO1RwaWkZcuJ2C8CZ35ztcLJZhkVCY+jgGD6RrHztG3H6ZtJVhAdQr
-         Ol2ob46wvz3NsyhLe46wBWrupVGMhWSXZq9QxH47LPpLd+pxuqnJa1Cne4+UnXNGLkIc
-         OmfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=oyHxbO3PUNNiO9rpGkiDw/KLrdxxFq2h9NV2xELqAZI=;
-        b=l8ZzWKKi4ovguKQvHpJVyLZn0NUkHzdHIlVk5VhV0U10hOGAUEhdeRZmVs8PHMO5Zs
-         yoLKhBQIagR0Wzu1ZUfisFdCclVdKMjejgqQljUqQstEfVXJRbDcvOTBPqsATHwVsxSP
-         lC4fEYC0j0+Mvo3byCrwH9Jr0F6aiQTTtJuySdbxL8mUAN+UqyMkTcvV5zFPk0Toev53
-         XUaKE445nEovGEe6JQQBwTPr7xHMDCt6qmH0n/XHPKXKQVZuuwqb0hL3bIE0Bi7/wF7J
-         lu47n3uuGsFF25IlEHDIyV0By/KWGJMAdoaa5rTMHTzMT493DMShsnx6GOU7AKw/eYPC
-         DXWg==
-X-Gm-Message-State: AOAM530ctOrOkYBwVGQyzBIdOvkYGMqFjVf3Zy7UAb9VBQ6TiY5wrUty
-        39DWYKxC45sOiEY3LP6Bo5/gJw==
-X-Google-Smtp-Source: ABdhPJyhO8r8scHjRFIav4WlBDVzxSBbX4cqENuJU1BEdQ9L9gMjYA4KXNY7MjY0BqyrkKCwGCJHrw==
-X-Received: by 2002:a05:6000:108b:: with SMTP id y11mr26758160wrw.196.1617567135377;
-        Sun, 04 Apr 2021 13:12:15 -0700 (PDT)
-Received: from ?IPv6:2a01:e34:ed2f:f020:6d68:6b9a:7a3c:4a9f? ([2a01:e34:ed2f:f020:6d68:6b9a:7a3c:4a9f])
-        by smtp.googlemail.com with ESMTPSA id 21sm21237319wme.6.2021.04.04.13.12.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 04 Apr 2021 13:12:14 -0700 (PDT)
-Subject: Re: [PATCH][next] thermal/drivers/devfreq_cooling: Fix error return
- if kasprintf returns NULL
-To:     Colin King <colin.king@canonical.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Amit Kucheria <amitk@kernel.org>,
-        Lukasz Luba <lukasz.luba@arm.com>, linux-pm@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210325172148.485259-1-colin.king@canonical.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <101b8460-6488-88f7-9ccc-3af2c694cb48@linaro.org>
-Date:   Sun, 4 Apr 2021 22:12:13 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Mon, 5 Apr 2021 01:42:07 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 1355eOaZ163506;
+        Mon, 5 Apr 2021 05:41:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=zhQnU1H76pQydnrWceIR1dWht8pjhp9lgvgfUU17rZk=;
+ b=hZ9fg2d/jbfYDtygTwS0HxRummCv7YyDdEGHS9sJPJ6iOWnPoljWkhJfTREpSB1VVqfv
+ uL/3ybgWf29gHyAMuuJYPXRdq6q9kUvGuAtg6lSSd1fhI2M60vEkG8K04FKdvoYDYRIm
+ ACpClrhIP1zQjgBXgm2TxnJv6eNx4WaIT+uLLVM+TBQIY+tTzq+W3I4G40PVSLRtYBWr
+ EtVJ8p9POF1rRS9UZcl1CG5wOp27EDTah+GulyZFm87SHXnhBSkIa2w/XXO2X1nWE8U2
+ UI52QcwVc3igDwgUtTezbJl1CessEIfrIUv3cdryAkzMoYY4b2l+TFOdwnJR2umcD/GC AQ== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 37q3f2954j-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 05 Apr 2021 05:41:53 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 1355Znge043085;
+        Mon, 5 Apr 2021 05:41:51 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 37qa3gmf31-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 05 Apr 2021 05:41:51 +0000
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 1355foCR013859;
+        Mon, 5 Apr 2021 05:41:50 GMT
+Received: from kadam (/102.36.221.92)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Sun, 04 Apr 2021 22:41:49 -0700
+Date:   Mon, 5 Apr 2021 08:41:41 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Mark Bloch <mbloch@nvidia.com>
+Cc:     Leon Romanovsky <leon@kernel.org>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Mark Bloch <markb@mellanox.com>, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] RDMA/addr: potential uninitialized variable in
+ ib_nl_process_good_ip_rsep()
+Message-ID: <20210405054140.GY2065@kadam>
+References: <YGcES6MsXGnh83qi@mwanda>
+ <YGmWB4fT/8IFeiZf@unreal>
+ <1b21be94-bf14-9e73-68a3-c503bb79f683@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <20210325172148.485259-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1b21be94-bf14-9e73-68a3-c503bb79f683@nvidia.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-IMR: 1
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9944 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 suspectscore=0
+ malwarescore=0 mlxscore=0 spamscore=0 phishscore=0 adultscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104030000 definitions=main-2104050039
+X-Proofpoint-GUID: 4js-rib4bKev7qwXlr0Fk96v6RAhdNbd
+X-Proofpoint-ORIG-GUID: 4js-rib4bKev7qwXlr0Fk96v6RAhdNbd
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9944 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxscore=0 suspectscore=0
+ spamscore=0 impostorscore=0 mlxlogscore=999 malwarescore=0 adultscore=0
+ lowpriorityscore=0 clxscore=1011 priorityscore=1501 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104030000
+ definitions=main-2104050039
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Could you send that and give me a reported-by?  I'm going AFK for a
+week.
 
-Hi Colin,
+regards,
+dan carpenter
 
-
-On 25/03/2021 18:21, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently when kasprintf fails and returns NULL, the error return -ENOMEM
-> is being assigned to cdev instead of err causing the return via the label
-> remove_qos_re to return the incorrect error code. Fix this by explicitly
-> setting err before taking the error return path.
-> 
-> Addresses-Coverity: ("Unused valued")
-> Fixes: f8d354e821b2 ("thermal/drivers/devfreq_cooling: Use device name instead of auto-numbering")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
-
-Thanks for your patch. It was already fixed after being reported by
-kbuild-test.
-
-  -- Daniel
-
-
-
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
