@@ -2,50 +2,47 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-21.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F28A1C433ED
-	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Apr 2021 19:00:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A271C433ED
+	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Apr 2021 20:00:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B529961359
-	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Apr 2021 19:00:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02FA0613BD
+	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Apr 2021 20:00:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236561AbhDETAW (ORCPT
+        id S240306AbhDEUAS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 5 Apr 2021 15:00:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37378 "EHLO mail.kernel.org"
+        Mon, 5 Apr 2021 16:00:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44230 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234063AbhDETAP (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 5 Apr 2021 15:00:15 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id DEAF16128A;
-        Mon,  5 Apr 2021 19:00:08 +0000 (UTC)
+        id S232726AbhDEUAQ (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 5 Apr 2021 16:00:16 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPS id 9B8B261041;
+        Mon,  5 Apr 2021 20:00:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617649208;
-        bh=OeEzPTq+1eWjCXb/NofZTNTh0T36O0z2OIw1nH+R8Q0=;
+        s=k20201202; t=1617652809;
+        bh=5ZH+jTqVwO2mzTpSHW0hmmnk47NXBHM6PwZt0uj3Osw=;
         h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=c0XImX0IgP3ld8PDj5mFcm3HMB2v7PeT4nBq/y6/s9n5a4bMXfdhNJIhCQxXDLEQU
-         uj+2bnlCkkl/IXkMWZGmRwPz8DA1y5x2CeWLbPZg1zSXhNsngUZQXMkVnwnJAPyLBW
-         ZGHp2yFo8fdDTkfZ2764Ua4KVDYFKPm800gpwkGYjNEbieVrbt5W4fmXptAPRndQqw
-         y+9GL5PRa4ZRa3vRjuYhy/B4AzdbthYhRQV47W1kCqvxxkGPVaP/1VGv9jevo0IDGH
-         GjEAWTLqH1jBaNWLqj3Rs3FQziKqlSWbNsKEviU43RTUj5LyeTSL2kz6jpuT8hTkme
-         53OeNdLC8jGdw==
+        b=fhDWMEE1/a/p/EtmsUQvID9ZZi0M/NDckl3QxwjpNVMxgSPbXXhnP87hQ+BU27S1z
+         BTC9ytUOzcQaxuRLfQlwHy9kaOQcu+rG12mEvYWQQ/hChNEYzQBXdSG2gn9etUictj
+         PJgxDpMHlhiyz/g3YKxB9XKjcwQBzqqBDz2N3ylnzaRIHdULESqtpZhUJEDJfPffuP
+         4EmwrQeFZIVwaqbSeHnzGna2tV8CrLrC765+jPiqiA9tKW+3WMZHP56SoU22n8v5iA
+         ADObInvXelZLhfgHZE8mQox9Om7+QO8BC0dR7BiPKlGT1ylwfDZBD43UM+FMMwwDnY
+         tBnPxdgRITUVg==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] ibmvnic: Use 'skb_frag_address()' instead of hand coding it
+Subject: Re: [PATCH 1/2] qede: Remove a erroneous ++ in 'qede_rx_build_jumbo()'
 From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <161764920881.15280.15774493910120301088.git-patchwork-notify@kernel.org>
-Date:   Mon, 05 Apr 2021 19:00:08 +0000
-References: <1638085135ee32d5699983981b6a54a11c49ff23.1617526369.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <1638085135ee32d5699983981b6a54a11c49ff23.1617526369.git.christophe.jaillet@wanadoo.fr>
+Message-Id: <161765280958.6353.3809782901793052721.git-patchwork-notify@kernel.org>
+Date:   Mon, 05 Apr 2021 20:00:09 +0000
+References: <1c27abb938a430e58bd644729597015b3414d4aa.1617540100.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <1c27abb938a430e58bd644729597015b3414d4aa.1617540100.git.christophe.jaillet@wanadoo.fr>
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     mpe@ellerman.id.au, benh@kernel.crashing.org, paulus@samba.org,
-        drt@linux.ibm.com, ljp@linux.ibm.com, sukadev@linux.ibm.com,
-        tlfalcon@linux.ibm.com, davem@davemloft.net, kuba@kernel.org,
-        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
+Cc:     aelior@marvell.com, GR-everest-linux-l2@marvell.com,
+        davem@davemloft.net, kuba@kernel.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
@@ -53,20 +50,23 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 Hello:
 
-This patch was applied to netdev/net-next.git (refs/heads/master):
+This series was applied to netdev/net-next.git (refs/heads/master):
 
-On Sun,  4 Apr 2021 10:54:37 +0200 you wrote:
-> 'page_address(skb_frag_page()) + skb_frag_off()' can be replaced by an
-> equivalent 'skb_frag_address()' which is less verbose.
+On Sun,  4 Apr 2021 14:42:44 +0200 you wrote:
+> This ++ is confusing. It looks duplicated with the one already performed in
+> 'skb_fill_page_desc()'.
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/net/ethernet/ibm/ibmvnic.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
+> In fact, it is harmless. 'nr_frags' is written twice with the same value.
+> Once, because of the nr_frags++, and once because of the 'nr_frags = i + 1'
+> in 'skb_fill_page_desc()'.
+> 
+> [...]
 
 Here is the summary with links:
-  - ibmvnic: Use 'skb_frag_address()' instead of hand coding it
-    https://git.kernel.org/netdev/net-next/c/c3105f848577
+  - [1/2] qede: Remove a erroneous ++ in 'qede_rx_build_jumbo()'
+    https://git.kernel.org/netdev/net-next/c/1ec3d02f9cdf
+  - [2/2] qede: Use 'skb_add_rx_frag()' instead of hand coding it
+    https://git.kernel.org/netdev/net-next/c/7190e9d8e131
 
 You are awesome, thank you!
 --
