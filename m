@@ -7,35 +7,41 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A61AAC433ED
-	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Apr 2021 10:00:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AFBEC43461
+	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Apr 2021 10:00:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7613161278
-	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Apr 2021 10:00:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59B3F6138B
+	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Apr 2021 10:00:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240487AbhDEKAz (ORCPT
+        id S240552AbhDEKA6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 5 Apr 2021 06:00:55 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:15598 "EHLO
+        Mon, 5 Apr 2021 06:00:58 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:14690 "EHLO
         szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232063AbhDEKAy (ORCPT
+        with ESMTP id S232063AbhDEKA5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 5 Apr 2021 06:00:54 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
-        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4FDR1m58sjz18HLL;
-        Mon,  5 Apr 2021 17:58:36 +0800 (CST)
+        Mon, 5 Apr 2021 06:00:57 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4FDR1B2qw3znYjW;
+        Mon,  5 Apr 2021 17:58:06 +0800 (CST)
 Received: from localhost.localdomain (10.175.104.82) by
- DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
- 14.3.498.0; Mon, 5 Apr 2021 18:00:36 +0800
+ DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
+ 14.3.498.0; Mon, 5 Apr 2021 18:00:40 +0800
 From:   Zheng Yongjun <zhengyongjun3@huawei.com>
-To:     <zhengyongjun3@huawei.com>, Chris Mason <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>
-CC:     <linux-btrfs@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+To:     <zhengyongjun3@huawei.com>, Jens Axboe <axboe@kernel.dk>,
+        "Johannes Thumshirn" <johannes.thumshirn@wdc.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
+        Daniel Wagner <dwagner@suse.de>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Hou Pu <houpu@bytedance.com>,
+        Aravind Ramesh <aravind.ramesh@wdc.com>,
+        John Garry <john.garry@huawei.com>
+CC:     <linux-block@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
         "Hulk Robot" <hulkci@huawei.com>
-Subject: [PATCH -next] btrfs: integrity-checker: use DEFINE_MUTEX() for mutex lock
-Date:   Mon, 5 Apr 2021 18:14:46 +0800
-Message-ID: <20210405101446.14990-1-zhengyongjun3@huawei.com>
+Subject: [PATCH -next] block: use DEFINE_MUTEX() for mutex lock
+Date:   Mon, 5 Apr 2021 18:14:50 +0800
+Message-ID: <20210405101450.15043-1-zhengyongjun3@huawei.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Type:   text/plain; charset=US-ASCII
@@ -52,28 +58,29 @@ rather than explicitly calling mutex_init().
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: Zheng Yongjun <zhengyongjun3@huawei.com>
 ---
- fs/btrfs/check-integrity.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/block/null_blk/main.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/fs/btrfs/check-integrity.c b/fs/btrfs/check-integrity.c
-index 169508609324..7af9273ef1b6 100644
---- a/fs/btrfs/check-integrity.c
-+++ b/fs/btrfs/check-integrity.c
-@@ -370,7 +370,7 @@ static void btrfsic_cmp_log_and_dev_bytenr(struct btrfsic_state *state,
- 					   struct btrfsic_dev_state *dev_state,
- 					   u64 dev_bytenr);
+diff --git a/drivers/block/null_blk/main.c b/drivers/block/null_blk/main.c
+index d6c821d48090..b15df944cde2 100644
+--- a/drivers/block/null_blk/main.c
++++ b/drivers/block/null_blk/main.c
+@@ -67,7 +67,7 @@ struct nullb_page {
+ #define NULLB_PAGE_FREE (MAP_SZ - 2)
  
--static struct mutex btrfsic_mutex;
-+static DEFINE_MUTEX(btrfsic_mutex);
- static int btrfsic_is_initialized;
- static struct btrfsic_dev_state_hashtable btrfsic_dev_state_hashtable;
+ static LIST_HEAD(nullb_list);
+-static struct mutex lock;
++static DEFINE_MUTEX(lock);
+ static int null_major;
+ static DEFINE_IDA(nullb_indexes);
+ static struct blk_mq_tag_set tag_set;
+@@ -1961,8 +1961,6 @@ static int __init null_init(void)
+ 	if (ret)
+ 		goto err_tagset;
  
-@@ -2787,7 +2787,6 @@ int btrfsic_mount(struct btrfs_fs_info *fs_info,
- 		return -ENOMEM;
- 
- 	if (!btrfsic_is_initialized) {
--		mutex_init(&btrfsic_mutex);
- 		btrfsic_dev_state_hashtable_init(&btrfsic_dev_state_hashtable);
- 		btrfsic_is_initialized = 1;
- 	}
+-	mutex_init(&lock);
+-
+ 	null_major = register_blkdev(0, "nullb");
+ 	if (null_major < 0) {
+ 		ret = null_major;
 
