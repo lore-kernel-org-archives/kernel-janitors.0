@@ -2,114 +2,111 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FAA1C433ED
-	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Apr 2021 20:52:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC2E4C43460
+	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Apr 2021 21:17:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0FC9B613CB
-	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Apr 2021 20:52:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C004E613D2
+	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Apr 2021 21:17:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237262AbhDEUwf (ORCPT
+        id S232848AbhDEVRp (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 5 Apr 2021 16:52:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39342 "EHLO
+        Mon, 5 Apr 2021 17:17:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237144AbhDEUwe (ORCPT
+        with ESMTP id S232715AbhDEVRj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 5 Apr 2021 16:52:34 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70C88C061756;
-        Mon,  5 Apr 2021 13:52:26 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id a6so5973581wrw.8;
-        Mon, 05 Apr 2021 13:52:26 -0700 (PDT)
+        Mon, 5 Apr 2021 17:17:39 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D46E3C061756;
+        Mon,  5 Apr 2021 14:17:31 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id e18so12028427wrt.6;
+        Mon, 05 Apr 2021 14:17:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=7C13XlUdOgzQF9sLGdJgUoIrOgcp/sITEfTitDZiIdc=;
-        b=Rb0mNRmGnTqpOkvNQ3ypJ//C+oH+JTE77MmLtNerx1gz8lpqfS3w/FpotN9eMElTK1
-         5s1YM9rg69RanWIoObVijLEX2ZXvtS3xh3s7gXl/0Wpwi/ka9gaDgbIw968Nupzdg+s8
-         0meS+b2N5AmzOuGK8e9Aj3uzxD5WsGnebHbLuMmqEV/dTEZEizGNRmcaPXCK2J3YMYf/
-         5QdnalUNF+IEHJpKvhNpTD3fVkrwgfnfBV/mknETE13sjBXBo/hmdiOLY4iWnj7mZyM+
-         sujyhmJx/sqhwn9VxTPFlITbOnGrRscCoTEAwJYMez8ePvgt1IYCMUjaZcYCZyj3RTkV
-         HWIQ==
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=xku8cZgBeg8aMVGdJK4Bl+ZcDI2/rAg1sxUWm6S5t2s=;
+        b=ORv65kxqAR8O+DXSh85RYlNzRkEB5ByNG7RqbCOUoM4qwiBA2qoC0PSEDlXb9PpEGt
+         R7QvOb7l8qZ94eBsoQuiDFaEZRyx4PZ0wGbaRJZeRO/U/4kH6EItm8JiPoD9VX0I1VIO
+         2/ztjnmaHiCLR0+q6dvx48cLtrhMXREI/rrgz/jXrfYqByECueHHsgscCz+nbdqhTyI3
+         bcQD6o4lAyi0zkU3K9gy6IRUq+xWJUCznlwg2eVIkKkIXW/E/4qTg5AgiX3nQp0ThPd1
+         y/KBA8lFL33Tb4DSjE0BJ4XfqcXjsyEYD9UoCnw9C0CJE1bTk0I/Hqhbs03SDQ7ltQUa
+         Kppw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=7C13XlUdOgzQF9sLGdJgUoIrOgcp/sITEfTitDZiIdc=;
-        b=sbD3XifXb3B+xz1Rhlx0iuA5CdMF3aOKT1T+f1f1dCJgeLYN30bRmSA8BHGDsX1LCD
-         OMAHEUnM8QIw/T5DnEDK8t57NdDeVaEDMMEdYZ6dbiTK27yAPuoZXtQEvdqLM4tAg05g
-         1hN5TbSb+Sbxwtom94g0T0/yt99YBw8h3EW5Igc4P4lmk6P4m+NAl/0s0ftVikurNtmH
-         oim+pHNG00iulq9iYpIunCcfX951/Pzw7VRNLWDHIP+MtUNULccB+Hc8xRUYGPniKrTL
-         r7AsIpNyAKYfEp5Aq2XUCjXifoXc/PWoF1qvYjTKYgc951RI0tavBn1oFZkSZucOKP1D
-         8hbA==
-X-Gm-Message-State: AOAM532hGr5PVK6K2EA9mLGRF2q1ulQ+dOH0GXBuKt6HCUxgSc6Cjm8h
-        0Nq1YE0yOZ95P1jKc/dWUYZ8FDK1i2q5Hg==
-X-Google-Smtp-Source: ABdhPJxSaXmM69ki950ZgNjz250o54xGZUeAdsgGMVuD5hSefBTuPhvsiW+81TLLy1bZ+hHNZYQrUw==
-X-Received: by 2002:a05:6000:181:: with SMTP id p1mr30779028wrx.73.1617655945220;
-        Mon, 05 Apr 2021 13:52:25 -0700 (PDT)
-Received: from LEGION ([39.46.7.73])
-        by smtp.gmail.com with ESMTPSA id x11sm674939wmi.3.2021.04.05.13.52.22
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=xku8cZgBeg8aMVGdJK4Bl+ZcDI2/rAg1sxUWm6S5t2s=;
+        b=e8rM+HYDDmZiIEtUiUUdpTPTNgufpyWLAgM5hgdoE50VcEh6m7Xroi2u81jmMnm+WG
+         KG+QrhPZ14AsXajDOio/MKX/9JcqsNesybkEmWOfir8qpTMQGpg+gU8HGZEMj/4mLaFF
+         lBFiNUOeHu2wl5ELQlvHPHCnjoMc43Flbe+gdWhlPJcylZiPkI64vxvJc9tRsolxwBkv
+         VoA4M8ZxtZ8+Kq/EqtOSNLoqpWH4ldVIEql5U47baCYfca9JeCnMYoptqSInhfV4FiXg
+         VfSnrju0cqB+KNQZJdqt0IJ0pmbAmN2vVNF+DW6kqdFWms72EtltfsDUy4xQoOGH1kJN
+         m1Mw==
+X-Gm-Message-State: AOAM533ZIP1jW+cyKheiNaNT/vgO3ZE13uzam0Wl7vp3b2AQY2u328Cl
+        kYiheBGht/xl1EONSs5gN6U=
+X-Google-Smtp-Source: ABdhPJzPyw2aLo/F07PLFZIo6xseAqD6+LtSiYrC8iP+ifj6P/SK0B63Y7rjbAFCkgmugXvJP39eHA==
+X-Received: by 2002:adf:f64e:: with SMTP id x14mr3872055wrp.203.1617657450513;
+        Mon, 05 Apr 2021 14:17:30 -0700 (PDT)
+Received: from 192.168.10.5 ([39.46.7.73])
+        by smtp.gmail.com with ESMTPSA id u19sm704605wml.28.2021.04.05.14.17.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Apr 2021 13:52:24 -0700 (PDT)
-Date:   Tue, 6 Apr 2021 01:52:19 +0500
+        Mon, 05 Apr 2021 14:17:30 -0700 (PDT)
+Message-ID: <d7f70ce31f6f61a50c05a5d5ba03582054f144fe.camel@gmail.com>
+Subject: Re: [PATCH -next] bcache: use DEFINE_MUTEX() for mutex lock
 From:   Muhammad Usama Anjum <musamaanjum@gmail.com>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "open list:SIANO DVB DRIVER" <linux-media@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        zhengyongjun3@huawei.com, kernel-janitors@vger.kernel.org,
-        colin.king@canonical.com, dan.carpenter@oracle.com
-Cc:     musamaanjum@gmail.com
-Subject: [PATCH] media: siano: use DEFINE_MUTEX() for mutex lock
-Message-ID: <20210405205219.GA687366@LEGION>
+To:     Coly Li <colyli@suse.de>, Zheng Yongjun <zhengyongjun3@huawei.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>
+Cc:     musamaanjum@gmail.com, linux-bcache@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+Date:   Tue, 06 Apr 2021 02:17:25 +0500
+In-Reply-To: <42c3e33d-c20e-0fdd-f316-5084e33f9a3b@suse.de>
+References: <20210405101453.15096-1-zhengyongjun3@huawei.com>
+         <42c3e33d-c20e-0fdd-f316-5084e33f9a3b@suse.de>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.4-0ubuntu1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-mutex lock can be initialized with DEFINE_MUTEX() rather than
-explicitly calling mutex_init().
+On Mon, 2021-04-05 at 22:02 +0800, Coly Li wrote:
+> On 4/5/21 6:14 PM, Zheng Yongjun wrote:
+> > mutex lock can be initialized automatically with DEFINE_MUTEX()
+> > rather than explicitly calling mutex_init().
+> > 
+> > Reported-by: Hulk Robot <hulkci@huawei.com>
+> > Signed-off-by: Zheng Yongjun <zhengyongjun3@huawei.com>
+> 
+> NACK. This is not the first time people try to "fix" this location...
+> 
+> Using DEFINE_MUTEX() does not gain anything for us, it will generate
+> unnecessary extra size for the bcache.ko.
+> ines.
 
-Signed-off-by: Muhammad Usama Anjum <musamaanjum@gmail.com>
----
- drivers/media/common/siano/smscoreapi.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+How can the final binary have larger size by just static declaration?
+By using DEFINE_MUTEX, the mutex is initialized at compile time. It'll
+save initialization at run time and one line of code will be less also
+from text section. 
 
-diff --git a/drivers/media/common/siano/smscoreapi.c b/drivers/media/common/siano/smscoreapi.c
-index 410cc3ac6f94..7f5b638d2458 100644
---- a/drivers/media/common/siano/smscoreapi.c
-+++ b/drivers/media/common/siano/smscoreapi.c
-@@ -414,10 +414,10 @@ struct smscore_registry_entry_t {
- 
- static struct list_head g_smscore_notifyees;
- static struct list_head g_smscore_devices;
--static struct mutex g_smscore_deviceslock;
-+static DEFINE_MUTEX(g_smscore_deviceslock);
- 
- static struct list_head g_smscore_registry;
--static struct mutex g_smscore_registrylock;
-+static DEFINE_MUTEX(g_smscore_registrylock);
- 
- static int default_mode = DEVICE_MODE_NONE;
- 
-@@ -2123,10 +2123,7 @@ static int __init smscore_module_init(void)
- {
- 	INIT_LIST_HEAD(&g_smscore_notifyees);
- 	INIT_LIST_HEAD(&g_smscore_devices);
--	mutex_init(&g_smscore_deviceslock);
--
- 	INIT_LIST_HEAD(&g_smscore_registry);
--	mutex_init(&g_smscore_registrylock);
- 
- 	return 0;
- }
--- 
-2.25.1
+#### with no change (dynamic initialization)
+size drivers/md/bcache/bcache.ko
+   text	   data	    bss	    dec	    hex	filename
+ 187792	  25310	    152	 213254	  34106	drivers/md/bcache/bcache.ko
+
+#### with patch applied (static initialization)
+   text	   data	    bss	    dec	    hex	filename
+ 187751	  25342	    120	 213213	  340dd	drivers/md/bcache/bcache.ko
+
+Module's binary size has decreased by 41 bytes with the path applied
+(x86_64 arch).
+
+
 
