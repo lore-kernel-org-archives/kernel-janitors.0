@@ -2,95 +2,163 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 763FDC433B4
-	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Apr 2021 14:02:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7A85C433B4
+	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Apr 2021 16:34:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4FC006139F
-	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Apr 2021 14:02:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8997C613AF
+	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Apr 2021 16:34:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235923AbhDEOCw (ORCPT
+        id S242421AbhDEQea (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 5 Apr 2021 10:02:52 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55324 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235903AbhDEOCw (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 5 Apr 2021 10:02:52 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 3FE55B2DA;
-        Mon,  5 Apr 2021 14:02:45 +0000 (UTC)
-To:     Zheng Yongjun <zhengyongjun3@huawei.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>
-Cc:     linux-bcache@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Hulk Robot <hulkci@huawei.com>
-References: <20210405101453.15096-1-zhengyongjun3@huawei.com>
-From:   Coly Li <colyli@suse.de>
-Subject: Re: [PATCH -next] bcache: use DEFINE_MUTEX() for mutex lock
-Message-ID: <42c3e33d-c20e-0fdd-f316-5084e33f9a3b@suse.de>
-Date:   Mon, 5 Apr 2021 22:02:41 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.9.0
+        Mon, 5 Apr 2021 12:34:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39490 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S242379AbhDEQe3 (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 5 Apr 2021 12:34:29 -0400
+Received: from mail-oi1-x231.google.com (mail-oi1-x231.google.com [IPv6:2607:f8b0:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B27AAC061756;
+        Mon,  5 Apr 2021 09:34:23 -0700 (PDT)
+Received: by mail-oi1-x231.google.com with SMTP id k25so12147135oic.4;
+        Mon, 05 Apr 2021 09:34:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=/D8xKPfaEk5h0IUuj0ZaKonPQzq7GWKMhfUBYdKGhFY=;
+        b=alKMcIHbxfce8Bp2XsRlXcRRzuQyRU5D+8Gb96q/hUTSa2PsIVfEUjC5a6rsBvKXUS
+         9hr/XEx8oa59FuICO8FIR5vPE627pbhML2PoobZ6Nf6Gxd7f6vTEQZK5HWa4mCfkXkXX
+         kxqMSkkR42M+StrKw0HXnwF/gVgAXS+BX1Y70dLbvnO7tewRo/aRhqSeGyZA/KLqXFJe
+         HhVXk5aQx31CmUWzcmf2B0gBTyilTvG6Wp8HWvcrpbiiocNLZvHEGCT2d2XOyVCNtnAq
+         vli1MY7NSazM7bBwrWAUPf5STDvRRHQRyq1ggrqf3dk5qXiAtmxxBvY0MvND8KOKmVhT
+         3Rog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=/D8xKPfaEk5h0IUuj0ZaKonPQzq7GWKMhfUBYdKGhFY=;
+        b=JCyO8yWF45Z4+9zCEZHCB2PCkg5uIJ0+OrV5li7iZHysrnfeNH1WxVGk4h9P8ltAZu
+         fwlxRfvrUHW4reRljInPNK9zplEgEOpZxpMtYjFKk0quP7nLDkXjxBYaEtZl7I39IsTL
+         54Ll66KfLMw/ESLnZO6ATVS2xJd55frAtiWU6GP5T+IhhqL9RcxHyrVt4cwPiSdyLdnh
+         guNxxSpT7jIqTrNkjgApsG2C+03VEQCKd3IsBO7ub6bpZPscJqHmMe51B8GeB4G/fh1M
+         rUDXHNs9GGwrjFYyZS4w2s69Lp7vcpQj27v63Qrl5O5fHL9Qz3t4gmnmhWafEYR0E5p2
+         SxJQ==
+X-Gm-Message-State: AOAM532wKBfocJy6VUmGLYna7m4HUqPiwhhvkWuPWY9wI22MbGl9QFM3
+        usuoOMClt5BqD4bjXed9UYfpCscuW3E=
+X-Google-Smtp-Source: ABdhPJz775aKrzmAMTvdvoCEk0uvv3EkH6Z4Qr3r0mdYyHuPsAKP+Aw2EmI/KM4wW466cbKB7sO6Og==
+X-Received: by 2002:aca:ea06:: with SMTP id i6mr6816oih.82.1617640462797;
+        Mon, 05 Apr 2021 09:34:22 -0700 (PDT)
+Received: from localhost.localdomain (cpe-24-31-245-230.kc.res.rr.com. [24.31.245.230])
+        by smtp.gmail.com with ESMTPSA id n13sm3993405otk.61.2021.04.05.09.34.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 05 Apr 2021 09:34:22 -0700 (PDT)
+Sender: Larry Finger <larry.finger@gmail.com>
+Subject: Re: [PATCH] rtlwifi: Simplify locking of a skb list accesses
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        pkshih@realtek.com, kvalo@codeaurora.org, davem@davemloft.net,
+        kuba@kernel.org
+Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <99cf8894fd52202cb7ce2ec6e3200eef400bc071.1617609346.git.christophe.jaillet@wanadoo.fr>
+From:   Larry Finger <Larry.Finger@lwfinger.net>
+Message-ID: <347e6042-2964-7037-b57f-5dd84aa4bf14@lwfinger.net>
+Date:   Mon, 5 Apr 2021 11:34:21 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-In-Reply-To: <20210405101453.15096-1-zhengyongjun3@huawei.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <99cf8894fd52202cb7ce2ec6e3200eef400bc071.1617609346.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 4/5/21 6:14 PM, Zheng Yongjun wrote:
-> mutex lock can be initialized automatically with DEFINE_MUTEX()
-> rather than explicitly calling mutex_init().
+On 4/5/21 2:57 AM, Christophe JAILLET wrote:
+> The 'c2hcmd_lock' spinlock is only used to protect some __skb_queue_tail()
+> and __skb_dequeue() calls.
+> Use the lock provided in the skb itself and call skb_queue_tail() and
+> skb_dequeue(). These functions already include the correct locking.
 > 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Zheng Yongjun <zhengyongjun3@huawei.com>
-
-NACK. This is not the first time people try to "fix" this location...
-
-Using DEFINE_MUTEX() does not gain anything for us, it will generate
-unnecessary extra size for the bcache.ko.
-ines.
-
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->  drivers/md/bcache/super.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+>   drivers/net/wireless/realtek/rtlwifi/base.c | 15 ++-------------
+>   drivers/net/wireless/realtek/rtlwifi/wifi.h |  1 -
+>   2 files changed, 2 insertions(+), 14 deletions(-)
 > 
-> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-> index 78c08a8aece8..c124da6e646d 100644
-> --- a/drivers/md/bcache/super.c
-> +++ b/drivers/md/bcache/super.c
-> @@ -41,7 +41,7 @@ static const char invalid_uuid[] = {
->  };
->  
->  static struct kobject *bcache_kobj;
-> -struct mutex bch_register_lock;
-
-
-Hmm, maybe if you compose a patch to add comments for bch_register_lock,
-for something like: Don't initialize global variable here. It might be
-helpful for noticing people not to fixing this in future.
-
-Thanks.
-
-Coly Li
-
-> +DEFINE_MUTEX(bch_register_lock);
->  bool bcache_is_reboot;
->  LIST_HEAD(bch_cache_sets);
->  static LIST_HEAD(uncached_devices);
-> @@ -2870,7 +2870,6 @@ static int __init bcache_init(void)
->  
->  	check_module_parameters();
->  
-> -	mutex_init(&bch_register_lock);
->  	init_waitqueue_head(&unregister_wait);
->  	register_reboot_notifier(&reboot);
->  
+> diff --git a/drivers/net/wireless/realtek/rtlwifi/base.c b/drivers/net/wireless/realtek/rtlwifi/base.c
+> index 6e8bd99e8911..2a7ee90a3f54 100644
+> --- a/drivers/net/wireless/realtek/rtlwifi/base.c
+> +++ b/drivers/net/wireless/realtek/rtlwifi/base.c
+> @@ -551,7 +551,6 @@ int rtl_init_core(struct ieee80211_hw *hw)
+>   	spin_lock_init(&rtlpriv->locks.rf_lock);
+>   	spin_lock_init(&rtlpriv->locks.waitq_lock);
+>   	spin_lock_init(&rtlpriv->locks.entry_list_lock);
+> -	spin_lock_init(&rtlpriv->locks.c2hcmd_lock);
+>   	spin_lock_init(&rtlpriv->locks.scan_list_lock);
+>   	spin_lock_init(&rtlpriv->locks.cck_and_rw_pagea_lock);
+>   	spin_lock_init(&rtlpriv->locks.fw_ps_lock);
+> @@ -2269,7 +2268,6 @@ static bool rtl_c2h_fast_cmd(struct ieee80211_hw *hw, struct sk_buff *skb)
+>   void rtl_c2hcmd_enqueue(struct ieee80211_hw *hw, struct sk_buff *skb)
+>   {
+>   	struct rtl_priv *rtlpriv = rtl_priv(hw);
+> -	unsigned long flags;
+>   
+>   	if (rtl_c2h_fast_cmd(hw, skb)) {
+>   		rtl_c2h_content_parsing(hw, skb);
+> @@ -2278,11 +2276,7 @@ void rtl_c2hcmd_enqueue(struct ieee80211_hw *hw, struct sk_buff *skb)
+>   	}
+>   
+>   	/* enqueue */
+> -	spin_lock_irqsave(&rtlpriv->locks.c2hcmd_lock, flags);
+> -
+> -	__skb_queue_tail(&rtlpriv->c2hcmd_queue, skb);
+> -
+> -	spin_unlock_irqrestore(&rtlpriv->locks.c2hcmd_lock, flags);
+> +	skb_queue_tail(&rtlpriv->c2hcmd_queue, skb);
+>   
+>   	/* wake up wq */
+>   	queue_delayed_work(rtlpriv->works.rtl_wq, &rtlpriv->works.c2hcmd_wq, 0);
+> @@ -2340,16 +2334,11 @@ void rtl_c2hcmd_launcher(struct ieee80211_hw *hw, int exec)
+>   {
+>   	struct rtl_priv *rtlpriv = rtl_priv(hw);
+>   	struct sk_buff *skb;
+> -	unsigned long flags;
+>   	int i;
+>   
+>   	for (i = 0; i < 200; i++) {
+>   		/* dequeue a task */
+> -		spin_lock_irqsave(&rtlpriv->locks.c2hcmd_lock, flags);
+> -
+> -		skb = __skb_dequeue(&rtlpriv->c2hcmd_queue);
+> -
+> -		spin_unlock_irqrestore(&rtlpriv->locks.c2hcmd_lock, flags);
+> +		skb = skb_dequeue(&rtlpriv->c2hcmd_queue);
+>   
+>   		/* do it */
+>   		if (!skb)
+> diff --git a/drivers/net/wireless/realtek/rtlwifi/wifi.h b/drivers/net/wireless/realtek/rtlwifi/wifi.h
+> index 9119144bb5a3..877ed6a1589f 100644
+> --- a/drivers/net/wireless/realtek/rtlwifi/wifi.h
+> +++ b/drivers/net/wireless/realtek/rtlwifi/wifi.h
+> @@ -2450,7 +2450,6 @@ struct rtl_locks {
+>   	spinlock_t waitq_lock;
+>   	spinlock_t entry_list_lock;
+>   	spinlock_t usb_lock;
+> -	spinlock_t c2hcmd_lock;
+>   	spinlock_t scan_list_lock; /* lock for the scan list */
+>   
+>   	/*FW clock change */
 > 
 
+Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
+
+Thanks,
+
+Larry
