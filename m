@@ -7,36 +7,35 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8E3CC433ED
-	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Apr 2021 10:00:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ADA6C433ED
+	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Apr 2021 10:00:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A1DDB61393
-	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Apr 2021 10:00:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 712B361393
+	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Apr 2021 10:00:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237954AbhDEKAn (ORCPT
+        id S240514AbhDEKAr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 5 Apr 2021 06:00:43 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:15481 "EHLO
-        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232063AbhDEKAn (ORCPT
+        Mon, 5 Apr 2021 06:00:47 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:14689 "EHLO
+        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232063AbhDEKAq (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 5 Apr 2021 06:00:43 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
-        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4FDR1Y1wKMzwQMJ;
-        Mon,  5 Apr 2021 17:58:25 +0800 (CST)
+        Mon, 5 Apr 2021 06:00:46 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4FDR0z32CGznYlh;
+        Mon,  5 Apr 2021 17:57:55 +0800 (CST)
 Received: from localhost.localdomain (10.175.104.82) by
- DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
- 14.3.498.0; Mon, 5 Apr 2021 18:00:24 +0800
+ DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
+ 14.3.498.0; Mon, 5 Apr 2021 18:00:31 +0800
 From:   Zheng Yongjun <zhengyongjun3@huawei.com>
-To:     <zhengyongjun3@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>,
-        Tom Rix <trix@redhat.com>
-CC:     <linux-usb@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH -next] usb: host: u132-hcd: use DEFINE_MUTEX() for mutex lock
-Date:   Mon, 5 Apr 2021 18:14:34 +0800
-Message-ID: <20210405101434.14878-1-zhengyongjun3@huawei.com>
+To:     <zhengyongjun3@huawei.com>, Lee Jones <lee.jones@linaro.org>,
+        "Daniel Thompson" <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>
+CC:     <dri-devel@lists.freedesktop.org>, <linux-fbdev@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH -next] backlight: backlight: Use DEFINE_MUTEX() for mutex lock
+Date:   Mon, 5 Apr 2021 18:14:40 +0800
+Message-ID: <20210405101440.14937-1-zhengyongjun3@huawei.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Type:   text/plain; charset=US-ASCII
@@ -53,28 +52,28 @@ rather than explicitly calling mutex_init().
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: Zheng Yongjun <zhengyongjun3@huawei.com>
 ---
- drivers/usb/host/u132-hcd.c | 3 +--
+ drivers/video/backlight/backlight.c | 3 +--
  1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/usb/host/u132-hcd.c b/drivers/usb/host/u132-hcd.c
-index eb96e1e15b71..5a783c423d8e 100644
---- a/drivers/usb/host/u132-hcd.c
-+++ b/drivers/usb/host/u132-hcd.c
-@@ -78,7 +78,7 @@ static DECLARE_WAIT_QUEUE_HEAD(u132_hcd_wait);
- * u132_module_lock exists to protect access to global variables
- *
- */
--static struct mutex u132_module_lock;
-+static DEFINE_MUTEX(u132_module_lock);
- static int u132_exiting;
- static int u132_instances;
- /*
-@@ -3190,7 +3190,6 @@ static int __init u132_hcd_init(void)
- 	int retval;
- 	u132_instances = 0;
- 	u132_exiting = 0;
--	mutex_init(&u132_module_lock);
- 	if (usb_disabled())
- 		return -ENODEV;
- 	printk(KERN_INFO "driver %s\n", hcd_name);
+diff --git a/drivers/video/backlight/backlight.c b/drivers/video/backlight/backlight.c
+index 537fe1b376ad..d7a09c422547 100644
+--- a/drivers/video/backlight/backlight.c
++++ b/drivers/video/backlight/backlight.c
+@@ -64,7 +64,7 @@
+  */
+ 
+ static struct list_head backlight_dev_list;
+-static struct mutex backlight_dev_list_mutex;
++static DEFINE_MUTEX(backlight_dev_list_mutex);
+ static struct blocking_notifier_head backlight_notifier;
+ 
+ static const char *const backlight_types[] = {
+@@ -757,7 +757,6 @@ static int __init backlight_class_init(void)
+ 	backlight_class->dev_groups = bl_device_groups;
+ 	backlight_class->pm = &backlight_class_dev_pm_ops;
+ 	INIT_LIST_HEAD(&backlight_dev_list);
+-	mutex_init(&backlight_dev_list_mutex);
+ 	BLOCKING_INIT_NOTIFIER_HEAD(&backlight_notifier);
+ 
+ 	return 0;
 
