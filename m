@@ -2,101 +2,78 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51E76C433B4
-	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Apr 2021 13:07:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 828BCC433B4
+	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Apr 2021 13:39:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0D276613C6
-	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Apr 2021 13:07:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E6D8600EF
+	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Apr 2021 13:39:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242346AbhDFNHZ (ORCPT
+        id S244005AbhDFNjt (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 6 Apr 2021 09:07:25 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:41352 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239413AbhDFNHY (ORCPT
+        Tue, 6 Apr 2021 09:39:49 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:33122 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238827AbhDFNjs (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 6 Apr 2021 09:07:24 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 136D6vLo002198;
-        Tue, 6 Apr 2021 08:06:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1617714417;
-        bh=uma/HGrD7FSNCA7vvx/wHhmqWGFic54vXdLDcyBqkzU=;
-        h=Date:From:To:CC:Subject:References:In-Reply-To;
-        b=iOFmoAFC0it38WA1hWkUfWIIYyFgiaYp9wlsdcmZPU21THa0Ed0py7uQSsZFVKJVG
-         RWOUhcNqciVDbgxc2m9cqOlILpHb1r7MleBBC2Ikg7nJcL9o81IbFpy6ZUxxJhfE3y
-         /BXz44wNFYJY1hYRsduyBHwLdPlZQ7uPm7j973kI=
-Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 136D6vhR008986
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 6 Apr 2021 08:06:57 -0500
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Tue, 6 Apr
- 2021 08:06:57 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2 via
- Frontend Transport; Tue, 6 Apr 2021 08:06:57 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 136D6vSh112043;
-        Tue, 6 Apr 2021 08:06:57 -0500
-Date:   Tue, 6 Apr 2021 08:06:57 -0500
-From:   Nishanth Menon <nm@ti.com>
-To:     Qiheng Lin <linqiheng@huawei.com>
-CC:     Santosh Shilimkar <ssantosh@kernel.org>,
-        <linux-pm@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
-Subject: Re: [PATCH -next] PM: AVS: remove redundant dev_err call in
- omap_sr_probe()
-Message-ID: <20210406130657.c5edf3pakylxwavr@spoon>
-References: <20210406122840.39-1-linqiheng@huawei.com>
+        Tue, 6 Apr 2021 09:39:48 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lTlvf-0003iY-Hg; Tue, 06 Apr 2021 13:39:39 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        David Airlie <airlied@linux.ie>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] drm/msm: Fix spelling mistake "Purgable" -> "Purgeable"
+Date:   Tue,  6 Apr 2021 14:39:39 +0100
+Message-Id: <20210406133939.425987-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20210406122840.39-1-linqiheng@huawei.com>
-User-Agent: NeoMutt/20171215
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 20:28-20210406, Qiheng Lin wrote:
-> There is a error message within devm_ioremap_resource
-> already, so remove the dev_err call to avoid redundant
-> error message.
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Qiheng Lin <linqiheng@huawei.com>
-> ---
->  drivers/soc/ti/smartreflex.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/soc/ti/smartreflex.c b/drivers/soc/ti/smartreflex.c
-> index 5376f3d22f31..06cbee5fd254 100644
-> --- a/drivers/soc/ti/smartreflex.c
-> +++ b/drivers/soc/ti/smartreflex.c
-> @@ -846,10 +846,8 @@ static int omap_sr_probe(struct platform_device *pdev)
->  
->  	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->  	sr_info->base = devm_ioremap_resource(&pdev->dev, mem);
-> -	if (IS_ERR(sr_info->base)) {
-> -		dev_err(&pdev->dev, "%s: ioremap fail\n", __func__);
-> +	if (IS_ERR(sr_info->base))
->  		return PTR_ERR(sr_info->base);
-> -	}
->  
->  	irq = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
->  
-> 
-Reviewed-by: Nishanth Menon <nm@ti.com>
+From: Colin Ian King <colin.king@canonical.com>
 
+There is a spelling mistake in debugfs gem stats. Fix it. Also
+re-align output to cater for the extra 1 character.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/msm/msm_gem.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/msm/msm_gem.c b/drivers/gpu/drm/msm/msm_gem.c
+index f146d9c5ba9c..4e2e0a93d17d 100644
+--- a/drivers/gpu/drm/msm/msm_gem.c
++++ b/drivers/gpu/drm/msm/msm_gem.c
+@@ -979,13 +979,13 @@ void msm_gem_describe_objects(struct list_head *list, struct seq_file *m)
+ 		msm_gem_describe(obj, m, &stats);
+ 	}
+ 
+-	seq_printf(m, "Total:    %4d objects, %9zu bytes\n",
++	seq_printf(m, "Total:     %4d objects, %9zu bytes\n",
+ 			stats.all.count, stats.all.size);
+-	seq_printf(m, "Active:   %4d objects, %9zu bytes\n",
++	seq_printf(m, "Active:    %4d objects, %9zu bytes\n",
+ 			stats.active.count, stats.active.size);
+-	seq_printf(m, "Purgable: %4d objects, %9zu bytes\n",
++	seq_printf(m, "Purgeable: %4d objects, %9zu bytes\n",
+ 			stats.purgable.count, stats.purgable.size);
+-	seq_printf(m, "Purged:   %4d objects, %9zu bytes\n",
++	seq_printf(m, "Purged:    %4d objects, %9zu bytes\n",
+ 			stats.purged.count, stats.purged.size);
+ }
+ #endif
 -- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+2.30.2
+
