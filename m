@@ -7,32 +7,34 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1659DC433B4
-	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Apr 2021 16:27:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A9C4C433B4
+	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Apr 2021 16:40:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C49CC613CC
-	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Apr 2021 16:27:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1C53613DF
+	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Apr 2021 16:40:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346408AbhDFQ1b (ORCPT
+        id S239419AbhDFQkO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 6 Apr 2021 12:27:31 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:39392 "EHLO
+        Tue, 6 Apr 2021 12:40:14 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:39738 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244099AbhDFQ1a (ORCPT
+        with ESMTP id S232042AbhDFQkN (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 6 Apr 2021 12:27:30 -0400
+        Tue, 6 Apr 2021 12:40:13 -0400
 Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <colin.king@canonical.com>)
-        id 1lToXv-0006Um-2c; Tue, 06 Apr 2021 16:27:19 +0000
+        id 1lTokE-0007EU-Sf; Tue, 06 Apr 2021 16:40:02 +0000
 From:   Colin King <colin.king@canonical.com>
-To:     Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
-        linux-erofs@lists.ozlabs.org
+To:     Mark Brown <broonie@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Guru Das Srinagesh <gurus@codeaurora.org>
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] erofs: fix uninitialized variable i used in a while-loop
-Date:   Tue,  6 Apr 2021 17:27:18 +0100
-Message-Id: <20210406162718.429852-1-colin.king@canonical.com>
+Subject: [PATCH][next] regmap-irq: Fix dereference of a potentially null d->virt_buf
+Date:   Tue,  6 Apr 2021 17:40:02 +0100
+Message-Id: <20210406164002.430221-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -43,29 +45,37 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The while-loop iterates until src is non-null or i is 3, however, the
-loop counter i is not intinitialied to zero, causing incorrect iteration
-counts.  Fix this by initializing it to zero.
+The clean up of struct d can potentiallly index into a null array
+d->virt_buf causing errorenous pointer dereferencing issues on
+kfree calls.  Fix this by adding a null check on d->virt_buf before
+attempting to traverse the array to kfree the objects.
 
-Addresses-Coverity: ("Uninitialized scalar variable")
-Fixes: 1aa5f2e2feed ("erofs: support decompress big pcluster for lz4 backend")
+Addresses-Coverity: ("Dereference after null check")
+Fixes: 4c5014456305 ("regmap-irq: Introduce virtual regs to handle more config regs")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- fs/erofs/decompressor.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/base/regmap/regmap-irq.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/fs/erofs/decompressor.c b/fs/erofs/decompressor.c
-index fe46a9c34923..8687ff81406b 100644
---- a/fs/erofs/decompressor.c
-+++ b/fs/erofs/decompressor.c
-@@ -154,6 +154,7 @@ static void *z_erofs_handle_inplace_io(struct z_erofs_decompress_req *rq,
- 	}
- 	kunmap_atomic(inpage);
- 	might_sleep();
-+	i = 0;
- 	while (1) {
- 		src = vm_map_ram(rq->in, nrpages_in, -1);
- 		/* retry two more times (totally 3 times) */
+diff --git a/drivers/base/regmap/regmap-irq.c b/drivers/base/regmap/regmap-irq.c
+index e6343ccc6aa1..760296a4b606 100644
+--- a/drivers/base/regmap/regmap-irq.c
++++ b/drivers/base/regmap/regmap-irq.c
+@@ -901,9 +901,11 @@ int regmap_add_irq_chip_fwnode(struct fwnode_handle *fwnode,
+ 	kfree(d->mask_buf);
+ 	kfree(d->status_buf);
+ 	kfree(d->status_reg_buf);
+-	for (i = 0; i < chip->num_virt_regs; i++)
+-		kfree(d->virt_buf[i]);
+-	kfree(d->virt_buf);
++	if (d->virt_buf) {
++		for (i = 0; i < chip->num_virt_regs; i++)
++			kfree(d->virt_buf[i]);
++		kfree(d->virt_buf);
++	}
+ 	kfree(d);
+ 	return ret;
+ }
 -- 
 2.30.2
 
