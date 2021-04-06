@@ -2,122 +2,329 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9903C433ED
-	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Apr 2021 21:13:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 003DDC433ED
+	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Apr 2021 23:15:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9C70161260
-	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Apr 2021 21:13:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C88F3611C9
+	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Apr 2021 23:15:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242977AbhDFVNu (ORCPT
+        id S240147AbhDFXPa (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 6 Apr 2021 17:13:50 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:40374 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S241654AbhDFVNt (ORCPT
+        Tue, 6 Apr 2021 19:15:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45576 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232039AbhDFXPa (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 6 Apr 2021 17:13:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1617743620;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=n0hWxJLVmdsricryI3Rst9nD37DLk4CPYNA3q9HyKGA=;
-        b=U/LxtqZ6aWK8FrKlCHVfYDuT4hypRZlHVOXk+IwPdyV/gXrGQSiOqd6US3fHB4ZKZ8Ceo6
-        IBTxlNKoPwxHG3dYDM9nPj2uFSfK/G1ygKF4bJDl4paKONjThOVKL5moP0jfbkegWz8WOH
-        xZIr7XM7UsCswOVV/6haPJXfQLetKzc=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-261-iUN6MgDFPYOXR2ArXQllsg-1; Tue, 06 Apr 2021 17:13:39 -0400
-X-MC-Unique: iUN6MgDFPYOXR2ArXQllsg-1
-Received: by mail-qt1-f197.google.com with SMTP id w2so10911648qts.18
-        for <kernel-janitors@vger.kernel.org>; Tue, 06 Apr 2021 14:13:39 -0700 (PDT)
+        Tue, 6 Apr 2021 19:15:30 -0400
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 603D1C06174A;
+        Tue,  6 Apr 2021 16:15:21 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id d13so25354058lfg.7;
+        Tue, 06 Apr 2021 16:15:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=5pkQa+A/3vvq9xfKOGYJ3q2RAzOOAi/VcGGX+q7kLaM=;
+        b=MsU2ypYIm96M1lDHBb2kyQlGtYzKB2+EkUX2xvmRupzB+ZMBfzKIWFaD37cPrlkmdX
+         8bh2Rr19ybpTcoUyGWvAHpmG/+omnXaxlAjzYqIPZssGoWk5KK8m2NVxVtaihHIFvAW7
+         BLESsXgIfTanW8+dnB931ZaMlvAGFRliaJfUvq1Iz1MLnXDJLS/rHW1W0DiqzpfVstFE
+         eRKYkJVarJt7dNe1cVf2W4sFxu+oEwqT1oyBPQ3emuRknVjVZAHQ2Un9/c4Wmjq41LGB
+         +T6KG/P3VgHkP2rUpjzDNCZnNJQwiZz71N3ZyiWBiSjL8RF1FFv/BiN0fggWxld33kpx
+         NBpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=n0hWxJLVmdsricryI3Rst9nD37DLk4CPYNA3q9HyKGA=;
-        b=FMdKKXydO5vdnFuvmfF76ca6FTzqdhQYhUY6TYMEPYHyOJRNjEJEWfJlAAyF10D0sJ
-         +Gt9bPfJwnmbkNVy0t81cxua37LdNbzHFmbRx6Ga4HJE9ZSRD7US5VuFMiXvTGH2Ql4Z
-         tomDth/k5TVh1fl4BSFLxATYjcLEybPG98J20KGF8X0vvwYrU+73t9xUdSNIebW+hnPu
-         jUtcr0vNTW7nvqGZNVu1Z/s2ljNunUGUsccRDnUHAbFDktgOf+70PhYShMa/Azu7eBti
-         hmNKs0Jf5X6HkYIppCX3Hqbw/3SUcmlLov/lTelswIobrNoTVSpUqfDw5y7f1Zbas3R+
-         S8KQ==
-X-Gm-Message-State: AOAM532VHDq4nm43kYR8GX72iFaooFagL2Gmj4yDZ5fGUxEl/Un5dL5h
-        cJapviL7vxmmQ3VUoJZ6cX6Y5/DjgxBVwDVaxyb06I80nJYCsuofR0ZcfJAve+LmNjmOsQK6d4b
-        l7lCcw67q+NNvlXX0a10UjTtGMJrI
-X-Received: by 2002:ac8:6c57:: with SMTP id z23mr14454876qtu.155.1617743618663;
-        Tue, 06 Apr 2021 14:13:38 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyvIEKe5NEFfjLI+xWqaKNhUTCtlcBMeB9iljRNEmRUAfwEbQMtz5cIl77hzWbFWgBhB1CLLA==
-X-Received: by 2002:ac8:6c57:: with SMTP id z23mr14454854qtu.155.1617743618434;
-        Tue, 06 Apr 2021 14:13:38 -0700 (PDT)
-Received: from loberhel7laptop ([2600:6c64:4e7f:cee0:ccad:a4ca:9a69:d8bc])
-        by smtp.gmail.com with ESMTPSA id a10sm16963948qkh.122.2021.04.06.14.13.37
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 06 Apr 2021 14:13:37 -0700 (PDT)
-Message-ID: <fe8cdf3bede40b46716bf94b0760db6d47a13187.camel@redhat.com>
-Subject: Re: [PATCH][next] net/mlx5: Fix bit-wise and with zero
-From:   Laurence Oberman <loberman@redhat.com>
-To:     Colin King <colin.king@canonical.com>,
-        Boris Pismenny <borisp@nvidia.com>,
-        Saeed Mahameed <saeedm@nvidia.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Raed Salem <raeds@nvidia.com>, Huy Nguyen <huyn@mellanox.com>,
-        netdev@vger.kernel.org, linux-rdma@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 06 Apr 2021 17:13:36 -0400
-In-Reply-To: <20210406165346.430535-1-colin.king@canonical.com>
-References: <20210406165346.430535-1-colin.king@canonical.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-10.el7) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=5pkQa+A/3vvq9xfKOGYJ3q2RAzOOAi/VcGGX+q7kLaM=;
+        b=gd7AdgIGOphKwlvC35HaVwPVnetpyVfbhzGClU9cxkj1vC8y1vuqZQeQw40niaakfY
+         yByZh8fNBblPOXw/9hC0SPks64N/OHOmseLpwOdjWPkz/L8lG78tiB4DIbgrVlCKXwf8
+         k4YGOeIWZ0PKtaj+uHzDCxEJrNthD+ZKIfQ7Y8NEYcLyEDOxR0QO5p2srZFpdyc1v3J0
+         j1HunsbgEMaSkgRsG+lnxrUg4RJYZbV8N9iT9NRTR04wzOfiohsCpg4D5g89z7ASNhDi
+         HB8VY0gSAdPc0LZvlQQKc65j1+Ge86wuCYxDMIkrH1mA5QRskOaMMf6GarDbUr3b3OM5
+         8lcw==
+X-Gm-Message-State: AOAM533sy64kyAEnCo7ccVaHPsocGXgR35tvDNd6NghJKIP3+C39Mel7
+        TjZ74uRr4F57Y+84nH/GdR1cgq3bM4BxxITI
+X-Google-Smtp-Source: ABdhPJyLrn4XSp1drEpJbRw1apLx7m/8GlGLpuoM0WYW7MJ2TNaXbGVh2QaH7cgvsI+yIPzj1tyNIg==
+X-Received: by 2002:a05:6512:3741:: with SMTP id a1mr384023lfs.121.1617750919878;
+        Tue, 06 Apr 2021 16:15:19 -0700 (PDT)
+Received: from test-VirtualBox ([87.116.183.186])
+        by smtp.gmail.com with ESMTPSA id j15sm2284211lfm.138.2021.04.06.16.15.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Apr 2021 16:15:19 -0700 (PDT)
+Date:   Wed, 7 Apr 2021 01:15:17 +0200
+From:   Sergei Krainov <sergei.krainov.lkd@gmail.com>
+To:     Larry.Finger@lwfinger.net, florian.c.schilhabel@googlemail.com,
+        gregkh@linuxfoundation.org
+Cc:     linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] staging: rtl8712: avoid multiple line dereference
+Message-ID: <20210406231517.GA30925@test-VirtualBox>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, 2021-04-06 at 17:53 +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The bit-wise and of the action field with
-> MLX5_ACCEL_ESP_ACTION_DECRYPT
-> is incorrect as MLX5_ACCEL_ESP_ACTION_DECRYPT is zero and not
-> intended
-> to be a bit-flag. Fix this by using the == operator as was originally
-> intended.
-> 
-> Addresses-Coverity: ("Logically dead code")
-> Fixes: 7dfee4b1d79e ("net/mlx5: IPsec, Refactor SA handle creation
-> and destruction")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/net/ethernet/mellanox/mlx5/core/fpga/ipsec.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/fpga/ipsec.c
-> b/drivers/net/ethernet/mellanox/mlx5/core/fpga/ipsec.c
-> index d43a05e77f67..0b19293cdd74 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/fpga/ipsec.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/fpga/ipsec.c
-> @@ -850,7 +850,7 @@ mlx5_fpga_ipsec_release_sa_ctx(struct
-> mlx5_fpga_ipsec_sa_ctx *sa_ctx)
->  		return;
->  	}
->  
-> -	if (sa_ctx->fpga_xfrm->accel_xfrm.attrs.action &
-> +	if (sa_ctx->fpga_xfrm->accel_xfrm.attrs.action ==
->  	    MLX5_ACCEL_ESP_ACTION_DECRYPT)
->  		ida_free(&fipsec->halloc, sa_ctx->sa_handle);
->  
+fix post-commit hook checkpatch issues:
 
-Looks correct to me with enum mlx5_accel_esp_action action;
+WARNING: Avoid multiple line dereference - prefer 'adapter->mlmepriv.cur_network.network.InfrastructureMode'
++			adapter->mlmepriv.cur_network.network.
++			InfrastructureMode)
 
-Reviewed-by Laurence Oberman <loberman@redhat.com>
+WARNING: Avoid multiple line dereference - prefer 'adapter->registrypriv.dev_network.MacAddress'
++						 adapter->registrypriv.
++							dev_network.MacAddress;
+
+WARNING: Avoid multiple line dereference - prefer 'pnetwork->network.Configuration.FHConfig.DwellTime'
++		 le32_to_cpu(pnetwork->network.Configuration.FHConfig.
++			     DwellTime);
+
+WARNING: Avoid multiple line dereference - prefer 'pnetwork->network.Configuration.FHConfig.HopPattern'
++		 le32_to_cpu(pnetwork->network.Configuration.
++			     FHConfig.HopPattern);
+
+WARNING: Avoid multiple line dereference - prefer 'pmlmepriv->scanned_queue'
++					    r8712_find_network(&pmlmepriv->
++					    scanned_queue,
+
+WARNING: Avoid multiple line dereference - prefer 'pmlmepriv->scanned_queue'
++					     r8712_find_network(&pmlmepriv->
++					     scanned_queue,
+
+WARNING: Avoid multiple line dereference - prefer 'pstapriv->sta_hash_lock'
++					spin_lock_irqsave(&pstapriv->
++						sta_hash_lock, irqL2);
+
+WARNING: Avoid multiple line dereference - prefer 'pstapriv->sta_hash_lock'
++					spin_unlock_irqrestore(&(pstapriv->
++						sta_hash_lock), irqL2);
+
+WARNING: Avoid multiple line dereference - prefer 'pmlmepriv->scanned_queue'
++						 r8712_find_network(&pmlmepriv->
++						 scanned_queue,
+
+WARNING: Avoid multiple line dereference - prefer 'pnetwork->network.MacAddress'
++						 pnetwork->network.
++						 MacAddress);
+
+WARNING: Avoid multiple line dereference - prefer 'pmlmepriv->scanned_queue'
++				ptarget_wlan = r8712_find_network(&pmlmepriv->
++						scanned_queue,
+
+WARNING: Avoid multiple line dereference - prefer 'adapter->securitypriv.AuthAlgrthm'
++					if (adapter->securitypriv.
++					    AuthAlgrthm == 2) {
+
+WARNING: Avoid multiple line dereference - prefer 'adapter->securitypriv.binstallGrpkey'
++						adapter->securitypriv.
++							binstallGrpkey =
+
+WARNING: Avoid multiple line dereference - prefer 'adapter->securitypriv.busetkipkey'
++						adapter->securitypriv.
++							busetkipkey =
+
+WARNING: Avoid multiple line dereference - prefer 'adapter->securitypriv.bgrpkey_handshake'
++						adapter->securitypriv.
++							bgrpkey_handshake =
+
+WARNING: Avoid multiple line dereference - prefer 'adapter->securitypriv.PrivacyAlgrthm'
++							 adapter->securitypriv.
++							 PrivacyAlgrthm;
+
+WARNING: Avoid multiple line dereference - prefer 'ptarget_sta->x_UncstKey'
++						memset((u8 *)&ptarget_sta->
++							 x_UncstKey,
+
+WARNING: Avoid multiple line dereference - prefer 'ptarget_sta->tkiprxmickey'
++						memset((u8 *)&ptarget_sta->
++							 tkiprxmickey,
+
+WARNING: Avoid multiple line dereference - prefer 'ptarget_sta->tkiptxmickey'
++						memset((u8 *)&ptarget_sta->
++							 tkiptxmickey,
+
+WARNING: Avoid multiple line dereference - prefer 'ptarget_sta->txpn'
++						memset((u8 *)&ptarget_sta->
++							 txpn, 0,
+
+WARNING: Avoid multiple line dereference - prefer 'ptarget_sta->rxpn'
++						memset((u8 *)&ptarget_sta->
++							 rxpn, 0,
+
+WARNING: Avoid multiple line dereference - prefer 'tgt_network->network'
++				r8712_get_wlan_bssid_ex_sz(&tgt_network->
++							network));
+
+WARNING: Avoid multiple line dereference - prefer 'pmlmepriv->cur_network.network'
++					if (is_same_network(&pmlmepriv->
++					    cur_network.network,
+
+Signed-off-by: Sergei Krainov <sergei.krainov.lkd@gmail.com>
+---
+ drivers/staging/rtl8712/rtl871x_mlme.c | 73 +++++++++-----------------
+ 1 file changed, 25 insertions(+), 48 deletions(-)
+
+diff --git a/drivers/staging/rtl8712/rtl871x_mlme.c b/drivers/staging/rtl8712/rtl871x_mlme.c
+index 8a97307fbbd6..26acb4069d3d 100644
+--- a/drivers/staging/rtl8712/rtl871x_mlme.c
++++ b/drivers/staging/rtl8712/rtl871x_mlme.c
+@@ -431,8 +431,7 @@ static int is_desired_network(struct _adapter *adapter,
+ 		bselected = false;
+ 	if (check_fwstate(&adapter->mlmepriv, WIFI_ADHOC_STATE)) {
+ 		if (pnetwork->network.InfrastructureMode !=
+-			adapter->mlmepriv.cur_network.network.
+-			InfrastructureMode)
++			adapter->mlmepriv.cur_network.network.InfrastructureMode)
+ 			bselected = false;
+ 	}
+ 	return bselected;
+@@ -539,8 +538,7 @@ void r8712_surveydone_event_callback(struct _adapter *adapter, u8 *pbuf)
+ 					struct wlan_bssid_ex *pdev_network =
+ 					  &(adapter->registrypriv.dev_network);
+ 					u8 *pibss =
+-						 adapter->registrypriv.
+-							dev_network.MacAddress;
++						 adapter->registrypriv.dev_network.MacAddress;
+ 					pmlmepriv->fw_state ^= _FW_UNDER_SURVEY;
+ 					memcpy(&pdev_network->Ssid,
+ 						&pmlmepriv->assoc_ssid,
+@@ -688,11 +686,9 @@ void r8712_joinbss_event_callback(struct _adapter *adapter, u8 *pbuf)
+ 	pnetwork->network.Configuration.DSConfig =
+ 		 le32_to_cpu(pnetwork->network.Configuration.DSConfig);
+ 	pnetwork->network.Configuration.FHConfig.DwellTime =
+-		 le32_to_cpu(pnetwork->network.Configuration.FHConfig.
+-			     DwellTime);
++		 le32_to_cpu(pnetwork->network.Configuration.FHConfig.DwellTime);
+ 	pnetwork->network.Configuration.FHConfig.HopPattern =
+-		 le32_to_cpu(pnetwork->network.Configuration.
+-			     FHConfig.HopPattern);
++		 le32_to_cpu(pnetwork->network.Configuration.FHConfig.HopPattern);
+ 	pnetwork->network.Configuration.FHConfig.HopSet =
+ 		 le32_to_cpu(pnetwork->network.Configuration.FHConfig.HopSet);
+ 	pnetwork->network.Configuration.FHConfig.Length =
+@@ -717,36 +713,29 @@ void r8712_joinbss_event_callback(struct _adapter *adapter, u8 *pbuf)
+ 			if (check_fwstate(pmlmepriv, _FW_LINKED)) {
+ 				if (the_same_macaddr) {
+ 					ptarget_wlan =
+-					    r8712_find_network(&pmlmepriv->
+-					    scanned_queue,
++					    r8712_find_network(&pmlmepriv->scanned_queue,
+ 					    cur_network->network.MacAddress);
+ 				} else {
+ 					pcur_wlan =
+-					     r8712_find_network(&pmlmepriv->
+-					     scanned_queue,
++					     r8712_find_network(&pmlmepriv->scanned_queue,
+ 					     cur_network->network.MacAddress);
+ 					if (pcur_wlan)
+ 						pcur_wlan->fixed = false;
+ 
+ 					pcur_sta = r8712_get_stainfo(pstapriv,
+ 					     cur_network->network.MacAddress);
+-					spin_lock_irqsave(&pstapriv->
+-						sta_hash_lock, irqL2);
++					spin_lock_irqsave(&pstapriv->sta_hash_lock, irqL2);
+ 					r8712_free_stainfo(adapter, pcur_sta);
+-					spin_unlock_irqrestore(&(pstapriv->
+-						sta_hash_lock), irqL2);
++					spin_unlock_irqrestore(&(pstapriv->sta_hash_lock), irqL2);
+ 
+ 					ptarget_wlan =
+-						 r8712_find_network(&pmlmepriv->
+-						 scanned_queue,
+-						 pnetwork->network.
+-						 MacAddress);
++						 r8712_find_network(&pmlmepriv->scanned_queue,
++						 pnetwork->network.MacAddress);
+ 					if (ptarget_wlan)
+ 						ptarget_wlan->fixed = true;
+ 				}
+ 			} else {
+-				ptarget_wlan = r8712_find_network(&pmlmepriv->
+-						scanned_queue,
++				ptarget_wlan = r8712_find_network(&pmlmepriv->scanned_queue,
+ 						pnetwork->network.MacAddress);
+ 				if (ptarget_wlan)
+ 					ptarget_wlan->fixed = true;
+@@ -779,39 +768,29 @@ void r8712_joinbss_event_callback(struct _adapter *adapter, u8 *pbuf)
+ 					ptarget_sta->aid = pnetwork->join_res;
+ 					ptarget_sta->qos_option = 1;
+ 					ptarget_sta->mac_id = 5;
+-					if (adapter->securitypriv.
+-					    AuthAlgrthm == 2) {
+-						adapter->securitypriv.
+-							binstallGrpkey =
++					if (adapter->securitypriv.AuthAlgrthm == 2) {
++						adapter->securitypriv.binstallGrpkey =
+ 							 false;
+-						adapter->securitypriv.
+-							busetkipkey =
++						adapter->securitypriv.busetkipkey =
+ 							 false;
+-						adapter->securitypriv.
+-							bgrpkey_handshake =
++						adapter->securitypriv.bgrpkey_handshake =
+ 							 false;
+-						ptarget_sta->ieee8021x_blocked
+-							 = true;
++						ptarget_sta->ieee8021x_blocked =
++							 true;
+ 						ptarget_sta->XPrivacy =
+-							 adapter->securitypriv.
+-							 PrivacyAlgrthm;
+-						memset((u8 *)&ptarget_sta->
+-							 x_UncstKey,
++							 adapter->securitypriv.PrivacyAlgrthm;
++						memset((u8 *)&ptarget_sta->x_UncstKey,
+ 							 0,
+ 							 sizeof(union Keytype));
+-						memset((u8 *)&ptarget_sta->
+-							 tkiprxmickey,
++						memset((u8 *)&ptarget_sta->tkiprxmickey,
+ 							 0,
+ 							 sizeof(union Keytype));
+-						memset((u8 *)&ptarget_sta->
+-							 tkiptxmickey,
++						memset((u8 *)&ptarget_sta->tkiptxmickey,
+ 							 0,
+ 							 sizeof(union Keytype));
+-						memset((u8 *)&ptarget_sta->
+-							 txpn, 0,
++						memset((u8 *)&ptarget_sta->txpn, 0,
+ 							 sizeof(union pn48));
+-						memset((u8 *)&ptarget_sta->
+-							 rxpn, 0,
++						memset((u8 *)&ptarget_sta->rxpn, 0,
+ 							 sizeof(union pn48));
+ 					}
+ 				} else {
+@@ -942,8 +921,7 @@ void r8712_stadel_event_callback(struct _adapter *adapter, u8 *pbuf)
+ 			pdev_network = &(adapter->registrypriv.dev_network);
+ 			pibss = adapter->registrypriv.dev_network.MacAddress;
+ 			memcpy(pdev_network, &tgt_network->network,
+-				r8712_get_wlan_bssid_ex_sz(&tgt_network->
+-							network));
++				r8712_get_wlan_bssid_ex_sz(&tgt_network->network));
+ 			memcpy(&pdev_network->Ssid,
+ 				&pmlmepriv->assoc_ssid,
+ 				sizeof(struct ndis_802_11_ssid));
+@@ -1092,8 +1070,7 @@ int r8712_select_and_join_from_scan(struct mlme_priv *pmlmepriv)
+ 			src_ssid = pmlmepriv->assoc_bssid;
+ 			if (!memcmp(dst_ssid, src_ssid, ETH_ALEN)) {
+ 				if (check_fwstate(pmlmepriv, _FW_LINKED)) {
+-					if (is_same_network(&pmlmepriv->
+-					    cur_network.network,
++					if (is_same_network(&pmlmepriv->cur_network.network,
+ 					    &pnetwork->network)) {
+ 						_clr_fwstate_(pmlmepriv,
+ 							_FW_UNDER_LINKING);
+-- 
+2.25.1
 
