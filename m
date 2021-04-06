@@ -2,80 +2,61 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4675C433ED
-	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Apr 2021 11:56:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC888C433ED
+	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Apr 2021 12:18:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AEA5C613BD
-	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Apr 2021 11:56:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A8544613C2
+	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Apr 2021 12:18:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343599AbhDFL41 (ORCPT
+        id S1343889AbhDFMSj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 6 Apr 2021 07:56:27 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:15917 "EHLO
-        szxga06-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240701AbhDFL41 (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 6 Apr 2021 07:56:27 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
-        by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4FF5Y26qclzkht2;
-        Tue,  6 Apr 2021 19:54:30 +0800 (CST)
-Received: from mdc.localdomain (10.175.104.57) by
- DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.498.0; Tue, 6 Apr 2021 19:56:08 +0800
-From:   Huang Guobin <huangguobin4@huawei.com>
-To:     <huangguobin4@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] tty: n_gsm: use DEFINE_SPINLOCK() for spinlock
-Date:   Tue, 6 Apr 2021 19:56:03 +0800
-Message-ID: <1617710163-48158-1-git-send-email-huangguobin4@huawei.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 6 Apr 2021 08:18:39 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36648 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S239518AbhDFMSg (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 6 Apr 2021 08:18:36 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id CE114B15D;
+        Tue,  6 Apr 2021 12:18:27 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id 12354DA732; Tue,  6 Apr 2021 14:16:15 +0200 (CEST)
+Date:   Tue, 6 Apr 2021 14:16:15 +0200
+From:   David Sterba <dsterba@suse.cz>
+To:     Zheng Yongjun <zhengyongjun3@huawei.com>
+Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+Subject: Re: [PATCH -next] btrfs: integrity-checker: use DEFINE_MUTEX() for
+ mutex lock
+Message-ID: <20210406121615.GE7604@suse.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Zheng Yongjun <zhengyongjun3@huawei.com>,
+        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+References: <20210405101446.14990-1-zhengyongjun3@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.175.104.57]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210405101446.14990-1-zhengyongjun3@huawei.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Guobin Huang <huangguobin4@huawei.com>
+On Mon, Apr 05, 2021 at 06:14:46PM +0800, Zheng Yongjun wrote:
+> mutex lock can be initialized automatically with DEFINE_MUTEX()
+> rather than explicitly calling mutex_init().
+> 
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Zheng Yongjun <zhengyongjun3@huawei.com>
 
-spinlock can be initialized automatically with DEFINE_SPINLOCK()
-rather than explicitly calling spin_lock_init().
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Guobin Huang <huangguobin4@huawei.com>
----
- drivers/tty/n_gsm.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/tty/n_gsm.c b/drivers/tty/n_gsm.c
-index 9e12f9cb1a98..d60cffc70a0c 100644
---- a/drivers/tty/n_gsm.c
-+++ b/drivers/tty/n_gsm.c
-@@ -266,7 +266,7 @@ struct gsm_mux {
- 
- #define MAX_MUX		4			/* 256 minors */
- static struct gsm_mux *gsm_mux[MAX_MUX];	/* GSM muxes */
--static spinlock_t gsm_mux_lock;
-+static DEFINE_SPINLOCK(gsm_mux_lock);
- 
- static struct tty_driver *gsm_tty_driver;
- 
-@@ -3257,8 +3257,6 @@ static int __init gsm_init(void)
- 	gsm_tty_driver->init_termios.c_lflag &= ~ECHO;
- 	tty_set_operations(gsm_tty_driver, &gsmtty_ops);
- 
--	spin_lock_init(&gsm_mux_lock);
--
- 	if (tty_register_driver(gsm_tty_driver)) {
- 		put_tty_driver(gsm_tty_driver);
- 		tty_unregister_ldisc(N_GSM0710);
-
+You've sent this patch already and haven't provided the answer why the
+changes should be done.
+https://lore.kernel.org/linux-btrfs/20210104144559.GF6430@twin.jikos.cz/
