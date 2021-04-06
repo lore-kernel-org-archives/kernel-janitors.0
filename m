@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DC9EC43462
-	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Apr 2021 20:49:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7372CC433ED
+	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Apr 2021 20:49:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5EAD3611CC
-	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Apr 2021 20:49:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 410E6611CC
+	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Apr 2021 20:49:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347283AbhDFUte (ORCPT
+        id S1347300AbhDFUtp (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 6 Apr 2021 16:49:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42172 "EHLO
+        Tue, 6 Apr 2021 16:49:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42184 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347279AbhDFUtd (ORCPT
+        with ESMTP id S1347301AbhDFUtg (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 6 Apr 2021 16:49:33 -0400
+        Tue, 6 Apr 2021 16:49:36 -0400
 Received: from viti.kaiser.cx (viti.kaiser.cx [IPv6:2a01:238:43fe:e600:cd0c:bd4a:7a3:8e9f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F479C061756;
-        Tue,  6 Apr 2021 13:49:25 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78AF0C06174A;
+        Tue,  6 Apr 2021 13:49:28 -0700 (PDT)
 Received: from ipservice-092-217-067-214.092.217.pools.vodafone-ip.de ([92.217.67.214] helo=martin-debian-2.paytec.ch)
         by viti.kaiser.cx with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.89)
         (envelope-from <martin@kaiser.cx>)
-        id 1lTsdV-0005Yc-23; Tue, 06 Apr 2021 22:49:21 +0200
+        id 1lTsdW-0005Yc-Dq; Tue, 06 Apr 2021 22:49:22 +0200
 From:   Martin Kaiser <martin@kaiser.cx>
 To:     Larry Finger <Larry.Finger@lwfinger.net>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org,
         linux-kernel@vger.kernel.org, Martin Kaiser <martin@kaiser.cx>
-Subject: [PATCH 09/11] staging: rtl8188eu: clean up usb_write16
-Date:   Tue,  6 Apr 2021 22:48:27 +0200
-Message-Id: <20210406204829.18130-9-martin@kaiser.cx>
+Subject: [PATCH 10/11] staging: rtl8188eu: clean up usb_write32
+Date:   Tue,  6 Apr 2021 22:48:28 +0200
+Message-Id: <20210406204829.18130-10-martin@kaiser.cx>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20210406204829.18130-1-martin@kaiser.cx>
 References: <20210406204829.18130-1-martin@kaiser.cx>
@@ -50,33 +50,32 @@ Remove unnecessary variable, summarize declaration and assignment.
 
 Signed-off-by: Martin Kaiser <martin@kaiser.cx>
 ---
- drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
+ drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c b/drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c
-index e2ff4f70610e..9d0c34f6a86c 100644
+index 9d0c34f6a86c..bb5889a130ca 100644
 --- a/drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c
 +++ b/drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c
-@@ -495,16 +495,10 @@ int usb_write8(struct adapter *adapter, u32 addr, u8 val)
+@@ -503,15 +503,10 @@ int usb_write16(struct adapter *adapter, u32 addr, u16 val)
  
- int usb_write16(struct adapter *adapter, u32 addr, u16 val)
+ int usb_write32(struct adapter *adapter, u32 addr, u32 val)
  {
 -	u16 wvalue;
 -	u16 len;
 -	__le32 data;
 -
 -	wvalue = (u16)(addr & 0x0000ffff);
--	len = 2;
--
--	data = cpu_to_le32(val & 0x0000ffff);
+-	len = 4;
+-	data = cpu_to_le32(val);
 +	u16 wvalue = (u16)(addr & 0xffff);
-+	__le32 data = cpu_to_le32(val & 0xffff);
++	__le32 data = cpu_to_le32(val);
  
 -	return usbctrl_vendorreq(adapter, wvalue, &data, len, REALTEK_USB_VENQT_WRITE);
-+	return usbctrl_vendorreq(adapter, wvalue, &data, 2, REALTEK_USB_VENQT_WRITE);
++	return usbctrl_vendorreq(adapter, wvalue, &data, 4, REALTEK_USB_VENQT_WRITE);
  }
  
- int usb_write32(struct adapter *adapter, u32 addr, u32 val)
+ static void usb_write_port_complete(struct urb *purb, struct pt_regs *regs)
 -- 
 2.20.1
 
