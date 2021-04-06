@@ -4,40 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A9C4C433B4
-	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Apr 2021 16:40:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2156EC433B4
+	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Apr 2021 16:53:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C1C53613DF
-	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Apr 2021 16:40:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE1B4613D2
+	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Apr 2021 16:53:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239419AbhDFQkO (ORCPT
+        id S1346670AbhDFQyB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 6 Apr 2021 12:40:14 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:39738 "EHLO
+        Tue, 6 Apr 2021 12:54:01 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:40238 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232042AbhDFQkN (ORCPT
+        with ESMTP id S1346631AbhDFQyB (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 6 Apr 2021 12:40:13 -0400
+        Tue, 6 Apr 2021 12:54:01 -0400
 Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <colin.king@canonical.com>)
-        id 1lTokE-0007EU-Sf; Tue, 06 Apr 2021 16:40:02 +0000
+        id 1lToxX-00086R-4j; Tue, 06 Apr 2021 16:53:47 +0000
 From:   Colin King <colin.king@canonical.com>
-To:     Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Guru Das Srinagesh <gurus@codeaurora.org>
+To:     Boris Pismenny <borisp@nvidia.com>,
+        Saeed Mahameed <saeedm@nvidia.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Raed Salem <raeds@nvidia.com>, Huy Nguyen <huyn@mellanox.com>,
+        netdev@vger.kernel.org, linux-rdma@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] regmap-irq: Fix dereference of a potentially null d->virt_buf
-Date:   Tue,  6 Apr 2021 17:40:02 +0100
-Message-Id: <20210406164002.430221-1-colin.king@canonical.com>
+Subject: [PATCH][next] net/mlx5: Fix bit-wise and with zero
+Date:   Tue,  6 Apr 2021 17:53:46 +0100
+Message-Id: <20210406165346.430535-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
@@ -45,37 +47,31 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The clean up of struct d can potentiallly index into a null array
-d->virt_buf causing errorenous pointer dereferencing issues on
-kfree calls.  Fix this by adding a null check on d->virt_buf before
-attempting to traverse the array to kfree the objects.
+The bit-wise and of the action field with MLX5_ACCEL_ESP_ACTION_DECRYPT
+is incorrect as MLX5_ACCEL_ESP_ACTION_DECRYPT is zero and not intended
+to be a bit-flag. Fix this by using the == operator as was originally
+intended.
 
-Addresses-Coverity: ("Dereference after null check")
-Fixes: 4c5014456305 ("regmap-irq: Introduce virtual regs to handle more config regs")
+Addresses-Coverity: ("Logically dead code")
+Fixes: 7dfee4b1d79e ("net/mlx5: IPsec, Refactor SA handle creation and destruction")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/base/regmap/regmap-irq.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/fpga/ipsec.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/base/regmap/regmap-irq.c b/drivers/base/regmap/regmap-irq.c
-index e6343ccc6aa1..760296a4b606 100644
---- a/drivers/base/regmap/regmap-irq.c
-+++ b/drivers/base/regmap/regmap-irq.c
-@@ -901,9 +901,11 @@ int regmap_add_irq_chip_fwnode(struct fwnode_handle *fwnode,
- 	kfree(d->mask_buf);
- 	kfree(d->status_buf);
- 	kfree(d->status_reg_buf);
--	for (i = 0; i < chip->num_virt_regs; i++)
--		kfree(d->virt_buf[i]);
--	kfree(d->virt_buf);
-+	if (d->virt_buf) {
-+		for (i = 0; i < chip->num_virt_regs; i++)
-+			kfree(d->virt_buf[i]);
-+		kfree(d->virt_buf);
-+	}
- 	kfree(d);
- 	return ret;
- }
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/fpga/ipsec.c b/drivers/net/ethernet/mellanox/mlx5/core/fpga/ipsec.c
+index d43a05e77f67..0b19293cdd74 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/fpga/ipsec.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/fpga/ipsec.c
+@@ -850,7 +850,7 @@ mlx5_fpga_ipsec_release_sa_ctx(struct mlx5_fpga_ipsec_sa_ctx *sa_ctx)
+ 		return;
+ 	}
+ 
+-	if (sa_ctx->fpga_xfrm->accel_xfrm.attrs.action &
++	if (sa_ctx->fpga_xfrm->accel_xfrm.attrs.action ==
+ 	    MLX5_ACCEL_ESP_ACTION_DECRYPT)
+ 		ida_free(&fipsec->halloc, sa_ctx->sa_handle);
+ 
 -- 
 2.30.2
 
