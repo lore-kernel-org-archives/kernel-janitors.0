@@ -2,61 +2,73 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC888C433ED
-	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Apr 2021 12:18:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B216AC433ED
+	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Apr 2021 12:28:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A8544613C2
-	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Apr 2021 12:18:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FAF0613C4
+	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Apr 2021 12:28:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343889AbhDFMSj (ORCPT
+        id S243070AbhDFM27 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 6 Apr 2021 08:18:39 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36648 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S239518AbhDFMSg (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 6 Apr 2021 08:18:36 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id CE114B15D;
-        Tue,  6 Apr 2021 12:18:27 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id 12354DA732; Tue,  6 Apr 2021 14:16:15 +0200 (CEST)
-Date:   Tue, 6 Apr 2021 14:16:15 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     Zheng Yongjun <zhengyongjun3@huawei.com>
-Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
-Subject: Re: [PATCH -next] btrfs: integrity-checker: use DEFINE_MUTEX() for
- mutex lock
-Message-ID: <20210406121615.GE7604@suse.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Zheng Yongjun <zhengyongjun3@huawei.com>,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
-References: <20210405101446.14990-1-zhengyongjun3@huawei.com>
+        Tue, 6 Apr 2021 08:28:59 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:15919 "EHLO
+        szxga06-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238137AbhDFM26 (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 6 Apr 2021 08:28:58 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
+        by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4FF6GZ716xzkhTC;
+        Tue,  6 Apr 2021 20:27:02 +0800 (CST)
+Received: from DESKTOP-EFRLNPK.china.huawei.com (10.174.176.196) by
+ DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
+ 14.3.498.0; Tue, 6 Apr 2021 20:28:40 +0800
+From:   Qiheng Lin <linqiheng@huawei.com>
+To:     <linqiheng@huawei.com>, Nishanth Menon <nm@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>
+CC:     <linux-pm@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH -next] PM: AVS: remove redundant dev_err call in omap_sr_probe()
+Date:   Tue, 6 Apr 2021 20:28:40 +0800
+Message-ID: <20210406122840.39-1-linqiheng@huawei.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210405101446.14990-1-zhengyongjun3@huawei.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.174.176.196]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Apr 05, 2021 at 06:14:46PM +0800, Zheng Yongjun wrote:
-> mutex lock can be initialized automatically with DEFINE_MUTEX()
-> rather than explicitly calling mutex_init().
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Zheng Yongjun <zhengyongjun3@huawei.com>
+There is a error message within devm_ioremap_resource
+already, so remove the dev_err call to avoid redundant
+error message.
 
-You've sent this patch already and haven't provided the answer why the
-changes should be done.
-https://lore.kernel.org/linux-btrfs/20210104144559.GF6430@twin.jikos.cz/
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Qiheng Lin <linqiheng@huawei.com>
+---
+ drivers/soc/ti/smartreflex.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/soc/ti/smartreflex.c b/drivers/soc/ti/smartreflex.c
+index 5376f3d22f31..06cbee5fd254 100644
+--- a/drivers/soc/ti/smartreflex.c
++++ b/drivers/soc/ti/smartreflex.c
+@@ -846,10 +846,8 @@ static int omap_sr_probe(struct platform_device *pdev)
+ 
+ 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	sr_info->base = devm_ioremap_resource(&pdev->dev, mem);
+-	if (IS_ERR(sr_info->base)) {
+-		dev_err(&pdev->dev, "%s: ioremap fail\n", __func__);
++	if (IS_ERR(sr_info->base))
+ 		return PTR_ERR(sr_info->base);
+-	}
+ 
+ 	irq = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+ 
+
