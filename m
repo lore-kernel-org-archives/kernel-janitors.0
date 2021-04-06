@@ -4,37 +4,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F6CBC433ED
-	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Apr 2021 18:45:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B48F9C43461
+	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Apr 2021 18:55:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2C106613BD
-	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Apr 2021 18:45:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7357C613D5
+	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Apr 2021 18:55:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237403AbhDFSpa (ORCPT
+        id S233724AbhDFSzP (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 6 Apr 2021 14:45:30 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:43379 "EHLO
+        Tue, 6 Apr 2021 14:55:15 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:43535 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233898AbhDFSpY (ORCPT
+        with ESMTP id S239008AbhDFSzJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 6 Apr 2021 14:45:24 -0400
+        Tue, 6 Apr 2021 14:55:09 -0400
 Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <colin.king@canonical.com>)
-        id 1lTqhL-0008Js-3L; Tue, 06 Apr 2021 18:45:11 +0000
+        id 1lTqqo-0000lW-EP; Tue, 06 Apr 2021 18:54:58 +0000
 From:   Colin King <colin.king@canonical.com>
-To:     Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Yoshihiro Shimoda <shimoda.yoshihiro@renesas.com>,
-        Paul Mundt <lethal@linux-sh.org>, linux-usb@vger.kernel.org
+To:     Juerg Haefliger <juergh@gmail.com>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        "Mark M . Hoffman" <mhoffman@lightlink.com>,
+        linux-hwmon@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] usb: gadget: r8a66597: Add missing null check on return from platform_get_resource
-Date:   Tue,  6 Apr 2021 19:45:10 +0100
-Message-Id: <20210406184510.433497-1-colin.king@canonical.com>
+Subject: [PATCH]  hwmon: (dme1737): Add missing null check on return from platform_get_resource
+Date:   Tue,  6 Apr 2021 19:54:58 +0100
+Message-Id: <20210406185458.433826-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -49,25 +50,25 @@ The call to platform_get_resource can potentially return a NULL pointer
 on failure, so add this check and return -EINVAL if it fails.
 
 Addresses-Coverity: ("Dereference null return")
-Fixes: c41442474a26 ("usb: gadget: R8A66597 peripheral controller support.")
+Fixes: e95c237d78c0 ("hwmon: (dme1737) Add sch311x support")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/usb/gadget/udc/r8a66597-udc.c | 2 ++
+ drivers/hwmon/dme1737.c | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/drivers/usb/gadget/udc/r8a66597-udc.c b/drivers/usb/gadget/udc/r8a66597-udc.c
-index 896c1a016d55..65cae4883454 100644
---- a/drivers/usb/gadget/udc/r8a66597-udc.c
-+++ b/drivers/usb/gadget/udc/r8a66597-udc.c
-@@ -1849,6 +1849,8 @@ static int r8a66597_probe(struct platform_device *pdev)
- 		return PTR_ERR(reg);
+diff --git a/drivers/hwmon/dme1737.c b/drivers/hwmon/dme1737.c
+index c1e4cfb40c3d..a2157872e126 100644
+--- a/drivers/hwmon/dme1737.c
++++ b/drivers/hwmon/dme1737.c
+@@ -2633,6 +2633,8 @@ static int dme1737_isa_probe(struct platform_device *pdev)
+ 	int err;
  
- 	ires = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
-+	if (!ires)
+ 	res = platform_get_resource(pdev, IORESOURCE_IO, 0);
++	if (!res)
 +		return -EINVAL;
- 	irq = ires->start;
- 	irq_trigger = ires->flags & IRQF_TRIGGER_MASK;
- 
+ 	if (!devm_request_region(dev, res->start, DME1737_EXTENT, "dme1737")) {
+ 		dev_err(dev, "Failed to request region 0x%04x-0x%04x.\n",
+ 			(unsigned short)res->start,
 -- 
 2.30.2
 
