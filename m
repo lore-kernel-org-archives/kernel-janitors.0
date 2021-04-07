@@ -7,71 +7,73 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99291C43460
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 14:27:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B700C433B4
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 14:28:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5F2DB611C1
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 14:27:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F49B6128D
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 14:28:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348449AbhDGO1v (ORCPT
+        id S1352861AbhDGO2U (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 7 Apr 2021 10:27:51 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:15951 "EHLO
-        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348416AbhDGO1u (ORCPT
+        Wed, 7 Apr 2021 10:28:20 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:43767 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1348517AbhDGO2Q (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 7 Apr 2021 10:27:50 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
-        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4FFmrl4Mt4zrdGY;
-        Wed,  7 Apr 2021 22:25:27 +0800 (CST)
-Received: from localhost.localdomain (10.175.102.38) by
- DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
- 14.3.498.0; Wed, 7 Apr 2021 22:27:27 +0800
-From:   Wei Yongjun <weiyongjun1@huawei.com>
-To:     <weiyongjun1@huawei.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-CC:     <linux-media@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        "Hulk Robot" <hulkci@huawei.com>
-Subject: [PATCH -next] media: omap3isp: Fix missing unlock in isp_subdev_notifier_complete()
-Date:   Wed, 7 Apr 2021 14:37:33 +0000
-Message-ID: <20210407143733.1608806-1-weiyongjun1@huawei.com>
-X-Mailer: git-send-email 2.25.1
+        Wed, 7 Apr 2021 10:28:16 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lU9A2-0003X8-PI; Wed, 07 Apr 2021 14:28:02 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Ariel Elior <aelior@marvell.com>,
+        Sudarsana Kalluru <skalluru@marvell.com>,
+        GR-everest-linux-l2@marvell.com,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Eilon Greenstein <eilong@broadcom.com>, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] bnx2x: Fix potential infinite loop
+Date:   Wed,  7 Apr 2021 15:28:02 +0100
+Message-Id: <20210407142802.495539-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.102.38]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Add the missing unlock before return from function
-isp_subdev_notifier_complete() in the init error
-handling case.
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: ba689d933361 ("media: omap3isp: Acquire graph mutex for graph traversal")
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+The for_each_tx_queue loop iterates with a u8 loop counter i and
+compares this with the loop upper limit of bp->num_queues that
+is an int type.  There is a potential infinite loop if bp->num_queues
+is larger than the u8 loop counter. Fix this by making the loop
+counter the same type as bp->num_queues.
+
+Addresses-Coverity: ("Infinite loop")
+Fixes: ad5afc89365e ("bnx2x: Separate VF and PF logic")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/media/platform/omap3isp/isp.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/omap3isp/isp.c b/drivers/media/platform/omap3isp/isp.c
-index 53025c8c7531..20f59c59ff8a 100644
---- a/drivers/media/platform/omap3isp/isp.c
-+++ b/drivers/media/platform/omap3isp/isp.c
-@@ -2037,8 +2037,10 @@ static int isp_subdev_notifier_complete(struct v4l2_async_notifier *async)
- 	mutex_lock(&isp->media_dev.graph_mutex);
+diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
+index 1a6ec1a12d53..edfbeb710ad4 100644
+--- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
++++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
+@@ -2959,7 +2959,8 @@ int bnx2x_nic_load(struct bnx2x *bp, int load_mode)
  
- 	ret = media_entity_enum_init(&isp->crashed, &isp->media_dev);
--	if (ret)
-+	if (ret) {
-+		mutex_unlock(&isp->media_dev.graph_mutex);
- 		return ret;
-+	}
+ int bnx2x_drain_tx_queues(struct bnx2x *bp)
+ {
+-	u8 rc = 0, cos, i;
++	u8 rc = 0, cos;
++	int i;
  
- 	list_for_each_entry(sd, &v4l2_dev->subdevs, list) {
- 		if (sd->notifier != &isp->notifier)
+ 	/* Wait until tx fastpath tasks complete */
+ 	for_each_tx_queue(bp, i) {
+-- 
+2.30.2
 
