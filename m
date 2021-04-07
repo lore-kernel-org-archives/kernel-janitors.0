@@ -2,110 +2,111 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13831C433ED
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 19:32:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 308B8C433ED
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 20:20:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DA6C66124B
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 19:32:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB3916120E
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 20:20:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345472AbhDGTcb (ORCPT
+        id S1346280AbhDGUUb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 7 Apr 2021 15:32:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58406 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345202AbhDGTc2 (ORCPT
+        Wed, 7 Apr 2021 16:20:31 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:51362 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234881AbhDGUUa (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 7 Apr 2021 15:32:28 -0400
-Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3427C06175F;
-        Wed,  7 Apr 2021 12:32:18 -0700 (PDT)
-Received: by mail-lj1-x22d.google.com with SMTP id 184so22077790ljf.9;
-        Wed, 07 Apr 2021 12:32:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=BGJNbfrqvXQ7YZKTbOhkcicRAhCvNB362hxy1D5Wp7I=;
-        b=eCGFsHJjM1Kn/fofJc5xWmawS6hTP0oJMLC1Ju0X6LDktS0MBvv5rZcrmmLQxsTecL
-         xDjpn+zcJrZriI42/ajIRrlsYaX8FUeSGVnah/xvVNm34KCIaQGieyCpTDjHmESojj94
-         gvc80nOUVMl+6q9pF8WKOCodnCEdH0Mfec+pPjJDR9G5aO54HZYEnWXogCn7T2Lk1Eo0
-         cZGLNlpp/Px98tLR+5yG1GSVddos1cX1lFulrnXNm9DTRk9yGsAoOJF7JFZhP/ZAxG3z
-         eyiCuuiZSQVkEyQEh9/znW18PD0yzWHwbWvdc0gDFkVb+kVLUVBjW0Zpk0+v7WpDxluq
-         f3cA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=BGJNbfrqvXQ7YZKTbOhkcicRAhCvNB362hxy1D5Wp7I=;
-        b=pdQ5YI3/8sOHl8PhS8WzJmKNJw9MjLZjXcnuwR+GqQbL27CwlvLVjPYc1E2lF6fw3w
-         uynX63zn3kj3g5DMt2tLdMeoqOrUF+3VXnir0VhaMr4iYIlAiGxYjSYpPZ/ljLrfU14Z
-         pQAVc2oEQZZb1KNLTkhkngbNGZPUKoPq3JGa1ilRhN+wa67jKC/IZrhGfwxXxPQq3A/4
-         labzhgc6Xpm6h0kj9MkyiaiY/vLvXYEwyp0t4T6x+4NxPZaH38t9sk1EndA9N87JQq4K
-         UnAaTcg1qskE4y5IDsRZ1dLNAB2kfXKPupCyHM22+aNxc/3NR1Og4YnPVZqWKl+iVFgT
-         Kr8g==
-X-Gm-Message-State: AOAM533K2rX/GtkXwx8Vpjc+5oTzUbSKnsEHeSuIS28zb0ENGSVimL8j
-        Mz/3sECKm6diuW7ZR8BGzik=
-X-Google-Smtp-Source: ABdhPJwQG4d5XvB4QyfkaW3I4rf6tge4vYmGDkdNtaK8ULajoegD4824Yb3YDClxehK30p1DtUkXEg==
-X-Received: by 2002:a2e:3913:: with SMTP id g19mr3146110lja.294.1617823937326;
-        Wed, 07 Apr 2021 12:32:17 -0700 (PDT)
-Received: from test-VirtualBox ([87.116.183.186])
-        by smtp.gmail.com with ESMTPSA id f16sm2500686lfm.155.2021.04.07.12.32.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Apr 2021 12:32:17 -0700 (PDT)
-Date:   Wed, 7 Apr 2021 21:32:14 +0200
-From:   Sergei Krainov <sergei.krainov.lkd@gmail.com>
-To:     Larry.Finger@lwfinger.net, florian.c.schilhabel@googlemail.com,
-        gregkh@linuxfoundation.org
-Cc:     linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] staging: rtl8712: remove unused variable from rtl871x_mlme.c
-Message-ID: <20210407193214.GA284402@test-VirtualBox>
+        Wed, 7 Apr 2021 16:20:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1617826820;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=WLJvdPFUIJ5ny5ARwp+JcVCf2mi3H4Cm9mgG+8OeioY=;
+        b=Y1HUqiWNikdqNJprpoaJYPb60asaD9zirQ1O8P8CRuySgwGEchN7XELom7ZEVdjuOUV4jE
+        3TWG5UrVqEm9yuKwJfI6a78DB/ha9FiW+rN8Uj9UQwd9YnjAc0FooUoVBWLFkdaCmbeZZa
+        e/q0Zcp+tX7q91KzqjB31PQcwj3w1u0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-590-DsyDga9MN9a9jyUCfVov6Q-1; Wed, 07 Apr 2021 16:20:16 -0400
+X-MC-Unique: DsyDga9MN9a9jyUCfVov6Q-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 54A0E91272;
+        Wed,  7 Apr 2021 20:20:14 +0000 (UTC)
+Received: from [10.40.193.103] (unknown [10.40.193.103])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3F7B519CAD;
+        Wed,  7 Apr 2021 20:20:09 +0000 (UTC)
+Message-ID: <4396d0b86d66afa1d3211403b48a15a4d0a03e55.camel@redhat.com>
+Subject: Re: [PATCH] net: sched: Fix potential infinite loop
+From:   Davide Caratti <dcaratti@redhat.com>
+To:     Colin King <colin.king@canonical.com>,
+        Jamal Hadi Salim <jhs@mojatatu.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Jiri Pirko <jiri@resnulli.us>,
+        "David S . Miller" <davem@davemloft.net>,
+        Gautam Ramakrishnan <gautamramk@gmail.com>,
+        "Sachin D . Patil" <sdp.sachin@gmail.com>,
+        Mohit Bhasi <mohitbhasi1998@gmail.com>,
+        Leslie Monis <lesliemonis@gmail.com>,
+        "Mohit P . Tahiliani" <tahiliani@nitk.edu.in>,
+        netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20210407163808.499027-1-colin.king@canonical.com>
+References: <20210407163808.499027-1-colin.king@canonical.com>
+Organization: red hat
+Content-Type: text/plain; charset="UTF-8"
+Date:   Wed, 07 Apr 2021 22:20:08 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Remove unused variable from rtl871x_mlme.c
+hello Colin, and thanks for your patch!
 
-Signed-off-by: Sergei Krainov <sergei.krainov.lkd@gmail.com>
----
- drivers/staging/rtl8712/rtl871x_mlme.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+On Wed, 2021-04-07 at 17:38 +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The for-loop iterates with a u16 loop counter idx and compares this
+> with the loop upper limit of q->flows_cnt that is a u32 type.
 
-diff --git a/drivers/staging/rtl8712/rtl871x_mlme.c b/drivers/staging/rtl8712/rtl871x_mlme.c
-index 8a97307fbbd6..4f41e321ea63 100644
---- a/drivers/staging/rtl8712/rtl871x_mlme.c
-+++ b/drivers/staging/rtl8712/rtl871x_mlme.c
-@@ -656,7 +656,7 @@ void r8712_joinbss_event_callback(struct _adapter *adapter, u8 *pbuf)
- 	struct sta_priv	*pstapriv = &adapter->stapriv;
- 	struct mlme_priv	*pmlmepriv = &adapter->mlmepriv;
- 	struct wlan_network	*cur_network = &pmlmepriv->cur_network;
--	struct wlan_network	*pcur_wlan = NULL, *ptarget_wlan = NULL;
-+	struct wlan_network	*ptarget_wlan = NULL;
- 	unsigned int		the_same_macaddr = false;
- 	struct wlan_network *pnetwork;
- 
-@@ -721,13 +721,6 @@ void r8712_joinbss_event_callback(struct _adapter *adapter, u8 *pbuf)
- 					    scanned_queue,
- 					    cur_network->network.MacAddress);
- 				} else {
--					pcur_wlan =
--					     r8712_find_network(&pmlmepriv->
--					     scanned_queue,
--					     cur_network->network.MacAddress);
--					if (pcur_wlan)
--						pcur_wlan->fixed = false;
--
- 					pcur_sta = r8712_get_stainfo(pstapriv,
- 					     cur_network->network.MacAddress);
- 					spin_lock_irqsave(&pstapriv->
+the value of 'flows_cnt' has 65535 as an upper bound in the ->init()
+function, so it should be safe to use an u16 for 'idx'. (BTW, the
+infinite loop loop was a real thing, see [1] :) ).
+
+> There is a potential infinite loop if q->flows_cnt is larger than
+> the u8 loop counter.
+
+(u16 loop counter, IIUC)
+
+>  Fix this by making the loop counter the same
+> type as q->flows_cnt.
+
+the same 'for' loop is in fq_pie_init() and fq_pie_reset(): so, in my
+opinion just changing fq_pie_timer() to fix an infinite loop is not very
+useful: 'idx' is also used as an index for q->flows[], that's allocated
+in [2]. Maybe (but I might be wrong) just allowing bigger values might
+potentially cause other covscan warnings. WDYT?
+
+> Addresses-Coverity: ("Infinite loop")
+> Fixes: ec97ecf1ebe4 ("net: sched: add Flow Queue PIE packet scheduler")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+thanks!
 -- 
-2.25.1
+davide
+
+
+[1] https://lore.kernel.org/netdev/416eb03a8ca70b5dfb5e882e2752b7fc13c42f92.1590537338.git.dcaratti@redhat.com/
+[2] https://elixir.bootlin.com/linux/latest/source/net/sched/sch_fq_pie.c#L417
+
 
