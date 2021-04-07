@@ -5,75 +5,73 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B700C433B4
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 14:28:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82099C43461
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 14:57:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6F49B6128D
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 14:28:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5577361363
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 14:57:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352861AbhDGO2U (ORCPT
+        id S1345683AbhDGO5U (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 7 Apr 2021 10:28:20 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:43767 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348517AbhDGO2Q (ORCPT
+        Wed, 7 Apr 2021 10:57:20 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:16387 "EHLO
+        szxga06-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1345663AbhDGO5T (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 7 Apr 2021 10:28:16 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1lU9A2-0003X8-PI; Wed, 07 Apr 2021 14:28:02 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Ariel Elior <aelior@marvell.com>,
-        Sudarsana Kalluru <skalluru@marvell.com>,
-        GR-everest-linux-l2@marvell.com,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Eilon Greenstein <eilong@broadcom.com>, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] bnx2x: Fix potential infinite loop
-Date:   Wed,  7 Apr 2021 15:28:02 +0100
-Message-Id: <20210407142802.495539-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.30.2
+        Wed, 7 Apr 2021 10:57:19 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
+        by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4FFnWF2d1gzlW8s;
+        Wed,  7 Apr 2021 22:55:21 +0800 (CST)
+Received: from localhost.localdomain (10.175.102.38) by
+ DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
+ 14.3.498.0; Wed, 7 Apr 2021 22:56:59 +0800
+From:   Wei Yongjun <weiyongjun1@huawei.com>
+To:     <weiyongjun1@huawei.com>, Christian Benvenuti <benve@cisco.com>,
+        Govindarajulu Varadarajan <_govind@gmx.com>,
+        Jakub Kicinski <kuba@kernel.org>
+CC:     <netdev@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: [PATCH net-next] enic: use module_pci_driver to simplify the code
+Date:   Wed, 7 Apr 2021 15:07:05 +0000
+Message-ID: <20210407150705.360840-1-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.102.38]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Use the module_pci_driver() macro to make the code simpler
+by eliminating module_init and module_exit calls.
 
-The for_each_tx_queue loop iterates with a u8 loop counter i and
-compares this with the loop upper limit of bp->num_queues that
-is an int type.  There is a potential infinite loop if bp->num_queues
-is larger than the u8 loop counter. Fix this by making the loop
-counter the same type as bp->num_queues.
-
-Addresses-Coverity: ("Infinite loop")
-Fixes: ad5afc89365e ("bnx2x: Separate VF and PF logic")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ .../net/ethernet/cisco/enic/enic_main.c | 13 +------------
+ 1 file changed, 1 insertion(+), 12 deletions(-)
 
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
-index 1a6ec1a12d53..edfbeb710ad4 100644
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
-@@ -2959,7 +2959,8 @@ int bnx2x_nic_load(struct bnx2x *bp, int load_mode)
+diff --git a/drivers/net/ethernet/cisco/enic/enic_main.c b/drivers/net/ethernet/cisco/enic/enic_main.c
+index f04ec53544ae..f48957a17c3a 100644
+--- a/drivers/net/ethernet/cisco/enic/enic_main.c
++++ b/drivers/net/ethernet/cisco/enic/enic_main.c
+@@ -3040,15 +3040,4 @@ static struct pci_driver enic_driver = {
+ 	.remove = enic_remove,
+ };
  
- int bnx2x_drain_tx_queues(struct bnx2x *bp)
- {
--	u8 rc = 0, cos, i;
-+	u8 rc = 0, cos;
-+	int i;
- 
- 	/* Wait until tx fastpath tasks complete */
- 	for_each_tx_queue(bp, i) {
--- 
-2.30.2
+-static int __init enic_init_module(void)
+-{
+-	return pci_register_driver(&enic_driver);
+-}
+-
+-static void __exit enic_cleanup_module(void)
+-{
+-	pci_unregister_driver(&enic_driver);
+-}
+-
+-module_init(enic_init_module);
+-module_exit(enic_cleanup_module);
++module_pci_driver(enic_driver);
 
