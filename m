@@ -5,38 +5,36 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45A01C43461
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 13:48:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBAACC43461
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 13:58:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0D54061382
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 13:48:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DB5B610A5
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 13:58:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347505AbhDGNso (ORCPT
+        id S1348007AbhDGN65 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 7 Apr 2021 09:48:44 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:42253 "EHLO
+        Wed, 7 Apr 2021 09:58:57 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:42572 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234087AbhDGNsn (ORCPT
+        with ESMTP id S1344125AbhDGN64 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 7 Apr 2021 09:48:43 -0400
+        Wed, 7 Apr 2021 09:58:56 -0400
 Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <colin.king@canonical.com>)
-        id 1lU8Xn-0000sO-QT; Wed, 07 Apr 2021 13:48:31 +0000
+        id 1lU8hc-0001U3-Sp; Wed, 07 Apr 2021 13:58:40 +0000
 From:   Colin King <colin.king@canonical.com>
-To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org
+To:     Jack Wang <jinpu.wang@cloud.ionos.com>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Viswas G <Viswas.G@microchip.com>, linux-scsi@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] media: venus: core,pm: fix potential infinite loop
-Date:   Wed,  7 Apr 2021 14:48:31 +0100
-Message-Id: <20210407134831.494351-1-colin.king@canonical.com>
+Subject: [PATCH][next] scsi: pm80xx: Fix potential infinite loop
+Date:   Wed,  7 Apr 2021 14:58:40 +0100
+Message-Id: <20210407135840.494747-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -48,40 +46,31 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 From: Colin Ian King <colin.king@canonical.com>
 
 The for-loop iterates with a u8 loop counter i and compares this
-with the loop upper limit of res->resets_num which is an unsigned
-int type.  There is a potential infinite loop if res->resets_num
-is larger than the u8 loop counter i. Fix this by making the loop
-counter the same type as res->resets_num.
+with the loop upper limit of pm8001_ha->max_q_num which is a u32
+type.  There is a potential infinite loop if pm8001_ha->max_q_num
+is larger than the u8 loop counter. Fix this by making the loop
+counter the same type as pm8001_ha->max_q_num.
 
 Addresses-Coverity: ("Infinite loop")
-Fixes: 3bca43585e22 ("media: venus: core,pm: Add handling for resets")
+Fixes: 65df7d1986a1 ("scsi: pm80xx: Fix chip initialization failure")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/media/platform/qcom/venus/pm_helpers.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/scsi/pm8001/pm8001_hwi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/qcom/venus/pm_helpers.c b/drivers/media/platform/qcom/venus/pm_helpers.c
-index dfe3ee84eeb6..5c0a9aa23e83 100644
---- a/drivers/media/platform/qcom/venus/pm_helpers.c
-+++ b/drivers/media/platform/qcom/venus/pm_helpers.c
-@@ -868,7 +868,7 @@ static void vcodec_domains_put(struct venus_core *core)
- static int core_resets_reset(struct venus_core *core)
+diff --git a/drivers/scsi/pm8001/pm8001_hwi.c b/drivers/scsi/pm8001/pm8001_hwi.c
+index d048455f4941..16edd84e7130 100644
+--- a/drivers/scsi/pm8001/pm8001_hwi.c
++++ b/drivers/scsi/pm8001/pm8001_hwi.c
+@@ -643,7 +643,7 @@ static void init_pci_device_addresses(struct pm8001_hba_info *pm8001_ha)
+  */
+ static int pm8001_chip_init(struct pm8001_hba_info *pm8001_ha)
  {
- 	const struct venus_resources *res = core->res;
--	unsigned char i;
-+	unsigned int i;
- 	int ret;
- 
- 	if (!res->resets_num)
-@@ -893,7 +893,7 @@ static int core_resets_get(struct venus_core *core)
- {
- 	struct device *dev = core->dev;
- 	const struct venus_resources *res = core->res;
--	unsigned char i;
-+	unsigned int i;
- 	int ret;
- 
- 	if (!res->resets_num)
+-	u8 i = 0;
++	u32 i = 0;
+ 	u16 deviceid;
+ 	pci_read_config_word(pm8001_ha->pdev, PCI_DEVICE_ID, &deviceid);
+ 	/* 8081 controllers need BAR shift to access MPI space
 -- 
 2.30.2
 
