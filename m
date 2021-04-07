@@ -2,117 +2,86 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6D62C433ED
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 13:07:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45A01C43461
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 13:48:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7EA8361279
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 13:07:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D54061382
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 13:48:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238275AbhDGNHV (ORCPT
+        id S1347505AbhDGNso (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 7 Apr 2021 09:07:21 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:1504 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233590AbhDGNHQ (ORCPT
+        Wed, 7 Apr 2021 09:48:44 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:42253 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234087AbhDGNsn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 7 Apr 2021 09:07:16 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 137D2uMn099195;
-        Wed, 7 Apr 2021 09:07:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
- subject : message-id : references : mime-version : content-type :
- content-transfer-encoding : in-reply-to; s=pp1;
- bh=SRzaWR+IRgqpnFF/lwZ2IoLOPZTIQfj893lxH0bxszw=;
- b=Pnu3z6LfLWqEn9Etmukm1oYwQRKUYFa6HmVy9GgNCJA86P0Bj8UMwku7bXwOLDerBl+S
- S80NXXGCqCx/ioC5P9P6JEra3dwkhWFDFSExP9DSeDqgZABWtnpffD+alYJTKgHU3ylq
- ardRcnbCPSoSzElZ4NsrnQn7FB9iZkbq8F1Yj/FwFS5oZxXwzezrJl7D8Z5YG1hKCgAW
- VLP+MWumzDASUIDOPIl8DZjadjgrHGEDTX1GtZuJgPChDdsOxZTKea1Jy840S48xF7b/
- zdmXxz25S8WkfXihtowcw4kv9pwenKN3fmmgx5T8rPnQqv3kcpaegvtvkYZj7RKsZ/vq bw== 
-Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 37rw7jh1e2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 07 Apr 2021 09:07:04 -0400
-Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
-        by ppma03ams.nl.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 137D30QO026851;
-        Wed, 7 Apr 2021 13:07:02 GMT
-Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
-        by ppma03ams.nl.ibm.com with ESMTP id 37rvbqgr17-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 07 Apr 2021 13:07:02 +0000
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 137D6cuu31981940
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 7 Apr 2021 13:06:38 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3D21E42041;
-        Wed,  7 Apr 2021 13:06:59 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D58684203F;
-        Wed,  7 Apr 2021 13:06:58 +0000 (GMT)
-Received: from osiris (unknown [9.171.27.208])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed,  7 Apr 2021 13:06:58 +0000 (GMT)
-Date:   Wed, 7 Apr 2021 15:06:57 +0200
-From:   Heiko Carstens <hca@linux.ibm.com>
-To:     "weiyongjun (A)" <weiyongjun1@huawei.com>
-Cc:     zhongbaisong <zhongbaisong@huawei.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>, kvm@vger.kernel.org,
-        linux-s390@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH -next] s390/protvirt: fix error return code in
- uv_info_init()
-Message-ID: <YG2ucbm3YziNrD2l@osiris>
-References: <2f7d62a4-3e75-b2b4-951b-75ef8ef59d16@huawei.com>
- <0210417d-23df-1fdc-2af8-b2664ed2c484@huawei.com>
+        Wed, 7 Apr 2021 09:48:43 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lU8Xn-0000sO-QT; Wed, 07 Apr 2021 13:48:31 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] media: venus: core,pm: fix potential infinite loop
+Date:   Wed,  7 Apr 2021 14:48:31 +0100
+Message-Id: <20210407134831.494351-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <0210417d-23df-1fdc-2af8-b2664ed2c484@huawei.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: pGbDLSZTBePRQus2mUi1CxIWkfJDjn9n
-X-Proofpoint-ORIG-GUID: pGbDLSZTBePRQus2mUi1CxIWkfJDjn9n
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
- definitions=2021-04-07_08:2021-04-07,2021-04-07 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 mlxscore=0
- mlxlogscore=999 malwarescore=0 lowpriorityscore=0 suspectscore=0
- phishscore=0 adultscore=0 priorityscore=1501 spamscore=0 impostorscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2104060000 definitions=main-2104070090
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Apr 07, 2021 at 08:48:19PM +0800, weiyongjun (A) wrote:
-> > Fix to return a negative error code from the error handling
-> > case instead of 0, as done elsewhere in this function.
-> > 
-> > Reported-by: Hulk Robot <hulkci@huawei.com>
-> > Signed-off-by: Baisong Zhong <zhongbaisong@huawei.com>
-> > ---
-> >  arch/s390/kernel/uv.c | 4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/arch/s390/kernel/uv.c b/arch/s390/kernel/uv.c
-> > index cbfbeab57c3b..370f664580af 100644
-> > --- a/arch/s390/kernel/uv.c
-> > +++ b/arch/s390/kernel/uv.c
-> > @@ -460,8 +460,10 @@ static int __init uv_info_init(void)
-> >          goto out_kobj;
-> > 
-> >      uv_query_kset = kset_create_and_add("query", NULL, uv_kobj);
-> > -    if (!uv_query_kset)
-> > +    if (!uv_query_kset) {
-> > +        rc = -ENOMEM;
-> >          goto out_ind_files;
-> > +    }
-> 
-> Your patch is corrupted, please resend with correct format.
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixed up, and applied anyway. Thanks.
+The for-loop iterates with a u8 loop counter i and compares this
+with the loop upper limit of res->resets_num which is an unsigned
+int type.  There is a potential infinite loop if res->resets_num
+is larger than the u8 loop counter i. Fix this by making the loop
+counter the same type as res->resets_num.
+
+Addresses-Coverity: ("Infinite loop")
+Fixes: 3bca43585e22 ("media: venus: core,pm: Add handling for resets")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/platform/qcom/venus/pm_helpers.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/platform/qcom/venus/pm_helpers.c b/drivers/media/platform/qcom/venus/pm_helpers.c
+index dfe3ee84eeb6..5c0a9aa23e83 100644
+--- a/drivers/media/platform/qcom/venus/pm_helpers.c
++++ b/drivers/media/platform/qcom/venus/pm_helpers.c
+@@ -868,7 +868,7 @@ static void vcodec_domains_put(struct venus_core *core)
+ static int core_resets_reset(struct venus_core *core)
+ {
+ 	const struct venus_resources *res = core->res;
+-	unsigned char i;
++	unsigned int i;
+ 	int ret;
+ 
+ 	if (!res->resets_num)
+@@ -893,7 +893,7 @@ static int core_resets_get(struct venus_core *core)
+ {
+ 	struct device *dev = core->dev;
+ 	const struct venus_resources *res = core->res;
+-	unsigned char i;
++	unsigned int i;
+ 	int ret;
+ 
+ 	if (!res->resets_num)
+-- 
+2.30.2
+
