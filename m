@@ -2,75 +2,126 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89FE7C433ED
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 03:01:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1D75C433ED
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 03:38:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6244A613C2
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 03:01:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A191613A7
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 03:38:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233823AbhDGDBy (ORCPT
+        id S243954AbhDGDi7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 6 Apr 2021 23:01:54 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:15928 "EHLO
-        szxga06-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231847AbhDGDBv (ORCPT
+        Tue, 6 Apr 2021 23:38:59 -0400
+Received: from smtprelay0111.hostedemail.com ([216.40.44.111]:33612 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S234337AbhDGDi6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 6 Apr 2021 23:01:51 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
-        by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4FFTdk224CzjYV0;
-        Wed,  7 Apr 2021 10:59:54 +0800 (CST)
-Received: from localhost.localdomain (10.175.102.38) by
- DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
- 14.3.498.0; Wed, 7 Apr 2021 11:01:30 +0800
-From:   Wei Yongjun <weiyongjun1@huawei.com>
-To:     <weiyongjun1@huawei.com>, Sanket Goswami <Sanket.Goswami@amd.com>,
-        "Jarkko Nikula" <jarkko.nikula@linux.intel.com>
-CC:     <linux-i2c@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH -next v2] i2c: designware: Fix return value check in navi_amd_register_client()
-Date:   Wed, 7 Apr 2021 03:11:37 +0000
-Message-ID: <20210407031137.2750993-1-weiyongjun1@huawei.com>
-X-Mailer: git-send-email 2.25.1
+        Tue, 6 Apr 2021 23:38:58 -0400
+Received: from omf15.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 8704E181D337B;
+        Wed,  7 Apr 2021 03:38:48 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf15.hostedemail.com (Postfix) with ESMTPA id 6CCE6C4182;
+        Wed,  7 Apr 2021 03:38:47 +0000 (UTC)
+Message-ID: <b56a44542a338583279893870ec819d4b1b4e23b.camel@perches.com>
+Subject: Re: [PATCH][next] erofs: fix uninitialized variable i used in a
+ while-loop
+From:   Joe Perches <joe@perches.com>
+To:     Gao Xiang <hsiangkao@redhat.com>,
+        Colin King <colin.king@canonical.com>
+Cc:     Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
+        linux-erofs@lists.ozlabs.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Tue, 06 Apr 2021 20:38:44 -0700
+In-Reply-To: <20210406235401.GA210667@xiangao.remote.csb>
+References: <20210406162718.429852-1-colin.king@canonical.com>
+         <20210406235401.GA210667@xiangao.remote.csb>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.38.1-1 
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.102.38]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
+X-Stat-Signature: ofx9em7xwsozzieswcpenrt3r3r95cat
+X-Rspamd-Server: rspamout05
+X-Rspamd-Queue-Id: 6CCE6C4182
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Session-ID: U2FsdGVkX19GKTF9FPXA2XYpIjjRK9qyadDR5X8MmkM=
+X-HE-Tag: 1617766727-223981
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-In case of error, the function i2c_new_client_device() returns
-ERR_PTR() and never returns NULL. The NULL test in the return
-value check should be replaced with IS_ERR().
+On Wed, 2021-04-07 at 07:54 +0800, Gao Xiang wrote:
+> Hi Colin,
+> 
+> On Tue, Apr 06, 2021 at 05:27:18PM +0100, Colin King wrote:
+> > From: Colin Ian King <colin.king@canonical.com>
+> > 
+> > The while-loop iterates until src is non-null or i is 3, however, the
+> > loop counter i is not intinitialied to zero, causing incorrect iteration
+> > counts.  Fix this by initializing it to zero.
+> > 
+> > Addresses-Coverity: ("Uninitialized scalar variable")
+> > Fixes: 1aa5f2e2feed ("erofs: support decompress big pcluster for lz4 backend")
+> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> 
+> Thank you very much for catching this! It looks good to me,
+> Reviewed-by: Gao Xiang <hsiangkao@redhat.com>
+> 
+> (btw, may I fold this into the original patchset? since such big pcluster
+>  patchset is just applied to for-next for further integration testing, and
+>  the commit id is not stable yet..)
+> 
+> Thanks,
+> Gao Xiang
 
-Fixes: 17631e8ca2d3 ("i2c: designware: Add driver support for AMD NAVI GPU")
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+I think this code is odd and would be more intelligible using
+a for loop like:
 ---
-v1 -> v2: fix description format.
----
- drivers/i2c/busses/i2c-designware-pcidrv.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/erofs/decompressor.c | 20 ++++++++------------
+ 1 file changed, 8 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-designware-pcidrv.c b/drivers/i2c/busses/i2c-designware-pcidrv.c
-index 7ca0017883a6..0f409a4c2da0 100644
---- a/drivers/i2c/busses/i2c-designware-pcidrv.c
-+++ b/drivers/i2c/busses/i2c-designware-pcidrv.c
-@@ -132,8 +132,8 @@ static int navi_amd_register_client(struct dw_i2c_dev *dev)
- 	info.irq = dev->irq;
+diff --git a/fs/erofs/decompressor.c b/fs/erofs/decompressor.c
+index 27aa6a99b371..5a64f4649414 100644
+--- a/fs/erofs/decompressor.c
++++ b/fs/erofs/decompressor.c
+@@ -286,28 +286,24 @@ static int z_erofs_decompress_generic(struct z_erofs_decompress_req *rq,
+ 	}
  
- 	dev->slave = i2c_new_client_device(&dev->adapter, &info);
--	if (!dev->slave)
--		return -ENODEV;
-+	if (IS_ERR(dev->slave))
-+		return PTR_ERR(dev->slave);
+ 	ret = alg->prepare_destpages(rq, pagepool);
+-	if (ret < 0) {
++	if (ret < 0)
+ 		return ret;
+-	} else if (ret) {
++	if (ret) {
+ 		dst = page_address(*rq->out);
+ 		dst_maptype = 1;
+ 		goto dstmap_out;
+ 	}
  
- 	return 0;
- }
+-	i = 0;
+-	while (1) {
++	for (i = 0; i < 3; i++) {
+ 		dst = vm_map_ram(rq->out, nrpages_out, -1);
+-
++		if (dst) {
++			dst_maptype = 2;
++			goto dstmap_out;
++		}
+ 		/* retry two more times (totally 3 times) */
+-		if (dst || ++i >= 3)
+-			break;
+ 		vm_unmap_aliases();
+ 	}
+-
+-	if (!dst)
+-		return -ENOMEM;
+-
+-	dst_maptype = 2;
++	return -ENOMEM;
+ 
+ dstmap_out:
+ 	ret = alg->decompress(rq, dst + rq->pageofs_out);
 
