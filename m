@@ -2,111 +2,86 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 308B8C433ED
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 20:20:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6E96C43460
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 20:27:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EB3916120E
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 20:20:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95FC561184
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 20:27:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346280AbhDGUUb (ORCPT
+        id S1356244AbhDGU1W (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 7 Apr 2021 16:20:31 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:51362 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234881AbhDGUUa (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 7 Apr 2021 16:20:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1617826820;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=WLJvdPFUIJ5ny5ARwp+JcVCf2mi3H4Cm9mgG+8OeioY=;
-        b=Y1HUqiWNikdqNJprpoaJYPb60asaD9zirQ1O8P8CRuySgwGEchN7XELom7ZEVdjuOUV4jE
-        3TWG5UrVqEm9yuKwJfI6a78DB/ha9FiW+rN8Uj9UQwd9YnjAc0FooUoVBWLFkdaCmbeZZa
-        e/q0Zcp+tX7q91KzqjB31PQcwj3w1u0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-590-DsyDga9MN9a9jyUCfVov6Q-1; Wed, 07 Apr 2021 16:20:16 -0400
-X-MC-Unique: DsyDga9MN9a9jyUCfVov6Q-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 54A0E91272;
-        Wed,  7 Apr 2021 20:20:14 +0000 (UTC)
-Received: from [10.40.193.103] (unknown [10.40.193.103])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3F7B519CAD;
-        Wed,  7 Apr 2021 20:20:09 +0000 (UTC)
-Message-ID: <4396d0b86d66afa1d3211403b48a15a4d0a03e55.camel@redhat.com>
-Subject: Re: [PATCH] net: sched: Fix potential infinite loop
-From:   Davide Caratti <dcaratti@redhat.com>
+        Wed, 7 Apr 2021 16:27:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57220 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1356310AbhDGU06 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 7 Apr 2021 16:26:58 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 507516100A;
+        Wed,  7 Apr 2021 20:26:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1617827208;
+        bh=4XfeJk66eQSMa2rKurHsDyJBMwgllEefbptPpEFUsjo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=sMFtJcImqn5uuRWjzhKCc6apO3r+g24/MtOnMFnfXtzYbbDwMYcQb3SIH4IKAzbBr
+         33rVHMig8StPzorXPMGrgMULgHlvv8JVxcO3857237DGDpYWRTgPcul6X7uz6Scphu
+         cYK2wPvg/nMnFhNPMUDmyczcwxqhRKpCbh8KHADt/P9vRBnC2aVkWsneydE2rbYUQp
+         GnvZw9gPYhp02/tiD5QKmEHfHGcCoKpC81cNUBck8Bgo64BSwTqCBtQulZoaop9nZp
+         i5QZOYMqmZHlkbEuxeYTvIWYZ67oEmLLgzAjdEHLil3JiUc2ODWxZH0LJvgDlQnfoY
+         3TxuZfLtE7X4A==
+From:   Mark Brown <broonie@kernel.org>
 To:     Colin King <colin.king@canonical.com>,
-        Jamal Hadi Salim <jhs@mojatatu.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Jiri Pirko <jiri@resnulli.us>,
-        "David S . Miller" <davem@davemloft.net>,
-        Gautam Ramakrishnan <gautamramk@gmail.com>,
-        "Sachin D . Patil" <sdp.sachin@gmail.com>,
-        Mohit Bhasi <mohitbhasi1998@gmail.com>,
-        Leslie Monis <lesliemonis@gmail.com>,
-        "Mohit P . Tahiliani" <tahiliani@nitk.edu.in>,
-        netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20210407163808.499027-1-colin.king@canonical.com>
-References: <20210407163808.499027-1-colin.king@canonical.com>
-Organization: red hat
-Content-Type: text/plain; charset="UTF-8"
-Date:   Wed, 07 Apr 2021 22:20:08 +0200
+        Guru Das Srinagesh <gurus@codeaurora.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH][next] regmap-irq: Fix dereference of a potentially null d->virt_buf
+Date:   Wed,  7 Apr 2021 21:26:20 +0100
+Message-Id: <161782707594.42848.5982836082039966334.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20210406164002.430221-1-colin.king@canonical.com>
+References: <20210406164002.430221-1-colin.king@canonical.com>
 MIME-Version: 1.0
-User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-hello Colin, and thanks for your patch!
+On Tue, 6 Apr 2021 17:40:02 +0100, Colin King wrote:
+> The clean up of struct d can potentiallly index into a null array
+> d->virt_buf causing errorenous pointer dereferencing issues on
+> kfree calls.  Fix this by adding a null check on d->virt_buf before
+> attempting to traverse the array to kfree the objects.
 
-On Wed, 2021-04-07 at 17:38 +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The for-loop iterates with a u16 loop counter idx and compares this
-> with the loop upper limit of q->flows_cnt that is a u32 type.
+Applied to
 
-the value of 'flows_cnt' has 65535 as an upper bound in the ->init()
-function, so it should be safe to use an u16 for 'idx'. (BTW, the
-infinite loop loop was a real thing, see [1] :) ).
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git for-next
 
-> There is a potential infinite loop if q->flows_cnt is larger than
-> the u8 loop counter.
+Thanks!
 
-(u16 loop counter, IIUC)
+[1/1] regmap-irq: Fix dereference of a potentially null d->virt_buf
+      commit: 14e13b1ce92ea278fc0d7bb95b340b46cff624ab
 
->  Fix this by making the loop counter the same
-> type as q->flows_cnt.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-the same 'for' loop is in fq_pie_init() and fq_pie_reset(): so, in my
-opinion just changing fq_pie_timer() to fix an infinite loop is not very
-useful: 'idx' is also used as an index for q->flows[], that's allocated
-in [2]. Maybe (but I might be wrong) just allowing bigger values might
-potentially cause other covscan warnings. WDYT?
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-> Addresses-Coverity: ("Infinite loop")
-> Fixes: ec97ecf1ebe4 ("net: sched: add Flow Queue PIE packet scheduler")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-thanks!
--- 
-davide
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-
-[1] https://lore.kernel.org/netdev/416eb03a8ca70b5dfb5e882e2752b7fc13c42f92.1590537338.git.dcaratti@redhat.com/
-[2] https://elixir.bootlin.com/linux/latest/source/net/sched/sch_fq_pie.c#L417
-
-
+Thanks,
+Mark
