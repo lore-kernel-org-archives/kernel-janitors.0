@@ -2,50 +2,47 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF4CDC43461
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 22:10:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2287C43462
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 22:10:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A1FEB61205
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 22:10:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CCE26121E
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 22:10:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229743AbhDGWKX (ORCPT
+        id S229830AbhDGWKZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 7 Apr 2021 18:10:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50874 "EHLO mail.kernel.org"
+        Wed, 7 Apr 2021 18:10:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50878 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229640AbhDGWKW (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        id S229661AbhDGWKW (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
         Wed, 7 Apr 2021 18:10:22 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id F067761353;
-        Wed,  7 Apr 2021 22:10:11 +0000 (UTC)
+Received: by mail.kernel.org (Postfix) with ESMTPS id 0687C61246;
+        Wed,  7 Apr 2021 22:10:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1617833412;
-        bh=MbeWD88f8jD0gLyIm+8WMDx6sspBJX9rWdchSIgUtEk=;
+        bh=6URSbQ0HxHQgYcGG9yxRjsCPAW6i/nYmWNvpowpKs2I=;
         h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=X8xWWYTJH9c1NnC8n0SVZVMi41apHOxN08RTNuIYH67GBb9/nrPuMD++GisENSifS
-         /q3ReuDCw2eI5gSlL+XQY3e+DG53PlSsN8+epaWsPbVAXTFNmH+NDFTKq/zn5fvq67
-         DF9EDVi9UP8TTMRHm/wVP7EQvbvHiPABYpR7Wf5pwkN/SPvBxAabb7AVv+R5ep55Ou
-         z8fR2PYJ5aQBaNSZniDniIOAVgODzWUo0uxPs1V4mmcTxfpVZ7bhJptj2RfhvK7YEe
-         2Bbahnu4NpvYLyUNigEJ6FSQT78nSxE52LS/BCd9IkTZPoUTIqTR1SCeZ7izY7OCgt
-         GQWwLXAb0kR2Q==
+        b=UvH6REGDx2r52lJfyld4J9++DrsSpVy6Q2dcbeuTr6bgTBcw+Xt9vUW351RZyO3pb
+         x/4dELwnUFvqDOu2VEr+8KzbfrjEhzBWcC63Cvo5cbTcHBSo/DN4xu7NM2/O8f6H+L
+         cPaqS0hi3HlxCg/2SVRhW5gCnpmbMNzRLmJmiIDchEKu/uh7nlKUlAmOor4rBeQNQB
+         uoJPEzz1RbxFE9rnA3Upt+ryfpmVH8nw5LLcy22efofaAgQxQ+y1bMjBoRnwHwOMvh
+         Qi8nPuCSwECdv6HRhHGGp3LK6HXPShsIMChogHsOpADEyAVEeclYqJrq6KGxqkKivC
+         cvThetZAuTTOA==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] liquidio: Fix unintented sign extension of a left shift of a
- u16
+Subject: Re: [PATCH] xircom: remove redundant error check on variable err
 From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <161783341195.5631.6736576843347914096.git-patchwork-notify@kernel.org>
+Message-Id: <161783341199.5631.9452380132960022895.git-patchwork-notify@kernel.org>
 Date:   Wed, 07 Apr 2021 22:10:11 +0000
-References: <20210407101248.485307-1-colin.king@canonical.com>
-In-Reply-To: <20210407101248.485307-1-colin.king@canonical.com>
+References: <20210407093922.484571-1-colin.king@canonical.com>
+In-Reply-To: <20210407093922.484571-1-colin.king@canonical.com>
 To:     Colin King <colin.king@canonical.com>
-Cc:     dchickles@marvell.com, sburla@marvell.com, fmanlunas@marvell.com,
-        davem@davemloft.net, kuba@kernel.org,
-        rvatsavayi@caviumnetworks.com, netdev@vger.kernel.org,
+Cc:     davem@davemloft.net, kuba@kernel.org, netdev@vger.kernel.org,
         kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
@@ -55,21 +52,20 @@ Hello:
 
 This patch was applied to netdev/net-next.git (refs/heads/master):
 
-On Wed,  7 Apr 2021 11:12:48 +0100 you wrote:
+On Wed,  7 Apr 2021 10:39:22 +0100 you wrote:
 > From: Colin Ian King <colin.king@canonical.com>
 > 
-> The macro CN23XX_PEM_BAR1_INDEX_REG is being used to shift oct->pcie_port
-> (a u16) left 24 places. There are two subtle issues here, first the
-> shift gets promoted to an signed int and then sign extended to a u64.
-> If oct->pcie_port is 0x80 or more then the upper bits get sign extended
-> to 1. Secondly shfiting a u16 24 bits will lead to an overflow so it
-> needs to be cast to a u64 for all the bits to not overflow.
+> The error check on err is always false as err is always 0 at the
+> port_found label. The code is redundant and can be removed.
+> 
+> Addresses-Coverity: ("Logically dead code")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > 
 > [...]
 
 Here is the summary with links:
-  - liquidio: Fix unintented sign extension of a left shift of a u16
-    https://git.kernel.org/netdev/net-next/c/298b58f00c0f
+  - xircom: remove redundant error check on variable err
+    https://git.kernel.org/netdev/net-next/c/7b3ae17f0f68
 
 You are awesome, thank you!
 --
