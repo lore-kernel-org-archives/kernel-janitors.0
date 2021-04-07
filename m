@@ -2,105 +2,162 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.5 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8CA3C433ED
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 05:23:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 647E9C433B4
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 05:40:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AB30E6113D
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 05:23:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A2F2613C6
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 05:40:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345106AbhDGFXa (ORCPT
+        id S233168AbhDGFkp (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 7 Apr 2021 01:23:30 -0400
-Received: from mail-wr1-f41.google.com ([209.85.221.41]:38428 "EHLO
-        mail-wr1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229603AbhDGFX3 (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 7 Apr 2021 01:23:29 -0400
-Received: by mail-wr1-f41.google.com with SMTP id i18so13017315wrm.5;
-        Tue, 06 Apr 2021 22:23:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=R1Tk7awH6UTxd/lzNQnn/DZAul8Yhd6wTJKqghmNytw=;
-        b=aIQ4nuGTdM5FG/ImkgZMWd/Rn8Si3t3A6h3tby5psMcmQhC9O0bEX9g02dppnzThYi
-         9rwRo/cxPcVu9YHHMDCGLKem0sC+N0ehlxuroPcxTlNKup31gcgYAsLeHOF0vFVxEd4v
-         uhSW7+G6SFZYMKDn7Wlbs1kIqq4fBrE3VlPkjSYJLEFAPdv6fzRYyVlFeWSs6Kzm7VXb
-         WvLTfeeAZEIlw8jGtxMAcbunTuFYtEWxYSLwIIsNsFClHKJ6A+v8Xztpfj/Jv/OS9xl7
-         Az03batqitfVoGQ47j90SpqBuYTtDRmZ4N2ZvEGN+PZ1KLSpcIaMnbjsCWTOgpNKptA8
-         tGZw==
-X-Gm-Message-State: AOAM532p6FB+iYy00bHbC4YHz2WMAKTabviEG5lHwIChhnAQvx/vbdrD
-        hND6P6FclB5G0mZVJEW2sNwr6ymzGuQ=
-X-Google-Smtp-Source: ABdhPJwBm/I3kfiql/BfKpIHmKDJBhsDLKUkYYp2aDe2V2ACFrVzJd0ou0rELeBQXv79bIqYHJs8SQ==
-X-Received: by 2002:adf:e843:: with SMTP id d3mr2047742wrn.56.1617772997840;
-        Tue, 06 Apr 2021 22:23:17 -0700 (PDT)
-Received: from [192.168.1.49] (185-219-167-24-static.vivo.cz. [185.219.167.24])
-        by smtp.gmail.com with ESMTPSA id d20sm6261283wmd.48.2021.04.06.22.23.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Apr 2021 22:23:17 -0700 (PDT)
-Subject: Re: [PATCH -next] tty: n_gsm: use DEFINE_SPINLOCK() for spinlock
-To:     Huang Guobin <huangguobin4@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <1617710163-48158-1-git-send-email-huangguobin4@huawei.com>
-From:   Jiri Slaby <jirislaby@kernel.org>
-Message-ID: <d6776a2e-15da-162d-5732-364dfda0a3b6@kernel.org>
-Date:   Wed, 7 Apr 2021 07:23:16 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        Wed, 7 Apr 2021 01:40:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40214 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229558AbhDGFkp (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 7 Apr 2021 01:40:45 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id AD097613C0;
+        Wed,  7 Apr 2021 05:40:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1617774036;
+        bh=1XZqIx6SDJy9lK+nO0VwaLN+iUjNHhA/ArlJSIl3ljo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=xoGkVLoXvJNh3XlnGqJyeiXaD8SRMrd+VXkZihtDE1peRfYWMq+extQsBidMHAMh6
+         NOKLHwyINIZ5qtzNU1PYmRBKh2vOx11QkT2cb45cgqZbE+Y6KjatF4Gkkp3vNCkhR3
+         ONcjDXD/Jk2smbQyAv7FA+Bkkhx6xlIbR+X/kAlM=
+Date:   Wed, 7 Apr 2021 07:40:33 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Sergei Krainov <sergei.krainov.lkd@gmail.com>
+Cc:     Larry.Finger@lwfinger.net, florian.c.schilhabel@googlemail.com,
+        linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] staging: rtl8712: avoid multiple line dereference
+Message-ID: <YG1F0UoHuuGXctim@kroah.com>
+References: <20210406231517.GA30925@test-VirtualBox>
 MIME-Version: 1.0
-In-Reply-To: <1617710163-48158-1-git-send-email-huangguobin4@huawei.com>
-Content-Type: text/plain; charset=iso-8859-2; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210406231517.GA30925@test-VirtualBox>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 06. 04. 21, 13:56, Huang Guobin wrote:
-> From: Guobin Huang <huangguobin4@huawei.com>
+On Wed, Apr 07, 2021 at 01:15:17AM +0200, Sergei Krainov wrote:
+> fix post-commit hook checkpatch issues:
 > 
-> spinlock can be initialized automatically with DEFINE_SPINLOCK()
-> rather than explicitly calling spin_lock_init().
+> WARNING: Avoid multiple line dereference - prefer 'adapter->mlmepriv.cur_network.network.InfrastructureMode'
+> +			adapter->mlmepriv.cur_network.network.
+> +			InfrastructureMode)
 > 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Guobin Huang <huangguobin4@huawei.com>
-
-Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
-
-> ---
->   drivers/tty/n_gsm.c | 4 +---
->   1 file changed, 1 insertion(+), 3 deletions(-)
+> WARNING: Avoid multiple line dereference - prefer 'adapter->registrypriv.dev_network.MacAddress'
+> +						 adapter->registrypriv.
+> +							dev_network.MacAddress;
 > 
-> diff --git a/drivers/tty/n_gsm.c b/drivers/tty/n_gsm.c
-> index 9e12f9cb1a98..d60cffc70a0c 100644
-> --- a/drivers/tty/n_gsm.c
-> +++ b/drivers/tty/n_gsm.c
-> @@ -266,7 +266,7 @@ struct gsm_mux {
->   
->   #define MAX_MUX		4			/* 256 minors */
->   static struct gsm_mux *gsm_mux[MAX_MUX];	/* GSM muxes */
-> -static spinlock_t gsm_mux_lock;
-> +static DEFINE_SPINLOCK(gsm_mux_lock);
->   
->   static struct tty_driver *gsm_tty_driver;
->   
-> @@ -3257,8 +3257,6 @@ static int __init gsm_init(void)
->   	gsm_tty_driver->init_termios.c_lflag &= ~ECHO;
->   	tty_set_operations(gsm_tty_driver, &gsmtty_ops);
->   
-> -	spin_lock_init(&gsm_mux_lock);
-> -
->   	if (tty_register_driver(gsm_tty_driver)) {
->   		put_tty_driver(gsm_tty_driver);
->   		tty_unregister_ldisc(N_GSM0710);
+> WARNING: Avoid multiple line dereference - prefer 'pnetwork->network.Configuration.FHConfig.DwellTime'
+> +		 le32_to_cpu(pnetwork->network.Configuration.FHConfig.
+> +			     DwellTime);
+> 
+> WARNING: Avoid multiple line dereference - prefer 'pnetwork->network.Configuration.FHConfig.HopPattern'
+> +		 le32_to_cpu(pnetwork->network.Configuration.
+> +			     FHConfig.HopPattern);
+> 
+> WARNING: Avoid multiple line dereference - prefer 'pmlmepriv->scanned_queue'
+> +					    r8712_find_network(&pmlmepriv->
+> +					    scanned_queue,
+> 
+> WARNING: Avoid multiple line dereference - prefer 'pmlmepriv->scanned_queue'
+> +					     r8712_find_network(&pmlmepriv->
+> +					     scanned_queue,
+> 
+> WARNING: Avoid multiple line dereference - prefer 'pstapriv->sta_hash_lock'
+> +					spin_lock_irqsave(&pstapriv->
+> +						sta_hash_lock, irqL2);
+> 
+> WARNING: Avoid multiple line dereference - prefer 'pstapriv->sta_hash_lock'
+> +					spin_unlock_irqrestore(&(pstapriv->
+> +						sta_hash_lock), irqL2);
+> 
+> WARNING: Avoid multiple line dereference - prefer 'pmlmepriv->scanned_queue'
+> +						 r8712_find_network(&pmlmepriv->
+> +						 scanned_queue,
+> 
+> WARNING: Avoid multiple line dereference - prefer 'pnetwork->network.MacAddress'
+> +						 pnetwork->network.
+> +						 MacAddress);
+> 
+> WARNING: Avoid multiple line dereference - prefer 'pmlmepriv->scanned_queue'
+> +				ptarget_wlan = r8712_find_network(&pmlmepriv->
+> +						scanned_queue,
+> 
+> WARNING: Avoid multiple line dereference - prefer 'adapter->securitypriv.AuthAlgrthm'
+> +					if (adapter->securitypriv.
+> +					    AuthAlgrthm == 2) {
+> 
+> WARNING: Avoid multiple line dereference - prefer 'adapter->securitypriv.binstallGrpkey'
+> +						adapter->securitypriv.
+> +							binstallGrpkey =
+> 
+> WARNING: Avoid multiple line dereference - prefer 'adapter->securitypriv.busetkipkey'
+> +						adapter->securitypriv.
+> +							busetkipkey =
+> 
+> WARNING: Avoid multiple line dereference - prefer 'adapter->securitypriv.bgrpkey_handshake'
+> +						adapter->securitypriv.
+> +							bgrpkey_handshake =
+> 
+> WARNING: Avoid multiple line dereference - prefer 'adapter->securitypriv.PrivacyAlgrthm'
+> +							 adapter->securitypriv.
+> +							 PrivacyAlgrthm;
+> 
+> WARNING: Avoid multiple line dereference - prefer 'ptarget_sta->x_UncstKey'
+> +						memset((u8 *)&ptarget_sta->
+> +							 x_UncstKey,
+> 
+> WARNING: Avoid multiple line dereference - prefer 'ptarget_sta->tkiprxmickey'
+> +						memset((u8 *)&ptarget_sta->
+> +							 tkiprxmickey,
+> 
+> WARNING: Avoid multiple line dereference - prefer 'ptarget_sta->tkiptxmickey'
+> +						memset((u8 *)&ptarget_sta->
+> +							 tkiptxmickey,
+> 
+> WARNING: Avoid multiple line dereference - prefer 'ptarget_sta->txpn'
+> +						memset((u8 *)&ptarget_sta->
+> +							 txpn, 0,
+> 
+> WARNING: Avoid multiple line dereference - prefer 'ptarget_sta->rxpn'
+> +						memset((u8 *)&ptarget_sta->
+> +							 rxpn, 0,
+> 
+> WARNING: Avoid multiple line dereference - prefer 'tgt_network->network'
+> +				r8712_get_wlan_bssid_ex_sz(&tgt_network->
+> +							network));
+> 
+> WARNING: Avoid multiple line dereference - prefer 'pmlmepriv->cur_network.network'
+> +					if (is_same_network(&pmlmepriv->
+> +					    cur_network.network,
 > 
 
+That's a lot of information we don't need in a changelog text, please
+summarize when possible :)
 
--- 
-js
+>  					ptarget_wlan =
+> -						 r8712_find_network(&pmlmepriv->
+> -						 scanned_queue,
+> -						 pnetwork->network.
+> -						 MacAddress);
+> +						 r8712_find_network(&pmlmepriv->scanned_queue,
+> +						 pnetwork->network.MacAddress);
+
+As bad as the original line here is, this isn't all that much better at
+all, right?  How about working to fix the huge indentation levels in
+this function instead, which will resolve all of this mess properly?
+That would be a much better way to solve this.
+
+thanks,
+
+greg k-h
