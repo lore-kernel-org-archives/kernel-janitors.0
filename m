@@ -7,44 +7,46 @@ X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6E96C43460
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 20:27:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F40EFC433ED
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 20:27:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 95FC561184
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 20:27:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0E1B61184
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 20:27:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356244AbhDGU1W (ORCPT
+        id S1356089AbhDGU1c (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 7 Apr 2021 16:27:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57220 "EHLO mail.kernel.org"
+        Wed, 7 Apr 2021 16:27:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57396 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1356310AbhDGU06 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 7 Apr 2021 16:26:58 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 507516100A;
-        Wed,  7 Apr 2021 20:26:48 +0000 (UTC)
+        id S1356203AbhDGU1E (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 7 Apr 2021 16:27:04 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id ACE3A6120E;
+        Wed,  7 Apr 2021 20:26:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617827208;
-        bh=4XfeJk66eQSMa2rKurHsDyJBMwgllEefbptPpEFUsjo=;
+        s=k20201202; t=1617827214;
+        bh=Ij6ZUSk87LHtlya9NtJcg/cBO4fTPWuZWYabbRGBlaE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sMFtJcImqn5uuRWjzhKCc6apO3r+g24/MtOnMFnfXtzYbbDwMYcQb3SIH4IKAzbBr
-         33rVHMig8StPzorXPMGrgMULgHlvv8JVxcO3857237DGDpYWRTgPcul6X7uz6Scphu
-         cYK2wPvg/nMnFhNPMUDmyczcwxqhRKpCbh8KHADt/P9vRBnC2aVkWsneydE2rbYUQp
-         GnvZw9gPYhp02/tiD5QKmEHfHGcCoKpC81cNUBck8Bgo64BSwTqCBtQulZoaop9nZp
-         i5QZOYMqmZHlkbEuxeYTvIWYZ67oEmLLgzAjdEHLil3JiUc2ODWxZH0LJvgDlQnfoY
-         3TxuZfLtE7X4A==
+        b=WMnOe9US2i44gARrRrNjw8DCv9yqyqhT8fnNzMtwTvdsS0RS7kedGfcjX8SZ5/qOF
+         1ZXE2iGQ95eThSpGG0IhVVULAd7fE++OoT14R57xo9zsn4KwY1zh2RgVk17xXzQMYA
+         ifUbOhHUSJfc3oQ8dtKWAR1uZYtN6IL8XROfjMTM2RjcPPOKS6yhSmI6uLvbhrE611
+         3ZZANeoNKtN1HeL7VHmkhGqprI9OZFMy7MTKz3hMLE/PLzbQT0pDK0QDsvMAG1PrZG
+         ILrWt9/yzUwSDBF/KxkA7qUSho+UYIkIgBq5wg+dD0GFIshrmrEsKhejsjrjeWd6yh
+         ZW7ndKiU7Xu2Q==
 From:   Mark Brown <broonie@kernel.org>
-To:     Colin King <colin.king@canonical.com>,
-        Guru Das Srinagesh <gurus@codeaurora.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Banajit Goswami <bgoswami@codeaurora.org>,
+        Takashi Iwai <tiwai@suse.com>, Ye Bin <yebin10@huawei.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>
 Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH][next] regmap-irq: Fix dereference of a potentially null d->virt_buf
-Date:   Wed,  7 Apr 2021 21:26:20 +0100
-Message-Id: <161782707594.42848.5982836082039966334.b4-ty@kernel.org>
+        Hulk Robot <hulkci@huawei.com>,
+        kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Re: [PATCH -next] ASoC: codecs: lpass-va-macro: constify static struct snd_soc_dai_ops
+Date:   Wed,  7 Apr 2021 21:26:22 +0100
+Message-Id: <161782703230.42756.14460019912472316913.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20210406164002.430221-1-colin.king@canonical.com>
-References: <20210406164002.430221-1-colin.king@canonical.com>
+In-Reply-To: <20210407074218.3051979-1-yebin10@huawei.com>
+References: <20210407074218.3051979-1-yebin10@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -52,20 +54,19 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, 6 Apr 2021 17:40:02 +0100, Colin King wrote:
-> The clean up of struct d can potentiallly index into a null array
-> d->virt_buf causing errorenous pointer dereferencing issues on
-> kfree calls.  Fix this by adding a null check on d->virt_buf before
-> attempting to traverse the array to kfree the objects.
+On Wed, 7 Apr 2021 15:42:18 +0800, Ye Bin wrote:
+> The snd_soc_dai_ops structures is only stored in the ops field of a
+> snd_soc_dai_driver structure, so make the snd_soc_dai_ops structure
+> const to allow the compiler to put it in read-only memory.
 
 Applied to
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git for-next
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
 Thanks!
 
-[1/1] regmap-irq: Fix dereference of a potentially null d->virt_buf
-      commit: 14e13b1ce92ea278fc0d7bb95b340b46cff624ab
+[1/1] ASoC: codecs: lpass-va-macro: constify static struct snd_soc_dai_ops
+      commit: af4b54127b2b8a69f0f50e54cf099f26b82c9244
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
