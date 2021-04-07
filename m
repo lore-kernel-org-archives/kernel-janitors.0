@@ -2,73 +2,63 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-21.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBE0BC433B4
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 22:20:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE436C433B4
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 23:29:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CDBEA61279
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 22:20:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B69361279
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 23:29:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231246AbhDGWUv (ORCPT
+        id S229558AbhDGX3y (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 7 Apr 2021 18:20:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53502 "EHLO mail.kernel.org"
+        Wed, 7 Apr 2021 19:29:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35566 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229793AbhDGWUk (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 7 Apr 2021 18:20:40 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 47A2D61369;
-        Wed,  7 Apr 2021 22:20:30 +0000 (UTC)
+        id S229459AbhDGX3x (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 7 Apr 2021 19:29:53 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 95A7C61246;
+        Wed,  7 Apr 2021 23:29:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617834030;
-        bh=UqrQT7ev9ck9uLtB9T7pI/UcQ1D8TKXKEMZCL9ESY6U=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=BxNGbzJwEHX29kaLhoPiJ/aMPwUS4QqbWeyaFNZSbwqgS0xnr7PKyPcivguLLVY4L
-         Xj8Rr00G2V+Bl4Da447XSfoZRr8QASdpDv5HIqFDYvk8H5grZmaKhhdxWVUmSv0p3c
-         OPgw/ifgUMbJC2R9fT1EnIaFP4tSpwrLkcGKsPhJpcK60mcNtOwABogGxpuLfpkvyD
-         EtYMpAbREkcDhn+EhPGN7oyeWeOFAa1Viiq1dGgnfVXotvZ7WM80/ubMlrFgeJim5/
-         rrohVSjMO/bYubKzk/k2nGINfQqg+lBj9/xkxwvYq06SYZxkaYH29VVbNy9ie/9GOh
-         X3gMDs40kzvyQ==
+        s=k20201202; t=1617838183;
+        bh=cJogNOH2U7LRtGhANiNxmCvrETxMdec2vVMiimauulc=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=Om8sBkAW3b18eJq6jaEI7NfnbGqjmmXMqAzPz21ONqkPdUE0dC98J7ArDA93hP7Hr
+         Qki2qFxvgtxnaJFFt3gjYW6OcTH1U4BoRgiy68rsR/ckku97PDRplQCatQH9I1UEAK
+         ILeffM+iOPo3bybhsUdiWU9s5kLZKs06b6+Mhvwm+wEfToOc/HimtMY2PScvWvX8zf
+         RRJqcdvRiyfAFAMMI31maVZel1h6QrrhgH70Kfdv2VugiGyJdaAMI9jD1sYMN7iTN1
+         KIIF9HT7qwReV+Dst2/70IUNdhlpNnqCQVolP3Hgg5vY8I0SNMPtkpIMQ0pGqzQf1x
+         j8E2HfaW6S1rQ==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] net: sundance: use module_pci_driver to simplify the
- code
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <161783403025.11274.3729728433464332126.git-patchwork-notify@kernel.org>
-Date:   Wed, 07 Apr 2021 22:20:30 +0000
-References: <20210407150709.365762-1-weiyongjun1@huawei.com>
-In-Reply-To: <20210407150709.365762-1-weiyongjun1@huawei.com>
-To:     Wei Yongjun <weiyongjun1@huawei.com>
-Cc:     kda@linux-powerpc.org, kuba@kernel.org, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20210406170115.430990-1-colin.king@canonical.com>
+References: <20210406170115.430990-1-colin.king@canonical.com>
+Subject: Re: [PATCH] clk: socfpga: arria10: Fix memory leak of socfpga_clk on error return
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Colin King <colin.king@canonical.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org
+Date:   Wed, 07 Apr 2021 16:29:42 -0700
+Message-ID: <161783818236.3790633.17349674576901992073@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
-
-This patch was applied to netdev/net-next.git (refs/heads/master):
-
-On Wed, 7 Apr 2021 15:07:09 +0000 you wrote:
-> Use the module_pci_driver() macro to make the code simpler
-> by eliminating module_init and module_exit calls.
-> 
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Quoting Colin King (2021-04-06 10:01:15)
+> From: Colin Ian King <colin.king@canonical.com>
+>=20
+> There is an error return path that is not kfree'ing socfpga_clk leading
+> to a memory leak. Fix this by adding in the missing kfree call.
+>=20
+> Addresses-Coverity: ("Resource leak")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
->  drivers/net/ethernet/dlink/sundance.c | 15 +--------------
->  1 file changed, 1 insertion(+), 14 deletions(-)
 
-Here is the summary with links:
-  - [net-next] net: sundance: use module_pci_driver to simplify the code
-    https://git.kernel.org/netdev/net-next/c/f670149a4f5f
-
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Applied to clk-next
