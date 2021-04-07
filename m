@@ -7,76 +7,74 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83717C433B4
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 16:38:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C58A6C433B4
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 17:05:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 334416124C
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 16:38:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 97766610FB
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 17:05:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245539AbhDGQiY (ORCPT
+        id S1354513AbhDGRGB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 7 Apr 2021 12:38:24 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:47898 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236269AbhDGQiY (ORCPT
+        Wed, 7 Apr 2021 13:06:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54520 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234065AbhDGRGA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 7 Apr 2021 12:38:24 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1lUBBx-0003Lg-58; Wed, 07 Apr 2021 16:38:09 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Jamal Hadi Salim <jhs@mojatatu.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Jiri Pirko <jiri@resnulli.us>,
-        "David S . Miller" <davem@davemloft.net>,
-        Gautam Ramakrishnan <gautamramk@gmail.com>,
-        "Sachin D . Patil" <sdp.sachin@gmail.com>,
-        Mohit Bhasi <mohitbhasi1998@gmail.com>,
-        Leslie Monis <lesliemonis@gmail.com>,
-        "Mohit P . Tahiliani" <tahiliani@nitk.edu.in>,
-        netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] net: sched: Fix potential infinite loop
-Date:   Wed,  7 Apr 2021 17:38:08 +0100
-Message-Id: <20210407163808.499027-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.30.2
+        Wed, 7 Apr 2021 13:06:00 -0400
+Received: from viti.kaiser.cx (viti.kaiser.cx [IPv6:2a01:238:43fe:e600:cd0c:bd4a:7a3:8e9f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAFB3C06175F;
+        Wed,  7 Apr 2021 10:05:50 -0700 (PDT)
+Received: from ipservice-092-217-079-185.092.217.pools.vodafone-ip.de ([92.217.79.185] helo=martin-debian-2.paytec.ch)
+        by viti.kaiser.cx with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <martin@kaiser.cx>)
+        id 1lUBcd-0001Q6-VP; Wed, 07 Apr 2021 19:05:44 +0200
+From:   Martin Kaiser <martin@kaiser.cx>
+To:     Larry Finger <Larry.Finger@lwfinger.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Martin Kaiser <martin@kaiser.cx>
+Subject: [PATCH 01/10] staging: rtl8188eu: remove unused macros
+Date:   Wed,  7 Apr 2021 19:05:22 +0200
+Message-Id: <20210407170531.29356-1-martin@kaiser.cx>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+usb_ops_linux.h contains a couple of macros to make functions usable as
+urb completion callbacks. Most of them are unused and can be removed.
 
-The for-loop iterates with a u16 loop counter idx and compares this
-with the loop upper limit of q->flows_cnt that is a u32 type.
-There is a potential infinite loop if q->flows_cnt is larger than
-the u8 loop counter. Fix this by making the loop counter the same
-type as q->flows_cnt.
-
-Addresses-Coverity: ("Infinite loop")
-Fixes: ec97ecf1ebe4 ("net: sched: add Flow Queue PIE packet scheduler")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Martin Kaiser <martin@kaiser.cx>
 ---
- net/sched/sch_fq_pie.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/rtl8188eu/include/usb_ops_linux.h | 8 --------
+ 1 file changed, 8 deletions(-)
 
-diff --git a/net/sched/sch_fq_pie.c b/net/sched/sch_fq_pie.c
-index 949163fe68af..00563e137ecb 100644
---- a/net/sched/sch_fq_pie.c
-+++ b/net/sched/sch_fq_pie.c
-@@ -367,7 +367,7 @@ static void fq_pie_timer(struct timer_list *t)
- 	struct fq_pie_sched_data *q = from_timer(q, t, adapt_timer);
- 	struct Qdisc *sch = q->sch;
- 	spinlock_t *root_lock; /* to lock qdisc for probability calculations */
--	u16 idx;
-+	u32 idx;
+diff --git a/drivers/staging/rtl8188eu/include/usb_ops_linux.h b/drivers/staging/rtl8188eu/include/usb_ops_linux.h
+index 4e0e48cb5c8e..1a0b38de5027 100644
+--- a/drivers/staging/rtl8188eu/include/usb_ops_linux.h
++++ b/drivers/staging/rtl8188eu/include/usb_ops_linux.h
+@@ -23,18 +23,10 @@
+ #define USB_HIGH_SPEED_BULK_SIZE	512
+ #define USB_FULL_SPEED_BULK_SIZE	64
  
- 	root_lock = qdisc_lock(qdisc_root_sleeping(sch));
- 	spin_lock(root_lock);
+-#define _usbctrl_vendorreq_async_callback(urb, regs)	\
+-	_usbctrl_vendorreq_async_callback(urb)
+-#define usb_bulkout_zero_complete(purb, regs)		\
+-	usb_bulkout_zero_complete(purb)
+-#define usb_write_mem_complete(purb, regs)		\
+-	usb_write_mem_complete(purb)
+ #define usb_write_port_complete(purb, regs)		\
+ 	usb_write_port_complete(purb)
+ #define usb_read_port_complete(purb, regs)		\
+ 	usb_read_port_complete(purb)
+-#define usb_read_interrupt_complete(purb, regs)		\
+-	usb_read_interrupt_complete(purb)
+ 
+ unsigned int ffaddr2pipehdl(struct dvobj_priv *pdvobj, u32 addr);
+ 
 -- 
-2.30.2
+2.20.1
 
