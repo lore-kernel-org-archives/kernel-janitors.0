@@ -7,70 +7,67 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 308FBC433ED
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 15:25:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FF66C433ED
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 15:39:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 02A9B61262
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 15:25:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 586286112F
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 15:39:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353492AbhDGPZM (ORCPT
+        id S243590AbhDGPjS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 7 Apr 2021 11:25:12 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:45676 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236449AbhDGPZK (ORCPT
+        Wed, 7 Apr 2021 11:39:18 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:16020 "EHLO
+        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1353712AbhDGPjP (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 7 Apr 2021 11:25:10 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1lUA37-0007DX-Ny; Wed, 07 Apr 2021 15:24:57 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: uniphier: Fix potential infinite loop
-Date:   Wed,  7 Apr 2021 16:24:57 +0100
-Message-Id: <20210407152457.497346-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.30.2
+        Wed, 7 Apr 2021 11:39:15 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
+        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4FFpQR5j9FzPnxd;
+        Wed,  7 Apr 2021 23:36:15 +0800 (CST)
+Received: from localhost.localdomain (10.175.102.38) by
+ DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
+ 14.3.498.0; Wed, 7 Apr 2021 23:38:54 +0800
+From:   Wei Yongjun <weiyongjun1@huawei.com>
+To:     <weiyongjun1@huawei.com>, Yangyang Li <liyangyang20@huawei.com>,
+        Lijun Ou <oulijun@huawei.com>,
+        Weihang Li <liweihang@huawei.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+CC:     <linux-rdma@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "Hulk Robot" <hulkci@huawei.com>
+Subject: [PATCH -next] RDMA/hns: Use GFP_ATOMIC under spin lock
+Date:   Wed, 7 Apr 2021 15:49:00 +0000
+Message-ID: <20210407154900.3486268-1-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.102.38]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+A spin lock is taken here so we should use GFP_ATOMIC.
 
-The for-loop iterates with a u8 loop counter i and compares this
-with the loop upper limit of num_parents that is an int type.
-There is a potential infinite loop if num_parents is larger than
-the u8 loop counter. Fix this by making the loop counter the same
-type as num_parents.
-
-Addresses-Coverity: ("Infinite loop")
-Fixes: 734d82f4a678 ("clk: uniphier: add core support code for UniPhier clock driver")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: f91696f2f053 ("RDMA/hns: Support congestion control type selection according to the FW")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/clk/uniphier/clk-uniphier-mux.c | 2 +-
+ drivers/infiniband/hw/hns/hns_roce_hw_v2.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/uniphier/clk-uniphier-mux.c b/drivers/clk/uniphier/clk-uniphier-mux.c
-index 462c84321b2d..ce219e0d2a85 100644
---- a/drivers/clk/uniphier/clk-uniphier-mux.c
-+++ b/drivers/clk/uniphier/clk-uniphier-mux.c
-@@ -34,7 +34,7 @@ static u8 uniphier_clk_mux_get_parent(struct clk_hw *hw)
- 	int num_parents = clk_hw_get_num_parents(hw);
- 	int ret;
- 	unsigned int val;
--	u8 i;
-+	int i;
- 
- 	ret = regmap_read(mux->regmap, mux->reg, &val);
- 	if (ret)
--- 
-2.30.2
+diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+index 1213f4011dd1..0312d383d49e 100644
+--- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
++++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+@@ -4623,7 +4623,7 @@ static int get_dip_ctx_idx(struct ib_qp *ibqp, const struct ib_qp_attr *attr,
+ 	/* If no dgid is found, a new dip and a mapping between dgid and
+ 	 * dip_idx will be created.
+ 	 */
+-	hr_dip = kzalloc(sizeof(*hr_dip), GFP_KERNEL);
++	hr_dip = kzalloc(sizeof(*hr_dip), GFP_ATOMIC);
+ 	if (!hr_dip) {
+ 		ret = -ENOMEM;
+ 		goto out;
 
