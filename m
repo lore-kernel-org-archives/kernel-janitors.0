@@ -2,122 +2,137 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 677EEC433ED
-	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Apr 2021 23:54:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D44B3C433B4
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 00:18:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 37B4E613BE
-	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Apr 2021 23:54:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2588613BE
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 00:18:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344829AbhDFXyZ (ORCPT
+        id S241758AbhDGASI (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 6 Apr 2021 19:54:25 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:25050 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1344778AbhDFXyY (ORCPT
+        Tue, 6 Apr 2021 20:18:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59208 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237769AbhDGASH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 6 Apr 2021 19:54:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1617753256;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Z9Bynhk5jx9PpUNdN9ForbiWm+KTPR+Iguq3N1bBzvE=;
-        b=L2KsMbGcy0Po0DMLxH6Q/j2VhBbC60kjw1WKl8/orDDyTIg0+HQJex1mqjempGoG6NY6iw
-        wGWX38H7zsyjBN1bMW2Dhq7Pyku0klm5O+WZa04Euu0OOMoAd/kZGji1sSdU9ZPnU5r92I
-        sxYNVnry6IjzSt+g/RR1s3fiBwJGmLY=
-Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com
- [209.85.210.198]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-229-Knr-kGyvO1et1bjEM1RV3g-1; Tue, 06 Apr 2021 19:54:14 -0400
-X-MC-Unique: Knr-kGyvO1et1bjEM1RV3g-1
-Received: by mail-pf1-f198.google.com with SMTP id n8so11625407pfd.23
-        for <kernel-janitors@vger.kernel.org>; Tue, 06 Apr 2021 16:54:14 -0700 (PDT)
+        Tue, 6 Apr 2021 20:18:07 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 957E5C061760;
+        Tue,  6 Apr 2021 17:17:58 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id mh7so14735306ejb.12;
+        Tue, 06 Apr 2021 17:17:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YKVtgqn3FTurcOSdNrQJXSMQKGxJcG+Owhfj5N0hU7Y=;
+        b=A5ZP5eKrx8vDWZkqIePXqyNHJutxfC/J15bpfUtlPvMzj72A4ChpSBj0Rv1CRgvAdy
+         z5BCCfEomP6BXF7oQb999RbCivKrexuSzaJzWZfXQXgJyJuYs4f8gEQr/L9tyNxEcGmi
+         I52PhKt9nVhEQZMFQV20+75COflG0PIaCe7dGeRjBJDgrfKbDIrH16WKtrtbA4KBK80l
+         2aU2MZo43Quu7g4OMTMRQJeZbNZ9SXD3S3BgCFSLqcLszlu+UWyDm6qL0arE3+17DVYw
+         Ho9eNDsXb3a8FryWJQfz2YakPoTs6BqjZtbdxXBCaErN8pOhQ0CRkYvyI+ZOwKwgj8ar
+         rSfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Z9Bynhk5jx9PpUNdN9ForbiWm+KTPR+Iguq3N1bBzvE=;
-        b=BE/cW79pZV46sGJSM6yH+pDgLLL4a64FRG1Vb9ql6YNf7LRlRUO6d1OLxTZg4g59dD
-         Ec4Uqz0Wi0prhwmnq3MMwx5is4jJiMpB7yHKwgzjmgSJ2/hi4kpLIPHmMejQ0Ml3TjXB
-         fzxW65d4iOkw7hReuA+LzquvA5eawgjKseVELoaP+NqOLbysj0Ibdw+8MAAifa1jiE2R
-         yYMC34Gd0l/UBEqj6mcEiT/rwTrpnqp32Ulig9CVzeeKO4qZA51T1zEVSGeVrv2ZmbF/
-         XyUcjiqdGaWCh+Wkqn4rqmILck7udSmBwN+4nmFgywjr2FXn2J5oTwImau8c8xlr7jLw
-         /tDQ==
-X-Gm-Message-State: AOAM5339X0GaITsZwieJypWJD88DtxKNECzdY8Uq7BFZUmpKK6Vz80T2
-        sQezbXmJiuIYMz/RmUOg4UrGYhX61nuh9PtEQBErraI4vHA4WsTipZip8O4sVsTk7hCWzrbQN7y
-        gsbAdpRekBC+ohuH1mc68y2N5RnNj
-X-Received: by 2002:a17:90a:8907:: with SMTP id u7mr607115pjn.114.1617753253129;
-        Tue, 06 Apr 2021 16:54:13 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwvaMBT8JgaLEReC0ssyotJOmen93GjLT0Sh1CDVdMUhYnY+Tzw3Y4/zdNqq/R55VEG7Om6rw==
-X-Received: by 2002:a17:90a:8907:: with SMTP id u7mr607098pjn.114.1617753252878;
-        Tue, 06 Apr 2021 16:54:12 -0700 (PDT)
-Received: from xiangao.remote.csb ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id u17sm3263331pjx.10.2021.04.06.16.54.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Apr 2021 16:54:12 -0700 (PDT)
-Date:   Wed, 7 Apr 2021 07:54:01 +0800
-From:   Gao Xiang <hsiangkao@redhat.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
-        linux-erofs@lists.ozlabs.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] erofs: fix uninitialized variable i used in a
- while-loop
-Message-ID: <20210406235401.GA210667@xiangao.remote.csb>
-References: <20210406162718.429852-1-colin.king@canonical.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YKVtgqn3FTurcOSdNrQJXSMQKGxJcG+Owhfj5N0hU7Y=;
+        b=BS+1z5fR6mOqOjT1rSAHr+hPww84UsAD/yh3Shor9HsxIX4iJ/+ppennXHt7ci3PAz
+         m9dPREcXJR2DBLGVJmApSjlTi7RURTWFGpeagw5kMveSEiyb8MV7OFSGgTI4uFh7mJ2f
+         XY2IhVyD1pOYrB2advLdJC1xo/nj1+w4yQ2sJIJ4EGmgU6x5k7WIeV3PYLgBSgXNaI3N
+         atOZoyP3Fsm3otlrgQvjh2KVqixlXuv4NbsPW802rC8ZpFGMRUzSiDmaTXTmrF8ckHek
+         aFOzt4eB9pc/pfrg7GyFOpWKkncDJ3VHBGAWcrsuRsSeNoqUpoeLKUN92eDTUZm6J7Kf
+         cTmA==
+X-Gm-Message-State: AOAM5307+4e3DD5774vMtnbLypiCCEHs984twj+xNmqBNNKXivEDzce2
+        YH302QJBdTHNkhm0idIA6zAOYcwBZT0MSWKYpwTBljK2
+X-Google-Smtp-Source: ABdhPJzIbt4VJettkwnUDneguXkbVSiuGthZKnHiDt45sD/JgPNzlHiNZuzRQl4JDub5/UBOPKgP0jPA/dtGz/sJaFk=
+X-Received: by 2002:a17:907:3ea0:: with SMTP id hs32mr652096ejc.411.1617754677376;
+ Tue, 06 Apr 2021 17:17:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20210406162718.429852-1-colin.king@canonical.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20210401113933.GA2828895@LEGION> <20210401115008.GS2088@kadam>
+ <CAKYAXd-ou4-jf7_8xa4jDQ_otyQ9ffKhwD7WZrmrna1P3b_W8Q@mail.gmail.com>
+ <ca1b9b0c-55f9-025d-558b-1b2b6c866d12@samba.org> <CAKYAXd-ScM9i9Ln_FL8pWyEnPO_0n8t1BLH8MJ=b4NkqEbhZ=Q@mail.gmail.com>
+ <2b758812-f00b-9465-c24e-763912748809@samba.org> <CAKYAXd_p1MrB2G25_p52OfppfSUcEWQEVxgJbBikAe3GZrJFhw@mail.gmail.com>
+ <46e67316-58f3-435d-458c-11968499d4ee@talpey.com>
+In-Reply-To: <46e67316-58f3-435d-458c-11968499d4ee@talpey.com>
+From:   ronnie sahlberg <ronniesahlberg@gmail.com>
+Date:   Wed, 7 Apr 2021 10:17:45 +1000
+Message-ID: <CAN05THQuMFiPpLVZ_j1UZVohitUPj59EOKT0qyscfV6dh4fBUw@mail.gmail.com>
+Subject: Re: [Linux-cifsd-devel] [PATCH] cifsd: use kfree to free memory
+ allocated by kzalloc
+To:     Tom Talpey <tom@talpey.com>
+Cc:     Namjae Jeon <linkinjeon@kernel.org>, Ralph Boehme <slow@samba.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        COMMON INTERNET FILE SYSTEM SERVER 
+        <linux-cifs@vger.kernel.org>,
+        COMMON INTERNET FILE SYSTEM SERVER 
+        <linux-cifsd-devel@lists.sourceforge.net>,
+        kernel-janitors <kernel-janitors@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Steve French <sfrench@samba.org>,
+        Colin King <colin.king@canonical.com>,
+        Muhammad Usama Anjum <musamaanjum@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Colin,
+On Fri, Apr 2, 2021 at 7:04 AM Tom Talpey <tom@talpey.com> wrote:
+>
+> On 4/1/2021 9:36 AM, Namjae Jeon wrote:
+> > 2021-04-01 22:14 GMT+09:00, Ralph Boehme <slow@samba.org>:
+> >> Am 4/1/21 um 2:59 PM schrieb Namjae Jeon:
+> >>> 2021-04-01 21:50 GMT+09:00, Ralph Boehme <slow@samba.org>:
+> >>>> fwiw, while at it what about renaming everything that still references
+> >>>> "cifs" to "smb" ? This is not the 90's... :)
+> >>> It is also used with the name "ksmbd". So function and variable prefix
+> >>> are used with ksmbd.
+> >>
+> >> well, I was thinking of this:
+> >>
+> >>   > +++ b/fs/cifsd/...
+> >>
+> >> We should really stop using the name cifs for modern implementation of
+> >> SMB{23} and the code should not be added as fs/cifsd/ to the kernel.
+> > As I know, currently "cifs" is being used for the subdirectory name
+> > for historical reasons and to avoid confusions, even though the CIFS
+> > (SMB1) dialect is no longer recommended.
+>
+> I'm with Ralph. CIFS is history that we need to relegate to the past.
 
-On Tue, Apr 06, 2021 at 05:27:18PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The while-loop iterates until src is non-null or i is 3, however, the
-> loop counter i is not intinitialied to zero, causing incorrect iteration
-> counts.  Fix this by initializing it to zero.
-> 
-> Addresses-Coverity: ("Uninitialized scalar variable")
-> Fixes: 1aa5f2e2feed ("erofs: support decompress big pcluster for lz4 backend")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Tom, and Ralph.
+Some background on the cifsd directory name:
 
-Thank you very much for catching this! It looks good to me,
-Reviewed-by: Gao Xiang <hsiangkao@redhat.com>
+We discussed in length but we decided with cifsd to align with the
+current directory name cifs for the client.
+Just to align with current praxis defined by other filesystems, i.e.
+nfs. which has nfs for client, nfsd for server
+and nfs_common for shared cod and definitions.
 
-(btw, may I fold this into the original patchset? since such big pcluster
- patchset is just applied to for-next for further integration testing, and
- the commit id is not stable yet..)
+Once cifsd lands in the kernel I expect we will start building
+cifs_common for this purpose.
 
-Thanks,
-Gao Xiang
+An alternative would have been to rename the current fs/cifs tree to
+fs/ksmb but renaming an entire directory tree
+felt it might get pushback.
+In the end we thought that the module name, that is user visible and
+there it is important we call it smb3 something
+but the source tree is not end-user visible so it was less important
+what the name was.
 
-> ---
->  fs/erofs/decompressor.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/fs/erofs/decompressor.c b/fs/erofs/decompressor.c
-> index fe46a9c34923..8687ff81406b 100644
-> --- a/fs/erofs/decompressor.c
-> +++ b/fs/erofs/decompressor.c
-> @@ -154,6 +154,7 @@ static void *z_erofs_handle_inplace_io(struct z_erofs_decompress_req *rq,
->  	}
->  	kunmap_atomic(inpage);
->  	might_sleep();
-> +	i = 0;
->  	while (1) {
->  		src = vm_map_ram(rq->in, nrpages_in, -1);
->  		/* retry two more times (totally 3 times) */
-> -- 
-> 2.30.2
-> 
+(the alternative ending up with   fs/cifs  fs/ksmbd and fs/cifs_common
+would have been terrible)
 
+regards
+ronnie sahlberg
+
+>
+> I also agree that wrappers around core memory allocators are to
+> be avoided.
+>
+> Tom.
