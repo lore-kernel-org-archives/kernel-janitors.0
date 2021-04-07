@@ -2,147 +2,77 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2480EC433ED
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 09:56:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C26EFC433ED
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 10:03:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C44C861382
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 09:56:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B1396139C
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 10:03:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350421AbhDGJ45 (ORCPT
+        id S1346400AbhDGKDq (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 7 Apr 2021 05:56:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44108 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346426AbhDGJ4z (ORCPT
+        Wed, 7 Apr 2021 06:03:46 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:16378 "EHLO
+        szxga06-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1346384AbhDGKCc (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 7 Apr 2021 05:56:55 -0400
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C94CBC061756;
-        Wed,  7 Apr 2021 02:56:44 -0700 (PDT)
-Received: by mail-wm1-x32c.google.com with SMTP id t5-20020a1c77050000b029010e62cea9deso865035wmi.0;
-        Wed, 07 Apr 2021 02:56:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=XI8zjCWrHrG5RIk4b3Hbm5Q3Z+HRUCQWg5bfMzD9Jsw=;
-        b=PFu66/SNVZwtKmaSFIdn/9ceMMmMfrg5wm0jZCzFUOkxp7UMTjNzv+rpxe0GGHZd2t
-         OyUq7Wdpon8ac2O4cHKkqaff7q9WnGVUzBrPFeGiEbUVFvKU3kWjyer2a4ATgUMZDm9b
-         0J+3qUscAHVFfQyzTikzaUaXOOBRcJpsZErg1MNFGMuYnF2lN6VKu3TiA75OUhjxYsNX
-         +i2RPqiOvBGzHehsYWL1vZn/9M3gxc2B7kw4cXkDaED/e5vGrrRg2FJQhKOh1zPdOaL6
-         tfxlWfOxCek89UCQERc0S+8OmZU2a/9n3S87Bzw6VAKoruJH54FsPLrqQkBgpdiqxosf
-         u4bg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=XI8zjCWrHrG5RIk4b3Hbm5Q3Z+HRUCQWg5bfMzD9Jsw=;
-        b=q/fZF/Ch5A2Ala9pq02Z3pRAxvOcfFGP9jewAvkgElwlU3VAMSeS31xoFu/i1q7PeL
-         TEusAmmfynEW0DqgwP6LS2DUOD7HQkWJ9mfptvS0NraI8YY56oTZHXfztbVR0jM1QyFc
-         /4pDrwE5Qo7Rgj1yyIbQS5LMWBOsJbLbKuZ5duGsEYLNVcha6KTLtcwx1iSvHal77l7E
-         oiMVjennAhf1ouWe1TTmL1BsgK8nzh8zDCuXzfJg4kAskqULSAFBwW6onKezJ96d72dE
-         496uQiGn5lfLEVJ7RfqB5RLa/1J9qcX3pofXFNnBMocraoXw1YhDYsUiS1NANdqdyFWg
-         YBPw==
-X-Gm-Message-State: AOAM533xgA1legbLCl5WANRsmPsX8cllPzFPzCYymEXhckHgn/Rj3Eg8
-        NPTu34bFgf/vUAz38ngdw+U=
-X-Google-Smtp-Source: ABdhPJyFvIZgCudXxRH75W0b0/ObztMY9OZAeZr5OgyvwLXGLUX3a+7dZmd43PJqWcc67lcFZcMvMQ==
-X-Received: by 2002:a1c:7209:: with SMTP id n9mr2286646wmc.132.1617789402785;
-        Wed, 07 Apr 2021 02:56:42 -0700 (PDT)
-Received: from LEGION ([39.46.7.73])
-        by smtp.gmail.com with ESMTPSA id u8sm39863959wrr.42.2021.04.07.02.56.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Apr 2021 02:56:42 -0700 (PDT)
-Date:   Wed, 7 Apr 2021 14:56:34 +0500
-From:   Muhammad Usama Anjum <musamaanjum@gmail.com>
-To:     Timur Tabi <timur@kernel.org>,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
-        Xiubo Li <Xiubo.Lee@gmail.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Shengjiu Wang <shengjiu.wang@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@lists.linux.dev
-Cc:     musamaanjum@gmail.com, linqiheng@huawei.com,
-        kernel-janitors@vger.kernel.org, dan.carpenter@oracle.com
-Subject: [PATCH] ASoC: fsl: sunxi: remove redundant dev_err call
-Message-ID: <20210407095634.GA1379642@LEGION>
+        Wed, 7 Apr 2021 06:02:32 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
+        by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4FFfz22YkhzjYZ1;
+        Wed,  7 Apr 2021 18:00:30 +0800 (CST)
+Received: from localhost.localdomain (10.175.103.91) by
+ DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
+ 14.3.498.0; Wed, 7 Apr 2021 18:02:10 +0800
+From:   Wei Li <liwei391@huawei.com>
+To:     <huawei.libin@huawei.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Boris Brezillon <boris.brezillon@collabora.com>
+CC:     <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>,
+        Wei Li <liwei391@huawei.com>
+Subject: [PATCH RESEND -next] mtd: rawnand: Remove redundant dev_err call in hisi_nfc_probe()
+Date:   Wed, 7 Apr 2021 18:05:26 +0800
+Message-ID: <20210407100526.3278741-1-liwei391@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.103.91]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-devm_ioremap_resource() prints error message in itself. Remove the
-dev_err call to avoid redundant error message.
+There is a error message within devm_ioremap_resource
+already, so remove the dev_err call to avoid redundant
+error message.
 
-Signed-off-by: Muhammad Usama Anjum <musamaanjum@gmail.com>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Li <liwei391@huawei.com>
 ---
- sound/soc/fsl/fsl_aud2htx.c   | 4 +---
- sound/soc/fsl/fsl_easrc.c     | 4 +---
- sound/soc/sunxi/sun4i-codec.c | 4 +---
- 3 files changed, 3 insertions(+), 9 deletions(-)
+ drivers/mtd/nand/raw/hisi504_nand.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/sound/soc/fsl/fsl_aud2htx.c b/sound/soc/fsl/fsl_aud2htx.c
-index d70d5e75a30c..a328697511f7 100644
---- a/sound/soc/fsl/fsl_aud2htx.c
-+++ b/sound/soc/fsl/fsl_aud2htx.c
-@@ -198,10 +198,8 @@ static int fsl_aud2htx_probe(struct platform_device *pdev)
+diff --git a/drivers/mtd/nand/raw/hisi504_nand.c b/drivers/mtd/nand/raw/hisi504_nand.c
+index 8b2122ce6ec3..78c4e05434e2 100644
+--- a/drivers/mtd/nand/raw/hisi504_nand.c
++++ b/drivers/mtd/nand/raw/hisi504_nand.c
+@@ -761,10 +761,8 @@ static int hisi_nfc_probe(struct platform_device *pdev)
  
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	regs = devm_ioremap_resource(&pdev->dev, res);
--	if (IS_ERR(regs)) {
--		dev_err(&pdev->dev, "failed ioremap\n");
-+	if (IS_ERR(regs))
- 		return PTR_ERR(regs);
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+ 	host->mmio = devm_ioremap_resource(dev, res);
+-	if (IS_ERR(host->mmio)) {
+-		dev_err(dev, "devm_ioremap_resource[1] fail\n");
++	if (IS_ERR(host->mmio))
+ 		return PTR_ERR(host->mmio);
 -	}
  
- 	aud2htx->regmap = devm_regmap_init_mmio(&pdev->dev, regs,
- 						&fsl_aud2htx_regmap_config);
-diff --git a/sound/soc/fsl/fsl_easrc.c b/sound/soc/fsl/fsl_easrc.c
-index 5e33afe87c4a..b1765c7d3bcd 100644
---- a/sound/soc/fsl/fsl_easrc.c
-+++ b/sound/soc/fsl/fsl_easrc.c
-@@ -1889,10 +1889,8 @@ static int fsl_easrc_probe(struct platform_device *pdev)
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	regs = devm_ioremap_resource(dev, res);
--	if (IS_ERR(regs)) {
--		dev_err(&pdev->dev, "failed ioremap\n");
-+	if (IS_ERR(regs))
- 		return PTR_ERR(regs);
--	}
- 
- 	easrc->paddr = res->start;
- 
-diff --git a/sound/soc/sunxi/sun4i-codec.c b/sound/soc/sunxi/sun4i-codec.c
-index 2173991c13db..6f3d9148a185 100644
---- a/sound/soc/sunxi/sun4i-codec.c
-+++ b/sound/soc/sunxi/sun4i-codec.c
-@@ -1711,10 +1711,8 @@ static int sun4i_codec_probe(struct platform_device *pdev)
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	base = devm_ioremap_resource(&pdev->dev, res);
--	if (IS_ERR(base)) {
--		dev_err(&pdev->dev, "Failed to map the registers\n");
-+	if (IS_ERR(base))
- 		return PTR_ERR(base);
--	}
- 
- 	quirks = of_device_get_match_data(&pdev->dev);
- 	if (quirks == NULL) {
--- 
-2.25.1
+ 	mtd->name		= "hisi_nand";
+ 	mtd->dev.parent         = &pdev->dev;
 
