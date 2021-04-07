@@ -2,87 +2,125 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F40EFC433ED
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 20:27:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E51FC43470
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 21:22:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D0E1B61184
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 20:27:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 735F8611CC
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 21:22:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356089AbhDGU1c (ORCPT
+        id S232921AbhDGVXC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 7 Apr 2021 16:27:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57396 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1356203AbhDGU1E (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 7 Apr 2021 16:27:04 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id ACE3A6120E;
-        Wed,  7 Apr 2021 20:26:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617827214;
-        bh=Ij6ZUSk87LHtlya9NtJcg/cBO4fTPWuZWYabbRGBlaE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WMnOe9US2i44gARrRrNjw8DCv9yqyqhT8fnNzMtwTvdsS0RS7kedGfcjX8SZ5/qOF
-         1ZXE2iGQ95eThSpGG0IhVVULAd7fE++OoT14R57xo9zsn4KwY1zh2RgVk17xXzQMYA
-         ifUbOhHUSJfc3oQ8dtKWAR1uZYtN6IL8XROfjMTM2RjcPPOKS6yhSmI6uLvbhrE611
-         3ZZANeoNKtN1HeL7VHmkhGqprI9OZFMy7MTKz3hMLE/PLzbQT0pDK0QDsvMAG1PrZG
-         ILrWt9/yzUwSDBF/KxkA7qUSho+UYIkIgBq5wg+dD0GFIshrmrEsKhejsjrjeWd6yh
-         ZW7ndKiU7Xu2Q==
-From:   Mark Brown <broonie@kernel.org>
-To:     Banajit Goswami <bgoswami@codeaurora.org>,
-        Takashi Iwai <tiwai@suse.com>, Ye Bin <yebin10@huawei.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>
-Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-        Hulk Robot <hulkci@huawei.com>,
-        kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Re: [PATCH -next] ASoC: codecs: lpass-va-macro: constify static struct snd_soc_dai_ops
-Date:   Wed,  7 Apr 2021 21:26:22 +0100
-Message-Id: <161782703230.42756.14460019912472316913.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20210407074218.3051979-1-yebin10@huawei.com>
-References: <20210407074218.3051979-1-yebin10@huawei.com>
+        Wed, 7 Apr 2021 17:23:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54568 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232170AbhDGVXB (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 7 Apr 2021 17:23:01 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47985C061760;
+        Wed,  7 Apr 2021 14:22:51 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id u11so7008869wrp.4;
+        Wed, 07 Apr 2021 14:22:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=YqC1MvbDb+PpI/oVtnbZYXRa+wI43UAIv4i3U4Q2Ho4=;
+        b=SZf0Pw4lDUzRtid00z08mx0iKP9kHkh9tZ4nw0LpmLTlXz9q8LBz6U3i9XKexOuYqV
+         ZSwqTlJhv2T6D2WQs5xDasRhmhUdnpsYbFdjiO+JR7Ghkb+2PcQJDL3W3OsUv+nZq6Mf
+         qIx8MLbkOYHw2L09a6TBSeqCpVlfq9Mhj/Od0Ydjyt7uZIyv/DMqlY0v5F7zJxUorqk1
+         Cvci8maDOnWX8zSlSvXPCSxtBsYwuABiSler9qw8iiDF6cciw8gN9p4bRrLcIVw2cQR/
+         GILKiAt/Fle6VThOPjGKgP6XhqxpSK/3g/zbEOOrBXmFg9LyD8BPMTjweZcsQJ+w2Vlo
+         07Ww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=YqC1MvbDb+PpI/oVtnbZYXRa+wI43UAIv4i3U4Q2Ho4=;
+        b=LZnbCgtNCMxAnzuwtFU9IZe/852SQ9owBqAGxrmP6h6A0yUE6CV6wEYHWvKHOX9JtB
+         LJlPjwImhmpcRWOiyy0ZjCXa/7qnjGGIBgK5lA02MwAJDYKkAu9C2QVOZ9PQxjKcm5GH
+         Kdomr3mEitk229pucDo1G3sW5dCXme37hzvSCQDXtct7c4ecfjPB4VEsjnuLZK/XbFYm
+         iVFAxZzoX1al5i6m8dy7IW2/ZD31wMFYa+/Fe8ymPXZQ5Fs55WZ2R3F1bJvNAhQVc1W7
+         UVT549WjApqNGq9XKnpZ3NdZB09T88Y6aN8prhSYGpI5CN2a5Wi0FPj/KMEEfa+zqwdl
+         FBpw==
+X-Gm-Message-State: AOAM531wqj22Dm0CI9vdoPBcrl/vPsZTaH7HNRj/Jkva+fkQ4QFDzbIP
+        qcRmKSotKOFGmp5RvpvUE5o=
+X-Google-Smtp-Source: ABdhPJw0LR/0N07bR1S+Ix97QolAIk1xlDpSQyO/2kV1hMwqR5bJWWafmdduSsH8NiQBWT9q1gg/lA==
+X-Received: by 2002:a05:6000:228:: with SMTP id l8mr6667127wrz.401.1617830570090;
+        Wed, 07 Apr 2021 14:22:50 -0700 (PDT)
+Received: from 192.168.10.5 ([39.46.7.73])
+        by smtp.gmail.com with ESMTPSA id n5sm21037581wrp.50.2021.04.07.14.22.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Apr 2021 14:22:49 -0700 (PDT)
+Message-ID: <5b1390ea12eb87c8180de61304d00a7d4bb66436.camel@gmail.com>
+Subject: Re: [PATCH][next] media: venus: hfi,pm,firmware: Fix dereference
+ before null check on hdev
+From:   Muhammad Usama Anjum <musamaanjum@gmail.com>
+To:     Colin King <colin.king@canonical.com>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Dikshita Agarwal <dikshita@codeaurora.org>,
+        linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Cc:     musamaanjum@gmail.com, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Thu, 08 Apr 2021 02:22:43 +0500
+In-Reply-To: <20210407141004.495093-1-colin.king@canonical.com>
+References: <20210407141004.495093-1-colin.king@canonical.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.4-0ubuntu1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 7 Apr 2021 15:42:18 +0800, Ye Bin wrote:
-> The snd_soc_dai_ops structures is only stored in the ops field of a
-> snd_soc_dai_driver structure, so make the snd_soc_dai_ops structure
-> const to allow the compiler to put it in read-only memory.
+On Wed, 2021-04-07 at 15:10 +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The pointer hdev is being dereferenced twice on the assignment of
+> pointers cpu_cs_base and wrapper_base before hdev is being null
+> checked.  Fix the potential null pointer dereference issues by
+> performing the null check of hdev before dereferencing it when
+> assigning cpu_cs_base and wrapper_base.
+> 
+> Addresses-Coverity: ("Dereference before null check")
+> Fixes: ff2a7013b3e6 ("media: venus: hfi,pm,firmware: Convert to block relative addressing")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/media/platform/qcom/venus/hfi_venus.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/platform/qcom/venus/hfi_venus.c b/drivers/media/platform/qcom/venus/hfi_venus.c
+> index cebb20cf371f..3eabb2646572 100644
+> --- a/drivers/media/platform/qcom/venus/hfi_venus.c
+> +++ b/drivers/media/platform/qcom/venus/hfi_venus.c
+> @@ -1094,12 +1094,14 @@ static irqreturn_t venus_isr(struct venus_core *core)
+>  {
+>  	struct venus_hfi_device *hdev = to_hfi_priv(core);
+>  	u32 status;
+> -	void __iomem *cpu_cs_base = hdev->core->cpu_cs_base;
+> -	void __iomem *wrapper_base = hdev->core->wrapper_base;
+> +	void __iomem *cpu_cs_base, *wrapper_base;
+>  
+>  	if (!hdev)
+>  		return IRQ_NONE;
+>  
+> +	cpu_cs_base = hdev->core->cpu_cs_base;
+> +	wrapper_base = hdev->core->wrapper_base;
+> +
+>  	status = readl(wrapper_base + WRAPPER_INTR_STATUS);
+>  	if (IS_V6(core)) {
+>  		if (status & WRAPPER_INTR_STATUS_A2H_MASK ||
 
-Applied to
+Reviewed-by: Muhammad Usama Anjum <musamaanjum@gmail.com>
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-Thanks!
-
-[1/1] ASoC: codecs: lpass-va-macro: constify static struct snd_soc_dai_ops
-      commit: af4b54127b2b8a69f0f50e54cf099f26b82c9244
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
