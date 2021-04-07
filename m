@@ -2,69 +2,147 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14BC0C433ED
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 09:40:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2480EC433ED
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 09:56:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DCE1661382
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 09:40:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C44C861382
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Apr 2021 09:56:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345850AbhDGJkQ (ORCPT
+        id S1350421AbhDGJ45 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 7 Apr 2021 05:40:16 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:35064 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345760AbhDGJjo (ORCPT
+        Wed, 7 Apr 2021 05:56:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44108 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1346426AbhDGJ4z (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 7 Apr 2021 05:39:44 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1lU4eg-0001zG-So; Wed, 07 Apr 2021 09:39:22 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] xircom: remove redundant error check on variable err
-Date:   Wed,  7 Apr 2021 10:39:22 +0100
-Message-Id: <20210407093922.484571-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.30.2
+        Wed, 7 Apr 2021 05:56:55 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C94CBC061756;
+        Wed,  7 Apr 2021 02:56:44 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id t5-20020a1c77050000b029010e62cea9deso865035wmi.0;
+        Wed, 07 Apr 2021 02:56:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=XI8zjCWrHrG5RIk4b3Hbm5Q3Z+HRUCQWg5bfMzD9Jsw=;
+        b=PFu66/SNVZwtKmaSFIdn/9ceMMmMfrg5wm0jZCzFUOkxp7UMTjNzv+rpxe0GGHZd2t
+         OyUq7Wdpon8ac2O4cHKkqaff7q9WnGVUzBrPFeGiEbUVFvKU3kWjyer2a4ATgUMZDm9b
+         0J+3qUscAHVFfQyzTikzaUaXOOBRcJpsZErg1MNFGMuYnF2lN6VKu3TiA75OUhjxYsNX
+         +i2RPqiOvBGzHehsYWL1vZn/9M3gxc2B7kw4cXkDaED/e5vGrrRg2FJQhKOh1zPdOaL6
+         tfxlWfOxCek89UCQERc0S+8OmZU2a/9n3S87Bzw6VAKoruJH54FsPLrqQkBgpdiqxosf
+         u4bg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=XI8zjCWrHrG5RIk4b3Hbm5Q3Z+HRUCQWg5bfMzD9Jsw=;
+        b=q/fZF/Ch5A2Ala9pq02Z3pRAxvOcfFGP9jewAvkgElwlU3VAMSeS31xoFu/i1q7PeL
+         TEusAmmfynEW0DqgwP6LS2DUOD7HQkWJ9mfptvS0NraI8YY56oTZHXfztbVR0jM1QyFc
+         /4pDrwE5Qo7Rgj1yyIbQS5LMWBOsJbLbKuZ5duGsEYLNVcha6KTLtcwx1iSvHal77l7E
+         oiMVjennAhf1ouWe1TTmL1BsgK8nzh8zDCuXzfJg4kAskqULSAFBwW6onKezJ96d72dE
+         496uQiGn5lfLEVJ7RfqB5RLa/1J9qcX3pofXFNnBMocraoXw1YhDYsUiS1NANdqdyFWg
+         YBPw==
+X-Gm-Message-State: AOAM533xgA1legbLCl5WANRsmPsX8cllPzFPzCYymEXhckHgn/Rj3Eg8
+        NPTu34bFgf/vUAz38ngdw+U=
+X-Google-Smtp-Source: ABdhPJyFvIZgCudXxRH75W0b0/ObztMY9OZAeZr5OgyvwLXGLUX3a+7dZmd43PJqWcc67lcFZcMvMQ==
+X-Received: by 2002:a1c:7209:: with SMTP id n9mr2286646wmc.132.1617789402785;
+        Wed, 07 Apr 2021 02:56:42 -0700 (PDT)
+Received: from LEGION ([39.46.7.73])
+        by smtp.gmail.com with ESMTPSA id u8sm39863959wrr.42.2021.04.07.02.56.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Apr 2021 02:56:42 -0700 (PDT)
+Date:   Wed, 7 Apr 2021 14:56:34 +0500
+From:   Muhammad Usama Anjum <musamaanjum@gmail.com>
+To:     Timur Tabi <timur@kernel.org>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        Xiubo Li <Xiubo.Lee@gmail.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Shengjiu Wang <shengjiu.wang@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sunxi@lists.linux.dev
+Cc:     musamaanjum@gmail.com, linqiheng@huawei.com,
+        kernel-janitors@vger.kernel.org, dan.carpenter@oracle.com
+Subject: [PATCH] ASoC: fsl: sunxi: remove redundant dev_err call
+Message-ID: <20210407095634.GA1379642@LEGION>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+devm_ioremap_resource() prints error message in itself. Remove the
+dev_err call to avoid redundant error message.
 
-The error check on err is always false as err is always 0 at the
-port_found label. The code is redundant and can be removed.
-
-Addresses-Coverity: ("Logically dead code")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Muhammad Usama Anjum <musamaanjum@gmail.com>
 ---
- drivers/net/ethernet/xircom/xirc2ps_cs.c | 2 --
- 1 file changed, 2 deletions(-)
+ sound/soc/fsl/fsl_aud2htx.c   | 4 +---
+ sound/soc/fsl/fsl_easrc.c     | 4 +---
+ sound/soc/sunxi/sun4i-codec.c | 4 +---
+ 3 files changed, 3 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/net/ethernet/xircom/xirc2ps_cs.c b/drivers/net/ethernet/xircom/xirc2ps_cs.c
-index 3e337142b516..2049d76a0e68 100644
---- a/drivers/net/ethernet/xircom/xirc2ps_cs.c
-+++ b/drivers/net/ethernet/xircom/xirc2ps_cs.c
-@@ -798,8 +798,6 @@ xirc2ps_config(struct pcmcia_device * link)
- 	    goto config_error;
-     }
-   port_found:
--    if (err)
--	 goto config_error;
+diff --git a/sound/soc/fsl/fsl_aud2htx.c b/sound/soc/fsl/fsl_aud2htx.c
+index d70d5e75a30c..a328697511f7 100644
+--- a/sound/soc/fsl/fsl_aud2htx.c
++++ b/sound/soc/fsl/fsl_aud2htx.c
+@@ -198,10 +198,8 @@ static int fsl_aud2htx_probe(struct platform_device *pdev)
  
-     /****************
-      * Now allocate an interrupt line.	Note that this does not
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	regs = devm_ioremap_resource(&pdev->dev, res);
+-	if (IS_ERR(regs)) {
+-		dev_err(&pdev->dev, "failed ioremap\n");
++	if (IS_ERR(regs))
+ 		return PTR_ERR(regs);
+-	}
+ 
+ 	aud2htx->regmap = devm_regmap_init_mmio(&pdev->dev, regs,
+ 						&fsl_aud2htx_regmap_config);
+diff --git a/sound/soc/fsl/fsl_easrc.c b/sound/soc/fsl/fsl_easrc.c
+index 5e33afe87c4a..b1765c7d3bcd 100644
+--- a/sound/soc/fsl/fsl_easrc.c
++++ b/sound/soc/fsl/fsl_easrc.c
+@@ -1889,10 +1889,8 @@ static int fsl_easrc_probe(struct platform_device *pdev)
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	regs = devm_ioremap_resource(dev, res);
+-	if (IS_ERR(regs)) {
+-		dev_err(&pdev->dev, "failed ioremap\n");
++	if (IS_ERR(regs))
+ 		return PTR_ERR(regs);
+-	}
+ 
+ 	easrc->paddr = res->start;
+ 
+diff --git a/sound/soc/sunxi/sun4i-codec.c b/sound/soc/sunxi/sun4i-codec.c
+index 2173991c13db..6f3d9148a185 100644
+--- a/sound/soc/sunxi/sun4i-codec.c
++++ b/sound/soc/sunxi/sun4i-codec.c
+@@ -1711,10 +1711,8 @@ static int sun4i_codec_probe(struct platform_device *pdev)
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	base = devm_ioremap_resource(&pdev->dev, res);
+-	if (IS_ERR(base)) {
+-		dev_err(&pdev->dev, "Failed to map the registers\n");
++	if (IS_ERR(base))
+ 		return PTR_ERR(base);
+-	}
+ 
+ 	quirks = of_device_get_match_data(&pdev->dev);
+ 	if (quirks == NULL) {
 -- 
-2.30.2
+2.25.1
 
