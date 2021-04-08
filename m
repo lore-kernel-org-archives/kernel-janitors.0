@@ -2,102 +2,98 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83A10C433ED
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Apr 2021 20:45:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 692A7C433B4
+	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Apr 2021 20:48:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4399261151
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Apr 2021 20:45:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CE4761175
+	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Apr 2021 20:48:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232297AbhDHUpS (ORCPT
+        id S231862AbhDHUsk (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 8 Apr 2021 16:45:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50214 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231676AbhDHUpR (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 8 Apr 2021 16:45:17 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4CFEC061760;
-        Thu,  8 Apr 2021 13:45:04 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id j5so2511204wrn.4;
-        Thu, 08 Apr 2021 13:45:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=I2uf88F1MX0D+/ieSTh4Dwgs5iH5yDVfXlgdaFvgyLY=;
-        b=iLQaYA9ii9lu78nfawnJ1j3EnThTkKbwXfmYWnlD+/U7jNg54IkiZ2oafwoqsiPQmB
-         bXDztdUBIbPdz5o99zGzRw2KZg9vbtjRnPgftRp7TxyTz68PKMUmaVXcESMvNVgZ3ZmZ
-         HG8DIPq7a0/4u8whVHwTVPV9uWHiPbjXlVwmhL73FaQrNIl/ewoMrsl97+Whcye4jTHt
-         VN0tFRDETneCHToNWF+aw74HYgtgTuVOTcnkgetKzSSygR8nGdp19G2somF84BBIG8/I
-         wgv8MqKba/7QQcLvTD2aPcE9UkePb1cmOJ/E/qdNatzSXo01WtcE2A2O4nUHAXSRNUZW
-         3odg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=I2uf88F1MX0D+/ieSTh4Dwgs5iH5yDVfXlgdaFvgyLY=;
-        b=XRir7RsbFkk4bAG4SgSvDLV1U0FDvcTVbt9CFsQDqxXiwL//zM+U3aOr4A06VW/YFC
-         inPBIpobjrWVnINlq20YR3ZkuyUIynLUPf/H3mLRgtSBxCbuvzLFgRK+AlEBXRWnD+Je
-         YHEl24xOIW9rFyxzNcHf5yu4JewC+qy36OzN94wyUrbH+j+OzLtmC7UeUfh7LRauoNwZ
-         yP/C6jzKlUN8S4y/6fgAEiSpDIspRaF3LIDG7HVcDYAKWJ3OE0B7r9fPDeRF+4z/X9Fm
-         ZIwWjAhsjV6i8Zh7SgKou+if/l83Xry/9F5/vi2i/MQJlUekmGhYkrXkFd4FMyn7a/RT
-         a86g==
-X-Gm-Message-State: AOAM531ZFd37M1UbL+huc4K01UQvjXVTbBH48pX64IWAWzTQnUgaNwqQ
-        ntJecKjGAzyrxlu+YaX020c=
-X-Google-Smtp-Source: ABdhPJz9eH5hl3abnAet2ReLpQ9AF0Zt0z0vKdm5nhpwAuyLX7xec5aYXlictvG+iAmXJIvosyDaWg==
-X-Received: by 2002:a5d:4686:: with SMTP id u6mr14043266wrq.60.1617914703550;
-        Thu, 08 Apr 2021 13:45:03 -0700 (PDT)
-Received: from LEGION ([39.46.7.73])
-        by smtp.gmail.com with ESMTPSA id w9sm519597wmg.21.2021.04.08.13.45.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Apr 2021 13:45:03 -0700 (PDT)
-Date:   Fri, 9 Apr 2021 01:44:57 +0500
-From:   Muhammad Usama Anjum <musamaanjum@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "open list:STAGING SUBSYSTEM" <linux-staging@lists.linux.dev>,
-        open list <linux-kernel@vger.kernel.org>
-Cc:     musamaanjum@gmail.com, kernel-janitors@vger.kernel.org,
-        colin.king@canonical.com, dan.carpenter@oracle.com
-Subject: [PATCH] staging: rtl8723bs: Remove unnecessary code
-Message-ID: <20210408204457.GA3079308@LEGION>
+        Thu, 8 Apr 2021 16:48:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54012 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231676AbhDHUsh (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 8 Apr 2021 16:48:37 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 572E0610FB;
+        Thu,  8 Apr 2021 20:48:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1617914906;
+        bh=EvhIj/2RXJW7QqkfUJFRLLkEZQFYaeVGhuEU5JXn2Dw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=RHsMMBhsbatwq/nknt4RPwlmZZr0SS3d4sqtL0V9CAoGQwT7JJAIPmFSZqPrBOz6X
+         Au0Rv1u5NkrZEuHdi7nZ0irKpkvxRbU35NFkbT/DzHS8rSb6DMmqHbhOOA2dqXjGfd
+         0jUnYkj5sACB88AbL+eLS95qIQf6E9Eb7g2DoeCSbr2PKtLdH5z0o+4F3V6xB8ejpY
+         5qmXHt5NIMNL5ANF9GuDwWQdKSCxC7bE+Ww9G3lp0DV+RKVlmLV9/ZieiFLUQeG30r
+         B7sbslO7FFB+7xl4EEceuPrwpuIB6cYGxtHETX9tbwn5UXRfMGysTqqgiIwX9Ic/iq
+         FghNYcjFl634w==
+Date:   Thu, 8 Apr 2021 22:48:22 +0200
+From:   Wolfram Sang <wsa@kernel.org>
+To:     Wei Yongjun <weiyongjun1@huawei.com>
+Cc:     Sanket Goswami <Sanket.Goswami@amd.com>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Hulk Robot <hulkci@huawei.com>
+Subject: Re: [PATCH -next v2] i2c: designware: Fix return value check in
+ navi_amd_register_client()
+Message-ID: <20210408204822.GC1900@kunai>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+        Wei Yongjun <weiyongjun1@huawei.com>,
+        Sanket Goswami <Sanket.Goswami@amd.com>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Hulk Robot <hulkci@huawei.com>
+References: <20210407031137.2750993-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="Bu8it7iiRSEf40bY"
 Content-Disposition: inline
+In-Reply-To: <20210407031137.2750993-1-weiyongjun1@huawei.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The same code is executed when the condition "!show_errors" is true or
-false. Remove the if condition from here. The original intension of this
-condition was to not to report any error logs if condition was true. But
-this driver doesn't has those logs added. So this if condition can be
-removed.
 
-Addresses-Coverity: ("Same code execution")
-Signed-off-by: Muhammad Usama Anjum <musamaanjum@gmail.com>
----
- drivers/staging/rtl8723bs/core/rtw_ieee80211.c | 2 --
- 1 file changed, 2 deletions(-)
+--Bu8it7iiRSEf40bY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_ieee80211.c b/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
-index 1b60252545b3..2af66a18200d 100644
---- a/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
-@@ -1000,8 +1000,6 @@ enum ParseRes rtw_ieee802_11_parse_elems(u8 *start, uint len,
- 			break;
- 		default:
- 			unknown++;
--			if (!show_errors)
--				break;
- 			break;
- 		}
- 
--- 
-2.25.1
+On Wed, Apr 07, 2021 at 03:11:37AM +0000, Wei Yongjun wrote:
+> In case of error, the function i2c_new_client_device() returns
+> ERR_PTR() and never returns NULL. The NULL test in the return
+> value check should be replaced with IS_ERR().
+>=20
+> Fixes: 17631e8ca2d3 ("i2c: designware: Add driver support for AMD NAVI GP=
+U")
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 
+Applied to for-next, thanks!
+
+
+--Bu8it7iiRSEf40bY
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmBvbBYACgkQFA3kzBSg
+Kbapyw/+OpvB8xYyjrrq+QCB5Fo+geIdY/vQeaKYtls1gPiCMeB+9LRVcOiaoE48
+tgdcqcrriHMEPqRJ2PArI6phuJoJxMb4vp+KW5g9A14FHvLpCS5Z3L5KJrhp+Ssk
+O6FtuTiazAb45vvo2jFUWXZfyqktXG+6pUuqlXCMnmq03UGgGOSqfLCnnE71gS59
+VAa29h5rSBCO4nkbemEGG23g7meClpecAhXq1lzNvVMDV6FXTPivAqsDAnY3N+sB
+/TKV5G7rUWERdtkEJtAy92xh+pNQhjV8Qt91Gnqy1ngFRo71K/P21f/mzOfM6lsl
+YBJTU1A6ygBt4DS9bSR9qNB5uznhoesQ+S1l/xhxHr6/qnNnQOd0BoM9+pfPpdeT
+vgRuziZmgwYWZWY7a2Nns3RYGENAUBYyDERE8fr+g+KjwWVgfpXb4Ywf0RNL8pV/
+YR0FMMXFIM2MwU0ujT5hqeKdTkF9fbZuB2f84ifMEuKaQfkLj8dIPjIFkGyuRWiN
+2UJBKa3ST/omKKVgoH1j71KSYV8KQYoyVdJGS9CtVuJpw/W4hBgmKb11DD7EPpVU
+L5K+52n+Ur2NQ7jJYvEC6oEHhxK+anlAmI9xB4AV3yQbIl8kFmXO7V21W4dq4rxG
+9G6tInjbkV0LmmCbroQnI0LR0c4zmKryFR5KGO2un9EZY1UBsg0=
+=ilmz
+-----END PGP SIGNATURE-----
+
+--Bu8it7iiRSEf40bY--
