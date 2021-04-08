@@ -7,38 +7,41 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5757CC433ED
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Apr 2021 06:18:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29C76C433B4
+	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Apr 2021 06:18:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 31D4661165
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Apr 2021 06:18:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0C82611C0
+	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Apr 2021 06:18:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230132AbhDHGSv (ORCPT
+        id S229936AbhDHGS4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 8 Apr 2021 02:18:51 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:16823 "EHLO
-        szxga07-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229998AbhDHGSm (ORCPT
+        Thu, 8 Apr 2021 02:18:56 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:16075 "EHLO
+        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230061AbhDHGSt (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 8 Apr 2021 02:18:42 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
-        by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4FG9xv0cfWz8xQX;
-        Thu,  8 Apr 2021 14:16:19 +0800 (CST)
-Received: from huawei.com (10.175.127.227) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.498.0; Thu, 8 Apr 2021
- 14:18:22 +0800
+        Thu, 8 Apr 2021 02:18:49 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4FG9xx02v9z1BGDy;
+        Thu,  8 Apr 2021 14:16:21 +0800 (CST)
+Received: from huawei.com (10.175.127.227) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.498.0; Thu, 8 Apr 2021
+ 14:18:25 +0800
 From:   Ye Bin <yebin10@huawei.com>
-To:     <yebin10@huawei.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Banajit Goswami <bgoswami@codeaurora.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
+To:     <yebin10@huawei.com>, Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Ravulapati Vishnu vardhan rao 
+        <Vishnuvardhanrao.Ravulapati@amd.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Akshu Agrawal <akshu.agrawal@amd.com>
 CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
         <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH -next] ASoC: wcd934x: constify static struct snd_soc_dai_ops
-Date:   Thu, 8 Apr 2021 14:26:48 +0800
-Message-ID: <20210408062648.803227-1-yebin10@huawei.com>
+Subject: [PATCH -next] ASoC: amd: raven: acp3x-i2s: Constify static struct snd_soc_dai_ops
+Date:   Thu, 8 Apr 2021 14:26:51 +0800
+Message-ID: <20210408062651.803413-1-yebin10@huawei.com>
 X-Mailer: git-send-email 2.25.4
 MIME-Version: 1.0
 Content-Type:   text/plain; charset=US-ASCII
@@ -56,20 +59,20 @@ const to allow the compiler to put it in read-only memory.
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: Ye Bin <yebin10@huawei.com>
 ---
- sound/soc/codecs/wcd934x.c | 2 +-
+ sound/soc/amd/raven/acp3x-i2s.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/wcd934x.c b/sound/soc/codecs/wcd934x.c
-index 2c4818dc2e6d..5fe403307b72 100644
---- a/sound/soc/codecs/wcd934x.c
-+++ b/sound/soc/codecs/wcd934x.c
-@@ -1946,7 +1946,7 @@ static int wcd934x_get_channel_map(struct snd_soc_dai *dai,
- 	return 0;
+diff --git a/sound/soc/amd/raven/acp3x-i2s.c b/sound/soc/amd/raven/acp3x-i2s.c
+index 5bc028692fcf..396cb7d619e2 100644
+--- a/sound/soc/amd/raven/acp3x-i2s.c
++++ b/sound/soc/amd/raven/acp3x-i2s.c
+@@ -249,7 +249,7 @@ static int acp3x_i2s_trigger(struct snd_pcm_substream *substream,
+ 	return ret;
  }
  
--static struct snd_soc_dai_ops wcd934x_dai_ops = {
-+static const struct snd_soc_dai_ops wcd934x_dai_ops = {
- 	.hw_params = wcd934x_hw_params,
- 	.hw_free = wcd934x_hw_free,
- 	.trigger = wcd934x_trigger,
+-static struct snd_soc_dai_ops acp3x_i2s_dai_ops = {
++static const struct snd_soc_dai_ops acp3x_i2s_dai_ops = {
+ 	.hw_params = acp3x_i2s_hwparams,
+ 	.trigger = acp3x_i2s_trigger,
+ 	.set_fmt = acp3x_i2s_set_fmt,
 
