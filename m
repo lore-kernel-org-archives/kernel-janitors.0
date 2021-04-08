@@ -2,68 +2,75 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E823C433B4
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Apr 2021 09:47:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A3A1C433B4
+	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Apr 2021 09:47:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 301A7610A6
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Apr 2021 09:47:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2609561154
+	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Apr 2021 09:47:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231293AbhDHJrx (ORCPT
+        id S231341AbhDHJr7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 8 Apr 2021 05:47:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40694 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230291AbhDHJrx (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 8 Apr 2021 05:47:53 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 5196661041;
-        Thu,  8 Apr 2021 09:47:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1617875262;
-        bh=GjlqAsmh2uiQv7GMYN6Xm9kKhIAIb6youbJXsF8s0vs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=veNhFzuWNU21qHqc+UD2uYbOFGQgVJ/CbXFQJGxtJdaf428QDll7tgiuUz628I5dH
-         8TnWJdFtubbLjTNvfxr8IO4m7gcAszD5vDAOkjhWhMXNoEeCyyUsmULkiLzoov8eme
-         /8D16yC7v5+haMU/b2idLizYIjpzdJiQY/lOTZCk=
-Date:   Thu, 8 Apr 2021 11:47:39 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     Ye Bin <yebin10@huawei.com>,
-        Valentina Manea <valentina.manea.m@gmail.com>,
-        Shuah Khan <shuah@kernel.org>, linux-usb@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
-Subject: Re: [PATCH -next] usbip: vudc: fix missing unlock on error in
- usbip_sockfd_store()
-Message-ID: <YG7RO9w9PuLqUrbV@kroah.com>
-References: <20210408085033.909377-1-yebin10@huawei.com>
- <bf976317-2bf5-d019-bf7b-4a4ead0b1c94@huawei.com>
- <YG7KhTDZyR8U0yNY@kroah.com>
- <d555fd00-9c4f-1ddb-4fb7-b4d015b6fe3a@huawei.com>
+        Thu, 8 Apr 2021 05:47:59 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:16406 "EHLO
+        szxga06-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231321AbhDHJr6 (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 8 Apr 2021 05:47:58 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
+        by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4FGGbm6cgkzkjWR;
+        Thu,  8 Apr 2021 17:45:56 +0800 (CST)
+Received: from huawei.com (10.67.174.117) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.498.0; Thu, 8 Apr 2021
+ 17:47:38 +0800
+From:   Ruiqi Gong <gongruiqi1@huawei.com>
+To:     <gongruiqi1@huawei.com>, Talel Shenhar <talel@amazon.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+CC:     Wang Weiyang <wangweiyang2@huawei.com>, <linux-pm@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH -next] thermal: thermal_mmio: remove redundant dev_err call in thermal_mmio_probe()
+Date:   Thu, 8 Apr 2021 06:01:44 -0400
+Message-ID: <20210408100144.7494-1-gongruiqi1@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d555fd00-9c4f-1ddb-4fb7-b4d015b6fe3a@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.174.117]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Apr 08, 2021 at 05:39:06PM +0800, YueHaibing wrote:
-> On 2021/4/8 17:19, Greg Kroah-Hartman wrote:
-> > On Thu, Apr 08, 2021 at 04:57:11PM +0800, YueHaibing wrote:
-> >>
-> >> 这种bugfix最好加下Fixes tag
-> > 
-> > I am sorry but I can not parse that :(
-> 
-> Sorry, I just suggest to add this Fixes tag
-> 
-> Fixes: bd8b82042269 ("usbip: vudc synchronize sysfs code paths")
+There is a error message within devm_ioremap_resource
+already, so remove the dev_err call to avoid redundant
+error message.
 
-Yes, that would be great to have added, thanks!
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Ruiqi Gong <gongruiqi1@huawei.com>
+---
+ drivers/thermal/thermal_mmio.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-greg k-h
+diff --git a/drivers/thermal/thermal_mmio.c b/drivers/thermal/thermal_mmio.c
+index d0bdf1ea3331..ded1dd0d4ef7 100644
+--- a/drivers/thermal/thermal_mmio.c
++++ b/drivers/thermal/thermal_mmio.c
+@@ -54,11 +54,8 @@ static int thermal_mmio_probe(struct platform_device *pdev)
+ 
+ 	resource = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	sensor->mmio_base = devm_ioremap_resource(&pdev->dev, resource);
+-	if (IS_ERR(sensor->mmio_base)) {
+-		dev_err(&pdev->dev, "failed to ioremap memory (%ld)\n",
+-			PTR_ERR(sensor->mmio_base));
++	if (IS_ERR(sensor->mmio_base))
+ 		return PTR_ERR(sensor->mmio_base);
+-	}
+ 
+ 	sensor_init_func = device_get_match_data(&pdev->dev);
+ 	if (sensor_init_func) {
+
