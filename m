@@ -5,72 +5,66 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 341B7C433ED
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Apr 2021 22:01:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99531C433B4
+	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Apr 2021 23:45:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0691C610F9
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Apr 2021 22:01:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52BDF61028
+	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Apr 2021 23:45:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232692AbhDHWBt (ORCPT
+        id S232938AbhDHXpo (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 8 Apr 2021 18:01:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38540 "EHLO
+        Thu, 8 Apr 2021 19:45:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32836 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232265AbhDHWBt (ORCPT
+        with ESMTP id S232426AbhDHXpn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 8 Apr 2021 18:01:49 -0400
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22F33C061761;
-        Thu,  8 Apr 2021 15:01:37 -0700 (PDT)
-Received: by mail-wm1-x335.google.com with SMTP id a76so1928593wme.0;
-        Thu, 08 Apr 2021 15:01:37 -0700 (PDT)
+        Thu, 8 Apr 2021 19:45:43 -0400
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79974C061760;
+        Thu,  8 Apr 2021 16:45:31 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id a7so5831658eju.1;
+        Thu, 08 Apr 2021 16:45:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=1k2oFebJMetFk2MF03n3BhfJ/Z6puGCIo7fh0K3MdcY=;
-        b=PRkaV10clS+sLFEZRt0+mqBC/zm4SqmmBE9Gqa81Fz0xckmRM+MJuOI2M525VQlPg1
-         D5ThmRBHKWpYoIIiGkgzco8KJcvyMvcQhWi8lgTawXnBb9X4vbWGi+Y9vf8atwhaj5Ce
-         oFAcr1MFJG5lO0AX4iRggn7HIDdTiy8mGxoDh05Fc4HUGzghplJf7iXLMSwakD6v8iUk
-         B9EVN7msrL3jru4b556NUvx41K9Xfo0LdNBQiwJ9avVKkMZyfu4+jAQHMS+EOWDLKzKu
-         I4Oiud+uTZ6fvFUCUzU5NhlcOcMRebMxa6lIohFsp8fzpu80DzrK6aSyMO1SHYKujZY1
-         6DUg==
+        bh=QhXqjewBtncdOCVUU5t44rbala3/r6RlbCvxFUCu3+M=;
+        b=uA8WrQ0N22+iR9oeA1h8gASKkARO7xU5WR15k/IhN6w0VmVzJ/ctMncOyRSvrlawmZ
+         9Y9hl3rY+3Jt7KcxhL3ZSceFm8fBZHSj8K65ahVdhaTobmUIOZHZOitOwaJsW+yIMGAG
+         2sz1T44y5XyRbs3PPbMLJE0Ceo76TWUxE4/yueSRUHbhfg666K4d3NpEYsJS0LhQa0nK
+         YEGTocAOSadgCqAfQReKpwIcs11SRclfg+DEbr3MHlsVCZDIXPTJmPYVuogeoft0TvOk
+         od6I0utFQKakFwmn7R7i0teJ7kP9q37qU6++zTPpnV4pjJGxqkUPIKwIcDg58lQbWSgP
+         VXnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
          :content-disposition;
-        bh=1k2oFebJMetFk2MF03n3BhfJ/Z6puGCIo7fh0K3MdcY=;
-        b=ox0DLYGIulOlNlVs3qBUO4xkNyO+l+LckU3+jFFFV2nRF8w0zCYekGLkZA0f9KfTIy
-         yizGVZQWzd8ZRJqYNmoU2XF90D97b6lRi0SDX51uwJ+Wfb4Gud3PY1vkfi1QojbJzIji
-         X1+lU/s/POy8zsBKXYbLp3L+8x0en5rMrYMQY6Bu5+GtWtbx9wPxYvWhiIrcPxVKhpiZ
-         NMvQ4JX6RgQIelw3WlFRVk7I7n5xseb1lldg63wVkAdgdgg+auTLM/04IllZvJb8va4s
-         nO31ZmQNmr/Y/sS/hDEOZtkGjfVFSFPHp1k9mZUql9QAdBW5WDh/5gjLbthP9u/mWS0J
-         k5lw==
-X-Gm-Message-State: AOAM530IGM9gC3WYkeaykLvERzyoSUrvxwVQ+EcojL74Qnk47y7CZPmw
-        EClZvTUsC+DJAn5VcNaDt0E=
-X-Google-Smtp-Source: ABdhPJxf8t72/YsLezTsQMLohaoXiiyiWCTcZkEGUe9xPH/SLdEmI4+zc7XajgVWPcBaL1ImutIVrQ==
-X-Received: by 2002:a1c:4c0c:: with SMTP id z12mr10800685wmf.38.1617919295698;
-        Thu, 08 Apr 2021 15:01:35 -0700 (PDT)
-Received: from LEGION ([39.46.7.73])
-        by smtp.gmail.com with ESMTPSA id o7sm1041687wrs.16.2021.04.08.15.01.32
+        bh=QhXqjewBtncdOCVUU5t44rbala3/r6RlbCvxFUCu3+M=;
+        b=t/PqoKvetZoZCYlzJilgk52sxd8n7IeoMyRZgeagBDpr9ggzYJ6gWPyb68NJ95d5c3
+         xvrpoy+FNS+cy/SoB77P3ecUJxoUiBSAs46xqIAI8PwhsOkQZko6JB5iURrWWDg0HxNz
+         YFmHLrIjfZoiI1AGsLjcWJzMZB1RKjmaOzs+fIS82qEuBgI4biZyFGcZOiNd6y4GX1w8
+         h/zEcuevWcXkznyiHCbLsOaqj90rLfFBTYVWm4T+9KV7/mXTBtoe4X8owJ62Jif753al
+         nUoPD2E6eE8sFXg9JUY9dGNSN+EO21MqNIjVKtF1dIs5OybMHHUlfwm5q4W0yHY9Li9N
+         UiSA==
+X-Gm-Message-State: AOAM532lz8xvExQF5Plno9pkexRPL06oEJljxB+ys1ZXBSGM5Ymt2mCl
+        hEpK2siNkYY+3GjqGutO5y0=
+X-Google-Smtp-Source: ABdhPJxlmqZFXITOX8f8zYmoxVtOp+YhPyDdDgCXRVxxqPyk51MqeXJsMlFlQJT7QmBqwpsecshSwQ==
+X-Received: by 2002:a17:906:3a94:: with SMTP id y20mr13368380ejd.35.1617925530313;
+        Thu, 08 Apr 2021 16:45:30 -0700 (PDT)
+Received: from test-VirtualBox ([87.116.181.227])
+        by smtp.gmail.com with ESMTPSA id h25sm383175ejx.105.2021.04.08.16.45.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Apr 2021 15:01:35 -0700 (PDT)
-Date:   Fri, 9 Apr 2021 03:01:29 +0500
-From:   Muhammad Usama Anjum <musamaanjum@gmail.com>
-To:     "David S. Miller" <davem@davemloft.net>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        David Ahern <dsahern@kernel.org>,
-        Jakub Kicinski <kuba@kernel.org>,
-        "open list:NETWORKING [IPv4/IPv6]" <netdev@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Cc:     musamaanjum@gmail.com, kernel-janitors@vger.kernel.org,
-        colin.king@canonical.com, dan.carpenter@oracle.com,
-        stable@vger.kernel.org
-Subject: [PATCH] net: ipv6: check for validity before dereferencing
- cfg->fc_nlinfo.nlh
-Message-ID: <20210408220129.GA3111136@LEGION>
+        Thu, 08 Apr 2021 16:45:30 -0700 (PDT)
+Date:   Fri, 9 Apr 2021 01:45:27 +0200
+From:   Sergei Krainov <sergei.krainov.lkd@gmail.com>
+To:     Larry.Finger@lwfinger.net, florian.c.schilhabel@googlemail.com,
+        gregkh@linuxfoundation.org
+Cc:     linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] staging: rtl8712: fix wrong function output
+Message-ID: <20210408234527.GA6893@test-VirtualBox>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -78,36 +72,28 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-nlh is being checked for validtity two times when it is dereferenced in
-this function. Check for validity again when updating the flags through
-nlh pointer to make the dereferencing safe.
+Function r8712_find_network() were returning wlan_network even if it
+didn't match required address. This happened due to not checking if
+list end was reached and returning last processed wlan_network.
 
-CC: <stable@vger.kernel.org>
-Addresses-Coverity: ("NULL pointer dereference")
-Signed-off-by: Muhammad Usama Anjum <musamaanjum@gmail.com>
+Signed-off-by: Sergei Krainov <sergei.krainov.lkd@gmail.com>
 ---
- net/ipv6/route.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/staging/rtl8712/rtl871x_mlme.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/net/ipv6/route.c b/net/ipv6/route.c
-index 28801ae80548..a22822bdbf39 100644
---- a/net/ipv6/route.c
-+++ b/net/ipv6/route.c
-@@ -5206,9 +5206,11 @@ static int ip6_route_multipath_add(struct fib6_config *cfg,
- 		 * nexthops have been replaced by first new, the rest should
- 		 * be added to it.
- 		 */
--		cfg->fc_nlinfo.nlh->nlmsg_flags &= ~(NLM_F_EXCL |
--						     NLM_F_REPLACE);
--		cfg->fc_nlinfo.nlh->nlmsg_flags |= NLM_F_CREATE;
-+		if (cfg->fc_nlinfo.nlh) {
-+			cfg->fc_nlinfo.nlh->nlmsg_flags &= ~(NLM_F_EXCL |
-+							     NLM_F_REPLACE);
-+			cfg->fc_nlinfo.nlh->nlmsg_flags |= NLM_F_CREATE;
-+		}
- 		nhn++;
+diff --git a/drivers/staging/rtl8712/rtl871x_mlme.c b/drivers/staging/rtl8712/rtl871x_mlme.c
+index 8a97307fbbd6..c38161114b80 100644
+--- a/drivers/staging/rtl8712/rtl871x_mlme.c
++++ b/drivers/staging/rtl8712/rtl871x_mlme.c
+@@ -146,6 +146,8 @@ static struct wlan_network *r8712_find_network(struct  __queue *scanned_queue,
+ 		if (!memcmp(addr, pnetwork->network.MacAddress, ETH_ALEN))
+ 			break;
  	}
- 
++	if (plist == phead)
++		pnetwork = NULL;
+ 	spin_unlock_irqrestore(&scanned_queue->lock, irqL);
+ 	return pnetwork;
+ }
 -- 
 2.25.1
 
