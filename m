@@ -7,79 +7,73 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A1E8C433B4
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Apr 2021 13:03:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 390F3C433ED
+	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Apr 2021 13:12:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1D883610FC
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Apr 2021 13:03:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06ACF61155
+	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Apr 2021 13:12:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231537AbhDHNDS (ORCPT
+        id S231534AbhDHNMv (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 8 Apr 2021 09:03:18 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:16410 "EHLO
-        szxga06-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229751AbhDHNDR (ORCPT
+        Thu, 8 Apr 2021 09:12:51 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:16098 "EHLO
+        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231474AbhDHNMu (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 8 Apr 2021 09:03:17 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
-        by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4FGLx90tJWzkjgD;
-        Thu,  8 Apr 2021 21:01:17 +0800 (CST)
-Received: from localhost.localdomain (10.175.112.125) by
- DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
- 14.3.498.0; Thu, 8 Apr 2021 21:02:54 +0800
-From:   Chen Huang <chenhuang5@huawei.com>
-To:     Evgeniy Polyakov <zbr@ioremap.net>,
-        Rikard Falkeborn <rikard.falkeborn@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+        Thu, 8 Apr 2021 09:12:50 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4FGM7j4Pfsz19L9X;
+        Thu,  8 Apr 2021 21:10:25 +0800 (CST)
+Received: from huawei.com (10.175.104.57) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.498.0; Thu, 8 Apr 2021
+ 21:12:30 +0800
+From:   Peng Wu <wupeng58@huawei.com>
+To:     <mingo@redhat.com>, <peterz@infradead.org>,
+        <juri.lelli@redhat.com>, <vincent.guittot@linaro.org>
 CC:     <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        "Chen Huang" <chenhuang5@huawei.com>
-Subject: [PATCH -next 1/2] w1: ds2805: Use module_w1_family to simplify the code
-Date:   Thu, 8 Apr 2021 13:09:53 +0000
-Message-ID: <20210408130954.1158963-1-chenhuang5@huawei.com>
-X-Mailer: git-send-email 2.25.1
+        Peng Wu <wupeng58@huawei.com>
+Subject: [PATCH -next] sched/topology: Make some symbols static
+Date:   Thu, 8 Apr 2021 21:12:17 +0800
+Message-ID: <1617887537-38438-1-git-send-email-wupeng58@huawei.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.112.125]
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.175.104.57]
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-module_w1_family() makes the code simpler by eliminating
-boilerplate code.
+The sparse tool complains as follows:
 
-Signed-off-by: Chen Huang <chenhuang5@huawei.com>
+kernel/sched/topology.c:211:1: warning:
+ symbol 'sched_energy_mutex' was not declared. Should it be static?
+kernel/sched/topology.c:212:6: warning:
+ symbol 'sched_energy_update' was not declared. Should it be static?
+
+This symbol is not used outside of topology.c, so this
+commit marks it static.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Peng Wu <wupeng58@huawei.com>
 ---
- drivers/w1/slaves/w1_ds2805.c | 15 +--------------
- 1 file changed, 1 insertion(+), 14 deletions(-)
+ kernel/sched/topology.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/w1/slaves/w1_ds2805.c b/drivers/w1/slaves/w1_ds2805.c
-index 206186db727d..6b5d12ba1b65 100644
---- a/drivers/w1/slaves/w1_ds2805.c
-+++ b/drivers/w1/slaves/w1_ds2805.c
-@@ -291,20 +291,7 @@ static struct w1_family w1_family_0d = {
- 	.fops = &w1_f0d_fops,
- };
+diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+index d1aec244c027..25c3f88d43cd 100644
+--- a/kernel/sched/topology.c
++++ b/kernel/sched/topology.c
+@@ -208,8 +208,8 @@ sd_parent_degenerate(struct sched_domain *sd, struct sched_domain *parent)
+ #if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
+ DEFINE_STATIC_KEY_FALSE(sched_energy_present);
+ unsigned int sysctl_sched_energy_aware = 1;
+-DEFINE_MUTEX(sched_energy_mutex);
+-bool sched_energy_update;
++static DEFINE_MUTEX(sched_energy_mutex);
++static bool sched_energy_update;
  
--static int __init w1_f0d_init(void)
--{
--	pr_info("%s()\n", __func__);
--	return w1_register_family(&w1_family_0d);
--}
--
--static void __exit w1_f0d_fini(void)
--{
--	pr_info("%s()\n", __func__);
--	w1_unregister_family(&w1_family_0d);
--}
--
--module_init(w1_f0d_init);
--module_exit(w1_f0d_fini);
-+module_w1_family(w1_family_0d);
- 
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Andrew Worsley amworsley@gmail.com");
--- 
-2.17.1
+ void rebuild_sched_domains_energy(void)
+ {
 
