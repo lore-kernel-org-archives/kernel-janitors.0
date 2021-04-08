@@ -2,117 +2,77 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17C69C433B4
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Apr 2021 08:38:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4530C433ED
+	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Apr 2021 08:42:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DA17C61164
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Apr 2021 08:38:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B259B610E8
+	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Apr 2021 08:42:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229741AbhDHIjA (ORCPT
+        id S229602AbhDHImg (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 8 Apr 2021 04:39:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43644 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229539AbhDHIjA (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 8 Apr 2021 04:39:00 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id E9BB361165;
-        Thu,  8 Apr 2021 08:38:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1617871129;
-        bh=K8sVpV5r3BqS9hmPn96824THlYvOfMr5q5GJIDgHY1I=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GfrbDht54m5KwRiHWtaxkbORpy4uJG7AQrqM5OGHoOiKmfNM7o0cN5thOuJWALCuX
-         IaYTVxPGscaZaQTxHC9aKsEyb7b9jvyWF9M/GvmI8PomlwYUXpPFjv/kh3kjL7dGlJ
-         DnsuI9YIB/cHqJLGGnXIMnX02mOAl810Zp+aTPdM=
-Date:   Thu, 8 Apr 2021 10:38:47 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Sergei Krainov <sergei.krainov.lkd@gmail.com>
-Cc:     Larry.Finger@lwfinger.net, florian.c.schilhabel@googlemail.com,
-        linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] staging: rtl8712: remove unused variable from
- rtl871x_mlme.c
-Message-ID: <YG7BF8Z1/gC1r8AP@kroah.com>
-References: <20210408083312.GA3118@test-VirtualBox>
+        Thu, 8 Apr 2021 04:42:36 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:16403 "EHLO
+        szxga06-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229539AbhDHImg (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 8 Apr 2021 04:42:36 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
+        by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4FGF8G5Tr8zkjVQ;
+        Thu,  8 Apr 2021 16:40:30 +0800 (CST)
+Received: from huawei.com (10.175.127.227) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.498.0; Thu, 8 Apr 2021
+ 16:42:07 +0800
+From:   Ye Bin <yebin10@huawei.com>
+To:     <yebin10@huawei.com>,
+        Valentina Manea <valentina.manea.m@gmail.com>,
+        "Shuah Khan" <shuah@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     <linux-usb@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH -next] usbip: vudc: fix missing unlock on error in usbip_sockfd_store()
+Date:   Thu, 8 Apr 2021 16:50:33 +0800
+Message-ID: <20210408085033.909377-1-yebin10@huawei.com>
+X-Mailer: git-send-email 2.25.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210408083312.GA3118@test-VirtualBox>
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.127.227]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Apr 08, 2021 at 10:33:12AM +0200, Sergei Krainov wrote:
-> Remove unused variable from rtl871x_mlme.c.
-> 
-> No side effects can be seen locally or in r8712_find_network()
-> 
-> Signed-off-by: Sergei Krainov <sergei.krainov.lkd@gmail.com>
-> ---
->  drivers/staging/rtl8712/rtl871x_mlme.c | 9 +--------
->  1 file changed, 1 insertion(+), 8 deletions(-)
-> 
-> diff --git a/drivers/staging/rtl8712/rtl871x_mlme.c b/drivers/staging/rtl8712/rtl871x_mlme.c
-> index 8a97307fbbd6..4f41e321ea63 100644
-> --- a/drivers/staging/rtl8712/rtl871x_mlme.c
-> +++ b/drivers/staging/rtl8712/rtl871x_mlme.c
-> @@ -656,7 +656,7 @@ void r8712_joinbss_event_callback(struct _adapter *adapter, u8 *pbuf)
->  	struct sta_priv	*pstapriv = &adapter->stapriv;
->  	struct mlme_priv	*pmlmepriv = &adapter->mlmepriv;
->  	struct wlan_network	*cur_network = &pmlmepriv->cur_network;
-> -	struct wlan_network	*pcur_wlan = NULL, *ptarget_wlan = NULL;
-> +	struct wlan_network	*ptarget_wlan = NULL;
->  	unsigned int		the_same_macaddr = false;
->  	struct wlan_network *pnetwork;
->  
-> @@ -721,13 +721,6 @@ void r8712_joinbss_event_callback(struct _adapter *adapter, u8 *pbuf)
->  					    scanned_queue,
->  					    cur_network->network.MacAddress);
->  				} else {
-> -					pcur_wlan =
-> -					     r8712_find_network(&pmlmepriv->
-> -					     scanned_queue,
-> -					     cur_network->network.MacAddress);
-> -					if (pcur_wlan)
-> -						pcur_wlan->fixed = false;
-> -
->  					pcur_sta = r8712_get_stainfo(pstapriv,
->  					     cur_network->network.MacAddress);
->  					spin_lock_irqsave(&pstapriv->
-> -- 
-> 2.25.1
-> 
-> 
+Add the missing unlock before return from function usbip_sockfd_store()
+in the error handling case.
 
-Hi,
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Ye Bin <yebin10@huawei.com>
+---
+ drivers/usb/usbip/vudc_sysfs.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+diff --git a/drivers/usb/usbip/vudc_sysfs.c b/drivers/usb/usbip/vudc_sysfs.c
+index f7633ee655a1..d1cf6b51bf85 100644
+--- a/drivers/usb/usbip/vudc_sysfs.c
++++ b/drivers/usb/usbip/vudc_sysfs.c
+@@ -156,12 +156,14 @@ static ssize_t usbip_sockfd_store(struct device *dev,
+ 		tcp_rx = kthread_create(&v_rx_loop, &udc->ud, "vudc_rx");
+ 		if (IS_ERR(tcp_rx)) {
+ 			sockfd_put(socket);
++			mutex_unlock(&udc->ud.sysfs_lock);
+ 			return -EINVAL;
+ 		}
+ 		tcp_tx = kthread_create(&v_tx_loop, &udc->ud, "vudc_tx");
+ 		if (IS_ERR(tcp_tx)) {
+ 			kthread_stop(tcp_rx);
+ 			sockfd_put(socket);
++			mutex_unlock(&udc->ud.sysfs_lock);
+ 			return -EINVAL;
+ 		}
+ 
 
-You are receiving this message because of the following common error(s)
-as indicated below:
-
-- This looks like a new version of a previously submitted patch, but you
-  did not list below the --- line any changes from the previous version.
-  Please read the section entitled "The canonical patch format" in the
-  kernel file, Documentation/SubmittingPatches for what needs to be done
-  here to properly describe this.
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
