@@ -2,102 +2,102 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A053FC43461
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Apr 2021 19:57:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 119A2C433ED
+	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Apr 2021 19:57:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 62C2D610CC
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Apr 2021 19:57:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8232610E8
+	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Apr 2021 19:57:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232519AbhDHT5Z (ORCPT
+        id S232548AbhDHT5j (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 8 Apr 2021 15:57:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39696 "EHLO
+        Thu, 8 Apr 2021 15:57:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39774 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232470AbhDHT5U (ORCPT
+        with ESMTP id S232218AbhDHT5j (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 8 Apr 2021 15:57:20 -0400
-Received: from viti.kaiser.cx (viti.kaiser.cx [IPv6:2a01:238:43fe:e600:cd0c:bd4a:7a3:8e9f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0531AC061762;
-        Thu,  8 Apr 2021 12:57:09 -0700 (PDT)
-Received: from ipservice-092-217-074-086.092.217.pools.vodafone-ip.de ([92.217.74.86] helo=martin-debian-2.paytec.ch)
-        by viti.kaiser.cx with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <martin@kaiser.cx>)
-        id 1lUam1-0005PV-0O; Thu, 08 Apr 2021 21:57:05 +0200
-From:   Martin Kaiser <martin@kaiser.cx>
-To:     Larry Finger <Larry.Finger@lwfinger.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Martin Kaiser <martin@kaiser.cx>
-Subject: [PATCH 12/12] staging: rtl8188eu: simplify rtw_cmd_thread's main loop
-Date:   Thu,  8 Apr 2021 21:56:01 +0200
-Message-Id: <20210408195601.4762-12-martin@kaiser.cx>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20210408195601.4762-1-martin@kaiser.cx>
-References: <20210408195601.4762-1-martin@kaiser.cx>
+        Thu, 8 Apr 2021 15:57:39 -0400
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F6B5C061760;
+        Thu,  8 Apr 2021 12:57:27 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id j4-20020a05600c4104b029010c62bc1e20so1825608wmi.3;
+        Thu, 08 Apr 2021 12:57:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=pHid7b1osF0SpTWtp0Ym0Sv/8aucsroZP/wDvU5qRUY=;
+        b=SDD77RRxaFIx6pnvEz8lN7D1kL7Sn5GoTa3dNZUubUCb93BqP4nTqhhci6lRfoEsII
+         SxRKvuOgtDblZRWYQfC0QN/y+W+HLEVGTceTdV51m+4D4jo96HRbsA9TsMnOBwC4w4LG
+         XVTDxyKDLhfJTf9jHbjTCm0BVq1Vz0pEedbrCWuqThKbw7HAftXTYa26QHkwsp5ab4JA
+         gwsxSali9y8hG7caeSHE4ObRAsIuISWdLglO2MFIgik5JdIsRhYY9TrZQ7qbPM/BX4kH
+         YXvYd9Xxf1lj3aL57hC35j7aasE1eb2L6ltfO2Ecwk9Nyd7afkvx0AONrJvTNGF+bSLs
+         wJYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=pHid7b1osF0SpTWtp0Ym0Sv/8aucsroZP/wDvU5qRUY=;
+        b=QLW7tLSIluQ+iQhG/BTnZb1ClRMOFU1MCF/GLvqHUrvLSLZDomXhqNLiLj3x9JSVIa
+         V5LwieypOxJDF+/aJdKaXMpGHd/nsgvZqLDXHIKFjyZ6TP1Ph6zFG3AQ9IYWwtKCvlPz
+         Fi1qGGjfyc8GgfNtDEEP0LaV53tMpYWueuE171IR4MoHjq2NDGXW2VD8N1nwDJac91+V
+         LoGC8JNy3NsUJMScsjzpiAWfFjKhW6Sun67ue3eFoCemwBajIuJzZV1u1N38SaRtvYVd
+         PhT8F5Yfx0ISqRDScf4FZ3FXoPkDXaJNKGalLMYvYJbh0YbOp2+FQedWGq/Yyjipszch
+         moUw==
+X-Gm-Message-State: AOAM531Tg6klLCxM6yXe6IQkVkInod+3e4CC4dJpkbCueaRaAZb0PxDO
+        nEWcCS7TI1vMQ9Z452Lqw3Y=
+X-Google-Smtp-Source: ABdhPJwumd9NyP++HS8c5TOLkkrMEBeTlEaV4aIyq1qCaTKCVHgdihqEgAPi3I5S0vnHubKWaorvIQ==
+X-Received: by 2002:a1c:7409:: with SMTP id p9mr9787834wmc.153.1617911846245;
+        Thu, 08 Apr 2021 12:57:26 -0700 (PDT)
+Received: from LEGION ([39.46.7.73])
+        by smtp.gmail.com with ESMTPSA id j30sm480579wrj.62.2021.04.08.12.57.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Apr 2021 12:57:25 -0700 (PDT)
+Date:   Fri, 9 Apr 2021 00:57:18 +0500
+From:   Muhammad Usama Anjum <musamaanjum@gmail.com>
+To:     Mark Brown <broonie@kernel.org>, Tian Tao <tiantao6@hisilicon.com>,
+        "open list:SPI SUBSYSTEM" <linux-spi@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Cc:     musamaanjum@gmail.com, kernel-janitors@vger.kernel.org,
+        colin.king@canonical.com, dan.carpenter@oracle.com
+Subject: [PATCH] spi: orion: set devdata properly as it is being used later
+Message-ID: <20210408195718.GA3075166@LEGION>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-In rtw_cmd_thread's main loop, we wait until there's a command in the
-queue. To skip this wait statement in subsequent iterations, the driver
-uses a label and goto instead of the actual loop. We only get back to the
-initial wait if the queue is empty when we read it.
+If device_get_match_data returns NULL, devdata isn't being updated
+properly. It is being used later in the function. Both devdata and
+spi->devdata should be updated to avoid NULL pointer dereference.
 
-Basically, all we want to do is check if there's a command in the queue.
-If yes, we process it. If not, we wait until someone enqueues a command.
-
-Signed-off-by: Martin Kaiser <martin@kaiser.cx>
+Addresses-Coverity: ("NULL pointer dereference")
+Fixes: 0e6521f13c2 ("spi: orion: Use device_get_match_data() helper")
+Signed-off-by: Muhammad Usama Anjum <musamaanjum@gmail.com>
 ---
- drivers/staging/rtl8188eu/core/rtw_cmd.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ drivers/spi/spi-orion.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/staging/rtl8188eu/core/rtw_cmd.c b/drivers/staging/rtl8188eu/core/rtw_cmd.c
-index 9d358dce5296..6728391d39e3 100644
---- a/drivers/staging/rtl8188eu/core/rtw_cmd.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_cmd.c
-@@ -188,10 +188,6 @@ int rtw_cmd_thread(void *context)
- 		 ("start r871x %s !!!!\n", __func__));
+diff --git a/drivers/spi/spi-orion.c b/drivers/spi/spi-orion.c
+index d02c5c9def20..34b31aba3981 100644
+--- a/drivers/spi/spi-orion.c
++++ b/drivers/spi/spi-orion.c
+@@ -676,7 +676,8 @@ static int orion_spi_probe(struct platform_device *pdev)
+ 	spi->dev = &pdev->dev;
  
- 	while (1) {
--		if (wait_for_completion_interruptible(&pcmdpriv->cmd_queue_comp))
--			break;
--
--_next:
- 		if (padapter->bDriverStopped ||
- 		    padapter->bSurpriseRemoved) {
- 			DBG_88E("%s: DriverStopped(%d) SurpriseRemoved(%d) break at line %d\n",
-@@ -201,8 +197,13 @@ int rtw_cmd_thread(void *context)
- 		}
+ 	devdata = device_get_match_data(&pdev->dev);
+-	spi->devdata = devdata ? devdata : &orion_spi_dev_data;
++	devdata = devdata ? devdata : &orion_spi_dev_data;
++	spi->devdata = devdata;
  
- 		pcmd = rtw_dequeue_cmd(&pcmdpriv->cmd_queue);
--		if (!pcmd)
-+		if (!pcmd) {
-+			/* The queue is empty. Wait until someone enqueues a command. */
-+			if (wait_for_completion_interruptible(&pcmdpriv->cmd_queue_comp))
-+				break;
-+
- 			continue;
-+		}
- 
- 		if (rtw_cmd_filter(pcmdpriv, pcmd) == _FAIL) {
- 			pcmd->res = H2C_DROPPED;
-@@ -239,8 +240,6 @@ int rtw_cmd_thread(void *context)
- 
- 		if (signal_pending(current))
- 			flush_signals(current);
--
--		goto _next;
- 	}
- 	pcmdpriv->cmdthd_running = false;
- 
+ 	spi->clk = devm_clk_get(&pdev->dev, NULL);
+ 	if (IS_ERR(spi->clk)) {
 -- 
-2.20.1
+2.25.1
 
