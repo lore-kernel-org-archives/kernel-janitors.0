@@ -2,114 +2,98 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1435C433B4
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Apr 2021 09:24:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A5B4C433ED
+	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Apr 2021 09:29:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A417061130
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Apr 2021 09:24:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 185176113C
+	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Apr 2021 09:29:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229689AbhDHJYv (ORCPT
+        id S229831AbhDHJ31 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 8 Apr 2021 05:24:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41364 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229618AbhDHJYt (ORCPT
+        Thu, 8 Apr 2021 05:29:27 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:15179 "EHLO
+        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229600AbhDHJ30 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 8 Apr 2021 05:24:49 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97213C061760;
-        Thu,  8 Apr 2021 02:24:38 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id mh7so1814176ejb.12;
-        Thu, 08 Apr 2021 02:24:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=3lbUPpJurXJokmph9WoNmMs1fe6ThVm1fd93joLn2Gk=;
-        b=jF/NCrUw5IxSYu/zRC5hVftqtDXEwXbRsFnXPReraR8naNX5NCFI/zqNrp7DvMc0oz
-         IJYNvNeglJkWskPOMhGSRo8A6USzjQMiohfjvmVR9wyuqG/WIkkBpIvTTIO/zFF2zoSw
-         X1U4TEk5H+075lNLfvV04Gc64Wh7vpPF8tfRuE3zx2wJMM7NhqfzjEROGEqtJ6EHovAR
-         Pp/cVcUrYvJdT6h6D8lZyTrxYZ2AScANZL6B/7ADwPMFyMx9RxcENbmwle2vsD8rT1nZ
-         pgs6vAUYXsdhE1DHqZFYgYBUCi/aio/NihSlp2CvaybwG1la7N7S/GoXVUn4izUhufNY
-         3dsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=3lbUPpJurXJokmph9WoNmMs1fe6ThVm1fd93joLn2Gk=;
-        b=JxsFWUjnT06Dje7jxjduFfayjN7uoRtdiRNBKEmOWK4DocHlxUxNVa5v8ct5o6Wy8N
-         +6ywTknYnJSsb6qcIG5Ltkk0doqr9/6rayqGlFV1pKih+MHsaE4OaphU2HLrATy/ZYIc
-         h8cAT6QrsZUdt1DFYR8NuRLEZcgeZLaM6eoRiOHmG9wsS1/ikYnAou5s7JJmsjORRnJ4
-         SqLq1x8vlHuCRGIkzc9sXzwDo+8rJIowapF8zawnBwunQN1LotTqCyq17BsFqQEWeTcJ
-         r6tKBiU11cdVZUWVpnZQPTnmXVFpenmmHk9WcsBLjrYcTjqd6EAiyq2fM/pLk3D23pNK
-         +gXw==
-X-Gm-Message-State: AOAM5323+7PqifDoK6tXBJdQSnN6u1XZq9ZwZ7JEcGif8Qvis7HDmHu0
-        pLNDivYS2J/dEd9UYJbBvUg=
-X-Google-Smtp-Source: ABdhPJzfmCVbJAtKQ3Q84d94CylAYCPtANdcTodmCR7IviUqvYzsypN85SQkgNAJHTb54r8Vm9BReA==
-X-Received: by 2002:a17:906:64f:: with SMTP id t15mr6115377ejb.411.1617873877383;
-        Thu, 08 Apr 2021 02:24:37 -0700 (PDT)
-Received: from test-VirtualBox ([87.116.181.227])
-        by smtp.gmail.com with ESMTPSA id d15sm453497ejj.42.2021.04.08.02.24.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Apr 2021 02:24:37 -0700 (PDT)
-Date:   Thu, 8 Apr 2021 11:24:35 +0200
-From:   Sergei Krainov <sergei.krainov.lkd@gmail.com>
-To:     Larry.Finger@lwfinger.net, florian.c.schilhabel@googlemail.com,
-        gregkh@linuxfoundation.org
-Cc:     linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] staging: rtl8712: remove unused variable from rtl871x_mlme.c
-Message-ID: <20210408092435.GA4096@test-VirtualBox>
+        Thu, 8 Apr 2021 05:29:26 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4FGG9H1bKwzpWVG;
+        Thu,  8 Apr 2021 17:26:27 +0800 (CST)
+Received: from huawei.com (10.67.174.117) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.498.0; Thu, 8 Apr 2021
+ 17:29:03 +0800
+From:   Ruiqi Gong <gongruiqi1@huawei.com>
+To:     <gongruiqi1@huawei.com>, Namjae Jeon <namjae.jeon@samsung.com>,
+        "Sergey Senozhatsky" <sergey.senozhatsky@gmail.com>,
+        Steve French <sfrench@samba.org>,
+        Hyunchul Lee <hyc.lee@gmail.com>,
+        Muhammad Usama Anjum <musamaanjum@gmail.com>
+CC:     Wang Weiyang <wangweiyang2@huawei.com>,
+        <linux-cifs@vger.kernel.org>,
+        <linux-cifsd-devel@lists.sourceforge.net>,
+        <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH -next] cifsd: remove unused header <linux/version.h>
+Date:   Thu, 8 Apr 2021 05:43:09 -0400
+Message-ID: <20210408094309.6652-1-gongruiqi1@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.174.117]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Remove unused variable from rtl871x_mlme.c.
+Remove the header <linux/version.h> that is not needed.
 
-No side effects can be seen locally or in r8712_find_network()
-
-Signed-off-by: Sergei Krainov <sergei.krainov.lkd@gmail.com>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Ruiqi Gong <gongruiqi1@huawei.com>
 ---
-Mention in the description that no observable side effects were found
+ fs/cifsd/mgmt/tree_connect.c | 1 -
+ fs/cifsd/mgmt/user_session.c | 1 -
+ fs/cifsd/mgmt/user_session.h | 1 -
+ 3 files changed, 3 deletions(-)
 
- drivers/staging/rtl8712/rtl871x_mlme.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
-
-diff --git a/drivers/staging/rtl8712/rtl871x_mlme.c b/drivers/staging/rtl8712/rtl871x_mlme.c
-index 8a97307fbbd6..4f41e321ea63 100644
---- a/drivers/staging/rtl8712/rtl871x_mlme.c
-+++ b/drivers/staging/rtl8712/rtl871x_mlme.c
-@@ -656,7 +656,7 @@ void r8712_joinbss_event_callback(struct _adapter *adapter, u8 *pbuf)
- 	struct sta_priv	*pstapriv = &adapter->stapriv;
- 	struct mlme_priv	*pmlmepriv = &adapter->mlmepriv;
- 	struct wlan_network	*cur_network = &pmlmepriv->cur_network;
--	struct wlan_network	*pcur_wlan = NULL, *ptarget_wlan = NULL;
-+	struct wlan_network	*ptarget_wlan = NULL;
- 	unsigned int		the_same_macaddr = false;
- 	struct wlan_network *pnetwork;
+diff --git a/fs/cifsd/mgmt/tree_connect.c b/fs/cifsd/mgmt/tree_connect.c
+index d3f28b10db4b..b9cd8fc46e5e 100644
+--- a/fs/cifsd/mgmt/tree_connect.c
++++ b/fs/cifsd/mgmt/tree_connect.c
+@@ -5,7 +5,6 @@
  
-@@ -721,13 +721,6 @@ void r8712_joinbss_event_callback(struct _adapter *adapter, u8 *pbuf)
- 					    scanned_queue,
- 					    cur_network->network.MacAddress);
- 				} else {
--					pcur_wlan =
--					     r8712_find_network(&pmlmepriv->
--					     scanned_queue,
--					     cur_network->network.MacAddress);
--					if (pcur_wlan)
--						pcur_wlan->fixed = false;
--
- 					pcur_sta = r8712_get_stainfo(pstapriv,
- 					     cur_network->network.MacAddress);
- 					spin_lock_irqsave(&pstapriv->
--- 
-2.25.1
+ #include <linux/list.h>
+ #include <linux/slab.h>
+-#include <linux/version.h>
+ #include <linux/xarray.h>
+ 
+ #include "../buffer_pool.h"
+diff --git a/fs/cifsd/mgmt/user_session.c b/fs/cifsd/mgmt/user_session.c
+index bd5789b7e08e..52c5c036ecf9 100644
+--- a/fs/cifsd/mgmt/user_session.c
++++ b/fs/cifsd/mgmt/user_session.c
+@@ -6,7 +6,6 @@
+ #include <linux/list.h>
+ #include <linux/slab.h>
+ #include <linux/rwsem.h>
+-#include <linux/version.h>
+ #include <linux/xarray.h>
+ 
+ #include "ksmbd_ida.h"
+diff --git a/fs/cifsd/mgmt/user_session.h b/fs/cifsd/mgmt/user_session.h
+index 1a97c851f2fc..ad5c0430b62a 100644
+--- a/fs/cifsd/mgmt/user_session.h
++++ b/fs/cifsd/mgmt/user_session.h
+@@ -7,7 +7,6 @@
+ #define __USER_SESSION_MANAGEMENT_H__
+ 
+ #include <linux/hashtable.h>
+-#include <linux/version.h>
+ #include <linux/xarray.h>
+ 
+ #include "../smb_common.h"
 
