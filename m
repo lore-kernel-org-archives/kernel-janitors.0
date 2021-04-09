@@ -2,69 +2,102 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96891C433B4
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 11:09:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41896C433B4
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 11:42:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 59FEA61019
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 11:09:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 188F661165
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 11:42:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233864AbhDILJf (ORCPT
+        id S233554AbhDILmR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 9 Apr 2021 07:09:35 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:15655 "EHLO
-        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232042AbhDILJe (ORCPT
+        Fri, 9 Apr 2021 07:42:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48078 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231370AbhDILmQ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 9 Apr 2021 07:09:34 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
-        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4FGwLJ6Jx9zpWsC;
-        Fri,  9 Apr 2021 19:06:32 +0800 (CST)
-Received: from DESKTOP-EFRLNPK.china.huawei.com (10.174.176.196) by
- DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
- 14.3.498.0; Fri, 9 Apr 2021 19:09:12 +0800
-From:   Qiheng Lin <linqiheng@huawei.com>
-To:     <linqiheng@huawei.com>, Douglas Miller <dougmill@linux.ibm.com>,
-        "Jakub Kicinski" <kuba@kernel.org>
-CC:     <netdev@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH net-next] ehea: add missing MODULE_DEVICE_TABLE
-Date:   Fri, 9 Apr 2021 19:09:11 +0800
-Message-ID: <20210409110911.214-1-linqiheng@huawei.com>
-X-Mailer: git-send-email 2.31.1
+        Fri, 9 Apr 2021 07:42:16 -0400
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 581B6C061760;
+        Fri,  9 Apr 2021 04:42:03 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id k128so2756006wmk.4;
+        Fri, 09 Apr 2021 04:42:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=V5+pjzHfePdkc4rtRN/TOnz51urUM/UQ0GOzVCwaFA0=;
+        b=unziX4wdDag2c1dvpdPDY18YWmm7+w3iEw0aEe1mfWmeg+GAdFsq+UUd88Lkk6IU9L
+         xqhIt58qE+bHOCfCK/3+S2U2kFxffNRanLV/TkyAB270FWkFP5E7CTDRiTMayJvV/R6P
+         dK33s7Ftdqxqy9yRKFs52pBPF0ArDKqO1v3FfRh4UbcxmxtcwhFbgZqVmKvQYCWNXzcr
+         PGqsg61tbGwy0Ldf1MVqshWKTFlIRdRGC62NB4eQVZhoFOmMsA+qX1EAFsgQ7uR0zKoN
+         H2wdIA7ckGo29LbNRf1+m61+t0jJAlsEcxVyUrPMcSTKnyD2iLhToqZ8y1vqoR8ENovK
+         b3qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=V5+pjzHfePdkc4rtRN/TOnz51urUM/UQ0GOzVCwaFA0=;
+        b=s0qzLfuoMZfCIdZIw+6cxtF8FmF79R7oNOsi25ITJyCkSv391c9W6bglsaayZubX1/
+         XEi+RBLFBQpDcxkEo4fWdNj+FlzS/RaIco/Qms1cRfj29vJvqPDkzUxzwky1vQHL4bp7
+         H2j4Q+2QB9AI9STy+Rmhoj3XdagpLAdKfijj6tgG1MS0MSQADCNcBiG2omM06Uj9P0fZ
+         tLuerB8YNIgdcOf4PYZ6a9TCk2LsDsLkQnwGEM7WBgWQM4BeGFO0+48nEjLoSacc0cxn
+         oClTNhMJAgO6hOD0VBnQZ/xG72WkHnW6wBEITzH9dxjHkAglYW4s9fpnkKE+0jogCXFh
+         XwOA==
+X-Gm-Message-State: AOAM532vw2sxdgXIWrf+tpAl7giZgpStJ9uk2vIok6x2s99P+YANO6oy
+        6M0v7UVFUXMUWUO86H+W2pTkGoIp+/kqzA==
+X-Google-Smtp-Source: ABdhPJwmdAyg9Fb1luYslkM5DiD4Uk0tt40oDvZh1cRvcM9dxHhY9t/F6CW6g164NdDbUUhueFVqRQ==
+X-Received: by 2002:a7b:c417:: with SMTP id k23mr6569549wmi.186.1617968521597;
+        Fri, 09 Apr 2021 04:42:01 -0700 (PDT)
+Received: from test-VirtualBox ([87.116.165.76])
+        by smtp.gmail.com with ESMTPSA id d133sm3604331wmf.9.2021.04.09.04.42.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Apr 2021 04:42:01 -0700 (PDT)
+Date:   Fri, 9 Apr 2021 13:41:59 +0200
+From:   Sergei Krainov <sergei.krainov.lkd@gmail.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Larry.Finger@lwfinger.net, florian.c.schilhabel@googlemail.com,
+        linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] staging: rtl8712: fix wrong function output
+Message-ID: <20210409114159.GA3122@test-VirtualBox>
+References: <20210408234527.GA6893@test-VirtualBox>
+ <YG/1MyfOrHgCi5sr@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.174.176.196]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YG/1MyfOrHgCi5sr@kroah.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This patch adds missing MODULE_DEVICE_TABLE definition which generates
-correct modalias for automatic loading of this driver when it is built
-as an external module.
+On Fri, Apr 09, 2021 at 08:33:23AM +0200, Greg KH wrote:
+> On Fri, Apr 09, 2021 at 01:45:27AM +0200, Sergei Krainov wrote:
+> > Function r8712_find_network() were returning wlan_network even if it
+> > didn't match required address. This happened due to not checking if
+> > list end was reached and returning last processed wlan_network.
+> > 
+> > Signed-off-by: Sergei Krainov <sergei.krainov.lkd@gmail.com>
+> > ---
+> >  drivers/staging/rtl8712/rtl871x_mlme.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> 
+> What commit does this "fix"?  Or has this bug been there always?
+> 
+> thanks,
+> 
+> greg k-h
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Qiheng Lin <linqiheng@huawei.com>
----
- drivers/net/ethernet/ibm/ehea/ehea_main.c | 1 +
- 1 file changed, 1 insertion(+)
+This commit fixes the bug mentioned. 
 
-diff --git a/drivers/net/ethernet/ibm/ehea/ehea_main.c b/drivers/net/ethernet/ibm/ehea/ehea_main.c
-index c2e740475786..ea55314b209d 100644
---- a/drivers/net/ethernet/ibm/ehea/ehea_main.c
-+++ b/drivers/net/ethernet/ibm/ehea/ehea_main.c
-@@ -109,6 +109,7 @@ static const struct of_device_id ehea_device_table[] = {
- 	},
- 	{},
- };
-+MODULE_DEVICE_TABLE(of, ehea_device_table);
- 
- static struct platform_driver ehea_driver = {
- 	.driver = {
+And this commit is based on staging-next and has nothing to do
+with my previous patches, for which I'm sorry, I was wrong.
 
+Thanks a lot for review and your time,
+
+Sergei
