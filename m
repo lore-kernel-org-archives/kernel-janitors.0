@@ -2,106 +2,125 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC7BCC433ED
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 11:52:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FBADC433ED
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 12:02:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9F8AC6115B
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 11:52:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 696EF61177
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 12:02:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233409AbhDILwO (ORCPT
+        id S232087AbhDIMCg (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 9 Apr 2021 07:52:14 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:35874 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231599AbhDILwO (ORCPT
+        Fri, 9 Apr 2021 08:02:36 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:44726 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231370AbhDIMCg (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 9 Apr 2021 07:52:14 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: sre)
-        with ESMTPSA id 74AF61F464C8
-Received: by earth.universe (Postfix, from userid 1000)
-        id D80423C0C96; Fri,  9 Apr 2021 13:51:57 +0200 (CEST)
-Date:   Fri, 9 Apr 2021 13:51:57 +0200
-From:   Sebastian Reichel <sebastian.reichel@collabora.com>
-To:     Chen Lifu <chenlifu@huawei.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH -next] power: reset: hisi-reboot: add missing
- MODULE_DEVICE_TABLE
-Message-ID: <20210409115157.cifirven2au4mj45@earth.universe>
-References: <20210409025011.8796-1-chenlifu@huawei.com>
+        Fri, 9 Apr 2021 08:02:36 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 139C08I2071449;
+        Fri, 9 Apr 2021 12:02:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
+ bh=+HNUnCXaK7Xa2rJul52WRBdu9ZSVRtHE39iDNYouSRk=;
+ b=UCvdecvIgyDak2VHlL3iw/FaX3izNLG3ftb02+vjXatk7iGTfHKmv58WnC1Y5RT3wFql
+ cEv8UOw1gxtLUAumLcRZAptNG/DO+NHH9D/Vw3IXmBqx/qdYNx+6jMpq2CD78c9Gp5da
+ sACXSWmDonTGXqTUQlGlc7NMcEW8Yt3MvfjDamGNcsZFqJLBWJS6zxmyUrp+A0zC5wDV
+ MABmA4MkObTYTlVt/RP4YMhrfKF0//2sf7Vhi++D7sDdTSS5XmS8lFHuM5lULv21lYtn
+ tFDm3lxMKXuCATbwXuxASFHtWCRlzXZZ4XZO1ZwG38/SGxXblq6AyTUvy8R58Y5gPajD ng== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 37rva695jf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 09 Apr 2021 12:02:12 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 139C0Gma075051;
+        Fri, 9 Apr 2021 12:02:11 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 37rvbhhhtt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 09 Apr 2021 12:02:10 +0000
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 139C27r2016715;
+        Fri, 9 Apr 2021 12:02:07 GMT
+Received: from mwanda (/102.36.221.92)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 09 Apr 2021 05:02:06 -0700
+Date:   Fri, 9 Apr 2021 15:01:58 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Marcel Holtmann <marcel@holtmann.org>
+Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
+        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+        Raghuram Hegde <raghuram.hegde@intel.com>,
+        Chethan T N <chethan.tumkur.narayan@intel.com>,
+        Kiran K <kiraank@gmail.com>,
+        Srivatsa Ravishankar <ravishankar.srivatsa@intel.com>,
+        Amit K Bag <amit.k.bag@intel.com>,
+        linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] Bluetooth: btintel: prevent buffer overflow in
+ btintel_read_version_tlv()
+Message-ID: <YHBCNqdojHJT2usi@mwanda>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="5pez7hzvzer77b36"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210409025011.8796-1-chenlifu@huawei.com>
+X-Mailer: git-send-email haha only kidding
+X-Proofpoint-IMR: 1
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9948 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=999
+ malwarescore=0 mlxscore=0 phishscore=0 spamscore=0 bulkscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104060000 definitions=main-2104090090
+X-Proofpoint-GUID: GDbwTXjR56q45zNubsd2gcCL0ID_djcL
+X-Proofpoint-ORIG-GUID: GDbwTXjR56q45zNubsd2gcCL0ID_djcL
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9948 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 clxscore=1011
+ lowpriorityscore=0 suspectscore=0 adultscore=0 mlxlogscore=999 bulkscore=0
+ priorityscore=1501 impostorscore=0 phishscore=0 mlxscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104060000
+ definitions=main-2104090090
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Smatch says that "tlv->len" comes from skb->data and so it's untrusted.
+It can be 0-255 which is more than the size of "version->otp_bd_addr"
+which is 6 bytes so the memcpy() could lead to memory corruption.
 
---5pez7hzvzer77b36
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+drivers/bluetooth/btintel.c:583 btintel_read_version_tlv() error: '__memcpy()' '&version->otp_bd_addr' too small (6 vs 255)
 
-Hi,
+Fix this by clamping the length to sizeof(version->otp_bd_addr).
 
-On Fri, Apr 09, 2021 at 10:50:11AM +0800, Chen Lifu wrote:
-> This patch adds missing MODULE_DEVICE_TABLE definition which generates
-> correct modalias for automatic loading of this driver when it is built
-> as an external module.
->=20
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Chen Lifu <chenlifu@huawei.com>
-> ---
+Fixes: 57375beef71a ("Bluetooth: btintel: Add infrastructure to read controller information")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/bluetooth/btintel.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Thanks, queued.
+diff --git a/drivers/bluetooth/btintel.c b/drivers/bluetooth/btintel.c
+index e44b6993cf91..654288e974b0 100644
+--- a/drivers/bluetooth/btintel.c
++++ b/drivers/bluetooth/btintel.c
+@@ -515,6 +515,7 @@ int btintel_read_version_tlv(struct hci_dev *hdev, struct intel_version_tlv *ver
+ 	 */
+ 	while (skb->len) {
+ 		struct intel_tlv *tlv;
++		int len;
+ 
+ 		tlv = (struct intel_tlv *)skb->data;
+ 		switch (tlv->type) {
+@@ -580,7 +581,8 @@ int btintel_read_version_tlv(struct hci_dev *hdev, struct intel_version_tlv *ver
+ 			version->sbe_type = tlv->val[0];
+ 			break;
+ 		case INTEL_TLV_OTP_BDADDR:
+-			memcpy(&version->otp_bd_addr, tlv->val, tlv->len);
++			len = min_t(int, tlv->len, sizeof(version->otp_bd_addr));
++			memcpy(&version->otp_bd_addr, tlv->val, len);
+ 			break;
+ 		default:
+ 			/* Ignore rest of information */
+-- 
+2.30.2
 
--- Sebastian
-
->  drivers/power/reset/hisi-reboot.c | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/drivers/power/reset/hisi-reboot.c b/drivers/power/reset/hisi=
--reboot.c
-> index 5abc5f6ba0fd..34409340528f 100644
-> --- a/drivers/power/reset/hisi-reboot.c
-> +++ b/drivers/power/reset/hisi-reboot.c
-> @@ -68,6 +68,7 @@ static const struct of_device_id hisi_reboot_of_match[]=
- =3D {
->  	{ .compatible =3D "hisilicon,sysctrl" },
->  	{}
->  };
-> +MODULE_DEVICE_TABLE(of, hisi_reboot_of_match);
-> =20
->  static struct platform_driver hisi_reboot_driver =3D {
->  	.probe =3D hisi_reboot_probe,
->=20
-
---5pez7hzvzer77b36
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmBwP90ACgkQ2O7X88g7
-+podlg//Q/InvDUDGeGGzBjK9HaUmbZ9yb9A2n4jKp1hpxH0kdy3DDu63+k+uHtp
-ZcwsrVjtVzdMsCb/g/S7cqZIZEcjB6g6fyRqvgul5g6sZJkMrx+ASdersUCALXua
-yfC7nxzigWncVGV+H0DT96FwUHQYjfR7riD0yGI3hweXO8MDM+NK6OGAJIJ/maHW
-Fb6rC6WMwEkc+sKmDyrKRKVnTcbTiDE+4zBVmi5c9RMQOk0xchs/lJqU36NzYflI
-rmZnFrMwuwszVjaDc6AHAIPgyPcCZtgnF3souUKn67FrTTNtPsNNXmmATQAZkiDM
-nIdWFt5PYX5b4MlC20H4sWvvGG5ojJacd14NB/1u2wGROhCL5lkvrg65sSysQty8
-/+U9vTR7v4S3uNrM9C9fefERRcvt2M7y0nLumKlhwnY0HW4EgeUXMOTMwCpgij1g
-l85P7Gf0s55dw8XeB7fJ4gwQ5bc/qvE/9yqt5o1J0u+Pr1cr6tqENUH2fUsNb/Zp
-9hAiBhw67LWW/dBvoyDbR/nAVGBwFbqYB/h7+kJiuoAUoD0ATaESPf8zC0v8BCdF
-qDg+K1CVngSLIqVFQ1o0L1jxBIx8ojNNUxkjYpTliJs/ChR6UKiYor4Sft9xMJSJ
-nXvyBoSmpVPe5rZxBfKZe6QMNbvlt8d+PigGWXZ7459FyI8LEVU=
-=XwSD
------END PGP SIGNATURE-----
-
---5pez7hzvzer77b36--
