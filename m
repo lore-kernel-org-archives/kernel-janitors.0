@@ -5,74 +5,74 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B85A8C43460
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 09:39:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA4B6C433B4
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 09:43:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8817661106
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 09:39:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9225761108
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 09:43:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232924AbhDIJjW (ORCPT
+        id S232276AbhDIJna (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 9 Apr 2021 05:39:22 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:15652 "EHLO
+        Fri, 9 Apr 2021 05:43:30 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:15653 "EHLO
         szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232892AbhDIJjV (ORCPT
+        with ESMTP id S231370AbhDIJn3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 9 Apr 2021 05:39:21 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
-        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4FGtLC5sy6zpWq1;
-        Fri,  9 Apr 2021 17:36:19 +0800 (CST)
-Received: from localhost.localdomain (10.175.102.38) by
- DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
- 14.3.498.0; Fri, 9 Apr 2021 17:38:57 +0800
-From:   Wei Yongjun <weiyongjun1@huawei.com>
-To:     <weiyongjun1@huawei.com>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-CC:     <coresight@lists.linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH -next v2] coresight: trbe: Fix return value check in arm_trbe_register_coresight_cpu()
-Date:   Fri, 9 Apr 2021 09:49:01 +0000
-Message-ID: <20210409094901.1903622-1-weiyongjun1@huawei.com>
-X-Mailer: git-send-email 2.25.1
+        Fri, 9 Apr 2021 05:43:29 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4FGtR01tRMzpWtY;
+        Fri,  9 Apr 2021 17:40:28 +0800 (CST)
+Received: from huawei.com (10.175.127.227) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.498.0; Fri, 9 Apr 2021
+ 17:43:10 +0800
+From:   Ye Bin <yebin10@huawei.com>
+To:     <yebin10@huawei.com>, <linux-block@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>
+CC:     <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH -next] block: use DEFINE_MUTEX() for mutex lock
+Date:   Fri, 9 Apr 2021 17:51:35 +0800
+Message-ID: <20210409095135.2293700-1-yebin10@huawei.com>
+X-Mailer: git-send-email 2.25.4
 MIME-Version: 1.0
 Content-Type:   text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.102.38]
+X-Originating-IP: [10.175.127.227]
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-In case of error, the function devm_kasprintf() returns NULL
-pointer not ERR_PTR(). The IS_ERR() test in the return value
-check should be replaced with NULL test.
+mutex lock can be initialized automatically with DEFINE_MUTEX()
+rather than explicitly calling mutex_init().
 
 Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Signed-off-by: Ye Bin <yebin10@huawei.com>
 ---
-v1 -> v2: remove fixes tag.
----
- drivers/hwtracing/coresight/coresight-trbe.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/block/pktcdvd.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/hwtracing/coresight/coresight-trbe.c b/drivers/hwtracing/coresight/coresight-trbe.c
-index 5ce239875c98..176868496879 100644
---- a/drivers/hwtracing/coresight/coresight-trbe.c
-+++ b/drivers/hwtracing/coresight/coresight-trbe.c
-@@ -871,7 +871,7 @@ static void arm_trbe_register_coresight_cpu(struct trbe_drvdata *drvdata, int cp
+diff --git a/drivers/block/pktcdvd.c b/drivers/block/pktcdvd.c
+index fc4b0f1aa86d..699ed8bbdbdf 100644
+--- a/drivers/block/pktcdvd.c
++++ b/drivers/block/pktcdvd.c
+@@ -96,7 +96,7 @@ static struct proc_dir_entry *pkt_proc;
+ static int pktdev_major;
+ static int write_congestion_on  = PKT_WRITE_CONGESTION_ON;
+ static int write_congestion_off = PKT_WRITE_CONGESTION_OFF;
+-static struct mutex ctl_mutex;	/* Serialize open/close/setup/teardown */
++static DEFINE_MUTEX(ctl_mutex);	/* Serialize open/close/setup/teardown */
+ static mempool_t psd_pool;
+ static struct bio_set pkt_bio_set;
  
- 	dev = &cpudata->drvdata->pdev->dev;
- 	desc.name = devm_kasprintf(dev, GFP_KERNEL, "trbe%d", cpu);
--	if (IS_ERR(desc.name))
-+	if (!desc.name)
- 		goto cpu_clear;
+@@ -2858,8 +2858,6 @@ static int __init pkt_init(void)
+ {
+ 	int ret;
  
- 	desc.type = CORESIGHT_DEV_TYPE_SINK;
+-	mutex_init(&ctl_mutex);
+-
+ 	ret = mempool_init_kmalloc_pool(&psd_pool, PSD_POOL_SIZE,
+ 				    sizeof(struct packet_stacked_data));
+ 	if (ret)
 
