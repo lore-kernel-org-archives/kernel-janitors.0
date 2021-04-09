@@ -2,72 +2,60 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 058FCC433B4
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 16:53:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8087EC43461
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 16:54:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C5ADC610C7
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 16:53:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C91B6115B
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 16:54:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234256AbhDIQxh (ORCPT
+        id S234151AbhDIQzB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 9 Apr 2021 12:53:37 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:53056 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234247AbhDIQx3 (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 9 Apr 2021 12:53:29 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1lUuNf-0006UW-7O; Fri, 09 Apr 2021 16:53:15 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-        linux-bluetooth@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] Bluetooth: virtio_bt: add missing null pointer check on alloc_skb call return
-Date:   Fri,  9 Apr 2021 17:53:14 +0100
-Message-Id: <20210409165314.671165-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.30.2
-MIME-Version: 1.0
+        Fri, 9 Apr 2021 12:55:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48996 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234006AbhDIQy6 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 9 Apr 2021 12:54:58 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id E2078610CA;
+        Fri,  9 Apr 2021 16:54:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1617987285;
+        bh=S1rreXn8cUdARnJpVN+EF5Cjzr8UniPQ8ZF/vXZxug8=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=WQn88ieIhX6uiBORRqI2/sDT5FE5w9MqbJzV84QCcLDepb9D3J+86hFwyi3+urJOw
+         +WlwM6cvEz1OK1flZLZIuXbr2WKVdeWCn9nflxkUnJCs7AlaKVtU6D4QeZOjOqHIiK
+         ljwX/s8UcS3kNOQa1+sE0gfnaj6Xi3b/r5NkQqHYaLEPfQK0myli5n3BnYN72euD4f
+         RuL1j3dg3j6R+LIDJmHR9cnVeW5N+BQIfw1OkzcUChpYyHZGx3DoCb8m9RLwRGqHy2
+         LjhNrG3t3mbVHuMQ2f05HkyVXWxQuASwHJKppYaxphPqkqAalIGMO6682DlFQovrNz
+         oRIMhhw4ym/Eg==
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20210409095150.2294437-1-yebin10@huawei.com>
+References: <20210409095150.2294437-1-yebin10@huawei.com>
+Subject: Re: [PATCH -next] clk: renesas: r8a77970: Use DEFINE_SPINLOCK() for spinlock
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>, yebin10@huawei.com
+Date:   Fri, 09 Apr 2021 09:54:43 -0700
+Message-ID: <161798728363.3790633.9588461531050943158@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Quoting Ye Bin (2021-04-09 02:51:50)
+> spinlock can be initialized automatically with DEFINE_SPINLOCK()
+> rather than explicitly calling spin_lock_init().
+>=20
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Ye Bin <yebin10@huawei.com>
+> ---
 
-The call to alloc_skb with the GFP_KERNEL flag can return a null sk_buff
-pointer, so add a null check to avoid any null pointer deference issues.
-
-Addresses-Coverity: ("Dereference null return value")
-Fixes: afd2daa26c7a ("Bluetooth: Add support for virtio transport driver")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/bluetooth/virtio_bt.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/bluetooth/virtio_bt.c b/drivers/bluetooth/virtio_bt.c
-index c804db7e90f8..5f82574236c0 100644
---- a/drivers/bluetooth/virtio_bt.c
-+++ b/drivers/bluetooth/virtio_bt.c
-@@ -34,6 +34,8 @@ static int virtbt_add_inbuf(struct virtio_bluetooth *vbt)
- 	int err;
- 
- 	skb = alloc_skb(1000, GFP_KERNEL);
-+	if (!skb)
-+		return -ENOMEM;
- 	sg_init_one(sg, skb->data, 1000);
- 
- 	err = virtqueue_add_inbuf(vq, sg, 1, skb, GFP_KERNEL);
--- 
-2.30.2
-
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
