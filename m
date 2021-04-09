@@ -7,38 +7,37 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3056C433B4
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 09:43:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA6D3C43460
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 09:43:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8F81C61181
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 09:43:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9106D60FE4
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 09:43:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233119AbhDIJnp (ORCPT
+        id S233293AbhDIJnu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 9 Apr 2021 05:43:45 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:16119 "EHLO
+        Fri, 9 Apr 2021 05:43:50 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:16120 "EHLO
         szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232989AbhDIJnk (ORCPT
+        with ESMTP id S232732AbhDIJnl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 9 Apr 2021 05:43:40 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
-        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4FGtRt5gk5z19L9n;
-        Fri,  9 Apr 2021 17:41:14 +0800 (CST)
-Received: from huawei.com (10.175.127.227) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.498.0; Fri, 9 Apr 2021
- 17:43:19 +0800
+        Fri, 9 Apr 2021 05:43:41 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4FGtRv0jpsz19L9r;
+        Fri,  9 Apr 2021 17:41:15 +0800 (CST)
+Received: from huawei.com (10.175.127.227) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.498.0; Fri, 9 Apr 2021
+ 17:43:20 +0800
 From:   Ye Bin <yebin10@huawei.com>
-To:     <yebin10@huawei.com>, Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "Nicolas Stuardo Diaz" <nicolasstuardodiaz@gmail.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Sean Young <sean@mess.org>,
-        Keita Suzuki <keitasuzuki.park@sslab.ics.keio.ac.jp>
-CC:     <linux-media@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        "Hulk Robot" <hulkci@huawei.com>
-Subject: [PATCH -next] [media] siano: use DEFINE_MUTEX() for mutex lock and LIST_HEAD for list head
-Date:   Fri, 9 Apr 2021 17:51:44 +0800
-Message-ID: <20210409095144.2294145-1-yebin10@huawei.com>
+To:     <yebin10@huawei.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+CC:     <linuxppc-dev@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH -next] macintosh/via-pmu: Use DEFINE_SPINLOCK() for spinlock
+Date:   Fri, 9 Apr 2021 17:51:45 +0800
+Message-ID: <20210409095145.2294210-1-yebin10@huawei.com>
 X-Mailer: git-send-email 2.25.4
 MIME-Version: 1.0
 Content-Type:   text/plain; charset=US-ASCII
@@ -49,40 +48,44 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-mutex lock can be initialized automatically with DEFINE_MUTEX()
-rather than explicitly calling mutex_init().
-list head can be initialized automatically with LIST_HEAD()
-rather than explicitly calling INIT_LIST_HEAD().
+spinlock can be initialized automatically with DEFINE_SPINLOCK()
+rather than explicitly calling spin_lock_init().
 
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: Ye Bin <yebin10@huawei.com>
 ---
- drivers/media/common/siano/smsdvb-main.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/macintosh/via-pmu.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/drivers/media/common/siano/smsdvb-main.c b/drivers/media/common/siano/smsdvb-main.c
-index cd5bafe9a3ac..b8a163a47d09 100644
---- a/drivers/media/common/siano/smsdvb-main.c
-+++ b/drivers/media/common/siano/smsdvb-main.c
-@@ -26,8 +26,8 @@ Copyright (C) 2006-2008, Uri Shkolnik
+diff --git a/drivers/macintosh/via-pmu.c b/drivers/macintosh/via-pmu.c
+index 73e6ae88fafd..bab913e3541a 100644
+--- a/drivers/macintosh/via-pmu.c
++++ b/drivers/macintosh/via-pmu.c
+@@ -161,7 +161,7 @@ static unsigned char __iomem *gpio_reg;
+ static int gpio_irq = 0;
+ static int gpio_irq_enabled = -1;
+ static volatile int pmu_suspended;
+-static spinlock_t pmu_lock;
++static DEFINE_SPINLOCK(pmu_lock);
+ static u8 pmu_intr_mask;
+ static int pmu_version;
+ static int drop_interrupts;
+@@ -306,8 +306,6 @@ int __init find_via_pmu(void)
+ 		goto fail;
+ 	}
  
- DVB_DEFINE_MOD_OPT_ADAPTER_NR(adapter_nr);
- 
--static struct list_head g_smsdvb_clients;
--static struct mutex g_smsdvb_clientslock;
-+static LIST_HEAD(g_smsdvb_clients);
-+static DEFINE_MUTEX(g_smsdvb_clientslock);
- 
- static u32 sms_to_guard_interval_table[] = {
- 	[0] = GUARD_INTERVAL_1_32,
-@@ -1236,9 +1236,6 @@ static int __init smsdvb_module_init(void)
- {
- 	int rc;
- 
--	INIT_LIST_HEAD(&g_smsdvb_clients);
--	mutex_init(&g_smsdvb_clientslock);
+-	spin_lock_init(&pmu_lock);
 -
- 	smsdvb_debugfs_register();
+ 	pmu_has_adb = 1;
  
- 	rc = smscore_register_hotplug(smsdvb_hotplug);
+ 	pmu_intr_mask =	PMU_INT_PCEJECT |
+@@ -389,8 +387,6 @@ int __init find_via_pmu(void)
+ 
+ 	pmu_kind = PMU_UNKNOWN;
+ 
+-	spin_lock_init(&pmu_lock);
+-
+ 	pmu_has_adb = 1;
+ 
+ 	pmu_intr_mask =	PMU_INT_PCEJECT |
 
