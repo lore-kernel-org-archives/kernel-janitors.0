@@ -2,107 +2,73 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5FE6C433B4
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 07:41:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81B9EC433ED
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 07:44:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7029861185
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 07:41:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52FD2610A3
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 07:44:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231817AbhDIHlr (ORCPT
+        id S232251AbhDIHoV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 9 Apr 2021 03:41:47 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:44944 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S229751AbhDIHlo (ORCPT
+        Fri, 9 Apr 2021 03:44:21 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:15643 "EHLO
+        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229621AbhDIHoU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 9 Apr 2021 03:41:44 -0400
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 1397axb0012005;
-        Fri, 9 Apr 2021 09:40:58 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=n06VPaXv/86nkAfO+Ew799xc9jm8nPwhGU0C5uayBqo=;
- b=1RA8xsujC5lSSS18IpKAI7zlKhO5HqRRLX8P+prNVx+GAvyBdI36ADgSxKkowBZ2Q5xQ
- jNxeqn6AOotH1CcVFV75WwUIuUql3AAfEoglVH5/7Z5on6nkoTD9yVnWizPzIcjqalxq
- jNeX4ZfivWEJZSkZp0Ec/cX+Bw6y06TOr4FYQYXWI6kBJIUW4O+RIL/ed48ub4clXJrN
- iQAzLEiyvgDsagp4p6osTuHJAefJ4fug62DNG3kEK+AGC8H3Ipb7dhe0kExRyapZErzA
- N/c1iuY11Wxh35H+n1LPCDlldFVpGU/X0GxTGSPquR00mAowcyY21E3aU6NuVPcwC7Pp +A== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 37tj4d8a3x-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 09 Apr 2021 09:40:58 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id BB76210002A;
-        Fri,  9 Apr 2021 09:40:56 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 584B721CA9E;
-        Fri,  9 Apr 2021 09:40:56 +0200 (CEST)
-Received: from lmecxl0889.lme.st.com (10.75.127.44) by SFHDAG2NODE3.st.com
- (10.75.127.6) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Fri, 9 Apr
- 2021 09:40:55 +0200
-Subject: Re: [PATCH -next] ASoC: sti: sti_uniperif: add missing
- MODULE_DEVICE_TABLE
-To:     Chen Lifu <chenlifu@huawei.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <20210409015953.259688-1-chenlifu@huawei.com>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Message-ID: <228beb65-2cd3-f2fe-92c8-5a4d3c0a4d33@foss.st.com>
-Date:   Fri, 9 Apr 2021 09:40:54 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Fri, 9 Apr 2021 03:44:20 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4FGqnW1xCxzpWr6;
+        Fri,  9 Apr 2021 15:41:19 +0800 (CST)
+Received: from huawei.com (10.175.127.227) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.498.0; Fri, 9 Apr 2021
+ 15:43:59 +0800
+From:   Ye Bin <yebin10@huawei.com>
+To:     <yebin10@huawei.com>, Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+CC:     <linux-pm@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH -next] thermal/drivers/hisi: Remove redundant dev_err call in hisi_thermal_probe()
+Date:   Fri, 9 Apr 2021 15:52:24 +0800
+Message-ID: <20210409075224.2109503-1-yebin10@huawei.com>
+X-Mailer: git-send-email 2.25.4
 MIME-Version: 1.0
-In-Reply-To: <20210409015953.259688-1-chenlifu@huawei.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.44]
-X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG2NODE3.st.com
- (10.75.127.6)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
- definitions=2021-04-09_04:2021-04-08,2021-04-09 signatures=0
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.127.227]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+There is a error message within devm_ioremap_resource
+already, so remove the dev_err call to avoid redundant
+error message.
 
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Ye Bin <yebin10@huawei.com>
+---
+ drivers/thermal/hisi_thermal.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-On 4/9/21 3:59 AM, Chen Lifu wrote:
-> This patch adds missing MODULE_DEVICE_TABLE definition which generates
-> correct modalias for automatic loading of this driver when it is built
-> as an external module.
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Chen Lifu <chenlifu@huawei.com>
+diff --git a/drivers/thermal/hisi_thermal.c b/drivers/thermal/hisi_thermal.c
+index d902db9f267f..9a21ac0ceb11 100644
+--- a/drivers/thermal/hisi_thermal.c
++++ b/drivers/thermal/hisi_thermal.c
+@@ -572,10 +572,8 @@ static int hisi_thermal_probe(struct platform_device *pdev)
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	data->regs = devm_ioremap_resource(dev, res);
+-	if (IS_ERR(data->regs)) {
+-		dev_err(dev, "failed to get io address\n");
++	if (IS_ERR(data->regs))
+ 		return PTR_ERR(data->regs);
+-	}
+ 
+ 	ret = data->ops->probe(data);
+ 	if (ret)
 
-Reviewed-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-
-Thanks,
-Arnaud
-
-> ---
->  sound/soc/sti/sti_uniperif.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/sound/soc/sti/sti_uniperif.c b/sound/soc/sti/sti_uniperif.c
-> index 67315d9b352d..e3561f00ed40 100644
-> --- a/sound/soc/sti/sti_uniperif.c
-> +++ b/sound/soc/sti/sti_uniperif.c
-> @@ -97,6 +97,7 @@ static const struct of_device_id snd_soc_sti_match[] = {
->  	},
->  	{},
->  };
-> +MODULE_DEVICE_TABLE(of, snd_soc_sti_match);
->  
->  int  sti_uniperiph_reset(struct uniperif *uni)
->  {
-> 
