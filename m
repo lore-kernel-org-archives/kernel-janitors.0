@@ -2,103 +2,78 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA9BEC433B4
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 18:33:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0A9EC433ED
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 20:13:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B1DA561001
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 18:33:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83CC661041
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 20:13:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234416AbhDISdU (ORCPT
+        id S234191AbhDIUNc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 9 Apr 2021 14:33:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53958 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234307AbhDISdR (ORCPT
+        Fri, 9 Apr 2021 16:13:32 -0400
+Received: from mail-40133.protonmail.ch ([185.70.40.133]:26395 "EHLO
+        mail-40133.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233674AbhDIUNb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 9 Apr 2021 14:33:17 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09062C061762;
-        Fri,  9 Apr 2021 11:33:03 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id j5so5561535wrn.4;
-        Fri, 09 Apr 2021 11:33:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=saDw2irPVKnwGeLPBL5IVZRbilJg+scGi3r1CfJCJow=;
-        b=OXmDr1aXvJf/a3kz7C38TwfICyHvUxlX9axM/LerixBCFTRUCDaVNVmBwD+T9CGAho
-         aOLKckeM+0ySveicmcSUMX9jabp2y89piHr6MSe0dblaUFNHbrVnwvI5SLzJBXl3TmVN
-         3k59Kn04BvidBp25wrRXVmdSoTdqR1Z3vEesQg1mlEWL57fu8USN3c9pYek15o9sBEMG
-         y1XozjnVLE0JCHVlugL29CpPLDJkAqhtNn69bwCEx8dSBHgWtKfQdaZvU4L2qVO68n9M
-         H7gnkQGOyD0+G/KxPXUCqlAQHvUNnLyCgOzyd5OW23TJIQAuHMEy9T/CkheWcbrVq+A3
-         N0PA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=saDw2irPVKnwGeLPBL5IVZRbilJg+scGi3r1CfJCJow=;
-        b=JR4r/fAJiQ/M7NWwlJjN0BWz1NDvej1Z2dp1Ao2cSoSRiruEzeT/UzvHk+rMAzEBTa
-         EpiVilNQkb130V27vHcoHXZeG+zdyIdtMvxVdN8i7HJB2PDMTyoNMhHAPveZDdY7VMVY
-         FQeMI9MxMQdEmxvQAk+/x8OBdT4SIZXe3aQzU2iGWjd6qs+z+J4bgqKrPYfSH7Kf+1/F
-         UKAC3o3HlFDrwQhYioytWd48UvQ9criF0vJ/ta3DHst4R75PhGIF+vH1s4dnulLSAZif
-         sp5fZddJukjd7nWbK5gCqVN6uQBNDqqV2Qt2Kggp6hLXfp5fzv7Pzx6JhaRtMBN0LyeW
-         hHgw==
-X-Gm-Message-State: AOAM530A8/x17yjWTRIyThiIyOcVjbgFtEPMp+5Kb36krpAn+sLxkdxh
-        Cls4kArd5O5LlBtaWASZs0U=
-X-Google-Smtp-Source: ABdhPJzFt4TtLTS3XnsUPR+FavkCoAIr70NW/H7WXdSYCulbs9GkJPtC7gLRN+KZCdk25O147u6Zbw==
-X-Received: by 2002:adf:c452:: with SMTP id a18mr18461159wrg.378.1617993181858;
-        Fri, 09 Apr 2021 11:33:01 -0700 (PDT)
-Received: from LEGION ([39.46.65.172])
-        by smtp.gmail.com with ESMTPSA id v7sm5152025wme.47.2021.04.09.11.32.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Apr 2021 11:33:01 -0700 (PDT)
-Date:   Fri, 9 Apr 2021 23:32:54 +0500
-From:   Muhammad Usama Anjum <musamaanjum@gmail.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>,
-        "open list:FILESYSTEMS (VFS and infrastructure)" 
-        <linux-fsdevel@vger.kernel.org>,
-        "open list:BLOCK LAYER" <linux-block@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>, hch@lst.de
-Cc:     musamaanjum@gmail.com, kernel-janitors@vger.kernel.org,
-        dan.carpenter@oracle.com
-Subject: [PATCH] block: initialize variable ret with 0
-Message-ID: <20210409183254.GA3534403@LEGION>
+        Fri, 9 Apr 2021 16:13:31 -0400
+Date:   Fri, 09 Apr 2021 20:13:08 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bryanbrattlof.com;
+        s=protonmail3; t=1617999196;
+        bh=EqzbmR+DJhqb9z9zKSGWyGT6bMFjSUyRnTL5U0wQp9E=;
+        h=Date:To:From:Cc:Reply-To:Subject:From;
+        b=EvtnezQZaulaWFJFWk6fCh3jklQ8Gbz7xTns7P5j1XDm5MXZf2it1XFBvFprcUEAB
+         NyHRsa/486AHbrzLBlU9bHfYmNwG3w6VXl0qp2+BtzhWeNa8b/wqI5FyqHxNEbdCOo
+         0A+a5e3hElFrUbBoLFzjDn0fPg2qTOexB2pd5MS+SqiJx78ON2dRJhB9akW1SjwDuX
+         /OYHmfahUKE3wPcFm0p8brzN8vRZNFtZHOyVoL5tJlu5W/d6L5izNWkPBKP6T5/YAj
+         D/EKjHFBgHUNCkPOxnDetQadoC5L2lE5BeoI3Xm4HU4QMAv+reiUBatnJb0n10TH6X
+         EN6juZP+jb4YQ==
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Larry Finger <Larry.Finger@lwfinger.net>
+From:   Bryan Brattlof <hello@bryanbrattlof.com>
+Cc:     linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Bryan Brattlof <hello@bryanbrattlof.com>
+Reply-To: Bryan Brattlof <hello@bryanbrattlof.com>
+Subject: [PATCH] staging: rtl8723bs: remove redundant initialization
+Message-ID: <20210409201235.407671-1-hello@bryanbrattlof.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-ret variable is not being set if get_capacity returns 0 in very first
-try. It should be initialized with 0 for this case.
+The variable ret is being initialized as 0 and is never used until
+it's updated by sdio_register_driver()
 
-Addresses-Coverity: ("Uninitialized variable")
-Fixes: d3c4a43d92 ("block: refactor blk_drop_partitions")
-Signed-off-by: Muhammad Usama Anjum <musamaanjum@gmail.com>
+This removes the redundant initialization of ret
+
+Signed-off-by: Bryan Brattlof <hello@bryanbrattlof.com>
 ---
- fs/block_dev.c | 2 +-
+ drivers/staging/rtl8723bs/os_dep/sdio_intf.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/block_dev.c b/fs/block_dev.c
-index bb02b4be7f1c..986951bfee85 100644
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@ -1240,7 +1240,7 @@ static void __blkdev_put(struct block_device *bdev, fmode_t mode, int for_part);
- int bdev_disk_changed(struct block_device *bdev, bool invalidate)
+diff --git a/drivers/staging/rtl8723bs/os_dep/sdio_intf.c b/drivers/staging=
+/rtl8723bs/os_dep/sdio_intf.c
+index 5de4c70aab6a..9fd926e1698f 100644
+--- a/drivers/staging/rtl8723bs/os_dep/sdio_intf.c
++++ b/drivers/staging/rtl8723bs/os_dep/sdio_intf.c
+@@ -503,7 +503,7 @@ static int rtw_sdio_resume(struct device *dev)
+=20
+ static int __init rtw_drv_entry(void)
  {
- 	struct gendisk *disk = bdev->bd_disk;
--	int ret;
-+	int ret = 0;
- 
- 	lockdep_assert_held(&bdev->bd_mutex);
- 
--- 
-2.25.1
+-=09int ret =3D 0;
++=09int ret;
+=20
+ =09DBG_871X_LEVEL(_drv_always_, "module init start\n");
+ =09dump_drv_version(RTW_DBGDUMP);
+--=20
+2.27.0
+
 
