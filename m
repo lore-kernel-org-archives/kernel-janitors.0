@@ -2,83 +2,93 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9378FC433ED
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 08:34:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E4C1C43460
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 08:42:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4057D61185
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 08:34:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CD5D611AD
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 08:42:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231925AbhDIIe7 (ORCPT
+        id S231840AbhDIIm3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 9 Apr 2021 04:34:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34876 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229829AbhDIIe7 (ORCPT
+        Fri, 9 Apr 2021 04:42:29 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:32900 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229846AbhDIIm2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 9 Apr 2021 04:34:59 -0400
-Received: from mail-il1-x135.google.com (mail-il1-x135.google.com [IPv6:2607:f8b0:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C842C061760;
-        Fri,  9 Apr 2021 01:34:46 -0700 (PDT)
-Received: by mail-il1-x135.google.com with SMTP id l19so201168ilk.13;
-        Fri, 09 Apr 2021 01:34:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NCwJI5ffEAzMKRWH7+S+TuRytYmua5VwVLYnvYOAOL8=;
-        b=U0Q9jEHKICx2Sug1O6lx9JD4azkZzxDi0jJwfbBegQO/515gYCJZ26NIh7ka8qKuqY
-         K/XPPFAMPMn6vm9Y4dB8CtVLpAncreQLESMRlKjajFTrcDaAEWl42wO/8NQaRWBzO9u+
-         HtxC74LzWdcWeE1IsRYFWY8tzK6ge+ELzCx9fSu6vwqktM4OrnkznkmOohU2hDSjeMQ8
-         jApYiteBXa28UetICZLEs1QacK6MN24OH8ujDBmKDThzRUp5oTLvKmpDZPKGvQ8T117M
-         gu9xl9SDpG5skzkrX/unJP6GCjO8ZLO64vHPke5hxjlOlwkSHXJBKOsdtsGzRuIh5Zar
-         1Vnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NCwJI5ffEAzMKRWH7+S+TuRytYmua5VwVLYnvYOAOL8=;
-        b=nrnQhLuqQFiQfy7OMaHUv43Gn83eQbaMMv5znaEYTSpFHLokE8CJtU1mS6jYDWPf1b
-         zGJKs0Vx6sbBU4mM2xOK5fCIPtrRLzITvQjQV4X1mVkcxRQxXGs2SwM896Sr0VX2RquE
-         D2qVs8wNAsVFvjDeUEoNkO/wMsZadFkqhZ+MXA8aMV3frJ7wAtlqp3vyvST/zSXHfC0S
-         xP+kcAt9LzWkLDjgynarFmfvbLyExOqOU5719nmJ4GkqjEFrfQj2bROMcZcG8daSgepH
-         9K85JPqBLumDlGECgpQiwfNZAUA+m+jb9Zpc9cYS2wxGuRhyR4bVlEOEuqjR5hFLM50R
-         hMAQ==
-X-Gm-Message-State: AOAM532+twGrQx733aQjvnEV8DYsrKxcCO5iZQGBBTC68ApXS8XAsFmv
-        CsHRGljazUtIFdavSAz6tVdSCBCsoSaancQPQhSQAhzcyUM=
-X-Google-Smtp-Source: ABdhPJy8Go9eGKnxjqs+H5oCYvcs+FPgMqWv4m1tQrwU/f3ose04FlweQI1nD/xWG1T8+OZ7INEY9e3s45xNKoTSP9s=
-X-Received: by 2002:a92:dd12:: with SMTP id n18mr10698284ilm.109.1617957285922;
- Fri, 09 Apr 2021 01:34:45 -0700 (PDT)
+        Fri, 9 Apr 2021 04:42:28 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212])
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lUmiV-0007hC-2B; Fri, 09 Apr 2021 08:42:15 +0000
+Subject: Re: [PATCH] clk: uniphier: Fix potential infinite loop
+To:     Masahiro Yamada <masahiroy@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        kernel-janitors@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20210407152457.497346-1-colin.king@canonical.com>
+ <CAK7LNAT+JTg5QYYbYqCm+m11X7CF_ZWyYRA4eAtqeTEuHRqoyw@mail.gmail.com>
+From:   Colin Ian King <colin.king@canonical.com>
+Message-ID: <fa2328c5-e082-0bb7-0e87-741a4c698123@canonical.com>
+Date:   Fri, 9 Apr 2021 09:42:14 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-References: <20210409082957.2909213-1-weiyongjun1@huawei.com>
-In-Reply-To: <20210409082957.2909213-1-weiyongjun1@huawei.com>
-From:   =?UTF-8?Q?Andreas_Gr=C3=BCnbacher?= <andreas.gruenbacher@gmail.com>
-Date:   Fri, 9 Apr 2021 10:34:34 +0200
-Message-ID: <CAHpGcMJdBD9XDJvzy2_9EuKaduSewd0p+39B1przV7UW3rtouA@mail.gmail.com>
-Subject: Re: [PATCH -next] gfs2: use kmem_cache_free() instead of kfree()
-To:     Wei Yongjun <weiyongjun1@huawei.com>
-Cc:     Bob Peterson <rpeterso@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        cluster-devel <cluster-devel@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAK7LNAT+JTg5QYYbYqCm+m11X7CF_ZWyYRA4eAtqeTEuHRqoyw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi,
-
-Am Fr., 9. Apr. 2021 um 10:20 Uhr schrieb Wei Yongjun <weiyongjun1@huawei.com>:
-> memory allocated by kmem_cache_alloc() should be freed using
-> kmem_cache_free(), not kfree().
-
-thanks for the patch, that's true. This patch has turned out to have
-other problems as well, so we've pulled it and Bob is currently
-investigating.
-
-Andreas
+On 09/04/2021 07:46, Masahiro Yamada wrote:
+> On Thu, Apr 8, 2021 at 12:25 AM Colin King <colin.king@canonical.com> wrote:
+>>
+>> From: Colin Ian King <colin.king@canonical.com>
+>>
+>> The for-loop iterates with a u8 loop counter i and compares this
+>> with the loop upper limit of num_parents that is an int type.
+>> There is a potential infinite loop if num_parents is larger than
+>> the u8 loop counter. Fix this by making the loop counter the same
+>> type as num_parents.
+>>
+>> Addresses-Coverity: ("Infinite loop")
+>> Fixes: 734d82f4a678 ("clk: uniphier: add core support code for UniPhier clock driver")
+>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>> ---
+>>  drivers/clk/uniphier/clk-uniphier-mux.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/uniphier/clk-uniphier-mux.c b/drivers/clk/uniphier/clk-uniphier-mux.c
+>> index 462c84321b2d..ce219e0d2a85 100644
+>> --- a/drivers/clk/uniphier/clk-uniphier-mux.c
+>> +++ b/drivers/clk/uniphier/clk-uniphier-mux.c
+>> @@ -34,7 +34,7 @@ static u8 uniphier_clk_mux_get_parent(struct clk_hw *hw)
+>>         int num_parents = clk_hw_get_num_parents(hw);
+>>         int ret;
+>>         unsigned int val;
+>> -       u8 i;
+>> +       int i;
+>>
+>>         ret = regmap_read(mux->regmap, mux->reg, &val);
+>>         if (ret)
+>> --
+>> 2.30.2
+>>
+> 
+> clk_hw_get_num_parents() returns 'unsigned int', so
+> I think 'num_parents' should also have been 'unsigned int'.
+> 
+> Maybe, the loop counter 'i' also should be 'unsigned int' then?
+> 
+> 
+Good point. I'll send a V2.
