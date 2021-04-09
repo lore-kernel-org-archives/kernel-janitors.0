@@ -2,97 +2,85 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C732C43461
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 14:41:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41F75C433ED
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 16:23:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6A4DB610D0
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 14:41:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B93161026
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 16:23:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234030AbhDIOlR (ORCPT
+        id S234110AbhDIQXb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 9 Apr 2021 10:41:17 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:49110 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232884AbhDIOlQ (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 9 Apr 2021 10:41:16 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212])
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1lUsJi-00069A-Fx; Fri, 09 Apr 2021 14:41:02 +0000
-Subject: Re: [PATCH] xfs: fix return of uninitialized value in variable error
-To:     Brian Foster <bfoster@redhat.com>
-Cc:     "Darrick J . Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org,
-        Dave Chinner <dchinner@redhat.com>,
-        Allison Collins <allison.henderson@oracle.com>,
-        Chandan Babu R <chandanrlinux@gmail.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210409141834.667163-1-colin.king@canonical.com>
- <YHBkjihVv4+7D62Q@bfoster>
-From:   Colin Ian King <colin.king@canonical.com>
-Message-ID: <08de5ee4-28ca-cb33-7c6c-72f133d97b36@canonical.com>
-Date:   Fri, 9 Apr 2021 15:41:02 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        Fri, 9 Apr 2021 12:23:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59734 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233864AbhDIQXb (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 9 Apr 2021 12:23:31 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 5CE8C6105A;
+        Fri,  9 Apr 2021 16:23:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1617985397;
+        bh=AtMxuAc0rwMUJsKBsJmtUeCRyl8bAabZIwT9Uehu7Bc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=LIMfGDncmDxz4CzhaLYP43ccv+bf8F20uwitMuVe1kIpdOtT3mHlkgMqReY0G55SW
+         wRBQXDInzUSPqQkzTecUsTnlr9TTA8L+wJVasrdTGJv5+LonihTyx+p8lQ5N2Bvk+v
+         H6rFjlNsXq72HKwOylEX4lX//0JemTP0pV2Tu+iBxzJieoCR8mQiu+dg3B0//XmJqF
+         VslgB9AndrumMls3xqyZVx6FqWyOjhLiYQ23kXoX3pecDxlQSeSjwJYNiA976+Jid5
+         UHH7oceyclz7ip9K0pG8+0C0AidLFKcwwLtlvDX7y5h/Wl1kNm8/cIqFeTFt6++YtA
+         0aOL1p2WGriyQ==
+From:   Mark Brown <broonie@kernel.org>
+To:     Muhammad Usama Anjum <musamaanjum@gmail.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        Tian Tao <tiantao6@hisilicon.com>,
+        "open list:SPI SUBSYSTEM" <linux-spi@vger.kernel.org>
+Cc:     Mark Brown <broonie@kernel.org>, kernel-janitors@vger.kernel.org,
+        colin.king@canonical.com, dan.carpenter@oracle.com
+Subject: Re: [PATCH] spi: orion: set devdata properly as it is being used later
+Date:   Fri,  9 Apr 2021 17:22:39 +0100
+Message-Id: <161798356987.48466.7574385472200837460.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20210408195718.GA3075166@LEGION>
+References: <20210408195718.GA3075166@LEGION>
 MIME-Version: 1.0
-In-Reply-To: <YHBkjihVv4+7D62Q@bfoster>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 09/04/2021 15:28, Brian Foster wrote:
-> On Fri, Apr 09, 2021 at 03:18:34PM +0100, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> A previous commit removed a call to xfs_attr3_leaf_read that
->> assigned an error return code to variable error. We now have
->> a few early error return paths to label 'out' that return
->> error if error is set; however error now is uninitialized
->> so potentially garbage is being returned.  Fix this by setting
->> error to zero to restore the original behaviour where error
->> was zero at the label 'restart'.
->>
->> Addresses-Coverity: ("Uninitialized scalar variable")
->> Fixes: 07120f1abdff ("xfs: Add xfs_has_attr and subroutines")
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>  fs/xfs/libxfs/xfs_attr.c | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/fs/xfs/libxfs/xfs_attr.c b/fs/xfs/libxfs/xfs_attr.c
->> index 472b3039eabb..902e5f7e6642 100644
->> --- a/fs/xfs/libxfs/xfs_attr.c
->> +++ b/fs/xfs/libxfs/xfs_attr.c
->> @@ -928,6 +928,7 @@ xfs_attr_node_addname(
->>  	 * Search to see if name already exists, and get back a pointer
->>  	 * to where it should go.
->>  	 */
->> +	error = 0;
->>  	retval = xfs_attr_node_hasname(args, &state);
->>  	if (retval != -ENOATTR && retval != -EEXIST)
->>  		goto out;
-> 
-> I think it would be nicer to initialize at the top of the function as
-> opposed to try and "preserve" historical behavior, but that nit aside:
+On Fri, 9 Apr 2021 00:57:18 +0500, Muhammad Usama Anjum wrote:
+> If device_get_match_data returns NULL, devdata isn't being updated
+> properly. It is being used later in the function. Both devdata and
+> spi->devdata should be updated to avoid NULL pointer dereference.
 
-I did think about that, but this fix does ensure it's zero'd for each
-iteration rather than just the once, so it should catch any code changes
-later on that may loop back to this point were error is non-zero.
+Applied to
 
-> 
-> Reviewed-by: Brian Foster <bfoster@redhat.com>
-> 
->> -- 
->> 2.30.2
->>
-> 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
+Thanks!
+
+[1/1] spi: orion: set devdata properly as it is being used later
+      commit: e980048263ba72dcdbbf45d59e84c02001340f75
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
