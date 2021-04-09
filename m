@@ -7,36 +7,33 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE48CC433B4
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 02:00:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81785C433B4
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 02:51:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 84ED3610F7
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 02:00:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41C31610CA
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 02:51:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233037AbhDICAl (ORCPT
+        id S232839AbhDICvq (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 8 Apr 2021 22:00:41 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:16056 "EHLO
-        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232426AbhDICAg (ORCPT
+        Thu, 8 Apr 2021 22:51:46 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:15633 "EHLO
+        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232616AbhDICvp (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 8 Apr 2021 22:00:36 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
-        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4FGh8v3TwRzPpMK;
-        Fri,  9 Apr 2021 09:57:35 +0800 (CST)
-Received: from huawei.com (10.67.174.78) by DGGEMS414-HUB.china.huawei.com
- (10.3.19.214) with Microsoft SMTP Server id 14.3.498.0; Fri, 9 Apr 2021
- 10:00:14 +0800
+        Thu, 8 Apr 2021 22:51:45 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4FGjHt5pSSznZ5M;
+        Fri,  9 Apr 2021 10:48:42 +0800 (CST)
+Received: from huawei.com (10.67.174.78) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.498.0; Fri, 9 Apr 2021
+ 10:51:21 +0800
 From:   Chen Lifu <chenlifu@huawei.com>
-To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-CC:     Chen Lifu <chenlifu@huawei.com>, <alsa-devel@alsa-project.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] ASoC: sti: sti_uniperif: add missing MODULE_DEVICE_TABLE
-Date:   Fri, 9 Apr 2021 09:59:53 +0800
-Message-ID: <20210409015953.259688-1-chenlifu@huawei.com>
+To:     Sebastian Reichel <sre@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, Chen Lifu <chenlifu@huawei.com>,
+        <linux-pm@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] power: reset: hisi-reboot: add missing MODULE_DEVICE_TABLE
+Date:   Fri, 9 Apr 2021 10:50:11 +0800
+Message-ID: <20210409025011.8796-1-chenlifu@huawei.com>
 X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"
@@ -54,19 +51,19 @@ as an external module.
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: Chen Lifu <chenlifu@huawei.com>
 ---
- sound/soc/sti/sti_uniperif.c | 1 +
+ drivers/power/reset/hisi-reboot.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/sound/soc/sti/sti_uniperif.c b/sound/soc/sti/sti_uniperif.c
-index 67315d9b352d..e3561f00ed40 100644
---- a/sound/soc/sti/sti_uniperif.c
-+++ b/sound/soc/sti/sti_uniperif.c
-@@ -97,6 +97,7 @@ static const struct of_device_id snd_soc_sti_match[] = {
- 	},
- 	{},
+diff --git a/drivers/power/reset/hisi-reboot.c b/drivers/power/reset/hisi-reboot.c
+index 5abc5f6ba0fd..34409340528f 100644
+--- a/drivers/power/reset/hisi-reboot.c
++++ b/drivers/power/reset/hisi-reboot.c
+@@ -68,6 +68,7 @@ static const struct of_device_id hisi_reboot_of_match[] = {
+ 	{ .compatible = "hisilicon,sysctrl" },
+ 	{}
  };
-+MODULE_DEVICE_TABLE(of, snd_soc_sti_match);
++MODULE_DEVICE_TABLE(of, hisi_reboot_of_match);
  
- int  sti_uniperiph_reset(struct uniperif *uni)
- {
+ static struct platform_driver hisi_reboot_driver = {
+ 	.probe = hisi_reboot_probe,
 
