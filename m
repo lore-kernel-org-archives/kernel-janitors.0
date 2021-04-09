@@ -2,118 +2,152 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B554C433B4
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 11:08:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1422C433B4
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 11:09:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 386E461019
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 11:08:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8FCAE61019
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 11:09:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233652AbhDILIy (ORCPT
+        id S233851AbhDILJR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 9 Apr 2021 07:08:54 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:57790 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233586AbhDILIy (ORCPT
+        Fri, 9 Apr 2021 07:09:17 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:40825 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232042AbhDILJQ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 9 Apr 2021 07:08:54 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 139B4o1Q029316;
-        Fri, 9 Apr 2021 11:08:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=2ZMA5+AaVamT/hsJWd7Sm1OuibhcsV+raAQJ1eKQDV8=;
- b=bJm/2VgNC5x7cezt8+HlhKiTrpVlHrKXLlhfDi2QClAAeHt6e8ZbrQbiF9v7QCymGwd5
- 40+2Y5J+d2LnwgZyKEo5TFtiDMBiDHvoTtq2TojA+oSWPcaqo1//s6D/0uaK8s0hd6xp
- /zgtxROuEKHQ55jTZyjmpsIGxkC5bQ4U8NPmKIxhV3dm1v4KD6pdvArU9t842SpFgo32
- cvx849czSf0xDGAS4LuGo1a3ibMuZ07y7lIO4f7hHf0b+fabfyueFLmZiR9dDK6GD2BD
- g7mIBzyLLp8BbGCL0QVrQAsHaCs/VhSjiCJH/eY0/vMmWL51ZOklM0jRzRTNeKrszH+z Ug== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 37rvagh2cu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 09 Apr 2021 11:08:33 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 139B5Dl6133750;
-        Fri, 9 Apr 2021 11:08:31 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3020.oracle.com with ESMTP id 37rvb2e0r8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 09 Apr 2021 11:08:31 +0000
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 139B8SBe011505;
-        Fri, 9 Apr 2021 11:08:28 GMT
-Received: from mwanda (/102.36.221.92)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 09 Apr 2021 04:08:28 -0700
-Date:   Fri, 9 Apr 2021 14:08:17 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Sebastian Reichel <sre@kernel.org>
-Cc:     Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, Jason Gunthorpe <jgg@nvidia.com>
-Subject: [PATCH] HSI: core: fix resource leaks in hsi_add_client_from_dt()
-Message-ID: <YHA1ofdGOEiBGxzL@mwanda>
+        Fri, 9 Apr 2021 07:09:16 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lUp0T-0003aW-Fc; Fri, 09 Apr 2021 11:08:57 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Raju Rangoju <rajur@chelsio.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>,
+        Kumar Sanghvi <kumaras@chelsio.com>,
+        Ganesh Goudar <ganeshgr@chelsio.com>, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] cxgb4: Fix unintentional sign extension issues
+Date:   Fri,  9 Apr 2021 12:08:57 +0100
+Message-Id: <20210409110857.637409-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-X-Proofpoint-IMR: 1
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9948 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 adultscore=0 bulkscore=0
- mlxlogscore=999 suspectscore=0 spamscore=0 phishscore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104060000
- definitions=main-2104090081
-X-Proofpoint-GUID: -qDvEzAHYK671yJysi1G5t4S4_I0AIzF
-X-Proofpoint-ORIG-GUID: -qDvEzAHYK671yJysi1G5t4S4_I0AIzF
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9948 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 mlxlogscore=999
- suspectscore=0 spamscore=0 phishscore=0 clxscore=1011 bulkscore=0
- mlxscore=0 lowpriorityscore=0 adultscore=0 malwarescore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104060000
- definitions=main-2104090081
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-If some of the allocations fail between the dev_set_name() and the
-device_register() then the name will not be freed.  Fix this by
-moving dev_set_name() directly in front of the call to device_register().
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: a2aa24734d9d ("HSI: Add common DT binding for HSI client devices")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The shifting of the u8 integers f->fs.nat_lip[] by 24 bits to
+the left will be promoted to a 32 bit signed int and then
+sign-extended to a u64. In the event that the top bit of the u8
+is set then all then all the upper 32 bits of the u64 end up as
+also being set because of the sign-extension. Fix this by
+casting the u8 values to a u64 before the 24 bit left shift.
+
+Addresses-Coverity: ("Unintended sign extension")
+Fixes: 12b276fbf6e0 ("cxgb4: add support to create hash filters")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
-Jason, this is the most common type of error I see with device_register().
-Is there a downside to calling dev_set_name() later?  Presumably it's
-printed out somewhere, but I feel like just moving the dev_set_name() is
-almost always the best and simplest fix.
+ .../net/ethernet/chelsio/cxgb4/cxgb4_filter.c | 22 +++++++++----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
- drivers/hsi/hsi_core.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/hsi/hsi_core.c b/drivers/hsi/hsi_core.c
-index c3fb5beb846e..ec90713564e3 100644
---- a/drivers/hsi/hsi_core.c
-+++ b/drivers/hsi/hsi_core.c
-@@ -210,8 +210,6 @@ static void hsi_add_client_from_dt(struct hsi_port *port,
- 	if (err)
- 		goto err;
+diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_filter.c b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_filter.c
+index b1cae5a19839..2f70f02207b2 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_filter.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_filter.c
+@@ -174,31 +174,31 @@ static void set_nat_params(struct adapter *adap, struct filter_entry *f,
+ 				      WORD_MASK, f->fs.nat_lip[15] |
+ 				      f->fs.nat_lip[14] << 8 |
+ 				      f->fs.nat_lip[13] << 16 |
+-				      f->fs.nat_lip[12] << 24, 1);
++				      (u64)f->fs.nat_lip[12] << 24, 1);
  
--	dev_set_name(&cl->device, "%s", name);
--
- 	err = hsi_of_property_parse_mode(client, "hsi-mode", &mode);
- 	if (err) {
- 		err = hsi_of_property_parse_mode(client, "hsi-rx-mode",
-@@ -293,6 +291,7 @@ static void hsi_add_client_from_dt(struct hsi_port *port,
- 	cl->device.release = hsi_client_release;
- 	cl->device.of_node = client;
+ 			set_tcb_field(adap, f, tid, TCB_SND_UNA_RAW_W + 1,
+ 				      WORD_MASK, f->fs.nat_lip[11] |
+ 				      f->fs.nat_lip[10] << 8 |
+ 				      f->fs.nat_lip[9] << 16 |
+-				      f->fs.nat_lip[8] << 24, 1);
++				      (u64)f->fs.nat_lip[8] << 24, 1);
  
-+	dev_set_name(&cl->device, "%s", name);
- 	if (device_register(&cl->device) < 0) {
- 		pr_err("hsi: failed to register client: %s\n", name);
- 		put_device(&cl->device);
+ 			set_tcb_field(adap, f, tid, TCB_SND_UNA_RAW_W + 2,
+ 				      WORD_MASK, f->fs.nat_lip[7] |
+ 				      f->fs.nat_lip[6] << 8 |
+ 				      f->fs.nat_lip[5] << 16 |
+-				      f->fs.nat_lip[4] << 24, 1);
++				      (u64)f->fs.nat_lip[4] << 24, 1);
+ 
+ 			set_tcb_field(adap, f, tid, TCB_SND_UNA_RAW_W + 3,
+ 				      WORD_MASK, f->fs.nat_lip[3] |
+ 				      f->fs.nat_lip[2] << 8 |
+ 				      f->fs.nat_lip[1] << 16 |
+-				      f->fs.nat_lip[0] << 24, 1);
++				      (u64)f->fs.nat_lip[0] << 24, 1);
+ 		} else {
+ 			set_tcb_field(adap, f, tid, TCB_RX_FRAG3_LEN_RAW_W,
+ 				      WORD_MASK, f->fs.nat_lip[3] |
+ 				      f->fs.nat_lip[2] << 8 |
+ 				      f->fs.nat_lip[1] << 16 |
+-				      f->fs.nat_lip[0] << 24, 1);
++				      (u64)f->fs.nat_lip[0] << 25, 1);
+ 		}
+ 	}
+ 
+@@ -208,25 +208,25 @@ static void set_nat_params(struct adapter *adap, struct filter_entry *f,
+ 				      WORD_MASK, f->fs.nat_fip[15] |
+ 				      f->fs.nat_fip[14] << 8 |
+ 				      f->fs.nat_fip[13] << 16 |
+-				      f->fs.nat_fip[12] << 24, 1);
++				      (u64)f->fs.nat_fip[12] << 24, 1);
+ 
+ 			set_tcb_field(adap, f, tid, TCB_RX_FRAG2_PTR_RAW_W + 1,
+ 				      WORD_MASK, f->fs.nat_fip[11] |
+ 				      f->fs.nat_fip[10] << 8 |
+ 				      f->fs.nat_fip[9] << 16 |
+-				      f->fs.nat_fip[8] << 24, 1);
++				      (u64)f->fs.nat_fip[8] << 24, 1);
+ 
+ 			set_tcb_field(adap, f, tid, TCB_RX_FRAG2_PTR_RAW_W + 2,
+ 				      WORD_MASK, f->fs.nat_fip[7] |
+ 				      f->fs.nat_fip[6] << 8 |
+ 				      f->fs.nat_fip[5] << 16 |
+-				      f->fs.nat_fip[4] << 24, 1);
++				      (u64)f->fs.nat_fip[4] << 24, 1);
+ 
+ 			set_tcb_field(adap, f, tid, TCB_RX_FRAG2_PTR_RAW_W + 3,
+ 				      WORD_MASK, f->fs.nat_fip[3] |
+ 				      f->fs.nat_fip[2] << 8 |
+ 				      f->fs.nat_fip[1] << 16 |
+-				      f->fs.nat_fip[0] << 24, 1);
++				      (u64)f->fs.nat_fip[0] << 24, 1);
+ 
+ 		} else {
+ 			set_tcb_field(adap, f, tid,
+@@ -234,13 +234,13 @@ static void set_nat_params(struct adapter *adap, struct filter_entry *f,
+ 				      WORD_MASK, f->fs.nat_fip[3] |
+ 				      f->fs.nat_fip[2] << 8 |
+ 				      f->fs.nat_fip[1] << 16 |
+-				      f->fs.nat_fip[0] << 24, 1);
++				      (u64)f->fs.nat_fip[0] << 24, 1);
+ 		}
+ 	}
+ 
+ 	set_tcb_field(adap, f, tid, TCB_PDU_HDR_LEN_W, WORD_MASK,
+ 		      (dp ? (nat_lp[1] | nat_lp[0] << 8) : 0) |
+-		      (sp ? (nat_fp[1] << 16 | nat_fp[0] << 24) : 0),
++		      (sp ? (nat_fp[1] << 16 | (u64)nat_fp[0] << 24) : 0),
+ 		      1);
+ }
+ 
 -- 
 2.30.2
 
