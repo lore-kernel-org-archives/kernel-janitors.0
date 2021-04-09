@@ -2,124 +2,62 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30F59C433ED
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 04:04:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7232BC433B4
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 06:33:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F2EB8610A4
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 04:04:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 392AD610C7
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 06:33:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230118AbhDIEEP (ORCPT
+        id S233389AbhDIGdi (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 9 Apr 2021 00:04:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60542 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230312AbhDIEEM (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 9 Apr 2021 00:04:12 -0400
-Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 975ADC061761
-        for <kernel-janitors@vger.kernel.org>; Thu,  8 Apr 2021 21:03:18 -0700 (PDT)
-Received: by mail-pj1-x1031.google.com with SMTP id mj7-20020a17090b3687b029014d162a65b6so4311463pjb.2
-        for <kernel-janitors@vger.kernel.org>; Thu, 08 Apr 2021 21:03:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=cZXp8zwbYNX+TsSnBOr40WCKeTdkFOXpBllvVSAkAdw=;
-        b=C0VxXZ+xWqLIs9FayXTKWSuqdZTJyi7DtaTYAsEbIeAoecHQ/+laxKaSMUCTWRxaMR
-         ehbF1rU5ZPcybd1VqaChGNXGLmKbvANiHNniBos9u6zpdYy0MV33KUFzxSQ9nujMEImj
-         RYV+eqVXnt05M6rthifE91dfxc0k7SOBPoG0b9ueNCxDlmP4V3A7ID9rG/C7xQvsiOat
-         /dbKPsizpAF/6DC++2rAXKpacdT2gNmcgOHCzJXw4mMmgveJmxdtHg/f1p/TC9kNBiuR
-         TGObshL67iLewdTaKeg8EieWN/c2zSu4DXvRxhESL3pGYrgANViBIIiUlzXTvznk5xtU
-         yIOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=cZXp8zwbYNX+TsSnBOr40WCKeTdkFOXpBllvVSAkAdw=;
-        b=pSgbRyveLAfEhgVKQ4iDOGOaso/mScB14uNXUUitnWiPccE/f2Syxe22eGfYdyRstv
-         cISTehuw7HCpFvmAOIEF0IJIQC6Sb9+B4J4/qheDfV0cxxz/JoZsumGmYefiH7FYEC9h
-         NQIZuvZAF0FFlJjIEwtCKyipLtpgBr4p+rUyIk7nkItDEs2rKSfGOR3dbl5gmFnaWq/p
-         ld82Go6isfVcdB9XLwRyPN8ALtd9hsUhzn7MuDjueuVMLwUDXMNPmKrWSh6OkTIwaMLh
-         5i5dyTIbreBFIpYo2lv044pLkqV2mIDkXr10VzQsvi3blOeN8iTEMwSJ35IE5p3Bv7Vn
-         W5TA==
-X-Gm-Message-State: AOAM532p+80AeOBYO3MaVFg53otJdSTc3WHu/hFlhNU6kVrxbY0YxzJq
-        1f6VYzl30gA9LBLM2pwAnqurKw==
-X-Google-Smtp-Source: ABdhPJwSoqHUBHuicfDO98U9yIo7SwHnzTmDYWNgkwE/S40rJFWUgVoKn4+65QBmO8AYrIVds+qhcg==
-X-Received: by 2002:a17:902:bc48:b029:e9:aebd:b509 with SMTP id t8-20020a170902bc48b02900e9aebdb509mr1440056plz.0.1617940998086;
-        Thu, 08 Apr 2021 21:03:18 -0700 (PDT)
-Received: from localhost ([136.185.154.93])
-        by smtp.gmail.com with ESMTPSA id s6sm638704pfw.96.2021.04.08.21.03.17
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 08 Apr 2021 21:03:17 -0700 (PDT)
-Date:   Fri, 9 Apr 2021 09:33:15 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Chen Lifu <chenlifu@huawei.com>
-Cc:     Viresh Kumar <vireshk@kernel.org>,
-        Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Fri, 9 Apr 2021 02:33:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36860 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233332AbhDIGdi (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 9 Apr 2021 02:33:38 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 4496B610A3;
+        Fri,  9 Apr 2021 06:33:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1617950005;
+        bh=yCdHBrN/kHGVkFYaO/eG0PB/iD92rmwVP1Z0FrCjlzc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ioF3xfMTkks4yEir6PotK2ustLBZKIzKr68uaBkkatl/NyyhvKgtUR0ThK+pk++r2
+         /RtmzlfVhBRIDX6fJLRyU6rqkMgazLzHJGxkyjsT3YMU5c9Hb2eKz30AsRZrx0N2TE
+         1DEHL1xdvYH+Isui/ijjhLeCt18iOgq5D8NncP4E=
+Date:   Fri, 9 Apr 2021 08:33:23 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Sergei Krainov <sergei.krainov.lkd@gmail.com>
+Cc:     Larry.Finger@lwfinger.net, florian.c.schilhabel@googlemail.com,
+        linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH -next] ARM: spear: Fix build error with
- CONFIG_ARCH_SPEAR3XX
-Message-ID: <20210409040315.vc55eogaxs4zu4xb@vireshk-i7>
-References: <20210409015515.258653-1-chenlifu@huawei.com>
+Subject: Re: [PATCH] staging: rtl8712: fix wrong function output
+Message-ID: <YG/1MyfOrHgCi5sr@kroah.com>
+References: <20210408234527.GA6893@test-VirtualBox>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210409015515.258653-1-chenlifu@huawei.com>
-User-Agent: NeoMutt/20180716-391-311a52
+In-Reply-To: <20210408234527.GA6893@test-VirtualBox>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 09-04-21, 09:55, Chen Lifu wrote:
-> commit 77f983a9df42 ("spi: pl022: Use GPIOs looked up by the core")
-> deleted 'struct pl022_ssp_controller' member 'num_chipselect'.
-> We get build error when CONFIG_ARCH_SPEAR3XX is set:
-> arch/arm/mach-spear/spear3xx.c:42:3: error: 'struct pl022_ssp_controller' has no member named 'num_chipselect'
->    42 |  .num_chipselect = 2,
->       |   ^~~~~~~~~~~~~~
-> arch/arm/mach-spear/spear3xx.c:42:20: warning: initialization of 'void *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
->    42 |  .num_chipselect = 2,
->       |                    ^
+On Fri, Apr 09, 2021 at 01:45:27AM +0200, Sergei Krainov wrote:
+> Function r8712_find_network() were returning wlan_network even if it
+> didn't match required address. This happened due to not checking if
+> list end was reached and returning last processed wlan_network.
 > 
-> Fix the issue by deleting the initialization of 'num_chipselect'
-> in spear3xx.c.
-> 
-> Fixes: 77f983a9df42 ("spi: pl022: Use GPIOs looked up by the core")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Chen Lifu <chenlifu@huawei.com>
+> Signed-off-by: Sergei Krainov <sergei.krainov.lkd@gmail.com>
 > ---
->  arch/arm/mach-spear/spear3xx.c | 10 ----------
->  1 file changed, 10 deletions(-)
-> 
-> diff --git a/arch/arm/mach-spear/spear3xx.c b/arch/arm/mach-spear/spear3xx.c
-> index 8537fcffe5a8..f83321d5e353 100644
-> --- a/arch/arm/mach-spear/spear3xx.c
-> +++ b/arch/arm/mach-spear/spear3xx.c
-> @@ -30,16 +30,6 @@ struct pl022_ssp_controller pl022_plat_data = {
->  	.dma_filter = pl08x_filter_id,
->  	.dma_tx_param = "ssp0_tx",
->  	.dma_rx_param = "ssp0_rx",
-> -	/*
-> -	 * This is number of spi devices that can be connected to spi. There are
-> -	 * two type of chipselects on which slave devices can work. One is chip
-> -	 * select provided by spi masters other is controlled through external
-> -	 * gpio's. We can't use chipselect provided from spi master (because as
-> -	 * soon as FIFO becomes empty, CS is disabled and transfer ends). So
-> -	 * this number now depends on number of gpios available for spi. each
-> -	 * slave on each master requires a separate gpio pin.
-> -	 */
-> -	.num_chipselect = 2,
->  };
+>  drivers/staging/rtl8712/rtl871x_mlme.c | 2 ++
+>  1 file changed, 2 insertions(+)
 
-A patch is already applied by Mark to fix this issue.
+What commit does this "fix"?  Or has this bug been there always?
 
--- 
-viresh
+thanks,
+
+greg k-h
