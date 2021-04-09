@@ -2,102 +2,106 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41896C433B4
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 11:42:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC7BCC433ED
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 11:52:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 188F661165
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 11:42:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F8AC6115B
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 11:52:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233554AbhDILmR (ORCPT
+        id S233409AbhDILwO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 9 Apr 2021 07:42:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48078 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231370AbhDILmQ (ORCPT
+        Fri, 9 Apr 2021 07:52:14 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:35874 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231599AbhDILwO (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 9 Apr 2021 07:42:16 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 581B6C061760;
-        Fri,  9 Apr 2021 04:42:03 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id k128so2756006wmk.4;
-        Fri, 09 Apr 2021 04:42:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=V5+pjzHfePdkc4rtRN/TOnz51urUM/UQ0GOzVCwaFA0=;
-        b=unziX4wdDag2c1dvpdPDY18YWmm7+w3iEw0aEe1mfWmeg+GAdFsq+UUd88Lkk6IU9L
-         xqhIt58qE+bHOCfCK/3+S2U2kFxffNRanLV/TkyAB270FWkFP5E7CTDRiTMayJvV/R6P
-         dK33s7Ftdqxqy9yRKFs52pBPF0ArDKqO1v3FfRh4UbcxmxtcwhFbgZqVmKvQYCWNXzcr
-         PGqsg61tbGwy0Ldf1MVqshWKTFlIRdRGC62NB4eQVZhoFOmMsA+qX1EAFsgQ7uR0zKoN
-         H2wdIA7ckGo29LbNRf1+m61+t0jJAlsEcxVyUrPMcSTKnyD2iLhToqZ8y1vqoR8ENovK
-         b3qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=V5+pjzHfePdkc4rtRN/TOnz51urUM/UQ0GOzVCwaFA0=;
-        b=s0qzLfuoMZfCIdZIw+6cxtF8FmF79R7oNOsi25ITJyCkSv391c9W6bglsaayZubX1/
-         XEi+RBLFBQpDcxkEo4fWdNj+FlzS/RaIco/Qms1cRfj29vJvqPDkzUxzwky1vQHL4bp7
-         H2j4Q+2QB9AI9STy+Rmhoj3XdagpLAdKfijj6tgG1MS0MSQADCNcBiG2omM06Uj9P0fZ
-         tLuerB8YNIgdcOf4PYZ6a9TCk2LsDsLkQnwGEM7WBgWQM4BeGFO0+48nEjLoSacc0cxn
-         oClTNhMJAgO6hOD0VBnQZ/xG72WkHnW6wBEITzH9dxjHkAglYW4s9fpnkKE+0jogCXFh
-         XwOA==
-X-Gm-Message-State: AOAM532vw2sxdgXIWrf+tpAl7giZgpStJ9uk2vIok6x2s99P+YANO6oy
-        6M0v7UVFUXMUWUO86H+W2pTkGoIp+/kqzA==
-X-Google-Smtp-Source: ABdhPJwmdAyg9Fb1luYslkM5DiD4Uk0tt40oDvZh1cRvcM9dxHhY9t/F6CW6g164NdDbUUhueFVqRQ==
-X-Received: by 2002:a7b:c417:: with SMTP id k23mr6569549wmi.186.1617968521597;
-        Fri, 09 Apr 2021 04:42:01 -0700 (PDT)
-Received: from test-VirtualBox ([87.116.165.76])
-        by smtp.gmail.com with ESMTPSA id d133sm3604331wmf.9.2021.04.09.04.42.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Apr 2021 04:42:01 -0700 (PDT)
-Date:   Fri, 9 Apr 2021 13:41:59 +0200
-From:   Sergei Krainov <sergei.krainov.lkd@gmail.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Larry.Finger@lwfinger.net, florian.c.schilhabel@googlemail.com,
-        linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+        Fri, 9 Apr 2021 07:52:14 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: sre)
+        with ESMTPSA id 74AF61F464C8
+Received: by earth.universe (Postfix, from userid 1000)
+        id D80423C0C96; Fri,  9 Apr 2021 13:51:57 +0200 (CEST)
+Date:   Fri, 9 Apr 2021 13:51:57 +0200
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     Chen Lifu <chenlifu@huawei.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] staging: rtl8712: fix wrong function output
-Message-ID: <20210409114159.GA3122@test-VirtualBox>
-References: <20210408234527.GA6893@test-VirtualBox>
- <YG/1MyfOrHgCi5sr@kroah.com>
+Subject: Re: [PATCH -next] power: reset: hisi-reboot: add missing
+ MODULE_DEVICE_TABLE
+Message-ID: <20210409115157.cifirven2au4mj45@earth.universe>
+References: <20210409025011.8796-1-chenlifu@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="5pez7hzvzer77b36"
 Content-Disposition: inline
-In-Reply-To: <YG/1MyfOrHgCi5sr@kroah.com>
+In-Reply-To: <20210409025011.8796-1-chenlifu@huawei.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Apr 09, 2021 at 08:33:23AM +0200, Greg KH wrote:
-> On Fri, Apr 09, 2021 at 01:45:27AM +0200, Sergei Krainov wrote:
-> > Function r8712_find_network() were returning wlan_network even if it
-> > didn't match required address. This happened due to not checking if
-> > list end was reached and returning last processed wlan_network.
-> > 
-> > Signed-off-by: Sergei Krainov <sergei.krainov.lkd@gmail.com>
-> > ---
-> >  drivers/staging/rtl8712/rtl871x_mlme.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> 
-> What commit does this "fix"?  Or has this bug been there always?
-> 
-> thanks,
-> 
-> greg k-h
 
-This commit fixes the bug mentioned. 
+--5pez7hzvzer77b36
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-And this commit is based on staging-next and has nothing to do
-with my previous patches, for which I'm sorry, I was wrong.
+Hi,
 
-Thanks a lot for review and your time,
+On Fri, Apr 09, 2021 at 10:50:11AM +0800, Chen Lifu wrote:
+> This patch adds missing MODULE_DEVICE_TABLE definition which generates
+> correct modalias for automatic loading of this driver when it is built
+> as an external module.
+>=20
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Chen Lifu <chenlifu@huawei.com>
+> ---
 
-Sergei
+Thanks, queued.
+
+-- Sebastian
+
+>  drivers/power/reset/hisi-reboot.c | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/drivers/power/reset/hisi-reboot.c b/drivers/power/reset/hisi=
+-reboot.c
+> index 5abc5f6ba0fd..34409340528f 100644
+> --- a/drivers/power/reset/hisi-reboot.c
+> +++ b/drivers/power/reset/hisi-reboot.c
+> @@ -68,6 +68,7 @@ static const struct of_device_id hisi_reboot_of_match[]=
+ =3D {
+>  	{ .compatible =3D "hisilicon,sysctrl" },
+>  	{}
+>  };
+> +MODULE_DEVICE_TABLE(of, hisi_reboot_of_match);
+> =20
+>  static struct platform_driver hisi_reboot_driver =3D {
+>  	.probe =3D hisi_reboot_probe,
+>=20
+
+--5pez7hzvzer77b36
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmBwP90ACgkQ2O7X88g7
++podlg//Q/InvDUDGeGGzBjK9HaUmbZ9yb9A2n4jKp1hpxH0kdy3DDu63+k+uHtp
+ZcwsrVjtVzdMsCb/g/S7cqZIZEcjB6g6fyRqvgul5g6sZJkMrx+ASdersUCALXua
+yfC7nxzigWncVGV+H0DT96FwUHQYjfR7riD0yGI3hweXO8MDM+NK6OGAJIJ/maHW
+Fb6rC6WMwEkc+sKmDyrKRKVnTcbTiDE+4zBVmi5c9RMQOk0xchs/lJqU36NzYflI
+rmZnFrMwuwszVjaDc6AHAIPgyPcCZtgnF3souUKn67FrTTNtPsNNXmmATQAZkiDM
+nIdWFt5PYX5b4MlC20H4sWvvGG5ojJacd14NB/1u2wGROhCL5lkvrg65sSysQty8
+/+U9vTR7v4S3uNrM9C9fefERRcvt2M7y0nLumKlhwnY0HW4EgeUXMOTMwCpgij1g
+l85P7Gf0s55dw8XeB7fJ4gwQ5bc/qvE/9yqt5o1J0u+Pr1cr6tqENUH2fUsNb/Zp
+9hAiBhw67LWW/dBvoyDbR/nAVGBwFbqYB/h7+kJiuoAUoD0ATaESPf8zC0v8BCdF
+qDg+K1CVngSLIqVFQ1o0L1jxBIx8ojNNUxkjYpTliJs/ChR6UKiYor4Sft9xMJSJ
+nXvyBoSmpVPe5rZxBfKZe6QMNbvlt8d+PigGWXZ7459FyI8LEVU=
+=XwSD
+-----END PGP SIGNATURE-----
+
+--5pez7hzvzer77b36--
