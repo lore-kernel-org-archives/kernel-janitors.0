@@ -2,78 +2,76 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA81CC433B4
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Apr 2021 23:50:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05118C433ED
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 01:12:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AD42E61151
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Apr 2021 23:50:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACDB4610F7
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 01:12:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233009AbhDHXul (ORCPT
+        id S233149AbhDIBMg (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 8 Apr 2021 19:50:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34724 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232793AbhDHXuj (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 8 Apr 2021 19:50:39 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id AB13C610F8;
-        Thu,  8 Apr 2021 23:50:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617925827;
-        bh=F0uP/nWIdK+V6oyBdJT4pqjUo8NRNN3upI17deigMdg=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=J2HgrMI1lQOIkUsYhQkTp9OpJKHBahC3silK+rCND8XenJo7916nmDnJf+9lff0s4
-         fbyYFBfRB4Hd6IJ4XvBlTiKQRnC9sI/3eg0wfI4ihgCUoEH1LKthZZHIIuzMJf2Iqc
-         KvMCVJO2iMOE2gfwbmJSFEsAXRqyTQU4pS17PrDMrcIjAsoEv7hhanP06hAsg0XusZ
-         mR/53AJzBJdya6C9Jna84HZ0qU6+KBoupflmwO/VOFbSs04/4+FzVd1PwF9/7DGbA/
-         hbYo84RNDuWQwcMK404YU4nQM88rd9jMjfaQhRlaFOpsl1dwx0J1BBtWVfNselUKKu
-         FZtzlsSxX5X6A==
-Content-Type: text/plain; charset="utf-8"
+        Thu, 8 Apr 2021 21:12:36 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:16848 "EHLO
+        szxga07-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232958AbhDIBMe (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 8 Apr 2021 21:12:34 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
+        by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4FGg6729DRz9xZl;
+        Fri,  9 Apr 2021 09:10:07 +0800 (CST)
+Received: from localhost.localdomain (10.175.102.38) by
+ DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
+ 14.3.498.0; Fri, 9 Apr 2021 09:12:09 +0800
+From:   Wei Yongjun <weiyongjun1@huawei.com>
+To:     <weiyongjun1@huawei.com>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+CC:     <coresight@lists.linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH -next] coresight: trbe: Fix return value check in arm_trbe_register_coresight_cpu()
+Date:   Fri, 9 Apr 2021 01:22:13 +0000
+Message-ID: <20210409012213.3664473-1-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net: ipv6: check for validity before dereferencing
- cfg->fc_nlinfo.nlh
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <161792582762.13386.8901145268048636141.git-patchwork-notify@kernel.org>
-Date:   Thu, 08 Apr 2021 23:50:27 +0000
-References: <20210408220129.GA3111136@LEGION>
-In-Reply-To: <20210408220129.GA3111136@LEGION>
-To:     Muhammad Usama Anjum <musamaanjum@gmail.com>
-Cc:     davem@davemloft.net, yoshfuji@linux-ipv6.org, dsahern@kernel.org,
-        kuba@kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        colin.king@canonical.com, dan.carpenter@oracle.com,
-        stable@vger.kernel.org
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.102.38]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+In case of error, the function devm_kasprintf() returns NULL
+pointer not ERR_PTR(). The IS_ERR() test in the return value
+check should be replaced with NULL test.
 
-This patch was applied to netdev/net.git (refs/heads/master):
+Fixes: 3fbf7f011f24 ("coresight: sink: Add TRBE driver")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/hwtracing/coresight/coresight-trbe.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Fri, 9 Apr 2021 03:01:29 +0500 you wrote:
-> nlh is being checked for validtity two times when it is dereferenced in
-> this function. Check for validity again when updating the flags through
-> nlh pointer to make the dereferencing safe.
-> 
-> CC: <stable@vger.kernel.org>
-> Addresses-Coverity: ("NULL pointer dereference")
-> Signed-off-by: Muhammad Usama Anjum <musamaanjum@gmail.com>
-> 
-> [...]
-
-Here is the summary with links:
-  - net: ipv6: check for validity before dereferencing cfg->fc_nlinfo.nlh
-    https://git.kernel.org/netdev/net/c/864db232dc70
-
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+diff --git a/drivers/hwtracing/coresight/coresight-trbe.c b/drivers/hwtracing/coresight/coresight-trbe.c
+index 5ce239875c98..176868496879 100644
+--- a/drivers/hwtracing/coresight/coresight-trbe.c
++++ b/drivers/hwtracing/coresight/coresight-trbe.c
+@@ -871,7 +871,7 @@ static void arm_trbe_register_coresight_cpu(struct trbe_drvdata *drvdata, int cp
+ 
+ 	dev = &cpudata->drvdata->pdev->dev;
+ 	desc.name = devm_kasprintf(dev, GFP_KERNEL, "trbe%d", cpu);
+-	if (IS_ERR(desc.name))
++	if (!desc.name)
+ 		goto cpu_clear;
+ 
+ 	desc.type = CORESIGHT_DEV_TYPE_SINK;
 
