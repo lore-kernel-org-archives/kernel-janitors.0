@@ -2,136 +2,120 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC484C433ED
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 17:34:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DF34C43470
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 18:29:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C02C46101B
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 17:34:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D531E61105
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 18:29:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234169AbhDIRem (ORCPT
+        id S234521AbhDIS3n (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 9 Apr 2021 13:34:42 -0400
-Received: from mail-mw2nam12on2084.outbound.protection.outlook.com ([40.107.244.84]:58848
-        "EHLO NAM12-MW2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S233896AbhDIRel (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 9 Apr 2021 13:34:41 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fEdFCiLPIYEfEfUvF7+A4+GuYqrFlJwqPQ4cLxjTqzS6oP88rAsafaLefBxYyu2muTE3FlnP+axmbEQLVz0TDTfxMYRmRnBsPMi6gQHB5JcWo2lZ76iwMPRevyiIaQaL7/JoIa77w/KIkyY496PvQTI6b6CMsl2M2Esww1dY99ySeBWj9Ijh/I2x1Hr5Gy1TeqZF0dLdQwt8yxkBJBHRcsvg57Y/eb767QIezMUVXLm8A3wdnOiFb5ycFHxgPQbnKpQemnY4pezSPxpr97YeCi/9B5EBb2Mq5ot4eVKO2BAMWhNZ3fLozUpKK7jR9VRLl/fJ5ktyEb9Grk1MociVkg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Y0iWitHvtYUi2eizDejgVtPxprS1+k2x7LyZcS3E+kw=;
- b=TmGUQNIXQMnHojWgDlXUJ58PWTRFmKipIlH/H9KjhBxe82iaTsTcs/oW75/LKbCb68FbiNdWL8XwZq/gM3o0SpUja/wzADyMtNzJwlfB+KlXcpPgies0IXNSFvPQ6gF4IiAGmxmrlHsLH7wd0x5b020cbdWr5aY3s28nFpy0vU68HHgpJeZqPJRYkMIZAC33yJ3MjuEGkOBIIeU7QXe9XLlL8zrLRsoToPUrquolTyGtkpNu1xDb4gTfyguJ9giZ4LSNeNCMK7piAQuPjjy4xvPM4LcCiJqgSPzoNwKuUxshaRMtDE+NYHWWIvlCaB6cnIChxWfyOzarboEgKiP92g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Y0iWitHvtYUi2eizDejgVtPxprS1+k2x7LyZcS3E+kw=;
- b=Tboi08qIlU1K/B3rciJWktj41yZpuKFvGbB30s9AsCWJPyzLSvFcU+PFQ5iHxay7j6aDec9YHLBZz5SNEdCD7F4vnjvzte0lMN/KVJ0FFt3OFg1q3ugRnC3Gtt00grCeAlypYq8H9uYgwN37wqoaN0i2qX1AlAo5TtvjIkjtcPNEYo4itXlguuujoAMYx3a1JjgncJPLiUYaYwUVHKdWvOK7Ggq8VWAPWonj7IlTHD6sEg4HdqZ/urKE9fvukIRjPqVjJHGCibd0akVQ5dIlgU/0cDuuqPp6Mg6pN8G7WX1JBNSGrErVYgx3blTvKpU2Yu8QH+kO46rQiNng3XeP5w==
-Authentication-Results: oracle.com; dkim=none (message not signed)
- header.d=none;oracle.com; dmarc=none action=none header.from=nvidia.com;
-Received: from BY5PR12MB3827.namprd12.prod.outlook.com (2603:10b6:a03:1ab::16)
- by BY5PR12MB4802.namprd12.prod.outlook.com (2603:10b6:a03:1fc::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3999.27; Fri, 9 Apr
- 2021 17:34:27 +0000
-Received: from BY5PR12MB3827.namprd12.prod.outlook.com
- ([fe80::4c46:77c0:7d7:7e43]) by BY5PR12MB3827.namprd12.prod.outlook.com
- ([fe80::4c46:77c0:7d7:7e43%6]) with mapi id 15.20.4020.018; Fri, 9 Apr 2021
- 17:34:27 +0000
-Date:   Fri, 9 Apr 2021 14:34:25 -0300
-From:   Jason Gunthorpe <jgg@nvidia.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Sebastian Reichel <sre@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] HSI: core: fix resource leaks in hsi_add_client_from_dt()
-Message-ID: <20210409173425.GB7405@nvidia.com>
-References: <YHA1ofdGOEiBGxzL@mwanda>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YHA1ofdGOEiBGxzL@mwanda>
-X-Originating-IP: [142.162.115.133]
-X-ClientProxiedBy: MN2PR13CA0030.namprd13.prod.outlook.com
- (2603:10b6:208:160::43) To BY5PR12MB3827.namprd12.prod.outlook.com
- (2603:10b6:a03:1ab::16)
+        Fri, 9 Apr 2021 14:29:43 -0400
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:57815 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234375AbhDIS3n (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 9 Apr 2021 14:29:43 -0400
+X-Greylist: delayed 42111 seconds by postgrey-1.27 at vger.kernel.org; Fri, 09 Apr 2021 14:29:42 EDT
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id 139ISwmU005372;
+        Sat, 10 Apr 2021 03:28:58 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com 139ISwmU005372
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1617992938;
+        bh=eCHNQxRkz9e15GI5IVdo8WG8vYYPK2jIVucpCRZPvu4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=wzeCXPVluHCxg3fnohDIUPMXIbzAl1lSWdH+uBypkjqRP1UyjlZ1nKguyxvXBPTdy
+         jpdyo3IP10LqjEpvElHHuwzPCbBCq2JNSlgriAFo+utDfUPEONKvZVmDe2Gor5e3A5
+         LO+j6mSgWfGxJRmLYELLmBGH7r9lJsy0nWgZyyIr4Uii7Q0R4WW9TFG5HNfY3ySjcR
+         ggvVHC8/dEvKlkFisOWsa0n7V5UNn4OGOYSpVh3Qi3PHJ9Y9lofBNvg2noE4/YDHZA
+         IcrNv3RN+WAStMxsM2tXmoTxgBRig8uEK67oIYclPL+d2jjCewjt9/eq/9dGgHBp1K
+         XcHNOb58ioXYA==
+X-Nifty-SrcIP: [209.85.210.179]
+Received: by mail-pf1-f179.google.com with SMTP id a85so4346499pfa.0;
+        Fri, 09 Apr 2021 11:28:58 -0700 (PDT)
+X-Gm-Message-State: AOAM533OjuZ1v87lAJuPySo2F6t/h6YrzK/eYO8ZAs5n9q9yxeYQxfS8
+        wClQ0QK0a68DB3ti1ttcsL9qMY2QlZRSwtdZst8=
+X-Google-Smtp-Source: ABdhPJx+7CPnY7PSLGsEDahPM2MF01RlsoL9wBaM+MVI/s46yFs+CWjOlD0LDR4VTzqRmJfqkVv6VqDDhNTTx2NFltg=
+X-Received: by 2002:aa7:956d:0:b029:1f1:5ba6:2a58 with SMTP id
+ x13-20020aa7956d0000b02901f15ba62a58mr13742848pfq.63.1617992937777; Fri, 09
+ Apr 2021 11:28:57 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from mlx.ziepe.ca (142.162.115.133) by MN2PR13CA0030.namprd13.prod.outlook.com (2603:10b6:208:160::43) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4042.6 via Frontend Transport; Fri, 9 Apr 2021 17:34:27 +0000
-Received: from jgg by mlx with local (Exim 4.94)        (envelope-from <jgg@nvidia.com>)        id 1lUv1V-003Ps7-Gt; Fri, 09 Apr 2021 14:34:25 -0300
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 1cec0287-1f12-4db3-1d9b-08d8fb7db965
-X-MS-TrafficTypeDiagnostic: BY5PR12MB4802:
-X-Microsoft-Antispam-PRVS: <BY5PR12MB48028C1FCD0C0151DB51B1FCC2739@BY5PR12MB4802.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Ad8BPp8rB7XRYzj7hSE6WpvRI0O+wluPdRi7mgzG5/Vq/1+/zKPxRBO8D0SYKDdyasOJjNQMKFYG1e+g6O6gTfoakrdt9g8Tn5cn25/AoJx5foV6d/vXhnZcTCgIt+VWHZz6j/zq2a8vGZZk6HXZ5sLe3gcY4dE6r75i6G99zikWQwLudHG7972Bd8r3tZE6CP6iezxdXvTIErhbgTSY3oWySCj8Wsih9LPWbKsiV9cx1xKqCgxu1rAx8GHr3ImQ8/PBIvI43WiDLhUTMDHKrKJh+cqnjFJeRH0e8OX7cAeCkhsvYpJZOp26OtW/1/vvrs+YFbLZhPvwnnVeuBSGdRAaHV+5akpXU4o2GWTeadXstusYhBLp9mWlB/FXUpa9HEoGocJm5IhsX84fgTLltNdsAuyRKdq0ZGfOzvg6Uq306MrqBp2eHd/4qJnK1VzBQMVIYBqqgwEpyxdOcVsXGsmS3C0/zkWpa6zoQp5oFTjBAMshe6JCIrHev1W5JINeXID5ll4lshb7IQV6pTWqOecY2r4CNPDVdYOsuZRLwGWVUOWRCUO/s9txVhVRjsogIAY1XqeEa2lHE9X9U1R9VMpR1YFB3h7rBGOQ6PFzrQW/5BO8aMbzqaAearSLU8QsIfWivTxiWAwsATq+q4yug9ZJxowLdnaIxR9E6Mmxtns=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB3827.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(136003)(376002)(396003)(346002)(39860400002)(366004)(66476007)(66556008)(316002)(478600001)(33656002)(26005)(36756003)(8936002)(2616005)(186003)(66946007)(38100700001)(86362001)(8676002)(5660300002)(1076003)(54906003)(9746002)(9786002)(4744005)(426003)(2906002)(4326008)(6916009);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?WtWBqYzGT0odxyYdEsNMI+F138lSV4OPykY+gRTkcEoBxrWe/+jNakt8lRd9?=
- =?us-ascii?Q?xLINkO/2UyBW5s+ULsMjBPWed3L8ppKGEaihAO1HubJSOlS0TSMyb404LXf/?=
- =?us-ascii?Q?HPrjeDevYmrjfV1KfaCWZ6HPOQ6f1NLqtPeALnC5CeNL4BtnjNTLi4V0Esfi?=
- =?us-ascii?Q?EPhljbr+WcOfVeKnJfBT41gsUJWPMBm3lqVQNApZOaJU62o0tTyYCLDb5lon?=
- =?us-ascii?Q?IAtHNWcGVwgSqTHFDXi5mwKwupkp4Lej5I8pgixyDcRX7OeKSLYZRmfEiCH7?=
- =?us-ascii?Q?1D/2OYT/ahOHlk2PAPv2HmdtRHPwVYp6yB8YOCiAIbCsBYF70p5yRU3Fbm2p?=
- =?us-ascii?Q?lvqt92ltfj7yTqPMc4NCO8ABZ2ivccwSjSARQ7Ehh3qu4UrNreR73J73Rlop?=
- =?us-ascii?Q?aL0v70b7tWe24+99askr/q16YDyINQqq/AdWEFHCsl5hmOy9Loku+67VuLYB?=
- =?us-ascii?Q?wr43s+4RAhCoI2GWMMCQmsY6AEuV3lzUbxKikAoIR7MoE4tyc3+5EePtUWWN?=
- =?us-ascii?Q?AhZnmWIki/cn8wjTgV7zs2MgvfNAulyMcLEW2v6jl1NHKMPZGLPpTZD6i7kD?=
- =?us-ascii?Q?dIlTwuFYGxaMVuf5bnSjnoX4z9zCI6Im1+EKN3HmkswfQPfBBoRG3SnPdzcY?=
- =?us-ascii?Q?YoTb4Uw5cFz5o2DxFRgtqwx7NIEUKbjbb3YzTsWtfELQutx9LoBd5/4sNoTi?=
- =?us-ascii?Q?Fk0ZwAU8VoQ7zFOs2RXcVQA9KB1Y1FJLFRi6b11x8nRb0nC6aXQIBnOUREQC?=
- =?us-ascii?Q?OOnViy10ff/u2aTyAnbssorypK6A8ce1y6YK+jyvH4mnfwPdXxr++mA7/5mb?=
- =?us-ascii?Q?0IsmG8Xwn+6CjtEYRvHmkBAb3GoilyzU+0yPRmlQiy8g+14a+claC7lxD/z0?=
- =?us-ascii?Q?T5ngDJuroXu/0M6+uK+wQXFjBlRLj8DrTCyweRQe5NAFheqtjRHZZEtGIcuY?=
- =?us-ascii?Q?tPY5ZMKgAcT/qKPsTqVJmhOncXdKhMypyf32sN4ZyIHY7tNmqosUJ3NvSKvu?=
- =?us-ascii?Q?lbgisDmI9OIqXA7fjriPAI551XFMz1v1g7ugVcFuvrnjfpa2q3oXW6xHmlrR?=
- =?us-ascii?Q?XlfS89dTx4i1ahDECh9KznJGq2PuotDEqivR5TnoQfzjLtfqRfoafzGGlQtv?=
- =?us-ascii?Q?AjQynOid1w/YCdcTyDsubmvtmSamlLnET5RlIEN3Szk+OHKDW/kXelLE+HJA?=
- =?us-ascii?Q?tjMSbeTE3+b+ZULq/Rt2QDKuxqcEhsJGviGIsfM4HWDa4pEF2jaek8CltnEo?=
- =?us-ascii?Q?/Kje1cN0vT8bTySFQtXghZ0dxPZUsUvthRoVN4aAwtJIW/PH66kFCVdj0u37?=
- =?us-ascii?Q?PDnoCC92k8p7hOLoDmY5rKYGdfX9Y9u88p+kfVN11kb+2A=3D=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1cec0287-1f12-4db3-1d9b-08d8fb7db965
-X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB3827.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Apr 2021 17:34:27.4749
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: P5SfYRp0IiYQtZlhUlP4+CxYbY7rgZ68WBKxsw7yU6++6D6WJrzL98zy3kZCHmOs
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4802
+References: <20210409090104.629722-1-colin.king@canonical.com> <20210409090104.629722-2-colin.king@canonical.com>
+In-Reply-To: <20210409090104.629722-2-colin.king@canonical.com>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Sat, 10 Apr 2021 03:28:21 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAS=cFxQ3Z3GPdQfwB8DBLDbY9Oxm+yK9cjz116HZ8OKAw@mail.gmail.com>
+Message-ID: <CAK7LNAS=cFxQ3Z3GPdQfwB8DBLDbY9Oxm+yK9cjz116HZ8OKAw@mail.gmail.com>
+Subject: Re: [PATCH][V2] clk: uniphier: Fix potential infinite loop
+To:     Colin King <colin.king@canonical.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        kernel-janitors@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Apr 09, 2021 at 02:08:17PM +0300, Dan Carpenter wrote:
-> If some of the allocations fail between the dev_set_name() and the
-> device_register() then the name will not be freed.  Fix this by
-> moving dev_set_name() directly in front of the call to device_register().
-> 
-> Fixes: a2aa24734d9d ("HSI: Add common DT binding for HSI client devices")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+On Fri, Apr 9, 2021 at 6:01 PM Colin King <colin.king@canonical.com> wrote:
+>
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> The for-loop iterates with a u8 loop counter i and compares this
+> with the loop upper limit of num_parents that is an int type.
+> There is a potential infinite loop if num_parents is larger than
+> the u8 loop counter. Fix this by making the loop counter the same
+> type as num_parents.  Also make num_parents an unsigned int to
+> match the return type of the call to clk_hw_get_num_parents.
+>
+> Addresses-Coverity: ("Infinite loop")
+> Fixes: 734d82f4a678 ("clk: uniphier: add core support code for UniPhier clock driver")
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
-> Jason, this is the most common type of error I see with device_register().
-> Is there a downside to calling dev_set_name() later?  Presumably it's
-> printed out somewhere, but I feel like just moving the dev_set_name() is
-> almost always the best and simplest fix.
+>
+> V2: Make num_parents an unsigned int to match return type of
+>     clk_hw_get_num_parents().
 
-It is hard to tell without detailed analysis.. ie a dev_err()/etc call
-will use the name. It is why I don't like this design pattern of
-avoiding device_initialize() and using device_registrR()
+Reviewed-by: Masahiro Yamada <masahiroy@kernel.org>
 
-This movement looks OK though
 
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
-Jason
+
+> ---
+>  drivers/clk/uniphier/clk-uniphier-mux.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/clk/uniphier/clk-uniphier-mux.c b/drivers/clk/uniphier/clk-uniphier-mux.c
+> index 462c84321b2d..1998e9d4cfc0 100644
+> --- a/drivers/clk/uniphier/clk-uniphier-mux.c
+> +++ b/drivers/clk/uniphier/clk-uniphier-mux.c
+> @@ -31,10 +31,10 @@ static int uniphier_clk_mux_set_parent(struct clk_hw *hw, u8 index)
+>  static u8 uniphier_clk_mux_get_parent(struct clk_hw *hw)
+>  {
+>         struct uniphier_clk_mux *mux = to_uniphier_clk_mux(hw);
+> -       int num_parents = clk_hw_get_num_parents(hw);
+> +       unsigned int num_parents = clk_hw_get_num_parents(hw);
+>         int ret;
+>         unsigned int val;
+> -       u8 i;
+> +       unsigned int i;
+>
+>         ret = regmap_read(mux->regmap, mux->reg, &val);
+>         if (ret)
+> --
+> 2.30.2
+>
+
+
+-- 
+Best Regards
+Masahiro Yamada
