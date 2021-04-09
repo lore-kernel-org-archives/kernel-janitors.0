@@ -7,63 +7,72 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81785C433B4
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 02:51:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 588ADC433ED
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 02:57:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 41C31610CA
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 02:51:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 11531610CA
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 02:57:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232839AbhDICvq (ORCPT
+        id S233032AbhDIC5b (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 8 Apr 2021 22:51:46 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:15633 "EHLO
+        Thu, 8 Apr 2021 22:57:31 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:16104 "EHLO
         szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232616AbhDICvp (ORCPT
+        with ESMTP id S232662AbhDIC53 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 8 Apr 2021 22:51:45 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
-        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4FGjHt5pSSznZ5M;
-        Fri,  9 Apr 2021 10:48:42 +0800 (CST)
-Received: from huawei.com (10.67.174.78) by DGGEMS409-HUB.china.huawei.com
- (10.3.19.209) with Microsoft SMTP Server id 14.3.498.0; Fri, 9 Apr 2021
- 10:51:21 +0800
-From:   Chen Lifu <chenlifu@huawei.com>
-To:     Sebastian Reichel <sre@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, Chen Lifu <chenlifu@huawei.com>,
-        <linux-pm@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] power: reset: hisi-reboot: add missing MODULE_DEVICE_TABLE
-Date:   Fri, 9 Apr 2021 10:50:11 +0800
-Message-ID: <20210409025011.8796-1-chenlifu@huawei.com>
+        Thu, 8 Apr 2021 22:57:29 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4FGjRC5GNLz1BGNM;
+        Fri,  9 Apr 2021 10:55:03 +0800 (CST)
+Received: from ubuntu1804.huawei.com (10.67.174.175) by
+ DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
+ 14.3.498.0; Fri, 9 Apr 2021 10:57:05 +0800
+From:   Lu Jialin <lujialin4@huawei.com>
+To:     <lujialin4@huawei.com>,
+        Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+CC:     <linux-media@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "Xiu Jianfeng" <xiujianfeng@huawei.com>,
+        Xiang Yang <xiangyang3@huawei.com>,
+        "Wang Weiyang" <wangweiyang2@huawei.com>,
+        Cui GaoSheng <cuigaosheng1@huawei.com>,
+        Gong Ruiqi <gongruiqi1@huawei.com>
+Subject: [PATCH -next] media: s3c-camif: fix PM reference leak in s3c_camif_open()
+Date:   Fri, 9 Apr 2021 10:57:09 +0800
+Message-ID: <20210409025709.181908-1-lujialin4@huawei.com>
 X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.174.78]
+X-Originating-IP: [10.67.174.175]
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This patch adds missing MODULE_DEVICE_TABLE definition which generates
-correct modalias for automatic loading of this driver when it is built
-as an external module.
+pm_runtime_get_sync will increment pm usage counter even it failed.
+Forgetting to putting operation will result in reference leak here.
+Fix it by replacing it with pm_runtime_resume_and_get to keep usage
+counter balanced.
 
 Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Chen Lifu <chenlifu@huawei.com>
+Signed-off-by: Lu Jialin <lujialin4@huawei.com>
 ---
- drivers/power/reset/hisi-reboot.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/media/platform/s3c-camif/camif-capture.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/power/reset/hisi-reboot.c b/drivers/power/reset/hisi-reboot.c
-index 5abc5f6ba0fd..34409340528f 100644
---- a/drivers/power/reset/hisi-reboot.c
-+++ b/drivers/power/reset/hisi-reboot.c
-@@ -68,6 +68,7 @@ static const struct of_device_id hisi_reboot_of_match[] = {
- 	{ .compatible = "hisilicon,sysctrl" },
- 	{}
- };
-+MODULE_DEVICE_TABLE(of, hisi_reboot_of_match);
+diff --git a/drivers/media/platform/s3c-camif/camif-capture.c b/drivers/media/platform/s3c-camif/camif-capture.c
+index 9ca49af29542..62241ec3b978 100644
+--- a/drivers/media/platform/s3c-camif/camif-capture.c
++++ b/drivers/media/platform/s3c-camif/camif-capture.c
+@@ -547,7 +547,7 @@ static int s3c_camif_open(struct file *file)
+ 	if (ret < 0)
+ 		goto unlock;
  
- static struct platform_driver hisi_reboot_driver = {
- 	.probe = hisi_reboot_probe,
+-	ret = pm_runtime_get_sync(camif->dev);
++	ret = pm_runtime_resume_and_get(camif->dev);
+ 	if (ret < 0)
+ 		goto err_pm;
+ 
 
