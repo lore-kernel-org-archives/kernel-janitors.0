@@ -7,43 +7,33 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB626C43460
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 11:02:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFA44C43460
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 11:08:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8AAFF610F7
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 11:02:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80BFE61108
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 11:08:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233725AbhDILDI (ORCPT
+        id S233777AbhDILIQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 9 Apr 2021 07:03:08 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:16863 "EHLO
-        szxga07-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233530AbhDILDH (ORCPT
+        Fri, 9 Apr 2021 07:08:16 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:15654 "EHLO
+        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233682AbhDILIP (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 9 Apr 2021 07:03:07 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
-        by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4FGwCW5kDRz9xkg;
-        Fri,  9 Apr 2021 19:00:39 +0800 (CST)
+        Fri, 9 Apr 2021 07:08:15 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4FGwJn1zNXzpWyb;
+        Fri,  9 Apr 2021 19:05:13 +0800 (CST)
 Received: from DESKTOP-EFRLNPK.china.huawei.com (10.174.176.196) by
- DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
- 14.3.498.0; Fri, 9 Apr 2021 19:02:47 +0800
+ DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
+ 14.3.498.0; Fri, 9 Apr 2021 19:07:55 +0800
 From:   Qiheng Lin <linqiheng@huawei.com>
-To:     <linqiheng@huawei.com>, Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Randy Dunlap <rdunlap@infradead.org>
-CC:     <alsa-devel@alsa-project.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH -next] ASoC: sun4i-codec: remove redundant dev_err call in sun4i_codec_probe()
-Date:   Fri, 9 Apr 2021 19:02:46 +0800
-Message-ID: <20210409110246.96-1-linqiheng@huawei.com>
+To:     <linqiheng@huawei.com>, Jassi Brar <jassisinghbrar@gmail.com>
+CC:     <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "Hulk Robot" <hulkci@huawei.com>
+Subject: [PATCH -next] mailbox: arm_mhu_db: Remove redundant dev_err call in mhu_db_probe()
+Date:   Fri, 9 Apr 2021 19:07:54 +0800
+Message-ID: <20210409110754.155-1-linqiheng@huawei.com>
 X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"
@@ -61,23 +51,23 @@ error message.
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: Qiheng Lin <linqiheng@huawei.com>
 ---
- sound/soc/sunxi/sun4i-codec.c | 4 +---
+ drivers/mailbox/arm_mhu_db.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/sound/soc/sunxi/sun4i-codec.c b/sound/soc/sunxi/sun4i-codec.c
-index 6c13cc84b3fb..00b73b7444b7 100644
---- a/sound/soc/sunxi/sun4i-codec.c
-+++ b/sound/soc/sunxi/sun4i-codec.c
-@@ -1706,10 +1706,8 @@ static int sun4i_codec_probe(struct platform_device *pdev)
+diff --git a/drivers/mailbox/arm_mhu_db.c b/drivers/mailbox/arm_mhu_db.c
+index 8eb66c4ecf5b..9e9c1261da2a 100644
+--- a/drivers/mailbox/arm_mhu_db.c
++++ b/drivers/mailbox/arm_mhu_db.c
+@@ -278,10 +278,8 @@ static int mhu_db_probe(struct amba_device *adev, const struct amba_id *id)
+ 		return -ENOMEM;
  
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	base = devm_ioremap_resource(&pdev->dev, res);
--	if (IS_ERR(base)) {
--		dev_err(&pdev->dev, "Failed to map the registers\n");
-+	if (IS_ERR(base))
- 		return PTR_ERR(base);
+ 	mhu->base = devm_ioremap_resource(dev, &adev->res);
+-	if (IS_ERR(mhu->base)) {
+-		dev_err(dev, "ioremap failed\n");
++	if (IS_ERR(mhu->base))
+ 		return PTR_ERR(mhu->base);
 -	}
  
- 	quirks = of_device_get_match_data(&pdev->dev);
- 	if (quirks == NULL) {
+ 	chans = devm_kcalloc(dev, max_chans, sizeof(*chans), GFP_KERNEL);
+ 	if (!chans)
 
