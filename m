@@ -7,47 +7,51 @@ X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6057AC433B4
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 16:24:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FDFDC433ED
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 16:24:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3A04C6115B
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 16:24:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52332611AD
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 16:24:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234246AbhDIQY3 (ORCPT
+        id S234177AbhDIQYa (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 9 Apr 2021 12:24:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60430 "EHLO mail.kernel.org"
+        Fri, 9 Apr 2021 12:24:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60486 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234187AbhDIQYE (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 9 Apr 2021 12:24:04 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 38A1A6108B;
-        Fri,  9 Apr 2021 16:23:51 +0000 (UTC)
+        id S234193AbhDIQYH (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 9 Apr 2021 12:24:07 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id F09A9610C7;
+        Fri,  9 Apr 2021 16:23:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617985431;
-        bh=mr6lFHIFIMXmguReaLtcYOFBsfMpP7iZFQC+ilCWZio=;
+        s=k20201202; t=1617985434;
+        bh=4ZmVfJ5ykqH5Uf8odNUAdm91J9+g4LRpPY6KYKiFzCg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L4899Qp6CSHL4vvl8vqeXC7p0wal7hBqXlI4Ti+5lOiZuV00J2Q7hP9cIZmGqwYA/
-         0TIMN/puf6MO5CyzQDky5NSe4g5DrtZDVSnHa09jc62puURHw1Gqxlp1mApq91lj4B
-         TLcmnG6tN9J4cY8ZMep3rC2E/2SQkSri34yvQm8BxlOyJelVpkyWWPZo2NPGp4pzJ6
-         v5QPMt1WxVmI10BzQdaAq1RZ1QXF3I5HfDHfVnfd6Lwq/p8YonMi8XeC2FzDEAROSx
-         5hQmMUfsvnhwTBClTf+B3/kGyARw0QzszzYobcsTY4mR0VMjY95Cr608gRy5poMvSD
-         x6iSK6LV4hZKA==
+        b=CxVgRwFF3WQnS1uzeS+3wcypONI0f8Fqwiro1lvv9kvv7nKDfi0xweW5xkHuuvxc7
+         BK9kJDwKadr7PgV13wu6Q2IFPd1gCmDPeXpDAuED0PX4cesJOh0lk2t9PRdqA93h4N
+         VKWvaDyHh8W0bb1bjgxIEqJeJRbBTQx0bg4VBX7ChcqfqIRAQxkV0g5Rigtm0E2atq
+         U7YeCoRJB561XTkxg2FkKt2cW99wMVTmyuj26KjDxG7xpqcfxvrGkZB0O92OBIAIuJ
+         7Lef1zmon34ViPYTECM21YRVNdoUeuJgHpPL2uciw11eC0FMzKWnQc5qwRRH7lnb41
+         HJ7CIWqUWqt5w==
 From:   Mark Brown <broonie@kernel.org>
 To:     Jaroslav Kysela <perex@perex.cz>,
-        Hui Wang <hui.wang@canonical.com>, Ye Bin <yebin10@huawei.com>,
-        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
+        Sia Jee Heng <jee.heng.sia@intel.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Ye Bin <yebin10@huawei.com>,
+        Jie Yang <yang.jie@linux.intel.com>,
         Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Takashi Iwai <tiwai@suse.com>
+        Michael Sit Wei Hong <michael.wei.hong.sit@intel.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        Cezary Rojewski <cezary.rojewski@intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>
 Cc:     Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
-        Hulk Robot <hulkci@huawei.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] ASoC: amd: renoir: acp3x-pdm-dma: constify static struct snd_soc_dai_ops
-Date:   Fri,  9 Apr 2021 17:22:51 +0100
-Message-Id: <161798344184.47643.3848198984728589699.b4-ty@kernel.org>
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Hulk Robot <hulkci@huawei.com>
+Subject: Re: [PATCH -next] ASoC: Intel: KMB: Constify static struct snd_soc_dai_ops
+Date:   Fri,  9 Apr 2021 17:22:52 +0100
+Message-Id: <161798344184.47643.15716261435220368367.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20210408062658.803724-1-yebin10@huawei.com>
-References: <20210408062658.803724-1-yebin10@huawei.com>
+In-Reply-To: <20210408062653.803478-1-yebin10@huawei.com>
+References: <20210408062653.803478-1-yebin10@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -55,7 +59,7 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 8 Apr 2021 14:26:58 +0800, Ye Bin wrote:
+On Thu, 8 Apr 2021 14:26:53 +0800, Ye Bin wrote:
 > The snd_soc_dai_ops structures is only stored in the ops field of a
 > snd_soc_dai_driver structure, so make the snd_soc_dai_ops structure
 > const to allow the compiler to put it in read-only memory.
@@ -66,8 +70,8 @@ Applied to
 
 Thanks!
 
-[1/1] ASoC: amd: renoir: acp3x-pdm-dma: constify static struct snd_soc_dai_ops
-      commit: 4150cc7306fa84577dd0c33f158949b0f085aea0
+[1/1] ASoC: Intel: KMB: Constify static struct snd_soc_dai_ops
+      commit: a457dd92d14acdf3dd64285f04ed9225d14d195a
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
