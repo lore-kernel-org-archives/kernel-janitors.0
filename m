@@ -2,110 +2,107 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53470C43462
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 06:52:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5FE6C433B4
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 07:41:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 283F5610C8
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 06:52:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7029861185
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 07:41:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233423AbhDIGwU (ORCPT
+        id S231817AbhDIHlr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 9 Apr 2021 02:52:20 -0400
-Received: from condef-02.nifty.com ([202.248.20.67]:59606 "EHLO
-        condef-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231540AbhDIGwS (ORCPT
+        Fri, 9 Apr 2021 03:41:47 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:44944 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S229751AbhDIHlo (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 9 Apr 2021 02:52:18 -0400
-Received: from conssluserg-02.nifty.com ([10.126.8.81])by condef-02.nifty.com with ESMTP id 1396lfaP032092;
-        Fri, 9 Apr 2021 15:47:41 +0900
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id 1396lOaH013190;
-        Fri, 9 Apr 2021 15:47:25 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com 1396lOaH013190
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1617950845;
-        bh=3qlAPQ+Wex7yCtbxYfgxiJvo2zY3a2uhCaoULi7lupU=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=iqGtWaRY/N04oOQyWJA7bSLK7HDW/FC5VF20BuMgJ0Yyz6DkLDNHKFD2MhVmpmZY2
-         wYhRiZ8GR1M3FpWxnxNsr5PBGJx66A0wPY+kjB+AtlrajjaSLiKHXPtU8C6n/bMuRX
-         NgvN744mTsvR/hEWm3Tm1CunxaGm9F/C1Fc802U0bxDqYjwAska/rWgcz41mDHPGXl
-         XTDV+uz2MbefCe3t/N6Q5KWBOQzKs4n9A7deG2m5im71GlGHb7gwS8u52ADIiQdpkq
-         86a8XfPMTOMtYFxMnFq4EJ9rm+02rQGCeSRYNZ78Q+oRsK/8HlumKtiu18HAbWBqx4
-         6wQeFOXszQXEA==
-X-Nifty-SrcIP: [209.85.214.170]
-Received: by mail-pl1-f170.google.com with SMTP id g10so2260173plt.8;
-        Thu, 08 Apr 2021 23:47:25 -0700 (PDT)
-X-Gm-Message-State: AOAM531rkqYVGMZ/9VI67hqGLVcmKbOIByr7Y8B4uKN7WAE3QWdkdIyl
-        4Hic3j65fZ98yikYikRShnTTUIMW44kuLotT6Qg=
-X-Google-Smtp-Source: ABdhPJy9fFjnUC0a7uXsLzObtUuTxt83kTVyYgo+75uamccOxStRHsnBhz/UJNqTdyxhx6Am4H0+e9/oAwwpEEoVDuQ=
-X-Received: by 2002:a17:902:b589:b029:e6:2875:aa4c with SMTP id
- a9-20020a170902b589b02900e62875aa4cmr11554274pls.71.1617950844298; Thu, 08
- Apr 2021 23:47:24 -0700 (PDT)
+        Fri, 9 Apr 2021 03:41:44 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 1397axb0012005;
+        Fri, 9 Apr 2021 09:40:58 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=n06VPaXv/86nkAfO+Ew799xc9jm8nPwhGU0C5uayBqo=;
+ b=1RA8xsujC5lSSS18IpKAI7zlKhO5HqRRLX8P+prNVx+GAvyBdI36ADgSxKkowBZ2Q5xQ
+ jNxeqn6AOotH1CcVFV75WwUIuUql3AAfEoglVH5/7Z5on6nkoTD9yVnWizPzIcjqalxq
+ jNeX4ZfivWEJZSkZp0Ec/cX+Bw6y06TOr4FYQYXWI6kBJIUW4O+RIL/ed48ub4clXJrN
+ iQAzLEiyvgDsagp4p6osTuHJAefJ4fug62DNG3kEK+AGC8H3Ipb7dhe0kExRyapZErzA
+ N/c1iuY11Wxh35H+n1LPCDlldFVpGU/X0GxTGSPquR00mAowcyY21E3aU6NuVPcwC7Pp +A== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 37tj4d8a3x-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 09 Apr 2021 09:40:58 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id BB76210002A;
+        Fri,  9 Apr 2021 09:40:56 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 584B721CA9E;
+        Fri,  9 Apr 2021 09:40:56 +0200 (CEST)
+Received: from lmecxl0889.lme.st.com (10.75.127.44) by SFHDAG2NODE3.st.com
+ (10.75.127.6) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Fri, 9 Apr
+ 2021 09:40:55 +0200
+Subject: Re: [PATCH -next] ASoC: sti: sti_uniperif: add missing
+ MODULE_DEVICE_TABLE
+To:     Chen Lifu <chenlifu@huawei.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+References: <20210409015953.259688-1-chenlifu@huawei.com>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Message-ID: <228beb65-2cd3-f2fe-92c8-5a4d3c0a4d33@foss.st.com>
+Date:   Fri, 9 Apr 2021 09:40:54 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <20210407152457.497346-1-colin.king@canonical.com>
-In-Reply-To: <20210407152457.497346-1-colin.king@canonical.com>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Fri, 9 Apr 2021 15:46:47 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAT+JTg5QYYbYqCm+m11X7CF_ZWyYRA4eAtqeTEuHRqoyw@mail.gmail.com>
-Message-ID: <CAK7LNAT+JTg5QYYbYqCm+m11X7CF_ZWyYRA4eAtqeTEuHRqoyw@mail.gmail.com>
-Subject: Re: [PATCH] clk: uniphier: Fix potential infinite loop
-To:     Colin King <colin.king@canonical.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        kernel-janitors@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20210409015953.259688-1-chenlifu@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.44]
+X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG2NODE3.st.com
+ (10.75.127.6)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
+ definitions=2021-04-09_04:2021-04-08,2021-04-09 signatures=0
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Apr 8, 2021 at 12:25 AM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The for-loop iterates with a u8 loop counter i and compares this
-> with the loop upper limit of num_parents that is an int type.
-> There is a potential infinite loop if num_parents is larger than
-> the u8 loop counter. Fix this by making the loop counter the same
-> type as num_parents.
->
-> Addresses-Coverity: ("Infinite loop")
-> Fixes: 734d82f4a678 ("clk: uniphier: add core support code for UniPhier clock driver")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+
+On 4/9/21 3:59 AM, Chen Lifu wrote:
+> This patch adds missing MODULE_DEVICE_TABLE definition which generates
+> correct modalias for automatic loading of this driver when it is built
+> as an external module.
+> 
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Chen Lifu <chenlifu@huawei.com>
+
+Reviewed-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+
+Thanks,
+Arnaud
+
 > ---
->  drivers/clk/uniphier/clk-uniphier-mux.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/uniphier/clk-uniphier-mux.c b/drivers/clk/uniphier/clk-uniphier-mux.c
-> index 462c84321b2d..ce219e0d2a85 100644
-> --- a/drivers/clk/uniphier/clk-uniphier-mux.c
-> +++ b/drivers/clk/uniphier/clk-uniphier-mux.c
-> @@ -34,7 +34,7 @@ static u8 uniphier_clk_mux_get_parent(struct clk_hw *hw)
->         int num_parents = clk_hw_get_num_parents(hw);
->         int ret;
->         unsigned int val;
-> -       u8 i;
-> +       int i;
->
->         ret = regmap_read(mux->regmap, mux->reg, &val);
->         if (ret)
-> --
-> 2.30.2
->
-
-clk_hw_get_num_parents() returns 'unsigned int', so
-I think 'num_parents' should also have been 'unsigned int'.
-
-Maybe, the loop counter 'i' also should be 'unsigned int' then?
-
-
--- 
-Best Regards
-Masahiro Yamada
+>  sound/soc/sti/sti_uniperif.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/sound/soc/sti/sti_uniperif.c b/sound/soc/sti/sti_uniperif.c
+> index 67315d9b352d..e3561f00ed40 100644
+> --- a/sound/soc/sti/sti_uniperif.c
+> +++ b/sound/soc/sti/sti_uniperif.c
+> @@ -97,6 +97,7 @@ static const struct of_device_id snd_soc_sti_match[] = {
+>  	},
+>  	{},
+>  };
+> +MODULE_DEVICE_TABLE(of, snd_soc_sti_match);
+>  
+>  int  sti_uniperiph_reset(struct uniperif *uni)
+>  {
+> 
