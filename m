@@ -2,88 +2,70 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD16AC43460
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 09:11:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6A04C433B4
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 09:15:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9782961181
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 09:11:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F3D961181
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 09:15:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232835AbhDIJMF (ORCPT
+        id S231956AbhDIJQI (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 9 Apr 2021 05:12:05 -0400
-Received: from foss.arm.com ([217.140.110.172]:45532 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232772AbhDIJME (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 9 Apr 2021 05:12:04 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E332B1FB;
-        Fri,  9 Apr 2021 02:11:51 -0700 (PDT)
-Received: from [192.168.0.130] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 132213F73D;
-        Fri,  9 Apr 2021 02:11:48 -0700 (PDT)
-Subject: Re: [PATCH -next] coresight: trbe: Fix return value check in
- arm_trbe_register_coresight_cpu()
-To:     Wei Yongjun <weiyongjun1@huawei.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc:     coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Hulk Robot <hulkci@huawei.com>
-References: <20210409012213.3664473-1-weiyongjun1@huawei.com>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <51e3225a-1abb-1c52-93cc-c6935f0c4b52@arm.com>
-Date:   Fri, 9 Apr 2021 14:42:39 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Fri, 9 Apr 2021 05:16:08 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:37111 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230181AbhDIJQI (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 9 Apr 2021 05:16:08 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lUnEh-0003Dt-TT; Fri, 09 Apr 2021 09:15:31 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] media: s2255drv: remove redundant assignment to variable field
+Date:   Fri,  9 Apr 2021 10:15:31 +0100
+Message-Id: <20210409091531.630379-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-In-Reply-To: <20210409012213.3664473-1-weiyongjun1@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+The variable 'field' is being assigned a value this is never read,
+it is being updated in all the following if/else combinations. The
+assignment is redundant and can be removed.
 
-On 4/9/21 6:52 AM, Wei Yongjun wrote:
-> In case of error, the function devm_kasprintf() returns NULL
-> pointer not ERR_PTR(). The IS_ERR() test in the return value
-> check should be replaced with NULL test.
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/usb/s2255/s2255drv.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Right.
+diff --git a/drivers/media/usb/s2255/s2255drv.c b/drivers/media/usb/s2255/s2255drv.c
+index 4af55e2478be..3b0e4ed75d99 100644
+--- a/drivers/media/usb/s2255/s2255drv.c
++++ b/drivers/media/usb/s2255/s2255drv.c
+@@ -767,8 +767,6 @@ static int vidioc_try_fmt_vid_cap(struct file *file, void *priv,
+ 	if (fmt == NULL)
+ 		return -EINVAL;
+ 
+-	field = f->fmt.pix.field;
+-
+ 	dprintk(vc->dev, 50, "%s NTSC: %d suggested width: %d, height: %d\n",
+ 		__func__, is_ntsc, f->fmt.pix.width, f->fmt.pix.height);
+ 	if (is_ntsc) {
+-- 
+2.30.2
 
-> 
-> Fixes: 3fbf7f011f24 ("coresight: sink: Add TRBE driver")
-
-Again, dont think this warrants "Fixes:" tag as there were no
-functional problem to be fixed here.
-
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  drivers/hwtracing/coresight/coresight-trbe.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/hwtracing/coresight/coresight-trbe.c b/drivers/hwtracing/coresight/coresight-trbe.c
-> index 5ce239875c98..176868496879 100644
-> --- a/drivers/hwtracing/coresight/coresight-trbe.c
-> +++ b/drivers/hwtracing/coresight/coresight-trbe.c
-> @@ -871,7 +871,7 @@ static void arm_trbe_register_coresight_cpu(struct trbe_drvdata *drvdata, int cp
->  
->  	dev = &cpudata->drvdata->pdev->dev;
->  	desc.name = devm_kasprintf(dev, GFP_KERNEL, "trbe%d", cpu);
-> -	if (IS_ERR(desc.name))
-> +	if (!desc.name)
->  		goto cpu_clear;
->  
->  	desc.type = CORESIGHT_DEV_TYPE_SINK;
->
-
-LGTM.
