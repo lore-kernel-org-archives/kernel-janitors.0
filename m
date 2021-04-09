@@ -2,103 +2,110 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CD0CC43461
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53470C43462
 	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 06:52:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5587F61178
+	by mail.kernel.org (Postfix) with ESMTP id 283F5610C8
 	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 06:52:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233495AbhDIGwU (ORCPT
+        id S233423AbhDIGwU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
         Fri, 9 Apr 2021 02:52:20 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:16496 "EHLO
-        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233335AbhDIGwT (ORCPT
+Received: from condef-02.nifty.com ([202.248.20.67]:59606 "EHLO
+        condef-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231540AbhDIGwS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 9 Apr 2021 02:52:19 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
-        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4FGpcj16dFzPpGG;
-        Fri,  9 Apr 2021 14:48:37 +0800 (CST)
-Received: from [10.67.100.236] (10.67.100.236) by
- DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
- 14.3.498.0; Fri, 9 Apr 2021 14:51:21 +0800
-Subject: Re: [PATCH -next] ARM: spear: Fix build error with
- CONFIG_ARCH_SPEAR3XX
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-CC:     Viresh Kumar <vireshk@kernel.org>,
-        Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-References: <20210409015515.258653-1-chenlifu@huawei.com>
- <20210409040315.vc55eogaxs4zu4xb@vireshk-i7>
-From:   chenlifu <chenlifu@huawei.com>
-Message-ID: <f4285a1b-9da5-d86b-95ec-cc8513936cde@huawei.com>
-Date:   Fri, 9 Apr 2021 14:51:21 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.9.0
+        Fri, 9 Apr 2021 02:52:18 -0400
+Received: from conssluserg-02.nifty.com ([10.126.8.81])by condef-02.nifty.com with ESMTP id 1396lfaP032092;
+        Fri, 9 Apr 2021 15:47:41 +0900
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id 1396lOaH013190;
+        Fri, 9 Apr 2021 15:47:25 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com 1396lOaH013190
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1617950845;
+        bh=3qlAPQ+Wex7yCtbxYfgxiJvo2zY3a2uhCaoULi7lupU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=iqGtWaRY/N04oOQyWJA7bSLK7HDW/FC5VF20BuMgJ0Yyz6DkLDNHKFD2MhVmpmZY2
+         wYhRiZ8GR1M3FpWxnxNsr5PBGJx66A0wPY+kjB+AtlrajjaSLiKHXPtU8C6n/bMuRX
+         NgvN744mTsvR/hEWm3Tm1CunxaGm9F/C1Fc802U0bxDqYjwAska/rWgcz41mDHPGXl
+         XTDV+uz2MbefCe3t/N6Q5KWBOQzKs4n9A7deG2m5im71GlGHb7gwS8u52ADIiQdpkq
+         86a8XfPMTOMtYFxMnFq4EJ9rm+02rQGCeSRYNZ78Q+oRsK/8HlumKtiu18HAbWBqx4
+         6wQeFOXszQXEA==
+X-Nifty-SrcIP: [209.85.214.170]
+Received: by mail-pl1-f170.google.com with SMTP id g10so2260173plt.8;
+        Thu, 08 Apr 2021 23:47:25 -0700 (PDT)
+X-Gm-Message-State: AOAM531rkqYVGMZ/9VI67hqGLVcmKbOIByr7Y8B4uKN7WAE3QWdkdIyl
+        4Hic3j65fZ98yikYikRShnTTUIMW44kuLotT6Qg=
+X-Google-Smtp-Source: ABdhPJy9fFjnUC0a7uXsLzObtUuTxt83kTVyYgo+75uamccOxStRHsnBhz/UJNqTdyxhx6Am4H0+e9/oAwwpEEoVDuQ=
+X-Received: by 2002:a17:902:b589:b029:e6:2875:aa4c with SMTP id
+ a9-20020a170902b589b02900e62875aa4cmr11554274pls.71.1617950844298; Thu, 08
+ Apr 2021 23:47:24 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20210409040315.vc55eogaxs4zu4xb@vireshk-i7>
-Content-Type: text/plain; charset="gbk"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.67.100.236]
-X-CFilter-Loop: Reflected
+References: <20210407152457.497346-1-colin.king@canonical.com>
+In-Reply-To: <20210407152457.497346-1-colin.king@canonical.com>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Fri, 9 Apr 2021 15:46:47 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAT+JTg5QYYbYqCm+m11X7CF_ZWyYRA4eAtqeTEuHRqoyw@mail.gmail.com>
+Message-ID: <CAK7LNAT+JTg5QYYbYqCm+m11X7CF_ZWyYRA4eAtqeTEuHRqoyw@mail.gmail.com>
+Subject: Re: [PATCH] clk: uniphier: Fix potential infinite loop
+To:     Colin King <colin.king@canonical.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        kernel-janitors@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On Thu, Apr 8, 2021 at 12:25 AM Colin King <colin.king@canonical.com> wrote:
+>
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> The for-loop iterates with a u8 loop counter i and compares this
+> with the loop upper limit of num_parents that is an int type.
+> There is a potential infinite loop if num_parents is larger than
+> the u8 loop counter. Fix this by making the loop counter the same
+> type as num_parents.
+>
+> Addresses-Coverity: ("Infinite loop")
+> Fixes: 734d82f4a678 ("clk: uniphier: add core support code for UniPhier clock driver")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/clk/uniphier/clk-uniphier-mux.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/uniphier/clk-uniphier-mux.c b/drivers/clk/uniphier/clk-uniphier-mux.c
+> index 462c84321b2d..ce219e0d2a85 100644
+> --- a/drivers/clk/uniphier/clk-uniphier-mux.c
+> +++ b/drivers/clk/uniphier/clk-uniphier-mux.c
+> @@ -34,7 +34,7 @@ static u8 uniphier_clk_mux_get_parent(struct clk_hw *hw)
+>         int num_parents = clk_hw_get_num_parents(hw);
+>         int ret;
+>         unsigned int val;
+> -       u8 i;
+> +       int i;
+>
+>         ret = regmap_read(mux->regmap, mux->reg, &val);
+>         if (ret)
+> --
+> 2.30.2
+>
 
-ÔÚ 2021/4/9 12:03, Viresh Kumar Ð´µÀ:
-> On 09-04-21, 09:55, Chen Lifu wrote:
->> commit 77f983a9df42 ("spi: pl022: Use GPIOs looked up by the core")
->> deleted 'struct pl022_ssp_controller' member 'num_chipselect'.
->> We get build error when CONFIG_ARCH_SPEAR3XX is set:
->> arch/arm/mach-spear/spear3xx.c:42:3: error: 'struct pl022_ssp_controller' has no member named 'num_chipselect'
->>     42 |  .num_chipselect = 2,
->>        |   ^~~~~~~~~~~~~~
->> arch/arm/mach-spear/spear3xx.c:42:20: warning: initialization of 'void *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
->>     42 |  .num_chipselect = 2,
->>        |                    ^
->>
->> Fix the issue by deleting the initialization of 'num_chipselect'
->> in spear3xx.c.
->>
->> Fixes: 77f983a9df42 ("spi: pl022: Use GPIOs looked up by the core")
->> Reported-by: Hulk Robot <hulkci@huawei.com>
->> Signed-off-by: Chen Lifu <chenlifu@huawei.com>
->> ---
->>   arch/arm/mach-spear/spear3xx.c | 10 ----------
->>   1 file changed, 10 deletions(-)
->>
->> diff --git a/arch/arm/mach-spear/spear3xx.c b/arch/arm/mach-spear/spear3xx.c
->> index 8537fcffe5a8..f83321d5e353 100644
->> --- a/arch/arm/mach-spear/spear3xx.c
->> +++ b/arch/arm/mach-spear/spear3xx.c
->> @@ -30,16 +30,6 @@ struct pl022_ssp_controller pl022_plat_data = {
->>   	.dma_filter = pl08x_filter_id,
->>   	.dma_tx_param = "ssp0_tx",
->>   	.dma_rx_param = "ssp0_rx",
->> -	/*
->> -	 * This is number of spi devices that can be connected to spi. There are
->> -	 * two type of chipselects on which slave devices can work. One is chip
->> -	 * select provided by spi masters other is controlled through external
->> -	 * gpio's. We can't use chipselect provided from spi master (because as
->> -	 * soon as FIFO becomes empty, CS is disabled and transfer ends). So
->> -	 * this number now depends on number of gpios available for spi. each
->> -	 * slave on each master requires a separate gpio pin.
->> -	 */
->> -	.num_chipselect = 2,
->>   };
-> 
-> A patch is already applied by Mark to fix this issue.
-> 
+clk_hw_get_num_parents() returns 'unsigned int', so
+I think 'num_parents' should also have been 'unsigned int'.
 
-Thanks.
+Maybe, the loop counter 'i' also should be 'unsigned int' then?
 
----
-Chen Lifu
+
+-- 
+Best Regards
+Masahiro Yamada
