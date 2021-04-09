@@ -5,67 +5,79 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6A04C433B4
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 09:15:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDA97C433ED
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 09:39:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7F3D961181
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 09:15:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8AAA761108
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 09:39:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231956AbhDIJQI (ORCPT
+        id S232849AbhDIJjU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 9 Apr 2021 05:16:08 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:37111 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230181AbhDIJQI (ORCPT
+        Fri, 9 Apr 2021 05:39:20 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:15651 "EHLO
+        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232042AbhDIJjU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 9 Apr 2021 05:16:08 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1lUnEh-0003Dt-TT; Fri, 09 Apr 2021 09:15:31 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] media: s2255drv: remove redundant assignment to variable field
-Date:   Fri,  9 Apr 2021 10:15:31 +0100
-Message-Id: <20210409091531.630379-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.30.2
+        Fri, 9 Apr 2021 05:39:20 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4FGtLB3yFPzpWsC;
+        Fri,  9 Apr 2021 17:36:18 +0800 (CST)
+Received: from localhost.localdomain (10.175.102.38) by
+ DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
+ 14.3.498.0; Fri, 9 Apr 2021 17:38:57 +0800
+From:   Wei Yongjun <weiyongjun1@huawei.com>
+To:     <weiyongjun1@huawei.com>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+CC:     <coresight@lists.linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH -next v2] coresight: core: Make symbol 'csdev_sink' static
+Date:   Fri, 9 Apr 2021 09:49:00 +0000
+Message-ID: <20210409094900.1902783-1-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.102.38]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The sparse tool complains as follows:
 
-The variable 'field' is being assigned a value this is never read,
-it is being updated in all the following if/else combinations. The
-assignment is redundant and can be removed.
+drivers/hwtracing/coresight/coresight-core.c:26:1: warning:
+ symbol '__pcpu_scope_csdev_sink' was not declared. Should it be static?
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+As csdev_sink is not used outside of coresight-core.c after the
+introduction of coresight_[set|get]_percpu_sink() helpers, this
+change marks it static.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/media/usb/s2255/s2255drv.c | 2 --
- 1 file changed, 2 deletions(-)
+v1 -> v2: remove fixes tag and description.
+---
+ drivers/hwtracing/coresight/coresight-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/usb/s2255/s2255drv.c b/drivers/media/usb/s2255/s2255drv.c
-index 4af55e2478be..3b0e4ed75d99 100644
---- a/drivers/media/usb/s2255/s2255drv.c
-+++ b/drivers/media/usb/s2255/s2255drv.c
-@@ -767,8 +767,6 @@ static int vidioc_try_fmt_vid_cap(struct file *file, void *priv,
- 	if (fmt == NULL)
- 		return -EINVAL;
+diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/hwtracing/coresight/coresight-core.c
+index 3e779e1619ed..6c68d34d956e 100644
+--- a/drivers/hwtracing/coresight/coresight-core.c
++++ b/drivers/hwtracing/coresight/coresight-core.c
+@@ -23,7 +23,7 @@
+ #include "coresight-priv.h"
  
--	field = f->fmt.pix.field;
--
- 	dprintk(vc->dev, 50, "%s NTSC: %d suggested width: %d, height: %d\n",
- 		__func__, is_ntsc, f->fmt.pix.width, f->fmt.pix.height);
- 	if (is_ntsc) {
--- 
-2.30.2
+ static DEFINE_MUTEX(coresight_mutex);
+-DEFINE_PER_CPU(struct coresight_device *, csdev_sink);
++static DEFINE_PER_CPU(struct coresight_device *, csdev_sink);
+ 
+ /**
+  * struct coresight_node - elements of a path, from source to sink
 
