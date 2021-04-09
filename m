@@ -5,36 +5,38 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C713C43460
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 09:43:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8E7FC433ED
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 09:43:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E283E60FE4
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 09:43:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 932776115C
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 09:43:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233351AbhDIJny (ORCPT
+        id S233369AbhDIJn7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 9 Apr 2021 05:43:54 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:16876 "EHLO
-        szxga06-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233147AbhDIJnr (ORCPT
+        Fri, 9 Apr 2021 05:43:59 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:16121 "EHLO
+        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233141AbhDIJnr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
         Fri, 9 Apr 2021 05:43:47 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
-        by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4FGtSS6DQ9zlWSj;
-        Fri,  9 Apr 2021 17:41:44 +0800 (CST)
-Received: from huawei.com (10.175.127.227) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.498.0; Fri, 9 Apr 2021
- 17:43:23 +0800
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4FGtS01sKxz19Jvy;
+        Fri,  9 Apr 2021 17:41:20 +0800 (CST)
+Received: from huawei.com (10.175.127.227) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.498.0; Fri, 9 Apr 2021
+ 17:43:22 +0800
 From:   Ye Bin <yebin10@huawei.com>
-To:     <yebin10@huawei.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>
-CC:     <linuxppc-dev@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH -next] [POWERPC] Rename get_property to of_get_property: use DEFINE_SPINLOCK() for spinlock
-Date:   Fri, 9 Apr 2021 17:51:48 +0800
-Message-ID: <20210409095148.2294319-1-yebin10@huawei.com>
+To:     <yebin10@huawei.com>, Faisal Latif <faisal.latif@intel.com>,
+        Shiraz Saleem <shiraz.saleem@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        "Jason Gunthorpe" <jgg@ziepe.ca>
+CC:     <linux-rdma@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "Hulk Robot" <hulkci@huawei.com>
+Subject: [PATCH -next] i40iw: Use DEFINE_SPINLOCK() for spinlock
+Date:   Fri, 9 Apr 2021 17:51:47 +0800
+Message-ID: <20210409095147.2294269-1-yebin10@huawei.com>
 X-Mailer: git-send-email 2.25.4
 MIME-Version: 1.0
 Content-Type:   text/plain; charset=US-ASCII
@@ -51,29 +53,28 @@ rather than explicitly calling spin_lock_init().
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: Ye Bin <yebin10@huawei.com>
 ---
- drivers/macintosh/via-pmu-led.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/infiniband/hw/i40iw/i40iw_main.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/macintosh/via-pmu-led.c b/drivers/macintosh/via-pmu-led.c
-index ae067ab2373d..2502119cff42 100644
---- a/drivers/macintosh/via-pmu-led.c
-+++ b/drivers/macintosh/via-pmu-led.c
-@@ -27,7 +27,7 @@
- #include <linux/pmu.h>
- #include <asm/prom.h>
+diff --git a/drivers/infiniband/hw/i40iw/i40iw_main.c b/drivers/infiniband/hw/i40iw/i40iw_main.c
+index 2ebcbb1ddaa2..b496f30ce066 100644
+--- a/drivers/infiniband/hw/i40iw/i40iw_main.c
++++ b/drivers/infiniband/hw/i40iw/i40iw_main.c
+@@ -78,7 +78,7 @@ static struct i40e_client i40iw_client;
+ static char i40iw_client_name[I40E_CLIENT_STR_LENGTH] = "i40iw";
  
--static spinlock_t pmu_blink_lock;
-+static DEFINE_SPINLOCK(pmu_blink_lock);
- static struct adb_request pmu_blink_req;
- /* -1: no change, 0: request off, 1: request on */
- static int requested_change;
-@@ -105,8 +105,6 @@ static int __init via_pmu_led_init(void)
- 		return -ENODEV;
- 	}
- 	of_node_put(dt);
--
--	spin_lock_init(&pmu_blink_lock);
- 	/* no outstanding req */
- 	pmu_blink_req.complete = 1;
- 	pmu_blink_req.done = pmu_req_done;
+ static LIST_HEAD(i40iw_handlers);
+-static spinlock_t i40iw_handler_lock;
++static DEFINE_SPINLOCK(i40iw_handler_lock);
+ 
+ static enum i40iw_status_code i40iw_virtchnl_send(struct i40iw_sc_dev *dev,
+ 						  u32 vf_id, u8 *msg, u16 len);
+@@ -2043,7 +2043,6 @@ static int __init i40iw_init_module(void)
+ 	i40iw_client.ops = &i40e_ops;
+ 	memcpy(i40iw_client.name, i40iw_client_name, I40E_CLIENT_STR_LENGTH);
+ 	i40iw_client.type = I40E_CLIENT_IWARP;
+-	spin_lock_init(&i40iw_handler_lock);
+ 	ret = i40e_register_client(&i40iw_client);
+ 	i40iw_register_notifiers();
+ 
 
