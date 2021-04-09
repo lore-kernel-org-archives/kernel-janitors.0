@@ -7,26 +7,26 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05118C433ED
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 01:12:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C02DC433B4
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 01:22:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ACDB4610F7
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 01:12:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68A5F610C8
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 01:22:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233149AbhDIBMg (ORCPT
+        id S233099AbhDIBWf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 8 Apr 2021 21:12:36 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:16848 "EHLO
+        Thu, 8 Apr 2021 21:22:35 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:16849 "EHLO
         szxga07-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232958AbhDIBMe (ORCPT
+        with ESMTP id S232426AbhDIBWf (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 8 Apr 2021 21:12:34 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
-        by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4FGg6729DRz9xZl;
-        Fri,  9 Apr 2021 09:10:07 +0800 (CST)
+        Thu, 8 Apr 2021 21:22:35 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
+        by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4FGgKh4yBHz9xZH;
+        Fri,  9 Apr 2021 09:20:08 +0800 (CST)
 Received: from localhost.localdomain (10.175.102.38) by
- DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
- 14.3.498.0; Fri, 9 Apr 2021 09:12:09 +0800
+ DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
+ 14.3.498.0; Fri, 9 Apr 2021 09:22:11 +0800
 From:   Wei Yongjun <weiyongjun1@huawei.com>
 To:     <weiyongjun1@huawei.com>,
         Anshuman Khandual <anshuman.khandual@arm.com>,
@@ -37,9 +37,9 @@ CC:     <coresight@lists.linaro.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
         Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH -next] coresight: trbe: Fix return value check in arm_trbe_register_coresight_cpu()
-Date:   Fri, 9 Apr 2021 01:22:13 +0000
-Message-ID: <20210409012213.3664473-1-weiyongjun1@huawei.com>
+Subject: [PATCH -next] coresight: core: Make symbol 'csdev_sink' static
+Date:   Fri, 9 Apr 2021 01:32:15 +0000
+Message-ID: <20210409013215.488823-1-weiyongjun1@huawei.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Type:   text/plain; charset=US-ASCII
@@ -50,28 +50,32 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-In case of error, the function devm_kasprintf() returns NULL
-pointer not ERR_PTR(). The IS_ERR() test in the return value
-check should be replaced with NULL test.
+The sparse tool complains as follows:
 
-Fixes: 3fbf7f011f24 ("coresight: sink: Add TRBE driver")
+drivers/hwtracing/coresight/coresight-core.c:26:1: warning:
+ symbol '__pcpu_scope_csdev_sink' was not declared. Should it be static?
+
+This symbol is not used outside of coresight-core.c, so this
+commit marks it static.
+
+Fixes: 2cd87a7b293d ("coresight: core: Add support for dedicated percpu sinks")
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/hwtracing/coresight/coresight-trbe.c | 2 +-
+ drivers/hwtracing/coresight/coresight-core.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hwtracing/coresight/coresight-trbe.c b/drivers/hwtracing/coresight/coresight-trbe.c
-index 5ce239875c98..176868496879 100644
---- a/drivers/hwtracing/coresight/coresight-trbe.c
-+++ b/drivers/hwtracing/coresight/coresight-trbe.c
-@@ -871,7 +871,7 @@ static void arm_trbe_register_coresight_cpu(struct trbe_drvdata *drvdata, int cp
+diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/hwtracing/coresight/coresight-core.c
+index 3e779e1619ed..6c68d34d956e 100644
+--- a/drivers/hwtracing/coresight/coresight-core.c
++++ b/drivers/hwtracing/coresight/coresight-core.c
+@@ -23,7 +23,7 @@
+ #include "coresight-priv.h"
  
- 	dev = &cpudata->drvdata->pdev->dev;
- 	desc.name = devm_kasprintf(dev, GFP_KERNEL, "trbe%d", cpu);
--	if (IS_ERR(desc.name))
-+	if (!desc.name)
- 		goto cpu_clear;
+ static DEFINE_MUTEX(coresight_mutex);
+-DEFINE_PER_CPU(struct coresight_device *, csdev_sink);
++static DEFINE_PER_CPU(struct coresight_device *, csdev_sink);
  
- 	desc.type = CORESIGHT_DEV_TYPE_SINK;
+ /**
+  * struct coresight_node - elements of a path, from source to sink
 
