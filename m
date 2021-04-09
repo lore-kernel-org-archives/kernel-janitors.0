@@ -2,92 +2,87 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23B6AC433ED
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 09:04:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA320C433B4
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 09:11:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D45DB61186
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 09:04:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D64861181
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 09:11:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231668AbhDIJEc (ORCPT
+        id S232544AbhDIJLr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 9 Apr 2021 05:04:32 -0400
-Received: from foss.arm.com ([217.140.110.172]:45292 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231127AbhDIJEc (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 9 Apr 2021 05:04:32 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 640C11FB;
-        Fri,  9 Apr 2021 02:04:19 -0700 (PDT)
-Received: from [192.168.0.130] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C26353F73D;
-        Fri,  9 Apr 2021 02:04:16 -0700 (PDT)
-Subject: Re: [PATCH -next] coresight: core: Make symbol 'csdev_sink' static
-To:     Wei Yongjun <weiyongjun1@huawei.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc:     coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Hulk Robot <hulkci@huawei.com>
-References: <20210409013215.488823-1-weiyongjun1@huawei.com>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <291c6015-dbef-553b-c756-9d5acd1d9fe2@arm.com>
-Date:   Fri, 9 Apr 2021 14:35:07 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Fri, 9 Apr 2021 05:11:47 -0400
+Received: from smtprelay0236.hostedemail.com ([216.40.44.236]:41654 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S232490AbhDIJLq (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 9 Apr 2021 05:11:46 -0400
+Received: from omf07.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 4584F1E08;
+        Fri,  9 Apr 2021 09:11:32 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf07.hostedemail.com (Postfix) with ESMTPA id DABA3315D78;
+        Fri,  9 Apr 2021 09:11:30 +0000 (UTC)
+Message-ID: <92af36981fa72db5944d28c6a8d6974ec7aff3f2.camel@perches.com>
+Subject: Re: [PATCH][next] mlxsw: spectrum_router: remove redundant
+ initialization of variable force
+From:   Joe Perches <joe@perches.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Colin King <colin.king@canonical.com>
+Cc:     Jiri Pirko <jiri@nvidia.com>, Ido Schimmel <idosch@nvidia.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 09 Apr 2021 02:11:29 -0700
+In-Reply-To: <20210329060441.GI1717@kadam>
+References: <20210327223334.24655-1-colin.king@canonical.com>
+         <20210329060441.GI1717@kadam>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.38.1-1 
 MIME-Version: 1.0
-In-Reply-To: <20210409013215.488823-1-weiyongjun1@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: DABA3315D78
+X-Stat-Signature: epsbekqwcfuww9tkg9yy6qf5xhxy1zq6
+X-Rspamd-Server: rspamout01
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Session-ID: U2FsdGVkX1+qOqSKZ/cujGok3IbgmEO4rhbVz7nVTK4=
+X-HE-Tag: 1617959490-278192
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-
-
-On 4/9/21 7:02 AM, Wei Yongjun wrote:
-> The sparse tool complains as follows:
+On Mon, 2021-03-29 at 09:04 +0300, Dan Carpenter wrote:
+> On Sat, Mar 27, 2021 at 10:33:34PM +0000, Colin King wrote:
+> > From: Colin Ian King <colin.king@canonical.com>
+> > 
+> > The variable force is being initialized with a value that is
+> > never read and it is being updated later with a new value. The
+> > initialization is redundant and can be removed.
+> > 
+> > Addresses-Coverity: ("Unused value")
+> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> > ---
+> >  drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c
+> > index 6ccaa194733b..ff240e3c29f7 100644
+> > --- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c
+> > +++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c
+> > @@ -5059,7 +5059,7 @@ mlxsw_sp_nexthop_obj_bucket_adj_update(struct mlxsw_sp *mlxsw_sp,
+> >  {
+> >  	u16 bucket_index = info->nh_res_bucket->bucket_index;
+> >  	struct netlink_ext_ack *extack = info->extack;
+> > -	bool force = info->nh_res_bucket->force;
+> > +	bool force;
+> >  	char ratr_pl_new[MLXSW_REG_RATR_LEN];
+> >  	char ratr_pl[MLXSW_REG_RATR_LEN];
+> >  	u32 adj_index;
 > 
-> drivers/hwtracing/coresight/coresight-core.c:26:1: warning:
->  symbol '__pcpu_scope_csdev_sink' was not declared. Should it be static?
-> 
-> This symbol is not used outside of coresight-core.c, so this
-> commit marks it static.
+> Reverse Christmas tree.
 
-commit ? It is not on the tree yet. s/commit/change instead.
+Is still terrible style.
 
-> 
-> Fixes: 2cd87a7b293d ("coresight: core: Add support for dedicated percpu sinks")
-
-There is no functional problem that this patch is proposing to fix
-and hence the "Fixes:" tag is not warranted. Suzuki/Matihieu ?
-
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  drivers/hwtracing/coresight/coresight-core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/hwtracing/coresight/coresight-core.c
-> index 3e779e1619ed..6c68d34d956e 100644
-> --- a/drivers/hwtracing/coresight/coresight-core.c
-> +++ b/drivers/hwtracing/coresight/coresight-core.c
-> @@ -23,7 +23,7 @@
->  #include "coresight-priv.h"
->  
->  static DEFINE_MUTEX(coresight_mutex);
-> -DEFINE_PER_CPU(struct coresight_device *, csdev_sink);
-> +static DEFINE_PER_CPU(struct coresight_device *, csdev_sink);
->  
->  /**
->   * struct coresight_node - elements of a path, from source to sink
-> 
-
-Otherwise LGTM. As csdev_sink is not being used outside coresight-core.c
-file after the introduction of coresight_[set|get]_percpu_sink() helpers.
