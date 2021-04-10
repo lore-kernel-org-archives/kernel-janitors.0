@@ -2,115 +2,74 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-21.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 941E7C433B4
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 23:08:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25055C433B4
+	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Apr 2021 00:40:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 63656610A4
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Apr 2021 23:08:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3E5B610A4
+	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Apr 2021 00:40:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235023AbhDIXIz (ORCPT
+        id S235325AbhDJAk0 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 9 Apr 2021 19:08:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57320 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234880AbhDIXIy (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 9 Apr 2021 19:08:54 -0400
-Received: from mail-ot1-x332.google.com (mail-ot1-x332.google.com [IPv6:2607:f8b0:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFFA4C061762;
-        Fri,  9 Apr 2021 16:08:40 -0700 (PDT)
-Received: by mail-ot1-x332.google.com with SMTP id v24-20020a9d69d80000b02901b9aec33371so7273273oto.2;
-        Fri, 09 Apr 2021 16:08:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=lpr1Vp/cOtO89rHVLcXxZ2elGZKeYl02Lj39b4gnicU=;
-        b=YokWywBaf20r1JtMG0TGKj/6/R7Zo7V1Q+QHkU0M+LmEKD+2eSNWfwea76Ca9CfTqk
-         wQ88K0u81uFHxsVgVjfx2K15ob2f3JCANESyhjhgPpOZzIqHJwdIFyTAEZdKo+aglbQ0
-         mLx4CY5D0WwDSCvkp6tKsw4mZlePvgYGBbh/CvZgIL+IKkYGvj8m2V7YJpDrnjx/R2yK
-         y3vCscP3sZm48xrP7IpKBchcY8j43N2/gXWlkI5Jd2DCcJNnNOnPlGP/BF45AVz4c/tl
-         MDiV+EE4mFCuJsqvCctk67i+Gkf9zHgfRE4OHbD4tSMDwKbmZ1S/x84g0jUOUad0ekmU
-         nyAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=lpr1Vp/cOtO89rHVLcXxZ2elGZKeYl02Lj39b4gnicU=;
-        b=LQvJZohjTqpJ8UWH6G6Qo2WgZomwnpBVZUNzO067x9MkuwckM3gYwRERF6wq9A0YMo
-         n/9Eeo7R3DFHIrqaEVSJas0RmDa8pQL7RXeKZDllcqroxu4r+q3loDI7GS2LE5mcS4OT
-         xdBaY3VaOLOA+k/3CIdOipJ++CQhhQA8PMT1zRk4WeMO2TSKVUSfzcN27H5FcWXFRBIx
-         2Cc8J9E1qRNMm6kbyxEHg83fceU60IM/8g36DEmhJDIDXskpll0QpMahRZ7zXk59oyEG
-         zAajYvq98M5273oba+2z7CH5MUKVrqKSZ9m6Cqh9YtgxkmUc6xpRbVit07nf30d1I4Ej
-         hZ5A==
-X-Gm-Message-State: AOAM53089bLwGpv5vYwkMkIX+Nvy3kaMQedowwqNrcNkECMnKUpt8wxm
-        D8RLTXtyPqi52UrFFV/1gbNPRioLaHc=
-X-Google-Smtp-Source: ABdhPJzKMvsE4AME1eu0c8egA9ucA8RkdHrtaWfOCcvFYa7lBlOp/TkbPHExyqCCijtDC9lH8c24wA==
-X-Received: by 2002:a9d:4509:: with SMTP id w9mr14076784ote.111.1618009720035;
-        Fri, 09 Apr 2021 16:08:40 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id f2sm781554oos.16.2021.04.09.16.08.38
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 09 Apr 2021 16:08:39 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date:   Fri, 9 Apr 2021 16:08:37 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Juerg Haefliger <juergh@gmail.com>,
-        Jean Delvare <jdelvare@suse.com>,
-        "Mark M . Hoffman" <mhoffman@lightlink.com>,
-        linux-hwmon@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH]  hwmon: (dme1737): Add missing null check on return from
- platform_get_resource
-Message-ID: <20210409230837.GA69920@roeck-us.net>
-References: <20210406185458.433826-1-colin.king@canonical.com>
+        Fri, 9 Apr 2021 20:40:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45874 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235314AbhDJAkX (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 9 Apr 2021 20:40:23 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPS id EBC686113A;
+        Sat, 10 Apr 2021 00:40:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1618015210;
+        bh=zYcsyeWduEvvWon5pC7/yS3mmNg4HmOEdk7BAwGSJC0=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=YeNpC8BVbZZOCcBSkfvyN2El+0T8DpoIdUFTn0T+FYv9ktAKigy2RQb7OXNRs0WDg
+         CyFXuzzsaL5bLrEJZNM9xHeZV6fI3zYXaO2ON+99EqNMGvJOAqnUwM4Mdsad8ZTKRX
+         Y3Ek87/6FIcymWcMiPgASzQ246nH5Vi8ZHsqr5loO1p2kr1ygcb+H2nZ5zOtKr8KGd
+         nbOnbt7/qmAJhq+GDvjrpqMv+VITkQTK1Lxx62pu50ratIiZjoJVQz2Y1azakgGhLi
+         4fTnnPXFKUgLft8bKvXhv1v/DheY9W3xUS0yfWmZXEapcDxzr6a/fnQ5iWVTD5A7xY
+         CAHdg6T9s9AGQ==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210406185458.433826-1-colin.king@canonical.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] net: enetc: fix array underflow in error handling
+ code
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <161801520992.30931.3251476857787928738.git-patchwork-notify@kernel.org>
+Date:   Sat, 10 Apr 2021 00:40:09 +0000
+References: <YHBHfCY/yv3EnM9z@mwanda>
+In-Reply-To: <YHBHfCY/yv3EnM9z@mwanda>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     claudiu.manoil@nxp.com, davem@davemloft.net, kuba@kernel.org,
+        vladimir.oltean@nxp.com, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Apr 06, 2021 at 07:54:58PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+Hello:
+
+This patch was applied to netdev/net-next.git (refs/heads/master):
+
+On Fri, 9 Apr 2021 15:24:28 +0300 you wrote:
+> This loop will try to unmap enetc_unmap_tx_buff[-1] and crash.
 > 
-> The call to platform_get_resource can potentially return a NULL pointer
-> on failure, so add this check and return -EINVAL if it fails.
-> 
-> Addresses-Coverity: ("Dereference null return")
-> Fixes: e95c237d78c0 ("hwmon: (dme1737) Add sch311x support")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-
-Not really sure what to do with this; it is a false positive.
-The resource is always set by the instantiating code (in the same
-driver). Adding an error check just to make coverity happy seems
-like a waste. Maybe we should introduce the equivalent of
-devm_ioremap_resource() for IORESOURCE_IO.
-
-Guenter
-
+> Fixes: 9d2b68cc108d ("net: enetc: add support for XDP_REDIRECT")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > ---
->  drivers/hwmon/dme1737.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/hwmon/dme1737.c b/drivers/hwmon/dme1737.c
-> index c1e4cfb40c3d..a2157872e126 100644
-> --- a/drivers/hwmon/dme1737.c
-> +++ b/drivers/hwmon/dme1737.c
-> @@ -2633,6 +2633,8 @@ static int dme1737_isa_probe(struct platform_device *pdev)
->  	int err;
->  
->  	res = platform_get_resource(pdev, IORESOURCE_IO, 0);
-> +	if (!res)
-> +		return -EINVAL;
->  	if (!devm_request_region(dev, res->start, DME1737_EXTENT, "dme1737")) {
->  		dev_err(dev, "Failed to request region 0x%04x-0x%04x.\n",
->  			(unsigned short)res->start,
+>  drivers/net/ethernet/freescale/enetc/enetc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+
+Here is the summary with links:
+  - [net-next] net: enetc: fix array underflow in error handling code
+    https://git.kernel.org/netdev/net-next/c/626b598aa8be
+
+You are awesome, thank you!
+--
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
