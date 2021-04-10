@@ -2,113 +2,187 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17917C43461
-	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Apr 2021 10:42:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7104BC433B4
+	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Apr 2021 11:55:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DDBE861182
-	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Apr 2021 10:42:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 405236115A
+	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Apr 2021 11:55:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234578AbhDJKnC (ORCPT
+        id S234392AbhDJLzS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 10 Apr 2021 06:43:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36234 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234091AbhDJKnB (ORCPT
+        Sat, 10 Apr 2021 07:55:18 -0400
+Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:24954 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231279AbhDJLzS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 10 Apr 2021 06:43:01 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15DBDC061762;
-        Sat, 10 Apr 2021 03:42:47 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id a6so8003240wrw.8;
-        Sat, 10 Apr 2021 03:42:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=beqXmyN/B6cqbpsqWboqXC093wFDZXtHxegRtfCiZ7w=;
-        b=Wr/N858Sv12bK0tZW055XDCUmopKrOk8HO82GpGqYPbqbcV72wYT+P+bYD49nfZ0AZ
-         fE/mALOO+YayhhBV2416RRh8IRKrz1INCg5iIMWzkgTrFquDF0LoU4JWuXR8CVaztMYN
-         QEtTT3xYPYxgRxv7aclmuGABAWfEWjgv985jt3PsVhatwrjysjrfBR3BDEu/orFLdlCq
-         8DlXOX4Wze5Q20PAyzg2XWlTLQ1nynX65DKKAeqS+9mP3EIavogYhhmuP3/YZ0knUWDg
-         xOOyls0PVhb/j8SVSPVd89bD7kwgk/VK0Z5CE32rDQ6HeA6rOrVahAeOUFii/G45WK9e
-         3LcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=beqXmyN/B6cqbpsqWboqXC093wFDZXtHxegRtfCiZ7w=;
-        b=G72NJInyml0zhjCfNqT31d2V9aHtRpuDeIXTaI4KsDRtqapo29iLcIYzreQd5kPkMn
-         qcIk9pOHY2R3/hmZMA/y6MdeAFTFiYxxbL8KqPWxZdKVpA33MVrUSggmxjqtHUhGBs/F
-         Zltr3HNVt7Esw1ts/sx4gb5jQ5C3NNb9/c4I1f/olSTJmMpJcvE9RSTm6Kybe5iEgOdR
-         8hvcIvHp8/HNqtl0T2UHKbftSQ/RzgEITt1CYjJCRF6leYImPby+jmuLJAplXprg5FB+
-         2hUyBVGlYEu5PDLzd8+PhV3dd98WWTOv80BfvEysBWwu2sys0QXsU2cGcYTJTEmOO9ff
-         uH5g==
-X-Gm-Message-State: AOAM532M0CpMpKxVKoFsYii/xsF5P/3dnStIsfouzQSAWIKy3B1ADSvR
-        KVeNUHx5k5X8oQWIKtvn0Cc=
-X-Google-Smtp-Source: ABdhPJy+aCPMYLmeYp0VFbLTKkdvlqeiMp/S/7YyOKw5IaEzVwDI73QfyIBFtr+fEU55GZZ/smpcfg==
-X-Received: by 2002:adf:fb0b:: with SMTP id c11mr22134572wrr.425.1618051365932;
-        Sat, 10 Apr 2021 03:42:45 -0700 (PDT)
-Received: from [192.168.2.202] (pd9ea306d.dip0.t-ipconnect.de. [217.234.48.109])
-        by smtp.gmail.com with ESMTPSA id z15sm2067086wrv.39.2021.04.10.03.42.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 10 Apr 2021 03:42:45 -0700 (PDT)
-Subject: Re: [PATCH -next] power: supply: Make symbol 'surface_ac_pm_ops'
- static
-To:     Qiheng Lin <linqiheng@huawei.com>,
-        Sebastian Reichel <sre@kernel.org>
-Cc:     linux-pm@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
-References: <20210410041249.12846-1-linqiheng@huawei.com>
-From:   Maximilian Luz <luzmaximilian@gmail.com>
-Message-ID: <c5edfe56-eebe-55c0-e30f-4a552934d0b8@gmail.com>
-Date:   Sat, 10 Apr 2021 12:42:43 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.9.0
+        Sat, 10 Apr 2021 07:55:18 -0400
+Received: from localhost.localdomain ([90.126.11.170])
+        by mwinf5d50 with ME
+        id qzv02400F3g7mfN03zv1tB; Sat, 10 Apr 2021 13:55:02 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 10 Apr 2021 13:55:02 +0200
+X-ME-IP: 90.126.11.170
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Larry.Finger@lwfinger.net, gregkh@linuxfoundation.org
+Cc:     linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 1/3] staging: rtl8188eu: Use existing arc4 implementation
+Date:   Sat, 10 Apr 2021 13:54:59 +0200
+Message-Id: <7e16c40d5baa007dca81a12b967a597ed00d8dd7.1618055514.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-In-Reply-To: <20210410041249.12846-1-linqiheng@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 4/10/21 6:12 AM, Qiheng Lin wrote:
-> The sparse tool complains as follows:
-> 
-> drivers/power/supply/surface_charger.c:229:1: warning:
->   symbol 'surface_ac_pm_ops' was not declared. Should it be static?
-> 
-> This symbol is not used outside of surface_charger.c, so this
-> commit marks it static.
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Qiheng Lin <linqiheng@huawei.com>
+Use functions provided by <crypto/arc4.h> instead of hand writing them.
 
-Acked-by: Maximilian Luz <luzmaximilian@gmail.com>
+The implementations are slightly different, but are equivalent. It has
+been checked with a test program which compares the output of the 2 sets of
+functions.
 
-> ---
->   drivers/power/supply/surface_charger.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/power/supply/surface_charger.c b/drivers/power/supply/surface_charger.c
-> index c2dd7e604d14..81a5b79822c9 100644
-> --- a/drivers/power/supply/surface_charger.c
-> +++ b/drivers/power/supply/surface_charger.c
-> @@ -226,7 +226,7 @@ static int __maybe_unused surface_ac_resume(struct device *dev)
->   {
->   	return spwr_ac_recheck(dev_get_drvdata(dev));
->   }
-> -SIMPLE_DEV_PM_OPS(surface_ac_pm_ops, NULL, surface_ac_resume);
-> +static SIMPLE_DEV_PM_OPS(surface_ac_pm_ops, NULL, surface_ac_resume);
->   
->   static int surface_ac_probe(struct ssam_device *sdev)
->   {
-> 
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/staging/rtl8188eu/core/rtw_security.c | 80 +++----------------
+ 1 file changed, 11 insertions(+), 69 deletions(-)
+
+diff --git a/drivers/staging/rtl8188eu/core/rtw_security.c b/drivers/staging/rtl8188eu/core/rtw_security.c
+index 617f89842c81..61e3eb0a4791 100644
+--- a/drivers/staging/rtl8188eu/core/rtw_security.c
++++ b/drivers/staging/rtl8188eu/core/rtw_security.c
+@@ -6,6 +6,7 @@
+  ******************************************************************************/
+ #define  _RTW_SECURITY_C_
+ 
++#include <crypto/arc4.h>
+ #include <osdep_service.h>
+ #include <drv_types.h>
+ #include <wifi.h>
+@@ -16,65 +17,6 @@
+ 
+ #define CRC32_POLY 0x04c11db7
+ 
+-struct arc4context {
+-	u32 x;
+-	u32 y;
+-	u8 state[256];
+-};
+-
+-static void arcfour_init(struct arc4context *parc4ctx, u8 *key, u32	key_len)
+-{
+-	u32	t, u;
+-	u32	keyindex;
+-	u32	stateindex;
+-	u8 *state;
+-	u32	counter;
+-
+-	state = parc4ctx->state;
+-	parc4ctx->x = 0;
+-	parc4ctx->y = 0;
+-	for (counter = 0; counter < 256; counter++)
+-		state[counter] = (u8)counter;
+-	keyindex = 0;
+-	stateindex = 0;
+-	for (counter = 0; counter < 256; counter++) {
+-		t = state[counter];
+-		stateindex = (stateindex + key[keyindex] + t) & 0xff;
+-		u = state[stateindex];
+-		state[stateindex] = (u8)t;
+-		state[counter] = (u8)u;
+-		if (++keyindex >= key_len)
+-			keyindex = 0;
+-	}
+-}
+-
+-static u32 arcfour_byte(struct arc4context *parc4ctx)
+-{
+-	u32 x;
+-	u32 y;
+-	u32 sx, sy;
+-	u8 *state;
+-
+-	state = parc4ctx->state;
+-	x = (parc4ctx->x + 1) & 0xff;
+-	sx = state[x];
+-	y = (sx + parc4ctx->y) & 0xff;
+-	sy = state[y];
+-	parc4ctx->x = x;
+-	parc4ctx->y = y;
+-	state[y] = (u8)sx;
+-	state[x] = (u8)sy;
+-	return state[(sx + sy) & 0xff];
+-}
+-
+-static void arcfour_encrypt(struct arc4context *parc4ctx, u8 *dest, u8 *src, u32 len)
+-{
+-	u32	i;
+-
+-	for (i = 0; i < len; i++)
+-		dest[i] = src[i] ^ (unsigned char)arcfour_byte(parc4ctx);
+-}
+-
+ static int bcrc32initialized;
+ static u32 crc32_table[256];
+ 
+@@ -564,7 +506,7 @@ u32	rtw_tkip_encrypt(struct adapter *padapter, struct xmit_frame *pxmitframe)
+ 	u8   ttkey[16];
+ 	u8	crc[4];
+ 	u8   hw_hdr_offset = 0;
+-	struct arc4context mycontext;
++	struct arc4_ctx mycontext;
+ 	int			curfragnum, length;
+ 
+ 	u8	*pframe, *payload, *iv, *prwskey;
+@@ -614,15 +556,15 @@ u32	rtw_tkip_encrypt(struct adapter *padapter, struct xmit_frame *pxmitframe)
+ 						 pattrib->iv_len, pattrib->icv_len));
+ 					*((__le32 *)crc) = getcrc32(payload, length);/* modified by Amy*/
+ 
+-					arcfour_init(&mycontext, rc4key, 16);
+-					arcfour_encrypt(&mycontext, payload, payload, length);
+-					arcfour_encrypt(&mycontext, payload + length, crc, 4);
++					arc4_setkey(&mycontext, rc4key, 16);
++					arc4_crypt(&mycontext, payload, payload, length);
++					arc4_crypt(&mycontext, payload + length, crc, 4);
+ 				} else {
+ 					length = pxmitpriv->frag_len - pattrib->hdrlen - pattrib->iv_len - pattrib->icv_len;
+ 					*((__le32 *)crc) = getcrc32(payload, length);/* modified by Amy*/
+-					arcfour_init(&mycontext, rc4key, 16);
+-					arcfour_encrypt(&mycontext, payload, payload, length);
+-					arcfour_encrypt(&mycontext, payload + length, crc, 4);
++					arc4_setkey(&mycontext, rc4key, 16);
++					arc4_crypt(&mycontext, payload, payload, length);
++					arc4_crypt(&mycontext, payload + length, crc, 4);
+ 
+ 					pframe += pxmitpriv->frag_len;
+ 					pframe = (u8 *)round_up((size_t)(pframe), 4);
+@@ -644,7 +586,7 @@ u32 rtw_tkip_decrypt(struct adapter *padapter, struct recv_frame *precvframe)
+ 	u8   rc4key[16];
+ 	u8   ttkey[16];
+ 	u8	crc[4];
+-	struct arc4context mycontext;
++	struct arc4_ctx mycontext;
+ 	int			length;
+ 	u8	*pframe, *payload, *iv, *prwskey;
+ 	union pn48 dot11txpn;
+@@ -685,8 +627,8 @@ u32 rtw_tkip_decrypt(struct adapter *padapter, struct recv_frame *precvframe)
+ 
+ 			/* 4 decrypt payload include icv */
+ 
+-			arcfour_init(&mycontext, rc4key, 16);
+-			arcfour_encrypt(&mycontext, payload, payload, length);
++			arc4_setkey(&mycontext, rc4key, 16);
++			arc4_crypt(&mycontext, payload, payload, length);
+ 
+ 			*((__le32 *)crc) = getcrc32(payload, length - 4);
+ 
+-- 
+2.27.0
+
