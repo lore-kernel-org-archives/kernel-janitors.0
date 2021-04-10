@@ -2,112 +2,90 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1576C433B4
-	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Apr 2021 07:00:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A46FC433ED
+	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Apr 2021 08:58:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7EA41610A1
-	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Apr 2021 07:00:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6558610A3
+	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Apr 2021 08:58:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234059AbhDJHA2 (ORCPT
+        id S231279AbhDJI60 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 10 Apr 2021 03:00:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45100 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229537AbhDJHAZ (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 10 Apr 2021 03:00:25 -0400
-Received: from mail-io1-xd32.google.com (mail-io1-xd32.google.com [IPv6:2607:f8b0:4864:20::d32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E4F0C061762;
-        Sat, 10 Apr 2021 00:00:11 -0700 (PDT)
-Received: by mail-io1-xd32.google.com with SMTP id v26so8182968iox.11;
-        Sat, 10 Apr 2021 00:00:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=y+qU2K2MTxemBysOAaAel00sT0k/PXV6IjQavtJSZP4=;
-        b=XilqbwzTDmRoEmZ6zQy+MRJEIeYKyOHHAC16Zl3Us6SEoaR1anZ4fT5hvmEMIjIF+Z
-         7LIT3HjQJH9SEKIBcYLK8qE26xt9DS9noGPt71wHnKgJ2IGqfvXIUv62ajy92+6SWLRH
-         xaHkniLAV9eEnwhRwW8h9mFBzGA359itdV/k0EmtrxzOEJJHz+UR3X6uTgV9B4hLyPVG
-         IeUSdS/D1plsFRtEZYytDk7bogOy4geia81tn3VpT/pp9X5buJB9yPoujgs9YcSXsy+O
-         EUwPdbGdteAaXj4FW2PfHASjtFO25YqSIYNh6YiHE/BsM9C/LPbxg2dxpKI4QctbKYbB
-         abWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=y+qU2K2MTxemBysOAaAel00sT0k/PXV6IjQavtJSZP4=;
-        b=qfRB7CckvF+SY2/Q5sLsf7seQXZZcSY5JH5n2QbRjM7i6Ixek22mJ9xZG7vrj5h4Yy
-         49CZOq9vmxP9dojJcLW67OiL4fFYsprCitaQntprQBs12CGr4wS+WzbtHzfpRHn7QOJE
-         lbs/TCvspcrHkkozt1CJAa5WCOXxFis83AziMUlU+h0pjOVbfRLk/KqPXFplxXmYSofU
-         WP1TdkQLoBLQaaFf4d0fKHh4g2C6E5yHS/kH8e5E7f6aR+l4AClVvLgSztg1fDcuxk7D
-         V/KG3M58YV+8Z1I7SLQzIv6K79mp+S/TIHRQ3jbU8qvprBJC/U0xl9jVkc2NL3V6bqeu
-         ZKsg==
-X-Gm-Message-State: AOAM531VD6ZBliPTCUzcbi715Qd7Pxm88qY7UIN24Rjg6N5bYZbUUHEV
-        6Dim7wdvAeGuL3OVVfSf5xToE6icl4gPGpIEvSI=
-X-Google-Smtp-Source: ABdhPJzX7dnw0bl/nBvHDpveje13mmDlU01z0s3B+jkqD01lF3gYiWxJ/q00iPXHYNNN1kkhj+KhHq79RK4dgy72RNg=
-X-Received: by 2002:a02:7410:: with SMTP id o16mr18527890jac.37.1618038011076;
- Sat, 10 Apr 2021 00:00:11 -0700 (PDT)
+        Sat, 10 Apr 2021 04:58:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32940 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229591AbhDJI6Z (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Sat, 10 Apr 2021 04:58:25 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 3442B610CD;
+        Sat, 10 Apr 2021 08:58:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1618045091;
+        bh=MDEEwk4xA/g1bJh/pmzvQ0+agfOwNiIO6s3rDzG0Qto=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=bPIa4aGlWfNtEkXQxsAdoz/WId69zqC0oZitbP9+tg0T//tW4WtZ44t8D1nC8zgAu
+         vB6WBG3pe0ic4WWXy+PrY7jjEYABBQkxsq/prU8n6YCaPvDmwZGOg3FYu8+0TODNX4
+         rMG8JYTVG18bq2RdgKN4s7f72Zma97HSygSgXxec=
+Date:   Sat, 10 Apr 2021 10:58:09 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Ye Bin <yebin10@huawei.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Michal Simek <michal.simek@xilinx.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+Subject: Re: [PATCH -next] char: xilinx_hwicap: use DEFINE_MUTEX() for mutex
+ lock
+Message-ID: <YHFooZWlC+PV1kV0@kroah.com>
+References: <20210409095136.2293754-1-yebin10@huawei.com>
 MIME-Version: 1.0
-References: <YD4enB/Er/5PWgUz@mwanda>
-In-Reply-To: <YD4enB/Er/5PWgUz@mwanda>
-From:   Stanislav Yakovlev <stas.yakovlev@gmail.com>
-Date:   Sat, 10 Apr 2021 10:59:49 +0400
-Message-ID: <CA++WF2PBo1Mok+bnnUCEZxbbEacX7FcU7PYAPTo=iqgOb2+f3Q@mail.gmail.com>
-Subject: Re: [PATCH] ipw2x00: potential buffer overflow in libipw_wx_set_encodeext()
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Kalle Valo <kvalo@codeaurora.org>, Jeff Garzik <jgarzik@pobox.com>,
-        James Ketrenos <jketreno@linux.intel.com>,
-        wireless <linux-wireless@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210409095136.2293754-1-yebin10@huawei.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, 2 Mar 2021 at 15:16, Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> The "ext->key_len" is a u16 that comes from the user.  If it's over
-> SCM_KEY_LEN (32) that could lead to memory corruption.
->
-> Fixes: e0d369d1d969 ("[PATCH] ieee82011: Added WE-18 support to default wireless extension handler")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+On Fri, Apr 09, 2021 at 05:51:36PM +0800, Ye Bin wrote:
+> mutex lock can be initialized automatically with DEFINE_MUTEX()
+> rather than explicitly calling mutex_init().
+> 
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Ye Bin <yebin10@huawei.com>
 > ---
->  drivers/net/wireless/intel/ipw2x00/libipw_wx.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->
+>  drivers/char/xilinx_hwicap/xilinx_hwicap.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/char/xilinx_hwicap/xilinx_hwicap.c b/drivers/char/xilinx_hwicap/xilinx_hwicap.c
+> index 067396bedf22..4d586233dfa4 100644
+> --- a/drivers/char/xilinx_hwicap/xilinx_hwicap.c
+> +++ b/drivers/char/xilinx_hwicap/xilinx_hwicap.c
+> @@ -111,7 +111,7 @@
+>  /* An array, which is set to true when the device is registered. */
+>  static DEFINE_MUTEX(hwicap_mutex);
+>  static bool probed_devices[HWICAP_DEVICES];
+> -static struct mutex icap_sem;
+> +static DEFINE_MUTEX(icap_sem);
+>  
+>  static struct class *icap_class;
+>  
+> @@ -857,7 +857,6 @@ static int __init hwicap_module_init(void)
+>  	int retval;
+>  
+>  	icap_class = class_create(THIS_MODULE, "xilinx_config");
+> -	mutex_init(&icap_sem);
+>  
+>  	devt = MKDEV(XHWICAP_MAJOR, XHWICAP_MINOR);
+>  	retval = register_chrdev_region(devt,
+> 
 
-Cc: stable@vger.kernel.org
-Acked-by: Stanislav Yakovlev <stas.yakovlev@gmail.com>
+What actually does this help out with?  Why is it wrong to explicitly
+call mutex_init() instead of a magic macro?
 
-Thanks, and sorry for the long review.
+What good are these changes causing?
 
-Stanislav.
+thanks,
 
-
-> diff --git a/drivers/net/wireless/intel/ipw2x00/libipw_wx.c b/drivers/net/wireless/intel/ipw2x00/libipw_wx.c
-> index a0cf78c418ac..27f15fa40528 100644
-> --- a/drivers/net/wireless/intel/ipw2x00/libipw_wx.c
-> +++ b/drivers/net/wireless/intel/ipw2x00/libipw_wx.c
-> @@ -633,8 +633,10 @@ int libipw_wx_set_encodeext(struct libipw_device *ieee,
->         }
->
->         if (ext->alg != IW_ENCODE_ALG_NONE) {
-> -               memcpy(sec.keys[idx], ext->key, ext->key_len);
-> -               sec.key_sizes[idx] = ext->key_len;
-> +               int len = min_t(int, ext->key_len, SCM_KEY_LEN);
-> +
-> +               memcpy(sec.keys[idx], ext->key, len);
-> +               sec.key_sizes[idx] = len;
->                 sec.flags |= (1 << idx);
->                 if (ext->alg == IW_ENCODE_ALG_WEP) {
->                         sec.encode_alg[idx] = SEC_ALG_WEP;
-> --
-> 2.30.1
->
+greg k-h
