@@ -7,41 +7,42 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7104BC433B4
-	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Apr 2021 11:55:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F4BAC433ED
+	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Apr 2021 11:55:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 405236115A
-	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Apr 2021 11:55:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1EA896115B
+	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Apr 2021 11:55:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234392AbhDJLzS (ORCPT
+        id S234587AbhDJL4A (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 10 Apr 2021 07:55:18 -0400
-Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:24954 "EHLO
+        Sat, 10 Apr 2021 07:56:00 -0400
+Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:25676 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231279AbhDJLzS (ORCPT
+        with ESMTP id S234569AbhDJL4A (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 10 Apr 2021 07:55:18 -0400
+        Sat, 10 Apr 2021 07:56:00 -0400
 Received: from localhost.localdomain ([90.126.11.170])
         by mwinf5d50 with ME
-        id qzv02400F3g7mfN03zv1tB; Sat, 10 Apr 2021 13:55:02 +0200
+        id qzvk2400J3g7mfN03zvkwY; Sat, 10 Apr 2021 13:55:45 +0200
 X-ME-Helo: localhost.localdomain
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 10 Apr 2021 13:55:02 +0200
+X-ME-Date: Sat, 10 Apr 2021 13:55:45 +0200
 X-ME-IP: 90.126.11.170
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Larry.Finger@lwfinger.net, gregkh@linuxfoundation.org
+To:     gregkh@linuxfoundation.org
 Cc:     linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Subject: [PATCH 1/3] staging: rtl8188eu: Use existing arc4 implementation
-Date:   Sat, 10 Apr 2021 13:54:59 +0200
-Message-Id: <7e16c40d5baa007dca81a12b967a597ed00d8dd7.1618055514.git.christophe.jaillet@wanadoo.fr>
+Date:   Sat, 10 Apr 2021 13:55:43 +0200
+Message-ID: <7e16c40d5baa007dca81a12b967a597ed00d8dd7.1618055514.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
+Message-ID: <20210410115543.mr_orj6DDVvRCrsBGs5mAz2zeaipLEtonFNAgnTreck@z>
 
 Use functions provided by <crypto/arc4.h> instead of hand writing them.
 
