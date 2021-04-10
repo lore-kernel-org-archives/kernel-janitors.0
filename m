@@ -2,90 +2,123 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_NONE,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A46FC433ED
-	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Apr 2021 08:58:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28283C433ED
+	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Apr 2021 10:41:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D6558610A3
-	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Apr 2021 08:58:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00CE8610F9
+	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Apr 2021 10:41:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231279AbhDJI60 (ORCPT
+        id S234377AbhDJKl3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 10 Apr 2021 04:58:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32940 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229591AbhDJI6Z (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 10 Apr 2021 04:58:25 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3442B610CD;
-        Sat, 10 Apr 2021 08:58:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1618045091;
-        bh=MDEEwk4xA/g1bJh/pmzvQ0+agfOwNiIO6s3rDzG0Qto=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bPIa4aGlWfNtEkXQxsAdoz/WId69zqC0oZitbP9+tg0T//tW4WtZ44t8D1nC8zgAu
-         vB6WBG3pe0ic4WWXy+PrY7jjEYABBQkxsq/prU8n6YCaPvDmwZGOg3FYu8+0TODNX4
-         rMG8JYTVG18bq2RdgKN4s7f72Zma97HSygSgXxec=
-Date:   Sat, 10 Apr 2021 10:58:09 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Ye Bin <yebin10@huawei.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Sat, 10 Apr 2021 06:41:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35904 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234091AbhDJKl2 (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Sat, 10 Apr 2021 06:41:28 -0400
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E547C061762;
+        Sat, 10 Apr 2021 03:41:14 -0700 (PDT)
+Received: by mail-wr1-x42b.google.com with SMTP id x7so7984829wrw.10;
+        Sat, 10 Apr 2021 03:41:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=qb8YcwmVjCvWFlIO3GJpj9CyVTAbrtiPYaokYJsc6zU=;
+        b=uKxwHHfW6z6r9sCgf/UAbjP/xhWeWCW7x2+4FAWp74+p+3Dnow4c3GnlyMKReBLxtm
+         lLvIygdSSl+uhEvzFRtbi3qh+QZBE5qDtEFSK5juYuUfl3lN8ekfbelAWm7GIloq0MU9
+         5P0QS3fMgt2Rug/txjIaZhX9+OjTzTGTTjgq0pI7ZafDZGsFYJ1HUF3z16SiXLWq2S82
+         M/oaif8BnDbw2uhDFCNb0PrltAbKIQFArTFbRAqYJoJ0ani9ksaXeUc9dvZZk1R7DO4v
+         nwiTvWwcQoObPdrVsCfK/u5NdFKGDlvNw8X/NHKGQi36joph8dNoz9yW12dNMw37IEKD
+         18mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=qb8YcwmVjCvWFlIO3GJpj9CyVTAbrtiPYaokYJsc6zU=;
+        b=RrktLmy6L2tkmRQP0HDLl2juQjqXZmzMoafCgMXLU1Jq5T5ZGfuUKEn+mjGRZkONvF
+         /oYL9j187PQuOzhFfs/iaotTgQayIVQWEcrxt2S58IfthnuhnwQZpRpc9ZOpCXb+twcr
+         OGqY/DukaN2MsQf9JTp575O9sb0rGI6kyHxeVMf8mmzxYivCn1fCWGL1+s1x5p9uJxkB
+         bQoCV7ig8N2PBvAwW9RNFKy24oOlekMnNX9r+rPEDke+14FaMQFAhSxMZiMrCzkBm9EM
+         s8lC0OHshUPCLTr+CLwfPfsPy4V6TyiUXSoy4Msc0c52VouwlTuEwD0blmSQobsZLHDb
+         tDWA==
+X-Gm-Message-State: AOAM533ux0IHLyWxuJt3AfGcBKS82Z/ju9vyT44Smkfm71ymWJ9EtCK8
+        lMxM0ME0qhy2Wg8IrGlAhq3Cp6IUll4=
+X-Google-Smtp-Source: ABdhPJygiTo6NoNb+c5+WZ8H7OctCHMmGFH3/02qw1dh179Y5Q5KGoFrUSnRcOmVYoHInCwvELfHxg==
+X-Received: by 2002:adf:ba87:: with SMTP id p7mr22362806wrg.298.1618051272682;
+        Sat, 10 Apr 2021 03:41:12 -0700 (PDT)
+Received: from [192.168.2.202] (pd9ea306d.dip0.t-ipconnect.de. [217.234.48.109])
+        by smtp.gmail.com with ESMTPSA id w22sm7433524wmc.13.2021.04.10.03.41.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 10 Apr 2021 03:41:12 -0700 (PDT)
+Subject: Re: [PATCH -next] power: supply: Make some symbols static
+To:     Qiheng Lin <linqiheng@huawei.com>,
+        Sebastian Reichel <sre@kernel.org>
+Cc:     linux-pm@vger.kernel.org, platform-driver-x86@vger.kernel.org,
         kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
-Subject: Re: [PATCH -next] char: xilinx_hwicap: use DEFINE_MUTEX() for mutex
- lock
-Message-ID: <YHFooZWlC+PV1kV0@kroah.com>
-References: <20210409095136.2293754-1-yebin10@huawei.com>
+References: <20210410041246.12791-1-linqiheng@huawei.com>
+From:   Maximilian Luz <luzmaximilian@gmail.com>
+Message-ID: <3026d506-4755-4885-4d22-9f589a660221@gmail.com>
+Date:   Sat, 10 Apr 2021 12:41:10 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210409095136.2293754-1-yebin10@huawei.com>
+In-Reply-To: <20210410041246.12791-1-linqiheng@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Apr 09, 2021 at 05:51:36PM +0800, Ye Bin wrote:
-> mutex lock can be initialized automatically with DEFINE_MUTEX()
-> rather than explicitly calling mutex_init().
+On 4/10/21 6:12 AM, Qiheng Lin wrote:
+> The sparse tool complains as follows:
+> 
+> drivers/power/supply/surface_battery.c:700:1: warning:
+>   symbol 'dev_attr_alarm' was not declared. Should it be static?
+> drivers/power/supply/surface_battery.c:805:1: warning:
+>   symbol 'surface_battery_pm_ops' was not declared. Should it be static?
+> 
+> This symbol is not used outside of surface_battery.c, so this
+> commit marks it static.
 > 
 > Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Ye Bin <yebin10@huawei.com>
+> Signed-off-by: Qiheng Lin <linqiheng@huawei.com>
+
+Acked-by: Maximilian Luz <luzmaximilian@gmail.com>
+
 > ---
->  drivers/char/xilinx_hwicap/xilinx_hwicap.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+>   drivers/power/supply/surface_battery.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/char/xilinx_hwicap/xilinx_hwicap.c b/drivers/char/xilinx_hwicap/xilinx_hwicap.c
-> index 067396bedf22..4d586233dfa4 100644
-> --- a/drivers/char/xilinx_hwicap/xilinx_hwicap.c
-> +++ b/drivers/char/xilinx_hwicap/xilinx_hwicap.c
-> @@ -111,7 +111,7 @@
->  /* An array, which is set to true when the device is registered. */
->  static DEFINE_MUTEX(hwicap_mutex);
->  static bool probed_devices[HWICAP_DEVICES];
-> -static struct mutex icap_sem;
-> +static DEFINE_MUTEX(icap_sem);
->  
->  static struct class *icap_class;
->  
-> @@ -857,7 +857,6 @@ static int __init hwicap_module_init(void)
->  	int retval;
->  
->  	icap_class = class_create(THIS_MODULE, "xilinx_config");
-> -	mutex_init(&icap_sem);
->  
->  	devt = MKDEV(XHWICAP_MAJOR, XHWICAP_MINOR);
->  	retval = register_chrdev_region(devt,
+> diff --git a/drivers/power/supply/surface_battery.c b/drivers/power/supply/surface_battery.c
+> index 4116dd839ecd..7efa431a62b2 100644
+> --- a/drivers/power/supply/surface_battery.c
+> +++ b/drivers/power/supply/surface_battery.c
+> @@ -697,7 +697,7 @@ static ssize_t alarm_store(struct device *dev, struct device_attribute *attr, co
+>   	return count;
+>   }
+>   
+> -DEVICE_ATTR_RW(alarm);
+> +static DEVICE_ATTR_RW(alarm);
+>   
+>   static struct attribute *spwr_battery_attrs[] = {
+>   	&dev_attr_alarm.attr,
+> @@ -802,7 +802,7 @@ static int __maybe_unused surface_battery_resume(struct device *dev)
+>   {
+>   	return spwr_battery_recheck_full(dev_get_drvdata(dev));
+>   }
+> -SIMPLE_DEV_PM_OPS(surface_battery_pm_ops, NULL, surface_battery_resume);
+> +static SIMPLE_DEV_PM_OPS(surface_battery_pm_ops, NULL, surface_battery_resume);
+>   
+>   static int surface_battery_probe(struct ssam_device *sdev)
+>   {
 > 
-
-What actually does this help out with?  Why is it wrong to explicitly
-call mutex_init() instead of a magic macro?
-
-What good are these changes causing?
-
-thanks,
-
-greg k-h
