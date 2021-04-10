@@ -7,42 +7,44 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F4BAC433ED
-	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Apr 2021 11:55:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2438C433B4
+	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Apr 2021 11:57:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1EA896115B
-	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Apr 2021 11:55:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5EFB6115A
+	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Apr 2021 11:57:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234587AbhDJL4A (ORCPT
+        id S234684AbhDJL5O (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 10 Apr 2021 07:56:00 -0400
-Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:25676 "EHLO
+        Sat, 10 Apr 2021 07:57:14 -0400
+Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:35655 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234569AbhDJL4A (ORCPT
+        with ESMTP id S234565AbhDJL5N (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 10 Apr 2021 07:56:00 -0400
+        Sat, 10 Apr 2021 07:57:13 -0400
 Received: from localhost.localdomain ([90.126.11.170])
         by mwinf5d50 with ME
-        id qzvk2400J3g7mfN03zvkwY; Sat, 10 Apr 2021 13:55:45 +0200
+        id qzwx2400d3g7mfN03zwy1i; Sat, 10 Apr 2021 13:56:58 +0200
 X-ME-Helo: localhost.localdomain
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 10 Apr 2021 13:55:45 +0200
+X-ME-Date: Sat, 10 Apr 2021 13:56:58 +0200
 X-ME-IP: 90.126.11.170
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     gregkh@linuxfoundation.org
+To:     Larry.Finger@lwfinger.net, florian.c.schilhabel@googlemail.com,
+        gregkh@linuxfoundation.org
 Cc:     linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 1/3] staging: rtl8188eu: Use existing arc4 implementation
-Date:   Sat, 10 Apr 2021 13:55:43 +0200
-Message-ID: <7e16c40d5baa007dca81a12b967a597ed00d8dd7.1618055514.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 3/3] staging: rtl8712: Use existing arc4 implementation
+Date:   Sat, 10 Apr 2021 13:56:57 +0200
+Message-Id: <a793f56d34e53397607df54c683943d2c48b84f7.1618055514.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.27.0
+In-Reply-To: <7e16c40d5baa007dca81a12b967a597ed00d8dd7.1618055514.git.christophe.jaillet@wanadoo.fr>
+References: <7e16c40d5baa007dca81a12b967a597ed00d8dd7.1618055514.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
-Message-ID: <20210410115543.mr_orj6DDVvRCrsBGs5mAz2zeaipLEtonFNAgnTreck@z>
 
 Use functions provided by <crypto/arc4.h> instead of hand writing them.
 
@@ -52,24 +54,24 @@ functions.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/staging/rtl8188eu/core/rtw_security.c | 80 +++----------------
- 1 file changed, 11 insertions(+), 69 deletions(-)
+ drivers/staging/rtl8712/rtl871x_security.c | 118 +++++----------------
+ 1 file changed, 29 insertions(+), 89 deletions(-)
 
-diff --git a/drivers/staging/rtl8188eu/core/rtw_security.c b/drivers/staging/rtl8188eu/core/rtw_security.c
-index 617f89842c81..61e3eb0a4791 100644
---- a/drivers/staging/rtl8188eu/core/rtw_security.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_security.c
-@@ -6,6 +6,7 @@
-  ******************************************************************************/
- #define  _RTW_SECURITY_C_
+diff --git a/drivers/staging/rtl8712/rtl871x_security.c b/drivers/staging/rtl8712/rtl871x_security.c
+index 1c7df65db3c9..b546e2f19620 100644
+--- a/drivers/staging/rtl8712/rtl871x_security.c
++++ b/drivers/staging/rtl8712/rtl871x_security.c
+@@ -16,6 +16,7 @@
+ 
+ #define  _RTL871X_SECURITY_C_
  
 +#include <crypto/arc4.h>
- #include <osdep_service.h>
- #include <drv_types.h>
- #include <wifi.h>
-@@ -16,65 +17,6 @@
+ #include <linux/compiler.h>
+ #include <linux/kernel.h>
+ #include <linux/errno.h>
+@@ -38,66 +39,6 @@
  
- #define CRC32_POLY 0x04c11db7
+ /* =====WEP related===== */
  
 -struct arc4context {
 -	u32 x;
@@ -77,7 +79,7 @@ index 617f89842c81..61e3eb0a4791 100644
 -	u8 state[256];
 -};
 -
--static void arcfour_init(struct arc4context *parc4ctx, u8 *key, u32	key_len)
+-static void arcfour_init(struct arc4context *parc4ctx, u8 *key, u32 key_len)
 -{
 -	u32	t, u;
 -	u32	keyindex;
@@ -122,68 +124,144 @@ index 617f89842c81..61e3eb0a4791 100644
 -	return state[(sx + sy) & 0xff];
 -}
 -
--static void arcfour_encrypt(struct arc4context *parc4ctx, u8 *dest, u8 *src, u32 len)
+-static void arcfour_encrypt(struct arc4context	*parc4ctx,
+-		     u8 *dest, u8 *src, u32 len)
 -{
--	u32	i;
+-	u32 i;
 -
 -	for (i = 0; i < len; i++)
 -		dest[i] = src[i] ^ (unsigned char)arcfour_byte(parc4ctx);
 -}
 -
- static int bcrc32initialized;
+ static sint bcrc32initialized;
  static u32 crc32_table[256];
  
-@@ -564,7 +506,7 @@ u32	rtw_tkip_encrypt(struct adapter *padapter, struct xmit_frame *pxmitframe)
- 	u8   ttkey[16];
- 	u8	crc[4];
- 	u8   hw_hdr_offset = 0;
+@@ -151,7 +92,7 @@ static u32 getcrc32(u8 *buf, u32 len)
+ void r8712_wep_encrypt(struct _adapter *padapter, u8 *pxmitframe)
+ {	/* exclude ICV */
+ 	unsigned char	crc[4];
+-	struct arc4context  mycontext;
++	struct arc4_ctx  mycontext;
+ 	u32 curfragnum, length, keylength, pki;
+ 	u8 *pframe, *payload, *iv;    /*,*wepkey*/
+ 	u8 wepkey[16];
+@@ -182,22 +123,22 @@ void r8712_wep_encrypt(struct _adapter *padapter, u8 *pxmitframe)
+ 					pattrib->icv_len;
+ 				*((__le32 *)crc) = cpu_to_le32(getcrc32(
+ 						payload, length));
+-				arcfour_init(&mycontext, wepkey, 3 + keylength);
+-				arcfour_encrypt(&mycontext, payload, payload,
+-						length);
+-				arcfour_encrypt(&mycontext, payload + length,
+-						crc, 4);
++				arc4_setkey(&mycontext, wepkey, 3 + keylength);
++				arc4_crypt(&mycontext, payload, payload,
++					   length);
++				arc4_crypt(&mycontext, payload + length,
++					   crc, 4);
+ 			} else {
+ 				length = pxmitpriv->frag_len -
+ 					 pattrib->hdrlen - pattrib->iv_len -
+ 					 pattrib->icv_len;
+ 				*((__le32 *)crc) = cpu_to_le32(getcrc32(
+ 						payload, length));
+-				arcfour_init(&mycontext, wepkey, 3 + keylength);
+-				arcfour_encrypt(&mycontext, payload, payload,
+-						length);
+-				arcfour_encrypt(&mycontext, payload + length,
+-						crc, 4);
++				arc4_setkey(&mycontext, wepkey, 3 + keylength);
++				arc4_crypt(&mycontext, payload, payload,
++					   length);
++				arc4_crypt(&mycontext, payload + length,
++					   crc, 4);
+ 				pframe += pxmitpriv->frag_len;
+ 				pframe = (u8 *)RND4((addr_t)(pframe));
+ 			}
+@@ -209,7 +150,7 @@ void r8712_wep_decrypt(struct _adapter  *padapter, u8 *precvframe)
+ {
+ 	/* exclude ICV */
+ 	u8 crc[4];
+-	struct arc4context  mycontext;
++	struct arc4_ctx mycontext;
+ 	u32 length, keylength;
+ 	u8 *pframe, *payload, *iv, wepkey[16];
+ 	u8  keyindex;
+@@ -233,8 +174,8 @@ void r8712_wep_decrypt(struct _adapter  *padapter, u8 *precvframe)
+ 			   u.hdr.len - prxattrib->hdrlen - prxattrib->iv_len;
+ 		payload = pframe + prxattrib->iv_len + prxattrib->hdrlen;
+ 		/* decrypt payload include icv */
+-		arcfour_init(&mycontext, wepkey, 3 + keylength);
+-		arcfour_encrypt(&mycontext, payload, payload,  length);
++		arc4_setkey(&mycontext, wepkey, 3 + keylength);
++		arc4_crypt(&mycontext, payload, payload, length);
+ 		/* calculate icv and compare the icv */
+ 		*((__le32 *)crc) = cpu_to_le32(getcrc32(payload, length - 4));
+ 	}
+@@ -563,7 +504,7 @@ u32 r8712_tkip_encrypt(struct _adapter *padapter, u8 *pxmitframe)
+ 	u8 rc4key[16];
+ 	u8 ttkey[16];
+ 	u8 crc[4];
 -	struct arc4context mycontext;
 +	struct arc4_ctx mycontext;
- 	int			curfragnum, length;
+ 	u32 curfragnum, length;
  
- 	u8	*pframe, *payload, *iv, *prwskey;
-@@ -614,15 +556,15 @@ u32	rtw_tkip_encrypt(struct adapter *padapter, struct xmit_frame *pxmitframe)
- 						 pattrib->iv_len, pattrib->icv_len));
- 					*((__le32 *)crc) = getcrc32(payload, length);/* modified by Amy*/
- 
+ 	u8 *pframe, *payload, *iv, *prwskey;
+@@ -606,11 +547,11 @@ u32 r8712_tkip_encrypt(struct _adapter *padapter, u8 *pxmitframe)
+ 					     pattrib->icv_len;
+ 					*((__le32 *)crc) = cpu_to_le32(
+ 						getcrc32(payload, length));
 -					arcfour_init(&mycontext, rc4key, 16);
--					arcfour_encrypt(&mycontext, payload, payload, length);
--					arcfour_encrypt(&mycontext, payload + length, crc, 4);
+-					arcfour_encrypt(&mycontext, payload,
+-							payload, length);
+-					arcfour_encrypt(&mycontext, payload +
+-							length, crc, 4);
 +					arc4_setkey(&mycontext, rc4key, 16);
-+					arc4_crypt(&mycontext, payload, payload, length);
-+					arc4_crypt(&mycontext, payload + length, crc, 4);
++					arc4_crypt(&mycontext, payload,
++						   payload, length);
++					arc4_crypt(&mycontext, payload +
++						   length, crc, 4);
  				} else {
- 					length = pxmitpriv->frag_len - pattrib->hdrlen - pattrib->iv_len - pattrib->icv_len;
- 					*((__le32 *)crc) = getcrc32(payload, length);/* modified by Amy*/
+ 					length = pxmitpriv->frag_len -
+ 						 pattrib->hdrlen -
+@@ -618,12 +559,11 @@ u32 r8712_tkip_encrypt(struct _adapter *padapter, u8 *pxmitframe)
+ 						 pattrib->icv_len;
+ 					*((__le32 *)crc) = cpu_to_le32(getcrc32(
+ 							payload, length));
 -					arcfour_init(&mycontext, rc4key, 16);
--					arcfour_encrypt(&mycontext, payload, payload, length);
--					arcfour_encrypt(&mycontext, payload + length, crc, 4);
+-					arcfour_encrypt(&mycontext, payload,
+-							 payload, length);
+-					arcfour_encrypt(&mycontext,
+-							payload + length, crc,
+-							4);
 +					arc4_setkey(&mycontext, rc4key, 16);
-+					arc4_crypt(&mycontext, payload, payload, length);
-+					arc4_crypt(&mycontext, payload + length, crc, 4);
- 
++					arc4_crypt(&mycontext, payload,
++						   payload, length);
++					arc4_crypt(&mycontext,
++						   payload + length, crc, 4);
  					pframe += pxmitpriv->frag_len;
- 					pframe = (u8 *)round_up((size_t)(pframe), 4);
-@@ -644,7 +586,7 @@ u32 rtw_tkip_decrypt(struct adapter *padapter, struct recv_frame *precvframe)
- 	u8   rc4key[16];
- 	u8   ttkey[16];
- 	u8	crc[4];
+ 					pframe = (u8 *)RND4((addr_t)(pframe));
+ 				}
+@@ -643,7 +583,7 @@ void r8712_tkip_decrypt(struct _adapter *padapter, u8 *precvframe)
+ 	u8 rc4key[16];
+ 	u8 ttkey[16];
+ 	u8 crc[4];
 -	struct arc4context mycontext;
 +	struct arc4_ctx mycontext;
- 	int			length;
- 	u8	*pframe, *payload, *iv, *prwskey;
- 	union pn48 dot11txpn;
-@@ -685,8 +627,8 @@ u32 rtw_tkip_decrypt(struct adapter *padapter, struct recv_frame *precvframe)
- 
+ 	u32 length;
+ 	u8 *pframe, *payload, *iv, *prwskey, idx = 0;
+ 	union pn48 txpn;
+@@ -682,8 +622,8 @@ void r8712_tkip_decrypt(struct _adapter *padapter, u8 *precvframe)
+ 			phase2(&rc4key[0], prwskey, (unsigned short *)
+ 			       &ttkey[0], pnl);
  			/* 4 decrypt payload include icv */
- 
 -			arcfour_init(&mycontext, rc4key, 16);
 -			arcfour_encrypt(&mycontext, payload, payload, length);
 +			arc4_setkey(&mycontext, rc4key, 16);
 +			arc4_crypt(&mycontext, payload, payload, length);
- 
- 			*((__le32 *)crc) = getcrc32(payload, length - 4);
- 
+ 			*((__le32 *)crc) = cpu_to_le32(getcrc32(payload,
+ 					length - 4));
+ 		}
 -- 
 2.27.0
 
