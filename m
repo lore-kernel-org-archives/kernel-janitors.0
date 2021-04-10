@@ -2,62 +2,83 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FBFCC433B4
-	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Apr 2021 12:09:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 566F1C433ED
+	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Apr 2021 13:33:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4B093611BF
-	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Apr 2021 12:09:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 221A46108B
+	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Apr 2021 13:33:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234392AbhDJMKA (ORCPT
+        id S234755AbhDJNdd (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 10 Apr 2021 08:10:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57436 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231279AbhDJMJ7 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 10 Apr 2021 08:09:59 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B560D611AF;
-        Sat, 10 Apr 2021 12:09:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1618056585;
-        bh=ZnQfVUJlE/hyrfgDFzqUZAHEdNuh2Ys/CDqf/79/Vl4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=oPaF0A6B+VWseOzTBs5PhQccHCzxoAYjsGaEBcaRskDQfpQ6GMK6LZEEh1ms0BmtH
-         4TKcMYCGyP7x3twJVuDIYbIbTWKxofA+Jgl3RWVb/ZqEdJPoDoKOgHQo/MD1JA4fM7
-         z05MaURqUHeD2JPoJ3daINyzKku8j59OZhMd7ziY=
-Date:   Sat, 10 Apr 2021 14:09:42 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Larry.Finger@lwfinger.net, florian.c.schilhabel@googlemail.com,
-        linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 3/3] staging: rtl8712: Use existing arc4 implementation
-Message-ID: <YHGVhjprFvmqMaY9@kroah.com>
-References: <7e16c40d5baa007dca81a12b967a597ed00d8dd7.1618055514.git.christophe.jaillet@wanadoo.fr>
- <a793f56d34e53397607df54c683943d2c48b84f7.1618055514.git.christophe.jaillet@wanadoo.fr>
+        Sat, 10 Apr 2021 09:33:33 -0400
+Received: from mail-40134.protonmail.ch ([185.70.40.134]:51468 "EHLO
+        mail-40134.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234653AbhDJNdd (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Sat, 10 Apr 2021 09:33:33 -0400
+Date:   Sat, 10 Apr 2021 13:33:09 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bryanbrattlof.com;
+        s=protonmail3; t=1618061597;
+        bh=FCOivwZmKcFsZJuUtmm6XCPlM3OwmFa87q/PxS8jP0I=;
+        h=Date:To:From:Cc:Reply-To:Subject:From;
+        b=jPqE+zQN6gwQJWXrOp1ifnqqBO+aAVKiyO31SWDKtpJHgcShdbX+WezfD6IGJ4u/r
+         mO7bIcH94FgAD94wB+G3P7OZ6SFGgQygjr0JgjDxp5gTx/sUBB5j8S4Ii1mG3eY5im
+         QUMWGdMKQ/m0oQA2S0M3eoAxcZQJkPdSUBp3LmVSqlL2b3s2ara8c8QjLy/3cLoN+Y
+         yccQK6y2TQ4sUQsS6NjfXXKLjvYTnTgfAfpKrzIBE5eDQr11kHSkUpG15SwaLtHpn3
+         fWE9dYxpDg/P/wRX5h91M26/kXv4nbahQYOLFJ4Q3JhMjwlEAQLObkTh0c1TaCBNmh
+         LPosP65SpcNzg==
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Larry Finger <Larry.Finger@lwfinger.net>
+From:   Bryan Brattlof <hello@bryanbrattlof.com>
+Cc:     linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Bryan Brattlof <hello@bryanbrattlof.com>
+Reply-To: Bryan Brattlof <hello@bryanbrattlof.com>
+Subject: [PATCH] staging: rtl8723bs: remove unnecessary goto jumps
+Message-ID: <20210410133212.422929-1-hello@bryanbrattlof.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a793f56d34e53397607df54c683943d2c48b84f7.1618055514.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, Apr 10, 2021 at 01:56:57PM +0200, Christophe JAILLET wrote:
-> Use functions provided by <crypto/arc4.h> instead of hand writing them.
-> 
-> The implementations are slightly different, but are equivalent. It has
-> been checked with a test program which compares the output of the 2 sets of
-> functions.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+The next instruction for both 'goto exit' jump statements is to
+execute the exit jump instructions regardless. We can safely
+remove all jump statements from __init rtw_drv_entry()
 
-I can not see patch 2/3 of this series, what happened to it?
+Signed-off-by: Bryan Brattlof <hello@bryanbrattlof.com>
+---
+ drivers/staging/rtl8723bs/os_dep/sdio_intf.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-thanks,
+diff --git a/drivers/staging/rtl8723bs/os_dep/sdio_intf.c b/drivers/staging=
+/rtl8723bs/os_dep/sdio_intf.c
+index 9fd926e1698f..84ac81d19746 100644
+--- a/drivers/staging/rtl8723bs/os_dep/sdio_intf.c
++++ b/drivers/staging/rtl8723bs/os_dep/sdio_intf.c
+@@ -517,13 +517,9 @@ static int __init rtw_drv_entry(void)
+ =09if (ret !=3D 0) {
+ =09=09sdio_drvpriv.drv_registered =3D false;
+ =09=09rtw_ndev_notifier_unregister();
+-=09=09goto exit;
+ =09}
+=20
+-=09goto exit;
+-
+-exit:
+-=09DBG_871X_LEVEL(_drv_always_, "module init ret =3D%d\n", ret);
++=09DBG_870X_LEVEL(_drv_always_, "module init ret =3D%d\n", ret);
+ =09return ret;
+ }
+=20
+--=20
+2.27.0
 
-greg k-h
+
