@@ -7,67 +7,80 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 099CFC43460
-	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Apr 2021 03:52:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7403C433B4
+	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Apr 2021 04:12:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D2CD1611AF
-	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Apr 2021 03:52:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8192C61181
+	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Apr 2021 04:12:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234253AbhDJDw5 (ORCPT
+        id S233332AbhDJENI (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 9 Apr 2021 23:52:57 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:16881 "EHLO
-        szxga06-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234229AbhDJDvx (ORCPT
+        Sat, 10 Apr 2021 00:13:08 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:16435 "EHLO
+        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229437AbhDJENH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 9 Apr 2021 23:51:53 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
-        by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4FHLbx5cpVzkjvy;
-        Sat, 10 Apr 2021 11:49:49 +0800 (CST)
-Received: from huawei.com (10.174.28.241) by DGGEMS407-HUB.china.huawei.com
- (10.3.19.207) with Microsoft SMTP Server id 14.3.498.0; Sat, 10 Apr 2021
- 11:51:28 +0800
-From:   Bixuan Cui <cuibixuan@huawei.com>
-To:     <cuibixuan@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-CC:     <linux-serial@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] serial: Add missing MODULE_DEVICE_TABLE
-Date:   Sat, 10 Apr 2021 11:50:48 +0800
-Message-ID: <20210410035048.11466-1-cuibixuan@huawei.com>
-X-Mailer: git-send-email 2.17.1
+        Sat, 10 Apr 2021 00:13:07 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
+        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4FHM3z0GXFzqT93;
+        Sat, 10 Apr 2021 12:10:39 +0800 (CST)
+Received: from DESKTOP-EFRLNPK.china.huawei.com (10.174.176.196) by
+ DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
+ 14.3.498.0; Sat, 10 Apr 2021 12:12:45 +0800
+From:   Qiheng Lin <linqiheng@huawei.com>
+To:     <linqiheng@huawei.com>, Maximilian Luz <luzmaximilian@gmail.com>,
+        Sebastian Reichel <sre@kernel.org>
+CC:     <linux-pm@vger.kernel.org>, <platform-driver-x86@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH -next] power: supply: Make some symbols static
+Date:   Sat, 10 Apr 2021 12:12:46 +0800
+Message-ID: <20210410041246.12791-1-linqiheng@huawei.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.174.28.241]
+X-Originating-IP: [10.174.176.196]
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This patch adds missing MODULE_DEVICE_TABLE definition which generates
-correct modalias for automatic loading of this driver when it is built
-as an external module.
+The sparse tool complains as follows:
+
+drivers/power/supply/surface_battery.c:700:1: warning:
+ symbol 'dev_attr_alarm' was not declared. Should it be static?
+drivers/power/supply/surface_battery.c:805:1: warning:
+ symbol 'surface_battery_pm_ops' was not declared. Should it be static?
+
+This symbol is not used outside of surface_battery.c, so this
+commit marks it static.
 
 Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Bixuan Cui <cuibixuan@huawei.com>
+Signed-off-by: Qiheng Lin <linqiheng@huawei.com>
 ---
- drivers/tty/serial/tegra-tcu.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/power/supply/surface_battery.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/tty/serial/tegra-tcu.c b/drivers/tty/serial/tegra-tcu.c
-index aaf8748a6147..52687c65ad74 100644
---- a/drivers/tty/serial/tegra-tcu.c
-+++ b/drivers/tty/serial/tegra-tcu.c
-@@ -282,6 +282,7 @@ static const struct of_device_id tegra_tcu_match[] = {
- 	{ .compatible = "nvidia,tegra194-tcu" },
- 	{ }
- };
-+MODULE_DEVICE_TABLE(of, tegra_tcu_match);
+diff --git a/drivers/power/supply/surface_battery.c b/drivers/power/supply/surface_battery.c
+index 4116dd839ecd..7efa431a62b2 100644
+--- a/drivers/power/supply/surface_battery.c
++++ b/drivers/power/supply/surface_battery.c
+@@ -697,7 +697,7 @@ static ssize_t alarm_store(struct device *dev, struct device_attribute *attr, co
+ 	return count;
+ }
  
- static struct platform_driver tegra_tcu_driver = {
- 	.driver = {
+-DEVICE_ATTR_RW(alarm);
++static DEVICE_ATTR_RW(alarm);
+ 
+ static struct attribute *spwr_battery_attrs[] = {
+ 	&dev_attr_alarm.attr,
+@@ -802,7 +802,7 @@ static int __maybe_unused surface_battery_resume(struct device *dev)
+ {
+ 	return spwr_battery_recheck_full(dev_get_drvdata(dev));
+ }
+-SIMPLE_DEV_PM_OPS(surface_battery_pm_ops, NULL, surface_battery_resume);
++static SIMPLE_DEV_PM_OPS(surface_battery_pm_ops, NULL, surface_battery_resume);
+ 
+ static int surface_battery_probe(struct ssam_device *sdev)
+ {
 
