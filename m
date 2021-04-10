@@ -7,38 +7,37 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD75FC43461
-	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Apr 2021 03:51:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 099CFC43460
+	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Apr 2021 03:52:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9E7F6611AE
-	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Apr 2021 03:51:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2CD1611AF
+	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Apr 2021 03:52:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234100AbhDJDvr (ORCPT
+        id S234253AbhDJDw5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 9 Apr 2021 23:51:47 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:16880 "EHLO
+        Fri, 9 Apr 2021 23:52:57 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:16881 "EHLO
         szxga06-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234229AbhDJDvq (ORCPT
+        with ESMTP id S234229AbhDJDvx (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 9 Apr 2021 23:51:46 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
-        by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4FHLbp2Lmxzkjvy;
-        Sat, 10 Apr 2021 11:49:42 +0800 (CST)
-Received: from huawei.com (10.174.28.241) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.498.0; Sat, 10 Apr 2021
- 11:51:25 +0800
+        Fri, 9 Apr 2021 23:51:53 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
+        by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4FHLbx5cpVzkjvy;
+        Sat, 10 Apr 2021 11:49:49 +0800 (CST)
+Received: from huawei.com (10.174.28.241) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.498.0; Sat, 10 Apr 2021
+ 11:51:28 +0800
 From:   Bixuan Cui <cuibixuan@huawei.com>
-To:     <cuibixuan@huawei.com>, Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Wolfram Sang <wsa@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Dejin Zheng" <zhengdejin5@gmail.com>,
-        Linhua Xu <linhua.xu@unisoc.com>
-CC:     <linux-i2c@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] i2c: sprd: Add missing MODULE_DEVICE_TABLE
-Date:   Sat, 10 Apr 2021 11:50:44 +0800
-Message-ID: <20210410035044.11418-1-cuibixuan@huawei.com>
+To:     <cuibixuan@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+CC:     <linux-serial@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] serial: Add missing MODULE_DEVICE_TABLE
+Date:   Sat, 10 Apr 2021 11:50:48 +0800
+Message-ID: <20210410035048.11466-1-cuibixuan@huawei.com>
 X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"
@@ -56,19 +55,19 @@ as an external module.
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: Bixuan Cui <cuibixuan@huawei.com>
 ---
- drivers/i2c/busses/i2c-sprd.c | 1 +
+ drivers/tty/serial/tegra-tcu.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/i2c/busses/i2c-sprd.c b/drivers/i2c/busses/i2c-sprd.c
-index 2917fecf6c80..9f77d1ddbaf8 100644
---- a/drivers/i2c/busses/i2c-sprd.c
-+++ b/drivers/i2c/busses/i2c-sprd.c
-@@ -640,6 +640,7 @@ static const struct of_device_id sprd_i2c_of_match[] = {
- 	{ .compatible = "sprd,sc9860-i2c", },
- 	{},
+diff --git a/drivers/tty/serial/tegra-tcu.c b/drivers/tty/serial/tegra-tcu.c
+index aaf8748a6147..52687c65ad74 100644
+--- a/drivers/tty/serial/tegra-tcu.c
++++ b/drivers/tty/serial/tegra-tcu.c
+@@ -282,6 +282,7 @@ static const struct of_device_id tegra_tcu_match[] = {
+ 	{ .compatible = "nvidia,tegra194-tcu" },
+ 	{ }
  };
-+MODULE_DEVICE_TABLE(of, sprd_i2c_of_match);
++MODULE_DEVICE_TABLE(of, tegra_tcu_match);
  
- static struct platform_driver sprd_i2c_driver = {
- 	.probe = sprd_i2c_probe,
+ static struct platform_driver tegra_tcu_driver = {
+ 	.driver = {
 
