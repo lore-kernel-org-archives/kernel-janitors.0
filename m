@@ -2,86 +2,102 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBE64C433B4
-	for <kernel-janitors@archiver.kernel.org>; Sun, 11 Apr 2021 13:36:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 535E9C433B4
+	for <kernel-janitors@archiver.kernel.org>; Sun, 11 Apr 2021 15:58:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7B186610CB
-	for <kernel-janitors@archiver.kernel.org>; Sun, 11 Apr 2021 13:36:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00DE36105A
+	for <kernel-janitors@archiver.kernel.org>; Sun, 11 Apr 2021 15:58:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235095AbhDKNhG (ORCPT
+        id S236349AbhDKP7M (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 11 Apr 2021 09:37:06 -0400
-Received: from mail-40134.protonmail.ch ([185.70.40.134]:18867 "EHLO
-        mail-40134.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232223AbhDKNhG (ORCPT
+        Sun, 11 Apr 2021 11:59:12 -0400
+Received: from mail-pj1-f52.google.com ([209.85.216.52]:43778 "EHLO
+        mail-pj1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236267AbhDKP7L (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 11 Apr 2021 09:37:06 -0400
-Date:   Sun, 11 Apr 2021 13:36:39 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bryanbrattlof.com;
-        s=protonmail3; t=1618148208;
-        bh=S+1fGAVV8UQL2Dd8l3RggPscvGMHVfdyONCHp5RBFt4=;
-        h=Date:To:From:Cc:Reply-To:Subject:From;
-        b=czKFh2c9sv+IQ4oyKxhSmRTc3kFleH5nErGuc1aEg8oFWnZHqnsVy5XxHaHGEnOGs
-         sUflTx+qhKo9FTqB2AMjPxvuojTY/B3KUxjGOL6ZZB3dm5vJ1jpmnhQXh8meCIv/Es
-         +qjg0f7e2r9xw8bPlMsEJexDV1OhKkzlkDFw7ChpheU7gYDZB6x71IzpzJ0bju7WR+
-         zq1/Nmuh0uVJPQWHYipSga23BaeGqVtjdCfBjdHHC7VYRtO58ZMguEiQ4f7WHqxqhm
-         lZp+4iN2jIyUDYSuHpBy+/0ZERN7UjBxm8KK/uB6h06C2I4jGonquRY1Cs3EjMMkgc
-         TZLc/MmnT9cfg==
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Larry Finger <Larry.Finger@lwfinger.net>
-From:   Bryan Brattlof <hello@bryanbrattlof.com>
-Cc:     linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Bryan Brattlof <hello@bryanbrattlof.com>
-Reply-To: Bryan Brattlof <hello@bryanbrattlof.com>
-Subject: [PATCH v4] staging: rtl8723bs: remove unnecessary goto jumps
-Message-ID: <20210411133625.38195-1-hello@bryanbrattlof.com>
+        Sun, 11 Apr 2021 11:59:11 -0400
+Received: by mail-pj1-f52.google.com with SMTP id x21-20020a17090a5315b029012c4a622e4aso5660664pjh.2;
+        Sun, 11 Apr 2021 08:58:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=v5B/SxQlFrHLo+Ii4FhwOsO2iGqGZQI3Qni9NgWHOwA=;
+        b=s+X8kFgFjEUe3xgZZS7i6Fe+zjv9WWh4fPN6iv/vS/y9AvH2WaPBUiCVEefxfZgLX3
+         OySx7bRU/W160yFEZidVHVRfqBumCOzgd36JNyN6PoKrsys5B5jv49S4XFzM4kHVA2C/
+         jsVKjBMMiLuqig9dmvEST9jEIiYQVnsLsWU8GDo5OQrnhrt3YDpG4UAd//wO2+yrfNAW
+         OgY4Y5beMh7HO6k7ReCjYnFuSuLEZJrxXDijI0b5WeBI36tJO0oFsDlN+srUenw7BprH
+         tS9vQyGTWGe8vAFV4UWO26QgfdrEWucnJCpDc0nEwzZq5UvXsezlVFcyFRhx65X9qzaB
+         n99w==
+X-Gm-Message-State: AOAM532pGcCARdeLL1wE5PNYMnlZrtKd/D0Xp1a2r/PW4D00lU4N70m6
+        Aj70r52KEAfX0gI7g6tLsXuqfMIMhuo=
+X-Google-Smtp-Source: ABdhPJyK2adZtQk/OjYeR4ypZP0ipNQSXpvgS28NGUzoqoncHcOmb7mHAUFjXjUg9wBfeqt2vA6IpA==
+X-Received: by 2002:a17:90a:55ca:: with SMTP id o10mr23382029pjm.173.1618156734486;
+        Sun, 11 Apr 2021 08:58:54 -0700 (PDT)
+Received: from ?IPv6:2601:647:4000:d7:7c41:980e:bfa1:bbb4? ([2601:647:4000:d7:7c41:980e:bfa1:bbb4])
+        by smtp.gmail.com with ESMTPSA id j3sm7224630pfc.49.2021.04.11.08.58.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 11 Apr 2021 08:58:53 -0700 (PDT)
+Subject: Re: [PATCH] scsi: qla2xxx: Re-use existing error handling path
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        njavali@marvell.com, GR-QLogic-Storage-Upstream@marvell.com,
+        jejb@linux.ibm.com, martin.petersen@oracle.com
+Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <6973844a1532ec2dc8e86f3533362e79d78ed774.1618132821.git.christophe.jaillet@wanadoo.fr>
+From:   Bart Van Assche <bvanassche@acm.org>
+Message-ID: <f237fbd4-2ebf-0105-2a1a-93672cd446cb@acm.org>
+Date:   Sun, 11 Apr 2021 08:58:52 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
+In-Reply-To: <6973844a1532ec2dc8e86f3533362e79d78ed774.1618132821.git.christophe.jaillet@wanadoo.fr>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The next instruction for both 'goto exit' jump statements is to
-execute the exit jump instructions regardless. We can safely
-remove all jump statements from __init rtw_drv_entry()
+On 4/11/21 2:21 AM, Christophe JAILLET wrote:
+> The code above this hunk looks spurious to me.
+> 
+> It looks like an error handling path (i.e.
+> "if (response_len > bsg_job->reply_payload.payload_len)")
+> but returns 0, which is the initial value of 'ret'.
+> 
+> Shouldn't we have ret = -<something> here?
 
-Signed-off-by: Bryan Brattlof <hello@bryanbrattlof.com>
----
-Changes from:
-  v1: removed unnecessary edit of DBG_871X_LEVEL
-  v2: elaborated on steps to remove a checkpatch.pl warning
-  v3: separated checkpatch.pl fix into separate patch
+Hmm ... if I read that code path correctly it is on purpose that that
+code path returns 0 and error reporting happens by reporting the
+EXT_STATUS_BUFFER_TOO_SMALL error code to user space.
 
- drivers/staging/rtl8723bs/os_dep/sdio_intf.c | 4 ----
- 1 file changed, 4 deletions(-)
+> ---
+>  drivers/scsi/qla2xxx/qla_bsg.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/scsi/qla2xxx/qla_bsg.c b/drivers/scsi/qla2xxx/qla_bsg.c
+> index aef2f7cc89d3..d42b2ad84049 100644
+> --- a/drivers/scsi/qla2xxx/qla_bsg.c
+> +++ b/drivers/scsi/qla2xxx/qla_bsg.c
+> @@ -2585,8 +2585,8 @@ qla2x00_get_host_stats(struct bsg_job *bsg_job)
+>  
+>  	data = kzalloc(response_len, GFP_KERNEL);
+>  	if (!data) {
+> -		kfree(req_data);
+> -		return -ENOMEM;
+> +		ret = -ENOMEM;
+> +		goto host_stat_out;
+>  	}
+>  
+>  	ret = qla2xxx_get_ini_stats(fc_bsg_to_shost(bsg_job), req_data->stat_type,
 
-diff --git a/drivers/staging/rtl8723bs/os_dep/sdio_intf.c b/drivers/staging=
-/rtl8723bs/os_dep/sdio_intf.c
-index 9fd926e1698f..2b61a4bdd8a1 100644
---- a/drivers/staging/rtl8723bs/os_dep/sdio_intf.c
-+++ b/drivers/staging/rtl8723bs/os_dep/sdio_intf.c
-@@ -517,12 +517,8 @@ static int __init rtw_drv_entry(void)
- =09if (ret !=3D 0) {
- =09=09sdio_drvpriv.drv_registered =3D false;
- =09=09rtw_ndev_notifier_unregister();
--=09=09goto exit;
- =09}
-=20
--=09goto exit;
--
--exit:
- =09DBG_871X_LEVEL(_drv_always_, "module init ret =3D%d\n", ret);
- =09return ret;
- }
---=20
-2.27.0
+Since the above looks good to me:
 
-
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
