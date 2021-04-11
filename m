@@ -2,70 +2,78 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BCE0C433ED
-	for <kernel-janitors@archiver.kernel.org>; Sun, 11 Apr 2021 12:57:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6B7FC433ED
+	for <kernel-janitors@archiver.kernel.org>; Sun, 11 Apr 2021 13:05:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C0959611CE
-	for <kernel-janitors@archiver.kernel.org>; Sun, 11 Apr 2021 12:57:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB18D610E9
+	for <kernel-janitors@archiver.kernel.org>; Sun, 11 Apr 2021 13:05:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232223AbhDKM5d (ORCPT
+        id S235622AbhDKNGJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 11 Apr 2021 08:57:33 -0400
-Received: from smtp06.smtpout.orange.fr ([80.12.242.128]:56862 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235306AbhDKM5c (ORCPT
+        Sun, 11 Apr 2021 09:06:09 -0400
+Received: from mail-40136.protonmail.ch ([185.70.40.136]:44218 "EHLO
+        mail-40136.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235606AbhDKNGJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 11 Apr 2021 08:57:32 -0400
-Received: from localhost.localdomain ([90.126.11.170])
-        by mwinf5d63 with ME
-        id rQxE240053g7mfN03QxEy7; Sun, 11 Apr 2021 14:57:14 +0200
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 11 Apr 2021 14:57:14 +0200
-X-ME-IP: 90.126.11.170
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     james.schulman@cirrus.com, david.rhodes@cirrus.com,
-        lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz,
-        tiwai@suse.com
-Cc:     alsa-devel@alsa-project.org, patches@opensource.cirrus.com,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] ASoC: cs35l36: Fix an error handling path in 'cs35l36_i2c_probe()'
-Date:   Sun, 11 Apr 2021 14:57:13 +0200
-Message-Id: <9fec48e75bc1d3c92626e6f6aca2344bda223379.1618145790.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.27.0
+        Sun, 11 Apr 2021 09:06:09 -0400
+Date:   Sun, 11 Apr 2021 13:05:45 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bryanbrattlof.com;
+        s=protonmail3; t=1618146350;
+        bh=gMCbMDXKluEh7a3wZCLySW+6f1sYY+ESIrdx8bfwTtE=;
+        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:From;
+        b=QJY4bBcPITcWEBo4JwJW5uYGcN8Hzt32/bfJZkm1+yyaaQ69d+Q2nMVKvQrhFq+Jr
+         JD7qzRPF9xUwgEnnEGTit2YgRrtWFvT817LTSWMYXMw+78MIPwILyHsVTYUxYo6v+c
+         o6CfICy0rsBqi8DL8UJQqWRYNIW+hLm/yvYGijTbAZ0fQcwo5fDhouI3ZpgqLrNAic
+         9vfHxKTS4uNEQX5smN0P2o77AkGlpnsln1ZjF+cMaCs0nfj8xCf8E9baR6nR18eb+t
+         BNXrod8g/iNm3MZBBsCf1MBZ32Vh6xudRhT6a5Zw9tg7uo/h0Rf3iZXf8Xvf7bBisY
+         AMzpbB4/FpZQQ==
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From:   Bryan Brattlof <hello@bryanbrattlof.com>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Reply-To: Bryan Brattlof <hello@bryanbrattlof.com>
+Subject: Re: [PATCH v3] staging: rtl8723bs: remove unnecessary goto jumps
+Message-ID: <20210411130531.wpp2jm5xsoxhombk@bryanbrattlof.com>
+In-Reply-To: <YHKaeaEPzoDRKI01@kroah.com>
+References: <20210410152536.426047-1-hello@bryanbrattlof.com> <YHKaeaEPzoDRKI01@kroah.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-If 'devm_regmap_init_i2c()' fails, there is no need to goto err. We should
-return directly as already done by the surrounding error handling paths.
+On Sun, Apr 11, 2021 at 08:43:05AM +0200, Greg Kroah-Hartman wrote:
+>
+>On Sat, Apr 10, 2021 at 03:27:02PM +0000, Bryan Brattlof wrote:
+>> The next instruction for both 'goto exit' jump statements is to
+>> execute the exit jump instructions regardless. We can safely
+>> remove all jump statements from __init rtw_drv_entry()
+>>
+>> This will also remove the extra line-break before module_init()
+>> that checkpatch.pl was concerned with.
+>
+>When you say "also", that almost always means it should be a separate
+>patch.  Please do so here, try to do only "one logical thing" per kernel
+>patch please.
+>
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- sound/soc/codecs/cs35l36.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Will do.
 
-diff --git a/sound/soc/codecs/cs35l36.c b/sound/soc/codecs/cs35l36.c
-index 4451ca9f4916..a038bcec2d17 100644
---- a/sound/soc/codecs/cs35l36.c
-+++ b/sound/soc/codecs/cs35l36.c
-@@ -1721,7 +1721,7 @@ static int cs35l36_i2c_probe(struct i2c_client *i2c_client,
- 	if (IS_ERR(cs35l36->regmap)) {
- 		ret = PTR_ERR(cs35l36->regmap);
- 		dev_err(dev, "regmap_init() failed: %d\n", ret);
--		goto err;
-+		return ret;
- 	}
- 
- 	cs35l36->num_supplies = ARRAY_SIZE(cs35l36_supplies);
--- 
-2.27.0
+I'll resubmit a clean v4 without the extra bits.
+
+>
+>thanks,
+>
+>greg k-h
+
+--
+~Brayn
 
