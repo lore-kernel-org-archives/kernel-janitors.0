@@ -2,80 +2,86 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4F2DC433B4
-	for <kernel-janitors@archiver.kernel.org>; Sun, 11 Apr 2021 09:21:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6867C433ED
+	for <kernel-janitors@archiver.kernel.org>; Sun, 11 Apr 2021 09:30:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9EAFB610E9
-	for <kernel-janitors@archiver.kernel.org>; Sun, 11 Apr 2021 09:21:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79E1A610A2
+	for <kernel-janitors@archiver.kernel.org>; Sun, 11 Apr 2021 09:30:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235237AbhDKJWA (ORCPT
+        id S235214AbhDKJae (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 11 Apr 2021 05:22:00 -0400
-Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:39109 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235202AbhDKJWA (ORCPT
+        Sun, 11 Apr 2021 05:30:34 -0400
+Received: from so254-9.mailgun.net ([198.61.254.9]:60060 "EHLO
+        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229804AbhDKJad (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 11 Apr 2021 05:22:00 -0400
-Received: from localhost.localdomain ([90.126.11.170])
-        by mwinf5d20 with ME
-        id rMMh2400e3g7mfN03MMhju; Sun, 11 Apr 2021 11:21:43 +0200
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 11 Apr 2021 11:21:43 +0200
-X-ME-IP: 90.126.11.170
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     njavali@marvell.com, GR-QLogic-Storage-Upstream@marvell.com,
-        jejb@linux.ibm.com, martin.petersen@oracle.com
-Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] scsi: qla2xxx: Re-use existing error handling path
-Date:   Sun, 11 Apr 2021 11:21:40 +0200
-Message-Id: <6973844a1532ec2dc8e86f3533362e79d78ed774.1618132821.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.27.0
+        Sun, 11 Apr 2021 05:30:33 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1618133417; h=Date: Message-Id: Cc: To: References:
+ In-Reply-To: From: Subject: Content-Transfer-Encoding: MIME-Version:
+ Content-Type: Sender; bh=Wjr4MtiwE10dyuPFl8BYAE2OkUDfX84c9+H04sEh7dQ=;
+ b=rG/zxDpnNHTZjQzYXVw7DTFFyyziEm8zsEw4+B6wlgbeZ8rtW8XWmq7A4aipnZxxFxZwHkw2
+ xK2MY+B1OiAyw3lWW91N24PHy2kWCwlkcQsDx5xTw2tTGoEYmkNdwup5ytACBdYN5xJBZJUy
+ PWztURwmhbXBJbO6bU0uquUvurA=
+X-Mailgun-Sending-Ip: 198.61.254.9
+X-Mailgun-Sid: WyI5NDExNyIsICJrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n06.prod.us-west-2.postgun.com with SMTP id
+ 6072c180febcffa80ff6be48 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Sun, 11 Apr 2021 09:29:36
+ GMT
+Sender: kvalo=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 110E4C433CA; Sun, 11 Apr 2021 09:29:36 +0000 (UTC)
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7CA22C433C6;
+        Sun, 11 Apr 2021 09:29:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7CA22C433C6
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v2] rtw88: Fix an error code in
+ rtw_debugfs_set_rsvd_page()
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <YE8nmatMDBDDWkjq@mwanda>
+References: <YE8nmatMDBDDWkjq@mwanda>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Yan-Hsuan Chuang <tony0620emma@gmail.com>,
+        Tzu-En Huang <tehuang@realtek.com>,
+        linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.5.2
+Message-Id: <20210411092936.110E4C433CA@smtp.codeaurora.org>
+Date:   Sun, 11 Apr 2021 09:29:36 +0000 (UTC)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is no need to duplicate some code, use the existing error handling
-path to free some resources.
-This is more future-proof.
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-The code above this hunk looks spurious to me.
+> The sscanf() function returns the number of matches (0 or 1 in this
+> case).  It doesn't return error codes.  We should return -EINVAL if the
+> string is invalid
+> 
+> Fixes: c376c1fc87b7 ("rtw88: add h2c command in debugfs")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-It looks like an error handling path (i.e.
-"if (response_len > bsg_job->reply_payload.payload_len)")
-but returns 0, which is the initial value of 'ret'.
+Patch applied to wireless-drivers-next.git, thanks.
 
-Shouldn't we have ret = -<something> here?
----
- drivers/scsi/qla2xxx/qla_bsg.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+c9eaee0c2ec6 rtw88: Fix an error code in rtw_debugfs_set_rsvd_page()
 
-diff --git a/drivers/scsi/qla2xxx/qla_bsg.c b/drivers/scsi/qla2xxx/qla_bsg.c
-index aef2f7cc89d3..d42b2ad84049 100644
---- a/drivers/scsi/qla2xxx/qla_bsg.c
-+++ b/drivers/scsi/qla2xxx/qla_bsg.c
-@@ -2585,8 +2585,8 @@ qla2x00_get_host_stats(struct bsg_job *bsg_job)
- 
- 	data = kzalloc(response_len, GFP_KERNEL);
- 	if (!data) {
--		kfree(req_data);
--		return -ENOMEM;
-+		ret = -ENOMEM;
-+		goto host_stat_out;
- 	}
- 
- 	ret = qla2xxx_get_ini_stats(fc_bsg_to_shost(bsg_job), req_data->stat_type,
 -- 
-2.27.0
+https://patchwork.kernel.org/project/linux-wireless/patch/YE8nmatMDBDDWkjq@mwanda/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
