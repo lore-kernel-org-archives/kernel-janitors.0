@@ -2,84 +2,104 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBC38C43461
-	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Apr 2021 19:01:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9613CC433ED
+	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Apr 2021 19:59:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CA3C061358
-	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Apr 2021 19:01:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73DAB61370
+	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Apr 2021 19:59:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236864AbhDLTBp (ORCPT
+        id S245408AbhDLT7y (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 12 Apr 2021 15:01:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56390 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236781AbhDLTBo (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 12 Apr 2021 15:01:44 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D180B61356;
-        Mon, 12 Apr 2021 19:01:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1618254086;
-        bh=wgbZzfhm4HQr4rtiTGyBeEl37821JWgT1iYcHuDlc6M=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MrwoeN8P6TCu3iuVNvKnNoom+Vy1QhBCcAIZlYufUcYGkgdjT7RpptEs68m8kxZ//
-         z/hEiEFY85NwzdxnL/TODg1eAwFMvXZ2SFKZSDIo7KH2J9xZTuhT9ZUxkvV2AolgeJ
-         S+UqqbjWBzFykJn84dZ9ALEjF3fCtEo4IBZDJUDZ0FyvIu7cJgg8V31hVdGHtPYTRy
-         eJtE47Cpe28CfBDpetFPcIqU1cQNyCLTuX4HU58waH0boSulPSLII9JRVKpdw+mD9l
-         24ouMANjyNkURiJUlLfNBGXs0IHKkJjcOCJ4DNQdgja9oeyl+m2IX2unuPduRQzmYG
-         8IyKFmhWTAGlQ==
-From:   Mark Brown <broonie@kernel.org>
-To:     Quanyang Wang <quanyang.wang@windriver.com>,
-        Wei Yongjun <weiyongjun1@huawei.com>,
-        Michal Simek <michal.simek@xilinx.com>
-Cc:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Hulk Robot <hulkci@huawei.com>, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH -next] spi: spi-zynqmp-gqspi: Fix missing unlock on error in zynqmp_qspi_exec_op()
-Date:   Mon, 12 Apr 2021 20:00:58 +0100
-Message-Id: <161825405874.52313.7242174771524864608.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20210412160025.194171-1-weiyongjun1@huawei.com>
-References: <20210412160025.194171-1-weiyongjun1@huawei.com>
+        Mon, 12 Apr 2021 15:59:54 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:47092 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S243661AbhDLT7y (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 12 Apr 2021 15:59:54 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: sre)
+        with ESMTPSA id 188B71F44D1C
+Received: by earth.universe (Postfix, from userid 1000)
+        id E16903C0C96; Mon, 12 Apr 2021 21:59:30 +0200 (CEST)
+Date:   Mon, 12 Apr 2021 21:59:30 +0200
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     Bixuan Cui <cuibixuan@huawei.com>
+Cc:     linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH -next] power/reset: Add missing MODULE_DEVICE_TABLE
+Message-ID: <20210412195930.zyzgjwjzgkqhe4rc@earth.universe>
+References: <20210410035040.11370-1-cuibixuan@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ldtjcraeudyq4k5g"
+Content-Disposition: inline
+In-Reply-To: <20210410035040.11370-1-cuibixuan@huawei.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, 12 Apr 2021 16:00:25 +0000, Wei Yongjun wrote:
-> Add the missing unlock before return from function zynqmp_qspi_exec_op()
-> in the error handling case.
 
-Applied to
+--ldtjcraeudyq4k5g
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+Hi,
 
-Thanks!
+On Sat, Apr 10, 2021 at 11:50:40AM +0800, Bixuan Cui wrote:
+> This patch adds missing MODULE_DEVICE_TABLE definition which generates
+> correct modalias for automatic loading of this driver when it is built
+> as an external module.
+>=20
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Bixuan Cui <cuibixuan@huawei.com>
+> ---
 
-[1/1] spi: spi-zynqmp-gqspi: Fix missing unlock on error in zynqmp_qspi_exec_op()
-      commit: 6043357263fbe2df0bf0736d971ad5dce7d19dc1
+Thanks, queued.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+-- Sebastian
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+>  drivers/power/reset/restart-poweroff.c | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/drivers/power/reset/restart-poweroff.c b/drivers/power/reset=
+/restart-poweroff.c
+> index d233daa5835b..04d4228119b2 100644
+> --- a/drivers/power/reset/restart-poweroff.c
+> +++ b/drivers/power/reset/restart-poweroff.c
+> @@ -45,6 +45,7 @@ static const struct of_device_id of_restart_poweroff_ma=
+tch[] =3D {
+>  	{ .compatible =3D "restart-poweroff", },
+>  	{},
+>  };
+> +MODULE_DEVICE_TABLE(of, of_restart_poweroff_match);
+> =20
+>  static struct platform_driver restart_poweroff_driver =3D {
+>  	.probe =3D restart_poweroff_probe,
+>=20
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+--ldtjcraeudyq4k5g
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+-----BEGIN PGP SIGNATURE-----
 
-Thanks,
-Mark
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmB0ppkACgkQ2O7X88g7
++poKdQ//XfIG/zO5tro961sC5McdKqBvNfitlCdg2iZJHS+4tMMdZsqLrGXhYFUY
+qZswkQpQtfoLRhNfTydFMuNE7+3WSwFWnoGXeZtm6i2KEyuhjhCszGyTBwlQd4c3
+OV3N3M9biP/Oe6QZZxttTGK+MqUr6Uzs+qbGu7DSKtGLhicFPCsjkDrh5A69aimQ
+IcCd6MBEQP48e/WlPK4PsJSRzbVI/Wb/qF9d6N/L4EGj12IXFRXhN4iRvwetx5Gg
+Xi+VQRwChkeRyEmFh5/509esiN5ukE10NXdl2KSg8kx4bkoeI3bXdZCETiuuuIGD
+wAsswybmBn/tysHFSY+u1dwURIajJTeHqaO+3/7doPd8//Uxo0lBaD8MtJln0eVx
+1venlIu8vFgU7Ryb3nAZhVB35+w/kUjWp0nTY2Iblmq0qH5JrUnowFFnoAgtJepP
+lLFLa0tcPRtksWhNMa3Zsw8/pm02v6uZi5KPY77dMuyqWTR5BO9VPOgE0i721IsZ
+nJewRGsSPdx+DqFhyfYt+mcmsOESPNAki3+QSbv3APz4cEva5nufMQRWW2i/H0K6
+w+lOEsiFVgBSNA6XzFZhVp5KbS0a8HQaroBLec9TJm+owipZ3/TKAnmYlOMXvVfE
+JztOyMT8KcvH9xpIU75wpDM1pvGL+SKLep6p1paU57+MUZSm45o=
+=gxXx
+-----END PGP SIGNATURE-----
+
+--ldtjcraeudyq4k5g--
