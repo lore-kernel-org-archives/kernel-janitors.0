@@ -2,73 +2,121 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 947E8C4361B
-	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Apr 2021 16:30:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0270DC433B4
+	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Apr 2021 16:51:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6DE866135D
-	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Apr 2021 16:30:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1B16611C9
+	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Apr 2021 16:51:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244762AbhDLQbC (ORCPT
+        id S245649AbhDLQvu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 12 Apr 2021 12:31:02 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:49697 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243998AbhDLQ20 (ORCPT
+        Mon, 12 Apr 2021 12:51:50 -0400
+Received: from mail-40136.protonmail.ch ([185.70.40.136]:30997 "EHLO
+        mail-40136.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1343763AbhDLQoG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 12 Apr 2021 12:28:26 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1lVzPw-00086R-Sy; Mon, 12 Apr 2021 16:28:04 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     "Michael S . Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Parav Pandit <parav@nvidia.com>,
-        virtualization@lists.linux-foundation.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] vdpa/mlx5: Fix resource leak of mgtdev due to incorrect kfree
-Date:   Mon, 12 Apr 2021 17:28:04 +0100
-Message-Id: <20210412162804.1628738-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.30.2
+        Mon, 12 Apr 2021 12:44:06 -0400
+Date:   Mon, 12 Apr 2021 16:43:31 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bryanbrattlof.com;
+        s=protonmail3; t=1618245812;
+        bh=bur6pDDgjXw6skXkwkUN9ZOYk+3Tg1KFD6dBSPnGAeY=;
+        h=Date:To:From:Reply-To:Subject:In-Reply-To:References:From;
+        b=l9jOGwG/5CoYVff8V7q5TX8HbZUX+omtZjQwP5pNTKJR2yuiTHx5ZNKnsSnfsXyAV
+         FvGW1jNoSmOlzeSe5V5/IM7rT07luS8vMMauGVYEyFf/inaAISgM2KUEaDQoRXn09O
+         U7EdlDkIOCEMDBYbka33WDTViGCxzdGVtu1VpYXj6GI1D5WmIZuFiRSnKrO0lLjHZK
+         fWuhD8K/R7DfBonjjUKKtFYNi58CguG5wm7AmIfuzNqV2+umb/S23n0+w0E7UrlMK/
+         mb2bhiO1v9zwf6eNPivufhY8jFqe8lnfiI886yi3HkuSQMXrg8QoBN2FEZkOiZxzPa
+         Uli54d2GOPsWw==
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+From:   Bryan Brattlof <hello@bryanbrattlof.com>
+Reply-To: Bryan Brattlof <hello@bryanbrattlof.com>
+Subject: NAK: [PATCH] staging: rtl8723bs: remove unnecessary adapter
+Message-ID: <20210412163414.5i53wyvguckj5uxz@bryanbrattlof.com>
+In-Reply-To: <20210412140054.27629-1-hello@bryanbrattlof.com>
+References: <20210412140054.27629-1-hello@bryanbrattlof.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Mon, Apr 12, 2021 at 02:01:49PM +0000, Bryan Brattlof wrote:
+>
+>The if2 adapter is defined in rtw_dvr_init() and in the dvobj_priv
+>structure but never used anywhere in the driver. This will remove all
+>definitions of if2
+>
+>Signed-off-by: Bryan Brattlof <hello@bryanbrattlof.com>
+>---
+> drivers/staging/rtl8723bs/include/drv_types.h |  1 -
+> drivers/staging/rtl8723bs/os_dep/sdio_intf.c  | 10 ++++------
+> 2 files changed, 4 insertions(+), 7 deletions(-)
+>
+>diff --git a/drivers/staging/rtl8723bs/include/drv_types.h b/drivers/stagi=
+ng/rtl8723bs/include/drv_types.h
+>index cec8d5ac0e2e..35882dc2654e 100644
+>--- a/drivers/staging/rtl8723bs/include/drv_types.h
+>+++ b/drivers/staging/rtl8723bs/include/drv_types.h
+>@@ -269,7 +269,6 @@ struct cam_entry_cache {
+> struct dvobj_priv {
+> =09/*-------- below is common data --------*/
+> =09struct adapter *if1; /* PRIMARY_ADAPTER */
+>-=09struct adapter *if2; /* SECONDARY_ADAPTER */
+>
+> =09s32=09processing_dev_remove;
+>
+>diff --git a/drivers/staging/rtl8723bs/os_dep/sdio_intf.c b/drivers/stagin=
+g/rtl8723bs/os_dep/sdio_intf.c
+>index 2b61a4bdd8a1..3545cb6ef886 100644
+>--- a/drivers/staging/rtl8723bs/os_dep/sdio_intf.c
+>+++ b/drivers/staging/rtl8723bs/os_dep/sdio_intf.c
+>@@ -381,7 +381,7 @@ static int rtw_drv_init(
+> =09const struct sdio_device_id *id)
+> {
+> =09int status =3D _FAIL;
+>-=09struct adapter *if1 =3D NULL, *if2 =3D NULL;
+>+=09struct adapter *if1 =3D NULL;
+> =09struct dvobj_priv *dvobj;
+>
+> =09dvobj =3D sdio_dvobj_init(func);
+>@@ -395,17 +395,15 @@ static int rtw_drv_init(
+> =09/* dev_alloc_name && register_netdev */
+> =09status =3D rtw_drv_register_netdev(if1);
+> =09if (status !=3D _SUCCESS)
+>-=09=09goto free_if2;
+>+=09=09goto free_if1;
+>
+> =09if (sdio_alloc_irq(dvobj) !=3D _SUCCESS)
+>-=09=09goto free_if2;
+>+=09=09goto free_if1;
+>
+> =09rtw_ndev_notifier_register();
+> =09status =3D _SUCCESS;
+>
+>-free_if2:
+>-=09if (status !=3D _SUCCESS && if2) {
+>-=09}
+>+free_if1:
+> =09if (status !=3D _SUCCESS && if1) {
+> =09=09rtw_sdio_if1_deinit(if1);
+> =09}
+>--=20
+>2.27.0
+>
 
-Static analysis is reporting a memory leak on mgtdev, it appears
-that the wrong object is being kfree'd. Fix this by kfree'ing
-mgtdev rather than mdev.
+Nack. There is a merge conflict when updating to next-20210412. I'll=20
+resend v2 after I resolve the conflict.
 
-Addresses-Coverity: ("Resource leak")
-Fixes: c8a2d4c73e70 ("vdpa/mlx5: Enable user to add/delete vdpa device")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/vdpa/mlx5/net/mlx5_vnet.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/mlx5_vnet.c
-index 10c5fef3c020..25533db01f5f 100644
---- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
-+++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
-@@ -2089,7 +2089,7 @@ static int mlx5v_probe(struct auxiliary_device *adev,
- 	return 0;
- 
- reg_err:
--	kfree(mdev);
-+	kfree(mgtdev);
- 	return err;
- }
- 
--- 
-2.30.2
+--
+~Bryan
 
