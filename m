@@ -2,147 +2,89 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04943C433ED
-	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Apr 2021 17:04:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B507DC433ED
+	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Apr 2021 17:10:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C6794611CE
-	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Apr 2021 17:04:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7AFD061206
+	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Apr 2021 17:10:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243915AbhDLRFJ (ORCPT
+        id S243366AbhDLRLL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 12 Apr 2021 13:05:09 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:50528 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245261AbhDLRE6 (ORCPT
+        Mon, 12 Apr 2021 13:11:11 -0400
+Received: from mail1.protonmail.ch ([185.70.40.18]:21347 "EHLO
+        mail1.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239716AbhDLRLL (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 12 Apr 2021 13:04:58 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212])
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1lVzzJ-00023K-IM; Mon, 12 Apr 2021 17:04:37 +0000
-Subject: Re: [PATCH][next] KEYS: trusted: Fix missing null return from kzalloc
- call
-To:     jejb@linux.ibm.com, Jarkko Sakkinen <jarkko@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Sumit Garg <sumit.garg@linaro.org>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210412160101.1627882-1-colin.king@canonical.com>
- <adeb7c73d0bb354f04f8117c5ccf6b006dfc15de.camel@linux.ibm.com>
-From:   Colin Ian King <colin.king@canonical.com>
-Message-ID: <53fef8cf-0dd4-e4fe-260b-0f5ad25d9014@canonical.com>
-Date:   Mon, 12 Apr 2021 18:04:37 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        Mon, 12 Apr 2021 13:11:11 -0400
+Date:   Mon, 12 Apr 2021 17:10:45 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bryanbrattlof.com;
+        s=protonmail3; t=1618247450;
+        bh=Bk58r5KxeglWZsaj3TvPM8D2XXqW6yrQ2YKhGW/xiE4=;
+        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:From;
+        b=RmC88qUlDzbuJzrj9YfH1xajWpJirjYC9P41w93yxnVM8fxE9uF/tNGQhofRv3gm2
+         joR+CwhtOhHg7yHUQZgsZQsNLVPXGhyvFOQOEnSqKDU7w62TXgZ1Ui7jIYYZDnF96C
+         yey31HRp2D2Q1GIgx3HLLrpYp/pn/5+EsyCKsqRlbB5rsaHaupGD+OOXzcWcdNAwM+
+         46YgrGlzIOc13khW7z+J25/EMCJ8lvewga8+VPBLStHu2cd5vjlxHDxyC8cHaPqDsn
+         g7vFa9WXWujc40T3vOOTG8f8uJHcjYkrDsrb8HWhgmIlrnDTGkWV6RY7fXJpzjyuPM
+         /UTD+z2RAVtZg==
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From:   Bryan Brattlof <hello@bryanbrattlof.com>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Reply-To: Bryan Brattlof <hello@bryanbrattlof.com>
+Subject: Re: [PATCH v2] staging: rtl8723bs: remove unnecessary adapter
+Message-ID: <20210412170939.beicrv26yiaapt7i@bryanbrattlof.com>
+In-Reply-To: <YHR5L2aSZ4hNNmT0@kroah.com>
+References: <20210412163650.42467-1-hello@bryanbrattlof.com> <YHR5L2aSZ4hNNmT0@kroah.com>
 MIME-Version: 1.0
-In-Reply-To: <adeb7c73d0bb354f04f8117c5ccf6b006dfc15de.camel@linux.ibm.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 12/04/2021 17:48, James Bottomley wrote:
-> On Mon, 2021-04-12 at 17:01 +0100, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
+On Mon, Apr 12, 2021 at 06:45:35PM +0200, Greg Kroah-Hartman wrote:
+>
+>On Mon, Apr 12, 2021 at 04:43:56PM +0000, Bryan Brattlof wrote:
+>> The if2 adapter is defined in rtw_dvr_init() and in the dvobj_priv
+>> structure but never used anywhere in the driver. This will remove all
+>> definitions of if2
 >>
->> The kzalloc call can return null with the GFP_KERNEL flag so
->> add a null check and exit via a new error exit label. Use the
->> same exit error label for another error path too.
->>
->> Addresses-Coverity: ("Dereference null return value")
->> Fixes: 830027e2cb55 ("KEYS: trusted: Add generic trusted keys
->> framework")
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>> Signed-off-by: Bryan Brattlof <hello@bryanbrattlof.com>
 >> ---
->>  security/keys/trusted-keys/trusted_core.c | 6 ++++--
->>  1 file changed, 4 insertions(+), 2 deletions(-)
->>
->> diff --git a/security/keys/trusted-keys/trusted_core.c
->> b/security/keys/trusted-keys/trusted_core.c
->> index ec3a066a4b42..90774793f0b1 100644
->> --- a/security/keys/trusted-keys/trusted_core.c
->> +++ b/security/keys/trusted-keys/trusted_core.c
->> @@ -116,11 +116,13 @@ static struct trusted_key_payload
->> *trusted_payload_alloc(struct key *key)
->>  
->>  	ret = key_payload_reserve(key, sizeof(*p));
->>  	if (ret < 0)
->> -		return p;
->> +		goto err;
->>  	p = kzalloc(sizeof(*p), GFP_KERNEL);
->> +	if (!p)
->> +		goto err;
->>  
->>  	p->migratable = migratable;
->> -
->> +err:
->>  	return p;
-> 
-> This is clearly a code migration bug in 
-> 
-> commit 251c85bd106099e6f388a89e88e12d14de2c9cda
-> Author: Sumit Garg <sumit.garg@linaro.org>
-> Date:   Mon Mar 1 18:41:24 2021 +0530
-> 
->     KEYS: trusted: Add generic trusted keys framework
-> 
-> Which has for addition to trusted_core.c:
-> 
-> +static struct trusted_key_payload *trusted_payload_alloc(struct key
-> *key)
-> +{
-> +       struct trusted_key_payload *p = NULL;
-> +       int ret;
-> +
-> +       ret = key_payload_reserve(key, sizeof(*p));
-> +       if (ret < 0)
-> +               return p;
-> +       p = kzalloc(sizeof(*p), GFP_KERNEL);
-> +
-> +       p->migratable = migratable;
-> +
-> +       return p;
-> +}
-> 
-> And for trusted_tpm1.c:
-> 
-> -static struct trusted_key_payload *trusted_payload_alloc(struct key
-> *key)
-> -{
-> -       struct trusted_key_payload *p = NULL;
-> -       int ret;
-> -
-> -       ret = key_payload_reserve(key, sizeof *p);
-> -       if (ret < 0)
-> -               return p;
-> -       p = kzalloc(sizeof *p, GFP_KERNEL);
-> -       if (p)
-> -               p->migratable = 1; /* migratable by default */
-> -       return p;
-> -}
-> 
-> The trusted_tpm1.c code was correct and we got this bug introduced by
-> what should have been a simple cut and paste ... how did that happen? 
-> And therefore, how safe is the rest of the extraction into
-> trusted_core.c?
-> 
+>>  drivers/staging/rtl8723bs/include/drv_types.h |  1 -
+>>  drivers/staging/rtl8723bs/os_dep/sdio_intf.c  | 10 ++++------
+>>  2 files changed, 4 insertions(+), 7 deletions(-)
+>
+>What changed from v1?  That goes below the --- line.
+>
+>v3?
 
-fortunately it gets caught by static analysis, but it does make me also
-concerned about what else has changed and how this gets through review.
+Oops.
 
-> James
-> 
-> 
+it's the simple things that always seem to be the hardest :)
+
+During the rebase to next-20210412, I lost the bracket on the=20
+conditional statement:
+
+   394: +free_if1:
+   395:          if (status !=3D _SUCCESS && if1) {
+=09=09=09=09=09=09^
+
+I'll be sending v3 shortly with a proper change long :)
+--
+~Bryan
+
+
+
+
+
+
 
