@@ -2,62 +2,188 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF918C43461
-	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Apr 2021 16:51:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00995C43462
+	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Apr 2021 16:51:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B8B8461353
+	by mail.kernel.org (Postfix) with ESMTP id D053C61355
 	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Apr 2021 16:51:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245202AbhDLQvx (ORCPT
+        id S245487AbhDLQvy (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 12 Apr 2021 12:51:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44946 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1344842AbhDLQp6 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 12 Apr 2021 12:45:58 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3106161042;
-        Mon, 12 Apr 2021 16:45:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1618245937;
-        bh=YzJfpRRwHIL/702AQ7JNIjM04wJ0QxXSj4/2WU2D0Yo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=enPn3PDHLhw/lDt7On0cAtqD72stzBnSJQiVTR3LsgOEClrvOanEN1Jmulh2WTFbG
-         wGkuIFFO8I+ciIUm9snU3Hep1VV4mXl2dutwDy3U8fabfo7K0CtbwmbKpdbak5rMrD
-         1yETrg+Y4byb5Ye69LdOhq9IO5kUFQR4Z4EEOcTE=
-Date:   Mon, 12 Apr 2021 18:45:35 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Bryan Brattlof <hello@bryanbrattlof.com>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Larry Finger <Larry.Finger@lwfinger.net>,
-        linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] staging: rtl8723bs: remove unnecessary adapter
-Message-ID: <YHR5L2aSZ4hNNmT0@kroah.com>
-References: <20210412163650.42467-1-hello@bryanbrattlof.com>
+        Mon, 12 Apr 2021 12:51:54 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:17222 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S244698AbhDLQtG (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 12 Apr 2021 12:49:06 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 13CGYX1n153949;
+        Mon, 12 Apr 2021 12:48:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : reply-to : to : cc : date : in-reply-to : references : content-type
+ : mime-version : content-transfer-encoding; s=pp1;
+ bh=yK3wcz6HfMKRr+Anv1JaZYvMeKi8LZVmm3oJn9Nm67k=;
+ b=Mzg4WZ6ps4U6AK9Y4eQAIsOY3JL7iEJhS7hCATAalpARQnpMAUTsTS8FPlQSWXN75u9l
+ YBBvArEhnOgFPxzwBpBzD54Rx3EZ3NvAZ1m2uClnz9WvFc6OAJOXCOLKLy4viVhtEL6l
+ IrtfGE3WNl0ZMt4/19rXPjJ9viDlmUjHi3E4CKdNHqUuuZnzV/RnZnZaG+Vc9MKL6Xxp
+ hI7kNHOOahXigG/yzCRRECUHAqAjTX8vcZYuFCWfuHGn7RoLWoUZb4ZydBi+a3OAzXuv
+ Vy1rLpSvtGLwmgj1xWlD9TN7BUEzxxj80mST1srvl+D1IXyYV4Z18wBCYJX/J2kZ+HLV Nw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 37vjtt97y5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 12 Apr 2021 12:48:24 -0400
+Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 13CGZGAU160201;
+        Mon, 12 Apr 2021 12:48:23 -0400
+Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 37vjtt97xw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 12 Apr 2021 12:48:23 -0400
+Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
+        by ppma04wdc.us.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 13CGlsPB019257;
+        Mon, 12 Apr 2021 16:48:23 GMT
+Received: from b03cxnp08027.gho.boulder.ibm.com (b03cxnp08027.gho.boulder.ibm.com [9.17.130.19])
+        by ppma04wdc.us.ibm.com with ESMTP id 37u3n9spgx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 12 Apr 2021 16:48:23 +0000
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 13CGmMfo61407758
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 12 Apr 2021 16:48:22 GMT
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 086277805C;
+        Mon, 12 Apr 2021 16:48:22 +0000 (GMT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CAFFD7805E;
+        Mon, 12 Apr 2021 16:48:19 +0000 (GMT)
+Received: from jarvis.int.hansenpartnership.com (unknown [9.85.203.222])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Mon, 12 Apr 2021 16:48:19 +0000 (GMT)
+Message-ID: <adeb7c73d0bb354f04f8117c5ccf6b006dfc15de.camel@linux.ibm.com>
+Subject: Re: [PATCH][next] KEYS: trusted: Fix missing null return from
+ kzalloc call
+From:   James Bottomley <jejb@linux.ibm.com>
+Reply-To: jejb@linux.ibm.com
+To:     Colin King <colin.king@canonical.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Sumit Garg <sumit.garg@linaro.org>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 12 Apr 2021 09:48:18 -0700
+In-Reply-To: <20210412160101.1627882-1-colin.king@canonical.com>
+References: <20210412160101.1627882-1-colin.king@canonical.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210412163650.42467-1-hello@bryanbrattlof.com>
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: lwvJeeXsjtjq2GtvbjWudOdZYnX9b8u3
+X-Proofpoint-ORIG-GUID: sdwC6w6xF5MD7wQIQbzEaD3PM4KA4XWi
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
+ definitions=2021-04-12_11:2021-04-12,2021-04-12 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
+ priorityscore=1501 impostorscore=0 suspectscore=0 bulkscore=0 adultscore=0
+ mlxscore=0 mlxlogscore=999 clxscore=1011 phishscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104060000
+ definitions=main-2104120106
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Apr 12, 2021 at 04:43:56PM +0000, Bryan Brattlof wrote:
-> The if2 adapter is defined in rtw_dvr_init() and in the dvobj_priv
-> structure but never used anywhere in the driver. This will remove all
-> definitions of if2
+On Mon, 2021-04-12 at 17:01 +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Signed-off-by: Bryan Brattlof <hello@bryanbrattlof.com>
+> The kzalloc call can return null with the GFP_KERNEL flag so
+> add a null check and exit via a new error exit label. Use the
+> same exit error label for another error path too.
+> 
+> Addresses-Coverity: ("Dereference null return value")
+> Fixes: 830027e2cb55 ("KEYS: trusted: Add generic trusted keys
+> framework")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
->  drivers/staging/rtl8723bs/include/drv_types.h |  1 -
->  drivers/staging/rtl8723bs/os_dep/sdio_intf.c  | 10 ++++------
->  2 files changed, 4 insertions(+), 7 deletions(-)
+>  security/keys/trusted-keys/trusted_core.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/security/keys/trusted-keys/trusted_core.c
+> b/security/keys/trusted-keys/trusted_core.c
+> index ec3a066a4b42..90774793f0b1 100644
+> --- a/security/keys/trusted-keys/trusted_core.c
+> +++ b/security/keys/trusted-keys/trusted_core.c
+> @@ -116,11 +116,13 @@ static struct trusted_key_payload
+> *trusted_payload_alloc(struct key *key)
+>  
+>  	ret = key_payload_reserve(key, sizeof(*p));
+>  	if (ret < 0)
+> -		return p;
+> +		goto err;
+>  	p = kzalloc(sizeof(*p), GFP_KERNEL);
+> +	if (!p)
+> +		goto err;
+>  
+>  	p->migratable = migratable;
+> -
+> +err:
+>  	return p;
 
-What changed from v1?  That goes below the --- line.
+This is clearly a code migration bug in 
 
-v3?
+commit 251c85bd106099e6f388a89e88e12d14de2c9cda
+Author: Sumit Garg <sumit.garg@linaro.org>
+Date:   Mon Mar 1 18:41:24 2021 +0530
+
+    KEYS: trusted: Add generic trusted keys framework
+
+Which has for addition to trusted_core.c:
+
++static struct trusted_key_payload *trusted_payload_alloc(struct key
+*key)
++{
++       struct trusted_key_payload *p = NULL;
++       int ret;
++
++       ret = key_payload_reserve(key, sizeof(*p));
++       if (ret < 0)
++               return p;
++       p = kzalloc(sizeof(*p), GFP_KERNEL);
++
++       p->migratable = migratable;
++
++       return p;
++}
+
+And for trusted_tpm1.c:
+
+-static struct trusted_key_payload *trusted_payload_alloc(struct key
+*key)
+-{
+-       struct trusted_key_payload *p = NULL;
+-       int ret;
+-
+-       ret = key_payload_reserve(key, sizeof *p);
+-       if (ret < 0)
+-               return p;
+-       p = kzalloc(sizeof *p, GFP_KERNEL);
+-       if (p)
+-               p->migratable = 1; /* migratable by default */
+-       return p;
+-}
+
+The trusted_tpm1.c code was correct and we got this bug introduced by
+what should have been a simple cut and paste ... how did that happen? 
+And therefore, how safe is the rest of the extraction into
+trusted_core.c?
+
+James
+
+
