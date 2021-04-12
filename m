@@ -2,99 +2,189 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54D39C433B4
-	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Apr 2021 21:09:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65436C433B4
+	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Apr 2021 21:10:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 39A136135D
-	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Apr 2021 21:09:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 409BE610CE
+	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Apr 2021 21:10:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240417AbhDLVJd (ORCPT
+        id S244610AbhDLVKS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 12 Apr 2021 17:09:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58176 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243496AbhDLVJZ (ORCPT
+        Mon, 12 Apr 2021 17:10:18 -0400
+Received: from smtp01.smtpout.orange.fr ([80.12.242.123]:55584 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S243496AbhDLVKR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 12 Apr 2021 17:09:25 -0400
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [IPv6:2001:df5:b000:5::4])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B6DDC061574
-        for <kernel-janitors@vger.kernel.org>; Mon, 12 Apr 2021 14:09:07 -0700 (PDT)
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id C04E4891AE;
-        Tue, 13 Apr 2021 09:09:03 +1200 (NZST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-        s=mail181024; t=1618261743;
-        bh=LD/6f2tvm/F2O9bhr6TZiDc0gSD+3rtfedYS7iWSrsg=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To;
-        b=Yu0tNGKX1nM9kQIqpwOps3k4puZNGkzRxfUU6uxxd7LrKd9uG1ZuOiRdGyMajATFb
-         IYsgHCgvJNikJRi0QkDwC0c+UJwlXiw1/PSDxf4peScCuAH/GL3VvW08HP9gvsgxVm
-         wMmUx1qDm32VzV6U1P7s1i9etuqyP6TbqOmLQqKNcGWVO+fkElZy5+mIdJOgx6lOph
-         JnkE15nkSTI04ZmV6Yyw6EBpTv5tPkiwEXNtxM62bXOM7MHPlGtKYAY4t7YMuqpDeN
-         +zibV/fGf+KzmCEUDFeR/YxqSm7IlggOlAllsS1Y6Mi06yIafLcpoajN+f9dYAQOIh
-         zWlbovYBLPheQ==
-Received: from svr-chch-ex1.atlnz.lc (Not Verified[2001:df5:b000:bc8::77]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-        id <B6074b6ef0001>; Tue, 13 Apr 2021 09:09:03 +1200
-Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) by
- svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) with Microsoft SMTP Server
- (TLS) id 15.0.1497.2; Tue, 13 Apr 2021 09:09:02 +1200
-Received: from svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8]) by
- svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8%12]) with mapi id
- 15.00.1497.012; Tue, 13 Apr 2021 09:09:02 +1200
-From:   Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-To:     Wei Yongjun <weiyongjun1@huawei.com>, Wolfram Sang <wsa@kernel.org>
-CC:     "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "Hulk Robot" <hulkci@huawei.com>
-Subject: Re: [PATCH -next] i2c: mpc: drop release for resource allocated with
- devm_*
-Thread-Topic: [PATCH -next] i2c: mpc: drop release for resource allocated with
- devm_*
-Thread-Index: AQHXL7ObhQQxaGDPA0yl+VE3IF/D8qqwl44A
-Date:   Mon, 12 Apr 2021 21:09:02 +0000
-Message-ID: <8a14bef8-2c38-cd1d-ad33-6c37030cdd04@alliedtelesis.co.nz>
-References: <20210412160026.194423-1-weiyongjun1@huawei.com>
-In-Reply-To: <20210412160026.194423-1-weiyongjun1@huawei.com>
-Accept-Language: en-NZ, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.32.1.11]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <6DA7AE79CE70F5418A61B43EE4FB84D0@atlnz.lc>
-Content-Transfer-Encoding: base64
+        Mon, 12 Apr 2021 17:10:17 -0400
+Received: from [192.168.1.18] ([86.243.172.93])
+        by mwinf5d24 with ME
+        id rx9v2400321Fzsu03x9vcL; Mon, 12 Apr 2021 23:09:56 +0200
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 12 Apr 2021 23:09:56 +0200
+X-ME-IP: 86.243.172.93
+Subject: Re: [PATCH 2/3] staging: rtl8723bs: Use existing arc4 implementation
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <7e16c40d5baa007dca81a12b967a597ed00d8dd7.1618055514.git.christophe.jaillet@wanadoo.fr>
+ <6a4aebf9feb9ece975734f2e51da5ecae2996cee.1618055514.git.christophe.jaillet@wanadoo.fr>
+ <YHQUH+Nqc/zS14Tb@kroah.com>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Message-ID: <b37bc546-c087-0f9d-b16a-bfc2231e0849@wanadoo.fr>
+Date:   Mon, 12 Apr 2021 23:09:55 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.9.1
 MIME-Version: 1.0
-X-SEG-SpamProfiler-Analysis: v=2.3 cv=GfppYjfL c=1 sm=1 tr=0 a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=oKJsc7D3gJEA:10 a=IkcTkHD0fZMA:10 a=3YhXtTcJ-WEA:10 a=i0EeH86SAAAA:8 a=sZwN78S90g8iCWLGYWoA:9 a=QEXdDO2ut3YA:10
-X-SEG-SpamProfiler-Score: 0
+In-Reply-To: <YHQUH+Nqc/zS14Tb@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-DQpPbiAxMy8wNC8yMSA0OjAwIGFtLCBXZWkgWW9uZ2p1biB3cm90ZToNCj4gSXQncyBub3QgbmVj
-ZXNzYXJ5IHRvIHJlbGVhc2UgcmVzb3VyY2Ugd2hpY2ggYWxsb2NhdGVkIHdpdGggZGV2bV8qDQo+
-IGFuZCB0aG9zZSByZWxlYXNlIG1heSBsZWFkcyB0byBhIGRvdWJsZSBmcmVlLiBBbmQgYWxzbyBy
-ZW1vdmUgdXNlbGVzcw0KPiBpcnFfZGlzcG9zZV9tYXBwaW5nKCkgY2FsbCBzaW5jZSBtYXBwaW5n
-IG5vdCBjcmVhdGVkLg0KPg0KPiBGaXhlczogMDlhYWI3YWRkN2JmICgiaTJjOiBtcGM6IHVzZSBk
-ZXZpY2UgbWFuYWdlZCBBUElzIikNCj4gUmVwb3J0ZWQtYnk6IEh1bGsgUm9ib3QgPGh1bGtjaUBo
-dWF3ZWkuY29tPg0KPiBTaWduZWQtb2ZmLWJ5OiBXZWkgWW9uZ2p1biA8d2VpeW9uZ2p1bjFAaHVh
-d2VpLmNvbT4NCg0KVGhhbmtzIGZvciB0aGUgZml4Lg0KDQpSZXZpZXdlZC1ieTogQ2hyaXMgUGFj
-a2hhbSA8Y2hyaXMucGFja2hhbUBhbGxpZWR0ZWxlc2lzLmNvLm56Pg0KDQo+IC0tLQ0KPiAgIGRy
-aXZlcnMvaTJjL2J1c3Nlcy9pMmMtbXBjLmMgfCA2IC0tLS0tLQ0KPiAgIDEgZmlsZSBjaGFuZ2Vk
-LCA2IGRlbGV0aW9ucygtKQ0KPg0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9pMmMvYnVzc2VzL2ky
-Yy1tcGMuYyBiL2RyaXZlcnMvaTJjL2J1c3Nlcy9pMmMtbXBjLmMNCj4gaW5kZXggNDZjZGIzNmUy
-ZjliLi42ZTU2MTRhY2ViYWMgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvaTJjL2J1c3Nlcy9pMmMt
-bXBjLmMNCj4gKysrIGIvZHJpdmVycy9pMmMvYnVzc2VzL2kyYy1tcGMuYw0KPiBAQCAtNzU5LDEy
-ICs3NTksNiBAQCBzdGF0aWMgaW50IGZzbF9pMmNfcmVtb3ZlKHN0cnVjdCBwbGF0Zm9ybV9kZXZp
-Y2UgKm9wKQ0KPiAgIAlpZiAoaTJjLT5jbGtfcGVyKQ0KPiAgIAkJY2xrX2Rpc2FibGVfdW5wcmVw
-YXJlKGkyYy0+Y2xrX3Blcik7DQo+ICAgDQo+IC0JaWYgKGkyYy0+aXJxKQ0KPiAtCQlmcmVlX2ly
-cShpMmMtPmlycSwgaTJjKTsNCj4gLQ0KPiAtCWlycV9kaXNwb3NlX21hcHBpbmcoaTJjLT5pcnEp
-Ow0KPiAtCWlvdW5tYXAoaTJjLT5iYXNlKTsNCj4gLQlrZnJlZShpMmMpOw0KPiAgIAlyZXR1cm4g
-MDsNCj4gICB9Ow0KPiAgIA0KPg==
+Le 12/04/2021 à 11:34, Greg KH a écrit :
+> On Sat, Apr 10, 2021 at 03:35:52PM +0200, Christophe JAILLET wrote:
+>> Use functions provided by <crypto/arc4.h> instead of hand writing them.
+>>
+>> The implementations are slightly different, but are equivalent. It has
+>> been checked with a test program which compares the output of the 2 sets of
+>> functions.
+>>
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>>   drivers/staging/rtl8723bs/core/rtw_security.c | 101 ++++--------------
+>>   1 file changed, 21 insertions(+), 80 deletions(-)
+>>
+>> diff --git a/drivers/staging/rtl8723bs/core/rtw_security.c b/drivers/staging/rtl8723bs/core/rtw_security.c
+>> index 9587d89a6b24..86949a65e96f 100644
+>> --- a/drivers/staging/rtl8723bs/core/rtw_security.c
+>> +++ b/drivers/staging/rtl8723bs/core/rtw_security.c
+>> @@ -6,6 +6,7 @@
+>>    ******************************************************************************/
+>>   #define  _RTW_SECURITY_C_
+>>   
+>> +#include <crypto/arc4.h>
+>>   #include <linux/crc32poly.h>
+>>   #include <drv_types.h>
+>>   #include <rtw_debug.h>
+>> @@ -31,66 +32,6 @@ const char *security_type_str(u8 value)
+>>   
+>>   /* WEP related ===== */
+>>   
+>> -struct arc4context {
+>> -	u32 x;
+>> -	u32 y;
+>> -	u8 state[256];
+>> -};
+>> -
+>> -
+>> -static void arcfour_init(struct arc4context	*parc4ctx, u8 *key, u32 key_len)
+>> -{
+>> -	u32 t, u;
+>> -	u32 keyindex;
+>> -	u32 stateindex;
+>> -	u8 *state;
+>> -	u32 counter;
+>> -
+>> -	state = parc4ctx->state;
+>> -	parc4ctx->x = 0;
+>> -	parc4ctx->y = 0;
+>> -	for (counter = 0; counter < 256; counter++)
+>> -		state[counter] = (u8)counter;
+>> -	keyindex = 0;
+>> -	stateindex = 0;
+>> -	for (counter = 0; counter < 256; counter++) {
+>> -		t = state[counter];
+>> -		stateindex = (stateindex + key[keyindex] + t) & 0xff;
+>> -		u = state[stateindex];
+>> -		state[stateindex] = (u8)t;
+>> -		state[counter] = (u8)u;
+>> -		if (++keyindex >= key_len)
+>> -			keyindex = 0;
+>> -	}
+>> -}
+>> -
+>> -static u32 arcfour_byte(struct arc4context	*parc4ctx)
+>> -{
+>> -	u32 x;
+>> -	u32 y;
+>> -	u32 sx, sy;
+>> -	u8 *state;
+>> -
+>> -	state = parc4ctx->state;
+>> -	x = (parc4ctx->x + 1) & 0xff;
+>> -	sx = state[x];
+>> -	y = (sx + parc4ctx->y) & 0xff;
+>> -	sy = state[y];
+>> -	parc4ctx->x = x;
+>> -	parc4ctx->y = y;
+>> -	state[y] = (u8)sx;
+>> -	state[x] = (u8)sy;
+>> -	return state[(sx + sy) & 0xff];
+>> -}
+>> -
+>> -static void arcfour_encrypt(struct arc4context *parc4ctx, u8 *dest, u8 *src, u32 len)
+>> -{
+>> -	u32 i;
+>> -
+>> -	for (i = 0; i < len; i++)
+>> -		dest[i] = src[i] ^ (unsigned char)arcfour_byte(parc4ctx);
+>> -}
+>> -
+>>   static signed int bcrc32initialized;
+>>   static u32 crc32_table[256];
+>>   
+>> @@ -150,7 +91,7 @@ void rtw_wep_encrypt(struct adapter *padapter, u8 *pxmitframe)
+>>   {																	/*  exclude ICV */
+>>   
+>>   	unsigned char crc[4];
+>> -	struct arc4context	 mycontext;
+>> +	struct arc4_ctx mycontext;
+> 
+> Are you sure you can declare that much space on the stack?  Is that what
+> other users of this api do?  In looking at the in-kernel users, they do
+> not :(
+> 
+
+In fact arc4context was a u8[256] but arc4_ctx uses a u32[256].
+
+Maybe arc4 function should be modified to use u8? Or at least when
+CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS is defined?
+
+
+
+Concerning the other uses of the arc4 API, in fact there is only few of 
+them. Most uses are buried into lib80211_crypt_tkip.c and 
+lib80211_crypt_wep.c which is the way to go, IMHO.
+In fact, I think that most, if not all 'rtl871x_security.c' could be 
+removed.
+
+However, it looks like a big step to me. And without any hardware to 
+test, I'm pretty sure to break something.
+
+
+Any hints on the best way to axe some duplicated code without to much 
+risks to break everything?
+
+CJ
+
+> Can you fix up this series to not take up so much stack memory?
+
+I guess that _adapter could be used to store this arc4_ctx, but I'm not 
+convinced that it is the way to go.
+
+CJ
+
+> 
+> thanks,
+> 
+> greg k-h
+> 
+
