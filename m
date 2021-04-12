@@ -2,104 +2,154 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A650C43603
-	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Apr 2021 09:31:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76DB9C43600
+	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Apr 2021 09:37:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D65986128A
-	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Apr 2021 09:31:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4DC0F61247
+	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Apr 2021 09:37:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239448AbhDLJbd (ORCPT
+        id S240340AbhDLJhQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 12 Apr 2021 05:31:33 -0400
-Received: from mail-vk1-f169.google.com ([209.85.221.169]:44856 "EHLO
-        mail-vk1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240962AbhDLJZH (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 12 Apr 2021 05:25:07 -0400
-Received: by mail-vk1-f169.google.com with SMTP id r196so2712183vkd.11;
-        Mon, 12 Apr 2021 02:24:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4SHMD1oGY2Yw0vxxws1zV6FhECO5igomD0LqhlWJBF8=;
-        b=U9rJIP1Z42ohACpM92IwMW0zGBMherp+60Ss/2DKTq0no3192Joz6L4q1pdqsQzerI
-         dObVJayqOWX54jJehgD0QPNsHkSx/R8vTh+NhwObvqF5AjkSK15zBr/PRdYeQthsy9Fl
-         tdxLnuWK55JJairDk5I3NMF7OqVUcukme17LDaAcESd9MBebhezMekafENCYg5hi9oOs
-         0yC+z5xnrL+hdrF2CMa91+/lw0xzbBSlSMDwA5HnQ47K4kBJ12f9tPbYRGwxTVhaWc1g
-         Niq9i0MeA6RCbzyTYiCLicD9NO/wLmPYgN9tjrwVrKkL5dXTq9/GlNi4vuADqJ1qGxt6
-         RJ/w==
-X-Gm-Message-State: AOAM5324wF/NT9Jy1laVWdRm6r+1wAjLcCLO7XBo1HL23ztuGcAa+h9U
-        CLLwjksHpuLheHUEfaXR9A5/2IAVeoLMayOIDlE=
-X-Google-Smtp-Source: ABdhPJz6H4I3RfTPV/+7eF6tq81iKBSPmhvjZbF2f9wIdDzpLsNpwUoIjlx4y7xBgY5IurLpS5eDhYdCxqR8sPk+a3g=
-X-Received: by 2002:a1f:2502:: with SMTP id l2mr18469108vkl.5.1618219488852;
- Mon, 12 Apr 2021 02:24:48 -0700 (PDT)
+        Mon, 12 Apr 2021 05:37:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53952 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S238364AbhDLJeo (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 12 Apr 2021 05:34:44 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 002A261248;
+        Mon, 12 Apr 2021 09:34:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1618220066;
+        bh=9s3yiTLRat04T1hmQnybEmXExdwH0wgaqtOSw/eug/E=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=11Mojb249CyZdYFjl9AKDPyVnJtYa23EDXU1Q+L4H+/1nMYc7cfqapkDjauXxDE+N
+         F9vklIMKQBdDcHPHDIwL/ivb6tNb/GR+7PeFPRWFjEFuY6vmvFsk1KHOwtlhLomWer
+         7c8svJNnlth5B3oPgBGVYA0yo0hPNBSdZdaAlWnw=
+Date:   Mon, 12 Apr 2021 11:34:23 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 2/3] staging: rtl8723bs: Use existing arc4 implementation
+Message-ID: <YHQUH+Nqc/zS14Tb@kroah.com>
+References: <7e16c40d5baa007dca81a12b967a597ed00d8dd7.1618055514.git.christophe.jaillet@wanadoo.fr>
+ <6a4aebf9feb9ece975734f2e51da5ecae2996cee.1618055514.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-References: <20210409095150.2294437-1-yebin10@huawei.com>
-In-Reply-To: <20210409095150.2294437-1-yebin10@huawei.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 12 Apr 2021 11:24:37 +0200
-Message-ID: <CAMuHMdUBS2wk7pSC2+8rxsf_-ixMB30FwODDZsH6QE0-QGx=Qg@mail.gmail.com>
-Subject: Re: [PATCH -next] clk: renesas: r8a77970: Use DEFINE_SPINLOCK() for spinlock
-To:     Ye Bin <yebin10@huawei.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6a4aebf9feb9ece975734f2e51da5ecae2996cee.1618055514.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Ye,
-
-On Fri, Apr 9, 2021 at 11:43 AM Ye Bin <yebin10@huawei.com> wrote:
-> spinlock can be initialized automatically with DEFINE_SPINLOCK()
-> rather than explicitly calling spin_lock_init().
->
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Ye Bin <yebin10@huawei.com>
-
-Thanks for your patch, which looks correct to me.
-
-> --- a/drivers/clk/renesas/r8a77970-cpg-mssr.c
-> +++ b/drivers/clk/renesas/r8a77970-cpg-mssr.c
-> @@ -47,7 +47,7 @@ enum clk_ids {
->         MOD_CLK_BASE
->  };
->
-> -static spinlock_t cpg_lock;
-> +static DEFINE_SPINLOCK(cpg_lock);
-
-I think a better fix would be to start using the common cpg_lock, by #including
-rcar-cpg-lib.h.
-
->
->  static const struct clk_div_table cpg_sd0h_div_table[] = {
->         {  0,  2 }, {  1,  3 }, {  2,  4 }, {  3,  6 },
-> @@ -212,8 +212,6 @@ static int __init r8a77970_cpg_mssr_init(struct device *dev)
->         if (error)
->                 return error;
->
-> -       spin_lock_init(&cpg_lock);
+On Sat, Apr 10, 2021 at 03:35:52PM +0200, Christophe JAILLET wrote:
+> Use functions provided by <crypto/arc4.h> instead of hand writing them.
+> 
+> The implementations are slightly different, but are equivalent. It has
+> been checked with a test program which compares the output of the 2 sets of
+> functions.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/staging/rtl8723bs/core/rtw_security.c | 101 ++++--------------
+>  1 file changed, 21 insertions(+), 80 deletions(-)
+> 
+> diff --git a/drivers/staging/rtl8723bs/core/rtw_security.c b/drivers/staging/rtl8723bs/core/rtw_security.c
+> index 9587d89a6b24..86949a65e96f 100644
+> --- a/drivers/staging/rtl8723bs/core/rtw_security.c
+> +++ b/drivers/staging/rtl8723bs/core/rtw_security.c
+> @@ -6,6 +6,7 @@
+>   ******************************************************************************/
+>  #define  _RTW_SECURITY_C_
+>  
+> +#include <crypto/arc4.h>
+>  #include <linux/crc32poly.h>
+>  #include <drv_types.h>
+>  #include <rtw_debug.h>
+> @@ -31,66 +32,6 @@ const char *security_type_str(u8 value)
+>  
+>  /* WEP related ===== */
+>  
+> -struct arc4context {
+> -	u32 x;
+> -	u32 y;
+> -	u8 state[256];
+> -};
 > -
->         cpg_pll_config = &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg_mode)];
->
->         return rcar_gen3_cpg_init(cpg_pll_config, CLK_EXTALR, cpg_mode);
+> -
+> -static void arcfour_init(struct arc4context	*parc4ctx, u8 *key, u32 key_len)
+> -{
+> -	u32 t, u;
+> -	u32 keyindex;
+> -	u32 stateindex;
+> -	u8 *state;
+> -	u32 counter;
+> -
+> -	state = parc4ctx->state;
+> -	parc4ctx->x = 0;
+> -	parc4ctx->y = 0;
+> -	for (counter = 0; counter < 256; counter++)
+> -		state[counter] = (u8)counter;
+> -	keyindex = 0;
+> -	stateindex = 0;
+> -	for (counter = 0; counter < 256; counter++) {
+> -		t = state[counter];
+> -		stateindex = (stateindex + key[keyindex] + t) & 0xff;
+> -		u = state[stateindex];
+> -		state[stateindex] = (u8)t;
+> -		state[counter] = (u8)u;
+> -		if (++keyindex >= key_len)
+> -			keyindex = 0;
+> -	}
+> -}
+> -
+> -static u32 arcfour_byte(struct arc4context	*parc4ctx)
+> -{
+> -	u32 x;
+> -	u32 y;
+> -	u32 sx, sy;
+> -	u8 *state;
+> -
+> -	state = parc4ctx->state;
+> -	x = (parc4ctx->x + 1) & 0xff;
+> -	sx = state[x];
+> -	y = (sx + parc4ctx->y) & 0xff;
+> -	sy = state[y];
+> -	parc4ctx->x = x;
+> -	parc4ctx->y = y;
+> -	state[y] = (u8)sx;
+> -	state[x] = (u8)sy;
+> -	return state[(sx + sy) & 0xff];
+> -}
+> -
+> -static void arcfour_encrypt(struct arc4context *parc4ctx, u8 *dest, u8 *src, u32 len)
+> -{
+> -	u32 i;
+> -
+> -	for (i = 0; i < len; i++)
+> -		dest[i] = src[i] ^ (unsigned char)arcfour_byte(parc4ctx);
+> -}
+> -
+>  static signed int bcrc32initialized;
+>  static u32 crc32_table[256];
+>  
+> @@ -150,7 +91,7 @@ void rtw_wep_encrypt(struct adapter *padapter, u8 *pxmitframe)
+>  {																	/*  exclude ICV */
+>  
+>  	unsigned char crc[4];
+> -	struct arc4context	 mycontext;
+> +	struct arc4_ctx mycontext;
 
-Gr{oetje,eeting}s,
+Are you sure you can declare that much space on the stack?  Is that what
+other users of this api do?  In looking at the in-kernel users, they do
+not :(
 
-                        Geert
+Can you fix up this series to not take up so much stack memory?
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+thanks,
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+greg k-h
