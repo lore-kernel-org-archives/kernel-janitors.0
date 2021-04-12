@@ -2,76 +2,99 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92A4DC433B4
-	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Apr 2021 20:20:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54D39C433B4
+	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Apr 2021 21:09:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5D36461350
-	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Apr 2021 20:20:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39A136135D
+	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Apr 2021 21:09:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242104AbhDLUU3 (ORCPT
+        id S240417AbhDLVJd (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 12 Apr 2021 16:20:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44902 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237595AbhDLUU1 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 12 Apr 2021 16:20:27 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 02BE361370;
-        Mon, 12 Apr 2021 20:20:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1618258809;
-        bh=BzOuTQ9+zmgAJVx5ZXDs2kgrGA0FvVgEAQASfiyfHwQ=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=VqsDDAmWy5C/Cqcac8fSxvx5OdvmczLf2W2KMuZDv8Ra9YHsdbsTIVUqG/jYRDzKY
-         ria+tJ5NEzq2Z9HozxMgP9KyKc+eJQV75nwLFT8ar6y5QsZfE36nvuXumZxDRVfjgj
-         3FFD389JLM9zbIq9/TQSx9BkYzJFKktBnBXdOTSTqpmhMILJYxza37KfbGogDBDOuP
-         lVlGI9ho0sXsXyIhnWOzhgNUYIU0ZpUueQIFWT6+V41zom6oxeidCYEaN7HhbTSDLZ
-         VkJM+imo+CMca+Kuki+Fg2Y620eTNxY7pzgrAa8LyCgpI2PQC87Lf6SKU6vlKJqjf5
-         XAkTckmdFpO+A==
+        Mon, 12 Apr 2021 17:09:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58176 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S243496AbhDLVJZ (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 12 Apr 2021 17:09:25 -0400
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [IPv6:2001:df5:b000:5::4])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B6DDC061574
+        for <kernel-janitors@vger.kernel.org>; Mon, 12 Apr 2021 14:09:07 -0700 (PDT)
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id C04E4891AE;
+        Tue, 13 Apr 2021 09:09:03 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail181024; t=1618261743;
+        bh=LD/6f2tvm/F2O9bhr6TZiDc0gSD+3rtfedYS7iWSrsg=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To;
+        b=Yu0tNGKX1nM9kQIqpwOps3k4puZNGkzRxfUU6uxxd7LrKd9uG1ZuOiRdGyMajATFb
+         IYsgHCgvJNikJRi0QkDwC0c+UJwlXiw1/PSDxf4peScCuAH/GL3VvW08HP9gvsgxVm
+         wMmUx1qDm32VzV6U1P7s1i9etuqyP6TbqOmLQqKNcGWVO+fkElZy5+mIdJOgx6lOph
+         JnkE15nkSTI04ZmV6Yyw6EBpTv5tPkiwEXNtxM62bXOM7MHPlGtKYAY4t7YMuqpDeN
+         +zibV/fGf+KzmCEUDFeR/YxqSm7IlggOlAllsS1Y6Mi06yIafLcpoajN+f9dYAQOIh
+         zWlbovYBLPheQ==
+Received: from svr-chch-ex1.atlnz.lc (Not Verified[2001:df5:b000:bc8::77]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+        id <B6074b6ef0001>; Tue, 13 Apr 2021 09:09:03 +1200
+Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) by
+ svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.2; Tue, 13 Apr 2021 09:09:02 +1200
+Received: from svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8]) by
+ svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8%12]) with mapi id
+ 15.00.1497.012; Tue, 13 Apr 2021 09:09:02 +1200
+From:   Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+To:     Wei Yongjun <weiyongjun1@huawei.com>, Wolfram Sang <wsa@kernel.org>
+CC:     "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "Hulk Robot" <hulkci@huawei.com>
+Subject: Re: [PATCH -next] i2c: mpc: drop release for resource allocated with
+ devm_*
+Thread-Topic: [PATCH -next] i2c: mpc: drop release for resource allocated with
+ devm_*
+Thread-Index: AQHXL7ObhQQxaGDPA0yl+VE3IF/D8qqwl44A
+Date:   Mon, 12 Apr 2021 21:09:02 +0000
+Message-ID: <8a14bef8-2c38-cd1d-ad33-6c37030cdd04@alliedtelesis.co.nz>
+References: <20210412160026.194423-1-weiyongjun1@huawei.com>
+In-Reply-To: <20210412160026.194423-1-weiyongjun1@huawei.com>
+Accept-Language: en-NZ, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.32.1.11]
 Content-Type: text/plain; charset="utf-8"
+Content-ID: <6DA7AE79CE70F5418A61B43EE4FB84D0@atlnz.lc>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH][next] net: hns3: Fix potential null pointer defererence of
- null ae_dev
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <161825880895.1346.11497783869109240984.git-patchwork-notify@kernel.org>
-Date:   Mon, 12 Apr 2021 20:20:08 +0000
-References: <20210409163726.670672-1-colin.king@canonical.com>
-In-Reply-To: <20210409163726.670672-1-colin.king@canonical.com>
-To:     Colin Ian King <colin.king@canonical.com>
-Cc:     yisen.zhuang@huawei.com, salil.mehta@huawei.com,
-        davem@davemloft.net, kuba@kernel.org, tanhuazhong@huawei.com,
-        zhangjiaran@huawei.com, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+X-SEG-SpamProfiler-Analysis: v=2.3 cv=GfppYjfL c=1 sm=1 tr=0 a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=oKJsc7D3gJEA:10 a=IkcTkHD0fZMA:10 a=3YhXtTcJ-WEA:10 a=i0EeH86SAAAA:8 a=sZwN78S90g8iCWLGYWoA:9 a=QEXdDO2ut3YA:10
+X-SEG-SpamProfiler-Score: 0
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
-
-This patch was applied to netdev/net-next.git (refs/heads/master):
-
-On Fri,  9 Apr 2021 17:37:26 +0100 you wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The reset_prepare and reset_done calls have a null pointer check
-> on ae_dev however ae_dev is being dereferenced via the call to
-> ns3_is_phys_func with the ae->pdev argument. Fix this by performing
-> a null pointer check on ae_dev and hence short-circuiting the
-> dereference to ae_dev on the call to ns3_is_phys_func.
-> 
-> [...]
-
-Here is the summary with links:
-  - [next] net: hns3: Fix potential null pointer defererence of null ae_dev
-    https://git.kernel.org/netdev/net-next/c/d0494135f94c
-
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+DQpPbiAxMy8wNC8yMSA0OjAwIGFtLCBXZWkgWW9uZ2p1biB3cm90ZToNCj4gSXQncyBub3QgbmVj
+ZXNzYXJ5IHRvIHJlbGVhc2UgcmVzb3VyY2Ugd2hpY2ggYWxsb2NhdGVkIHdpdGggZGV2bV8qDQo+
+IGFuZCB0aG9zZSByZWxlYXNlIG1heSBsZWFkcyB0byBhIGRvdWJsZSBmcmVlLiBBbmQgYWxzbyBy
+ZW1vdmUgdXNlbGVzcw0KPiBpcnFfZGlzcG9zZV9tYXBwaW5nKCkgY2FsbCBzaW5jZSBtYXBwaW5n
+IG5vdCBjcmVhdGVkLg0KPg0KPiBGaXhlczogMDlhYWI3YWRkN2JmICgiaTJjOiBtcGM6IHVzZSBk
+ZXZpY2UgbWFuYWdlZCBBUElzIikNCj4gUmVwb3J0ZWQtYnk6IEh1bGsgUm9ib3QgPGh1bGtjaUBo
+dWF3ZWkuY29tPg0KPiBTaWduZWQtb2ZmLWJ5OiBXZWkgWW9uZ2p1biA8d2VpeW9uZ2p1bjFAaHVh
+d2VpLmNvbT4NCg0KVGhhbmtzIGZvciB0aGUgZml4Lg0KDQpSZXZpZXdlZC1ieTogQ2hyaXMgUGFj
+a2hhbSA8Y2hyaXMucGFja2hhbUBhbGxpZWR0ZWxlc2lzLmNvLm56Pg0KDQo+IC0tLQ0KPiAgIGRy
+aXZlcnMvaTJjL2J1c3Nlcy9pMmMtbXBjLmMgfCA2IC0tLS0tLQ0KPiAgIDEgZmlsZSBjaGFuZ2Vk
+LCA2IGRlbGV0aW9ucygtKQ0KPg0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9pMmMvYnVzc2VzL2ky
+Yy1tcGMuYyBiL2RyaXZlcnMvaTJjL2J1c3Nlcy9pMmMtbXBjLmMNCj4gaW5kZXggNDZjZGIzNmUy
+ZjliLi42ZTU2MTRhY2ViYWMgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvaTJjL2J1c3Nlcy9pMmMt
+bXBjLmMNCj4gKysrIGIvZHJpdmVycy9pMmMvYnVzc2VzL2kyYy1tcGMuYw0KPiBAQCAtNzU5LDEy
+ICs3NTksNiBAQCBzdGF0aWMgaW50IGZzbF9pMmNfcmVtb3ZlKHN0cnVjdCBwbGF0Zm9ybV9kZXZp
+Y2UgKm9wKQ0KPiAgIAlpZiAoaTJjLT5jbGtfcGVyKQ0KPiAgIAkJY2xrX2Rpc2FibGVfdW5wcmVw
+YXJlKGkyYy0+Y2xrX3Blcik7DQo+ICAgDQo+IC0JaWYgKGkyYy0+aXJxKQ0KPiAtCQlmcmVlX2ly
+cShpMmMtPmlycSwgaTJjKTsNCj4gLQ0KPiAtCWlycV9kaXNwb3NlX21hcHBpbmcoaTJjLT5pcnEp
+Ow0KPiAtCWlvdW5tYXAoaTJjLT5iYXNlKTsNCj4gLQlrZnJlZShpMmMpOw0KPiAgIAlyZXR1cm4g
+MDsNCj4gICB9Ow0KPiAgIA0KPg==
