@@ -4,43 +4,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09B75C433B4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3DD7C43462
 	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Apr 2021 15:50:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D79286128C
-	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Apr 2021 15:50:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8AF86128C
+	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Apr 2021 15:50:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243139AbhDLPux (ORCPT
+        id S243155AbhDLPuy (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 12 Apr 2021 11:50:53 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:15668 "EHLO
-        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240878AbhDLPuw (ORCPT
+        Mon, 12 Apr 2021 11:50:54 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:16531 "EHLO
+        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S243042AbhDLPux (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 12 Apr 2021 11:50:52 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
-        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4FJtRJ1G7HzpXgv;
+        Mon, 12 Apr 2021 11:50:53 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
+        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4FJtRJ1r2HzPqLV;
         Mon, 12 Apr 2021 23:47:40 +0800 (CST)
 Received: from localhost.localdomain (10.175.102.38) by
- DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
- 14.3.498.0; Mon, 12 Apr 2021 23:50:22 +0800
+ DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
+ 14.3.498.0; Mon, 12 Apr 2021 23:50:25 +0800
 From:   Wei Yongjun <weiyongjun1@huawei.com>
-To:     <weiyongjun1@huawei.com>, James Bottomley <jejb@linux.ibm.com>,
-        "Jarkko Sakkinen" <jarkko@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Sumit Garg <sumit.garg@linaro.org>
-CC:     <linux-integrity@vger.kernel.org>, <keyrings@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
+To:     <weiyongjun1@huawei.com>,
+        Quanyang Wang <quanyang.wang@windriver.com>,
+        Mark Brown <broonie@kernel.org>,
+        Michal Simek <michal.simek@xilinx.com>
+CC:     <linux-spi@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
         <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH -next] KEYS: trusted: Switch to kmemdup_nul()
-Date:   Mon, 12 Apr 2021 16:00:22 +0000
-Message-ID: <20210412160022.193460-1-weiyongjun1@huawei.com>
+Subject: [PATCH -next] spi: spi-zynqmp-gqspi: Fix missing unlock on error in zynqmp_qspi_exec_op()
+Date:   Mon, 12 Apr 2021 16:00:25 +0000
+Message-ID: <20210412160025.194171-1-weiyongjun1@huawei.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Type:   text/plain; charset=US-ASCII
@@ -51,30 +48,30 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Use kmemdup_nul() helper instead of open-coding to
-simplify the code.
+Add the missing unlock before return from function zynqmp_qspi_exec_op()
+in the error handling case.
 
+Fixes: a0f65be6e880 ("spi: spi-zynqmp-gqspi: add mutex locking for exec_op")
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- security/keys/trusted-keys/trusted_core.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/spi/spi-zynqmp-gqspi.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/security/keys/trusted-keys/trusted_core.c b/security/keys/trusted-keys/trusted_core.c
-index ec3a066a4b42..9430cba1f084 100644
---- a/security/keys/trusted-keys/trusted_core.c
-+++ b/security/keys/trusted-keys/trusted_core.c
-@@ -146,11 +146,9 @@ static int trusted_instantiate(struct key *key,
- 	if (datalen <= 0 || datalen > 32767 || !prep->data)
- 		return -EINVAL;
+diff --git a/drivers/spi/spi-zynqmp-gqspi.c b/drivers/spi/spi-zynqmp-gqspi.c
+index 9494da9aea40..1670b0aeaa23 100644
+--- a/drivers/spi/spi-zynqmp-gqspi.c
++++ b/drivers/spi/spi-zynqmp-gqspi.c
+@@ -965,8 +965,10 @@ static int zynqmp_qspi_exec_op(struct spi_mem *mem,
  
--	datablob = kmalloc(datalen + 1, GFP_KERNEL);
-+	datablob = kmemdup_nul(prep->data, datalen, GFP_KERNEL);
- 	if (!datablob)
- 		return -ENOMEM;
--	memcpy(datablob, prep->data, datalen);
--	datablob[datalen] = '\0';
- 
- 	payload = trusted_payload_alloc(key);
- 	if (!payload) {
+ 	if (op->cmd.opcode) {
+ 		tmpbuf = kzalloc(op->cmd.nbytes, GFP_KERNEL | GFP_DMA);
+-		if (!tmpbuf)
++		if (!tmpbuf) {
++			mutex_unlock(&xqspi->op_lock);
+ 			return -ENOMEM;
++		}
+ 		tmpbuf[0] = op->cmd.opcode;
+ 		reinit_completion(&xqspi->data_completion);
+ 		xqspi->txbuf = tmpbuf;
 
