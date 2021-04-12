@@ -2,103 +2,79 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E464AC433B4
-	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Apr 2021 15:32:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09B75C433B4
+	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Apr 2021 15:50:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A9CB961246
-	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Apr 2021 15:32:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D79286128C
+	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Apr 2021 15:50:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242922AbhDLPck (ORCPT
+        id S243139AbhDLPux (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 12 Apr 2021 11:32:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45198 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S240372AbhDLPch (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 12 Apr 2021 11:32:37 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 704B261287;
-        Mon, 12 Apr 2021 15:32:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1618241539;
-        bh=PfUYz7ehOP36ze9zottzqYLT6YofP1E/5QKb3NCGfRY=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Qo6XIw/903qdy+wsJUt0dbetUSiB8NAUHBi44/AgP/z3CwwzWhjQ3AoUvjMfZAZTw
-         wl73pB3333TrKJY9sRfsirNKwk9kx5pYQec6YUTiIuxufuW5dIVNi1TK59Rbd420cT
-         32KJjvzHLzKfOoAqS+spaOxLmlEuZ5lXv8vMMZoOXY3Kn2kNK7Zi0r1LvtIu3N9eVP
-         Od4cU0zfkt0NeLyF83bVTqmPD4toeE4K0qjUaNli6+SVDc1Zy0PZmkrNY9S1bPz3ga
-         BSKPU9rRItSSq3kE59IyWzgn6s3E8rOGe9X5iW3LbXy7Q1MBAyjtNlZQN3o3aUhYct
-         CXLvKN1pHOqZQ==
-Received: by mail-ej1-f48.google.com with SMTP id r9so20977321ejj.3;
-        Mon, 12 Apr 2021 08:32:19 -0700 (PDT)
-X-Gm-Message-State: AOAM533/JjFnnn+aGkKGYjHpQ5lO2h0vz7sWOYBwuSwJG8JeKg9wMNs/
-        T77x3d6G8VGlZBctIbfjoDa3wEai0NQ8/SQvWw==
-X-Google-Smtp-Source: ABdhPJxUH+6kFAMsFOGXnWZU4y+lM9pGKAyUVJwsXhiMUyF3mf1ypBpE74YoOYyllLOSa7Tkz/VEl3gfdNDYBpx1tEY=
-X-Received: by 2002:a17:906:c348:: with SMTP id ci8mr8745246ejb.303.1618241538032;
- Mon, 12 Apr 2021 08:32:18 -0700 (PDT)
+        Mon, 12 Apr 2021 11:50:53 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:15668 "EHLO
+        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240878AbhDLPuw (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 12 Apr 2021 11:50:52 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4FJtRJ1G7HzpXgv;
+        Mon, 12 Apr 2021 23:47:40 +0800 (CST)
+Received: from localhost.localdomain (10.175.102.38) by
+ DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
+ 14.3.498.0; Mon, 12 Apr 2021 23:50:22 +0800
+From:   Wei Yongjun <weiyongjun1@huawei.com>
+To:     <weiyongjun1@huawei.com>, James Bottomley <jejb@linux.ibm.com>,
+        "Jarkko Sakkinen" <jarkko@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Sumit Garg <sumit.garg@linaro.org>
+CC:     <linux-integrity@vger.kernel.org>, <keyrings@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH -next] KEYS: trusted: Switch to kmemdup_nul()
+Date:   Mon, 12 Apr 2021 16:00:22 +0000
+Message-ID: <20210412160022.193460-1-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20210410034841.16567-1-wangli74@huawei.com>
-In-Reply-To: <20210410034841.16567-1-wangli74@huawei.com>
-From:   Chun-Kuang Hu <chunkuang.hu@kernel.org>
-Date:   Mon, 12 Apr 2021 23:32:06 +0800
-X-Gmail-Original-Message-ID: <CAAOTY_-qNeoZT1CorqhBrQe888tG21TF=LnPkUgymv=rQ8-YAA@mail.gmail.com>
-Message-ID: <CAAOTY_-qNeoZT1CorqhBrQe888tG21TF=LnPkUgymv=rQ8-YAA@mail.gmail.com>
-Subject: Re: [PATCH -next] drm/mediatek: Fix PM reference leak in mtk_crtc_ddp_hw_init()
-To:     Wang Li <wangli74@huawei.com>
-Cc:     Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.102.38]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi, Wang:
+Use kmemdup_nul() helper instead of open-coding to
+simplify the code.
 
-Wang Li <wangli74@huawei.com> =E6=96=BC 2021=E5=B9=B44=E6=9C=8810=E6=97=A5 =
-=E9=80=B1=E5=85=AD =E4=B8=8A=E5=8D=8811:31=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> pm_runtime_get_sync will increment pm usage counter even it failed.
-> Forgetting to putting operation will result in reference leak here.
-> Fix it by replacing it with pm_runtime_resume_and_get to keep usage
-> counter balanced.
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ security/keys/trusted-keys/trusted_core.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Reviewed-by: Chun-Kuang Hu <chunkuang.hu@kernel.org>
+diff --git a/security/keys/trusted-keys/trusted_core.c b/security/keys/trusted-keys/trusted_core.c
+index ec3a066a4b42..9430cba1f084 100644
+--- a/security/keys/trusted-keys/trusted_core.c
++++ b/security/keys/trusted-keys/trusted_core.c
+@@ -146,11 +146,9 @@ static int trusted_instantiate(struct key *key,
+ 	if (datalen <= 0 || datalen > 32767 || !prep->data)
+ 		return -EINVAL;
+ 
+-	datablob = kmalloc(datalen + 1, GFP_KERNEL);
++	datablob = kmemdup_nul(prep->data, datalen, GFP_KERNEL);
+ 	if (!datablob)
+ 		return -ENOMEM;
+-	memcpy(datablob, prep->data, datalen);
+-	datablob[datalen] = '\0';
+ 
+ 	payload = trusted_payload_alloc(key);
+ 	if (!payload) {
 
->
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wang Li <wangli74@huawei.com>
-> ---
->  drivers/gpu/drm/mediatek/mtk_drm_crtc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c b/drivers/gpu/drm/me=
-diatek/mtk_drm_crtc.c
-> index 54ab3a324752..f1954242d8f6 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
-> @@ -259,7 +259,7 @@ static int mtk_crtc_ddp_hw_init(struct mtk_drm_crtc *=
-mtk_crtc)
->                 drm_connector_list_iter_end(&conn_iter);
->         }
->
-> -       ret =3D pm_runtime_get_sync(crtc->dev->dev);
-> +       ret =3D pm_runtime_resume_and_get(crtc->dev->dev);
->         if (ret < 0) {
->                 DRM_ERROR("Failed to enable power domain: %d\n", ret);
->                 return ret;
-> --
-> 2.17.1
->
