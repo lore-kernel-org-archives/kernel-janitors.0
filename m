@@ -2,98 +2,84 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17F05C433ED
-	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Apr 2021 18:41:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBC38C43461
+	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Apr 2021 19:01:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E54B66128D
-	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Apr 2021 18:41:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA3C061358
+	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Apr 2021 19:01:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245043AbhDLSmP (ORCPT
+        id S236864AbhDLTBp (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 12 Apr 2021 14:42:15 -0400
-Received: from mout.kundenserver.de ([217.72.192.75]:41157 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243433AbhDLSmP (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 12 Apr 2021 14:42:15 -0400
-Received: from mail-wr1-f49.google.com ([209.85.221.49]) by
- mrelayeu.kundenserver.de (mreue109 [213.165.67.113]) with ESMTPSA (Nemesis)
- id 1MNKuK-1lCpvV1qlm-00OnaS; Mon, 12 Apr 2021 20:41:55 +0200
-Received: by mail-wr1-f49.google.com with SMTP id s7so13849850wru.6;
-        Mon, 12 Apr 2021 11:41:55 -0700 (PDT)
-X-Gm-Message-State: AOAM533SA37cqd3e2ReIgm0eclNhyvbE7lvq+fBTp+t6F8XKEdgBvrkm
-        L7gMTQU0BcEaI08FSf1DDLC2ah6UkFYaagZEaDA=
-X-Google-Smtp-Source: ABdhPJyl9ozm0Lk3BSMDxA0gevtHoth6mdEPg6RhJBS+HV0+ckK8znO7EM3K7u0TnFESQngQNEAr2dHrGE/Z/SU6yJQ=
-X-Received: by 2002:a5d:6a11:: with SMTP id m17mr33915154wru.361.1618252915158;
- Mon, 12 Apr 2021 11:41:55 -0700 (PDT)
+        Mon, 12 Apr 2021 15:01:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56390 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S236781AbhDLTBo (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 12 Apr 2021 15:01:44 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D180B61356;
+        Mon, 12 Apr 2021 19:01:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1618254086;
+        bh=wgbZzfhm4HQr4rtiTGyBeEl37821JWgT1iYcHuDlc6M=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=MrwoeN8P6TCu3iuVNvKnNoom+Vy1QhBCcAIZlYufUcYGkgdjT7RpptEs68m8kxZ//
+         z/hEiEFY85NwzdxnL/TODg1eAwFMvXZ2SFKZSDIo7KH2J9xZTuhT9ZUxkvV2AolgeJ
+         S+UqqbjWBzFykJn84dZ9ALEjF3fCtEo4IBZDJUDZ0FyvIu7cJgg8V31hVdGHtPYTRy
+         eJtE47Cpe28CfBDpetFPcIqU1cQNyCLTuX4HU58waH0boSulPSLII9JRVKpdw+mD9l
+         24ouMANjyNkURiJUlLfNBGXs0IHKkJjcOCJ4DNQdgja9oeyl+m2IX2unuPduRQzmYG
+         8IyKFmhWTAGlQ==
+From:   Mark Brown <broonie@kernel.org>
+To:     Quanyang Wang <quanyang.wang@windriver.com>,
+        Wei Yongjun <weiyongjun1@huawei.com>,
+        Michal Simek <michal.simek@xilinx.com>
+Cc:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Hulk Robot <hulkci@huawei.com>, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH -next] spi: spi-zynqmp-gqspi: Fix missing unlock on error in zynqmp_qspi_exec_op()
+Date:   Mon, 12 Apr 2021 20:00:58 +0100
+Message-Id: <161825405874.52313.7242174771524864608.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20210412160025.194171-1-weiyongjun1@huawei.com>
+References: <20210412160025.194171-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
-References: <20210412161012.1628202-1-colin.king@canonical.com>
-In-Reply-To: <20210412161012.1628202-1-colin.king@canonical.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 12 Apr 2021 20:41:38 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a2pSRu0OKDNrNJSdviRgcv8Lw1mwZr5opv=UbtHLps2oQ@mail.gmail.com>
-Message-ID: <CAK8P3a2pSRu0OKDNrNJSdviRgcv8Lw1mwZr5opv=UbtHLps2oQ@mail.gmail.com>
-Subject: Re: [PATCH][next] habanalabs/gaudi: Fix uninitialized return code rc
- when read size is zero
-To:     Colin King <colin.king@canonical.com>
-Cc:     Oded Gabbay <ogabbay@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ofir Bitton <obitton@habana.ai>,
-        kernel-janitors@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:3rrTtg7LjheVpYkEOa9RH5Wn2Ghd47zXbMPLrHE+IM3LMrGOW95
- 8jpDsIm+wtX+fKNz4JeFb9GqZY7HOn+lBZDbcQyyrOn3REg8VPyOL1gKWN4K2VdqeMMWWOB
- TOvj07xXgS65e6EhXJUhdoovP7E6krNzqdp/OJMgtRLLIdLKdnxUOAWszOCSSVtg7Bry1Ba
- YjNOr2I09fdyrNjVmeLiw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:ese25u6vl4k=:7U7gTxMlohvHng81P4IYFa
- CzB0YG2wYE+/altuAcXN+UI+r9PjRj7aNhgqF6qnOlm+QlQ4vtgFI0VgafOWMU0Tqg9YljDbY
- lBskMcc7nLvKC1sKOWxS2kgeVBvk/JpT+q9Xt/moYZpbqHfk6QjmlUmRT1ZFN5DV6fLp4Rk5U
- 5vseaIUJnwZK829bbyZ4APd6rii8r6SjR6i32ALO28IF4rqQEyW1znvoRT0eAPdZZnJYF6Zxs
- ScilR6aVbc6pVC1/cNnJwH/ZDhTAFuAWqgjW+m6Ax/46KaH9SJZzBXh0nIxRU7mFWefqqFhUu
- ZU+0ofeO2WC2bzGKNcaLgb5ct4pNuIwB0JCAgGiWz2i/V9qtc5jYueYkY7iy8HFuZg5pU6kwz
- mxoB6ff1CibeZIjUci700vxoqghmyCdqnT6kn0aMEDpo5igeQSJn1BjmB4a7DLK7PYtAq73Hy
- flUcZRzCZIztAhPOyYfGPpcb+moBGbk=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Apr 12, 2021 at 6:11 PM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> In the case where size is zero the while loop never assigns rc and the
-> return value is uninitialized. Fix this by initializing rc to zero.
->
-> Addresses-Coverity: ("Uninitialized scalar variable")
-> Fixes: 639781dcab82 ("habanalabs/gaudi: add debugfs to DMA from the device")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/misc/habanalabs/gaudi/gaudi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/misc/habanalabs/gaudi/gaudi.c b/drivers/misc/habanalabs/gaudi/gaudi.c
-> index 8730b691ec61..b751652f80a8 100644
-> --- a/drivers/misc/habanalabs/gaudi/gaudi.c
-> +++ b/drivers/misc/habanalabs/gaudi/gaudi.c
-> @@ -6252,7 +6252,7 @@ static int gaudi_debugfs_read_dma(struct hl_device *hdev, u64 addr, u32 size,
->         dma_addr_t dma_addr;
->         void *kernel_addr;
->         bool is_eng_idle;
-> -       int rc, dma_id;
-> +       int rc = 0, dma_id;
->
->         kernel_addr = hdev->asic_funcs->asic_dma_alloc_coherent(
->                                                 hdev, SZ_2M,
+On Mon, 12 Apr 2021 16:00:25 +0000, Wei Yongjun wrote:
+> Add the missing unlock before return from function zynqmp_qspi_exec_op()
+> in the error handling case.
 
+Applied to
 
-In general, I don't like adding initializations during the declaration as that
-tends to hide warnings for the cases where a later initialization is
-missing. In this case it looks correct though.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+Thanks!
+
+[1/1] spi: spi-zynqmp-gqspi: Fix missing unlock on error in zynqmp_qspi_exec_op()
+      commit: 6043357263fbe2df0bf0736d971ad5dce7d19dc1
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
