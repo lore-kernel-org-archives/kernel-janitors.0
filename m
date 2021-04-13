@@ -2,85 +2,120 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 543D3C433B4
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 15:09:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54DE6C433ED
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 15:42:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3B711613B3
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 15:09:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B9A661221
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 15:42:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346522AbhDMPJs (ORCPT
+        id S231878AbhDMPmy (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 13 Apr 2021 11:09:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54800 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1346521AbhDMPJr (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 13 Apr 2021 11:09:47 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id E0D85613B8;
-        Tue, 13 Apr 2021 15:09:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1618326567;
-        bh=+W96IuXgYD2p65bDFfeqaBI9QaBpzQ0dmecX2pIWOzo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uwZWnBUvOfGce4nQHB2OtXu6CpzMmm6jw0Z79r+7L25sERwcJOSkrvZMZZNPSVMQK
-         ca11Ocu4TMOsyGjulR0+FOqecBu81KG20znaVBK5phIMN1ajzZV2De0zcqeC+ttJnK
-         83UN8i0EOfCQ7TPi625b5NWP/3IwGYR28bhQH3OWOi3YfWCXnCda9ira4qzjuS8TkL
-         o/J3mGwRthtn2W5k+KT2g9Wc3flc2m2ygbJzXUVRnGA+rw8LaxmjJmNoSnr+3f0muj
-         lumTJ6MV1s52bYRRNpsUOW1tgA1QU8mqimM2M5eLc7wXDTVg1s/ir1vRg6LK2O7QDQ
-         ag8HuLURRgfIw==
-From:   Mark Brown <broonie@kernel.org>
-To:     david.rhodes@cirrus.com,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        tiwai@suse.com, perex@perex.cz, lgirdwood@gmail.com,
-        james.schulman@cirrus.com
-Cc:     Mark Brown <broonie@kernel.org>, patches@opensource.cirrus.com,
-        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ASoC: cs35l35: Fix an error handling path in 'cs35l35_i2c_probe()'
-Date:   Tue, 13 Apr 2021 16:08:55 +0100
-Message-Id: <161832446010.49152.17792070153979808894.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <15720439769ba94ffb65c90217392b0758b08f61.1618145369.git.christophe.jaillet@wanadoo.fr>
-References: <15720439769ba94ffb65c90217392b0758b08f61.1618145369.git.christophe.jaillet@wanadoo.fr>
+        Tue, 13 Apr 2021 11:42:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47396 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231652AbhDMPmw (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 13 Apr 2021 11:42:52 -0400
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F390C061574;
+        Tue, 13 Apr 2021 08:42:32 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id e14so26645537ejz.11;
+        Tue, 13 Apr 2021 08:42:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=AHJFlkVHWqO1FHapYslC65eJ8g65HylpEtA4GsqBGy0=;
+        b=MCeMQdyjPS5cM7ZQQUlD0dVrnTvjDVPjtejlw4q0xEfCKf3ssp5xhTUKa6/B1ffP4P
+         7pS/iruAYATcL96nRfAs2e1IRqygmpm0sQDNh7xnr8jaoJjpsmP3cOB3O/y2ARvWx8Df
+         iXJwuepC6u3gpzT9+2j7OLGIApcyAxaPeSdm3MCyU/JTRxrhbI06tEugWwY4yfLvPcey
+         Ga9+uaiEMGsuEvTPuPPVC2IXRBxd4hDe/QYcJX8b37JqcrLEPws4G75rCXY9fyglrbSt
+         FqNI6fv7vBSJ5Ac3UTk0pCMgiI1Y0eBlgr9chsS/8YC1A50U/ok/8uDADkWGGsh+XPOE
+         M/yA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=AHJFlkVHWqO1FHapYslC65eJ8g65HylpEtA4GsqBGy0=;
+        b=AW5a5Atnz7sEpvSv7mhw7qWbhs5nlWxPEX9oWx16lR0vkdtpevW6IFA30HvJp2DqHz
+         kwyiy6YQjKwbJAkAt6kXeJA86b7B2A0kunhH17aTvVUlWMWAgabnqaZZ4w/376JY/f8K
+         DcGkAULgZ+2tNcmn63KLfkl/pPQs7d5tRCqqr2PV+8A8sDMXjqo/BBbxk1tgS9SA9m0o
+         307Go/01Lz3SVT1oOnzv26Ixn3uKg5TNQlDDWTJcpx3w4jfSTl4aQjfGSCF6ooZBO03c
+         yjywkmkEPavK9qJxPahm2qoTKMgP/oaG37G0pVFHn2P7SmbLMpm3bQ/70q7xs215Nxs7
+         X9SA==
+X-Gm-Message-State: AOAM532shiFHg+gTFUSwiMwM6CZtXf1jnMeVLBFXKuiBJ0n1aJ87msLb
+        3dTBVhHbvkaRd5bgmzFrcWkWhmqAbYPCxqGB
+X-Google-Smtp-Source: ABdhPJzy5ANQQ8Us5qvmS5XPmsu6fn52o+F19r72vm/W1oVbwUOYaUw2i+0hOUxaLzlRuTSgdACSwA==
+X-Received: by 2002:a17:906:4eda:: with SMTP id i26mr10489085ejv.301.1618328550649;
+        Tue, 13 Apr 2021 08:42:30 -0700 (PDT)
+Received: from anparri (host-95-232-15-7.retail.telecomitalia.it. [95.232.15.7])
+        by smtp.gmail.com with ESMTPSA id t14sm8088868ejc.121.2021.04.13.08.42.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Apr 2021 08:42:30 -0700 (PDT)
+Date:   Tue, 13 Apr 2021 17:42:21 +0200
+From:   Andrea Parri <parri.andrea@gmail.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Wei Liu <wei.liu@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dexuan Cui <decui@microsoft.com>, linux-hyperv@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] Drivers: hv: vmbus: Use after free in __vmbus_open()
+Message-ID: <20210413154221.GA2369@anparri>
+References: <YHV3XLCot6xBS44r@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YHV3XLCot6xBS44r@mwanda>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, 11 Apr 2021 14:51:06 +0200, Christophe JAILLET wrote:
-> If 'devm_regmap_init_i2c()' fails, there is no need to goto err. We should
-> return directly as already done by the surrounding error handling paths.
+On Tue, Apr 13, 2021 at 01:50:04PM +0300, Dan Carpenter wrote:
+> The "open_info" variable is added to the &vmbus_connection.chn_msg_list,
+> but the error handling frees "open_info" without removing it from the
+> list.  This will result in a use after free.  First remove it from the
+> list, and then free it.
+> 
+> Fixes: 6f3d791f3006 ("Drivers: hv: vmbus: Fix rescind handling issues")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied to
+I had this 'queued' in my list,
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+Reviewed-by: Andrea Parri <parri.andrea@gmail.com>
 
-Thanks!
+  Andrea
 
-[1/1] ASoC: cs35l35: Fix an error handling path in 'cs35l35_i2c_probe()'
-      commit: 38c694e98f6a6c8dfa48f2ba6f442363ed836efb
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+> ---
+> From static analysis.  Untested etc.  There is almost certainly a good
+> reason to add it to the list before checking "newchannel->rescind" but I
+> don't know the code well enough to know what the reason is.
+> 
+>  drivers/hv/channel.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/hv/channel.c b/drivers/hv/channel.c
+> index db30be8f9cce..1c5a418c1962 100644
+> --- a/drivers/hv/channel.c
+> +++ b/drivers/hv/channel.c
+> @@ -653,7 +653,7 @@ static int __vmbus_open(struct vmbus_channel *newchannel,
+>  
+>  	if (newchannel->rescind) {
+>  		err = -ENODEV;
+> -		goto error_free_info;
+> +		goto error_clean_msglist;
+>  	}
+>  
+>  	err = vmbus_post_msg(open_msg,
+> -- 
+> 2.30.2
+> 
