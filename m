@@ -2,113 +2,119 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-23.2 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCCD7C433B4
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 07:29:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9049EC433B4
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 09:24:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A43BA613B2
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 07:29:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6CB13613BB
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 09:24:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239680AbhDMHaG (ORCPT
+        id S239187AbhDMJYg (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 13 Apr 2021 03:30:06 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:35742 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239357AbhDMHaA (ORCPT
+        Tue, 13 Apr 2021 05:24:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48206 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239454AbhDMJYe (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 13 Apr 2021 03:30:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1618298980;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=YudAFqILa3mOOE+t1TyWZ2gFUm2V6rY++OIJXhuuw1I=;
-        b=GVFECx12o1HxFMFDi+vKfUZpJyldeRU3GqaOaZAL33IlUdEti5n+MXWu9OP0hh7u7wRhe8
-        TB8ZofjrRkF6FcQSlnJUO2g9FK9lwOVnOr3FnNZk5s3TUTklLDzdmz1ChdAeugi9dHyrkZ
-        1l0++xy5yXZAO5soWr6+JhPspJXAABU=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-301-tcCYl-qhPQuei3ZINSPvrw-1; Tue, 13 Apr 2021 03:29:38 -0400
-X-MC-Unique: tcCYl-qhPQuei3ZINSPvrw-1
-Received: by mail-ed1-f72.google.com with SMTP id bm19-20020a0564020b13b02903789d6e74b5so792374edb.21
-        for <kernel-janitors@vger.kernel.org>; Tue, 13 Apr 2021 00:29:38 -0700 (PDT)
+        Tue, 13 Apr 2021 05:24:34 -0400
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33FD9C061574
+        for <kernel-janitors@vger.kernel.org>; Tue, 13 Apr 2021 02:24:14 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id y204so6929853wmg.2
+        for <kernel-janitors@vger.kernel.org>; Tue, 13 Apr 2021 02:24:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=q/ZG+pCcF9dWPEWXNf+sTrl+9ocn3tujNZhS/yVRHoY=;
+        b=WgtR6uJ2GYaDkNUBtlk1alYw407nGKyIKWQ6rNbBFEtGxPGXAaUvmJqds6RoKjsPYj
+         QjRDwyFAJNQA3cdmiuh6Xm0GbWSyR70m/80C7sccunne+PywBlKlTLsbxZJ41Fi4FA7N
+         ydTtKpbmmhs4xugElMGX3LsGxV44QaR7FpU0blEwOoc9S4IJu1ajipv7OH5D2A3FDa7I
+         loj16JPo8loeYCa/5Z4dlW/tvc5tJuXUl0gXeeXhvxE63KAZQ9N38lXQBFtN00kp2V1R
+         TliA3bTkJLflNq05v5qMRGkuvI86kXna1SHZc+8ZkIUgf4WTOYO9f/WLn0lHv55Ogp42
+         MdFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=YudAFqILa3mOOE+t1TyWZ2gFUm2V6rY++OIJXhuuw1I=;
-        b=nYE2B8WUgN91slx0Tmtq8r0TZB34Bd7zLhAJdZOcyIW7CSWOMbH3sgcqVfMkNR2a31
-         ZEZ5VqrelM3aN2E0smpQoDPuNGo2yrdD344MT3TTxjxBu7zrI5GgqtS6KAIS9lz0Mrbf
-         /nZ2P9ScVpyQfmsS3DSg3pni+j8aCfeWw0hTU9GbiAroGN6gmRBCIe+SjUg9CUGvYTIq
-         g6pJA6AvrXYIRG3yrduQHxbVNlZrAcAssLQJvqBr7BJIRKxY77s7DA+rlzGA3IUrrvcH
-         e8zSpM0s/B09Ea6LhHFlV0IqRM1hPiirQn8swqU3gO34XREGzX4RpiIutlyBVuURPBsM
-         pCCA==
-X-Gm-Message-State: AOAM530wvxBYU8M+hInCS9VvY+6b8PABELS2vOb9XC0aCXM0EOtWUEwX
-        JK7OIyYeB6l7gA9bQLwc5GBVx8o9NBm3j7H9qOQosqgC9yL7x1nD/3LdZa8LPVkn/G7WTuYlnhg
-        KfYs6Gymve4jS9zrnoPledmqkvOWc
-X-Received: by 2002:a05:6402:3445:: with SMTP id l5mr33576462edc.27.1618298977497;
-        Tue, 13 Apr 2021 00:29:37 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxQrY+VYWzozoHawW7aNAan46NiQL9riVrwylV8GXb98pXD2+8ryZFNg9lKT4PGXF62dZbE/g==
-X-Received: by 2002:a05:6402:3445:: with SMTP id l5mr33576447edc.27.1618298977323;
-        Tue, 13 Apr 2021 00:29:37 -0700 (PDT)
-Received: from steredhat (host-79-34-249-199.business.telecomitalia.it. [79.34.249.199])
-        by smtp.gmail.com with ESMTPSA id gt37sm7169639ejc.12.2021.04.13.00.29.36
+        bh=q/ZG+pCcF9dWPEWXNf+sTrl+9ocn3tujNZhS/yVRHoY=;
+        b=qRmhVm7HJKK+ux502a7vuwoSyD0X5Ec/oXudU5+gJ2sC9Xiu1y4LcZyMdcp4aVByeO
+         HliFB+DKUr2qmDhV7rPhV66b3GmksIgNOozP11er65e0zBaDCawxrBSd1ayzdSC8LZQd
+         R3zobUg/tdHR/w9O+LemFcEWMzpjvCqcY3aHONsh76jfuv5RwziMwebSNs6UrXS5jMek
+         U4qAb4tWogHeNTdYNtufjY60y+1gW1pJxAfzp/uYwNt2lfuZjXXzE3vLBeWb6dvJDa6C
+         X3OgDI5P+Oa5jpauU7Q1jkzIq3qVDSFIxEc9p0LIhfO9lrRcFCADFEvv3gPZ0fSEJJ4R
+         KGOw==
+X-Gm-Message-State: AOAM530f1G34hKvdrIpri5kkSWno+bmGHochuVG8OCXN8VgeR5g45KYB
+        EAqDC6CyNoCu+/JxVrPY8sGmkA==
+X-Google-Smtp-Source: ABdhPJzM0s6uitdjPDyGqTnxZF+cYb4kinVMj8YyWDY7q2hwt3JZKeacKfRXSr/WieOP3ypRTT4wXQ==
+X-Received: by 2002:a1c:6446:: with SMTP id y67mr3049107wmb.145.1618305852795;
+        Tue, 13 Apr 2021 02:24:12 -0700 (PDT)
+Received: from google.com (105.168.195.35.bc.googleusercontent.com. [35.195.168.105])
+        by smtp.gmail.com with ESMTPSA id a22sm11064362wrc.59.2021.04.13.02.24.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Apr 2021 00:29:37 -0700 (PDT)
-Date:   Tue, 13 Apr 2021 09:29:34 +0200
-From:   Stefano Garzarella <sgarzare@redhat.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     "Michael S . Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Parav Pandit <parav@nvidia.com>,
-        virtualization@lists.linux-foundation.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] vdpa/mlx5: Fix resource leak of mgtdev due to
- incorrect kfree
-Message-ID: <20210413072934.ibz7iersn5byad3h@steredhat>
-References: <20210412162804.1628738-1-colin.king@canonical.com>
+        Tue, 13 Apr 2021 02:24:12 -0700 (PDT)
+Date:   Tue, 13 Apr 2021 09:24:09 +0000
+From:   Quentin Perret <qperret@google.com>
+To:     Peng Wu <wupeng58@huawei.com>
+Cc:     mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH -next] sched/topology: Make some symbols static
+Message-ID: <YHVjOeSGT3xe2smj@google.com>
+References: <1617887537-38438-1-git-send-email-wupeng58@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210412162804.1628738-1-colin.king@canonical.com>
+In-Reply-To: <1617887537-38438-1-git-send-email-wupeng58@huawei.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Apr 12, 2021 at 05:28:04PM +0100, Colin King wrote:
->From: Colin Ian King <colin.king@canonical.com>
->
->Static analysis is reporting a memory leak on mgtdev, it appears
->that the wrong object is being kfree'd. Fix this by kfree'ing
->mgtdev rather than mdev.
->
->Addresses-Coverity: ("Resource leak")
->Fixes: c8a2d4c73e70 ("vdpa/mlx5: Enable user to add/delete vdpa device")
->Signed-off-by: Colin Ian King <colin.king@canonical.com>
->---
-> drivers/vdpa/mlx5/net/mlx5_vnet.c | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
->
->diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/mlx5_vnet.c
->index 10c5fef3c020..25533db01f5f 100644
->--- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
->+++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
->@@ -2089,7 +2089,7 @@ static int mlx5v_probe(struct auxiliary_device *adev,
-> 	return 0;
->
-> reg_err:
->-	kfree(mdev);
->+	kfree(mgtdev);
-> 	return err;
-> }
->
->-- 
->2.30.2
+On Thursday 08 Apr 2021 at 21:12:17 (+0800), Peng Wu wrote:
+> The sparse tool complains as follows:
+> 
+> kernel/sched/topology.c:211:1: warning:
+>  symbol 'sched_energy_mutex' was not declared. Should it be static?
+> kernel/sched/topology.c:212:6: warning:
+>  symbol 'sched_energy_update' was not declared. Should it be static?
+> 
+> This symbol is not used outside of topology.c, so this
+> commit marks it static.
+> 
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Peng Wu <wupeng58@huawei.com>
+> ---
+>  kernel/sched/topology.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+> index d1aec244c027..25c3f88d43cd 100644
+> --- a/kernel/sched/topology.c
+> +++ b/kernel/sched/topology.c
+> @@ -208,8 +208,8 @@ sd_parent_degenerate(struct sched_domain *sd, struct sched_domain *parent)
+>  #if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
+>  DEFINE_STATIC_KEY_FALSE(sched_energy_present);
+>  unsigned int sysctl_sched_energy_aware = 1;
+> -DEFINE_MUTEX(sched_energy_mutex);
+> -bool sched_energy_update;
+> +static DEFINE_MUTEX(sched_energy_mutex);
+> +static bool sched_energy_update;
+>  
+>  void rebuild_sched_domains_energy(void)
+>  {
 >
 
-Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
+FWIW, that has been reported some time ago:
 
+https://lore.kernel.org/lkml/1606218731-3999-1-git-send-email-zou_wei@huawei.com/
+https://lore.kernel.org/lkml/1606271447-74720-1-git-send-email-zou_wei@huawei.com/
+
+But otherwise, this looks OK to me.
+
+Thanks,
+Quentin
