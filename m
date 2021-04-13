@@ -5,73 +5,71 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no version=3.4.0
+	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96BD6C433B4
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 10:50:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6952C433B4
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 10:50:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7598C613C3
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 10:50:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACF3E613C6
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 10:50:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236800AbhDMKut (ORCPT
+        id S1343870AbhDMKvP (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 13 Apr 2021 06:50:49 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:45060 "EHLO
+        Tue, 13 Apr 2021 06:51:15 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:45298 "EHLO
         aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237097AbhDMKur (ORCPT
+        with ESMTP id S236800AbhDMKvN (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 13 Apr 2021 06:50:47 -0400
+        Tue, 13 Apr 2021 06:51:13 -0400
 Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13DAiYdB004879;
-        Tue, 13 Apr 2021 10:50:24 GMT
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13DAj1fY015775;
+        Tue, 13 Apr 2021 10:50:53 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
  : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=lLdNvK4ftLKel0hXn6PRPGezW59y7vBAnkI9NXgza4o=;
- b=YZGJ6g1id2aRxzhK2kOgZ7XnXC3SMarLcVa/mIC6XkGuWq6dV7EoSf0rjr5qZsZl8Wmh
- e0dAO74GvaN7rthBff3oIJOs0YRXuwS8tMJj8hEttYk0Am/Q1G5E0KyM1nJftpIyR40i
- Nl1hr5pbtR79E/I5am0saTEFZm+AVeFLowRUlktfnTIqj9I8kw5qUGoVeWxUMj7D2ZLN
- dnI5mlmYNisv1yni/fr9Gr7HY5ob0YSVJBEdZGVMnxgCaSDuA1H26onQ0T4sNs3p9m/p
- dZ494ho68jXvwV57JS4iIoXudyy4Lm/0UluTZoM+cijPsV07iUyXEHF0liUyoJC1O75F QQ== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2120.oracle.com with ESMTP id 37u3ymek8d-1
+ bh=rEmqSMLQlKdr8i/yVs/kmYn6MYPqJZf1Db+LrridPCE=;
+ b=gvFdZErDowU8+SmscltPnxhcCtAJxaZJzOTs9SWt1mVHSqQ3LZeBB3j296QTL1FKMxuy
+ iZ8Tga/vs0dgCNgMfsfkz5qpExvZsFUeUcFUfXkbREQOxY+9i7S4tHr1cbldS4pXFewM
+ etfkKm9eS0369kRvYnUKkfJDkL5zwSGzYizG2f4QFKTfroSaIMe6H/fA7HadtY30g+bT
+ ErfsAH2Z9U6WyU5/9RQ5WodAIwDW9PjjcqyKEBjuqxeHDvMUY3lTu1PgX95txNphxtHM
+ TD811ogiUVCWKtJT7LSUegvqpLmSWwKxD3Ww3U77quEPfekup6og77yWDserVLRphtN+ ng== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 37u3ymek9c-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 13 Apr 2021 10:50:24 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13DAoM8S003839;
-        Tue, 13 Apr 2021 10:50:23 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3030.oracle.com with ESMTP id 37unxwp7s3-1
+        Tue, 13 Apr 2021 10:50:53 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13DAoS7B089128;
+        Tue, 13 Apr 2021 10:50:51 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3030.oracle.com with ESMTP id 37unkpbxf7-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 13 Apr 2021 10:50:22 +0000
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 13DAoDIg010852;
-        Tue, 13 Apr 2021 10:50:13 GMT
+        Tue, 13 Apr 2021 10:50:51 +0000
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 13DAoose006521;
+        Tue, 13 Apr 2021 10:50:50 GMT
 Received: from mwanda (/102.36.221.92)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 13 Apr 2021 03:50:13 -0700
-Date:   Tue, 13 Apr 2021 13:50:04 +0300
+        with ESMTP ; Tue, 13 Apr 2021 03:50:49 -0700
+Date:   Tue, 13 Apr 2021 13:50:42 +0300
 From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     "K. Y. Srinivasan" <kys@microsoft.com>
-Cc:     Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Wei Liu <wei.liu@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dexuan Cui <decui@microsoft.com>, linux-hyperv@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] Drivers: hv: vmbus: Use after free in __vmbus_open()
-Message-ID: <YHV3XLCot6xBS44r@mwanda>
+To:     Mark Brown <broonie@kernel.org>,
+        Quanyang Wang <quanyang.wang@windriver.com>
+Cc:     Michal Simek <michal.simek@xilinx.com>,
+        Amit Kumar Mahapatra <amit.kumar-mahapatra@xilinx.com>,
+        linux-spi@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] spi: spi-zynqmp-gqspi: unlock on error path in exec_op
+Message-ID: <YHV3gkc3RFcBZVAK@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 X-Proofpoint-IMR: 1
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9952 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 bulkscore=0 malwarescore=0
- spamscore=0 adultscore=0 phishscore=0 mlxlogscore=999 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104060000
- definitions=main-2104130075
-X-Proofpoint-GUID: oWLg4Cl5UKUUuDGu--YtdMJoGkw-ow83
-X-Proofpoint-ORIG-GUID: oWLg4Cl5UKUUuDGu--YtdMJoGkw-ow83
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=999
+ adultscore=0 phishscore=0 malwarescore=0 mlxscore=0 bulkscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104060000 definitions=main-2104130075
+X-Proofpoint-GUID: T-I6Rs3m37aj8ccDMRKzIdArUNFrpxvY
+X-Proofpoint-ORIG-GUID: T-I6Rs3m37aj8ccDMRKzIdArUNFrpxvY
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9952 signatures=668683
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=999 spamscore=0
  impostorscore=0 priorityscore=1501 lowpriorityscore=0 adultscore=0
@@ -82,34 +80,32 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The "open_info" variable is added to the &vmbus_connection.chn_msg_list,
-but the error handling frees "open_info" without removing it from the
-list.  This will result in a use after free.  First remove it from the
-list, and then free it.
+If the allocation fails then we need to drop the &xqspi->op_lock mutex
+before returning.
 
-Fixes: 6f3d791f3006 ("Drivers: hv: vmbus: Fix rescind handling issues")
+Fixes: a0f65be6e880 ("spi: spi-zynqmp-gqspi: add mutex locking for exec_op")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-From static analysis.  Untested etc.  There is almost certainly a good
-reason to add it to the list before checking "newchannel->rescind" but I
-don't know the code well enough to know what the reason is.
+ drivers/spi/spi-zynqmp-gqspi.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
- drivers/hv/channel.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/hv/channel.c b/drivers/hv/channel.c
-index db30be8f9cce..1c5a418c1962 100644
---- a/drivers/hv/channel.c
-+++ b/drivers/hv/channel.c
-@@ -653,7 +653,7 @@ static int __vmbus_open(struct vmbus_channel *newchannel,
+diff --git a/drivers/spi/spi-zynqmp-gqspi.c b/drivers/spi/spi-zynqmp-gqspi.c
+index 9494da9aea40..d08ca6d5670c 100644
+--- a/drivers/spi/spi-zynqmp-gqspi.c
++++ b/drivers/spi/spi-zynqmp-gqspi.c
+@@ -965,8 +965,10 @@ static int zynqmp_qspi_exec_op(struct spi_mem *mem,
  
- 	if (newchannel->rescind) {
- 		err = -ENODEV;
--		goto error_free_info;
-+		goto error_clean_msglist;
- 	}
- 
- 	err = vmbus_post_msg(open_msg,
+ 	if (op->cmd.opcode) {
+ 		tmpbuf = kzalloc(op->cmd.nbytes, GFP_KERNEL | GFP_DMA);
+-		if (!tmpbuf)
+-			return -ENOMEM;
++		if (!tmpbuf) {
++			err = -ENOMEM;
++			goto return_err;
++		}
+ 		tmpbuf[0] = op->cmd.opcode;
+ 		reinit_completion(&xqspi->data_completion);
+ 		xqspi->txbuf = tmpbuf;
 -- 
 2.30.2
 
