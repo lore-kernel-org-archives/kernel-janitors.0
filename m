@@ -2,61 +2,114 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0010C433B4
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 10:49:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96BD6C433B4
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 10:50:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C620960E0B
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 10:49:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7598C613C3
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 10:50:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343958AbhDMKto (ORCPT
+        id S236800AbhDMKut (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 13 Apr 2021 06:49:44 -0400
-Received: from foss.arm.com ([217.140.110.172]:40228 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1343982AbhDMKs7 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 13 Apr 2021 06:48:59 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 72B3A106F;
-        Tue, 13 Apr 2021 03:48:39 -0700 (PDT)
-Received: from e123427-lin.arm.com (unknown [10.57.59.108])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D4F813F73B;
-        Tue, 13 Apr 2021 03:48:37 -0700 (PDT)
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Qiheng Lin <linqiheng@huawei.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-mediatek@lists.infradead.org, Hulk Robot <hulkci@huawei.com>,
-        kernel-janitors@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH -next] PCI: mediatek: Add missing MODULE_DEVICE_TABLE
-Date:   Tue, 13 Apr 2021 11:48:33 +0100
-Message-Id: <161831089975.6369.2070015191943714889.b4-ty@arm.com>
-X-Mailer: git-send-email 2.26.1
-In-Reply-To: <20210331085938.3115-1-linqiheng@huawei.com>
-References: <20210331085938.3115-1-linqiheng@huawei.com>
+        Tue, 13 Apr 2021 06:50:49 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:45060 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237097AbhDMKur (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 13 Apr 2021 06:50:47 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13DAiYdB004879;
+        Tue, 13 Apr 2021 10:50:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
+ bh=lLdNvK4ftLKel0hXn6PRPGezW59y7vBAnkI9NXgza4o=;
+ b=YZGJ6g1id2aRxzhK2kOgZ7XnXC3SMarLcVa/mIC6XkGuWq6dV7EoSf0rjr5qZsZl8Wmh
+ e0dAO74GvaN7rthBff3oIJOs0YRXuwS8tMJj8hEttYk0Am/Q1G5E0KyM1nJftpIyR40i
+ Nl1hr5pbtR79E/I5am0saTEFZm+AVeFLowRUlktfnTIqj9I8kw5qUGoVeWxUMj7D2ZLN
+ dnI5mlmYNisv1yni/fr9Gr7HY5ob0YSVJBEdZGVMnxgCaSDuA1H26onQ0T4sNs3p9m/p
+ dZ494ho68jXvwV57JS4iIoXudyy4Lm/0UluTZoM+cijPsV07iUyXEHF0liUyoJC1O75F QQ== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 37u3ymek8d-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 13 Apr 2021 10:50:24 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13DAoM8S003839;
+        Tue, 13 Apr 2021 10:50:23 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3030.oracle.com with ESMTP id 37unxwp7s3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 13 Apr 2021 10:50:22 +0000
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 13DAoDIg010852;
+        Tue, 13 Apr 2021 10:50:13 GMT
+Received: from mwanda (/102.36.221.92)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 13 Apr 2021 03:50:13 -0700
+Date:   Tue, 13 Apr 2021 13:50:04 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     "K. Y. Srinivasan" <kys@microsoft.com>
+Cc:     Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Wei Liu <wei.liu@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dexuan Cui <decui@microsoft.com>, linux-hyperv@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] Drivers: hv: vmbus: Use after free in __vmbus_open()
+Message-ID: <YHV3XLCot6xBS44r@mwanda>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+X-Proofpoint-IMR: 1
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9952 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 bulkscore=0 malwarescore=0
+ spamscore=0 adultscore=0 phishscore=0 mlxlogscore=999 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104060000
+ definitions=main-2104130075
+X-Proofpoint-GUID: oWLg4Cl5UKUUuDGu--YtdMJoGkw-ow83
+X-Proofpoint-ORIG-GUID: oWLg4Cl5UKUUuDGu--YtdMJoGkw-ow83
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9952 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=999 spamscore=0
+ impostorscore=0 priorityscore=1501 lowpriorityscore=0 adultscore=0
+ bulkscore=0 phishscore=0 suspectscore=0 malwarescore=0 clxscore=1011
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104060000
+ definitions=main-2104130074
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 31 Mar 2021 16:59:38 +0800, Qiheng Lin wrote:
-> This patch adds missing MODULE_DEVICE_TABLE definition which generates
-> correct modalias for automatic loading of this driver when it is built
-> as an external module.
+The "open_info" variable is added to the &vmbus_connection.chn_msg_list,
+but the error handling frees "open_info" without removing it from the
+list.  This will result in a use after free.  First remove it from the
+list, and then free it.
 
-Applied to pci/mediatek, thanks!
+Fixes: 6f3d791f3006 ("Drivers: hv: vmbus: Fix rescind handling issues")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+From static analysis.  Untested etc.  There is almost certainly a good
+reason to add it to the list before checking "newchannel->rescind" but I
+don't know the code well enough to know what the reason is.
 
-[1/1] PCI: mediatek: Add missing MODULE_DEVICE_TABLE
-      https://git.kernel.org/lpieralisi/pci/c/87db343f80
+ drivers/hv/channel.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Lorenzo
+diff --git a/drivers/hv/channel.c b/drivers/hv/channel.c
+index db30be8f9cce..1c5a418c1962 100644
+--- a/drivers/hv/channel.c
++++ b/drivers/hv/channel.c
+@@ -653,7 +653,7 @@ static int __vmbus_open(struct vmbus_channel *newchannel,
+ 
+ 	if (newchannel->rescind) {
+ 		err = -ENODEV;
+-		goto error_free_info;
++		goto error_clean_msglist;
+ 	}
+ 
+ 	err = vmbus_post_msg(open_msg,
+-- 
+2.30.2
+
