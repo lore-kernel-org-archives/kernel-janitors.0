@@ -5,125 +5,118 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 625B5C433B4
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 17:11:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DE36C433B4
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 17:25:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3FE1A613B3
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 17:11:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D0F9611AD
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 17:25:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232428AbhDMRMJ (ORCPT
+        id S232634AbhDMRZ0 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 13 Apr 2021 13:12:09 -0400
-Received: from mail-40136.protonmail.ch ([185.70.40.136]:28632 "EHLO
-        mail-40136.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232399AbhDMRMI (ORCPT
+        Tue, 13 Apr 2021 13:25:26 -0400
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:47281 "EHLO
+        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232521AbhDMRZZ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 13 Apr 2021 13:12:08 -0400
-Date:   Tue, 13 Apr 2021 17:11:39 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bryanbrattlof.com;
-        s=protonmail3; t=1618333905;
-        bh=JRgenIaLUI4xNF3fT6/o+CfeGgQ3ycbu2skgPulPjiI=;
-        h=Date:To:From:Cc:Reply-To:Subject:From;
-        b=el1X2abuLZXwA3e5DlDZ4teIaFcaAL7MIJTMwOlKmD9MiVRFaxtH0VvUE/DxjVnb0
-         wxON/ImnI9/nMl8lDQjVIc7AFD8nQIz2cCh5XgYiGCAlO2rLAewBWHK25fzi5V7cCQ
-         DjQ1AKX44wYKg6CcSSaNixgn7bLYhx+eUH+ctkJ1624VQbzqS1Iy0Ve9Rjzhgq/Rmd
-         ezY96vOYsRTNUquaitSQx5GQLg6AWC8vW38+2J64ELPl3pbEs3OlmII3jgjU1BTM9h
-         zac+ia0bQoPWSS5cK65xlMl1xGF6XIvZl/oAYYLvfuCL7MX556/fOhkuSpd2is8Eq2
-         Tc4lFeZ577fnQ==
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Larry Finger <Larry.Finger@lwfinger.net>
-From:   Bryan Brattlof <hello@bryanbrattlof.com>
-Cc:     linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Bryan Brattlof <hello@bryanbrattlof.com>
-Reply-To: Bryan Brattlof <hello@bryanbrattlof.com>
-Subject: [PATCH] staging: rtl8723bs: remove sdio_drv_priv structure
-Message-ID: <20210413171124.174008-1-hello@bryanbrattlof.com>
+        Tue, 13 Apr 2021 13:25:25 -0400
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailout.nyi.internal (Postfix) with ESMTP id 1F7CC5C0085;
+        Tue, 13 Apr 2021 13:25:05 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Tue, 13 Apr 2021 13:25:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bur.io; h=date
+        :from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm3; bh=FAxzhQis+VzV9EuRK6sBuAnym9g
+        l5bJPLVFhKy7PrYc=; b=szxYHLzcBwBq9zApoa9+sFTJqxzBP/McWn5QbFp8NNE
+        IRbzbidDyUzfVqgag70t527ZiyL0vrzWvKhodYD/rH8kBBaJ8aYTo6SCPD6mmam1
+        RrbQ52b9mFh1swiFMAya7WupYbp5nS3J62T32XWsFJFucoNWtjYsQmI68E/VjV/u
+        mgWPzIiZvwzYFh2hmGxXRZHBFHk4ZLS5Om7BDWaFUmJXud6tQIXhCo2H3sGMEWki
+        iauHVjV0i0Re3pUU4kL5sERZ1Npxzm1xbxase+qHlTXM4PY/I21++t2Ztw8HtmjS
+        VEKqI7U4h5/jmRFpcMSg6lj2pFrKHJ+0fNhQLm0VBMw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=FAxzhQ
+        is+VzV9EuRK6sBuAnym9gl5bJPLVFhKy7PrYc=; b=LRDXE0WyZzif/OQ6WPaLAp
+        AXMgVS5bzs1FJ3jek4+RPhcVCf/dMyleQXzrrhd18FJ1j0ukzvINWPLk4xBvmH6d
+        sb72/nZrPpBhegYzl6mL17GmHfl5bRkufKBmWTGWiLBAp7sBpUBATaH1kUF6DvWq
+        PURKmlGw8fSTPAc4Sao6FyITLy2xjWv0t9/TqI9EM0EnLpESHObEr08VN4Q7sd3V
+        RFWRbvOk2LNNnvXXmlq+SeRKnXfs6/h3ynmMXmhamMggvPHD4DoqNZ8cBOzWvyc7
+        68Ky7Nk8k/XXc1DRrICrFqqCcVjjqMG29vdTlZVB2ivCgPQf7iz9JZokwBRzMT7Q
+        ==
+X-ME-Sender: <xms:8NN1YC834B6lDKJcC-nbz3LTi8osr_McQCv6Juerkm-8K7l7ZjZrFQ>
+    <xme:8NN1YCvVVYBgnqO5MsOb1c36_ndznz8Odd9ifdMtw0ZEVwa5C2t4BOUYLRcqWB2ez
+    wkeWAniz9uKmtjM4wk>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrudekledguddufecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehorhhi
+    shcuuehurhhkohhvuceosghorhhishessghurhdrihhoqeenucggtffrrghtthgvrhhnpe
+    ehudevleekieetleevieeuhfduhedtiefgheekfeefgeelvdeuveeggfduueevfeenucfk
+    phepvddtjedrheefrddvheefrdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomhepsghorhhishessghurhdrihho
+X-ME-Proxy: <xmx:8NN1YIC9FIciUHrazurDGJoNeSNA-iOkHlT9fAUXL7fLpD03HY7uOA>
+    <xmx:8NN1YKcb-RzT3C9F4PTpV1mnFmGfibMY7aaMzf3_rMQ0pv_oIhi4JA>
+    <xmx:8NN1YHOUILFqBzOIf69P27WoVjC7fmzT4txw7yDIyxpeitpv3qwgdQ>
+    <xmx:8dN1YMq08gAWupX5dEC6DREyOnanSFhBeDs0C9kHD-TNXsuuLf9G6A>
+Received: from localhost (unknown [207.53.253.7])
+        by mail.messagingengine.com (Postfix) with ESMTPA id EEEDE1080066;
+        Tue, 13 Apr 2021 13:25:02 -0400 (EDT)
+Date:   Tue, 13 Apr 2021 10:25:01 -0700
+From:   Boris Burkov <boris@bur.io>
+To:     Khaled ROMDHANI <khaledromdhani216@gmail.com>
+Cc:     clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH-next] fs/btrfs: Fix uninitialized variable
+Message-ID: <YHXT4kIrs28daRER@zen>
+References: <20210413130604.11487-1-khaledromdhani216@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210413130604.11487-1-khaledromdhani216@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The sdio_drv_priv structure is a small wrapper around sdio_driver in
-linux/mmc/sdio_func.h with an added drv_registered integer.
+On Tue, Apr 13, 2021 at 02:06:04PM +0100, Khaled ROMDHANI wrote:
+> The variable zone is not initialized. It
+> may causes a failed assertion.
+> 
+> Addresses-Coverity: ("Uninitialized variables")
+> 
+> Signed-off-by: Khaled ROMDHANI <khaledromdhani216@gmail.com>
 
-drv_registered is never used anywhere in the driver and only assigned to
-during the sdio registering and unregistering process. We can safely
-remove sdio_drv_priv and use the sdio_driver structure directly.
+Reviewed-by: Boris Burkov <boris@bur.io>
 
-Signed-off-by: Bryan Brattlof <hello@bryanbrattlof.com>
----
- drivers/staging/rtl8723bs/os_dep/sdio_intf.c | 32 ++++++--------------
- 1 file changed, 9 insertions(+), 23 deletions(-)
+> ---
+>  fs/btrfs/zoned.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
+> index eeb3ebe11d7a..ee15ab8dccb5 100644
+> --- a/fs/btrfs/zoned.c
+> +++ b/fs/btrfs/zoned.c
+> @@ -136,7 +136,7 @@ static int sb_write_pointer(struct block_device *bdev, struct blk_zone *zones,
+>   */
+>  static inline u32 sb_zone_number(int shift, int mirror)
+>  {
+> -	u64 zone;
+> +	u64 zone = 0;
+>  
+>  	ASSERT(mirror < BTRFS_SUPER_MIRROR_MAX);
 
-diff --git a/drivers/staging/rtl8723bs/os_dep/sdio_intf.c b/drivers/staging=
-/rtl8723bs/os_dep/sdio_intf.c
-index a8ef95ab14da..816b5bf6e3ed 100644
---- a/drivers/staging/rtl8723bs/os_dep/sdio_intf.c
-+++ b/drivers/staging/rtl8723bs/os_dep/sdio_intf.c
-@@ -36,17 +36,12 @@ static const struct dev_pm_ops rtw_sdio_pm_ops =3D {
- =09.resume=09=3D rtw_sdio_resume,
- };
-=20
--struct sdio_drv_priv {
--=09struct sdio_driver r871xs_drv;
--=09int drv_registered;
--};
--
--static struct sdio_drv_priv sdio_drvpriv =3D {
--=09.r871xs_drv.probe =3D rtw_drv_init,
--=09.r871xs_drv.remove =3D rtw_dev_remove,
--=09.r871xs_drv.name =3D "rtl8723bs",
--=09.r871xs_drv.id_table =3D sdio_ids,
--=09.r871xs_drv.drv =3D {
-+static struct sdio_driver rtl8723bs_sdio_driver =3D {
-+=09.probe =3D rtw_drv_init,
-+=09.remove =3D rtw_dev_remove,
-+=09.name =3D "rtl8723bs",
-+=09.id_table =3D sdio_ids,
-+=09.drv =3D {
- =09=09.pm =3D &rtw_sdio_pm_ops,
- =09}
- };
-@@ -498,18 +493,11 @@ static int __init rtw_drv_entry(void)
- =09DBG_871X_LEVEL(_drv_always_, "rtl8723bs BT-Coex version =3D %s\n", BTCO=
-EXVERSION);
- #endif /*  BTCOEXVERSION */
-=20
--=09sdio_drvpriv.drv_registered =3D true;
-=20
--=09ret =3D sdio_register_driver(&sdio_drvpriv.r871xs_drv);
--=09if (ret !=3D 0) {
--=09=09sdio_drvpriv.drv_registered =3D false;
-+=09ret =3D sdio_register_driver(&rtl8723bs_sdio_driver);
-+=09if (ret !=3D 0)
- =09=09rtw_ndev_notifier_unregister();
--=09=09goto exit;
--=09}
-=20
--=09goto exit;
--
--exit:
- =09DBG_871X_LEVEL(_drv_always_, "module init ret =3D%d\n", ret);
- =09return ret;
- }
-@@ -518,9 +506,7 @@ static void __exit rtw_drv_halt(void)
- {
- =09DBG_871X_LEVEL(_drv_always_, "module exit start\n");
-=20
--=09sdio_drvpriv.drv_registered =3D false;
--
--=09sdio_unregister_driver(&sdio_drvpriv.r871xs_drv);
-+=09sdio_unregister_driver(&rtl8723bs_sdio_driver);
-=20
- =09rtw_ndev_notifier_unregister();
-=20
---=20
-2.27.0
+Thanks for the fix.
 
+I assume this was dug up by coverity static analysis rather than hitting
+it in a live system?
 
+Since there is already an assert for the pre-condition 'mirror < max',
+I feel like it would make sense to also add one for mirror > 0.
+
+>  	switch (mirror) {
+> -- 
+> 2.17.1
+> 
