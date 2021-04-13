@@ -2,96 +2,85 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,PDS_TONAME_EQ_TOLOCAL_SHORT,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32D1EC433B4
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 14:15:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A07AC433B4
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 15:09:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 057586128C
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 14:15:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43785613B8
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 15:09:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229762AbhDMOQH (ORCPT
+        id S1346462AbhDMPJo (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 13 Apr 2021 10:16:07 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:57558 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231135AbhDMOQF (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 13 Apr 2021 10:16:05 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13DEFHKH095853;
-        Tue, 13 Apr 2021 14:15:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=NIh49Dj/kn2fUpzyeA1h47utONydvPDU+amfrcRk324=;
- b=oRCCvh47ioUXRgzXsA9xrctMTseAnO5DP0QYsewGhvhn8IpPyu6fduafTSg/9yUjwyCH
- 4C0d4SBKtMoVU5R+qTA5iXsDz/D0sshciiqxethhc5YfFZV1f6QlLy5/LZxOHAPUU7BM
- euGiFQjJF1VTlyAMuo6P5zV00WN6xoToQGXs+dSktcDlw+8en0X5PMTvpGFH7cv6Bl0E
- Z7WEMjtY292tgEY2SGGhJuB6vVmneEmEtG7HbDVykfvQstKtrUDIDIQvIqNq+vUEek9x
- lMBt3nm3rLEqh3h9mJCxYGrJCBJa6FG3HB8/uG98t7ptaYVVbik9PmdMO1kGvu67lmKI bA== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2120.oracle.com with ESMTP id 37u4nnf6rc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 13 Apr 2021 14:15:34 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13DEFUYr009554;
-        Tue, 13 Apr 2021 14:15:32 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3020.oracle.com with ESMTP id 37unsse9e5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 13 Apr 2021 14:15:32 +0000
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 13DEFHEa017895;
-        Tue, 13 Apr 2021 14:15:17 GMT
-Received: from kadam (/102.36.221.92)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 13 Apr 2021 07:15:17 -0700
-Date:   Tue, 13 Apr 2021 17:15:09 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     zhongbaisong <zhongbaisong@huawei.com>
-Cc:     Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, kvm@vger.kernel.org,
-        linux-s390@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH -next] s390/protvirt: fix error return code in
- uv_info_init()
-Message-ID: <20210413141509.GF6021@kadam>
-References: <2f7d62a4-3e75-b2b4-951b-75ef8ef59d16@huawei.com>
+        Tue, 13 Apr 2021 11:09:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54672 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232120AbhDMPJk (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 13 Apr 2021 11:09:40 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 417CF613B6;
+        Tue, 13 Apr 2021 15:09:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1618326560;
+        bh=2mrmh7KWeWnO3AgGPTiEPrsluOYYVwNB/gzeJ2AAmJc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=bht0AWlKxDnXY7xXGf9zBminX8JaUxZmolH/VsR+q7RN72k80Z6js0ybi135ERVrk
+         XI3zkfLXZ1uoCCBDFBWkemj37ULTNeb2lqytJZqdoPYpQ8oiDAogk9Wkzjf/sHFvCR
+         U/qhJUdY4I8fHe3T9AOWSmxMgx1AKZj868Veh6Il5T1euBsklGTxXGQqZ94rbsfyYS
+         t4RzcicjkmiosXa9MA8G3UQ1OXSrGfqi2Wsx7lPTCatn5+tIeYdr950mj34Dd78N+s
+         ehI5+QfOQXBsMnMysXUDFr4wKylXzXy+wKaJu84MrR/4b8OLw9EFZFDg0FSKfoUrw/
+         kVFomZsah9Qbw==
+From:   Mark Brown <broonie@kernel.org>
+To:     david.rhodes@cirrus.com,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        tiwai@suse.com, perex@perex.cz, lgirdwood@gmail.com,
+        james.schulman@cirrus.com
+Cc:     Mark Brown <broonie@kernel.org>, patches@opensource.cirrus.com,
+        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ASoC: cs35l36: Fix an error handling path in 'cs35l36_i2c_probe()'
+Date:   Tue, 13 Apr 2021 16:08:53 +0100
+Message-Id: <161832446010.49152.18429371778012715101.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <9fec48e75bc1d3c92626e6f6aca2344bda223379.1618145790.git.christophe.jaillet@wanadoo.fr>
+References: <9fec48e75bc1d3c92626e6f6aca2344bda223379.1618145790.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2f7d62a4-3e75-b2b4-951b-75ef8ef59d16@huawei.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-IMR: 1
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9953 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
- malwarescore=0 suspectscore=0 bulkscore=0 mlxscore=0 spamscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2104060000 definitions=main-2104130101
-X-Proofpoint-ORIG-GUID: 6xX0RmcbNbMtEUbJpzbBOznee1VVVXc2
-X-Proofpoint-GUID: 6xX0RmcbNbMtEUbJpzbBOznee1VVVXc2
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9953 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0
- phishscore=0 suspectscore=0 mlxlogscore=999 priorityscore=1501
- clxscore=1011 lowpriorityscore=0 spamscore=0 impostorscore=0 bulkscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2104060000 definitions=main-2104130101
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Apr 07, 2021 at 08:38:55PM +0800, zhongbaisong wrote:
-                                          ^^^^^^^^^^^^
+On Sun, 11 Apr 2021 14:57:13 +0200, Christophe JAILLET wrote:
+> If 'devm_regmap_init_i2c()' fails, there is no need to goto err. We should
+> return directly as already done by the surrounding error handling paths.
 
-Heiko Carstens already fixed and applied the patch but it's best to fix
-this From line so it says "Baisong Zhong" like your Signed-off-by line.
+Applied to
 
-regards,
-dan carpenter
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
+Thanks!
+
+[1/1] ASoC: cs35l36: Fix an error handling path in 'cs35l36_i2c_probe()'
+      commit: cdf20c3ef0e90b962e62ae7d835d7f46333285bc
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
