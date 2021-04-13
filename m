@@ -2,87 +2,108 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1B18C433ED
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 16:56:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BFCAC433B4
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 17:08:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C711361369
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 16:56:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 169B060C3E
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 17:08:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232214AbhDMQ4o (ORCPT
+        id S1347113AbhDMRIl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 13 Apr 2021 12:56:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55710 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232449AbhDMQ4j (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 13 Apr 2021 12:56:39 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7FE5F61369;
-        Tue, 13 Apr 2021 16:56:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1618332980;
-        bh=BMzJR4VJ6S1chDRuLo9fNI6baCLetujlMTgG9T1hBTA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=H1+F6QWKSDbw99N9oHLwneBEHm7z2DLMLXAPn+TicXytB6qyUrMKJTzH/1BOi1Kjm
-         q0FSLD/sX3Y0PXgIrqaIngI6mOcmUVsfkjK/2x2RfHhW0GFQ6gwldtvXNWyshYcwDx
-         F8kQc+lf9kN1CJuq/CXgy38FmRkYBwnsW48PxFrcyTJ8UoDYNg42/qK++/stJwStJ+
-         OW7V9M7WPAw/EKI3N5X9ysBAJdGLrn3WuSsVMDLbacrCWTA5q96+ep+lYJSZOm096l
-         +85NzGjWUtucRFaxt6R/ci4pFFM+8wKJITk+XEXbDowX+0nH2uefjWmOL65rbRMcl0
-         cGNq9OGI9h8Ow==
-Date:   Tue, 13 Apr 2021 17:55:58 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     alsa-devel@alsa-project.org, lgirdwood@gmail.com,
-        patches@opensource.cirrus.com, kernel-janitors@vger.kernel.org,
-        tiwai@suse.com, james.schulman@cirrus.com, david.rhodes@cirrus.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ASoC: cs35l35: Fix an error handling path in
- 'cs35l35_i2c_probe()'
-Message-ID: <20210413165558.GH5586@sirena.org.uk>
-References: <15720439769ba94ffb65c90217392b0758b08f61.1618145369.git.christophe.jaillet@wanadoo.fr>
- <20210413124323.GD5586@sirena.org.uk>
- <3f276ab6-1704-84ed-3681-d639ba1e0010@wanadoo.fr>
+        Tue, 13 Apr 2021 13:08:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37650 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1347118AbhDMRIj (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 13 Apr 2021 13:08:39 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A00FC061574;
+        Tue, 13 Apr 2021 10:08:16 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id h4so8160399wrt.12;
+        Tue, 13 Apr 2021 10:08:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=K/kiVlWr9jXTw6l1mfaywK3J5oBfrjHUAoZh2g85M0w=;
+        b=XED4oB6RsgA4wpo+b6abLPediKo9oasX8Sx58+/FjuOA9VqncW09qfnpEFg675hYYS
+         37IsYdS/2p/SDCVXUifyYfTAmpU2GP8aQ1BaDPFgcirbn4oM8FE2Ld5topCMnRDBM4Nq
+         PcUfmhAcCJp+Vtnrum16aLe720VQFhCGhASJRAXoMVJSkvIBB//rzO2WjsOoW8tD0P/e
+         H3OjcdZ/ZI8qp2nFNtajq+EynV2SLhOGuBG0I84V6iqSCw7DPeG8OXwvQvRVa69HLGJA
+         BTTi9tOeqKrtXrgawdhxW7iHMKji8wfBVi68l1jwhOw/bUCG8q33mmjNfRBAHksBmHQW
+         87Wg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=K/kiVlWr9jXTw6l1mfaywK3J5oBfrjHUAoZh2g85M0w=;
+        b=ibWoy/X/+MFeAKIiYr1k6ZoFn5hPRNG3A7bGkHewoE8ZN+bsVIVjevR3ZIPythMveT
+         2/DX+FU3as7amBxt0bR/oZEVkL/k7zNnDnxuBg1zhK+CTg5vRo+5hGhnJ/glLdJmmlXy
+         BJWf/1qQfg+AWPdoiRktiEntEU8VCA10PzqslwYo4kf2unHh1A7kgFJH1qyCwr1vuBPd
+         15hBr0x1acsHX+HQLeHcPfXDeQud55Ca8i01Zdl00iseWK62tf7CuBeyhDFjh6PocXRp
+         hRZTSJjbpyRJWr7C5HQ3VbfTIPE8G2VLGhx4LN1FYLkimJGDxzBCL/1CZCJ+6LRPV+Yj
+         2xZQ==
+X-Gm-Message-State: AOAM532jPRCktjwyMKkcRA635DHdLRxvcvkKfy/1bnnpVo99bbtsr1eF
+        V0RlaIKxRlC/ZD0QKhE6Pls=
+X-Google-Smtp-Source: ABdhPJx3Uajeisnjyscy0g3utepSDCitXthgN6FMpqs5KrWDHciona1jpI6xn1PD20iDPvtwbRJvrw==
+X-Received: by 2002:adf:fb05:: with SMTP id c5mr39073342wrr.302.1618333695126;
+        Tue, 13 Apr 2021 10:08:15 -0700 (PDT)
+Received: from 192.168.10.5 ([39.46.65.172])
+        by smtp.gmail.com with ESMTPSA id i12sm879580wmd.3.2021.04.13.10.08.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Apr 2021 10:08:14 -0700 (PDT)
+Message-ID: <3caf81e242edacd91e32217261e2d21ceb5d4dc7.camel@gmail.com>
+Subject: Re: [PATCH] xen/pciback: Fix incorrect type warnings
+From:   Muhammad Usama Anjum <musamaanjum@gmail.com>
+To:     Juergen Gross <jgross@suse.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        "moderated list:XEN HYPERVISOR INTERFACE" 
+        <xen-devel@lists.xenproject.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org, colin.king@canonical.com,
+        dan.carpenter@oracle.com
+Cc:     musamaanjum@gmail.com
+Date:   Tue, 13 Apr 2021 22:08:10 +0500
+In-Reply-To: <c619fb6c-6957-5b87-b0a1-6be96f8771db@suse.com>
+References: <20210326181442.GA1735905@LEGION>
+         <c619fb6c-6957-5b87-b0a1-6be96f8771db@suse.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.4-0ubuntu1 
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="cW+P/jduATWpL925"
-Content-Disposition: inline
-In-Reply-To: <3f276ab6-1704-84ed-3681-d639ba1e0010@wanadoo.fr>
-X-Cookie: Shake well before using.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Reminder!
 
---cW+P/jduATWpL925
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Mon, 2021-03-29 at 09:24 +0200, Juergen Gross wrote:
+> On 26.03.21 19:14, Muhammad Usama Anjum wrote:
+> > Correct enum pci_channel_io_normal should be used instead of putting
+> > integer value 1.
+> > 
+> > Fix following smatch warnings:
+> > drivers/xen/xen-pciback/pci_stub.c:805:40: warning: incorrect type in argument 2 (different base types)
+> > drivers/xen/xen-pciback/pci_stub.c:805:40:    expected restricted pci_channel_state_t [usertype] state
+> > drivers/xen/xen-pciback/pci_stub.c:805:40:    got int
+> > drivers/xen/xen-pciback/pci_stub.c:862:40: warning: incorrect type in argument 2 (different base types)
+> > drivers/xen/xen-pciback/pci_stub.c:862:40:    expected restricted pci_channel_state_t [usertype] state
+> > drivers/xen/xen-pciback/pci_stub.c:862:40:    got int
+> > drivers/xen/xen-pciback/pci_stub.c:973:31: warning: incorrect type in argument 2 (different base types)
+> > drivers/xen/xen-pciback/pci_stub.c:973:31:    expected restricted pci_channel_state_t [usertype] state
+> > drivers/xen/xen-pciback/pci_stub.c:973:31:    got int
+> > 
+> > Signed-off-by: Muhammad Usama Anjum <musamaanjum@gmail.com>
+> 
+> Reviewed-by: Juergen Gross <jgross@suse.com>
+> 
+> 
+> Juergen
 
-On Tue, Apr 13, 2021 at 04:02:21PM +0200, Christophe JAILLET wrote:
-
-> What do you prefer:
->   - you fix the subject?
->   - I send a v2 with a new subject?
->   - we leave it as-is as this patch is a no-op in the real world? So it
-> doesn't really mater.
-
-It's fine, I already queued it - more a note for the future.
-
---cW+P/jduATWpL925
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmB1zR0ACgkQJNaLcl1U
-h9BJwgf9G8n6zatxyWi95NrgjszQW2bkdnOdAhkOym0X/xyrH6kURNsAR7zrPGkT
-LEv2oUZTXBFc11NJy2/g/W7+MMOTA9+E4vYmqJUZQbZ6uinJZFGxgvIlgUsKy4d/
-26uCsV8bnzRYmeH0iw9G+tE41Zm+cA/TF6DSGowoyvg1OoLROp6/0aHhCjQwEnW4
-Wj263Eb88PcVN3XpXCIAbRCHJ9TnO8asSUzyMXTadQnJNxdCvg8I5fVahDLekp+U
-mAsyyd9VyL2lAgAjfjGvfglXwOLWjMNKi+ySQJhysOGZqIJ7JYxdIMY1lZNQWeJ/
-TQmnbD4Jigu7mg0wyoNNLOQ7bepCPA==
-=XUD+
------END PGP SIGNATURE-----
-
---cW+P/jduATWpL925--
