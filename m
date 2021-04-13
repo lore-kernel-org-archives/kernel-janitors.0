@@ -2,101 +2,82 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AE7FC433B4
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 12:35:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAE19C433B4
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 12:44:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 591A6613B2
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 12:35:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A71CB613C4
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 12:44:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229759AbhDMMfx (ORCPT
+        id S244360AbhDMMpC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 13 Apr 2021 08:35:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47576 "EHLO mail.kernel.org"
+        Tue, 13 Apr 2021 08:45:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48860 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229730AbhDMMfx (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 13 Apr 2021 08:35:53 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 2D9CA6128E;
-        Tue, 13 Apr 2021 12:35:32 +0000 (UTC)
+        id S244281AbhDMMoE (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 13 Apr 2021 08:44:04 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 6CE1D613B2;
+        Tue, 13 Apr 2021 12:43:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1618317333;
-        bh=jZq27WHtD28iaDPaxdRQdCiW4Fnh0dePIgDdkXHZc3M=;
+        s=k20201202; t=1618317825;
+        bh=qiBtcnTxT4Pf7P7KT8Oez6AX4LDmqJOiJjbynCK5Sj0=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LAv+3hMeHEqlxWgwh6oyJugxWohxTict/My9171bvPww47HspB15sgTu7FAbfAJoI
-         fIRUwOOq2RSB3GojIDBUfvktn78o0tZ5e8JTsJf5+jbsIfTl0fhOJ8yNZpSW7wGG7R
-         nxN3bnyaR90N1SRP5d75tOSGizN+lZjJyC0XWoGV5Qhx5ESKxw5DSelZdhrk4J+whr
-         mD4oOeM9GcQdHbUeZbBcOsl7o/ZW+4HNjK7N6G5MRKv0uhX19IvORo6lReP4PnKV76
-         tGIf+CHXt9VgS975Ohn7vDRsEXv1N9G1QtjCxWqRupWB6WU/e5adpQfEu0LYaNRAFq
-         liGbHPstqKOow==
-Date:   Tue, 13 Apr 2021 14:35:30 +0200
-From:   Wolfram Sang <wsa@kernel.org>
-To:     Bixuan Cui <cuibixuan@huawei.com>
-Cc:     Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Dejin Zheng <zhengdejin5@gmail.com>,
-        Linhua Xu <linhua.xu@unisoc.com>, linux-i2c@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH -next] i2c: sprd: Add missing MODULE_DEVICE_TABLE
-Message-ID: <20210413123530.GF1553@kunai>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-        Bixuan Cui <cuibixuan@huawei.com>, Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Dejin Zheng <zhengdejin5@gmail.com>,
-        Linhua Xu <linhua.xu@unisoc.com>, linux-i2c@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <20210410035044.11418-1-cuibixuan@huawei.com>
+        b=FcVngKpkYCCvBk30DH3rjZnD81URSc77GI/TivDJuZF+4tHYUzBHbiGRZFQKzU/hN
+         ZZd7LleKkJSJSMxCNDZ81vuOBQu1iKygcACi8Kapx63xuyjRTIz3r7apROxSrIBrt9
+         SW7CwCdUyk8qDCob+4+R0pnqn6t95Iz0DX7WNb1tAxwsdPSSbYhFJWfbSifPFhEVp8
+         TcRw+cUQ8AgMyh8bX+XW/uCj/OnbZd8D2TWWZzotYppfUI1ta2IuFwRzffbsoyuVY6
+         MSJx0kpElpiiM+/qwbeDgRIpK/aNd3L8E5zrkIN+8Z0KIgScp8hKbzPoLlglOUvUc2
+         Oupbo+qQ98xAg==
+Date:   Tue, 13 Apr 2021 13:43:23 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     james.schulman@cirrus.com, david.rhodes@cirrus.com,
+        lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
+        alsa-devel@alsa-project.org, patches@opensource.cirrus.com,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] ASoC: cs35l35: Fix an error handling path in
+ 'cs35l35_i2c_probe()'
+Message-ID: <20210413124323.GD5586@sirena.org.uk>
+References: <15720439769ba94ffb65c90217392b0758b08f61.1618145369.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="HCdXmnRlPgeNBad2"
+        protocol="application/pgp-signature"; boundary="osDK9TLjxFScVI/L"
 Content-Disposition: inline
-In-Reply-To: <20210410035044.11418-1-cuibixuan@huawei.com>
+In-Reply-To: <15720439769ba94ffb65c90217392b0758b08f61.1618145369.git.christophe.jaillet@wanadoo.fr>
+X-Cookie: Shake well before using.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 
---HCdXmnRlPgeNBad2
+--osDK9TLjxFScVI/L
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, Apr 10, 2021 at 11:50:44AM +0800, Bixuan Cui wrote:
-> This patch adds missing MODULE_DEVICE_TABLE definition which generates
-> correct modalias for automatic loading of this driver when it is built
-> as an external module.
->=20
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Bixuan Cui <cuibixuan@huawei.com>
+On Sun, Apr 11, 2021 at 02:51:06PM +0200, Christophe JAILLET wrote:
+> If 'devm_regmap_init_i2c()' fails, there is no need to goto err. We should
+> return directly as already done by the surrounding error handling paths.
 
-Applied to for-next, thanks!
+These are stylistic improvements rather than bug fixes so it's probably
+better not to call them fixes.
 
-
---HCdXmnRlPgeNBad2
+--osDK9TLjxFScVI/L
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmB1kBIACgkQFA3kzBSg
-KbZDrA/9FvLooUUs4AsjyGRYipNco5Ol7z7YKTI0xXJmFyAo3kKTGFpQH8YTgd0Z
-6D4XwZYhd24uMewRDSzlmCLBI85oDkC/6FV1dIOY/7P62lwkkjYOCw7UvA3sfPq9
-M871GHF4w1OAKTylSL/ZAi7llH0ReofkE1n/2L8ALnX7iI38xMwc3BeCdgMc2HFc
-nuGvOwOcJLzByakfawWB1Q/hiDZy49DpkhLexw+cXNtYBS6y9zRdyjiZisgGS/mT
-XduvW18Mv/2Xm/qz8RGKwdWR8HDd0g8KVZ4ZcQm4LsiuxO8fnHftTpMcmzrsgbOF
-KMbJdIC6l2KPPDlk3LCm1bmdIvqtlb6dPeFkx0u65FXi6mr5JaPEqPXLhzrXZ4YN
-JmPspVHwk7BfcRIlJ+H6ZmbWJn85xV4d07jfUvg0QQA+KHGroRoG6GGxg8/Y6BWQ
-OKdr4X5sERgm7/3OgL2Ka1GjOr4sggLZTw9J9IBkZIByzto8qNiZWe5Zhuweb1ix
-O2kvnVtF3iQMUJGgLt1unLQeDgwBVB7vrrTvlN/gmurTjQi2ClLtIiBP3NARBf7C
-8x5+nkbyCXhmH41GtfFbnSdl9QPJZOwhUWwCBvUAxbEAJ+n+QtElSB3sY6ZKh1Gb
-hX794odocfaC0pyJ4MzNFlWw/GtP5XGZ2+Hw1+h5AlQOah541o8=
-=LBNi
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmB1keoACgkQJNaLcl1U
+h9Cv3wf+NEs2AimelvFepIXotWXQORggDNT0w9PYpIVhx8qJDau2m0VQTgfzprrE
+SBxqb8RaJnOrzew3fZmzDit+EpfjT7D+X1tWwUvGY8HI/bjc0clVVzlpW81+s/FT
+F1mepwHK26ct0/VZxKqiibsNoFCsf81VUDPy26KiScG7BAdrF8us25gVSepKAyIF
+kh4fqhgcU8GPtUHz23pSgn0vzgA5qdWPJVVQ44tBoJRAtkJ0zBCf9pnvE5ZNZQt0
+bwHL/EwG84ufa0Y4x+wzx+O3VeDaT1fv9K9Se/hIylrCRYg+o/agbgnZcCUDD2RI
+v8uynYS9hbv6gYfp3hqFkqKWRH1suA==
+=q+7O
 -----END PGP SIGNATURE-----
 
---HCdXmnRlPgeNBad2--
+--osDK9TLjxFScVI/L--
