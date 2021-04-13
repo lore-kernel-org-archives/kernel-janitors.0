@@ -2,121 +2,100 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DE36C433B4
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 17:25:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72D05C433ED
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 17:53:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5D0F9611AD
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 17:25:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45C1F613B1
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 17:53:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232634AbhDMRZ0 (ORCPT
+        id S232543AbhDMRxg (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 13 Apr 2021 13:25:26 -0400
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:47281 "EHLO
-        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232521AbhDMRZZ (ORCPT
+        Tue, 13 Apr 2021 13:53:36 -0400
+Received: from mail-wr1-f49.google.com ([209.85.221.49]:42574 "EHLO
+        mail-wr1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230108AbhDMRxe (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 13 Apr 2021 13:25:25 -0400
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailout.nyi.internal (Postfix) with ESMTP id 1F7CC5C0085;
-        Tue, 13 Apr 2021 13:25:05 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Tue, 13 Apr 2021 13:25:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bur.io; h=date
-        :from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm3; bh=FAxzhQis+VzV9EuRK6sBuAnym9g
-        l5bJPLVFhKy7PrYc=; b=szxYHLzcBwBq9zApoa9+sFTJqxzBP/McWn5QbFp8NNE
-        IRbzbidDyUzfVqgag70t527ZiyL0vrzWvKhodYD/rH8kBBaJ8aYTo6SCPD6mmam1
-        RrbQ52b9mFh1swiFMAya7WupYbp5nS3J62T32XWsFJFucoNWtjYsQmI68E/VjV/u
-        mgWPzIiZvwzYFh2hmGxXRZHBFHk4ZLS5Om7BDWaFUmJXud6tQIXhCo2H3sGMEWki
-        iauHVjV0i0Re3pUU4kL5sERZ1Npxzm1xbxase+qHlTXM4PY/I21++t2Ztw8HtmjS
-        VEKqI7U4h5/jmRFpcMSg6lj2pFrKHJ+0fNhQLm0VBMw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=FAxzhQ
-        is+VzV9EuRK6sBuAnym9gl5bJPLVFhKy7PrYc=; b=LRDXE0WyZzif/OQ6WPaLAp
-        AXMgVS5bzs1FJ3jek4+RPhcVCf/dMyleQXzrrhd18FJ1j0ukzvINWPLk4xBvmH6d
-        sb72/nZrPpBhegYzl6mL17GmHfl5bRkufKBmWTGWiLBAp7sBpUBATaH1kUF6DvWq
-        PURKmlGw8fSTPAc4Sao6FyITLy2xjWv0t9/TqI9EM0EnLpESHObEr08VN4Q7sd3V
-        RFWRbvOk2LNNnvXXmlq+SeRKnXfs6/h3ynmMXmhamMggvPHD4DoqNZ8cBOzWvyc7
-        68Ky7Nk8k/XXc1DRrICrFqqCcVjjqMG29vdTlZVB2ivCgPQf7iz9JZokwBRzMT7Q
-        ==
-X-ME-Sender: <xms:8NN1YC834B6lDKJcC-nbz3LTi8osr_McQCv6Juerkm-8K7l7ZjZrFQ>
-    <xme:8NN1YCvVVYBgnqO5MsOb1c36_ndznz8Odd9ifdMtw0ZEVwa5C2t4BOUYLRcqWB2ez
-    wkeWAniz9uKmtjM4wk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrudekledguddufecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehorhhi
-    shcuuehurhhkohhvuceosghorhhishessghurhdrihhoqeenucggtffrrghtthgvrhhnpe
-    ehudevleekieetleevieeuhfduhedtiefgheekfeefgeelvdeuveeggfduueevfeenucfk
-    phepvddtjedrheefrddvheefrdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepsghorhhishessghurhdrihho
-X-ME-Proxy: <xmx:8NN1YIC9FIciUHrazurDGJoNeSNA-iOkHlT9fAUXL7fLpD03HY7uOA>
-    <xmx:8NN1YKcb-RzT3C9F4PTpV1mnFmGfibMY7aaMzf3_rMQ0pv_oIhi4JA>
-    <xmx:8NN1YHOUILFqBzOIf69P27WoVjC7fmzT4txw7yDIyxpeitpv3qwgdQ>
-    <xmx:8dN1YMq08gAWupX5dEC6DREyOnanSFhBeDs0C9kHD-TNXsuuLf9G6A>
-Received: from localhost (unknown [207.53.253.7])
-        by mail.messagingengine.com (Postfix) with ESMTPA id EEEDE1080066;
-        Tue, 13 Apr 2021 13:25:02 -0400 (EDT)
-Date:   Tue, 13 Apr 2021 10:25:01 -0700
-From:   Boris Burkov <boris@bur.io>
-To:     Khaled ROMDHANI <khaledromdhani216@gmail.com>
-Cc:     clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH-next] fs/btrfs: Fix uninitialized variable
-Message-ID: <YHXT4kIrs28daRER@zen>
-References: <20210413130604.11487-1-khaledromdhani216@gmail.com>
+        Tue, 13 Apr 2021 13:53:34 -0400
+Received: by mail-wr1-f49.google.com with SMTP id p6so10590594wrn.9;
+        Tue, 13 Apr 2021 10:53:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=Ev/cIRjlk73mIDK57wJJn3pchBiqOZC7aFiR3PP+ifk=;
+        b=vIVrIdqSffj9PKmvGmjc+95KNwntgZUXuITj4lF+rpoXq5DGs+Thcrz8cdTg4ycfU1
+         +bmJr/kvMvJ/VTL9SRKkKJsqPHgQaIosFTitBvbl+fZfxGC0tGUQTnAHUz5Btnk6nJbU
+         u144wdV7GejNDFpejQDZiMyu4uwkcmuCPyA2sjNRvW6tu+IOvfB57CE9NwYdlQunWyL4
+         C5YiCkpxvagwuQ03pOvEQO4jxgoPHf2j9Hcvkez1juVucDSNKchhmqOmzpLZWRwEXI+d
+         DI2k40z3UpPDnbAQKbVOiZhaP/33fi8onaq55DrzLF8p3EkVPCPiOq6KPA+Uu8NoiuUa
+         SSGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=Ev/cIRjlk73mIDK57wJJn3pchBiqOZC7aFiR3PP+ifk=;
+        b=f5KlkKOAJiVFCQ3t4L0GAbn7KUI9ekU2lJEhNYJUh36e4aNgQYoZu04qsFCATO1ZZX
+         /RrQpNpmOa9LUxhhiLjCIO5nq3oYCxsF9jHC1tQJx5/+qcGMiYCDQGz9uh9cCszRsOvv
+         EGyuw8JXj7qSlu4Rb7lufqdAUrsI9ILgpo76UjevSD6Eb/NQa5Vwo+3wZJHavDVYrgin
+         w+LJEVWsyDXXr/ryDnm6p/t+g/e3PBzsgt9O293WRky6lZL+0PoTDLGmn/SxVyQcUWhx
+         7FssZ/gBPwpH4ylDPeThLh8pA/PY9yHOCgFmVQmCaf27LHyMEgRhd36FqDYgSLiEwUAw
+         9g8Q==
+X-Gm-Message-State: AOAM53190hTl16HN5iJ/If/0XHbGX0leTBl217A9ZEkh+jFc1282cdlu
+        0n2AXEsf6415vzfd+0BI8CA=
+X-Google-Smtp-Source: ABdhPJy8rK50scZ7mmv0JWCl1m3wQr/F1ouYwyNf3VjPzbAeydLTlg6QeciQX8Qr3UZWhXzpXPeF+w==
+X-Received: by 2002:a5d:5914:: with SMTP id v20mr12743011wrd.402.1618336334143;
+        Tue, 13 Apr 2021 10:52:14 -0700 (PDT)
+Received: from LEGION ([39.46.65.172])
+        by smtp.gmail.com with ESMTPSA id o15sm20975338wra.93.2021.04.13.10.52.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Apr 2021 10:52:13 -0700 (PDT)
+Date:   Tue, 13 Apr 2021 22:52:08 +0500
+From:   Muhammad Usama Anjum <musamaanjum@gmail.com>
+To:     Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+        "mark-yw.chen" <mark-yw.chen@mediatek.com>,
+        "open list:BLUETOOTH DRIVERS" <linux-bluetooth@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Cc:     musamaanjum@gmail.com, kernel-janitors@vger.kernel.org,
+        dan.carpenter@oracle.com, colin.king@canonical.com
+Subject: [PATCH] Bluetooth: btusb: fix memory leak
+Message-ID: <20210413175208.GA560049@LEGION>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210413130604.11487-1-khaledromdhani216@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Apr 13, 2021 at 02:06:04PM +0100, Khaled ROMDHANI wrote:
-> The variable zone is not initialized. It
-> may causes a failed assertion.
-> 
-> Addresses-Coverity: ("Uninitialized variables")
-> 
-> Signed-off-by: Khaled ROMDHANI <khaledromdhani216@gmail.com>
+If btusb_mtk_submit_wmt_recv_urb returns error, wc should be freed and
+then error should be returned to prevent memory leak.
 
-Reviewed-by: Boris Burkov <boris@bur.io>
+Addresses-Coverity: ("Prevent memory leak")
+Fixes: 4cbb375e997d ("Bluetooth: btusb: Fixed too many in-token issue for Mediatek Chip.")
+Signed-off-by: Muhammad Usama Anjum <musamaanjum@gmail.com>
+---
+ drivers/bluetooth/btusb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> ---
->  fs/btrfs/zoned.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
-> index eeb3ebe11d7a..ee15ab8dccb5 100644
-> --- a/fs/btrfs/zoned.c
-> +++ b/fs/btrfs/zoned.c
-> @@ -136,7 +136,7 @@ static int sb_write_pointer(struct block_device *bdev, struct blk_zone *zones,
->   */
->  static inline u32 sb_zone_number(int shift, int mirror)
->  {
-> -	u64 zone;
-> +	u64 zone = 0;
->  
->  	ASSERT(mirror < BTRFS_SUPER_MIRROR_MAX);
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index 58ae824fb507..2c403188f586 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -3324,7 +3324,7 @@ static int btusb_mtk_hci_wmt_sync(struct hci_dev *hdev,
+ 	/* Submit control IN URB on demand to process the WMT event */
+ 	err = btusb_mtk_submit_wmt_recv_urb(hdev);
+ 	if (err < 0)
+-		return err;
++		goto err_free_wc;
+ 
+ 	/* The vendor specific WMT commands are all answered by a vendor
+ 	 * specific event and will have the Command Status or Command
+-- 
+2.25.1
 
-Thanks for the fix.
-
-I assume this was dug up by coverity static analysis rather than hitting
-it in a live system?
-
-Since there is already an assert for the pre-condition 'mirror < max',
-I feel like it would make sense to also add one for mirror > 0.
-
->  	switch (mirror) {
-> -- 
-> 2.17.1
-> 
