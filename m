@@ -7,60 +7,61 @@ X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83A80C43462
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 05:29:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8604C433ED
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 05:42:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5E499613AE
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 05:29:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9EC861004
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 05:42:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344672AbhDMF3Z (ORCPT
+        id S245286AbhDMFmh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 13 Apr 2021 01:29:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53334 "EHLO
+        Tue, 13 Apr 2021 01:42:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245541AbhDMF3P (ORCPT
+        with ESMTP id S245198AbhDMFmg (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 13 Apr 2021 01:29:15 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35798C061756
-        for <kernel-janitors@vger.kernel.org>; Mon, 12 Apr 2021 22:28:56 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id n138so25349139lfa.3
-        for <kernel-janitors@vger.kernel.org>; Mon, 12 Apr 2021 22:28:56 -0700 (PDT)
+        Tue, 13 Apr 2021 01:42:36 -0400
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58853C06138D
+        for <kernel-janitors@vger.kernel.org>; Mon, 12 Apr 2021 22:42:17 -0700 (PDT)
+Received: by mail-lf1-x12a.google.com with SMTP id g8so25319715lfv.12
+        for <kernel-janitors@vger.kernel.org>; Mon, 12 Apr 2021 22:42:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=AvM1ldJd1PKthEmfQSYxE8KSNEBVhrFycB3fykwgq2c=;
-        b=UK3JH759G5m7p0pnsTXSHGCiELHJAr54O5vcX1IB6nRyAoAETABf7dCAHSlGY/lPhU
-         WUXj/erFHsdspCxelTHH6uL8NGXau+QJ3AaAEGL/i8aX1ON2ysWli9CSVKKCPW320tPv
-         06lJbsmE+UsWs6YIPzVQikof8W+h9yCRAqa9+2Z13jlUT6BdGNZ06LMW79Tw6QDi8B0S
-         McA2kNbpz/P22FYKFoOm4oDwrNbCh+zAJs0QHQ410EXbBr2BZ0hmnefPGl6xdBgPqtHV
-         4XCjcpjsCBNvoKGm4ZTU+0B/AL2zpyvfV1S0G9gGfLkhIYS/poU85AqHGMQGVabPY9zO
-         FHUw==
+        bh=MITjT2ay51KOcdM71HVFO+ySm3JooSqiJI3Cb7Ri/aQ=;
+        b=on4KYu7s8YlB0xwBDXTiFFbdyzkvcU7IAPfyGWXq5powKidROTOJGmYgHpqcw41WBk
+         LKpnOH6b+gid2kUOFlDS9dLSbLUnXOhlFRgMmQBNx+hlvAIRZtZ07ga9CeO/UbifKU1F
+         k7bY/jo0BhF5LCfDddP8BLCX368gJlErfsjpgCrp3qE9NdnNmtf2G+6Eg2SdPpJoGmtF
+         IIkg9jc4Me4BMMIgM5CJEzPfYIECwFOi2unjFtYwX2tBiRT7FxVTQv2i2lnTZqAD00ZB
+         plosOla9KJY3ZZTEUXfgwMTXbWAQ2jUh9L3av/iP1JtGxs75TTJ+qEV2j1rvPxBSr0vi
+         ytpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=AvM1ldJd1PKthEmfQSYxE8KSNEBVhrFycB3fykwgq2c=;
-        b=BKnf0VrqpE8UVs6sI3C3wwd322HZbxVTFJE88eYK76Smjkvdnl826XTVV1P7TxSNgj
-         eX+iR5Z+kWpBQfgSIQbYzXIipubA0rvdLo9ywF3EMZ/L/wJBb85kPCxMCV8m1CU3NCUN
-         lr/zcmyOx3NBK5NUUYHZ0z5vp4W4EpxlVXvgWQxW+xanpm2+z/NVBktLPLvESpQ4Wwp6
-         mxsMpPZX1c5wvEBl7PMwYY9NqzjqDnF46t9oqScuVwhS/pZ1cvFez+jjN2LGO58bFTNM
-         b4UIL5kTJMduoAdIwcn6LXAWJwce3e1k7CoSiuBcOl8eoN2b9ZVD5dMsNFLCXbsjQsqt
-         5Qcw==
-X-Gm-Message-State: AOAM5310/bB0QQBEYFTTJls4FcbqttntpjX1KKrKJLnaOBFo50QbCaqk
-        upwoL8pdxKvAw09uTozM5UXlJ6E1J5V4MvrlWJB6Gg==
-X-Google-Smtp-Source: ABdhPJx9ng30E0BX/dlKP+vG2PKF/myAqIZYQjX8xoWOhcGfWAFEM7eX3+jRMIpdP8gqwgxzRTls3J+2Xp/efIqxLfE=
-X-Received: by 2002:ac2:4db9:: with SMTP id h25mr8011757lfe.108.1618291734612;
- Mon, 12 Apr 2021 22:28:54 -0700 (PDT)
+        bh=MITjT2ay51KOcdM71HVFO+ySm3JooSqiJI3Cb7Ri/aQ=;
+        b=fUFKHXnjOPaIUrlPAUO4iI3QHqZZfalddyYzpylbt+zo7YYB5A3iN4Vzdf3OUb8zgL
+         5N7bpH6lUnkNYm61s/MX3nGc7vh0Jji7hX1ITn3rVo3psLgqSGkDINGjZeGU2mrQ/l9Z
+         1j/8/hwOxS7TB7YcstjizOQzwwjZ7ChN9l+DGGxIov7X3FWe2uEO3Ho6kmh9gn+zS+g8
+         w5mGL8MZFRNVbtkQv84/wwMVLk3ApJz3sMmjL0upLtdwr1rpDn70L6lmAciicylNyj6H
+         3aEaWHORp1uuczBrBlgQ1ebrQZ38WQSAu/Oq4i1aGNIFbvkwGJ7rmgjDedmWVILk7Cqs
+         0yFQ==
+X-Gm-Message-State: AOAM533J4VHms76vrXOle259iS+FmnoGH+fsq+gWnF1SDRMZ8ftJYV87
+        RBQuMTZreao7+5J88E8vgZgVDB1YjqW08UC6gngVl23mLIjKOA==
+X-Google-Smtp-Source: ABdhPJyMKOQIyeojpXPuo0SSdzWliMMkGmlkNBcznqsQM2TOrLpFA1+nvOPmwAotZazrF73OIccOTqzdFp3YLO7vuwY=
+X-Received: by 2002:a05:6512:3c8e:: with SMTP id h14mr3031818lfv.113.1618292535723;
+ Mon, 12 Apr 2021 22:42:15 -0700 (PDT)
 MIME-Version: 1.0
 References: <20210412160101.1627882-1-colin.king@canonical.com>
-In-Reply-To: <20210412160101.1627882-1-colin.king@canonical.com>
+ <adeb7c73d0bb354f04f8117c5ccf6b006dfc15de.camel@linux.ibm.com> <53fef8cf-0dd4-e4fe-260b-0f5ad25d9014@canonical.com>
+In-Reply-To: <53fef8cf-0dd4-e4fe-260b-0f5ad25d9014@canonical.com>
 From:   Sumit Garg <sumit.garg@linaro.org>
-Date:   Tue, 13 Apr 2021 10:58:43 +0530
-Message-ID: <CAFA6WYM65kjt0rbheAorX9uwWnhd5z7Gqed7a3YxjXMdHai1pw@mail.gmail.com>
+Date:   Tue, 13 Apr 2021 11:12:04 +0530
+Message-ID: <CAFA6WYPt97daNPQ+tWpFunTK77Q-vP=sdya7k+bUEJ9YHDq-Jg@mail.gmail.com>
 Subject: Re: [PATCH][next] KEYS: trusted: Fix missing null return from kzalloc call
-To:     Colin King <colin.king@canonical.com>
+To:     Colin Ian King <colin.king@canonical.com>
 Cc:     James Bottomley <jejb@linux.ibm.com>,
         Jarkko Sakkinen <jarkko@kernel.org>,
         Mimi Zohar <zohar@linux.ibm.com>,
@@ -78,48 +79,113 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, 12 Apr 2021 at 21:31, Colin King <colin.king@canonical.com> wrote:
+On Mon, 12 Apr 2021 at 22:34, Colin Ian King <colin.king@canonical.com> wrote:
 >
-> From: Colin Ian King <colin.king@canonical.com>
+> On 12/04/2021 17:48, James Bottomley wrote:
+> > On Mon, 2021-04-12 at 17:01 +0100, Colin King wrote:
+> >> From: Colin Ian King <colin.king@canonical.com>
+> >>
+> >> The kzalloc call can return null with the GFP_KERNEL flag so
+> >> add a null check and exit via a new error exit label. Use the
+> >> same exit error label for another error path too.
+> >>
+> >> Addresses-Coverity: ("Dereference null return value")
+> >> Fixes: 830027e2cb55 ("KEYS: trusted: Add generic trusted keys
+> >> framework")
+> >> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> >> ---
+> >>  security/keys/trusted-keys/trusted_core.c | 6 ++++--
+> >>  1 file changed, 4 insertions(+), 2 deletions(-)
+> >>
+> >> diff --git a/security/keys/trusted-keys/trusted_core.c
+> >> b/security/keys/trusted-keys/trusted_core.c
+> >> index ec3a066a4b42..90774793f0b1 100644
+> >> --- a/security/keys/trusted-keys/trusted_core.c
+> >> +++ b/security/keys/trusted-keys/trusted_core.c
+> >> @@ -116,11 +116,13 @@ static struct trusted_key_payload
+> >> *trusted_payload_alloc(struct key *key)
+> >>
+> >>      ret = key_payload_reserve(key, sizeof(*p));
+> >>      if (ret < 0)
+> >> -            return p;
+> >> +            goto err;
+> >>      p = kzalloc(sizeof(*p), GFP_KERNEL);
+> >> +    if (!p)
+> >> +            goto err;
+> >>
+> >>      p->migratable = migratable;
+> >> -
+> >> +err:
+> >>      return p;
+> >
+> > This is clearly a code migration bug in
+> >
+> > commit 251c85bd106099e6f388a89e88e12d14de2c9cda
+> > Author: Sumit Garg <sumit.garg@linaro.org>
+> > Date:   Mon Mar 1 18:41:24 2021 +0530
+> >
+> >     KEYS: trusted: Add generic trusted keys framework
+> >
+> > Which has for addition to trusted_core.c:
+> >
+> > +static struct trusted_key_payload *trusted_payload_alloc(struct key
+> > *key)
+> > +{
+> > +       struct trusted_key_payload *p = NULL;
+> > +       int ret;
+> > +
+> > +       ret = key_payload_reserve(key, sizeof(*p));
+> > +       if (ret < 0)
+> > +               return p;
+> > +       p = kzalloc(sizeof(*p), GFP_KERNEL);
+> > +
+> > +       p->migratable = migratable;
+> > +
+> > +       return p;
+> > +}
+> >
+> > And for trusted_tpm1.c:
+> >
+> > -static struct trusted_key_payload *trusted_payload_alloc(struct key
+> > *key)
+> > -{
+> > -       struct trusted_key_payload *p = NULL;
+> > -       int ret;
+> > -
+> > -       ret = key_payload_reserve(key, sizeof *p);
+> > -       if (ret < 0)
+> > -               return p;
+> > -       p = kzalloc(sizeof *p, GFP_KERNEL);
+> > -       if (p)
+> > -               p->migratable = 1; /* migratable by default */
+> > -       return p;
+> > -}
+> >
+> > The trusted_tpm1.c code was correct and we got this bug introduced by
+> > what should have been a simple cut and paste ... how did that happen?
+
+It was a little more than just cut and paste where I did generalized
+"migratable" flag to be provided by the corresponding trust source's
+ops struct.
+
+> > And therefore, how safe is the rest of the extraction into
+> > trusted_core.c?
+> >
 >
-> The kzalloc call can return null with the GFP_KERNEL flag so
-> add a null check and exit via a new error exit label. Use the
-> same exit error label for another error path too.
->
-> Addresses-Coverity: ("Dereference null return value")
-> Fixes: 830027e2cb55 ("KEYS: trusted: Add generic trusted keys framework")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  security/keys/trusted-keys/trusted_core.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+> fortunately it gets caught by static analysis, but it does make me also
+> concerned about what else has changed and how this gets through review.
 >
 
-Ah, it's my bad. Thanks for fixing this issue.
+I agree that extraction into trusted_core.c was a complex change but
+this patch has been up for review for almost 2 years [1]. And
+extensive testing can't catch this sort of bug as allocation wouldn't
+normally fail.
 
-Reviewed-by: Sumit Garg <sumit.garg@linaro.org>
+[1] https://lwn.net/Articles/795416/
 
 -Sumit
 
-> diff --git a/security/keys/trusted-keys/trusted_core.c b/security/keys/trusted-keys/trusted_core.c
-> index ec3a066a4b42..90774793f0b1 100644
-> --- a/security/keys/trusted-keys/trusted_core.c
-> +++ b/security/keys/trusted-keys/trusted_core.c
-> @@ -116,11 +116,13 @@ static struct trusted_key_payload *trusted_payload_alloc(struct key *key)
->
->         ret = key_payload_reserve(key, sizeof(*p));
->         if (ret < 0)
-> -               return p;
-> +               goto err;
->         p = kzalloc(sizeof(*p), GFP_KERNEL);
-> +       if (!p)
-> +               goto err;
->
->         p->migratable = migratable;
-> -
-> +err:
->         return p;
->  }
->
-> --
-> 2.30.2
+> > James
+> >
+> >
 >
