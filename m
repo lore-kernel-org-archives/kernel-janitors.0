@@ -2,120 +2,76 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54DE6C433ED
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 15:42:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B6A6C433B4
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 15:54:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2B9A661221
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 15:42:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 257C061153
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 15:54:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231878AbhDMPmy (ORCPT
+        id S1346221AbhDMPx6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 13 Apr 2021 11:42:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47396 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231652AbhDMPmw (ORCPT
+        Tue, 13 Apr 2021 11:53:58 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:17327 "EHLO
+        szxga07-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232038AbhDMPxy (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 13 Apr 2021 11:42:52 -0400
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F390C061574;
-        Tue, 13 Apr 2021 08:42:32 -0700 (PDT)
-Received: by mail-ej1-x62b.google.com with SMTP id e14so26645537ejz.11;
-        Tue, 13 Apr 2021 08:42:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=AHJFlkVHWqO1FHapYslC65eJ8g65HylpEtA4GsqBGy0=;
-        b=MCeMQdyjPS5cM7ZQQUlD0dVrnTvjDVPjtejlw4q0xEfCKf3ssp5xhTUKa6/B1ffP4P
-         7pS/iruAYATcL96nRfAs2e1IRqygmpm0sQDNh7xnr8jaoJjpsmP3cOB3O/y2ARvWx8Df
-         iXJwuepC6u3gpzT9+2j7OLGIApcyAxaPeSdm3MCyU/JTRxrhbI06tEugWwY4yfLvPcey
-         Ga9+uaiEMGsuEvTPuPPVC2IXRBxd4hDe/QYcJX8b37JqcrLEPws4G75rCXY9fyglrbSt
-         FqNI6fv7vBSJ5Ac3UTk0pCMgiI1Y0eBlgr9chsS/8YC1A50U/ok/8uDADkWGGsh+XPOE
-         M/yA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=AHJFlkVHWqO1FHapYslC65eJ8g65HylpEtA4GsqBGy0=;
-        b=AW5a5Atnz7sEpvSv7mhw7qWbhs5nlWxPEX9oWx16lR0vkdtpevW6IFA30HvJp2DqHz
-         kwyiy6YQjKwbJAkAt6kXeJA86b7B2A0kunhH17aTvVUlWMWAgabnqaZZ4w/376JY/f8K
-         DcGkAULgZ+2tNcmn63KLfkl/pPQs7d5tRCqqr2PV+8A8sDMXjqo/BBbxk1tgS9SA9m0o
-         307Go/01Lz3SVT1oOnzv26Ixn3uKg5TNQlDDWTJcpx3w4jfSTl4aQjfGSCF6ooZBO03c
-         yjywkmkEPavK9qJxPahm2qoTKMgP/oaG37G0pVFHn2P7SmbLMpm3bQ/70q7xs215Nxs7
-         X9SA==
-X-Gm-Message-State: AOAM532shiFHg+gTFUSwiMwM6CZtXf1jnMeVLBFXKuiBJ0n1aJ87msLb
-        3dTBVhHbvkaRd5bgmzFrcWkWhmqAbYPCxqGB
-X-Google-Smtp-Source: ABdhPJzy5ANQQ8Us5qvmS5XPmsu6fn52o+F19r72vm/W1oVbwUOYaUw2i+0hOUxaLzlRuTSgdACSwA==
-X-Received: by 2002:a17:906:4eda:: with SMTP id i26mr10489085ejv.301.1618328550649;
-        Tue, 13 Apr 2021 08:42:30 -0700 (PDT)
-Received: from anparri (host-95-232-15-7.retail.telecomitalia.it. [95.232.15.7])
-        by smtp.gmail.com with ESMTPSA id t14sm8088868ejc.121.2021.04.13.08.42.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Apr 2021 08:42:30 -0700 (PDT)
-Date:   Tue, 13 Apr 2021 17:42:21 +0200
-From:   Andrea Parri <parri.andrea@gmail.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Wei Liu <wei.liu@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dexuan Cui <decui@microsoft.com>, linux-hyperv@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] Drivers: hv: vmbus: Use after free in __vmbus_open()
-Message-ID: <20210413154221.GA2369@anparri>
-References: <YHV3XLCot6xBS44r@mwanda>
+        Tue, 13 Apr 2021 11:53:54 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
+        by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4FKVSx2vTPz9vgJ;
+        Tue, 13 Apr 2021 23:51:13 +0800 (CST)
+Received: from localhost.localdomain (10.175.102.38) by
+ DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
+ 14.3.498.0; Tue, 13 Apr 2021 23:53:20 +0800
+From:   Wei Yongjun <weiyongjun1@huawei.com>
+To:     <weiyongjun1@huawei.com>, Loic Poulain <loic.poulain@linaro.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Hemant Kumar <hemantk@codeaurora.org>
+CC:     <linux-arm-msm@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "Hulk Robot" <hulkci@huawei.com>
+Subject: [PATCH -next] bus: mhi: pci_generic: Fix possible use-after-free in mhi_pci_remove()
+Date:   Tue, 13 Apr 2021 16:03:18 +0000
+Message-ID: <20210413160318.2003699-1-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YHV3XLCot6xBS44r@mwanda>
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.102.38]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Apr 13, 2021 at 01:50:04PM +0300, Dan Carpenter wrote:
-> The "open_info" variable is added to the &vmbus_connection.chn_msg_list,
-> but the error handling frees "open_info" without removing it from the
-> list.  This will result in a use after free.  First remove it from the
-> list, and then free it.
-> 
-> Fixes: 6f3d791f3006 ("Drivers: hv: vmbus: Fix rescind handling issues")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This driver's remove path calls del_timer(). However, that function
+does not wait until the timer handler finishes. This means that the
+timer handler may still be running after the driver's remove function
+has finished, which would result in a use-after-free.
 
-I had this 'queued' in my list,
+Fix by calling del_timer_sync(), which makes sure the timer handler
+has finished, and unable to re-schedule itself.
 
-Reviewed-by: Andrea Parri <parri.andrea@gmail.com>
+Fixes: 8562d4fe34a3 ("mhi: pci_generic: Add health-check")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/bus/mhi/pci_generic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-  Andrea
+diff --git a/drivers/bus/mhi/pci_generic.c b/drivers/bus/mhi/pci_generic.c
+index 7c810f02a2ef..5b19e877d17a 100644
+--- a/drivers/bus/mhi/pci_generic.c
++++ b/drivers/bus/mhi/pci_generic.c
+@@ -708,7 +708,7 @@ static void mhi_pci_remove(struct pci_dev *pdev)
+ 	struct mhi_pci_device *mhi_pdev = pci_get_drvdata(pdev);
+ 	struct mhi_controller *mhi_cntrl = &mhi_pdev->mhi_cntrl;
+ 
+-	del_timer(&mhi_pdev->health_check_timer);
++	del_timer_sync(&mhi_pdev->health_check_timer);
+ 	cancel_work_sync(&mhi_pdev->recovery_work);
+ 
+ 	if (test_and_clear_bit(MHI_PCI_DEV_STARTED, &mhi_pdev->status)) {
 
-
-> ---
-> From static analysis.  Untested etc.  There is almost certainly a good
-> reason to add it to the list before checking "newchannel->rescind" but I
-> don't know the code well enough to know what the reason is.
-> 
->  drivers/hv/channel.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/hv/channel.c b/drivers/hv/channel.c
-> index db30be8f9cce..1c5a418c1962 100644
-> --- a/drivers/hv/channel.c
-> +++ b/drivers/hv/channel.c
-> @@ -653,7 +653,7 @@ static int __vmbus_open(struct vmbus_channel *newchannel,
->  
->  	if (newchannel->rescind) {
->  		err = -ENODEV;
-> -		goto error_free_info;
-> +		goto error_clean_msglist;
->  	}
->  
->  	err = vmbus_post_msg(open_msg,
-> -- 
-> 2.30.2
-> 
