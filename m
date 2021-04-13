@@ -2,112 +2,96 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 651A6C433B4
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 11:46:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0DCFC433ED
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 12:20:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 40F426135C
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 11:46:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6C9D613B2
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 12:20:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244553AbhDMLqz (ORCPT
+        id S239960AbhDMMUn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 13 Apr 2021 07:46:55 -0400
-Received: from mail-wr1-f48.google.com ([209.85.221.48]:46737 "EHLO
-        mail-wr1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238852AbhDMLqw (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 13 Apr 2021 07:46:52 -0400
-Received: by mail-wr1-f48.google.com with SMTP id c15so7177946wro.13;
-        Tue, 13 Apr 2021 04:46:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=viU+fHMEqdW75c5aw+RUzyVT5kieLjfcDxdSRhzyk6k=;
-        b=BeWTm08FkCV7S6DNaD7QeKz6P/1J5jCJuDufJs9fJqpKLf2neQ3bRhokUvgMpP45Ow
-         5raV3HU3J8nPVk2VpBsbFBC1tE0WzBnz5ZbgzQvTTZh/uvs+iEK+8TToXP2JijabSUgZ
-         qlImlKQ26d0lqlRloUPWVW+A4K+H2xmyc4WQUK2h6eJR7AnvA8LmgHHDtLyAsLKRCiSX
-         55kndmo6ca0okjjkXrNVin3QzXhj+OahvjuTumO0cxNpfNeSMOkI+OmMLIWz67IUSdgT
-         wQA8k2+L5jh9A0GQ7piaA5N4KTynF7yILwmbeNBdiBpo6KODigYc9ucQcaWo9/ZD4fSI
-         ZnAQ==
-X-Gm-Message-State: AOAM5315MoctdN2ejRRXdCldU34/IZTAkzAQ4vsCFO97dA9cq2ZElB3B
-        pHDCPoRtt40NIOrnxfMnDrc=
-X-Google-Smtp-Source: ABdhPJw5ejgRiJXW67IP5nLKiW/DmEyAU1cwjnP7B9VkUaVVIFPuFMjWiixtasfgydOEVQ+vpATXag==
-X-Received: by 2002:a5d:4f82:: with SMTP id d2mr9977881wru.228.1618314392433;
-        Tue, 13 Apr 2021 04:46:32 -0700 (PDT)
-Received: from liuwe-devbox-debian-v2 ([51.145.34.42])
-        by smtp.gmail.com with ESMTPSA id b206sm2226445wmc.15.2021.04.13.04.46.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Apr 2021 04:46:31 -0700 (PDT)
-Date:   Tue, 13 Apr 2021 11:46:30 +0000
-From:   Wei Liu <wei.liu@kernel.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Wei Liu <wei.liu@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dexuan Cui <decui@microsoft.com>, linux-hyperv@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Michael Kelley <mikelley@microsoft.com>
-Subject: Re: [PATCH] Drivers: hv: vmbus: Use after free in __vmbus_open()
-Message-ID: <20210413114630.szpbtjxidefh566g@liuwe-devbox-debian-v2>
-References: <YHV3XLCot6xBS44r@mwanda>
+        Tue, 13 Apr 2021 08:20:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44770 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230025AbhDMMUn (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 13 Apr 2021 08:20:43 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 26F4561278;
+        Tue, 13 Apr 2021 12:20:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1618316423;
+        bh=kQt1/77hrtC2oWRd/jaewcxy+R5bvHz3HUuBuKiUon4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=tk1rf+5/CnbN2rYE1qYYHGChd/TfCiOLNY2E1jDyNbPrR8xFSHWVL9vaUJZ9xF7/D
+         zK893c+adrloy0tN4Jh5nBR4ngzsW/ccBWEokFstDX4P2gDO0i8kj7LWZIPAtF40Pg
+         LazrNELPdcSBnk38xh4+Mb6B7BUVjsZiXPzsE9Wb++gg+Cb8DDMLtcJeMmqtw06Rce
+         YopWGOdRfE8xNl8IGQYd902112Nz5vUoQYX1vr8pqLhEiYtkB3AO4I5K5BZFM9yj6h
+         yZdm9ghMEaifj2Cje9Rjv7A1wsLiepG5SYTfimad90q86dZ/Bf281v9kVKnNEicS/L
+         x2KWDDGM2M/9Q==
+Date:   Tue, 13 Apr 2021 14:20:16 +0200
+From:   Wolfram Sang <wsa@kernel.org>
+To:     Wei Yongjun <weiyongjun1@huawei.com>
+Cc:     Chris Packham <chris.packham@alliedtelesis.co.nz>,
+        linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Hulk Robot <hulkci@huawei.com>
+Subject: Re: [PATCH -next] i2c: mpc: drop release for resource allocated with
+ devm_*
+Message-ID: <20210413122016.GA1553@kunai>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+        Wei Yongjun <weiyongjun1@huawei.com>,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>,
+        linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Hulk Robot <hulkci@huawei.com>
+References: <20210412160026.194423-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="HcAYCG3uE/tztfnV"
 Content-Disposition: inline
-In-Reply-To: <YHV3XLCot6xBS44r@mwanda>
+In-Reply-To: <20210412160026.194423-1-weiyongjun1@huawei.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Apr 13, 2021 at 01:50:04PM +0300, Dan Carpenter wrote:
-> The "open_info" variable is added to the &vmbus_connection.chn_msg_list,
-> but the error handling frees "open_info" without removing it from the
-> list.  This will result in a use after free.  First remove it from the
-> list, and then free it.
-> 
-> Fixes: 6f3d791f3006 ("Drivers: hv: vmbus: Fix rescind handling issues")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> From static analysis.  Untested etc.  There is almost certainly a good
-> reason to add it to the list before checking "newchannel->rescind" but I
-> don't know the code well enough to know what the reason is.
-> 
 
-AIUI the channel management code requires the message be queued before
-posting the message to backend, because processing response is done in
-another thread, and might happen before this message is added to the
-list if the order is reversed.
+--HcAYCG3uE/tztfnV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->  drivers/hv/channel.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/hv/channel.c b/drivers/hv/channel.c
-> index db30be8f9cce..1c5a418c1962 100644
-> --- a/drivers/hv/channel.c
-> +++ b/drivers/hv/channel.c
-> @@ -653,7 +653,7 @@ static int __vmbus_open(struct vmbus_channel *newchannel,
->  
->  	if (newchannel->rescind) {
->  		err = -ENODEV;
-> -		goto error_free_info;
-> +		goto error_clean_msglist;
+On Mon, Apr 12, 2021 at 04:00:26PM +0000, Wei Yongjun wrote:
+> It's not necessary to release resource which allocated with devm_*
+> and those release may leads to a double free. And also remove useless
+> irq_dispose_mapping() call since mapping not created.
+>=20
+> Fixes: 09aab7add7bf ("i2c: mpc: use device managed APIs")
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 
-Looking at similar functions in the same file I think there is indeed an
-UAF problem in the original code.
+Applied to for-next, thanks!
 
-I have not studied this piece of code extensively so I will wait for
-others to chime in.
 
-Wei.
+--HcAYCG3uE/tztfnV
+Content-Type: application/pgp-signature; name="signature.asc"
 
->  	}
->  
->  	err = vmbus_post_msg(open_msg,
-> -- 
-> 2.30.2
-> 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmB1jHsACgkQFA3kzBSg
+KbYBZQ/+IF8gQoU6LIMTmgJnKXG2dhuGSETUh3ep6oER2VBzeLE9iliIaJEAnzIL
+hKD3QTCDgWb+qvVMleMqX0q2FXf7y6lpvxiP/RGueLTFJgDinpCMQmw630Q0Suhy
+GICB3NCEIpInIKDnEA3wfYivR9HbfPLjDji4/oJELS1klK3EO1zqqYYLxgpjD6iC
+2Ni2sOwcvuVYnr3HgAuJstHa5QkSwlnSCsaUWE0BAix2XGvBp7Ki/w7qTdkthr0y
+y/LbG9hisxg91BpkvhYnjLgceUVD51jAFV6GhaXMTx4PmGAmpxfnsr87CxYhqVXb
+9k7K4ccLnSuY/CLLaeawN14VoJfYpbQ3LCVWIEqnhNGyWojz7mr8280uWja5dAty
+kGfi7AG/QOLEMb7x9DI0ryJggzVEN2+YPi/0u+AcmeFy5M95dHItJ3rSYiHbfD9P
+HIJarF6L6c76O5p2VQZVWIW6C0zh9LQEEYmMoZp0zFCyWiUHeN0Z8fwfVC+VP880
+UW1jAzDuXWblnIDQHPM1sEwBMfEa05N3Q+MQbX+yQvpiBUD4eYvpDOEwmSAIzssN
+Hh3kFkmBLYeKBAcu/F4w4P98KhnAVBFht69Mf1moev9BRyp9kpUmlttyZlG0pCjF
+EQdhIDvYSMJvTjYpMCMAsOf/ZTylrasxt6T6vu0EdzZwS5ib06A=
+=eULB
+-----END PGP SIGNATURE-----
+
+--HcAYCG3uE/tztfnV--
