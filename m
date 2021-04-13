@@ -5,76 +5,69 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6010FC43462
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 20:13:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28FE1C433B4
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 20:45:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 38BD9613D8
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 20:13:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE47261139
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 20:45:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230308AbhDMUN4 (ORCPT
+        id S243954AbhDMUpk (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 13 Apr 2021 16:13:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49674 "EHLO
+        Tue, 13 Apr 2021 16:45:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229590AbhDMUNz (ORCPT
+        with ESMTP id S230281AbhDMUpj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 13 Apr 2021 16:13:55 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82518C061574;
-        Tue, 13 Apr 2021 13:13:35 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id w4so13919578wrt.5;
-        Tue, 13 Apr 2021 13:13:35 -0700 (PDT)
+        Tue, 13 Apr 2021 16:45:39 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0333FC061574;
+        Tue, 13 Apr 2021 13:45:18 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id w4so13994036wrt.5;
+        Tue, 13 Apr 2021 13:45:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=VLF6/P7EZjK4b9JVKvC4s0oerk5rpO6dK9mxoGQATgk=;
-        b=QBMerjyfmkBCZjkkYTsAlMSuXiu3Z0Jzf81vhQdmkJxcRdnOPQdw53ibPDLTQm9beD
-         9crudOocqZowDvYl+ESSSmVQFQ3xNWXlQTWJJKOB2S3ISVv1SyHDSZhc5c6lLTfs3Icj
-         G6A/wmFfv4bdKBHVP8N+ctQoLWa+iArTfjJEqDvabCAH2DHrLspZiy4CbZaoHwqwYbP6
-         Cf3HSrWabCPq9XOE67ePcQmxGuZejRRh08VOdANdzCU4PC2z19O9ESjqdtUK71fTj+Db
-         ZlU0xtlwgrryRWP3Uet6aw6DY19FdSnztVZ+SPmwyHxWR4byHksNnHgaoudGaencyEYs
-         Y0kw==
+        bh=ofPn2mdRtTE7ElcZXwF2kZ46phxxe+jY7bsznPkzuoU=;
+        b=PWVGfHrR1yygXP+Q89qMNfKtVP6CQBelVvBwcBljVcvcDdEnZnSUNdxb4n4WiQmu4V
+         aI7BOfA4PVpC170M+wD4NSvFzsKmgYUzylcePTJJX9YdpoNFtm0hZ4azShlLquSakpnt
+         MJRC9lPlOqQIhuXDaIDd0nj8hzY05EC8nIh2mELhdDHU37E2c5QOF3uZaKRUqfmciRtj
+         e75PbhBbgNmEDz1zCDHrYzP/Qy3sAJITMYjZRmWvIocJITW6oKqkYBMDFomN3uu1WCqF
+         24rfbwctICenr1AEqjm8sdtvafsqc64dfqrh/9Nd/81bPeO9ofEtw7w+9FA+6RWC8/X6
+         IquA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
          :content-disposition;
-        bh=VLF6/P7EZjK4b9JVKvC4s0oerk5rpO6dK9mxoGQATgk=;
-        b=r6zFhe6PC44fdrahOFLNfYhbosy/TK7UiPttp3UGm/22Zd1n+oyZUzLVGM+3c0gddt
-         ezyP8GwHdS6WAhMkuo/YkAJxpuZarEzoMv38p6bpVnWqpKUKI9Yh+Myo6+GU+dU5KAzo
-         Pth4m751EVWmDpo9gORHLSazMpmBNGzktUBJOSkhcIrX3u/i3h/+vOGWvnj/QqUJ92Ak
-         3dy0GsUZCB8usjdhVrJ9OwLwFWb+3GgiwV7ZcZIkjtZgMJ3nNHAzS5/VgEYE/PJW7fsB
-         pIK2U5BKpnm7+4qYaGzTghAsmZjAV9ge1MdUlhXyFEDxs8V45HGmtjr3ciyhthydmL/O
-         qNgw==
-X-Gm-Message-State: AOAM5302k6fCWM638mROFWRVknEaju5lwa+7ussrXeltiJ4YPdo4aXbj
-        2qVapT8SWfupO6y3AhEAPYU=
-X-Google-Smtp-Source: ABdhPJwZCfFj02Edi3FehLcM4AGqWBkDDDDqv5RLROfIpiZbFdprbOFl3OcX7pxq7HPnjvlkfy45GA==
-X-Received: by 2002:a5d:6a90:: with SMTP id s16mr19299060wru.163.1618344814180;
-        Tue, 13 Apr 2021 13:13:34 -0700 (PDT)
+        bh=ofPn2mdRtTE7ElcZXwF2kZ46phxxe+jY7bsznPkzuoU=;
+        b=AxfebU7sr2fTytZ44agBl+UFqEqBJgM8Ipxdp20emA9cPamHKmfoKiWCOeab/lseeM
+         hKrCnUG2fX2MopSWLL3ZqIVV5oppXyPL+IXmE6l0RKssflr9tN/R5rqiImer45CDokwm
+         0+ayR5L4G7n67lbdKrzzej+m5L9/i0bjxjzPAsXSXAI6z1sxmyChkyssmyF9eMk1Raka
+         SpjlVBWuJ38+2Tab494q15afB6T9E3zVsoXG1jnioiNqYjnarlIuZ8aUNwqWC+RQcxc9
+         VvboNurOohM9B/JbSuvm2S9yoM2EBGj9OIkcDSSeSESVE+SwXSpKEnAsMv6zrXX/w8Q/
+         m/Eg==
+X-Gm-Message-State: AOAM531qBiu+gyoCJmHl4NwK7UIRSVAwR9LayxRyxJf/pdh++vUbGqve
+        9589dN4UdLWP6R/fTDwjORc=
+X-Google-Smtp-Source: ABdhPJxTFoylCyBlkk0JGmB+/r8VFD/dKMAYewZuK4NuQajcEv8RDyvOKg/yqssVlRqkpntXUZN4sQ==
+X-Received: by 2002:a5d:468b:: with SMTP id u11mr30802239wrq.293.1618346717781;
+        Tue, 13 Apr 2021 13:45:17 -0700 (PDT)
 Received: from LEGION ([39.46.65.172])
-        by smtp.gmail.com with ESMTPSA id f6sm9820799wrt.19.2021.04.13.13.13.29
+        by smtp.gmail.com with ESMTPSA id x14sm20784716wrw.13.2021.04.13.13.45.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Apr 2021 13:13:33 -0700 (PDT)
-Date:   Wed, 14 Apr 2021 01:13:26 +0500
+        Tue, 13 Apr 2021 13:45:17 -0700 (PDT)
+Date:   Wed, 14 Apr 2021 01:45:11 +0500
 From:   Muhammad Usama Anjum <musamaanjum@gmail.com>
-To:     James.Bottomley@HansenPartnership.com,
-        James Bottomley <jejb@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        "open list:KEYS-TRUSTED" <linux-integrity@vger.kernel.org>,
-        "open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>,
-        "open list:SECURITY SUBSYSTEM" 
-        <linux-security-module@vger.kernel.org>,
+To:     Josh Poimboeuf <jpoimboe@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>, Borislav Petkov <bp@suse.de>,
         open list <linux-kernel@vger.kernel.org>
 Cc:     musamaanjum@gmail.com, kernel-janitors@vger.kernel.org,
         dan.carpenter@oracle.com, colin.king@canonical.com
-Subject: [PATCH] security: keys: trusted: prevent memory leak in error path
-Message-ID: <20210413201326.GA649679@LEGION>
+Subject: [PATCH] objtool: prevent memory leak in error paths
+Message-ID: <20210413204511.GA664936@LEGION>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -82,96 +75,66 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-tpm2_key_decode sometimes allocates blob. This blob should be freed if
-some error occurs later in the function. Free the blob before returning
-from this function if it was allocated.
+Memory allocated by sym and sym->name isn't being freed if some error
+occurs in elf_create_undef_symbol(). Free the sym and sym->name if error
+is detected before returning NULL.
 
 Addresses-Coverity: ("Prevent memory leak")
-Fixes: 14676f1eb796 ("security: keys: trusted: use ASN.1 TPM2 key format for the blobs")
+Fixes: 2f2f7e47f052 ("objtool: Add elf_create_undef_symbol()")
 Signed-off-by: Muhammad Usama Anjum <musamaanjum@gmail.com>
 ---
-This is only build tested. 
+Only build has been tested.
 
- security/keys/trusted-keys/trusted_tpm2.c | 37 +++++++++++++++--------
- 1 file changed, 24 insertions(+), 13 deletions(-)
+tools/objtool/elf.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
-index d225ad140960..4551384124e0 100644
---- a/security/keys/trusted-keys/trusted_tpm2.c
-+++ b/security/keys/trusted-keys/trusted_tpm2.c
-@@ -378,22 +378,30 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
+diff --git a/tools/objtool/elf.c b/tools/objtool/elf.c
+index d08f5f3670f8..17ee265a6c6b 100644
+--- a/tools/objtool/elf.c
++++ b/tools/objtool/elf.c
+@@ -733,7 +733,7 @@ struct symbol *elf_create_undef_symbol(struct elf *elf, const char *name)
+ 
+ 	sym->sym.st_name = elf_add_string(elf, NULL, sym->name);
+ 	if (sym->sym.st_name == -1)
+-		return NULL;
++		goto err;
+ 
+ 	sym->sym.st_info = GELF_ST_INFO(STB_GLOBAL, STT_NOTYPE);
+ 	// st_other 0
+@@ -744,19 +744,19 @@ struct symbol *elf_create_undef_symbol(struct elf *elf, const char *name)
+ 	symtab = find_section_by_name(elf, ".symtab");
+ 	if (!symtab) {
+ 		WARN("can't find .symtab");
+-		return NULL;
++		goto err;
  	}
  
- 	/* new format carries keyhandle but old format doesn't */
--	if (!options->keyhandle)
--		return -EINVAL;
-+	if (!options->keyhandle) {
-+		rc = -EINVAL;
+ 	s = elf_getscn(elf->elf, symtab->idx);
+ 	if (!s) {
+ 		WARN_ELF("elf_getscn");
+-		return NULL;
 +		goto err;
-+	}
+ 	}
  
- 	/* must be big enough for at least the two be16 size counts */
--	if (payload->blob_len < 4)
--		return -EINVAL;
-+	if (payload->blob_len < 4) {
-+		rc = -EINVAL;
+ 	data = elf_newdata(s);
+ 	if (!data) {
+ 		WARN_ELF("elf_newdata");
+-		return NULL;
 +		goto err;
-+	}
+ 	}
  
- 	private_len = get_unaligned_be16(blob);
+ 	data->d_buf = &sym->sym;
+@@ -773,6 +773,10 @@ struct symbol *elf_create_undef_symbol(struct elf *elf, const char *name)
+ 	elf_add_symbol(elf, sym);
  
- 	/* must be big enough for following public_len */
--	if (private_len + 2 + 2 > (payload->blob_len))
--		return -E2BIG;
-+	if (private_len + 2 + 2 > (payload->blob_len)) {
-+		rc = -E2BIG;
-+		goto err;
-+	}
- 
- 	public_len = get_unaligned_be16(blob + 2 + private_len);
--	if (private_len + 2 + public_len + 2 > payload->blob_len)
--		return -E2BIG;
-+	if (private_len + 2 + public_len + 2 > payload->blob_len) {
-+		rc = -E2BIG;
-+		goto err;
-+	}
- 
- 	pub = blob + 2 + private_len + 2;
- 	/* key attributes are always at offset 4 */
-@@ -406,12 +414,14 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
- 		payload->migratable = 1;
- 
- 	blob_len = private_len + public_len + 4;
--	if (blob_len > payload->blob_len)
--		return -E2BIG;
-+	if (blob_len > payload->blob_len) {
-+		rc = -E2BIG;
-+		goto err;
-+	}
- 
- 	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_LOAD);
- 	if (rc)
--		return rc;
-+		goto err;
- 
- 	tpm_buf_append_u32(&buf, options->keyhandle);
- 	tpm2_buf_append_auth(&buf, TPM2_RS_PW,
-@@ -433,12 +443,13 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
- 			(__be32 *) &buf.data[TPM_HEADER_SIZE]);
- 
- out:
--	if (blob != payload->blob)
--		kfree(blob);
- 	tpm_buf_destroy(&buf);
- 
- 	if (rc > 0)
- 		rc = -EPERM;
+ 	return sym;
 +err:
-+	if (blob != payload->blob)
-+		kfree(blob);
- 
- 	return rc;
++	free(sym->name);
++	free(sym);
++	return NULL;
  }
+ 
+ struct section *elf_create_section(struct elf *elf, const char *name,
 -- 
 2.25.1
 
