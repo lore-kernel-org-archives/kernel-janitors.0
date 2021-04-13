@@ -2,76 +2,109 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-15.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B6A6C433B4
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 15:54:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2373C433ED
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 16:01:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 257C061153
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 15:54:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 991D76124B
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 16:01:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346221AbhDMPx6 (ORCPT
+        id S1346710AbhDMQCS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 13 Apr 2021 11:53:58 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:17327 "EHLO
-        szxga07-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232038AbhDMPxy (ORCPT
+        Tue, 13 Apr 2021 12:02:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51610 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1346652AbhDMQCR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 13 Apr 2021 11:53:54 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
-        by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4FKVSx2vTPz9vgJ;
-        Tue, 13 Apr 2021 23:51:13 +0800 (CST)
-Received: from localhost.localdomain (10.175.102.38) by
- DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
- 14.3.498.0; Tue, 13 Apr 2021 23:53:20 +0800
-From:   Wei Yongjun <weiyongjun1@huawei.com>
-To:     <weiyongjun1@huawei.com>, Loic Poulain <loic.poulain@linaro.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Hemant Kumar <hemantk@codeaurora.org>
-CC:     <linux-arm-msm@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        "Hulk Robot" <hulkci@huawei.com>
-Subject: [PATCH -next] bus: mhi: pci_generic: Fix possible use-after-free in mhi_pci_remove()
-Date:   Tue, 13 Apr 2021 16:03:18 +0000
-Message-ID: <20210413160318.2003699-1-weiyongjun1@huawei.com>
-X-Mailer: git-send-email 2.25.1
+        Tue, 13 Apr 2021 12:02:17 -0400
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37297C06175F
+        for <kernel-janitors@vger.kernel.org>; Tue, 13 Apr 2021 09:01:57 -0700 (PDT)
+Received: by mail-pj1-x1030.google.com with SMTP id i4so8705158pjk.1
+        for <kernel-janitors@vger.kernel.org>; Tue, 13 Apr 2021 09:01:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=pensando.io; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=Q/AnNTNlBCjZqChhNddMYNKRfa5HdDTkyK0WivXdYHc=;
+        b=i1NAtzOjQ0lsMAwDmYC9XV3ElHbrEqnkWfccIxI72XX3nbpZDq2wOjmgmdGK0LMRMB
+         eUjmzKz4UIy/LISe/9abSPbI1WrZQX8ZMkMO6EJkd/LxG0DYbWgQ35pTeUU9wfM9d2p2
+         V/ETWnzwYqcBbgQjNaSf49v9VjkmIHO8SzT4lF1vtLssuquPrvwS2FXZrrVddb4ryQRg
+         41Sd+SySTNvxrjfLVXw+fyYKuyv+DXaR4iJz1wGVlQNu4AczCQ9gGyiavETu8+o6PO0Q
+         ILARH/49mYF9XDCsa/fFCRTug+A1jlFPQCJ+McDwHng0BGlv4H+Mb0Clh60JAwHKq+gP
+         Gakw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=Q/AnNTNlBCjZqChhNddMYNKRfa5HdDTkyK0WivXdYHc=;
+        b=lb0/SXI5Mwa/xnRrKcXP0to5dUC0gUtslc9B8JEIEO7DdmsPmxOtzjZInfg6KvzMki
+         FFXeMus0Ec9WJjJSXDjO7V7f84dBfDxVCIgNpayHYy06i2owzO3idXagv/JYRPV5DuX9
+         3G5Yvu3R+cI+mL55qhMxXNVvTjSbHv5AaZcEtXhfHv/cnKhx0NUpn0LxavzM4eYLBxFM
+         HJJ0Du05IESxnIt1ikCfE8biq8mffLpA2sKhZygl8VrrCPvvQHsyJzRSBG5pN55FTxqN
+         FkBzT5ZI09nL3E5qCz6vf7tnPYosvcoEGJdqTK5BieBNr67u9Wg9y28lB8ocNyMloLHq
+         pKfg==
+X-Gm-Message-State: AOAM532U1r4yTr6di7KRTeAJQN5DSnOmnM1lhdeqo6qum42D2TPP1cJZ
+        RvX2u1IV+TmXmYWMKV9xwpujfPg8xQMoAA==
+X-Google-Smtp-Source: ABdhPJyVs41VJHay8GUipc1O1fwMSTLtC6VZibMSMx6M8ls0jgOw9Z1wvMoytdd0berH5lKG2eY/XQ==
+X-Received: by 2002:a17:90a:c7d5:: with SMTP id gf21mr748510pjb.80.1618329716359;
+        Tue, 13 Apr 2021 09:01:56 -0700 (PDT)
+Received: from Shannons-MacBook-Pro.local ([50.53.47.17])
+        by smtp.gmail.com with ESMTPSA id 63sm7233147pfu.43.2021.04.13.09.01.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 Apr 2021 09:01:55 -0700 (PDT)
+Subject: Re: [PATCH net-next] ionic: return -EFAULT if copy_to_user() fails
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     drivers@pensando.io, "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Allen Hubbe <allenbh@pensando.io>, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <YHV230jUzxBJxlPS@mwanda>
+From:   Shannon Nelson <snelson@pensando.io>
+Message-ID: <a1581cc4-fa0c-22eb-0a2c-62f1a1a1e215@pensando.io>
+Date:   Tue, 13 Apr 2021 09:01:54 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.9.0
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.102.38]
-X-CFilter-Loop: Reflected
+In-Reply-To: <YHV230jUzxBJxlPS@mwanda>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This driver's remove path calls del_timer(). However, that function
-does not wait until the timer handler finishes. This means that the
-timer handler may still be running after the driver's remove function
-has finished, which would result in a use-after-free.
+On 4/13/21 3:47 AM, Dan Carpenter wrote:
+> The copy_to_user() function returns the number of bytes that it wasn't
+> able to copy.  We want to return -EFAULT to the user.
+>
+> Fixes: fee6efce565d ("ionic: add hw timestamp support files")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Fix by calling del_timer_sync(), which makes sure the timer handler
-has finished, and unable to re-schedule itself.
+Acked-by: Shannon Nelson <snelson@pensando.io>
 
-Fixes: 8562d4fe34a3 ("mhi: pci_generic: Add health-check")
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/bus/mhi/pci_generic.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/bus/mhi/pci_generic.c b/drivers/bus/mhi/pci_generic.c
-index 7c810f02a2ef..5b19e877d17a 100644
---- a/drivers/bus/mhi/pci_generic.c
-+++ b/drivers/bus/mhi/pci_generic.c
-@@ -708,7 +708,7 @@ static void mhi_pci_remove(struct pci_dev *pdev)
- 	struct mhi_pci_device *mhi_pdev = pci_get_drvdata(pdev);
- 	struct mhi_controller *mhi_cntrl = &mhi_pdev->mhi_cntrl;
- 
--	del_timer(&mhi_pdev->health_check_timer);
-+	del_timer_sync(&mhi_pdev->health_check_timer);
- 	cancel_work_sync(&mhi_pdev->recovery_work);
- 
- 	if (test_and_clear_bit(MHI_PCI_DEV_STARTED, &mhi_pdev->status)) {
+> ---
+>   drivers/net/ethernet/pensando/ionic/ionic_phc.c | 4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/net/ethernet/pensando/ionic/ionic_phc.c b/drivers/net/ethernet/pensando/ionic/ionic_phc.c
+> index 86ae5011ac9b..d7d8d5e81ea0 100644
+> --- a/drivers/net/ethernet/pensando/ionic/ionic_phc.c
+> +++ b/drivers/net/ethernet/pensando/ionic/ionic_phc.c
+> @@ -225,7 +225,9 @@ int ionic_lif_hwstamp_get(struct ionic_lif *lif, struct ifreq *ifr)
+>   	memcpy(&config, &lif->phc->ts_config, sizeof(config));
+>   	mutex_unlock(&lif->phc->config_lock);
+>   
+> -	return copy_to_user(ifr->ifr_data, &config, sizeof(config));
+> +	if (copy_to_user(ifr->ifr_data, &config, sizeof(config)))
+> +		return -EFAULT;
+> +	return 0;
+>   }
+>   
+>   static u64 ionic_hwstamp_read(struct ionic *ionic,
 
