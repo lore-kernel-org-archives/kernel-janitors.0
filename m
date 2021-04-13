@@ -2,139 +2,74 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-21.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28FE1C433B4
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 20:45:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89CA9C433ED
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 22:10:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EE47261139
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 20:45:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D17361353
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 22:10:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243954AbhDMUpk (ORCPT
+        id S1348572AbhDMWKf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 13 Apr 2021 16:45:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56564 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230281AbhDMUpj (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 13 Apr 2021 16:45:39 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0333FC061574;
-        Tue, 13 Apr 2021 13:45:18 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id w4so13994036wrt.5;
-        Tue, 13 Apr 2021 13:45:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=ofPn2mdRtTE7ElcZXwF2kZ46phxxe+jY7bsznPkzuoU=;
-        b=PWVGfHrR1yygXP+Q89qMNfKtVP6CQBelVvBwcBljVcvcDdEnZnSUNdxb4n4WiQmu4V
-         aI7BOfA4PVpC170M+wD4NSvFzsKmgYUzylcePTJJX9YdpoNFtm0hZ4azShlLquSakpnt
-         MJRC9lPlOqQIhuXDaIDd0nj8hzY05EC8nIh2mELhdDHU37E2c5QOF3uZaKRUqfmciRtj
-         e75PbhBbgNmEDz1zCDHrYzP/Qy3sAJITMYjZRmWvIocJITW6oKqkYBMDFomN3uu1WCqF
-         24rfbwctICenr1AEqjm8sdtvafsqc64dfqrh/9Nd/81bPeO9ofEtw7w+9FA+6RWC8/X6
-         IquA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=ofPn2mdRtTE7ElcZXwF2kZ46phxxe+jY7bsznPkzuoU=;
-        b=AxfebU7sr2fTytZ44agBl+UFqEqBJgM8Ipxdp20emA9cPamHKmfoKiWCOeab/lseeM
-         hKrCnUG2fX2MopSWLL3ZqIVV5oppXyPL+IXmE6l0RKssflr9tN/R5rqiImer45CDokwm
-         0+ayR5L4G7n67lbdKrzzej+m5L9/i0bjxjzPAsXSXAI6z1sxmyChkyssmyF9eMk1Raka
-         SpjlVBWuJ38+2Tab494q15afB6T9E3zVsoXG1jnioiNqYjnarlIuZ8aUNwqWC+RQcxc9
-         VvboNurOohM9B/JbSuvm2S9yoM2EBGj9OIkcDSSeSESVE+SwXSpKEnAsMv6zrXX/w8Q/
-         m/Eg==
-X-Gm-Message-State: AOAM531qBiu+gyoCJmHl4NwK7UIRSVAwR9LayxRyxJf/pdh++vUbGqve
-        9589dN4UdLWP6R/fTDwjORc=
-X-Google-Smtp-Source: ABdhPJxTFoylCyBlkk0JGmB+/r8VFD/dKMAYewZuK4NuQajcEv8RDyvOKg/yqssVlRqkpntXUZN4sQ==
-X-Received: by 2002:a5d:468b:: with SMTP id u11mr30802239wrq.293.1618346717781;
-        Tue, 13 Apr 2021 13:45:17 -0700 (PDT)
-Received: from LEGION ([39.46.65.172])
-        by smtp.gmail.com with ESMTPSA id x14sm20784716wrw.13.2021.04.13.13.45.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Apr 2021 13:45:17 -0700 (PDT)
-Date:   Wed, 14 Apr 2021 01:45:11 +0500
-From:   Muhammad Usama Anjum <musamaanjum@gmail.com>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Miroslav Benes <mbenes@suse.cz>, Borislav Petkov <bp@suse.de>,
-        open list <linux-kernel@vger.kernel.org>
-Cc:     musamaanjum@gmail.com, kernel-janitors@vger.kernel.org,
-        dan.carpenter@oracle.com, colin.king@canonical.com
-Subject: [PATCH] objtool: prevent memory leak in error paths
-Message-ID: <20210413204511.GA664936@LEGION>
+        Tue, 13 Apr 2021 18:10:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55312 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1345636AbhDMWKb (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 13 Apr 2021 18:10:31 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPS id EDC50613B1;
+        Tue, 13 Apr 2021 22:10:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1618351811;
+        bh=ES92U478LsUAZ5S3F/H03niMG8FN6Wmv5Rkq27dcdxs=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=JHujBMq++8ehWyGN4DQcS0qrWHiQvxTNDON8Vs4UEZs1L8f0jfyxqRbd7656u7Yua
+         cUYcuaJUAlcMnUalAh7UiJmIkOEhYA+TEywP3iu+7AqqPAVw3bCKHFAiNtqxnaL9L1
+         oW2bVF4ju+GgxdCSx7VWlg3aNycLxkxVTm7RBnjBR0yCU1wtgfygBZDOygg0Mj6u7U
+         t0LjvjngxeLHcQUmdyBnbYAqrVule+5iDVpsFZ5rbKY4o57YRdyMLKHboE5cbFfOxb
+         Z6smv7MlmGc/lFPJRvf4JeKVahRkfbtUhT2yFTliyOrf1I8Orw7q1DqLaAxo6+zVnu
+         XOqoGz1Iu/q6Q==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] ionic: return -EFAULT if copy_to_user() fails
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <161835181092.31494.8890436906955463778.git-patchwork-notify@kernel.org>
+Date:   Tue, 13 Apr 2021 22:10:10 +0000
+References: <YHV230jUzxBJxlPS@mwanda>
+In-Reply-To: <YHV230jUzxBJxlPS@mwanda>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     snelson@pensando.io, drivers@pensando.io, davem@davemloft.net,
+        kuba@kernel.org, allenbh@pensando.io, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Memory allocated by sym and sym->name isn't being freed if some error
-occurs in elf_create_undef_symbol(). Free the sym and sym->name if error
-is detected before returning NULL.
+Hello:
 
-Addresses-Coverity: ("Prevent memory leak")
-Fixes: 2f2f7e47f052 ("objtool: Add elf_create_undef_symbol()")
-Signed-off-by: Muhammad Usama Anjum <musamaanjum@gmail.com>
----
-Only build has been tested.
+This patch was applied to netdev/net-next.git (refs/heads/master):
 
-tools/objtool/elf.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+On Tue, 13 Apr 2021 13:47:59 +0300 you wrote:
+> The copy_to_user() function returns the number of bytes that it wasn't
+> able to copy.  We want to return -EFAULT to the user.
+> 
+> Fixes: fee6efce565d ("ionic: add hw timestamp support files")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  drivers/net/ethernet/pensando/ionic/ionic_phc.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/tools/objtool/elf.c b/tools/objtool/elf.c
-index d08f5f3670f8..17ee265a6c6b 100644
---- a/tools/objtool/elf.c
-+++ b/tools/objtool/elf.c
-@@ -733,7 +733,7 @@ struct symbol *elf_create_undef_symbol(struct elf *elf, const char *name)
- 
- 	sym->sym.st_name = elf_add_string(elf, NULL, sym->name);
- 	if (sym->sym.st_name == -1)
--		return NULL;
-+		goto err;
- 
- 	sym->sym.st_info = GELF_ST_INFO(STB_GLOBAL, STT_NOTYPE);
- 	// st_other 0
-@@ -744,19 +744,19 @@ struct symbol *elf_create_undef_symbol(struct elf *elf, const char *name)
- 	symtab = find_section_by_name(elf, ".symtab");
- 	if (!symtab) {
- 		WARN("can't find .symtab");
--		return NULL;
-+		goto err;
- 	}
- 
- 	s = elf_getscn(elf->elf, symtab->idx);
- 	if (!s) {
- 		WARN_ELF("elf_getscn");
--		return NULL;
-+		goto err;
- 	}
- 
- 	data = elf_newdata(s);
- 	if (!data) {
- 		WARN_ELF("elf_newdata");
--		return NULL;
-+		goto err;
- 	}
- 
- 	data->d_buf = &sym->sym;
-@@ -773,6 +773,10 @@ struct symbol *elf_create_undef_symbol(struct elf *elf, const char *name)
- 	elf_add_symbol(elf, sym);
- 
- 	return sym;
-+err:
-+	free(sym->name);
-+	free(sym);
-+	return NULL;
- }
- 
- struct section *elf_create_section(struct elf *elf, const char *name,
--- 
-2.25.1
+Here is the summary with links:
+  - [net-next] ionic: return -EFAULT if copy_to_user() fails
+    https://git.kernel.org/netdev/net-next/c/5871d0c6b8ea
+
+You are awesome, thank you!
+--
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
