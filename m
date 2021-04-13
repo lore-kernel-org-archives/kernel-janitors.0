@@ -2,96 +2,70 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA04AC433B4
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 13:06:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4976C433ED
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 14:02:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A89C0613B2
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 13:06:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A4D461242
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 14:02:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245451AbhDMNGf (ORCPT
+        id S1344917AbhDMODE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 13 Apr 2021 09:06:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40818 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229610AbhDMNGe (ORCPT
+        Tue, 13 Apr 2021 10:03:04 -0400
+Received: from smtp13.smtpout.orange.fr ([80.12.242.135]:21533 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1345022AbhDMOCq (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 13 Apr 2021 09:06:34 -0400
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8ABF4C061574;
-        Tue, 13 Apr 2021 06:06:14 -0700 (PDT)
-Received: by mail-wm1-x32c.google.com with SMTP id u5-20020a7bcb050000b029010e9316b9d5so8711292wmj.2;
-        Tue, 13 Apr 2021 06:06:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=6iIxabbABCVQUceL64W/qjOv0NrxRjxEGVm5CqC0Sp4=;
-        b=ODtqRIkOff7Jy0N6cKEBiOUiIeZX70tw3vcS6hphomxgVOv13p03tIIQNVIIapLjev
-         KWNynunW/hl7pENIVd7NpuRPfYaUs3LHR6jXGgtyBX/JeKafM9LTCqXhtvo2uk1hYfGV
-         ko94DCrFFLNF5vjsTyRiANBUfWbilTZyT9mKAEhZMMinxQX6chFaeEgWngxlB8GMSzIp
-         qxMA2w4SLm6Q0TTm5AwnWHM4ny5GDojz0gV+Vpt2HqLorY7BWY06OSqDjyTpfEDir+zD
-         3W164bJJ2UcwVi8Nuybo+xjwhqMBh5Bdy0FaQnoqNIqmK6Ldyif9A/dL2ywt4Kefrfo9
-         KtFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=6iIxabbABCVQUceL64W/qjOv0NrxRjxEGVm5CqC0Sp4=;
-        b=o549LpBWF8ef7dRSBL4gmrz5c+gQ7dGUUDL/H1N763YP2KOpVh0hc0TSYUGRYzI3Zt
-         HpHWTG1zWtGFbBrTYok7YC1KC5vqABEOip9US053IKa58209MggVWrjWsQ5pLbjo9/i/
-         dvLRC/zoAlE7DwZ5CYjIWrZ070uB/viM2+LfEujeDb9Uk4Gyvg4Q7VJo7k1YO6S415pp
-         SHBQT8IEUqYgAq5Oqdq8uP+JqTOKbUYheeQHOhz63dI5ebGDxSJ36wRT1e2pakq2lGzc
-         hSdSeOAU0Iz3PNfO5em0PzLaHB4j/MSMmxHx7q6eiuX3oeJo+L8tqWwQRoo7yGdVD10e
-         BBSg==
-X-Gm-Message-State: AOAM5305C+wMjTz5/VitFm9ZdWI/7J4DnxJJ6OKhCcD2redz0QLEMSRl
-        qTwpMAvOxJcWhZivjFwGz14=
-X-Google-Smtp-Source: ABdhPJwAt7l/7XKncnUZeKMr5fkcfptD5oCB0hubq1HkPbdFV7iaS5FlVytjKSgJXngNSMDAOTyivg==
-X-Received: by 2002:a1c:ed0a:: with SMTP id l10mr4027963wmh.151.1618319173292;
-        Tue, 13 Apr 2021 06:06:13 -0700 (PDT)
-Received: from localhost.localdomain ([197.3.90.181])
-        by smtp.gmail.com with ESMTPSA id j23sm2372320wmo.33.2021.04.13.06.06.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Apr 2021 06:06:12 -0700 (PDT)
-From:   Khaled ROMDHANI <khaledromdhani216@gmail.com>
-To:     clm@fb.com, josef@toxicpanda.com, dsterba@suse.com
-Cc:     Khaled ROMDHANI <khaledromdhani216@gmail.com>,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH-next] fs/btrfs: Fix uninitialized variable
-Date:   Tue, 13 Apr 2021 14:06:04 +0100
-Message-Id: <20210413130604.11487-1-khaledromdhani216@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 13 Apr 2021 10:02:46 -0400
+Received: from [192.168.1.18] ([86.243.172.93])
+        by mwinf5d76 with ME
+        id sE2N2400F21Fzsu03E2NeZ; Tue, 13 Apr 2021 16:02:24 +0200
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 13 Apr 2021 16:02:24 +0200
+X-ME-IP: 86.243.172.93
+Subject: Re: [PATCH] ASoC: cs35l35: Fix an error handling path in
+ 'cs35l35_i2c_probe()'
+To:     Mark Brown <broonie@kernel.org>
+Cc:     alsa-devel@alsa-project.org, lgirdwood@gmail.com,
+        patches@opensource.cirrus.com, kernel-janitors@vger.kernel.org,
+        tiwai@suse.com, james.schulman@cirrus.com, david.rhodes@cirrus.com,
+        linux-kernel@vger.kernel.org
+References: <15720439769ba94ffb65c90217392b0758b08f61.1618145369.git.christophe.jaillet@wanadoo.fr>
+ <20210413124323.GD5586@sirena.org.uk>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Message-ID: <3f276ab6-1704-84ed-3681-d639ba1e0010@wanadoo.fr>
+Date:   Tue, 13 Apr 2021 16:02:21 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.9.1
+MIME-Version: 1.0
+In-Reply-To: <20210413124323.GD5586@sirena.org.uk>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The variable zone is not initialized. It
-may causes a failed assertion.
+Le 13/04/2021 à 14:43, Mark Brown a écrit :
+> On Sun, Apr 11, 2021 at 02:51:06PM +0200, Christophe JAILLET wrote:
+>> If 'devm_regmap_init_i2c()' fails, there is no need to goto err. We should
+>> return directly as already done by the surrounding error handling paths.
+> 
+> These are stylistic improvements rather than bug fixes so it's probably
+> better not to call them fixes.
+> 
 
-Addresses-Coverity: ("Uninitialized variables")
+Ok, agreed.
+The error handling path is a no-op in such a case.
 
-Signed-off-by: Khaled ROMDHANI <khaledromdhani216@gmail.com>
----
- fs/btrfs/zoned.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+What do you prefer:
+   - you fix the subject?
+   - I send a v2 with a new subject?
+   - we leave it as-is as this patch is a no-op in the real world? So it 
+doesn't really mater.
 
-diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
-index eeb3ebe11d7a..ee15ab8dccb5 100644
---- a/fs/btrfs/zoned.c
-+++ b/fs/btrfs/zoned.c
-@@ -136,7 +136,7 @@ static int sb_write_pointer(struct block_device *bdev, struct blk_zone *zones,
-  */
- static inline u32 sb_zone_number(int shift, int mirror)
- {
--	u64 zone;
-+	u64 zone = 0;
- 
- 	ASSERT(mirror < BTRFS_SUPER_MIRROR_MAX);
- 	switch (mirror) {
--- 
-2.17.1
-
+CJ
