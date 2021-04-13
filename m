@@ -2,107 +2,57 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 769B8C433B4
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 10:37:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9733BC43460
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 10:42:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 57E0F61176
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 10:37:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75A4361176
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 10:42:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245750AbhDMKh4 (ORCPT
+        id S231304AbhDMKmV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 13 Apr 2021 06:37:56 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:39126 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245730AbhDMKh4 (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 13 Apr 2021 06:37:56 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13DAUYQ1191089;
-        Tue, 13 Apr 2021 10:37:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=a49XKfFDi2IaRm8HfCUDmWOG4oiQUmUQiFQeVHD9fXU=;
- b=lK+8gYUHJxCxr3Wt4utJpoZxe4Em4dSi6d+g5OWQ8NJGikUmnJHiLLKsPM9h7UHEejcj
- 9yidFKbOetiEm2L4jmQFXpn2L/JPdSafiMA6RcK0jMmMUJQqlhQHlgndmocBIAxPO/bd
- b8/W/RTZ1vZcolulo3LGYPgTU8KEYamMSDAvjxllbPHu7PIRoFGdfynRLNUFtlKtd6Br
- r71Sfyzqzwe4fCbzxi9Rse9zgaJmOc20ZHuBsi4S/I6AMlGiUop0W/LYK0Knsauk+m2o
- yrp5I8xd3N33WUsh2YSUInCGcKgpUXT2X7Yk7MMUVmN6S+90PawHPsWN949iBiztYepH ng== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2120.oracle.com with ESMTP id 37u3ymejg8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 13 Apr 2021 10:37:29 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13DATee7002897;
-        Tue, 13 Apr 2021 10:37:27 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 37unwykww2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 13 Apr 2021 10:37:27 +0000
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 13DAbKw7026411;
-        Tue, 13 Apr 2021 10:37:20 GMT
-Received: from mwanda (/102.36.221.92)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 13 Apr 2021 03:37:19 -0700
-Date:   Tue, 13 Apr 2021 13:37:12 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] media: omap3isp: drop graph mutex on error path
-Message-ID: <YHV0WJWNQv5I6yqO@mwanda>
+        Tue, 13 Apr 2021 06:42:21 -0400
+Received: from foss.arm.com ([217.140.110.172]:40104 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229686AbhDMKmU (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 13 Apr 2021 06:42:20 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2F933106F;
+        Tue, 13 Apr 2021 03:42:01 -0700 (PDT)
+Received: from e123427-lin.arm.com (unknown [10.57.59.108])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 110233F73B;
+        Tue, 13 Apr 2021 03:41:59 -0700 (PDT)
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Colin King <colin.king@canonical.com>, linux-pci@vger.kernel.org,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: endpoint: remove redundant initialization of pointer dev
+Date:   Tue, 13 Apr 2021 11:41:54 +0100
+Message-Id: <161831050129.2159.13173655949716032262.b4-ty@arm.com>
+X-Mailer: git-send-email 2.26.1
+In-Reply-To: <20210326190909.622369-1-colin.king@canonical.com>
+References: <20210326190909.622369-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-X-Proofpoint-IMR: 1
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9952 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 suspectscore=0
- mlxscore=0 malwarescore=0 adultscore=0 bulkscore=0 spamscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2104060000 definitions=main-2104130072
-X-Proofpoint-GUID: rzwGE9aQ28t3hMVgb3rAaUnRnAxJbl89
-X-Proofpoint-ORIG-GUID: rzwGE9aQ28t3hMVgb3rAaUnRnAxJbl89
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9952 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=999 spamscore=0
- impostorscore=0 priorityscore=1501 lowpriorityscore=0 adultscore=0
- bulkscore=0 phishscore=0 suspectscore=0 malwarescore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104060000
- definitions=main-2104130072
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Drop the "&isp->media_dev.graph_mutex" if media_entity_enum_init() fails.
+On Fri, 26 Mar 2021 19:09:09 +0000, Colin King wrote:
+> The pointer dev is being initialized with a value that is
+> never read and it is being updated later with a new value.  The
+> initialization is redundant and can be removed.
 
-Fixes: ba689d933361 ("media: omap3isp: Acquire graph mutex for graph traversal")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/media/platform/omap3isp/isp.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Applied to pci/endpoint, thanks!
 
-diff --git a/drivers/media/platform/omap3isp/isp.c b/drivers/media/platform/omap3isp/isp.c
-index 53025c8c7531..20f59c59ff8a 100644
---- a/drivers/media/platform/omap3isp/isp.c
-+++ b/drivers/media/platform/omap3isp/isp.c
-@@ -2037,8 +2037,10 @@ static int isp_subdev_notifier_complete(struct v4l2_async_notifier *async)
- 	mutex_lock(&isp->media_dev.graph_mutex);
- 
- 	ret = media_entity_enum_init(&isp->crashed, &isp->media_dev);
--	if (ret)
-+	if (ret) {
-+		mutex_unlock(&isp->media_dev.graph_mutex);
- 		return ret;
-+	}
- 
- 	list_for_each_entry(sd, &v4l2_dev->subdevs, list) {
- 		if (sd->notifier != &isp->notifier)
--- 
-2.30.2
+[1/1] PCI: endpoint: Remove redundant initialization of pointer dev
+      https://git.kernel.org/lpieralisi/pci/c/80c253bd7f
 
+Thanks,
+Lorenzo
