@@ -2,82 +2,96 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAE19C433B4
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 12:44:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA04AC433B4
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 13:06:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A71CB613C4
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 12:44:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A89C0613B2
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 13:06:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244360AbhDMMpC (ORCPT
+        id S245451AbhDMNGf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 13 Apr 2021 08:45:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48860 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S244281AbhDMMoE (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 13 Apr 2021 08:44:04 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 6CE1D613B2;
-        Tue, 13 Apr 2021 12:43:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1618317825;
-        bh=qiBtcnTxT4Pf7P7KT8Oez6AX4LDmqJOiJjbynCK5Sj0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FcVngKpkYCCvBk30DH3rjZnD81URSc77GI/TivDJuZF+4tHYUzBHbiGRZFQKzU/hN
-         ZZd7LleKkJSJSMxCNDZ81vuOBQu1iKygcACi8Kapx63xuyjRTIz3r7apROxSrIBrt9
-         SW7CwCdUyk8qDCob+4+R0pnqn6t95Iz0DX7WNb1tAxwsdPSSbYhFJWfbSifPFhEVp8
-         TcRw+cUQ8AgMyh8bX+XW/uCj/OnbZd8D2TWWZzotYppfUI1ta2IuFwRzffbsoyuVY6
-         MSJx0kpElpiiM+/qwbeDgRIpK/aNd3L8E5zrkIN+8Z0KIgScp8hKbzPoLlglOUvUc2
-         Oupbo+qQ98xAg==
-Date:   Tue, 13 Apr 2021 13:43:23 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     james.schulman@cirrus.com, david.rhodes@cirrus.com,
-        lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
-        alsa-devel@alsa-project.org, patches@opensource.cirrus.com,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] ASoC: cs35l35: Fix an error handling path in
- 'cs35l35_i2c_probe()'
-Message-ID: <20210413124323.GD5586@sirena.org.uk>
-References: <15720439769ba94ffb65c90217392b0758b08f61.1618145369.git.christophe.jaillet@wanadoo.fr>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="osDK9TLjxFScVI/L"
-Content-Disposition: inline
-In-Reply-To: <15720439769ba94ffb65c90217392b0758b08f61.1618145369.git.christophe.jaillet@wanadoo.fr>
-X-Cookie: Shake well before using.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 13 Apr 2021 09:06:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40818 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229610AbhDMNGe (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 13 Apr 2021 09:06:34 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8ABF4C061574;
+        Tue, 13 Apr 2021 06:06:14 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id u5-20020a7bcb050000b029010e9316b9d5so8711292wmj.2;
+        Tue, 13 Apr 2021 06:06:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=6iIxabbABCVQUceL64W/qjOv0NrxRjxEGVm5CqC0Sp4=;
+        b=ODtqRIkOff7Jy0N6cKEBiOUiIeZX70tw3vcS6hphomxgVOv13p03tIIQNVIIapLjev
+         KWNynunW/hl7pENIVd7NpuRPfYaUs3LHR6jXGgtyBX/JeKafM9LTCqXhtvo2uk1hYfGV
+         ko94DCrFFLNF5vjsTyRiANBUfWbilTZyT9mKAEhZMMinxQX6chFaeEgWngxlB8GMSzIp
+         qxMA2w4SLm6Q0TTm5AwnWHM4ny5GDojz0gV+Vpt2HqLorY7BWY06OSqDjyTpfEDir+zD
+         3W164bJJ2UcwVi8Nuybo+xjwhqMBh5Bdy0FaQnoqNIqmK6Ldyif9A/dL2ywt4Kefrfo9
+         KtFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=6iIxabbABCVQUceL64W/qjOv0NrxRjxEGVm5CqC0Sp4=;
+        b=o549LpBWF8ef7dRSBL4gmrz5c+gQ7dGUUDL/H1N763YP2KOpVh0hc0TSYUGRYzI3Zt
+         HpHWTG1zWtGFbBrTYok7YC1KC5vqABEOip9US053IKa58209MggVWrjWsQ5pLbjo9/i/
+         dvLRC/zoAlE7DwZ5CYjIWrZ070uB/viM2+LfEujeDb9Uk4Gyvg4Q7VJo7k1YO6S415pp
+         SHBQT8IEUqYgAq5Oqdq8uP+JqTOKbUYheeQHOhz63dI5ebGDxSJ36wRT1e2pakq2lGzc
+         hSdSeOAU0Iz3PNfO5em0PzLaHB4j/MSMmxHx7q6eiuX3oeJo+L8tqWwQRoo7yGdVD10e
+         BBSg==
+X-Gm-Message-State: AOAM5305C+wMjTz5/VitFm9ZdWI/7J4DnxJJ6OKhCcD2redz0QLEMSRl
+        qTwpMAvOxJcWhZivjFwGz14=
+X-Google-Smtp-Source: ABdhPJwAt7l/7XKncnUZeKMr5fkcfptD5oCB0hubq1HkPbdFV7iaS5FlVytjKSgJXngNSMDAOTyivg==
+X-Received: by 2002:a1c:ed0a:: with SMTP id l10mr4027963wmh.151.1618319173292;
+        Tue, 13 Apr 2021 06:06:13 -0700 (PDT)
+Received: from localhost.localdomain ([197.3.90.181])
+        by smtp.gmail.com with ESMTPSA id j23sm2372320wmo.33.2021.04.13.06.06.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Apr 2021 06:06:12 -0700 (PDT)
+From:   Khaled ROMDHANI <khaledromdhani216@gmail.com>
+To:     clm@fb.com, josef@toxicpanda.com, dsterba@suse.com
+Cc:     Khaled ROMDHANI <khaledromdhani216@gmail.com>,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH-next] fs/btrfs: Fix uninitialized variable
+Date:   Tue, 13 Apr 2021 14:06:04 +0100
+Message-Id: <20210413130604.11487-1-khaledromdhani216@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+The variable zone is not initialized. It
+may causes a failed assertion.
 
---osDK9TLjxFScVI/L
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Addresses-Coverity: ("Uninitialized variables")
 
-On Sun, Apr 11, 2021 at 02:51:06PM +0200, Christophe JAILLET wrote:
-> If 'devm_regmap_init_i2c()' fails, there is no need to goto err. We should
-> return directly as already done by the surrounding error handling paths.
+Signed-off-by: Khaled ROMDHANI <khaledromdhani216@gmail.com>
+---
+ fs/btrfs/zoned.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-These are stylistic improvements rather than bug fixes so it's probably
-better not to call them fixes.
+diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
+index eeb3ebe11d7a..ee15ab8dccb5 100644
+--- a/fs/btrfs/zoned.c
++++ b/fs/btrfs/zoned.c
+@@ -136,7 +136,7 @@ static int sb_write_pointer(struct block_device *bdev, struct blk_zone *zones,
+  */
+ static inline u32 sb_zone_number(int shift, int mirror)
+ {
+-	u64 zone;
++	u64 zone = 0;
+ 
+ 	ASSERT(mirror < BTRFS_SUPER_MIRROR_MAX);
+ 	switch (mirror) {
+-- 
+2.17.1
 
---osDK9TLjxFScVI/L
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmB1keoACgkQJNaLcl1U
-h9Cv3wf+NEs2AimelvFepIXotWXQORggDNT0w9PYpIVhx8qJDau2m0VQTgfzprrE
-SBxqb8RaJnOrzew3fZmzDit+EpfjT7D+X1tWwUvGY8HI/bjc0clVVzlpW81+s/FT
-F1mepwHK26ct0/VZxKqiibsNoFCsf81VUDPy26KiScG7BAdrF8us25gVSepKAyIF
-kh4fqhgcU8GPtUHz23pSgn0vzgA5qdWPJVVQ44tBoJRAtkJ0zBCf9pnvE5ZNZQt0
-bwHL/EwG84ufa0Y4x+wzx+O3VeDaT1fv9K9Se/hIylrCRYg+o/agbgnZcCUDD2RI
-v8uynYS9hbv6gYfp3hqFkqKWRH1suA==
-=q+7O
------END PGP SIGNATURE-----
-
---osDK9TLjxFScVI/L--
