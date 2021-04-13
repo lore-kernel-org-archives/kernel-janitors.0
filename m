@@ -2,74 +2,121 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-21.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89CA9C433ED
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 22:10:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B437FC433B4
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 23:26:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6D17361353
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 22:10:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8844860C3D
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 23:26:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348572AbhDMWKf (ORCPT
+        id S1348800AbhDMX01 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 13 Apr 2021 18:10:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55312 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1345636AbhDMWKb (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 13 Apr 2021 18:10:31 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id EDC50613B1;
-        Tue, 13 Apr 2021 22:10:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1618351811;
-        bh=ES92U478LsUAZ5S3F/H03niMG8FN6Wmv5Rkq27dcdxs=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=JHujBMq++8ehWyGN4DQcS0qrWHiQvxTNDON8Vs4UEZs1L8f0jfyxqRbd7656u7Yua
-         cUYcuaJUAlcMnUalAh7UiJmIkOEhYA+TEywP3iu+7AqqPAVw3bCKHFAiNtqxnaL9L1
-         oW2bVF4ju+GgxdCSx7VWlg3aNycLxkxVTm7RBnjBR0yCU1wtgfygBZDOygg0Mj6u7U
-         t0LjvjngxeLHcQUmdyBnbYAqrVule+5iDVpsFZ5rbKY4o57YRdyMLKHboE5cbFfOxb
-         Z6smv7MlmGc/lFPJRvf4JeKVahRkfbtUhT2yFTliyOrf1I8Orw7q1DqLaAxo6+zVnu
-         XOqoGz1Iu/q6Q==
-Content-Type: text/plain; charset="utf-8"
+        Tue, 13 Apr 2021 19:26:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35044 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230123AbhDMX01 (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 13 Apr 2021 19:26:27 -0400
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76850C061574;
+        Tue, 13 Apr 2021 16:26:06 -0700 (PDT)
+Received: by mail-wr1-x42e.google.com with SMTP id p6so11321204wrn.9;
+        Tue, 13 Apr 2021 16:26:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=Bem/p08va+1GAFuU0LTGSjQYRLOf3cmGSRP+mg48WO0=;
+        b=gAqek3+Yxs0T57tuh7TxH8pYNNFco4ooq3u47xzORW4+3k4dxKScnRb94m07lXJCtO
+         6vFgbKDUAWkL89ldu90rjm/qlqvsLT9aWhEsUOHfmXov+derlxr6OD/wSU6XClgxUwva
+         PP/EvYvowS8l1ypyIXJGs0Lb+VonygfGkLobJnS+1tMfAm88B1h8Bmq6gFDW9HGOM6wp
+         kjeQO9YH67vIxh/c1lKVQKqEDSY94PEE+kJ4xNPV9c2M8u0QtLcjDjHS3hiXrgSdCYUA
+         4W0WdSCxX6qdlMMhVQW7rX+QILvwn4qtFBGRbRZQg3Mzcg8ITYVTZ0w1xPGLnlcX1uUd
+         OpKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=Bem/p08va+1GAFuU0LTGSjQYRLOf3cmGSRP+mg48WO0=;
+        b=cghuq1j2VeGcGhWfLFVMeW2JaQ6rNGH1OULgoIdO8M5bKYH0pgiVQHD0M8RkGxaZmg
+         9MI3Su2n87CfCR9mYnQHP3TOBcG7AvMUPMBunwTsPyXm+OJZda+6HpC6ByTyCFYEOI4a
+         opIBxUvXXj1ZXLIQSauEc5j5OrhRkMvreZq74y5WxwY2E+Ycdn8f7xqrlirEj+nSD+7m
+         kkUJPdgzRJnkT50a0+sxK9VJFhDPZ6potafd/rXq/Wzy/LmVkKi3HudDKoIbnMGjqUxB
+         NWwsCD8je/KFq420t2Jhf9NnFQdheyQWak4hiTxlcr1sfw2Pg9yCg3QNgnAIBz/orsYf
+         aKpA==
+X-Gm-Message-State: AOAM531G2IAWVksLHutDVdwHQY9Xkdg29nz+P9Pg4mXuT9mXn4yaAijb
+        42bpbf3sv8bWy9uuTohtnkg=
+X-Google-Smtp-Source: ABdhPJxpNylQxNyIvvIYwWjESkNUS14wxwP2YXsCfk6lD56i2MYhY+u38RHgySVHjDRdkUek/6oOgQ==
+X-Received: by 2002:adf:f250:: with SMTP id b16mr10066858wrp.347.1618356364056;
+        Tue, 13 Apr 2021 16:26:04 -0700 (PDT)
+Received: from LEGION ([39.46.65.172])
+        by smtp.gmail.com with ESMTPSA id i12sm1504831wmd.3.2021.04.13.16.26.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Apr 2021 16:26:03 -0700 (PDT)
+Date:   Wed, 14 Apr 2021 04:25:58 +0500
+From:   Muhammad Usama Anjum <musamaanjum@gmail.com>
+To:     Steve French <sfrench@samba.org>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        "open list:COMMON INTERNET FILE SYSTEM CLIENT (CIFS)" 
+        <linux-cifs@vger.kernel.org>,
+        "moderated list:COMMON INTERNET FILE SYSTEM CLIENT (CIFS)" 
+        <samba-technical@lists.samba.org>,
+        open list <linux-kernel@vger.kernel.org>
+Cc:     musamaanjum@gmail.com, kernel-janitors@vger.kernel.org,
+        dan.carpenter@oracle.com, colin.king@canonical.com
+Subject: [PATCH] cifs: remove unnecessary copies of tcon->crfid.fid
+Message-ID: <20210413232558.GA1136036@LEGION>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] ionic: return -EFAULT if copy_to_user() fails
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <161835181092.31494.8890436906955463778.git-patchwork-notify@kernel.org>
-Date:   Tue, 13 Apr 2021 22:10:10 +0000
-References: <YHV230jUzxBJxlPS@mwanda>
-In-Reply-To: <YHV230jUzxBJxlPS@mwanda>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     snelson@pensando.io, drivers@pensando.io, davem@davemloft.net,
-        kuba@kernel.org, allenbh@pensando.io, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+pfid is being set to tcon->crfid.fid and they are copied in each other
+multiple times. Remove the memcopy between same pointers.
 
-This patch was applied to netdev/net-next.git (refs/heads/master):
+Addresses-Coverity: ("Overlapped copy")
+Fixes: 9e81e8ff74b9 ("cifs: return cached_fid from open_shroot")
+Signed-off-by: Muhammad Usama Anjum <musamaanjum@gmail.com>
+---
+I'm not sure why refcount was being incremented here. This file has been
+evoloved so much. Any ideas?
 
-On Tue, 13 Apr 2021 13:47:59 +0300 you wrote:
-> The copy_to_user() function returns the number of bytes that it wasn't
-> able to copy.  We want to return -EFAULT to the user.
-> 
-> Fixes: fee6efce565d ("ionic: add hw timestamp support files")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/net/ethernet/pensando/ionic/ionic_phc.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+fs/cifs/smb2ops.c | 9 ---------
+ 1 file changed, 9 deletions(-)
 
-Here is the summary with links:
-  - [net-next] ionic: return -EFAULT if copy_to_user() fails
-    https://git.kernel.org/netdev/net-next/c/5871d0c6b8ea
-
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+diff --git a/fs/cifs/smb2ops.c b/fs/cifs/smb2ops.c
+index 61214b23c57f..6fa35003dcfe 100644
+--- a/fs/cifs/smb2ops.c
++++ b/fs/cifs/smb2ops.c
+@@ -847,14 +847,6 @@ int open_cached_dir(unsigned int xid, struct cifs_tcon *tcon,
+ 			.volatile_fid = pfid->volatile_fid,
+ 		};
+ 
+-		/*
+-		 * caller expects this func to set pfid to a valid
+-		 * cached root, so we copy the existing one and get a
+-		 * reference.
+-		 */
+-		memcpy(pfid, tcon->crfid.fid, sizeof(*pfid));
+-		kref_get(&tcon->crfid.refcount);
+-
+ 		mutex_unlock(&tcon->crfid.fid_mutex);
+ 
+ 		if (rc == 0) {
+@@ -885,7 +877,6 @@ int open_cached_dir(unsigned int xid, struct cifs_tcon *tcon,
+ 	oparms.fid->mid = le64_to_cpu(o_rsp->sync_hdr.MessageId);
+ #endif /* CIFS_DEBUG2 */
+ 
+-	memcpy(tcon->crfid.fid, pfid, sizeof(struct cifs_fid));
+ 	tcon->crfid.tcon = tcon;
+ 	tcon->crfid.is_valid = true;
+ 	tcon->crfid.dentry = dentry;
+-- 
+2.25.1
 
