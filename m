@@ -2,66 +2,176 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A945C433ED
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 18:35:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6010FC43462
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 20:13:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 04598613C1
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 18:35:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38BD9613D8
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 20:13:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347934AbhDMSfZ convert rfc822-to-8bit (ORCPT
+        id S230308AbhDMUN4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 13 Apr 2021 14:35:25 -0400
-Received: from coyote.holtmann.net ([212.227.132.17]:48454 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347929AbhDMSfY (ORCPT
+        Tue, 13 Apr 2021 16:13:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49674 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229590AbhDMUNz (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 13 Apr 2021 14:35:24 -0400
-Received: from marcel-macbook.holtmann.net (p5b3d235a.dip0.t-ipconnect.de [91.61.35.90])
-        by mail.holtmann.org (Postfix) with ESMTPSA id 84989CECCC;
-        Tue, 13 Apr 2021 20:42:47 +0200 (CEST)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 14.0 \(3654.60.0.2.21\))
-Subject: Re: [PATCH] Bluetooth: btusb: fix memory leak
-From:   Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <20210413175208.GA560049@LEGION>
-Date:   Tue, 13 Apr 2021 20:35:02 +0200
-Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
-        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-        "mark-yw.chen" <mark-yw.chen@mediatek.com>,
-        "open list:BLUETOOTH DRIVERS" <linux-bluetooth@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org, dan.carpenter@oracle.com,
-        colin.king@canonical.com
-Content-Transfer-Encoding: 8BIT
-Message-Id: <E4C40E0D-4D06-4E3C-BEA3-079FACEE1A06@holtmann.org>
-References: <20210413175208.GA560049@LEGION>
-To:     Muhammad Usama Anjum <musamaanjum@gmail.com>
-X-Mailer: Apple Mail (2.3654.60.0.2.21)
+        Tue, 13 Apr 2021 16:13:55 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82518C061574;
+        Tue, 13 Apr 2021 13:13:35 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id w4so13919578wrt.5;
+        Tue, 13 Apr 2021 13:13:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=VLF6/P7EZjK4b9JVKvC4s0oerk5rpO6dK9mxoGQATgk=;
+        b=QBMerjyfmkBCZjkkYTsAlMSuXiu3Z0Jzf81vhQdmkJxcRdnOPQdw53ibPDLTQm9beD
+         9crudOocqZowDvYl+ESSSmVQFQ3xNWXlQTWJJKOB2S3ISVv1SyHDSZhc5c6lLTfs3Icj
+         G6A/wmFfv4bdKBHVP8N+ctQoLWa+iArTfjJEqDvabCAH2DHrLspZiy4CbZaoHwqwYbP6
+         Cf3HSrWabCPq9XOE67ePcQmxGuZejRRh08VOdANdzCU4PC2z19O9ESjqdtUK71fTj+Db
+         ZlU0xtlwgrryRWP3Uet6aw6DY19FdSnztVZ+SPmwyHxWR4byHksNnHgaoudGaencyEYs
+         Y0kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=VLF6/P7EZjK4b9JVKvC4s0oerk5rpO6dK9mxoGQATgk=;
+        b=r6zFhe6PC44fdrahOFLNfYhbosy/TK7UiPttp3UGm/22Zd1n+oyZUzLVGM+3c0gddt
+         ezyP8GwHdS6WAhMkuo/YkAJxpuZarEzoMv38p6bpVnWqpKUKI9Yh+Myo6+GU+dU5KAzo
+         Pth4m751EVWmDpo9gORHLSazMpmBNGzktUBJOSkhcIrX3u/i3h/+vOGWvnj/QqUJ92Ak
+         3dy0GsUZCB8usjdhVrJ9OwLwFWb+3GgiwV7ZcZIkjtZgMJ3nNHAzS5/VgEYE/PJW7fsB
+         pIK2U5BKpnm7+4qYaGzTghAsmZjAV9ge1MdUlhXyFEDxs8V45HGmtjr3ciyhthydmL/O
+         qNgw==
+X-Gm-Message-State: AOAM5302k6fCWM638mROFWRVknEaju5lwa+7ussrXeltiJ4YPdo4aXbj
+        2qVapT8SWfupO6y3AhEAPYU=
+X-Google-Smtp-Source: ABdhPJwZCfFj02Edi3FehLcM4AGqWBkDDDDqv5RLROfIpiZbFdprbOFl3OcX7pxq7HPnjvlkfy45GA==
+X-Received: by 2002:a5d:6a90:: with SMTP id s16mr19299060wru.163.1618344814180;
+        Tue, 13 Apr 2021 13:13:34 -0700 (PDT)
+Received: from LEGION ([39.46.65.172])
+        by smtp.gmail.com with ESMTPSA id f6sm9820799wrt.19.2021.04.13.13.13.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Apr 2021 13:13:33 -0700 (PDT)
+Date:   Wed, 14 Apr 2021 01:13:26 +0500
+From:   Muhammad Usama Anjum <musamaanjum@gmail.com>
+To:     James.Bottomley@HansenPartnership.com,
+        James Bottomley <jejb@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        "open list:KEYS-TRUSTED" <linux-integrity@vger.kernel.org>,
+        "open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>,
+        "open list:SECURITY SUBSYSTEM" 
+        <linux-security-module@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Cc:     musamaanjum@gmail.com, kernel-janitors@vger.kernel.org,
+        dan.carpenter@oracle.com, colin.king@canonical.com
+Subject: [PATCH] security: keys: trusted: prevent memory leak in error path
+Message-ID: <20210413201326.GA649679@LEGION>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Muhammad,
+tpm2_key_decode sometimes allocates blob. This blob should be freed if
+some error occurs later in the function. Free the blob before returning
+from this function if it was allocated.
 
-> If btusb_mtk_submit_wmt_recv_urb returns error, wc should be freed and
-> then error should be returned to prevent memory leak.
-> 
-> Addresses-Coverity: ("Prevent memory leak")
-> Fixes: 4cbb375e997d ("Bluetooth: btusb: Fixed too many in-token issue for Mediatek Chip.")
-> Signed-off-by: Muhammad Usama Anjum <musamaanjum@gmail.com>
-> ---
-> drivers/bluetooth/btusb.c | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
+Addresses-Coverity: ("Prevent memory leak")
+Fixes: 14676f1eb796 ("security: keys: trusted: use ASN.1 TPM2 key format for the blobs")
+Signed-off-by: Muhammad Usama Anjum <musamaanjum@gmail.com>
+---
+This is only build tested. 
 
-patch has been applied to bluetooth-next tree.
+ security/keys/trusted-keys/trusted_tpm2.c | 37 +++++++++++++++--------
+ 1 file changed, 24 insertions(+), 13 deletions(-)
 
-Regards
-
-Marcel
+diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
+index d225ad140960..4551384124e0 100644
+--- a/security/keys/trusted-keys/trusted_tpm2.c
++++ b/security/keys/trusted-keys/trusted_tpm2.c
+@@ -378,22 +378,30 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
+ 	}
+ 
+ 	/* new format carries keyhandle but old format doesn't */
+-	if (!options->keyhandle)
+-		return -EINVAL;
++	if (!options->keyhandle) {
++		rc = -EINVAL;
++		goto err;
++	}
+ 
+ 	/* must be big enough for at least the two be16 size counts */
+-	if (payload->blob_len < 4)
+-		return -EINVAL;
++	if (payload->blob_len < 4) {
++		rc = -EINVAL;
++		goto err;
++	}
+ 
+ 	private_len = get_unaligned_be16(blob);
+ 
+ 	/* must be big enough for following public_len */
+-	if (private_len + 2 + 2 > (payload->blob_len))
+-		return -E2BIG;
++	if (private_len + 2 + 2 > (payload->blob_len)) {
++		rc = -E2BIG;
++		goto err;
++	}
+ 
+ 	public_len = get_unaligned_be16(blob + 2 + private_len);
+-	if (private_len + 2 + public_len + 2 > payload->blob_len)
+-		return -E2BIG;
++	if (private_len + 2 + public_len + 2 > payload->blob_len) {
++		rc = -E2BIG;
++		goto err;
++	}
+ 
+ 	pub = blob + 2 + private_len + 2;
+ 	/* key attributes are always at offset 4 */
+@@ -406,12 +414,14 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
+ 		payload->migratable = 1;
+ 
+ 	blob_len = private_len + public_len + 4;
+-	if (blob_len > payload->blob_len)
+-		return -E2BIG;
++	if (blob_len > payload->blob_len) {
++		rc = -E2BIG;
++		goto err;
++	}
+ 
+ 	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_LOAD);
+ 	if (rc)
+-		return rc;
++		goto err;
+ 
+ 	tpm_buf_append_u32(&buf, options->keyhandle);
+ 	tpm2_buf_append_auth(&buf, TPM2_RS_PW,
+@@ -433,12 +443,13 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
+ 			(__be32 *) &buf.data[TPM_HEADER_SIZE]);
+ 
+ out:
+-	if (blob != payload->blob)
+-		kfree(blob);
+ 	tpm_buf_destroy(&buf);
+ 
+ 	if (rc > 0)
+ 		rc = -EPERM;
++err:
++	if (blob != payload->blob)
++		kfree(blob);
+ 
+ 	return rc;
+ }
+-- 
+2.25.1
 
