@@ -4,94 +4,99 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0DCFC433ED
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 12:20:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AE7FC433B4
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 12:35:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C6C9D613B2
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 12:20:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 591A6613B2
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 12:35:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239960AbhDMMUn (ORCPT
+        id S229759AbhDMMfx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 13 Apr 2021 08:20:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44770 "EHLO mail.kernel.org"
+        Tue, 13 Apr 2021 08:35:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47576 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230025AbhDMMUn (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 13 Apr 2021 08:20:43 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 26F4561278;
-        Tue, 13 Apr 2021 12:20:22 +0000 (UTC)
+        id S229730AbhDMMfx (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 13 Apr 2021 08:35:53 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 2D9CA6128E;
+        Tue, 13 Apr 2021 12:35:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1618316423;
-        bh=kQt1/77hrtC2oWRd/jaewcxy+R5bvHz3HUuBuKiUon4=;
+        s=k20201202; t=1618317333;
+        bh=jZq27WHtD28iaDPaxdRQdCiW4Fnh0dePIgDdkXHZc3M=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tk1rf+5/CnbN2rYE1qYYHGChd/TfCiOLNY2E1jDyNbPrR8xFSHWVL9vaUJZ9xF7/D
-         zK893c+adrloy0tN4Jh5nBR4ngzsW/ccBWEokFstDX4P2gDO0i8kj7LWZIPAtF40Pg
-         LazrNELPdcSBnk38xh4+Mb6B7BUVjsZiXPzsE9Wb++gg+Cb8DDMLtcJeMmqtw06Rce
-         YopWGOdRfE8xNl8IGQYd902112Nz5vUoQYX1vr8pqLhEiYtkB3AO4I5K5BZFM9yj6h
-         yZdm9ghMEaifj2Cje9Rjv7A1wsLiepG5SYTfimad90q86dZ/Bf281v9kVKnNEicS/L
-         x2KWDDGM2M/9Q==
-Date:   Tue, 13 Apr 2021 14:20:16 +0200
+        b=LAv+3hMeHEqlxWgwh6oyJugxWohxTict/My9171bvPww47HspB15sgTu7FAbfAJoI
+         fIRUwOOq2RSB3GojIDBUfvktn78o0tZ5e8JTsJf5+jbsIfTl0fhOJ8yNZpSW7wGG7R
+         nxN3bnyaR90N1SRP5d75tOSGizN+lZjJyC0XWoGV5Qhx5ESKxw5DSelZdhrk4J+whr
+         mD4oOeM9GcQdHbUeZbBcOsl7o/ZW+4HNjK7N6G5MRKv0uhX19IvORo6lReP4PnKV76
+         tGIf+CHXt9VgS975Ohn7vDRsEXv1N9G1QtjCxWqRupWB6WU/e5adpQfEu0LYaNRAFq
+         liGbHPstqKOow==
+Date:   Tue, 13 Apr 2021 14:35:30 +0200
 From:   Wolfram Sang <wsa@kernel.org>
-To:     Wei Yongjun <weiyongjun1@huawei.com>
-Cc:     Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Hulk Robot <hulkci@huawei.com>
-Subject: Re: [PATCH -next] i2c: mpc: drop release for resource allocated with
- devm_*
-Message-ID: <20210413122016.GA1553@kunai>
+To:     Bixuan Cui <cuibixuan@huawei.com>
+Cc:     Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Dejin Zheng <zhengdejin5@gmail.com>,
+        Linhua Xu <linhua.xu@unisoc.com>, linux-i2c@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH -next] i2c: sprd: Add missing MODULE_DEVICE_TABLE
+Message-ID: <20210413123530.GF1553@kunai>
 Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-        Wei Yongjun <weiyongjun1@huawei.com>,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Hulk Robot <hulkci@huawei.com>
-References: <20210412160026.194423-1-weiyongjun1@huawei.com>
+        Bixuan Cui <cuibixuan@huawei.com>, Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Dejin Zheng <zhengdejin5@gmail.com>,
+        Linhua Xu <linhua.xu@unisoc.com>, linux-i2c@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <20210410035044.11418-1-cuibixuan@huawei.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="HcAYCG3uE/tztfnV"
+        protocol="application/pgp-signature"; boundary="HCdXmnRlPgeNBad2"
 Content-Disposition: inline
-In-Reply-To: <20210412160026.194423-1-weiyongjun1@huawei.com>
+In-Reply-To: <20210410035044.11418-1-cuibixuan@huawei.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 
---HcAYCG3uE/tztfnV
+--HCdXmnRlPgeNBad2
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Apr 12, 2021 at 04:00:26PM +0000, Wei Yongjun wrote:
-> It's not necessary to release resource which allocated with devm_*
-> and those release may leads to a double free. And also remove useless
-> irq_dispose_mapping() call since mapping not created.
+On Sat, Apr 10, 2021 at 11:50:44AM +0800, Bixuan Cui wrote:
+> This patch adds missing MODULE_DEVICE_TABLE definition which generates
+> correct modalias for automatic loading of this driver when it is built
+> as an external module.
 >=20
-> Fixes: 09aab7add7bf ("i2c: mpc: use device managed APIs")
 > Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> Signed-off-by: Bixuan Cui <cuibixuan@huawei.com>
 
 Applied to for-next, thanks!
 
 
---HcAYCG3uE/tztfnV
+--HCdXmnRlPgeNBad2
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmB1jHsACgkQFA3kzBSg
-KbYBZQ/+IF8gQoU6LIMTmgJnKXG2dhuGSETUh3ep6oER2VBzeLE9iliIaJEAnzIL
-hKD3QTCDgWb+qvVMleMqX0q2FXf7y6lpvxiP/RGueLTFJgDinpCMQmw630Q0Suhy
-GICB3NCEIpInIKDnEA3wfYivR9HbfPLjDji4/oJELS1klK3EO1zqqYYLxgpjD6iC
-2Ni2sOwcvuVYnr3HgAuJstHa5QkSwlnSCsaUWE0BAix2XGvBp7Ki/w7qTdkthr0y
-y/LbG9hisxg91BpkvhYnjLgceUVD51jAFV6GhaXMTx4PmGAmpxfnsr87CxYhqVXb
-9k7K4ccLnSuY/CLLaeawN14VoJfYpbQ3LCVWIEqnhNGyWojz7mr8280uWja5dAty
-kGfi7AG/QOLEMb7x9DI0ryJggzVEN2+YPi/0u+AcmeFy5M95dHItJ3rSYiHbfD9P
-HIJarF6L6c76O5p2VQZVWIW6C0zh9LQEEYmMoZp0zFCyWiUHeN0Z8fwfVC+VP880
-UW1jAzDuXWblnIDQHPM1sEwBMfEa05N3Q+MQbX+yQvpiBUD4eYvpDOEwmSAIzssN
-Hh3kFkmBLYeKBAcu/F4w4P98KhnAVBFht69Mf1moev9BRyp9kpUmlttyZlG0pCjF
-EQdhIDvYSMJvTjYpMCMAsOf/ZTylrasxt6T6vu0EdzZwS5ib06A=
-=eULB
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmB1kBIACgkQFA3kzBSg
+KbZDrA/9FvLooUUs4AsjyGRYipNco5Ol7z7YKTI0xXJmFyAo3kKTGFpQH8YTgd0Z
+6D4XwZYhd24uMewRDSzlmCLBI85oDkC/6FV1dIOY/7P62lwkkjYOCw7UvA3sfPq9
+M871GHF4w1OAKTylSL/ZAi7llH0ReofkE1n/2L8ALnX7iI38xMwc3BeCdgMc2HFc
+nuGvOwOcJLzByakfawWB1Q/hiDZy49DpkhLexw+cXNtYBS6y9zRdyjiZisgGS/mT
+XduvW18Mv/2Xm/qz8RGKwdWR8HDd0g8KVZ4ZcQm4LsiuxO8fnHftTpMcmzrsgbOF
+KMbJdIC6l2KPPDlk3LCm1bmdIvqtlb6dPeFkx0u65FXi6mr5JaPEqPXLhzrXZ4YN
+JmPspVHwk7BfcRIlJ+H6ZmbWJn85xV4d07jfUvg0QQA+KHGroRoG6GGxg8/Y6BWQ
+OKdr4X5sERgm7/3OgL2Ka1GjOr4sggLZTw9J9IBkZIByzto8qNiZWe5Zhuweb1ix
+O2kvnVtF3iQMUJGgLt1unLQeDgwBVB7vrrTvlN/gmurTjQi2ClLtIiBP3NARBf7C
+8x5+nkbyCXhmH41GtfFbnSdl9QPJZOwhUWwCBvUAxbEAJ+n+QtElSB3sY6ZKh1Gb
+hX794odocfaC0pyJ4MzNFlWw/GtP5XGZ2+Hw1+h5AlQOah541o8=
+=LBNi
 -----END PGP SIGNATURE-----
 
---HcAYCG3uE/tztfnV--
+--HCdXmnRlPgeNBad2--
