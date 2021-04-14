@@ -2,70 +2,91 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF27EC433ED
-	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Apr 2021 11:07:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3880C433B4
+	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Apr 2021 11:10:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9FE76613D1
-	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Apr 2021 11:07:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A3DB613C3
+	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Apr 2021 11:10:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344386AbhDNLII (ORCPT
+        id S233782AbhDNLKb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 14 Apr 2021 07:08:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40728 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S239428AbhDNLII (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 14 Apr 2021 07:08:08 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7BD1A6103D;
-        Wed, 14 Apr 2021 11:07:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1618398467;
-        bh=fp4lQztsNG/Z1CQUfIxUw9+Sv3sdaVopx3+oJQp1PI0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=O7mb4fLhexO3tpqRmWk/PqQWFURwVwFN08AAHLoYUaWG5sb5LssosCnbTBULY/MaW
-         uL8Q5PHDdrrlFlGCUfVnG/UCEfaGZNx15PblylhNI7hiw55Td4coLqKxOUVj7uu2QL
-         s1rUd21wp1e+t0cF/Znox/UttPff54wY0vjW2WEkYI9nAA432tNu97PknXUlLSsmVI
-         afIv7tGOioWiBjFOrX0j/ylSitsd9zPRbdyxbKT9H2JxYTbFf+Cxtu58JWkZYkkXRA
-         aRQslMoQRozJZjcDkOqkLatVFQXH6QssLSHOOp/RHO8I+JQfFaGp0NWeu9Rj3uzFY8
-         hoCfwPeOqkcFg==
-Date:   Wed, 14 Apr 2021 14:07:44 +0300
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Colin King <colin.king@canonical.com>
-Cc:     James Bottomley <jejb@linux.ibm.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Sumit Garg <sumit.garg@linaro.org>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] KEYS: trusted: Fix missing null return from
- kzalloc call
-Message-ID: <YHbNAFMdQO0/ugHE@kernel.org>
-References: <20210412160101.1627882-1-colin.king@canonical.com>
+        Wed, 14 Apr 2021 07:10:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46898 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233758AbhDNLKa (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 14 Apr 2021 07:10:30 -0400
+Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6112EC061574;
+        Wed, 14 Apr 2021 04:10:09 -0700 (PDT)
+Received: by mail-io1-xd2d.google.com with SMTP id e186so20250781iof.7;
+        Wed, 14 Apr 2021 04:10:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=FASEUqYIZBb6hS7B3SBXB89XThdZrbyVFurlFc1J03g=;
+        b=Mx/DPTZX+OvWlWEWLYvPDZWCJZsWeZR+F7x8MzZKksI1jZlptdeLmRRTuzXgXukE4p
+         lLrIDsSljV68AGjc/Q9WmYA4+alUPY9CEfuk/jhbpd+xKfCBTt1+XNLhcS/xpmFoRJ/F
+         wuSAsgaXv7XLRUIiE0oQkfiX0ty9ezIDyURe7W+0oe+OXx5V2oecHTOc7Xmu2W27pvLa
+         scbcWoQBr1BDxxKNo/YGmYpPgHbZL5LqOmUyZ+pAKVyu+hxoahNnPWMcCr6XUfL4ZpZE
+         JEfhS95e0gPpdqrB8O8iNh8aHbv4e4HBSM+SHSjtXLarYYMMYtK/7DC2Z6JYK5dQ/YwS
+         H9wA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FASEUqYIZBb6hS7B3SBXB89XThdZrbyVFurlFc1J03g=;
+        b=J1VVnJxui+bwtPGBK6SbRyreoUzsMLbqrqpaMxQ89uzoGCI0txkNb5Yif7bk902Pty
+         KJl7tl3aByqnkE/mH39chwfEWaUKj/C6xzC1gxc25cMcwFL7/PctUgPZqw0GHGH/6S8J
+         Ey99aUwBEayPE/kPfP8Avpxkiy2pIbEk190xOzlbkWqV4uWBX+Co7DgrBq5bJOjjdQnf
+         weOTj/VqxZ9b/Ju9hJmwJ+MhWsxW+1zuvY8P+HNBfaw1ChFpRt6vQDFM2O1JoxoVOXY7
+         gneyk947TyZj/XKDZwwQgmJNog6w+6sIPMYdGHpjVlvFDPRnRNf1bEcKEUn6Y7OrzQk6
+         rXwg==
+X-Gm-Message-State: AOAM533mk08v/vyneURcDn2+y7d2C3aOmTBUiRHUNZBBa0Uk3oUA+TO1
+        La5am5uxuHj3As1IMGfJkTe6YicGO3GwREvSM/8=
+X-Google-Smtp-Source: ABdhPJzQ1Bw4nnuaR951fNbcSkJI74gkp+vB6tWFrd7JR/wEdTF17GSulZw7ykDJcPIGqoHdaU0r7zkxRv3fpjCvmQo=
+X-Received: by 2002:a05:6602:179e:: with SMTP id y30mr17120190iox.130.1618398608907;
+ Wed, 14 Apr 2021 04:10:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210412160101.1627882-1-colin.king@canonical.com>
+References: <YHaoA1i+8uT4ir4h@mwanda>
+In-Reply-To: <YHaoA1i+8uT4ir4h@mwanda>
+From:   Stanislav Yakovlev <stas.yakovlev@gmail.com>
+Date:   Wed, 14 Apr 2021 15:09:59 +0400
+Message-ID: <CA++WF2M_XOPhUpARSi8+-JfcmF2rfY8jM5+j7vTuA5YFsYbqiw@mail.gmail.com>
+Subject: Re: [PATCH v2] ipw2x00: potential buffer overflow in libipw_wx_set_encodeext()
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Kalle Valo <kvalo@codeaurora.org>,
+        James Ketrenos <jketreno@linux.intel.com>,
+        Jeff Garzik <jgarzik@pobox.com>,
+        wireless <linux-wireless@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Apr 12, 2021 at 05:01:01PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The kzalloc call can return null with the GFP_KERNEL flag so
-> add a null check and exit via a new error exit label. Use the
-> same exit error label for another error path too.
-> 
-> Addresses-Coverity: ("Dereference null return value")
-> Fixes: 830027e2cb55 ("KEYS: trusted: Add generic trusted keys framework")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
- 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+On Wed, 14 Apr 2021 at 12:30, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+>
+> The "ext->key_len" is a u16 that comes from the user.  If it's over
+> SCM_KEY_LEN (32) that could lead to memory corruption.
+>
+> Fixes: e0d369d1d969 ("[PATCH] ieee82011: Added WE-18 support to default wireless extension handler")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> v2: use clamp_val() instead of min_t()
+>
+>  drivers/net/wireless/intel/ipw2x00/libipw_wx.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>
 
-/Jarkko
+Cc: stable@vger.kernel.org
+Acked-by: Stanislav Yakovlev <stas.yakovlev@gmail.com>
+
+Stanislav.
