@@ -2,172 +2,75 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C38FC43462
-	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Apr 2021 06:09:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3B9AC433B4
+	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Apr 2021 07:21:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E30D2613C7
-	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Apr 2021 06:09:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84D3661166
+	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Apr 2021 07:21:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233312AbhDNGJv (ORCPT
+        id S1345885AbhDNHWC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 14 Apr 2021 02:09:51 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:52368 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229840AbhDNGJt (ORCPT
+        Wed, 14 Apr 2021 03:22:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52724 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S242024AbhDNHWA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 14 Apr 2021 02:09:49 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13E64ZWa128459;
-        Wed, 14 Apr 2021 06:09:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=QVyht9+yJ8dfT9u8/h2qi0FFBihCppmvtUsB/7xN34o=;
- b=XD221qAHFQ7YOfWFC+j5D3mO++IQ1s/pBnb6VxCzqPofgai4zSWydUihR44gjLxLaou3
- B8P4B0w6F4+7n3e3YBz8CPop2eN8/BgHCwlK6j42ps8/p/pyhgfEIFLPTyJWBg5088Qh
- 9XgHd2tDYcud+fKbyj2i6ORnERurWKyqNKvenDdqyyKAn/3ykoY3mDJULXr7ekPtVx2E
- 4tMi5XAZRcgPpr1G/2vhTh6Ku0pt66bPLxw9LRAB6UPkYPVcS9w40Grx77WKDQ3OmIxA
- p+/NccSwwaaBUdMJo970w7tjfxYSdLOpc4Ow1CHlACTbf3ThL9xE3NS7/RLHR50h114d FA== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2120.oracle.com with ESMTP id 37u3ymh5sf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 14 Apr 2021 06:09:14 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13E64Vfn112554;
-        Wed, 14 Apr 2021 06:09:12 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3030.oracle.com with ESMTP id 37unkqjppa-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 14 Apr 2021 06:09:12 +0000
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 13E695DF023914;
-        Wed, 14 Apr 2021 06:09:09 GMT
-Received: from mwanda (/10.175.166.128)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 14 Apr 2021 06:09:05 +0000
-Date:   Wed, 14 Apr 2021 09:08:58 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Sumit Garg <sumit.garg@linaro.org>
-Cc:     James Bottomley <jejb@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] KEYS: trusted: fix a couple error pointer dereferences
-Message-ID: <YHaG+p5nlOXQFp1n@mwanda>
+        Wed, 14 Apr 2021 03:22:00 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1231C061574;
+        Wed, 14 Apr 2021 00:21:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=pU///pcRL1z9/+8uTgCodVo5x+FjYrV6Z2iez9GC9YY=; b=FGNVSVPQCVIG9eXB/bWWtRztff
+        WOcL9PQzKTe6oRgRxXBb1yA2hwafYS1+UvLS2Ps2TGsC77ajsmOeOOquaEGeMp3a+ymAyGIS0edNt
+        IM7ec40iTdS3P/tMB7+AbePXoD+Z3GtUa67InkkSP4V7T0n4IllyksKgt1xXUv6ykkap1yfnKzkTz
+        uJFzO966bHE/ZqAKaBF+0QyV7HVALLbjC5xiFfRWKBRqmS/aAZNphmKLsDyXqNK5RpJWtguz8Ld3q
+        qN56QaAPpiDPyElbJMtE4ZRz/eX/Gzck2eUB5akrKZx43m8FF6lP7cpJespH0SLGSfxnJogeIAv09
+        ZD/1t3Hw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by casper.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
+        id 1lWZpt-006nRS-Uz; Wed, 14 Apr 2021 07:21:20 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 848C0300033;
+        Wed, 14 Apr 2021 09:21:17 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 35657203CF7D6; Wed, 14 Apr 2021 09:21:17 +0200 (CEST)
+Date:   Wed, 14 Apr 2021 09:21:17 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Muhammad Usama Anjum <musamaanjum@gmail.com>
+Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>, Borislav Petkov <bp@suse.de>,
+        open list <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org, dan.carpenter@oracle.com,
+        colin.king@canonical.com
+Subject: Re: [PATCH] objtool: prevent memory leak in error paths
+Message-ID: <YHaX7cxNTPHAEC4T@hirez.programming.kicks-ass.net>
+References: <20210413204511.GA664936@LEGION>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-X-Proofpoint-IMR: 1
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9953 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=999
- adultscore=0 phishscore=0 malwarescore=0 mlxscore=0 bulkscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2104060000 definitions=main-2104140043
-X-Proofpoint-GUID: RJNP3oqmP6_MQGiSmuiOdzohr_7cx_9X
-X-Proofpoint-ORIG-GUID: RJNP3oqmP6_MQGiSmuiOdzohr_7cx_9X
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9953 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=999 spamscore=0
- impostorscore=0 priorityscore=1501 lowpriorityscore=0 adultscore=0
- bulkscore=0 phishscore=0 suspectscore=0 malwarescore=0 clxscore=1011
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104060000
- definitions=main-2104140043
+In-Reply-To: <20210413204511.GA664936@LEGION>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-If registering "reg_shm_out" fails, then it is an error pointer and the
-error handling will call tee_shm_free(reg_shm_out) which leads to an
-error pointer dereference and an Oops.
+On Wed, Apr 14, 2021 at 01:45:11AM +0500, Muhammad Usama Anjum wrote:
+> Memory allocated by sym and sym->name isn't being freed if some error
+> occurs in elf_create_undef_symbol(). Free the sym and sym->name if error
+> is detected before returning NULL.
+> 
+> Addresses-Coverity: ("Prevent memory leak")
 
-I've re-arranged it so we only free things that have been allocated
-successfully.
-
-Fixes: 6dd95e650c8a ("KEYS: trusted: Introduce TEE based Trusted Keys")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- security/keys/trusted-keys/trusted_tee.c | 24 ++++++++++--------------
- 1 file changed, 10 insertions(+), 14 deletions(-)
-
-diff --git a/security/keys/trusted-keys/trusted_tee.c b/security/keys/trusted-keys/trusted_tee.c
-index 2ce66c199e1d..45f96f6ed673 100644
---- a/security/keys/trusted-keys/trusted_tee.c
-+++ b/security/keys/trusted-keys/trusted_tee.c
-@@ -65,7 +65,7 @@ static int trusted_tee_seal(struct trusted_key_payload *p, char *datablob)
- 	int ret;
- 	struct tee_ioctl_invoke_arg inv_arg;
- 	struct tee_param param[4];
--	struct tee_shm *reg_shm_in = NULL, *reg_shm_out = NULL;
-+	struct tee_shm *reg_shm_in, *reg_shm_out;
- 
- 	memset(&inv_arg, 0, sizeof(inv_arg));
- 	memset(&param, 0, sizeof(param));
-@@ -84,7 +84,7 @@ static int trusted_tee_seal(struct trusted_key_payload *p, char *datablob)
- 	if (IS_ERR(reg_shm_out)) {
- 		dev_err(pvt_data.dev, "blob shm register failed\n");
- 		ret = PTR_ERR(reg_shm_out);
--		goto out;
-+		goto free_shm_in;
- 	}
- 
- 	inv_arg.func = TA_CMD_SEAL;
-@@ -109,11 +109,9 @@ static int trusted_tee_seal(struct trusted_key_payload *p, char *datablob)
- 		p->blob_len = param[1].u.memref.size;
- 	}
- 
--out:
--	if (reg_shm_out)
--		tee_shm_free(reg_shm_out);
--	if (reg_shm_in)
--		tee_shm_free(reg_shm_in);
-+	tee_shm_free(reg_shm_out);
-+free_shm_in:
-+	tee_shm_free(reg_shm_in);
- 
- 	return ret;
- }
-@@ -126,7 +124,7 @@ static int trusted_tee_unseal(struct trusted_key_payload *p, char *datablob)
- 	int ret;
- 	struct tee_ioctl_invoke_arg inv_arg;
- 	struct tee_param param[4];
--	struct tee_shm *reg_shm_in = NULL, *reg_shm_out = NULL;
-+	struct tee_shm *reg_shm_in, *reg_shm_out;
- 
- 	memset(&inv_arg, 0, sizeof(inv_arg));
- 	memset(&param, 0, sizeof(param));
-@@ -145,7 +143,7 @@ static int trusted_tee_unseal(struct trusted_key_payload *p, char *datablob)
- 	if (IS_ERR(reg_shm_out)) {
- 		dev_err(pvt_data.dev, "key shm register failed\n");
- 		ret = PTR_ERR(reg_shm_out);
--		goto out;
-+		goto free_shm_in;
- 	}
- 
- 	inv_arg.func = TA_CMD_UNSEAL;
-@@ -170,11 +168,9 @@ static int trusted_tee_unseal(struct trusted_key_payload *p, char *datablob)
- 		p->key_len = param[1].u.memref.size;
- 	}
- 
--out:
--	if (reg_shm_out)
--		tee_shm_free(reg_shm_out);
--	if (reg_shm_in)
--		tee_shm_free(reg_shm_in);
-+	tee_shm_free(reg_shm_out);
-+free_shm_in:
-+	tee_shm_free(reg_shm_in);
- 
- 	return ret;
- }
--- 
-2.30.2
-
+-EDONTCARE, objtool is single-shot by design, on error we quit, which
+frees all memory. Please exclude all of objtool from this class of
+problems in your Coverity thing.
