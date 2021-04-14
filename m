@@ -2,75 +2,121 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3B9AC433B4
-	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Apr 2021 07:21:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53120C433B4
+	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Apr 2021 07:44:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 84D3661166
-	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Apr 2021 07:21:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14A2161166
+	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Apr 2021 07:44:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345885AbhDNHWC (ORCPT
+        id S244791AbhDNHpO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 14 Apr 2021 03:22:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52724 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242024AbhDNHWA (ORCPT
+        Wed, 14 Apr 2021 03:45:14 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:44906 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231140AbhDNHpN (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 14 Apr 2021 03:22:00 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1231C061574;
-        Wed, 14 Apr 2021 00:21:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=pU///pcRL1z9/+8uTgCodVo5x+FjYrV6Z2iez9GC9YY=; b=FGNVSVPQCVIG9eXB/bWWtRztff
-        WOcL9PQzKTe6oRgRxXBb1yA2hwafYS1+UvLS2Ps2TGsC77ajsmOeOOquaEGeMp3a+ymAyGIS0edNt
-        IM7ec40iTdS3P/tMB7+AbePXoD+Z3GtUa67InkkSP4V7T0n4IllyksKgt1xXUv6ykkap1yfnKzkTz
-        uJFzO966bHE/ZqAKaBF+0QyV7HVALLbjC5xiFfRWKBRqmS/aAZNphmKLsDyXqNK5RpJWtguz8Ld3q
-        qN56QaAPpiDPyElbJMtE4ZRz/eX/Gzck2eUB5akrKZx43m8FF6lP7cpJespH0SLGSfxnJogeIAv09
-        ZD/1t3Hw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by casper.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
-        id 1lWZpt-006nRS-Uz; Wed, 14 Apr 2021 07:21:20 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 848C0300033;
-        Wed, 14 Apr 2021 09:21:17 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 35657203CF7D6; Wed, 14 Apr 2021 09:21:17 +0200 (CEST)
-Date:   Wed, 14 Apr 2021 09:21:17 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Muhammad Usama Anjum <musamaanjum@gmail.com>
-Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Miroslav Benes <mbenes@suse.cz>, Borislav Petkov <bp@suse.de>,
-        open list <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org, dan.carpenter@oracle.com,
-        colin.king@canonical.com
-Subject: Re: [PATCH] objtool: prevent memory leak in error paths
-Message-ID: <YHaX7cxNTPHAEC4T@hirez.programming.kicks-ass.net>
-References: <20210413204511.GA664936@LEGION>
+        Wed, 14 Apr 2021 03:45:13 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13E7iYh7070282;
+        Wed, 14 Apr 2021 07:44:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
+ bh=YYpWT+54DiKG1mpTtvWPuyxWI9sWMxE6oWl1mUNmwaQ=;
+ b=HCAKevP6LQXNzXzhEedvKuNgDJGg5J7CQYGr1LiGN9n5CT7YXrVL/JENDKs5emz/CRT3
+ NbgtjzAGsCfs6iJoF7YxkDjb2yi5K/0984VNaeUXyTiUCICiZ4EwQ9oXBbXdh4lmfrpe
+ AQzgewFd+oG0M38MJvcZ8P3ks6tJcTZvCKs1oJc0HLDFIMLdqvhjbGUjSY9JWz8VVi3O
+ Kp6YuY3ysnoNu5Z49m+vog/wOpN/PLIN0DUmAHxXOVFeERdw8ZGBkRyEh2OhlWukr0ee
+ nT7hLeEPPHaMNmgPeT0SKctrylyT2mv9fRAySWEgATPgr4ab9p8Ih4cTsBHPSsMlSO7X Gg== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 37u3ymhe23-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 14 Apr 2021 07:44:49 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13E7aSWA121769;
+        Wed, 14 Apr 2021 07:44:47 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 37unxy0ykt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 14 Apr 2021 07:44:47 +0000
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 13E7ikTf028859;
+        Wed, 14 Apr 2021 07:44:46 GMT
+Received: from mwanda (/10.175.166.128)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 14 Apr 2021 00:44:45 -0700
+Date:   Wed, 14 Apr 2021 10:44:40 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] usb: typec: silence a static checker warning
+Message-ID: <YHadaACH8Mq/10F7@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210413204511.GA664936@LEGION>
+X-Mailer: git-send-email haha only kidding
+X-Proofpoint-IMR: 1
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9953 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 bulkscore=0 malwarescore=0
+ spamscore=0 adultscore=0 phishscore=0 mlxlogscore=999 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104060000
+ definitions=main-2104140051
+X-Proofpoint-GUID: poEY082I-9YxXb2AuSj0ebG01W9PIzAv
+X-Proofpoint-ORIG-GUID: poEY082I-9YxXb2AuSj0ebG01W9PIzAv
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9953 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=999 spamscore=0
+ impostorscore=0 priorityscore=1501 lowpriorityscore=0 adultscore=0
+ bulkscore=0 phishscore=0 suspectscore=0 malwarescore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104060000
+ definitions=main-2104140052
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Apr 14, 2021 at 01:45:11AM +0500, Muhammad Usama Anjum wrote:
-> Memory allocated by sym and sym->name isn't being freed if some error
-> occurs in elf_create_undef_symbol(). Free the sym and sym->name if error
-> is detected before returning NULL.
-> 
-> Addresses-Coverity: ("Prevent memory leak")
+Smatch complains about a potential missing error code:
 
--EDONTCARE, objtool is single-shot by design, on error we quit, which
-frees all memory. Please exclude all of objtool from this class of
-problems in your Coverity thing.
+    drivers/usb/typec/port-mapper.c:168 typec_link_port()
+    warn: missing error code 'ret'
+
+This is a false positive and returning zero is intentional.  Let's
+re-arrange the code to silence the warning and make the intent more
+clear.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/usb/typec/port-mapper.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/usb/typec/port-mapper.c b/drivers/usb/typec/port-mapper.c
+index fae736eb0601..9b0991bdf391 100644
+--- a/drivers/usb/typec/port-mapper.c
++++ b/drivers/usb/typec/port-mapper.c
+@@ -157,15 +157,17 @@ int typec_link_port(struct device *port)
+ {
+ 	struct device *connector;
+ 	struct port_node *node;
+-	int ret = 0;
++	int ret;
+ 
+ 	node = create_port_node(port);
+ 	if (IS_ERR(node))
+ 		return PTR_ERR(node);
+ 
+ 	connector = find_connector(node);
+-	if (!connector)
++	if (!connector) {
++		ret = 0;
+ 		goto remove_node;
++	}
+ 
+ 	ret = link_port(to_typec_port(connector), node);
+ 	if (ret)
+-- 
+2.30.2
+
