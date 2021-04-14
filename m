@@ -2,102 +2,68 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72C25C43460
-	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Apr 2021 08:02:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2225C433ED
+	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Apr 2021 08:28:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 43BCF61168
-	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Apr 2021 08:02:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9387C610E8
+	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Apr 2021 08:28:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349846AbhDNIC2 (ORCPT
+        id S232696AbhDNI2R (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 14 Apr 2021 04:02:28 -0400
-Received: from mga02.intel.com ([134.134.136.20]:23227 "EHLO mga02.intel.com"
+        Wed, 14 Apr 2021 04:28:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45900 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1349802AbhDNIC0 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 14 Apr 2021 04:02:26 -0400
-IronPort-SDR: myK2LQvL6bzKV5diamIQlQHnkcKwmW2OLWwMeCTp2TMOP6UxAD7yD9UrbCAQzj/eDK5WVuxhnB
- UIuz9zQriN/g==
-X-IronPort-AV: E=McAfee;i="6200,9189,9953"; a="181712120"
-X-IronPort-AV: E=Sophos;i="5.82,221,1613462400"; 
-   d="scan'208";a="181712120"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2021 01:02:03 -0700
-IronPort-SDR: nN1X+UEKOplLFKzfT759Vd3nykvmMnaZu7r3/pxh0eZk+y5mEBfkdcMwviSGdrx09SRT5f+zmT
- /ocFhmwQeIfg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.82,221,1613462400"; 
-   d="scan'208";a="521907223"
-Received: from kuha.fi.intel.com ([10.237.72.162])
-  by fmsmga001.fm.intel.com with SMTP; 14 Apr 2021 01:02:00 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 14 Apr 2021 11:01:59 +0300
-Date:   Wed, 14 Apr 2021 11:01:59 +0300
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        id S229467AbhDNI2P (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 14 Apr 2021 04:28:15 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 8AA19613C4;
+        Wed, 14 Apr 2021 08:27:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1618388874;
+        bh=bsj0yTP1PFUb/V2oR3gLTK6H+GD+8Hj8YaUWcNDooNE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Nbu5hnKaG5FnRqZMHYvaz7PTjFo2kSpnEfqclxIHjWqDW1x4SJ/SVKhLFH9VLOU0z
+         JYva32lguS00R+s0lc9C3lri+fFuoS21sAZAQm5GYBZxRllBrYioOwrMSP4YZWn1BZ
+         DYAipfmpJiHAC/p7rI4HiD9no8R00M5PXfoV+V1k=
+Date:   Wed, 14 Apr 2021 10:27:51 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Bryan Brattlof <hello@bryanbrattlof.com>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] usb: typec: silence a static checker warning
-Message-ID: <YHahdwkU9A4AVv5T@kuha.fi.intel.com>
-References: <YHadaACH8Mq/10F7@mwanda>
+Subject: Re: [PATCH] staging: rtl8723bs: remove sdio_drv_priv structure
+Message-ID: <YHanh+kO3Z6qi9Wx@kroah.com>
+References: <20210413171124.174008-1-hello@bryanbrattlof.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YHadaACH8Mq/10F7@mwanda>
+In-Reply-To: <20210413171124.174008-1-hello@bryanbrattlof.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Apr 14, 2021 at 10:44:40AM +0300, Dan Carpenter wrote:
-> Smatch complains about a potential missing error code:
+On Tue, Apr 13, 2021 at 05:11:39PM +0000, Bryan Brattlof wrote:
+> The sdio_drv_priv structure is a small wrapper around sdio_driver in
+> linux/mmc/sdio_func.h with an added drv_registered integer.
 > 
->     drivers/usb/typec/port-mapper.c:168 typec_link_port()
->     warn: missing error code 'ret'
+> drv_registered is never used anywhere in the driver and only assigned to
+> during the sdio registering and unregistering process. We can safely
+> remove sdio_drv_priv and use the sdio_driver structure directly.
 > 
-> This is a false positive and returning zero is intentional.  Let's
-> re-arrange the code to silence the warning and make the intent more
-> clear.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-
+> Signed-off-by: Bryan Brattlof <hello@bryanbrattlof.com>
 > ---
->  drivers/usb/typec/port-mapper.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/usb/typec/port-mapper.c b/drivers/usb/typec/port-mapper.c
-> index fae736eb0601..9b0991bdf391 100644
-> --- a/drivers/usb/typec/port-mapper.c
-> +++ b/drivers/usb/typec/port-mapper.c
-> @@ -157,15 +157,17 @@ int typec_link_port(struct device *port)
->  {
->  	struct device *connector;
->  	struct port_node *node;
-> -	int ret = 0;
-> +	int ret;
->  
->  	node = create_port_node(port);
->  	if (IS_ERR(node))
->  		return PTR_ERR(node);
->  
->  	connector = find_connector(node);
-> -	if (!connector)
-> +	if (!connector) {
-> +		ret = 0;
->  		goto remove_node;
-> +	}
->  
->  	ret = link_port(to_typec_port(connector), node);
->  	if (ret)
-> -- 
-> 2.30.2
+>  drivers/staging/rtl8723bs/os_dep/sdio_intf.c | 32 ++++++--------------
+>  1 file changed, 9 insertions(+), 23 deletions(-)
+
+Does not apply to my tree :(
+
+Please rebase and resend.
 
 thanks,
 
--- 
-heikki
+greg k-h
