@@ -2,121 +2,110 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B437FC433B4
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 23:26:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5279EC433B4
+	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Apr 2021 05:57:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8844860C3D
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Apr 2021 23:26:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22FBB610E8
+	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Apr 2021 05:57:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348800AbhDMX01 (ORCPT
+        id S1347626AbhDNF5e (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 13 Apr 2021 19:26:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35044 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230123AbhDMX01 (ORCPT
+        Wed, 14 Apr 2021 01:57:34 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:46064 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233317AbhDNF5d (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 13 Apr 2021 19:26:27 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76850C061574;
-        Tue, 13 Apr 2021 16:26:06 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id p6so11321204wrn.9;
-        Tue, 13 Apr 2021 16:26:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=Bem/p08va+1GAFuU0LTGSjQYRLOf3cmGSRP+mg48WO0=;
-        b=gAqek3+Yxs0T57tuh7TxH8pYNNFco4ooq3u47xzORW4+3k4dxKScnRb94m07lXJCtO
-         6vFgbKDUAWkL89ldu90rjm/qlqvsLT9aWhEsUOHfmXov+derlxr6OD/wSU6XClgxUwva
-         PP/EvYvowS8l1ypyIXJGs0Lb+VonygfGkLobJnS+1tMfAm88B1h8Bmq6gFDW9HGOM6wp
-         kjeQO9YH67vIxh/c1lKVQKqEDSY94PEE+kJ4xNPV9c2M8u0QtLcjDjHS3hiXrgSdCYUA
-         4W0WdSCxX6qdlMMhVQW7rX+QILvwn4qtFBGRbRZQg3Mzcg8ITYVTZ0w1xPGLnlcX1uUd
-         OpKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=Bem/p08va+1GAFuU0LTGSjQYRLOf3cmGSRP+mg48WO0=;
-        b=cghuq1j2VeGcGhWfLFVMeW2JaQ6rNGH1OULgoIdO8M5bKYH0pgiVQHD0M8RkGxaZmg
-         9MI3Su2n87CfCR9mYnQHP3TOBcG7AvMUPMBunwTsPyXm+OJZda+6HpC6ByTyCFYEOI4a
-         opIBxUvXXj1ZXLIQSauEc5j5OrhRkMvreZq74y5WxwY2E+Ycdn8f7xqrlirEj+nSD+7m
-         kkUJPdgzRJnkT50a0+sxK9VJFhDPZ6potafd/rXq/Wzy/LmVkKi3HudDKoIbnMGjqUxB
-         NWwsCD8je/KFq420t2Jhf9NnFQdheyQWak4hiTxlcr1sfw2Pg9yCg3QNgnAIBz/orsYf
-         aKpA==
-X-Gm-Message-State: AOAM531G2IAWVksLHutDVdwHQY9Xkdg29nz+P9Pg4mXuT9mXn4yaAijb
-        42bpbf3sv8bWy9uuTohtnkg=
-X-Google-Smtp-Source: ABdhPJxpNylQxNyIvvIYwWjESkNUS14wxwP2YXsCfk6lD56i2MYhY+u38RHgySVHjDRdkUek/6oOgQ==
-X-Received: by 2002:adf:f250:: with SMTP id b16mr10066858wrp.347.1618356364056;
-        Tue, 13 Apr 2021 16:26:04 -0700 (PDT)
-Received: from LEGION ([39.46.65.172])
-        by smtp.gmail.com with ESMTPSA id i12sm1504831wmd.3.2021.04.13.16.26.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Apr 2021 16:26:03 -0700 (PDT)
-Date:   Wed, 14 Apr 2021 04:25:58 +0500
-From:   Muhammad Usama Anjum <musamaanjum@gmail.com>
-To:     Steve French <sfrench@samba.org>,
-        Ronnie Sahlberg <lsahlber@redhat.com>,
-        "open list:COMMON INTERNET FILE SYSTEM CLIENT (CIFS)" 
-        <linux-cifs@vger.kernel.org>,
-        "moderated list:COMMON INTERNET FILE SYSTEM CLIENT (CIFS)" 
-        <samba-technical@lists.samba.org>,
-        open list <linux-kernel@vger.kernel.org>
-Cc:     musamaanjum@gmail.com, kernel-janitors@vger.kernel.org,
-        dan.carpenter@oracle.com, colin.king@canonical.com
-Subject: [PATCH] cifs: remove unnecessary copies of tcon->crfid.fid
-Message-ID: <20210413232558.GA1136036@LEGION>
+        Wed, 14 Apr 2021 01:57:33 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13E5sZoh110755;
+        Wed, 14 Apr 2021 05:56:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
+ bh=P/i1vmHNJnjFbfOoldRB68MAgV3STMB5j+k2o9a8Suk=;
+ b=QVb8laRID4mbAeilrue4sdNdmU4Zl8xBvYMs3NXRac6+RMyUyI9WUeP82gyu4BQUS177
+ SQnDd79xDBu1AgzdZ/pHBL5q0yPeEzSel91UFXRb2OTX/y5/Qsoc8Dr1ajuVFryb3Yw3
+ Q6+uoTGRdS1MUl3BGHDeLX46AbyFadKmqdSqEyIkmOUvkABdyg6LHINgp7HME9Qeq4wC
+ Cgv7I8m3/ska3u7lcTzelDSdmrvmWwRbxpx8RSqfG5/2ICY6zwZIc4Iq7X1N0og12b7S
+ fU8MepCS5JCy94as/pPByLiFZNaeKZAI17ZUWa/nNuLh5JWRB+34lpISPruGOidnN46d 9A== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 37u3ymh4rb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 14 Apr 2021 05:56:46 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13E5uVjd077636;
+        Wed, 14 Apr 2021 05:56:45 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 37unkqj5su-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 14 Apr 2021 05:56:45 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 13E5ueng003657;
+        Wed, 14 Apr 2021 05:56:40 GMT
+Received: from mwanda (/10.175.166.128)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 14 Apr 2021 05:56:40 +0000
+Date:   Wed, 14 Apr 2021 08:56:33 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] mtd: rawnand: fix an error code in nand_setup_interface()
+Message-ID: <YHaEEYg2DUFwnxSo@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+X-Proofpoint-IMR: 1
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9953 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=999
+ adultscore=0 phishscore=0 malwarescore=0 mlxscore=0 bulkscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104060000 definitions=main-2104140041
+X-Proofpoint-GUID: r7lz9uowWJzlA_c7QnSMVcENprQihhwG
+X-Proofpoint-ORIG-GUID: r7lz9uowWJzlA_c7QnSMVcENprQihhwG
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9953 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=999 spamscore=0
+ impostorscore=0 priorityscore=1501 lowpriorityscore=0 adultscore=0
+ bulkscore=0 phishscore=0 suspectscore=0 malwarescore=0 clxscore=1011
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104060000
+ definitions=main-2104140041
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-pfid is being set to tcon->crfid.fid and they are copied in each other
-multiple times. Remove the memcopy between same pointers.
+We should return an error code if the timing mode is not acknowledged
+by the NAND chip.
 
-Addresses-Coverity: ("Overlapped copy")
-Fixes: 9e81e8ff74b9 ("cifs: return cached_fid from open_shroot")
-Signed-off-by: Muhammad Usama Anjum <musamaanjum@gmail.com>
+Fixes: 415ae78ffb5d ("mtd: rawnand: check ONFI timings have been acked by the chip")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-I'm not sure why refcount was being incremented here. This file has been
-evoloved so much. Any ideas?
+From static analysis.  Not tested.
 
-fs/cifs/smb2ops.c | 9 ---------
- 1 file changed, 9 deletions(-)
+ drivers/mtd/nand/raw/nand_base.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/cifs/smb2ops.c b/fs/cifs/smb2ops.c
-index 61214b23c57f..6fa35003dcfe 100644
---- a/fs/cifs/smb2ops.c
-+++ b/fs/cifs/smb2ops.c
-@@ -847,14 +847,6 @@ int open_cached_dir(unsigned int xid, struct cifs_tcon *tcon,
- 			.volatile_fid = pfid->volatile_fid,
- 		};
+diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
+index fb072c444495..d83c0503f96f 100644
+--- a/drivers/mtd/nand/raw/nand_base.c
++++ b/drivers/mtd/nand/raw/nand_base.c
+@@ -880,6 +880,7 @@ static int nand_setup_interface(struct nand_chip *chip, int chipnr)
+ 	if (tmode_param[0] != chip->best_interface_config->timings.mode) {
+ 		pr_warn("timing mode %d not acknowledged by the NAND chip\n",
+ 			chip->best_interface_config->timings.mode);
++		ret = -EINVAL;
+ 		goto err_reset_chip;
+ 	}
  
--		/*
--		 * caller expects this func to set pfid to a valid
--		 * cached root, so we copy the existing one and get a
--		 * reference.
--		 */
--		memcpy(pfid, tcon->crfid.fid, sizeof(*pfid));
--		kref_get(&tcon->crfid.refcount);
--
- 		mutex_unlock(&tcon->crfid.fid_mutex);
- 
- 		if (rc == 0) {
-@@ -885,7 +877,6 @@ int open_cached_dir(unsigned int xid, struct cifs_tcon *tcon,
- 	oparms.fid->mid = le64_to_cpu(o_rsp->sync_hdr.MessageId);
- #endif /* CIFS_DEBUG2 */
- 
--	memcpy(tcon->crfid.fid, pfid, sizeof(struct cifs_fid));
- 	tcon->crfid.tcon = tcon;
- 	tcon->crfid.is_valid = true;
- 	tcon->crfid.dentry = dentry;
 -- 
-2.25.1
+2.30.2
 
