@@ -2,104 +2,86 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0692C433B4
-	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Apr 2021 07:19:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD8C9C433B4
+	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Apr 2021 07:25:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6B8966102A
-	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Apr 2021 07:19:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85124611AB
+	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Apr 2021 07:25:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231222AbhDOHUJ (ORCPT
+        id S231326AbhDOHZu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 15 Apr 2021 03:20:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44234 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231143AbhDOHUI (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 15 Apr 2021 03:20:08 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 07B6C61103;
-        Thu, 15 Apr 2021 07:19:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1618471184;
-        bh=6yA3ZP7QlU0O7VefE5uCcyXZQdn2vdNBzoNCgVzhAH0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=P4EGm6D9qx4YMmIfc4mX90pvDkJQaQUxvxPvT3bkLwNI8RS9qrFP1kjaEwRZi8b1u
-         GCM3x7sirPfh7DlE/+4N9TyZcBqJGMggr4/TSkeLHQ7J1hJfDfHTBn9OFUQdJxiE18
-         R6YDZ8PsnZCtnJY5Npaq9Uf1Xhf66z0TNDxAdahY=
-Date:   Thu, 15 Apr 2021 09:19:42 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Oded Gabbay <oded.gabbay@gmail.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Colin King <colin.king@canonical.com>,
-        Oded Gabbay <ogabbay@kernel.org>,
-        Ofir Bitton <obitton@habana.ai>,
-        kernel-janitors@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH][next] habanalabs/gaudi: Fix uninitialized return code rc
- when read size is zero
-Message-ID: <YHfpDvLvzwEFT5BT@kroah.com>
-References: <20210412161012.1628202-1-colin.king@canonical.com>
- <CAK8P3a2pSRu0OKDNrNJSdviRgcv8Lw1mwZr5opv=UbtHLps2oQ@mail.gmail.com>
- <CAFCwf10S8WhEZtpwD=2AgbgopMahxHofp-yXvsZ4GWkrctPRAQ@mail.gmail.com>
+        Thu, 15 Apr 2021 03:25:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57670 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230090AbhDOHZt (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 15 Apr 2021 03:25:49 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C154BC061574;
+        Thu, 15 Apr 2021 00:25:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=qIUuzFbM5Xu+iHP+ZYetd8xb2tkbqd4x6+aFiWRS990=; b=BxvxQo5kHKlbeo6LBzqzVUuR7y
+        E8nyNJVa/LsIQg1XXQmrG+9IQ26U2jgSj3WP+T1sLkHoGdYWod8YIWPLFZcss7xTiU5wJZlXUI/3A
+        lfskGSgjCWhuNYWrMstBdAVbku/FURyQAhY9VAg7mQBGQjeK7Hdmxw7THxScyf35kqPX+4eO0uMBI
+        TV+WqJ5IuVMMMqwMhop+O+lMlb3Gd4qVY/sLLBOtWpHAFPPt3ma0GoDo49TLjr/qNX2DBeQxWKO39
+        /SsV9Mx6EFw9O5x0uJJ7F2SKRjHWzPpaxslfs6eLcg6dFpfAYflLMq4dx4gkkgTP1kI91cAw/6DK7
+        2mz1yxLw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by casper.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
+        id 1lWwMl-008C72-5N; Thu, 15 Apr 2021 07:24:45 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id C7F76300209;
+        Thu, 15 Apr 2021 09:24:41 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id B22EC20BF5EFA; Thu, 15 Apr 2021 09:24:41 +0200 (CEST)
+Date:   Thu, 15 Apr 2021 09:24:41 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Muhammad Usama Anjum <musamaanjum@gmail.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>, Borislav Petkov <bp@suse.de>,
+        open list <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org, colin.king@canonical.com,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Subject: Re: [PATCH] objtool: prevent memory leak in error paths
+Message-ID: <YHfqOVf1hGlbWjLP@hirez.programming.kicks-ass.net>
+References: <20210413204511.GA664936@LEGION>
+ <20210414084709.GT6021@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAFCwf10S8WhEZtpwD=2AgbgopMahxHofp-yXvsZ4GWkrctPRAQ@mail.gmail.com>
+In-Reply-To: <20210414084709.GT6021@kadam>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Apr 15, 2021 at 10:08:26AM +0300, Oded Gabbay wrote:
-> On Mon, Apr 12, 2021 at 9:41 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> >
-> > On Mon, Apr 12, 2021 at 6:11 PM Colin King <colin.king@canonical.com> wrote:
-> > >
-> > > From: Colin Ian King <colin.king@canonical.com>
-> > >
-> > > In the case where size is zero the while loop never assigns rc and the
-> > > return value is uninitialized. Fix this by initializing rc to zero.
-> > >
-> > > Addresses-Coverity: ("Uninitialized scalar variable")
-> > > Fixes: 639781dcab82 ("habanalabs/gaudi: add debugfs to DMA from the device")
-> > > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > > ---
-> > >  drivers/misc/habanalabs/gaudi/gaudi.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/misc/habanalabs/gaudi/gaudi.c b/drivers/misc/habanalabs/gaudi/gaudi.c
-> > > index 8730b691ec61..b751652f80a8 100644
-> > > --- a/drivers/misc/habanalabs/gaudi/gaudi.c
-> > > +++ b/drivers/misc/habanalabs/gaudi/gaudi.c
-> > > @@ -6252,7 +6252,7 @@ static int gaudi_debugfs_read_dma(struct hl_device *hdev, u64 addr, u32 size,
-> > >         dma_addr_t dma_addr;
-> > >         void *kernel_addr;
-> > >         bool is_eng_idle;
-> > > -       int rc, dma_id;
-> > > +       int rc = 0, dma_id;
-> > >
-> > >         kernel_addr = hdev->asic_funcs->asic_dma_alloc_coherent(
-> > >                                                 hdev, SZ_2M,
-> >
-> >
-> > In general, I don't like adding initializations during the declaration as that
-> > tends to hide warnings for the cases where a later initialization is
-> > missing. In this case it looks correct though.
-> >
-> > Acked-by: Arnd Bergmann <arnd@arndb.de>
+On Wed, Apr 14, 2021 at 11:47:09AM +0300, Dan Carpenter wrote:
+> On Wed, Apr 14, 2021 at 01:45:11AM +0500, Muhammad Usama Anjum wrote:
+> > Memory allocated by sym and sym->name isn't being freed if some error
+> > occurs in elf_create_undef_symbol(). Free the sym and sym->name if error
+> > is detected before returning NULL.
+> > 
+> > Addresses-Coverity: ("Prevent memory leak")
+> > Fixes: 2f2f7e47f052 ("objtool: Add elf_create_undef_symbol()")
+> > Signed-off-by: Muhammad Usama Anjum <musamaanjum@gmail.com>
+> > ---
+> > Only build has been tested.
+> > 
 > 
-> I don't mind taking this patch for eliminating the warning but fyi,
-> the caller function (hl_dma_size_write) checks that the size is not
-> zero. If the size is zero, we never reach this function.
-> 
-> Greg, do you mind applying it directly to your -next branch ? I don't
-> have anything pending and I'm too lazy sending a pull request on a
-> single patch ;)
-> 
-> Reviewed-by: Oded Gabbay <ogabbay@kernel.org>
+> Just ignore leaks from the tools/ directory.  These things run and then
+> exit and all the memory is freed.  #OldSchoolGarbageCollector
 
-I can grab it from this thread, thanks!
-
-greg k-h
+Mostly true; but I suspect tools/perf might care, it has some longer
+running things in.
