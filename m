@@ -2,86 +2,87 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD8C9C433B4
-	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Apr 2021 07:25:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C79FC433B4
+	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Apr 2021 08:38:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 85124611AB
-	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Apr 2021 07:25:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E165D611F1
+	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Apr 2021 08:38:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231326AbhDOHZu (ORCPT
+        id S231829AbhDOIi0 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 15 Apr 2021 03:25:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57670 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230090AbhDOHZt (ORCPT
+        Thu, 15 Apr 2021 04:38:26 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:38262 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231697AbhDOIiZ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 15 Apr 2021 03:25:49 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C154BC061574;
-        Thu, 15 Apr 2021 00:25:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=qIUuzFbM5Xu+iHP+ZYetd8xb2tkbqd4x6+aFiWRS990=; b=BxvxQo5kHKlbeo6LBzqzVUuR7y
-        E8nyNJVa/LsIQg1XXQmrG+9IQ26U2jgSj3WP+T1sLkHoGdYWod8YIWPLFZcss7xTiU5wJZlXUI/3A
-        lfskGSgjCWhuNYWrMstBdAVbku/FURyQAhY9VAg7mQBGQjeK7Hdmxw7THxScyf35kqPX+4eO0uMBI
-        TV+WqJ5IuVMMMqwMhop+O+lMlb3Gd4qVY/sLLBOtWpHAFPPt3ma0GoDo49TLjr/qNX2DBeQxWKO39
-        /SsV9Mx6EFw9O5x0uJJ7F2SKRjHWzPpaxslfs6eLcg6dFpfAYflLMq4dx4gkkgTP1kI91cAw/6DK7
-        2mz1yxLw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by casper.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
-        id 1lWwMl-008C72-5N; Thu, 15 Apr 2021 07:24:45 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id C7F76300209;
-        Thu, 15 Apr 2021 09:24:41 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id B22EC20BF5EFA; Thu, 15 Apr 2021 09:24:41 +0200 (CEST)
-Date:   Thu, 15 Apr 2021 09:24:41 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Muhammad Usama Anjum <musamaanjum@gmail.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Miroslav Benes <mbenes@suse.cz>, Borislav Petkov <bp@suse.de>,
-        open list <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org, colin.king@canonical.com,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Subject: Re: [PATCH] objtool: prevent memory leak in error paths
-Message-ID: <YHfqOVf1hGlbWjLP@hirez.programming.kicks-ass.net>
-References: <20210413204511.GA664936@LEGION>
- <20210414084709.GT6021@kadam>
+        Thu, 15 Apr 2021 04:38:25 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lWxVd-0008RD-8Q; Thu, 15 Apr 2021 08:37:57 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] net: stmmac: replace redundant comparison with true
+Date:   Thu, 15 Apr 2021 09:37:57 +0100
+Message-Id: <20210415083757.1807538-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210414084709.GT6021@kadam>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Apr 14, 2021 at 11:47:09AM +0300, Dan Carpenter wrote:
-> On Wed, Apr 14, 2021 at 01:45:11AM +0500, Muhammad Usama Anjum wrote:
-> > Memory allocated by sym and sym->name isn't being freed if some error
-> > occurs in elf_create_undef_symbol(). Free the sym and sym->name if error
-> > is detected before returning NULL.
-> > 
-> > Addresses-Coverity: ("Prevent memory leak")
-> > Fixes: 2f2f7e47f052 ("objtool: Add elf_create_undef_symbol()")
-> > Signed-off-by: Muhammad Usama Anjum <musamaanjum@gmail.com>
-> > ---
-> > Only build has been tested.
-> > 
-> 
-> Just ignore leaks from the tools/ directory.  These things run and then
-> exit and all the memory is freed.  #OldSchoolGarbageCollector
+From: Colin Ian King <colin.king@canonical.com>
 
-Mostly true; but I suspect tools/perf might care, it has some longer
-running things in.
+The comparison of the u32 variable queue with <= zero is always true
+since an unsigned can never be negative. Replace the conditional
+check with the boolean true to simplify the code.  The while loop
+will terminate because of the zero check on queue before queue is
+decremented.
+
+Addresses-Coverity: ("Unsigned compared against 0")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index e3e22200a4fd..6e5b4c4b375c 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -1673,7 +1673,7 @@ static void stmmac_reinit_rx_buffers(struct stmmac_priv *priv)
+ 	return;
+ 
+ err_reinit_rx_buffers:
+-	while (queue >= 0) {
++	while (true) {
+ 		dma_free_rx_skbufs(priv, queue);
+ 
+ 		if (queue == 0)
+@@ -1781,7 +1781,7 @@ static int init_dma_rx_desc_rings(struct net_device *dev, gfp_t flags)
+ 	return 0;
+ 
+ err_init_rx_buffers:
+-	while (queue >= 0) {
++	while (true) {
+ 		struct stmmac_rx_queue *rx_q = &priv->rx_queue[queue];
+ 
+ 		if (rx_q->xsk_pool)
+-- 
+2.30.2
+
