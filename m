@@ -2,117 +2,106 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96A89C433ED
-	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Apr 2021 16:21:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8305EC433ED
+	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Apr 2021 16:23:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 73F646115B
-	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Apr 2021 16:21:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50F626115B
+	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Apr 2021 16:23:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232913AbhDOQWM (ORCPT
+        id S233052AbhDOQYQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 15 Apr 2021 12:22:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35230 "EHLO
+        Thu, 15 Apr 2021 12:24:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230056AbhDOQWM (ORCPT
+        with ESMTP id S233201AbhDOQYM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 15 Apr 2021 12:22:12 -0400
-Received: from mail-oi1-x229.google.com (mail-oi1-x229.google.com [IPv6:2607:f8b0:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAE59C061574
-        for <kernel-janitors@vger.kernel.org>; Thu, 15 Apr 2021 09:21:48 -0700 (PDT)
-Received: by mail-oi1-x229.google.com with SMTP id m13so24798025oiw.13
-        for <kernel-janitors@vger.kernel.org>; Thu, 15 Apr 2021 09:21:48 -0700 (PDT)
+        Thu, 15 Apr 2021 12:24:12 -0400
+Received: from mail-oi1-x22f.google.com (mail-oi1-x22f.google.com [IPv6:2607:f8b0:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEFA2C061574
+        for <kernel-janitors@vger.kernel.org>; Thu, 15 Apr 2021 09:23:47 -0700 (PDT)
+Received: by mail-oi1-x22f.google.com with SMTP id i18so3306876oii.2
+        for <kernel-janitors@vger.kernel.org>; Thu, 15 Apr 2021 09:23:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=t7pqJXti59c1rJZw2pACVhJls5W5jKhWFw5ukj9e48U=;
-        b=R/O/tUak6DfYH8B+Kw9sxzRxBlisU2gV2zGdlsVd+Gf+3WQN6UF1UrcAVLfwAQDixd
-         RJ3g8Wa4FsX9e2nQKAZw6BuSDTxAy3wgnCf396qM7TEfAOJdNSxfZtI/a/u2n0+4ruGw
-         yG3EbY29ZC8VeFe6DR/hxxFL6GchyU6huaMgLFaKb3n8v6hOCut08KfMCdDetwuAO38G
-         kEh2Ze+IQ0poo2z9pgYxEJw+DnXF6XWIBv8B8eDKH8aLf/ICDcf1fI6waMbaF6/2H+zU
-         9ghTvXh9THRm0uVldKexJE68WLSnI6+8YzJrfe2z0mOluWF+UZgZukKaQXojYM/jnQiC
-         88pA==
+        bh=jXfRBBk0JPaYI5Z5HEgmHkynq+uw0ZW/JO/1K44osvA=;
+        b=YXLg5KuFZVN4vU3sAvllAvmwTloIbA2P3M6Wir6P/9nBVGCImakgm4jSFMM8iGPlAT
+         B+Z8PHp/GrR+3khPE3XVYOc+AIJvzlW3+1x6BAAsROsvaUwq+oUmWPPLAnOG4tRRKtyh
+         vIPo7uJgDxwkFi9aNwq8QTItJmJcS1ZwDIHozEU7i1vVkmxTFLfu10A731xnmw7MqeTt
+         OrgB34w7IGNkuRCn2D1jRc2BUevOxg0UAn061ecn1YSR+L0PxkWL8jeI8Ivzt6Yn9v/U
+         l8lt7E119+61437nMOAd/kF9AFTVukzQ3R1f4INnYc4K+d6n74MUlYGBoLnTZlAiQRYC
+         +bPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=t7pqJXti59c1rJZw2pACVhJls5W5jKhWFw5ukj9e48U=;
-        b=l02RL7pk7Su8tHUWJwPJ7Xx4hMrlrSewjOG8oxsy9PmDIVdRK61SSqD3wLUDHKsZoT
-         fsJWeL6vcX+rulh8eaDn64hQr7qw4n0UZWerBLcIfTtWWyeBLpecXJwN0Tx6BoyB9Wt7
-         GVYh+Ovzo1OPubggTXK5Z9LhRjIU9sRtAQDRFkpfyoCJcRxyqVW+HxD/cTqYWgZpc2Fn
-         rW33CjwNTzMH37nYOrNXArqBbjSDDUfKytqAsd5khdu+S/UaVyJWHvBoOSYmwr1Wlemz
-         Htfhd7JUw+ROJWXz4vQ/9qqHrkrzp+WSfCtUu6Lr8WoGZDjmnCFO5QKBeqEN9NmLJIGg
-         jPQg==
-X-Gm-Message-State: AOAM531fMLrsYDT7QeFTKbYZEFpGR4tHAdAOirti1mrf9rCbEFBQat5Q
-        bUSeb1GNhFroUwMhagf5GErE2/UvaaYyETHneoA=
-X-Google-Smtp-Source: ABdhPJyrh8so60UP05DbmhzkFCCL+XuSDGiplhBalDHBQgGOJbpmiGOkUNLDHSgeIXiFmFlKjE+F7nb8TUjaJlmgjag=
-X-Received: by 2002:aca:c08a:: with SMTP id q132mr2977980oif.5.1618503708222;
- Thu, 15 Apr 2021 09:21:48 -0700 (PDT)
+        bh=jXfRBBk0JPaYI5Z5HEgmHkynq+uw0ZW/JO/1K44osvA=;
+        b=XDgFlVkUI8rM9eOl15E864+Mx2w6aVZRs+hGOOXq8RhC8ZwARuAdMiKFfoz3Sshv7D
+         C90rruAYsTW5JbHrhgwZO15GQovsY8xXbCHyx94wklwsZtmqNE3aD40mOO6gf6a4chu9
+         7WlRqWitbD1ylcCswfJxUx9jLdw3TV9bwCvDm9QbOqLBKx9FosN8t4AVlWwLz5ULbAs6
+         gyCwfkyjdYcelTLE9JRqUYVqMQF/gpPz3lp+XSbh5fByFuT0mbLFB8E1/iirmVmzs08b
+         s7SjM9C6We0ikI1P2RlcwjnjF27ynMuUmkQiRbAA9h4m3bpvZsNHDGdrzk6ZMv8uzlmW
+         43GQ==
+X-Gm-Message-State: AOAM532X30kQYAVztKf8c0GFmfplo/os0cVPWk2eDv++8ZHJRfnRxm/R
+        C4WFRH/zKiCN1xZf/uHbVY9w4EQg/uOejRGB4VdBBz2QySVidA==
+X-Google-Smtp-Source: ABdhPJxOk3GIJTM4+56m3f0143Ty3G0wU5BP4zf4znCV82m7VpFkBSaw2z2SHKUjpoJm/PrRvp2MTLn+7giHxjJ1Buo=
+X-Received: by 2002:aca:c08a:: with SMTP id q132mr2983922oif.5.1618503827170;
+ Thu, 15 Apr 2021 09:23:47 -0700 (PDT)
 MIME-Version: 1.0
-References: <YHaEn8h5JP9CGMee@mwanda>
-In-Reply-To: <YHaEn8h5JP9CGMee@mwanda>
+References: <YHaEutSVsa63kcFZ@mwanda>
+In-Reply-To: <YHaEutSVsa63kcFZ@mwanda>
 From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Thu, 15 Apr 2021 12:21:37 -0400
-Message-ID: <CADnq5_Nt+QuaT6Qo2eRguJ34dxjK-_DttOKT-ZeL1cPjgKncjQ@mail.gmail.com>
-Subject: Re: [PATCH v2] drm/amdgpu: fix an error code in init_pmu_entry_by_type_and_add()
+Date:   Thu, 15 Apr 2021 12:23:35 -0400
+Message-ID: <CADnq5_PwkGzwLq_Jy_stMB4pN4ta6E5STrcMkE7HsAvg3Ln37w@mail.gmail.com>
+Subject: Re: [PATCH] drm/amd/pm: fix error code in smu_set_power_limit()
 To:     Dan Carpenter <dan.carpenter@oracle.com>
 Cc:     Alex Deucher <alexander.deucher@amd.com>,
-        Jonathan Kim <jonathan.kim@amd.com>,
+        Lijo Lazar <lijo.lazar@amd.com>,
         David Airlie <airlied@linux.ie>,
+        Kevin Wang <kevin1.wang@amd.com>,
         kernel-janitors@vger.kernel.org,
-        Harish Kasiviswanathan <harish.kasiviswanathan@amd.com>,
         amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Luben Tuikov <luben.tuikov@amd.com>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>, Daniel Vetter <daniel@ffwll.ch>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+        Daniel Vetter <daniel@ffwll.ch>, Evan Quan <evan.quan@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        Hawking Zhang <Hawking.Zhang@amd.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Apr 14, 2021 at 1:59 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> If the kmemdup() fails then this should return a negative error code
-> but it currently returns success
->
-> Fixes: b4a7db71ea06 ("drm/amdgpu: add per device user friendly xgmi events for vega20")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
 Applied.  Thanks!
 
 Alex
 
+On Wed, Apr 14, 2021 at 1:59 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+>
+> We should return -EINVAL instead of success if the "limit" is too high.
+>
+> Fixes: e098bc9612c2 ("drm/amd/pm: optimize the power related source code layout")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > ---
-> v2: I sent this patch in Feb but I accidentally added an unrelated
-> hunk from nouveau to the commit.  Now both hunks are have been sent to
-> the correct lists.
+>  drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c | 1 +
+>  1 file changed, 1 insertion(+)
 >
->  drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+> diff --git a/drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c b/drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c
+> index e0eb7ca112e2..c29d8b3131b7 100644
+> --- a/drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c
+> +++ b/drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c
+> @@ -2221,6 +2221,7 @@ static int smu_set_power_limit(void *handle, uint32_t limit)
+>                 dev_err(smu->adev->dev,
+>                         "New power limit (%d) is over the max allowed %d\n",
+>                         limit, smu->max_power_limit);
+> +               ret = -EINVAL;
+>                 goto out;
+>         }
 >
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
-> index 19c0a3655228..82e9ecf84352 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
-> @@ -519,8 +519,10 @@ static int init_pmu_entry_by_type_and_add(struct amdgpu_pmu_entry *pmu_entry,
->         pmu_entry->pmu.attr_groups = kmemdup(attr_groups, sizeof(attr_groups),
->                                                                 GFP_KERNEL);
->
-> -       if (!pmu_entry->pmu.attr_groups)
-> +       if (!pmu_entry->pmu.attr_groups) {
-> +               ret = -ENOMEM;
->                 goto err_attr_group;
-> +       }
->
->         snprintf(pmu_name, PMU_NAME_SIZE, "%s_%d", pmu_entry->pmu_file_prefix,
->                                 adev_to_drm(pmu_entry->adev)->primary->index);
 > --
 > 2.30.2
 >
