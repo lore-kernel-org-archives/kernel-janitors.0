@@ -5,34 +5,39 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F7C1C433B4
-	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Apr 2021 11:06:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD6A8C433B4
+	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Apr 2021 11:30:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5215A6137D
-	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Apr 2021 11:06:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B08F16137D
+	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Apr 2021 11:30:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232514AbhDOLHV (ORCPT
+        id S231482AbhDOLbS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 15 Apr 2021 07:07:21 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:43972 "EHLO
+        Thu, 15 Apr 2021 07:31:18 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:44831 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232493AbhDOLHU (ORCPT
+        with ESMTP id S230056AbhDOLbS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 15 Apr 2021 07:07:20 -0400
+        Thu, 15 Apr 2021 07:31:18 -0400
 Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <colin.king@canonical.com>)
-        id 1lWzpm-0004Eh-8H; Thu, 15 Apr 2021 11:06:54 +0000
+        id 1lX0Cw-00061I-L2; Thu, 15 Apr 2021 11:30:50 +0000
 From:   Colin King <colin.king@canonical.com>
-To:     Dave Jiang <dave.jiang@intel.com>, Vinod Koul <vkoul@kernel.org>,
-        dmaengine@vger.kernel.org
+To:     Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+        Arunachalam Santhanam <arunachalam.santhanam@in.bosch.com>,
+        linux-can@vger.kernel.org, netdev@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] dmaengine: idxd: Fix potential null dereference on pointer status
-Date:   Thu, 15 Apr 2021 12:06:54 +0100
-Message-Id: <20210415110654.1941580-1-colin.king@canonical.com>
+Subject: [PATCH][next] can: etas_es58x: Fix a couple of spelling mistakes
+Date:   Thu, 15 Apr 2021 12:30:50 +0100
+Message-Id: <20210415113050.1942333-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -43,34 +48,36 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-There are calls to idxd_cmd_exec that pass a null status pointer however
-a recent commit has added an assignment to *status that can end up
-with a null pointer dereference.  The function expects a null status
-pointer sometimes as there is a later assignment to *status where
-status is first null checked.  Fix the issue by null checking status
-before making the assignment.
+There are spelling mistakes in netdev_dbg and netdev_dbg messages,
+fix these.
 
-Addresses-Coverity: ("Explicit null dereferenced")
-Fixes: 89e3becd8f82 ("dmaengine: idxd: check device state before issue command")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/dma/idxd/device.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/can/usb/etas_es58x/es58x_core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/dma/idxd/device.c b/drivers/dma/idxd/device.c
-index 31c819544a22..78d2dc5e9bd8 100644
---- a/drivers/dma/idxd/device.c
-+++ b/drivers/dma/idxd/device.c
-@@ -451,7 +451,8 @@ static void idxd_cmd_exec(struct idxd_device *idxd, int cmd_code, u32 operand,
+diff --git a/drivers/net/can/usb/etas_es58x/es58x_core.c b/drivers/net/can/usb/etas_es58x/es58x_core.c
+index 57e5f94468e9..8e9102482c52 100644
+--- a/drivers/net/can/usb/etas_es58x/es58x_core.c
++++ b/drivers/net/can/usb/etas_es58x/es58x_core.c
+@@ -688,7 +688,7 @@ int es58x_rx_err_msg(struct net_device *netdev, enum es58x_err error,
  
- 	if (idxd_device_is_halted(idxd)) {
- 		dev_warn(&idxd->pdev->dev, "Device is HALTED!\n");
--		*status = IDXD_CMDSTS_HW_ERR;
-+		if (status)
-+			*status = IDXD_CMDSTS_HW_ERR;
- 		return;
- 	}
+ 	case ES58X_ERR_PROT_STUFF:
+ 		if (net_ratelimit())
+-			netdev_dbg(netdev, "Error BITSUFF\n");
++			netdev_dbg(netdev, "Error BITSTUFF\n");
+ 		if (cf)
+ 			cf->data[2] |= CAN_ERR_PROT_STUFF;
+ 		break;
+@@ -1015,7 +1015,7 @@ int es58x_rx_cmd_ret_u32(struct net_device *netdev,
+ 			int ret;
  
+ 			netdev_warn(netdev,
+-				    "%s: channel is already opened, closing and re-openning it to reflect new configuration\n",
++				    "%s: channel is already opened, closing and re-opening it to reflect new configuration\n",
+ 				    ret_desc);
+ 			ret = ops->disable_channel(es58x_priv(netdev));
+ 			if (ret)
 -- 
 2.30.2
 
