@@ -2,73 +2,79 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDAD4C433B4
-	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Apr 2021 21:02:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E816DC433ED
+	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Apr 2021 23:52:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B674661153
-	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Apr 2021 21:02:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD8026109D
+	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Apr 2021 23:52:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235433AbhDOVDV (ORCPT
+        id S234894AbhDOXxB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 15 Apr 2021 17:03:21 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:39864 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235184AbhDOVDV (ORCPT
+        Thu, 15 Apr 2021 19:53:01 -0400
+Received: from smtprelay0209.hostedemail.com ([216.40.44.209]:58744 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S234735AbhDOXw7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 15 Apr 2021 17:03:21 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1lX98M-0006gt-LV; Thu, 15 Apr 2021 21:02:42 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        linux-um@lists.infradead.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] um: Fix inline void order in function declaration
-Date:   Thu, 15 Apr 2021 22:02:42 +0100
-Message-Id: <20210415210242.1970216-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.30.2
+        Thu, 15 Apr 2021 19:52:59 -0400
+Received: from omf06.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 389091808827C;
+        Thu, 15 Apr 2021 23:52:30 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf06.hostedemail.com (Postfix) with ESMTPA id 486BD2448BB;
+        Thu, 15 Apr 2021 23:52:29 +0000 (UTC)
+Message-ID: <82fc2a9a0df1fa6c901645693cca2eab34d5f032.camel@perches.com>
+Subject: Re: [PATCH 2/2] Input: evbug - Use 'pr_debug()' instead of
+ hand-writing it
+From:   Joe Perches <joe@perches.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        dmitry.torokhov@gmail.com
+Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Date:   Thu, 15 Apr 2021 16:52:27 -0700
+In-Reply-To: <5bc599f199df4e43c4a7f02f167af3e897f823dd.1618520227.git.christophe.jaillet@wanadoo.fr>
+References: <fda981546203427a0ac86ef47f231239ad18ecfe.1618520227.git.christophe.jaillet@wanadoo.fr>
+         <5bc599f199df4e43c4a7f02f167af3e897f823dd.1618520227.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.38.1-1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Stat-Signature: 3rr1ck6noq6yr1bba6hr6fyqncmzgtx7
+X-Rspamd-Server: rspamout05
+X-Rspamd-Queue-Id: 486BD2448BB
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Session-ID: U2FsdGVkX18L6sZKnhCru4z3Lnm5SnBf8KVcLAjIW4I=
+X-HE-Tag: 1618530749-3431
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Thu, 2021-04-15 at 22:58 +0200, Christophe JAILLET wrote:
+> 'printk(KERN_DEBUG pr_fmt(...))' can be replaced by a much less verbose
+> 'pr_debug()'.
 
-The inline keyword should be between storage class and type. Fix
-this by swapping void inline to inline void.
+This is not really true because
+	printk(KERN_DEBUG ...);
+will _always_ be emitted if the console level allows
+	pr_debug(...);
+will _only_ be emitted if the console level allows _and_
+	DEBUG is defined or dynamic_debug is enabled
+		(and for dynamic_debug, only if specifically enabled)
+	DEBUG is defined and dynamic_debug is enabled
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- arch/x86/um/shared/sysdep/stub_32.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> diff --git a/drivers/input/evbug.c b/drivers/input/evbug.c
+[]
+> @@ -21,8 +21,8 @@ MODULE_LICENSE("GPL");
+>  
+> 
+>  static void evbug_event(struct input_handle *handle, unsigned int type, unsigned int code, int value)
+>  {
+> -	printk(KERN_DEBUG pr_fmt("Event. Dev: %s, Type: %d, Code: %d, Value: %d\n"),
+> -	       dev_name(&handle->dev->dev), type, code, value);
+> +	pr_debug("Event. Dev: %s, Type: %d, Code: %d, Value: %d\n",
+> +		 dev_name(&handle->dev->dev), type, code, value);
+>  }
 
-diff --git a/arch/x86/um/shared/sysdep/stub_32.h b/arch/x86/um/shared/sysdep/stub_32.h
-index c3891c1ada26..b95db9daf0e8 100644
---- a/arch/x86/um/shared/sysdep/stub_32.h
-+++ b/arch/x86/um/shared/sysdep/stub_32.h
-@@ -77,7 +77,7 @@ static inline void trap_myself(void)
- 	__asm("int3");
- }
- 
--static void inline remap_stack_and_trap(void)
-+static inline void remap_stack_and_trap(void)
- {
- 	__asm__ volatile (
- 		"movl %%esp,%%ebx ;"
--- 
-2.30.2
 
