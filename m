@@ -2,49 +2,91 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C32E4C433ED
-	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Apr 2021 13:46:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2109BC433ED
+	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Apr 2021 14:09:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9C7DA613C1
-	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Apr 2021 13:46:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECDC16137D
+	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Apr 2021 14:09:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232759AbhDONq6 (ORCPT
+        id S233367AbhDOOKR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 15 Apr 2021 09:46:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57382 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232332AbhDONqx (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 15 Apr 2021 09:46:53 -0400
-Received: from theia.8bytes.org (8bytes.org [IPv6:2a01:238:4383:600:38bc:a715:4b6d:a889])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C213CC061574;
-        Thu, 15 Apr 2021 06:46:30 -0700 (PDT)
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 6AFA0387; Thu, 15 Apr 2021 15:46:29 +0200 (CEST)
-Date:   Thu, 15 Apr 2021 15:46:27 +0200
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     dwmw2@infradead.org, baolu.lu@linux.intel.com, will@kernel.org,
-        kyung.min.park@intel.com, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] iommu/vt-d: Fix an error handling path in
- 'intel_prepare_irq_remapping()'
-Message-ID: <YHhDs/PTP9u1DD+F@8bytes.org>
-References: <98d531caabe66012b4fffc7813fd4b9470afd517.1618124777.git.christophe.jaillet@wanadoo.fr>
+        Thu, 15 Apr 2021 10:10:17 -0400
+Received: from mga03.intel.com ([134.134.136.65]:62047 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230056AbhDOOKQ (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 15 Apr 2021 10:10:16 -0400
+IronPort-SDR: tjWuhqocqVlRaGKm8UG+L0A35L8TSR9RZ0LNgX+gR3OX27Yhh/uncvYoOshBFuuwsiTE1KQbwr
+ RpuHrtPVG8Sg==
+X-IronPort-AV: E=McAfee;i="6200,9189,9955"; a="194885666"
+X-IronPort-AV: E=Sophos;i="5.82,225,1613462400"; 
+   d="scan'208";a="194885666"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2021 07:09:41 -0700
+IronPort-SDR: 31qFUbJplDmJcJwbCE3slOYca0ZnN/+3E7vaX73S8oZ8hG759bsYGZty0n8AJ9jl8jJYrGaPv3
+ 7pDU1oWPxbQw==
+X-IronPort-AV: E=Sophos;i="5.82,225,1613462400"; 
+   d="scan'208";a="461627273"
+Received: from ckgurumu-mobl3.amr.corp.intel.com (HELO [10.212.35.10]) ([10.212.35.10])
+  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2021 07:09:41 -0700
+Subject: Re: [PATCH] dmaengine: idxd: Fix potential null dereference on
+ pointer status
+To:     Colin King <colin.king@canonical.com>,
+        Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210415110654.1941580-1-colin.king@canonical.com>
+From:   Dave Jiang <dave.jiang@intel.com>
+Message-ID: <4e545597-8fe5-411d-6bb7-0c5e8eea5b23@intel.com>
+Date:   Thu, 15 Apr 2021 07:09:40 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <98d531caabe66012b4fffc7813fd4b9470afd517.1618124777.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20210415110654.1941580-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, Apr 11, 2021 at 09:08:17AM +0200, Christophe JAILLET wrote:
->  drivers/iommu/intel/irq_remapping.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied, thanks.
+On 4/15/2021 4:06 AM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> There are calls to idxd_cmd_exec that pass a null status pointer however
+> a recent commit has added an assignment to *status that can end up
+> with a null pointer dereference.  The function expects a null status
+> pointer sometimes as there is a later assignment to *status where
+> status is first null checked.  Fix the issue by null checking status
+> before making the assignment.
+>
+> Addresses-Coverity: ("Explicit null dereferenced")
+> Fixes: 89e3becd8f82 ("dmaengine: idxd: check device state before issue command")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+Acked-by: Dave Jiang <dave.jiang@intel.com>
+
+Thanks!
+
+> ---
+>   drivers/dma/idxd/device.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/dma/idxd/device.c b/drivers/dma/idxd/device.c
+> index 31c819544a22..78d2dc5e9bd8 100644
+> --- a/drivers/dma/idxd/device.c
+> +++ b/drivers/dma/idxd/device.c
+> @@ -451,7 +451,8 @@ static void idxd_cmd_exec(struct idxd_device *idxd, int cmd_code, u32 operand,
+>   
+>   	if (idxd_device_is_halted(idxd)) {
+>   		dev_warn(&idxd->pdev->dev, "Device is HALTED!\n");
+> -		*status = IDXD_CMDSTS_HW_ERR;
+> +		if (status)
+> +			*status = IDXD_CMDSTS_HW_ERR;
+>   		return;
+>   	}
+>   
