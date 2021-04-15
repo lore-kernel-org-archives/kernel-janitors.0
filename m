@@ -5,128 +5,118 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75F35C433B4
-	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Apr 2021 15:24:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96A89C433ED
+	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Apr 2021 16:21:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5BDDE61166
-	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Apr 2021 15:24:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73F646115B
+	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Apr 2021 16:21:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233905AbhDOPYq (ORCPT
+        id S232913AbhDOQWM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 15 Apr 2021 11:24:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50696 "EHLO
+        Thu, 15 Apr 2021 12:22:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35230 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233664AbhDOPYk (ORCPT
+        with ESMTP id S230056AbhDOQWM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 15 Apr 2021 11:24:40 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F84EC061574;
-        Thu, 15 Apr 2021 08:24:16 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id g9so7685069wrx.0;
-        Thu, 15 Apr 2021 08:24:16 -0700 (PDT)
+        Thu, 15 Apr 2021 12:22:12 -0400
+Received: from mail-oi1-x229.google.com (mail-oi1-x229.google.com [IPv6:2607:f8b0:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAE59C061574
+        for <kernel-janitors@vger.kernel.org>; Thu, 15 Apr 2021 09:21:48 -0700 (PDT)
+Received: by mail-oi1-x229.google.com with SMTP id m13so24798025oiw.13
+        for <kernel-janitors@vger.kernel.org>; Thu, 15 Apr 2021 09:21:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=voeJtF0iw8AB6pNUld2TDfbtXFa8dqqEzyxFckRdXOI=;
-        b=amC4xfPIXhPVxoPeNRRvDvgG212ZOtwtCi2v9kHS1fsEz3e8nTF+7dIHJgx9fVIj5p
-         TCq28oputVumoxVS5SVLX9NQQN8hhOToOvI0BeWjIZafK+dPPW47J5g2F8AW1zuvIB2x
-         i4ITVVeh7xecIrzYsGzJbwo/gyAC0zsfkEEkn7x7gp0zvxEE+36BdSvdCE+k7zcYJvHe
-         CBFez1m5qhooAn+jGrjr6gGoYbEyhMX4xHq25ud1tYvNNDDqkc7kFKeC3HiOxMdW5Kwa
-         pkAjt8glG3JEseBGIJwXrLqtEzoPvZcoz/KaFyRvJFqCuMGa9gVVcYmZ++/fXYvyf47G
-         JLoQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=t7pqJXti59c1rJZw2pACVhJls5W5jKhWFw5ukj9e48U=;
+        b=R/O/tUak6DfYH8B+Kw9sxzRxBlisU2gV2zGdlsVd+Gf+3WQN6UF1UrcAVLfwAQDixd
+         RJ3g8Wa4FsX9e2nQKAZw6BuSDTxAy3wgnCf396qM7TEfAOJdNSxfZtI/a/u2n0+4ruGw
+         yG3EbY29ZC8VeFe6DR/hxxFL6GchyU6huaMgLFaKb3n8v6hOCut08KfMCdDetwuAO38G
+         kEh2Ze+IQ0poo2z9pgYxEJw+DnXF6XWIBv8B8eDKH8aLf/ICDcf1fI6waMbaF6/2H+zU
+         9ghTvXh9THRm0uVldKexJE68WLSnI6+8YzJrfe2z0mOluWF+UZgZukKaQXojYM/jnQiC
+         88pA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=voeJtF0iw8AB6pNUld2TDfbtXFa8dqqEzyxFckRdXOI=;
-        b=U+HJGV4fjmLa91W6Wme04ALhLlZ8Jpt1E40zQA4frrwmCz4FOvrLYq4hBQty47jHjr
-         iur2ImY9oDCZFQt1AHyR3S1EgHhE3umJECZ+5MQXhw3vMIcVHPhw/uwLlSUch1u2TwyQ
-         KXvLtyAYziAcIhx1WAA/oOZiLci/+iIyhpg5niLoYLIP10JZIrC/kIPwSmaV1ZcfY6W1
-         +ThB3+hOe8w+56eOA8xDPTDrxYRFE56fGqMLeoEoTTQpvs6AQEwq+4+P5AkocxBeeEhi
-         OcyggucL0iSUbr+52YtstaeAvAxLW8jM5gKJHMgXwnLkTh6vHQ9RL9gMMKBuka3t+QKl
-         aydg==
-X-Gm-Message-State: AOAM532l6ovQ6Et2AdnU8FfZjFU6TWNhgZrEZMNAsro3HYSLXQNNEj+m
-        4ciEGWgYgeXZPUS+/MJfT6I=
-X-Google-Smtp-Source: ABdhPJyeevuUpEi01PNTMCOO6gu8n0VGBAdrqzla0ocnKObhmU+PM35BoMw/AgkZWdFvn2/7M10BYw==
-X-Received: by 2002:adf:cf09:: with SMTP id o9mr4195683wrj.366.1618500255010;
-        Thu, 15 Apr 2021 08:24:15 -0700 (PDT)
-Received: from LEGION ([39.46.65.172])
-        by smtp.gmail.com with ESMTPSA id c16sm4577954wrs.81.2021.04.15.08.24.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Apr 2021 08:24:14 -0700 (PDT)
-Date:   Thu, 15 Apr 2021 20:24:09 +0500
-From:   Muhammad Usama Anjum <musamaanjum@gmail.com>
-To:     aaptel@suse.com, Steve French <sfrench@samba.org>,
-        Ronnie Sahlberg <lsahlber@redhat.com>,
-        "open list:COMMON INTERNET FILE SYSTEM CLIENT (CIFS)" 
-        <linux-cifs@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Cc:     musamaanjum@gmail.com, kernel-janitors@vger.kernel.org,
-        dan.carpenter@oracle.com, colin.king@canonical.com
-Subject: [PATCH v2] cifs: remove unnecessary copies of tcon->crfid.fid
-Message-ID: <20210415152409.GA2286719@LEGION>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=t7pqJXti59c1rJZw2pACVhJls5W5jKhWFw5ukj9e48U=;
+        b=l02RL7pk7Su8tHUWJwPJ7Xx4hMrlrSewjOG8oxsy9PmDIVdRK61SSqD3wLUDHKsZoT
+         fsJWeL6vcX+rulh8eaDn64hQr7qw4n0UZWerBLcIfTtWWyeBLpecXJwN0Tx6BoyB9Wt7
+         GVYh+Ovzo1OPubggTXK5Z9LhRjIU9sRtAQDRFkpfyoCJcRxyqVW+HxD/cTqYWgZpc2Fn
+         rW33CjwNTzMH37nYOrNXArqBbjSDDUfKytqAsd5khdu+S/UaVyJWHvBoOSYmwr1Wlemz
+         Htfhd7JUw+ROJWXz4vQ/9qqHrkrzp+WSfCtUu6Lr8WoGZDjmnCFO5QKBeqEN9NmLJIGg
+         jPQg==
+X-Gm-Message-State: AOAM531fMLrsYDT7QeFTKbYZEFpGR4tHAdAOirti1mrf9rCbEFBQat5Q
+        bUSeb1GNhFroUwMhagf5GErE2/UvaaYyETHneoA=
+X-Google-Smtp-Source: ABdhPJyrh8so60UP05DbmhzkFCCL+XuSDGiplhBalDHBQgGOJbpmiGOkUNLDHSgeIXiFmFlKjE+F7nb8TUjaJlmgjag=
+X-Received: by 2002:aca:c08a:: with SMTP id q132mr2977980oif.5.1618503708222;
+ Thu, 15 Apr 2021 09:21:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <YHaEn8h5JP9CGMee@mwanda>
+In-Reply-To: <YHaEn8h5JP9CGMee@mwanda>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Thu, 15 Apr 2021 12:21:37 -0400
+Message-ID: <CADnq5_Nt+QuaT6Qo2eRguJ34dxjK-_DttOKT-ZeL1cPjgKncjQ@mail.gmail.com>
+Subject: Re: [PATCH v2] drm/amdgpu: fix an error code in init_pmu_entry_by_type_and_add()
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Alex Deucher <alexander.deucher@amd.com>,
+        Jonathan Kim <jonathan.kim@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        kernel-janitors@vger.kernel.org,
+        Harish Kasiviswanathan <harish.kasiviswanathan@amd.com>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Luben Tuikov <luben.tuikov@amd.com>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>, Daniel Vetter <daniel@ffwll.ch>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-pfid is being set to tcon->crfid.fid and they are copied in each other
-multiple times. Remove the memcopy between same pointers - memory
-locations.
+On Wed, Apr 14, 2021 at 1:59 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+>
+> If the kmemdup() fails then this should return a negative error code
+> but it currently returns success
+>
+> Fixes: b4a7db71ea06 ("drm/amdgpu: add per device user friendly xgmi events for vega20")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Addresses-Coverity: ("Overlapped copy")
-Fixes: 9e81e8ff74b9 ("cifs: return cached_fid from open_shroot")
-Signed-off-by: Muhammad Usama Anjum <musamaanjum@gmail.com>
----
-Changes in V2:
-	refcount increment is necessary. Don't remove it.
-	Add and improve comments.
+Applied.  Thanks!
 
-fs/cifs/smb2ops.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+Alex
 
-diff --git a/fs/cifs/smb2ops.c b/fs/cifs/smb2ops.c
-index caa5432a5ed1..797a20714ca1 100644
---- a/fs/cifs/smb2ops.c
-+++ b/fs/cifs/smb2ops.c
-@@ -848,11 +848,9 @@ int open_cached_dir(unsigned int xid, struct cifs_tcon *tcon,
- 		};
- 
- 		/*
--		 * caller expects this func to set pfid to a valid
--		 * cached root, so we copy the existing one and get a
--		 * reference.
-+		 * caller expects this func to set the fid in crfid to valid
-+		 * cached root, so increment the refcount.
- 		 */
--		memcpy(pfid, tcon->crfid.fid, sizeof(*pfid));
- 		kref_get(&tcon->crfid.refcount);
- 
- 		mutex_unlock(&tcon->crfid.fid_mutex);
-@@ -885,7 +883,6 @@ int open_cached_dir(unsigned int xid, struct cifs_tcon *tcon,
- 	oparms.fid->mid = le64_to_cpu(o_rsp->sync_hdr.MessageId);
- #endif /* CIFS_DEBUG2 */
- 
--	memcpy(tcon->crfid.fid, pfid, sizeof(struct cifs_fid));
- 	tcon->crfid.tcon = tcon;
- 	tcon->crfid.is_valid = true;
- 	tcon->crfid.dentry = dentry;
-@@ -894,6 +891,10 @@ int open_cached_dir(unsigned int xid, struct cifs_tcon *tcon,
- 
- 	/* BB TBD check to see if oplock level check can be removed below */
- 	if (o_rsp->OplockLevel == SMB2_OPLOCK_LEVEL_LEASE) {
-+		/*
-+		 * caller expects this func to set the fid in crfid to valid
-+		 * cached root, so increment the refcount.
-+		 */
- 		kref_get(&tcon->crfid.refcount);
- 		tcon->crfid.has_lease = true;
- 		smb2_parse_contexts(server, o_rsp,
--- 
-2.25.1
-
+> ---
+> v2: I sent this patch in Feb but I accidentally added an unrelated
+> hunk from nouveau to the commit.  Now both hunks are have been sent to
+> the correct lists.
+>
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
+> index 19c0a3655228..82e9ecf84352 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
+> @@ -519,8 +519,10 @@ static int init_pmu_entry_by_type_and_add(struct amdgpu_pmu_entry *pmu_entry,
+>         pmu_entry->pmu.attr_groups = kmemdup(attr_groups, sizeof(attr_groups),
+>                                                                 GFP_KERNEL);
+>
+> -       if (!pmu_entry->pmu.attr_groups)
+> +       if (!pmu_entry->pmu.attr_groups) {
+> +               ret = -ENOMEM;
+>                 goto err_attr_group;
+> +       }
+>
+>         snprintf(pmu_name, PMU_NAME_SIZE, "%s_%d", pmu_entry->pmu_file_prefix,
+>                                 adev_to_drm(pmu_entry->adev)->primary->index);
+> --
+> 2.30.2
+>
+> _______________________________________________
+> amd-gfx mailing list
+> amd-gfx@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
