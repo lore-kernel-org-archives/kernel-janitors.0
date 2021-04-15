@@ -2,76 +2,75 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE8C7C433ED
-	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Apr 2021 09:12:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F7C1C433B4
+	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Apr 2021 11:06:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8D80D611F1
-	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Apr 2021 09:12:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5215A6137D
+	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Apr 2021 11:06:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232019AbhDOJNK (ORCPT
+        id S232514AbhDOLHV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 15 Apr 2021 05:13:10 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:39419 "EHLO
+        Thu, 15 Apr 2021 07:07:21 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:43972 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231622AbhDOJNJ (ORCPT
+        with ESMTP id S232493AbhDOLHU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 15 Apr 2021 05:13:09 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212])
+        Thu, 15 Apr 2021 07:07:20 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <colin.king@canonical.com>)
-        id 1lWy3J-0002hA-6U; Thu, 15 Apr 2021 09:12:45 +0000
-Subject: Re: [PATCH][next] can: etas_es58x: Fix potential null pointer
- dereference on pointer cf
-To:     Marc Kleine-Budde <mkl@pengutronix.de>
-Cc:     Wolfgang Grandegger <wg@grandegger.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-        Arunachalam Santhanam <arunachalam.santhanam@in.bosch.com>,
-        linux-can@vger.kernel.org, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210415085535.1808272-1-colin.king@canonical.com>
- <20210415090314.vvyvr2wihwnauyi6@pengutronix.de>
-From:   Colin Ian King <colin.king@canonical.com>
-Message-ID: <c2d87a09-118a-7521-b78f-a7af114046fc@canonical.com>
-Date:   Thu, 15 Apr 2021 10:12:44 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        id 1lWzpm-0004Eh-8H; Thu, 15 Apr 2021 11:06:54 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Dave Jiang <dave.jiang@intel.com>, Vinod Koul <vkoul@kernel.org>,
+        dmaengine@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] dmaengine: idxd: Fix potential null dereference on pointer status
+Date:   Thu, 15 Apr 2021 12:06:54 +0100
+Message-Id: <20210415110654.1941580-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-In-Reply-To: <20210415090314.vvyvr2wihwnauyi6@pengutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 15/04/2021 10:03, Marc Kleine-Budde wrote:
-> On 15.04.2021 09:55:35, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> The pointer cf is being null checked earlier in the code, however the
->> update of the rx_bytes statistics is dereferencing cf without null
->> checking cf.  Fix this by moving the statement into the following code
->> block that has a null cf check.
->>
->> Addresses-Coverity: ("Dereference after null check")
->> Fixes: 8537257874e9 ("can: etas_es58x: add core support for ETAS ES58X CAN USB interfaces")
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> 
-> A somewhat different fix is already in net-next/master
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/commit/?id=e2b1e4b532abdd39bfb7313146153815e370d60c
+From: Colin Ian King <colin.king@canonical.com>
 
-+1 on that
+There are calls to idxd_cmd_exec that pass a null status pointer however
+a recent commit has added an assignment to *status that can end up
+with a null pointer dereference.  The function expects a null status
+pointer sometimes as there is a later assignment to *status where
+status is first null checked.  Fix the issue by null checking status
+before making the assignment.
 
-> 
-> Marc
-> 
+Addresses-Coverity: ("Explicit null dereferenced")
+Fixes: 89e3becd8f82 ("dmaengine: idxd: check device state before issue command")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/dma/idxd/device.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/dma/idxd/device.c b/drivers/dma/idxd/device.c
+index 31c819544a22..78d2dc5e9bd8 100644
+--- a/drivers/dma/idxd/device.c
++++ b/drivers/dma/idxd/device.c
+@@ -451,7 +451,8 @@ static void idxd_cmd_exec(struct idxd_device *idxd, int cmd_code, u32 operand,
+ 
+ 	if (idxd_device_is_halted(idxd)) {
+ 		dev_warn(&idxd->pdev->dev, "Device is HALTED!\n");
+-		*status = IDXD_CMDSTS_HW_ERR;
++		if (status)
++			*status = IDXD_CMDSTS_HW_ERR;
+ 		return;
+ 	}
+ 
+-- 
+2.30.2
 
