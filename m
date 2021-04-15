@@ -2,126 +2,123 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E01AFC433ED
-	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Apr 2021 17:39:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DF65C433B4
+	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Apr 2021 07:08:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AB27F61166
-	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Apr 2021 17:39:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E657B611AB
+	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Apr 2021 07:08:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351146AbhDNRjg (ORCPT
+        id S231134AbhDOHJR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 14 Apr 2021 13:39:36 -0400
-Received: from mail-40136.protonmail.ch ([185.70.40.136]:54505 "EHLO
-        mail-40136.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234179AbhDNRje (ORCPT
+        Thu, 15 Apr 2021 03:09:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54024 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230481AbhDOHJR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 14 Apr 2021 13:39:34 -0400
-Date:   Wed, 14 Apr 2021 17:39:03 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bryanbrattlof.com;
-        s=protonmail3; t=1618421951;
-        bh=BTrwt4Py8YXtFw2ZFlV3iiTbqXa6G4CKZAeFPHvZZms=;
-        h=Date:To:From:Cc:Reply-To:Subject:From;
-        b=MnAv+BJ95v0qai0I4TSjKX4Em1PZBnT4XCUxPvUatFON7udnunMQ1adb0qhIqFI1B
-         +iDVp9xXwuREAA8vKepwHLxD0udDVXlGhAcrkqqFLLJmYPpC0veaI1ykKK1osM1kna
-         Bk4Vr78U9Qjs0MRbTEW7stIaxnqx+6Fxgtd68yYdSHDt4EzWqo8aivnofXexlt91Va
-         jukfGfWRUJpZhXnri+QMzKrlfI2Pk8jEKUksDHcFGC4byD6Cis41U7Hluam2xRviZA
-         JmmdZmp+tXiq8CfP0TvarjQ8rx9AgdhTui/INcSEHI8tQUzYMBCvgzzATxxPGUbN4w
-         OenRlz1oO3TDQ==
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Larry Finger <Larry.Finger@lwfinger.net>
-From:   Bryan Brattlof <hello@bryanbrattlof.com>
-Cc:     linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Bryan Brattlof <hello@bryanbrattlof.com>
-Reply-To: Bryan Brattlof <hello@bryanbrattlof.com>
-Subject: [PATCH v2] staging: rtl8723bs: remove sdio_drv_priv structure
-Message-ID: <20210414173751.317762-1-hello@bryanbrattlof.com>
+        Thu, 15 Apr 2021 03:09:17 -0400
+Received: from mail-ot1-x32f.google.com (mail-ot1-x32f.google.com [IPv6:2607:f8b0:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 849FFC061574;
+        Thu, 15 Apr 2021 00:08:54 -0700 (PDT)
+Received: by mail-ot1-x32f.google.com with SMTP id k14-20020a9d7dce0000b02901b866632f29so21741436otn.1;
+        Thu, 15 Apr 2021 00:08:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nvv9Z+5IWRSsuwqqnBpx+MZMoeQomd87AFJ4WvcFBio=;
+        b=fELtbrT9MMPajwbDhgBIp13s7ytuo9ZP436u5bHiLqI96pnWwNG5zhIfjL9Dw171m9
+         fgJQDkAnw4nnD67piz3+EUgSD97l2fMIi2PAliv47JT18EwJeet92Tk6/rxCnCh7x0vV
+         7A7B5sBCJKb+eCKX60HGUvjQraaDuXEGIqle1953TFREiTFvvUsoqfJTZRlpQlAF+gKE
+         db8+fYW/SYMcJLsYG9M+aWLLBz/Ptng/B/iZjwwpjXsXR2q6XjFKU3GqS2C9dZv194e/
+         77ZLOqxbOwrdA0Tl3lLF+WkUukRsQSMj8ryC+DoRJYTD+gNGZv7WIqo43RV9sKg3s/Sx
+         LFiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nvv9Z+5IWRSsuwqqnBpx+MZMoeQomd87AFJ4WvcFBio=;
+        b=S3dd5PSQTmo0Y+pcMEtDHpfVgScFNkoAeOnNS9k74z5lfCGlHp1pIiTXKPvxD6FXGe
+         AdXFk4jkPyGq4eX+QB33iLWcmcH1CutDHbd0Ca6E2WfzPEV6aNSM/9aTcStHDhfOWzlM
+         L3xE2Gawoo07nSfmla0xh7yiSiG8Pb0alGA7b3mVBKwz9jQQIZQFkqGZ1/X7QctLxODu
+         jDRLwGV0CQoUp69JKj8ITbx8wECl0R4zn2bZixflShKSLT4HZgI4i02xYgSdQjdgtwWe
+         4jxtu24SxrWJ4luKmUurSDG1FxpZl98D9hmCS4QBKiuLLhiMFXU2J73Ibn30MJmOL6e5
+         z+9Q==
+X-Gm-Message-State: AOAM530XqGIkox0r1usmuRvTdGZHxRetlKoDtMkMjKgTfr0tLQ1Sa27W
+        NQjf3bZkvmtWNVV/LM3/K10TUfqNL5MQ1C8CnXh/xfg7ejX76Q==
+X-Google-Smtp-Source: ABdhPJyS9hsAmAbnFATfr51nALqPsm1RRwEbtQKsklRn8JfEb5jRAgLViDjfoMM3N8DgpnbsDPhmyxSQLK5BbaQ8tig=
+X-Received: by 2002:a9d:ecf:: with SMTP id 73mr1587984otj.339.1618470533770;
+ Thu, 15 Apr 2021 00:08:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <20210412161012.1628202-1-colin.king@canonical.com> <CAK8P3a2pSRu0OKDNrNJSdviRgcv8Lw1mwZr5opv=UbtHLps2oQ@mail.gmail.com>
+In-Reply-To: <CAK8P3a2pSRu0OKDNrNJSdviRgcv8Lw1mwZr5opv=UbtHLps2oQ@mail.gmail.com>
+From:   Oded Gabbay <oded.gabbay@gmail.com>
+Date:   Thu, 15 Apr 2021 10:08:26 +0300
+Message-ID: <CAFCwf10S8WhEZtpwD=2AgbgopMahxHofp-yXvsZ4GWkrctPRAQ@mail.gmail.com>
+Subject: Re: [PATCH][next] habanalabs/gaudi: Fix uninitialized return code rc
+ when read size is zero
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Colin King <colin.king@canonical.com>
+Cc:     Oded Gabbay <ogabbay@kernel.org>, Ofir Bitton <obitton@habana.ai>,
+        kernel-janitors@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The sdio_drv_priv structure is a small wrapper around sdio_driver in
-linux/mmc/sdio_func.h with an added drv_registered integer.
+On Mon, Apr 12, 2021 at 9:41 PM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Mon, Apr 12, 2021 at 6:11 PM Colin King <colin.king@canonical.com> wrote:
+> >
+> > From: Colin Ian King <colin.king@canonical.com>
+> >
+> > In the case where size is zero the while loop never assigns rc and the
+> > return value is uninitialized. Fix this by initializing rc to zero.
+> >
+> > Addresses-Coverity: ("Uninitialized scalar variable")
+> > Fixes: 639781dcab82 ("habanalabs/gaudi: add debugfs to DMA from the device")
+> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> > ---
+> >  drivers/misc/habanalabs/gaudi/gaudi.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/misc/habanalabs/gaudi/gaudi.c b/drivers/misc/habanalabs/gaudi/gaudi.c
+> > index 8730b691ec61..b751652f80a8 100644
+> > --- a/drivers/misc/habanalabs/gaudi/gaudi.c
+> > +++ b/drivers/misc/habanalabs/gaudi/gaudi.c
+> > @@ -6252,7 +6252,7 @@ static int gaudi_debugfs_read_dma(struct hl_device *hdev, u64 addr, u32 size,
+> >         dma_addr_t dma_addr;
+> >         void *kernel_addr;
+> >         bool is_eng_idle;
+> > -       int rc, dma_id;
+> > +       int rc = 0, dma_id;
+> >
+> >         kernel_addr = hdev->asic_funcs->asic_dma_alloc_coherent(
+> >                                                 hdev, SZ_2M,
+>
+>
+> In general, I don't like adding initializations during the declaration as that
+> tends to hide warnings for the cases where a later initialization is
+> missing. In this case it looks correct though.
+>
+> Acked-by: Arnd Bergmann <arnd@arndb.de>
 
-drv_registered is never used anywhere in the driver and only assigned to
-during the sdio registering and unregistering process. We can safely
-remove sdio_drv_priv and use the sdio_driver structure directly.
+I don't mind taking this patch for eliminating the warning but fyi,
+the caller function (hl_dma_size_write) checks that the size is not
+zero. If the size is zero, we never reach this function.
 
-Signed-off-by: Bryan Brattlof <hello@bryanbrattlof.com>
----
-Changes from:
- v1 -> v2: rebased to current staging-next
+Greg, do you mind applying it directly to your -next branch ? I don't
+have anything pending and I'm too lazy sending a pull request on a
+single patch ;)
 
- drivers/staging/rtl8723bs/os_dep/sdio_intf.c | 28 +++++++-------------
- 1 file changed, 9 insertions(+), 19 deletions(-)
+Reviewed-by: Oded Gabbay <ogabbay@kernel.org>
 
-diff --git a/drivers/staging/rtl8723bs/os_dep/sdio_intf.c b/drivers/staging=
-/rtl8723bs/os_dep/sdio_intf.c
-index a9a9631dd23c..c235c47e735a 100644
---- a/drivers/staging/rtl8723bs/os_dep/sdio_intf.c
-+++ b/drivers/staging/rtl8723bs/os_dep/sdio_intf.c
-@@ -36,17 +36,12 @@ static const struct dev_pm_ops rtw_sdio_pm_ops =3D {
- =09.resume=09=3D rtw_sdio_resume,
- };
-=20
--struct sdio_drv_priv {
--=09struct sdio_driver r871xs_drv;
--=09int drv_registered;
--};
--
--static struct sdio_drv_priv sdio_drvpriv =3D {
--=09.r871xs_drv.probe =3D rtw_drv_init,
--=09.r871xs_drv.remove =3D rtw_dev_remove,
--=09.r871xs_drv.name =3D "rtl8723bs",
--=09.r871xs_drv.id_table =3D sdio_ids,
--=09.r871xs_drv.drv =3D {
-+static struct sdio_driver rtl8723bs_sdio_driver =3D {
-+=09.probe =3D rtw_drv_init,
-+=09.remove =3D rtw_dev_remove,
-+=09.name =3D "rtl8723bs",
-+=09.id_table =3D sdio_ids,
-+=09.drv =3D {
- =09=09.pm =3D &rtw_sdio_pm_ops,
- =09}
- };
-@@ -496,13 +491,10 @@ static int __init rtw_drv_entry(void)
- =09DBG_871X_LEVEL(_drv_always_, "rtl8723bs BT-Coex version =3D %s\n", BTCO=
-EXVERSION);
- #endif /*  BTCOEXVERSION */
-=20
--=09sdio_drvpriv.drv_registered =3D true;
-=20
--=09ret =3D sdio_register_driver(&sdio_drvpriv.r871xs_drv);
--=09if (ret !=3D 0) {
--=09=09sdio_drvpriv.drv_registered =3D false;
-+=09ret =3D sdio_register_driver(&rtl8723bs_sdio_driver);
-+=09if (ret !=3D 0)
- =09=09rtw_ndev_notifier_unregister();
--=09}
-=20
- =09DBG_871X_LEVEL(_drv_always_, "module init ret =3D%d\n", ret);
- =09return ret;
-@@ -512,9 +504,7 @@ static void __exit rtw_drv_halt(void)
- {
- =09DBG_871X_LEVEL(_drv_always_, "module exit start\n");
-=20
--=09sdio_drvpriv.drv_registered =3D false;
--
--=09sdio_unregister_driver(&sdio_drvpriv.r871xs_drv);
-+=09sdio_unregister_driver(&rtl8723bs_sdio_driver);
-=20
- =09rtw_ndev_notifier_unregister();
-=20
---=20
-2.27.0
-
-
+Thanks,
+Oded
