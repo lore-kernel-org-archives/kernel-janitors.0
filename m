@@ -2,87 +2,71 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B849C433B4
-	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Apr 2021 15:29:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A030C433B4
+	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Apr 2021 15:59:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5C22260FF1
-	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Apr 2021 15:29:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3EE26611C2
+	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Apr 2021 15:59:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343667AbhDPPaF (ORCPT
+        id S237789AbhDPP72 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 16 Apr 2021 11:30:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57380 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243009AbhDPPaE (ORCPT
+        Fri, 16 Apr 2021 11:59:28 -0400
+Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:38614 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235483AbhDPP72 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 16 Apr 2021 11:30:04 -0400
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFEB7C061574
-        for <kernel-janitors@vger.kernel.org>; Fri, 16 Apr 2021 08:29:39 -0700 (PDT)
-Received: by mail-pl1-x636.google.com with SMTP id u15so5615224plf.10
-        for <kernel-janitors@vger.kernel.org>; Fri, 16 Apr 2021 08:29:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=p+GVt4zFmKmqKxkmzGI4Q5a/DBpLPH80j/5btmM1LmY=;
-        b=xoRW3IYe922zO/lzORn0p+Xob3qxvdX+UnZ3jGlz/goun4RYxt/xKdSMkm+ZcSFGvp
-         OGQ+OJ4CFGN1ip7TcfW0wZVUd/evc/G8BPcQRXnDTmyAR2FyopuxFjIaEoIX2T2Bw2Xk
-         2GLFDgRt8NR98KcfxBvnOE1Zqmq1BCWh7C7nPX2TdU0zB5oGUhLpARKaF6BmGLTyqJGd
-         08+UDLagE5NHj4yQ538i0aEd/5p1dIghqOEpKJqOTyNo20j85WKmxtoCtPbSFhfWWjes
-         7LNszsmrpa4UfiVOCU2CmH/340pfVuDOMDJ1j6mBSTbuRC5Ese40W4vyPcpgLK7GlaKx
-         /RBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=p+GVt4zFmKmqKxkmzGI4Q5a/DBpLPH80j/5btmM1LmY=;
-        b=Ji8Ggn6ZCQk8j3G+903cKGp1dguX9GoPdMcFJhxTDgNSlNRMAfWLUoUu41Lqfzuf/q
-         pcuMDimxmJ96OdgUYv3HApAa5DJ0bCvcvqfOuUTMxR6yPUHA8A8Lc4FeaQEd7jL2lHZX
-         CPqYfdMqrQtzhTYPEhvYtnsGrzxg0NgtU8fQlVPKcZYHAkPB4+eElDc9sXzRhCKkTnEf
-         YDMzkZGzwcRH4ONcD4BaV54mUpvo2bXLahfQPXreOq8h0x4G4xU8wZ46veuWGs6GLuvd
-         GQyfKVw7UhNHFR7ko2wuhsLm/X15yOtNQsz9ynzjGSLsl3qAIgvMPj8JMr7n8oYGQfTD
-         k1UQ==
-X-Gm-Message-State: AOAM531qfyujEbRPWPvVyxtZm6S5ha+kscua6isjBPwFUsIBxv4L4q3L
-        RvuC7Zwc2Z/MxU+u6wlFYn8GSAKYRqVjPKQr6BFxXw==
-X-Google-Smtp-Source: ABdhPJyZtucPw7kU6E7JEzddw3OxyuG6Na85DhOxrZ1BNc/ZLcHmt799YZYyVsyNY88iS5vemCAFByqQ4FRtUsBe4ns=
-X-Received: by 2002:a17:90a:b112:: with SMTP id z18mr10675954pjq.18.1618586979275;
- Fri, 16 Apr 2021 08:29:39 -0700 (PDT)
+        Fri, 16 Apr 2021 11:59:28 -0400
+Received: from localhost.localdomain ([86.243.172.93])
+        by mwinf5d18 with ME
+        id tTyz2400G21Fzsu03Tyz5Q; Fri, 16 Apr 2021 17:59:00 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 16 Apr 2021 17:59:00 +0200
+X-ME-IP: 86.243.172.93
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     apw@canonical.com, joe@perches.com, dwaipayanray1@gmail.com,
+        lukas.bulwahn@gmail.com
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] checkpatch: Improve ALLOC_ARRAY_ARGS test
+Date:   Fri, 16 Apr 2021 17:58:57 +0200
+Message-Id: <a1ac975aaabc9f71397b75254f833920428411e0.1618588673.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-References: <20210413160318.2003699-1-weiyongjun1@huawei.com>
-In-Reply-To: <20210413160318.2003699-1-weiyongjun1@huawei.com>
-From:   Loic Poulain <loic.poulain@linaro.org>
-Date:   Fri, 16 Apr 2021 17:38:11 +0200
-Message-ID: <CAMZdPi9c7L7_4Pzr82zfiYOXp128gnwMEpSex7S9-tQ=jWvNWA@mail.gmail.com>
-Subject: Re: [PATCH -next] bus: mhi: pci_generic: Fix possible use-after-free
- in mhi_pci_remove()
-To:     Wei Yongjun <weiyongjun1@huawei.com>
-Cc:     Manivannan Sadhasivam <mani@kernel.org>,
-        Hemant Kumar <hemantk@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, 13 Apr 2021 at 17:54, Wei Yongjun <weiyongjun1@huawei.com> wrote:
->
-> This driver's remove path calls del_timer(). However, that function
-> does not wait until the timer handler finishes. This means that the
-> timer handler may still be running after the driver's remove function
-> has finished, which would result in a use-after-free.
->
-> Fix by calling del_timer_sync(), which makes sure the timer handler
-> has finished, and unable to re-schedule itself.
->
-> Fixes: 8562d4fe34a3 ("mhi: pci_generic: Add health-check")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+The devm_ variant of 'kcalloc()' and 'kmalloc_array()' are not tested
+Add the corresponding check.
 
-Reviewed-by: Loic Poulain <loic.poulain@linaro.org>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ scripts/checkpatch.pl | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 44b9dc330ac6..c778edfdbad7 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -7006,9 +7006,9 @@ sub process {
+ 		}
+ 
+ # check for alloc argument mismatch
+-		if ($line =~ /\b(kcalloc|kmalloc_array)\s*\(\s*sizeof\b/) {
++		if ($line =~ /\b(devm_|)(kcalloc|kmalloc_array)\s*\(\s*sizeof\b/) {
+ 			WARN("ALLOC_ARRAY_ARGS",
+-			     "$1 uses number as first arg, sizeof is generally wrong\n" . $herecurr);
++			     "$1$2 uses number as first arg, sizeof is generally wrong\n" . $herecurr);
+ 		}
+ 
+ # check for multiple semicolons
+-- 
+2.27.0
+
