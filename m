@@ -2,81 +2,58 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE300C433ED
-	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Apr 2021 10:37:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C471C433ED
+	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Apr 2021 11:34:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BE9FC610CD
-	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Apr 2021 10:37:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8078B61153
+	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Apr 2021 11:34:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240030AbhDPKhx (ORCPT
+        id S242812AbhDPLe3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 16 Apr 2021 06:37:53 -0400
-Received: from mail-wr1-f53.google.com ([209.85.221.53]:37494 "EHLO
-        mail-wr1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235292AbhDPKhv (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 16 Apr 2021 06:37:51 -0400
-Received: by mail-wr1-f53.google.com with SMTP id j5so25245731wrn.4;
-        Fri, 16 Apr 2021 03:37:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=P+A7eG2xptzjgbsbSvyXQfGCX8bfwC+5K1b6fy+53iQ=;
-        b=Y6garCGQTPPG41ejLOvvlBwxXwJjtNGp9A2eI9LcX8wSDofcSNe88dS6EXSIZaycR7
-         dvb/CRIAd6N93BaiaF466cVmaHJFoZNbeAYqYn1puZNLpVdOGeO1G2fH9IyFhSn2j6uv
-         6iL2023QT+WQPWn8GpbYwy9ik6Jxse1nZROR16fA4gp71c6TSpLhADVzqVhOvCyb10ML
-         3L5nHMVSxROkoW60ditxaPTXiEsKFGCidcedkI+W1mfNqE0Z5ECx8TaNguA+13LX9wCQ
-         30mexfAnOHNnaOBowPFn0DRNSBL5diLLwyMBFfbXGSTp6qOZmNyKxpZP+3VOEMCErUP4
-         mdlQ==
-X-Gm-Message-State: AOAM532cynuRnyR/CmHkilC2DIGBV10WNjTJS4lnVIh17dr8kmjyDuT5
-        SjYHo0Wlw6xgbA8rtAwrNEHWXqzKyh4=
-X-Google-Smtp-Source: ABdhPJy4e4WGoztuHaP/Faw1E88xX/1PqKXlrwj5+H8nmp+omFyhbTiR7gcOqkpohHVCVXq/eizXtw==
-X-Received: by 2002:a5d:6c62:: with SMTP id r2mr3159155wrz.37.1618569445807;
-        Fri, 16 Apr 2021 03:37:25 -0700 (PDT)
-Received: from liuwe-devbox-debian-v2 ([51.145.34.42])
-        by smtp.gmail.com with ESMTPSA id g84sm8528560wmf.30.2021.04.16.03.37.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Apr 2021 03:37:25 -0700 (PDT)
-Date:   Fri, 16 Apr 2021 10:37:24 +0000
-From:   Wei Liu <wei.liu@kernel.org>
-To:     Andrea Parri <parri.andrea@gmail.com>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Wei Liu <wei.liu@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dexuan Cui <decui@microsoft.com>, linux-hyperv@vger.kernel.org,
+        Fri, 16 Apr 2021 07:34:29 -0400
+Received: from helcar.hmeau.com ([216.24.177.18]:53170 "EHLO fornost.hmeau.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235505AbhDPLe2 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 16 Apr 2021 07:34:28 -0400
+Received: from gwarestrin.arnor.me.apana.org.au ([192.168.103.7])
+        by fornost.hmeau.com with smtp (Exim 4.92 #5 (Debian))
+        id 1lXMjT-0003am-Jc; Fri, 16 Apr 2021 21:33:56 +1000
+Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Fri, 16 Apr 2021 21:33:55 +1000
+Date:   Fri, 16 Apr 2021 21:33:55 +1000
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     davem@davemloft.net, linux-crypto@vger.kernel.org,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] Drivers: hv: vmbus: Use after free in __vmbus_open()
-Message-ID: <20210416103724.f3unhyu72pbp2qr3@liuwe-devbox-debian-v2>
-References: <YHV3XLCot6xBS44r@mwanda>
- <20210413154221.GA2369@anparri>
+Subject: Re: [PATCH] crypto: crc32-generic - Use SPDX-License-Identifier
+Message-ID: <20210416113355.GP16633@gondor.apana.org.au>
+References: <c7fb3d1f92d95cedd74b5caff8dbfe2f16370814.1618086551.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210413154221.GA2369@anparri>
+In-Reply-To: <c7fb3d1f92d95cedd74b5caff8dbfe2f16370814.1618086551.git.christophe.jaillet@wanadoo.fr>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Apr 13, 2021 at 05:42:21PM +0200, Andrea Parri wrote:
-> On Tue, Apr 13, 2021 at 01:50:04PM +0300, Dan Carpenter wrote:
-> > The "open_info" variable is added to the &vmbus_connection.chn_msg_list,
-> > but the error handling frees "open_info" without removing it from the
-> > list.  This will result in a use after free.  First remove it from the
-> > list, and then free it.
-> > 
-> > Fixes: 6f3d791f3006 ("Drivers: hv: vmbus: Fix rescind handling issues")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+On Sat, Apr 10, 2021 at 10:30:16PM +0200, Christophe JAILLET wrote:
+> Use SPDX-License-Identifier: GPL-2.0-only, instead of hand writing it.
 > 
-> I had this 'queued' in my list,
+> This also removes a reference to http://www.xyratex.com which seems to be
+> down.
 > 
-> Reviewed-by: Andrea Parri <parri.andrea@gmail.com>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  crypto/crc32_generic.c | 24 +-----------------------
+>  1 file changed, 1 insertion(+), 23 deletions(-)
 
-Applied. Thanks.
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
