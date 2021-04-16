@@ -2,182 +2,100 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-20.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59596C43460
-	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Apr 2021 02:54:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D223CC433B4
+	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Apr 2021 07:34:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 39533610FB
-	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Apr 2021 02:54:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 97AA361166
+	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Apr 2021 07:34:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235937AbhDPCy1 (ORCPT
+        id S239578AbhDPHem (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 15 Apr 2021 22:54:27 -0400
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:33135 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235863AbhDPCy1 (ORCPT
+        Fri, 16 Apr 2021 03:34:42 -0400
+Received: from mail-qv1-f42.google.com ([209.85.219.42]:34522 "EHLO
+        mail-qv1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239462AbhDPHem (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 15 Apr 2021 22:54:27 -0400
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179]) (authenticated)
-        by conssluserg-04.nifty.com with ESMTP id 13G2rj5v020114;
-        Fri, 16 Apr 2021 11:53:45 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com 13G2rj5v020114
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1618541625;
-        bh=C3o2fuGogysZj6JUvfMYyt2JuWyfL7NiiLTCUac1I+g=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=eonCGiJQHsqpZ/iYfUV6r6YN4izdBpsXxeIWZewDQj+SgmwL66MGogDS/0R8HX2TI
-         uqle9ZeL/Luag8A7Jf/+ae5slrDcOZiq9kId4oPQ2Ckklykl/Di4ZAyLIudBcAZV9O
-         kQs4NbltQxQzG1ym0cPTIIORZuwETzHzgQReiE0wZjI4f6d/lGSPM72idliwRpcXQC
-         atM6SOmnp8kqIOmhSA1Ol7biYW0P9dCX2PR4xUUkFpPQ1wT9ttzavICvOKySP6+hKu
-         zZ6j3IxAnWfTjAa5wjbjh7YkRK2g5fVgYotFhrWvtDveEXJUMOHSWXPoGxwy0ztptf
-         U6GnkrKNg6cMA==
-X-Nifty-SrcIP: [209.85.215.179]
-Received: by mail-pg1-f179.google.com with SMTP id b17so18262094pgh.7;
-        Thu, 15 Apr 2021 19:53:45 -0700 (PDT)
-X-Gm-Message-State: AOAM533OqOBJ+KKL1TLWlq23fMsmMMlA8f+GOPGwFhRF0GQW8yfK9LBv
-        bRrF01VOrnAK85T8WEDCnyGaRGXGWDZ6LakK5a8=
-X-Google-Smtp-Source: ABdhPJye0T0Zqs/E4nSVHtl6qDvrTFn2swAHtiCk0RlhR0STxhUMS97/R14pGv5lOTA2CMcjQdgANBZlVex2nBHNDJA=
-X-Received: by 2002:a05:6a00:2303:b029:249:b91e:72f0 with SMTP id
- h3-20020a056a002303b0290249b91e72f0mr5935536pfh.80.1618541624454; Thu, 15 Apr
- 2021 19:53:44 -0700 (PDT)
+        Fri, 16 Apr 2021 03:34:42 -0400
+Received: by mail-qv1-f42.google.com with SMTP id j3so12999723qvs.1;
+        Fri, 16 Apr 2021 00:34:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=uFu1ansvgQWTnPWidX6DS+YOvYK1ittywA6eOG1qupA=;
+        b=c+20I+f/+5NcwR7XIOzF2TMduM0BpkNsu/uE7CZB0lNh5AfcArtH65w8QR2g69W4Md
+         NNP8Yj/aCqNTJGHmmaJIG7VBMKiAYHFb21ig/DfkUt1fptF7Ynez6nleTuACMZ5uBH+o
+         3VmZwGnmJXMGhbL3D4trs0yo0Ml80ZLtZ7exwznCAzQgJLwGWU36G+wIp8NaDwJrZSaq
+         mLpNbWjU0CKzrcAAZYJeD5vZGsWITwQZe9SsWr4dmgIWexyywpdspWUrOzIC7Bexje1I
+         Tuk61BFxt+Esml5KqK8+t1rOb1HD9kXOV9H/TUjbIqnUQTIfGSDmYzPZZknF9Q9zj3e2
+         hhlA==
+X-Gm-Message-State: AOAM531GLj55DKTvyB/mkfr9McneK6uRABB/DLFXZuUVZ6DE8lcnuCxT
+        MA1qI9T9btYs5oiH8OkuDVKbAzel4e1mJg==
+X-Google-Smtp-Source: ABdhPJxXUubcn3MFVfm3NxiCyXVl+a9KvQgVJPLFIyw/tsMEoC1x7INMcvMWw9rFvQ0eqSZXiIcEnQ==
+X-Received: by 2002:a0c:f2c8:: with SMTP id c8mr6999428qvm.35.1618558457628;
+        Fri, 16 Apr 2021 00:34:17 -0700 (PDT)
+Received: from [10.68.32.192] (broadband-188-32-236-56.ip.moscow.rt.ru. [188.32.236.56])
+        by smtp.gmail.com with ESMTPSA id a26sm3602955qtg.60.2021.04.16.00.34.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 16 Apr 2021 00:34:17 -0700 (PDT)
+Subject: Re: [PATCH] floppy: remove redundant assignment to variable st
+To:     Colin King <colin.king@canonical.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Willy Tarreau <w@1wt.eu>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210415130020.1959951-1-colin.king@canonical.com>
+From:   Denis Efremov <efremov@linux.com>
+Message-ID: <a732fe0b-217b-084b-eecb-ccbc21cbbfc9@linux.com>
+Date:   Fri, 16 Apr 2021 10:34:12 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-References: <20210407152457.497346-1-colin.king@canonical.com>
- <CAK7LNAT+JTg5QYYbYqCm+m11X7CF_ZWyYRA4eAtqeTEuHRqoyw@mail.gmail.com> <20210415181850.GD6021@kadam>
-In-Reply-To: <20210415181850.GD6021@kadam>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Fri, 16 Apr 2021 11:53:07 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATySocPRr4BdaKr5_GZ=G4tQYgPQEDe0piiTS_qiWawkA@mail.gmail.com>
-Message-ID: <CAK7LNATySocPRr4BdaKr5_GZ=G4tQYgPQEDe0piiTS_qiWawkA@mail.gmail.com>
-Subject: Re: [PATCH] clk: uniphier: Fix potential infinite loop
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Colin King <colin.king@canonical.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        kernel-janitors@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20210415130020.1959951-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Apr 16, 2021 at 3:19 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> On Fri, Apr 09, 2021 at 03:46:47PM +0900, Masahiro Yamada wrote:
-> > On Thu, Apr 8, 2021 at 12:25 AM Colin King <colin.king@canonical.com> wrote:
-> > >
-> > > From: Colin Ian King <colin.king@canonical.com>
-> > >
-> > > The for-loop iterates with a u8 loop counter i and compares this
-> > > with the loop upper limit of num_parents that is an int type.
-> > > There is a potential infinite loop if num_parents is larger than
-> > > the u8 loop counter. Fix this by making the loop counter the same
-> > > type as num_parents.
-> > >
-> > > Addresses-Coverity: ("Infinite loop")
-> > > Fixes: 734d82f4a678 ("clk: uniphier: add core support code for UniPhier clock driver")
-> > > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > > ---
-> > >  drivers/clk/uniphier/clk-uniphier-mux.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/clk/uniphier/clk-uniphier-mux.c b/drivers/clk/uniphier/clk-uniphier-mux.c
-> > > index 462c84321b2d..ce219e0d2a85 100644
-> > > --- a/drivers/clk/uniphier/clk-uniphier-mux.c
-> > > +++ b/drivers/clk/uniphier/clk-uniphier-mux.c
-> > > @@ -34,7 +34,7 @@ static u8 uniphier_clk_mux_get_parent(struct clk_hw *hw)
-> > >         int num_parents = clk_hw_get_num_parents(hw);
-> > >         int ret;
-> > >         unsigned int val;
-> > > -       u8 i;
-> > > +       int i;
-> > >
-> > >         ret = regmap_read(mux->regmap, mux->reg, &val);
-> > >         if (ret)
-> > > --
-> > > 2.30.2
-> > >
-> >
-> > clk_hw_get_num_parents() returns 'unsigned int', so
-> > I think 'num_parents' should also have been 'unsigned int'.
-> >
-> > Maybe, the loop counter 'i' also should be 'unsigned int' then?
->
-> The clk_hw_get_num_parents() function returns 0-255 so the original code
-> works fine.
+Hi,
 
-True.  clk->core->num_parents is u8,
-but it is not clear just by looking at the
-prototype of clk_hw_get_num_parents().
+On 4/15/21 4:00 PM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The variable st is being assigned a value that is never read and
+> it is being updated later with a new value. The initialization is
+> redundant and can be removed.
+> 
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-At least, it is not clear enough for tools,
-and actually Coverity raised a flag.
+Applied, thanks!
 
+https://github.com/evdenis/linux-floppy/commit/aeec7983d49a5f972df47c742ff8373df15b0d28
 
-Personally, I prefer 'unsigned int' (or 'int')
-when I count the number of something.
-Historically, the clk subsystem uses u8,
-(maybe to save memory??), and there exists
-distortion.
-
-For example, the return type of
-uniphier_clk_mux_get_parent() is u8,
-but it actually returns -EINVAL for error cases.
-
-So, u8 is not wide enough, in my opinion.
-
-
-
->
-> It should basically always be "int i;"  That's the safest assumption.
-> There are other case where it has to be size_t but in those cases I
-> think people should call the list iterator something else instead of "i"
-> like "size_t pg_idx;".
->
-> Making everthing u32 causes more bugs than it prevents.  Signedness bugs
-> with comparing to zero, type promotion bugs, or subtraction bugs where
-> subtracting wraps to a high value.  It's rare to loop more than INT_MAX
-> times in the kernel.  When we do need to count about 2 million then
-> we're probably not going to stop counting at 4 million, we're going to
-> go to 10 million or higher so size_t is more appropriate than u32.
->
-> Btw, if you have a loop that does:
->
->         for (i = 0; i < UINT_MAX; i++) {
->
-> that loop works exactly the same if "i" is an int or if it's a u32
-> because of type promotion.
-
-You are right.
-
-Perhaps, in hindsight, the following were natural:
-
-
-   unsigned int num_parents = clk_hw_get_num_parents(hw);
-   ...
-   int i;
-
-
-I am fine with this if it is not too late.
-But, Stephen has already picked up this patch.
-
-
-
-
-
->  So you have to look really hard to find a
-> place where changing a loop iterator from int to u32 fixes bug in real
-> life.
->
-> regards,
-> dan carpenter
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+> ---
+>  arch/x86/include/asm/floppy.h | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/arch/x86/include/asm/floppy.h b/arch/x86/include/asm/floppy.h
+> index d43717b423cb..6ec3fc969ad5 100644
+> --- a/arch/x86/include/asm/floppy.h
+> +++ b/arch/x86/include/asm/floppy.h
+> @@ -74,7 +74,6 @@ static irqreturn_t floppy_hardint(int irq, void *dev_id)
+>  		int lcount;
+>  		char *lptr;
+>  
+> -		st = 1;
+>  		for (lcount = virtual_dma_count, lptr = virtual_dma_addr;
+>  		     lcount; lcount--, lptr++) {
+>  			st = inb(virtual_dma_port + FD_STATUS);
+> 
