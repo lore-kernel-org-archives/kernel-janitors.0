@@ -2,92 +2,202 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B790C433ED
-	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Apr 2021 12:30:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D931CC43460
+	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Apr 2021 12:42:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0879B611AC
-	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Apr 2021 12:30:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3F9D611AE
+	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Apr 2021 12:42:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241025AbhDPMbI (ORCPT
+        id S241801AbhDPMnI (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 16 Apr 2021 08:31:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44996 "EHLO
+        Fri, 16 Apr 2021 08:43:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240783AbhDPMbC (ORCPT
+        with ESMTP id S233916AbhDPMnH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 16 Apr 2021 08:31:02 -0400
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C311C061760
-        for <kernel-janitors@vger.kernel.org>; Fri, 16 Apr 2021 05:30:34 -0700 (PDT)
-Received: by mail-pj1-x102a.google.com with SMTP id k23-20020a17090a5917b02901043e35ad4aso16281740pji.3
-        for <kernel-janitors@vger.kernel.org>; Fri, 16 Apr 2021 05:30:34 -0700 (PDT)
+        Fri, 16 Apr 2021 08:43:07 -0400
+Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7131C061574
+        for <kernel-janitors@vger.kernel.org>; Fri, 16 Apr 2021 05:42:42 -0700 (PDT)
+Received: by mail-lj1-x22b.google.com with SMTP id a36so20059480ljq.8
+        for <kernel-janitors@vger.kernel.org>; Fri, 16 Apr 2021 05:42:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=5iDQ+n5O+yKXMjT+TRIf4eZ4wu1n263xyTGUJyOMGZk=;
-        b=poaug3sfihBK/PNZlpnWudeGAAaaZGqBflAJqkGlUdZOkob3Rlj+kRbCgHuXqrGxfU
-         9bH/OsiNwI4rE8Vyh8E0eI+fBJiZW6S5L6MDSTSHLTQIrKPvGA5XJFdJKL0BRDFFO9uZ
-         +bEA+KMj6VmchABU9cEWhLJqky38zZHnzlHJl1mATVroUHQ906GtpZpAGLc91o1uGxDk
-         NIRVH/vM0cBnPZ9qW8xCdtXBHlhhOeXjhJyGEFCNRjrpCn5c/qlXpGUYB+LCqw6Q5lvy
-         hNsOt34tkvimsHY5eCftYUJNtyh1JkbMpLRUOMcBYgOQRV0R0gtEUfppI/YbR3Qtp+9E
-         QizQ==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xSvAjT7fJoqP/gXy5cezTHjGsp7EVSxfqA5TLEclTpE=;
+        b=N2R8BSwyq6L8HhG5VF4U5Z8XYGGb6pNZoJAMJ/1ur+kAdwX70KKdhm9t/ER//BaaGC
+         fC4yv1tQxMxfYFuoTo68rLF2UuyW3JekVhz9+xQTJG4RX1Wt0FDpW6dQvwTKDH8OM8Zz
+         XAo0SRVp1WoY1+uTX8CCAhHkBip3hAiwW/z33RlDq4grtd4yD6iC5gCsYfE3/YttwM74
+         9ESseF9WStozPeMahssUKibfjLnzyh0IYD2MntIGJfmz/2Q41q3iwDSPRZEbSLBVmSor
+         LIkZIbmEOSH4ZRpgTXu6gbMHD7g9CJ48nYg3M1i/vvv2u+k7s9/zlK1edCwq5oRehlTe
+         3GyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=5iDQ+n5O+yKXMjT+TRIf4eZ4wu1n263xyTGUJyOMGZk=;
-        b=hu9bWf09QCyeWNcStXU4DkN5pP9kRl2ISMbKU+e3/FOveS8/ogXE1KWrqQUDSEB2T3
-         45CIMDq7mx/ASNoZrmk8KaDjx3lUMg6SL33F5YKVXeN4R04AVbCH8lvsaEQN7y8JqzZy
-         dOH+2dkNkbJ6zHtip0wMEiESKyqo5RnR43gzuC/VxJsYxl1QENUSoOWFEWK5+Wgi8/za
-         xg2tB2Drkjv3Y20ZrjR4tbwsmm6gvcW2e3tXtou5LM6aSMz0qtsPY64rJ0qLHofizhKH
-         t6OA/7anFVgVIoYKhqWKhPfv3QALGspBIuBH3V4CH4ph63d5Ht4nKRhThOLpSdVO14OP
-         iveQ==
-X-Gm-Message-State: AOAM5337iRMaAR5y2ZYijeJNv/rUU5UayrlB3w2hdB/NzwzuqIYFM8M1
-        AUNgYD5T5IcuX4jsCfFIogp25w==
-X-Google-Smtp-Source: ABdhPJw9rE4NqIus0mK7zt2Ef16XnLgBz/gbAgkWlhy2LAvQdKD98QnKkKd465mwQJSXov69gYu8Zg==
-X-Received: by 2002:a17:90a:7f95:: with SMTP id m21mr9850212pjl.174.1618576233554;
-        Fri, 16 Apr 2021 05:30:33 -0700 (PDT)
-Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id i10sm1668126pfo.37.2021.04.16.05.30.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 Apr 2021 05:30:33 -0700 (PDT)
-Subject: Re: [PATCH] floppy: remove redundant assignment to variable st
-To:     Denis Efremov <efremov@linux.com>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Colin King <colin.king@canonical.com>,
-        Willy Tarreau <w@1wt.eu>,
-        linux-block <linux-block@vger.kernel.org>
-References: <20210415130020.1959951-1-colin.king@canonical.com>
- <d6c29628-be82-c812-e021-fd0f0ab02172@linux.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <a61c6976-0035-d562-6059-d8ae0c6d2425@kernel.dk>
-Date:   Fri, 16 Apr 2021 06:30:32 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xSvAjT7fJoqP/gXy5cezTHjGsp7EVSxfqA5TLEclTpE=;
+        b=cQQb/YoXK4S13HmU7nR1S8cGb+2/J5YVxMrefP7KVzERJOokhpw9yvferafS5ky6hB
+         kcP2pr0RYvNctaH71uhbaBmzJzOb1HPs3018q4EmYL8F8TuTHKBpjpmLFlCC8F5A5KI2
+         rF4q+lydn1JXqqrknN4oNPU3HAquVSGcC1M6xehRGuwyyQiAouUPwo5XrxSp5XbO8bY9
+         hCeEmLRJwWT5gaOa0XRCH5FNGKFI5zWja5DF5Et4DLc3tsb76XPb18WBUBT3MTJCW1pv
+         flVV2EgLNEwJ2E3Lwb6t0RAJYAG6uZcP2ausyw7QE2fq9EK5bxJA/2VWiYo1g0/TOH8/
+         MVyg==
+X-Gm-Message-State: AOAM532z9Vp5rqoDRjSueusXf6vZHPdz9uywehS1ajJqk23Y8XO9VQud
+        qZI92Tbo1NfeQVEPxBznQJkDsJhOcqUivE2GF4aBnQ==
+X-Google-Smtp-Source: ABdhPJxpPsOb5Vn7O+jFE45i/Oi8eyCRoGdm3iVzaaI0n2gDmIuJE5RiWb1Ekfzr6QRG9wCTQ7AnfakUvrfliDClOow=
+X-Received: by 2002:a2e:7607:: with SMTP id r7mr2559286ljc.226.1618576961144;
+ Fri, 16 Apr 2021 05:42:41 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <d6c29628-be82-c812-e021-fd0f0ab02172@linux.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <YHaG+p5nlOXQFp1n@mwanda>
+In-Reply-To: <YHaG+p5nlOXQFp1n@mwanda>
+From:   Sumit Garg <sumit.garg@linaro.org>
+Date:   Fri, 16 Apr 2021 18:12:29 +0530
+Message-ID: <CAFA6WYMpeX=j3tk2edBs_kQNKmL0Kjp32kY0O-SshAX9V6OYiw@mail.gmail.com>
+Subject: Re: [PATCH] KEYS: trusted: fix a couple error pointer dereferences
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     James Bottomley <jejb@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
+        "open list:SECURITY SUBSYSTEM" 
+        <linux-security-module@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 4/16/21 6:29 AM, Denis Efremov wrote:
-> Jens, could you please take this one? I thought to send it to you with other
-> cleanup patches in a merge request, but you already applied rest of the
-> patches. If you prefer to take it as merge request, it's ok I'll send it
-> based on your branch for-5.13/drivers.
+Hi Dan,
 
-I have applied it, thanks.
+On Wed, 14 Apr 2021 at 11:39, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+>
+> If registering "reg_shm_out" fails, then it is an error pointer and the
+> error handling will call tee_shm_free(reg_shm_out) which leads to an
+> error pointer dereference and an Oops.
+>
+> I've re-arranged it so we only free things that have been allocated
+> successfully.
+>
+> Fixes: 6dd95e650c8a ("KEYS: trusted: Introduce TEE based Trusted Keys")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  security/keys/trusted-keys/trusted_tee.c | 24 ++++++++++--------------
+>  1 file changed, 10 insertions(+), 14 deletions(-)
+>
 
--- 
-Jens Axboe
+Thanks for fixing the error path. Although an alternative simple fix
+could be [1] but I liked your approach to get rid of redundant "if"
+checks. FWIW:
 
+Reviewed-by: Sumit Garg <sumit.garg@linaro.org>
+
+[1]
+
+diff --git a/security/keys/trusted-keys/trusted_tee.c
+b/security/keys/trusted-keys/trusted_tee.c
+index 2ce66c199e1d..c4a54b0fa3eb 100644
+--- a/security/keys/trusted-keys/trusted_tee.c
++++ b/security/keys/trusted-keys/trusted_tee.c
+@@ -84,6 +84,7 @@ static int trusted_tee_seal(struct
+trusted_key_payload *p, char *datablob)
+        if (IS_ERR(reg_shm_out)) {
+                dev_err(pvt_data.dev, "blob shm register failed\n");
+                ret = PTR_ERR(reg_shm_out);
++               reg_shm_out = NULL;
+                goto out;
+        }
+
+@@ -145,6 +146,7 @@ static int trusted_tee_unseal(struct
+trusted_key_payload *p, char *datablob)
+        if (IS_ERR(reg_shm_out)) {
+                dev_err(pvt_data.dev, "key shm register failed\n");
+                ret = PTR_ERR(reg_shm_out);
++               reg_shm_out = NULL;
+                goto out;
+        }
+
+-Sumit
+
+> diff --git a/security/keys/trusted-keys/trusted_tee.c b/security/keys/trusted-keys/trusted_tee.c
+> index 2ce66c199e1d..45f96f6ed673 100644
+> --- a/security/keys/trusted-keys/trusted_tee.c
+> +++ b/security/keys/trusted-keys/trusted_tee.c
+> @@ -65,7 +65,7 @@ static int trusted_tee_seal(struct trusted_key_payload *p, char *datablob)
+>         int ret;
+>         struct tee_ioctl_invoke_arg inv_arg;
+>         struct tee_param param[4];
+> -       struct tee_shm *reg_shm_in = NULL, *reg_shm_out = NULL;
+> +       struct tee_shm *reg_shm_in, *reg_shm_out;
+>
+>         memset(&inv_arg, 0, sizeof(inv_arg));
+>         memset(&param, 0, sizeof(param));
+> @@ -84,7 +84,7 @@ static int trusted_tee_seal(struct trusted_key_payload *p, char *datablob)
+>         if (IS_ERR(reg_shm_out)) {
+>                 dev_err(pvt_data.dev, "blob shm register failed\n");
+>                 ret = PTR_ERR(reg_shm_out);
+> -               goto out;
+> +               goto free_shm_in;
+>         }
+>
+>         inv_arg.func = TA_CMD_SEAL;
+> @@ -109,11 +109,9 @@ static int trusted_tee_seal(struct trusted_key_payload *p, char *datablob)
+>                 p->blob_len = param[1].u.memref.size;
+>         }
+>
+> -out:
+> -       if (reg_shm_out)
+> -               tee_shm_free(reg_shm_out);
+> -       if (reg_shm_in)
+> -               tee_shm_free(reg_shm_in);
+> +       tee_shm_free(reg_shm_out);
+> +free_shm_in:
+> +       tee_shm_free(reg_shm_in);
+>
+>         return ret;
+>  }
+> @@ -126,7 +124,7 @@ static int trusted_tee_unseal(struct trusted_key_payload *p, char *datablob)
+>         int ret;
+>         struct tee_ioctl_invoke_arg inv_arg;
+>         struct tee_param param[4];
+> -       struct tee_shm *reg_shm_in = NULL, *reg_shm_out = NULL;
+> +       struct tee_shm *reg_shm_in, *reg_shm_out;
+>
+>         memset(&inv_arg, 0, sizeof(inv_arg));
+>         memset(&param, 0, sizeof(param));
+> @@ -145,7 +143,7 @@ static int trusted_tee_unseal(struct trusted_key_payload *p, char *datablob)
+>         if (IS_ERR(reg_shm_out)) {
+>                 dev_err(pvt_data.dev, "key shm register failed\n");
+>                 ret = PTR_ERR(reg_shm_out);
+> -               goto out;
+> +               goto free_shm_in;
+>         }
+>
+>         inv_arg.func = TA_CMD_UNSEAL;
+> @@ -170,11 +168,9 @@ static int trusted_tee_unseal(struct trusted_key_payload *p, char *datablob)
+>                 p->key_len = param[1].u.memref.size;
+>         }
+>
+> -out:
+> -       if (reg_shm_out)
+> -               tee_shm_free(reg_shm_out);
+> -       if (reg_shm_in)
+> -               tee_shm_free(reg_shm_in);
+> +       tee_shm_free(reg_shm_out);
+> +free_shm_in:
+> +       tee_shm_free(reg_shm_in);
+>
+>         return ret;
+>  }
+> --
+> 2.30.2
+>
