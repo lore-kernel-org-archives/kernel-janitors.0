@@ -2,93 +2,96 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.2 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91B44C43462
-	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Apr 2021 14:09:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48923C433B4
+	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Apr 2021 15:00:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6A9CB6121E
-	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Apr 2021 14:09:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1DB3561184
+	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Apr 2021 15:00:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242163AbhDPOJm (ORCPT
+        id S244179AbhDPPBJ convert rfc822-to-8bit (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 16 Apr 2021 10:09:42 -0400
-Received: from mail.hallyn.com ([178.63.66.53]:39982 "EHLO mail.hallyn.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S244335AbhDPOI7 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 16 Apr 2021 10:08:59 -0400
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-        id 302AA64A; Fri, 16 Apr 2021 09:08:26 -0500 (CDT)
-Date:   Fri, 16 Apr 2021 09:08:26 -0500
-From:   "Serge E. Hallyn" <serge@hallyn.com>
-To:     Sumit Garg <sumit.garg@linaro.org>
-Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
-        "open list:SECURITY SUBSYSTEM" 
-        <linux-security-module@vger.kernel.org>,
+        Fri, 16 Apr 2021 11:01:09 -0400
+Received: from relay7-d.mail.gandi.net ([217.70.183.200]:55405 "EHLO
+        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233916AbhDPPBI (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 16 Apr 2021 11:01:08 -0400
+X-Originating-IP: 90.89.138.59
+Received: from xps13 (lfbn-tou-1-1325-59.w90-89.abo.wanadoo.fr [90.89.138.59])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 8DB402000E;
+        Fri, 16 Apr 2021 15:00:41 +0000 (UTC)
+Date:   Fri, 16 Apr 2021 17:00:40 +0200
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] KEYS: trusted: fix a couple error pointer dereferences
-Message-ID: <20210416140826.GA21299@mail.hallyn.com>
-References: <YHaG+p5nlOXQFp1n@mwanda>
- <20210414140734.GB11180@mail.hallyn.com>
- <CAFA6WYOfy0mtM071GoSjeARRNWJ7ozJdZNsNa4v0ba=TxFnE8g@mail.gmail.com>
+Subject: Re: [PATCH] mtd: rawnand: fix an error code in
+ nand_setup_interface()
+Message-ID: <20210416170040.4e467039@xps13>
+In-Reply-To: <YHaEEYg2DUFwnxSo@mwanda>
+References: <YHaEEYg2DUFwnxSo@mwanda>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFA6WYOfy0mtM071GoSjeARRNWJ7ozJdZNsNa4v0ba=TxFnE8g@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Apr 16, 2021 at 06:15:58PM +0530, Sumit Garg wrote:
-> Hi Serge,
-> 
-> On Wed, 14 Apr 2021 at 19:37, Serge E. Hallyn <serge@hallyn.com> wrote:
-> >
-> > On Wed, Apr 14, 2021 at 09:08:58AM +0300, Dan Carpenter wrote:
-> > > If registering "reg_shm_out" fails, then it is an error pointer and the
-> > > error handling will call tee_shm_free(reg_shm_out) which leads to an
-> > > error pointer dereference and an Oops.
-> > >
-> > > I've re-arranged it so we only free things that have been allocated
-> > > successfully.
-> > >
-> > > Fixes: 6dd95e650c8a ("KEYS: trusted: Introduce TEE based Trusted Keys")
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > > ---
-> > >  security/keys/trusted-keys/trusted_tee.c | 24 ++++++++++--------------
-> > >  1 file changed, 10 insertions(+), 14 deletions(-)
-> > >
-> > > diff --git a/security/keys/trusted-keys/trusted_tee.c b/security/keys/trusted-keys/trusted_tee.c
-> > > index 2ce66c199e1d..45f96f6ed673 100644
-> > > --- a/security/keys/trusted-keys/trusted_tee.c
-> > > +++ b/security/keys/trusted-keys/trusted_tee.c
-> > > @@ -65,7 +65,7 @@ static int trusted_tee_seal(struct trusted_key_payload *p, char *datablob)
-> > >       int ret;
-> > >       struct tee_ioctl_invoke_arg inv_arg;
-> > >       struct tee_param param[4];
-> > > -     struct tee_shm *reg_shm_in = NULL, *reg_shm_out = NULL;
-> > > +     struct tee_shm *reg_shm_in, *reg_shm_out;
-> >
-> > I don't have this file (trusted_tee.c) in my tree and there's no lore
-> > link here to previous what threads this depends on.  Based on the
-> > context I can't verify that reg_shm_in will always be initialized
-> > before you get to the free_shm_in label.
-> >
-> 
-> You can find trusted_tee.c here [1].
-> 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/tree/security/keys/trusted-keys/trusted_tee.c
+Hi Dan,
 
-Thanks.  Looks good then :)
+Dan Carpenter <dan.carpenter@oracle.com> wrote on Wed, 14 Apr 2021
+08:56:33 +0300:
+
+> We should return an error code if the timing mode is not acknowledged
+> by the NAND chip.
+
+This truly is questionable (and I am not yet decided whether the answer
+should be yes or no).
+
+Returning an error here would produce the entire boot sequence to fail,
+even though the NAND chip would work in mode 0.
+
+Not returning an error would print the below warning (so the
+user/developer is warned) and continue the boot with the slowest
+timing interface.
+
+Honestly I would be more in favor of letting things as they are
+because I don't think this may be considered as a buggy situation, but I
+am open to discussion.
+
+> Fixes: 415ae78ffb5d ("mtd: rawnand: check ONFI timings have been acked by the chip")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> From static analysis.  Not tested.
+> 
+>  drivers/mtd/nand/raw/nand_base.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
+> index fb072c444495..d83c0503f96f 100644
+> --- a/drivers/mtd/nand/raw/nand_base.c
+> +++ b/drivers/mtd/nand/raw/nand_base.c
+> @@ -880,6 +880,7 @@ static int nand_setup_interface(struct nand_chip *chip, int chipnr)
+>  	if (tmode_param[0] != chip->best_interface_config->timings.mode) {
+>  		pr_warn("timing mode %d not acknowledged by the NAND chip\n",
+>  			chip->best_interface_config->timings.mode);
+> +		ret = -EINVAL;
+>  		goto err_reset_chip;
+>  	}
+>  
+
+Thanks,
+Miquèl
