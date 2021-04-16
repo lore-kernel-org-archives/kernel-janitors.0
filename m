@@ -2,96 +2,87 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=ham
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48923C433B4
-	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Apr 2021 15:00:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B849C433B4
+	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Apr 2021 15:29:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1DB3561184
-	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Apr 2021 15:00:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C22260FF1
+	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Apr 2021 15:29:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244179AbhDPPBJ convert rfc822-to-8bit (ORCPT
+        id S1343667AbhDPPaF (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 16 Apr 2021 11:01:09 -0400
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:55405 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233916AbhDPPBI (ORCPT
+        Fri, 16 Apr 2021 11:30:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57380 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S243009AbhDPPaE (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 16 Apr 2021 11:01:08 -0400
-X-Originating-IP: 90.89.138.59
-Received: from xps13 (lfbn-tou-1-1325-59.w90-89.abo.wanadoo.fr [90.89.138.59])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 8DB402000E;
-        Fri, 16 Apr 2021 15:00:41 +0000 (UTC)
-Date:   Fri, 16 Apr 2021 17:00:40 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] mtd: rawnand: fix an error code in
- nand_setup_interface()
-Message-ID: <20210416170040.4e467039@xps13>
-In-Reply-To: <YHaEEYg2DUFwnxSo@mwanda>
-References: <YHaEEYg2DUFwnxSo@mwanda>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Fri, 16 Apr 2021 11:30:04 -0400
+Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFEB7C061574
+        for <kernel-janitors@vger.kernel.org>; Fri, 16 Apr 2021 08:29:39 -0700 (PDT)
+Received: by mail-pl1-x636.google.com with SMTP id u15so5615224plf.10
+        for <kernel-janitors@vger.kernel.org>; Fri, 16 Apr 2021 08:29:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=p+GVt4zFmKmqKxkmzGI4Q5a/DBpLPH80j/5btmM1LmY=;
+        b=xoRW3IYe922zO/lzORn0p+Xob3qxvdX+UnZ3jGlz/goun4RYxt/xKdSMkm+ZcSFGvp
+         OGQ+OJ4CFGN1ip7TcfW0wZVUd/evc/G8BPcQRXnDTmyAR2FyopuxFjIaEoIX2T2Bw2Xk
+         2GLFDgRt8NR98KcfxBvnOE1Zqmq1BCWh7C7nPX2TdU0zB5oGUhLpARKaF6BmGLTyqJGd
+         08+UDLagE5NHj4yQ538i0aEd/5p1dIghqOEpKJqOTyNo20j85WKmxtoCtPbSFhfWWjes
+         7LNszsmrpa4UfiVOCU2CmH/340pfVuDOMDJ1j6mBSTbuRC5Ese40W4vyPcpgLK7GlaKx
+         /RBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=p+GVt4zFmKmqKxkmzGI4Q5a/DBpLPH80j/5btmM1LmY=;
+        b=Ji8Ggn6ZCQk8j3G+903cKGp1dguX9GoPdMcFJhxTDgNSlNRMAfWLUoUu41Lqfzuf/q
+         pcuMDimxmJ96OdgUYv3HApAa5DJ0bCvcvqfOuUTMxR6yPUHA8A8Lc4FeaQEd7jL2lHZX
+         CPqYfdMqrQtzhTYPEhvYtnsGrzxg0NgtU8fQlVPKcZYHAkPB4+eElDc9sXzRhCKkTnEf
+         YDMzkZGzwcRH4ONcD4BaV54mUpvo2bXLahfQPXreOq8h0x4G4xU8wZ46veuWGs6GLuvd
+         GQyfKVw7UhNHFR7ko2wuhsLm/X15yOtNQsz9ynzjGSLsl3qAIgvMPj8JMr7n8oYGQfTD
+         k1UQ==
+X-Gm-Message-State: AOAM531qfyujEbRPWPvVyxtZm6S5ha+kscua6isjBPwFUsIBxv4L4q3L
+        RvuC7Zwc2Z/MxU+u6wlFYn8GSAKYRqVjPKQr6BFxXw==
+X-Google-Smtp-Source: ABdhPJyZtucPw7kU6E7JEzddw3OxyuG6Na85DhOxrZ1BNc/ZLcHmt799YZYyVsyNY88iS5vemCAFByqQ4FRtUsBe4ns=
+X-Received: by 2002:a17:90a:b112:: with SMTP id z18mr10675954pjq.18.1618586979275;
+ Fri, 16 Apr 2021 08:29:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+References: <20210413160318.2003699-1-weiyongjun1@huawei.com>
+In-Reply-To: <20210413160318.2003699-1-weiyongjun1@huawei.com>
+From:   Loic Poulain <loic.poulain@linaro.org>
+Date:   Fri, 16 Apr 2021 17:38:11 +0200
+Message-ID: <CAMZdPi9c7L7_4Pzr82zfiYOXp128gnwMEpSex7S9-tQ=jWvNWA@mail.gmail.com>
+Subject: Re: [PATCH -next] bus: mhi: pci_generic: Fix possible use-after-free
+ in mhi_pci_remove()
+To:     Wei Yongjun <weiyongjun1@huawei.com>
+Cc:     Manivannan Sadhasivam <mani@kernel.org>,
+        Hemant Kumar <hemantk@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Dan,
+On Tue, 13 Apr 2021 at 17:54, Wei Yongjun <weiyongjun1@huawei.com> wrote:
+>
+> This driver's remove path calls del_timer(). However, that function
+> does not wait until the timer handler finishes. This means that the
+> timer handler may still be running after the driver's remove function
+> has finished, which would result in a use-after-free.
+>
+> Fix by calling del_timer_sync(), which makes sure the timer handler
+> has finished, and unable to re-schedule itself.
+>
+> Fixes: 8562d4fe34a3 ("mhi: pci_generic: Add health-check")
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 
-Dan Carpenter <dan.carpenter@oracle.com> wrote on Wed, 14 Apr 2021
-08:56:33 +0300:
-
-> We should return an error code if the timing mode is not acknowledged
-> by the NAND chip.
-
-This truly is questionable (and I am not yet decided whether the answer
-should be yes or no).
-
-Returning an error here would produce the entire boot sequence to fail,
-even though the NAND chip would work in mode 0.
-
-Not returning an error would print the below warning (so the
-user/developer is warned) and continue the boot with the slowest
-timing interface.
-
-Honestly I would be more in favor of letting things as they are
-because I don't think this may be considered as a buggy situation, but I
-am open to discussion.
-
-> Fixes: 415ae78ffb5d ("mtd: rawnand: check ONFI timings have been acked by the chip")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> From static analysis.  Not tested.
-> 
->  drivers/mtd/nand/raw/nand_base.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
-> index fb072c444495..d83c0503f96f 100644
-> --- a/drivers/mtd/nand/raw/nand_base.c
-> +++ b/drivers/mtd/nand/raw/nand_base.c
-> @@ -880,6 +880,7 @@ static int nand_setup_interface(struct nand_chip *chip, int chipnr)
->  	if (tmode_param[0] != chip->best_interface_config->timings.mode) {
->  		pr_warn("timing mode %d not acknowledged by the NAND chip\n",
->  			chip->best_interface_config->timings.mode);
-> +		ret = -EINVAL;
->  		goto err_reset_chip;
->  	}
->  
-
-Thanks,
-Miquèl
+Reviewed-by: Loic Poulain <loic.poulain@linaro.org>
