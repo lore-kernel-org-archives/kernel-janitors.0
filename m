@@ -2,98 +2,81 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 587F8C433B4
-	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Apr 2021 18:03:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8366FC433ED
+	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Apr 2021 18:04:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 37E006115B
-	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Apr 2021 18:03:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 638A86137D
+	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Apr 2021 18:04:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244174AbhDPSEU (ORCPT
+        id S244262AbhDPSFL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 16 Apr 2021 14:04:20 -0400
-Received: from smtp05.smtpout.orange.fr ([80.12.242.127]:59928 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243844AbhDPSEU (ORCPT
+        Fri, 16 Apr 2021 14:05:11 -0400
+Received: from smtprelay0118.hostedemail.com ([216.40.44.118]:49326 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S244245AbhDPSFK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 16 Apr 2021 14:04:20 -0400
-Received: from [192.168.1.18] ([86.243.172.93])
-        by mwinf5d61 with ME
-        id tW3u2400221Fzsu03W3u6H; Fri, 16 Apr 2021 20:03:54 +0200
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 16 Apr 2021 20:03:54 +0200
-X-ME-IP: 86.243.172.93
-Subject: Re: [PATCH] checkpatch: Improve ALLOC_ARRAY_ARGS test
-To:     Joe Perches <joe@perches.com>, apw@canonical.com,
-        dwaipayanray1@gmail.com, lukas.bulwahn@gmail.com
+        Fri, 16 Apr 2021 14:05:10 -0400
+Received: from omf16.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay01.hostedemail.com (Postfix) with ESMTP id AA32D100E7B46;
+        Fri, 16 Apr 2021 18:04:44 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf16.hostedemail.com (Postfix) with ESMTPA id 6B20D2550F6;
+        Fri, 16 Apr 2021 18:04:43 +0000 (UTC)
+Message-ID: <579ee13e8e3805cbc6e6070becbd60bcc1ed3ff6.camel@perches.com>
+Subject: Re: [PATCH v2] checkpatch: Improve ALLOC_ARRAY_ARGS test
+From:   Joe Perches <joe@perches.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        apw@canonical.com, dwaipayanray1@gmail.com,
+        lukas.bulwahn@gmail.com, Andrew Morton <akpm@linux-foundation.org>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <a1ac975aaabc9f71397b75254f833920428411e0.1618588673.git.christophe.jaillet@wanadoo.fr>
- <decdb749f0192bd886faa7e8470795fb2644e4f8.camel@perches.com>
- <ec273f46-6709-a1cd-7871-1e1d67fab7dd@wanadoo.fr>
- <698f8bef0fccd425a0f8d1928bc05dfc13787bbe.camel@perches.com>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Message-ID: <9f1339ba-624c-9975-cd7e-d8fcab1da158@wanadoo.fr>
-Date:   Fri, 16 Apr 2021 20:03:53 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.9.1
+Date:   Fri, 16 Apr 2021 11:04:42 -0700
+In-Reply-To: <205fc4847972fb6779abcc8818f39c14d1b45af1.1618595794.git.christophe.jaillet@wanadoo.fr>
+References: <205fc4847972fb6779abcc8818f39c14d1b45af1.1618595794.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.38.1-1 
 MIME-Version: 1.0
-In-Reply-To: <698f8bef0fccd425a0f8d1928bc05dfc13787bbe.camel@perches.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 6B20D2550F6
+X-Stat-Signature: roxonjmcn84wxgak965jhyzwqxbqcgqm
+X-Rspamd-Server: rspamout04
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Session-ID: U2FsdGVkX19l1PdXJFOCfAr7IgnvYsFMLmiILi2NcME=
+X-HE-Tag: 1618596283-393397
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 16/04/2021 Ã  19:03, Joe Perches a Ã©critÂ :
-> On Fri, 2021-04-16 at 18:51 +0200, Christophe JAILLET wrote:
->> Le 16/04/2021 Ã  18:11, Joe Perches a Ã©critÂ :
->>> On Fri, 2021-04-16 at 17:58 +0200, Christophe JAILLET wrote:
->>>> The devm_ variant of 'kcalloc()' and 'kmalloc_array()' are not tested
->>>> Add the corresponding check.
->>> []
->>>> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
->>> []
->>>> @@ -7006,9 +7006,9 @@ sub process {
->>>>  Â Â 		}
->>>>    
->>>>
->>>>
->>>>  Â Â # check for alloc argument mismatch
->>>> -		if ($line =~ /\b(kcalloc|kmalloc_array)\s*\(\s*sizeof\b/) {
->>>> +		if ($line =~ /\b(devm_|)(kcalloc|kmalloc_array)\s*\(\s*sizeof\b/) {
->>>
->>> Perhaps nicer using
->> I'll send a V2.
->>
->> Thx for the feedback.
->>
->> CJ
->>
->>>
->>> 		if ($line =~ /\b((?:devm_)?(?:kcalloc|kmalloc_array))\s*\*\s*sizeof\b/) {
+On Fri, 2021-04-16 at 19:57 +0200, Christophe JAILLET wrote:
+> The devm_ variant of 'kcalloc()' and 'kmalloc_array()' are not tested
+> Add the corresponding check.
 > 
-> The \* above should be \(.
-> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> v2: use a cleaner regex as proposed by Joe Perches
 
-Yes I've seen it when I tested the updated test case.
+Acked-by: Joe Perches <joe@perches.com>
 
-> I can't type and apparently I don't proofread either.
-> I offer the excuse that the * and ( are adjacent on my keyboard...
+> ---
+>  scripts/checkpatch.pl | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
+> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> index 44b9dc330ac6..23697a6b1eaa 100755
+> --- a/scripts/checkpatch.pl
+> +++ b/scripts/checkpatch.pl
+> @@ -7006,7 +7006,7 @@ sub process {
+>  		}
+>  
+> 
+>  # check for alloc argument mismatch
+> -		if ($line =~ /\b(kcalloc|kmalloc_array)\s*\(\s*sizeof\b/) {
+> +		if ($line =~ /\b((?:devm_)?(?:kcalloc|kmalloc_array))\s*\(\s*sizeof\b/) {
+>  			WARN("ALLOC_ARRAY_ARGS",
+>  			     "$1 uses number as first arg, sizeof is generally wrong\n" . $herecurr);
+>  		}
 
-Well, you should try with a French keyboard :)
-Anyway, thanks for taking time for the update.
-
-CJ
-
-> cheers, Joe
-> 
-> 
-> 
 
