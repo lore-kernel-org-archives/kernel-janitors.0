@@ -2,86 +2,69 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,SUBJ_BRKN_WORDNUMS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C7B8C433B4
-	for <kernel-janitors@archiver.kernel.org>; Sat, 17 Apr 2021 17:55:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F194CC433B4
+	for <kernel-janitors@archiver.kernel.org>; Sat, 17 Apr 2021 18:00:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E6FE1613B0
-	for <kernel-janitors@archiver.kernel.org>; Sat, 17 Apr 2021 17:55:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2553613B4
+	for <kernel-janitors@archiver.kernel.org>; Sat, 17 Apr 2021 18:00:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236886AbhDQR4J (ORCPT
+        id S236796AbhDQSBX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 17 Apr 2021 13:56:09 -0400
-Received: from so254-9.mailgun.net ([198.61.254.9]:22079 "EHLO
-        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236692AbhDQR4I (ORCPT
+        Sat, 17 Apr 2021 14:01:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36580 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236718AbhDQSBW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 17 Apr 2021 13:56:08 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1618682142; h=Date: Message-Id: Cc: To: References:
- In-Reply-To: From: Subject: Content-Transfer-Encoding: MIME-Version:
- Content-Type: Sender; bh=6QrwTzf39SIEDg4ZzpC44kNc2ctf71NHN7DHe9aDuy4=;
- b=d4u5srCCb751gIg+utz/ZPf+mmgmBD7fdl9LjX0dBvsokC//Lh52X9FBC3IvzJDWVltmWwA+
- /Fubj6U7bCRWSe43Arp81YlF4m0Iw1lnIdLvuMMgCNOupc4hLUqtJrB7yL0Yfp+sz1yECJBt
- BQTf/+7/b3mVNY7j20hOjNL2D6M=
-X-Mailgun-Sending-Ip: 198.61.254.9
-X-Mailgun-Sid: WyI5NDExNyIsICJrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n01.prod.us-east-1.postgun.com with SMTP id
- 607b211ca817abd39a2b054c (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Sat, 17 Apr 2021 17:55:40
- GMT
-Sender: kvalo=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 18F9DC4323A; Sat, 17 Apr 2021 17:55:40 +0000 (UTC)
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7F2F7C433D3;
-        Sat, 17 Apr 2021 17:55:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7F2F7C433D3
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Sat, 17 Apr 2021 14:01:22 -0400
+Received: from viti.kaiser.cx (viti.kaiser.cx [IPv6:2a01:238:43fe:e600:cd0c:bd4a:7a3:8e9f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 990FFC061574;
+        Sat, 17 Apr 2021 11:00:55 -0700 (PDT)
+Received: from ipservice-092-217-095-235.092.217.pools.vodafone-ip.de ([92.217.95.235] helo=martin-debian-2.paytec.ch)
+        by viti.kaiser.cx with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <martin@kaiser.cx>)
+        id 1lXpFQ-0002pi-K5; Sat, 17 Apr 2021 20:00:48 +0200
+From:   Martin Kaiser <martin@kaiser.cx>
+To:     Larry Finger <Larry.Finger@lwfinger.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Martin Kaiser <martin@kaiser.cx>
+Subject: [PATCH 1/4] staging: rtl8188eu: change bLeisurePs' type to bool
+Date:   Sat, 17 Apr 2021 20:00:34 +0200
+Message-Id: <20210417180037.17806-1-martin@kaiser.cx>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] rtl8xxxu: Simplify locking of a skb list accesses
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <8bcec6429615aeb498482dc7e1955ce09b456585.1617613700.git.christophe.jaillet@wanadoo.fr>
-References: <8bcec6429615aeb498482dc7e1955ce09b456585.1617613700.git.christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Jes.Sorensen@gmail.com, davem@davemloft.net, kuba@kernel.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.5.2
-Message-Id: <20210417175540.18F9DC4323A@smtp.codeaurora.org>
-Date:   Sat, 17 Apr 2021 17:55:40 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+bLeisurePs is used as a boolean variable. Change its type from
+u8 to bool.
 
-> The 'c2hcmd_lock' spinlock is only used to protect some __skb_queue_tail()
-> and __skb_dequeue() calls.
-> Use the lock provided in the skb itself and call skb_queue_tail() and
-> skb_dequeue(). These functions already include the correct locking.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Martin Kaiser <martin@kaiser.cx>
+---
+ drivers/staging/rtl8188eu/include/rtw_pwrctrl.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Patch applied to wireless-drivers-next.git, thanks.
-
-431eb49e87ed rtl8xxxu: Simplify locking of a skb list accesses
-
+diff --git a/drivers/staging/rtl8188eu/include/rtw_pwrctrl.h b/drivers/staging/rtl8188eu/include/rtw_pwrctrl.h
+index 06062643c868..4345dc0c7cf9 100644
+--- a/drivers/staging/rtl8188eu/include/rtw_pwrctrl.h
++++ b/drivers/staging/rtl8188eu/include/rtw_pwrctrl.h
+@@ -171,7 +171,7 @@ struct pwrctrl_priv {
+ 	unsigned long ips_deny_time; /* will deny IPS when system time less than this */
+ 	u8 ps_processing; /* temp used to mark whether in rtw_ps_processor */
+ 
+-	u8	bLeisurePs;
++	bool	bLeisurePs;
+ 	u8	LpsIdleCount;
+ 	u8	power_mgnt;
+ 	u8	bFwCurrentInPSMode;
 -- 
-https://patchwork.kernel.org/project/linux-wireless/patch/8bcec6429615aeb498482dc7e1955ce09b456585.1617613700.git.christophe.jaillet@wanadoo.fr/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.20.1
 
