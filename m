@@ -2,128 +2,195 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A9D1C43460
-	for <kernel-janitors@archiver.kernel.org>; Sat, 17 Apr 2021 10:25:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92483C433ED
+	for <kernel-janitors@archiver.kernel.org>; Sat, 17 Apr 2021 10:53:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0D10A61209
-	for <kernel-janitors@archiver.kernel.org>; Sat, 17 Apr 2021 10:25:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 76C25610E8
+	for <kernel-janitors@archiver.kernel.org>; Sat, 17 Apr 2021 10:53:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236069AbhDQKZn (ORCPT
+        id S236128AbhDQKyM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 17 Apr 2021 06:25:43 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:34582 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236058AbhDQKZl (ORCPT
+        Sat, 17 Apr 2021 06:54:12 -0400
+Received: from de-smtp-delivery-102.mimecast.com ([62.140.7.102]:36557 "EHLO
+        de-smtp-delivery-102.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229972AbhDQKyL (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 17 Apr 2021 06:25:41 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13HAKb26014842;
-        Sat, 17 Apr 2021 10:24:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=Sv5e1id0xmN6AnV4mguXiCqPq8KQ5QvmLZmfSk/+Hdg=;
- b=niSKvMOZ6NqJIOvccj1TipOsmfdar3kCfn3OUlHCtcyx/43aKpUHcgJdREdqperLWSEf
- jgRN7syutnZEWY1zzwOKa+ixRU+HPADE6VU2y60XdyUbsA5hYm+WKmWgUsqiDNqooeqC
- c2xGdffMFumm/2s554VNxuDJmpDSEAuP063c8nX442Qqtvk/ZB8N7Wz4mkL7US5xX7cl
- c0jkhjLglevTVq5ccfzeNLn/W6C6/hBHGBpqgxs2l/t4elf58oLPl8kDvUFHdnih1Q9t
- QCVQKMz4knxNUoJEm1gvXBfI815dgQN+SJLrwyQjaZ70XiAGuKW/bIiSuyDI/bAUAruW FA== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2120.oracle.com with ESMTP id 37yrap8bg7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 17 Apr 2021 10:24:42 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13HAJfpq139444;
-        Sat, 17 Apr 2021 10:24:41 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3020.oracle.com with ESMTP id 37yq0k3p36-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 17 Apr 2021 10:24:41 +0000
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 13HAOYaI016727;
-        Sat, 17 Apr 2021 10:24:34 GMT
-Received: from kadam (/102.36.221.92)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sat, 17 Apr 2021 03:24:34 -0700
-Date:   Sat, 17 Apr 2021 13:24:26 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] mtd: rawnand: fix an error code in nand_setup_interface()
-Message-ID: <20210417102426.GP6048@kadam>
-References: <YHaEEYg2DUFwnxSo@mwanda>
- <20210416170040.4e467039@xps13>
+        Sat, 17 Apr 2021 06:54:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=mimecast20200619;
+        t=1618656823;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=EQhZsK+vEUDc2t1aqTICQHERXV6sMiCkmgDu0EwT0tA=;
+        b=lBUKEQw7VtlcI6CtkDiJWBupEJKwHhrXLNL2F80IR/WZcjWUy3PmG4/+XI5wycb0rVowJ8
+        s3vufbmJ31/p6M7yQ1SJf0XlVjD5olkN5NDiKVS5jUNWnZEo7u5yi3juIJyX5tkHlSd4LW
+        m0Fc1TwOifowZaZxZcbqOVnkvuoKXMM=
+Received: from EUR02-AM5-obe.outbound.protection.outlook.com
+ (mail-am5eur02lp2058.outbound.protection.outlook.com [104.47.4.58]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ de-mta-36-uB6UyVdVMwuDhXcmDHw84Q-1; Sat, 17 Apr 2021 12:53:42 +0200
+X-MC-Unique: uB6UyVdVMwuDhXcmDHw84Q-1
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=GqjRiLgnnvW+ZXMFoWdHend/Fe8XVnvOKcNh31wuBcitz/RD1hlaf65vfutn9OJun/NAfoDo+JKN4r7F0B/qwpmCUa1XIvGvh2Jo06MUlTynUpmO5doymI94gQHuETw3Motfk0OWsJxjAJYDR6kxU8XpKP2VtudNG2IO8leoqXZ51GOfZhkSmOC8KARcyw/tkTjPSl8RHsQcroELz5y2nW7+yqsjQNtFAiGB0W/YYdE1okpU2EY35iW7he2fNHLO+90XJiibp+zxINRtb4yXiFzSa8YrwJ8XCSbc2ulbvM64Z/qNKQ39DZU4zdwuKZEn2VxjOU4otyu3Dd1RX7APQQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EQhZsK+vEUDc2t1aqTICQHERXV6sMiCkmgDu0EwT0tA=;
+ b=D3LwwBqsjrcuy4hzWnLH0GXWHMbeYSpeg3x/579LaM9I0bpOuXAS9WhBPGzfX9xk7fUtUaiDrPA8sgsyfUT0krKloZ2/0xdnKVNFSoX/90xQpGI9aTJsKzdQoutS6E7/ooVcTYSK4i7RVY86Djup1Njd0ol5gg4Y3OfI92fZIAsdP8KXX63nwdqjMAlUrhex9FgDLNVBahpd1ZKMYc5TWi/SUErVLiI8z+sec12aaCnvyWav2VPIzDpvnD5Ak130NJqE4G/hqrle4B1kgbeFgWLneY/xLtangTC5UsdQft3XPCLs9/eL1m1jxLa9dCBbgCgd9HKIZsxVcMbFWmhiQg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=suse.com; dmarc=pass action=none header.from=suse.com;
+ dkim=pass header.d=suse.com; arc=none
+Authentication-Results: gmail.com; dkim=none (message not signed)
+ header.d=none;gmail.com; dmarc=none action=none header.from=suse.com;
+Received: from VI1PR0402MB3359.eurprd04.prod.outlook.com (2603:10a6:803:3::28)
+ by VI1PR0402MB3888.eurprd04.prod.outlook.com (2603:10a6:803:21::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4042.16; Sat, 17 Apr
+ 2021 10:53:40 +0000
+Received: from VI1PR0402MB3359.eurprd04.prod.outlook.com
+ ([fe80::3c87:7c9e:2597:4d94]) by VI1PR0402MB3359.eurprd04.prod.outlook.com
+ ([fe80::3c87:7c9e:2597:4d94%5]) with mapi id 15.20.4020.025; Sat, 17 Apr 2021
+ 10:53:40 +0000
+From:   =?utf-8?Q?Aur=C3=A9lien?= Aptel <aaptel@suse.com>
+To:     Muhammad Usama Anjum <musamaanjum@gmail.com>,
+        Steve French <sfrench@samba.org>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        "open list:COMMON INTERNET FILE SYSTEM CLIENT (CIFS)" 
+        <linux-cifs@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Cc:     musamaanjum@gmail.com, kernel-janitors@vger.kernel.org,
+        dan.carpenter@oracle.com, colin.king@canonical.com
+Subject: Re: [PATCH v2] cifs: remove unnecessary copies of tcon->crfid.fid
+In-Reply-To: <20210415152409.GA2286719@LEGION>
+References: <20210415152409.GA2286719@LEGION>
+Date:   Sat, 17 Apr 2021 12:53:37 +0200
+Message-ID: <8735vp18su.fsf@suse.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Originating-IP: [2003:fa:709:9219:df10:b79:7ed4:bb5e]
+X-ClientProxiedBy: ZR0P278CA0014.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:16::24) To VI1PR0402MB3359.eurprd04.prod.outlook.com
+ (2603:10a6:803:3::28)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210416170040.4e467039@xps13>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-IMR: 1
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9956 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0
- phishscore=0 mlxlogscore=999 bulkscore=0 mlxscore=0 suspectscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2104060000 definitions=main-2104170071
-X-Proofpoint-ORIG-GUID: rbBbbTqEYbSJNA5J3RbjxamUH4pw2Nq6
-X-Proofpoint-GUID: rbBbbTqEYbSJNA5J3RbjxamUH4pw2Nq6
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9956 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 adultscore=0
- impostorscore=0 bulkscore=0 phishscore=0 spamscore=0 clxscore=1015
- mlxlogscore=999 lowpriorityscore=0 malwarescore=0 priorityscore=1501
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2104060000 definitions=main-2104170071
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from localhost (2003:fa:709:9219:df10:b79:7ed4:bb5e) by ZR0P278CA0014.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:16::24) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4042.16 via Frontend Transport; Sat, 17 Apr 2021 10:53:40 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: d721bfdb-15ea-4fbd-f589-08d9018f0f91
+X-MS-TrafficTypeDiagnostic: VI1PR0402MB3888:
+X-Microsoft-Antispam-PRVS: <VI1PR0402MB388881CCC4469396941CE9B5A84B9@VI1PR0402MB3888.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:4303;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: VX9pbOZSv8cXtoi+6CeD/D6osnZMphScSd7artE3C+r52GWL33fFgQi/uMavApK58O7NV8QsXUmsxs4HEBMpILS17akBXgsfzuhzwFuK3oEUZCwJKL40kWJl/2JdNm+v9hIkZ2E0BFIIDbC2HJCoZwhNDP92/LWJsndRIAqeIfkJkd9Gk0Lw6aX/mm1OwGZz08zRNo/4WX2f9s2IckpxDM9fA/qB2IBtq4W9xtwCTWS8T63uV5DecnvgkJz4c8bvrMbDjfZRJnL0MaYq1d60bp/GAHKB0gkU052aNbmAz/2YCUXq5vYF5gBS5DqRsePvSOgmmHAI4tsBZlVrOsfW9yZLwghha1rGGoYRY+xMOpnvz9OlH52VCI2cL8OLuzzvF6JGOmFaeryL1obeqHUrKjlfy2noC/qmmCujm3gBjXoKYuTZqTUp1Ltq4tb3/ZGFEdATbkS1B4No4+S42dcJVfvXJzFdM5HjssFVh+9nDZxnsSHMtvqt32rXLLrS9MRQp2CFExrDsbFpgq1bgb+ha19GjszSwZTiVJziWLWe1AO7iKhw6Y4c/62WKZJejzVbCij+5XsShwQPZKv5UgmnIw==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR0402MB3359.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(396003)(39850400004)(136003)(346002)(366004)(376002)(5660300002)(110136005)(52116002)(6666004)(86362001)(16526019)(83380400001)(186003)(8936002)(6486002)(316002)(66946007)(2616005)(478600001)(66556008)(66476007)(6496006)(2906002)(8676002)(36756003)(38100700002)(4326008)(66574015);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: =?utf-8?B?Y3ZEdDFyenVlR2RCMWU2THRSdjh5M05BTTJuSmlta1Q3WjJoL0RURHJ6eVVp?=
+ =?utf-8?B?SkpJYkoySUIzS2RJejFSQ3R3Rm5NUm5UOWRIaEYwM0dyS0grVUZtdEZ5bXov?=
+ =?utf-8?B?MWc1ZnUwUjBSZVZSK08rWTZrSE96N2p2bXMxd05tNjI1NXBYRHFnTzFzWFAx?=
+ =?utf-8?B?YVl6ZXd4YmtacmpHNVpheGJrbXhZY2s3eVhiSkpWc3lHelRCb2JBSGNGUWhu?=
+ =?utf-8?B?d2hCcGVKZ255ZVZzRVRJK1IrVnluanRLaXhGV1lRR2RlWjI2NWR3L2pFaDU0?=
+ =?utf-8?B?WVAxaXN0d20zejBOeGZ0VVZBNzBKYWJWQ3o0V3VzVXlxaHplTkFaTXRuOVR6?=
+ =?utf-8?B?eFBDWnc5QTREeFV0T2pES0lnTUgySXNvcFV3eTdpVzEvQnlIS1JGM3dRa2tJ?=
+ =?utf-8?B?MlI4d3F1RmdPTmdnc0hjMVZteVVkZzM1REpCSktlZjBXdW1ocGRiTVYvbnRU?=
+ =?utf-8?B?S1hHRWptUldUbmxpb2wzTGZ3UkRtM0VBTFBUUm9kMmVZeXd5OVJNcDk5cHBm?=
+ =?utf-8?B?c1JmaGtHZVc3N1QyVlB3NUFVZHlzWnVwaTlQTVJWdk0xdy9iNFJUVEJUWXBM?=
+ =?utf-8?B?dFAzYWx5REhyV1VGSmRZUnNDYzVnU25WaWlSL1o4d2JTelgyejRuSE9Kcm14?=
+ =?utf-8?B?Q3lCY0VUNkhTOWIvTWNQblBkeHdqdWhwdkJubXBBeFE0VEhhSUhQZ2tIWFJr?=
+ =?utf-8?B?TTdza014VUJKMzdMbmx3bFJOcW1uL1BvZ1hWRSt5WmxhYzU1MWJ6SUZlS24r?=
+ =?utf-8?B?N2dQT1AvTzNraFQrUk1sMVZWZGJOS3NTdG9MSThkcnJodEF1RDFlSEpNdURL?=
+ =?utf-8?B?QnZNZytRWkJTbWpxVXFwTFF6Ti9wUjd3aDFuUG01Mmk5UERmS0Vkc0h3MGtC?=
+ =?utf-8?B?aC9aQnJuM0wzeFNGcnpwOGY4Z1VVNHg1SThTRDY0c2k0TVJoM2E2SEk2emU4?=
+ =?utf-8?B?WE40em0zSUZMbjlPOWhUYTJhdytPRTNJVFFORVR2VVVrYjhiK1lVNlVGUWtS?=
+ =?utf-8?B?RUE2ZFNWSml5ZGF3aG5HajFrZVRFSU1IbWhSaVFoUExmSkpnUG5BYjM5TjQ4?=
+ =?utf-8?B?QzdWK0xUVjdtUnJYb2t2eThwYVNmajBVc1ZnanFNa2VqZTRaQi9oczJlT0hT?=
+ =?utf-8?B?RW1za1BBMU1tdzNvRUxKZXVuRTEyRnFWaDFZcm5OL0J6aXlOa3pkanV1c201?=
+ =?utf-8?B?eWlHdFpTcUJ4YWRSdFVaREVFV0lwWHBjM21jelU2TDNoV0VNZHQ0eWZrQTZ0?=
+ =?utf-8?B?cHhycFI1eFZSb2hLZllGcm05Vjhua2c3N3NNMlQ3NTdUV0k1RUhBblMvY3li?=
+ =?utf-8?B?WFpTVFk4SlBpNG44K0ZaWFZMT0sxK09MWDYrVVkyVTFxZ2J4RHhoRU54cWFW?=
+ =?utf-8?B?MUJPd1dyTUJvWUdxdG9zbXBEUWZRd2tzdHM4NStHek9GOHBPRmlBaE9TUWRG?=
+ =?utf-8?B?Mk9CZFZwSi9LSFZhd1dIODhDSDg0bTRmbzBMTUw5MXhmalZWdDhnblJUUk5t?=
+ =?utf-8?B?blZaNEtzV2VFTjNQMUFqVi9acFFuamlXM0kyNCtJK210QUxVdTFGMjZkTjFW?=
+ =?utf-8?B?YjBiT1RESWltOTBpZXBZWk5JaEJway9obkpDNEo2aDFrME5qZTNUblZ3WmE1?=
+ =?utf-8?B?RXkwNTBsNUQ3WDF4QThEVGVETEx4UVp1Q0t3N1FWalg4SU90S3JaZlhkUm5n?=
+ =?utf-8?B?VGR3bTNuK3JKZ1ZPaVM5VFdiQktTOWZkNDVNUEllYm8wZFFoME5lTjVnaFRl?=
+ =?utf-8?B?bFIydE5qaEViM2xFL0Jvb0hoemJ6bk01MWtFTzdCZUNsL3RyT0Rjb2JwakNG?=
+ =?utf-8?Q?rx4KrM5qqSDjgvQOlXXoYFUBM1AyeMDpdmLpI=3D?=
+X-OriginatorOrg: suse.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d721bfdb-15ea-4fbd-f589-08d9018f0f91
+X-MS-Exchange-CrossTenant-AuthSource: VI1PR0402MB3359.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Apr 2021 10:53:40.4379
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: f7a17af6-1c5c-4a36-aa8b-f5be247aa4ba
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: mQfrHf8qShcUieaGdRdm9Cc4HSJasrRRaJDhyGZWDJk4eA8VnX+5mLfOKY7UMLwu
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3888
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Apr 16, 2021 at 05:00:40PM +0200, Miquel Raynal wrote:
-> Hi Dan,
-> 
-> Dan Carpenter <dan.carpenter@oracle.com> wrote on Wed, 14 Apr 2021
-> 08:56:33 +0300:
-> 
-> > We should return an error code if the timing mode is not acknowledged
-> > by the NAND chip.
-> 
-> This truly is questionable (and I am not yet decided whether the answer
-> should be yes or no).
-> 
-> Returning an error here would produce the entire boot sequence to fail,
-> even though the NAND chip would work in mode 0.
-> 
-> Not returning an error would print the below warning (so the
-> user/developer is warned) and continue the boot with the slowest
-> timing interface.
-> 
-> Honestly I would be more in favor of letting things as they are
-> because I don't think this may be considered as a buggy situation, but I
-> am open to discussion.
-> 
+Hi,
 
-If we decided that the original code is correct then one way to silence
-the warning would be to do:
+This is better I think.
 
-	if (tmode_param[0] != chip->best_interface_config->timings.mode) {
-		pr_warn("timing mode %d not acknowledged by the NAND chip\n",
- 			chip->best_interface_config->timings.mode);
-		ret = 0;
-		goto err_reset_chip;
-	}
+Muhammad Usama Anjum <musamaanjum@gmail.com> writes:
+> @@ -894,6 +891,10 @@ int open_cached_dir(unsigned int xid, struct cifs_tc=
+on *tcon,
+> =20
+>  	/* BB TBD check to see if oplock level check can be removed below */
+>  	if (o_rsp->OplockLevel =3D=3D SMB2_OPLOCK_LEVEL_LEASE) {
+> +		/*
+> +		 * caller expects this func to set the fid in crfid to valid
+> +		 * cached root, so increment the refcount.
+> +		 */
 
-Setting "ret = 0;" right before the goto makes the code look more
-intentional to human readers as well.
+This comment is misleading. crfid variable doesn't exist anymore, and
+the kref_get() here is because of this commit:
 
-regards,
-dan carpenter
+    commit 2f94a3125b87
+    Author: Ronnie Sahlberg <lsahlber@redhat.com>
+    Date:   Thu Mar 28 11:20:02 2019 +1000
+   =20
+        cifs: fix kref underflow in close_shroot()
+
+        [...]
+-->     This extra get() is only used to hold the structure until we get a =
+lease
+-->     break from the server at which point we will kref_put() it during l=
+ease
+-->     processing.
+        [...]
+
+
+
+When we queue a lease break, we usually get() the cifsFileInfo, but if
+that cifsFileInfo is backed by a cached_fid, the cached_fid isn't
+bumped. That commit was probably a work around for that.
+
+@Ronnie :
+
+struct cached_fid is starting to look very much like struct
+cifsFileInfo. I wonder why we couldn't use it, along with
+find_writable_file()/find_readable_file() to handle the caching.
+
+Alternatively, make cifsFileInfo use cached_fid (perhaps renaming it in
+the process, I don't know)
+
+Because I suspect a lot more issues will come up regarding cached_fid
+refcount and cifsFileInfo refcount going out of sync otherwise.
+
+Cheers,
+--=20
+Aur=C3=A9lien Aptel / SUSE Labs Samba Team
+GPG: 1839 CB5F 9F5B FB9B AA97  8C99 03C8 A49B 521B D5D3
+SUSE Software Solutions Germany GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, D=
+E
+GF: Felix Imend=C3=B6rffer, Mary Higgins, Sri Rasiah HRB 247165 (AG M=C3=BC=
+nchen)
 
