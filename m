@@ -2,89 +2,98 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10EE6C433B4
-	for <kernel-janitors@archiver.kernel.org>; Sat, 17 Apr 2021 11:50:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AF4DC433ED
+	for <kernel-janitors@archiver.kernel.org>; Sat, 17 Apr 2021 12:31:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DA298610CE
-	for <kernel-janitors@archiver.kernel.org>; Sat, 17 Apr 2021 11:50:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 086C1611ED
+	for <kernel-janitors@archiver.kernel.org>; Sat, 17 Apr 2021 12:31:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236156AbhDQLvB (ORCPT
+        id S236259AbhDQMbz convert rfc822-to-8bit (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 17 Apr 2021 07:51:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40982 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235901AbhDQLvB (ORCPT
+        Sat, 17 Apr 2021 08:31:55 -0400
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:40689 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236058AbhDQMby (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 17 Apr 2021 07:51:01 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C44FC061574;
-        Sat, 17 Apr 2021 04:50:33 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id r7so17144565wrm.1;
-        Sat, 17 Apr 2021 04:50:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=hWQTtezj5e7iWCHlJMc/HElbpfX2XhqmE3A4fxS1/zs=;
-        b=TOJN98Y5AJgvwqWBXb3oN1sktUtOgOjayiLIailIKN8OfZ01K1WDZ5IGsZHu3ewnbD
-         Kv0usVyqiCN/c+rwornOm/CUkJ9/W7k6XKYKD+8PabWrZn1Pjr/VePU1tzD+aTXe9HHJ
-         OSqyA55TTs44hD2HqL4h9bCpe/I0Aki80XxisRJWtBOSys/UDGa8vA+DVtn9Xv1reIrg
-         dEIBVuPoo/ZV0nLbIgb57QuOtfeR6x0SEheM8944eYb+ipKKwlPDTUxLh4EQV09KFGu7
-         GKdaXUHjmLtoFgSLHX83A9mcRO0oH/V7odhveorl38U9L5JqGfZXNucM0SGFhKpUKk0+
-         mnTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=hWQTtezj5e7iWCHlJMc/HElbpfX2XhqmE3A4fxS1/zs=;
-        b=a/OtErxW+ICY7KYnHmYrmttsNs771kf/GHHTciOAdgc/nNpw2ATXYb8JSgUv+Y9A4l
-         kDiZW/xc/Z1PXuFAviFoZoK2Bofk2j7vOKz3f4sp1o+q5UQSKAkjArw68qykom1Q8qAt
-         bD2Ovz8r4YVU/8xK8+gERg9AglF4vkxKjBT9jeuDBkqQlApKopoIb76OjncKqkDlT/9O
-         4aeZZOTQYzTW5V3Sd6aD1BiGRn7Z3zy4irHKd2U+e8twewPZv7v/mXHGLiKuw9HUXRnJ
-         ayUxkRfjLHok96GCnE00JVostGQZrTPJeZpi5SbrLzhmUfUulRjgvpbMwGhzggXCwE22
-         fRaQ==
-X-Gm-Message-State: AOAM530emJVYk6zf8IK1tKl0uQNcvkJ8sUBOD4N8IrD63OjDQeWtjzio
-        moEKYwIK8ifpDD81VV3OcfQ=
-X-Google-Smtp-Source: ABdhPJwiI2uq4gmoZdg/8UpZ9CopW+Q7D2WGRFhJRA9IyInoGGc9jonEe7oBzmSJJrYZaHt55uxEcA==
-X-Received: by 2002:a5d:65d2:: with SMTP id e18mr4059418wrw.31.1618660232167;
-        Sat, 17 Apr 2021 04:50:32 -0700 (PDT)
-Received: from ard0534 ([41.62.188.221])
-        by smtp.gmail.com with ESMTPSA id u4sm13790693wml.0.2021.04.17.04.50.31
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 17 Apr 2021 04:50:31 -0700 (PDT)
-Date:   Sat, 17 Apr 2021 12:50:28 +0100
-From:   Khaled Romdhani <khaledromdhani216@gmail.com>
-To:     David Sterba <dsterba@suse.cz>, clm@fb.com, josef@toxicpanda.com
-Cc:     linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, khaledromdhani216@gmail.com
-Subject: Re: [PATCH-next] fs/btrfs: Fix uninitialized variable
-Message-ID: <20210417115028.GA21778@ard0534>
-References: <20210413130604.11487-1-khaledromdhani216@gmail.com>
- <20210416173203.GE7604@twin.jikos.cz>
+        Sat, 17 Apr 2021 08:31:54 -0400
+X-Originating-IP: 90.89.138.59
+Received: from xps13 (lfbn-tou-1-1325-59.w90-89.abo.wanadoo.fr [90.89.138.59])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 2A81A240003;
+        Sat, 17 Apr 2021 12:31:24 +0000 (UTC)
+Date:   Sat, 17 Apr 2021 14:31:24 +0200
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] mtd: rawnand: fix an error code in
+ nand_setup_interface()
+Message-ID: <20210417143124.6a79c71c@xps13>
+In-Reply-To: <20210417102426.GP6048@kadam>
+References: <YHaEEYg2DUFwnxSo@mwanda>
+        <20210416170040.4e467039@xps13>
+        <20210417102426.GP6048@kadam>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210416173203.GE7604@twin.jikos.cz>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Apr 16, 2021 at 07:32:03PM +0200, David Sterba wrote:
-> On Tue, Apr 13, 2021 at 02:06:04PM +0100, Khaled ROMDHANI wrote:
-> > The variable zone is not initialized. It
-> > may causes a failed assertion.
-> 
-> Failed assertion means the 2nd one checking that the result still fits
-> to 32bit type. That would mean that none of the cases were hit, but all
-> callers pass valid values.
-> 
-> It would be better to add a default: case to catch that explicitly,
-> though hitting that is considered 'will not happen'.
+Hi Dan,
 
-Yes. I will send a V2.
+Dan Carpenter <dan.carpenter@oracle.com> wrote on Sat, 17 Apr 2021
+13:24:26 +0300:
+
+> On Fri, Apr 16, 2021 at 05:00:40PM +0200, Miquel Raynal wrote:
+> > Hi Dan,
+> > 
+> > Dan Carpenter <dan.carpenter@oracle.com> wrote on Wed, 14 Apr 2021
+> > 08:56:33 +0300:
+> >   
+> > > We should return an error code if the timing mode is not acknowledged
+> > > by the NAND chip.  
+> > 
+> > This truly is questionable (and I am not yet decided whether the answer
+> > should be yes or no).
+> > 
+> > Returning an error here would produce the entire boot sequence to fail,
+> > even though the NAND chip would work in mode 0.
+> > 
+> > Not returning an error would print the below warning (so the
+> > user/developer is warned) and continue the boot with the slowest
+> > timing interface.
+> > 
+> > Honestly I would be more in favor of letting things as they are
+> > because I don't think this may be considered as a buggy situation, but I
+> > am open to discussion.
+> >   
+> 
+> If we decided that the original code is correct then one way to silence
+> the warning would be to do:
+> 
+> 	if (tmode_param[0] != chip->best_interface_config->timings.mode) {
+> 		pr_warn("timing mode %d not acknowledged by the NAND chip\n",
+>  			chip->best_interface_config->timings.mode);
+> 		ret = 0;
+> 		goto err_reset_chip;
+> 	}
+> 
+> Setting "ret = 0;" right before the goto makes the code look more
+> intentional to human readers as well.
+
+Absolutely right. Let's got for it then.
+
+Cheers,
+Miquèl
