@@ -2,99 +2,90 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC029C433B4
-	for <kernel-janitors@archiver.kernel.org>; Sat, 17 Apr 2021 15:36:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6F9FC43460
+	for <kernel-janitors@archiver.kernel.org>; Sat, 17 Apr 2021 17:29:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 89F806128B
-	for <kernel-janitors@archiver.kernel.org>; Sat, 17 Apr 2021 15:36:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5D2B6137D
+	for <kernel-janitors@archiver.kernel.org>; Sat, 17 Apr 2021 17:29:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236610AbhDQPhF (ORCPT
+        id S236773AbhDQRaO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 17 Apr 2021 11:37:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33760 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236287AbhDQPhE (ORCPT
+        Sat, 17 Apr 2021 13:30:14 -0400
+Received: from so254-9.mailgun.net ([198.61.254.9]:24085 "EHLO
+        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236807AbhDQRaN (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 17 Apr 2021 11:37:04 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3838AC061574;
-        Sat, 17 Apr 2021 08:36:38 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id e5so842350wrg.7;
-        Sat, 17 Apr 2021 08:36:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=c+F4d/dEml33345nfDC4G3PoJm5Qmt0bDGgusF3hVAA=;
-        b=pg3G1wezwp+QSAiQWTByKGg8AxHR1ktpMxQFkRs8iKwJ8Y86bRwAnhU0dHuiTjAEpQ
-         TyDYn+vxSWyq/HQIU5CfpRHGoWQIZgAbLt3lVI+6zNCCiNJsb1d1wowfC9dcz2PY1XnT
-         5vutlOnMLEMS1Xuh06PY3Y/XMjIlvlJyGq1+komGHJII8ZyNNI2HSkLZZ49pBcjUUx5j
-         G3kLNVPGvLduOUeYY/00R+yb9XBmO5yKbzgvvcE79xH+UTooUK4BRnPYmXmAqlamiuR9
-         DIphQNl7Q0/vgHpqmFMWUWscqhNwFNxArnmFdEsdB0Py89Ju2wR6yY0A75x7o+XDBg4Y
-         Znvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=c+F4d/dEml33345nfDC4G3PoJm5Qmt0bDGgusF3hVAA=;
-        b=pjkuZAq7I25ado+3XuqAm54pqK4OFjFUIlyOUY592BwjsuXJ5Hrdq4thrVJ95m1B3S
-         Yn845VysOmV74QPr5emXbbXSqLGG8gK+bxBCR62Sfb+if7iPdq/RHNdWG3Tq0yz+Om5m
-         QQePkw1ok1NEfgGV9ZS8jvpK4llBAC8EdDaRlRPYNjBYOYzWRBxRVnwPqnDA//yMZVeV
-         +uMotZ8Ungt/9MhaQdpSDGXCmUECMgtnaMuCRLBAJ7WhgZBoZXdS7BUsHvhIaRwIgtGh
-         4SuABiP1HbnXHVa4ChqhhN0cDnUccMmpi0B3vJZMEW5ybdmB+lmRzpQZ1WEhOsNOXRIZ
-         ElMw==
-X-Gm-Message-State: AOAM531+eGZruhe+M6QDhdak2QycK576Ku0mAwZR64oKXndJOZ0Hb2H9
-        2lOiic3Lqo/BBOkQe94GNmY=
-X-Google-Smtp-Source: ABdhPJwj+dRgPK3Xpn2TLtvCocLIWT4HlgdYcvvZlC2n/PDqXhJK10s2yzmiUISQcxzyUPIf4bwJBA==
-X-Received: by 2002:adf:e650:: with SMTP id b16mr4760567wrn.273.1618673796958;
-        Sat, 17 Apr 2021 08:36:36 -0700 (PDT)
-Received: from localhost.localdomain ([41.62.188.221])
-        by smtp.gmail.com with ESMTPSA id a15sm14773926wrr.53.2021.04.17.08.36.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 17 Apr 2021 08:36:36 -0700 (PDT)
-From:   Khaled ROMDHANI <khaledromdhani216@gmail.com>
-To:     clm@fb.com, josef@toxicpanda.com, dsterba@suse.com
-Cc:     Khaled ROMDHANI <khaledromdhani216@gmail.com>,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH v2] fs/btrfs: Fix uninitialized variable
-Date:   Sat, 17 Apr 2021 16:36:16 +0100
-Message-Id: <20210417153616.25056-1-khaledromdhani216@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Sat, 17 Apr 2021 13:30:13 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1618680586; h=Date: Message-Id: Cc: To: References:
+ In-Reply-To: From: Subject: Content-Transfer-Encoding: MIME-Version:
+ Content-Type: Sender; bh=Tmnmg/FcPCjv/KgppzdIIzcrR9RSKgPcm0+i3Ofk8ng=;
+ b=tXiJK69NADeQ1IljLRhbW+Zci3A6WRCS8IlkbAb+zcmDkC1ygOLH8H5uj1TtoSDyujY+BlGV
+ AYUK/z8H+rt/NRCfK6v4j/PuSlVW5dcHgdPq4yoQFDvTAOLv+D7YhZ4NrBZnZTH+ksD2VZl5
+ 8neJHEIYi67zvksTRq7nD9I1Qn4=
+X-Mailgun-Sending-Ip: 198.61.254.9
+X-Mailgun-Sid: WyI5NDExNyIsICJrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n05.prod.us-west-2.postgun.com with SMTP id
+ 607b1b08febcffa80f288d93 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Sat, 17 Apr 2021 17:29:44
+ GMT
+Sender: kvalo=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 469CEC4338A; Sat, 17 Apr 2021 17:29:44 +0000 (UTC)
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id E29BCC433F1;
+        Sat, 17 Apr 2021 17:29:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E29BCC433F1
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] rtlwifi: remove redundant assignment to variable err
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20210327230014.25554-1-colin.king@canonical.com>
+References: <20210327230014.25554-1-colin.king@canonical.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Ping-Ke Shih <pkshih@realtek.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.5.2
+Message-Id: <20210417172944.469CEC4338A@smtp.codeaurora.org>
+Date:   Sat, 17 Apr 2021 17:29:44 +0000 (UTC)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-As reported by the Coverity static analysis.
-The variable zone is not initialized which
-may causes a failed assertion.
+Colin King <colin.king@canonical.com> wrote:
 
-Addresses-Coverity: ("Uninitialized variables")
-Signed-off-by: Khaled ROMDHANI <khaledromdhani216@gmail.com>
----
-v2: add a default case as proposed by David Sterba
----
- fs/btrfs/zoned.c | 3 +++
- 1 file changed, 3 insertions(+)
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Variable err is assigned -ENODEV followed by an error return path
+> via label error_out that does not access the variable and returns
+> with the -ENODEV error return code. The assignment to err is
+> redundant and can be removed.
+> 
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
-index eeb3ebe11d7a..82527308d165 100644
---- a/fs/btrfs/zoned.c
-+++ b/fs/btrfs/zoned.c
-@@ -143,6 +143,9 @@ static inline u32 sb_zone_number(int shift, int mirror)
- 	case 0: zone = 0; break;
- 	case 1: zone = 1ULL << (BTRFS_SB_LOG_FIRST_SHIFT - shift); break;
- 	case 2: zone = 1ULL << (BTRFS_SB_LOG_SECOND_SHIFT - shift); break;
-+	default:
-+		zone = 0;
-+	break;
- 	}
- 
- 	ASSERT(zone <= U32_MAX);
+Patch applied to wireless-drivers-next.git, thanks.
+
+87431bc1f0f6 rtlwifi: remove redundant assignment to variable err
+
 -- 
-2.17.1
+https://patchwork.kernel.org/project/linux-wireless/patch/20210327230014.25554-1-colin.king@canonical.com/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
