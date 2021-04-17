@@ -2,77 +2,128 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C15F5C433ED
-	for <kernel-janitors@archiver.kernel.org>; Sat, 17 Apr 2021 07:16:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A9D1C43460
+	for <kernel-janitors@archiver.kernel.org>; Sat, 17 Apr 2021 10:25:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9B624611ED
-	for <kernel-janitors@archiver.kernel.org>; Sat, 17 Apr 2021 07:16:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D10A61209
+	for <kernel-janitors@archiver.kernel.org>; Sat, 17 Apr 2021 10:25:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232190AbhDQHRT (ORCPT
+        id S236069AbhDQKZn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 17 Apr 2021 03:17:19 -0400
-Received: from smtp11.smtpout.orange.fr ([80.12.242.133]:43607 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229888AbhDQHRS (ORCPT
+        Sat, 17 Apr 2021 06:25:43 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:34582 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236058AbhDQKZl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 17 Apr 2021 03:17:18 -0400
-Received: from localhost.localdomain ([86.243.172.93])
-        by mwinf5d34 with ME
-        id tjGm2400E21Fzsu03jGmVo; Sat, 17 Apr 2021 09:16:50 +0200
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 17 Apr 2021 09:16:50 +0200
-X-ME-IP: 86.243.172.93
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     saeedm@nvidia.com, leon@kernel.org, davem@davemloft.net,
-        kuba@kernel.org
-Cc:     netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] net/mlx5: Use kasprintf instead of hand-writing it
-Date:   Sat, 17 Apr 2021 09:16:44 +0200
-Message-Id: <46235ec010551d2788483ce636686a61345e40ba.1618643703.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.27.0
+        Sat, 17 Apr 2021 06:25:41 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13HAKb26014842;
+        Sat, 17 Apr 2021 10:24:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=Sv5e1id0xmN6AnV4mguXiCqPq8KQ5QvmLZmfSk/+Hdg=;
+ b=niSKvMOZ6NqJIOvccj1TipOsmfdar3kCfn3OUlHCtcyx/43aKpUHcgJdREdqperLWSEf
+ jgRN7syutnZEWY1zzwOKa+ixRU+HPADE6VU2y60XdyUbsA5hYm+WKmWgUsqiDNqooeqC
+ c2xGdffMFumm/2s554VNxuDJmpDSEAuP063c8nX442Qqtvk/ZB8N7Wz4mkL7US5xX7cl
+ c0jkhjLglevTVq5ccfzeNLn/W6C6/hBHGBpqgxs2l/t4elf58oLPl8kDvUFHdnih1Q9t
+ QCVQKMz4knxNUoJEm1gvXBfI815dgQN+SJLrwyQjaZ70XiAGuKW/bIiSuyDI/bAUAruW FA== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 37yrap8bg7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 17 Apr 2021 10:24:42 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13HAJfpq139444;
+        Sat, 17 Apr 2021 10:24:41 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 37yq0k3p36-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 17 Apr 2021 10:24:41 +0000
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 13HAOYaI016727;
+        Sat, 17 Apr 2021 10:24:34 GMT
+Received: from kadam (/102.36.221.92)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Sat, 17 Apr 2021 03:24:34 -0700
+Date:   Sat, 17 Apr 2021 13:24:26 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] mtd: rawnand: fix an error code in nand_setup_interface()
+Message-ID: <20210417102426.GP6048@kadam>
+References: <YHaEEYg2DUFwnxSo@mwanda>
+ <20210416170040.4e467039@xps13>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210416170040.4e467039@xps13>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-IMR: 1
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9956 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0
+ phishscore=0 mlxlogscore=999 bulkscore=0 mlxscore=0 suspectscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104060000 definitions=main-2104170071
+X-Proofpoint-ORIG-GUID: rbBbbTqEYbSJNA5J3RbjxamUH4pw2Nq6
+X-Proofpoint-GUID: rbBbbTqEYbSJNA5J3RbjxamUH4pw2Nq6
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9956 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 adultscore=0
+ impostorscore=0 bulkscore=0 phishscore=0 spamscore=0 clxscore=1015
+ mlxlogscore=999 lowpriorityscore=0 malwarescore=0 priorityscore=1501
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104060000 definitions=main-2104170071
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-'kasprintf()' can replace a kmalloc/strcpy/strcat sequence.
-It is less verbose and avoid the use of a magic number (64).
+On Fri, Apr 16, 2021 at 05:00:40PM +0200, Miquel Raynal wrote:
+> Hi Dan,
+> 
+> Dan Carpenter <dan.carpenter@oracle.com> wrote on Wed, 14 Apr 2021
+> 08:56:33 +0300:
+> 
+> > We should return an error code if the timing mode is not acknowledged
+> > by the NAND chip.
+> 
+> This truly is questionable (and I am not yet decided whether the answer
+> should be yes or no).
+> 
+> Returning an error here would produce the entire boot sequence to fail,
+> even though the NAND chip would work in mode 0.
+> 
+> Not returning an error would print the below warning (so the
+> user/developer is warned) and continue the boot with the slowest
+> timing interface.
+> 
+> Honestly I would be more in favor of letting things as they are
+> because I don't think this may be considered as a buggy situation, but I
+> am open to discussion.
+> 
 
-Anyway, the underlying 'alloc_workqueue()' would only keep the 24 first
-chars (i.e. sizeof(struct workqueue_struct->name) = WQ_NAME_LEN).
+If we decided that the original code is correct then one way to silence
+the warning would be to do:
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/net/ethernet/mellanox/mlx5/core/health.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+	if (tmode_param[0] != chip->best_interface_config->timings.mode) {
+		pr_warn("timing mode %d not acknowledged by the NAND chip\n",
+ 			chip->best_interface_config->timings.mode);
+		ret = 0;
+		goto err_reset_chip;
+	}
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/health.c b/drivers/net/ethernet/mellanox/mlx5/core/health.c
-index 9ff163c5bcde..a5383e701b4b 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/health.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/health.c
-@@ -802,12 +802,10 @@ int mlx5_health_init(struct mlx5_core_dev *dev)
- 	mlx5_fw_reporters_create(dev);
- 
- 	health = &dev->priv.health;
--	name = kmalloc(64, GFP_KERNEL);
-+	name = kasprintf(GFP_KERNEL, "mlx5_health%s", dev_name(dev->device));
- 	if (!name)
- 		goto out_err;
- 
--	strcpy(name, "mlx5_health");
--	strcat(name, dev_name(dev->device));
- 	health->wq = create_singlethread_workqueue(name);
- 	kfree(name);
- 	if (!health->wq)
--- 
-2.27.0
+Setting "ret = 0;" right before the goto makes the code look more
+intentional to human readers as well.
+
+regards,
+dan carpenter
 
