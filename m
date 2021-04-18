@@ -2,85 +2,91 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56941C433B4
-	for <kernel-janitors@archiver.kernel.org>; Sun, 18 Apr 2021 06:36:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BED27C433B4
+	for <kernel-janitors@archiver.kernel.org>; Sun, 18 Apr 2021 07:58:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2F7F061359
-	for <kernel-janitors@archiver.kernel.org>; Sun, 18 Apr 2021 06:36:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8FCF9610CC
+	for <kernel-janitors@archiver.kernel.org>; Sun, 18 Apr 2021 07:58:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234846AbhDRGgo (ORCPT
+        id S230243AbhDRH7O (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 18 Apr 2021 02:36:44 -0400
-Received: from so254-9.mailgun.net ([198.61.254.9]:38273 "EHLO
-        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229991AbhDRGgo (ORCPT
+        Sun, 18 Apr 2021 03:59:14 -0400
+Received: from smtprelay0095.hostedemail.com ([216.40.44.95]:56644 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S229605AbhDRH7O (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 18 Apr 2021 02:36:44 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1618727776; h=Date: Message-Id: Cc: To: References:
- In-Reply-To: From: Subject: Content-Transfer-Encoding: MIME-Version:
- Content-Type: Sender; bh=3JIVMHOahL7BQlBr4OBrtZYdE0AiOBGQfswRQ3QJbFA=;
- b=e97cqifjuhL5zmHsoNm+R0YLoPgtIRVzAoCJ7pwvhLrvw/1+AQrSqZIINEwc1IKW1lGVFybj
- 9jN26D7QWUU/MY8azT9pnCv0WeGA/tDdgd6k3B6cheFTNwasyF6XBApfgEfvpZfy9qqMilyi
- 1Fsae8DkbKRJVDnfo6sNBRgZO3E=
-X-Mailgun-Sending-Ip: 198.61.254.9
-X-Mailgun-Sid: WyI5NDExNyIsICJrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n06.prod.us-east-1.postgun.com with SMTP id
- 607bd358853c0a2c4616d0cf (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Sun, 18 Apr 2021 06:36:08
- GMT
-Sender: kvalo=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 97C89C4323A; Sun, 18 Apr 2021 06:36:07 +0000 (UTC)
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 24DC9C433F1;
-        Sun, 18 Apr 2021 06:36:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 24DC9C433F1
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Sun, 18 Apr 2021 03:59:14 -0400
+Received: from omf15.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 625581801EC5B;
+        Sun, 18 Apr 2021 07:58:45 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf15.hostedemail.com (Postfix) with ESMTPA id 421D1C4171;
+        Sun, 18 Apr 2021 07:58:42 +0000 (UTC)
+Message-ID: <78ad5b527aa1da06569fd5ae422ea2a403ef40a0.camel@perches.com>
+Subject: Re: [PATCH] brcmsmac: fix shift on 4 bit masked value
+From:   Joe Perches <joe@perches.com>
+To:     Kalle Valo <kvalo@codeaurora.org>,
+        Colin King <colin.king@canonical.com>
+Cc:     Arend van Spriel <aspriel@gmail.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Chi-hsien Lin <chi-hsien.lin@infineon.com>,
+        Wright Feng <wright.feng@infineon.com>,
+        Chung-hsien Hsu <chung-hsien.hsu@infineon.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        linux-wireless@vger.kernel.org,
+        brcm80211-dev-list.pdl@broadcom.com,
+        SHA-cyfmac-dev-list@infineon.com, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Sun, 18 Apr 2021 00:58:40 -0700
+In-Reply-To: <20210418061021.AB25CC43217@smtp.codeaurora.org>
+References: <20210318164513.19600-1-colin.king@canonical.com>
+         <20210418061021.AB25CC43217@smtp.codeaurora.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.38.1-1 
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] carl9170: remove get_tid_h
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <68efad7a597159e22771d37fc8b4a8a613866d60.1617399010.git.christophe.jaillet@wanadoo.fr>
-References: <68efad7a597159e22771d37fc8b4a8a613866d60.1617399010.git.christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     chunkeey@googlemail.com, davem@davemloft.net, kuba@kernel.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.5.2
-Message-Id: <20210418063607.97C89C4323A@smtp.codeaurora.org>
-Date:   Sun, 18 Apr 2021 06:36:07 +0000 (UTC)
+X-Rspamd-Server: rspamout02
+X-Stat-Signature: 8gh465wuimw17kau5gdipacob9prza1i
+X-Rspamd-Queue-Id: 421D1C4171
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Session-ID: U2FsdGVkX1/xWSqVlWo+70JHQhB8hBT2bN/Di8JdQ18=
+X-HE-Tag: 1618732722-454334
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
-
-> 'get_tid_h()' is the same as 'ieee80211_get_tid()'.
-> So this function can be removed to save a few lines of code.
+On Sun, 2021-04-18 at 06:10 +0000, Kalle Valo wrote:
+> Colin King <colin.king@canonical.com> wrote:
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Acked-by: Christian Lamparter <chunkeey@gmail.com>
+> > From: Colin Ian King <colin.king@canonical.com>
+> > 
+> > The calculation of offtune_val seems incorrect, the u16 value in
+> > pi->tx_rx_cal_radio_saveregs[2] is being masked with 0xf0 and then
+> > shifted 8 places right so that always ends up as a zero result. I
+> > believe the intended shift was 4 bits to the right. Fix this.
+> > 
+> > [Note: not tested, I don't have the H/W]
+> > 
+> > Addresses-Coverity: ("Operands don't affect result")
+> > Fixes: 5b435de0d786 ("net: wireless: add brcm80211 drivers")
+> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> 
+> I think this needs review from someone familiar with the hardware.
+> 
+> Patch set to Changes Requested.
 
-Patch applied to wireless-drivers-next.git, thanks.
+What "change" are you requesting here?
 
-cf366b154704 carl9170: remove get_tid_h
+Likely there needs to be some other setting for the patch.
 
--- 
-https://patchwork.kernel.org/project/linux-wireless/patch/68efad7a597159e22771d37fc8b4a8a613866d60.1617399010.git.christophe.jaillet@wanadoo.fr/
+Perhaps "deferred" as you seem to be requesting a review
+and there's no actual change necessary, just approval from
+someone with the hardware and that someone test the patch.
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
