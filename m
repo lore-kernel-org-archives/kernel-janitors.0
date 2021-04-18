@@ -2,91 +2,127 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BED27C433B4
-	for <kernel-janitors@archiver.kernel.org>; Sun, 18 Apr 2021 07:58:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8200EC433ED
+	for <kernel-janitors@archiver.kernel.org>; Sun, 18 Apr 2021 17:34:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8FCF9610CC
-	for <kernel-janitors@archiver.kernel.org>; Sun, 18 Apr 2021 07:58:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5323260FE5
+	for <kernel-janitors@archiver.kernel.org>; Sun, 18 Apr 2021 17:34:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230243AbhDRH7O (ORCPT
+        id S232211AbhDRRfF (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 18 Apr 2021 03:59:14 -0400
-Received: from smtprelay0095.hostedemail.com ([216.40.44.95]:56644 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S229605AbhDRH7O (ORCPT
+        Sun, 18 Apr 2021 13:35:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56016 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229783AbhDRRfE (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 18 Apr 2021 03:59:14 -0400
-Received: from omf15.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 625581801EC5B;
-        Sun, 18 Apr 2021 07:58:45 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf15.hostedemail.com (Postfix) with ESMTPA id 421D1C4171;
-        Sun, 18 Apr 2021 07:58:42 +0000 (UTC)
-Message-ID: <78ad5b527aa1da06569fd5ae422ea2a403ef40a0.camel@perches.com>
-Subject: Re: [PATCH] brcmsmac: fix shift on 4 bit masked value
-From:   Joe Perches <joe@perches.com>
-To:     Kalle Valo <kvalo@codeaurora.org>,
-        Colin King <colin.king@canonical.com>
-Cc:     Arend van Spriel <aspriel@gmail.com>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Chi-hsien Lin <chi-hsien.lin@infineon.com>,
-        Wright Feng <wright.feng@infineon.com>,
-        Chung-hsien Hsu <chung-hsien.hsu@infineon.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        linux-wireless@vger.kernel.org,
-        brcm80211-dev-list.pdl@broadcom.com,
-        SHA-cyfmac-dev-list@infineon.com, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Sun, 18 Apr 2021 00:58:40 -0700
-In-Reply-To: <20210418061021.AB25CC43217@smtp.codeaurora.org>
-References: <20210318164513.19600-1-colin.king@canonical.com>
-         <20210418061021.AB25CC43217@smtp.codeaurora.org>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.38.1-1 
+        Sun, 18 Apr 2021 13:35:04 -0400
+Received: from mail-oo1-xc30.google.com (mail-oo1-xc30.google.com [IPv6:2607:f8b0:4864:20::c30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EBBCC06174A
+        for <kernel-janitors@vger.kernel.org>; Sun, 18 Apr 2021 10:34:35 -0700 (PDT)
+Received: by mail-oo1-xc30.google.com with SMTP id c84-20020a4a4f570000b02901e9af00ac1bso1040460oob.10
+        for <kernel-janitors@vger.kernel.org>; Sun, 18 Apr 2021 10:34:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tyhicks-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=aiDBbDlNdCS2FMtreSqkM5dXUdAdhf1EEE5nTHdKML8=;
+        b=Ns49uFivuLCigXhCdeoEkzbgrA9uFd5/6k3H0LNs7wdT6bOAK97XJmQ0Q++uBAHYlt
+         KhTXacLQTfYDZvREb6VAgvfMIzUoHkbZvu6nNDx3AIw/9f2gxYg2YnxQ+3HYAkh4pAnp
+         R+xcrLMPAbr6y5pt/L3mzoyxvoAYAGDT8SMdPLokSiuxF2xVK+8ppMXoRzccMC7LhGmT
+         BydTlxNCJGnvUSEF+N0v2JGf0+yhwFldI7F+pi7x6FuofA6Fp24yNAgFl+Mdy8HGIiyX
+         65WZsViYiyeOLXjcxnHKVaIE4ncX/neFR4DcoTdWJfDBs1588kb/lWNsFg+wg0bld+hk
+         MFDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=aiDBbDlNdCS2FMtreSqkM5dXUdAdhf1EEE5nTHdKML8=;
+        b=Pay69gpHTbgNLTxwOlI8PLNhBdMN5tIp7azjjZD2Zd+pkamrG0wUkr3TaC1MVEpd5X
+         JMDUhNZSN0HQZOtYM325YO5EQ2fei5Xd/qdZTCPfwfl8epJioTKcfKmQSIFSuUGvcdu6
+         8WrKjeII6AihiOffXuNTetqGC9NCkGSzCMHbfU/Y28mM0kYqli1zRNbE8JlTi4/5ZgW5
+         ExkkhT47aIxNMWnpeRh/oGuPj8g+t0aVCWQeHDqOFvBS/9HAiHZvxUROwOzxlR90f4u8
+         JIOuvvguvhwPXG1kTu/tgRQY7XL+hH6bPpL1IVPyFKUxNfp1wV4RlmzD6yKn5uCod6Js
+         xuvQ==
+X-Gm-Message-State: AOAM530cNdZQn5huQUe2VKmTYVqCAJZnie8m9Gzjk62ZYVnU290styXY
+        2H8H5gzGbpzfklFW8EVa28mGzA==
+X-Google-Smtp-Source: ABdhPJwjE7TY6A3Mq7jEAqI+ZwAp96XNj7eaWDTBEJdNhvNPDCeB5jhHSB7nuXQAri3dRpBG/ewEoA==
+X-Received: by 2002:a4a:dc4e:: with SMTP id q14mr10880376oov.43.1618767275391;
+        Sun, 18 Apr 2021 10:34:35 -0700 (PDT)
+Received: from elm (162-237-133-238.lightspeed.rcsntx.sbcglobal.net. [162.237.133.238])
+        by smtp.gmail.com with ESMTPSA id t19sm2984537otm.40.2021.04.18.10.34.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 18 Apr 2021 10:34:35 -0700 (PDT)
+Date:   Sun, 18 Apr 2021 12:34:33 -0500
+From:   Tyler Hicks <code@tyhicks.com>
+To:     Ye Bin <yebin10@huawei.com>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Waiman Long <longman@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>, ecryptfs@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+Subject: Re: [PATCH -next] eCryptfs: Use DEFINE_MUTEX() for mutex lock
+Message-ID: <20210418173433.GD398325@elm>
+References: <20210409095142.2294032-1-yebin10@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Server: rspamout02
-X-Stat-Signature: 8gh465wuimw17kau5gdipacob9prza1i
-X-Rspamd-Queue-Id: 421D1C4171
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX1/xWSqVlWo+70JHQhB8hBT2bN/Di8JdQ18=
-X-HE-Tag: 1618732722-454334
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210409095142.2294032-1-yebin10@huawei.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, 2021-04-18 at 06:10 +0000, Kalle Valo wrote:
-> Colin King <colin.king@canonical.com> wrote:
+On 2021-04-09 17:51:42, Ye Bin wrote:
+> mutex lock can be initialized automatically with DEFINE_MUTEX()
+> rather than explicitly calling mutex_init().
 > 
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > The calculation of offtune_val seems incorrect, the u16 value in
-> > pi->tx_rx_cal_radio_saveregs[2] is being masked with 0xf0 and then
-> > shifted 8 places right so that always ends up as a zero result. I
-> > believe the intended shift was 4 bits to the right. Fix this.
-> > 
-> > [Note: not tested, I don't have the H/W]
-> > 
-> > Addresses-Coverity: ("Operands don't affect result")
-> > Fixes: 5b435de0d786 ("net: wireless: add brcm80211 drivers")
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Ye Bin <yebin10@huawei.com>
+
+This looks good to me. Thanks for the fix.
+
+Tyler
+
+> ---
+>  fs/ecryptfs/messaging.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
 > 
-> I think this needs review from someone familiar with the hardware.
+> diff --git a/fs/ecryptfs/messaging.c b/fs/ecryptfs/messaging.c
+> index c0dfd9647627..25ed9baf524e 100644
+> --- a/fs/ecryptfs/messaging.c
+> +++ b/fs/ecryptfs/messaging.c
+> @@ -14,10 +14,10 @@
+>  
+>  static LIST_HEAD(ecryptfs_msg_ctx_free_list);
+>  static LIST_HEAD(ecryptfs_msg_ctx_alloc_list);
+> -static struct mutex ecryptfs_msg_ctx_lists_mux;
+> +static DEFINE_MUTEX(ecryptfs_msg_ctx_lists_mux);
+>  
+>  static struct hlist_head *ecryptfs_daemon_hash;
+> -struct mutex ecryptfs_daemon_hash_mux;
+> +DEFINE_MUTEX(ecryptfs_daemon_hash_mux);
+>  static int ecryptfs_hash_bits;
+>  #define ecryptfs_current_euid_hash(uid) \
+>  	hash_long((unsigned long)from_kuid(&init_user_ns, current_euid()), ecryptfs_hash_bits)
+> @@ -359,7 +359,6 @@ int __init ecryptfs_init_messaging(void)
+>  		       "too large, defaulting to [%d] users\n", __func__,
+>  		       ecryptfs_number_of_users);
+>  	}
+> -	mutex_init(&ecryptfs_daemon_hash_mux);
+>  	mutex_lock(&ecryptfs_daemon_hash_mux);
+>  	ecryptfs_hash_bits = 1;
+>  	while (ecryptfs_number_of_users >> ecryptfs_hash_bits)
+> @@ -383,7 +382,6 @@ int __init ecryptfs_init_messaging(void)
+>  		rc = -ENOMEM;
+>  		goto out;
+>  	}
+> -	mutex_init(&ecryptfs_msg_ctx_lists_mux);
+>  	mutex_lock(&ecryptfs_msg_ctx_lists_mux);
+>  	ecryptfs_msg_counter = 0;
+>  	for (i = 0; i < ecryptfs_message_buf_len; i++) {
 > 
-> Patch set to Changes Requested.
-
-What "change" are you requesting here?
-
-Likely there needs to be some other setting for the patch.
-
-Perhaps "deferred" as you seem to be requesting a review
-and there's no actual change necessary, just approval from
-someone with the hardware and that someone test the patch.
-
-
