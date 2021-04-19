@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
 	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FEBCC433B4
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Apr 2021 04:04:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B61D9C43603
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Apr 2021 04:04:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 77B59610A1
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Apr 2021 04:04:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B2D9613AA
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Apr 2021 04:04:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237300AbhDSEEv (ORCPT
+        id S237393AbhDSEEw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 19 Apr 2021 00:04:51 -0400
-Received: from ozlabs.org ([203.11.71.1]:54329 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233881AbhDSEEo (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 19 Apr 2021 00:04:44 -0400
+        Mon, 19 Apr 2021 00:04:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49616 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234109AbhDSEEs (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 19 Apr 2021 00:04:48 -0400
+Received: from ozlabs.org (bilbo.ozlabs.org [IPv6:2401:3900:2:1::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D7C8C06138E;
+        Sun, 18 Apr 2021 21:04:18 -0700 (PDT)
 Received: by ozlabs.org (Postfix, from userid 1034)
-        id 4FNtVQ0MPcz9vG3; Mon, 19 Apr 2021 14:04:13 +1000 (AEST)
+        id 4FNtVR5nzHz9tl3; Mon, 19 Apr 2021 14:04:15 +1000 (AEST)
 From:   Michael Ellerman <patch-notifications@ellerman.id.au>
-To:     Madhavan Srinivasan <maddy@linux.ibm.com>,
+To:     Michael Ellerman <mpe@ellerman.id.au>,
         Bixuan Cui <cuibixuan@huawei.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Kajol Jain <kjain@linux.ibm.com>,
-        Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+        Liu Shixin <liushixin2@huawei.com>
 Cc:     kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         linux-kernel@vger.kernel.org
-In-Reply-To: <20210409090119.59444-1-cuibixuan@huawei.com>
-References: <20210409090119.59444-1-cuibixuan@huawei.com>
-Subject: Re: [PATCH -next] powerpc/perf: Make symbol 'isa207_pmu_format_attr' static
-Message-Id: <161880479814.1398509.6067179315782910479.b4-ty@ellerman.id.au>
-Date:   Mon, 19 Apr 2021 13:59:58 +1000
+In-Reply-To: <20210409090109.59347-1-cuibixuan@huawei.com>
+References: <20210409090109.59347-1-cuibixuan@huawei.com>
+Subject: Re: [PATCH -next] powerpc/pseries: Make symbol '__pcpu_scope_hcall_stats' static
+Message-Id: <161880479761.1398509.15398715314309643145.b4-ty@ellerman.id.au>
+Date:   Mon, 19 Apr 2021 13:59:57 +1000
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -41,18 +43,18 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 9 Apr 2021 17:01:19 +0800, Bixuan Cui wrote:
+On Fri, 9 Apr 2021 17:01:09 +0800, Bixuan Cui wrote:
 > The sparse tool complains as follows:
 > 
-> arch/powerpc/perf/isa207-common.c:24:18: warning:
->  symbol 'isa207_pmu_format_attr' was not declared. Should it be static?
+> arch/powerpc/platforms/pseries/hvCall_inst.c:29:1: warning:
+>  symbol '__pcpu_scope_hcall_stats' was not declared. Should it be static?
 > 
-> This symbol is not used outside of isa207-common.c, so this
+> This symbol is not used outside of hvCall_inst.c, so this
 > commit marks it static.
 
 Applied to powerpc/next.
 
-[1/1] powerpc/perf: Make symbol 'isa207_pmu_format_attr' static
-      https://git.kernel.org/powerpc/c/107dadb046178173dea18e0a78ff8ea3cc27c213
+[1/1] powerpc/pseries: Make symbol '__pcpu_scope_hcall_stats' static
+      https://git.kernel.org/powerpc/c/193e4cd8ed9dd01092d01df7706a6b344c946af4
 
 cheers
