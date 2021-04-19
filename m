@@ -2,68 +2,109 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FA10C433B4
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Apr 2021 04:04:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1587CC433ED
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Apr 2021 06:00:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 342D460E09
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Apr 2021 04:04:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2DCD61057
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Apr 2021 06:00:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237427AbhDSEEy (ORCPT
+        id S231501AbhDSGBJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 19 Apr 2021 00:04:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49614 "EHLO
+        Mon, 19 Apr 2021 02:01:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46474 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234090AbhDSEEs (ORCPT
+        with ESMTP id S229652AbhDSGBI (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 19 Apr 2021 00:04:48 -0400
-Received: from ozlabs.org (ozlabs.org [IPv6:2401:3900:2:1::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E4D3C061760;
-        Sun, 18 Apr 2021 21:04:15 -0700 (PDT)
-Received: by ozlabs.org (Postfix, from userid 1034)
-        id 4FNtVP1HGSz9vGp; Mon, 19 Apr 2021 14:04:13 +1000 (AEST)
-From:   Michael Ellerman <patch-notifications@ellerman.id.au>
-To:     Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Bixuan Cui <cuibixuan@huawei.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Kajol Jain <kjain@linux.ibm.com>,
-        "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
-Cc:     kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <20210409090124.59492-1-cuibixuan@huawei.com>
-References: <20210409090124.59492-1-cuibixuan@huawei.com>
-Subject: Re: [PATCH -next] powerpc/perf/hv-24x7: Make some symbols static
-Message-Id: <161880479840.1398509.5195313938984929332.b4-ty@ellerman.id.au>
-Date:   Mon, 19 Apr 2021 13:59:58 +1000
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Mon, 19 Apr 2021 02:01:08 -0400
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE9A5C06174A;
+        Sun, 18 Apr 2021 23:00:37 -0700 (PDT)
+Received: by mail-wr1-x430.google.com with SMTP id m9so19862568wrx.3;
+        Sun, 18 Apr 2021 23:00:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=IYmFJ+BJKkV6xPPlNj0ePpOdoBvoVWpe2CwMz3Be8Ss=;
+        b=Bx+I8SIqnxfc3KJVfIaC2oBMA/L4EgNFa92VX6KUDIUF/U14nTrnjPkjluEi6kzKUG
+         moN01JivZ6Ck9ID5HPo5sZM1z3XygR94dzlOzBb4wbspl1H/dn2eIwil8jKN7HS+YIfJ
+         PkVaiEOMmLmx9KpWivXVxdyCS62UtNmVIUA4kaLyavDPYO63BhZYnzLQ/T/fc/WHY5Ar
+         QvsV31kmlU6ifzAGsTxmucmyrDKyOJw7fCWnysRhODnQPnXUfvXHpvWxqinvv3/YLT5q
+         slvJWet+ZTLGqsWquqNQSz+KOYzLYLwLn01MHUlKdELUdZRUcLnwzyMn7CSFLGL5sIKO
+         bEUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=IYmFJ+BJKkV6xPPlNj0ePpOdoBvoVWpe2CwMz3Be8Ss=;
+        b=pG1QJ1TYRQenIpl5ua1t91ywJgm3YjnsvNysQoz5cM7Vco9HQKi33Zsr61G1yBNLXU
+         yzW1ZHb6NW8ZdD3kln+ZY0zNzjhtbhrgkK7vnCm49RW4mp4fByOXBYFWLdGA6aTso+GZ
+         PsOiA98fN927MpRwG+ePA/RlsQmMlUeVU6v12FViP8ZMNZx0JnEmUK54nBGinMnEEDad
+         RUGyLBYdoYJhQI52HCjDjMNfcw6yGyDXowWIyYepfDh8yBurktAdkXNqoxl1yYp9F/h/
+         wZ0yW26luSzd4TVphvZIhSLgF/ADYir9HNxKen8rHpUPQ3JqkQQqbjqdgbntaE7UUo7H
+         1DfQ==
+X-Gm-Message-State: AOAM530Bx8P0BvdrNsx81jOW7v5oXz+V4uLKytu+cFexfTxVSXUd4WEJ
+        d0ofGTq8fntNf4iXDZrtwXI=
+X-Google-Smtp-Source: ABdhPJzYywU4adD/FSSILOqIQ2oUcfN8M9ai7CyR3KbsTivPZ0TmissuJy2yFcha1mQSvrljanSTMg==
+X-Received: by 2002:adf:f38e:: with SMTP id m14mr12103905wro.34.1618812032763;
+        Sun, 18 Apr 2021 23:00:32 -0700 (PDT)
+Received: from felia.fritz.box ([2001:16b8:2dc6:900:a414:a08d:9e82:6738])
+        by smtp.gmail.com with ESMTPSA id d200sm3837731wmd.45.2021.04.18.23.00.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 18 Apr 2021 23:00:32 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Giulio Benetti <giulio.benetti@benettiengineering.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input@vger.kernel.org
+Cc:     Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
+        Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: repair reference in HYCON HY46XX TOUCHSCREEN SUPPORT
+Date:   Mon, 19 Apr 2021 08:00:23 +0200
+Message-Id: <20210419060023.3460-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 9 Apr 2021 17:01:24 +0800, Bixuan Cui wrote:
-> The sparse tool complains as follows:
-> 
-> arch/powerpc/perf/hv-24x7.c:229:1: warning:
->  symbol '__pcpu_scope_hv_24x7_txn_flags' was not declared. Should it be static?
-> arch/powerpc/perf/hv-24x7.c:230:1: warning:
->  symbol '__pcpu_scope_hv_24x7_txn_err' was not declared. Should it be static?
-> arch/powerpc/perf/hv-24x7.c:236:1: warning:
->  symbol '__pcpu_scope_hv_24x7_hw' was not declared. Should it be static?
-> arch/powerpc/perf/hv-24x7.c:244:1: warning:
->  symbol '__pcpu_scope_hv_24x7_reqb' was not declared. Should it be static?
-> arch/powerpc/perf/hv-24x7.c:245:1: warning:
->  symbol '__pcpu_scope_hv_24x7_resb' was not declared. Should it be static?
-> 
-> [...]
+Commit aa2f62cf211a ("Input: add driver for the Hycon HY46XX touchpanel
+series") adds the file ./drivers/input/touchscreen/hycon-hy46xx.c, but the
+file entry in MAINTAINERS refers to ./drivers/input/touchscreen/hy46xx.c.
 
-Applied to powerpc/next.
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains:
 
-[1/1] powerpc/perf/hv-24x7: Make some symbols static
-      https://git.kernel.org/powerpc/c/cc331eee03eadd750af1fb957d020b3f24e5e056
+  warning: no file matches    F:    drivers/input/touchscreen/hy46xx.c
 
-cheers
+Repair the file entry by referring to the right location.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+applies cleanly on next-20210419
+
+Guilio, please ack.
+Dmitry, please pick this minor clean up patch for your -next tree.
+
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index c54b8e4520d1..bbe356508f29 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8425,7 +8425,7 @@ M:	Giulio Benetti <giulio.benetti@benettiengineering.com>
+ L:	linux-input@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/input/touchscreen/hycon,hy46xx.yaml
+-F:	drivers/input/touchscreen/hy46xx.c
++F:	drivers/input/touchscreen/hycon-hy46xx.c
+ 
+ HYGON PROCESSOR SUPPORT
+ M:	Pu Wen <puwen@hygon.cn>
+-- 
+2.17.1
+
