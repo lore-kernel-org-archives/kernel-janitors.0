@@ -2,100 +2,104 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E83D7C433B4
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Apr 2021 20:47:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68524C43460
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Apr 2021 23:29:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B8A5F613B0
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Apr 2021 20:47:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A0F76102A
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Apr 2021 23:29:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241273AbhDSUrm (ORCPT
+        id S231302AbhDSX3d (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 19 Apr 2021 16:47:42 -0400
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:13723
-        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238209AbhDSUpx (ORCPT
+        Mon, 19 Apr 2021 19:29:33 -0400
+Received: from mo-csw1515.securemx.jp ([210.130.202.154]:42952 "EHLO
+        mo-csw.securemx.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229842AbhDSX3c (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 19 Apr 2021 16:45:53 -0400
-IronPort-HdrOrdr: =?us-ascii?q?A9a23=3AyxeUNqxKDhwB/4lm/b6yKrPw571zdoIgy1kn?=
- =?us-ascii?q?xilNYDZeG/b0q+mFmvMH2RjozAsLUHY7ltyafIWGS3XQ9Zl6iLNhXouKcQH6tA?=
- =?us-ascii?q?KTQ71KwpDlx1TbcBHW0s54+eNef7NlCNv2ZGIbse/f7BOjG9gthPmLmZrHuc7k?=
- =?us-ascii?q?w31gTR5nZshbhm9EIzyGGU57ThQuP/YEPaebj/AsmxOQPVAebsG2HRA+PtT+mw?=
- =?us-ascii?q?=3D=3D?=
-X-IronPort-AV: E=Sophos;i="5.82,235,1613430000"; 
-   d="scan'208";a="379100915"
-Received: from palace.rsr.lip6.fr (HELO palace.lip6.fr) ([132.227.105.202])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-SHA; 19 Apr 2021 22:45:20 +0200
-From:   Julia Lawall <Julia.Lawall@inria.fr>
-To:     Julia Lawall <Julia.Lawall@inria.fr>
-Cc:     kernel-janitors@vger.kernel.org,
-        Gilles Muller <Gilles.Muller@inria.fr>,
-        Nicolas Palix <nicolas.palix@imag.fr>, cocci@systeme.lip6.fr,
-        linux-kernel@vger.kernel.org,
-        "Fabio M . De Francesco" <fmdefrancesco@gmail.com>
-Subject: [PATCH] Coccinelle: drop context *s
-Date:   Mon, 19 Apr 2021 21:58:07 +0200
-Message-Id: <20210419195807.2362029-1-Julia.Lawall@inria.fr>
-X-Mailer: git-send-email 2.25.1
+        Mon, 19 Apr 2021 19:29:32 -0400
+Received: by mo-csw.securemx.jp (mx-mo-csw1515) id 13JNSKma008066; Tue, 20 Apr 2021 08:28:20 +0900
+X-Iguazu-Qid: 34tre4erL1uXq8Lo6m
+X-Iguazu-QSIG: v=2; s=0; t=1618874900; q=34tre4erL1uXq8Lo6m; m=EC0wCzbTh/qdnd5+DAtK9Y6Bek2gq4A5/QgKBXv6o1E=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+        by relay.securemx.jp (mx-mr1510) id 13JNSIgK023852
+        (version=TLSv1.2 cipher=AES128-GCM-SHA256 bits=128 verify=NOT);
+        Tue, 20 Apr 2021 08:28:18 +0900
+Received: from enc01.toshiba.co.jp (enc01.toshiba.co.jp [106.186.93.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by imx2-a.toshiba.co.jp (Postfix) with ESMTPS id 1C0A91000A3;
+        Tue, 20 Apr 2021 08:28:18 +0900 (JST)
+Received: from hop001.toshiba.co.jp ([133.199.164.63])
+        by enc01.toshiba.co.jp  with ESMTP id 13JNSHw1015773;
+        Tue, 20 Apr 2021 08:28:17 +0900
+Date:   Tue, 20 Apr 2021 08:28:00 +0900
+From:   Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Yu Chen <chenyu56@huawei.com>,
+        Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Joe Perches <joe@perches.com>,
+        Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] MAINTAINERS: rectify entry for ARM/TOSHIBA VISCONTI
+ ARCHITECTURE
+X-TSB-HOP: ON
+Message-ID: <20210419232800.cbcyjlyrqywkrqdt@toshiba.co.jp>
+References: <20210419092609.3692-1-lukas.bulwahn@gmail.com>
+ <20210419092609.3692-2-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210419092609.3692-2-lukas.bulwahn@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Context mode is not supported, so the *s are just confusing to people
-who use the rule outside of make coccicheck.  So, drop the *s.
+Hi,
 
-Fixes: 6dd9379e8f32 ("coccinelle: also catch kzfree() issues")
-Reported-by: Fabio M. De Francesco <fmdefrancesco@gmail.com>
-Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+Thanks for your patch.
 
----
- scripts/coccinelle/free/kfree.cocci |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+On Mon, Apr 19, 2021 at 11:26:07AM +0200, Lukas Bulwahn wrote:
+> Commit 836863a08c99 ("MAINTAINERS: Add information for Toshiba Visconti ARM
+> SoCs") refers to the non-existing file toshiba,tmpv7700-pinctrl.yaml in
+> ./Documentation/devicetree/bindings/pinctrl/. Commit 1825c1fe0057
+> ("pinctrl: Add DT bindings for Toshiba Visconti TMPV7700 SoC") originating
+> from the same patch series however adds the file
+> toshiba,visconti-pinctrl.yaml in that directory instead.
+> 
+> So, refer to toshiba,visconti-pinctrl.yaml in the ARM/TOSHIBA VISCONTI
+> ARCHITECTURE section instead.
+> 
 
-diff --git a/scripts/coccinelle/free/kfree.cocci b/scripts/coccinelle/free/kfree.cocci
-index 168568386034..9b6e2037c2a9 100644
---- a/scripts/coccinelle/free/kfree.cocci
-+++ b/scripts/coccinelle/free/kfree.cocci
-@@ -22,9 +22,9 @@ position p1;
- @@
- 
- (
--* kfree@p1(E)
-+ kfree@p1(E)
- |
--* kfree_sensitive@p1(E)
-+ kfree_sensitive@p1(E)
- )
- 
- @print expression@
-@@ -66,9 +66,9 @@ position ok;
- 
- while (1) { ...
- (
--* kfree@ok(E)
-+ kfree@ok(E)
- |
--* kfree_sensitive@ok(E)
-+ kfree_sensitive@ok(E)
- )
-   ... when != break;
-       when != goto l;
-@@ -84,9 +84,9 @@ position free.p1!=loop.ok,p2!={print.p,sz.p};
- @@
- 
- (
--* kfree@p1(E,...)
-+ kfree@p1(E,...)
- |
--* kfree_sensitive@p1(E,...)
-+ kfree_sensitive@p1(E,...)
- )
- ...
- (
+Could you add  Fixes: tag?
 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+
+Acked-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+
+> ---
+>  MAINTAINERS | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index c54b8e4520d1..d31c8058b17f 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -2669,7 +2669,7 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/iwamatsu/linux-visconti.git
+>  F:	Documentation/devicetree/bindings/arm/toshiba.yaml
+>  F:	Documentation/devicetree/bindings/net/toshiba,visconti-dwmac.yaml
+>  F:	Documentation/devicetree/bindings/gpio/toshiba,gpio-visconti.yaml
+> -F:	Documentation/devicetree/bindings/pinctrl/toshiba,tmpv7700-pinctrl.yaml
+> +F:	Documentation/devicetree/bindings/pinctrl/toshiba,visconti-pinctrl.yaml
+>  F:	Documentation/devicetree/bindings/watchdog/toshiba,visconti-wdt.yaml
+>  F:	arch/arm64/boot/dts/toshiba/
+>  F:	drivers/net/ethernet/stmicro/stmmac/dwmac-visconti.c
+> -- 
+> 2.17.1
+> 
+> 
