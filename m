@@ -2,40 +2,45 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B33B4C433ED
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Apr 2021 12:56:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F016BC43470
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Apr 2021 13:23:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 82ADC6108B
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Apr 2021 12:56:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CAC1C6101C
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Apr 2021 13:23:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239095AbhDSM5A (ORCPT
+        id S241456AbhDSNXf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 19 Apr 2021 08:57:00 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:58929 "EHLO
+        Mon, 19 Apr 2021 09:23:35 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:59920 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232709AbhDSM47 (ORCPT
+        with ESMTP id S240580AbhDSNVL (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 19 Apr 2021 08:56:59 -0400
+        Mon, 19 Apr 2021 09:21:11 -0400
 Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <colin.king@canonical.com>)
-        id 1lYTS0-0001Z9-7b; Mon, 19 Apr 2021 12:56:28 +0000
+        id 1lYTpI-0003Uj-N6; Mon, 19 Apr 2021 13:20:32 +0000
 From:   Colin King <colin.king@canonical.com>
-To:     Coly Li <colyli@suse.de>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Jianpeng Ma <jianpeng.ma@intel.com>,
-        linux-bcache@vger.kernel.org
+To:     Felix Fietkau <nbd@nbd.name>,
+        Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] bcache: Set error return err to -ENOMEM on allocation failure
-Date:   Mon, 19 Apr 2021 13:56:27 +0100
-Message-Id: <20210419125628.177047-1-colin.king@canonical.com>
+Subject: [PATCH][next] mt76: mt7615: Fix a dereference of pointer sta before it is null checked
+Date:   Mon, 19 Apr 2021 14:20:32 +0100
+Message-Id: <20210419132032.177788-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -46,29 +51,39 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Currently when ns fails to be allocated the error return path returns
-an uninitialized return code in variable 'err'. Fix this by setting
-err to -ENOMEM.
+Currently the assignment of idx dereferences pointer sta before
+sta is null checked, leading to a potential null pointer dereference.
+Fix this by assigning idx when it is required after the null check on
+pointer sta.
 
-Addresses-Coverity: ("Uninitialized scalar variable")
-Fixes: 688330711e9a ("bcache: initialize the nvm pages allocator")
+Addresses-Coverity: ("Dereference before null check")
+Fixes: a4a5a430b076 ("mt76: mt7615: fix TSF configuration")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/md/bcache/nvm-pages.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/wireless/mediatek/mt76/mt7615/usb_sdio.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/md/bcache/nvm-pages.c b/drivers/md/bcache/nvm-pages.c
-index 08cd45e90481..2e124d546099 100644
---- a/drivers/md/bcache/nvm-pages.c
-+++ b/drivers/md/bcache/nvm-pages.c
-@@ -584,6 +584,7 @@ struct bch_nvm_namespace *bch_register_namespace(const char *dev_path)
- 		return ERR_PTR(PTR_ERR(bdev));
- 	}
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/usb_sdio.c b/drivers/net/wireless/mediatek/mt76/mt7615/usb_sdio.c
+index 4a370b9f7a17..f8d3673c2cae 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7615/usb_sdio.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7615/usb_sdio.c
+@@ -67,7 +67,7 @@ static int mt7663_usb_sdio_set_rates(struct mt7615_dev *dev,
+ 	struct mt7615_rate_desc *rate = &wrd->rate;
+ 	struct mt7615_sta *sta = wrd->sta;
+ 	u32 w5, w27, addr, val;
+-	u16 idx = sta->vif->mt76.omac_idx;
++	u16 idx;
  
-+	err = -ENOMEM;
- 	ns = kzalloc(sizeof(struct bch_nvm_namespace), GFP_KERNEL);
- 	if (!ns)
- 		goto bdput;
+ 	lockdep_assert_held(&dev->mt76.mutex);
+ 
+@@ -119,6 +119,7 @@ static int mt7663_usb_sdio_set_rates(struct mt7615_dev *dev,
+ 
+ 	sta->rate_probe = sta->rateset[rate->rateset].probe_rate.idx != -1;
+ 
++	idx = sta->vif->mt76.omac_idx;
+ 	idx = idx > HW_BSSID_MAX ? HW_BSSID_0 : idx;
+ 	addr = idx > 1 ? MT_LPON_TCR2(idx): MT_LPON_TCR0(idx);
+ 
 -- 
 2.30.2
 
