@@ -2,76 +2,73 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D93DC433B4
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Apr 2021 17:34:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6741C43461
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Apr 2021 19:35:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 21F886127C
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Apr 2021 17:34:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 74DD261369
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Apr 2021 19:35:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240020AbhDSRfQ (ORCPT
+        id S241748AbhDSTfy (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 19 Apr 2021 13:35:16 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49906 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S239976AbhDSRfO (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 19 Apr 2021 13:35:14 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id CDB61B30A;
-        Mon, 19 Apr 2021 17:34:43 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id 83FB0DA732; Mon, 19 Apr 2021 19:32:25 +0200 (CEST)
-Date:   Mon, 19 Apr 2021 19:32:25 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     Khaled ROMDHANI <khaledromdhani216@gmail.com>
-Cc:     clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] fs/btrfs: Fix uninitialized variable
-Message-ID: <20210419173225.GT7604@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz,
-        Khaled ROMDHANI <khaledromdhani216@gmail.com>, clm@fb.com,
-        josef@toxicpanda.com, dsterba@suse.com, linux-btrfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <20210417153616.25056-1-khaledromdhani216@gmail.com>
+        Mon, 19 Apr 2021 15:35:54 -0400
+Received: from smtp13.smtpout.orange.fr ([80.12.242.135]:26500 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S239730AbhDSTfx (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 19 Apr 2021 15:35:53 -0400
+Received: from localhost.localdomain ([86.243.172.93])
+        by mwinf5d74 with ME
+        id ujbK2400121Fzsu03jbKZD; Mon, 19 Apr 2021 21:35:21 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 19 Apr 2021 21:35:21 +0200
+X-ME-IP: 86.243.172.93
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     aspriel@gmail.com, franky.lin@broadcom.com,
+        hante.meuleman@broadcom.com, chi-hsien.lin@infineon.com,
+        wright.feng@infineon.com, chung-hsien.hsu@infineon.com,
+        kvalo@codeaurora.org, davem@davemloft.net, kuba@kernel.org
+Cc:     linux-wireless@vger.kernel.org,
+        brcm80211-dev-list.pdl@broadcom.com,
+        SHA-cyfmac-dev-list@infineon.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] brcmfmac: Avoid GFP_ATOMIC when GFP_KERNEL is enough
+Date:   Mon, 19 Apr 2021 21:35:17 +0200
+Message-Id: <b6e619415db4ee5de95389280d7195bb56e45f77.1618860716.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210417153616.25056-1-khaledromdhani216@gmail.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, Apr 17, 2021 at 04:36:16PM +0100, Khaled ROMDHANI wrote:
-> As reported by the Coverity static analysis.
-> The variable zone is not initialized which
-> may causes a failed assertion.
-> 
-> Addresses-Coverity: ("Uninitialized variables")
-> Signed-off-by: Khaled ROMDHANI <khaledromdhani216@gmail.com>
-> ---
-> v2: add a default case as proposed by David Sterba
-> ---
->  fs/btrfs/zoned.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
-> index eeb3ebe11d7a..82527308d165 100644
-> --- a/fs/btrfs/zoned.c
-> +++ b/fs/btrfs/zoned.c
-> @@ -143,6 +143,9 @@ static inline u32 sb_zone_number(int shift, int mirror)
->  	case 0: zone = 0; break;
->  	case 1: zone = 1ULL << (BTRFS_SB_LOG_FIRST_SHIFT - shift); break;
->  	case 2: zone = 1ULL << (BTRFS_SB_LOG_SECOND_SHIFT - shift); break;
-> +	default:
-> +		zone = 0;
+A workqueue is not atomic, so constraints can be relaxed here.
+GFP_KERNEL can be used instead of GFP_ATOMIC.
 
-Well yeah but this is not a valid case at all, we'd rather catch that as
-an assertion failure than letting is silently continue.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.c
+index ea78fe527c5d..838b09b23abf 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.c
+@@ -151,7 +151,7 @@ static void _brcmf_set_multicast_list(struct work_struct *work)
+ 	/* Send down the multicast list first. */
+ 	cnt = netdev_mc_count(ndev);
+ 	buflen = sizeof(cnt) + (cnt * ETH_ALEN);
+-	buf = kmalloc(buflen, GFP_ATOMIC);
++	buf = kmalloc(buflen, GFP_KERNEL);
+ 	if (!buf)
+ 		return;
+ 	bufp = buf;
+-- 
+2.27.0
+
