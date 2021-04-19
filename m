@@ -2,110 +2,95 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 826B5C43611
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Apr 2021 09:26:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7062C433B4
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Apr 2021 10:22:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 63D8F61157
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Apr 2021 09:26:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6DBD661166
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Apr 2021 10:22:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237901AbhDSJ1R (ORCPT
+        id S238566AbhDSKXO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 19 Apr 2021 05:27:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35180 "EHLO
+        Mon, 19 Apr 2021 06:23:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233132AbhDSJ1L (ORCPT
+        with ESMTP id S238512AbhDSKXD (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 19 Apr 2021 05:27:11 -0400
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5967CC061763;
-        Mon, 19 Apr 2021 02:26:26 -0700 (PDT)
-Received: by mail-ej1-x62b.google.com with SMTP id r12so51836645ejr.5;
-        Mon, 19 Apr 2021 02:26:26 -0700 (PDT)
+        Mon, 19 Apr 2021 06:23:03 -0400
+Received: from mail-qk1-x729.google.com (mail-qk1-x729.google.com [IPv6:2607:f8b0:4864:20::729])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 384D5C06174A;
+        Mon, 19 Apr 2021 03:22:34 -0700 (PDT)
+Received: by mail-qk1-x729.google.com with SMTP id o5so35224293qkb.0;
+        Mon, 19 Apr 2021 03:22:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=HmfVs+hiDRXJZWZEBHBQ3JAhFTKr+C9J2z3911ynMEw=;
-        b=BDha9bfXAT8giuVCew3679cxC64+xg9PxhnDm/+mz8+W47wOpU9/W+8n18jhtEMoMh
-         qY8QDyNfZINfycHz8ENrWkdBPFYkMid6s++vYfllnAPg82YcP5eeu9F2DrlFPIe70Lyx
-         MZEXSVloX+iUWuzuCIniGL3h0MRmD4/U7jGMT130yiHU+MWmhoeYi4qtds9GnfkZUk53
-         aQRwlRrqSTC4nMuu81C1qP7RDNaAihQwFBVlyQDSDbzsN+i1WazkLJfevOl1W7bQzV8R
-         H4TCAij4yj5pLp0SMemIHKCOndc+IlqPu5lQXw3LucTLlqineqbRa/of2Icg24yy2e+i
-         Nlrg==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=363VWPLcAU951lFrOwLAp4x5JJh1Vw/iAvcAFa7MyZk=;
+        b=R5XQ5iZqatSvkNTU0qHCUsd0p3WT01/W6ntNqMUmTduyEm8YkOXTdWM+oK7ac+tcoA
+         NRmOJX4f9vdm9iTRu91lqQRl70RW/TSL+7MtEm5wLDZfwkOYlSjr9fbNTNh0B39Kkowt
+         Bi5WZpYn1Yk1+IA8xtPcgYX06Hc33xaf5QMYf98EMh39ixuRDZYsdE44bN8c3rKjNycy
+         jnZyz9fV93XN3GZEzzlU5szM0TFi6FCAXCFHq/Ps8ZSC0T1AxjC3mG1EKcJOT97anYWt
+         U3yn+hc4TLXFo1m12iRukb3HKdEu392+NfVNdvyNa/vpzSe/a3swEafL+a3B1hbuQLS1
+         hhHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=HmfVs+hiDRXJZWZEBHBQ3JAhFTKr+C9J2z3911ynMEw=;
-        b=W37ju3dAagNV1q3B0vYwi400J0yyWXhtY6uYVA88dkrDJk7cVvBqEKfiySBiz1h+o/
-         abno1Q5rmMoACm82nyxRNeZtUsWtH2eoSI2kTfXbNBlRT4y3s9GBZckdBNkptuQ8E4HK
-         KTt0pe1NV4Rt5BCd9AUAtfuWmn5EY+2TMgCuYk6FO2edooe8MYH6BPkEHYsObHME22p7
-         UhbFo5W6GI5aiG+n8gMMKrtyVZ7oeQZ1bnJpQroZRDIM1ayqil3gnsYmhsrznIkazDjc
-         MU2EuxlQyJEYsgcmcP+J8owR0YLC4+gSnUl7x6Xy9SItce/gtdUi0xR9fUxS1sAgzRl2
-         VRSg==
-X-Gm-Message-State: AOAM532dfNceiCavCbNedTjaOgIW5siX+4++Ofnvhgte3+OKxPEc0atL
-        3frdFKPapLo/whnjohSCj40=
-X-Google-Smtp-Source: ABdhPJztvNS0sFK4JkfQ4EGlh9BsAWq5TFQ/tSjLqw/fAb309CW7p/9NoVmVOold+Em/ozwXu95KLQ==
-X-Received: by 2002:a17:906:fb92:: with SMTP id lr18mr20590092ejb.511.1618824385070;
-        Mon, 19 Apr 2021 02:26:25 -0700 (PDT)
-Received: from felia.fritz.box ([2001:16b8:2dc6:900:a414:a08d:9e82:6738])
-        by smtp.gmail.com with ESMTPSA id bh14sm9943706ejb.104.2021.04.19.02.26.24
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=363VWPLcAU951lFrOwLAp4x5JJh1Vw/iAvcAFa7MyZk=;
+        b=bIywzl1my8NHAvWAiXi1qnU9dYmoQOVmpzLg9qB3O4YYqSScR/sYxYiU2V7N+xtOQD
+         U6q+Lo5sezkHXKYMoYr6u61lCVpdSjHaLJM8lRZdLyBO/Ocyj34L13whrh3aBzgZsxWB
+         4YfxCp1q7gb0QbmXQvwmvp/J86Q7c9b1ebO2DIYwoxkqbxGXLqOuuj/ozzNgWefEaQ1X
+         dBy5o73gfU2IlAyWwemK8Yvq6fkO0rK3wkSTbkWDXWdcVb0dmqB25v8jCaQLLhiSHN4v
+         JNIW8ElA8SUiQdNZtgHkiJNpP2AqwJBVIqyeLLHO4gysKVUWfnCIjWbI6zIaSyIreIGf
+         aSWg==
+X-Gm-Message-State: AOAM5339/Sk3gMsvN1tkHE6qQYfh/y4IBNOYIuzRIZndJWAI8MlLZCWp
+        xz/lvgvSUdTGrWckWlAu5uj87pf0AsOJPQ==
+X-Google-Smtp-Source: ABdhPJwv0PfWbwbywYMr0ja8rTRSIwkz72j7PM0deJVOZmAzf8SeX58JgPPuNxZ50gh2CISo9QcD3Q==
+X-Received: by 2002:a37:814:: with SMTP id 20mr10509400qki.230.1618827753300;
+        Mon, 19 Apr 2021 03:22:33 -0700 (PDT)
+Received: from localhost (dhcp-6c-ae-f6-dc-d8-61.cpe.echoes.net. [199.96.183.179])
+        by smtp.gmail.com with ESMTPSA id z17sm8506175qtf.10.2021.04.19.03.22.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Apr 2021 02:26:24 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
-Cc:     Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        Yu Chen <chenyu56@huawei.com>,
-        Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Joe Perches <joe@perches.com>,
-        Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH 3/3] MAINTAINERS: rectify entry for INTEL KEEM BAY DRM DRIVER
-Date:   Mon, 19 Apr 2021 11:26:09 +0200
-Message-Id: <20210419092609.3692-4-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210419092609.3692-1-lukas.bulwahn@gmail.com>
-References: <20210419092609.3692-1-lukas.bulwahn@gmail.com>
+        Mon, 19 Apr 2021 03:22:32 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date:   Mon, 19 Apr 2021 06:22:31 -0400
+From:   Tejun Heo <tj@kernel.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     jiangshanlai@gmail.com, saeedm@nvidia.com, leon@kernel.org,
+        davem@davemloft.net, kuba@kernel.org, bvanassche@acm.org,
+        netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 0/2] workqueue: Have 'alloc_workqueue()' like macros
+ accept a format specifier
+Message-ID: <YH1Z57+iJxBT3S3b@slm.duckdns.org>
+References: <cover.1618780558.git.christophe.jaillet@wanadoo.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1618780558.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit ed794057b052 ("drm/kmb: Build files for KeemBay Display driver")
-refers to the non-existing file intel,kmb_display.yaml in
-./Documentation/devicetree/bindings/display/.
+Hello, Christophe.
 
-Commit 5a76b1ed73b9 ("dt-bindings: display: Add support for Intel KeemBay
-Display") originating from the same patch series however adds the file
-intel,keembay-display.yaml in that directory instead.
+On Sun, Apr 18, 2021 at 11:25:52PM +0200, Christophe JAILLET wrote:
+> Improve 'create_workqueue', 'create_freezable_workqueue' and
+> 'create_singlethread_workqueue' so that they accept a format
+> specifier and a variable number of arguments.
+> 
+> This will put these macros more in line with 'alloc_ordered_workqueue' and
+> the underlying 'alloc_workqueue()' function.
 
-So, refer to intel,keembay-display.yaml in the INTEL KEEM BAY DRM DRIVER
-section instead.
+Those interfaces are deprecated and if you're doing anything with the users,
+the right course of action would be converting them to use one of the
+alloc_workqueue interfaces.
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 4f152717365c..421e24e43335 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9268,7 +9268,7 @@ INTEL KEEM BAY DRM DRIVER
- M:	Anitha Chrisanthus <anitha.chrisanthus@intel.com>
- M:	Edmund Dea <edmund.j.dea@intel.com>
- S:	Maintained
--F:	Documentation/devicetree/bindings/display/intel,kmb_display.yaml
-+F:	Documentation/devicetree/bindings/display/intel,keembay-display.yaml
- F:	drivers/gpu/drm/kmb/
- 
- INTEL KEEM BAY OCS AES/SM4 CRYPTO DRIVER
 -- 
-2.17.1
-
+tejun
