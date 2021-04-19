@@ -2,112 +2,125 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82285C43460
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Apr 2021 08:23:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30D5AC433B4
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Apr 2021 08:33:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5B19B61029
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Apr 2021 08:23:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1193B6113C
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Apr 2021 08:33:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229790AbhDSIYM (ORCPT
+        id S237925AbhDSIeD (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 19 Apr 2021 04:24:12 -0400
-Received: from smtpcmd10101.aruba.it ([62.149.156.101]:40735 "EHLO
-        smtpcmd10101.aruba.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238188AbhDSIYJ (ORCPT
+        Mon, 19 Apr 2021 04:34:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51774 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231193AbhDSIeC (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 19 Apr 2021 04:24:09 -0400
-X-Greylist: delayed 422 seconds by postgrey-1.27 at vger.kernel.org; Mon, 19 Apr 2021 04:24:08 EDT
-Received: from [192.168.126.129] ([146.241.148.6])
-        by Aruba Outgoing Smtp  with ESMTPSA
-        id YP54lgfxuSvjVYP55lMM7u; Mon, 19 Apr 2021 10:16:35 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
-        t=1618820195; bh=EgjvdP/tGfj217l54hOzQFhxxNRicPHj7+iUKb5Klzk=;
-        h=Subject:To:From:Date:MIME-Version:Content-Type;
-        b=OdGiKazruJIOzO2Lw+iFZsKaL+ePF+h5fiuJ+4J2kXiwQJW1M3HJ6O1dLIvUFukYR
-         e6QpVNABlg5iS1HBfloytPLpR+0vNQiYKk6p4solbGpDmhFLg1owlizCn5wEZrP0HI
-         GLvW5wJ6uDDQNn0sIFbdN/3Y98yysEOGYTv3VE4W9G1Dw84PHRw2G+jFnsDLGBYggD
-         QmgtAFoJz10fBUpJ0QBLZV/zNc5f7m3FQcq87t8m7lcN28iuuEuZbV6lStDE4aieoM
-         ttyfJAJjfgiSxBKz25KzWds2eYSKTL7Aw8u50XI9uwINfYc0qnaFg0uwniRiguvtRX
-         0/rbY5sZoY5Xw==
-Subject: Re: [PATCH] MAINTAINERS: repair reference in HYCON HY46XX TOUCHSCREEN
- SUPPORT
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input@vger.kernel.org
-Cc:     Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
-        Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210419060023.3460-1-lukas.bulwahn@gmail.com>
-From:   Giulio Benetti <giulio.benetti@benettiengineering.com>
-Message-ID: <02ce3130-f86e-7a91-ba06-e79d96d7eab7@benettiengineering.com>
-Date:   Mon, 19 Apr 2021 10:16:30 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
+        Mon, 19 Apr 2021 04:34:02 -0400
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EF65C06174A;
+        Mon, 19 Apr 2021 01:33:33 -0700 (PDT)
+Received: by mail-pj1-x1029.google.com with SMTP id s14so12635773pjl.5;
+        Mon, 19 Apr 2021 01:33:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nXAoRa2UrIlJ9e5z4Yh7wHRJrkulXwyDRq9azWs4mI4=;
+        b=tcDJiiAaxA0dU93gfmr0LZLp9z/rM9gWZsFKV3PaUmgedMvwGUChDHYNcCGZips99Q
+         nKMXRzt6rZWssNoc6wACqWd9jc/I4dE4z3/Y99R07wuMhuvHzT1eV5S13C/7Wl39OiOF
+         Qo5kq134S6beNxc3T6uBjZc1NVeeGy/lvj1eQpQdYFoT1nWG/zMq+fGkkqEytlzWCv4h
+         b252RS68O6zGyIPypaFTvMkn/7uQjDopHYIL/ZrrtI6UHG36yqMjVOi+8kEQnjxg3nvE
+         0S58IASMYLtt9kpCED76AAogbW5n2mlQS797P00c6gx222k6uIittr/ABetbLkbJT6Pz
+         yVvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nXAoRa2UrIlJ9e5z4Yh7wHRJrkulXwyDRq9azWs4mI4=;
+        b=jIlcA8YPQ/DJOPR3IB9c6qKymlmNblvKqsiDVRPs+XtrxRWbzcB5rbOGvq2Et1mXvF
+         90wil5B6gXRJP+yMilhokNeuY+GhEs328rQJIaMbqBOCYo6oorDdcIQ/m5EL1OeyIUPh
+         GQlX30zuOS4g+36IzDAyMQh6JCj0F0z7nZjG4lDd6jY+0u0wXPpBB+RjBLQQj7AYxX9P
+         GDwTK2zV3yLZ35dIKTRPxhSFg544m4fr/s5Aca9FxHSFle1fPu2YDcLLIUkxp8ZUu7Ox
+         zjvrwNg5m7KT9IuMbq39OayQXPZGfyH+z9nBLWO03zYwrTCEpBzkZ4t/9Zcnkz5t3Pdu
+         TO9A==
+X-Gm-Message-State: AOAM530IbhjNERX+UmOy6guJ2A0glPq3o6IB21iTBv4HURFG5s/0Cgqw
+        jeNKXXtBoBSgjQgnZ13gMFX+xytdAEbJ7akVgeM=
+X-Google-Smtp-Source: ABdhPJwROB/iJmK7Xs/KjcTfZrbHMvrMFtU2QwFubPDWfZ7jv31T9D9ukhfbCNSDO1gqTbHnAV0337hKngeBrgeiRm4=
+X-Received: by 2002:a17:90b:1184:: with SMTP id gk4mr18380884pjb.129.1618821212898;
+ Mon, 19 Apr 2021 01:33:32 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20210419060023.3460-1-lukas.bulwahn@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfFBxJkjiGMfFM17OV5dn0SLigDntxG2hC2J3+yB/AC7MPEPD5xXgRLQ11iql2I2X3jqwoT5knCQpXDuf+J/zMGQGD13NUrXSbKT1wSPBxrlSZyf36BUG
- tYcsYv9QQDGsn5SvPQ7AtR7WFpoJ0wRrsYB+kShf7hno7mtDJ9dMTy1nRgM1qh7QOcHMp3pqz9cYJyXF14yN1FIzabScoPqREx0AI6/UYWgmAn/6Yos2he9v
- vtBsi1Fde9Y9An5JlXpVnwa8pLG8Advgzm6iwXroShhnpwlKHWXsXiPY7caVj93E0lTca4qG7p0ceNYFm4LKkziarb/gApSxo9gL/lpnLAggB7fRuRynkQcu
- gQQx6lY5JLnrb8Kk0HhxPHgy3MSKP8/8qqN2sS4mNC0pUaqDb60aqJpOAHD2w4tqe2diZcZyKjQCFoJDljMhhXKCP0rOMRhwzel8rh3de8OaS+UOpyn5mRBw
- +fR8xSpgLwZihyrb
+References: <20210419061809.15045-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20210419061809.15045-1-lukas.bulwahn@gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 19 Apr 2021 11:33:16 +0300
+Message-ID: <CAHp75Vfv0FQGXrmpDveOf-cBahoDK3uSPHjPU2RNh6mhFxN7vQ@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: adjust to removing i2c designware platform data
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        Wolfram Sang <wsa@kernel.org>,
+        Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
+        kernel-janitors <kernel-janitors@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Lukas,
-
-thank you,
-
-On 4/19/21 8:00 AM, Lukas Bulwahn wrote:
-> Commit aa2f62cf211a ("Input: add driver for the Hycon HY46XX touchpanel
-> series") adds the file ./drivers/input/touchscreen/hycon-hy46xx.c, but the
-> file entry in MAINTAINERS refers to ./drivers/input/touchscreen/hy46xx.c.
-> 
+On Mon, Apr 19, 2021 at 9:38 AM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+>
+> Commit 5a517b5bf687 ("i2c: designware: Get rid of legacy platform data")
+> removes ./include/linux/platform_data/i2c-designware.h, but misses to
+> adjust the SYNOPSYS DESIGNWARE I2C DRIVER section in MAINTAINERS.
+>
 > Hence, ./scripts/get_maintainer.pl --self-test=patterns complains:
-> 
->    warning: no file matches    F:    drivers/input/touchscreen/hy46xx.c
-> 
-> Repair the file entry by referring to the right location.
-> 
+>
+>   warning: no file matches F: include/linux/platform_data/i2c-designware.h
+>
+> Remove the file entry to this removed file as well.
+
+Oops, I was under the impression I grepped all occurrences, but I have not.
+
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+
+Thanks for the catch!
+
 > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-
-Acked-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
-
-Best regards
--- 
-Giulio Benetti
-Benetti Engineering sas
-
 > ---
 > applies cleanly on next-20210419
-> 
-> Guilio, please ack.
-> Dmitry, please pick this minor clean up patch for your -next tree.
-> 
->   MAINTAINERS | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
+>
+> Andy, please ack.
+> Lee, please pick this minor patch on your -next tree.
+>
+>  MAINTAINERS | 1 -
+>  1 file changed, 1 deletion(-)
+>
 > diff --git a/MAINTAINERS b/MAINTAINERS
-> index c54b8e4520d1..bbe356508f29 100644
+> index bbe356508f29..6b903aad27f4 100644
 > --- a/MAINTAINERS
 > +++ b/MAINTAINERS
-> @@ -8425,7 +8425,7 @@ M:	Giulio Benetti <giulio.benetti@benettiengineering.com>
->   L:	linux-input@vger.kernel.org
->   S:	Maintained
->   F:	Documentation/devicetree/bindings/input/touchscreen/hycon,hy46xx.yaml
-> -F:	drivers/input/touchscreen/hy46xx.c
-> +F:	drivers/input/touchscreen/hycon-hy46xx.c
->   
->   HYGON PROCESSOR SUPPORT
->   M:	Pu Wen <puwen@hygon.cn>
-> 
+> @@ -17667,7 +17667,6 @@ R:      Mika Westerberg <mika.westerberg@linux.intel.com>
+>  L:     linux-i2c@vger.kernel.org
+>  S:     Maintained
+>  F:     drivers/i2c/busses/i2c-designware-*
+> -F:     include/linux/platform_data/i2c-designware.h
+>
+>  SYNOPSYS DESIGNWARE MMC/SD/SDIO DRIVER
+>  M:     Jaehoon Chung <jh80.chung@samsung.com>
+> --
+> 2.17.1
+>
 
+
+-- 
+With Best Regards,
+Andy Shevchenko
