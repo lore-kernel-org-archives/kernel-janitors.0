@@ -2,85 +2,74 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,SUBJ_BRKN_WORDNUMS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A1F3C433ED
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Apr 2021 20:02:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0B1FC433ED
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Apr 2021 20:12:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EEF4861363
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Apr 2021 20:02:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FA5561369
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Apr 2021 20:12:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242025AbhDSUDJ (ORCPT
+        id S233225AbhDSUMh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 19 Apr 2021 16:03:09 -0400
-Received: from mail-pl1-f178.google.com ([209.85.214.178]:37560 "EHLO
-        mail-pl1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230160AbhDSUDI (ORCPT
+        Mon, 19 Apr 2021 16:12:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37536 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230213AbhDSUMh (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 19 Apr 2021 16:03:08 -0400
-Received: by mail-pl1-f178.google.com with SMTP id h20so18379974plr.4;
-        Mon, 19 Apr 2021 13:02:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=uWrTUKdJjgaCGLW+RH2C2+Z+PPmsZG/+0Dq0dsG+zow=;
-        b=dWLvI6fWoGLKym/locI3WPka9Gho+I2Q6+PrnV0JApn07217ibgElOWo8oBBXoKk5l
-         a1/mBs+fgI4gu3fMIEb38XXGuZOh/xaoeFdJ/OYNcCWTr3pBmJLxmxXdMXt5vjT2YME7
-         DuOT0KEHyHmkkJaIynfOkOaN9QnMcHlkIOmC/cRBx+XerRid/iM/XoHNI4jm2n1YRcEu
-         /rDbcD3eS595C5i1nSQmDGYwc6Boanbvke50G+VX6VSIU6Mth9gV2Cs/nf9wE590jjhz
-         MNe6b2urozeMU5aBkN4IO+7TQKxRNxMCGPLUjs/d4c4rDdqDyj663swWNZPMzSaTqt5k
-         ANuw==
-X-Gm-Message-State: AOAM533MFR3YL7lRVtHru1TjTxEJuiE9wwXAtt9iR6i2aJ3nW2ucIn0E
-        Yznve0CAHNwA2wtptgTww3l7l/p1Gis=
-X-Google-Smtp-Source: ABdhPJwDuR0gpQkAv7V+r4Zvgot2L+HjIAgrHYqURMsfM+UL6bXEu18tWhk+41d18aHmRZYwGsiWTw==
-X-Received: by 2002:a17:90a:17a3:: with SMTP id q32mr862460pja.224.1618862557137;
-        Mon, 19 Apr 2021 13:02:37 -0700 (PDT)
-Received: from ?IPv6:2601:647:4000:d7:e7f5:59ce:2145:6158? ([2601:647:4000:d7:e7f5:59ce:2145:6158])
-        by smtp.gmail.com with ESMTPSA id z5sm5065159pff.191.2021.04.19.13.02.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Apr 2021 13:02:36 -0700 (PDT)
-Subject: Re: [PATCH 1/2] workqueue: Have 'alloc_workqueue()' like macros
- accept a format specifier
-To:     Marion et Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        tj@kernel.org, jiangshanlai@gmail.com, saeedm@nvidia.com,
-        leon@kernel.org, davem@davemloft.net, kuba@kernel.org
-Cc:     netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <cover.1618780558.git.christophe.jaillet@wanadoo.fr>
- <ae88f6c2c613d17bc1a56692cfa4f960dbc723d2.1618780558.git.christophe.jaillet@wanadoo.fr>
- <042f5fff-5faf-f3c5-0819-b8c8d766ede6@acm.org>
- <1032428026.331.1618814178946.JavaMail.www@wwinf2229>
-From:   Bart Van Assche <bvanassche@acm.org>
-Message-ID: <40c21bfe-e304-230d-b319-b98063347b8b@acm.org>
-Date:   Mon, 19 Apr 2021 13:02:34 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.9.1
+        Mon, 19 Apr 2021 16:12:37 -0400
+Received: from viti.kaiser.cx (viti.kaiser.cx [IPv6:2a01:238:43fe:e600:cd0c:bd4a:7a3:8e9f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5751C06174A;
+        Mon, 19 Apr 2021 13:12:06 -0700 (PDT)
+Received: from dslb-188-097-210-083.188.097.pools.vodafone-ip.de ([188.97.210.83] helo=martin-debian-2.paytec.ch)
+        by viti.kaiser.cx with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <martin@kaiser.cx>)
+        id 1lYaFS-0006ik-AY; Mon, 19 Apr 2021 22:11:58 +0200
+From:   Martin Kaiser <martin@kaiser.cx>
+To:     Larry Finger <Larry.Finger@lwfinger.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Martin Kaiser <martin@kaiser.cx>
+Subject: [PATCH v2 1/4] staging: rtl8188eu: change bLeisurePs' type to bool
+Date:   Mon, 19 Apr 2021 22:11:23 +0200
+Message-Id: <20210419201126.25633-1-martin@kaiser.cx>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20210417180037.17806-1-martin@kaiser.cx>
+References: <20210417180037.17806-1-martin@kaiser.cx>
 MIME-Version: 1.0
-In-Reply-To: <1032428026.331.1618814178946.JavaMail.www@wwinf2229>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 4/18/21 11:36 PM, Marion et Christophe JAILLET wrote:
-> The list in To: is the one given by get_maintainer.pl. Usualy, I only
-> put the ML in Cc: I've run the script on the 2 patches of the serie
-> and merged the 2 lists. Everyone is in the To: of the cover letter
-> and of the 2 patches.
-> 
-> If Théo is "Tejun Heo" (  (maintainer:WORKQUEUE) ), he is already in
-> the To: line.
-Linus wants to see a "Cc: ${maintainer}" tag in patches that he receives
-from a maintainer and that modify another subsystem than the subsystem
-maintained by that maintainer.
+bLeisurePs is used as a boolean variable. Change its type from
+u8 to bool.
 
-Thanks,
+Signed-off-by: Martin Kaiser <martin@kaiser.cx>
+---
+v2:
+ - no change, re-sending the entire series
 
-Bart.
+ drivers/staging/rtl8188eu/include/rtw_pwrctrl.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/rtl8188eu/include/rtw_pwrctrl.h b/drivers/staging/rtl8188eu/include/rtw_pwrctrl.h
+index 06062643c868..4345dc0c7cf9 100644
+--- a/drivers/staging/rtl8188eu/include/rtw_pwrctrl.h
++++ b/drivers/staging/rtl8188eu/include/rtw_pwrctrl.h
+@@ -171,7 +171,7 @@ struct pwrctrl_priv {
+ 	unsigned long ips_deny_time; /* will deny IPS when system time less than this */
+ 	u8 ps_processing; /* temp used to mark whether in rtw_ps_processor */
+ 
+-	u8	bLeisurePs;
++	bool	bLeisurePs;
+ 	u8	LpsIdleCount;
+ 	u8	power_mgnt;
+ 	u8	bFwCurrentInPSMode;
+-- 
+2.20.1
+
