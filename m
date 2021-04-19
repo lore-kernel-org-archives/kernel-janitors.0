@@ -2,104 +2,157 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68524C43460
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Apr 2021 23:29:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 042D5C433ED
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Apr 2021 23:39:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3A0F76102A
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Apr 2021 23:29:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6C596127C
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Apr 2021 23:39:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231302AbhDSX3d (ORCPT
+        id S231434AbhDSXkP (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 19 Apr 2021 19:29:33 -0400
-Received: from mo-csw1515.securemx.jp ([210.130.202.154]:42952 "EHLO
-        mo-csw.securemx.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229842AbhDSX3c (ORCPT
+        Mon, 19 Apr 2021 19:40:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54584 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229842AbhDSXkO (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 19 Apr 2021 19:29:32 -0400
-Received: by mo-csw.securemx.jp (mx-mo-csw1515) id 13JNSKma008066; Tue, 20 Apr 2021 08:28:20 +0900
-X-Iguazu-Qid: 34tre4erL1uXq8Lo6m
-X-Iguazu-QSIG: v=2; s=0; t=1618874900; q=34tre4erL1uXq8Lo6m; m=EC0wCzbTh/qdnd5+DAtK9Y6Bek2gq4A5/QgKBXv6o1E=
-Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
-        by relay.securemx.jp (mx-mr1510) id 13JNSIgK023852
-        (version=TLSv1.2 cipher=AES128-GCM-SHA256 bits=128 verify=NOT);
-        Tue, 20 Apr 2021 08:28:18 +0900
-Received: from enc01.toshiba.co.jp (enc01.toshiba.co.jp [106.186.93.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by imx2-a.toshiba.co.jp (Postfix) with ESMTPS id 1C0A91000A3;
-        Tue, 20 Apr 2021 08:28:18 +0900 (JST)
-Received: from hop001.toshiba.co.jp ([133.199.164.63])
-        by enc01.toshiba.co.jp  with ESMTP id 13JNSHw1015773;
-        Tue, 20 Apr 2021 08:28:17 +0900
-Date:   Tue, 20 Apr 2021 08:28:00 +0900
-From:   Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Yu Chen <chenyu56@huawei.com>,
-        Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Joe Perches <joe@perches.com>,
-        Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] MAINTAINERS: rectify entry for ARM/TOSHIBA VISCONTI
- ARCHITECTURE
-X-TSB-HOP: ON
-Message-ID: <20210419232800.cbcyjlyrqywkrqdt@toshiba.co.jp>
-References: <20210419092609.3692-1-lukas.bulwahn@gmail.com>
- <20210419092609.3692-2-lukas.bulwahn@gmail.com>
+        Mon, 19 Apr 2021 19:40:14 -0400
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99CF3C06174A;
+        Mon, 19 Apr 2021 16:39:42 -0700 (PDT)
+Received: by mail-lj1-x230.google.com with SMTP id z8so41355969ljm.12;
+        Mon, 19 Apr 2021 16:39:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=LfEpz0iSjiNDbPXawTwLPZzoSRuzzKGOxdOGebsOX3c=;
+        b=OZJ2dq2qJ5uj4GxBGsnYxJZ0yMig951/JM5Yx8zlFk5Ker01MAUc003nNQt+po7kRO
+         debCIwjD1HJqCkzEIVAWep2IarzX+nzs/P8lhCNblHpS5gnfmFx6G1GZgGC68AZ81gdf
+         9WKGDRkeQXEGZnmOA3EUTeCV/W2o5LqtaA0VCuUjQe+eKn8//52l2mBqHM/v1H5uIDCj
+         7egCMZbOs2OL9Kqt/H/cugtDgZKITs57StunHsMH5/LGyWUYQX1M35bAQQOMceldKpQT
+         HAkSumSoVHkp5sTZxIcGoUEXjFcjll1DqkSnrOFdG5QOCabCcWZI1QvFpd0xuZXa6YiT
+         u1Ag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=LfEpz0iSjiNDbPXawTwLPZzoSRuzzKGOxdOGebsOX3c=;
+        b=EdQGrfy8zKahsJxlRQR1zlc7HMuWNZwIDEZVmXsoOk0XZSS5UjbJdULDK4cZk/SpTn
+         0stAWa/JNgDEIyLZ8RWm9nf5M173iDrsxj4hxABeW/gV/KBP5wJ8YMoXZWqo09jz8UhS
+         40bLdryrGe7Oe/7FDbaaG6sPUxJsPC20p/kbtj7rROzSKDmG9gPsZjDRR/rZy0LMdSC6
+         zQ/L2EAjIejdYuceOcDS0QcQB5XbBlHD4G7rr3Sf9TikfLnQLSqksOWUTR9McZGenY4y
+         sJRxIQA491Se0vxYJTtER/DP7kH/C5iO12OseCuNy5Nzv2dCmpzzzRICyUCxxPymlYeY
+         M7dw==
+X-Gm-Message-State: AOAM532KB7BVEEcKVduULUKVeLoDBi+o+GYbh+0lWh02Ys5ZAI9y8I0d
+        RYyTmLl2BLAi/ttdC96DzaWZmcxHNpto42iny04=
+X-Google-Smtp-Source: ABdhPJwBuUhwU7MDlAnuogmGpFmJLlcos+VhDPWVAgQqC+uDhcnnkQThfnFQxkMCz8S1PFN/Uc33qunbbsOd4idJ5vE=
+X-Received: by 2002:a2e:b8d2:: with SMTP id s18mr12849213ljp.148.1618875577658;
+ Mon, 19 Apr 2021 16:39:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210419092609.3692-2-lukas.bulwahn@gmail.com>
+References: <20210415152409.GA2286719@LEGION> <8735vp18su.fsf@suse.com>
+In-Reply-To: <8735vp18su.fsf@suse.com>
+From:   Steve French <smfrench@gmail.com>
+Date:   Mon, 19 Apr 2021 18:39:26 -0500
+Message-ID: <CAH2r5mtwMep4J1yu1jUUEp3+CmwhFuv2mJKqN1ViBkSxi-jGTg@mail.gmail.com>
+Subject: Re: [PATCH v2] cifs: remove unnecessary copies of tcon->crfid.fid
+To:     =?UTF-8?Q?Aur=C3=A9lien_Aptel?= <aaptel@suse.com>
+Cc:     Muhammad Usama Anjum <musamaanjum@gmail.com>,
+        Steve French <sfrench@samba.org>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        "open list:COMMON INTERNET FILE SYSTEM CLIENT (CIFS)" 
+        <linux-cifs@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        kernel-janitors <kernel-janitors@vger.kernel.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Colin King <colin.king@canonical.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi,
+I changed the comment to
 
-Thanks for your patch.
++               /*
++                * See commit 2f94a3125b87. Increment the refcount when we
++                * get a lease for root, release it if lease break occurs
++                */
 
-On Mon, Apr 19, 2021 at 11:26:07AM +0200, Lukas Bulwahn wrote:
-> Commit 836863a08c99 ("MAINTAINERS: Add information for Toshiba Visconti ARM
-> SoCs") refers to the non-existing file toshiba,tmpv7700-pinctrl.yaml in
-> ./Documentation/devicetree/bindings/pinctrl/. Commit 1825c1fe0057
-> ("pinctrl: Add DT bindings for Toshiba Visconti TMPV7700 SoC") originating
-> from the same patch series however adds the file
-> toshiba,visconti-pinctrl.yaml in that directory instead.
-> 
-> So, refer to toshiba,visconti-pinctrl.yaml in the ARM/TOSHIBA VISCONTI
-> ARCHITECTURE section instead.
-> 
+and added Aurelien's Reviewed-by.  Let me know if you see any
+additional problems.
 
-Could you add  Fixes: tag?
+On Sat, Apr 17, 2021 at 5:54 AM Aur=C3=A9lien Aptel <aaptel@suse.com> wrote=
+:
+>
+> Hi,
+>
+> This is better I think.
+>
+> Muhammad Usama Anjum <musamaanjum@gmail.com> writes:
+> > @@ -894,6 +891,10 @@ int open_cached_dir(unsigned int xid, struct cifs_=
+tcon *tcon,
+> >
+> >       /* BB TBD check to see if oplock level check can be removed below=
+ */
+> >       if (o_rsp->OplockLevel =3D=3D SMB2_OPLOCK_LEVEL_LEASE) {
+> > +             /*
+> > +              * caller expects this func to set the fid in crfid to va=
+lid
+> > +              * cached root, so increment the refcount.
+> > +              */
+>
+> This comment is misleading. crfid variable doesn't exist anymore, and
+> the kref_get() here is because of this commit:
+>
+>     commit 2f94a3125b87
+>     Author: Ronnie Sahlberg <lsahlber@redhat.com>
+>     Date:   Thu Mar 28 11:20:02 2019 +1000
+>
+>         cifs: fix kref underflow in close_shroot()
+>
+>         [...]
+> -->     This extra get() is only used to hold the structure until we get =
+a lease
+> -->     break from the server at which point we will kref_put() it during=
+ lease
+> -->     processing.
+>         [...]
+>
+>
+>
+> When we queue a lease break, we usually get() the cifsFileInfo, but if
+> that cifsFileInfo is backed by a cached_fid, the cached_fid isn't
+> bumped. That commit was probably a work around for that.
+>
+> @Ronnie :
+>
+> struct cached_fid is starting to look very much like struct
+> cifsFileInfo. I wonder why we couldn't use it, along with
+> find_writable_file()/find_readable_file() to handle the caching.
+>
+> Alternatively, make cifsFileInfo use cached_fid (perhaps renaming it in
+> the process, I don't know)
+>
+> Because I suspect a lot more issues will come up regarding cached_fid
+> refcount and cifsFileInfo refcount going out of sync otherwise.
+>
+> Cheers,
+> --
+> Aur=C3=A9lien Aptel / SUSE Labs Samba Team
+> GPG: 1839 CB5F 9F5B FB9B AA97  8C99 03C8 A49B 521B D5D3
+> SUSE Software Solutions Germany GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg,=
+ DE
+> GF: Felix Imend=C3=B6rffer, Mary Higgins, Sri Rasiah HRB 247165 (AG M=C3=
+=BCnchen)
+>
 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-Acked-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+--=20
+Thanks,
 
-> ---
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index c54b8e4520d1..d31c8058b17f 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -2669,7 +2669,7 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/iwamatsu/linux-visconti.git
->  F:	Documentation/devicetree/bindings/arm/toshiba.yaml
->  F:	Documentation/devicetree/bindings/net/toshiba,visconti-dwmac.yaml
->  F:	Documentation/devicetree/bindings/gpio/toshiba,gpio-visconti.yaml
-> -F:	Documentation/devicetree/bindings/pinctrl/toshiba,tmpv7700-pinctrl.yaml
-> +F:	Documentation/devicetree/bindings/pinctrl/toshiba,visconti-pinctrl.yaml
->  F:	Documentation/devicetree/bindings/watchdog/toshiba,visconti-wdt.yaml
->  F:	arch/arm64/boot/dts/toshiba/
->  F:	drivers/net/ethernet/stmicro/stmmac/dwmac-visconti.c
-> -- 
-> 2.17.1
-> 
-> 
+Steve
