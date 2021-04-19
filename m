@@ -2,122 +2,80 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92BE8C433B4
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Apr 2021 15:31:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E4CFC43460
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Apr 2021 16:05:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6A7D161157
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Apr 2021 15:31:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F1F561285
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Apr 2021 16:05:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240319AbhDSPbp (ORCPT
+        id S232690AbhDSQGF (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 19 Apr 2021 11:31:45 -0400
-Received: from smtp1-g21.free.fr ([212.27.42.1]:39458 "EHLO smtp1-g21.free.fr"
+        Mon, 19 Apr 2021 12:06:05 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54124 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S239962AbhDSPbo (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 19 Apr 2021 11:31:44 -0400
-Received: from Normandy.localdomain (unknown [88.129.173.226])
-        (Authenticated sender: pierre.morrow@free.fr)
-        by smtp1-g21.free.fr (Postfix) with ESMTPSA id CE72EB00593;
-        Mon, 19 Apr 2021 17:30:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=free.fr;
-        s=smtp-20201208; t=1618846243;
-        bh=hTxMh/3AVmviRW4NuaHcdozpATtThaOjYz7vJa/CJ+c=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JRFgdJE6TDLvKwFh8j8EeE9a5Bb79jewZUMunxZBXfY3+cFwcevXnTsQxCW44krDm
-         W2t9rW091wwy3KqlWQW6nf/RREwSJUVr7K7w/9LKwGp86gFkUsnNk7O04Zajlo36tR
-         nhX+6kZ9cqwR3qnszxsH5vpEdjBNcbgPt5ttDRwhLyFy0zJDgDC525I64OelqtMB7G
-         rUZ+KEJ2Pws0Xl2sml8v8gcG6VVyEgC47JY4VkiyKrXQ1Z0N7/6sdxNFkb2t93lzSH
-         3js0kGNHGEl4Kjr4mpq54nuzQ9qxP+1MIwuRexorWpNjUnUk9mSRSGMVV0tq02YDW8
-         R63mBLkm3uw9w==
-Date:   Mon, 19 Apr 2021 17:30:20 +0200
-From:   Pierre Moreau <pierre.morrow@free.fr>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>,
-        nouveau@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [Nouveau] [PATCH] drm/nouveau: fix an error code in
- nouveau_backlight_init()
-Message-ID: <20210419153020.kkwgc7kvg5zkhjmk@Normandy.localdomain>
-Mail-Followup-To: Dan Carpenter <dan.carpenter@oracle.com>,
-        Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>,
-        nouveau@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>
-References: <YHaEdBgqCFQRqg1B@mwanda>
+        id S232161AbhDSQEq (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 19 Apr 2021 12:04:46 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 26BC0AF48;
+        Mon, 19 Apr 2021 16:04:15 +0000 (UTC)
+Subject: Re: [PATCH][next] bcache: Set error return err to -ENOMEM on
+ allocation failure
+To:     Colin King <colin.king@canonical.com>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-bcache@vger.kernel.org, Jianpeng Ma <jianpeng.ma@intel.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Kent Overstreet <kent.overstreet@gmail.com>
+References: <20210419125628.177047-1-colin.king@canonical.com>
+From:   Coly Li <colyli@suse.de>
+Message-ID: <85f515b5-05a0-5844-bed7-0287f845f491@suse.de>
+Date:   Tue, 20 Apr 2021 00:04:10 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="my3zcp46ylqrwbex"
-Content-Disposition: inline
-In-Reply-To: <YHaEdBgqCFQRqg1B@mwanda>
+In-Reply-To: <20210419125628.177047-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-
---my3zcp46ylqrwbex
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-I can not remember why the original code did return 0 rather than an error,=
- but
--ENOMEM seems indeed way more fitting.
-
-Reviewed-by: Pierre Moreau <pierre.morrow@free.fr>
-
-On 2021-04-14 =E2=80=94 08:58, Dan Carpenter wrote:
-> If nouveau_get_backlight_name() fails then this should return -ENOMEM
-> but currently it returns success.
->=20
-> Fixes: db1a0ae21461 ("drm/nouveau/bl: Assign different names to interface=
-s")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+On 4/19/21 8:56 PM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Currently when ns fails to be allocated the error return path returns
+> an uninitialized return code in variable 'err'. Fix this by setting
+> err to -ENOMEM.
+> 
+> Addresses-Coverity: ("Uninitialized scalar variable")
+> Fixes: 688330711e9a ("bcache: initialize the nvm pages allocator")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
-> This is from static analysis.  In the original commit db1a0ae21461
-> ("drm/nouveau/bl: Assign different names to interfaces") then returning
-> zero seemed to be a very deliberate choice.  I do think it was wrong
-> though and -ENOMEM is the currect return.
->=20
->  drivers/gpu/drm/nouveau/nouveau_backlight.c | 1 +
+>  drivers/md/bcache/nvm-pages.c | 1 +
 >  1 file changed, 1 insertion(+)
->=20
-> diff --git a/drivers/gpu/drm/nouveau/nouveau_backlight.c b/drivers/gpu/dr=
-m/nouveau/nouveau_backlight.c
-> index 72f35a2babcb..3786b1c85182 100644
-> --- a/drivers/gpu/drm/nouveau/nouveau_backlight.c
-> +++ b/drivers/gpu/drm/nouveau/nouveau_backlight.c
-> @@ -274,6 +274,7 @@ nouveau_backlight_init(struct drm_connector *connecto=
-r)
-> =20
->  	if (!nouveau_get_backlight_name(backlight_name, bl)) {
->  		NV_ERROR(drm, "Failed to retrieve a unique name for the backlight inte=
-rface\n");
-> +		ret =3D -ENOMEM;
->  		goto fail_alloc;
+> 
+> diff --git a/drivers/md/bcache/nvm-pages.c b/drivers/md/bcache/nvm-pages.c
+> index 08cd45e90481..2e124d546099 100644
+> --- a/drivers/md/bcache/nvm-pages.c
+> +++ b/drivers/md/bcache/nvm-pages.c
+> @@ -584,6 +584,7 @@ struct bch_nvm_namespace *bch_register_namespace(const char *dev_path)
+>  		return ERR_PTR(PTR_ERR(bdev));
 >  	}
-> =20
-> --=20
-> 2.30.2
->=20
-> _______________________________________________
-> Nouveau mailing list
-> Nouveau@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/nouveau
+>  
+> +	err = -ENOMEM;
+>  	ns = kzalloc(sizeof(struct bch_nvm_namespace), GFP_KERNEL);
+>  	if (!ns)
+>  		goto bdput;
+> 
 
---my3zcp46ylqrwbex
-Content-Type: application/pgp-signature; name="signature.asc"
+Copied, added into my queue for rc1.
 
------BEGIN PGP SIGNATURE-----
+Thanks.
 
-iHUEABYKAB0WIQR/JmlivLpJL9Gbvb06GdGs4t/H/gUCYH2iDAAKCRA6GdGs4t/H
-/uSvAQDcmak9o1JNcYSU2PrWd6XA6bO+q89J8zAUxMcCwqYXWwD/Uoasi8OTWyJ3
-4CeMzekcwYCGulAvpXF0S29V6IDA6wA=
-=BaJ7
------END PGP SIGNATURE-----
-
---my3zcp46ylqrwbex--
+Coly Li
