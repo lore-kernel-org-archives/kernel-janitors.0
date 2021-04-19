@@ -2,59 +2,61 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB01DC43600
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Apr 2021 09:26:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 826B5C43611
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Apr 2021 09:26:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AF1516113C
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Apr 2021 09:26:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63D8F61157
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Apr 2021 09:26:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237860AbhDSJ1Q (ORCPT
+        id S237901AbhDSJ1R (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 19 Apr 2021 05:27:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35164 "EHLO
+        Mon, 19 Apr 2021 05:27:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233011AbhDSJ1L (ORCPT
+        with ESMTP id S233132AbhDSJ1L (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
         Mon, 19 Apr 2021 05:27:11 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 896FDC06174A;
-        Mon, 19 Apr 2021 02:26:19 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id n2so51780805ejy.7;
-        Mon, 19 Apr 2021 02:26:19 -0700 (PDT)
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5967CC061763;
+        Mon, 19 Apr 2021 02:26:26 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id r12so51836645ejr.5;
+        Mon, 19 Apr 2021 02:26:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=tY/k7LsOZFfK3RtnDp9XwkFm0+jK9FFo4MbEp8JdMEw=;
-        b=ZXzxvvy3LwGpIBsBfaYmc1JNUzabvrf1FbwSkGygBhvjt4Xtb0B3P9WVgLELJGxZad
-         UzY5km4GpYuoN8KHtP2pmOgyTthPE9FqTPLR67dsEN4lUPWK2mzf+HonUpI398iKa3Al
-         0lgWFtdqKyv54RXgpi9R5OXo5HRdHCp//CZuYqBi4J1WfFpmAs6V8khSJJpk2qJn1BoR
-         l1/QNsRm1cPwR9rPnKM40RW3p5z6OZIQmjugrZV+V/HXKMD/dFn/ouGKN/kVM6mt6GdZ
-         BLB5SfG5AdmtxUEaWs1cqP3RJQ+fx6vEWe1KZySI3Jt/vAimxvfMY8ly+FAfp7sp8po+
-         RRgw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=HmfVs+hiDRXJZWZEBHBQ3JAhFTKr+C9J2z3911ynMEw=;
+        b=BDha9bfXAT8giuVCew3679cxC64+xg9PxhnDm/+mz8+W47wOpU9/W+8n18jhtEMoMh
+         qY8QDyNfZINfycHz8ENrWkdBPFYkMid6s++vYfllnAPg82YcP5eeu9F2DrlFPIe70Lyx
+         MZEXSVloX+iUWuzuCIniGL3h0MRmD4/U7jGMT130yiHU+MWmhoeYi4qtds9GnfkZUk53
+         aQRwlRrqSTC4nMuu81C1qP7RDNaAihQwFBVlyQDSDbzsN+i1WazkLJfevOl1W7bQzV8R
+         H4TCAij4yj5pLp0SMemIHKCOndc+IlqPu5lQXw3LucTLlqineqbRa/of2Icg24yy2e+i
+         Nlrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=tY/k7LsOZFfK3RtnDp9XwkFm0+jK9FFo4MbEp8JdMEw=;
-        b=NrpvAzLUdaksJsL4SDOL6pHGubhTKc92veqsDGNs1u/nkgbAKlCVf9tlnnXH/CGNDJ
-         gGeXW6JgUaZS999Blsqpf5hkYyf1hdlhLq+BMfrRKMoXRQlghLdsRigTBcGtG92/9RDN
-         biUC308U/jwI1Pm7s/XI/IykSd43af6FUd3rqOAETJu1xrCl1N499DE8uLQ1aNOx1lL8
-         JFjro03Vijuyk0658GdWf6meoYH4ikVUVmK/jl9Q2VJvc81R0lp0w4MrSCBgvuRsGong
-         WC4Qpf0/XDpZBmu6l/bK50trjKpEszB3m8lYrN81Yg80GgOur+dz5wnzhIDJYcA1lMFe
-         6CIA==
-X-Gm-Message-State: AOAM530EUVr8NXCX9nd5mfwUFM555uoxIea2aOfazA55FJoqCMZBuvuC
-        wJVc6CEiSWETMKCb+m71huk=
-X-Google-Smtp-Source: ABdhPJynh94GHJwQQV1jYlxE2a7c3BzPkA5iEX5nGCa9dI0cyNp+Wi+59nZGyhZzt8AvNnrqAay8og==
-X-Received: by 2002:a17:906:3509:: with SMTP id r9mr21161478eja.490.1618824378181;
-        Mon, 19 Apr 2021 02:26:18 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=HmfVs+hiDRXJZWZEBHBQ3JAhFTKr+C9J2z3911ynMEw=;
+        b=W37ju3dAagNV1q3B0vYwi400J0yyWXhtY6uYVA88dkrDJk7cVvBqEKfiySBiz1h+o/
+         abno1Q5rmMoACm82nyxRNeZtUsWtH2eoSI2kTfXbNBlRT4y3s9GBZckdBNkptuQ8E4HK
+         KTt0pe1NV4Rt5BCd9AUAtfuWmn5EY+2TMgCuYk6FO2edooe8MYH6BPkEHYsObHME22p7
+         UhbFo5W6GI5aiG+n8gMMKrtyVZ7oeQZ1bnJpQroZRDIM1ayqil3gnsYmhsrznIkazDjc
+         MU2EuxlQyJEYsgcmcP+J8owR0YLC4+gSnUl7x6Xy9SItce/gtdUi0xR9fUxS1sAgzRl2
+         VRSg==
+X-Gm-Message-State: AOAM532dfNceiCavCbNedTjaOgIW5siX+4++Ofnvhgte3+OKxPEc0atL
+        3frdFKPapLo/whnjohSCj40=
+X-Google-Smtp-Source: ABdhPJztvNS0sFK4JkfQ4EGlh9BsAWq5TFQ/tSjLqw/fAb309CW7p/9NoVmVOold+Em/ozwXu95KLQ==
+X-Received: by 2002:a17:906:fb92:: with SMTP id lr18mr20590092ejb.511.1618824385070;
+        Mon, 19 Apr 2021 02:26:25 -0700 (PDT)
 Received: from felia.fritz.box ([2001:16b8:2dc6:900:a414:a08d:9e82:6738])
-        by smtp.gmail.com with ESMTPSA id bh14sm9943706ejb.104.2021.04.19.02.26.16
+        by smtp.gmail.com with ESMTPSA id bh14sm9943706ejb.104.2021.04.19.02.26.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Apr 2021 02:26:17 -0700 (PDT)
+        Mon, 19 Apr 2021 02:26:24 -0700 (PDT)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
 To:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
 Cc:     Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -65,41 +67,45 @@ Cc:     Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
         Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
         kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH RESEND 0/3] Rectify file references for dt-bindings in MAINTAINERS
-Date:   Mon, 19 Apr 2021 11:26:06 +0200
-Message-Id: <20210419092609.3692-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH 3/3] MAINTAINERS: rectify entry for INTEL KEEM BAY DRM DRIVER
+Date:   Mon, 19 Apr 2021 11:26:09 +0200
+Message-Id: <20210419092609.3692-4-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20210419092609.3692-1-lukas.bulwahn@gmail.com>
+References: <20210419092609.3692-1-lukas.bulwahn@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Rob,
+Commit ed794057b052 ("drm/kmb: Build files for KeemBay Display driver")
+refers to the non-existing file intel,kmb_display.yaml in
+./Documentation/devicetree/bindings/display/.
 
-here is a patch series that cleans up all file references for dt-bindings
-in MAINTAINERS. It applies cleanly on next-20210416.
+Commit 5a76b1ed73b9 ("dt-bindings: display: Add support for Intel KeemBay
+Display") originating from the same patch series however adds the file
+intel,keembay-display.yaml in that directory instead.
 
-This is a resend of the still relevant patches from the first submission
-of the patch series [see Link] on 2021-03-15.
+So, refer to intel,keembay-display.yaml in the INTEL KEEM BAY DRM DRIVER
+section instead.
 
-Could you pick this series for your devicetree bindings tree?
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-No functional change, just cleaning up MAINTAINERS.
-
-Lukas
-
-Link: https://lore.kernel.org/lkml/20210315160451.7469-1-lukas.bulwahn@gmail.com/
-
-Adjustment from original to resend version:
-  - drop subsumed patches
-
-Lukas Bulwahn (3):
-  MAINTAINERS: rectify entry for ARM/TOSHIBA VISCONTI ARCHITECTURE
-  MAINTAINERS: rectify entry for HIKEY960 ONBOARD USB GPIO HUB DRIVER
-  MAINTAINERS: rectify entry for INTEL KEEM BAY DRM DRIVER
-
- MAINTAINERS | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 4f152717365c..421e24e43335 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -9268,7 +9268,7 @@ INTEL KEEM BAY DRM DRIVER
+ M:	Anitha Chrisanthus <anitha.chrisanthus@intel.com>
+ M:	Edmund Dea <edmund.j.dea@intel.com>
+ S:	Maintained
+-F:	Documentation/devicetree/bindings/display/intel,kmb_display.yaml
++F:	Documentation/devicetree/bindings/display/intel,keembay-display.yaml
+ F:	drivers/gpu/drm/kmb/
+ 
+ INTEL KEEM BAY OCS AES/SM4 CRYPTO DRIVER
 -- 
 2.17.1
 
