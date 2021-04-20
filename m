@@ -7,64 +7,72 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DB48C433B4
-	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Apr 2021 11:38:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76041C433B4
+	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Apr 2021 12:05:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C36EE613C0
-	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Apr 2021 11:38:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39EF761042
+	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Apr 2021 12:05:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231200AbhDTLi4 (ORCPT
+        id S232110AbhDTMFs (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 20 Apr 2021 07:38:56 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:39043 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231561AbhDTLiv (ORCPT
+        Tue, 20 Apr 2021 08:05:48 -0400
+Received: from smtp07.smtpout.orange.fr ([80.12.242.129]:18696 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232066AbhDTMFr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 20 Apr 2021 07:38:51 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1lYohu-0005Og-EL; Tue, 20 Apr 2021 11:38:18 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Alan Stern <stern@rowland.harvard.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] usb: storage: datafab: remove redundant assignment of variable result
-Date:   Tue, 20 Apr 2021 12:38:18 +0100
-Message-Id: <20210420113818.378478-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.30.2
+        Tue, 20 Apr 2021 08:05:47 -0400
+Received: from localhost.localdomain ([86.243.172.93])
+        by mwinf5d66 with ME
+        id v05C2400Q21Fzsu0305CQX; Tue, 20 Apr 2021 14:05:13 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 20 Apr 2021 14:05:13 +0200
+X-ME-IP: 86.243.172.93
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     gregkh@linuxfoundation.org
+Cc:     linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] staging: octeon: Use 'for_each_child_of_node'
+Date:   Tue, 20 Apr 2021 14:05:10 +0200
+Message-Id: <eaffe388e6c51e97caf3e8fa474de74428575455.1618920182.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Use 'for_each_child_of_node' instead of hand writing it.
+This saves a few line of code.
 
-The variable result is being assigned with a value that is
-never read, the assignment is redundant and can be removed.
-
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/usb/storage/datafab.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/staging/octeon/ethernet.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/usb/storage/datafab.c b/drivers/usb/storage/datafab.c
-index 588818483f4b..bcc4a2fad863 100644
---- a/drivers/usb/storage/datafab.c
-+++ b/drivers/usb/storage/datafab.c
-@@ -294,7 +294,6 @@ static int datafab_write_data(struct us_data *us,
- 		if (reply[0] != 0x50 && reply[1] != 0) {
- 			usb_stor_dbg(us, "Gah! write return code: %02x %02x\n",
- 				     reply[0], reply[1]);
--			result = USB_STOR_TRANSPORT_ERROR;
- 			goto leave;
- 		}
+diff --git a/drivers/staging/octeon/ethernet.c b/drivers/staging/octeon/ethernet.c
+index da7c2cd8ebb8..dcbba9621b21 100644
+--- a/drivers/staging/octeon/ethernet.c
++++ b/drivers/staging/octeon/ethernet.c
+@@ -610,14 +610,11 @@ static const struct net_device_ops cvm_oct_pow_netdev_ops = {
+ static struct device_node *cvm_oct_of_get_child
+ 				(const struct device_node *parent, int reg_val)
+ {
+-	struct device_node *node = NULL;
+-	int size;
++	struct device_node *node;
+ 	const __be32 *addr;
++	int size;
  
+-	for (;;) {
+-		node = of_get_next_child(parent, node);
+-		if (!node)
+-			break;
++	for_each_child_of_node(parent, node) {
+ 		addr = of_get_property(node, "reg", &size);
+ 		if (addr && (be32_to_cpu(*addr) == reg_val))
+ 			break;
 -- 
-2.30.2
+2.27.0
 
