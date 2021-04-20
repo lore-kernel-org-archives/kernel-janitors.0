@@ -7,36 +7,35 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF06AC433ED
-	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Apr 2021 18:48:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9102BC433B4
+	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Apr 2021 19:31:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7370261029
-	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Apr 2021 18:48:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B518601FE
+	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Apr 2021 19:31:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233632AbhDTStS (ORCPT
+        id S233681AbhDTTc3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 20 Apr 2021 14:49:18 -0400
-Received: from smtp11.smtpout.orange.fr ([80.12.242.133]:30656 "EHLO
+        Tue, 20 Apr 2021 15:32:29 -0400
+Received: from smtp11.smtpout.orange.fr ([80.12.242.133]:40477 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233587AbhDTStR (ORCPT
+        with ESMTP id S233541AbhDTTc2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 20 Apr 2021 14:49:17 -0400
+        Tue, 20 Apr 2021 15:32:28 -0400
 Received: from localhost.localdomain ([86.243.172.93])
         by mwinf5d34 with ME
-        id v6oi2401121Fzsu036oiDl; Tue, 20 Apr 2021 20:48:44 +0200
+        id v7Xu2400321Fzsu037XufV; Tue, 20 Apr 2021 21:31:55 +0200
 X-ME-Helo: localhost.localdomain
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 20 Apr 2021 20:48:44 +0200
+X-ME-Date: Tue, 20 Apr 2021 21:31:55 +0200
 X-ME-IP: 86.243.172.93
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     anil.gurumurthy@qlogic.com, sudarsana.kalluru@qlogic.com,
-        jejb@linux.ibm.com, martin.petersen@oracle.com
-Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
+To:     lgirdwood@gmail.com, broonie@kernel.org,
+        ckeepax@opensource.cirrus.com
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] scsi: bfa: Remove some unused variables
-Date:   Tue, 20 Apr 2021 20:48:41 +0200
-Message-Id: <d10ccee35e35bf33d651f2e0163034d7c451520b.1618944442.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] regulator: Avoid a double 'of_node_get' in 'regulator_of_get_init_node()'
+Date:   Tue, 20 Apr 2021 21:31:51 +0200
+Message-Id: <a79f0068812b89ff412d572a1171f22109c24132.1618947049.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -44,46 +43,36 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-'lp' is unused. It is just declared and memset'ed.
-It can be removed.
+'for_each_available_child_of_node()' already performs an 'of_node_get()'
+on child, so there is no need to perform another one before returning.
+Otherwise, a double 'get' is performed and a resource may never be
+released.
 
+Fixes: 925c85e21ed8 ("regulator: Factor out location of init data OF node")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/scsi/bfa/bfa_svc.c | 6 ------
- 1 file changed, 6 deletions(-)
+Untested, speculative patch
+---
+ drivers/regulator/of_regulator.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/bfa/bfa_svc.c b/drivers/scsi/bfa/bfa_svc.c
-index 11c0c3e6f014..5387883d6604 100644
---- a/drivers/scsi/bfa/bfa_svc.c
-+++ b/drivers/scsi/bfa/bfa_svc.c
-@@ -369,13 +369,10 @@ bfa_plog_fchdr(struct bfa_plog_s *plog, enum bfa_plog_mid mid,
- 			enum bfa_plog_eid event,
- 			u16 misc, struct fchs_s *fchdr)
- {
--	struct bfa_plog_rec_s  lp;
- 	u32	*tmp_int = (u32 *) fchdr;
- 	u32	ints[BFA_PL_INT_LOG_SZ];
+diff --git a/drivers/regulator/of_regulator.c b/drivers/regulator/of_regulator.c
+index 564f928eb1db..49f6c05fee34 100644
+--- a/drivers/regulator/of_regulator.c
++++ b/drivers/regulator/of_regulator.c
+@@ -422,7 +422,11 @@ device_node *regulator_of_get_init_node(struct device *dev,
  
- 	if (plog->plog_enabled) {
--		memset(&lp, 0, sizeof(struct bfa_plog_rec_s));
--
- 		ints[0] = tmp_int[0];
- 		ints[1] = tmp_int[1];
- 		ints[2] = tmp_int[4];
-@@ -389,13 +386,10 @@ bfa_plog_fchdr_and_pl(struct bfa_plog_s *plog, enum bfa_plog_mid mid,
- 		      enum bfa_plog_eid event, u16 misc, struct fchs_s *fchdr,
- 		      u32 pld_w0)
- {
--	struct bfa_plog_rec_s  lp;
- 	u32	*tmp_int = (u32 *) fchdr;
- 	u32	ints[BFA_PL_INT_LOG_SZ];
+ 		if (!strcmp(desc->of_match, name)) {
+ 			of_node_put(search);
+-			return of_node_get(child);
++			/*
++			 * 'of_node_get(child)' is already performed by the
++			 * for_each loop.
++			 */
++			return child;
+ 		}
+ 	}
  
- 	if (plog->plog_enabled) {
--		memset(&lp, 0, sizeof(struct bfa_plog_rec_s));
--
- 		ints[0] = tmp_int[0];
- 		ints[1] = tmp_int[1];
- 		ints[2] = tmp_int[4];
 -- 
 2.27.0
 
