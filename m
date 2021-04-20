@@ -2,118 +2,82 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EC88C433ED
-	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Apr 2021 15:34:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9772AC433B4
+	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Apr 2021 17:16:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E91A4613B2
-	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Apr 2021 15:34:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6074F61076
+	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Apr 2021 17:16:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232967AbhDTPeu (ORCPT
+        id S233380AbhDTRQw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 20 Apr 2021 11:34:50 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:47386 "EHLO
+        Tue, 20 Apr 2021 13:16:52 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:50872 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232174AbhDTPet (ORCPT
+        with ESMTP id S233362AbhDTRQt (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 20 Apr 2021 11:34:49 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212])
+        Tue, 20 Apr 2021 13:16:49 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <colin.king@canonical.com>)
-        id 1lYsOH-0006uF-4W; Tue, 20 Apr 2021 15:34:17 +0000
-Subject: Re: [PATCH] perf/x86: Fix integer overflow when left shifting an
- integer more than 32 bits
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        George Dunlap <george.dunlap@eu.citrix.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210420142907.382417-1-colin.king@canonical.com>
- <YH7tJz6WnPH7s8yO@hirez.programming.kicks-ass.net>
- <YH7z5lv9CVQuiI7V@hirez.programming.kicks-ass.net>
-From:   Colin Ian King <colin.king@canonical.com>
-Message-ID: <a86b81d8-c842-b72a-16d7-f894a469eb91@canonical.com>
-Date:   Tue, 20 Apr 2021 16:34:16 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        id 1lYtyw-00060S-P3; Tue, 20 Apr 2021 17:16:14 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Grygorii Strashko <grygorii.strashko@ti.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-omap@vger.kernel.org, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] net: davinci_emac: Fix incorrect masking of tx and rx error channel
+Date:   Tue, 20 Apr 2021 18:16:14 +0100
+Message-Id: <20210420171614.385721-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-In-Reply-To: <YH7z5lv9CVQuiI7V@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 20/04/2021 16:31, Peter Zijlstra wrote:
-> On Tue, Apr 20, 2021 at 05:03:03PM +0200, Peter Zijlstra wrote:
->> On Tue, Apr 20, 2021 at 03:29:07PM +0100, Colin King wrote:
->>> From: Colin Ian King <colin.king@canonical.com>
->>>
->>> The 64 bit value read from MSR_ARCH_PERFMON_FIXED_CTR_CTRL is being
->>> bit-wise masked with the value (0x03 << i*4). However, the shifted value
->>> is evaluated using 32 bit arithmetic, so will overflow when i > 8.
->>> Fix this by making 0x03 a ULL so that the shift is performed using
->>> 64 bit arithmetic.
->>>
->>> Addresses-Coverity: ("Unintentional integer overflow")
->>
->> Strange tag that, also inaccurate, wide shifts are UB and don't behave
->> consistently.
->>
->> As is, we've not had hardware with that many fixed counters, but yes,
->> worth fixing I suppose.
-> 
-> Patch now reads:
-> 
-> ---
-> Subject: perf/x86: Allow for 8<num_fixed_counters<16
-> From: Colin Ian King <colin.king@canonical.com>
-> Date: Tue, 20 Apr 2021 15:29:07 +0100
-> 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The 64 bit value read from MSR_ARCH_PERFMON_FIXED_CTR_CTRL is being
-> bit-wise masked with the value (0x03 << i*4). However, the shifted value
-> is evaluated using 32 bit arithmetic, so will UB when i > 8. Fix this
-> by making 0x03 a ULL so that the shift is performed using 64 bit
-> arithmetic.
-> 
-> This makes the arithmetic internally consistent and preparers for the
-> day when hardware provides 8<num_fixed_counters<16.
+From: Colin Ian King <colin.king@canonical.com>
 
-Yep, that's good. Thanks.
+The bit-masks used for the TXERRCH and RXERRCH (tx and rx error channels)
+are incorrect and always lead to a zero result. The mask values are
+currently the incorrect post-right shifted values, fix this by setting
+them to the currect values.
 
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Link: https://lkml.kernel.org/r/20210420142907.382417-1-colin.king@canonical.com
-> ---
->  arch/x86/events/core.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> --- a/arch/x86/events/core.c
-> +++ b/arch/x86/events/core.c
-> @@ -261,7 +261,7 @@ static bool check_hw_exists(void)
->  		for (i = 0; i < x86_pmu.num_counters_fixed; i++) {
->  			if (fixed_counter_disabled(i))
->  				continue;
-> -			if (val & (0x03 << i*4)) {
-> +			if (val & (0x03ULL << i*4)) {
->  				bios_fail = 1;
->  				val_fail = val;
->  				reg_fail = reg;
-> 
+(I double checked these against the TMS320TCI6482 data sheet, section
+5.30, page 127 to ensure I had the correct mask values for the TXERRCH
+and RXERRCH fields in the MACSTATUS register).
+
+Addresses-Coverity: ("Operands don't affect result")
+Fixes: a6286ee630f6 ("net: Add TI DaVinci EMAC driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/ti/davinci_emac.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/ti/davinci_emac.c b/drivers/net/ethernet/ti/davinci_emac.c
+index 57450b174fc4..fb5eca688af9 100644
+--- a/drivers/net/ethernet/ti/davinci_emac.c
++++ b/drivers/net/ethernet/ti/davinci_emac.c
+@@ -183,11 +183,11 @@ static const char emac_version_string[] = "TI DaVinci EMAC Linux v6.1";
+ /* EMAC mac_status register */
+ #define EMAC_MACSTATUS_TXERRCODE_MASK	(0xF00000)
+ #define EMAC_MACSTATUS_TXERRCODE_SHIFT	(20)
+-#define EMAC_MACSTATUS_TXERRCH_MASK	(0x7)
++#define EMAC_MACSTATUS_TXERRCH_MASK	(0x70000)
+ #define EMAC_MACSTATUS_TXERRCH_SHIFT	(16)
+ #define EMAC_MACSTATUS_RXERRCODE_MASK	(0xF000)
+ #define EMAC_MACSTATUS_RXERRCODE_SHIFT	(12)
+-#define EMAC_MACSTATUS_RXERRCH_MASK	(0x7)
++#define EMAC_MACSTATUS_RXERRCH_MASK	(0x700)
+ #define EMAC_MACSTATUS_RXERRCH_SHIFT	(8)
+ 
+ /* EMAC RX register masks */
+-- 
+2.30.2
 
