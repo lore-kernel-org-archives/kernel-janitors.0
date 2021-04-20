@@ -2,100 +2,79 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99B06C433ED
-	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Apr 2021 15:16:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB859C433B4
+	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Apr 2021 15:28:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6260161154
-	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Apr 2021 15:16:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70C1E613AB
+	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Apr 2021 15:28:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232758AbhDTPRK (ORCPT
+        id S232931AbhDTP3J (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 20 Apr 2021 11:17:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33690 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231391AbhDTPRJ (ORCPT
+        Tue, 20 Apr 2021 11:29:09 -0400
+Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:58291 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232996AbhDTP3I (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 20 Apr 2021 11:17:09 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E017C06174A;
-        Tue, 20 Apr 2021 08:16:38 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id a4so38029219wrr.2;
-        Tue, 20 Apr 2021 08:16:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=mgB0zcGWFNH/Q/FVhfin+obpUYcpRcl494fttRvC2kc=;
-        b=BWTmydHs3Izqqn+cHtKSrjGm9O5nH41FX27Drc7tweu2Kla4Qj27OmTuxqTqBxCpjt
-         5WIxSB9LXmQc7oHREnynz3T4N6gAmx9Lw8yDIesjzyjRtz8sQaaBdZ+f4BZWPXdTJpbL
-         jhVYEeEHPnS0xF2vkW4SKW5i2SISppDdDPKrxPu71T9mc39bqe6z0fhl6S5evf8rkwZa
-         sz25ETkot/D7nHS2yefY9TkBigDJxKhQ9xqhStnwtNWQDpM9lnZLNsni5Sg9o+KYoQvy
-         PQhn4gJrKZvDSUIXjn3Odk3wKKYjqykpYjNd17b6u/LJSOTA6ntoCCta9x66QnWPU4Cj
-         Lzag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=mgB0zcGWFNH/Q/FVhfin+obpUYcpRcl494fttRvC2kc=;
-        b=dEoNDorsgCcDStGoww5EKU3zxTBnZZ48jCw37u6pOsdJwtntA1TB7QFfBEHIGb0Ou2
-         F/S1WVbl0p/S9NBAxQmQ93aTcFCclL3XyT4kGaD0T0jMniI6LDW9EjWKnjYPSCE/0MFi
-         vrn2kFPKX5iWYx9H3aGhcKvIxQ+2TrDfF0aqQfZYvlpeAI9seNPa1RHrDTanlTaoKSL0
-         7sz87C5GqBedSvfFlOWpb514D0wvIhJGCnrmVs/AsJL8EbJiPM5lzTTvugNE6Vt08UV0
-         Ad48MjVqb4x+lUGQOfap2YqU6hVHUT8Z85ISv+BNB/iKW2QVznQrB42MyYy82pObDe5W
-         jzBA==
-X-Gm-Message-State: AOAM533ZVzWm/hNA/s8PtO6hmih0UXpsI5ofHdBu3a22jax6Y7vdqFtD
-        G7//DfoiAqFdjYw8pXoXlYvaCYmZGgqX7A==
-X-Google-Smtp-Source: ABdhPJwpZe9twxVd5/Re4ELKgGEOdxkzHuBDhuUHrH4/PvlSj3nCn9tnG6VEZy6oXnkvlnA1kXJX5Q==
-X-Received: by 2002:a05:6000:1ac7:: with SMTP id i7mr21610164wry.9.1618931797115;
-        Tue, 20 Apr 2021 08:16:37 -0700 (PDT)
-Received: from localhost.localdomain ([197.240.34.190])
-        by smtp.gmail.com with ESMTPSA id a8sm30983776wrh.91.2021.04.20.08.16.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Apr 2021 08:16:36 -0700 (PDT)
-From:   Khaled ROMDHANI <khaledromdhani216@gmail.com>
-To:     clm@fb.com, josef@toxicpanda.com, dsterba@suse.com
-Cc:     Khaled ROMDHANI <khaledromdhani216@gmail.com>,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH v3] fs/btrfs: Fix uninitialized variable
-Date:   Tue, 20 Apr 2021 16:16:26 +0100
-Message-Id: <20210420151626.6045-1-khaledromdhani216@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 20 Apr 2021 11:29:08 -0400
+Received: from localhost.localdomain ([86.243.172.93])
+        by mwinf5d56 with ME
+        id v3Ua2400k21Fzsu033UboS; Tue, 20 Apr 2021 17:28:36 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 20 Apr 2021 17:28:36 +0200
+X-ME-IP: 86.243.172.93
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     yishaih@nvidia.com, dledford@redhat.com, jgg@ziepe.ca
+Cc:     linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] RDMA/mlx4: remove an unused variable
+Date:   Tue, 20 Apr 2021 17:28:33 +0200
+Message-Id: <413dc6e2ea9d85bda1131bbd6a730b7620839eab.1618932283.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.27.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-As reported by the Coverity static analysis.
-The variable zone is not initialized which
-may causes a failed assertion.
+'in6' is unused. It is just declared and filled-in.
+It can be removed.
 
-Addresses-Coverity: ("Uninitialized variables")
-Signed-off-by: Khaled ROMDHANI <khaledromdhani216@gmail.com>
----
-v3: catch default as an assertion failure
-as proposed by David Sterba.
----
- fs/btrfs/zoned.c | 3 +++
- 1 file changed, 3 insertions(+)
+This is a left over from commit 5ea8bbfc4929
+("mlx4: Implement IP based gids support for RoCE/SRIOV")
 
-diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
-index 70b23a0d03b1..432509f4b3ac 100644
---- a/fs/btrfs/zoned.c
-+++ b/fs/btrfs/zoned.c
-@@ -143,6 +143,9 @@ static inline u32 sb_zone_number(int shift, int mirror)
- 	case 0: zone = 0; break;
- 	case 1: zone = 1ULL << (BTRFS_SB_LOG_FIRST_SHIFT - shift); break;
- 	case 2: zone = 1ULL << (BTRFS_SB_LOG_SECOND_SHIFT - shift); break;
-+	default:
-+		ASSERT(zone);
-+		break;
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/infiniband/hw/mlx4/qp.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/infiniband/hw/mlx4/qp.c b/drivers/infiniband/hw/mlx4/qp.c
+index 651785bd57f2..92ddbcc00eb2 100644
+--- a/drivers/infiniband/hw/mlx4/qp.c
++++ b/drivers/infiniband/hw/mlx4/qp.c
+@@ -3135,7 +3135,6 @@ static int build_mlx_header(struct mlx4_ib_qp *qp, const struct ib_ud_wr *wr,
  	}
  
- 	ASSERT(zone <= U32_MAX);
+ 	if (is_eth) {
+-		struct in6_addr in6;
+ 		u16 ether_type;
+ 		u16 pcp = (be32_to_cpu(ah->av.ib.sl_tclass_flowlabel) >> 29) << 13;
+ 
+@@ -3148,8 +3147,6 @@ static int build_mlx_header(struct mlx4_ib_qp *qp, const struct ib_ud_wr *wr,
+ 		memcpy(sqp->ud_header.eth.dmac_h, ah->av.eth.mac, 6);
+ 		memcpy(&ctrl->srcrb_flags16[0], ah->av.eth.mac, 2);
+ 		memcpy(&ctrl->imm, ah->av.eth.mac + 2, 4);
+-		memcpy(&in6, sgid.raw, sizeof(in6));
+-
+ 
+ 		if (!memcmp(sqp->ud_header.eth.smac_h, sqp->ud_header.eth.dmac_h, 6))
+ 			mlx->flags |= cpu_to_be32(MLX4_WQE_CTRL_FORCE_LOOPBACK);
 -- 
-2.17.1
+2.27.0
 
