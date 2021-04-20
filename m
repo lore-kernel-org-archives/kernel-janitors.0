@@ -2,121 +2,111 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24DF1C433ED
-	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Apr 2021 10:22:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5B64C433B4
+	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Apr 2021 10:24:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E0A30613B2
-	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Apr 2021 10:22:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 780C661164
+	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Apr 2021 10:24:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231553AbhDTKXD (ORCPT
+        id S231473AbhDTKZS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 20 Apr 2021 06:23:03 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:33774 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231536AbhDTKXC (ORCPT
+        Tue, 20 Apr 2021 06:25:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53438 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231422AbhDTKZO (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 20 Apr 2021 06:23:02 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13KAK9h8058776;
-        Tue, 20 Apr 2021 10:22:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=bPuzElpjiOo1zRjSEnYwkdbLNwWPB/1sGrCY1L0+/nk=;
- b=SK2yp54Mm5hj2vNEO49W79IuvChvxXimdFLZNUAZotP5gRPO/oBaVGdbMQo+1bcmhin6
- 1xp0K8AH2//Q0Kmcxl90woLQ34FEqIwCfMx1loyveBMLcOjGiZYZVeUbB0J8mB7EJAgx
- 42To4eMxdLW9hQFwMO68k32g88pZNaFYM0bgTaocjT8krFc4/R6jb40ojrqEnuRggZ+s
- CSTOdkQRsakWK8qHU8oqzf2aTZkLhUL88Yu+NuRThnQ/+HzviHk2TpsMjwMmqKYUBFmp
- jq9gK9nnrbcqOW7lwqBGSqPj5IDakFgpzNmoL69op9HyV+0NZWO3kpnKZgQzJjmcvWUJ lA== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 37yveaea4h-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 20 Apr 2021 10:22:24 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13KAKmrr022570;
-        Tue, 20 Apr 2021 10:22:23 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by userp3030.oracle.com with ESMTP id 3809kxskwy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 20 Apr 2021 10:22:23 +0000
-Received: from userp3030.oracle.com (userp3030.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 13KAMN7r027505;
-        Tue, 20 Apr 2021 10:22:23 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3030.oracle.com with ESMTP id 3809kxskwj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 20 Apr 2021 10:22:23 +0000
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 13KAMLKX021192;
-        Tue, 20 Apr 2021 10:22:21 GMT
-Received: from kadam (/102.36.221.92)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 20 Apr 2021 03:22:21 -0700
-Date:   Tue, 20 Apr 2021 13:22:14 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Khaled ROMDHANI <khaledromdhani216@gmail.com>
-Cc:     clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Tue, 20 Apr 2021 06:25:14 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95846C06174A;
+        Tue, 20 Apr 2021 03:24:40 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id mh2so35908324ejb.8;
+        Tue, 20 Apr 2021 03:24:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=iDi8cUbiyndOqXYkEBTxg8CyIbOjMD0ycEy+x60xpsw=;
+        b=roQeYFmx2/icGD6lUKMbke4T1HvYGH1yyx5REXyF+rwL+KV/sRbiHhLPwydnKtaa/G
+         KeVBfpvYns1GKX1IsuCTdfS4uaFzyFP0mwYAWoW4rqKgf6K5BtNm3GkhWUFM7vndYvle
+         rt2MefYLMF4K8GpKHs244d1OE1NGarkBLo8hnOr+l5j9zJ/OmeohyXo+HJS/upqwOyiZ
+         we2+9j/V/6enS3qdXCPpv5O/lyJe6whuTejnhfMYkUquXgOp+8jQ6lAwBstl2s7k4RPx
+         Kz8yJVv4sG3wL2/YJPvl22nNrh/HG8qeAmGxyf4iSStVjr2TkT+GUB3sR/9swBM5BXOJ
+         5VbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=iDi8cUbiyndOqXYkEBTxg8CyIbOjMD0ycEy+x60xpsw=;
+        b=KmOM0xAerjm44lsnFDHG87uBfgXfOdX2zu6/hUtZg9YU7XTHSrG0UrNRKq+0lI4NX0
+         bDoau11+N0ElAVQW1LGcO+BgZCX4PVAon2Bb1ULpcRwy29sdHkv+4nRJycunkm/4a3Oi
+         U+FTUhPizORHyuqnOTXdKStl+rLchn9VR6jU8eJOaOviGuiusRTZMFdcuzoHmkx/Y/ej
+         nSkfwKugZOvSya7xwaJ32q/ePLY9nbrqjSSjpknJ7Xha/HzwiqcV5r0UeNxLIx1ZHqCH
+         6gAjvwXn/XgY8JpXjqrAvYP7UQnV/BlH4UoPjmqpdD1uuPtt5nxQZB51U8CdmRqt6qgq
+         SZIw==
+X-Gm-Message-State: AOAM530ThWOp3bkuCBAvLGyLMPEwSJtV1rPyUGdWbbHKoENKIL8DC+2d
+        wR+zoJLrspvzaSFXXOCjoO+gnld/eLQ=
+X-Google-Smtp-Source: ABdhPJwv7sEOGcS4T4d7yVxSjB+KHHDSNOEyOEcNORPWzZwaI2xwQnNKXS/ajg8NGQ5NgwEogrWhnw==
+X-Received: by 2002:a17:907:9485:: with SMTP id dm5mr26830144ejc.194.1618914279049;
+        Tue, 20 Apr 2021 03:24:39 -0700 (PDT)
+Received: from [10.18.0.21] ([37.58.58.229])
+        by smtp.gmail.com with ESMTPSA id e11sm12362807ejn.100.2021.04.20.03.24.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 20 Apr 2021 03:24:38 -0700 (PDT)
+Subject: Re: [PATCH] platform/surface: aggregator: fix a bit test
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <mgross@linux.intel.com>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] fs/btrfs: Fix uninitialized variable
-Message-ID: <20210420102214.GA1981@kadam>
-References: <20210417153616.25056-1-khaledromdhani216@gmail.com>
+References: <YH6UUhJhGk3mk13b@mwanda>
+From:   Maximilian Luz <luzmaximilian@gmail.com>
+Message-ID: <7352fbf8-6773-99e6-1baa-3daea8523bc7@gmail.com>
+Date:   Tue, 20 Apr 2021 12:24:37 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210417153616.25056-1-khaledromdhani216@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-GUID: apFXcdx82eJ5clMeWqsNsBlKtdoJAoHu
-X-Proofpoint-ORIG-GUID: apFXcdx82eJ5clMeWqsNsBlKtdoJAoHu
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9959 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 impostorscore=0 phishscore=0 mlxscore=0
- suspectscore=0 lowpriorityscore=0 mlxlogscore=999 spamscore=0 bulkscore=0
- adultscore=0 malwarescore=0 clxscore=1011 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104060000
- definitions=main-2104200079
+In-Reply-To: <YH6UUhJhGk3mk13b@mwanda>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, Apr 17, 2021 at 04:36:16PM +0100, Khaled ROMDHANI wrote:
-> As reported by the Coverity static analysis.
-> The variable zone is not initialized which
-> may causes a failed assertion.
+On 4/20/21 10:44 AM, Dan Carpenter wrote:
+> The "funcs" variable is a u64.  If "func" is more than 31 then the
+> BIT() shift will wrap instead of testing the high bits.
 > 
-> Addresses-Coverity: ("Uninitialized variables")
-> Signed-off-by: Khaled ROMDHANI <khaledromdhani216@gmail.com>
+> Fixes: c167b9c7e3d6 ("platform/surface: Add Surface Aggregator subsystem")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+Thanks!
+
+Reviewed-by: Maximilian Luz <luzmaximilian@gmail.com>
+
 > ---
-> v2: add a default case as proposed by David Sterba
-> ---
->  fs/btrfs/zoned.c | 3 +++
->  1 file changed, 3 insertions(+)
+>   drivers/platform/surface/aggregator/controller.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
-> index eeb3ebe11d7a..82527308d165 100644
-> --- a/fs/btrfs/zoned.c
-> +++ b/fs/btrfs/zoned.c
-> @@ -143,6 +143,9 @@ static inline u32 sb_zone_number(int shift, int mirror)
->  	case 0: zone = 0; break;
->  	case 1: zone = 1ULL << (BTRFS_SB_LOG_FIRST_SHIFT - shift); break;
->  	case 2: zone = 1ULL << (BTRFS_SB_LOG_SECOND_SHIFT - shift); break;
-
-It took me a while to spot these break statements.
-
-> +	default:
-> +		zone = 0;
-> +	break;
-
-This break needs to be indented one more tab.
-
->  	}
->  
->  	ASSERT(zone <= U32_MAX);
-
-regards,
-dan carpenter
+> diff --git a/drivers/platform/surface/aggregator/controller.c b/drivers/platform/surface/aggregator/controller.c
+> index 00e38284885a..69e86cd599d3 100644
+> --- a/drivers/platform/surface/aggregator/controller.c
+> +++ b/drivers/platform/surface/aggregator/controller.c
+> @@ -1040,7 +1040,7 @@ static int ssam_dsm_load_u32(acpi_handle handle, u64 funcs, u64 func, u32 *ret)
+>   	union acpi_object *obj;
+>   	u64 val;
+>   
+> -	if (!(funcs & BIT(func)))
+> +	if (!(funcs & BIT_ULL(func)))
+>   		return 0; /* Not supported, leave *ret at its default value */
+>   
+>   	obj = acpi_evaluate_dsm_typed(handle, &SSAM_SSH_DSM_GUID,
+> 
