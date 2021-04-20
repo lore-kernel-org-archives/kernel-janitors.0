@@ -2,100 +2,108 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FE26C433B4
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Apr 2021 23:40:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A63B8C433B4
+	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Apr 2021 08:44:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 41B9261279
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Apr 2021 23:40:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A451611C9
+	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Apr 2021 08:44:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232527AbhDSXk4 (ORCPT
+        id S230491AbhDTIoq (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 19 Apr 2021 19:40:56 -0400
-Received: from mo-csw1116.securemx.jp ([210.130.202.158]:36098 "EHLO
-        mo-csw.securemx.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232484AbhDSXk4 (ORCPT
+        Tue, 20 Apr 2021 04:44:46 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:60852 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229749AbhDTIoq (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 19 Apr 2021 19:40:56 -0400
-Received: by mo-csw.securemx.jp (mx-mo-csw1116) id 13JNdlVM005625; Tue, 20 Apr 2021 08:39:47 +0900
-X-Iguazu-Qid: 2wHHhVLfD68WbBSrrf
-X-Iguazu-QSIG: v=2; s=0; t=1618875586; q=2wHHhVLfD68WbBSrrf; m=OpTumAytCPng2rPIF8zru+UG0PLMCzlcfWIBcmKYL68=
-Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
-        by relay.securemx.jp (mx-mr1110) id 13JNdivT005802
-        (version=TLSv1.2 cipher=AES128-GCM-SHA256 bits=128 verify=NOT);
-        Tue, 20 Apr 2021 08:39:44 +0900
-Received: from enc01.toshiba.co.jp (enc01.toshiba.co.jp [106.186.93.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by imx2-a.toshiba.co.jp (Postfix) with ESMTPS id 1E4FB1000B0;
-        Tue, 20 Apr 2021 08:39:44 +0900 (JST)
-Received: from hop001.toshiba.co.jp ([133.199.164.63])
-        by enc01.toshiba.co.jp  with ESMTP id 13JNdhoP024180;
-        Tue, 20 Apr 2021 08:39:43 +0900
-Date:   Tue, 20 Apr 2021 08:39:07 +0900
-From:   Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Yu Chen <chenyu56@huawei.com>,
-        Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Joe Perches <joe@perches.com>,
-        Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] MAINTAINERS: rectify entry for HIKEY960 ONBOARD USB
- GPIO HUB DRIVER
-X-TSB-HOP: ON
-Message-ID: <20210419233907.qaxgwlggm35fyklz@toshiba.co.jp>
-References: <20210419092609.3692-1-lukas.bulwahn@gmail.com>
- <20210419092609.3692-3-lukas.bulwahn@gmail.com>
+        Tue, 20 Apr 2021 04:44:46 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13K8JJqv175990;
+        Tue, 20 Apr 2021 08:44:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
+ bh=vUXFWl3fpUuqSWOHe9zDl0mexS+RTbrEVv1eNGSk3i4=;
+ b=co5rixwnTNEul1efoP0KvaSOtc/dlB1psUa4EtTsNyLI6VYGCMBXbg7sV/p6tze0yyJ9
+ P11jKLfYWZut4+cK4ISQ76WslgHBHePql5xfY3G2qZ7lEiY09DVlMkDzoifSnqhoIsJA
+ 3f1gW84Aodlvh2yQLMAfrL9m+LJ0NK2msaUkOAvg2+DOtm+goVIJNWubpIsmRAajB5qB
+ yOWo94v3I31ds93gvqybTkreXBpvecSsZbnRi9vmKfF9JRRbzex/aTbPP55BQ3WCKGWI
+ IjnLByFpmvYPiVSxD4fWE4HDOy5exQp52E8fZrbJYT6Ofwue1pdIouwivXRmwGvJ9dOj Yw== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 37yqmnebkp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 20 Apr 2021 08:44:11 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13K8bR1f138467;
+        Tue, 20 Apr 2021 08:44:11 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by aserp3030.oracle.com with ESMTP id 38098pv4w7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 20 Apr 2021 08:44:11 +0000
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 13K8iA7d163141;
+        Tue, 20 Apr 2021 08:44:10 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3030.oracle.com with ESMTP id 38098pv4vm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 20 Apr 2021 08:44:10 +0000
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 13K8i99f015537;
+        Tue, 20 Apr 2021 08:44:09 GMT
+Received: from mwanda (/102.36.221.92)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 20 Apr 2021 01:44:09 -0700
+Date:   Tue, 20 Apr 2021 11:44:02 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Maximilian Luz <luzmaximilian@gmail.com>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <mgross@linux.intel.com>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] platform/surface: aggregator: fix a bit test
+Message-ID: <YH6UUhJhGk3mk13b@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210419092609.3692-3-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email haha only kidding
+X-Proofpoint-ORIG-GUID: 4iCASsShEcj4h5YPyacErW9Ry97_fC_x
+X-Proofpoint-GUID: 4iCASsShEcj4h5YPyacErW9Ry97_fC_x
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9959 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxscore=0 adultscore=0
+ impostorscore=0 spamscore=0 malwarescore=0 clxscore=1015
+ lowpriorityscore=0 priorityscore=1501 suspectscore=0 mlxlogscore=999
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104060000 definitions=main-2104200064
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi,
+The "funcs" variable is a u64.  If "func" is more than 31 then the
+BIT() shift will wrap instead of testing the high bits.
 
-On Mon, Apr 19, 2021 at 11:26:08AM +0200, Lukas Bulwahn wrote:
-> Commit 7a6ff4c4cbc3 ("misc: hisi_hikey_usb: Driver to support onboard USB
-> gpio hub on Hikey960") refers to the non-existing file
-> ./Documentation/devicetree/bindings/misc/hisilicon-hikey-usb.yaml, but this
-> commit's patch series does not add any related devicetree binding in misc.
-> 
-> So, just drop this file reference in HIKEY960 ONBOARD USB GPIO HUB DRIVER.
-> 
+Fixes: c167b9c7e3d6 ("platform/surface: Add Surface Aggregator subsystem")
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/platform/surface/aggregator/controller.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Could you add Fixes: tag ?
-Please also add this to patch: "MAINTAINERS: rectify entry for INTEL KEEM BAY
-DRM DRIVER".
+diff --git a/drivers/platform/surface/aggregator/controller.c b/drivers/platform/surface/aggregator/controller.c
+index 00e38284885a..69e86cd599d3 100644
+--- a/drivers/platform/surface/aggregator/controller.c
++++ b/drivers/platform/surface/aggregator/controller.c
+@@ -1040,7 +1040,7 @@ static int ssam_dsm_load_u32(acpi_handle handle, u64 funcs, u64 func, u32 *ret)
+ 	union acpi_object *obj;
+ 	u64 val;
+ 
+-	if (!(funcs & BIT(func)))
++	if (!(funcs & BIT_ULL(func)))
+ 		return 0; /* Not supported, leave *ret at its default value */
+ 
+ 	obj = acpi_evaluate_dsm_typed(handle, &SSAM_SSH_DSM_GUID,
+-- 
+2.30.2
 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
->  MAINTAINERS | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index d31c8058b17f..4f152717365c 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -8239,7 +8239,6 @@ M:	John Stultz <john.stultz@linaro.org>
->  L:	linux-kernel@vger.kernel.org
->  S:	Maintained
->  F:	drivers/misc/hisi_hikey_usb.c
-> -F:	Documentation/devicetree/bindings/misc/hisilicon-hikey-usb.yaml
->  
->  HISILICON PMU DRIVER
->  M:	Shaokun Zhang <zhangshaokun@hisilicon.com>
-> -- 
-> 2.17.1
-> 
-> 
-
-Best regards,
-  Nobuhiro
