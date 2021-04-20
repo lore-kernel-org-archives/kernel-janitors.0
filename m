@@ -2,70 +2,98 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.5 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD32EC433ED
-	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Apr 2021 10:57:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7A5DC433B4
+	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Apr 2021 11:03:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 723D56135F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Apr 2021 10:57:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 943F161026
+	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Apr 2021 11:03:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231705AbhDTK5w (ORCPT
+        id S231769AbhDTLDd (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 20 Apr 2021 06:57:52 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:37705 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231669AbhDTK5u (ORCPT
+        Tue, 20 Apr 2021 07:03:33 -0400
+Received: from mail-wm1-f50.google.com ([209.85.128.50]:52883 "EHLO
+        mail-wm1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230408AbhDTLDc (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 20 Apr 2021 06:57:50 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1lYo4E-0002ku-71; Tue, 20 Apr 2021 10:57:18 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>
+        Tue, 20 Apr 2021 07:03:32 -0400
+Received: by mail-wm1-f50.google.com with SMTP id y204so18492695wmg.2;
+        Tue, 20 Apr 2021 04:03:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=1AAWZmufQzCNDyFr+MdjO53lpNsdxGXjz3hk1qaUcRo=;
+        b=ZU1FRyjDmOzRjBMuG4K/i7WaHTLhiniYnVX/ju1nspPH4B37V09VJ2RyyjSdCI80bp
+         jjNMfERFb1rvdkd6CXsYLDuVlorhWenbOPVxtkvwBOEiMpZztlnyCWk0ztCR7sjLBhON
+         qj+WLH5icuUBxJhiP272xfEsK1XN59yX/HcEDcZtTw4pyGloLg4WMBHvh8o3r6PbIg5/
+         Am/cuT0ebtX9h/qlx7Pm2LUR2Hncpj7VLn9+k53QIG8vZYUw4BpNsWGhr5DT8GaADvvq
+         jnjEQ7jzSZ6roaqD02uftHnhnD7rQ/6uz/42X0Gcbz4NPVkCtwLVUm2A3Jrxjdiiqah6
+         AFGQ==
+X-Gm-Message-State: AOAM532yoBICX4y3T02+TAJw7NYlOczs7hoOklWRif2kyNbL7+7c0x5c
+        vaNqodGTW0r4bKqT4qM9utje+V5fdfQ=
+X-Google-Smtp-Source: ABdhPJwpsqamaRHrYecSA0zk+u3/3AgiaMMuU+M68xwm3MqKjD8aFTtkeLWdFdJphninToiWNA9qtw==
+X-Received: by 2002:a05:600c:3643:: with SMTP id y3mr3739500wmq.159.1618916580214;
+        Tue, 20 Apr 2021 04:03:00 -0700 (PDT)
+Received: from ?IPv6:2a0b:e7c0:0:107::70f? ([2a0b:e7c0:0:107::70f])
+        by smtp.gmail.com with ESMTPSA id r2sm26765551wrt.79.2021.04.20.04.02.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 20 Apr 2021 04:02:59 -0700 (PDT)
+Subject: Re: [PATCH] tty: synclink_gt: remove redundant initialization of
+ variable count
+To:     Colin King <colin.king@canonical.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] tty: synclink_gt: remove redundant initialization of variable count
-Date:   Tue, 20 Apr 2021 11:57:18 +0100
-Message-Id: <20210420105718.377086-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.30.2
+References: <20210420105718.377086-1-colin.king@canonical.com>
+From:   Jiri Slaby <jirislaby@kernel.org>
+Message-ID: <de4f4627-a3e4-aa85-c10d-99677c6fcb57@kernel.org>
+Date:   Tue, 20 Apr 2021 13:02:58 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210420105718.377086-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On 20. 04. 21, 12:57, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The variable count is being initialized with a value that is
+> never read and it is being updated later with a new value.  The
+> initialization is redundant and can be removed.
+> 
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-The variable count is being initialized with a value that is
-never read and it is being updated later with a new value.  The
-initialization is redundant and can be removed.
+Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/tty/synclink_gt.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> ---
+>   drivers/tty/synclink_gt.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/tty/synclink_gt.c b/drivers/tty/synclink_gt.c
+> index 994618618466..5523cf7bd1c2 100644
+> --- a/drivers/tty/synclink_gt.c
+> +++ b/drivers/tty/synclink_gt.c
+> @@ -4958,7 +4958,7 @@ static int loopback_test(struct slgt_info *info)
+>   #define TESTFRAMESIZE 20
+>   
+>   	unsigned long timeout;
+> -	u16 count = TESTFRAMESIZE;
+> +	u16 count;
+>   	unsigned char buf[TESTFRAMESIZE];
+>   	int rc = -ENODEV;
+>   	unsigned long flags;
+> 
 
-diff --git a/drivers/tty/synclink_gt.c b/drivers/tty/synclink_gt.c
-index 994618618466..5523cf7bd1c2 100644
---- a/drivers/tty/synclink_gt.c
-+++ b/drivers/tty/synclink_gt.c
-@@ -4958,7 +4958,7 @@ static int loopback_test(struct slgt_info *info)
- #define TESTFRAMESIZE 20
- 
- 	unsigned long timeout;
--	u16 count = TESTFRAMESIZE;
-+	u16 count;
- 	unsigned char buf[TESTFRAMESIZE];
- 	int rc = -ENODEV;
- 	unsigned long flags;
+
 -- 
-2.30.2
-
+js
