@@ -2,52 +2,33 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAF52C433ED
-	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Apr 2021 15:33:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EC88C433ED
+	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Apr 2021 15:34:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 60851613B2
-	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Apr 2021 15:33:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E91A4613B2
+	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Apr 2021 15:34:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232507AbhDTPeJ (ORCPT
+        id S232967AbhDTPeu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 20 Apr 2021 11:34:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37432 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232174AbhDTPeI (ORCPT
+        Tue, 20 Apr 2021 11:34:50 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:47386 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232174AbhDTPet (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 20 Apr 2021 11:34:08 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40C51C06174A;
-        Tue, 20 Apr 2021 08:33:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=4lb1LnTLGkIdXTQo5Xqxyu0JUq7Aqt0OGUHw1Lai628=; b=uyb9m4kZgsrKZ3liNSNlGSNPHt
-        bUEFd2WLB/CK4MqJswE2vjF6OMMWJnOh3r3mJdz9fu4XftjeMGiQhi6i1oKv11V+bMk0VTm8wGgT6
-        geZ4wZ7/OKgVXsjsBxlwnBqneBBk/ROY3yJJu+2YHOn+dMkVcLRyYd42rtoRlR7yrUAbHDSZJ6DMC
-        cq2IdfOd0RRys8LLdqEUcRamizX6vRf0jsD5KN2ewldzEBupIEc4mWQR2YoNBR7VUDS2ESceOGxvb
-        AbPmHS8WzlLN93tuqITYlmgf5w/7/qh3S6Vu/lQqG5xqPuFE0h2NpKpSsMo5ykBOG6D7lP3ZpSBHQ
-        hlIOngww==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by casper.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
-        id 1lYsLw-00FKMC-D9; Tue, 20 Apr 2021 15:32:02 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id AD0AB30020C;
-        Tue, 20 Apr 2021 17:31:50 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 962AB2BCB3F63; Tue, 20 Apr 2021 17:31:50 +0200 (CEST)
-Date:   Tue, 20 Apr 2021 17:31:50 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Colin King <colin.king@canonical.com>
+        Tue, 20 Apr 2021 11:34:49 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212])
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lYsOH-0006uF-4W; Tue, 20 Apr 2021 15:34:17 +0000
+Subject: Re: [PATCH] perf/x86: Fix integer overflow when left shifting an
+ integer more than 32 bits
+To:     Peter Zijlstra <peterz@infradead.org>
 Cc:     Ingo Molnar <mingo@redhat.com>,
         Arnaldo Carvalho de Melo <acme@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -59,70 +40,80 @@ Cc:     Ingo Molnar <mingo@redhat.com>,
         "H . Peter Anvin" <hpa@zytor.com>,
         George Dunlap <george.dunlap@eu.citrix.com>,
         kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf/x86: Fix integer overflow when left shifting an
- integer more than 32 bits
-Message-ID: <YH7z5lv9CVQuiI7V@hirez.programming.kicks-ass.net>
 References: <20210420142907.382417-1-colin.king@canonical.com>
  <YH7tJz6WnPH7s8yO@hirez.programming.kicks-ass.net>
+ <YH7z5lv9CVQuiI7V@hirez.programming.kicks-ass.net>
+From:   Colin Ian King <colin.king@canonical.com>
+Message-ID: <a86b81d8-c842-b72a-16d7-f894a469eb91@canonical.com>
+Date:   Tue, 20 Apr 2021 16:34:16 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YH7tJz6WnPH7s8yO@hirez.programming.kicks-ass.net>
+In-Reply-To: <YH7z5lv9CVQuiI7V@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Apr 20, 2021 at 05:03:03PM +0200, Peter Zijlstra wrote:
-> On Tue, Apr 20, 2021 at 03:29:07PM +0100, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > The 64 bit value read from MSR_ARCH_PERFMON_FIXED_CTR_CTRL is being
-> > bit-wise masked with the value (0x03 << i*4). However, the shifted value
-> > is evaluated using 32 bit arithmetic, so will overflow when i > 8.
-> > Fix this by making 0x03 a ULL so that the shift is performed using
-> > 64 bit arithmetic.
-> > 
-> > Addresses-Coverity: ("Unintentional integer overflow")
+On 20/04/2021 16:31, Peter Zijlstra wrote:
+> On Tue, Apr 20, 2021 at 05:03:03PM +0200, Peter Zijlstra wrote:
+>> On Tue, Apr 20, 2021 at 03:29:07PM +0100, Colin King wrote:
+>>> From: Colin Ian King <colin.king@canonical.com>
+>>>
+>>> The 64 bit value read from MSR_ARCH_PERFMON_FIXED_CTR_CTRL is being
+>>> bit-wise masked with the value (0x03 << i*4). However, the shifted value
+>>> is evaluated using 32 bit arithmetic, so will overflow when i > 8.
+>>> Fix this by making 0x03 a ULL so that the shift is performed using
+>>> 64 bit arithmetic.
+>>>
+>>> Addresses-Coverity: ("Unintentional integer overflow")
+>>
+>> Strange tag that, also inaccurate, wide shifts are UB and don't behave
+>> consistently.
+>>
+>> As is, we've not had hardware with that many fixed counters, but yes,
+>> worth fixing I suppose.
 > 
-> Strange tag that, also inaccurate, wide shifts are UB and don't behave
-> consistently.
+> Patch now reads:
 > 
-> As is, we've not had hardware with that many fixed counters, but yes,
-> worth fixing I suppose.
+> ---
+> Subject: perf/x86: Allow for 8<num_fixed_counters<16
+> From: Colin Ian King <colin.king@canonical.com>
+> Date: Tue, 20 Apr 2021 15:29:07 +0100
+> 
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The 64 bit value read from MSR_ARCH_PERFMON_FIXED_CTR_CTRL is being
+> bit-wise masked with the value (0x03 << i*4). However, the shifted value
+> is evaluated using 32 bit arithmetic, so will UB when i > 8. Fix this
+> by making 0x03 a ULL so that the shift is performed using 64 bit
+> arithmetic.
+> 
+> This makes the arithmetic internally consistent and preparers for the
+> day when hardware provides 8<num_fixed_counters<16.
 
-Patch now reads:
+Yep, that's good. Thanks.
 
----
-Subject: perf/x86: Allow for 8<num_fixed_counters<16
-From: Colin Ian King <colin.king@canonical.com>
-Date: Tue, 20 Apr 2021 15:29:07 +0100
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Link: https://lkml.kernel.org/r/20210420142907.382417-1-colin.king@canonical.com
+> ---
+>  arch/x86/events/core.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> --- a/arch/x86/events/core.c
+> +++ b/arch/x86/events/core.c
+> @@ -261,7 +261,7 @@ static bool check_hw_exists(void)
+>  		for (i = 0; i < x86_pmu.num_counters_fixed; i++) {
+>  			if (fixed_counter_disabled(i))
+>  				continue;
+> -			if (val & (0x03 << i*4)) {
+> +			if (val & (0x03ULL << i*4)) {
+>  				bios_fail = 1;
+>  				val_fail = val;
+>  				reg_fail = reg;
+> 
 
-From: Colin Ian King <colin.king@canonical.com>
-
-The 64 bit value read from MSR_ARCH_PERFMON_FIXED_CTR_CTRL is being
-bit-wise masked with the value (0x03 << i*4). However, the shifted value
-is evaluated using 32 bit arithmetic, so will UB when i > 8. Fix this
-by making 0x03 a ULL so that the shift is performed using 64 bit
-arithmetic.
-
-This makes the arithmetic internally consistent and preparers for the
-day when hardware provides 8<num_fixed_counters<16.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/20210420142907.382417-1-colin.king@canonical.com
----
- arch/x86/events/core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/arch/x86/events/core.c
-+++ b/arch/x86/events/core.c
-@@ -261,7 +261,7 @@ static bool check_hw_exists(void)
- 		for (i = 0; i < x86_pmu.num_counters_fixed; i++) {
- 			if (fixed_counter_disabled(i))
- 				continue;
--			if (val & (0x03 << i*4)) {
-+			if (val & (0x03ULL << i*4)) {
- 				bios_fail = 1;
- 				val_fail = val;
- 				reg_fail = reg;
