@@ -4,36 +4,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1749C433ED
-	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Apr 2021 11:06:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DB48C433B4
+	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Apr 2021 11:38:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8A78D61363
-	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Apr 2021 11:06:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C36EE613C0
+	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Apr 2021 11:38:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231651AbhDTLGz (ORCPT
+        id S231200AbhDTLi4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 20 Apr 2021 07:06:55 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:37849 "EHLO
+        Tue, 20 Apr 2021 07:38:56 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:39043 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231309AbhDTLGz (ORCPT
+        with ESMTP id S231561AbhDTLiv (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 20 Apr 2021 07:06:55 -0400
+        Tue, 20 Apr 2021 07:38:51 -0400
 Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <colin.king@canonical.com>)
-        id 1lYoD0-0003FG-EF; Tue, 20 Apr 2021 11:06:22 +0000
+        id 1lYohu-0005Og-EL; Tue, 20 Apr 2021 11:38:18 +0000
 From:   Colin King <colin.king@canonical.com>
-To:     Felipe Balbi <balbi@kernel.org>,
+To:     Alan Stern <stern@rowland.harvard.edu>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org
+        linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] usb: gadget: net2272: remove redundant initialization of status
-Date:   Tue, 20 Apr 2021 12:06:22 +0100
-Message-Id: <20210420110622.377339-1-colin.king@canonical.com>
+Subject: [PATCH] usb: storage: datafab: remove redundant assignment of variable result
+Date:   Tue, 20 Apr 2021 12:38:18 +0100
+Message-Id: <20210420113818.378478-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -44,38 +44,27 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The variable status is being initialized with a value that is
-never read and it is being updated later with a new value.  The
-initialization is redundant and can be removed and move the
-declaration of status to the scope where it is used.
+The variable result is being assigned with a value that is
+never read, the assignment is redundant and can be removed.
 
 Addresses-Coverity: ("Unused value")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/usb/gadget/udc/net2272.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/usb/storage/datafab.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/usb/gadget/udc/net2272.c b/drivers/usb/gadget/udc/net2272.c
-index 23a735641c3d..89f479b78d80 100644
---- a/drivers/usb/gadget/udc/net2272.c
-+++ b/drivers/usb/gadget/udc/net2272.c
-@@ -539,7 +539,6 @@ net2272_read_fifo(struct net2272_ep *ep, struct net2272_request *req)
- 	int count;
- 	int tmp;
- 	int cleanup = 0;
--	int status = -1;
+diff --git a/drivers/usb/storage/datafab.c b/drivers/usb/storage/datafab.c
+index 588818483f4b..bcc4a2fad863 100644
+--- a/drivers/usb/storage/datafab.c
++++ b/drivers/usb/storage/datafab.c
+@@ -294,7 +294,6 @@ static int datafab_write_data(struct us_data *us,
+ 		if (reply[0] != 0x50 && reply[1] != 0) {
+ 			usb_stor_dbg(us, "Gah! write return code: %02x %02x\n",
+ 				     reply[0], reply[1]);
+-			result = USB_STOR_TRANSPORT_ERROR;
+ 			goto leave;
+ 		}
  
- 	dev_vdbg(ep->dev->dev, "read_fifo %s actual %d len %d\n",
- 		ep->ep.name, req->req.actual, req->req.length);
-@@ -591,6 +590,8 @@ net2272_read_fifo(struct net2272_ep *ep, struct net2272_request *req)
- 			}
- 
- 			if (!list_empty(&ep->queue)) {
-+				int status;
-+
- 				req = list_entry(ep->queue.next,
- 					struct net2272_request, queue);
- 				status = net2272_kick_dma(ep, req);
 -- 
 2.30.2
 
