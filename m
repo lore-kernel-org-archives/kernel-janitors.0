@@ -2,157 +2,100 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-22.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 105ADC433B4
-	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Apr 2021 19:32:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93503C433B4
+	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Apr 2021 20:20:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D834A6143B
-	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Apr 2021 19:32:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FB71613E6
+	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Apr 2021 20:20:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241793AbhDUTc6 (ORCPT
+        id S243641AbhDUUU6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 21 Apr 2021 15:32:58 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:44424 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238081AbhDUTc5 (ORCPT
+        Wed, 21 Apr 2021 16:20:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51278 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239205AbhDUUU5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 21 Apr 2021 15:32:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1619033543;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=1BBZbDPdoILFAbDCTmIR8WakICnxwYOnEVliMh8JCfw=;
-        b=JoXskYRY3okldpqpUJjAYNpJ028kQUPyfEVzaXI4IRXMacAEJJuwZl6G+Vn+XA5YcaamQ3
-        uXUzeJyCSnQ7JdLLR7wZQmFOIa+KSevxmKYXA/xsQcTVKW7kymqTHP4S7I3UkqfBMtZ6Vj
-        iqloTTyedESY+X2qu15XYn78RSGdudY=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-488-fWmPzDK0OsmgtZ3Qx320xQ-1; Wed, 21 Apr 2021 15:32:22 -0400
-X-MC-Unique: fWmPzDK0OsmgtZ3Qx320xQ-1
-Received: by mail-ed1-f72.google.com with SMTP id w14-20020aa7da4e0000b02903834aeed684so13799793eds.13
-        for <kernel-janitors@vger.kernel.org>; Wed, 21 Apr 2021 12:32:21 -0700 (PDT)
+        Wed, 21 Apr 2021 16:20:57 -0400
+Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97B4CC06174A;
+        Wed, 21 Apr 2021 13:20:23 -0700 (PDT)
+Received: by mail-pf1-x42e.google.com with SMTP id c3so11166655pfo.3;
+        Wed, 21 Apr 2021 13:20:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Jae3Hw3SWDj7jWLYD6f3SsT1PsOuBFLti/qy9DGNGts=;
+        b=YIFeWOnNbrzhj2tciJ47rw3epSBGPTfFGW4KToLEuXCmkGW3Yx9WRpheVLxx0Q4ygY
+         N0vfuP1w39UbQEa97Ho+Wz6/rQ2xf7YvECjcZaAi6IUTH7QB7dIJV+I7BLC2DkvhNP0e
+         yvs0aMQSkjBRSdtedHuhbR8hq+Dh9iHiRiux2OgrXlrtiEOZHRmWfiEXKmsAay+eGwWl
+         /SdOLGDBP+eZbT/OAv8E/tzAKlZtwa5uFlNrT1okx5wf1wc0VvXS1KeV4NmzNRLFBNmb
+         hMwG6JLsmtExz2WquMg6NUKte0xBviXUuTAqAdQhfWT23QxsJpbck6/7k9uizlNPQpKS
+         a+Ew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=1BBZbDPdoILFAbDCTmIR8WakICnxwYOnEVliMh8JCfw=;
-        b=Gqc5i/+tn9Zu9D6HlfJP7GXRyX0N4aTrbJ7KdkSwGFK6SigBlHwDAp/w8DT1c6+lcF
-         kd8Bjh7k0Y7AMJSDMU1nSmEd7PPoPYTo3iJBuFtwMC0HQAO4cNNsYF1V3XisG8m9kwjO
-         uhgtktrJb1816JWz7whTBHAhy4Nv/+iVSX3d670tEepfFhIC+4GYz5mFlUhij/2ptTBz
-         xykgLCg9584wUG11/VN0J6F5QBlzcgRPiQFKreP8KFGuBZl2rbyFnGjp9LAuWKFG3c7S
-         xI86qWYVPWN3K5lWR3rA9Nfa7m5EvXc/gRPsxdJm3c38n3VnuCy352mQ0j6Ezan0j1uI
-         MZMA==
-X-Gm-Message-State: AOAM531eqtAMKCprkl6Sag2fsovRWXBAcGVaOKZVybJhmkC3weyB8Hy2
-        j+Pk27p565GRgKvQioZxIR3m4mJzFWaqOJ6QH+JCpAngoodePiZxcSEXb5zd5JJ/88yK8g9WFII
-        75PPQmAhXTHJneX+lGJj1frHgnHFtDgs2GjyUaF1zU3kMoDAt3Wnvei6QotAFd5GR2T3OoVyZGr
-        1XUdX7
-X-Received: by 2002:a17:906:49c1:: with SMTP id w1mr35176159ejv.178.1619033540696;
-        Wed, 21 Apr 2021 12:32:20 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxdRpxiINqsS4aMzDxg+dVxuQVoOGhMEjSyLCURLTc1al9CQeb0bDFM8n1U/vBFgVyVwEwFUw==
-X-Received: by 2002:a17:906:49c1:: with SMTP id w1mr35176126ejv.178.1619033540350;
-        Wed, 21 Apr 2021 12:32:20 -0700 (PDT)
-Received: from x1.localdomain (2001-1c00-0c1e-bf00-1054-9d19-e0f0-8214.cable.dynamic.v6.ziggo.nl. [2001:1c00:c1e:bf00:1054:9d19:e0f0:8214])
-        by smtp.gmail.com with ESMTPSA id gn19sm287812ejc.68.2021.04.21.12.32.19
+        bh=Jae3Hw3SWDj7jWLYD6f3SsT1PsOuBFLti/qy9DGNGts=;
+        b=so53cZd/zohzfM+qXrOXEtEzfaBcf+47NbJcmUIkNOcIPaZIgmDY2/M/WL/sQWfErB
+         x8bLejGUyEN2YDqTgLyab0f019uzz6K83CppN316vFJNo/fNpyXC1pGsDvUjCGbjz6YY
+         ZDcVIXalSiljmKVOglOY28+uC2WMsEhG57GEpCamSsGu1Ubr371qRLqiyhQWhK1byI75
+         Of/xra76MmekJUsUOM/SmcWyz6fxGgQeWn21ggLY+HK2vncSdnwVEYpAvPTjsgbXV8o+
+         JpKIq2ODPyHIYXI37BelHnUSeyycZpzvcbBnfy/8TSulVqbgGar8tN6zbFye2AyNVdnc
+         vH3Q==
+X-Gm-Message-State: AOAM533dq9ABf+ypOCMyW42V3fdKfrWB9Yj+d3+aK0NCYB/uNzZd9Lnp
+        CtjdHTPNWhnRYBclAGb3SGD0SYFGVvI=
+X-Google-Smtp-Source: ABdhPJwCERt83sS3P4ZAgNpy2u38gdnZEDFG2XZKImDNJoDP2gCCS9eeWYws68doDLCdQqqCf0QKCw==
+X-Received: by 2002:a63:6ec3:: with SMTP id j186mr23051120pgc.249.1619036423003;
+        Wed, 21 Apr 2021 13:20:23 -0700 (PDT)
+Received: from [10.230.185.151] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id x18sm3052590pjn.51.2021.04.21.13.20.22
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 Apr 2021 12:32:19 -0700 (PDT)
-Subject: Re: [PATCH v2] platform/x86: intel_pmc_core: Uninitialized data in
- pmc_core_lpm_latch_mode_write()
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Rajneesh Bhardwaj <irenic.rajneesh@gmail.com>
-Cc:     David E Box <david.e.box@intel.com>,
-        Mark Gross <mgross@linux.intel.com>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <YIBCf+G9Ef8wrGJw@mwanda>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <ad05f502-b3dc-b62f-1f9f-ca8c806e1e3c@redhat.com>
-Date:   Wed, 21 Apr 2021 21:32:19 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        Wed, 21 Apr 2021 13:20:22 -0700 (PDT)
+Subject: Re: [PATCH] scsi: lpfc: remove redundant assignment to pointer
+ temp_hdr
+To:     Colin King <colin.king@canonical.com>,
+        James Smart <james.smart@broadcom.com>,
+        Dick Kennedy <dick.kennedy@broadcom.com>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210420104123.376420-1-colin.king@canonical.com>
+From:   James Smart <jsmart2021@gmail.com>
+Message-ID: <fc6b1a12-de2e-de91-021e-30bb0a1e5732@gmail.com>
+Date:   Wed, 21 Apr 2021 13:20:20 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.0
 MIME-Version: 1.0
-In-Reply-To: <YIBCf+G9Ef8wrGJw@mwanda>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20210420104123.376420-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi,
-
-On 4/21/21 5:19 PM, Dan Carpenter wrote:
-> The simple_write_to_buffer() can return success if even a single byte
-> is copied from user space.  In this case it can result in using
-> uninitalized data if the buf[] array is not fully initialized.  Really
-> we should only succeed if the whole buffer is copied.
+On 4/20/2021 3:41 AM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Just using copy_from_user() is simpler and more appropriate.
+> The pointer tmp_hdr is being assigned a value that is never
+> read, the assignment is redundant and can be removed.
 > 
-> Fixes: 8074a79fad2e ("platform/x86: intel_pmc_core: Add option to set/clear LPM mode")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
-> v2: The first version of this patch returned -EINVAL if userspace didn't
-> give us NUL terminated strings.  That's not necessarily a good
-> assumption.
-> 
-> This patch is just simpler as well.  No need to introduce the "len"
-> variable because "count" is capped at the start of the function.
 
-Much better, thank you.
+Thanks
 
-Thank you for your patch, I've applied this patch to my review-hans 
-branch:
-https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
+Reviewed-by: James Smart <jsmart2021@gmail.com>
 
-Note it will show up in my review-hans branch once I've pushed my
-local branch there, which might take a while.
-
-Once I've run some tests on this branch the patches there will be
-added to the platform-drivers-x86/for-next branch and eventually
-will be included in the pdx86 pull-request to Linus for the next
-merge-window.
-
-Regards,
-
-Hans
-
-
-
-
->  drivers/platform/x86/intel_pmc_core.c | 8 ++------
->  1 file changed, 2 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/platform/x86/intel_pmc_core.c b/drivers/platform/x86/intel_pmc_core.c
-> index d174aeb492e0..b0e486a6bdfb 100644
-> --- a/drivers/platform/x86/intel_pmc_core.c
-> +++ b/drivers/platform/x86/intel_pmc_core.c
-> @@ -1360,17 +1360,13 @@ static ssize_t pmc_core_lpm_latch_mode_write(struct file *file,
->  	struct pmc_dev *pmcdev = s->private;
->  	bool clear = false, c10 = false;
->  	unsigned char buf[8];
-> -	ssize_t ret;
->  	int idx, m, mode;
->  	u32 reg;
->  
->  	if (count > sizeof(buf) - 1)
->  		return -EINVAL;
-> -
-> -	ret = simple_write_to_buffer(buf, sizeof(buf) - 1, ppos, userbuf, count);
-> -	if (ret < 0)
-> -		return ret;
-> -
-> +	if (copy_from_user(buf, userbuf, count))
-> +		return -EFAULT;
->  	buf[count] = '\0';
->  
->  	/*
-> 
+-- james
 
