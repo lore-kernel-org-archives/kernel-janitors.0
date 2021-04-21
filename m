@@ -2,123 +2,87 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02A8BC433ED
-	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Apr 2021 07:45:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32242C43460
+	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Apr 2021 08:44:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BD1426142C
-	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Apr 2021 07:45:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 008A9613D7
+	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Apr 2021 08:44:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237131AbhDUHpc (ORCPT
+        id S235295AbhDUIoe (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 21 Apr 2021 03:45:32 -0400
-Received: from mga18.intel.com ([134.134.136.126]:35638 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235209AbhDUHpb (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 21 Apr 2021 03:45:31 -0400
-IronPort-SDR: oQEw/3uJ4MFqYNYHwJfHF/7xo/bAml2UwtF4i63Imjh4BYjsTgAOEf+kmk8Pb95wjPCfy1T1V9
- Pq3FNpD9gIEw==
-X-IronPort-AV: E=McAfee;i="6200,9189,9960"; a="183145104"
-X-IronPort-AV: E=Sophos;i="5.82,238,1613462400"; 
-   d="scan'208";a="183145104"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Apr 2021 00:44:58 -0700
-IronPort-SDR: /ZfMj8tehuOV2jaCj9TI57dzsFt0fcxC7/DYzUco5ddScdT7bOEChibRekFkuP5opoRN7g8iL4
- mGOXkNzA+4Rg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.82,238,1613462400"; 
-   d="scan'208";a="617260348"
-Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.170]) ([10.237.72.170])
-  by fmsmga005.fm.intel.com with ESMTP; 21 Apr 2021 00:44:56 -0700
-Subject: Re: [PATCH resend] xhci: Do not use GFP_KERNEL in (potentially)
- atomic context
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        mathias.nyman@intel.com, gregkh@linuxfoundation.org
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <f30e8c94707b0e3a257f4c628a1b5d7744898109.1618921790.git.christophe.jaillet@wanadoo.fr>
-From:   Mathias Nyman <mathias.nyman@linux.intel.com>
-Autocrypt: addr=mathias.nyman@linux.intel.com; prefer-encrypt=mutual; keydata=
- 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 fiD/
-Message-ID: <5eb0bea7-46b6-7225-7603-cac3195a92e4@linux.intel.com>
-Date:   Wed, 21 Apr 2021 10:46:54 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Wed, 21 Apr 2021 04:44:34 -0400
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:42190 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235083AbhDUIod (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 21 Apr 2021 04:44:33 -0400
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 13L8bSlw004719;
+        Wed, 21 Apr 2021 03:43:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=PODMain02222019;
+ bh=nPczol+VR0KR9nJGshmhZqjVXxehr8YBfTima70vMQ4=;
+ b=FF8yrK+TrvFPsj6oIGfOhVxAy/ZLNwMxTJtIssQ3eWRsxa1yX+ovoZYalxNjZf5ZGQdC
+ j7uVxhm7R0/idzqj0mnAd9BfwWCPnjjBZMi+tujkAdIB26iJSlmAups7gTnOdDFbNR6D
+ pWlv9M6+zhMySn9pQQeiHUMG7uldQlutL4Ji6uB++Nlh3bsazIVjvkxCa4I0o3yo4yDi
+ avuIeBzBub6aBUuhQOUia+q13hHQOZvRZNQJmmwdVWIkTxPgh89xz1giZ7gs2M2SfEks
+ 8e93BRU/aMbd6PCryeMYfh83RgDpDt839Y/HhtvLcfo41UjW3WDPMtaD3bzkfPBsRgKR 0w== 
+Received: from ediex01.ad.cirrus.com ([87.246.76.36])
+        by mx0b-001ae601.pphosted.com with ESMTP id 381a0rjtcs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Wed, 21 Apr 2021 03:43:58 -0500
+Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Wed, 21 Apr
+ 2021 09:43:57 +0100
+Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server id 15.1.2242.4 via Frontend
+ Transport; Wed, 21 Apr 2021 09:43:57 +0100
+Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
+        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 292D711D6;
+        Wed, 21 Apr 2021 08:43:57 +0000 (UTC)
+Date:   Wed, 21 Apr 2021 08:43:57 +0000
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+CC:     <lgirdwood@gmail.com>, <broonie@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH] regulator: Avoid a double 'of_node_get' in
+ 'regulator_of_get_init_node()'
+Message-ID: <20210421084357.GB64205@ediswmail.ad.cirrus.com>
+References: <a79f0068812b89ff412d572a1171f22109c24132.1618947049.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-In-Reply-To: <f30e8c94707b0e3a257f4c628a1b5d7744898109.1618921790.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <a79f0068812b89ff412d572a1171f22109c24132.1618947049.git.christophe.jaillet@wanadoo.fr>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Proofpoint-GUID: WmW1AHhvl6ZsxFfNfknH2sKP5mZ1xlsz
+X-Proofpoint-ORIG-GUID: WmW1AHhvl6ZsxFfNfknH2sKP5mZ1xlsz
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 priorityscore=1501
+ phishscore=0 mlxlogscore=770 impostorscore=0 lowpriorityscore=0
+ bulkscore=0 suspectscore=0 adultscore=0 spamscore=0 clxscore=1011
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104060000 definitions=main-2104210068
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 20.4.2021 15.32, Christophe JAILLET wrote:
-> 'xhci_urb_enqueue()' is passed a 'mem_flags' argument, because "URBs may be
-> submitted in interrupt context" (see comment related to 'usb_submit_urb()'
-> in 'drivers/usb/core/urb.c')
+On Tue, Apr 20, 2021 at 09:31:51PM +0200, Christophe JAILLET wrote:
+> 'for_each_available_child_of_node()' already performs an 'of_node_get()'
+> on child, so there is no need to perform another one before returning.
+> Otherwise, a double 'get' is performed and a resource may never be
+> released.
 > 
-> So this flag should be used in all the calling chain.
-> Up to now, 'xhci_check_maxpacket()' which is only called from
-> 'xhci_urb_enqueue()', uses GFP_KERNEL.
-> 
-> Be safe and pass the mem_flags to this function as well.
-> 
-> Fixes: ddba5cd0aeff ("xhci: Use command structures when queuing commands on the command ring")
+> Fixes: 925c85e21ed8 ("regulator: Factor out location of init data OF node")
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
-> I'm not 100% sure of the Fixes tag. The commit is the only that introduced
-> this GFP_KERNEL, but I've not checked what was the behavior before that.
-> 
-> If the patch is correct, I guess that a cc stable should be welcome.
-> 
-> This patch was proposed on 14/08/20. It has been rebased on latest -next tree.
 
-Added to queue, and added stable tag
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-Thanks
--Mathias
+Thanks,
+Charles
