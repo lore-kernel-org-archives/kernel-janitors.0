@@ -2,52 +2,125 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F224C43460
-	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Apr 2021 14:24:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45A7BC43462
+	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Apr 2021 14:31:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 373C561450
-	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Apr 2021 14:24:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17B406143B
+	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Apr 2021 14:31:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241532AbhDUOYv (ORCPT
+        id S243569AbhDUOcV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 21 Apr 2021 10:24:51 -0400
-Received: from verein.lst.de ([213.95.11.211]:54838 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S243506AbhDUOXt (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 21 Apr 2021 10:23:49 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id E203F67373; Wed, 21 Apr 2021 16:23:14 +0200 (CEST)
-Date:   Wed, 21 Apr 2021 16:23:14 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 2/2] ataflop: fix off by one in ataflop_probe()
-Message-ID: <20210421142314.GB29072@lst.de>
-References: <YH/7+65JruUO/wsg@mwanda> <YH/8QdfDxhjGjXHG@mwanda>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YH/8QdfDxhjGjXHG@mwanda>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+        Wed, 21 Apr 2021 10:32:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58302 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235533AbhDUOcV (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 21 Apr 2021 10:32:21 -0400
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04299C06174A;
+        Wed, 21 Apr 2021 07:31:48 -0700 (PDT)
+Received: by mail-ej1-x629.google.com with SMTP id u21so63855733ejo.13;
+        Wed, 21 Apr 2021 07:31:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=76/MK3U9p2w1LAxessam/b1YnGwnwr95hug2odeXPdY=;
+        b=rSGq4LsRS/EdSViNrrkL8PPr/4AV5XwIM0Ey3yO5xb3CZAuPiSFViSdNhtSx9PnwQU
+         8x6axKQaLh4x0+3fIwLqv6ZIV+LNPy/zS6Sd4g2Hs/RG7/FN2LYELIVDpZ1Gec8wlsBA
+         nrJ36Ck76N1GDh4tZkA0gc/x7n5YIEICX8wi3sjJ6DPmGDPzkd6FF06aiECWLD4Mx1d+
+         cnjL1sWiDyTypQw/3qF3sAGC86MlYI4qh2P98fqmtO77avCA69keTOutF1JEfeu4+sbv
+         lzq2ruTeq6Bju7Pe+fIWdhaWxyjGer9Mx/GBpLqDYyMqQu5n+tKkvtVDESxBUhibAjiP
+         RADw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=76/MK3U9p2w1LAxessam/b1YnGwnwr95hug2odeXPdY=;
+        b=dSRQJ/lxUZdBAarG3hM+szCWlelNL5uKrYHepUcDu/AJwdWUfVWvRRql7Dx+tCGSjf
+         SKD/ADM+z3zuazcFUsdsS7m3VTPqXHYLbsF8VMfaGdH3m89JDMwTFq8vdaCenHgq1gxV
+         ifsW8cq9Pxkpr2YQ+TDdORT67V7wLUSCFlkSwTNKHg41/TX86bxbJmRiFtzFj6GTVYs7
+         BBnUKixcCYP/jglOgvTP6xrZDGFSAyi5EguL8ymEeWBnVQorEjVlB+7+mbKE1WhGmyNf
+         s0Uwx3Ipdd5xeFgytzhnqnUUnHCPlLzCSgwKW4yVyNbSzbeF0r62GlfpFf2bQrqFzJIs
+         61IQ==
+X-Gm-Message-State: AOAM532L9TGBw/sITssLCtDWD69pwV1gP5MIgUb5uYkVUcmDOfQgDRGy
+        2KxYmpaa5tFEmLYhDuwnLbo=
+X-Google-Smtp-Source: ABdhPJwXIFr4CdAKCHSzNSXUMcFnND3YA+X11z+WT1K03k7HMaOSBeGd8VTUC/u1cKlQ2Y5yhn8z6A==
+X-Received: by 2002:a17:906:cb88:: with SMTP id mf8mr33804099ejb.541.1619015506673;
+        Wed, 21 Apr 2021 07:31:46 -0700 (PDT)
+Received: from felia.fritz.box ([2001:16b8:2dab:e100:dc6b:6f9a:b8a4:111b])
+        by smtp.gmail.com with ESMTPSA id s8sm3586133edj.25.2021.04.21.07.31.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Apr 2021 07:31:46 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        devicetree@vger.kernel.org
+Cc:     linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] of: address recent kernel-doc warnings
+Date:   Wed, 21 Apr 2021 16:31:24 +0200
+Message-Id: <20210421143124.17873-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Apr 21, 2021 at 01:19:45PM +0300, Dan Carpenter wrote:
-> Smatch complains that the "type > NUM_DISK_MINORS" should be >=
-> instead of >.  We also need to subtract one from "type" at the start.
-> 
-> Fixes: bf9c0538e485 ("ataflop: use a separate gendisk for each media format")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Recently, make htmldocs reports these kernel-doc warnings:
 
-Looks good,
+  warning: Function parameter or member 'output' not described in 'of_property_read_string_index'
+  warning: Excess function parameter 'out_string' description in 'of_property_read_string_index'
+  warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
+    * Overlay support
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Address those kernel-doc warnings by simple adjustment of the comments.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+applies cleanly on next-20210421
+
+Rob, please pick this minor clean-up patch for the devicetree tree.
+
+ include/linux/of.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/include/linux/of.h b/include/linux/of.h
+index ef6b161d1f91..4d84674f8aac 100644
+--- a/include/linux/of.h
++++ b/include/linux/of.h
+@@ -1192,7 +1192,7 @@ static inline int of_property_count_strings(const struct device_node *np,
+  * @np:		device node from which the property value is to be read.
+  * @propname:	name of the property to be searched.
+  * @index:	index of the string in the list of strings
+- * @out_string:	pointer to null terminated return string, modified only if
++ * @output:	pointer to null terminated return string, modified only if
+  *		return value is 0.
+  *
+  * Search for a property in a device tree node and retrieve a null
+@@ -1203,7 +1203,7 @@ static inline int of_property_count_strings(const struct device_node *np,
+  * property does not have a value, and -EILSEQ if the string is not
+  * null-terminated within the length of the property data.
+  *
+- * The out_string pointer is modified only if a valid string can be decoded.
++ * The output pointer is modified only if a valid string can be decoded.
+  */
+ static inline int of_property_read_string_index(const struct device_node *np,
+ 						const char *propname,
+@@ -1473,7 +1473,7 @@ static inline bool of_device_is_system_power_controller(const struct device_node
+ 	return of_property_read_bool(np, "system-power-controller");
+ }
+ 
+-/**
++/*
+  * Overlay support
+  */
+ 
+-- 
+2.17.1
+
