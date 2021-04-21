@@ -2,87 +2,78 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-21.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA762C43460
-	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Apr 2021 16:53:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14185C433B4
+	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Apr 2021 17:30:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9DD346145F
-	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Apr 2021 16:53:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA3026145B
+	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Apr 2021 17:30:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241421AbhDUQxo (ORCPT
+        id S244736AbhDURap (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 21 Apr 2021 12:53:44 -0400
-Received: from mail-oo1-f43.google.com ([209.85.161.43]:38858 "EHLO
-        mail-oo1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235436AbhDUQxn (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 21 Apr 2021 12:53:43 -0400
-Received: by mail-oo1-f43.google.com with SMTP id p12-20020a4a2f0c0000b02901ecdbb16887so2422138oop.5;
-        Wed, 21 Apr 2021 09:53:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+WcdVAWw1wrE0hCoQ+UXML3T7kI52AZNB5+mZJ4YXyA=;
-        b=cQ4bRpTUkpKMKuk/SZmMkvkZhovg70ur5KulEFMV9YTnrLMa9eL8QJATDNtikdem0H
-         VTOd8ICaIePVrtuR3sl4gRUohr+xfsk9+5zxq3jn4Rz7FSoMPJfMivkDuL1AgE/4qdDo
-         VHysH4Nn4kCxs7tPHEkJjJU/sCdlq+p/JpxoQgzEAlufMHuBJBa+w5iJ1FyiDqF3R08s
-         aF3GAgJzG9XGzUUcEs74CY2B1zaS+Un1WiFYaYxEFmUWjjIwln+Gy/L/mSV5YbBzduBF
-         4zS/h8l0gouaY80wUg1u1zq35oSllGGgCPTCvfDk3vZlsngD+ELnU0Cctq+Wtf+SLx9f
-         V7HQ==
-X-Gm-Message-State: AOAM5322bKVvbDQxPXPU4IwtMXw4OE6AxvKX5AAZwN64WmsKABfIYOuu
-        9XYiIssSw+McSI2yCqtIneQUUJYG4dedl+D038U=
-X-Google-Smtp-Source: ABdhPJxSq8Z7Oay74Ci2aElVdYLnRCXpGGB0j1dzlozKhf7iQegxeIuo8msIODvBqfSxPh1mcqBZT4r7aiHGlWtKT74=
-X-Received: by 2002:a4a:d781:: with SMTP id c1mr21492266oou.44.1619023989913;
- Wed, 21 Apr 2021 09:53:09 -0700 (PDT)
+        Wed, 21 Apr 2021 13:30:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49272 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S244672AbhDURan (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 21 Apr 2021 13:30:43 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPS id 4DCBC6145C;
+        Wed, 21 Apr 2021 17:30:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1619026210;
+        bh=wvG6mq/pPzzw+F3r/h1+Yj8Af73d25CcCy4yT3YbXyI=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=dJuh4n8zXWmLA3oNwCD/f/Wy53aaRMstQmirCTqglofjWb25/nEEykH5gRMeRGCSC
+         TSRRrUpEcZCO/tTY9IBMXecAj5mHkOpTH6wwtnspDBOx+HVFREID2/FNDkdctXDPPN
+         Rge3aYpuisIltu2MTGHLcL/Oxm8xfudPy390k+576iRr/uhMQ2dLNiQ8iLBBhmxUay
+         DAtYe9hGVPzz5FN8eVDnjKW3v05IwEIbF7XkwmzgtsepV2dRz5fVlkPpuHZ8ucgmC9
+         uXjtFbhNKmwlnQrJiXLyYRxGzzGdOhZ0QNs+Y9PFf8x7XxJ17k9hZqOEISe2MXL+R4
+         jilbJ45JAmnbg==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20210415143758.1962567-1-colin.king@canonical.com>
-In-Reply-To: <20210415143758.1962567-1-colin.king@canonical.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Wed, 21 Apr 2021 18:52:58 +0200
-Message-ID: <CAJZ5v0gogVAEZRP7AoiHhEiYcDtjsUoAUUACSpUcWBEc_qhSSw@mail.gmail.com>
-Subject: Re: [PATCH] ACPI: APEI: remove redundant assignment to variable rc
-To:     Colin King <colin.king@canonical.com>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, James Morse <james.morse@arm.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] stmmac: intel: unlock on error path in
+ intel_crosststamp()
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <161902621029.9844.10834595645280467228.git-patchwork-notify@kernel.org>
+Date:   Wed, 21 Apr 2021 17:30:10 +0000
+References: <YIAnKtpJa/K+0efq@mwanda>
+In-Reply-To: <YIAnKtpJa/K+0efq@mwanda>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     peppe.cavallaro@st.com, tee.min.tan@intel.com,
+        alexandre.torgue@foss.st.com, joabreu@synopsys.com,
+        davem@davemloft.net, kuba@kernel.org, mcoquelin.stm32@gmail.com,
+        vee.khee.wong@linux.intel.com, richardcochran@gmail.com,
+        netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+        kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Apr 15, 2021 at 4:38 PM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The variable rc is being assigned a value that is never read,
-> the assignment is redundant and can be removed.
->
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/acpi/apei/einj.c | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/drivers/acpi/apei/einj.c b/drivers/acpi/apei/einj.c
-> index 133156759551..328e8aeece6c 100644
-> --- a/drivers/acpi/apei/einj.c
-> +++ b/drivers/acpi/apei/einj.c
-> @@ -725,7 +725,6 @@ static int __init einj_init(void)
->                 goto err_release;
->         }
->
-> -       rc = -ENOMEM;
->         einj_param = einj_get_parameter_address();
->         if ((param_extension || acpi5) && einj_param) {
->                 debugfs_create_x32("flags", S_IRUSR | S_IWUSR, einj_debug_dir,
-> --
+Hello:
 
-Applied as 5.13 material, thanks!
+This patch was applied to netdev/net-next.git (refs/heads/master):
+
+On Wed, 21 Apr 2021 16:22:50 +0300 you wrote:
+> We recently added some new locking to this function but one error path
+> was overlooked.  We need to drop the lock before returning.
+> 
+> Fixes: f4da56529da6 ("net: stmmac: Add support for external trigger timestamping")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c | 1 +
+>  1 file changed, 1 insertion(+)
+
+Here is the summary with links:
+  - [net-next] stmmac: intel: unlock on error path in intel_crosststamp()
+    https://git.kernel.org/netdev/net-next/c/53e35ebb9a17
+
+You are awesome, thank you!
+--
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
