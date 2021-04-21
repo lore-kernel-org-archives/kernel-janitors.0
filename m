@@ -2,126 +2,77 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 569C6C43460
-	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Apr 2021 15:19:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBF53C43461
+	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Apr 2021 15:30:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 33BFE6144B
-	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Apr 2021 15:19:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4BEB6143D
+	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Apr 2021 15:30:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240492AbhDUPUQ (ORCPT
+        id S238526AbhDUPbM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 21 Apr 2021 11:20:16 -0400
-Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:39522 "EHLO
-        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S240440AbhDUPUP (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 21 Apr 2021 11:20:15 -0400
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 13LF1eqh026116;
-        Wed, 21 Apr 2021 15:19:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type : in-reply-to;
- s=corp-2020-01-29; bh=Rxpae055naMvyjukIZqKVynJM4wLpOcw2BPFdfdM5sM=;
- b=fMvfrfBNuzxuhiV0MGTz5RPARWG2+dSn8rnew48y6jv0ulpp+c3EsDnUOY7JKDf2nBii
- aFR33QXvKMTxS0RrHAK004y/mCtjUfdCkI0gCdEXCbyFW6zpOoo11hFsI/qE6t5N5GYP
- rkHgw2LHdrxenhc6j3d3H10TENgpW29jeBz/REfhiNaPBMktSVYfxI6hIjQOEEdHtQwc
- hcHZjTkR9qVVU7MNqJbyng03toEncjesjN2tSZi+lJdwSwkVt4bSnou4Rm/MHnYYZEQj
- a44Sd/AY3FDdbqFuv1Mc2F+tmzBYIBH+kkHWxKR1T/yiUYu1g9P5UfkEaM0cQ/i2qHKH MQ== 
-Received: from oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by mx0b-00069f02.pphosted.com with ESMTP id 381tw0gjjr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 21 Apr 2021 15:19:37 +0000
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
-        by pps.podrdrct (8.16.0.36/8.16.0.36) with SMTP id 13LFJaS9054029;
-        Wed, 21 Apr 2021 15:19:36 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by aserp3030.oracle.com with ESMTP id 38098rvm7a-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 21 Apr 2021 15:19:36 +0000
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 13LFGvhc037551;
-        Wed, 21 Apr 2021 15:19:35 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3030.oracle.com with ESMTP id 38098rvm6k-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 21 Apr 2021 15:19:35 +0000
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 13LFJYXI031486;
-        Wed, 21 Apr 2021 15:19:34 GMT
-Received: from mwanda (/102.36.221.92)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 21 Apr 2021 08:19:33 -0700
-Date:   Wed, 21 Apr 2021 18:19:27 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Rajneesh Bhardwaj <irenic.rajneesh@gmail.com>
-Cc:     David E Box <david.e.box@intel.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <mgross@linux.intel.com>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH v2] platform/x86: intel_pmc_core: Uninitialized data in
- pmc_core_lpm_latch_mode_write()
-Message-ID: <YIBCf+G9Ef8wrGJw@mwanda>
+        Wed, 21 Apr 2021 11:31:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54876 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S240811AbhDUPbL (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 21 Apr 2021 11:31:11 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id E7F3761445;
+        Wed, 21 Apr 2021 15:30:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1619019037;
+        bh=718R0mWssWWbm9DM0aJGix93KoNJSCbMgOXMmPJ0jgs=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=HxH5fExVY5G00Yaucsbs0LugLx0HsqMzgzRe+A5a2hzPz8TmXqjJMzHCTeADU0HkR
+         7RlxA/xY3oakYs+jK319pxC+xUr3/kJeHqdA5nXcXWGffWzGOjq7dLNdkkcJKzIXG+
+         +WExcd807ziYZQf81BKjyNGTaLRP8moTIObiHK8/w8ejsUhxy48R1C5doif/sjk5XG
+         KCO8Xz3oICFV5HeAMD6quZW5gN99gIoRKA1HniF+xwrYHGRvMuwgrd0MCXgQpxw3K/
+         5RzjihjAokusuvYbk+8MgkGT1tREp24kL3WIa8qR68aqU894uVAuQCcPIiCQbTzEsK
+         zEk7L8uFxThqw==
+Received: by mail-ed1-f46.google.com with SMTP id y3so13589823eds.5;
+        Wed, 21 Apr 2021 08:30:37 -0700 (PDT)
+X-Gm-Message-State: AOAM5304ZT1LY/DlbfDGykEOnHmH/ex61jA0KYaTStKZyuY+Y6CkVPV+
+        lJlmzW4xnjs1WnZ4bAVXUMRiRywDzMj61RYN2w==
+X-Google-Smtp-Source: ABdhPJy//f7FU1zXPNeSv6PF0tDqCIoFAQ6hiYnWTU1NluOr5ecodptHdhmZ4BdAMTUfU0qmmTi4/E9bUHTYpAsZ09Y=
+X-Received: by 2002:aa7:cd51:: with SMTP id v17mr39467692edw.137.1619019034404;
+ Wed, 21 Apr 2021 08:30:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87e61d84-e23e-1ccc-c4ed-57ffa0ed95fb@redhat.com>
-X-Mailer: git-send-email haha only kidding
-X-Proofpoint-GUID: ECw56KjdYg0IXNc2JtlNvMSsnop18kv7
-X-Proofpoint-ORIG-GUID: ECw56KjdYg0IXNc2JtlNvMSsnop18kv7
+References: <20210421143124.17873-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20210421143124.17873-1-lukas.bulwahn@gmail.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Wed, 21 Apr 2021 10:30:22 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+ApYJxd2zGFy-XXBkXXYsBeZBjV55cYS_4R3+Ce4u2qg@mail.gmail.com>
+Message-ID: <CAL_Jsq+ApYJxd2zGFy-XXBkXXYsBeZBjV55cYS_4R3+Ce4u2qg@mail.gmail.com>
+Subject: Re: [PATCH] of: address recent kernel-doc warnings
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Frank Rowand <frowand.list@gmail.com>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        devicetree@vger.kernel.org,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The simple_write_to_buffer() can return success if even a single byte
-is copied from user space.  In this case it can result in using
-uninitalized data if the buf[] array is not fully initialized.  Really
-we should only succeed if the whole buffer is copied.
+On Wed, Apr 21, 2021 at 9:31 AM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+>
+> Recently, make htmldocs reports these kernel-doc warnings:
+>
+>   warning: Function parameter or member 'output' not described in 'of_property_read_string_index'
+>   warning: Excess function parameter 'out_string' description in 'of_property_read_string_index'
+>   warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
+>     * Overlay support
+>
+> Address those kernel-doc warnings by simple adjustment of the comments.
+>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+> applies cleanly on next-20210421
+>
+> Rob, please pick this minor clean-up patch for the devicetree tree.
 
-Just using copy_from_user() is simpler and more appropriate.
-
-Fixes: 8074a79fad2e ("platform/x86: intel_pmc_core: Add option to set/clear LPM mode")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-v2: The first version of this patch returned -EINVAL if userspace didn't
-give us NUL terminated strings.  That's not necessarily a good
-assumption.
-
-This patch is just simpler as well.  No need to introduce the "len"
-variable because "count" is capped at the start of the function.
-
- drivers/platform/x86/intel_pmc_core.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/platform/x86/intel_pmc_core.c b/drivers/platform/x86/intel_pmc_core.c
-index d174aeb492e0..b0e486a6bdfb 100644
---- a/drivers/platform/x86/intel_pmc_core.c
-+++ b/drivers/platform/x86/intel_pmc_core.c
-@@ -1360,17 +1360,13 @@ static ssize_t pmc_core_lpm_latch_mode_write(struct file *file,
- 	struct pmc_dev *pmcdev = s->private;
- 	bool clear = false, c10 = false;
- 	unsigned char buf[8];
--	ssize_t ret;
- 	int idx, m, mode;
- 	u32 reg;
- 
- 	if (count > sizeof(buf) - 1)
- 		return -EINVAL;
--
--	ret = simple_write_to_buffer(buf, sizeof(buf) - 1, ppos, userbuf, count);
--	if (ret < 0)
--		return ret;
--
-+	if (copy_from_user(buf, userbuf, count))
-+		return -EFAULT;
- 	buf[count] = '\0';
- 
- 	/*
--- 
-2.30.2
-
+Already got a similar fix.
