@@ -5,126 +5,124 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no version=3.4.0
+	UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E2A5C43462
-	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Apr 2021 10:00:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5CFDC433B4
+	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Apr 2021 10:18:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3DC746144B
-	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Apr 2021 10:00:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62C1B61447
+	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Apr 2021 10:18:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236770AbhDUKBH (ORCPT
+        id S234038AbhDUKTY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 21 Apr 2021 06:01:07 -0400
-Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:34420 "EHLO
-        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235387AbhDUKBF (ORCPT
+        Wed, 21 Apr 2021 06:19:24 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:59862 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239217AbhDUKTX (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 21 Apr 2021 06:01:05 -0400
-X-Greylist: delayed 1576 seconds by postgrey-1.27 at vger.kernel.org; Wed, 21 Apr 2021 06:01:04 EDT
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 13L9SvcZ022552;
-        Wed, 21 Apr 2021 09:34:12 GMT
+        Wed, 21 Apr 2021 06:19:23 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13LAF67u048515;
+        Wed, 21 Apr 2021 10:18:45 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
  : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=8gNfUIaKyR1ckO6hGOqqpfoiLL7Zd/cCYnF0H0aUYzs=;
- b=GEglrgSe8BzcLb28XQ399XpShJF8+bwK/BIce9inxxSxJHY/pOgnfcRC6u+M4Dn4o3rD
- GTR+xHfFT9BEr4J6DAZcoJ6xTCG0jqjArcB0edsqUEWJV9+BjwdH69TzNQ7Bl+YEHmEf
- rTLugt8SQhYBSvl3A4oLocywpOXbi0CyKz6NIYDpmFsf4anM09fEyHUGN8rOhJFElm6g
- zmPCgErBbCaa52/3Wd5042jTQun1aaXrE5zavNRuMdGLKHO+E8G9nsr/HjoNuPmc96NJ
- dHagy3mEPI8rnwtujWR/GxyI6A+qoptM3gqLSgBrXYt/e0ZQv1f6MyXU3Rl48FKivKHC 7A== 
-Received: from oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by mx0b-00069f02.pphosted.com with ESMTP id 3818whgn2s-1
+ bh=NeK84gnoNqVysfeyXYFbCqb738dTlOAvISWFExp8Ypg=;
+ b=HaRD6zEdDaw/42yXRYPAiDDAG1/waogxKSLVi5X62ZBvLdmvn0C09XFHPHjDfxGJH4rA
+ eQWm1mJCLVCGQURJ+yCtASPZRf4sViZq/reIF9wnKgb3ne9FcXmtO5h/dCK2XGMMZoeN
+ OY+0OJ0f6jMX/jSdDbemChNXd5KiFHt0A0Zong9M+8rOqd0o5BGsguk+hkwCX1p15X/H
+ CNE5ql7eQwXO1xsoNsFN8XWoibIDMRzkhkCdrEmfbEibMfcLexw+Pu9BuZV60d7PYQOu
+ Slkx4rxbYd2dKFwd2pabXVFNw8R6GykaBATWv+nGFiPKK5eSvH5Bfp4EuvwcZE7QXVyh RQ== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 37yveahgaw-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 21 Apr 2021 09:34:12 +0000
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
-        by pps.podrdrct (8.16.0.36/8.16.0.36) with SMTP id 13L9YBH5123619;
-        Wed, 21 Apr 2021 09:34:11 GMT
+        Wed, 21 Apr 2021 10:18:45 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13LAAqll084575;
+        Wed, 21 Apr 2021 10:18:45 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-        by aserp3030.oracle.com with ESMTP id 38098rg2st-1
+        by userp3030.oracle.com with ESMTP id 3809m0cm4p-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 21 Apr 2021 09:34:11 +0000
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 13L9YAGb123586;
-        Wed, 21 Apr 2021 09:34:10 GMT
+        Wed, 21 Apr 2021 10:18:45 +0000
+Received: from userp3030.oracle.com (userp3030.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 13LAAwdX084933;
+        Wed, 21 Apr 2021 10:18:45 GMT
 Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3030.oracle.com with ESMTP id 38098rg2sb-1
+        by userp3030.oracle.com with ESMTP id 3809m0cm3m-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 21 Apr 2021 09:34:10 +0000
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 13L9Y8Ow004066;
-        Wed, 21 Apr 2021 09:34:08 GMT
+        Wed, 21 Apr 2021 10:18:44 +0000
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 13LAIgW7014720;
+        Wed, 21 Apr 2021 10:18:42 GMT
 Received: from mwanda (/102.36.221.92)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 21 Apr 2021 02:34:07 -0700
-Date:   Wed, 21 Apr 2021 12:34:01 +0300
+        with ESMTP ; Wed, 21 Apr 2021 03:18:42 -0700
+Date:   Wed, 21 Apr 2021 13:18:35 +0300
 From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Rajneesh Bhardwaj <irenic.rajneesh@gmail.com>
-Cc:     David E Box <david.e.box@intel.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <mgross@linux.intel.com>,
-        "David E. Box" <david.e.box@linux.intel.com>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: [PATCH] platform/x86: intel_pmc_core: re-write copy in
- pmc_core_lpm_latch_mode_write()
-Message-ID: <YH/xicL9RXjH2pvD@mwanda>
+Subject: [PATCH 1/2] ataflop: potential out of bounds in do_format()
+Message-ID: <YH/7+65JruUO/wsg@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
-X-Proofpoint-ORIG-GUID: 7bXkb2nbQYGuKUD1iMJTcne8JMqMVFVd
-X-Proofpoint-GUID: 7bXkb2nbQYGuKUD1iMJTcne8JMqMVFVd
+X-Proofpoint-GUID: uXnpRIXHCSPgWHcg8dgTm5ru2z8xmkSJ
+X-Proofpoint-ORIG-GUID: uXnpRIXHCSPgWHcg8dgTm5ru2z8xmkSJ
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9960 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 impostorscore=0 phishscore=0 mlxscore=0
+ suspectscore=0 lowpriorityscore=0 mlxlogscore=999 spamscore=0 bulkscore=0
+ adultscore=0 malwarescore=0 clxscore=1015 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104060000
+ definitions=main-2104210078
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There are two bugs in this code:
-1) "ret" is unsigned so the error handling is broken.
-2) simple_write_to_buffer() is innappropriate.  It will succeed even if
-   we are only able to copy a single byte of data from user space.  This
-   could lead to an information leak if the buf[] array is not fully
-   initialized.
+The function uses "type" as an array index:
 
-I've fixed it to use strncpy_from_user() and to return -EINVAL if the
-user supplied string is not NUL terminated.
+	q = unit[drive].disk[type]->queue;
 
-Fixes: 8074a79fad2e ("platform/x86: intel_pmc_core: Add option to set/clear LPM mode")
+Unfortunately the bounds check on "type" isn't done until later in the
+function.  Fix this by moving the bounds check to the start.
+
+Fixes: bf9c0538e485 ("ataflop: use a separate gendisk for each media format")
+Reported-by: kernel test robot <lkp@intel.com>
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/platform/x86/intel_pmc_core.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ drivers/block/ataflop.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/platform/x86/intel_pmc_core.c b/drivers/platform/x86/intel_pmc_core.c
-index 3ae00ac85c75..c989796a5d52 100644
---- a/drivers/platform/x86/intel_pmc_core.c
-+++ b/drivers/platform/x86/intel_pmc_core.c
-@@ -1360,18 +1360,19 @@ static ssize_t pmc_core_lpm_latch_mode_write(struct file *file,
- 	struct pmc_dev *pmcdev = s->private;
- 	bool clear = false, c10 = false;
- 	unsigned char buf[8];
--	size_t ret;
--	int idx, m, mode;
-+	int idx, m, mode, ret;
-+	size_t len;
- 	u32 reg;
+diff --git a/drivers/block/ataflop.c b/drivers/block/ataflop.c
+index 104b713f4055..aed2c2a4f4ea 100644
+--- a/drivers/block/ataflop.c
++++ b/drivers/block/ataflop.c
+@@ -729,8 +729,12 @@ static int do_format(int drive, int type, struct atari_format_descr *desc)
+ 	unsigned long	flags;
+ 	int ret;
  
--	if (count > sizeof(buf) - 1)
-+	if (count > sizeof(buf))
- 		return -EINVAL;
+-	if (type)
++	if (type) {
+ 		type--;
++		if (type >= NUM_DISK_MINORS ||
++		    minor2disktype[type].drive_types > DriveType)
++			return -EINVAL;
++	}
  
--	ret = simple_write_to_buffer(buf, sizeof(buf) - 1, ppos, userbuf, count);
-+	len = min(count, sizeof(buf));
-+	ret = strncpy_from_user(buf, userbuf, len);
- 	if (ret < 0)
- 		return ret;
--
--	buf[count] = '\0';
-+	if (ret == len)
-+		return -EINVAL;
+ 	q = unit[drive].disk[type]->queue;
+ 	blk_mq_freeze_queue(q);
+@@ -742,11 +746,6 @@ static int do_format(int drive, int type, struct atari_format_descr *desc)
+ 	local_irq_restore(flags);
  
- 	/*
- 	 * Allowed strings are:
+ 	if (type) {
+-		if (type >= NUM_DISK_MINORS ||
+-		    minor2disktype[type].drive_types > DriveType) {
+-			ret = -EINVAL;
+-			goto out;
+-		}
+ 		type = minor2disktype[type].index;
+ 		UDT = &atari_disk_type[type];
+ 	}
 -- 
 2.30.2
 
