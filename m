@@ -4,45 +4,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F152AC433B4
-	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Apr 2021 19:04:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76F72C43461
+	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Apr 2021 19:04:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C346C61453
-	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Apr 2021 19:04:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 482286140D
+	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Apr 2021 19:04:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239751AbhDUTEv (ORCPT
+        id S245432AbhDUTFH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 21 Apr 2021 15:04:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35518 "EHLO mail.kernel.org"
+        Wed, 21 Apr 2021 15:05:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35820 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S245377AbhDUTEr (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 21 Apr 2021 15:04:47 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 4348A6145F;
-        Wed, 21 Apr 2021 19:04:13 +0000 (UTC)
+        id S245387AbhDUTFC (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 21 Apr 2021 15:05:02 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id E894B61457;
+        Wed, 21 Apr 2021 19:04:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1619031853;
-        bh=g/8nf17kbeStmv6J0pgzqx/VDBN/9MWXjrwtGSSy01c=;
+        s=k20201202; t=1619031868;
+        bh=w86Hg/P36kP1rlWu7feNGoS+/J61vahKxacM04YWx/8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fRGeF2/vjXflG5d648nIuWmTnPIF3fyMyR/HBh2+67Bk/AM+qV1QjV46fvqS0A3Uj
-         R+wyzuXVKD8G4dmH+292QY2pUo2dphKSJjzPSqip4HpRnHKfBlsJ5Ptunz45f4F+n2
-         vDv1TNXxWDurw8t52pOPNAi6qH9hz0dbNEwol2NIVHxnnTbVB20sfEFPizuWcmhaEb
-         kle6AvOesGeKX+Ts/3DrmMdRGfd/XLh8V1lNcKYlL8yEnPE0zgwOTBjpLRwN+34EIm
-         K0U58P7MYB8khtSxwDDxL9yRjoA/GNrd72LrOQAoIcrv7H81LepkKwu1IH/3OMXdBQ
-         AhncME7/ZHcQg==
+        b=OUY9K+eHtnvKEWOMO1jbHumGDFILo8yZJy/mLwzNH+Q/VDW/+oOVEvTAVGlj9WO2/
+         QEqHzVgr4epn6q+9T9R7BtCfIFunDuo9M+rDle+4+i0yOgcAjT0plpwMl3/QiQ+EOf
+         8S/Ljm3kIeYS1gyOYlUgTjY9CuM5LKjeh9aNfxL2Yh7pZvWBhMJH8zh1vBBqmifHd9
+         u3UvDjyj9IZ/PLG8epHyeIFoYlG3x8o3JMgsd7+AwyCSAPlvQPINm1ur741eHtKZnk
+         zIpWNiSB5sQE8Prz9AwYs2wN8LnfxEQSaHY3MrmU3hK9uw4c7St4bYPxVLOqFS5HuC
+         Ut/ydiKBlGe5w==
 From:   Mark Brown <broonie@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        eajames@linux.ibm.com
-Cc:     Mark Brown <broonie@kernel.org>, kernel-janitors@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] spi: fsi: add a missing of_node_put
-Date:   Wed, 21 Apr 2021 20:03:27 +0100
-Message-Id: <161903040535.13608.18069667099177914560.b4-ty@kernel.org>
+To:     lgirdwood@gmail.com, ckeepax@opensource.cirrus.com,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] regulator: Avoid a double 'of_node_get' in 'regulator_of_get_init_node()'
+Date:   Wed, 21 Apr 2021 20:03:32 +0100
+Message-Id: <161903035952.13561.4200524604109878768.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <504e431b900341249d331b868d90312cf41f415a.1618947919.git.christophe.jaillet@wanadoo.fr>
-References: <504e431b900341249d331b868d90312cf41f415a.1618947919.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <a79f0068812b89ff412d572a1171f22109c24132.1618947049.git.christophe.jaillet@wanadoo.fr>
+References: <a79f0068812b89ff412d572a1171f22109c24132.1618947049.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -50,18 +50,20 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, 20 Apr 2021 21:46:13 +0200, Christophe JAILLET wrote:
-> 'for_each_available_child_of_node' performs an of_node_get on each
-> iteration, so a return from the middle of the loop requires an of_node_put.
+On Tue, 20 Apr 2021 21:31:51 +0200, Christophe JAILLET wrote:
+> 'for_each_available_child_of_node()' already performs an 'of_node_get()'
+> on child, so there is no need to perform another one before returning.
+> Otherwise, a double 'get' is performed and a resource may never be
+> released.
 
 Applied to
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
 
 Thanks!
 
-[1/1] spi: fsi: add a missing of_node_put
-      commit: 24b5515aa3ac075880be776bf36553ff7f9712c7
+[1/1] regulator: Avoid a double 'of_node_get' in 'regulator_of_get_init_node()'
+      commit: 8a065ce92b218e453742b745162d75a6f86fb768
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
