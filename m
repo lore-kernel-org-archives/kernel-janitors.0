@@ -2,106 +2,188 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-22.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E50F2C433ED
-	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Apr 2021 13:40:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E2C3C433ED
+	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Apr 2021 14:11:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A1ED1613B6
-	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Apr 2021 13:40:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57F6761139
+	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Apr 2021 14:11:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240329AbhDUNlb (ORCPT
+        id S238530AbhDUOL4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 21 Apr 2021 09:41:31 -0400
-Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:62294 "EHLO
-        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229536AbhDUNlb (ORCPT
+        Wed, 21 Apr 2021 10:11:56 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:29422 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S238163AbhDUOLx (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 21 Apr 2021 09:41:31 -0400
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 13LDcNHu006382;
-        Wed, 21 Apr 2021 13:40:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type : in-reply-to;
- s=corp-2020-01-29; bh=CiyY0TY/FT7GLJEH1shy+3dTJnAndDqr1nVXcawFzIM=;
- b=QHTo7GuamBfRfZRfAZidoFKXUVHvYIvfxo+GTvRkMjq1NS1k4fGwhFxw2ynR5WTCTfK6
- +DWwokTQtnMRkkuW0lkeNd6QDM6TaJzgij+6k0Z+lJ/y0W4LXrdUGNUJb3l6qZRub7ko
- Cd+Or1zg0ED+3uH/oT+5mELGKIVeyR9jXp2r/yKbt1CF3c7RglG8EDMKCNHg2dvxjT7a
- 00+I8ltgiq5M8IugRVJEzlIUrWIG589kQcOUivfUVCJJPZOuP683bCBMq2N7FKXjDmD0
- Ep4v/iz2qjlA2POrM6bdTWf10mIB/Q1TIKdib5EgEm3d58ZqbKjTFkXcUoGamvqdXGtv vQ== 
-Received: from oracle.com (userp3020.oracle.com [156.151.31.79])
-        by mx0b-00069f02.pphosted.com with ESMTP id 3818whgr19-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 21 Apr 2021 13:40:50 +0000
-Received: from userp3020.oracle.com (userp3020.oracle.com [127.0.0.1])
-        by pps.podrdrct (8.16.0.36/8.16.0.36) with SMTP id 13LDbYmI048456;
-        Wed, 21 Apr 2021 13:40:49 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3020.oracle.com with ESMTP id 3809eu9qy1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 21 Apr 2021 13:40:49 +0000
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 13LDellH009579;
-        Wed, 21 Apr 2021 13:40:48 GMT
-Received: from kadam (/102.36.221.92)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 21 Apr 2021 06:40:47 -0700
-Date:   Wed, 21 Apr 2021 16:40:40 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Felix Fietkau <nbd@nbd.name>
-Cc:     Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Shayne Chen <shayne.chen@mediatek.com>,
-        linux-wireless@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        Wed, 21 Apr 2021 10:11:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1619014280;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=no9E22n6xFp0ErmLBps/AYHPNqCND0cR48PHFS1zZb0=;
+        b=SHATAliIzwQHfx3U9TX7nFw+D1okb/lI58uk0JzrXI5ECsKlxulWLU+awdRhvwEbb0IfsQ
+        1uPaIvXa7kCzzL5UawAdkD4exVRPrMj29yVEezVYwJWTbWQCRU4LAnMmQShxUZJHwKi5hh
+        njU9+HjZMrWvbXZpFaxymNAyRTAPGCU=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-389-VlUVzibNOj6MsoU_epfkIw-1; Wed, 21 Apr 2021 10:11:18 -0400
+X-MC-Unique: VlUVzibNOj6MsoU_epfkIw-1
+Received: by mail-ej1-f69.google.com with SMTP id ji8-20020a1709079808b029037c921a9ea0so5923789ejc.9
+        for <kernel-janitors@vger.kernel.org>; Wed, 21 Apr 2021 07:11:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=no9E22n6xFp0ErmLBps/AYHPNqCND0cR48PHFS1zZb0=;
+        b=LFZAwDL/Lfr10yT9e9i2t+UZo7jlVsq5Vrgo7qFQCsZ0YmQNeaF85YtfRmj28hO+lx
+         AmrSuO9hO0zq5xRHYMRJVxDhHxz8VwoDwZCWzFIjvMrT+RnuZnXlMLJfimyTUBAICUkC
+         IXtHgxkslTcMYasE/y6X1w1Pesgz7qNVWgZk8C7KGtIsIvaVUHz4D9wdOyeFEOaynRUi
+         tDGQTRK8Kk3TkdSkRymenm7D7v38Xec5FIN2TRishU1eKmNPWiWmsh0JwKnoEIR1tO53
+         b7eqDN4q6Kac+jTxjVG4nxEnUgA6pVilu21m+R6lyZJyr9yLAIapRIt31WMMQBhw/PUa
+         aHFA==
+X-Gm-Message-State: AOAM531+xYusoAjBbZoEEaFwJitV7kX+6F1nsfWX7EbrVIdITo7u3HeF
+        Lxs57E2Yx/nFOym14MJSDy2FM7z6DaLWG/uBvA7ZEvKOkLjPK9XkDLTPFEUEULQpcmEffpGOBZP
+        xNIJiJYteSAFLCEZdqZHzRrwXvdS2TeSE9L86/Zecws7Du2clw2gK//MYTSzDrTNqHVGWBjZ/wJ
+        OkUzon
+X-Received: by 2002:a05:6402:40c9:: with SMTP id z9mr39325091edb.24.1619014276906;
+        Wed, 21 Apr 2021 07:11:16 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwrqZt+nvJogt73yI9Jd+E2aQ0gY3a+a2uV/BTiXvfbZcykZA0uU7drO20nWxyzpawU6I76Xg==
+X-Received: by 2002:a05:6402:40c9:: with SMTP id z9mr39325055edb.24.1619014276660;
+        Wed, 21 Apr 2021 07:11:16 -0700 (PDT)
+Received: from x1.localdomain (2001-1c00-0c1e-bf00-1054-9d19-e0f0-8214.cable.dynamic.v6.ziggo.nl. [2001:1c00:c1e:bf00:1054:9d19:e0f0:8214])
+        by smtp.gmail.com with ESMTPSA id bu26sm2497436ejb.30.2021.04.21.07.11.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 21 Apr 2021 07:11:16 -0700 (PDT)
+Subject: Re: [PATCH] platform/x86: intel_pmc_core: re-write copy in
+ pmc_core_lpm_latch_mode_write()
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Rajneesh Bhardwaj <irenic.rajneesh@gmail.com>
+Cc:     David E Box <david.e.box@intel.com>,
+        Mark Gross <mgross@linux.intel.com>,
+        "David E. Box" <david.e.box@linux.intel.com>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: [PATCH 2/3 v2] mt76: mt7915: fix a precision vs width bug in printk
-Message-ID: <20210421134040.GI1959@kadam>
+References: <YH/xicL9RXjH2pvD@mwanda>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <87e61d84-e23e-1ccc-c4ed-57ffa0ed95fb@redhat.com>
+Date:   Wed, 21 Apr 2021 16:11:15 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87ecf5b648ea6d42994abbef8d9cde7e15a0a837.camel@sipsolutions.net>
-X-Mailer: git-send-email haha only kidding
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9961 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 mlxscore=0
- mlxlogscore=999 malwarescore=0 adultscore=0 phishscore=0 bulkscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2104060000 definitions=main-2104210106
-X-Proofpoint-ORIG-GUID: 65bgiovjOKDKye3hix_FCzryIttMqmp3
-X-Proofpoint-GUID: 65bgiovjOKDKye3hix_FCzryIttMqmp3
+In-Reply-To: <YH/xicL9RXjH2pvD@mwanda>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Precision %.*s was intended instead of width %*s.  The original code
-will still print unintended data from beyond the end of skb->data.
+Hi Dan,
 
-Fixes: 665b2c780d63 ("mt76: mt7915: limit firmware log message printk to buffer length")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-v2: fix a typo in the commit message
+On 4/21/21 11:34 AM, Dan Carpenter wrote:
+> There are two bugs in this code:
+> 1) "ret" is unsigned so the error handling is broken.
 
- drivers/net/wireless/mediatek/mt76/mt7915/mcu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This is already fixed in the latest for-next branch:
+https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=for-next
 
-diff --git a/drivers/net/wireless/mediatek/mt76/mt7915/mcu.c b/drivers/net/wireless/mediatek/mt76/mt7915/mcu.c
-index 908e74a6b8e6..94195a1ad3b8 100644
---- a/drivers/net/wireless/mediatek/mt76/mt7915/mcu.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt7915/mcu.c
-@@ -521,7 +521,7 @@ mt7915_mcu_rx_log_message(struct mt7915_dev *dev, struct sk_buff *skb)
- 		break;
- 	}
+> 2) simple_write_to_buffer() is innappropriate.  It will succeed even if
+>    we are only able to copy a single byte of data from user space.  This
+>    could lead to an information leak if the buf[] array is not fully
+>    initialized.
+> 
+> I've fixed it to use strncpy_from_user() and to return -EINVAL if the
+> user supplied string is not NUL terminated.
+
+This is a debugfs interface, AFAIK there is no guarantee that:
+
+echo foo > /sys/kernel/debug/foo/bar
+
+Will result in the buf of the write(fd, buf, 4 /* 3 chars + '\n' */)
+call actually being 0 terminated ?  I know that with sysfs the sysfs
+code takes care of 0 termination, but I don't believe that that is the
+case in debugfs ?
+
+So it would see that the original code which does not assume 0
+termination of the user-input is correct here.
+
+Except that you are right that this could result in processing
+whatever was leftover in the buffer, since simple_write_to_buffer()
+may write less then count bytes to buf.
+
+This should fix that however, while sticking with simple_write_to_buffer():
+
+diff --git a/drivers/platform/x86/intel_pmc_core.c b/drivers/platform/x86/intel_pmc_core.c
+index d174aeb492e0..ac753e1b2cd4 100644
+--- a/drivers/platform/x86/intel_pmc_core.c
++++ b/drivers/platform/x86/intel_pmc_core.c
+@@ -1371,7 +1371,7 @@ static ssize_t pmc_core_lpm_latch_mode_write(struct file *file,
+ 	if (ret < 0)
+ 		return ret;
  
--	wiphy_info(mt76_hw(dev)->wiphy, "%s: %*s", type,
-+	wiphy_info(mt76_hw(dev)->wiphy, "%s: %.*s", type,
- 		   (int)(skb->len - sizeof(*rxd)), data);
- }
+-	buf[count] = '\0';
++	buf[ret] = '\0';
  
--- 
-2.30.2
+ 	/*
+ 	 * Allowed strings are:
+
+I think that that would be a better fix ?
+
+Regards,
+
+Hans
+
+
+> 
+> Fixes: 8074a79fad2e ("platform/x86: intel_pmc_core: Add option to set/clear LPM mode")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  drivers/platform/x86/intel_pmc_core.c | 13 +++++++------
+>  1 file changed, 7 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/platform/x86/intel_pmc_core.c b/drivers/platform/x86/intel_pmc_core.c
+> index 3ae00ac85c75..c989796a5d52 100644
+> --- a/drivers/platform/x86/intel_pmc_core.c
+> +++ b/drivers/platform/x86/intel_pmc_core.c
+> @@ -1360,18 +1360,19 @@ static ssize_t pmc_core_lpm_latch_mode_write(struct file *file,
+>  	struct pmc_dev *pmcdev = s->private;
+>  	bool clear = false, c10 = false;
+>  	unsigned char buf[8];
+> -	size_t ret;
+> -	int idx, m, mode;
+> +	int idx, m, mode, ret;
+> +	size_t len;
+>  	u32 reg;
+>  
+> -	if (count > sizeof(buf) - 1)
+> +	if (count > sizeof(buf))
+>  		return -EINVAL;
+
+Assuming that the buffer passed to a debugfs write is guaranteed to be 0 terminated
+then this is not necessary, if we hit this case then the ret == len check below
+will trigger?
+
+>  
+> -	ret = simple_write_to_buffer(buf, sizeof(buf) - 1, ppos, userbuf, count);
+> +	len = min(count, sizeof(buf));
+> +	ret = strncpy_from_user(buf, userbuf, len);
+>  	if (ret < 0)
+>  		return ret;
+> -
+> -	buf[count] = '\0';
+> +	if (ret == len)
+> +		return -EINVAL;
+>  
+>  	/*
+>  	 * Allowed strings are:
+> 
+
