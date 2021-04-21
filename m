@@ -2,87 +2,119 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32242C43460
-	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Apr 2021 08:44:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 141CFC433B4
+	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Apr 2021 09:08:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 008A9613D7
-	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Apr 2021 08:44:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6B6E61409
+	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Apr 2021 09:08:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235295AbhDUIoe (ORCPT
+        id S237716AbhDUJIj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 21 Apr 2021 04:44:34 -0400
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:42190 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235083AbhDUIod (ORCPT
+        Wed, 21 Apr 2021 05:08:39 -0400
+Received: from so254-9.mailgun.net ([198.61.254.9]:62717 "EHLO
+        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237043AbhDUJIj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 21 Apr 2021 04:44:33 -0400
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-        by mx0b-001ae601.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 13L8bSlw004719;
-        Wed, 21 Apr 2021 03:43:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=PODMain02222019;
- bh=nPczol+VR0KR9nJGshmhZqjVXxehr8YBfTima70vMQ4=;
- b=FF8yrK+TrvFPsj6oIGfOhVxAy/ZLNwMxTJtIssQ3eWRsxa1yX+ovoZYalxNjZf5ZGQdC
- j7uVxhm7R0/idzqj0mnAd9BfwWCPnjjBZMi+tujkAdIB26iJSlmAups7gTnOdDFbNR6D
- pWlv9M6+zhMySn9pQQeiHUMG7uldQlutL4Ji6uB++Nlh3bsazIVjvkxCa4I0o3yo4yDi
- avuIeBzBub6aBUuhQOUia+q13hHQOZvRZNQJmmwdVWIkTxPgh89xz1giZ7gs2M2SfEks
- 8e93BRU/aMbd6PCryeMYfh83RgDpDt839Y/HhtvLcfo41UjW3WDPMtaD3bzkfPBsRgKR 0w== 
-Received: from ediex01.ad.cirrus.com ([87.246.76.36])
-        by mx0b-001ae601.pphosted.com with ESMTP id 381a0rjtcs-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Wed, 21 Apr 2021 03:43:58 -0500
-Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Wed, 21 Apr
- 2021 09:43:57 +0100
-Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server id 15.1.2242.4 via Frontend
- Transport; Wed, 21 Apr 2021 09:43:57 +0100
-Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
-        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 292D711D6;
-        Wed, 21 Apr 2021 08:43:57 +0000 (UTC)
-Date:   Wed, 21 Apr 2021 08:43:57 +0000
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-CC:     <lgirdwood@gmail.com>, <broonie@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH] regulator: Avoid a double 'of_node_get' in
- 'regulator_of_get_init_node()'
-Message-ID: <20210421084357.GB64205@ediswmail.ad.cirrus.com>
-References: <a79f0068812b89ff412d572a1171f22109c24132.1618947049.git.christophe.jaillet@wanadoo.fr>
+        Wed, 21 Apr 2021 05:08:39 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1618996086; h=Content-Type: MIME-Version: Message-ID:
+ In-Reply-To: Date: References: Subject: Cc: To: From: Sender;
+ bh=OX6XiY6joBfdyzSpmKbHuqcmnZRR1EQFEvTqQUGxAWo=; b=A5RTzwZiLVVmi4sQHSkTy5ItGtVNTLwJ148b5FJ7MNaxDk+JELe/IhbU5lwh+oUuDqkdctsg
+ 134SG4ltfdkj+vbN33+NREobVdXkeGzB+/DThfxm4L1cX7lXF11fqglpvfp2Kd56bvsPCSiD
+ sGt/BS9lpP2XuadF42K64JQwHrc=
+X-Mailgun-Sending-Ip: 198.61.254.9
+X-Mailgun-Sid: WyI5NDExNyIsICJrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n01.prod.us-west-2.postgun.com with SMTP id
+ 607feb54f34440a9d470a5fe (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 21 Apr 2021 09:07:32
+ GMT
+Sender: kvalo=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 648BDC43147; Wed, 21 Apr 2021 09:07:31 +0000 (UTC)
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D3F43C43217;
+        Wed, 21 Apr 2021 09:07:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D3F43C43217
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+To:     Joe Perches <joe@perches.com>
+Cc:     Colin King <colin.king@canonical.com>,
+        Arend van Spriel <aspriel@gmail.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Chi-hsien Lin <chi-hsien.lin@infineon.com>,
+        Wright Feng <wright.feng@infineon.com>,
+        Chung-hsien Hsu <chung-hsien.hsu@infineon.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        linux-wireless@vger.kernel.org,
+        brcm80211-dev-list.pdl@broadcom.com,
+        SHA-cyfmac-dev-list@infineon.com, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] brcmsmac: fix shift on 4 bit masked value
+References: <20210318164513.19600-1-colin.king@canonical.com>
+        <20210418061021.AB25CC43217@smtp.codeaurora.org>
+        <78ad5b527aa1da06569fd5ae422ea2a403ef40a0.camel@perches.com>
+Date:   Wed, 21 Apr 2021 12:07:24 +0300
+In-Reply-To: <78ad5b527aa1da06569fd5ae422ea2a403ef40a0.camel@perches.com> (Joe
+        Perches's message of "Sun, 18 Apr 2021 00:58:40 -0700")
+Message-ID: <87pmyoj99v.fsf@codeaurora.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <a79f0068812b89ff412d572a1171f22109c24132.1618947049.git.christophe.jaillet@wanadoo.fr>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Proofpoint-GUID: WmW1AHhvl6ZsxFfNfknH2sKP5mZ1xlsz
-X-Proofpoint-ORIG-GUID: WmW1AHhvl6ZsxFfNfknH2sKP5mZ1xlsz
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 priorityscore=1501
- phishscore=0 mlxlogscore=770 impostorscore=0 lowpriorityscore=0
- bulkscore=0 suspectscore=0 adultscore=0 spamscore=0 clxscore=1011
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2104060000 definitions=main-2104210068
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Apr 20, 2021 at 09:31:51PM +0200, Christophe JAILLET wrote:
-> 'for_each_available_child_of_node()' already performs an 'of_node_get()'
-> on child, so there is no need to perform another one before returning.
-> Otherwise, a double 'get' is performed and a resource may never be
-> released.
-> 
-> Fixes: 925c85e21ed8 ("regulator: Factor out location of init data OF node")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
+Joe Perches <joe@perches.com> writes:
 
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+> On Sun, 2021-04-18 at 06:10 +0000, Kalle Valo wrote:
+>> Colin King <colin.king@canonical.com> wrote:
+>> 
+>> > From: Colin Ian King <colin.king@canonical.com>
+>> > 
+>> > The calculation of offtune_val seems incorrect, the u16 value in
+>> > pi->tx_rx_cal_radio_saveregs[2] is being masked with 0xf0 and then
+>> > shifted 8 places right so that always ends up as a zero result. I
+>> > believe the intended shift was 4 bits to the right. Fix this.
+>> > 
+>> > [Note: not tested, I don't have the H/W]
+>> > 
+>> > Addresses-Coverity: ("Operands don't affect result")
+>> > Fixes: 5b435de0d786 ("net: wireless: add brcm80211 drivers")
+>> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>> 
+>> I think this needs review from someone familiar with the hardware.
+>> 
+>> Patch set to Changes Requested.
+>
+> What "change" are you requesting here?
 
-Thanks,
-Charles
+Don't take patchwork states literally, a better name for this state
+would be "Needs work" or something like that.
+
+> Likely there needs to be some other setting for the patch.
+>
+> Perhaps "deferred" as you seem to be requesting a review
+> and there's no actual change necessary, just approval from
+> someone with the hardware and that someone test the patch.
+
+I already asked for help on April 7th and nobody replied, so I'm
+dropping this now. The patch can be resent if/when the change is
+confirmed to be correct.
+
+-- 
+https://patchwork.kernel.org/project/linux-wireless/list/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
