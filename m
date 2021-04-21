@@ -2,94 +2,82 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72551C433ED
-	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Apr 2021 18:23:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F152AC433B4
+	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Apr 2021 19:04:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4EE99613D3
-	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Apr 2021 18:23:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C346C61453
+	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Apr 2021 19:04:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245131AbhDUSYH (ORCPT
+        id S239751AbhDUTEv (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 21 Apr 2021 14:24:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53706 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235518AbhDUSYD (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 21 Apr 2021 14:24:03 -0400
-Received: from mail-qv1-xf33.google.com (mail-qv1-xf33.google.com [IPv6:2607:f8b0:4864:20::f33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4F84C06138A
-        for <kernel-janitors@vger.kernel.org>; Wed, 21 Apr 2021 11:23:29 -0700 (PDT)
-Received: by mail-qv1-xf33.google.com with SMTP id h15so10975251qvu.4
-        for <kernel-janitors@vger.kernel.org>; Wed, 21 Apr 2021 11:23:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=pEe5PZRzotHXF6wvwpO5vYTFWnCReMX6MPr0QZ7yo2Y=;
-        b=PxvdwZasfsEE7Ys0Fr9ySM8GWmuUf2u+2EyoJ6NAv5FaU2hoGu0bM8Nj6+n4uc1naD
-         7XibpmiOJrLxC34f9eoERq737OUpXbwZ4FHodlyJcOJ6nhzTAuIOA5zFWYfYn6sibrkz
-         jvf2/3gx3WYa3215trShhZsNHe7l/EB6ymSrdEukHu83D5Ge/BSc6GM7DSqFfLmzw2m3
-         /PCEwmDm6j0kHaZiRTKAS1brgWZcKeZ7TtMXKzfR1F956IG01WQc8CxYtuTGz/j0dREc
-         S6l8RMHLefAjkUBTKqNCzTD+K1vfyt8u++9iHPU7/QU9RX+2p3QoR1H7rJ+yTjYex4cC
-         IJpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=pEe5PZRzotHXF6wvwpO5vYTFWnCReMX6MPr0QZ7yo2Y=;
-        b=RWAb/Uk/Cunt8PA9DixrJBinm4qNRuXvthwwyVfRnzUCNRYYNT/vjxScJNRbX5c+Zn
-         ZVi9qq1SPo1/nVllkghudPKt0XfbdvhrMeVFne4qr5DFLyi2OPYHZU9mYGeIEI/XDyWw
-         wzS1EMyP6ZVeO4h+cRFhN6dymBZ4gtCsltHE/lYZsLnYUCLoTgdKD7WLHdPJr0evjo6e
-         YQKAHvS1ysCaBBZpPXO/1lILYXFfcfQHdkfm0c7twsgItVWMOiJ9SC2XUoQHcxG/ps8Z
-         jIDfGiozRzFjBTykf3LiPNRhgwcL/TlWWl3UMl7VR4nb/sRTUPJ4DFx2DpQbeyBwykCm
-         3yzQ==
-X-Gm-Message-State: AOAM530wowC6aEC4g9f4XC05d98Rtu9pXA2F8MjBEecQkMb9Ls/zd1EG
-        ob4pnXwZV32zLj2pwNsZ1xVugQ==
-X-Google-Smtp-Source: ABdhPJyvgzHXAL+BJgPHqwuJ96KHMgfl6lKvi2GyMh+7Nct0M1SLmRqnQK0pMm6W+xYvE0uczx9r7Q==
-X-Received: by 2002:a05:6214:725:: with SMTP id c5mr17652898qvz.54.1619029409070;
-        Wed, 21 Apr 2021 11:23:29 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-162-115-133.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.162.115.133])
-        by smtp.gmail.com with ESMTPSA id x204sm109847qkb.97.2021.04.21.11.23.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Apr 2021 11:23:28 -0700 (PDT)
-Received: from jgg by mlx with local (Exim 4.94)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1lZHVX-009bey-Ix; Wed, 21 Apr 2021 15:23:27 -0300
-Date:   Wed, 21 Apr 2021 15:23:27 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Kirti Wankhede <kwankhede@nvidia.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        kvm@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] vfio/mdev: remove unnecessary NULL check in
- mbochs_create()
-Message-ID: <20210421182327.GD2047089@ziepe.ca>
-References: <YIAowNYCOCNu+xhm@mwanda>
+        Wed, 21 Apr 2021 15:04:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35518 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S245377AbhDUTEr (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 21 Apr 2021 15:04:47 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 4348A6145F;
+        Wed, 21 Apr 2021 19:04:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1619031853;
+        bh=g/8nf17kbeStmv6J0pgzqx/VDBN/9MWXjrwtGSSy01c=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=fRGeF2/vjXflG5d648nIuWmTnPIF3fyMyR/HBh2+67Bk/AM+qV1QjV46fvqS0A3Uj
+         R+wyzuXVKD8G4dmH+292QY2pUo2dphKSJjzPSqip4HpRnHKfBlsJ5Ptunz45f4F+n2
+         vDv1TNXxWDurw8t52pOPNAi6qH9hz0dbNEwol2NIVHxnnTbVB20sfEFPizuWcmhaEb
+         kle6AvOesGeKX+Ts/3DrmMdRGfd/XLh8V1lNcKYlL8yEnPE0zgwOTBjpLRwN+34EIm
+         K0U58P7MYB8khtSxwDDxL9yRjoA/GNrd72LrOQAoIcrv7H81LepkKwu1IH/3OMXdBQ
+         AhncME7/ZHcQg==
+From:   Mark Brown <broonie@kernel.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        eajames@linux.ibm.com
+Cc:     Mark Brown <broonie@kernel.org>, kernel-janitors@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] spi: fsi: add a missing of_node_put
+Date:   Wed, 21 Apr 2021 20:03:27 +0100
+Message-Id: <161903040535.13608.18069667099177914560.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <504e431b900341249d331b868d90312cf41f415a.1618947919.git.christophe.jaillet@wanadoo.fr>
+References: <504e431b900341249d331b868d90312cf41f415a.1618947919.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YIAowNYCOCNu+xhm@mwanda>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Apr 21, 2021 at 04:29:36PM +0300, Dan Carpenter wrote:
-> This NULL check is no longer required because "type" now points to
-> an element in a non-NULL array.
-> 
-> Fixes: 3d3a360e570616 ("vfio/mbochs: Use mdev_get_type_group_id()")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  samples/vfio-mdev/mbochs.c | 2 --
->  samples/vfio-mdev/mdpy.c | 3 +--
->  2 files changed, 1 insertion(+), 4 deletions(-)
+On Tue, 20 Apr 2021 21:46:13 +0200, Christophe JAILLET wrote:
+> 'for_each_available_child_of_node' performs an of_node_get on each
+> iteration, so a return from the middle of the loop requires an of_node_put.
 
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+Applied to
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+
+Thanks!
+
+[1/1] spi: fsi: add a missing of_node_put
+      commit: 24b5515aa3ac075880be776bf36553ff7f9712c7
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
 Thanks,
-Jason
+Mark
