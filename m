@@ -2,88 +2,85 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EFE0C433ED
-	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Apr 2021 13:26:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2FDEC433ED
+	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Apr 2021 14:04:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 40AFA6143B
-	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Apr 2021 13:26:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7749E6142F
+	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Apr 2021 14:04:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235957AbhDVN1T (ORCPT
+        id S236461AbhDVOEl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 22 Apr 2021 09:27:19 -0400
-Received: from mail-ot1-f47.google.com ([209.85.210.47]:43549 "EHLO
-        mail-ot1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230005AbhDVN1S (ORCPT
+        Thu, 22 Apr 2021 10:04:41 -0400
+Received: from so254-9.mailgun.net ([198.61.254.9]:20459 "EHLO
+        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236320AbhDVOEk (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 22 Apr 2021 09:27:18 -0400
-Received: by mail-ot1-f47.google.com with SMTP id i26-20020a9d625a0000b02902a2119f7613so5305212otk.10;
-        Thu, 22 Apr 2021 06:26:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=P6+9wENIjOSGm0rNZssrWwc+3q+P9ydCyEXK+E2E3rI=;
-        b=Pqxwj7VlId/HEP6i185weLdxHDvpBKe1oJpRZS03j9HH3ULKjZSgFIvbCIjgYLv0Vp
-         4C3KJWM4/XhbjP05pEFBda8BZ0/yyyuCvX+LEFbnbIP08Ytd5mjmpvyDiUWlLTsOw/eW
-         oB2sXpm3us1TQPsT3Yocgq1VvXHENy/VjEAKBKLpjUz266jN6cVO8THf/FTzjs47Fv3N
-         zPoSYcbNRczOgEp8HeyFV+Tkh8PEmDCYw8soXDs4auIikxjdIxCOjcId5c0WIixcCAJy
-         YIB1OBr6J2Pw72guEqxxwnR7nfyR8CuYuaj0PjwGmFC5Qp0RBawwLmlzHrMSV6794bas
-         4ABg==
-X-Gm-Message-State: AOAM532WyU4H/2QSSP6gCOyZy9T3t9GJFrv5mYkGUzW8Y0eJKlChQ4Kc
-        xDisISkrNqiGgE0ggrTbCUIdcyO0ba8BofqBTNs=
-X-Google-Smtp-Source: ABdhPJyY6NJtdIXc773L+QTLvHiKMQ+H0AThT/TKlpZoEEWVZQ/ZvoW7JrMss8sej1qYm6BRJf07ULO6tX6Dg5ZjE7g=
-X-Received: by 2002:a05:6830:55b:: with SMTP id l27mr2846251otb.260.1619098003827;
- Thu, 22 Apr 2021 06:26:43 -0700 (PDT)
+        Thu, 22 Apr 2021 10:04:40 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1619100245; h=Date: Message-Id: Cc: To: References:
+ In-Reply-To: From: Subject: Content-Transfer-Encoding: MIME-Version:
+ Content-Type: Sender; bh=4HMCjdtvHaTSyjFKUDRAhNbN/Lc1AjfSDQkLeUEgxs4=;
+ b=Lh8CClwyZqgXAStLHhj+xWUWDQEK69pk5y3jIhp4IqAFSJyZgOLChmjqluu7JyPS0cXuulFn
+ oLBZS6ti2PMlEicscEQccyBe86DP8j0bbu4CPjmRHsd0dRFLAOpGLWFVi6UH+Yan2xGxZ9BW
+ IqJPCNIbK2CkpKCj6jD8NnScm8o=
+X-Mailgun-Sending-Ip: 198.61.254.9
+X-Mailgun-Sid: WyI5NDExNyIsICJrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n03.prod.us-west-2.postgun.com with SMTP id
+ 6081823ae0e9c9a6b6e97aab (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 22 Apr 2021 14:03:38
+ GMT
+Sender: kvalo=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 66487C4338A; Thu, 22 Apr 2021 14:03:38 +0000 (UTC)
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 35198C433F1;
+        Thu, 22 Apr 2021 14:03:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 35198C433F1
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20210416124352.2049258-1-colin.king@canonical.com>
-In-Reply-To: <20210416124352.2049258-1-colin.king@canonical.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 22 Apr 2021 15:26:32 +0200
-Message-ID: <CAJZ5v0ge7e68vTB3vvcz9OThp32X0=+XaQPrPQCGf0xM9uCi0Q@mail.gmail.com>
-Subject: Re: [PATCH] PM / wakeup: remove redundant assignment to variable retval
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH][next] ath11k: qmi: Fix spelling mistake "requeqst" ->
+ "request"
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20210316091924.15627-1-colin.king@canonical.com>
+References: <20210316091924.15627-1-colin.king@canonical.com>
 To:     Colin King <colin.king@canonical.com>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, ath11k@lists.infradead.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.5.2
+Message-Id: <20210422140338.66487C4338A@smtp.codeaurora.org>
+Date:   Thu, 22 Apr 2021 14:03:38 +0000 (UTC)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Apr 16, 2021 at 2:44 PM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The variable retval is being initialized with a value that is
-> never read and it is being updated later with a new value. The
-> initialization is redundant and can be removed.
->
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/base/power/wakeup_stats.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/base/power/wakeup_stats.c b/drivers/base/power/wakeup_stats.c
-> index 5ade7539ac02..924fac493c4f 100644
-> --- a/drivers/base/power/wakeup_stats.c
-> +++ b/drivers/base/power/wakeup_stats.c
-> @@ -137,7 +137,7 @@ static struct device *wakeup_source_device_create(struct device *parent,
->                                                   struct wakeup_source *ws)
->  {
->         struct device *dev = NULL;
-> -       int retval = -ENODEV;
-> +       int retval;
->
->         dev = kzalloc(sizeof(*dev), GFP_KERNEL);
->         if (!dev) {
-> --
+Colin King <colin.king@canonical.com> wrote:
 
-Applied as 5.13 material, thanks!
+> There is a spelling mistake in an ath11k_warn message. Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+
+Patch applied to ath-next branch of ath.git, thanks.
+
+6dc89f070d28 ath11k: qmi: Fix spelling mistake "requeqst" -> "request"
+
+-- 
+https://patchwork.kernel.org/project/linux-wireless/patch/20210316091924.15627-1-colin.king@canonical.com/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
