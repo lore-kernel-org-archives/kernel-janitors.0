@@ -2,125 +2,101 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D7F0C43461
-	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Apr 2021 16:21:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DFD4C433B4
+	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Apr 2021 17:12:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0C3BA61424
-	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Apr 2021 16:21:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F350860FE6
+	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Apr 2021 17:12:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236504AbhDVQWV convert rfc822-to-8bit (ORCPT
+        id S237829AbhDVRNN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 22 Apr 2021 12:22:21 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([185.58.85.151]:31570 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236058AbhDVQWT (ORCPT
+        Thu, 22 Apr 2021 13:13:13 -0400
+Received: from mail-pg1-f180.google.com ([209.85.215.180]:44849 "EHLO
+        mail-pg1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236058AbhDVRNM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 22 Apr 2021 12:22:19 -0400
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-270-mhKvP-dDOsuLyQ0QyQj3_Q-1; Thu, 22 Apr 2021 17:21:41 +0100
-X-MC-Unique: mhKvP-dDOsuLyQ0QyQj3_Q-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) with Microsoft SMTP
- Server (TLS) id 15.0.1497.2; Thu, 22 Apr 2021 17:21:40 +0100
-Received: from AcuMS.Aculab.com ([fe80::994c:f5c2:35d6:9b65]) by
- AcuMS.aculab.com ([fe80::994c:f5c2:35d6:9b65%12]) with mapi id
- 15.00.1497.015; Thu, 22 Apr 2021 17:21:40 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Dan Carpenter' <dan.carpenter@oracle.com>,
-        Joel Stanley <joel@jms.id.au>
-CC:     Andrew Jeffery <andrew@aj.id.au>,
-        "Chia-Wei, Wang" <chiawei_wang@aspeedtech.com>,
-        Jae Hyun Yoo <jae.hyun.yoo@intel.com>,
-        "John Wang" <wangzhiqiang.bj@bytedance.com>,
-        Brad Bishop <bradleyb@fuzziesquirrel.com>,
-        Patrick Venture <venture@google.com>,
-        "Benjamin Fair" <benjaminfair@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Robert Lippert <rlippert@google.com>,
-        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: RE: [PATCH] soc: aspeed: fix a ternary sign expansion bug
-Thread-Topic: [PATCH] soc: aspeed: fix a ternary sign expansion bug
-Thread-Index: AQHXN1ec+IlNNgnl7EGootyN/jCOrarAtu4w
-Date:   Thu, 22 Apr 2021 16:21:40 +0000
-Message-ID: <59596244622c4a15ac8cc0747332d0be@AcuMS.aculab.com>
-References: <YIE90PSXsMTa2Y8n@mwanda>
-In-Reply-To: <YIE90PSXsMTa2Y8n@mwanda>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Thu, 22 Apr 2021 13:13:12 -0400
+Received: by mail-pg1-f180.google.com with SMTP id y32so33280833pga.11;
+        Thu, 22 Apr 2021 10:12:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=oL0/WcnCbHxL1yJ51DUfiDMDBwIuiDipc8mvrh5ow+4=;
+        b=byXLXSL5+xLBTGrqnQfcZrqYoIoPEiv3qjTNvx0an3iusFSg3FU+jWvxR3F+84R3Jh
+         8ZwMCRrCj2oVEq30KRKEzblaPgdbmtuwgiBfiyhihwTenoHO3el164ifAUmo72KSdZ5R
+         Xc7bE4Z+yCA5HdkEb25JRPezqNOeEIFBD9lfg7PUWTXK1JeB8Gi+l2hBMNLxNh6I+a5u
+         OrG7QtBysFfXdiO1Hiw2o6nP+JrAK3FoTm4B0EIv+2/JLCy2eE83doczAoEWg7S9SNtk
+         HPnu3LjRAvrzloySHKmMAR4UcFfNyGWog9xowhtwgc39QfFp6zMYcUDnt7IDG7mBb+XW
+         B0pA==
+X-Gm-Message-State: AOAM5337ZXE3K1W6EvyALR8MyFxfj3/P9yBfi33UcGObFsZJIDsCRXc2
+        n6GxpmoYDVK70pxAMBIrRUXtkpYwZEM+TQ==
+X-Google-Smtp-Source: ABdhPJypCeQEUKOtXrXBs8b2viAjaw3NbuX4UaVGriFcAl0iIo1zShVEQ8SfJJXuVETEvTpPJA0zpw==
+X-Received: by 2002:a63:2c14:: with SMTP id s20mr4415277pgs.72.1619111555663;
+        Thu, 22 Apr 2021 10:12:35 -0700 (PDT)
+Received: from ?IPv6:2601:647:4000:d7:ca3e:c761:2ef0:61cd? ([2601:647:4000:d7:ca3e:c761:2ef0:61cd])
+        by smtp.gmail.com with ESMTPSA id l18sm5098991pjq.33.2021.04.22.10.12.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 22 Apr 2021 10:12:34 -0700 (PDT)
+Subject: Re: [PATCH 1/2] workqueue: Have 'alloc_workqueue()' like macros
+ accept a format specifier
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Marion et Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        tj@kernel.org, jiangshanlai@gmail.com, saeedm@nvidia.com,
+        leon@kernel.org, davem@davemloft.net, kuba@kernel.org,
+        netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <cover.1618780558.git.christophe.jaillet@wanadoo.fr>
+ <ae88f6c2c613d17bc1a56692cfa4f960dbc723d2.1618780558.git.christophe.jaillet@wanadoo.fr>
+ <042f5fff-5faf-f3c5-0819-b8c8d766ede6@acm.org>
+ <1032428026.331.1618814178946.JavaMail.www@wwinf2229>
+ <40c21bfe-e304-230d-b319-b98063347b8b@acm.org>
+ <20210422122419.GF2047089@ziepe.ca>
+From:   Bart Van Assche <bvanassche@acm.org>
+Message-ID: <782e329a-7c3f-a0da-5d2f-89871b0c4b9b@acm.org>
+Date:   Thu, 22 Apr 2021 10:12:33 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.9.1
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
+In-Reply-To: <20210422122419.GF2047089@ziepe.ca>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter
-> Sent: 22 April 2021 10:12
+On 4/22/21 5:24 AM, Jason Gunthorpe wrote:
+> On Mon, Apr 19, 2021 at 01:02:34PM -0700, Bart Van Assche wrote:
+>> On 4/18/21 11:36 PM, Marion et Christophe JAILLET wrote:
+>>> The list in To: is the one given by get_maintainer.pl. Usualy, I only
+>>> put the ML in Cc: I've run the script on the 2 patches of the serie
+>>> and merged the 2 lists. Everyone is in the To: of the cover letter
+>>> and of the 2 patches.
+>>>
+>>> If Théo is "Tejun Heo" (  (maintainer:WORKQUEUE) ), he is already in
+>>> the To: line.
+>> Linus wants to see a "Cc: ${maintainer}" tag in patches that he receives
+>> from a maintainer and that modify another subsystem than the subsystem
+>> maintained by that maintainer.
 > 
-> The intent here was to return negative error codes but it actually
-> returns positive values.  The problem is that type promotion with
-> ternary operations is quite complicated.
-> 
-> "ret" is an int.  "copied" is a u32.  And the snoop_file_read() function
-> returns long.  What happens is that "ret" is cast to u32 and becomes
-> positive then it's cast to long and it's still positive.
-> 
-> Fix this by removing the ternary so that "ret" is type promoted directly
-> to long.
-> 
-> Fixes: 3772e5da4454 ("drivers/misc: Aspeed LPC snoop output using misc chardev")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/soc/aspeed/aspeed-lpc-snoop.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/soc/aspeed/aspeed-lpc-snoop.c b/drivers/soc/aspeed/aspeed-lpc-snoop.c
-> index 210455efb321..eceeaf8dfbeb 100644
-> --- a/drivers/soc/aspeed/aspeed-lpc-snoop.c
-> +++ b/drivers/soc/aspeed/aspeed-lpc-snoop.c
-> @@ -94,8 +94,10 @@ static ssize_t snoop_file_read(struct file *file, char __user *buffer,
->  			return -EINTR;
->  	}
->  	ret = kfifo_to_user(&chan->fifo, buffer, count, &copied);
-> +	if (ret)
-> +		return ret;
-> 
-> -	return ret ? ret : copied;
-> +	return copied;
+> Really? Do you remember a lore link for this?
 
-I wonder if changing it to:
-	return ret ? ret + 0L : copied;
+Last time I saw Linus mentioning this was a few months ago.
+Unfortunately I cannot find that message anymore.
 
-Might make people think in the future and not convert it back
-as an 'optimisation'.
+> Generally I've been junking the CC lines (vs Andrew at the other
+> extreme that often has 10's of CC lines)
 
-I much prefer adding 0 to a cast to fix integer types.
-In can go less wrong!
+Most entries in the MAINTAINERS file have one to three email addresses
+so I'm surprised to read that Cc-ing maintainer(s) could result in tens
+of Cc lines?
 
-IMHO there are far too many casts in the kernel sources.
-Especially the ones that are only there to appease sparse.
-A functional notation for those would remove some of
-the potential problems.
+Thanks,
 
-	David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
-
+Bart.
