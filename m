@@ -2,90 +2,117 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-23.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 030F2C433ED
-	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Apr 2021 14:42:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D232C433ED
+	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Apr 2021 14:56:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BB3F66113C
-	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Apr 2021 14:42:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05D1361104
+	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Apr 2021 14:56:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237475AbhDVOmi (ORCPT
+        id S236663AbhDVO5O (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 22 Apr 2021 10:42:38 -0400
-Received: from so254-9.mailgun.net ([198.61.254.9]:21927 "EHLO
-        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236519AbhDVOmh (ORCPT
+        Thu, 22 Apr 2021 10:57:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42554 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236529AbhDVO5N (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 22 Apr 2021 10:42:37 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1619102522; h=Date: Message-Id: Cc: To: References:
- In-Reply-To: From: Subject: Content-Transfer-Encoding: MIME-Version:
- Content-Type: Sender; bh=29YxYonfPUw7SnZvwwb2rBFdiTJreAfV7w0WUgIcV3Q=;
- b=CJoLMW2w0lqLiT43rhMRqNppGeEj1mnWpgMm65W6gR8a2oD406c16X58zTD5GxA9kMrJOSc+
- CSczD8cdtffgH6jgkSjs57lr3/VWCj4GNi42QrnuAGcl6XmK6BQ74zXzdDsAgHweOjP+7yUD
- TFhFV8C/ztKb9Rr2zNuCuIR/t+Q=
-X-Mailgun-Sending-Ip: 198.61.254.9
-X-Mailgun-Sid: WyI5NDExNyIsICJrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n04.prod.us-east-1.postgun.com with SMTP id
- 60818b1fc39407c3274ee765 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 22 Apr 2021 14:41:35
- GMT
-Sender: kvalo=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id AE066C433D3; Thu, 22 Apr 2021 14:41:34 +0000 (UTC)
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 85A47C433D3;
-        Thu, 22 Apr 2021 14:41:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 85A47C433D3
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Thu, 22 Apr 2021 10:57:13 -0400
+Received: from mail-qk1-x736.google.com (mail-qk1-x736.google.com [IPv6:2607:f8b0:4864:20::736])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11AFFC06138B
+        for <kernel-janitors@vger.kernel.org>; Thu, 22 Apr 2021 07:56:39 -0700 (PDT)
+Received: by mail-qk1-x736.google.com with SMTP id e13so36705214qkl.6
+        for <kernel-janitors@vger.kernel.org>; Thu, 22 Apr 2021 07:56:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9cZAWfImI6VLS+4QpAMj/1HbaXFkUQw52F6CC9VLM0Y=;
+        b=XOvY2HS1G58unBxLg5ROQPBVXB2i1rtoWGc+bbXT+2vA7bCspRWZdgzAaCCZ0bsoeu
+         0sF56VPYV5WfWMwnmZ3Wxy5UtjMzcrDiAqmNu/dR2bYadmmTBLf/iSiXxEjg/GGXuOxB
+         mQDhMr9mzdoN6BH9LnOyrOJ8fRZwMpWjD26p+zcqf+J13OviGDOMnBODvZfMg016tALI
+         qiyv/x7QuuGB5CZjIlcz701ylLLjRKDmO9O8eprkW2MllSn6Yaui2gI1s2o7s34ux3QI
+         jegryPdr6Ar6NzYc3zJu60EBIyHDyIOrzPCcVgX/dgaHH1JrLhbUUe+0XNID6kKlHUJr
+         3WYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9cZAWfImI6VLS+4QpAMj/1HbaXFkUQw52F6CC9VLM0Y=;
+        b=chbEBxAFbRKuKLrFKAjS3v5KGzcs6UamXfebfYTcAr1i08WriA8qT+XAPRdpY3DdSj
+         n98UwxtsZvlHuFUd/GdmMTfa5bSqlnyGL2V7PK/+9iWBd6P5mRpCJfrKjZYQOfGpzOQG
+         mEKR1SMCwGXzuyn1WQpR8n0FTiKkbSYb6BCTSPG+XPDl7d3r5+8NcHsvkXbe947HdtlZ
+         pJ63AHLyelWMzOzAFfzdAqiRUXjI//VECeC0/qKiHquUODxqppgaUIUSb015yKf43/sl
+         WOFgTH3Rxnw5JEJPT3wmFt+4/IYOkUYSXXNVKU9+6/CBy/Ag5mKLM3jtIyovD4rAI5uX
+         5x/Q==
+X-Gm-Message-State: AOAM531esovs0WynjHgK4eewnKLQVeGGGfiW4vZYnDRRQLsN39URdfsY
+        0cHRAuGHqEtITvJZvX0d71SU8OecB5yDv4z+UewCkQ==
+X-Google-Smtp-Source: ABdhPJxFW03kYV1p+C7svvmXCA8kbvcMHwdxhGDs5AuWcLYnO3Ok1b8fiJ6ENnUdOk4iCG1afoKrJZRnyTQwB3rWzc8=
+X-Received: by 2002:a05:620a:52d:: with SMTP id h13mr4127770qkh.472.1619103397954;
+ Thu, 22 Apr 2021 07:56:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] brcmfmac: Avoid GFP_ATOMIC when GFP_KERNEL is enough
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <b6e619415db4ee5de95389280d7195bb56e45f77.1618860716.git.christophe.jaillet@wanadoo.fr>
-References: <b6e619415db4ee5de95389280d7195bb56e45f77.1618860716.git.christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     aspriel@gmail.com, franky.lin@broadcom.com,
-        hante.meuleman@broadcom.com, chi-hsien.lin@infineon.com,
-        wright.feng@infineon.com, chung-hsien.hsu@infineon.com,
-        davem@davemloft.net, kuba@kernel.org,
-        linux-wireless@vger.kernel.org,
-        brcm80211-dev-list.pdl@broadcom.com,
-        SHA-cyfmac-dev-list@infineon.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.5.2
-Message-Id: <20210422144134.AE066C433D3@smtp.codeaurora.org>
-Date:   Thu, 22 Apr 2021 14:41:34 +0000 (UTC)
+References: <YIE90PSXsMTa2Y8n@mwanda>
+In-Reply-To: <YIE90PSXsMTa2Y8n@mwanda>
+From:   Patrick Venture <venture@google.com>
+Date:   Thu, 22 Apr 2021 07:56:27 -0700
+Message-ID: <CAO=notzLH4reOAVu9t=81th+dS52BvBURKveHbg4wDjbdhbH5w@mail.gmail.com>
+Subject: Re: [PATCH] soc: aspeed: fix a ternary sign expansion bug
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>,
+        "Chia-Wei, Wang" <chiawei_wang@aspeedtech.com>,
+        Jae Hyun Yoo <jae.hyun.yoo@intel.com>,
+        John Wang <wangzhiqiang.bj@bytedance.com>,
+        Brad Bishop <bradleyb@fuzziesquirrel.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Robert Lippert <rlippert@google.com>,
+        linux-aspeed@lists.ozlabs.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
-
-> A workqueue is not atomic, so constraints can be relaxed here.
-> GFP_KERNEL can be used instead of GFP_ATOMIC.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
-
-Patch applied to wireless-drivers-next.git, thanks.
-
-7a4fc7154e32 brcmfmac: Avoid GFP_ATOMIC when GFP_KERNEL is enough
-
--- 
-https://patchwork.kernel.org/project/linux-wireless/patch/b6e619415db4ee5de95389280d7195bb56e45f77.1618860716.git.christophe.jaillet@wanadoo.fr/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+On Thu, Apr 22, 2021 at 2:12 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+>
+> The intent here was to return negative error codes but it actually
+> returns positive values.  The problem is that type promotion with
+> ternary operations is quite complicated.
+>
+> "ret" is an int.  "copied" is a u32.  And the snoop_file_read() function
+> returns long.  What happens is that "ret" is cast to u32 and becomes
+> positive then it's cast to long and it's still positive.
+>
+> Fix this by removing the ternary so that "ret" is type promoted directly
+> to long.
+>
+> Fixes: 3772e5da4454 ("drivers/misc: Aspeed LPC snoop output using misc chardev")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Patrick Venture <venture@google.com>
+> ---
+>  drivers/soc/aspeed/aspeed-lpc-snoop.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/soc/aspeed/aspeed-lpc-snoop.c b/drivers/soc/aspeed/aspeed-lpc-snoop.c
+> index 210455efb321..eceeaf8dfbeb 100644
+> --- a/drivers/soc/aspeed/aspeed-lpc-snoop.c
+> +++ b/drivers/soc/aspeed/aspeed-lpc-snoop.c
+> @@ -94,8 +94,10 @@ static ssize_t snoop_file_read(struct file *file, char __user *buffer,
+>                         return -EINTR;
+>         }
+>         ret = kfifo_to_user(&chan->fifo, buffer, count, &copied);
+> +       if (ret)
+> +               return ret;
+>
+> -       return ret ? ret : copied;
+> +       return copied;
+>  }
+>
+>  static __poll_t snoop_file_poll(struct file *file,
+> --
+> 2.30.2
+>
