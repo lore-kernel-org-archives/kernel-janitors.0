@@ -7,35 +7,33 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4248DC433ED
-	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Apr 2021 12:04:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 100CBC433B4
+	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Apr 2021 12:11:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F3F416140F
-	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Apr 2021 12:04:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C56F061164
+	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Apr 2021 12:11:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236331AbhDVMEu (ORCPT
+        id S236150AbhDVMLw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 22 Apr 2021 08:04:50 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:33584 "EHLO
+        Thu, 22 Apr 2021 08:11:52 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:34001 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236001AbhDVMEt (ORCPT
+        with ESMTP id S230510AbhDVMLv (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 22 Apr 2021 08:04:49 -0400
+        Thu, 22 Apr 2021 08:11:51 -0400
 Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <colin.king@canonical.com>)
-        id 1lZY44-00040i-Ua; Thu, 22 Apr 2021 12:04:13 +0000
+        id 1lZYAt-0004lM-Am; Thu, 22 Apr 2021 12:11:15 +0000
 From:   Colin King <colin.king@canonical.com>
-To:     Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>, linux-serial@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] thermal: mtk_thermal: remove redundant initializations of several variables
-Date:   Thu, 22 Apr 2021 13:04:12 +0100
-Message-Id: <20210422120412.246291-1-colin.king@canonical.com>
+Subject: [PATCH][next] tty: serial: jsm: remove redundant assignments of several variables
+Date:   Thu, 22 Apr 2021 13:11:15 +0100
+Message-Id: <20210422121115.246625-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -46,39 +44,40 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Several variables are being initialized with values that is never
+Several variables are being assigned with values that are never
 read and being updated later with a new value. The initializations
 are redundant and can be removed.
 
 Addresses-Coverity: ("Unused value")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/thermal/mtk_thermal.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/tty/serial/jsm/jsm_cls.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/thermal/mtk_thermal.c b/drivers/thermal/mtk_thermal.c
-index 149c6d7fd5a0..97e8678ccf0e 100644
---- a/drivers/thermal/mtk_thermal.c
-+++ b/drivers/thermal/mtk_thermal.c
-@@ -573,12 +573,12 @@ static int raw_to_mcelsius_v1(struct mtk_thermal *mt, int sensno, s32 raw)
+diff --git a/drivers/tty/serial/jsm/jsm_cls.c b/drivers/tty/serial/jsm/jsm_cls.c
+index b507a2cec926..b58ea4344aaf 100644
+--- a/drivers/tty/serial/jsm/jsm_cls.c
++++ b/drivers/tty/serial/jsm/jsm_cls.c
+@@ -349,8 +349,8 @@ static void cls_assert_modem_signals(struct jsm_channel *ch)
  
- static int raw_to_mcelsius_v2(struct mtk_thermal *mt, int sensno, s32 raw)
+ static void cls_copy_data_from_uart_to_queue(struct jsm_channel *ch)
  {
--	s32 format_1 = 0;
--	s32 format_2 = 0;
--	s32 g_oe = 1;
--	s32 g_gain = 1;
--	s32 g_x_roomt = 0;
--	s32 tmp = 0;
-+	s32 format_1;
-+	s32 format_2;
-+	s32 g_oe;
-+	s32 g_gain;
-+	s32 g_x_roomt;
-+	s32 tmp;
+-	int qleft = 0;
+-	u8 linestatus = 0;
++	int qleft;
++	u8 linestatus;
+ 	u8 error_mask = 0;
+ 	u16 head;
+ 	u16 tail;
+@@ -365,8 +365,6 @@ static void cls_copy_data_from_uart_to_queue(struct jsm_channel *ch)
+ 	head = ch->ch_r_head & RQUEUEMASK;
+ 	tail = ch->ch_r_tail & RQUEUEMASK;
  
- 	if (raw == 0)
- 		return 0;
+-	/* Get our cached LSR */
+-	linestatus = ch->ch_cached_lsr;
+ 	ch->ch_cached_lsr = 0;
+ 
+ 	/* Store how much space we have left in the queue */
 -- 
 2.30.2
 
