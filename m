@@ -2,98 +2,144 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6506C433ED
-	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Apr 2021 17:46:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF1F5C433ED
+	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Apr 2021 18:00:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A96E161249
-	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Apr 2021 17:46:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8554560C3E
+	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Apr 2021 18:00:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236817AbhDVRrO (ORCPT
+        id S236762AbhDVSBB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 22 Apr 2021 13:47:14 -0400
-Received: from foss.arm.com ([217.140.110.172]:54604 "EHLO foss.arm.com"
+        Thu, 22 Apr 2021 14:01:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41690 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236659AbhDVRrO (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 22 Apr 2021 13:47:14 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C0A1A1063;
-        Thu, 22 Apr 2021 10:46:38 -0700 (PDT)
-Received: from bogus (unknown [10.57.52.142])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C88EF3F694;
-        Thu, 22 Apr 2021 10:46:37 -0700 (PDT)
-Date:   Thu, 22 Apr 2021 18:46:31 +0100
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Cristian Marussi <cristian.marussi@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH] firmware: arm_scpi: prevent ternary sign expansion bug
-Message-ID: <20210422174631.aruiqqqx3szboqdp@bogus>
-References: <YIE7pdqV/h10tEAK@mwanda>
+        id S236287AbhDVSA7 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 22 Apr 2021 14:00:59 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 662C3613F5;
+        Thu, 22 Apr 2021 18:00:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1619114424;
+        bh=egWDsX0yqk96ieznqeLeCw1Tuzn2uxvCmXxvAmpHf9A=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ggWHayk99M89Mxo3jOOpneGFS75RRjFQzo7TgFW0dR5vDE/aQmsKtO2bZvJvpCG2g
+         1EziTt76QhbfLYUMp09PEPpbaR7BjuSEE5DMh9/5g1bKr6l0RjytIvsAANAXK+k88W
+         dXl0ImA25oddOAgg8aE9+nXYVBANs8A2nGZQcolRNEWc9bjcJvAu8QcQIdonQb3o1r
+         2aNjVhnlkQuNEvYf4hQKWaj+ihVP8k5fWnk8eCjCA86uqnkSkI8ObG4kb08XlgCNRc
+         MG1Koxlsc9RUuvgf3y4tPJbBKKOEn9P4rV7yjfw8AM3pVTdJ1N7gM/ryfyv19gUnyq
+         swFK3+5Ilj9yw==
+Date:   Thu, 22 Apr 2021 21:00:20 +0300
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Bart Van Assche <bvanassche@acm.org>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
+        Marion et Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        tj@kernel.org, jiangshanlai@gmail.com, saeedm@nvidia.com,
+        davem@davemloft.net, kuba@kernel.org, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 1/2] workqueue: Have 'alloc_workqueue()' like macros
+ accept a format specifier
+Message-ID: <YIG5tLBIAledZetf@unreal>
+References: <cover.1618780558.git.christophe.jaillet@wanadoo.fr>
+ <ae88f6c2c613d17bc1a56692cfa4f960dbc723d2.1618780558.git.christophe.jaillet@wanadoo.fr>
+ <042f5fff-5faf-f3c5-0819-b8c8d766ede6@acm.org>
+ <1032428026.331.1618814178946.JavaMail.www@wwinf2229>
+ <40c21bfe-e304-230d-b319-b98063347b8b@acm.org>
+ <20210422122419.GF2047089@ziepe.ca>
+ <782e329a-7c3f-a0da-5d2f-89871b0c4b9b@acm.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <YIE7pdqV/h10tEAK@mwanda>
-User-Agent: NeoMutt/20171215
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <782e329a-7c3f-a0da-5d2f-89871b0c4b9b@acm.org>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-(dropping Tixy as I am sure it will bounce, he left/retired from Linaro
-long back)
+On Thu, Apr 22, 2021 at 10:12:33AM -0700, Bart Van Assche wrote:
+> On 4/22/21 5:24 AM, Jason Gunthorpe wrote:
+> > On Mon, Apr 19, 2021 at 01:02:34PM -0700, Bart Van Assche wrote:
+> >> On 4/18/21 11:36 PM, Marion et Christophe JAILLET wrote:
+> >>> The list in To: is the one given by get_maintainer.pl. Usualy, I only
+> >>> put the ML in Cc: I've run the script on the 2 patches of the serie
+> >>> and merged the 2 lists. Everyone is in the To: of the cover letter
+> >>> and of the 2 patches.
+> >>>
+> >>> If Théo is "Tejun Heo" (  (maintainer:WORKQUEUE) ), he is already in
+> >>> the To: line.
+> >> Linus wants to see a "Cc: ${maintainer}" tag in patches that he receives
+> >> from a maintainer and that modify another subsystem than the subsystem
+> >> maintained by that maintainer.
+> > 
+> > Really? Do you remember a lore link for this?
+> 
+> Last time I saw Linus mentioning this was a few months ago.
+> Unfortunately I cannot find that message anymore.
+> 
+> > Generally I've been junking the CC lines (vs Andrew at the other
+> > extreme that often has 10's of CC lines)
+> 
+> Most entries in the MAINTAINERS file have one to three email addresses
+> so I'm surprised to read that Cc-ing maintainer(s) could result in tens
+> of Cc lines?
 
-On Thu, Apr 22, 2021 at 12:02:29PM +0300, Dan Carpenter wrote:
-> How type promotion works in ternary expressions is a bit tricky.
-> The problem is that scpi_clk_get_val() returns longs, "ret" is a int
-> which holds a negative error code, and le32_to_cpu() is an unsigned int.
+git log mm/
 
-Agreed.
+commit 2b8305260fb37fc20e13f71e13073304d0a031c8
+Author: Alexander Potapenko <glider@google.com>
+Date:   Thu Feb 25 17:19:21 2021 -0800
 
-> We want the negative error code to be cast to a negative long.  But
-> because le32_to_cpu() is an u32 then "ret" is type promoted to u32 and
-> becomes a high positive and then it is promoted to long and it is still
-> a high positive value.
->
+    kfence, kasan: make KFENCE compatible with KASAN
 
-Thanks a lot for finding and fixing the bug!
+    Make KFENCE compatible with KASAN. Currently this helps test KFENCE
+    itself, where KASAN can catch potential corruptions to KFENCE state, or
+    other corruptions that may be a result of freepointer corruptions in the
+    main allocators.
 
-> Fix this by getting rid of the ternary.
->
-> Fixes: 8cb7cf56c9fe ("firmware: add support for ARM System Control and Power Interface(SCPI) protocol")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/firmware/arm_scpi.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/firmware/arm_scpi.c b/drivers/firmware/arm_scpi.c
-> index d0dee37ad522..3bf61854121d 100644
-> --- a/drivers/firmware/arm_scpi.c
-> +++ b/drivers/firmware/arm_scpi.c
-> @@ -552,8 +552,10 @@ static unsigned long scpi_clk_get_val(u16 clk_id)
->
->  	ret = scpi_send_message(CMD_GET_CLOCK_VALUE, &le_clk_id,
->  				sizeof(le_clk_id), &rate, sizeof(rate));
-> +	if (ret)
-> +		return ret;
+    [akpm@linux-foundation.org: merge fixup]
+    [andreyknvl@google.com: untag addresses for KFENCE]
+      Link: https://lkml.kernel.org/r/9dc196006921b191d25d10f6e611316db7da2efc.1611946152.git.andreyknvl@google.com
 
-This could be still an issue, ideally I would prefer to pass the return
-value via argument pointer and always return success/failure as return
-value. Can't remember any reason for this. Since this is old interface
-with limited platform to test, I think returning 0 as clock rate on error
-should be fine as Cristain suggested. If you agree with that, I can
-fix up when applying. 
+    Link: https://lkml.kernel.org/r/20201103175841.3495947-7-elver@google.com
+    Signed-off-by: Marco Elver <elver@google.com>
+    Signed-off-by: Alexander Potapenko <glider@google.com>
+    Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+    Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
+    Reviewed-by: Jann Horn <jannh@google.com>
+    Co-developed-by: Marco Elver <elver@google.com>
+    Cc: Andrey Konovalov <andreyknvl@google.com>
+    Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
+    Cc: Andy Lutomirski <luto@kernel.org>
+    Cc: Borislav Petkov <bp@alien8.de>
+    Cc: Catalin Marinas <catalin.marinas@arm.com>
+    Cc: Christopher Lameter <cl@linux.com>
+    Cc: Dave Hansen <dave.hansen@linux.intel.com>
+    Cc: David Rientjes <rientjes@google.com>
+    Cc: Eric Dumazet <edumazet@google.com>
+    Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Cc: Hillf Danton <hdanton@sina.com>
+    Cc: "H. Peter Anvin" <hpa@zytor.com>
+    Cc: Ingo Molnar <mingo@redhat.com>
+    Cc: Joern Engel <joern@purestorage.com>
+    Cc: Jonathan Corbet <corbet@lwn.net>
+    Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+    Cc: Kees Cook <keescook@chromium.org>
+    Cc: Mark Rutland <mark.rutland@arm.com>
+    Cc: Paul E. McKenney <paulmck@kernel.org>
+    Cc: Pekka Enberg <penberg@kernel.org>
+    Cc: Peter Zijlstra <peterz@infradead.org>
+    Cc: SeongJae Park <sjpark@amazon.de>
+    Cc: Thomas Gleixner <tglx@linutronix.de>
+    Cc: Vlastimil Babka <vbabka@suse.cz>
+    Cc: Will Deacon <will@kernel.org>
+    Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+    Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 
-If you don't, we can look at changing the scpi interface to clock driver
-which will anyway need to do the same(i.e. send 0 in case of error)
 
-Let me know.
-
---
-Regards,
-Sudeep
+> 
+> Thanks,
+> 
+> Bart.
