@@ -2,105 +2,79 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6175CC433ED
-	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Apr 2021 12:24:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55491C433ED
+	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Apr 2021 12:32:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 11C1A61164
-	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Apr 2021 12:24:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10B2061417
+	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Apr 2021 12:32:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236222AbhDVMY5 (ORCPT
+        id S236144AbhDVMch (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 22 Apr 2021 08:24:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37228 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235791AbhDVMY4 (ORCPT
+        Thu, 22 Apr 2021 08:32:37 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:34593 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235791AbhDVMcg (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 22 Apr 2021 08:24:56 -0400
-Received: from mail-qt1-x82e.google.com (mail-qt1-x82e.google.com [IPv6:2607:f8b0:4864:20::82e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5FA9C06174A
-        for <kernel-janitors@vger.kernel.org>; Thu, 22 Apr 2021 05:24:21 -0700 (PDT)
-Received: by mail-qt1-x82e.google.com with SMTP id q4so5228814qtn.5
-        for <kernel-janitors@vger.kernel.org>; Thu, 22 Apr 2021 05:24:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=Is05JWHPFApn3MhnEp8CclJVYRn/uQGbj5/LETOny2Q=;
-        b=Y79UHIET3J/zpQ2D5u2CwJJkSSTTFGgD+kF1m+N8tqyw/+vNAQVJb3RB33hxOnqg6G
-         GobKirIX/Q3vme0FeNf+H6GW1JVkSwVMZKuwy0rvRWQlMRpgtvzJkMsXc+6N3gAb8BWV
-         JukzkxcQhd2qk08R8Pkun1hEaZjZAzG73ztzwQbxHPdDVX1wOiO3sE497guh1hiR57hm
-         igtSfv/t/soNU2qs7wK6pPtJRmsCFlfyC0aMyhsvdhoRqBQrP9fed2dAqOGPJtqcaqKT
-         njCH624+YLnJ3D6Z1XkEP5HoLBvK7TApYgkREivoia2MpOgC4FDLz2+J9knUMqPsXgL4
-         XI7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=Is05JWHPFApn3MhnEp8CclJVYRn/uQGbj5/LETOny2Q=;
-        b=U/yVp0ifrU+GFbLu/kFyq2f8e/SBZTkMlknUfhqczTpyoCbtyArdbOlEec8O/W9qJy
-         GkVuG0n5Xjn3FCFPmrfVuYcgbOGTAAk9H1qMWi/NzffS0E5EMVyqJWTCeMzPga9+2psC
-         wPDhfGiimyABm0Pp+EqBTgQ5EL0wu6NkHOTb/Jo3PJgutHKXYsc4J0fruFrd78hYB23k
-         pDFAookyGcD6Alp+NOqD3Te+LPXRi/Phl3D1kqRMxeUbpfdn+twH6u25NgoqvwQuJBmi
-         418tS1uXTqEpm/SjKGwkEmjIypbcGeNO9NMSIiCigUf/WkGRA2EOS3L4K5/44FImbh4E
-         KaGw==
-X-Gm-Message-State: AOAM531fbGuS+Z8jSwJkrGlVvb5fYc66tVE6HI3kvuq8UTsr2j4iinv0
-        bAjvmQgic4MpquCZFzpHz8OPYQ==
-X-Google-Smtp-Source: ABdhPJxmga5jzjCzVECn9/ABhWfehVmaeDjMx6i1nagE65VyQf4VR4HrdTJmWnLH/kTlplPQEALSZQ==
-X-Received: by 2002:a05:622a:1186:: with SMTP id m6mr2804440qtk.319.1619094261080;
-        Thu, 22 Apr 2021 05:24:21 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-47-55-113-94.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.113.94])
-        by smtp.gmail.com with ESMTPSA id e12sm2014445qtj.81.2021.04.22.05.24.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Apr 2021 05:24:20 -0700 (PDT)
-Received: from jgg by mlx with local (Exim 4.94)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1lZYNX-009xCE-Mz; Thu, 22 Apr 2021 09:24:19 -0300
-Date:   Thu, 22 Apr 2021 09:24:19 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Bart Van Assche <bvanassche@acm.org>
-Cc:     Marion et Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        tj@kernel.org, jiangshanlai@gmail.com, saeedm@nvidia.com,
-        leon@kernel.org, davem@davemloft.net, kuba@kernel.org,
-        netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 1/2] workqueue: Have 'alloc_workqueue()' like macros
- accept a format specifier
-Message-ID: <20210422122419.GF2047089@ziepe.ca>
-References: <cover.1618780558.git.christophe.jaillet@wanadoo.fr>
- <ae88f6c2c613d17bc1a56692cfa4f960dbc723d2.1618780558.git.christophe.jaillet@wanadoo.fr>
- <042f5fff-5faf-f3c5-0819-b8c8d766ede6@acm.org>
- <1032428026.331.1618814178946.JavaMail.www@wwinf2229>
- <40c21bfe-e304-230d-b319-b98063347b8b@acm.org>
+        Thu, 22 Apr 2021 08:32:36 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lZYUx-0006X3-4m; Thu, 22 Apr 2021 12:31:59 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Felix Kuehling <Felix.Kuehling@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Alex Sierra <alex.sierra@amd.com>,
+        Philip Yang <Philip.Yang@amd.com>,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] drm/amdkfd: fix uint32 variable compared to less than zero
+Date:   Thu, 22 Apr 2021 13:31:58 +0100
+Message-Id: <20210422123158.247332-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <40c21bfe-e304-230d-b319-b98063347b8b@acm.org>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Apr 19, 2021 at 01:02:34PM -0700, Bart Van Assche wrote:
-> On 4/18/21 11:36 PM, Marion et Christophe JAILLET wrote:
-> > The list in To: is the one given by get_maintainer.pl. Usualy, I only
-> > put the ML in Cc: I've run the script on the 2 patches of the serie
-> > and merged the 2 lists. Everyone is in the To: of the cover letter
-> > and of the 2 patches.
-> > 
-> > If Théo is "Tejun Heo" (  (maintainer:WORKQUEUE) ), he is already in
-> > the To: line.
-> Linus wants to see a "Cc: ${maintainer}" tag in patches that he receives
-> from a maintainer and that modify another subsystem than the subsystem
-> maintained by that maintainer.
+From: Colin Ian King <colin.king@canonical.com>
 
-Really? Do you remember a lore link for this?
+Currently the call to kfd_process_gpuidx_from_gpuid is returning an
+int value and this is being assigned to a uint32_t variable gpuidx
+and this is being checked for a negative error return which is always
+going to be false. Fix this by making gpuidx an int32_t. This makes
+gpuidx also type consistent with the use of gpuidx from the callers.
 
-Generally I've been junking the CC lines (vs Andrew at the other
-extreme that often has 10's of CC lines)
+Addresses-Coverity: ("Unsigned compared against 0")
+Fixes: cda0f85bfa5e ("drm/amdkfd: refine migration policy with xnack on")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/amdkfd/kfd_svm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Jason
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_svm.c b/drivers/gpu/drm/amd/amdkfd/kfd_svm.c
+index 0e0b4ffd20ab..bf3c8de85b4a 100644
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_svm.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_svm.c
+@@ -1330,7 +1330,7 @@ static void svm_range_unreserve_bos(struct svm_validate_context *ctx)
+  */
+ static int svm_range_validate_and_map(struct mm_struct *mm,
+ 				      struct svm_range *prange,
+-				      uint32_t gpuidx, bool intr, bool wait)
++				      int32_t gpuidx, bool intr, bool wait)
+ {
+ 	struct svm_validate_context ctx;
+ 	struct hmm_range *hmm_range;
+-- 
+2.30.2
+
