@@ -4,109 +4,118 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF321C433B4
-	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Apr 2021 22:51:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C8F4C433B4
+	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Apr 2021 09:01:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AD419613E6
-	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Apr 2021 22:51:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE1E961428
+	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Apr 2021 09:01:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240271AbhDUWwS (ORCPT
+        id S232896AbhDVJCG (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 21 Apr 2021 18:52:18 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:37912 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235481AbhDUWwS (ORCPT
+        Thu, 22 Apr 2021 05:02:06 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:51236 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229938AbhDVJCF (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 21 Apr 2021 18:52:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1619045504;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=S2eln1RiXUGbh8l5mrppZibe/ezmLkuWu5Q7gl1yH1I=;
-        b=iI8BYmBUiFQx0r+/8An0h/wGvXvBwZ/aqdxhwasn55E4CwV+x5p78g/fJRsW79IsmkeIkd
-        6t2M+Ij7TLelF7Bu2MkkAR+jn5POKAajp2QIQhqApk7H7tGcsB40T6mltqPA9sdfSckgmz
-        4itT12gyMOrmsXnqK8f1VhBiOO2c2tI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-161-kd-xcCRJM6KjHMqIGpOPVg-1; Wed, 21 Apr 2021 18:51:42 -0400
-X-MC-Unique: kd-xcCRJM6KjHMqIGpOPVg-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 699F4343A3;
-        Wed, 21 Apr 2021 22:51:41 +0000 (UTC)
-Received: from redhat.com (ovpn-114-21.phx2.redhat.com [10.3.114.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0637F5D747;
-        Wed, 21 Apr 2021 22:51:40 +0000 (UTC)
-Date:   Wed, 21 Apr 2021 16:51:40 -0600
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Kirti Wankhede <kwankhede@nvidia.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, kvm@vger.kernel.org,
+        Thu, 22 Apr 2021 05:02:05 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13M8xue2163355;
+        Thu, 22 Apr 2021 09:01:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
+ bh=+DyWdORbB7Ede6TpRJ/COaO5LuAEsT1iyov80SfV6MA=;
+ b=RkvrseLlIi8ldTQhwyIm+Iz9Av0wjYrAK5/iK7kJ1Z8i0zDRDeI5CVvQkTWM48BxPu+a
+ PXj+ltiJ34XvhKIuApEbAUSTH9aNrYq08atDtbKtuwzLmb5pzBHlozdP6XHRKVStazcK
+ WGqvQkzKXLbV7tDh7q0jWuE4YS3w8Dlnsn1o+BEYwcR6eCXuv4AhRXygD2c2az2J1mTH
+ caBAmzd1QLibZYm9zOwmMThANcxVYcTOo+ds+nhu7L7uEcYjT2+xnGLUIur2hFT35Y7D
+ 6gdA8DALMwR7vxMTo4A3pDY3Mk9sW4AaC9Qpib6ITCkK49KGnc3tGyqjekq9OaVlk1rk rw== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2130.oracle.com with ESMTP id 37yn6cct5m-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 22 Apr 2021 09:01:07 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13M90tuB109723;
+        Thu, 22 Apr 2021 09:01:06 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by userp3030.oracle.com with ESMTP id 3809m1wnbw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 22 Apr 2021 09:01:06 +0000
+Received: from userp3030.oracle.com (userp3030.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 13M915OF110866;
+        Thu, 22 Apr 2021 09:01:05 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3030.oracle.com with ESMTP id 3809m1wnbe-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 22 Apr 2021 09:01:05 +0000
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 13M912IR018219;
+        Thu, 22 Apr 2021 09:01:02 GMT
+Received: from mwanda (/10.175.205.56)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 22 Apr 2021 02:01:01 -0700
+Date:   Thu, 22 Apr 2021 12:00:54 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Felipe Balbi <balbi@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Jens Axboe <axboe@kernel.dk>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Zhang Qilong <zhangqilong3@huawei.com>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] vfio/mdev: remove unnecessary NULL check in
- mbochs_create()
-Message-ID: <20210421165140.52e9083b@redhat.com>
-In-Reply-To: <YIAowNYCOCNu+xhm@mwanda>
-References: <YIAowNYCOCNu+xhm@mwanda>
+Subject: [PATCH] usb: gadget: prevent a ternary sign expansion bug
+Message-ID: <YIE7RrBPLWc3XtMg@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+X-Proofpoint-GUID: YYEUKkGAQil2fRn5kdTJJMwDAOkMSuAT
+X-Proofpoint-ORIG-GUID: YYEUKkGAQil2fRn5kdTJJMwDAOkMSuAT
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9961 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 priorityscore=1501
+ bulkscore=0 suspectscore=0 impostorscore=0 mlxscore=0 lowpriorityscore=0
+ clxscore=1011 spamscore=0 mlxlogscore=944 adultscore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104060000
+ definitions=main-2104220076
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 21 Apr 2021 16:29:36 +0300
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+The problem is that "req->actual" is a u32, "req->status" is an int, and
+iocb->ki_complete() takes a long.  We would expect that a negative error
+code in "req->status" would translate to a negative long value.
 
-> This NULL check is no longer required because "type" now points to
-> an element in a non-NULL array.
+But what actually happens is that because "req->actual" is a u32, the
+error codes is type promoted to a high positive value and then remains
+a positive value when it is cast to long.  (No sign expansion).
 
-I think the mdpy change is correct too, but it's hard to verify from
-this commit log that it was actually intended.  Can we note that change
-as well?  Thanks,
+We can fix this by casting "req->status" to long.
 
-Alex
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/usb/gadget/legacy/inode.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> 
-> Fixes: 3d3a360e570616 ("vfio/mbochs: Use mdev_get_type_group_id()")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  samples/vfio-mdev/mbochs.c | 2 --
->  samples/vfio-mdev/mdpy.c | 3 +--
->  2 files changed, 1 insertion(+), 4 deletions(-)
-> 
-> diff --git a/samples/vfio-mdev/mbochs.c b/samples/vfio-mdev/mbochs.c
-> index 861c76914e76..881ef9a7296f 100644
-> --- a/samples/vfio-mdev/mbochs.c
-> +++ b/samples/vfio-mdev/mbochs.c
-> @@ -513,8 +513,6 @@ static int mbochs_create(struct mdev_device *mdev)
->  	struct device *dev = mdev_dev(mdev);
->  	struct mdev_state *mdev_state;
->  
-> -	if (!type)
-> -		type = &mbochs_types[0];
->  	if (type->mbytes + mbochs_used_mbytes > max_mbytes)
->  		return -ENOMEM;
->  
-> diff --git a/samples/vfio-mdev/mdpy.c b/samples/vfio-mdev/mdpy.c
-> index f0c0e7209719..e889c1cf8fd1 100644
-> --- a/samples/vfio-mdev/mdpy.c
-> +++ b/samples/vfio-mdev/mdpy.c
-> @@ -667,8 +667,7 @@ static ssize_t description_show(struct mdev_type *mtype,
->  		&mdpy_types[mtype_get_type_group_id(mtype)];
->  
->  	return sprintf(buf, "virtual display, %dx%d framebuffer\n",
-> -		       type ? type->width  : 0,
-> -		       type ? type->height : 0);
-> +		       type->width, type->height);
->  }
->  static MDEV_TYPE_ATTR_RO(description);
->  
+diff --git a/drivers/usb/gadget/legacy/inode.c b/drivers/usb/gadget/legacy/inode.c
+index 71e7d10dd76b..cd8e2737947b 100644
+--- a/drivers/usb/gadget/legacy/inode.c
++++ b/drivers/usb/gadget/legacy/inode.c
+@@ -498,7 +498,8 @@ static void ep_aio_complete(struct usb_ep *ep, struct usb_request *req)
+ 		iocb->private = NULL;
+ 		/* aio_complete() reports bytes-transferred _and_ faults */
+ 
+-		iocb->ki_complete(iocb, req->actual ? req->actual : req->status,
++		iocb->ki_complete(iocb,
++				req->actual ? req->actual : (long)req->status,
+ 				req->status);
+ 	} else {
+ 		/* ep_copy_to_user() won't report both; we hide some faults */
+-- 
+2.30.2
 
