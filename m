@@ -2,161 +2,179 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 958E7C433B4
-	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Apr 2021 19:43:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 462B8C43460
+	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Apr 2021 20:30:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5B45761428
-	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Apr 2021 19:43:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 168C3613DC
+	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Apr 2021 20:30:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238770AbhDVTob (ORCPT
+        id S239473AbhDVUak (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 22 Apr 2021 15:44:31 -0400
-Received: from mail-co1nam11on2063.outbound.protection.outlook.com ([40.107.220.63]:53728
-        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S236896AbhDVToa (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 22 Apr 2021 15:44:30 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RbCUxAu3FZhk4JimsxLT/3MS+pjvkWqbGHHOCHpr5gpmmhlfk65pjpN392OxnBaRwECgJFOyIBab1+jdZzOlJHknLQW7H+smVAm+juCgUxZ42JNWXBZ1aNkVSxng1481kkraZecxSi2LQiGAwOF4MTy9PUVEoMPUd7oR0JHQ31ZlyJrdldDXnyL4KmtW603WKaAumuBO4L/OVwKjXnIsjZva/7v5S7QnPdyN9Ki+Sv1PyMnBCPej7hmRE51RLPM0Pyu4+qga+6zpWiOOzYf5MJYfr8wK8BCYTGO0CKfPB7DftF+Jz+S90HWl5BuCcpwkewCZ1VK8dpddT+ToulfQvg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1Yq+cv11qqPc4M0UOEL5/ziQQd52hOpSGeLEor1k058=;
- b=UiWyPixErF/qYkqEpMgi0v8Q2NmwBzthC5yI5JxYknxgdh7Wpqn20jz7buWPmm7/suxOf6NJt6Cxm03rCWZ9hC6N9v9EJhfv9Zt60+3c6fdJnpxT0TJ0tkrOVVxTjnOsCrqxNO4a/OHOQiUctoYCa+QvK9uTReR2c7UkrrmVCzb4R+Ne+1PWjUxA56U6E/naCM7Pc7DhAfHHyRcuCQ5hXf5MAVmf0J8ODM9F5qGCpJqzv2qAAXrpVH3FBQSxHVDaJXHtpmpfoQlMbcok2j8o/EvoZ+cfE8l4Z3TVOwm3psDwPRSC+7ducUOsZ1gvTq3qd3JJYcUYGS7GfmDJI2em+w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1Yq+cv11qqPc4M0UOEL5/ziQQd52hOpSGeLEor1k058=;
- b=uUKNBZDECrCPt/BUpMyHbvMrWNnWIBzAhSbM2EGL3Nm78L+9PoVN6tqmm2axlXcjlMFg4xT9upNRWFP/jygSUrBCnpiSRCrC58xz2oQOcvk835pB9MgDsVFkykGyDGuYbZ3MZEiLNt4osRebXuhn6WEdIQ3Op1wU8Mj5e41CQEM=
-Authentication-Results: vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=none action=none header.from=amd.com;
-Received: from BL0PR12MB4948.namprd12.prod.outlook.com (2603:10b6:208:1cc::20)
- by BL0PR12MB2484.namprd12.prod.outlook.com (2603:10b6:207:4e::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3999.32; Thu, 22 Apr
- 2021 19:43:53 +0000
-Received: from BL0PR12MB4948.namprd12.prod.outlook.com
- ([fe80::70f5:99ed:65a1:c033]) by BL0PR12MB4948.namprd12.prod.outlook.com
- ([fe80::70f5:99ed:65a1:c033%7]) with mapi id 15.20.3933.040; Thu, 22 Apr 2021
- 19:43:53 +0000
-Subject: Re: [PATCH][next] drm/amdkfd: remove redundant initialization to
- variable r
-To:     Colin King <colin.king@canonical.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210422124452.247714-1-colin.king@canonical.com>
-From:   Felix Kuehling <felix.kuehling@amd.com>
-Message-ID: <cd3329b0-dc8b-c9e5-a4aa-b161dbf4a7cd@amd.com>
-Date:   Thu, 22 Apr 2021 15:43:50 -0400
+        Thu, 22 Apr 2021 16:30:40 -0400
+Received: from mail-pg1-f179.google.com ([209.85.215.179]:45859 "EHLO
+        mail-pg1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239298AbhDVUaj (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 22 Apr 2021 16:30:39 -0400
+Received: by mail-pg1-f179.google.com with SMTP id d10so33648888pgf.12;
+        Thu, 22 Apr 2021 13:30:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ErwniLcaGVO/kxmEwl8gGV0QjSUQKJ/t9ZJlSqCEkEo=;
+        b=UHgXJpPoOZl081FZ+7kXYg7dS6ENxhs/XxcdbvKZCeDIyYkcYigb8pTmVeDOynj2dU
+         yAqCRdte7xpQJkrcwylxj+YmeQ7bN/6xVlrBMUYEIVvQUGDtq77EDoRnpGC5g0O/94Lq
+         /z9zQfTWs9jeBCu6WkSWswffr6lBeCI+hr66LumWxgIQjjXwxhAYWK3zs0BS1vdI7GGg
+         iAsAkEA4MX+v67TFaGljp+vebE9hu/GIJpOqn+1z2ltMsCKIbmxHZHTDhJLjeSE/Q/L4
+         Hv+q2g19vtZGhhrTfq2h0Eoh6DIzLf46TumoHK/mIi/GqhoCwu/FeC5buUcuLRE/N5LU
+         aPew==
+X-Gm-Message-State: AOAM531AAsbQr95dMFhLh+N+Ltd2fZeZQNcWNxzNvMzhi/z+mNP/a8fC
+        E6wY4WUMsX09fplieFsVjPRbAXnXkLw6MA==
+X-Google-Smtp-Source: ABdhPJxNNltJlaq4UgjTTlU6u2x4QZW/U/kixD1KrCTqqMjziRQo0Aws14ZZK/60vBVE/YGzE7v9Mg==
+X-Received: by 2002:a63:e00f:: with SMTP id e15mr407170pgh.317.1619123403370;
+        Thu, 22 Apr 2021 13:30:03 -0700 (PDT)
+Received: from [192.168.51.110] (c-73-241-217-19.hsd1.ca.comcast.net. [73.241.217.19])
+        by smtp.gmail.com with ESMTPSA id k21sm2751759pfi.28.2021.04.22.13.30.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 22 Apr 2021 13:30:02 -0700 (PDT)
+Subject: Re: [PATCH 1/2] workqueue: Have 'alloc_workqueue()' like macros
+ accept a format specifier
+To:     Leon Romanovsky <leon@kernel.org>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
+        Marion et Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        tj@kernel.org, jiangshanlai@gmail.com, saeedm@nvidia.com,
+        davem@davemloft.net, kuba@kernel.org, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <cover.1618780558.git.christophe.jaillet@wanadoo.fr>
+ <ae88f6c2c613d17bc1a56692cfa4f960dbc723d2.1618780558.git.christophe.jaillet@wanadoo.fr>
+ <042f5fff-5faf-f3c5-0819-b8c8d766ede6@acm.org>
+ <1032428026.331.1618814178946.JavaMail.www@wwinf2229>
+ <40c21bfe-e304-230d-b319-b98063347b8b@acm.org>
+ <20210422122419.GF2047089@ziepe.ca>
+ <782e329a-7c3f-a0da-5d2f-89871b0c4b9b@acm.org> <YIG5tLBIAledZetf@unreal>
+From:   Bart Van Assche <bvanassche@acm.org>
+Message-ID: <53b2ef14-1b8a-43b1-ef53-e314e2649ea0@acm.org>
+Date:   Thu, 22 Apr 2021 13:30:00 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
-In-Reply-To: <20210422124452.247714-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Originating-IP: [142.182.183.69]
-X-ClientProxiedBy: YT2PR01CA0002.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:38::7) To BL0PR12MB4948.namprd12.prod.outlook.com
- (2603:10b6:208:1cc::20)
+ Thunderbird/78.9.0
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [192.168.2.100] (142.182.183.69) by YT2PR01CA0002.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:38::7) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4042.22 via Frontend Transport; Thu, 22 Apr 2021 19:43:52 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: fe748671-c8c1-4322-f41b-08d905c6f542
-X-MS-TrafficTypeDiagnostic: BL0PR12MB2484:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <BL0PR12MB24845FA1D8D43A5A95A6378592469@BL0PR12MB2484.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:1002;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: SCaNFfSkb1vG9+jKxKPqRIUjsb55obqO16p0Ay7EG/B0Y2c0NcCyOB7hs4wc4o5qBdLpDdExTBtEqfDj0RBXNWNUeUa+781qJi00z9juura2PXMwzPBq4gmKmtvv/miFeXQuOKG0TzJnxJYZsxtmG9lYmpeiodClMXOyt3DJLGz4vPauN4qAwx1wn7xWMoOA37S1L9/tl0vCA23F0qmav90BwDOe7lPp4GB7yKxVXQplQbl/tcihrUa34esvsTOcLKjPXtTBev+wynQCnLmgsmg3FxBwEn7ZdtFvIWl0WqN3g17v73Irip3DNHtMwTFNwTjnv98VR7/7bjrpJfv3SBtjlivcnlw0o24hwsx8LHlbk3Hwntm3owhlskpBPlSBoCXp+GCxkxLcmndj58Dh0Qo1Yy8V1eaavxh4wJpi2SGsR+b9RoQTYssxlgbsczrT4mExolDoe/1oTlCMrvwlrp/Vk2dstORlXTtJUVetI/A5nOOTp76QG3l2UB7gq/TYYbOYlleEw53DQBH+hd9qe+RrJAGOVrzGWean+TB93gvNiB/7GGygUHNweMbWP0Hn8kfbV5S+Qb5jR9GTG96dEYZyuA3MYrXZby5oezIMb9xm4sUKo7XRAtBdb4FDGYKOKa4b/2yBD/kVSJD/73xad6LSXYTNTHmCeUYPpcOuyIRtR6ojMEps91ClM91RTRKV44576M69yJOlIAyoA4hpbIhyFzs6CFqeH4ATVqFEOm8=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL0PR12MB4948.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(376002)(396003)(366004)(346002)(136003)(39860400002)(66946007)(31696002)(6486002)(110136005)(31686004)(66556008)(8936002)(4326008)(956004)(36756003)(66476007)(186003)(2906002)(478600001)(38100700002)(5660300002)(8676002)(86362001)(2616005)(83380400001)(16576012)(16526019)(316002)(44832011)(26005)(129723003)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: =?utf-8?B?ZU9zdFdtNWgvZlZsb0x0Z1VzNFZIQm82d2l2cHpPMnpURFdFSmZtdTBhS1Ey?=
- =?utf-8?B?aDRuanovRE55a0xEWENnNkFEYVJxRitZb3ora3gwcGxQTXVWSjJibXlPMW52?=
- =?utf-8?B?QUF5SW80cTdhdnBnWStpMStpYktFaktQQzYzTmgwdUNoSkhoWHFONkpyZWMw?=
- =?utf-8?B?UUVxWDcyb3lZS3pFcEQxR2lTZUJNTzFzSUNvWUR4SVdNMmZ6S3NWRGlUTXVo?=
- =?utf-8?B?NURoMG5KTmdzbld3V1VCTDZ0b3hFcWFXZDdrSVNVZk1xWFZKQ0l5Y09hbFUr?=
- =?utf-8?B?M05OUWhzUkVJNzE0RnhuUjEvaUNndmVUd1hNTHNPbENjZ1liUW5YUjFtUUc5?=
- =?utf-8?B?TEx5RDNXZzVKRVk4by9qZlo1THBMYklWYW9hT0lYeERwYkxucUVqaGdobmta?=
- =?utf-8?B?UnJTUTIvLzFKRUpHc2k5UUhtMkFqN2UrNWZ0YmdncWFacVpYSUZjR3pFeHRI?=
- =?utf-8?B?UTJSdGJ6bWRjSk0xWVdxSHppczZsYTRsY1BiZHlsNlVBZ1hVaHk4Vit4WFph?=
- =?utf-8?B?bUlNK1QzekhENHI5OWlUcmxoNzhQbDE2c3A4eThuRXNNSm9icWtvVXczU1E3?=
- =?utf-8?B?cDBHQzU4M1QvcDJTWWszcStoZjlKMVRUaDhmTmdGZWhKelZ1d1hTQ21XaEdl?=
- =?utf-8?B?VHlLZTRGR0RPb3AyK0ltem00R1NqcThWSVQ4NHBPTmRPWDVob3RLc3hNNXNP?=
- =?utf-8?B?a29BaDlQakJqL0E2V1o0UDdCVWxkd1ZsRE04R3UvNzFWR1MvbTFCRDhmQlN2?=
- =?utf-8?B?VWxtWGZjaEVxY0l5UTlDQ2JldUxJdU90dCtWcy9OeS9KVEhvcWdYU1JPN3lh?=
- =?utf-8?B?Z25QbnNZT0JabTF4NVBHVVFmWmNwSkVWdjUxQ05jT3pXZlo4ZDVGTkFhQWk2?=
- =?utf-8?B?SzdhWmdWNlhkVUZ6b2liMkNMZks2TC9FZ0pFdEk4aytnUzk5bWpLK21aZXRu?=
- =?utf-8?B?aHNkb3lIbHZTdWlyRVRCVlJ4MjlHRFhwMXVrWkF3aVJHZHUrK0Z4bEpWYWI5?=
- =?utf-8?B?bjVjNWdwRGxSR21HclpVSmdkd0RaSFFUdFVXcEZBSXhrWUJVa3lMSG1kcGhz?=
- =?utf-8?B?RVJ1ZUFXWlh3TDVnR2U1UkxVRTltVWVnNEFjUmRZMFhGWVNJY0pWSHdJeE13?=
- =?utf-8?B?Q0lURmo3bmJrK0hFdlh4cGlBNEgzZ2V6dWNmZlpneGxIUGI0ZFJ0OTRCdVFB?=
- =?utf-8?B?UVoyMmRvc0w3K0Q0MHgrNFUxOXlMODVoQjcxckFweW12VFF1cWRkankzL2JN?=
- =?utf-8?B?UVp1UXo2Y0p1U2Y2NWRYbWtHZ1FjVktBakVka2FsamFSdWR0OGJqTXNuMWRN?=
- =?utf-8?B?ZGJlWFNxWFI4OG9KejhtRExBZTNCTWdNOG9iZG8zV0RxM1pzLytoc2daLy9B?=
- =?utf-8?B?V2k5L0dWRFNnSDBPMFNVMytWbzBiK1ZGazJhVkl5bTNhUFFSdGNRUVYzM05K?=
- =?utf-8?B?UDNoQjk0anVqSHVpWVJSZ2hXOFFtWjVmOVo2SjZ3ZllUMjNBRUVZQ3ZMOEV1?=
- =?utf-8?B?RXFQUitCT2NqRW0wM3hKSEkrUmZQaDNySVZFUXVLNE1aUTJSV2xjT2FnQkZ1?=
- =?utf-8?B?d21iSkFlUWdId0tHYkRVS1c2c1A0WlVEWk5aUjNxV3R4bVBLUERRNW4vNit5?=
- =?utf-8?B?KytWU1pDa3hNQmFHZEVyUkhvMExVR0RPQnRRRktlTWZYNVFpVGQzeFVnU0dH?=
- =?utf-8?B?TGZmcHZ3S1MxQ1IwdktGU29RZGl1Z3Exckg1eUw1bURHbTV6bEV5YlUxREEr?=
- =?utf-8?Q?IG51ikF4PvoZyLHjiGux3CqblT/AxrQ8cz5ekTm?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fe748671-c8c1-4322-f41b-08d905c6f542
-X-MS-Exchange-CrossTenant-AuthSource: BL0PR12MB4948.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Apr 2021 19:43:52.8952
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4vN1811C7VBajz2U6wjFApjWQYnpd2oGvMULyzTdDeCJTnpInNnhOUotcp2VlUHvljJtBYMSqI7O4kxfKcBOGQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR12MB2484
+In-Reply-To: <YIG5tLBIAledZetf@unreal>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Am 2021-04-22 um 8:44 a.m. schrieb Colin King:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The variable r is being initialized with a value that is never read
-> and it is being updated later with a new value. The initialization is
-> redundant and can be removed.
->
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Applied to amd-staging-drm-next.
+On 4/22/21 11:00 AM, Leon Romanovsky wrote:
+> On Thu, Apr 22, 2021 at 10:12:33AM -0700, Bart Van Assche wrote:
+>> On 4/22/21 5:24 AM, Jason Gunthorpe wrote:
+>>> On Mon, Apr 19, 2021 at 01:02:34PM -0700, Bart Van Assche wrote:
+>>>> On 4/18/21 11:36 PM, Marion et Christophe JAILLET wrote:
+>>>>> The list in To: is the one given by get_maintainer.pl. Usualy, I only
+>>>>> put the ML in Cc: I've run the script on the 2 patches of the serie
+>>>>> and merged the 2 lists. Everyone is in the To: of the cover letter
+>>>>> and of the 2 patches.
+>>>>>
+>>>>> If Théo is "Tejun Heo" (  (maintainer:WORKQUEUE) ), he is already in
+>>>>> the To: line.
+>>>> Linus wants to see a "Cc: ${maintainer}" tag in patches that he receives
+>>>> from a maintainer and that modify another subsystem than the subsystem
+>>>> maintained by that maintainer.
+>>>
+>>> Really? Do you remember a lore link for this?
+>>
+>> Last time I saw Linus mentioning this was a few months ago.
+>> Unfortunately I cannot find that message anymore.
+>>
+>>> Generally I've been junking the CC lines (vs Andrew at the other
+>>> extreme that often has 10's of CC lines)
+>>
+>> Most entries in the MAINTAINERS file have one to three email addresses
+>> so I'm surprised to read that Cc-ing maintainer(s) could result in tens
+>> of Cc lines?
+> 
+> git log mm/
+> 
+> commit 2b8305260fb37fc20e13f71e13073304d0a031c8
+> Author: Alexander Potapenko <glider@google.com>
+> Date:   Thu Feb 25 17:19:21 2021 -0800
+> 
+>      kfence, kasan: make KFENCE compatible with KASAN
+> 
+>      Make KFENCE compatible with KASAN. Currently this helps test KFENCE
+>      itself, where KASAN can catch potential corruptions to KFENCE state, or
+>      other corruptions that may be a result of freepointer corruptions in the
+>      main allocators.
+> 
+>      [akpm@linux-foundation.org: merge fixup]
+>      [andreyknvl@google.com: untag addresses for KFENCE]
+>        Link: https://lkml.kernel.org/r/9dc196006921b191d25d10f6e611316db7da2efc.1611946152.git.andreyknvl@google.com
+> 
+>      Link: https://lkml.kernel.org/r/20201103175841.3495947-7-elver@google.com
+>      Signed-off-by: Marco Elver <elver@google.com>
+>      Signed-off-by: Alexander Potapenko <glider@google.com>
+>      Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+>      Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
+>      Reviewed-by: Jann Horn <jannh@google.com>
+>      Co-developed-by: Marco Elver <elver@google.com>
+>      Cc: Andrey Konovalov <andreyknvl@google.com>
+>      Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
+>      Cc: Andy Lutomirski <luto@kernel.org>
+>      Cc: Borislav Petkov <bp@alien8.de>
+>      Cc: Catalin Marinas <catalin.marinas@arm.com>
+>      Cc: Christopher Lameter <cl@linux.com>
+>      Cc: Dave Hansen <dave.hansen@linux.intel.com>
+>      Cc: David Rientjes <rientjes@google.com>
+>      Cc: Eric Dumazet <edumazet@google.com>
+>      Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>      Cc: Hillf Danton <hdanton@sina.com>
+>      Cc: "H. Peter Anvin" <hpa@zytor.com>
+>      Cc: Ingo Molnar <mingo@redhat.com>
+>      Cc: Joern Engel <joern@purestorage.com>
+>      Cc: Jonathan Corbet <corbet@lwn.net>
+>      Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+>      Cc: Kees Cook <keescook@chromium.org>
+>      Cc: Mark Rutland <mark.rutland@arm.com>
+>      Cc: Paul E. McKenney <paulmck@kernel.org>
+>      Cc: Pekka Enberg <penberg@kernel.org>
+>      Cc: Peter Zijlstra <peterz@infradead.org>
+>      Cc: SeongJae Park <sjpark@amazon.de>
+>      Cc: Thomas Gleixner <tglx@linutronix.de>
+>      Cc: Vlastimil Babka <vbabka@suse.cz>
+>      Cc: Will Deacon <will@kernel.org>
+>      Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+>      Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+
+But where does that Cc-list come from? If I extract that patch and run 
+the get_maintainer.pl script, the following output appears:
+
+$ git format-patch -1 2b8305260fb37fc20e13f71e13073304d0a031c8
+0001-kfence-kasan-make-KFENCE-compatible-with-KASAN.patch
+$ scripts/get_maintainer.pl 
+0001-kfence-kasan-make-KFENCE-compatible-with-KASAN.patch
+Alexander Potapenko <glider@google.com> (maintainer:KFENCE)
+Marco Elver <elver@google.com> (maintainer:KFENCE)
+Dmitry Vyukov <dvyukov@google.com> (reviewer:KFENCE)
+Andrey Ryabinin <ryabinin.a.a@gmail.com> (maintainer:KASAN)
+Andrey Konovalov <andreyknvl@gmail.com> (reviewer:KASAN)
+Andrew Morton <akpm@linux-foundation.org> (maintainer:MEMORY MANAGEMENT)
+kasan-dev@googlegroups.com (open list:KFENCE)
+linux-kernel@vger.kernel.org (open list)
+linux-mm@kvack.org (open list:MEMORY MANAGEMENT)
+
+Additionally, please note that in my email I was referring to the 
+MAINTAINERS file. I do not use the get_maintainers.pl script but instead 
+select the Cc-list manually based on what I find in the MAINTAINERS file.
 
 Thanks,
-  Felix
 
-
-> ---
->  drivers/gpu/drm/amd/amdkfd/kfd_migrate.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c b/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c
-> index d44a46eb00d6..a66b67083d83 100644
-> --- a/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c
-> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c
-> @@ -303,7 +303,7 @@ svm_migrate_copy_to_vram(struct amdgpu_device *adev, struct svm_range *prange,
->  	uint64_t vram_addr;
->  	uint64_t offset;
->  	uint64_t i, j;
-> -	int r = -ENOMEM;
-> +	int r;
->  
->  	pr_debug("svms 0x%p [0x%lx 0x%lx]\n", prange->svms, prange->start,
->  		 prange->last);
+Bart.
