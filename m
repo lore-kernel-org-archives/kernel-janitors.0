@@ -7,110 +7,108 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6261DC433B4
-	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Apr 2021 09:12:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62D47C433ED
+	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Apr 2021 09:15:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 32E156148E
-	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Apr 2021 09:12:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 258DF61460
+	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Apr 2021 09:15:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235529AbhDVJM7 (ORCPT
+        id S235592AbhDVJPd (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 22 Apr 2021 05:12:59 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:58368 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230270AbhDVJM5 (ORCPT
+        Thu, 22 Apr 2021 05:15:33 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:52506 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235553AbhDVJPc (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 22 Apr 2021 05:12:57 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13M98vRd179706;
-        Thu, 22 Apr 2021 09:10:39 GMT
+        Thu, 22 Apr 2021 05:15:32 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13M9EuEM031163;
+        Thu, 22 Apr 2021 09:14:56 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
  : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=yMvGDxuBCHmaYIODgZ2Gjc4XWpSEGvxViHuFEN9vEIA=;
- b=YTzYlSF8sRZMuNZtrLGwwfV85kzixFnMkz19KP+d8nAh7r6R42jjGE7NgBhBD9iMe9G/
- pzFXVsJkyFEBI7w9z3zJkPBpVd6jwdMV4qPNaiFoMR4kFftbQI0MQb4nFZrprsvqF/4y
- R69Fz/mS3vPX2FdRXeQUKmkfXjV97sYyciNjwhof3vGezRWT2wTz33cpxeEl1r3f7caf
- 72wzvih4ACvklAfAJkwz4Dz45f5oWYAJR/1UlK8cULhJSfA0GXzFWiC4wbCeFo4sR0u8
- PJQ1UEHHPR/x5O+U1cd894X/N2LtTpG9bmyElnIXOeHe7f2AgeEZap3Amzxyj+SBpcnO Zw== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2120.oracle.com with ESMTP id 38022y454m-1
+ bh=xntS/55EiFbzdDwmFm4R7C34nQeasl3GgUIT3Rw89U4=;
+ b=vKjMjChvNhTsOIel7KExaIwQHQNK6Cf5huUh26zm9at/S9+9EzyCFjS15jwcSJzxJ0bn
+ eLLpyKqQjsbv6vJmXipJjKndw6eznVU8z/m8B3yeMM5i2WObG8AGulbSLNehJfTM96Ml
+ yDzjJYdxQ1CcNo1e/7V9MsKfXDLWSfOl0NjfI9yOu24Rp9J27DWXjAyBqpbntmAbZcPu
+ eeceEXDJPqrXM3zT2xOVi6yY2ZWDv//+3s6dUmF5yk9TyXv+MvgXBd6+klzztok/scH1
+ 4iDBZpvlAK2au0hC5nDqbqRBBVd2bNI5OqoBD9l85UlNZpJKJqVNHf2+WSGXAKproRzM QA== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 37yqmnmsje-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 22 Apr 2021 09:10:39 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13M9AEqm076479;
-        Thu, 22 Apr 2021 09:10:38 GMT
+        Thu, 22 Apr 2021 09:14:55 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13M9A3qd001482;
+        Thu, 22 Apr 2021 09:14:50 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-        by aserp3020.oracle.com with ESMTP id 3809k36nky-1
+        by userp3020.oracle.com with ESMTP id 3809evkb4g-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 22 Apr 2021 09:10:38 +0000
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 13M9Ab2Z078564;
-        Thu, 22 Apr 2021 09:10:37 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3020.oracle.com with ESMTP id 3809k36nkj-1
+        Thu, 22 Apr 2021 09:14:50 +0000
+Received: from userp3020.oracle.com (userp3020.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 13M9D0qo013728;
+        Thu, 22 Apr 2021 09:14:50 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 3809evkb48-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 22 Apr 2021 09:10:37 +0000
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 13M9AZVR024776;
-        Thu, 22 Apr 2021 09:10:36 GMT
+        Thu, 22 Apr 2021 09:14:50 +0000
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 13M9EjKJ031593;
+        Thu, 22 Apr 2021 09:14:45 GMT
 Received: from mwanda (/102.36.221.92)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 22 Apr 2021 02:10:35 -0700
-Date:   Thu, 22 Apr 2021 12:10:28 +0300
+        with ESMTP ; Thu, 22 Apr 2021 02:14:44 -0700
+Date:   Thu, 22 Apr 2021 12:14:37 +0300
 From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Michael Chan <michael.chan@broadcom.com>,
-        Edwin Peer <edwin.peer@broadcom.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH net] bnxt_en: fix ternary sign extension bug in
- bnxt_show_temp()
-Message-ID: <YIE9hEhXpdfffKg1@mwanda>
+To:     Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Chuck Lever <chuck.lever@oracle.com>
+Cc:     Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] SUNRPC: fix ternary sign expansion bug in tracing
+Message-ID: <YIE+fTOOnC9PLXbg@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
-X-Proofpoint-ORIG-GUID: HY-fF0bX4yRn8f2SUIYfb9stiHq-O93L
-X-Proofpoint-GUID: HY-fF0bX4yRn8f2SUIYfb9stiHq-O93L
+X-Proofpoint-ORIG-GUID: VnexRzdtOA0_n3_q8V25vGRfYbFlM_GC
+X-Proofpoint-GUID: VnexRzdtOA0_n3_q8V25vGRfYbFlM_GC
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9961 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 lowpriorityscore=0
- spamscore=0 bulkscore=0 phishscore=0 clxscore=1011 impostorscore=0
- mlxlogscore=999 adultscore=0 malwarescore=0 mlxscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104060000
- definitions=main-2104220077
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxscore=0 adultscore=0
+ impostorscore=0 spamscore=0 malwarescore=0 clxscore=1015
+ lowpriorityscore=0 priorityscore=1501 suspectscore=0 mlxlogscore=999
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104060000 definitions=main-2104220078
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The problem is that bnxt_show_temp() returns long but "rc" is an int
-and "len" is a u32.  With ternary operations the type promotion is quite
-tricky.  The negative "rc" is first promoted to u32 and then to long so
-it ends up being a high positive value instead of a a negative as we
-intended.
+This code is supposed to pass negative "err" values for tracing but it
+passes positive values instead.  The problem is that the
+trace_svcsock_tcp_send() function takes a long but "err" is an int and
+"sent" is a u32.  The negative is first type promoted to u32 so it
+becomes a high positive then it is promoted to long and it stays
+positive.
 
-Fix this by removing the ternary.
+Fix this by casting "err" directly to long.
 
-Fixes: d69753fa1ecb ("bnxt_en: return proper error codes in bnxt_show_temp")
+Fixes: 998024dee197 ("SUNRPC: Add more svcsock tracepoints")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/net/ethernet/broadcom/bnxt/bnxt.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ net/sunrpc/svcsock.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-index e15d454e33f0..f582d51e25ed 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-@@ -9736,7 +9736,9 @@ static ssize_t bnxt_show_temp(struct device *dev,
- 	if (!rc)
- 		len = sprintf(buf, "%u\n", resp->temp * 1000); /* display millidegree */
- 	mutex_unlock(&bp->hwrm_cmd_lock);
--	return rc ?: len;
-+	if (rc)
-+		return rc;
-+	return len;
- }
- static SENSOR_DEVICE_ATTR(temp1_input, 0444, bnxt_show_temp, NULL, 0);
- 
+diff --git a/net/sunrpc/svcsock.c b/net/sunrpc/svcsock.c
+index 9eb5b6b89077..478f857cdaed 100644
+--- a/net/sunrpc/svcsock.c
++++ b/net/sunrpc/svcsock.c
+@@ -1174,7 +1174,7 @@ static int svc_tcp_sendto(struct svc_rqst *rqstp)
+ 	tcp_sock_set_cork(svsk->sk_sk, true);
+ 	err = svc_tcp_sendmsg(svsk->sk_sock, xdr, marker, &sent);
+ 	xdr_free_bvec(xdr);
+-	trace_svcsock_tcp_send(xprt, err < 0 ? err : sent);
++	trace_svcsock_tcp_send(xprt, err < 0 ? (long)err : sent);
+ 	if (err < 0 || sent != (xdr->len + sizeof(marker)))
+ 		goto out_close;
+ 	if (atomic_dec_and_test(&svsk->sk_sendqlen))
 -- 
 2.30.2
 
