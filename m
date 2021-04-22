@@ -2,102 +2,125 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A6E4C433ED
-	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Apr 2021 15:11:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D7F0C43461
+	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Apr 2021 16:21:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 596CC61077
-	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Apr 2021 15:11:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C3BA61424
+	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Apr 2021 16:21:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237511AbhDVPMY (ORCPT
+        id S236504AbhDVQWV convert rfc822-to-8bit (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 22 Apr 2021 11:12:24 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:40234 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236975AbhDVPMX (ORCPT
+        Thu, 22 Apr 2021 12:22:21 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([185.58.85.151]:31570 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S236058AbhDVQWT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 22 Apr 2021 11:12:23 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212])
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1lZaza-0004D1-SE; Thu, 22 Apr 2021 15:11:46 +0000
-Subject: Re: [PATCH][next] KVM: x86: simplify zero'ing of entry->ebx
-To:     Sean Christopherson <seanjc@google.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        kvm@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20210422141129.250525-1-colin.king@canonical.com>
- <YIGRTfMm0MfypN22@google.com>
-From:   Colin Ian King <colin.king@canonical.com>
-Message-ID: <a5e1caeb-f298-e7b2-9132-17aa8f249cec@canonical.com>
-Date:   Thu, 22 Apr 2021 16:11:46 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        Thu, 22 Apr 2021 12:22:19 -0400
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-270-mhKvP-dDOsuLyQ0QyQj3_Q-1; Thu, 22 Apr 2021 17:21:41 +0100
+X-MC-Unique: mhKvP-dDOsuLyQ0QyQj3_Q-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) with Microsoft SMTP
+ Server (TLS) id 15.0.1497.2; Thu, 22 Apr 2021 17:21:40 +0100
+Received: from AcuMS.Aculab.com ([fe80::994c:f5c2:35d6:9b65]) by
+ AcuMS.aculab.com ([fe80::994c:f5c2:35d6:9b65%12]) with mapi id
+ 15.00.1497.015; Thu, 22 Apr 2021 17:21:40 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Dan Carpenter' <dan.carpenter@oracle.com>,
+        Joel Stanley <joel@jms.id.au>
+CC:     Andrew Jeffery <andrew@aj.id.au>,
+        "Chia-Wei, Wang" <chiawei_wang@aspeedtech.com>,
+        Jae Hyun Yoo <jae.hyun.yoo@intel.com>,
+        "John Wang" <wangzhiqiang.bj@bytedance.com>,
+        Brad Bishop <bradleyb@fuzziesquirrel.com>,
+        Patrick Venture <venture@google.com>,
+        "Benjamin Fair" <benjaminfair@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Robert Lippert <rlippert@google.com>,
+        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Subject: RE: [PATCH] soc: aspeed: fix a ternary sign expansion bug
+Thread-Topic: [PATCH] soc: aspeed: fix a ternary sign expansion bug
+Thread-Index: AQHXN1ec+IlNNgnl7EGootyN/jCOrarAtu4w
+Date:   Thu, 22 Apr 2021 16:21:40 +0000
+Message-ID: <59596244622c4a15ac8cc0747332d0be@AcuMS.aculab.com>
+References: <YIE90PSXsMTa2Y8n@mwanda>
+In-Reply-To: <YIE90PSXsMTa2Y8n@mwanda>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-In-Reply-To: <YIGRTfMm0MfypN22@google.com>
-Content-Type: text/plain; charset=utf-8
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 22/04/2021 16:07, Sean Christopherson wrote:
-> On Thu, Apr 22, 2021, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> Currently entry->ebx is being zero'd by masking itself with zero.
->> Simplify this by just assigning zero, cleans up static analysis
->> warning.
->>
->> Addresses-Coverity: ("Bitwise-and with zero")
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>  arch/x86/kvm/cpuid.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
->> index 57744a5d1bc2..9bcc2ff4b232 100644
->> --- a/arch/x86/kvm/cpuid.c
->> +++ b/arch/x86/kvm/cpuid.c
->> @@ -851,7 +851,7 @@ static inline int __do_cpuid_func(struct kvm_cpuid_array *array, u32 function)
->>  		entry->eax &= SGX_ATTR_DEBUG | SGX_ATTR_MODE64BIT |
->>  			      SGX_ATTR_PROVISIONKEY | SGX_ATTR_EINITTOKENKEY |
->>  			      SGX_ATTR_KSS;
->> -		entry->ebx &= 0;
->> +		entry->ebx = 0;
+From: Dan Carpenter
+> Sent: 22 April 2021 10:12
 > 
-> I 100% understand the code is funky, but using &= is intentional.  ebx:eax holds
-> a 64-bit value that is a effectively a set of feature flags.  While the upper
-> 32 bits are extremely unlikely to be used any time soon, if a feature comes
-> along then the correct behavior would be:
+> The intent here was to return negative error codes but it actually
+> returns positive values.  The problem is that type promotion with
+> ternary operations is quite complicated.
 > 
-> 		entry->ebx &= SGX_ATTR_FANCY_NEW_FEATURE;
+> "ret" is an int.  "copied" is a u32.  And the snoop_file_read() function
+> returns long.  What happens is that "ret" is cast to u32 and becomes
+> positive then it's cast to long and it's still positive.
 > 
-> While directly setting entry->ebx would be incorrect.  The idea is to set up a
-> future developer for success so that they don't forget to add the "&".
+> Fix this by removing the ternary so that "ret" is type promoted directly
+> to long.
 > 
-> TL;DR: I'd prefer to keep this as is, even though it's rather ridiculous.
+> Fixes: 3772e5da4454 ("drivers/misc: Aspeed LPC snoop output using misc chardev")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  drivers/soc/aspeed/aspeed-lpc-snoop.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/soc/aspeed/aspeed-lpc-snoop.c b/drivers/soc/aspeed/aspeed-lpc-snoop.c
+> index 210455efb321..eceeaf8dfbeb 100644
+> --- a/drivers/soc/aspeed/aspeed-lpc-snoop.c
+> +++ b/drivers/soc/aspeed/aspeed-lpc-snoop.c
+> @@ -94,8 +94,10 @@ static ssize_t snoop_file_read(struct file *file, char __user *buffer,
+>  			return -EINTR;
+>  	}
+>  	ret = kfifo_to_user(&chan->fifo, buffer, count, &copied);
+> +	if (ret)
+> +		return ret;
+> 
+> -	return ret ? ret : copied;
+> +	return copied;
 
-OK, makes sense. Thanks for explaining.
+I wonder if changing it to:
+	return ret ? ret + 0L : copied;
 
-> 
->>  		break;
->>  	/* Intel PT */
->>  	case 0x14:
->> -- 
->> 2.30.2
->>
+Might make people think in the future and not convert it back
+as an 'optimisation'.
+
+I much prefer adding 0 to a cast to fix integer types.
+In can go less wrong!
+
+IMHO there are far too many casts in the kernel sources.
+Especially the ones that are only there to appease sparse.
+A functional notation for those would remove some of
+the potential problems.
+
+	David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
