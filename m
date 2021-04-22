@@ -2,76 +2,98 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E34E7C433ED
-	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Apr 2021 09:26:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CB8EC433B4
+	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Apr 2021 10:17:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A0783613FA
-	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Apr 2021 09:26:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70E7F61450
+	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Apr 2021 10:17:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235553AbhDVJ1S (ORCPT
+        id S235798AbhDVKRs (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 22 Apr 2021 05:27:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54290 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230341AbhDVJ1R (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 22 Apr 2021 05:27:17 -0400
-Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56CE2C06174A;
-        Thu, 22 Apr 2021 02:26:43 -0700 (PDT)
-Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lZVbP-007H9U-Iu; Thu, 22 Apr 2021 09:26:27 +0000
-Date:   Thu, 22 Apr 2021 09:26:27 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
+        Thu, 22 Apr 2021 06:17:48 -0400
+Received: from foss.arm.com ([217.140.110.172]:49446 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234773AbhDVKRr (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 22 Apr 2021 06:17:47 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 27A0811D4;
+        Thu, 22 Apr 2021 03:17:13 -0700 (PDT)
+Received: from e120937-lin (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 25D053F774;
+        Thu, 22 Apr 2021 03:17:12 -0700 (PDT)
+Date:   Thu, 22 Apr 2021 11:17:09 +0100
+From:   Cristian Marussi <cristian.marussi@arm.com>
 To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>,
-        "Chia-Wei, Wang" <chiawei_wang@aspeedtech.com>,
-        Jae Hyun Yoo <jae.hyun.yoo@intel.com>,
-        John Wang <wangzhiqiang.bj@bytedance.com>,
-        Brad Bishop <bradleyb@fuzziesquirrel.com>,
-        Patrick Venture <venture@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Robert Lippert <rlippert@google.com>,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+Cc:     Sudeep Holla <sudeep.holla@arm.com>,
+        "Jon Medhurst (Tixy)" <tixy@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] soc: aspeed: fix a ternary sign expansion bug
-Message-ID: <YIFBQ50rcZO3NDFD@zeniv-ca.linux.org.uk>
-References: <YIE90PSXsMTa2Y8n@mwanda>
- <YIFA68mfUTSMczp0@zeniv-ca.linux.org.uk>
+Subject: Re: [PATCH] firmware: arm_scpi: prevent ternary sign expansion bug
+Message-ID: <20210422101709.GF43717@e120937-lin>
+References: <YIE7pdqV/h10tEAK@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YIFA68mfUTSMczp0@zeniv-ca.linux.org.uk>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <YIE7pdqV/h10tEAK@mwanda>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Apr 22, 2021 at 09:24:59AM +0000, Al Viro wrote:
-> On Thu, Apr 22, 2021 at 12:11:44PM +0300, Dan Carpenter wrote:
-> > The intent here was to return negative error codes but it actually
-> > returns positive values.  The problem is that type promotion with
-> > ternary operations is quite complicated.
-> > 
-> > "ret" is an int.  "copied" is a u32.  And the snoop_file_read() function
-> > returns long.  What happens is that "ret" is cast to u32 and becomes
-> > positive then it's cast to long and it's still positive.
-> > 
-> > Fix this by removing the ternary so that "ret" is type promoted directly
-> > to long.
-> 
-> Hmm...  Let's grep for kfifo_to_user() - smells like a possible recurring bug...
-> Yup -
-> 
-> samples/kfifo/bytestream-example.c:138: ret = kfifo_to_user(&test, buf, count, &copied);
-> samples/kfifo/inttype-example.c:131:    ret = kfifo_to_user(&test, buf, count, &copied);
-> samples/kfifo/record-example.c:145:     ret = kfifo_to_user(&test, buf, count, &copied);
-> 
-> All three are exactly like that one.
+Hi,
 
-Nevermind, you've already caught and posted that bunch.  Sorry for noise...
+On Thu, Apr 22, 2021 at 12:02:29PM +0300, Dan Carpenter wrote:
+> How type promotion works in ternary expressions is a bit tricky.
+> The problem is that scpi_clk_get_val() returns longs, "ret" is a int
+> which holds a negative error code, and le32_to_cpu() is an unsigned int.
+> We want the negative error code to be cast to a negative long.  But
+> because le32_to_cpu() is an u32 then "ret" is type promoted to u32 and
+> becomes a high positive and then it is promoted to long and it is still
+> a high positive value.
+> 
+> Fix this by getting rid of the ternary.
+
+I wonder how/if the callers up in the stack check/expect ever effectively for a
+2-complement negative value inside the returned unsigned long...given that this
+plugs finally into CLK framework struct clk_ops.recalc_rate via clk-scpi.c which
+also expects unsigned long....but that's another story.
+
+FWIW regarding this patch:
+
+Reviewed-by: Cristian Marussi <cristian.marussi@arm.com>
+
+Thanks
+
+Cristian
+
+> 
+> Fixes: 8cb7cf56c9fe ("firmware: add support for ARM System Control and Power Interface(SCPI) protocol")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  drivers/firmware/arm_scpi.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/firmware/arm_scpi.c b/drivers/firmware/arm_scpi.c
+> index d0dee37ad522..3bf61854121d 100644
+> --- a/drivers/firmware/arm_scpi.c
+> +++ b/drivers/firmware/arm_scpi.c
+> @@ -552,8 +552,10 @@ static unsigned long scpi_clk_get_val(u16 clk_id)
+>  
+>  	ret = scpi_send_message(CMD_GET_CLOCK_VALUE, &le_clk_id,
+>  				sizeof(le_clk_id), &rate, sizeof(rate));
+> +	if (ret)
+> +		return ret;
+>  
+> -	return ret ? ret : le32_to_cpu(rate);
+> +	return le32_to_cpu(rate);
+>  }
+>  
+>  static int scpi_clk_set_val(u16 clk_id, unsigned long rate)
+> -- 
+> 2.30.2
+> 
