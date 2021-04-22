@@ -2,123 +2,88 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65189C433B4
-	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Apr 2021 13:15:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EFE0C433ED
+	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Apr 2021 13:26:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 25C586101B
-	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Apr 2021 13:15:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40AFA6143B
+	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Apr 2021 13:26:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236283AbhDVNPs (ORCPT
+        id S235957AbhDVN1T (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 22 Apr 2021 09:15:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51862 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230005AbhDVNPs (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 22 Apr 2021 09:15:48 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 16E9261426;
-        Thu, 22 Apr 2021 13:15:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1619097313;
-        bh=qYbinlozbiPMkWqTzsC8oiOShV5c2Xd4JeYWmDaKed4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PDsdJBagcHSbWpTjPwuiLei0YCvMarWaL7fAepN/1GASOs2Zj56wgx7Ogk8EfXlwo
-         TW94TS+Q9iO86l9hnZ5aPlFBa4/2XkrQtVhOCIex57/1xAXeA60IKo1FDqfktSk3HG
-         jJjH84uHWWe6iDEmMTMlgCuHgcxjORT0EMdOcUlel45yCUARSpCSwO1poNcENrK6Vp
-         78ixzp1+vPzxQ6DxGfauV/SIirULq8s9fbKCv//4+AGM0RdNzelP0m6qgnwppA4pxL
-         yGC8uZerTWRQ7nr5WIQFHlvF7/1DrngxzX/dqCS/YrpLo8TboyPVn1rc/4WtONSJyA
-         tGt5NmLyWAHnQ==
-Received: from johan by xi.lan with local (Exim 4.93.0.4)
-        (envelope-from <johan@kernel.org>)
-        id 1lZZAs-0008SM-8K; Thu, 22 Apr 2021 15:15:18 +0200
-Date:   Thu, 22 Apr 2021 15:15:18 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Colin Ian King <colin.king@canonical.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>, linux-serial@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] tty: serial: jsm: remove redundant assignments of
- several variables
-Message-ID: <YIF25kxW99LfysdQ@hovoldconsulting.com>
-References: <20210422121115.246625-1-colin.king@canonical.com>
- <YIFxfH4MXc1ekn4f@hovoldconsulting.com>
- <c9497e47-cdfb-7be0-ad35-648ea5d68268@canonical.com>
- <YIFydeoE/WRfPcvA@hovoldconsulting.com>
- <0b9086b4-8da8-c18e-ad22-1f52d6ed0686@canonical.com>
+        Thu, 22 Apr 2021 09:27:19 -0400
+Received: from mail-ot1-f47.google.com ([209.85.210.47]:43549 "EHLO
+        mail-ot1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230005AbhDVN1S (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 22 Apr 2021 09:27:18 -0400
+Received: by mail-ot1-f47.google.com with SMTP id i26-20020a9d625a0000b02902a2119f7613so5305212otk.10;
+        Thu, 22 Apr 2021 06:26:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=P6+9wENIjOSGm0rNZssrWwc+3q+P9ydCyEXK+E2E3rI=;
+        b=Pqxwj7VlId/HEP6i185weLdxHDvpBKe1oJpRZS03j9HH3ULKjZSgFIvbCIjgYLv0Vp
+         4C3KJWM4/XhbjP05pEFBda8BZ0/yyyuCvX+LEFbnbIP08Ytd5mjmpvyDiUWlLTsOw/eW
+         oB2sXpm3us1TQPsT3Yocgq1VvXHENy/VjEAKBKLpjUz266jN6cVO8THf/FTzjs47Fv3N
+         zPoSYcbNRczOgEp8HeyFV+Tkh8PEmDCYw8soXDs4auIikxjdIxCOjcId5c0WIixcCAJy
+         YIB1OBr6J2Pw72guEqxxwnR7nfyR8CuYuaj0PjwGmFC5Qp0RBawwLmlzHrMSV6794bas
+         4ABg==
+X-Gm-Message-State: AOAM532WyU4H/2QSSP6gCOyZy9T3t9GJFrv5mYkGUzW8Y0eJKlChQ4Kc
+        xDisISkrNqiGgE0ggrTbCUIdcyO0ba8BofqBTNs=
+X-Google-Smtp-Source: ABdhPJyY6NJtdIXc773L+QTLvHiKMQ+H0AThT/TKlpZoEEWVZQ/ZvoW7JrMss8sej1qYm6BRJf07ULO6tX6Dg5ZjE7g=
+X-Received: by 2002:a05:6830:55b:: with SMTP id l27mr2846251otb.260.1619098003827;
+ Thu, 22 Apr 2021 06:26:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0b9086b4-8da8-c18e-ad22-1f52d6ed0686@canonical.com>
+References: <20210416124352.2049258-1-colin.king@canonical.com>
+In-Reply-To: <20210416124352.2049258-1-colin.king@canonical.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 22 Apr 2021 15:26:32 +0200
+Message-ID: <CAJZ5v0ge7e68vTB3vvcz9OThp32X0=+XaQPrPQCGf0xM9uCi0Q@mail.gmail.com>
+Subject: Re: [PATCH] PM / wakeup: remove redundant assignment to variable retval
+To:     Colin King <colin.king@canonical.com>
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Apr 22, 2021 at 02:01:36PM +0100, Colin Ian King wrote:
-> On 22/04/2021 13:56, Johan Hovold wrote:
-> > On Thu, Apr 22, 2021 at 01:53:03PM +0100, Colin Ian King wrote:
-> >> On 22/04/2021 13:52, Johan Hovold wrote:
-> >>> On Thu, Apr 22, 2021 at 01:11:15PM +0100, Colin King wrote:
-> >>>> From: Colin Ian King <colin.king@canonical.com>
-> >>>>
-> >>>> Several variables are being assigned with values that are never
-> >>>> read and being updated later with a new value. The initializations
-> >>>> are redundant and can be removed.
-> >>>>
-> >>>> Addresses-Coverity: ("Unused value")
-> >>>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> >>>> ---
-> >>>>  drivers/tty/serial/jsm/jsm_cls.c | 6 ++----
-> >>>>  1 file changed, 2 insertions(+), 4 deletions(-)
-> >>>>
-> >>>> diff --git a/drivers/tty/serial/jsm/jsm_cls.c b/drivers/tty/serial/jsm/jsm_cls.c
-> >>>> index b507a2cec926..b58ea4344aaf 100644
-> >>>> --- a/drivers/tty/serial/jsm/jsm_cls.c
-> >>>> +++ b/drivers/tty/serial/jsm/jsm_cls.c
-> >>>> @@ -349,8 +349,8 @@ static void cls_assert_modem_signals(struct jsm_channel *ch)
-> >>>>  
-> >>>>  static void cls_copy_data_from_uart_to_queue(struct jsm_channel *ch)
-> >>>>  {
-> >>>> -	int qleft = 0;
-> >>>> -	u8 linestatus = 0;
-> >>>> +	int qleft;
-> >>>> +	u8 linestatus;
-> >>>>  	u8 error_mask = 0;
-> >>>>  	u16 head;
-> >>>>  	u16 tail;
-> >>>> @@ -365,8 +365,6 @@ static void cls_copy_data_from_uart_to_queue(struct jsm_channel *ch)
-> >>>>  	head = ch->ch_r_head & RQUEUEMASK;
-> >>>>  	tail = ch->ch_r_tail & RQUEUEMASK;
-> >>>>  
-> >>>> -	/* Get our cached LSR */
-> >>>> -	linestatus = ch->ch_cached_lsr;
-> >>>>  	ch->ch_cached_lsr = 0;
-> >>>
-> >>> Why leave this assignment in? Looks like this was all copy-pasta, but
-> >>> this assignment makes even less sense now that you remove the comment
-> >>> and load.
-> >>
-> >> Which assignment are you referring to?
-> > 
-> > The one just above my comment: 
-> > 
-> > 	ch->ch_cached_lsr = 0;
-> 
-> that cached value is being used in jsm_neo.c, so removing the zero'ing
-> may cause some issues.
+On Fri, Apr 16, 2021 at 2:44 PM Colin King <colin.king@canonical.com> wrote:
+>
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> The variable retval is being initialized with a value that is
+> never read and it is being updated later with a new value. The
+> initialization is redundant and can be removed.
+>
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/base/power/wakeup_stats.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/base/power/wakeup_stats.c b/drivers/base/power/wakeup_stats.c
+> index 5ade7539ac02..924fac493c4f 100644
+> --- a/drivers/base/power/wakeup_stats.c
+> +++ b/drivers/base/power/wakeup_stats.c
+> @@ -137,7 +137,7 @@ static struct device *wakeup_source_device_create(struct device *parent,
+>                                                   struct wakeup_source *ws)
+>  {
+>         struct device *dev = NULL;
+> -       int retval = -ENODEV;
+> +       int retval;
+>
+>         dev = kzalloc(sizeof(*dev), GFP_KERNEL);
+>         if (!dev) {
+> --
 
-That's for you to determine, right? Only doing half of a clean may
-actually be worse than doing nothing at all. At least now it's somewhat
-clear why that statement is there.
-
-The jsm_neo.c implements support for a different class of devices and
-only those actually use ch_cached_lsr AFAICT.
-
-It would be good if you include some context in the commit message such
-as which commit added this code and that it has never been used.
-
-Johan
+Applied as 5.13 material, thanks!
