@@ -7,26 +7,26 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D59C1C43460
-	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 06:25:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C91DC433ED
+	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 06:25:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B4A5661458
-	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 06:25:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CD416144A
+	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 06:25:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240767AbhDWG0H (ORCPT
+        id S240786AbhDWG0J (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 23 Apr 2021 02:26:07 -0400
-Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:31543 "EHLO
+        Fri, 23 Apr 2021 02:26:09 -0400
+Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:59027 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240744AbhDWGZ5 (ORCPT
+        with ESMTP id S240701AbhDWG0F (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 23 Apr 2021 02:25:57 -0400
+        Fri, 23 Apr 2021 02:26:05 -0400
 Received: from localhost.localdomain ([86.243.172.93])
         by mwinf5d49 with ME
-        id w6RL2400421Fzsu036RLls; Fri, 23 Apr 2021 08:25:20 +0200
+        id w6RT2400Y21Fzsu036RUmj; Fri, 23 Apr 2021 08:25:28 +0200
 X-ME-Helo: localhost.localdomain
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 23 Apr 2021 08:25:20 +0200
+X-ME-Date: Fri, 23 Apr 2021 08:25:28 +0200
 X-ME-IP: 86.243.172.93
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 To:     mturquette@baylibre.com, sboyd@kernel.org,
@@ -34,9 +34,9 @@ To:     mturquette@baylibre.com, sboyd@kernel.org,
 Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 3/4] clk: mvebu: Add a missing space
-Date:   Fri, 23 Apr 2021 08:25:18 +0200
-Message-Id: <39826a4aaf2b1769d7ff95301a25eab4adc98535.1619157996.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 4/4] clk: mvebu: Remove an unneeded include
+Date:   Fri, 23 Apr 2021 08:25:26 +0200
+Message-Id: <0dfcf67d0afe0cd58fd267ef0c4ec0d0414b6fe7.1619157996.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <cover.1619157996.git.christophe.jaillet@wanadoo.fr>
 References: <cover.1619157996.git.christophe.jaillet@wanadoo.fr>
@@ -46,27 +46,27 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Fix a checkpatch warning.
-Add a missing space.
+Compiling without <asm/smp_plat.h> just works fine, so remove it
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/clk/mvebu/clk-cpu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Completely speculative, but compilation works for me without this include
+---
+ drivers/clk/mvebu/clk-cpu.c | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/drivers/clk/mvebu/clk-cpu.c b/drivers/clk/mvebu/clk-cpu.c
-index 9a5c2aec6ec2..55a8486f665f 100644
+index 55a8486f665f..4879458c768a 100644
 --- a/drivers/clk/mvebu/clk-cpu.c
 +++ b/drivers/clk/mvebu/clk-cpu.c
-@@ -238,7 +238,7 @@ static void __init of_cpu_clk_setup(struct device_node *node)
- 	return;
- bail_out:
- 	kfree(clks);
--	while(ncpus--)
-+	while (ncpus--)
- 		kfree(cpuclk[ncpus].clk_name);
- clks_out:
- 	kfree(cpuclk);
+@@ -16,7 +16,6 @@
+ #include <linux/of.h>
+ #include <linux/delay.h>
+ #include <linux/mvebu-pmsu.h>
+-#include <asm/smp_plat.h>
+ 
+ #define SYS_CTRL_CLK_DIVIDER_CTRL_OFFSET               0x0
+ #define   SYS_CTRL_CLK_DIVIDER_CTRL_RESET_ALL          0xff
 -- 
 2.27.0
 
