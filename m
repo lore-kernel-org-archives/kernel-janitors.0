@@ -2,100 +2,86 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43BBDC433ED
-	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 12:42:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19A3DC433B4
+	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 12:54:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 14F3C61459
-	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 12:42:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C658D611AE
+	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 12:54:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242471AbhDWMmv (ORCPT
+        id S231220AbhDWMy4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 23 Apr 2021 08:42:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46652 "EHLO
+        Fri, 23 Apr 2021 08:54:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229479AbhDWMmu (ORCPT
+        with ESMTP id S230305AbhDWMy4 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 23 Apr 2021 08:42:50 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4C47C06174A;
-        Fri, 23 Apr 2021 05:42:12 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id w3so73743580ejc.4;
-        Fri, 23 Apr 2021 05:42:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=Cigm8FoAQJCFR8BBSxQb1qtaSNBp4pLV8SFaN1EkbqQ=;
-        b=C99A1yH9iuOPA7YDilWOAH5Eqbrw3NHSmFOxiJSMYi5w4kJo5XTFSmijgXxPMvaT/g
-         aQiNDwBil9E3asW3C2gTw/dl4sK1Wku/ufrK6xY3Io9hzQVvk8yRrFIqTPhkgh8biJJ+
-         esfve6ZPYHvyIJolS41HMXF6LVRQsv4WH/CzjBnQG0XKY31lJBfHg/OSxGz7m6/dHdcc
-         6RxZ2SIWTu493LFovRgcqfEY2WmTSNpmcFpmkk7qAvpNPwCqvaF96WM86t4SUpS+1WkM
-         OdD8Sv2Cges8w47SyAm+1NOpHnd6YAjr+IH/eJ/sFnvrrX4G9a8y59NAJPr51Z/rYj85
-         uSLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Cigm8FoAQJCFR8BBSxQb1qtaSNBp4pLV8SFaN1EkbqQ=;
-        b=DLd4RdKLd/2B7GdwXOP9AWRCXqKDUiCC9LcwfiwV5Q5eX54QAjce3j6v+4Cupn7yli
-         b3Sab5DO47e/LxF3GaRCsuc2cvSsiL1DkEuvcBeEi9vwbgrtJ23HCvdTPI5SDoQpMKd0
-         7GdM5INhpk0AbQbjlj+t6DnJ0urbDCOGl0zvawag3F8/XYGDR/HZ4hknRNbghCyth469
-         cghXO29chdO5rzM3wLqPMhJeuHZ14mvYIBeKDmB17fAnNg+jDCrJd4yP+L3NhZPQnKyR
-         cqThKTr2Mn8Nx+wy3s2GwwI/dFz4AsaQexSfSUa/bMDBJPkmKVRQLZrpF0LCmrQQJGmZ
-         W+8Q==
-X-Gm-Message-State: AOAM533kxznp6kFOe3ykx+J+T1qIVpnTkiR0Cer/rAkoagUpcy9XTdqL
-        lj3UuatWp/I1LX5w0GGRyQkIH2Bj+pE1bCWE
-X-Google-Smtp-Source: ABdhPJxEVyBDl9SrHFwOI9XmiRaLeOLGTbuurEQaw23ba78UH7qsNOzcWob/nfgJzAn2GOknA3DBng==
-X-Received: by 2002:a17:906:f2c8:: with SMTP id gz8mr4110139ejb.242.1619181731477;
-        Fri, 23 Apr 2021 05:42:11 -0700 (PDT)
-Received: from localhost.localdomain ([102.156.210.94])
-        by smtp.gmail.com with ESMTPSA id lb18sm3894116ejc.6.2021.04.23.05.42.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Apr 2021 05:42:11 -0700 (PDT)
-From:   Khaled ROMDHANI <khaledromdhani216@gmail.com>
-To:     clm@fb.com, josef@toxicpanda.com, dsterba@suse.com
-Cc:     Khaled ROMDHANI <khaledromdhani216@gmail.com>,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Fri, 23 Apr 2021 08:54:56 -0400
+Received: from sipsolutions.net (s3.sipsolutions.net [IPv6:2a01:4f8:191:4433::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D95E4C061574;
+        Fri, 23 Apr 2021 05:54:19 -0700 (PDT)
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+        (Exim 4.94)
+        (envelope-from <johannes@sipsolutions.net>)
+        id 1lZvJs-00Fh3U-Nc; Fri, 23 Apr 2021 14:54:04 +0200
+Message-ID: <17adb27af76820813c035874fad7e468681bfe04.camel@sipsolutions.net>
+Subject: Re: [PATCH] brcmfmac: fix a loop exit condition
+From:   Johannes Berg <johannes@sipsolutions.net>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Arend van Spriel <aspriel@gmail.com>,
+        Matthias Brugger <mbrugger@suse.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Chi-hsien Lin <chi-hsien.lin@infineon.com>,
+        Wright Feng <wright.feng@infineon.com>,
+        Chung-hsien Hsu <chung-hsien.hsu@infineon.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Hans deGoede <hdegoede@redhat.com>,
+        linux-wireless@vger.kernel.org,
+        brcm80211-dev-list.pdl@broadcom.com,
         kernel-janitors@vger.kernel.org
-Subject: [PATCH-next] fs/btrfs: Fix uninitialized variable
-Date:   Fri, 23 Apr 2021 13:42:01 +0100
-Message-Id: <20210423124201.11262-1-khaledromdhani216@gmail.com>
-X-Mailer: git-send-email 2.17.1
+Date:   Fri, 23 Apr 2021 14:54:03 +0200
+In-Reply-To: <bda7ae6b-00f9-ae0e-66d3-413049bc543d@wanadoo.fr>
+References: <YIKzmoMiTdToaIyP@mwanda>
+         <427e33af49758c61bc23cf1eedb6dd6964c40296.camel@sipsolutions.net>
+         <20210423121110.GO1981@kadam>
+         <bda7ae6b-00f9-ae0e-66d3-413049bc543d@wanadoo.fr>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-malware-bazaar: not-scanned
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The variable 'zone' is uninitialized which
-introduce some build warning.
+On Fri, 2021-04-23 at 14:20 +0200, Christophe JAILLET wrote:
+> 
+> > > > +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
+> > > > @@ -34,7 +34,7 @@ void brcmf_of_probe(struct device *dev, enum brcmf_bus_type bus_type,
+> > > >   		len = strlen(tmp) + 1;
+> > > >   		board_type = devm_kzalloc(dev, len, GFP_KERNEL);
+> > > >   		strscpy(board_type, tmp, len);
+> > > > -		for (i = 0; i < board_type[i]; i++) {
+> > > > +		for (i = 0; i < len; i++) {
+> > > >   			if (board_type[i] == '/')
+> > > >   				board_type[i] = '-';
+> > > >   		}
+> > > 
+> > > It should probably just use strreplace() though :)
+> > 
+> > Good point.  I'll send a v2.
+> > 
+> 
+> and the 2 lines above look like a devm_kstrdup.
+> 
+> The (unlikely) malloc failure test is also missing.
 
-It is not always set or overwritten within
-the function. So explicitly initialize it.
+How many issues can you have in 6 lines of code ;-)
 
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Khaled ROMDHANI <khaledromdhani216@gmail.com>
----
- fs/btrfs/zoned.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
-index 432509f4b3ac..42f99b25127f 100644
---- a/fs/btrfs/zoned.c
-+++ b/fs/btrfs/zoned.c
-@@ -136,7 +136,7 @@ static int sb_write_pointer(struct block_device *bdev, struct blk_zone *zones,
-  */
- static inline u32 sb_zone_number(int shift, int mirror)
- {
--	u64 zone;
-+	u64 zone = 0;
- 
- 	ASSERT(mirror < BTRFS_SUPER_MIRROR_MAX);
- 	switch (mirror) {
-
-base-commit: c05b2a58c9ed11bd753f1e64695bd89da715fbaa
--- 
-2.17.1
+johannes
 
