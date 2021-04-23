@@ -2,162 +2,240 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,PDS_BAD_THREAD_QP_64,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22617C433ED
-	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 15:25:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BCDBC43460
+	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 15:40:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EA6F7613D5
-	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 15:25:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E81F4613D5
+	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 15:40:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231754AbhDWP03 (ORCPT
+        id S231754AbhDWPlG (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 23 Apr 2021 11:26:29 -0400
-Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:4270 "EHLO
-        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231437AbhDWP03 (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 23 Apr 2021 11:26:29 -0400
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 13NFG0kM005206;
-        Fri, 23 Apr 2021 15:25:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=pbVVKuyQK5q5hcI5v7ncsGBjn84Ca1cs5D6tvGmMKec=;
- b=Oc/rDr5qh9qz5jB47ktLNEj9/5BLNwf1kAqA/ic9XZ8wfJknOxMhUXeV2yB+K98uTKFD
- cXVVJQb7TGclTwRgn0uIhaARpz6sfewc4Eg09iej6BjwrQUZDpUEqK2MmvbY4uZ+L1+m
- uDfsN4F0vQKEnh3BFKGTpPvvEKWvdK93ryQATl/okK5GxmxePP88B0HQ1XBIB19SjJVb
- MeYNiwHodPz/85vJfDssd0Em3ABOGBnA1xl7hpt+eCPuKf/9Sek1EomD90p7EAT6nKzk
- AeZQonaeduVZQUgwK4AyU2MMHgII1FN4fgQJFHegZuHmiJEY+MQqplsfMyZHSxWaVXjq Bg== 
-Received: from oracle.com (userp3020.oracle.com [156.151.31.79])
-        by mx0b-00069f02.pphosted.com with ESMTP id 383j5s895t-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 23 Apr 2021 15:25:24 +0000
-Received: from userp3020.oracle.com (userp3020.oracle.com [127.0.0.1])
-        by pps.podrdrct (8.16.0.36/8.16.0.36) with SMTP id 13NFK2L2114865;
-        Fri, 23 Apr 2021 15:25:23 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by userp3020.oracle.com with ESMTP id 383cgaf70y-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 23 Apr 2021 15:25:23 +0000
-Received: from userp3020.oracle.com (userp3020.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 13NFP2Di131894;
-        Fri, 23 Apr 2021 15:25:22 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3020.oracle.com with ESMTP id 383cgaf70k-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 23 Apr 2021 15:25:22 +0000
-Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 13NFPAIL009081;
-        Fri, 23 Apr 2021 15:25:10 GMT
-Received: from kadam (/102.36.221.92)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 23 Apr 2021 08:25:10 -0700
-Date:   Fri, 23 Apr 2021 18:24:59 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Sergey Organov <sorganov@gmail.com>
-Cc:     Walter Harms <wharms@bfs.de>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        "Chia-Wei, Wang" <chiawei_wang@aspeedtech.com>,
-        Jae Hyun Yoo <jae.hyun.yoo@intel.com>,
-        John Wang <wangzhiqiang.bj@bytedance.com>,
-        Brad Bishop <bradleyb@fuzziesquirrel.com>,
-        Patrick Venture <venture@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Robert Lippert <rlippert@google.com>,
-        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+        Fri, 23 Apr 2021 11:41:06 -0400
+Received: from mx01-sz.bfs.de ([194.94.69.67]:16127 "EHLO mx01-sz.bfs.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231437AbhDWPlG (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 23 Apr 2021 11:41:06 -0400
+X-Greylist: delayed 348 seconds by postgrey-1.27 at vger.kernel.org; Fri, 23 Apr 2021 11:41:05 EDT
+Received: from SRVEX01-SZ.bfs.intern (exchange-sz.bfs.de [10.129.90.31])
+        by mx01-sz.bfs.de (Postfix) with ESMTPS id 01584208CC;
+        Fri, 23 Apr 2021 17:34:38 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bfs.de; s=dkim201901;
+        t=1619192078;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=vKYgUPg98TBKS/ZY+chiTR1DckAZhCd21sI7/QoNsQI=;
+        b=u1JNUw8D/ow/40pjuetWS84Y4GHE9bhAwDBW51+V7vHHjuedltOEB3ZzP5UEyebd1MvtBr
+        YsLkpfi+GCRfinJvXjLa8hY4nFGzMg1rAsNJ5UaRsIF2XoWOqHjXlegJRjeMlvpYTMEGGg
+        fjkPQoE/doN94lQcfrowarM+ba9cwArvq2mH5uTR+s8qFxXVtYJTe8fO8XbcYpM7a6hAw2
+        Vjj8z14zkLtH3FqVpHDX2nJAbftjabid3jHHnEK96wFt4MxXN6Qtm4SESStNxoFi8IdPIu
+        d4xJ3UAPQNkC/56u9MnU+lcnb+CoZjSQp7s/bNyNNXFLrh4TFmyavtsATuZlUg==
+Received: from SRVEX01-SZ.bfs.intern (10.129.90.31) by SRVEX01-SZ.bfs.intern
+ (10.129.90.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2242.4; Fri, 23 Apr
+ 2021 17:34:37 +0200
+Received: from SRVEX01-SZ.bfs.intern ([fe80::7d2d:f9cb:2761:d24a]) by
+ SRVEX01-SZ.bfs.intern ([fe80::7d2d:f9cb:2761:d24a%13]) with mapi id
+ 15.01.2242.008; Fri, 23 Apr 2021 17:34:37 +0200
+From:   Walter Harms <wharms@bfs.de>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "gregory.clement@bootlin.com" <gregory.clement@bootlin.com>,
+        "thomas.petazzoni@free-electrons.com" 
+        <thomas.petazzoni@free-electrons.com>
+CC:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: Re: AW: [PATCH] soc: aspeed: fix a ternary sign expansion bug
-Message-ID: <20210423152459.GU1959@kadam>
-References: <YIE90PSXsMTa2Y8n@mwanda>
- <59596244622c4a15ac8cc0747332d0be@AcuMS.aculab.com>
- <877dktuvmz.fsf@osv.gnss.ru>
- <265e2d3accc74c89b5bab22eadb43808@AcuMS.aculab.com>
- <ebe4a1a6dd0748e28e6ca19aec20223e@bfs.de>
- <878s59rrn0.fsf@osv.gnss.ru>
+Subject: AW: [PATCH 1/4] clk: mvebu: Fix a memory leak in an error handling
+ path
+Thread-Topic: [PATCH 1/4] clk: mvebu: Fix a memory leak in an error handling
+ path
+Thread-Index: AQHXOAlra2sQAacEjUWcDYHHPtnRKKrB+sUc///ko4CAAFZ1Wg==
+Date:   Fri, 23 Apr 2021 15:34:37 +0000
+Message-ID: <ec52f27bb33f419481653fe1a0b35419@bfs.de>
+References: <cover.1619157996.git.christophe.jaillet@wanadoo.fr>
+ <27db232fdd14e14d493f29a5404d9e643f09cc96.1619157996.git.christophe.jaillet@wanadoo.fr>
+ <3e38da0e86c045d3aefd46f375e8b48e@bfs.de>,<f26e2ad3-d1b8-de96-febe-5b8f52abdf8f@wanadoo.fr>
+In-Reply-To: <f26e2ad3-d1b8-de96-febe-5b8f52abdf8f@wanadoo.fr>
+Accept-Language: de-DE, en-US
+Content-Language: de-DE
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.137.16.40]
+x-tm-as-product-ver: SMEX-14.0.0.3080-8.6.1012-26110.001
+x-tm-as-result: No-10--2.642500-5.000000
+x-tmase-matchedrid: 7RlxjwaqaMLRubRCcrbc5grcxrzwsv5u3dCmvEa6IiGoLZarzrrPmYHe
+        Wvo2w5AlKsWWHEzJoyEqG/HhH1yTFoZKkFFIbQIA9aPMjkYccfkB4JHtiamkLPRPcu3uH/G00+m
+        f+4Do0Dj+AlHJqOD4IHZaiQH57N/neASYyytjzKSJUlmL3Uj0mA5GMzfaGfZvrcN9BdgNdeblMv
+        pqkHcOyln3wG3NurRldqQQIhr5j4vfkJeYYItMRTkWEAXjjR2RnnjOyk87HN98YCCIGSc4tfFnz
+        pYjk62hK52HYCW7VBPIdhbSUjG6GYHmS1Qw23jCC4s/hE51YdWhp756/rM6Up8euMsD0OFm8z70
+        XDTUjsbp6aRZpxSKWhItqQ/criE61u+8t82ayB2bbGl0ztMplyYof8qPjr5VYy6fApvL8BdAHOg
+        8qEtqyI+pAn19BHXOPHM1hBoOGp5BJacAbR6CMZCANcFtZ7wT64sVlliWKx+/WXZS/HqJ2lZ0V5
+        tYhzdWxEHRux+uk8jQ9TRN0mhS122h+FZFOY0P3tkdvQp2yTcJ6CGGOfMtJZMsu+T1MEaScYftG
+        if//zUcl9PTuT60/PcE+fk37wf+eqiDLopACgpQTCDtSN+G0N/SJznOClIxoCAKAoIb2WYM/vKz
+        x1GusR3L41iYoouZ8XlA7aX0aQ0=
+x-tm-as-user-approved-sender: No
+x-tm-as-user-blocked-sender: No
+x-tmase-result: 10--2.642500-5.000000
+x-tmase-version: SMEX-14.0.0.3080-8.6.1012-26110.001
+x-tm-snts-smtp: 4AC192502F063FFE80FAC32ED90A4AEFBF6C3DE4FF1789D42FE304EED772D5922000:9
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <878s59rrn0.fsf@osv.gnss.ru>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-ORIG-GUID: PN18IsdkXlnRXsRsGcqbP1RqHBC8pUjr
-X-Proofpoint-GUID: PN18IsdkXlnRXsRsGcqbP1RqHBC8pUjr
+X-Spamd-Result: default: False [-9.90 / 7.00];
+         ARC_NA(0.00)[];
+         TO_DN_EQ_ADDR_SOME(0.00)[];
+         HAS_XOIP(0.00)[];
+         FROM_HAS_DN(0.00)[];
+         TO_DN_SOME(0.00)[];
+         FREEMAIL_ENVRCPT(0.00)[wanadoo.fr];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         MIME_GOOD(-0.10)[text/plain];
+         BAYES_SPAM(5.10)[100.00%];
+         DKIM_SIGNED(0.00)[bfs.de:s=dkim201901];
+         WHITELIST_LOCAL_IP(-15.00)[10.129.90.31];
+         RCPT_COUNT_SEVEN(0.00)[8];
+         NEURAL_HAM(-0.00)[-1.000];
+         FREEMAIL_TO(0.00)[wanadoo.fr,baylibre.com,kernel.org,bootlin.com,free-electrons.com];
+         RCVD_NO_TLS_LAST(0.10)[];
+         FROM_EQ_ENVFROM(0.00)[];
+         MIME_TRACE(0.00)[0:+];
+         RCVD_COUNT_TWO(0.00)[2];
+         MID_RHS_MATCH_FROM(0.00)[]
+Authentication-Results: mx01-sz.bfs.de;
+        none
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Apr 23, 2021 at 05:40:19PM +0300, Sergey Organov wrote:
-> Walter Harms <wharms@bfs.de> writes:
-> 
-> > as indepentent observer,
-> > i would go for Dans solution:
-> >
-> > ret = kfifo_to_user();
-> > /* if an error occurs just return */
-> > if (ret)
-> >    return ret;
-> >
-> > /* otherwise return the copied number of bytes */
-> >
-> > return copied;
-> >
-> > there is no need for any deeper language knowledge,
-> 
-> Yep, but this is not idiomatic C, so one looking at this code would
-> tend to convert it back to ternary, and the actual problem here is that
-> the type of 'copied' does not match the return type of the function.
+yep,
+there was a patch containing while()/free(), i guessed the comment
+was accidentaly copied (or do i mixup something ?)
+
+forget about it, the comment was confusing me.=20
+IMHO it is the wrong way around.
+I would say:
+
+ sightly rearrange the code:
+    - use kasprintf instead of kzalloc/sprintf to simplify code and avoid a
+      magic number
+If an error occurs in the for_each loop, clk_name must be freed.
+ goto bail_out;
+=20
+as side effect more that 9 clk_cpu are now correctly shown.
+
+hope that helps,
+
+re,
+ wh
+________________________________________
+Von: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Gesendet: Freitag, 23. April 2021 14:02:17
+An: Walter Harms; mturquette@baylibre.com; sboyd@kernel.org; gregory.clemen=
+t@bootlin.com; thomas.petazzoni@free-electrons.com
+Cc: linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org; kernel-janitor=
+s@vger.kernel.org
+Betreff: AW: [PATCH 1/4] clk: mvebu: Fix a memory leak in an error handling=
+ path
+
+WARNUNG: Diese E-Mail kam von au=DFerhalb der Organisation. Klicken Sie nic=
+ht auf Links oder =F6ffnen Sie keine Anh=E4nge, es sei denn, Sie kennen den=
+/die Absender*in und wissen, dass der Inhalt sicher ist.
+
+
+Le 23/04/2021 =E0 13:42, Walter Harms a =E9crit :
+> nitpicking:
+>   clk_name could be replaced with cpuclk[cpu].clk_name
+
+Agreed, Thx.
+I'll wait a few days to see if there are other comments before sending a
+v2. (especially if 4/4 is correct or not)
+I'll also add "clk-cpu:" after "clk: mvebu:"
+
+> and the commit msg is from the other patch (free  cpuclk[cpu].clk_name)
 >
 
-I help maintain drivers/staging.  I would hope that no one would send us
-a patch like this because it's not a checkpatch or CodingStyle violation.
-But people have sent us these before and Greg NAKs them because he
-doesn't like ternaries.  I NAK them because I like my success path kept
-separate from the failure path.  I want the success path indented one
-tab and the failure path indented two tabs.  I like when code is written
-ploddingly, without fanciness, or combining multiple things on one line.
+But here, I don't follow you.
+What do you mean? Which other patch?
 
-Using a ternary in this context seems to me like it falls under the
-anti-pattern of "making the last call in a function weird".  A lot of
-times people change from failure handling to success handling for the
-last function call.
+Do you mean that the commit message has to be updated accordingly?
+(ie: s/clk_name/cpuclk[cpu].clk_name/ must be freed)
 
-	err = one();
-	if (err)
-		goto fail;
-	err = two();
-	if (err)
-		goto fail;
-	err = three();
-	if (!err)
-		return 0;
-goto fail:
-	print("failed!\n");
 
-It seems crazy, but people do this all the time!  It's fine to do:
+> jm2c,
+>
+> re,
+>   wh
+> ________________________________________
+> Von: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Gesendet: Freitag, 23. April 2021 08:25:01
+> An: mturquette@baylibre.com; sboyd@kernel.org; gregory.clement@bootlin.co=
+m; thomas.petazzoni@free-electrons.com
+> Cc: linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org; kernel-janit=
+ors@vger.kernel.org; Christophe JAILLET
+> Betreff: [PATCH 1/4] clk: mvebu: Fix a memory leak in an error handling p=
+ath
+>
+> WARNUNG: Diese E-Mail kam von au=DFerhalb der Organisation. Klicken Sie n=
+icht auf Links oder =F6ffnen Sie keine Anh=E4nge, es sei denn, Sie kennen d=
+en/die Absender*in und wissen, dass der Inhalt sicher ist.
+>
+>
+> If an error occurs in the for_each loop, clk_name must be freed.
+>
+> In order to do so, sightly rearrange the code:
+>     - move the allocation to simplify error handling
+>     - use kasprintf instead of kzalloc/sprintf to simplify code and avoid=
+ a
+>       magic number
+>
+> Fixes: ab8ba01b3fe5 ("clk: mvebu: add armada-370-xp CPU specific clocks")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> The { } around the 1 line block after kasprintf is intentional and makes
+> sense with 2/2
+> ---
+>   drivers/clk/mvebu/clk-cpu.c | 10 +++++-----
+>   1 file changed, 5 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/clk/mvebu/clk-cpu.c b/drivers/clk/mvebu/clk-cpu.c
+> index c2af3395cf13..a11d7273fcc7 100644
+> --- a/drivers/clk/mvebu/clk-cpu.c
+> +++ b/drivers/clk/mvebu/clk-cpu.c
+> @@ -195,17 +195,17 @@ static void __init of_cpu_clk_setup(struct device_n=
+ode *node)
+>          for_each_of_cpu_node(dn) {
+>                  struct clk_init_data init;
+>                  struct clk *clk;
+> -               char *clk_name =3D kzalloc(5, GFP_KERNEL);
+> +               char *clk_name;
+>                  int cpu, err;
+>
+> -               if (WARN_ON(!clk_name))
+> -                       goto bail_out;
+> -
+>                  err =3D of_property_read_u32(dn, "reg", &cpu);
+>                  if (WARN_ON(err))
+>                          goto bail_out;
+>
+> -               sprintf(clk_name, "cpu%d", cpu);
+> +               clk_name =3D kasprintf(GFP_KERNEL, "cpu%d", cpu);
+> +               if (WARN_ON(!clk_name)) {
+> +                       goto bail_out;
+> +               }
+>
+>                  cpuclk[cpu].parent_name =3D of_clk_get_parent_name(node,=
+ 0);
+>                  cpuclk[cpu].clk_name =3D clk_name;
+> --
+> 2.27.0
+>
+>
 
-	return three();
-
-There are some maintainers who insist that it should be:
-
-	err = three();
-	if (err)
-		return err;
-	return 0;
-
-I don't go as far as that.  But I also do like when I can glance at the
-function and there is a giant "return 0;" at the bottom.
-
-Anyway, if people change it back to ternary then the kbuild bot will
-send them a warning message and they'll learn about an odd quirk in C's
-type promotion rules.
-
-regards,
-dan carpenter
