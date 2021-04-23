@@ -2,86 +2,67 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19A3DC433B4
-	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 12:54:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3572BC43462
+	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 13:29:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C658D611AE
-	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 12:54:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FAE0601FD
+	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 13:29:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231220AbhDWMy4 (ORCPT
+        id S242870AbhDWNaE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 23 Apr 2021 08:54:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49332 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230305AbhDWMy4 (ORCPT
+        Fri, 23 Apr 2021 09:30:04 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:47469 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S242762AbhDWN3U (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 23 Apr 2021 08:54:56 -0400
-Received: from sipsolutions.net (s3.sipsolutions.net [IPv6:2a01:4f8:191:4433::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D95E4C061574;
-        Fri, 23 Apr 2021 05:54:19 -0700 (PDT)
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-        (Exim 4.94)
-        (envelope-from <johannes@sipsolutions.net>)
-        id 1lZvJs-00Fh3U-Nc; Fri, 23 Apr 2021 14:54:04 +0200
-Message-ID: <17adb27af76820813c035874fad7e468681bfe04.camel@sipsolutions.net>
-Subject: Re: [PATCH] brcmfmac: fix a loop exit condition
-From:   Johannes Berg <johannes@sipsolutions.net>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Arend van Spriel <aspriel@gmail.com>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Chi-hsien Lin <chi-hsien.lin@infineon.com>,
-        Wright Feng <wright.feng@infineon.com>,
-        Chung-hsien Hsu <chung-hsien.hsu@infineon.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Hans deGoede <hdegoede@redhat.com>,
-        linux-wireless@vger.kernel.org,
-        brcm80211-dev-list.pdl@broadcom.com,
-        kernel-janitors@vger.kernel.org
-Date:   Fri, 23 Apr 2021 14:54:03 +0200
-In-Reply-To: <bda7ae6b-00f9-ae0e-66d3-413049bc543d@wanadoo.fr>
-References: <YIKzmoMiTdToaIyP@mwanda>
-         <427e33af49758c61bc23cf1eedb6dd6964c40296.camel@sipsolutions.net>
-         <20210423121110.GO1981@kadam>
-         <bda7ae6b-00f9-ae0e-66d3-413049bc543d@wanadoo.fr>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
+        Fri, 23 Apr 2021 09:29:20 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lZvrJ-00027P-37; Fri, 23 Apr 2021 13:28:37 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Chas Williams <3chas3@gmail.com>,
+        linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] net/atm: Fix spelling mistake "requed" -> "requeued"
+Date:   Fri, 23 Apr 2021 14:28:36 +0100
+Message-Id: <20210423132836.338763-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-malware-bazaar: not-scanned
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 2021-04-23 at 14:20 +0200, Christophe JAILLET wrote:
-> 
-> > > > +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
-> > > > @@ -34,7 +34,7 @@ void brcmf_of_probe(struct device *dev, enum brcmf_bus_type bus_type,
-> > > >   		len = strlen(tmp) + 1;
-> > > >   		board_type = devm_kzalloc(dev, len, GFP_KERNEL);
-> > > >   		strscpy(board_type, tmp, len);
-> > > > -		for (i = 0; i < board_type[i]; i++) {
-> > > > +		for (i = 0; i < len; i++) {
-> > > >   			if (board_type[i] == '/')
-> > > >   				board_type[i] = '-';
-> > > >   		}
-> > > 
-> > > It should probably just use strreplace() though :)
-> > 
-> > Good point.  I'll send a v2.
-> > 
-> 
-> and the 2 lines above look like a devm_kstrdup.
-> 
-> The (unlikely) malloc failure test is also missing.
+From: Colin Ian King <colin.king@canonical.com>
 
-How many issues can you have in 6 lines of code ;-)
+There is a spelling mistake in a printk message. Fix it.
 
-johannes
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/atm/iphase.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/atm/iphase.c b/drivers/atm/iphase.c
+index eef637fd90b3..933e3ff2ee8d 100644
+--- a/drivers/atm/iphase.c
++++ b/drivers/atm/iphase.c
+@@ -680,7 +680,7 @@ static void ia_tx_poll (IADEV *iadev) {
+           skb1 = skb_dequeue(&iavcc->txing_skb);
+        }                                                        
+        if (!skb1) {
+-          IF_EVENT(printk("IA: Vci %d - skb not found requed\n",vcc->vci);)
++          IF_EVENT(printk("IA: Vci %d - skb not found requeued\n",vcc->vci);)
+           ia_enque_head_rtn_q (&iadev->tx_return_q, rtne);
+           break;
+        }
+-- 
+2.30.2
 
