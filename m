@@ -2,85 +2,77 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FA61C433ED
-	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 14:55:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37BC8C433B4
+	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 15:09:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EA42161465
-	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 14:55:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1197461462
+	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 15:09:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229871AbhDWO4c (ORCPT
+        id S236494AbhDWPKN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 23 Apr 2021 10:56:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38092 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231169AbhDWO43 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 23 Apr 2021 10:56:29 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 433F661445;
-        Fri, 23 Apr 2021 14:55:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1619189753;
-        bh=R62pLNjA9noFl2JNlwS4diwF3n2+vBGPxhkGlcLJqNU=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=OHb9hJ26La3xCDjCdmfC0+DTMmtSZqIETEbpFB4o43Tg/CTphiDmkdeR+WrZmRY8R
-         Ufvva8FGnrC0dFC++suE5LUFdwceIbXSqdjwrlkfaKIFXP4WzUDu4CLz+8uJd78zUQ
-         FnjER9fWRSWtX5UDAX/zukAGdAQUZUSAN3yoqYBZ6J50N+vJbWDnCcYfJOPBeXjQw+
-         TTHM8E1HhfKfstD+QeiB+Nz8Zs1HxNzAqUeot1n/54Xeu8LPr9julfcFa1xzISbhXp
-         gL5uGd23NSKjolrFBXEsZFFD+NewSw7jEh1PmdNbLc4HTdCJuRQCJ/cTNdatMUurOB
-         NVBYxw/+ZvdZQ==
-Received: by mail-ej1-f44.google.com with SMTP id w3so74364487ejc.4;
-        Fri, 23 Apr 2021 07:55:53 -0700 (PDT)
-X-Gm-Message-State: AOAM533fuqfh8bQoVTghxRCC+z2hvefbH7NyiDDXH9aYOK4D/AbvBDmx
-        hk0X7p0UzMmd5NCOK2yd4HAs9wPPuARTI9QXog==
-X-Google-Smtp-Source: ABdhPJyzSYoCrQUp8AZOe/VzsaOGQ7Ex2FewksH/32fJAahVFtRK2yHuqsRqIXD3LON0ZjaWUzCbhgXMiHLQGar8l38=
-X-Received: by 2002:a17:906:1984:: with SMTP id g4mr4558298ejd.525.1619189751774;
- Fri, 23 Apr 2021 07:55:51 -0700 (PDT)
+        Fri, 23 Apr 2021 11:10:13 -0400
+Received: from smtp04.smtpout.orange.fr ([80.12.242.126]:23523 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231169AbhDWPKJ (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 23 Apr 2021 11:10:09 -0400
+Received: from localhost.localdomain ([86.243.172.93])
+        by mwinf5d51 with ME
+        id wF9W2400q21Fzsu03F9X4c; Fri, 23 Apr 2021 17:09:32 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 23 Apr 2021 17:09:32 +0200
+X-ME-IP: 86.243.172.93
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     jonas@southpole.se, stefan.kristiansson@saunalahti.fi,
+        shorne@gmail.com, rppt@kernel.org, akpm@linux-foundation.org,
+        arnd@arndb.de
+Cc:     openrisc@lists.librecores.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] openrisc: Fix a memory leak
+Date:   Fri, 23 Apr 2021 17:09:28 +0200
+Message-Id: <c078439e31fd60e1617be8c17cc1ec57639e0586.1619190470.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-References: <f2186955f310494f10990b5c402ada164d7834b8.1619188632.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <f2186955f310494f10990b5c402ada164d7834b8.1619188632.git.christophe.jaillet@wanadoo.fr>
-From:   Rob Herring <robh@kernel.org>
-Date:   Fri, 23 Apr 2021 09:55:40 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJkR94s107S0yiJpjNWKbi6yuqDcV7DaxbjBF-o80meaA@mail.gmail.com>
-Message-ID: <CAL_JsqJkR94s107S0yiJpjNWKbi6yuqDcV7DaxbjBF-o80meaA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] powerpc: Fix a memory leak in error handling paths
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>, gustavoars@kernel.org,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Apr 23, 2021 at 9:40 AM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> If we exit the for_each_of_cpu_node loop early, the reference on the
-> current node must be decremented, otherwise there is a leak.
->
-> Fixes: a94fe366340a ("powerpc: use for_each_of_cpu_node iterator")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Strangely, the commit above added the needed of_node_put in one place but
-> missed 2 other places!
+'setup_find_cpu_node()' take a reference on the node it returns.
+This reference must be decremented when not needed anymore, or there will
+be a leak.
 
-Well, maintained it in one place and forgot to add in the other two.
+Add the missing 'of_node_put(cpu)'.
 
-> This is strange, so maybe I misunderstand something. Review carefully
-> ---
->  arch/powerpc/platforms/powermac/feature.c | 2 ++
->  1 file changed, 2 insertions(+)
+Note that 'setup_cpuinfo()' that also calls this function already has a
+correct 'of_node_put(cpu)' at its end.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Fixes: 9d02a4283e9c ("OpenRISC: Boot code")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ arch/openrisc/kernel/setup.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-I don't really think patch 2 is worthwhile but that's up to the
-powerpc maintainers.
+diff --git a/arch/openrisc/kernel/setup.c b/arch/openrisc/kernel/setup.c
+index 2416a9f91533..c6f9e7b9f7cb 100644
+--- a/arch/openrisc/kernel/setup.c
++++ b/arch/openrisc/kernel/setup.c
+@@ -278,6 +278,8 @@ void calibrate_delay(void)
+ 	pr_cont("%lu.%02lu BogoMIPS (lpj=%lu)\n",
+ 		loops_per_jiffy / (500000 / HZ),
+ 		(loops_per_jiffy / (5000 / HZ)) % 100, loops_per_jiffy);
++
++	of_node_put(cpu);
+ }
+ 
+ void __init setup_arch(char **cmdline_p)
+-- 
+2.27.0
 
-Rob
