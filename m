@@ -2,152 +2,182 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,PDS_BAD_THREAD_QP_64,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0722DC433ED
-	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 11:15:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DB9BC433B4
+	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 11:42:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C0C0C61409
-	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 11:15:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 111CD613AF
+	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 11:42:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242142AbhDWLPi (ORCPT
+        id S242385AbhDWLnL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 23 Apr 2021 07:15:38 -0400
-Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:43980 "EHLO
-        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229890AbhDWLPh (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 23 Apr 2021 07:15:37 -0400
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 13NB6s9s000522;
-        Fri, 23 Apr 2021 11:14:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=e6UoQ3Sz9f7WFV5mtRzwBcTj28OvIA+hDg21SLUc3pg=;
- b=WV1aqczTtVCGOctNcVgMq0APAnFZY/m01vdaccfTLxp493RIPB2iMJl+pqD21GboS5ym
- wcIFNRP0Q0FgB75HBBL+P6Mz7CLlOVATLAMgXvsGE0VeHiBuFuapt2aZKkXzW0hWzDli
- DFAJTggJrXUl1CrZPKb5+sM3Hjmw9qLCa8/YuDD6J7M7mg36ysTNlp0tmbdUN7di4IAZ
- d8+NNC6nPMNGbuvv4RcI+mIUTj150KSkENNJMGsJMekuXLaMuW+iIflL+lySfrWaywv2
- v6O8BdTeqfspw16h91XKe4DZmOjiMcQyoZ+FGj5Oc1LSXcZmPi5uqGjdL4hXd25jakSg OA== 
-Received: from oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by mx0b-00069f02.pphosted.com with ESMTP id 382uth0pj8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 23 Apr 2021 11:14:41 +0000
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
-        by pps.podrdrct (8.16.0.36/8.16.0.36) with SMTP id 13NBEQ8Y004911;
-        Fri, 23 Apr 2021 11:14:40 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by aserp3020.oracle.com with ESMTP id 383cbf0y7u-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 23 Apr 2021 11:14:40 +0000
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 13NB5ZX0146618;
-        Fri, 23 Apr 2021 11:14:40 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3020.oracle.com with ESMTP id 383cbf0y6h-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 23 Apr 2021 11:14:40 +0000
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 13NBEZVa012333;
-        Fri, 23 Apr 2021 11:14:35 GMT
-Received: from kadam (/102.36.221.92)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 23 Apr 2021 04:14:34 -0700
-Date:   Fri, 23 Apr 2021 14:14:26 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Sergey Organov <sorganov@gmail.com>
-Cc:     David Laight <David.Laight@ACULAB.COM>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        "Chia-Wei, Wang" <chiawei_wang@aspeedtech.com>,
-        Jae Hyun Yoo <jae.hyun.yoo@intel.com>,
-        John Wang <wangzhiqiang.bj@bytedance.com>,
-        Brad Bishop <bradleyb@fuzziesquirrel.com>,
-        Patrick Venture <venture@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Robert Lippert <rlippert@google.com>,
-        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+        Fri, 23 Apr 2021 07:43:11 -0400
+Received: from mx01-muc.bfs.de ([193.174.230.67]:45342 "EHLO mx01-muc.bfs.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S236815AbhDWLnK (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 23 Apr 2021 07:43:10 -0400
+Received: from SRVEX01-SZ.bfs.intern (exchange-sz.bfs.de [10.129.90.31])
+        by mx01-muc.bfs.de (Postfix) with ESMTPS id F0FD820389;
+        Fri, 23 Apr 2021 13:42:31 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bfs.de; s=dkim201901;
+        t=1619178152;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=dQDZaEXB4OrIze3umzwdepSHeanpp8Bw7/iC8vF911c=;
+        b=BYo0BU9gHsBa1L+z/XrlTrnUm40R1SANUPOKkCzrFSb+pnvNmRh/w5ApRsFJ+Gp27jlzL/
+        y/Kv0O1gPbRPodBrPUW3cWrnHnyPFN0cmXIAsPlNUWKeXbRSfzqDSIfhIdYbqDnYBn+nYk
+        sd8YbKttk5Am7YjQEaUYUrfr0fch+/nNWEtw5MhHqPbAzZre61qau9oeg7tAxrcc7o3ICP
+        n6VM6VOpY2Ko51si/YNRDoda/uUEOFRZe9vcybcfwLBEKEZ4icgMnGY/OdVGuol8mpQaKE
+        7eAxfQ7diKZjMD/QwDyx4ySvBPESA/pHXihqCnLtfEVEXLLsXnSe2NXCQ273Hg==
+Received: from SRVEX01-SZ.bfs.intern (10.129.90.31) by SRVEX01-SZ.bfs.intern
+ (10.129.90.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2242.4; Fri, 23 Apr
+ 2021 13:42:31 +0200
+Received: from SRVEX01-SZ.bfs.intern ([fe80::7d2d:f9cb:2761:d24a]) by
+ SRVEX01-SZ.bfs.intern ([fe80::7d2d:f9cb:2761:d24a%13]) with mapi id
+ 15.01.2242.008; Fri, 23 Apr 2021 13:42:31 +0200
+From:   Walter Harms <wharms@bfs.de>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "gregory.clement@bootlin.com" <gregory.clement@bootlin.com>,
+        "thomas.petazzoni@free-electrons.com" 
+        <thomas.petazzoni@free-electrons.com>
+CC:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH] soc: aspeed: fix a ternary sign expansion bug
-Message-ID: <20210423111425.GT1959@kadam>
-References: <YIE90PSXsMTa2Y8n@mwanda>
- <59596244622c4a15ac8cc0747332d0be@AcuMS.aculab.com>
- <877dktuvmz.fsf@osv.gnss.ru>
+Subject: AW: [PATCH 1/4] clk: mvebu: Fix a memory leak in an error handling
+ path
+Thread-Topic: [PATCH 1/4] clk: mvebu: Fix a memory leak in an error handling
+ path
+Thread-Index: AQHXOAlra2sQAacEjUWcDYHHPtnRKKrB+sUc
+Date:   Fri, 23 Apr 2021 11:42:30 +0000
+Message-ID: <3e38da0e86c045d3aefd46f375e8b48e@bfs.de>
+References: <cover.1619157996.git.christophe.jaillet@wanadoo.fr>,<27db232fdd14e14d493f29a5404d9e643f09cc96.1619157996.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <27db232fdd14e14d493f29a5404d9e643f09cc96.1619157996.git.christophe.jaillet@wanadoo.fr>
+Accept-Language: de-DE, en-US
+Content-Language: de-DE
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.137.16.39]
+x-tm-as-product-ver: SMEX-14.0.0.3080-8.6.1012-26108.007
+x-tm-as-result: No-10-1.572100-5.000000
+x-tmase-matchedrid: q51PvYY4nNTRubRCcrbc5grcxrzwsv5u3dCmvEa6IiGoLZarzrrPmcEr
+        mnVGYuv6U6QXwKi+8hAd28n/9SVHwfs9SDPkW26p9u1rQ4BgXPKxT02+VRUpqcz/SxKo9mJ4Vlm
+        LeeCmr+Qwg90qZP2xjEE5MsiOdQppIbz6NfTUBu6EeJva4+0wXZHVxrCMbhjZ8voDjR2X7lwVWL
+        q9OD+dxP4CUcmo4PggvBnXDRQDOdPINUBYpHy9LRouoVvF2i0ZF4r8H5YrEqxjLp8Cm8vwF0Ac6
+        DyoS2rIj6kCfX0Edc48czWEGg4ankElpwBtHoIxkIA1wW1nvBPrixWWWJYrH79ZdlL8eonaC24o
+        EZ6SpSk6XEE7Yhw4FlreFBI5y8oAjFCXwwTXuHzp+utPzpWkMirkU1Y1dRQr9801gjeZKajkPpd
+        Jh5DqM6tiiq3HBpTM3SC0Pa604d54wdSwiqr5giis9jscQpKczRtC/fI/GzL62iqv7ym1n2PqXS
+        KGf39Kj0FRshmKgblnIxZyJs78kg==
+x-tm-as-user-approved-sender: No
+x-tm-as-user-blocked-sender: No
+x-tmase-result: 10-1.572100-5.000000
+x-tmase-version: SMEX-14.0.0.3080-8.6.1012-26108.007
+x-tm-snts-smtp: 887BBBFA70AA266C9F2956588BCB59E064FB8E878BF7F67343E1EED0825C71E22000:9
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <877dktuvmz.fsf@osv.gnss.ru>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-ORIG-GUID: buI5O6n7g4zgWO5D-JTNuvwpixakMr6V
-X-Proofpoint-GUID: buI5O6n7g4zgWO5D-JTNuvwpixakMr6V
+X-Spamd-Result: default: False [-18.00 / 7.00];
+         ARC_NA(0.00)[];
+         TO_DN_EQ_ADDR_SOME(0.00)[];
+         HAS_XOIP(0.00)[];
+         FROM_HAS_DN(0.00)[];
+         TO_DN_SOME(0.00)[];
+         FREEMAIL_ENVRCPT(0.00)[wanadoo.fr];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         MIME_GOOD(-0.10)[text/plain];
+         DKIM_SIGNED(0.00)[bfs.de:s=dkim201901];
+         WHITELIST_LOCAL_IP(-15.00)[10.129.90.31];
+         RCPT_COUNT_SEVEN(0.00)[8];
+         FREEMAIL_TO(0.00)[wanadoo.fr,baylibre.com,kernel.org,bootlin.com,free-electrons.com];
+         RCVD_NO_TLS_LAST(0.10)[];
+         FROM_EQ_ENVFROM(0.00)[];
+         MIME_TRACE(0.00)[0:+];
+         RCVD_COUNT_TWO(0.00)[2];
+         MID_RHS_MATCH_FROM(0.00)[];
+         BAYES_HAM(-3.00)[99.99%]
+Authentication-Results: mx01-muc.bfs.de;
+        none
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Apr 23, 2021 at 01:45:40PM +0300, Sergey Organov wrote:
-> David Laight <David.Laight@ACULAB.COM> writes:
-> 
-> > From: Dan Carpenter
-> >> Sent: 22 April 2021 10:12
-> >> 
-> >> The intent here was to return negative error codes but it actually
-> >> returns positive values.  The problem is that type promotion with
-> >> ternary operations is quite complicated.
-> >> 
-> >> "ret" is an int.  "copied" is a u32.  And the snoop_file_read() function
-> >> returns long.  What happens is that "ret" is cast to u32 and becomes
-> >> positive then it's cast to long and it's still positive.
-> >> 
-> >> Fix this by removing the ternary so that "ret" is type promoted directly
-> >> to long.
-> >> 
-> >> Fixes: 3772e5da4454 ("drivers/misc: Aspeed LPC snoop output using misc chardev")
-> >> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> >> ---
-> >>  drivers/soc/aspeed/aspeed-lpc-snoop.c | 4 +++-
-> >>  1 file changed, 3 insertions(+), 1 deletion(-)
-> >> 
-> >> diff --git a/drivers/soc/aspeed/aspeed-lpc-snoop.c b/drivers/soc/aspeed/aspeed-lpc-snoop.c
-> >> index 210455efb321..eceeaf8dfbeb 100644
-> >> --- a/drivers/soc/aspeed/aspeed-lpc-snoop.c
-> >> +++ b/drivers/soc/aspeed/aspeed-lpc-snoop.c
-> >> @@ -94,8 +94,10 @@ static ssize_t snoop_file_read(struct file *file, char __user *buffer,
-> >>  			return -EINTR;
-> >>  	}
-> >>  	ret = kfifo_to_user(&chan->fifo, buffer, count, &copied);
-> >> +	if (ret)
-> >> +		return ret;
-> >> 
-> >> -	return ret ? ret : copied;
-> >> +	return copied;
-> >
-> > I wonder if changing it to:
-> > 	return ret ? ret + 0L : copied;
-> >
-> > Might make people think in the future and not convert it back
-> > as an 'optimisation'.
-> 
-> It rather made me think: "what the heck is going on here?!"
-> 
-> Shouldn't it better be:
-> 
->  	return ret ? ret : (long)copied;
-> 
-> or even:
-> 
->         return ret ?: (long)copied;
+nitpicking:
+ clk_name could be replaced with cpuclk[cpu].clk_name
 
-I work with Greg a lot and his bias against ternaries has rubbed off a
-bit.  They're sort of Perl-ish.  And I have nothing against Perl.  It's
-a perfectly fine programming language, but when I write Perl I write it
-in C.
+and the commit msg is from the other patch (free  cpuclk[cpu].clk_name)
 
-regards,
-dan carpenter
+jm2c,
+
+re,
+ wh
+________________________________________
+Von: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Gesendet: Freitag, 23. April 2021 08:25:01
+An: mturquette@baylibre.com; sboyd@kernel.org; gregory.clement@bootlin.com;=
+ thomas.petazzoni@free-electrons.com
+Cc: linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org; kernel-janitor=
+s@vger.kernel.org; Christophe JAILLET
+Betreff: [PATCH 1/4] clk: mvebu: Fix a memory leak in an error handling pat=
+h
+
+WARNUNG: Diese E-Mail kam von au=DFerhalb der Organisation. Klicken Sie nic=
+ht auf Links oder =F6ffnen Sie keine Anh=E4nge, es sei denn, Sie kennen den=
+/die Absender*in und wissen, dass der Inhalt sicher ist.
+
+
+If an error occurs in the for_each loop, clk_name must be freed.
+
+In order to do so, sightly rearrange the code:
+   - move the allocation to simplify error handling
+   - use kasprintf instead of kzalloc/sprintf to simplify code and avoid a
+     magic number
+
+Fixes: ab8ba01b3fe5 ("clk: mvebu: add armada-370-xp CPU specific clocks")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+The { } around the 1 line block after kasprintf is intentional and makes
+sense with 2/2
+---
+ drivers/clk/mvebu/clk-cpu.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/clk/mvebu/clk-cpu.c b/drivers/clk/mvebu/clk-cpu.c
+index c2af3395cf13..a11d7273fcc7 100644
+--- a/drivers/clk/mvebu/clk-cpu.c
++++ b/drivers/clk/mvebu/clk-cpu.c
+@@ -195,17 +195,17 @@ static void __init of_cpu_clk_setup(struct device_nod=
+e *node)
+        for_each_of_cpu_node(dn) {
+                struct clk_init_data init;
+                struct clk *clk;
+-               char *clk_name =3D kzalloc(5, GFP_KERNEL);
++               char *clk_name;
+                int cpu, err;
+
+-               if (WARN_ON(!clk_name))
+-                       goto bail_out;
+-
+                err =3D of_property_read_u32(dn, "reg", &cpu);
+                if (WARN_ON(err))
+                        goto bail_out;
+
+-               sprintf(clk_name, "cpu%d", cpu);
++               clk_name =3D kasprintf(GFP_KERNEL, "cpu%d", cpu);
++               if (WARN_ON(!clk_name)) {
++                       goto bail_out;
++               }
+
+                cpuclk[cpu].parent_name =3D of_clk_get_parent_name(node, 0)=
+;
+                cpuclk[cpu].clk_name =3D clk_name;
+--
+2.27.0
+
