@@ -2,182 +2,129 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,PDS_BAD_THREAD_QP_64,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DB9BC433B4
-	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 11:42:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19343C433ED
+	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 11:43:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 111CD613AF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 11:42:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB2166144D
+	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 11:43:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242385AbhDWLnL (ORCPT
+        id S230305AbhDWLnr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 23 Apr 2021 07:43:11 -0400
-Received: from mx01-muc.bfs.de ([193.174.230.67]:45342 "EHLO mx01-muc.bfs.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236815AbhDWLnK (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 23 Apr 2021 07:43:10 -0400
-Received: from SRVEX01-SZ.bfs.intern (exchange-sz.bfs.de [10.129.90.31])
-        by mx01-muc.bfs.de (Postfix) with ESMTPS id F0FD820389;
-        Fri, 23 Apr 2021 13:42:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bfs.de; s=dkim201901;
-        t=1619178152;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=dQDZaEXB4OrIze3umzwdepSHeanpp8Bw7/iC8vF911c=;
-        b=BYo0BU9gHsBa1L+z/XrlTrnUm40R1SANUPOKkCzrFSb+pnvNmRh/w5ApRsFJ+Gp27jlzL/
-        y/Kv0O1gPbRPodBrPUW3cWrnHnyPFN0cmXIAsPlNUWKeXbRSfzqDSIfhIdYbqDnYBn+nYk
-        sd8YbKttk5Am7YjQEaUYUrfr0fch+/nNWEtw5MhHqPbAzZre61qau9oeg7tAxrcc7o3ICP
-        n6VM6VOpY2Ko51si/YNRDoda/uUEOFRZe9vcybcfwLBEKEZ4icgMnGY/OdVGuol8mpQaKE
-        7eAxfQ7diKZjMD/QwDyx4ySvBPESA/pHXihqCnLtfEVEXLLsXnSe2NXCQ273Hg==
-Received: from SRVEX01-SZ.bfs.intern (10.129.90.31) by SRVEX01-SZ.bfs.intern
- (10.129.90.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2242.4; Fri, 23 Apr
- 2021 13:42:31 +0200
-Received: from SRVEX01-SZ.bfs.intern ([fe80::7d2d:f9cb:2761:d24a]) by
- SRVEX01-SZ.bfs.intern ([fe80::7d2d:f9cb:2761:d24a%13]) with mapi id
- 15.01.2242.008; Fri, 23 Apr 2021 13:42:31 +0200
-From:   Walter Harms <wharms@bfs.de>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "gregory.clement@bootlin.com" <gregory.clement@bootlin.com>,
-        "thomas.petazzoni@free-electrons.com" 
-        <thomas.petazzoni@free-electrons.com>
-CC:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: AW: [PATCH 1/4] clk: mvebu: Fix a memory leak in an error handling
- path
-Thread-Topic: [PATCH 1/4] clk: mvebu: Fix a memory leak in an error handling
- path
-Thread-Index: AQHXOAlra2sQAacEjUWcDYHHPtnRKKrB+sUc
-Date:   Fri, 23 Apr 2021 11:42:30 +0000
-Message-ID: <3e38da0e86c045d3aefd46f375e8b48e@bfs.de>
-References: <cover.1619157996.git.christophe.jaillet@wanadoo.fr>,<27db232fdd14e14d493f29a5404d9e643f09cc96.1619157996.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <27db232fdd14e14d493f29a5404d9e643f09cc96.1619157996.git.christophe.jaillet@wanadoo.fr>
-Accept-Language: de-DE, en-US
-Content-Language: de-DE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.137.16.39]
-x-tm-as-product-ver: SMEX-14.0.0.3080-8.6.1012-26108.007
-x-tm-as-result: No-10-1.572100-5.000000
-x-tmase-matchedrid: q51PvYY4nNTRubRCcrbc5grcxrzwsv5u3dCmvEa6IiGoLZarzrrPmcEr
-        mnVGYuv6U6QXwKi+8hAd28n/9SVHwfs9SDPkW26p9u1rQ4BgXPKxT02+VRUpqcz/SxKo9mJ4Vlm
-        LeeCmr+Qwg90qZP2xjEE5MsiOdQppIbz6NfTUBu6EeJva4+0wXZHVxrCMbhjZ8voDjR2X7lwVWL
-        q9OD+dxP4CUcmo4PggvBnXDRQDOdPINUBYpHy9LRouoVvF2i0ZF4r8H5YrEqxjLp8Cm8vwF0Ac6
-        DyoS2rIj6kCfX0Edc48czWEGg4ankElpwBtHoIxkIA1wW1nvBPrixWWWJYrH79ZdlL8eonaC24o
-        EZ6SpSk6XEE7Yhw4FlreFBI5y8oAjFCXwwTXuHzp+utPzpWkMirkU1Y1dRQr9801gjeZKajkPpd
-        Jh5DqM6tiiq3HBpTM3SC0Pa604d54wdSwiqr5giis9jscQpKczRtC/fI/GzL62iqv7ym1n2PqXS
-        KGf39Kj0FRshmKgblnIxZyJs78kg==
-x-tm-as-user-approved-sender: No
-x-tm-as-user-blocked-sender: No
-x-tmase-result: 10-1.572100-5.000000
-x-tmase-version: SMEX-14.0.0.3080-8.6.1012-26108.007
-x-tm-snts-smtp: 887BBBFA70AA266C9F2956588BCB59E064FB8E878BF7F67343E1EED0825C71E22000:9
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 23 Apr 2021 07:43:47 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:50200 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229957AbhDWLnq (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 23 Apr 2021 07:43:46 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13NBea49169184;
+        Fri, 23 Apr 2021 11:43:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
+ bh=S66XGWsxtWw3KFeNK/zMFkU4+OP6l6K4EheP3hlTzoI=;
+ b=BgWwaFiOwJahgfkC+kjgUCbCf5bM6NZdufF/jdoeHVkUUHzNWJDNA5xPF+Cn+rKvfz9R
+ kkDV7Z5q6732IG5j8SwbBl9YWMUzRDB3+8yoKuAc5kx/PS4M4jxsQi7U+L6aToczTfU0
+ piliPw2KdZ5el9XzF87DPSHA3fnVBZ7EpFJzuFwEDGZHomcj7yWEyxoVXmhnPKuKKJS5
+ kyH52vf+HxNFeqruhAAgTJUndvkNUpDHbtEkHXdxfXXSsP6rjBYLNjVpVXkFHKpIuh8u
+ WiGCQJp6HwfAMAaYxm4LLJx+5XQWUUECb3f5KQO1az87MCNuR9sKKLM0QT+Cjdj0Wbh/ jg== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2130.oracle.com with ESMTP id 37yn6cg8dm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 23 Apr 2021 11:43:06 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13NBduR4013295;
+        Fri, 23 Apr 2021 11:43:06 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by aserp3030.oracle.com with ESMTP id 383ccffnsg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 23 Apr 2021 11:43:06 +0000
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 13NBh5pM018898;
+        Fri, 23 Apr 2021 11:43:05 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 383ccffns7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 23 Apr 2021 11:43:05 +0000
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 13NBh4EF001372;
+        Fri, 23 Apr 2021 11:43:04 GMT
+Received: from mwanda (/102.36.221.92)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 23 Apr 2021 04:43:03 -0700
+Date:   Fri, 23 Apr 2021 14:42:57 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Saeed Mahameed <saeedm@nvidia.com>,
+        Yevgeny Kliteynik <kliteyn@nvidia.com>
+Cc:     Leon Romanovsky <leon@kernel.org>, linux-rdma@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH net-next] net/mlx5: Fix some error messages
+Message-ID: <YIKywXhusLj4cDFM@mwanda>
 MIME-Version: 1.0
-X-Spamd-Result: default: False [-18.00 / 7.00];
-         ARC_NA(0.00)[];
-         TO_DN_EQ_ADDR_SOME(0.00)[];
-         HAS_XOIP(0.00)[];
-         FROM_HAS_DN(0.00)[];
-         TO_DN_SOME(0.00)[];
-         FREEMAIL_ENVRCPT(0.00)[wanadoo.fr];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         MIME_GOOD(-0.10)[text/plain];
-         DKIM_SIGNED(0.00)[bfs.de:s=dkim201901];
-         WHITELIST_LOCAL_IP(-15.00)[10.129.90.31];
-         RCPT_COUNT_SEVEN(0.00)[8];
-         FREEMAIL_TO(0.00)[wanadoo.fr,baylibre.com,kernel.org,bootlin.com,free-electrons.com];
-         RCVD_NO_TLS_LAST(0.10)[];
-         FROM_EQ_ENVFROM(0.00)[];
-         MIME_TRACE(0.00)[0:+];
-         RCVD_COUNT_TWO(0.00)[2];
-         MID_RHS_MATCH_FROM(0.00)[];
-         BAYES_HAM(-3.00)[99.99%]
-Authentication-Results: mx01-muc.bfs.de;
-        none
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+X-Proofpoint-GUID: YSFmQf3h8wS6QcxzcBUv3cQJ8cimGK3h
+X-Proofpoint-ORIG-GUID: YSFmQf3h8wS6QcxzcBUv3cQJ8cimGK3h
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9962 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 priorityscore=1501
+ bulkscore=0 suspectscore=0 impostorscore=0 mlxscore=0 lowpriorityscore=0
+ clxscore=1011 spamscore=0 mlxlogscore=999 adultscore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104060000
+ definitions=main-2104230076
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-nitpicking:
- clk_name could be replaced with cpuclk[cpu].clk_name
+This code was using IS_ERR() instead of PTR_ERR() so it prints 1 instead
+of the correct error code.
 
-and the commit msg is from the other patch (free  cpuclk[cpu].clk_name)
-
-jm2c,
-
-re,
- wh
-________________________________________
-Von: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Gesendet: Freitag, 23. April 2021 08:25:01
-An: mturquette@baylibre.com; sboyd@kernel.org; gregory.clement@bootlin.com;=
- thomas.petazzoni@free-electrons.com
-Cc: linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org; kernel-janitor=
-s@vger.kernel.org; Christophe JAILLET
-Betreff: [PATCH 1/4] clk: mvebu: Fix a memory leak in an error handling pat=
-h
-
-WARNUNG: Diese E-Mail kam von au=DFerhalb der Organisation. Klicken Sie nic=
-ht auf Links oder =F6ffnen Sie keine Anh=E4nge, es sei denn, Sie kennen den=
-/die Absender*in und wissen, dass der Inhalt sicher ist.
-
-
-If an error occurs in the for_each loop, clk_name must be freed.
-
-In order to do so, sightly rearrange the code:
-   - move the allocation to simplify error handling
-   - use kasprintf instead of kzalloc/sprintf to simplify code and avoid a
-     magic number
-
-Fixes: ab8ba01b3fe5 ("clk: mvebu: add armada-370-xp CPU specific clocks")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Fixes: 25cb31768042 ("net/mlx5: E-Switch, Improve error messages in term table creation")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-The { } around the 1 line block after kasprintf is intentional and makes
-sense with 2/2
----
- drivers/clk/mvebu/clk-cpu.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ .../mellanox/mlx5/core/eswitch_offloads_termtbl.c    | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/clk/mvebu/clk-cpu.c b/drivers/clk/mvebu/clk-cpu.c
-index c2af3395cf13..a11d7273fcc7 100644
---- a/drivers/clk/mvebu/clk-cpu.c
-+++ b/drivers/clk/mvebu/clk-cpu.c
-@@ -195,17 +195,17 @@ static void __init of_cpu_clk_setup(struct device_nod=
-e *node)
-        for_each_of_cpu_node(dn) {
-                struct clk_init_data init;
-                struct clk *clk;
--               char *clk_name =3D kzalloc(5, GFP_KERNEL);
-+               char *clk_name;
-                int cpu, err;
-
--               if (WARN_ON(!clk_name))
--                       goto bail_out;
--
-                err =3D of_property_read_u32(dn, "reg", &cpu);
-                if (WARN_ON(err))
-                        goto bail_out;
-
--               sprintf(clk_name, "cpu%d", cpu);
-+               clk_name =3D kasprintf(GFP_KERNEL, "cpu%d", cpu);
-+               if (WARN_ON(!clk_name)) {
-+                       goto bail_out;
-+               }
-
-                cpuclk[cpu].parent_name =3D of_clk_get_parent_name(node, 0)=
-;
-                cpuclk[cpu].clk_name =3D clk_name;
---
-2.27.0
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads_termtbl.c b/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads_termtbl.c
+index a81ece94f599..95f5c1a27718 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads_termtbl.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads_termtbl.c
+@@ -83,16 +83,16 @@ mlx5_eswitch_termtbl_create(struct mlx5_core_dev *dev,
+ 	ft_attr.autogroup.max_num_groups = 1;
+ 	tt->termtbl = mlx5_create_auto_grouped_flow_table(root_ns, &ft_attr);
+ 	if (IS_ERR(tt->termtbl)) {
+-		esw_warn(dev, "Failed to create termination table (error %d)\n",
+-			 IS_ERR(tt->termtbl));
++		esw_warn(dev, "Failed to create termination table (error %ld)\n",
++			 PTR_ERR(tt->termtbl));
+ 		return -EOPNOTSUPP;
+ 	}
+ 
+ 	tt->rule = mlx5_add_flow_rules(tt->termtbl, NULL, flow_act,
+ 				       &tt->dest, 1);
+ 	if (IS_ERR(tt->rule)) {
+-		esw_warn(dev, "Failed to create termination table rule (error %d)\n",
+-			 IS_ERR(tt->rule));
++		esw_warn(dev, "Failed to create termination table rule (error %ld)\n",
++			 PTR_ERR(tt->rule));
+ 		goto add_flow_err;
+ 	}
+ 	return 0;
+@@ -283,8 +283,8 @@ mlx5_eswitch_add_termtbl_rule(struct mlx5_eswitch *esw,
+ 		tt = mlx5_eswitch_termtbl_get_create(esw, &term_tbl_act,
+ 						     &dest[i], attr);
+ 		if (IS_ERR(tt)) {
+-			esw_warn(esw->dev, "Failed to get termination table (error %d)\n",
+-				 IS_ERR(tt));
++			esw_warn(esw->dev, "Failed to get termination table (error %ld)\n",
++				 PTR_ERR(tt));
+ 			goto revert_changes;
+ 		}
+ 		attr->dests[num_vport_dests].termtbl = tt;
+-- 
+2.30.2
 
