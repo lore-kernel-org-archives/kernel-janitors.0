@@ -2,72 +2,111 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46769C433B4
-	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 19:47:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B045EC433ED
+	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 21:19:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1A6E861409
-	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 19:47:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8276F6145F
+	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 21:19:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232894AbhDWTse (ORCPT
+        id S244015AbhDWVUV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 23 Apr 2021 15:48:34 -0400
-Received: from h4.fbrelay.privateemail.com ([131.153.2.45]:58431 "EHLO
-        h4.fbrelay.privateemail.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229691AbhDWTsd (ORCPT
+        Fri, 23 Apr 2021 17:20:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48400 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232686AbhDWVUT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 23 Apr 2021 15:48:33 -0400
-X-Greylist: delayed 806 seconds by postgrey-1.27 at vger.kernel.org; Fri, 23 Apr 2021 15:48:33 EDT
-Received: from MTA-13-4.privateemail.com (mta-13.privateemail.com [198.54.118.203])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by h3.fbrelay.privateemail.com (Postfix) with ESMTPS id 05060812B5;
-        Fri, 23 Apr 2021 15:34:30 -0400 (EDT)
-Received: from mta-13.privateemail.com (localhost [127.0.0.1])
-        by mta-13.privateemail.com (Postfix) with ESMTP id BFFD68006D;
-        Fri, 23 Apr 2021 15:34:27 -0400 (EDT)
-Received: from hal-station.. (unknown [10.20.151.233])
-        by mta-13.privateemail.com (Postfix) with ESMTPA id 5361080067;
-        Fri, 23 Apr 2021 15:34:27 -0400 (EDT)
-From:   Hamza Mahfooz <someguy@effective-light.com>
-To:     kernel-janitors@vger.kernel.org
-Cc:     linux-input@vger.kernel.org,
-        Hamza Mahfooz <someguy@effective-light.com>
-Subject: [PATCH] hid: remove the unnecessary redefinition of a macro
-Date:   Fri, 23 Apr 2021 15:34:05 -0400
-Message-Id: <20210423193405.3828-1-someguy@effective-light.com>
-X-Mailer: git-send-email 2.31.1
+        Fri, 23 Apr 2021 17:20:19 -0400
+Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82313C061574;
+        Fri, 23 Apr 2021 14:19:42 -0700 (PDT)
+Received: by mail-pg1-x534.google.com with SMTP id p12so36030804pgj.10;
+        Fri, 23 Apr 2021 14:19:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=WAO+nTeTFKCXmHl+vp74ehdsr2jzD+Il2HojC2vivp4=;
+        b=jh3E0F9cmHHV45i2iz4jSxo6rNeP1zus8z7oJn9SUycV0Qwp/5hqJ6LIJsCaGM5azq
+         0j4/pX8V/HNvmN3TQcgtlvCWt5l7I05gNF2CImlB4N0UnWK0RBoe7UGB/GKi3cF02Et8
+         s/8ILNzGnE/1JyxtRr919BrJZc/2ZOxe/stWx7HHzDxJFfmABIgxNjbKCwBq/h+ZTPtN
+         sCzAgUtJSiXsLpfjUNH8RZPI7kImn3S7zT0jUNr2Bv4oGPWAs7mkhaia9TMELq6YCKNg
+         3esi8HjeOyeHnmCk9h1kQzG61G0TVi+6DFxepUsPo9cdET7YCwVw++0hE421c5V0q9dN
+         7n7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=WAO+nTeTFKCXmHl+vp74ehdsr2jzD+Il2HojC2vivp4=;
+        b=XY13GvJrX6fmMVJRJmtGc7n0+D3cswuL4WyZ4HZct9usoCfIfSlrkoxBVqTLgtbd0W
+         YIQB4UqHXlE0208i6upt0QVWeH+ZkOo7klwLbszQoWPtidjpI+6KWwzDY7znZXviH/e5
+         6dHcStwtjgxclhV7e1jzbPCkTE8lFMpGd8OzPxvIgENNIk5QQ5jst305Y/CyVdObrwaL
+         0dA4IZe4sCTXcOG8cKLr/wvII0wWle3KhxHL5bn9pZNJpGg9d2LyUJVI52if8v/T0pek
+         cJgGCyAeXxibrDlBglNm/M3H8Lq5TVG5AN4CiBMGA9SABODlNuVVwSpDEMA9MIyv12SP
+         iJxg==
+X-Gm-Message-State: AOAM530s+8t8W9UYft6FAb++FlBhxmTcXT7hFc+U78/Vjz9bb2kGQtEw
+        m119koFYL/OadTitftO0KlE=
+X-Google-Smtp-Source: ABdhPJwgDjseqFJlZ7o7q9LGMWZO9BTmSGr0Y6iCXKAXi19G4EFyrcnl6ZWfwKsgNo8LSmW07YWeTA==
+X-Received: by 2002:a63:5626:: with SMTP id k38mr5878365pgb.128.1619212781788;
+        Fri, 23 Apr 2021 14:19:41 -0700 (PDT)
+Received: from localhost (g191.124-44-145.ppp.wakwak.ne.jp. [124.44.145.191])
+        by smtp.gmail.com with ESMTPSA id d17sm5339384pfn.60.2021.04.23.14.19.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Apr 2021 14:19:41 -0700 (PDT)
+Date:   Sat, 24 Apr 2021 06:19:39 +0900
+From:   Stafford Horne <shorne@gmail.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     jonas@southpole.se, stefan.kristiansson@saunalahti.fi,
+        rppt@kernel.org, akpm@linux-foundation.org, arnd@arndb.de,
+        openrisc@lists.librecores.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] openrisc: Fix a memory leak
+Message-ID: <20210423211939.GP3288043@lianli.shorne-pla.net>
+References: <c078439e31fd60e1617be8c17cc1ec57639e0586.1619190470.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c078439e31fd60e1617be8c17cc1ec57639e0586.1619190470.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-USB_VENDOR_ID_CORSAIR is defined twice in the same file with the same
-value.
+On Fri, Apr 23, 2021 at 05:09:28PM +0200, Christophe JAILLET wrote:
+> 'setup_find_cpu_node()' take a reference on the node it returns.
+> This reference must be decremented when not needed anymore, or there will
+> be a leak.
+> 
+> Add the missing 'of_node_put(cpu)'.
+> 
+> Note that 'setup_cpuinfo()' that also calls this function already has a
+> correct 'of_node_put(cpu)' at its end.
 
-Signed-off-by: Hamza Mahfooz <someguy@effective-light.com>
----
- drivers/hid/hid-ids.h | 1 -
- 1 file changed, 1 deletion(-)
+Thanks, this looks good to me.  I will queue it up.
 
-diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-index 67fd8a2f5aba..133101b567f2 100644
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -299,7 +299,6 @@
- #define USB_VENDOR_ID_CORSAIR		0x1b1c
- #define USB_DEVICE_ID_CORSAIR_K90	0x1b02
- 
--#define USB_VENDOR_ID_CORSAIR           0x1b1c
- #define USB_DEVICE_ID_CORSAIR_K70R      0x1b09
- #define USB_DEVICE_ID_CORSAIR_K95RGB    0x1b11
- #define USB_DEVICE_ID_CORSAIR_M65RGB    0x1b12
--- 
-2.31.1
-
+> Fixes: 9d02a4283e9c ("OpenRISC: Boot code")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  arch/openrisc/kernel/setup.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/openrisc/kernel/setup.c b/arch/openrisc/kernel/setup.c
+> index 2416a9f91533..c6f9e7b9f7cb 100644
+> --- a/arch/openrisc/kernel/setup.c
+> +++ b/arch/openrisc/kernel/setup.c
+> @@ -278,6 +278,8 @@ void calibrate_delay(void)
+>  	pr_cont("%lu.%02lu BogoMIPS (lpj=%lu)\n",
+>  		loops_per_jiffy / (500000 / HZ),
+>  		(loops_per_jiffy / (5000 / HZ)) % 100, loops_per_jiffy);
+> +
+> +	of_node_put(cpu);
+>  }
+>  
+>  void __init setup_arch(char **cmdline_p)
+> -- 
+> 2.27.0
+> 
