@@ -2,252 +2,210 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.8 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3253C43460
-	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 13:41:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91A8FC43460
+	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 14:02:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6A678611AC
-	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 13:41:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D02761404
+	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 14:02:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236941AbhDWNmP (ORCPT
+        id S231305AbhDWODH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 23 Apr 2021 09:42:15 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:47747 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231274AbhDWNmP (ORCPT
+        Fri, 23 Apr 2021 10:03:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36126 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229931AbhDWODG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 23 Apr 2021 09:42:15 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1lZw3p-0002wi-8X; Fri, 23 Apr 2021 13:41:33 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, ath10k@lists.infradead.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        ath11k@lists.infradead.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ath10k/ath11k: fix spelling mistake "requed" -> "requeued"
-Date:   Fri, 23 Apr 2021 14:41:33 +0100
-Message-Id: <20210423134133.339751-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.30.2
+        Fri, 23 Apr 2021 10:03:06 -0400
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B94E3C061756
+        for <kernel-janitors@vger.kernel.org>; Fri, 23 Apr 2021 07:02:29 -0700 (PDT)
+Received: by mail-wr1-x42b.google.com with SMTP id s7so48452681wru.6
+        for <kernel-janitors@vger.kernel.org>; Fri, 23 Apr 2021 07:02:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=mqDAI2Eo0AiEBMj+7YqhB+/EfKK7wEdKmdXLdRdTOaw=;
+        b=PcB4NGYzuRZfIQCklsDEhiVsnNkUPaGQDpaJWtwroqJaTW5plTBA+wjkIKfKDkxwZ6
+         xU/1Rm894k7ruc2jCU5Syg239Uc5QDMokzbD7CNnG4G6j6GpIQegviH8dySyJI+p9xti
+         uSPcxDix+2yCqVELTmFsbybyYHZKJJfkSY/PqCCQwrB5rqN5v860ewnFzHu7JNeLjCGy
+         Ytr1QXVS8RT1QZKRwvFls5lO3rXmt/NpghkyAdFbpyF3tHLByDrWcaPZsEAEVNEsxIfA
+         Rz6vQcpl+UHoeIGDrZg1koY5RRt4SRsniACz5udYvR3UH5+UAGO39IpGB23DXdJGBZBk
+         13yA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=mqDAI2Eo0AiEBMj+7YqhB+/EfKK7wEdKmdXLdRdTOaw=;
+        b=UITpONyqp8PR3mHE4OJsy4Ifpt6wBHKEqmgp1tABXLEZacN6goRMabi5y+yvEzsJp0
+         XH4vPz9+BKpLbVz2MwMr29LlNn7ab4TP0gMFmuWRbNeXh4ymH7iOZuAIv2pWFBm8ahJI
+         bT+GI0ED5ew96WLwMVMukUujri9Y39ZNcrlz65/IM7TWVSOzzP/XwCKmH5Pszv5tRr6n
+         fC+woRSUKcu3Y1Ee+3NB2FYfwv3b2DoRfax6su2W2GMXpBKLO9Xh/nNgZiQuXwVok9yy
+         NmDaBI6RD/RQwY8wUYMoGbpJyOeSj4YQgABsNkUhSF75udX5QATv/+3GrNR/lKC8cfJm
+         gkIg==
+X-Gm-Message-State: AOAM5338ht7PUJJu+nAcP0CFwa/IUQ5FOTwFcer1pFPHs8wGsv3pqmvd
+        fG+kmb73JXdQ5GtebJiWqjI4OQ==
+X-Google-Smtp-Source: ABdhPJz4lBAWRredHV50729J0WuYpflBIWpdZIt5fX8mmVLMQZwVCqN6/75zTpHENIY+al7Yf6HlWg==
+X-Received: by 2002:a05:6000:18ae:: with SMTP id b14mr4943822wri.211.1619186548117;
+        Fri, 23 Apr 2021 07:02:28 -0700 (PDT)
+Received: from elver.google.com ([2a00:79e0:15:13:d1f:43f2:c472:9b8])
+        by smtp.gmail.com with ESMTPSA id z15sm8890560wrv.39.2021.04.23.07.02.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Apr 2021 07:02:27 -0700 (PDT)
+Date:   Fri, 23 Apr 2021 16:02:21 +0200
+From:   Marco Elver <elver@google.com>
+To:     Bart Van Assche <bvanassche@acm.org>
+Cc:     Leon Romanovsky <leon@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Marion et Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        tj@kernel.org, jiangshanlai@gmail.com, saeedm@nvidia.com,
+        davem@davemloft.net, kuba@kernel.org, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, akpm@linux-foundation.org
+Subject: Re: [PATCH 1/2] workqueue: Have 'alloc_workqueue()' like macros
+ accept a format specifier
+Message-ID: <YILTbVnxBJVYa3jT@elver.google.com>
+References: <cover.1618780558.git.christophe.jaillet@wanadoo.fr>
+ <ae88f6c2c613d17bc1a56692cfa4f960dbc723d2.1618780558.git.christophe.jaillet@wanadoo.fr>
+ <042f5fff-5faf-f3c5-0819-b8c8d766ede6@acm.org>
+ <1032428026.331.1618814178946.JavaMail.www@wwinf2229>
+ <40c21bfe-e304-230d-b319-b98063347b8b@acm.org>
+ <20210422122419.GF2047089@ziepe.ca>
+ <782e329a-7c3f-a0da-5d2f-89871b0c4b9b@acm.org>
+ <YIG5tLBIAledZetf@unreal>
+ <53b2ef14-1b8a-43b1-ef53-e314e2649ea0@acm.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <53b2ef14-1b8a-43b1-ef53-e314e2649ea0@acm.org>
+User-Agent: Mutt/2.0.5 (2021-01-21)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Thu, Apr 22, 2021 at 01:30PM -0700, Bart Van Assche wrote:
+> On 4/22/21 11:00 AM, Leon Romanovsky wrote:
+> > On Thu, Apr 22, 2021 at 10:12:33AM -0700, Bart Van Assche wrote:
+> > > On 4/22/21 5:24 AM, Jason Gunthorpe wrote:
+> > > > On Mon, Apr 19, 2021 at 01:02:34PM -0700, Bart Van Assche wrote:
+> > > > > On 4/18/21 11:36 PM, Marion et Christophe JAILLET wrote:
+> > > > > > The list in To: is the one given by get_maintainer.pl. Usualy, I only
+> > > > > > put the ML in Cc: I've run the script on the 2 patches of the serie
+> > > > > > and merged the 2 lists. Everyone is in the To: of the cover letter
+> > > > > > and of the 2 patches.
+> > > > > > 
+> > > > > > If Théo is "Tejun Heo" (  (maintainer:WORKQUEUE) ), he is already in
+> > > > > > the To: line.
+> > > > > Linus wants to see a "Cc: ${maintainer}" tag in patches that he receives
+> > > > > from a maintainer and that modify another subsystem than the subsystem
+> > > > > maintained by that maintainer.
+> > > > 
+> > > > Really? Do you remember a lore link for this?
+> > > 
+> > > Last time I saw Linus mentioning this was a few months ago.
+> > > Unfortunately I cannot find that message anymore.
+> > > 
+> > > > Generally I've been junking the CC lines (vs Andrew at the other
+> > > > extreme that often has 10's of CC lines)
+> > > 
+> > > Most entries in the MAINTAINERS file have one to three email addresses
+> > > so I'm surprised to read that Cc-ing maintainer(s) could result in tens
+> > > of Cc lines?
+> > 
+> > git log mm/
+> > 
+> > commit 2b8305260fb37fc20e13f71e13073304d0a031c8
+> > Author: Alexander Potapenko <glider@google.com>
+> > Date:   Thu Feb 25 17:19:21 2021 -0800
+> > 
+> >      kfence, kasan: make KFENCE compatible with KASAN
+> > 
+> >      Make KFENCE compatible with KASAN. Currently this helps test KFENCE
+> >      itself, where KASAN can catch potential corruptions to KFENCE state, or
+> >      other corruptions that may be a result of freepointer corruptions in the
+> >      main allocators.
+> > 
+> >      [akpm@linux-foundation.org: merge fixup]
+> >      [andreyknvl@google.com: untag addresses for KFENCE]
+> >        Link: https://lkml.kernel.org/r/9dc196006921b191d25d10f6e611316db7da2efc.1611946152.git.andreyknvl@google.com
+> > 
+> >      Link: https://lkml.kernel.org/r/20201103175841.3495947-7-elver@google.com
+> >      Signed-off-by: Marco Elver <elver@google.com>
+> >      Signed-off-by: Alexander Potapenko <glider@google.com>
+> >      Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+> >      Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
+> >      Reviewed-by: Jann Horn <jannh@google.com>
+> >      Co-developed-by: Marco Elver <elver@google.com>
+> >      Cc: Andrey Konovalov <andreyknvl@google.com>
+> >      Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
+> >      Cc: Andy Lutomirski <luto@kernel.org>
+> >      Cc: Borislav Petkov <bp@alien8.de>
+> >      Cc: Catalin Marinas <catalin.marinas@arm.com>
+> >      Cc: Christopher Lameter <cl@linux.com>
+> >      Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> >      Cc: David Rientjes <rientjes@google.com>
+> >      Cc: Eric Dumazet <edumazet@google.com>
+> >      Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> >      Cc: Hillf Danton <hdanton@sina.com>
+> >      Cc: "H. Peter Anvin" <hpa@zytor.com>
+> >      Cc: Ingo Molnar <mingo@redhat.com>
+> >      Cc: Joern Engel <joern@purestorage.com>
+> >      Cc: Jonathan Corbet <corbet@lwn.net>
+> >      Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+> >      Cc: Kees Cook <keescook@chromium.org>
+> >      Cc: Mark Rutland <mark.rutland@arm.com>
+> >      Cc: Paul E. McKenney <paulmck@kernel.org>
+> >      Cc: Pekka Enberg <penberg@kernel.org>
+> >      Cc: Peter Zijlstra <peterz@infradead.org>
+> >      Cc: SeongJae Park <sjpark@amazon.de>
+> >      Cc: Thomas Gleixner <tglx@linutronix.de>
+> >      Cc: Vlastimil Babka <vbabka@suse.cz>
+> >      Cc: Will Deacon <will@kernel.org>
+> >      Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+> >      Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 
-There are multiple occurrances of the misspelling of requeued in
-the drivers with symbol names and debug text. Fix these.
+This is a special case probably as KFENCE touched various subsystems and
+architectures.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/wireless/ath/ath10k/core.h              | 2 +-
- drivers/net/wireless/ath/ath10k/debug.c             | 4 ++--
- drivers/net/wireless/ath/ath10k/htt.h               | 4 ++--
- drivers/net/wireless/ath/ath10k/wmi.c               | 6 +++---
- drivers/net/wireless/ath/ath10k/wmi.h               | 8 ++++----
- drivers/net/wireless/ath/ath11k/core.h              | 4 ++--
- drivers/net/wireless/ath/ath11k/debugfs_htt_stats.c | 2 +-
- drivers/net/wireless/ath/ath11k/debugfs_htt_stats.h | 2 +-
- drivers/net/wireless/ath/ath11k/wmi.c               | 4 ++--
- drivers/net/wireless/ath/ath11k/wmi.h               | 4 ++--
- 10 files changed, 20 insertions(+), 20 deletions(-)
+That Cc list is from the original
 
-diff --git a/drivers/net/wireless/ath/ath10k/core.h b/drivers/net/wireless/ath/ath10k/core.h
-index 648ed36f845f..5aeff2d9f6cf 100644
---- a/drivers/net/wireless/ath/ath10k/core.h
-+++ b/drivers/net/wireless/ath/ath10k/core.h
-@@ -301,7 +301,7 @@ struct ath10k_fw_stats_pdev {
- 	s32 underrun;
- 	u32 hw_paused;
- 	s32 tx_abort;
--	s32 mpdus_requed;
-+	s32 mpdus_requeued;
- 	u32 tx_ko;
- 	u32 data_rc;
- 	u32 self_triggers;
-diff --git a/drivers/net/wireless/ath/ath10k/debug.c b/drivers/net/wireless/ath/ath10k/debug.c
-index fd052f6ed019..39378e3f9b2b 100644
---- a/drivers/net/wireless/ath/ath10k/debug.c
-+++ b/drivers/net/wireless/ath/ath10k/debug.c
-@@ -1105,7 +1105,7 @@ static const char ath10k_gstrings_stats[][ETH_GSTRING_LEN] = {
- 	"d_tx_ppdu_reaped",
- 	"d_tx_fifo_underrun",
- 	"d_tx_ppdu_abort",
--	"d_tx_mpdu_requed",
-+	"d_tx_mpdu_requeued",
- 	"d_tx_excessive_retries",
- 	"d_tx_hw_rate",
- 	"d_tx_dropped_sw_retries",
-@@ -1205,7 +1205,7 @@ void ath10k_debug_get_et_stats(struct ieee80211_hw *hw,
- 	data[i++] = pdev_stats->hw_reaped;
- 	data[i++] = pdev_stats->underrun;
- 	data[i++] = pdev_stats->tx_abort;
--	data[i++] = pdev_stats->mpdus_requed;
-+	data[i++] = pdev_stats->mpdus_requeued;
- 	data[i++] = pdev_stats->tx_ko;
- 	data[i++] = pdev_stats->data_rc;
- 	data[i++] = pdev_stats->sw_retry_failure;
-diff --git a/drivers/net/wireless/ath/ath10k/htt.h b/drivers/net/wireless/ath/ath10k/htt.h
-index 956157946106..4e11ee775b4d 100644
---- a/drivers/net/wireless/ath/ath10k/htt.h
-+++ b/drivers/net/wireless/ath/ath10k/htt.h
-@@ -1282,8 +1282,8 @@ struct htt_dbg_stats_wal_tx_stats {
- 	/* Num PPDUs cleaned up in TX abort */
- 	__le32 tx_abort;
- 
--	/* Num MPDUs requed by SW */
--	__le32 mpdus_requed;
-+	/* Num MPDUs requeued by SW */
-+	__le32 mpdus_requeued;
- 
- 	/* excessive retries */
- 	__le32 tx_ko;
-diff --git a/drivers/net/wireless/ath/ath10k/wmi.c b/drivers/net/wireless/ath/ath10k/wmi.c
-index d48b922215eb..f42bf2c8f9e7 100644
---- a/drivers/net/wireless/ath/ath10k/wmi.c
-+++ b/drivers/net/wireless/ath/ath10k/wmi.c
-@@ -2867,7 +2867,7 @@ void ath10k_wmi_pull_pdev_stats_tx(const struct wmi_pdev_stats_tx *src,
- 	dst->hw_reaped = __le32_to_cpu(src->hw_reaped);
- 	dst->underrun = __le32_to_cpu(src->underrun);
- 	dst->tx_abort = __le32_to_cpu(src->tx_abort);
--	dst->mpdus_requed = __le32_to_cpu(src->mpdus_requed);
-+	dst->mpdus_requeued = __le32_to_cpu(src->mpdus_requeued);
- 	dst->tx_ko = __le32_to_cpu(src->tx_ko);
- 	dst->data_rc = __le32_to_cpu(src->data_rc);
- 	dst->self_triggers = __le32_to_cpu(src->self_triggers);
-@@ -2895,7 +2895,7 @@ ath10k_wmi_10_4_pull_pdev_stats_tx(const struct wmi_10_4_pdev_stats_tx *src,
- 	dst->hw_reaped = __le32_to_cpu(src->hw_reaped);
- 	dst->underrun = __le32_to_cpu(src->underrun);
- 	dst->tx_abort = __le32_to_cpu(src->tx_abort);
--	dst->mpdus_requed = __le32_to_cpu(src->mpdus_requed);
-+	dst->mpdus_requeued = __le32_to_cpu(src->mpdus_requeued);
- 	dst->tx_ko = __le32_to_cpu(src->tx_ko);
- 	dst->data_rc = __le32_to_cpu(src->data_rc);
- 	dst->self_triggers = __le32_to_cpu(src->self_triggers);
-@@ -8270,7 +8270,7 @@ ath10k_wmi_fw_pdev_tx_stats_fill(const struct ath10k_fw_stats_pdev *pdev,
- 	len += scnprintf(buf + len, buf_len - len, "%30s %10d\n",
- 			 "PPDUs cleaned", pdev->tx_abort);
- 	len += scnprintf(buf + len, buf_len - len, "%30s %10d\n",
--			 "MPDUs requed", pdev->mpdus_requed);
-+			 "MPDUs requeued", pdev->mpdus_requeued);
- 	len += scnprintf(buf + len, buf_len - len, "%30s %10d\n",
- 			 "Excessive retries", pdev->tx_ko);
- 	len += scnprintf(buf + len, buf_len - len, "%30s %10d\n",
-diff --git a/drivers/net/wireless/ath/ath10k/wmi.h b/drivers/net/wireless/ath/ath10k/wmi.h
-index d870f7067cb7..dd980c81793e 100644
---- a/drivers/net/wireless/ath/ath10k/wmi.h
-+++ b/drivers/net/wireless/ath/ath10k/wmi.h
-@@ -4371,8 +4371,8 @@ struct wmi_pdev_stats_tx {
- 	/* Num PPDUs cleaned up in TX abort */
- 	__le32 tx_abort;
- 
--	/* Num MPDUs requed by SW */
--	__le32 mpdus_requed;
-+	/* Num MPDUs requeued by SW */
-+	__le32 mpdus_requeued;
- 
- 	/* excessive retries */
- 	__le32 tx_ko;
-@@ -4444,8 +4444,8 @@ struct wmi_10_4_pdev_stats_tx {
- 	/* Num PPDUs cleaned up in TX abort */
- 	__le32 tx_abort;
- 
--	/* Num MPDUs requed by SW */
--	__le32 mpdus_requed;
-+	/* Num MPDUs requeued by SW */
-+	__le32 mpdus_requeued;
- 
- 	/* excessive retries */
- 	__le32 tx_ko;
-diff --git a/drivers/net/wireless/ath/ath11k/core.h b/drivers/net/wireless/ath/ath11k/core.h
-index 55af982deca7..382df5318b61 100644
---- a/drivers/net/wireless/ath/ath11k/core.h
-+++ b/drivers/net/wireless/ath/ath11k/core.h
-@@ -795,8 +795,8 @@ struct ath11k_fw_stats_pdev {
- 	s32 underrun;
- 	/* Num PPDUs cleaned up in TX abort */
- 	s32 tx_abort;
--	/* Num MPDUs requed by SW */
--	s32 mpdus_requed;
-+	/* Num MPDUs requeued by SW */
-+	s32 mpdus_requeued;
- 	/* excessive retries */
- 	u32 tx_ko;
- 	/* data hw rate code */
-diff --git a/drivers/net/wireless/ath/ath11k/debugfs_htt_stats.c b/drivers/net/wireless/ath/ath11k/debugfs_htt_stats.c
-index ec93f14e6d2a..9e0c90da99d3 100644
---- a/drivers/net/wireless/ath/ath11k/debugfs_htt_stats.c
-+++ b/drivers/net/wireless/ath/ath11k/debugfs_htt_stats.c
-@@ -89,7 +89,7 @@ static inline void htt_print_tx_pdev_stats_cmn_tlv(const void *tag_buf,
- 	len += HTT_DBG_OUT(buf + len, buf_len - len, "tx_abort = %u",
- 			   htt_stats_buf->tx_abort);
- 	len += HTT_DBG_OUT(buf + len, buf_len - len, "mpdu_requeued = %u",
--			   htt_stats_buf->mpdu_requed);
-+			   htt_stats_buf->mpdu_requeued);
- 	len += HTT_DBG_OUT(buf + len, buf_len - len, "tx_xretry = %u",
- 			   htt_stats_buf->tx_xretry);
- 	len += HTT_DBG_OUT(buf + len, buf_len - len, "data_rc = %u",
-diff --git a/drivers/net/wireless/ath/ath11k/debugfs_htt_stats.h b/drivers/net/wireless/ath/ath11k/debugfs_htt_stats.h
-index 567a26d485a9..d428f52003a4 100644
---- a/drivers/net/wireless/ath/ath11k/debugfs_htt_stats.h
-+++ b/drivers/net/wireless/ath/ath11k/debugfs_htt_stats.h
-@@ -147,7 +147,7 @@ struct htt_tx_pdev_stats_cmn_tlv {
- 	u32 hw_flush;
- 	u32 hw_filt;
- 	u32 tx_abort;
--	u32 mpdu_requed;
-+	u32 mpdu_requeued;
- 	u32 tx_xretry;
- 	u32 data_rc;
- 	u32 mpdu_dropped_xretry;
-diff --git a/drivers/net/wireless/ath/ath11k/wmi.c b/drivers/net/wireless/ath/ath11k/wmi.c
-index 5ca2d80679b6..6c253eae9d06 100644
---- a/drivers/net/wireless/ath/ath11k/wmi.c
-+++ b/drivers/net/wireless/ath/ath11k/wmi.c
-@@ -5235,7 +5235,7 @@ ath11k_wmi_pull_pdev_stats_tx(const struct wmi_pdev_stats_tx *src,
- 	dst->hw_reaped = src->hw_reaped;
- 	dst->underrun = src->underrun;
- 	dst->tx_abort = src->tx_abort;
--	dst->mpdus_requed = src->mpdus_requed;
-+	dst->mpdus_requeued = src->mpdus_requeued;
- 	dst->tx_ko = src->tx_ko;
- 	dst->data_rc = src->data_rc;
- 	dst->self_triggers = src->self_triggers;
-@@ -5505,7 +5505,7 @@ ath11k_wmi_fw_pdev_tx_stats_fill(const struct ath11k_fw_stats_pdev *pdev,
- 	len += scnprintf(buf + len, buf_len - len, "%30s %10d\n",
- 			 "PPDUs cleaned", pdev->tx_abort);
- 	len += scnprintf(buf + len, buf_len - len, "%30s %10d\n",
--			 "MPDUs requed", pdev->mpdus_requed);
-+			 "MPDUs requeued", pdev->mpdus_requeued);
- 	len += scnprintf(buf + len, buf_len - len, "%30s %10u\n",
- 			 "Excessive retries", pdev->tx_ko);
- 	len += scnprintf(buf + len, buf_len - len, "%30s %10u\n",
-diff --git a/drivers/net/wireless/ath/ath11k/wmi.h b/drivers/net/wireless/ath/ath11k/wmi.h
-index 3ade1ddd35c9..d35c47e0b19d 100644
---- a/drivers/net/wireless/ath/ath11k/wmi.h
-+++ b/drivers/net/wireless/ath/ath11k/wmi.h
-@@ -4171,8 +4171,8 @@ struct wmi_pdev_stats_tx {
- 	/* Num PPDUs cleaned up in TX abort */
- 	s32 tx_abort;
- 
--	/* Num MPDUs requed by SW */
--	s32 mpdus_requed;
-+	/* Num MPDUs requeued by SW */
-+	s32 mpdus_requeued;
- 
- 	/* excessive retries */
- 	u32 tx_ko;
--- 
-2.30.2
+	https://lkml.kernel.org/r/20201103175841.3495947-7-elver@google.com
 
+It was determined based on the full series, mostly from a
+get_maintainer.pl of 'reviewer' and 'maintainer' lists of the full
+series diff, minus a some false positives to avoid spamming people, and
+plus a few people get_maintainer.pl missed that had provided or could
+provide useful input. So the list above is mostly maintainers+reviewers
+of mm/, mm/kasan, arch/x86, and arch/arm64.
+
+> But where does that Cc-list come from? If I extract that patch and run the
+> get_maintainer.pl script, the following output appears:
+> 
+> $ git format-patch -1 2b8305260fb37fc20e13f71e13073304d0a031c8
+> 0001-kfence-kasan-make-KFENCE-compatible-with-KASAN.patch
+> $ scripts/get_maintainer.pl
+> 0001-kfence-kasan-make-KFENCE-compatible-with-KASAN.patch
+> Alexander Potapenko <glider@google.com> (maintainer:KFENCE)
+> Marco Elver <elver@google.com> (maintainer:KFENCE)
+
+KFENCE did not yet exist when the patch the above series was part of was
+posted... so chicken and egg situation here. ;-)
+
+> Dmitry Vyukov <dvyukov@google.com> (reviewer:KFENCE)
+> Andrey Ryabinin <ryabinin.a.a@gmail.com> (maintainer:KASAN)
+> Andrey Konovalov <andreyknvl@gmail.com> (reviewer:KASAN)
+> Andrew Morton <akpm@linux-foundation.org> (maintainer:MEMORY MANAGEMENT)
+> kasan-dev@googlegroups.com (open list:KFENCE)
+> linux-kernel@vger.kernel.org (open list)
+> linux-mm@kvack.org (open list:MEMORY MANAGEMENT)
+
+Thanks,
+-- Marco
