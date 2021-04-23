@@ -7,106 +7,103 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3E6FC433B4
-	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 11:46:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEA6EC433ED
+	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 11:48:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BA91661406
-	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 11:46:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 830126145A
+	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 11:48:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230376AbhDWLrd (ORCPT
+        id S238429AbhDWLta (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 23 Apr 2021 07:47:33 -0400
-Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:3904 "EHLO
-        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229479AbhDWLrc (ORCPT
+        Fri, 23 Apr 2021 07:49:30 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:39662 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229957AbhDWLt3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 23 Apr 2021 07:47:32 -0400
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 13NBkk01002138;
-        Fri, 23 Apr 2021 11:46:46 GMT
+        Fri, 23 Apr 2021 07:49:29 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13NBcwRV034176;
+        Fri, 23 Apr 2021 11:48:45 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
  : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=V8eWeMAcsLl7tZpXsts53bUBVHL96c2xc8DdfKsfDts=;
- b=zTflOAY84jMUMEdHzVGpEokyI9OpgQoJBROzpRkYsE5Aw/SKaFa1qS589IpCigvg7wzq
- 3ZHxQrEOtiXsyx6ZHZr3FPUdddh3nM/LnIa7wD8Wa/8h+p6quzFuR9OVOHEOErogi/zz
- 8wL9Lut9UcIywn4gB8GOux9B0O4KE25a0aN5fzXdrFjK+1yR8V9o3wiaEjTrh6PgrG76
- Q1e7ZiuHVyISr80fqWOmgme/XCkVYH/He9ByBjC51sTz7InJiOkWdZKhyKQiFED8nYvT
- bfPq1FiHGzDkgXGq/EiZ3OaqM51EWXGH6mcHBvnu8JqZ8HcEzgZ8NLWwkfU2j+KQ64lG Iw== 
-Received: from oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by mx0b-00069f02.pphosted.com with ESMTP id 383duh89qd-1
+ bh=iPby8n/oKiSg9iosJsx9rxTWFJNSezrrmzL3UQ0jX3w=;
+ b=T66eUBCC0JclzjlmpGtcL8C33MI1jV9nSKjMGW+vpV55thrQz0Qelu9x5nCEDX0pXeBq
+ nt4N1TohtoMWVhXNILiOb2GE/WjBR3Dprm9XTrOupSRyMqyIXfzqdJ8t1f86JYS/Chkh
+ Z3Zeo80A8OqVPjBzmCMbsPLVtZx8XdN7zeqPKEJX/LQvHK2LTV4vP649qxBMfI2NhUqq
+ MdOcIp1wvtV0qCYNVTmNaXBxaZxggJI0yZcy1A+u3QV5Y5pWrbliTgvYGzUHM79YT3nw
+ uIPBlJ08Pj4M4f0et2ySqkt9KUvrwgfns/Du7zWpI2vrcVie1hfHimw+cWxIMpDsbfJ3 Bw== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 37yqmnr69j-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 23 Apr 2021 11:46:45 +0000
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
-        by pps.podrdrct (8.16.0.36/8.16.0.36) with SMTP id 13NBkZsb023885;
-        Fri, 23 Apr 2021 11:46:44 GMT
+        Fri, 23 Apr 2021 11:48:45 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13NBjTEL009544;
+        Fri, 23 Apr 2021 11:48:45 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-        by aserp3030.oracle.com with ESMTP id 383ccffqkb-1
+        by aserp3020.oracle.com with ESMTP id 383cbf3436-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 23 Apr 2021 11:46:44 +0000
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 13NBkiDN024104;
-        Fri, 23 Apr 2021 11:46:44 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3030.oracle.com with ESMTP id 383ccffqk5-1
+        Fri, 23 Apr 2021 11:48:45 +0000
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 13NBmiSS035729;
+        Fri, 23 Apr 2021 11:48:44 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 383cbf3425-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 23 Apr 2021 11:46:44 +0000
-Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 13NBkhMg006515;
-        Fri, 23 Apr 2021 11:46:43 GMT
+        Fri, 23 Apr 2021 11:48:44 +0000
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 13NBmbqu002744;
+        Fri, 23 Apr 2021 11:48:37 GMT
 Received: from mwanda (/102.36.221.92)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 23 Apr 2021 04:46:42 -0700
-Date:   Fri, 23 Apr 2021 14:46:34 +0300
+        with ESMTP ; Fri, 23 Apr 2021 04:48:37 -0700
+Date:   Fri, 23 Apr 2021 14:48:31 +0300
 From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Arend van Spriel <aspriel@gmail.com>,
-        Matthias Brugger <mbrugger@suse.com>
-Cc:     Franky Lin <franky.lin@broadcom.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Chi-hsien Lin <chi-hsien.lin@infineon.com>,
-        Wright Feng <wright.feng@infineon.com>,
-        Chung-hsien Hsu <chung-hsien.hsu@infineon.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Hans deGoede <hdegoede@redhat.com>,
-        linux-wireless@vger.kernel.org,
-        brcm80211-dev-list.pdl@broadcom.com,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] brcmfmac: fix a loop exit condition
-Message-ID: <YIKzmoMiTdToaIyP@mwanda>
+To:     Ard Biesheuvel <ardb@kernel.org>
+Cc:     Arvind Sankar <nivedita@alum.mit.edu>,
+        Philipp Fent <fent@in.tum.de>, linux-efi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] efi/libstub: prevent read overflow in find_file_option()
+Message-ID: <YIK0D1JyV6ZeDMSS@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
-X-Proofpoint-ORIG-GUID: 9dYnMahR47TC0akC679jUJB2bGjB4VYE
-X-Proofpoint-GUID: 9dYnMahR47TC0akC679jUJB2bGjB4VYE
+X-Proofpoint-ORIG-GUID: 5ap1h2IUpdIXpA20rB1QYLJ-3aVVhSg9
+X-Proofpoint-GUID: 5ap1h2IUpdIXpA20rB1QYLJ-3aVVhSg9
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9962 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxscore=0 adultscore=0
+ impostorscore=0 spamscore=0 malwarescore=0 clxscore=1011
+ lowpriorityscore=0 priorityscore=1501 suspectscore=0 mlxlogscore=999
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104060000 definitions=main-2104230076
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This code is supposed to loop over the whole board_type[] string.  The
-current code kind of works just because ascii values start 97 and the
-string is likely shorter than that so it will break when we hit the NUL
-terminator.  But really the condition should be "i < len" instead of
-"i < board_type[i]".
+If the buffer has slashes up to the end then this will read past the end
+of the array.  I don't anticipate that this is an issue for many people
+in real life, but it's the right thing to do and it makes static
+checkers happy.
 
-Fixes: 29e354ebeeec ("brcmfmac: Transform compatible string for FW loading")
+Fixes: 7a88a6227dc7 ("efi/libstub: Fix path separator regression")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c | 2 +-
+ drivers/firmware/efi/libstub/file.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
-index a7554265f95f..9b75e396fc50 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
-@@ -34,7 +34,7 @@ void brcmf_of_probe(struct device *dev, enum brcmf_bus_type bus_type,
- 		len = strlen(tmp) + 1;
- 		board_type = devm_kzalloc(dev, len, GFP_KERNEL);
- 		strscpy(board_type, tmp, len);
--		for (i = 0; i < board_type[i]; i++) {
-+		for (i = 0; i < len; i++) {
- 			if (board_type[i] == '/')
- 				board_type[i] = '-';
- 		}
+diff --git a/drivers/firmware/efi/libstub/file.c b/drivers/firmware/efi/libstub/file.c
+index 4e81c6077188..dd95f330fe6e 100644
+--- a/drivers/firmware/efi/libstub/file.c
++++ b/drivers/firmware/efi/libstub/file.c
+@@ -103,7 +103,7 @@ static int find_file_option(const efi_char16_t *cmdline, int cmdline_len,
+ 		return 0;
+ 
+ 	/* Skip any leading slashes */
+-	while (cmdline[i] == L'/' || cmdline[i] == L'\\')
++	while (i < cmdline_len && (cmdline[i] == L'/' || cmdline[i] == L'\\'))
+ 		i++;
+ 
+ 	while (--result_len > 0 && i < cmdline_len) {
 -- 
 2.30.2
 
