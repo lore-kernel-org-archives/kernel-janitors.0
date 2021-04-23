@@ -2,76 +2,76 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.8 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-5.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91A8FC43460
-	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 14:02:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA538C433ED
+	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 14:27:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4D02761404
-	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 14:02:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFCC861406
+	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 14:27:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231305AbhDWODH (ORCPT
+        id S242681AbhDWO2b (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 23 Apr 2021 10:03:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36126 "EHLO
+        Fri, 23 Apr 2021 10:28:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229931AbhDWODG (ORCPT
+        with ESMTP id S242623AbhDWO23 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 23 Apr 2021 10:03:06 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B94E3C061756
-        for <kernel-janitors@vger.kernel.org>; Fri, 23 Apr 2021 07:02:29 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id s7so48452681wru.6
-        for <kernel-janitors@vger.kernel.org>; Fri, 23 Apr 2021 07:02:29 -0700 (PDT)
+        Fri, 23 Apr 2021 10:28:29 -0400
+Received: from mail-qt1-x830.google.com (mail-qt1-x830.google.com [IPv6:2607:f8b0:4864:20::830])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 743DCC06175F
+        for <kernel-janitors@vger.kernel.org>; Fri, 23 Apr 2021 07:27:53 -0700 (PDT)
+Received: by mail-qt1-x830.google.com with SMTP id z25so13773488qtn.8
+        for <kernel-janitors@vger.kernel.org>; Fri, 23 Apr 2021 07:27:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=ziepe.ca; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=mqDAI2Eo0AiEBMj+7YqhB+/EfKK7wEdKmdXLdRdTOaw=;
-        b=PcB4NGYzuRZfIQCklsDEhiVsnNkUPaGQDpaJWtwroqJaTW5plTBA+wjkIKfKDkxwZ6
-         xU/1Rm894k7ruc2jCU5Syg239Uc5QDMokzbD7CNnG4G6j6GpIQegviH8dySyJI+p9xti
-         uSPcxDix+2yCqVELTmFsbybyYHZKJJfkSY/PqCCQwrB5rqN5v860ewnFzHu7JNeLjCGy
-         Ytr1QXVS8RT1QZKRwvFls5lO3rXmt/NpghkyAdFbpyF3tHLByDrWcaPZsEAEVNEsxIfA
-         Rz6vQcpl+UHoeIGDrZg1koY5RRt4SRsniACz5udYvR3UH5+UAGO39IpGB23DXdJGBZBk
-         13yA==
+         :content-disposition:in-reply-to;
+        bh=YLPJWY/azRbnnEeqJelTHQDU3rlCapQE7SWi8gOkxo8=;
+        b=X8DMnOvJWz6RVRUcb6+nr43WXMARL/jS3IeUBfx0zbIDKsAcmX69OndHPl+ndP2HGJ
+         VH9VgVugzyWKzbcfFKLCIUxTRIlbynnxGumlG227wFnOYYHOx51GidlswE9k5kFwkIQt
+         RwmBGsmDEtfnn56saGev6jZPLRffF5TngdXYcHxlLYUz2WcXvKiBzcD89hdg1t88bu3t
+         MK7Xwt6gXFikn7F7kEx/P/Gmyn6y2iizIGswNP9TlXVlUByT+nGEJXJvixkqNjWCF6Ry
+         SOGd19Xj3sG7YdJVb22Uhkv/NtXAot/N51k1rPmwGqBIkXRY4pKNEBBuxAqpatiFjJ2f
+         2CfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=mqDAI2Eo0AiEBMj+7YqhB+/EfKK7wEdKmdXLdRdTOaw=;
-        b=UITpONyqp8PR3mHE4OJsy4Ifpt6wBHKEqmgp1tABXLEZacN6goRMabi5y+yvEzsJp0
-         XH4vPz9+BKpLbVz2MwMr29LlNn7ab4TP0gMFmuWRbNeXh4ymH7iOZuAIv2pWFBm8ahJI
-         bT+GI0ED5ew96WLwMVMukUujri9Y39ZNcrlz65/IM7TWVSOzzP/XwCKmH5Pszv5tRr6n
-         fC+woRSUKcu3Y1Ee+3NB2FYfwv3b2DoRfax6su2W2GMXpBKLO9Xh/nNgZiQuXwVok9yy
-         NmDaBI6RD/RQwY8wUYMoGbpJyOeSj4YQgABsNkUhSF75udX5QATv/+3GrNR/lKC8cfJm
-         gkIg==
-X-Gm-Message-State: AOAM5338ht7PUJJu+nAcP0CFwa/IUQ5FOTwFcer1pFPHs8wGsv3pqmvd
-        fG+kmb73JXdQ5GtebJiWqjI4OQ==
-X-Google-Smtp-Source: ABdhPJz4lBAWRredHV50729J0WuYpflBIWpdZIt5fX8mmVLMQZwVCqN6/75zTpHENIY+al7Yf6HlWg==
-X-Received: by 2002:a05:6000:18ae:: with SMTP id b14mr4943822wri.211.1619186548117;
-        Fri, 23 Apr 2021 07:02:28 -0700 (PDT)
-Received: from elver.google.com ([2a00:79e0:15:13:d1f:43f2:c472:9b8])
-        by smtp.gmail.com with ESMTPSA id z15sm8890560wrv.39.2021.04.23.07.02.26
+         :mime-version:content-disposition:in-reply-to;
+        bh=YLPJWY/azRbnnEeqJelTHQDU3rlCapQE7SWi8gOkxo8=;
+        b=C23pUCJR0cReasToWy8+n3mYWvqDIG/m2ucrHogp09Xdc1WsSIJRr4ZUEhNRyOtOOi
+         ySi4Oa6aTqv+FwQpG4K/BklT2cYF/6A1x76+NJckFL41mNieqD24MVF8YVXGH6bKAHeg
+         22eapIgI842DxcZgKqApGAZ6U5KtuHM0OWP2aJFa5ZBXi9C80Z1V1YMg3GAgeA+SaAP7
+         QhN8T4KstUNhwySI0yevso7R/CozlVEECLQsZWO1A8YtTK2SxpkvxVeb+e1iErDoG34F
+         uzOQj73CrzmrovDLabNq0OzsoLYieVNcaIn6Wy5pnlqfMJbqavYGBDGqZfrdatdUGukQ
+         WSgg==
+X-Gm-Message-State: AOAM532JKlrg1qVuNSf5wzC4/2b8uT7WVPKflYplEFKUNRMu0kRJq0tn
+        dogE+55nlVpJ7HH1Ej4h9pSm+w==
+X-Google-Smtp-Source: ABdhPJxkzemfNaJUgp3rIDqZFUObtNumgoSWIwZ/JIcNRt5n2hkELchTzx5suzsRW3S+A6j/ytkumg==
+X-Received: by 2002:ac8:488f:: with SMTP id i15mr4193224qtq.75.1619188072605;
+        Fri, 23 Apr 2021 07:27:52 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-47-55-113-94.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.113.94])
+        by smtp.gmail.com with ESMTPSA id x20sm4412854qkf.42.2021.04.23.07.27.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Apr 2021 07:02:27 -0700 (PDT)
-Date:   Fri, 23 Apr 2021 16:02:21 +0200
-From:   Marco Elver <elver@google.com>
+        Fri, 23 Apr 2021 07:27:52 -0700 (PDT)
+Received: from jgg by mlx with local (Exim 4.94)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1lZwmd-00AbSa-Gy; Fri, 23 Apr 2021 11:27:51 -0300
+Date:   Fri, 23 Apr 2021 11:27:51 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
 To:     Bart Van Assche <bvanassche@acm.org>
-Cc:     Leon Romanovsky <leon@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+Cc:     Leon Romanovsky <leon@kernel.org>,
         Marion et Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
         tj@kernel.org, jiangshanlai@gmail.com, saeedm@nvidia.com,
         davem@davemloft.net, kuba@kernel.org, netdev@vger.kernel.org,
         linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, akpm@linux-foundation.org
+        kernel-janitors@vger.kernel.org
 Subject: Re: [PATCH 1/2] workqueue: Have 'alloc_workqueue()' like macros
  accept a format specifier
-Message-ID: <YILTbVnxBJVYa3jT@elver.google.com>
+Message-ID: <20210423142751.GI2047089@ziepe.ca>
 References: <cover.1618780558.git.christophe.jaillet@wanadoo.fr>
  <ae88f6c2c613d17bc1a56692cfa4f960dbc723d2.1618780558.git.christophe.jaillet@wanadoo.fr>
  <042f5fff-5faf-f3c5-0819-b8c8d766ede6@acm.org>
@@ -82,130 +82,19 @@ References: <cover.1618780558.git.christophe.jaillet@wanadoo.fr>
  <YIG5tLBIAledZetf@unreal>
  <53b2ef14-1b8a-43b1-ef53-e314e2649ea0@acm.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
 In-Reply-To: <53b2ef14-1b8a-43b1-ef53-e314e2649ea0@acm.org>
-User-Agent: Mutt/2.0.5 (2021-01-21)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Apr 22, 2021 at 01:30PM -0700, Bart Van Assche wrote:
-> On 4/22/21 11:00 AM, Leon Romanovsky wrote:
-> > On Thu, Apr 22, 2021 at 10:12:33AM -0700, Bart Van Assche wrote:
-> > > On 4/22/21 5:24 AM, Jason Gunthorpe wrote:
-> > > > On Mon, Apr 19, 2021 at 01:02:34PM -0700, Bart Van Assche wrote:
-> > > > > On 4/18/21 11:36 PM, Marion et Christophe JAILLET wrote:
-> > > > > > The list in To: is the one given by get_maintainer.pl. Usualy, I only
-> > > > > > put the ML in Cc: I've run the script on the 2 patches of the serie
-> > > > > > and merged the 2 lists. Everyone is in the To: of the cover letter
-> > > > > > and of the 2 patches.
-> > > > > > 
-> > > > > > If Théo is "Tejun Heo" (  (maintainer:WORKQUEUE) ), he is already in
-> > > > > > the To: line.
-> > > > > Linus wants to see a "Cc: ${maintainer}" tag in patches that he receives
-> > > > > from a maintainer and that modify another subsystem than the subsystem
-> > > > > maintained by that maintainer.
-> > > > 
-> > > > Really? Do you remember a lore link for this?
-> > > 
-> > > Last time I saw Linus mentioning this was a few months ago.
-> > > Unfortunately I cannot find that message anymore.
-> > > 
-> > > > Generally I've been junking the CC lines (vs Andrew at the other
-> > > > extreme that often has 10's of CC lines)
-> > > 
-> > > Most entries in the MAINTAINERS file have one to three email addresses
-> > > so I'm surprised to read that Cc-ing maintainer(s) could result in tens
-> > > of Cc lines?
-> > 
-> > git log mm/
-> > 
-> > commit 2b8305260fb37fc20e13f71e13073304d0a031c8
-> > Author: Alexander Potapenko <glider@google.com>
-> > Date:   Thu Feb 25 17:19:21 2021 -0800
-> > 
-> >      kfence, kasan: make KFENCE compatible with KASAN
-> > 
-> >      Make KFENCE compatible with KASAN. Currently this helps test KFENCE
-> >      itself, where KASAN can catch potential corruptions to KFENCE state, or
-> >      other corruptions that may be a result of freepointer corruptions in the
-> >      main allocators.
-> > 
-> >      [akpm@linux-foundation.org: merge fixup]
-> >      [andreyknvl@google.com: untag addresses for KFENCE]
-> >        Link: https://lkml.kernel.org/r/9dc196006921b191d25d10f6e611316db7da2efc.1611946152.git.andreyknvl@google.com
-> > 
-> >      Link: https://lkml.kernel.org/r/20201103175841.3495947-7-elver@google.com
-> >      Signed-off-by: Marco Elver <elver@google.com>
-> >      Signed-off-by: Alexander Potapenko <glider@google.com>
-> >      Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
-> >      Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
-> >      Reviewed-by: Jann Horn <jannh@google.com>
-> >      Co-developed-by: Marco Elver <elver@google.com>
-> >      Cc: Andrey Konovalov <andreyknvl@google.com>
-> >      Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
-> >      Cc: Andy Lutomirski <luto@kernel.org>
-> >      Cc: Borislav Petkov <bp@alien8.de>
-> >      Cc: Catalin Marinas <catalin.marinas@arm.com>
-> >      Cc: Christopher Lameter <cl@linux.com>
-> >      Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> >      Cc: David Rientjes <rientjes@google.com>
-> >      Cc: Eric Dumazet <edumazet@google.com>
-> >      Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> >      Cc: Hillf Danton <hdanton@sina.com>
-> >      Cc: "H. Peter Anvin" <hpa@zytor.com>
-> >      Cc: Ingo Molnar <mingo@redhat.com>
-> >      Cc: Joern Engel <joern@purestorage.com>
-> >      Cc: Jonathan Corbet <corbet@lwn.net>
-> >      Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-> >      Cc: Kees Cook <keescook@chromium.org>
-> >      Cc: Mark Rutland <mark.rutland@arm.com>
-> >      Cc: Paul E. McKenney <paulmck@kernel.org>
-> >      Cc: Pekka Enberg <penberg@kernel.org>
-> >      Cc: Peter Zijlstra <peterz@infradead.org>
-> >      Cc: SeongJae Park <sjpark@amazon.de>
-> >      Cc: Thomas Gleixner <tglx@linutronix.de>
-> >      Cc: Vlastimil Babka <vbabka@suse.cz>
-> >      Cc: Will Deacon <will@kernel.org>
-> >      Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-> >      Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-
-This is a special case probably as KFENCE touched various subsystems and
-architectures.
-
-That Cc list is from the original
-
-	https://lkml.kernel.org/r/20201103175841.3495947-7-elver@google.com
-
-It was determined based on the full series, mostly from a
-get_maintainer.pl of 'reviewer' and 'maintainer' lists of the full
-series diff, minus a some false positives to avoid spamming people, and
-plus a few people get_maintainer.pl missed that had provided or could
-provide useful input. So the list above is mostly maintainers+reviewers
-of mm/, mm/kasan, arch/x86, and arch/arm64.
-
+On Thu, Apr 22, 2021 at 01:30:00PM -0700, Bart Van Assche wrote:
+ 
 > But where does that Cc-list come from? If I extract that patch and run the
 > get_maintainer.pl script, the following output appears:
-> 
-> $ git format-patch -1 2b8305260fb37fc20e13f71e13073304d0a031c8
-> 0001-kfence-kasan-make-KFENCE-compatible-with-KASAN.patch
-> $ scripts/get_maintainer.pl
-> 0001-kfence-kasan-make-KFENCE-compatible-with-KASAN.patch
-> Alexander Potapenko <glider@google.com> (maintainer:KFENCE)
-> Marco Elver <elver@google.com> (maintainer:KFENCE)
 
-KFENCE did not yet exist when the patch the above series was part of was
-posted... so chicken and egg situation here. ;-)
+Andrew takes it from the email CC list in the original email that the
+patch came from
 
-> Dmitry Vyukov <dvyukov@google.com> (reviewer:KFENCE)
-> Andrey Ryabinin <ryabinin.a.a@gmail.com> (maintainer:KASAN)
-> Andrey Konovalov <andreyknvl@gmail.com> (reviewer:KASAN)
-> Andrew Morton <akpm@linux-foundation.org> (maintainer:MEMORY MANAGEMENT)
-> kasan-dev@googlegroups.com (open list:KFENCE)
-> linux-kernel@vger.kernel.org (open list)
-> linux-mm@kvack.org (open list:MEMORY MANAGEMENT)
-
-Thanks,
--- Marco
+Jason
