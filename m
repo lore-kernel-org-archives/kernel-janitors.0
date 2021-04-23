@@ -2,88 +2,138 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74FF9C433B4
-	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 11:59:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACB64C433ED
+	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 12:02:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3C8F760FE6
-	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 11:59:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65A2D6141C
+	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 12:02:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242152AbhDWMA3 (ORCPT
+        id S242153AbhDWMC7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 23 Apr 2021 08:00:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37356 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230305AbhDWMA3 (ORCPT
+        Fri, 23 Apr 2021 08:02:59 -0400
+Received: from smtp06.smtpout.orange.fr ([80.12.242.128]:47273 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229479AbhDWMC4 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 23 Apr 2021 08:00:29 -0400
-Received: from sipsolutions.net (s3.sipsolutions.net [IPv6:2a01:4f8:191:4433::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20A47C061574;
-        Fri, 23 Apr 2021 04:59:53 -0700 (PDT)
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-        (Exim 4.94)
-        (envelope-from <johannes@sipsolutions.net>)
-        id 1lZuTB-00FeW1-OS; Fri, 23 Apr 2021 13:59:37 +0200
-Message-ID: <427e33af49758c61bc23cf1eedb6dd6964c40296.camel@sipsolutions.net>
-Subject: Re: [PATCH] brcmfmac: fix a loop exit condition
-From:   Johannes Berg <johannes@sipsolutions.net>
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Arend van Spriel <aspriel@gmail.com>,
-        Matthias Brugger <mbrugger@suse.com>
-Cc:     Franky Lin <franky.lin@broadcom.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Chi-hsien Lin <chi-hsien.lin@infineon.com>,
-        Wright Feng <wright.feng@infineon.com>,
-        Chung-hsien Hsu <chung-hsien.hsu@infineon.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Hans deGoede <hdegoede@redhat.com>,
-        linux-wireless@vger.kernel.org,
-        brcm80211-dev-list.pdl@broadcom.com,
-        kernel-janitors@vger.kernel.org
-Date:   Fri, 23 Apr 2021 13:59:36 +0200
-In-Reply-To: <YIKzmoMiTdToaIyP@mwanda> (sfid-20210423_134702_525310_A6DD2972)
-References: <YIKzmoMiTdToaIyP@mwanda> (sfid-20210423_134702_525310_A6DD2972)
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
+        Fri, 23 Apr 2021 08:02:56 -0400
+Received: from [192.168.1.18] ([86.243.172.93])
+        by mwinf5d63 with ME
+        id wC2J2400121Fzsu03C2JFL; Fri, 23 Apr 2021 14:02:19 +0200
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 23 Apr 2021 14:02:19 +0200
+X-ME-IP: 86.243.172.93
+Subject: AW: [PATCH 1/4] clk: mvebu: Fix a memory leak in an error handling
+ path
+To:     Walter Harms <wharms@bfs.de>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "gregory.clement@bootlin.com" <gregory.clement@bootlin.com>,
+        "thomas.petazzoni@free-electrons.com" 
+        <thomas.petazzoni@free-electrons.com>
+Cc:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+References: <cover.1619157996.git.christophe.jaillet@wanadoo.fr>
+ <27db232fdd14e14d493f29a5404d9e643f09cc96.1619157996.git.christophe.jaillet@wanadoo.fr>
+ <3e38da0e86c045d3aefd46f375e8b48e@bfs.de>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Message-ID: <f26e2ad3-d1b8-de96-febe-5b8f52abdf8f@wanadoo.fr>
+Date:   Fri, 23 Apr 2021 14:02:17 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.0
 MIME-Version: 1.0
+In-Reply-To: <3e38da0e86c045d3aefd46f375e8b48e@bfs.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-malware-bazaar: not-scanned
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 2021-04-23 at 14:46 +0300, Dan Carpenter wrote:
-> This code is supposed to loop over the whole board_type[] string.  The
-> current code kind of works just because ascii values start 97 and the
-> string is likely shorter than that so it will break when we hit the NUL
-> terminator.  But really the condition should be "i < len" instead of
-> "i < board_type[i]".
+Le 23/04/2021 à 13:42, Walter Harms a écrit :
+> nitpicking:
+>   clk_name could be replaced with cpuclk[cpu].clk_name
+
+Agreed, Thx.
+I'll wait a few days to see if there are other comments before sending a 
+v2. (especially if 4/4 is correct or not)
+I'll also add "clk-cpu:" after "clk: mvebu:"
+
+> and the commit msg is from the other patch (free  cpuclk[cpu].clk_name)
 > 
-> Fixes: 29e354ebeeec ("brcmfmac: Transform compatible string for FW loading")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+But here, I don't follow you.
+What do you mean? Which other patch?
+
+Do you mean that the commit message has to be updated accordingly?
+(ie: s/clk_name/cpuclk[cpu].clk_name/ must be freed)
+
+
+> jm2c,
+> 
+> re,
+>   wh
+> ________________________________________
+> Von: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Gesendet: Freitag, 23. April 2021 08:25:01
+> An: mturquette@baylibre.com; sboyd@kernel.org; gregory.clement@bootlin.com; thomas.petazzoni@free-electrons.com
+> Cc: linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org; kernel-janitors@vger.kernel.org; Christophe JAILLET
+> Betreff: [PATCH 1/4] clk: mvebu: Fix a memory leak in an error handling path
+> 
+> WARNUNG: Diese E-Mail kam von außerhalb der Organisation. Klicken Sie nicht auf Links oder öffnen Sie keine Anhänge, es sei denn, Sie kennen den/die Absender*in und wissen, dass der Inhalt sicher ist.
+> 
+> 
+> If an error occurs in the for_each loop, clk_name must be freed.
+> 
+> In order to do so, sightly rearrange the code:
+>     - move the allocation to simplify error handling
+>     - use kasprintf instead of kzalloc/sprintf to simplify code and avoid a
+>       magic number
+> 
+> Fixes: ab8ba01b3fe5 ("clk: mvebu: add armada-370-xp CPU specific clocks")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->  drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> The { } around the 1 line block after kasprintf is intentional and makes
+> sense with 2/2
+> ---
+>   drivers/clk/mvebu/clk-cpu.c | 10 +++++-----
+>   1 file changed, 5 insertions(+), 5 deletions(-)
 > 
-> diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
-> index a7554265f95f..9b75e396fc50 100644
-> --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
-> +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
-> @@ -34,7 +34,7 @@ void brcmf_of_probe(struct device *dev, enum brcmf_bus_type bus_type,
->  		len = strlen(tmp) + 1;
->  		board_type = devm_kzalloc(dev, len, GFP_KERNEL);
->  		strscpy(board_type, tmp, len);
-> -		for (i = 0; i < board_type[i]; i++) {
-> +		for (i = 0; i < len; i++) {
->  			if (board_type[i] == '/')
->  				board_type[i] = '-';
->  		}
-
-It should probably just use strreplace() though :)
-
-johannes
+> diff --git a/drivers/clk/mvebu/clk-cpu.c b/drivers/clk/mvebu/clk-cpu.c
+> index c2af3395cf13..a11d7273fcc7 100644
+> --- a/drivers/clk/mvebu/clk-cpu.c
+> +++ b/drivers/clk/mvebu/clk-cpu.c
+> @@ -195,17 +195,17 @@ static void __init of_cpu_clk_setup(struct device_node *node)
+>          for_each_of_cpu_node(dn) {
+>                  struct clk_init_data init;
+>                  struct clk *clk;
+> -               char *clk_name = kzalloc(5, GFP_KERNEL);
+> +               char *clk_name;
+>                  int cpu, err;
+> 
+> -               if (WARN_ON(!clk_name))
+> -                       goto bail_out;
+> -
+>                  err = of_property_read_u32(dn, "reg", &cpu);
+>                  if (WARN_ON(err))
+>                          goto bail_out;
+> 
+> -               sprintf(clk_name, "cpu%d", cpu);
+> +               clk_name = kasprintf(GFP_KERNEL, "cpu%d", cpu);
+> +               if (WARN_ON(!clk_name)) {
+> +                       goto bail_out;
+> +               }
+> 
+>                  cpuclk[cpu].parent_name = of_clk_get_parent_name(node, 0);
+>                  cpuclk[cpu].clk_name = clk_name;
+> --
+> 2.27.0
+> 
+> 
 
