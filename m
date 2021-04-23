@@ -2,71 +2,54 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C91DC433ED
-	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 06:25:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE63BC433B4
+	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 06:57:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1CD416144A
-	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 06:25:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7208613B7
+	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 06:57:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240786AbhDWG0J (ORCPT
+        id S240943AbhDWG6S (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 23 Apr 2021 02:26:09 -0400
-Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:59027 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240701AbhDWG0F (ORCPT
+        Fri, 23 Apr 2021 02:58:18 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:33190 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240910AbhDWG6R (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 23 Apr 2021 02:26:05 -0400
-Received: from localhost.localdomain ([86.243.172.93])
-        by mwinf5d49 with ME
-        id w6RT2400Y21Fzsu036RUmj; Fri, 23 Apr 2021 08:25:28 +0200
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 23 Apr 2021 08:25:28 +0200
-X-ME-IP: 86.243.172.93
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     mturquette@baylibre.com, sboyd@kernel.org,
-        gregory.clement@bootlin.com, thomas.petazzoni@free-electrons.com
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 4/4] clk: mvebu: Remove an unneeded include
-Date:   Fri, 23 Apr 2021 08:25:26 +0200
-Message-Id: <0dfcf67d0afe0cd58fd267ef0c4ec0d0414b6fe7.1619157996.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <cover.1619157996.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1619157996.git.christophe.jaillet@wanadoo.fr>
+        Fri, 23 Apr 2021 02:58:17 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id 8BC4C1F437FB
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To:     Benson Leung <bleung@chromium.org>, Ye Bin <yebin10@huawei.com>
+Cc:     linux-kernel@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH -next] platform/chrome: cros_ec_lpc: Use DEFINE_MUTEX() for mutex lock
+Date:   Fri, 23 Apr 2021 08:57:31 +0200
+Message-Id: <161916102148.2605538.6249402321169381536.b4-ty@collabora.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20210409095138.2293869-1-yebin10@huawei.com>
+References: <20210409095138.2293869-1-yebin10@huawei.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Compiling without <asm/smp_plat.h> just works fine, so remove it
+On Fri, 9 Apr 2021 17:51:38 +0800, Ye Bin wrote:
+> mutex lock can be initialized automatically with DEFINE_MUTEX()
+> rather than explicitly calling mutex_init().
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Completely speculative, but compilation works for me without this include
----
- drivers/clk/mvebu/clk-cpu.c | 1 -
- 1 file changed, 1 deletion(-)
+Applied, thanks!
 
-diff --git a/drivers/clk/mvebu/clk-cpu.c b/drivers/clk/mvebu/clk-cpu.c
-index 55a8486f665f..4879458c768a 100644
---- a/drivers/clk/mvebu/clk-cpu.c
-+++ b/drivers/clk/mvebu/clk-cpu.c
-@@ -16,7 +16,6 @@
- #include <linux/of.h>
- #include <linux/delay.h>
- #include <linux/mvebu-pmsu.h>
--#include <asm/smp_plat.h>
- 
- #define SYS_CTRL_CLK_DIVIDER_CTRL_OFFSET               0x0
- #define   SYS_CTRL_CLK_DIVIDER_CTRL_RESET_ALL          0xff
+[1/1] platform/chrome: cros_ec_lpc: Use DEFINE_MUTEX() for mutex lock
+      commit: d61b3f9b91be32f714b218377ab5081932e3ebc2
+
+Best regards,
 -- 
-2.27.0
-
+Enric Balletbo i Serra <enric.balletbo@collabora.com>
