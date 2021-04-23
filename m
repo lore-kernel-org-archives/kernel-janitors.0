@@ -2,126 +2,103 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.5 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62A33C43460
-	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 00:07:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F40E3C43461
+	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 04:10:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 39C27613D8
-	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 00:07:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B316061452
+	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Apr 2021 04:10:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240052AbhDWAHy (ORCPT
+        id S229717AbhDWEKj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 22 Apr 2021 20:07:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51042 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240041AbhDWAHx (ORCPT
+        Fri, 23 Apr 2021 00:10:39 -0400
+Received: from mail-wr1-f46.google.com ([209.85.221.46]:36722 "EHLO
+        mail-wr1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229454AbhDWEKi (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 22 Apr 2021 20:07:53 -0400
-Received: from mail-qv1-xf30.google.com (mail-qv1-xf30.google.com [IPv6:2607:f8b0:4864:20::f30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4DCBC06174A;
-        Thu, 22 Apr 2021 17:07:17 -0700 (PDT)
-Received: by mail-qv1-xf30.google.com with SMTP id dp18so18372366qvb.5;
-        Thu, 22 Apr 2021 17:07:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jms.id.au; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=JfM3d7LOiLS9qmGDziTRg1PSfPwhJZSu7g8WxAmeWYU=;
-        b=CPLFUXiNh4B93n9Xa5TPQoafBuJO+Xzvo6rwK5wfYF3Lpx9T05KuYCVSKj9fJcrIJG
-         QwBAnHWwPqlV2hBpDeOEawH0udkeNH6RtSJb4e89xjKokYFgoFRYLVkoio1Rg52snfp0
-         3b2R+eu7uryyY++tta636sg60TtoVc1+IKtRw=
+        Fri, 23 Apr 2021 00:10:38 -0400
+Received: by mail-wr1-f46.google.com with SMTP id m9so34186899wrx.3;
+        Thu, 22 Apr 2021 21:10:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JfM3d7LOiLS9qmGDziTRg1PSfPwhJZSu7g8WxAmeWYU=;
-        b=DnL8qseHJ68Mc8GZktbMoV0eoY5PURw0cH8/1simvNWvHe78O/v5D2nJUEalU/LEJ/
-         Ki5g3wAAoHRnryi1KN0/gI78x6hQbYRpLBSK2cBQXvij7SLS6rg05xJQKuU4YTe3/Ale
-         ZoPpGB/KqOH6zm6qjQOvgF15W+RTdvsIpALgd6TF+LWuqqoD7AkUJc/WrAnY+WVB2V/G
-         VfIk2fd7mZIHwf5TXhQtDvVw1XGeYwJncPfBO3Xs9Jdr4pFz/Nnn3xQ2pxXFeUnfq/XO
-         RboAPqrbyHDJjFxTWNw98cwpRClRogEv0+Ib4XD3jp1kUFkVZ9DX84qHQpo5yNW1n/jG
-         QcmQ==
-X-Gm-Message-State: AOAM531SiH2IwyfWtMaNX+WP5ntCaLeI+OorWAK2YX8MnibdgS2nDuui
-        MQRaIilUepUM0SOx14jcpC4VDM8OeJtY6IzEHkQ=
-X-Google-Smtp-Source: ABdhPJwzrmIHJN3KSKdUfPi114SsARBXFjKZOnUsANQ2c4AII3cxjV1HF1foJ0rKi1mBguFhLOW4GX9GnFoT5okPR5s=
-X-Received: by 2002:a0c:eb06:: with SMTP id j6mr1253747qvp.10.1619136436827;
- Thu, 22 Apr 2021 17:07:16 -0700 (PDT)
-MIME-Version: 1.0
-References: <YIE90PSXsMTa2Y8n@mwanda> <59596244622c4a15ac8cc0747332d0be@AcuMS.aculab.com>
-In-Reply-To: <59596244622c4a15ac8cc0747332d0be@AcuMS.aculab.com>
-From:   Joel Stanley <joel@jms.id.au>
-Date:   Fri, 23 Apr 2021 00:07:04 +0000
-Message-ID: <CACPK8XcOkQms8UpRZiansyRfmh4HmrrGN178x7sOEAarNM4u1w@mail.gmail.com>
-Subject: Re: [PATCH] soc: aspeed: fix a ternary sign expansion bug
-To:     David Laight <David.Laight@aculab.com>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        "Chia-Wei, Wang" <chiawei_wang@aspeedtech.com>,
-        Jae Hyun Yoo <jae.hyun.yoo@intel.com>,
-        John Wang <wangzhiqiang.bj@bytedance.com>,
-        Brad Bishop <bradleyb@fuzziesquirrel.com>,
-        Patrick Venture <venture@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=NEAj7YFHV/fmMkK3zL2KqXVEqxafCEMmM3EwgPewYr4=;
+        b=ooliFFLZL3dusTWCTtlNdcIxIS7NcDqEsd13EhLpJXuGl5iIYjdZqVx8ht1Hk7+oZ1
+         0YNQJwWB21tCcivtnQ2JIgUmuUZlJJGVb/PtKlnj1oR9P+EMKKBcdtStO/4o1kZ7E2Pp
+         fBGWtORmNAfQ2EKiraZrQtk7I4O+kPpqBsfc2kaBV1ppwKU4zuaF50CNu7O8h/jon6ib
+         0MiYerj6P8PXL7Rp/cMLCvsbRcbvspYQ8XZ1A4HEi0aJTZov/7rAwAcT0FZ9OP+nJzRd
+         UvGcmjlqnj2Mwkb/dXtti5o4gOQUj8iELXVd8cUEYQ0QsNAUeHQQun/Rsdx9QDuh2y8X
+         A0Jw==
+X-Gm-Message-State: AOAM533971O1BudD7wHo1m9olCe+ZiKZYaIFhAbDIsP16cFZH7SZxMl3
+        pxgKqe+XlY3UQGmjHCw2I4M+KxX3qjg=
+X-Google-Smtp-Source: ABdhPJy91wnLa1xxDLsC3Osh347tC4UnSQSLN6RUdQnMnZwYRVXubw2xB6YOI/SVDdvTlA4H0L2Ikw==
+X-Received: by 2002:a5d:58fa:: with SMTP id f26mr1823482wrd.177.1619151000110;
+        Thu, 22 Apr 2021 21:10:00 -0700 (PDT)
+Received: from ?IPv6:2a0b:e7c0:0:107::70f? ([2a0b:e7c0:0:107::70f])
+        by smtp.gmail.com with ESMTPSA id l7sm7832051wrb.35.2021.04.22.21.09.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 22 Apr 2021 21:09:59 -0700 (PDT)
+Subject: Re: [PATCH] soc: qcom-geni-se: remove redundant initialization to
+ variable line
+To:     Colin King <colin.king@canonical.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Robert Lippert <rlippert@google.com>,
-        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-arm-msm@vger.kernel.org, linux-serial@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210422125810.248166-1-colin.king@canonical.com>
+From:   Jiri Slaby <jirislaby@kernel.org>
+Message-ID: <06eab84e-db3d-44a5-44d8-5e09bd876283@kernel.org>
+Date:   Fri, 23 Apr 2021 06:09:58 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.9.1
+MIME-Version: 1.0
+In-Reply-To: <20210422125810.248166-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 22 Apr 2021 at 16:21, David Laight <David.Laight@aculab.com> wrote:
->
-> From: Dan Carpenter
-> > Sent: 22 April 2021 10:12
-> >
-> > The intent here was to return negative error codes but it actually
-> > returns positive values.  The problem is that type promotion with
-> > ternary operations is quite complicated.
-> >
-> > "ret" is an int.  "copied" is a u32.  And the snoop_file_read() function
-> > returns long.  What happens is that "ret" is cast to u32 and becomes
-> > positive then it's cast to long and it's still positive.
-> >
-> > Fix this by removing the ternary so that "ret" is type promoted directly
-> > to long.
-> >
-> > Fixes: 3772e5da4454 ("drivers/misc: Aspeed LPC snoop output using misc chardev")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> >  drivers/soc/aspeed/aspeed-lpc-snoop.c | 4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/soc/aspeed/aspeed-lpc-snoop.c b/drivers/soc/aspeed/aspeed-lpc-snoop.c
-> > index 210455efb321..eceeaf8dfbeb 100644
-> > --- a/drivers/soc/aspeed/aspeed-lpc-snoop.c
-> > +++ b/drivers/soc/aspeed/aspeed-lpc-snoop.c
-> > @@ -94,8 +94,10 @@ static ssize_t snoop_file_read(struct file *file, char __user *buffer,
-> >                       return -EINTR;
-> >       }
-> >       ret = kfifo_to_user(&chan->fifo, buffer, count, &copied);
-> > +     if (ret)
-> > +             return ret;
-> >
-> > -     return ret ? ret : copied;
-> > +     return copied;
->
-> I wonder if changing it to:
->         return ret ? ret + 0L : copied;
->
-> Might make people think in the future and not convert it back
-> as an 'optimisation'.
+On 22. 04. 21, 14:58, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The variable line being initialized with a value that is never read
+> and it is being updated later with a new value. The initialization is
+> redundant and can be removed.
+> 
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-I think the change that Dan posted is clear.
+Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
 
-Thanks Dan! I'll get it queued up.
+> ---
+>   drivers/tty/serial/qcom_geni_serial.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
+> index 99375d99f6fa..c5f2a4fa2bb1 100644
+> --- a/drivers/tty/serial/qcom_geni_serial.c
+> +++ b/drivers/tty/serial/qcom_geni_serial.c
+> @@ -1338,7 +1338,7 @@ static const struct uart_ops qcom_geni_uart_pops = {
+>   static int qcom_geni_serial_probe(struct platform_device *pdev)
+>   {
+>   	int ret = 0;
+> -	int line = -1;
+> +	int line;
+>   	struct qcom_geni_serial_port *port;
+>   	struct uart_port *uport;
+>   	struct resource *res;
+> 
 
-Cheers,
 
-Joel
+-- 
+js
+suse labs
