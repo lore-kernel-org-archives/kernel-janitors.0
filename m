@@ -2,225 +2,127 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7B2FC433ED
-	for <kernel-janitors@archiver.kernel.org>; Sun, 25 Apr 2021 12:46:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5F8AC433B4
+	for <kernel-janitors@archiver.kernel.org>; Sun, 25 Apr 2021 16:14:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 73A0F61364
-	for <kernel-janitors@archiver.kernel.org>; Sun, 25 Apr 2021 12:46:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77BA761363
+	for <kernel-janitors@archiver.kernel.org>; Sun, 25 Apr 2021 16:14:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229913AbhDYMrg (ORCPT
+        id S230481AbhDYQOz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 25 Apr 2021 08:47:36 -0400
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:27815
-        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229659AbhDYMrf (ORCPT
+        Sun, 25 Apr 2021 12:14:55 -0400
+Received: from smtp06.smtpout.orange.fr ([80.12.242.128]:58715 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230458AbhDYQOy (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 25 Apr 2021 08:47:35 -0400
-IronPort-HdrOrdr: =?us-ascii?q?A9a23=3Agv/EXKzF9Ek1yNBf8EWTKrPw571zdoIgy1kn?=
- =?us-ascii?q?xilNYDZeG/b0q+mFmvMH2RjozAsLUHY7ltyafIWGS3XQ9Zl6iLNhXouKcQH6tA?=
- =?us-ascii?q?KTQ71KwpDlx1TbcBHW0s54+eNef7NlCNv2ZGIbse/f7BOjG9gthPmLmZrHuc7k?=
- =?us-ascii?q?w31gTR5nZshbhm9EIzyGGU57ThQuP/YEPaebj/AsmxOQPVAebsG2HRA+PtT+mw?=
- =?us-ascii?q?=3D=3D?=
-X-IronPort-AV: E=Sophos;i="5.82,250,1613430000"; 
-   d="scan'208";a="379598642"
-Received: from palace.rsr.lip6.fr (HELO palace.lip6.fr) ([132.227.105.202])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-SHA; 25 Apr 2021 14:46:54 +0200
-From:   Julia Lawall <Julia.Lawall@inria.fr>
-To:     Julia Lawall <Julia.Lawall@inria.fr>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     kernel-janitors@vger.kernel.org,
-        Gilles Muller <Gilles.Muller@inria.fr>,
-        Nicolas Palix <nicolas.palix@imag.fr>, cocci@systeme.lip6.fr,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] coccinelle: api: semantic patch to use pm_runtime_resume_and_get
-Date:   Sun, 25 Apr 2021 13:55:32 +0200
-Message-Id: <20210425115532.2447295-1-Julia.Lawall@inria.fr>
-X-Mailer: git-send-email 2.25.1
+        Sun, 25 Apr 2021 12:14:54 -0400
+Received: from localhost.localdomain ([86.243.172.93])
+        by mwinf5d64 with ME
+        id x4EB2400621Fzsu034EBvP; Sun, 25 Apr 2021 18:14:12 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 25 Apr 2021 18:14:12 +0200
+X-ME-IP: 86.243.172.93
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     davem@davemloft.net, kuba@kernel.org
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] macvlan: Use 'hash' iterators to simplify code
+Date:   Sun, 25 Apr 2021 18:14:10 +0200
+Message-Id: <fa1b35d89a6254b3d46d9385ae6f85584138cc31.1619367130.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-pm_runtime_get_sync keeps a reference count on failure, which can lead
-to leaks.  pm_runtime_resume_and_get drops the reference count in the
-failure case.  This rule very conservatively follows the definition of
-pm_runtime_resume_and_get to address the cases where the reference
-count is unlikely to be needed in the failure case.
+Use 'hash_for_each_rcu' and 'hash_for_each_safe' instead of hand writing
+them. This saves some lines of code, reduce indentation and improve
+readability.
 
-pm_runtime_resume_and_get was introduced in
-commit dd8088d5a896 ("PM: runtime: Add pm_runtime_resume_and_get to
-deal with usage counter")
-
-Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- scripts/coccinelle/api/pm_runtime_resume_and_get.cocci |  153 +++++++++++++++++
- 1 file changed, 153 insertions(+)
+Compile tested only
+---
+ drivers/net/macvlan.c | 45 +++++++++++++++++--------------------------
+ 1 file changed, 18 insertions(+), 27 deletions(-)
 
-diff --git a/scripts/coccinelle/api/pm_runtime_resume_and_get.cocci b/scripts/coccinelle/api/pm_runtime_resume_and_get.cocci
-new file mode 100644
-index 000000000000..3387cb606f9b
---- /dev/null
-+++ b/scripts/coccinelle/api/pm_runtime_resume_and_get.cocci
-@@ -0,0 +1,153 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+///
-+/// Use pm_runtime_resume_and_get.
-+/// pm_runtime_get_sync keeps a reference count on failure,
-+/// which can lead to leaks.  pm_runtime_resume_and_get
-+/// drops the reference count in the failure case.
-+/// This rule addresses the cases where the reference count
-+/// is unlikely to be needed in the failure case.
-+///
-+// Confidence: High
-+// Copyright: (C) 2021 Julia Lawall, Inria
-+// URL: https://coccinelle.gitlabpages.inria.fr/website
-+// Options: --include-headers --no-includes
-+// Keywords: kwd
-+
-+virtual patch
-+virtual context
-+virtual org
-+virtual report
-+
-+@r0 depends on patch && !context && !org && !report@
-+expression ret,e;
-+@@
-+
-+-     ret = pm_runtime_get_sync(e);
-++     ret = pm_runtime_resume_and_get(e);
-+-     if (ret < 0)
-+-             pm_runtime_put_noidle(e);
-+
-+@r1 depends on patch && !context && !org && !report@
-+expression ret,e;
-+statement S1,S2;
-+@@
-+
-+-     ret = pm_runtime_get_sync(e);
-++     ret = pm_runtime_resume_and_get(e);
-+      if (ret < 0)
-+-     {
-+-             pm_runtime_put_noidle(e);
-+	      S1
-+-     }
-+      else S2
-+
-+@r2 depends on patch && !context && !org && !report@
-+expression ret,e;
-+statement S;
-+@@
-+
-+-     ret = pm_runtime_get_sync(e);
-++     ret = pm_runtime_resume_and_get(e);
-+      if (ret < 0) {
-+-             pm_runtime_put_noidle(e);
-+	      ...
-+      } else S
-+
-+@r3 depends on patch && !context && !org && !report@
-+expression ret,e;
-+identifier f;
-+constant char[] c;
-+statement S;
-+@@
-+
-+-     ret = pm_runtime_get_sync(e);
-++     ret = pm_runtime_resume_and_get(e);
-+      if (ret < 0)
-+-     {
-+              f(...,c,...);
-+-             pm_runtime_put_noidle(e);
-+-     }
-+      else S
-+
-+@r4 depends on patch && !context && !org && !report@
-+expression ret,e;
-+identifier f;
-+constant char[] c;
-+statement S;
-+@@
-+
-+-     ret = pm_runtime_get_sync(e);
-++     ret = pm_runtime_resume_and_get(e);
-+      if (ret < 0) {
-+              f(...,c,...);
-+-             pm_runtime_put_noidle(e);
-+	      ...
-+      } else S
-+
-+// ----------------------------------------------------------------------------
-+
-+@r2_context depends on !patch && (context || org || report)@
-+statement S;
-+expression e, ret;
-+position j0, j1;
-+@@
-+
-+*     ret@j0 = pm_runtime_get_sync(e);
-+      if (ret < 0) {
-+*             pm_runtime_put_noidle@j1(e);
-+	      ...
-+      } else S
-+
-+@r3_context depends on !patch && (context || org || report)@
-+identifier f;
-+statement S;
-+constant char []c;
-+expression e, ret;
-+position j0, j1;
-+@@
-+
-+*     ret@j0 = pm_runtime_get_sync(e);
-+      if (ret < 0) {
-+              f(...,c,...);
-+*             pm_runtime_put_noidle@j1(e);
-+	      ...
-+      } else S
-+
-+// ----------------------------------------------------------------------------
-+
-+@script:python r2_org depends on org@
-+j0 << r2_context.j0;
-+j1 << r2_context.j1;
-+@@
-+
-+msg = "WARNING: opportunity for pm_runtime_get_sync"
-+coccilib.org.print_todo(j0[0], msg)
-+coccilib.org.print_link(j1[0], "")
-+
-+@script:python r3_org depends on org@
-+j0 << r3_context.j0;
-+j1 << r3_context.j1;
-+@@
-+
-+msg = "WARNING: opportunity for pm_runtime_get_sync"
-+coccilib.org.print_todo(j0[0], msg)
-+coccilib.org.print_link(j1[0], "")
-+
-+// ----------------------------------------------------------------------------
-+
-+@script:python r2_report depends on report@
-+j0 << r2_context.j0;
-+j1 << r2_context.j1;
-+@@
-+
-+msg = "WARNING: opportunity for pm_runtime_get_sync on line %s." % (j0[0].line)
-+coccilib.report.print_report(j0[0], msg)
-+
-+@script:python r3_report depends on report@
-+j0 << r3_context.j0;
-+j1 << r3_context.j1;
-+@@
-+
-+msg = "WARNING: opportunity for pm_runtime_get_sync on %s." % (j0[0].line)
-+coccilib.report.print_report(j0[0], msg)
-+
+diff --git a/drivers/net/macvlan.c b/drivers/net/macvlan.c
+index 9a9a5cf36a4b..b4f9c66e9a75 100644
+--- a/drivers/net/macvlan.c
++++ b/drivers/net/macvlan.c
+@@ -272,25 +272,22 @@ static void macvlan_broadcast(struct sk_buff *skb,
+ 	if (skb->protocol == htons(ETH_P_PAUSE))
+ 		return;
+ 
+-	for (i = 0; i < MACVLAN_HASH_SIZE; i++) {
+-		hlist_for_each_entry_rcu(vlan, &port->vlan_hash[i], hlist) {
+-			if (vlan->dev == src || !(vlan->mode & mode))
+-				continue;
++	hash_for_each_rcu(port->vlan_hash, i, vlan, hlist) {
++		if (vlan->dev == src || !(vlan->mode & mode))
++			continue;
+ 
+-			hash = mc_hash(vlan, eth->h_dest);
+-			if (!test_bit(hash, vlan->mc_filter))
+-				continue;
++		hash = mc_hash(vlan, eth->h_dest);
++		if (!test_bit(hash, vlan->mc_filter))
++			continue;
+ 
+-			err = NET_RX_DROP;
+-			nskb = skb_clone(skb, GFP_ATOMIC);
+-			if (likely(nskb))
+-				err = macvlan_broadcast_one(
+-					nskb, vlan, eth,
++		err = NET_RX_DROP;
++		nskb = skb_clone(skb, GFP_ATOMIC);
++		if (likely(nskb))
++			err = macvlan_broadcast_one(nskb, vlan, eth,
+ 					mode == MACVLAN_MODE_BRIDGE) ?:
+-				      netif_rx_ni(nskb);
+-			macvlan_count_rx(vlan, skb->len + ETH_HLEN,
+-					 err == NET_RX_SUCCESS, true);
+-		}
++			      netif_rx_ni(nskb);
++		macvlan_count_rx(vlan, skb->len + ETH_HLEN,
++				 err == NET_RX_SUCCESS, true);
+ 	}
+ }
+ 
+@@ -380,20 +377,14 @@ static void macvlan_broadcast_enqueue(struct macvlan_port *port,
+ static void macvlan_flush_sources(struct macvlan_port *port,
+ 				  struct macvlan_dev *vlan)
+ {
++	struct macvlan_source_entry *entry;
++	struct hlist_node *next;
+ 	int i;
+ 
+-	for (i = 0; i < MACVLAN_HASH_SIZE; i++) {
+-		struct hlist_node *h, *n;
+-
+-		hlist_for_each_safe(h, n, &port->vlan_source_hash[i]) {
+-			struct macvlan_source_entry *entry;
++	hash_for_each_safe(port->vlan_source_hash, i, next, entry, hlist)
++		if (entry->vlan == vlan)
++			macvlan_hash_del_source(entry);
+ 
+-			entry = hlist_entry(h, struct macvlan_source_entry,
+-					    hlist);
+-			if (entry->vlan == vlan)
+-				macvlan_hash_del_source(entry);
+-		}
+-	}
+ 	vlan->macaddr_count = 0;
+ }
+ 
+-- 
+2.30.2
 
