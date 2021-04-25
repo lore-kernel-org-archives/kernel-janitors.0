@@ -2,137 +2,86 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD1C8C433B4
-	for <kernel-janitors@archiver.kernel.org>; Sat, 24 Apr 2021 06:48:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3208C433B4
+	for <kernel-janitors@archiver.kernel.org>; Sun, 25 Apr 2021 05:26:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A9E4C61584
-	for <kernel-janitors@archiver.kernel.org>; Sat, 24 Apr 2021 06:48:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 878A0613BB
+	for <kernel-janitors@archiver.kernel.org>; Sun, 25 Apr 2021 05:26:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244405AbhDXGtC (ORCPT
+        id S229611AbhDYF1U (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 24 Apr 2021 02:49:02 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:51756 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244260AbhDXGsQ (ORCPT
+        Sun, 25 Apr 2021 01:27:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38052 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229522AbhDYF1T (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 24 Apr 2021 02:48:16 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13O6Ou7e083276;
-        Sat, 24 Apr 2021 06:43:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=B2e0yO5JEDbjpt9UVoxx75p29kZv7siwpuysnfs6zd0=;
- b=ZVALcXpwgYy2uwAYcSB9lBXh9F2N79cE9+O5Gd1IE7ytBiH89/dQNy1d1cZjFg8C2wih
- 5nM6PIeaTPU41Ev0jgvyfiMYal8nXzDnxX/d8ptnTcLiYgQyu1z+//6BM1OEK8bYbMlP
- 4WoMrcgxekKZUr0QtRwaQixT/d15+uYkItQzwx4UxGw7YtWCX6XSuWObZhn/zGDFOPZi
- V3xMdfZsx0hRLKr9YVi/Q+LKfLTNoLcZlTE6nZWYOIVln2E/LRDYVBFWzB46U6rSqx57
- VWvWUUaPkbb9MjFGa9PUDPmXwLIkN+gYsW7NAIUF4LMU1eHhy67wwxmpQXbuEuseI7fk xQ== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2130.oracle.com with ESMTP id 384ars04ga-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 24 Apr 2021 06:43:18 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13O6PZJj164989;
-        Sat, 24 Apr 2021 06:43:17 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by aserp3020.oracle.com with ESMTP id 384b5164m8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 24 Apr 2021 06:43:17 +0000
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 13O6hHsP019326;
-        Sat, 24 Apr 2021 06:43:17 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 384b5164kq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 24 Apr 2021 06:43:17 +0000
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 13O6hDjr030484;
-        Sat, 24 Apr 2021 06:43:16 GMT
-Received: from kadam (/102.36.221.92)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 23 Apr 2021 23:43:13 -0700
-Date:   Sat, 24 Apr 2021 09:43:07 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Sudeep Holla <sudeep.holla@arm.com>
-Cc:     Cristian Marussi <cristian.marussi@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Sun, 25 Apr 2021 01:27:19 -0400
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55BE9C061574;
+        Sat, 24 Apr 2021 22:26:39 -0700 (PDT)
+Received: by mail-pl1-x630.google.com with SMTP id s20so11399937plr.13;
+        Sat, 24 Apr 2021 22:26:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=19YsI2OqhZt9KEbpFpml+1pJ9ZHBS+ua43lgOkMfsQg=;
+        b=oiWrSCpIoilmatpR0so5WVBBMJMqP8RNXEH2Je09KW3JpMx9NxgR/DoNV20yewWNdn
+         FxXz3kUzBF3/Ukw6g/vlNdGaEB78mjSZmMwDZHq8o5S7nB4zrRAYyT4R1w9JO6pvzuHw
+         LZAoDZkG3MPQKajP70I82W68LnI5Oge3ImD5BJ60bULLebmN3YqgBZnvalaEI8nW/0yZ
+         tIVbRCWjTy7Q0WtO1q6X6asGddNsN+e0YEunZ4f1oWZN90bGtqEK4ybgeZzWLyZhpdUd
+         1+BvJm3qPpBj/RYp6D0BnD+r5tnjJ/LGm7JI5SUIIMq5B9i2tpRx4Sjsl3NFKJf4cA2B
+         MhNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=19YsI2OqhZt9KEbpFpml+1pJ9ZHBS+ua43lgOkMfsQg=;
+        b=jn77wz7pi61+zGinq90FZjaYIj5Uo1PQr5t9ntZFuORFN2tbJN3KI37p5BkiURkqS2
+         BNnSYJdR+hzpjaDoSPZWQ5axAg+xRfMvw95e7ySxQRxlo4AHX008hJcfg7aSUlFhzNdh
+         4saMg/lya6dPkWy5PSPtigReZHg2g4ew7Ulk+8kmN6ko6QD4dXdp88vcCrEbAJEL8DrR
+         fC6HOzye+z/ikNun/teJpDPdiuI7FFjWb33HgFzJ0WgXhI6y1revMum1WmMgdfe32svQ
+         wqEAIpw9OGnHgtrgHzZ4SormNm4/cR4077yBye+29lFf2DkZGCOw1qtV9GNu1TS5Ds78
+         Oiug==
+X-Gm-Message-State: AOAM532O+KvpGB4JyXJ2UVghN+DJiBE7U4o0Tp4vcNZq0P3/lPywsd6o
+        MkWdkGgl6dH/+iN/JrHtg60=
+X-Google-Smtp-Source: ABdhPJzWwnojpPRkg2QjfGOOgyYVJrnA5PdWNgDvnc7QMoMK+xr0a6LXpiS7IyFzXysQxlVvmN3Y+A==
+X-Received: by 2002:a17:902:a9c7:b029:e8:de49:6a76 with SMTP id b7-20020a170902a9c7b02900e8de496a76mr12442662plr.63.1619328398798;
+        Sat, 24 Apr 2021 22:26:38 -0700 (PDT)
+Received: from google.com ([2620:15c:202:201:28b7:b656:4f0d:6473])
+        by smtp.gmail.com with ESMTPSA id o127sm8334834pfd.147.2021.04.24.22.26.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 24 Apr 2021 22:26:37 -0700 (PDT)
+Date:   Sat, 24 Apr 2021 22:26:35 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] firmware: arm_scpi: prevent ternary sign expansion bug
-Message-ID: <20210424064307.GV1959@kadam>
-References: <YIE7pdqV/h10tEAK@mwanda>
- <20210422174631.aruiqqqx3szboqdp@bogus>
+Subject: Re: [PATCH 1/2] Input: evbug - Remove an empty comment block
+Message-ID: <YIT9i1EWlq5hks6Y@google.com>
+References: <fda981546203427a0ac86ef47f231239ad18ecfe.1618520227.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210422174631.aruiqqqx3szboqdp@bogus>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-ORIG-GUID: UjpaBYuHQzR7qtW6xmIOkAwv1T9BSn8T
-X-Proofpoint-GUID: UjpaBYuHQzR7qtW6xmIOkAwv1T9BSn8T
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9963 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 impostorscore=0 adultscore=0
- malwarescore=0 phishscore=0 mlxlogscore=999 suspectscore=0
- priorityscore=1501 clxscore=1015 spamscore=0 bulkscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2104060000 definitions=main-2104240045
+In-Reply-To: <fda981546203427a0ac86ef47f231239ad18ecfe.1618520227.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Apr 22, 2021 at 06:46:31PM +0100, Sudeep Holla wrote:
-> (dropping Tixy as I am sure it will bounce, he left/retired from Linaro
-> long back)
+On Thu, Apr 15, 2021 at 10:58:16PM +0200, Christophe JAILLET wrote:
+> This is a left-over from commit 1a59d1b8e05e ("treewide: Replace GPLv2
+> boilerplate/reference with SPDX - rule 156")
 > 
-> On Thu, Apr 22, 2021 at 12:02:29PM +0300, Dan Carpenter wrote:
-> > How type promotion works in ternary expressions is a bit tricky.
-> > The problem is that scpi_clk_get_val() returns longs, "ret" is a int
-> > which holds a negative error code, and le32_to_cpu() is an unsigned int.
+> Axe an empty and useless comment block.
 > 
-> Agreed.
-> 
-> > We want the negative error code to be cast to a negative long.  But
-> > because le32_to_cpu() is an u32 then "ret" is type promoted to u32 and
-> > becomes a high positive and then it is promoted to long and it is still
-> > a high positive value.
-> >
-> 
-> Thanks a lot for finding and fixing the bug!
-> 
-> > Fix this by getting rid of the ternary.
-> >
-> > Fixes: 8cb7cf56c9fe ("firmware: add support for ARM System Control and Power Interface(SCPI) protocol")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> >  drivers/firmware/arm_scpi.c | 4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/firmware/arm_scpi.c b/drivers/firmware/arm_scpi.c
-> > index d0dee37ad522..3bf61854121d 100644
-> > --- a/drivers/firmware/arm_scpi.c
-> > +++ b/drivers/firmware/arm_scpi.c
-> > @@ -552,8 +552,10 @@ static unsigned long scpi_clk_get_val(u16 clk_id)
-> >
-> >  	ret = scpi_send_message(CMD_GET_CLOCK_VALUE, &le_clk_id,
-> >  				sizeof(le_clk_id), &rate, sizeof(rate));
-> > +	if (ret)
-> > +		return ret;
-> 
-> This could be still an issue, ideally I would prefer to pass the return
-> value via argument pointer and always return success/failure as return
-> value. Can't remember any reason for this. Since this is old interface
-> with limited platform to test, I think returning 0 as clock rate on error
-> should be fine as Cristain suggested. If you agree with that, I can
-> fix up when applying. 
-> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-That sounds great.  Thanks.
+Applied, thank you.
 
-regards,
-dan carpenter
-
+-- 
+Dmitry
