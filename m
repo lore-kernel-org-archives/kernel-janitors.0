@@ -2,86 +2,107 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3208C433B4
-	for <kernel-janitors@archiver.kernel.org>; Sun, 25 Apr 2021 05:26:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3924C433ED
+	for <kernel-janitors@archiver.kernel.org>; Sun, 25 Apr 2021 06:39:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 878A0613BB
-	for <kernel-janitors@archiver.kernel.org>; Sun, 25 Apr 2021 05:26:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7D1561482
+	for <kernel-janitors@archiver.kernel.org>; Sun, 25 Apr 2021 06:39:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229611AbhDYF1U (ORCPT
+        id S229588AbhDYGkN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 25 Apr 2021 01:27:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38052 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229522AbhDYF1T (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 25 Apr 2021 01:27:19 -0400
-Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55BE9C061574;
-        Sat, 24 Apr 2021 22:26:39 -0700 (PDT)
-Received: by mail-pl1-x630.google.com with SMTP id s20so11399937plr.13;
-        Sat, 24 Apr 2021 22:26:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=19YsI2OqhZt9KEbpFpml+1pJ9ZHBS+ua43lgOkMfsQg=;
-        b=oiWrSCpIoilmatpR0so5WVBBMJMqP8RNXEH2Je09KW3JpMx9NxgR/DoNV20yewWNdn
-         FxXz3kUzBF3/Ukw6g/vlNdGaEB78mjSZmMwDZHq8o5S7nB4zrRAYyT4R1w9JO6pvzuHw
-         LZAoDZkG3MPQKajP70I82W68LnI5Oge3ImD5BJ60bULLebmN3YqgBZnvalaEI8nW/0yZ
-         tIVbRCWjTy7Q0WtO1q6X6asGddNsN+e0YEunZ4f1oWZN90bGtqEK4ybgeZzWLyZhpdUd
-         1+BvJm3qPpBj/RYp6D0BnD+r5tnjJ/LGm7JI5SUIIMq5B9i2tpRx4Sjsl3NFKJf4cA2B
-         MhNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=19YsI2OqhZt9KEbpFpml+1pJ9ZHBS+ua43lgOkMfsQg=;
-        b=jn77wz7pi61+zGinq90FZjaYIj5Uo1PQr5t9ntZFuORFN2tbJN3KI37p5BkiURkqS2
-         BNnSYJdR+hzpjaDoSPZWQ5axAg+xRfMvw95e7ySxQRxlo4AHX008hJcfg7aSUlFhzNdh
-         4saMg/lya6dPkWy5PSPtigReZHg2g4ew7Ulk+8kmN6ko6QD4dXdp88vcCrEbAJEL8DrR
-         fC6HOzye+z/ikNun/teJpDPdiuI7FFjWb33HgFzJ0WgXhI6y1revMum1WmMgdfe32svQ
-         wqEAIpw9OGnHgtrgHzZ4SormNm4/cR4077yBye+29lFf2DkZGCOw1qtV9GNu1TS5Ds78
-         Oiug==
-X-Gm-Message-State: AOAM532O+KvpGB4JyXJ2UVghN+DJiBE7U4o0Tp4vcNZq0P3/lPywsd6o
-        MkWdkGgl6dH/+iN/JrHtg60=
-X-Google-Smtp-Source: ABdhPJzWwnojpPRkg2QjfGOOgyYVJrnA5PdWNgDvnc7QMoMK+xr0a6LXpiS7IyFzXysQxlVvmN3Y+A==
-X-Received: by 2002:a17:902:a9c7:b029:e8:de49:6a76 with SMTP id b7-20020a170902a9c7b02900e8de496a76mr12442662plr.63.1619328398798;
-        Sat, 24 Apr 2021 22:26:38 -0700 (PDT)
-Received: from google.com ([2620:15c:202:201:28b7:b656:4f0d:6473])
-        by smtp.gmail.com with ESMTPSA id o127sm8334834pfd.147.2021.04.24.22.26.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 24 Apr 2021 22:26:37 -0700 (PDT)
-Date:   Sat, 24 Apr 2021 22:26:35 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 1/2] Input: evbug - Remove an empty comment block
-Message-ID: <YIT9i1EWlq5hks6Y@google.com>
-References: <fda981546203427a0ac86ef47f231239ad18ecfe.1618520227.git.christophe.jaillet@wanadoo.fr>
+        Sun, 25 Apr 2021 02:40:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56420 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229480AbhDYGkM (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Sun, 25 Apr 2021 02:40:12 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 3C4396113D;
+        Sun, 25 Apr 2021 06:39:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1619332772;
+        bh=0o3GuEStuPPp6fhAZuQAurJbIkCnuOyJDSAE60E8ZZE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=k8uVJFmK9TeL94byE618v1RmX2TVpkekCbBNjNrnbNihMHrKtNdZ09yo55BHtpk1N
+         2NDYB3bVwp3rILzEifCXzazG0NcriyPBY+6HuhO+IVPjuH4fb2rNKOxEDI0gB771v0
+         zS++DL9Dvvi1lbNeOTLFUoaS4eigMIq0XtbKsrLJ5NkGjQBVEgQozJFb7XUPHe5GUE
+         qab8QYNWpVa8hFk+i4Be0cfxQhtSQCxszCnZmQkCIbGz2iA9ZtXW2ex3X3KplcdCyU
+         O9UIgGx241YCOPb0xcUQK9UJY3YWS1Zj8OCHApTqXhcRKLTN9GIHZAM5yVySKeqCwR
+         uPlZTWDlTS08Q==
+Date:   Sun, 25 Apr 2021 09:39:29 +0300
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Saeed Mahameed <saeedm@nvidia.com>,
+        Yevgeny Kliteynik <kliteyn@nvidia.com>,
+        linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-netdev <netdev@vger.kernel.org>
+Subject: Re: [PATCH net-next] net/mlx5: Fix some error messages
+Message-ID: <YIUOoTKRwy3UTRWz@unreal>
+References: <YIKywXhusLj4cDFM@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <fda981546203427a0ac86ef47f231239ad18ecfe.1618520227.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <YIKywXhusLj4cDFM@mwanda>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Apr 15, 2021 at 10:58:16PM +0200, Christophe JAILLET wrote:
-> This is a left-over from commit 1a59d1b8e05e ("treewide: Replace GPLv2
-> boilerplate/reference with SPDX - rule 156")
+On Fri, Apr 23, 2021 at 02:42:57PM +0300, Dan Carpenter wrote:
+> This code was using IS_ERR() instead of PTR_ERR() so it prints 1 instead
+> of the correct error code.
 > 
-> Axe an empty and useless comment block.
+> Fixes: 25cb31768042 ("net/mlx5: E-Switch, Improve error messages in term table creation")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  .../mellanox/mlx5/core/eswitch_offloads_termtbl.c    | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+>
+
+It should go through netdev@.
+
+Thanks,
+Reviewed-by: Leon Romanovsky <leonro@nvidia.com> 
+
+
+> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads_termtbl.c b/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads_termtbl.c
+> index a81ece94f599..95f5c1a27718 100644
+> --- a/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads_termtbl.c
+> +++ b/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads_termtbl.c
+> @@ -83,16 +83,16 @@ mlx5_eswitch_termtbl_create(struct mlx5_core_dev *dev,
+>  	ft_attr.autogroup.max_num_groups = 1;
+>  	tt->termtbl = mlx5_create_auto_grouped_flow_table(root_ns, &ft_attr);
+>  	if (IS_ERR(tt->termtbl)) {
+> -		esw_warn(dev, "Failed to create termination table (error %d)\n",
+> -			 IS_ERR(tt->termtbl));
+> +		esw_warn(dev, "Failed to create termination table (error %ld)\n",
+> +			 PTR_ERR(tt->termtbl));
+>  		return -EOPNOTSUPP;
+>  	}
+>  
+>  	tt->rule = mlx5_add_flow_rules(tt->termtbl, NULL, flow_act,
+>  				       &tt->dest, 1);
+>  	if (IS_ERR(tt->rule)) {
+> -		esw_warn(dev, "Failed to create termination table rule (error %d)\n",
+> -			 IS_ERR(tt->rule));
+> +		esw_warn(dev, "Failed to create termination table rule (error %ld)\n",
+> +			 PTR_ERR(tt->rule));
+>  		goto add_flow_err;
+>  	}
+>  	return 0;
+> @@ -283,8 +283,8 @@ mlx5_eswitch_add_termtbl_rule(struct mlx5_eswitch *esw,
+>  		tt = mlx5_eswitch_termtbl_get_create(esw, &term_tbl_act,
+>  						     &dest[i], attr);
+>  		if (IS_ERR(tt)) {
+> -			esw_warn(esw->dev, "Failed to get termination table (error %d)\n",
+> -				 IS_ERR(tt));
+> +			esw_warn(esw->dev, "Failed to get termination table (error %ld)\n",
+> +				 PTR_ERR(tt));
+>  			goto revert_changes;
+>  		}
+>  		attr->dests[num_vport_dests].termtbl = tt;
+> -- 
+> 2.30.2
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-
-Applied, thank you.
-
--- 
-Dmitry
