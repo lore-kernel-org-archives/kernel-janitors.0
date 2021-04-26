@@ -4,41 +4,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 605E5C43460
-	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Apr 2021 10:55:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5999CC433B4
+	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Apr 2021 12:13:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 30219611CE
-	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Apr 2021 10:55:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2206B6109E
+	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Apr 2021 12:13:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233160AbhDZK4A (ORCPT
+        id S233218AbhDZMNs (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 26 Apr 2021 06:56:00 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:45932 "EHLO
+        Mon, 26 Apr 2021 08:13:48 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:48411 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233134AbhDZKz7 (ORCPT
+        with ESMTP id S231550AbhDZMNs (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 26 Apr 2021 06:55:59 -0400
+        Mon, 26 Apr 2021 08:13:48 -0400
 Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <colin.king@canonical.com>)
-        id 1laytW-0000MK-G0; Mon, 26 Apr 2021 10:55:14 +0000
+        id 1lb06q-0001ta-9F; Mon, 26 Apr 2021 12:13:04 +0000
 From:   Colin King <colin.king@canonical.com>
-To:     Laxman Dewangan <ldewangan@nvidia.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Krishna Yarlagadda <kyarlagadda@nvidia.com>,
-        Shardar Shariff Md <smohammed@nvidia.com>,
-        linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org
+To:     Felix Kuehling <Felix.Kuehling@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] serial: tegra: Fix a mask operation that is always true
-Date:   Mon, 26 Apr 2021 11:55:14 +0100
-Message-Id: <20210426105514.23268-1-colin.king@canonical.com>
+Subject: [PATCH][next] drm/amdkfd: Fix spelling mistake "unregisterd" -> "unregistered"
+Date:   Mon, 26 Apr 2021 13:13:04 +0100
+Message-Id: <20210426121304.83256-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -49,30 +47,26 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Currently the expression lsr | UART_LSR_TEMT is always true and
-this seems suspect. I believe the intent was to mask lsr with UART_LSR_TEMT
-to check that bit, so the expression should be using the & operator
-instead. Fix this.
+There is a spelling mistake in a pr_debug message. Fix it.
 
-Fixes: b9c2470fb150 ("serial: tegra: flush the RX fifo on frame error")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/tty/serial/serial-tegra.c | 2 +-
+ drivers/gpu/drm/amd/amdkfd/kfd_svm.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/serial-tegra.c
-index bbae072a125d..222032792d6c 100644
---- a/drivers/tty/serial/serial-tegra.c
-+++ b/drivers/tty/serial/serial-tegra.c
-@@ -338,7 +338,7 @@ static void tegra_uart_fifo_reset(struct tegra_uart_port *tup, u8 fcr_bits)
- 
- 	do {
- 		lsr = tegra_uart_read(tup, UART_LSR);
--		if ((lsr | UART_LSR_TEMT) && !(lsr & UART_LSR_DR))
-+		if ((lsr & UART_LSR_TEMT) && !(lsr & UART_LSR_DR))
- 			break;
- 		udelay(1);
- 	} while (--tmout);
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_svm.c b/drivers/gpu/drm/amd/amdkfd/kfd_svm.c
+index 4cc2539bed5b..e4ce97ab6e26 100644
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_svm.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_svm.c
+@@ -2286,7 +2286,7 @@ svm_range_restore_pages(struct amdgpu_device *adev, unsigned int pasid,
+ 		}
+ 		prange = svm_range_create_unregistered_range(adev, p, mm, addr);
+ 		if (!prange) {
+-			pr_debug("failed to create unregisterd range svms 0x%p address [0x%llx]\n",
++			pr_debug("failed to create unregistered range svms 0x%p address [0x%llx]\n",
+ 				 svms, addr);
+ 			mmap_write_downgrade(mm);
+ 			r = -EFAULT;
 -- 
 2.30.2
 
