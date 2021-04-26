@@ -2,85 +2,229 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2033C433ED
-	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Apr 2021 18:47:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B72DCC433B4
+	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Apr 2021 19:46:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A892D61104
-	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Apr 2021 18:47:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8199561040
+	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Apr 2021 19:46:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238077AbhDZSrs (ORCPT
+        id S241080AbhDZTrI (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 26 Apr 2021 14:47:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48440 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S238045AbhDZSrr (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 26 Apr 2021 14:47:47 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D60BC60C3D;
-        Mon, 26 Apr 2021 18:47:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1619462825;
-        bh=LzNTYbiIWhKMpW5wxTjs6p9h2s4HLvKp7YiHBdWNF1E=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=ONufhNyrHGrELeVqTZK15JxWEZhOmZWroNjNuCEbm8kztwgl4X/RNCKZFd2XgPNAD
-         FhOitq6vSvhw46H2PPeJXVdjBO55yR7TR1cvVY/M2YZL71nhaX6tpPNIsgbq8shKGD
-         PxfkTdK3RjjY5X4ue22IBdzXSqCfpvzMXpiYltxR5AqhQdEB8P9Jb71XNtnjh6PhyU
-         YSvw4Qpy6aHsEQJseFqE/C9t0OcY+QtpGav4Bhf2GgIGKEvi1pp6IIVzwH86hoShu9
-         mebvy1lN067HjnP2ay0Ue/+9BLDl+u8GI4xlfyq/MGngWOParRAD9AEiVMFBpyBI8s
-         Jpx1CVME6aeWg==
-Message-ID: <d2eca0209e76544b09021d94a47bc623ebfdc20c.camel@kernel.org>
-Subject: Re: [PATCH net-next] net/mlx5: Fix some error messages
-From:   Saeed Mahameed <saeed@kernel.org>
-To:     Jakub Kicinski <kuba@kernel.org>, Leon Romanovsky <leon@kernel.org>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Yevgeny Kliteynik <kliteyn@nvidia.com>,
-        linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-netdev <netdev@vger.kernel.org>
-Date:   Mon, 26 Apr 2021 11:47:03 -0700
-In-Reply-To: <20210426093314.5f73781e@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
-References: <YIKywXhusLj4cDFM@mwanda> <YIUOoTKRwy3UTRWz@unreal>
-         <20210426093314.5f73781e@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
+        Mon, 26 Apr 2021 15:47:08 -0400
+Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:22372 "EHLO
+        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S241071AbhDZTrH (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 26 Apr 2021 15:47:07 -0400
+IronPort-HdrOrdr: =?us-ascii?q?A9a23=3AY/9ikKPgjrBfqsBcTkGjsMiAIKoaSvp033AC?=
+ =?us-ascii?q?y112QwdEa9Hwra+Ttd4c0gL5jytUfXkml8yJNqXoewK6ybde544NMbC+GDT3oW?=
+ =?us-ascii?q?fAFvAH0aLOyyDtchefysdzzqFlGpITNPTRChxAgd/+8E2EFb8bsby62YSJocub?=
+ =?us-ascii?q?8Ht3VwFtbMhbnmVEIyKWCFd/SgUDJbdRLvuhz+xdqTKmeWcec8S8ARA+MdTrnN?=
+ =?us-ascii?q?HAmJL4bRNuPXdO1CC0gTyl87L8GRSDty1ybxp03bwg/WLZ+jaT2oyftZiAoCP0?=
+ =?us-ascii?q?63Xe9NB/ltfn17J4da+xtvQ=3D?=
+X-IronPort-AV: E=Sophos;i="5.82,252,1613430000"; 
+   d="scan'208";a="505149600"
+Received: from palace.rsr.lip6.fr (HELO palace.lip6.fr) ([132.227.105.202])
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-SHA; 26 Apr 2021 21:46:24 +0200
+From:   Julia Lawall <Julia.Lawall@inria.fr>
+To:     Julia Lawall <Julia.Lawall@inria.fr>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc:     kernel-janitors@vger.kernel.org,
+        Gilles Muller <Gilles.Muller@inria.fr>,
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        Michal Marek <michal.lkml@markovi.net>, cocci@systeme.lip6.fr,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] coccinelle: api: semantic patch to use pm_runtime_resume_and_get
+Date:   Mon, 26 Apr 2021 20:54:04 +0200
+Message-Id: <20210426185404.2466195-1-Julia.Lawall@inria.fr>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, 2021-04-26 at 09:33 -0700, Jakub Kicinski wrote:
-> On Sun, 25 Apr 2021 09:39:29 +0300 Leon Romanovsky wrote:
-> > > diff --git
-> > > a/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads_termtb
-> > > l.c
-> > > b/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads_termtb
-> > > l.c
-> > > index a81ece94f599..95f5c1a27718 100644
-> > > ---
-> > > a/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads_termtb
-> > > l.c
-> > > +++
-> > > b/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads_termtb
-> > > l.c
-> > > @@ -83,16 +83,16 @@ mlx5_eswitch_termtbl_create(struct
-> > > mlx5_core_dev *dev,
-> > >         ft_attr.autogroup.max_num_groups = 1;
-> > >         tt->termtbl =
-> > > mlx5_create_auto_grouped_flow_table(root_ns, &ft_attr);
-> > >         if (IS_ERR(tt->termtbl)) {
-> > > -               esw_warn(dev, "Failed to create termination table
-> > > (error %d)\n",
-> > > -                        IS_ERR(tt->termtbl));
-> > > +               esw_warn(dev, "Failed to create termination table
-> > > (error %ld)\n",
-> > > +                        PTR_ERR(tt->termtbl));
-> 
-> If these are error pointers - perhaps %pe?
+pm_runtime_get_sync keeps a reference count on failure, which can lead
+to leaks.  pm_runtime_resume_and_get drops the reference count in the
+failure case.  This rule very conservatively follows the definition of
+pm_runtime_resume_and_get to address the cases where the reference
+count is unlikely to be needed in the failure case.
 
-no reason to use %pe, we know it is an err ptr at this point so just
-report PTR_ERR() 
+pm_runtime_resume_and_get was introduced in
+commit dd8088d5a896 ("PM: runtime: Add pm_runtime_resume_and_get to
+deal with usage counter")
 
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+
+---
+v2: better keyword
+
+ scripts/coccinelle/api/pm_runtime_resume_and_get.cocci |  153 +++++++++++++++++
+ 1 file changed, 153 insertions(+)
+
+diff --git a/scripts/coccinelle/api/pm_runtime_resume_and_get.cocci b/scripts/coccinelle/api/pm_runtime_resume_and_get.cocci
+new file mode 100644
+index 000000000000..3387cb606f9b
+--- /dev/null
++++ b/scripts/coccinelle/api/pm_runtime_resume_and_get.cocci
+@@ -0,0 +1,153 @@
++// SPDX-License-Identifier: GPL-2.0-only
++///
++/// Use pm_runtime_resume_and_get.
++/// pm_runtime_get_sync keeps a reference count on failure,
++/// which can lead to leaks.  pm_runtime_resume_and_get
++/// drops the reference count in the failure case.
++/// This rule addresses the cases where the reference count
++/// is unlikely to be needed in the failure case.
++///
++// Confidence: High
++// Copyright: (C) 2021 Julia Lawall, Inria
++// URL: https://coccinelle.gitlabpages.inria.fr/website
++// Options: --include-headers --no-includes
++// Keywords: pm_runtime_get_sync
++
++virtual patch
++virtual context
++virtual org
++virtual report
++
++@r0 depends on patch && !context && !org && !report@
++expression ret,e;
++@@
++
++-     ret = pm_runtime_get_sync(e);
+++     ret = pm_runtime_resume_and_get(e);
++-     if (ret < 0)
++-             pm_runtime_put_noidle(e);
++
++@r1 depends on patch && !context && !org && !report@
++expression ret,e;
++statement S1,S2;
++@@
++
++-     ret = pm_runtime_get_sync(e);
+++     ret = pm_runtime_resume_and_get(e);
++      if (ret < 0)
++-     {
++-             pm_runtime_put_noidle(e);
++	      S1
++-     }
++      else S2
++
++@r2 depends on patch && !context && !org && !report@
++expression ret,e;
++statement S;
++@@
++
++-     ret = pm_runtime_get_sync(e);
+++     ret = pm_runtime_resume_and_get(e);
++      if (ret < 0) {
++-             pm_runtime_put_noidle(e);
++	      ...
++      } else S
++
++@r3 depends on patch && !context && !org && !report@
++expression ret,e;
++identifier f;
++constant char[] c;
++statement S;
++@@
++
++-     ret = pm_runtime_get_sync(e);
+++     ret = pm_runtime_resume_and_get(e);
++      if (ret < 0)
++-     {
++              f(...,c,...);
++-             pm_runtime_put_noidle(e);
++-     }
++      else S
++
++@r4 depends on patch && !context && !org && !report@
++expression ret,e;
++identifier f;
++constant char[] c;
++statement S;
++@@
++
++-     ret = pm_runtime_get_sync(e);
+++     ret = pm_runtime_resume_and_get(e);
++      if (ret < 0) {
++              f(...,c,...);
++-             pm_runtime_put_noidle(e);
++	      ...
++      } else S
++
++// ----------------------------------------------------------------------------
++
++@r2_context depends on !patch && (context || org || report)@
++statement S;
++expression e, ret;
++position j0, j1;
++@@
++
++*     ret@j0 = pm_runtime_get_sync(e);
++      if (ret < 0) {
++*             pm_runtime_put_noidle@j1(e);
++	      ...
++      } else S
++
++@r3_context depends on !patch && (context || org || report)@
++identifier f;
++statement S;
++constant char []c;
++expression e, ret;
++position j0, j1;
++@@
++
++*     ret@j0 = pm_runtime_get_sync(e);
++      if (ret < 0) {
++              f(...,c,...);
++*             pm_runtime_put_noidle@j1(e);
++	      ...
++      } else S
++
++// ----------------------------------------------------------------------------
++
++@script:python r2_org depends on org@
++j0 << r2_context.j0;
++j1 << r2_context.j1;
++@@
++
++msg = "WARNING: opportunity for pm_runtime_get_sync"
++coccilib.org.print_todo(j0[0], msg)
++coccilib.org.print_link(j1[0], "")
++
++@script:python r3_org depends on org@
++j0 << r3_context.j0;
++j1 << r3_context.j1;
++@@
++
++msg = "WARNING: opportunity for pm_runtime_get_sync"
++coccilib.org.print_todo(j0[0], msg)
++coccilib.org.print_link(j1[0], "")
++
++// ----------------------------------------------------------------------------
++
++@script:python r2_report depends on report@
++j0 << r2_context.j0;
++j1 << r2_context.j1;
++@@
++
++msg = "WARNING: opportunity for pm_runtime_get_sync on line %s." % (j0[0].line)
++coccilib.report.print_report(j0[0], msg)
++
++@script:python r3_report depends on report@
++j0 << r3_context.j0;
++j1 << r3_context.j1;
++@@
++
++msg = "WARNING: opportunity for pm_runtime_get_sync on %s." % (j0[0].line)
++coccilib.report.print_report(j0[0], msg)
++
 
