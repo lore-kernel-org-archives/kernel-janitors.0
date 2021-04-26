@@ -2,127 +2,83 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E608C433B4
-	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Apr 2021 10:08:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37C22C433ED
+	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Apr 2021 10:11:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 63D9B61178
-	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Apr 2021 10:08:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0435661353
+	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Apr 2021 10:11:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232990AbhDZKJB (ORCPT
+        id S233058AbhDZKLz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 26 Apr 2021 06:09:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45126 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232541AbhDZKI4 (ORCPT
+        Mon, 26 Apr 2021 06:11:55 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:44777 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233072AbhDZKLv (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 26 Apr 2021 06:08:56 -0400
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27170C061756;
-        Mon, 26 Apr 2021 03:08:01 -0700 (PDT)
-Received: by mail-wm1-x32c.google.com with SMTP id i129so2695794wma.3;
-        Mon, 26 Apr 2021 03:08:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=0CxAJGsWfI6bvhx4b1S37+OR2+rBYziqOE1wt59EsZg=;
-        b=S5t3GYNrV+ALejk5CjzFyXgtMXkTv7+uQH07LQLfMYJY3aeSAqe3mhuv6BZ56SXfxn
-         jdbSofskOT2mc37i/0sTYu8fK9WmRHOzMhXP9x4vkhSDwplWxac1DY9cTo0RjnbnTPVi
-         QlqcZ4zGVZfiESfLMyizVFAbixj3MRKUd1fGSv+NcfDuovx8CaaPHylemxPUqT5VZ5ey
-         W6cTA/A0vLNpAE5xw93MaHckjX50TEvMK+QlMDT3eoJYLJf3TH+YX+QLYWLpHy+R3Jqg
-         LMPVG0XMmzhElR2Vze40vye9WSou6S0QI+jqexoOo4Jcj2V+bLhY1dNCUy1iXKv4epCc
-         QCXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=0CxAJGsWfI6bvhx4b1S37+OR2+rBYziqOE1wt59EsZg=;
-        b=O05+RBW8lCbjT0vD/gSWZmjUamd5ppUNGzUF/Fc1JhQ4Mx6X7d7hib40qZImUz4xmW
-         3RE/F56GMgc/cCEpuL9LgZ5iYpcHyz+7ky41ZTKYeEIvcU5xUmNjl9YUtYISoC+3e8Qa
-         YK0ze75B2u7/fesq3CfjKxSw73/w8SA6HdEpZwaRtyp1v+b7Q+yUAMJQ+N97iV/TakPW
-         evxIZoQpyH1CKB5vqOx1c53enVUivgVn2wkn1FKJzETCoDe3cUUdy0dHOjrSbMlrw5bU
-         Q5/nQyWPhmaYDeyw42dXVOGMYEWkXUaEmALipDhbPFDQu08hdKpE64Qej5QevbTIUNn2
-         RTVg==
-X-Gm-Message-State: AOAM5335sw+HQUdWDq+dO1J1wiMvaorskYBJO1fgeV/tzJr3SheoEu6o
-        NuvRkecJ/iSnEaa2ODDECRalbyFifLg=
-X-Google-Smtp-Source: ABdhPJwXxNRZ4EIEH2sh8LmxS8Phmq2ir+hukGmNyHrZ1yVZC/dp7ISf+xGxF+GogBm3SA7COHBsgQ==
-X-Received: by 2002:a1c:9a95:: with SMTP id c143mr18905903wme.143.1619431679736;
-        Mon, 26 Apr 2021 03:07:59 -0700 (PDT)
-Received: from [192.168.8.197] ([148.252.129.131])
-        by smtp.gmail.com with ESMTPSA id a22sm19613170wrc.59.2021.04.26.03.07.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Apr 2021 03:07:59 -0700 (PDT)
-Subject: Re: [PATCH][next] io_uring: Fix uninitialized variable up.resv
-To:     Colin Ian King <colin.king@canonical.com>,
-        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+        Mon, 26 Apr 2021 06:11:51 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1layCo-0003XV-9l; Mon, 26 Apr 2021 10:11:06 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210426094735.8320-1-colin.king@canonical.com>
- <ef9d0ed2-a8cd-fc4a-5b02-092d2c151313@gmail.com>
- <b937f247-e5b2-0630-aa7a-72d495a20667@canonical.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Message-ID: <681850b0-fe2a-ae9e-a55b-6788fce71a8e@gmail.com>
-Date:   Mon, 26 Apr 2021 11:07:54 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.9.1
+Subject: [PATCH] serial: meson: remove redundant initialization of variable id
+Date:   Mon, 26 Apr 2021 11:11:06 +0100
+Message-Id: <20210426101106.9122-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-In-Reply-To: <b937f247-e5b2-0630-aa7a-72d495a20667@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 4/26/21 11:01 AM, Colin Ian King wrote:
-> On 26/04/2021 10:59, Pavel Begunkov wrote:
->> On 4/26/21 10:47 AM, Colin King wrote:
->>> From: Colin Ian King <colin.king@canonical.com>
->>>
->>> The variable up.resv is not initialized and is being checking for a
->>> non-zero value in the call to _io_register_rsrc_update. Fix this by
->>> explicitly setting the pointer to 0.
-> 
->                           ^^ s/pointer/variable/
-> 
-> Shall I send a V2?
+From: Colin Ian King <colin.king@canonical.com>
 
-If you like, but if you don't want to resend it's not important, or
-Jens can edit it while applying.
+The variable id being initialized with a value that is never read
+and it is being updated later with a new value. The initialization is
+redundant and can be removed. Since id is just being used in a for-loop
+inside a local scope, move the declaration of id to that scope.
 
-> 
->>
->> LGTM, thanks Colin
->>
->>
->>> Addresses-Coverity: ("Uninitialized scalar variable)"
->>> Fixes: c3bdad027183 ("io_uring: add generic rsrc update with tags")
->>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->>> ---
->>>  fs/io_uring.c | 1 +
->>>  1 file changed, 1 insertion(+)
->>>
->>> diff --git a/fs/io_uring.c b/fs/io_uring.c
->>> index f4ec092c23f4..63f610ee274b 100644
->>> --- a/fs/io_uring.c
->>> +++ b/fs/io_uring.c
->>> @@ -5842,6 +5842,7 @@ static int io_files_update(struct io_kiocb *req, unsigned int issue_flags)
->>>  	up.data = req->rsrc_update.arg;
->>>  	up.nr = 0;
->>>  	up.tags = 0;
->>> +	up.resv = 0;
->>>  
->>>  	mutex_lock(&ctx->uring_lock);
->>>  	ret = __io_register_rsrc_update(ctx, IORING_RSRC_FILE,
->>>
->>
-> 
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/tty/serial/meson_uart.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/tty/serial/meson_uart.c b/drivers/tty/serial/meson_uart.c
+index 529cd0289056..d7f55031b2cf 100644
+--- a/drivers/tty/serial/meson_uart.c
++++ b/drivers/tty/serial/meson_uart.c
+@@ -716,12 +716,13 @@ static int meson_uart_probe(struct platform_device *pdev)
+ 	struct resource *res_mem, *res_irq;
+ 	struct uart_port *port;
+ 	int ret = 0;
+-	int id = -1;
+ 
+ 	if (pdev->dev.of_node)
+ 		pdev->id = of_alias_get_id(pdev->dev.of_node, "serial");
+ 
+ 	if (pdev->id < 0) {
++		int id;
++
+ 		for (id = AML_UART_PORT_OFFSET; id < AML_UART_PORT_NUM; id++) {
+ 			if (!meson_ports[id]) {
+ 				pdev->id = id;
 -- 
-Pavel Begunkov
+2.30.2
+
