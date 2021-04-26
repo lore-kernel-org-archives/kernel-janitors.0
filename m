@@ -2,92 +2,119 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21D88C433B4
-	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Apr 2021 12:51:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AB37C433B4
+	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Apr 2021 15:19:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D69D06101C
-	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Apr 2021 12:51:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 28ECE60FE5
+	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Apr 2021 15:19:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233385AbhDZMw2 (ORCPT
+        id S233573AbhDZPTl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 26 Apr 2021 08:52:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53234 "EHLO
+        Mon, 26 Apr 2021 11:19:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231876AbhDZMw2 (ORCPT
+        with ESMTP id S233829AbhDZPTk (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 26 Apr 2021 08:52:28 -0400
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 725B9C061756
-        for <kernel-janitors@vger.kernel.org>; Mon, 26 Apr 2021 05:51:45 -0700 (PDT)
-Received: by mail-pj1-x1030.google.com with SMTP id g1-20020a17090adac1b0290150d07f9402so5119736pjx.5
-        for <kernel-janitors@vger.kernel.org>; Mon, 26 Apr 2021 05:51:45 -0700 (PDT)
+        Mon, 26 Apr 2021 11:19:40 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71610C061574
+        for <kernel-janitors@vger.kernel.org>; Mon, 26 Apr 2021 08:18:58 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id l189-20020a1cbbc60000b0290140319ad207so2961183wmf.2
+        for <kernel-janitors@vger.kernel.org>; Mon, 26 Apr 2021 08:18:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Ie15wHFE76bzG+Wxt/79MF6wdJrWeejBS8p/vm45PF4=;
-        b=gPNn9QbO/x2+6+ep8RdXTKii7vY3o891ydwruA9Mm6Egq1iofqvwrGDQGksONOmTYT
-         5v3k+HL9xqzifguqnNkHS+barYyarLAA2VzXbA6EYbXg/XnjeofqJNlUbOcVtBNwjq4l
-         jJYYs/3rMbFtfzs3GB9HDme0TmX2IeJUY3c9IKhj9dQ1CUAXkpNdMhA0UAkMwl/KBXoY
-         xVL21lI7A5dx9B1U3AxhZ0qz9BVbrpqtaY0ZxiKLEdalJwvl+L9ZtgkksI35u5WdnPhf
-         B2Z6122xu3wCBnD22Gi6hr+l6+O0E6RYapnEAcLO/HaoapheFN9dVpvhYsnK7jMx628t
-         AoOw==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=d7c910HdFIDkEZtBVmU+xya0RUVFfE7u0NPc6LnaV4A=;
+        b=zPI+wHnjxVRqB2h7HkKFXWNFbszfV2rYGIDDv9QRZjNNBzvOK2tGd9/nLf9U2zVhWL
+         zx4JePmNRfZLB+aX6PDlMI3hp+L1GbRMyIfzteWIDwaHNxfQDG0b5mwcwM4I/K7uBrBg
+         ruKzOXdtaFfXnlal6zJHaMxq3OCdD65IjjGrt5zx/1X9KXDEFJcMmKuFfqUbEMXTzdEJ
+         bQPv4CBh+tcPHBf+oaQls+ZuzsDoh3+e1TxKSuDB0+JpULtVcjFww230XNhmKSmKNi8P
+         pYqLoBQwcolRQx1/tIIwNAKPLzeUJn9kLQBMtGD9lZUcqaWWnNrIAFWeocS6sw6QUVvY
+         drBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Ie15wHFE76bzG+Wxt/79MF6wdJrWeejBS8p/vm45PF4=;
-        b=SbcMMiO5LL0tmGrDEXhxCbzEoIKZbzosKTVZQM/Av7nX/aU32VH/5chhwrdB0+quOe
-         0QhQ2hVtQ68dh4c7d6tX1xTobSz4t5ydFi3ejpgM8x+tIkAgExDZDc4S5g5mvm9tY+/n
-         Bc4mVadnkhek4pdsKFAUzcJ0J5yVySLufjqN0mBL7mBeyCywWttDyQ4Xmx96xZmLSStG
-         XevZ/moyB6w4p6+CeniepjNQNR/epVosxIAn0pWXONZc3M2a0vK2iQbuKqD3lW4FNStz
-         Ml/lecxk9ZA5DsqF6DWg8Nlt8+JIaNDqMmcpmWVpda/1Ud1ds5h/D3vw1rXt99MmeLFA
-         jPaw==
-X-Gm-Message-State: AOAM5333cnZuEwu5+12NR2TzUIm+hFMu/l7mIC2TELgJGqvztNBAx8tI
-        eHTCPgQIW5Yyh42V6fTsAn+wSQ==
-X-Google-Smtp-Source: ABdhPJycZeWxEAEMvutxAr4Nn+NLUpl9AyywYZpRHWrQ7XW+sELMqfLQLPVrKb5fPV4AKGvJR4VwCQ==
-X-Received: by 2002:a17:90a:9409:: with SMTP id r9mr21154964pjo.157.1619441504978;
-        Mon, 26 Apr 2021 05:51:44 -0700 (PDT)
-Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id u17sm11156058pfm.113.2021.04.26.05.51.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Apr 2021 05:51:44 -0700 (PDT)
-Subject: Re: [PATCH][next] io_uring: Fix uninitialized variable up.resv
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=d7c910HdFIDkEZtBVmU+xya0RUVFfE7u0NPc6LnaV4A=;
+        b=JThtuUw7M9AT0Lo1TjQs8LxYTKZzNfcoB+z3+r3w2ei3rnmdS4vn0tNosHra0AEyEj
+         CICSPDlHmlowfo65Im0E5wTcZAJkQeoW2Gzj1NE3l5MuI8bNyurFIZbyRmVtROqf8Aze
+         WfxTPAETIFb1Pr2/eMpNZ/9Ti+188wsK5gazYiqRMUwZAyblZ9f847QjH5wD77zLKbmT
+         +PBeyTo985E7tapsuBFhDQR/g3b1lHbHNeOBGZFxQJybbEgokNAyzy7fL1w6YJpZ6+Pd
+         05BZXgw2gT8c7hXaCsOIuYAPeyEO0bCQT3egeXVd1v3UwiOKWTzM5TTL3XEg7Bm32Kds
+         OthQ==
+X-Gm-Message-State: AOAM533t6T3ONQGnE5Ei00knqdBbl4pMRUbe0+4FcVe2CEKsGaL6S7KX
+        uXuJ4OvKnAHFOEw4ItvbtMpYBQ==
+X-Google-Smtp-Source: ABdhPJzeVCEu0G7/KsNN5GV0idVuXFvH4c6Dd8NZqnG4S6Uym6BLFUkIBVE4h4nvQDzoIvKiCcOaug==
+X-Received: by 2002:a1c:4382:: with SMTP id q124mr12824636wma.63.1619450337109;
+        Mon, 26 Apr 2021 08:18:57 -0700 (PDT)
+Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
+        by smtp.gmail.com with ESMTPSA id h8sm15920060wmq.19.2021.04.26.08.18.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Apr 2021 08:18:56 -0700 (PDT)
+From:   Kevin Hilman <khilman@baylibre.com>
 To:     Colin King <colin.king@canonical.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring@vger.kernel.org
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210426094735.8320-1-colin.king@canonical.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <d65b1763-ac78-acd6-3b92-e28bd4402a75@kernel.dk>
-Date:   Mon, 26 Apr 2021 06:51:48 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+Subject: Re: [PATCH] serial: meson: remove redundant initialization of
+ variable id
+In-Reply-To: <20210426101106.9122-1-colin.king@canonical.com>
+References: <20210426101106.9122-1-colin.king@canonical.com>
+Date:   Mon, 26 Apr 2021 08:18:53 -0700
+Message-ID: <7hwnspysyq.fsf@baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <20210426094735.8320-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 4/26/21 3:47 AM, Colin King wrote:
+Colin King <colin.king@canonical.com> writes:
+
 > From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable up.resv is not initialized and is being checking for a
-> non-zero value in the call to _io_register_rsrc_update. Fix this by
-> explicitly setting the pointer to 0.
+>
+> The variable id being initialized with a value that is never read
+> and it is being updated later with a new value. The initialization is
+> redundant and can be removed. Since id is just being used in a for-loop
+> inside a local scope, move the declaration of id to that scope.
+>
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Thanks Colin, applied. I changed the pointer to variable while doing
-so.
+Reviewed-by: Kevin Hilman <khilman@baylibre.com>
 
--- 
-Jens Axboe
-
+> ---
+>  drivers/tty/serial/meson_uart.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/tty/serial/meson_uart.c b/drivers/tty/serial/meson_uart.c
+> index 529cd0289056..d7f55031b2cf 100644
+> --- a/drivers/tty/serial/meson_uart.c
+> +++ b/drivers/tty/serial/meson_uart.c
+> @@ -716,12 +716,13 @@ static int meson_uart_probe(struct platform_device *pdev)
+>  	struct resource *res_mem, *res_irq;
+>  	struct uart_port *port;
+>  	int ret = 0;
+> -	int id = -1;
+>  
+>  	if (pdev->dev.of_node)
+>  		pdev->id = of_alias_get_id(pdev->dev.of_node, "serial");
+>  
+>  	if (pdev->id < 0) {
+> +		int id;
+> +
+>  		for (id = AML_UART_PORT_OFFSET; id < AML_UART_PORT_NUM; id++) {
+>  			if (!meson_ports[id]) {
+>  				pdev->id = id;
+> -- 
+> 2.30.2
