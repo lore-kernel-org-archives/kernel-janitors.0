@@ -2,119 +2,67 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AB37C433B4
-	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Apr 2021 15:19:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7F59C433B4
+	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Apr 2021 16:33:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 28ECE60FE5
-	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Apr 2021 15:19:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E4826103E
+	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Apr 2021 16:33:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233573AbhDZPTl (ORCPT
+        id S234358AbhDZQd6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 26 Apr 2021 11:19:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57824 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233829AbhDZPTk (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 26 Apr 2021 11:19:40 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71610C061574
-        for <kernel-janitors@vger.kernel.org>; Mon, 26 Apr 2021 08:18:58 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id l189-20020a1cbbc60000b0290140319ad207so2961183wmf.2
-        for <kernel-janitors@vger.kernel.org>; Mon, 26 Apr 2021 08:18:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=d7c910HdFIDkEZtBVmU+xya0RUVFfE7u0NPc6LnaV4A=;
-        b=zPI+wHnjxVRqB2h7HkKFXWNFbszfV2rYGIDDv9QRZjNNBzvOK2tGd9/nLf9U2zVhWL
-         zx4JePmNRfZLB+aX6PDlMI3hp+L1GbRMyIfzteWIDwaHNxfQDG0b5mwcwM4I/K7uBrBg
-         ruKzOXdtaFfXnlal6zJHaMxq3OCdD65IjjGrt5zx/1X9KXDEFJcMmKuFfqUbEMXTzdEJ
-         bQPv4CBh+tcPHBf+oaQls+ZuzsDoh3+e1TxKSuDB0+JpULtVcjFww230XNhmKSmKNi8P
-         pYqLoBQwcolRQx1/tIIwNAKPLzeUJn9kLQBMtGD9lZUcqaWWnNrIAFWeocS6sw6QUVvY
-         drBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=d7c910HdFIDkEZtBVmU+xya0RUVFfE7u0NPc6LnaV4A=;
-        b=JThtuUw7M9AT0Lo1TjQs8LxYTKZzNfcoB+z3+r3w2ei3rnmdS4vn0tNosHra0AEyEj
-         CICSPDlHmlowfo65Im0E5wTcZAJkQeoW2Gzj1NE3l5MuI8bNyurFIZbyRmVtROqf8Aze
-         WfxTPAETIFb1Pr2/eMpNZ/9Ti+188wsK5gazYiqRMUwZAyblZ9f847QjH5wD77zLKbmT
-         +PBeyTo985E7tapsuBFhDQR/g3b1lHbHNeOBGZFxQJybbEgokNAyzy7fL1w6YJpZ6+Pd
-         05BZXgw2gT8c7hXaCsOIuYAPeyEO0bCQT3egeXVd1v3UwiOKWTzM5TTL3XEg7Bm32Kds
-         OthQ==
-X-Gm-Message-State: AOAM533t6T3ONQGnE5Ei00knqdBbl4pMRUbe0+4FcVe2CEKsGaL6S7KX
-        uXuJ4OvKnAHFOEw4ItvbtMpYBQ==
-X-Google-Smtp-Source: ABdhPJzeVCEu0G7/KsNN5GV0idVuXFvH4c6Dd8NZqnG4S6Uym6BLFUkIBVE4h4nvQDzoIvKiCcOaug==
-X-Received: by 2002:a1c:4382:: with SMTP id q124mr12824636wma.63.1619450337109;
-        Mon, 26 Apr 2021 08:18:57 -0700 (PDT)
-Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
-        by smtp.gmail.com with ESMTPSA id h8sm15920060wmq.19.2021.04.26.08.18.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Apr 2021 08:18:56 -0700 (PDT)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Colin King <colin.king@canonical.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] serial: meson: remove redundant initialization of
- variable id
-In-Reply-To: <20210426101106.9122-1-colin.king@canonical.com>
-References: <20210426101106.9122-1-colin.king@canonical.com>
-Date:   Mon, 26 Apr 2021 08:18:53 -0700
-Message-ID: <7hwnspysyq.fsf@baylibre.com>
+        Mon, 26 Apr 2021 12:33:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46416 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233923AbhDZQd6 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 26 Apr 2021 12:33:58 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D51AF611CE;
+        Mon, 26 Apr 2021 16:33:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1619454796;
+        bh=d0gfNgV9zTvtd4x6r4lI4n6KddJ35PZDUmebabXDSKQ=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=FFmJ79xE0QKNVYj36vQclGEC2+oq16f+aZHSuwK7oMgzt5na2PKlzD0fZUa8qUwcy
+         n8FMNriIva1cmwTxV0eSlIvyYNH1oxFoCFKVDIEpkQeMN8IUh1L63CPy4OxR9uAxaL
+         FrxfjcM/mDq22JlUXyCZnj/Oo0Y1JDb+lLI0M3ALqWa0hWTheqmGyw2UDsqO83FIqQ
+         8in7/wPb/VGwSiOPaccTULMM0zJAdUJ9W3sUt8NwGpcgb3jAaLEdFn5hLnSvMNEJvy
+         rGhAdU1x1n6xJMl9l2zwRqhuwLf1fr4DEikdUAG22G9fxOjj/xDaFrTqDc7cklMfk5
+         zu7BX9P+MYQaw==
+Date:   Mon, 26 Apr 2021 09:33:14 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Leon Romanovsky <leon@kernel.org>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Saeed Mahameed <saeedm@nvidia.com>,
+        Yevgeny Kliteynik <kliteyn@nvidia.com>,
+        linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-netdev <netdev@vger.kernel.org>
+Subject: Re: [PATCH net-next] net/mlx5: Fix some error messages
+Message-ID: <20210426093314.5f73781e@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+In-Reply-To: <YIUOoTKRwy3UTRWz@unreal>
+References: <YIKywXhusLj4cDFM@mwanda>
+        <YIUOoTKRwy3UTRWz@unreal>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Colin King <colin.king@canonical.com> writes:
+On Sun, 25 Apr 2021 09:39:29 +0300 Leon Romanovsky wrote:
+> > diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads_termtbl.c b/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads_termtbl.c
+> > index a81ece94f599..95f5c1a27718 100644
+> > --- a/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads_termtbl.c
+> > +++ b/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads_termtbl.c
+> > @@ -83,16 +83,16 @@ mlx5_eswitch_termtbl_create(struct mlx5_core_dev *dev,
+> >  	ft_attr.autogroup.max_num_groups = 1;
+> >  	tt->termtbl = mlx5_create_auto_grouped_flow_table(root_ns, &ft_attr);
+> >  	if (IS_ERR(tt->termtbl)) {
+> > -		esw_warn(dev, "Failed to create termination table (error %d)\n",
+> > -			 IS_ERR(tt->termtbl));
+> > +		esw_warn(dev, "Failed to create termination table (error %ld)\n",
+> > +			 PTR_ERR(tt->termtbl));
 
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The variable id being initialized with a value that is never read
-> and it is being updated later with a new value. The initialization is
-> redundant and can be removed. Since id is just being used in a for-loop
-> inside a local scope, move the declaration of id to that scope.
->
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-
-Reviewed-by: Kevin Hilman <khilman@baylibre.com>
-
-> ---
->  drivers/tty/serial/meson_uart.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/tty/serial/meson_uart.c b/drivers/tty/serial/meson_uart.c
-> index 529cd0289056..d7f55031b2cf 100644
-> --- a/drivers/tty/serial/meson_uart.c
-> +++ b/drivers/tty/serial/meson_uart.c
-> @@ -716,12 +716,13 @@ static int meson_uart_probe(struct platform_device *pdev)
->  	struct resource *res_mem, *res_irq;
->  	struct uart_port *port;
->  	int ret = 0;
-> -	int id = -1;
->  
->  	if (pdev->dev.of_node)
->  		pdev->id = of_alias_get_id(pdev->dev.of_node, "serial");
->  
->  	if (pdev->id < 0) {
-> +		int id;
-> +
->  		for (id = AML_UART_PORT_OFFSET; id < AML_UART_PORT_NUM; id++) {
->  			if (!meson_ports[id]) {
->  				pdev->id = id;
-> -- 
-> 2.30.2
+If these are error pointers - perhaps %pe?
