@@ -2,75 +2,71 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B00DC433ED
-	for <kernel-janitors@archiver.kernel.org>; Sun, 25 Apr 2021 20:38:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15717C433ED
+	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Apr 2021 09:38:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0D1DA61260
-	for <kernel-janitors@archiver.kernel.org>; Sun, 25 Apr 2021 20:38:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF379610A2
+	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Apr 2021 09:38:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231293AbhDYUjK (ORCPT
+        id S232954AbhDZJjR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 25 Apr 2021 16:39:10 -0400
-Received: from jabberwock.ucw.cz ([46.255.230.98]:48460 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230494AbhDYUjJ (ORCPT
+        Mon, 26 Apr 2021 05:39:17 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:43817 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232068AbhDZJjF (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 25 Apr 2021 16:39:09 -0400
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 439871C0B77; Sun, 25 Apr 2021 22:38:27 +0200 (CEST)
-Date:   Sun, 25 Apr 2021 22:38:25 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Dan Murphy <dmurphy@ti.com>,
-        Amireddy Mallikarjuna <mallikarjunax.reddy@linux.intel.com>,
-        linux-leds@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] leds: lgm: Fix spelling mistake "prepate" ->
- "prepare"
-Message-ID: <20210425203825.GC10996@amd>
-References: <20210222134939.1510720-1-colin.king@canonical.com>
+        Mon, 26 Apr 2021 05:39:05 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1laxgN-0000HD-Vx; Mon, 26 Apr 2021 09:37:36 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] io_uring: fix incorrect check for kvmalloc failure
+Date:   Mon, 26 Apr 2021 10:37:35 +0100
+Message-Id: <20210426093735.7932-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="E/DnYTRukya0zdZ1"
-Content-Disposition: inline
-In-Reply-To: <20210222134939.1510720-1-colin.king@canonical.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
---E/DnYTRukya0zdZ1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Currently imu is being allocated but the kvmalloc failure is checking
+imu->bvec instead of imu.  Fix this by checking imu for null.
 
-Hi!
+Addresses-Coverity: ("Array compared against 0")
+Fixes: 41edf1a5ec96 ("io_uring: keep table of pointers to ubufs")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/io_uring.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> There is a spelling mistake in a dev_err error message. Fix it.
->=20
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 57a64c7e0e69..f4ec092c23f4 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -8269,7 +8269,7 @@ static int io_sqe_buffer_register(struct io_ring_ctx *ctx, struct iovec *iov,
+ 		goto done;
+ 
+ 	imu = kvmalloc(struct_size(imu, bvec, nr_pages), GFP_KERNEL);
+-	if (!imu->bvec)
++	if (!imu)
+ 		goto done;
+ 
+ 	ret = 0;
+-- 
+2.30.2
 
-Thanks, applied.
-								Pavel
---=20
-http://www.livejournal.com/~pavelmachek
-
---E/DnYTRukya0zdZ1
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAmCF00EACgkQMOfwapXb+vKosQCfd5cbyZ/YvBNkdvF3mwm6gtyj
-01EAn2cSiUeZkrI6hmm6c3DaPiiRBW7U
-=xVQg
------END PGP SIGNATURE-----
-
---E/DnYTRukya0zdZ1--
