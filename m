@@ -2,137 +2,124 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E4EAC433ED
-	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Apr 2021 12:12:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47F98C433ED
+	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Apr 2021 12:18:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F2B3B61168
-	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Apr 2021 12:12:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D78961004
+	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Apr 2021 12:18:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235639AbhD0MM5 (ORCPT
+        id S235410AbhD0MSy (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 27 Apr 2021 08:12:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52510 "EHLO
+        Tue, 27 Apr 2021 08:18:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235410AbhD0MM4 (ORCPT
+        with ESMTP id S235652AbhD0MSx (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 27 Apr 2021 08:12:56 -0400
-Received: from mail-pg1-x536.google.com (mail-pg1-x536.google.com [IPv6:2607:f8b0:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D793C061574;
-        Tue, 27 Apr 2021 05:12:13 -0700 (PDT)
-Received: by mail-pg1-x536.google.com with SMTP id b17so5174903pgh.7;
-        Tue, 27 Apr 2021 05:12:13 -0700 (PDT)
+        Tue, 27 Apr 2021 08:18:53 -0400
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7FD4C061574;
+        Tue, 27 Apr 2021 05:18:08 -0700 (PDT)
+Received: by mail-wr1-x430.google.com with SMTP id h4so50209599wrt.12;
+        Tue, 27 Apr 2021 05:18:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gtxfnCE0QB9Perajd4AHYu0QLVv0yXPd0ZkZWcVU9UY=;
-        b=Uo7o1Rism3BXnTjuhVg/Hhi8CFeeCVqGRpKmE3+Xjhb8hvVD7mJMvjR2+Q9y7BwftO
-         yGk6G0Qsv392sHufj4bpRKYofXihWmmJGRUYFu9jpaSgQFcClbAo2BUvuH5L7uQ+hXPS
-         01xiBkh02OQIJk3ZJyMAcFLWmNE6czbZOzXN1uKWOSJgJy5s9zdjID78pPRYWCT//p9m
-         +jLY+0f3u5kR28DSy5bFsP1LQ5YcmU/g0j7YngTH0TA1UuQ+iR/7D9PWpyd1voqw3QUF
-         Fx6zq/qaQ6DvRZMiv9dUsI/m1L4FsHCUNXt2sxPrNSuRU+SBWAHW4xG9M7BKIz9i/eY9
-         s2iQ==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=nwYYP5GSWCGL21FGByVMgOz2Zp6qeL8goYySzJMMPZI=;
+        b=pZ06IqKYI9QOQmdWQaJ3fwVk9NysimAqNIiWEmmGBUNFB6/SBToqHrjezZNFR+T0ln
+         6G5rDTPSrf6k+jrApT6HaHex+sPZJVIVnpiuO08nIiKQHyj7zAZ9qaMVYvgLkvLq4nXs
+         jGPAjikF/Hzv1FZ/kQN9RDAVlX0d9SWYxkTL8kMzhmqznq28+dou5e8Nmbtg1HCLQd7H
+         ozDghsaljxPnT/+RHhF8h3heCNxQ1EWlDi0NP3R5EZ1dSffITkAEtwJh2mUlqqcYcgwQ
+         H/P/gddHyp3P2gzU5CRmnB4bCTY5rJ0rM9cmziOeDRY0QX+5hwR3yc5bYL6ggsAkMX2r
+         W1mw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gtxfnCE0QB9Perajd4AHYu0QLVv0yXPd0ZkZWcVU9UY=;
-        b=DpiT3h/4xqrDaC5T+QL+1atkO8Luff1bLEsgcg/Inz7ysicgBJOeaNpboT71NIp04f
-         9kepBo7q/05axzELnLuxbBq2q1XrW+HqDp7EAyzEzlI90ep9yGXQir9vjQK8NfbxvT4u
-         psua73pVRO9oAVqzW3DHpqDBzGQsMk4+CmXBPPHBfhg0DRRLvDHzGwT5blkF9pK4fgW9
-         lqZUl8rmKUmBPOVRuhh8ujrbyYLfBZ1+D4Y+R2Nxx8J9MaEFI8VDezz1gkARTtNdGOhr
-         oPfiJZW2i9Hr2SQ2qF6HFYedajk4JL+qcNmYjunq1bVAQSebZ2OYnQGp5Xrt4bHoQhqb
-         gXhA==
-X-Gm-Message-State: AOAM531KKdNEO7OOq9jrW0aC6z2wsN+u7Y7W74VlD5VBIkNn/6zHk3lw
-        NkSy5sOUpKOLBUNRKq3RUAcD2iBXyB1CKKNSJPBDCdeyHGw=
-X-Google-Smtp-Source: ABdhPJwB0KFp3aPcr9ubVL4K7W7pZVG44ylohvnpZsNXTA956q7/R/lVe92blxdHi0UbNm6GZsuss9s8maJ0/McZJOQ=
-X-Received: by 2002:a62:5c6:0:b029:24d:e97f:1b1d with SMTP id
- 189-20020a6205c60000b029024de97f1b1dmr23090847pff.40.1619525532759; Tue, 27
- Apr 2021 05:12:12 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=nwYYP5GSWCGL21FGByVMgOz2Zp6qeL8goYySzJMMPZI=;
+        b=YqqrU1gD8+ooTyhGsHsX0tgamKEGROrLGaeSMtFGW0ICdKfWtneao96A3lBrnFVpku
+         o9ZxvYEK3jeHVSh60iUOx9M5aC5coR4oQfRUQNV0fGy7M3Ncap+6K99COVMyV4uSYKu+
+         JaRPcEvtb9TUezAoI4PNWXHl8YlgfDBz2hRKyh2/iS2mfYUDrzxhB2l3Hxi7DL1yRHyi
+         HVxssL9nC/tiEVt2stGkNyaTffcbVKF1lCaz1/AdKwWcdhM7+r+ms5NXog6+IhEbXksf
+         z4g+c6CATMI4cauDNMt8eqW6ED9+cxV3RLCJa1bfEBa1M/dpX0F+FeOsoJppoaLwQhM4
+         UeJg==
+X-Gm-Message-State: AOAM533c9zQV602y9pCsRA/vyErMFvMNnxu83ojCBLxu9VATijvEpDAI
+        wwuagij9907EziO0ecYJy7/LfMaYyXc=
+X-Google-Smtp-Source: ABdhPJzam8dJzwU87MEnV6VEPQnVzXnAmet8lKqdZKK18xwRA1zD6QCWRZplqtdKDY2xZQFBKUSjSw==
+X-Received: by 2002:adf:d1e8:: with SMTP id g8mr1791117wrd.80.1619525887682;
+        Tue, 27 Apr 2021 05:18:07 -0700 (PDT)
+Received: from ard0534 ([102.158.125.167])
+        by smtp.gmail.com with ESMTPSA id q4sm1108136wrs.21.2021.04.27.05.18.06
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 27 Apr 2021 05:18:07 -0700 (PDT)
+Date:   Tue, 27 Apr 2021 13:18:04 +0100
+From:   Khaled Romdhani <khaledromdhani216@gmail.com>
+To:     David Sterba <dsterba@suse.cz>
+Cc:     clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH-next] fs/btrfs: Fix uninitialized variable
+Message-ID: <20210427121804.GA16179@ard0534>
+References: <20210423124201.11262-1-khaledromdhani216@gmail.com>
+ <20210426201929.GI7604@suse.cz>
 MIME-Version: 1.0
-References: <20210427114950.12739-1-colin.king@canonical.com>
-In-Reply-To: <20210427114950.12739-1-colin.king@canonical.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 27 Apr 2021 15:11:56 +0300
-Message-ID: <CAHp75VeFmgOM_APt=pStkU03mP02VgCw0q31bpY7dFnJhKLn8w@mail.gmail.com>
-Subject: Re: [PATCH][next][V2] gpio: sim: Fix dereference of free'd pointer config
-To:     Colin King <colin.king@canonical.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        kernel-janitors <kernel-janitors@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210426201929.GI7604@suse.cz>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Apr 27, 2021 at 2:49 PM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The error return of config->id dereferences the kfree'd object config.
-> Fix this by using a temporary variable for the id to avoid this issue.
+On Mon, Apr 26, 2021 at 10:19:29PM +0200, David Sterba wrote:
+> On Fri, Apr 23, 2021 at 01:42:01PM +0100, Khaled ROMDHANI wrote:
+> > The variable 'zone' is uninitialized which
+> > introduce some build warning.
+> > 
+> > It is not always set or overwritten within
+> > the function. So explicitly initialize it.
+> > 
+> > Reported-by: kernel test robot <lkp@intel.com>
+> > Signed-off-by: Khaled ROMDHANI <khaledromdhani216@gmail.com>
+> > ---
+> >  fs/btrfs/zoned.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
+> > index 432509f4b3ac..42f99b25127f 100644
+> > --- a/fs/btrfs/zoned.c
+> > +++ b/fs/btrfs/zoned.c
+> > @@ -136,7 +136,7 @@ static int sb_write_pointer(struct block_device *bdev, struct blk_zone *zones,
+> >   */
+> >  static inline u32 sb_zone_number(int shift, int mirror)
+> >  {
+> > -	u64 zone;
+> > +	u64 zone = 0;
+> 
+> This is exactly same as v1
+> https://lore.kernel.org/linux-btrfs/20210413130604.11487-1-khaledromdhani216@gmail.com/
+> 
+> It does fix the build warning but does not make sense in the code
+> because it would would silently let mirror == 4 pass. I think there was
+> enough feedback under the previous posts how to fix that properly.
 
-Thanks!
-I'm wondering how I missed this... Nevertheless
+Yes, it fixes the build warning. I implemented a tiny test
+program before sending the patch. In which I explicitly
+set 'm=5' to check the change results:
 
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+[356843.099365] assertion failed: z, in /home/khaled/fs_btrfs/test3.c:30
 
-> Addresses-Coverity: ("Read from pointer aftyer free")
+From the above output message, I think that it catchs the assertion.
+Sorry, but let me know if I am missing something.
 
-after
+I absolutly agree with you regarding the waste of memory
+when doing some pointless initializations. I will, come
+back with a V2.
 
-> Fixes: a49d14276ac4 ("gpio: sim: allocate IDA numbers earlier")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
-> V2: Don't make id local to the if statement to improve coding style.
->     Thanks to Bartosz Golaszewski for this improvement suggestion.
-> ---
->  drivers/gpio/gpio-sim.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-sim.c b/drivers/gpio/gpio-sim.c
-> index 2e2e6399e453..b21541c0b700 100644
-> --- a/drivers/gpio/gpio-sim.c
-> +++ b/drivers/gpio/gpio-sim.c
-> @@ -744,20 +744,22 @@ static struct config_item *
->  gpio_sim_config_make_item(struct config_group *group, const char *name)
->  {
->         struct gpio_sim_chip_config *config;
-> +       int id;
->
->         config = kzalloc(sizeof(*config), GFP_KERNEL);
->         if (!config)
->                 return ERR_PTR(-ENOMEM);
->
-> -       config->id = ida_alloc(&gpio_sim_ida, GFP_KERNEL);
-> -       if (config->id < 0) {
-> +       id = ida_alloc(&gpio_sim_ida, GFP_KERNEL);
-> +       if (id < 0) {
->                 kfree(config);
-> -               return ERR_PTR(config->id);
-> +               return ERR_PTR(id);
->         }
->
->         config_item_init_type_name(&config->item, name,
->                                    &gpio_sim_chip_config_type);
->         config->num_lines = 1;
-> +       config->id = id;
->         mutex_init(&config->lock);
->
->         return &config->item;
-> --
-> 2.30.2
->
-
-
--- 
-With Best Regards,
-Andy Shevchenko
+Thanks.
