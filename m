@@ -2,256 +2,99 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFD61C433ED
-	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Apr 2021 13:55:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E38A4C433ED
+	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Apr 2021 15:01:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8815E61001
-	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Apr 2021 13:55:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A16F061131
+	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Apr 2021 15:01:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236342AbhD0Nzx (ORCPT
+        id S237169AbhD0PBv (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 27 Apr 2021 09:55:53 -0400
-Received: from mail-ot1-f54.google.com ([209.85.210.54]:33392 "EHLO
-        mail-ot1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236173AbhD0Nzv (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 27 Apr 2021 09:55:51 -0400
-Received: by mail-ot1-f54.google.com with SMTP id 92-20020a9d02e50000b029028fcc3d2c9eso32841882otl.0;
-        Tue, 27 Apr 2021 06:55:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qezdgbyatE1l8zypI4FJQjmH7o9oUZIhojul/qRpkU0=;
-        b=es2sgGVuQfPz1pJ9FbCY7bG/5+cNf9bOHB4NaThUtE9WNKNa6Fv3JsC7GsO0arYgZR
-         dGqMZHUBFzFRLo34OQWUI50ype7dG/xy8AQiXjRxsa+9MPWSO2/73/3WEIlC8CXLApxt
-         N65E/90m9+/yDlXEnTQkN2PLQcnfl7N2cqLF6hewm95cKXPNsD1GwXyWa1ERaSmLxIe8
-         Fol85w1fG9BO+zKxcWCQ66Y/Gpq6cITvjVzHGx+JwX56drPCaPt6pJ4Jp5ygnInrI+/J
-         RlKk6Q+tbcFZroX7PAMLJoiiPJj5ZNFOmIBJ5u34css+EFjW0mlrAouqg4eXrVu0O0qQ
-         6wSA==
-X-Gm-Message-State: AOAM53292AD9sKyXMmhXfhLuG8tqZzahh8Z+IUC8B1ThfbAWicQQ0Qo4
-        5UObtYsIN7usT+xNLADnDxt5fRwjWyfjD+sawmY=
-X-Google-Smtp-Source: ABdhPJxCYPLWLZ+In6uL5ea3rfA/sRsYCBbR83vXiHsXVds9LKZjv4AmhBg/RtM2rhV2GrS2/X/KWjb6BDPFY05bQlc=
-X-Received: by 2002:a05:6830:55b:: with SMTP id l27mr19534881otb.260.1619531707610;
- Tue, 27 Apr 2021 06:55:07 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210427125834.2477467-1-Julia.Lawall@inria.fr>
-In-Reply-To: <20210427125834.2477467-1-Julia.Lawall@inria.fr>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 27 Apr 2021 15:54:56 +0200
-Message-ID: <CAJZ5v0ib-RegkeXf7G3mHjp2oRu7cSpCYBH_3BqGfKSe39fh4A@mail.gmail.com>
-Subject: Re: [PATCH v3] coccinelle: api: semantic patch to use pm_runtime_resume_and_get
-To:     Julia Lawall <Julia.Lawall@inria.fr>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Tue, 27 Apr 2021 11:01:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35750 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S236144AbhD0PBt (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 27 Apr 2021 11:01:49 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id C505961040;
+        Tue, 27 Apr 2021 15:01:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1619535665;
+        bh=OC4/qlmmod8S1lp4PDb7I6TD9Zf4cbEBS/O+ifD0CFQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=k3ZJQ/B5fBrjM7stmhRy3sKAI7pPXzCGfphXxuM91qf8WP88jPmGCo9wC/Yiq2Ywc
+         8Qfv75UYGgTKww4mPmPx1Dxp/jlSkd+tPFlkYaTcADVKOxITL5t1VYTQDF8DY2Qqpb
+         APTB1w+nNUnTVWdfsq8pEllfc3CiGcSI+C7F5QGQZNKesmTC41Ei89BwP5gS/kTnYk
+         jpu3a8zip71uxCdcF0GgrCFOcM/LJq9bBq0/A7oBdwU63u7waEcRiodWNXGLHjQ3CL
+         BlBNvWeSZRpXO4z7ziDX3BKsEL72DPc0Va9egV7OnEsON3tFPebZCozZpqUgKefNNS
+         AAuk6w1w8USgA==
+Received: from johan by xi.lan with local (Exim 4.93.0.4)
+        (envelope-from <johan@kernel.org>)
+        id 1lbPDC-0002xR-Na; Tue, 27 Apr 2021 17:01:19 +0200
+Date:   Tue, 27 Apr 2021 17:01:18 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Julia Lawall <julia.lawall@inria.fr>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
         kernel-janitors@vger.kernel.org,
         Gilles Muller <Gilles.Muller@inria.fr>,
         Nicolas Palix <nicolas.palix@imag.fr>,
         Michal Marek <michal.lkml@markovi.net>, cocci@systeme.lip6.fr,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Johan Hovold <johan@kernel.org>,
-        Zhang Qilong <zhangqilong3@huawei.com>,
-        Jakub Kicinski <kuba@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] coccinelle: api: semantic patch to use
+ pm_runtime_resume_and_get
+Message-ID: <YIgnPkx3NEsOITZH@hovoldconsulting.com>
+References: <20210426185404.2466195-1-Julia.Lawall@inria.fr>
+ <YIgPNRiaz2Jup+PT@hovoldconsulting.com>
+ <alpine.DEB.2.22.394.2104271542170.5173@hadrien>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.22.394.2104271542170.5173@hadrien>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Apr 27, 2021 at 3:51 PM Julia Lawall <Julia.Lawall@inria.fr> wrote:
->
-> pm_runtime_get_sync keeps a reference count on failure, which can lead
-> to leaks.  pm_runtime_resume_and_get drops the reference count in the
-> failure case.  This rule very conservatively follows the definition of
-> pm_runtime_resume_and_get to address the cases where the reference
-> count is unlikely to be needed in the failure case.  Specifically, the
-> change is only done when pm_runtime_get_sync is followed immediately
-> by an if and when the branch of the if is immediately a call to
-> pm_runtime_put_noidle (like in the definition of
-> pm_runtime_resume_and_get) or something that is likely a print
-> statement followed by a pm_runtime_resume_and_get call.  The patch
-> case appears somewhat more complicated, because it also deals with the
-> cases where {}s need to be removed.
->
-> pm_runtime_resume_and_get was introduced in
-> commit dd8088d5a896 ("PM: runtime: Add pm_runtime_resume_and_get to
-> deal with usage counter")
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+On Tue, Apr 27, 2021 at 03:44:25PM +0200, Julia Lawall wrote:
+> On Tue, 27 Apr 2021, Johan Hovold wrote:
+> 
+> > On Mon, Apr 26, 2021 at 08:54:04PM +0200, Julia Lawall wrote:
+> > > pm_runtime_get_sync keeps a reference count on failure, which can lead
+> > > to leaks.  pm_runtime_resume_and_get drops the reference count in the
+> > > failure case.  This rule very conservatively follows the definition of
+> > > pm_runtime_resume_and_get to address the cases where the reference
+> > > count is unlikely to be needed in the failure case.
+> > >
+> > > pm_runtime_resume_and_get was introduced in
+> > > commit dd8088d5a896 ("PM: runtime: Add pm_runtime_resume_and_get to
+> > > deal with usage counter")
+> > >
+> > > Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+> >
+> > As I've said elsewhere, not sure trying to do a mass conversion of this
+> > is a good idea. People may not be used to the interface, but it is
+> > consistent and has its use. The recent flurry of conversions show that
+> > those also risk introducing new bugs in code that is currently tested
+> > and correct.
+> 
+> I looked some of the patches you commented on, and this rule would not
+> have transformed those cases.  This rule is very restricted to ensure that
+> the transformed code follows the behavior of the new function.
 
-This patch looks good to me, so
+Ah, ok. I didn't look too closely at the semantic patch itself and
+wrongly associated it with the all-or-nothing media subsystem
+conversions.
 
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Thanks for clarifying further in v3 too.
 
->
-> ---
-> v3: add the people who signed off on commit dd8088d5a896, expand the log message
-> v2: better keyword
->
->  scripts/coccinelle/api/pm_runtime_resume_and_get.cocci |  153 +++++++++++++++++
->  1 file changed, 153 insertions(+)
->
-> diff --git a/scripts/coccinelle/api/pm_runtime_resume_and_get.cocci b/scripts/coccinelle/api/pm_runtime_resume_and_get.cocci
-> new file mode 100644
-> index 000000000000..3387cb606f9b
-> --- /dev/null
-> +++ b/scripts/coccinelle/api/pm_runtime_resume_and_get.cocci
-> @@ -0,0 +1,153 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +///
-> +/// Use pm_runtime_resume_and_get.
-> +/// pm_runtime_get_sync keeps a reference count on failure,
-> +/// which can lead to leaks.  pm_runtime_resume_and_get
-> +/// drops the reference count in the failure case.
-> +/// This rule addresses the cases where the reference count
-> +/// is unlikely to be needed in the failure case.
-> +///
-> +// Confidence: High
-> +// Copyright: (C) 2021 Julia Lawall, Inria
-> +// URL: https://coccinelle.gitlabpages.inria.fr/website
-> +// Options: --include-headers --no-includes
-> +// Keywords: pm_runtime_get_sync
-> +
-> +virtual patch
-> +virtual context
-> +virtual org
-> +virtual report
-> +
-> +@r0 depends on patch && !context && !org && !report@
-> +expression ret,e;
-> +@@
-> +
-> +-     ret = pm_runtime_get_sync(e);
-> ++     ret = pm_runtime_resume_and_get(e);
-> +-     if (ret < 0)
-> +-             pm_runtime_put_noidle(e);
-> +
-> +@r1 depends on patch && !context && !org && !report@
-> +expression ret,e;
-> +statement S1,S2;
-> +@@
-> +
-> +-     ret = pm_runtime_get_sync(e);
-> ++     ret = pm_runtime_resume_and_get(e);
-> +      if (ret < 0)
-> +-     {
-> +-             pm_runtime_put_noidle(e);
-> +             S1
-> +-     }
-> +      else S2
-> +
-> +@r2 depends on patch && !context && !org && !report@
-> +expression ret,e;
-> +statement S;
-> +@@
-> +
-> +-     ret = pm_runtime_get_sync(e);
-> ++     ret = pm_runtime_resume_and_get(e);
-> +      if (ret < 0) {
-> +-             pm_runtime_put_noidle(e);
-> +             ...
-> +      } else S
-> +
-> +@r3 depends on patch && !context && !org && !report@
-> +expression ret,e;
-> +identifier f;
-> +constant char[] c;
-> +statement S;
-> +@@
-> +
-> +-     ret = pm_runtime_get_sync(e);
-> ++     ret = pm_runtime_resume_and_get(e);
-> +      if (ret < 0)
-> +-     {
-> +              f(...,c,...);
-> +-             pm_runtime_put_noidle(e);
-> +-     }
-> +      else S
-> +
-> +@r4 depends on patch && !context && !org && !report@
-> +expression ret,e;
-> +identifier f;
-> +constant char[] c;
-> +statement S;
-> +@@
-> +
-> +-     ret = pm_runtime_get_sync(e);
-> ++     ret = pm_runtime_resume_and_get(e);
-> +      if (ret < 0) {
-> +              f(...,c,...);
-> +-             pm_runtime_put_noidle(e);
-> +             ...
-> +      } else S
-> +
-> +// ----------------------------------------------------------------------------
-> +
-> +@r2_context depends on !patch && (context || org || report)@
-> +statement S;
-> +expression e, ret;
-> +position j0, j1;
-> +@@
-> +
-> +*     ret@j0 = pm_runtime_get_sync(e);
-> +      if (ret < 0) {
-> +*             pm_runtime_put_noidle@j1(e);
-> +             ...
-> +      } else S
-> +
-> +@r3_context depends on !patch && (context || org || report)@
-> +identifier f;
-> +statement S;
-> +constant char []c;
-> +expression e, ret;
-> +position j0, j1;
-> +@@
-> +
-> +*     ret@j0 = pm_runtime_get_sync(e);
-> +      if (ret < 0) {
-> +              f(...,c,...);
-> +*             pm_runtime_put_noidle@j1(e);
-> +             ...
-> +      } else S
-> +
-> +// ----------------------------------------------------------------------------
-> +
-> +@script:python r2_org depends on org@
-> +j0 << r2_context.j0;
-> +j1 << r2_context.j1;
-> +@@
-> +
-> +msg = "WARNING: opportunity for pm_runtime_get_sync"
-> +coccilib.org.print_todo(j0[0], msg)
-> +coccilib.org.print_link(j1[0], "")
-> +
-> +@script:python r3_org depends on org@
-> +j0 << r3_context.j0;
-> +j1 << r3_context.j1;
-> +@@
-> +
-> +msg = "WARNING: opportunity for pm_runtime_get_sync"
-> +coccilib.org.print_todo(j0[0], msg)
-> +coccilib.org.print_link(j1[0], "")
-> +
-> +// ----------------------------------------------------------------------------
-> +
-> +@script:python r2_report depends on report@
-> +j0 << r2_context.j0;
-> +j1 << r2_context.j1;
-> +@@
-> +
-> +msg = "WARNING: opportunity for pm_runtime_get_sync on line %s." % (j0[0].line)
-> +coccilib.report.print_report(j0[0], msg)
-> +
-> +@script:python r3_report depends on report@
-> +j0 << r3_context.j0;
-> +j1 << r3_context.j1;
-> +@@
-> +
-> +msg = "WARNING: opportunity for pm_runtime_get_sync on %s." % (j0[0].line)
-> +coccilib.report.print_report(j0[0], msg)
-> +
->
+Still a bit worried that this will push the cleanup crew to send more
+broken patches since it sends a signal that pm_runtime_get_sync() is
+always wrong. But guess there's not much to do about that now after
+having added pm_runtime_resume_and_get() in the first place.
+
+Johan
