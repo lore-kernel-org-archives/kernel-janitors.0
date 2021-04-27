@@ -2,95 +2,75 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5DE5C433ED
-	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Apr 2021 05:08:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3D22C43460
+	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Apr 2021 10:24:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9E0F3613BE
-	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Apr 2021 05:08:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86C37611C1
+	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Apr 2021 10:24:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229550AbhD0FJJ (ORCPT
+        id S235391AbhD0KZO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 27 Apr 2021 01:09:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49750 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229490AbhD0FJI (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 27 Apr 2021 01:09:08 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 5ABB361078;
-        Tue, 27 Apr 2021 05:08:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1619500106;
-        bh=se4N3XRMNqnR8HJf2nwyOdDriOFE0QMWPZMG7tgwpMs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Q0fyONEJq1UU0PsUJ8Kvd14hKCyM/qCmIpdnhlB+1gwqauzRN9cPAMH7k5avtYyFG
-         Lm/sCfs/xJubDR3BrzvGAXZuAEaJwUSqh+8Gz08D9S8r6OhkJff663Wlgw75qNVMeC
-         Tkd3ZaQrd6nzwTs0G4AM/7AE7HfTq3yz4X6dgPKDijKtqjA0emnUK46MtEHNH1MnfU
-         7WwprK6oxOAiDpn2KaV+vL37zqLSXfMe8lsOnag0U9FNyAE5bZpXXHvvwX8XcZd1JP
-         zgCQN5wo/FfIPQ1mEaiUUfmwKaF1oWmWnKfbU+4Wsme4V7TUGAiO2o9fDtpHaV0DeF
-         fEStF5weAgz4Q==
-Date:   Tue, 27 Apr 2021 08:08:22 +0300
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Saeed Mahameed <saeed@kernel.org>
-Cc:     Jakub Kicinski <kuba@kernel.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Yevgeny Kliteynik <kliteyn@nvidia.com>,
-        linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-netdev <netdev@vger.kernel.org>
-Subject: Re: [PATCH net-next] net/mlx5: Fix some error messages
-Message-ID: <YIecRqSNq6aPiwVA@unreal>
-References: <YIKywXhusLj4cDFM@mwanda>
- <YIUOoTKRwy3UTRWz@unreal>
- <20210426093314.5f73781e@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
- <d2eca0209e76544b09021d94a47bc623ebfdc20c.camel@kernel.org>
+        Tue, 27 Apr 2021 06:25:14 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:58499 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235351AbhD0KZN (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 27 Apr 2021 06:25:13 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lbKtH-0003oc-Dr; Tue, 27 Apr 2021 10:24:27 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        linux-gpio@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] gpio: sim: Fix dereference of free'd pointer config
+Date:   Tue, 27 Apr 2021 11:24:27 +0100
+Message-Id: <20210427102427.11066-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <d2eca0209e76544b09021d94a47bc623ebfdc20c.camel@kernel.org>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Apr 26, 2021 at 11:47:03AM -0700, Saeed Mahameed wrote:
-> On Mon, 2021-04-26 at 09:33 -0700, Jakub Kicinski wrote:
-> > On Sun, 25 Apr 2021 09:39:29 +0300 Leon Romanovsky wrote:
-> > > > diff --git
-> > > > a/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads_termtb
-> > > > l.c
-> > > > b/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads_termtb
-> > > > l.c
-> > > > index a81ece94f599..95f5c1a27718 100644
-> > > > ---
-> > > > a/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads_termtb
-> > > > l.c
-> > > > +++
-> > > > b/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads_termtb
-> > > > l.c
-> > > > @@ -83,16 +83,16 @@ mlx5_eswitch_termtbl_create(struct
-> > > > mlx5_core_dev *dev,
-> > > >         ft_attr.autogroup.max_num_groups = 1;
-> > > >         tt->termtbl =
-> > > > mlx5_create_auto_grouped_flow_table(root_ns, &ft_attr);
-> > > >         if (IS_ERR(tt->termtbl)) {
-> > > > -               esw_warn(dev, "Failed to create termination table
-> > > > (error %d)\n",
-> > > > -                        IS_ERR(tt->termtbl));
-> > > > +               esw_warn(dev, "Failed to create termination table
-> > > > (error %ld)\n",
-> > > > +                        PTR_ERR(tt->termtbl));
-> > 
-> > If these are error pointers - perhaps %pe?
-> 
-> no reason to use %pe, we know it is an err ptr at this point so just
-> report PTR_ERR() 
+From: Colin Ian King <colin.king@canonical.com>
 
-Saeed,
+The error return of config->id dereferences the kfree'd object config.
+Fix this by using a temporary variable for the id to avoid this issue.
 
-%pe prints string "-EINVAL" instead of "22", which is better.
+Addresses-Coverity: ("Read from pointer aftyer free")
+Fixes: a49d14276ac4 ("gpio: sim: allocate IDA numbers earlier")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpio/gpio-sim.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-I didn't know about such format specifier.
+diff --git a/drivers/gpio/gpio-sim.c b/drivers/gpio/gpio-sim.c
+index 2e2e6399e453..7bba5783a043 100644
+--- a/drivers/gpio/gpio-sim.c
++++ b/drivers/gpio/gpio-sim.c
+@@ -751,8 +751,10 @@ gpio_sim_config_make_item(struct config_group *group, const char *name)
+ 
+ 	config->id = ida_alloc(&gpio_sim_ida, GFP_KERNEL);
+ 	if (config->id < 0) {
++		int id = config->id;
++
+ 		kfree(config);
+-		return ERR_PTR(config->id);
++		return ERR_PTR(id);
+ 	}
+ 
+ 	config_item_init_type_name(&config->item, name,
+-- 
+2.30.2
 
-Thanks
