@@ -2,43 +2,44 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BEDBC433B4
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Apr 2021 10:03:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52611C433B4
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Apr 2021 12:00:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1EAB661422
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Apr 2021 10:03:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27FC161417
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Apr 2021 12:00:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238858AbhD1KED (ORCPT
+        id S231516AbhD1MBE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 28 Apr 2021 06:04:03 -0400
-Received: from foss.arm.com ([217.140.110.172]:38700 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S238428AbhD1KEB (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 28 Apr 2021 06:04:01 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0D6061FB;
-        Wed, 28 Apr 2021 03:03:17 -0700 (PDT)
-Received: from usa.arm.com (e103737-lin.cambridge.arm.com [10.1.197.49])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 1B9E23F70D;
-        Wed, 28 Apr 2021 03:03:16 -0700 (PDT)
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Sudeep Holla <sudeep.holla@arm.com>,
-        kernel-janitors@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Cristian Marussi <cristian.marussi@arm.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] firmware: arm_scpi: prevent ternary sign expansion bug
-Date:   Wed, 28 Apr 2021 11:03:06 +0100
-Message-Id: <161960405992.396847.5531876675862211477.b4-ty@arm.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <YIE7pdqV/h10tEAK@mwanda>
-References: <YIE7pdqV/h10tEAK@mwanda>
+        Wed, 28 Apr 2021 08:01:04 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:46756 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231218AbhD1MBD (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 28 Apr 2021 08:01:03 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lbirS-00083n-E7; Wed, 28 Apr 2021 12:00:10 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Woojung Huh <woojung.huh@microchip.com>,
+        UNGLinuxDriver@microchip.com, Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, Marek Vasut <marex@denx.de>,
+        Tristram Ha <Tristram.Ha@microchip.com>, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] net: dsa: ksz: Make reg_mib_cnt a u8 as it never exceeds 255
+Date:   Wed, 28 Apr 2021 13:00:10 +0100
+Message-Id: <20210428120010.337959-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -46,23 +47,36 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 22 Apr 2021 12:02:29 +0300, Dan Carpenter wrote:
-> How type promotion works in ternary expressions is a bit tricky.
-> The problem is that scpi_clk_get_val() returns longs, "ret" is a int
-> which holds a negative error code, and le32_to_cpu() is an unsigned int.
-> We want the negative error code to be cast to a negative long.  But
-> because le32_to_cpu() is an u32 then "ret" is type promoted to u32 and
-> becomes a high positive and then it is promoted to long and it is still
-> a high positive value.
->
-> [...]
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to sudeep.holla/linux (for-next/scmi), thanks!
+Currently the for-loop in ksz8_port_init_cnt is causing a static
+analysis infinite loop warning with the comparison of
+mib->cnt_ptr < dev->reg_mib_cnt. This occurs because mib->cnt_ptr
+is a u8 and dev->reg_mib_cnt is an int and the analyzer determines
+that mib->cnt_ptr potentially can wrap around to zero if the value
+in dev->reg_mib_cnt is > 255. However, this value is never this
+large, it is always less than 256 so make reg_mib_cnt a u8.
 
-[1/1] firmware: arm_scpi: prevent ternary sign expansion bug
-      https://git.kernel.org/sudeep.holla/c/d9cd78edb2
+Addresses-Coverity: ("Infinite loop")
+Fixes: e66f840c08a2 ("net: dsa: ksz: Add Microchip KSZ8795 DSA driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/dsa/microchip/ksz_common.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---
-Regards,
-Sudeep
+diff --git a/drivers/net/dsa/microchip/ksz_common.h b/drivers/net/dsa/microchip/ksz_common.h
+index e0bbdca64375..2e6bfd333f50 100644
+--- a/drivers/net/dsa/microchip/ksz_common.h
++++ b/drivers/net/dsa/microchip/ksz_common.h
+@@ -69,7 +69,7 @@ struct ksz_device {
+ 	int cpu_ports;			/* port bitmap can be cpu port */
+ 	int phy_port_cnt;
+ 	int port_cnt;
+-	int reg_mib_cnt;
++	u8 reg_mib_cnt;
+ 	int mib_cnt;
+ 	const struct mib_names *mib_names;
+ 	phy_interface_t compat_interface;
+-- 
+2.30.2
 
