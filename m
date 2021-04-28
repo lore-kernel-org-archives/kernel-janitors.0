@@ -4,81 +4,73 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 103B7C433B4
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Apr 2021 07:30:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED1DFC433B4
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Apr 2021 07:33:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D333361407
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Apr 2021 07:30:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1A5E613F8
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Apr 2021 07:33:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236821AbhD1Hbk (ORCPT
+        id S235862AbhD1HeZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 28 Apr 2021 03:31:40 -0400
-Received: from smtp06.smtpout.orange.fr ([80.12.242.128]:32176 "EHLO
+        Wed, 28 Apr 2021 03:34:25 -0400
+Received: from smtp06.smtpout.orange.fr ([80.12.242.128]:49585 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236799AbhD1Hbk (ORCPT
+        with ESMTP id S230145AbhD1HeY (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 28 Apr 2021 03:31:40 -0400
+        Wed, 28 Apr 2021 03:34:24 -0400
 Received: from localhost.localdomain ([86.243.172.93])
         by mwinf5d41 with ME
-        id y7Wu2400A21Fzsu037Wur5; Wed, 28 Apr 2021 09:30:54 +0200
+        id y7Zf2400A21Fzsu037ZfFS; Wed, 28 Apr 2021 09:33:39 +0200
 X-ME-Helo: localhost.localdomain
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 28 Apr 2021 09:30:54 +0200
+X-ME-Date: Wed, 28 Apr 2021 09:33:39 +0200
 X-ME-IP: 86.243.172.93
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     gregkh@linuxfoundation.org, jirislaby@kernel.org, lukas@wunner.de,
-        yangyingliang@huawei.com, andriy.shevchenko@linux.intel.com
-Cc:     linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     gcherian@marvell.com, herbert@gondor.apana.org.au,
+        davem@davemloft.net
+Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 2/2] serial: 8250: Add an empty line and remove some useless {}
-Date:   Wed, 28 Apr 2021 09:30:52 +0200
-Message-Id: <257ffd691b4a062ad017333c9430d69da6dbd29a.1619594713.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] crypto: cavium - Use 'hlist_for_each_entry' to simplify code
+Date:   Wed, 28 Apr 2021 09:33:37 +0200
+Message-Id: <5a7692aa1d2ffb81e981fdf87b060db7e55956b8.1619593010.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <14024ddeb2b3a8c5b0138b5ba5083f54d00164a9.1619594713.git.christophe.jaillet@wanadoo.fr>
-References: <14024ddeb2b3a8c5b0138b5ba5083f54d00164a9.1619594713.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This fixes the following checkpatch.pl warnings:
-   WARNING: Missing a blank line after declarations
-   WARNING: braces {} are not necessary for any arm of this statement
+Use 'hlist_for_each_entry' instead of hand writing it.
+This saves a few lines of code.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/tty/serial/8250/8250_core.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Compile tested only
+---
+ drivers/crypto/cavium/cpt/cptvf_reqmanager.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/drivers/tty/serial/8250/8250_core.c b/drivers/tty/serial/8250/8250_core.c
-index 081b773a54c9..1082e76c4d37 100644
---- a/drivers/tty/serial/8250/8250_core.c
-+++ b/drivers/tty/serial/8250/8250_core.c
-@@ -321,9 +321,9 @@ static int univ8250_setup_irq(struct uart_8250_port *up)
- 	 * hardware interrupt, we use a timer-based system.  The original
- 	 * driver used to do this with IRQ0.
- 	 */
--	if (!port->irq) {
-+	if (!port->irq)
- 		mod_timer(&up->timer, jiffies + uart_poll_timeout(port));
--	} else
-+	else
- 		retval = serial_link_irq_chain(up);
+diff --git a/drivers/crypto/cavium/cpt/cptvf_reqmanager.c b/drivers/crypto/cavium/cpt/cptvf_reqmanager.c
+index 4fe7898c8561..feb0f76783dd 100644
+--- a/drivers/crypto/cavium/cpt/cptvf_reqmanager.c
++++ b/drivers/crypto/cavium/cpt/cptvf_reqmanager.c
+@@ -244,11 +244,7 @@ static int send_cpt_command(struct cpt_vf *cptvf, union cpt_inst_s *cmd,
+ 	memcpy(ent, (void *)cmd, qinfo->cmd_size);
  
- 	return retval;
-@@ -752,6 +752,7 @@ void serial8250_suspend_port(int line)
- 	if (!console_suspend_enabled && uart_console(port) &&
- 	    port->type != PORT_8250) {
- 		unsigned char canary = 0xa5;
-+
- 		serial_out(up, UART_SCR, canary);
- 		if (serial_in(up, UART_SCR) == canary)
- 			up->canary = canary;
+ 	if (++queue->idx >= queue->qhead->size / 64) {
+-		struct hlist_node *node;
+-
+-		hlist_for_each(node, &queue->chead) {
+-			chunk = hlist_entry(node, struct command_chunk,
+-					    nextchunk);
++		hlist_for_each_entry(chunk, &queue->chead, nextchunk) {
+ 			if (chunk == queue->qhead) {
+ 				continue;
+ 			} else {
 -- 
 2.30.2
 
