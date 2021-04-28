@@ -2,81 +2,88 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52611C433B4
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Apr 2021 12:00:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D73EC43461
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Apr 2021 12:26:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 27FC161417
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Apr 2021 12:00:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD55361289
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Apr 2021 12:26:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231516AbhD1MBE (ORCPT
+        id S235751AbhD1M1a (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 28 Apr 2021 08:01:04 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:46756 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231218AbhD1MBD (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 28 Apr 2021 08:01:03 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1lbirS-00083n-E7; Wed, 28 Apr 2021 12:00:10 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Woojung Huh <woojung.huh@microchip.com>,
-        UNGLinuxDriver@microchip.com, Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Vladimir Oltean <olteanv@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, Marek Vasut <marex@denx.de>,
-        Tristram Ha <Tristram.Ha@microchip.com>, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] net: dsa: ksz: Make reg_mib_cnt a u8 as it never exceeds 255
-Date:   Wed, 28 Apr 2021 13:00:10 +0100
-Message-Id: <20210428120010.337959-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.30.2
+        Wed, 28 Apr 2021 08:27:30 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39910 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235298AbhD1M1a (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 28 Apr 2021 08:27:30 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 7297BB156;
+        Wed, 28 Apr 2021 12:26:44 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 3B4221E150F; Wed, 28 Apr 2021 14:26:44 +0200 (CEST)
+Date:   Wed, 28 Apr 2021 14:26:44 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     jack@suse.com, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] quota: Use 'hlist_for_each_entry' to simplify code
+Message-ID: <20210428122644.GD25222@quack2.suse.cz>
+References: <f82d3e33964dcbd2aac19866735e0a8381c8a735.1619599407.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f82d3e33964dcbd2aac19866735e0a8381c8a735.1619599407.git.christophe.jaillet@wanadoo.fr>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Wed 28-04-21 10:44:19, Christophe JAILLET wrote:
+> Use 'hlist_for_each_entry' instead of hand writing it.
+> This saves a few lines of code.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Compile tested only
+> ---
+>  fs/quota/dquot.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
 
-Currently the for-loop in ksz8_port_init_cnt is causing a static
-analysis infinite loop warning with the comparison of
-mib->cnt_ptr < dev->reg_mib_cnt. This occurs because mib->cnt_ptr
-is a u8 and dev->reg_mib_cnt is an int and the analyzer determines
-that mib->cnt_ptr potentially can wrap around to zero if the value
-in dev->reg_mib_cnt is > 255. However, this value is never this
-large, it is always less than 256 so make reg_mib_cnt a u8.
+Thanks for the cleanup. It looks good.  I'll queue it to my tree after the
+merge window closes (i.e., in about two weeks).
 
-Addresses-Coverity: ("Infinite loop")
-Fixes: e66f840c08a2 ("net: dsa: ksz: Add Microchip KSZ8795 DSA driver")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/dsa/microchip/ksz_common.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+								Honza
 
-diff --git a/drivers/net/dsa/microchip/ksz_common.h b/drivers/net/dsa/microchip/ksz_common.h
-index e0bbdca64375..2e6bfd333f50 100644
---- a/drivers/net/dsa/microchip/ksz_common.h
-+++ b/drivers/net/dsa/microchip/ksz_common.h
-@@ -69,7 +69,7 @@ struct ksz_device {
- 	int cpu_ports;			/* port bitmap can be cpu port */
- 	int phy_port_cnt;
- 	int port_cnt;
--	int reg_mib_cnt;
-+	u8 reg_mib_cnt;
- 	int mib_cnt;
- 	const struct mib_names *mib_names;
- 	phy_interface_t compat_interface;
+> 
+> diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
+> index 4f1373463766..22d904bde6ab 100644
+> --- a/fs/quota/dquot.c
+> +++ b/fs/quota/dquot.c
+> @@ -288,14 +288,12 @@ static inline void remove_dquot_hash(struct dquot *dquot)
+>  static struct dquot *find_dquot(unsigned int hashent, struct super_block *sb,
+>  				struct kqid qid)
+>  {
+> -	struct hlist_node *node;
+>  	struct dquot *dquot;
+>  
+> -	hlist_for_each (node, dquot_hash+hashent) {
+> -		dquot = hlist_entry(node, struct dquot, dq_hash);
+> +	hlist_for_each_entry(dquot, dquot_hash+hashent, dq_hash)
+>  		if (dquot->dq_sb == sb && qid_eq(dquot->dq_id, qid))
+>  			return dquot;
+> -	}
+> +
+>  	return NULL;
+>  }
+>  
+> -- 
+> 2.30.2
+> 
 -- 
-2.30.2
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
