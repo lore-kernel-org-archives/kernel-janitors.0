@@ -2,74 +2,75 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 691F5C433B4
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Apr 2021 16:14:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B297AC433B4
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Apr 2021 16:19:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1A77061418
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Apr 2021 16:14:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73835613F8
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Apr 2021 16:19:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240378AbhD1QP0 (ORCPT
+        id S240639AbhD1QUU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 28 Apr 2021 12:15:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57414 "EHLO
+        Wed, 28 Apr 2021 12:20:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58530 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239915AbhD1QPZ (ORCPT
+        with ESMTP id S239696AbhD1QUT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 28 Apr 2021 12:15:25 -0400
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60FD9C061573;
-        Wed, 28 Apr 2021 09:14:40 -0700 (PDT)
-Received: by mail-wm1-x32c.google.com with SMTP id y124-20020a1c32820000b029010c93864955so9600085wmy.5;
-        Wed, 28 Apr 2021 09:14:40 -0700 (PDT)
+        Wed, 28 Apr 2021 12:20:19 -0400
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6125CC061573;
+        Wed, 28 Apr 2021 09:19:32 -0700 (PDT)
+Received: by mail-wr1-x42c.google.com with SMTP id t18so6104171wry.1;
+        Wed, 28 Apr 2021 09:19:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=message-id:subject:from:to:cc:date:in-reply-to:references
          :user-agent:mime-version:content-transfer-encoding;
-        bh=aYKVWAKIY2SVLc5Zm+ilU7xifRJwW77SW1HqG8x0JaA=;
-        b=SbSdFVW1uVaKGxNMdvb2zSIxE+zfnIBM1DfXdsREMf2yzLTG9aTam/opWJt6FAR0FO
-         IAE2wArZ+XAhqUb/xgr/uPuJnr04OS0Qdgax29qEP1ROdkNK/pAM88TXXuLEKZikbJXC
-         uC0GOE6Hg6xdlrN5ZI5FXtrozhpi+ytgPyFouiLIdtCEl30o5gFnW2vMkC/JDNwOhlMb
-         C/PAfls4zqUYynpdiP/KEQZmDcHTLpeymfv5e23dTl5Otx3ArQsDvGB/u4wYRRxxc34t
-         0xpfBUcexuPemMENQaFf0aTemJQs4UT7OdCKtpw9X8Ol5jQ7Rz52aTDbRw7jKkleMwW2
-         AwpQ==
+        bh=NJWgp0DVo201XCLLpj1xRC5xodv9ORKraGgrH9Sa6nk=;
+        b=H5yBNcNnOVTvFGhuXFBT0NJXra62094ceVdHQ3VU+IZwolrFx9guwIv7En2biyu3ZB
+         nHPKhV79pJKPAG834582rdlKa5m9H53jZvXHPz/ShNKMpDzz8SrrOHICu6fnRd0IyED9
+         ljdhuzavJP46ii3GbT9J9o9Ac7qwS9d06ky+r735cB89dOJ7b87+UoJHrQNPliQC7ZxC
+         gG8/nl3GPqrHu6SAdyiLItcPJpI2zz6IMOg9Gb2e6u69WgPwQyNleY89zimVeCE10nrf
+         9i7dSZFcrYHtPFuDvhKblTFldVXgZAITRpXurL9TZlpne3oF/1w8Wi0I2T/khCTg16kk
+         xyqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
          :references:user-agent:mime-version:content-transfer-encoding;
-        bh=aYKVWAKIY2SVLc5Zm+ilU7xifRJwW77SW1HqG8x0JaA=;
-        b=jKpWpI5MLno76ukz7wXZLRdJBdhDbVAL4WA8BM05k536VZgJZeKqvNWeLcuGRg1dQX
-         05g9MHcnxjbFQvhkMI4xdA+QC5z/oUN/WW1vTMWsw9PhQYvIEPGAeXDexcUBXSRoLyJB
-         DzCLpJWo9if0iqNhTXFEKzUpwscQ76+VcyjDmbmT9pqwYMUh/cL4RHWdE5GdphXe0ZqM
-         myOpgVSui5GwfnCQX+l+Ct5ybPdrhI4MH0kuj24meA2nobiAv+72W8v+F6zdW+JAY5+f
-         ybanH3RuEE1cJZifyrmYO9rWLYTHTfZGr3beSrHLMR2yY5tKVdIL3itWYWnlRXldjg1h
-         G1qw==
-X-Gm-Message-State: AOAM530SdM8+uGexZcnxRD02oHYp3ffYhbwDD3HwrUBdeHUL1e5dqgMP
-        zlXJwjlJ+AUj9OVhFSewN1mn9BWzAlH8iesh
-X-Google-Smtp-Source: ABdhPJwVj5FDMqGLOFFmQahABCgh5yKpcSSFoypgvL/bqC3d1eLkEXCrKRmL9dNVkzTLXDaBCynX0g==
-X-Received: by 2002:a05:600c:4f45:: with SMTP id m5mr5399854wmq.132.1619626479138;
-        Wed, 28 Apr 2021 09:14:39 -0700 (PDT)
+        bh=NJWgp0DVo201XCLLpj1xRC5xodv9ORKraGgrH9Sa6nk=;
+        b=sX9HMrIyD3Scmnnggr1b3/+W/6EoLNZagWzIimE96vnD07M4J/88pZHflD3PDN2wb7
+         D2RdMQ04F3JnHC1cnbfktErObmYce10MXGn4NGnvA/ui8aJq/QBaV+3bHPelNz6Wvaqv
+         aoLWbO/z879F8czvD2ZsHNT1w7p8sE5gJzInzH9RzkfuX+Rg4YISK9LCI/IFE8hciAuJ
+         h9NJsACxYxPToaZKsGGcYjsXGy/0/ZBdiwIZVG8sXXb6Hl9c9e0cQ0DQgu/TRbnYQSIi
+         30IXdAhMl01d5qkBLYNULp5u014Yc1dH2PUtBdxT2zUnkHl02N8oSWsfzTVrt3L51AJd
+         BZIQ==
+X-Gm-Message-State: AOAM531x5M39c8PC6Xl8wgRXhKX/qpuc2OmhdNl2KAwe93OAFaMxWg/6
+        GQ2KKp1rdPknLQtuHlw//wg=
+X-Google-Smtp-Source: ABdhPJykbVHss9uwP1THmOmVyxw5sbaWWh0yRvRr84fTwcc64K60W9oCzIFcceXhGvBHjlyLkjdh3g==
+X-Received: by 2002:a5d:4a87:: with SMTP id o7mr16543757wrq.102.1619626771226;
+        Wed, 28 Apr 2021 09:19:31 -0700 (PDT)
 Received: from 192.168.10.5 ([39.46.118.120])
-        by smtp.gmail.com with ESMTPSA id p7sm280375wrt.24.2021.04.28.09.14.36
+        by smtp.gmail.com with ESMTPSA id i20sm6679250wmq.29.2021.04.28.09.19.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Apr 2021 09:14:38 -0700 (PDT)
-Message-ID: <2b5365025e7a9162aae111b1c5134430a37e6ff8.camel@gmail.com>
-Subject: Re: [PATCH] media: siano: use DEFINE_MUTEX() for mutex lock
+        Wed, 28 Apr 2021 09:19:30 -0700 (PDT)
+Message-ID: <0b4b7c5cc2f19d2d77a66c0d2ce42f63692174d9.camel@gmail.com>
+Subject: Re: [PATCH -next] bcache: use DEFINE_MUTEX() for mutex lock
 From:   Muhammad Usama Anjum <musamaanjum@gmail.com>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "open list:SIANO DVB DRIVER" <linux-media@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        zhengyongjun3@huawei.com, kernel-janitors@vger.kernel.org,
-        colin.king@canonical.com, dan.carpenter@oracle.com
-Cc:     musamaanjum@gmail.com
-Date:   Wed, 28 Apr 2021 21:14:34 +0500
-In-Reply-To: <20210405205219.GA687366@LEGION>
-References: <20210405205219.GA687366@LEGION>
+To:     Coly Li <colyli@suse.de>, Zheng Yongjun <zhengyongjun3@huawei.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     musamaanjum@gmail.com, linux-bcache@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Date:   Wed, 28 Apr 2021 21:19:26 +0500
+In-Reply-To: <d7f70ce31f6f61a50c05a5d5ba03582054f144fe.camel@gmail.com>
+References: <20210405101453.15096-1-zhengyongjun3@huawei.com>
+         <42c3e33d-c20e-0fdd-f316-5084e33f9a3b@suse.de>
+         <d7f70ce31f6f61a50c05a5d5ba03582054f144fe.camel@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.36.4-0ubuntu1 
 MIME-Version: 1.0
@@ -78,43 +79,38 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Reminder!
+On Tue, 2021-04-06 at 02:17 +0500, Muhammad Usama Anjum wrote:
+> On Mon, 2021-04-05 at 22:02 +0800, Coly Li wrote:
+> > On 4/5/21 6:14 PM, Zheng Yongjun wrote:
+> > > mutex lock can be initialized automatically with DEFINE_MUTEX()
+> > > rather than explicitly calling mutex_init().
+> > > 
+> > > Reported-by: Hulk Robot <hulkci@huawei.com>
+> > > Signed-off-by: Zheng Yongjun <zhengyongjun3@huawei.com>
+> > 
+> > NACK. This is not the first time people try to "fix" this location...
+> > 
+> > Using DEFINE_MUTEX() does not gain anything for us, it will generate
+> > unnecessary extra size for the bcache.ko.
+> > ines.
+> 
+> How can the final binary have larger size by just static declaration?
+> By using DEFINE_MUTEX, the mutex is initialized at compile time. It'll
+> save initialization at run time and one line of code will be less also
+> from text section. 
+> 
+> #### with no change (dynamic initialization)
+> size drivers/md/bcache/bcache.ko
+>    text	   data	    bss	    dec	    hex	filename
+>  187792	  25310	    152	 213254	  34106	drivers/md/bcache/bcache.ko
+> 
+> #### with patch applied (static initialization)
+>    text	   data	    bss	    dec	    hex	filename
+>  187751	  25342	    120	 213213	  340dd	drivers/md/bcache/bcache.ko
+> 
+> Module's binary size has decreased by 41 bytes with the path applied
+> (x86_64 arch).
+> 
+Anybody has any thoughts on it?
 
-On Tue, 2021-04-06 at 01:52 +0500, Muhammad Usama Anjum wrote:
-> mutex lock can be initialized with DEFINE_MUTEX() rather than
-> explicitly calling mutex_init().
-> 
-> Signed-off-by: Muhammad Usama Anjum <musamaanjum@gmail.com>
-> ---
->  drivers/media/common/siano/smscoreapi.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/media/common/siano/smscoreapi.c b/drivers/media/common/siano/smscoreapi.c
-> index 410cc3ac6f94..7f5b638d2458 100644
-> --- a/drivers/media/common/siano/smscoreapi.c
-> +++ b/drivers/media/common/siano/smscoreapi.c
-> @@ -414,10 +414,10 @@ struct smscore_registry_entry_t {
->  
->  static struct list_head g_smscore_notifyees;
->  static struct list_head g_smscore_devices;
-> -static struct mutex g_smscore_deviceslock;
-> +static DEFINE_MUTEX(g_smscore_deviceslock);
->  
->  static struct list_head g_smscore_registry;
-> -static struct mutex g_smscore_registrylock;
-> +static DEFINE_MUTEX(g_smscore_registrylock);
->  
->  static int default_mode = DEVICE_MODE_NONE;
->  
-> @@ -2123,10 +2123,7 @@ static int __init smscore_module_init(void)
->  {
->  	INIT_LIST_HEAD(&g_smscore_notifyees);
->  	INIT_LIST_HEAD(&g_smscore_devices);
-> -	mutex_init(&g_smscore_deviceslock);
-> -
->  	INIT_LIST_HEAD(&g_smscore_registry);
-> -	mutex_init(&g_smscore_registrylock);
->  
->  	return 0;
->  }
 
