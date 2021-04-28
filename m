@@ -2,103 +2,98 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE846C433B4
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Apr 2021 09:06:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A1F2C433B4
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Apr 2021 09:08:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 91FD661073
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Apr 2021 09:06:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E77E96109E
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Apr 2021 09:08:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237824AbhD1JHZ (ORCPT
+        id S237842AbhD1JJe (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 28 Apr 2021 05:07:25 -0400
-Received: from mga04.intel.com ([192.55.52.120]:11102 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230113AbhD1JHY (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 28 Apr 2021 05:07:24 -0400
-IronPort-SDR: 19u9sQ86hIOPmi2kEqiARS3njuKpmpe/6FHNVt6lfeoc/c3K2WIT/RmCeb/Pt+xm4SHTjTkDh9
- aKchyNfIgMXw==
-X-IronPort-AV: E=McAfee;i="6200,9189,9967"; a="194579810"
-X-IronPort-AV: E=Sophos;i="5.82,257,1613462400"; 
-   d="scan'208";a="194579810"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2021 02:06:40 -0700
-IronPort-SDR: oxydSdPDCRBsw6vd2p2BrdWc+V5eDRGhitUmmArfmGlX7dVE79M3toNcDmh1jKsk8EhCW2/07q
- Yq/wJuN0yNQw==
-X-IronPort-AV: E=Sophos;i="5.82,257,1613462400"; 
-   d="scan'208";a="425532650"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2021 02:06:37 -0700
-Received: from andy by smile with local (Exim 4.94)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1lbg9T-007q1b-3m; Wed, 28 Apr 2021 12:06:35 +0300
-Date:   Wed, 28 Apr 2021 12:06:35 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     gregkh@linuxfoundation.org, jirislaby@kernel.org, lukas@wunner.de,
-        yangyingliang@huawei.com, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 2/2] serial: 8250: Add an empty line and remove some
- useless {}
-Message-ID: <YIklm6h4xvQlw5Wf@smile.fi.intel.com>
-References: <14024ddeb2b3a8c5b0138b5ba5083f54d00164a9.1619594713.git.christophe.jaillet@wanadoo.fr>
- <257ffd691b4a062ad017333c9430d69da6dbd29a.1619594713.git.christophe.jaillet@wanadoo.fr>
+        Wed, 28 Apr 2021 05:09:34 -0400
+Received: from smtp12.smtpout.orange.fr ([80.12.242.134]:18987 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237824AbhD1JJe (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 28 Apr 2021 05:09:34 -0400
+Received: from localhost.localdomain ([86.243.172.93])
+        by mwinf5d23 with ME
+        id y98k2400a21Fzsu0398lpr; Wed, 28 Apr 2021 11:08:48 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Wed, 28 Apr 2021 11:08:48 +0200
+X-ME-IP: 86.243.172.93
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     pbonzini@redhat.com, seanjc@google.com, vkuznets@redhat.com,
+        wanpengli@tencent.com, jmattson@google.com, joro@8bytes.org,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, x86@kernel.org,
+        hpa@zytor.com
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] x86/kvm: Use 'hlist_for_each_entry' to simplify code
+Date:   Wed, 28 Apr 2021 11:08:43 +0200
+Message-Id: <29796ca9a5d4255c2a0260c2f5c829539a6e7d88.1619600757.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <257ffd691b4a062ad017333c9430d69da6dbd29a.1619594713.git.christophe.jaillet@wanadoo.fr>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Apr 28, 2021 at 09:30:52AM +0200, Christophe JAILLET wrote:
-> This fixes the following checkpatch.pl warnings:
->    WARNING: Missing a blank line after declarations
->    WARNING: braces {} are not necessary for any arm of this statement
+Use 'hlist_for_each_entry' instead of hand writing it.
+This saves a few lines of code.
 
-If it makes somebody happier...
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only
+---
+ arch/x86/kernel/kvm.c | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/tty/serial/8250/8250_core.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/tty/serial/8250/8250_core.c b/drivers/tty/serial/8250/8250_core.c
-> index 081b773a54c9..1082e76c4d37 100644
-> --- a/drivers/tty/serial/8250/8250_core.c
-> +++ b/drivers/tty/serial/8250/8250_core.c
-> @@ -321,9 +321,9 @@ static int univ8250_setup_irq(struct uart_8250_port *up)
->  	 * hardware interrupt, we use a timer-based system.  The original
->  	 * driver used to do this with IRQ0.
->  	 */
-> -	if (!port->irq) {
-> +	if (!port->irq)
->  		mod_timer(&up->timer, jiffies + uart_poll_timeout(port));
-> -	} else
-> +	else
->  		retval = serial_link_irq_chain(up);
->  
->  	return retval;
-> @@ -752,6 +752,7 @@ void serial8250_suspend_port(int line)
->  	if (!console_suspend_enabled && uart_console(port) &&
->  	    port->type != PORT_8250) {
->  		unsigned char canary = 0xa5;
-> +
->  		serial_out(up, UART_SCR, canary);
->  		if (serial_in(up, UART_SCR) == canary)
->  			up->canary = canary;
-> -- 
-> 2.30.2
-> 
-
+diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
+index d307c22e5c18..35f5a0898b92 100644
+--- a/arch/x86/kernel/kvm.c
++++ b/arch/x86/kernel/kvm.c
+@@ -89,14 +89,11 @@ static struct kvm_task_sleep_head {
+ static struct kvm_task_sleep_node *_find_apf_task(struct kvm_task_sleep_head *b,
+ 						  u32 token)
+ {
+-	struct hlist_node *p;
++	struct kvm_task_sleep_node *n;
+ 
+-	hlist_for_each(p, &b->list) {
+-		struct kvm_task_sleep_node *n =
+-			hlist_entry(p, typeof(*n), link);
++	hlist_for_each_entry(n, &b->list, link)
+ 		if (n->token == token)
+ 			return n;
+-	}
+ 
+ 	return NULL;
+ }
+@@ -169,14 +166,12 @@ static void apf_task_wake_all(void)
+ 	for (i = 0; i < KVM_TASK_SLEEP_HASHSIZE; i++) {
+ 		struct kvm_task_sleep_head *b = &async_pf_sleepers[i];
+ 		struct kvm_task_sleep_node *n;
+-		struct hlist_node *p, *next;
++		struct hlist_node *next;
+ 
+ 		raw_spin_lock(&b->lock);
+-		hlist_for_each_safe(p, next, &b->list) {
+-			n = hlist_entry(p, typeof(*n), link);
++		hlist_for_each_entry_safe(n, next, &b->list, link)
+ 			if (n->cpu == smp_processor_id())
+ 				apf_task_wake_one(n);
+-		}
+ 		raw_spin_unlock(&b->lock);
+ 	}
+ }
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.30.2
 
