@@ -2,165 +2,67 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,PDS_BAD_THREAD_QP_64,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 402A8C433B4
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Apr 2021 09:35:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BEDBC433B4
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Apr 2021 10:03:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 09FCE61429
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Apr 2021 09:35:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1EAB661422
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Apr 2021 10:03:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237748AbhD1Jfp (ORCPT
+        id S238858AbhD1KED (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 28 Apr 2021 05:35:45 -0400
-Received: from mx01-sz.bfs.de ([194.94.69.67]:3006 "EHLO mx01-sz.bfs.de"
+        Wed, 28 Apr 2021 06:04:03 -0400
+Received: from foss.arm.com ([217.140.110.172]:38700 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230147AbhD1Jfp (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 28 Apr 2021 05:35:45 -0400
-Received: from SRVEX01-SZ.bfs.intern (exchange-sz.bfs.de [10.129.90.31])
-        by mx01-sz.bfs.de (Postfix) with ESMTPS id 6622F203D5;
-        Wed, 28 Apr 2021 11:34:59 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bfs.de; s=dkim201901;
-        t=1619602499;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=1OcoJeGI7nIYUxcB+eIkJLyMMk/GmpnqsmPK09oEq1w=;
-        b=mUczqE5cBKIRx2O7+Eb2zXqfdF42gYdXHP/a+1AjxY9iHQo2qmaYZ/wVrmhFZTcJV2bqnt
-        Uk0hPQvo8zxY2m3JA8i54+VoQ1QRx1om/VpTqcjU3mB+nLPqUtnfKBHpaj0IvTT1YWf/AI
-        lvCCvqvKk1K2iB/m4y3UUN6ktGmXdi0H1tuNHJTOljxXN5qqpHu1iSuOlAn7RPe11xkOPn
-        48LJFU4iixP8QZEilcNmMnRoxkxcqJexTEOh4KiUBglg5FyDzVTc88Oa/oG9Fsqvwp9NMG
-        u4pDy4E7g7ERIVauNFwf9Xxk0Hf4nWWoJUCd4glwAvBVUP1kwgjqh4H9tCkfyg==
-Received: from SRVEX01-SZ.bfs.intern (10.129.90.31) by SRVEX01-SZ.bfs.intern
- (10.129.90.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2242.4; Wed, 28 Apr
- 2021 11:34:58 +0200
-Received: from SRVEX01-SZ.bfs.intern ([fe80::7d2d:f9cb:2761:d24a]) by
- SRVEX01-SZ.bfs.intern ([fe80::7d2d:f9cb:2761:d24a%13]) with mapi id
- 15.01.2242.008; Wed, 28 Apr 2021 11:34:58 +0200
-From:   Walter Harms <wharms@bfs.de>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        "gcherian@marvell.com" <gcherian@marvell.com>,
-        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        "davem@davemloft.net" <davem@davemloft.net>
-CC:     "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: AW: [PATCH] crypto: cavium - Use 'hlist_for_each_entry' to simplify
- code
-Thread-Topic: [PATCH] crypto: cavium - Use 'hlist_for_each_entry' to simplify
- code
-Thread-Index: AQHXPADcKh3hPUi810mckHZ+wU3y0arJqq9s
-Date:   Wed, 28 Apr 2021 09:34:58 +0000
-Message-ID: <c621542318e644239008eea5f670390e@bfs.de>
-References: <5a7692aa1d2ffb81e981fdf87b060db7e55956b8.1619593010.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <5a7692aa1d2ffb81e981fdf87b060db7e55956b8.1619593010.git.christophe.jaillet@wanadoo.fr>
-Accept-Language: de-DE, en-US
-Content-Language: de-DE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.137.16.40]
-x-tm-as-product-ver: SMEX-14.0.0.3080-8.6.1012-26118.006
-x-tm-as-result: No-10-0.361300-5.000000
-x-tmase-matchedrid: RlE/Xlx8wK/RubRCcrbc5grcxrzwsv5u3dCmvEa6IiGoLZarzrrPmfKD
-        H4hGq6yQhNJdnjCqAbpwE0Mkl9ZaE+7GBH+sbvN4iVJZi91I9JixT02+VRUpqdjV3pEXvjHeN4I
-        xix1zvwXnHqJEtsM2g7xFpZGWIKcrzECxVOnBRA4eTAX99VElYA8JAnaMw0RV/q/20XcvFJXbJM
-        bTT9K/Ta3aC25avUua2v4PzRk1tzIiK/gF68FTSd9JA2lmQRNU64sVlliWKx+/WXZS/HqJ2gtuK
-        BGekqUpOlxBO2IcOBYV7A+VLWfZ75BpzoYEbvl0AhlLvxrd1HzvccRqRr5Z11y6CNNIEVIcDwKe
-        tZp3SdfIZNGNZy4hjo7cZpYhy9Ubftrw6OBuv3EorPY7HEKSnM0bQv3yPxsy+toqr+8ptZ9j6l0
-        ihn9/So9BUbIZioG5lExlQIQeRG0=
-x-tm-as-user-approved-sender: No
-x-tm-as-user-blocked-sender: No
-x-tmase-result: 10-0.361300-5.000000
-x-tmase-version: SMEX-14.0.0.3080-8.6.1012-26118.006
-x-tm-snts-smtp: A2C9A7A1459D92F427AF30AC9FD10232DCC8B7EF4CAC08BF6D38DAE5C248ADCC2000:9
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S238428AbhD1KEB (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 28 Apr 2021 06:04:01 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0D6061FB;
+        Wed, 28 Apr 2021 03:03:17 -0700 (PDT)
+Received: from usa.arm.com (e103737-lin.cambridge.arm.com [10.1.197.49])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 1B9E23F70D;
+        Wed, 28 Apr 2021 03:03:16 -0700 (PDT)
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Sudeep Holla <sudeep.holla@arm.com>,
+        kernel-janitors@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Cristian Marussi <cristian.marussi@arm.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] firmware: arm_scpi: prevent ternary sign expansion bug
+Date:   Wed, 28 Apr 2021 11:03:06 +0100
+Message-Id: <161960405992.396847.5531876675862211477.b4-ty@arm.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <YIE7pdqV/h10tEAK@mwanda>
+References: <YIE7pdqV/h10tEAK@mwanda>
 MIME-Version: 1.0
-X-Spamd-Result: default: False [-15.43 / 7.00];
-         ARC_NA(0.00)[];
-         TO_DN_EQ_ADDR_SOME(0.00)[];
-         HAS_XOIP(0.00)[];
-         FROM_HAS_DN(0.00)[];
-         TO_DN_SOME(0.00)[];
-         FREEMAIL_ENVRCPT(0.00)[wanadoo.fr];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         MIME_GOOD(-0.10)[text/plain];
-         DKIM_SIGNED(0.00)[bfs.de:s=dkim201901];
-         WHITELIST_LOCAL_IP(-15.00)[10.129.90.31];
-         RCPT_COUNT_SEVEN(0.00)[7];
-         NEURAL_HAM(-0.00)[-1.000];
-         FREEMAIL_TO(0.00)[wanadoo.fr,marvell.com,gondor.apana.org.au,davemloft.net];
-         RCVD_NO_TLS_LAST(0.10)[];
-         FROM_EQ_ENVFROM(0.00)[];
-         MIME_TRACE(0.00)[0:+];
-         RCVD_COUNT_TWO(0.00)[2];
-         MID_RHS_MATCH_FROM(0.00)[];
-         BAYES_HAM(-0.43)[78.39%]
-Authentication-Results: mx01-sz.bfs.de;
-        none
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-It is also possible to drop the else and simplify
-further.
+On Thu, 22 Apr 2021 12:02:29 +0300, Dan Carpenter wrote:
+> How type promotion works in ternary expressions is a bit tricky.
+> The problem is that scpi_clk_get_val() returns longs, "ret" is a int
+> which holds a negative error code, and le32_to_cpu() is an unsigned int.
+> We want the negative error code to be cast to a negative long.  But
+> because le32_to_cpu() is an u32 then "ret" is type promoted to u32 and
+> becomes a high positive and then it is promoted to long and it is still
+> a high positive value.
+>
+> [...]
 
-hlist_for_each_entry(chunk, &queue->chead, nextchunk)
-if (chunk !=3D queue->qhead) {
-                                queue->qhead =3D chunk;
-                                break;
-                        }
+Applied to sudeep.holla/linux (for-next/scmi), thanks!
 
-re,
- wh
-________________________________________
-Von: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Gesendet: Mittwoch, 28. April 2021 09:33:37
-An: gcherian@marvell.com; herbert@gondor.apana.org.au; davem@davemloft.net
-Cc: linux-crypto@vger.kernel.org; linux-kernel@vger.kernel.org; kernel-jani=
-tors@vger.kernel.org; Christophe JAILLET
-Betreff: [PATCH] crypto: cavium - Use 'hlist_for_each_entry' to simplify co=
-de
+[1/1] firmware: arm_scpi: prevent ternary sign expansion bug
+      https://git.kernel.org/sudeep.holla/c/d9cd78edb2
 
-WARNUNG: Diese E-Mail kam von au=DFerhalb der Organisation. Klicken Sie nic=
-ht auf Links oder =F6ffnen Sie keine Anh=E4nge, es sei denn, Sie kennen den=
-/die Absender*in und wissen, dass der Inhalt sicher ist.
-
-
-Use 'hlist_for_each_entry' instead of hand writing it.
-This saves a few lines of code.
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only
----
- drivers/crypto/cavium/cpt/cptvf_reqmanager.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
-
-diff --git a/drivers/crypto/cavium/cpt/cptvf_reqmanager.c b/drivers/crypto/=
-cavium/cpt/cptvf_reqmanager.c
-index 4fe7898c8561..feb0f76783dd 100644
---- a/drivers/crypto/cavium/cpt/cptvf_reqmanager.c
-+++ b/drivers/crypto/cavium/cpt/cptvf_reqmanager.c
-@@ -244,11 +244,7 @@ static int send_cpt_command(struct cpt_vf *cptvf, unio=
-n cpt_inst_s *cmd,
-        memcpy(ent, (void *)cmd, qinfo->cmd_size);
-
-        if (++queue->idx >=3D queue->qhead->size / 64) {
--               struct hlist_node *node;
--
--               hlist_for_each(node, &queue->chead) {
--                       chunk =3D hlist_entry(node, struct command_chunk,
--                                           nextchunk);
-+               hlist_for_each_entry(chunk, &queue->chead, nextchunk) {
-                        if (chunk =3D=3D queue->qhead) {
-                                continue;
-                        } else {
 --
-2.30.2
+Regards,
+Sudeep
 
