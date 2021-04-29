@@ -2,127 +2,73 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21D1DC43460
-	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Apr 2021 09:53:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92F16C433ED
+	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Apr 2021 10:03:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BEB3E60C40
-	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Apr 2021 09:53:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 509B561457
+	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Apr 2021 10:03:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237004AbhD2Jy0 (ORCPT
+        id S238072AbhD2KEn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 29 Apr 2021 05:54:26 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:45636 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231543AbhD2JyZ (ORCPT
+        Thu, 29 Apr 2021 06:04:43 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:39532 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237512AbhD2KEn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 29 Apr 2021 05:54:25 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13T9XrGH131973;
-        Thu, 29 Apr 2021 09:53:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=zMqah14+OFnOSJ6UHqaQtZjQ2w6PI4tm2fnCNKK/fi0=;
- b=L5aJa2VqnQdAXIeIR4rtKZyFAcYavk8z8YWn2ggFvCR1cLxXOVyHE6cWJ/K2G64KBRBD
- tcVlDcrAZBV5ewDDRak5TaBGM4NCnlDacWGHTCL/xia6vgNKOOjbH9pWqDudRfUK/rSK
- 2d5xef05cNs09OHeKIoiAaUA4zsjdqC27m+v7ANII/MAR2l08CVXV76RifYdrOmUBmmo
- ZFt34YoPA+B7bCtSFUk0ETxkuU0w2OizjNi3n9yG28sffJUC9S+9VYzfp8jHWQ6MTVHS
- tv7DPLFmQyOc9Qx+MpLG2eeJBdm7a+L+vpc6R37WLaqBV81RoyRo2J/65mwZRSv/0ofy 9Q== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2120.oracle.com with ESMTP id 385aeq3spg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 29 Apr 2021 09:53:35 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13T9UsFm180136;
-        Thu, 29 Apr 2021 09:53:35 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3030.oracle.com with ESMTP id 3848f0u8ak-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 29 Apr 2021 09:53:34 +0000
-Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 13T9rXB0004611;
-        Thu, 29 Apr 2021 09:53:33 GMT
-Received: from kadam (/102.36.221.92)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 29 Apr 2021 09:53:33 +0000
-Date:   Thu, 29 Apr 2021 12:53:27 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Kirti Wankhede <kwankhede@nvidia.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Alex Williamson <alex.williamson@redhat.com>, kvm@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH v2] vfio/mdev: remove unnecessary NULL check in
- mbochs_create()
-Message-ID: <20210429095327.GY1981@kadam>
+        Thu, 29 Apr 2021 06:04:43 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lc3WU-0004lW-RS; Thu, 29 Apr 2021 10:03:54 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        linux-kernel@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, clang-built-linux@googlegroups.com
+Subject: [PATCH] initrd: remove redundant assignment to variable rotate
+Date:   Thu, 29 Apr 2021 11:03:54 +0100
+Message-Id: <20210429100354.58353-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9968 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 phishscore=0 spamscore=0
- mlxlogscore=999 malwarescore=0 bulkscore=0 adultscore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104060000
- definitions=main-2104290067
-X-Proofpoint-ORIG-GUID: cJHDy9ASvbS2L6ec5T_3l35qXnZXxmI1
-X-Proofpoint-GUID: cJHDy9ASvbS2L6ec5T_3l35qXnZXxmI1
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9968 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 impostorscore=0
- phishscore=0 spamscore=0 bulkscore=0 mlxscore=0 lowpriorityscore=0
- clxscore=1015 suspectscore=0 malwarescore=0 mlxlogscore=999
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2104060000 definitions=main-2104290067
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Originally "type" could be NULL and these checks were required, but we
-recently changed how "type" is assigned and that's no longer the case.
-Now "type" points to an element in the middle of a non-NULL array.
+From: Colin Ian King <colin.king@canonical.com>
 
-Removing the checks does not affect runtime at all, but it makes the
-code a little bit simpler to read.
+The assignment of 0 to rotate is redundant, the value is never
+read so it can be it removed.
 
-Fixes: 3d3a360e570616 ("vfio/mbochs: Use mdev_get_type_group_id()")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Cleans up clang scan-build warning:
+init/do_mounts_rd.c:252:4: warning: Value stored to 'rotate' is
+never read [deadcode.DeadStores]
+                        rotate = 0;
+                        ^        ~
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
-Update the commit message
+ init/do_mounts_rd.c | 1 -
+ 1 file changed, 1 deletion(-)
 
- samples/vfio-mdev/mbochs.c | 2 --
- samples/vfio-mdev/mdpy.c | 3 +--
- 2 files changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/samples/vfio-mdev/mbochs.c b/samples/vfio-mdev/mbochs.c
-index 861c76914e76..881ef9a7296f 100644
---- a/samples/vfio-mdev/mbochs.c
-+++ b/samples/vfio-mdev/mbochs.c
-@@ -513,8 +513,6 @@ static int mbochs_create(struct mdev_device *mdev)
- 	struct device *dev = mdev_dev(mdev);
- 	struct mdev_state *mdev_state;
- 
--	if (!type)
--		type = &mbochs_types[0];
- 	if (type->mbytes + mbochs_used_mbytes > max_mbytes)
- 		return -ENOMEM;
- 
-diff --git a/samples/vfio-mdev/mdpy.c b/samples/vfio-mdev/mdpy.c
-index f0c0e7209719..e889c1cf8fd1 100644
---- a/samples/vfio-mdev/mdpy.c
-+++ b/samples/vfio-mdev/mdpy.c
-@@ -667,8 +667,7 @@ static ssize_t description_show(struct mdev_type *mtype,
- 		&mdpy_types[mtype_get_type_group_id(mtype)];
- 
- 	return sprintf(buf, "virtual display, %dx%d framebuffer\n",
--		       type ? type->width  : 0,
--		       type ? type->height : 0);
-+		       type->width, type->height);
- }
- static MDEV_TYPE_ATTR_RO(description);
- 
+diff --git a/init/do_mounts_rd.c b/init/do_mounts_rd.c
+index ac021ae6e6fa..8003604dbf90 100644
+--- a/init/do_mounts_rd.c
++++ b/init/do_mounts_rd.c
+@@ -249,7 +249,6 @@ int __init rd_load_image(char *from)
+ 	for (i = 0; i < nblocks; i++) {
+ 		if (i && (i % devblocks == 0)) {
+ 			pr_cont("done disk #1.\n");
+-			rotate = 0;
+ 			fput(in_file);
+ 			break;
+ 		}
 -- 
 2.30.2
+
