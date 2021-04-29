@@ -2,108 +2,111 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D873C433B4
-	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Apr 2021 07:21:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24116C43460
+	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Apr 2021 09:27:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E57D761059
-	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Apr 2021 07:21:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0F0F6143F
+	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Apr 2021 09:27:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230309AbhD2HVJ (ORCPT
+        id S237460AbhD2J2l (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 29 Apr 2021 03:21:09 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:41862 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239259AbhD2HVH (ORCPT
+        Thu, 29 Apr 2021 05:28:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58392 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237366AbhD2J2k (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 29 Apr 2021 03:21:07 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13T79B0X057234;
-        Thu, 29 Apr 2021 07:19:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=jsdn4YxHgm56M3A35OuWefg0AHZp+MPWhQ4rZ6Il2VA=;
- b=iWkQenwG3/viiiDGAbizIcboIyUDMZseD9BDr6CmT5ZUS+GtREm9R/z621iNvtUl7GPp
- 4RZWaCkGR0nObiIeFnCIkhYfSBvLz/rvJxPMdR0px2CyG1wnk9JWRdQgp8W0N1t2UHmT
- ErKAkD1EASHjpzxrNSkNQ8Ljre8BSHeWFQz9Ld889bWeG88vW+pGnbWBlWTDqQrgEs63
- UoW8Q2z3p0Oa2rl6bUBD/UyF5aWDbUMxSxZi3SIA4KcRblUXRF6Csrcf7TMGTBAlULSS
- A6QJLy+KypqOUlIoLfzJB6BAhUcP+qyN71C2+6S9rT0zzAyMsxYFwu30APIMjxuQKqCs Ig== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2130.oracle.com with ESMTP id 385afq3as3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 29 Apr 2021 07:19:34 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13T7Eo5i105983;
-        Thu, 29 Apr 2021 07:19:33 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by aserp3030.oracle.com with ESMTP id 3874d34xxt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 29 Apr 2021 07:19:33 +0000
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 13T7JXcx123631;
-        Thu, 29 Apr 2021 07:19:33 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3030.oracle.com with ESMTP id 3874d34xxb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 29 Apr 2021 07:19:33 +0000
-Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 13T7JW1p010053;
-        Thu, 29 Apr 2021 07:19:32 GMT
-Received: from mwanda (/102.36.221.92)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 29 Apr 2021 07:19:31 +0000
-Date:   Thu, 29 Apr 2021 10:19:22 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+        Thu, 29 Apr 2021 05:28:40 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77463C06138C;
+        Thu, 29 Apr 2021 02:27:53 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id x7so66082576wrw.10;
+        Thu, 29 Apr 2021 02:27:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=sHv+t9w1wAMsbIM5VHr+smQOf+tyPUMFdSQ+YdNerTg=;
+        b=LlBSVRTCtVIOrBU1AIHYSFyCjDUySKyzOG6CAIS1yFRuE4b9MBvYh4XrbWfO32IdYG
+         6g1jPO/861wrXyU4AYIUETm+iHqGgrwaPSfkLr5q41S4xP1o0zzlBLCCKKTDRKxONCAE
+         XsBoRal7KdvVIsIeVk8xb9xvc7hlRFDNeA03Sf0+4ohBIotHstEe+cuW6nJsalBtL67D
+         y36ktx1RoVBsKu3pkhg4DxZpCWdAQzr4TngGd0WaQookUL52Y4BUD8Cb5YjeiNcnv8WJ
+         RY0zUTcdkusDaN/tFeJPuI6//wa7cY1hj55jmkbwxfYm1t0psTcEHv2URpXdqex9cmrh
+         B+xQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=sHv+t9w1wAMsbIM5VHr+smQOf+tyPUMFdSQ+YdNerTg=;
+        b=MfDcHsSvymdj8/wnWhvY3rvelOt66e1k9jNODJ+zmeataJR3ADkpSS4bQBHo6ctuJe
+         9hHZVtcLzhtkLRT0bnUdltZhyXVtDfM+E1HxmRexgKKvR/67CesFVirClg3JpqEekC7T
+         9WWBY2DJvBQDCLqfq6M5fpfK/7vn3nBPoxRju9y+p4/3pjYsxnuXy3XY5GFTwRc/ABmU
+         6o5dHYzjXuKwzPQxBxhjmpyp7M+CjHUNTFE7/QKUQyIPk4lvQRUBsJh6tEsi2aqw5d/c
+         yT7J2pVaookbATKj9R364H/m3wG3dg5YXz+Q+zatYjhVAiNrnrROg/KXRMCaYJ2OclNt
+         2sJw==
+X-Gm-Message-State: AOAM532th5d3I8f2ZecE6A0ZPipoj6SvEiIdOccQXGRCYmQA/kpTMtMu
+        eR6pOMT+hOG9bEOoEBLn3noyQCGmDms=
+X-Google-Smtp-Source: ABdhPJw40X1ijqMJIItMnswZOauNBA6lQ0H59WZMpduPH4NU8O7YAHx9dhQnilWfYMRsXurU0YoHIQ==
+X-Received: by 2002:adf:cc85:: with SMTP id p5mr9063889wrj.75.1619688472301;
+        Thu, 29 Apr 2021 02:27:52 -0700 (PDT)
+Received: from [192.168.1.20] ([195.245.23.224])
+        by smtp.gmail.com with ESMTPSA id m2sm9194674wmq.15.2021.04.29.02.27.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 Apr 2021 02:27:51 -0700 (PDT)
+Subject: Re: [PATCH] serial: 8250_omap: fix a timeout loop condition
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Jiri Slaby <jirislaby@kernel.org>,
         Vignesh Raghavendra <vigneshr@ti.com>,
-        Alexander Sverdlin <alexander.sverdlin@gmail.com>,
         Johan Hovold <johan@kernel.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] serial: 8250_omap: fix a timeout loop condition
-Message-ID: <YIpd+kOpXKMpEXPf@mwanda>
+References: <YIpd+kOpXKMpEXPf@mwanda>
+From:   Alexander Sverdlin <alexander.sverdlin@gmail.com>
+Message-ID: <960e9d26-8840-d6b6-b368-0ca79fc52544@gmail.com>
+Date:   Thu, 29 Apr 2021 11:23:50 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-X-Proofpoint-ORIG-GUID: DuMRfTpx1w-bLUMeQFEqUvhKOVz6spGf
-X-Proofpoint-GUID: DuMRfTpx1w-bLUMeQFEqUvhKOVz6spGf
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9968 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 spamscore=0 phishscore=0
- clxscore=1011 suspectscore=0 lowpriorityscore=0 mlxlogscore=999 mlxscore=0
- adultscore=0 malwarescore=0 impostorscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104060000
- definitions=main-2104290052
+In-Reply-To: <YIpd+kOpXKMpEXPf@mwanda>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This loop ends on -1 so the error message will never be printed.
+Hello Dan!
 
-Fixes: 4bcf59a5dea0 ("serial: 8250: 8250_omap: Account for data in flight during DMA teardown")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/tty/serial/8250/8250_omap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 29/04/2021 09:19, Dan Carpenter wrote:
+> This loop ends on -1 so the error message will never be printed.
+> 
+> Fixes: 4bcf59a5dea0 ("serial: 8250: 8250_omap: Account for data in flight during DMA teardown")
 
-diff --git a/drivers/tty/serial/8250/8250_omap.c b/drivers/tty/serial/8250/8250_omap.c
-index 8ac11eaeca51..c06631ced414 100644
---- a/drivers/tty/serial/8250/8250_omap.c
-+++ b/drivers/tty/serial/8250/8250_omap.c
-@@ -813,7 +813,7 @@ static void __dma_rx_do_complete(struct uart_8250_port *p)
- 			       poll_count--)
- 				cpu_relax();
- 
--			if (!poll_count)
-+			if (poll_count == -1)
- 				dev_err(p->port.dev, "teardown incomplete\n");
- 		}
- 	}
--- 
-2.30.2
+Looks good to me!
+Reviewed-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  drivers/tty/serial/8250/8250_omap.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/tty/serial/8250/8250_omap.c b/drivers/tty/serial/8250/8250_omap.c
+> index 8ac11eaeca51..c06631ced414 100644
+> --- a/drivers/tty/serial/8250/8250_omap.c
+> +++ b/drivers/tty/serial/8250/8250_omap.c
+> @@ -813,7 +813,7 @@ static void __dma_rx_do_complete(struct uart_8250_port *p)
+>  			       poll_count--)
+>  				cpu_relax();
+>  
+> -			if (!poll_count)
+> +			if (poll_count == -1)
+>  				dev_err(p->port.dev, "teardown incomplete\n");
+>  		}
+>  	}
