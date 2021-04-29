@@ -7,33 +7,38 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6134EC433B4
-	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Apr 2021 10:46:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E886C43460
+	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Apr 2021 11:00:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1ED6B61449
-	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Apr 2021 10:46:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BC4B61447
+	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Apr 2021 11:00:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235578AbhD2Kqu (ORCPT
+        id S235758AbhD2LBd (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 29 Apr 2021 06:46:50 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:41312 "EHLO
+        Thu, 29 Apr 2021 07:01:33 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:41746 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232245AbhD2Kqu (ORCPT
+        with ESMTP id S232803AbhD2LBc (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 29 Apr 2021 06:46:50 -0400
+        Thu, 29 Apr 2021 07:01:32 -0400
 Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <colin.king@canonical.com>)
-        id 1lc4BG-00084q-EX; Thu, 29 Apr 2021 10:46:02 +0000
+        id 1lc4PQ-0000ev-DZ; Thu, 29 Apr 2021 11:00:40 +0000
 From:   Colin King <colin.king@canonical.com>
-To:     Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring@vger.kernel.org
+To:     Ryder Lee <ryder.lee@mediatek.com>,
+        Jianjun Wang <jianjun.wang@mediatek.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Rob Herring <robh@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-pci@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next][V2] io_uring: Fix premature return from loop and memory leak
-Date:   Thu, 29 Apr 2021 11:46:02 +0100
-Message-Id: <20210429104602.62676-1-colin.king@canonical.com>
+Subject: [PATCH][next] PCI: mediatek-gen3: Add missing null pointer check
+Date:   Thu, 29 Apr 2021 12:00:40 +0100
+Message-Id: <20210429110040.63119-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -44,52 +49,29 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Currently the -EINVAL error return path is leaking memory allocated
-to data. Fix this by not returning immediately but instead setting
-the error return variable to -EINVAL and breaking out of the loop.
+The call to platform_get_resource_byname can potentially return null, so
+add a null pointer check to avoid a null pointer dereference issue.
 
-Kudos to Pavel Begunkov for suggesting a correct fix.
-
+Addresses-Coverity: ("Dereference null return")
+Fixes: 441903d9e8f0 ("PCI: mediatek-gen3: Add MediaTek Gen3 driver for MT8192")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
+ drivers/pci/controller/pcie-mediatek-gen3.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-V2: set ret/err to -EINVAL and break rather than kfree and return,
-    fix both occurrences of this issue.
-
----
- fs/io_uring.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 47c2f126f885..c783ad83f220 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -8417,8 +8417,10 @@ static int io_sqe_buffers_register(struct io_ring_ctx *ctx, void __user *arg,
- 		ret = io_buffer_validate(&iov);
- 		if (ret)
- 			break;
--		if (!iov.iov_base && tag)
--			return -EINVAL;
-+		if (!iov.iov_base && tag) {
-+			ret = -EINVAL;
-+			break;
-+		}
+diff --git a/drivers/pci/controller/pcie-mediatek-gen3.c b/drivers/pci/controller/pcie-mediatek-gen3.c
+index 20165e4a75b2..3c5b97716d40 100644
+--- a/drivers/pci/controller/pcie-mediatek-gen3.c
++++ b/drivers/pci/controller/pcie-mediatek-gen3.c
+@@ -721,6 +721,8 @@ static int mtk_pcie_parse_port(struct mtk_pcie_port *port)
+ 	int ret;
  
- 		ret = io_sqe_buffer_register(ctx, &iov, &ctx->user_bufs[i],
- 					     &last_hpage);
-@@ -8468,8 +8470,10 @@ static int __io_sqe_buffers_update(struct io_ring_ctx *ctx,
- 		err = io_buffer_validate(&iov);
- 		if (err)
- 			break;
--		if (!iov.iov_base && tag)
--			return -EINVAL;
-+		if (!iov.iov_base && tag) {
-+			err = -EINVAL;
-+			break;
-+		}
- 		err = io_sqe_buffer_register(ctx, &iov, &imu, &last_hpage);
- 		if (err)
- 			break;
+ 	regs = platform_get_resource_byname(pdev, IORESOURCE_MEM, "pcie-mac");
++	if (!regs)
++		return -EINVAL;
+ 	port->base = devm_ioremap_resource(dev, regs);
+ 	if (IS_ERR(port->base)) {
+ 		dev_err(dev, "failed to map register base\n");
 -- 
 2.30.2
 
