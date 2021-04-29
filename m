@@ -2,116 +2,94 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 125C5C433B4
-	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Apr 2021 14:12:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE36AC433ED
+	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Apr 2021 14:27:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CD05661420
-	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Apr 2021 14:12:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A78546144B
+	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Apr 2021 14:27:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239881AbhD2ONR (ORCPT
+        id S237406AbhD2O2L (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 29 Apr 2021 10:13:17 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:52758 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234473AbhD2ONQ (ORCPT
+        Thu, 29 Apr 2021 10:28:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39978 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237338AbhD2O2K (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 29 Apr 2021 10:13:16 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13TDtYAt137755;
-        Thu, 29 Apr 2021 14:12:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=7wO3S1awYKukxfXx/AgA8BN45wRenl6f8tRf1DRHcFo=;
- b=MIX3H+CEVlP5dw1fBFOyp2izPwL8FkgDd6T9ci1sXkthxSvFklK0NauWygvEvfkW9qhm
- /nNFrkG7HxhXO/4jF9RDGeR2X35VH76XSoycdBh7AL8lHpLopKLFwpVpOJe2mFKAc5xJ
- 3Cay2sKYFkOXEhVhQGMd5MSL/CwUNLqrZIyVEBn5LK+o9zh93dIoDoffbqt2h/YKo+GJ
- S/V9kTPQuyeojadKHtAFiXqMxmRohYkMWpZYaf3cqgvZG2u1FTswL8csHFy2mx/ZYChv
- tIxapZ3Yxmu0pmmTBUMsk1b/6QV2kzENG/Oaod5rK9VPBGDi+QE2/m5S0TmardtPSKEh kw== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2130.oracle.com with ESMTP id 385aft4gt2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 29 Apr 2021 14:12:09 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13TDtxNO169381;
-        Thu, 29 Apr 2021 14:12:08 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by aserp3020.oracle.com with ESMTP id 384b5acmjd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 29 Apr 2021 14:12:08 +0000
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 13TEC1LK092501;
-        Thu, 29 Apr 2021 14:12:08 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 384b5acmhp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 29 Apr 2021 14:12:08 +0000
-Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 13TEC7Hu011472;
-        Thu, 29 Apr 2021 14:12:07 GMT
-Received: from kadam (/102.36.221.92)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 29 Apr 2021 07:12:06 -0700
-Date:   Thu, 29 Apr 2021 17:12:00 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Khaled ROMDHANI <khaledromdhani216@gmail.com>
-Cc:     clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH-V2] fs/btrfs: Fix uninitialized variable
-Message-ID: <20210429141200.GB1981@kadam>
-References: <20210427171627.32356-1-khaledromdhani216@gmail.com>
+        Thu, 29 Apr 2021 10:28:10 -0400
+Received: from mail-il1-x12f.google.com (mail-il1-x12f.google.com [IPv6:2607:f8b0:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51BCEC06138B
+        for <kernel-janitors@vger.kernel.org>; Thu, 29 Apr 2021 07:27:21 -0700 (PDT)
+Received: by mail-il1-x12f.google.com with SMTP id y6so420257ilq.10
+        for <kernel-janitors@vger.kernel.org>; Thu, 29 Apr 2021 07:27:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=oX7qYgxXYUDTnDWIrAAdrMAk23CW1FWOs8hQTp5c3yY=;
+        b=U4mbRlv5UHD7sn2yKKFCrR+4XJ13UgOrePmZ9r2zi4LgU/UxNb72eYOLK/TvO7VUlz
+         30WM7WkrcRFNI/x/ite+fOcgwI2QEtgUxsjoskRUTfetp2ZeV8V6EvbTQJQ8k/LVqLSz
+         LkoD3TnCV+fTaXYxRE35BxH8SiXnv7w1dxW3bIcojZXcQEWKEdKLy4tpks1Cw+gUrAkq
+         VuQqMkHFdQ0zszYyHwo5cmhjNf9iphNdIiDdkLefNDM7yiRp1rrPoe+45r/HOSWh/7WI
+         vNsgd2MnuJMVvW5PuGtKQDv4GD6uCtf2xJAILqgH4/102fTtZdT3o7pZTZtcy7g1yg4X
+         791A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=oX7qYgxXYUDTnDWIrAAdrMAk23CW1FWOs8hQTp5c3yY=;
+        b=rbzeWYhHkh3CXv6h7ySsgmG8HvXSEiGRHUB/07K/AGleUNKl95Av0UeMfz66Pj1Jjg
+         eOpMdStCsAG/+WYXHs1kihCEYfKBUeNCUCOmOE0Q9glaIpuOBoQ399Skux05Js6Sdjr1
+         G0zh/rmJLYDMo+I/tBXo1mtiiKfsJsWuo6CjJ14CHD3lglfzDnoHYKxB/SI4gxdq0F8U
+         J+j+GvMxXET7bAtB7Bg+NJ2A6yHsObWCp9mA3xYk40DoY/m8PXxpB+Q3Ka4L6QgZQaoa
+         BsasF3UHovOpTQmOajBUgVkcekhbukApqRSVXdm/zhAAsCdsxBceu9wWKudElcIiETWM
+         aOcA==
+X-Gm-Message-State: AOAM531XkbRD5uYUg4m1l59Iq7h7GBgrufQsB/QigdDo423cXHI5gBfN
+        ocH1GHDkImMWessTaFQ+G/WQZA==
+X-Google-Smtp-Source: ABdhPJzWaBrIbWy1Gn3RmYAqSSx+0mMumwirKFFqogCYQtG1qxtNM3so9mUBItXCb//RX9HCWkhDEg==
+X-Received: by 2002:a05:6e02:20ed:: with SMTP id q13mr26252658ilv.235.1619706440821;
+        Thu, 29 Apr 2021 07:27:20 -0700 (PDT)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id p1sm1453223ilp.10.2021.04.29.07.27.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 Apr 2021 07:27:20 -0700 (PDT)
+Subject: Re: [PATCH][next][V2] io_uring: Fix premature return from loop and
+ memory leak
+To:     Colin King <colin.king@canonical.com>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210429104602.62676-1-colin.king@canonical.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <8513d853-fd44-c90f-26ba-45b763b8879a@kernel.dk>
+Date:   Thu, 29 Apr 2021 08:27:20 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210427171627.32356-1-khaledromdhani216@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-GUID: 5XMmar-2JWd8WARv3s5ERz9mr6XXrbzN
-X-Proofpoint-ORIG-GUID: 5XMmar-2JWd8WARv3s5ERz9mr6XXrbzN
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9969 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 impostorscore=0 lowpriorityscore=0
- mlxlogscore=999 malwarescore=0 phishscore=0 priorityscore=1501
- clxscore=1015 spamscore=0 bulkscore=0 suspectscore=0 adultscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2104060000 definitions=main-2104290093
+In-Reply-To: <20210429104602.62676-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Apr 27, 2021 at 06:16:27PM +0100, Khaled ROMDHANI wrote:
-> The variable 'zone' is uninitialized which
-> introduce some build warning.
+On 4/29/21 4:46 AM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Signed-off-by: Khaled ROMDHANI <khaledromdhani216@gmail.com>
-> ---
-> v2: catch the init as an assertion
-> ---
->  fs/btrfs/zoned.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Currently the -EINVAL error return path is leaking memory allocated
+> to data. Fix this by not returning immediately but instead setting
+> the error return variable to -EINVAL and breaking out of the loop.
 > 
-> diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
-> index 432509f4b3ac..70c0b1b2ff04 100644
-> --- a/fs/btrfs/zoned.c
-> +++ b/fs/btrfs/zoned.c
-> @@ -144,7 +144,7 @@ static inline u32 sb_zone_number(int shift, int mirror)
->  	case 1: zone = 1ULL << (BTRFS_SB_LOG_FIRST_SHIFT - shift); break;
->  	case 2: zone = 1ULL << (BTRFS_SB_LOG_SECOND_SHIFT - shift); break;
->  	default:
-> -		ASSERT(zone);
-> +		ASSERT(zone = 0);
+> Kudos to Pavel Begunkov for suggesting a correct fix.
 
-I'm sorry but this doesn't make any kind of sense.
+Applied, thanks.
 
->  		break;
->  	}
-
-regards,
-dan carpenter
+-- 
+Jens Axboe
 
