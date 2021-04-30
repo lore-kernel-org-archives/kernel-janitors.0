@@ -2,115 +2,80 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-21.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37AF0C433B4
-	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Apr 2021 16:34:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02D7EC433ED
+	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Apr 2021 17:03:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 15B7161468
-	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Apr 2021 16:34:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAFFA61468
+	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Apr 2021 17:03:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230093AbhD3Qfk (ORCPT
+        id S230290AbhD3REQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 30 Apr 2021 12:35:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51420 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229579AbhD3Qfk (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 30 Apr 2021 12:35:40 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 881D860233;
-        Fri, 30 Apr 2021 16:34:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1619800491;
-        bh=CTKqzMvOc6YCJvRdNUuExGC6a82/6LKQAJ0WVAxwTHI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=HcVnRRoN6PJV0PZxkh2SBFKELhCNx2XmJ+OJDu3mRyWzYHMRNkMciQVXCumFAekqC
-         YCz6QclpGMiYgurI5/ZjQrZ9zmHcdXaeyiKGLpfyUTpMM7OMPMgwdK2TDpGcDd8kAc
-         XUQ9koyWLfJaF7xjXZDy2tW/LjUkZCdLu71d/NtQXmv0brxgoTVAyDHIwHzc7XOL9F
-         jTn2O6wUqTjEGEUSVBFo8aJRlP74s1/s7K3xkGcYSNVrurbvKkboyKRAHgNOFB1rhn
-         FexsQ7BigHsIs+5nRzS8RgccqusV/3IgXfVj7yy+xYxJKdC2RcqNpxHvJBn4DBru9b
-         4yeikauXWCrbg==
-Date:   Fri, 30 Apr 2021 11:34:50 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Colin King <colin.king@canonical.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Jianjun Wang <jianjun.wang@mediatek.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Rob Herring <robh@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-pci@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] PCI: mediatek-gen3: Add missing null pointer check
-Message-ID: <20210430163450.GA657994@bjorn-Precision-5520>
+        Fri, 30 Apr 2021 13:04:16 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:38233 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229750AbhD3REP (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 30 Apr 2021 13:04:15 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lcWXf-0001yL-Cp; Fri, 30 Apr 2021 17:03:03 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Nathan Tempelman <natet@google.com>, kvm@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] KVM: x86: Fix potential fput on a null source_kvm_file
+Date:   Fri, 30 Apr 2021 18:03:03 +0100
+Message-Id: <20210430170303.131924-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <7a512e3a-2897-ac12-ac6e-06be28735279@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Apr 30, 2021 at 09:47:06AM +0200, Christophe JAILLET wrote:
-> Le 29/04/2021 à 13:00, Colin King a écrit :
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > The call to platform_get_resource_byname can potentially return null, so
-> > add a null pointer check to avoid a null pointer dereference issue.
-> > 
-> > Addresses-Coverity: ("Dereference null return")
-> > Fixes: 441903d9e8f0 ("PCI: mediatek-gen3: Add MediaTek Gen3 driver for MT8192")
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
-> >   drivers/pci/controller/pcie-mediatek-gen3.c | 2 ++
-> >   1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/drivers/pci/controller/pcie-mediatek-gen3.c b/drivers/pci/controller/pcie-mediatek-gen3.c
-> > index 20165e4a75b2..3c5b97716d40 100644
-> > --- a/drivers/pci/controller/pcie-mediatek-gen3.c
-> > +++ b/drivers/pci/controller/pcie-mediatek-gen3.c
-> > @@ -721,6 +721,8 @@ static int mtk_pcie_parse_port(struct mtk_pcie_port *port)
-> >   	int ret;
-> >   	regs = platform_get_resource_byname(pdev, IORESOURCE_MEM, "pcie-mac");
-> > +	if (!regs)
-> > +		return -EINVAL;
-> >   	port->base = devm_ioremap_resource(dev, regs);
-> >   	if (IS_ERR(port->base)) {
-> >   		dev_err(dev, "failed to map register base\n");
-> > 
-> 
-> Nitpick:
->    Using 'devm_platform_ioremap_resource_byname' is slightly less verbose
-> and should please Coverity.
+From: Colin Ian King <colin.king@canonical.com>
 
-Not a nitpick at all.  Jianjun is correct that devm_ioremap_resource()
-does check "regs" for NULL and it fails gracefully before trying to
-dereference it, so the extra check shouldn't be needed.  And most
-cases in drivers/pci/ look like this, without the extra check:
+The fget can potentially return null, so the fput on the error return
+path can cause a null pointer dereference. Fix this by checking for
+a null source_kvm_file before doing a fput.
 
-  res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "app");
-  base = devm_ioremap_resource(dev, res);
-  if (IS_ERR(base))
-    ...
+Addresses-Coverity: ("Dereference null return")
+Fixes: 54526d1fd593 ("KVM: x86: Support KVM VMs sharing SEV context")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ arch/x86/kvm/svm/sev.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-If devm_platform_ioremap_resource_byname() keeps Coverity happy, I
-think that's what we should be doing across drivers/pci/.  Coverity
-false positives are a hassle.
+diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+index 1356ee095cd5..8b11c711a0e4 100644
+--- a/arch/x86/kvm/svm/sev.c
++++ b/arch/x86/kvm/svm/sev.c
+@@ -1764,7 +1764,8 @@ int svm_vm_copy_asid_from(struct kvm *kvm, unsigned int source_fd)
+ e_source_unlock:
+ 	mutex_unlock(&source_kvm->lock);
+ e_source_put:
+-	fput(source_kvm_file);
++	if (source_kvm_file)
++		fput(source_kvm_file);
+ 	return ret;
+ }
+ 
+-- 
+2.30.2
 
-Seems like something for next cycle since we're in the middle of the
-merge window.
-
-> Also, which git repo are you using? On linux-next ([1)], your proposed patch
-> is already part of "PCI: mediatek-gen3: Add MediaTek Gen3 driver for
-> MT8192".
-> 
-> [1]: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/log/drivers/pci/controller/pcie-mediatek-gen3.c
-
-I think this is because Lorenzo already squashed Colin's change in.
-
-Bjorn
