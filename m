@@ -2,244 +2,87 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EE7AC433B4
-	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Apr 2021 18:38:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EEDFC433ED
+	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Apr 2021 07:25:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5FD0A61441
-	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Apr 2021 18:38:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E7B46143B
+	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Apr 2021 07:25:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240999AbhD2SjG (ORCPT
+        id S229786AbhD3HZu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 29 Apr 2021 14:39:06 -0400
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:10721
-        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S240974AbhD2SjG (ORCPT
+        Fri, 30 Apr 2021 03:25:50 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:56878 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S229590AbhD3HZu (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 29 Apr 2021 14:39:06 -0400
-IronPort-HdrOrdr: =?us-ascii?q?A9a23=3AG/vuIKym4zfRSgGlnE3oKrPw571zdoIgy1kn?=
- =?us-ascii?q?xilNYDZeG/b0q+mFmvMH2RjozAsLUHY7ltyafIWGS3XQ9Zl6iLNhXouKcQH6tA?=
- =?us-ascii?q?KTQ71KwpDlx1TbcBHW0s54+eNef7NlCNv2ZGIbse/f7BOjG9gthPmLmZrHuc7k?=
- =?us-ascii?q?w31gTR5nZshbhm9EIzyGGU57ThQuP/YEPaebj/AsmxOQPVAebsG2HRA+PtT+mw?=
- =?us-ascii?q?=3D=3D?=
-X-IronPort-AV: E=Sophos;i="5.82,260,1613430000"; 
-   d="scan'208";a="380062492"
-Received: from palace.rsr.lip6.fr (HELO palace.lip6.fr) ([132.227.105.202])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-SHA; 29 Apr 2021 20:38:16 +0200
-From:   Julia Lawall <Julia.Lawall@inria.fr>
-To:     Julia Lawall <Julia.Lawall@inria.fr>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc:     kernel-janitors@vger.kernel.org,
-        Gilles Muller <Gilles.Muller@inria.fr>,
-        Nicolas Palix <nicolas.palix@imag.fr>,
-        Michal Marek <michal.lkml@markovi.net>, cocci@systeme.lip6.fr,
-        linux-kernel@vger.kernel.org,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Johan Hovold <johan@kernel.org>,
-        Zhang Qilong <zhangqilong3@huawei.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH v4] coccinelle: api: semantic patch to use pm_runtime_resume_and_get
-Date:   Thu, 29 Apr 2021 19:43:43 +0200
-Message-Id: <20210429174343.2509714-1-Julia.Lawall@inria.fr>
-X-Mailer: git-send-email 2.25.1
+        Fri, 30 Apr 2021 03:25:50 -0400
+X-UUID: 40e94ae71d2b470cb30089d2faf0ecd9-20210430
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=fYnTZjtZi+ChPsBsoKvCFsCx7AX5XBrzMnGC25v6LBM=;
+        b=mvXaxDuDdgyPXqi2LZaYW4uD81lp8SmL5kiv8z/Cc5t8Iwq6hG65og37ozLGgqoIVExkVXvoocYZsFXc4RpOGnuqESAST7+ThDxQS/OgkRPZhxiVNFXkFHeOFQYwXqI01rQ3gp2a1U3Hn8qVaQPXkvonVh4QlfKEv0C7uokzYfo=;
+X-UUID: 40e94ae71d2b470cb30089d2faf0ecd9-20210430
+Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw02.mediatek.com
+        (envelope-from <jianjun.wang@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 1956212543; Fri, 30 Apr 2021 15:24:58 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by mtkmbs08n2.mediatek.inc
+ (172.21.101.56) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Fri, 30 Apr
+ 2021 15:24:55 +0800
+Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Fri, 30 Apr 2021 15:24:54 +0800
+Message-ID: <1619767494.1027.3.camel@mhfsdcap03>
+Subject: Re: [PATCH][next] PCI: mediatek-gen3: Add missing null pointer check
+From:   Jianjun Wang <jianjun.wang@mediatek.com>
+To:     Colin King <colin.king@canonical.com>
+CC:     Ryder Lee <ryder.lee@mediatek.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Rob Herring <robh@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <linux-pci@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Date:   Fri, 30 Apr 2021 15:24:54 +0800
+In-Reply-To: <20210429110040.63119-1-colin.king@canonical.com>
+References: <20210429110040.63119-1-colin.king@canonical.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-TM-SNTS-SMTP: 8410CB59BBA8CE1684706891C6FE72A498F1C9DD1D6662302587175341C90FE22000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-pm_runtime_get_sync keeps a reference count on failure, which can lead
-to leaks.  pm_runtime_resume_and_get drops the reference count in the
-failure case.  This rule very conservatively follows the definition of
-pm_runtime_resume_and_get to address the cases where the reference
-count is unlikely to be needed in the failure case.  Specifically, the
-change is only done when pm_runtime_get_sync is followed immediately
-by an if and when the branch of the if is immediately a call to
-pm_runtime_put_noidle (like in the definition of
-pm_runtime_resume_and_get) or something that is likely a print
-statement followed by a pm_runtime_put_noidle call.  The patch
-case appears somewhat more complicated, because it also deals with the
-cases where {}s need to be removed.
-
-pm_runtime_resume_and_get was introduced in
-commit dd8088d5a896 ("PM: runtime: Add pm_runtime_resume_and_get to
-deal with usage counter")
-
-Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-
----
-v5: print a message with the new function name, as suggested by Markus Elfring
-v4: s/pm_runtime_resume_and_get/pm_runtime_put_noidle/ as noted by John Hovold
-v3: add the people who signed off on commit dd8088d5a896, expand the log message
-v2: better keyword
-
- scripts/coccinelle/api/pm_runtime_resume_and_get.cocci |  153 +++++++++++++++++
- 1 file changed, 153 insertions(+)
-
-diff --git a/scripts/coccinelle/api/pm_runtime_resume_and_get.cocci b/scripts/coccinelle/api/pm_runtime_resume_and_get.cocci
-new file mode 100644
-index 000000000000..3387cb606f9b
---- /dev/null
-+++ b/scripts/coccinelle/api/pm_runtime_resume_and_get.cocci
-@@ -0,0 +1,153 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+///
-+/// Use pm_runtime_resume_and_get.
-+/// pm_runtime_get_sync keeps a reference count on failure,
-+/// which can lead to leaks.  pm_runtime_resume_and_get
-+/// drops the reference count in the failure case.
-+/// This rule addresses the cases where the reference count
-+/// is unlikely to be needed in the failure case.
-+///
-+// Confidence: High
-+// Copyright: (C) 2021 Julia Lawall, Inria
-+// URL: https://coccinelle.gitlabpages.inria.fr/website
-+// Options: --include-headers --no-includes
-+// Keywords: pm_runtime_get_sync
-+
-+virtual patch
-+virtual context
-+virtual org
-+virtual report
-+
-+@r0 depends on patch && !context && !org && !report@
-+expression ret,e;
-+@@
-+
-+-     ret = pm_runtime_get_sync(e);
-++     ret = pm_runtime_resume_and_get(e);
-+-     if (ret < 0)
-+-             pm_runtime_put_noidle(e);
-+
-+@r1 depends on patch && !context && !org && !report@
-+expression ret,e;
-+statement S1,S2;
-+@@
-+
-+-     ret = pm_runtime_get_sync(e);
-++     ret = pm_runtime_resume_and_get(e);
-+      if (ret < 0)
-+-     {
-+-             pm_runtime_put_noidle(e);
-+	      S1
-+-     }
-+      else S2
-+
-+@r2 depends on patch && !context && !org && !report@
-+expression ret,e;
-+statement S;
-+@@
-+
-+-     ret = pm_runtime_get_sync(e);
-++     ret = pm_runtime_resume_and_get(e);
-+      if (ret < 0) {
-+-             pm_runtime_put_noidle(e);
-+	      ...
-+      } else S
-+
-+@r3 depends on patch && !context && !org && !report@
-+expression ret,e;
-+identifier f;
-+constant char[] c;
-+statement S;
-+@@
-+
-+-     ret = pm_runtime_get_sync(e);
-++     ret = pm_runtime_resume_and_get(e);
-+      if (ret < 0)
-+-     {
-+              f(...,c,...);
-+-             pm_runtime_put_noidle(e);
-+-     }
-+      else S
-+
-+@r4 depends on patch && !context && !org && !report@
-+expression ret,e;
-+identifier f;
-+constant char[] c;
-+statement S;
-+@@
-+
-+-     ret = pm_runtime_get_sync(e);
-++     ret = pm_runtime_resume_and_get(e);
-+      if (ret < 0) {
-+              f(...,c,...);
-+-             pm_runtime_put_noidle(e);
-+	      ...
-+      } else S
-+
-+// ----------------------------------------------------------------------------
-+
-+@r2_context depends on !patch && (context || org || report)@
-+statement S;
-+expression e, ret;
-+position j0, j1;
-+@@
-+
-+*     ret@j0 = pm_runtime_get_sync(e);
-+      if (ret < 0) {
-+*             pm_runtime_put_noidle@j1(e);
-+	      ...
-+      } else S
-+
-+@r3_context depends on !patch && (context || org || report)@
-+identifier f;
-+statement S;
-+constant char []c;
-+expression e, ret;
-+position j0, j1;
-+@@
-+
-+*     ret@j0 = pm_runtime_get_sync(e);
-+      if (ret < 0) {
-+              f(...,c,...);
-+*             pm_runtime_put_noidle@j1(e);
-+	      ...
-+      } else S
-+
-+// ----------------------------------------------------------------------------
-+
-+@script:python r2_org depends on org@
-+j0 << r2_context.j0;
-+j1 << r2_context.j1;
-+@@
-+
-+msg = "WARNING: opportunity for pm_runtime_resume_and_get"
-+coccilib.org.print_todo(j0[0], msg)
-+coccilib.org.print_link(j1[0], "")
-+
-+@script:python r3_org depends on org@
-+j0 << r3_context.j0;
-+j1 << r3_context.j1;
-+@@
-+
-+msg = "WARNING: opportunity for pm_runtime_resume_and_get"
-+coccilib.org.print_todo(j0[0], msg)
-+coccilib.org.print_link(j1[0], "")
-+
-+// ----------------------------------------------------------------------------
-+
-+@script:python r2_report depends on report@
-+j0 << r2_context.j0;
-+j1 << r2_context.j1;
-+@@
-+
-+msg = "WARNING: opportunity for pm_runtime_resume_and_get on line %s." % (j0[0].line)
-+coccilib.report.print_report(j0[0], msg)
-+
-+@script:python r3_report depends on report@
-+j0 << r3_context.j0;
-+j1 << r3_context.j1;
-+@@
-+
-+msg = "WARNING: opportunity for pm_runtime_resume_and_get on %s." % (j0[0].line)
-+coccilib.report.print_report(j0[0], msg)
-+
+SGkgQ29saW4sDQoNCk9uIFRodSwgMjAyMS0wNC0yOSBhdCAxMjowMCArMDEwMCwgQ29saW4gS2lu
+ZyB3cm90ZToNCj4gRnJvbTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNv
+bT4NCj4gDQo+IFRoZSBjYWxsIHRvIHBsYXRmb3JtX2dldF9yZXNvdXJjZV9ieW5hbWUgY2FuIHBv
+dGVudGlhbGx5IHJldHVybiBudWxsLCBzbw0KPiBhZGQgYSBudWxsIHBvaW50ZXIgY2hlY2sgdG8g
+YXZvaWQgYSBudWxsIHBvaW50ZXIgZGVyZWZlcmVuY2UgaXNzdWUuDQo+IA0KPiBBZGRyZXNzZXMt
+Q292ZXJpdHk6ICgiRGVyZWZlcmVuY2UgbnVsbCByZXR1cm4iKQ0KPiBGaXhlczogNDQxOTAzZDll
+OGYwICgiUENJOiBtZWRpYXRlay1nZW4zOiBBZGQgTWVkaWFUZWsgR2VuMyBkcml2ZXIgZm9yIE1U
+ODE5MiIpDQo+IFNpZ25lZC1vZmYtYnk6IENvbGluIElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9u
+aWNhbC5jb20+DQo+IC0tLQ0KPiAgZHJpdmVycy9wY2kvY29udHJvbGxlci9wY2llLW1lZGlhdGVr
+LWdlbjMuYyB8IDIgKysNCj4gIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKykNCj4gDQo+
+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3BjaS9jb250cm9sbGVyL3BjaWUtbWVkaWF0ZWstZ2VuMy5j
+IGIvZHJpdmVycy9wY2kvY29udHJvbGxlci9wY2llLW1lZGlhdGVrLWdlbjMuYw0KPiBpbmRleCAy
+MDE2NWU0YTc1YjIuLjNjNWI5NzcxNmQ0MCAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9wY2kvY29u
+dHJvbGxlci9wY2llLW1lZGlhdGVrLWdlbjMuYw0KPiArKysgYi9kcml2ZXJzL3BjaS9jb250cm9s
+bGVyL3BjaWUtbWVkaWF0ZWstZ2VuMy5jDQo+IEBAIC03MjEsNiArNzIxLDggQEAgc3RhdGljIGlu
+dCBtdGtfcGNpZV9wYXJzZV9wb3J0KHN0cnVjdCBtdGtfcGNpZV9wb3J0ICpwb3J0KQ0KPiAgCWlu
+dCByZXQ7DQo+ICANCj4gIAlyZWdzID0gcGxhdGZvcm1fZ2V0X3Jlc291cmNlX2J5bmFtZShwZGV2
+LCBJT1JFU09VUkNFX01FTSwgInBjaWUtbWFjIik7DQo+ICsJaWYgKCFyZWdzKQ0KPiArCQlyZXR1
+cm4gLUVJTlZBTDsNCg0KVGhhbmtzIGZvciB5b3VyIHBhdGNoLg0KDQpkZXZtX2lvcmVtYXBfcmVz
+b3VyY2UoKSB3aWxsIGNoZWNrIGFuZCBkZWNvZGUgdGhpcyBudWxsIHBvaW50ZXINCmRlcmVmZXJl
+bmNlIGVycm9yLCBzbyBJIGRvbid0IHRoaW5rIHdlIG5lZWQgdG8gY2hlY2sgaGVyZS4NCg0KVGhh
+bmtzLg0KDQo+ICAJcG9ydC0+YmFzZSA9IGRldm1faW9yZW1hcF9yZXNvdXJjZShkZXYsIHJlZ3Mp
+Ow0KPiAgCWlmIChJU19FUlIocG9ydC0+YmFzZSkpIHsNCj4gIAkJZGV2X2VycihkZXYsICJmYWls
+ZWQgdG8gbWFwIHJlZ2lzdGVyIGJhc2VcbiIpOw0KDQoNCg==
 
