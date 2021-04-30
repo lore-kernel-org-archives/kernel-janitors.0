@@ -2,59 +2,54 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.3 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BF6CC433ED
-	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Apr 2021 07:47:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4936C433B4
+	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Apr 2021 08:40:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4B4706101B
-	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Apr 2021 07:47:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9128D613EE
+	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Apr 2021 08:40:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230518AbhD3Hsa (ORCPT
+        id S229669AbhD3IlN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 30 Apr 2021 03:48:30 -0400
-Received: from smtp07.smtpout.orange.fr ([80.12.242.129]:60312 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230494AbhD3Hr6 (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 30 Apr 2021 03:47:58 -0400
-Received: from [192.168.1.18] ([86.243.172.93])
-        by mwinf5d87 with ME
-        id yvn72400521Fzsu03vn7oy; Fri, 30 Apr 2021 09:47:08 +0200
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 30 Apr 2021 09:47:08 +0200
-X-ME-IP: 86.243.172.93
-Subject: Re: [PATCH][next] PCI: mediatek-gen3: Add missing null pointer check
-To:     Colin King <colin.king@canonical.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
+        Fri, 30 Apr 2021 04:41:13 -0400
+Received: from foss.arm.com ([217.140.110.172]:43684 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229606AbhD3IlM (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 30 Apr 2021 04:41:12 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3907AED1;
+        Fri, 30 Apr 2021 01:40:08 -0700 (PDT)
+Received: from lpieralisi (e121166-lin.cambridge.arm.com [10.1.196.255])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A61233F70D;
+        Fri, 30 Apr 2021 01:40:06 -0700 (PDT)
+Date:   Fri, 30 Apr 2021 09:40:01 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Ryder Lee <ryder.lee@mediatek.com>,
         Jianjun Wang <jianjun.wang@mediatek.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Rob Herring <robh@kernel.org>,
         Bjorn Helgaas <bhelgaas@google.com>,
         Matthias Brugger <matthias.bgg@gmail.com>,
         linux-pci@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+        linux-arm-kernel@lists.infradead.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] PCI: mediatek-gen3: Add missing null pointer check
+Message-ID: <20210430084001.GA12388@lpieralisi>
 References: <20210429110040.63119-1-colin.king@canonical.com>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Message-ID: <7a512e3a-2897-ac12-ac6e-06be28735279@wanadoo.fr>
-Date:   Fri, 30 Apr 2021 09:47:06 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.0
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <20210429110040.63119-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 29/04/2021 à 13:00, Colin King a écrit :
+On Thu, Apr 29, 2021 at 12:00:40PM +0100, Colin King wrote:
 > From: Colin Ian King <colin.king@canonical.com>
 > 
 > The call to platform_get_resource_byname can potentially return null, so
@@ -64,34 +59,27 @@ Le 29/04/2021 à 13:00, Colin King a écrit :
 > Fixes: 441903d9e8f0 ("PCI: mediatek-gen3: Add MediaTek Gen3 driver for MT8192")
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
->   drivers/pci/controller/pcie-mediatek-gen3.c | 2 ++
->   1 file changed, 2 insertions(+)
-> 
+>  drivers/pci/controller/pcie-mediatek-gen3.c | 2 ++
+>  1 file changed, 2 insertions(+)
+
+Squashed into the commit it is fixing, in my pci/mediatek branch.
+
+Thanks,
+Lorenzo
+
 > diff --git a/drivers/pci/controller/pcie-mediatek-gen3.c b/drivers/pci/controller/pcie-mediatek-gen3.c
 > index 20165e4a75b2..3c5b97716d40 100644
 > --- a/drivers/pci/controller/pcie-mediatek-gen3.c
 > +++ b/drivers/pci/controller/pcie-mediatek-gen3.c
 > @@ -721,6 +721,8 @@ static int mtk_pcie_parse_port(struct mtk_pcie_port *port)
->   	int ret;
->   
->   	regs = platform_get_resource_byname(pdev, IORESOURCE_MEM, "pcie-mac");
+>  	int ret;
+>  
+>  	regs = platform_get_resource_byname(pdev, IORESOURCE_MEM, "pcie-mac");
 > +	if (!regs)
 > +		return -EINVAL;
->   	port->base = devm_ioremap_resource(dev, regs);
->   	if (IS_ERR(port->base)) {
->   		dev_err(dev, "failed to map register base\n");
+>  	port->base = devm_ioremap_resource(dev, regs);
+>  	if (IS_ERR(port->base)) {
+>  		dev_err(dev, "failed to map register base\n");
+> -- 
+> 2.30.2
 > 
-
-Nitpick:
-    Using 'devm_platform_ioremap_resource_byname' is slightly less 
-verbose and should please Coverity.
-
-
-Also, which git repo are you using? On linux-next ([1)], your proposed 
-patch is already part of "PCI: mediatek-gen3: Add MediaTek Gen3 driver 
-for MT8192".
-
-[1]: 
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/log/drivers/pci/controller/pcie-mediatek-gen3.c
-
-CJ
