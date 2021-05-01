@@ -2,79 +2,102 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 928DBC433ED
-	for <kernel-janitors@archiver.kernel.org>; Sat,  1 May 2021 15:13:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 396EAC433ED
+	for <kernel-janitors@archiver.kernel.org>; Sat,  1 May 2021 22:51:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5B74761606
-	for <kernel-janitors@archiver.kernel.org>; Sat,  1 May 2021 15:13:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09F1E61409
+	for <kernel-janitors@archiver.kernel.org>; Sat,  1 May 2021 22:51:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230450AbhEAPOM (ORCPT
+        id S231950AbhEAWv6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 1 May 2021 11:14:12 -0400
-Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:56171 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230250AbhEAPOL (ORCPT
+        Sat, 1 May 2021 18:51:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43772 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231739AbhEAWv5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 1 May 2021 11:14:11 -0400
-Received: from localhost.localdomain ([86.243.172.93])
-        by mwinf5d06 with ME
-        id zTDH2400S21Fzsu03TDJFe; Sat, 01 May 2021 17:13:20 +0200
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 01 May 2021 17:13:20 +0200
-X-ME-IP: 86.243.172.93
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     hjc@rock-chips.com, heiko@sntech.de, airlied@linux.ie,
-        daniel@ffwll.ch, miquel.raynal@bootlin.com
-Cc:     dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] drm/rockchip: Fix an error handling path
-Date:   Sat,  1 May 2021 17:13:16 +0200
-Message-Id: <248220d4815dc8c8088cebfab7d6df5f70518438.1619881852.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Sat, 1 May 2021 18:51:57 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2271EC06174A;
+        Sat,  1 May 2021 15:51:06 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id s5-20020a7bc0c50000b0290147d0c21c51so1288710wmh.4;
+        Sat, 01 May 2021 15:51:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=PwSV7FUhyJ1mxH+xfT6PmlAiJ1kI3txZ1OhhYMJ+KoM=;
+        b=bNYTxQvFFKjVbSmFkmHmnAwxnykw2R7jrMyD8gjKefiQk700UnoZXsRZZNk0X1XdtV
+         1boXIS3JLX3+uzTrFwRCTaMuQ6wKcHJMPr4PGgvvbLfstIXZVsV6InLfEQFUhqQSU2/d
+         s0XphrdWof5VwAT9Xf+vyKViTmHeuKMkWoqRSlrsmGjUg496WxbTJodgoapM8ON2y/VG
+         FapDERrqnRsisWw7Nt1cwl0ab+2/im04sb3cSeQiJhfOuTYuyPJUhMrtYOD3MB724E9B
+         CfQjfjxiUqcN/plFO1tSyapsxUvFvWIT/AJemOheYuIxKBUzrDHnl2WE7akykKz4lhTv
+         GwQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=PwSV7FUhyJ1mxH+xfT6PmlAiJ1kI3txZ1OhhYMJ+KoM=;
+        b=eYuR7DDW/6UAMExE/QeE28FKj9p9tBq3+d9q6X2Vgp9csvSEcHr45RBPOAdJ63nwFx
+         ZnC0vZhed86Wc/m5EfDS/Ni+hIepLfvgPaFbzl3kL8QmVG2Ye/a8vJyEstgKRgtOWCl8
+         6IBNNRXItFx1+MS65yNZ7gnpfcmFDLO1HS85EjybvdUg4QSDWBBDKDgqbagXSIBfpkT8
+         VPgR8pxNF2UFhE8DGbWvgBSJ9DbgjnPpQLQkxb+1rp7BjuzFJ9Rd2feRxErW/7vDR3K2
+         qt5EySl5DMzKzdV6LlgKb3x/YZrZSn8qceYz/BTzJkDC9qYwIn4N96OfMyOt6PF5VUhi
+         XkVQ==
+X-Gm-Message-State: AOAM532DjoIRTeGiOApNTXRV9f5y43PvJv6sM00uLRujIwvOmHSyHYLx
+        BvJ3MaTy+ry85WQth5B+g4wOIdlL9KOD5bgG
+X-Google-Smtp-Source: ABdhPJw4heNvR+XcJW4rZ0mvVyn/rkIN69A1d9f4P8AgO5ne57CgcPSt73A8oWx0ai5jS7goZCnS7A==
+X-Received: by 2002:a1c:804a:: with SMTP id b71mr13678574wmd.82.1619909464863;
+        Sat, 01 May 2021 15:51:04 -0700 (PDT)
+Received: from localhost.localdomain ([102.156.189.222])
+        by smtp.gmail.com with ESMTPSA id t17sm2570172wrx.40.2021.05.01.15.51.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 01 May 2021 15:51:04 -0700 (PDT)
+From:   Khaled ROMDHANI <khaledromdhani216@gmail.com>
+To:     clm@fb.com, josef@toxicpanda.com, dsterba@suse.com
+Cc:     Khaled ROMDHANI <khaledromdhani216@gmail.com>,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] fs/btrfs: Fix uninitialized variable
+Date:   Sat,  1 May 2021 23:50:46 +0100
+Message-Id: <20210501225046.9138-1-khaledromdhani216@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-'ret' is know to be 0 a this point. Checking the return value of
-'phy_init()' and 'phy_set_mode()' was intended instead.
+Fix the warning: variable 'zone' is used
+uninitialized whenever '?:' condition is true.
 
-So add the missing assignments.
+Fix that by preventing the code to reach
+the last assertion. If the variable 'mirror'
+is invalid, the assertion fails and we return
+immediately.
 
-Fixes: cca1705c3d89 ("drm/rockchip: lvds: Add PX30 support")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Khaled ROMDHANI <khaledromdhani216@gmail.com>
 ---
- drivers/gpu/drm/rockchip/rockchip_lvds.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/btrfs/zoned.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/rockchip/rockchip_lvds.c b/drivers/gpu/drm/rockchip/rockchip_lvds.c
-index bd5ba10822c2..489d63c05c0d 100644
---- a/drivers/gpu/drm/rockchip/rockchip_lvds.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_lvds.c
-@@ -499,11 +499,11 @@ static int px30_lvds_probe(struct platform_device *pdev,
- 	if (IS_ERR(lvds->dphy))
- 		return PTR_ERR(lvds->dphy);
+diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
+index 8250ab3f0868..23da9d8dc184 100644
+--- a/fs/btrfs/zoned.c
++++ b/fs/btrfs/zoned.c
+@@ -145,7 +145,7 @@ static inline u32 sb_zone_number(int shift, int mirror)
+ 	case 2: zone = 1ULL << (BTRFS_SB_LOG_SECOND_SHIFT - shift); break;
+ 	default:
+ 		ASSERT((u32)mirror < 3);
+-		break;
++		return 0;
+ 	}
  
--	phy_init(lvds->dphy);
-+	ret = phy_init(lvds->dphy);
- 	if (ret)
- 		return ret;
- 
--	phy_set_mode(lvds->dphy, PHY_MODE_LVDS);
-+	ret = phy_set_mode(lvds->dphy, PHY_MODE_LVDS);
- 	if (ret)
- 		return ret;
- 
+ 	ASSERT(zone <= U32_MAX);
+
+base-commit: b5c294aac8a6164ddf38bfbdd1776091b4a1eeba
 -- 
-2.30.2
+2.17.1
 
