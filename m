@@ -2,98 +2,288 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 335D9C433B4
-	for <kernel-janitors@archiver.kernel.org>; Sun,  2 May 2021 16:18:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1A30C433B4
+	for <kernel-janitors@archiver.kernel.org>; Sun,  2 May 2021 19:29:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0DF9261359
-	for <kernel-janitors@archiver.kernel.org>; Sun,  2 May 2021 16:18:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 800EF60FD8
+	for <kernel-janitors@archiver.kernel.org>; Sun,  2 May 2021 19:29:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232320AbhEBQS4 (ORCPT
+        id S232363AbhEBTap (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 2 May 2021 12:18:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42092 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230110AbhEBQSz (ORCPT
+        Sun, 2 May 2021 15:30:45 -0400
+Received: from smtp04.smtpout.orange.fr ([80.12.242.126]:24693 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231818AbhEBTap (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 2 May 2021 12:18:55 -0400
-Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 217AAC06174A;
-        Sun,  2 May 2021 09:18:04 -0700 (PDT)
-Received: by mail-pg1-x535.google.com with SMTP id d10so1992289pgf.12;
-        Sun, 02 May 2021 09:18:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=G8PwBdGIDFXi8DL6S5B96fgDJSf68cMbk9MM93GuLb8=;
-        b=NGjgfhgP5Kz/zIBjKbDdRk08XqS6IRvcM3TgBu0WbQtbvXwNMJGqH71VKiS3Bg0Sp6
-         u9MwBxE8XD2W5V866Axa4yIzXNPVTMHzxuhZU/UgtGaXwtMnX4+MLE4e4K4u2PhGqG6y
-         Qmdht1wqh9MRMiskgpAvIM/lTenfxdV5dUxgWU67M3wl5KgxOs73LbCt32dyT8mV1EvJ
-         rc0R8MiyBWIeXuhfME4GF29b6kFPIFgjjBLqZzNwjh/8AdyXi/WlqxcIlY5DOWBEXzrJ
-         FG6IJCXVxMmI23wYlr72o/7IGtwSn1emo6EhVf2UueKW2CrbB8nNJgU62xJ/AQHsaekd
-         zFfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=G8PwBdGIDFXi8DL6S5B96fgDJSf68cMbk9MM93GuLb8=;
-        b=Gs7Wu12lbEe9YBV1whD1q4QinPtoUsGceGFKUEXbMNrVzVVCyJQXCAT8pBNcWFU8Dk
-         6HY5g6E3nzYm31Fjh+zX/JEALO1y2bevrsYSPWpKF3mPpy+31YPMqR3K0ygi9F6qh+Uj
-         zJd3BjmU0W4m/6hGUSL/j4nqbopf3p2S7Sgt7+J86tbrq5kGiT3TjRa3WAM/XbS3+5ho
-         M84rfL69e85LmblfSp/neutKq2/kpMhfDsk58trxPSG9LGIyi5T19yIZQ3Y0x0DiJZhX
-         pOohlyHHAqI9VbzYsUbXdu70V/qkf8Waj/U+bFNYX1sQtFFVCNvdfKxV5oXcO630WjdT
-         540A==
-X-Gm-Message-State: AOAM533KcGxYIBC8txh7J5W9Yi9839Q5wgUhrPbbBj3HRkjs9HG7k7LY
-        MEOcrdiawV72Q1ansmJ+15nv7zv4yI3RTH9r4pwdj3JG
-X-Google-Smtp-Source: ABdhPJw7TeIfztwe4iXqg3z+DF0jLO9LrSX7vnK2rcSilC0eNWhzSUUYfebfYb134+S6so67J7mvuA==
-X-Received: by 2002:a63:f258:: with SMTP id d24mr14197280pgk.174.1619972283685;
-        Sun, 02 May 2021 09:18:03 -0700 (PDT)
-Received: from fedora ([103.125.235.29])
-        by smtp.gmail.com with ESMTPSA id n8sm6688050pfu.111.2021.05.02.09.17.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 May 2021 09:18:03 -0700 (PDT)
-Date:   Sun, 2 May 2021 11:17:52 -0500
-From:   Nigel Christian <nigel.l.christian@gmail.com>
-To:     "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>
-Cc:     linux-hyperv@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] hv_balloon: remove redundant assignment
-Message-ID: <YI7QsN9cY/Z9NgW4@fedora>
+        Sun, 2 May 2021 15:30:45 -0400
+Received: from localhost.localdomain ([86.243.172.93])
+        by mwinf5d60 with ME
+        id zvVp2400521Fzsu03vVpt8; Sun, 02 May 2021 21:29:51 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 02 May 2021 21:29:51 +0200
+X-ME-IP: 86.243.172.93
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     herbert@gondor.apana.org.au, davem@davemloft.net
+Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [RFC PATCH] crypto: arc4: Implement a version optimized for memory usage
+Date:   Sun,  2 May 2021 21:29:46 +0200
+Message-Id: <c52bd8972c9763c3fac685d7c6af3c46a23a1477.1619983555.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The variable region_start is being assigned a value that is
-not read. Remove it.
+The S array does not need to be u32, u8 is enough
+On machine which have efficient unaligned access, use u8 to save some
+memory.
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Nigel Christian <nigel.l.christian@gmail.com>
+So, provide a version optimized for memory usage in such a case.
+
+Based on my testing, the size of arc4_ctx is:
+	u8  version:  264
+	u32 version: 1032
+
+On my machine, the u8 version is about 5% faster.
+It save ~800 bytes of memory or stack depending on how arc4_ctx is stored.
+It is likely to be more cache friendly.
+
+It has been tested an Core i7-3770 with the following test program:
+
+ #include <stdlib.h>
+ #include <stdio.h>
+ #include <string.h>
+
+ #define u8      unsigned char
+ #define u32     unsigned int
+ #define true    1
+
+struct arc4_ctx_8 {
+	u8 S[256];
+	u32 x, y;
+};
+struct arc4_ctx_32 {
+	u32 S[256];
+	u32 x, y;
+};
+
+ #define S_type	u8
+int arc4_setkey_8(struct arc4_ctx_8 *ctx, const u8 *in_key, unsigned int key_len)
+{
+	int i, j = 0, k = 0;
+
+	ctx->x = 1;
+	ctx->y = 0;
+
+	for (i = 0; i < 256; i++)
+		ctx->S[i] = i;
+
+	for (i = 0; i < 256; i++) {
+		S_type a = ctx->S[i];
+
+		j = (j + in_key[k] + a) & 0xff;
+		ctx->S[i] = ctx->S[j];
+		ctx->S[j] = a;
+		if (++k >= key_len)
+			k = 0;
+	}
+
+	return 0;
+}
+
+void arc4_crypt_8(struct arc4_ctx_8 *ctx, u8 *out, const u8 *in, unsigned int len)
+{
+	S_type *const S = ctx->S;
+	S_type a, b, ta, tb;
+	u32 x, y, ty;
+
+	if (len == 0)
+		return;
+
+	x = ctx->x;
+	y = ctx->y;
+
+	a = S[x];
+	y = (y + a) & 0xff;
+	b = S[y];
+
+	do {
+		S[y] = a;
+		a = (a + b) & 0xff;
+		S[x] = b;
+		x = (x + 1) & 0xff;
+		ta = S[x];
+		ty = (y + ta) & 0xff;
+		tb = S[ty];
+		*out++ = *in++ ^ S[a];
+		if (--len == 0)
+			break;
+		y = ty;
+		a = ta;
+		b = tb;
+	} while (true);
+
+	ctx->x = x;
+	ctx->y = y;
+}
+
+ #undef S_type
+ #define S_type	u32
+int arc4_setkey_32(struct arc4_ctx_32 *ctx, const u8 *in_key, unsigned int key_len)
+{
+	int i, j = 0, k = 0;
+
+	ctx->x = 1;
+	ctx->y = 0;
+
+	for (i = 0; i < 256; i++)
+		ctx->S[i] = i;
+
+	for (i = 0; i < 256; i++) {
+		S_type a = ctx->S[i];
+
+		j = (j + in_key[k] + a) & 0xff;
+		ctx->S[i] = ctx->S[j];
+		ctx->S[j] = a;
+		if (++k >= key_len)
+			k = 0;
+	}
+
+	return 0;
+}
+
+void arc4_crypt_32(struct arc4_ctx_32 *ctx, u8 *out, const u8 *in, unsigned int len)
+{
+	S_type *const S = ctx->S;
+	S_type a, b, ta, tb;
+	u32 x, y, ty;
+
+	if (len == 0)
+		return;
+
+	x = ctx->x;
+	y = ctx->y;
+
+	a = S[x];
+	y = (y + a) & 0xff;
+	b = S[y];
+
+	do {
+		S[y] = a;
+		a = (a + b) & 0xff;
+		S[x] = b;
+		x = (x + 1) & 0xff;
+		ta = S[x];
+		ty = (y + ta) & 0xff;
+		tb = S[ty];
+		*out++ = *in++ ^ S[a];
+		if (--len == 0)
+			break;
+		y = ty;
+		a = ta;
+		b = tb;
+	} while (true);
+
+	ctx->x = x;
+	ctx->y = y;
+}
+
+ #define KEY     "AZERTY"
+ #define in      "AZERTYUIOP_QSDFGHJKLM_WXCVBN"
+
+int main() {
+        long i;
+        struct arc4_ctx_8 ctx_8;
+        u8 out8[1024] = { };
+        struct arc4_ctx_32 ctx_32;
+        u8 out32[1024] = { };
+
+        arc4_setkey_8(&ctx_8, KEY, strlen(KEY));
+        arc4_crypt_8(&ctx_8, out8, in, strlen(in));
+
+        arc4_setkey_32(&ctx_32, KEY, strlen(KEY));
+        arc4_crypt_32(&ctx_32, out32, in, strlen(in));
+
+        printf("%ld vs %ld\n", sizeof(ctx_8), sizeof(ctx_32));
+        if (memcmp(out8, out32, 1024) == 0)
+                printf("Ok\n");
+        else
+                printf("Broken\n");
+
+        return 0;
+}
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/hv/hv_balloon.c | 1 -
- 1 file changed, 1 deletion(-)
+The idea came from code found in staging/rtl8712/
+See at the top of:
+   https://elixir.bootlin.com/linux/v5.12/source/drivers/staging/rtl8712/rtl871x_security.c
 
-diff --git a/drivers/hv/hv_balloon.c b/drivers/hv/hv_balloon.c
-index 58af84e30144..7f11ea07d698 100644
---- a/drivers/hv/hv_balloon.c
-+++ b/drivers/hv/hv_balloon.c
-@@ -1010,7 +1010,6 @@ static void hot_add_req(struct work_struct *dummy)
- 		 * that need to be hot-added while ensuring the alignment
- 		 * and size requirements of Linux as it relates to hot-add.
- 		 */
--		region_start = pg_start;
- 		region_size = (pfn_cnt / HA_CHUNK) * HA_CHUNK;
- 		if (pfn_cnt % HA_CHUNK)
- 			region_size += HA_CHUNK;
+More precisely, in an attempt to clean staging/rtl8712/, I triggered the
+kernel test robot about some increasing stack usage:
+   https://lore.kernel.org/kernel-janitors/YHQUH+Nqc%2FzS14Tb@kroah.com/T/#m832a01a9d1517e7efc4f671ed46deae9993d6ae9
+
+The above patch works for me, but should be taken as a RFC.
+---
+ include/crypto/arc4.h | 8 +++++++-
+ lib/crypto/arc4.c     | 8 ++++----
+ 2 files changed, 11 insertions(+), 5 deletions(-)
+
+diff --git a/include/crypto/arc4.h b/include/crypto/arc4.h
+index f3c22fe01704..39545ed486e2 100644
+--- a/include/crypto/arc4.h
++++ b/include/crypto/arc4.h
+@@ -12,8 +12,14 @@
+ #define ARC4_MAX_KEY_SIZE	256
+ #define ARC4_BLOCK_SIZE		1
+ 
++#if defined(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS)
++#define S_type	u8
++#else
++#define S_type	u32
++#endif
++
+ struct arc4_ctx {
+-	u32 S[256];
++	S_type S[256];
+ 	u32 x, y;
+ };
+ 
+diff --git a/lib/crypto/arc4.c b/lib/crypto/arc4.c
+index c2020f19c652..e0be0c2a08d9 100644
+--- a/lib/crypto/arc4.c
++++ b/lib/crypto/arc4.c
+@@ -21,7 +21,7 @@ int arc4_setkey(struct arc4_ctx *ctx, const u8 *in_key, unsigned int key_len)
+ 		ctx->S[i] = i;
+ 
+ 	for (i = 0; i < 256; i++) {
+-		u32 a = ctx->S[i];
++		S_type a = ctx->S[i];
+ 
+ 		j = (j + in_key[k] + a) & 0xff;
+ 		ctx->S[i] = ctx->S[j];
+@@ -36,9 +36,9 @@ EXPORT_SYMBOL(arc4_setkey);
+ 
+ void arc4_crypt(struct arc4_ctx *ctx, u8 *out, const u8 *in, unsigned int len)
+ {
+-	u32 *const S = ctx->S;
+-	u32 x, y, a, b;
+-	u32 ty, ta, tb;
++	S_type *const S = ctx->S;
++	S_type a, b, ta, tb;
++	u32 x, y, ty;
+ 
+ 	if (len == 0)
+ 		return;
 -- 
-2.31.1
+2.30.2
 
