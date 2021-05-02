@@ -2,102 +2,114 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 396EAC433ED
-	for <kernel-janitors@archiver.kernel.org>; Sat,  1 May 2021 22:51:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D07BCC433B4
+	for <kernel-janitors@archiver.kernel.org>; Sun,  2 May 2021 07:21:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 09F1E61409
-	for <kernel-janitors@archiver.kernel.org>; Sat,  1 May 2021 22:51:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88BD961408
+	for <kernel-janitors@archiver.kernel.org>; Sun,  2 May 2021 07:21:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231950AbhEAWv6 (ORCPT
+        id S229754AbhEBHWF (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 1 May 2021 18:51:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43772 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231739AbhEAWv5 (ORCPT
+        Sun, 2 May 2021 03:22:05 -0400
+Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:36919 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229545AbhEBHWF (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 1 May 2021 18:51:57 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2271EC06174A;
-        Sat,  1 May 2021 15:51:06 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id s5-20020a7bc0c50000b0290147d0c21c51so1288710wmh.4;
-        Sat, 01 May 2021 15:51:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=PwSV7FUhyJ1mxH+xfT6PmlAiJ1kI3txZ1OhhYMJ+KoM=;
-        b=bNYTxQvFFKjVbSmFkmHmnAwxnykw2R7jrMyD8gjKefiQk700UnoZXsRZZNk0X1XdtV
-         1boXIS3JLX3+uzTrFwRCTaMuQ6wKcHJMPr4PGgvvbLfstIXZVsV6InLfEQFUhqQSU2/d
-         s0XphrdWof5VwAT9Xf+vyKViTmHeuKMkWoqRSlrsmGjUg496WxbTJodgoapM8ON2y/VG
-         FapDERrqnRsisWw7Nt1cwl0ab+2/im04sb3cSeQiJhfOuTYuyPJUhMrtYOD3MB724E9B
-         CfQjfjxiUqcN/plFO1tSyapsxUvFvWIT/AJemOheYuIxKBUzrDHnl2WE7akykKz4lhTv
-         GwQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=PwSV7FUhyJ1mxH+xfT6PmlAiJ1kI3txZ1OhhYMJ+KoM=;
-        b=eYuR7DDW/6UAMExE/QeE28FKj9p9tBq3+d9q6X2Vgp9csvSEcHr45RBPOAdJ63nwFx
-         ZnC0vZhed86Wc/m5EfDS/Ni+hIepLfvgPaFbzl3kL8QmVG2Ye/a8vJyEstgKRgtOWCl8
-         6IBNNRXItFx1+MS65yNZ7gnpfcmFDLO1HS85EjybvdUg4QSDWBBDKDgqbagXSIBfpkT8
-         VPgR8pxNF2UFhE8DGbWvgBSJ9DbgjnPpQLQkxb+1rp7BjuzFJ9Rd2feRxErW/7vDR3K2
-         qt5EySl5DMzKzdV6LlgKb3x/YZrZSn8qceYz/BTzJkDC9qYwIn4N96OfMyOt6PF5VUhi
-         XkVQ==
-X-Gm-Message-State: AOAM532DjoIRTeGiOApNTXRV9f5y43PvJv6sM00uLRujIwvOmHSyHYLx
-        BvJ3MaTy+ry85WQth5B+g4wOIdlL9KOD5bgG
-X-Google-Smtp-Source: ABdhPJw4heNvR+XcJW4rZ0mvVyn/rkIN69A1d9f4P8AgO5ne57CgcPSt73A8oWx0ai5jS7goZCnS7A==
-X-Received: by 2002:a1c:804a:: with SMTP id b71mr13678574wmd.82.1619909464863;
-        Sat, 01 May 2021 15:51:04 -0700 (PDT)
-Received: from localhost.localdomain ([102.156.189.222])
-        by smtp.gmail.com with ESMTPSA id t17sm2570172wrx.40.2021.05.01.15.51.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 May 2021 15:51:04 -0700 (PDT)
-From:   Khaled ROMDHANI <khaledromdhani216@gmail.com>
-To:     clm@fb.com, josef@toxicpanda.com, dsterba@suse.com
-Cc:     Khaled ROMDHANI <khaledromdhani216@gmail.com>,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] fs/btrfs: Fix uninitialized variable
-Date:   Sat,  1 May 2021 23:50:46 +0100
-Message-Id: <20210501225046.9138-1-khaledromdhani216@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Sun, 2 May 2021 03:22:05 -0400
+Received: from localhost.localdomain ([86.243.172.93])
+        by mwinf5d84 with ME
+        id zjMA2400F21Fzsu03jMAmL; Sun, 02 May 2021 09:21:11 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 02 May 2021 09:21:11 +0200
+X-ME-IP: 86.243.172.93
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Larry.Finger@lwfinger.net, florian.c.schilhabel@googlemail.com,
+        gregkh@linuxfoundation.org
+Cc:     linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] staging: rtl8712: Fix some tests against some 'data' subtype frames
+Date:   Sun,  2 May 2021 09:21:08 +0200
+Message-Id: <44aebfa3c5ce8f45ae05369c73e9ff77c6d271f9.1619939806.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Fix the warning: variable 'zone' is used
-uninitialized whenever '?:' condition is true.
+Commit 6e2baa44c6d1 ("staging: rtl8712: remove enum WIFI_FRAME_SUBTYPE")
+was wrong because:
+	WIFI_DATA_NULL != IEEE80211_STYPE_NULLFUNC
+	WIFI_DATA_CFACK != IEEE80211_STYPE_DATA_CFACK
+	WIFI_DATA_CFPOLL != IEEE80211_STYPE_DATA_CFPOLL
+	WIFI_DATA_CFACKPOLL != IEEE80211_STYPE_DATA_CFACKPOLL
 
-Fix that by preventing the code to reach
-the last assertion. If the variable 'mirror'
-is invalid, the assertion fails and we return
-immediately.
+the WIFI_DATA_xxx definitions include WIFI_DATA_TYPE, which is 'BIT(3)'.
+Restore the previous behavior by adding the missing
+'IEEE80211_FTYPE_DATA |' (0x0008, that is to say BIT(3)) when these values
+are used.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Khaled ROMDHANI <khaledromdhani216@gmail.com>
+Hopefully, the wrong commit was small enough and hand review is possible.
+
+Fixes: 6e2baa44c6d1 ("staging: rtl8712: remove enum WIFI_FRAME_SUBTYPE")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- fs/btrfs/zoned.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Apologies for the noise and for the wrong initial commit :(
+---
+ drivers/staging/rtl8712/rtl871x_recv.c     |  2 +-
+ drivers/staging/rtl8712/rtl871x_security.c | 12 ++++++------
+ 2 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
-index 8250ab3f0868..23da9d8dc184 100644
---- a/fs/btrfs/zoned.c
-+++ b/fs/btrfs/zoned.c
-@@ -145,7 +145,7 @@ static inline u32 sb_zone_number(int shift, int mirror)
- 	case 2: zone = 1ULL << (BTRFS_SB_LOG_SECOND_SHIFT - shift); break;
- 	default:
- 		ASSERT((u32)mirror < 3);
--		break;
-+		return 0;
- 	}
+diff --git a/drivers/staging/rtl8712/rtl871x_recv.c b/drivers/staging/rtl8712/rtl871x_recv.c
+index db2add576418..c23f6b376111 100644
+--- a/drivers/staging/rtl8712/rtl871x_recv.c
++++ b/drivers/staging/rtl8712/rtl871x_recv.c
+@@ -374,7 +374,7 @@ static sint ap2sta_data_frame(struct _adapter *adapter,
+ 	if (check_fwstate(pmlmepriv, WIFI_STATION_STATE) &&
+ 	    check_fwstate(pmlmepriv, _FW_LINKED)) {
+ 		/* if NULL-frame, drop packet */
+-		if ((GetFrameSubType(ptr)) == IEEE80211_STYPE_NULLFUNC)
++		if ((GetFrameSubType(ptr)) == (IEEE80211_FTYPE_DATA | IEEE80211_STYPE_NULLFUNC))
+ 			return _FAIL;
+ 		/* drop QoS-SubType Data, including QoS NULL,
+ 		 * excluding QoS-Data
+diff --git a/drivers/staging/rtl8712/rtl871x_security.c b/drivers/staging/rtl8712/rtl871x_security.c
+index 63d63f7be481..e0a1c30a8fe6 100644
+--- a/drivers/staging/rtl8712/rtl871x_security.c
++++ b/drivers/staging/rtl8712/rtl871x_security.c
+@@ -1045,9 +1045,9 @@ static void aes_cipher(u8 *key, uint hdrlen,
+ 	else
+ 		a4_exists = 1;
  
- 	ASSERT(zone <= U32_MAX);
-
-base-commit: b5c294aac8a6164ddf38bfbdd1776091b4a1eeba
+-	if ((frtype == IEEE80211_STYPE_DATA_CFACK) ||
+-	    (frtype == IEEE80211_STYPE_DATA_CFPOLL) ||
+-	    (frtype == IEEE80211_STYPE_DATA_CFACKPOLL)) {
++	if ((frtype == (IEEE80211_FTYPE_DATA | IEEE80211_STYPE_DATA_CFACK)) ||
++	    (frtype == (IEEE80211_FTYPE_DATA | IEEE80211_STYPE_DATA_CFPOLL)) ||
++	    (frtype == (IEEE80211_FTYPE_DATA | IEEE80211_STYPE_DATA_CFACKPOLL))) {
+ 		qc_exists = 1;
+ 		if (hdrlen !=  WLAN_HDR_A3_QOS_LEN)
+ 			hdrlen += 2;
+@@ -1225,9 +1225,9 @@ static void aes_decipher(u8 *key, uint hdrlen,
+ 		a4_exists = 0;
+ 	else
+ 		a4_exists = 1;
+-	if ((frtype == IEEE80211_STYPE_DATA_CFACK) ||
+-	    (frtype == IEEE80211_STYPE_DATA_CFPOLL) ||
+-	    (frtype == IEEE80211_STYPE_DATA_CFACKPOLL)) {
++	if ((frtype == (IEEE80211_FTYPE_DATA | IEEE80211_STYPE_DATA_CFACK)) ||
++	    (frtype == (IEEE80211_FTYPE_DATA | IEEE80211_STYPE_DATA_CFPOLL)) ||
++	    (frtype == (IEEE80211_FTYPE_DATA | IEEE80211_STYPE_DATA_CFACKPOLL))) {
+ 		qc_exists = 1;
+ 		if (hdrlen != WLAN_HDR_A3_QOS_LEN)
+ 			hdrlen += 2;
 -- 
-2.17.1
+2.30.2
 
