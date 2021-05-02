@@ -2,65 +2,140 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F35B7C433ED
-	for <kernel-janitors@archiver.kernel.org>; Sun,  2 May 2021 07:42:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B340FC433ED
+	for <kernel-janitors@archiver.kernel.org>; Sun,  2 May 2021 10:17:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AFF91613EC
-	for <kernel-janitors@archiver.kernel.org>; Sun,  2 May 2021 07:42:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A27461285
+	for <kernel-janitors@archiver.kernel.org>; Sun,  2 May 2021 10:17:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229676AbhEBHmz (ORCPT
+        id S230255AbhEBKSt (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 2 May 2021 03:42:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35788 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229536AbhEBHmy (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 2 May 2021 03:42:54 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 8B20D610A5;
-        Sun,  2 May 2021 07:42:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1619941323;
-        bh=t2AWVgBt64kW6rndk3NkV+hojEG6OsDxb3UcSOjsCGA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VgpJJyT9xpu+uMetjaT5aaKVElEupGsCbZzoWwhM5Q0Kn7lfqPOKAYXahFtYK/sLC
-         dUQQ6HVFg0eL0Yf1mrDFuU6yzqkzLkvEPqlqDeMJyYQOa5icItFseoB/j/2kkc2lhr
-         aNOsGak6eVOTF6qJJdXdAozNflrD/FnNA2RNj/5zel/4/idLFr3teEAi98P/CfOXo4
-         KdW1xwmB/sv5PnAVUiMKySyLQKbVnOWPCG6zw0dyhRARwa/Fq7N8IXjMYwD9LKQ2ST
-         3zJWpaIVc+VDXwjfVVI8+d0Rn3Rg2XIUFG4VxUHCIidFj1D0yhvaACx8EdyIsqEn1e
-         YBGQnGV8vW3pA==
-Date:   Sun, 2 May 2021 10:41:59 +0300
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Saeed Mahameed <saeedm@nvidia.com>,
-        "David S. Miller" <dddavem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Yevgeny Kliteynik <kliteyn@nvidia.com>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2 net-next] net/mlx5: net/mlx5: Fix some error messages
-Message-ID: <YI5Xxw9R4DqEQ1uv@unreal>
-References: <YIqTHAq37U57ehAa@mwanda>
+        Sun, 2 May 2021 06:18:49 -0400
+Received: from smtp04.smtpout.orange.fr ([80.12.242.126]:53314 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229754AbhEBKSt (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Sun, 2 May 2021 06:18:49 -0400
+Received: from [192.168.1.18] ([86.243.172.93])
+        by mwinf5d27 with ME
+        id zmHs2400F21Fzsu03mHtWf; Sun, 02 May 2021 12:17:54 +0200
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 02 May 2021 12:17:54 +0200
+X-ME-IP: 86.243.172.93
+Subject: Re: [PATCH] fs/btrfs: Fix uninitialized variable
+To:     Khaled ROMDHANI <khaledromdhani216@gmail.com>, clm@fb.com,
+        josef@toxicpanda.com, dsterba@suse.com
+Cc:     linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <20210501225046.9138-1-khaledromdhani216@gmail.com>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Message-ID: <eba16312-9d50-9549-76c0-b0512a394669@wanadoo.fr>
+Date:   Sun, 2 May 2021 12:17:51 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YIqTHAq37U57ehAa@mwanda>
+In-Reply-To: <20210501225046.9138-1-khaledromdhani216@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Apr 29, 2021 at 02:06:04PM +0300, Dan Carpenter wrote:
-> This code was using IS_ERR() instead of PTR_ERR() so it prints 1 instead
-> of the correct error code.  Even better would be to use %pe which prints
-> out the name of the error, as in "ENOMEM", "EINVAL" etc.
+Le 02/05/2021 à 00:50, Khaled ROMDHANI a écrit :
+> Fix the warning: variable 'zone' is used
+> uninitialized whenever '?:' condition is true.
 > 
-> Fixes: 25cb31768042 ("net/mlx5: E-Switch, Improve error messages in term table creation")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Fix that by preventing the code to reach
+> the last assertion. If the variable 'mirror'
+> is invalid, the assertion fails and we return
+> immediately.
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Signed-off-by: Khaled ROMDHANI <khaledromdhani216@gmail.com>
 > ---
-> v2:  Use %pe instead of %ld.
+>   fs/btrfs/zoned.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Leon says this goes through netdev instead of the RDMA tree.
+> diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
+> index 8250ab3f0868..23da9d8dc184 100644
+> --- a/fs/btrfs/zoned.c
+> +++ b/fs/btrfs/zoned.c
+> @@ -145,7 +145,7 @@ static inline u32 sb_zone_number(int shift, int mirror)
+>   	case 2: zone = 1ULL << (BTRFS_SB_LOG_SECOND_SHIFT - shift); break;
+>   	default:
+>   		ASSERT((u32)mirror < 3);
+> -		break;
+> +		return 0;
+>   	}
+>   
+>   	ASSERT(zone <= U32_MAX);
+> 
+> base-commit: b5c294aac8a6164ddf38bfbdd1776091b4a1eeba
+> 
+Hi,
 
-Thanks,
-Reviewed-by: Leon Romanovsky <leonro@nvidia.com>
+just a few comments.
+
+If I understand correctly, what you try to do is to silence a compiler 
+warning if no case branch is taken.
+
+First, all your proposals are based on the previous one.
+I find it hard to follow because we don't easily see what are the 
+differences since the beginning.
+
+The "base-commit" at the bottom of your mail, is related to your own 
+local tree, I guess. It can't be used by any-one.
+
+My understanding it that a patch, should it be v2, v3..., must apply to 
+the current tree. (In my case, it is the latest linux-next)
+This is not the case here and you have to apply each step to see the 
+final result.
+
+Should this version be fine, a maintainer wouldn't be able to apply it 
+as-is.
+
+You also try to take into account previous comments to check for 
+incorrect negative values for minor and catch (the can't happen today) 
+cases, should BTRFS_SUPER_MIRROR_MAX change and this function remain the 
+same.
+
+So, why hard-coding '3'?
+The reason of magic numbers are hard to remember. You should avoid them 
+or add a comment about it.
+
+My own personal variation would be something like the code below (untested).
+
+Hope this helps.
+
+CJ
+
+
+diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
+index 70b23a0d03b1..75fe5f001d8b 100644
+--- a/fs/btrfs/zoned.c
++++ b/fs/btrfs/zoned.c
+@@ -138,11 +138,14 @@ static inline u32 sb_zone_number(int shift, int 
+mirror)
+  {
+  	u64 zone;
+
+-	ASSERT(mirror < BTRFS_SUPER_MIRROR_MAX);
++	ASSERT(mirror >= 0 && mirror < BTRFS_SUPER_MIRROR_MAX);
+  	switch (mirror) {
+  	case 0: zone = 0; break;
+  	case 1: zone = 1ULL << (BTRFS_SB_LOG_FIRST_SHIFT - shift); break;
+  	case 2: zone = 1ULL << (BTRFS_SB_LOG_SECOND_SHIFT - shift); break;
++	default:
++		ASSERT(! "mirror < BTRFS_SUPER_MIRROR_MAX but not handled above.");
++		return 0;
+  	}
+
+  	ASSERT(zone <= U32_MAX);
+
