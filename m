@@ -2,77 +2,89 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2798C43460
-	for <kernel-janitors@archiver.kernel.org>; Mon,  3 May 2021 14:55:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA3CEC43140
+	for <kernel-janitors@archiver.kernel.org>; Mon,  3 May 2021 17:00:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AC0BD611EE
-	for <kernel-janitors@archiver.kernel.org>; Mon,  3 May 2021 14:55:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E31B613BE
+	for <kernel-janitors@archiver.kernel.org>; Mon,  3 May 2021 17:00:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230023AbhECO4d (ORCPT
+        id S233290AbhECRBi (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 3 May 2021 10:56:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60172 "EHLO mail.kernel.org"
+        Mon, 3 May 2021 13:01:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43308 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229767AbhECO4c (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 3 May 2021 10:56:32 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id CCF53611CD;
-        Mon,  3 May 2021 14:55:38 +0000 (UTC)
+        id S234069AbhECQ5R (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 3 May 2021 12:57:17 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 91E1461176;
+        Mon,  3 May 2021 16:47:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1620053739;
-        bh=yYdFn9UpSYDW+ZIqHHl4T7RRAR7QT/dCboazRa48y5E=;
+        s=k20201202; t=1620060464;
+        bh=GJ7TwwZNdhpalyTS0v9ThEIBUeLJlxiXzIDExLIL4Io=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=EEW4oazT3r6l/DHbrMliqYyYmsjLfOPaQ+nK/51/0aMr3hOeKK1/DoZk04yNpYcX1
-         eJphO5rjzLBgvHU4sGd907Ts1iLlh589GvYatCf08sGmcY0TV8G55Jf1F9pPmUDeuA
-         oQc2vV1OC+yf8j50w6KzEd/iLZ/2EO3CpeGKhIkJ5pfzCOUXiF4k4co3bBjLzCznpw
-         qM4KdBl3w6+5RekJ0zcxhfCxwdvWUQAvU35wjZJZRbftLkDLXKsCXuBxU+t5VbJYJP
-         Zx2RoStBFoBL1Z421krxc5YRnJkeo2vup/2WY6hrnSBxAEJhRYho7/gBYU7ccIc6+c
-         KMHfC5GKDRFpQ==
-Date:   Mon, 3 May 2021 17:55:37 +0300
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Colin King <colin.king@canonical.com>
-Cc:     James Bottomley <jejb@linux.ibm.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        clang-built-linux@googlegroups.com
-Subject: Re: [PATCH] KEYS: trusted: Fix memory leak on object td
-Message-ID: <YJAO6SfreYLxOOpn@kernel.org>
-References: <20210430113724.110746-1-colin.king@canonical.com>
+        b=fP/kEM4vPdbXkP5KGinPqzG+3HwMtnPYhCbeK0uejBILfqskCNQVqMXfND6ZptX0r
+         PY7/l72hEv6AvFotwH1oWthetWLATIXHPeEFl7ejRR/ryhvc7C4NOa8NR0yhK6xoTr
+         llFtXjZCxedI4bBP0SVsHUl1vVAPsklnRFTZz18qTFN3pYnfYwT/lR1xwG7jJCVE0Z
+         MkAuQE61VKXb+3jtEY1/Ma19/MDPjNgKjkSEEoxbGEtoTviLEDtMWiW86sp8RBisZa
+         gtR4sUzOrw6KNDdzRnQusgfYv2rn49Pbgdm6Zd9k3e7voanT3ZCTMegGJOpSmST0XD
+         DD2PKI0g4ZoMg==
+Date:   Mon, 3 May 2021 22:17:32 +0530
+From:   Manivannan Sadhasivam <mani@kernel.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Marc Kleine-Budde <mkl@pengutronix.de>,
+        Thomas Kopp <thomas.kopp@microchip.com>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, linux-can@vger.kernel.org,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net] can: mcp251xfd: fix an error pointer dereference in
+ probe
+Message-ID: <20210503164732.GB3958@thinkpad>
+References: <YJANZf13Qxd5Mhr1@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210430113724.110746-1-colin.king@canonical.com>
+In-Reply-To: <YJANZf13Qxd5Mhr1@mwanda>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Apr 30, 2021 at 12:37:24PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On Mon, May 03, 2021 at 05:49:09PM +0300, Dan Carpenter wrote:
+> When we converted this code to use dev_err_probe() we accidentally
+> removed a return.  It means that if devm_clk_get() it will lead to
+> an Oops when we call clk_get_rate() on the next line.
 > 
-> Two error return paths are neglecting to free allocated object td,
-> causing a memory leak. Fix this by returning via the error return
-> path that securely kfree's td.
+> Fixes: cf8ee6de2543 ("can: mcp251xfd: mcp251xfd_probe(): use dev_err_probe() to simplify error handling")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+Reviewed-by: Manivannan Sadhasivam <mani@kernel.org>
+
+Thanks,
+Mani
+
+> ---
+>  drivers/net/can/spi/mcp251xfd/mcp251xfd-core.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> Fixes clang scan-build warning:
-> security/keys/trusted-keys/trusted_tpm1.c:496:10: warning: Potential
-> memory leak [unix.Malloc]
+> diff --git a/drivers/net/can/spi/mcp251xfd/mcp251xfd-core.c b/drivers/net/can/spi/mcp251xfd/mcp251xfd-core.c
+> index 970dc570e7a5..f122976e90da 100644
+> --- a/drivers/net/can/spi/mcp251xfd/mcp251xfd-core.c
+> +++ b/drivers/net/can/spi/mcp251xfd/mcp251xfd-core.c
+> @@ -2885,8 +2885,8 @@ static int mcp251xfd_probe(struct spi_device *spi)
+>  
+>  	clk = devm_clk_get(&spi->dev, NULL);
+>  	if (IS_ERR(clk))
+> -		dev_err_probe(&spi->dev, PTR_ERR(clk),
+> -			      "Failed to get Oscillator (clock)!\n");
+> +		return dev_err_probe(&spi->dev, PTR_ERR(clk),
+> +				     "Failed to get Oscillator (clock)!\n");
+>  	freq = clk_get_rate(clk);
+>  
+>  	/* Sanity check */
+> -- 
+> 2.30.2
 > 
-> Fixes: 5df16caada3f ("KEYS: trusted: Fix incorrect handling of tpm_get_random()")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-
-Thanks, applied.
-
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-
-/Jarkko
