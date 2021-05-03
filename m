@@ -2,175 +2,113 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6C94C433ED
-	for <kernel-janitors@archiver.kernel.org>; Mon,  3 May 2021 08:49:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 095D2C433ED
+	for <kernel-janitors@archiver.kernel.org>; Mon,  3 May 2021 09:29:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ABBDE61221
-	for <kernel-janitors@archiver.kernel.org>; Mon,  3 May 2021 08:49:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D025F61353
+	for <kernel-janitors@archiver.kernel.org>; Mon,  3 May 2021 09:29:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232964AbhECIur (ORCPT
+        id S233113AbhECJag (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 3 May 2021 04:50:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59146 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230490AbhECIur (ORCPT
+        Mon, 3 May 2021 05:30:36 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:51496 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231523AbhECJaf (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 3 May 2021 04:50:47 -0400
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46C76C06174A;
-        Mon,  3 May 2021 01:49:54 -0700 (PDT)
-Received: by mail-wm1-x32c.google.com with SMTP id o26-20020a1c4d1a0000b0290146e1feccdaso4559108wmh.0;
-        Mon, 03 May 2021 01:49:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=bBM0SwmyL24vSMDSlmeLgk7jvyP2F9RB4lw9rD7QFeU=;
-        b=bWCrvE2pBKu3m2yy7fF55dhqoSgM00fOlSZA7NF70UvmWNeeU3BjbUheFEPSnl5uDa
-         jKrLF1eQu8VO+oIRaITnVGdiyIK9UXpgoOZQVmonZqrdLrGfyZoJC+dAGoh50YwUpPBP
-         3WK1aF9IQ1Zkpq0gWENQ5wCaiPs/fORUG+aZ7PZuvZmk2rZ64GOIcLtAgic7G86tIVh+
-         pDxP5IXodJi02hV6RLaK2BA/Yx5O5BQM1LVa+3Wg29V1O2bugF6vr9koiMc1Ha8jTG5i
-         fMAIUyAv2gS+V1UQv8/AISeY2yCFGNPHsuTTy6RueOlo/+kY93ImL4F6myRV/INIq7J0
-         xB/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=bBM0SwmyL24vSMDSlmeLgk7jvyP2F9RB4lw9rD7QFeU=;
-        b=b7R0PF2VoSKHJkTbVyBGIGHBp9BIftiJSmQqSAZMF2Sd2Px8HeZsoBI5IBfJEuYadI
-         Qz2/b/IK38ZlSu0O8uso4Prxcli0UlFW0Bb4ipJZJV51CiigVC2VYXJcXNLruSozi6Ab
-         /7qpfs/ZwFqz0pGiZNaZVhmG2TiBSn0pnp6jG2q7dPzfYP8ryf+VgQcOv767isZTOFpw
-         S8uBbphaCTS1+Fq12Y1ecYPayLIVQJjhJIwyEMyi67DD2ZCPNsVueocEiWwafWt6M3Se
-         plufQSLag7AHL9vdjjY1B1tP3cdFvBIaA1Va5kMlIrO5Li4UBb7N8l/SvXCxXT4pdTWJ
-         o9BA==
-X-Gm-Message-State: AOAM532YA6qJlzK+4/gW/E5Lq08ZztXv4gNRTUnjOjxKs2WY5V6/LpRH
-        F4nPSgGPtPbBdswcpuaK6iQ=
-X-Google-Smtp-Source: ABdhPJwfRQ7GUGxWCLpcEoZUyT7MIR7VybsFY3NryyEKQXFPq6/jOwxWlvnCkSelnE1k5/1BHXBJHg==
-X-Received: by 2002:a1c:7e82:: with SMTP id z124mr31415402wmc.51.1620031792997;
-        Mon, 03 May 2021 01:49:52 -0700 (PDT)
-Received: from ard0534 ([41.62.186.65])
-        by smtp.gmail.com with ESMTPSA id r19sm19883771wmq.33.2021.05.03.01.49.51
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 May 2021 01:49:52 -0700 (PDT)
-Date:   Mon, 3 May 2021 09:49:49 +0100
-From:   Khaled Romdhani <khaledromdhani216@gmail.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] fs/btrfs: Fix uninitialized variable
-Message-ID: <20210503084949.GA27017@ard0534>
-References: <20210501225046.9138-1-khaledromdhani216@gmail.com>
- <eba16312-9d50-9549-76c0-b0512a394669@wanadoo.fr>
+        Mon, 3 May 2021 05:30:35 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 1439Ej47095761;
+        Mon, 3 May 2021 09:29:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=D9UNFPRmfvogZj9PAB7k6zDOA5DgR66HQyCjzw0gC7g=;
+ b=jglg8iSsE9X60e3V3hTwmJTyMyDrs/krt6TPV9Nia+OLRp4xo+UjOQfWGCOJ1pGP/ZqG
+ 63ZasQzaYquod3AOV5oyQxPUEFDMgTwO54J3NX46yTWMQocU3RSQLi/zpv/UNnI65RsF
+ +KPap+anQKgIpjZ/7YlK9O4vPRKo4nNL/3Ks2rpbRjNz2on0TSjGMI2fNALr3oHAMgPL
+ kVwCPsYDXoEmok8u2YbSCwQNpHVJGG1jQn8CLAkBaurKrAes6hLcBWlYzhGIC/fyzSwg
+ Br1WcvCAcE57n+nGj5MZfXPEf5ptHktyGrV5WP6pEbteAY/ZNGrqGmCaqM/D4NCmo8Fa Qw== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 389h13syd1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 03 May 2021 09:29:33 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 1439ABI8116302;
+        Mon, 3 May 2021 09:29:33 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by aserp3020.oracle.com with ESMTP id 388xt234rs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 03 May 2021 09:29:33 +0000
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 1439TWpE191144;
+        Mon, 3 May 2021 09:29:32 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3020.oracle.com with ESMTP id 388xt234rd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 03 May 2021 09:29:32 +0000
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 1439TVNC004813;
+        Mon, 3 May 2021 09:29:31 GMT
+Received: from kadam (/102.36.221.92)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 03 May 2021 02:29:31 -0700
+Date:   Mon, 3 May 2021 12:29:24 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Nigel Christian <nigel.l.christian@gmail.com>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] media: uvcvideo: Remove unused variable
+Message-ID: <20210503092924.GO1981@kadam>
+References: <YIyCJoEwdqgqkxYN@fedora>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <eba16312-9d50-9549-76c0-b0512a394669@wanadoo.fr>
+In-Reply-To: <YIyCJoEwdqgqkxYN@fedora>
 User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-ORIG-GUID: 7S3tJumW5rB0_PZXjIny7zHgSmJqKNrg
+X-Proofpoint-GUID: 7S3tJumW5rB0_PZXjIny7zHgSmJqKNrg
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9972 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1011 spamscore=0 mlxscore=0
+ phishscore=0 adultscore=0 lowpriorityscore=0 suspectscore=0
+ priorityscore=1501 mlxlogscore=999 malwarescore=0 impostorscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104060000 definitions=main-2105030062
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, May 02, 2021 at 12:17:51PM +0200, Christophe JAILLET wrote:
-> Le 02/05/2021 à 00:50, Khaled ROMDHANI a écrit :
-> > Fix the warning: variable 'zone' is used
-> > uninitialized whenever '?:' condition is true.
-> > 
-> > Fix that by preventing the code to reach
-> > the last assertion. If the variable 'mirror'
-> > is invalid, the assertion fails and we return
-> > immediately.
-> > 
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > Signed-off-by: Khaled ROMDHANI <khaledromdhani216@gmail.com>
-> > ---
-> >   fs/btrfs/zoned.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
-> > index 8250ab3f0868..23da9d8dc184 100644
-> > --- a/fs/btrfs/zoned.c
-> > +++ b/fs/btrfs/zoned.c
-> > @@ -145,7 +145,7 @@ static inline u32 sb_zone_number(int shift, int mirror)
-> >   	case 2: zone = 1ULL << (BTRFS_SB_LOG_SECOND_SHIFT - shift); break;
-> >   	default:
-> >   		ASSERT((u32)mirror < 3);
-> > -		break;
-> > +		return 0;
-> >   	}
-> >   	ASSERT(zone <= U32_MAX);
-> > 
-> > base-commit: b5c294aac8a6164ddf38bfbdd1776091b4a1eeba
-> > 
-> Hi,
+On Fri, Apr 30, 2021 at 06:18:14PM -0400, Nigel Christian wrote:
+> The variable buflen is being assigned a value that is never read,
+> which can be removed.
 > 
-> just a few comments.
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Nigel Christian <nigel.l.christian@gmail.com>
+> ---
+>  drivers/media/usb/uvc/uvc_driver.c | 1 -
+>  1 file changed, 1 deletion(-)
 > 
-> If I understand correctly, what you try to do is to silence a compiler
-> warning if no case branch is taken.
-> 
-> First, all your proposals are based on the previous one.
-> I find it hard to follow because we don't easily see what are the
-> differences since the beginning.
-> 
-> The "base-commit" at the bottom of your mail, is related to your own local
-> tree, I guess. It can't be used by any-one.
-> 
-> My understanding it that a patch, should it be v2, v3..., must apply to the
-> current tree. (In my case, it is the latest linux-next)
-> This is not the case here and you have to apply each step to see the final
-> result.
-> 
-> Should this version be fine, a maintainer wouldn't be able to apply it
-> as-is.
-> 
-> You also try to take into account previous comments to check for incorrect
-> negative values for minor and catch (the can't happen today) cases, should
-> BTRFS_SUPER_MIRROR_MAX change and this function remain the same.
-> 
-> So, why hard-coding '3'?
-> The reason of magic numbers are hard to remember. You should avoid them or
-> add a comment about it.
-> 
-> My own personal variation would be something like the code below (untested).
-> 
-> Hope this helps.
-> 
-> CJ
-> 
-> 
-> diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
-> index 70b23a0d03b1..75fe5f001d8b 100644
-> --- a/fs/btrfs/zoned.c
-> +++ b/fs/btrfs/zoned.c
-> @@ -138,11 +138,14 @@ static inline u32 sb_zone_number(int shift, int
-> mirror)
->  {
->  	u64 zone;
-> 
-> -	ASSERT(mirror < BTRFS_SUPER_MIRROR_MAX);
-> +	ASSERT(mirror >= 0 && mirror < BTRFS_SUPER_MIRROR_MAX);
->  	switch (mirror) {
->  	case 0: zone = 0; break;
->  	case 1: zone = 1ULL << (BTRFS_SB_LOG_FIRST_SHIFT - shift); break;
->  	case 2: zone = 1ULL << (BTRFS_SB_LOG_SECOND_SHIFT - shift); break;
-> +	default:
-> +		ASSERT(! "mirror < BTRFS_SUPER_MIRROR_MAX but not handled above.");
-> +		return 0;
+> diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+> index 9a791d8ef200..370b086c6e22 100644
+> --- a/drivers/media/usb/uvc/uvc_driver.c
+> +++ b/drivers/media/usb/uvc/uvc_driver.c
+> @@ -768,7 +768,6 @@ static int uvc_parse_format(struct uvc_device *dev,
+>  		format->xfer_func = uvc_xfer_func(buffer[4]);
+>  		format->ycbcr_enc = uvc_ycbcr_enc(buffer[5]);
+>  
+> -		buflen -= buffer[0];
+>  		buffer += buffer[0];
 >  	}
-> 
->  	ASSERT(zone <= U32_MAX);
->
 
-Thank you for all of your comments. Yes, of course, they will help me.
-I will try to handle that more properly.
-Thanks again.
+This is a situation where I think that the unused assignment helps
+readability because it shows how buflen and buffer are connected.
+
+regards,
+dan carpenter
+
