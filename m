@@ -2,86 +2,113 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26AEAC433ED
-	for <kernel-janitors@archiver.kernel.org>; Mon,  3 May 2021 10:07:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0AA5C433B4
+	for <kernel-janitors@archiver.kernel.org>; Mon,  3 May 2021 10:13:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9D5BA6117A
-	for <kernel-janitors@archiver.kernel.org>; Mon,  3 May 2021 10:07:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9EDAC61369
+	for <kernel-janitors@archiver.kernel.org>; Mon,  3 May 2021 10:13:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233173AbhECKI2 (ORCPT
+        id S233241AbhECKOL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 3 May 2021 06:08:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47816 "EHLO
+        Mon, 3 May 2021 06:14:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49088 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233095AbhECKI2 (ORCPT
+        with ESMTP id S233159AbhECKOL (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 3 May 2021 06:08:28 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89ADFC06174A;
-        Mon,  3 May 2021 03:07:35 -0700 (PDT)
-Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5C16156B;
-        Mon,  3 May 2021 12:07:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1620036452;
-        bh=oeq5yAnxVpDTezsrEE2MxgP7UgCP5bXHGgJvz3hmt18=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=nkjCT3vAyk8GrJ06IjBWqx8VvXc8xoiowL22ALe7x/NgiCR6JhkRCTwbekGdRqbUO
-         JvbqwS3TJwmT+CwVC84v/8YHH2nslUQwXykJlTJYA1S/W4kH9jLdgt50VQflRwOiZB
-         npGK8ZJWzr8RF2ggzyeNiIZkHtWf6wvCB9zfGjCY=
-Date:   Mon, 3 May 2021 13:07:29 +0300
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+        Mon, 3 May 2021 06:14:11 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4092DC06174A;
+        Mon,  3 May 2021 03:13:17 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id n205so2114697wmf.1;
+        Mon, 03 May 2021 03:13:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ZIiigzczc2DpeF5+8WBfchZtQVOjuSNAlSlfWiT/G4k=;
+        b=AlutymW/j+Tc7Xu+7nbANQTfOfTahhAHdoRNLk7zt/APz2ydNtFK/f8OVe3smXk0rW
+         smEhFR+/xAfkGMWmAWN1IPztixOVXjvrzj8ynDaB0CNGH66HjeF3Ui8JkBGiZvvCqYBy
+         vRVK1OaDyf845ADQro0/ZmXarztafc6XVFV/eWCI3kEE2scvAU1WpoGpZVG8ENuIJ/b8
+         wZ183Ovs0NHI05Z1Z81R6mtDbWyz+LAkYqRqFk6CCSFOoOvel7EUn23QPa1VtxvX4dO0
+         O5ZAJdUIC26apYi9CeWJcPX+p+qmp1irc6qieReieCNaGGfg9Bm42HldZeKZ8/ncHp12
+         OW/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ZIiigzczc2DpeF5+8WBfchZtQVOjuSNAlSlfWiT/G4k=;
+        b=NQQq13m9aqtAZsVMGbQYXugD08c8/jJsbS3K46CgAWIikiYySErXF1JhQdGBWZ6vce
+         TPg1ZWhsbyMALWhnzRQY2FM5bCiqtrn+oZGdQg3jtuR3ybacFWhuUnbwPPMyfwCez9nQ
+         yp+n0Y489yiYwpFUVcLgsButssdeprEZT0ugLp71xa5BvNGrTwDcGb7Oya1LrdDQl493
+         yjlXFt2wEEXWHQPIHubhj9yD5hgYgRIwtrWuS12YmnzhSSbQGaux+QLopmY+8mibmV/N
+         Ojgn6IhiAh6FB4NSbLQ1vv3R8AtBCB7ShdriKLJ84nzpAHXOASTVcac2QBq3Nv6xx2Pz
+         d4tQ==
+X-Gm-Message-State: AOAM533TyMUe3v6YULVZpi0MT10PkOp7ot22Ro8nk0B1/QjUaVkCPT0Z
+        bdC31CMmP73bA0/MQXtrZlWbN2gGncCi7qPo
+X-Google-Smtp-Source: ABdhPJwBldsGw//teJhYUukFMq+NmABbXP9lBHI0ZZbtaikmZZuXhmpKSia/IU6cTw2JF9JwRZyQGA==
+X-Received: by 2002:a05:600c:2e42:: with SMTP id q2mr21044097wmf.64.1620036795973;
+        Mon, 03 May 2021 03:13:15 -0700 (PDT)
+Received: from ard0534 ([41.62.186.65])
+        by smtp.gmail.com with ESMTPSA id g13sm7484718wrd.41.2021.05.03.03.13.14
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 May 2021 03:13:14 -0700 (PDT)
+Date:   Mon, 3 May 2021 11:13:12 +0100
+From:   Khaled Romdhani <khaledromdhani216@gmail.com>
 To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Nigel Christian <nigel.l.christian@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] media: uvcvideo: Remove unused variable
-Message-ID: <YI/LYY4LGmGEGyo1@pendragon.ideasonboard.com>
-References: <YIyCJoEwdqgqkxYN@fedora>
- <20210503092924.GO1981@kadam>
+Cc:     clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] fs/btrfs: Fix uninitialized variable
+Message-ID: <20210503101312.GA27593@ard0534>
+References: <20210501225046.9138-1-khaledromdhani216@gmail.com>
+ <20210503072322.GK1981@kadam>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210503092924.GO1981@kadam>
+In-Reply-To: <20210503072322.GK1981@kadam>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, May 03, 2021 at 12:29:24PM +0300, Dan Carpenter wrote:
-> On Fri, Apr 30, 2021 at 06:18:14PM -0400, Nigel Christian wrote:
-> > The variable buflen is being assigned a value that is never read,
-> > which can be removed.
+On Mon, May 03, 2021 at 10:23:22AM +0300, Dan Carpenter wrote:
+> On Sat, May 01, 2021 at 11:50:46PM +0100, Khaled ROMDHANI wrote:
+> > Fix the warning: variable 'zone' is used
+> > uninitialized whenever '?:' condition is true.
 > > 
-> > Addresses-Coverity: ("Unused value")
-> > Signed-off-by: Nigel Christian <nigel.l.christian@gmail.com>
+> > Fix that by preventing the code to reach
+> > the last assertion. If the variable 'mirror'
+> > is invalid, the assertion fails and we return
+> > immediately.
+> > 
+> > Reported-by: kernel test robot <lkp@intel.com>
+> > Signed-off-by: Khaled ROMDHANI <khaledromdhani216@gmail.com>
 > > ---
-> >  drivers/media/usb/uvc/uvc_driver.c | 1 -
-> >  1 file changed, 1 deletion(-)
-> > 
-> > diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-> > index 9a791d8ef200..370b086c6e22 100644
-> > --- a/drivers/media/usb/uvc/uvc_driver.c
-> > +++ b/drivers/media/usb/uvc/uvc_driver.c
-> > @@ -768,7 +768,6 @@ static int uvc_parse_format(struct uvc_device *dev,
-> >  		format->xfer_func = uvc_xfer_func(buffer[4]);
-> >  		format->ycbcr_enc = uvc_ycbcr_enc(buffer[5]);
-> >  
-> > -		buflen -= buffer[0];
-> >  		buffer += buffer[0];
-> >  	}
 > 
-> This is a situation where I think that the unused assignment helps
-> readability because it shows how buflen and buffer are connected.
+> This is not how you send a v4 patch...  v2 patches have to apply to the
+> original code and not on top of the patched code.
+> 
+> I sort of think you should find a different thing to work on.  This code
+> works fine as-is.  Just leave it and try to find a real bug and fix that
+> instead.
+> 
+> regards,
+> dan carpenter
+>
 
-And removing it may cause issues later if we end up adding more code
-below (unlikely in practice though). I'd rather keep this line.
+Sorry, I was wrong and I shall send a proper V4.
 
--- 
-Regards,
+Yes, this code works fine just a warning caught by Coverity scan analysis. 
+So the idea behind the patch is to fix the warning. To do that and as suggested by 
+David Sterba, it would be rather to add a default case. So we fix the warning 
+through the enhancement of the switch statement (some sort of 2*1).
 
-Laurent Pinchart
+Yes, I will always try to find other bugs. It is a pleasure for me to do that.
+
+Thanks.
