@@ -2,125 +2,112 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77ED8C433ED
-	for <kernel-janitors@archiver.kernel.org>; Mon,  3 May 2021 14:05:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95EF6C433ED
+	for <kernel-janitors@archiver.kernel.org>; Mon,  3 May 2021 14:49:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 30EF8610E9
-	for <kernel-janitors@archiver.kernel.org>; Mon,  3 May 2021 14:05:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B3FC611C9
+	for <kernel-janitors@archiver.kernel.org>; Mon,  3 May 2021 14:49:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233884AbhECOGZ (ORCPT
+        id S229872AbhECOue (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 3 May 2021 10:06:25 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:36834 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233400AbhECOGT (ORCPT
+        Mon, 3 May 2021 10:50:34 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:50638 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229596AbhECOue (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 3 May 2021 10:06:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1620050725;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=GNPR9aetB5O6vbBVkjBt4WTSfiMRhHXQRTN0FbjXPg4=;
-        b=ct8CTkXH5sOc+v4F6HRc/aCHILwepnt63b1TxarNB2e6CPifd82Zlpuhj+CQRlD0IXMBFp
-        XZVhC7wdPOthFJnySnb9Mn95eUU5FH/NbXLvhCA/I6jATUhp2wvNlBsSEh/3hS6a3+uH7p
-        yIoO5bQ9xtC73/8VSI9+QcehOk1wVas=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-267-JAOO8d9hNaSCMPaZTUGbRQ-1; Mon, 03 May 2021 10:05:24 -0400
-X-MC-Unique: JAOO8d9hNaSCMPaZTUGbRQ-1
-Received: by mail-ej1-f70.google.com with SMTP id k9-20020a17090646c9b029039d323bd239so2062520ejs.16
-        for <kernel-janitors@vger.kernel.org>; Mon, 03 May 2021 07:05:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=GNPR9aetB5O6vbBVkjBt4WTSfiMRhHXQRTN0FbjXPg4=;
-        b=KwlPnzVUVfWA8VdExLnl8WgaeEFzZxJSuyqv0yRbwk7Y6ubN/0Ex5bZyGwVb98/3hS
-         4ln+I0tTFxmhK2U+8eFyXRcJW9Rq23Wshq4VfjXKC8cxuDrhEU0h6updI+s6LJ6x6UaD
-         WpmZd2VyqdCVYzQsdI4GEowS7z6FwaTlBGNzS86C7OnXDSRJVKNfl8WxLJqKbihDb17K
-         gmTxW/fQ7QxAqZRd57KnK1f0IA23bFPFKSS1gNGyzqORowO+bDDkvB1o8eGswoP9rA4T
-         EYYxzkz6DLgc4i1prfetCeDu6T1/dyq0VPMik/a1lBmGRx+CfNcptcha3n/zTtbs4aDa
-         dyDQ==
-X-Gm-Message-State: AOAM53214E1oOTVHWglhec+0k5Wmjyw1xRf5I0x7roHgYD0ihgNL4ZTt
-        r8YUGEOZ1EaIRO0EArpBjCmpWkA1KDrNY7EaucAEtMVyt35AuDqgEmKrcI99t8pxqEP+9l/pQUW
-        VvPQpprySyABHUI3Nx9niNlPMC+R5
-X-Received: by 2002:a17:906:4d8d:: with SMTP id s13mr16729100eju.37.1620050722848;
-        Mon, 03 May 2021 07:05:22 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJw4au918keNwU9ajYzFOowIyCo1Jppz2HVvxcn98scQ414jHG95DpQAGuWs5CJ8pUcPcdDWZw==
-X-Received: by 2002:a17:906:4d8d:: with SMTP id s13mr16729075eju.37.1620050722699;
-        Mon, 03 May 2021 07:05:22 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:c8dd:75d4:99ab:290a? ([2001:b07:6468:f312:c8dd:75d4:99ab:290a])
-        by smtp.gmail.com with ESMTPSA id t14sm10993993ejc.121.2021.05.03.07.05.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 May 2021 07:05:22 -0700 (PDT)
-Subject: Re: [PATCH][next] KVM: x86: Fix potential fput on a null
- source_kvm_file
-To:     Colin King <colin.king@canonical.com>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Nathan Tempelman <natet@google.com>, kvm@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210430170303.131924-1-colin.king@canonical.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <9d28cde2-7aff-64bb-26f4-9909344676e5@redhat.com>
-Date:   Mon, 3 May 2021 16:05:21 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        Mon, 3 May 2021 10:50:34 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 143Ei4dM009417;
+        Mon, 3 May 2021 14:49:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
+ bh=SoiMkEpKlhR/SPzQZKWhuYHOGqyO7f6ekQE/KJ2Xfeo=;
+ b=rhN7qTDtQVfJR+e8ttEzU75oUxrD1Bm1dNxIacJuZBx9ORUwfIJVvmyv4PQvZ+byUWgt
+ W4iCGFwheqBa1EIFWkBMHO48jSNXbDdsOcMHQcN57Q/PlRBuEsssuEqRbVhHFzK+E8TG
+ vp3ihpGtlG6rrNv9K4Vg3qubLJgRJUTylyOSkwcONI+KEuO8uDu6yNgrSwia9fk9IpAT
+ 5CjnpF8CyMg4qCay0begB/1HugJBwFg2+2y1JmgNXH4F75vXGDny/HqG5/lSjdPK2wy7
+ L6y9j1YgXq5mgnAGa22OjCkucE9OAvODOwpvg2szltRLPMw8b1LK4n4gRf+MfdXjcg7S gg== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 388xxmuuww-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 03 May 2021 14:49:21 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 143EfHWQ139249;
+        Mon, 3 May 2021 14:49:20 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by userp3020.oracle.com with ESMTP id 389grqtc54-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 03 May 2021 14:49:20 +0000
+Received: from userp3020.oracle.com (userp3020.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 143Egu4q161043;
+        Mon, 3 May 2021 14:49:20 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3020.oracle.com with ESMTP id 389grqtc4n-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 03 May 2021 14:49:20 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 143EnHSX032020;
+        Mon, 3 May 2021 14:49:17 GMT
+Received: from mwanda (/102.36.221.92)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 03 May 2021 14:49:16 +0000
+Date:   Mon, 3 May 2021 17:49:09 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Marc Kleine-Budde <mkl@pengutronix.de>
+Cc:     Manivannan Sadhasivam <mani@kernel.org>,
+        Thomas Kopp <thomas.kopp@microchip.com>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, linux-can@vger.kernel.org,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH net] can: mcp251xfd: fix an error pointer dereference in probe
+Message-ID: <YJANZf13Qxd5Mhr1@mwanda>
 MIME-Version: 1.0
-In-Reply-To: <20210430170303.131924-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+X-Proofpoint-GUID: X_RwcsY3xP1R8gQHmDq5FQLLSFZox1Rz
+X-Proofpoint-ORIG-GUID: X_RwcsY3xP1R8gQHmDq5FQLLSFZox1Rz
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9973 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 spamscore=0
+ suspectscore=0 phishscore=0 clxscore=1011 lowpriorityscore=0
+ mlxlogscore=999 priorityscore=1501 impostorscore=0 mlxscore=0 adultscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104060000 definitions=main-2105030102
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 30/04/21 19:03, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The fget can potentially return null, so the fput on the error return
-> path can cause a null pointer dereference. Fix this by checking for
-> a null source_kvm_file before doing a fput.
-> 
-> Addresses-Coverity: ("Dereference null return")
-> Fixes: 54526d1fd593 ("KVM: x86: Support KVM VMs sharing SEV context")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->   arch/x86/kvm/svm/sev.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-> index 1356ee095cd5..8b11c711a0e4 100644
-> --- a/arch/x86/kvm/svm/sev.c
-> +++ b/arch/x86/kvm/svm/sev.c
-> @@ -1764,7 +1764,8 @@ int svm_vm_copy_asid_from(struct kvm *kvm, unsigned int source_fd)
->   e_source_unlock:
->   	mutex_unlock(&source_kvm->lock);
->   e_source_put:
-> -	fput(source_kvm_file);
-> +	if (source_kvm_file)
-> +		fput(source_kvm_file);
->   	return ret;
->   }
->   
-> 
+When we converted this code to use dev_err_probe() we accidentally
+removed a return.  It means that if devm_clk_get() it will lead to
+an Oops when we call clk_get_rate() on the next line.
 
-Queued, thanks.
+Fixes: cf8ee6de2543 ("can: mcp251xfd: mcp251xfd_probe(): use dev_err_probe() to simplify error handling")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/net/can/spi/mcp251xfd/mcp251xfd-core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Paolo
+diff --git a/drivers/net/can/spi/mcp251xfd/mcp251xfd-core.c b/drivers/net/can/spi/mcp251xfd/mcp251xfd-core.c
+index 970dc570e7a5..f122976e90da 100644
+--- a/drivers/net/can/spi/mcp251xfd/mcp251xfd-core.c
++++ b/drivers/net/can/spi/mcp251xfd/mcp251xfd-core.c
+@@ -2885,8 +2885,8 @@ static int mcp251xfd_probe(struct spi_device *spi)
+ 
+ 	clk = devm_clk_get(&spi->dev, NULL);
+ 	if (IS_ERR(clk))
+-		dev_err_probe(&spi->dev, PTR_ERR(clk),
+-			      "Failed to get Oscillator (clock)!\n");
++		return dev_err_probe(&spi->dev, PTR_ERR(clk),
++				     "Failed to get Oscillator (clock)!\n");
+ 	freq = clk_get_rate(clk);
+ 
+ 	/* Sanity check */
+-- 
+2.30.2
 
