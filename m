@@ -2,103 +2,75 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09A55C433B4
-	for <kernel-janitors@archiver.kernel.org>; Mon,  3 May 2021 14:53:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B62BDC433ED
+	for <kernel-janitors@archiver.kernel.org>; Mon,  3 May 2021 14:53:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BF28A611CD
-	for <kernel-janitors@archiver.kernel.org>; Mon,  3 May 2021 14:53:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 834B2611CD
+	for <kernel-janitors@archiver.kernel.org>; Mon,  3 May 2021 14:53:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229757AbhECOyW (ORCPT
+        id S229909AbhECOyp (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 3 May 2021 10:54:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54698 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229649AbhECOyV (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 3 May 2021 10:54:21 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79735C06174A
-        for <kernel-janitors@vger.kernel.org>; Mon,  3 May 2021 07:53:28 -0700 (PDT)
-Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=bjornoya.blackshift.org)
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mkl@pengutronix.de>)
-        id 1ldZwi-0005np-TW; Mon, 03 May 2021 16:53:16 +0200
-Received: from pengutronix.de (unknown [IPv6:2a03:f580:87bc:d400:1b0:e062:be12:b9c6])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (Client did not present a certificate)
-        (Authenticated sender: mkl-all@blackshift.org)
-        by smtp.blackshift.org (Postfix) with ESMTPSA id AEA9061B32F;
-        Mon,  3 May 2021 14:53:10 +0000 (UTC)
-Date:   Mon, 3 May 2021 16:53:09 +0200
-From:   Marc Kleine-Budde <mkl@pengutronix.de>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Manivannan Sadhasivam <mani@kernel.org>,
-        Thomas Kopp <thomas.kopp@microchip.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, linux-can@vger.kernel.org,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net] can: mcp251xfd: fix an error pointer dereference in
- probe
-Message-ID: <20210503145309.fhij36vze4d5xrte@pengutronix.de>
-References: <YJANZf13Qxd5Mhr1@mwanda>
+        Mon, 3 May 2021 10:54:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58188 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229649AbhECOyo (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 3 May 2021 10:54:44 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 4FB09611BF;
+        Mon,  3 May 2021 14:53:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1620053630;
+        bh=CUC2CtuvzErK37KWqnrScmPHfkq9NDl2U4c1S7d10a0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mzQluamzW7KQZn/2rVrUnKpyUmg6yzsg/Fg3lNf6Ged9O7m2Asda4EYp+fmvhsULj
+         gdVMCXB4+OErVsstULtS9qpuDGTo5Jspnm+67EeCtV1KTyeYVp0/6+XXpcRVJOtji2
+         SgYbh0wAqBmntGxdZ905gpBWMQBFfdxAwRbzBZ8wNBJzliSQKkSLfteGOuWGdrXUTI
+         8PsKa5lJzdUT5d54qoEJz3Ajs1MTzyMRwXYbj58Xj04ceNDZiuPfoBPVknGjrvPAeb
+         6swKGiZmJFB9/M0d2AbB+KUhdcgMSXOhyVzeCQu7D2/zz3cxmqVYkCdSU/3zqVzsQk
+         QjvkA+uVACGkQ==
+Date:   Mon, 3 May 2021 17:53:48 +0300
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Colin King <colin.king@canonical.com>
+Cc:     James Bottomley <jejb@linux.ibm.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        clang-built-linux@googlegroups.com
+Subject: Re: [PATCH] KEYS: trusted: Fix memory leak on object td
+Message-ID: <YJAOfJyMy6Uu/Cia@kernel.org>
+References: <20210430113724.110746-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="uffqkjhbb2ctxi46"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YJANZf13Qxd5Mhr1@mwanda>
-X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
+In-Reply-To: <20210430113724.110746-1-colin.king@canonical.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On Fri, Apr 30, 2021 at 12:37:24PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Two error return paths are neglecting to free allocated object td,
+> causing a memory leak. Fix this by returning via the error return
+> path that securely kfree's td.
+> 
+> Fixes clang scan-build warning:
+> security/keys/trusted-keys/trusted_tpm1.c:496:10: warning: Potential
+> memory leak [unix.Malloc]
+> 
+> Fixes: 5df16caada3f ("KEYS: trusted: Fix incorrect handling of tpm_get_random()")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+ 
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
---uffqkjhbb2ctxi46
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On 03.05.2021 17:49:09, Dan Carpenter wrote:
-> When we converted this code to use dev_err_probe() we accidentally
-> removed a return.  It means that if devm_clk_get() it will lead to
-> an Oops when we call clk_get_rate() on the next line.
->=20
-> Fixes: cf8ee6de2543 ("can: mcp251xfd: mcp251xfd_probe(): use dev_err_prob=
-e() to simplify error handling")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Good catch, found that yesterday, too, but haven't posted it here.
-
-Marc
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde           |
-Embedded Linux                   | https://www.pengutronix.de  |
-Vertretung West/Dortmund         | Phone: +49-231-2826-924     |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-5555 |
-
---uffqkjhbb2ctxi46
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEK3kIWJt9yTYMP3ehqclaivrt76kFAmCQDlMACgkQqclaivrt
-76kzcQf9HuBx3N3HU3kNHeC2hmvSIgDptYkjb2HwaKINxHVyP5uFUHgPCYDiC5RO
-D9Qf4lBPSEhSyYv3V2OuNNwkjmA8qHrkitYJ2FCrfULPo3YU/FlVRLBt6xlQnInr
-g3avJ5LHm3LxxF7yoDcIsrDtd5ocVWvvqI0uHCjC2WUCM92XyX+6Zb3WF2r29it1
-FljJTQoEOFCZrzUDIdJHYiHxmW8ZtOo8kmtUYf++eCMHCgIjAY9KJWU6D54ojY48
-P3mAW40JQGKmQK+DUb/3iooiNRaelv8pa8WbQXCBnbqCAJZDhGoU4fKB4JU/L5Kg
-5heBqtMwKqpIQ7uzTiOcbZaHvjgi4Q==
-=Pojn
------END PGP SIGNATURE-----
-
---uffqkjhbb2ctxi46--
+/Jarkko
