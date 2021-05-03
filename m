@@ -2,113 +2,126 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0AA5C433B4
-	for <kernel-janitors@archiver.kernel.org>; Mon,  3 May 2021 10:13:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EE63C433ED
+	for <kernel-janitors@archiver.kernel.org>; Mon,  3 May 2021 11:55:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9EDAC61369
-	for <kernel-janitors@archiver.kernel.org>; Mon,  3 May 2021 10:13:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE97361151
+	for <kernel-janitors@archiver.kernel.org>; Mon,  3 May 2021 11:55:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233241AbhECKOL (ORCPT
+        id S233062AbhECL40 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 3 May 2021 06:14:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49088 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233159AbhECKOL (ORCPT
+        Mon, 3 May 2021 07:56:26 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:41926 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229811AbhECL4Z (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 3 May 2021 06:14:11 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4092DC06174A;
-        Mon,  3 May 2021 03:13:17 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id n205so2114697wmf.1;
-        Mon, 03 May 2021 03:13:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ZIiigzczc2DpeF5+8WBfchZtQVOjuSNAlSlfWiT/G4k=;
-        b=AlutymW/j+Tc7Xu+7nbANQTfOfTahhAHdoRNLk7zt/APz2ydNtFK/f8OVe3smXk0rW
-         smEhFR+/xAfkGMWmAWN1IPztixOVXjvrzj8ynDaB0CNGH66HjeF3Ui8JkBGiZvvCqYBy
-         vRVK1OaDyf845ADQro0/ZmXarztafc6XVFV/eWCI3kEE2scvAU1WpoGpZVG8ENuIJ/b8
-         wZ183Ovs0NHI05Z1Z81R6mtDbWyz+LAkYqRqFk6CCSFOoOvel7EUn23QPa1VtxvX4dO0
-         O5ZAJdUIC26apYi9CeWJcPX+p+qmp1irc6qieReieCNaGGfg9Bm42HldZeKZ8/ncHp12
-         OW/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ZIiigzczc2DpeF5+8WBfchZtQVOjuSNAlSlfWiT/G4k=;
-        b=NQQq13m9aqtAZsVMGbQYXugD08c8/jJsbS3K46CgAWIikiYySErXF1JhQdGBWZ6vce
-         TPg1ZWhsbyMALWhnzRQY2FM5bCiqtrn+oZGdQg3jtuR3ybacFWhuUnbwPPMyfwCez9nQ
-         yp+n0Y489yiYwpFUVcLgsButssdeprEZT0ugLp71xa5BvNGrTwDcGb7Oya1LrdDQl493
-         yjlXFt2wEEXWHQPIHubhj9yD5hgYgRIwtrWuS12YmnzhSSbQGaux+QLopmY+8mibmV/N
-         Ojgn6IhiAh6FB4NSbLQ1vv3R8AtBCB7ShdriKLJ84nzpAHXOASTVcac2QBq3Nv6xx2Pz
-         d4tQ==
-X-Gm-Message-State: AOAM533TyMUe3v6YULVZpi0MT10PkOp7ot22Ro8nk0B1/QjUaVkCPT0Z
-        bdC31CMmP73bA0/MQXtrZlWbN2gGncCi7qPo
-X-Google-Smtp-Source: ABdhPJwBldsGw//teJhYUukFMq+NmABbXP9lBHI0ZZbtaikmZZuXhmpKSia/IU6cTw2JF9JwRZyQGA==
-X-Received: by 2002:a05:600c:2e42:: with SMTP id q2mr21044097wmf.64.1620036795973;
-        Mon, 03 May 2021 03:13:15 -0700 (PDT)
-Received: from ard0534 ([41.62.186.65])
-        by smtp.gmail.com with ESMTPSA id g13sm7484718wrd.41.2021.05.03.03.13.14
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 May 2021 03:13:14 -0700 (PDT)
-Date:   Mon, 3 May 2021 11:13:12 +0100
-From:   Khaled Romdhani <khaledromdhani216@gmail.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
+        Mon, 3 May 2021 07:56:25 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 143Bs17B134887;
+        Mon, 3 May 2021 11:55:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=AAyZkKWuqq5vRsFe0Durc3DY/xdDGYQ5XRUSlOZ3gyE=;
+ b=ojrx5BJbSJn1S5VJDTtBfc1kUpouSrPLIsZeOKRxdSfuKTzDS22r9s4bdUFuJ+K7ZApq
+ 8px6V6ypOASA1oPOeIGNX+KED+qYZs0PRm5cLWrtY4guHHzzEkGoNji9KFOL8Z/T8SKW
+ WAmah8E6KHCGNbDljn0WljwmN6yArHo9lX43EnDjUwB38H0i5T7WYUUCRWl6kBsePu3p
+ 1ryZ3O7ccv1NOCAdmTbBmZzhMjM9U4AbfAEJvqf+uWUx0JaDK0g7b4l3eR3EtafxtOpj
+ 6UTOXF4rR+Kl2bCPEJF+4w+nmBdUSYU4nz+KiuPI7xAEPIkkA+EzQDg/wNhui3C8JAPy zQ== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 388xxmubfk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 03 May 2021 11:55:26 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 143Bt9Kv095064;
+        Mon, 3 May 2021 11:55:25 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by userp3030.oracle.com with ESMTP id 388v3uvn4a-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 03 May 2021 11:55:25 +0000
+Received: from userp3030.oracle.com (userp3030.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 143BtOdw096285;
+        Mon, 3 May 2021 11:55:25 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 388v3uvn3w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 03 May 2021 11:55:24 +0000
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 143BtNCr008052;
+        Mon, 3 May 2021 11:55:23 GMT
+Received: from kadam (/102.36.221.92)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 03 May 2021 04:55:23 -0700
+Date:   Mon, 3 May 2021 14:55:15 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Khaled Romdhani <khaledromdhani216@gmail.com>
 Cc:     clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
         linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org
 Subject: Re: [PATCH] fs/btrfs: Fix uninitialized variable
-Message-ID: <20210503101312.GA27593@ard0534>
+Message-ID: <20210503115515.GJ21598@kadam>
 References: <20210501225046.9138-1-khaledromdhani216@gmail.com>
  <20210503072322.GK1981@kadam>
+ <20210503101312.GA27593@ard0534>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210503072322.GK1981@kadam>
+In-Reply-To: <20210503101312.GA27593@ard0534>
 User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-GUID: Ns5gJI1mwHALv6qd-EvkF4RqtyxAsrfu
+X-Proofpoint-ORIG-GUID: Ns5gJI1mwHALv6qd-EvkF4RqtyxAsrfu
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9972 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 spamscore=0
+ suspectscore=0 phishscore=0 clxscore=1015 lowpriorityscore=0
+ mlxlogscore=926 priorityscore=1501 impostorscore=0 mlxscore=0 adultscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104060000 definitions=main-2105030083
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, May 03, 2021 at 10:23:22AM +0300, Dan Carpenter wrote:
-> On Sat, May 01, 2021 at 11:50:46PM +0100, Khaled ROMDHANI wrote:
-> > Fix the warning: variable 'zone' is used
-> > uninitialized whenever '?:' condition is true.
+On Mon, May 03, 2021 at 11:13:12AM +0100, Khaled Romdhani wrote:
+> On Mon, May 03, 2021 at 10:23:22AM +0300, Dan Carpenter wrote:
+> > On Sat, May 01, 2021 at 11:50:46PM +0100, Khaled ROMDHANI wrote:
+> > > Fix the warning: variable 'zone' is used
+> > > uninitialized whenever '?:' condition is true.
+> > > 
+> > > Fix that by preventing the code to reach
+> > > the last assertion. If the variable 'mirror'
+> > > is invalid, the assertion fails and we return
+> > > immediately.
+> > > 
+> > > Reported-by: kernel test robot <lkp@intel.com>
+> > > Signed-off-by: Khaled ROMDHANI <khaledromdhani216@gmail.com>
+> > > ---
 > > 
-> > Fix that by preventing the code to reach
-> > the last assertion. If the variable 'mirror'
-> > is invalid, the assertion fails and we return
-> > immediately.
+> > This is not how you send a v4 patch...  v2 patches have to apply to the
+> > original code and not on top of the patched code.
 > > 
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > Signed-off-by: Khaled ROMDHANI <khaledromdhani216@gmail.com>
-> > ---
+> > I sort of think you should find a different thing to work on.  This code
+> > works fine as-is.  Just leave it and try to find a real bug and fix that
+> > instead.
+> > 
+> > regards,
+> > dan carpenter
+> >
 > 
-> This is not how you send a v4 patch...  v2 patches have to apply to the
-> original code and not on top of the patched code.
+> Sorry, I was wrong and I shall send a proper V4.
 > 
-> I sort of think you should find a different thing to work on.  This code
-> works fine as-is.  Just leave it and try to find a real bug and fix that
-> instead.
-> 
-> regards,
-> dan carpenter
->
+> Yes, this code works fine just a warning caught by Coverity scan analysis. 
 
-Sorry, I was wrong and I shall send a proper V4.
+We're going to a lot of work to silence a static checker false positive.
+As a rule, I tell people to ignore the static checker when it is wrong.
 
-Yes, this code works fine just a warning caught by Coverity scan analysis. 
-So the idea behind the patch is to fix the warning. To do that and as suggested by 
-David Sterba, it would be rather to add a default case. So we fix the warning 
-through the enhancement of the switch statement (some sort of 2*1).
+Btw, Smatch parses this code correctly and understands that the callers
+only pass valid values for "mirror".
 
-Yes, I will always try to find other bugs. It is a pleasure for me to do that.
+regards,
+dan carpenter
 
-Thanks.
