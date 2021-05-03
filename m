@@ -2,187 +2,86 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A2A9C433B4
-	for <kernel-janitors@archiver.kernel.org>; Mon,  3 May 2021 09:51:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26AEAC433ED
+	for <kernel-janitors@archiver.kernel.org>; Mon,  3 May 2021 10:07:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 16C2D61157
-	for <kernel-janitors@archiver.kernel.org>; Mon,  3 May 2021 09:51:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D5BA6117A
+	for <kernel-janitors@archiver.kernel.org>; Mon,  3 May 2021 10:07:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233152AbhECJwg (ORCPT
+        id S233173AbhECKI2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 3 May 2021 05:52:36 -0400
-Received: from mga01.intel.com ([192.55.52.88]:10595 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231523AbhECJwg (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 3 May 2021 05:52:36 -0400
-IronPort-SDR: 7Fo9L2F9CVZUWkEFknWmklGsocFhFIi92HlxLSmmxCq5m/T3XkBfoU8FDJqXgo353gttlhIxMk
- eK/LHLULC8Nw==
-X-IronPort-AV: E=McAfee;i="6200,9189,9972"; a="218494911"
-X-IronPort-AV: E=Sophos;i="5.82,268,1613462400"; 
-   d="scan'208";a="218494911"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 May 2021 02:51:43 -0700
-IronPort-SDR: rnnC37PlQP7b07uU/5diHiDYx/F+E9bHBhRAjHoEPelVhmRsAqoL9hm6vk8JNoNpNCCZOHcNcB
- OnmVfrgstMUA==
-X-IronPort-AV: E=Sophos;i="5.82,268,1613462400"; 
-   d="scan'208";a="405544989"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 May 2021 02:51:41 -0700
-Received: from andy by smile with local (Exim 4.94)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1ldVEo-009Ed1-90; Mon, 03 May 2021 12:51:38 +0300
-Date:   Mon, 3 May 2021 12:51:38 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+        Mon, 3 May 2021 06:08:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47816 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233095AbhECKI2 (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 3 May 2021 06:08:28 -0400
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89ADFC06174A;
+        Mon,  3 May 2021 03:07:35 -0700 (PDT)
+Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5C16156B;
+        Mon,  3 May 2021 12:07:32 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1620036452;
+        bh=oeq5yAnxVpDTezsrEE2MxgP7UgCP5bXHGgJvz3hmt18=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nkjCT3vAyk8GrJ06IjBWqx8VvXc8xoiowL22ALe7x/NgiCR6JhkRCTwbekGdRqbUO
+         JvbqwS3TJwmT+CwVC84v/8YHH2nslUQwXykJlTJYA1S/W4kH9jLdgt50VQflRwOiZB
+         npGK8ZJWzr8RF2ggzyeNiIZkHtWf6wvCB9zfGjCY=
+Date:   Mon, 3 May 2021 13:07:29 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-        Johan Hovold <johan@kernel.org>, linux-serial@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] serial: 8250_omap: fix a timeout loop condition
-Message-ID: <YI/HqpJN+OvYduMn@smile.fi.intel.com>
-References: <YIpd+kOpXKMpEXPf@mwanda>
- <YIqTvcZ6ZrAEL7WE@smile.fi.intel.com>
- <20210429130215.GE21598@kadam>
- <YIvDz7hEhwm66R8G@smile.fi.intel.com>
- <20210430114106.GF1981@kadam>
- <YIv92DBnaVotWd9Y@smile.fi.intel.com>
- <20210430133329.GH1981@kadam>
- <YIwSZGE76f2ZJyyf@smile.fi.intel.com>
- <20210503065439.GI1981@kadam>
+Cc:     Nigel Christian <nigel.l.christian@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] media: uvcvideo: Remove unused variable
+Message-ID: <YI/LYY4LGmGEGyo1@pendragon.ideasonboard.com>
+References: <YIyCJoEwdqgqkxYN@fedora>
+ <20210503092924.GO1981@kadam>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20210503065439.GI1981@kadam>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20210503092924.GO1981@kadam>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, May 03, 2021 at 09:54:39AM +0300, Dan Carpenter wrote:
-> On Fri, Apr 30, 2021 at 05:21:24PM +0300, Andy Shevchenko wrote:
-> > On Fri, Apr 30, 2021 at 04:33:29PM +0300, Dan Carpenter wrote:
-> > > On Fri, Apr 30, 2021 at 03:53:44PM +0300, Andy Shevchenko wrote:
-> > > > On Fri, Apr 30, 2021 at 02:41:06PM +0300, Dan Carpenter wrote:
-> > > > > On Fri, Apr 30, 2021 at 11:46:07AM +0300, Andy Shevchenko wrote:
+On Mon, May 03, 2021 at 12:29:24PM +0300, Dan Carpenter wrote:
+> On Fri, Apr 30, 2021 at 06:18:14PM -0400, Nigel Christian wrote:
+> > The variable buflen is being assigned a value that is never read,
+> > which can be removed.
 > > 
-> > ...
+> > Addresses-Coverity: ("Unused value")
+> > Signed-off-by: Nigel Christian <nigel.l.christian@gmail.com>
+> > ---
+> >  drivers/media/usb/uvc/uvc_driver.c | 1 -
+> >  1 file changed, 1 deletion(-)
 > > 
-> > > > > Why would I make it unsigned?  As a static analysis developer,
-> > > > > pointlessly unsigned variables are one of the leading causes for the
-> > > > > bugs I see.
-> > > > > 
-> > > > > There are times where a iterator counter needs to be unsigned long, or
-> > > > > u64 but I have never seen a case where changing an iterator from
-> > > > > "int i;" to "unsigned int i;" solves a real life kernel bug.  It only
-> > > > > introduces bugs.
-> > > > 
-> > > > See my followup to that, I meant
-> > > > 
-> > > > unsigned int count;
-> > > > 
-> > > > do {
-> > > > 	...
-> > > > } while (--count);
-> > > > 
-> > > > It doesn't solve bug, but prevents the code be read incorrectly like what you
-> > > > are fixing can be avoided with do {} while (); along with unsigned type.
-> > > 
-> > > Why would you use an unsigned int for this???
-> > 
-> > Why it should be signed? You clearly show the amount of iterations. Check for
-> > null I guess even compact in the assembly in comparison to -1.
-> > 
-> > I do not see any point why it should be signed. For what purpose?
-> > 
-> > It's a *down* counter.
+> > diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+> > index 9a791d8ef200..370b086c6e22 100644
+> > --- a/drivers/media/usb/uvc/uvc_driver.c
+> > +++ b/drivers/media/usb/uvc/uvc_driver.c
+> > @@ -768,7 +768,6 @@ static int uvc_parse_format(struct uvc_device *dev,
+> >  		format->xfer_func = uvc_xfer_func(buffer[4]);
+> >  		format->ycbcr_enc = uvc_ycbcr_enc(buffer[5]);
+> >  
+> > -		buflen -= buffer[0];
+> >  		buffer += buffer[0];
+> >  	}
 > 
-> Yeah.  And people regularly test down counters for >= 0.
+> This is a situation where I think that the unused assignment helps
+> readability because it shows how buflen and buffer are connected.
 
-I don't know that. What I see the test is as simple as
-while (--count) which is basically > 0.
-
-> Signed ints
-> are safer.
-
-Any research article about it? What about wrong integral promotions which
-I consider is a root cause of many bugs? People should learn that, or the
-C (standard) should be fixed to make it easier to get.
-
-> Unsigned ints are a *leading* cause of bugs in the kernel.
-
-Again, where this statistics comes from? Maybe it's a simple answer to the
-question that review in kernel is not good enough?
-
-> I don't know if they're in the top five but they're definitely in the
-> top ten.
-
-Again, I don't see any proofs.
-
-> Also if you need a larger type you should switch to a 64 bit type.  The
-> 2-4 million range is very narrow.
-> 
-> I have never seen a single kernel bug where the for loop counter was
-> "int i;" and making it "unsigned int i;" fixed a real life kernel bug.
-
-Your very patch suggests one of the solution to switch to unsigned to fix a
-kernel bug (though with lowest severity).
-
-> Of course, there are times when unsigned int is appropriate, like for
-> sizes or because it's in the spec.
-> 
-> It's frustrating to me because GCC encourages people to make loop
-> counters unsigned and it introduces bugs.
-
-Any code which was written in unthought manner is a buggy code. So, how
-unsigned vs. signed loop counter any different here to any other buggy code?
-
-> I'm looking at the git log right now and I see that someone changed:
-> 
->  void dt_to_asm(FILE *f, struct dt_info *dti, int version)
->  {
->         struct version_info *vi = NULL;
-> -       int i;
-> +       unsigned int i;
->         struct data strbuf = empty_data;
->         struct reserve_info *re;
->         const char *symprefix = "dt";
-> 
-> There are two loops in that function:
-> 
-> 	for (i = 0; i < ARRAY_SIZE(version_table); i++) {
-> 
-> This the one that generates the warning.  GCC knows at compile time that
-> ARRAY_SIZE() is 5.  ARGH!!!  GCC is so lazy and horrible.  If I did this
-> in Smatch people would never accept it.  Even if ARRAY_SIZE() were
-> higher than INT_MAX the loop would behave the same regardless of whether
-> it was signed or not because of type promotion.
-> 
-> The other loop is:
-> 
-> 	for (i = 0; i < reservenum; i++) {
-> 
-> In this case "reservenum" comes from the command line.  In the original
-> code if it were negative that would be a harmless no-op but now because
-> i is unsigned it's a crashing bug.  Why did GCC not generate a warning
-> for this?  The code was obviously bad before, that's true, but now in a
-> very measurable way it has become worse.
-
-See above. I think the root cause that people do not understand C and how to
-program in C in bug-less manner.
-
-> This example is not really important.  I only brought it up because it
-> is most recent example of people changing "int i;" to "unsigned int i;".
-> But there have been other cases like this which have had a security
-> impact.
+And removing it may cause issues later if we end up adding more code
+below (unlikely in practice though). I'd rather keep this line.
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Regards,
 
-
+Laurent Pinchart
