@@ -2,147 +2,107 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28C9AC433B4
-	for <kernel-janitors@archiver.kernel.org>; Mon,  3 May 2021 07:04:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0159C433ED
+	for <kernel-janitors@archiver.kernel.org>; Mon,  3 May 2021 07:23:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 05295611CB
-	for <kernel-janitors@archiver.kernel.org>; Mon,  3 May 2021 07:04:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7972C6120D
+	for <kernel-janitors@archiver.kernel.org>; Mon,  3 May 2021 07:23:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232853AbhECHF1 (ORCPT
+        id S230490AbhECHYa (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 3 May 2021 03:05:27 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:43430 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229820AbhECHF0 (ORCPT
+        Mon, 3 May 2021 03:24:30 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:50646 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229817AbhECHYa (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 3 May 2021 03:05:26 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 1436jSSO125386;
-        Mon, 3 May 2021 07:04:09 GMT
+        Mon, 3 May 2021 03:24:30 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 1437FECs124271;
+        Mon, 3 May 2021 07:23:32 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
  : subject : message-id : references : mime-version : content-type :
- content-transfer-encoding : in-reply-to; s=corp-2020-01-29;
- bh=A2LUi98bQEsBLs6+EHyBIVyeTOOCSHH3hPDWNj+yY6c=;
- b=Bi4VLwxwlYpvLUg5nYwEXFoLf9b1AbGySJ/WjfihKqE9kJlVg5bFWkFtVIaSTGch+n/D
- VeDURr3lKTWlZZtRdai6UcdsmIlqVqnVb0ow10CkQyBTtpKosxtB16aBHzontgI56pdx
- EZC2baxfpORkyfFFv9a8YTdHuGDFpDSKh8GOZywnEHsYowFfqG/SyC84GGB9JeJw+mb0
- c+9NxwTwZdXWM1R4/YIKBICPXaHzkW88pJqUCZfmTM4owdRMj4uX/IWSHHw9JAfxY4eN
- OKN6gTA9XDqL7hPsTk26sb91j88eGe6dhbzJsyYwM03K0magBKNsM4NO2uouisbL23Lr KA== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2130.oracle.com with ESMTP id 388vgbjs15-1
+ in-reply-to; s=corp-2020-01-29;
+ bh=PRTKyLHF7uB7hw/rNKqK5iaFT2wvuHgVDu9UJa42LW0=;
+ b=KGpBy2aSTBDXoVNuL/opNj2f9Yd+7p11aE399zSP9/JC74BWSf8KKPenffN4FC/NLavA
+ DORdDmGQAuBXsad8jIntu1jp4i+/bRnOTcnJ6lKgzFzRz2wmjB06mEjHqTXnzP0W7fqk
+ +4B4K5tYpLmrPYXgk4m5s/39K/hzJDrmH0hT6srC8UE0VfokJ91eK/2kvB3ql9X9B07s
+ F2OV7o2C+oK0rwbEkolIS/boZqwatH+Fq5EfUFPVc56m6Xd2QfuDrY2X45uC9s1vaNk0
+ XZKcfMuEw0XVvz4yBb3TkO2n73oxVTyQrILAmjhHb63plr5qYbTog2xoF7XduAdlTDbf 2g== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 388xxmtpxt-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 03 May 2021 07:04:09 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 1436jDfw072686;
-        Mon, 3 May 2021 07:04:08 GMT
+        Mon, 03 May 2021 07:23:32 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 1437KAkq062499;
+        Mon, 3 May 2021 07:23:31 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-        by userp3020.oracle.com with ESMTP id 389grqau13-1
+        by aserp3020.oracle.com with ESMTP id 388xt1xuqj-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 03 May 2021 07:04:08 +0000
-Received: from userp3020.oracle.com (userp3020.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 143747Bk155347;
-        Mon, 3 May 2021 07:04:07 GMT
+        Mon, 03 May 2021 07:23:31 +0000
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 1437NV9s078301;
+        Mon, 3 May 2021 07:23:31 GMT
 Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3020.oracle.com with ESMTP id 389grqau0r-1
+        by aserp3020.oracle.com with ESMTP id 388xt1xuq6-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 03 May 2021 07:04:07 +0000
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 143741qO029906;
-        Mon, 3 May 2021 07:04:04 GMT
+        Mon, 03 May 2021 07:23:31 +0000
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 1437NTGo012563;
+        Mon, 3 May 2021 07:23:29 GMT
 Received: from kadam (/102.36.221.92)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 03 May 2021 07:04:01 +0000
-Date:   Mon, 3 May 2021 10:03:51 +0300
+        with ESMTP ; Mon, 03 May 2021 00:23:28 -0700
+Date:   Mon, 3 May 2021 10:23:22 +0300
 From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Colin King <colin.king@canonical.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Jianjun Wang <jianjun.wang@mediatek.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Rob Herring <robh@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-pci@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] PCI: mediatek-gen3: Add missing null pointer check
-Message-ID: <20210503070351.GJ1981@kadam>
-References: <7a512e3a-2897-ac12-ac6e-06be28735279@wanadoo.fr>
- <20210430163450.GA657994@bjorn-Precision-5520>
+To:     Khaled ROMDHANI <khaledromdhani216@gmail.com>
+Cc:     clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] fs/btrfs: Fix uninitialized variable
+Message-ID: <20210503072322.GK1981@kadam>
+References: <20210501225046.9138-1-khaledromdhani216@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210430163450.GA657994@bjorn-Precision-5520>
+In-Reply-To: <20210501225046.9138-1-khaledromdhani216@gmail.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-GUID: -HUAwuDF2LXDw3bFyBbGcmZlTdgK708b
-X-Proofpoint-ORIG-GUID: -HUAwuDF2LXDw3bFyBbGcmZlTdgK708b
+X-Proofpoint-GUID: YsC9ZDBNHAigZu5GhynQq1XkYp9b4oEt
+X-Proofpoint-ORIG-GUID: YsC9ZDBNHAigZu5GhynQq1XkYp9b4oEt
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9972 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 mlxlogscore=999
- suspectscore=0 priorityscore=1501 phishscore=0 malwarescore=0
- impostorscore=0 clxscore=1011 bulkscore=0 spamscore=0 adultscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2104060000 definitions=main-2105030046
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 spamscore=0
+ suspectscore=0 phishscore=0 clxscore=1015 lowpriorityscore=0
+ mlxlogscore=999 priorityscore=1501 impostorscore=0 mlxscore=0 adultscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104060000 definitions=main-2105030048
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Apr 30, 2021 at 11:34:50AM -0500, Bjorn Helgaas wrote:
-> On Fri, Apr 30, 2021 at 09:47:06AM +0200, Christophe JAILLET wrote:
-> > Le 29/04/2021 à 13:00, Colin King a écrit :
-> > > From: Colin Ian King <colin.king@canonical.com>
-> > > 
-> > > The call to platform_get_resource_byname can potentially return null, so
-> > > add a null pointer check to avoid a null pointer dereference issue.
-> > > 
-> > > Addresses-Coverity: ("Dereference null return")
-> > > Fixes: 441903d9e8f0 ("PCI: mediatek-gen3: Add MediaTek Gen3 driver for MT8192")
-> > > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > > ---
-> > >   drivers/pci/controller/pcie-mediatek-gen3.c | 2 ++
-> > >   1 file changed, 2 insertions(+)
-> > > 
-> > > diff --git a/drivers/pci/controller/pcie-mediatek-gen3.c b/drivers/pci/controller/pcie-mediatek-gen3.c
-> > > index 20165e4a75b2..3c5b97716d40 100644
-> > > --- a/drivers/pci/controller/pcie-mediatek-gen3.c
-> > > +++ b/drivers/pci/controller/pcie-mediatek-gen3.c
-> > > @@ -721,6 +721,8 @@ static int mtk_pcie_parse_port(struct mtk_pcie_port *port)
-> > >   	int ret;
-> > >   	regs = platform_get_resource_byname(pdev, IORESOURCE_MEM, "pcie-mac");
-> > > +	if (!regs)
-> > > +		return -EINVAL;
-> > >   	port->base = devm_ioremap_resource(dev, regs);
-> > >   	if (IS_ERR(port->base)) {
-> > >   		dev_err(dev, "failed to map register base\n");
-> > > 
-> > 
-> > Nitpick:
-> >    Using 'devm_platform_ioremap_resource_byname' is slightly less verbose
-> > and should please Coverity.
+On Sat, May 01, 2021 at 11:50:46PM +0100, Khaled ROMDHANI wrote:
+> Fix the warning: variable 'zone' is used
+> uninitialized whenever '?:' condition is true.
 > 
-> Not a nitpick at all.  Jianjun is correct that devm_ioremap_resource()
-> does check "regs" for NULL and it fails gracefully before trying to
-> dereference it, so the extra check shouldn't be needed.  And most
-> cases in drivers/pci/ look like this, without the extra check:
+> Fix that by preventing the code to reach
+> the last assertion. If the variable 'mirror'
+> is invalid, the assertion fails and we return
+> immediately.
 > 
->   res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "app");
->   base = devm_ioremap_resource(dev, res);
->   if (IS_ERR(base))
->     ...
-> 
-> If devm_platform_ioremap_resource_byname() keeps Coverity happy, I
-> think that's what we should be doing across drivers/pci/.  Coverity
-> false positives are a hassle.
+> Reported-by: kernel test robot <lkp@intel.com>
+> Signed-off-by: Khaled ROMDHANI <khaledromdhani216@gmail.com>
+> ---
 
-Smatch knows that devm_ioremap_resource() will return ERR_PTR(-EINVAL)
-when we pass it a NULL.  ;)
+This is not how you send a v4 patch...  v2 patches have to apply to the
+original code and not on top of the patched code.
+
+I sort of think you should find a different thing to work on.  This code
+works fine as-is.  Just leave it and try to find a real bug and fix that
+instead.
 
 regards,
 dan carpenter
