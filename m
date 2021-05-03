@@ -2,112 +2,77 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56B61C433ED
-	for <kernel-janitors@archiver.kernel.org>; Mon,  3 May 2021 14:54:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2798C43460
+	for <kernel-janitors@archiver.kernel.org>; Mon,  3 May 2021 14:55:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2699D611EE
-	for <kernel-janitors@archiver.kernel.org>; Mon,  3 May 2021 14:54:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC0BD611EE
+	for <kernel-janitors@archiver.kernel.org>; Mon,  3 May 2021 14:55:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229757AbhECOzX (ORCPT
+        id S230023AbhECO4d (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 3 May 2021 10:55:23 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:49064 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229596AbhECOzW (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 3 May 2021 10:55:22 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 143EoL7m007643;
-        Mon, 3 May 2021 14:54:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=cdNlMntfr+Dhz5UmiQP55qbEYXLGg/UgqsiwzzTuLEw=;
- b=OaoFUQGde/t1Ha4HqhHpTUfutzrJ1njdrv/J5Vt97HV65Z5Qe9CzCqKvE397j8fgauN/
- MUASNG9r4NkT/pBdADinfbozMoKdq1HBRrd3KZyyjKgfqei/Ch1Xkqb4/ALtJZrNZ5PE
- OSeP4kNo38VQV4IbbBIOjwP4OrA0wKkhPHJ3bYkuIITtqcW7hPKd6VRZk3VoeGrP9LdZ
- huF0YLREmBI1QO/1Ud0RhC0fNNnthVVMVFDKuAG2J+aCRq5gLJiolQswtL07CbbKXbj2
- M1LCsVwYuj/Pr5+w0x5AmPKg+uN1b7jbG1s1U1WFioJly22hga+QUY1wlRbfhYj0Olig Nw== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2120.oracle.com with ESMTP id 389h13ts84-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 03 May 2021 14:54:09 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 143EpFkd192498;
-        Mon, 3 May 2021 14:54:09 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by userp3020.oracle.com with ESMTP id 389grqthgq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 03 May 2021 14:54:09 +0000
-Received: from userp3020.oracle.com (userp3020.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 143Es9qr016517;
-        Mon, 3 May 2021 14:54:09 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3020.oracle.com with ESMTP id 389grqthge-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 03 May 2021 14:54:09 +0000
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 143Es7Xr002774;
-        Mon, 3 May 2021 14:54:07 GMT
-Received: from mwanda (/102.36.221.92)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 03 May 2021 14:54:06 +0000
-Date:   Mon, 3 May 2021 17:53:59 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Felix Fietkau <nbd@nbd.name>
-Cc:     Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Shayne Chen <shayne.chen@mediatek.com>,
-        linux-wireless@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] mt76: mt7915: fix a signedness bug in
- mt7915_mcu_apply_tx_dpd()
-Message-ID: <YJAOhzs1XQQIB1Kw@mwanda>
+        Mon, 3 May 2021 10:56:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60172 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229767AbhECO4c (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 3 May 2021 10:56:32 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id CCF53611CD;
+        Mon,  3 May 2021 14:55:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1620053739;
+        bh=yYdFn9UpSYDW+ZIqHHl4T7RRAR7QT/dCboazRa48y5E=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=EEW4oazT3r6l/DHbrMliqYyYmsjLfOPaQ+nK/51/0aMr3hOeKK1/DoZk04yNpYcX1
+         eJphO5rjzLBgvHU4sGd907Ts1iLlh589GvYatCf08sGmcY0TV8G55Jf1F9pPmUDeuA
+         oQc2vV1OC+yf8j50w6KzEd/iLZ/2EO3CpeGKhIkJ5pfzCOUXiF4k4co3bBjLzCznpw
+         qM4KdBl3w6+5RekJ0zcxhfCxwdvWUQAvU35wjZJZRbftLkDLXKsCXuBxU+t5VbJYJP
+         Zx2RoStBFoBL1Z421krxc5YRnJkeo2vup/2WY6hrnSBxAEJhRYho7/gBYU7ccIc6+c
+         KMHfC5GKDRFpQ==
+Date:   Mon, 3 May 2021 17:55:37 +0300
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Colin King <colin.king@canonical.com>
+Cc:     James Bottomley <jejb@linux.ibm.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        clang-built-linux@googlegroups.com
+Subject: Re: [PATCH] KEYS: trusted: Fix memory leak on object td
+Message-ID: <YJAO6SfreYLxOOpn@kernel.org>
+References: <20210430113724.110746-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-X-Proofpoint-ORIG-GUID: GU7Nq_ShP-nsk1V-MiVG_Nndt6qHvgsH
-X-Proofpoint-GUID: GU7Nq_ShP-nsk1V-MiVG_Nndt6qHvgsH
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9973 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1015 spamscore=0 mlxscore=0
- phishscore=0 adultscore=0 lowpriorityscore=0 suspectscore=0
- priorityscore=1501 mlxlogscore=999 malwarescore=0 impostorscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2104060000 definitions=main-2105030103
+In-Reply-To: <20210430113724.110746-1-colin.king@canonical.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-"idx" needs to be signed for the error handling to work.
+On Fri, Apr 30, 2021 at 12:37:24PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Two error return paths are neglecting to free allocated object td,
+> causing a memory leak. Fix this by returning via the error return
+> path that securely kfree's td.
+> 
+> Fixes clang scan-build warning:
+> security/keys/trusted-keys/trusted_tpm1.c:496:10: warning: Potential
+> memory leak [unix.Malloc]
+> 
+> Fixes: 5df16caada3f ("KEYS: trusted: Fix incorrect handling of tpm_get_random()")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Fixes: 495184ac91bb ("mt76: mt7915: add support for applying pre-calibration data")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/net/wireless/mediatek/mt76/mt7915/mcu.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Thanks, applied.
 
-diff --git a/drivers/net/wireless/mediatek/mt76/mt7915/mcu.c b/drivers/net/wireless/mediatek/mt76/mt7915/mcu.c
-index b3f14ff67c5a..764f25a828fa 100644
---- a/drivers/net/wireless/mediatek/mt76/mt7915/mcu.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt7915/mcu.c
-@@ -3440,8 +3440,9 @@ int mt7915_mcu_apply_tx_dpd(struct mt7915_phy *phy)
- {
- 	struct mt7915_dev *dev = phy->dev;
- 	struct cfg80211_chan_def *chandef = &phy->mt76->chandef;
--	u16 total = 2, idx, center_freq = chandef->center_freq1;
-+	u16 total = 2, center_freq = chandef->center_freq1;
- 	u8 *cal = dev->cal, *eep = dev->mt76.eeprom.data;
-+	int idx;
- 
- 	if (!(eep[MT_EE_DO_PRE_CAL] & MT_EE_WIFI_CAL_DPD))
- 		return 0;
--- 
-2.30.2
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
+/Jarkko
