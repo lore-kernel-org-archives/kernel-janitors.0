@@ -2,90 +2,89 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2664C433ED
-	for <kernel-janitors@archiver.kernel.org>; Mon,  3 May 2021 22:42:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64E88C43461
+	for <kernel-janitors@archiver.kernel.org>; Tue,  4 May 2021 00:06:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D0D8A61186
-	for <kernel-janitors@archiver.kernel.org>; Mon,  3 May 2021 22:42:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 326CF610E6
+	for <kernel-janitors@archiver.kernel.org>; Tue,  4 May 2021 00:06:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229595AbhECWmy (ORCPT
+        id S229695AbhEDAGz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 3 May 2021 18:42:54 -0400
-Received: from so254-9.mailgun.net ([198.61.254.9]:44738 "EHLO
-        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229570AbhECWmx (ORCPT
+        Mon, 3 May 2021 20:06:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37300 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229714AbhEDAGx (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 3 May 2021 18:42:53 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1620081720; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
- Subject: Sender; bh=e87KiAr/ZyTVFzb6IdygSWtuAVyaAu/iFNR5Z+8302c=; b=AWFu5dijRdYBX2JapBMvSPeAT88dkvjNQ76k9GfUM+C/D+l10HECvwvs76q5GPA2S7UNlzJk
- jUTob8qxc7CkRN0C4cyJXV25zBGJ+8zZklQfX72P3MLqGteIGiKGujNOPK8Zob36D67Varz1
- LrGJ+2l49rBMwbKhfS3EwIL2+o8=
-X-Mailgun-Sending-Ip: 198.61.254.9
-X-Mailgun-Sid: WyI5NDExNyIsICJrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n01.prod.us-west-2.postgun.com with SMTP id
- 60907c238807bcde1d0224b8 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Mon, 03 May 2021 22:41:39
- GMT
-Sender: hemantk=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 508A1C433D3; Mon,  3 May 2021 22:41:39 +0000 (UTC)
-Received: from [10.46.162.249] (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: hemantk)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id D78E7C433F1;
-        Mon,  3 May 2021 22:41:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D78E7C433F1
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=hemantk@codeaurora.org
-Subject: Re: [PATCH -next] bus: mhi: pci_generic: Fix possible use-after-free
- in mhi_pci_remove()
-To:     Wei Yongjun <weiyongjun1@huawei.com>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Manivannan Sadhasivam <mani@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Hulk Robot <hulkci@huawei.com>
-References: <20210413160318.2003699-1-weiyongjun1@huawei.com>
-From:   Hemant Kumar <hemantk@codeaurora.org>
-Message-ID: <0048b760-cb55-9775-c175-05fe957b35aa@codeaurora.org>
-Date:   Mon, 3 May 2021 15:41:36 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Mon, 3 May 2021 20:06:53 -0400
+Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FC0AC061574
+        for <kernel-janitors@vger.kernel.org>; Mon,  3 May 2021 17:05:58 -0700 (PDT)
+Received: by mail-pf1-x42c.google.com with SMTP id k19so2675748pfu.5
+        for <kernel-janitors@vger.kernel.org>; Mon, 03 May 2021 17:05:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=jlwag/uSXI11ILOIN89++20RL6/tXX3LDSgQBRBdBOU=;
+        b=ZQm8gFiW96TZMryAmLMnN0xnS/oS/3U8vLNnaJWFPJmfVBsGpLfYb8L0+IUNhSNr3+
+         ADT08NYza76P++MU6x3/ETruXrriu4w82WIVNRjqN0KqB+aLcRoFwcmdV5Luvxnpf0sq
+         bAT97oaVJ+cig/8tht9DwnLaDN+R8NGSEAcajrTBzwwNGB3v5mExK/xtHKPyED4S+/qf
+         GLqufTBW8lMhq2xNoFvK4gaM0nf1Y3m/9jawWdlrxvLAl2zN2BBTl6JpBmwJb8g0xLyk
+         wkQKh7RPkmiQ126PUUn55ZAmG0o6pje7F2BwAwTj6eNfipHUUomPiCmgZu2BG5bPGTdz
+         oDGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=jlwag/uSXI11ILOIN89++20RL6/tXX3LDSgQBRBdBOU=;
+        b=IhsQ1+JzkEk3aozVDCvQxDc1rJ6RIH+8KOda0ChSFHXcPOQvSBcnTe7gQdquMLjEzG
+         hHsftLQCSNIwoQPU9NdrFDDTjXeD0870x/KgsbP0WoQWQ7Ea/VCwEs4KQyHWTmeUz4kD
+         wD9c0ZlxtxTL5rjj22V7avhUGf4p2Mz6aG+PmDCwVPqBDTCHwE+4+/llX7AZdhvZYCAA
+         1E8w+zTE2K/uuaGUjY4sTb80HlVimXrSVp58KnWXAfmZ4xkZ7u/6x7p92Pi3OvD+OK4C
+         6k4WHy63cJK6J+ScKu9VXzQQ73ya3WT9xxxIeFezfy21bSFg4aPkM414VRyQXNsc+i5Q
+         8YbA==
+X-Gm-Message-State: AOAM530+bOUBFcc8xe4wWlTgt2mDPr4QzYo88gaYQ7g8oBvay8CDfluz
+        6q+xtoR/oEotWEbq0dBzmWTxEQ==
+X-Google-Smtp-Source: ABdhPJwZ+dFy8uvseVcLfYrjvph2vOhgI+bPnckBb9XnFgLOdOCwxUBjA0t+PHSHMR6Hn+tVwrQhPA==
+X-Received: by 2002:a63:4648:: with SMTP id v8mr12263361pgk.34.1620086758143;
+        Mon, 03 May 2021 17:05:58 -0700 (PDT)
+Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
+        by smtp.gmail.com with ESMTPSA id f201sm10222879pfa.133.2021.05.03.17.05.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 May 2021 17:05:57 -0700 (PDT)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     Qiheng Lin <linqiheng@huawei.com>
+Cc:     Hulk Robot <hulkci@huawei.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH -next] soc: amlogic: meson-clk-measure: remove redundant dev_err call in meson_msr_probe()
+Date:   Mon,  3 May 2021 17:05:54 -0700
+Message-Id: <162008674673.40672.9817801757275466869.b4-ty@baylibre.com>
+X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20210409110243.41-1-linqiheng@huawei.com>
+References: <20210409110243.41-1-linqiheng@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20210413160318.2003699-1-weiyongjun1@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On Fri, 9 Apr 2021 19:02:43 +0800, Qiheng Lin wrote:
+> There is a error message within devm_ioremap_resource
+> already, so remove the dev_err call to avoid redundant
+> error message.
 
+Applied, thanks!
 
-On 4/13/21 9:03 AM, Wei Yongjun wrote:
-> This driver's remove path calls del_timer(). However, that function
-> does not wait until the timer handler finishes. This means that the
-> timer handler may still be running after the driver's remove function
-> has finished, which would result in a use-after-free.
-> 
-> Fix by calling del_timer_sync(), which makes sure the timer handler
-> has finished, and unable to re-schedule itself.
-> 
-> Fixes: 8562d4fe34a3 ("mhi: pci_generic: Add health-check")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+[1/1] soc: amlogic: meson-clk-measure: remove redundant dev_err call in meson_msr_probe()
+      commit: 4f2f0162a389196fb4092aee93ef4a89f96390be
 
-Reviewed-by: Hemant kumar <hemantk@codeaurora.org>
-
+Best regards,
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Kevin Hilman <khilman@baylibre.com>
