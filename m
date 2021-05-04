@@ -2,70 +2,95 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BFADC433B4
-	for <kernel-janitors@archiver.kernel.org>; Tue,  4 May 2021 16:57:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82A26C43461
+	for <kernel-janitors@archiver.kernel.org>; Tue,  4 May 2021 17:17:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 26CD9613C6
-	for <kernel-janitors@archiver.kernel.org>; Tue,  4 May 2021 16:57:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6652A613BC
+	for <kernel-janitors@archiver.kernel.org>; Tue,  4 May 2021 17:17:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230463AbhEDQ6b (ORCPT
+        id S232091AbhEDRSp (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 4 May 2021 12:58:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52136 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230285AbhEDQ6b (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 4 May 2021 12:58:31 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 02B336112F;
-        Tue,  4 May 2021 16:57:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1620147456;
-        bh=7xtXEJUggeEQTnglckkti+0y7zH44zmLRlGn4eJ23Zw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=POXrpb22md3Gzgo2Tdj0M4U4LAOaoGmbUFzKkFlRlHCzxXbq4UhFXpyXp9biB7vwT
-         26B7R2RL6kXXSoqe6ZT0J5UrMLBcNJn6/LzlIrOh/BC92EUyzKnv3jGZPi8RpeF8kd
-         TPNCuFQtSKH9OSSPxlf9zLS7YmYs1XlqavRiKiyM7dL4iCw+z8zLtzi83O8PNK+7z5
-         rEpe2yJRdW4oqsTaeAQz9lD7CeWO23ZYxmlMYX8MnTh7QZhzhVMHSrR170Aqi+nwIy
-         hwx4jb/o8/SGN7RiAZt53FYHofj+v2IA05vFVwyvtUUVWcEf8/4wR9s3slKqVD/kT6
-         l6qesFDYHJxlQ==
-Date:   Tue, 4 May 2021 09:57:34 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     herbert@gondor.apana.org.au, davem@davemloft.net,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [RFC PATCH] crypto: arc4: Implement a version optimized for
- memory usage
-Message-ID: <YJF8/oaWUqZsWfOb@gmail.com>
-References: <c52bd8972c9763c3fac685d7c6af3c46a23a1477.1619983555.git.christophe.jaillet@wanadoo.fr>
+        Tue, 4 May 2021 13:18:45 -0400
+Received: from smtp06.smtpout.orange.fr ([80.12.242.128]:27267 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232067AbhEDRSn (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 4 May 2021 13:18:43 -0400
+Received: from localhost.localdomain ([86.243.172.93])
+        by mwinf5d41 with ME
+        id 0hHl2500221Fzsu03hHlrD; Tue, 04 May 2021 19:17:46 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 04 May 2021 19:17:46 +0200
+X-ME-IP: 86.243.172.93
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     thierry.reding@gmail.com, lorenzo.pieralisi@arm.com,
+        robh@kernel.org, bhelgaas@google.com, jonathanh@nvidia.com
+Cc:     linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 1/3] PCI: tegra: Fix OF node reference leak
+Date:   Tue,  4 May 2021 19:17:42 +0200
+Message-Id: <55b11e9a7fa2987fbc0869d68ae59888954d65e2.1620148539.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c52bd8972c9763c3fac685d7c6af3c46a23a1477.1619983555.git.christophe.jaillet@wanadoo.fr>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, May 02, 2021 at 09:29:46PM +0200, Christophe JAILLET wrote:
-> +#if defined(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS)
-> +#define S_type	u8
-> +#else
-> +#define S_type	u32
-> +#endif
-> +
->  struct arc4_ctx {
-> -	u32 S[256];
-> +	S_type S[256];
->  	u32 x, y;
->  };
+Commit 9e38e690ace3 ("PCI: tegra: Fix OF node reference leak") has fixed
+some node reference leaks in this function but missed some of them.
 
-Is it actually useful to keep both versions?  It seems we could just use the u8
-version everywhere.  Note that there aren't actually any unaligned memory
-accesses, so choosing the version conditionally on
-CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS seems odd.  What are you trying to
-determine by checking that?
+In fact, having 'port' referenced in the 'rp' structure is not enough to
+prevent the leak, until 'rp' is actually added in the 'pcie->ports' list.
 
-- Eric
+Add the missing 'goto err_node_put' accordingly.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/pci/controller/pci-tegra.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
+index 8069bd9232d4..006bf0346dec 100644
+--- a/drivers/pci/controller/pci-tegra.c
++++ b/drivers/pci/controller/pci-tegra.c
+@@ -2193,13 +2193,15 @@ static int tegra_pcie_parse_dt(struct tegra_pcie *pcie)
+ 		rp->np = port;
+ 
+ 		rp->base = devm_pci_remap_cfg_resource(dev, &rp->regs);
+-		if (IS_ERR(rp->base))
+-			return PTR_ERR(rp->base);
++		if (IS_ERR(rp->base)) {
++			err = PTR_ERR(rp->base);
++			goto err_node_put;
++		}
+ 
+ 		label = devm_kasprintf(dev, GFP_KERNEL, "pex-reset-%u", index);
+ 		if (!label) {
+-			dev_err(dev, "failed to create reset GPIO label\n");
+-			return -ENOMEM;
++			err = -ENOMEM;
++			goto err_node_put;
+ 		}
+ 
+ 		/*
+@@ -2217,7 +2219,8 @@ static int tegra_pcie_parse_dt(struct tegra_pcie *pcie)
+ 			} else {
+ 				dev_err(dev, "failed to get reset GPIO: %ld\n",
+ 					PTR_ERR(rp->reset_gpio));
+-				return PTR_ERR(rp->reset_gpio);
++				err = PTR_ERR(rp->reset_gpio);
++				goto err_node_put;
+ 			}
+ 		}
+ 
+-- 
+2.30.2
+
