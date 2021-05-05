@@ -2,100 +2,86 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17A32C433B4
-	for <kernel-janitors@archiver.kernel.org>; Wed,  5 May 2021 10:20:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FFDDC433ED
+	for <kernel-janitors@archiver.kernel.org>; Wed,  5 May 2021 12:26:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ED082613B3
-	for <kernel-janitors@archiver.kernel.org>; Wed,  5 May 2021 10:20:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9EF5613BE
+	for <kernel-janitors@archiver.kernel.org>; Wed,  5 May 2021 12:26:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232634AbhEEKVm (ORCPT
+        id S232544AbhEEM1v (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 5 May 2021 06:21:42 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([185.58.85.151]:33555 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232283AbhEEKVl (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 5 May 2021 06:21:41 -0400
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-226-NBzCLfwUMDaGZYPLw1SIkQ-1; Wed, 05 May 2021 11:20:41 +0100
-X-MC-Unique: NBzCLfwUMDaGZYPLw1SIkQ-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) with Microsoft SMTP
- Server (TLS) id 15.0.1497.2; Wed, 5 May 2021 11:20:41 +0100
-Received: from AcuMS.Aculab.com ([fe80::994c:f5c2:35d6:9b65]) by
- AcuMS.aculab.com ([fe80::994c:f5c2:35d6:9b65%12]) with mapi id
- 15.00.1497.015; Wed, 5 May 2021 11:20:41 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Christophe JAILLET' <christophe.jaillet@wanadoo.fr>,
-        Eric Biggers <ebiggers@kernel.org>
-CC:     "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: RE: [RFC PATCH] crypto: arc4: Implement a version optimized for
- memory usage
-Thread-Topic: [RFC PATCH] crypto: arc4: Implement a version optimized for
- memory usage
-Thread-Index: AQHXQQ8/MxI87C5LlEaRIASgh2FBkKrUrGEQ
-Date:   Wed, 5 May 2021 10:20:41 +0000
-Message-ID: <4fe67cdda2c64c1da314142eda998967@AcuMS.aculab.com>
-References: <c52bd8972c9763c3fac685d7c6af3c46a23a1477.1619983555.git.christophe.jaillet@wanadoo.fr>
- <YJF8/oaWUqZsWfOb@gmail.com>
- <d523902e-744c-1291-aee8-9be734f2a3ce@wanadoo.fr>
-In-Reply-To: <d523902e-744c-1291-aee8-9be734f2a3ce@wanadoo.fr>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Wed, 5 May 2021 08:27:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59676 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231129AbhEEM1s (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 5 May 2021 08:27:48 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 72BE1613B3;
+        Wed,  5 May 2021 12:26:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1620217611;
+        bh=YL7D4o7kDUatxUlkVQK7lpg7yBylqK7Icu1EuQsksM0=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=iToY3lL0hRaSsi7NkW1PYxuRNLCT7cc9E8r8AdVH574Z2d9DDm/+k5C8uRQVjvdKD
+         h6on9jJRLx0yhiBkQNF07zjvs6V5gO8h9mH7nZaW7KDhtya7E+H5RMUw5IP7mgmA5B
+         1rfukrRHUXnR/q9gPkzE6x9noxe7Z6DAweMllFeNNCWO7fulRAj9PoFFAsh1pAYWvb
+         juytEMSxgmmrNvfvmhKNeJoURWOP9MnXK3fFodPmIr6e+0gkpkTdzmS5XsmeSRcQNS
+         WHQKPXLspNLiD2P6HerPqs6eFn44SmCqgO9Ecmc4+5BxX89B3oroKtjheUWJC4eLPx
+         sv4+C49pNwbxQ==
+Date:   Wed, 5 May 2021 14:26:47 +0200 (CEST)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     Wei Yongjun <weiyongjun1@huawei.com>
+cc:     Dario Pagani <dario.pagani.146@gmail.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        linux-input@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org,
+        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+Subject: Re: [PATCH -next] HID: thrustmaster: fix return value check in
+ thrustmaster_probe()
+In-Reply-To: <20210402094041.3424285-1-weiyongjun1@huawei.com>
+Message-ID: <nycvar.YFH.7.76.2105051426390.28378@cbobk.fhfr.pm>
+References: <20210402094041.3424285-1-weiyongjun1@huawei.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-RnJvbTogQ2hyaXN0b3BoZSBKQUlMTEVUDQo+IFNlbnQ6IDA0IE1heSAyMDIxIDE5OjAwDQo+IA0K
-PiBMZSAwNC8wNS8yMDIxIMOgIDE4OjU3LCBFcmljIEJpZ2dlcnMgYSDDqWNyaXTCoDoNCj4gPiBP
-biBTdW4sIE1heSAwMiwgMjAyMSBhdCAwOToyOTo0NlBNICswMjAwLCBDaHJpc3RvcGhlIEpBSUxM
-RVQgd3JvdGU6DQo+ID4+ICsjaWYgZGVmaW5lZChDT05GSUdfSEFWRV9FRkZJQ0lFTlRfVU5BTElH
-TkVEX0FDQ0VTUykNCj4gPj4gKyNkZWZpbmUgU190eXBlCXU4DQo+ID4+ICsjZWxzZQ0KPiA+PiAr
-I2RlZmluZSBTX3R5cGUJdTMyDQo+ID4+ICsjZW5kaWYNCj4gPj4gKw0KPiA+PiAgIHN0cnVjdCBh
-cmM0X2N0eCB7DQo+ID4+IC0JdTMyIFNbMjU2XTsNCj4gPj4gKwlTX3R5cGUgU1syNTZdOw0KPiA+
-PiAgIAl1MzIgeCwgeTsNCj4gPj4gICB9Ow0KPiA+DQo+ID4gSXMgaXQgYWN0dWFsbHkgdXNlZnVs
-IHRvIGtlZXAgYm90aCB2ZXJzaW9ucz8gIEl0IHNlZW1zIHdlIGNvdWxkIGp1c3QgdXNlIHRoZSB1
-OA0KPiA+IHZlcnNpb24gZXZlcnl3aGVyZS4gIE5vdGUgdGhhdCB0aGVyZSBhcmVuJ3QgYWN0dWFs
-bHkgYW55IHVuYWxpZ25lZCBtZW1vcnkNCj4gPiBhY2Nlc3Nlcywgc28gY2hvb3NpbmcgdGhlIHZl
-cnNpb24gY29uZGl0aW9uYWxseSBvbg0KPiA+IENPTkZJR19IQVZFX0VGRklDSUVOVF9VTkFMSUdO
-RURfQUNDRVNTIHNlZW1zIG9kZC4gIFdoYXQgYXJlIHlvdSB0cnlpbmcgdG8NCj4gPiBkZXRlcm1p
-bmUgYnkgY2hlY2tpbmcgdGhhdD8NCj4gDQo+IEhpLCB0aGlzIGlzIGEgYmFkIGludGVycHJldGF0
-aW9uIGZyb20gbWUuDQouLi4NCj4gDQo+IEkgd2FudGVkIHRvIGF2b2lkIHBvdGVudGlhbCBwZXJm
-b3JtYW5jZSBjb3N0IHJlbGF0ZWQgdG8gdXNpbmcgY2hhciAoaS5lDQo+IHU4KSBpbnN0ZWFkIG9m
-IGludCAoaS5lLiB1MzIpLg0KPiBPbiBzb21lIGFyY2hpdGVjdHVyZSB0aGlzIGNvdWxkIHJlcXVp
-cmUgc29tZSBzaGlmdCBvciBtYXNraW5nIG9yDQo+IHdoYXRldmVyIHRvICJ1bnBhY2siIHRoZSB2
-YWx1ZXMgb2YgUy4NCg0KVGhlIG9ubHkgYXJjaGl0ZWN0dXJlIHRoYXQgTGludXggcmFuIG9uIHdo
-ZXJlIHRoZSBoYXJkd2FyZQ0KZGlkIFJNVyBhY2Nlc3NlcyBmb3IgYnl0ZSB3cml0ZXMgd2FzIHNv
-bWUgdmVyeSBvbGQgYWxwaGEgY3B1Lg0KRXZlbiBtb3JlIHJlY2VudCBhbHBoYSBzdXBwb3J0ZWQg
-Ynl0ZSB3cml0ZXMgdG8gbWVtb3J5Lg0KDQpPbiBtYW55IGFyY2hpdGVjdHVyZXMgKG5vdCB4ODYg
-b3IgYXJtKSBpbmRleGluZyBhIGJ5dGUgYXJyYXkNCmlzIGJldHRlciBiZWNhdXNlIGl0IHNhdmVz
-IHRoZSBpbnN0cnVjdGlvbiB0byBtdWx0aXBseSB0aGUgaW5kZXggYnkgNC4NCk9uIHg4Ni02NCB5
-b3Ugd2FudCB0byBiZSB1c2luZyAndW5zaWduZWQgaW50JyBmb3IgYXJyYXkgaW5kZXhlcw0Kc28g
-dGhlIGNvbXBpbGVyIGRvZXNuJ3QgaGF2ZSB0byBlbWl0IHRoZSBpbnN0cnVjdGlvbiB0byBzaWdu
-IGV4dGVuZA0KYSAzMmJpdCBpbnQgdG8gNjQgYml0cyAoc29tZXRpbWVzIGl0IGtub3dzIGl0IGNh
-bid0IGJlIG5lZWRlZCkuDQoNCkZXSVcgd2l0aCBhIG1vZGVybiBjb21waWxlciBhbGwgdGhvc2Ug
-dGVtcG9yYXJpZXMgYXJlIHBvaW50bGVzcy4NClRoZSBudW1iZXIgb2YgbGluZXMgb2YgY29kZSBj
-YW4gYmUgaGFsdmVkLg0KDQoJRGF2aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRl
-LCBCcmFtbGV5IFJvYWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpS
-ZWdpc3RyYXRpb24gTm86IDEzOTczODYgKFdhbGVzKQ0K
+On Fri, 2 Apr 2021, Wei Yongjun wrote:
+
+> Fix the return value check which testing the wrong variable
+> in thrustmaster_probe().
+> 
+> Fixes: c49c33637802 ("HID: support for initialization of some Thrustmaster wheels")
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ---
+>  drivers/hid/hid-thrustmaster.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/hid/hid-thrustmaster.c b/drivers/hid/hid-thrustmaster.c
+> index bfcd08759ba0..fada3536f60e 100644
+> --- a/drivers/hid/hid-thrustmaster.c
+> +++ b/drivers/hid/hid-thrustmaster.c
+> @@ -311,7 +311,7 @@ static int thrustmaster_probe(struct hid_device *hdev, const struct hid_device_i
+>  	}
+>  
+>  	tm_wheel->change_request = kzalloc(sizeof(struct usb_ctrlrequest), GFP_KERNEL);
+> -	if (!tm_wheel->model_request) {
+> +	if (!tm_wheel->change_request) {
+>  		ret = -ENOMEM;
+
+Good catch, applied. Thanks,
+
+-- 
+Jiri Kosina
+SUSE Labs
 
