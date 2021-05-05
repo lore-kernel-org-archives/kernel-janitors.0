@@ -4,69 +4,106 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2BBBC433B4
-	for <kernel-janitors@archiver.kernel.org>; Wed,  5 May 2021 20:20:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FBC0C433B4
+	for <kernel-janitors@archiver.kernel.org>; Wed,  5 May 2021 20:27:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 73507613DD
-	for <kernel-janitors@archiver.kernel.org>; Wed,  5 May 2021 20:20:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8482A613D8
+	for <kernel-janitors@archiver.kernel.org>; Wed,  5 May 2021 20:27:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234623AbhEEUVj (ORCPT
+        id S235695AbhEEU2L (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 5 May 2021 16:21:39 -0400
-Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:32358 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234413AbhEEUVi (ORCPT
+        Wed, 5 May 2021 16:28:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33598 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235560AbhEEU1n (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 5 May 2021 16:21:38 -0400
-Received: from localhost.localdomain ([86.243.172.93])
-        by mwinf5d16 with ME
-        id 18Lf2500B21Fzsu038Lf9L; Wed, 05 May 2021 22:20:41 +0200
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 05 May 2021 22:20:41 +0200
-X-ME-IP: 86.243.172.93
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     sakari.ailus@linux.intel.com, akinobu.mita@gmail.com,
-        s.nawrocki@samsung.com, mchehab@kernel.org
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] media: i2c: ov9650: Fix an error message
-Date:   Wed,  5 May 2021 22:20:37 +0200
-Message-Id: <067380a72bc900e184058d88b7d3247b95aee3f2.1620245957.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Wed, 5 May 2021 16:27:43 -0400
+Received: from viti.kaiser.cx (viti.kaiser.cx [IPv6:2a01:238:43fe:e600:cd0c:bd4a:7a3:8e9f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B5CFC06174A;
+        Wed,  5 May 2021 13:26:44 -0700 (PDT)
+Received: from dslb-188-104-057-152.188.104.pools.vodafone-ip.de ([188.104.57.152] helo=martin-debian-2.paytec.ch)
+        by viti.kaiser.cx with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <martin@kaiser.cx>)
+        id 1leO6R-0003aS-Lq; Wed, 05 May 2021 22:26:39 +0200
+From:   Martin Kaiser <martin@kaiser.cx>
+To:     Larry Finger <Larry.Finger@lwfinger.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Martin Kaiser <martin@kaiser.cx>
+Subject: [PATCH 2/6] staging: rtl8188eu: rtw_init_cmd_priv never fails
+Date:   Wed,  5 May 2021 22:26:18 +0200
+Message-Id: <20210505202622.11087-2-martin@kaiser.cx>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20210505202622.11087-1-martin@kaiser.cx>
+References: <20210505202622.11087-1-martin@kaiser.cx>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-'ret' is known to be 0 here and printing -ENODEV wouldn't be really
-helpful. So remove it from the error message.
+Change the return type to void. Remove unnecessary error handling.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Martin Kaiser <martin@kaiser.cx>
 ---
- drivers/media/i2c/ov9650.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/rtl8188eu/core/rtw_cmd.c    | 3 +--
+ drivers/staging/rtl8188eu/include/rtw_cmd.h | 2 +-
+ drivers/staging/rtl8188eu/os_dep/os_intfs.c | 6 +-----
+ 3 files changed, 3 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/media/i2c/ov9650.c b/drivers/media/i2c/ov9650.c
-index 4fe68aa55789..a9f13dc2f053 100644
---- a/drivers/media/i2c/ov9650.c
-+++ b/drivers/media/i2c/ov9650.c
-@@ -1479,8 +1479,8 @@ static int ov965x_detect_sensor(struct v4l2_subdev *sd)
- 		if (ov965x->id == OV9650_ID || ov965x->id == OV9652_ID) {
- 			v4l2_info(sd, "Found OV%04X sensor\n", ov965x->id);
- 		} else {
--			v4l2_err(sd, "Sensor detection failed (%04X, %d)\n",
--				 ov965x->id, ret);
-+			v4l2_err(sd, "Sensor detection failed (%04X)\n",
-+				 ov965x->id);
- 			ret = -ENODEV;
- 		}
- 	}
+diff --git a/drivers/staging/rtl8188eu/core/rtw_cmd.c b/drivers/staging/rtl8188eu/core/rtw_cmd.c
+index 6728391d39e3..61d0342c76fc 100644
+--- a/drivers/staging/rtl8188eu/core/rtw_cmd.c
++++ b/drivers/staging/rtl8188eu/core/rtw_cmd.c
+@@ -52,13 +52,12 @@ static struct _cmd_callback rtw_cmd_callback[] = {
+  * No irqsave is necessary.
+  */
+ 
+-int rtw_init_cmd_priv(struct cmd_priv *pcmdpriv)
++void rtw_init_cmd_priv(struct cmd_priv *pcmdpriv)
+ {
+ 	init_completion(&pcmdpriv->cmd_queue_comp);
+ 	init_completion(&pcmdpriv->terminate_cmdthread_comp);
+ 
+ 	_rtw_init_queue(&pcmdpriv->cmd_queue);
+-	return _SUCCESS;
+ }
+ 
+ /*
+diff --git a/drivers/staging/rtl8188eu/include/rtw_cmd.h b/drivers/staging/rtl8188eu/include/rtw_cmd.h
+index 68b8ad1a412f..cb0eb4a1d2b7 100644
+--- a/drivers/staging/rtl8188eu/include/rtw_cmd.h
++++ b/drivers/staging/rtl8188eu/include/rtw_cmd.h
+@@ -54,7 +54,7 @@ void rtw_free_cmd_obj(struct cmd_obj *pcmd);
+ 
+ int rtw_cmd_thread(void *context);
+ 
+-int rtw_init_cmd_priv(struct cmd_priv *pcmdpriv);
++void rtw_init_cmd_priv(struct cmd_priv *pcmdpriv);
+ 
+ enum rtw_drvextra_cmd_id {
+ 	NONE_WK_CID,
+diff --git a/drivers/staging/rtl8188eu/os_dep/os_intfs.c b/drivers/staging/rtl8188eu/os_dep/os_intfs.c
+index a826228cbbe9..55ed721994a0 100644
+--- a/drivers/staging/rtl8188eu/os_dep/os_intfs.c
++++ b/drivers/staging/rtl8188eu/os_dep/os_intfs.c
+@@ -424,11 +424,7 @@ u8 rtw_init_drv_sw(struct adapter *padapter)
+ 
+ 	RT_TRACE(_module_os_intfs_c_, _drv_info_, ("+%s\n", __func__));
+ 
+-	if ((rtw_init_cmd_priv(&padapter->cmdpriv)) == _FAIL) {
+-		RT_TRACE(_module_os_intfs_c_, _drv_err_, ("\n Can't init cmd_priv\n"));
+-		ret8 = _FAIL;
+-		goto exit;
+-	}
++	rtw_init_cmd_priv(&padapter->cmdpriv);
+ 
+ 	padapter->cmdpriv.padapter = padapter;
+ 
 -- 
-2.30.2
+2.20.1
 
