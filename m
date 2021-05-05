@@ -4,78 +4,83 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 733D7C433B4
-	for <kernel-janitors@archiver.kernel.org>; Wed,  5 May 2021 19:06:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B79EC433ED
+	for <kernel-janitors@archiver.kernel.org>; Wed,  5 May 2021 19:38:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 38A7E61168
-	for <kernel-janitors@archiver.kernel.org>; Wed,  5 May 2021 19:06:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 272AA613B4
+	for <kernel-janitors@archiver.kernel.org>; Wed,  5 May 2021 19:38:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234437AbhEETHS (ORCPT
+        id S232925AbhEETjz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 5 May 2021 15:07:18 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:35647 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231422AbhEETHR (ORCPT
+        Wed, 5 May 2021 15:39:55 -0400
+Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:39289 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232847AbhEETjy (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 5 May 2021 15:07:17 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <colin.king@canonical.com>)
-        id 1leMqg-0008J6-S8; Wed, 05 May 2021 19:06:18 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sean Young <sean@mess.org>, linux-media@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] media: mxl692: make a const array static, makes object smaller
-Date:   Wed,  5 May 2021 20:06:18 +0100
-Message-Id: <20210505190618.70367-1-colin.king@canonical.com>
+        Wed, 5 May 2021 15:39:54 -0400
+Received: from localhost.localdomain ([86.243.172.93])
+        by mwinf5d16 with ME
+        id 17es2500B21Fzsu037eswd; Wed, 05 May 2021 21:38:55 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Wed, 05 May 2021 21:38:55 +0200
+X-ME-IP: 86.243.172.93
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     fbarrat@linux.ibm.com, ajd@linux.ibm.com, arnd@arndb.de,
+        gregkh@linuxfoundation.org, mpe@ellerman.id.au,
+        imunsie@au1.ibm.com, mikey@neuling.org
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] cxl: Fix an error message
+Date:   Wed,  5 May 2021 21:38:49 +0200
+Message-Id: <fa2b2c9c72335ab4c3d5e6a33415e7f020b1d51b.1620243401.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+'rc' is known to be 0 here.
+Initialize 'rc' with the expected error code before using it.
 
-Don't populate the const array fw_hdr on the stack but instead it
-static. Makes the object code smaller by 5 bytes:
+While at it, avoid the affectation of 'rc' in a 'if' to make things more
+obvious and linux style.
 
-Before:
-   text    data    bss     dec    hex filename
-  31948   12072     64   44084   ac34 drivers/media/dvb-frontends/mxl692.o
-
-After:
-   text    data    bss     dec    hex filename
-  31879   12136     64   44079   ac2f drivers/media/dvb-frontends/mxl692.o
-
-(gcc version 10.3.0)
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: f204e0b8ce ("cxl: Driver code for powernv PCIe based cards for userspace access")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/media/dvb-frontends/mxl692.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/misc/cxl/file.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/dvb-frontends/mxl692.c b/drivers/media/dvb-frontends/mxl692.c
-index 83030643aba7..a246db683cdf 100644
---- a/drivers/media/dvb-frontends/mxl692.c
-+++ b/drivers/media/dvb-frontends/mxl692.c
-@@ -224,7 +224,9 @@ static int mxl692_validate_fw_header(struct mxl692_dev *dev,
- 	u32 ix, temp;
- 	__be32 *local_buf = NULL;
- 	u8 temp_cksum = 0;
--	const u8 fw_hdr[] = { 0x4D, 0x31, 0x10, 0x02, 0x40, 0x00, 0x00, 0x80 };
-+	static const u8 fw_hdr[] = {
-+		0x4D, 0x31, 0x10, 0x02, 0x40, 0x00, 0x00, 0x80
-+	};
+diff --git a/drivers/misc/cxl/file.c b/drivers/misc/cxl/file.c
+index bd3bd32333c5..3dbdce96fae0 100644
+--- a/drivers/misc/cxl/file.c
++++ b/drivers/misc/cxl/file.c
+@@ -569,7 +569,8 @@ static int cxl_add_chardev(struct cxl_afu *afu, dev_t devt, struct cdev *cdev,
+ 	int rc;
  
- 	if (memcmp(buffer, fw_hdr, 8) != 0) {
- 		status = -EINVAL;
+ 	cdev_init(cdev, fops);
+-	if ((rc = cdev_add(cdev, devt, 1))) {
++	rc = cdev_add(cdev, devt, 1);
++	if (rc) {
+ 		dev_err(&afu->dev, "Unable to add %s chardev: %i\n", desc, rc);
+ 		return rc;
+ 	}
+@@ -577,8 +578,8 @@ static int cxl_add_chardev(struct cxl_afu *afu, dev_t devt, struct cdev *cdev,
+ 	dev = device_create(cxl_class, &afu->dev, devt, afu,
+ 			"afu%i.%i%s", afu->adapter->adapter_num, afu->slice, postfix);
+ 	if (IS_ERR(dev)) {
+-		dev_err(&afu->dev, "Unable to create %s chardev in sysfs: %i\n", desc, rc);
+ 		rc = PTR_ERR(dev);
++		dev_err(&afu->dev, "Unable to create %s chardev in sysfs: %i\n", desc, rc);
+ 		goto err;
+ 	}
+ 
 -- 
 2.30.2
 
