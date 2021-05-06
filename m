@@ -2,102 +2,128 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F422AC43460
-	for <kernel-janitors@archiver.kernel.org>; Wed,  5 May 2021 20:27:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F325EC433ED
+	for <kernel-janitors@archiver.kernel.org>; Thu,  6 May 2021 02:30:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D908D613C9
-	for <kernel-janitors@archiver.kernel.org>; Wed,  5 May 2021 20:27:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C918E613B5
+	for <kernel-janitors@archiver.kernel.org>; Thu,  6 May 2021 02:30:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235668AbhEEU2b (ORCPT
+        id S231628AbhEFCb1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 5 May 2021 16:28:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33588 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235691AbhEEU2F (ORCPT
+        Wed, 5 May 2021 22:31:27 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40364 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S231370AbhEFCb0 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 5 May 2021 16:28:05 -0400
-Received: from viti.kaiser.cx (viti.kaiser.cx [IPv6:2a01:238:43fe:e600:cd0c:bd4a:7a3:8e9f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 871DBC06134E;
-        Wed,  5 May 2021 13:27:02 -0700 (PDT)
-Received: from dslb-188-104-057-152.188.104.pools.vodafone-ip.de ([188.104.57.152] helo=martin-debian-2.paytec.ch)
-        by viti.kaiser.cx with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <martin@kaiser.cx>)
-        id 1leO6k-0003aS-DI; Wed, 05 May 2021 22:26:58 +0200
-From:   Martin Kaiser <martin@kaiser.cx>
-To:     Larry Finger <Larry.Finger@lwfinger.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Martin Kaiser <martin@kaiser.cx>
-Subject: [PATCH 5/6] staging: rtl8188eu: remove nic_hdl from struct mlme_priv
-Date:   Wed,  5 May 2021 22:26:21 +0200
-Message-Id: <20210505202622.11087-5-martin@kaiser.cx>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20210505202622.11087-1-martin@kaiser.cx>
-References: <20210505202622.11087-1-martin@kaiser.cx>
+        Wed, 5 May 2021 22:31:26 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 14623PuL099470;
+        Wed, 5 May 2021 22:30:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=zVJIP4Vr3vYoks5fNrjKys6fTQaLjWRrc40xCBL/L1A=;
+ b=j6pI8n7zzIhv2A9GYDh49psG9zlPAmU/bIfUFv0NcJr+okNT0qumI43NLX41VjDVse3D
+ MWsgYsWyQu7ONrCvmuhb5Pvia/1rsGFyCJlYb829SYPkMStDabuu/UjJF7UpfqftBhJZ
+ htSZxK4oXpyuj/SJlnGgkjlaq7+p8xl+W+xx9JHhptpWUo85FpsjNs3Ms/p+djNj0YI6
+ PsQLbEQyXzcOlfrkG48rNAktXa3r/apwvN+Z5PDWk0oAA2EGt9tZG7nhZpC84GIpUm5f
+ oDnRLsm1IfvPANXcVC9R8iYVhjPt4pus9hSfuWV8lyLoZJBrx9b4t1mkbuHUteI5jiqz Jw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 38c69asqvq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 05 May 2021 22:30:14 -0400
+Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 14623NMj099371;
+        Wed, 5 May 2021 22:30:14 -0400
+Received: from ppma01fra.de.ibm.com (46.49.7a9f.ip4.static.sl-reverse.com [159.122.73.70])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 38c69asqv2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 05 May 2021 22:30:14 -0400
+Received: from pps.filterd (ppma01fra.de.ibm.com [127.0.0.1])
+        by ppma01fra.de.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 1462Qr2F020795;
+        Thu, 6 May 2021 02:30:12 GMT
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
+        by ppma01fra.de.ibm.com with ESMTP id 38bee88axx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 06 May 2021 02:30:12 +0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1462U9Av57410018
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 6 May 2021 02:30:09 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 498D05205F;
+        Thu,  6 May 2021 02:30:09 +0000 (GMT)
+Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id E93C752059;
+        Thu,  6 May 2021 02:30:08 +0000 (GMT)
+Received: from [9.102.44.218] (unknown [9.102.44.218])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 10924605DB;
+        Thu,  6 May 2021 12:30:03 +1000 (AEST)
+Subject: Re: [PATCH] cxl: Fix an error message
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        fbarrat@linux.ibm.com, arnd@arndb.de, gregkh@linuxfoundation.org,
+        mpe@ellerman.id.au, imunsie@au1.ibm.com, mikey@neuling.org
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <fa2b2c9c72335ab4c3d5e6a33415e7f020b1d51b.1620243401.git.christophe.jaillet@wanadoo.fr>
+From:   Andrew Donnellan <ajd@linux.ibm.com>
+Message-ID: <2d898a2a-fc3c-a804-ce13-cbfc58565cfb@linux.ibm.com>
+Date:   Thu, 6 May 2021 12:29:57 +1000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <fa2b2c9c72335ab4c3d5e6a33415e7f020b1d51b.1620243401.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: VSghf0rnEQ14vYNIMtTSdUOwaviH6ala
+X-Proofpoint-GUID: E86YZwJNrf2pBY55GnvTwxdXP9pAeMwV
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
+ definitions=2021-05-05_11:2021-05-05,2021-05-05 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 clxscore=1011
+ phishscore=0 impostorscore=0 adultscore=0 lowpriorityscore=0 spamscore=0
+ suspectscore=0 priorityscore=1501 mlxlogscore=999 bulkscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104060000
+ definitions=main-2105060012
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-struct mlme_priv is an element of struct adapter. Use container_of
-to get a pointer to the enclosing struct.
+On 6/5/21 5:38 am, Christophe JAILLET wrote:
+> 'rc' is known to be 0 here.
+> Initialize 'rc' with the expected error code before using it.
 
-Signed-off-by: Martin Kaiser <martin@kaiser.cx>
----
- drivers/staging/rtl8188eu/core/rtw_mlme.c    | 5 +----
- drivers/staging/rtl8188eu/include/rtw_mlme.h | 2 --
- 2 files changed, 1 insertion(+), 6 deletions(-)
+I would prefer:
 
-diff --git a/drivers/staging/rtl8188eu/core/rtw_mlme.c b/drivers/staging/rtl8188eu/core/rtw_mlme.c
-index b6ac5b8915b1..e19091a2a4b8 100644
---- a/drivers/staging/rtl8188eu/core/rtw_mlme.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_mlme.c
-@@ -32,8 +32,6 @@ int rtw_init_mlme_priv(struct adapter *padapter)
- 
- 	/*  We don't need to memset padapter->XXX to zero, because adapter is allocated by vzalloc(). */
- 
--	pmlmepriv->nic_hdl = (u8 *)padapter;
--
- 	pmlmepriv->pscanned = NULL;
- 	pmlmepriv->fw_state = 0;
- 	pmlmepriv->cur_network.network.InfrastructureMode = Ndis802_11AutoUnknown;
-@@ -1456,7 +1454,7 @@ int rtw_select_and_join_from_scanned_queue(struct mlme_priv *pmlmepriv)
- {
- 	int ret;
- 	struct list_head *phead;
--	struct adapter *adapter;
-+	struct adapter *adapter = container_of(pmlmepriv, struct adapter, mlmepriv);
- 	struct __queue *queue = &pmlmepriv->scanned_queue;
- 	struct wlan_network *pnetwork = NULL;
- 	struct wlan_network *candidate = NULL;
-@@ -1464,7 +1462,6 @@ int rtw_select_and_join_from_scanned_queue(struct mlme_priv *pmlmepriv)
- 
- 	spin_lock_bh(&pmlmepriv->scanned_queue.lock);
- 	phead = get_list_head(queue);
--	adapter = (struct adapter *)pmlmepriv->nic_hdl;
- 	pmlmepriv->pscanned = phead->next;
- 	while (phead != pmlmepriv->pscanned) {
- 		pnetwork = container_of(pmlmepriv->pscanned, struct wlan_network, list);
-diff --git a/drivers/staging/rtl8188eu/include/rtw_mlme.h b/drivers/staging/rtl8188eu/include/rtw_mlme.h
-index 1b74b32b8a81..f5e805c13442 100644
---- a/drivers/staging/rtl8188eu/include/rtw_mlme.h
-+++ b/drivers/staging/rtl8188eu/include/rtw_mlme.h
-@@ -111,8 +111,6 @@ struct mlme_priv {
- 	u8 to_join; /* flag */
- 	u8 to_roaming; /*  roaming trying times */
- 
--	u8 *nic_hdl;
--
- 	struct list_head *pscanned;
- 	struct __queue free_bss_pool;
- 	struct __queue scanned_queue;
+"In cxl_add_chardev(), if the call to device_create() fails, we print 
+the error message before 'rc' is set correctly, and therefore always 
+print 0. Move the error message after setting 'rc'."
+
+> 
+> While at it, avoid the affectation of 'rc' in a 'if' to make things more
+> obvious and linux style.
+
+I strongly agree with this, some of the other cxl developers don't but 
+they are wrong :)
+
+> 
+> Fixes: f204e0b8ce ("cxl: Driver code for powernv PCIe based cards for userspace access")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+
+Apart from my comment above:
+
+Acked-by: Andrew Donnellan <ajd@linux.ibm.com>
+
+Thanks for catching this!
+
 -- 
-2.20.1
-
+Andrew Donnellan              OzLabs, ADL Canberra
+ajd@linux.ibm.com             IBM Australia Limited
