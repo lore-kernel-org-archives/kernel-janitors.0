@@ -2,128 +2,72 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F325EC433ED
-	for <kernel-janitors@archiver.kernel.org>; Thu,  6 May 2021 02:30:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8378C433B4
+	for <kernel-janitors@archiver.kernel.org>; Thu,  6 May 2021 05:39:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C918E613B5
-	for <kernel-janitors@archiver.kernel.org>; Thu,  6 May 2021 02:30:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5FE75611AD
+	for <kernel-janitors@archiver.kernel.org>; Thu,  6 May 2021 05:39:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231628AbhEFCb1 (ORCPT
+        id S232889AbhEFFj7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 5 May 2021 22:31:27 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40364 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S231370AbhEFCb0 (ORCPT
+        Thu, 6 May 2021 01:39:59 -0400
+Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:31996 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230246AbhEFFj6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 5 May 2021 22:31:26 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 14623PuL099470;
-        Wed, 5 May 2021 22:30:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=zVJIP4Vr3vYoks5fNrjKys6fTQaLjWRrc40xCBL/L1A=;
- b=j6pI8n7zzIhv2A9GYDh49psG9zlPAmU/bIfUFv0NcJr+okNT0qumI43NLX41VjDVse3D
- MWsgYsWyQu7ONrCvmuhb5Pvia/1rsGFyCJlYb829SYPkMStDabuu/UjJF7UpfqftBhJZ
- htSZxK4oXpyuj/SJlnGgkjlaq7+p8xl+W+xx9JHhptpWUo85FpsjNs3Ms/p+djNj0YI6
- PsQLbEQyXzcOlfrkG48rNAktXa3r/apwvN+Z5PDWk0oAA2EGt9tZG7nhZpC84GIpUm5f
- oDnRLsm1IfvPANXcVC9R8iYVhjPt4pus9hSfuWV8lyLoZJBrx9b4t1mkbuHUteI5jiqz Jw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 38c69asqvq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 05 May 2021 22:30:14 -0400
-Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 14623NMj099371;
-        Wed, 5 May 2021 22:30:14 -0400
-Received: from ppma01fra.de.ibm.com (46.49.7a9f.ip4.static.sl-reverse.com [159.122.73.70])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 38c69asqv2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 05 May 2021 22:30:14 -0400
-Received: from pps.filterd (ppma01fra.de.ibm.com [127.0.0.1])
-        by ppma01fra.de.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 1462Qr2F020795;
-        Thu, 6 May 2021 02:30:12 GMT
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
-        by ppma01fra.de.ibm.com with ESMTP id 38bee88axx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 06 May 2021 02:30:12 +0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1462U9Av57410018
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 6 May 2021 02:30:09 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 498D05205F;
-        Thu,  6 May 2021 02:30:09 +0000 (GMT)
-Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id E93C752059;
-        Thu,  6 May 2021 02:30:08 +0000 (GMT)
-Received: from [9.102.44.218] (unknown [9.102.44.218])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 10924605DB;
-        Thu,  6 May 2021 12:30:03 +1000 (AEST)
-Subject: Re: [PATCH] cxl: Fix an error message
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        fbarrat@linux.ibm.com, arnd@arndb.de, gregkh@linuxfoundation.org,
-        mpe@ellerman.id.au, imunsie@au1.ibm.com, mikey@neuling.org
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <fa2b2c9c72335ab4c3d5e6a33415e7f020b1d51b.1620243401.git.christophe.jaillet@wanadoo.fr>
-From:   Andrew Donnellan <ajd@linux.ibm.com>
-Message-ID: <2d898a2a-fc3c-a804-ce13-cbfc58565cfb@linux.ibm.com>
-Date:   Thu, 6 May 2021 12:29:57 +1000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.0
+        Thu, 6 May 2021 01:39:58 -0400
+Received: from localhost.localdomain ([86.243.172.93])
+        by mwinf5d79 with ME
+        id 1Hez2500521Fzsu03Hez1A; Thu, 06 May 2021 07:38:59 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 06 May 2021 07:38:59 +0200
+X-ME-IP: 86.243.172.93
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     mchehab@kernel.org, sean@mess.org
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] media: rc: i2c: Fix an error message
+Date:   Thu,  6 May 2021 07:38:56 +0200
+Message-Id: <179fb4cda2b79904fc9cf1d7d8e61153e30fae6b.1620279452.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-In-Reply-To: <fa2b2c9c72335ab4c3d5e6a33415e7f020b1d51b.1620243401.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: VSghf0rnEQ14vYNIMtTSdUOwaviH6ala
-X-Proofpoint-GUID: E86YZwJNrf2pBY55GnvTwxdXP9pAeMwV
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
- definitions=2021-05-05_11:2021-05-05,2021-05-05 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 clxscore=1011
- phishscore=0 impostorscore=0 adultscore=0 lowpriorityscore=0 spamscore=0
- suspectscore=0 priorityscore=1501 mlxlogscore=999 bulkscore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104060000
- definitions=main-2105060012
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 6/5/21 5:38 am, Christophe JAILLET wrote:
-> 'rc' is known to be 0 here.
-> Initialize 'rc' with the expected error code before using it.
+'ret' is known to be 1 here. In fact 'i' is expected instead.
+Store the return value of 'i2c_master_recv()' in 'ret' so that the error
+message print the correct error code.
 
-I would prefer:
+Fixes: acaa34bf06e9 ('media: rc: implement zilog transmitter")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/media/i2c/ir-kbd-i2c.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-"In cxl_add_chardev(), if the call to device_create() fails, we print 
-the error message before 'rc' is set correctly, and therefore always 
-print 0. Move the error message after setting 'rc'."
-
-> 
-> While at it, avoid the affectation of 'rc' in a 'if' to make things more
-> obvious and linux style.
-
-I strongly agree with this, some of the other cxl developers don't but 
-they are wrong :)
-
-> 
-> Fixes: f204e0b8ce ("cxl: Driver code for powernv PCIe based cards for userspace access")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-
-Apart from my comment above:
-
-Acked-by: Andrew Donnellan <ajd@linux.ibm.com>
-
-Thanks for catching this!
-
+diff --git a/drivers/media/i2c/ir-kbd-i2c.c b/drivers/media/i2c/ir-kbd-i2c.c
+index e8119ad0bc71..92376592455e 100644
+--- a/drivers/media/i2c/ir-kbd-i2c.c
++++ b/drivers/media/i2c/ir-kbd-i2c.c
+@@ -678,8 +678,8 @@ static int zilog_tx(struct rc_dev *rcdev, unsigned int *txbuf,
+ 		goto out_unlock;
+ 	}
+ 
+-	i = i2c_master_recv(ir->tx_c, buf, 1);
+-	if (i != 1) {
++	ret = i2c_master_recv(ir->tx_c, buf, 1);
++	if (ret != 1) {
+ 		dev_err(&ir->rc->dev, "i2c_master_recv failed with %d\n", ret);
+ 		ret = -EIO;
+ 		goto out_unlock;
 -- 
-Andrew Donnellan              OzLabs, ADL Canberra
-ajd@linux.ibm.com             IBM Australia Limited
+2.30.2
+
