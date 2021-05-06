@@ -4,41 +4,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D721C433B4
-	for <kernel-janitors@archiver.kernel.org>; Thu,  6 May 2021 18:57:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 966D6C43460
+	for <kernel-janitors@archiver.kernel.org>; Thu,  6 May 2021 19:09:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4FE3D613C2
-	for <kernel-janitors@archiver.kernel.org>; Thu,  6 May 2021 18:57:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 650DB613BA
+	for <kernel-janitors@archiver.kernel.org>; Thu,  6 May 2021 19:09:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234485AbhEFS6K (ORCPT
+        id S234842AbhEFTKw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 6 May 2021 14:58:10 -0400
-Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:40257 "EHLO
+        Thu, 6 May 2021 15:10:52 -0400
+Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:28606 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231727AbhEFS6J (ORCPT
+        with ESMTP id S234694AbhEFTKu (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 6 May 2021 14:58:09 -0400
+        Thu, 6 May 2021 15:10:50 -0400
 Received: from localhost.localdomain ([86.243.172.93])
         by mwinf5d05 with ME
-        id 1Wx72500C21Fzsu03Wx7Vc; Thu, 06 May 2021 20:57:09 +0200
+        id 1X9p2500F21Fzsu03X9qJq; Thu, 06 May 2021 21:09:50 +0200
 X-ME-Helo: localhost.localdomain
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 06 May 2021 20:57:09 +0200
+X-ME-Date: Thu, 06 May 2021 21:09:50 +0200
 X-ME-IP: 86.243.172.93
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     s.hauer@pengutronix.de, kernel@pengutronix.de, shawnguo@kernel.org,
-        festevam@gmail.com, linux-imx@nxp.com, j.beisert@pengutronix.de,
-        krzysztof.h1@poczta.fm
-Cc:     linux-fbdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
+To:     sudeep.holla@arm.com, cristian.marussi@arm.com, rjw@rjwysocki.net,
+        viresh.kumar@linaro.org, nicola.mazzucato@arm.com
+Cc:     linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] video: fbdev: imxfb: Fix an error message
-Date:   Thu,  6 May 2021 20:57:05 +0200
-Message-Id: <d7b25026f82659da3c6f7159eea480faa9d738be.1620327302.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] cpufreq: scmi: Fix an error message
+Date:   Thu,  6 May 2021 21:09:48 +0200
+Message-Id: <b0c09698216af60d97bfd30b55bad89dc0f70112.1620328067.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -47,27 +45,27 @@ List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 'ret' is known to be 0 here.
-No error code is available, so just remove it from the error message.
+The last error code is stored in 'nr_opp', so use it in the error message.
 
-Fixes: 72330b0eeefc ("i.MX Framebuffer: Use readl/writel instead of direct pointer deref")
+Fixes: 71a37cd6a59d ("scmi-cpufreq: Remove deferred probe")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/video/fbdev/imxfb.c | 2 +-
+ drivers/cpufreq/scmi-cpufreq.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/video/fbdev/imxfb.c b/drivers/video/fbdev/imxfb.c
-index 7f8debd2da06..ad598257ab38 100644
---- a/drivers/video/fbdev/imxfb.c
-+++ b/drivers/video/fbdev/imxfb.c
-@@ -992,7 +992,7 @@ static int imxfb_probe(struct platform_device *pdev)
- 	info->screen_buffer = dma_alloc_wc(&pdev->dev, fbi->map_size,
- 					   &fbi->map_dma, GFP_KERNEL);
- 	if (!info->screen_buffer) {
--		dev_err(&pdev->dev, "Failed to allocate video RAM: %d\n", ret);
-+		dev_err(&pdev->dev, "Failed to allocate video RAM\n");
- 		ret = -ENOMEM;
- 		goto failed_map;
- 	}
+diff --git a/drivers/cpufreq/scmi-cpufreq.c b/drivers/cpufreq/scmi-cpufreq.c
+index c8a4364ad3c2..ec9a87ca2dbb 100644
+--- a/drivers/cpufreq/scmi-cpufreq.c
++++ b/drivers/cpufreq/scmi-cpufreq.c
+@@ -174,7 +174,7 @@ static int scmi_cpufreq_init(struct cpufreq_policy *policy)
+ 		nr_opp = dev_pm_opp_get_opp_count(cpu_dev);
+ 		if (nr_opp <= 0) {
+ 			dev_err(cpu_dev, "%s: No OPPs for this device: %d\n",
+-				__func__, ret);
++				__func__, nr_opp);
+ 
+ 			ret = -ENODEV;
+ 			goto out_free_opp;
 -- 
 2.30.2
 
