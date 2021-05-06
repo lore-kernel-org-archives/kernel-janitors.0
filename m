@@ -7,100 +7,72 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33064C43460
-	for <kernel-janitors@archiver.kernel.org>; Thu,  6 May 2021 12:15:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7675C433ED
+	for <kernel-janitors@archiver.kernel.org>; Thu,  6 May 2021 18:38:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0453B61177
-	for <kernel-janitors@archiver.kernel.org>; Thu,  6 May 2021 12:15:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9AD2261164
+	for <kernel-janitors@archiver.kernel.org>; Thu,  6 May 2021 18:38:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231370AbhEFMQH (ORCPT
+        id S235525AbhEFSjj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 6 May 2021 08:16:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44978 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233833AbhEFMPv (ORCPT
+        Thu, 6 May 2021 14:39:39 -0400
+Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:25463 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234161AbhEFSji (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 6 May 2021 08:15:51 -0400
-Received: from viti.kaiser.cx (viti.kaiser.cx [IPv6:2a01:238:43fe:e600:cd0c:bd4a:7a3:8e9f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6178C0613ED;
-        Thu,  6 May 2021 05:14:52 -0700 (PDT)
-Received: from ipservice-092-217-072-007.092.217.pools.vodafone-ip.de ([92.217.72.7] helo=martin-debian-2.paytec.ch)
-        by viti.kaiser.cx with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <martin@kaiser.cx>)
-        id 1lectz-0005c3-Sg; Thu, 06 May 2021 14:14:47 +0200
-From:   Martin Kaiser <martin@kaiser.cx>
-To:     Larry Finger <Larry.Finger@lwfinger.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Martin Kaiser <martin@kaiser.cx>
-Subject: [PATCH v2] staging: rtl8188eu: remove nic_hdl from struct mlme_priv
-Date:   Thu,  6 May 2021 14:14:10 +0200
-Message-Id: <20210506121410.17613-1-martin@kaiser.cx>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20210505202622.11087-1-martin@kaiser.cx>
-References: <20210505202622.11087-1-martin@kaiser.cx>
+        Thu, 6 May 2021 14:39:38 -0400
+Received: from localhost.localdomain ([86.243.172.93])
+        by mwinf5d05 with ME
+        id 1WeN2500821Fzsu03WeNP0; Thu, 06 May 2021 20:38:38 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 06 May 2021 20:38:38 +0200
+X-ME-IP: 86.243.172.93
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     kartilak@cisco.com, sebaddel@cisco.com, jejb@linux.ibm.com,
+        martin.petersen@oracle.com, JBottomley@Odin.com, hare@suse.de,
+        nmusini@cisco.com
+Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] scsi: snic: Fix an error message
+Date:   Thu,  6 May 2021 20:38:20 +0200
+Message-Id: <3b9d5d767e09d03a07bede293a6ba32e3735cd1a.1620326191.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-struct mlme_priv is an element of struct adapter. Use container_of
-to get a pointer to the enclosing struct.
+'ret' is known to be 0 here.
+No error code is available, so just remove it from the error message.
 
-Signed-off-by: Martin Kaiser <martin@kaiser.cx>
+While at it, change the word "Queuing" into "Init" which looks more
+appropriate.
+
+Fixes: c8806b6c9e82 ("snic: driver for Cisco SCSI HBA")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-v2:
- - rebased against current staging-testing branch
+ drivers/scsi/snic/snic_ctl.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
- drivers/staging/rtl8188eu/core/rtw_mlme.c    | 5 +----
- drivers/staging/rtl8188eu/include/rtw_mlme.h | 2 --
- 2 files changed, 1 insertion(+), 6 deletions(-)
-
-diff --git a/drivers/staging/rtl8188eu/core/rtw_mlme.c b/drivers/staging/rtl8188eu/core/rtw_mlme.c
-index 049e25455849..159465b073c2 100644
---- a/drivers/staging/rtl8188eu/core/rtw_mlme.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_mlme.c
-@@ -32,8 +32,6 @@ int rtw_init_mlme_priv(struct adapter *padapter)
+diff --git a/drivers/scsi/snic/snic_ctl.c b/drivers/scsi/snic/snic_ctl.c
+index 4cd86115cfb2..703f229862fc 100644
+--- a/drivers/scsi/snic/snic_ctl.c
++++ b/drivers/scsi/snic/snic_ctl.c
+@@ -114,10 +114,7 @@ snic_queue_exch_ver_req(struct snic *snic)
  
- 	/*  We don't need to memset padapter->XXX to zero, because adapter is allocated by vzalloc(). */
- 
--	pmlmepriv->nic_hdl = (u8 *)padapter;
+ 	rqi = snic_req_init(snic, 0);
+ 	if (!rqi) {
+-		SNIC_HOST_ERR(snic->shost,
+-			      "Queuing Exch Ver Req failed, err = %d\n",
+-			      ret);
 -
- 	pmlmepriv->pscanned = NULL;
- 	pmlmepriv->fw_state = 0;
- 	pmlmepriv->cur_network.network.InfrastructureMode = Ndis802_11AutoUnknown;
-@@ -1446,7 +1444,7 @@ int rtw_select_and_join_from_scanned_queue(struct mlme_priv *pmlmepriv)
- {
- 	int ret;
- 	struct list_head *phead;
--	struct adapter *adapter;
-+	struct adapter *adapter = container_of(pmlmepriv, struct adapter, mlmepriv);
- 	struct __queue *queue = &pmlmepriv->scanned_queue;
- 	struct wlan_network *pnetwork = NULL;
- 	struct wlan_network *candidate = NULL;
-@@ -1454,7 +1452,6 @@ int rtw_select_and_join_from_scanned_queue(struct mlme_priv *pmlmepriv)
- 
- 	spin_lock_bh(&pmlmepriv->scanned_queue.lock);
- 	phead = get_list_head(queue);
--	adapter = (struct adapter *)pmlmepriv->nic_hdl;
- 	list_for_each(pmlmepriv->pscanned, phead) {
- 		pnetwork = list_entry(pmlmepriv->pscanned,
- 				      struct wlan_network, list);
-diff --git a/drivers/staging/rtl8188eu/include/rtw_mlme.h b/drivers/staging/rtl8188eu/include/rtw_mlme.h
-index 1b74b32b8a81..f5e805c13442 100644
---- a/drivers/staging/rtl8188eu/include/rtw_mlme.h
-+++ b/drivers/staging/rtl8188eu/include/rtw_mlme.h
-@@ -111,8 +111,6 @@ struct mlme_priv {
- 	u8 to_join; /* flag */
- 	u8 to_roaming; /*  roaming trying times */
- 
--	u8 *nic_hdl;
--
- 	struct list_head *pscanned;
- 	struct __queue free_bss_pool;
- 	struct __queue scanned_queue;
++		SNIC_HOST_ERR(snic->shost, "Init Exch Ver Req failed\n");
+ 		ret = -ENOMEM;
+ 		goto error;
+ 	}
 -- 
-2.20.1
+2.30.2
 
