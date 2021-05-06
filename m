@@ -4,38 +4,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8378C433B4
-	for <kernel-janitors@archiver.kernel.org>; Thu,  6 May 2021 05:39:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04F5FC43460
+	for <kernel-janitors@archiver.kernel.org>; Thu,  6 May 2021 05:49:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5FE75611AD
-	for <kernel-janitors@archiver.kernel.org>; Thu,  6 May 2021 05:39:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D71D4611AD
+	for <kernel-janitors@archiver.kernel.org>; Thu,  6 May 2021 05:49:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232889AbhEFFj7 (ORCPT
+        id S233170AbhEFFun (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 6 May 2021 01:39:59 -0400
-Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:31996 "EHLO
+        Thu, 6 May 2021 01:50:43 -0400
+Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:18442 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230246AbhEFFj6 (ORCPT
+        with ESMTP id S233147AbhEFFun (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 6 May 2021 01:39:58 -0400
+        Thu, 6 May 2021 01:50:43 -0400
 Received: from localhost.localdomain ([86.243.172.93])
         by mwinf5d79 with ME
-        id 1Hez2500521Fzsu03Hez1A; Thu, 06 May 2021 07:38:59 +0200
+        id 1Hpd2500H21Fzsu03Hpdmo; Thu, 06 May 2021 07:49:44 +0200
 X-ME-Helo: localhost.localdomain
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 06 May 2021 07:38:59 +0200
+X-ME-Date: Thu, 06 May 2021 07:49:44 +0200
 X-ME-IP: 86.243.172.93
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     mchehab@kernel.org, sean@mess.org
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     rric@kernel.org, bp@alien8.de, mchehab@kernel.org,
+        tony.luck@intel.com, james.morse@arm.com, s.temerkhanov@gmail.com
+Cc:     linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] media: rc: i2c: Fix an error message
-Date:   Thu,  6 May 2021 07:38:56 +0200
-Message-Id: <179fb4cda2b79904fc9cf1d7d8e61153e30fae6b.1620279452.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] EDAC/thunderx: Fix an error message
+Date:   Thu,  6 May 2021 07:49:34 +0200
+Message-Id: <0c046ef5cfb367a3f707ef4270e21a2bcbf44952.1620280098.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -43,31 +44,37 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-'ret' is known to be 1 here. In fact 'i' is expected instead.
-Store the return value of 'i2c_master_recv()' in 'ret' so that the error
-message print the correct error code.
+'ret' is known to be 0 here.
+No error code is available, so just remove it from the error message.
 
-Fixes: acaa34bf06e9 ('media: rc: implement zilog transmitter")
+Fixes: 41003396f932 ("EDAC, thunderx: Add Cavium ThunderX EDAC driver")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/media/i2c/ir-kbd-i2c.c | 4 ++--
+ drivers/edac/thunderx_edac.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/i2c/ir-kbd-i2c.c b/drivers/media/i2c/ir-kbd-i2c.c
-index e8119ad0bc71..92376592455e 100644
---- a/drivers/media/i2c/ir-kbd-i2c.c
-+++ b/drivers/media/i2c/ir-kbd-i2c.c
-@@ -678,8 +678,8 @@ static int zilog_tx(struct rc_dev *rcdev, unsigned int *txbuf,
- 		goto out_unlock;
+diff --git a/drivers/edac/thunderx_edac.c b/drivers/edac/thunderx_edac.c
+index 0eb5eb97fd74..f13674081cb6 100644
+--- a/drivers/edac/thunderx_edac.c
++++ b/drivers/edac/thunderx_edac.c
+@@ -1368,7 +1368,7 @@ static int thunderx_ocx_probe(struct pci_dev *pdev,
+ 					      name, 1, "CCPI", 1,
+ 					      0, NULL, 0, idx);
+ 	if (!edac_dev) {
+-		dev_err(&pdev->dev, "Cannot allocate EDAC device: %d\n", ret);
++		dev_err(&pdev->dev, "Cannot allocate EDAC device\n");
+ 		return -ENOMEM;
  	}
+ 	ocx = edac_dev->pvt_info;
+@@ -1380,7 +1380,7 @@ static int thunderx_ocx_probe(struct pci_dev *pdev,
  
--	i = i2c_master_recv(ir->tx_c, buf, 1);
--	if (i != 1) {
-+	ret = i2c_master_recv(ir->tx_c, buf, 1);
-+	if (ret != 1) {
- 		dev_err(&ir->rc->dev, "i2c_master_recv failed with %d\n", ret);
- 		ret = -EIO;
- 		goto out_unlock;
+ 	ocx->regs = pcim_iomap_table(pdev)[0];
+ 	if (!ocx->regs) {
+-		dev_err(&pdev->dev, "Cannot map PCI resources: %d\n", ret);
++		dev_err(&pdev->dev, "Cannot map PCI resources\n");
+ 		ret = -ENODEV;
+ 		goto err_free;
+ 	}
 -- 
 2.30.2
 
