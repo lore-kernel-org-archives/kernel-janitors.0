@@ -2,65 +2,105 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57EFAC433ED
-	for <kernel-janitors@archiver.kernel.org>; Thu,  6 May 2021 10:14:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33064C43460
+	for <kernel-janitors@archiver.kernel.org>; Thu,  6 May 2021 12:15:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1B1F861207
-	for <kernel-janitors@archiver.kernel.org>; Thu,  6 May 2021 10:14:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0453B61177
+	for <kernel-janitors@archiver.kernel.org>; Thu,  6 May 2021 12:15:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233942AbhEFKPT (ORCPT
+        id S231370AbhEFMQH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 6 May 2021 06:15:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46794 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233332AbhEFKPT (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 6 May 2021 06:15:19 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 2E7F8611AC;
-        Thu,  6 May 2021 10:14:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1620296060;
-        bh=plZ63zK9R9UDZd34lXcnuKV+/8tuQT/kyARVDigr8TU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=kYr2V6hWwtaS9Nouj84ehMMpJ9Zd7GNfd7oSuyTd27hENVNoBYd9m2JRSAX/ErXTU
-         wea37xTXyliAkU9shM0xQ8DFWJYe7Q+7G9rUPlY/HQ1P2rsw1ExMTNPeS1Wt9czbgR
-         CIm4ZIeYE+/QGu4BJm5WIHMVY2jNe6J5Y44KhloY=
-Date:   Thu, 6 May 2021 12:14:18 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Martin Kaiser <martin@kaiser.cx>
-Cc:     Larry Finger <Larry.Finger@lwfinger.net>,
-        linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/6] staging: rtl8188eu: remove nic_hdl from struct
- mlme_priv
-Message-ID: <YJPBekheQ/7eiCDN@kroah.com>
+        Thu, 6 May 2021 08:16:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44978 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233833AbhEFMPv (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 6 May 2021 08:15:51 -0400
+Received: from viti.kaiser.cx (viti.kaiser.cx [IPv6:2a01:238:43fe:e600:cd0c:bd4a:7a3:8e9f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6178C0613ED;
+        Thu,  6 May 2021 05:14:52 -0700 (PDT)
+Received: from ipservice-092-217-072-007.092.217.pools.vodafone-ip.de ([92.217.72.7] helo=martin-debian-2.paytec.ch)
+        by viti.kaiser.cx with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <martin@kaiser.cx>)
+        id 1lectz-0005c3-Sg; Thu, 06 May 2021 14:14:47 +0200
+From:   Martin Kaiser <martin@kaiser.cx>
+To:     Larry Finger <Larry.Finger@lwfinger.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Martin Kaiser <martin@kaiser.cx>
+Subject: [PATCH v2] staging: rtl8188eu: remove nic_hdl from struct mlme_priv
+Date:   Thu,  6 May 2021 14:14:10 +0200
+Message-Id: <20210506121410.17613-1-martin@kaiser.cx>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20210505202622.11087-1-martin@kaiser.cx>
 References: <20210505202622.11087-1-martin@kaiser.cx>
- <20210505202622.11087-5-martin@kaiser.cx>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210505202622.11087-5-martin@kaiser.cx>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, May 05, 2021 at 10:26:21PM +0200, Martin Kaiser wrote:
-> struct mlme_priv is an element of struct adapter. Use container_of
-> to get a pointer to the enclosing struct.
-> 
-> Signed-off-by: Martin Kaiser <martin@kaiser.cx>
-> ---
->  drivers/staging/rtl8188eu/core/rtw_mlme.c    | 5 +----
->  drivers/staging/rtl8188eu/include/rtw_mlme.h | 2 --
->  2 files changed, 1 insertion(+), 6 deletions(-)
+struct mlme_priv is an element of struct adapter. Use container_of
+to get a pointer to the enclosing struct.
 
-This patch didn't apply to my tree, can you rebase and resend just this
-one as I've taken your others?
+Signed-off-by: Martin Kaiser <martin@kaiser.cx>
+---
+v2:
+ - rebased against current staging-testing branch
 
-thanks,
+ drivers/staging/rtl8188eu/core/rtw_mlme.c    | 5 +----
+ drivers/staging/rtl8188eu/include/rtw_mlme.h | 2 --
+ 2 files changed, 1 insertion(+), 6 deletions(-)
 
-greg k-h
+diff --git a/drivers/staging/rtl8188eu/core/rtw_mlme.c b/drivers/staging/rtl8188eu/core/rtw_mlme.c
+index 049e25455849..159465b073c2 100644
+--- a/drivers/staging/rtl8188eu/core/rtw_mlme.c
++++ b/drivers/staging/rtl8188eu/core/rtw_mlme.c
+@@ -32,8 +32,6 @@ int rtw_init_mlme_priv(struct adapter *padapter)
+ 
+ 	/*  We don't need to memset padapter->XXX to zero, because adapter is allocated by vzalloc(). */
+ 
+-	pmlmepriv->nic_hdl = (u8 *)padapter;
+-
+ 	pmlmepriv->pscanned = NULL;
+ 	pmlmepriv->fw_state = 0;
+ 	pmlmepriv->cur_network.network.InfrastructureMode = Ndis802_11AutoUnknown;
+@@ -1446,7 +1444,7 @@ int rtw_select_and_join_from_scanned_queue(struct mlme_priv *pmlmepriv)
+ {
+ 	int ret;
+ 	struct list_head *phead;
+-	struct adapter *adapter;
++	struct adapter *adapter = container_of(pmlmepriv, struct adapter, mlmepriv);
+ 	struct __queue *queue = &pmlmepriv->scanned_queue;
+ 	struct wlan_network *pnetwork = NULL;
+ 	struct wlan_network *candidate = NULL;
+@@ -1454,7 +1452,6 @@ int rtw_select_and_join_from_scanned_queue(struct mlme_priv *pmlmepriv)
+ 
+ 	spin_lock_bh(&pmlmepriv->scanned_queue.lock);
+ 	phead = get_list_head(queue);
+-	adapter = (struct adapter *)pmlmepriv->nic_hdl;
+ 	list_for_each(pmlmepriv->pscanned, phead) {
+ 		pnetwork = list_entry(pmlmepriv->pscanned,
+ 				      struct wlan_network, list);
+diff --git a/drivers/staging/rtl8188eu/include/rtw_mlme.h b/drivers/staging/rtl8188eu/include/rtw_mlme.h
+index 1b74b32b8a81..f5e805c13442 100644
+--- a/drivers/staging/rtl8188eu/include/rtw_mlme.h
++++ b/drivers/staging/rtl8188eu/include/rtw_mlme.h
+@@ -111,8 +111,6 @@ struct mlme_priv {
+ 	u8 to_join; /* flag */
+ 	u8 to_roaming; /*  roaming trying times */
+ 
+-	u8 *nic_hdl;
+-
+ 	struct list_head *pscanned;
+ 	struct __queue free_bss_pool;
+ 	struct __queue scanned_queue;
+-- 
+2.20.1
+
