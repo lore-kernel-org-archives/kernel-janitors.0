@@ -4,70 +4,84 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 671F1C433B4
-	for <kernel-janitors@archiver.kernel.org>; Fri,  7 May 2021 17:02:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3D53C433ED
+	for <kernel-janitors@archiver.kernel.org>; Fri,  7 May 2021 18:30:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2F95761460
-	for <kernel-janitors@archiver.kernel.org>; Fri,  7 May 2021 17:02:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93C8E61436
+	for <kernel-janitors@archiver.kernel.org>; Fri,  7 May 2021 18:30:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236591AbhEGRDx (ORCPT
+        id S229603AbhEGSbs (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 7 May 2021 13:03:53 -0400
-Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:29166 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236467AbhEGRDw (ORCPT
+        Fri, 7 May 2021 14:31:48 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:54182 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229470AbhEGSbr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 7 May 2021 13:03:52 -0400
-Received: from localhost.localdomain ([86.243.172.93])
-        by mwinf5d33 with ME
-        id 1t2p2500d21Fzsu03t2pdH; Fri, 07 May 2021 19:02:51 +0200
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 07 May 2021 19:02:51 +0200
-X-ME-IP: 86.243.172.93
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     srinivas.kandagatla@linaro.org, orsonzhai@gmail.com,
-        baolin.wang7@gmail.com, zhang.lyra@gmail.com,
-        gregkh@linuxfoundation.org, freeman.liu@unisoc.com
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] nvmem: sprd: Fix an error message
-Date:   Fri,  7 May 2021 19:02:48 +0200
-Message-Id: <5bc44aace2fe7e1c91d8b35c8fe31e7134ceab2c.1620406852.git.christophe.jaillet@wanadoo.fr>
+        Fri, 7 May 2021 14:31:47 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lf5FJ-0002sA-Po; Fri, 07 May 2021 18:30:41 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Jon Brenner <jbrenner@taosinc.com>, linux-iio@vger.kernel.org,
+        clang-built-linux@googlegroups.com
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] iio: tsl2583: Fix division by a zero lux_val
+Date:   Fri,  7 May 2021 19:30:41 +0100
+Message-Id: <20210507183041.115864-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-'ret' is known to be 0 here.
-The expected error status is stored in 'status', so use it instead.
+From: Colin Ian King <colin.king@canonical.com>
 
-Also change %d in %u, because status is an u32, not a int.
+The lux_val returned from tsl2583_get_lux can potentially be zero,
+so check for this to avoid a division by zero and an overflowed
+gain_trim_val.
 
-Fixes: 096030e7f449 ("nvmem: sprd: Add Spreadtrum SoCs eFuse support")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Fixes clang scan-build warning:
+
+drivers/iio/light/tsl2583.c:345:40: warning: Either the
+condition 'lux_val<0' is redundant or there is division
+by zero at line 345. [zerodivcond]
+
+Fixes: ac4f6eee8fe8 ("staging: iio: TAOS tsl258x: Device driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/nvmem/sprd-efuse.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/iio/light/tsl2583.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/nvmem/sprd-efuse.c b/drivers/nvmem/sprd-efuse.c
-index 5d394559edf2..e3e721d4c205 100644
---- a/drivers/nvmem/sprd-efuse.c
-+++ b/drivers/nvmem/sprd-efuse.c
-@@ -234,7 +234,7 @@ static int sprd_efuse_raw_prog(struct sprd_efuse *efuse, u32 blk, bool doub,
- 	status = readl(efuse->base + SPRD_EFUSE_ERR_FLAG);
- 	if (status) {
- 		dev_err(efuse->dev,
--			"write error status %d of block %d\n", ret, blk);
-+			"write error status %u of block %d\n", status, blk);
+diff --git a/drivers/iio/light/tsl2583.c b/drivers/iio/light/tsl2583.c
+index 0f787bfc88fc..c9d8f07a6fcd 100644
+--- a/drivers/iio/light/tsl2583.c
++++ b/drivers/iio/light/tsl2583.c
+@@ -341,6 +341,14 @@ static int tsl2583_als_calibrate(struct iio_dev *indio_dev)
+ 		return lux_val;
+ 	}
  
- 		writel(SPRD_EFUSE_ERR_CLR_MASK,
- 		       efuse->base + SPRD_EFUSE_ERR_CLR);
++	/* Avoid division by zero of lux_value later on */
++	if (lux_val == 0) {
++		dev_err(&chip->client->dev,
++			"%s: lux_val of 0 will produce out of range trim_value\n",
++			__func__);
++		return -ENODATA;
++	}
++
+ 	gain_trim_val = (unsigned int)(((chip->als_settings.als_cal_target)
+ 			* chip->als_settings.als_gain_trim) / lux_val);
+ 	if ((gain_trim_val < 250) || (gain_trim_val > 4000)) {
 -- 
 2.30.2
 
