@@ -2,112 +2,71 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA30AC43461
-	for <kernel-janitors@archiver.kernel.org>; Fri,  7 May 2021 09:27:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C794C433ED
+	for <kernel-janitors@archiver.kernel.org>; Fri,  7 May 2021 15:08:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7EDEC6145A
-	for <kernel-janitors@archiver.kernel.org>; Fri,  7 May 2021 09:27:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06F056145D
+	for <kernel-janitors@archiver.kernel.org>; Fri,  7 May 2021 15:08:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236152AbhEGJ22 (ORCPT
+        id S232081AbhEGPJO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 7 May 2021 05:28:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46018 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236023AbhEGJ22 (ORCPT
+        Fri, 7 May 2021 11:09:14 -0400
+Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:53450 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237830AbhEGPJN (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 7 May 2021 05:28:28 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7C3CC061574
-        for <kernel-janitors@vger.kernel.org>; Fri,  7 May 2021 02:27:28 -0700 (PDT)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mtr@pengutronix.de>)
-        id 1lewlP-00023a-JO; Fri, 07 May 2021 11:27:15 +0200
-Received: from mtr by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <mtr@pengutronix.de>)
-        id 1lewlN-0007ID-SU; Fri, 07 May 2021 11:27:13 +0200
-Date:   Fri, 7 May 2021 11:27:13 +0200
-From:   Michael Tretter <m.tretter@pengutronix.de>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, michal.simek@xilinx.com,
-        quanyang.wang@windriver.com, rajan.vaja@xilinx.com,
-        jolly.shah@xilinx.com, tejasp@xilinx.com,
-        shubhrajyoti.datta@xilinx.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, kernel@pengutronix.de
-Subject: Re: [PATCH] clk: zynqmp: pll: Remove some dead code
-Message-ID: <20210507092713.GM29775@pengutronix.de>
-References: <71a9fed5f762a71248b8ac73c0a15af82f3ce1e2.1619867987.git.christophe.jaillet@wanadoo.fr>
+        Fri, 7 May 2021 11:09:13 -0400
+Received: from localhost.localdomain ([86.243.172.93])
+        by mwinf5d16 with ME
+        id 1r812500h21Fzsu03r83jQ; Fri, 07 May 2021 17:08:10 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 07 May 2021 17:08:10 +0200
+X-ME-IP: 86.243.172.93
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     ldewangan@nvidia.com, broonie@kernel.org, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, swarren@nvidia.com, grant.likely@secretlab.ca
+Cc:     linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] spi: tegra114: Fix an error message
+Date:   Fri,  7 May 2021 17:07:59 +0200
+Message-Id: <e2593974c9484b7055177ad0c9237c8e343946be.1620399829.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <71a9fed5f762a71248b8ac73c0a15af82f3ce1e2.1619867987.git.christophe.jaillet@wanadoo.fr>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 11:22:09 up 78 days, 12:46, 97 users,  load average: 0.07, 0.08,
- 0.09
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: mtr@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, 01 May 2021 13:24:32 +0200, Christophe JAILLET wrote:
-> 'clk_hw_set_rate_range()' does not return any error code and 'ret' is
-> known to be 0 at this point, so this message can never be displayed.
-> 
-> Remove it.
-> 
-> Fixes: 3fde0e16d016 ("drivers: clk: Add ZynqMP clock driver")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+'ret' is known to be 0 here.
+No error code is available, so just remove it from the error message.
 
-Reviewed-by: Michael Tretter <m.tretter@pengutronix.de>
+Fixes: f333a331ad ("spi/tegra114: add spi driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/spi/spi-tegra114.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-> ---
-> HOWEVER, the message is about 'clk_set_rate_range()', not
-> 'clk_hw_set_rate_range()'. So the message is maybe correct and the
-> 'xxx_rate_range()' function incorrect.
+diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
+index a2e5907276e7..5131141bbf0d 100644
+--- a/drivers/spi/spi-tegra114.c
++++ b/drivers/spi/spi-tegra114.c
+@@ -1071,8 +1071,7 @@ static int tegra_spi_transfer_one_message(struct spi_master *master,
+ 		ret = wait_for_completion_timeout(&tspi->xfer_completion,
+ 						SPI_DMA_TIMEOUT);
+ 		if (WARN_ON(ret == 0)) {
+-			dev_err(tspi->dev,
+-				"spi transfer timeout, err %d\n", ret);
++			dev_err(tspi->dev, "spi transfer timeout\n");
+ 			if (tspi->is_curr_dma_xfer &&
+ 			    (tspi->cur_direction & DATA_DIR_TX))
+ 				dmaengine_terminate_all(tspi->tx_dma_chan);
+-- 
+2.30.2
 
-Thanks. The function is correct, as this is a clock provider and should use
-the clk_hw. Removing the message is correct.
-
-Michael
-
-> ---
->  drivers/clk/zynqmp/pll.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/clk/zynqmp/pll.c b/drivers/clk/zynqmp/pll.c
-> index abe6afbf3407..af11e9400058 100644
-> --- a/drivers/clk/zynqmp/pll.c
-> +++ b/drivers/clk/zynqmp/pll.c
-> @@ -331,8 +331,6 @@ struct clk_hw *zynqmp_clk_register_pll(const char *name, u32 clk_id,
->  	}
->  
->  	clk_hw_set_rate_range(hw, PS_PLL_VCO_MIN, PS_PLL_VCO_MAX);
-> -	if (ret < 0)
-> -		pr_err("%s:ERROR clk_set_rate_range failed %d\n", name, ret);
->  
->  	return hw;
->  }
-> -- 
-> 2.30.2
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> 
