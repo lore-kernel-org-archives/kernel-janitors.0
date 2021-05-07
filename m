@@ -2,70 +2,139 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 802E9C433B4
-	for <kernel-janitors@archiver.kernel.org>; Fri,  7 May 2021 16:26:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97427C433ED
+	for <kernel-janitors@archiver.kernel.org>; Fri,  7 May 2021 16:34:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 453986141E
-	for <kernel-janitors@archiver.kernel.org>; Fri,  7 May 2021 16:26:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5930561463
+	for <kernel-janitors@archiver.kernel.org>; Fri,  7 May 2021 16:34:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238141AbhEGQ1n (ORCPT
+        id S238220AbhEGQfj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 7 May 2021 12:27:43 -0400
-Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:26316 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238134AbhEGQ1m (ORCPT
+        Fri, 7 May 2021 12:35:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56164 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236542AbhEGQfi (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 7 May 2021 12:27:42 -0400
-Received: from localhost.localdomain ([86.243.172.93])
-        by mwinf5d33 with ME
-        id 1sSf2500j21Fzsu03sSgHa; Fri, 07 May 2021 18:26:40 +0200
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 07 May 2021 18:26:40 +0200
-X-ME-IP: 86.243.172.93
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     thierry.reding@gmail.com, jonathanh@nvidia.com,
-        skomatineni@nvidia.com, ldewangan@nvidia.com, broonie@kernel.org
-Cc:     linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] spi: tegra210-quad: Fix an error message
-Date:   Fri,  7 May 2021 18:26:39 +0200
-Message-Id: <b990c1bb5830196142c3d70e3e3c6c0245a7e75f.1620404705.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Fri, 7 May 2021 12:35:38 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DC41C061763
+        for <kernel-janitors@vger.kernel.org>; Fri,  7 May 2021 09:34:38 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id d11so9891826wrw.8
+        for <kernel-janitors@vger.kernel.org>; Fri, 07 May 2021 09:34:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=O99QLS/XuXmi5sOenN2CFxQz7Q5z0xeHfl0XAzi4THc=;
+        b=U+IByuCcxULK3nxRVkk7JSImKY8trLGHWZcfLZTgiCNxRgComAbd5SB0Cfj6jYZ996
+         9lS6uV6uHIiiE4JuSIZxyPiEFBQLgBWjXWWpjAxbl8UM05Asr4O0C2J4hfCVuPJJkeXk
+         Lp1lfV5LSbB4AJ6q9iEoC6lTzRO2xg0DHZElM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to;
+        bh=O99QLS/XuXmi5sOenN2CFxQz7Q5z0xeHfl0XAzi4THc=;
+        b=UiMARo2bcv6EL5UZO4cRaw9hU+sxOpgUgsp7kdkdmOx4+OmF28XKH+RFIASOpJj3rh
+         cSi4fjuG6v9rU27eRLs4I9xW2Kzjo6S6JaQtXpEwFFCe35BItabfFjUgyfoLAopsftPm
+         ZAdkk6HvUfM8IDorX2tUCjqPDXisdGem1HJ76kha1eV76tgtzDJ/ie/77XFaax31kMJW
+         sfoBSkQ+eyiwpZ/UlWhj6MRa6P3469D8dHXj499g+FiRbJFgODitC5kkRvkzAYbOG6ZT
+         QUe89b2xz64JfV4Rpuze6yTPMtNvmqG4KyjhCXo2yh8YD1e6Zq6crHB0u2s49Hmb/i3z
+         1ebQ==
+X-Gm-Message-State: AOAM530BxFKOKbLn4sZiDlMmNoA4F8gH7/230UOAynt/ToZCaLdc3sDp
+        WMfTQEt79DgSwN9JgEcLCVSkvg==
+X-Google-Smtp-Source: ABdhPJz9eV+VjyShaXPfAx4WvqHMrnt9SIWVOMU/ZLtthyBfUy5zg6ri6iuFlihrahEEp1TfX0GW8g==
+X-Received: by 2002:a5d:6181:: with SMTP id j1mr13620583wru.16.1620405276947;
+        Fri, 07 May 2021 09:34:36 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id r2sm8702898wrt.79.2021.05.07.09.34.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 May 2021 09:34:36 -0700 (PDT)
+Date:   Fri, 7 May 2021 18:34:34 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-fbdev@vger.kernel.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel-janitors@vger.kernel.org,
+        krzysztof.h1@poczta.fm, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, j.beisert@pengutronix.de,
+        linux-imx@nxp.com, kernel@pengutronix.de,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] video: fbdev: imxfb: Fix an error message
+Message-ID: <YJVsGn4+rbh0+b+I@phenom.ffwll.local>
+Mail-Followup-To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-fbdev@vger.kernel.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel-janitors@vger.kernel.org,
+        krzysztof.h1@poczta.fm, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, j.beisert@pengutronix.de,
+        linux-imx@nxp.com, kernel@pengutronix.de,
+        linux-arm-kernel@lists.infradead.org
+References: <d7b25026f82659da3c6f7159eea480faa9d738be.1620327302.git.christophe.jaillet@wanadoo.fr>
+ <20210507050503.iwrcis2xzhjjthmp@pengutronix.de>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210507050503.iwrcis2xzhjjthmp@pengutronix.de>
+X-Operating-System: Linux phenom 5.10.32scarlett+ 
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-'ret' is known to be 0 here.
-No error code is available, so just remove it from the error message.
+On Fri, May 07, 2021 at 07:05:03AM +0200, Uwe Kleine-König wrote:
+> Hello Christophe,
+> 
+> On Thu, May 06, 2021 at 08:57:05PM +0200, Christophe JAILLET wrote:
+> > 'ret' is known to be 0 here.
+> > No error code is available, so just remove it from the error message.
+> > 
+> > Fixes: 72330b0eeefc ("i.MX Framebuffer: Use readl/writel instead of direct pointer deref")
+> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> > ---
+> >  drivers/video/fbdev/imxfb.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/video/fbdev/imxfb.c b/drivers/video/fbdev/imxfb.c
+> > index 7f8debd2da06..ad598257ab38 100644
+> > --- a/drivers/video/fbdev/imxfb.c
+> > +++ b/drivers/video/fbdev/imxfb.c
+> > @@ -992,7 +992,7 @@ static int imxfb_probe(struct platform_device *pdev)
+> >  	info->screen_buffer = dma_alloc_wc(&pdev->dev, fbi->map_size,
+> >  					   &fbi->map_dma, GFP_KERNEL);
+> >  	if (!info->screen_buffer) {
+> > -		dev_err(&pdev->dev, "Failed to allocate video RAM: %d\n", ret);
+> > +		dev_err(&pdev->dev, "Failed to allocate video RAM\n");
+> >  		ret = -ENOMEM;
+> >  		goto failed_map;
+> >  	}
+> 
+> Reviewed-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-Fixes: 921fc1838fb0 ("spi: tegra210-quad: Add support for Tegra210 QSPI controller")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/spi/spi-tegra210-quad.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks for patch& review, queued for 5.14 in drm-misc-next.
+-Daniel
 
-diff --git a/drivers/spi/spi-tegra210-quad.c b/drivers/spi/spi-tegra210-quad.c
-index 2f806f4b2c34..2354ca1e3858 100644
---- a/drivers/spi/spi-tegra210-quad.c
-+++ b/drivers/spi/spi-tegra210-quad.c
-@@ -1028,7 +1028,7 @@ static int tegra_qspi_transfer_one_message(struct spi_master *master, struct spi
- 		ret = wait_for_completion_timeout(&tqspi->xfer_completion,
- 						  QSPI_DMA_TIMEOUT);
- 		if (WARN_ON(ret == 0)) {
--			dev_err(tqspi->dev, "transfer timeout: %d\n", ret);
-+			dev_err(tqspi->dev, "transfer timeout\n");
- 			if (tqspi->is_curr_dma_xfer && (tqspi->cur_direction & DATA_DIR_TX))
- 				dmaengine_terminate_all(tqspi->tx_dma_chan);
- 			if (tqspi->is_curr_dma_xfer && (tqspi->cur_direction & DATA_DIR_RX))
+> 
+> Are you using this driver, or did you find that problem using some
+> static checker?
+> 
+> Best regards
+> Uwe
+> 
+> -- 
+> Pengutronix e.K.                           | Uwe Kleine-König            |
+> Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+
+
 -- 
-2.30.2
-
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
