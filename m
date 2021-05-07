@@ -2,89 +2,119 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35777C433ED
-	for <kernel-janitors@archiver.kernel.org>; Fri,  7 May 2021 02:20:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B51BC433B4
+	for <kernel-janitors@archiver.kernel.org>; Fri,  7 May 2021 05:05:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DAA206113D
-	for <kernel-janitors@archiver.kernel.org>; Fri,  7 May 2021 02:20:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE4F8610FC
+	for <kernel-janitors@archiver.kernel.org>; Fri,  7 May 2021 05:05:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232391AbhEGCVl (ORCPT
+        id S232900AbhEGFGR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 6 May 2021 22:21:41 -0400
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:26138 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S229909AbhEGCVk (ORCPT
+        Fri, 7 May 2021 01:06:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43738 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232428AbhEGFGQ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 6 May 2021 22:21:40 -0400
-X-UUID: 0a79a3a97875496b8c0d78c39d727961-20210507
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=vf2dHNq2QpYWmKlMM1biVyh+zvhtSl8VMnhZIpqXEOk=;
-        b=Tbh3ewNTW3pZTgTi18go2CqY4+0OW8VQ8tBHgTH3kJwDYIgU/GFC4a3lbu8xz97bEeOO/CYMp417NaPC4OhRAAGTf5SfTbqYRRSyAzqAzwmxZ7MJWwtjohHUhZbDHegZOUZcoHDDZWnF0DcXAYdPL5HKg87hPVE/Fbiz/2jlWFQ=;
-X-UUID: 0a79a3a97875496b8c0d78c39d727961-20210507
-Received: from mtkcas36.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
-        (envelope-from <chunfeng.yun@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 286317022; Fri, 07 May 2021 10:20:39 +0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS32N2.mediatek.inc
- (172.27.4.72) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Fri, 7 May
- 2021 10:20:31 +0800
-Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Fri, 7 May 2021 10:20:30 +0800
-Message-ID: <1620354030.10796.6.camel@mhfsdcap03>
-Subject: Re: [PATCH] usb: fotg210-hcd: Fix an error message
-From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
+        Fri, 7 May 2021 01:06:16 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A720C061761
+        for <kernel-janitors@vger.kernel.org>; Thu,  6 May 2021 22:05:14 -0700 (PDT)
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1lesfi-0003g4-Cs; Fri, 07 May 2021 07:05:06 +0200
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1lesff-0007eK-8B; Fri, 07 May 2021 07:05:03 +0200
+Date:   Fri, 7 May 2021 07:05:03 +0200
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-CC:     <gregkh@linuxfoundation.org>, <shubhankarvk@gmail.com>,
-        <lee.jones@linaro.org>, <gustavoars@kernel.org>,
-        <vulab@iscas.ac.cn>, <john453@faraday-tech.com>,
-        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-Date:   Fri, 7 May 2021 10:20:30 +0800
-In-Reply-To: <94531bcff98e46d4f9c20183a90b7f47f699126c.1620333419.git.christophe.jaillet@wanadoo.fr>
-References: <94531bcff98e46d4f9c20183a90b7f47f699126c.1620333419.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+Cc:     s.hauer@pengutronix.de, kernel@pengutronix.de, shawnguo@kernel.org,
+        festevam@gmail.com, linux-imx@nxp.com, j.beisert@pengutronix.de,
+        krzysztof.h1@poczta.fm, linux-fbdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] video: fbdev: imxfb: Fix an error message
+Message-ID: <20210507050503.iwrcis2xzhjjthmp@pengutronix.de>
+References: <d7b25026f82659da3c6f7159eea480faa9d738be.1620327302.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-X-TM-SNTS-SMTP: BFA33764F29650E7F3F7B92C3AB705902216267BFAAC029DB2B872DB20E008D02000:8
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="fchy7hv2sjxcax73"
+Content-Disposition: inline
+In-Reply-To: <d7b25026f82659da3c6f7159eea480faa9d738be.1620327302.git.christophe.jaillet@wanadoo.fr>
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-T24gVGh1LCAyMDIxLTA1LTA2IGF0IDIyOjM5ICswMjAwLCBDaHJpc3RvcGhlIEpBSUxMRVQgd3Jv
-dGU6DQo+ICdyZXR2YWwnIGlzIGtub3duIHRvIGJlIC1FTk9ERVYgaGVyZS4NCj4gVGhpcyBpcyBh
-IGhhcmQtY29kZWQgZGVmYXVsdCBlcnJvciBjb2RlIHdoaWNoIGlzIG5vdCB1c2VmdWwgaW4gdGhl
-IGVycm9yDQo+IG1lc3NhZ2UuIE1vcmVvdmVyLCBhbm90aGVyIGVycm9yIG1lc3NhZ2UgaXMgcHJp
-bnRlZCBhdCB0aGUgZW5kIG9mIHRoZQ0KPiBlcnJvciBoYW5kbGluZyBwYXRoLiBUaGUgY29ycmVz
-cG9uZGluZyBlcnJvciBjb2RlICgtRU5PTUVNKSBpcyBtb3JlDQo+IGluZm9ybWF0aXZlLg0KPiAN
-Cj4gU28gcmVtb3ZlIHNpbXBsaWZ5IHRoZSBmaXJzdCBlcnJvciBtZXNzYWdlLg0KPiANCj4gV2hp
-bGUgYXQgaXQsIGFsc28gcmVtb3ZlIHRoZSB1c2VsZXNzIGluaXRpYWxpemF0aW9uIG9mICdyZXR2
-YWwnLg0KPiANCj4gRml4ZXM6IDdkNTAxOTVmNmM1MCAoInVzYjogaG9zdDogRmFyYWRheSBmb3Rn
-MjEwLWhjZCBkcml2ZXIiKQ0KPiBTaWduZWQtb2ZmLWJ5OiBDaHJpc3RvcGhlIEpBSUxMRVQgPGNo
-cmlzdG9waGUuamFpbGxldEB3YW5hZG9vLmZyPg0KPiAtLS0NCj4gIGRyaXZlcnMvdXNiL2hvc3Qv
-Zm90ZzIxMC1oY2QuYyB8IDQgKystLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygr
-KSwgMiBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3VzYi9ob3N0L2Zv
-dGcyMTAtaGNkLmMgYi9kcml2ZXJzL3VzYi9ob3N0L2ZvdGcyMTAtaGNkLmMNCj4gaW5kZXggNmNh
-YzY0MjUyMGZjLi45YzJlZGEwOTE4ZTEgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvdXNiL2hvc3Qv
-Zm90ZzIxMC1oY2QuYw0KPiArKysgYi9kcml2ZXJzL3VzYi9ob3N0L2ZvdGcyMTAtaGNkLmMNCj4g
-QEAgLTU1NjgsNyArNTU2OCw3IEBAIHN0YXRpYyBpbnQgZm90ZzIxMF9oY2RfcHJvYmUoc3RydWN0
-IHBsYXRmb3JtX2RldmljZSAqcGRldikNCj4gIAlzdHJ1Y3QgdXNiX2hjZCAqaGNkOw0KPiAgCXN0
-cnVjdCByZXNvdXJjZSAqcmVzOw0KPiAgCWludCBpcnE7DQo+IC0JaW50IHJldHZhbCA9IC1FTk9E
-RVY7DQo+ICsJaW50IHJldHZhbDsNCj4gIAlzdHJ1Y3QgZm90ZzIxMF9oY2QgKmZvdGcyMTA7DQo+
-ICANCj4gIAlpZiAodXNiX2Rpc2FibGVkKCkpDQo+IEBAIC01NTg4LDcgKzU1ODgsNyBAQCBzdGF0
-aWMgaW50IGZvdGcyMTBfaGNkX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQo+
-ICAJaGNkID0gdXNiX2NyZWF0ZV9oY2QoJmZvdGcyMTBfZm90ZzIxMF9oY19kcml2ZXIsIGRldiwN
-Cj4gIAkJCWRldl9uYW1lKGRldikpOw0KPiAgCWlmICghaGNkKSB7DQo+IC0JCWRldl9lcnIoZGV2
-LCAiZmFpbGVkIHRvIGNyZWF0ZSBoY2Qgd2l0aCBlcnIgJWRcbiIsIHJldHZhbCk7DQo+ICsJCWRl
-dl9lcnIoZGV2LCAiZmFpbGVkIHRvIGNyZWF0ZSBoY2RcbiIpOw0KPiAgCQlyZXR2YWwgPSAtRU5P
-TUVNOw0KSG93IGFib3V0IG1vdmluZyB0aGlzIGxpbmUgYmVmb3JlIGRldl9lcnIoKT8gdGhlbiBj
-b3VsZCBrZWVwIGVycm9yIGxvZw0KdW5jaGFuZ2VkLg0KDQo+ICAJCWdvdG8gZmFpbF9jcmVhdGVf
-aGNkOw0KPiAgCX0NCg0K
 
+--fchy7hv2sjxcax73
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hello Christophe,
+
+On Thu, May 06, 2021 at 08:57:05PM +0200, Christophe JAILLET wrote:
+> 'ret' is known to be 0 here.
+> No error code is available, so just remove it from the error message.
+>=20
+> Fixes: 72330b0eeefc ("i.MX Framebuffer: Use readl/writel instead of direc=
+t pointer deref")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/video/fbdev/imxfb.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/video/fbdev/imxfb.c b/drivers/video/fbdev/imxfb.c
+> index 7f8debd2da06..ad598257ab38 100644
+> --- a/drivers/video/fbdev/imxfb.c
+> +++ b/drivers/video/fbdev/imxfb.c
+> @@ -992,7 +992,7 @@ static int imxfb_probe(struct platform_device *pdev)
+>  	info->screen_buffer =3D dma_alloc_wc(&pdev->dev, fbi->map_size,
+>  					   &fbi->map_dma, GFP_KERNEL);
+>  	if (!info->screen_buffer) {
+> -		dev_err(&pdev->dev, "Failed to allocate video RAM: %d\n", ret);
+> +		dev_err(&pdev->dev, "Failed to allocate video RAM\n");
+>  		ret =3D -ENOMEM;
+>  		goto failed_map;
+>  	}
+
+Reviewed-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+
+Are you using this driver, or did you find that problem using some
+static checker?
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--fchy7hv2sjxcax73
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmCUynsACgkQwfwUeK3K
+7Akw+QgAibPO6IbkA1icCBx3pbmkEnH1NGD7B1YrSwgKWeQlnCqqfv67hRrjvs1u
+s2PTr3bd7cE3G7YnWnWWLEC9/7xew8nNKv89KFGSQa1pzRFBc/FGpaeTMDvkO8PK
+miGiZbBAl240AtvS87ODzAIDqB2vQkJ6UzinynVbHTN4j+1FKjwnmag05qugFDvx
+nYGaNPop0x4BzwcBVVKGTwCnHjmoWdz+HGw+udY9AnO/N5A+Ms6WGsx2yf6d1Z4f
+9i9UwA7LoOM/i8+bEwtgZRnn7CXBhYWPFhNMtU+nKAqeGryeAr4UsO/8Y/O9kN/5
+F+yqk+jOjwAAnNq5cNzXm6wxrxN88Q==
+=KRUx
+-----END PGP SIGNATURE-----
+
+--fchy7hv2sjxcax73--
