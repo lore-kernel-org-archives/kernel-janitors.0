@@ -4,39 +4,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6A0EC43460
-	for <kernel-janitors@archiver.kernel.org>; Sat,  8 May 2021 01:51:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB5C7C433ED
+	for <kernel-janitors@archiver.kernel.org>; Sat,  8 May 2021 01:51:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9A92860C3E
-	for <kernel-janitors@archiver.kernel.org>; Sat,  8 May 2021 01:51:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9803C61006
+	for <kernel-janitors@archiver.kernel.org>; Sat,  8 May 2021 01:51:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230331AbhEHBwd (ORCPT
+        id S230342AbhEHBwg (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 7 May 2021 21:52:33 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:17593 "EHLO
-        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230326AbhEHBwc (ORCPT
+        Fri, 7 May 2021 21:52:36 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:18367 "EHLO
+        szxga06-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230350AbhEHBwf (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 7 May 2021 21:52:32 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
-        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4FcVbV4YFsz16Lhf;
-        Sat,  8 May 2021 09:48:54 +0800 (CST)
-Received: from huawei.com (10.174.28.241) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.498.0; Sat, 8 May 2021
- 09:51:20 +0800
+        Fri, 7 May 2021 21:52:35 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
+        by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4FcVc51mDQzlbxB;
+        Sat,  8 May 2021 09:49:25 +0800 (CST)
+Received: from huawei.com (10.174.28.241) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.498.0; Sat, 8 May 2021
+ 09:51:24 +0800
 From:   Bixuan Cui <cuibixuan@huawei.com>
-To:     <cuibixuan@huawei.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>
-CC:     <virtualization@lists.linux-foundation.org>,
-        <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>,
+To:     <cuibixuan@huawei.com>, Haren Myneni <haren@us.ibm.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Michael Ellerman <mpe@ellerman.id.au>
+CC:     <linux-crypto@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
         <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] iommu/virtio: Add missing MODULE_DEVICE_TABLE
-Date:   Sat, 8 May 2021 11:14:51 +0800
-Message-ID: <20210508031451.53493-1-cuibixuan@huawei.com>
+Subject: [PATCH -next] crypto: nx842: add missing MODULE_DEVICE_TABLE
+Date:   Sat, 8 May 2021 11:14:55 +0800
+Message-ID: <20210508031455.53541-1-cuibixuan@huawei.com>
 X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"
@@ -54,19 +54,19 @@ as an external module.
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: Bixuan Cui <cuibixuan@huawei.com>
 ---
- drivers/iommu/virtio-iommu.c | 1 +
+ drivers/crypto/nx/nx-842-pseries.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/iommu/virtio-iommu.c b/drivers/iommu/virtio-iommu.c
-index 7c02481a81b4..c6e5ee4d9cef 100644
---- a/drivers/iommu/virtio-iommu.c
-+++ b/drivers/iommu/virtio-iommu.c
-@@ -1136,6 +1136,7 @@ static struct virtio_device_id id_table[] = {
- 	{ VIRTIO_ID_IOMMU, VIRTIO_DEV_ANY_ID },
- 	{ 0 },
+diff --git a/drivers/crypto/nx/nx-842-pseries.c b/drivers/crypto/nx/nx-842-pseries.c
+index cc8dd3072b8b..8ee547ee378e 100644
+--- a/drivers/crypto/nx/nx-842-pseries.c
++++ b/drivers/crypto/nx/nx-842-pseries.c
+@@ -1069,6 +1069,7 @@ static const struct vio_device_id nx842_vio_driver_ids[] = {
+ 	{"ibm,compression-v1", "ibm,compression"},
+ 	{"", ""},
  };
-+MODULE_DEVICE_TABLE(virtio, id_table);
++MODULE_DEVICE_TABLE(vio, nx842_vio_driver_ids);
  
- static struct virtio_driver virtio_iommu_drv = {
- 	.driver.name		= KBUILD_MODNAME,
+ static struct vio_driver nx842_vio_driver = {
+ 	.name = KBUILD_MODNAME,
 
