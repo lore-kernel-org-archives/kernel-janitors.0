@@ -2,150 +2,116 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A021C433B4
-	for <kernel-janitors@archiver.kernel.org>; Sat,  8 May 2021 11:03:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08044C433B4
+	for <kernel-janitors@archiver.kernel.org>; Sat,  8 May 2021 12:54:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0F5D86105A
-	for <kernel-janitors@archiver.kernel.org>; Sat,  8 May 2021 11:03:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D605561469
+	for <kernel-janitors@archiver.kernel.org>; Sat,  8 May 2021 12:54:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230455AbhEHLEH (ORCPT
+        id S230486AbhEHMzY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 8 May 2021 07:04:07 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:48934 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230257AbhEHLEH (ORCPT
+        Sat, 8 May 2021 08:55:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39080 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230438AbhEHMzW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 8 May 2021 07:04:07 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 148B04bv063085;
-        Sat, 8 May 2021 11:02:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- content-transfer-encoding : in-reply-to; s=corp-2020-01-29;
- bh=r0/XXh/jtriWu0VTLHZImPY97JqBO6EFOErMsyS74R4=;
- b=AEJc8qscz/htwff9kWW6Jkp31joSrGYdy6Ou0frzYqoCrhEjDYrccRAxek4V4bAK0ZpF
- asrfGof4h/19YhxNXwi5idpy301nEksGRHrzl39dzB52ZUfkoOGcDmPXVdOC8VgTK0ig
- ycK9DCEILHFsbz143RP2o4ZtpDJLhkIkAda0nyC4lGTNTsHp8+JRX3vW0HtAjfGPWjBw
- 5cgR5CsQysy2H9HwM39H/oGoaiLRgd6Wmwp5xya4oDAU/UvJyZkj7C/d6NSe9cJu0568
- IeNCHZzEBxuaIRBVD7RHUWh1sYS3Oqr3vlYyucsmRpVenMXmNsUrnepU1M8x5LC/M+Lx iw== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 38dj2r0c84-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 08 May 2021 11:02:48 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 148B1PmQ007865;
-        Sat, 8 May 2021 11:02:48 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by userp3030.oracle.com with ESMTP id 38dfrs41ud-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 08 May 2021 11:02:48 +0000
-Received: from userp3030.oracle.com (userp3030.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 148B2l3W010552;
-        Sat, 8 May 2021 11:02:48 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3030.oracle.com with ESMTP id 38dfrs41ty-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 08 May 2021 11:02:47 +0000
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 148B2jei026189;
-        Sat, 8 May 2021 11:02:45 GMT
-Received: from kadam (/102.36.221.92)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sat, 08 May 2021 11:02:45 +0000
-Date:   Sat, 8 May 2021 14:02:35 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Johannes Berg <johannes@sipsolutions.net>,
-        Arend van Spriel <aspriel@gmail.com>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Chi-hsien Lin <chi-hsien.lin@infineon.com>,
-        Wright Feng <wright.feng@infineon.com>,
-        Chung-hsien Hsu <chung-hsien.hsu@infineon.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Hans deGoede <hdegoede@redhat.com>,
-        linux-wireless@vger.kernel.org,
-        brcm80211-dev-list.pdl@broadcom.com,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] brcmfmac: fix a loop exit condition
-Message-ID: <20210508110235.GM1922@kadam>
-References: <YIKzmoMiTdToaIyP@mwanda>
- <427e33af49758c61bc23cf1eedb6dd6964c40296.camel@sipsolutions.net>
- <20210423121110.GO1981@kadam>
- <bda7ae6b-00f9-ae0e-66d3-413049bc543d@wanadoo.fr>
+        Sat, 8 May 2021 08:55:22 -0400
+Received: from mail-yb1-xb2c.google.com (mail-yb1-xb2c.google.com [IPv6:2607:f8b0:4864:20::b2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFB58C061574;
+        Sat,  8 May 2021 05:54:07 -0700 (PDT)
+Received: by mail-yb1-xb2c.google.com with SMTP id l7so15480551ybf.8;
+        Sat, 08 May 2021 05:54:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aXVXrFw3OGzh7nVtDJeFdDpq7b/QcyboCBGX47RVf78=;
+        b=aekVGnd449/i9yVzo2TgnVAsOPnB78JLrCiAFCnk9wDt3RwY1XU3/p+x9Y5QN9zCE8
+         qkfWF1ownY2HwvYl4h0hrkJ6D2fnSaiM7zvCJ6MrI+2HAZYsLoEjN+3re6mxrz2aeSUD
+         uv9Uz3l8feQ9VJXV6CdCYgppOBphHZG1FesPXGYK7O/STINXgZjQSal7mxumay+9UOhA
+         DYVOfPARzFyDYfi/lYiDY13g0mg01I+2GFtLo9+KS7Dtwu0+h2+V52czH5+jGCvNm9C8
+         2iNsrf+LbpBM4IJZgz+qYiKhVaL3Z24ST0S6XyciqFtGZR4ZwXLaCStsGVPcC2D4KhYp
+         M/GQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aXVXrFw3OGzh7nVtDJeFdDpq7b/QcyboCBGX47RVf78=;
+        b=Pd2hpZO2j9Wr9jqYlUimdh7yA0i5uS8D+RPJu0NSQELAO+XGkkFQA4AFjSyX5V5747
+         uMyx0pafLavIB54B8xJuTji0our2MC89Wh8r4fHoKjGeH0a7OK/F4juQfDpg3OxtvPs8
+         jbGWmq8EuO/9squ9wJIJOYCTNlIRZuWZkADVrSm74J3jsFM4hSUIrzNh04rm+uCsezFR
+         zARaVFfRG8uq3VHbXtNldQYGe1qZfr03Z5Vm9s1emYXrRIohWsYU4JsyObmguaEt13Q3
+         We+E4y28y9AF39/lwUeMYPL/EaZE8Sa/4p/XtRpJEITaYZlZAANP8rD9+LC5vSgbaJ2W
+         f9wg==
+X-Gm-Message-State: AOAM532l8mlBFow83qXfs5f3bNvG3T5tX8jOnpqL0GLm4V2hBhJ+fN5d
+        0YRxOW2DBi6zTwem9XOw15I+EIFdKFf0bjynQ9vljuJQ9nllmw==
+X-Google-Smtp-Source: ABdhPJyb/sC0ao9kv47LEMxG2PnSQdrq895Z/M3G/4emGSqWcKLCKYdyG3tUt5Ul/WZ46VKYX+Qcknk6SLiQmFn5GnU=
+X-Received: by 2002:a25:5741:: with SMTP id l62mr19697754ybb.119.1620478447017;
+ Sat, 08 May 2021 05:54:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <bda7ae6b-00f9-ae0e-66d3-413049bc543d@wanadoo.fr>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-ORIG-GUID: K383e4lnf4Wq4ZGo9c0t87Ao7TSeJRZm
-X-Proofpoint-GUID: K383e4lnf4Wq4ZGo9c0t87Ao7TSeJRZm
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9977 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1015 spamscore=0
- suspectscore=0 mlxscore=0 phishscore=0 lowpriorityscore=0 malwarescore=0
- adultscore=0 impostorscore=0 priorityscore=1501 bulkscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2104190000 definitions=main-2105080080
+References: <d995e27db003a26e5b5eb53b0f40b55f8015d873.1620245794.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <d995e27db003a26e5b5eb53b0f40b55f8015d873.1620245794.git.christophe.jaillet@wanadoo.fr>
+From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date:   Sat, 8 May 2021 13:53:41 +0100
+Message-ID: <CA+V-a8sd7GYGWqvDQX4Zc1Z-t+L1oSSmYUpHrVkB0-6mqVhnBA@mail.gmail.com>
+Subject: Re: [PATCH V2] media: i2c: ov2659: Fix an error message
+To:     christophe.jaillet@wanadoo.fr
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Benoit Parrot <bparrot@ti.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        linux-media <linux-media@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Apr 23, 2021 at 02:20:35PM +0200, Christophe JAILLET wrote:
-> Le 23/04/2021 à 14:11, Dan Carpenter a écrit :
-> > On Fri, Apr 23, 2021 at 01:59:36PM +0200, Johannes Berg wrote:
-> > > On Fri, 2021-04-23 at 14:46 +0300, Dan Carpenter wrote:
-> > > > This code is supposed to loop over the whole board_type[] string.  The
-> > > > current code kind of works just because ascii values start 97 and the
-> > > > string is likely shorter than that so it will break when we hit the NUL
-> > > > terminator.  But really the condition should be "i < len" instead of
-> > > > "i < board_type[i]".
-> > > > 
-> > > > Fixes: 29e354ebeeec ("brcmfmac: Transform compatible string for FW loading")
-> > > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > > > ---
-> > > >   drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c | 2 +-
-> > > >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
-> > > > index a7554265f95f..9b75e396fc50 100644
-> > > > --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
-> > > > +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
-> > > > @@ -34,7 +34,7 @@ void brcmf_of_probe(struct device *dev, enum brcmf_bus_type bus_type,
-> > > >   		len = strlen(tmp) + 1;
-> > > >   		board_type = devm_kzalloc(dev, len, GFP_KERNEL);
-> > > >   		strscpy(board_type, tmp, len);
-> > > > -		for (i = 0; i < board_type[i]; i++) {
-> > > > +		for (i = 0; i < len; i++) {
-> > > >   			if (board_type[i] == '/')
-> > > >   				board_type[i] = '-';
-> > > >   		}
-> > > 
-> > > It should probably just use strreplace() though :)
-> > 
-> > Good point.  I'll send a v2.
-> > 
-> 
-> and the 2 lines above look like a devm_kstrdup.
-> 
-> The (unlikely) malloc failure test is also missing.
+Hi Christophe,
 
-It turns out that Smatch checks for allocation failure were really
-ancient and really crap...  I need to add all devm_ functions.
-Probably should re-write all that code.
+Thank you for the patch.
 
-Also originally GFP_NOFAIL was 0x800 and now it is 0x8000.  Smatch
-was out of sync.  So the functions that were supposed to be checked
-were all disabled...  Need to figure out a better way to do that as
-well.
+On Wed, May 5, 2021 at 9:17 PM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+>
+> 'ret' is known to be 0 here and printing -ENODEV wouldn't be really
+> helpful. So remove it from the error message.
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> V2: Remove the Fixes tag. It doesn't really fix something, it just removes
+>     a useless information.
+>     Just remove ret. No need to add something else.
+> ---
+>  drivers/media/i2c/ov2659.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+Acked-by: Lad Prabhakar <prabhakar.csengg@gmail.com>
 
-regards,
-dan carpenter
+Cheers,
+Prabhakar
 
+> diff --git a/drivers/media/i2c/ov2659.c b/drivers/media/i2c/ov2659.c
+> index 42f64175a6df..6bbbb94fdda4 100644
+> --- a/drivers/media/i2c/ov2659.c
+> +++ b/drivers/media/i2c/ov2659.c
+> @@ -1368,8 +1368,7 @@ static int ov2659_detect(struct v4l2_subdev *sd)
+>                 id = OV265X_ID(pid, ver);
+>                 if (id != OV2659_ID) {
+>                         dev_err(&client->dev,
+> -                               "Sensor detection failed (%04X, %d)\n",
+> -                               id, ret);
+> +                               "Sensor detection failed (%04X)\n", id);
+>                         ret = -ENODEV;
+>                 } else {
+>                         dev_info(&client->dev, "Found OV%04X sensor\n", id);
+> --
+> 2.30.2
+>
