@@ -2,93 +2,68 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.5 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51FF8C433ED
-	for <kernel-janitors@archiver.kernel.org>; Sat,  8 May 2021 16:12:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51267C433ED
+	for <kernel-janitors@archiver.kernel.org>; Sat,  8 May 2021 16:59:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2EF7B61261
-	for <kernel-janitors@archiver.kernel.org>; Sat,  8 May 2021 16:12:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E3C66141E
+	for <kernel-janitors@archiver.kernel.org>; Sat,  8 May 2021 16:59:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229591AbhEHQNE (ORCPT
+        id S229559AbhEHRAb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 8 May 2021 12:13:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58360 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229500AbhEHQNE (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 8 May 2021 12:13:04 -0400
-Received: from jic23-huawei (cpc108967-cmbg20-2-0-cust86.5-4.cable.virginm.net [81.101.6.87])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DEFEB61260;
-        Sat,  8 May 2021 16:11:59 +0000 (UTC)
-Date:   Sat, 8 May 2021 17:12:58 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Lars-Peter Clausen <lars@metafoo.de>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Jon Brenner <jbrenner@taosinc.com>, linux-iio@vger.kernel.org,
-        clang-built-linux@googlegroups.com,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: tsl2583: Fix division by a zero lux_val
-Message-ID: <20210508171258.2ef71a70@jic23-huawei>
-In-Reply-To: <20210507183041.115864-1-colin.king@canonical.com>
-References: <20210507183041.115864-1-colin.king@canonical.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+        Sat, 8 May 2021 13:00:31 -0400
+Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:47434 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229544AbhEHRAb (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Sat, 8 May 2021 13:00:31 -0400
+Received: from [192.168.1.18] ([86.243.172.93])
+        by mwinf5d16 with ME
+        id 2GzR2500221Fzsu03GzRHm; Sat, 08 May 2021 18:59:28 +0200
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 08 May 2021 18:59:28 +0200
+X-ME-IP: 86.243.172.93
+Subject: Re: [PATCH] rtc: max77686: Remove some dead code
+To:     Edmundo Carmona Antoranz <eantoranz@gmail.com>
+Cc:     cw00.choi@samsung.com, krzysztof.kozlowski@canonical.com,
+        b.zolnierkie@samsung.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, linux-rtc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <a6b23ee8d3ea78f62d3fda0b53aa273718f14c6d.1620452523.git.christophe.jaillet@wanadoo.fr>
+ <CAOc6etaUPtJqoH9DBDE72nDW7s7iEZHnaJRpKx9zFow02WOZig@mail.gmail.com>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Message-ID: <9f34ebcd-0c17-cd7f-eb08-52c6c3dc7b03@wanadoo.fr>
+Date:   Sat, 8 May 2021 18:59:25 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAOc6etaUPtJqoH9DBDE72nDW7s7iEZHnaJRpKx9zFow02WOZig@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri,  7 May 2021 19:30:41 +0100
-Colin King <colin.king@canonical.com> wrote:
+Le 08/05/2021 à 16:38, Edmundo Carmona Antoranz a écrit :
+> On Fri, May 7, 2021 at 11:43 PM Christophe JAILLET
+> <christophe.jaillet@wanadoo.fr> wrote:
+>>          if (IS_ERR(info->rtc_dev)) {
+>>                  ret = PTR_ERR(info->rtc_dev);
+>>                  dev_err(&pdev->dev, "Failed to register RTC device: %d\n", ret);
+> 
+> Following the recent conversations, I think it might make sense to do
+> dev_err(&pdev->dev, "Failed to register RTC device: %pe\n", info->rtc_dev);
+> 
+> Is that right?
+> 
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The lux_val returned from tsl2583_get_lux can potentially be zero,
-> so check for this to avoid a division by zero and an overflowed
-> gain_trim_val.
-> 
-> Fixes clang scan-build warning:
-> 
-> drivers/iio/light/tsl2583.c:345:40: warning: Either the
-> condition 'lux_val<0' is redundant or there is division
-> by zero at line 345. [zerodivcond]
-> 
-> Fixes: ac4f6eee8fe8 ("staging: iio: TAOS tsl258x: Device driver")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Definitely looks like it could happen so applied to the fixes-togreg branch of
-iio.git and marked for stable.
+Yes, it is right, but it should be done in another patch.
 
-Thanks,
+Would you like to give it a try?
 
-Jonathan
-> ---
->  drivers/iio/light/tsl2583.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/drivers/iio/light/tsl2583.c b/drivers/iio/light/tsl2583.c
-> index 0f787bfc88fc..c9d8f07a6fcd 100644
-> --- a/drivers/iio/light/tsl2583.c
-> +++ b/drivers/iio/light/tsl2583.c
-> @@ -341,6 +341,14 @@ static int tsl2583_als_calibrate(struct iio_dev *indio_dev)
->  		return lux_val;
->  	}
->  
-> +	/* Avoid division by zero of lux_value later on */
-> +	if (lux_val == 0) {
-> +		dev_err(&chip->client->dev,
-> +			"%s: lux_val of 0 will produce out of range trim_value\n",
-> +			__func__);
-> +		return -ENODATA;
-> +	}
-> +
->  	gain_trim_val = (unsigned int)(((chip->als_settings.als_cal_target)
->  			* chip->als_settings.als_gain_trim) / lux_val);
->  	if ((gain_trim_val < 250) || (gain_trim_val > 4000)) {
-
+CJ
