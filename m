@@ -5,119 +5,121 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+	UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C390FC433B4
-	for <kernel-janitors@archiver.kernel.org>; Sat,  8 May 2021 13:04:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1539CC433ED
+	for <kernel-janitors@archiver.kernel.org>; Sat,  8 May 2021 13:31:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 84354610A7
-	for <kernel-janitors@archiver.kernel.org>; Sat,  8 May 2021 13:04:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E30F761456
+	for <kernel-janitors@archiver.kernel.org>; Sat,  8 May 2021 13:31:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231152AbhEHNFF (ORCPT
+        id S229559AbhEHNcG (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 8 May 2021 09:05:05 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:47148 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230438AbhEHNFF (ORCPT
+        Sat, 8 May 2021 09:32:06 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:35916 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229493AbhEHNcG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 8 May 2021 09:05:05 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 148D407U073051;
-        Sat, 8 May 2021 13:04:00 GMT
+        Sat, 8 May 2021 09:32:06 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 148DQc1v065614;
+        Sat, 8 May 2021 13:30:51 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
  : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=B68G7C5Mo/ulKLEzdcTuGlR7RXV1F5cDdj4WlbKIQcE=;
- b=xJJSLS1MabHv78U6U/2w/TcE1Bwr7lp8iCUdPYJpbwhdc3a0442NCxe26TuWoK1lh3gZ
- awWl4iQWYyGnaQhR6M22vTg9e5TDE0A0V4D2SUbNblKlatP1G3NnZE58ZSU3YqhV1s6N
- uM2g/KZrbVQWw7uJxjc/NXOhDxlkr/Hdv8SMoPidREHru1nLuiUEkqG8AvBkGp+xIfs9
- WmD5GMhYQKMcrt7i8DcEUIfTmWuuLldJyI0ghgFMsGuwQBQyz9wflcR/e5/wp3TLwRcj
- kvpQY5bZ85m/c+HxX+e+qzpjYxFeolQu8KSWLefPbZ5dRGsO1/hC6HhrUhFQjpGK8aV7 wQ== 
+ bh=NyGDGUetUFrCLm3ZQ409Z0sTueN2O1nrtLlx0iXFuzo=;
+ b=rxwNfkJM1p0DZQBi0HU4kOvp/prah4/fV3TXucnAmW9MTNxb+YNGO/3lT6VxLGwXss6I
+ f4VdzZBkxuV7DsT/mVtFIkWlSxtl/SHj41mnPmi3g9YndXbAeTSnehnPVJ4s21cB6PpO
+ Q095JSyJqVI89QwmoPdfit4Vp5Ax+bquF0ym1vM392C/qWlHw9MZ0JT0M765qJrDUu5D
+ 9XGfzRCN9Ifww/ikC+5Uf8ZLevJKr2AKco7TrFrZ0E1TMm9Fx5wUDRiiVpGrwqH7ijlx
+ +DORBakB+EufcH060FuZRyZEg5XKgTqAiR947XZLP76/Ij5itA/pR3nGW0E5OblpGr0f Qg== 
 Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2130.oracle.com with ESMTP id 38dg5b8h6x-1
+        by aserp2120.oracle.com with ESMTP id 38djkm8eax-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 08 May 2021 13:03:59 +0000
+        Sat, 08 May 2021 13:30:51 +0000
 Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 148CxneB159013;
-        Sat, 8 May 2021 13:03:59 GMT
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 148DTnhd017853;
+        Sat, 8 May 2021 13:30:50 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-        by userp3020.oracle.com with ESMTP id 38dhyjv70t-1
+        by userp3020.oracle.com with ESMTP id 38dhyjx3pg-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 08 May 2021 13:03:59 +0000
+        Sat, 08 May 2021 13:30:50 +0000
 Received: from userp3020.oracle.com (userp3020.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 148D3wbP168130;
-        Sat, 8 May 2021 13:03:58 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3020.oracle.com with ESMTP id 38dhyjv70k-1
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 148DUnIH020446;
+        Sat, 8 May 2021 13:30:49 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 38dhyjx3n7-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 08 May 2021 13:03:58 +0000
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 148D3vhX010067;
-        Sat, 8 May 2021 13:03:58 GMT
+        Sat, 08 May 2021 13:30:49 +0000
+Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 148DUgN0017780;
+        Sat, 8 May 2021 13:30:42 GMT
 Received: from mwanda (/102.36.221.92)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sat, 08 May 2021 06:03:57 -0700
-Date:   Sat, 8 May 2021 16:03:51 +0300
+        with ESMTP ; Sat, 08 May 2021 06:30:42 -0700
+Date:   Sat, 8 May 2021 16:30:35 +0300
 From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Johannes Berg <johannes@sipsolutions.net>
-Cc:     linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] cfg80211: clean up variable use in
- cfg80211_parse_colocated_ap()
-Message-ID: <YJaMNzZENkYFAYQX@mwanda>
+To:     Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>
+Cc:     Vivien Didelot <vivien.didelot@gmail.com>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH net] net: dsa: fix a crash if ->get_sset_count() fails
+Message-ID: <YJaSe3RPgn7gKxZv@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
-X-Proofpoint-GUID: 7zdN6WIKlVmDUPwwr7WNhLlsOExDKpLn
-X-Proofpoint-ORIG-GUID: 7zdN6WIKlVmDUPwwr7WNhLlsOExDKpLn
+X-Proofpoint-GUID: 7bNA72TTi-_Bz2ZxTwcV_qOhqw5Fs_8z
+X-Proofpoint-ORIG-GUID: 7bNA72TTi-_Bz2ZxTwcV_qOhqw5Fs_8z
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9978 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 malwarescore=0
- bulkscore=0 spamscore=0 clxscore=1015 priorityscore=1501 adultscore=0
- mlxlogscore=999 mlxscore=0 suspectscore=0 impostorscore=0 phishscore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 priorityscore=1501
+ suspectscore=0 clxscore=1011 bulkscore=0 adultscore=0 impostorscore=0
+ spamscore=0 phishscore=0 mlxlogscore=999 mlxscore=0 lowpriorityscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
- definitions=main-2105080096
+ definitions=main-2105080100
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The "ap_info->tbtt_info_len" and "length" variables are the same value
-but it is confusing how the names are mixed up.  Let's use "length"
-everywhere for consistency.
+If ds->ops->get_sset_count() fails then it "count" is a negative error
+code such as -EOPNOTSUPP.  Because "i" is an unsigned int, the negative
+error code is type promoted to a very high value and the loop will
+corrupt memory until the system crashes.
 
+Fix this by checking for error codes and changing the type of "i" to
+just int.
+
+Fixes: badf3ada60ab ("net: dsa: Provide CPU port statistics to master netdev")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- net/wireless/scan.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ net/dsa/master.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/net/wireless/scan.c b/net/wireless/scan.c
-index 4f06c1825029..a3941b19b516 100644
---- a/net/wireless/scan.c
-+++ b/net/wireless/scan.c
-@@ -618,7 +618,7 @@ static int cfg80211_parse_colocated_ap(const struct cfg80211_bss_ies *ies,
+diff --git a/net/dsa/master.c b/net/dsa/master.c
+index 052a977914a6..63adbc21a735 100644
+--- a/net/dsa/master.c
++++ b/net/dsa/master.c
+@@ -147,8 +147,7 @@ static void dsa_master_get_strings(struct net_device *dev, uint32_t stringset,
+ 	struct dsa_switch *ds = cpu_dp->ds;
+ 	int port = cpu_dp->index;
+ 	int len = ETH_GSTRING_LEN;
+-	int mcount = 0, count;
+-	unsigned int i;
++	int mcount = 0, count, i;
+ 	uint8_t pfx[4];
+ 	uint8_t *ndata;
  
- 		freq = ieee80211_channel_to_frequency(ap_info->channel, band);
- 
--		if (end - pos < count * ap_info->tbtt_info_len)
-+		if (end - pos < count * length)
- 			break;
- 
- 		/*
-@@ -630,7 +630,7 @@ static int cfg80211_parse_colocated_ap(const struct cfg80211_bss_ies *ies,
- 		if (band != NL80211_BAND_6GHZ ||
- 		    (length != IEEE80211_TBTT_INFO_OFFSET_BSSID_BSS_PARAM &&
- 		     length < IEEE80211_TBTT_INFO_OFFSET_BSSID_SSSID_BSS_PARAM)) {
--			pos += count * ap_info->tbtt_info_len;
-+			pos += count * length;
- 			continue;
- 		}
- 
-@@ -653,7 +653,7 @@ static int cfg80211_parse_colocated_ap(const struct cfg80211_bss_ies *ies,
- 				kfree(entry);
- 			}
- 
--			pos += ap_info->tbtt_info_len;
-+			pos += length;
- 		}
- 	}
- 
+@@ -178,6 +177,8 @@ static void dsa_master_get_strings(struct net_device *dev, uint32_t stringset,
+ 		 */
+ 		ds->ops->get_strings(ds, port, stringset, ndata);
+ 		count = ds->ops->get_sset_count(ds, port, stringset);
++		if (count < 0)
++			return;
+ 		for (i = 0; i < count; i++) {
+ 			memmove(ndata + (i * len + sizeof(pfx)),
+ 				ndata + i * len, len - sizeof(pfx));
 -- 
-2.30.3
+2.30.2
+
