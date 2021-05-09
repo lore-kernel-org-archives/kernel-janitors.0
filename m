@@ -2,88 +2,105 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B393C433B4
-	for <kernel-janitors@archiver.kernel.org>; Sun,  9 May 2021 00:06:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEDD4C433B4
+	for <kernel-janitors@archiver.kernel.org>; Sun,  9 May 2021 00:42:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 22C956141D
-	for <kernel-janitors@archiver.kernel.org>; Sun,  9 May 2021 00:06:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8857661400
+	for <kernel-janitors@archiver.kernel.org>; Sun,  9 May 2021 00:42:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229647AbhEIAHS (ORCPT
+        id S229691AbhEIAnd (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 8 May 2021 20:07:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43150 "EHLO
+        Sat, 8 May 2021 20:43:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50954 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229570AbhEIAHS (ORCPT
+        with ESMTP id S229620AbhEIAnd (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 8 May 2021 20:07:18 -0400
-Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58E1DC061573;
-        Sat,  8 May 2021 17:06:15 -0700 (PDT)
-Received: by mail-il1-x12d.google.com with SMTP id v13so10967268ilj.8;
-        Sat, 08 May 2021 17:06:15 -0700 (PDT)
+        Sat, 8 May 2021 20:43:33 -0400
+Received: from mail-qt1-x835.google.com (mail-qt1-x835.google.com [IPv6:2607:f8b0:4864:20::835])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90127C061573
+        for <kernel-janitors@vger.kernel.org>; Sat,  8 May 2021 17:42:30 -0700 (PDT)
+Received: by mail-qt1-x835.google.com with SMTP id c11so9381845qth.2
+        for <kernel-janitors@vger.kernel.org>; Sat, 08 May 2021 17:42:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3nk5otuuvpQdd5V63KbzQrvfCEVv6aZKunZOJD4xz+Q=;
-        b=EVD6P7md3BCemopGoXFblj0Li3O8zld2a65mjbKBWDCLt3m5dn1hDXUJ9o7Jhj6Add
-         WOpj9+ppOm2mZtzubG/2UYiFyDwsjpTJn+tw7GqNuGUmfRndU448KnS9ep9qcQEy3hiI
-         wmACAKWfkiyKxh/Vy/USXsEz6Xn/1xIXyYjwRa3fiBUrFnMb1UobFN5K3QAA3icOAGGo
-         B0Lu7Ueg1FM4B13BWYU/YyugfX2qJ3DERqOkl85GdLCT+t0EkJUiTjHSs/FOyzhyVM5M
-         p5HDkdoz8/3fnffNCWhXXye0gxSDoqJ8P7axFAZwVFpxO5l6qs89wrwS3CxAMQQ/GCAe
-         rIbA==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=C07YwASl0zpqDQVX+5JFG3kpJXKlR71QBAMY+k9JQdM=;
+        b=PVKKvcu95u+XCSkInv8gyZUxsnu7lPFEE1dqPXXMd+4EJmzME0jajgY7D/4hu1TzlV
+         jaPSNoEzRY0VHgaqz0Zcp2CUDldGikO87t6qhm1/eRTIQZNm8VsqAgQKq7QR9X7bfKCl
+         QgkWnAnP5ZpyiuIy89uedu0XZW2do4KERn6uR9/s1NgiesQs7fxWNl7r5a4x7lkz+/wW
+         4GJJzwS06Y9HXjRdQTXwX/mJs6XZYqITaGLbwtRZojFSL+O5DxUFRHbVbx6qixoRiq0y
+         rM87YOvcxMhSIPF2l1OmZgKhWy9VJR2qUITTwRjbSmhNxgEI4jW1L2CYmudAYbbeUpwO
+         9tZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3nk5otuuvpQdd5V63KbzQrvfCEVv6aZKunZOJD4xz+Q=;
-        b=T1AFyFjg93wQcIkaWl5I1hrzn1z/DPN4SaslBRmyoYsQ27I+D++kdt8btamHDCwwhq
-         5PKmrMI29DB7O4NAbxUzGgD3IDmBNuu09+t4o9TUpwqN8rwC5yTNn4Z3Hgmu2UDhK7Kq
-         UmqRrYmyYSceEy3E+DW0zdvb0P2MSGJZ+jkvg7JKgiKEuBxuBd738AjrcJvlIHNwtqyE
-         0BcGXucZSCUJ+PpSoIjjUVjdJSko3tM3bwUnViEG1vCRqY3o0KuNdRlX99vkLCBsZpLJ
-         wTHo8i1ubKTNFBaeUuOMTMOEsHW716wuZD/7gtd3NInaCCubBTZS2r6RV+/AEjMUFXXi
-         u1oQ==
-X-Gm-Message-State: AOAM5337jydBXNb17QvOetlgsn893VXKLWDo87g+ilUlEVVr6vvYJ5gu
-        NuGfgiTA5Ewxotriwv/vyLJ2aHtzI0XES3fq0vg=
-X-Google-Smtp-Source: ABdhPJxWMfurobgFPi+t5kxWyMseS0+8/Aks0PQM/fu9bT8ipMsNtEr5vCp+SHyznEsWmy4Hdslz8pMW3iNmq0BnWIQ=
-X-Received: by 2002:a05:6e02:20ce:: with SMTP id 14mr15581662ilq.102.1620518774641;
- Sat, 08 May 2021 17:06:14 -0700 (PDT)
-MIME-Version: 1.0
-References: <a6b23ee8d3ea78f62d3fda0b53aa273718f14c6d.1620452523.git.christophe.jaillet@wanadoo.fr>
- <CAOc6etaUPtJqoH9DBDE72nDW7s7iEZHnaJRpKx9zFow02WOZig@mail.gmail.com> <9f34ebcd-0c17-cd7f-eb08-52c6c3dc7b03@wanadoo.fr>
-In-Reply-To: <9f34ebcd-0c17-cd7f-eb08-52c6c3dc7b03@wanadoo.fr>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=C07YwASl0zpqDQVX+5JFG3kpJXKlR71QBAMY+k9JQdM=;
+        b=DglzxbvRMSWaa/ouRWgKxsA0EtBXl1HbZQWUxmF+nRqx16feHBiecUuUlptDvUnF/d
+         wcGcsNyrghwvPX3jJ4qtXzYhYTzXmj/a1tFXj6WyMtkpycVfb5m0gcGe2Bipi2iqCc+s
+         M/+Jc/OfW/nXWUE2DaMaMYSCqUpohicGEtFsL72jc5lBz4sOGoax+TtBMUV8ACi0vapk
+         iAiu9iS6D9yuZcXDCXjGZz7LJEQ6qfl3BFt8HwIw7SygRpCjrerUn5CHe4wmcpr+ZhMt
+         NiCBEF03mpcWKJf77qg86mifTFzvnZHdJSwmOiL056lLDuz3x7K4UDq/shhBqYJxcK/I
+         gvQQ==
+X-Gm-Message-State: AOAM533RFfH6A4GMsJwChN+PiU27+FEGUTPmHBn4fzB5iUD8TSULSUNK
+        KsXKnxwKq5KmphIVZ8GDbVo=
+X-Google-Smtp-Source: ABdhPJzt50rF+xK22UPqdTAr2UU+kox9t2h6kivkm8j1fJJfuJNrsWgqNY1l7X+a9wn7z1GXj6I6UA==
+X-Received: by 2002:ac8:5e0b:: with SMTP id h11mr16107664qtx.194.1620520949895;
+        Sat, 08 May 2021 17:42:29 -0700 (PDT)
+Received: from linuxerio.localdomain ([186.32.194.42])
+        by smtp.gmail.com with ESMTPSA id r81sm8440750qka.82.2021.05.08.17.42.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 08 May 2021 17:42:29 -0700 (PDT)
 From:   Edmundo Carmona Antoranz <eantoranz@gmail.com>
-Date:   Sat, 8 May 2021 18:06:03 -0600
-Message-ID: <CAOc6etYwTvVPnoB3BQfuQEikvsCwSs9AqBWnLFrs9zQ0pJGp1A@mail.gmail.com>
-Subject: Re: [PATCH] rtc: max77686: Remove some dead code
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     cw00.choi@samsung.com, krzysztof.kozlowski@canonical.com,
-        b.zolnierkie@samsung.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, linux-rtc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+To:     christophe.jaillet@wanadoo.fr, dan.carpenter@oracle.com
+Cc:     kernel-janitors@vger.kernel.org,
+        Edmundo Carmona Antoranz <eantoranz@gmail.com>
+Subject: [RFC 1/2] rtc: max77686: use symbolic error messages
+Date:   Sat,  8 May 2021 18:41:11 -0600
+Message-Id: <20210509004112.421100-1-eantoranz@gmail.com>
+X-Mailer: git-send-email 2.30.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, May 8, 2021 at 10:59 AM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> >
-> > Following the recent conversations, I think it might make sense to do
-> > dev_err(&pdev->dev, "Failed to register RTC device: %pe\n", info->rtc_dev);
-> >
-> > Is that right?
-> >
->
-> Yes, it is right, but it should be done in another patch.
->
-> Would you like to give it a try?
->
-Sure, I'll have the patch ready to send it when I see yours on next.
-> CJ
+Modify some error messages so that the symbolic error value be
+printed instead of a numeric value.
+---
+ drivers/rtc/rtc-max77686.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/rtc/rtc-max77686.c b/drivers/rtc/rtc-max77686.c
+index ce089ed934ad..470260478752 100644
+--- a/drivers/rtc/rtc-max77686.c
++++ b/drivers/rtc/rtc-max77686.c
+@@ -711,7 +711,8 @@ static int max77686_init_rtc_regmap(struct max77686_rtc_info *info)
+ 						info->drv_data->regmap_config);
+ 	if (IS_ERR(info->rtc_regmap)) {
+ 		ret = PTR_ERR(info->rtc_regmap);
+-		dev_err(info->dev, "Failed to allocate RTC regmap: %d\n", ret);
++		dev_err(info->dev, "Failed to allocate RTC regmap: %pe\n",
++			info->rtc_regmap);
+ 		return ret;
+ 	}
+ 
+@@ -763,7 +764,8 @@ static int max77686_rtc_probe(struct platform_device *pdev)
+ 
+ 	if (IS_ERR(info->rtc_dev)) {
+ 		ret = PTR_ERR(info->rtc_dev);
+-		dev_err(&pdev->dev, "Failed to register RTC device: %d\n", ret);
++		dev_err(&pdev->dev, "Failed to register RTC device: %pe\n",
++			info->rtc_dev);
+ 		goto err_rtc;
+ 	}
+ 
+-- 
+2.30.2
+
