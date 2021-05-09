@@ -2,88 +2,73 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04617C433ED
-	for <kernel-janitors@archiver.kernel.org>; Sun,  9 May 2021 19:26:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87EBDC433B4
+	for <kernel-janitors@archiver.kernel.org>; Sun,  9 May 2021 21:06:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C203C611F0
-	for <kernel-janitors@archiver.kernel.org>; Sun,  9 May 2021 19:26:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C0FB613F0
+	for <kernel-janitors@archiver.kernel.org>; Sun,  9 May 2021 21:06:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229726AbhEIT1j (ORCPT
+        id S229898AbhEIVHc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 9 May 2021 15:27:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37826 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229666AbhEIT1j (ORCPT
+        Sun, 9 May 2021 17:07:32 -0400
+Received: from relay8-d.mail.gandi.net ([217.70.183.201]:55437 "EHLO
+        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229840AbhEIVHb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 9 May 2021 15:27:39 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6D0AC061573;
-        Sun,  9 May 2021 12:26:35 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id l24-20020a7bc4580000b029014ac3b80020so9948206wmi.1;
-        Sun, 09 May 2021 12:26:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=r2dEu4hvQezgg+nEKJ+VJ/vBdC0xX4twJSBrlDmPz9g=;
-        b=G/KL0GMi8jlxQvskJcAJpLMVgkkRInd/fz5i0z+p0mE+1pAMVNLchRxBNJuFtvEGqT
-         S0/auBsfA+rb1D9KysOl+9o26ITBn10gu4jWCgHHGf7bNY4eKrKJWa6qp5Z8V2y5JMcc
-         aGeu02f85d2ON87lBYZAhzKaWxKKeYn8N69nhGT+UFbqKJVmC/n3fM6Sl4rG2tkPU0EB
-         nKMlYqqcwXUBGCvAI+4G99gOG4Fxax23KM/y6hyGYYjxavfix+2b6RTDd9W040MGi4TB
-         DoE4YQqcO/Puqq7BSRpgqAmauieoEDpH6yw8PjGTecyMIORdKKhKyhWESufyet8gbpLh
-         Ifqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=r2dEu4hvQezgg+nEKJ+VJ/vBdC0xX4twJSBrlDmPz9g=;
-        b=O7jkqrqlfywBDpU2Xb+aZvoq4H4mZNUJLJY+x5evXNdDh7fAAM0F2HzfT0cmCh3oHl
-         jGFw8bfc7ZXbTDfpWL7iDLCt9RlEZ4tNSjiXP4d/U+FqHeOLyKzSZpbXVd0uAUUCiXZv
-         VUgmC2ZQV9t1Ix8atclPJah3Ojkr5stTQcot7HycKvDbM04QAbQaG+SWDvRsQ+5BuSwQ
-         kJp6MjHx/LQMVIJpUsUKqbBz2vxVHE6ZVOIww3wj6LfsdUMrAmQFSaAw5GjVKyiKrDUP
-         qM+9B8Liuei0BhfgWRd9QJnWDaEiNg6NUbjcbOHO79pUQuVw+UZD4v1Mo7DMZgsDDjWn
-         vsWw==
-X-Gm-Message-State: AOAM533gOClG0p9UJs388Ox8gb2yiv7jpAmnpmR5+LTTJpEdo4r/6sxw
-        G/UvBwgH3QjefT/Tkpp2854=
-X-Google-Smtp-Source: ABdhPJy4dAUOVwJ7oBJqhKNx2n2E67kQzpf67S5Qs3BntkX8sTKk+BrfWnF00uYW3mHw28j0dG6zNA==
-X-Received: by 2002:a1c:4c07:: with SMTP id z7mr22592916wmf.96.1620588394388;
-        Sun, 09 May 2021 12:26:34 -0700 (PDT)
-Received: from skbuf ([86.127.41.210])
-        by smtp.gmail.com with ESMTPSA id d15sm19175233wrw.71.2021.05.09.12.26.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 May 2021 12:26:33 -0700 (PDT)
-Date:   Sun, 9 May 2021 22:26:32 +0300
-From:   Vladimir Oltean <olteanv@gmail.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     broonie@kernel.org, maitysanchayan@gmail.com,
-        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Sun, 9 May 2021 17:07:31 -0400
+X-Originating-IP: 90.65.108.55
+Received: from localhost (lfbn-lyo-1-1676-55.w90-65.abo.wanadoo.fr [90.65.108.55])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id 1863D1BF207;
+        Sun,  9 May 2021 21:06:26 +0000 (UTC)
+Date:   Sun, 9 May 2021 23:06:25 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Edmundo Carmona Antoranz <eantoranz@gmail.com>
+Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        cw00.choi@samsung.com, krzysztof.kozlowski@canonical.com,
+        b.zolnierkie@samsung.com, a.zummo@towertech.it,
+        linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] spi: spi-fsl-dspi: Fix a resource leak in an error
- handling path
-Message-ID: <20210509192632.2nzgwckpai34hgnr@skbuf>
-References: <d51caaac747277a1099ba8dea07acd85435b857e.1620587472.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] rtc: max77686: Remove some dead code
+Message-ID: <YJhO0cEqpbJAdv7s@piout.net>
+References: <a6b23ee8d3ea78f62d3fda0b53aa273718f14c6d.1620452523.git.christophe.jaillet@wanadoo.fr>
+ <CAOc6etaUPtJqoH9DBDE72nDW7s7iEZHnaJRpKx9zFow02WOZig@mail.gmail.com>
+ <9f34ebcd-0c17-cd7f-eb08-52c6c3dc7b03@wanadoo.fr>
+ <CAOc6etYwTvVPnoB3BQfuQEikvsCwSs9AqBWnLFrs9zQ0pJGp1A@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d51caaac747277a1099ba8dea07acd85435b857e.1620587472.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <CAOc6etYwTvVPnoB3BQfuQEikvsCwSs9AqBWnLFrs9zQ0pJGp1A@mail.gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, May 09, 2021 at 09:12:27PM +0200, Christophe JAILLET wrote:
-> 'dspi_request_dma()' should be undone by a 'dspi_release_dma()' call in the
-> error handling path of the probe function, as already done in the remove
-> function
-> 
-> Fixes: 90ba37033cb9 ("spi: spi-fsl-dspi: Add DMA support for Vybrid")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
+On 08/05/2021 18:06:03-0600, Edmundo Carmona Antoranz wrote:
+> On Sat, May 8, 2021 at 10:59 AM Christophe JAILLET
+> <christophe.jaillet@wanadoo.fr> wrote:
+> >
+> > >
+> > > Following the recent conversations, I think it might make sense to do
+> > > dev_err(&pdev->dev, "Failed to register RTC device: %pe\n", info->rtc_dev);
+> > >
+> > > Is that right?
+> > >
+> >
+> > Yes, it is right, but it should be done in another patch.
+> >
+> > Would you like to give it a try?
+> >
+> Sure, I'll have the patch ready to send it when I see yours on next.
 
-Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
+Does it make sense to print anything at all? Who would use the output?
+Is anyone actually going to read it?
 
-Thanks!
+
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
