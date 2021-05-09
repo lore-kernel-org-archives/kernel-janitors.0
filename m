@@ -7,36 +7,35 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E5D5C433B4
-	for <kernel-janitors@archiver.kernel.org>; Sun,  9 May 2021 08:28:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2584CC433B4
+	for <kernel-janitors@archiver.kernel.org>; Sun,  9 May 2021 17:22:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0A5CD613F0
-	for <kernel-janitors@archiver.kernel.org>; Sun,  9 May 2021 08:28:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E837B61006
+	for <kernel-janitors@archiver.kernel.org>; Sun,  9 May 2021 17:22:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229662AbhEII3X (ORCPT
+        id S229699AbhEIRXj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 9 May 2021 04:29:23 -0400
-Received: from smtp06.smtpout.orange.fr ([80.12.242.128]:29592 "EHLO
+        Sun, 9 May 2021 13:23:39 -0400
+Received: from smtp07.smtpout.orange.fr ([80.12.242.129]:52838 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229616AbhEII3X (ORCPT
+        with ESMTP id S229662AbhEIRXj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 9 May 2021 04:29:23 -0400
+        Sun, 9 May 2021 13:23:39 -0400
 Received: from localhost.localdomain ([86.243.172.93])
-        by mwinf5d86 with ME
-        id 2YUJ2500S21Fzsu03YUKfS; Sun, 09 May 2021 10:28:19 +0200
+        by mwinf5d87 with ME
+        id 2hNZ2500621Fzsu03hNZsm; Sun, 09 May 2021 19:22:34 +0200
 X-ME-Helo: localhost.localdomain
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 09 May 2021 10:28:19 +0200
+X-ME-Date: Sun, 09 May 2021 19:22:34 +0200
 X-ME-IP: 86.243.172.93
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     gregkh@linuxfoundation.org, hjk@linutronix.de,
-        jirislaby@kernel.org, lee.jones@linaro.org
-Cc:     linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
+To:     gregkh@linuxfoundation.org, jirislaby@kernel.org,
+        akpm@linux-foundation.org, stefani@seibold.net
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] tty: serial: 8250: serial_cs: Fix a memory leak in error handling path
-Date:   Sun,  9 May 2021 10:28:18 +0200
-Message-Id: <562910a450cb86db7c2c4a4328a60e53ef95f504.1620548790.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] tty: nozomi: Fix a resource leak in an error handling function
+Date:   Sun,  9 May 2021 19:22:33 +0200
+Message-Id: <4f0d2b3038e82f081d370ccb0cade3ad88463fe7.1620580838.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -44,50 +43,37 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-In the probe function, if the final 'serial_config()' fails, 'info' is
-leaking.
+A 'request_irq()' call is not balanced by a corresponding 'free_irq()' in
+the error handling path, as already done in the remove function.
 
-Use 'devm_kzalloc' instead to fix the leak and simplify the .remove
-function.
+Add it.
 
+Fixes: 9842c38e9176 ("kfifo: fix warn_unused_result")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-I've not been able to find a Fixes tag. All I know is that it is old!
+I also wonder if the loop above is correct. The 'i < MAX_PORT' looks really
+spurious to me.
+'tty_port_destroy' can be called twice for the same entry (once before
+branching in the error handling path, and once in here) and
+'tty_unregister_device'/'tty_port_destroy' will be called on entries
+that have not been 'tty_port_init'ed or 'tty_port_register_device'd.
+I don't know if it may be an issue.
 ---
- drivers/tty/serial/8250/serial_cs.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ drivers/tty/nozomi.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/tty/serial/8250/serial_cs.c b/drivers/tty/serial/8250/serial_cs.c
-index 63ea9c4da3d5..d18c98e0d0b0 100644
---- a/drivers/tty/serial/8250/serial_cs.c
-+++ b/drivers/tty/serial/8250/serial_cs.c
-@@ -310,7 +310,7 @@ static int serial_probe(struct pcmcia_device *link)
- 	dev_dbg(&link->dev, "serial_attach()\n");
- 
- 	/* Create new serial device */
--	info = kzalloc(sizeof(*info), GFP_KERNEL);
-+	info = devm_kzalloc(&link->dev, sizeof(*info), GFP_KERNEL);
- 	if (!info)
- 		return -ENOMEM;
- 	info->p_dev = link;
-@@ -325,17 +325,12 @@ static int serial_probe(struct pcmcia_device *link)
- 
- static void serial_detach(struct pcmcia_device *link)
- {
--	struct serial_info *info = link->priv;
--
- 	dev_dbg(&link->dev, "serial_detach\n");
- 
- 	/*
- 	 * Ensure that the ports have been released.
- 	 */
- 	serial_remove(link);
--
--	/* free bits */
--	kfree(info);
- }
- 
- /*====================================================================*/
+diff --git a/drivers/tty/nozomi.c b/drivers/tty/nozomi.c
+index 9a2d78ace49b..b270e137ef9b 100644
+--- a/drivers/tty/nozomi.c
++++ b/drivers/tty/nozomi.c
+@@ -1420,6 +1420,7 @@ static int nozomi_card_init(struct pci_dev *pdev,
+ 		tty_unregister_device(ntty_driver, dc->index_start + i);
+ 		tty_port_destroy(&dc->port[i].port);
+ 	}
++	free_irq(pdev->irq, dc);
+ err_free_kfifo:
+ 	for (i = 0; i < MAX_PORT; i++)
+ 		kfifo_free(&dc->port[i].fifo_ul);
 -- 
 2.30.2
 
