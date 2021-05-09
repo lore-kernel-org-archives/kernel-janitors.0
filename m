@@ -2,94 +2,88 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A78ABC433B4
-	for <kernel-janitors@archiver.kernel.org>; Sat,  8 May 2021 20:23:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B393C433B4
+	for <kernel-janitors@archiver.kernel.org>; Sun,  9 May 2021 00:06:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 802C6613F0
-	for <kernel-janitors@archiver.kernel.org>; Sat,  8 May 2021 20:23:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22C956141D
+	for <kernel-janitors@archiver.kernel.org>; Sun,  9 May 2021 00:06:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229640AbhEHUYj (ORCPT
+        id S229647AbhEIAHS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 8 May 2021 16:24:39 -0400
-Received: from smtp07.smtpout.orange.fr ([80.12.242.129]:33745 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229593AbhEHUYj (ORCPT
+        Sat, 8 May 2021 20:07:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43150 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229570AbhEIAHS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 8 May 2021 16:24:39 -0400
-Received: from localhost.localdomain ([86.243.172.93])
-        by mwinf5d65 with ME
-        id 2LPa2500521Fzsu03LPaNR; Sat, 08 May 2021 22:23:36 +0200
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 08 May 2021 22:23:36 +0200
-X-ME-IP: 86.243.172.93
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     krzysztof.h1@wp.pl, akpm@linux-foundation.org, imre.deak@nokia.com,
-        juha.yrjola@solidboot.com
-Cc:     linux-fbdev@vger.kernel.org, linux-omap@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] video: fbdev: lcd_mipid: Fix a memory leak in an error handling path
-Date:   Sat,  8 May 2021 22:23:33 +0200
-Message-Id: <8b82e34724755b69f34f15dddb288cd373080390.1620505229.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Sat, 8 May 2021 20:07:18 -0400
+Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58E1DC061573;
+        Sat,  8 May 2021 17:06:15 -0700 (PDT)
+Received: by mail-il1-x12d.google.com with SMTP id v13so10967268ilj.8;
+        Sat, 08 May 2021 17:06:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3nk5otuuvpQdd5V63KbzQrvfCEVv6aZKunZOJD4xz+Q=;
+        b=EVD6P7md3BCemopGoXFblj0Li3O8zld2a65mjbKBWDCLt3m5dn1hDXUJ9o7Jhj6Add
+         WOpj9+ppOm2mZtzubG/2UYiFyDwsjpTJn+tw7GqNuGUmfRndU448KnS9ep9qcQEy3hiI
+         wmACAKWfkiyKxh/Vy/USXsEz6Xn/1xIXyYjwRa3fiBUrFnMb1UobFN5K3QAA3icOAGGo
+         B0Lu7Ueg1FM4B13BWYU/YyugfX2qJ3DERqOkl85GdLCT+t0EkJUiTjHSs/FOyzhyVM5M
+         p5HDkdoz8/3fnffNCWhXXye0gxSDoqJ8P7axFAZwVFpxO5l6qs89wrwS3CxAMQQ/GCAe
+         rIbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3nk5otuuvpQdd5V63KbzQrvfCEVv6aZKunZOJD4xz+Q=;
+        b=T1AFyFjg93wQcIkaWl5I1hrzn1z/DPN4SaslBRmyoYsQ27I+D++kdt8btamHDCwwhq
+         5PKmrMI29DB7O4NAbxUzGgD3IDmBNuu09+t4o9TUpwqN8rwC5yTNn4Z3Hgmu2UDhK7Kq
+         UmqRrYmyYSceEy3E+DW0zdvb0P2MSGJZ+jkvg7JKgiKEuBxuBd738AjrcJvlIHNwtqyE
+         0BcGXucZSCUJ+PpSoIjjUVjdJSko3tM3bwUnViEG1vCRqY3o0KuNdRlX99vkLCBsZpLJ
+         wTHo8i1ubKTNFBaeUuOMTMOEsHW716wuZD/7gtd3NInaCCubBTZS2r6RV+/AEjMUFXXi
+         u1oQ==
+X-Gm-Message-State: AOAM5337jydBXNb17QvOetlgsn893VXKLWDo87g+ilUlEVVr6vvYJ5gu
+        NuGfgiTA5Ewxotriwv/vyLJ2aHtzI0XES3fq0vg=
+X-Google-Smtp-Source: ABdhPJxWMfurobgFPi+t5kxWyMseS0+8/Aks0PQM/fu9bT8ipMsNtEr5vCp+SHyznEsWmy4Hdslz8pMW3iNmq0BnWIQ=
+X-Received: by 2002:a05:6e02:20ce:: with SMTP id 14mr15581662ilq.102.1620518774641;
+ Sat, 08 May 2021 17:06:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <a6b23ee8d3ea78f62d3fda0b53aa273718f14c6d.1620452523.git.christophe.jaillet@wanadoo.fr>
+ <CAOc6etaUPtJqoH9DBDE72nDW7s7iEZHnaJRpKx9zFow02WOZig@mail.gmail.com> <9f34ebcd-0c17-cd7f-eb08-52c6c3dc7b03@wanadoo.fr>
+In-Reply-To: <9f34ebcd-0c17-cd7f-eb08-52c6c3dc7b03@wanadoo.fr>
+From:   Edmundo Carmona Antoranz <eantoranz@gmail.com>
+Date:   Sat, 8 May 2021 18:06:03 -0600
+Message-ID: <CAOc6etYwTvVPnoB3BQfuQEikvsCwSs9AqBWnLFrs9zQ0pJGp1A@mail.gmail.com>
+Subject: Re: [PATCH] rtc: max77686: Remove some dead code
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     cw00.choi@samsung.com, krzysztof.kozlowski@canonical.com,
+        b.zolnierkie@samsung.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, linux-rtc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-If 'mipid_detect()' fails, we must free 'md' to avoid a memory leak.
-
-While at it, modernize the function:
-   - remove a useless message in case of memory allocation failure
-   - change a '== NULL' into a '!'
-
-Fixes: 66d2f99d0bb5 ("omapfb: add support for MIPI-DCS compatible LCDs")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/video/fbdev/omap/lcd_mipid.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/video/fbdev/omap/lcd_mipid.c b/drivers/video/fbdev/omap/lcd_mipid.c
-index a75ae0c9b14c..b4b93ff4b41a 100644
---- a/drivers/video/fbdev/omap/lcd_mipid.c
-+++ b/drivers/video/fbdev/omap/lcd_mipid.c
-@@ -551,10 +551,8 @@ static int mipid_spi_probe(struct spi_device *spi)
- 	int r;
- 
- 	md = kzalloc(sizeof(*md), GFP_KERNEL);
--	if (md == NULL) {
--		dev_err(&spi->dev, "out of memory\n");
-+	if (!md)
- 		return -ENOMEM;
--	}
- 
- 	spi->mode = SPI_MODE_0;
- 	md->spi = spi;
-@@ -563,11 +561,15 @@ static int mipid_spi_probe(struct spi_device *spi)
- 
- 	r = mipid_detect(md);
- 	if (r < 0)
--		return r;
-+		goto free_md;
- 
- 	omapfb_register_panel(&md->panel);
- 
- 	return 0;
-+
-+free_md:
-+	kfree(md);
-+	return r;
- }
- 
- static int mipid_spi_remove(struct spi_device *spi)
--- 
-2.30.2
-
+On Sat, May 8, 2021 at 10:59 AM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+>
+> >
+> > Following the recent conversations, I think it might make sense to do
+> > dev_err(&pdev->dev, "Failed to register RTC device: %pe\n", info->rtc_dev);
+> >
+> > Is that right?
+> >
+>
+> Yes, it is right, but it should be done in another patch.
+>
+> Would you like to give it a try?
+>
+Sure, I'll have the patch ready to send it when I see yours on next.
+> CJ
