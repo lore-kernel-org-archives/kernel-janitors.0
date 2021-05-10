@@ -2,94 +2,78 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=BAYES_50,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F278C433ED
-	for <kernel-janitors@archiver.kernel.org>; Mon, 10 May 2021 17:04:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4A83C433ED
+	for <kernel-janitors@archiver.kernel.org>; Mon, 10 May 2021 17:18:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7A77B613C8
-	for <kernel-janitors@archiver.kernel.org>; Mon, 10 May 2021 17:04:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B48BB61400
+	for <kernel-janitors@archiver.kernel.org>; Mon, 10 May 2021 17:18:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232146AbhEJRFz (ORCPT
+        id S232065AbhEJRTc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 10 May 2021 13:05:55 -0400
-Received: from mail-ot1-f41.google.com ([209.85.210.41]:39767 "EHLO
-        mail-ot1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232240AbhEJRFc (ORCPT
+        Mon, 10 May 2021 13:19:32 -0400
+Received: from flippie-beckerwealth.me ([62.173.147.204]:42180 "EHLO
+        host.flippie-beckerwealth.me" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232530AbhEJRTW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 10 May 2021 13:05:32 -0400
-Received: by mail-ot1-f41.google.com with SMTP id d25-20020a0568300459b02902f886f7dd43so1626762otc.6;
-        Mon, 10 May 2021 10:04:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Xl40YY+UwmSdCEgMPbdm3QhhBzG29tkagPo5lF6lVJo=;
-        b=Y+fT1O5nbFKwneruCBEYTmli7uj1O7O0yfWxq9uQjw9I1WxTtLj/YLMcg2e3z3tbaQ
-         kfrFN+h/WOkYSLOOzZHO2mL9exWCrNo2KFi4KXUQSt6wfnUncSGzfihlslmgx8Mkiy6a
-         i4t6JRkMSTcJ5w7baw0PgmCoyul/zBxXpqlElHS9b/m4SZA/QlTGD0VLfgQUoALoTmzs
-         R6HpnmjvRcUJq0/BIFsFxulBkYj/us02hoxJsWs8OMR5jMR2dd19YDRkfYDOcgyqdMDc
-         HTnBaT1NtUsMFuPNwtaZsqFA4B2uA1+JboRkWS5A0lEE4yRm/MPLVjbPzlF0L4QSACrW
-         Q3EQ==
-X-Gm-Message-State: AOAM5332qe37xkUWBUBbj6QPLM9dmAiP2rymUS/d74wdVsRn50MVlcbC
-        fZQ+ItYTUGE0LkBj/3XLcJHYIAxOF/Rq1nPGH7Y6A39P
-X-Google-Smtp-Source: ABdhPJxzgKL8nTsWIc40ErSnfp5DyWliOhM0nTQ1BzEHKT4msTNjiCn2yiQ2dwjPpUTGyhyDC/TVBPvXdsy+/1VNcX4=
-X-Received: by 2002:a05:6830:55b:: with SMTP id l27mr21934250otb.260.1620666267231;
- Mon, 10 May 2021 10:04:27 -0700 (PDT)
-MIME-Version: 1.0
-References: <63bf4e87eb42fa3fff2cd87eb605ebcc01f4b2f7.1620458525.git.christophe.jaillet@wanadoo.fr>
- <YJkkjI6+k34ZoQ69@smile.fi.intel.com>
-In-Reply-To: <YJkkjI6+k34ZoQ69@smile.fi.intel.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Mon, 10 May 2021 19:04:16 +0200
-Message-ID: <CAJZ5v0jNG54Y4LYCFjqh2UKWXLswJFfKMxjrpPpGoSjNnEPibg@mail.gmail.com>
-Subject: Re: [PATCH] ACPI: scan: Fix a memory leak in an error handling path
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 10 May 2021 13:19:22 -0400
+X-Greylist: delayed 2113 seconds by postgrey-1.27 at vger.kernel.org; Mon, 10 May 2021 13:19:21 EDT
+Received: from flippie-beckerwealth.me (ec2-3-23-60-79.us-east-2.compute.amazonaws.com [3.23.60.79])
+        by host.flippie-beckerwealth.me (Postfix) with ESMTPA id F2D783FF228
+        for <kernel-janitors@vger.kernel.org>; Mon, 10 May 2021 19:24:42 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 host.flippie-beckerwealth.me F2D783FF228
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=flippie-beckerwealth.me; s=default; t=1620663883;
+        bh=Lxx5rGQCX/MQzrwE9epz1Mb5yPYRqDyEupWj6GReobo=;
+        h=Reply-To:From:To:Subject:Date:From;
+        b=YQJ2/ldkrmu7nGUdmLJL8rGYYLeJ2eyaPueh/R59Ka0uTMjx6m148Q75fqSpd8oFH
+         8kyHNwtBXpqBEMaGXItXs/U413xtRd4ZMbunqjfACm9U2gce7gCmRT3sjIstUGPi/u
+         ZxHRo7qX97agQboFkAvaXEwjk9e0F5dugbzJQSLk=
+DKIM-Filter: OpenDKIM Filter v2.11.0 host.flippie-beckerwealth.me F2D783FF228
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=flippie-beckerwealth.me; s=default; t=1620663883;
+        bh=Lxx5rGQCX/MQzrwE9epz1Mb5yPYRqDyEupWj6GReobo=;
+        h=Reply-To:From:To:Subject:Date:From;
+        b=YQJ2/ldkrmu7nGUdmLJL8rGYYLeJ2eyaPueh/R59Ka0uTMjx6m148Q75fqSpd8oFH
+         8kyHNwtBXpqBEMaGXItXs/U413xtRd4ZMbunqjfACm9U2gce7gCmRT3sjIstUGPi/u
+         ZxHRo7qX97agQboFkAvaXEwjk9e0F5dugbzJQSLk=
+Reply-To: cpavlides@flippiebeckerwealthservices.com
+From:   C Pavlides <cpavlides@flippie-beckerwealth.me>
+To:     kernel-janitors@vger.kernel.org
+Subject: Project
+Date:   10 May 2021 16:24:42 +0000
+Message-ID: <20210510162442.217CCBB4E1062145@flippie-beckerwealth.me>
+Mime-Version: 1.0
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, May 10, 2021 at 3:17 PM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Sat, May 08, 2021 at 09:23:09AM +0200, Christophe JAILLET wrote:
-> > If 'acpi_device_set_name()' fails, we must free
-> > 'acpi_device_bus_id->bus_id' or there is a (potential) memory leak.
->
-> Good catch!
-> I guess I have lost it somewhere in the middle of developing the mentioned fix.
->
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
->
-> Thanks!
->
-> > Fixes: eb50aaf960e3 ("ACPI: scan: Use unique number for instance_no")
-> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > ---
-> >  drivers/acpi/scan.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
-> > index a22778e880c2..651a431e2bbf 100644
-> > --- a/drivers/acpi/scan.c
-> > +++ b/drivers/acpi/scan.c
-> > @@ -700,6 +700,7 @@ int acpi_device_add(struct acpi_device *device,
-> >
-> >               result = acpi_device_set_name(device, acpi_device_bus_id);
-> >               if (result) {
-> > +                     kfree_const(acpi_device_bus_id->bus_id);
-> >                       kfree(acpi_device_bus_id);
-> >                       goto err_unlock;
-> >               }
-> > --
+Hello there,
 
-Applied as 5.13-rc material, thanks!
+I hope this message finds you in good spirits especially during=20
+this challenging time of coronavirus pandemic. I hope you and=20
+your family are well and keeping safe. Anyway, I am Chris=20
+Pavlides, a broker working with Flippiebecker Wealth. I got your=20
+contact (along with few other contacts) through an online=20
+business directory and I thought I should contact you to see if=20
+you are interested in this opportunity. I am contacting you=20
+because one of my high profile clients is interested in investing=20
+abroad and has asked me to look for individuals and companies=20
+with interesting business ideas and projects that he can invest=20
+in. He wants to invest a substantial amount of asset abroad.
+
+Please kindly respond back to this email if you are interested in=20
+this opportunity. Once I receive your response, I will give you=20
+more details and we can plan a strategy that will be beneficial=20
+to all parties.
+
+Best regards
+
+C Pavlides
+Flippiebecker Wealth
