@@ -2,94 +2,59 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 490C2C43460
-	for <kernel-janitors@archiver.kernel.org>; Mon, 10 May 2021 08:36:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27C6DC43460
+	for <kernel-janitors@archiver.kernel.org>; Mon, 10 May 2021 09:10:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0DC156143B
-	for <kernel-janitors@archiver.kernel.org>; Mon, 10 May 2021 08:36:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC75061456
+	for <kernel-janitors@archiver.kernel.org>; Mon, 10 May 2021 09:10:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230166AbhEJIhr (ORCPT
+        id S230170AbhEJJLl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 10 May 2021 04:37:47 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:52006 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230029AbhEJIhr (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 10 May 2021 04:37:47 -0400
-Received: from zn.tnic (p200300ec2f066d00c3c3b9d774715f25.dip0.t-ipconnect.de [IPv6:2003:ec:2f06:6d00:c3c3:b9d7:7471:5f25])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 487AB1EC04A6;
-        Mon, 10 May 2021 10:36:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1620635801;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=lKWUtHrdn8WhQE7UfCe0YXghCkTkcq/bmDYMTWW7yow=;
-        b=EkAkUyXv5bYLO2N6rxZW6U9gU3fa1hBBhFNRSiZGNr9EoncLWXsLH3U55unvnjMxzwfMYo
-        dIhSLhKbw4UoVHoczYaMrasflOjVBWjrctxT7lht/csnFpswYDmmfWWrxSeLwxaDe6CisT
-        2M3vwDeN8wOnMmlrEXf+Wwk2vaWoWHs=
-Date:   Mon, 10 May 2021 10:36:37 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     rric@kernel.org, mchehab@kernel.org, tony.luck@intel.com,
-        james.morse@arm.com, s.temerkhanov@gmail.com,
-        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] EDAC/thunderx: Fix an error message
-Message-ID: <YJjwlTI30S9PfD4I@zn.tnic>
-References: <0c046ef5cfb367a3f707ef4270e21a2bcbf44952.1620280098.git.christophe.jaillet@wanadoo.fr>
+        Mon, 10 May 2021 05:11:41 -0400
+Received: from relay12.mail.gandi.net ([217.70.178.232]:50959 "EHLO
+        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230405AbhEJJL2 (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 10 May 2021 05:11:28 -0400
+Received: from xps13.home (lfbn-tou-1-1325-59.w90-89.abo.wanadoo.fr [90.89.138.59])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 65F73200011;
+        Mon, 10 May 2021 09:10:21 +0000 (UTC)
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Wei Li <liwei391@huawei.com>, huawei.libin@huawei.com,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Boris Brezillon <boris.brezillon@collabora.com>
+Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+Subject: Re: [PATCH RESEND -next] mtd: rawnand: Remove redundant dev_err call in hisi_nfc_probe()
+Date:   Mon, 10 May 2021 11:10:20 +0200
+Message-Id: <20210510091020.4229-1-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20210407100526.3278741-1-liwei391@huawei.com>
+References: 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <0c046ef5cfb367a3f707ef4270e21a2bcbf44952.1620280098.git.christophe.jaillet@wanadoo.fr>
+X-linux-mtd-patch-notification: thanks
+X-linux-mtd-patch-commit: b'03299d054047c32d864abe2e640533c55acda6c7'
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, May 06, 2021 at 07:49:34AM +0200, Christophe JAILLET wrote:
-> 'ret' is known to be 0 here.
-> No error code is available, so just remove it from the error message.
+On Wed, 2021-04-07 at 10:05:26 UTC, Wei Li wrote:
+> There is a error message within devm_ioremap_resource
+> already, so remove the dev_err call to avoid redundant
+> error message.
 > 
-> Fixes: 41003396f932 ("EDAC, thunderx: Add Cavium ThunderX EDAC driver")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/edac/thunderx_edac.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/edac/thunderx_edac.c b/drivers/edac/thunderx_edac.c
-> index 0eb5eb97fd74..f13674081cb6 100644
-> --- a/drivers/edac/thunderx_edac.c
-> +++ b/drivers/edac/thunderx_edac.c
-> @@ -1368,7 +1368,7 @@ static int thunderx_ocx_probe(struct pci_dev *pdev,
->  					      name, 1, "CCPI", 1,
->  					      0, NULL, 0, idx);
->  	if (!edac_dev) {
-> -		dev_err(&pdev->dev, "Cannot allocate EDAC device: %d\n", ret);
-> +		dev_err(&pdev->dev, "Cannot allocate EDAC device\n");
->  		return -ENOMEM;
->  	}
->  	ocx = edac_dev->pvt_info;
-> @@ -1380,7 +1380,7 @@ static int thunderx_ocx_probe(struct pci_dev *pdev,
->  
->  	ocx->regs = pcim_iomap_table(pdev)[0];
->  	if (!ocx->regs) {
-> -		dev_err(&pdev->dev, "Cannot map PCI resources: %d\n", ret);
-> +		dev_err(&pdev->dev, "Cannot map PCI resources\n");
->  		ret = -ENODEV;
->  		goto err_free;
->  	}
-> -- 
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Wei Li <liwei391@huawei.com>
 
-Applied, thanks.
+Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git nand/next, thanks.
 
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Miquel
