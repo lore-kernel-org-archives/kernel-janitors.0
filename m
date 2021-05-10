@@ -2,78 +2,77 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=BAYES_50,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4A83C433ED
-	for <kernel-janitors@archiver.kernel.org>; Mon, 10 May 2021 17:18:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95213C433ED
+	for <kernel-janitors@archiver.kernel.org>; Mon, 10 May 2021 21:30:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B48BB61400
-	for <kernel-janitors@archiver.kernel.org>; Mon, 10 May 2021 17:18:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5473261585
+	for <kernel-janitors@archiver.kernel.org>; Mon, 10 May 2021 21:30:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232065AbhEJRTc (ORCPT
+        id S232426AbhEJVbS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 10 May 2021 13:19:32 -0400
-Received: from flippie-beckerwealth.me ([62.173.147.204]:42180 "EHLO
-        host.flippie-beckerwealth.me" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232530AbhEJRTW (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 10 May 2021 13:19:22 -0400
-X-Greylist: delayed 2113 seconds by postgrey-1.27 at vger.kernel.org; Mon, 10 May 2021 13:19:21 EDT
-Received: from flippie-beckerwealth.me (ec2-3-23-60-79.us-east-2.compute.amazonaws.com [3.23.60.79])
-        by host.flippie-beckerwealth.me (Postfix) with ESMTPA id F2D783FF228
-        for <kernel-janitors@vger.kernel.org>; Mon, 10 May 2021 19:24:42 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 host.flippie-beckerwealth.me F2D783FF228
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=flippie-beckerwealth.me; s=default; t=1620663883;
-        bh=Lxx5rGQCX/MQzrwE9epz1Mb5yPYRqDyEupWj6GReobo=;
-        h=Reply-To:From:To:Subject:Date:From;
-        b=YQJ2/ldkrmu7nGUdmLJL8rGYYLeJ2eyaPueh/R59Ka0uTMjx6m148Q75fqSpd8oFH
-         8kyHNwtBXpqBEMaGXItXs/U413xtRd4ZMbunqjfACm9U2gce7gCmRT3sjIstUGPi/u
-         ZxHRo7qX97agQboFkAvaXEwjk9e0F5dugbzJQSLk=
-DKIM-Filter: OpenDKIM Filter v2.11.0 host.flippie-beckerwealth.me F2D783FF228
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=flippie-beckerwealth.me; s=default; t=1620663883;
-        bh=Lxx5rGQCX/MQzrwE9epz1Mb5yPYRqDyEupWj6GReobo=;
-        h=Reply-To:From:To:Subject:Date:From;
-        b=YQJ2/ldkrmu7nGUdmLJL8rGYYLeJ2eyaPueh/R59Ka0uTMjx6m148Q75fqSpd8oFH
-         8kyHNwtBXpqBEMaGXItXs/U413xtRd4ZMbunqjfACm9U2gce7gCmRT3sjIstUGPi/u
-         ZxHRo7qX97agQboFkAvaXEwjk9e0F5dugbzJQSLk=
-Reply-To: cpavlides@flippiebeckerwealthservices.com
-From:   C Pavlides <cpavlides@flippie-beckerwealth.me>
-To:     kernel-janitors@vger.kernel.org
-Subject: Project
-Date:   10 May 2021 16:24:42 +0000
-Message-ID: <20210510162442.217CCBB4E1062145@flippie-beckerwealth.me>
-Mime-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 10 May 2021 17:31:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40380 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231617AbhEJVbP (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 10 May 2021 17:31:15 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPS id 573CD61465;
+        Mon, 10 May 2021 21:30:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1620682210;
+        bh=DsprG27637zOiSjhbn2owZ7m7xFVPW+am+KuF9+Ac0A=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=h7u3iot7cNdbq1eXuT9Vb7osmfINimaCU4PWqZxM5ZIyEFyqxOwxZjOXl8hwFLiey
+         wyLfpkNYSr4xO5JWuo2zhNdI/G6VOR/gvCRqLHjw8SObZZiysBRUMhRlV52qD1avyw
+         BDYQZvTsyq4Z6ZsksC0TYAvJHKswBVh56PBNSCjKyPlQpJkB0okrFH4B9e5wt5M+bo
+         OAMAdsVXstnS1QHZnYyjHeGF87kxUSxsQzfe0f/u87p2mChRNsIsIeY7pAAf6XJNsO
+         H9k5X8b0gvKInLMEgkemaJEnCc1/ItDYNCZ3cXQRCijiJnSMcTmVJgM90jy4ONMW28
+         1yTRTmcFcyvxA==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] net: netcp: Fix an error message
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <162068221028.28006.2233147599257942332.git-patchwork-notify@kernel.org>
+Date:   Mon, 10 May 2021 21:30:10 +0000
+References: <1a0db6d47ee2efb03c725948613f8a0167ce1439.1620452171.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <1a0db6d47ee2efb03c725948613f8a0167ce1439.1620452171.git.christophe.jaillet@wanadoo.fr>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     davem@davemloft.net, kuba@kernel.org, andrew@lunn.ch,
+        michael@walle.cc, w-kwok2@ti.com, m-karicheri2@ti.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello there,
+Hello:
 
-I hope this message finds you in good spirits especially during=20
-this challenging time of coronavirus pandemic. I hope you and=20
-your family are well and keeping safe. Anyway, I am Chris=20
-Pavlides, a broker working with Flippiebecker Wealth. I got your=20
-contact (along with few other contacts) through an online=20
-business directory and I thought I should contact you to see if=20
-you are interested in this opportunity. I am contacting you=20
-because one of my high profile clients is interested in investing=20
-abroad and has asked me to look for individuals and companies=20
-with interesting business ideas and projects that he can invest=20
-in. He wants to invest a substantial amount of asset abroad.
+This patch was applied to netdev/net.git (refs/heads/master):
 
-Please kindly respond back to this email if you are interested in=20
-this opportunity. Once I receive your response, I will give you=20
-more details and we can plan a strategy that will be beneficial=20
-to all parties.
+On Sat,  8 May 2021 07:38:22 +0200 you wrote:
+> 'ret' is known to be 0 here.
+> The expected error code is stored in 'tx_pipe->dma_queue', so use it
+> instead.
+> 
+> While at it, switch from %d to %pe which is more user friendly.
+> 
+> Fixes: 84640e27f230 ("net: netcp: Add Keystone NetCP core ethernet driver")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> 
+> [...]
 
-Best regards
+Here is the summary with links:
+  - net: netcp: Fix an error message
+    https://git.kernel.org/netdev/net/c/ddb6e00f8413
 
-C Pavlides
-Flippiebecker Wealth
+You are awesome, thank you!
+--
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
