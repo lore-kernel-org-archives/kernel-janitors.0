@@ -2,114 +2,92 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A275C433ED
-	for <kernel-janitors@archiver.kernel.org>; Mon, 10 May 2021 10:45:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33382C433B4
+	for <kernel-janitors@archiver.kernel.org>; Mon, 10 May 2021 13:32:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4A7DC61981
-	for <kernel-janitors@archiver.kernel.org>; Mon, 10 May 2021 10:45:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E762D61288
+	for <kernel-janitors@archiver.kernel.org>; Mon, 10 May 2021 13:32:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231628AbhEJKqD (ORCPT
+        id S237148AbhEJNc7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 10 May 2021 06:46:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41592 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232873AbhEJKoo (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 10 May 2021 06:44:44 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 237B3C06134C
-        for <kernel-janitors@vger.kernel.org>; Mon, 10 May 2021 03:33:55 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id n2so16110133wrm.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 10 May 2021 03:33:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=j9ho1FshsaBSAwzsRsNW4z/HT3Epd7NSpGM7BhSuMLI=;
-        b=Cgd2xNWIsVDX4Xl20RjyyQ4FGNgdzGAty8TF4bAjIR0WhTqWum0+aJAgcxHj/EQ8Ed
-         kDakR2SDvRtBWuRixHYp/j0hzYlo6YAVJZq3Z2kDwbpdEqvJycsoZLAYZhrww98iCXV/
-         n4Yf0tuTto88YwF1sF3qOkEu+oN7mnkb+gV7kZqQfc+skszrqg6qeYhyV1Oa+HmEuH4a
-         wsmW7GZg5wSzl12Pl3A3ClNCy6BB2XmYTvIPLmLPnR6khRt1HB51EpoHwVN7j7MCD6lE
-         tLNrUiGKTV1wBU1CupexdnUzO3u0g59DHsXwdTswYMzb/nhiXR3LVDGCsRgIIcvP9/Qz
-         8udQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=j9ho1FshsaBSAwzsRsNW4z/HT3Epd7NSpGM7BhSuMLI=;
-        b=Z2lHvZZudxEGR3JVntTeqniGBuFwCf7pIpbLOb/zgX0mMpKpGmxaPwYMNb4VXtJGv/
-         Nqz4IFzywjdggXUnfrLxj9YUxMdRij9bO4oeBPI6yNgZBv1kYSLpH5l4dkmEQrsIz2+/
-         +hec9imC9XWDLNAjM4ahLOqIpsiPdIY9fv59PZRIM0WGgUVtOm4/SEy4sWgrCQ4qRm5Z
-         9L8ViwinSMfdwiT84L+n67VCJpROLnpE1rZf/w6TqYh1k6nVzkHFYmyw+DuQfu+nZU1L
-         KwKI8z/6Lu1iPakdvxJJsOijak2dqc+dVPXz10r42tuTostr7lFwAswLgT0TQPs0o0C4
-         ALzA==
-X-Gm-Message-State: AOAM530YXkMPk/7WZNpTRfBXsKgOWuQB1icPkhRbE/MmTwh1oCbpoz1a
-        NoJ4XEwPyajz3ktQ6wrrm4/OlaOPiLJnLUi0
-X-Google-Smtp-Source: ABdhPJy1SqFJjzZtiLqFnniXN1gwxbdOhOTKoi7KDq80pgXVVv02TOIdIAi3Odqa4ZJaLPJtSKzYcw==
-X-Received: by 2002:a05:6000:1b06:: with SMTP id f6mr29460986wrz.339.1620642833642;
-        Mon, 10 May 2021 03:33:53 -0700 (PDT)
-Received: from [192.168.86.34] (cpc86377-aztw32-2-0-cust226.18-1.cable.virginm.net. [92.233.226.227])
-        by smtp.googlemail.com with ESMTPSA id g6sm25938797wrr.63.2021.05.10.03.33.52
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 May 2021 03:33:53 -0700 (PDT)
-Subject: Re: [PATCH -next] ASoC: codecs: lpass-tx-macro: add missing
- MODULE_DEVICE_TABLE
-To:     Bixuan Cui <cuibixuan@huawei.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, Ye Bin <yebin10@huawei.com>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <20210508031512.53783-1-cuibixuan@huawei.com>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <a4bbe07e-eed6-4667-3efc-c9307782c05b@linaro.org>
-Date:   Mon, 10 May 2021 11:33:52 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Mon, 10 May 2021 09:32:59 -0400
+Received: from mga06.intel.com ([134.134.136.31]:30707 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S243429AbhEJMTj (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 10 May 2021 08:19:39 -0400
+IronPort-SDR: Evd8opFPGzhCVFT1ay/CUKsm3Tu+v47ZN2tc3UMlS7kshakAmpVo4VxpOkgu1dZQ+THJzUITPC
+ glLbxSgFpqEg==
+X-IronPort-AV: E=McAfee;i="6200,9189,9979"; a="260444372"
+X-IronPort-AV: E=Sophos;i="5.82,286,1613462400"; 
+   d="scan'208";a="260444372"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2021 05:18:24 -0700
+IronPort-SDR: IRU+4kJB9UCczVymR3GBVIkbepiApWDkwC6FafTPRDfJ6V8R8VbqaIbgHlKguFrqphC+dNLBXo
+ BWg7KDYnXWMg==
+X-IronPort-AV: E=Sophos;i="5.82,287,1613462400"; 
+   d="scan'208";a="468101379"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2021 05:18:23 -0700
+Received: from andy by smile with local (Exim 4.94)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1lg4rc-00BAFN-NV; Mon, 10 May 2021 15:18:20 +0300
+Date:   Mon, 10 May 2021 15:18:20 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     rjw@rjwysocki.net, lenb@kernel.org, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] ACPI: scan: Fix a memory leak in an error handling path
+Message-ID: <YJkkjI6+k34ZoQ69@smile.fi.intel.com>
+References: <63bf4e87eb42fa3fff2cd87eb605ebcc01f4b2f7.1620458525.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-In-Reply-To: <20210508031512.53783-1-cuibixuan@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <63bf4e87eb42fa3fff2cd87eb605ebcc01f4b2f7.1620458525.git.christophe.jaillet@wanadoo.fr>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On Sat, May 08, 2021 at 09:23:09AM +0200, Christophe JAILLET wrote:
+> If 'acpi_device_set_name()' fails, we must free
+> 'acpi_device_bus_id->bus_id' or there is a (potential) memory leak.
 
+Good catch!
+I guess I have lost it somewhere in the middle of developing the mentioned fix.
 
-On 08/05/2021 04:15, Bixuan Cui wrote:
-> This patch adds missing MODULE_DEVICE_TABLE definition which generates
-> correct modalias for automatic loading of this driver when it is built
-> as an external module.
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Bixuan Cui <cuibixuan@huawei.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
+Thanks!
 
-Reviewed-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-
-
+> Fixes: eb50aaf960e3 ("ACPI: scan: Use unique number for instance_no")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->   sound/soc/codecs/lpass-tx-macro.c | 1 +
->   1 file changed, 1 insertion(+)
+>  drivers/acpi/scan.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/sound/soc/codecs/lpass-tx-macro.c b/sound/soc/codecs/lpass-tx-macro.c
-> index acd2fbc0ca7c..27a0d5defd27 100644
-> --- a/sound/soc/codecs/lpass-tx-macro.c
-> +++ b/sound/soc/codecs/lpass-tx-macro.c
-> @@ -1846,6 +1846,7 @@ static const struct of_device_id tx_macro_dt_match[] = {
->   	{ .compatible = "qcom,sm8250-lpass-tx-macro" },
->   	{ }
->   };
-> +MODULE_DEVICE_TABLE(of, tx_macro_dt_match);
->   static struct platform_driver tx_macro_driver = {
->   	.driver = {
->   		.name = "tx_macro",
+> diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
+> index a22778e880c2..651a431e2bbf 100644
+> --- a/drivers/acpi/scan.c
+> +++ b/drivers/acpi/scan.c
+> @@ -700,6 +700,7 @@ int acpi_device_add(struct acpi_device *device,
+>  
+>  		result = acpi_device_set_name(device, acpi_device_bus_id);
+>  		if (result) {
+> +			kfree_const(acpi_device_bus_id->bus_id);
+>  			kfree(acpi_device_bus_id);
+>  			goto err_unlock;
+>  		}
+> -- 
+> 2.30.2
 > 
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
