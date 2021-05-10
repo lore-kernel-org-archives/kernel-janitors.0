@@ -2,90 +2,59 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5C9DC43460
-	for <kernel-janitors@archiver.kernel.org>; Mon, 10 May 2021 15:39:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32240C433B4
+	for <kernel-janitors@archiver.kernel.org>; Mon, 10 May 2021 15:50:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8B536611C1
-	for <kernel-janitors@archiver.kernel.org>; Mon, 10 May 2021 15:39:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E038D61400
+	for <kernel-janitors@archiver.kernel.org>; Mon, 10 May 2021 15:50:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232260AbhEJPkZ (ORCPT
+        id S231735AbhEJPvk (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 10 May 2021 11:40:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58302 "EHLO mail.kernel.org"
+        Mon, 10 May 2021 11:51:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41610 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234490AbhEJPju (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 10 May 2021 11:39:50 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D4A7D60FE4;
-        Mon, 10 May 2021 15:38:41 +0000 (UTC)
+        id S231721AbhEJPve (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 10 May 2021 11:51:34 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 19AEF61400;
+        Mon, 10 May 2021 15:50:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1620661121;
-        bh=1Zsl9SztvxaW6X5yybQdHiTY0J0WjKFNG3noiaEUXQQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=OF5j/FVpcPcGwdaOBA/s3TbLmd8a7l+K09QjFCyscBSuOGMFXXhv/feNa4mF+8ryo
-         n0KzaCREFZN/zqNC0xENKxBaC4z7ZswREiNIH4NulcS7j1w1F/OCltsZY0oHDvX8Tj
-         TLO1g1Ex2WMEFst6LKOZd2AaRFigXknWTGTR9kLhgIMUEQL1nEUBC2iddPhWI1oi8w
-         LIdUX9kzzCDQP87ejxW0D8OOZ5SDsYp84QTmJOGtyReIOen0hC0E8UMWEQy3KLzokM
-         NQWiIg9UcH+aedKbchBNJZEnIsh0JETNrqhEVC47yfEi/ptsvpguH7Qkxp91ph49pz
-         TsmuJEa9ZFscg==
-Received: by mail-oi1-f179.google.com with SMTP id b25so10923321oic.0;
-        Mon, 10 May 2021 08:38:41 -0700 (PDT)
-X-Gm-Message-State: AOAM531QBFCbxRDhHrhlOZIkAWNXUWQVJh2mcdDhlPffZvSzMsMRm46c
-        XzyBMK3Kj1R1ipbruSX57zPPJGZRWLVBPTnYUbY=
-X-Google-Smtp-Source: ABdhPJyzL1Eyc5r70XnrgnFSkdgDVnk8oWZUFRX1A3dchBwdZpihODX/nbKKUaWX6vR16z6SR9rq6Mli+P1KA7DzDH8=
-X-Received: by 2002:aca:4056:: with SMTP id n83mr26631363oia.47.1620661121088;
- Mon, 10 May 2021 08:38:41 -0700 (PDT)
+        s=k20201202; t=1620661829;
+        bh=JPkJHUiU/lse7/DOiU4LyD7lKWfjNaXscTsjXBfAs/c=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=LQNT6h+XzsZfuIZs9E4AQZ9NduVzZmOghnqx3M7TC+tCTj93l2zLXAQkx38SSn2I1
+         TfZ4/GAzLinTMzUvtQHa38TizPRqZN+9lX/avt/K9fN7mF9wi7LkM19Hl6GvX0ntCr
+         dEvmBcIp/xkoOy/5Evzi1zs0fd3PGyBV9BQJb3aSzmpzTQoqUbidCiTmqmNYv2Bxxf
+         ZH0MmInPDbBepRjGIU2wuM8TTCdpIyD8TSXf88ETzHYcVyFxNBguiUyLaOd/4ZmnZ3
+         Hzoa39++Gt2ZZRS7KkyXGIKjF8WedGLA98Z1XGQNH1C2Bbd09Pl8Jzc5UCEK+Ni8xG
+         gRpkbFigDI15w==
+Date:   Mon, 10 May 2021 21:20:24 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Dave Jiang <dave.jiang@intel.com>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        dmaengine@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] dmaengine: idxd: remove devm allocation for
+ idxd->int_handles
+Message-ID: <YJlWQJZys1b6p3za@vkoul-mobl.Dlink>
+References: <YJZJ2Z5CEqQC5s+1@mwanda>
+ <162060710518.130816.11349798049329202863.stgit@djiang5-desk3.ch.intel.com>
 MIME-Version: 1.0
-References: <YIK0D1JyV6ZeDMSS@mwanda>
-In-Reply-To: <YIK0D1JyV6ZeDMSS@mwanda>
-From:   Ard Biesheuvel <ardb@kernel.org>
-Date:   Mon, 10 May 2021 17:38:30 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXHELn=t9H4z2SK7u5kkTuqh-TnW9YtY6PJs8Q=j-PLVTg@mail.gmail.com>
-Message-ID: <CAMj1kXHELn=t9H4z2SK7u5kkTuqh-TnW9YtY6PJs8Q=j-PLVTg@mail.gmail.com>
-Subject: Re: [PATCH] efi/libstub: prevent read overflow in find_file_option()
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Arvind Sankar <nivedita@alum.mit.edu>,
-        Philipp Fent <fent@in.tum.de>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <162060710518.130816.11349798049329202863.stgit@djiang5-desk3.ch.intel.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 23 Apr 2021 at 13:48, Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> If the buffer has slashes up to the end then this will read past the end
-> of the array.  I don't anticipate that this is an issue for many people
-> in real life, but it's the right thing to do and it makes static
-> checkers happy.
->
-> Fixes: 7a88a6227dc7 ("efi/libstub: Fix path separator regression")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/firmware/efi/libstub/file.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/firmware/efi/libstub/file.c b/drivers/firmware/efi/libstub/file.c
-> index 4e81c6077188..dd95f330fe6e 100644
-> --- a/drivers/firmware/efi/libstub/file.c
-> +++ b/drivers/firmware/efi/libstub/file.c
-> @@ -103,7 +103,7 @@ static int find_file_option(const efi_char16_t *cmdline, int cmdline_len,
->                 return 0;
->
->         /* Skip any leading slashes */
-> -       while (cmdline[i] == L'/' || cmdline[i] == L'\\')
-> +       while (i < cmdline_len && (cmdline[i] == L'/' || cmdline[i] == L'\\'))
->                 i++;
->
->         while (--result_len > 0 && i < cmdline_len) {
-> --
-> 2.30.2
->
+On 09-05-21, 17:38, Dave Jiang wrote:
+> Allocation of idxd->int_handles was merged incorrectly for the 5.13 merge
+> window. The devm_kcalloc should've been regular kcalloc due to devm_*
+> removal series for the driver.
 
-Thanks Dan, I will queue this up.
+Applied, thanks
+
+-- 
+~Vinod
