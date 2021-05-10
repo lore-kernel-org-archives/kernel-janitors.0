@@ -2,59 +2,94 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32240C433B4
-	for <kernel-janitors@archiver.kernel.org>; Mon, 10 May 2021 15:50:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F278C433ED
+	for <kernel-janitors@archiver.kernel.org>; Mon, 10 May 2021 17:04:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E038D61400
-	for <kernel-janitors@archiver.kernel.org>; Mon, 10 May 2021 15:50:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A77B613C8
+	for <kernel-janitors@archiver.kernel.org>; Mon, 10 May 2021 17:04:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231735AbhEJPvk (ORCPT
+        id S232146AbhEJRFz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 10 May 2021 11:51:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41610 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231721AbhEJPve (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 10 May 2021 11:51:34 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 19AEF61400;
-        Mon, 10 May 2021 15:50:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1620661829;
-        bh=JPkJHUiU/lse7/DOiU4LyD7lKWfjNaXscTsjXBfAs/c=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LQNT6h+XzsZfuIZs9E4AQZ9NduVzZmOghnqx3M7TC+tCTj93l2zLXAQkx38SSn2I1
-         TfZ4/GAzLinTMzUvtQHa38TizPRqZN+9lX/avt/K9fN7mF9wi7LkM19Hl6GvX0ntCr
-         dEvmBcIp/xkoOy/5Evzi1zs0fd3PGyBV9BQJb3aSzmpzTQoqUbidCiTmqmNYv2Bxxf
-         ZH0MmInPDbBepRjGIU2wuM8TTCdpIyD8TSXf88ETzHYcVyFxNBguiUyLaOd/4ZmnZ3
-         Hzoa39++Gt2ZZRS7KkyXGIKjF8WedGLA98Z1XGQNH1C2Bbd09Pl8Jzc5UCEK+Ni8xG
-         gRpkbFigDI15w==
-Date:   Mon, 10 May 2021 21:20:24 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Dave Jiang <dave.jiang@intel.com>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        dmaengine@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] dmaengine: idxd: remove devm allocation for
- idxd->int_handles
-Message-ID: <YJlWQJZys1b6p3za@vkoul-mobl.Dlink>
-References: <YJZJ2Z5CEqQC5s+1@mwanda>
- <162060710518.130816.11349798049329202863.stgit@djiang5-desk3.ch.intel.com>
+        Mon, 10 May 2021 13:05:55 -0400
+Received: from mail-ot1-f41.google.com ([209.85.210.41]:39767 "EHLO
+        mail-ot1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232240AbhEJRFc (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 10 May 2021 13:05:32 -0400
+Received: by mail-ot1-f41.google.com with SMTP id d25-20020a0568300459b02902f886f7dd43so1626762otc.6;
+        Mon, 10 May 2021 10:04:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Xl40YY+UwmSdCEgMPbdm3QhhBzG29tkagPo5lF6lVJo=;
+        b=Y+fT1O5nbFKwneruCBEYTmli7uj1O7O0yfWxq9uQjw9I1WxTtLj/YLMcg2e3z3tbaQ
+         kfrFN+h/WOkYSLOOzZHO2mL9exWCrNo2KFi4KXUQSt6wfnUncSGzfihlslmgx8Mkiy6a
+         i4t6JRkMSTcJ5w7baw0PgmCoyul/zBxXpqlElHS9b/m4SZA/QlTGD0VLfgQUoALoTmzs
+         R6HpnmjvRcUJq0/BIFsFxulBkYj/us02hoxJsWs8OMR5jMR2dd19YDRkfYDOcgyqdMDc
+         HTnBaT1NtUsMFuPNwtaZsqFA4B2uA1+JboRkWS5A0lEE4yRm/MPLVjbPzlF0L4QSACrW
+         Q3EQ==
+X-Gm-Message-State: AOAM5332qe37xkUWBUBbj6QPLM9dmAiP2rymUS/d74wdVsRn50MVlcbC
+        fZQ+ItYTUGE0LkBj/3XLcJHYIAxOF/Rq1nPGH7Y6A39P
+X-Google-Smtp-Source: ABdhPJxzgKL8nTsWIc40ErSnfp5DyWliOhM0nTQ1BzEHKT4msTNjiCn2yiQ2dwjPpUTGyhyDC/TVBPvXdsy+/1VNcX4=
+X-Received: by 2002:a05:6830:55b:: with SMTP id l27mr21934250otb.260.1620666267231;
+ Mon, 10 May 2021 10:04:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <162060710518.130816.11349798049329202863.stgit@djiang5-desk3.ch.intel.com>
+References: <63bf4e87eb42fa3fff2cd87eb605ebcc01f4b2f7.1620458525.git.christophe.jaillet@wanadoo.fr>
+ <YJkkjI6+k34ZoQ69@smile.fi.intel.com>
+In-Reply-To: <YJkkjI6+k34ZoQ69@smile.fi.intel.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Mon, 10 May 2021 19:04:16 +0200
+Message-ID: <CAJZ5v0jNG54Y4LYCFjqh2UKWXLswJFfKMxjrpPpGoSjNnEPibg@mail.gmail.com>
+Subject: Re: [PATCH] ACPI: scan: Fix a memory leak in an error handling path
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 09-05-21, 17:38, Dave Jiang wrote:
-> Allocation of idxd->int_handles was merged incorrectly for the 5.13 merge
-> window. The devm_kcalloc should've been regular kcalloc due to devm_*
-> removal series for the driver.
+On Mon, May 10, 2021 at 3:17 PM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Sat, May 08, 2021 at 09:23:09AM +0200, Christophe JAILLET wrote:
+> > If 'acpi_device_set_name()' fails, we must free
+> > 'acpi_device_bus_id->bus_id' or there is a (potential) memory leak.
+>
+> Good catch!
+> I guess I have lost it somewhere in the middle of developing the mentioned fix.
+>
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>
+> Thanks!
+>
+> > Fixes: eb50aaf960e3 ("ACPI: scan: Use unique number for instance_no")
+> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> > ---
+> >  drivers/acpi/scan.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
+> > index a22778e880c2..651a431e2bbf 100644
+> > --- a/drivers/acpi/scan.c
+> > +++ b/drivers/acpi/scan.c
+> > @@ -700,6 +700,7 @@ int acpi_device_add(struct acpi_device *device,
+> >
+> >               result = acpi_device_set_name(device, acpi_device_bus_id);
+> >               if (result) {
+> > +                     kfree_const(acpi_device_bus_id->bus_id);
+> >                       kfree(acpi_device_bus_id);
+> >                       goto err_unlock;
+> >               }
+> > --
 
-Applied, thanks
-
--- 
-~Vinod
+Applied as 5.13-rc material, thanks!
