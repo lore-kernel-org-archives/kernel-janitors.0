@@ -2,108 +2,115 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63FE0C433ED
-	for <kernel-janitors@archiver.kernel.org>; Mon, 10 May 2021 13:32:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35D43C433ED
+	for <kernel-janitors@archiver.kernel.org>; Mon, 10 May 2021 13:57:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 332D0613EE
-	for <kernel-janitors@archiver.kernel.org>; Mon, 10 May 2021 13:32:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0CB32610A7
+	for <kernel-janitors@archiver.kernel.org>; Mon, 10 May 2021 13:57:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236602AbhEJNdL (ORCPT
+        id S238090AbhEJN6r (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 10 May 2021 09:33:11 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:43331 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345188AbhEJMWB (ORCPT
+        Mon, 10 May 2021 09:58:47 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:60420 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S244124AbhEJN4p (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 10 May 2021 08:22:01 -0400
-Received: from mail-qv1-f72.google.com ([209.85.219.72])
-        by youngberry.canonical.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <krzysztof.kozlowski@canonical.com>)
-        id 1lg4u7-0003Jg-T8
-        for kernel-janitors@vger.kernel.org; Mon, 10 May 2021 12:20:56 +0000
-Received: by mail-qv1-f72.google.com with SMTP id a6-20020a0ce3460000b02901c4f39aa36aso12335521qvm.21
-        for <kernel-janitors@vger.kernel.org>; Mon, 10 May 2021 05:20:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Y+brPHK6z0qfj8MD7JTAIcwTm+x3W3WlQXIOTpGxTZ8=;
-        b=TaNREt2h5GF7p0j0C94gRsiXgF2j7x8mzkCMWQ/ZAI1W3LEdYnhaK2dznFXTEAUte1
-         dOG0HHLQIaxn3jZnf4TXMQx5o9a985C3l+PjCRYPf47UnsS2PwID+Kt8IhBbhyI9uNGg
-         zOdCvySZ7NKjlkMf2HIjNseSq/6SJXCAi2PSEmYOTGyH9gQc4qnI0ZiVhod4F4xtABby
-         g8UH3Jpo382S32L8f3UDeSumSADDVqjesQhVjJLCg8zQGhthE8k8qy/rIK5ZFU2x/VKH
-         OpR5kW+UCxghZ6j7I9nZm5+DdDFyglLE4gjq6MJu+iaaIg6IubLJW3Q8s/38P/YI68Hm
-         F8tA==
-X-Gm-Message-State: AOAM530a+oxOkh3jwiTmyG7DgAdnyRfuBtz3HUYgmKNNF6gx7EUZtvNF
-        TfswVWGN+UaFhrUw4qSXyrUgDsv8b7igLRgeoHG1vo2Mc4mDnSg745PETVbnGHzghfN1gdTIhgn
-        CHdXwK50WsmXBeHVqgqJfMV+2kRzBpCQd9+HA7b60pYEqSw==
-X-Received: by 2002:ac8:7dd2:: with SMTP id c18mr22423552qte.301.1620649254826;
-        Mon, 10 May 2021 05:20:54 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwMunM+w/xF+r8imk3jOy21ySiyKh1GdRxXlfCXnAc7JoAsdSDDjE6CNw9JyHSGV2p/qnWbyw==
-X-Received: by 2002:ac8:7dd2:: with SMTP id c18mr22423538qte.301.1620649254655;
-        Mon, 10 May 2021 05:20:54 -0700 (PDT)
-Received: from [192.168.1.4] ([45.237.49.2])
-        by smtp.gmail.com with ESMTPSA id v65sm11805007qkc.125.2021.05.10.05.20.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 May 2021 05:20:54 -0700 (PDT)
-Subject: Re: [PATCH] rtc: max77686: Remove some dead code
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Edmundo Carmona Antoranz <eantoranz@gmail.com>
+        Mon, 10 May 2021 09:56:45 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 14ADsOkR026030;
+        Mon, 10 May 2021 13:55:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=/jZ9dmsp0noXhi3A13lb8Nb2kMyuabTqJ98lmp9CmZE=;
+ b=vvqZJcwWVwAniRtAzrJR4lSMJgYxsI/jmar9pO8KE+LtpOWMYkmDTRj1W+oXskpYvQLj
+ Ub9j4XewSDrGDAndPrUsIdyJYRTNpIN7Gu3mDntfuKddDf42zuA+XwDbg+kS5hxTqz0w
+ Q+xk8LEIUFWD6wE56GhHemXDQkW2G35dTnNTyrs2GVGjLkubrdJemHTnItn9TG4aMtfa
+ nm/dvxep9jfzVojA432wSh2KEOgr3eKCf9qfSywEo9qKzdU9s8fgddemzMCE6HwxfxxE
+ mBpdoNP1vYmzP/WRrFYyOofwfbPp5ZTKpLlywWF/AfYSFDSci8ckDmw4q/uJ6yvhAk61 iQ== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 38djkmba30-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 10 May 2021 13:55:39 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 14ADtXtK054743;
+        Mon, 10 May 2021 13:55:38 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by userp3030.oracle.com with ESMTP id 38dfrvfkmw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 10 May 2021 13:55:38 +0000
+Received: from userp3030.oracle.com (userp3030.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 14ADtcKX055404;
+        Mon, 10 May 2021 13:55:38 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 38dfrvfkmf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 10 May 2021 13:55:38 +0000
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 14ADtbB1019301;
+        Mon, 10 May 2021 13:55:37 GMT
+Received: from kadam (/102.36.221.92)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 10 May 2021 06:55:36 -0700
+Date:   Mon, 10 May 2021 16:55:30 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Edmundo Carmona Antoranz <eantoranz@gmail.com>
 Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        cw00.choi@samsung.com, b.zolnierkie@samsung.com,
-        a.zummo@towertech.it, linux-rtc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <a6b23ee8d3ea78f62d3fda0b53aa273718f14c6d.1620452523.git.christophe.jaillet@wanadoo.fr>
- <CAOc6etaUPtJqoH9DBDE72nDW7s7iEZHnaJRpKx9zFow02WOZig@mail.gmail.com>
- <9f34ebcd-0c17-cd7f-eb08-52c6c3dc7b03@wanadoo.fr>
- <CAOc6etYwTvVPnoB3BQfuQEikvsCwSs9AqBWnLFrs9zQ0pJGp1A@mail.gmail.com>
- <YJhO0cEqpbJAdv7s@piout.net>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <219efcc7-ca05-a7d1-5943-d34a42f0d49f@canonical.com>
-Date:   Mon, 10 May 2021 08:20:52 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] ACPI: scan: Fix a memory leak in an error handling path
+Message-ID: <20210510135529.GS1922@kadam>
+References: <63bf4e87eb42fa3fff2cd87eb605ebcc01f4b2f7.1620458525.git.christophe.jaillet@wanadoo.fr>
+ <CAOc6etbPaPOjdcfYBY1i_N0V6Tua9p-OL5Hw7PgJ6T7dfRrhfA@mail.gmail.com>
+ <20210510053958.GO1955@kadam>
+ <CAOc6etbVZkANHVVmP5rss-nQqSYNiSFRXrg_nVUBV-719xKqJw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <YJhO0cEqpbJAdv7s@piout.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOc6etbVZkANHVVmP5rss-nQqSYNiSFRXrg_nVUBV-719xKqJw@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-GUID: eY_gAmGVJjqf5GXkCxzuqOx65b2UupAc
+X-Proofpoint-ORIG-GUID: eY_gAmGVJjqf5GXkCxzuqOx65b2UupAc
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9980 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 priorityscore=1501
+ suspectscore=0 clxscore=1015 bulkscore=0 adultscore=0 impostorscore=0
+ spamscore=0 phishscore=0 mlxlogscore=999 mlxscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
+ definitions=main-2105100100
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 09/05/2021 17:06, Alexandre Belloni wrote:
-> On 08/05/2021 18:06:03-0600, Edmundo Carmona Antoranz wrote:
->> On Sat, May 8, 2021 at 10:59 AM Christophe JAILLET
->> <christophe.jaillet@wanadoo.fr> wrote:
->>>
->>>>
->>>> Following the recent conversations, I think it might make sense to do
->>>> dev_err(&pdev->dev, "Failed to register RTC device: %pe\n", info->rtc_dev);
->>>>
->>>> Is that right?
->>>>
->>>
->>> Yes, it is right, but it should be done in another patch.
->>>
->>> Would you like to give it a try?
->>>
->> Sure, I'll have the patch ready to send it when I see yours on next.
+On Mon, May 10, 2021 at 07:18:14AM -0600, Edmundo Carmona Antoranz wrote:
+> On Sun, May 9, 2021 at 11:40 PM Dan Carpenter <dan.carpenter@oracle.com>
+> wrote:
 > 
-> Does it make sense to print anything at all? Who would use the output?
-> Is anyone actually going to read it?
+> >
+> > The best way to write error handling is "free the last resource style"
+> > where you free the most recent resouce that was successfully allocated.
+> > That way in your head you just have to keep track of one thing, instead
+> > of tracking everything.
+> >
+> 
+> IC. So the answer is rather: single place to free stuff? Yes..... _but_ in
+> a layered fashion (through tags) instead of having a single tag to take
+> care of everything.
+> 
+> Follow up question: is it worth making a patch to try to simplify a
+> function to have error handling set up this way for code that is already
+> working? Or not really?
+> 
 
-If the RTC core does not print the message, it should be
-dev_err_probe().  However the first is recently preferred - RTC core
-should do it for all drivers.  I find such error messages useful - helps
-easily spotting regressions via dmesg -l err.
+No, absolutely not.  This is just my preference and probably the most
+common way to write error handling but it's not an official standard.
 
+Plus it super easy to find error handling code which is not working and
+fix that instead.
 
-Best regards,
-Krzysztof
+regards,
+dan carpenter
+
