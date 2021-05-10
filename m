@@ -2,73 +2,78 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87EBDC433B4
-	for <kernel-janitors@archiver.kernel.org>; Sun,  9 May 2021 21:06:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A682AC433ED
+	for <kernel-janitors@archiver.kernel.org>; Mon, 10 May 2021 00:38:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5C0FB613F0
-	for <kernel-janitors@archiver.kernel.org>; Sun,  9 May 2021 21:06:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77ED661352
+	for <kernel-janitors@archiver.kernel.org>; Mon, 10 May 2021 00:38:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229898AbhEIVHc (ORCPT
+        id S230057AbhEJAja (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 9 May 2021 17:07:32 -0400
-Received: from relay8-d.mail.gandi.net ([217.70.183.201]:55437 "EHLO
-        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229840AbhEIVHb (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 9 May 2021 17:07:31 -0400
-X-Originating-IP: 90.65.108.55
-Received: from localhost (lfbn-lyo-1-1676-55.w90-65.abo.wanadoo.fr [90.65.108.55])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id 1863D1BF207;
-        Sun,  9 May 2021 21:06:26 +0000 (UTC)
-Date:   Sun, 9 May 2021 23:06:25 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Edmundo Carmona Antoranz <eantoranz@gmail.com>
-Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        cw00.choi@samsung.com, krzysztof.kozlowski@canonical.com,
-        b.zolnierkie@samsung.com, a.zummo@towertech.it,
-        linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] rtc: max77686: Remove some dead code
-Message-ID: <YJhO0cEqpbJAdv7s@piout.net>
-References: <a6b23ee8d3ea78f62d3fda0b53aa273718f14c6d.1620452523.git.christophe.jaillet@wanadoo.fr>
- <CAOc6etaUPtJqoH9DBDE72nDW7s7iEZHnaJRpKx9zFow02WOZig@mail.gmail.com>
- <9f34ebcd-0c17-cd7f-eb08-52c6c3dc7b03@wanadoo.fr>
- <CAOc6etYwTvVPnoB3BQfuQEikvsCwSs9AqBWnLFrs9zQ0pJGp1A@mail.gmail.com>
+        Sun, 9 May 2021 20:39:30 -0400
+Received: from mga07.intel.com ([134.134.136.100]:36661 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229853AbhEJAja (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Sun, 9 May 2021 20:39:30 -0400
+IronPort-SDR: cZ8RMWtyEW6bZX+U3VTy8qkhWqNNvOElGCzDp1YjM62ltA31hCshQHGhiRRKGSXFkYPlTpfvCJ
+ Y5VJrVf0KsWA==
+X-IronPort-AV: E=McAfee;i="6200,9189,9979"; a="263014919"
+X-IronPort-AV: E=Sophos;i="5.82,286,1613462400"; 
+   d="scan'208";a="263014919"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2021 17:38:26 -0700
+IronPort-SDR: YEHWQ26AuzAekwnrQmYLh/EheY8CUQaowgvQ5DXQAQ52rhZqNCMBKLglrPfrmGyV26tq0XyPqb
+ rhKkuOEZMU5g==
+X-IronPort-AV: E=Sophos;i="5.82,286,1613462400"; 
+   d="scan'208";a="467854890"
+Received: from djiang5-desk3.ch.intel.com ([143.182.136.137])
+  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2021 17:38:25 -0700
+Subject: [PATCH] dmaengine: idxd: remove devm allocation for idxd->int_handles
+From:   Dave Jiang <dave.jiang@intel.com>
+To:     vkoul@kernel.org
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        dmaengine@vger.kernel.org, kernel-janitors@vger.kernel.org
+Date:   Sun, 09 May 2021 17:38:25 -0700
+Message-ID: <162060710518.130816.11349798049329202863.stgit@djiang5-desk3.ch.intel.com>
+In-Reply-To: <YJZJ2Z5CEqQC5s+1@mwanda>
+References: <YJZJ2Z5CEqQC5s+1@mwanda>
+User-Agent: StGit/0.23-29-ga622f1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOc6etYwTvVPnoB3BQfuQEikvsCwSs9AqBWnLFrs9zQ0pJGp1A@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 08/05/2021 18:06:03-0600, Edmundo Carmona Antoranz wrote:
-> On Sat, May 8, 2021 at 10:59 AM Christophe JAILLET
-> <christophe.jaillet@wanadoo.fr> wrote:
-> >
-> > >
-> > > Following the recent conversations, I think it might make sense to do
-> > > dev_err(&pdev->dev, "Failed to register RTC device: %pe\n", info->rtc_dev);
-> > >
-> > > Is that right?
-> > >
-> >
-> > Yes, it is right, but it should be done in another patch.
-> >
-> > Would you like to give it a try?
-> >
-> Sure, I'll have the patch ready to send it when I see yours on next.
+Allocation of idxd->int_handles was merged incorrectly for the 5.13 merge
+window. The devm_kcalloc should've been regular kcalloc due to devm_*
+removal series for the driver.
 
-Does it make sense to print anything at all? Who would use the output?
-Is anyone actually going to read it?
+Fixes: eb15e7154fbf ("dmaengine: idxd: add interrupt handle request and release support")
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dave Jiang <dave.jiang@intel.com>
+---
+ drivers/dma/idxd/init.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/dma/idxd/init.c b/drivers/dma/idxd/init.c
+index 2a926bef87f2..21d3dcb1c0e3 100644
+--- a/drivers/dma/idxd/init.c
++++ b/drivers/dma/idxd/init.c
+@@ -311,7 +311,8 @@ static int idxd_setup_internals(struct idxd_device *idxd)
+ 	init_waitqueue_head(&idxd->cmd_waitq);
+ 
+ 	if (idxd->hw.cmd_cap & BIT(IDXD_CMD_REQUEST_INT_HANDLE)) {
+-		idxd->int_handles = devm_kcalloc(dev, idxd->max_wqs, sizeof(int), GFP_KERNEL);
++		idxd->int_handles = kcalloc_node(idxd->max_wqs, sizeof(int), GFP_KERNEL,
++						 dev_to_node(dev));
+ 		if (!idxd->int_handles)
+ 			return -ENOMEM;
+ 	}
 
 
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
