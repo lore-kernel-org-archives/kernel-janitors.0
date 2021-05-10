@@ -2,59 +2,116 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.5 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27C6DC43460
-	for <kernel-janitors@archiver.kernel.org>; Mon, 10 May 2021 09:10:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 329BEC43461
+	for <kernel-janitors@archiver.kernel.org>; Mon, 10 May 2021 09:51:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DC75061456
-	for <kernel-janitors@archiver.kernel.org>; Mon, 10 May 2021 09:10:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09F9F61554
+	for <kernel-janitors@archiver.kernel.org>; Mon, 10 May 2021 09:51:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230170AbhEJJLl (ORCPT
+        id S231230AbhEJJxA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 10 May 2021 05:11:41 -0400
-Received: from relay12.mail.gandi.net ([217.70.178.232]:50959 "EHLO
-        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230405AbhEJJL2 (ORCPT
+        Mon, 10 May 2021 05:53:00 -0400
+Received: from mail-wm1-f54.google.com ([209.85.128.54]:37716 "EHLO
+        mail-wm1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231185AbhEJJwh (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 10 May 2021 05:11:28 -0400
-Received: from xps13.home (lfbn-tou-1-1325-59.w90-89.abo.wanadoo.fr [90.89.138.59])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 65F73200011;
-        Mon, 10 May 2021 09:10:21 +0000 (UTC)
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Wei Li <liwei391@huawei.com>, huawei.libin@huawei.com,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Boris Brezillon <boris.brezillon@collabora.com>
-Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
-Subject: Re: [PATCH RESEND -next] mtd: rawnand: Remove redundant dev_err call in hisi_nfc_probe()
-Date:   Mon, 10 May 2021 11:10:20 +0200
-Message-Id: <20210510091020.4229-1-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20210407100526.3278741-1-liwei391@huawei.com>
-References: 
+        Mon, 10 May 2021 05:52:37 -0400
+Received: by mail-wm1-f54.google.com with SMTP id b11-20020a7bc24b0000b0290148da0694ffso10779481wmj.2;
+        Mon, 10 May 2021 02:51:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=sqrzfth2vQXxqsJTeCMpMZf0Wa6kexMFJ4z/H3+4Fqg=;
+        b=aWyQCW8msaJ5rOiZ2PJlpLQOVWhEY0jJvXYsllmJzAUdyg2EmyHM7Zb3ORy09uFhJJ
+         9VOvi653snqbQU6PmKbA80iljCM3LHJe+Zyh4ltfdAAEyDsQpYM5qSiTKRe1XCSqI7Y+
+         jYKE64qatvIkdWcf44WC9Uq0Y/FhZ0qsrHwKWPBWI/PjU7hU3cl16cqvWik5225eMf1S
+         dN6U1jwWi8V2CZaiFnQHPQ+lEWBeF8d4zkINVqhwQcttD8gFX3QNluYpHCr3hAymnNIp
+         5bcmiikLLRZ1WuXlLTYIvqkgpnmM5DBlVesurBRMy2JXrtnS91bQPxPwU/XcPZakTafP
+         5y2g==
+X-Gm-Message-State: AOAM5323pJTEO2NFBOLj8mylEpRpUxb9GOpX1t9YDUwmL9Xi4YVZiw8S
+        928CTAFFACETAn+NVHpSxEziOxhulL8=
+X-Google-Smtp-Source: ABdhPJwYXBi6Jv9MIRSt/zTdWKJijZ0Qgn1Hl47sz6JgSv9iQ1g8XCRLEBdb2/8ItSQzGJ/vLQIDcg==
+X-Received: by 2002:a7b:c7c5:: with SMTP id z5mr34244569wmk.184.1620640277782;
+        Mon, 10 May 2021 02:51:17 -0700 (PDT)
+Received: from ?IPv6:2a0b:e7c0:0:107::70f? ([2a0b:e7c0:0:107::70f])
+        by smtp.gmail.com with ESMTPSA id j13sm21964872wrw.93.2021.05.10.02.51.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 May 2021 02:51:16 -0700 (PDT)
+Subject: Re: [PATCH] tty: nozomi: Fix a resource leak in an error handling
+ function
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        gregkh@linuxfoundation.org, akpm@linux-foundation.org,
+        stefani@seibold.net
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <4f0d2b3038e82f081d370ccb0cade3ad88463fe7.1620580838.git.christophe.jaillet@wanadoo.fr>
+From:   Jiri Slaby <jirislaby@kernel.org>
+Message-ID: <749cb98d-07d6-740e-1d2d-46306520089b@kernel.org>
+Date:   Mon, 10 May 2021 11:51:16 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.9.1
 MIME-Version: 1.0
-X-linux-mtd-patch-notification: thanks
-X-linux-mtd-patch-commit: b'03299d054047c32d864abe2e640533c55acda6c7'
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <4f0d2b3038e82f081d370ccb0cade3ad88463fe7.1620580838.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=iso-8859-2; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 2021-04-07 at 10:05:26 UTC, Wei Li wrote:
-> There is a error message within devm_ioremap_resource
-> already, so remove the dev_err call to avoid redundant
-> error message.
+On 09. 05. 21, 19:22, Christophe JAILLET wrote:
+> A 'request_irq()' call is not balanced by a corresponding 'free_irq()' in
+> the error handling path, as already done in the remove function.
 > 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wei Li <liwei391@huawei.com>
+> Add it.
+> 
+> Fixes: 9842c38e9176 ("kfifo: fix warn_unused_result")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git nand/next, thanks.
+Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
 
-Miquel
+> ---
+> I also wonder if the loop above is correct. The 'i < MAX_PORT' looks really
+> spurious to me.
+> 'tty_port_destroy' can be called twice for the same entry (once before
+> branching in the error handling path, and once in here) and
+> 'tty_unregister_device'/'tty_port_destroy' will be called on entries
+> that have not been 'tty_port_init'ed or 'tty_port_register_device'd.
+> I don't know if it may be an issue.
+
+Yes. The fail path handling is very broken there. Both the code of 
+err_free_tty label, and of the err_free_kfifo label. The loops should 
+have been _something_ (I didn't invest much thinking into it, so it's 
+likely wrong) like:
+for (i--; i--; ) {
+    ...
+}
+
+
+> ---
+>   drivers/tty/nozomi.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/tty/nozomi.c b/drivers/tty/nozomi.c
+> index 9a2d78ace49b..b270e137ef9b 100644
+> --- a/drivers/tty/nozomi.c
+> +++ b/drivers/tty/nozomi.c
+> @@ -1420,6 +1420,7 @@ static int nozomi_card_init(struct pci_dev *pdev,
+>   		tty_unregister_device(ntty_driver, dc->index_start + i);
+>   		tty_port_destroy(&dc->port[i].port);
+>   	}
+> +	free_irq(pdev->irq, dc);
+>   err_free_kfifo:
+>   	for (i = 0; i < MAX_PORT; i++)
+>   		kfifo_free(&dc->port[i].fifo_ul);
+> 
+
+thanks,
+-- 
+js
+suse labs
