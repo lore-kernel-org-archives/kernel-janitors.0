@@ -5,112 +5,131 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no version=3.4.0
+	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BAFEC433B4
-	for <kernel-janitors@archiver.kernel.org>; Tue, 11 May 2021 07:19:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D6E6C433B4
+	for <kernel-janitors@archiver.kernel.org>; Tue, 11 May 2021 07:22:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DC60B61482
-	for <kernel-janitors@archiver.kernel.org>; Tue, 11 May 2021 07:19:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63DE161923
+	for <kernel-janitors@archiver.kernel.org>; Tue, 11 May 2021 07:22:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230362AbhEKHU4 (ORCPT
+        id S230097AbhEKHXj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 11 May 2021 03:20:56 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:41536 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230343AbhEKHUz (ORCPT
+        Tue, 11 May 2021 03:23:39 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:53000 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229924AbhEKHXg (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 11 May 2021 03:20:55 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 14B7ALna151746;
-        Tue, 11 May 2021 07:19:38 GMT
+        Tue, 11 May 2021 03:23:36 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 14B7KC7j165568;
+        Tue, 11 May 2021 07:22:27 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
  : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=eP1PwzhAIrvlXsQZtEzk+wE318PF26VjA6mVgLMKE1c=;
- b=QkNYxOLftcx/YSVxlXAhfHr1Cjv6nK0/eiOAkJJUBdYI0AZY7NoxT5Dfz0p8Y1ZhvzXR
- 1MTpxKG5g0aUEYHoi0gjWVgRW09pp/G/bpWK8YMaAwzMrT4Oxz5MV+upGXba970uBXWI
- 0Ztoy6GhyVDcpFMhhbut6tHECUDGS0rTYVH2hRF8CuafeJpuUcKUkDnJjgYQorlL3rld
- u0+KzxYbiojDDZL3IG0upwC/VHabbYrzQG5Hgqx2DK/S9BgG5eC0nyxovU1wv4zNgm6t
- g5tFk8iuCToqgr45UPXIki/6unj0hi2JbQbJ54+sH0G9UL6cLGD8kWudizbu0W6DDYQv wA== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2120.oracle.com with ESMTP id 38djkmdnaa-1
+ bh=LIqIlTYR8W6LmxNRlfRBjYRVMwL26zOpcyZEqTLcG3k=;
+ b=QMpO3kGAQFAcZyRBMYZiaJYMQIyc+PB8a9Kc0GQHLnff3o/owJbtaJNfaV1P7G670Jc7
+ XXnQMXsljf94jK4b19UVkNQM7KYxhimfrs70sedenN7ZJMy8FPpiZXXD9UuE8GPi0ep/
+ A80ZLGyH8MgvRtH2a5dKu5AeEzMoxyTotqsTWQ1eSmdonKjVlqx00lMJdiELuUIn1rDv
+ EVZWqP4OoNeNL1NmXuCHlqS3dlZMpzFkxQ1Ti+7CzGVpVtfEs6CnySItoJolm/30Ll0q
+ d22/zxmc6uAjOJt9si71+rS7/vIC3P20Wj64asftchdJUEPjVpF9kl0lHpTFC4wmEU7a TQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 38e285cwr5-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 11 May 2021 07:19:38 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 14B7Ae3I171905;
-        Tue, 11 May 2021 07:19:38 GMT
+        Tue, 11 May 2021 07:22:27 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 14B7K0CP077626;
+        Tue, 11 May 2021 07:22:26 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-        by aserp3020.oracle.com with ESMTP id 38djf8kprw-1
+        by userp3020.oracle.com with ESMTP id 38fh3w96wb-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 11 May 2021 07:19:38 +0000
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 14B7Jbbi018550;
-        Tue, 11 May 2021 07:19:37 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3020.oracle.com with ESMTP id 38djf8kpr3-1
+        Tue, 11 May 2021 07:22:26 +0000
+Received: from userp3020.oracle.com (userp3020.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 14B7Kv8h081385;
+        Tue, 11 May 2021 07:22:26 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3020.oracle.com with ESMTP id 38fh3w96w5-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 11 May 2021 07:19:37 +0000
-Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 14B7JXJl014687;
-        Tue, 11 May 2021 07:19:36 GMT
+        Tue, 11 May 2021 07:22:26 +0000
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 14B7MPNq026849;
+        Tue, 11 May 2021 07:22:25 GMT
 Received: from mwanda (/102.36.221.92)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 11 May 2021 00:19:32 -0700
-Date:   Tue, 11 May 2021 10:19:26 +0300
+        with ESMTP ; Tue, 11 May 2021 00:22:24 -0700
+Date:   Tue, 11 May 2021 10:22:19 +0300
 From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Alessandro Zummo <a.zummo@towertech.it>,
-        "Kim, Milo" <Milo.Kim@ti.com>
-Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] rtc: fix snprintf() checking in is_rtc_hctosys()
-Message-ID: <YJov/pcGmhLi2pEl@mwanda>
+To:     Malcolm Priestley <tvboxspy@gmail.com>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] media: lmedm04: delete lme2510_get_adapter_count()
+Message-ID: <YJowq0hJZ6cFDX/6@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
-X-Proofpoint-GUID: 0nYgb_Re4wnEQ_R_YDXuSgcBS2L4nieV
-X-Proofpoint-ORIG-GUID: 0nYgb_Re4wnEQ_R_YDXuSgcBS2L4nieV
+X-Proofpoint-GUID: zzJUf4pMPLC7VRtiREv6Ypfx-s_5r19i
+X-Proofpoint-ORIG-GUID: zzJUf4pMPLC7VRtiREv6Ypfx-s_5r19i
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9980 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 priorityscore=1501
- suspectscore=0 clxscore=1011 bulkscore=0 adultscore=0 impostorscore=0
- spamscore=0 phishscore=0 mlxlogscore=999 mlxscore=0 lowpriorityscore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 mlxlogscore=999
+ mlxscore=0 bulkscore=0 lowpriorityscore=0 priorityscore=1501 spamscore=0
+ clxscore=1011 impostorscore=0 phishscore=0 malwarescore=0 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
- definitions=main-2105110054
+ definitions=main-2105110055
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The scnprintf() function silently truncates the printf() and returns
-the number bytes that it was able to copy (not counting the NUL
-terminator).  Thus, the highest value it can return here is
-"NAME_SIZE - 1" and the overflow check is dead code.  Fix this by
-using the snprintf() function which returns the number of bytes that
-would have been copied if there was enough space and changing the
-condition from "> NAME_SIZE" to ">= NAME_SIZE".
+The adapter count is fixed at compile time so we can delete the
+lme2510_get_adapter_count() function and set ".num_adapters = 1"
+instead.  There is also no need to create a zeroed adapter
+element at the end of the array.  Remove that as well.
 
-Fixes: 92589c986b33 ("rtc-proc: permit the /proc/driver/rtc device to use other devices")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/rtc/proc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+From code review.  Not tested.
 
-diff --git a/drivers/rtc/proc.c b/drivers/rtc/proc.c
-index 73344598fc1b..cbcdbb19d848 100644
---- a/drivers/rtc/proc.c
-+++ b/drivers/rtc/proc.c
-@@ -23,8 +23,8 @@ static bool is_rtc_hctosys(struct rtc_device *rtc)
- 	int size;
- 	char name[NAME_SIZE];
+ drivers/media/usb/dvb-usb-v2/lmedm04.c | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
+
+diff --git a/drivers/media/usb/dvb-usb-v2/lmedm04.c b/drivers/media/usb/dvb-usb-v2/lmedm04.c
+index 1b6d4e4c52ca..fe4d886442a4 100644
+--- a/drivers/media/usb/dvb-usb-v2/lmedm04.c
++++ b/drivers/media/usb/dvb-usb-v2/lmedm04.c
+@@ -1122,11 +1122,6 @@ static int lme2510_powerup(struct dvb_usb_device *d, int onoff)
+ 	return ret;
+ }
  
--	size = scnprintf(name, NAME_SIZE, "rtc%d", rtc->id);
--	if (size > NAME_SIZE)
-+	size = snprintf(name, NAME_SIZE, "rtc%d", rtc->id);
-+	if (size >= NAME_SIZE)
- 		return false;
+-static int lme2510_get_adapter_count(struct dvb_usb_device *d)
+-{
+-	return 1;
+-}
+-
+ static int lme2510_identify_state(struct dvb_usb_device *d, const char **name)
+ {
+ 	struct lme2510_state *st = d->priv;
+@@ -1211,12 +1206,12 @@ static struct dvb_usb_device_properties lme2510_props = {
+ 	.frontend_attach  = dm04_lme2510_frontend_attach,
+ 	.tuner_attach = dm04_lme2510_tuner,
+ 	.get_stream_config = lme2510_get_stream_config,
+-	.get_adapter_count = lme2510_get_adapter_count,
+ 	.streaming_ctrl   = lme2510_streaming_ctrl,
  
- 	return !strncmp(name, CONFIG_RTC_HCTOSYS_DEVICE, NAME_SIZE);
+ 	.get_rc_config = lme2510_get_rc_config,
+ 
+ 	.exit = lme2510_exit,
++	.num_adapters = 1,
+ 	.adapter = {
+ 		{
+ 			.caps = DVB_USB_ADAP_HAS_PID_FILTER|
+@@ -1227,8 +1222,6 @@ static struct dvb_usb_device_properties lme2510_props = {
+ 			.stream =
+ 			DVB_USB_STREAM_BULK(0x86, 10, 4096),
+ 		},
+-		{
+-		}
+ 	},
+ };
+ 
 -- 
 2.30.2
 
