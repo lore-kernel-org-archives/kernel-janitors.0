@@ -2,153 +2,146 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCD4DC433B4
-	for <kernel-janitors@archiver.kernel.org>; Tue, 11 May 2021 13:54:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 141D7C433ED
+	for <kernel-janitors@archiver.kernel.org>; Tue, 11 May 2021 18:18:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A798E61004
-	for <kernel-janitors@archiver.kernel.org>; Tue, 11 May 2021 13:54:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DED5C6186A
+	for <kernel-janitors@archiver.kernel.org>; Tue, 11 May 2021 18:18:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231691AbhEKNzZ (ORCPT
+        id S232020AbhEKSTe (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 11 May 2021 09:55:25 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:44100 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231539AbhEKNzY (ORCPT
+        Tue, 11 May 2021 14:19:34 -0400
+Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:33253 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231939AbhEKSTe (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 11 May 2021 09:55:24 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 14BDj4gn147896;
-        Tue, 11 May 2021 13:54:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type : in-reply-to;
- s=corp-2020-01-29; bh=jDeQisHV5eJ4djdXX1wmkmp8ulHDhbp0k1CxqmYYk78=;
- b=cNizvRr4NInK6ZRQpGSItahz75bO67G/h1cVuK2m/PO1R6cWvkeUaKRQEsFKgXpNOqk9
- 4gjqnb5DT5wbIHUlLGVfKAz1vSK47ZR8V9cliAc1HYGDSWIVfn/9D5mxRL0nSnRlU7Jp
- sbNsBwLwN7LWQxixAECSlU4DCYjpEdaHBxbkZfFIPXAWLwAAgdZiqfNNZkdRNtgQr3XJ
- ZI0yX/xm71DStAGBFdeA1O29nrvD40Trn4Kb8xcjZtFCXRQLS4Y8y88EYZrH9wwe8RIQ
- XyhGdq5dQd0U70cxBk2tCGT/HJnOGzAhqfGs7FVVGQTZeNsbN7IO6PGL+I4J8GEYa9A/ fw== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2120.oracle.com with ESMTP id 38dk9nernp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 11 May 2021 13:54:00 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 14BDpbNb018275;
-        Tue, 11 May 2021 13:53:59 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by userp3030.oracle.com with ESMTP id 38dfrxa3mx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 11 May 2021 13:53:59 +0000
-Received: from userp3030.oracle.com (userp3030.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 14BDrxQC028423;
-        Tue, 11 May 2021 13:53:59 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 38dfrxa3ks-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 11 May 2021 13:53:59 +0000
-Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 14BDrw1Y004638;
-        Tue, 11 May 2021 13:53:58 GMT
-Received: from kadam (/102.36.221.92)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 11 May 2021 06:53:57 -0700
-Date:   Tue, 11 May 2021 16:53:50 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Mark Fasheh <mark@fasheh.com>
-Cc:     Joel Becker <jlbec@evilplan.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Gang He <ghe@suse.com>, ocfs2-devel@oss.oracle.com,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH v2] ocfs2: fix snprintf() checking
-Message-ID: <20210511135350.GV1955@kadam>
+        Tue, 11 May 2021 14:19:34 -0400
+Received: from [192.168.1.18] ([86.243.172.93])
+        by mwinf5d16 with ME
+        id 3WJP2500n21Fzsu03WJQuW; Tue, 11 May 2021 20:18:25 +0200
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 11 May 2021 20:18:25 +0200
+X-ME-IP: 86.243.172.93
+Subject: Re: [PATCH 1/2] uio_hv_generic: Fix a memory leak in error handling
+ paths
+To:     Wei Liu <wei.liu@kernel.org>
+Cc:     kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com,
+        decui@microsoft.com, gregkh@linuxfoundation.org,
+        linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <4fdaff557deef6f0475d02ba7922ddbaa1ab08a6.1620544055.git.christophe.jaillet@wanadoo.fr>
+ <20210511095227.ggrl3z6otjanwffz@liuwe-devbox-debian-v2>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Message-ID: <f0dca7cf-c737-0f06-34aa-e4759826a974@wanadoo.fr>
+Date:   Tue, 11 May 2021 20:18:23 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bd7ddc22-11c4-3e88-120a-d68f153f573d@linux.alibaba.com>
-X-Mailer: git-send-email haha only kidding
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-ORIG-GUID: efFoIHRT_ml8Agg4yGbMP-uJov8FiyN_
-X-Proofpoint-GUID: efFoIHRT_ml8Agg4yGbMP-uJov8FiyN_
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9980 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 phishscore=0
- adultscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 lowpriorityscore=0
- malwarescore=0 priorityscore=1501 clxscore=1015 bulkscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
- definitions=main-2105110106
+In-Reply-To: <20210511095227.ggrl3z6otjanwffz@liuwe-devbox-debian-v2>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The snprintf() function returns the number of bytes which would have
-been printed if the buffer was large enough.  In other words it can
-return ">= remain" but this code assumes it returns "== remain".
+Le 11/05/2021 à 11:52, Wei Liu a écrit :
+>> Before commit cdfa835c6e5e, the 'vfree' were done unconditionally
+>> in 'hv_uio_cleanup()'.
+>> So, another way for fixing the potential leak is to modify
+>> 'hv_uio_cleanup()' and revert to the previous behavior.
+>>
+> 
+> I think this is cleaner.
 
-The run time impact of this bug is not very severe.  The next iteration
-through the loop would trigger a WARN() when we pass a negative limit
-to snprintf().  We would then return success instead of -E2BIG.
+Agreed
 
-The kernel implementation of snprintf() will never return negatives so
-there is no need to check and I have deleted that dead code.
+> 
+> Stephen, you authored cdfa835c6e5e. What do you think?
+> 
+> Christophe, OOI how did you discover these issues?
 
-Fixes: a860f6eb4c6a ("ocfs2: sysfile interfaces for online file check")
-Fixes: 74ae4e104dfc ("ocfs2: Create stack glue sysfs files.")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
----
-v2: update the Fixes tag, add Joseph's R-b tag.
+I use an ugly coccinelle script which tries to spot functions called in 
+the .remove function of a driver, but which is not in the error handling 
+path of the .probe
 
- fs/ocfs2/filecheck.c | 6 +-----
- fs/ocfs2/stackglue.c | 8 ++------
- 2 files changed, 3 insertions(+), 11 deletions(-)
+It is way to verbose and gives too much false positive, but I manage to 
+spot a few things with it.
+Here it is, should it be useful for someone, or if anyone want to 
+improve it.
 
-diff --git a/fs/ocfs2/filecheck.c b/fs/ocfs2/filecheck.c
-index 90b8d300c1ee..de56e6231af8 100644
---- a/fs/ocfs2/filecheck.c
-+++ b/fs/ocfs2/filecheck.c
-@@ -326,11 +326,7 @@ static ssize_t ocfs2_filecheck_attr_show(struct kobject *kobj,
- 		ret = snprintf(buf + total, remain, "%lu\t\t%u\t%s\n",
- 			       p->fe_ino, p->fe_done,
- 			       ocfs2_filecheck_error(p->fe_status));
--		if (ret < 0) {
--			total = ret;
--			break;
--		}
--		if (ret == remain) {
-+		if (ret >= remain) {
- 			/* snprintf() didn't fit */
- 			total = -E2BIG;
- 			break;
-diff --git a/fs/ocfs2/stackglue.c b/fs/ocfs2/stackglue.c
-index d50e8b8dfea4..16f1bfc407f2 100644
---- a/fs/ocfs2/stackglue.c
-+++ b/fs/ocfs2/stackglue.c
-@@ -500,11 +500,7 @@ static ssize_t ocfs2_loaded_cluster_plugins_show(struct kobject *kobj,
- 	list_for_each_entry(p, &ocfs2_stack_list, sp_list) {
- 		ret = snprintf(buf, remain, "%s\n",
- 			       p->sp_name);
--		if (ret < 0) {
--			total = ret;
--			break;
--		}
--		if (ret == remain) {
-+		if (ret >= remain) {
- 			/* snprintf() didn't fit */
- 			total = -E2BIG;
- 			break;
-@@ -531,7 +527,7 @@ static ssize_t ocfs2_active_cluster_plugin_show(struct kobject *kobj,
- 	if (active_stack) {
- 		ret = snprintf(buf, PAGE_SIZE, "%s\n",
- 			       active_stack->sp_name);
--		if (ret == PAGE_SIZE)
-+		if (ret >= PAGE_SIZE)
- 			ret = -E2BIG;
- 	}
- 	spin_unlock(&ocfs2_stack_lock);
--- 
-2.30.2
+The idea is:
+    - find the probe and remove function
+    - find a function (f1) which is not the first of the remove function 
+(the first is likely the last in the probe that doesn't need to be 
+undone in the probe error handling path)
+    - try to filter with likely false positive pattern
+    - search in the probe if this function is also called
+    - if not, then it is a candidate.
+
+CJ
+
+---------------------------------
+
+// Find the probe and remove functions
+@platform@
+identifier type, p, probefn, removefn;
+@@
+struct type p = {
+   .probe = probefn,
+   .remove = removefn,
+};
+
+
+// In the remove function, find a function that is called
+@rem depends on platform@
+identifier platform.removefn, firstFct, lastFct;
+identifier f1 !~ 
+"(pr_.*|dev_.*|cancel_work.*|cancel_delayed_work.*|tasklet_kill|list_del|.*unregister.*|.*deregister.*|spin_.*|flush_.*|pm_runtime_.*)";
+@@
+removefn(...) {
+(
+   <+...
+   firstFct(...);
+   f1(...);
+   ...+>
+|
+   <+...
+   fXXX1(...);
+   lastFct(...);
+   ...+>
+)
+}
+
+
+// Check if this function is also called in the probe error path
+@prb depends on rem@
+identifier platform.probefn, platform.removefn, rem.f1;
+@@
+probefn(...) {
+(
+   <+...
+     f1(...);
+   ...+>
+|
+   <+...
+     removefn(...);
+   ...+>
+)
+}
+
+
+// If not, this function is likely missing from the probe error path
+@prb3 depends on !prb@
+identifier platform.removefn, rem.f1;
+@@
+*removefn(...) {
+   <+...
+*  f1(...);
+   ...+>
+}
