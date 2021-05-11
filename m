@@ -2,74 +2,120 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34BDAC43460
-	for <kernel-janitors@archiver.kernel.org>; Tue, 11 May 2021 11:31:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97DC6C433ED
+	for <kernel-janitors@archiver.kernel.org>; Tue, 11 May 2021 12:54:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 022026121E
-	for <kernel-janitors@archiver.kernel.org>; Tue, 11 May 2021 11:31:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 616ED61921
+	for <kernel-janitors@archiver.kernel.org>; Tue, 11 May 2021 12:54:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231393AbhEKLcy (ORCPT
+        id S231515AbhEKM4C (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 11 May 2021 07:32:54 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:40726 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231273AbhEKLcx (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 11 May 2021 07:32:53 -0400
-Received: from zn.tnic (p200300ec2f0ec70038bae042ea25b78e.dip0.t-ipconnect.de [IPv6:2003:ec:2f0e:c700:38ba:e042:ea25:b78e])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0FB5A1EC0373;
-        Tue, 11 May 2021 13:31:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1620732706;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=iD/mLUexiG9Uw5+sPNvqGd6wScn21U33gzwthPIxSi4=;
-        b=GKIuVxhVx9TcGXZt+6ZuPzn8Hm1GUXEROWokX1oF9aKMHYk88vYIRIGt+A9DckIK5UStb1
-        AacRJLwFKTICE7VByDjj5yxwusKhWYN7MHY1OgGAyYSEKiZmbEebZfPpYMKtRztLQjbzK5
-        fkToO1nCjSEIvaMXK+GlrRkxZuLV8x4=
-Date:   Tue, 11 May 2021 13:31:47 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Bixuan Cui <cuibixuan@huawei.com>
-Cc:     Tero Kristo <kristo@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Tony Luck <tony.luck@intel.com>, linux-edac@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH -next] EDAC: ti: Add missing MODULE_DEVICE_TABLE
-Message-ID: <YJprIzhI9UF5wVQp@zn.tnic>
-References: <20210508031506.53687-1-cuibixuan@huawei.com>
+        Tue, 11 May 2021 08:56:02 -0400
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:51867 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231392AbhEKM4C (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 11 May 2021 08:56:02 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0UYYCUtP_1620737693;
+Received: from B-D1K7ML85-0059.local(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0UYYCUtP_1620737693)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 11 May 2021 20:54:54 +0800
+Subject: Re: [PATCH] ocfs2: fix snprintf() checking
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Mark Fasheh <mark@fasheh.com>
+Cc:     Joel Becker <jlbec@evilplan.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Gang He <ghe@suse.com>, ocfs2-devel@oss.oracle.com,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <YJovRPdOiaU6I+JK@mwanda>
+From:   Joseph Qi <joseph.qi@linux.alibaba.com>
+Message-ID: <bd7ddc22-11c4-3e88-120a-d68f153f573d@linux.alibaba.com>
+Date:   Tue, 11 May 2021 20:54:53 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.10.0
 MIME-Version: 1.0
+In-Reply-To: <YJovRPdOiaU6I+JK@mwanda>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20210508031506.53687-1-cuibixuan@huawei.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, May 08, 2021 at 11:15:06AM +0800, Bixuan Cui wrote:
-> This patch adds missing MODULE_DEVICE_TABLE definition which generates
 
-Avoid having "This patch" or "This commit" in the commit message. It is
-tautologically useless.
 
-Also, do
+On 5/11/21 3:16 PM, Dan Carpenter wrote:
+> The snprintf() function returns the number of bytes which would have
+> been printed if the buffer was large enough.  In other words it can
+> return ">= remain" but this code assumes it returns "== remain".
+> 
+> The run time impact of this bug is not very severe.  The next iteration
+> through the loop would trigger a WARN() when we pass a negative limit
+> to snprintf().  We would then return success instead of -E2BIG.
+> 
+> The kernel implementation of snprintf() will never return negatives so
+> there is no need to check and I have deleted that dead code.
+> 
+> Fixes: a860f6eb4c6a ("ocfs2: sysfile interfaces for online file check")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-$ git grep 'This patch' Documentation/process
+Looks good. But the last 2 sections are introduced by:
+74ae4e104dfc ocfs2: Create stack glue sysfs files.
 
-for more details.
+With 'Fixes' tag updated,
+Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
 
-> correct modalias for automatic loading of this driver when it is built
-> as an external module.
-
-"external" or simply a module?
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+> ---
+>  fs/ocfs2/filecheck.c | 6 +-----
+>  fs/ocfs2/stackglue.c | 8 ++------
+>  2 files changed, 3 insertions(+), 11 deletions(-)
+> 
+> diff --git a/fs/ocfs2/filecheck.c b/fs/ocfs2/filecheck.c
+> index 90b8d300c1ee..de56e6231af8 100644
+> --- a/fs/ocfs2/filecheck.c
+> +++ b/fs/ocfs2/filecheck.c
+> @@ -326,11 +326,7 @@ static ssize_t ocfs2_filecheck_attr_show(struct kobject *kobj,
+>  		ret = snprintf(buf + total, remain, "%lu\t\t%u\t%s\n",
+>  			       p->fe_ino, p->fe_done,
+>  			       ocfs2_filecheck_error(p->fe_status));
+> -		if (ret < 0) {
+> -			total = ret;
+> -			break;
+> -		}
+> -		if (ret == remain) {
+> +		if (ret >= remain) {
+>  			/* snprintf() didn't fit */
+>  			total = -E2BIG;
+>  			break;
+> diff --git a/fs/ocfs2/stackglue.c b/fs/ocfs2/stackglue.c
+> index d50e8b8dfea4..16f1bfc407f2 100644
+> --- a/fs/ocfs2/stackglue.c
+> +++ b/fs/ocfs2/stackglue.c
+> @@ -500,11 +500,7 @@ static ssize_t ocfs2_loaded_cluster_plugins_show(struct kobject *kobj,
+>  	list_for_each_entry(p, &ocfs2_stack_list, sp_list) {
+>  		ret = snprintf(buf, remain, "%s\n",
+>  			       p->sp_name);
+> -		if (ret < 0) {
+> -			total = ret;
+> -			break;
+> -		}
+> -		if (ret == remain) {
+> +		if (ret >= remain) {
+>  			/* snprintf() didn't fit */
+>  			total = -E2BIG;
+>  			break;
+> @@ -531,7 +527,7 @@ static ssize_t ocfs2_active_cluster_plugin_show(struct kobject *kobj,
+>  	if (active_stack) {
+>  		ret = snprintf(buf, PAGE_SIZE, "%s\n",
+>  			       active_stack->sp_name);
+> -		if (ret == PAGE_SIZE)
+> +		if (ret >= PAGE_SIZE)
+>  			ret = -E2BIG;
+>  	}
+>  	spin_unlock(&ocfs2_stack_lock);
+> 
