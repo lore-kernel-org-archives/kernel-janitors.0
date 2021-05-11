@@ -5,116 +5,128 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no version=3.4.0
+	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EEFEC43461
-	for <kernel-janitors@archiver.kernel.org>; Tue, 11 May 2021 07:09:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB336C43460
+	for <kernel-janitors@archiver.kernel.org>; Tue, 11 May 2021 07:12:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 70D5361926
-	for <kernel-janitors@archiver.kernel.org>; Tue, 11 May 2021 07:09:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3F0561926
+	for <kernel-janitors@archiver.kernel.org>; Tue, 11 May 2021 07:12:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230388AbhEKHKe (ORCPT
+        id S230382AbhEKHNy (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 11 May 2021 03:10:34 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:47430 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230023AbhEKHKd (ORCPT
+        Tue, 11 May 2021 03:13:54 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:33798 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230305AbhEKHNw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 11 May 2021 03:10:33 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 14B6u44A140114;
-        Tue, 11 May 2021 07:09:22 GMT
+        Tue, 11 May 2021 03:13:52 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 14B7CFOq074110;
+        Tue, 11 May 2021 07:12:15 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
  : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=Mibl25RnqWxYpC/GFaO5Ls5UQcgAmI0Xvt4CjXK5M4g=;
- b=syIFOcbEQP5VpLEs0/9+Z8gwfXky7cdPUEmVv3M5qy4A500TfmGL4cLBtB+PlmnAI2vR
- GibOjevX9AYg/y9clG8JiA9gpA9Ev2yYRpBzLIr0XNvIw3BzXQzbnuvF+V3fORS9d6nQ
- 5ecv8yDwtUEThhqJOFod1xfMXQiqETe9JdmBaxx5scRupMriBJ7vrLuFVoEs07UX4wYy
- Qt3LaN/njn/qSQVEwCoopwRUybHToPygMQQ2UKkqB5nmO1F+CvPlUcVEEkIzsR4M+WIF
- hvtfsju9jD6VnKTGcXMO1Uiey4aJwyfzSnFfke7T8xFS9AN16vuMO/cNAlD0Xkvq1HBy Wg== 
+ bh=bOp/npdKBNjrpeNmwbAIxmkWgoyso0P/KtdS+cREOds=;
+ b=NR72fIGab4jbE8+60ycDseDoxrEQLY91fjbrKHZGxfi8TGPo4i2RK1W+hGU03PX9Ckir
+ S5WAMulPHNcmxWfk/chwLu+1GevlyoLYfS2QMUQ3fl34wjrEn07JpN8y4SonxV/J7IRc
+ wqjWZ70fJimeS9ATznQiO021EHnUvgoGQ1+rTzc4/amQKAMfkrFuLZtRh62UCt18PNE0
+ Lcz2PIXNQ2XDe1DvaFka3Z6Yka6LqRDzJaq74KNS2teZyYGa6GTiEK3hGuSwORexrxzp
+ xMe8jzSxWJMTk4SStQ9bweaUK0dS1lzrnzLamdDRa/mbHu/P05q8i9dcpEQO8lAzx0tU 7Q== 
 Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2130.oracle.com with ESMTP id 38e285cvnx-1
+        by aserp2130.oracle.com with ESMTP id 38dg5bdrfm-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 11 May 2021 07:09:22 +0000
+        Tue, 11 May 2021 07:12:15 +0000
 Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 14B6toFY000830;
-        Tue, 11 May 2021 07:09:21 GMT
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 14B79nvX051622;
+        Tue, 11 May 2021 07:12:15 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-        by aserp3030.oracle.com with ESMTP id 38e5pwqj3b-1
+        by aserp3030.oracle.com with ESMTP id 38e5pwqmp5-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 11 May 2021 07:09:21 +0000
+        Tue, 11 May 2021 07:12:15 +0000
 Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 14B72Osn026089;
-        Tue, 11 May 2021 07:09:20 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3030.oracle.com with ESMTP id 38e5pwqj2v-1
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 14B7CE11060528;
+        Tue, 11 May 2021 07:12:14 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 38e5pwqmnk-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 11 May 2021 07:09:20 +0000
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 14B79GL4024914;
-        Tue, 11 May 2021 07:09:18 GMT
+        Tue, 11 May 2021 07:12:14 +0000
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 14B7C7Cj021104;
+        Tue, 11 May 2021 07:12:12 GMT
 Received: from mwanda (/102.36.221.92)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 11 May 2021 07:09:16 +0000
-Date:   Tue, 11 May 2021 10:09:08 +0300
+        with ESMTP ; Tue, 11 May 2021 00:12:07 -0700
+Date:   Tue, 11 May 2021 10:12:00 +0300
 From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Andy Gross <agross@kernel.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     Richard Weinberger <richard@nod.at>
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Artem Bityutskiy <Artem.Bityutskiy@nokia.com>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: [PATCH] clk: qcom: cleanup some dev_err_probe() calls
-Message-ID: <YJotlJBJ1CVAgvMT@mwanda>
+Subject: [PATCH] ubifs: fix snprintf() checking
+Message-ID: <YJouQKMQZe1I2kkg@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
-X-Proofpoint-GUID: jIWi1qqxZ-LroHYhOiPYS0431XlE8Odm
-X-Proofpoint-ORIG-GUID: jIWi1qqxZ-LroHYhOiPYS0431XlE8Odm
+X-Proofpoint-GUID: 3wvVLYegYHyQAbTUgjskSeriImquWwta
+X-Proofpoint-ORIG-GUID: 3wvVLYegYHyQAbTUgjskSeriImquWwta
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9980 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 mlxlogscore=999
- mlxscore=0 bulkscore=0 lowpriorityscore=0 priorityscore=1501 spamscore=0
- clxscore=1015 impostorscore=0 phishscore=0 malwarescore=0 adultscore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 malwarescore=0
+ bulkscore=0 spamscore=0 clxscore=1011 priorityscore=1501 adultscore=0
+ mlxlogscore=999 mlxscore=0 suspectscore=0 impostorscore=0 phishscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
- definitions=main-2105110053
+ definitions=main-2105110054
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The dev_err_probe() function prints an error message if the error
-code is not -EPROBE_DEFER.  If we know the error code in is -ENODEV
-then there is no reason to check.  Conversely, we do not need to
-check for -EPROBE_DEFER before calling.
+The snprintf() function returns the number of characters (not
+counting the NUL terminator) that it would have printed if we
+had space.
 
+This buffer has UBIFS_DFS_DIR_LEN characters plus one extra for
+the terminator.  Printing UBIFS_DFS_DIR_LEN is okay but anything
+higher will result in truncation.  Thus the comparison needs to be
+change from == to >.
+
+These strings are compile time constants so this patch doesn't
+affect runtime.
+
+Fixes: ae380ce04731 ("UBIFS: lessen the size of debugging info data structure")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/clk/qcom/apcs-sdx55.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/mtd/ubi/debug.c | 2 +-
+ fs/ubifs/debug.c        | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/qcom/apcs-sdx55.c b/drivers/clk/qcom/apcs-sdx55.c
-index d0edabebf9c2..ee3fbe755f72 100644
---- a/drivers/clk/qcom/apcs-sdx55.c
-+++ b/drivers/clk/qcom/apcs-sdx55.c
-@@ -57,7 +57,7 @@ static int qcom_apcs_sdx55_clk_probe(struct platform_device *pdev)
+diff --git a/drivers/mtd/ubi/debug.c b/drivers/mtd/ubi/debug.c
+index ac2bdba8bb1a..3c0c8eca4d51 100644
+--- a/drivers/mtd/ubi/debug.c
++++ b/drivers/mtd/ubi/debug.c
+@@ -511,7 +511,7 @@ int ubi_debugfs_init_dev(struct ubi_device *ubi)
  
- 	regmap = dev_get_regmap(parent, NULL);
- 	if (!regmap) {
--		dev_err_probe(dev, -ENODEV, "Failed to get parent regmap\n");
-+		dev_err(dev, "Failed to get parent regmap\n");
- 		return -ENODEV;
+ 	n = snprintf(d->dfs_dir_name, UBI_DFS_DIR_LEN + 1, UBI_DFS_DIR_NAME,
+ 		     ubi->ubi_num);
+-	if (n == UBI_DFS_DIR_LEN) {
++	if (n > UBI_DFS_DIR_LEN) {
+ 		/* The array size is too small */
+ 		return -EINVAL;
  	}
+diff --git a/fs/ubifs/debug.c b/fs/ubifs/debug.c
+index 1bbb9fe661b1..fc718f6178f2 100644
+--- a/fs/ubifs/debug.c
++++ b/fs/ubifs/debug.c
+@@ -2824,7 +2824,7 @@ void dbg_debugfs_init_fs(struct ubifs_info *c)
  
-@@ -82,9 +82,7 @@ static int qcom_apcs_sdx55_clk_probe(struct platform_device *pdev)
- 	a7cc->pclk = devm_clk_get(parent, "pll");
- 	if (IS_ERR(a7cc->pclk)) {
- 		ret = PTR_ERR(a7cc->pclk);
--		if (ret != -EPROBE_DEFER)
--			dev_err_probe(dev, ret, "Failed to get PLL clk\n");
--		return ret;
-+		return dev_err_probe(dev, ret, "Failed to get PLL clk\n");
+ 	n = snprintf(d->dfs_dir_name, UBIFS_DFS_DIR_LEN + 1, UBIFS_DFS_DIR_NAME,
+ 		     c->vi.ubi_num, c->vi.vol_id);
+-	if (n == UBIFS_DFS_DIR_LEN) {
++	if (n > UBIFS_DFS_DIR_LEN) {
+ 		/* The array size is too small */
+ 		return;
  	}
- 
- 	a7cc->clk_nb.notifier_call = a7cc_notifier_cb;
 -- 
 2.30.2
+
