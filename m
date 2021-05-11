@@ -2,134 +2,84 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D6E6C433B4
-	for <kernel-janitors@archiver.kernel.org>; Tue, 11 May 2021 07:22:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDC4AC43470
+	for <kernel-janitors@archiver.kernel.org>; Tue, 11 May 2021 08:26:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 63DE161923
-	for <kernel-janitors@archiver.kernel.org>; Tue, 11 May 2021 07:22:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B970A61622
+	for <kernel-janitors@archiver.kernel.org>; Tue, 11 May 2021 08:26:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230097AbhEKHXj (ORCPT
+        id S230495AbhEKI16 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 11 May 2021 03:23:39 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:53000 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229924AbhEKHXg (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 11 May 2021 03:23:36 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 14B7KC7j165568;
-        Tue, 11 May 2021 07:22:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=LIqIlTYR8W6LmxNRlfRBjYRVMwL26zOpcyZEqTLcG3k=;
- b=QMpO3kGAQFAcZyRBMYZiaJYMQIyc+PB8a9Kc0GQHLnff3o/owJbtaJNfaV1P7G670Jc7
- XXnQMXsljf94jK4b19UVkNQM7KYxhimfrs70sedenN7ZJMy8FPpiZXXD9UuE8GPi0ep/
- A80ZLGyH8MgvRtH2a5dKu5AeEzMoxyTotqsTWQ1eSmdonKjVlqx00lMJdiELuUIn1rDv
- EVZWqP4OoNeNL1NmXuCHlqS3dlZMpzFkxQ1Ti+7CzGVpVtfEs6CnySItoJolm/30Ll0q
- d22/zxmc6uAjOJt9si71+rS7/vIC3P20Wj64asftchdJUEPjVpF9kl0lHpTFC4wmEU7a TQ== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 38e285cwr5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 11 May 2021 07:22:27 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 14B7K0CP077626;
-        Tue, 11 May 2021 07:22:26 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by userp3020.oracle.com with ESMTP id 38fh3w96wb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 11 May 2021 07:22:26 +0000
-Received: from userp3020.oracle.com (userp3020.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 14B7Kv8h081385;
-        Tue, 11 May 2021 07:22:26 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3020.oracle.com with ESMTP id 38fh3w96w5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 11 May 2021 07:22:26 +0000
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 14B7MPNq026849;
-        Tue, 11 May 2021 07:22:25 GMT
-Received: from mwanda (/102.36.221.92)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 11 May 2021 00:22:24 -0700
-Date:   Tue, 11 May 2021 10:22:19 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Malcolm Priestley <tvboxspy@gmail.com>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] media: lmedm04: delete lme2510_get_adapter_count()
-Message-ID: <YJowq0hJZ6cFDX/6@mwanda>
+        Tue, 11 May 2021 04:27:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35982 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230431AbhEKI1v (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 11 May 2021 04:27:51 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 96A1561107;
+        Tue, 11 May 2021 08:26:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1620721605;
+        bh=bYIaUAprXVrQfA7WorJjuNskjH3tHeoOdXcsy6zWmqM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Mdi7DjVpvXPwq3QIlmFS4cQAhgrT1tsoPhmW/v1oaFswrqaVBoZb29Iv6+KgWq/X0
+         RswE5cniiDVxehNo0YPebeIqJ0nI5zirtUbNDV4xM41Y/XfsiGxlY/v+29oFcg+vfB
+         NlO/snxA05F7bZeIRF7ArOp87G9vey6+iepUnmBb2KFzRuwULDyXyfzfJGSqE9aWcI
+         i5YPGqLUycafEUBajh5wuna+e24HWCCvX+lw4hPeslQkhtdIa0ogIjd56fsKH4J6Fa
+         PEmyqFhOV1Yt1X5nnQ0S8zDBuB0Q4fqd4z/xjbaLhpB/C6mM7Tz8dvyWvYjcCBsCuu
+         zuYblQWVBuqUw==
+From:   Mark Brown <broonie@kernel.org>
+To:     skomatineni@nvidia.com, thierry.reding@gmail.com,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        jonathanh@nvidia.com, ldewangan@nvidia.com
+Cc:     Mark Brown <broonie@kernel.org>, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] spi: tegra210-quad: Fix an error message
+Date:   Tue, 11 May 2021 09:25:30 +0100
+Message-Id: <162072071981.33404.5625114795994944628.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <b990c1bb5830196142c3d70e3e3c6c0245a7e75f.1620404705.git.christophe.jaillet@wanadoo.fr>
+References: <b990c1bb5830196142c3d70e3e3c6c0245a7e75f.1620404705.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-X-Proofpoint-GUID: zzJUf4pMPLC7VRtiREv6Ypfx-s_5r19i
-X-Proofpoint-ORIG-GUID: zzJUf4pMPLC7VRtiREv6Ypfx-s_5r19i
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9980 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 mlxlogscore=999
- mlxscore=0 bulkscore=0 lowpriorityscore=0 priorityscore=1501 spamscore=0
- clxscore=1011 impostorscore=0 phishscore=0 malwarescore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
- definitions=main-2105110055
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The adapter count is fixed at compile time so we can delete the
-lme2510_get_adapter_count() function and set ".num_adapters = 1"
-instead.  There is also no need to create a zeroed adapter
-element at the end of the array.  Remove that as well.
+On Fri, 7 May 2021 18:26:39 +0200, Christophe JAILLET wrote:
+> 'ret' is known to be 0 here.
+> No error code is available, so just remove it from the error message.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-From code review.  Not tested.
+Applied to
 
- drivers/media/usb/dvb-usb-v2/lmedm04.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-diff --git a/drivers/media/usb/dvb-usb-v2/lmedm04.c b/drivers/media/usb/dvb-usb-v2/lmedm04.c
-index 1b6d4e4c52ca..fe4d886442a4 100644
---- a/drivers/media/usb/dvb-usb-v2/lmedm04.c
-+++ b/drivers/media/usb/dvb-usb-v2/lmedm04.c
-@@ -1122,11 +1122,6 @@ static int lme2510_powerup(struct dvb_usb_device *d, int onoff)
- 	return ret;
- }
- 
--static int lme2510_get_adapter_count(struct dvb_usb_device *d)
--{
--	return 1;
--}
--
- static int lme2510_identify_state(struct dvb_usb_device *d, const char **name)
- {
- 	struct lme2510_state *st = d->priv;
-@@ -1211,12 +1206,12 @@ static struct dvb_usb_device_properties lme2510_props = {
- 	.frontend_attach  = dm04_lme2510_frontend_attach,
- 	.tuner_attach = dm04_lme2510_tuner,
- 	.get_stream_config = lme2510_get_stream_config,
--	.get_adapter_count = lme2510_get_adapter_count,
- 	.streaming_ctrl   = lme2510_streaming_ctrl,
- 
- 	.get_rc_config = lme2510_get_rc_config,
- 
- 	.exit = lme2510_exit,
-+	.num_adapters = 1,
- 	.adapter = {
- 		{
- 			.caps = DVB_USB_ADAP_HAS_PID_FILTER|
-@@ -1227,8 +1222,6 @@ static struct dvb_usb_device_properties lme2510_props = {
- 			.stream =
- 			DVB_USB_STREAM_BULK(0x86, 10, 4096),
- 		},
--		{
--		}
- 	},
- };
- 
--- 
-2.30.2
+Thanks!
 
+[1/1] spi: tegra210-quad: Fix an error message
+      commit: 665a990fdbea66a4d2af0287420f8266631be2ab
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
