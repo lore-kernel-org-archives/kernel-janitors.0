@@ -2,182 +2,85 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45B71C433ED
-	for <kernel-janitors@archiver.kernel.org>; Wed, 12 May 2021 13:53:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7631BC433B4
+	for <kernel-janitors@archiver.kernel.org>; Wed, 12 May 2021 14:36:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 081F2613DE
-	for <kernel-janitors@archiver.kernel.org>; Wed, 12 May 2021 13:53:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 329AC6100A
+	for <kernel-janitors@archiver.kernel.org>; Wed, 12 May 2021 14:36:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230466AbhELNyJ convert rfc822-to-8bit (ORCPT
+        id S231176AbhELOhd (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 12 May 2021 09:54:09 -0400
-Received: from mail.sch.bme.hu ([152.66.249.140]:40356 "EHLO mail.sch.bme.hu"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230182AbhELNyI (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 12 May 2021 09:54:08 -0400
-Received: from mail-lj1-f175.google.com (209.85.208.175) by
- Exchange2016-1.sch.bme.hu (152.66.249.140) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2176.14; Wed, 12 May 2021 15:52:57 +0200
-Received: by mail-lj1-f175.google.com with SMTP id f12so17106964ljp.2;
-        Wed, 12 May 2021 06:52:57 -0700 (PDT)
-X-Gm-Message-State: AOAM533HbYrMtgT0gWJVc4tsWfXX8BkyRGGBwmpKt6wSNZwJ5PM4VzO+
-        e/zDUTXTWKClmvSTnoWF2knq288HOD2gmHxaXLs=
-X-Google-Smtp-Source: ABdhPJzeRiNPcZCMpb90Z/3PTiS9IBrL68IEGlqU8RLLZLNfHVH8nKZ1FGOiWvGo9MW8NWf9VYmcZImjxMk/1KJoVds=
-X-Received: by 2002:a2e:97c3:: with SMTP id m3mr29562424ljj.231.1620827576825;
- Wed, 12 May 2021 06:52:56 -0700 (PDT)
+        Wed, 12 May 2021 10:37:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35600 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230247AbhELOhc (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 12 May 2021 10:37:32 -0400
+Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 577FEC061574;
+        Wed, 12 May 2021 07:36:24 -0700 (PDT)
+Received: by mail-pg1-x52b.google.com with SMTP id z4so1035160pgb.9;
+        Wed, 12 May 2021 07:36:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=XHFz1AUQhthLuyvfQKtlXX4LXpuG6vLo1bOCg3QrkZo=;
+        b=i3jOyKghni2mQg2K/X/IR88r7IcfCS8INVVrMqoxLyE1rPleaduJBw1+ATBAZTby1P
+         dWGFP+0kNHb3/lWVqoEjj5z9rycG0aZrKEHQ0QrY/Uy9zf9emgiswJe6orAOiK/t1D2i
+         kSimYL2ccc879rHI09fh8ISqRMj0/rwdVUn+/Hhsblbpdfjvgj2Hlh00BQ/tnHd39SkD
+         rBRaAwF+/wwM6sFqo/v3qubmHFV7nsGcv6vMXkRc9kq4xH4UhM2GEkA22R0VGgr3se+9
+         f0M0m+NIPn8axjVvk6chnWeMnm7TET4hXfHL5Q8MOIzhiYJP8unIVCyv3ZbwRbLkDxm6
+         c63A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=XHFz1AUQhthLuyvfQKtlXX4LXpuG6vLo1bOCg3QrkZo=;
+        b=FSql0+/UHL6ZP6zl6WrFB7B0ymL0xxvaQ03XeYdOx9UURQg3Nh2aQ2KvC2fhaKNQiG
+         eweBUl4VzcXiFL39VBwrJqh/H8iQKyoiLyHWAPnM1QZfmNR8WGfslTPtLe9Y7WSLmZr+
+         9jS48aDJteNdHcZ0+WVBzKneqh7+3tJ9ivDI+MDjmt3nfUOt7f1df0JbCd24PBp9/Bor
+         SW4Bi9SDKXyQb39TLMubZc05gWcfB+5IHq/8TRYKRI2Ko8rIH1JyjLqn/D30ii4COzDt
+         HIqpsw9J6xbMURlcevxI48BRCzqCJEnJUZj1qXkIZCQRS/P8752iLlYb5NB5NQUhhTYq
+         4T4g==
+X-Gm-Message-State: AOAM530xIdhi9V56ZipDc/+UoJyF1vBLNECL8nlrYxktY5qodHhclKdn
+        Uuhn7YGnxQ+roQyR4h41tb6cOpJnBtE=
+X-Google-Smtp-Source: ABdhPJwXt5MUPOJxBxkQ4TLe4aHkfOhSH4/gqUZPbBzXWoXM4fTjycA+2Ql6UXm7XJIB4CyN+gotJA==
+X-Received: by 2002:aa7:955b:0:b029:28e:a874:d0c2 with SMTP id w27-20020aa7955b0000b029028ea874d0c2mr35349909pfq.66.1620830183906;
+        Wed, 12 May 2021 07:36:23 -0700 (PDT)
+Received: from hoboy.vegasvil.org ([2601:645:c000:35:e2d5:5eff:fea5:802f])
+        by smtp.gmail.com with ESMTPSA id z3sm101998pfe.78.2021.05.12.07.36.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 May 2021 07:36:22 -0700 (PDT)
+Date:   Wed, 12 May 2021 07:36:20 -0700
+From:   Richard Cochran <richardcochran@gmail.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     kuba@kernel.org, jonathan.lemon@gmail.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] ptp: ocp: Fix a resource leak in an error handling path
+Message-ID: <20210512143620.GE27051@hoboy.vegasvil.org>
+References: <141cd7dc7b44385ead176b1d0eb139573b47f110.1620818043.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-References: <YJuosd6rew91vlyX@mwanda> <CACCVKEEQViw1FaSA4dZoy3KbZydxDyxdx+uf=zQW1Q=R5kRAcg@mail.gmail.com>
- <20210512131034.GW1955@kadam>
-In-Reply-To: <20210512131034.GW1955@kadam>
-From:   =?UTF-8?B?QmVuY2UgQ3PDs2vDoXM=?= <bence98@sch.bme.hu>
-Date:   Wed, 12 May 2021 15:52:45 +0200
-X-Gmail-Original-Message-ID: <CACCVKEGb6yKxAUZry7CsXovihdUDMxi4zNNbAL_jtoEWUD3V+A@mail.gmail.com>
-Message-ID: <CACCVKEGb6yKxAUZry7CsXovihdUDMxi4zNNbAL_jtoEWUD3V+A@mail.gmail.com>
-Subject: Re: [PATCH] i2c: cp2615: check for allocation failure in cp2615_i2c_recv()
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-CC:     Wolfram Sang <wsa@kernel.org>, <linux-i2c@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [209.85.208.175]
-X-ClientProxiedBy: Exchange2016-1.sch.bme.hu (152.66.249.140) To
- Exchange2016-1.sch.bme.hu (152.66.249.140)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <141cd7dc7b44385ead176b1d0eb139573b47f110.1620818043.git.christophe.jaillet@wanadoo.fr>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-All right, if you want to do that, fine. I did it this way, because it
-took 1 less `goto`s... But your approach is equally valid.
+On Wed, May 12, 2021 at 01:15:29PM +0200, Christophe JAILLET wrote:
+> If an error occurs after a successful 'pci_ioremap_bar()' call, it must be
+> undone by a corresponding 'pci_iounmap()' call, as already done in the
+> remove function.
+> 
+> Fixes: a7e1abad13f3 ("ptp: Add clock driver for the OpenCompute TimeCard.")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-But, to keep it consistent, if you change it one place, change it
-everywhere else.
-
-Regards,
-Bence
-
-Dan Carpenter <dan.carpenter@oracle.com> ezt írta (időpont: 2021. máj.
-12., Sze, 15:11):
->
-> On Wed, May 12, 2021 at 12:54:47PM +0200, Bence Csókás wrote:
-> > Dan Carpenter <dan.carpenter@oracle.com> ezt írta (időpont: 2021. máj.
-> > 12., Sze, 12:07):
-> > >
-> > > We need to add a check for if the kzalloc() fails.
-> >
-> > That is correct, I missed that :/
-> >
-> > >
-> > > Fixes: 4a7695429ead ("i2c: cp2615: add i2c driver for Silicon Labs' CP2615 Digital Audio Bridge")
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > > ---
-> > >  drivers/i2c/busses/i2c-cp2615.c | 14 ++++++++++----
-> > >  1 file changed, 10 insertions(+), 4 deletions(-)
-> > >
-> > > diff --git a/drivers/i2c/busses/i2c-cp2615.c b/drivers/i2c/busses/i2c-cp2615.c
-> > > index 78cfecd1ea76..3ded28632e4c 100644
-> > > --- a/drivers/i2c/busses/i2c-cp2615.c
-> > > +++ b/drivers/i2c/busses/i2c-cp2615.c
-> > > @@ -138,17 +138,23 @@ cp2615_i2c_send(struct usb_interface *usbif, struct cp2615_i2c_transfer *i2c_w)
-> > >  static int
-> > >  cp2615_i2c_recv(struct usb_interface *usbif, unsigned char tag, void *buf)
-> > >  {
-> > > -       struct cp2615_iop_msg *msg = kzalloc(sizeof(*msg), GFP_KERNEL);
-> > > -       struct cp2615_i2c_transfer_result *i2c_r = (struct cp2615_i2c_transfer_result *)&msg->data;
-> >
-> > These two lines could stay as-is, since the invalid i2c_r will never be used.
-> >
->
-> Yeah, I know but people shouldn't put functions which can fail inside
-> the declaration block.  And I also know that doing:
->
->         struct cp2615_i2c_transfer_result *i2c_r = (struct cp2615_i2c_transfer_result *)&msg->data;
->
-> is fine even when "msg" is NULL.  But don't do that, because it is ugly.
->
-> > >         struct usb_device *usbdev = interface_to_usbdev(usbif);
-> > > -       int res = usb_bulk_msg(usbdev, usb_rcvbulkpipe(usbdev, IOP_EP_IN),
-> > > -                              msg, sizeof(struct cp2615_iop_msg), NULL, 0);
-> > > +       struct cp2615_iop_msg *msg;
-> > > +       struct cp2615_i2c_transfer_result *i2c_r;
-> > > +       int res;
-> > > +
-> > > +       msg = kzalloc(sizeof(*msg), GFP_KERNEL);
-> > > +       if (!msg)
-> > > +               return -ENOMEM;
-> >
-> > You will want to also make `cp2615_init_iop_msg()` return -ENOMEM
-> > instead of -EINVAL, for consistency's sake.
-> >
->
-> I view that as unrelated and I'm sorry but this error handling code is
-> not really best practices...  I don't have time to fix it up.  :/
->
-> drivers/i2c/busses/i2c-cp2615.c
->    124  static int
->    125  cp2615_i2c_send(struct usb_interface *usbif, struct cp2615_i2c_transfer *i2c_w)
->    126  {
->    127          struct cp2615_iop_msg *msg = kzalloc(sizeof(*msg), GFP_KERNEL);
->
-> Don't put functions which can fail inside the declaration block.
-> Although, it is relatively uncommon to put allocations inside the
-> declaration block these sorts of allocations are over represented when
-> it comes to memory leaks and other static analysis bugs.
->
->    128          struct usb_device *usbdev = interface_to_usbdev(usbif);
->    129          int res = cp2615_init_i2c_msg(msg, i2c_w);
->
-> Handle failures immediately.  Try not to mix the error paths and the
-> success paths.  After a function call, then you're going to have to deal
-> with both failure and success path, but the failure path is just
-> "clean up and return an error code" and the success path is hopefully
-> going to continue for days or months.  So get the shorter failure path
-> out of the way first, then continue with the success path.
->
->    130
->    131          if (!res)
->
-> Always do error handling, don't do success handling.
->
->    132                  res = usb_bulk_msg(usbdev, usb_sndbulkpipe(usbdev, IOP_EP_OUT),
->    133                                     msg, ntohs(msg->length), NULL, 0);
->
-> The success path should be indented one tab and the error handling
-> should be indented two tabs.
->
->    134          kfree(msg);
->    135          return res;
->    136  }
->
-> The function should look like this.
->
-> static int
-> cp2615_i2c_send(struct usb_interface *usbif, struct cp2615_i2c_transfer *i2c_w)
-> {
->         struct usb_device *usbdev = interface_to_usbdev(usbif);
->         struct cp2615_iop_msg *msg;
->         int res;
->
->         msg = kzalloc(sizeof(*msg), GFP_KERNEL);
->         if (!msg)
->                 return -ENOMEM;
->
->         res = cp2615_init_i2c_msg(msg, i2c_w);
->         if (res)
->                 goto free;
->
->         res = usb_bulk_msg(usbdev, usb_sndbulkpipe(usbdev, IOP_EP_OUT),
->                            msg, ntohs(msg->length), NULL, 0);
-> free:
->         kfree(msg);
->         return res;
-> }
->
-> regards,
-> dan carpenter
->
+Acked-by: Richard Cochran <richardcochran@gmail.com>
