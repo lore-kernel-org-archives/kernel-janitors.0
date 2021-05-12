@@ -2,74 +2,89 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D865C433ED
-	for <kernel-janitors@archiver.kernel.org>; Wed, 12 May 2021 21:40:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0526AC433B4
+	for <kernel-janitors@archiver.kernel.org>; Wed, 12 May 2021 21:40:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DE40D613E6
-	for <kernel-janitors@archiver.kernel.org>; Wed, 12 May 2021 21:40:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7E5D61459
+	for <kernel-janitors@archiver.kernel.org>; Wed, 12 May 2021 21:40:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239875AbhELVlS (ORCPT
+        id S239983AbhELVlb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 12 May 2021 17:41:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40738 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237616AbhELVLm (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 12 May 2021 17:11:42 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id BCEE261406;
-        Wed, 12 May 2021 21:10:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1620853810;
-        bh=mo9JAJAZO1+EYpVeXiY2Wy9tImvw6V6BMPdk7k7W6dU=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=C56o2t8EW/navsNCQgLK/KfPzbp+Fvpmb7nzYN49tmlWHDVISdIyQHWREgNE1Vx+M
-         9tuUEKCZgPJxKCw7f9JGauO+hKahWEoeqz6VTjBTjxTJSiCl3Z5+KvNMfK/eFCeYq3
-         5Q8KEQx+Vyj/G0Y82dgx9M2F31C05rx9ohd3Tb6EaWcxVMibCQHCfPrQmWyG7AWJZl
-         1gmUTQ9XJj6aFIW2lwKtBTYhNt+aH+xebeVthNCNYkmQ7utAzhHyjZ0rkq6GQqel3y
-         9+2UoqcwTF1IP/hXw8AG3fAwmanzv0QPhvuUVKfif6InL8cGTTbydwPePe7ithFoZU
-         HF0KecDMDQa7A==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] ptp: ocp: Fix a resource leak in an error handling path
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <162085381069.5514.11486827619265689281.git-patchwork-notify@kernel.org>
-Date:   Wed, 12 May 2021 21:10:10 +0000
-References: <141cd7dc7b44385ead176b1d0eb139573b47f110.1620818043.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <141cd7dc7b44385ead176b1d0eb139573b47f110.1620818043.git.christophe.jaillet@wanadoo.fr>
+        Wed, 12 May 2021 17:41:31 -0400
+Received: from mslow1.mail.gandi.net ([217.70.178.240]:52801 "EHLO
+        mslow1.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1391882AbhELVd6 (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 12 May 2021 17:33:58 -0400
+Received: from relay9-d.mail.gandi.net (unknown [217.70.183.199])
+        by mslow1.mail.gandi.net (Postfix) with ESMTP id CF8BDCE11C
+        for <kernel-janitors@vger.kernel.org>; Wed, 12 May 2021 21:25:03 +0000 (UTC)
+X-Originating-IP: 90.65.108.55
+Received: from localhost (lfbn-lyo-1-1676-55.w90-65.abo.wanadoo.fr [90.65.108.55])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 24ABAFF803;
+        Wed, 12 May 2021 21:22:38 +0000 (UTC)
+Date:   Wed, 12 May 2021 23:22:37 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     richardcochran@gmail.com, kuba@kernel.org,
-        jonathan.lemon@gmail.com, netdev@vger.kernel.org,
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Edmundo Carmona Antoranz <eantoranz@gmail.com>,
+        cw00.choi@samsung.com, b.zolnierkie@samsung.com,
+        a.zummo@towertech.it, linux-rtc@vger.kernel.org,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] rtc: max77686: Remove some dead code
+Message-ID: <YJxHHWvzppGHUbCW@piout.net>
+References: <a6b23ee8d3ea78f62d3fda0b53aa273718f14c6d.1620452523.git.christophe.jaillet@wanadoo.fr>
+ <CAOc6etaUPtJqoH9DBDE72nDW7s7iEZHnaJRpKx9zFow02WOZig@mail.gmail.com>
+ <9f34ebcd-0c17-cd7f-eb08-52c6c3dc7b03@wanadoo.fr>
+ <CAOc6etYwTvVPnoB3BQfuQEikvsCwSs9AqBWnLFrs9zQ0pJGp1A@mail.gmail.com>
+ <YJhO0cEqpbJAdv7s@piout.net>
+ <219efcc7-ca05-a7d1-5943-d34a42f0d49f@canonical.com>
+ <YJv+mMRcOuTJxLuk@piout.net>
+ <9535976d-1029-3668-4be4-c09068ccf84c@wanadoo.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9535976d-1029-3668-4be4-c09068ccf84c@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
-
-This patch was applied to netdev/net.git (refs/heads/master):
-
-On Wed, 12 May 2021 13:15:29 +0200 you wrote:
-> If an error occurs after a successful 'pci_ioremap_bar()' call, it must be
-> undone by a corresponding 'pci_iounmap()' call, as already done in the
-> remove function.
+On 12/05/2021 22:02:17+0200, Christophe JAILLET wrote:
+> > The only error path that will not print a message by default (it is
+> > dev_dbg) is when rtc-ops is NULL which I don't expect would regress
+> > anyway.
+> > 
+> > A better way to remove the dead code would be to switch to
+> > devm_rtc_allocate_device/devm_rtc_register_device.
 > 
-> Fixes: a7e1abad13f3 ("ptp: Add clock driver for the OpenCompute TimeCard.")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> I don't follow you here.
+> Isn't devm_rtc_device_register = devm_rtc_allocate_device +
+> devm_rtc_register_device?
 > 
-> [...]
+> What would be the benefit for switch to the latter?
+> 
 
-Here is the summary with links:
-  - ptp: ocp: Fix a resource leak in an error handling path
-    https://git.kernel.org/netdev/net/c/9c1bb37f8cad
+The immediate benefit is that this solve a possible but very unlikely
+race condition around the character device removal when probe ultimately
+fails. The other benefit is that I won't have to do it later to handle
+the modern features.
 
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+> 
+> > And even better would
+> > be to take that opportunity to set range_min and range_max ;)
+> 
+> Maybe, but this goes beyond my knowledge.
+> I'll let someone else propose a patch for it.
+> 
+> CJ
+> 
 
-
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
