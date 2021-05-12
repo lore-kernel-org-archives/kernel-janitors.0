@@ -2,101 +2,108 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84520C433B4
-	for <kernel-janitors@archiver.kernel.org>; Wed, 12 May 2021 10:19:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31C25C433ED
+	for <kernel-janitors@archiver.kernel.org>; Wed, 12 May 2021 10:24:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4632C613DF
-	for <kernel-janitors@archiver.kernel.org>; Wed, 12 May 2021 10:19:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3061613D3
+	for <kernel-janitors@archiver.kernel.org>; Wed, 12 May 2021 10:24:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230018AbhELKUK (ORCPT
+        id S230126AbhELKZu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 12 May 2021 06:20:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42694 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230145AbhELKUI (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 12 May 2021 06:20:08 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D1E87613BE;
-        Wed, 12 May 2021 10:19:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1620814740;
-        bh=u3IdEUw5iqENTS2r+X9v7WRZxxumpLboTCBqIFW0waI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Damw++OFpp6bVGcaBAW3iz00Q6HIVxmAp9ZH6LY2aKlfVMjMCM+LAI27hsxDqT0nP
-         npC1egUSqMZF+etbc/lDdSeMjSXXos5KFrRneyu7IE8NxHXV2JSt9rJ8R5cp3X8rY+
-         lDH76ljzAV5M5FhE68TkxU1G6ftSCXNGwVS5GWnVh41svjAs69IS8gYrKWXgyqMhC1
-         E3WdXFXmnbOVLkXn5ZuY1C882hMrC3+dX9SghEQ8COx365vxfLuA2IyllilGWm95WO
-         CLbY0rPJ98CBHlRfXunyK2uQooDPCKyenCzGEyAPW7wNu7COP/z7UwnAdi8JbM8hta
-         FlkvCgJhA0BEQ==
-Received: from johan by xi.lan with local (Exim 4.94.2)
-        (envelope-from <johan@kernel.org>)
-        id 1lglxH-0004Ob-6b; Wed, 12 May 2021 12:19:03 +0200
-Date:   Wed, 12 May 2021 12:19:03 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Denis Joseph Barrow <D.Barow@option.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Oliver Neukum <oneukum@suse.com>,
-        Anirudh Rayabharam <mail@anirudhrb.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rustam Kovhaev <rkovhaev@gmail.com>,
-        Zheng Yongjun <zhengyongjun3@huawei.com>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        linux-usb@vger.kernel.org, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net] net: hso: check for allocation failure in
- hso_create_bulk_serial_device()
-Message-ID: <YJurlxqQ9L+zzIAS@hovoldconsulting.com>
-References: <YJupQPb+Y4vw3rDk@mwanda>
+        Wed, 12 May 2021 06:25:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35288 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230096AbhELKZt (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 12 May 2021 06:25:49 -0400
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F2A3C061574;
+        Wed, 12 May 2021 03:24:41 -0700 (PDT)
+Received: by mail-wm1-x32e.google.com with SMTP id z130so538177wmg.2;
+        Wed, 12 May 2021 03:24:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2C2FoO6CrkTJpcGiem/5LfYRMsdprpFU1pFNFre5PRM=;
+        b=UZt1xRZmGhJF5Q0uJVIwFG7zBYENuHPzd2yyk7MoecrDBUTaz+qH6YbdtdxOHjNZA4
+         WHEszknrv/D0p4ucYQb4SENgApeYpo2RJEidLP6phMKnPR1H1MFHQ5Zvhm5axSeXhAKw
+         ZUCfAnrxru2NQ2c4o93OX0+cQd35q7ttFl4xWg11or2L/DbNgyilaKrVORfA/u0Gs9Ng
+         +xxJ9FSBLmRU3NrAgMFIuOzp0W3J0cbO5roy3n8aa5IP3KzxbxYHnM4htryEKxUGM1/2
+         WgLBronUHl1H/yjxk43q9KSgmJDqwco8hxRZoAT+UYP+n1nF+2JkKOjuiSCAIbt4zD+5
+         lB4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2C2FoO6CrkTJpcGiem/5LfYRMsdprpFU1pFNFre5PRM=;
+        b=a7gXgTOwuyEQNELPei0nPCkIx1JpHiYhuM1SfTcsAEBGebj8DNwnobTEtypoRrC8+A
+         FT4TB5U/vEfIPfzBDH0L2w3QyKbDw7XxtoIFuIC1BSgIxlzyRZ0SnuKRIds2s/LnLzGM
+         fRu6UtAXlWCFWCFvjv/u/5aNJn0e59dAGKCs3+kZAYlKdEhn7YHav7goi1C9fybf4LCy
+         3sldDJVZU68/dbEWuivqBz3ZEEH/2/ebwtGAv1540nrXYWAYiVV3ef4oS8AumwPba7Y6
+         FmcoyUxBtn6EGeQ5rRYRw9jAAtdpdhFf2rf0hug11rU54wbkm92ESYiNpywhj0IKpI1x
+         8P0A==
+X-Gm-Message-State: AOAM530FhCsbJ/xp0ekIrwRM/bqS0xYIm5O2bD0jw0sqmzKEtxuO1jCH
+        dSvdR8z26ruAywPsIo98TougV8HGEPC4lbYAX64=
+X-Google-Smtp-Source: ABdhPJwKtvHD6waVQCEBi+xcuxQD0bG0NpXRy5dEl4DqO0SBz7bIBuK10YObBGgXav/mX4UGb12zYjAr1ncXww7lj9w=
+X-Received: by 2002:a7b:c312:: with SMTP id k18mr38162819wmj.89.1620815079575;
+ Wed, 12 May 2021 03:24:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YJupQPb+Y4vw3rDk@mwanda>
+References: <YJup3/Ih2vIOXK2R@mwanda>
+In-Reply-To: <YJup3/Ih2vIOXK2R@mwanda>
+From:   Sunil Kovvuri <sunil.kovvuri@gmail.com>
+Date:   Wed, 12 May 2021 15:54:28 +0530
+Message-ID: <CA+sq2Ce0yA1Deh=q_Ne0qNGebwmGOfnMmV75_foKxbXnPnXOwA@mail.gmail.com>
+Subject: Re: [PATCH net] octeontx2-pf: fix a buffer overflow in otx2_set_rxfh_context()
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Sunil Goutham <sgoutham@marvell.com>,
+        Geetha sowjanya <gakula@marvell.com>,
+        Subbaraya Sundeep <sbhatta@marvell.com>,
+        hariprasad <hkelam@marvell.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Linux Netdev List <netdev@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, May 12, 2021 at 01:09:04PM +0300, Dan Carpenter wrote:
-> Add a couple checks for if these allocations fail.
-> 
-> Fixes: 542f54823614 ("tty: Modem functions for the HSO driver")
+On Wed, May 12, 2021 at 3:42 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+>
+> This function is called from ethtool_set_rxfh() and "*rss_context"
+> comes from the user.  Add some bounds checking to prevent memory
+> corruption.
+>
+> Fixes: 81a4362016e7 ("octeontx2-pf: Add RSS multi group support")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > ---
->  drivers/net/usb/hso.c | 4 ++++
+>  drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c | 4 ++++
 >  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/net/usb/hso.c b/drivers/net/usb/hso.c
-> index 3ef4b2841402..3b2a868d7a72 100644
-> --- a/drivers/net/usb/hso.c
-> +++ b/drivers/net/usb/hso.c
-> @@ -2618,9 +2618,13 @@ static struct hso_device *hso_create_bulk_serial_device(
->  		num_urbs = 2;
->  		serial->tiocmget = kzalloc(sizeof(struct hso_tiocmget),
->  					   GFP_KERNEL);
-> +		if (!serial->tiocmget)
-> +			goto exit;
+>
+> diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c
+> index f4962a97a075..9d9a2e438acf 100644
+> --- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c
+> +++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c
+> @@ -786,6 +786,10 @@ static int otx2_set_rxfh_context(struct net_device *dev, const u32 *indir,
+>         if (hfunc != ETH_RSS_HASH_NO_CHANGE && hfunc != ETH_RSS_HASH_TOP)
+>                 return -EOPNOTSUPP;
+>
+> +       if (*rss_context != ETH_RXFH_CONTEXT_ALLOC &&
+> +           *rss_context >= MAX_RSS_GROUPS)
+> +               return -EINVAL;
+> +
+>         rss = &pfvf->hw.rss_info;
+>
+>         if (!rss->enable) {
+> --
+> 2.30.2
+>
 
-Nice catch; the next assignment would go boom if this ever failed.
-
-This appears to have been introduced by 
-
-	af0de1303c4e ("usb: hso: obey DMA rules in tiocmget")
-
->  		serial->tiocmget->serial_state_notification
->  			= kzalloc(sizeof(struct hso_serial_state_notification),
->  					   GFP_KERNEL);
-> +		if (!serial->tiocmget->serial_state_notification)
-> +			goto exit;
->  		/* it isn't going to break our heart if serial->tiocmget
->  		 *  allocation fails don't bother checking this.
->  		 */
-
-You should remove this comment and drop the conditional on the following
-line as well now, though.
-
-Johan
+Acked-by: Sunil Goutham <sgoutham@marvell.com>
