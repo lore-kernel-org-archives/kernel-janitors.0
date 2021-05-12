@@ -2,108 +2,111 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31C25C433ED
-	for <kernel-janitors@archiver.kernel.org>; Wed, 12 May 2021 10:24:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0BDFC433ED
+	for <kernel-janitors@archiver.kernel.org>; Wed, 12 May 2021 11:10:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F3061613D3
-	for <kernel-janitors@archiver.kernel.org>; Wed, 12 May 2021 10:24:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1E2C611F1
+	for <kernel-janitors@archiver.kernel.org>; Wed, 12 May 2021 11:10:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230126AbhELKZu (ORCPT
+        id S230102AbhELLLP convert rfc822-to-8bit (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 12 May 2021 06:25:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35288 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230096AbhELKZt (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 12 May 2021 06:25:49 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F2A3C061574;
-        Wed, 12 May 2021 03:24:41 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id z130so538177wmg.2;
-        Wed, 12 May 2021 03:24:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2C2FoO6CrkTJpcGiem/5LfYRMsdprpFU1pFNFre5PRM=;
-        b=UZt1xRZmGhJF5Q0uJVIwFG7zBYENuHPzd2yyk7MoecrDBUTaz+qH6YbdtdxOHjNZA4
-         WHEszknrv/D0p4ucYQb4SENgApeYpo2RJEidLP6phMKnPR1H1MFHQ5Zvhm5axSeXhAKw
-         ZUCfAnrxru2NQ2c4o93OX0+cQd35q7ttFl4xWg11or2L/DbNgyilaKrVORfA/u0Gs9Ng
-         +xxJ9FSBLmRU3NrAgMFIuOzp0W3J0cbO5roy3n8aa5IP3KzxbxYHnM4htryEKxUGM1/2
-         WgLBronUHl1H/yjxk43q9KSgmJDqwco8hxRZoAT+UYP+n1nF+2JkKOjuiSCAIbt4zD+5
-         lB4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2C2FoO6CrkTJpcGiem/5LfYRMsdprpFU1pFNFre5PRM=;
-        b=a7gXgTOwuyEQNELPei0nPCkIx1JpHiYhuM1SfTcsAEBGebj8DNwnobTEtypoRrC8+A
-         FT4TB5U/vEfIPfzBDH0L2w3QyKbDw7XxtoIFuIC1BSgIxlzyRZ0SnuKRIds2s/LnLzGM
-         fRu6UtAXlWCFWCFvjv/u/5aNJn0e59dAGKCs3+kZAYlKdEhn7YHav7goi1C9fybf4LCy
-         3sldDJVZU68/dbEWuivqBz3ZEEH/2/ebwtGAv1540nrXYWAYiVV3ef4oS8AumwPba7Y6
-         FmcoyUxBtn6EGeQ5rRYRw9jAAtdpdhFf2rf0hug11rU54wbkm92ESYiNpywhj0IKpI1x
-         8P0A==
-X-Gm-Message-State: AOAM530FhCsbJ/xp0ekIrwRM/bqS0xYIm5O2bD0jw0sqmzKEtxuO1jCH
-        dSvdR8z26ruAywPsIo98TougV8HGEPC4lbYAX64=
-X-Google-Smtp-Source: ABdhPJwKtvHD6waVQCEBi+xcuxQD0bG0NpXRy5dEl4DqO0SBz7bIBuK10YObBGgXav/mX4UGb12zYjAr1ncXww7lj9w=
-X-Received: by 2002:a7b:c312:: with SMTP id k18mr38162819wmj.89.1620815079575;
- Wed, 12 May 2021 03:24:39 -0700 (PDT)
+        Wed, 12 May 2021 07:11:15 -0400
+Received: from mail.sch.bme.hu ([152.66.249.140]:20458 "EHLO mail.sch.bme.hu"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230035AbhELLLO (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 12 May 2021 07:11:14 -0400
+X-Greylist: delayed 903 seconds by postgrey-1.27 at vger.kernel.org; Wed, 12 May 2021 07:11:14 EDT
+Received: from mail-lj1-f178.google.com (209.85.208.178) by
+ Exchange2016-1.sch.bme.hu (152.66.249.140) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2176.14; Wed, 12 May 2021 12:54:59 +0200
+Received: by mail-lj1-f178.google.com with SMTP id f12so16432210ljp.2;
+        Wed, 12 May 2021 03:54:59 -0700 (PDT)
+X-Gm-Message-State: AOAM5324pQ9Uc3zzquDVayvN5lIB/KCQN0SB0nJt8X69zjtYXK6S6/8C
+        coiXyGuFv+eEEvUtZf96IaHE8RNisksv4y7NIW8=
+X-Google-Smtp-Source: ABdhPJxCtb0TD+42FcE0cZYUuEqaxROPclfBlGeGdTWRDSJ/jk5GxsPmbIb0WJXK3TTrbOhf4r2Ah6Km4/TikNaPo0U=
+X-Received: by 2002:a2e:8e21:: with SMTP id r1mr28462101ljk.166.1620816898710;
+ Wed, 12 May 2021 03:54:58 -0700 (PDT)
 MIME-Version: 1.0
-References: <YJup3/Ih2vIOXK2R@mwanda>
-In-Reply-To: <YJup3/Ih2vIOXK2R@mwanda>
-From:   Sunil Kovvuri <sunil.kovvuri@gmail.com>
-Date:   Wed, 12 May 2021 15:54:28 +0530
-Message-ID: <CA+sq2Ce0yA1Deh=q_Ne0qNGebwmGOfnMmV75_foKxbXnPnXOwA@mail.gmail.com>
-Subject: Re: [PATCH net] octeontx2-pf: fix a buffer overflow in otx2_set_rxfh_context()
+References: <YJuosd6rew91vlyX@mwanda>
+In-Reply-To: <YJuosd6rew91vlyX@mwanda>
+From:   =?UTF-8?B?QmVuY2UgQ3PDs2vDoXM=?= <bence98@sch.bme.hu>
+Date:   Wed, 12 May 2021 12:54:47 +0200
+X-Gmail-Original-Message-ID: <CACCVKEEQViw1FaSA4dZoy3KbZydxDyxdx+uf=zQW1Q=R5kRAcg@mail.gmail.com>
+Message-ID: <CACCVKEEQViw1FaSA4dZoy3KbZydxDyxdx+uf=zQW1Q=R5kRAcg@mail.gmail.com>
+Subject: Re: [PATCH] i2c: cp2615: check for allocation failure in cp2615_i2c_recv()
 To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Sunil Goutham <sgoutham@marvell.com>,
-        Geetha sowjanya <gakula@marvell.com>,
-        Subbaraya Sundeep <sbhatta@marvell.com>,
-        hariprasad <hkelam@marvell.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Linux Netdev List <netdev@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
+CC:     Wolfram Sang <wsa@kernel.org>, <linux-i2c@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+X-Originating-IP: [209.85.208.178]
+X-ClientProxiedBy: Exchange2016-1.sch.bme.hu (152.66.249.140) To
+ Exchange2016-1.sch.bme.hu (152.66.249.140)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, May 12, 2021 at 3:42 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+Dan Carpenter <dan.carpenter@oracle.com> ezt írta (időpont: 2021. máj.
+12., Sze, 12:07):
 >
-> This function is called from ethtool_set_rxfh() and "*rss_context"
-> comes from the user.  Add some bounds checking to prevent memory
-> corruption.
+> We need to add a check for if the kzalloc() fails.
+
+That is correct, I missed that :/
+
 >
-> Fixes: 81a4362016e7 ("octeontx2-pf: Add RSS multi group support")
+> Fixes: 4a7695429ead ("i2c: cp2615: add i2c driver for Silicon Labs' CP2615 Digital Audio Bridge")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > ---
->  drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c | 4 ++++
->  1 file changed, 4 insertions(+)
+>  drivers/i2c/busses/i2c-cp2615.c | 14 ++++++++++----
+>  1 file changed, 10 insertions(+), 4 deletions(-)
 >
-> diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c
-> index f4962a97a075..9d9a2e438acf 100644
-> --- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c
-> +++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c
-> @@ -786,6 +786,10 @@ static int otx2_set_rxfh_context(struct net_device *dev, const u32 *indir,
->         if (hfunc != ETH_RSS_HASH_NO_CHANGE && hfunc != ETH_RSS_HASH_TOP)
->                 return -EOPNOTSUPP;
->
-> +       if (*rss_context != ETH_RXFH_CONTEXT_ALLOC &&
-> +           *rss_context >= MAX_RSS_GROUPS)
-> +               return -EINVAL;
+> diff --git a/drivers/i2c/busses/i2c-cp2615.c b/drivers/i2c/busses/i2c-cp2615.c
+> index 78cfecd1ea76..3ded28632e4c 100644
+> --- a/drivers/i2c/busses/i2c-cp2615.c
+> +++ b/drivers/i2c/busses/i2c-cp2615.c
+> @@ -138,17 +138,23 @@ cp2615_i2c_send(struct usb_interface *usbif, struct cp2615_i2c_transfer *i2c_w)
+>  static int
+>  cp2615_i2c_recv(struct usb_interface *usbif, unsigned char tag, void *buf)
+>  {
+> -       struct cp2615_iop_msg *msg = kzalloc(sizeof(*msg), GFP_KERNEL);
+> -       struct cp2615_i2c_transfer_result *i2c_r = (struct cp2615_i2c_transfer_result *)&msg->data;
+
+These two lines could stay as-is, since the invalid i2c_r will never be used.
+
+>         struct usb_device *usbdev = interface_to_usbdev(usbif);
+> -       int res = usb_bulk_msg(usbdev, usb_rcvbulkpipe(usbdev, IOP_EP_IN),
+> -                              msg, sizeof(struct cp2615_iop_msg), NULL, 0);
+> +       struct cp2615_iop_msg *msg;
+> +       struct cp2615_i2c_transfer_result *i2c_r;
+> +       int res;
 > +
->         rss = &pfvf->hw.rss_info;
+> +       msg = kzalloc(sizeof(*msg), GFP_KERNEL);
+> +       if (!msg)
+> +               return -ENOMEM;
+
+You will want to also make `cp2615_init_iop_msg()` return -ENOMEM
+instead of -EINVAL, for consistency's sake.
+
 >
->         if (!rss->enable) {
+> +       res = usb_bulk_msg(usbdev, usb_rcvbulkpipe(usbdev, IOP_EP_IN), msg,
+> +                          sizeof(struct cp2615_iop_msg), NULL, 0);
+>         if (res < 0) {
+>                 kfree(msg);
+>                 return res;
+>         }
+>
+> +       i2c_r = (struct cp2615_i2c_transfer_result *)&msg->data;
+>         if (msg->msg != htons(iop_I2cTransferResult) || i2c_r->tag != tag) {
+>                 kfree(msg);
+>                 return -EIO;
 > --
 > 2.30.2
 >
 
-Acked-by: Sunil Goutham <sgoutham@marvell.com>
+Otherwise, the patch looks good, I shall sign off on the next version
