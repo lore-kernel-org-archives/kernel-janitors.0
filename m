@@ -2,146 +2,79 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 141D7C433ED
-	for <kernel-janitors@archiver.kernel.org>; Tue, 11 May 2021 18:18:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D32BC433B4
+	for <kernel-janitors@archiver.kernel.org>; Wed, 12 May 2021 02:14:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DED5C6186A
-	for <kernel-janitors@archiver.kernel.org>; Tue, 11 May 2021 18:18:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 34483617C9
+	for <kernel-janitors@archiver.kernel.org>; Wed, 12 May 2021 02:14:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232020AbhEKSTe (ORCPT
+        id S229925AbhELCPO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 11 May 2021 14:19:34 -0400
-Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:33253 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231939AbhEKSTe (ORCPT
+        Tue, 11 May 2021 22:15:14 -0400
+Received: from szxga02-in.huawei.com ([45.249.212.188]:2426 "EHLO
+        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229848AbhELCPO (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 11 May 2021 14:19:34 -0400
-Received: from [192.168.1.18] ([86.243.172.93])
-        by mwinf5d16 with ME
-        id 3WJP2500n21Fzsu03WJQuW; Tue, 11 May 2021 20:18:25 +0200
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 11 May 2021 20:18:25 +0200
-X-ME-IP: 86.243.172.93
-Subject: Re: [PATCH 1/2] uio_hv_generic: Fix a memory leak in error handling
- paths
-To:     Wei Liu <wei.liu@kernel.org>
-Cc:     kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com,
-        decui@microsoft.com, gregkh@linuxfoundation.org,
-        linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <4fdaff557deef6f0475d02ba7922ddbaa1ab08a6.1620544055.git.christophe.jaillet@wanadoo.fr>
- <20210511095227.ggrl3z6otjanwffz@liuwe-devbox-debian-v2>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Message-ID: <f0dca7cf-c737-0f06-34aa-e4759826a974@wanadoo.fr>
-Date:   Tue, 11 May 2021 20:18:23 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        Tue, 11 May 2021 22:15:14 -0400
+Received: from dggeml751-chm.china.huawei.com (unknown [172.30.72.53])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Ffyvc3Md5z6140;
+        Wed, 12 May 2021 10:11:24 +0800 (CST)
+Received: from dggpemm500004.china.huawei.com (7.185.36.219) by
+ dggeml751-chm.china.huawei.com (10.1.199.150) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2176.2; Wed, 12 May 2021 10:14:04 +0800
+Received: from huawei.com (10.174.28.241) by dggpemm500004.china.huawei.com
+ (7.185.36.219) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.2; Wed, 12 May
+ 2021 10:14:03 +0800
+From:   Bixuan Cui <cuibixuan@huawei.com>
+To:     <bp@alien8.de>
+CC:     <kristo@kernel.org>, <mchehab@kernel.org>, <tony.luck@intel.com>,
+        <linux-edac@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next v2] EDAC: ti: Add missing MODULE_DEVICE_TABLE
+Date:   Wed, 12 May 2021 11:37:27 +0800
+Message-ID: <20210512033727.26701-1-cuibixuan@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <20210511095227.ggrl3z6otjanwffz@liuwe-devbox-debian-v2>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.174.28.241]
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpemm500004.china.huawei.com (7.185.36.219)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 11/05/2021 à 11:52, Wei Liu a écrit :
->> Before commit cdfa835c6e5e, the 'vfree' were done unconditionally
->> in 'hv_uio_cleanup()'.
->> So, another way for fixing the potential leak is to modify
->> 'hv_uio_cleanup()' and revert to the previous behavior.
->>
-> 
-> I think this is cleaner.
+The module misses MODULE_DEVICE_TABLE() for of_device_id tables
+and thus never autoloads on ID matches.
+Add the missing declarations.
 
-Agreed
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Bixuan Cui <cuibixuan@huawei.com>
+---
+Changes v2:
+* Modify the commit message to make it more suitable.
 
-> 
-> Stephen, you authored cdfa835c6e5e. What do you think?
-> 
-> Christophe, OOI how did you discover these issues?
+ drivers/edac/ti_edac.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-I use an ugly coccinelle script which tries to spot functions called in 
-the .remove function of a driver, but which is not in the error handling 
-path of the .probe
+diff --git a/drivers/edac/ti_edac.c b/drivers/edac/ti_edac.c
+index e7eae20f83d1..169f96e51c29 100644
+--- a/drivers/edac/ti_edac.c
++++ b/drivers/edac/ti_edac.c
+@@ -197,6 +197,7 @@ static const struct of_device_id ti_edac_of_match[] = {
+ 	{ .compatible = "ti,emif-dra7xx", .data = (void *)EMIF_TYPE_DRA7 },
+ 	{},
+ };
++MODULE_DEVICE_TABLE(of, ti_edac_of_match);
+ 
+ static int _emif_get_id(struct device_node *node)
+ {
+-- 
+2.17.1
 
-It is way to verbose and gives too much false positive, but I manage to 
-spot a few things with it.
-Here it is, should it be useful for someone, or if anyone want to 
-improve it.
-
-The idea is:
-    - find the probe and remove function
-    - find a function (f1) which is not the first of the remove function 
-(the first is likely the last in the probe that doesn't need to be 
-undone in the probe error handling path)
-    - try to filter with likely false positive pattern
-    - search in the probe if this function is also called
-    - if not, then it is a candidate.
-
-CJ
-
----------------------------------
-
-// Find the probe and remove functions
-@platform@
-identifier type, p, probefn, removefn;
-@@
-struct type p = {
-   .probe = probefn,
-   .remove = removefn,
-};
-
-
-// In the remove function, find a function that is called
-@rem depends on platform@
-identifier platform.removefn, firstFct, lastFct;
-identifier f1 !~ 
-"(pr_.*|dev_.*|cancel_work.*|cancel_delayed_work.*|tasklet_kill|list_del|.*unregister.*|.*deregister.*|spin_.*|flush_.*|pm_runtime_.*)";
-@@
-removefn(...) {
-(
-   <+...
-   firstFct(...);
-   f1(...);
-   ...+>
-|
-   <+...
-   fXXX1(...);
-   lastFct(...);
-   ...+>
-)
-}
-
-
-// Check if this function is also called in the probe error path
-@prb depends on rem@
-identifier platform.probefn, platform.removefn, rem.f1;
-@@
-probefn(...) {
-(
-   <+...
-     f1(...);
-   ...+>
-|
-   <+...
-     removefn(...);
-   ...+>
-)
-}
-
-
-// If not, this function is likely missing from the probe error path
-@prb3 depends on !prb@
-identifier platform.removefn, rem.f1;
-@@
-*removefn(...) {
-   <+...
-*  f1(...);
-   ...+>
-}
