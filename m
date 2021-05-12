@@ -2,91 +2,75 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BD12C433B4
-	for <kernel-janitors@archiver.kernel.org>; Wed, 12 May 2021 21:40:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB739C433ED
+	for <kernel-janitors@archiver.kernel.org>; Wed, 12 May 2021 21:40:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D81F9613BD
-	for <kernel-janitors@archiver.kernel.org>; Wed, 12 May 2021 21:40:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89BE8613BD
+	for <kernel-janitors@archiver.kernel.org>; Wed, 12 May 2021 21:40:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239480AbhELVlE (ORCPT
+        id S239794AbhELVlM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 12 May 2021 17:41:04 -0400
-Received: from smtp05.smtpout.orange.fr ([80.12.242.127]:20360 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345618AbhELU7s (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 12 May 2021 16:59:48 -0400
-Received: from localhost.localdomain ([86.243.172.93])
-        by mwinf5d61 with ME
-        id 3wyW2500621Fzsu03wyW7p; Wed, 12 May 2021 22:58:33 +0200
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 12 May 2021 22:58:33 +0200
-X-ME-IP: 86.243.172.93
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     aspriel@gmail.com, franky.lin@broadcom.com,
-        hante.meuleman@broadcom.com, chi-hsien.lin@infineon.com,
-        wright.feng@infineon.com, chung-hsien.hsu@infineon.com,
-        davem@davemloft.net, kvalo@codeaurora.org, kuba@kernel.org
-Cc:     linux-wireless@vger.kernel.org,
-        brcm80211-dev-list.pdl@broadcom.com,
-        SHA-cyfmac-dev-list@infineon.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] brcmsmac: mac80211_if: Fix a resource leak in an error handling path
-Date:   Wed, 12 May 2021 22:58:30 +0200
-Message-Id: <8fbc171a1a493b38db5a6f0873c6021fca026a6c.1620852921.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Wed, 12 May 2021 17:41:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40744 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S237691AbhELVLl (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 12 May 2021 17:11:41 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPS id C4E9361428;
+        Wed, 12 May 2021 21:10:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1620853810;
+        bh=cyLh9qw8T4SCn3I4q6HRtt8w7L6qy334n3YIsO2B4eI=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=a+qFWytqlmOHR3o/TvH02n99ZEmf+DH4TLWBjmgegXCRcpgIRZXRin31f0E+8uqcb
+         rh3BpH6F0LPLkey1VQRMaHXSmziaPnJldoazgB0hvVjBLV4Dvmn0S2LoU/aLsIKwYl
+         TyzrVWQBNm1osiuf/TgvemUXm6MjMlkeFxmMVv4A+hamksu48m2SSWbNOdmoLd7fJo
+         BhdI9hUYdpbsGm704ZQGECHC5pp1Yf0ASaYRmyO/EAC3i9icytAd+P2AqJ8ryOg5vZ
+         HUNR7cU6oFhCspSO/Pfe7W2K/AuqeMvXCqUcMxLp6a7q7xOLSfGgtFkV4u/qAOYtIh
+         lTiKftP7OF7Dw==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net] octeontx2-pf: fix a buffer overflow in
+ otx2_set_rxfh_context()
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <162085381074.5514.7569325730400775140.git-patchwork-notify@kernel.org>
+Date:   Wed, 12 May 2021 21:10:10 +0000
+References: <YJup3/Ih2vIOXK2R@mwanda>
+In-Reply-To: <YJup3/Ih2vIOXK2R@mwanda>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     sgoutham@marvell.com, gakula@marvell.com, sbhatta@marvell.com,
+        hkelam@marvell.com, davem@davemloft.net, kuba@kernel.org,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-If 'brcms_attach()' fails, we must undo the previous 'ieee80211_alloc_hw()'
-as already done in the remove function.
+Hello:
 
-Fixes: 5b435de0d786 ("net: wireless: add brcm80211 drivers")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- .../wireless/broadcom/brcm80211/brcmsmac/mac80211_if.c    | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+This patch was applied to netdev/net.git (refs/heads/master):
 
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/mac80211_if.c b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/mac80211_if.c
-index 39f3af2d0439..eadac0f5590f 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/mac80211_if.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/mac80211_if.c
-@@ -1220,6 +1220,7 @@ static int brcms_bcma_probe(struct bcma_device *pdev)
- {
- 	struct brcms_info *wl;
- 	struct ieee80211_hw *hw;
-+	int ret;
- 
- 	dev_info(&pdev->dev, "mfg %x core %x rev %d class %d irq %d\n",
- 		 pdev->id.manuf, pdev->id.id, pdev->id.rev, pdev->id.class,
-@@ -1244,11 +1245,16 @@ static int brcms_bcma_probe(struct bcma_device *pdev)
- 	wl = brcms_attach(pdev);
- 	if (!wl) {
- 		pr_err("%s: brcms_attach failed!\n", __func__);
--		return -ENODEV;
-+		ret = -ENODEV;
-+		goto err_free_ieee80211;
- 	}
- 	brcms_led_register(wl);
- 
- 	return 0;
-+
-+err_free_ieee80211:
-+	ieee80211_free_hw(hw);
-+	return ret;
- }
- 
- static int brcms_suspend(struct bcma_device *pdev)
--- 
-2.30.2
+On Wed, 12 May 2021 13:11:43 +0300 you wrote:
+> This function is called from ethtool_set_rxfh() and "*rss_context"
+> comes from the user.  Add some bounds checking to prevent memory
+> corruption.
+> 
+> Fixes: 81a4362016e7 ("octeontx2-pf: Add RSS multi group support")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> [...]
+
+Here is the summary with links:
+  - [net] octeontx2-pf: fix a buffer overflow in otx2_set_rxfh_context()
+    https://git.kernel.org/netdev/net/c/e5cc361e2164
+
+You are awesome, thank you!
+--
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
