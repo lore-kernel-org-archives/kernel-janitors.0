@@ -2,107 +2,81 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 572B1C433ED
-	for <kernel-janitors@archiver.kernel.org>; Wed, 12 May 2021 21:39:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF2CAC433B4
+	for <kernel-janitors@archiver.kernel.org>; Wed, 12 May 2021 21:39:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 22C6A613BD
-	for <kernel-janitors@archiver.kernel.org>; Wed, 12 May 2021 21:39:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8430361413
+	for <kernel-janitors@archiver.kernel.org>; Wed, 12 May 2021 21:39:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238118AbhELVk6 (ORCPT
+        id S239082AbhELVlC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 12 May 2021 17:40:58 -0400
-Received: from smtp05.smtpout.orange.fr ([80.12.242.127]:33392 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344147AbhELUDb (ORCPT
+        Wed, 12 May 2021 17:41:02 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:40542 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1387087AbhELUcE (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 12 May 2021 16:03:31 -0400
-Received: from [192.168.1.18] ([86.243.172.93])
-        by mwinf5d61 with ME
-        id 3w2G2500221Fzsu03w2GZX; Wed, 12 May 2021 22:02:18 +0200
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 12 May 2021 22:02:18 +0200
-X-ME-IP: 86.243.172.93
-Subject: Re: [PATCH] rtc: max77686: Remove some dead code
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Edmundo Carmona Antoranz <eantoranz@gmail.com>,
-        cw00.choi@samsung.com, b.zolnierkie@samsung.com,
-        a.zummo@towertech.it, linux-rtc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <a6b23ee8d3ea78f62d3fda0b53aa273718f14c6d.1620452523.git.christophe.jaillet@wanadoo.fr>
- <CAOc6etaUPtJqoH9DBDE72nDW7s7iEZHnaJRpKx9zFow02WOZig@mail.gmail.com>
- <9f34ebcd-0c17-cd7f-eb08-52c6c3dc7b03@wanadoo.fr>
- <CAOc6etYwTvVPnoB3BQfuQEikvsCwSs9AqBWnLFrs9zQ0pJGp1A@mail.gmail.com>
- <YJhO0cEqpbJAdv7s@piout.net>
- <219efcc7-ca05-a7d1-5943-d34a42f0d49f@canonical.com>
- <YJv+mMRcOuTJxLuk@piout.net>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Message-ID: <9535976d-1029-3668-4be4-c09068ccf84c@wanadoo.fr>
-Date:   Wed, 12 May 2021 22:02:17 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        Wed, 12 May 2021 16:32:04 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lgvVM-0006Pb-5r; Wed, 12 May 2021 20:30:52 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Maxime Ripard <maxime@cerno.tech>,
+        dri-devel@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] drm: simpledrm: Fix use after free issues
+Date:   Wed, 12 May 2021 21:30:51 +0100
+Message-Id: <20210512203051.299026-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-In-Reply-To: <YJv+mMRcOuTJxLuk@piout.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 12/05/2021 à 18:13, Alexandre Belloni a écrit :
-> On 10/05/2021 08:20:52-0400, Krzysztof Kozlowski wrote:
->> On 09/05/2021 17:06, Alexandre Belloni wrote:
->>> On 08/05/2021 18:06:03-0600, Edmundo Carmona Antoranz wrote:
->>>> On Sat, May 8, 2021 at 10:59 AM Christophe JAILLET
->>>> <christophe.jaillet@wanadoo.fr> wrote:
->>>>>
->>>>>>
->>>>>> Following the recent conversations, I think it might make sense to do
->>>>>> dev_err(&pdev->dev, "Failed to register RTC device: %pe\n", info->rtc_dev);
->>>>>>
->>>>>> Is that right?
->>>>>>
->>>>>
->>>>> Yes, it is right, but it should be done in another patch.
->>>>>
->>>>> Would you like to give it a try?
->>>>>
->>>> Sure, I'll have the patch ready to send it when I see yours on next.
->>>
->>> Does it make sense to print anything at all? Who would use the output?
->>> Is anyone actually going to read it?
->>
->> If the RTC core does not print the message, it should be
->> dev_err_probe().  However the first is recently preferred - RTC core
->> should do it for all drivers.  I find such error messages useful - helps
->> easily spotting regressions via dmesg -l err.
->>
-> 
-> The only error path that will not print a message by default (it is
-> dev_dbg) is when rtc-ops is NULL which I don't expect would regress
-> anyway.
-> 
-> A better way to remove the dead code would be to switch to
-> devm_rtc_allocate_device/devm_rtc_register_device.
+From: Colin Ian King <colin.king@canonical.com>
 
-I don't follow you here.
-Isn't devm_rtc_device_register = devm_rtc_allocate_device + 
-devm_rtc_register_device?
+There are two occurrances where objects are being free'd via
+a put call and yet they are being referenced after this. Fix these
+by adding in the missing continue statement so that the put on the
+end of the loop is skipped over.
 
-What would be the benefit for switch to the latter?
+Addresses-Coverity: ("Use after free")
+Fixes: 11e8f5fd223b ("drm: Add simpledrm driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/tiny/simpledrm.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-
-> And even better would
-> be to take that opportunity to set range_min and range_max ;)
-
-Maybe, but this goes beyond my knowledge.
-I'll let someone else propose a patch for it.
-
-CJ
+diff --git a/drivers/gpu/drm/tiny/simpledrm.c b/drivers/gpu/drm/tiny/simpledrm.c
+index 2bdb477d9326..eae748394b00 100644
+--- a/drivers/gpu/drm/tiny/simpledrm.c
++++ b/drivers/gpu/drm/tiny/simpledrm.c
+@@ -298,6 +298,7 @@ static int simpledrm_device_init_clocks(struct simpledrm_device *sdev)
+ 			drm_err(dev, "failed to enable clock %u: %d\n",
+ 				i, ret);
+ 			clk_put(clock);
++			continue;
+ 		}
+ 		sdev->clks[i] = clock;
+ 	}
+@@ -415,6 +416,7 @@ static int simpledrm_device_init_regulators(struct simpledrm_device *sdev)
+ 			drm_err(dev, "failed to enable regulator %u: %d\n",
+ 				i, ret);
+ 			regulator_put(regulator);
++			continue;
+ 		}
+ 
+ 		sdev->regulators[i++] = regulator;
+-- 
+2.30.2
 
