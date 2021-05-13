@@ -2,147 +2,80 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80E49C433B4
-	for <kernel-janitors@archiver.kernel.org>; Thu, 13 May 2021 14:02:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 525F2C43460
+	for <kernel-janitors@archiver.kernel.org>; Thu, 13 May 2021 14:19:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 618C661408
-	for <kernel-janitors@archiver.kernel.org>; Thu, 13 May 2021 14:02:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2BF4261433
+	for <kernel-janitors@archiver.kernel.org>; Thu, 13 May 2021 14:19:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234330AbhEMODN (ORCPT
+        id S234436AbhEMOUs (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 13 May 2021 10:03:13 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44752 "EHLO mx2.suse.de"
+        Thu, 13 May 2021 10:20:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49086 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234317AbhEMODE (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 13 May 2021 10:03:04 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id B8CB7B1C3;
-        Thu, 13 May 2021 14:01:52 +0000 (UTC)
-Subject: Re: [PATCH][next] drm: simpledrm: Fix use after free issues
-To:     Colin King <colin.king@canonical.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Maxime Ripard <maxime@cerno.tech>,
-        dri-devel@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210512203051.299026-1-colin.king@canonical.com>
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-Message-ID: <2b709552-cd8c-0885-c99c-7cb9e2af905b@suse.de>
-Date:   Thu, 13 May 2021 16:01:51 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.0
+        id S234413AbhEMOUU (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 13 May 2021 10:20:20 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 6C07B6142C;
+        Thu, 13 May 2021 14:19:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1620915549;
+        bh=4ZfGgMKCI/cI5RBHRWLjHYp9AqtZG2RVPTzXZprYUog=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=N267V8gt2mcIkXDiRX+QXiWDbChAFFrGze9w+zciV7tsbejBZ3uFuxbSoeqG8WUGD
+         lH7bkb5HNNurM8rnjIpTBzDlDVGSitCe4cgdYeGKN/lp2sDHPAYbC/Q9lr4o6bdQ61
+         c2aeHAS5nAElTV1YBdeEH/UnDKtdAtw8qMKOB6nM=
+Date:   Thu, 13 May 2021 16:19:07 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     hjk@linutronix.de, jirislaby@kernel.org, lee.jones@linaro.org,
+        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] tty: serial: 8250: serial_cs: Fix a memory leak in error
+ handling path
+Message-ID: <YJ01W4zWfG601Sbv@kroah.com>
+References: <562910a450cb86db7c2c4a4328a60e53ef95f504.1620548790.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-In-Reply-To: <20210512203051.299026-1-colin.king@canonical.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="XaWzkNuflmcnRw9sH5tvQKoTUukS4gsCn"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <562910a450cb86db7c2c4a4328a60e53ef95f504.1620548790.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---XaWzkNuflmcnRw9sH5tvQKoTUukS4gsCn
-Content-Type: multipart/mixed; boundary="la8J2z3cSCMFxMNgESLXqTvLIpk2BDxpm";
- protected-headers="v1"
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: Colin King <colin.king@canonical.com>, David Airlie <airlied@linux.ie>,
- Daniel Vetter <daniel@ffwll.ch>, Maxime Ripard <maxime@cerno.tech>,
- dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-ID: <2b709552-cd8c-0885-c99c-7cb9e2af905b@suse.de>
-Subject: Re: [PATCH][next] drm: simpledrm: Fix use after free issues
-References: <20210512203051.299026-1-colin.king@canonical.com>
-In-Reply-To: <20210512203051.299026-1-colin.king@canonical.com>
-
---la8J2z3cSCMFxMNgESLXqTvLIpk2BDxpm
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-
-Hi
-
-Am 12.05.21 um 22:30 schrieb Colin King:
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> There are two occurrances where objects are being free'd via
-> a put call and yet they are being referenced after this. Fix these
-> by adding in the missing continue statement so that the put on the
-> end of the loop is skipped over.
->=20
-> Addresses-Coverity: ("Use after free")
-> Fixes: 11e8f5fd223b ("drm: Add simpledrm driver")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-
-Queued up for drm-misc-next. Thanks!
-
-Best regards
-Thomas
-
+On Sun, May 09, 2021 at 10:28:18AM +0200, Christophe JAILLET wrote:
+> In the probe function, if the final 'serial_config()' fails, 'info' is
+> leaking.
+> 
+> Use 'devm_kzalloc' instead to fix the leak and simplify the .remove
+> function.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->   drivers/gpu/drm/tiny/simpledrm.c | 2 ++
->   1 file changed, 2 insertions(+)
->=20
-> diff --git a/drivers/gpu/drm/tiny/simpledrm.c b/drivers/gpu/drm/tiny/si=
-mpledrm.c
-> index 2bdb477d9326..eae748394b00 100644
-> --- a/drivers/gpu/drm/tiny/simpledrm.c
-> +++ b/drivers/gpu/drm/tiny/simpledrm.c
-> @@ -298,6 +298,7 @@ static int simpledrm_device_init_clocks(struct simp=
-ledrm_device *sdev)
->   			drm_err(dev, "failed to enable clock %u: %d\n",
->   				i, ret);
->   			clk_put(clock);
-> +			continue;
->   		}
->   		sdev->clks[i] =3D clock;
->   	}
-> @@ -415,6 +416,7 @@ static int simpledrm_device_init_regulators(struct =
-simpledrm_device *sdev)
->   			drm_err(dev, "failed to enable regulator %u: %d\n",
->   				i, ret);
->   			regulator_put(regulator);
-> +			continue;
->   		}
->  =20
->   		sdev->regulators[i++] =3D regulator;
->=20
+> I've not been able to find a Fixes tag. All I know is that it is old!
+> ---
+>  drivers/tty/serial/8250/serial_cs.c | 7 +------
+>  1 file changed, 1 insertion(+), 6 deletions(-)
+> 
+> diff --git a/drivers/tty/serial/8250/serial_cs.c b/drivers/tty/serial/8250/serial_cs.c
+> index 63ea9c4da3d5..d18c98e0d0b0 100644
+> --- a/drivers/tty/serial/8250/serial_cs.c
+> +++ b/drivers/tty/serial/8250/serial_cs.c
+> @@ -310,7 +310,7 @@ static int serial_probe(struct pcmcia_device *link)
+>  	dev_dbg(&link->dev, "serial_attach()\n");
+>  
+>  	/* Create new serial device */
+> -	info = kzalloc(sizeof(*info), GFP_KERNEL);
+> +	info = devm_kzalloc(&link->dev, sizeof(*info), GFP_KERNEL);
 
---=20
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-(HRB 36809, AG N=C3=BCrnberg)
-Gesch=C3=A4ftsf=C3=BChrer: Felix Imend=C3=B6rffer
+Ick, let's not mix and only use some devm_ calls here, why not just fix
+it up and free it in the error path?
 
 
---la8J2z3cSCMFxMNgESLXqTvLIpk2BDxpm--
+thanks,
 
---XaWzkNuflmcnRw9sH5tvQKoTUukS4gsCn
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature"
-
------BEGIN PGP SIGNATURE-----
-
-wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmCdMU8FAwAAAAAACgkQlh/E3EQov+Aw
-bw/+P/W5921z5b3YngrfUBXAGxwGZ0ElScedm7rPMu4X7lxySR9LAtZtZj/a+Jy6opYN7PF2QOMu
-8lTHe4RRlRlYllWG1agX8pSAiH577d1EURj4XDmFGN8oNJKrpRaBTdV1qJstc3det3qyioHdG401
-Ms6cSsZ5pj2TmhOn6LSAGhr1SGKjvNDORGY0bO787YrJTt6gP66uBKv1S6lUH+uLIvptnnzpIzhr
-/FCSm57ouQJQdHAo7EtxjCZ8tYXZzyM/xbWtBbsURLc9nBg5cproYS5SlBMYPvOf24pa7gD6CRRa
-UpcWfZ3HmEhoE0zrkM0Fo+8fvSNT/d8fyq+9yIRlVn8tACq+yQZqk93nFqzFWEdjl6Q+yue2uo2R
-xdfrdr0ZX8z4ycClKaJWyeBN3Pqq96i1vprGuIhUAgBUR0OB+6N195Nr2bPO3HpMm/yKPon3U9IL
-FP8XORzMnrxln3pBpHCoxs26WOCt/1pw1i684Im/gkqP+NQ3J3H3x+OTau5NW9FZWXiQu4ogFN/5
-5q9/ITkDvbSHcqi5Qb/aDRoiylpzUfIfCHE1kMB1Flt2NH0+69z+K2Ml7cEXQTPmCM5/NDpCY6mV
-ntjKyAUu9rFG/EFIR3TX7PhnaKOQWxA0IY6cjc7SMDzD93eS//BZHm5UD1Q+ncP6EBPp6jy3KRM5
-f3w=
-=/ZoR
------END PGP SIGNATURE-----
-
---XaWzkNuflmcnRw9sH5tvQKoTUukS4gsCn--
+greg k-h
