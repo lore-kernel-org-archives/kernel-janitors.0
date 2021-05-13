@@ -2,65 +2,86 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 733D6C433ED
-	for <kernel-janitors@archiver.kernel.org>; Wed, 12 May 2021 22:58:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36928C433ED
+	for <kernel-janitors@archiver.kernel.org>; Thu, 13 May 2021 06:21:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5629F613EB
-	for <kernel-janitors@archiver.kernel.org>; Wed, 12 May 2021 22:58:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E34F0613E6
+	for <kernel-janitors@archiver.kernel.org>; Thu, 13 May 2021 06:21:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233055AbhELW66 (ORCPT
+        id S230318AbhEMGWz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 12 May 2021 18:58:58 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:37818 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1347157AbhELVpj (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 12 May 2021 17:45:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=G4FRzr8UOcQ0mGjU/d41grqZ4PRaNx1y9G+DGXzduP4=; b=w8mAlBwZh0NWwURiIt4ishGdXU
-        O7l+wjTe0bacbb6zrO+Rmiv65PeFtAy55PfF4Dy/EJWGXvTZvjtIycewJujAM8gFuo1Q+cmPT69qe
-        j/GThzI3gKXbsgY4tdN4Y3IoN3mM5aBNRIN15JjSZGgPvIbaE8ZyQxj11W8kikUGOzSg=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1lgweN-003yj3-3e; Wed, 12 May 2021 23:44:15 +0200
-Date:   Wed, 12 May 2021 23:44:15 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+        Thu, 13 May 2021 02:22:55 -0400
+Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:43494 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229748AbhEMGWz (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 13 May 2021 02:22:55 -0400
+Received: from [192.168.1.18] ([86.243.172.93])
+        by mwinf5d84 with ME
+        id 46Mh2500H21Fzsu036MiWh; Thu, 13 May 2021 08:21:44 +0200
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 13 May 2021 08:21:44 +0200
+X-ME-IP: 86.243.172.93
+Subject: Re: [PATCH] net: mdio: Fix a double free issue in the .remove
+ function
+To:     Andrew Lunn <andrew@lunn.ch>
 Cc:     hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
         kuba@kernel.org, david.daney@cavium.com, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] net: mdio: Fix a double free issue in the .remove
- function
-Message-ID: <YJxML4HvQd+WiDK6@lunn.ch>
 References: <f8ad939e6d5df4cb0273ea71a418a3ca1835338d.1620855222.git.christophe.jaillet@wanadoo.fr>
+ <YJxML4HvQd+WiDK6@lunn.ch>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Message-ID: <6ff7d862-b88a-eea0-d977-b7f71176c5ed@wanadoo.fr>
+Date:   Thu, 13 May 2021 08:21:41 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f8ad939e6d5df4cb0273ea71a418a3ca1835338d.1620855222.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <YJxML4HvQd+WiDK6@lunn.ch>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, May 12, 2021 at 11:35:38PM +0200, Christophe JAILLET wrote:
-> 'bus->mii_bus' have been allocated with 'devm_mdiobus_alloc_size()' in the
-> probe function. So it must not be freed explicitly or there will be a
-> double free.
+Le 12/05/2021 à 23:44, Andrew Lunn a écrit :
+> On Wed, May 12, 2021 at 11:35:38PM +0200, Christophe JAILLET wrote:
+>> 'bus->mii_bus' have been allocated with 'devm_mdiobus_alloc_size()' in the
+>> probe function. So it must not be freed explicitly or there will be a
+>> double free.
+> 
+> Hi Christophe
+> 
+> [PATCH] net: mdio: Fix a double free issue in the .remove function
+> 
+> Please indicate in the subject which mdio bus driver has a double
+> free.
 
-Hi Christophe
+Ok, will do.
+But looking at [1], it was not not self-explanatory that it was the rule 
+here :)
 
-[PATCH] net: mdio: Fix a double free issue in the .remove function
+> 
+> Also, octeon_mdiobus_remove() appears to have the same problem.
 
-Please indicate in the subject which mdio bus driver has a double
-free.
+In fact, even a little worse. It also calls 'mdiobus_free()' in the 
+error handling path of the probe (which is why my coccinelle script 
+didn't spot it. It looks for discrepancy between error handling path in 
+the probe and the remove function. If both are wrong, it looks safe :) )
 
-Also, octeon_mdiobus_remove() appears to have the same problem.
+I'll send another patch for this driver.
 
-      Andrew
+CJ
+
+> 
+>        Andrew
+> 
+
+[1]: 
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/log/drivers/net/mdio
