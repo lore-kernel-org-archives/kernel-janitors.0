@@ -7,66 +7,92 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59E1BC433B4
-	for <kernel-janitors@archiver.kernel.org>; Thu, 13 May 2021 11:49:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E00D6C433ED
+	for <kernel-janitors@archiver.kernel.org>; Thu, 13 May 2021 11:51:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2823E61176
-	for <kernel-janitors@archiver.kernel.org>; Thu, 13 May 2021 11:49:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2B2E61186
+	for <kernel-janitors@archiver.kernel.org>; Thu, 13 May 2021 11:51:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232925AbhEMLuo (ORCPT
+        id S233028AbhEMLxA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 13 May 2021 07:50:44 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:33067 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233500AbhEMLu1 (ORCPT
+        Thu, 13 May 2021 07:53:00 -0400
+Received: from smtp06.smtpout.orange.fr ([80.12.242.128]:49561 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232817AbhEMLw6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 13 May 2021 07:50:27 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <colin.king@canonical.com>)
-        id 1lh9q2-0000An-DP; Thu, 13 May 2021 11:49:10 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Ariel Elior <aelior@marvell.com>, GR-everest-linux-l2@marvell.com,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] net: qed: remove redundant initialization of variable rc
-Date:   Thu, 13 May 2021 12:49:10 +0100
-Message-Id: <20210513114910.57915-1-colin.king@canonical.com>
+        Thu, 13 May 2021 07:52:58 -0400
+Received: from localhost.localdomain ([86.243.172.93])
+        by mwinf5d29 with ME
+        id 4Bri2500321Fzsu03BriSG; Thu, 13 May 2021 13:51:46 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 13 May 2021 13:51:46 +0200
+X-ME-IP: 86.243.172.93
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
+        davem@davemloft.net, kuba@kernel.org, david.daney@cavium.com
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] net: mdio: thunder: Do not unregister buses that have not been registered
+Date:   Thu, 13 May 2021 13:51:40 +0200
+Message-Id: <918382e19fdeb172f3836234d07e706460b7d06b.1620906605.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+In the probe, if 'of_mdiobus_register()' fails, 'nexus->buses[i]' will
+still have a non-NULL value.
+So in the remove function, we will try to unregister a bus that has not
+been registered.
 
-The variable rc is being initialized with a value that is never read,
-it is being updated later on.  The assignment is redundant and can be
-removed.
+In order to avoid that NULLify 'nexus->buses[i]'.
+'oct_mdio_writeq(0,...)' must also be called here.
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Suggested-by: Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Fixes: 379d7ac7ca31 ("phy: mdio-thunder: Add driver for Cavium Thunder SoC MDIO buses.")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/net/ethernet/qlogic/qed/qed_iscsi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Calling 'devm_mdiobus_free()' would also be cleaner, IMHO.
+I've not added it because:
+   - it should be fine, even without it
+   - I'm not sure how to use it
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_iscsi.c b/drivers/net/ethernet/qlogic/qed/qed_iscsi.c
-index 4eae4ee3538f..448567a1f520 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_iscsi.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_iscsi.c
-@@ -453,7 +453,7 @@ static int qed_sp_iscsi_conn_update(struct qed_hwfn *p_hwfn,
- 	struct iscsi_conn_update_ramrod_params *p_ramrod = NULL;
- 	struct qed_spq_entry *p_ent = NULL;
- 	struct qed_sp_init_data init_data;
--	int rc = -EINVAL;
-+	int rc;
- 	u32 dval;
+The best I could think-of (not even compile tested) is:
+   devm_mdiobus_free(&pdev->dev, container_of(mii_bus, struct mdiobus_devres, mii));
+which is not very nice looking.
+(unless I missed something obvious!)
+
+If I'm correct, just passing 'mii_bus' to have something that look logical
+would require changing 'devm_mdiobus_alloc_size()' and
+'devm_mdiobus_free()'.
+---
+ drivers/net/mdio/mdio-thunder.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/mdio/mdio-thunder.c b/drivers/net/mdio/mdio-thunder.c
+index 822d2cdd2f35..140c405d4a41 100644
+--- a/drivers/net/mdio/mdio-thunder.c
++++ b/drivers/net/mdio/mdio-thunder.c
+@@ -97,8 +97,14 @@ static int thunder_mdiobus_pci_probe(struct pci_dev *pdev,
+ 		bus->mii_bus->write = cavium_mdiobus_write;
  
- 	/* Get SPQ entry */
+ 		err = of_mdiobus_register(bus->mii_bus, node);
+-		if (err)
++		if (err) {
+ 			dev_err(&pdev->dev, "of_mdiobus_register failed\n");
++			/* non-registered buses must not be unregistered in
++			 * the .remove function
++			 */
++			oct_mdio_writeq(0, bus->register_base + SMI_EN);
++			nexus->buses[i] = NULL;
++		}
+ 
+ 		dev_info(&pdev->dev, "Added bus at %llx\n", r.start);
+ 		if (i >= ARRAY_SIZE(nexus->buses))
 -- 
 2.30.2
 
