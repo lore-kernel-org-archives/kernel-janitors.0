@@ -2,123 +2,78 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90D06C433ED
-	for <kernel-janitors@archiver.kernel.org>; Thu, 13 May 2021 08:22:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44B3AC433B4
+	for <kernel-janitors@archiver.kernel.org>; Thu, 13 May 2021 08:52:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 513A461168
-	for <kernel-janitors@archiver.kernel.org>; Thu, 13 May 2021 08:22:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E2976142E
+	for <kernel-janitors@archiver.kernel.org>; Thu, 13 May 2021 08:52:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231839AbhEMIXX (ORCPT
+        id S232193AbhEMIxm (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 13 May 2021 04:23:23 -0400
-Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:43285 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231630AbhEMIXW (ORCPT
+        Thu, 13 May 2021 04:53:42 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:56815 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231517AbhEMIxl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 13 May 2021 04:23:22 -0400
-Received: from [192.168.1.18] ([86.243.172.93])
-        by mwinf5d84 with ME
-        id 48NB2500B21Fzsu038NBBM; Thu, 13 May 2021 10:22:12 +0200
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 13 May 2021 10:22:12 +0200
-X-ME-IP: 86.243.172.93
-Subject: Re: [PATCH] net: mdio: Fix a double free issue in the .remove
- function
-To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
-Cc:     andrew@lunn.ch, hkallweit1@gmail.com, davem@davemloft.net,
-        kuba@kernel.org, david.daney@cavium.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <f8ad939e6d5df4cb0273ea71a418a3ca1835338d.1620855222.git.christophe.jaillet@wanadoo.fr>
- <20210512214403.GQ1336@shell.armlinux.org.uk>
- <0a044473-f3f7-02fc-eca5-84adf8b5c9f2@wanadoo.fr>
- <20210513080957.GS1336@shell.armlinux.org.uk>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Message-ID: <93bd6133-41a3-f160-ddd2-f89ea4b5c6db@wanadoo.fr>
-Date:   Thu, 13 May 2021 10:22:11 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        Thu, 13 May 2021 04:53:41 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lh751-0006fu-U5; Thu, 13 May 2021 08:52:28 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
+        Srinivas Neeli <srinivas.neeli@xilinx.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] gpio: xilinx: Fix potential integer overflow on shift of a u32 int
+Date:   Thu, 13 May 2021 09:52:27 +0100
+Message-Id: <20210513085227.54392-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-In-Reply-To: <20210513080957.GS1336@shell.armlinux.org.uk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 13/05/2021 à 10:09, Russell King - ARM Linux admin a écrit :
-> On Thu, May 13, 2021 at 08:29:01AM +0200, Christophe JAILLET wrote:
->> Le 12/05/2021 à 23:44, Russell King - ARM Linux admin a écrit :
->>> On Wed, May 12, 2021 at 11:35:38PM +0200, Christophe JAILLET wrote:
->>>> 'bus->mii_bus' have been allocated with 'devm_mdiobus_alloc_size()' in the
->>>> probe function. So it must not be freed explicitly or there will be a
->>>> double free.
->>>>
->>>> Remove the incorrect 'mdiobus_free' in the remove function.
->>>
->>> Yes, this looks correct, thanks.
->>>
->>> Reviewed-by: Russell King <rmk+kernel@armlinux.org.uk>
->>>
->>> However, there's another issue in this driver that ought to be fixed.
->>>
->>> If devm_mdiobus_alloc_size() succeeds, but of_mdiobus_register() fails,
->>> we continue on to the next bus (which I think is reasonable.) We don't
->>> free the bus.
->>>
->>> When we come to the remove method however, we will call
->>> mdiobus_unregister() on this existent but not-registered bus. Surely we
->>> don't want to do that?
->>>
->>
->> Hmmm, I don't agree here.
->>
->> 'nexus' is 'kzalloc()'ed.
->> So the pointers in 'buses[]' are all NULL by default.
->> We set 'nexus->buses[i] = bus' only when all functions that can fail in the
->> loop have been called. (the very last 'break' is when the array is full)
->>
->> And in the remove function, we have:
->> 	struct cavium_mdiobus *bus = nexus->buses[i];
->> 	if (!bus)
->> 		continue;
->>
->> So, this looks safe to me.
-> 
-> It isn't safe. Please look closer.
-> 
->          device_for_each_child_node(&pdev->dev, fwn) {
->                  mii_bus = devm_mdiobus_alloc_size(&pdev->dev, sizeof(*bus));
->                  if (!mii_bus)
->                          break;
->                  bus = mii_bus->priv;
->                  bus->mii_bus = mii_bus;
-> 
->                  nexus->buses[i] = bus;
-> 
-> This succeeds and sets nexus->buses[i] to a non-NULL value.
-> 
->                  err = of_mdiobus_register(bus->mii_bus, node);
->                  if (err)
->                          dev_err(&pdev->dev, "of_mdiobus_register failed\n");
-> 
->                  dev_info(&pdev->dev, "Added bus at %llx\n", r.start);
->                  if (i >= ARRAY_SIZE(nexus->buses))
->                          break;
->          }
-> 
-> If of_mdiobus_register() fails, the bus is not registered, and we just
-> move on to the next bus, leaving nexus->buses[i] set to a non-NULL
-> value.
+From: Colin Ian King <colin.king@canonical.com>
 
-Got it.
+The left shift of the u32 integer v is evaluated using 32 bit
+arithmetic and then assigned to a u64 integer. There are cases
+where v will currently overflow on the shift. Avoid this by
+casting it to unsigned long (same type as map[]) before shifting
+it.
 
-Thx for the explanation.
+Addresses-Coverity: ("Unintentional integer overflow")
+Fixes: 02b3f84d9080 ("gpio: xilinx: Switch to use bitmap APIs")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpio/gpio-xilinx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-CJ
+diff --git a/drivers/gpio/gpio-xilinx.c b/drivers/gpio/gpio-xilinx.c
+index 109b32104867..164a3a5a9393 100644
+--- a/drivers/gpio/gpio-xilinx.c
++++ b/drivers/gpio/gpio-xilinx.c
+@@ -99,7 +99,7 @@ static inline void xgpio_set_value32(unsigned long *map, int bit, u32 v)
+ 	const unsigned long offset = (bit % BITS_PER_LONG) & BIT(5);
+ 
+ 	map[index] &= ~(0xFFFFFFFFul << offset);
+-	map[index] |= v << offset;
++	map[index] |= (unsigned long)v << offset;
+ }
+ 
+ static inline int xgpio_regoffset(struct xgpio_instance *chip, int ch)
+-- 
+2.30.2
+
