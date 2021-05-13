@@ -2,83 +2,147 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38B92C43460
-	for <kernel-janitors@archiver.kernel.org>; Thu, 13 May 2021 13:50:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80E49C433B4
+	for <kernel-janitors@archiver.kernel.org>; Thu, 13 May 2021 14:02:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 05AA7613C5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 13 May 2021 13:50:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 618C661408
+	for <kernel-janitors@archiver.kernel.org>; Thu, 13 May 2021 14:02:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234252AbhEMNwG (ORCPT
+        id S234330AbhEMODN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 13 May 2021 09:52:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57406 "EHLO mail.kernel.org"
+        Thu, 13 May 2021 10:03:13 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44752 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234240AbhEMNv4 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 13 May 2021 09:51:56 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C2029613C8;
-        Thu, 13 May 2021 13:50:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1620913846;
-        bh=CEA3FRQtgAztdkKO3KsZGDizTo3tS40qy8xIl9x5pbo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WNfS/rZ0bk0a17LDgRG87v+2N5Xv39RBnKGdAR/l5SGXGb7YIaeE3XRGzi99Hg9vF
-         0B3Nk2edw5woKPNwOoKlxkqiw1nOiox50+gn8uwhr3Ei1CQ7YRlcYzYJievKukdPaV
-         DfkZMUMLy8n30ckSK5jGDCujPQNrwn/gW9hlcC3A=
-Date:   Thu, 13 May 2021 15:50:43 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Gong Ruiqi <gongruiqi1@huawei.com>
-Cc:     Wang Weiyang <wangweiyang2@huawei.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH -next] drivers/base/node.c: make CACHE_ATTR define static
- DEVICE_ATTR_RO
-Message-ID: <YJ0usxH4Li+fPRUf@kroah.com>
-References: <20210513110716.25791-1-gongruiqi1@huawei.com>
- <YJ0M5HcXIQQFOTEq@kroah.com>
- <017d9fae-328f-e93f-095e-bdfa0cc2f2ff@huawei.com>
+        id S234317AbhEMODE (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 13 May 2021 10:03:04 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id B8CB7B1C3;
+        Thu, 13 May 2021 14:01:52 +0000 (UTC)
+Subject: Re: [PATCH][next] drm: simpledrm: Fix use after free issues
+To:     Colin King <colin.king@canonical.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Maxime Ripard <maxime@cerno.tech>,
+        dri-devel@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210512203051.299026-1-colin.king@canonical.com>
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+Message-ID: <2b709552-cd8c-0885-c99c-7cb9e2af905b@suse.de>
+Date:   Thu, 13 May 2021 16:01:51 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <017d9fae-328f-e93f-095e-bdfa0cc2f2ff@huawei.com>
+In-Reply-To: <20210512203051.299026-1-colin.king@canonical.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="XaWzkNuflmcnRw9sH5tvQKoTUukS4gsCn"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, May 13, 2021 at 09:22:44PM +0800, Gong Ruiqi wrote:
-> 
-> 
-> On 2021/05/13 19:26, Greg Kroah-Hartman wrote:
-> > On Thu, May 13, 2021 at 07:07:16PM +0800, Ruiqi Gong wrote:
-> > > The Sparse tool reports as follows:
-> > > 
-> > > drivers/base/node.c:239:1: warning:
-> > >   symbol 'dev_attr_line_size' was not declared. Should it be static?
-> > > drivers/base/node.c:240:1: warning:
-> > >   symbol 'dev_attr_indexing' was not declared. Should it be static?
-> > > 
-> > > These symbols (and several others) are defined by DEVICE_ATTR_RO(name) in
-> > > CACHE_ATTR(name, fmt), and all of them are not used outside of node.c. So let's
-> > > mark DEVICE_ATTR_RO(name) static to solve these complains from Sparse.
-> > 
-> > Why not fix them all at once?  Why only one here?
-> 
-> Sorry for not making it clear enough. Actually the patch does fix them all.
-> Those symbols reported by Sparse are generated when two of the following
-> macros are expanded:
-> 
->     CACHE_ATTR(size, "%llu")
->     CACHE_ATTR(line_size, "%u")
->     CACHE_ATTR(indexing, "%u")
->     CACHE_ATTR(write_policy, "%u")
-> 
-> So one fix of the CACHE_ATTR's definition fixs them all.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--XaWzkNuflmcnRw9sH5tvQKoTUukS4gsCn
+Content-Type: multipart/mixed; boundary="la8J2z3cSCMFxMNgESLXqTvLIpk2BDxpm";
+ protected-headers="v1"
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: Colin King <colin.king@canonical.com>, David Airlie <airlied@linux.ie>,
+ Daniel Vetter <daniel@ffwll.ch>, Maxime Ripard <maxime@cerno.tech>,
+ dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-ID: <2b709552-cd8c-0885-c99c-7cb9e2af905b@suse.de>
+Subject: Re: [PATCH][next] drm: simpledrm: Fix use after free issues
+References: <20210512203051.299026-1-colin.king@canonical.com>
+In-Reply-To: <20210512203051.299026-1-colin.king@canonical.com>
 
-Ok, can you please rewrite the changelog text to make it more clear?
+--la8J2z3cSCMFxMNgESLXqTvLIpk2BDxpm
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-thanks,
+Hi
 
-greg k-h
+Am 12.05.21 um 22:30 schrieb Colin King:
+> From: Colin Ian King <colin.king@canonical.com>
+>=20
+> There are two occurrances where objects are being free'd via
+> a put call and yet they are being referenced after this. Fix these
+> by adding in the missing continue statement so that the put on the
+> end of the loop is skipped over.
+>=20
+> Addresses-Coverity: ("Use after free")
+> Fixes: 11e8f5fd223b ("drm: Add simpledrm driver")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+Queued up for drm-misc-next. Thanks!
+
+Best regards
+Thomas
+
+> ---
+>   drivers/gpu/drm/tiny/simpledrm.c | 2 ++
+>   1 file changed, 2 insertions(+)
+>=20
+> diff --git a/drivers/gpu/drm/tiny/simpledrm.c b/drivers/gpu/drm/tiny/si=
+mpledrm.c
+> index 2bdb477d9326..eae748394b00 100644
+> --- a/drivers/gpu/drm/tiny/simpledrm.c
+> +++ b/drivers/gpu/drm/tiny/simpledrm.c
+> @@ -298,6 +298,7 @@ static int simpledrm_device_init_clocks(struct simp=
+ledrm_device *sdev)
+>   			drm_err(dev, "failed to enable clock %u: %d\n",
+>   				i, ret);
+>   			clk_put(clock);
+> +			continue;
+>   		}
+>   		sdev->clks[i] =3D clock;
+>   	}
+> @@ -415,6 +416,7 @@ static int simpledrm_device_init_regulators(struct =
+simpledrm_device *sdev)
+>   			drm_err(dev, "failed to enable regulator %u: %d\n",
+>   				i, ret);
+>   			regulator_put(regulator);
+> +			continue;
+>   		}
+>  =20
+>   		sdev->regulators[i++] =3D regulator;
+>=20
+
+--=20
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
+(HRB 36809, AG N=C3=BCrnberg)
+Gesch=C3=A4ftsf=C3=BChrer: Felix Imend=C3=B6rffer
+
+
+--la8J2z3cSCMFxMNgESLXqTvLIpk2BDxpm--
+
+--XaWzkNuflmcnRw9sH5tvQKoTUukS4gsCn
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature"
+
+-----BEGIN PGP SIGNATURE-----
+
+wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmCdMU8FAwAAAAAACgkQlh/E3EQov+Aw
+bw/+P/W5921z5b3YngrfUBXAGxwGZ0ElScedm7rPMu4X7lxySR9LAtZtZj/a+Jy6opYN7PF2QOMu
+8lTHe4RRlRlYllWG1agX8pSAiH577d1EURj4XDmFGN8oNJKrpRaBTdV1qJstc3det3qyioHdG401
+Ms6cSsZ5pj2TmhOn6LSAGhr1SGKjvNDORGY0bO787YrJTt6gP66uBKv1S6lUH+uLIvptnnzpIzhr
+/FCSm57ouQJQdHAo7EtxjCZ8tYXZzyM/xbWtBbsURLc9nBg5cproYS5SlBMYPvOf24pa7gD6CRRa
+UpcWfZ3HmEhoE0zrkM0Fo+8fvSNT/d8fyq+9yIRlVn8tACq+yQZqk93nFqzFWEdjl6Q+yue2uo2R
+xdfrdr0ZX8z4ycClKaJWyeBN3Pqq96i1vprGuIhUAgBUR0OB+6N195Nr2bPO3HpMm/yKPon3U9IL
+FP8XORzMnrxln3pBpHCoxs26WOCt/1pw1i684Im/gkqP+NQ3J3H3x+OTau5NW9FZWXiQu4ogFN/5
+5q9/ITkDvbSHcqi5Qb/aDRoiylpzUfIfCHE1kMB1Flt2NH0+69z+K2Ml7cEXQTPmCM5/NDpCY6mV
+ntjKyAUu9rFG/EFIR3TX7PhnaKOQWxA0IY6cjc7SMDzD93eS//BZHm5UD1Q+ncP6EBPp6jy3KRM5
+f3w=
+=/ZoR
+-----END PGP SIGNATURE-----
+
+--XaWzkNuflmcnRw9sH5tvQKoTUukS4gsCn--
