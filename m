@@ -2,78 +2,76 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2732C433ED
-	for <kernel-janitors@archiver.kernel.org>; Thu, 13 May 2021 20:20:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92D14C433B4
+	for <kernel-janitors@archiver.kernel.org>; Thu, 13 May 2021 22:03:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8001B61421
-	for <kernel-janitors@archiver.kernel.org>; Thu, 13 May 2021 20:20:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72F2F613F7
+	for <kernel-janitors@archiver.kernel.org>; Thu, 13 May 2021 22:03:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232719AbhEMUVV (ORCPT
+        id S231201AbhEMWEb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 13 May 2021 16:21:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44510 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232582AbhEMUVU (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 13 May 2021 16:21:20 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id E3997613DE;
-        Thu, 13 May 2021 20:20:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1620937209;
-        bh=M7fff01UaM/PyNcz1Grxz5NiWZd8L0rRDZZzYnsMyZs=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=K4YIk7ll4rSrbQqSOP8zq4uCh+YvRwDrkpXBPZ0W06HedZbh1f8rAn8ZEVbMWUuru
-         jj/izkCMzpEdUNUjlejfUA+yoZ/HPcor0vnKi2IHDkvIWvGgfcQT0/TcUu1IzjUnWV
-         uZMkzHenHMYzR4bXNaaP+QMV7eKzDZvV5TkQWNn2VyG0AlLdPb9b3PIypPuaNF6RZl
-         roD86hGSTPI/J5xi987AOxuuafRuGXemhzLFPRqTkSl9GYljp0QhKA/osHlBLOFION
-         c4OExDO3I5jAxL7GKJrhnjjS6DIUZj4UMfr8/NN0b/SSBn6BvWM7al6xSJED4sHn/V
-         duC1OuKTtL3ig==
-Content-Type: text/plain; charset="utf-8"
+        Thu, 13 May 2021 18:04:31 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:48328 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229459AbhEMWEb (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 13 May 2021 18:04:31 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lhJQL-00078E-TH; Thu, 13 May 2021 22:03:17 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-media@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-staging@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] media: meson: vdec: remove redundant initialization of variable reg_cur
+Date:   Thu, 13 May 2021 23:03:17 +0100
+Message-Id: <20210513220317.137090-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH V2] net: mdio: thunder: Fix a double free issue in the .remove
- function
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <162093720986.5649.11608621968366387859.git-patchwork-notify@kernel.org>
-Date:   Thu, 13 May 2021 20:20:09 +0000
-References: <f8ad9a9e6d7df4cb02731a71a418acca18353380.1620890611.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <f8ad9a9e6d7df4cb02731a71a418acca18353380.1620890611.git.christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
-        davem@davemloft.net, kuba@kernel.org, david.daney@cavium.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+From: Colin Ian King <colin.king@canonical.com>
 
-This patch was applied to netdev/net.git (refs/heads/master):
+The variable reg_cur is being initialized with a value that is never
+read, it is being updated later on. The assignment is redundant and
+can be removed.
 
-On Thu, 13 May 2021 09:44:49 +0200 you wrote:
-> 'bus->mii_bus' have been allocated with 'devm_mdiobus_alloc_size()' in the
-> probe function. So it must not be freed explicitly or there will be a
-> double free.
-> 
-> Remove the incorrect 'mdiobus_free' in the remove function.
-> 
-> Fixes: 379d7ac7ca31 ("phy: mdio-thunder: Add driver for Cavium Thunder SoC MDIO buses.")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> 
-> [...]
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/media/meson/vdec/vdec_helpers.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Here is the summary with links:
-  - [V2] net: mdio: thunder: Fix a double free issue in the .remove function
-    https://git.kernel.org/netdev/net/c/a93a0a15876d
-
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+diff --git a/drivers/staging/media/meson/vdec/vdec_helpers.c b/drivers/staging/media/meson/vdec/vdec_helpers.c
+index 7f07a9175815..b9125c295d1d 100644
+--- a/drivers/staging/media/meson/vdec/vdec_helpers.c
++++ b/drivers/staging/media/meson/vdec/vdec_helpers.c
+@@ -183,7 +183,7 @@ int amvdec_set_canvases(struct amvdec_session *sess,
+ 	u32 pixfmt = sess->pixfmt_cap;
+ 	u32 width = ALIGN(sess->width, 32);
+ 	u32 height = ALIGN(sess->height, 32);
+-	u32 reg_cur = reg_base[0];
++	u32 reg_cur;
+ 	u32 reg_num_cur = 0;
+ 	u32 reg_base_cur = 0;
+ 	int i = 0;
+-- 
+2.30.2
 
