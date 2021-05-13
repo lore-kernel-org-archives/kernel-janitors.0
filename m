@@ -2,105 +2,77 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91D22C433B4
-	for <kernel-janitors@archiver.kernel.org>; Thu, 13 May 2021 09:44:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3470C43461
+	for <kernel-janitors@archiver.kernel.org>; Thu, 13 May 2021 11:16:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7371B61432
-	for <kernel-janitors@archiver.kernel.org>; Thu, 13 May 2021 09:44:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B79A4613CB
+	for <kernel-janitors@archiver.kernel.org>; Thu, 13 May 2021 11:16:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232005AbhEMJpb (ORCPT
+        id S233277AbhEMLRL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 13 May 2021 05:45:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35998 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231193AbhEMJp2 (ORCPT
+        Thu, 13 May 2021 07:17:11 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:2473 "EHLO
+        szxga07-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233253AbhEMLQz (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 13 May 2021 05:45:28 -0400
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [IPv6:2001:4d48:ad52:32c8:5054:ff:fe00:142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76D6EC061574;
-        Thu, 13 May 2021 02:44:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=8lKBmdjvyNJC0zSVS9+cqxL1DCxV5U8RNgB+s7i0tH8=; b=aVEmWKaAYpr2okDCcyt3Yv7zs
-        jWLgwljgaZaCitHkfIJaO6qVaNT2ncb4viijtLJXVnZ8W/dooauIr0wgC1MyFb4qTgK+EfMqPscvM
-        X3KADSYrV7XQ5UE8uESnUcIt2ku4uojePpco/7SfH40CIenjESKrNGpjpDA41p0KF4iV4VkaRvuaf
-        YmZtCyc6O5yYnmyDrbgUSu5vQlDycB9rZUV+aQNOWpP4ac2bmUJ/n2ixqklwv27WoBHQHyXS03Cf5
-        BfHfSdJKUsio36PPqASSXhD8mm4mMtitnNuYCXTkVZ/t8eIg/+PlgIX3EP5UZHo/W3Hrjo0dJyvaT
-        fJDzP/mgg==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:43922)
-        by pandora.armlinux.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1lh7tA-0005uI-DM; Thu, 13 May 2021 10:44:16 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1lh7t9-0002uD-Vh; Thu, 13 May 2021 10:44:16 +0100
-Date:   Thu, 13 May 2021 10:44:15 +0100
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     andrew@lunn.ch, hkallweit1@gmail.com, davem@davemloft.net,
-        kuba@kernel.org, f.fainelli@gmail.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] net: mdio: octeon: Fix some double free issues
-Message-ID: <20210513094415.GV1336@shell.armlinux.org.uk>
-References: <7adc1815237605a0b774efb31a2ab22df51462d3.1620890610.git.christophe.jaillet@wanadoo.fr>
+        Thu, 13 May 2021 07:16:55 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
+        by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4Fgpt111JszBv4Z;
+        Thu, 13 May 2021 19:12:57 +0800 (CST)
+Received: from huawei.com (10.67.174.117) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.498.0; Thu, 13 May 2021
+ 19:15:29 +0800
+From:   Ruiqi Gong <gongruiqi1@huawei.com>
+To:     <gongruiqi1@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Wang Weiyang <wangweiyang2@huawei.com>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] drivers/base/node.c: make CACHE_ATTR define static DEVICE_ATTR_RO
+Date:   Thu, 13 May 2021 19:07:16 +0800
+Message-ID: <20210513110716.25791-1-gongruiqi1@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7adc1815237605a0b774efb31a2ab22df51462d3.1620890610.git.christophe.jaillet@wanadoo.fr>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-Sender: Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.174.117]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, May 13, 2021 at 09:24:55AM +0200, Christophe JAILLET wrote:
-> 'bus->mii_bus' has been allocated with 'devm_mdiobus_alloc_size()' in the
-> probe function. So it must not be freed explicitly or there will be a
-> double free.
-> 
-> Remove the incorrect 'mdiobus_free' in the error handling path of the
-> probe function and in remove function.
-> 
-> Suggested-By: Andrew Lunn <andrew@lunn.ch>
-> Fixes: 35d2aeac9810 ("phy: mdio-octeon: Use devm_mdiobus_alloc_size()")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+The Sparse tool reports as follows:
 
-Reviewed-by: Russell King <rmk+kernel@armlinux.org.uk>
+drivers/base/node.c:239:1: warning:
+ symbol 'dev_attr_line_size' was not declared. Should it be static?
+drivers/base/node.c:240:1: warning:
+ symbol 'dev_attr_indexing' was not declared. Should it be static?
 
-> ---
-> The 'smi_en.u64 = 0; oct_mdio_writeq()' looks odd to me. Usually the normal
-> path and the error handling path don't write the same value. Here, both
-> write 0.
-> Having '1' somewhere would 'look' more usual. :)
-> More over I think that 'smi_en.s.en = 1;' in the probe is useless.
+These symbols (and several others) are defined by DEVICE_ATTR_RO(name) in
+CACHE_ATTR(name, fmt), and all of them are not used outside of node.c. So let's
+mark DEVICE_ATTR_RO(name) static to solve these complains from Sparse.
 
-It looks fine to me.
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Ruiqi Gong <gongruiqi1@huawei.com>
+---
+ drivers/base/node.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-        smi_en.u64 = 0;
-        smi_en.s.en = 1;
-        oct_mdio_writeq(smi_en.u64, bus->register_base + SMI_EN);
+diff --git a/drivers/base/node.c b/drivers/base/node.c
+index f449dbb2c746..27f251c2742a 100644
+--- a/drivers/base/node.c
++++ b/drivers/base/node.c
+@@ -233,7 +233,7 @@ static ssize_t name##_show(struct device *dev,				\
+ 	return sysfs_emit(buf, fmt "\n",				\
+ 			  to_cache_info(dev)->cache_attrs.name);	\
+ }									\
+-DEVICE_ATTR_RO(name);
++static DEVICE_ATTR_RO(name);
+ 
+ CACHE_ATTR(size, "%llu")
+ CACHE_ATTR(line_size, "%u")
 
-smi_en is a union of a u64 and a structure containing a bitfield. s.en
-corresponds on LE systems with the u64 bit 0. So the above has the
-effect of writing a u64 value of '1' to the SMI_EN register, whereas:
-
-        smi_en.u64 = 0;
-        oct_mdio_writeq(smi_en.u64, bus->register_base + SMI_EN);
-
-has the effect of writing a u64 value of '0' to the SMI_EN register.
-
-This code is fine.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 40Mbps down 10Mbps up. Decent connectivity at last!
