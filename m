@@ -2,64 +2,73 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AC6AC433B4
-	for <kernel-janitors@archiver.kernel.org>; Thu, 13 May 2021 12:23:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B669C433ED
+	for <kernel-janitors@archiver.kernel.org>; Thu, 13 May 2021 12:24:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1B2C06127A
-	for <kernel-janitors@archiver.kernel.org>; Thu, 13 May 2021 12:23:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21C536127A
+	for <kernel-janitors@archiver.kernel.org>; Thu, 13 May 2021 12:24:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233194AbhEMMZC (ORCPT
+        id S233815AbhEMMZe (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 13 May 2021 08:25:02 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:38600 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230097AbhEMMZB (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 13 May 2021 08:25:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=3RfX3ZTxasf3qaleCTBm0QOY9AWrA3aOMELJWashnxs=; b=itpRKvxPi7HM3zOo8sasRb8H5g
-        GGJ9WkLPsdcVkcTWFKClkPItOT/VDnDPcRdjLF/V9xXD7vBbUtkd8hFDWejq0V6wzzfZxb8YVeqDx
-        GbM8oRZ9HgqfMva6SaTP2SMYYZUm84Cnn6Pj8kaqj6xCqEdxs9cG1eJ38J25u8bfLHF8=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1lhANW-0043f6-Mn; Thu, 13 May 2021 14:23:46 +0200
-Date:   Thu, 13 May 2021 14:23:46 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
-        kuba@kernel.org, david.daney@cavium.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH V2] net: mdio: thunder: Fix a double free issue in the
- .remove function
-Message-ID: <YJ0aUoUNn7/aIPaC@lunn.ch>
-References: <f8ad9a9e6d7df4cb02731a71a418acca18353380.1620890611.git.christophe.jaillet@wanadoo.fr>
+        Thu, 13 May 2021 08:25:34 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:34054 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233800AbhEMMZ1 (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 13 May 2021 08:25:27 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lhANu-0003dX-6U; Thu, 13 May 2021 12:24:10 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Ping-Ke Shih <pkshih@realtek.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] rtlwifi: rtl8723ae: remove redundant initialization of variable rtstatus
+Date:   Thu, 13 May 2021 13:24:09 +0100
+Message-Id: <20210513122410.59204-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f8ad9a9e6d7df4cb02731a71a418acca18353380.1620890611.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, May 13, 2021 at 09:44:49AM +0200, Christophe JAILLET wrote:
-> 'bus->mii_bus' have been allocated with 'devm_mdiobus_alloc_size()' in the
-> probe function. So it must not be freed explicitly or there will be a
-> double free.
-> 
-> Remove the incorrect 'mdiobus_free' in the remove function.
-> 
-> Fixes: 379d7ac7ca31 ("phy: mdio-thunder: Add driver for Cavium Thunder SoC MDIO buses.")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Colin Ian King <colin.king@canonical.com>
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+The variable rtstatus is being initialized with a value that is never
+read, it is being updated later on. The assignment is redundant and
+can be removed.
 
-    Andrew
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/realtek/rtlwifi/rtl8723ae/hw.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/hw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/hw.c
+index f8a1de6e9849..c98f2216734f 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/hw.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/hw.c
+@@ -915,7 +915,7 @@ int rtl8723e_hw_init(struct ieee80211_hw *hw)
+ 	struct rtl_phy *rtlphy = &(rtlpriv->phy);
+ 	struct rtl_ps_ctl *ppsc = rtl_psc(rtl_priv(hw));
+ 	struct rtl_pci *rtlpci = rtl_pcidev(rtl_pcipriv(hw));
+-	bool rtstatus = true;
++	bool rtstatus;
+ 	int err;
+ 	u8 tmp_u1b;
+ 	unsigned long flags;
+-- 
+2.30.2
+
