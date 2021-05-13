@@ -7,68 +7,93 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B669C433ED
-	for <kernel-janitors@archiver.kernel.org>; Thu, 13 May 2021 12:24:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7F36C433B4
+	for <kernel-janitors@archiver.kernel.org>; Thu, 13 May 2021 12:37:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 21C536127A
-	for <kernel-janitors@archiver.kernel.org>; Thu, 13 May 2021 12:24:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C41BF6127A
+	for <kernel-janitors@archiver.kernel.org>; Thu, 13 May 2021 12:37:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233815AbhEMMZe (ORCPT
+        id S233897AbhEMMiZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 13 May 2021 08:25:34 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:34054 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233800AbhEMMZ1 (ORCPT
+        Thu, 13 May 2021 08:38:25 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:2721 "EHLO
+        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232660AbhEMMiT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 13 May 2021 08:25:27 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <colin.king@canonical.com>)
-        id 1lhANu-0003dX-6U; Thu, 13 May 2021 12:24:10 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Ping-Ke Shih <pkshih@realtek.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] rtlwifi: rtl8723ae: remove redundant initialization of variable rtstatus
-Date:   Thu, 13 May 2021 13:24:09 +0100
-Message-Id: <20210513122410.59204-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.30.2
+        Thu, 13 May 2021 08:38:19 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Fgrh05h7Tz16PD7;
+        Thu, 13 May 2021 20:34:24 +0800 (CST)
+Received: from localhost.localdomain (10.175.102.38) by
+ DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
+ 14.3.498.0; Thu, 13 May 2021 20:36:59 +0800
+From:   Wei Yongjun <weiyongjun1@huawei.com>
+To:     <weiyongjun1@huawei.com>, "David S. Miller" <davem@davemloft.net>,
+        "Jakub Kicinski" <kuba@kernel.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Valentin Vidic <vvidic@valentin-vidic.from.hr>,
+        Mike Rapoport <rppt@kernel.org>,
+        =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@laposte.net>
+CC:     <netdev@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH net] net: korina: Fix return value check in korina_probe()
+Date:   Thu, 13 May 2021 12:46:21 +0000
+Message-ID: <20210513124621.2361806-1-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.102.38]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+In case of error, the function devm_platform_ioremap_resource_byname()
+returns ERR_PTR() and never returns NULL. The NULL test in the return
+value check should be replaced with IS_ERR().
 
-The variable rtstatus is being initialized with a value that is never
-read, it is being updated later on. The assignment is redundant and
-can be removed.
-
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: b4cd249a8cc0 ("net: korina: Use devres functions")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/net/wireless/realtek/rtlwifi/rtl8723ae/hw.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/korina.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/hw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/hw.c
-index f8a1de6e9849..c98f2216734f 100644
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/hw.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/hw.c
-@@ -915,7 +915,7 @@ int rtl8723e_hw_init(struct ieee80211_hw *hw)
- 	struct rtl_phy *rtlphy = &(rtlpriv->phy);
- 	struct rtl_ps_ctl *ppsc = rtl_psc(rtl_priv(hw));
- 	struct rtl_pci *rtlpci = rtl_pcidev(rtl_pcipriv(hw));
--	bool rtstatus = true;
-+	bool rtstatus;
- 	int err;
- 	u8 tmp_u1b;
- 	unsigned long flags;
--- 
-2.30.2
+diff --git a/drivers/net/ethernet/korina.c b/drivers/net/ethernet/korina.c
+index 6f987a7ffcb3..b30a45725374 100644
+--- a/drivers/net/ethernet/korina.c
++++ b/drivers/net/ethernet/korina.c
+@@ -1315,23 +1315,23 @@ static int korina_probe(struct platform_device *pdev)
+ 	lp->tx_irq = platform_get_irq_byname(pdev, "tx");
+ 
+ 	p = devm_platform_ioremap_resource_byname(pdev, "emac");
+-	if (!p) {
++	if (IS_ERR(p)) {
+ 		printk(KERN_ERR DRV_NAME ": cannot remap registers\n");
+-		return -ENOMEM;
++		return PTR_ERR(p);
+ 	}
+ 	lp->eth_regs = p;
+ 
+ 	p = devm_platform_ioremap_resource_byname(pdev, "dma_rx");
+-	if (!p) {
++	if (IS_ERR(p)) {
+ 		printk(KERN_ERR DRV_NAME ": cannot remap Rx DMA registers\n");
+-		return -ENOMEM;
++		return PTR_ERR(p);
+ 	}
+ 	lp->rx_dma_regs = p;
+ 
+ 	p = devm_platform_ioremap_resource_byname(pdev, "dma_tx");
+-	if (!p) {
++	if (IS_ERR(p)) {
+ 		printk(KERN_ERR DRV_NAME ": cannot remap Tx DMA registers\n");
+-		return -ENOMEM;
++		return PTR_ERR(p);
+ 	}
+ 	lp->tx_dma_regs = p;
+ 
 
