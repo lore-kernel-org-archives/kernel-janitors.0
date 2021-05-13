@@ -2,74 +2,149 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AEC4C433ED
-	for <kernel-janitors@archiver.kernel.org>; Thu, 13 May 2021 07:46:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05B37C433B4
+	for <kernel-janitors@archiver.kernel.org>; Thu, 13 May 2021 08:10:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 23DAC613F7
-	for <kernel-janitors@archiver.kernel.org>; Thu, 13 May 2021 07:46:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C26B8611CE
+	for <kernel-janitors@archiver.kernel.org>; Thu, 13 May 2021 08:10:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231795AbhEMHrW (ORCPT
+        id S231562AbhEMILO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 13 May 2021 03:47:22 -0400
-Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:56829 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231856AbhEMHqR (ORCPT
+        Thu, 13 May 2021 04:11:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43232 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230318AbhEMILN (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 13 May 2021 03:46:17 -0400
-Received: from localhost.localdomain ([86.243.172.93])
-        by mwinf5d84 with ME
-        id 47l52500E21Fzsu037l5tW; Thu, 13 May 2021 09:45:06 +0200
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 13 May 2021 09:45:06 +0200
-X-ME-IP: 86.243.172.93
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
-        davem@davemloft.net, kuba@kernel.org, david.daney@cavium.com
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH V2] net: mdio: thunder: Fix a double free issue in the .remove function
-Date:   Thu, 13 May 2021 09:44:49 +0200
-Message-Id: <f8ad9a9e6d7df4cb02731a71a418acca18353380.1620890611.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Thu, 13 May 2021 04:11:13 -0400
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [IPv6:2001:4d48:ad52:32c8:5054:ff:fe00:142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4029EC061574;
+        Thu, 13 May 2021 01:10:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
+        Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=/NESzHwym3XtCoGMXOiM5WCowQQPiyusBeHAHRS0vfg=; b=GZkhcKULQSAULYUqQvnlmsI/3
+        78MbWC2j0wXnjAYTr4Gc4zVmJ4g3wv5D33kNsl+YVCrxk3bMSD2ORnbEDYf7EJglkHeEMc1pFBtCu
+        An1qhk4TeUVAXWfshJdnDpAq4S9ttppEapX1CrmF8yGvTV+SF2pwzcV0YP68DScsGMdpOazXp2SzW
+        AyGNf6exDtT9Y6lo5SSdLDa0/+alOtFuhsTTUFoyFgO4GgUIdzaYCkfwHNrcs4fVEtBrAQJJtcbZU
+        IzsmTQDWLGgh5SrXn3dni0gkx2PRyhmgW7GSn252RoUBfofJFvjJ1OCjyJ+F75CuFIqRtcdI+uQmH
+        Te53m4n/w==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:43916)
+        by pandora.armlinux.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1lh6Pv-0005oL-5n; Thu, 13 May 2021 09:09:59 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1lh6Pt-0002qR-B2; Thu, 13 May 2021 09:09:57 +0100
+Date:   Thu, 13 May 2021 09:09:57 +0100
+From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     andrew@lunn.ch, hkallweit1@gmail.com, davem@davemloft.net,
+        kuba@kernel.org, david.daney@cavium.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] net: mdio: Fix a double free issue in the .remove
+ function
+Message-ID: <20210513080957.GS1336@shell.armlinux.org.uk>
+References: <f8ad939e6d5df4cb0273ea71a418a3ca1835338d.1620855222.git.christophe.jaillet@wanadoo.fr>
+ <20210512214403.GQ1336@shell.armlinux.org.uk>
+ <0a044473-f3f7-02fc-eca5-84adf8b5c9f2@wanadoo.fr>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <0a044473-f3f7-02fc-eca5-84adf8b5c9f2@wanadoo.fr>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+Sender: Russell King - ARM Linux admin <linux@armlinux.org.uk>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-'bus->mii_bus' have been allocated with 'devm_mdiobus_alloc_size()' in the
-probe function. So it must not be freed explicitly or there will be a
-double free.
+On Thu, May 13, 2021 at 08:29:01AM +0200, Christophe JAILLET wrote:
+> Le 12/05/2021 à 23:44, Russell King - ARM Linux admin a écrit :
+> > On Wed, May 12, 2021 at 11:35:38PM +0200, Christophe JAILLET wrote:
+> > > 'bus->mii_bus' have been allocated with 'devm_mdiobus_alloc_size()' in the
+> > > probe function. So it must not be freed explicitly or there will be a
+> > > double free.
+> > > 
+> > > Remove the incorrect 'mdiobus_free' in the remove function.
+> > 
+> > Yes, this looks correct, thanks.
+> > 
+> > Reviewed-by: Russell King <rmk+kernel@armlinux.org.uk>
+> > 
+> > However, there's another issue in this driver that ought to be fixed.
+> > 
+> > If devm_mdiobus_alloc_size() succeeds, but of_mdiobus_register() fails,
+> > we continue on to the next bus (which I think is reasonable.) We don't
+> > free the bus.
+> > 
+> > When we come to the remove method however, we will call
+> > mdiobus_unregister() on this existent but not-registered bus. Surely we
+> > don't want to do that?
+> > 
+> 
+> Hmmm, I don't agree here.
+> 
+> 'nexus' is 'kzalloc()'ed.
+> So the pointers in 'buses[]' are all NULL by default.
+> We set 'nexus->buses[i] = bus' only when all functions that can fail in the
+> loop have been called. (the very last 'break' is when the array is full)
+> 
+> And in the remove function, we have:
+> 	struct cavium_mdiobus *bus = nexus->buses[i];
+> 	if (!bus)
+> 		continue;
+> 
+> So, this looks safe to me.
 
-Remove the incorrect 'mdiobus_free' in the remove function.
+It isn't safe. Please look closer.
 
-Fixes: 379d7ac7ca31 ("phy: mdio-thunder: Add driver for Cavium Thunder SoC MDIO buses.")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-v2: indicate in the subject which mdio bus driver has a double free
----
- drivers/net/mdio/mdio-thunder.c | 1 -
- 1 file changed, 1 deletion(-)
+        device_for_each_child_node(&pdev->dev, fwn) {
+                mii_bus = devm_mdiobus_alloc_size(&pdev->dev, sizeof(*bus));
+                if (!mii_bus)
+                        break;
+                bus = mii_bus->priv;
+                bus->mii_bus = mii_bus;
 
-diff --git a/drivers/net/mdio/mdio-thunder.c b/drivers/net/mdio/mdio-thunder.c
-index cb1761693b69..822d2cdd2f35 100644
---- a/drivers/net/mdio/mdio-thunder.c
-+++ b/drivers/net/mdio/mdio-thunder.c
-@@ -126,7 +126,6 @@ static void thunder_mdiobus_pci_remove(struct pci_dev *pdev)
- 			continue;
- 
- 		mdiobus_unregister(bus->mii_bus);
--		mdiobus_free(bus->mii_bus);
- 		oct_mdio_writeq(0, bus->register_base + SMI_EN);
- 	}
- 	pci_release_regions(pdev);
+                nexus->buses[i] = bus;
+
+This succeeds and sets nexus->buses[i] to a non-NULL value.
+
+                err = of_mdiobus_register(bus->mii_bus, node);
+                if (err)
+                        dev_err(&pdev->dev, "of_mdiobus_register failed\n");
+
+                dev_info(&pdev->dev, "Added bus at %llx\n", r.start);
+                if (i >= ARRAY_SIZE(nexus->buses))
+                        break;
+        }
+
+If of_mdiobus_register() fails, the bus is not registered, and we just
+move on to the next bus, leaving nexus->buses[i] set to a non-NULL
+value.
+
+If we now look at the remove code:
+
+        for (i = 0; i < ARRAY_SIZE(nexus->buses); i++) {
+                struct cavium_mdiobus *bus = nexus->buses[i];
+
+                if (!bus)
+                        continue;
+
+                mdiobus_unregister(bus->mii_bus);
+
+nexus->buses[i] is non-NULL, but the bus is _not_ registered. We end up
+calling mdiobus_unregister() on an allocated but _unregistered_ bus.
+This is a bug.
+
 -- 
-2.30.2
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 40Mbps down 10Mbps up. Decent connectivity at last!
