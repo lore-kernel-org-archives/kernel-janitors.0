@@ -7,41 +7,35 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92D14C433B4
-	for <kernel-janitors@archiver.kernel.org>; Thu, 13 May 2021 22:03:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9C32C433ED
+	for <kernel-janitors@archiver.kernel.org>; Thu, 13 May 2021 22:08:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 72F2F613F7
-	for <kernel-janitors@archiver.kernel.org>; Thu, 13 May 2021 22:03:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86BB06142E
+	for <kernel-janitors@archiver.kernel.org>; Thu, 13 May 2021 22:08:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231201AbhEMWEb (ORCPT
+        id S231302AbhEMWJs (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 13 May 2021 18:04:31 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:48328 "EHLO
+        Thu, 13 May 2021 18:09:48 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:48409 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229459AbhEMWEb (ORCPT
+        with ESMTP id S229459AbhEMWJr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 13 May 2021 18:04:31 -0400
+        Thu, 13 May 2021 18:09:47 -0400
 Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
         (Exim 4.93)
         (envelope-from <colin.king@canonical.com>)
-        id 1lhJQL-00078E-TH; Thu, 13 May 2021 22:03:17 +0000
+        id 1lhJVQ-0007RT-95; Thu, 13 May 2021 22:08:32 +0000
 From:   Colin King <colin.king@canonical.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
+To:     David Kershner <david.kershner@unisys.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-media@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-staging@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+        sparmaintainer@unisys.com, linux-staging@lists.linux.dev
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] media: meson: vdec: remove redundant initialization of variable reg_cur
-Date:   Thu, 13 May 2021 23:03:17 +0100
-Message-Id: <20210513220317.137090-1-colin.king@canonical.com>
+Subject: [PATCH] staging: unisys: visorinput: remove redundant assignment of variable led
+Date:   Thu, 13 May 2021 23:08:32 +0100
+Message-Id: <20210513220832.137336-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
@@ -49,29 +43,27 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The variable reg_cur is being initialized with a value that is never
-read, it is being updated later on. The assignment is redundant and
-can be removed.
+The variable led  is being assigned a value that is never used before
+a return statement. The assignment is redundant and can be removed.
 
 Addresses-Coverity: ("Unused value")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/staging/media/meson/vdec/vdec_helpers.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/unisys/visorinput/visorinput.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/staging/media/meson/vdec/vdec_helpers.c b/drivers/staging/media/meson/vdec/vdec_helpers.c
-index 7f07a9175815..b9125c295d1d 100644
---- a/drivers/staging/media/meson/vdec/vdec_helpers.c
-+++ b/drivers/staging/media/meson/vdec/vdec_helpers.c
-@@ -183,7 +183,7 @@ int amvdec_set_canvases(struct amvdec_session *sess,
- 	u32 pixfmt = sess->pixfmt_cap;
- 	u32 width = ALIGN(sess->width, 32);
- 	u32 height = ALIGN(sess->height, 32);
--	u32 reg_cur = reg_base[0];
-+	u32 reg_cur;
- 	u32 reg_num_cur = 0;
- 	u32 reg_base_cur = 0;
- 	int i = 0;
+diff --git a/drivers/staging/unisys/visorinput/visorinput.c b/drivers/staging/unisys/visorinput/visorinput.c
+index 6d202cba8575..426deab22d62 100644
+--- a/drivers/staging/unisys/visorinput/visorinput.c
++++ b/drivers/staging/unisys/visorinput/visorinput.c
+@@ -556,7 +556,6 @@ static void handle_locking_key(struct input_dev *visorinput_dev, int keycode,
+ 		led = LED_NUML;
+ 		break;
+ 	default:
+-		led = -1;
+ 		return;
+ 	}
+ 	if (test_bit(led, visorinput_dev->led) != desired_state) {
 -- 
 2.30.2
 
