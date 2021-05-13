@@ -2,70 +2,78 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20F55C43460
-	for <kernel-janitors@archiver.kernel.org>; Thu, 13 May 2021 15:16:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2732C433ED
+	for <kernel-janitors@archiver.kernel.org>; Thu, 13 May 2021 20:20:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 02F9261166
-	for <kernel-janitors@archiver.kernel.org>; Thu, 13 May 2021 15:16:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8001B61421
+	for <kernel-janitors@archiver.kernel.org>; Thu, 13 May 2021 20:20:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234810AbhEMPR4 (ORCPT
+        id S232719AbhEMUVV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 13 May 2021 11:17:56 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:38984 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234811AbhEMPRy (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 13 May 2021 11:17:54 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <colin.king@canonical.com>)
-        id 1lhD4q-0004tp-28; Thu, 13 May 2021 15:16:40 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     "J . Bruce Fields" <bfields@fieldses.org>,
-        Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] nfsd: remove redundant assignment to pointer 'this'
-Date:   Thu, 13 May 2021 16:16:39 +0100
-Message-Id: <20210513151639.73435-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.30.2
-MIME-Version: 1.0
+        Thu, 13 May 2021 16:21:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44510 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232582AbhEMUVU (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 13 May 2021 16:21:20 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPS id E3997613DE;
+        Thu, 13 May 2021 20:20:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1620937209;
+        bh=M7fff01UaM/PyNcz1Grxz5NiWZd8L0rRDZZzYnsMyZs=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=K4YIk7ll4rSrbQqSOP8zq4uCh+YvRwDrkpXBPZ0W06HedZbh1f8rAn8ZEVbMWUuru
+         jj/izkCMzpEdUNUjlejfUA+yoZ/HPcor0vnKi2IHDkvIWvGgfcQT0/TcUu1IzjUnWV
+         uZMkzHenHMYzR4bXNaaP+QMV7eKzDZvV5TkQWNn2VyG0AlLdPb9b3PIypPuaNF6RZl
+         roD86hGSTPI/J5xi987AOxuuafRuGXemhzLFPRqTkSl9GYljp0QhKA/osHlBLOFION
+         c4OExDO3I5jAxL7GKJrhnjjS6DIUZj4UMfr8/NN0b/SSBn6BvWM7al6xSJED4sHn/V
+         duC1OuKTtL3ig==
 Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH V2] net: mdio: thunder: Fix a double free issue in the .remove
+ function
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <162093720986.5649.11608621968366387859.git-patchwork-notify@kernel.org>
+Date:   Thu, 13 May 2021 20:20:09 +0000
+References: <f8ad9a9e6d7df4cb02731a71a418acca18353380.1620890611.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <f8ad9a9e6d7df4cb02731a71a418acca18353380.1620890611.git.christophe.jaillet@wanadoo.fr>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
+        davem@davemloft.net, kuba@kernel.org, david.daney@cavium.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hello:
 
-The pointer 'this' is being initialized with a value that is never read
-and it is being updated later with a new value. The initialization is
-redundant and can be removed.
+This patch was applied to netdev/net.git (refs/heads/master):
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- fs/nfsd/nfs4proc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Thu, 13 May 2021 09:44:49 +0200 you wrote:
+> 'bus->mii_bus' have been allocated with 'devm_mdiobus_alloc_size()' in the
+> probe function. So it must not be freed explicitly or there will be a
+> double free.
+> 
+> Remove the incorrect 'mdiobus_free' in the remove function.
+> 
+> Fixes: 379d7ac7ca31 ("phy: mdio-thunder: Add driver for Cavium Thunder SoC MDIO buses.")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> 
+> [...]
 
-diff --git a/fs/nfsd/nfs4proc.c b/fs/nfsd/nfs4proc.c
-index f4ce93d7f26e..712df4b7dcb2 100644
---- a/fs/nfsd/nfs4proc.c
-+++ b/fs/nfsd/nfs4proc.c
-@@ -3232,7 +3232,7 @@ bool nfsd4_spo_must_allow(struct svc_rqst *rqstp)
- {
- 	struct nfsd4_compoundres *resp = rqstp->rq_resp;
- 	struct nfsd4_compoundargs *argp = rqstp->rq_argp;
--	struct nfsd4_op *this = &argp->ops[resp->opcnt - 1];
-+	struct nfsd4_op *this;
- 	struct nfsd4_compound_state *cstate = &resp->cstate;
- 	struct nfs4_op_map *allow = &cstate->clp->cl_spo_must_allow;
- 	u32 opiter;
--- 
-2.30.2
+Here is the summary with links:
+  - [V2] net: mdio: thunder: Fix a double free issue in the .remove function
+    https://git.kernel.org/netdev/net/c/a93a0a15876d
+
+You are awesome, thank you!
+--
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
