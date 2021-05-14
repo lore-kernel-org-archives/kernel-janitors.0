@@ -2,142 +2,73 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42164C43460
-	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 18:33:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BA4CC433B4
+	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 18:35:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1C1DB6144B
-	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 18:33:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C0176144B
+	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 18:35:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231309AbhENSet (ORCPT
+        id S231264AbhENSgr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 14 May 2021 14:34:49 -0400
-Received: from mail-co1nam11on2077.outbound.protection.outlook.com ([40.107.220.77]:54689
-        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S229952AbhENSer (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 14 May 2021 14:34:47 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=hNCkCoUF7xXy26HSMomy7RlVyVxGwzmc1kb54vAPsSlITyIR5+LWl055mTNSitD9zU2t8xBgojK/RntBzzjammOSaATrCFu89/7dl2SSKU8Fz2IyEFO3vvv4oMG28/vCtGlW12NgyMkq0TOu4ccxX4nqRUa+myZEnGQ0pUoYf0LtAC0ZLc6/fEW0NuWKeLhDHwJnFSy21f06WAdEWpC+TcjXJN53GVgpC0Gm7pWrE07ZZSEpKdcuOAaIZatrGgXj1gmKW3EHqUnRf7ewZiuToQ1VULZsgxVxcqIOnAfRH/SUdD8/l3JjGurdaVQqF7uImKFRreFXyUOEXpagExpZlg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DyncnrtnmsqdCYWoTItodDCTsxSlEJbtQewwIaqpopQ=;
- b=GearDeVHRkSFepaChBourZyKeMjuwngmAI61XsAN7s94EWKZQM5epwWccOE/VneRcApHr6eR4auD1M3j/QfNC6tVFiAds3SK/YJ9IJt+zCMjl38PBByNBFMOl6fAJUoikjjL7RCSy4uI6urHEHu0VkJDGbJ1MWisx/IHaFHWtNzEDQ9aiQywlvIx1a48K8hjd1V0LHndLCtnDKnITas5LK/NHAMm1STMlem8bhTMiFihF9L7BYEcoKgCATW9gqbC1DlPv5Nw93a39JLurkAK9QludNChpr/Mhg0ILXEHHQbRGmSyNsW+OMgUuUqXloA7hSGrYA/WAr6HbmA3YwTAnw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vmware.com; dmarc=pass action=none header.from=vmware.com;
- dkim=pass header.d=vmware.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DyncnrtnmsqdCYWoTItodDCTsxSlEJbtQewwIaqpopQ=;
- b=aLnRYVra4oOg4jJdxn0of86OSA5kGDNXMZJFD/MfAlpGxXsilfy5wfGFiPDUNm2o1ISpS6Bjyw8EMglsnziIW8q3SQqizaE8Xns15+i2PckXV4Z8XISNL4Wx2EyMCd6cUCm8vPeNjnY/+DqTOX7JxVCl0y1/sy60T9guhj6QfG4=
-Authentication-Results: huawei.com; dkim=none (message not signed)
- header.d=none;huawei.com; dmarc=none action=none header.from=vmware.com;
-Received: from MN2PR05MB6624.namprd05.prod.outlook.com (2603:10b6:208:d8::18)
- by MN2PR05MB7037.namprd05.prod.outlook.com (2603:10b6:208:189::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4150.11; Fri, 14 May
- 2021 18:33:34 +0000
-Received: from MN2PR05MB6624.namprd05.prod.outlook.com
- ([fe80::603b:4954:dbec:c02]) by MN2PR05MB6624.namprd05.prod.outlook.com
- ([fe80::603b:4954:dbec:c02%7]) with mapi id 15.20.4129.027; Fri, 14 May 2021
- 18:33:34 +0000
-Subject: Re: [PATCH -next] drm/vmwgfx: Fix return value check in
- vmw_setup_pci_resources()
-To:     Qiheng Lin <linqiheng@huawei.com>,
-        VMware Graphics <linux-graphics-maintainer@vmware.com>,
-        Roland Scheidegger <sroland@vmware.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
-References: <20210514082812.1697-1-linqiheng@huawei.com>
-From:   Zack Rusin <zackr@vmware.com>
-Message-ID: <d8f8ef46-5a27-5011-3c93-198ad57dafb3@vmware.com>
-Date:   Fri, 14 May 2021 14:33:31 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
-In-Reply-To: <20210514082812.1697-1-linqiheng@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [108.36.85.85]
-X-ClientProxiedBy: BL0PR02CA0072.namprd02.prod.outlook.com
- (2603:10b6:207:3d::49) To MN2PR05MB6624.namprd05.prod.outlook.com
- (2603:10b6:208:d8::18)
+        Fri, 14 May 2021 14:36:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51282 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229952AbhENSgr (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 14 May 2021 14:36:47 -0400
+Received: from ssl.serverraum.org (ssl.serverraum.org [IPv6:2a01:4f8:151:8464::1:2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 652A8C061574
+        for <kernel-janitors@vger.kernel.org>; Fri, 14 May 2021 11:35:35 -0700 (PDT)
+Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id 9C68F2224B;
+        Fri, 14 May 2021 20:35:31 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
+        t=1621017331;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=riT+Nq4J1hu8+qyaKDSrJBVE67oxWgNH7ZvD4d985ck=;
+        b=O/U1tdww2I83EyZeJOZ+8G3qKDKFtGRh2Xjg72z0s4w8WIaxya1r5BpEyt/W7VTb4F2Ku6
+        M3Mz//SSvneCcff0dEXJ5qNgWu6+4VJR1ur4hGKKL5jADOObyIRvWUkQ8wx+PQHSiscS8B
+        YA8CgaeNUipNhg+GFgfs92nKjhsDznQ=
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [192.168.0.193] (108.36.85.85) by BL0PR02CA0072.namprd02.prod.outlook.com (2603:10b6:207:3d::49) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4108.25 via Frontend Transport; Fri, 14 May 2021 18:33:32 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: ea2ab3ca-d14d-40be-5f7a-08d91706c758
-X-MS-TrafficTypeDiagnostic: MN2PR05MB7037:
-X-LD-Processed: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0,ExtAddr
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <MN2PR05MB7037DF90531910CF3DA70DACCE509@MN2PR05MB7037.namprd05.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:3383;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: D4o6vbfYj7VkxWm6Z3508EWsptueTE089jesa21aReeGdzkt9aappmtzfyE7zu05/DEnoW/K3YoczOonEjz5g+0R6uQoyvez8efK3YIX3FEElSxoTCJqoplnW6CVTfiyiAvuzh8hnFldo9WSu9tSbIki0EO3k5oAJ/ij51fBE1U2BCAZP1gcECKbdDrj5qB6HcSWIh3dvYykLfti11LbQmSxpwu5+KO4syWOb9T/M4EA53xHNblBwA3T4zGbCY+CzSa1dVT+hF6q6LeJZrxkfnNEorlq6SGWLn5jyuIjxZFdJidw8alkvYUUqoV4Zgv6AVrMImvE5Z6J81wDOCksQqgRAWpagTHeMtVYkM7i+yCUoEn9dIVAvE4grd7F5SugnsQ+U3rxPvWWBuZdVlM5vrH+c/wfgZuGCt1dHRvvg2M+she7If6N3SIph3fxRvodKNokmOIuuDcwWDr/IJYt8w2nShTHrbYvTDDvsA8tF6J7cKImDoQju1Gxu7CbdDuy6oFwaaWfBqQXO81lSPaAv6Qvxp57nagc8fKHDeVWWWJxiw9muIbJIKwVeoedcovtJOlelQqFSGN/JbgT2o+N41/iTWjXKDFaj6HP1VYQHRJ/hxkdCD37p5rccj1Atwo3yWlQkmfqQv9v8Z+AUCC6IWyTrfn0AsmI54Ji6Y+yM1n+qT32Aine22QuL/M5NBQ4
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR05MB6624.namprd05.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(376002)(136003)(39860400002)(366004)(396003)(346002)(5660300002)(6486002)(956004)(2616005)(2906002)(8936002)(38100700002)(8676002)(26005)(4326008)(4744005)(66556008)(66476007)(110136005)(16526019)(53546011)(66946007)(36756003)(31696002)(86362001)(186003)(16576012)(316002)(478600001)(31686004)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: =?utf-8?B?WmlkZEYxUGtZWFdtdHRHQVl1WnRINWJCYnZ3QVVZUGM3UzdNeWRhV3JMMlg5?=
- =?utf-8?B?TmV4amx0TGJRaUVNYVBBcjd6cENLVUZZS3RjUGZlYVg1eHBhTmcwVjZzQlVS?=
- =?utf-8?B?Ums0YTRpcHV3NndpTndwdkpsb2J1VEZPK1V1M0hUdDJvSWs1QTVJdUpLclhq?=
- =?utf-8?B?US9nL242VlYxaUN4MjNpY0VaMUxwdVVmMEhXYVFmaXc5L09neU15SVc3U1dV?=
- =?utf-8?B?d2Nxbkh2U2tsbUpzUGNvelNkTXY4RjhqbkJEeFU2ajFBcDJYV3M5TVN3UDZm?=
- =?utf-8?B?Um5GalhMWkJHTUh2OVdQSy9nZ3FFRkhwV1lJTy9Ta3NuczBzMzd4RkQxWXdZ?=
- =?utf-8?B?aWJyaG5zempSMklHLy9FSWpsYXZCc0RuZzFXdTdOc0NpV0VxY29iT3BkS3ZB?=
- =?utf-8?B?YUt6ekczWnhYQm9ubDg3RU0wR0FneXFhNUNZVWlWZXlKUTVwVVV6b01mdnZW?=
- =?utf-8?B?SzNZSW53UldETjlRMEt5aklsKzAzZi8zb1RGeE5vcjZRYUJUWk8zYVdWZDVT?=
- =?utf-8?B?cEczUlo4ZFgwNFJKVFp3OTlKYi9LOWJNSkVCUnlvelNkRWk0OGhyWU9NUDdD?=
- =?utf-8?B?L2x1QktuOW1XZzQ5bHczQTE0Y0tzQWI0WlRiRUtoMW1BTTB2UVlyK0ZnbXda?=
- =?utf-8?B?bTNiMkxuR3NBWmhhMHdzSSttRG5WbEg1dTFBTHFmQ3RFb3ltZ2puVmlyREFm?=
- =?utf-8?B?bjZ0S0g1Umd2bVNlVlpwdGRaNERxb3ZyRi9iU3YrV2s3WVJsYm84ZUJVaWQw?=
- =?utf-8?B?Zk50QTZlcVI1N2Q0MmJWMFFlVTRPK0huMVNUQkNZbzkwYkN1N2x3UU1NQVRH?=
- =?utf-8?B?OFdjYXVPcWZRL1ZyakZEbG1zODR2c1g1OHc0UHNNbXVyOWFCbTl1NmFKWlVM?=
- =?utf-8?B?cStTeU14SmgwbUpEdlo5cmpLMzhQSDVHTTFicjZoQUFiY0U5QjlKTGZsYUx4?=
- =?utf-8?B?V2V0YmdldkVxdTY2VUV1aEhtR243KzQ5WEJuNitlaVVDcUR6amdPSDdDV2Jr?=
- =?utf-8?B?Qi90Rmx6Um5PY3MraWRmMW1FSTFDZ0MyYTdVZnBGZzlMR1pXZW5NR3Z1cmc3?=
- =?utf-8?B?Nm1GbHhleWtrNFFIUDkrK3U4ZktTYnIzZFJaTHNUWEFtRi9kS3I0aVdwelBk?=
- =?utf-8?B?V0hUNHVrTHpWMUJXcXhWcXZxY2FtMHZDZXVOeHFTNldQSlFjelNQbUlralRk?=
- =?utf-8?B?ZklDVXRUODJOMm1pK3NqL2g5UndBdUJxK0VDWFU5V0NPTElSaFhsQk5ZVHdx?=
- =?utf-8?B?SlB5eUdwSWhpTzhuVktBZ2hvaGh0QlJLVzNSd3h3MEVndkI1S245VDJPdDkv?=
- =?utf-8?B?bWdsYnFJWE5GbVpHMVcwUVd0OXhtd2JNM3NieGJjMDMrOEFWMzhoT25POVp2?=
- =?utf-8?B?enJtQnBUQW5sdjFDRjRxS2MxQ2hVcUNSVGNFdWlzU0lkSzQyS0kwTHpCeW9Z?=
- =?utf-8?B?S21EWjVJK0FvbDNkSk1LMGhJWVZ2ZlA1RHQ3a2FNdC9OeFd5d2w0eFdCMk83?=
- =?utf-8?B?dDgxZ3gwU0RnVFp4Z2JFaklNVm8rVTFBT1lhWXVSLy9UUlNjQU9NcnhabDFB?=
- =?utf-8?B?ZU5sVXYrK21DaWZncE9hbVlZSDhoQlQ2ZGNZZ0pZclRRbWoxcmFrWFVUQVps?=
- =?utf-8?B?VVdyeUNqQm1HV1dGRDJYakMxdDlUSUVJTjg1TVp1NUNnZXJzWnJ3REdzU2Rp?=
- =?utf-8?B?OCtkT3hnRnVwSUJoU1VDY0F3bXhKNXhMM1dZSHRiRDNwMk4vV3ZVZlp0ZFVt?=
- =?utf-8?Q?uyN3EdG9H6sk6Q3nQHiy1fwhB/jAeKssccMwx5q?=
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ea2ab3ca-d14d-40be-5f7a-08d91706c758
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR05MB6624.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 May 2021 18:33:33.5223
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +ezQoCAwOKdgDP6UxfSfItLksXAvmk0+TN+A/gs3wgIEmsiNw+CjDE34R/Oo2F7DWbe6cmUjWHnoFFCfDxj1Dw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR05MB7037
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 14 May 2021 20:35:31 +0200
+From:   Michael Walle <michael@walle.cc>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] mtd: core: Potential NULL dereference in mtd_otp_size()
+In-Reply-To: <YJ6Iw3iNvGycAWV6@mwanda>
+References: <YJ6Iw3iNvGycAWV6@mwanda>
+User-Agent: Roundcube Webmail/1.4.11
+Message-ID: <23f1c1a4cf741a40e63420ff9aedff9b@walle.cc>
+X-Sender: michael@walle.cc
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 5/14/21 4:28 AM, Qiheng Lin wrote:
-> In case of error, the function devm_ioremap() returns NULL pointer not ERR_PTR().
-> The IS_ERR() test in the return value check should be replaced with NULL test.
-> After that, the error code -ENOMEM should be returned.
+Am 2021-05-14 16:27, schrieb Dan Carpenter:
+> If kmalloc() fails then it could lead to a NULL dereference.  Check and
+> return -ENOMEM on error.
 > 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Qiheng Lin <linqiheng@huawei.com>
+> Fixes: 4b361cfa8624 ("mtd: core: add OTP nvmem provider support")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Looks good. Thank you. I'll push it with some other fixes via drm-misc-next.
+Thanks, were was my head..
 
-z
+Reviewed-by: Michael Walle <michael@walle.cc>
+
+-michael
