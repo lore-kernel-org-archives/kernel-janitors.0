@@ -2,116 +2,126 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-17.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+	UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48B74C433B4
-	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 14:27:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5546C433ED
+	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 14:31:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1C59361457
-	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 14:27:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A87E16144A
+	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 14:31:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234447AbhENO3H (ORCPT
+        id S232502AbhENOcX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 14 May 2021 10:29:07 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:37344 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234393AbhENO3E (ORCPT
+        Fri, 14 May 2021 10:32:23 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:48752 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230141AbhENOcW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 14 May 2021 10:29:04 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 14EEOQTp126175;
-        Fri, 14 May 2021 14:27:31 GMT
+        Fri, 14 May 2021 10:32:22 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 14EEOpIn080853;
+        Fri, 14 May 2021 14:31:04 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=xoGMcMduUxbkEKICEOxnEMCQqvsCuv5m2wxRFwEknrE=;
- b=jB75CIxTXHKAV9h/I3HrdNMhgAZmhafRKC75P7KZaYz33tRV85ASBFWEmJqSiZTeGwxW
- v+oW1Qyhcu9W4LZvxTJMVU41g7/xCZW567tp46LnQguXhzTCfklwBXLXoPvWV4LqRY5C
- AeGxS8bCh9esgJPSSrRVKcNVMdUOtr5Fj37t0qPznq8aYhex1smbNJqbNk4Dm2oFlkrR
- +jbhyheXA6eLFNwQSwjb6TL52tUOPP5M9wNSOyzDDjPstAA8LjxJilbIzQQ9rbrdKlFd
- uvoX+LctnIZC5G8jK+/WBc11JvmPY2TycgyiLikLQ81+GEyTK/WYTtXidIGvLa3aBfWi Zw== 
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=SHT0PNis77lwJziP68IpS6MihhAlEZSQsq7f8r7VjeI=;
+ b=Q037oNWTDoerh9iGbDLb93xKlDTPSX8nxmwJGlAC2MO4JdsN7PAxgvebwT0A4Sd7//Us
+ BiA5nUj/yE0jnVnDk3mJzz83bIDKeLiwPKJy4zF/wFzADbNZqW3GbmO9SMtA2AEwCwRc
+ V/ctl2+COLT9WUdvpzXqflWQx6sgv1WhLPkclA3f1MYcKXm5sugU5QDo3S9ZCcNu/gN3
+ IuCYWdf1jHGJmQx97kvnwJrjhTnVjYtatZbIkQM9t6G8cXn22xz/oPBqH4SUiG0y2k/t
+ p2duRpMiAoP62rATB8AoZsizqfnqiJm47uVgStv+BE25HHl2AweZ5OlR5/CpAIJuV7D9 kA== 
 Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2130.oracle.com with ESMTP id 38gpndcg67-1
+        by userp2120.oracle.com with ESMTP id 38gpnumg1k-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 14 May 2021 14:27:31 +0000
+        Fri, 14 May 2021 14:31:04 +0000
 Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 14EEOsVD167793;
-        Fri, 14 May 2021 14:27:30 GMT
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 14EEOtBG167927;
+        Fri, 14 May 2021 14:31:03 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-        by aserp3020.oracle.com with ESMTP id 38gppecqpn-1
+        by aserp3020.oracle.com with ESMTP id 38gpped2fy-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 14 May 2021 14:27:30 +0000
+        Fri, 14 May 2021 14:31:03 +0000
 Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 14EERUlk194103;
-        Fri, 14 May 2021 14:27:30 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3020.oracle.com with ESMTP id 38gppecqmb-1
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 14EES4Wn008604;
+        Fri, 14 May 2021 14:31:03 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3020.oracle.com with ESMTP id 38gpped2er-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 14 May 2021 14:27:30 +0000
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 14EERMX1000849;
-        Fri, 14 May 2021 14:27:24 GMT
-Received: from mwanda (/102.36.221.92)
+        Fri, 14 May 2021 14:31:03 +0000
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 14EEV1FT004327;
+        Fri, 14 May 2021 14:31:01 GMT
+Received: from kadam (/102.36.221.92)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 14 May 2021 14:27:21 +0000
-Date:   Fri, 14 May 2021 17:27:15 +0300
+        with ESMTP ; Fri, 14 May 2021 07:31:00 -0700
+Date:   Fri, 14 May 2021 17:30:53 +0300
 From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Michael Walle <michael@walle.cc>
-Cc:     Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] mtd: core: Potential NULL dereference in mtd_otp_size()
-Message-ID: <YJ6Iw3iNvGycAWV6@mwanda>
+To:     Colin King <colin.king@canonical.com>
+Cc:     VMware Graphics <linux-graphics-maintainer@vmware.com>,
+        Roland Scheidegger <sroland@vmware.com>,
+        Zack Rusin <zackr@vmware.com>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] drm/vmwgfx: Fix memory leak of object fifo on
+ error return
+Message-ID: <20210514143053.GB1955@kadam>
+References: <20210512195609.298326-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-X-Proofpoint-ORIG-GUID: iXhTkydWML_4O-1CgPpjGH9HkquPLdT3
-X-Proofpoint-GUID: iXhTkydWML_4O-1CgPpjGH9HkquPLdT3
+In-Reply-To: <20210512195609.298326-1-colin.king@canonical.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-ORIG-GUID: KkvVC5LyMeuY8x-z0ORunh1kRJP3BOoA
+X-Proofpoint-GUID: KkvVC5LyMeuY8x-z0ORunh1kRJP3BOoA
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9984 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 impostorscore=0 phishscore=0
- priorityscore=1501 suspectscore=0 spamscore=0 lowpriorityscore=0
- adultscore=0 clxscore=1015 mlxscore=0 bulkscore=0 mlxlogscore=999
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 impostorscore=0
+ adultscore=0 spamscore=0 clxscore=1011 mlxlogscore=999 bulkscore=0
+ mlxscore=0 priorityscore=1501 malwarescore=0 lowpriorityscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2104190000 definitions=main-2105140117
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-If kmalloc() fails then it could lead to a NULL dereference.  Check and
-return -ENOMEM on error.
+On Wed, May 12, 2021 at 08:56:09PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> In the case where fifo->static_buffer fails to be allocated the
+> error return path neglects to kfree the fifo object. Fix this by
+> adding in the missing kfree.
+> 
+> Addresses-Coverity: ("Resource leak")
+> Fixes: 2cd80dbd3551 ("drm/vmwgfx: Add basic support for SVGA3")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/gpu/drm/vmwgfx/vmwgfx_cmd.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_cmd.c b/drivers/gpu/drm/vmwgfx/vmwgfx_cmd.c
+> index 027d7d504e78..e5fa210f589e 100644
+> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_cmd.c
+> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_cmd.c
+> @@ -107,8 +107,10 @@ struct vmw_fifo_state *vmw_fifo_create(struct vmw_private *dev_priv)
+>  	fifo = kzalloc(sizeof(*fifo), GFP_KERNEL);
 
-Fixes: 4b361cfa8624 ("mtd: core: add OTP nvmem provider support")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/mtd/mtdcore.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+This needs an:
 
-diff --git a/drivers/mtd/mtdcore.c b/drivers/mtd/mtdcore.c
-index 3ae261661eea..9624ad1b999c 100644
---- a/drivers/mtd/mtdcore.c
-+++ b/drivers/mtd/mtdcore.c
-@@ -779,12 +779,16 @@ static void mtd_set_dev_defaults(struct mtd_info *mtd)
- 
- static ssize_t mtd_otp_size(struct mtd_info *mtd, bool is_user)
- {
--	struct otp_info *info = kmalloc(PAGE_SIZE, GFP_KERNEL);
-+	struct otp_info *info;
- 	ssize_t size = 0;
- 	unsigned int i;
- 	size_t retlen;
- 	int ret;
- 
-+	info = kmalloc(PAGE_SIZE, GFP_KERNEL);
-+	if (!info)
-+		return -ENOMEM;
-+
- 	if (is_user)
- 		ret = mtd_get_user_prot_info(mtd, PAGE_SIZE, &retlen, info);
- 	else
--- 
-2.30.2
+	if (!fifo)
+		return -ENOMEM;
+
+>  	fifo->static_buffer_size = VMWGFX_FIFO_STATIC_SIZE;
+>  	fifo->static_buffer = vmalloc(fifo->static_buffer_size);
+> -	if (unlikely(fifo->static_buffer == NULL))
+> +	if (unlikely(fifo->static_buffer == NULL)) {
+> +		kfree(fifo);
+>  		return ERR_PTR(-ENOMEM);
+> +	}
+
+regards,
+dan carpenter
 
