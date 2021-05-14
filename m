@@ -2,90 +2,62 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 789AAC433ED
-	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 10:23:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1989C433B4
+	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 11:35:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5AD876145A
-	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 10:23:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A1806145A
+	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 11:35:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233155AbhENKYN (ORCPT
+        id S231945AbhENLgV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 14 May 2021 06:24:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53318 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230362AbhENKYN (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 14 May 2021 06:24:13 -0400
-Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AE87C061574;
-        Fri, 14 May 2021 03:23:02 -0700 (PDT)
-Received: from zn.tnic (p200300ec2f0b2c00e75fd5d24a8a460d.dip0.t-ipconnect.de [IPv6:2003:ec:2f0b:2c00:e75f:d5d2:4a8a:460d])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 07EF91EC03A0;
-        Fri, 14 May 2021 12:23:01 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1620987781;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=8uN+blNbUuTK1vAwzHY9/vcgYGqsYhOW4M+ryJ3GiSU=;
-        b=F7lBy7xAxK9LBSD9DH34xrgrd+Khh424Ubas3gkWty3pu2mFkiFEPhL8k9Pu3kUmBbhPXI
-        0EoOhwc/A8ray8RpYVq/t/2LrJE1W2qlo5NSVfoRLaU3FWocSVABzUuvKkOL+24VXjFq8A
-        jfBbOkAqWSeNQjepmS7H7+DbeGkJdhU=
-Date:   Fri, 14 May 2021 12:22:57 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Bixuan Cui <cuibixuan@huawei.com>
-Cc:     kristo@kernel.org, mchehab@kernel.org, tony.luck@intel.com,
-        linux-edac@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH -next v2] EDAC: ti: Add missing MODULE_DEVICE_TABLE
-Message-ID: <YJ5PgRDG9OZ4msyJ@zn.tnic>
-References: <20210512033727.26701-1-cuibixuan@huawei.com>
+        Fri, 14 May 2021 07:36:21 -0400
+Received: from helcar.hmeau.com ([216.24.177.18]:37216 "EHLO deadmen.hmeau.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229445AbhENLgU (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 14 May 2021 07:36:20 -0400
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtp (Exim 4.89 #2 (Debian))
+        id 1lhW5v-0002uv-Fe; Fri, 14 May 2021 19:35:03 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1lhW5s-0002Xc-R3; Fri, 14 May 2021 19:35:00 +0800
+Date:   Fri, 14 May 2021 19:35:00 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     gcherian@marvell.com, davem@davemloft.net,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] crypto: cavium - Use 'hlist_for_each_entry' to simplify
+ code
+Message-ID: <20210514113500.kafadgv7oyo7hh5v@gondor.apana.org.au>
+References: <5a7692aa1d2ffb81e981fdf87b060db7e55956b8.1619593010.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210512033727.26701-1-cuibixuan@huawei.com>
+In-Reply-To: <5a7692aa1d2ffb81e981fdf87b060db7e55956b8.1619593010.git.christophe.jaillet@wanadoo.fr>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, May 12, 2021 at 11:37:27AM +0800, Bixuan Cui wrote:
-> The module misses MODULE_DEVICE_TABLE() for of_device_id tables
-> and thus never autoloads on ID matches.
-> Add the missing declarations.
+On Wed, Apr 28, 2021 at 09:33:37AM +0200, Christophe JAILLET wrote:
+> Use 'hlist_for_each_entry' instead of hand writing it.
+> This saves a few lines of code.
 > 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Bixuan Cui <cuibixuan@huawei.com>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
-> Changes v2:
-> * Modify the commit message to make it more suitable.
-> 
->  drivers/edac/ti_edac.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/edac/ti_edac.c b/drivers/edac/ti_edac.c
-> index e7eae20f83d1..169f96e51c29 100644
-> --- a/drivers/edac/ti_edac.c
-> +++ b/drivers/edac/ti_edac.c
-> @@ -197,6 +197,7 @@ static const struct of_device_id ti_edac_of_match[] = {
->  	{ .compatible = "ti,emif-dra7xx", .data = (void *)EMIF_TYPE_DRA7 },
->  	{},
->  };
-> +MODULE_DEVICE_TABLE(of, ti_edac_of_match);
->  
->  static int _emif_get_id(struct device_node *node)
->  {
-> -- 
+> Compile tested only
+> ---
+>  drivers/crypto/cavium/cpt/cptvf_reqmanager.c | 6 +-----
+>  1 file changed, 1 insertion(+), 5 deletions(-)
 
-Applied, thanks.
-
+Patch applied.  Thanks.
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
