@@ -2,74 +2,98 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.5 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF0F2C433B4
-	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 06:30:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEAA2C433ED
+	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 06:51:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BE5096144B
-	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 06:30:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B280C61353
+	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 06:51:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232385AbhENGbx (ORCPT
+        id S232719AbhENGwt (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 14 May 2021 02:31:53 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:2917 "EHLO
-        szxga07-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232349AbhENGbx (ORCPT
+        Fri, 14 May 2021 02:52:49 -0400
+Received: from mail-ed1-f51.google.com ([209.85.208.51]:36696 "EHLO
+        mail-ed1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232658AbhENGws (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 14 May 2021 02:31:53 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
-        by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4FhJVk5hCczBvLb;
-        Fri, 14 May 2021 14:27:58 +0800 (CST)
-Received: from localhost.localdomain (10.175.102.38) by
- DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
- 14.3.498.0; Fri, 14 May 2021 14:30:30 +0800
-From:   Wei Yongjun <weiyongjun1@huawei.com>
-To:     <weiyongjun1@huawei.com>, Dennis Zhou <dennis@kernel.org>,
-        Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-CC:     <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH -next] percpu: make symbol 'pcpu_free_slot' static
-Date:   Fri, 14 May 2021 06:39:52 +0000
-Message-ID: <20210514063952.3240527-1-weiyongjun1@huawei.com>
-X-Mailer: git-send-email 2.25.1
+        Fri, 14 May 2021 02:52:48 -0400
+Received: by mail-ed1-f51.google.com with SMTP id df21so6307951edb.3;
+        Thu, 13 May 2021 23:51:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=1gymq95orR5zgtyh8ZSQwnKyiuFehw+cpEXmsD2CDf0=;
+        b=t0xDpaM3hgrBCsyaGCbYjw+h0FAHJrQxUNA88xXyxu+5rB2kyeg7sxVDIi4NiBithH
+         3ijxA4yIO4inE48xinlj93tSemvRw9159ek6kgaxZtKnydapr0B8LDvVUsXuZgk1TXtT
+         teMtQ77rA5gjYspm5/ustHxm0MiFYwMLgHFHqyxPzvf/7Cr4aUuot6j42a1dJXwikr6W
+         IEAjwgBDIP4nRyK4IpToRucI5LK0lsK4E0xafkEhPPNkumgovUKLToPaZL+EmymgHzMp
+         cI06IlMCmCyv9Tjwc0FJa3Pi4mvtJ2NHezwdkqMxhCDidPc2EpUzOBK3LHyRmubS4qyE
+         nHPg==
+X-Gm-Message-State: AOAM530YbfaGhYcJJ52VFphIgcc7P5f1GVGUubMlnW3M8gnHXcgCOrxP
+        TBp/mzhK2Rhv8Jpgoa+jh0Swaju9DnA=
+X-Google-Smtp-Source: ABdhPJyXdXGiv6DhZlc+bTWc7aWFBeNON8OPqZ/xYuVote/cTk5V2YYOcY9zrJu9GcLmFBF3eNPthw==
+X-Received: by 2002:a05:6402:5244:: with SMTP id t4mr37013244edd.228.1620975091508;
+        Thu, 13 May 2021 23:51:31 -0700 (PDT)
+Received: from ?IPv6:2a0b:e7c0:0:107::70f? ([2a0b:e7c0:0:107::70f])
+        by smtp.gmail.com with ESMTPSA id o3sm3948253edr.84.2021.05.13.23.51.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 May 2021 23:51:30 -0700 (PDT)
+Subject: Re: [PATCH] tty: pty: remove redundant initialization of variable fd
+To:     Colin King <colin.king@canonical.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210513221833.137672-1-colin.king@canonical.com>
+From:   Jiri Slaby <jirislaby@kernel.org>
+Message-ID: <2f6c2e1e-770b-aade-cdcc-aa4010c36d5e@kernel.org>
+Date:   Fri, 14 May 2021 08:51:30 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.102.38]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20210513221833.137672-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The sparse tool complains as follows:
+On 14. 05. 21, 0:18, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The variable fd is being initialized with a value that is never
+> read, it is being updated later on. The assignment is redundant and
+> can be removed.
+> 
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-mm/percpu.c:138:5: warning:
- symbol 'pcpu_free_slot' was not declared. Should it be static?
+Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
 
-This symbol is not used outside of percpu.c, so marks it static.
+> ---
+>   drivers/tty/pty.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/tty/pty.c b/drivers/tty/pty.c
+> index 9b5d4ae5d8f2..2251330e7e00 100644
+> --- a/drivers/tty/pty.c
+> +++ b/drivers/tty/pty.c
+> @@ -626,7 +626,7 @@ static struct cdev ptmx_cdev;
+>    */
+>   int ptm_open_peer(struct file *master, struct tty_struct *tty, int flags)
+>   {
+> -	int fd = -1;
+> +	int fd;
+>   	struct file *filp;
+>   	int retval = -EINVAL;
+>   	struct path path;
+> 
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- mm/percpu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/mm/percpu.c b/mm/percpu.c
-index a257c3efdf18..73c249f3b6a3 100644
---- a/mm/percpu.c
-+++ b/mm/percpu.c
-@@ -135,7 +135,7 @@ static int pcpu_unit_size __ro_after_init;
- static int pcpu_nr_units __ro_after_init;
- static int pcpu_atom_size __ro_after_init;
- int pcpu_nr_slots __ro_after_init;
--int pcpu_free_slot __ro_after_init;
-+static int pcpu_free_slot __ro_after_init;
- int pcpu_sidelined_slot __ro_after_init;
- int pcpu_to_depopulate_slot __ro_after_init;
- static size_t pcpu_chunk_struct_size __ro_after_init;
-
+-- 
+js
+suse labs
