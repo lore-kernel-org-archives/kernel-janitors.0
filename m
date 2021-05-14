@@ -2,106 +2,69 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89142C433ED
-	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 08:53:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BC66C433B4
+	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 09:04:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 611CA613AA
-	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 08:53:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2DAA661352
+	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 09:04:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231221AbhENIyR (ORCPT
+        id S233845AbhENJFj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 14 May 2021 04:54:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33052 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231278AbhENIyR (ORCPT
+        Fri, 14 May 2021 05:05:39 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:35415 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229981AbhENJFi (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 14 May 2021 04:54:17 -0400
-Received: from mail-il1-x133.google.com (mail-il1-x133.google.com [IPv6:2607:f8b0:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46E6BC061574;
-        Fri, 14 May 2021 01:53:05 -0700 (PDT)
-Received: by mail-il1-x133.google.com with SMTP id r5so25239104ilb.2;
-        Fri, 14 May 2021 01:53:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qayX7zhi1zPzWfW6+6qw+j9s4Gb6sXImv1cPAAHWTPc=;
-        b=NsOSXd5lSsEgESDlXDj+Nzr2yzyy8QbLdeMrHPW+gesGwaAemQY0NqnbhYlo7SGtp7
-         0p8sRUPBuim+yCrGNklS4DfhQDs4isJqz6m/gzUT07HKYgQl2XO49/+LNotGrFiKwNry
-         0q7burohApTyz/cpNFt2PL1nwLYruGM8sc1XrdSVEwIwiSIDKzEzAqYtZ6qLd+XMIRO1
-         VeU4Iz/Z+KeQufMM7cZmeuE8JDEhHpLQVfmmp0pCtf9YMFXhGtSfrzfZvoUUtyreAe7N
-         NpYiUNcb1aAwxvvU+u/gK4R/FnpX6rHrcqcrejoVhgzFL4VKnm+o9Yx0PKsMhsD5Ygfr
-         tyRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qayX7zhi1zPzWfW6+6qw+j9s4Gb6sXImv1cPAAHWTPc=;
-        b=GCdcQ7sR5bP8CLk7plQijXHuz4VkHRH7gaYqY/rkyHIWD85YNxCKzWTFWqLb8MRpGQ
-         INljHQ/huRXq4Kuteq+MDIoM6ZgPygQ/KqtmdwKgGBulWGhdnp5TFbY2ByLbwiHPaQtd
-         iEoYdrTgs6ceyRA4I3S6Q4/n/mpvPiacigGwptsUNkzOIh8rR7UClq5Y7XEcdT+/wJhx
-         CsbaFGUcDVnhWg+mAgjMTeCGs81OxNYCLnQ0gZMNn4kts7mcKzD8ijeiIydBPs4/8rUY
-         FKVLhvCLDwJAJxswr+Lumw1NYbCSPBMhNYiBtCVC1NTLC1oVbEKGLI1ZrjrCWtOAJgdL
-         6stw==
-X-Gm-Message-State: AOAM533JGZXtyK8lG5qVdRYTMVjGVu9VFmOfqaf1w/vC/MFFoRiCmjCW
-        d9hYA0pZdvUwinWGazGSPavD37B3MKC57ffT0JY=
-X-Google-Smtp-Source: ABdhPJynVVQ5BLTIsbnyQ2xjJBlWg+YMqKO2eOLz8o6Rj7suiQMI/hLmQVtqhyULHB4J6nYNfScxLV03hSiACROvdpk=
-X-Received: by 2002:a05:6e02:eac:: with SMTP id u12mr40364277ilj.177.1620982384742;
- Fri, 14 May 2021 01:53:04 -0700 (PDT)
+        Fri, 14 May 2021 05:05:38 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lhTk3-0003mo-GR; Fri, 14 May 2021 09:04:19 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Shuah Khan <shuah@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Chris Hyser <chris.hyser@oracle.com>,
+        linux-kselftest@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] kselftest: Fix spelling mistake "hiearchy" -> "hierarchy"
+Date:   Fri, 14 May 2021 10:04:19 +0100
+Message-Id: <20210514090419.7792-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-References: <20210514063953.3242049-1-weiyongjun1@huawei.com>
-In-Reply-To: <20210514063953.3242049-1-weiyongjun1@huawei.com>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Fri, 14 May 2021 10:53:14 +0200
-Message-ID: <CAOi1vP9h=VNP1NP=Vb3kjoAKYzAGZOaznBgqn5v1RuKeh7zEOg@mail.gmail.com>
-Subject: Re: [PATCH -next] ceph: make symbol 'ceph_netfs_read_ops' static
-To:     Wei Yongjun <weiyongjun1@huawei.com>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, May 14, 2021 at 8:30 AM Wei Yongjun <weiyongjun1@huawei.com> wrote:
->
-> The sparse tool complains as follows:
->
-> fs/ceph/addr.c:316:37: warning:
->  symbol 'ceph_netfs_read_ops' was not declared. Should it be static?
->
-> This symbol is not used outside of addr.c, so marks it static.
->
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  fs/ceph/addr.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> index c1570fada3d8..5dfd18d84a3b 100644
-> --- a/fs/ceph/addr.c
-> +++ b/fs/ceph/addr.c
-> @@ -313,7 +313,7 @@ static void ceph_readahead_cleanup(struct address_space *mapping, void *priv)
->                 ceph_put_cap_refs(ci, got);
->  }
->
-> -const struct netfs_read_request_ops ceph_netfs_read_ops = {
-> +static const struct netfs_read_request_ops ceph_netfs_read_ops = {
->         .init_rreq              = ceph_init_rreq,
->         .is_cache_enabled       = ceph_is_cache_enabled,
->         .begin_cache_operation  = ceph_begin_cache_operation,
->
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied.
+There is a spelling mistake in a message. Fix it.
 
-Thanks,
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ tools/testing/selftests/sched/cs_prctl_test.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-                Ilya
+diff --git a/tools/testing/selftests/sched/cs_prctl_test.c b/tools/testing/selftests/sched/cs_prctl_test.c
+index 63fe6521c56d..cf9ca10b876c 100644
+--- a/tools/testing/selftests/sched/cs_prctl_test.c
++++ b/tools/testing/selftests/sched/cs_prctl_test.c
+@@ -262,7 +262,7 @@ int main(int argc, char *argv[])
+ 	if (setpgid(0, 0) != 0)
+ 		handle_error("process group");
+ 
+-	printf("\n## Create a thread/process/process group hiearchy\n");
++	printf("\n## Create a thread/process/process group hierarchy\n");
+ 	create_processes(num_processes, num_threads, procs);
+ 	disp_processes(num_processes, procs);
+ 	validate(get_cs_cookie(0) == 0);
+-- 
+2.30.2
+
