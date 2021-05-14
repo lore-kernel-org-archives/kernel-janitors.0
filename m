@@ -7,104 +7,158 @@ X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28351C433B4
-	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 14:20:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DD6CC433ED
+	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 14:26:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EA9926145D
-	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 14:20:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D45461355
+	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 14:26:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234336AbhENOWB (ORCPT
+        id S232079AbhENO1t (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 14 May 2021 10:22:01 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:39058 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230097AbhENOV7 (ORCPT
+        Fri, 14 May 2021 10:27:49 -0400
+Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:14674 "EHLO
+        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229942AbhENO1s (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 14 May 2021 10:21:59 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 14EEKlNS076972;
-        Fri, 14 May 2021 14:20:47 GMT
+        Fri, 14 May 2021 10:27:48 -0400
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 14EEMNDg027629;
+        Fri, 14 May 2021 14:25:04 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=hKbVDKRnMKch/6rCPFa+HL1VQf6RGS46pwKxQDUDSF4=;
- b=ExHX4sGS9Eqcga+ZUOm8nKtlw20dnN5lwfx61ob2ffif6W20xCQBClfls9uoButD7JSC
- jCDA5nuwvdMz6gpWsWrxK2Kq1txbmXpG3ZLOQSq0De3b++eODafdqWD8nnElYGzGWAKo
- qbG1f320i2qV/7E9bNA/Bj1ToX8hZcuFWYQshlnW2zPOKsl3+/904hc0cqBmJzU6g3Oa
- dVpJIBR4Lneo9X89qw/izxZ7zr8OiCJ8GkveXFLLoqZOmx9QtocJTuwUvdXQ5+WcjDDl
- lSa5x11+7EjaDHYbDjNjyFBOGL/nHQ3OqwL6l3oJSFhEj6lolkkWqg3tOgTBXZVaCJ2c Mg== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 38gpnxvf8p-1
+ : subject : message-id : mime-version : content-type : in-reply-to;
+ s=corp-2020-01-29; bh=5bl1zmUBree67gp8ksHVfQp53E6olxx+qbucqo8ZA7c=;
+ b=gxJi051NTXSXHm8q738zmdTQ8mihP1X1ixC0KXc1vk5xe9oOS22ZiTTpFgLC4MZp06Mj
+ pRQHwWI/dFOOCbV2qKantlsRmzlNOAFCo6IsrtoQlFv0kty0ZbHIVO0eJ6l4P+gAtJne
+ J/pyXFgp47RHZaDepiXX8bdpoe5fha0OAeE0LMT9NUn2GP4sI0t5ydZWFyjTQ0eHOME3
+ ohAaotzy1GkXSbR5w7xGCe3eiftiad5QTioDQcPpDX7cqVa5x6bKaTaBeIS3mWmlx4jm
+ f0TwrzjKu0VuSuOTb2uRWjkBQr5cGRcQCmkfSDeAwuG6qBF9wqfbvGSzjVOxOL8GLFfO UQ== 
+Received: from oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by mx0b-00069f02.pphosted.com with ESMTP id 38gpqsrq3b-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 14 May 2021 14:20:47 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 14EEKBKj034842;
-        Fri, 14 May 2021 14:20:46 GMT
+        Fri, 14 May 2021 14:25:04 +0000
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
+        by pps.podrdrct (8.16.0.36/8.16.0.36) with SMTP id 14EEO5p2106870;
+        Fri, 14 May 2021 14:25:03 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-        by userp3020.oracle.com with ESMTP id 38gpph8xu0-1
+        by aserp3030.oracle.com with ESMTP id 38gppq53yg-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 14 May 2021 14:20:46 +0000
-Received: from userp3020.oracle.com (userp3020.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 14EEKkMG035665;
-        Fri, 14 May 2021 14:20:46 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3020.oracle.com with ESMTP id 38gpph8xtv-1
+        Fri, 14 May 2021 14:25:03 +0000
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 14EEM3bl103577;
+        Fri, 14 May 2021 14:25:02 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 38gppq53wp-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 14 May 2021 14:20:46 +0000
-Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 14EEKjEP028916;
-        Fri, 14 May 2021 14:20:45 GMT
+        Fri, 14 May 2021 14:25:02 +0000
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 14EEOumt008995;
+        Fri, 14 May 2021 14:24:57 GMT
 Received: from mwanda (/102.36.221.92)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 14 May 2021 07:20:44 -0700
-Date:   Fri, 14 May 2021 17:20:38 +0300
+        with ESMTP ; Fri, 14 May 2021 07:24:56 -0700
+Date:   Fri, 14 May 2021 17:24:48 +0300
 From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Shuah Khan <shuah@kernel.org>
-Cc:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] media: au0828: fix a NULL vs IS_ERR() check
-Message-ID: <YJ6HNj0g3UlJ6js0@mwanda>
+To:     "David S. Miller" <davem@davemloft.net>,
+        Johan Hovold <johan@kernel.org>
+Cc:     Jakub Kicinski <kuba@kernel.org>, Oliver Neukum <oneukum@suse.com>,
+        Anirudh Rayabharam <mail@anirudhrb.com>,
+        Johan Hovold <johan@kernel.org>,
+        Zheng Yongjun <zhengyongjun3@huawei.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        Rustam Kovhaev <rkovhaev@gmail.com>, linux-usb@vger.kernel.org,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH v2 net] net: hso: check for allocation failure in
+ hso_create_bulk_serial_device()
+Message-ID: <YJ6IMH7jI9QFdGIX@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <YJurlxqQ9L+zzIAS@hovoldconsulting.com>
 X-Mailer: git-send-email haha only kidding
-X-Proofpoint-GUID: aEg5wX7qMMJmfYT80w1-BDCRPvLxdXWD
-X-Proofpoint-ORIG-GUID: aEg5wX7qMMJmfYT80w1-BDCRPvLxdXWD
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9984 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 bulkscore=0
- adultscore=0 priorityscore=1501 phishscore=0 malwarescore=0 spamscore=0
- impostorscore=0 mlxlogscore=999 mlxscore=0 clxscore=1011 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
- definitions=main-2105140116
+X-Proofpoint-GUID: iw5OUc9nxGpX4DRnwmKRtU1O-Z93NsTo
+X-Proofpoint-ORIG-GUID: iw5OUc9nxGpX4DRnwmKRtU1O-Z93NsTo
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The media_device_usb_allocate() function returns error pointers when
-it's enabled and something goes wrong.  It can return NULL as well, but
-only if CONFIG_MEDIA_CONTROLLER is disabled so that doesn't apply here.
+In current kernels, small allocations never actually fail so this
+patch shouldn't affect runtime.
 
-Fixes: 812658d88d26 ("media: change au0828 to use Media Device Allocator API")
+Originally this error handling code written with the idea that if
+the "serial->tiocmget" allocation failed, then we would continue
+operating instead of bailing out early.  But in later years we added
+an unchecked dereference on the next line.
+
+	serial->tiocmget->serial_state_notification = kzalloc();
+        ^^^^^^^^^^^^^^^^^^
+
+Since these allocations are never going fail in real life, this is
+mostly a philosophical debate, but I think bailing out early is the
+correct behavior that the user would want.  And generally it's safer to
+bail as soon an error happens.
+
+Fixes: af0de1303c4e ("usb: hso: obey DMA rules in tiocmget")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/media/usb/au0828/au0828-core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+v2: Do more extensive clean up.  As Johan pointed out the comments and
+later NULL checks can be removed.
 
-diff --git a/drivers/media/usb/au0828/au0828-core.c b/drivers/media/usb/au0828/au0828-core.c
-index a8a72d5fbd12..caefac07af92 100644
---- a/drivers/media/usb/au0828/au0828-core.c
-+++ b/drivers/media/usb/au0828/au0828-core.c
-@@ -199,8 +199,8 @@ static int au0828_media_device_init(struct au0828_dev *dev,
- 	struct media_device *mdev;
- 
- 	mdev = media_device_usb_allocate(udev, KBUILD_MODNAME, THIS_MODULE);
--	if (!mdev)
--		return -ENOMEM;
-+	if (IS_ERR(mdev))
-+		return PTR_ERR(mdev);
- 
- 	dev->media_dev = mdev;
- #endif
+ drivers/net/usb/hso.c | 37 ++++++++++++++++++-------------------
+ 1 file changed, 18 insertions(+), 19 deletions(-)
+
+diff --git a/drivers/net/usb/hso.c b/drivers/net/usb/hso.c
+index 3ef4b2841402..260f850d69eb 100644
+--- a/drivers/net/usb/hso.c
++++ b/drivers/net/usb/hso.c
+@@ -2618,29 +2618,28 @@ static struct hso_device *hso_create_bulk_serial_device(
+ 		num_urbs = 2;
+ 		serial->tiocmget = kzalloc(sizeof(struct hso_tiocmget),
+ 					   GFP_KERNEL);
++		if (!serial->tiocmget)
++			goto exit;
+ 		serial->tiocmget->serial_state_notification
+ 			= kzalloc(sizeof(struct hso_serial_state_notification),
+ 					   GFP_KERNEL);
+-		/* it isn't going to break our heart if serial->tiocmget
+-		 *  allocation fails don't bother checking this.
+-		 */
+-		if (serial->tiocmget && serial->tiocmget->serial_state_notification) {
+-			tiocmget = serial->tiocmget;
+-			tiocmget->endp = hso_get_ep(interface,
+-						    USB_ENDPOINT_XFER_INT,
+-						    USB_DIR_IN);
+-			if (!tiocmget->endp) {
+-				dev_err(&interface->dev, "Failed to find INT IN ep\n");
+-				goto exit;
+-			}
+-
+-			tiocmget->urb = usb_alloc_urb(0, GFP_KERNEL);
+-			if (tiocmget->urb) {
+-				mutex_init(&tiocmget->mutex);
+-				init_waitqueue_head(&tiocmget->waitq);
+-			} else
+-				hso_free_tiomget(serial);
++		if (!serial->tiocmget->serial_state_notification)
++			goto exit;
++		tiocmget = serial->tiocmget;
++		tiocmget->endp = hso_get_ep(interface,
++					    USB_ENDPOINT_XFER_INT,
++					    USB_DIR_IN);
++		if (!tiocmget->endp) {
++			dev_err(&interface->dev, "Failed to find INT IN ep\n");
++			goto exit;
+ 		}
++
++		tiocmget->urb = usb_alloc_urb(0, GFP_KERNEL);
++		if (tiocmget->urb) {
++			mutex_init(&tiocmget->mutex);
++			init_waitqueue_head(&tiocmget->waitq);
++		} else
++			hso_free_tiomget(serial);
+ 	}
+ 	else
+ 		num_urbs = 1;
 -- 
 2.30.2
 
