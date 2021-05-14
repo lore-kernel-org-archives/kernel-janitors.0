@@ -2,77 +2,106 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAE66C43460
-	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 08:28:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89142C433ED
+	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 08:53:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CAB536145B
-	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 08:28:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 611CA613AA
+	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 08:53:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230362AbhENI3g (ORCPT
+        id S231221AbhENIyR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 14 May 2021 04:29:36 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:3686 "EHLO
-        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231681AbhENI3c (ORCPT
+        Fri, 14 May 2021 04:54:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33052 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231278AbhENIyR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 14 May 2021 04:29:32 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
-        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4FhM6T6wQYz1BMBS;
-        Fri, 14 May 2021 16:25:37 +0800 (CST)
-Received: from DESKTOP-EFRLNPK.china.huawei.com (10.174.176.189) by
- DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
- 14.3.498.0; Fri, 14 May 2021 16:28:12 +0800
-From:   Qiheng Lin <linqiheng@huawei.com>
-To:     <linqiheng@huawei.com>,
-        VMware Graphics <linux-graphics-maintainer@vmware.com>,
-        Roland Scheidegger <sroland@vmware.com>,
-        Zack Rusin <zackr@vmware.com>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-CC:     <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH -next] drm/vmwgfx: Fix return value check in vmw_setup_pci_resources()
-Date:   Fri, 14 May 2021 16:28:12 +0800
-Message-ID: <20210514082812.1697-1-linqiheng@huawei.com>
-X-Mailer: git-send-email 2.31.1
+        Fri, 14 May 2021 04:54:17 -0400
+Received: from mail-il1-x133.google.com (mail-il1-x133.google.com [IPv6:2607:f8b0:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46E6BC061574;
+        Fri, 14 May 2021 01:53:05 -0700 (PDT)
+Received: by mail-il1-x133.google.com with SMTP id r5so25239104ilb.2;
+        Fri, 14 May 2021 01:53:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qayX7zhi1zPzWfW6+6qw+j9s4Gb6sXImv1cPAAHWTPc=;
+        b=NsOSXd5lSsEgESDlXDj+Nzr2yzyy8QbLdeMrHPW+gesGwaAemQY0NqnbhYlo7SGtp7
+         0p8sRUPBuim+yCrGNklS4DfhQDs4isJqz6m/gzUT07HKYgQl2XO49/+LNotGrFiKwNry
+         0q7burohApTyz/cpNFt2PL1nwLYruGM8sc1XrdSVEwIwiSIDKzEzAqYtZ6qLd+XMIRO1
+         VeU4Iz/Z+KeQufMM7cZmeuE8JDEhHpLQVfmmp0pCtf9YMFXhGtSfrzfZvoUUtyreAe7N
+         NpYiUNcb1aAwxvvU+u/gK4R/FnpX6rHrcqcrejoVhgzFL4VKnm+o9Yx0PKsMhsD5Ygfr
+         tyRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qayX7zhi1zPzWfW6+6qw+j9s4Gb6sXImv1cPAAHWTPc=;
+        b=GCdcQ7sR5bP8CLk7plQijXHuz4VkHRH7gaYqY/rkyHIWD85YNxCKzWTFWqLb8MRpGQ
+         INljHQ/huRXq4Kuteq+MDIoM6ZgPygQ/KqtmdwKgGBulWGhdnp5TFbY2ByLbwiHPaQtd
+         iEoYdrTgs6ceyRA4I3S6Q4/n/mpvPiacigGwptsUNkzOIh8rR7UClq5Y7XEcdT+/wJhx
+         CsbaFGUcDVnhWg+mAgjMTeCGs81OxNYCLnQ0gZMNn4kts7mcKzD8ijeiIydBPs4/8rUY
+         FKVLhvCLDwJAJxswr+Lumw1NYbCSPBMhNYiBtCVC1NTLC1oVbEKGLI1ZrjrCWtOAJgdL
+         6stw==
+X-Gm-Message-State: AOAM533JGZXtyK8lG5qVdRYTMVjGVu9VFmOfqaf1w/vC/MFFoRiCmjCW
+        d9hYA0pZdvUwinWGazGSPavD37B3MKC57ffT0JY=
+X-Google-Smtp-Source: ABdhPJynVVQ5BLTIsbnyQ2xjJBlWg+YMqKO2eOLz8o6Rj7suiQMI/hLmQVtqhyULHB4J6nYNfScxLV03hSiACROvdpk=
+X-Received: by 2002:a05:6e02:eac:: with SMTP id u12mr40364277ilj.177.1620982384742;
+ Fri, 14 May 2021 01:53:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.174.176.189]
-X-CFilter-Loop: Reflected
+References: <20210514063953.3242049-1-weiyongjun1@huawei.com>
+In-Reply-To: <20210514063953.3242049-1-weiyongjun1@huawei.com>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Fri, 14 May 2021 10:53:14 +0200
+Message-ID: <CAOi1vP9h=VNP1NP=Vb3kjoAKYzAGZOaznBgqn5v1RuKeh7zEOg@mail.gmail.com>
+Subject: Re: [PATCH -next] ceph: make symbol 'ceph_netfs_read_ops' static
+To:     Wei Yongjun <weiyongjun1@huawei.com>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        Ceph Development <ceph-devel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-In case of error, the function devm_ioremap() returns NULL pointer not ERR_PTR().
-The IS_ERR() test in the return value check should be replaced with NULL test.
-After that, the error code -ENOMEM should be returned.
+On Fri, May 14, 2021 at 8:30 AM Wei Yongjun <weiyongjun1@huawei.com> wrote:
+>
+> The sparse tool complains as follows:
+>
+> fs/ceph/addr.c:316:37: warning:
+>  symbol 'ceph_netfs_read_ops' was not declared. Should it be static?
+>
+> This symbol is not used outside of addr.c, so marks it static.
+>
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ---
+>  fs/ceph/addr.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+> index c1570fada3d8..5dfd18d84a3b 100644
+> --- a/fs/ceph/addr.c
+> +++ b/fs/ceph/addr.c
+> @@ -313,7 +313,7 @@ static void ceph_readahead_cleanup(struct address_space *mapping, void *priv)
+>                 ceph_put_cap_refs(ci, got);
+>  }
+>
+> -const struct netfs_read_request_ops ceph_netfs_read_ops = {
+> +static const struct netfs_read_request_ops ceph_netfs_read_ops = {
+>         .init_rreq              = ceph_init_rreq,
+>         .is_cache_enabled       = ceph_is_cache_enabled,
+>         .begin_cache_operation  = ceph_begin_cache_operation,
+>
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Qiheng Lin <linqiheng@huawei.com>
----
- drivers/gpu/drm/vmwgfx/vmwgfx_drv.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Applied.
 
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-index 5cf3a5bf539f..6f5ea00973e0 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-@@ -719,10 +719,10 @@ static int vmw_setup_pci_resources(struct vmw_private *dev,
- 		dev->rmmio = devm_ioremap(dev->drm.dev,
- 					  rmmio_start,
- 					  rmmio_size);
--		if (IS_ERR(dev->rmmio)) {
-+		if (!dev->rmmio) {
- 			DRM_ERROR("Failed mapping registers mmio memory.\n");
- 			pci_release_regions(pdev);
--			return PTR_ERR(dev->rmmio);
-+			return -ENOMEM;
- 		}
- 	} else if (pci_id == VMWGFX_PCI_ID_SVGA2) {
- 		dev->io_start = pci_resource_start(pdev, 0);
+Thanks,
 
+                Ilya
