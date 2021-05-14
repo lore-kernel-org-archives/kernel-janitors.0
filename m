@@ -2,85 +2,73 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 728BCC433ED
-	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 07:01:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B1DEC433B4
+	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 07:03:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 57838613F6
-	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 07:01:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48CDC61408
+	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 07:03:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232901AbhENHDH (ORCPT
+        id S232671AbhENHE2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 14 May 2021 03:03:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36338 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232892AbhENHDF (ORCPT
+        Fri, 14 May 2021 03:04:28 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2658 "EHLO
+        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231433AbhENHE1 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 14 May 2021 03:03:05 -0400
-Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B450C061574;
-        Fri, 14 May 2021 00:01:54 -0700 (PDT)
-Received: from zn.tnic (p200300ec2f0b2c00f343c5c4aba7bf62.dip0.t-ipconnect.de [IPv6:2003:ec:2f0b:2c00:f343:c5c4:aba7:bf62])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0AD4F1EC04DA;
-        Fri, 14 May 2021 09:01:52 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1620975712;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=rMUtS53V+V2XZVbfMA27FWCHdkf2qEP4oFLnuhfpt2w=;
-        b=JV4oa6/OljTxTyR8v/j+QigMG9g/lAeyFQeuuKNUjWpVwV2VaaNTgHY6oxh7Xd5gMcN5ZV
-        nQN152hxvStR07IbU3Jd9ZEhsbZ85L6cXtxHLE87tlK8BBYgRCPdjr6icSI9fzFZuVabVU
-        lrtWDUkU7ZmTpgsw1RgNG3oFOCf4Q+Y=
-Date:   Fri, 14 May 2021 09:01:46 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Bixuan Cui <cuibixuan@huawei.com>
-Cc:     kristo@kernel.org, mchehab@kernel.org, tony.luck@intel.com,
-        linux-edac@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH -next v2] staging: =?utf-8?Q?co?=
- =?utf-8?Q?medi=3A_Remove_unused_variable_=E2=80=98min=5Ffull=5Fscale?=
- =?utf-8?B?4oCZ?= and function 'get_min_full_scales'
-Message-ID: <YJ4gWq3TL0TZtyKS@zn.tnic>
-References: <20210514043539.55212-1-cuibixuan@huawei.com>
+        Fri, 14 May 2021 03:04:27 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
+        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4FhKCV5NX9zQnJk;
+        Fri, 14 May 2021 14:59:50 +0800 (CST)
+Received: from DESKTOP-EFRLNPK.china.huawei.com (10.174.176.189) by
+ DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
+ 14.3.498.0; Fri, 14 May 2021 15:03:07 +0800
+From:   Qiheng Lin <linqiheng@huawei.com>
+To:     <linqiheng@huawei.com>, Phong LE <ple@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
+CC:     <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH -next] drm: bridge: fix wrong pointer passed to PTR_ERR()
+Date:   Fri, 14 May 2021 15:03:06 +0800
+Message-ID: <20210514070306.606-1-linqiheng@huawei.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210514043539.55212-1-cuibixuan@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.174.176.189]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, May 14, 2021 at 12:35:39PM +0800, Bixuan Cui wrote:
-> The variable ‘min_full_scale’ and function 'get_min_full_scales' are
-> not used, So delete them.
-> 
-> Signed-off-by: Bixuan Cui <cuibixuan@huawei.com>
-> ---
-> Changes from v2:
-> * Delete function 'get_min_full_scales'
-> 
->  drivers/comedi/drivers/jr3_pci.c | 15 ---------------
+PTR_ERR should access the value just tested by IS_ERR, otherwise
+the wrong error code will be returned.
 
-You shouldn't wonder when you don't get a proper reply with that Cc
-list:
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Qiheng Lin <linqiheng@huawei.com>
+---
+ drivers/gpu/drm/bridge/ite-it66121.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-./scripts/get_maintainer.pl -f drivers/comedi/drivers/jr3_pci.c
-Ian Abbott <abbotti@mev.co.uk> (odd fixer:COMEDI DRIVERS)
-H Hartley Sweeten <hsweeten@visionengravers.com> (odd fixer:COMEDI DRIVERS)
-Greg Kroah-Hartman <gregkh@linuxfoundation.org> (commit_signer:2/2=100%,authored:1/2=50%)
-"Alexander A. Klimov" <grandmaster@al2klimov.de> (commit_signer:1/2=50%,authored:1/2=50%)
-linux-kernel@vger.kernel.org (open list)
+diff --git a/drivers/gpu/drm/bridge/ite-it66121.c b/drivers/gpu/drm/bridge/ite-it66121.c
+index d8a60691fd32..6980c9801d0d 100644
+--- a/drivers/gpu/drm/bridge/ite-it66121.c
++++ b/drivers/gpu/drm/bridge/ite-it66121.c
+@@ -943,7 +943,7 @@ static int it66121_probe(struct i2c_client *client,
+ 	ctx->regmap = devm_regmap_init_i2c(client, &it66121_regmap_config);
+ 	if (IS_ERR(ctx->regmap)) {
+ 		ite66121_power_off(ctx);
+-		return PTR_ERR(ctx);
++		return PTR_ERR(ctx->regmap);
+ 	}
+ 
+ 	regmap_read(ctx->regmap, IT66121_VENDOR_ID0_REG, &vendor_ids[0]);
 
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
