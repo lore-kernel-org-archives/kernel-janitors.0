@@ -2,85 +2,75 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C6ABC433ED
-	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 07:08:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50F4AC433ED
+	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 07:27:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1D2476140F
-	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 07:08:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1649B613AA
+	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 07:27:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232969AbhENHJV (ORCPT
+        id S232718AbhENH27 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 14 May 2021 03:09:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50626 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232897AbhENHJU (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 14 May 2021 03:09:20 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 899E761354;
-        Fri, 14 May 2021 07:08:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1620976090;
-        bh=e5/9R5jIX60oWrB142AU3f1OLRTtCpmN7NsFzFxnRts=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lGSq0YJBbgpsJfs97LaEt5pCjMUd7LLmEzCYM0y9CGssS3JqeoAPkFYHKFkLs7tew
-         0zh27mH+R15ZK4CAK/izDwRkrL8AqEuVXsj2b6irdssxzdciUTCRnAUTWTfW/cGqqc
-         FHE9SNHiq5YLDYw2pCjGtVbd2A6cBKxxJzzQxySM=
-Date:   Fri, 14 May 2021 09:08:07 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Qiheng Lin <linqiheng@huawei.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        zhenwei pi <pizhenwei@bytedance.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mihai Carabas <mihai.carabas@oracle.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Shile Zhang <shile.zhang@linux.alibaba.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Hulk Robot <hulkci@huawei.com>
-Subject: Re: [PATCH -next] misc/pvpanic: add missing MODULE_DEVICE_TABLE
-Message-ID: <YJ4h16jjImjvqAKx@kroah.com>
-References: <20210514070103.540-1-linqiheng@huawei.com>
+        Fri, 14 May 2021 03:28:59 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:2978 "EHLO
+        szxga06-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232037AbhENH26 (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 14 May 2021 03:28:58 -0400
+Received: from dggems705-chm.china.huawei.com (unknown [172.30.72.60])
+        by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4FhKn920MhzmWGn;
+        Fri, 14 May 2021 15:25:33 +0800 (CST)
+Received: from dggpemm500004.china.huawei.com (7.185.36.219) by
+ dggems705-chm.china.huawei.com (10.3.19.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Fri, 14 May 2021 15:27:45 +0800
+Received: from [10.174.177.91] (10.174.177.91) by
+ dggpemm500004.china.huawei.com (7.185.36.219) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Fri, 14 May 2021 15:27:45 +0800
+Subject: =?UTF-8?Q?Re=3a_=5bPATCH_-next_v2=5d_staging=3a_comedi=3a_Remove_un?=
+ =?UTF-8?Q?used_variable_=e2=80=98min=5ffull=5fscale=e2=80=99_and_function_?=
+ =?UTF-8?B?J2dldF9taW5fZnVsbF9zY2FsZXMn?=
+To:     Borislav Petkov <bp@alien8.de>
+CC:     <kristo@kernel.org>, <mchehab@kernel.org>, <tony.luck@intel.com>,
+        <linux-edac@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+References: <20210514043539.55212-1-cuibixuan@huawei.com>
+ <YJ4gWq3TL0TZtyKS@zn.tnic>
+From:   Bixuan Cui <cuibixuan@huawei.com>
+Message-ID: <f37484ae-1630-7591-1102-748e43769ec1@huawei.com>
+Date:   Fri, 14 May 2021 15:27:44 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210514070103.540-1-linqiheng@huawei.com>
+In-Reply-To: <YJ4gWq3TL0TZtyKS@zn.tnic>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.174.177.91]
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpemm500004.china.huawei.com (7.185.36.219)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, May 14, 2021 at 03:01:03PM +0800, Qiheng Lin wrote:
-> This patch adds missing MODULE_DEVICE_TABLE definition which generates
-> correct modalias for automatic loading of this driver when it is built
-> as an external module.
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Qiheng Lin <linqiheng@huawei.com>
-> ---
->  drivers/misc/pvpanic/pvpanic-pci.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/misc/pvpanic/pvpanic-pci.c b/drivers/misc/pvpanic/pvpanic-pci.c
-> index 9ecc4e8559d5..ccd7e32d3f55 100644
-> --- a/drivers/misc/pvpanic/pvpanic-pci.c
-> +++ b/drivers/misc/pvpanic/pvpanic-pci.c
-> @@ -26,6 +26,7 @@ static const struct pci_device_id pvpanic_pci_id_tbl[]  = {
->  	{ PCI_DEVICE(PCI_VENDOR_ID_REDHAT, PCI_DEVICE_ID_REDHAT_PVPANIC)},
->  	{}
->  };
-> +MODULE_DEVICE_TABLE(pci, pvpanic_pci_id_tbl);
->  
->  static ssize_t capability_show(struct device *dev,
->  			       struct device_attribute *attr, char *buf)
-> 
 
-As I have said before, unless you have a user that reports a real
-problem with these types of modules not automatically loading, I am not
-going to take these patches, and you should probably stop generating
-them.
 
-thanks,
+On 2021/5/14 15:01, Borislav Petkov wrote:
+> You shouldn't wonder when you don't get a proper reply with that Cc
+> list:
+> 
+> ./scripts/get_maintainer.pl -f drivers/comedi/drivers/jr3_pci.c
+> Ian Abbott <abbotti@mev.co.uk> (odd fixer:COMEDI DRIVERS)
+> H Hartley Sweeten <hsweeten@visionengravers.com> (odd fixer:COMEDI DRIVERS)
+> Greg Kroah-Hartman <gregkh@linuxfoundation.org> (commit_signer:2/2=100%,authored:1/2=50%)
+> "Alexander A. Klimov" <grandmaster@al2klimov.de> (commit_signer:1/2=50%,authored:1/2=50%)
+> linux-kernel@vger.kernel.org (open list)
 
-greg k-h
+Thank you for your reminder, this is my mistake :-(
+
+Thanks
+Bixuan Cui
