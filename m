@@ -2,92 +2,155 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 955F1C43460
-	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 14:49:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEC96C433ED
+	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 18:32:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7363261476
-	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 14:49:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88B806144A
+	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 18:32:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232971AbhENOur (ORCPT
+        id S233764AbhENSdi (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 14 May 2021 10:50:47 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:45038 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233044AbhENOup (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 14 May 2021 10:50:45 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <colin.king@canonical.com>)
-        id 1lhZ87-0006J9-0E; Fri, 14 May 2021 14:49:31 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     VMware Graphics <linux-graphics-maintainer@vmware.com>,
+        Fri, 14 May 2021 14:33:38 -0400
+Received: from mail-dm6nam12on2077.outbound.protection.outlook.com ([40.107.243.77]:14944
+        "EHLO NAM12-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S229952AbhENSdh (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 14 May 2021 14:33:37 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ORCu58qUhe7ZzqVV16dBEfiIOVhBnlhZIXOqqkNKA2kaakzOW3/SrOWlJ5QHymACwnZTwtHNNc5w/YBLBzgagG3Rx2qHMTDAKr6ZJ6+6UYLhA7ekG4LDiudgIt+DmuC0P6aHEkDftdPUfYGowUERydvxIQXAe0Ux+J9sSKQI/rSpwQGBhTVoXg3iWsLAVuKgc3ghdxFhBoRYRrLnTQ5xAJ68Vtf5skHeafMEmDV6g6W2poeF/r2pgKJujmRygaZHtc/sJBZCYWIYc6fKoPeSi7DMUWOFKXa0A94r5pmhBEKaOrEALxatqGRsgqOKnrsFp35JfYDbGcViGzXa44LA9A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HK46JPfKvqukRs78JCR0MXhPZ3S68TebG9B4Q+PeQFg=;
+ b=WV+sXoJwIm+3wRA4geeO0NYLrF4MFbJDoMozMidaAL/T7EM1yxyIfiVLT+2vagzQ5TW5Q6Up/ytUdch3RnhzwVbSBw7lDLHlvo+YCIMXPiKs8Kf8ZfWqivz5oP0ZYdmy6GQuBEc4rQWXDT0suxGCnyfZJz+psRiQd5ymlaxS6mZwfwTxJE9oIEetXoyjPolNBJr53feZztxcybBLMeF2fXdeps2cTy9/7qsKvJ7gAXPmum1NgogOnKu5aFoIuG0ZZ66nNWILqorTm2dvrKQdDPKjlh+UNBYSXZoYufa8CoMDLu5JfNGYZ0UoGf8L+nQIjMxYgu073i7rNaU3Jqfp+w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vmware.com; dmarc=pass action=none header.from=vmware.com;
+ dkim=pass header.d=vmware.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HK46JPfKvqukRs78JCR0MXhPZ3S68TebG9B4Q+PeQFg=;
+ b=TVwQK/Tvu9/Q/N5gKKJCSJiEZXeqGRjDKBbLOd3ITL3ANKOtCeVxWvakhV6DYKsErdaw5vFVvU3HrTN991dCnJhKs9+gXqQXXi1yIUK1wAS+w+zlVahNQI6OxM1ugXPJRpmhYFst7Z7n2ZtXZa4R4OJmC3ny8Bi/czcRNnkwBSI=
+Authentication-Results: vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=none action=none header.from=vmware.com;
+Received: from MN2PR05MB6624.namprd05.prod.outlook.com (2603:10b6:208:d8::18)
+ by MN2PR05MB6205.namprd05.prod.outlook.com (2603:10b6:208:d1::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4150.12; Fri, 14 May
+ 2021 18:32:23 +0000
+Received: from MN2PR05MB6624.namprd05.prod.outlook.com
+ ([fe80::603b:4954:dbec:c02]) by MN2PR05MB6624.namprd05.prod.outlook.com
+ ([fe80::603b:4954:dbec:c02%7]) with mapi id 15.20.4129.027; Fri, 14 May 2021
+ 18:32:23 +0000
+Subject: Re: [PATCH][V2][next] drm/vmwgfx: Fix memory allocation check and a
+ leak of object fifo
+To:     Colin King <colin.king@canonical.com>,
+        VMware Graphics <linux-graphics-maintainer@vmware.com>,
         Roland Scheidegger <sroland@vmware.com>,
-        Zack Rusin <zackr@vmware.com>, David Airlie <airlied@linux.ie>,
+        David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>,
         dri-devel@lists.freedesktop.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][V2][next] drm/vmwgfx: Fix memory allocation check and a leak of object fifo
-Date:   Fri, 14 May 2021 15:49:30 +0100
-Message-Id: <20210514144930.89813-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.30.2
+References: <20210514144930.89813-1-colin.king@canonical.com>
+From:   Zack Rusin <zackr@vmware.com>
+Message-ID: <859a6800-5c5e-b6cc-50af-8bd4560cf35b@vmware.com>
+Date:   Fri, 14 May 2021 14:32:21 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
+In-Reply-To: <20210514144930.89813-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [108.36.85.85]
+X-ClientProxiedBy: BL0PR02CA0071.namprd02.prod.outlook.com
+ (2603:10b6:207:3d::48) To MN2PR05MB6624.namprd05.prod.outlook.com
+ (2603:10b6:208:d8::18)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from [192.168.0.193] (108.36.85.85) by BL0PR02CA0071.namprd02.prod.outlook.com (2603:10b6:207:3d::48) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4108.25 via Frontend Transport; Fri, 14 May 2021 18:32:22 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: be698950-23c9-459f-987b-08d917069d4b
+X-MS-TrafficTypeDiagnostic: MN2PR05MB6205:
+X-LD-Processed: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0,ExtAddr
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <MN2PR05MB6205E8E97AAFDEA3B47D47BBCE509@MN2PR05MB6205.namprd05.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:3968;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 5e3TkdQNRW8bK4spAJ31fZDeT/RNFqaeXzErlaT2sALTyqtJuPPC0beqnOn82UAo1a75JwD7FS56U92IwgqyBh9NPrH7Q75HNESl77Nywa5NpoFVD05OxlP+HLLT8wK69hmX8mBWkq4fKQm1Zgg51bRncxk7BIDnWw7luSCxrtu+9beQmew5L2o4uai8qemIA46BhjrXgnLdLnFTWnl3/PA7JIEaDXhKoSl0fjdcv8lp5a2nc9WKtOP5Y4h19CtakNveJ0pKQzLRearWy09WYMqEffRDZtcCD5kg/oT9UWHlbQSa4D+rjpp9y6p8wCSUtSE0iDWxSFoCgIVie2N+UcptKO21FK4AN9bA9LAFN16mAbbjxRl2RAHotLa2NXttjyhSHevegs2VYxriq+nwN/iFsy+RdLGMdXVXK672/opnbhFJ8wxDIeB32Q+IKMiVtNh3CkcSe2HHSjjtIsMYtmcfDmLUlDR0JdFr8FvDJk4IjlGAnvKFYVTl77I06wL56AvBB3pRvfMrBKNqvGJ9xneQVaQldLbgXc0GVqiyhZNIrPaGuBJhwA+udpYWENMxRjpWO8Gu1mw7Rp/7ggwDZqDkjc0HE/VHWmDNCovSeAKhBmwSHiCB/dcTWcp68ESXxHpRLq7wuaWZpRdm9+xxUWiYvfvAl2oLmNiggt1Vc7LRGBZ7uimD9zQWyEPFDyug
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR05MB6624.namprd05.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(136003)(39840400004)(376002)(366004)(346002)(396003)(478600001)(8936002)(2906002)(186003)(16526019)(83380400001)(31686004)(36756003)(86362001)(316002)(2616005)(66946007)(66556008)(66476007)(4326008)(16576012)(4744005)(956004)(26005)(53546011)(8676002)(38100700002)(6486002)(31696002)(5660300002)(110136005)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: =?utf-8?B?OW1YQ3VpMkVCUHRzY0p1Nmh0Q1ZnRnNjaml1VTZCSTNac25acE5SWWlSOURH?=
+ =?utf-8?B?QitzdXB3clJYRlVTSlYzRXlNZnU1R1Njc3RYbG5Ma2tqU2JZdW11aDRwRTlh?=
+ =?utf-8?B?aVBtZkdmR2QrQVd1QXdRYytvZytjdkdvdy9LRWV2d1ZuUEw0ZmE1SGNSNEFE?=
+ =?utf-8?B?R2Z1akJQOGdueG10b3R5Ly9rVHVrNFpCOVZMa1ErMnNVWUhXeUdKRjR4MWhW?=
+ =?utf-8?B?V05BRFFjU1VkMmNMVjFBdTg2WUFKQzM1V3FaLzdFLzNNYlNhVFNTb0ZJMldZ?=
+ =?utf-8?B?c1pwVDJlZ0FtVlRiL3JEc0xkWCt4Qm1COGFwTXREWWlabWJFemoxWFZIZnhr?=
+ =?utf-8?B?NmpvU2h3RThLVkgzUHVROEdZOHE2NFVMa2VVaFB6U1lBMmIyQmhSWXEvOHN0?=
+ =?utf-8?B?NTd6N2E1N1dkbG8vZnFITVBxYUdrV211dE5BSWpTT3VLcXNQSnJwZWhyTkRB?=
+ =?utf-8?B?a2JLRTJIdzFpWE4xTWFxSnRscnppbXFMVmJ2RzRTZEtpUWNhZTc0ZEg5eERN?=
+ =?utf-8?B?M1Zoa0Q5bjhHNVpmVlJVOHU1WlMvZnYzTmpPS2JOamlHbGVZRzZPQjBnd3ln?=
+ =?utf-8?B?M0lIenVGSk1lNDhtQXZFS1V3WGc2Vk8yR1hLWE0rT1ZJcWZwSmVpYlNObytG?=
+ =?utf-8?B?TXQ5cHRPYm1MamM4bDM3aFdlL1ZZQXVQMnNVZ2xQaC9KREJpN0RnSm1pbk9s?=
+ =?utf-8?B?TEd0djdDZ1E4eDEyS28xcUE0dm1XeWYrR292K2ZJU0tHM21Lc3BJeTI0aEl4?=
+ =?utf-8?B?T0Nyb1dLbUNodExuRGsrVmEwb2JFT1VMRDFqMlpCdGpXbWRJb1ZDdTFvZ1Rv?=
+ =?utf-8?B?cnJuT0xnaXpMMDRadUN3bUEwQlZ3aENXU0w3eU9rK3g1RVJhVzk1U1pMYjRK?=
+ =?utf-8?B?K0llblJFWTQxT29EVWJsNGJERzhtMXdrbk5ScW03ZkRERWdCczBqbUNxNVor?=
+ =?utf-8?B?VzdQM3RScFBwVlZBQlpIQ1ZuY2F1TTJDRlVRM0dtUXpPK0dFZFdPajR1dld5?=
+ =?utf-8?B?bGYrYXNOazFBQU5KYUhUSWhSdi9EeG0xUTJtb01STjlocDgzcGhvcGJxVnhX?=
+ =?utf-8?B?d1kySlBTYjZWczltZzdpWHdOZi85NHBGakNYNG8zY1NMZ256L29IZVV6K3B5?=
+ =?utf-8?B?N3N3S0ZrcDczQi9XMUZmSTQ3Y0xiRm55L1gwcFp5QllZdDhEOHdHdU80eEZY?=
+ =?utf-8?B?dm8zbE9FOXQxempKcHNpRVhmNS9QMXJGM213SU9nd3VaMXN2WEYvdFZoSUZX?=
+ =?utf-8?B?OWFzTThnV3FRTUxOdWFRV0NrUGdubmtXcElKMmlKU0wzbnZiVDRIMW1XK042?=
+ =?utf-8?B?d2VhUlVjQXBRUVRNNWhoL1hlVEl3VEpEVm9aMVBLc3A0TFcvWTRmbU5ndHlT?=
+ =?utf-8?B?Y0F2N0Jockc1WVk4ZFdkZldpcHkwbHhZR3IvSG83M0RRd2prOG4wVlhrLzBM?=
+ =?utf-8?B?Qk1zWVdyVzArdzhtdHZsaWVNcUJVUmV1QXIwdFR1b2xWK29ZWXArRnpvMDAy?=
+ =?utf-8?B?M0NRc1JoUVhSRTR2V0RLYk1VT0MwcHJxMUYxeUE1RSt2Y1BPVDEveXd6T2Vl?=
+ =?utf-8?B?UVM5STlFelNvejR5Sy82emdqbUdybUZJSWZTRGRvQ2NGOHdRWVRmQ0lJak9P?=
+ =?utf-8?B?ODZBTlR1eFNhaUIwN01RVytYK25xdm41UmZqaVlIT25PZFBLaU40NmZzSi9v?=
+ =?utf-8?B?ZmNtYUprOEhGYVR2NEVGNTBtdXppbTAzZFFXUVVLcEo4bWtMU2w5VUV3WmY4?=
+ =?utf-8?Q?s1WmEn+2uQisXk8IfidaNM3/FYApEKjafwqnGzG?=
+X-OriginatorOrg: vmware.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: be698950-23c9-459f-987b-08d917069d4b
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR05MB6624.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 May 2021 18:32:23.0932
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: mYfpThw95QD2l9w/qzVwB6PpgI5YQSn3UoWFJvSu2P5XugAOSJ3x7JvWV+ROZKwEs2owqEVd/oEp+S7PXN612g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR05MB6205
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On 5/14/21 10:49 AM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The allocation of fifo is lacking an allocation failure check, so
+> fix this by adding one.
+> 
+> In the case where fifo->static_buffer fails to be allocated the
+> error return path neglects to kfree the fifo object. Fix this by
+> adding in the missing kfree.
+> 
+> Kudos to Dan Carpenter for spotting the missing kzalloc failure
+> check.
+> 
+> Addresses-Coverity: ("Resource leak")
+> Fixes: 2cd80dbd3551 ("drm/vmwgfx: Add basic support for SVGA3")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+> 
+> V2: Add missing allocation failure check
+>      Update $SUBJECT to reflect this extra change
 
-The allocation of fifo is lacking an allocation failure check, so
-fix this by adding one.
+Looks good. Thanks. I'll push it through drm-misc-next.
 
-In the case where fifo->static_buffer fails to be allocated the
-error return path neglects to kfree the fifo object. Fix this by
-adding in the missing kfree.
-
-Kudos to Dan Carpenter for spotting the missing kzalloc failure
-check.
-
-Addresses-Coverity: ("Resource leak")
-Fixes: 2cd80dbd3551 ("drm/vmwgfx: Add basic support for SVGA3")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
-
-V2: Add missing allocation failure check
-    Update $SUBJECT to reflect this extra change
-
----
- drivers/gpu/drm/vmwgfx/vmwgfx_cmd.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_cmd.c b/drivers/gpu/drm/vmwgfx/vmwgfx_cmd.c
-index 027d7d504e78..d9acd2f3f673 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_cmd.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_cmd.c
-@@ -105,10 +105,14 @@ struct vmw_fifo_state *vmw_fifo_create(struct vmw_private *dev_priv)
- 		return NULL;
- 
- 	fifo = kzalloc(sizeof(*fifo), GFP_KERNEL);
-+	if (!fifo)
-+		return ERR_PTR(-ENOMEM);
- 	fifo->static_buffer_size = VMWGFX_FIFO_STATIC_SIZE;
- 	fifo->static_buffer = vmalloc(fifo->static_buffer_size);
--	if (unlikely(fifo->static_buffer == NULL))
-+	if (unlikely(fifo->static_buffer == NULL)) {
-+		kfree(fifo);
- 		return ERR_PTR(-ENOMEM);
-+	}
- 
- 	fifo->dynamic_buffer = NULL;
- 	fifo->reserved_size = 0;
--- 
-2.30.2
-
+z
