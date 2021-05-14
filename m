@@ -7,34 +7,31 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BC66C433B4
-	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 09:04:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C98CBC433ED
+	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 09:36:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2DAA661352
-	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 09:04:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4F3B61415
+	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 09:36:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233845AbhENJFj (ORCPT
+        id S231614AbhENJiI (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 14 May 2021 05:05:39 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:35415 "EHLO
+        Fri, 14 May 2021 05:38:08 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:36570 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229981AbhENJFi (ORCPT
+        with ESMTP id S229477AbhENJiI (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 14 May 2021 05:05:38 -0400
+        Fri, 14 May 2021 05:38:08 -0400
 Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
         (Exim 4.93)
         (envelope-from <colin.king@canonical.com>)
-        id 1lhTk3-0003mo-GR; Fri, 14 May 2021 09:04:19 +0000
+        id 1lhUFc-00073Z-67; Fri, 14 May 2021 09:36:56 +0000
 From:   Colin King <colin.king@canonical.com>
-To:     Shuah Khan <shuah@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Chris Hyser <chris.hyser@oracle.com>,
-        linux-kselftest@vger.kernel.org
+To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] kselftest: Fix spelling mistake "hiearchy" -> "hierarchy"
-Date:   Fri, 14 May 2021 10:04:19 +0100
-Message-Id: <20210514090419.7792-1-colin.king@canonical.com>
+Subject: [PATCH][next] scripts/spelling.txt: add more spellings to spelling.txt
+Date:   Fri, 14 May 2021 10:36:55 +0100
+Message-Id: <20210514093655.8829-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -45,26 +42,129 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-There is a spelling mistake in a message. Fix it.
+Here are some of the more common spelling mistakes and typos that I've
+found while fixing up spelling mistakes in the kernel in the past few
+months.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- tools/testing/selftests/sched/cs_prctl_test.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ scripts/spelling.txt | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/tools/testing/selftests/sched/cs_prctl_test.c b/tools/testing/selftests/sched/cs_prctl_test.c
-index 63fe6521c56d..cf9ca10b876c 100644
---- a/tools/testing/selftests/sched/cs_prctl_test.c
-+++ b/tools/testing/selftests/sched/cs_prctl_test.c
-@@ -262,7 +262,7 @@ int main(int argc, char *argv[])
- 	if (setpgid(0, 0) != 0)
- 		handle_error("process group");
- 
--	printf("\n## Create a thread/process/process group hiearchy\n");
-+	printf("\n## Create a thread/process/process group hierarchy\n");
- 	create_processes(num_processes, num_threads, procs);
- 	disp_processes(num_processes, procs);
- 	validate(get_cs_cookie(0) == 0);
+diff --git a/scripts/spelling.txt b/scripts/spelling.txt
+index 7b6a01291598..17fdc620d548 100644
+--- a/scripts/spelling.txt
++++ b/scripts/spelling.txt
+@@ -22,6 +22,7 @@ absolut||absolute
+ absoulte||absolute
+ acccess||access
+ acceess||access
++accelaration||acceleration
+ acceleratoin||acceleration
+ accelleration||acceleration
+ accesing||accessing
+@@ -264,6 +265,7 @@ calucate||calculate
+ calulate||calculate
+ cancelation||cancellation
+ cancle||cancel
++canot||cannot
+ capabilites||capabilities
+ capabilties||capabilities
+ capabilty||capability
+@@ -494,7 +496,10 @@ digial||digital
+ dimention||dimension
+ dimesions||dimensions
+ diconnected||disconnected
++disabed||disabled
++disble||disable
+ disgest||digest
++disired||desired
+ dispalying||displaying
+ diplay||display
+ directon||direction
+@@ -710,6 +715,7 @@ havind||having
+ heirarchically||hierarchically
+ heirarchy||hierarchy
+ helpfull||helpful
++hearbeat||heartbeat
+ heterogenous||heterogeneous
+ hexdecimal||hexadecimal
+ hybernate||hibernate
+@@ -989,6 +995,7 @@ notications||notifications
+ notifcations||notifications
+ notifed||notified
+ notity||notify
++nubmer||number
+ numebr||number
+ numner||number
+ obtaion||obtain
+@@ -1014,8 +1021,10 @@ ommiting||omitting
+ ommitted||omitted
+ onself||oneself
+ ony||only
++openning||opening
+ operatione||operation
+ opertaions||operations
++opportunies||opportunities
+ optionnal||optional
+ optmizations||optimizations
+ orientatied||orientated
+@@ -1111,6 +1120,7 @@ prefitler||prefilter
+ preform||perform
+ premption||preemption
+ prepaired||prepared
++prepate||prepare
+ preperation||preparation
+ preprare||prepare
+ pressre||pressure
+@@ -1123,6 +1133,7 @@ privilaged||privileged
+ privilage||privilege
+ priviledge||privilege
+ priviledges||privileges
++privleges||privileges
+ probaly||probably
+ procceed||proceed
+ proccesors||processors
+@@ -1167,6 +1178,7 @@ promixity||proximity
+ psudo||pseudo
+ psuedo||pseudo
+ psychadelic||psychedelic
++purgable||purgeable
+ pwoer||power
+ queing||queuing
+ quering||querying
+@@ -1180,6 +1192,7 @@ receieve||receive
+ recepient||recipient
+ recevied||received
+ receving||receiving
++recievd||received
+ recieved||received
+ recieve||receive
+ reciever||receiver
+@@ -1228,6 +1241,7 @@ reponse||response
+ representaion||representation
+ reqeust||request
+ reqister||register
++requed||requeued
+ requestied||requested
+ requiere||require
+ requirment||requirement
+@@ -1332,6 +1346,7 @@ singal||signal
+ singed||signed
+ sleeped||slept
+ sliped||slipped
++softwade||software
+ softwares||software
+ soley||solely
+ souce||source
+@@ -1510,6 +1525,7 @@ unintialized||uninitialized
+ unitialized||uninitialized
+ unkmown||unknown
+ unknonw||unknown
++unknouwn||unknown
+ unknow||unknown
+ unkown||unknown
+ unamed||unnamed
 -- 
 2.30.2
 
