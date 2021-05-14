@@ -5,98 +5,110 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no version=3.4.0
+	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16451C433B4
-	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 13:11:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3789C433ED
+	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 14:18:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E889A61460
-	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 13:11:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C7A661408
+	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 14:18:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231806AbhENNMg (ORCPT
+        id S232922AbhENOTj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 14 May 2021 09:12:36 -0400
-Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:23292 "EHLO
-        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229469AbhENNMg (ORCPT
+        Fri, 14 May 2021 10:19:39 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:37918 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230097AbhENOTj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 14 May 2021 09:12:36 -0400
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 14ED17JA018629;
-        Fri, 14 May 2021 13:11:10 GMT
+        Fri, 14 May 2021 10:19:39 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 14EEEhq4072385;
+        Fri, 14 May 2021 14:18:21 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type : in-reply-to;
- s=corp-2020-01-29; bh=7fC04BucLpGRD/n2GA1XspszHQIl4ZHLmE65wctplAY=;
- b=Q8HL8oJDlLSH/LMF6fpUfBnDb2UpqrVz5qTgJrOQK7f0FHB9AXACy4Yl/C3r4iPFI1st
- DqmqznPjv8bnG7F60XUc6xJ21cxy8GyFWSbT8ll5/H5SpX4zIWb4SnQ/4dkyCWNVlX2x
- O6QS87ui3Wb0eBpaPabaSNuu/ssPZAUNhaOA/ZIDPx/8BPyAS7xp2CNb2L7gP9++hYN+
- U+z9g18cVX34o5RMXle7MMJTsuyEnDaKAZoAhIT+aDURnNmTsg5SKJQwgvgeMBc/9Qzu
- QabLzhPSsyZWEwjV9uZxR+kT2pebGi8Z0IbKJuEtxeFm/z4YTS5eCGsKGt0t/UdDECeC QQ== 
-Received: from oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by mx0b-00069f02.pphosted.com with ESMTP id 38gppjgp89-1
+ : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
+ bh=zNC7OQCGpB44JeelSJRSvUVJPjA+rAX5PB4VLakxdFI=;
+ b=t7Q7cC9wDUoKjvMRBiuViSqOmsHa5GcEEgT+l3YiMXVUiKopsoXSnrm1GlqjJeNbMB25
+ JXu1zW7cnkpTEEghg4NRIU4vRKpYTHHsVK1hxUlOCeyebZk5MjQTDrlDEXBGONxkESQV
+ PTKBKRRQoT7pBTN8sYzsHVfMCiJ2HhhHSLcfxrjJc1lYhk8tNRyEixu1ZVbspKfEVlbs
+ PTd7BV1Y389wP418laZsSw9d+6GlR6B81QHyWdJ67byXc1AQTVciczNztzcUfCLG3iHk
+ GUU8qjp05rkiy1S6N/fqGYDRWWgDYBADQqpjRQq2fKzKBT+ZE0/RsuiQn5wjILfE8moR 7w== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 38gpnxvf29-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 14 May 2021 13:11:10 +0000
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
-        by pps.podrdrct (8.16.0.36/8.16.0.36) with SMTP id 14EDB9kO188514;
-        Fri, 14 May 2021 13:11:09 GMT
+        Fri, 14 May 2021 14:18:20 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 14EEG0CP094099;
+        Fri, 14 May 2021 14:18:20 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-        by aserp3020.oracle.com with ESMTP id 38gppe5mqc-1
+        by aserp3030.oracle.com with ESMTP id 38gppq4y3v-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 14 May 2021 13:11:09 +0000
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 14EDB7oh187959;
-        Fri, 14 May 2021 13:11:07 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 38gppe5mgm-1
+        Fri, 14 May 2021 14:18:20 +0000
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 14EEIKL0097842;
+        Fri, 14 May 2021 14:18:20 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3030.oracle.com with ESMTP id 38gppq4y3q-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 14 May 2021 13:11:07 +0000
-Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 14EDB2fJ015206;
-        Fri, 14 May 2021 13:11:02 GMT
+        Fri, 14 May 2021 14:18:19 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 14EEIIBu029349;
+        Fri, 14 May 2021 14:18:18 GMT
 Received: from mwanda (/102.36.221.92)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 14 May 2021 06:11:01 -0700
-Date:   Fri, 14 May 2021 16:10:55 +0300
+        with ESMTP ; Fri, 14 May 2021 14:18:18 +0000
+Date:   Fri, 14 May 2021 17:18:10 +0300
 From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     Lars-Peter Clausen <lars@metafoo.de>,
-        Joe Sandom <joe.g.sandom@gmail.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Leon Romanovsky <leon@kernel.org>,
+        Avihai Horon <avihaih@nvidia.com>,
+        Michael Guralnik <michaelgur@nvidia.com>,
+        Aharon Landau <aharonl@mellanox.com>,
+        Gal Pressman <galpress@amazon.com>,
+        Yishai Hadas <yishaih@mellanox.com>,
+        Parav Pandit <parav@mellanox.com>, linux-rdma@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: [PATCH 2/2] iio: light: tsl2591: delete a stray tab
-Message-ID: <YJ523y0dhc1IwCOB@mwanda>
+Subject: [PATCH] RDMA/uverbs: fix a NULL vs IS_ERR() bug
+Message-ID: <YJ6Got+U7lz+3n9a@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YJ52r1XZ44myD9Xx@mwanda>
 X-Mailer: git-send-email haha only kidding
-X-Proofpoint-ORIG-GUID: AKY68wcUczUoxFVjFD-8bC0o0aQH1_9J
-X-Proofpoint-GUID: AKY68wcUczUoxFVjFD-8bC0o0aQH1_9J
+X-Proofpoint-GUID: pAOQGFclzYTUCpQ23dtiy4nkhhrDKqYn
+X-Proofpoint-ORIG-GUID: pAOQGFclzYTUCpQ23dtiy4nkhhrDKqYn
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9984 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 bulkscore=0
+ adultscore=0 priorityscore=1501 phishscore=0 malwarescore=0 spamscore=0
+ impostorscore=0 mlxlogscore=999 mlxscore=0 clxscore=1011 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
+ definitions=main-2105140115
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This return statement is indented one more tab than it should be.
+The uapi_get_object() function returns error pointers, it never returns
+NULL.
 
+Fixes: 149d3845f4a5 ("RDMA/uverbs: Add a method to introspect handles in a context")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/iio/light/tsl2591.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/infiniband/core/uverbs_std_types_device.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/iio/light/tsl2591.c b/drivers/iio/light/tsl2591.c
-index 26e3cb6c4ff8..39e68d0c9d6a 100644
---- a/drivers/iio/light/tsl2591.c
-+++ b/drivers/iio/light/tsl2591.c
-@@ -451,7 +451,7 @@ static int tsl2591_read_channel_data(struct iio_dev *indio_dev,
- 					    sizeof(als_data), als_data);
- 	if (ret < 0) {
- 		dev_err(&client->dev, "Failed to read data bytes");
--			return ret;
-+		return ret;
- 	}
+diff --git a/drivers/infiniband/core/uverbs_std_types_device.c b/drivers/infiniband/core/uverbs_std_types_device.c
+index 9ec6971056fa..818704c676c0 100644
+--- a/drivers/infiniband/core/uverbs_std_types_device.c
++++ b/drivers/infiniband/core/uverbs_std_types_device.c
+@@ -117,8 +117,8 @@ static int UVERBS_HANDLER(UVERBS_METHOD_INFO_HANDLES)(
+ 		return ret;
  
- 	als_ch0 = get_unaligned_le16(&als_data[0]);
+ 	uapi_object = uapi_get_object(attrs->ufile->device->uapi, object_id);
+-	if (!uapi_object)
+-		return -EINVAL;
++	if (IS_ERR(uapi_object))
++		return PTR_ERR(uapi_object);
+ 
+ 	handles = gather_objects_handle(attrs->ufile, uapi_object, attrs,
+ 					out_len, &total);
 -- 
 2.30.2
 
