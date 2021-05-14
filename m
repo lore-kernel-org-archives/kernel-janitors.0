@@ -2,169 +2,90 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C98CBC433ED
-	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 09:36:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 789AAC433ED
+	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 10:23:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A4F3B61415
-	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 09:36:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5AD876145A
+	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 10:23:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231614AbhENJiI (ORCPT
+        id S233155AbhENKYN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 14 May 2021 05:38:08 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:36570 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229477AbhENJiI (ORCPT
+        Fri, 14 May 2021 06:24:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53318 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230362AbhENKYN (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 14 May 2021 05:38:08 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <colin.king@canonical.com>)
-        id 1lhUFc-00073Z-67; Fri, 14 May 2021 09:36:56 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] scripts/spelling.txt: add more spellings to spelling.txt
-Date:   Fri, 14 May 2021 10:36:55 +0100
-Message-Id: <20210514093655.8829-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.30.2
+        Fri, 14 May 2021 06:24:13 -0400
+Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AE87C061574;
+        Fri, 14 May 2021 03:23:02 -0700 (PDT)
+Received: from zn.tnic (p200300ec2f0b2c00e75fd5d24a8a460d.dip0.t-ipconnect.de [IPv6:2003:ec:2f0b:2c00:e75f:d5d2:4a8a:460d])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 07EF91EC03A0;
+        Fri, 14 May 2021 12:23:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1620987781;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=8uN+blNbUuTK1vAwzHY9/vcgYGqsYhOW4M+ryJ3GiSU=;
+        b=F7lBy7xAxK9LBSD9DH34xrgrd+Khh424Ubas3gkWty3pu2mFkiFEPhL8k9Pu3kUmBbhPXI
+        0EoOhwc/A8ray8RpYVq/t/2LrJE1W2qlo5NSVfoRLaU3FWocSVABzUuvKkOL+24VXjFq8A
+        jfBbOkAqWSeNQjepmS7H7+DbeGkJdhU=
+Date:   Fri, 14 May 2021 12:22:57 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Bixuan Cui <cuibixuan@huawei.com>
+Cc:     kristo@kernel.org, mchehab@kernel.org, tony.luck@intel.com,
+        linux-edac@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH -next v2] EDAC: ti: Add missing MODULE_DEVICE_TABLE
+Message-ID: <YJ5PgRDG9OZ4msyJ@zn.tnic>
+References: <20210512033727.26701-1-cuibixuan@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20210512033727.26701-1-cuibixuan@huawei.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Wed, May 12, 2021 at 11:37:27AM +0800, Bixuan Cui wrote:
+> The module misses MODULE_DEVICE_TABLE() for of_device_id tables
+> and thus never autoloads on ID matches.
+> Add the missing declarations.
+> 
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Bixuan Cui <cuibixuan@huawei.com>
+> ---
+> Changes v2:
+> * Modify the commit message to make it more suitable.
+> 
+>  drivers/edac/ti_edac.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/edac/ti_edac.c b/drivers/edac/ti_edac.c
+> index e7eae20f83d1..169f96e51c29 100644
+> --- a/drivers/edac/ti_edac.c
+> +++ b/drivers/edac/ti_edac.c
+> @@ -197,6 +197,7 @@ static const struct of_device_id ti_edac_of_match[] = {
+>  	{ .compatible = "ti,emif-dra7xx", .data = (void *)EMIF_TYPE_DRA7 },
+>  	{},
+>  };
+> +MODULE_DEVICE_TABLE(of, ti_edac_of_match);
+>  
+>  static int _emif_get_id(struct device_node *node)
+>  {
+> -- 
 
-Here are some of the more common spelling mistakes and typos that I've
-found while fixing up spelling mistakes in the kernel in the past few
-months.
+Applied, thanks.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- scripts/spelling.txt | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
-
-diff --git a/scripts/spelling.txt b/scripts/spelling.txt
-index 7b6a01291598..17fdc620d548 100644
---- a/scripts/spelling.txt
-+++ b/scripts/spelling.txt
-@@ -22,6 +22,7 @@ absolut||absolute
- absoulte||absolute
- acccess||access
- acceess||access
-+accelaration||acceleration
- acceleratoin||acceleration
- accelleration||acceleration
- accesing||accessing
-@@ -264,6 +265,7 @@ calucate||calculate
- calulate||calculate
- cancelation||cancellation
- cancle||cancel
-+canot||cannot
- capabilites||capabilities
- capabilties||capabilities
- capabilty||capability
-@@ -494,7 +496,10 @@ digial||digital
- dimention||dimension
- dimesions||dimensions
- diconnected||disconnected
-+disabed||disabled
-+disble||disable
- disgest||digest
-+disired||desired
- dispalying||displaying
- diplay||display
- directon||direction
-@@ -710,6 +715,7 @@ havind||having
- heirarchically||hierarchically
- heirarchy||hierarchy
- helpfull||helpful
-+hearbeat||heartbeat
- heterogenous||heterogeneous
- hexdecimal||hexadecimal
- hybernate||hibernate
-@@ -989,6 +995,7 @@ notications||notifications
- notifcations||notifications
- notifed||notified
- notity||notify
-+nubmer||number
- numebr||number
- numner||number
- obtaion||obtain
-@@ -1014,8 +1021,10 @@ ommiting||omitting
- ommitted||omitted
- onself||oneself
- ony||only
-+openning||opening
- operatione||operation
- opertaions||operations
-+opportunies||opportunities
- optionnal||optional
- optmizations||optimizations
- orientatied||orientated
-@@ -1111,6 +1120,7 @@ prefitler||prefilter
- preform||perform
- premption||preemption
- prepaired||prepared
-+prepate||prepare
- preperation||preparation
- preprare||prepare
- pressre||pressure
-@@ -1123,6 +1133,7 @@ privilaged||privileged
- privilage||privilege
- priviledge||privilege
- priviledges||privileges
-+privleges||privileges
- probaly||probably
- procceed||proceed
- proccesors||processors
-@@ -1167,6 +1178,7 @@ promixity||proximity
- psudo||pseudo
- psuedo||pseudo
- psychadelic||psychedelic
-+purgable||purgeable
- pwoer||power
- queing||queuing
- quering||querying
-@@ -1180,6 +1192,7 @@ receieve||receive
- recepient||recipient
- recevied||received
- receving||receiving
-+recievd||received
- recieved||received
- recieve||receive
- reciever||receiver
-@@ -1228,6 +1241,7 @@ reponse||response
- representaion||representation
- reqeust||request
- reqister||register
-+requed||requeued
- requestied||requested
- requiere||require
- requirment||requirement
-@@ -1332,6 +1346,7 @@ singal||signal
- singed||signed
- sleeped||slept
- sliped||slipped
-+softwade||software
- softwares||software
- soley||solely
- souce||source
-@@ -1510,6 +1525,7 @@ unintialized||uninitialized
- unitialized||uninitialized
- unkmown||unknown
- unknonw||unknown
-+unknouwn||unknown
- unknow||unknown
- unkown||unknown
- unamed||unnamed
 -- 
-2.30.2
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
