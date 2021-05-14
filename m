@@ -2,73 +2,96 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BA4CC433B4
-	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 18:35:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58806C43603
+	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 21:01:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5C0176144B
-	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 18:35:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41012613EB
+	for <kernel-janitors@archiver.kernel.org>; Fri, 14 May 2021 21:01:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231264AbhENSgr (ORCPT
+        id S233434AbhENVCX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 14 May 2021 14:36:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51282 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229952AbhENSgr (ORCPT
+        Fri, 14 May 2021 17:02:23 -0400
+Received: from mail-il1-f180.google.com ([209.85.166.180]:46635 "EHLO
+        mail-il1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231658AbhENVBt (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 14 May 2021 14:36:47 -0400
-Received: from ssl.serverraum.org (ssl.serverraum.org [IPv6:2a01:4f8:151:8464::1:2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 652A8C061574
-        for <kernel-janitors@vger.kernel.org>; Fri, 14 May 2021 11:35:35 -0700 (PDT)
-Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id 9C68F2224B;
-        Fri, 14 May 2021 20:35:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1621017331;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=riT+Nq4J1hu8+qyaKDSrJBVE67oxWgNH7ZvD4d985ck=;
-        b=O/U1tdww2I83EyZeJOZ+8G3qKDKFtGRh2Xjg72z0s4w8WIaxya1r5BpEyt/W7VTb4F2Ku6
-        M3Mz//SSvneCcff0dEXJ5qNgWu6+4VJR1ur4hGKKL5jADOObyIRvWUkQ8wx+PQHSiscS8B
-        YA8CgaeNUipNhg+GFgfs92nKjhsDznQ=
+        Fri, 14 May 2021 17:01:49 -0400
+Received: by mail-il1-f180.google.com with SMTP id w7so855171ilg.13;
+        Fri, 14 May 2021 14:00:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=TeLhWehijG54mouce8ikq7VtYZj7/i4EvjKXhny3Jfo=;
+        b=eDgF07Og/uBtIlYHqpy7GvWKrGo4e4BNwsZbKMQ1YXaA76hDYocd6reY/B07KsdCvX
+         voTGlr44LTrZvEcUjPIu28itJ9wTyfcCeYtkoFg2DXZ/IkiK2lh6KS3x1B+jNi8WFV0C
+         yo7UNL3i9r0727TlVXthzcF7jCwU0Gg2X1AACfKDHVEMAP4lU14/+viWFvyn1apY+OD0
+         YLbWTfngy2fklHBc5L5hb1KTFqLw5wexT8vK0zg09kyianJHJ/EGZxjzuXZN4N9Q4qcp
+         nmQeAmOMgGOrfjJgNabpiSP7g1r9X3P0S0KtjrNua+ztDp6APhvhz+LfOZluHVe0cfwx
+         FVdg==
+X-Gm-Message-State: AOAM531MC9K2t1aTof8KB+nGgLXNW0hWXdjqPACtepOYVbzv+q8aNdHR
+        LqZ84AbJQc7LL4m6o0Knf/w=
+X-Google-Smtp-Source: ABdhPJyXHLR18z9BtQ5R8acjjU7PO+hmO2IzJ2vd1o3DUpSbN0+MoCAa3c70t6m0+yZfR8ehgrRZsw==
+X-Received: by 2002:a92:510:: with SMTP id q16mr28805400ile.41.1621026037202;
+        Fri, 14 May 2021 14:00:37 -0700 (PDT)
+Received: from google.com (243.199.238.35.bc.googleusercontent.com. [35.238.199.243])
+        by smtp.gmail.com with ESMTPSA id s14sm3560458ilj.14.2021.05.14.14.00.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 May 2021 14:00:36 -0700 (PDT)
+Date:   Fri, 14 May 2021 21:00:35 +0000
+From:   Dennis Zhou <dennis@kernel.org>
+To:     Wei Yongjun <weiyongjun1@huawei.com>
+Cc:     Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Hulk Robot <hulkci@huawei.com>
+Subject: Re: [PATCH -next] percpu: make symbol 'pcpu_free_slot' static
+Message-ID: <YJ7k8zWAOoDA5i3t@google.com>
+References: <20210514063952.3240527-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 14 May 2021 20:35:31 +0200
-From:   Michael Walle <michael@walle.cc>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] mtd: core: Potential NULL dereference in mtd_otp_size()
-In-Reply-To: <YJ6Iw3iNvGycAWV6@mwanda>
-References: <YJ6Iw3iNvGycAWV6@mwanda>
-User-Agent: Roundcube Webmail/1.4.11
-Message-ID: <23f1c1a4cf741a40e63420ff9aedff9b@walle.cc>
-X-Sender: michael@walle.cc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210514063952.3240527-1-weiyongjun1@huawei.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Am 2021-05-14 16:27, schrieb Dan Carpenter:
-> If kmalloc() fails then it could lead to a NULL dereference.  Check and
-> return -ENOMEM on error.
+Hello,
+
+On Fri, May 14, 2021 at 06:39:52AM +0000, Wei Yongjun wrote:
+> The sparse tool complains as follows:
 > 
-> Fixes: 4b361cfa8624 ("mtd: core: add OTP nvmem provider support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> mm/percpu.c:138:5: warning:
+>  symbol 'pcpu_free_slot' was not declared. Should it be static?
+> 
+> This symbol is not used outside of percpu.c, so marks it static.
+> 
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ---
+>  mm/percpu.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/mm/percpu.c b/mm/percpu.c
+> index a257c3efdf18..73c249f3b6a3 100644
+> --- a/mm/percpu.c
+> +++ b/mm/percpu.c
+> @@ -135,7 +135,7 @@ static int pcpu_unit_size __ro_after_init;
+>  static int pcpu_nr_units __ro_after_init;
+>  static int pcpu_atom_size __ro_after_init;
+>  int pcpu_nr_slots __ro_after_init;
+> -int pcpu_free_slot __ro_after_init;
+> +static int pcpu_free_slot __ro_after_init;
+>  int pcpu_sidelined_slot __ro_after_init;
+>  int pcpu_to_depopulate_slot __ro_after_init;
+>  static size_t pcpu_chunk_struct_size __ro_after_init;
+> 
 
-Thanks, were was my head..
+Ah that's my bad. I've applied this for-5.14.
 
-Reviewed-by: Michael Walle <michael@walle.cc>
-
--michael
+Thanks,
+Dennis
