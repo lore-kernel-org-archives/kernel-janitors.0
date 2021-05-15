@@ -2,123 +2,149 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A790C433ED
-	for <kernel-janitors@archiver.kernel.org>; Sat, 15 May 2021 10:43:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D41DC433B4
+	for <kernel-janitors@archiver.kernel.org>; Sat, 15 May 2021 12:08:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E2EDF613C7
-	for <kernel-janitors@archiver.kernel.org>; Sat, 15 May 2021 10:43:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6787F613CA
+	for <kernel-janitors@archiver.kernel.org>; Sat, 15 May 2021 12:08:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232704AbhEOKoS (ORCPT
+        id S229952AbhEOMJh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 15 May 2021 06:44:18 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:39948 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231163AbhEOKoQ (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 15 May 2021 06:44:16 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 14FAh1IG038850;
-        Sat, 15 May 2021 10:43:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=Aw1u5ow0Hl5ySHNll3atH0LmQQZ28gK7oK0V7pcLdJ8=;
- b=wFQN6WDU+OcpTcuOCE8UBs2y8UDGqCfre7jms8z22ec3P6YIRwhml827QbI5C8UrOOHW
- keGShm/43NzQJ17+6exYRnRqRN239ASybCTBq0n34kwqmgOloWAIz1Uo2/Uflp2uhg+g
- 264ryTRUV9kxF5p3HNfT1ZFSwyFDmj4dynJG72vhM7pzpn2B/fVLjtxsM2R+MVbk7/X3
- e4uCe8NnEgtMeKNKC7xpsWI1f4lh+AlEEBI5ysiuFzYwkGxprHsaJnhn9ecy8bmz1VXx
- Zp/yEmL0XHLIgzfowo8JR8NbrfmNiBqRb8MYOGD0p81TEst6uE97pbCCF5riRQuI6JZx cw== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2120.oracle.com with ESMTP id 38j68m8b44-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 15 May 2021 10:43:01 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 14FAe14g130603;
-        Sat, 15 May 2021 10:43:00 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by aserp3030.oracle.com with ESMTP id 38j4b9rpre-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 15 May 2021 10:43:00 +0000
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 14FAh0TL138029;
-        Sat, 15 May 2021 10:43:00 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3030.oracle.com with ESMTP id 38j4b9rpr8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 15 May 2021 10:43:00 +0000
-Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 14FAgx4I006168;
-        Sat, 15 May 2021 10:42:59 GMT
-Received: from mwanda (/102.36.221.92)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sat, 15 May 2021 03:42:58 -0700
-Date:   Sat, 15 May 2021 13:42:53 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     ayush.sawal@chelsio.com
-Cc:     kernel-janitors@vger.kernel.org
-Subject: [bug report] cxgb4/ch_ktls: Clear resources when pf4 device is
- removed
-Message-ID: <YJ+lregUoryep/Ix@mwanda>
+        Sat, 15 May 2021 08:09:37 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37358 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229469AbhEOMJh (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Sat, 15 May 2021 08:09:37 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 0A54DAF59;
+        Sat, 15 May 2021 12:08:23 +0000 (UTC)
+Subject: Re: [PATCH] drm: simpledrm: fix a potential NULL dereference
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        David Airlie <airlied@linux.ie>
+Cc:     Daniel Vetter <daniel@ffwll.ch>, Maxime Ripard <maxime@cerno.tech>,
+        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+References: <YJ+aC47XX58ICXax@mwanda>
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+Message-ID: <1bdf5216-7503-71ca-f8c2-4bd55d110d87@suse.de>
+Date:   Sat, 15 May 2021 14:08:21 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Proofpoint-ORIG-GUID: 2RfmvCdwGxd9cmjp2hQPz5T1UBPPwEFy
-X-Proofpoint-GUID: 2RfmvCdwGxd9cmjp2hQPz5T1UBPPwEFy
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9984 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=999
- priorityscore=1501 impostorscore=0 suspectscore=0 clxscore=1015
- adultscore=0 bulkscore=0 phishscore=0 spamscore=0 malwarescore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2104190000 definitions=main-2105150075
+In-Reply-To: <YJ+aC47XX58ICXax@mwanda>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="a2edGrlxnKaXkBgRndnK8RuD8ns712nVp"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello Ayush Sawal,
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--a2edGrlxnKaXkBgRndnK8RuD8ns712nVp
+Content-Type: multipart/mixed; boundary="cZnVOTFPw6EFZYAsyug9zYdv4zPapUC7s";
+ protected-headers="v1"
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: Dan Carpenter <dan.carpenter@oracle.com>, David Airlie <airlied@linux.ie>
+Cc: Daniel Vetter <daniel@ffwll.ch>, Maxime Ripard <maxime@cerno.tech>,
+ dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+Message-ID: <1bdf5216-7503-71ca-f8c2-4bd55d110d87@suse.de>
+Subject: Re: [PATCH] drm: simpledrm: fix a potential NULL dereference
+References: <YJ+aC47XX58ICXax@mwanda>
+In-Reply-To: <YJ+aC47XX58ICXax@mwanda>
 
-This is a semi-automatic email about new static checker warnings.
+--cZnVOTFPw6EFZYAsyug9zYdv4zPapUC7s
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-The patch 65e302a9bd57: "cxgb4/ch_ktls: Clear resources when pf4 
-device is removed" from May 13, 2021, leads to the following Smatch 
-complaint:
 
-    drivers/net/ethernet/chelsio/inline_crypto/ch_ktls/chcr_ktls.c:393 chcr_ktls_dev_del()
-    error: we previously assumed 'u_ctx' could be null (see line 374)
 
-drivers/net/ethernet/chelsio/inline_crypto/ch_ktls/chcr_ktls.c
-   373		u_ctx = tx_info->adap->uld[CXGB4_ULD_KTLS].handle;
-   374		if (u_ctx && u_ctx->detach)
-                    ^^^^^
-Can u_ctx be NULL?
+Am 15.05.21 um 11:53 schrieb Dan Carpenter:
+> The drm_format_info() function returns NULL if the format is
+> unsupported, but the simplefb_get_validated_format() is expected to
+> return error pointers.  If we propagate teh NULL return then it will
+> lead to a NULL dereference in the callers.  Swap the NULL and trade it
+> in for an ERR_PTR(-EINVAL).
 
-   375			return;
-   376		/* clear l2t entry */
-   377		if (tx_info->l2te)
-   378			cxgb4_l2t_release(tx_info->l2te);
-   379	
-   380	#if IS_ENABLED(CONFIG_IPV6)
-   381		/* clear clip entry */
-   382		if (tx_info->ip_family == AF_INET6)
-   383			cxgb4_clip_release(netdev, (const u32 *)
-   384					   &tx_info->sk->sk_v6_rcv_saddr,
-   385					   1);
-   386	#endif
-   387	
-   388		/* clear tid */
-   389		if (tx_info->tid != -1) {
-   390			cxgb4_remove_tid(&tx_info->adap->tids, tx_info->tx_chan,
-   391					 tx_info->tid, tx_info->ip_family);
-   392	
-   393			xa_erase(&u_ctx->tid_list, tx_info->tid);
-                                 ^^^^^^^^^^^^^^^^
-Unchecked dereference.
+Thank you. I've added the patch to drm-misc-next.
 
-   394		}
-   395	
+Best regards
+Thomas
 
-regards,
-dan carpenter
+>=20
+> Fixes: 11e8f5fd223b ("drm: Add simpledrm driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>   drivers/gpu/drm/tiny/simpledrm.c | 9 +++++++--
+>   1 file changed, 7 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/tiny/simpledrm.c b/drivers/gpu/drm/tiny/si=
+mpledrm.c
+> index f72ca3a1c2d4..4f605c5fe856 100644
+> --- a/drivers/gpu/drm/tiny/simpledrm.c
+> +++ b/drivers/gpu/drm/tiny/simpledrm.c
+> @@ -72,6 +72,7 @@ simplefb_get_validated_format(struct drm_device *dev,=20
+const char *format_name)
+>   	static const struct simplefb_format formats[] =3D SIMPLEFB_FORMATS;
+>   	const struct simplefb_format *fmt =3D formats;
+>   	const struct simplefb_format *end =3D fmt + ARRAY_SIZE(formats);
+> +	const struct drm_format_info *info;
+>  =20
+>   	if (!format_name) {
+>   		drm_err(dev, "simplefb: missing framebuffer format\n");
+> @@ -79,8 +80,12 @@ simplefb_get_validated_format(struct drm_device *dev=
+, const char *format_name)
+>   	}
+>  =20
+>   	while (fmt < end) {
+> -		if (!strcmp(format_name, fmt->name))
+> -			return drm_format_info(fmt->fourcc);
+> +		if (!strcmp(format_name, fmt->name)) {
+> +			info =3D drm_format_info(fmt->fourcc);
+> +			if (!info)
+> +				return ERR_PTR(-EINVAL);
+> +			return info;
+> +		}
+>   		++fmt;
+>   	}
+>  =20
+>=20
+
+--=20
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
+(HRB 36809, AG N=C3=BCrnberg)
+Gesch=C3=A4ftsf=C3=BChrer: Felix Imend=C3=B6rffer
+
+
+--cZnVOTFPw6EFZYAsyug9zYdv4zPapUC7s--
+
+--a2edGrlxnKaXkBgRndnK8RuD8ns712nVp
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature"
+
+-----BEGIN PGP SIGNATURE-----
+
+wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmCfubYFAwAAAAAACgkQlh/E3EQov+DO
+bQ//Z/v3WC/Mu+3IHlG3XzTn7MpfzR0Xgyh0Qiaz3/vlOMGWwfNzG3ZWwKfS8sPa7wglcYvoXYg4
+ycWZlFcMgIYI5iwhwtqnH+hhDjAhSQ6hV2+TdPAh5EzJJF7zlMBbmdKRQBLz2JB3kBF6Ci0cWfW/
+g5t9Q7v8VIv+Vgl48Vi+OijYpJMz8MzrmrZ0CrMvjRG1NzVAshh/om1F4iHA2SSmMrVTIpYK2KBA
+iesvvyPcaVUv/85ViR6kX+Y5RCJh7z4Y3DYsXhEC79JAQmawthtFQaAfgKCC2KzW/paAIq8r9oqM
+B8Tv9aVepzswIJlImZ/iT22PAqgbwnL4DEW6srcwpbaQWXO8FpcUicXhxQl1z3B8+cwPilCO0cUC
+PO2punVOrYun7kh41M8ihRn2mif/X5DO4+hbqa3QLEbMLRgSlGyoDj+Mi6GhWfuWeMKDKKWcIbu8
+eCO8V8j5o90qOblJI4qn1D0/5ZE7aQVZLCrEpTPRLRe7JDRokNZk72wwMVLYR7NaKv+v2Q4U87Y3
+qhgMtpk0rp/m3DxhDUrBNyoFpz3JqkK9o+mE/wR8KRnzdD/KTCXzHyIqf7gHyJ+ziPh0YpCTnqyw
+0HEliv+mczy2X5/XmUx4aY97dVOhuGbrKPJxP31bzG0kv25B2R4oMAIvayfb3LqozUfVnV9vTmZL
++qQ=
+=bSHB
+-----END PGP SIGNATURE-----
+
+--a2edGrlxnKaXkBgRndnK8RuD8ns712nVp--
