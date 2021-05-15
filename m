@@ -5,57 +5,57 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBC2EC433ED
-	for <kernel-janitors@archiver.kernel.org>; Sat, 15 May 2021 16:47:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60FECC433ED
+	for <kernel-janitors@archiver.kernel.org>; Sat, 15 May 2021 17:11:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9973661352
-	for <kernel-janitors@archiver.kernel.org>; Sat, 15 May 2021 16:47:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 384F761184
+	for <kernel-janitors@archiver.kernel.org>; Sat, 15 May 2021 17:11:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232752AbhEOQs6 (ORCPT
+        id S229969AbhEORM4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 15 May 2021 12:48:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60194 "EHLO
+        Sat, 15 May 2021 13:12:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229441AbhEOQs5 (ORCPT
+        with ESMTP id S229501AbhEORMz (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 15 May 2021 12:48:57 -0400
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A68DC061573;
-        Sat, 15 May 2021 09:47:43 -0700 (PDT)
-Received: by mail-wr1-x436.google.com with SMTP id s8so2116620wrw.10;
-        Sat, 15 May 2021 09:47:42 -0700 (PDT)
+        Sat, 15 May 2021 13:12:55 -0400
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2E95C061573;
+        Sat, 15 May 2021 10:11:41 -0700 (PDT)
+Received: by mail-wr1-x42c.google.com with SMTP id n2so2224991wrm.0;
+        Sat, 15 May 2021 10:11:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=pE29kkTNVgaqIoZ2qWVYXC1cONHAz+tF4/QgcXzl/dc=;
-        b=V3UCUnhGCXj3vVY/uPBwCbSa1dYDyw0W5O/V4tjSLOvku38JRvJdqgNL/9/D7qYmW1
-         SSYZHN9QoD01yA5Qhh+2j79rapkFjHkRn/KEUppTLgPPvzRiZgf1YXcFtECYXIZU+2X3
-         vEjbky8yEs+g/8/OGqvTcnoaKmXEkLlakuI09dWT6JKymK0rqFDwPXz2O4IiW1KDMjaR
-         auAXFe/nofwIIl9QIB7AMojn9xx3X9n5BH4bS6yxb31JSmOFfNUVYvF3tBbU94JSbKuh
-         X/yb1s+hqkBywQMeHFe8/cSsJhxnK7mm9Kh7Hc7K0XburYLfXTsjd3jhhkmILvBAsf/T
-         CC9g==
+        bh=Yv/SMg0fIXZjNNbdbCRKD2NaAjmoQnkcxhQGmRWvOuQ=;
+        b=oKAz9AQ5LnN95wyCVKVkQNiGMTiUA24FwSc6bv8h5CAK7q0GG+B9zgDUyC0Fv8NBYJ
+         znJ9bRFBNsFgaJEH+f4/WX253OQ5syY639XlUD7isfstVZLYXIoakhqHY33VyIQ5sO3A
+         iCsP3Os21zWukI1fgXDrN2irzqSdWnH4a/5za5PLeio4DLUolXx4FExNKQd7P1xG8GSR
+         H3aDktcCxIzgX3Wj/1c20sXy/j+RQETypQxLNQhIY9l8F3U/REVE3ETV5dI23u7Q/LaB
+         xWjx2ToMgGU+z59JAk3nqVmTa0weCkr8fzMuMxwQHCWC6IGhws+Kl3RDVVI5+TzNmp/o
+         6eNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=pE29kkTNVgaqIoZ2qWVYXC1cONHAz+tF4/QgcXzl/dc=;
-        b=YB7O43kEcCXXMp1nk1spzAp6u359upOs34WtBiZh67ef6oEIPIcFpW9OYoOpqq5qmv
-         rZkDLoj8xBIqM6OGVNXoJb3BH5bFakq+bgBD8D33PBa0o6dN/OMTDxhJgcOXh7zAd4Ee
-         OZBBIFHl/93z/9np4WVuqW/I3/P/7IrZKGgDFCfKlgIe0/0wvevoiDlP3yFtLv3MNnU2
-         VSZmqZBw5BFGrvUmt0iu90DC7do3wslNm/34pkOosqLWkc3p9CtZeU0Fty9vDHpoVVrM
-         EwNdD9KnJ75AT7LtxGVSSSWnuBwYnsnHVWqCHaHvKadJcHRKHvJdWjDxygGPscl/7TS8
-         0EYg==
-X-Gm-Message-State: AOAM533Q1HhOy4KX1+ATQNvSKmSmob55K+uZY7D7rm5UUdaX8FWE0l5i
-        sHRm9+cVWb/N5q6+bqx9XRo=
-X-Google-Smtp-Source: ABdhPJwAvxD1gItpO2Xvv1BIlPDwjtd3lT03gz4NShUrWqGaZSUYp2ZFYZvzYq8aAlVBi+e7aJYJVQ==
-X-Received: by 2002:a5d:534d:: with SMTP id t13mr65166806wrv.153.1621097261791;
-        Sat, 15 May 2021 09:47:41 -0700 (PDT)
+        bh=Yv/SMg0fIXZjNNbdbCRKD2NaAjmoQnkcxhQGmRWvOuQ=;
+        b=JHHLtr8X5V6f4JO4aGc41CYBhisynTx0Vabdx7G2wNXJ9EIZtyGFRlaSNDHIBi2+L9
+         P84QxykQxlyw5mPUnRtaMsym6IveNLJkCY1O58/2OG3xOvwmXJp5J09KRBAmkQj6+egt
+         6V+BWsexMnomByqt8EDGTpOkgbfMM1dImqEbbzrDcF0gP2zUlaITotIMVOwy/YfpNND7
+         dDeQPDhJIk4TP99bi9pmZTfZUQtl/vP9Qx8VRDNY0szCec1RxlxdtSJXbO8hdLn4VUNl
+         eORErlITRUYZw1FQob0nFaRX9QLa/5vlY7EIYRqXAW0RFs0VteN0Thu75OoLa1uV6liZ
+         khFw==
+X-Gm-Message-State: AOAM532TKl8k1KbIbZx57m7Dp+KolnAoRmEtqSpQOO8OTscQI0Rgcji6
+        Trj7ajrGZk7EQNIfhyV1aGY=
+X-Google-Smtp-Source: ABdhPJwa35QKDuZ51e4NQBbEhiDPZ9VOP++SwdFSri2/tJtCV4TBrl6Gn/GaUz5yI092//YDKA5WLg==
+X-Received: by 2002:a05:6000:2cf:: with SMTP id o15mr30314865wry.243.1621098700332;
+        Sat, 15 May 2021 10:11:40 -0700 (PDT)
 Received: from localhost.localdomain ([197.240.82.148])
-        by smtp.gmail.com with ESMTPSA id k11sm10136810wrm.62.2021.05.15.09.47.40
+        by smtp.gmail.com with ESMTPSA id f3sm9740308wrp.7.2021.05.15.10.11.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 May 2021 09:47:41 -0700 (PDT)
+        Sat, 15 May 2021 10:11:39 -0700 (PDT)
 From:   Khaled ROMDHANI <khaledromdhani216@gmail.com>
 To:     mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
         vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
@@ -63,37 +63,38 @@ To:     mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
         bristot@redhat.com
 Cc:     Khaled ROMDHANI <khaledromdhani216@gmail.com>,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH-next] sched: Fix Null pointer derefrence
-Date:   Sat, 15 May 2021 17:46:45 +0100
-Message-Id: <20210515164645.22849-1-khaledromdhani216@gmail.com>
+Subject: [PATCH-next] sched: Fix Dereference after null check
+Date:   Sat, 15 May 2021 18:11:17 +0100
+Message-Id: <20210515171117.23240-1-khaledromdhani216@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The 'curr' variable could be NULL and derefrenced by
-pick_next_entity. Fix this by adding a check that prevent
-the invocation of pick_next_entity with a NULL passed argument.
+The group_cfs_rq derefrence the 'se' variable that could
+be passed as NULL pointer. Fix this by adding a check
+against the sched entity 'se' before the derefrence.
 
-Addresses-Coverity: ("Explicit null dereferenced")
+Addresses-Coverity: ("Dereference after null check")
 Signed-off-by: Khaled ROMDHANI <khaledromdhani216@gmail.com>
 ---
- kernel/sched/fair.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/sched/fair.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 161b92aa1c79..490948df94fe 100644
+index 161b92aa1c79..9be6cdba351d 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -7075,7 +7075,7 @@ static struct task_struct *pick_task_fair(struct rq *rq)
- 			else
- 				curr = NULL;
- 
--			if (unlikely(check_cfs_rq_runtime(cfs_rq)))
-+			if (unlikely(check_cfs_rq_runtime(cfs_rq) || !curr))
- 				goto again;
+@@ -7080,7 +7080,8 @@ static struct task_struct *pick_task_fair(struct rq *rq)
  		}
  
+ 		se = pick_next_entity(cfs_rq, curr);
+-		cfs_rq = group_cfs_rq(se);
++		if (se)
++			cfs_rq = group_cfs_rq(se);
+ 	} while (cfs_rq);
+ 
+ 	return task_of(se);
 -- 
 2.17.1
 
