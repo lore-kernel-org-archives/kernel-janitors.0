@@ -2,149 +2,63 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D41DC433B4
-	for <kernel-janitors@archiver.kernel.org>; Sat, 15 May 2021 12:08:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B449DC433ED
+	for <kernel-janitors@archiver.kernel.org>; Sat, 15 May 2021 14:07:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6787F613CA
-	for <kernel-janitors@archiver.kernel.org>; Sat, 15 May 2021 12:08:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8BCB46101E
+	for <kernel-janitors@archiver.kernel.org>; Sat, 15 May 2021 14:07:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229952AbhEOMJh (ORCPT
+        id S231587AbhEOOIH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 15 May 2021 08:09:37 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37358 "EHLO mx2.suse.de"
+        Sat, 15 May 2021 10:08:07 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:41740 "EHLO vps0.lunn.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229469AbhEOMJh (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 15 May 2021 08:09:37 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 0A54DAF59;
-        Sat, 15 May 2021 12:08:23 +0000 (UTC)
-Subject: Re: [PATCH] drm: simpledrm: fix a potential NULL dereference
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        David Airlie <airlied@linux.ie>
-Cc:     Daniel Vetter <daniel@ffwll.ch>, Maxime Ripard <maxime@cerno.tech>,
-        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
-References: <YJ+aC47XX58ICXax@mwanda>
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-Message-ID: <1bdf5216-7503-71ca-f8c2-4bd55d110d87@suse.de>
-Date:   Sat, 15 May 2021 14:08:21 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.0
+        id S230210AbhEOOIF (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Sat, 15 May 2021 10:08:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+        Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+        bh=D0vB53EGV7pBSyBp8RPfA5JvjdEHg/tl7GOvHK6yzFU=; b=hQkSvwsQdB2DHxJP76JCUSJmmM
+        mIovO0uUbEfz6iHKHD5w6eNvgR6RWUS5a9u3qMem6etk5VYqh8jCsZwNcTdZBVI7stWte013HbEfk
+        EGokmkfzPvE3AExXR6iIR0mPSisGUHwwaUTv94Xo514nSo7yfVGDSasYjk3T3lrSLJqI=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1lhuw5-004Kf7-UX; Sat, 15 May 2021 16:06:33 +0200
+Date:   Sat, 15 May 2021 16:06:33 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net] net: mdiobus: get rid of a BUG_ON()
+Message-ID: <YJ/VaQW54hM5btjP@lunn.ch>
+References: <YJ+b52c5bGLdewFz@mwanda>
 MIME-Version: 1.0
-In-Reply-To: <YJ+aC47XX58ICXax@mwanda>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="a2edGrlxnKaXkBgRndnK8RuD8ns712nVp"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YJ+b52c5bGLdewFz@mwanda>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---a2edGrlxnKaXkBgRndnK8RuD8ns712nVp
-Content-Type: multipart/mixed; boundary="cZnVOTFPw6EFZYAsyug9zYdv4zPapUC7s";
- protected-headers="v1"
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: Dan Carpenter <dan.carpenter@oracle.com>, David Airlie <airlied@linux.ie>
-Cc: Daniel Vetter <daniel@ffwll.ch>, Maxime Ripard <maxime@cerno.tech>,
- dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
-Message-ID: <1bdf5216-7503-71ca-f8c2-4bd55d110d87@suse.de>
-Subject: Re: [PATCH] drm: simpledrm: fix a potential NULL dereference
-References: <YJ+aC47XX58ICXax@mwanda>
-In-Reply-To: <YJ+aC47XX58ICXax@mwanda>
-
---cZnVOTFPw6EFZYAsyug9zYdv4zPapUC7s
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-
-
-
-Am 15.05.21 um 11:53 schrieb Dan Carpenter:
-> The drm_format_info() function returns NULL if the format is
-> unsupported, but the simplefb_get_validated_format() is expected to
-> return error pointers.  If we propagate teh NULL return then it will
-> lead to a NULL dereference in the callers.  Swap the NULL and trade it
-> in for an ERR_PTR(-EINVAL).
-
-Thank you. I've added the patch to drm-misc-next.
-
-Best regards
-Thomas
-
->=20
-> Fixes: 11e8f5fd223b ("drm: Add simpledrm driver")
+On Sat, May 15, 2021 at 01:01:11PM +0300, Dan Carpenter wrote:
+> We spotted a bug recently during a review where a driver was
+> unregistering a bus that wasn't registered, which would trigger this
+> BUG_ON().  Let's handle that situation more gracefully, and just print
+> a warning and return.
+> 
+> Reported-by: Russell King <linux@armlinux.org.uk>
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->   drivers/gpu/drm/tiny/simpledrm.c | 9 +++++++--
->   1 file changed, 7 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/tiny/simpledrm.c b/drivers/gpu/drm/tiny/si=
-mpledrm.c
-> index f72ca3a1c2d4..4f605c5fe856 100644
-> --- a/drivers/gpu/drm/tiny/simpledrm.c
-> +++ b/drivers/gpu/drm/tiny/simpledrm.c
-> @@ -72,6 +72,7 @@ simplefb_get_validated_format(struct drm_device *dev,=20
-const char *format_name)
->   	static const struct simplefb_format formats[] =3D SIMPLEFB_FORMATS;
->   	const struct simplefb_format *fmt =3D formats;
->   	const struct simplefb_format *end =3D fmt + ARRAY_SIZE(formats);
-> +	const struct drm_format_info *info;
->  =20
->   	if (!format_name) {
->   		drm_err(dev, "simplefb: missing framebuffer format\n");
-> @@ -79,8 +80,12 @@ simplefb_get_validated_format(struct drm_device *dev=
-, const char *format_name)
->   	}
->  =20
->   	while (fmt < end) {
-> -		if (!strcmp(format_name, fmt->name))
-> -			return drm_format_info(fmt->fourcc);
-> +		if (!strcmp(format_name, fmt->name)) {
-> +			info =3D drm_format_info(fmt->fourcc);
-> +			if (!info)
-> +				return ERR_PTR(-EINVAL);
-> +			return info;
-> +		}
->   		++fmt;
->   	}
->  =20
->=20
 
---=20
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-(HRB 36809, AG N=C3=BCrnberg)
-Gesch=C3=A4ftsf=C3=BChrer: Felix Imend=C3=B6rffer
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-
---cZnVOTFPw6EFZYAsyug9zYdv4zPapUC7s--
-
---a2edGrlxnKaXkBgRndnK8RuD8ns712nVp
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature"
-
------BEGIN PGP SIGNATURE-----
-
-wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmCfubYFAwAAAAAACgkQlh/E3EQov+DO
-bQ//Z/v3WC/Mu+3IHlG3XzTn7MpfzR0Xgyh0Qiaz3/vlOMGWwfNzG3ZWwKfS8sPa7wglcYvoXYg4
-ycWZlFcMgIYI5iwhwtqnH+hhDjAhSQ6hV2+TdPAh5EzJJF7zlMBbmdKRQBLz2JB3kBF6Ci0cWfW/
-g5t9Q7v8VIv+Vgl48Vi+OijYpJMz8MzrmrZ0CrMvjRG1NzVAshh/om1F4iHA2SSmMrVTIpYK2KBA
-iesvvyPcaVUv/85ViR6kX+Y5RCJh7z4Y3DYsXhEC79JAQmawthtFQaAfgKCC2KzW/paAIq8r9oqM
-B8Tv9aVepzswIJlImZ/iT22PAqgbwnL4DEW6srcwpbaQWXO8FpcUicXhxQl1z3B8+cwPilCO0cUC
-PO2punVOrYun7kh41M8ihRn2mif/X5DO4+hbqa3QLEbMLRgSlGyoDj+Mi6GhWfuWeMKDKKWcIbu8
-eCO8V8j5o90qOblJI4qn1D0/5ZE7aQVZLCrEpTPRLRe7JDRokNZk72wwMVLYR7NaKv+v2Q4U87Y3
-qhgMtpk0rp/m3DxhDUrBNyoFpz3JqkK9o+mE/wR8KRnzdD/KTCXzHyIqf7gHyJ+ziPh0YpCTnqyw
-0HEliv+mczy2X5/XmUx4aY97dVOhuGbrKPJxP31bzG0kv25B2R4oMAIvayfb3LqozUfVnV9vTmZL
-+qQ=
-=bSHB
------END PGP SIGNATURE-----
-
---a2edGrlxnKaXkBgRndnK8RuD8ns712nVp--
+    Andrew
