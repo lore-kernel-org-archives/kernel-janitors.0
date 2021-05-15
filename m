@@ -5,96 +5,96 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60FECC433ED
-	for <kernel-janitors@archiver.kernel.org>; Sat, 15 May 2021 17:11:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CED98C433B4
+	for <kernel-janitors@archiver.kernel.org>; Sat, 15 May 2021 20:22:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 384F761184
-	for <kernel-janitors@archiver.kernel.org>; Sat, 15 May 2021 17:11:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7A3461377
+	for <kernel-janitors@archiver.kernel.org>; Sat, 15 May 2021 20:22:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229969AbhEORM4 (ORCPT
+        id S234896AbhEOUYH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 15 May 2021 13:12:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37264 "EHLO
+        Sat, 15 May 2021 16:24:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229501AbhEORMz (ORCPT
+        with ESMTP id S234884AbhEOUYG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 15 May 2021 13:12:55 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2E95C061573;
-        Sat, 15 May 2021 10:11:41 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id n2so2224991wrm.0;
-        Sat, 15 May 2021 10:11:41 -0700 (PDT)
+        Sat, 15 May 2021 16:24:06 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 572B1C061573;
+        Sat, 15 May 2021 13:22:52 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id y14so338418wrm.13;
+        Sat, 15 May 2021 13:22:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=Yv/SMg0fIXZjNNbdbCRKD2NaAjmoQnkcxhQGmRWvOuQ=;
-        b=oKAz9AQ5LnN95wyCVKVkQNiGMTiUA24FwSc6bv8h5CAK7q0GG+B9zgDUyC0Fv8NBYJ
-         znJ9bRFBNsFgaJEH+f4/WX253OQ5syY639XlUD7isfstVZLYXIoakhqHY33VyIQ5sO3A
-         iCsP3Os21zWukI1fgXDrN2irzqSdWnH4a/5za5PLeio4DLUolXx4FExNKQd7P1xG8GSR
-         H3aDktcCxIzgX3Wj/1c20sXy/j+RQETypQxLNQhIY9l8F3U/REVE3ETV5dI23u7Q/LaB
-         xWjx2ToMgGU+z59JAk3nqVmTa0weCkr8fzMuMxwQHCWC6IGhws+Kl3RDVVI5+TzNmp/o
-         6eNA==
+        bh=H3kWxqXuQEnL5DwEXyW1diyp55Y75IrB9TmE8vDDQPI=;
+        b=ZlhWDjC76HNmk5S8sor/OnXsNso5eH3Xci1o/M3QRWhDoAAiFrGgQwvC6lkIRFeg0z
+         jSm+TaL/2Hk3R014/3DbrBNq6Oojr77Pcy+RqNtx/ZuoCu/S8eTnJ/vIr/Smmn/mqKIU
+         yo33WUnlfIVUm9HGkiUHwo+q663s9YTqzmBXp/+lM3lP1Uk+pSxtlxJX0/9C0cBGTV/q
+         gOpHfW+0uJwIi3gmF6/nOwck1vxSH+9Ol+84Bp2Yc55f+gw8+Ri2vn4CYnVDUV4sdYt0
+         IXvhZKG+L0EiTtn1oAfU4g4YqaSxwQRHQk3fxEoAx5X69v07SrmKRtkXIpb2h0OE7Wq3
+         S1jA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Yv/SMg0fIXZjNNbdbCRKD2NaAjmoQnkcxhQGmRWvOuQ=;
-        b=JHHLtr8X5V6f4JO4aGc41CYBhisynTx0Vabdx7G2wNXJ9EIZtyGFRlaSNDHIBi2+L9
-         P84QxykQxlyw5mPUnRtaMsym6IveNLJkCY1O58/2OG3xOvwmXJp5J09KRBAmkQj6+egt
-         6V+BWsexMnomByqt8EDGTpOkgbfMM1dImqEbbzrDcF0gP2zUlaITotIMVOwy/YfpNND7
-         dDeQPDhJIk4TP99bi9pmZTfZUQtl/vP9Qx8VRDNY0szCec1RxlxdtSJXbO8hdLn4VUNl
-         eORErlITRUYZw1FQob0nFaRX9QLa/5vlY7EIYRqXAW0RFs0VteN0Thu75OoLa1uV6liZ
-         khFw==
-X-Gm-Message-State: AOAM532TKl8k1KbIbZx57m7Dp+KolnAoRmEtqSpQOO8OTscQI0Rgcji6
-        Trj7ajrGZk7EQNIfhyV1aGY=
-X-Google-Smtp-Source: ABdhPJwa35QKDuZ51e4NQBbEhiDPZ9VOP++SwdFSri2/tJtCV4TBrl6Gn/GaUz5yI092//YDKA5WLg==
-X-Received: by 2002:a05:6000:2cf:: with SMTP id o15mr30314865wry.243.1621098700332;
-        Sat, 15 May 2021 10:11:40 -0700 (PDT)
+        bh=H3kWxqXuQEnL5DwEXyW1diyp55Y75IrB9TmE8vDDQPI=;
+        b=q6i6M7xocXivvRYEpLgGEZ32rosdsND0DcegUI42JE5U+vtBERqBz2IVmH9we1NjGQ
+         qbXRLy1/3NXAPID5MtKUtj7RucCss2hHBCf3F5vE748r3Elm5tHTFen1EUEit3MuwzsV
+         0A42ZPJT5yZ9FvrWEWCTlTsREwO/NZLoJA9/jM2icWErCVW8iJhbyii+zdgUljhgyM9T
+         dD7+xf0aZnjAS7XgylMYSllrhBWHUpZg77/2NFo42q7lp3zjdosRtavHRWGbB9HgvYlm
+         DyXLdms1iYMotcvZ91M/JvJIhtfZH9lD92XdCv/30LMXkeM7raKHyX6atptfGJvgAHaD
+         l4bw==
+X-Gm-Message-State: AOAM530Hw/lm5+78ginj0q15u1YXe8J9vGSNHHv80JaOuAy/u5U5ZQ7m
+        b5cD/obxu+U/Pi6g9/p95Bk=
+X-Google-Smtp-Source: ABdhPJwWL6Pc3XcA4SLfv6dgWbVgS6bfmcVMz5d9A4wn2g/oh1i3O2pezMq+T6EWvhOB2cR3RsDiuw==
+X-Received: by 2002:adf:de09:: with SMTP id b9mr23880827wrm.340.1621110170114;
+        Sat, 15 May 2021 13:22:50 -0700 (PDT)
 Received: from localhost.localdomain ([197.240.82.148])
-        by smtp.gmail.com with ESMTPSA id f3sm9740308wrp.7.2021.05.15.10.11.38
+        by smtp.gmail.com with ESMTPSA id r5sm9910503wmh.23.2021.05.15.13.22.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 May 2021 10:11:39 -0700 (PDT)
+        Sat, 15 May 2021 13:22:49 -0700 (PDT)
 From:   Khaled ROMDHANI <khaledromdhani216@gmail.com>
-To:     mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-        bristot@redhat.com
+To:     peterz@infradead.org, jpoimboe@redhat.com, jbaron@akamai.com,
+        rostedt@goodmis.org, ardb@kernel.org, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com
 Cc:     Khaled ROMDHANI <khaledromdhani216@gmail.com>,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH-next] sched: Fix Dereference after null check
-Date:   Sat, 15 May 2021 18:11:17 +0100
-Message-Id: <20210515171117.23240-1-khaledromdhani216@gmail.com>
+Subject: [PATCH-next] x86/kernel: Fix unchecked return value
+Date:   Sat, 15 May 2021 21:22:12 +0100
+Message-Id: <20210515202212.24836-1-khaledromdhani216@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The group_cfs_rq derefrence the 'se' variable that could
-be passed as NULL pointer. Fix this by adding a check
-against the sched entity 'se' before the derefrence.
+From the coverity scan analysis, the return value from
+insn_decode_kernel is not checked. It is a macro constructed
+from the insn_decode function which may fail and return
+negative integer. Fix this by explicitly checking the
+return value.
 
-Addresses-Coverity: ("Dereference after null check")
+Addresses-Coverity: ("Unchecked return value")
 Signed-off-by: Khaled ROMDHANI <khaledromdhani216@gmail.com>
 ---
- kernel/sched/fair.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/x86/kernel/jump_label.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 161b92aa1c79..9be6cdba351d 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -7080,7 +7080,8 @@ static struct task_struct *pick_task_fair(struct rq *rq)
- 		}
+diff --git a/arch/x86/kernel/jump_label.c b/arch/x86/kernel/jump_label.c
+index a762dc1c615e..bf0ea003b6e7 100644
+--- a/arch/x86/kernel/jump_label.c
++++ b/arch/x86/kernel/jump_label.c
+@@ -23,7 +23,7 @@ int arch_jump_entry_size(struct jump_entry *entry)
+ {
+ 	struct insn insn = {};
  
- 		se = pick_next_entity(cfs_rq, curr);
--		cfs_rq = group_cfs_rq(se);
-+		if (se)
-+			cfs_rq = group_cfs_rq(se);
- 	} while (cfs_rq);
+-	insn_decode_kernel(&insn, (void *)jump_entry_code(entry));
++	WARN_ON(insn_decode_kernel(&insn, (void *)jump_entry_code(entry)));
+ 	BUG_ON(insn.length != 2 && insn.length != 5);
  
- 	return task_of(se);
+ 	return insn.length;
 -- 
 2.17.1
 
