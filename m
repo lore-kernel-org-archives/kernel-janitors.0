@@ -2,63 +2,84 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B449DC433ED
-	for <kernel-janitors@archiver.kernel.org>; Sat, 15 May 2021 14:07:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DCC8C433B4
+	for <kernel-janitors@archiver.kernel.org>; Sat, 15 May 2021 16:09:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8BCB46101E
-	for <kernel-janitors@archiver.kernel.org>; Sat, 15 May 2021 14:07:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C02061205
+	for <kernel-janitors@archiver.kernel.org>; Sat, 15 May 2021 16:09:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231587AbhEOOIH (ORCPT
+        id S233239AbhEOQKu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 15 May 2021 10:08:07 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:41740 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230210AbhEOOIF (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 15 May 2021 10:08:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-        Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-        bh=D0vB53EGV7pBSyBp8RPfA5JvjdEHg/tl7GOvHK6yzFU=; b=hQkSvwsQdB2DHxJP76JCUSJmmM
-        mIovO0uUbEfz6iHKHD5w6eNvgR6RWUS5a9u3qMem6etk5VYqh8jCsZwNcTdZBVI7stWte013HbEfk
-        EGokmkfzPvE3AExXR6iIR0mPSisGUHwwaUTv94Xo514nSo7yfVGDSasYjk3T3lrSLJqI=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1lhuw5-004Kf7-UX; Sat, 15 May 2021 16:06:33 +0200
-Date:   Sat, 15 May 2021 16:06:33 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net] net: mdiobus: get rid of a BUG_ON()
-Message-ID: <YJ/VaQW54hM5btjP@lunn.ch>
-References: <YJ+b52c5bGLdewFz@mwanda>
+        Sat, 15 May 2021 12:10:50 -0400
+Received: from mail-wm1-f42.google.com ([209.85.128.42]:40865 "EHLO
+        mail-wm1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233130AbhEOQKs (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Sat, 15 May 2021 12:10:48 -0400
+Received: by mail-wm1-f42.google.com with SMTP id f6-20020a1c1f060000b0290175ca89f698so395798wmf.5;
+        Sat, 15 May 2021 09:09:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=aSGQJagwvk6PPII7IdB5b+OW9KihpKvzZJPLLXU8/AA=;
+        b=RKxP7Vtmn5cP1LVtEG6rsY1e3iRtfu8muTUKW1IUr+ebE+S3w6gX6nhFZkukQ0/wjq
+         VMRfXN0oiSrxD8L7653ghBkN8ZlF+TOdQX745k2nX7D7ZkzQYY12MiyJIrwQWx+LmP5Q
+         92GFbk2luNmN79jpq08W7SUNGQSR6+UL+MdpXtQWB1k5nSw9FeIBjwp3WkNmjNjQU8tJ
+         anyF1rTzQuE30CPg27wp8B5AEJGhtmLURCC+9VJYNhS/nH9OEddB+CN0FjFd5sQxKiVP
+         7iayf/n40gHK1bcKrD06kNHbKX4AAEsYhUsHx2m4flZvynqrRbSMQtbA2cj3gR9lhx4K
+         Jh6w==
+X-Gm-Message-State: AOAM532LlhfsYtxGaQv/SyhpkAFzwUdcRRWhngQ2ha3w5Ig3Ioh3wDd1
+        TyTJwBUIRsG/fKkqrJMUkr4=
+X-Google-Smtp-Source: ABdhPJyrztD03NAPUEXoCPIjoFrPVVZIm7WBpX37/50MGqp10Odx39R1l3bx0sr234Mhp47bElqxhA==
+X-Received: by 2002:a1c:7205:: with SMTP id n5mr15138368wmc.131.1621094974315;
+        Sat, 15 May 2021 09:09:34 -0700 (PDT)
+Received: from liuwe-devbox-debian-v2 ([51.145.34.42])
+        by smtp.gmail.com with ESMTPSA id n6sm736281wmq.34.2021.05.15.09.09.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 15 May 2021 09:09:33 -0700 (PDT)
+Date:   Sat, 15 May 2021 16:09:32 +0000
+From:   Wei Liu <wei.liu@kernel.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Wei Liu <wei.liu@kernel.org>, kys@microsoft.com,
+        haiyangz@microsoft.com, sthemmin@microsoft.com,
+        decui@microsoft.com, gregkh@linuxfoundation.org,
+        linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 1/2] uio_hv_generic: Fix a memory leak in error handling
+ paths
+Message-ID: <20210515160932.v4inlp5xlzokmmel@liuwe-devbox-debian-v2>
+References: <4fdaff557deef6f0475d02ba7922ddbaa1ab08a6.1620544055.git.christophe.jaillet@wanadoo.fr>
+ <20210511095227.ggrl3z6otjanwffz@liuwe-devbox-debian-v2>
+ <f0dca7cf-c737-0f06-34aa-e4759826a974@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <YJ+b52c5bGLdewFz@mwanda>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f0dca7cf-c737-0f06-34aa-e4759826a974@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, May 15, 2021 at 01:01:11PM +0300, Dan Carpenter wrote:
-> We spotted a bug recently during a review where a driver was
-> unregistering a bus that wasn't registered, which would trigger this
-> BUG_ON().  Let's handle that situation more gracefully, and just print
-> a warning and return.
+On Tue, May 11, 2021 at 08:18:23PM +0200, Christophe JAILLET wrote:
+> Le 11/05/2021 à 11:52, Wei Liu a écrit :
+> > > Before commit cdfa835c6e5e, the 'vfree' were done unconditionally
+> > > in 'hv_uio_cleanup()'.
+> > > So, another way for fixing the potential leak is to modify
+> > > 'hv_uio_cleanup()' and revert to the previous behavior.
+> > > 
+> > 
+> > I think this is cleaner.
 > 
-> Reported-by: Russell King <linux@armlinux.org.uk>
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Agreed
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Stephen, ping?
 
-    Andrew
+If I don't hear back from you, I think Christophe should move ahead with
+modifying hv_uio_cleanup.
+
+Wei.
