@@ -2,84 +2,98 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DCC8C433B4
-	for <kernel-janitors@archiver.kernel.org>; Sat, 15 May 2021 16:09:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBC2EC433ED
+	for <kernel-janitors@archiver.kernel.org>; Sat, 15 May 2021 16:47:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0C02061205
-	for <kernel-janitors@archiver.kernel.org>; Sat, 15 May 2021 16:09:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9973661352
+	for <kernel-janitors@archiver.kernel.org>; Sat, 15 May 2021 16:47:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233239AbhEOQKu (ORCPT
+        id S232752AbhEOQs6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 15 May 2021 12:10:50 -0400
-Received: from mail-wm1-f42.google.com ([209.85.128.42]:40865 "EHLO
-        mail-wm1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233130AbhEOQKs (ORCPT
+        Sat, 15 May 2021 12:48:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60194 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229441AbhEOQs5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 15 May 2021 12:10:48 -0400
-Received: by mail-wm1-f42.google.com with SMTP id f6-20020a1c1f060000b0290175ca89f698so395798wmf.5;
-        Sat, 15 May 2021 09:09:34 -0700 (PDT)
+        Sat, 15 May 2021 12:48:57 -0400
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A68DC061573;
+        Sat, 15 May 2021 09:47:43 -0700 (PDT)
+Received: by mail-wr1-x436.google.com with SMTP id s8so2116620wrw.10;
+        Sat, 15 May 2021 09:47:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=pE29kkTNVgaqIoZ2qWVYXC1cONHAz+tF4/QgcXzl/dc=;
+        b=V3UCUnhGCXj3vVY/uPBwCbSa1dYDyw0W5O/V4tjSLOvku38JRvJdqgNL/9/D7qYmW1
+         SSYZHN9QoD01yA5Qhh+2j79rapkFjHkRn/KEUppTLgPPvzRiZgf1YXcFtECYXIZU+2X3
+         vEjbky8yEs+g/8/OGqvTcnoaKmXEkLlakuI09dWT6JKymK0rqFDwPXz2O4IiW1KDMjaR
+         auAXFe/nofwIIl9QIB7AMojn9xx3X9n5BH4bS6yxb31JSmOFfNUVYvF3tBbU94JSbKuh
+         X/yb1s+hqkBywQMeHFe8/cSsJhxnK7mm9Kh7Hc7K0XburYLfXTsjd3jhhkmILvBAsf/T
+         CC9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=aSGQJagwvk6PPII7IdB5b+OW9KihpKvzZJPLLXU8/AA=;
-        b=RKxP7Vtmn5cP1LVtEG6rsY1e3iRtfu8muTUKW1IUr+ebE+S3w6gX6nhFZkukQ0/wjq
-         VMRfXN0oiSrxD8L7653ghBkN8ZlF+TOdQX745k2nX7D7ZkzQYY12MiyJIrwQWx+LmP5Q
-         92GFbk2luNmN79jpq08W7SUNGQSR6+UL+MdpXtQWB1k5nSw9FeIBjwp3WkNmjNjQU8tJ
-         anyF1rTzQuE30CPg27wp8B5AEJGhtmLURCC+9VJYNhS/nH9OEddB+CN0FjFd5sQxKiVP
-         7iayf/n40gHK1bcKrD06kNHbKX4AAEsYhUsHx2m4flZvynqrRbSMQtbA2cj3gR9lhx4K
-         Jh6w==
-X-Gm-Message-State: AOAM532LlhfsYtxGaQv/SyhpkAFzwUdcRRWhngQ2ha3w5Ig3Ioh3wDd1
-        TyTJwBUIRsG/fKkqrJMUkr4=
-X-Google-Smtp-Source: ABdhPJyrztD03NAPUEXoCPIjoFrPVVZIm7WBpX37/50MGqp10Odx39R1l3bx0sr234Mhp47bElqxhA==
-X-Received: by 2002:a1c:7205:: with SMTP id n5mr15138368wmc.131.1621094974315;
-        Sat, 15 May 2021 09:09:34 -0700 (PDT)
-Received: from liuwe-devbox-debian-v2 ([51.145.34.42])
-        by smtp.gmail.com with ESMTPSA id n6sm736281wmq.34.2021.05.15.09.09.33
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=pE29kkTNVgaqIoZ2qWVYXC1cONHAz+tF4/QgcXzl/dc=;
+        b=YB7O43kEcCXXMp1nk1spzAp6u359upOs34WtBiZh67ef6oEIPIcFpW9OYoOpqq5qmv
+         rZkDLoj8xBIqM6OGVNXoJb3BH5bFakq+bgBD8D33PBa0o6dN/OMTDxhJgcOXh7zAd4Ee
+         OZBBIFHl/93z/9np4WVuqW/I3/P/7IrZKGgDFCfKlgIe0/0wvevoiDlP3yFtLv3MNnU2
+         VSZmqZBw5BFGrvUmt0iu90DC7do3wslNm/34pkOosqLWkc3p9CtZeU0Fty9vDHpoVVrM
+         EwNdD9KnJ75AT7LtxGVSSSWnuBwYnsnHVWqCHaHvKadJcHRKHvJdWjDxygGPscl/7TS8
+         0EYg==
+X-Gm-Message-State: AOAM533Q1HhOy4KX1+ATQNvSKmSmob55K+uZY7D7rm5UUdaX8FWE0l5i
+        sHRm9+cVWb/N5q6+bqx9XRo=
+X-Google-Smtp-Source: ABdhPJwAvxD1gItpO2Xvv1BIlPDwjtd3lT03gz4NShUrWqGaZSUYp2ZFYZvzYq8aAlVBi+e7aJYJVQ==
+X-Received: by 2002:a5d:534d:: with SMTP id t13mr65166806wrv.153.1621097261791;
+        Sat, 15 May 2021 09:47:41 -0700 (PDT)
+Received: from localhost.localdomain ([197.240.82.148])
+        by smtp.gmail.com with ESMTPSA id k11sm10136810wrm.62.2021.05.15.09.47.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 May 2021 09:09:33 -0700 (PDT)
-Date:   Sat, 15 May 2021 16:09:32 +0000
-From:   Wei Liu <wei.liu@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Wei Liu <wei.liu@kernel.org>, kys@microsoft.com,
-        haiyangz@microsoft.com, sthemmin@microsoft.com,
-        decui@microsoft.com, gregkh@linuxfoundation.org,
-        linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 1/2] uio_hv_generic: Fix a memory leak in error handling
- paths
-Message-ID: <20210515160932.v4inlp5xlzokmmel@liuwe-devbox-debian-v2>
-References: <4fdaff557deef6f0475d02ba7922ddbaa1ab08a6.1620544055.git.christophe.jaillet@wanadoo.fr>
- <20210511095227.ggrl3z6otjanwffz@liuwe-devbox-debian-v2>
- <f0dca7cf-c737-0f06-34aa-e4759826a974@wanadoo.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f0dca7cf-c737-0f06-34aa-e4759826a974@wanadoo.fr>
+        Sat, 15 May 2021 09:47:41 -0700 (PDT)
+From:   Khaled ROMDHANI <khaledromdhani216@gmail.com>
+To:     mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        bristot@redhat.com
+Cc:     Khaled ROMDHANI <khaledromdhani216@gmail.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH-next] sched: Fix Null pointer derefrence
+Date:   Sat, 15 May 2021 17:46:45 +0100
+Message-Id: <20210515164645.22849-1-khaledromdhani216@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, May 11, 2021 at 08:18:23PM +0200, Christophe JAILLET wrote:
-> Le 11/05/2021 à 11:52, Wei Liu a écrit :
-> > > Before commit cdfa835c6e5e, the 'vfree' were done unconditionally
-> > > in 'hv_uio_cleanup()'.
-> > > So, another way for fixing the potential leak is to modify
-> > > 'hv_uio_cleanup()' and revert to the previous behavior.
-> > > 
-> > 
-> > I think this is cleaner.
-> 
-> Agreed
+The 'curr' variable could be NULL and derefrenced by
+pick_next_entity. Fix this by adding a check that prevent
+the invocation of pick_next_entity with a NULL passed argument.
 
-Stephen, ping?
+Addresses-Coverity: ("Explicit null dereferenced")
+Signed-off-by: Khaled ROMDHANI <khaledromdhani216@gmail.com>
+---
+ kernel/sched/fair.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-If I don't hear back from you, I think Christophe should move ahead with
-modifying hv_uio_cleanup.
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 161b92aa1c79..490948df94fe 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -7075,7 +7075,7 @@ static struct task_struct *pick_task_fair(struct rq *rq)
+ 			else
+ 				curr = NULL;
+ 
+-			if (unlikely(check_cfs_rq_runtime(cfs_rq)))
++			if (unlikely(check_cfs_rq_runtime(cfs_rq) || !curr))
+ 				goto again;
+ 		}
+ 
+-- 
+2.17.1
 
-Wei.
