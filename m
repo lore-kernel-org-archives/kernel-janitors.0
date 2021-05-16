@@ -2,242 +2,88 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37CA2C433B4
-	for <kernel-janitors@archiver.kernel.org>; Sun, 16 May 2021 16:27:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F5C5C433ED
+	for <kernel-janitors@archiver.kernel.org>; Sun, 16 May 2021 17:01:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F0A71610F7
-	for <kernel-janitors@archiver.kernel.org>; Sun, 16 May 2021 16:27:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79ECD60551
+	for <kernel-janitors@archiver.kernel.org>; Sun, 16 May 2021 17:01:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231339AbhEPQ2t (ORCPT
+        id S231166AbhEPRDN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 16 May 2021 12:28:49 -0400
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:39019 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229955AbhEPQ2q (ORCPT
+        Sun, 16 May 2021 13:03:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37270 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229459AbhEPRDM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 16 May 2021 12:28:46 -0400
-IronPort-HdrOrdr: =?us-ascii?q?A9a23=3Agri78ahbW10zCdS2gOtwlm6kHnBQXsgji2hC?=
- =?us-ascii?q?6mlwRA09TyX+rbHKoB17726XtN9/Yh4dcLy7VpVoIkmslqKdg7NxAV7KZmCP01?=
- =?us-ascii?q?dAR7sO0WKN+Vfd8lXFltK0A89bH5RDNA=3D=3D?=
-X-IronPort-AV: E=Sophos;i="5.82,304,1613430000"; 
-   d="scan'208";a="508346347"
-Received: from 173.121.68.85.rev.sfr.net (HELO hadrien) ([85.68.121.173])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 May 2021 18:27:30 +0200
-Date:   Sun, 16 May 2021 18:27:30 +0200 (CEST)
-From:   Julia Lawall <julia.lawall@inria.fr>
-X-X-Sender: jll@hadrien
-To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-cc:     Julia Lawall <Julia.Lawall@inria.fr>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        kernel-janitors@vger.kernel.org,
-        Gilles Muller <Gilles.Muller@inria.fr>,
-        Nicolas Palix <nicolas.palix@imag.fr>,
-        Michal Marek <michal.lkml@markovi.net>, cocci@systeme.lip6.fr,
-        linux-kernel@vger.kernel.org,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Johan Hovold <johan@kernel.org>,
-        Zhang Qilong <zhangqilong3@huawei.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Jonathan Cameron <jic23@kernel.org>
-Subject: Re: [PATCH v5] coccinelle: api: semantic patch to use
- pm_runtime_resume_and_get
-In-Reply-To: <20210505104434.7d7838f0@coco.lan>
-Message-ID: <alpine.DEB.2.22.394.2105161826100.94589@hadrien>
-References: <20210429174343.2509714-1-Julia.Lawall@inria.fr> <20210505104434.7d7838f0@coco.lan>
-User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
+        Sun, 16 May 2021 13:03:12 -0400
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66AE1C061573;
+        Sun, 16 May 2021 10:01:56 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id z12so4281436ejw.0;
+        Sun, 16 May 2021 10:01:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=AtiJHfdmT2LSVR4rbNIaNF36Xfs944KqtBektfTje5M=;
+        b=DAGiCJN/B0AuQYxR2YMS1YdLG7E04XbNnAThdGjmBoPVyWeVm0Vt63bTbv2eoScYRQ
+         SvAEYLrzwnmzOR5wp1CC3RKN4hyBnHKWJQKmPAax8xiYeQN0kxz2jQJP+F4Eg3PnYmne
+         1tPqS44UJ6bIQx53XCLEzkUDSA0PKYzdiJ1Bm8Ux9G1YFwdM/2HDZfALKNqSjTCpM2/w
+         /Rh5WhkPS0VtYInMu//A4ZE4YYK/MTrUiFkFfqoKnAk9XrjylD1xFHqznvRukMuPJ097
+         ZgkrbbJ358Ttx/9WXCUX4sI2HnbgR0YAj0ln5t6NUysuwZ90LddsWhtadieg1uDXWzMv
+         XHaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AtiJHfdmT2LSVR4rbNIaNF36Xfs944KqtBektfTje5M=;
+        b=rrJxHhVmnvwPsE9bFaNTi/KrxzBoPJmlOu2MQS6pU4umeWuXMrTSdKE+pwLgMhO9s4
+         LBqa8MFVADkyrmp7VALoSNHIk7MBpwYNGyDHnYy8HKEiWOAEEenjVCNsNc/3o6zsJiHW
+         gE6IUKDg1T7DsFeSGXda10xL3C3AENAJcPANf3lh1iyNSk3hvyxzjPe346srvu216lnz
+         FXC2fyZXpxXjYrdH5FrgOzhllgyAigba4gbGYitiRqbyDN/4zASFbwpdM0ROdi13Go0T
+         esV1ogqTUSYRann4fwIUgmzEMkN4MxlimP2pqyauT3grOjOYY0s99HQCALwjBvbsiwbR
+         HZkQ==
+X-Gm-Message-State: AOAM532Buv/UX7vrydWqZkAWLUlkY7o9/Cj95UKbb85FFvA9EMD7U6CP
+        n/UI+gU/fViWIVBpwhIfJq4HqadiTK/RF3oG2Q4=
+X-Google-Smtp-Source: ABdhPJxElTHfIzHywbG8S+ZiNXqSjJEqGZe2D3CIdGakxelu3WUAQhIbf0zHelLeFVb7YO60doX8+J/CEmulNZITgNg=
+X-Received: by 2002:a17:906:57c3:: with SMTP id u3mr59329306ejr.162.1621184515178;
+ Sun, 16 May 2021 10:01:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20210513220317.137090-1-colin.king@canonical.com>
+In-Reply-To: <20210513220317.137090-1-colin.king@canonical.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Sun, 16 May 2021 19:01:44 +0200
+Message-ID: <CAFBinCDde0+QzDOYF2EAkjmbdd80Emu3YuFV3jOCMaZuT+FNmQ@mail.gmail.com>
+Subject: Re: [PATCH] media: meson: vdec: remove redundant initialization of
+ variable reg_cur
+To:     Colin King <colin.king@canonical.com>
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        linux-media <linux-media@vger.kernel.org>,
+        linux-amlogic@lists.infradead.org, linux-staging@lists.linux.dev,
+        linux-arm-kernel@lists.infradead.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-
-
-On Wed, 5 May 2021, Mauro Carvalho Chehab wrote:
-
-> Hi Julia,
+On Fri, May 14, 2021 at 12:03 AM Colin King <colin.king@canonical.com> wrote:
 >
-> Em Thu, 29 Apr 2021 19:43:43 +0200
-> Julia Lawall <Julia.Lawall@inria.fr> escreveu:
+> From: Colin Ian King <colin.king@canonical.com>
 >
-> > pm_runtime_get_sync keeps a reference count on failure, which can lead
-> > to leaks.  pm_runtime_resume_and_get drops the reference count in the
-> > failure case.  This rule very conservatively follows the definition of
-> > pm_runtime_resume_and_get to address the cases where the reference
-> > count is unlikely to be needed in the failure case.  Specifically, the
-> > change is only done when pm_runtime_get_sync is followed immediately
-> > by an if and when the branch of the if is immediately a call to
-> > pm_runtime_put_noidle (like in the definition of
-> > pm_runtime_resume_and_get) or something that is likely a print
-> > statement followed by a pm_runtime_put_noidle call.  The patch
-> > case appears somewhat more complicated, because it also deals with the
-> > cases where {}s need to be removed.
-> >
-> > pm_runtime_resume_and_get was introduced in
-> > commit dd8088d5a896 ("PM: runtime: Add pm_runtime_resume_and_get to
-> > deal with usage counter")
-> >
-> > Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-> > Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> The variable reg_cur is being initialized with a value that is never
+> read, it is being updated later on. The assignment is redundant and
+> can be removed.
 >
-> First of all, thanks for doing that! It sounds a lot better to have
-> a script doing the check than newbies trying to address it manually,
-> as there are several aspects to be considered on such replacement.
->
-> >
-> > ---
-> > v5: print a message with the new function name, as suggested by Markus Elfring
-> > v4: s/pm_runtime_resume_and_get/pm_runtime_put_noidle/ as noted by John Hovold
-> > v3: add the people who signed off on commit dd8088d5a896, expand the log message
-> > v2: better keyword
-> >
-> >  scripts/coccinelle/api/pm_runtime_resume_and_get.cocci |  153 +++++++++++++++++
-> >  1 file changed, 153 insertions(+)
-> >
-> > diff --git a/scripts/coccinelle/api/pm_runtime_resume_and_get.cocci b/scripts/coccinelle/api/pm_runtime_resume_and_get.cocci
-> > new file mode 100644
-> > index 000000000000..3387cb606f9b
-> > --- /dev/null
-> > +++ b/scripts/coccinelle/api/pm_runtime_resume_and_get.cocci
-> > @@ -0,0 +1,153 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +///
-> > +/// Use pm_runtime_resume_and_get.
-> > +/// pm_runtime_get_sync keeps a reference count on failure,
-> > +/// which can lead to leaks.  pm_runtime_resume_and_get
-> > +/// drops the reference count in the failure case.
-> > +/// This rule addresses the cases where the reference count
-> > +/// is unlikely to be needed in the failure case.
-> > +///
-> > +// Confidence: High
->
-> Long story short, I got a corner case where the script is doing
-> the wrong thing.
->
-> ---
->
-> A detailed explanation follows:
->
-> As you know, I'm doing some manual work to address issues related
-> to pm_runtime_get() on media.
->
-> There, I found a corner case: There is a functional difference
-> between:
->
-> 	ret = pm_runtime_get_sync(&client->dev);
->         if (ret < 0) {
->                 pm_runtime_put_noidle(&client->dev);
-> 		return ret;
-> 	}
->
-> and:
-> 	ret = pm_runtime_resume_and_get(&client->dev);
->         if (ret < 0)
-> 		return ret;
->
-> On success, pm_runtime_get_sync() can return either 0 or 1.
-> When 1 is returned, it means that the driver was already resumed.
->
-> pm_runtime_resume_and_get(), on the other hand, don't have the same
-> behavior. On success, it always return zero.
->
-> IMO, this is actually a good thing, as it helps to address a common
-> mistake:
->
-> 	ret = pm_runtime_get_sync(&client->dev);
-> 	/*
-> 	 * or, even worse:
-> 	 * ret = some_function_that_calls_pm_runtime_get_sync();
-> 	 */
->
->         if (ret) {
->                 pm_runtime_put_noidle(&client->dev);
-> 		return ret;
-> 	}
->
-> FYI, Dan pointed one media driver to me those days with the above
-> issue at the imx334 driver, which I'm fixing on my patch series.
->
-> -
->
-> Anyway, after revisiting my patches, I found several cases that were
-> doing things like:
->
-> 	int ret;
->
-> 	ret = pm_runtime_get_sync(dev);
-> 	pm_runtime_put_noidle(dev);		/* Or without it, on drivers with unbalanced get/put */
->
-> 	return ret > 0 ? 0 : ret;
->
-> Which can be replaced by just:
->
-> 	return pm_runtime_resume_and_get(&ctx->gsc_dev->pdev->dev);
->
-> Yet, I found a single corner case on media where a driver is actually
-> using the positive return: the ccs-core camera sensor driver.
->
-> There, the driver checks the past state of RPM. If the
-> device was indeed suspended, the driver restores the hardware
-> controls (on V4L2, a control is something like brightness,
-> contrast, etc) to the last used value set.
->
-> This is the right thing to be done there, as setting values
-> to such hardware can be a slow operation, as it is done via I2C.
->
-> So, this particular driver checks if the RPM returned 0 or 1,
-> in order to check the previous RPM state before get.
->
-> In this particular case, replacing:
-> 	pm_runtime_get_sync()
-> with
-> 	pm_runtime_resume_and_get()
->
-> Will make part of the code unreachable.
->
-> While it won't break this specific driver, It could have
-> cause troubles if the logic there were different.
->
-> In any case, I tested the coccinelle script, and it produces
-> this change:
->
->  static int ccs_pm_get_init(struct ccs_sensor *sensor)
->  {
->         struct i2c_client *client = v4l2_get_subdevdata(&sensor->src->sd);
->         int rval;
->
-> -       rval = pm_runtime_get_sync(&client->dev);
-> -       if (rval < 0) {
-> -               pm_runtime_put_noidle(&client->dev);
-> +       rval = pm_runtime_resume_and_get(&client->dev);
-> +       if (rval < 0)
->
->                 return rval;
-> -       } else if (!rval) {
-> +       else if (!rval) {
->                 rval = v4l2_ctrl_handler_setup(&sensor->pixel_array->
->                                                ctrl_handler);
->                 if (rval)
->                         return rval;
->
->                 return v4l2_ctrl_handler_setup(&sensor->src->ctrl_handler);
->         }
->
->         return 0;
->
-> which will make v4l2_ctrl_handler_setup() to always being called,
-> even if the device was already resumed.
-
-Thanks for the feedback.  It looks like what you are saying that the
-script should ensure that the return value of pm_runtime_get_sync is not
-used for anything else.  That can be added to the script.
-
-julia
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
