@@ -4,40 +4,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 448C9C433B4
-	for <kernel-janitors@archiver.kernel.org>; Sun, 16 May 2021 06:58:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36327C433ED
+	for <kernel-janitors@archiver.kernel.org>; Sun, 16 May 2021 07:44:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2036D61026
-	for <kernel-janitors@archiver.kernel.org>; Sun, 16 May 2021 06:58:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05B54611AD
+	for <kernel-janitors@archiver.kernel.org>; Sun, 16 May 2021 07:44:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233558AbhEPG71 (ORCPT
+        id S233913AbhEPHpj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 16 May 2021 02:59:27 -0400
-Received: from smtp01.smtpout.orange.fr ([80.12.242.123]:44651 "EHLO
+        Sun, 16 May 2021 03:45:39 -0400
+Received: from smtp01.smtpout.orange.fr ([80.12.242.123]:39939 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229807AbhEPG7Y (ORCPT
+        with ESMTP id S229501AbhEPHpi (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 16 May 2021 02:59:24 -0400
+        Sun, 16 May 2021 03:45:38 -0400
 Received: from localhost.localdomain ([86.243.172.93])
         by mwinf5d54 with ME
-        id 5Jy42500J21Fzsu03Jy4SW; Sun, 16 May 2021 08:58:07 +0200
+        id 5KkN2500G21Fzsu03KkNnW; Sun, 16 May 2021 09:44:23 +0200
 X-ME-Helo: localhost.localdomain
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 16 May 2021 08:58:07 +0200
+X-ME-Date: Sun, 16 May 2021 09:44:23 +0200
 X-ME-IP: 86.243.172.93
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     thomas.lendacky@amd.com, john.allen@amd.com,
-        herbert@gondor.apana.org.au, davem@davemloft.net,
-        gary.hook@amd.com, brijesh.singh@amd.com
-Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
+To:     airlied@linux.ie, kraxel@redhat.com, daniel@ffwll.ch,
+        ezequiel@collabora.com
+Cc:     dri-devel@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] crypto: ccp - Fix a resource leak in an error handling path
-Date:   Sun, 16 May 2021 08:58:04 +0200
-Message-Id: <4af832b7e75b729ebfb0f07fe039dc47712512c2.1621146079.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] drm/virtgpu: Fix a resource leak in an error handling path
+Date:   Sun, 16 May 2021 09:44:21 +0200
+Message-Id: <6486962009b4ef496feeca565f2b9376daebac32.1621150940.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -45,41 +45,33 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-If an error occurs after calling 'sp_get_irqs()', 'sp_free_irqs()' must be
-called as already done in the error handling path.
+If an error occurs after calling 'virtio_gpu_init()', 'virtio_gpu_deinit()'
+must be called as already done in the remove function.
 
-Fixes: f4d18d656f88 ("crypto: ccp - Abstract interrupt registeration")
+Fixes: d516e75c71c9 ("drm/virtio: Drop deprecated load/unload initialization")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/crypto/ccp/sp-pci.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/virtio/virtgpu_drv.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/crypto/ccp/sp-pci.c b/drivers/crypto/ccp/sp-pci.c
-index f468594ef8af..6fb6ba35f89d 100644
---- a/drivers/crypto/ccp/sp-pci.c
-+++ b/drivers/crypto/ccp/sp-pci.c
-@@ -222,7 +222,7 @@ static int sp_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 		if (ret) {
- 			dev_err(dev, "dma_set_mask_and_coherent failed (%d)\n",
- 				ret);
--			goto e_err;
-+			goto free_irqs;
- 		}
- 	}
+diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.c b/drivers/gpu/drm/virtio/virtgpu_drv.c
+index 33bf5f53ae31..ca77edbc5ea0 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_drv.c
++++ b/drivers/gpu/drm/virtio/virtgpu_drv.c
+@@ -125,11 +125,13 @@ static int virtio_gpu_probe(struct virtio_device *vdev)
  
-@@ -230,10 +230,12 @@ static int sp_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 
- 	ret = sp_init(sp);
+ 	ret = drm_dev_register(dev, 0);
  	if (ret)
--		goto e_err;
-+		goto free_irqs;
+-		goto err_free;
++		goto err_deinit;
  
+ 	drm_fbdev_generic_setup(vdev->priv, 32);
  	return 0;
  
-+free_irqs:
-+	sp_free_irqs(sp);
- e_err:
- 	dev_notice(dev, "initialization failed\n");
++err_deinit:
++	virtio_gpu_deinit(dev);
+ err_free:
+ 	drm_dev_put(dev);
  	return ret;
 -- 
 2.30.2
