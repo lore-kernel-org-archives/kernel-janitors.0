@@ -7,37 +7,34 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36327C433ED
-	for <kernel-janitors@archiver.kernel.org>; Sun, 16 May 2021 07:44:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36B35C433B4
+	for <kernel-janitors@archiver.kernel.org>; Sun, 16 May 2021 08:27:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 05B54611AD
-	for <kernel-janitors@archiver.kernel.org>; Sun, 16 May 2021 07:44:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0215261177
+	for <kernel-janitors@archiver.kernel.org>; Sun, 16 May 2021 08:27:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233913AbhEPHpj (ORCPT
+        id S234130AbhEPI3D (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 16 May 2021 03:45:39 -0400
-Received: from smtp01.smtpout.orange.fr ([80.12.242.123]:39939 "EHLO
+        Sun, 16 May 2021 04:29:03 -0400
+Received: from smtp01.smtpout.orange.fr ([80.12.242.123]:42304 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229501AbhEPHpi (ORCPT
+        with ESMTP id S230040AbhEPI3C (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 16 May 2021 03:45:38 -0400
+        Sun, 16 May 2021 04:29:02 -0400
 Received: from localhost.localdomain ([86.243.172.93])
         by mwinf5d54 with ME
-        id 5KkN2500G21Fzsu03KkNnW; Sun, 16 May 2021 09:44:23 +0200
+        id 5LTk2500821Fzsu03LTk3J; Sun, 16 May 2021 10:27:46 +0200
 X-ME-Helo: localhost.localdomain
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 16 May 2021 09:44:23 +0200
+X-ME-Date: Sun, 16 May 2021 10:27:46 +0200
 X-ME-IP: 86.243.172.93
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     airlied@linux.ie, kraxel@redhat.com, daniel@ffwll.ch,
-        ezequiel@collabora.com
-Cc:     dri-devel@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+To:     alexander.shishkin@linux.intel.com, gregkh@linuxfoundation.org
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] drm/virtgpu: Fix a resource leak in an error handling path
-Date:   Sun, 16 May 2021 09:44:21 +0200
-Message-Id: <6486962009b4ef496feeca565f2b9376daebac32.1621150940.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] intel_th: Fix a resource leak in an error handling path
+Date:   Sun, 16 May 2021 10:27:43 +0200
+Message-Id: <6e89bfd3c66de62bc3b9da720a2c864a7c167c49.1621153607.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -45,34 +42,44 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-If an error occurs after calling 'virtio_gpu_init()', 'virtio_gpu_deinit()'
-must be called as already done in the remove function.
+If an error occurs after calling 'pci_alloc_irq_vectors()',
+'pci_free_irq_vectors()' must be called as already done in the remove
+function.
 
-Fixes: d516e75c71c9 ("drm/virtio: Drop deprecated load/unload initialization")
+Fixes: 7b7036d47c35 ("intel_th: pci: Use MSI interrupt signalling")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/gpu/drm/virtio/virtgpu_drv.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/hwtracing/intel_th/pci.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.c b/drivers/gpu/drm/virtio/virtgpu_drv.c
-index 33bf5f53ae31..ca77edbc5ea0 100644
---- a/drivers/gpu/drm/virtio/virtgpu_drv.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_drv.c
-@@ -125,11 +125,13 @@ static int virtio_gpu_probe(struct virtio_device *vdev)
+diff --git a/drivers/hwtracing/intel_th/pci.c b/drivers/hwtracing/intel_th/pci.c
+index 7da4f298ed01..fcd0aca75007 100644
+--- a/drivers/hwtracing/intel_th/pci.c
++++ b/drivers/hwtracing/intel_th/pci.c
+@@ -100,8 +100,10 @@ static int intel_th_pci_probe(struct pci_dev *pdev,
+ 		}
  
- 	ret = drm_dev_register(dev, 0);
- 	if (ret)
--		goto err_free;
-+		goto err_deinit;
+ 	th = intel_th_alloc(&pdev->dev, drvdata, resource, r);
+-	if (IS_ERR(th))
+-		return PTR_ERR(th);
++	if (IS_ERR(th)) {
++		err = PTR_ERR(th);
++		goto err_free_irq;
++	}
  
- 	drm_fbdev_generic_setup(vdev->priv, 32);
+ 	th->activate   = intel_th_pci_activate;
+ 	th->deactivate = intel_th_pci_deactivate;
+@@ -109,6 +111,10 @@ static int intel_th_pci_probe(struct pci_dev *pdev,
+ 	pci_set_master(pdev);
+ 
  	return 0;
++
++err_free_irq:
++	pci_free_irq_vectors(pdev);
++	return err;
+ }
  
-+err_deinit:
-+	virtio_gpu_deinit(dev);
- err_free:
- 	drm_dev_put(dev);
- 	return ret;
+ static void intel_th_pci_remove(struct pci_dev *pdev)
 -- 
 2.30.2
 
