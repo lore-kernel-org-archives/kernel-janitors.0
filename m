@@ -2,84 +2,96 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.5 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36B35C433B4
-	for <kernel-janitors@archiver.kernel.org>; Sun, 16 May 2021 08:27:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70D92C433ED
+	for <kernel-janitors@archiver.kernel.org>; Sun, 16 May 2021 09:08:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0215261177
-	for <kernel-janitors@archiver.kernel.org>; Sun, 16 May 2021 08:27:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42755610E6
+	for <kernel-janitors@archiver.kernel.org>; Sun, 16 May 2021 09:08:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234130AbhEPI3D (ORCPT
+        id S233550AbhEPJJl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 16 May 2021 04:29:03 -0400
-Received: from smtp01.smtpout.orange.fr ([80.12.242.123]:42304 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230040AbhEPI3C (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 16 May 2021 04:29:02 -0400
-Received: from localhost.localdomain ([86.243.172.93])
-        by mwinf5d54 with ME
-        id 5LTk2500821Fzsu03LTk3J; Sun, 16 May 2021 10:27:46 +0200
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 16 May 2021 10:27:46 +0200
-X-ME-IP: 86.243.172.93
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     alexander.shishkin@linux.intel.com, gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] intel_th: Fix a resource leak in an error handling path
-Date:   Sun, 16 May 2021 10:27:43 +0200
-Message-Id: <6e89bfd3c66de62bc3b9da720a2c864a7c167c49.1621153607.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Sun, 16 May 2021 05:09:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50754 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231258AbhEPJJl (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Sun, 16 May 2021 05:09:41 -0400
+Received: from jic23-huawei (cpc108967-cmbg20-2-0-cust86.5-4.cable.virginm.net [81.101.6.87])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 171196109F;
+        Sun, 16 May 2021 09:08:24 +0000 (UTC)
+Date:   Sun, 16 May 2021 10:09:36 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Alexandru Ardelean <ardeleanalex@gmail.com>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Yicong Yang <yangyicong@hisilicon.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Nuno Sa <nuno.sa@analog.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        linux-iio <linux-iio@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] iio: core: Fix an error pointer vs NULL bug in
+ devm_iio_device_alloc()
+Message-ID: <20210516100936.1d733df1@jic23-huawei>
+In-Reply-To: <CA+U=Dspvr4J=vRYK7ntdB2-XSLss8YutMd0YOQi4zkDr-UkxWw@mail.gmail.com>
+References: <YJ+a1yaMu2QNATgt@mwanda>
+        <CA+U=Dspvr4J=vRYK7ntdB2-XSLss8YutMd0YOQi4zkDr-UkxWw@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-If an error occurs after calling 'pci_alloc_irq_vectors()',
-'pci_free_irq_vectors()' must be called as already done in the remove
-function.
+On Sun, 16 May 2021 08:30:20 +0300
+Alexandru Ardelean <ardeleanalex@gmail.com> wrote:
 
-Fixes: 7b7036d47c35 ("intel_th: pci: Use MSI interrupt signalling")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/hwtracing/intel_th/pci.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+> On Sat, May 15, 2021 at 3:01 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> >
+> > The devm_iio_device_alloc() function is supposed to return NULL and not
+> > error pointers.  Returning an error pointer will lead to a crash in the
+> > callers.
+> >  
+> 
+> oh
+> that's a good catch;
+> 
+> Reviewed-by: Alexandru Ardelean <ardeleanalex@gmail.com>
 
-diff --git a/drivers/hwtracing/intel_th/pci.c b/drivers/hwtracing/intel_th/pci.c
-index 7da4f298ed01..fcd0aca75007 100644
---- a/drivers/hwtracing/intel_th/pci.c
-+++ b/drivers/hwtracing/intel_th/pci.c
-@@ -100,8 +100,10 @@ static int intel_th_pci_probe(struct pci_dev *pdev,
- 		}
- 
- 	th = intel_th_alloc(&pdev->dev, drvdata, resource, r);
--	if (IS_ERR(th))
--		return PTR_ERR(th);
-+	if (IS_ERR(th)) {
-+		err = PTR_ERR(th);
-+		goto err_free_irq;
-+	}
- 
- 	th->activate   = intel_th_pci_activate;
- 	th->deactivate = intel_th_pci_deactivate;
-@@ -109,6 +111,10 @@ static int intel_th_pci_probe(struct pci_dev *pdev,
- 	pci_set_master(pdev);
- 
- 	return 0;
-+
-+err_free_irq:
-+	pci_free_irq_vectors(pdev);
-+	return err;
- }
- 
- static void intel_th_pci_remove(struct pci_dev *pdev)
--- 
-2.30.2
+Applied to the togreg branch of iio.git and pushed out as testing for the autobuilders
+to poke at it.
+
+Thanks,
+
+Jonathan
+
+
+> 
+> > Fixes: d240dc25e3b8 ("iio: core: simplify some devm functions")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > ---
+> >  drivers/iio/industrialio-core.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
+> > index bfa20a346f71..75e92bac78f3 100644
+> > --- a/drivers/iio/industrialio-core.c
+> > +++ b/drivers/iio/industrialio-core.c
+> > @@ -1711,7 +1711,7 @@ struct iio_dev *devm_iio_device_alloc(struct device *parent, int sizeof_priv)
+> >         ret = devm_add_action_or_reset(parent, devm_iio_device_release,
+> >                                        iio_dev);
+> >         if (ret)
+> > -               return ERR_PTR(ret);
+> > +               return NULL;
+> >
+> >         return iio_dev;
+> >  }
+> > --
+> > 2.30.2
+> >  
 
