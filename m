@@ -2,88 +2,138 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F5C5C433ED
-	for <kernel-janitors@archiver.kernel.org>; Sun, 16 May 2021 17:01:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9FE7C433ED
+	for <kernel-janitors@archiver.kernel.org>; Sun, 16 May 2021 19:24:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 79ECD60551
-	for <kernel-janitors@archiver.kernel.org>; Sun, 16 May 2021 17:01:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BAE7160698
+	for <kernel-janitors@archiver.kernel.org>; Sun, 16 May 2021 19:24:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231166AbhEPRDN (ORCPT
+        id S232144AbhEPTZZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 16 May 2021 13:03:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37270 "EHLO
+        Sun, 16 May 2021 15:25:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229459AbhEPRDM (ORCPT
+        with ESMTP id S229661AbhEPTZZ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 16 May 2021 13:03:12 -0400
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66AE1C061573;
-        Sun, 16 May 2021 10:01:56 -0700 (PDT)
-Received: by mail-ej1-x62b.google.com with SMTP id z12so4281436ejw.0;
-        Sun, 16 May 2021 10:01:56 -0700 (PDT)
+        Sun, 16 May 2021 15:25:25 -0400
+Received: from mail-qt1-x829.google.com (mail-qt1-x829.google.com [IPv6:2607:f8b0:4864:20::829])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64546C061573;
+        Sun, 16 May 2021 12:24:10 -0700 (PDT)
+Received: by mail-qt1-x829.google.com with SMTP id j19so3440107qtp.7;
+        Sun, 16 May 2021 12:24:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=AtiJHfdmT2LSVR4rbNIaNF36Xfs944KqtBektfTje5M=;
-        b=DAGiCJN/B0AuQYxR2YMS1YdLG7E04XbNnAThdGjmBoPVyWeVm0Vt63bTbv2eoScYRQ
-         SvAEYLrzwnmzOR5wp1CC3RKN4hyBnHKWJQKmPAax8xiYeQN0kxz2jQJP+F4Eg3PnYmne
-         1tPqS44UJ6bIQx53XCLEzkUDSA0PKYzdiJ1Bm8Ux9G1YFwdM/2HDZfALKNqSjTCpM2/w
-         /Rh5WhkPS0VtYInMu//A4ZE4YYK/MTrUiFkFfqoKnAk9XrjylD1xFHqznvRukMuPJ097
-         ZgkrbbJ358Ttx/9WXCUX4sI2HnbgR0YAj0ln5t6NUysuwZ90LddsWhtadieg1uDXWzMv
-         XHaA==
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=fZxwgKfIQimb2AFH9JXSBKvKMRan0cAJtKbrTFd8DCw=;
+        b=oAFuw8Wmvx0yY/70GlCle9lO76HkGhbMJymOixmBUvyzzqQT0FOomMm56cDB73Rd5g
+         t4zw3VSbnD//3Ew+RisP/Dy8OWP24iNKZTqgt0VdIjmuF46hpwRwCa6pFa7YxgaU1xo8
+         1KyLY+bFS6eBYBQzDT5vI0sRjLFzgTg0bJtFBchVtxQKg1LRPV8+JcPiiYUfyIdibnAI
+         /wnf6FonMZ1G/hOypvchbLwy/sHTeKUDE4GwBy7g+pwKTED4yjLEPFw/5hPIsao/ZNSe
+         F2/IPPW+X3FGPaeBWtoK9IvlmGjTZiPx4jZCyjUJlkqxvqDgW5htN4TcSaIpn5TUHTmj
+         XBJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=AtiJHfdmT2LSVR4rbNIaNF36Xfs944KqtBektfTje5M=;
-        b=rrJxHhVmnvwPsE9bFaNTi/KrxzBoPJmlOu2MQS6pU4umeWuXMrTSdKE+pwLgMhO9s4
-         LBqa8MFVADkyrmp7VALoSNHIk7MBpwYNGyDHnYy8HKEiWOAEEenjVCNsNc/3o6zsJiHW
-         gE6IUKDg1T7DsFeSGXda10xL3C3AENAJcPANf3lh1iyNSk3hvyxzjPe346srvu216lnz
-         FXC2fyZXpxXjYrdH5FrgOzhllgyAigba4gbGYitiRqbyDN/4zASFbwpdM0ROdi13Go0T
-         esV1ogqTUSYRann4fwIUgmzEMkN4MxlimP2pqyauT3grOjOYY0s99HQCALwjBvbsiwbR
-         HZkQ==
-X-Gm-Message-State: AOAM532Buv/UX7vrydWqZkAWLUlkY7o9/Cj95UKbb85FFvA9EMD7U6CP
-        n/UI+gU/fViWIVBpwhIfJq4HqadiTK/RF3oG2Q4=
-X-Google-Smtp-Source: ABdhPJxElTHfIzHywbG8S+ZiNXqSjJEqGZe2D3CIdGakxelu3WUAQhIbf0zHelLeFVb7YO60doX8+J/CEmulNZITgNg=
-X-Received: by 2002:a17:906:57c3:: with SMTP id u3mr59329306ejr.162.1621184515178;
- Sun, 16 May 2021 10:01:55 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210513220317.137090-1-colin.king@canonical.com>
-In-Reply-To: <20210513220317.137090-1-colin.king@canonical.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Sun, 16 May 2021 19:01:44 +0200
-Message-ID: <CAFBinCDde0+QzDOYF2EAkjmbdd80Emu3YuFV3jOCMaZuT+FNmQ@mail.gmail.com>
-Subject: Re: [PATCH] media: meson: vdec: remove redundant initialization of
- variable reg_cur
-To:     Colin King <colin.king@canonical.com>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=fZxwgKfIQimb2AFH9JXSBKvKMRan0cAJtKbrTFd8DCw=;
+        b=G2BuNgG2Z2uJs/ErwLsHXpA/ntLtXzfVInx0Vu2TCicPsVJyYLE2ycP06d9ZAGyi3p
+         VsIOqdI/31OE+3Pu2JNko3FOVCONg4cRr0N8Y74HZ0pfJ5rpreocSIrV5XNdlJ04Ihlm
+         0RBvA+67ztO/ToMglVH68HCwkO4ImYa7RtIeXJdSniLywJ+ayxvk08PH2GuGVOhpGugy
+         kesTx0uwtyhudsGGE1iZUUzhtM47yfmlp5JDaDylaFWWxsFJl3pMiKBfp5bWm1WG8evY
+         7YpjuDzOfvKx97nmRTQJZwRbSXtL2DJp8kEAxHmoguI53xPrIW+UoBMXIXDLKMdc7wzw
+         iP6w==
+X-Gm-Message-State: AOAM5333xIGEeeLAtEuF3ATl3UqyFI6f6ArKNuPgh6Z472qEt/Yr1Zi9
+        qjS2OIBhL4lVMd1ZKMG0FRI8ZfLu9rI=
+X-Google-Smtp-Source: ABdhPJw4ToR7cX6GwzJbqm5gAAoq9uNgPrbSZky7o6MUT6XFMq14WKNkqN9PXv1mbajcZYIUonTbcg==
+X-Received: by 2002:ac8:5751:: with SMTP id 17mr36207643qtx.389.1621193049615;
+        Sun, 16 May 2021 12:24:09 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id h8sm9027603qtp.46.2021.05.16.12.24.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 16 May 2021 12:24:08 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date:   Sun, 16 May 2021 12:24:07 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Martin Kaiser <martin@kaiser.cx>
+Cc:     Larry Finger <Larry.Finger@lwfinger.net>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        linux-media <linux-media@vger.kernel.org>,
-        linux-amlogic@lists.infradead.org, linux-staging@lists.linux.dev,
-        linux-arm-kernel@lists.infradead.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/6] staging: rtl8188eu: use safe iterator in
+ rtw_free_network_queue
+Message-ID: <20210516192407.GA2126643@roeck-us.net>
+References: <20210516160613.30489-1-martin@kaiser.cx>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210516160613.30489-1-martin@kaiser.cx>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, May 14, 2021 at 12:03 AM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The variable reg_cur is being initialized with a value that is never
-> read, it is being updated later on. The assignment is redundant and
-> can be removed.
->
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+On Sun, May 16, 2021 at 06:06:08PM +0200, Martin Kaiser wrote:
+> rtw_free_network_queue iterates over the scanned wireless networks and
+> calls _rtw_free_network for each of them. In some cases,
+> _rtw_free_network removes a network from the list.
+> 
+> We have to use list_for_each_safe if we remove list entries while we
+> iterate over a list.
+> 
+> Fixes: 23017c8842d2 ("staging: rtl8188eu: Use list iterators and helpers")
+> Signed-off-by: Martin Kaiser <martin@kaiser.cx>
+> ---
+> Without this patch, it's easy to get the driver into an endless loop by
+> scanning, connecting and disconnecting repeatedly.
+> 
+
+Oops. Good catch. Thanks for noticing.
+
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+
+> wpa_supplicant -B -Dwext -i wlan0 -c /path/to/my/config...
+> while true ; do
+>    sleep 1
+>    wpa_cli reconfigure     
+>    wpa_cli add_network
+>    wpa_cli set_network 0 ssid ...
+>    wpa_cli set_network 0 psk ...
+>    wpa_cli select_network 0
+>    sleep 6
+>    wpa_cli status
+>    wpa_cli disconnect 0
+> done
+> 
+>  drivers/staging/rtl8188eu/core/rtw_mlme.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/staging/rtl8188eu/core/rtw_mlme.c b/drivers/staging/rtl8188eu/core/rtw_mlme.c
+> index 159465b073c2..14816ad51668 100644
+> --- a/drivers/staging/rtl8188eu/core/rtw_mlme.c
+> +++ b/drivers/staging/rtl8188eu/core/rtw_mlme.c
+> @@ -199,7 +199,7 @@ struct wlan_network *rtw_find_network(struct __queue *scanned_queue, u8 *addr)
+>  
+>  void rtw_free_network_queue(struct adapter *padapter, u8 isfreeall)
+>  {
+> -	struct list_head *phead, *plist;
+> +	struct list_head *phead, *plist, *temp;
+>  	struct wlan_network *pnetwork;
+>  	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
+>  	struct __queue *scanned_queue = &pmlmepriv->scanned_queue;
+> @@ -207,7 +207,7 @@ void rtw_free_network_queue(struct adapter *padapter, u8 isfreeall)
+>  	spin_lock_bh(&scanned_queue->lock);
+>  
+>  	phead = get_list_head(scanned_queue);
+> -	list_for_each(plist, phead) {
+> +	list_for_each_safe(plist, temp, phead) {
+>  		pnetwork = list_entry(plist, struct wlan_network, list);
+>  
+>  		_rtw_free_network(pmlmepriv, pnetwork, isfreeall);
+> -- 
+> 2.20.1
+> 
