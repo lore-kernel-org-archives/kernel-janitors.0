@@ -6,40 +6,35 @@ X-Spam-Status: No, score=-15.5 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70D92C433ED
-	for <kernel-janitors@archiver.kernel.org>; Sun, 16 May 2021 09:08:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0C2EC433ED
+	for <kernel-janitors@archiver.kernel.org>; Sun, 16 May 2021 09:29:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 42755610E6
-	for <kernel-janitors@archiver.kernel.org>; Sun, 16 May 2021 09:08:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6E2361152
+	for <kernel-janitors@archiver.kernel.org>; Sun, 16 May 2021 09:29:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233550AbhEPJJl (ORCPT
+        id S234599AbhEPJa6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 16 May 2021 05:09:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50754 "EHLO mail.kernel.org"
+        Sun, 16 May 2021 05:30:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55088 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231258AbhEPJJl (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 16 May 2021 05:09:41 -0400
+        id S231187AbhEPJa5 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Sun, 16 May 2021 05:30:57 -0400
 Received: from jic23-huawei (cpc108967-cmbg20-2-0-cust86.5-4.cable.virginm.net [81.101.6.87])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 171196109F;
-        Sun, 16 May 2021 09:08:24 +0000 (UTC)
-Date:   Sun, 16 May 2021 10:09:36 +0100
+        by mail.kernel.org (Postfix) with ESMTPSA id CCD1E61139;
+        Sun, 16 May 2021 09:29:41 +0000 (UTC)
+Date:   Sun, 16 May 2021 10:30:53 +0100
 From:   Jonathan Cameron <jic23@kernel.org>
-To:     Alexandru Ardelean <ardeleanalex@gmail.com>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Yicong Yang <yangyicong@hisilicon.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Nuno Sa <nuno.sa@analog.com>,
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Lars-Peter Clausen <lars@metafoo.de>,
+        Joe Sandom <joe.g.sandom@gmail.com>,
         Andy Shevchenko <andy.shevchenko@gmail.com>,
-        linux-iio <linux-iio@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] iio: core: Fix an error pointer vs NULL bug in
- devm_iio_device_alloc()
-Message-ID: <20210516100936.1d733df1@jic23-huawei>
-In-Reply-To: <CA+U=Dspvr4J=vRYK7ntdB2-XSLss8YutMd0YOQi4zkDr-UkxWw@mail.gmail.com>
-References: <YJ+a1yaMu2QNATgt@mwanda>
-        <CA+U=Dspvr4J=vRYK7ntdB2-XSLss8YutMd0YOQi4zkDr-UkxWw@mail.gmail.com>
+        linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 1/2] iio: light: tsl2591: fix some signedness bugs
+Message-ID: <20210516103053.35528ab4@jic23-huawei>
+In-Reply-To: <YJ52r1XZ44myD9Xx@mwanda>
+References: <YJ52r1XZ44myD9Xx@mwanda>
 X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -48,50 +43,50 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, 16 May 2021 08:30:20 +0300
-Alexandru Ardelean <ardeleanalex@gmail.com> wrote:
+On Fri, 14 May 2021 16:10:07 +0300
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-> On Sat, May 15, 2021 at 3:01 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> >
-> > The devm_iio_device_alloc() function is supposed to return NULL and not
-> > error pointers.  Returning an error pointer will lead to a crash in the
-> > callers.
-> >  
+> These variables need to be int for the error handling to work.
 > 
-> oh
-> that's a good catch;
-> 
-> Reviewed-by: Alexandru Ardelean <ardeleanalex@gmail.com>
+> Fixes: f053d4e748ce ("iio: light: Added AMS tsl2591 driver implementation")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied to the togreg branch of iio.git and pushed out as testing for the autobuilders
-to poke at it.
+Both applied to the togreg branch of iio.git and pushed out as testing for
+the autobuilders to poke at it.
 
-Thanks,
+As such, there is still a bit of time if anyone else wants to review
+these / give tags etc, before I push it out as a non rebasing branch.
+
+thanks,
 
 Jonathan
 
-
+> ---
+>  drivers/iio/light/tsl2591.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> > Fixes: d240dc25e3b8 ("iio: core: simplify some devm functions")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> >  drivers/iio/industrialio-core.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
-> > index bfa20a346f71..75e92bac78f3 100644
-> > --- a/drivers/iio/industrialio-core.c
-> > +++ b/drivers/iio/industrialio-core.c
-> > @@ -1711,7 +1711,7 @@ struct iio_dev *devm_iio_device_alloc(struct device *parent, int sizeof_priv)
-> >         ret = devm_add_action_or_reset(parent, devm_iio_device_release,
-> >                                        iio_dev);
-> >         if (ret)
-> > -               return ERR_PTR(ret);
-> > +               return NULL;
-> >
-> >         return iio_dev;
-> >  }
-> > --
-> > 2.30.2
-> >  
+> diff --git a/drivers/iio/light/tsl2591.c b/drivers/iio/light/tsl2591.c
+> index 2bdae388ff01..26e3cb6c4ff8 100644
+> --- a/drivers/iio/light/tsl2591.c
+> +++ b/drivers/iio/light/tsl2591.c
+> @@ -213,7 +213,7 @@ static int tsl2591_gain_to_multiplier(const u8 als_gain)
+>  	}
+>  }
+>  
+> -static u8 tsl2591_multiplier_to_gain(const u32 multiplier)
+> +static int tsl2591_multiplier_to_gain(const u32 multiplier)
+>  {
+>  	switch (multiplier) {
+>  	case TSL2591_CTRL_ALS_LOW_GAIN_MULTIPLIER:
+> @@ -783,8 +783,8 @@ static int tsl2591_write_raw(struct iio_dev *indio_dev,
+>  			     int val, int val2, long mask)
+>  {
+>  	struct tsl2591_chip *chip = iio_priv(indio_dev);
+> -	u32 int_time;
+> -	u8 gain;
+> +	int int_time;
+> +	int gain;
+>  	int ret;
+>  
+>  	mutex_lock(&chip->als_mutex);
 
