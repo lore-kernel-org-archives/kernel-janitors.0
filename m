@@ -2,91 +2,124 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A175AC433ED
-	for <kernel-janitors@archiver.kernel.org>; Sun, 16 May 2021 13:01:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6672FC433ED
+	for <kernel-janitors@archiver.kernel.org>; Sun, 16 May 2021 13:17:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7A1C160FD7
-	for <kernel-janitors@archiver.kernel.org>; Sun, 16 May 2021 13:01:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 388C961057
+	for <kernel-janitors@archiver.kernel.org>; Sun, 16 May 2021 13:17:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233501AbhEPNCv (ORCPT
+        id S233606AbhEPNSe (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 16 May 2021 09:02:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41150 "EHLO
+        Sun, 16 May 2021 09:18:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229888AbhEPNCu (ORCPT
+        with ESMTP id S229888AbhEPNSe (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 16 May 2021 09:02:50 -0400
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1612BC061573;
-        Sun, 16 May 2021 06:01:34 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id y14so1561383wrm.13;
-        Sun, 16 May 2021 06:01:34 -0700 (PDT)
+        Sun, 16 May 2021 09:18:34 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8792DC061573;
+        Sun, 16 May 2021 06:17:19 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id j14so1954658wrq.5;
+        Sun, 16 May 2021 06:17:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=uKxhfXqsz5KiS3/U8uvLI52MLsIje961R562h2mq3u8=;
-        b=ajEVunZo3Gvh6N5465bXB+09XeuhSK4MSpnt0cIb6Z/rnwM4cyEZkIcpVpWiw/u/dU
-         3IzMjNeVU26UNzFu/sHPKsA2YLpRA4t+kTKa1hGW3JO39PHhYj8cSQe6xS26NWtRuv24
-         hqVvsc/mhZrLlJj/RqePV+wGT68o0pU68sUNsTBdaGqQCSWKo4XMUVFmk5YCNrl7Bb93
-         ZqpuqhkR8G0rS7CTHAdfq9ybzio/1CDILDQn8/eAfveXmxNy3z7OZcnZvs06t1HS4jzP
-         7veW8LiHN4oGR0DYVskeD5jFvHHaPEnx66LYPp/OUEwQM003U8U/NJcnIo16QMLQlDo9
-         Q1RA==
+        bh=+weRdtfsmgJ3fVjRKfIEjFe2XchM/2eivewIT+ylU88=;
+        b=nnYIQw5nfrshTJ5KRwybLAjQv98nPLEyw3Y2YIkfpz6bblFR+VZgiA1yQktM5bsiSH
+         wH50fdCe0FH/ejr7N94hCYzx/aUOxp1vA9NpImS8V79E3RdP2crgudjTrV9ze1wpO7P9
+         hDt4bSL+oNIs+hDNzTmxFB53/pVG/ODaQJS8L0Ty3tVO+cPTYHUDF9SDsVAHIODAmo1x
+         1xMCU017w3ZUgmfsDvrRBNXW32U9W/fvqydPkchYb/KU6zABfKrGYnBmPkhqBvhfB9pQ
+         XsttBFYsTeoEkESuLfpTJmvB4KvXiwrSb3HkK4h+wpt8v3Fbf2ubRteQrl+XZ/7N8r4E
+         FisQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=uKxhfXqsz5KiS3/U8uvLI52MLsIje961R562h2mq3u8=;
-        b=tQiWPjiaXO6Jm38LJ9HA39s4BuyEDzHVFvxuBmpWrK5oHL2R43/WzRRGH/VoOZ1Sva
-         gsLZXlbVdeTDtfxsgo4r3dXj3E1lK4aTc0aMhf9v7pnCz827k+M9BivL8pMhmQ0PMROZ
-         cC78A/RRO5Umtn6uKAud5qlpN+UjYv1gvueZUyrRh05iyqG3fGQwCiP9iqrUs/sWBVMP
-         741dfam/q9ySveKqWKj7Kb3uPjOixlZPdRx7eZvQpU88HQHliHP36r7dY4bqN1yeGER9
-         rOTG2RCz4B1kMSY2kWnclxzRwoy7E3XrICzUUl2H6CTm4ZyXGyt4UrhSZI2DlEJ5Kve+
-         d96g==
-X-Gm-Message-State: AOAM530RRid2tbYOPYvpyCNvCxhf82xbWLeVe0sqbTNVPaUA9+s7heSq
-        FOCPS9EFW8cKbyptChpz2ys=
-X-Google-Smtp-Source: ABdhPJwSWY55GFLxHrUTMkefdD6C9KYN1+EwzpZ5LjhvdUv7VmMoksOU5bTtqF6xYoihkNkyhwSNSg==
-X-Received: by 2002:a5d:6248:: with SMTP id m8mr69071465wrv.42.1621170092715;
-        Sun, 16 May 2021 06:01:32 -0700 (PDT)
+        bh=+weRdtfsmgJ3fVjRKfIEjFe2XchM/2eivewIT+ylU88=;
+        b=DXhcqUTUTciDf0ALKvtIg4bidLBRI9RnPjXl8/H29h28/V1fdz3h5MhYw4oTiZ08XR
+         cUet14MmcyiznM/T8lDN5peY33++q8WMCu38B1sZrJl+4sDp5sMEPQtpdU30WMEh4tO7
+         lvpMYMfGIpkEHReI/EnG/F+NLB+j8PQkJssIac4DSFcp/IoSk/98rnS/O1nw86o0MsKi
+         +jlZVaZjRhlWGkhRL0DhD3VMQu2Loika30N1qdg5w00ajfzJqR3ibEobDCEYkNojCkjI
+         aSowjYSVTbSemVnO4vhekK9PQ+ZKnhO9HHcYsKUrg3rulre2se9p1v5gmrWv4BS/0npq
+         JyBg==
+X-Gm-Message-State: AOAM530v5Rkzi1qeAoKs/TCvXT1AGYbQmnm88rKlDmFsKx9XHhF/TW2L
+        X6rSRNXdnJH57GvkivXbxkiQ0ZlW0iZA4L/H
+X-Google-Smtp-Source: ABdhPJwm8SqqSIWe/jY7chFdBhRbyo/lx81TVv5xiEW55CCPMgzsqmvqo6dqVEjoU3vQ0qYMQZMaXw==
+X-Received: by 2002:a5d:58d0:: with SMTP id o16mr32689178wrf.420.1621171038219;
+        Sun, 16 May 2021 06:17:18 -0700 (PDT)
 Received: from ard0534 ([102.156.106.137])
-        by smtp.gmail.com with ESMTPSA id u126sm5937911wmb.9.2021.05.16.06.01.31
+        by smtp.gmail.com with ESMTPSA id x8sm13091104wrs.25.2021.05.16.06.17.16
         (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 16 May 2021 06:01:32 -0700 (PDT)
-Date:   Sun, 16 May 2021 14:01:29 +0100
+        Sun, 16 May 2021 06:17:17 -0700 (PDT)
+Date:   Sun, 16 May 2021 14:17:14 +0100
 From:   Khaled Romdhani <khaledromdhani216@gmail.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     mingo@redhat.com, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-        bristot@redhat.com, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH-next] sched: Fix Null pointer derefrence
-Message-ID: <20210516130129.GA32445@ard0534>
-References: <20210515164645.22849-1-khaledromdhani216@gmail.com>
- <20210515210238.GG5618@worktop.programming.kicks-ass.net>
+To:     Colin Ian King <colin.king@canonical.com>,
+        Borislav Petkov <bp@alien8.de>
+Cc:     peterz@infradead.org, jpoimboe@redhat.com, jbaron@akamai.com,
+        rostedt@goodmis.org, ardb@kernel.org, tglx@linutronix.de,
+        mingo@redhat.com, x86@kernel.org, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH-next] x86/kernel: Fix unchecked return value
+Message-ID: <20210516131714.GB32445@ard0534>
+References: <20210515202212.24836-1-khaledromdhani216@gmail.com>
+ <YKAw3Yl8c6nU1zng@zn.tnic>
+ <6f149c2e-eeb0-6b50-2b54-a56ae4646ea5@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210515210238.GG5618@worktop.programming.kicks-ass.net>
+In-Reply-To: <6f149c2e-eeb0-6b50-2b54-a56ae4646ea5@canonical.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, May 15, 2021 at 11:02:38PM +0200, Peter Zijlstra wrote:
-> On Sat, May 15, 2021 at 05:46:45PM +0100, Khaled ROMDHANI wrote:
-> > The 'curr' variable could be NULL and derefrenced by
-> > pick_next_entity. Fix this by adding a check that prevent
-> > the invocation of pick_next_entity with a NULL passed argument.
+On Sat, May 15, 2021 at 09:51:23PM +0100, Colin Ian King wrote:
+> On 15/05/2021 21:36, Borislav Petkov wrote:
+> > On Sat, May 15, 2021 at 09:22:12PM +0100, Khaled ROMDHANI wrote:
+> >> From the coverity scan analysis, the return value from
+> >> insn_decode_kernel is not checked. It is a macro constructed
+> >> from the insn_decode function which may fail and return
+> >> negative integer. Fix this by explicitly checking the
+> >> return value.
+> >>
+> >> Addresses-Coverity: ("Unchecked return value")
+> >> Signed-off-by: Khaled ROMDHANI <khaledromdhani216@gmail.com>
+> >> ---
+> >>  arch/x86/kernel/jump_label.c | 2 +-
+> >>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>
+> >> diff --git a/arch/x86/kernel/jump_label.c b/arch/x86/kernel/jump_label.c
+> >> index a762dc1c615e..bf0ea003b6e7 100644
+> >> --- a/arch/x86/kernel/jump_label.c
+> >> +++ b/arch/x86/kernel/jump_label.c
+> >> @@ -23,7 +23,7 @@ int arch_jump_entry_size(struct jump_entry *entry)
+> >>  {
+> >>  	struct insn insn = {};
+> >>  
+> >> -	insn_decode_kernel(&insn, (void *)jump_entry_code(entry));
+> >> +	WARN_ON(insn_decode_kernel(&insn, (void *)jump_entry_code(entry)));
+> > 
+> > I don't think coverity is smart enough to notice...
+> > 
+> >>  	BUG_ON(insn.length != 2 && insn.length != 5);
+> > 	^^^^^^^^^^^^^
+> > 
+> > ... this line.
+> > 
+> > 
+> Indeed. One needs to be careful with false positives with Coverity.
 > 
-> And why exactly is that a problem?
->
-Within pick_next_entity, we could have 'left = curr'. 
-Thus the function wakeup_preempt_entity which is invoked 
-from pick_next_entity, derefrence the the sched entity 'left' 
-that may be a NULL passed argument.
+> Colin
+
+Yes. I shall be.
+
+Thanks,
+
+Khaled.
