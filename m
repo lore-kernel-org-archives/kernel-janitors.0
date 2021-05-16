@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A239EC433B4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2356C43461
 	for <kernel-janitors@archiver.kernel.org>; Sun, 16 May 2021 16:07:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8603A6115C
+	by mail.kernel.org (Postfix) with ESMTP id A4DBE61183
 	for <kernel-janitors@archiver.kernel.org>; Sun, 16 May 2021 16:07:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231640AbhEPQI5 (ORCPT
+        id S231166AbhEPQI7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 16 May 2021 12:08:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53272 "EHLO
+        Sun, 16 May 2021 12:08:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53274 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231537AbhEPQI4 (ORCPT
+        with ESMTP id S231560AbhEPQI4 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
         Sun, 16 May 2021 12:08:56 -0400
 Received: from viti.kaiser.cx (viti.kaiser.cx [IPv6:2a01:238:43fe:e600:cd0c:bd4a:7a3:8e9f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F0F5C061756;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B29D7C06175F;
         Sun, 16 May 2021 09:07:41 -0700 (PDT)
 Received: from dslb-094-219-038-078.094.219.pools.vodafone-ip.de ([94.219.38.78] helo=martin-debian-2.paytec.ch)
         by viti.kaiser.cx with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.89)
         (envelope-from <martin@kaiser.cx>)
-        id 1liJId-0003Vl-Nf; Sun, 16 May 2021 18:07:27 +0200
+        id 1liJIg-0003Vl-PZ; Sun, 16 May 2021 18:07:30 +0200
 From:   Martin Kaiser <martin@kaiser.cx>
 To:     Larry Finger <Larry.Finger@lwfinger.net>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Guenter Roeck <linux@roeck-us.net>
 Cc:     linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org,
         linux-kernel@vger.kernel.org, Martin Kaiser <martin@kaiser.cx>
-Subject: [PATCH 2/6] staging: rtl8188eu: use safe iterator in rtw_free_all_stainfo
-Date:   Sun, 16 May 2021 18:06:09 +0200
-Message-Id: <20210516160613.30489-2-martin@kaiser.cx>
+Subject: [PATCH 4/6] staging: rtl8188eu: use safe iterator in rtw_acl_remove_sta
+Date:   Sun, 16 May 2021 18:06:11 +0200
+Message-Id: <20210516160613.30489-4-martin@kaiser.cx>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20210516160613.30489-1-martin@kaiser.cx>
 References: <20210516160613.30489-1-martin@kaiser.cx>
@@ -47,40 +47,39 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This is another case where we may remove list entries while we iterate over
-the list. Use list_for_each_safe to avoid an endless loop.
+Use list_for_each_safe, we may delete list items while iterating over
+the list.
 
 Fixes: 23017c8842d2 ("staging: rtl8188eu: Use list iterators and helpers")
 Signed-off-by: Martin Kaiser <martin@kaiser.cx>
 ---
-Without this patch, unloading the module goes into an endless loop
-sometimes.
+compile-tested only
 
- drivers/staging/rtl8188eu/core/rtw_sta_mgt.c | 4 ++--
+ drivers/staging/rtl8188eu/core/rtw_ap.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/rtl8188eu/core/rtw_sta_mgt.c b/drivers/staging/rtl8188eu/core/rtw_sta_mgt.c
-index 7941ca0397ed..eda7a441acde 100644
---- a/drivers/staging/rtl8188eu/core/rtw_sta_mgt.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_sta_mgt.c
-@@ -379,7 +379,7 @@ u32 rtw_free_stainfo(struct adapter *padapter, struct sta_info *psta)
- /*  free all stainfo which in sta_hash[all] */
- void rtw_free_all_stainfo(struct adapter *padapter)
+diff --git a/drivers/staging/rtl8188eu/core/rtw_ap.c b/drivers/staging/rtl8188eu/core/rtw_ap.c
+index a410b42ecb6e..601974df4114 100644
+--- a/drivers/staging/rtl8188eu/core/rtw_ap.c
++++ b/drivers/staging/rtl8188eu/core/rtw_ap.c
+@@ -1072,7 +1072,7 @@ int rtw_acl_add_sta(struct adapter *padapter, u8 *addr)
+ 
+ int rtw_acl_remove_sta(struct adapter *padapter, u8 *addr)
  {
 -	struct list_head *plist, *phead;
 +	struct list_head *plist, *phead, *temp;
- 	s32 index;
- 	struct sta_info *psta = NULL;
+ 	struct rtw_wlan_acl_node *paclnode;
  	struct sta_priv *pstapriv = &padapter->stapriv;
-@@ -392,7 +392,7 @@ void rtw_free_all_stainfo(struct adapter *padapter)
+ 	struct wlan_acl_pool *pacl_list = &pstapriv->acl_list;
+@@ -1083,7 +1083,7 @@ int rtw_acl_remove_sta(struct adapter *padapter, u8 *addr)
+ 	spin_lock_bh(&pacl_node_q->lock);
  
- 	for (index = 0; index < NUM_STA; index++) {
- 		phead = &pstapriv->sta_hash[index];
--		list_for_each(plist, phead) {
-+		list_for_each_safe(plist, temp, phead) {
- 			psta = list_entry(plist, struct sta_info, hash_list);
+ 	phead = get_list_head(pacl_node_q);
+-	list_for_each(plist, phead) {
++	list_for_each_safe(plist, temp, phead) {
+ 		paclnode = list_entry(plist, struct rtw_wlan_acl_node, list);
  
- 			if (pbcmc_stainfo != psta)
+ 		if (!memcmp(paclnode->addr, addr, ETH_ALEN)) {
 -- 
 2.20.1
 
