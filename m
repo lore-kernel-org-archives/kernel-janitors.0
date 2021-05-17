@@ -4,93 +4,113 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40EB3C433ED
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 07:40:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49AE1C433ED
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 08:02:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 22CCB611CC
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 07:40:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 230786117A
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 08:02:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235357AbhEQHmK (ORCPT
+        id S234742AbhEQIDS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 17 May 2021 03:42:10 -0400
-Received: from mga07.intel.com ([134.134.136.100]:39144 "EHLO mga07.intel.com"
+        Mon, 17 May 2021 04:03:18 -0400
+Received: from mga01.intel.com ([192.55.52.88]:31206 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235372AbhEQHmH (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 17 May 2021 03:42:07 -0400
-IronPort-SDR: xOtvbQFr+fQ7ysoF0Qyr0/UjqYfma1O+DgvEFFFgEfpKvvdliRDV7SyBoSS3TTCsLaJYegWOOJ
- 87Xx0X2YxC6w==
-X-IronPort-AV: E=McAfee;i="6200,9189,9986"; a="264325837"
+        id S233996AbhEQIDO (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 17 May 2021 04:03:14 -0400
+IronPort-SDR: /dqYSnAAENTefNx/d7qpcvv/ydKWxWyTHS2GwRj9Cr6QE8ocPJscoB+JuzEX5eDmsZjFSG12sL
+ pmFtByZw0H8Q==
+X-IronPort-AV: E=McAfee;i="6200,9189,9986"; a="221441607"
 X-IronPort-AV: E=Sophos;i="5.82,306,1613462400"; 
-   d="scan'208";a="264325837"
+   d="scan'208";a="221441607"
 Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2021 00:40:21 -0700
-IronPort-SDR: dAdRdi1OZ5hYiaAOKuAJ+aXMdn8EvNAmqlwk8yOthuSmQObcW+7vxdJWYeB+ExP3s5BHlOQQZY
- uiPmqDz6lwUA==
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2021 01:01:33 -0700
+IronPort-SDR: FgOX0IWDmyxGYjz2Ou+WxyBrPYO6+TWl+uC8XpXkWwZTAeJS6J2roLjeMZ9pJ8x6ViFAdKv0KV
+ 2wHLlYByVnew==
 X-IronPort-AV: E=Sophos;i="5.82,306,1613462400"; 
-   d="scan'208";a="403951583"
+   d="scan'208";a="403962831"
 Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2021 00:40:16 -0700
+  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2021 01:01:29 -0700
 Received: from andy by smile with local (Exim 4.94)
         (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1liXrI-00CgkM-82; Mon, 17 May 2021 10:40:12 +0300
-Date:   Mon, 17 May 2021 10:40:12 +0300
+        id 1liYBq-00Cgwp-Ao; Mon, 17 May 2021 11:01:26 +0300
+Date:   Mon, 17 May 2021 11:01:26 +0300
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Cc:     arnd@arndb.de, gregkh@linuxfoundation.org,
         mihai.carabas@oracle.com, pizhenwei@bytedance.com,
-        pbonzini@redhat.com, bobo.shaobowang@huawei.com,
+        pbonzini@redhat.com, linqiheng@huawei.com,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 Subject: Re: [PATCH 1/2] misc/pvpanic: Fix error handling in
- 'pvpanic_mmio_probe()'
-Message-ID: <YKId3AuQgQiQFY/q@smile.fi.intel.com>
-References: <d6e7bf6eb6e482c387124e815edc0e0edaebafe8.1621177126.git.christophe.jaillet@wanadoo.fr>
+ 'pvpanic_pci_probe()'
+Message-ID: <YKIi1hljnjvqMCVA@smile.fi.intel.com>
+References: <7efa7b4b9867ac44f398783b89f3a21deac4ce8b.1621175108.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d6e7bf6eb6e482c387124e815edc0e0edaebafe8.1621177126.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <7efa7b4b9867ac44f398783b89f3a21deac4ce8b.1621175108.git.christophe.jaillet@wanadoo.fr>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, May 16, 2021 at 05:00:27PM +0200, Christophe JAILLET wrote:
+On Sun, May 16, 2021 at 04:36:55PM +0200, Christophe JAILLET wrote:
 > There is no error handling path in the probe function.
 > Switch to managed resource so that errors in the probe are handled easily
 > and simplify the remove function accordingly.
 
-Either folded or separated, feel free to add to the result
+Yes, that's what I suggested earlier to another contributor.
+
 Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-> Fixes: b3c0f8774668 ("misc/pvpanic: probe multiple instances")
+Thanks!
+
+P.S. You may consider the following things as well:
+ 1) converting to use pci_set_drvdata() / pci_get_drvdata()
+ 2) providing devm_pvpanic_probe() [via devm_add_action() /
+    devm_add_action_or_reset()]
+
+> Fixes: db3a4f0abefd ("misc/pvpanic: add PCI driver")
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->  drivers/misc/pvpanic/pvpanic-mmio.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+>  drivers/misc/pvpanic/pvpanic-pci.c | 9 +++------
+>  1 file changed, 3 insertions(+), 6 deletions(-)
 > 
-> diff --git a/drivers/misc/pvpanic/pvpanic-mmio.c b/drivers/misc/pvpanic/pvpanic-mmio.c
-> index 4c0841776087..69b31f7adf4f 100644
-> --- a/drivers/misc/pvpanic/pvpanic-mmio.c
-> +++ b/drivers/misc/pvpanic/pvpanic-mmio.c
-> @@ -93,7 +93,7 @@ static int pvpanic_mmio_probe(struct platform_device *pdev)
->  		return -EINVAL;
->  	}
+> diff --git a/drivers/misc/pvpanic/pvpanic-pci.c b/drivers/misc/pvpanic/pvpanic-pci.c
+> index 9ecc4e8559d5..046ce4ecc195 100644
+> --- a/drivers/misc/pvpanic/pvpanic-pci.c
+> +++ b/drivers/misc/pvpanic/pvpanic-pci.c
+> @@ -78,15 +78,15 @@ static int pvpanic_pci_probe(struct pci_dev *pdev,
+>  	void __iomem *base;
+>  	int ret;
+>  
+> -	ret = pci_enable_device(pdev);
+> +	ret = pcim_enable_device(pdev);
+>  	if (ret < 0)
+>  		return ret;
+>  
+> -	base = pci_iomap(pdev, 0, 0);
+> +	base = pcim_iomap(pdev, 0, 0);
+>  	if (!base)
+>  		return -ENOMEM;
 >  
 > -	pi = kmalloc(sizeof(*pi), GFP_ATOMIC);
-> +	pi = devm_kmalloc(dev, sizeof(*pi), GFP_ATOMIC);
+> +	pi = devm_kmalloc(&pdev->dev, sizeof(*pi), GFP_ATOMIC);
 >  	if (!pi)
 >  		return -ENOMEM;
 >  
-> @@ -114,7 +114,6 @@ static int pvpanic_mmio_remove(struct platform_device *pdev)
+> @@ -107,9 +107,6 @@ static void pvpanic_pci_remove(struct pci_dev *pdev)
 >  	struct pvpanic_instance *pi = dev_get_drvdata(&pdev->dev);
 >  
 >  	pvpanic_remove(pi);
+> -	iounmap(pi->base);
 > -	kfree(pi);
->  
->  	return 0;
+> -	pci_disable_device(pdev);
 >  }
+>  
+>  static struct pci_driver pvpanic_pci_driver = {
 > -- 
 > 2.30.2
 > 
