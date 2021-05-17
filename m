@@ -2,92 +2,107 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D79C9C43460
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 20:20:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD6BCC433B4
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 20:22:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BB2D360FEB
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 20:20:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B73926112F
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 20:22:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240406AbhEQUWA (ORCPT
+        id S240236AbhEQUXS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 17 May 2021 16:22:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35482 "EHLO
+        Mon, 17 May 2021 16:23:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35814 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239639AbhEQUV5 (ORCPT
+        with ESMTP id S238792AbhEQUXQ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 17 May 2021 16:21:57 -0400
+        Mon, 17 May 2021 16:23:16 -0400
 Received: from viti.kaiser.cx (viti.kaiser.cx [IPv6:2a01:238:43fe:e600:cd0c:bd4a:7a3:8e9f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DD84C061573;
-        Mon, 17 May 2021 13:20:40 -0700 (PDT)
-Received: from dslb-084-059-234-229.084.059.pools.vodafone-ip.de ([84.59.234.229] helo=martin-debian-2.paytec.ch)
-        by viti.kaiser.cx with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <martin@kaiser.cx>)
-        id 1lijj2-0001o4-6W; Mon, 17 May 2021 22:20:28 +0200
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1ED88C061573;
+        Mon, 17 May 2021 13:22:00 -0700 (PDT)
+Received: from martin by viti.kaiser.cx with local (Exim 4.89)
+        (envelope-from <martin@viti.kaiser.cx>)
+        id 1lijkQ-0001s7-1u; Mon, 17 May 2021 22:21:54 +0200
+Date:   Mon, 17 May 2021 22:21:54 +0200
 From:   Martin Kaiser <martin@kaiser.cx>
-To:     Larry Finger <Larry.Finger@lwfinger.net>,
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Larry Finger <Larry.Finger@lwfinger.net>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Guenter Roeck <linux@roeck-us.net>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Martin Kaiser <martin@kaiser.cx>
-Subject: [PATCH v2 6/6] staging: rtl8188eu: use safe iterator in rtw_free_xmitframe_queue
-Date:   Mon, 17 May 2021 22:18:26 +0200
-Message-Id: <20210517201826.25150-6-martin@kaiser.cx>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20210517201826.25150-1-martin@kaiser.cx>
+        linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/6] staging: rtl8188eu: use safe iterator in
+ rtw_free_network_queue
+Message-ID: <20210517202154.3swbe3e2tbcjbuit@viti.kaiser.cx>
 References: <20210516160613.30489-1-martin@kaiser.cx>
- <20210517201826.25150-1-martin@kaiser.cx>
+ <738695eb-61f1-54b2-cd68-2143e831e338@wanadoo.fr>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <738695eb-61f1-54b2-cd68-2143e831e338@wanadoo.fr>
+User-Agent: NeoMutt/20170113 (1.7.2)
+Sender: Martin Kaiser <martin@viti.kaiser.cx>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Use list_for_each_entry_safe, we may delete list items while iterating
-over the list.
+Thus wrote Christophe JAILLET (christophe.jaillet@wanadoo.fr):
 
-Fixes: 23017c8842d2 ("staging: rtl8188eu: Use list iterators and helpers")
-Signed-off-by: Martin Kaiser <martin@kaiser.cx>
----
-v2:
- - use list_for_each_entry_safe
+> Le 16/05/2021 à 18:06, Martin Kaiser a écrit :
+> > rtw_free_network_queue iterates over the scanned wireless networks and
+> > calls _rtw_free_network for each of them. In some cases,
+> > _rtw_free_network removes a network from the list.
 
- drivers/staging/rtl8188eu/core/rtw_xmit.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+> > We have to use list_for_each_safe if we remove list entries while we
+> > iterate over a list.
 
-diff --git a/drivers/staging/rtl8188eu/core/rtw_xmit.c b/drivers/staging/rtl8188eu/core/rtw_xmit.c
-index 3763d188b892..dcc29a74612d 100644
---- a/drivers/staging/rtl8188eu/core/rtw_xmit.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_xmit.c
-@@ -1329,17 +1329,15 @@ s32 rtw_free_xmitframe(struct xmit_priv *pxmitpriv, struct xmit_frame *pxmitfram
- 
- void rtw_free_xmitframe_queue(struct xmit_priv *pxmitpriv, struct __queue *pframequeue)
- {
--	struct list_head *plist, *phead;
--	struct	xmit_frame	*pxmitframe;
-+	struct list_head *phead;
-+	struct	xmit_frame	*pxmitframe, *temp;
- 
- 	spin_lock_bh(&pframequeue->lock);
- 
- 	phead = get_list_head(pframequeue);
--	list_for_each(plist, phead) {
--		pxmitframe = list_entry(plist, struct xmit_frame, list);
--
-+	list_for_each_entry_safe(pxmitframe, temp, phead, list)
- 		rtw_free_xmitframe(pxmitpriv, pxmitframe);
--	}
-+
- 	spin_unlock_bh(&pframequeue->lock);
- }
- 
--- 
-2.20.1
+> > Fixes: 23017c8842d2 ("staging: rtl8188eu: Use list iterators and helpers")
+> > Signed-off-by: Martin Kaiser <martin@kaiser.cx>
+> > ---
+> > Without this patch, it's easy to get the driver into an endless loop by
+> > scanning, connecting and disconnecting repeatedly.
 
+> > wpa_supplicant -B -Dwext -i wlan0 -c /path/to/my/config...
+> > while true ; do
+> >     sleep 1
+> >     wpa_cli reconfigure
+> >     wpa_cli add_network
+> >     wpa_cli set_network 0 ssid ...
+> >     wpa_cli set_network 0 psk ...
+> >     wpa_cli select_network 0
+> >     sleep 6
+> >     wpa_cli status
+> >     wpa_cli disconnect 0
+> > done
+
+> >   drivers/staging/rtl8188eu/core/rtw_mlme.c | 4 ++--
+> >   1 file changed, 2 insertions(+), 2 deletions(-)
+
+> > diff --git a/drivers/staging/rtl8188eu/core/rtw_mlme.c b/drivers/staging/rtl8188eu/core/rtw_mlme.c
+> > index 159465b073c2..14816ad51668 100644
+> > --- a/drivers/staging/rtl8188eu/core/rtw_mlme.c
+> > +++ b/drivers/staging/rtl8188eu/core/rtw_mlme.c
+> > @@ -199,7 +199,7 @@ struct wlan_network *rtw_find_network(struct __queue *scanned_queue, u8 *addr)
+> >   void rtw_free_network_queue(struct adapter *padapter, u8 isfreeall)
+> >   {
+> > -	struct list_head *phead, *plist;
+> > +	struct list_head *phead, *plist, *temp;
+> >   	struct wlan_network *pnetwork;
+> >   	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
+> >   	struct __queue *scanned_queue = &pmlmepriv->scanned_queue;
+> > @@ -207,7 +207,7 @@ void rtw_free_network_queue(struct adapter *padapter, u8 isfreeall)
+> >   	spin_lock_bh(&scanned_queue->lock);
+> >   	phead = get_list_head(scanned_queue);
+> > -	list_for_each(plist, phead) {
+> > +	list_for_each_safe(plist, temp, phead) {
+> >   		pnetwork = list_entry(plist, struct wlan_network, list);
+> >   		_rtw_free_network(pmlmepriv, pnetwork, isfreeall);
+
+> Nitpicking: 'list_for_each_entry_safe' could also be used to simplify code.
+
+Thanks for the hint, I just sent out v2.
