@@ -2,104 +2,131 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DEE3C433ED
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 09:58:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2843BC433ED
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 10:05:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4EC64610FC
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 09:58:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0740C610C9
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 10:05:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236191AbhEQKAK (ORCPT
+        id S233034AbhEQKHH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 17 May 2021 06:00:10 -0400
-Received: from stargate.chelsio.com ([12.32.117.8]:16918 "EHLO
-        stargate70.asicdesigners.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S236424AbhEQJ7l (ORCPT
+        Mon, 17 May 2021 06:07:07 -0400
+Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:18015 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236238AbhEQKE3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 17 May 2021 05:59:41 -0400
-Received: from [10.193.177.171] (dd3k3bs-lt01.asicdesigners.com [10.193.177.171] (may be forged))
-        by stargate70.asicdesigners.com (8.14.7/8.14.7) with ESMTP id 14H9wHEH017565;
-        Mon, 17 May 2021 02:58:18 -0700
-Cc:     ayush.sawal@asicdesigners.com, kernel-janitors@vger.kernel.org,
-        Rohit Maheshwari <rohitm@chelsio.com>
-Subject: Re: [bug report] cxgb4/ch_ktls: Clear resources when pf4 device is
- removed
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-References: <YJ+lregUoryep/Ix@mwanda>
-From:   Ayush Sawal <ayush.sawal@chelsio.com>
-Message-ID: <83fca50a-448b-a0a7-e406-ea458270637f@chelsio.com>
-Date:   Mon, 17 May 2021 15:48:49 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.1
+        Mon, 17 May 2021 06:04:29 -0400
+Received: from [192.168.1.18] ([86.243.172.93])
+        by mwinf5d20 with ME
+        id 5m2P2500Z21Fzsu03m2PcA; Mon, 17 May 2021 12:02:27 +0200
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 17 May 2021 12:02:27 +0200
+X-ME-IP: 86.243.172.93
+Subject: Re: [PATCH 1/2] misc/pvpanic: Fix error handling in
+ 'pvpanic_pci_probe()'
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     arnd@arndb.de, gregkh@linuxfoundation.org,
+        mihai.carabas@oracle.com, pizhenwei@bytedance.com,
+        pbonzini@redhat.com, linqiheng@huawei.com,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <7efa7b4b9867ac44f398783b89f3a21deac4ce8b.1621175108.git.christophe.jaillet@wanadoo.fr>
+ <YKIi1hljnjvqMCVA@smile.fi.intel.com>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Message-ID: <ada55e25-5eb3-9b6b-5783-d2303db9bf83@wanadoo.fr>
+Date:   Mon, 17 May 2021 12:02:24 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-In-Reply-To: <YJ+lregUoryep/Ix@mwanda>
+In-Reply-To: <YKIi1hljnjvqMCVA@smile.fi.intel.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
 Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Dan,
+Le 17/05/2021 à 10:01, Andy Shevchenko a écrit :
+> On Sun, May 16, 2021 at 04:36:55PM +0200, Christophe JAILLET wrote:
+>> There is no error handling path in the probe function.
+>> Switch to managed resource so that errors in the probe are handled easily
+>> and simplify the remove function accordingly.
+> 
+> Yes, that's what I suggested earlier to another contributor.
+> 
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> 
+> Thanks!
+> 
+> P.S. You may consider the following things as well:
+>   1) converting to use pci_set_drvdata() / pci_get_drvdata()
 
-Thanks for pointing this out.
-The u_ctx pointer in case of ch_ktls will always be valid.
+I can send a patch for that if you want.
+But it looks really low value for a driver that is already very short 
+and clean.
 
-So this condition if(u_ctx && u_ctx->detach) must be if(u_ctx->detach).
-and xa_erase(&u_ctx->tid_list, tx_info->tid) doesnot requires a u_ctx check.
+>   2) providing devm_pvpanic_probe() [via devm_add_action() /
+>      devm_add_action_or_reset()]
 
-So I will send a fix which replaces if(u_ctx && u_ctx->detach) to 
-if(u_ctx->detach)
-and removes the checks for u_ctx pointer in ch_ktls driver.
+I don't follow you here.
+The goal would be to avoid the remove function and "record" the needed 
+action directly in the probe?
 
-Thanks,
-Ayush
+If this is it, I would only see an unusual pattern and a harder to 
+follow logic.
 
-On 5/15/2021 4:12 PM, Dan Carpenter wrote:
-> Hello Ayush Sawal,
->
-> This is a semi-automatic email about new static checker warnings.
->
-> The patch 65e302a9bd57: "cxgb4/ch_ktls: Clear resources when pf4
-> device is removed" from May 13, 2021, leads to the following Smatch
-> complaint:
->
->      drivers/net/ethernet/chelsio/inline_crypto/ch_ktls/chcr_ktls.c:393 chcr_ktls_dev_del()
->      error: we previously assumed 'u_ctx' could be null (see line 374)
->
-> drivers/net/ethernet/chelsio/inline_crypto/ch_ktls/chcr_ktls.c
->     373		u_ctx = tx_info->adap->uld[CXGB4_ULD_KTLS].handle;
->     374		if (u_ctx && u_ctx->detach)
->                      ^^^^^
-> Can u_ctx be NULL?
->
->     375			return;
->     376		/* clear l2t entry */
->     377		if (tx_info->l2te)
->     378			cxgb4_l2t_release(tx_info->l2te);
->     379	
->     380	#if IS_ENABLED(CONFIG_IPV6)
->     381		/* clear clip entry */
->     382		if (tx_info->ip_family == AF_INET6)
->     383			cxgb4_clip_release(netdev, (const u32 *)
->     384					   &tx_info->sk->sk_v6_rcv_saddr,
->     385					   1);
->     386	#endif
->     387	
->     388		/* clear tid */
->     389		if (tx_info->tid != -1) {
->     390			cxgb4_remove_tid(&tx_info->adap->tids, tx_info->tx_chan,
->     391					 tx_info->tid, tx_info->ip_family);
->     392	
->     393			xa_erase(&u_ctx->tid_list, tx_info->tid);
->                                   ^^^^^^^^^^^^^^^^
-> Unchecked dereference.
->
->     394		}
->     395	
->
-> regards,
-> dan carpenter
+Did I miss something?
+What would be the benefit?
+
+CJ
+
+> 
+>> Fixes: db3a4f0abefd ("misc/pvpanic: add PCI driver")
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>>   drivers/misc/pvpanic/pvpanic-pci.c | 9 +++------
+>>   1 file changed, 3 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/misc/pvpanic/pvpanic-pci.c b/drivers/misc/pvpanic/pvpanic-pci.c
+>> index 9ecc4e8559d5..046ce4ecc195 100644
+>> --- a/drivers/misc/pvpanic/pvpanic-pci.c
+>> +++ b/drivers/misc/pvpanic/pvpanic-pci.c
+>> @@ -78,15 +78,15 @@ static int pvpanic_pci_probe(struct pci_dev *pdev,
+>>   	void __iomem *base;
+>>   	int ret;
+>>   
+>> -	ret = pci_enable_device(pdev);
+>> +	ret = pcim_enable_device(pdev);
+>>   	if (ret < 0)
+>>   		return ret;
+>>   
+>> -	base = pci_iomap(pdev, 0, 0);
+>> +	base = pcim_iomap(pdev, 0, 0);
+>>   	if (!base)
+>>   		return -ENOMEM;
+>>   
+>> -	pi = kmalloc(sizeof(*pi), GFP_ATOMIC);
+>> +	pi = devm_kmalloc(&pdev->dev, sizeof(*pi), GFP_ATOMIC);
+>>   	if (!pi)
+>>   		return -ENOMEM;
+>>   
+>> @@ -107,9 +107,6 @@ static void pvpanic_pci_remove(struct pci_dev *pdev)
+>>   	struct pvpanic_instance *pi = dev_get_drvdata(&pdev->dev);
+>>   
+>>   	pvpanic_remove(pi);
+>> -	iounmap(pi->base);
+>> -	kfree(pi);
+>> -	pci_disable_device(pdev);
+>>   }
+>>   
+>>   static struct pci_driver pvpanic_pci_driver = {
+>> -- 
+>> 2.30.2
+>>
+> 
+
