@@ -2,108 +2,103 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70766C433B4
-	for <kernel-janitors@archiver.kernel.org>; Sun, 16 May 2021 20:03:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EB85C433B4
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 07:03:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4DFE960FE8
-	for <kernel-janitors@archiver.kernel.org>; Sun, 16 May 2021 20:03:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 409E6610C9
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 07:03:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233207AbhEPUEb (ORCPT
+        id S234988AbhEQHEs (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 16 May 2021 16:04:31 -0400
-Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:37033 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230104AbhEPUEb (ORCPT
+        Mon, 17 May 2021 03:04:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52026 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234274AbhEQHEr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 16 May 2021 16:04:31 -0400
-Received: from [192.168.1.18] ([86.243.172.93])
-        by mwinf5d79 with ME
-        id 5Y3C2500E21Fzsu03Y3CLh; Sun, 16 May 2021 22:03:15 +0200
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 16 May 2021 22:03:15 +0200
-X-ME-IP: 86.243.172.93
-Subject: Re: [PATCH 1/6] staging: rtl8188eu: use safe iterator in
- rtw_free_network_queue
-To:     Martin Kaiser <martin@kaiser.cx>,
-        Larry Finger <Larry.Finger@lwfinger.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Cc:     linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20210516160613.30489-1-martin@kaiser.cx>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Message-ID: <738695eb-61f1-54b2-cd68-2143e831e338@wanadoo.fr>
-Date:   Sun, 16 May 2021 22:03:12 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        Mon, 17 May 2021 03:04:47 -0400
+Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB86FC061573;
+        Mon, 17 May 2021 00:03:31 -0700 (PDT)
+Received: by mail-pj1-x1035.google.com with SMTP id pi6-20020a17090b1e46b029015cec51d7cdso3145522pjb.5;
+        Mon, 17 May 2021 00:03:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kso+u5oDEUI6hC/TpN6G+VEPeqtVt8JMKDkpe0hvQw4=;
+        b=NEbHNwThWEj/g23crYRi7RqFA8QTN7P7vSE8qulvyTyQ6IEA61lbeLgBIMLxpkA5kZ
+         ugEXfzy15FDU6bAn2yycy1il8SfAeERdmFfccsen7A2kODq5Zn/w4FvX3wlsdKrU+8u9
+         a5RfT7u8xCwzH96fptkWr3fGInei2PDt1l9JfMIdwsktQ2Tl149U+R07krzvwhkl/iY5
+         HAGionsDO3VG4dnaLIokeyFqrTBmQydqVgclx0qJUoLbm/BQycSSeAHfJF7YkxQPzVz1
+         IF4DXfGjlsuH2IOQ5ETXDc2Kia28lut6eHhyLpVZzQtXKD2MyEw8puW1psx4VfHsiJ13
+         SfBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kso+u5oDEUI6hC/TpN6G+VEPeqtVt8JMKDkpe0hvQw4=;
+        b=AhHFJq6bxUM/lRkmY+mOBtlLQ9k/rNYWYJRA3970rlhd4CVjr1rSM5Ys6rdWG6uowf
+         coPQO9t1pV6ZvBnNwvCcGk+UFhlKi8uyN1RP7Kgzks9cByS2oo14PpYt3cHCeVDEPl6R
+         ljWaMGJn1crzJhxcOQt/GBFlUdcI91O/TMOY6cZQdj2e7uT6xriouBlYPSViEmIn7CyK
+         P8ZBq+AoKTow40abOsKJECtPYS1Eyj9BhcT7vFtmGcMu8vToIK6YZ3wRgK9GSfCJAc0w
+         b7p7uUnQ4PwX0EGqF7D+My8VQkAQ7qw2BdwUQ0IGPGP2Ibm5xCAs6d7vV8+Gk6QVQk4N
+         yphw==
+X-Gm-Message-State: AOAM533G446OIKOH39jxCKjk31pU2vU/MHLxw3D1BN0po/TYaidLU2Wc
+        o3CgxIbnYbgbRBQOAFnaVz61tuu/ebjGs3+oSZE=
+X-Google-Smtp-Source: ABdhPJzEYwkmCqhc0PcoCvbscW8cdar0csJ9Ro1rhG3jcTsBopXsi87oK+hq4MY+OFYFMaVphW4HofSxoxS8Snj4u4Q=
+X-Received: by 2002:a17:90a:d184:: with SMTP id fu4mr1421945pjb.129.1621235011120;
+ Mon, 17 May 2021 00:03:31 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20210516160613.30489-1-martin@kaiser.cx>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20210513085227.54392-1-colin.king@canonical.com>
+In-Reply-To: <20210513085227.54392-1-colin.king@canonical.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 17 May 2021 10:03:15 +0300
+Message-ID: <CAHp75VdvZEhdmui0+1eS0BXvxBs60=uB0zOPex_TTDTrK7ewnQ@mail.gmail.com>
+Subject: Re: [PATCH][next] gpio: xilinx: Fix potential integer overflow on
+ shift of a u32 int
+To:     Colin King <colin.king@canonical.com>
+Cc:     Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
+        Srinivas Neeli <srinivas.neeli@xilinx.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        kernel-janitors <kernel-janitors@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 16/05/2021 à 18:06, Martin Kaiser a écrit :
-> rtw_free_network_queue iterates over the scanned wireless networks and
-> calls _rtw_free_network for each of them. In some cases,
-> _rtw_free_network removes a network from the list.
-> 
-> We have to use list_for_each_safe if we remove list entries while we
-> iterate over a list.
-> 
-> Fixes: 23017c8842d2 ("staging: rtl8188eu: Use list iterators and helpers")
-> Signed-off-by: Martin Kaiser <martin@kaiser.cx>
-> ---
-> Without this patch, it's easy to get the driver into an endless loop by
-> scanning, connecting and disconnecting repeatedly.
-> 
-> wpa_supplicant -B -Dwext -i wlan0 -c /path/to/my/config...
-> while true ; do
->     sleep 1
->     wpa_cli reconfigure
->     wpa_cli add_network
->     wpa_cli set_network 0 ssid ...
->     wpa_cli set_network 0 psk ...
->     wpa_cli select_network 0
->     sleep 6
->     wpa_cli status
->     wpa_cli disconnect 0
-> done
-> 
->   drivers/staging/rtl8188eu/core/rtw_mlme.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/rtl8188eu/core/rtw_mlme.c b/drivers/staging/rtl8188eu/core/rtw_mlme.c
-> index 159465b073c2..14816ad51668 100644
-> --- a/drivers/staging/rtl8188eu/core/rtw_mlme.c
-> +++ b/drivers/staging/rtl8188eu/core/rtw_mlme.c
-> @@ -199,7 +199,7 @@ struct wlan_network *rtw_find_network(struct __queue *scanned_queue, u8 *addr)
->   
->   void rtw_free_network_queue(struct adapter *padapter, u8 isfreeall)
->   {
-> -	struct list_head *phead, *plist;
-> +	struct list_head *phead, *plist, *temp;
->   	struct wlan_network *pnetwork;
->   	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
->   	struct __queue *scanned_queue = &pmlmepriv->scanned_queue;
-> @@ -207,7 +207,7 @@ void rtw_free_network_queue(struct adapter *padapter, u8 isfreeall)
->   	spin_lock_bh(&scanned_queue->lock);
->   
->   	phead = get_list_head(scanned_queue);
-> -	list_for_each(plist, phead) {
-> +	list_for_each_safe(plist, temp, phead) {
->   		pnetwork = list_entry(plist, struct wlan_network, list);
->   
->   		_rtw_free_network(pmlmepriv, pnetwork, isfreeall);
-> 
-Nitpicking: 'list_for_each_entry_safe' could also be used to simplify code.
+On Thu, May 13, 2021 at 12:12 PM Colin King <colin.king@canonical.com> wrote:
+>
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> The left shift of the u32 integer v is evaluated using 32 bit
+> arithmetic and then assigned to a u64 integer. There are cases
+> where v will currently overflow on the shift. Avoid this by
+> casting it to unsigned long (same type as map[]) before shifting
+> it.
+>
+> Addresses-Coverity: ("Unintentional integer overflow")
+> Fixes: 02b3f84d9080 ("gpio: xilinx: Switch to use bitmap APIs")
 
-CJ
+No, it is a false positive,
+
+>         const unsigned long offset = (bit % BITS_PER_LONG) & BIT(5);
+
+See above, offset is 0 when BITS_PER_LONG == 32 and 32 when it's equal to 64.
+
+> -       map[index] |= v << offset;
+> +       map[index] |= (unsigned long)v << offset;
+
+-- 
+With Best Regards,
+Andy Shevchenko
