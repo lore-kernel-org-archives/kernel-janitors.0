@@ -2,129 +2,101 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3025C43461
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 08:43:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 129FEC43460
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 08:54:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B935E61029
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 08:43:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCCB060249
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 08:54:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235363AbhEQIol (ORCPT
+        id S235674AbhEQI4B (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 17 May 2021 04:44:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46696 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230312AbhEQIok (ORCPT
+        Mon, 17 May 2021 04:56:01 -0400
+Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:8288 "EHLO
+        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232924AbhEQI4B (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 17 May 2021 04:44:40 -0400
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94FEDC061573
-        for <kernel-janitors@vger.kernel.org>; Mon, 17 May 2021 01:43:24 -0700 (PDT)
-Received: by mail-wm1-x334.google.com with SMTP id z137-20020a1c7e8f0000b02901774f2a7dc4so869910wmc.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 17 May 2021 01:43:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=HsGrTTXSqy1R5BsWlfd1YsU0RFI4WeeaWkJklgir48U=;
-        b=0hE5O+GscDy8Nn4rYBiNbO80WVKdf2MQMu1/ZGp+wCPqj71c1zOsJkxvhm92HFfh9D
-         A5Xpa4k+L15JPEr7KVv/BlG5uTR41DCDIzsz3ZA4bk+oFWtSIxLox9X9ioQIuLtX96K1
-         6X5pWg5MWQCpHll9ELZSrPLOyVFmu9nFR1IAk5M+GHtXP+8NW/bQ+SC3xSl9XmRR306s
-         SfYHuPTBAVgOaJUDACDY4MyyxQvxucaRM75v4ue//VMt1IHOlpuXwu9EnXsE8tisjjmN
-         vwhzQCMmlREj1E+EmxAtnfvj7TP13MV8Q/UpVpQnHFgeJvEHOhipIwPbGZNwM49i0mgE
-         7m8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=HsGrTTXSqy1R5BsWlfd1YsU0RFI4WeeaWkJklgir48U=;
-        b=Q2YFb6gpN2zkOIVNcb1dfIZmPscg7dEWBoN+5uPwN10+PrE3PNbGyPMtIbkmPF1cAF
-         dlgdukbir23fIaiBc0Gnvx07QrGhaRuYWreLJOKjwsheKT7Q774I4v0MU4A7dVr6ljb8
-         eZkFiQUNNsDzKlV2cjUU73cSXnGv15y8jO/y7XYKUz3aa2+Xpt3orZd9KIgjV7evIxqe
-         4etS+Ztg874XLmib37ZXQ0VWB+dPgSskF2R/jcjLvWq4ct+9a7+iIFax3aPv7Gk9ODXc
-         wTUf1TiYwBKJx6CeBwOvzucCvozlzqQOVB6Dyproi+X9tmFJJv/+yh3n/SsnocQLIiQ+
-         Aeqw==
-X-Gm-Message-State: AOAM532rcHWJ/Z7gKQCGRs7G9f77rDUUd37jua9Sdtvg+Y9bIqb1IMf3
-        bK2+XWB/Eia2D8p+XgmJAkt3yVlFwVFxdrq9
-X-Google-Smtp-Source: ABdhPJx2rtb2czAZLf2iwucJaJ228xdmBB8ZpCH4PIXiaefI7VBHYklQgRZAQYZ4EVToF5rVF1PYNw==
-X-Received: by 2002:a7b:c841:: with SMTP id c1mr62673858wml.123.1621241002792;
-        Mon, 17 May 2021 01:43:22 -0700 (PDT)
-Received: from ?IPv6:2a01:e0a:90c:e290:3044:ffc:eaa9:6a70? ([2a01:e0a:90c:e290:3044:ffc:eaa9:6a70])
-        by smtp.gmail.com with ESMTPSA id q186sm588870wme.20.2021.05.17.01.43.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 May 2021 01:43:22 -0700 (PDT)
-Subject: Re: [PATCH 2/2] drm: bridge: it66121: fix a resource leak in probe
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Phong LE <ple@baylibre.com>
-Cc:     Andrzej Hajda <a.hajda@samsung.com>,
-        Robert Foss <robert.foss@linaro.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
-References: <YJ+ZgXTFa6voZuJG@mwanda>
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Organization: Baylibre
-Message-ID: <873d476b-d8b2-8757-47ba-4588231ceac3@baylibre.com>
-Date:   Mon, 17 May 2021 10:43:21 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
+        Mon, 17 May 2021 04:56:01 -0400
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 14H8kmTj029677;
+        Mon, 17 May 2021 08:50:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
+ bh=qtW+izEwvN1JhotR/PnIKHwhYFppy04AO6qnSiOTI8A=;
+ b=0TsTl3ncEuHq6w+1r3Uam2RTUbUnTKDdUkQHBpxNjyL/kbsWGs/gEOlKVrunmTnH0ijs
+ /slMTq9mLx2e9KKTBAfPu76qwjE3SOJcBHfrC8+buYHzoPuacUu3EIXFWSalKuQ2F/ti
+ 8d2KAlj1ep2L7Go5PEtId3EtECFVOMtU1nSg9GjW6CgFd6nmG3GZa488rh3yIJxBz9BI
+ voaLV/M2ABM/s9w04z9O82cVsnkzxwgVDse64ndC5Nmb9e+e/Q76tbMOJTu9X9vxu52e
+ rybF52hMOlkNDjfTOUTJBxbn1ZLcJ8DIvPQpbJLmNgSQUPYTF3Z7FEV826l8V7y+glqN yw== 
+Received: from oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by mx0b-00069f02.pphosted.com with ESMTP id 38kffu03su-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 17 May 2021 08:50:42 +0000
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
+        by pps.podrdrct (8.16.0.36/8.16.0.36) with SMTP id 14H8oflI146696;
+        Mon, 17 May 2021 08:50:41 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by aserp3020.oracle.com with ESMTP id 38j644t24w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 17 May 2021 08:50:41 +0000
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 14H8ofHE146618;
+        Mon, 17 May 2021 08:50:41 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 38j644t23t-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 17 May 2021 08:50:41 +0000
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 14H8odxC015762;
+        Mon, 17 May 2021 08:50:40 GMT
+Received: from mwanda (/102.36.221.92)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 17 May 2021 01:50:38 -0700
+Date:   Mon, 17 May 2021 11:50:32 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Ferenc Bakonyi <fero@drama.obuda.kando.hu>,
+        Igor Matheus Andrade Torrente <igormtorrente@gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-nvidia@lists.surfsouth.com, dri-devel@lists.freedesktop.org,
+        linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] hgafb: fix probe function
+Message-ID: <YKIuWEcIJvTIuE2j@mwanda>
 MIME-Version: 1.0
-In-Reply-To: <YJ+ZgXTFa6voZuJG@mwanda>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+X-Proofpoint-ORIG-GUID: zp_B0iEjk4-JQRkm1u9iH0RnRXT6DhA-
+X-Proofpoint-GUID: zp_B0iEjk4-JQRkm1u9iH0RnRXT6DhA-
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 15/05/2021 11:50, Dan Carpenter wrote:
-> In the original code if the "ctx = devm_kzalloc()" allocation failed
-> then we should have called of_node_put(ep); before returning.  It's
-> actually a bit easier to do the allocation first before assigning
-> ep = of_graph_get_endpoint_by_regs().
-> 
-> Fixes: 988156dc2fc9 ("drm: bridge: add it66121 driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/gpu/drm/bridge/ite-it66121.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/ite-it66121.c b/drivers/gpu/drm/bridge/ite-it66121.c
-> index 6980c9801d0d..7149ed40af83 100644
-> --- a/drivers/gpu/drm/bridge/ite-it66121.c
-> +++ b/drivers/gpu/drm/bridge/ite-it66121.c
-> @@ -898,14 +898,14 @@ static int it66121_probe(struct i2c_client *client,
->  		return -ENXIO;
->  	}
->  
-> -	ep = of_graph_get_endpoint_by_regs(dev->of_node, 0, 0);
-> -	if (!ep)
-> -		return -EINVAL;
-> -
->  	ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
->  	if (!ctx)
->  		return -ENOMEM;
->  
-> +	ep = of_graph_get_endpoint_by_regs(dev->of_node, 0, 0);
-> +	if (!ep)
-> +		return -EINVAL;
-> +
->  	ctx->dev = dev;
->  	ctx->client = client;
->  
-> 
+There is a reversed if statement in this probe function so the driver is
+completely broken.
 
-Thanks !
+Fixes: dc13cac4862c ("video: hgafb: fix potential NULL pointer dereference")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/video/fbdev/hgafb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+diff --git a/drivers/video/fbdev/hgafb.c b/drivers/video/fbdev/hgafb.c
+index cc8e62ae93f6..bd3d07aa4f0e 100644
+--- a/drivers/video/fbdev/hgafb.c
++++ b/drivers/video/fbdev/hgafb.c
+@@ -558,7 +558,7 @@ static int hgafb_probe(struct platform_device *pdev)
+ 	int ret;
+ 
+ 	ret = hga_card_detect();
+-	if (!ret)
++	if (ret)
+ 		return ret;
+ 
+ 	printk(KERN_INFO "hgafb: %s with %ldK of memory detected.\n",
+-- 
+2.30.2
 
-Applying to drm-misc-fixes
