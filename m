@@ -2,104 +2,111 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05805C433ED
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 08:58:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10F21C43460
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 09:01:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DAF2F60FF3
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 08:58:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4BC660FF3
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 09:01:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235772AbhEQJAH (ORCPT
+        id S235580AbhEQJCl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 17 May 2021 05:00:07 -0400
-Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:35628 "EHLO
-        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235510AbhEQJAG (ORCPT
+        Mon, 17 May 2021 05:02:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50818 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235573AbhEQJCk (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 17 May 2021 05:00:06 -0400
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 14H8l004030473;
-        Mon, 17 May 2021 08:58:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type : in-reply-to;
- s=corp-2020-01-29; bh=BmkRI2QJIX544Vr/gqGTFLcETOY1snYLn3dIrLvTSXs=;
- b=MUhrRwxhMqFc+7h3pfGd5i5bhKX00OPvJ9YcO42wu2aLRPdgUetRvxPxPMjQJsJa0J8M
- dX/2sNNtkN0vAgg1RSj4WMHY049S3CxRsWFX1xXp8MmN86nKKRt/NZhPOaY96YMc88K7
- JHilgVeUGjMtvvi1UWM4uS5t53sEDs/o2JUAnTQHBLbeStT/OV8hejDkzVr9CKOLhJ/O
- Di2HIBuNzdGrlOwNve1pp4eLS0TcnSSj3n/Jt2AHX8pSs34h2KeRxZviKICoVxYJ0lJ/
- ZGibK/po/q/QNiT4rtbEIDNxT/6pWmhLqixcdlOQ0XYE9qOINNPSiNQW5Os+w5Q51n7x Qg== 
-Received: from oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by mx0b-00069f02.pphosted.com with ESMTP id 38j6usgmwa-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 17 May 2021 08:58:46 +0000
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
-        by pps.podrdrct (8.16.0.36/8.16.0.36) with SMTP id 14H8pwH0066457;
-        Mon, 17 May 2021 08:58:45 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by aserp3030.oracle.com with ESMTP id 38j4baytvb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 17 May 2021 08:58:45 +0000
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 14H8suq9070534;
-        Mon, 17 May 2021 08:58:45 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3030.oracle.com with ESMTP id 38j4baytv8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 17 May 2021 08:58:45 +0000
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 14H8wi7B009528;
-        Mon, 17 May 2021 08:58:44 GMT
-Received: from mwanda (/102.36.221.92)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 17 May 2021 08:58:44 +0000
-Date:   Mon, 17 May 2021 11:58:37 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Chris Snook <chris.snook@gmail.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH 2/2 net-next] alx: unlock on error in alx_set_pauseparam()
-Message-ID: <YKIwPe2/k1R+PTWU@mwanda>
+        Mon, 17 May 2021 05:02:40 -0400
+Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7D1CC06174A
+        for <kernel-janitors@vger.kernel.org>; Mon, 17 May 2021 02:01:24 -0700 (PDT)
+Received: by mail-pg1-x52b.google.com with SMTP id t193so4207181pgb.4
+        for <kernel-janitors@vger.kernel.org>; Mon, 17 May 2021 02:01:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9OkKHJwSRtsD1XoVSI9D7062oV0S6RC6cgh0CBzJGxQ=;
+        b=wurd6Th2hC0CtygbnWfpzXlmQIro6bMhdR7DCsDpr4cXF8QvJWfU2H7SuFcfuyl/on
+         xtOSzL9mRf6Qpm+/yH9LQawbpjRtEIfDuKPownnp0Bixi4DHYm0Cv4Ovg/7BeVIjwGte
+         Vgvdu50DNIgJdrMFWpziD3ZSowR3zWxzQazg7uoQJt6bE8+uPeOEhd7o2h/HBsYbh8lU
+         hlikFoTOsIDijq4sx06mXFj7NwWE6z4lsmpAtBJraB2mLA7f3Dcuke8KR7G53Vp1OhUK
+         kMKP77uZj4QYkMbZjh+ysYt/FSCyNPtmGQ0qYnuNvshMWQykCTz+CBHahzQff7YY7bCB
+         17QA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9OkKHJwSRtsD1XoVSI9D7062oV0S6RC6cgh0CBzJGxQ=;
+        b=eRsy8F3V2ISSzQGW7tkAAO8rr1hWHU1u+kd6igLSZhUeqYa3C/8jw0Yx2e2NboFZks
+         w/z0SEKqPKtGdXzheyvAqBzBlC3wdti+US+V/PdMyzr6vKNg2A4/0Zyx+XO7ZhwJLJ1Z
+         8lpYpQWM/o47seUNidoRnhh3AKjuMXYBr8IkWEpSGgYoLVFuyiB7oFd7h2ayeC3SgvVE
+         ROYuqOx5cgl9J3PH+ub/KNtg82n2D/78TCkBFkafyXSklx6eJuecJctqKU/T5a4PN5ZX
+         ltBrh4GwbL6IkWkIdyjvQOgGwTJg+0hCtWNdIFw4STuOk3H2KlXyjjEVfFLMdqWSkKc3
+         vNzw==
+X-Gm-Message-State: AOAM531YuCXKUM9Jko7S0GdMfAvg+VRnJylZJOO73rGkG3CNLc/HJBAt
+        MErAD6AvQHa/XWWUHUkAjX63g+GjMRrYiZtFIEiXHw==
+X-Google-Smtp-Source: ABdhPJyp+18LHyzRAiO7+sc3FHiRgXNmFI/UTNc7tUNrDDRlUREycMbppyLtZcKvXSr6KiyqKSsBhvaEt7CAlg7Cf0M=
+X-Received: by 2002:a63:4e01:: with SMTP id c1mr46758645pgb.265.1621242084104;
+ Mon, 17 May 2021 02:01:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YKIwFAmmm2W2XocO@mwanda>
-X-Mailer: git-send-email haha only kidding
-X-Proofpoint-GUID: _hlPJYDV7W9bnr2QOeY3AUvyoDj_picS
-X-Proofpoint-ORIG-GUID: _hlPJYDV7W9bnr2QOeY3AUvyoDj_picS
+References: <20210514070306.606-1-linqiheng@huawei.com>
+In-Reply-To: <20210514070306.606-1-linqiheng@huawei.com>
+From:   Robert Foss <robert.foss@linaro.org>
+Date:   Mon, 17 May 2021 11:01:13 +0200
+Message-ID: <CAG3jFytWqa9CwPto4Q1b5wZvHkviLgtY_pqYWyVCa5Trx0otwg@mail.gmail.com>
+Subject: Re: [PATCH -next] drm: bridge: fix wrong pointer passed to PTR_ERR()
+To:     Qiheng Lin <linqiheng@huawei.com>
+Cc:     Phong LE <ple@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-We need to drop the lock before returning on this error path.
+Hey Qiheng,
 
-Fixes: 4a5fe57e7751 ("alx: use fine-grained locking instead of RTNL")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/net/ethernet/atheros/alx/ethtool.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Thanks for submitting this bugfix.
 
-diff --git a/drivers/net/ethernet/atheros/alx/ethtool.c b/drivers/net/ethernet/atheros/alx/ethtool.c
-index f3627157a38a..b716adacd815 100644
---- a/drivers/net/ethernet/atheros/alx/ethtool.c
-+++ b/drivers/net/ethernet/atheros/alx/ethtool.c
-@@ -253,8 +253,10 @@ static int alx_set_pauseparam(struct net_device *netdev,
- 
- 	if (reconfig_phy) {
- 		err = alx_setup_speed_duplex(hw, hw->adv_cfg, fc);
--		if (err)
-+		if (err) {
-+			mutex_unlock(&alx->mtx);
- 			return err;
-+		}
- 	}
- 
- 	/* flow control on mac */
--- 
-2.30.2
+The title of this patch should probably be:
+drm: bridge: it66121: fix wrong pointer passed to PTR_ERR()
 
+With this fixed, feel free to add my r-b.
+Reviewed-by: Robert Foss <robert.foss@linaro.org>
+
+
+On Fri, 14 May 2021 at 09:03, Qiheng Lin <linqiheng@huawei.com> wrote:
+>
+> PTR_ERR should access the value just tested by IS_ERR, otherwise
+> the wrong error code will be returned.
+>
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Qiheng Lin <linqiheng@huawei.com>
+> ---
+>  drivers/gpu/drm/bridge/ite-it66121.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/bridge/ite-it66121.c b/drivers/gpu/drm/bridge/ite-it66121.c
+> index d8a60691fd32..6980c9801d0d 100644
+> --- a/drivers/gpu/drm/bridge/ite-it66121.c
+> +++ b/drivers/gpu/drm/bridge/ite-it66121.c
+> @@ -943,7 +943,7 @@ static int it66121_probe(struct i2c_client *client,
+>         ctx->regmap = devm_regmap_init_i2c(client, &it66121_regmap_config);
+>         if (IS_ERR(ctx->regmap)) {
+>                 ite66121_power_off(ctx);
+> -               return PTR_ERR(ctx);
+> +               return PTR_ERR(ctx->regmap);
+>         }
+>
+>         regmap_read(ctx->regmap, IT66121_VENDOR_ID0_REG, &vendor_ids[0]);
+>
