@@ -2,146 +2,147 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ED25C433ED
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 12:57:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD028C433B4
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 13:37:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 634CB61241
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 12:57:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 891FF610E9
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 13:37:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235185AbhEQM6v (ORCPT
+        id S235388AbhEQNi0 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 17 May 2021 08:58:51 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43584 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235092AbhEQM6u (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 17 May 2021 08:58:50 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 72E53B1C8;
-        Mon, 17 May 2021 12:57:33 +0000 (UTC)
-Subject: Re: [PATCH] MAINTAINERS: repair reference in DRM DRIVER FOR SIMPLE
- FRAMEBUFFERS
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org
-Cc:     Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210517101648.29906-1-lukas.bulwahn@gmail.com>
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-Message-ID: <d86962b1-da7e-232e-6501-9fa2e406781f@suse.de>
-Date:   Mon, 17 May 2021 14:57:32 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.0
+        Mon, 17 May 2021 09:38:26 -0400
+Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:42110 "EHLO
+        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234748AbhEQNiZ (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 17 May 2021 09:38:25 -0400
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 14HDVD3h021203;
+        Mon, 17 May 2021 13:36:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=O8xo1agX3REWXjxQUJndTeVR5fSyPXUXRmD8lmbJu8M=;
+ b=nJ0mKjgJQ46+ty9wqve0Kv+3thlu0263L0L1uO4+I5Myea7l+UOT/amoeIllV0Evk8Lp
+ h2JTQVFNYDNnN6RkmMZfdB1xGfoazAhDyG/Z571fQf05f08OA8iG180NbWtdr1U9+Qwr
+ fk2kzRr1ggjl8C5+WJ4PJ/PpYw0z9YgezVAS3m2SDNj/M9qTOGz78M/wIsFzYePc51Yl
+ EkpvgXYPQgZ4qZDH92w33nDAt/ZykhR2wt3Y/UzTg3Xiq1+TE2I0wWhaFQ60v+YIqKOr
+ M7RScz0Qbuiz8RDJ0i31FqttFrF7Yj+muXTMFIU2QAwlzfdntJDX5/9Uxr4iIIUBMz6D ZA== 
+Received: from oracle.com (userp3030.oracle.com [156.151.31.80])
+        by mx0b-00069f02.pphosted.com with ESMTP id 38kfhwg72g-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 17 May 2021 13:36:58 +0000
+Received: from userp3030.oracle.com (userp3030.oracle.com [127.0.0.1])
+        by pps.podrdrct (8.16.0.36/8.16.0.36) with SMTP id 14HDXXTn119439;
+        Mon, 17 May 2021 13:36:57 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by userp3030.oracle.com with ESMTP id 38j3dtbgse-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 17 May 2021 13:36:57 +0000
+Received: from userp3030.oracle.com (userp3030.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 14HDXrvv120420;
+        Mon, 17 May 2021 13:36:56 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 38j3dtbgrw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 17 May 2021 13:36:56 +0000
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 14HDaqhO028744;
+        Mon, 17 May 2021 13:36:52 GMT
+Received: from kadam (/102.36.221.92)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 17 May 2021 06:36:51 -0700
+Date:   Mon, 17 May 2021 16:36:43 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Colin King <colin.king@canonical.com>,
+        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
+        Srinivas Neeli <srinivas.neeli@xilinx.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        kernel-janitors <kernel-janitors@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH][next] gpio: xilinx: Fix potential integer overflow on
+ shift of a u32 int
+Message-ID: <20210517133643.GI1955@kadam>
+References: <20210513085227.54392-1-colin.king@canonical.com>
+ <20210514053754.GZ1955@kadam>
+ <CAHp75Ve-YWh_sfupwQV0xxL7Vk8GNObJ+6O29RqRMXCgAmemCw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20210517101648.29906-1-lukas.bulwahn@gmail.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="8T38aIg0zaK56NSCyYPDE0KMDZccUjuyX"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHp75Ve-YWh_sfupwQV0xxL7Vk8GNObJ+6O29RqRMXCgAmemCw@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-GUID: dLB8ec6Q_IuAwH4IsNLDCEHIoe1f52oG
+X-Proofpoint-ORIG-GUID: dLB8ec6Q_IuAwH4IsNLDCEHIoe1f52oG
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---8T38aIg0zaK56NSCyYPDE0KMDZccUjuyX
-Content-Type: multipart/mixed; boundary="nzNGNBF0QtYWhtU9g06smdT7uiap7YwMT";
- protected-headers="v1"
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>, David Airlie <airlied@linux.ie>,
- Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org
-Cc: Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
- kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-ID: <d86962b1-da7e-232e-6501-9fa2e406781f@suse.de>
-Subject: Re: [PATCH] MAINTAINERS: repair reference in DRM DRIVER FOR SIMPLE
- FRAMEBUFFERS
-References: <20210517101648.29906-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20210517101648.29906-1-lukas.bulwahn@gmail.com>
+On Mon, May 17, 2021 at 10:07:20AM +0300, Andy Shevchenko wrote:
+> On Fri, May 14, 2021 at 12:26 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> > On Thu, May 13, 2021 at 09:52:27AM +0100, Colin King wrote:
+> 
+> ...
+> 
+> > >       const unsigned long offset = (bit % BITS_PER_LONG) & BIT(5);
+> > >
+> > >       map[index] &= ~(0xFFFFFFFFul << offset);
+> > > -     map[index] |= v << offset;
+> > > +     map[index] |= (unsigned long)v << offset;
+> >
+> > Doing a shift by BIT(5) is super weird.
+> 
+> Not the first place in the kernel with such a trick.
+> 
+> >  It looks like a double shift
+> > bug and should probably trigger a static checker warning.  It's like
+> > when people do BIT(BIT(5)).
+> >
+> > It would be more readable to write it as:
+> >
+> >         int shift = (bit % BITS_PER_LONG) ? 32 : 0;
+> 
+> Usually this code is in a kinda fast path. Have you checked if the
+> compiler generates the same or better code when you are using ternary?
 
---nzNGNBF0QtYWhtU9g06smdT7uiap7YwMT
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+I wrote a little benchmark to see which was faster and they're the same
+as far as I can see.
 
-Hi
+regards,
+dan carpenter
 
-Am 17.05.21 um 12:16 schrieb Lukas Bulwahn:
-> Commit 11e8f5fd223b ("drm: Add simpledrm driver") adds the file
-> ./drivers/gpu/drm/tiny/simpledrm.c, but refers to the file
-> ./drivers/gpu/drm/tiny/simplekms.c with the new MAINTAINERS section
-> DRM DRIVER FOR SIMPLE FRAMEBUFFERS.
->=20
-> Hence, ./scripts/get_maintainer.pl --self-test=3Dpatterns complains:
->=20
->    warning: no file matches    F:    drivers/gpu/drm/tiny/simplekms.c
->=20
-> Repair the file entry by referring to the right location.
->=20
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> applies cleanly on next-20210514
->=20
-> Thomas, Daniel, please pick this minor clean-up patch for your -next tr=
-ee.
+static inline __attribute__((__gnu_inline__)) unsigned long xgpio_set_value_orig(unsigned long *map, int bit, u32 v)
+{
+        int shift = (bit % 64) & ((((1UL))) << (5));
+        return v << shift;
+}
 
-Thank you so much. Added to drm-misc-next
+static inline __attribute__((__gnu_inline__)) unsigned long xgpio_set_value_new(unsigned long *map, int bit, u32 v)
+{
+        int shift = (bit % 64) ? 32 : 0;
+        return v << shift;
+}
 
-Best regards
-Thomas
+int main(void)
+{
+        int i;
 
->=20
->   MAINTAINERS | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 6582d19cdf7a..88277ff25d43 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -5885,7 +5885,7 @@ M:	Thomas Zimmermann <tzimmermann@suse.de>
->   L:	dri-devel@lists.freedesktop.org
->   S:	Maintained
->   T:	git git://anongit.freedesktop.org/drm/drm-misc
-> -F:	drivers/gpu/drm/tiny/simplekms.c
-> +F:	drivers/gpu/drm/tiny/simpledrm.c
->  =20
->   DRM DRIVER FOR SIS VIDEO CARDS
->   S:	Orphan / Obsolete
->=20
+        for (i = 0; i < INT_MAX; i++)
+                xgpio_set_value_orig(NULL, i, 0);
 
---=20
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-(HRB 36809, AG N=C3=BCrnberg)
-Gesch=C3=A4ftsf=C3=BChrer: Felix Imend=C3=B6rffer
+//      for (i = 0; i < INT_MAX; i++)
+//              xgpio_set_value_new(NULL, i, 0);
 
+        return 0;
+}
 
---nzNGNBF0QtYWhtU9g06smdT7uiap7YwMT--
-
---8T38aIg0zaK56NSCyYPDE0KMDZccUjuyX
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature"
-
------BEGIN PGP SIGNATURE-----
-
-wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmCiaDwFAwAAAAAACgkQlh/E3EQov+DD
-tBAAotWv6n0Bi9OwXQHdZ+36Mh8S4VR1BH5wElL3t3VPjFChCmY0xMSNx44AaW9rD9akvfdE8EWI
-M+Q1wPPCoNplbgeQFuwlJZIXTh41NaDQcSJequwUEHEzU4YmPXBP3uq7GvnvjHi0hWfamar87bJ7
-kYMp9yax3WjdRzlA03H6fblysVjTZrZnnwCPBShYp81pSTiWgIVPQbhlLotPi/94w6LbYGqN5Kh8
-RrTQvEJrpKtqk7GzQ7FxKzAic8jwxv4B4bGhuPVzNEd0ya7fCf9dH1Tn34/DYAjMM2DU9eZyraqB
-wYeWJhLOmUoN3xNbOyn6VI3dEJDznnJNZKbfKcXHzSbagu1Ay39KZyYfnONiaW7DXzz7PMpGfyv4
-kcMpH+3OTacIwdw111J24LyyGqg0j+AtxebSWEdgbxOs9vtlaIIsuto1/+M72G8GSqaYbwEAQLJ6
-QqqlZy3o4CL+/8hsZiPE8+H4EXh2mIB1e5szv0Bxja5cbdwOla5f9PZXVdZbyJACVQOub6W36Otg
-/GOrrAjwbJEq21xeX2ouCYOb4HL7mVNj+WnTf8vtUedldlm0aqNYJ66KAH9CkIn27bAYryWcgw8i
-NqXijb1CBY7K1iI7gNl9aPl9waFuaL+/e+R2IcbfFGGScAurG1j5gX5RTdizYhLtgQWIiTNfm+1M
-ZHk=
-=JYFL
------END PGP SIGNATURE-----
-
---8T38aIg0zaK56NSCyYPDE0KMDZccUjuyX--
