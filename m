@@ -2,141 +2,256 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=BAYES_00,DKIM_ADSP_CUSTOM_MED,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85A34C433ED
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 13:49:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71103C433B4
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 16:01:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6109860FD7
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 13:49:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52BE860FDA
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 16:01:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235523AbhEQNvJ (ORCPT
+        id S245737AbhEQQCS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 17 May 2021 09:51:09 -0400
-Received: from mga03.intel.com ([134.134.136.65]:3829 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233139AbhEQNvJ (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 17 May 2021 09:51:09 -0400
-IronPort-SDR: UPRhEG1ZSMGBg2WGrY8R6LgSnXJHb/uUFGuT5S3kRZKbtFp1NMMTU54UZkYTCif+VvUF2sLbcj
- AiOXjptQNxDg==
-X-IronPort-AV: E=McAfee;i="6200,9189,9986"; a="200520459"
-X-IronPort-AV: E=Sophos;i="5.82,307,1613462400"; 
-   d="scan'208";a="200520459"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2021 06:49:51 -0700
-IronPort-SDR: qPrqaoZIsX7KFEzvrWT847vxuU/vQuXuNBSGdJJhpOobzAlB1E5ZRLycDimZlVlmDAekIzThdb
- mahwX5TRbyRg==
-X-IronPort-AV: E=Sophos;i="5.82,307,1613462400"; 
-   d="scan'208";a="393523740"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2021 06:49:48 -0700
-Received: from andy by smile with local (Exim 4.94)
-        (envelope-from <andy.shevchenko@gmail.com>)
-        id 1lidcw-00CkNa-2G; Mon, 17 May 2021 16:49:46 +0300
-Date:   Mon, 17 May 2021 16:49:46 +0300
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Colin King <colin.king@canonical.com>,
-        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
-        Srinivas Neeli <srinivas.neeli@xilinx.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        kernel-janitors <kernel-janitors@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH][next] gpio: xilinx: Fix potential integer overflow on
- shift of a u32 int
-Message-ID: <YKJ0egfeNxw2Aoxl@smile.fi.intel.com>
-References: <20210513085227.54392-1-colin.king@canonical.com>
- <20210514053754.GZ1955@kadam>
- <CAHp75Ve-YWh_sfupwQV0xxL7Vk8GNObJ+6O29RqRMXCgAmemCw@mail.gmail.com>
- <20210517133643.GI1955@kadam>
+        Mon, 17 May 2021 12:02:18 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:51166 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1344974AbhEQQAO (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 17 May 2021 12:00:14 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 14HFn2Nf149176;
+        Mon, 17 May 2021 15:57:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=46zegLTyORjCsXmwBaOGpVU+tbqb7CJ5loKuJs3uNxI=;
+ b=LoOhFOOChJ1O0mbu+1ddqtqACKixTcROK0cYkmViFNP/xYon6ykXEhyvQ12VKxKIL2Qu
+ yHkBvo4uUh3AkjEUaQpOKkSfUh2TAA+EOu272cKjBgUM/x/7J+iBXGgTMadpxd1Ww9dA
+ h5C26sZ8QI3q6Pp2GP0SGK5b72P0/LTYoB1M3PM3/KpcRrtATcgyJql6QoTJok4Y1PqB
+ 6z2FwKwqv43Gq6Hewj2+t18bw/d82aLsgkUru6ZoOtXxcms0HKlOo/FZ5wIoNYEFG1Pq
+ qKrZU1Zhdxc9qVaCI9RFeTj3QVupbqwmyGM9TC3nuG99Nn7aDnp1Ke10ofdZAlQNFqb9 hQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 38j5qr3q5b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 17 May 2021 15:57:48 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 14HFjnoo066746;
+        Mon, 17 May 2021 15:57:47 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by aserp3020.oracle.com with ESMTP id 38j645y8j7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 17 May 2021 15:57:47 +0000
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 14HFt3QU150609;
+        Mon, 17 May 2021 15:57:47 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 38j645y8gf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 17 May 2021 15:57:46 +0000
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 14HFvfJx029187;
+        Mon, 17 May 2021 15:57:41 GMT
+Received: from kadam (/102.36.221.92)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 17 May 2021 08:57:40 -0700
+Date:   Mon, 17 May 2021 18:57:33 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Martin Kaiser <martin@kaiser.cx>
+Cc:     Larry Finger <Larry.Finger@lwfinger.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/6] staging: rtl8188eu: use safe iterator in
+ rtw_free_network_queue
+Message-ID: <20210517155733.GK1955@kadam>
+References: <20210516160613.30489-1-martin@kaiser.cx>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210517133643.GI1955@kadam>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20210516160613.30489-1-martin@kaiser.cx>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-GUID: HW1ESqbzC4QZTidz2X09wEVQvnux-4f8
+X-Proofpoint-ORIG-GUID: HW1ESqbzC4QZTidz2X09wEVQvnux-4f8
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9987 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1011 impostorscore=0
+ mlxscore=0 lowpriorityscore=0 malwarescore=0 mlxlogscore=999
+ suspectscore=0 adultscore=0 priorityscore=1501 spamscore=0 phishscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104190000 definitions=main-2105170109
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, May 17, 2021 at 04:36:43PM +0300, Dan Carpenter wrote:
-> On Mon, May 17, 2021 at 10:07:20AM +0300, Andy Shevchenko wrote:
-> > On Fri, May 14, 2021 at 12:26 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> > > On Thu, May 13, 2021 at 09:52:27AM +0100, Colin King wrote:
-> > 
-> > ...
-> > 
-> > > >       const unsigned long offset = (bit % BITS_PER_LONG) & BIT(5);
-> > > >
-> > > >       map[index] &= ~(0xFFFFFFFFul << offset);
-> > > > -     map[index] |= v << offset;
-> > > > +     map[index] |= (unsigned long)v << offset;
-> > >
-> > > Doing a shift by BIT(5) is super weird.
-> > 
-> > Not the first place in the kernel with such a trick.
-> > 
-> > >  It looks like a double shift
-> > > bug and should probably trigger a static checker warning.  It's like
-> > > when people do BIT(BIT(5)).
-> > >
-> > > It would be more readable to write it as:
-> > >
-> > >         int shift = (bit % BITS_PER_LONG) ? 32 : 0;
-> > 
-> > Usually this code is in a kinda fast path. Have you checked if the
-> > compiler generates the same or better code when you are using ternary?
-> 
-> I wrote a little benchmark to see which was faster and they're the same
-> as far as I can see.
+Thanks for catching these...  I've created a new Smatch static checker
+warning for this but it only works for list_for_each_entry().
+Eventually someone would have run the coccinelle script to convert these
+list_for_each loops into list_for_each_entry().  Otherwise you have to
+parse container_of() and I've been meaning to do that for a while but I
+haven't yet.
 
-Thanks for checking.
+Anyway, I'm going to test it out overnight and see what it finds.  It's
+sort a new use for the modification_hook(), before I had only ever used
+it to silence warnings but this check uses it to trigger warnings.  So
+perhaps it will generate a lot of false positives.  We'll see.
 
-Besides the fact that offset should be 0 for 32-bit always and if compiler can
-proof that...
+It sets the state of the iterator to &start at the start of the loop
+and if it's not &start state at the end then it prints a warning.
 
-The test below doesn't take into account the exact trick is used for offset
-(i.e. implicit dependency between BITS_PER_LONG, size of unsigned long, and
- using 5th bit out of value). I don't know if compiler can properly optimize
-the ternary in this case (but it looks like it should generate the same code).
+regards,
+dan carpenter
 
-That said, I would rather to see the diff between assembly of the exact
-function before and after your proposal.
+/*
+ * Copyright (C) 2021 Oracle.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, see http://www.gnu.org/copyleft/gpl.txt
+ */
 
-> static inline __attribute__((__gnu_inline__)) unsigned long xgpio_set_value_orig(unsigned long *map, int bit, u32 v)
-> {
->         int shift = (bit % 64) & ((((1UL))) << (5));
->         return v << shift;
-> }
-> 
-> static inline __attribute__((__gnu_inline__)) unsigned long xgpio_set_value_new(unsigned long *map, int bit, u32 v)
-> {
->         int shift = (bit % 64) ? 32 : 0;
->         return v << shift;
-> }
-> 
-> int main(void)
-> {
->         int i;
-> 
->         for (i = 0; i < INT_MAX; i++)
->                 xgpio_set_value_orig(NULL, i, 0);
-> 
-> //      for (i = 0; i < INT_MAX; i++)
-> //              xgpio_set_value_new(NULL, i, 0);
-> 
->         return 0;
-> }
-> 
+#include "smatch.h"
+#include "smatch_extra.h"
 
--- 
-With Best Regards,
-Andy Shevchenko
+static int my_id;
 
+STATE(start);
+STATE(watch);
+
+static struct statement *iterator_stmt, *pre_stmt, *post_stmt;
+
+static void set_watch(struct sm_state *sm, struct expression *mod_expr)
+{
+	set_state(my_id, sm->name, sm->sym, &watch);
+}
+
+static bool is_list_macro(const char *macro)
+{
+	if (strcmp(macro, "list_for_each_entry") == 0)
+		return true;
+	return false;
+}
+
+static void match_iterator_statement(struct statement *stmt)
+{
+	const char *macro;
+
+	if (stmt->type != STMT_ITERATOR ||
+	    !stmt->iterator_pre_statement ||
+	    !stmt->iterator_post_statement)
+		return;
+
+	macro = get_macro_name(stmt->pos);
+	if (!macro)
+		return;
+	if (!is_list_macro(macro))
+		return;
+
+	iterator_stmt = stmt;
+	pre_stmt = stmt->iterator_pre_statement;
+	post_stmt = stmt->iterator_post_statement;
+}
+
+static bool stmt_matches(struct expression *expr, struct statement *stmt)
+{
+	struct expression *tmp;
+	struct statement *parent;
+
+	if (!stmt)
+		return false;
+	while ((tmp = expr_get_parent_expr(expr)))
+		expr = tmp;
+
+	parent = expr_get_parent_stmt(expr);
+	return parent == stmt;
+}
+
+static char *get_iterator_member(void)
+{
+	struct expression *expr;
+
+	if (!iterator_stmt ||
+	    !iterator_stmt->iterator_pre_condition)
+		return NULL;
+
+	expr = iterator_stmt->iterator_pre_condition;
+	if (expr->type != EXPR_PREOP || expr->op != '!')
+		return NULL;
+	expr = strip_parens(expr->unop);
+	if (expr->type != EXPR_COMPARE)
+		return NULL;
+	expr = strip_parens(expr->left);
+	if (expr->type != EXPR_PREOP || expr->op != '&')
+		return NULL;
+	expr = strip_expr(expr->unop);
+	if (expr->type != EXPR_DEREF || !expr->member)
+		return NULL;
+	return expr->member->name;
+}
+
+static void match_pre_statement(struct expression *expr)
+{
+	char *name, *member;
+	struct symbol *sym;
+	char buf[64];
+
+	if (!stmt_matches(expr, pre_stmt))
+		return;
+
+	name = expr_to_var_sym(expr->left, &sym);
+	if (!name)
+		return;
+	member = get_iterator_member();
+
+	snprintf(buf, sizeof(buf), "%s->%s.next", name, member);
+	set_state(my_id, buf, sym, &start);
+}
+
+static void match_post_statement(struct expression *expr)
+{
+	struct smatch_state *state;
+	char *name, *member;
+	struct symbol *sym;
+	char buf[64];
+
+	if (!stmt_matches(expr, post_stmt))
+		return;
+
+	name = expr_to_var_sym(expr->left, &sym);
+	if (!name)
+		return;
+	member = get_iterator_member();
+
+	snprintf(buf, sizeof(buf), "%s->%s.next", name, member);
+	state = get_state(my_id, buf, sym);
+	if (!state || state == &start)
+		return;
+
+	sm_warning("iterator '%s' changed during iteration", buf);
+}
+
+void check_list_set_inside(int id)
+{
+	my_id = id;
+
+	if (option_project != PROJ_KERNEL)
+		return;
+
+	add_hook(match_iterator_statement, STMT_HOOK);
+	add_hook(match_pre_statement, ASSIGNMENT_HOOK);
+	add_hook(match_post_statement, ASSIGNMENT_HOOK);
+
+	add_modification_hook(my_id, &set_watch);
+}
 
