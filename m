@@ -2,121 +2,147 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49AE1C433ED
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 08:02:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1512C433B4
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 08:07:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 230786117A
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 08:02:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94C0E6121F
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 08:07:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234742AbhEQIDS (ORCPT
+        id S235322AbhEQIIr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 17 May 2021 04:03:18 -0400
-Received: from mga01.intel.com ([192.55.52.88]:31206 "EHLO mga01.intel.com"
+        Mon, 17 May 2021 04:08:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45790 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233996AbhEQIDO (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 17 May 2021 04:03:14 -0400
-IronPort-SDR: /dqYSnAAENTefNx/d7qpcvv/ydKWxWyTHS2GwRj9Cr6QE8ocPJscoB+JuzEX5eDmsZjFSG12sL
- pmFtByZw0H8Q==
-X-IronPort-AV: E=McAfee;i="6200,9189,9986"; a="221441607"
-X-IronPort-AV: E=Sophos;i="5.82,306,1613462400"; 
-   d="scan'208";a="221441607"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2021 01:01:33 -0700
-IronPort-SDR: FgOX0IWDmyxGYjz2Ou+WxyBrPYO6+TWl+uC8XpXkWwZTAeJS6J2roLjeMZ9pJ8x6ViFAdKv0KV
- 2wHLlYByVnew==
-X-IronPort-AV: E=Sophos;i="5.82,306,1613462400"; 
-   d="scan'208";a="403962831"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2021 01:01:29 -0700
-Received: from andy by smile with local (Exim 4.94)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1liYBq-00Cgwp-Ao; Mon, 17 May 2021 11:01:26 +0300
-Date:   Mon, 17 May 2021 11:01:26 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     arnd@arndb.de, gregkh@linuxfoundation.org,
-        mihai.carabas@oracle.com, pizhenwei@bytedance.com,
-        pbonzini@redhat.com, linqiheng@huawei.com,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 1/2] misc/pvpanic: Fix error handling in
- 'pvpanic_pci_probe()'
-Message-ID: <YKIi1hljnjvqMCVA@smile.fi.intel.com>
-References: <7efa7b4b9867ac44f398783b89f3a21deac4ce8b.1621175108.git.christophe.jaillet@wanadoo.fr>
+        id S233675AbhEQIIo (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 17 May 2021 04:08:44 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 894B96117A;
+        Mon, 17 May 2021 08:07:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1621238848;
+        bh=S1xEZIZ5CsbZYKrV5iPkhrgOe6N7EuOvzRyWvsqEDo0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kC1hJRDu/KEZWeBj0mZJuNH+4yuoAPz96307kF96JP11oUMJmNGf/NhWgQ1b2zR+K
+         +L3ckOmdMbPW9Y4lMxsl8uGoPdSu1KVu+Tkr2yjdHLlEGcqyuqdP4L1ubI/k8zJ31Y
+         rc7hRpdLzTKSXvaEnn644KZ+kx0R6VJjOHH2dNsDfSqRYcRDFjw6Vl9fUpJcfUNJ+s
+         7rPqr5/TEA0OZZNFNz1NwtPK71zYT+7NV7xA2sUXHbYZGCnMUJ/7sfqeMUV39oS1Ay
+         AcUCP05HNZmFQkxsj1IvESxtFd/emMY0cowTjeNXbjiJxyzo9BeNN0UBgIkSntGGEs
+         LPGPNtsjoPmwQ==
+Received: from johan by xi.lan with local (Exim 4.94.2)
+        (envelope-from <johan@kernel.org>)
+        id 1liYHd-0003Mx-Ds; Mon, 17 May 2021 10:07:26 +0200
+Date:   Mon, 17 May 2021 10:07:25 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Oliver Neukum <oneukum@suse.com>,
+        Anirudh Rayabharam <mail@anirudhrb.com>,
+        Zheng Yongjun <zhengyongjun3@huawei.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        Rustam Kovhaev <rkovhaev@gmail.com>, linux-usb@vger.kernel.org,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2 net] net: hso: check for allocation failure in
+ hso_create_bulk_serial_device()
+Message-ID: <YKIkPS/RNh32i042@hovoldconsulting.com>
+References: <YJurlxqQ9L+zzIAS@hovoldconsulting.com>
+ <YJ6IMH7jI9QFdGIX@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7efa7b4b9867ac44f398783b89f3a21deac4ce8b.1621175108.git.christophe.jaillet@wanadoo.fr>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <YJ6IMH7jI9QFdGIX@mwanda>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, May 16, 2021 at 04:36:55PM +0200, Christophe JAILLET wrote:
-> There is no error handling path in the probe function.
-> Switch to managed resource so that errors in the probe are handled easily
-> and simplify the remove function accordingly.
-
-Yes, that's what I suggested earlier to another contributor.
-
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
-Thanks!
-
-P.S. You may consider the following things as well:
- 1) converting to use pci_set_drvdata() / pci_get_drvdata()
- 2) providing devm_pvpanic_probe() [via devm_add_action() /
-    devm_add_action_or_reset()]
-
-> Fixes: db3a4f0abefd ("misc/pvpanic: add PCI driver")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+On Fri, May 14, 2021 at 05:24:48PM +0300, Dan Carpenter wrote:
+> In current kernels, small allocations never actually fail so this
+> patch shouldn't affect runtime.
+> 
+> Originally this error handling code written with the idea that if
+> the "serial->tiocmget" allocation failed, then we would continue
+> operating instead of bailing out early.  But in later years we added
+> an unchecked dereference on the next line.
+> 
+> 	serial->tiocmget->serial_state_notification = kzalloc();
+>         ^^^^^^^^^^^^^^^^^^
+> 
+> Since these allocations are never going fail in real life, this is
+> mostly a philosophical debate, but I think bailing out early is the
+> correct behavior that the user would want.  And generally it's safer to
+> bail as soon an error happens.
+> 
+> Fixes: af0de1303c4e ("usb: hso: obey DMA rules in tiocmget")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > ---
->  drivers/misc/pvpanic/pvpanic-pci.c | 9 +++------
->  1 file changed, 3 insertions(+), 6 deletions(-)
+> v2: Do more extensive clean up.  As Johan pointed out the comments and
+> later NULL checks can be removed.
 > 
-> diff --git a/drivers/misc/pvpanic/pvpanic-pci.c b/drivers/misc/pvpanic/pvpanic-pci.c
-> index 9ecc4e8559d5..046ce4ecc195 100644
-> --- a/drivers/misc/pvpanic/pvpanic-pci.c
-> +++ b/drivers/misc/pvpanic/pvpanic-pci.c
-> @@ -78,15 +78,15 @@ static int pvpanic_pci_probe(struct pci_dev *pdev,
->  	void __iomem *base;
->  	int ret;
->  
-> -	ret = pci_enable_device(pdev);
-> +	ret = pcim_enable_device(pdev);
->  	if (ret < 0)
->  		return ret;
->  
-> -	base = pci_iomap(pdev, 0, 0);
-> +	base = pcim_iomap(pdev, 0, 0);
->  	if (!base)
->  		return -ENOMEM;
->  
-> -	pi = kmalloc(sizeof(*pi), GFP_ATOMIC);
-> +	pi = devm_kmalloc(&pdev->dev, sizeof(*pi), GFP_ATOMIC);
->  	if (!pi)
->  		return -ENOMEM;
->  
-> @@ -107,9 +107,6 @@ static void pvpanic_pci_remove(struct pci_dev *pdev)
->  	struct pvpanic_instance *pi = dev_get_drvdata(&pdev->dev);
->  
->  	pvpanic_remove(pi);
-> -	iounmap(pi->base);
-> -	kfree(pi);
-> -	pci_disable_device(pdev);
->  }
->  
->  static struct pci_driver pvpanic_pci_driver = {
-> -- 
-> 2.30.2
+>  drivers/net/usb/hso.c | 37 ++++++++++++++++++-------------------
+>  1 file changed, 18 insertions(+), 19 deletions(-)
 > 
+> diff --git a/drivers/net/usb/hso.c b/drivers/net/usb/hso.c
+> index 3ef4b2841402..260f850d69eb 100644
+> --- a/drivers/net/usb/hso.c
+> +++ b/drivers/net/usb/hso.c
+> @@ -2618,29 +2618,28 @@ static struct hso_device *hso_create_bulk_serial_device(
+>  		num_urbs = 2;
+>  		serial->tiocmget = kzalloc(sizeof(struct hso_tiocmget),
+>  					   GFP_KERNEL);
+> +		if (!serial->tiocmget)
+> +			goto exit;
+>  		serial->tiocmget->serial_state_notification
+>  			= kzalloc(sizeof(struct hso_serial_state_notification),
+>  					   GFP_KERNEL);
+> -		/* it isn't going to break our heart if serial->tiocmget
+> -		 *  allocation fails don't bother checking this.
+> -		 */
+> -		if (serial->tiocmget && serial->tiocmget->serial_state_notification) {
+> -			tiocmget = serial->tiocmget;
+> -			tiocmget->endp = hso_get_ep(interface,
+> -						    USB_ENDPOINT_XFER_INT,
+> -						    USB_DIR_IN);
+> -			if (!tiocmget->endp) {
+> -				dev_err(&interface->dev, "Failed to find INT IN ep\n");
+> -				goto exit;
+> -			}
+> -
+> -			tiocmget->urb = usb_alloc_urb(0, GFP_KERNEL);
+> -			if (tiocmget->urb) {
+> -				mutex_init(&tiocmget->mutex);
+> -				init_waitqueue_head(&tiocmget->waitq);
+> -			} else
+> -				hso_free_tiomget(serial);
+> +		if (!serial->tiocmget->serial_state_notification)
+> +			goto exit;
+> +		tiocmget = serial->tiocmget;
+> +		tiocmget->endp = hso_get_ep(interface,
+> +					    USB_ENDPOINT_XFER_INT,
+> +					    USB_DIR_IN);
+> +		if (!tiocmget->endp) {
+> +			dev_err(&interface->dev, "Failed to find INT IN ep\n");
+> +			goto exit;
+>  		}
+> +
+> +		tiocmget->urb = usb_alloc_urb(0, GFP_KERNEL);
+> +		if (tiocmget->urb) {
+> +			mutex_init(&tiocmget->mutex);
+> +			init_waitqueue_head(&tiocmget->waitq);
+> +		} else
+> +			hso_free_tiomget(serial);
 
--- 
-With Best Regards,
-Andy Shevchenko
+This should probably be changed to bail out on allocation errors as well
+now but that can be done as a follow-up. Either way:
 
+Reviewed-by: Johan Hovold <johan@kernel.org>
 
+>  	}
+>  	else
+>  		num_urbs = 1;
+
+Johan
