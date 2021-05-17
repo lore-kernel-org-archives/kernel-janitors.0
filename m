@@ -2,147 +2,119 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1512C433B4
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 08:07:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52973C433B4
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 08:42:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 94C0E6121F
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 08:07:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31516611BF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 08:42:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235322AbhEQIIr (ORCPT
+        id S235286AbhEQIn7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 17 May 2021 04:08:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45790 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233675AbhEQIIo (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 17 May 2021 04:08:44 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 894B96117A;
-        Mon, 17 May 2021 08:07:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1621238848;
-        bh=S1xEZIZ5CsbZYKrV5iPkhrgOe6N7EuOvzRyWvsqEDo0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=kC1hJRDu/KEZWeBj0mZJuNH+4yuoAPz96307kF96JP11oUMJmNGf/NhWgQ1b2zR+K
-         +L3ckOmdMbPW9Y4lMxsl8uGoPdSu1KVu+Tkr2yjdHLlEGcqyuqdP4L1ubI/k8zJ31Y
-         rc7hRpdLzTKSXvaEnn644KZ+kx0R6VJjOHH2dNsDfSqRYcRDFjw6Vl9fUpJcfUNJ+s
-         7rPqr5/TEA0OZZNFNz1NwtPK71zYT+7NV7xA2sUXHbYZGCnMUJ/7sfqeMUV39oS1Ay
-         AcUCP05HNZmFQkxsj1IvESxtFd/emMY0cowTjeNXbjiJxyzo9BeNN0UBgIkSntGGEs
-         LPGPNtsjoPmwQ==
-Received: from johan by xi.lan with local (Exim 4.94.2)
-        (envelope-from <johan@kernel.org>)
-        id 1liYHd-0003Mx-Ds; Mon, 17 May 2021 10:07:26 +0200
-Date:   Mon, 17 May 2021 10:07:25 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Oliver Neukum <oneukum@suse.com>,
-        Anirudh Rayabharam <mail@anirudhrb.com>,
-        Zheng Yongjun <zhengyongjun3@huawei.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        Rustam Kovhaev <rkovhaev@gmail.com>, linux-usb@vger.kernel.org,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2 net] net: hso: check for allocation failure in
- hso_create_bulk_serial_device()
-Message-ID: <YKIkPS/RNh32i042@hovoldconsulting.com>
-References: <YJurlxqQ9L+zzIAS@hovoldconsulting.com>
- <YJ6IMH7jI9QFdGIX@mwanda>
+        Mon, 17 May 2021 04:43:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46530 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235446AbhEQIn6 (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 17 May 2021 04:43:58 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FC83C061760
+        for <kernel-janitors@vger.kernel.org>; Mon, 17 May 2021 01:42:42 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id b19-20020a05600c06d3b029014258a636e8so3069599wmn.2
+        for <kernel-janitors@vger.kernel.org>; Mon, 17 May 2021 01:42:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=zXxaT8nwWGbSA3y71Sv2dFK7xUB5sHLPcIFAVGVS5/o=;
+        b=xKt2I5INi0ltOoKuJqoyxEaSp+X9Itm/nppkVkA2uNvGcJa98/ZsMPQOTzXP5a6xkX
+         sDR5uJyjuz4zrQOplIHLLKDvMlBMuLeKCJBY3xwwRiW1G1tp3NRY9T8l+yVvWZLp+nAp
+         hQaZhGEQmfOyHbztaPk+bf/zWzu2tEt/gZwVl1UeOEjcKg+z/rLbugGdcrvFMj5srlXu
+         cfgXToN4KCjFtiWgHamsSc0oVVmQ/ualErnm2+xuwiJLq9MM73zYtmxpJnUi7CW1NU0S
+         t6m1ESXgfDzjx/VS3YurE6B8Q5kWMIsd9CufeAhKcn4OQnt7CcQD7nJzv4xggGCHDm+h
+         yZjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=zXxaT8nwWGbSA3y71Sv2dFK7xUB5sHLPcIFAVGVS5/o=;
+        b=nr9Z5UIRVK/YctJ2FHkmJVjKUPWRf2OrK4yyWgDvF9QF8OBV8CPfXtuUkLdufRq3EA
+         4lJS/DboP5Gr3MFpaKv7e0EwpIF2ZmkN51r0QJNWSk7CztcKu8HUtTQhXNj4XBKSM7gL
+         vkORAn6l0J57O2wyHX3xoj4X8YuvAaAe7W0xPxuRCzWVuJWl8v7LuYZICy9CIFA3cybI
+         yZG+lvqST4xWuPDx0LzkDOP6jspnhmI6xJB4l7vfapF9xvjNXESG9zShCkwsft94Mxlx
+         NUyDbfrcxvTh1G+BKrcBAUVvZOfxWMOF93GGr8Vk5e2GL+z0gOTrYY6+C64sk0kUUIWi
+         hSqg==
+X-Gm-Message-State: AOAM533uP/B8klq0+/SP+yWbw3TKZKwkVZvMH6rH3xTFQHNofle4y1XP
+        i/VcvnhTe5Xm0IFQ4D1WLKxkYz0o64YlZmOE
+X-Google-Smtp-Source: ABdhPJxnfbUUFBq8SHWIEOb1yzYUGtz36OYX9EnYlPiOSVu236fyQ9xAjk6p3KB12c/i/XwvElJEXA==
+X-Received: by 2002:a05:600c:35d2:: with SMTP id r18mr22409712wmq.133.1621240960771;
+        Mon, 17 May 2021 01:42:40 -0700 (PDT)
+Received: from ?IPv6:2a01:e0a:90c:e290:3044:ffc:eaa9:6a70? ([2a01:e0a:90c:e290:3044:ffc:eaa9:6a70])
+        by smtp.gmail.com with ESMTPSA id 6sm15759027wry.60.2021.05.17.01.42.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 May 2021 01:42:40 -0700 (PDT)
+Subject: Re: [PATCH 1/2] drm: bridge: it66121: fix an error code in
+ it66121_probe()
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Phong LE <ple@baylibre.com>
+Cc:     Andrzej Hajda <a.hajda@samsung.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <YJ+ZX3BdKPAN0pUZ@mwanda>
+From:   Neil Armstrong <narmstrong@baylibre.com>
+Organization: Baylibre
+Message-ID: <638a3344-3222-87a1-d500-0d49960088a1@baylibre.com>
+Date:   Mon, 17 May 2021 10:42:38 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YJ6IMH7jI9QFdGIX@mwanda>
+In-Reply-To: <YJ+ZX3BdKPAN0pUZ@mwanda>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, May 14, 2021 at 05:24:48PM +0300, Dan Carpenter wrote:
-> In current kernels, small allocations never actually fail so this
-> patch shouldn't affect runtime.
+On 15/05/2021 11:50, Dan Carpenter wrote:
+> This code is passing the wrong variable to PTR_ERR() so it doesn't
+> return the correct error code.
 > 
-> Originally this error handling code written with the idea that if
-> the "serial->tiocmget" allocation failed, then we would continue
-> operating instead of bailing out early.  But in later years we added
-> an unchecked dereference on the next line.
-> 
-> 	serial->tiocmget->serial_state_notification = kzalloc();
->         ^^^^^^^^^^^^^^^^^^
-> 
-> Since these allocations are never going fail in real life, this is
-> mostly a philosophical debate, but I think bailing out early is the
-> correct behavior that the user would want.  And generally it's safer to
-> bail as soon an error happens.
-> 
-> Fixes: af0de1303c4e ("usb: hso: obey DMA rules in tiocmget")
+> Fixes: 988156dc2fc9 ("drm: bridge: add it66121 driver")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > ---
-> v2: Do more extensive clean up.  As Johan pointed out the comments and
-> later NULL checks can be removed.
+>  drivers/gpu/drm/bridge/ite-it66121.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
->  drivers/net/usb/hso.c | 37 ++++++++++++++++++-------------------
->  1 file changed, 18 insertions(+), 19 deletions(-)
-> 
-> diff --git a/drivers/net/usb/hso.c b/drivers/net/usb/hso.c
-> index 3ef4b2841402..260f850d69eb 100644
-> --- a/drivers/net/usb/hso.c
-> +++ b/drivers/net/usb/hso.c
-> @@ -2618,29 +2618,28 @@ static struct hso_device *hso_create_bulk_serial_device(
->  		num_urbs = 2;
->  		serial->tiocmget = kzalloc(sizeof(struct hso_tiocmget),
->  					   GFP_KERNEL);
-> +		if (!serial->tiocmget)
-> +			goto exit;
->  		serial->tiocmget->serial_state_notification
->  			= kzalloc(sizeof(struct hso_serial_state_notification),
->  					   GFP_KERNEL);
-> -		/* it isn't going to break our heart if serial->tiocmget
-> -		 *  allocation fails don't bother checking this.
-> -		 */
-> -		if (serial->tiocmget && serial->tiocmget->serial_state_notification) {
-> -			tiocmget = serial->tiocmget;
-> -			tiocmget->endp = hso_get_ep(interface,
-> -						    USB_ENDPOINT_XFER_INT,
-> -						    USB_DIR_IN);
-> -			if (!tiocmget->endp) {
-> -				dev_err(&interface->dev, "Failed to find INT IN ep\n");
-> -				goto exit;
-> -			}
-> -
-> -			tiocmget->urb = usb_alloc_urb(0, GFP_KERNEL);
-> -			if (tiocmget->urb) {
-> -				mutex_init(&tiocmget->mutex);
-> -				init_waitqueue_head(&tiocmget->waitq);
-> -			} else
-> -				hso_free_tiomget(serial);
-> +		if (!serial->tiocmget->serial_state_notification)
-> +			goto exit;
-> +		tiocmget = serial->tiocmget;
-> +		tiocmget->endp = hso_get_ep(interface,
-> +					    USB_ENDPOINT_XFER_INT,
-> +					    USB_DIR_IN);
-> +		if (!tiocmget->endp) {
-> +			dev_err(&interface->dev, "Failed to find INT IN ep\n");
-> +			goto exit;
->  		}
-> +
-> +		tiocmget->urb = usb_alloc_urb(0, GFP_KERNEL);
-> +		if (tiocmget->urb) {
-> +			mutex_init(&tiocmget->mutex);
-> +			init_waitqueue_head(&tiocmget->waitq);
-> +		} else
-> +			hso_free_tiomget(serial);
-
-This should probably be changed to bail out on allocation errors as well
-now but that can be done as a follow-up. Either way:
-
-Reviewed-by: Johan Hovold <johan@kernel.org>
-
+> diff --git a/drivers/gpu/drm/bridge/ite-it66121.c b/drivers/gpu/drm/bridge/ite-it66121.c
+> index d8a60691fd32..6980c9801d0d 100644
+> --- a/drivers/gpu/drm/bridge/ite-it66121.c
+> +++ b/drivers/gpu/drm/bridge/ite-it66121.c
+> @@ -943,7 +943,7 @@ static int it66121_probe(struct i2c_client *client,
+>  	ctx->regmap = devm_regmap_init_i2c(client, &it66121_regmap_config);
+>  	if (IS_ERR(ctx->regmap)) {
+>  		ite66121_power_off(ctx);
+> -		return PTR_ERR(ctx);
+> +		return PTR_ERR(ctx->regmap);
 >  	}
->  	else
->  		num_urbs = 1;
+>  
+>  	regmap_read(ctx->regmap, IT66121_VENDOR_ID0_REG, &vendor_ids[0]);
+> 
 
-Johan
+Thanks !
+
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+
+Applying to drm-misc-fixes
