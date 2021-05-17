@@ -2,111 +2,109 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10F21C43460
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 09:01:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2376EC433B4
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 09:04:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D4BC660FF3
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 09:01:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05DE961184
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 09:04:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235580AbhEQJCl (ORCPT
+        id S235674AbhEQJGJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 17 May 2021 05:02:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50818 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235573AbhEQJCk (ORCPT
+        Mon, 17 May 2021 05:06:09 -0400
+Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:31682 "EHLO
+        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230087AbhEQJGI (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 17 May 2021 05:02:40 -0400
-Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7D1CC06174A
-        for <kernel-janitors@vger.kernel.org>; Mon, 17 May 2021 02:01:24 -0700 (PDT)
-Received: by mail-pg1-x52b.google.com with SMTP id t193so4207181pgb.4
-        for <kernel-janitors@vger.kernel.org>; Mon, 17 May 2021 02:01:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9OkKHJwSRtsD1XoVSI9D7062oV0S6RC6cgh0CBzJGxQ=;
-        b=wurd6Th2hC0CtygbnWfpzXlmQIro6bMhdR7DCsDpr4cXF8QvJWfU2H7SuFcfuyl/on
-         xtOSzL9mRf6Qpm+/yH9LQawbpjRtEIfDuKPownnp0Bixi4DHYm0Cv4Ovg/7BeVIjwGte
-         Vgvdu50DNIgJdrMFWpziD3ZSowR3zWxzQazg7uoQJt6bE8+uPeOEhd7o2h/HBsYbh8lU
-         hlikFoTOsIDijq4sx06mXFj7NwWE6z4lsmpAtBJraB2mLA7f3Dcuke8KR7G53Vp1OhUK
-         kMKP77uZj4QYkMbZjh+ysYt/FSCyNPtmGQ0qYnuNvshMWQykCTz+CBHahzQff7YY7bCB
-         17QA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9OkKHJwSRtsD1XoVSI9D7062oV0S6RC6cgh0CBzJGxQ=;
-        b=eRsy8F3V2ISSzQGW7tkAAO8rr1hWHU1u+kd6igLSZhUeqYa3C/8jw0Yx2e2NboFZks
-         w/z0SEKqPKtGdXzheyvAqBzBlC3wdti+US+V/PdMyzr6vKNg2A4/0Zyx+XO7ZhwJLJ1Z
-         8lpYpQWM/o47seUNidoRnhh3AKjuMXYBr8IkWEpSGgYoLVFuyiB7oFd7h2ayeC3SgvVE
-         ROYuqOx5cgl9J3PH+ub/KNtg82n2D/78TCkBFkafyXSklx6eJuecJctqKU/T5a4PN5ZX
-         ltBrh4GwbL6IkWkIdyjvQOgGwTJg+0hCtWNdIFw4STuOk3H2KlXyjjEVfFLMdqWSkKc3
-         vNzw==
-X-Gm-Message-State: AOAM531YuCXKUM9Jko7S0GdMfAvg+VRnJylZJOO73rGkG3CNLc/HJBAt
-        MErAD6AvQHa/XWWUHUkAjX63g+GjMRrYiZtFIEiXHw==
-X-Google-Smtp-Source: ABdhPJyp+18LHyzRAiO7+sc3FHiRgXNmFI/UTNc7tUNrDDRlUREycMbppyLtZcKvXSr6KiyqKSsBhvaEt7CAlg7Cf0M=
-X-Received: by 2002:a63:4e01:: with SMTP id c1mr46758645pgb.265.1621242084104;
- Mon, 17 May 2021 02:01:24 -0700 (PDT)
+        Mon, 17 May 2021 05:06:08 -0400
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 14H926mm018652;
+        Mon, 17 May 2021 09:04:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type : in-reply-to;
+ s=corp-2020-01-29; bh=OITtMnOQqFatshRwK/G3cSME8UfYiuTbecRPw4JvaYQ=;
+ b=rvXSzhOqaSNxmoXYQ0Sy4E0sk9Q7pzYyLGi5pg0hmU4/wtC1q6rZyHatai6JdhcIG99D
+ DCwo/fGS/srO8PwIyB3W2YeYXu63R0vFLbTxfqD2ng0XuB5lmTZQ6XPE8Y+dVjaOwcpC
+ 0+BpSpk9jfhgtzmU5hlS0oGWZWeU7UOmO6l8/DiJwDEaHua1Bq6LG0rBTjbEZ1LGdRNk
+ /AV0M8xFM9kFq/M8jNvRjGCksvT8kUePbJywjF73rxcKnSdilPqfYpajaoVbB/0BAeas
+ ziL1Yt5OCzfOJ/WqzkBc1WKlpkar5Bimur4+EDSN2eeWHsnHSPBDwkFWSUxVf1BGT1h6 Bw== 
+Received: from oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by mx0b-00069f02.pphosted.com with ESMTP id 38kjp6g26x-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 17 May 2021 09:04:29 +0000
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
+        by pps.podrdrct (8.16.0.36/8.16.0.36) with SMTP id 14H93qxP064798;
+        Mon, 17 May 2021 09:04:28 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 38j644u58k-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 17 May 2021 09:04:28 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 14H94Mgt025989;
+        Mon, 17 May 2021 09:04:22 GMT
+Received: from kadam (/102.36.221.92)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 17 May 2021 09:04:21 +0000
+Date:   Mon, 17 May 2021 12:04:13 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH net v2] net: mdiobus: get rid of a BUG_ON()
+Message-ID: <20210517090413.GC1955@kadam>
 MIME-Version: 1.0
-References: <20210514070306.606-1-linqiheng@huawei.com>
-In-Reply-To: <20210514070306.606-1-linqiheng@huawei.com>
-From:   Robert Foss <robert.foss@linaro.org>
-Date:   Mon, 17 May 2021 11:01:13 +0200
-Message-ID: <CAG3jFytWqa9CwPto4Q1b5wZvHkviLgtY_pqYWyVCa5Trx0otwg@mail.gmail.com>
-Subject: Re: [PATCH -next] drm: bridge: fix wrong pointer passed to PTR_ERR()
-To:     Qiheng Lin <linqiheng@huawei.com>
-Cc:     Phong LE <ple@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210515101522.GM12395@shell.armlinux.org.uk>
+X-Mailer: git-send-email haha only kidding
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9986 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 malwarescore=0
+ bulkscore=0 mlxlogscore=999 phishscore=0 adultscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
+ definitions=main-2105170064
+X-Proofpoint-ORIG-GUID: tjSKhXC8lCcUCFRVPsLh710U9N5CiUY6
+X-Proofpoint-GUID: tjSKhXC8lCcUCFRVPsLh710U9N5CiUY6
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hey Qiheng,
+We spotted a bug recently during a review where a driver was
+unregistering a bus that wasn't registered, which would trigger this
+BUG_ON().  Let's handle that situation more gracefully, and just print
+a warning and return.
 
-Thanks for submitting this bugfix.
+Reported-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+---
+v2: Update the Reported-by tag.
 
-The title of this patch should probably be:
-drm: bridge: it66121: fix wrong pointer passed to PTR_ERR()
+ drivers/net/phy/mdio_bus.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-With this fixed, feel free to add my r-b.
-Reviewed-by: Robert Foss <robert.foss@linaro.org>
-
-
-On Fri, 14 May 2021 at 09:03, Qiheng Lin <linqiheng@huawei.com> wrote:
->
-> PTR_ERR should access the value just tested by IS_ERR, otherwise
-> the wrong error code will be returned.
->
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Qiheng Lin <linqiheng@huawei.com>
-> ---
->  drivers/gpu/drm/bridge/ite-it66121.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/bridge/ite-it66121.c b/drivers/gpu/drm/bridge/ite-it66121.c
-> index d8a60691fd32..6980c9801d0d 100644
-> --- a/drivers/gpu/drm/bridge/ite-it66121.c
-> +++ b/drivers/gpu/drm/bridge/ite-it66121.c
-> @@ -943,7 +943,7 @@ static int it66121_probe(struct i2c_client *client,
->         ctx->regmap = devm_regmap_init_i2c(client, &it66121_regmap_config);
->         if (IS_ERR(ctx->regmap)) {
->                 ite66121_power_off(ctx);
-> -               return PTR_ERR(ctx);
-> +               return PTR_ERR(ctx->regmap);
->         }
->
->         regmap_read(ctx->regmap, IT66121_VENDOR_ID0_REG, &vendor_ids[0]);
->
+diff --git a/drivers/net/phy/mdio_bus.c b/drivers/net/phy/mdio_bus.c
+index dadf75ff3ab9..6045ad3def12 100644
+--- a/drivers/net/phy/mdio_bus.c
++++ b/drivers/net/phy/mdio_bus.c
+@@ -607,7 +607,8 @@ void mdiobus_unregister(struct mii_bus *bus)
+ 	struct mdio_device *mdiodev;
+ 	int i;
+ 
+-	BUG_ON(bus->state != MDIOBUS_REGISTERED);
++	if (WARN_ON_ONCE(bus->state != MDIOBUS_REGISTERED))
++		return;
+ 	bus->state = MDIOBUS_UNREGISTERED;
+ 
+ 	for (i = 0; i < PHY_MAX_ADDR; i++) {
+-- 
+2.30.2
