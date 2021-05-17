@@ -2,96 +2,107 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2591AC433ED
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 10:53:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C8BCC433ED
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 11:24:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ED24D61209
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 10:53:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 01F0961166
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 11:24:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236582AbhEQKzK (ORCPT
+        id S236685AbhEQL0E (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 17 May 2021 06:55:10 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35202 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236591AbhEQKzI (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 17 May 2021 06:55:08 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 96607B039;
-        Mon, 17 May 2021 10:53:50 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id 2F468DAF1B; Mon, 17 May 2021 12:51:18 +0200 (CEST)
-Date:   Mon, 17 May 2021 12:51:18 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     Khaled ROMDHANI <khaledromdhani216@gmail.com>
-Cc:     clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] fs/btrfs: Fix uninitialized variable
-Message-ID: <20210517105117.GL7604@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz,
-        Khaled ROMDHANI <khaledromdhani216@gmail.com>, clm@fb.com,
-        josef@toxicpanda.com, dsterba@suse.com, linux-btrfs@vger.kernel.org,
+        Mon, 17 May 2021 07:26:04 -0400
+Received: from smtp07.smtpout.orange.fr ([80.12.242.129]:50979 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236618AbhEQL0E (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 17 May 2021 07:26:04 -0400
+Received: from [192.168.1.18] ([86.243.172.93])
+        by mwinf5d66 with ME
+        id 5nQi2500A21Fzsu03nQi5b; Mon, 17 May 2021 13:24:47 +0200
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 17 May 2021 13:24:47 +0200
+X-ME-IP: 86.243.172.93
+Subject: Re: [PATCH 1/2] misc/pvpanic: Fix error handling in
+ 'pvpanic_pci_probe()'
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     arnd@arndb.de, gregkh@linuxfoundation.org,
+        mihai.carabas@oracle.com, pizhenwei@bytedance.com,
+        pbonzini@redhat.com, linqiheng@huawei.com,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <20210501225046.9138-1-khaledromdhani216@gmail.com>
+References: <7efa7b4b9867ac44f398783b89f3a21deac4ce8b.1621175108.git.christophe.jaillet@wanadoo.fr>
+ <YKIi1hljnjvqMCVA@smile.fi.intel.com>
+ <ada55e25-5eb3-9b6b-5783-d2303db9bf83@wanadoo.fr>
+ <YKJGrGTHz+DzfiHN@smile.fi.intel.com>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Message-ID: <a5759f89-0617-29a1-26bd-0ed9a4bc41b8@wanadoo.fr>
+Date:   Mon, 17 May 2021 13:24:42 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210501225046.9138-1-khaledromdhani216@gmail.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+In-Reply-To: <YKJGrGTHz+DzfiHN@smile.fi.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, May 01, 2021 at 11:50:46PM +0100, Khaled ROMDHANI wrote:
-> Fix the warning: variable 'zone' is used
-> uninitialized whenever '?:' condition is true.
+Le 17/05/2021 à 12:34, Andy Shevchenko a écrit :
+> On Mon, May 17, 2021 at 12:02:24PM +0200, Christophe JAILLET wrote:
+>> Le 17/05/2021 à 10:01, Andy Shevchenko a écrit :
+>>> On Sun, May 16, 2021 at 04:36:55PM +0200, Christophe JAILLET wrote:
+>>>> There is no error handling path in the probe function.
+>>>> Switch to managed resource so that errors in the probe are handled easily
+>>>> and simplify the remove function accordingly.
+>>>
+>>> Yes, that's what I suggested earlier to another contributor.
+>>>
+>>> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>>>
+>>> Thanks!
+>>>
+>>> P.S. You may consider the following things as well:
+>>>    1) converting to use pci_set_drvdata() / pci_get_drvdata()
+>>
+>> I can send a patch for that if you want.
+>> But it looks really low value for a driver that is already very short and
+>> clean.
 > 
-> Fix that by preventing the code to reach
-> the last assertion. If the variable 'mirror'
-> is invalid, the assertion fails and we return
-> immediately.
+> Yep, that's why 2) below came to my mind (then you will remove drvdata call).
 > 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Signed-off-by: Khaled ROMDHANI <khaledromdhani216@gmail.com>
-
-This took several rounds and none of them was close to what I'd consider
-a proper fix, for something that's not really important. As Dan said,
-smatch does understand the values passed from the callers and the
-function is a static inline so the complete information is available. No
-tricky analysis is required, so why does not coverity see that too?
-
-We use assertions to namely catch programmer errors and API misuse,
-anything that can happen at runtime or depends on input needs proper
-checks and error handling. But for the super block copies, the constant
-won't change so all we want is to catch the stupid errors.
-
-> ---
->  fs/btrfs/zoned.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>    2) providing devm_pvpanic_probe() [via devm_add_action() /
+>>>       devm_add_action_or_reset()]
+>>
+>> I don't follow you here.
+>> The goal would be to avoid the remove function and "record" the needed
+>> action directly in the probe?
+>>
+>> If this is it, I would only see an unusual pattern and a harder to follow
+>> logic.
 > 
-> diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
-> index 8250ab3f0868..23da9d8dc184 100644
-> --- a/fs/btrfs/zoned.c
-> +++ b/fs/btrfs/zoned.c
-> @@ -145,7 +145,7 @@ static inline u32 sb_zone_number(int shift, int mirror)
->  	case 2: zone = 1ULL << (BTRFS_SB_LOG_SECOND_SHIFT - shift); break;
->  	default:
->  		ASSERT((u32)mirror < 3);
-> -		break;
-> +		return 0;
+>> Did I miss something?
+>> What would be the benefit?
+> 
+> First of all it's a usual pattern when one, often used in ->probe(), function
+> gains its devm variant. See, for example, `return devm_gpiochip_add_data(...);`
+> used in the code.
+> 
+> Benefit is to have everything under managed resources and yes, no ->remove()
+> will be needed in the individual drivers.
+> 
+> But it's up to you. It was just a proposal that you may simply refuse to follow,
+> it's fine.
+> 
 
-It's been pointed out that this does not apply on the current code but
-on top of previous versions, so it's not making it easy for me to apply
-the patch and do maybe some tweaks only.
+Ok, I'll propose something when/if my first patches reach -next.
 
-I don't mind merging trivial patches, people can learn the process and
-few iterations are not a big deal. What I also hope for is to get some
-understanding of the code being changed and not just silencing some
-tools' warnings.
+I now better see your point. I first read devm_pvpanic_pci_probe (i.e. 
+with pci inside), instead of devm_pvpanic_probe.
+
+CJ
