@@ -2,131 +2,109 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-20.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2843BC433ED
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 10:05:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1050C433B4
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 10:17:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0740C610C9
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 10:05:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB9B0610CD
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 May 2021 10:17:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233034AbhEQKHH (ORCPT
+        id S236332AbhEQKSR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 17 May 2021 06:07:07 -0400
-Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:18015 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236238AbhEQKE3 (ORCPT
+        Mon, 17 May 2021 06:18:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39964 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230248AbhEQKSQ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 17 May 2021 06:04:29 -0400
-Received: from [192.168.1.18] ([86.243.172.93])
-        by mwinf5d20 with ME
-        id 5m2P2500Z21Fzsu03m2PcA; Mon, 17 May 2021 12:02:27 +0200
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 17 May 2021 12:02:27 +0200
-X-ME-IP: 86.243.172.93
-Subject: Re: [PATCH 1/2] misc/pvpanic: Fix error handling in
- 'pvpanic_pci_probe()'
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     arnd@arndb.de, gregkh@linuxfoundation.org,
-        mihai.carabas@oracle.com, pizhenwei@bytedance.com,
-        pbonzini@redhat.com, linqiheng@huawei.com,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <7efa7b4b9867ac44f398783b89f3a21deac4ce8b.1621175108.git.christophe.jaillet@wanadoo.fr>
- <YKIi1hljnjvqMCVA@smile.fi.intel.com>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Message-ID: <ada55e25-5eb3-9b6b-5783-d2303db9bf83@wanadoo.fr>
-Date:   Mon, 17 May 2021 12:02:24 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
-MIME-Version: 1.0
-In-Reply-To: <YKIi1hljnjvqMCVA@smile.fi.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Mon, 17 May 2021 06:18:16 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0F29C061573;
+        Mon, 17 May 2021 03:17:00 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id lg14so8340018ejb.9;
+        Mon, 17 May 2021 03:17:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=O61mLnBohDelrXy5jyEb8/b2q8aYYlIu4kGyelK2l6Q=;
+        b=rOSe6Yj3yl4Zgb4OWWe25FgdsrQFEPBxVM9DHVtuhcIbMlMoFl+N8aIS70uYUbtllU
+         5vGid/3GUvjRlhyYnUakYC9i02JpWQtA2NyxwG50rs0VdFuPaziS5zeulhVkSFM8oU7J
+         dzjlrZARlkTKz8k5/pxcgc7E8CxxHSvJOlLMGiRQ7XCpITo7HFZ2M3+zTtqqVp2r25u9
+         k5yIwdF/d5bjDakxyUQ5tD1boLvDYdKymysN6b1xG8aRamiY/v0olrWFKMFEOc9Uuhql
+         JI03I/W+zQNWFCmRcQPAzkzeW2SIRQVrsaPdB+Ta4+/8/6hiVtIhVBWsmjhPkYAPQ22Z
+         XYiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=O61mLnBohDelrXy5jyEb8/b2q8aYYlIu4kGyelK2l6Q=;
+        b=InHLwcEBA/APuhEtPx2cGhUUQv6trwjljKkcUVNhE3sqW4qn3CDnoeHwxjCQs8em+C
+         ukEkrW9K+L/dLRPI3/2ItB932/YbxR0Cty4b6e3prn2s45h9f2IHexdN13xT/2EAvbhx
+         6e5RNGm+hKOgVjJ6UWlZNcR7qRFpJdEgVRY/aBVxMUJlpHF8HTPRRbIIssJsIE14wttX
+         cK2ICws1ldDE9TFUx1tdBI+fOlz8X8A75o8uSf+bbAu+Lepu35qjA5D7jjZN8kTMa5MS
+         8JuTGhSojth7vHlamilBLJTAn85BuqH5PiPNTzvnZ+UNJrs4eMdPeMu1qRcwxCYT8/6d
+         jIGQ==
+X-Gm-Message-State: AOAM532gqMCIiK+mb/EVFnCiTPZj5/NVIrL4h/GMMM/3UArZxbgZsOn2
+        Jm9vMzxog/oorvITJ6RCpXw=
+X-Google-Smtp-Source: ABdhPJzN+QqZIMCo0M9ryL0N7psIVJilRc8/khRPNwua2F9RP9nQB+ZXg6xEYCLrlw8BHItUJHVFNw==
+X-Received: by 2002:a17:907:c15:: with SMTP id ga21mr51769479ejc.141.1621246619384;
+        Mon, 17 May 2021 03:16:59 -0700 (PDT)
+Received: from felia.fritz.box ([2001:16b8:2dca:fb00:e0e5:3623:aa29:cf48])
+        by smtp.gmail.com with ESMTPSA id l6sm8415243ejc.92.2021.05.17.03.16.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 May 2021 03:16:59 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org
+Cc:     Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: repair reference in DRM DRIVER FOR SIMPLE FRAMEBUFFERS
+Date:   Mon, 17 May 2021 12:16:48 +0200
+Message-Id: <20210517101648.29906-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 17/05/2021 à 10:01, Andy Shevchenko a écrit :
-> On Sun, May 16, 2021 at 04:36:55PM +0200, Christophe JAILLET wrote:
->> There is no error handling path in the probe function.
->> Switch to managed resource so that errors in the probe are handled easily
->> and simplify the remove function accordingly.
-> 
-> Yes, that's what I suggested earlier to another contributor.
-> 
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> 
-> Thanks!
-> 
-> P.S. You may consider the following things as well:
->   1) converting to use pci_set_drvdata() / pci_get_drvdata()
+Commit 11e8f5fd223b ("drm: Add simpledrm driver") adds the file
+./drivers/gpu/drm/tiny/simpledrm.c, but refers to the file
+./drivers/gpu/drm/tiny/simplekms.c with the new MAINTAINERS section
+DRM DRIVER FOR SIMPLE FRAMEBUFFERS.
 
-I can send a patch for that if you want.
-But it looks really low value for a driver that is already very short 
-and clean.
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains:
 
->   2) providing devm_pvpanic_probe() [via devm_add_action() /
->      devm_add_action_or_reset()]
+  warning: no file matches    F:    drivers/gpu/drm/tiny/simplekms.c
 
-I don't follow you here.
-The goal would be to avoid the remove function and "record" the needed 
-action directly in the probe?
+Repair the file entry by referring to the right location.
 
-If this is it, I would only see an unusual pattern and a harder to 
-follow logic.
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+applies cleanly on next-20210514
 
-Did I miss something?
-What would be the benefit?
+Thomas, Daniel, please pick this minor clean-up patch for your -next tree.
 
-CJ
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
->> Fixes: db3a4f0abefd ("misc/pvpanic: add PCI driver")
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->>   drivers/misc/pvpanic/pvpanic-pci.c | 9 +++------
->>   1 file changed, 3 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/misc/pvpanic/pvpanic-pci.c b/drivers/misc/pvpanic/pvpanic-pci.c
->> index 9ecc4e8559d5..046ce4ecc195 100644
->> --- a/drivers/misc/pvpanic/pvpanic-pci.c
->> +++ b/drivers/misc/pvpanic/pvpanic-pci.c
->> @@ -78,15 +78,15 @@ static int pvpanic_pci_probe(struct pci_dev *pdev,
->>   	void __iomem *base;
->>   	int ret;
->>   
->> -	ret = pci_enable_device(pdev);
->> +	ret = pcim_enable_device(pdev);
->>   	if (ret < 0)
->>   		return ret;
->>   
->> -	base = pci_iomap(pdev, 0, 0);
->> +	base = pcim_iomap(pdev, 0, 0);
->>   	if (!base)
->>   		return -ENOMEM;
->>   
->> -	pi = kmalloc(sizeof(*pi), GFP_ATOMIC);
->> +	pi = devm_kmalloc(&pdev->dev, sizeof(*pi), GFP_ATOMIC);
->>   	if (!pi)
->>   		return -ENOMEM;
->>   
->> @@ -107,9 +107,6 @@ static void pvpanic_pci_remove(struct pci_dev *pdev)
->>   	struct pvpanic_instance *pi = dev_get_drvdata(&pdev->dev);
->>   
->>   	pvpanic_remove(pi);
->> -	iounmap(pi->base);
->> -	kfree(pi);
->> -	pci_disable_device(pdev);
->>   }
->>   
->>   static struct pci_driver pvpanic_pci_driver = {
->> -- 
->> 2.30.2
->>
-> 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 6582d19cdf7a..88277ff25d43 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -5885,7 +5885,7 @@ M:	Thomas Zimmermann <tzimmermann@suse.de>
+ L:	dri-devel@lists.freedesktop.org
+ S:	Maintained
+ T:	git git://anongit.freedesktop.org/drm/drm-misc
+-F:	drivers/gpu/drm/tiny/simplekms.c
++F:	drivers/gpu/drm/tiny/simpledrm.c
+ 
+ DRM DRIVER FOR SIS VIDEO CARDS
+ S:	Orphan / Obsolete
+-- 
+2.17.1
 
