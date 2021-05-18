@@ -2,113 +2,121 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7B59C433ED
-	for <kernel-janitors@archiver.kernel.org>; Tue, 18 May 2021 08:29:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9B0CC433B4
+	for <kernel-janitors@archiver.kernel.org>; Tue, 18 May 2021 09:20:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BFF6E61285
-	for <kernel-janitors@archiver.kernel.org>; Tue, 18 May 2021 08:29:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C31266135F
+	for <kernel-janitors@archiver.kernel.org>; Tue, 18 May 2021 09:20:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347507AbhERIaz (ORCPT
+        id S1347189AbhERJV2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 18 May 2021 04:30:55 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:42192 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242456AbhERIao (ORCPT
+        Tue, 18 May 2021 05:21:28 -0400
+Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:43134 "EHLO
+        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S240078AbhERJVX (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 18 May 2021 04:30:44 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 14I8T5e5030752;
-        Tue, 18 May 2021 08:29:05 GMT
+        Tue, 18 May 2021 05:21:23 -0400
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 14I9Ct0k023204;
+        Tue, 18 May 2021 09:19:53 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=mjm2389M6xU+/vps2nDbC/9gZkJjzYIN9Xv+5bntbZA=;
- b=PSeveHJW0vgvKGfYSyGkKZPWcuJ8Mx4L69mbeBP8MrNMhi6cdcXyjAc8TsojaYlJSkF3
- UJhiMMysyk1xTwb/hf6F0EHOcY9K0H6VZEH4m+fzchVpyahoSJV9XJ2AFbsmnNy35P/z
- CZvcXqrHk3Nn0uxoTFt7SAL8HnLqoujtaJmRjdYJlQsj7T6QLmhoe855/sSGTw4+mxrA
- rpQa4xyLzgC7CgajAryeEP4GfqP53RpNc/UTfl0Ek2A67TAQmmu2/U919Xl7fc92YB0Q
- dbWgpSYGDzurcXGuFjlXkcveQjD8lrDf3u2zWc3o50H/P78wmUF3GYZgLqb6b9WSwXbl kA== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2120.oracle.com with ESMTP id 38j6xndfd4-1
+ : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
+ bh=n8e6VGBvsEJjz8jZNXiVgvyKjF6tuVQmtskn3RF1rFc=;
+ b=F1Z3+HjIpu2VLqZj+6IImaud6ddlLKvI5yuSt3L+3KAn9/P+sStIEQY4VzubmJzuqV8G
+ ioigVJBjDbFVJwW74ZrvqJYGVZFCA04MPDux/khlD/io/PTD5AdXQNTEDqQGpfuHNkjc
+ n9E/Dbih/rshzYp/mNDeA+GOtjArDO/iz9bLc32PWd58Yx9gMziogIFOLYkUc9uZ97dO
+ D8yC7ePbxMN/nmISSz01szddAbPkkN8Q2MmhASW+NXTWYaaEfNUu98W6t1JApjM8zU8k
+ kFGhc668mKlBvRYyKK56xXWn57y7ZB/jPj5G0/oR9XNE0eQ6wmuDGgM5X5WcU79fJ3v3 sw== 
+Received: from oracle.com (userp3030.oracle.com [156.151.31.80])
+        by mx0b-00069f02.pphosted.com with ESMTP id 38m9bgg1aa-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 18 May 2021 08:29:05 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 14I8PrTn024766;
-        Tue, 18 May 2021 08:29:04 GMT
+        Tue, 18 May 2021 09:19:53 +0000
+Received: from userp3030.oracle.com (userp3030.oracle.com [127.0.0.1])
+        by pps.podrdrct (8.16.0.36/8.16.0.36) with SMTP id 14I9AtTB090680;
+        Tue, 18 May 2021 09:19:52 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-        by aserp3020.oracle.com with ESMTP id 38j647w740-1
+        by userp3030.oracle.com with ESMTP id 38j3du6x53-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 18 May 2021 08:29:04 +0000
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 14I8RHSH037750;
-        Tue, 18 May 2021 08:29:04 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3020.oracle.com with ESMTP id 38j647w729-1
+        Tue, 18 May 2021 09:19:52 +0000
+Received: from userp3030.oracle.com (userp3030.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 14I9JpEC109238;
+        Tue, 18 May 2021 09:19:51 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 38j3du6x4f-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 18 May 2021 08:29:03 +0000
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 14I8T220011971;
-        Tue, 18 May 2021 08:29:02 GMT
-Received: from kadam (/62.8.83.26)
+        Tue, 18 May 2021 09:19:51 +0000
+Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 14I9Jdlx012420;
+        Tue, 18 May 2021 09:19:39 GMT
+Received: from mwanda (/62.8.83.26)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 18 May 2021 01:29:01 -0700
-Date:   Tue, 18 May 2021 11:28:55 +0300
+        with ESMTP ; Tue, 18 May 2021 02:19:39 -0700
+Date:   Tue, 18 May 2021 12:19:30 +0300
 From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Martin Kaiser <martin@kaiser.cx>
-Cc:     Larry Finger <Larry.Finger@lwfinger.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/6] staging: rtl8188eu: use safe iterator in
- rtw_free_network_queue
-Message-ID: <20210518082855.GB32682@kadam>
-References: <20210516160613.30489-1-martin@kaiser.cx>
- <20210517155733.GK1955@kadam>
+To:     Andrzej Hajda <a.hajda@samsung.com>
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] drm/bridge: ti-sn65dsi86: fix a ternary type promotion bug
+Message-ID: <YKOGogHasIyvF8nj@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210517155733.GK1955@kadam>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-GUID: UdcIccWTxjhHBZviQBZGOBBlLnO8prSb
-X-Proofpoint-ORIG-GUID: UdcIccWTxjhHBZviQBZGOBBlLnO8prSb
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9987 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 impostorscore=0 mlxscore=0
- mlxlogscore=999 adultscore=0 malwarescore=0 priorityscore=1501
- phishscore=0 suspectscore=0 lowpriorityscore=0 bulkscore=0 clxscore=1015
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2104190000 definitions=main-2105180061
+X-Mailer: git-send-email haha only kidding
+X-Proofpoint-ORIG-GUID: b9ooFrFJESALkdzw1ESlb6Ymmjg1FYhe
+X-Proofpoint-GUID: b9ooFrFJESALkdzw1ESlb6Ymmjg1FYhe
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, May 17, 2021 at 06:57:33PM +0300, Dan Carpenter wrote:
-> Thanks for catching these...  I've created a new Smatch static checker
-> warning for this but it only works for list_for_each_entry().
-> Eventually someone would have run the coccinelle script to convert these
-> list_for_each loops into list_for_each_entry().  Otherwise you have to
-> parse container_of() and I've been meaning to do that for a while but I
-> haven't yet.
-> 
-> Anyway, I'm going to test it out overnight and see what it finds.  It's
-> sort a new use for the modification_hook(), before I had only ever used
-> it to silence warnings but this check uses it to trigger warnings.  So
-> perhaps it will generate a lot of false positives.  We'll see.
-> 
-> It sets the state of the iterator to &start at the start of the loop
-> and if it's not &start state at the end then it prints a warning.
-> 
-> regards,
-> dan carpenter
-> 
+The ti_sn_aux_transfer() function returns ssize_t (signed long).  It's
+supposed to return negative error codes or the number of bytes
+transferred.  The "ret" variable is int and the "len" variable is
+unsigned int.
 
-That Smatch check didn't work at all.  :P  Back to the drawing board.
+The problem is that with a ternary like this, the negative int is first
+type promoted to unsigned int to match "len" at this point it is a high
+positive value.  Then when it is type promoted to ssize_t (s64) it
+remains a high positive value instead of sign extending and becoming a
+negative again.
 
-regards,
-dan carpenter
+Fix this by removing the ternary.
+
+Fixes: b137406d9679 ("drm/bridge: ti-sn65dsi86: If refclk, DP AUX can happen w/out pre-enable")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/gpu/drm/bridge/ti-sn65dsi86.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi86.c b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+index bb0a0e1c6341..45a2969afb2b 100644
+--- a/drivers/gpu/drm/bridge/ti-sn65dsi86.c
++++ b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+@@ -1042,7 +1042,9 @@ static ssize_t ti_sn_aux_transfer(struct drm_dp_aux *aux,
+ 	pm_runtime_mark_last_busy(pdata->dev);
+ 	pm_runtime_put_autosuspend(pdata->dev);
+ 
+-	return ret ? ret : len;
++	if (ret)
++		return ret;
++	return len;
+ }
+ 
+ static int ti_sn_bridge_parse_dsi_host(struct ti_sn65dsi86 *pdata)
+-- 
+2.30.2
 
