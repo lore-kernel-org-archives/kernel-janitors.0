@@ -7,58 +7,59 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59C25C433B4
-	for <kernel-janitors@archiver.kernel.org>; Tue, 18 May 2021 13:21:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89612C433ED
+	for <kernel-janitors@archiver.kernel.org>; Tue, 18 May 2021 13:29:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 392EE6109E
-	for <kernel-janitors@archiver.kernel.org>; Tue, 18 May 2021 13:21:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D478611CC
+	for <kernel-janitors@archiver.kernel.org>; Tue, 18 May 2021 13:29:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243064AbhERNW1 (ORCPT
+        id S1349590AbhERNag (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 18 May 2021 09:22:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39446 "EHLO
+        Tue, 18 May 2021 09:30:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240830AbhERNW0 (ORCPT
+        with ESMTP id S1349598AbhERNag (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 18 May 2021 09:22:26 -0400
+        Tue, 18 May 2021 09:30:36 -0400
 Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27239C06175F
-        for <kernel-janitors@vger.kernel.org>; Tue, 18 May 2021 06:21:09 -0700 (PDT)
-Received: by mail-pl1-x630.google.com with SMTP id p6so5058332plr.11
-        for <kernel-janitors@vger.kernel.org>; Tue, 18 May 2021 06:21:09 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77A54C061756
+        for <kernel-janitors@vger.kernel.org>; Tue, 18 May 2021 06:29:17 -0700 (PDT)
+Received: by mail-pl1-x630.google.com with SMTP id z4so2887232plg.8
+        for <kernel-janitors@vger.kernel.org>; Tue, 18 May 2021 06:29:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Eij78DTYm6LdNyJPrTT7rIc4tl9S27pR1VqAL0ye5eg=;
-        b=i3pMD4EzmEx0IQ02hRhTPfWzHAZxoHQCiYfbjxNP823FZ/30gTRWPWGpibKir53wDG
-         5Y8bC28z0VPmH9l0Btv2arydjw0pIGMo6+1IJ1Jiu9VG0xn4MHgOefKpmwc1OnJxP/A7
-         nC950+rJqjW66it6AZo2SWrI8rlHWNQF9ujtGqENUM3Kg9WUrBr1eYHb1b2JU3tuXgd0
-         PtcEWdMj6op4rGBFmIBnCwwmk6WqEPdCaXz+UVjy+mZvqlMTClxYQO2stfqHIVMNlCgl
-         qvBYy6QqFo3qj0+0xb/NcyU6YM8XUgzAucXH2GP4hbq56Cm+Zj2/HeHnk/V4WWYJTFjc
-         w2Ew==
+        bh=+9uUXCGM1WRSLZSKiMJRcVlxa7yFZ11QeqDeoqK0ih0=;
+        b=VkJlo6aDzmgedwuPJlD6/sR6xRtHX9hlA6a/sT70kxM2CZtzJyB8E/1f/uuQQL72jM
+         RgSd6CTnJ2B8mkWBWA7T0biB/qWptdVWJ9CR01MoM8wSemX4pQcuioxOoGD8iMwxSqVl
+         XQ+vV6CHG6cLAKBc+U65HZA+xTQ50ElmVQg9XEpUUFRoAx/RBNP8hb8+iQcsNgRNVq+O
+         1C3RmUqfsqY3k3SB4L/KTblMT6dkmnA3dGlpLD0OyZ9iqFadqbftsKmdSguz3nBHpHTP
+         1xWuNf7DlOd8Pt6G6kasTA8SpWbuGGeOJpGdag8TzGjNPizBOaQxbraSgTAundfiJsDM
+         4Wbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Eij78DTYm6LdNyJPrTT7rIc4tl9S27pR1VqAL0ye5eg=;
-        b=X6dlk0tbNDzuTMqbLwBIBac0QHUsSYcsAAizQ+Ktq9jzC9NG1GHDZ27GC78VE2P5UT
-         YsIWD1myDfG88s795n7uqUi08H13b2uneeSxbnzsogsNoPOXTCiFkV5RFDegyXmgDr2x
-         IBWZpXkx//Kvq71dnUtqrPCAB/5mhkCx/cA00ShUEs/KR4UIz5oHvXWZ+ObrKq9q2uea
-         4Y0GBiyBxT30npfrCxaVFehZ4TBbgs0K1iSb74Y9AkZlicgHKs73GGSVCmlVP+1rIl/d
-         yWlT+Xq8cSn72rEJtFT7fbGJxZLvgDTvG+MB5AX7m1622WK2Gbbm1+4BpZDIS8/omVYx
-         H7lQ==
-X-Gm-Message-State: AOAM532B4sQcIJ3AzVSgjH2w24yjQ29v/9ngyFifhuf0lRZq3DX+3FqX
-        /lOC1xsQ42ve4ThPbCnQ9JVlSui0484KCOudyLUA8Q==
-X-Google-Smtp-Source: ABdhPJyEB0vA70S0lI3WHu3HCNasA37Y5tjILdnUF6+2WrHYIGLEwPF3u5iNV46DS4+EpEvgiHCl+6xIZzDLKE+vwLQ=
-X-Received: by 2002:a17:90a:7e8f:: with SMTP id j15mr5529715pjl.19.1621344068626;
- Tue, 18 May 2021 06:21:08 -0700 (PDT)
+        bh=+9uUXCGM1WRSLZSKiMJRcVlxa7yFZ11QeqDeoqK0ih0=;
+        b=VdnwMw4I+ooub6VnYkvWE6PhzDa659c2nt8GFnSb9yV31UxgPsWixDLzxKSPVvyWBF
+         Rvs+CWZLJngP5eLuLziSijxriEujAqvPWJy/de6S9imeth3MV5cwsOfbeEuVHKsEnqal
+         DXrNK0siqYPzYcKIt8hBCmMf1slyDBuYljFsyNtJDVf7Ua6u425/CnPZpvwSnrd/z5pB
+         K5eyixQGBw0sYSy9MkDnmQeK7cs+SKHJEINZ/6NGLmrL7WTibwat4Iy5+CqMMiMeqyS3
+         wd+RpuQPnUepMIisn1KthYYazeP7OIxyPx3Oz/2RYx7yshi6J3IyedcjdrhkKuwTNo06
+         Wp5w==
+X-Gm-Message-State: AOAM533cyoDXpm+dw++FOMn3TrPR0F0YTckCPe1H998lQHcqhKkV9jN9
+        iY3M68FEp4hChHViw/PygqayqNcPZPhE7vS+7+59lQ==
+X-Google-Smtp-Source: ABdhPJyiRloyNEJhG1wQmfsOk1IFKsu7S1Qi/FL145KCqHGpn79hzewNqDX8wpkVthQLJYRuP/xASf05ED/bn9leiOU=
+X-Received: by 2002:a17:902:4:b029:ee:8f40:ecbf with SMTP id
+ 4-20020a1709020004b02900ee8f40ecbfmr4596509pla.28.1621344556939; Tue, 18 May
+ 2021 06:29:16 -0700 (PDT)
 MIME-Version: 1.0
-References: <YKOGogHasIyvF8nj@mwanda>
-In-Reply-To: <YKOGogHasIyvF8nj@mwanda>
+References: <YKOGogHasIyvF8nj@mwanda> <CAG3jFytpOb8KeNCjCJ7gq20LQK3UGA9PgGne+cR2kZdADS-Oxg@mail.gmail.com>
+In-Reply-To: <CAG3jFytpOb8KeNCjCJ7gq20LQK3UGA9PgGne+cR2kZdADS-Oxg@mail.gmail.com>
 From:   Robert Foss <robert.foss@linaro.org>
-Date:   Tue, 18 May 2021 15:20:57 +0200
-Message-ID: <CAG3jFytpOb8KeNCjCJ7gq20LQK3UGA9PgGne+cR2kZdADS-Oxg@mail.gmail.com>
+Date:   Tue, 18 May 2021 15:29:06 +0200
+Message-ID: <CAG3jFytF9KToiQcNZpiVz7T-uAx6gHDcxSnc6MH7d3bqpWWz8Q@mail.gmail.com>
 Subject: Re: [PATCH] drm/bridge: ti-sn65dsi86: fix a ternary type promotion bug
 To:     Dan Carpenter <dan.carpenter@oracle.com>
 Cc:     Andrzej Hajda <a.hajda@samsung.com>,
@@ -79,46 +80,50 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hey Dan,
+Since it fixes drm-misc-next, applied it there instead.
 
-Thanks for submitting this.
-
-On Tue, 18 May 2021 at 11:20, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+On Tue, 18 May 2021 at 15:20, Robert Foss <robert.foss@linaro.org> wrote:
 >
-> The ti_sn_aux_transfer() function returns ssize_t (signed long).  It's
-> supposed to return negative error codes or the number of bytes
-> transferred.  The "ret" variable is int and the "len" variable is
-> unsigned int.
+> Hey Dan,
 >
-> The problem is that with a ternary like this, the negative int is first
-> type promoted to unsigned int to match "len" at this point it is a high
-> positive value.  Then when it is type promoted to ssize_t (s64) it
-> remains a high positive value instead of sign extending and becoming a
-> negative again.
+> Thanks for submitting this.
 >
-> Fix this by removing the ternary.
+> On Tue, 18 May 2021 at 11:20, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> >
+> > The ti_sn_aux_transfer() function returns ssize_t (signed long).  It's
+> > supposed to return negative error codes or the number of bytes
+> > transferred.  The "ret" variable is int and the "len" variable is
+> > unsigned int.
+> >
+> > The problem is that with a ternary like this, the negative int is first
+> > type promoted to unsigned int to match "len" at this point it is a high
+> > positive value.  Then when it is type promoted to ssize_t (s64) it
+> > remains a high positive value instead of sign extending and becoming a
+> > negative again.
+> >
+> > Fix this by removing the ternary.
+> >
+> > Fixes: b137406d9679 ("drm/bridge: ti-sn65dsi86: If refclk, DP AUX can happen w/out pre-enable")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > ---
+> >  drivers/gpu/drm/bridge/ti-sn65dsi86.c | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi86.c b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+> > index bb0a0e1c6341..45a2969afb2b 100644
+> > --- a/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+> > +++ b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+> > @@ -1042,7 +1042,9 @@ static ssize_t ti_sn_aux_transfer(struct drm_dp_aux *aux,
+> >         pm_runtime_mark_last_busy(pdata->dev);
+> >         pm_runtime_put_autosuspend(pdata->dev);
+> >
+> > -       return ret ? ret : len;
+> > +       if (ret)
+> > +               return ret;
+> > +       return len;
+> >  }
+> >
 >
-> Fixes: b137406d9679 ("drm/bridge: ti-sn65dsi86: If refclk, DP AUX can happen w/out pre-enable")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/gpu/drm/bridge/ti-sn65dsi86.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+> Reviewed-by: Robert Foss <robert.foss@linaro.org>
 >
-> diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi86.c b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-> index bb0a0e1c6341..45a2969afb2b 100644
-> --- a/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-> +++ b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-> @@ -1042,7 +1042,9 @@ static ssize_t ti_sn_aux_transfer(struct drm_dp_aux *aux,
->         pm_runtime_mark_last_busy(pdata->dev);
->         pm_runtime_put_autosuspend(pdata->dev);
->
-> -       return ret ? ret : len;
-> +       if (ret)
-> +               return ret;
-> +       return len;
->  }
->
-
-Reviewed-by: Robert Foss <robert.foss@linaro.org>
-
-Applying to drm-misc-fixes.
+> Applying to drm-misc-fixes.
