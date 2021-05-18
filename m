@@ -2,83 +2,76 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F34E3C433B4
-	for <kernel-janitors@archiver.kernel.org>; Tue, 18 May 2021 20:46:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0004C433B4
+	for <kernel-janitors@archiver.kernel.org>; Tue, 18 May 2021 20:50:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D9604611B0
-	for <kernel-janitors@archiver.kernel.org>; Tue, 18 May 2021 20:46:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 857A86135B
+	for <kernel-janitors@archiver.kernel.org>; Tue, 18 May 2021 20:50:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236195AbhERUrm (ORCPT
+        id S1352010AbhERUvc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 18 May 2021 16:47:42 -0400
-Received: from smtp05.smtpout.orange.fr ([80.12.242.127]:37439 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233645AbhERUrl (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 18 May 2021 16:47:41 -0400
-Received: from [192.168.1.18] ([86.243.172.93])
-        by mwinf5d52 with ME
-        id 6LmK2500421Fzsu03LmKQJ; Tue, 18 May 2021 22:46:20 +0200
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 18 May 2021 22:46:20 +0200
-X-ME-IP: 86.243.172.93
-Subject: Re: [PATCH 1/2] uio_hv_generic: Fix a memory leak in error handling
- paths
-To:     Wei Liu <wei.liu@kernel.org>
-Cc:     kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com,
-        decui@microsoft.com, gregkh@linuxfoundation.org,
-        linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <4fdaff557deef6f0475d02ba7922ddbaa1ab08a6.1620544055.git.christophe.jaillet@wanadoo.fr>
- <20210511095227.ggrl3z6otjanwffz@liuwe-devbox-debian-v2>
- <f0dca7cf-c737-0f06-34aa-e4759826a974@wanadoo.fr>
- <20210515160932.v4inlp5xlzokmmel@liuwe-devbox-debian-v2>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Message-ID: <dd8b09a6-ced1-3b96-4422-01219f5bbc7a@wanadoo.fr>
-Date:   Tue, 18 May 2021 22:46:19 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        Tue, 18 May 2021 16:51:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36280 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S238356AbhERUvb (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 18 May 2021 16:51:31 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPS id E234361355;
+        Tue, 18 May 2021 20:50:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1621371012;
+        bh=Sbsa1uGP6vqypWZFm6ZfaCJuMcHe7ruZ2zbbkgBjesI=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=sXnl6H2oq2g7VRUWH2sM2RUs/NLV7ha1b8JwlB35Zk6kZvXnZ8rlcJtMdqLz92l9V
+         du4rwz15cA7jGPYy7tmvEjJyz+rs9Aj09pA5JYrHKQ74IsEJAiSYc/QbT5XQ+Yzcx2
+         Uike/4fRzNOXe846FqcFAuR0qfj3zITHOsBOgjtqPGwt8sb1aVN0hBTp4yYLCcHONF
+         nkMj/pByccRsQrE1FBo+Oow3t1ukI1YYY55gbYad4qmLmN2jqa64v5OUyt6PiNUBHa
+         Jcw//qOmk2G4e/MYBlwihF9aKPIXFGVYmOSVRb+BYIur8/prQdqnLrVVGLEVuil2Mu
+         niE+OHWDkZpLA==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20210515160932.v4inlp5xlzokmmel@liuwe-devbox-debian-v2>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] net: dsa: qca8k: fix missing unlock on error in
+ qca8k_vlan_(add|del)
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <162137101285.13244.15041383280095302302.git-patchwork-notify@kernel.org>
+Date:   Tue, 18 May 2021 20:50:12 +0000
+References: <20210518112413.622913-1-weiyongjun1@huawei.com>
+In-Reply-To: <20210518112413.622913-1-weiyongjun1@huawei.com>
+To:     Wei Yongjun <weiyongjun1@huawei.com>
+Cc:     ansuelsmth@gmail.com, andrew@lunn.ch, vivien.didelot@gmail.com,
+        f.fainelli@gmail.com, olteanv@gmail.com, davem@davemloft.net,
+        kuba@kernel.org, linux@armlinux.org.uk, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, hulkci@huawei.com
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 15/05/2021 à 18:09, Wei Liu a écrit :
-> On Tue, May 11, 2021 at 08:18:23PM +0200, Christophe JAILLET wrote:
->> Le 11/05/2021 à 11:52, Wei Liu a écrit :
->>>> Before commit cdfa835c6e5e, the 'vfree' were done unconditionally
->>>> in 'hv_uio_cleanup()'.
->>>> So, another way for fixing the potential leak is to modify
->>>> 'hv_uio_cleanup()' and revert to the previous behavior.
->>>>
->>>
->>> I think this is cleaner.
->>
->> Agreed
-> 
-> Stephen, ping?
-> 
-> If I don't hear back from you, I think Christophe should move ahead with
-> modifying hv_uio_cleanup.
-> 
-> Wei.
-> 
+Hello:
 
-Hi,
-just for your information, it has already been picked by Greg KH (see [1]).
-If the cleaner solution is preferred, it will be built on top of this patch.
+This patch was applied to netdev/net-next.git (refs/heads/master):
 
-CJ
+On Tue, 18 May 2021 11:24:13 +0000 you wrote:
+> Add the missing unlock before return from function qca8k_vlan_add()
+> and qca8k_vlan_del() in the error handling case.
+> 
+> Fixes: 028f5f8ef44f ("net: dsa: qca8k: handle error with qca8k_read operation")
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> 
+> [...]
 
-[1]: 
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/drivers/uio/uio_hv_generic.c?id=3ee098f96b8b6c1a98f7f97915f8873164e6af9d
+Here is the summary with links:
+  - [net-next] net: dsa: qca8k: fix missing unlock on error in qca8k_vlan_(add|del)
+    https://git.kernel.org/netdev/net-next/c/0d56e5c191b1
+
+You are awesome, thank you!
+--
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
