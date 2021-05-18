@@ -2,122 +2,130 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-20.5 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7BD8C433ED
-	for <kernel-janitors@archiver.kernel.org>; Tue, 18 May 2021 05:21:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCA79C433ED
+	for <kernel-janitors@archiver.kernel.org>; Tue, 18 May 2021 05:37:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7DF8B60FE9
-	for <kernel-janitors@archiver.kernel.org>; Tue, 18 May 2021 05:21:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A280D60230
+	for <kernel-janitors@archiver.kernel.org>; Tue, 18 May 2021 05:37:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240633AbhERFW5 (ORCPT
+        id S241003AbhERFjD (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 18 May 2021 01:22:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43202 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235248AbhERFWx (ORCPT
+        Tue, 18 May 2021 01:39:03 -0400
+Received: from mail-wr1-f47.google.com ([209.85.221.47]:40668 "EHLO
+        mail-wr1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234640AbhERFjD (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 18 May 2021 01:22:53 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AF6EC061573;
-        Mon, 17 May 2021 22:21:35 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id l4so12518819ejc.10;
-        Mon, 17 May 2021 22:21:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=WurjucYuOG4COFl5J6u446g3kHrCIJ2hLKLLFtpRi6E=;
-        b=k7xbeo185fcG5VfcrBCI8NkXeMgRD92KYa9eXLNvvd4Zu1K6lRn38cAkBRWczkbE8C
-         BpwT0cYMEcztOXk0r6RJiMnd0SKn/5C1abXmBBMtZzqUZQ9POy2xcVvYtqfi6vyNtyap
-         bagk6AoOsx5LykeFWmwyoixaO0Hcj3KCyPxMZU1AJ72sApA7uOU8udQExncuii4AJ5pI
-         XJAsDzx+uBXZvr+KuXAMsSIs43kWVUwCJjYYnsHV6k9l4Z0zpr2JU0kPdBK7qKvUql5r
-         GH4CEld6ox45j68HZ7/l5GPef3iIqmxqk32Zpe9slbEMp16yKleRPjOKDm+jjF1ErsU2
-         Rg2A==
+        Tue, 18 May 2021 01:39:03 -0400
+Received: by mail-wr1-f47.google.com with SMTP id z17so8676838wrq.7;
+        Mon, 17 May 2021 22:37:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=WurjucYuOG4COFl5J6u446g3kHrCIJ2hLKLLFtpRi6E=;
-        b=Vgcj7IEa3D/NoD+XRePBzx524UNOAmXJ8gc+gBFb8RNIZyspjvJH+tkCM4QSLWJsQE
-         p1NaK6i9nbztImMxe8sdR+F4MlpJxextVkXu9D7bI5kDEC7vUrLc3Bew3B++ac9vfIWy
-         m3h5XgIcA7wpx6BdjpINx+POvwrVMJ0lkWCaH+Lfz2biKi44Q3CRwltjrx7P4K2PHVsV
-         yUDARAqH4w42422+e+kz641E/QNl8F2u6uSPNQBlYl0Qf8UVursu6gYhIFwRsqnXmccR
-         42Zmn4iVsxrURadKEEwdvi/K75/CI4u/muGFb1wPlTFmA/hPlCfck6tZoomxSCaCLAxi
-         VMUQ==
-X-Gm-Message-State: AOAM530FsypmxvhXB/ziY7zBtt2WmvNgS6j8qw8oBa6cxIp8YyFzpT+W
-        65eT6RUb6OgZw2W/rFvObns=
-X-Google-Smtp-Source: ABdhPJw0vmAuG+NqVZh3Ed0Fs9qPW5Zj903fabNj+QANcbyQIpqqif8kb3ygFDh2BUCCO1wsYoYH5g==
-X-Received: by 2002:a17:906:3883:: with SMTP id q3mr4098218ejd.4.1621315293759;
-        Mon, 17 May 2021 22:21:33 -0700 (PDT)
-Received: from felia.fritz.box ([2001:16b8:2db8:6100:84b8:37fd:659f:be17])
-        by smtp.gmail.com with ESMTPSA id n17sm12117083eds.72.2021.05.17.22.21.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 May 2021 22:21:33 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=qYgTEcI0p8vm+Wd+KuORzC7sfMU5u1tAKUxc2TJ7yQ4=;
+        b=Hnk5e9H6PNAYhMsG08p4GBWKvbIz/9EPRrvDQYVdcGNP+EySMo7dOAbZWITh273s0J
+         pmzzaPhPNq4iA7I/ovoJKeZu1QCxqN1xVsDpxhE5jCe32ojLir07Pa9JIoX696t67qAi
+         QG89/tI6aAfYaOsgvJ9Z9fg0srNIOESeyrNsSpigs53+WlbYjDdXlsu8p04KRg1jAJVN
+         vsquPYPHPuC0d2UFgPw2B2wIRwE7W+b6Qn4hH8/Egq8LPce4HTQqfE7VWtH62j6+q8Xi
+         sWsN2aubjYyF+eatex6kkUa/pswuIO0ULgV5OjlZkaCnAyav6ywy2dsbzh0taApg3vDM
+         ZpDw==
+X-Gm-Message-State: AOAM5328MN90y0Mdda4rHHOQvY1y3Gl7EA7wlRsx68z2eZ+r3HHUyzyG
+        AQOwE2DW8oySsT0bhsFnFueZPxaNkL0=
+X-Google-Smtp-Source: ABdhPJz4X5qxJaw/KOSOFlmrtqcdtaLfeSjtFY267oOOeU1PJnTB2CHuAd5qxLAM+8jUON2HU02e4w==
+X-Received: by 2002:a5d:5688:: with SMTP id f8mr4403312wrv.237.1621316263409;
+        Mon, 17 May 2021 22:37:43 -0700 (PDT)
+Received: from ?IPv6:2a0b:e7c0:0:107::49? ([2a0b:e7c0:0:107::49])
+        by smtp.gmail.com with ESMTPSA id x13sm9887722wro.31.2021.05.17.22.37.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 May 2021 22:37:42 -0700 (PDT)
+Subject: Re: [RFC PATCH 1/1] MAINTAINERS: TTY LAYER: add some ./include/linux/
+ header files
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [RFC PATCH 1/1] MAINTAINERS: TTY LAYER: add some ./include/linux/ header files
-Date:   Tue, 18 May 2021 07:21:17 +0200
-Message-Id: <20210518052117.14819-2-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210518052117.14819-1-lukas.bulwahn@gmail.com>
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20210518052117.14819-1-lukas.bulwahn@gmail.com>
+ <20210518052117.14819-2-lukas.bulwahn@gmail.com>
+From:   Jiri Slaby <jirislaby@kernel.org>
+Message-ID: <69da627e-91c5-66f0-c0c9-75fbaaba6782@kernel.org>
+Date:   Tue, 18 May 2021 07:37:41 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
+MIME-Version: 1.0
+In-Reply-To: <20210518052117.14819-2-lukas.bulwahn@gmail.com>
+Content-Type: text/plain; charset=iso-8859-2; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-An early prototypical automated code analysis of headers and the
-existing MAINTAINERS sections identified some header files in
-./include/linux/ to be probably included into the TTY LAYER section.
+On 18. 05. 21, 7:21, Lukas Bulwahn wrote:
+> An early prototypical automated code analysis of headers and the
+> existing MAINTAINERS sections identified some header files in
+> ./include/linux/ to be probably included into the TTY LAYER section.
+> 
+> I further checked those suggestions by this analysis and identified a
+> subset of files that I am rather certain to belong to the TTY LAYER.
+> 
+> Add these ./include/linux/ header files to TTY LAYER in MAINTAINERS.
+> 
+> The patterns include/linux/tty*.h and include/linux/vt_*.h currently cover:
+> 
+>    include/linux/tty.h
+>    include/linux/tty_driver.h
+>    include/linux/tty_flip.h
+>    include/linux/tty_ldisc.h
+> 
+>    include/linux/vt_buffer.h
+>    include/linux/vt_kern.h
 
-I further checked those suggestions by this analysis and identified a
-subset of files that I am rather certain to belong to the TTY LAYER.
+Yes, that looks good.
 
-Add these ./include/linux/ header files to TTY LAYER in MAINTAINERS.
+Can you extend the tool to include/uapi too?
 
-The patterns include/linux/tty*.h and include/linux/vt_*.h currently cover:
+For example this is missing too:
+include/uapi/linux/tty*.h
 
-  include/linux/tty.h
-  include/linux/tty_driver.h
-  include/linux/tty_flip.h
-  include/linux/tty_ldisc.h
+It expands to:
+include/uapi/linux/tty_flags.h
+include/uapi/linux/tty.h
 
-  include/linux/vt_buffer.h
-  include/linux/vt_kern.h
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+> applies cleanly on next-20210507
+> 
+>   MAINTAINERS | 6 +++++-
+>   1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 8923f0064784..d056f777c1a5 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -18563,9 +18563,13 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git
+>   F:	Documentation/driver-api/serial/
+>   F:	drivers/tty/
+>   F:	drivers/tty/serial/serial_core.c
+> +F:	include/linux/selection.h
+>   F:	include/linux/serial.h
+>   F:	include/linux/serial_core.h
+> -F:	include/linux/tty.h
+> +F:	include/linux/sysrq.h
+> +F:	include/linux/tty*.h
+> +F:	include/linux/vt.h
+> +F:	include/linux/vt_*.h
+>   F:	include/uapi/linux/serial.h
+>   F:	include/uapi/linux/serial_core.h
+>   F:	include/uapi/linux/tty.h
+> 
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-applies cleanly on next-20210507
-
- MAINTAINERS | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8923f0064784..d056f777c1a5 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -18563,9 +18563,13 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git
- F:	Documentation/driver-api/serial/
- F:	drivers/tty/
- F:	drivers/tty/serial/serial_core.c
-+F:	include/linux/selection.h
- F:	include/linux/serial.h
- F:	include/linux/serial_core.h
--F:	include/linux/tty.h
-+F:	include/linux/sysrq.h
-+F:	include/linux/tty*.h
-+F:	include/linux/vt.h
-+F:	include/linux/vt_*.h
- F:	include/uapi/linux/serial.h
- F:	include/uapi/linux/serial_core.h
- F:	include/uapi/linux/tty.h
+thanks,
 -- 
-2.17.1
-
+js
+suse labs
