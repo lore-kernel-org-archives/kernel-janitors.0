@@ -2,118 +2,123 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21925C433B4
-	for <kernel-janitors@archiver.kernel.org>; Tue, 18 May 2021 11:15:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59C25C433B4
+	for <kernel-janitors@archiver.kernel.org>; Tue, 18 May 2021 13:21:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EFCD96117A
-	for <kernel-janitors@archiver.kernel.org>; Tue, 18 May 2021 11:15:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 392EE6109E
+	for <kernel-janitors@archiver.kernel.org>; Tue, 18 May 2021 13:21:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348760AbhERLQU (ORCPT
+        id S243064AbhERNW1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 18 May 2021 07:16:20 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:4659 "EHLO
-        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348757AbhERLQR (ORCPT
+        Tue, 18 May 2021 09:22:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39446 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240830AbhERNW0 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 18 May 2021 07:16:17 -0400
-Received: from dggems701-chm.china.huawei.com (unknown [172.30.72.60])
-        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Fktcr2szPz16QMq;
-        Tue, 18 May 2021 19:12:12 +0800 (CST)
-Received: from dggeml759-chm.china.huawei.com (10.1.199.138) by
- dggems701-chm.china.huawei.com (10.3.19.178) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
- 15.1.2176.2; Tue, 18 May 2021 19:14:57 +0800
-Received: from localhost.localdomain (10.175.102.38) by
- dggeml759-chm.china.huawei.com (10.1.199.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2176.2; Tue, 18 May 2021 19:14:56 +0800
-From:   Wei Yongjun <weiyongjun1@huawei.com>
-To:     <weiyongjun1@huawei.com>, Ansuel Smith <ansuelsmth@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Vladimir Oltean <olteanv@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Russell King <linux@armlinux.org.uk>
-CC:     <netdev@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH net-next] net: dsa: qca8k: fix missing unlock on error in qca8k_vlan_(add|del)
-Date:   Tue, 18 May 2021 11:24:13 +0000
-Message-ID: <20210518112413.622913-1-weiyongjun1@huawei.com>
-X-Mailer: git-send-email 2.25.1
+        Tue, 18 May 2021 09:22:26 -0400
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27239C06175F
+        for <kernel-janitors@vger.kernel.org>; Tue, 18 May 2021 06:21:09 -0700 (PDT)
+Received: by mail-pl1-x630.google.com with SMTP id p6so5058332plr.11
+        for <kernel-janitors@vger.kernel.org>; Tue, 18 May 2021 06:21:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Eij78DTYm6LdNyJPrTT7rIc4tl9S27pR1VqAL0ye5eg=;
+        b=i3pMD4EzmEx0IQ02hRhTPfWzHAZxoHQCiYfbjxNP823FZ/30gTRWPWGpibKir53wDG
+         5Y8bC28z0VPmH9l0Btv2arydjw0pIGMo6+1IJ1Jiu9VG0xn4MHgOefKpmwc1OnJxP/A7
+         nC950+rJqjW66it6AZo2SWrI8rlHWNQF9ujtGqENUM3Kg9WUrBr1eYHb1b2JU3tuXgd0
+         PtcEWdMj6op4rGBFmIBnCwwmk6WqEPdCaXz+UVjy+mZvqlMTClxYQO2stfqHIVMNlCgl
+         qvBYy6QqFo3qj0+0xb/NcyU6YM8XUgzAucXH2GP4hbq56Cm+Zj2/HeHnk/V4WWYJTFjc
+         w2Ew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Eij78DTYm6LdNyJPrTT7rIc4tl9S27pR1VqAL0ye5eg=;
+        b=X6dlk0tbNDzuTMqbLwBIBac0QHUsSYcsAAizQ+Ktq9jzC9NG1GHDZ27GC78VE2P5UT
+         YsIWD1myDfG88s795n7uqUi08H13b2uneeSxbnzsogsNoPOXTCiFkV5RFDegyXmgDr2x
+         IBWZpXkx//Kvq71dnUtqrPCAB/5mhkCx/cA00ShUEs/KR4UIz5oHvXWZ+ObrKq9q2uea
+         4Y0GBiyBxT30npfrCxaVFehZ4TBbgs0K1iSb74Y9AkZlicgHKs73GGSVCmlVP+1rIl/d
+         yWlT+Xq8cSn72rEJtFT7fbGJxZLvgDTvG+MB5AX7m1622WK2Gbbm1+4BpZDIS8/omVYx
+         H7lQ==
+X-Gm-Message-State: AOAM532B4sQcIJ3AzVSgjH2w24yjQ29v/9ngyFifhuf0lRZq3DX+3FqX
+        /lOC1xsQ42ve4ThPbCnQ9JVlSui0484KCOudyLUA8Q==
+X-Google-Smtp-Source: ABdhPJyEB0vA70S0lI3WHu3HCNasA37Y5tjILdnUF6+2WrHYIGLEwPF3u5iNV46DS4+EpEvgiHCl+6xIZzDLKE+vwLQ=
+X-Received: by 2002:a17:90a:7e8f:: with SMTP id j15mr5529715pjl.19.1621344068626;
+ Tue, 18 May 2021 06:21:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.102.38]
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- dggeml759-chm.china.huawei.com (10.1.199.138)
-X-CFilter-Loop: Reflected
+References: <YKOGogHasIyvF8nj@mwanda>
+In-Reply-To: <YKOGogHasIyvF8nj@mwanda>
+From:   Robert Foss <robert.foss@linaro.org>
+Date:   Tue, 18 May 2021 15:20:57 +0200
+Message-ID: <CAG3jFytpOb8KeNCjCJ7gq20LQK3UGA9PgGne+cR2kZdADS-Oxg@mail.gmail.com>
+Subject: Re: [PATCH] drm/bridge: ti-sn65dsi86: fix a ternary type promotion bug
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Andrzej Hajda <a.hajda@samsung.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Add the missing unlock before return from function qca8k_vlan_add()
-and qca8k_vlan_del() in the error handling case.
+Hey Dan,
 
-Fixes: 028f5f8ef44f ("net: dsa: qca8k: handle error with qca8k_read operation")
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/net/dsa/qca8k.c | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+Thanks for submitting this.
 
-diff --git a/drivers/net/dsa/qca8k.c b/drivers/net/dsa/qca8k.c
-index 4753228f02b3..1f1b7c4dda13 100644
---- a/drivers/net/dsa/qca8k.c
-+++ b/drivers/net/dsa/qca8k.c
-@@ -506,8 +506,10 @@ qca8k_vlan_add(struct qca8k_priv *priv, u8 port, u16 vid, bool untagged)
- 		goto out;
- 
- 	reg = qca8k_read(priv, QCA8K_REG_VTU_FUNC0);
--	if (reg < 0)
--		return reg;
-+	if (reg < 0) {
-+		ret = reg;
-+		goto out;
-+	}
- 	reg |= QCA8K_VTU_FUNC0_VALID | QCA8K_VTU_FUNC0_IVL_EN;
- 	reg &= ~(QCA8K_VTU_FUNC0_EG_MODE_MASK << QCA8K_VTU_FUNC0_EG_MODE_S(port));
- 	if (untagged)
-@@ -519,7 +521,7 @@ qca8k_vlan_add(struct qca8k_priv *priv, u8 port, u16 vid, bool untagged)
- 
- 	ret = qca8k_write(priv, QCA8K_REG_VTU_FUNC0, reg);
- 	if (ret)
--		return ret;
-+		goto out;
- 	ret = qca8k_vlan_access(priv, QCA8K_VLAN_LOAD, vid);
- 
- out:
-@@ -541,8 +543,10 @@ qca8k_vlan_del(struct qca8k_priv *priv, u8 port, u16 vid)
- 		goto out;
- 
- 	reg = qca8k_read(priv, QCA8K_REG_VTU_FUNC0);
--	if (reg < 0)
--		return reg;
-+	if (reg < 0) {
-+		ret = reg;
-+		goto out;
-+	}
- 	reg &= ~(3 << QCA8K_VTU_FUNC0_EG_MODE_S(port));
- 	reg |= QCA8K_VTU_FUNC0_EG_MODE_NOT <<
- 			QCA8K_VTU_FUNC0_EG_MODE_S(port);
-@@ -564,7 +568,7 @@ qca8k_vlan_del(struct qca8k_priv *priv, u8 port, u16 vid)
- 	} else {
- 		ret = qca8k_write(priv, QCA8K_REG_VTU_FUNC0, reg);
- 		if (ret)
--			return ret;
-+			goto out;
- 		ret = qca8k_vlan_access(priv, QCA8K_VLAN_LOAD, vid);
- 	}
- 
+On Tue, 18 May 2021 at 11:20, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+>
+> The ti_sn_aux_transfer() function returns ssize_t (signed long).  It's
+> supposed to return negative error codes or the number of bytes
+> transferred.  The "ret" variable is int and the "len" variable is
+> unsigned int.
+>
+> The problem is that with a ternary like this, the negative int is first
+> type promoted to unsigned int to match "len" at this point it is a high
+> positive value.  Then when it is type promoted to ssize_t (s64) it
+> remains a high positive value instead of sign extending and becoming a
+> negative again.
+>
+> Fix this by removing the ternary.
+>
+> Fixes: b137406d9679 ("drm/bridge: ti-sn65dsi86: If refclk, DP AUX can happen w/out pre-enable")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  drivers/gpu/drm/bridge/ti-sn65dsi86.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi86.c b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+> index bb0a0e1c6341..45a2969afb2b 100644
+> --- a/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+> +++ b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+> @@ -1042,7 +1042,9 @@ static ssize_t ti_sn_aux_transfer(struct drm_dp_aux *aux,
+>         pm_runtime_mark_last_busy(pdata->dev);
+>         pm_runtime_put_autosuspend(pdata->dev);
+>
+> -       return ret ? ret : len;
+> +       if (ret)
+> +               return ret;
+> +       return len;
+>  }
+>
 
+Reviewed-by: Robert Foss <robert.foss@linaro.org>
+
+Applying to drm-misc-fixes.
