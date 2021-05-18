@@ -2,130 +2,54 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.5 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCA79C433ED
-	for <kernel-janitors@archiver.kernel.org>; Tue, 18 May 2021 05:37:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83C8BC43461
+	for <kernel-janitors@archiver.kernel.org>; Tue, 18 May 2021 06:28:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A280D60230
-	for <kernel-janitors@archiver.kernel.org>; Tue, 18 May 2021 05:37:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C08A611BF
+	for <kernel-janitors@archiver.kernel.org>; Tue, 18 May 2021 06:28:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241003AbhERFjD (ORCPT
+        id S1346667AbhERG3T (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 18 May 2021 01:39:03 -0400
-Received: from mail-wr1-f47.google.com ([209.85.221.47]:40668 "EHLO
-        mail-wr1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234640AbhERFjD (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 18 May 2021 01:39:03 -0400
-Received: by mail-wr1-f47.google.com with SMTP id z17so8676838wrq.7;
-        Mon, 17 May 2021 22:37:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=qYgTEcI0p8vm+Wd+KuORzC7sfMU5u1tAKUxc2TJ7yQ4=;
-        b=Hnk5e9H6PNAYhMsG08p4GBWKvbIz/9EPRrvDQYVdcGNP+EySMo7dOAbZWITh273s0J
-         pmzzaPhPNq4iA7I/ovoJKeZu1QCxqN1xVsDpxhE5jCe32ojLir07Pa9JIoX696t67qAi
-         QG89/tI6aAfYaOsgvJ9Z9fg0srNIOESeyrNsSpigs53+WlbYjDdXlsu8p04KRg1jAJVN
-         vsquPYPHPuC0d2UFgPw2B2wIRwE7W+b6Qn4hH8/Egq8LPce4HTQqfE7VWtH62j6+q8Xi
-         sWsN2aubjYyF+eatex6kkUa/pswuIO0ULgV5OjlZkaCnAyav6ywy2dsbzh0taApg3vDM
-         ZpDw==
-X-Gm-Message-State: AOAM5328MN90y0Mdda4rHHOQvY1y3Gl7EA7wlRsx68z2eZ+r3HHUyzyG
-        AQOwE2DW8oySsT0bhsFnFueZPxaNkL0=
-X-Google-Smtp-Source: ABdhPJz4X5qxJaw/KOSOFlmrtqcdtaLfeSjtFY267oOOeU1PJnTB2CHuAd5qxLAM+8jUON2HU02e4w==
-X-Received: by 2002:a5d:5688:: with SMTP id f8mr4403312wrv.237.1621316263409;
-        Mon, 17 May 2021 22:37:43 -0700 (PDT)
-Received: from ?IPv6:2a0b:e7c0:0:107::49? ([2a0b:e7c0:0:107::49])
-        by smtp.gmail.com with ESMTPSA id x13sm9887722wro.31.2021.05.17.22.37.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 May 2021 22:37:42 -0700 (PDT)
-Subject: Re: [RFC PATCH 1/1] MAINTAINERS: TTY LAYER: add some ./include/linux/
- header files
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210518052117.14819-1-lukas.bulwahn@gmail.com>
- <20210518052117.14819-2-lukas.bulwahn@gmail.com>
-From:   Jiri Slaby <jirislaby@kernel.org>
-Message-ID: <69da627e-91c5-66f0-c0c9-75fbaaba6782@kernel.org>
-Date:   Tue, 18 May 2021 07:37:41 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        Tue, 18 May 2021 02:29:19 -0400
+Received: from muru.com ([72.249.23.125]:56960 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1346631AbhERG3M (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 18 May 2021 02:29:12 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id A42A280BA;
+        Tue, 18 May 2021 06:27:58 +0000 (UTC)
+Date:   Tue, 18 May 2021 09:27:51 +0300
+From:   Tony Lindgren <tony@atomide.com>
+To:     Yongqiang Liu <liuyongqiang13@huawei.com>
+Cc:     linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org,
+        linux-omap@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH -next] ARM: OMAP2+: Fix build warning when mmc_omap is
+ not built
+Message-ID: <YKNeZ/uZ7fOgTE8d@atomide.com>
+References: <20210401131533.998767-1-liuyongqiang13@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20210518052117.14819-2-lukas.bulwahn@gmail.com>
-Content-Type: text/plain; charset=iso-8859-2; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210401131533.998767-1-liuyongqiang13@huawei.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 18. 05. 21, 7:21, Lukas Bulwahn wrote:
-> An early prototypical automated code analysis of headers and the
-> existing MAINTAINERS sections identified some header files in
-> ./include/linux/ to be probably included into the TTY LAYER section.
+* Yongqiang Liu <liuyongqiang13@huawei.com> [210401 16:09]:
+> GCC reports the following warning with W=1:
 > 
-> I further checked those suggestions by this analysis and identified a
-> subset of files that I am rather certain to belong to the TTY LAYER.
+> arch/arm/mach-omap2/board-n8x0.c:325:19: warning:
+> variable 'index' set but not used [-Wunused-but-set-variable]
+> 325 |  int bit, *openp, index;
+>     |                   ^~~~~
 > 
-> Add these ./include/linux/ header files to TTY LAYER in MAINTAINERS.
-> 
-> The patterns include/linux/tty*.h and include/linux/vt_*.h currently cover:
-> 
->    include/linux/tty.h
->    include/linux/tty_driver.h
->    include/linux/tty_flip.h
->    include/linux/tty_ldisc.h
-> 
->    include/linux/vt_buffer.h
->    include/linux/vt_kern.h
+> Fix this by moving CONFIG_MMC_OMAP to cover the rest codes
+> in the n8x0_mmc_callback().
 
-Yes, that looks good.
+Thanks applying into fixes.
 
-Can you extend the tool to include/uapi too?
-
-For example this is missing too:
-include/uapi/linux/tty*.h
-
-It expands to:
-include/uapi/linux/tty_flags.h
-include/uapi/linux/tty.h
-
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> applies cleanly on next-20210507
-> 
->   MAINTAINERS | 6 +++++-
->   1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 8923f0064784..d056f777c1a5 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -18563,9 +18563,13 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git
->   F:	Documentation/driver-api/serial/
->   F:	drivers/tty/
->   F:	drivers/tty/serial/serial_core.c
-> +F:	include/linux/selection.h
->   F:	include/linux/serial.h
->   F:	include/linux/serial_core.h
-> -F:	include/linux/tty.h
-> +F:	include/linux/sysrq.h
-> +F:	include/linux/tty*.h
-> +F:	include/linux/vt.h
-> +F:	include/linux/vt_*.h
->   F:	include/uapi/linux/serial.h
->   F:	include/uapi/linux/serial_core.h
->   F:	include/uapi/linux/tty.h
-> 
-
-thanks,
--- 
-js
-suse labs
+Tony
