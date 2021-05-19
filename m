@@ -2,68 +2,45 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49C40C433B4
-	for <kernel-janitors@archiver.kernel.org>; Wed, 19 May 2021 05:39:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B02AEC433B4
+	for <kernel-janitors@archiver.kernel.org>; Wed, 19 May 2021 07:00:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 25AFC6139A
-	for <kernel-janitors@archiver.kernel.org>; Wed, 19 May 2021 05:39:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89EFB6135B
+	for <kernel-janitors@archiver.kernel.org>; Wed, 19 May 2021 07:00:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347278AbhESFlD (ORCPT
+        id S238532AbhESHCJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 19 May 2021 01:41:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33458 "EHLO mail.kernel.org"
+        Wed, 19 May 2021 03:02:09 -0400
+Received: from verein.lst.de ([213.95.11.211]:36997 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1344991AbhESFif (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 19 May 2021 01:38:35 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 17D50611BF;
-        Wed, 19 May 2021 05:37:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1621402636;
-        bh=/wserOAM71RxcqsBZBi62Nr8Kzx6ii8wtkOB0XiIVZU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=N5fo9t0CXUmUiJ6RYESAXULd7nEiQ5eLOxPvVFYOnZeal59HtjtSXMIEengDMh1L0
-         Nq1JKywIDrrYO5kRl4RrrZLJY+OdvHcp7rI+cKHaRwwIyjoYzmCeX/GOGoVehQRDYO
-         MQhABZi6ArVh1BtKOF4tTmrhFZx7pI3wyv4EeD9GLa8UnsFvajMiutnTs1VDYJuS5x
-         ma/1YAqxjIFbVcmJEZcIw2uiVVvnXIThS8hp66AfXXTeKOgeLcwEw+WAyPVjvwSIt4
-         /YqeZ2jznzZFkMklLfK08aZvLE0uOmdPr40Z8Muro4h5qto8qFoRT9aNTyxlzGecc2
-         /rz5elMajzQTA==
-Date:   Wed, 19 May 2021 08:37:12 +0300
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Avihai Horon <avihaih@nvidia.com>,
-        Michael Guralnik <michaelgur@nvidia.com>,
-        Aharon Landau <aharonl@mellanox.com>,
-        Gal Pressman <galpress@amazon.com>,
-        Yishai Hadas <yishaih@mellanox.com>,
-        Parav Pandit <parav@mellanox.com>, linux-rdma@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] RDMA/uverbs: fix a NULL vs IS_ERR() bug
-Message-ID: <YKSkCDcGMdttmeCH@unreal>
-References: <YJ6Got+U7lz+3n9a@mwanda>
+        id S232520AbhESHCJ (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 19 May 2021 03:02:09 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 6E12067373; Wed, 19 May 2021 09:00:48 +0200 (CEST)
+Date:   Wed, 19 May 2021 09:00:48 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        linux-nvme@lists.infradead.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] nvme: remove redundant initialization of variable ret
+Message-ID: <20210519070048.GB32339@lst.de>
+References: <20210513115952.58482-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YJ6Got+U7lz+3n9a@mwanda>
+In-Reply-To: <20210513115952.58482-1-colin.king@canonical.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, May 14, 2021 at 05:18:10PM +0300, Dan Carpenter wrote:
-> The uapi_get_object() function returns error pointers, it never returns
-> NULL.
-> 
-> Fixes: 149d3845f4a5 ("RDMA/uverbs: Add a method to introspect handles in a context")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/infiniband/core/uverbs_std_types_device.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-
 Thanks,
-Reviewed-by: Leon Romanovsky <leonro@nvidia.com>
+
+applied to nvme-5.14.
