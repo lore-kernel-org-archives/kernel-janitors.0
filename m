@@ -2,75 +2,78 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52D2BC433B4
-	for <kernel-janitors@archiver.kernel.org>; Wed, 19 May 2021 12:39:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1D11C433ED
+	for <kernel-janitors@archiver.kernel.org>; Wed, 19 May 2021 14:06:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2E6C160FE8
-	for <kernel-janitors@archiver.kernel.org>; Wed, 19 May 2021 12:39:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89B3B60FEF
+	for <kernel-janitors@archiver.kernel.org>; Wed, 19 May 2021 14:06:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353428AbhESMkg (ORCPT
+        id S1346956AbhESOIH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 19 May 2021 08:40:36 -0400
-Received: from lpdvacalvio01.broadcom.com ([192.19.229.182]:33680 "EHLO
-        relay.smtp-ext.broadcom.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1353419AbhESMkf (ORCPT
+        Wed, 19 May 2021 10:08:07 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:3424 "EHLO
+        szxga07-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240179AbhESOIH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 19 May 2021 08:40:35 -0400
-Received: from bld-lvn-bcawlan-34.lvn.broadcom.net (bld-lvn-bcawlan-34.lvn.broadcom.net [10.75.138.137])
-        by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id D722624706;
-        Wed, 19 May 2021 05:39:15 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com D722624706
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
-        s=dkimrelay; t=1621427955;
-        bh=rmuK/K3fBffMGY9dTheEJuib9VCu9Gy25cLus+IJUug=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=VgS533qm3C1EqyRmsV7B0Xs4p19KcSWkZBffW6Cf6caYrMtmogkGbUjQEqgK1PVEt
-         +jL87cedxnr6z/qWPoqa0LOepb56Zuy8L3Apu/OkLEy1ZMMpX0PlmDpbuGrfuHYcEQ
-         elsFfUk4kEEG4P58APWaL33j8OpRbgJUTXNcmUr0=
-Received: from [10.230.42.155] (unknown [10.230.42.155])
-        by bld-lvn-bcawlan-34.lvn.broadcom.net (Postfix) with ESMTPSA id 6F0051874BE;
-        Wed, 19 May 2021 05:39:11 -0700 (PDT)
-Subject: Re: [PATCH] brcmsmac: mac80211_if: Fix a resource leak in an error
- handling path
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        aspriel@gmail.com, franky.lin@broadcom.com,
-        hante.meuleman@broadcom.com, chi-hsien.lin@infineon.com,
-        wright.feng@infineon.com, chung-hsien.hsu@infineon.com,
-        davem@davemloft.net, kvalo@codeaurora.org, kuba@kernel.org
-Cc:     linux-wireless@vger.kernel.org,
-        brcm80211-dev-list.pdl@broadcom.com,
-        SHA-cyfmac-dev-list@infineon.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <8fbc171a1a493b38db5a6f0873c6021fca026a6c.1620852921.git.christophe.jaillet@wanadoo.fr>
-From:   Arend van Spriel <arend.vanspriel@broadcom.com>
-Message-ID: <3b96aa02-869c-4663-1c63-759d058b8744@broadcom.com>
-Date:   Wed, 19 May 2021 14:39:08 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+        Wed, 19 May 2021 10:08:07 -0400
+Received: from dggems704-chm.china.huawei.com (unknown [172.30.72.58])
+        by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4FlZNZ65h7zCsYm;
+        Wed, 19 May 2021 22:03:58 +0800 (CST)
+Received: from dggeml759-chm.china.huawei.com (10.1.199.138) by
+ dggems704-chm.china.huawei.com (10.3.19.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
+ 15.1.2176.2; Wed, 19 May 2021 22:06:45 +0800
+Received: from localhost.localdomain (10.175.102.38) by
+ dggeml759-chm.china.huawei.com (10.1.199.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2176.2; Wed, 19 May 2021 22:06:45 +0800
+From:   Wei Yongjun <weiyongjun1@huawei.com>
+To:     <weiyongjun1@huawei.com>, Kirti Wankhede <kwankhede@nvidia.com>
+CC:     <kvm@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH -next] samples: vfio-mdev: fix error return code in mdpy_fb_probe()
+Date:   Wed, 19 May 2021 14:15:59 +0000
+Message-ID: <20210519141559.3031063-1-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <8fbc171a1a493b38db5a6f0873c6021fca026a6c.1620852921.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.102.38]
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggeml759-chm.china.huawei.com (10.1.199.138)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Fix to return negative error code -ENOMEM from the error handling
+case instead of 0, as done elsewhere in this function.
 
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ samples/vfio-mdev/mdpy-fb.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-On 12-05-2021 22:58, Christophe JAILLET wrote:
-> If 'brcms_attach()' fails, we must undo the previous 'ieee80211_alloc_hw()'
-> as already done in the remove function.
+diff --git a/samples/vfio-mdev/mdpy-fb.c b/samples/vfio-mdev/mdpy-fb.c
+index 21dbf63d6e41..d4abc0594dbd 100644
+--- a/samples/vfio-mdev/mdpy-fb.c
++++ b/samples/vfio-mdev/mdpy-fb.c
+@@ -131,8 +131,10 @@ static int mdpy_fb_probe(struct pci_dev *pdev,
+ 		 width, height);
+ 
+ 	info = framebuffer_alloc(sizeof(struct mdpy_fb_par), &pdev->dev);
+-	if (!info)
++	if (!info) {
++		ret = -ENOMEM;
+ 		goto err_release_regions;
++	}
+ 	pci_set_drvdata(pdev, info);
+ 	par = info->par;
+ 
 
-Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
-> Fixes: 5b435de0d786 ("net: wireless: add brcm80211 drivers")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->   .../wireless/broadcom/brcm80211/brcmsmac/mac80211_if.c    | 8 +++++++-
->   1 file changed, 7 insertions(+), 1 deletion(-)
