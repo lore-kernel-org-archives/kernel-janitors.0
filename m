@@ -2,136 +2,82 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4205EC433ED
-	for <kernel-janitors@archiver.kernel.org>; Wed, 19 May 2021 22:50:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D54CC433B4
+	for <kernel-janitors@archiver.kernel.org>; Wed, 19 May 2021 23:01:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 19E6D613AC
-	for <kernel-janitors@archiver.kernel.org>; Wed, 19 May 2021 22:50:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0455A6135C
+	for <kernel-janitors@archiver.kernel.org>; Wed, 19 May 2021 23:01:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230013AbhESWvq (ORCPT
+        id S229854AbhESXC1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 19 May 2021 18:51:46 -0400
-Received: from mail-co1nam11on2076.outbound.protection.outlook.com ([40.107.220.76]:11809
-        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S229508AbhESWvq (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 19 May 2021 18:51:46 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=NzEi9zLnWvFongnjsqj10WO5hcjOuP42J9hej9ouQT4mA25zrGJIVvJJnuvh2xHw9M4gMlIsh9uoPzbXGdqYwTHcyFFBQRUgxbSbxcLDcs3YUsufMBQvHakXB8R8wEf1o1BgCwEfTnftcRYXx1TwhDT5OrRwKDYI+wk6ACmWHh157waUpjDeSNrYI5LjpH1seV0Hvr92U+waZ4rBFV0ZsaPSSi3INvEvLJnq3mE36B+KG820QxH8B7EHVYHln451H3yYS4hEQI/yex0MsUGthEIF836zL26VV7XJBvVEmnxngm16NQF17lWjrPZHXRht/ndV7jwHsQwztUFT9R8m1w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1Hz2K3FfzY0I/Y+aBe3jRngw+XSZAEjFinZokqJKW+c=;
- b=ebTBkhm9hWZD/0WsuONC2pO0W55TxK8K0xgcBJbkYOK8c0xlKm9Kn2hJdg0wp2zwJHS/odLqZHydgog515FmlTTBUbdMZXRRCb6k5bf+UAog6xsgvtT+wxmkVVMqGSZ3Ar9TP8jT3VVbChB19s14Opt6bqoMeV8+UsnHsyU0BJRD2G01RUCW3GQ2C3EPts2l00ejaMOUW9ZqLcR3DPRJq3/vM47/L1Yjm2jPOmUrsKr3cWkaPI1212Sl5vY7ILTXLDNh7ZMGtIm/JQDhMUnX9WgYCIPy07ODQycPa6nMUbL3dtgoJ8R12FBuSoe8Eiq7Zi0vYBq7X//DIqmoneF3Uw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1Hz2K3FfzY0I/Y+aBe3jRngw+XSZAEjFinZokqJKW+c=;
- b=TdEcffx8FBiOIkihF8tmtaG9WcWosi7cqeKMuioUTLW6BjhULl3os+G9PldKw8bCSR5er9vHrgU7RD5h9KW3LJT5GvT30+j7pl7OINefWvhbGeCTf+RXqnG6bpYezvQ2NXeCU7QOkZoCHLH7UoF+zbqj9Zveu4rN3xRBJq2S8uix3RjrsiZpXM7XqjlVAu6A+XJmJqITNaJY4vdtx4NwohkC8ykSH2DRU3vsboYH9Xqib7xCJse3gVqa6xde7Yyuzp+fhj21TNTw4Jz3dbsqlsK70/iROsWYjzzeR0tFvY7DPtLsXgUuS1hIUiZrCUvOG4V/0CS508JeKC9lunDrsQ==
-Authentication-Results: oracle.com; dkim=none (message not signed)
- header.d=none;oracle.com; dmarc=none action=none header.from=nvidia.com;
-Received: from DM6PR12MB3834.namprd12.prod.outlook.com (2603:10b6:5:14a::12)
- by DM5PR12MB1548.namprd12.prod.outlook.com (2603:10b6:4:a::23) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.4129.26; Wed, 19 May 2021 22:50:24 +0000
-Received: from DM6PR12MB3834.namprd12.prod.outlook.com
- ([fe80::ddb4:2cbb:4589:f039]) by DM6PR12MB3834.namprd12.prod.outlook.com
- ([fe80::ddb4:2cbb:4589:f039%4]) with mapi id 15.20.4129.033; Wed, 19 May 2021
- 22:50:24 +0000
-Date:   Wed, 19 May 2021 19:50:22 -0300
-From:   Jason Gunthorpe <jgg@nvidia.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Doug Ledford <dledford@redhat.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Avihai Horon <avihaih@nvidia.com>,
-        Michael Guralnik <michaelgur@nvidia.com>,
-        Aharon Landau <aharonl@mellanox.com>,
-        Gal Pressman <galpress@amazon.com>,
-        Yishai Hadas <yishaih@mellanox.com>,
-        Parav Pandit <parav@mellanox.com>, linux-rdma@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] RDMA/uverbs: fix a NULL vs IS_ERR() bug
-Message-ID: <20210519225022.GA2607549@nvidia.com>
-References: <YJ6Got+U7lz+3n9a@mwanda>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YJ6Got+U7lz+3n9a@mwanda>
-X-Originating-IP: [47.55.113.94]
-X-ClientProxiedBy: BLAPR03CA0057.namprd03.prod.outlook.com
- (2603:10b6:208:32d::32) To DM6PR12MB3834.namprd12.prod.outlook.com
- (2603:10b6:5:14a::12)
+        Wed, 19 May 2021 19:02:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45118 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229465AbhESXC1 (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 19 May 2021 19:02:27 -0400
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92BC1C061574
+        for <kernel-janitors@vger.kernel.org>; Wed, 19 May 2021 16:01:06 -0700 (PDT)
+Received: by mail-lf1-x12c.google.com with SMTP id m11so21559894lfg.3
+        for <kernel-janitors@vger.kernel.org>; Wed, 19 May 2021 16:01:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BwnfvoL4Ry92OwxuQd6a/oz1LSyOJoqr23NH/Ta20UA=;
+        b=QxRZ51VHGBg26SHmr1c1e7SQSOJR5YW34ikTY/quw4coLeiqRhmx/QPawqYdvsFmpW
+         nActs2ei6F4NybwGg9rIF7zophAqMrxB+EIIxzxpG4IYybr3AowzLfJ4h+552dXvufdF
+         WPIl5+yf4z+QvqrSJmaOOBH7pi0yZWNFA8beByRQWBBPfjLYbpylbHZyTFBeOMqUDM1D
+         +eBNTXDnwaKj4u47jCCelYAqj98gHF7q4sjoLV+/Qjk/OJzHCSuHQAmZbpwtlHk3ZvVT
+         37J67Toxwk21erCmrEEagVtWJiUEoykeFwh0mAnMl/qWjqQng81rBWP+rwdMBWnjbO5w
+         /rsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BwnfvoL4Ry92OwxuQd6a/oz1LSyOJoqr23NH/Ta20UA=;
+        b=j8lSD+3KTcoXnUXdR/515bfCf1EkFbzJjVBJn7b2RO7N1Fs54J9wEsfRXPjfZyvMdO
+         HPFUP7OUkks+AH3pwojdCJje70ylZZNJjMu4cuIDHs+aODuKSyAYIyOEjcKSOHYqzUeo
+         M/D8REz+Gi6hQsCiC6Bf4/wLoiiuLpQ/UtYscfWTpThCZ5zVaroSvz/TkDXd2K5bhWJ2
+         vPSp8Vewwk7aG3ValqlA4jiQFoBotledMWYeNa3MJaON4E1hWn4gsDERAmNWghD6A5KE
+         nxUtOoHlj4e87qWAWfx8fPedTNEru6pcnXRPoq5xkK9fF7CyCb6foOgYaot5eSUEy0Hy
+         FEbQ==
+X-Gm-Message-State: AOAM532B5XWfET16w8l+WJuElwoUSGbK3CbEgANYILEFwz9NDnEEfZKT
+        +OWkaPoKXHUBi09pSMsMrAOvDOaxfcBPNfaIKwhLxT3HKi4=
+X-Google-Smtp-Source: ABdhPJzbb5vE0e3wYVAbtJfmXNKmKj6SEilgkLGDkfEA9u9GY/g8fWw7FKZKvzpukoiUovgXiZwLcWpkLNxOrLKP93E=
+X-Received: by 2002:ac2:544f:: with SMTP id d15mr1244857lfn.465.1621465264942;
+ Wed, 19 May 2021 16:01:04 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from mlx.ziepe.ca (47.55.113.94) by BLAPR03CA0057.namprd03.prod.outlook.com (2603:10b6:208:32d::32) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4129.32 via Frontend Transport; Wed, 19 May 2021 22:50:24 +0000
-Received: from jgg by mlx with local (Exim 4.94)        (envelope-from <jgg@nvidia.com>)        id 1ljV1C-00AwMD-Ib; Wed, 19 May 2021 19:50:22 -0300
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 94be941e-a02c-4c7a-c5ac-08d91b187d18
-X-MS-TrafficTypeDiagnostic: DM5PR12MB1548:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <DM5PR12MB1548EB2953171AEE4AF81683C22B9@DM5PR12MB1548.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:4502;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: yfTx6ufb75ewdaQDNrEd7qTzipP7jFwRtkMoLx7ZbB8RZbH7GuE3J9s/tmNUyq3Y+qw4c3bKPuYyi1ETqAxTjSfeuIvy9NCFuwpON03hScWeMuJhMbvAauFNipyX2WJrxsUPOgJeJC8sRceb7Bp3sl02xnmKnqB+afuRAWzRYIALRQHt9d4Dj03Hs1Mhw7ety9u3PkPUk0TBkjM5G5ZxZ4A6Ss/KnE7yGSCvJ1M4M+Q2U/HnJYVoI6wsdphyYqPNPWh53rNQ4AKezhDM7xgkn9Q1bGrn2C95mSIceGRxUsWULiLL9GNE1bmZeg5LKEL7EOSl1HbBzvhM4Yd1v6EneUJSg6sSXmSFbcSpIHY9TlwKnWmWVOPVhAVcqGhpGEgVwUn/JYqp4G8sFG6nqflHMUqBVMQpclv8jJwQZs+UuGQvdUFZVEtdXINra6R2Lc/eAMutBmC8PRihB3eYakxuq9VgeGSl+QqAhaI8nF7xi26veRZas2ZEapA4e5PZQZP0JN2kQ73SrX3IvUC/T/qeJUCtYvArUCUgGiXo1sOA6qgEjWlA0rU0TTwLoFcfFs5tP6WQHtHxA1NsRfohOcFVBLrmrVoesLk0y8q5KKIZZ+A=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3834.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(39860400002)(346002)(136003)(366004)(376002)(396003)(86362001)(1076003)(4744005)(36756003)(4326008)(66556008)(8936002)(6916009)(66946007)(2616005)(66476007)(8676002)(38100700002)(426003)(54906003)(33656002)(83380400001)(316002)(2906002)(186003)(5660300002)(9786002)(9746002)(478600001)(26005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?rPlkaDOQzZFS3Uqqa7dCnQI9DJgs/gre+DrSyBcsk2rm2z+PQu1JYx1z3zLK?=
- =?us-ascii?Q?AzYsQKu57Zo2lYCNP++EzDrpiziXn8YI/9pYj5Q/R3j/+36aABTw8XgQOWkg?=
- =?us-ascii?Q?waN8pxbhLXfAGhJzdLBzXHq5u3fdIW3BS46W1hh/fcpF7VsiquEZP5xOt+9H?=
- =?us-ascii?Q?CqW6DJdFxctEhMII/W+02r3+ERbEtXMWwk0g3tLME3tWDtflffWAZLVNpefG?=
- =?us-ascii?Q?Ds85w+EMnSqHHNtjtOGtUdAtDKQDfVZ3UMc/g1yPsJ24kkOwLsBkz8zo5JnO?=
- =?us-ascii?Q?J5oeH15EA7vYHGDUT/u0XbjsLzd5Q4h+3ndfCj60YAzhbjFRUbLysvqfqiUx?=
- =?us-ascii?Q?rjvLNkvHWQNF9ealANljb2QtArFX0K0mwUbN39JE0FYkoLE+FoPYruqSdbdu?=
- =?us-ascii?Q?XApoHcbj7/RIK9AnYXO2EymJfcoTrmqMUlRF2GbBjEa33HI26Ni30p2ScI7H?=
- =?us-ascii?Q?Y/Q75CHCnz3tkHqCJ+Ku8+BExicOoeqBXpgRcnwnjuOFC2YnJSpRy7EZsBHH?=
- =?us-ascii?Q?/ODyROcaFn7wU56reKK6C4T5L9fQhJz3codXfzybcVgyvs+2TvE3Sld4ObRD?=
- =?us-ascii?Q?xcMXe8dajOqrD0pBU/xcW16fq8dni2mkkHAS2eng/FXLZLgLgHFhyKV5kwfK?=
- =?us-ascii?Q?LSWdsYLmpHJthz0DYP1tnwHfp6MsN9wqQ1PaeBBvPxoenza52cvuvnEA/u2V?=
- =?us-ascii?Q?VOXy+yBQZcjTjQnsyISbDCXoFkjrk6xU56iz3CetgM8xf8pQvMWLXgYe88RP?=
- =?us-ascii?Q?2NU6xwOtg0GNJNs7rKBx7rI6eDwAteq/b9QwGcWegM40m4su/62C6o8TWjOb?=
- =?us-ascii?Q?74YqXBZLiZOb8fZKCNYz1FLSWhPBhTIuIm6lom2qTnJL3ZMsmvBOHEZJy5gT?=
- =?us-ascii?Q?6G+81uPfOXqj7+AbI+na8HOJppes7hxSGR5gVPPiFpFGF4EDxezkCqaNAn6/?=
- =?us-ascii?Q?6HgLpPwjV3N91o8YdboZ/Bt+Yqt5Xki+cAAN24HvXeHhEMHIHfqzwwdMvyV3?=
- =?us-ascii?Q?5vlgTET4Unj/NjQiB1u63Z+Pwq63I9OI2zGOFmUQ0OCQ3CLQUywhbi+nVmge?=
- =?us-ascii?Q?n8dZ4WA3fzOV8ccAQz6pYEVKQ3tRHS1pRz8DUBhERWJZN/1Cv6tDKY6nS22L?=
- =?us-ascii?Q?3r/mGd1HGzt+qUA3uLuAPGR8FvJ7cD3xzG6VRIsGwfw250klo8LJ6NNLSaDC?=
- =?us-ascii?Q?ZTXHMjwPlQJ0t2i+b/qRXiLsQoMpcSjoOKTib9GIN7sSelTCpTZpE7elh/zG?=
- =?us-ascii?Q?3SWMemj3NRNORLqRxlIAi/Yvm18WsYEKLpIxFGlKiofbsc71JdK/eiTMA/BA?=
- =?us-ascii?Q?90rTx2NSQ4rkwE+QqSdx8vRO?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 94be941e-a02c-4c7a-c5ac-08d91b187d18
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3834.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 May 2021 22:50:24.6323
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: SkA0n0MxLt4H6XergRf3NsiGdoYfb17ix9ZHAVcbw8vDEJ6tvyEqTpaFDCxp7KOu
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1548
+References: <20210508031502.53637-1-cuibixuan@huawei.com>
+In-Reply-To: <20210508031502.53637-1-cuibixuan@huawei.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 20 May 2021 01:00:54 +0200
+Message-ID: <CACRpkdY_npXMDE6ks6mAeMOpmdUVY3XzhZqvKceZH0Wg+xiJdg@mail.gmail.com>
+Subject: Re: [PATCH -next] pinctrl: equilibrium: Add missing MODULE_DEVICE_TABLE
+To:     Bixuan Cui <cuibixuan@huawei.com>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, May 14, 2021 at 05:18:10PM +0300, Dan Carpenter wrote:
-> The uapi_get_object() function returns error pointers, it never returns
-> NULL.
-> 
-> Fixes: 149d3845f4a5 ("RDMA/uverbs: Add a method to introspect handles in a context")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Reviewed-by: Leon Romanovsky <leonro@nvidia.com>
-> ---
->  drivers/infiniband/core/uverbs_std_types_device.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+On Sat, May 8, 2021 at 3:51 AM Bixuan Cui <cuibixuan@huawei.com> wrote:
 
-Applied to for-rc, thanks
+> This patch adds missing MODULE_DEVICE_TABLE definition which generates
+> correct modalias for automatic loading of this driver when it is built
+> as an external module.
+>
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Bixuan Cui <cuibixuan@huawei.com>
 
-Jason
+Patch applied.
+
+Yours,
+Linus Walleij
