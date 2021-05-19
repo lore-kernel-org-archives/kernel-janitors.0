@@ -2,77 +2,101 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31B6AC43461
-	for <kernel-janitors@archiver.kernel.org>; Wed, 19 May 2021 20:20:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C113C433B4
+	for <kernel-janitors@archiver.kernel.org>; Wed, 19 May 2021 20:47:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 16A6561363
-	for <kernel-janitors@archiver.kernel.org>; Wed, 19 May 2021 20:20:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EAB62611AE
+	for <kernel-janitors@archiver.kernel.org>; Wed, 19 May 2021 20:47:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229976AbhESUVh (ORCPT
+        id S229478AbhESUs2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 19 May 2021 16:21:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51632 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229625AbhESUVf (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 19 May 2021 16:21:35 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 6D4AB613B5;
-        Wed, 19 May 2021 20:20:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1621455615;
-        bh=8g5eYBivg5IznIEAFIca9LAGXET2r1Xl8EQ+5RN/FhA=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=i6WjeXJ388iTn/zg3rN2ijLNAtEWXG93n2+Bn+H9aSGmm8EZNE1CSj4wjb/PoY+8y
-         H2kEiSOV8vcM3dYVjGza6F2ByKt77V8tSGDsHZvFkrA+3p+zXVDEXXadfMRiF0EOXx
-         r9BbuC4JtGeLkacJraOJGDIJMRI4kDl9sp4YzX6j58UtjE8p7YK2Rb/jmbvmrvfU5G
-         broYV/aEK9RoGOcCsc//1YK4E+UxDTBI1Mz7xClU4wtxwCmpuVQRXa5RKNDWFfHOnw
-         CoOePdJpt4xghGgpua6sZEc50zl+oRfLNAKs9+BYynYuPTE8IG79UH29j3szw1JH1x
-         3cPiWE3B/0wNg==
-Content-Type: text/plain; charset="utf-8"
+        Wed, 19 May 2021 16:48:28 -0400
+Received: from smtp05.smtpout.orange.fr ([80.12.242.127]:46407 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229437AbhESUs2 (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 19 May 2021 16:48:28 -0400
+Received: from localhost.localdomain ([86.243.172.93])
+        by mwinf5d81 with ME
+        id 6kn32500A21Fzsu03kn3Bq; Wed, 19 May 2021 22:47:05 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Wed, 19 May 2021 22:47:05 +0200
+X-ME-IP: 86.243.172.93
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     anitha.chrisanthus@intel.com, edmund.j.dea@intel.com,
+        airlied@linux.ie, daniel@ffwll.ch, sam@ravnborg.org
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] drm/kmb: Fix an error handling path
+Date:   Wed, 19 May 2021 22:47:02 +0200
+Message-Id: <ce19f0d78174b0674dc963d134fbdec222250e84.1621457119.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v2] net: qrtr: ns: Fix error return code in
- qrtr_ns_init()
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <162145561539.14289.12444383566241954680.git-patchwork-notify@kernel.org>
-Date:   Wed, 19 May 2021 20:20:15 +0000
-References: <20210519155852.2878479-1-weiyongjun1@huawei.com>
-In-Reply-To: <20210519155852.2878479-1-weiyongjun1@huawei.com>
-To:     Wei Yongjun <weiyongjun1@huawei.com>
-Cc:     mani@kernel.org, davem@davemloft.net, kuba@kernel.org,
-        linux-arm-msm@vger.kernel.org, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, hulkci@huawei.com,
-        manivannan.sadhasivam@linaro.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+If 'platform_get_irq()' fails, it is spurious to call
+'of_reserved_mem_device_release()' in the error handling path, because
+'of_reserved_mem_device_init() has not been called yet.
 
-This patch was applied to netdev/net-next.git (refs/heads/master):
+Moreover, a previous 'kmb_initialize_clocks()' is unbalanced by a
+corresponding 'kmb_display_clk_disable()' call, has already done in the
+remove function.
 
-On Wed, 19 May 2021 15:58:52 +0000 you wrote:
-> Fix to return a negative error code -ENOMEM from the error handling
-> case instead of 0, as done elsewhere in this function.
-> 
-> Fixes: c6e08d6251f3 ("net: qrtr: Allocate workqueue before kernel_bind")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> 
-> [...]
+It is likely that 'kmb_display_clk_disable()' is expected in the error
+handling path, instead of 'kmb_display_clk_disable()'.
 
-Here is the summary with links:
-  - [net-next,v2] net: qrtr: ns: Fix error return code in qrtr_ns_init()
-    https://git.kernel.org/netdev/net-next/c/a49e72b3bda7
 
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Also, it is spurious to return directly if 'of_reserved_mem_device_init()'
+fails.
+Goto the error handling path instead to free some resources.
 
+Fixes: 7f7b96a8a0a1 ("drm/kmb: Add support for KeemBay Display")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/gpu/drm/kmb/kmb_drv.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/kmb/kmb_drv.c b/drivers/gpu/drm/kmb/kmb_drv.c
+index f64e06e1067d..b41b8789fe57 100644
+--- a/drivers/gpu/drm/kmb/kmb_drv.c
++++ b/drivers/gpu/drm/kmb/kmb_drv.c
+@@ -138,13 +138,13 @@ static int kmb_hw_init(struct drm_device *drm, unsigned long flags)
+ 	irq_lcd = platform_get_irq(pdev, 0);
+ 	if (irq_lcd < 0) {
+ 		drm_err(&kmb->drm, "irq_lcd not found");
+-		goto setup_fail;
++		goto disable_clk_err;
+ 	}
+ 
+ 	/* Get the optional framebuffer memory resource */
+ 	ret = of_reserved_mem_device_init(drm->dev);
+ 	if (ret && ret != -ENODEV)
+-		return ret;
++		goto disable_clk_err;
+ 
+ 	spin_lock_init(&kmb->irq_lock);
+ 
+@@ -152,8 +152,8 @@ static int kmb_hw_init(struct drm_device *drm, unsigned long flags)
+ 
+ 	return 0;
+ 
+- setup_fail:
+-	of_reserved_mem_device_release(drm->dev);
++ disable_clk_err:
++	kmb_display_clk_disable(kmb);
+ 
+ 	return ret;
+ }
+-- 
+2.30.2
 
