@@ -2,99 +2,85 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2C86C433B4
-	for <kernel-janitors@archiver.kernel.org>; Wed, 19 May 2021 15:45:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD048C433B4
+	for <kernel-janitors@archiver.kernel.org>; Wed, 19 May 2021 15:49:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 90290611BD
-	for <kernel-janitors@archiver.kernel.org>; Wed, 19 May 2021 15:45:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A21DB6124C
+	for <kernel-janitors@archiver.kernel.org>; Wed, 19 May 2021 15:49:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241503AbhESPqq (ORCPT
+        id S1354975AbhESPvC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 19 May 2021 11:46:46 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:48182 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1348078AbhESPqo (ORCPT
+        Wed, 19 May 2021 11:51:02 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:4753 "EHLO
+        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233708AbhESPvA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 19 May 2021 11:46:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1621439123;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=tJhhAB5BAUKw2eGpq2+2/VViXgOiLGOuvkZG3xj1vTw=;
-        b=IrWQ+rPat35VAYhpkhVU1dmahWHrIGOVogBx8HeTkxdEmHQb0Oqu8uuugX/JnU3e84Gr3Q
-        Y4+iPrkA9rwKtROC+tUeiteYGu8EtlDcTAhjaqH8wd10Fl9bH0BiMZEGwAsS+RihnzBHHc
-        FIRO5CaXBAJfZ/iD6l4e87nvT0nj2LY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-270-Gzs1CZxJM5uB2kFoU4Qm4Q-1; Wed, 19 May 2021 11:45:21 -0400
-X-MC-Unique: Gzs1CZxJM5uB2kFoU4Qm4Q-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A998D107ACE3;
-        Wed, 19 May 2021 15:45:19 +0000 (UTC)
-Received: from redhat.com (ovpn-113-225.phx2.redhat.com [10.3.113.225])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 631295C261;
-        Wed, 19 May 2021 15:45:13 +0000 (UTC)
-Date:   Wed, 19 May 2021 09:45:12 -0600
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     Wei Yongjun <weiyongjun1@huawei.com>
-Cc:     Kirti Wankhede <kwankhede@nvidia.com>, <kvm@vger.kernel.org>,
+        Wed, 19 May 2021 11:51:00 -0400
+Received: from dggems705-chm.china.huawei.com (unknown [172.30.72.58])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4FlcfR6sgMzpfcM;
+        Wed, 19 May 2021 23:46:07 +0800 (CST)
+Received: from dggeml759-chm.china.huawei.com (10.1.199.138) by
+ dggems705-chm.china.huawei.com (10.3.19.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
+ 15.1.2176.2; Wed, 19 May 2021 23:49:37 +0800
+Received: from localhost.localdomain (10.175.102.38) by
+ dggeml759-chm.china.huawei.com (10.1.199.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2176.2; Wed, 19 May 2021 23:49:37 +0800
+From:   Wei Yongjun <weiyongjun1@huawei.com>
+To:     <weiyongjun1@huawei.com>, Manivannan Sadhasivam <mani@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>
+CC:     <linux-arm-msm@vger.kernel.org>, <netdev@vger.kernel.org>,
         <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>,
-        kraxel@redhat.com
-Subject: Re: [PATCH -next] samples: vfio-mdev: fix error return code in
- mdpy_fb_probe()
-Message-ID: <20210519094512.7ed3ea0f.alex.williamson@redhat.com>
-In-Reply-To: <20210519141559.3031063-1-weiyongjun1@huawei.com>
-References: <20210519141559.3031063-1-weiyongjun1@huawei.com>
+        "Manivannan Sadhasivam" <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH net-next v2] net: qrtr: ns: Fix error return code in qrtr_ns_init()
+Date:   Wed, 19 May 2021 15:58:52 +0000
+Message-ID: <20210519155852.2878479-1-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.102.38]
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggeml759-chm.china.huawei.com (10.1.199.138)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 19 May 2021 14:15:59 +0000
-Wei Yongjun <weiyongjun1@huawei.com> wrote:
+Fix to return a negative error code -ENOMEM from the error handling
+case instead of 0, as done elsewhere in this function.
 
-> Fix to return negative error code -ENOMEM from the error handling
-> case instead of 0, as done elsewhere in this function.
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  samples/vfio-mdev/mdpy-fb.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/samples/vfio-mdev/mdpy-fb.c b/samples/vfio-mdev/mdpy-fb.c
-> index 21dbf63d6e41..d4abc0594dbd 100644
-> --- a/samples/vfio-mdev/mdpy-fb.c
-> +++ b/samples/vfio-mdev/mdpy-fb.c
-> @@ -131,8 +131,10 @@ static int mdpy_fb_probe(struct pci_dev *pdev,
->  		 width, height);
->  
->  	info = framebuffer_alloc(sizeof(struct mdpy_fb_par), &pdev->dev);
-> -	if (!info)
-> +	if (!info) {
-> +		ret = -ENOMEM;
->  		goto err_release_regions;
-> +	}
->  	pci_set_drvdata(pdev, info);
->  	par = info->par;
->  
-> 
+Fixes: c6e08d6251f3 ("net: qrtr: Allocate workqueue before kernel_bind")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+v1 -> v2: add fixes tag and reviewed-by
+---
+ net/qrtr/ns.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-I think there's also a question of why the three 'return -EINVAL;' exit
-paths between here and the prior call to pci_request_regions() don't
-also take this goto.  Thanks,
-
-Alex
+diff --git a/net/qrtr/ns.c b/net/qrtr/ns.c
+index 8d00dfe8139e..1990d496fcfc 100644
+--- a/net/qrtr/ns.c
++++ b/net/qrtr/ns.c
+@@ -775,8 +775,10 @@ int qrtr_ns_init(void)
+ 	}
+ 
+ 	qrtr_ns.workqueue = alloc_workqueue("qrtr_ns_handler", WQ_UNBOUND, 1);
+-	if (!qrtr_ns.workqueue)
++	if (!qrtr_ns.workqueue) {
++		ret = -ENOMEM;
+ 		goto err_sock;
++	}
+ 
+ 	qrtr_ns.sock->sk->sk_data_ready = qrtr_ns_data_ready;
+ 
 
