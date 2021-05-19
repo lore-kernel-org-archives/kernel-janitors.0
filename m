@@ -2,87 +2,113 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 960C3C433ED
-	for <kernel-janitors@archiver.kernel.org>; Wed, 19 May 2021 14:18:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63B03C433B4
+	for <kernel-janitors@archiver.kernel.org>; Wed, 19 May 2021 14:18:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 76DDA611C2
-	for <kernel-janitors@archiver.kernel.org>; Wed, 19 May 2021 14:18:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FFA5611C2
+	for <kernel-janitors@archiver.kernel.org>; Wed, 19 May 2021 14:18:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241022AbhESOTv (ORCPT
+        id S1347357AbhESOT4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 19 May 2021 10:19:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44130 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1347357AbhESOT3 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 19 May 2021 10:19:29 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 84FA461244;
-        Wed, 19 May 2021 14:18:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1621433889;
-        bh=0pvunetzygNqY35KHnnR9Jx2D12exeL0Npca5/mUUOg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bgigDgU9etIAgCNfP0yys107j8RkZ/rYbGLc+9nAKo/TdLpvxeq14yOM+zHdORoVB
-         AF2gy0O6MnEkA+WXCb8d5WAxDiP0ipTq/gjwjo2vGVrm/pUkPDDO8KSZrDcNbvRHJ/
-         BDvBRZDCzrcdLc6mD5O/X1cbpmuWCGUsPSDSJaBB+/hNojnzwRHw31wWfSM9xUuH5Y
-         H3Q3NtEZL65rwR+EhAvFGnn58Sj4dWuhOXfG653SovAE6XStdm7UC2jNtH/ZjRU/zF
-         2blWFcAGvoH4BlBWvn7u4ujlQvi1IMRfHNI08/9LROtnq14BeaRJ47ajAMsdsFzhUN
-         y57g0RBE25bgA==
-Date:   Wed, 19 May 2021 19:48:01 +0530
-From:   Manivannan Sadhasivam <mani@kernel.org>
-To:     Wei Yongjun <weiyongjun1@huawei.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        linux-arm-msm@vger.kernel.org, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
-Subject: Re: [PATCH net-next] net: qrtr: ns: Fix error return code in
- qrtr_ns_init()
-Message-ID: <20210519141801.GB119648@thinkpad>
-References: <20210519141621.3044684-1-weiyongjun1@huawei.com>
+        Wed, 19 May 2021 10:19:56 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:37556 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1354066AbhESOTz (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 19 May 2021 10:19:55 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 14JEF9S0101727;
+        Wed, 19 May 2021 14:18:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type : in-reply-to;
+ s=corp-2020-01-29; bh=3N0UDr8fp/rROWpaUFSOnbPEWFC1lCojv6j2aMf4zHY=;
+ b=IffCIAR0qn7rYRPWwUZlSa5i7x5lpIzo+wqkYYxxq5NSLm1Ft0UfJ9L1kYk6HqeJmNjE
+ WVhCX3+28DAYd8060//bo79+PIi5ZnxoWRjWPIrHdOL0B1mMzXM82I0XMN9507w9w1Rx
+ tA4BUePtbhxBJxRRquqESAmef1zBkiw3thanHaxjSWArg73eJl03k/jSQpRmnwXCndl1
+ mn1u9bkBCayc4GKOH09AjU2RD9l9JP0ddEeQmjLAkchVhcC1qNA15Q/0cx5L2WfBQSPl
+ szGWiN8yNqrbm/TiTiFEkh8Sjia/Qf4R5QbBAS1vZsw1MqvO50Bi5b4C3i/7ZW5AqG5z aQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 38j6xnhnxe-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 19 May 2021 14:18:15 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 14JEC4xK028409;
+        Wed, 19 May 2021 14:18:14 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by aserp3020.oracle.com with ESMTP id 38mecjb8qm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 19 May 2021 14:18:14 +0000
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 14JEFewt070836;
+        Wed, 19 May 2021 14:18:14 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 38mecjb8np-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 19 May 2021 14:18:14 +0000
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 14JEIBxX031464;
+        Wed, 19 May 2021 14:18:12 GMT
+Received: from mwanda (/41.212.42.34)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 19 May 2021 07:18:10 -0700
+Date:   Wed, 19 May 2021 17:17:45 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Evgeniy Polyakov <zbr@ioremap.net>
+Cc:     Greg Kroah-Hartman <gregkh@suse.de>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] w1: fix loop in w1_fini()
+Message-ID: <YKUeCfjQqt5NuSta@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210519141621.3044684-1-weiyongjun1@huawei.com>
+In-Reply-To: <20210518082855.GB32682@kadam>
+X-Mailer: git-send-email haha only kidding
+X-Proofpoint-GUID: A5jfNBGAkI2EWzceDpCJO9nvvs7mwSYj
+X-Proofpoint-ORIG-GUID: A5jfNBGAkI2EWzceDpCJO9nvvs7mwSYj
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9988 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 impostorscore=0 mlxscore=0
+ mlxlogscore=936 adultscore=0 malwarescore=0 priorityscore=1501
+ phishscore=0 suspectscore=0 lowpriorityscore=0 bulkscore=0 clxscore=1011
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104190000 definitions=main-2105190089
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, May 19, 2021 at 02:16:21PM +0000, Wei Yongjun wrote:
-> Fix to return a negative error code -ENOMEM from the error handling
-> case instead of 0, as done elsewhere in this function.
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+The __w1_remove_master_device() function calls:
 
-You might want to add Fixes tag:
+	list_del(&dev->w1_master_entry);
 
-Fixes: c6e08d6251f3 ("net: qrtr: Allocate workqueue before kernel_bind")
+So presumably this can cause an endless loop.
 
-Thanks,
-Mani
+Fixes: 7785925dd8e0 ("[PATCH] w1: cleanups.")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/w1/w1.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> ---
->  net/qrtr/ns.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/net/qrtr/ns.c b/net/qrtr/ns.c
-> index 8d00dfe8139e..1990d496fcfc 100644
-> --- a/net/qrtr/ns.c
-> +++ b/net/qrtr/ns.c
-> @@ -775,8 +775,10 @@ int qrtr_ns_init(void)
->  	}
->  
->  	qrtr_ns.workqueue = alloc_workqueue("qrtr_ns_handler", WQ_UNBOUND, 1);
-> -	if (!qrtr_ns.workqueue)
-> +	if (!qrtr_ns.workqueue) {
-> +		ret = -ENOMEM;
->  		goto err_sock;
-> +	}
->  
->  	qrtr_ns.sock->sk->sk_data_ready = qrtr_ns_data_ready;
->  
-> 
+diff --git a/drivers/w1/w1.c b/drivers/w1/w1.c
+index f2ae2e563dc5..8b2d82959ded 100644
+--- a/drivers/w1/w1.c
++++ b/drivers/w1/w1.c
+@@ -1259,10 +1259,10 @@ static int __init w1_init(void)
+ 
+ static void __exit w1_fini(void)
+ {
+-	struct w1_master *dev;
++	struct w1_master *dev, *n;
+ 
+ 	/* Set netlink removal messages and some cleanup */
+-	list_for_each_entry(dev, &w1_masters, w1_master_entry)
++	list_for_each_entry_safe(dev, n, &w1_masters, w1_master_entry)
+ 		__w1_remove_master_device(dev);
+ 
+ 	w1_fini_netlink();
+-- 
+2.30.2
+
