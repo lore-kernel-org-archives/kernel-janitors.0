@@ -2,85 +2,75 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD048C433B4
-	for <kernel-janitors@archiver.kernel.org>; Wed, 19 May 2021 15:49:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD746C433B4
+	for <kernel-janitors@archiver.kernel.org>; Wed, 19 May 2021 20:20:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A21DB6124C
-	for <kernel-janitors@archiver.kernel.org>; Wed, 19 May 2021 15:49:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4BB7611C2
+	for <kernel-janitors@archiver.kernel.org>; Wed, 19 May 2021 20:20:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354975AbhESPvC (ORCPT
+        id S229724AbhESUVh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 19 May 2021 11:51:02 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:4753 "EHLO
-        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233708AbhESPvA (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 19 May 2021 11:51:00 -0400
-Received: from dggems705-chm.china.huawei.com (unknown [172.30.72.58])
-        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4FlcfR6sgMzpfcM;
-        Wed, 19 May 2021 23:46:07 +0800 (CST)
-Received: from dggeml759-chm.china.huawei.com (10.1.199.138) by
- dggems705-chm.china.huawei.com (10.3.19.182) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
- 15.1.2176.2; Wed, 19 May 2021 23:49:37 +0800
-Received: from localhost.localdomain (10.175.102.38) by
- dggeml759-chm.china.huawei.com (10.1.199.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2176.2; Wed, 19 May 2021 23:49:37 +0800
-From:   Wei Yongjun <weiyongjun1@huawei.com>
-To:     <weiyongjun1@huawei.com>, Manivannan Sadhasivam <mani@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>
-CC:     <linux-arm-msm@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>,
-        "Manivannan Sadhasivam" <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH net-next v2] net: qrtr: ns: Fix error return code in qrtr_ns_init()
-Date:   Wed, 19 May 2021 15:58:52 +0000
-Message-ID: <20210519155852.2878479-1-weiyongjun1@huawei.com>
-X-Mailer: git-send-email 2.25.1
+        Wed, 19 May 2021 16:21:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51618 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229565AbhESUVf (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 19 May 2021 16:21:35 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPS id 52EE26135F;
+        Wed, 19 May 2021 20:20:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1621455615;
+        bh=bLfZ6T+0eeJALV2fgqEgxwkeDQvQ35QAOv8EHlCuLis=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=ZM0qvfH2F+J15M1VR0gwmRf5Ya1rVk7hlqb6C97NtEbUZos14f8N3POZvcUTWE6lS
+         i0ynzL5Gf4A8YeMWnYa0cXEYqvMXzgMF3Z95rY7FtiABCRJ4biePO2/YXzTbztyKOQ
+         ZrAiKhL24v3f9/ry5cCgmaeenB7bDJ+hfN0mBlCVZqN0lapY9Rm4PkDa7iUyeYs9Vs
+         KXIP91sSZPRvD+6s0RECDO832nXhd8psPrikDW9A9VCRx5R/YGnD7ihEgfHcImRcKH
+         TIGexv6ZnavRT9YPXvrgybSCbi6eATlXBxK1fy5kGj3sDfmadtgb3vbz+yBimL/e0Z
+         JOl07riBTRFAA==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.102.38]
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggeml759-chm.china.huawei.com (10.1.199.138)
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] net: ethernet: ixp4xx: Fix return value check in
+ ixp4xx_eth_probe()
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <162145561531.14289.9199299011458304917.git-patchwork-notify@kernel.org>
+Date:   Wed, 19 May 2021 20:20:15 +0000
+References: <20210519141627.3047264-1-weiyongjun1@huawei.com>
+In-Reply-To: <20210519141627.3047264-1-weiyongjun1@huawei.com>
+To:     Wei Yongjun <weiyongjun1@huawei.com>
+Cc:     khalasa@piap.pl, davem@davemloft.net, kuba@kernel.org,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        hulkci@huawei.com
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Fix to return a negative error code -ENOMEM from the error handling
-case instead of 0, as done elsewhere in this function.
+Hello:
 
-Fixes: c6e08d6251f3 ("net: qrtr: Allocate workqueue before kernel_bind")
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
-v1 -> v2: add fixes tag and reviewed-by
----
- net/qrtr/ns.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+This patch was applied to netdev/net-next.git (refs/heads/master):
 
-diff --git a/net/qrtr/ns.c b/net/qrtr/ns.c
-index 8d00dfe8139e..1990d496fcfc 100644
---- a/net/qrtr/ns.c
-+++ b/net/qrtr/ns.c
-@@ -775,8 +775,10 @@ int qrtr_ns_init(void)
- 	}
- 
- 	qrtr_ns.workqueue = alloc_workqueue("qrtr_ns_handler", WQ_UNBOUND, 1);
--	if (!qrtr_ns.workqueue)
-+	if (!qrtr_ns.workqueue) {
-+		ret = -ENOMEM;
- 		goto err_sock;
-+	}
- 
- 	qrtr_ns.sock->sk->sk_data_ready = qrtr_ns_data_ready;
- 
+On Wed, 19 May 2021 14:16:27 +0000 you wrote:
+> In case of error, the function mdiobus_get_phy() returns NULL
+> pointer not ERR_PTR(). The IS_ERR() test in the return value
+> check should be replaced with NULL test.
+> 
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next] net: ethernet: ixp4xx: Fix return value check in ixp4xx_eth_probe()
+    https://git.kernel.org/netdev/net-next/c/20e76d3d044d
+
+You are awesome, thank you!
+--
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
