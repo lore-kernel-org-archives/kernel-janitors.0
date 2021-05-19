@@ -2,76 +2,85 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D91AC433ED
-	for <kernel-janitors@archiver.kernel.org>; Wed, 19 May 2021 14:07:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1069EC43460
+	for <kernel-janitors@archiver.kernel.org>; Wed, 19 May 2021 14:16:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4E7C161363
-	for <kernel-janitors@archiver.kernel.org>; Wed, 19 May 2021 14:07:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EAF30611C2
+	for <kernel-janitors@archiver.kernel.org>; Wed, 19 May 2021 14:16:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353873AbhESOJK (ORCPT
+        id S1347300AbhESORx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 19 May 2021 10:09:10 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:3427 "EHLO
-        szxga07-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353892AbhESOJE (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 19 May 2021 10:09:04 -0400
-Received: from dggems706-chm.china.huawei.com (unknown [172.30.72.60])
-        by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4FlZPh4n5KzCtt3;
-        Wed, 19 May 2021 22:04:56 +0800 (CST)
-Received: from dggeml759-chm.china.huawei.com (10.1.199.138) by
- dggems706-chm.china.huawei.com (10.3.19.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
- 15.1.2176.2; Wed, 19 May 2021 22:07:43 +0800
-Received: from localhost.localdomain (10.175.102.38) by
- dggeml759-chm.china.huawei.com (10.1.199.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2176.2; Wed, 19 May 2021 22:07:42 +0800
-From:   Wei Yongjun <weiyongjun1@huawei.com>
-To:     <weiyongjun1@huawei.com>, Gao Xiang <xiang@kernel.org>,
-        Chao Yu <chao@kernel.org>
-CC:     <linux-erofs@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH -next] erofs: fix error return code in erofs_read_superblock()
-Date:   Wed, 19 May 2021 14:16:57 +0000
-Message-ID: <20210519141657.3062715-1-weiyongjun1@huawei.com>
-X-Mailer: git-send-email 2.25.1
+        Wed, 19 May 2021 10:17:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41456 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1354213AbhESOQa (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 19 May 2021 10:16:30 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id A7381613AA;
+        Wed, 19 May 2021 14:15:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1621433710;
+        bh=ThtU2KVb061FESXUqP9mzeYpSF2o2toGVNDSpucGG1Y=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=sngsqF22KolnPOyLHETglroYOIvZA0VvHpL3bZaBnS48Ix/VgkftHickLfiro7c4N
+         8RUIodIc+syR4XcIDEWoCQJGnr1ftbKnd9q3kHbd03qTbYr1C2Svt8jRhyS8zjBg3b
+         C07o2vvOe26c1mxp6Z+zaeZlw9kKJsmM38HJO1tgQMnNC9udbgu1d57P0X3XJ7Gvxb
+         rx3+Ud/vNx6j9XonRyWBkeDpy0B5x817hXI61fz23tq/s+5la632ZjXcxYuisS4mWi
+         7tf9V/GV9FZJ8+qodB2Fyyo6vV8LtpRfduOW/+y7rxl7ZSUJRO/vzVxod4/KdXmYz3
+         5gXS8LeADH1AQ==
+Date:   Wed, 19 May 2021 19:45:01 +0530
+From:   Manivannan Sadhasivam <mani@kernel.org>
+To:     Wei Yongjun <weiyongjun1@huawei.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        linux-arm-msm@vger.kernel.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+Subject: Re: [PATCH net-next] net: qrtr: ns: Fix error return code in
+ qrtr_ns_init()
+Message-ID: <20210519141501.GA119648@thinkpad>
+References: <20210519141621.3044684-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.102.38]
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggeml759-chm.china.huawei.com (10.1.199.138)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210519141621.3044684-1-weiyongjun1@huawei.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-'ret' will be overwritten to 0 if erofs_sb_has_sb_chksum() return true,
-thus 0 will return in some error handling cases. Fix to return negative
-error code -EINVAL instead of 0.
+On Wed, May 19, 2021 at 02:16:21PM +0000, Wei Yongjun wrote:
+> Fix to return a negative error code -ENOMEM from the error handling
+> case instead of 0, as done elsewhere in this function.
+> 
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- fs/erofs/super.c | 1 +
- 1 file changed, 1 insertion(+)
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-index bbf3bbd908e0..22991d22af5a 100644
---- a/fs/erofs/super.c
-+++ b/fs/erofs/super.c
-@@ -285,6 +285,7 @@ static int erofs_read_superblock(struct super_block *sb)
- 			goto out;
- 	}
- 
-+	ret = -EINVAL;
- 	blkszbits = dsb->blkszbits;
- 	/* 9(512 bytes) + LOG_SECTORS_PER_BLOCK == LOG_BLOCK_SIZE */
- 	if (blkszbits != LOG_BLOCK_SIZE) {
+Thanks,
+Mani
 
+> ---
+>  net/qrtr/ns.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/net/qrtr/ns.c b/net/qrtr/ns.c
+> index 8d00dfe8139e..1990d496fcfc 100644
+> --- a/net/qrtr/ns.c
+> +++ b/net/qrtr/ns.c
+> @@ -775,8 +775,10 @@ int qrtr_ns_init(void)
+>  	}
+>  
+>  	qrtr_ns.workqueue = alloc_workqueue("qrtr_ns_handler", WQ_UNBOUND, 1);
+> -	if (!qrtr_ns.workqueue)
+> +	if (!qrtr_ns.workqueue) {
+> +		ret = -ENOMEM;
+>  		goto err_sock;
+> +	}
+>  
+>  	qrtr_ns.sock->sk->sk_data_ready = qrtr_ns_data_ready;
+>  
+> 
