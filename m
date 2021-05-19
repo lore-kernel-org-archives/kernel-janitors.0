@@ -2,108 +2,68 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34466C433ED
-	for <kernel-janitors@archiver.kernel.org>; Tue, 18 May 2021 21:53:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49C40C433B4
+	for <kernel-janitors@archiver.kernel.org>; Wed, 19 May 2021 05:39:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EBA8961261
-	for <kernel-janitors@archiver.kernel.org>; Tue, 18 May 2021 21:53:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25AFC6139A
+	for <kernel-janitors@archiver.kernel.org>; Wed, 19 May 2021 05:39:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238989AbhERVyn (ORCPT
+        id S1347278AbhESFlD (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 18 May 2021 17:54:43 -0400
-Received: from mail-wm1-f44.google.com ([209.85.128.44]:35633 "EHLO
-        mail-wm1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233561AbhERVym (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 18 May 2021 17:54:42 -0400
-Received: by mail-wm1-f44.google.com with SMTP id z19-20020a7bc7d30000b029017521c1fb75so2332486wmk.0;
-        Tue, 18 May 2021 14:53:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=SbhE0iSK8kwkfF5k3gEa4k3XZSxzWdx+S3mqdnigAW8=;
-        b=eniDNL53vm0q9RuEC3o/4F+pG8zWA0HPzumJXlY4JikNmGf5rtqIA3fUj9OphpoDMl
-         GZtQnMj9XUQVf4XbFz3QiBfShjcMbYJ7AEP679WG+9NsxrzbXGsGdBaB1jteA9qckIpw
-         obwA8M2UlK13D9bfHS51SCwveGIoywxOV6RoWjvLeoG7xAG45QXphi4WAPfS23tFRjP9
-         WJ9F9GAqY5/ep6mB2uXxAdWMDWzSb71+GpwxW58AblD4YE7WergY8kZW0tuxpFKqiiO6
-         HEv8VlM0pUVwnRS1fgrkohk24W+jTQD65uCp3fAsOu2saylcwcGTMIFfjxxg8Z3VGztO
-         Nv5g==
-X-Gm-Message-State: AOAM533rPKxQ/UaKfTLhfsVBQ/L89awGIiyO4GdqE+AB4q1ghdrnoXe5
-        of0cR4xxOel+7zngWCoRavY=
-X-Google-Smtp-Source: ABdhPJwRwSXIo1FB+tqxPueLwXz9QZqTF0wkAFEi/eP9dDOaopfPEWETvtcv3dozXk7g3ENAdxtsuA==
-X-Received: by 2002:a05:600c:4f4e:: with SMTP id m14mr7154705wmq.164.1621374801402;
-        Tue, 18 May 2021 14:53:21 -0700 (PDT)
-Received: from liuwe-devbox-debian-v2 ([51.145.34.42])
-        by smtp.gmail.com with ESMTPSA id c12sm3284407wrr.90.2021.05.18.14.53.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 May 2021 14:53:21 -0700 (PDT)
-Date:   Tue, 18 May 2021 21:53:19 +0000
-From:   Wei Liu <wei.liu@kernel.org>
-To:     Long Li <longli@microsoft.com>
-Cc:     Wei Liu <wei.liu@kernel.org>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        KY Srinivasan <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Dexuan Cui <decui@microsoft.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH 1/2] uio_hv_generic: Fix a memory leak in error handling
- paths
-Message-ID: <20210518215319.yshxwkvxaxsv77bv@liuwe-devbox-debian-v2>
-References: <4fdaff557deef6f0475d02ba7922ddbaa1ab08a6.1620544055.git.christophe.jaillet@wanadoo.fr>
- <20210511095227.ggrl3z6otjanwffz@liuwe-devbox-debian-v2>
- <20210518110122.7jbktl6olsl75vqz@liuwe-devbox-debian-v2>
- <BY5PR21MB15069658A7DE04A863C75036CE2C9@BY5PR21MB1506.namprd21.prod.outlook.com>
+        Wed, 19 May 2021 01:41:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33458 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1344991AbhESFif (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 19 May 2021 01:38:35 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 17D50611BF;
+        Wed, 19 May 2021 05:37:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1621402636;
+        bh=/wserOAM71RxcqsBZBi62Nr8Kzx6ii8wtkOB0XiIVZU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=N5fo9t0CXUmUiJ6RYESAXULd7nEiQ5eLOxPvVFYOnZeal59HtjtSXMIEengDMh1L0
+         Nq1JKywIDrrYO5kRl4RrrZLJY+OdvHcp7rI+cKHaRwwIyjoYzmCeX/GOGoVehQRDYO
+         MQhABZi6ArVh1BtKOF4tTmrhFZx7pI3wyv4EeD9GLa8UnsFvajMiutnTs1VDYJuS5x
+         ma/1YAqxjIFbVcmJEZcIw2uiVVvnXIThS8hp66AfXXTeKOgeLcwEw+WAyPVjvwSIt4
+         /YqeZ2jznzZFkMklLfK08aZvLE0uOmdPr40Z8Muro4h5qto8qFoRT9aNTyxlzGecc2
+         /rz5elMajzQTA==
+Date:   Wed, 19 May 2021 08:37:12 +0300
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Avihai Horon <avihaih@nvidia.com>,
+        Michael Guralnik <michaelgur@nvidia.com>,
+        Aharon Landau <aharonl@mellanox.com>,
+        Gal Pressman <galpress@amazon.com>,
+        Yishai Hadas <yishaih@mellanox.com>,
+        Parav Pandit <parav@mellanox.com>, linux-rdma@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] RDMA/uverbs: fix a NULL vs IS_ERR() bug
+Message-ID: <YKSkCDcGMdttmeCH@unreal>
+References: <YJ6Got+U7lz+3n9a@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <BY5PR21MB15069658A7DE04A863C75036CE2C9@BY5PR21MB1506.namprd21.prod.outlook.com>
+In-Reply-To: <YJ6Got+U7lz+3n9a@mwanda>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, May 18, 2021 at 09:50:17PM +0000, Long Li wrote:
-> > Subject: Re: [PATCH 1/2] uio_hv_generic: Fix a memory leak in error handling
-> > paths
-> > 
-> > Cc Long Li.
-> > 
-> > Long, Stephen suggested I check with you. Do you have any opinion?
-> > 
-> > Wei.
-> > 
-> > On Tue, May 11, 2021 at 09:52:27AM +0000, Wei Liu wrote:
-> > > On Sun, May 09, 2021 at 09:13:03AM +0200, Christophe JAILLET wrote:
-> > > > If 'vmbus_establish_gpadl()' fails, the (recv|send)_gpadl will not
-> > > > be updated and 'hv_uio_cleanup()' in the error handling path will
-> > > > not be able to free the corresponding buffer.
-> > > >
-> > > > In such a case, we need to free the buffer explicitly.
-> > > >
-> > > > Fixes: cdfa835c6e5e ("uio_hv_generic: defer opening vmbus until
-> > > > first use")
-> > > > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > > > ---
-> > > > Before commit cdfa835c6e5e, the 'vfree' were done unconditionally in
-> > > > 'hv_uio_cleanup()'.
-> > > > So, another way for fixing the potential leak is to modify
-> > > > 'hv_uio_cleanup()' and revert to the previous behavior.
-> > > >
-> > >
-> > > I think this is cleaner.
+On Fri, May 14, 2021 at 05:18:10PM +0300, Dan Carpenter wrote:
+> The uapi_get_object() function returns error pointers, it never returns
+> NULL.
 > 
-> Christophe has mentioned that the patch is already picked up by Greg KH.
+> Fixes: 149d3845f4a5 ("RDMA/uverbs: Add a method to introspect handles in a context")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  drivers/infiniband/core/uverbs_std_types_device.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> I think both approaches are correct. We can go with this one.
 
-OK. That's fine.
-
-Wei.
+Thanks,
+Reviewed-by: Leon Romanovsky <leonro@nvidia.com>
