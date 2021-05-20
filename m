@@ -2,88 +2,115 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DAB6C433ED
-	for <kernel-janitors@archiver.kernel.org>; Thu, 20 May 2021 04:57:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F1BDC433ED
+	for <kernel-janitors@archiver.kernel.org>; Thu, 20 May 2021 05:08:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E4674611BD
-	for <kernel-janitors@archiver.kernel.org>; Thu, 20 May 2021 04:57:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0790E611AD
+	for <kernel-janitors@archiver.kernel.org>; Thu, 20 May 2021 05:08:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230008AbhETE7K (ORCPT
+        id S229534AbhETFJ3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 20 May 2021 00:59:10 -0400
-Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:26849 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229536AbhETE7I (ORCPT
+        Thu, 20 May 2021 01:09:29 -0400
+Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:47596 "EHLO
+        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229498AbhETFJ2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 20 May 2021 00:59:08 -0400
-Received: from [192.168.1.18] ([86.243.172.93])
-        by mwinf5d84 with ME
-        id 6sxl2500321Fzsu03sxml6; Thu, 20 May 2021 06:57:46 +0200
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 20 May 2021 06:57:46 +0200
-X-ME-IP: 86.243.172.93
-Subject: Re: [PATCH] scsi: sni_53c710: Fix a resource leak in an error
- handling path
-To:     jejb@linux.ibm.com, martin.petersen@oracle.com,
-        James.Bottomley@SteelEye.com
-Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <5a97774020847f6b63e161197254d15ef1d786ea.1621485792.git.christophe.jaillet@wanadoo.fr>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Message-ID: <c1948555-41fe-fc8e-ac27-68d314a05c81@wanadoo.fr>
-Date:   Thu, 20 May 2021 06:57:44 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.2
+        Thu, 20 May 2021 01:09:28 -0400
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 14K57HAc026940;
+        Thu, 20 May 2021 05:07:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
+ bh=CticVaCzxTnWWrztDkOoQDsia6opGnbN/MHwdlyE1uM=;
+ b=je4wc9UFiYGrf+SL7B87BtMfPD7xcbOYFOY+POdLVajtNvbBj6cBKYukhw27w02zZuF0
+ 8q/83iPXKes3XEXXOLbTCigDXsW9lblIwOcgNMtComxeFRoSwV96+PfVVFMrBTuop/CF
+ HN1IdoGf3mKqgKCb8lBRTlK9sw9F67ksdcbMDeez14YrsUjH4oPseIpERSMhdbbMVPkn
+ 3U2ntxoNSE6VNQDRGEuS+IyC+M25+AGqcwmui0pN1Xb+Q6AUiUcJcqBpmQ8rXNkND+fi
+ psLc458EVnBEjjsAui9I1yKnk5B9ktA+FdwYJFTWzOlaH8xXMVhtpps5qKCyUyaPbBQt Gg== 
+Received: from oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by mx0b-00069f02.pphosted.com with ESMTP id 38ktd2h978-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 20 May 2021 05:07:16 +0000
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
+        by pps.podrdrct (8.16.0.36/8.16.0.36) with SMTP id 14K57GoN009272;
+        Thu, 20 May 2021 05:07:16 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by aserp3020.oracle.com with ESMTP id 38mecm7wyc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 20 May 2021 05:07:15 +0000
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 14K56c9E006907;
+        Thu, 20 May 2021 05:07:14 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3020.oracle.com with ESMTP id 38mecm7wxg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 20 May 2021 05:07:14 +0000
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 14K579ew005140;
+        Thu, 20 May 2021 05:07:09 GMT
+Received: from mwanda (/10.175.161.110)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 19 May 2021 22:07:09 -0700
+Date:   Thu, 20 May 2021 08:07:02 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Liam Girdwood <lgirdwood@gmail.com>
+Cc:     Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>,
+        Jaska Uimonen <jaska.uimonen@linux.intel.com>,
+        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH 1/2] ASoC: topology: Fix some error codes in
+ soc_tplg_dapm_widget_create()
+Message-ID: <YKXudu7p8VZ2/zZN@mwanda>
 MIME-Version: 1.0
-In-Reply-To: <5a97774020847f6b63e161197254d15ef1d786ea.1621485792.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+X-Proofpoint-GUID: 2-YPIjwM2SAhaSJKdrghziEeSlBjhEcf
+X-Proofpoint-ORIG-GUID: 2-YPIjwM2SAhaSJKdrghziEeSlBjhEcf
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 20/05/2021 à 06:44, Christophe JAILLET a écrit :
-> After a successful 'NCR_700_detect()' call, 'NCR_700_release()' must be
-> called to release some DMA related resources, as already done in the
-> remove function.
-> 
-> Fixes: c27d85f3f3c5 ("[SCSI] SNI RM 53c710 driver")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->   drivers/scsi/sni_53c710.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/scsi/sni_53c710.c b/drivers/scsi/sni_53c710.c
-> index 678651b9b4dd..f6d60d542207 100644
-> --- a/drivers/scsi/sni_53c710.c
-> +++ b/drivers/scsi/sni_53c710.c
-> @@ -98,6 +98,7 @@ static int snirm710_probe(struct platform_device *dev)
->   
->    out_put_host:
->   	scsi_host_put(host);
-> +	NCR_700_release(host);
->    out_kfree:
->   	iounmap(hostdata->base);
->   	kfree(hostdata);
-> 
-Hi,
+Return -ENOMEM if these allocations fail.  (The current code returns
+success).
 
-please note that this patch is speculative
-All the drivers I've look at don't call NCR_700_release in the error 
-handling path of the probe. They only do in the remove function.
-So it is likely that this patch is wrong and that the truth is elsewhere.
+Fixes: d29d41e28eea ("ASoC: topology: Add support for multiple kcontrol types to a widget")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ sound/soc/soc-topology.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-'scsi_host_put()' is used in the probe and 'scsi_remove_host()' in the 
-remove function. That maybe is the trick, but I've not been able to see 
-how NCR_700_release (or equivalent) was called in this case.
+diff --git a/sound/soc/soc-topology.c b/sound/soc/soc-topology.c
+index e71d98d7b116..6b7a813bc264 100644
+--- a/sound/soc/soc-topology.c
++++ b/sound/soc/soc-topology.c
+@@ -1481,13 +1481,17 @@ static int soc_tplg_dapm_widget_create(struct soc_tplg *tplg,
+ 
+ 	template.num_kcontrols = le32_to_cpu(w->num_kcontrols);
+ 	kc = devm_kcalloc(tplg->dev, le32_to_cpu(w->num_kcontrols), sizeof(*kc), GFP_KERNEL);
+-	if (!kc)
++	if (!kc) {
++		ret = -ENOMEM;
+ 		goto err;
++	}
+ 
+ 	kcontrol_type = devm_kcalloc(tplg->dev, le32_to_cpu(w->num_kcontrols), sizeof(unsigned int),
+ 				     GFP_KERNEL);
+-	if (!kcontrol_type)
++	if (!kcontrol_type) {
++		ret = -ENOMEM;
+ 		goto err;
++	}
+ 
+ 	for (i = 0; i < w->num_kcontrols; i++) {
+ 		control_hdr = (struct snd_soc_tplg_ctl_hdr *)tplg->pos;
+-- 
+2.30.2
 
-So review with care!
-
-CJ
