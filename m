@@ -5,95 +5,95 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F066C433ED
-	for <kernel-janitors@archiver.kernel.org>; Thu, 20 May 2021 05:32:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 581C5C433ED
+	for <kernel-janitors@archiver.kernel.org>; Thu, 20 May 2021 05:45:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0980E610A2
-	for <kernel-janitors@archiver.kernel.org>; Thu, 20 May 2021 05:32:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 34583610A8
+	for <kernel-janitors@archiver.kernel.org>; Thu, 20 May 2021 05:45:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229545AbhETFeN (ORCPT
+        id S230335AbhETFqf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 20 May 2021 01:34:13 -0400
-Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:47788 "EHLO
+        Thu, 20 May 2021 01:46:35 -0400
+Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:22978 "EHLO
         mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229526AbhETFeM (ORCPT
+        by vger.kernel.org with ESMTP id S229534AbhETFqd (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 20 May 2021 01:34:12 -0400
+        Thu, 20 May 2021 01:46:33 -0400
 Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 14K5WekN007192;
-        Thu, 20 May 2021 05:32:40 GMT
+        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 14K5aE9N010395;
+        Thu, 20 May 2021 05:44:49 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
  : subject : message-id : references : mime-version : content-type :
  in-reply-to; s=corp-2020-01-29;
- bh=bHmW7DjTNy6mnGJ19G1OFrjB4TVUbzTCIrZYyW2E40s=;
- b=m5SUiBSCTzhw5ALz3vfD/SbrtUtw/j+4AJ5GDgILRPCR12UeuRF5kbsOx8mZX4S7+gYl
- LeNBF1mFh1ggbIn7FZFATAiJLWx59CmPj15G2Y1I5MSnU9VISdIWgv7TX+CHHzWGiWVB
- B6VK8bfIfB8KNGl7bNu8SlIzqZcf8aHL5HcbyjGSAi/J9bjg3mxJ9z29gy4qF0oOMGNG
- NaVT1XW7XYphALxbS5h25MK+Ivq2h8BEyWMWCuwjiQx59V642CPUCOctVc1jYDHau2yV
- Ghdx9dhsLKzYZ9ZwfydRXeiDdCu8n9TVMoCyNEJs0gKiCAxsomKMwzRgnx5n3rTqwbmu KA== 
-Received: from oracle.com (userp3020.oracle.com [156.151.31.79])
-        by mx0b-00069f02.pphosted.com with ESMTP id 38n4u8r9ya-1
+ bh=AcofJe4OsYgrXuCBDsBRH0YG1kx+BV8oi3tFkRmbIws=;
+ b=TlKOBtTCEOsslclf5b9rxfON9qQlpL3X/VE+fAa9AlcMj0iw+fZinIUb5yN9z6hPi3XK
+ fLc+wfSLZl+nmvegrZ/ello31gfa/F9RBgSd5y6jsXnEq0fjJuALNq5VJoiVRMiD53SB
+ JfSnKMX0YP2iH2IWzHytNpfndmFZfq8GJxrMAm/DbZjBHxOvUqE6mzlg2ObXgzzx5vqB
+ DhWBE5BCNjhCqf3qvWtg3HeZuJGCBGPWWJHpB+ukFRch5c+Fki+caAtBz3aImy46HB0u
+ TFf6Pe/BTVG4ncsk7Co+6YisXNg6FcUh1ViUec182ldbxLfSTsjDsq4WFxBnTe5yHd61 Kw== 
+Received: from oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by mx0b-00069f02.pphosted.com with ESMTP id 38n4u8ra29-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 20 May 2021 05:32:40 +0000
-Received: from userp3020.oracle.com (userp3020.oracle.com [127.0.0.1])
-        by pps.podrdrct (8.16.0.36/8.16.0.36) with SMTP id 14K5Wdr8045790;
-        Thu, 20 May 2021 05:32:39 GMT
+        Thu, 20 May 2021 05:44:49 +0000
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
+        by pps.podrdrct (8.16.0.36/8.16.0.36) with SMTP id 14K5imx1020150;
+        Thu, 20 May 2021 05:44:48 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-        by userp3020.oracle.com with ESMTP id 38n491drns-1
+        by aserp3020.oracle.com with ESMTP id 38mecmbq7a-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 20 May 2021 05:32:39 +0000
-Received: from userp3020.oracle.com (userp3020.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 14K5Wclm045772;
-        Thu, 20 May 2021 05:32:38 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3020.oracle.com with ESMTP id 38n491drnb-1
+        Thu, 20 May 2021 05:44:48 +0000
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 14K5ihSu018930;
+        Thu, 20 May 2021 05:44:43 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3020.oracle.com with ESMTP id 38mecmbpw3-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 20 May 2021 05:32:38 +0000
-Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 14K5WY3K029263;
-        Thu, 20 May 2021 05:32:34 GMT
+        Thu, 20 May 2021 05:44:43 +0000
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 14K5iPse028273;
+        Thu, 20 May 2021 05:44:25 GMT
 Received: from kadam (/41.212.42.34)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 19 May 2021 22:32:34 -0700
-Date:   Thu, 20 May 2021 08:32:26 +0300
+        with ESMTP ; Wed, 19 May 2021 22:44:23 -0700
+Date:   Thu, 20 May 2021 08:44:11 +0300
 From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Wei Yongjun <weiyongjun1@huawei.com>,
-        Pratik Shinde <pratikshinde320@gmail.com>
-Cc:     Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
-        linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
-Subject: Re: [PATCH -next] erofs: fix error return code in
- erofs_read_superblock()
-Message-ID: <20210520053226.GB1955@kadam>
-References: <20210519141657.3062715-1-weiyongjun1@huawei.com>
+To:     Wei Yongjun <weiyongjun1@huawei.com>
+Cc:     Alexander Aring <alex.aring@gmail.com>,
+        Stefan Schmidt <stefan@datenfreihafen.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, linux-wpan@vger.kernel.org,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Hulk Robot <hulkci@huawei.com>,
+        Phoebe Buckheister <phoebe.buckheister@itwm.fraunhofer.de>
+Subject: Re: [PATCH net-next] ieee802154: fix error return code in
+ ieee802154_llsec_getparams()
+Message-ID: <20210520054411.GC1955@kadam>
+References: <20210519141614.3040055-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210519141657.3062715-1-weiyongjun1@huawei.com>
+In-Reply-To: <20210519141614.3040055-1-weiyongjun1@huawei.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-GUID: 71ktOTSC9iypQgxVtPdqoXOLQuYrozob
-X-Proofpoint-ORIG-GUID: 71ktOTSC9iypQgxVtPdqoXOLQuYrozob
+X-Proofpoint-GUID: V7WVPR1lgVaBwvepuhB0VkR4f6TgD-lc
+X-Proofpoint-ORIG-GUID: V7WVPR1lgVaBwvepuhB0VkR4f6TgD-lc
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, May 19, 2021 at 02:16:57PM +0000, Wei Yongjun wrote:
-> 'ret' will be overwritten to 0 if erofs_sb_has_sb_chksum() return true,
-> thus 0 will return in some error handling cases. Fix to return negative
-> error code -EINVAL instead of 0.
+On Wed, May 19, 2021 at 02:16:14PM +0000, Wei Yongjun wrote:
+> Fix to return negative error code -ENOBUFS from the error handling
+> case instead of 0, as done elsewhere in this function.
 > 
 > Reported-by: Hulk Robot <hulkci@huawei.com>
 > Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 
-You need to add Fixes tags to bug fix patches and you need to ensure
-that the authors of the Fixes commit are CC'd so they can review your
-fix.  get_maintainer.pl will add the author automatically, but normally
-I like to put them in the To header to make sure they see it.
+Fixes: 3e9c156e2c21 ("ieee802154: add netlink interfaces for llsec")
 
-Fixes: b858a4844cfb ("erofs: support superblock checksum")
+This patch doesn't seem to affect runtime so far as I can tell with
+a quick glance...
 
 regards,
 dan carpenter
