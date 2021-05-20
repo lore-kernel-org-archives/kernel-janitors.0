@@ -2,165 +2,86 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-14.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3C02C433B4
-	for <kernel-janitors@archiver.kernel.org>; Thu, 20 May 2021 19:29:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16BB8C433ED
+	for <kernel-janitors@archiver.kernel.org>; Thu, 20 May 2021 21:08:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 94F79611AD
-	for <kernel-janitors@archiver.kernel.org>; Thu, 20 May 2021 19:29:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDB48613AC
+	for <kernel-janitors@archiver.kernel.org>; Thu, 20 May 2021 21:08:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239875AbhETTa0 (ORCPT
+        id S229996AbhETVJr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 20 May 2021 15:30:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39700 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239841AbhETTaZ (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 20 May 2021 15:30:25 -0400
-Received: from mail-ot1-x335.google.com (mail-ot1-x335.google.com [IPv6:2607:f8b0:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4E7FC0613CE;
-        Thu, 20 May 2021 12:29:03 -0700 (PDT)
-Received: by mail-ot1-x335.google.com with SMTP id u25-20020a0568302319b02902ac3d54c25eso15916580ote.1;
-        Thu, 20 May 2021 12:29:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4fQz3E7M09dHnT8r4F5QnQfFKZss577wKaQEpCbDtOM=;
-        b=nUbCn/keUGZM2MN9ZviCD70uZR2tfctAWAxg9NkRdooySE3ikR4oSy2cfft9I5Kc5T
-         UQgg/6GJzrEn9cL9TAqk4yNU9eZwJpriTvNG+FYFvchQhZ3Ae0tMvMQX0rQSkGPa+kDF
-         0vCDNYRXLVcpzBVQsI1QS3FQuNO2z8Pu9lfh6LWgyOFqs4rO2AjYCzfJIKO/tGbup/U5
-         QsLKbMh1NpGPlGZx8nqLtLgctXfvTcE7s7/WNWd4ODqGIoMnlbwweRchtWrkHzVTOWIL
-         hidaYQr3fBgJkNDw5ocYzLgj0vneOTdbTnBNJb2SglSzOm6SHDNC96tiVazVZqO0qN3z
-         bAlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4fQz3E7M09dHnT8r4F5QnQfFKZss577wKaQEpCbDtOM=;
-        b=WxdxC+/O6GIhnytOJwu8a25P9ydkqKKbZJ0vjMhbL5GThacBLMrNVP5IVWVlw5bxTN
-         OtZk2P6sh0p9OeFgWAakYxh02zlOam5w1CnncZwps4SMdQUJ5mW85f2hlXPzGgBibaCl
-         fmh/YkBIQPz0x2Ze5tHo8nATk5br9IRvKLF0Xy1AeGD1TBWJpj5aYuqFIodPQByW2PcO
-         leJptE4OCQHy8kC+mldO/ZWoNNFGYMGkoFF92DgfBQJiKJmexTo2z5jKWinzFBAQheQE
-         CyuT3YrlEHvTQ2f3OTi5FdKxm1foQjZkE/2KlzlOa1lE1DpbVqsBMtHi1FsROqcDcaR3
-         eA1g==
-X-Gm-Message-State: AOAM5338byW7taJUMwuMWg4TK9D/tEIfd15YUo0JINDXLlSc5Dm+DAV3
-        qSKRzykM4BLzyqCjUp/He0vfKaEggkfSKzgUfdc=
-X-Google-Smtp-Source: ABdhPJxdfepUBcqlsCo+5kGey7uP00jgQgS3D+dTpQK6p4pByzdOPTLVy+qT1BuGsghVxFJQ4daDjgV9NZli/E2enq4=
-X-Received: by 2002:a9d:74c6:: with SMTP id a6mr5166412otl.132.1621538943068;
- Thu, 20 May 2021 12:29:03 -0700 (PDT)
+        Thu, 20 May 2021 17:09:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40070 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229971AbhETVJn (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 20 May 2021 17:09:43 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 956B361355;
+        Thu, 20 May 2021 21:08:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1621544902;
+        bh=8ELMlxBpUUAE7ubz9VhApkiJhq+FPqvYh5sDquV8mog=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=leBo93YJ55CgttPP6pHoPbXyLt4Ym7IO2Srph5Gz8wPur9dc2dCGiLMWWBi8VsUUM
+         ZrXujb8yx0koSMCOjblPCCKm4dmV2i6A9gnOzvJojpKn7NhrJdL+ZrsgCMhqd2EQoc
+         aZehVbn81PFcAkbfm71xtz0e5AUAcPFnL5TTftP4Ly+bS7xf55ognPcaRjp146mDQS
+         6f3RvzNNkLIj9JAeKuPL9pHPiHPIVaugOOzHc7X8rkHOxglBOMcVxws+qlYFDprOgK
+         g6N570YbnmiTXO2ABx7O9RwzQFocJynnL/dZhX7cmJ3EZ0xV6vT2MK64fe95Q0zAUe
+         txwBZu3N+z1dA==
+From:   Mark Brown <broonie@kernel.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        James Schulman <james.schulman@cirrus.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Paul Handrigan <Paul.Handrigan@cirrus.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        David Rhodes <david.rhodes@cirrus.com>,
+        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org,
+        patches@opensource.cirrus.com
+Subject: Re: [PATCH] ASoC: cs35l33: fix an error code in probe()
+Date:   Thu, 20 May 2021 22:08:04 +0100
+Message-Id: <162154465460.5161.4887908906712264006.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <YKXuyGEzhPT35R3G@mwanda>
+References: <YKXuyGEzhPT35R3G@mwanda>
 MIME-Version: 1.0
-References: <20210520134159.1665467-1-weiyongjun1@huawei.com>
-In-Reply-To: <20210520134159.1665467-1-weiyongjun1@huawei.com>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Thu, 20 May 2021 15:28:52 -0400
-Message-ID: <CADnq5_O-7r-zsRechjuy2NatJ=kRVnRiq5366RDdvMfbGB9u+g@mail.gmail.com>
-Subject: Re: [PATCH -next] drm/amdgpu: fix unused-but-set-variable warnings
-To:     Wei Yongjun <weiyongjun1@huawei.com>
-Cc:     Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, Leo Liu <leo.liu@amd.com>,
-        James Zhu <James.Zhu@amd.com>,
-        Deepak R Varma <mh12gx2825@gmail.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Hulk Robot <hulkci@huawei.com>,
-        kernel-janitors@vger.kernel.org,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Applied.  Thanks!
+On Thu, 20 May 2021 08:08:24 +0300, Dan Carpenter wrote:
+> This error path returns zero (success) but it should return -EINVAL.
 
-On Thu, May 20, 2021 at 9:32 AM Wei Yongjun <weiyongjun1@huawei.com> wrote:
->
-> GCC reports the following warnings with W=1:
->
-> drivers/gpu/drm/amd/amdgpu/jpeg_v2_5.c:190:22: warning:
->  variable 'ring' set but not used [-Wunused-but-set-variable]
->   190 |  struct amdgpu_ring *ring;
->       |                      ^~~~
-> drivers/gpu/drm/amd/amdgpu/jpeg_v3_0.c:162:22: warning:
->  variable 'ring' set but not used [-Wunused-but-set-variable]
->   162 |  struct amdgpu_ring *ring;
->       |                      ^~~~
-> drivers/gpu/drm/amd/amdgpu/vcn_v3_0.c:383:22: warning:
->  variable 'ring' set but not used [-Wunused-but-set-variable]
->   383 |  struct amdgpu_ring *ring;
->       |                      ^~~~
->
-> Those variables are not really used, so remove them
-> to fix the warnings.
->
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  drivers/gpu/drm/amd/amdgpu/jpeg_v2_5.c | 2 --
->  drivers/gpu/drm/amd/amdgpu/jpeg_v3_0.c | 2 --
->  drivers/gpu/drm/amd/amdgpu/vcn_v3_0.c  | 3 ---
->  3 file changed, 7 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/jpeg_v2_5.c b/drivers/gpu/drm/amd/amdgpu/jpeg_v2_5.c
-> index 938ef4ce5b76..af6f45c3f6fc 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/jpeg_v2_5.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/jpeg_v2_5.c
-> @@ -187,14 +187,12 @@ static int jpeg_v2_5_hw_init(void *handle)
->  static int jpeg_v2_5_hw_fini(void *handle)
->  {
->         struct amdgpu_device *adev = (struct amdgpu_device *)handle;
-> -       struct amdgpu_ring *ring;
->         int i;
->
->         for (i = 0; i < adev->jpeg.num_jpeg_inst; ++i) {
->                 if (adev->jpeg.harvest_config & (1 << i))
->                         continue;
->
-> -               ring = &adev->jpeg.inst[i].ring_dec;
->                 if (adev->jpeg.cur_state != AMD_PG_STATE_GATE &&
->                       RREG32_SOC15(JPEG, i, mmUVD_JRBC_STATUS))
->                         jpeg_v2_5_set_powergating_state(adev, AMD_PG_STATE_GATE);
-> diff --git a/drivers/gpu/drm/amd/amdgpu/jpeg_v3_0.c b/drivers/gpu/drm/amd/amdgpu/jpeg_v3_0.c
-> index 94be35357f7d..b4d53d1a6123 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/jpeg_v3_0.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/jpeg_v3_0.c
-> @@ -159,9 +159,7 @@ static int jpeg_v3_0_hw_init(void *handle)
->  static int jpeg_v3_0_hw_fini(void *handle)
->  {
->         struct amdgpu_device *adev = (struct amdgpu_device *)handle;
-> -       struct amdgpu_ring *ring;
->
-> -       ring = &adev->jpeg.inst->ring_dec;
->         if (adev->jpeg.cur_state != AMD_PG_STATE_GATE &&
->               RREG32_SOC15(JPEG, 0, mmUVD_JRBC_STATUS))
->                 jpeg_v3_0_set_powergating_state(adev, AMD_PG_STATE_GATE);
-> diff --git a/drivers/gpu/drm/amd/amdgpu/vcn_v3_0.c b/drivers/gpu/drm/amd/amdgpu/vcn_v3_0.c
-> index 946335d0f19c..d60358767d10 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/vcn_v3_0.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/vcn_v3_0.c
-> @@ -380,15 +380,12 @@ static int vcn_v3_0_hw_init(void *handle)
->  static int vcn_v3_0_hw_fini(void *handle)
->  {
->         struct amdgpu_device *adev = (struct amdgpu_device *)handle;
-> -       struct amdgpu_ring *ring;
->         int i;
->
->         for (i = 0; i < adev->vcn.num_vcn_inst; ++i) {
->                 if (adev->vcn.harvest_config & (1 << i))
->                         continue;
->
-> -               ring = &adev->vcn.inst[i].ring_dec;
-> -
->                 if (!amdgpu_sriov_vf(adev)) {
->                         if ((adev->pg_flags & AMD_PG_SUPPORT_VCN_DPG) ||
->                                         (adev->vcn.cur_state != AMD_PG_STATE_GATE &&
+Applied to
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/1] ASoC: cs35l33: fix an error code in probe()
+      commit: 833bc4cf9754643acc69b3c6b65988ca78df4460
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
