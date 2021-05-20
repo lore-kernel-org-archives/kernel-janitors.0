@@ -4,91 +4,105 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E38D3C43461
-	for <kernel-janitors@archiver.kernel.org>; Thu, 20 May 2021 13:33:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9F0AC433ED
+	for <kernel-janitors@archiver.kernel.org>; Thu, 20 May 2021 13:33:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C720760BD3
-	for <kernel-janitors@archiver.kernel.org>; Thu, 20 May 2021 13:33:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2EAC610CB
+	for <kernel-janitors@archiver.kernel.org>; Thu, 20 May 2021 13:33:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240011AbhETNen (ORCPT
+        id S241518AbhETNeo (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 20 May 2021 09:34:43 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:4561 "EHLO
+        Thu, 20 May 2021 09:34:44 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:4560 "EHLO
         szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239925AbhETNeT (ORCPT
+        with ESMTP id S239828AbhETNeT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
         Thu, 20 May 2021 09:34:19 -0400
-Received: from dggems704-chm.china.huawei.com (unknown [172.30.72.59])
-        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Fm9b62GRQzqThy;
-        Thu, 20 May 2021 21:30:10 +0800 (CST)
+Received: from dggems706-chm.china.huawei.com (unknown [172.30.72.59])
+        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Fm9b51bzVzqTQW;
+        Thu, 20 May 2021 21:30:09 +0800 (CST)
 Received: from dggeml759-chm.china.huawei.com (10.1.199.138) by
- dggems704-chm.china.huawei.com (10.3.19.181) with Microsoft SMTP Server
+ dggems706-chm.china.huawei.com (10.3.19.183) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
- 15.1.2176.2; Thu, 20 May 2021 21:32:57 +0800
+ 15.1.2176.2; Thu, 20 May 2021 21:32:55 +0800
 Received: from localhost.localdomain (10.175.102.38) by
  dggeml759-chm.china.huawei.com (10.1.199.138) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2176.2; Thu, 20 May 2021 21:32:56 +0800
+ 15.1.2176.2; Thu, 20 May 2021 21:32:55 +0800
 From:   Wei Yongjun <weiyongjun1@huawei.com>
-To:     <weiyongjun1@huawei.com>, Loic Poulain <loic.poulain@linaro.org>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        Masahiro Yamada <masahiroy@kernel.org>
-CC:     <linux-usb@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH -next] usb: cdc-wdm: fix build error when CONFIG_WWAN_CORE is not set
-Date:   Thu, 20 May 2021 13:42:10 +0000
-Message-ID: <20210520134210.1667580-1-weiyongjun1@huawei.com>
+To:     <weiyongjun1@huawei.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        "Philipp Zabel" <p.zabel@pengutronix.de>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        "Mark Brown" <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+        Vidya Sagar <vidyas@nvidia.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Dinghao Liu <dinghao.liu@zju.edu.cn>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     <linux-pci@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH -next] PCI: tegra: Fix build warnings when CONFIG_PCIEASPM is not set
+Date:   Thu, 20 May 2021 13:42:09 +0000
+Message-ID: <20210520134209.1667244-1-weiyongjun1@huawei.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Type:   text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7BIT
 X-Originating-IP: [10.175.102.38]
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
  dggeml759-chm.china.huawei.com (10.1.199.138)
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Fix build error when CONFIG_WWAN_CORE is not set:
+Fix build warning when CONFIG_PCIEASPM is not set:
 
-x86_64-linux-gnu-ld: drivers/usb/class/cdc-wdm.o: in function `wdm_disconnect':
-cdc-wdm.c:(.text+0xb2a): undefined reference to `wwan_remove_port'
-x86_64-linux-gnu-ld: drivers/usb/class/cdc-wdm.o: in function `wdm_in_callback':
-cdc-wdm.c:(.text+0xf23): undefined reference to `wwan_port_rx'
-x86_64-linux-gnu-ld: drivers/usb/class/cdc-wdm.o: in function `wdm_wwan_port_stop':
-cdc-wdm.c:(.text+0x127d): undefined reference to `wwan_port_get_drvdata'
-x86_64-linux-gnu-ld: drivers/usb/class/cdc-wdm.o: in function `wdm_wwan_port_tx':
-cdc-wdm.c:(.text+0x12d9): undefined reference to `wwan_port_get_drvdata'
-x86_64-linux-gnu-ld: cdc-wdm.c:(.text+0x13c1): undefined reference to `wwan_port_txoff'
-x86_64-linux-gnu-ld: drivers/usb/class/cdc-wdm.o: in function `wdm_wwan_port_start':
-cdc-wdm.c:(.text+0x13e0): undefined reference to `wwan_port_get_drvdata'
-x86_64-linux-gnu-ld: cdc-wdm.c:(.text+0x1431): undefined reference to `wwan_port_txon'
-x86_64-linux-gnu-ld: drivers/usb/class/cdc-wdm.o: in function `wdm_wwan_port_tx_complete':
-cdc-wdm.c:(.text+0x14a4): undefined reference to `wwan_port_txon'
-x86_64-linux-gnu-ld: drivers/usb/class/cdc-wdm.o: in function `wdm_create.cold':
-cdc-wdm.c:(.text.unlikely+0x209): undefined reference to `wwan_create_port'
+drivers/pci/controller/dwc/pcie-tegra194.c:259:18: warning:
+ 'event_cntr_data_offset' defined but not used [-Wunused-const-variable=]
+  259 | static const u32 event_cntr_data_offset[] = {
+      |                  ^~~~~~~~~~~~~~~~~~~~~~
+drivers/pci/controller/dwc/pcie-tegra194.c:250:18: warning:
+ 'event_cntr_ctrl_offset' defined but not used [-Wunused-const-variable=]
+  250 | static const u32 event_cntr_ctrl_offset[] = {
+      |                  ^~~~~~~~~~~~~~~~~~~~~~
+drivers/pci/controller/dwc/pcie-tegra194.c:243:27: warning:
+ 'pcie_gen_freq' defined but not used [-Wunused-const-variable=]
+  243 | static const unsigned int pcie_gen_freq[] = {
+      |                           ^~~~~~~~~~~~~
 
-Fixes: cac6fb015f71 ("usb: class: cdc-wdm: WWAN framework integration")
+Fix it by only define then when CONFIG_PCIEASPM is set.
+
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/usb/class/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/pci/controller/dwc/pcie-tegra194.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/usb/class/Kconfig b/drivers/usb/class/Kconfig
-index d3f5162bd67e..7e502c046031 100644
---- a/drivers/usb/class/Kconfig
-+++ b/drivers/usb/class/Kconfig
-@@ -30,6 +30,7 @@ config USB_PRINTER
+diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+index bafd2c6ab3c2..b80dd071e90d 100644
+--- a/drivers/pci/controller/dwc/pcie-tegra194.c
++++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+@@ -240,6 +240,7 @@
+ #define EP_STATE_DISABLED	0
+ #define EP_STATE_ENABLED	1
  
- config USB_WDM
- 	tristate "USB Wireless Device Management support"
-+	depends on WWAN_CORE
- 	help
- 	  This driver supports the WMC Device Management functionality
- 	  of cell phones compliant to the CDC WMC specification. You can use
++#if defined(CONFIG_PCIEASPM)
+ static const unsigned int pcie_gen_freq[] = {
+ 	GEN1_CORE_CLK_FREQ,
+ 	GEN2_CORE_CLK_FREQ,
+@@ -264,6 +265,7 @@ static const u32 event_cntr_data_offset[] = {
+ 	0x1c8,
+ 	0x1dc
+ };
++#endif
+ 
+ struct tegra_pcie_dw {
+ 	struct device *dev;
 
