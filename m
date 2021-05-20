@@ -2,122 +2,111 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC95CC433ED
-	for <kernel-janitors@archiver.kernel.org>; Thu, 20 May 2021 15:52:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7542C433B4
+	for <kernel-janitors@archiver.kernel.org>; Thu, 20 May 2021 16:03:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AF41F6108D
-	for <kernel-janitors@archiver.kernel.org>; Thu, 20 May 2021 15:52:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98735611AD
+	for <kernel-janitors@archiver.kernel.org>; Thu, 20 May 2021 16:03:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232665AbhETPxj (ORCPT
+        id S233375AbhETQFF (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 20 May 2021 11:53:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46542 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231995AbhETPxj (ORCPT
+        Thu, 20 May 2021 12:05:05 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:45638 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232813AbhETQFC (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 20 May 2021 11:53:39 -0400
-Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BAF4C06175F
-        for <kernel-janitors@vger.kernel.org>; Thu, 20 May 2021 08:52:17 -0700 (PDT)
-Received: by mail-pl1-x62b.google.com with SMTP id v12so9305144plo.10
-        for <kernel-janitors@vger.kernel.org>; Thu, 20 May 2021 08:52:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=et4Y9oDwBfZPSJIkobIdERmduN5tDbataYzAvTYU2PY=;
-        b=BCVv0pd4nAmeI+5bWyUVRJaJy3FgrY85SkTMeC+lgVcLhgFZ4tRLQSouhqM3mnWImU
-         NEAQtBm4Cw4snbFI7JjhZFDxcpirRizhSD3v9IIY25LyEQHlMcfkuls3kPkXXwkadHQO
-         6z1fx/gwt/D+qn/Mvty0czYMycp8CoRSY0XmR8oPK3AglkaWF6Y7IypNYiHYINHnwlYs
-         /U4kf/AKZz0hV9FBUKSoqQyBQIQeekQwdKN4LMC5G3xyriUu+/cKFHDODGbNr1Z8Zirm
-         zu8FtrwoBH7YkmXf7rs/aT4HoWCac/qjmYmQMScdsEYzL939MZy+1eD+svEEYzFJbI9p
-         dEMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=et4Y9oDwBfZPSJIkobIdERmduN5tDbataYzAvTYU2PY=;
-        b=GjXTmkvnzscbFXGXGnUmGgzCRZQMoP+Nax+3q2vly+LdDOPgBzJZWyQlWHdjIkJQ9p
-         IPSk891PjW//prFEqXZ4pMbMwsh1dJ75WXhiiAc0MSbS3qV6Rr4LsEEQ/BTSAmhXqvnP
-         IG4i7kRP7P2j7aeMqtHo0+6Z3IWYVUURhbWWR8nP/zrye0tLDojbLEJ/8Occ6TPvpHJS
-         ssOcO8WQicdkcRuUW88anm8MpVC3yEX3ULTomm3OOkokNMR4xHWN9DayaAntsqdsmmO9
-         jdPLQD4o1yMhbGt6wkI7oLikxUAa2uc2r6ZAdnbHmkGOh7hf2ZDZaVKtu/fStBIoTqva
-         WATw==
-X-Gm-Message-State: AOAM532/SPvhzQ6V2l9bmlIxDWJMj0TpOKeMSObIhG/3N0jnntmfS1Hz
-        kpYK3EuVSQd31XeTlQixaweMuX/t3AQuxGQ7Iu8fjA==
-X-Google-Smtp-Source: ABdhPJzlGXK4gw/ppubxQvbs1HN3MmWw2v/sExbp6XD0V3xabqGLH61Kzs0STh1qpcBaqJm5STnIQX6xaFNwgt8TWjY=
-X-Received: by 2002:a17:902:a405:b029:f4:6975:14a8 with SMTP id
- p5-20020a170902a405b02900f4697514a8mr6557945plq.49.1621525936907; Thu, 20 May
- 2021 08:52:16 -0700 (PDT)
+        Thu, 20 May 2021 12:05:02 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 14KFmwCu187187;
+        Thu, 20 May 2021 16:03:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
+ bh=UplTL1m87USsO5prWyFgDKTaFzDCcXPanOavFdSjeOo=;
+ b=ys1hWrWBFEgWJbmdvVz1+x6+ha5Nupsy2M7GZBlM9ARY7LfwzIhm1lTWnq4ffdsbKNGB
+ H0RknTU0Y+hV1DWMc++evMXP+aK2C2+yTqZ7XD4ueMYX8qOPlZS40daqtUMiaRcUFI0p
+ aikII/O7OMD/vSmYnaXXDiuaWJ0kqJLUOEVxNxoMlG0JLaLynQdbMTqMiY+RfIRH3Jk1
+ HAjjnC5rOiUJUXjnwFpXYmcK999YonBLDMdy5YkvINyz5m7kj4uVzuUU4ZXOTvZmBoDo
+ udUsht10t+rMud9GQICL+/8Ky5w1JdOAQGHvV9OQuWuR6JhT0IZXU3+6a9KoBLzHuTXU pA== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 38j68mn6cx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 20 May 2021 16:03:07 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 14KFo7af009918;
+        Thu, 20 May 2021 16:03:06 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by aserp3020.oracle.com with ESMTP id 38nry04hqg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 20 May 2021 16:03:06 +0000
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 14KG36R7144532;
+        Thu, 20 May 2021 16:03:06 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 38nry04hnc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 20 May 2021 16:03:06 +0000
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 14KG2w4O023698;
+        Thu, 20 May 2021 16:02:59 GMT
+Received: from mwanda (/41.212.42.34)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 20 May 2021 09:02:58 -0700
+Date:   Thu, 20 May 2021 19:02:49 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Ezequiel Garcia <ezequiel@collabora.com>,
+        Emil Velikov <emil.velikov@collabora.com>
+Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org
+Subject: [PATCH] media: hantro: test the correct variable in probe()
+Message-ID: <YKaIKXOcDb0nXguP@mwanda>
 MIME-Version: 1.0
-References: <20210520134210.1667580-1-weiyongjun1@huawei.com>
-In-Reply-To: <20210520134210.1667580-1-weiyongjun1@huawei.com>
-From:   Loic Poulain <loic.poulain@linaro.org>
-Date:   Thu, 20 May 2021 18:00:38 +0200
-Message-ID: <CAMZdPi_GBhF7Dk0vxUu3YoPTEs=BXAEzTE+rtFN2hRbfXke=rQ@mail.gmail.com>
-Subject: Re: [PATCH -next] usb: cdc-wdm: fix build error when CONFIG_WWAN_CORE
- is not set
-To:     Wei Yongjun <weiyongjun1@huawei.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        USB <linux-usb@vger.kernel.org>, kernel-janitors@vger.kernel.org,
-        Hulk Robot <hulkci@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+X-Proofpoint-ORIG-GUID: hGha3Rc6qYMPnQcAHEPQDkS1hl0hUjeH
+X-Proofpoint-GUID: hGha3Rc6qYMPnQcAHEPQDkS1hl0hUjeH
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9989 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=999
+ priorityscore=1501 impostorscore=0 suspectscore=0 clxscore=1011
+ adultscore=0 bulkscore=0 phishscore=0 spamscore=0 malwarescore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104190000 definitions=main-2105200105
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Wei,
+This should be testing "vpu->clocks[0].clk" instead of "vpu->clocks".
 
-On Thu, 20 May 2021 at 15:32, Wei Yongjun <weiyongjun1@huawei.com> wrote:
->
-> Fix build error when CONFIG_WWAN_CORE is not set:
->
-> x86_64-linux-gnu-ld: drivers/usb/class/cdc-wdm.o: in function `wdm_disconnect':
-> cdc-wdm.c:(.text+0xb2a): undefined reference to `wwan_remove_port'
-> x86_64-linux-gnu-ld: drivers/usb/class/cdc-wdm.o: in function `wdm_in_callback':
-> cdc-wdm.c:(.text+0xf23): undefined reference to `wwan_port_rx'
-> x86_64-linux-gnu-ld: drivers/usb/class/cdc-wdm.o: in function `wdm_wwan_port_stop':
-> cdc-wdm.c:(.text+0x127d): undefined reference to `wwan_port_get_drvdata'
-> x86_64-linux-gnu-ld: drivers/usb/class/cdc-wdm.o: in function `wdm_wwan_port_tx':
-> cdc-wdm.c:(.text+0x12d9): undefined reference to `wwan_port_get_drvdata'
-> x86_64-linux-gnu-ld: cdc-wdm.c:(.text+0x13c1): undefined reference to `wwan_port_txoff'
-> x86_64-linux-gnu-ld: drivers/usb/class/cdc-wdm.o: in function `wdm_wwan_port_start':
-> cdc-wdm.c:(.text+0x13e0): undefined reference to `wwan_port_get_drvdata'
-> x86_64-linux-gnu-ld: cdc-wdm.c:(.text+0x1431): undefined reference to `wwan_port_txon'
-> x86_64-linux-gnu-ld: drivers/usb/class/cdc-wdm.o: in function `wdm_wwan_port_tx_complete':
-> cdc-wdm.c:(.text+0x14a4): undefined reference to `wwan_port_txon'
-> x86_64-linux-gnu-ld: drivers/usb/class/cdc-wdm.o: in function `wdm_create.cold':
-> cdc-wdm.c:(.text.unlikely+0x209): undefined reference to `wwan_create_port'
->
-> Fixes: cac6fb015f71 ("usb: class: cdc-wdm: WWAN framework integration")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  drivers/usb/class/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/usb/class/Kconfig b/drivers/usb/class/Kconfig
-> index d3f5162bd67e..7e502c046031 100644
-> --- a/drivers/usb/class/Kconfig
-> +++ b/drivers/usb/class/Kconfig
-> @@ -30,6 +30,7 @@ config USB_PRINTER
->
->  config USB_WDM
->         tristate "USB Wireless Device Management support"
-> +       depends on WWAN_CORE
->         help
->           This driver supports the WMC Device Management functionality
->           of cell phones compliant to the CDC WMC specification. You can use
+Fixes: eb4cacdfb998 ("media: hantro: add fallback handling for single irq/clk")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/staging/media/hantro/hantro_drv.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks for fixing this. Some *optional* code in cdc-wdm.c is flagged
-with CONFIG_WWAN instead of CONFIG_WWAN_CORE. would it be possible to
-change that flags in the code instead of adding a dependency?
+diff --git a/drivers/staging/media/hantro/hantro_drv.c b/drivers/staging/media/hantro/hantro_drv.c
+index 85dcb0882afc..8ac476be1682 100644
+--- a/drivers/staging/media/hantro/hantro_drv.c
++++ b/drivers/staging/media/hantro/hantro_drv.c
+@@ -780,8 +780,8 @@ static int hantro_probe(struct platform_device *pdev)
+ 		 * actual name in the DT bindings.
+ 		 */
+ 		vpu->clocks[0].clk = devm_clk_get(&pdev->dev, NULL);
+-		if (IS_ERR(vpu->clocks))
+-			return PTR_ERR(vpu->clocks);
++		if (IS_ERR(vpu->clocks[0].clk))
++			return PTR_ERR(vpu->clocks[0].clk);
+ 	}
+ 
+ 	num_bases = vpu->variant->num_regs ?: 1;
+-- 
+2.30.2
 
-Regards,
-Loic
