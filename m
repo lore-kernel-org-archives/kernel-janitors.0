@@ -4,137 +4,91 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82149C433B4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E38D3C43461
 	for <kernel-janitors@archiver.kernel.org>; Thu, 20 May 2021 13:33:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5E435613AA
+	by mail.kernel.org (Postfix) with ESMTP id C720760BD3
 	for <kernel-janitors@archiver.kernel.org>; Thu, 20 May 2021 13:33:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237927AbhETNem (ORCPT
+        id S240011AbhETNen (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 20 May 2021 09:34:42 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:3630 "EHLO
-        szxga06-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238616AbhETNeK (ORCPT
+        Thu, 20 May 2021 09:34:43 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:4561 "EHLO
+        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239925AbhETNeT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 20 May 2021 09:34:10 -0400
-Received: from dggems703-chm.china.huawei.com (unknown [172.30.72.59])
-        by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4Fm9bV6TjxzmXVT;
-        Thu, 20 May 2021 21:30:30 +0800 (CST)
+        Thu, 20 May 2021 09:34:19 -0400
+Received: from dggems704-chm.china.huawei.com (unknown [172.30.72.59])
+        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Fm9b62GRQzqThy;
+        Thu, 20 May 2021 21:30:10 +0800 (CST)
 Received: from dggeml759-chm.china.huawei.com (10.1.199.138) by
- dggems703-chm.china.huawei.com (10.3.19.180) with Microsoft SMTP Server
+ dggems704-chm.china.huawei.com (10.3.19.181) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
- 15.1.2176.2; Thu, 20 May 2021 21:32:46 +0800
+ 15.1.2176.2; Thu, 20 May 2021 21:32:57 +0800
 Received: from localhost.localdomain (10.175.102.38) by
  dggeml759-chm.china.huawei.com (10.1.199.138) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2176.2; Thu, 20 May 2021 21:32:46 +0800
+ 15.1.2176.2; Thu, 20 May 2021 21:32:56 +0800
 From:   Wei Yongjun <weiyongjun1@huawei.com>
-To:     <weiyongjun1@huawei.com>, Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, Leo Liu <leo.liu@amd.com>,
-        James Zhu <James.Zhu@amd.com>,
-        Deepak R Varma <mh12gx2825@gmail.com>,
-        Colin Ian King <colin.king@canonical.com>
-CC:     <amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+To:     <weiyongjun1@huawei.com>, Loic Poulain <loic.poulain@linaro.org>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        Masahiro Yamada <masahiroy@kernel.org>
+CC:     <linux-usb@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
         Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH -next] drm/amdgpu: fix unused-but-set-variable warnings
-Date:   Thu, 20 May 2021 13:41:59 +0000
-Message-ID: <20210520134159.1665467-1-weiyongjun1@huawei.com>
+Subject: [PATCH -next] usb: cdc-wdm: fix build error when CONFIG_WWAN_CORE is not set
+Date:   Thu, 20 May 2021 13:42:10 +0000
+Message-ID: <20210520134210.1667580-1-weiyongjun1@huawei.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Type:   text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7BIT
 X-Originating-IP: [10.175.102.38]
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
  dggeml759-chm.china.huawei.com (10.1.199.138)
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-GCC reports the following warnings with W=1:
+Fix build error when CONFIG_WWAN_CORE is not set:
 
-drivers/gpu/drm/amd/amdgpu/jpeg_v2_5.c:190:22: warning:
- variable 'ring' set but not used [-Wunused-but-set-variable]
-  190 |  struct amdgpu_ring *ring;
-      |                      ^~~~
-drivers/gpu/drm/amd/amdgpu/jpeg_v3_0.c:162:22: warning:
- variable 'ring' set but not used [-Wunused-but-set-variable]
-  162 |  struct amdgpu_ring *ring;
-      |                      ^~~~
-drivers/gpu/drm/amd/amdgpu/vcn_v3_0.c:383:22: warning:
- variable 'ring' set but not used [-Wunused-but-set-variable]
-  383 |  struct amdgpu_ring *ring;
-      |                      ^~~~
+x86_64-linux-gnu-ld: drivers/usb/class/cdc-wdm.o: in function `wdm_disconnect':
+cdc-wdm.c:(.text+0xb2a): undefined reference to `wwan_remove_port'
+x86_64-linux-gnu-ld: drivers/usb/class/cdc-wdm.o: in function `wdm_in_callback':
+cdc-wdm.c:(.text+0xf23): undefined reference to `wwan_port_rx'
+x86_64-linux-gnu-ld: drivers/usb/class/cdc-wdm.o: in function `wdm_wwan_port_stop':
+cdc-wdm.c:(.text+0x127d): undefined reference to `wwan_port_get_drvdata'
+x86_64-linux-gnu-ld: drivers/usb/class/cdc-wdm.o: in function `wdm_wwan_port_tx':
+cdc-wdm.c:(.text+0x12d9): undefined reference to `wwan_port_get_drvdata'
+x86_64-linux-gnu-ld: cdc-wdm.c:(.text+0x13c1): undefined reference to `wwan_port_txoff'
+x86_64-linux-gnu-ld: drivers/usb/class/cdc-wdm.o: in function `wdm_wwan_port_start':
+cdc-wdm.c:(.text+0x13e0): undefined reference to `wwan_port_get_drvdata'
+x86_64-linux-gnu-ld: cdc-wdm.c:(.text+0x1431): undefined reference to `wwan_port_txon'
+x86_64-linux-gnu-ld: drivers/usb/class/cdc-wdm.o: in function `wdm_wwan_port_tx_complete':
+cdc-wdm.c:(.text+0x14a4): undefined reference to `wwan_port_txon'
+x86_64-linux-gnu-ld: drivers/usb/class/cdc-wdm.o: in function `wdm_create.cold':
+cdc-wdm.c:(.text.unlikely+0x209): undefined reference to `wwan_create_port'
 
-Those variables are not really used, so remove them
-to fix the warnings.
-
+Fixes: cac6fb015f71 ("usb: class: cdc-wdm: WWAN framework integration")
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/gpu/drm/amd/amdgpu/jpeg_v2_5.c | 2 --
- drivers/gpu/drm/amd/amdgpu/jpeg_v3_0.c | 2 --
- drivers/gpu/drm/amd/amdgpu/vcn_v3_0.c  | 3 ---
- 3 file changed, 7 deletions(-)
+ drivers/usb/class/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/jpeg_v2_5.c b/drivers/gpu/drm/amd/amdgpu/jpeg_v2_5.c
-index 938ef4ce5b76..af6f45c3f6fc 100644
---- a/drivers/gpu/drm/amd/amdgpu/jpeg_v2_5.c
-+++ b/drivers/gpu/drm/amd/amdgpu/jpeg_v2_5.c
-@@ -187,14 +187,12 @@ static int jpeg_v2_5_hw_init(void *handle)
- static int jpeg_v2_5_hw_fini(void *handle)
- {
- 	struct amdgpu_device *adev = (struct amdgpu_device *)handle;
--	struct amdgpu_ring *ring;
- 	int i;
+diff --git a/drivers/usb/class/Kconfig b/drivers/usb/class/Kconfig
+index d3f5162bd67e..7e502c046031 100644
+--- a/drivers/usb/class/Kconfig
++++ b/drivers/usb/class/Kconfig
+@@ -30,6 +30,7 @@ config USB_PRINTER
  
- 	for (i = 0; i < adev->jpeg.num_jpeg_inst; ++i) {
- 		if (adev->jpeg.harvest_config & (1 << i))
- 			continue;
- 
--		ring = &adev->jpeg.inst[i].ring_dec;
- 		if (adev->jpeg.cur_state != AMD_PG_STATE_GATE &&
- 		      RREG32_SOC15(JPEG, i, mmUVD_JRBC_STATUS))
- 			jpeg_v2_5_set_powergating_state(adev, AMD_PG_STATE_GATE);
-diff --git a/drivers/gpu/drm/amd/amdgpu/jpeg_v3_0.c b/drivers/gpu/drm/amd/amdgpu/jpeg_v3_0.c
-index 94be35357f7d..b4d53d1a6123 100644
---- a/drivers/gpu/drm/amd/amdgpu/jpeg_v3_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/jpeg_v3_0.c
-@@ -159,9 +159,7 @@ static int jpeg_v3_0_hw_init(void *handle)
- static int jpeg_v3_0_hw_fini(void *handle)
- {
- 	struct amdgpu_device *adev = (struct amdgpu_device *)handle;
--	struct amdgpu_ring *ring;
- 
--	ring = &adev->jpeg.inst->ring_dec;
- 	if (adev->jpeg.cur_state != AMD_PG_STATE_GATE &&
- 	      RREG32_SOC15(JPEG, 0, mmUVD_JRBC_STATUS))
- 		jpeg_v3_0_set_powergating_state(adev, AMD_PG_STATE_GATE);
-diff --git a/drivers/gpu/drm/amd/amdgpu/vcn_v3_0.c b/drivers/gpu/drm/amd/amdgpu/vcn_v3_0.c
-index 946335d0f19c..d60358767d10 100644
---- a/drivers/gpu/drm/amd/amdgpu/vcn_v3_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/vcn_v3_0.c
-@@ -380,15 +380,12 @@ static int vcn_v3_0_hw_init(void *handle)
- static int vcn_v3_0_hw_fini(void *handle)
- {
- 	struct amdgpu_device *adev = (struct amdgpu_device *)handle;
--	struct amdgpu_ring *ring;
- 	int i;
- 
- 	for (i = 0; i < adev->vcn.num_vcn_inst; ++i) {
- 		if (adev->vcn.harvest_config & (1 << i))
- 			continue;
- 
--		ring = &adev->vcn.inst[i].ring_dec;
--
- 		if (!amdgpu_sriov_vf(adev)) {
- 			if ((adev->pg_flags & AMD_PG_SUPPORT_VCN_DPG) ||
- 					(adev->vcn.cur_state != AMD_PG_STATE_GATE &&
+ config USB_WDM
+ 	tristate "USB Wireless Device Management support"
++	depends on WWAN_CORE
+ 	help
+ 	  This driver supports the WMC Device Management functionality
+ 	  of cell phones compliant to the CDC WMC specification. You can use
+
