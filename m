@@ -2,104 +2,75 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D137C4707D
-	for <kernel-janitors@archiver.kernel.org>; Fri, 21 May 2021 18:22:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC59DC4707A
+	for <kernel-janitors@archiver.kernel.org>; Fri, 21 May 2021 21:00:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3289F610A8
-	for <kernel-janitors@archiver.kernel.org>; Fri, 21 May 2021 18:22:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4118613E6
+	for <kernel-janitors@archiver.kernel.org>; Fri, 21 May 2021 21:00:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238832AbhEUSXo (ORCPT
+        id S229921AbhEUVBh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 21 May 2021 14:23:44 -0400
-Received: from smtp12.smtpout.orange.fr ([80.12.242.134]:22141 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232348AbhEUSXm (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 21 May 2021 14:23:42 -0400
-Received: from localhost.localdomain ([86.243.172.93])
-        by mwinf5d35 with ME
-        id 7WNG2500221Fzsu03WNGpn; Fri, 21 May 2021 20:22:17 +0200
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 21 May 2021 20:22:17 +0200
-X-ME-IP: 86.243.172.93
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     richard.gong@linux.intel.com, gregkh@linuxfoundation.org,
-        atull@kernel.org
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] firmware: stratix10-svc: Fix a resource leak in an error handling path
-Date:   Fri, 21 May 2021 20:22:15 +0200
-Message-Id: <0ca3f3ab139c53e846804455a1e7599ee8ae896a.1621621271.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Fri, 21 May 2021 17:01:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60384 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229613AbhEUVBe (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 21 May 2021 17:01:34 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPS id AB3B5613F6;
+        Fri, 21 May 2021 21:00:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1621630810;
+        bh=ghms6Xnact060zD3RhnBzr4n4P4odAXZYYmUVGHLzyI=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=bNn7NK3jX1Bg5Zc53+7xYzAvjMjubuWVByN6ZqwzYCxJ+5DM5W3s2+xK0FpLy5zzr
+         nKFNH4U/p35g2acE9E1svh1iwNq19XZZipNAg5gaAiDDWTHLItRydDxHw8zj0lo+81
+         KKIF3G0JJLJ7eYoTLQsSp4ut+AH9U7R0uVgJ0ylHPGXGwBjQZ7tlMdcZeVq4y7NBnY
+         RVGCUvWBy8UQiKQjsz6ms5PadCH4SmfgoTIdHId78TKdtSVkLmL7BRjUACcy3JpvNT
+         W+fVodY7+Ulwm0OGUfWB5YXwUm9puShgAmRktxmBFROPFL/XlEjDLsND62Fymq5FGI
+         JNJTqkHqjftXg==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH][next] net: hns3: Fix return of uninitialized variable ret
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <162163081066.24690.18151834351101510648.git-patchwork-notify@kernel.org>
+Date:   Fri, 21 May 2021 21:00:10 +0000
+References: <20210521100146.42980-1-colin.king@canonical.com>
+In-Reply-To: <20210521100146.42980-1-colin.king@canonical.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     yisen.zhuang@huawei.com, salil.mehta@huawei.com,
+        davem@davemloft.net, kuba@kernel.org, tanhuazhong@huawei.com,
+        chenhao288@hisilicon.com, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-If an error occurs after a successful 'kfifo_alloc()' call, it must be
-undone by a corresponding 'kfifo_free()' call, as already done in the
-remove function.
+Hello:
 
-While at it, move the 'platform_device_put()' call to this new error
-handling path and explicitly return 0 in the success path.
+This patch was applied to netdev/net-next.git (refs/heads/master):
 
-Fixes: b5dc75c915cd ("firmware: stratix10-svc: extend svc to support new RSU features")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/firmware/stratix10-svc.c | 22 +++++++++++++++-------
- 1 file changed, 15 insertions(+), 7 deletions(-)
+On Fri, 21 May 2021 11:01:46 +0100 you wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> In the unlikely event that rule_cnt is zero the variable ret is
+> not assigned a value and function hclge_dbg_dump_fd_tcam can end
+> up returning an unitialized value in ret. Fix this by explicitly
+> setting ret to zero before the for-loop.
+> 
+> [...]
 
-diff --git a/drivers/firmware/stratix10-svc.c b/drivers/firmware/stratix10-svc.c
-index 3aa489dba30a..2a7687911c09 100644
---- a/drivers/firmware/stratix10-svc.c
-+++ b/drivers/firmware/stratix10-svc.c
-@@ -1034,24 +1034,32 @@ static int stratix10_svc_drv_probe(struct platform_device *pdev)
- 
- 	/* add svc client device(s) */
- 	svc = devm_kzalloc(dev, sizeof(*svc), GFP_KERNEL);
--	if (!svc)
--		return -ENOMEM;
-+	if (!svc) {
-+		ret = -ENOMEM;
-+		goto err_free_kfifo;
-+	}
- 
- 	svc->stratix10_svc_rsu = platform_device_alloc(STRATIX10_RSU, 0);
- 	if (!svc->stratix10_svc_rsu) {
- 		dev_err(dev, "failed to allocate %s device\n", STRATIX10_RSU);
--		return -ENOMEM;
-+		ret = -ENOMEM;
-+		goto err_free_kfifo;
- 	}
- 
- 	ret = platform_device_add(svc->stratix10_svc_rsu);
--	if (ret) {
--		platform_device_put(svc->stratix10_svc_rsu);
--		return ret;
--	}
-+	if (ret)
-+		goto err_put_device;
-+
- 	dev_set_drvdata(dev, svc);
- 
- 	pr_info("Intel Service Layer Driver Initialized\n");
- 
-+	return 0;
-+
-+err_put_device:
-+	platform_device_put(svc->stratix10_svc_rsu);
-+err_free_kfifo:
-+	kfifo_free(&controller->svc_fifo);
- 	return ret;
- }
- 
--- 
-2.30.2
+Here is the summary with links:
+  - [next] net: hns3: Fix return of uninitialized variable ret
+    https://git.kernel.org/netdev/net-next/c/030c8198d744
+
+You are awesome, thank you!
+--
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
