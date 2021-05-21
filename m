@@ -2,92 +2,80 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AF14C433B4
-	for <kernel-janitors@archiver.kernel.org>; Fri, 21 May 2021 12:36:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D68BC433ED
+	for <kernel-janitors@archiver.kernel.org>; Fri, 21 May 2021 12:40:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EE7D9613D8
-	for <kernel-janitors@archiver.kernel.org>; Fri, 21 May 2021 12:36:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 527D8613D9
+	for <kernel-janitors@archiver.kernel.org>; Fri, 21 May 2021 12:40:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233890AbhEUMiL (ORCPT
+        id S232483AbhEUMmP (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 21 May 2021 08:38:11 -0400
-Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:59551 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233708AbhEUMiI (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 21 May 2021 08:38:08 -0400
-Received: from localhost.localdomain ([86.243.172.93])
-        by mwinf5d78 with ME
-        id 7Qcg2500H21Fzsu03Qchxh; Fri, 21 May 2021 14:36:44 +0200
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 21 May 2021 14:36:44 +0200
-X-ME-IP: 86.243.172.93
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     ulf.hansson@linaro.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        linux-imx@nxp.com, wsa+renesas@sang-engineering.com,
-        dianders@chromium.org, rmfrfs@gmail.com, cjb@laptop.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] mmc: mxs-mmc: Disable the 'reg_vmmc' regulator when needed
-Date:   Fri, 21 May 2021 14:36:39 +0200
-Message-Id: <d05074c11962a046ff9c2f457c240432ca8a7194.1621600443.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Fri, 21 May 2021 08:42:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58750 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231447AbhEUMmN (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 21 May 2021 08:42:13 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id C71A7613CA;
+        Fri, 21 May 2021 12:40:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1621600850;
+        bh=Zd2uZ/NzI4g1Qu2S7+9Pwydv4FGMJZRaQ3BjjojC22A=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=TnzNHnR52qPTlxZGk9GFxvPYwJj7G028iLbIN+VM4lyKuxUbqvUbMkcT77k/4cXsv
+         +ZA9s2QYebMeEDDVOOWjpA/Vp2ljLeoGnBSBYoREUWrTCNbELE114C0oJWeXYec5zn
+         2G1q4VfyB+8jplIcisu9aCCWyXR1iq+WY4axjopo=
+Date:   Fri, 21 May 2021 14:40:48 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] ttyprintk: remove redundant initialization of
+ variable i
+Message-ID: <YKeqUBZ+Zy/mvZNQ@kroah.com>
+References: <20210518182126.140978-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210518182126.140978-1-colin.king@canonical.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The 'reg_vmmc' regulator is never disabled. Neither in the error handling
-of the probe, nor in the remove function.
+On Tue, May 18, 2021 at 07:21:26PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The variable i is being initialized with a value that is never read,
+> it is being updated later on.  The assignment is redundant and can be
+> removed.
+> 
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/char/ttyprintk.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/char/ttyprintk.c b/drivers/char/ttyprintk.c
+> index 219fa1382396..230b2c9b3e3c 100644
+> --- a/drivers/char/ttyprintk.c
+> +++ b/drivers/char/ttyprintk.c
+> @@ -52,7 +52,7 @@ static void tpk_flush(void)
+>  
+>  static int tpk_printk(const unsigned char *buf, int count)
+>  {
+> -	int i = tpk_curr;
+> +	int i;
+>  
+>  	for (i = 0; i < count; i++) {
+>  		if (tpk_curr >= TPK_STR_SIZE) {
+> -- 
+> 2.31.1
+> 
 
-Add a managed action to do the required clean-up before a 'regulator_put()'
-call.
+This is not ok for what is currently in linux-next :(
 
-Fixes: 4dc5a79f1350 ("mmc: mxs-mmc: enable regulator for mmc slot")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/mmc/host/mxs-mmc.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/drivers/mmc/host/mxs-mmc.c b/drivers/mmc/host/mxs-mmc.c
-index 947581de7860..b043d53dd728 100644
---- a/drivers/mmc/host/mxs-mmc.c
-+++ b/drivers/mmc/host/mxs-mmc.c
-@@ -552,6 +552,13 @@ static const struct of_device_id mxs_mmc_dt_ids[] = {
- };
- MODULE_DEVICE_TABLE(of, mxs_mmc_dt_ids);
- 
-+static void regulator_disable_action(void *_data)
-+{
-+	struct regulator *regulator = _data;
-+
-+	regulator_disable(regulator);
-+}
-+
- static int mxs_mmc_probe(struct platform_device *pdev)
- {
- 	struct device_node *np = pdev->dev.of_node;
-@@ -591,6 +598,10 @@ static int mxs_mmc_probe(struct platform_device *pdev)
- 				"Failed to enable vmmc regulator: %d\n", ret);
- 			goto out_mmc_free;
- 		}
-+		ret = devm_add_action_or_reset(&pdev->dev,
-+					regulator_disable_action, reg_vmmc);
-+		if (ret)
-+			goto out_mmc_free;
- 	}
- 
- 	ssp->clk = devm_clk_get(&pdev->dev, NULL);
--- 
-2.30.2
-
+greg k-h
