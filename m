@@ -5,81 +5,82 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23793C433B4
-	for <kernel-janitors@archiver.kernel.org>; Fri, 21 May 2021 12:55:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C851AC433ED
+	for <kernel-janitors@archiver.kernel.org>; Fri, 21 May 2021 13:15:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 071096101B
-	for <kernel-janitors@archiver.kernel.org>; Fri, 21 May 2021 12:55:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACC9861244
+	for <kernel-janitors@archiver.kernel.org>; Fri, 21 May 2021 13:15:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233295AbhEUM4u (ORCPT
+        id S233368AbhEUNQ7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 21 May 2021 08:56:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36520 "EHLO mail.kernel.org"
+        Fri, 21 May 2021 09:16:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41242 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231795AbhEUMzk (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 21 May 2021 08:55:40 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id E10FD60FEE;
-        Fri, 21 May 2021 12:54:16 +0000 (UTC)
+        id S233317AbhEUNQ6 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 21 May 2021 09:16:58 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 38E1660FEF;
+        Fri, 21 May 2021 13:15:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1621601657;
-        bh=BD4wTuQPIxItsa6Cujs6ISBIpsLi0+lXyF4Ny/3AnN0=;
+        s=korg; t=1621602934;
+        bh=ELkwNWjodHS5o8+tIb+k6kw61lBw+odKqudQ/BusQHA=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=h6mSH0CxaEQFEayJFhlghOdEOUn/drwHIUEZG/gmy7wtc08bf6cD/G1e8oGdhM3bQ
-         BfruQqYo0eYcbeK0KroOJ/uSb3MX3X9I6uLtPrHv7PcbD6T3c5ux1RsOwlgOD7KKna
-         C40sfd6rnnoORKhtPXGkfpoqYroMSI1wVIo6fDb4=
-Date:   Fri, 21 May 2021 14:54:13 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Ferenc Bakonyi <fero@drama.obuda.kando.hu>,
-        Igor Matheus Andrade Torrente <igormtorrente@gmail.com>,
-        linux-nvidia@lists.surfsouth.com, dri-devel@lists.freedesktop.org,
-        linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] hgafb: fix probe function
-Message-ID: <YKetdZTqjOUPQXS8@kroah.com>
-References: <YKIuWEcIJvTIuE2j@mwanda>
+        b=RZcGe+nm9GkVGQbo4yCe1+TGsNoiyM4qPcoiPf/89zKWMcZO0qO3i0hyuFWJSaKw5
+         iBjD623cTwD1b+8SKVIYjo/wZvGv4+nOw9avM1LSEAIhiBLObZvJJDrMWyMT0Nw2Vd
+         nWVSpXGV6pnkhpFh9LFYhhg3fK81uQ6j8zE8E0b4=
+Date:   Fri, 21 May 2021 15:15:32 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     arnd@arndb.de, mihai.carabas@oracle.com,
+        andriy.shevchenko@linux.intel.com, pizhenwei@bytedance.com,
+        pbonzini@redhat.com, linqiheng@huawei.com,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 1/2] misc/pvpanic: Fix error handling in
+ 'pvpanic_pci_probe()'
+Message-ID: <YKeydEDcqgiAYGgT@kroah.com>
+References: <7efa7b4b9867ac44f398783b89f3a21deac4ce8b.1621175108.git.christophe.jaillet@wanadoo.fr>
+ <YKepSQpLUc5V17tz@kroah.com>
+ <694c162e-cbd4-5c51-9b20-b66006594d75@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <YKIuWEcIJvTIuE2j@mwanda>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <694c162e-cbd4-5c51-9b20-b66006594d75@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, May 17, 2021 at 11:50:32AM +0300, Dan Carpenter wrote:
-> There is a reversed if statement in this probe function so the driver is
-> completely broken.
+On Fri, May 21, 2021 at 02:41:16PM +0200, Christophe JAILLET wrote:
+> Le 21/05/2021 à 14:36, Greg KH a écrit :
+> > On Sun, May 16, 2021 at 04:36:55PM +0200, Christophe JAILLET wrote:
+> > > There is no error handling path in the probe function.
+> > > Switch to managed resource so that errors in the probe are handled easily
+> > > and simplify the remove function accordingly.
+> > > 
+> > > Fixes: db3a4f0abefd ("misc/pvpanic: add PCI driver")
+> > > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> > > ---
+> > >   drivers/misc/pvpanic/pvpanic-pci.c | 9 +++------
+> > >   1 file changed, 3 insertions(+), 6 deletions(-)
+> > 
+> > I see two different series for these patches, so I don't know which to
+> > take :(
+> > 
+> > Please fix up and send a v2 series so that I have a clue...
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> > 
 > 
-> Fixes: dc13cac4862c ("video: hgafb: fix potential NULL pointer dereference")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/video/fbdev/hgafb.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/video/fbdev/hgafb.c b/drivers/video/fbdev/hgafb.c
-> index cc8e62ae93f6..bd3d07aa4f0e 100644
-> --- a/drivers/video/fbdev/hgafb.c
-> +++ b/drivers/video/fbdev/hgafb.c
-> @@ -558,7 +558,7 @@ static int hgafb_probe(struct platform_device *pdev)
->  	int ret;
->  
->  	ret = hga_card_detect();
-> -	if (!ret)
-> +	if (ret)
->  		return ret;
->  
->  	printk(KERN_INFO "hgafb: %s with %ldK of memory detected.\n",
-> -- 
-> 2.30.2
-> 
+> Both have to be taken. One is for -pci.c and one is for -mmio.c.
 
-Someone _just_ beat you to this:
-	https://lore.kernel.org/r/20210516192714.25823-1-mail@anirudhrb.com
+Ah, I totally missed that :(
 
-I'll add your s-o-b to that one as it's identical to yours.
+> I'll resend both with a more complete subject and will include Andy
+> Shevchenko's comments.
 
-thanks,
+Wonderful, thanks for doing that.
 
 greg k-h
-
