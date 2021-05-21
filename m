@@ -2,125 +2,91 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBC1AC433ED
-	for <kernel-janitors@archiver.kernel.org>; Fri, 21 May 2021 11:21:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06798C433B4
+	for <kernel-janitors@archiver.kernel.org>; Fri, 21 May 2021 12:17:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CC39F60249
-	for <kernel-janitors@archiver.kernel.org>; Fri, 21 May 2021 11:21:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2170611AD
+	for <kernel-janitors@archiver.kernel.org>; Fri, 21 May 2021 12:17:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234593AbhEULWb (ORCPT
+        id S233747AbhEUMTR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 21 May 2021 07:22:31 -0400
-Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:58173 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232584AbhEULW2 (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 21 May 2021 07:22:28 -0400
-Received: from localhost.localdomain ([86.243.172.93])
-        by mwinf5d78 with ME
-        id 7PM22500521Fzsu03PM2sy; Fri, 21 May 2021 13:21:03 +0200
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 21 May 2021 13:21:03 +0200
-X-ME-IP: 86.243.172.93
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     pavel@ucw.cz, j.anaszewski@samsung.com, sw0312.kim@samsung.com,
-        ingi2.kim@samsung.com, varkabhadram@gmail.com, cooloney@gmail.com
-Cc:     linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] leds: ktd2692: Fix an error handling path
-Date:   Fri, 21 May 2021 13:21:01 +0200
-Message-Id: <4057d4cb2d47f893039de85e595682d17f4814a4.1621595943.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Fri, 21 May 2021 08:19:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52416 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233446AbhEUMTP (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 21 May 2021 08:19:15 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 76F6D61132;
+        Fri, 21 May 2021 12:17:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1621599472;
+        bh=tBcvFEs+ow7c3L30GWwCiTEhMAeiKeENq9UePhTGcMs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=hcHIN9m45nwBQ3dIUdwsF5vXqCU+xh+zQw74ZcrOrq/yl75p6FHwJJjIj+XrM5jfO
+         ZWoxbcpHjSK3mNFyunFyyCgdjrJ8ywwhKiaaYhBtqEIgV/PXGumEYgRC9wdyJEWia6
+         NTYcQPwPeHTMc5zcxp+yojvfIMsHjSaPAjHPFip1+otuWlUyIn4i7eXmzW7V8tFQL3
+         0JZK+HA9ngh5k9VFcyc2aLs348us7efT6C9teYtrOcumO8APpS4nptbSBxyh4FCfuo
+         D3Lvk40Y02mf+z9CDBemwRETtiDRg9JwCV209T4VIQhe4eKbr16ewGQ/7ZugVRhry6
+         kUyi9YCUxtr7A==
+Date:   Fri, 21 May 2021 17:47:44 +0530
+From:   Manivannan Sadhasivam <mani@kernel.org>
+To:     Wei Yongjun <weiyongjun1@huawei.com>,
+        Loic Poulain <loic.poulain@linaro.org>
+Cc:     Loic Poulain <loic.poulain@linaro.org>,
+        Hemant Kumar <hemantk@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Hulk Robot <hulkci@huawei.com>
+Subject: Re: [PATCH -next] bus: mhi: pci_generic: Fix possible use-after-free
+ in mhi_pci_remove()
+Message-ID: <20210521121744.GB70095@thinkpad>
+References: <20210413160318.2003699-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210413160318.2003699-1-weiyongjun1@huawei.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-In 'ktd2692_parse_dt()', if an error occurs after a successful
-'regulator_enable()' call, we should call 'regulator_enable()'.
+On Tue, Apr 13, 2021 at 04:03:18PM +0000, Wei Yongjun wrote:
+> This driver's remove path calls del_timer(). However, that function
+> does not wait until the timer handler finishes. This means that the
+> timer handler may still be running after the driver's remove function
+> has finished, which would result in a use-after-free.
+> 
+> Fix by calling del_timer_sync(), which makes sure the timer handler
+> has finished, and unable to re-schedule itself.
+> 
+> Fixes: 8562d4fe34a3 ("mhi: pci_generic: Add health-check")
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 
-This is the same in 'ktd2692_probe()', if an error occurs after a
-successful 'ktd2692_parse_dt()' call.
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-Instead of adding 'regulator_enable()' in several places, implement a
-resource managed solution and simplify the remove function accordingly.
+Loic, could you please review this patch as well?
 
-Fixes: b7da8c5c725c ("leds: Add ktd2692 flash LED driver")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only.
-The regulator looks optional, so maybe 'devm_add_action()' without a
-'return ret;' would be more logical that 'devm_add_action_or_reset()'.
-The code could be simpler if we don't car about the message if
-'regulator_disable()' fails.
----
- drivers/leds/leds-ktd2692.c | 27 ++++++++++++++++++---------
- 1 file changed, 18 insertions(+), 9 deletions(-)
+Thanks,
+Mani
 
-diff --git a/drivers/leds/leds-ktd2692.c b/drivers/leds/leds-ktd2692.c
-index 632f10db4b3f..f341da1503a4 100644
---- a/drivers/leds/leds-ktd2692.c
-+++ b/drivers/leds/leds-ktd2692.c
-@@ -256,6 +256,17 @@ static void ktd2692_setup(struct ktd2692_context *led)
- 				 | KTD2692_REG_FLASH_CURRENT_BASE);
- }
- 
-+static void regulator_disable_action(void *_data)
-+{
-+	struct device *dev = _data;
-+	struct ktd2692_context *led = dev_get_drvdata(dev);
-+	int ret;
-+
-+	ret = regulator_disable(led->regulator);
-+	if (ret)
-+		dev_err(dev, "Failed to disable supply: %d\n", ret);
-+}
-+
- static int ktd2692_parse_dt(struct ktd2692_context *led, struct device *dev,
- 			    struct ktd2692_led_config_data *cfg)
- {
-@@ -286,8 +297,14 @@ static int ktd2692_parse_dt(struct ktd2692_context *led, struct device *dev,
- 
- 	if (led->regulator) {
- 		ret = regulator_enable(led->regulator);
--		if (ret)
-+		if (ret) {
- 			dev_err(dev, "Failed to enable supply: %d\n", ret);
-+		} else {
-+			ret = devm_add_action_or_reset(dev,
-+						regulator_disable_action, dev);
-+			if (ret)
-+				return ret;
-+		}
- 	}
- 
- 	child_node = of_get_next_available_child(np, NULL);
-@@ -377,17 +394,9 @@ static int ktd2692_probe(struct platform_device *pdev)
- static int ktd2692_remove(struct platform_device *pdev)
- {
- 	struct ktd2692_context *led = platform_get_drvdata(pdev);
--	int ret;
- 
- 	led_classdev_flash_unregister(&led->fled_cdev);
- 
--	if (led->regulator) {
--		ret = regulator_disable(led->regulator);
--		if (ret)
--			dev_err(&pdev->dev,
--				"Failed to disable supply: %d\n", ret);
--	}
--
- 	mutex_destroy(&led->lock);
- 
- 	return 0;
--- 
-2.30.2
-
+> ---
+>  drivers/bus/mhi/pci_generic.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/bus/mhi/pci_generic.c b/drivers/bus/mhi/pci_generic.c
+> index 7c810f02a2ef..5b19e877d17a 100644
+> --- a/drivers/bus/mhi/pci_generic.c
+> +++ b/drivers/bus/mhi/pci_generic.c
+> @@ -708,7 +708,7 @@ static void mhi_pci_remove(struct pci_dev *pdev)
+>  	struct mhi_pci_device *mhi_pdev = pci_get_drvdata(pdev);
+>  	struct mhi_controller *mhi_cntrl = &mhi_pdev->mhi_cntrl;
+>  
+> -	del_timer(&mhi_pdev->health_check_timer);
+> +	del_timer_sync(&mhi_pdev->health_check_timer);
+>  	cancel_work_sync(&mhi_pdev->recovery_work);
+>  
+>  	if (test_and_clear_bit(MHI_PCI_DEV_STARTED, &mhi_pdev->status)) {
+> 
