@@ -2,88 +2,104 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA7AAC4707C
-	for <kernel-janitors@archiver.kernel.org>; Fri, 21 May 2021 17:38:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D137C4707D
+	for <kernel-janitors@archiver.kernel.org>; Fri, 21 May 2021 18:22:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BBA5961168
-	for <kernel-janitors@archiver.kernel.org>; Fri, 21 May 2021 17:38:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3289F610A8
+	for <kernel-janitors@archiver.kernel.org>; Fri, 21 May 2021 18:22:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238242AbhEURje (ORCPT
+        id S238832AbhEUSXo (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 21 May 2021 13:39:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49810 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235715AbhEURjb (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 21 May 2021 13:39:31 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 27E87611AB;
-        Fri, 21 May 2021 17:38:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1621618687;
-        bh=6KqEfYkDcoTb6Jwh7h3ZcahKjT4Yfi70EmtRbuy7RLo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=EViyEUm/3szNNeeSikyCz5/891e36M5WtDqih5VPwrBtKo+VgPm/DOiZvkt9T59yX
-         NFC//5BjgxPWCizubfiH0ZsNMsKrrYeafmNKglzqVXx/NsLXCwRiHxeRA3VXxaVzun
-         mOEHeiYC0Pw784ga/uClmNAhA1RV3ZwjklsuVOGE2yGCQhX3s/6IjXgL6ck9uuNh49
-         d7H0Pmyq69Z8Tcvd5bSAU6a0npy7oib78V4h9d5MViZcy5RH20YXM+pNqb/mnibKTG
-         aKG0cdwTie/kS8qYR6BjLIiXmZ9rGis46yknZBQVw1KpUlDV05uc7DaVddB0UUDkhE
-         kfILHZJ8RBEzw==
-Date:   Fri, 21 May 2021 23:07:59 +0530
-From:   Manivannan Sadhasivam <mani@kernel.org>
-To:     Wei Yongjun <weiyongjun1@huawei.com>
-Cc:     Loic Poulain <loic.poulain@linaro.org>,
-        Hemant Kumar <hemantk@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Hulk Robot <hulkci@huawei.com>
-Subject: Re: [PATCH -next] bus: mhi: pci_generic: Fix possible use-after-free
- in mhi_pci_remove()
-Message-ID: <20210521173759.GR70095@thinkpad>
-References: <20210413160318.2003699-1-weiyongjun1@huawei.com>
+        Fri, 21 May 2021 14:23:44 -0400
+Received: from smtp12.smtpout.orange.fr ([80.12.242.134]:22141 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232348AbhEUSXm (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 21 May 2021 14:23:42 -0400
+Received: from localhost.localdomain ([86.243.172.93])
+        by mwinf5d35 with ME
+        id 7WNG2500221Fzsu03WNGpn; Fri, 21 May 2021 20:22:17 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 21 May 2021 20:22:17 +0200
+X-ME-IP: 86.243.172.93
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     richard.gong@linux.intel.com, gregkh@linuxfoundation.org,
+        atull@kernel.org
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] firmware: stratix10-svc: Fix a resource leak in an error handling path
+Date:   Fri, 21 May 2021 20:22:15 +0200
+Message-Id: <0ca3f3ab139c53e846804455a1e7599ee8ae896a.1621621271.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210413160318.2003699-1-weiyongjun1@huawei.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Apr 13, 2021 at 04:03:18PM +0000, Wei Yongjun wrote:
-> This driver's remove path calls del_timer(). However, that function
-> does not wait until the timer handler finishes. This means that the
-> timer handler may still be running after the driver's remove function
-> has finished, which would result in a use-after-free.
-> 
-> Fix by calling del_timer_sync(), which makes sure the timer handler
-> has finished, and unable to re-schedule itself.
-> 
-> Fixes: 8562d4fe34a3 ("mhi: pci_generic: Add health-check")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+If an error occurs after a successful 'kfifo_alloc()' call, it must be
+undone by a corresponding 'kfifo_free()' call, as already done in the
+remove function.
 
-Applied to mhi-fixes!
+While at it, move the 'platform_device_put()' call to this new error
+handling path and explicitly return 0 in the success path.
 
-Thanks,
-Mani
+Fixes: b5dc75c915cd ("firmware: stratix10-svc: extend svc to support new RSU features")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/firmware/stratix10-svc.c | 22 +++++++++++++++-------
+ 1 file changed, 15 insertions(+), 7 deletions(-)
 
-> ---
->  drivers/bus/mhi/pci_generic.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/bus/mhi/pci_generic.c b/drivers/bus/mhi/pci_generic.c
-> index 7c810f02a2ef..5b19e877d17a 100644
-> --- a/drivers/bus/mhi/pci_generic.c
-> +++ b/drivers/bus/mhi/pci_generic.c
-> @@ -708,7 +708,7 @@ static void mhi_pci_remove(struct pci_dev *pdev)
->  	struct mhi_pci_device *mhi_pdev = pci_get_drvdata(pdev);
->  	struct mhi_controller *mhi_cntrl = &mhi_pdev->mhi_cntrl;
->  
-> -	del_timer(&mhi_pdev->health_check_timer);
-> +	del_timer_sync(&mhi_pdev->health_check_timer);
->  	cancel_work_sync(&mhi_pdev->recovery_work);
->  
->  	if (test_and_clear_bit(MHI_PCI_DEV_STARTED, &mhi_pdev->status)) {
-> 
+diff --git a/drivers/firmware/stratix10-svc.c b/drivers/firmware/stratix10-svc.c
+index 3aa489dba30a..2a7687911c09 100644
+--- a/drivers/firmware/stratix10-svc.c
++++ b/drivers/firmware/stratix10-svc.c
+@@ -1034,24 +1034,32 @@ static int stratix10_svc_drv_probe(struct platform_device *pdev)
+ 
+ 	/* add svc client device(s) */
+ 	svc = devm_kzalloc(dev, sizeof(*svc), GFP_KERNEL);
+-	if (!svc)
+-		return -ENOMEM;
++	if (!svc) {
++		ret = -ENOMEM;
++		goto err_free_kfifo;
++	}
+ 
+ 	svc->stratix10_svc_rsu = platform_device_alloc(STRATIX10_RSU, 0);
+ 	if (!svc->stratix10_svc_rsu) {
+ 		dev_err(dev, "failed to allocate %s device\n", STRATIX10_RSU);
+-		return -ENOMEM;
++		ret = -ENOMEM;
++		goto err_free_kfifo;
+ 	}
+ 
+ 	ret = platform_device_add(svc->stratix10_svc_rsu);
+-	if (ret) {
+-		platform_device_put(svc->stratix10_svc_rsu);
+-		return ret;
+-	}
++	if (ret)
++		goto err_put_device;
++
+ 	dev_set_drvdata(dev, svc);
+ 
+ 	pr_info("Intel Service Layer Driver Initialized\n");
+ 
++	return 0;
++
++err_put_device:
++	platform_device_put(svc->stratix10_svc_rsu);
++err_free_kfifo:
++	kfifo_free(&controller->svc_fifo);
+ 	return ret;
+ }
+ 
+-- 
+2.30.2
+
