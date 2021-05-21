@@ -7,33 +7,36 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCF09C433ED
-	for <kernel-janitors@archiver.kernel.org>; Fri, 21 May 2021 09:51:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71E05C433ED
+	for <kernel-janitors@archiver.kernel.org>; Fri, 21 May 2021 10:02:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ACE18613CA
-	for <kernel-janitors@archiver.kernel.org>; Fri, 21 May 2021 09:51:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 566C86109F
+	for <kernel-janitors@archiver.kernel.org>; Fri, 21 May 2021 10:02:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231975AbhEUJw3 (ORCPT
+        id S232983AbhEUKDh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 21 May 2021 05:52:29 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:39494 "EHLO
+        Fri, 21 May 2021 06:03:37 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:39738 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232702AbhEUJw2 (ORCPT
+        with ESMTP id S233340AbhEUKDT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 21 May 2021 05:52:28 -0400
+        Fri, 21 May 2021 06:03:19 -0400
 Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
         (Exim 4.93)
         (envelope-from <colin.king@canonical.com>)
-        id 1lk1o5-0005eY-OQ; Fri, 21 May 2021 09:51:01 +0000
+        id 1lk1yU-0006X0-CW; Fri, 21 May 2021 10:01:46 +0000
 From:   Colin King <colin.king@canonical.com>
-To:     Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
-        Joe Thornber <ejt@redhat.com>
+To:     Yisen Zhuang <yisen.zhuang@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Huazhong Tan <tanhuazhong@huawei.com>,
+        Hao Chen <chenhao288@hisilicon.com>, netdev@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][V2][next] dm space maps: Fix uninitialized variable r2
-Date:   Fri, 21 May 2021 10:51:01 +0100
-Message-Id: <20210521095101.42737-1-colin.king@canonical.com>
+Subject: [PATCH][next] net: hns3: Fix return of uninitialized variable ret
+Date:   Fri, 21 May 2021 11:01:46 +0100
+Message-Id: <20210521100146.42980-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -44,46 +47,30 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-In the case where recursing(mm) is true variable r2 is not
-inintialized and an uninitialized value is being used in the
-call combine_errors later on. Fix this by setting r2 to zero.
+In the unlikely event that rule_cnt is zero the variable ret is
+not assigned a value and function hclge_dbg_dump_fd_tcam can end
+up returning an unitialized value in ret. Fix this by explicitly
+setting ret to zero before the for-loop.
 
 Addresses-Coverity: ("Uninitialized scalar variable")
-Fixes: def6a7a9a7f0 ("dm space maps: improve performance with inc/dec on ranges of blocks")
+Fixes: b5a0b70d77b9 ("net: hns3: refactor dump fd tcam of debugfs")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-V2: Add fix in function sm_metadata_inc_blocks
-
----
- drivers/md/persistent-data/dm-space-map-metadata.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/md/persistent-data/dm-space-map-metadata.c b/drivers/md/persistent-data/dm-space-map-metadata.c
-index 3b70ee861cf5..a9a362777fad 100644
---- a/drivers/md/persistent-data/dm-space-map-metadata.c
-+++ b/drivers/md/persistent-data/dm-space-map-metadata.c
-@@ -417,6 +417,7 @@ static int sm_metadata_inc_blocks(struct dm_space_map *sm, dm_block_t b, dm_bloc
- 		r = add_bop(smm, BOP_INC, b, e);
- 		if (r)
- 			return r;
-+		r2 = 0;
- 	} else {
- 		in(smm);
- 		r = sm_ll_inc(&smm->ll, b, e, &nr_allocations);
-@@ -432,9 +433,10 @@ static int sm_metadata_dec_blocks(struct dm_space_map *sm, dm_block_t b, dm_bloc
- 	int32_t nr_allocations;
- 	struct sm_metadata *smm = container_of(sm, struct sm_metadata, sm);
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c
+index dd9eb6e6f5a7..0b7c6838d905 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c
+@@ -1519,6 +1519,7 @@ static int hclge_dbg_dump_fd_tcam(struct hclge_dev *hdev, char *buf, int len)
+ 		goto out;
+ 	}
  
--	if (recursing(smm))
-+	if (recursing(smm)) {
- 		r = add_bop(smm, BOP_DEC, b, e);
--	else {
-+		r2 = 0;
-+	} else {
- 		in(smm);
- 		r = sm_ll_dec(&smm->ll, b, e, &nr_allocations);
- 		r2 = out(smm);
++	ret = 0;
+ 	for (i = 0; i < rule_cnt; i++) {
+ 		tcam_msg.stage = HCLGE_FD_STAGE_1;
+ 		tcam_msg.loc = rule_locs[i];
 -- 
 2.31.1
 
