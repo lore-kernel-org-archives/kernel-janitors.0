@@ -2,117 +2,98 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BFE8C433ED
-	for <kernel-janitors@archiver.kernel.org>; Fri, 21 May 2021 12:18:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3AF5C433ED
+	for <kernel-janitors@archiver.kernel.org>; Fri, 21 May 2021 12:20:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 71A7A61132
-	for <kernel-janitors@archiver.kernel.org>; Fri, 21 May 2021 12:18:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE1A86023D
+	for <kernel-janitors@archiver.kernel.org>; Fri, 21 May 2021 12:20:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232812AbhEUMUG (ORCPT
+        id S229462AbhEUMVd (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 21 May 2021 08:20:06 -0400
-Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:49139 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233446AbhEUMTx (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 21 May 2021 08:19:53 -0400
-Received: from localhost.localdomain ([86.243.172.93])
-        by mwinf5d78 with ME
-        id 7QJU2500J21Fzsu03QJUpX; Fri, 21 May 2021 14:18:29 +0200
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 21 May 2021 14:18:29 +0200
-X-ME-IP: 86.243.172.93
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Yasunari.Takiguchi@sony.com, mchehab@kernel.org,
-        narmstrong@baylibre.com, sean@mess.org
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 2/2] media: cxd2880-spi: Fix some error messages
-Date:   Fri, 21 May 2021 14:18:27 +0200
-Message-Id: <172cc58731c52da7c7b351349118a348d34a9913.1621599392.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <28a115d7207b258715a029f822ab88f7a4ee05e6.1621599392.git.christophe.jaillet@wanadoo.fr>
-References: <28a115d7207b258715a029f822ab88f7a4ee05e6.1621599392.git.christophe.jaillet@wanadoo.fr>
+        Fri, 21 May 2021 08:21:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53194 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232009AbhEUMVa (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 21 May 2021 08:21:30 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 3F0EC61132;
+        Fri, 21 May 2021 12:20:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1621599607;
+        bh=/RhEbe/nsOgLC7YrjB+J/krqEGphJxg1gyZM4ZuhW1Q=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=R6Mj/6imEN3tFW7PW0PKWD9ZsQvIXDpHX7RptZMZ3v2ABSMGIrelRYHlB2mk1s5Mm
+         q1tT3xH3Y5WnsIR++BscWISmxqyYk3ByVvYk7tpfs8ChTaoZrRU5i1Wq3rbiu1do6D
+         H5DlnP4xLjYDP6i58sIeMjJVPFxDy0gooIcNRJkfV7oCYl2iLaExXKE7igRRjsGHRb
+         iLIilv5wEoJ1OaPQNWwf0PVIYkEOKOz3jtBR6glMBaaQ/bd/JXzX2e3YhrBM2jTcyO
+         XtYyWHYCfrK43okID1a7ULqlSqtLmYbqv2zZUEUOJQjUrHaj52LnLpLVEu3Cohrc/T
+         yUl1xZKIKTcTw==
+Date:   Fri, 21 May 2021 17:49:58 +0530
+From:   Manivannan Sadhasivam <mani@kernel.org>
+To:     Wei Yongjun <weiyongjun1@huawei.com>,
+        Loic Poulain <loic.poulain@linaro.org>
+Cc:     Hemant Kumar <hemantk@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Hulk Robot <hulkci@huawei.com>
+Subject: Re: [PATCH -next] bus: mhi: pci_generic: Fix possible use-after-free
+ in mhi_pci_remove()
+Message-ID: <20210521121958.GC70095@thinkpad>
+References: <20210413160318.2003699-1-weiyongjun1@huawei.com>
+ <20210521121744.GB70095@thinkpad>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210521121744.GB70095@thinkpad>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Fix some erroneous function names in some error messages.
-Remove some spurious or useless trailing and leading character in some
-messages.
+On Fri, May 21, 2021 at 05:47:44PM +0530, Manivannan Sadhasivam wrote:
+> On Tue, Apr 13, 2021 at 04:03:18PM +0000, Wei Yongjun wrote:
+> > This driver's remove path calls del_timer(). However, that function
+> > does not wait until the timer handler finishes. This means that the
+> > timer handler may still be running after the driver's remove function
+> > has finished, which would result in a use-after-free.
+> > 
+> > Fix by calling del_timer_sync(), which makes sure the timer handler
+> > has finished, and unable to re-schedule itself.
+> > 
+> > Fixes: 8562d4fe34a3 ("mhi: pci_generic: Add health-check")
+> > Reported-by: Hulk Robot <hulkci@huawei.com>
+> > Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> 
+> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> 
+> Loic, could you please review this patch as well?
+> 
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/media/spi/cxd2880-spi.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Nvm, Loic did review the patch.
 
-diff --git a/drivers/media/spi/cxd2880-spi.c b/drivers/media/spi/cxd2880-spi.c
-index df1335e7061c..88aef9333ad8 100644
---- a/drivers/media/spi/cxd2880-spi.c
-+++ b/drivers/media/spi/cxd2880-spi.c
-@@ -147,7 +147,7 @@ static int cxd2880_spi_read_ts(struct spi_device *spi,
- 
- 	ret = spi_sync(spi, &message);
- 	if (ret)
--		pr_err("spi_write_then_read failed\n");
-+		pr_err("spi_sync failed\n");
- 
- 	return ret;
- }
-@@ -401,7 +401,7 @@ static int cxd2880_start_feed(struct dvb_demux_feed *feed)
- 							      dvb_spi,
- 							      "cxd2880_ts_read");
- 		if (IS_ERR(dvb_spi->cxd2880_ts_read_thread)) {
--			pr_err("kthread_run failed/\n");
-+			pr_err("kthread_run failed\n");
- 			kfree(dvb_spi->ts_buf);
- 			dvb_spi->ts_buf = NULL;
- 			memset(&dvb_spi->filter_config, 0,
-@@ -448,7 +448,7 @@ static int cxd2880_stop_feed(struct dvb_demux_feed *feed)
- 		 * in dvb_spi->all_pid_feed_count.
- 		 */
- 		if (dvb_spi->all_pid_feed_count <= 0) {
--			pr_err("PID %d not found.\n", feed->pid);
-+			pr_err("PID %d not found\n", feed->pid);
- 			return -EINVAL;
- 		}
- 		dvb_spi->all_pid_feed_count--;
-@@ -485,7 +485,7 @@ static int cxd2880_stop_feed(struct dvb_demux_feed *feed)
- 
- 		ret_stop = kthread_stop(dvb_spi->cxd2880_ts_read_thread);
- 		if (ret_stop) {
--			pr_err("'kthread_stop failed. (%d)\n", ret_stop);
-+			pr_err("kthread_stop failed. (%d)\n", ret_stop);
- 			ret = ret_stop;
- 		}
- 		kfree(dvb_spi->ts_buf);
-@@ -512,7 +512,7 @@ cxd2880_spi_probe(struct spi_device *spi)
- 	struct cxd2880_config config;
- 
- 	if (!spi) {
--		pr_err("invalid arg.\n");
-+		pr_err("invalid arg\n");
- 		return -EINVAL;
- 	}
- 
-@@ -596,7 +596,7 @@ cxd2880_spi_probe(struct spi_device *spi)
- 	ret = dvb_spi->demux.dmx.connect_frontend(&dvb_spi->demux.dmx,
- 						  &dvb_spi->dmx_fe);
- 	if (ret < 0) {
--		pr_err("dvb_register_frontend() failed\n");
-+		pr_err("connect_frontend() failed\n");
- 		goto fail_fe_conn;
- 	}
- 
--- 
-2.30.2
+Thanks,
+Mani
 
+> Thanks,
+> Mani
+> 
+> > ---
+> >  drivers/bus/mhi/pci_generic.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/bus/mhi/pci_generic.c b/drivers/bus/mhi/pci_generic.c
+> > index 7c810f02a2ef..5b19e877d17a 100644
+> > --- a/drivers/bus/mhi/pci_generic.c
+> > +++ b/drivers/bus/mhi/pci_generic.c
+> > @@ -708,7 +708,7 @@ static void mhi_pci_remove(struct pci_dev *pdev)
+> >  	struct mhi_pci_device *mhi_pdev = pci_get_drvdata(pdev);
+> >  	struct mhi_controller *mhi_cntrl = &mhi_pdev->mhi_cntrl;
+> >  
+> > -	del_timer(&mhi_pdev->health_check_timer);
+> > +	del_timer_sync(&mhi_pdev->health_check_timer);
+> >  	cancel_work_sync(&mhi_pdev->recovery_work);
+> >  
+> >  	if (test_and_clear_bit(MHI_PCI_DEV_STARTED, &mhi_pdev->status)) {
+> > 
