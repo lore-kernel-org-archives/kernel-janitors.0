@@ -2,98 +2,68 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3AF5C433ED
-	for <kernel-janitors@archiver.kernel.org>; Fri, 21 May 2021 12:20:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2E5FC433ED
+	for <kernel-janitors@archiver.kernel.org>; Fri, 21 May 2021 12:36:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CE1A86023D
-	for <kernel-janitors@archiver.kernel.org>; Fri, 21 May 2021 12:20:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82D64613EB
+	for <kernel-janitors@archiver.kernel.org>; Fri, 21 May 2021 12:36:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229462AbhEUMVd (ORCPT
+        id S233708AbhEUMhv (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 21 May 2021 08:21:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53194 "EHLO mail.kernel.org"
+        Fri, 21 May 2021 08:37:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57900 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232009AbhEUMVa (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 21 May 2021 08:21:30 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3F0EC61132;
-        Fri, 21 May 2021 12:20:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1621599607;
-        bh=/RhEbe/nsOgLC7YrjB+J/krqEGphJxg1gyZM4ZuhW1Q=;
+        id S231841AbhEUMhu (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 21 May 2021 08:37:50 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 49AD5613DF;
+        Fri, 21 May 2021 12:36:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1621600587;
+        bh=dhLso/vIiTF2IWtgiXtmzhZHjHC6OeVr8BkZcImxV+c=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=R6Mj/6imEN3tFW7PW0PKWD9ZsQvIXDpHX7RptZMZ3v2ABSMGIrelRYHlB2mk1s5Mm
-         q1tT3xH3Y5WnsIR++BscWISmxqyYk3ByVvYk7tpfs8ChTaoZrRU5i1Wq3rbiu1do6D
-         H5DlnP4xLjYDP6i58sIeMjJVPFxDy0gooIcNRJkfV7oCYl2iLaExXKE7igRRjsGHRb
-         iLIilv5wEoJ1OaPQNWwf0PVIYkEOKOz3jtBR6glMBaaQ/bd/JXzX2e3YhrBM2jTcyO
-         XtYyWHYCfrK43okID1a7ULqlSqtLmYbqv2zZUEUOJQjUrHaj52LnLpLVEu3Cohrc/T
-         yUl1xZKIKTcTw==
-Date:   Fri, 21 May 2021 17:49:58 +0530
-From:   Manivannan Sadhasivam <mani@kernel.org>
-To:     Wei Yongjun <weiyongjun1@huawei.com>,
-        Loic Poulain <loic.poulain@linaro.org>
-Cc:     Hemant Kumar <hemantk@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Hulk Robot <hulkci@huawei.com>
-Subject: Re: [PATCH -next] bus: mhi: pci_generic: Fix possible use-after-free
- in mhi_pci_remove()
-Message-ID: <20210521121958.GC70095@thinkpad>
-References: <20210413160318.2003699-1-weiyongjun1@huawei.com>
- <20210521121744.GB70095@thinkpad>
+        b=tMOdL2j2wPiZ+kEi1sU9bD0PXTQjgMfpN7BPDycqsEUZ0atQt0ABGg+J1Cjs4tb+Q
+         Z0Pyj3wDOcaSEj8UPqSknq6FZ+PifsXd3PEraj3DxKs8qP2tf/a8T/fvFLW064XZsO
+         mlVQZ/2alUDvYrFsfYGSRIZnyzJLCXxB4hLEtoQA=
+Date:   Fri, 21 May 2021 14:36:25 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     arnd@arndb.de, mihai.carabas@oracle.com,
+        andriy.shevchenko@linux.intel.com, pizhenwei@bytedance.com,
+        pbonzini@redhat.com, linqiheng@huawei.com,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 1/2] misc/pvpanic: Fix error handling in
+ 'pvpanic_pci_probe()'
+Message-ID: <YKepSQpLUc5V17tz@kroah.com>
+References: <7efa7b4b9867ac44f398783b89f3a21deac4ce8b.1621175108.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210521121744.GB70095@thinkpad>
+In-Reply-To: <7efa7b4b9867ac44f398783b89f3a21deac4ce8b.1621175108.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, May 21, 2021 at 05:47:44PM +0530, Manivannan Sadhasivam wrote:
-> On Tue, Apr 13, 2021 at 04:03:18PM +0000, Wei Yongjun wrote:
-> > This driver's remove path calls del_timer(). However, that function
-> > does not wait until the timer handler finishes. This means that the
-> > timer handler may still be running after the driver's remove function
-> > has finished, which would result in a use-after-free.
-> > 
-> > Fix by calling del_timer_sync(), which makes sure the timer handler
-> > has finished, and unable to re-schedule itself.
-> > 
-> > Fixes: 8562d4fe34a3 ("mhi: pci_generic: Add health-check")
-> > Reported-by: Hulk Robot <hulkci@huawei.com>
-> > Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+On Sun, May 16, 2021 at 04:36:55PM +0200, Christophe JAILLET wrote:
+> There is no error handling path in the probe function.
+> Switch to managed resource so that errors in the probe are handled easily
+> and simplify the remove function accordingly.
 > 
-> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> 
-> Loic, could you please review this patch as well?
-> 
+> Fixes: db3a4f0abefd ("misc/pvpanic: add PCI driver")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/misc/pvpanic/pvpanic-pci.c | 9 +++------
+>  1 file changed, 3 insertions(+), 6 deletions(-)
 
-Nvm, Loic did review the patch.
+I see two different series for these patches, so I don't know which to
+take :(
 
-Thanks,
-Mani
+Please fix up and send a v2 series so that I have a clue...
 
-> Thanks,
-> Mani
-> 
-> > ---
-> >  drivers/bus/mhi/pci_generic.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/bus/mhi/pci_generic.c b/drivers/bus/mhi/pci_generic.c
-> > index 7c810f02a2ef..5b19e877d17a 100644
-> > --- a/drivers/bus/mhi/pci_generic.c
-> > +++ b/drivers/bus/mhi/pci_generic.c
-> > @@ -708,7 +708,7 @@ static void mhi_pci_remove(struct pci_dev *pdev)
-> >  	struct mhi_pci_device *mhi_pdev = pci_get_drvdata(pdev);
-> >  	struct mhi_controller *mhi_cntrl = &mhi_pdev->mhi_cntrl;
-> >  
-> > -	del_timer(&mhi_pdev->health_check_timer);
-> > +	del_timer_sync(&mhi_pdev->health_check_timer);
-> >  	cancel_work_sync(&mhi_pdev->recovery_work);
-> >  
-> >  	if (test_and_clear_bit(MHI_PCI_DEV_STARTED, &mhi_pdev->status)) {
-> > 
+thanks,
+
+greg k-h
