@@ -2,85 +2,105 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C851AC433ED
-	for <kernel-janitors@archiver.kernel.org>; Fri, 21 May 2021 13:15:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B71E8C47076
+	for <kernel-janitors@archiver.kernel.org>; Fri, 21 May 2021 16:55:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ACC9861244
-	for <kernel-janitors@archiver.kernel.org>; Fri, 21 May 2021 13:15:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9568C613D8
+	for <kernel-janitors@archiver.kernel.org>; Fri, 21 May 2021 16:55:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233368AbhEUNQ7 (ORCPT
+        id S237679AbhEUQ5R (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 21 May 2021 09:16:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41242 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233317AbhEUNQ6 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 21 May 2021 09:16:58 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 38E1660FEF;
-        Fri, 21 May 2021 13:15:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1621602934;
-        bh=ELkwNWjodHS5o8+tIb+k6kw61lBw+odKqudQ/BusQHA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=RZcGe+nm9GkVGQbo4yCe1+TGsNoiyM4qPcoiPf/89zKWMcZO0qO3i0hyuFWJSaKw5
-         iBjD623cTwD1b+8SKVIYjo/wZvGv4+nOw9avM1LSEAIhiBLObZvJJDrMWyMT0Nw2Vd
-         nWVSpXGV6pnkhpFh9LFYhhg3fK81uQ6j8zE8E0b4=
-Date:   Fri, 21 May 2021 15:15:32 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     arnd@arndb.de, mihai.carabas@oracle.com,
-        andriy.shevchenko@linux.intel.com, pizhenwei@bytedance.com,
-        pbonzini@redhat.com, linqiheng@huawei.com,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 1/2] misc/pvpanic: Fix error handling in
- 'pvpanic_pci_probe()'
-Message-ID: <YKeydEDcqgiAYGgT@kroah.com>
-References: <7efa7b4b9867ac44f398783b89f3a21deac4ce8b.1621175108.git.christophe.jaillet@wanadoo.fr>
- <YKepSQpLUc5V17tz@kroah.com>
- <694c162e-cbd4-5c51-9b20-b66006594d75@wanadoo.fr>
+        Fri, 21 May 2021 12:57:17 -0400
+Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:41577 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236233AbhEUQ5R (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 21 May 2021 12:57:17 -0400
+Received: from localhost.localdomain ([86.243.172.93])
+        by mwinf5d49 with ME
+        id 7Uvr2500B21Fzsu03UvrPg; Fri, 21 May 2021 18:55:52 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 21 May 2021 18:55:52 +0200
+X-ME-IP: 86.243.172.93
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     balbi@kernel.org, gregkh@linuxfoundation.org,
+        narmstrong@baylibre.com, khilman@baylibre.com,
+        jbrunet@baylibre.com, martin.blumenstingl@googlemail.com
+Cc:     linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] usb: dwc3: meson-g12a: Disable the regulator in the error handling path of the probe
+Date:   Fri, 21 May 2021 18:55:50 +0200
+Message-Id: <79df054046224bbb0716a8c5c2082650290eec86.1621616013.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <694c162e-cbd4-5c51-9b20-b66006594d75@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, May 21, 2021 at 02:41:16PM +0200, Christophe JAILLET wrote:
-> Le 21/05/2021 à 14:36, Greg KH a écrit :
-> > On Sun, May 16, 2021 at 04:36:55PM +0200, Christophe JAILLET wrote:
-> > > There is no error handling path in the probe function.
-> > > Switch to managed resource so that errors in the probe are handled easily
-> > > and simplify the remove function accordingly.
-> > > 
-> > > Fixes: db3a4f0abefd ("misc/pvpanic: add PCI driver")
-> > > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > > ---
-> > >   drivers/misc/pvpanic/pvpanic-pci.c | 9 +++------
-> > >   1 file changed, 3 insertions(+), 6 deletions(-)
-> > 
-> > I see two different series for these patches, so I don't know which to
-> > take :(
-> > 
-> > Please fix up and send a v2 series so that I have a clue...
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> > 
-> 
-> Both have to be taken. One is for -pci.c and one is for -mmio.c.
+If an error occurs after a successful 'regulator_enable()' call,
+'regulator_disable()' must be called.
 
-Ah, I totally missed that :(
+Fix the error handling path of the probe accordingly.
 
-> I'll resend both with a more complete subject and will include Andy
-> Shevchenko's comments.
+The remove function doesn't need to be fixed, because the
+'regulator_disable()' call is already hidden in 'dwc3_meson_g12a_suspend()'
+which is called via 'pm_runtime_set_suspended()' in the remove function.
 
-Wonderful, thanks for doing that.
+Fixes: c99993376f72 ("usb: dwc3: Add Amlogic G12A DWC3 glue")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Please review carefully.
 
-greg k-h
+I'm not that sure about:
+   The remove function doesn't need to be fixed, because the
+   'regulator_disable()' call is already hidden in 'dwc3_meson_g12a_suspend()'
+   which is called via 'pm_runtime_set_suspended()' in the remove function.
+
+This is more a guess than anything else!
+---
+ drivers/usb/dwc3/dwc3-meson-g12a.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/usb/dwc3/dwc3-meson-g12a.c b/drivers/usb/dwc3/dwc3-meson-g12a.c
+index bdf1f98dfad8..804957525130 100644
+--- a/drivers/usb/dwc3/dwc3-meson-g12a.c
++++ b/drivers/usb/dwc3/dwc3-meson-g12a.c
+@@ -772,13 +772,13 @@ static int dwc3_meson_g12a_probe(struct platform_device *pdev)
+ 
+ 	ret = priv->drvdata->usb_init(priv);
+ 	if (ret)
+-		goto err_disable_clks;
++		goto err_disable_regulator;
+ 
+ 	/* Init PHYs */
+ 	for (i = 0 ; i < PHY_COUNT ; ++i) {
+ 		ret = phy_init(priv->phys[i]);
+ 		if (ret)
+-			goto err_disable_clks;
++			goto err_disable_regulator;
+ 	}
+ 
+ 	/* Set PHY Power */
+@@ -816,6 +816,10 @@ static int dwc3_meson_g12a_probe(struct platform_device *pdev)
+ 	for (i = 0 ; i < PHY_COUNT ; ++i)
+ 		phy_exit(priv->phys[i]);
+ 
++err_disable_regulator:
++	if (priv->vbus)
++		regulator_disable(priv->vbus);
++
+ err_disable_clks:
+ 	clk_bulk_disable_unprepare(priv->drvdata->num_clks,
+ 				   priv->drvdata->clks);
+-- 
+2.30.2
+
