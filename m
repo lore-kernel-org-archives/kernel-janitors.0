@@ -2,62 +2,76 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24C0BC433B4
-	for <kernel-janitors@archiver.kernel.org>; Fri, 21 May 2021 08:23:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49613C433B4
+	for <kernel-janitors@archiver.kernel.org>; Fri, 21 May 2021 09:40:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0328C61363
-	for <kernel-janitors@archiver.kernel.org>; Fri, 21 May 2021 08:23:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29B32613C8
+	for <kernel-janitors@archiver.kernel.org>; Fri, 21 May 2021 09:40:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231403AbhEUIZC (ORCPT
+        id S236775AbhEUJmA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 21 May 2021 04:25:02 -0400
-Received: from helcar.hmeau.com ([216.24.177.18]:56124 "EHLO deadmen.hmeau.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231307AbhEUIZC (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 21 May 2021 04:25:02 -0400
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtp (Exim 4.92 #5 (Debian))
-        id 1lk0RR-00055o-HX; Fri, 21 May 2021 16:23:33 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1lk0RM-0007Xf-Ps; Fri, 21 May 2021 16:23:28 +0800
-Date:   Fri, 21 May 2021 16:23:28 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     thomas.lendacky@amd.com, john.allen@amd.com, davem@davemloft.net,
-        gary.hook@amd.com, brijesh.singh@amd.com,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] crypto: ccp - Fix a resource leak in an error handling
- path
-Message-ID: <20210521082328.ftdnzvztmqmnxu5r@gondor.apana.org.au>
-References: <4af832b7e75b729ebfb0f07fe039dc47712512c2.1621146079.git.christophe.jaillet@wanadoo.fr>
+        Fri, 21 May 2021 05:42:00 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:39220 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236786AbhEUJl7 (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 21 May 2021 05:41:59 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lk1dv-0004pf-E5; Fri, 21 May 2021 09:40:31 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Joe Thornber <ejt@redhat.com>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] dm space maps: Fix uninitialized variable r2
+Date:   Fri, 21 May 2021 10:40:31 +0100
+Message-Id: <20210521094031.42356-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4af832b7e75b729ebfb0f07fe039dc47712512c2.1621146079.git.christophe.jaillet@wanadoo.fr>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, May 16, 2021 at 08:58:04AM +0200, Christophe JAILLET wrote:
-> If an error occurs after calling 'sp_get_irqs()', 'sp_free_irqs()' must be
-> called as already done in the error handling path.
-> 
-> Fixes: f4d18d656f88 ("crypto: ccp - Abstract interrupt registeration")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/crypto/ccp/sp-pci.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+From: Colin Ian King <colin.king@canonical.com>
 
-Patch applied.  Thanks.
+In the case where recursing(mm) is true variable r2 is not
+inintialized and an uninitialized value is being used in the
+call combine_errors later on. Fix this by setting r2 to zero.
+
+Addresses-Coverity: ("Uninitialized scalar variable")
+Fixes: def6a7a9a7f0 ("dm space maps: improve performance with inc/dec on ranges of blocks")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/md/persistent-data/dm-space-map-metadata.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/md/persistent-data/dm-space-map-metadata.c b/drivers/md/persistent-data/dm-space-map-metadata.c
+index 3b70ee861cf5..5be5ef4c831f 100644
+--- a/drivers/md/persistent-data/dm-space-map-metadata.c
++++ b/drivers/md/persistent-data/dm-space-map-metadata.c
+@@ -432,9 +432,10 @@ static int sm_metadata_dec_blocks(struct dm_space_map *sm, dm_block_t b, dm_bloc
+ 	int32_t nr_allocations;
+ 	struct sm_metadata *smm = container_of(sm, struct sm_metadata, sm);
+ 
+-	if (recursing(smm))
++	if (recursing(smm)) {
+ 		r = add_bop(smm, BOP_DEC, b, e);
+-	else {
++		r2 = 0;
++	} else {
+ 		in(smm);
+ 		r = sm_ll_dec(&smm->ll, b, e, &nr_allocations);
+ 		r2 = out(smm);
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.31.1
+
