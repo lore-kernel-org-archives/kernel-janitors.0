@@ -2,30 +2,31 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 231A6C2B9F2
-	for <kernel-janitors@archiver.kernel.org>; Sat, 22 May 2021 06:52:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B303C2B9F2
+	for <kernel-janitors@archiver.kernel.org>; Sat, 22 May 2021 06:53:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F043D61244
-	for <kernel-janitors@archiver.kernel.org>; Sat, 22 May 2021 06:52:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A5846128A
+	for <kernel-janitors@archiver.kernel.org>; Sat, 22 May 2021 06:53:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229903AbhEVGx1 (ORCPT
+        id S229943AbhEVGzS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 22 May 2021 02:53:27 -0400
-Received: from smtp13.smtpout.orange.fr ([80.12.242.135]:16524 "EHLO
+        Sat, 22 May 2021 02:55:18 -0400
+Received: from smtp13.smtpout.orange.fr ([80.12.242.135]:44663 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S229808AbhEVGx0 (ORCPT
+        with ESMTP id S229781AbhEVGzR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 22 May 2021 02:53:26 -0400
+        Sat, 22 May 2021 02:55:17 -0400
 Received: from localhost.localdomain ([86.243.172.93])
         by mwinf5d71 with ME
-        id 7irs2500C21Fzsu03irsPk; Sat, 22 May 2021 08:52:01 +0200
+        id 7itr2500C21Fzsu03itsYF; Sat, 22 May 2021 08:53:52 +0200
 X-ME-Helo: localhost.localdomain
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 22 May 2021 08:52:01 +0200
+X-ME-Date: Sat, 22 May 2021 08:53:52 +0200
 X-ME-IP: 86.243.172.93
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 To:     arnd@arndb.de, gregkh@linuxfoundation.org,
@@ -34,46 +35,44 @@ To:     arnd@arndb.de, gregkh@linuxfoundation.org,
         bobo.shaobowang@huawei.com, linqiheng@huawei.com
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 0/4] clk: mvebu: Fix some error handling paths + do some clean-up
-Date:   Sat, 22 May 2021 08:51:51 +0200
-Message-ID: <cover.1619157996.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH v2 0/5] misc/pvpanic: Fix some errro handling path and simplify code
+Date:   Sat, 22 May 2021 08:52:35 +0200
+Message-Id: <cover.1621665058.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
-Message-ID: <20210522065151.F4SYPZSGdXpt_Awm29WPXemA4Dzoy7NRRc6pX_pea7E@z>
 
-This serie fixes some (unlikely) error handlings paths.
+This serie was previously sent in 2 parts, one for -pci.c and one for
+-mmio.c.
+Execpt the patch 5/5 which is new, the 4 first patches are the same as the
+ones previously posted. Only the description has been slighly updated.
 
-The 4th patch is completely speculative. When I compile-tested the changes,
-I had to remove this line in order for it to compile.
-As it works fine (at least for me) without it, I wonder if it is needed at all.
+Pacth 5/5 is a proposal to simplify code and turn 'pvpanic_probe()' into a
+fully resource managed version.
+This way callers don't need to do some clean-up on error in the
+probe and on remove.
 
 
-Also, I wonder if the drivers in drivers/clk/mvebu are used by anyone.
-In order to compile-test the changes, I also had to change the 'bool' in Kconfig
-by 'bool "blah"'. Without this change, it was not possible to set
-CONFIG_MVEBU_CLK_CPU required by Makefile.
+"Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>" was only
+added on patch 1 and 3. I was unsure if his Reviewed-by was also related to
+the s/GFP_ATOMIC/GFP_KERNEL/ of patch 2 et 4.
 
-I don't know if I did something wrong, if it is an issue only on my environment
-or if something got broken at some time in the build chain but it looks
-spurious.
+Christophe JAILLET (5):
+  misc/pvpanic-pci: Fix error handling in 'pvpanic_pci_probe()'
+  misc/pvpanic-pci: Use GFP_KERNEL instead of GFP_ATOMIC
+  misc/pvpanic-mmio: Fix error handling in 'pvpanic_mmio_probe()'
+  misc/pvpanic-mmio: Use GFP_KERNEL instead of GFP_ATOMIC
+  misc/pvpanic: Make 'pvpanic_probe()' resource managed
 
-If I'm right and that these drivers never compile and no-one noticed it,
-maybe removing them is better than fixing some unlikely issues and style.
-If these drivers should stay, Kconfig may need some love from someone.
-
-Christophe JAILLET (4):
-  clk: mvebu: Fix a memory leak in an error handling path
-  clk: mvebu: Fix a another memory leak in an error handling path
-  clk: mvebu: Fix a checkpatch warning
-  clk: mvebu: Remove an unneeded include
-
- drivers/clk/mvebu/clk-cpu.c | 22 +++++++++++++---------
- 1 file changed, 13 insertions(+), 9 deletions(-)
+ drivers/misc/pvpanic/pvpanic-mmio.c | 17 ++--------------
+ drivers/misc/pvpanic/pvpanic-pci.c  | 22 ++++-----------------
+ drivers/misc/pvpanic/pvpanic.c      | 30 ++++++++++++++---------------
+ drivers/misc/pvpanic/pvpanic.h      |  3 +--
+ 4 files changed, 22 insertions(+), 50 deletions(-)
 
 -- 
-2.27.0
+2.30.2
 
