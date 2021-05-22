@@ -8,60 +8,60 @@ X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D9FEC2B9F2
-	for <kernel-janitors@archiver.kernel.org>; Sat, 22 May 2021 10:03:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0538DC2B9F2
+	for <kernel-janitors@archiver.kernel.org>; Sat, 22 May 2021 10:06:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EC2B2610A8
-	for <kernel-janitors@archiver.kernel.org>; Sat, 22 May 2021 10:03:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7782610C8
+	for <kernel-janitors@archiver.kernel.org>; Sat, 22 May 2021 10:06:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230186AbhEVKEn (ORCPT
+        id S230216AbhEVKIT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 22 May 2021 06:04:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48114 "EHLO
+        Sat, 22 May 2021 06:08:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230137AbhEVKEn (ORCPT
+        with ESMTP id S230137AbhEVKIT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 22 May 2021 06:04:43 -0400
-Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C30E9C061574;
-        Sat, 22 May 2021 03:03:18 -0700 (PDT)
-Received: by mail-pl1-x631.google.com with SMTP id t9so3793334ply.6;
-        Sat, 22 May 2021 03:03:18 -0700 (PDT)
+        Sat, 22 May 2021 06:08:19 -0400
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEE5BC061574;
+        Sat, 22 May 2021 03:06:54 -0700 (PDT)
+Received: by mail-pj1-x1029.google.com with SMTP id b15-20020a17090a550fb029015dad75163dso8506949pji.0;
+        Sat, 22 May 2021 03:06:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=7Vw6OT/X2I8phVFQgo2JGHgLRH7v5/W/41Zd3gPR0WQ=;
-        b=Pz4E5zKBRzuWTe0v+MdVzRRpDRPcbVMk+3kD+V1hThCV8TW1okkHlLRS+hduCbZ/+C
-         Odz7NHUddIw7+d+g7lvfaaq734Omovm2pYn6WqLva/xnD4oGEqayQWzE734gSQxadmoW
-         kmOG70dYY+iOuZg0sd0w5nYZPxA9+L9WYh0VKBvSkoxR1scwcpqqsDpaFrRDbbaTutIu
-         v6MA6nLt2UWSNldwzGJXYFRoMyxwl3B8w+nu1x+zYoyanAsXAdcPt80S65oo+GA/HQ0o
-         c/fBuX1Q6tRY/9Hj45HrtyvufmaKlRuv69SpEz/hJZL1PmBwWw7TwC5wP65v4/ugap0j
-         c+Fw==
+        bh=hvDIbtN9K/GXWA2yy/iHLYNnz9SQ94SbF46Utkb5PLE=;
+        b=mvblMSaOebG8oKYK+nUMKMiRdKIKdqQapjXT25TgLYBHpIKl50Q2SddqMdbZTGzte6
+         gccJzaqEnZ7NMbCiEF8Kj8xe5QaotnXZuT69DUEO2Ft6dFgLwi4/JxYvSTmMRfLJv2Py
+         iOU36EnjtZDy+L9H54wOfPcdP7j0x3gFqAJbgurzIEAGoscbqhHB9Tl3XGaEbYVlmd43
+         B25SQh9HozWi2rB9GM9ZcL1A8nv5TyBfjupI6+66D0LUKal8x3b4wm5TuiQhJSsOWeOA
+         UeK8neO1Ex9awSpEet3oOBsJP2L3LWTfKi2YHwXlgUQC2FNSojpy47XTU/pT/s6znbvQ
+         o0bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=7Vw6OT/X2I8phVFQgo2JGHgLRH7v5/W/41Zd3gPR0WQ=;
-        b=hgiQUNnMtBec5Tmc2MPN8p3yWDUomVYR9hWmWvJARYS6PYtvOz+rQtYeWr33TSTNWL
-         FQWTOzjNRat3HbNKeIY+bbaz+L0C8/ko3u6CtwwjH64foY1t1h0thtzdXse+1q9aSD9S
-         +kH5qVbasa7RykiOINhyQXVg/cGRTS/E8pDyn4iDS5B12oRVYI8O/aPR2TJZm5vOLANv
-         wJVWLGyLDwbPIxp2/u3nGWuppM6ek6OaPoM3Olmru4cvl1clfgYjT1uHPm8EoqMTGiN/
-         GJqLENaX1MGt28ccgFrDh5ChwNoJFgJ/cniWgGGshqoK6ZQwde/P1Ohpbas3W2AG5DMg
-         Ijww==
-X-Gm-Message-State: AOAM532AGWtyuxyzddWvVULGVQXPv2v3VhEQPskFx2WfiNhqhikJMXqa
-        unUfX2vn9gB5RLXFeoOBnmbT+Upyi73s3w4ycT4=
-X-Google-Smtp-Source: ABdhPJyIb/W1BamR0UOY29I7lyEAu4FI6g2E1KSYBxoSZlhdJpgAjaNtx8Id232/4Cl3Zgm38oDAvZ+oOwx47MkD/a8=
-X-Received: by 2002:a17:90b:1091:: with SMTP id gj17mr13869023pjb.129.1621677798237;
- Sat, 22 May 2021 03:03:18 -0700 (PDT)
+        bh=hvDIbtN9K/GXWA2yy/iHLYNnz9SQ94SbF46Utkb5PLE=;
+        b=P8DsiWP1WAT/LMWm8/la8klqanrYchz53/uxkavjkCvvb5r7EkZvqYWCv1yNHZYTlW
+         5HvjNUbmaixaYBMaHmNUXR22F2wGFVIJXd2o6t/BZUwX7X2BrRJtYbLkmUqkW+CzfwWo
+         /dgsw4NEiLjQ7g4R84tNdOexU9QRRSYVkNe1HbWRIWZ2eWo1AQCHX6V2BT1YTN9+jJVC
+         JCSB05nqK++nqpYb2u2YkLVhAZC/m/ejbjV4Ber3aWEzYmcxDguQ8SA637wJ28i4UbHq
+         qyD482vMCMkiSzLgJ2xcffVd0QbzZrykIywyhen1Nnr56vSrisitfQ+spGK+VsnlcC70
+         OGLA==
+X-Gm-Message-State: AOAM533n7WW48HvPj37cBonz1tx4RFV3lmUgaBw8LxWC0gmgFPoQH71y
+        LDwIOaGO33Iq6AdepD5A07LzOtbImMuTBO8Cg34=
+X-Google-Smtp-Source: ABdhPJy9ITgEGc8I2geiKSGcnyElXuICyPXzoOwutqsK36I1ZzNow8CFQTr0ZWneNneEdZl3VAeQ0nbO5ngNu1PIqHM=
+X-Received: by 2002:a17:902:b18c:b029:f4:67e6:67af with SMTP id
+ s12-20020a170902b18cb02900f467e667afmr16565027plr.17.1621678014049; Sat, 22
+ May 2021 03:06:54 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1621665058.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <cover.1621665058.git.christophe.jaillet@wanadoo.fr>
+References: <cover.1621665058.git.christophe.jaillet@wanadoo.fr> <9212cdc8c1e5c187a2f1129a6190085c2a10d28a.1621665058.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <9212cdc8c1e5c187a2f1129a6190085c2a10d28a.1621665058.git.christophe.jaillet@wanadoo.fr>
 From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Sat, 22 May 2021 13:03:01 +0300
-Message-ID: <CAHp75VfhKM9z_yMzux8F07tmukxZpJOCZXtFDEZenCjrU26_Sg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/5] misc/pvpanic: Fix some errro handling path and
- simplify code
+Date:   Sat, 22 May 2021 13:06:37 +0300
+Message-ID: <CAHp75VdhgEEeOoJZNXu9RMR0QppDv7HZ-_Lmy4PC=ptXHaz_Lw@mail.gmail.com>
+Subject: Re: [PATCH v2 5/5] misc/pvpanic: Make 'pvpanic_probe()' resource managed
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Cc:     Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -76,40 +76,162 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, May 22, 2021 at 9:54 AM Christophe JAILLET
+On Sat, May 22, 2021 at 9:56 AM Christophe JAILLET
 <christophe.jaillet@wanadoo.fr> wrote:
 >
-> This serie was previously sent in 2 parts, one for -pci.c and one for
-> -mmio.c.
-> Execpt the patch 5/5 which is new, the 4 first patches are the same as the
-> ones previously posted. Only the description has been slighly updated.
->
-> Pacth 5/5 is a proposal to simplify code and turn 'pvpanic_probe()' into a
-> fully resource managed version.
-> This way callers don't need to do some clean-up on error in the
+> Simplify code and turn 'pvpanic_probe()' into a managed resource version.
+> This simplify callers that don't need to do some clean-up on error in the
 > probe and on remove.
 >
+> Update pvpanic-mmio.c and pvpanic-pci.c accordingly.
 >
-> "Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>" was only
-> added on patch 1 and 3. I was unsure if his Reviewed-by was also related to
-> the s/GFP_ATOMIC/GFP_KERNEL/ of patch 2 et 4.
+> 'pvpanic_remove()' don't need to be exported anymore.
 
-To be sure, always send a series with a cover letter :-)
-Yes, 2 and 4 were also included.
+LGTM, thanks!
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-> Christophe JAILLET (5):
->   misc/pvpanic-pci: Fix error handling in 'pvpanic_pci_probe()'
->   misc/pvpanic-pci: Use GFP_KERNEL instead of GFP_ATOMIC
->   misc/pvpanic-mmio: Fix error handling in 'pvpanic_mmio_probe()'
->   misc/pvpanic-mmio: Use GFP_KERNEL instead of GFP_ATOMIC
->   misc/pvpanic: Make 'pvpanic_probe()' resource managed
->
->  drivers/misc/pvpanic/pvpanic-mmio.c | 17 ++--------------
->  drivers/misc/pvpanic/pvpanic-pci.c  | 22 ++++-----------------
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+> Compile tested only
+> ---
+>  drivers/misc/pvpanic/pvpanic-mmio.c | 14 +-------------
+>  drivers/misc/pvpanic/pvpanic-pci.c  | 13 +------------
 >  drivers/misc/pvpanic/pvpanic.c      | 30 ++++++++++++++---------------
 >  drivers/misc/pvpanic/pvpanic.h      |  3 +--
->  4 files changed, 22 insertions(+), 50 deletions(-)
+>  4 files changed, 18 insertions(+), 42 deletions(-)
 >
+> diff --git a/drivers/misc/pvpanic/pvpanic-mmio.c b/drivers/misc/pvpanic/pvpanic-mmio.c
+> index d4a407956c07..be4016084979 100644
+> --- a/drivers/misc/pvpanic/pvpanic-mmio.c
+> +++ b/drivers/misc/pvpanic/pvpanic-mmio.c
+> @@ -104,18 +104,7 @@ static int pvpanic_mmio_probe(struct platform_device *pdev)
+>         pi->capability &= ioread8(base);
+>         pi->events = pi->capability;
+>
+> -       dev_set_drvdata(dev, pi);
+> -
+> -       return pvpanic_probe(pi);
+> -}
+> -
+> -static int pvpanic_mmio_remove(struct platform_device *pdev)
+> -{
+> -       struct pvpanic_instance *pi = dev_get_drvdata(&pdev->dev);
+> -
+> -       pvpanic_remove(pi);
+> -
+> -       return 0;
+> +       return devm_pvpanic_probe(dev, pi);
+>  }
+>
+>  static const struct of_device_id pvpanic_mmio_match[] = {
+> @@ -138,6 +127,5 @@ static struct platform_driver pvpanic_mmio_driver = {
+>                 .dev_groups = pvpanic_mmio_dev_groups,
+>         },
+>         .probe = pvpanic_mmio_probe,
+> -       .remove = pvpanic_mmio_remove,
+>  };
+>  module_platform_driver(pvpanic_mmio_driver);
+> diff --git a/drivers/misc/pvpanic/pvpanic-pci.c b/drivers/misc/pvpanic/pvpanic-pci.c
+> index 3d7f9efb3dd4..a43c401017ae 100644
+> --- a/drivers/misc/pvpanic/pvpanic-pci.c
+> +++ b/drivers/misc/pvpanic/pvpanic-pci.c
+> @@ -73,7 +73,6 @@ ATTRIBUTE_GROUPS(pvpanic_pci_dev);
+>  static int pvpanic_pci_probe(struct pci_dev *pdev,
+>                              const struct pci_device_id *ent)
+>  {
+> -       struct device *dev = &pdev->dev;
+>         struct pvpanic_instance *pi;
+>         void __iomem *base;
+>         int ret;
+> @@ -97,23 +96,13 @@ static int pvpanic_pci_probe(struct pci_dev *pdev,
+>         pi->capability &= ioread8(base);
+>         pi->events = pi->capability;
+>
+> -       dev_set_drvdata(dev, pi);
+> -
+> -       return pvpanic_probe(pi);
+> -}
+> -
+> -static void pvpanic_pci_remove(struct pci_dev *pdev)
+> -{
+> -       struct pvpanic_instance *pi = dev_get_drvdata(&pdev->dev);
+> -
+> -       pvpanic_remove(pi);
+> +       return devm_pvpanic_probe(&pdev->dev, pi);
+>  }
+>
+>  static struct pci_driver pvpanic_pci_driver = {
+>         .name =         "pvpanic-pci",
+>         .id_table =     pvpanic_pci_id_tbl,
+>         .probe =        pvpanic_pci_probe,
+> -       .remove =       pvpanic_pci_remove,
+>         .driver = {
+>                 .dev_groups = pvpanic_pci_dev_groups,
+>         },
+> diff --git a/drivers/misc/pvpanic/pvpanic.c b/drivers/misc/pvpanic/pvpanic.c
+> index 793ea0c01193..82770a088d62 100644
+> --- a/drivers/misc/pvpanic/pvpanic.c
+> +++ b/drivers/misc/pvpanic/pvpanic.c
+> @@ -61,22 +61,10 @@ static struct notifier_block pvpanic_panic_nb = {
+>         .priority = 1, /* let this called before broken drm_fb_helper */
+>  };
+>
+> -int pvpanic_probe(struct pvpanic_instance *pi)
+> -{
+> -       if (!pi || !pi->base)
+> -               return -EINVAL;
+> -
+> -       spin_lock(&pvpanic_lock);
+> -       list_add(&pi->list, &pvpanic_list);
+> -       spin_unlock(&pvpanic_lock);
+> -
+> -       return 0;
+> -}
+> -EXPORT_SYMBOL_GPL(pvpanic_probe);
+> -
+> -void pvpanic_remove(struct pvpanic_instance *pi)
+> +static void pvpanic_remove(void *param)
+>  {
+>         struct pvpanic_instance *pi_cur, *pi_next;
+> +       struct pvpanic_instance *pi = param;
+>
+>         if (!pi)
+>                 return;
+> @@ -90,7 +78,19 @@ void pvpanic_remove(struct pvpanic_instance *pi)
+>         }
+>         spin_unlock(&pvpanic_lock);
+>  }
+> -EXPORT_SYMBOL_GPL(pvpanic_remove);
+> +
+> +int devm_pvpanic_probe(struct device *dev, struct pvpanic_instance *pi)
+> +{
+> +       if (!pi || !pi->base)
+> +               return -EINVAL;
+> +
+> +       spin_lock(&pvpanic_lock);
+> +       list_add(&pi->list, &pvpanic_list);
+> +       spin_unlock(&pvpanic_lock);
+> +
+> +       return devm_add_action_or_reset(dev, pvpanic_remove, pi);
+> +}
+> +EXPORT_SYMBOL_GPL(devm_pvpanic_probe);
+>
+>  static int pvpanic_init(void)
+>  {
+> diff --git a/drivers/misc/pvpanic/pvpanic.h b/drivers/misc/pvpanic/pvpanic.h
+> index 1afccc2e9fec..493545951754 100644
+> --- a/drivers/misc/pvpanic/pvpanic.h
+> +++ b/drivers/misc/pvpanic/pvpanic.h
+> @@ -15,7 +15,6 @@ struct pvpanic_instance {
+>         struct list_head list;
+>  };
+>
+> -int pvpanic_probe(struct pvpanic_instance *pi);
+> -void pvpanic_remove(struct pvpanic_instance *pi);
+> +int devm_pvpanic_probe(struct device *dev, struct pvpanic_instance *pi);
+>
+>  #endif /* PVPANIC_H_ */
 > --
 > 2.30.2
 >
