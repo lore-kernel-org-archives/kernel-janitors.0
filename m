@@ -2,98 +2,63 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E561EC47080
-	for <kernel-janitors@archiver.kernel.org>; Sun, 23 May 2021 08:18:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22781C47081
+	for <kernel-janitors@archiver.kernel.org>; Sun, 23 May 2021 11:02:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BB3B861261
-	for <kernel-janitors@archiver.kernel.org>; Sun, 23 May 2021 08:18:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 034976109E
+	for <kernel-janitors@archiver.kernel.org>; Sun, 23 May 2021 11:02:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231616AbhEWIUP (ORCPT
+        id S231743AbhEWLD3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 23 May 2021 04:20:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40204 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231153AbhEWIUP (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 23 May 2021 04:20:15 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 9AB4961168;
-        Sun, 23 May 2021 08:18:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1621757928;
-        bh=U0YAvZaLR8WDB/++plZoqCKo3gtUlnYXHKAqLTt8gr8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=oPc0pz0dEPacRLTt9eTBIWButqRYE/XQ+Jy1WcfgbyZgnRYks466piY9L5/bR52ca
-         9aXd7M4YiLY3Kqs8xRoBZOX/3BZugaXSjcXKvDS1gWuHbJgppKflry2/6cqDsLRqEU
-         Ji7yLOOTjyrg4dX+q2G94vmxfyVBi5Q22MQ+UtEs=
-Date:   Sun, 23 May 2021 10:18:44 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Jiri Slaby <jirislaby@kernel.org>,
-        Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
+        Sun, 23 May 2021 07:03:29 -0400
+Received: from smtp07.smtpout.orange.fr ([80.12.242.129]:48362 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231701AbhEWLD3 (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Sun, 23 May 2021 07:03:29 -0400
+Received: from localhost.localdomain ([86.243.172.93])
+        by mwinf5d83 with ME
+        id 8B1z2500421Fzsu03B1zsi; Sun, 23 May 2021 13:02:01 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 23 May 2021 13:02:01 +0200
+X-ME-IP: 86.243.172.93
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     skashyap@marvell.com, jhasan@marvell.com,
+        GR-QLogic-Storage-Upstream@marvell.com, jejb@linux.ibm.com,
+        martin.petersen@oracle.com, chad.dupuis@cavium.com,
+        arun.easi@cavium.com, nilesh.javali@cavium.com
+Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 1/1] MAINTAINERS: TTY LAYER: add some
- ./include/linux/ header files
-Message-ID: <YKoP5BHxXnww8d6k@kroah.com>
-References: <20210518052117.14819-1-lukas.bulwahn@gmail.com>
- <20210518052117.14819-2-lukas.bulwahn@gmail.com>
- <69da627e-91c5-66f0-c0c9-75fbaaba6782@kernel.org>
- <CAKXUXMw21Up0WhSX0V=h5oYcw-ocLT0Bv=tUaekA1beoo6u+aA@mail.gmail.com>
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 0/3] scsi: qedf: Fix an error handling path + cleanups
+Date:   Sun, 23 May 2021 13:01:59 +0200
+Message-Id: <cover.1621765056.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKXUXMw21Up0WhSX0V=h5oYcw-ocLT0Bv=tUaekA1beoo6u+aA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, May 23, 2021 at 09:05:48AM +0200, Lukas Bulwahn wrote:
-> On Tue, May 18, 2021 at 7:37 AM Jiri Slaby <jirislaby@kernel.org> wrote:
-> >
-> > On 18. 05. 21, 7:21, Lukas Bulwahn wrote:
-> > > An early prototypical automated code analysis of headers and the
-> > > existing MAINTAINERS sections identified some header files in
-> > > ./include/linux/ to be probably included into the TTY LAYER section.
-> > >
-> > > I further checked those suggestions by this analysis and identified a
-> > > subset of files that I am rather certain to belong to the TTY LAYER.
-> > >
-> > > Add these ./include/linux/ header files to TTY LAYER in MAINTAINERS.
-> > >
-> > > The patterns include/linux/tty*.h and include/linux/vt_*.h currently cover:
-> > >
-> > >    include/linux/tty.h
-> > >    include/linux/tty_driver.h
-> > >    include/linux/tty_flip.h
-> > >    include/linux/tty_ldisc.h
-> > >
-> > >    include/linux/vt_buffer.h
-> > >    include/linux/vt_kern.h
-> >
-> > Yes, that looks good.
-> >
-> > Can you extend the tool to include/uapi too?
-> >
-> > For example this is missing too:
-> > include/uapi/linux/tty*.h
-> >
-> > It expands to:
-> > include/uapi/linux/tty_flags.h
-> > include/uapi/linux/tty.h
-> >
-> 
-> Jiri,
-> 
-> Greg already picked this patch up; so I will keep this patch as-is and move on.
+Patch 1/3 fixes a case where success is un-intentionaly returned.
 
-This patch was fine as-is, but sending an additional patch with that
-information added would be most welcome.  No need for your tool to
-create it, you can do it by hand :)
+The 2 other patches are clean-up.
+Patch 2/3 is a clean-up in the same function, to improve its readability.
+Pacth 3/3 is a proposal to both remove some lines of code and improve readability.
 
-thanks,
+Christophe JAILLET (3):
+  scsi: qedf: Fix an error handling path in 'qedf_alloc_global_queues()'
+  scsi: qedf: Simplify 'qedf_alloc_global_queues()'
+  scsi: qedf: Axe a few useless lines of code
 
-greg k-h
+ drivers/scsi/qedf/qedf_main.c | 102 +++++++++++++---------------------
+ 1 file changed, 38 insertions(+), 64 deletions(-)
+
+-- 
+2.30.2
+
