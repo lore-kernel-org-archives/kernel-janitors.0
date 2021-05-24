@@ -2,109 +2,87 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46F07C47080
-	for <kernel-janitors@archiver.kernel.org>; Sun, 23 May 2021 16:04:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D191FC04FF3
+	for <kernel-janitors@archiver.kernel.org>; Mon, 24 May 2021 05:35:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0C8DE61132
-	for <kernel-janitors@archiver.kernel.org>; Sun, 23 May 2021 16:04:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A1F761151
+	for <kernel-janitors@archiver.kernel.org>; Mon, 24 May 2021 05:35:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231841AbhEWQF1 (ORCPT
+        id S232240AbhEXFhP (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 23 May 2021 12:05:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45268 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231800AbhEWQF0 (ORCPT
+        Mon, 24 May 2021 01:37:15 -0400
+Received: from so254-9.mailgun.net ([198.61.254.9]:53519 "EHLO
+        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232128AbhEXFhP (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 23 May 2021 12:05:26 -0400
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 979B6C061574;
-        Sun, 23 May 2021 09:03:58 -0700 (PDT)
-Received: by mail-ed1-x536.google.com with SMTP id y7so11516374eda.2;
-        Sun, 23 May 2021 09:03:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gJkD6i4SEo6SHdZ7GGHPrHMiskGVfh8CdW3Nufpvn2I=;
-        b=CnI3Abzt5Xv9BhXQL8KS9PW5422NN27D1tSFTpWB4Knv/ZRbOmrQ1ShJYV9KlqeGHS
-         z7Fe4E7REfieJoL5gru+JIA1CUtP5Bhrn8Zp54hRj4apLyiRkK26gDNXlL/C4Im/NCpi
-         BNqOYkHoIJCH8en6v7t4x2mrcOGf8k+MSGL6fTt3478Dou+Zeuhynm0cDXoc0hG8pzPJ
-         Tb8FGtTw2RTOBQGnSkSFnS49eAApdPQYIv7HKTS4/xHBnSD+PMKBCm2mmOl+6fSAT7GA
-         ovFDq21Va8xrotyiZVPDxWiGC1wLh3V7uPvJxHRXlGrD0g+kfn69UrKiFhnQ5xAoqAKI
-         guCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gJkD6i4SEo6SHdZ7GGHPrHMiskGVfh8CdW3Nufpvn2I=;
-        b=A7jifdV87PDyktMdQ0u4Eyf3496V+UtGUucKRgDHCGbJSVj55uHWZQWGYAt1ezB4g9
-         w9/vOUFQOUuzNnEwasuM7B4g893Xg9fbgBU8DTZwG/Vw5bGV6/2JNMTMO3bht3EazepQ
-         OYc4yJDDV/VNn2NkJhiUA9j9avG/vOc0LkqHtItTiHlKwSGbdqI53iP4MCOq7xyLHMTN
-         kco7hwa4Lz7UqrfabaKaxiCHuiSQUqI0d78tKkvIgZRRdmc3PgHjtPAjeURZB9kVpkuC
-         IqlNdBRpY4bD3USn0eF11JxIAuKTpn9HPBLxx8W7xNowizeJL8BRoxT21lq/EaoIPr+W
-         YOSQ==
-X-Gm-Message-State: AOAM533wROP7SL8EbUmzJw1B3N8b7AdDp4YodvstOyd2PLQpPQg1q7Of
-        GUMVjyG7tYvf0ei86gunr2EZmsOhao88CkeXurU=
-X-Google-Smtp-Source: ABdhPJxFDpHabe9W6/7esigrOS2kY4rmQITdh3xVTXAkjKPgodavQcSx3o8iM0vUCzjfrFm/ao20QTXEe9xq6Na96dM=
-X-Received: by 2002:a50:9346:: with SMTP id n6mr21297997eda.365.1621785837181;
- Sun, 23 May 2021 09:03:57 -0700 (PDT)
+        Mon, 24 May 2021 01:37:15 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1621834548; h=Date: Message-Id: Cc: To: References:
+ In-Reply-To: From: Subject: Content-Transfer-Encoding: MIME-Version:
+ Content-Type: Sender; bh=aCeZloNWIr+9qJLmE8MblU3PgPnuO3Zl8vpP89RVOa0=;
+ b=D2vEU/mlqXn53nmS54azXbgSgwL0dBOPhhNvJe1fLNxw/znVK50rbri2KEb+TapxVXUmQmPA
+ ClFS5qL8yZFzFpsGyY57YXMoQ6242fwyA9ChjjDSRsQX744+G4Ppzi3xZqeF48vVtNmkKgdk
+ 8Any8kjtNcyeYZkHazxt1bu19LA=
+X-Mailgun-Sending-Ip: 198.61.254.9
+X-Mailgun-Sid: WyI5NDExNyIsICJrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n06.prod.us-west-2.postgun.com with SMTP id
+ 60ab3b335f788b52a5a3f3e2 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Mon, 24 May 2021 05:35:47
+ GMT
+Sender: kvalo=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 69DFAC43460; Mon, 24 May 2021 05:35:47 +0000 (UTC)
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id AE14DC433D3;
+        Mon, 24 May 2021 05:35:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AE14DC433D3
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <79df054046224bbb0716a8c5c2082650290eec86.1621616013.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <79df054046224bbb0716a8c5c2082650290eec86.1621616013.git.christophe.jaillet@wanadoo.fr>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Sun, 23 May 2021 18:03:46 +0200
-Message-ID: <CAFBinCCBo4fYoO=2NiWTEixPuJo2Q=J1o1+yfi4Oc32SLi=GAw@mail.gmail.com>
-Subject: Re: [PATCH] usb: dwc3: meson-g12a: Disable the regulator in the error
- handling path of the probe
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     balbi@kernel.org, gregkh@linuxfoundation.org,
-        Neil Armstrong <narmstrong@baylibre.com>, khilman@baylibre.com,
-        jbrunet@baylibre.com, linux-usb@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] ath10k/ath11k: fix spelling mistake "requed" ->
+ "requeued"
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20210423134133.339751-1-colin.king@canonical.com>
+References: <20210423134133.339751-1-colin.king@canonical.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, ath10k@lists.infradead.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        ath11k@lists.infradead.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.5.2
+Message-Id: <20210524053547.69DFAC43460@smtp.codeaurora.org>
+Date:   Mon, 24 May 2021 05:35:47 +0000 (UTC)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Christophe,
+Colin King <colin.king@canonical.com> wrote:
 
-On Fri, May 21, 2021 at 6:55 PM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> If an error occurs after a successful 'regulator_enable()' call,
-> 'regulator_disable()' must be called.
->
-> Fix the error handling path of the probe accordingly.
->
-> The remove function doesn't need to be fixed, because the
-> 'regulator_disable()' call is already hidden in 'dwc3_meson_g12a_suspend()'
-> which is called via 'pm_runtime_set_suspended()' in the remove function.
->
-> Fixes: c99993376f72 ("usb: dwc3: Add Amlogic G12A DWC3 glue")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-for me this makes sense so:
-Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> There are multiple occurrances of the misspelling of requeued in
+> the drivers with symbol names and debug text. Fix these.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-> ---
-> Please review carefully.
->
-> I'm not that sure about:
->    The remove function doesn't need to be fixed, because the
->    'regulator_disable()' call is already hidden in 'dwc3_meson_g12a_suspend()'
->    which is called via 'pm_runtime_set_suspended()' in the remove function.
->
-> This is more a guess than anything else!
-I am not 100% sure about the suspend code-path, so I am hoping that
-someone else (for example Neil) can also review your patch
+Patch applied to ath-next branch of ath.git, thanks.
 
+17818dfa8f2e ath10k/ath11k: fix spelling mistake "requed" -> "requeued"
 
-Best regards,
-Martin
+-- 
+https://patchwork.kernel.org/project/linux-wireless/patch/20210423134133.339751-1-colin.king@canonical.com/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
