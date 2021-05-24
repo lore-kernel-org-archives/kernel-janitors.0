@@ -2,87 +2,76 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D191FC04FF3
-	for <kernel-janitors@archiver.kernel.org>; Mon, 24 May 2021 05:35:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7B9AC47084
+	for <kernel-janitors@archiver.kernel.org>; Mon, 24 May 2021 12:47:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9A1F761151
-	for <kernel-janitors@archiver.kernel.org>; Mon, 24 May 2021 05:35:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A04EC613CC
+	for <kernel-janitors@archiver.kernel.org>; Mon, 24 May 2021 12:47:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232240AbhEXFhP (ORCPT
+        id S232401AbhEXMsd (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 24 May 2021 01:37:15 -0400
-Received: from so254-9.mailgun.net ([198.61.254.9]:53519 "EHLO
-        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232128AbhEXFhP (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 24 May 2021 01:37:15 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1621834548; h=Date: Message-Id: Cc: To: References:
- In-Reply-To: From: Subject: Content-Transfer-Encoding: MIME-Version:
- Content-Type: Sender; bh=aCeZloNWIr+9qJLmE8MblU3PgPnuO3Zl8vpP89RVOa0=;
- b=D2vEU/mlqXn53nmS54azXbgSgwL0dBOPhhNvJe1fLNxw/znVK50rbri2KEb+TapxVXUmQmPA
- ClFS5qL8yZFzFpsGyY57YXMoQ6242fwyA9ChjjDSRsQX744+G4Ppzi3xZqeF48vVtNmkKgdk
- 8Any8kjtNcyeYZkHazxt1bu19LA=
-X-Mailgun-Sending-Ip: 198.61.254.9
-X-Mailgun-Sid: WyI5NDExNyIsICJrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n06.prod.us-west-2.postgun.com with SMTP id
- 60ab3b335f788b52a5a3f3e2 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Mon, 24 May 2021 05:35:47
- GMT
-Sender: kvalo=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 69DFAC43460; Mon, 24 May 2021 05:35:47 +0000 (UTC)
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id AE14DC433D3;
-        Mon, 24 May 2021 05:35:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AE14DC433D3
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] ath10k/ath11k: fix spelling mistake "requed" ->
- "requeued"
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20210423134133.339751-1-colin.king@canonical.com>
-References: <20210423134133.339751-1-colin.king@canonical.com>
+        Mon, 24 May 2021 08:48:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59658 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232371AbhEXMsd (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 24 May 2021 08:48:33 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id BEB5661151;
+        Mon, 24 May 2021 12:47:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1621860425;
+        bh=WnN5e9HfBPPWYgPqD1Fhg5WKyUN1eOAm3lsD5f24Pss=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=uMMdwjcFEOLAVn86AayckjUSwAXBzuff07zjlCabZ+sMc3PZYSJ1Be7JsAJ/OyWib
+         bHmayxNTckn5NWx1NW4HHH+O3FN2QXTjLk99e7lKbj0xYH2eUyRvGtf/9nazWU2i0j
+         JXmo4ORPc0msFX4K0gQ/LeLOFNMHKEJ+OiRKzzGM=
+Date:   Mon, 24 May 2021 14:47:03 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     Colin King <colin.king@canonical.com>
-Cc:     "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, ath10k@lists.infradead.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        ath11k@lists.infradead.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.5.2
-Message-Id: <20210524053547.69DFAC43460@smtp.codeaurora.org>
-Date:   Mon, 24 May 2021 05:35:47 +0000 (UTC)
+Cc:     kernel-janitors@vger.kernel.org, Stable@vger.kernel.org,
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+Subject: Re: [PATCH][4.9.y] iio: tsl2583: Fix division by a zero lux_val
+Message-ID: <YKugR84xHxne6wox@kroah.com>
+References: <20210520111552.27409-1-colin.king@canonical.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210520111552.27409-1-colin.king@canonical.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote:
-
-> There are multiple occurrances of the misspelling of requeued in
-> the drivers with symbol names and debug text. Fix these.
+On Thu, May 20, 2021 at 12:15:52PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
+> commit af0e1871d79cfbb91f732d2c6fa7558e45c31038 upstream.
+> 
+> The lux_val returned from tsl2583_get_lux can potentially be zero,
+> so check for this to avoid a division by zero and an overflowed
+> gain_trim_val.
+> 
+> Fixes clang scan-build warning:
+> 
+> drivers/iio/light/tsl2583.c:345:40: warning: Either the
+> condition 'lux_val<0' is redundant or there is division
+> by zero at line 345. [zerodivcond]
+> 
+> Fixes: ac4f6eee8fe8 ("staging: iio: TAOS tsl258x: Device driver")
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+> Cc: <Stable@vger.kernel.org>
+> Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> [iwamatsu: Change file path.]
+> [Colin Ian King: minor context adjustments for 4.9.y]
+> Signed-off-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+> ---
+>  drivers/staging/iio/light/tsl2583.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
 
-Patch applied to ath-next branch of ath.git, thanks.
+Now queued up, thanks.
 
-17818dfa8f2e ath10k/ath11k: fix spelling mistake "requed" -> "requeued"
 
--- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20210423134133.339751-1-colin.king@canonical.com/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+greg k-
