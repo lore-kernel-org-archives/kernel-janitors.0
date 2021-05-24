@@ -2,142 +2,125 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C546C2B9F7
-	for <kernel-janitors@archiver.kernel.org>; Mon, 24 May 2021 14:00:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61B8FC04FF3
+	for <kernel-janitors@archiver.kernel.org>; Mon, 24 May 2021 18:12:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EAB9F61370
-	for <kernel-janitors@archiver.kernel.org>; Mon, 24 May 2021 14:00:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 390ED600D1
+	for <kernel-janitors@archiver.kernel.org>; Mon, 24 May 2021 18:12:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232946AbhEXOCF (ORCPT
+        id S233603AbhEXSNr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 24 May 2021 10:02:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54488 "EHLO
+        Mon, 24 May 2021 14:13:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55104 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232902AbhEXOCD (ORCPT
+        with ESMTP id S232789AbhEXSNr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 24 May 2021 10:02:03 -0400
-Received: from mail-ua1-x936.google.com (mail-ua1-x936.google.com [IPv6:2607:f8b0:4864:20::936])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 521B1C06138B
-        for <kernel-janitors@vger.kernel.org>; Mon, 24 May 2021 07:00:34 -0700 (PDT)
-Received: by mail-ua1-x936.google.com with SMTP id 105so9353316uak.8
-        for <kernel-janitors@vger.kernel.org>; Mon, 24 May 2021 07:00:34 -0700 (PDT)
+        Mon, 24 May 2021 14:13:47 -0400
+Received: from mail-oo1-xc33.google.com (mail-oo1-xc33.google.com [IPv6:2607:f8b0:4864:20::c33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E30EFC061574;
+        Mon, 24 May 2021 11:12:17 -0700 (PDT)
+Received: by mail-oo1-xc33.google.com with SMTP id o66-20020a4a44450000b029020d44dea886so6543564ooa.5;
+        Mon, 24 May 2021 11:12:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=bhZvYF2rrfsZa6Xf7+GPLv45uKVXrZPOlQNANCKECQI=;
-        b=QFwnDovX8FbineGyWDzBEnowUBB99r0szO6EctLouJ+VM2LiCGRhsvhsWGG63bQ38u
-         L8737OQdQqtbmzB2DOFHbAMHFz4mbgFynB6Hr6LEPzS2NlZebCoksFMUbpIrF5cEwx7B
-         T/9TaMS4c84GbC8mE2fvp1gao9RKc70VhhCRbiSPgOwHjT4x4MyLQ3y1AeJYjQvkEDI3
-         hTtFD7vvnj9PNncgtHBXpOzlA5KQG9P4JKmzwSe61ZYFSHnEWhrel6yZkKW/kbqSnTbg
-         QZOdLzAcRz1zB3xj9RzYvlmwEpHqCOREpVzye076+kpjJ8eDCQmKr6UsQZJa1pqzWEHI
-         lPEg==
+        bh=+9I9jlaYCJwm7GMK8vCa+XPnOfqmkJZLcMPH2lbyCHI=;
+        b=nzCpeBr7dDnoasU9Kv35bQBN1pMvKkUb21yqjebcNR2NJdUbJQcfCM/tzozKsoET/0
+         uRTBHjIf65/dksUaZ6hQKSniPIUhnWbn84k8THLUecpHq6CvZeJnM6xyXqcZWRd2kKeG
+         FPbHQEbOwZN+EoTMnq7lEWNmenmgzpzKltRDQ8yy3W/c7yn1FE4h8VKbIQfGAzUGzL4K
+         ZyMvbhSOIKL1tn1GKT39I0eYmVguLX3dG458TVDrp96RUjLhWnFoYWhQ35Ubl4nsPzRL
+         CdIWHCDVaqLD9QJuY1LhiLLmgnjCL8jG22j2BF5VIGNAoPfGswRu1a7C35eWEDZSwxWr
+         UbZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=bhZvYF2rrfsZa6Xf7+GPLv45uKVXrZPOlQNANCKECQI=;
-        b=kP1ftb+tc39N3n1zz1kgW+RtKrm8MQa0roiBO3O5UcMJMfeelRWSg0O4VvCn3LJ9/e
-         Es8bH2ybXGA2kS0C3h1onIUTUSdwIP4yr90mGkJBKeV3I028BnfveI3+EfuVXy7EPsT6
-         9cRLmIVZsXdhaBaV6KVXdjucOzb/VOvGaQGGGP7JI44loFtMeLXjN654rCsmLeo9wNzr
-         bBhjRGtNV8wQ45L4xSXv3nlIS9klvTftLY2IxSAu44opL567VQEqo+CATl2FZvb8Y8C3
-         IGeqZk3oUqi0UA0K7UVeQER4jlMqtsyDbhUQGFrcnJ0vrQAuqTOrSw/6XG/0X7R0MziA
-         giNA==
-X-Gm-Message-State: AOAM531a+S4zAW3Ty9SJaVdJj10ImEO/SgD0lESqqir2NUh6W4rWEHcn
-        99D6xN8G/E2DR2U2g+o4gkXpdKFzT3DHr5BDd8jM/A==
-X-Google-Smtp-Source: ABdhPJyTkuNIXW/4VTeu46rTAPJNrdcFFBw/FDfMkyZ8gV3dDP2TWej1nRS1wo4Y1zZF3ITB+QVUCzn16nazwshQD3Y=
-X-Received: by 2002:a9f:24b4:: with SMTP id 49mr12816796uar.100.1621864832999;
- Mon, 24 May 2021 07:00:32 -0700 (PDT)
+        bh=+9I9jlaYCJwm7GMK8vCa+XPnOfqmkJZLcMPH2lbyCHI=;
+        b=C4TVg7lZv85JIK3Z68lU5tXdifH4ajyAkjwXq2HTuJgtqB3lyFjyQpdxCACOnNvSNu
+         u1U26ofBK6JjwtZYY/HvT7Vm/jqkuSIq5Y3kFs5bPcZwVr0chuZt1HvwWTmVgvvLEAuf
+         GNmuEEWeQWVa/abtjdpLsRPvjJuxguOABpU0qfBgxcJYOaLzLOJzx58RI9+fG1iIZYMe
+         A+8TRvhrAYiMyJ4L/UccDBdbzjqUOc/6OLzODtpr7PcM7zuZfwbBkn6KQZ8zYO517Gp3
+         cjlkOB7RkZZefxVK/MtW3E5Diom/ro+dn8ccH2HcWegRnuHO6V4beSKHRR+J5dcmFUj0
+         kRlQ==
+X-Gm-Message-State: AOAM5330TRxXS50UDnB/9ZJPA9FgdxgRk8M/dSaDP4U33QbM3fG2+iIE
+        Mt3T1hr8TjpKR0pg+++eEfcxe5ZwSzg4wN1oex0=
+X-Google-Smtp-Source: ABdhPJzhVFLRxGfoyzWVJh3tF9KW/NhQHanjStmXRL3+N/qojxCqMzyXV6pZNW3TG8IVKGKFaI7lHeuVsvrsYP+dFK0=
+X-Received: by 2002:a4a:d085:: with SMTP id i5mr19301783oor.61.1621879937282;
+ Mon, 24 May 2021 11:12:17 -0700 (PDT)
 MIME-Version: 1.0
-References: <d05074c11962a046ff9c2f457c240432ca8a7194.1621600443.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <d05074c11962a046ff9c2f457c240432ca8a7194.1621600443.git.christophe.jaillet@wanadoo.fr>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 24 May 2021 15:59:56 +0200
-Message-ID: <CAPDyKFrS3wdYs3AQtjZEOsLzNvxgy1n3EfxZ+a8w8J8rH8kQ-w@mail.gmail.com>
-Subject: Re: [PATCH] mmc: mxs-mmc: Disable the 'reg_vmmc' regulator when needed
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Doug Anderson <dianders@chromium.org>,
-        Rui Miguel Silva <rmfrfs@gmail.com>,
-        Chris Ball <cjb@laptop.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
+References: <20210524133548.2361943-1-weiyongjun1@huawei.com>
+In-Reply-To: <20210524133548.2361943-1-weiyongjun1@huawei.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Mon, 24 May 2021 14:12:06 -0400
+Message-ID: <CADnq5_Os1fKouKSkfmmiWgjLxkX3FQ1Ny5Wcno7VQcheG4-26Q@mail.gmail.com>
+Subject: Re: [PATCH -next] drm/amdgpu: fix error return code in amdgpu_acpi_init()
+To:     Wei Yongjun <weiyongjun1@huawei.com>
+Cc:     Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Prike Liang <Prike.Liang@amd.com>,
+        Lijo Lazar <lijo.lazar@amd.com>,
+        Rajneesh Bhardwaj <rajneesh.bhardwaj@amd.com>,
+        Ye Bin <yebin10@huawei.com>, Likun Gao <Likun.Gao@amd.com>,
+        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
+        Hulk Robot <hulkci@huawei.com>,
+        kernel-janitors@vger.kernel.org,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 21 May 2021 at 14:36, Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
+On Mon, May 24, 2021 at 9:25 AM Wei Yongjun <weiyongjun1@huawei.com> wrote:
 >
-> The 'reg_vmmc' regulator is never disabled. Neither in the error handling
-> of the probe, nor in the remove function.
+> Fix to return a negative error code from the error handling
+> case instead of 0, as done elsewhere in this function.
+
+I don't see any other cases in this function where we return an error.
+It could arguably be made a void.  All of these APCI methods are
+optional.
+
+Alex
+
 >
-> Add a managed action to do the required clean-up before a 'regulator_put()'
-> call.
->
-> Fixes: 4dc5a79f1350 ("mmc: mxs-mmc: enable regulator for mmc slot")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Fixes: 77bf762f8b30 ("drm/amdgpu/acpi: unify ATCS handling (v3)")
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 > ---
->  drivers/mmc/host/mxs-mmc.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
 >
-> diff --git a/drivers/mmc/host/mxs-mmc.c b/drivers/mmc/host/mxs-mmc.c
-> index 947581de7860..b043d53dd728 100644
-> --- a/drivers/mmc/host/mxs-mmc.c
-> +++ b/drivers/mmc/host/mxs-mmc.c
-> @@ -552,6 +552,13 @@ static const struct of_device_id mxs_mmc_dt_ids[] = {
->  };
->  MODULE_DEVICE_TABLE(of, mxs_mmc_dt_ids);
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
+> index 49563ff87f1a..9564690b21b4 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
+> @@ -895,12 +895,15 @@ int amdgpu_acpi_init(struct amdgpu_device *adev)
+>  atcs:
+>         /* Probe for ATCS, and initialize it if found */
+>         atcs_handle = amdgpu_atcs_probe_handle(handle);
+> -       if (!atcs_handle)
+> +       if (!atcs_handle) {
+> +               ret = -ENODEV;
+>                 goto out;
+> +       }
 >
-> +static void regulator_disable_action(void *_data)
-> +{
-> +       struct regulator *regulator = _data;
-> +
-> +       regulator_disable(regulator);
-> +}
-> +
->  static int mxs_mmc_probe(struct platform_device *pdev)
->  {
->         struct device_node *np = pdev->dev.of_node;
-> @@ -591,6 +598,10 @@ static int mxs_mmc_probe(struct platform_device *pdev)
->                                 "Failed to enable vmmc regulator: %d\n", ret);
->                         goto out_mmc_free;
->                 }
-> +               ret = devm_add_action_or_reset(&pdev->dev,
-> +                                       regulator_disable_action, reg_vmmc);
-> +               if (ret)
-> +                       goto out_mmc_free;
-
-Even if this improves the behaviour, there is a standardized way for
-how we deal with regulators for mmc.
-
-1. Call mmc_regulator_get_supply() during probe to fetch the optional
-regulator. If a regulator is found a corresponding OCR mask, in
-host->ocr_avail is assigned.
-
-2. In the ->set_ios() callback, invoke mmc_regulator_set_ocr(). This
-will also set the correct voltage-level and turn on/off the regulator,
-depending on the requested OCR/voltage-level.
-
+>         atcs = kzalloc(sizeof(*atcs), GFP_KERNEL);
+>         if (!atcs) {
+>                 DRM_WARN("Not enough memory to initialize ATCS\n");
+> +               ret = -ENOMEM;
+>                 goto out;
 >         }
+>         atcs->handle = atcs_handle;
 >
->         ssp->clk = devm_clk_get(&pdev->dev, NULL);
-> --
-> 2.30.2
->
-
-Kind regards
-Uffe
