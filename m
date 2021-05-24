@@ -2,125 +2,125 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61B8FC04FF3
-	for <kernel-janitors@archiver.kernel.org>; Mon, 24 May 2021 18:12:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51433C2B9F7
+	for <kernel-janitors@archiver.kernel.org>; Mon, 24 May 2021 19:49:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 390ED600D1
-	for <kernel-janitors@archiver.kernel.org>; Mon, 24 May 2021 18:12:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3668461004
+	for <kernel-janitors@archiver.kernel.org>; Mon, 24 May 2021 19:49:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233603AbhEXSNr (ORCPT
+        id S233215AbhEXTvR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 24 May 2021 14:13:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55104 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232789AbhEXSNr (ORCPT
+        Mon, 24 May 2021 15:51:17 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:35898 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232107AbhEXTvR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 24 May 2021 14:13:47 -0400
-Received: from mail-oo1-xc33.google.com (mail-oo1-xc33.google.com [IPv6:2607:f8b0:4864:20::c33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E30EFC061574;
-        Mon, 24 May 2021 11:12:17 -0700 (PDT)
-Received: by mail-oo1-xc33.google.com with SMTP id o66-20020a4a44450000b029020d44dea886so6543564ooa.5;
-        Mon, 24 May 2021 11:12:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+9I9jlaYCJwm7GMK8vCa+XPnOfqmkJZLcMPH2lbyCHI=;
-        b=nzCpeBr7dDnoasU9Kv35bQBN1pMvKkUb21yqjebcNR2NJdUbJQcfCM/tzozKsoET/0
-         uRTBHjIf65/dksUaZ6hQKSniPIUhnWbn84k8THLUecpHq6CvZeJnM6xyXqcZWRd2kKeG
-         FPbHQEbOwZN+EoTMnq7lEWNmenmgzpzKltRDQ8yy3W/c7yn1FE4h8VKbIQfGAzUGzL4K
-         ZyMvbhSOIKL1tn1GKT39I0eYmVguLX3dG458TVDrp96RUjLhWnFoYWhQ35Ubl4nsPzRL
-         CdIWHCDVaqLD9QJuY1LhiLLmgnjCL8jG22j2BF5VIGNAoPfGswRu1a7C35eWEDZSwxWr
-         UbZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+9I9jlaYCJwm7GMK8vCa+XPnOfqmkJZLcMPH2lbyCHI=;
-        b=C4TVg7lZv85JIK3Z68lU5tXdifH4ajyAkjwXq2HTuJgtqB3lyFjyQpdxCACOnNvSNu
-         u1U26ofBK6JjwtZYY/HvT7Vm/jqkuSIq5Y3kFs5bPcZwVr0chuZt1HvwWTmVgvvLEAuf
-         GNmuEEWeQWVa/abtjdpLsRPvjJuxguOABpU0qfBgxcJYOaLzLOJzx58RI9+fG1iIZYMe
-         A+8TRvhrAYiMyJ4L/UccDBdbzjqUOc/6OLzODtpr7PcM7zuZfwbBkn6KQZ8zYO517Gp3
-         cjlkOB7RkZZefxVK/MtW3E5Diom/ro+dn8ccH2HcWegRnuHO6V4beSKHRR+J5dcmFUj0
-         kRlQ==
-X-Gm-Message-State: AOAM5330TRxXS50UDnB/9ZJPA9FgdxgRk8M/dSaDP4U33QbM3fG2+iIE
-        Mt3T1hr8TjpKR0pg+++eEfcxe5ZwSzg4wN1oex0=
-X-Google-Smtp-Source: ABdhPJzhVFLRxGfoyzWVJh3tF9KW/NhQHanjStmXRL3+N/qojxCqMzyXV6pZNW3TG8IVKGKFaI7lHeuVsvrsYP+dFK0=
-X-Received: by 2002:a4a:d085:: with SMTP id i5mr19301783oor.61.1621879937282;
- Mon, 24 May 2021 11:12:17 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210524133548.2361943-1-weiyongjun1@huawei.com>
-In-Reply-To: <20210524133548.2361943-1-weiyongjun1@huawei.com>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Mon, 24 May 2021 14:12:06 -0400
-Message-ID: <CADnq5_Os1fKouKSkfmmiWgjLxkX3FQ1Ny5Wcno7VQcheG4-26Q@mail.gmail.com>
-Subject: Re: [PATCH -next] drm/amdgpu: fix error return code in amdgpu_acpi_init()
+        Mon, 24 May 2021 15:51:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1621885788;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=/ks2ewGQDMjkPlSXbPudMhSXdnsqWMPCcsnAWLRBS1E=;
+        b=aIQftwuS+cKmr4KmrZMg1LS30Ez7HtrQ/tKndFFtb3Aac+UlI39NgGLg6hr90rUMCk6gHo
+        SWbpvAQYDg7BkmlJR7UFbbyBBrIsVp5w7XHyeBUHHnCXuVro4NQOtiaTITSiMYpq/Ue+Pl
+        mTe2rluGcvZjRr0MszUPSoWA3e8Vi34=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-473-oba3XaYtNWq1VGhUF2Fz9w-1; Mon, 24 May 2021 15:49:44 -0400
+X-MC-Unique: oba3XaYtNWq1VGhUF2Fz9w-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2CACD107ACC7;
+        Mon, 24 May 2021 19:49:43 +0000 (UTC)
+Received: from x1.home.shazbot.org (ovpn-113-225.phx2.redhat.com [10.3.113.225])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 72678E14D;
+        Mon, 24 May 2021 19:49:39 +0000 (UTC)
+Date:   Mon, 24 May 2021 13:49:38 -0600
+From:   Alex Williamson <alex.williamson@redhat.com>
 To:     Wei Yongjun <weiyongjun1@huawei.com>
-Cc:     Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Prike Liang <Prike.Liang@amd.com>,
-        Lijo Lazar <lijo.lazar@amd.com>,
-        Rajneesh Bhardwaj <rajneesh.bhardwaj@amd.com>,
-        Ye Bin <yebin10@huawei.com>, Likun Gao <Likun.Gao@amd.com>,
-        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
-        Hulk Robot <hulkci@huawei.com>,
-        kernel-janitors@vger.kernel.org,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     Gerd Hoffmann <kraxel@redhat.com>,
+        "Kirti Wankhede" <kwankhede@nvidia.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        <kvm@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        Hulk Robot <hulkci@huawei.com>
+Subject: Re: [PATCH -next v2] samples: vfio-mdev: fix error handing in
+ mdpy_fb_probe()
+Message-ID: <20210524134938.0d736615@x1.home.shazbot.org>
+In-Reply-To: <20210520133641.1421378-1-weiyongjun1@huawei.com>
+References: <20210520133641.1421378-1-weiyongjun1@huawei.com>
+Organization: Red Hat
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, May 24, 2021 at 9:25 AM Wei Yongjun <weiyongjun1@huawei.com> wrote:
->
-> Fix to return a negative error code from the error handling
-> case instead of 0, as done elsewhere in this function.
+On Thu, 20 May 2021 13:36:41 +0000
+Wei Yongjun <weiyongjun1@huawei.com> wrote:
 
-I don't see any other cases in this function where we return an error.
-It could arguably be made a void.  All of these APCI methods are
-optional.
-
-Alex
-
->
-> Fixes: 77bf762f8b30 ("drm/amdgpu/acpi: unify ATCS handling (v3)")
+> Fix to return a negative error code from the framebuffer_alloc() error
+> handling case instead of 0, also release regions in some error handing
+> cases.
+> 
+> Fixes: cacade1946a4 ("sample: vfio mdev display - guest driver")
 > Reported-by: Hulk Robot <hulkci@huawei.com>
 > Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 > ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
-> index 49563ff87f1a..9564690b21b4 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
-> @@ -895,12 +895,15 @@ int amdgpu_acpi_init(struct amdgpu_device *adev)
->  atcs:
->         /* Probe for ATCS, and initialize it if found */
->         atcs_handle = amdgpu_atcs_probe_handle(handle);
-> -       if (!atcs_handle)
-> +       if (!atcs_handle) {
-> +               ret = -ENODEV;
->                 goto out;
-> +       }
->
->         atcs = kzalloc(sizeof(*atcs), GFP_KERNEL);
->         if (!atcs) {
->                 DRM_WARN("Not enough memory to initialize ATCS\n");
-> +               ret = -ENOMEM;
->                 goto out;
->         }
->         atcs->handle = atcs_handle;
->
+> v1 -> v2: add missing regions release.
+> ---
+>  samples/vfio-mdev/mdpy-fb.c | 13 +++++++++----
+>  1 file changed, 9 insertions(+), 4 deletions(-)
+> 
+> diff --git a/samples/vfio-mdev/mdpy-fb.c b/samples/vfio-mdev/mdpy-fb.c
+> index 21dbf63d6e41..9ec93d90e8a5 100644
+> --- a/samples/vfio-mdev/mdpy-fb.c
+> +++ b/samples/vfio-mdev/mdpy-fb.c
+> @@ -117,22 +117,27 @@ static int mdpy_fb_probe(struct pci_dev *pdev,
+>  	if (format != DRM_FORMAT_XRGB8888) {
+>  		pci_err(pdev, "format mismatch (0x%x != 0x%x)\n",
+>  			format, DRM_FORMAT_XRGB8888);
+> -		return -EINVAL;
+> +		ret = -EINVAL;
+> +		goto err_release_regions;
+>  	}
+>  	if (width < 100	 || width > 10000) {
+>  		pci_err(pdev, "width (%d) out of range\n", width);
+> -		return -EINVAL;
+> +		ret = -EINVAL;
+> +		goto err_release_regions;
+>  	}
+>  	if (height < 100 || height > 10000) {
+>  		pci_err(pdev, "height (%d) out of range\n", height);
+> -		return -EINVAL;
+> +		ret = -EINVAL;
+> +		goto err_release_regions;
+>  	}
+>  	pci_info(pdev, "mdpy found: %dx%d framebuffer\n",
+>  		 width, height);
+>  
+>  	info = framebuffer_alloc(sizeof(struct mdpy_fb_par), &pdev->dev);
+> -	if (!info)
+> +	if (!info) {
+> +		ret = -ENOMEM;
+>  		goto err_release_regions;
+> +	}
+>  	pci_set_drvdata(pdev, info);
+>  	par = info->par;
+>  
+> 
+
+Thanks for adding the extra error cases.  Applied to vfio for-linus
+branch for v5.13.  Thanks,
+
+Alex
+
