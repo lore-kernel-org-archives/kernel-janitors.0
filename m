@@ -2,107 +2,141 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2E45C4707F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 25 May 2021 19:23:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3DDBC2B9F8
+	for <kernel-janitors@archiver.kernel.org>; Tue, 25 May 2021 19:32:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9294961420
-	for <kernel-janitors@archiver.kernel.org>; Tue, 25 May 2021 19:23:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD62F613FA
+	for <kernel-janitors@archiver.kernel.org>; Tue, 25 May 2021 19:32:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232496AbhEYTY6 (ORCPT
+        id S229982AbhEYTda (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 25 May 2021 15:24:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48838 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232308AbhEYTY6 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 25 May 2021 15:24:58 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 48A1A61417;
-        Tue, 25 May 2021 19:23:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1621970608;
-        bh=UO65MsW5+yB2jxZcSd7Il+YyAtlpHOYMoAQRFy/mYzY=;
-        h=Date:From:To:Subject:References:In-Reply-To:From;
-        b=L6l4HDmFszt2vUhTcBq6ATvzX0JTKdtjQQ+y2qgaqaRWEDPHhWXQl4YvAKxJEIB4e
-         BOibmDOtdIceMRNK6gdUsazpPaU02B8PJ1r3TB4dutbHjxw6lT9mqV87vGFidkWeWN
-         oBfdo4gM7kob1DfYNwpoB+EYPyXQjlInsx/2u3ik09qJXW62hbtlSspp9g3rlsdbLh
-         o42NwaLjpKK8a2yOGiklV4HocIc3L4M2Soo+0p9q/5ed9JAxltPKqA4vJ+paDSJrYs
-         MjIxcgs2FtgxjckbmX0bzeeXpCxA57RoZIQg/4DBJCzZMgZ0ZfLt52dt5wRH7te++A
-         P5rewMfx89QSw==
-Date:   Tue, 25 May 2021 21:23:25 +0200
-From:   Wolfram Sang <wsa@kernel.org>
-To:     Akash Asthana <akashast@codeaurora.org>,
-        Colin King <colin.king@canonical.com>,
-        Alok Chauhan <alokc@codeaurora.org>,
-        Andy Gross <agross@kernel.org>, linux-i2c@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i2c: qcom-geni: fix spelling mistake "unepxected" ->
- "unexpected"
-Message-ID: <YK1OrYO77rXlivZI@kunai>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-        Akash Asthana <akashast@codeaurora.org>,
-        Colin King <colin.king@canonical.com>,
-        Alok Chauhan <alokc@codeaurora.org>, Andy Gross <agross@kernel.org>,
-        linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20191103212204.13606-1-colin.king@canonical.com>
- <74e71d14-9f27-6a44-f253-4756ba124695@codeaurora.org>
- <ee839cf4-6310-aa4e-6ed2-322f20343953@codeaurora.org>
- <YK1Oc2wVZ7Y7qgya@kunai>
+        Tue, 25 May 2021 15:33:30 -0400
+Received: from smtp06.smtpout.orange.fr ([80.12.242.128]:52438 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229907AbhEYTd3 (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 25 May 2021 15:33:29 -0400
+Received: from [192.168.1.18] ([86.243.172.93])
+        by mwinf5d64 with ME
+        id 97Xv2500221Fzsu037Xvxk; Tue, 25 May 2021 21:31:58 +0200
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 25 May 2021 21:31:58 +0200
+X-ME-IP: 86.243.172.93
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] mmc: mxs-mmc: Disable the 'reg_vmmc' regulator when
+ needed
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Doug Anderson <dianders@chromium.org>,
+        Rui Miguel Silva <rmfrfs@gmail.com>,
+        Chris Ball <cjb@laptop.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+References: <d05074c11962a046ff9c2f457c240432ca8a7194.1621600443.git.christophe.jaillet@wanadoo.fr>
+ <CAPDyKFrS3wdYs3AQtjZEOsLzNvxgy1n3EfxZ+a8w8J8rH8kQ-w@mail.gmail.com>
+Message-ID: <7c973bfd-8fc3-026d-351c-dc00e92c8b01@wanadoo.fr>
+Date:   Tue, 25 May 2021 21:31:55 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="e0xijyBadRQCRWG0"
-Content-Disposition: inline
-In-Reply-To: <YK1Oc2wVZ7Y7qgya@kunai>
+In-Reply-To: <CAPDyKFrS3wdYs3AQtjZEOsLzNvxgy1n3EfxZ+a8w8J8rH8kQ-w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Le 24/05/2021 à 15:59, Ulf Hansson a écrit :
+> On Fri, 21 May 2021 at 14:36, Christophe JAILLET
+> <christophe.jaillet@wanadoo.fr> wrote:
+>>
+>> The 'reg_vmmc' regulator is never disabled. Neither in the error handling
+>> of the probe, nor in the remove function.
+>>
+>> Add a managed action to do the required clean-up before a 'regulator_put()'
+>> call.
+>>
+>> Fixes: 4dc5a79f1350 ("mmc: mxs-mmc: enable regulator for mmc slot")
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>>   drivers/mmc/host/mxs-mmc.c | 11 +++++++++++
+>>   1 file changed, 11 insertions(+)
+>>
+>> diff --git a/drivers/mmc/host/mxs-mmc.c b/drivers/mmc/host/mxs-mmc.c
+>> index 947581de7860..b043d53dd728 100644
+>> --- a/drivers/mmc/host/mxs-mmc.c
+>> +++ b/drivers/mmc/host/mxs-mmc.c
+>> @@ -552,6 +552,13 @@ static const struct of_device_id mxs_mmc_dt_ids[] = {
+>>   };
+>>   MODULE_DEVICE_TABLE(of, mxs_mmc_dt_ids);
+>>
+>> +static void regulator_disable_action(void *_data)
+>> +{
+>> +       struct regulator *regulator = _data;
+>> +
+>> +       regulator_disable(regulator);
+>> +}
+>> +
+>>   static int mxs_mmc_probe(struct platform_device *pdev)
+>>   {
+>>          struct device_node *np = pdev->dev.of_node;
+>> @@ -591,6 +598,10 @@ static int mxs_mmc_probe(struct platform_device *pdev)
+>>                                  "Failed to enable vmmc regulator: %d\n", ret);
+>>                          goto out_mmc_free;
+>>                  }
+>> +               ret = devm_add_action_or_reset(&pdev->dev,
+>> +                                       regulator_disable_action, reg_vmmc);
+>> +               if (ret)
+>> +                       goto out_mmc_free;
+> 
+> Even if this improves the behaviour, there is a standardized way for
+> how we deal with regulators for mmc.
+> 
+> 1. Call mmc_regulator_get_supply() during probe to fetch the optional
+> regulator. If a regulator is found a corresponding OCR mask, in
+> host->ocr_avail is assigned.
+> 
+> 2. In the ->set_ios() callback, invoke mmc_regulator_set_ocr(). This
+> will also set the correct voltage-level and turn on/off the regulator,
+> depending on the requested OCR/voltage-level.
 
---e0xijyBadRQCRWG0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi,
+I don't know this API.
+I've tried to look at a few drivers to see how it was used, but it 
+didn't help me either.
 
-On Tue, May 25, 2021 at 09:22:27PM +0200, Wolfram Sang wrote:
-> On Mon, Jul 27, 2020 at 01:28:56PM +0530, Akash Asthana wrote:
-> >=20
-> > On 7/27/2020 1:25 PM, Akash Asthana wrote:
-> > >=20
-> > > On 11/4/2019 2:52 AM, Colin King wrote:
-> > > > From: Colin Ian King <colin.king@canonical.com>
-> > > >=20
-> > > > There is a spelling mistake in an error message string, fix it.
-> > > >=20
-> > > > Signed-off-by: Colin Ian King <colin.king@canonical.com>
->=20
-> Applied to for-next, thanks!
+So, I won't be able to provide any other proposal on this. It would only 
+be trial/error.
+It is yours if something needs to be fixed here.
 
-Oops, I mean for-current, sorry for the noise!
+Anyway, thanks for your time for answering and trying to show the right 
+direction.
 
+CJ
 
---e0xijyBadRQCRWG0
-Content-Type: application/pgp-signature; name="signature.asc"
+> 
+>>          }
+>>
+>>          ssp->clk = devm_clk_get(&pdev->dev, NULL);
+>> --
+>> 2.30.2
+>>
+> 
+> Kind regards
+> Uffe
+> 
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmCtTq0ACgkQFA3kzBSg
-KbbU6g/+NfQJCmAPWtlAjl18CMC/CKgYgOKNMn9cCWs/Rh9C2TVbEM3WmIZgECLZ
-5FK2RtcCgK/jUD0EPmeHxbo6XO/ud08iGHgr1L2uS9RQ99e/1VUwIHVkSUVfzRPV
-N9MOtUp+DQAqP/0zIlGGR7+LaxOZbRZlOdi93BQ15PlXiD6lV9bOvty4fexcJ75T
-t5fKvVtvSi1/0Be/YJHHEO3RpEpai2NZJEwQwmyFDMWsntr0uelkN7/dJSC2hvhW
-UufOQS/Vy0+C75riCgf/v47lsunUmvC+UJ2/gWc5oBEOt+wIRPVBeCi+IGKN58Jc
-2XoS5RDYFFELBb+wOfSThcvjrnV1fzFWWheViFAN1reFypc3ORXdOzw0V4nTk1lH
-XI3GhY5RYhr4r/r9XQY7FHY3PLWfyCQM4H59vEuSpVMyVhwjOI80dla8kmLpApua
-MjJyv+z1ervSNI1G+YhAdqpRxoWivJzaVw2QqyAjFLAiKDDtq9O0aaiRXkDI4wYe
-LsQKgPIqpnRtp1AgBiyjeKfMit9AvFXP6kr8SEOBHXpd2rcVb1indCsLRFBmHLcd
-RTHnUDwcoaOs/vDd7KNBnmqFriALrJLlLldx/vCtLJooRotWPBXR0ZZGzLj2UEAz
-UZDROnRtptn+bltVWGtp6qnTLJQJIBwBr81+wMsiHBNK2efFteM=
-=0AJi
------END PGP SIGNATURE-----
-
---e0xijyBadRQCRWG0--
