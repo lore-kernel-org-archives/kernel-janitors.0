@@ -2,124 +2,103 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A07D1C4707F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 25 May 2021 19:02:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 126ABC4707F
+	for <kernel-janitors@archiver.kernel.org>; Tue, 25 May 2021 19:22:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7ED166141C
-	for <kernel-janitors@archiver.kernel.org>; Tue, 25 May 2021 19:02:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1FAE6140F
+	for <kernel-janitors@archiver.kernel.org>; Tue, 25 May 2021 19:22:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232133AbhEYTDu (ORCPT
+        id S232231AbhEYTYB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 25 May 2021 15:03:50 -0400
-Received: from smtp06.smtpout.orange.fr ([80.12.242.128]:23407 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231389AbhEYTDu (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 25 May 2021 15:03:50 -0400
-Received: from [192.168.1.18] ([86.243.172.93])
-        by mwinf5d64 with ME
-        id 972H2500921Fzsu0372JbJ; Tue, 25 May 2021 21:02:19 +0200
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 25 May 2021 21:02:19 +0200
-X-ME-IP: 86.243.172.93
-Subject: Re: [PATCH -next v2] samples: vfio-mdev: fix error handing in
- mdpy_fb_probe()
-To:     Alex Williamson <alex.williamson@redhat.com>,
-        Wei Yongjun <weiyongjun1@huawei.com>
-Cc:     Gerd Hoffmann <kraxel@redhat.com>,
-        Kirti Wankhede <kwankhede@nvidia.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>, kvm@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
-References: <20210520133641.1421378-1-weiyongjun1@huawei.com>
- <20210524134938.0d736615@x1.home.shazbot.org>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Message-ID: <1de50564-b251-2eb7-9bcc-4ce347a85bcb@wanadoo.fr>
-Date:   Tue, 25 May 2021 21:02:17 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.2
+        Tue, 25 May 2021 15:24:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48542 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230029AbhEYTYB (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 25 May 2021 15:24:01 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 74FF2613F9;
+        Tue, 25 May 2021 19:22:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1621970551;
+        bh=WNXCsny2RCHObuthw2EADUIfUrtcdPzIFkEJVokSliE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=M1+FHRbf4nJcJ7uClpGPZP2H4rs4bO7eRu39nr4NQVLT49+4iEp96YhkFbkiyV8+h
+         16ae4fMV5LiYWt8MGdhUV+dE0ca/hy7Cc4WULLsMfZ49GhyW7G6lgDKjrDUZzPtOo2
+         WevIhRrCTcMZkSYTpjQ9M2kaIQjRCbuIh055TWJ9qY+4ohnU2dEfRqhdxuCSHbBu8y
+         muvFfUreJvUYPrUTplZxo5bSgI9G1P8QU8UybT5lNP4zr72l9Jc8Csg9XuQB3ZGaj/
+         if4icxsI+tj6u7duxUXkblC7h/nW7kUTfz/JvcV/MIIPcucfsmQQuaDC2v6EXGiZec
+         7Fs/nFM1eoChg==
+Date:   Tue, 25 May 2021 21:22:27 +0200
+From:   Wolfram Sang <wsa@kernel.org>
+To:     Akash Asthana <akashast@codeaurora.org>
+Cc:     Colin King <colin.king@canonical.com>,
+        Alok Chauhan <alokc@codeaurora.org>,
+        Andy Gross <agross@kernel.org>, linux-i2c@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] i2c: qcom-geni: fix spelling mistake "unepxected" ->
+ "unexpected"
+Message-ID: <YK1Oc2wVZ7Y7qgya@kunai>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+        Akash Asthana <akashast@codeaurora.org>,
+        Colin King <colin.king@canonical.com>,
+        Alok Chauhan <alokc@codeaurora.org>, Andy Gross <agross@kernel.org>,
+        linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20191103212204.13606-1-colin.king@canonical.com>
+ <74e71d14-9f27-6a44-f253-4756ba124695@codeaurora.org>
+ <ee839cf4-6310-aa4e-6ed2-322f20343953@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20210524134938.0d736615@x1.home.shazbot.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="nCkcUKPtdBEoVDN0"
+Content-Disposition: inline
+In-Reply-To: <ee839cf4-6310-aa4e-6ed2-322f20343953@codeaurora.org>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 24/05/2021 à 21:49, Alex Williamson a écrit :
-> On Thu, 20 May 2021 13:36:41 +0000
-> Wei Yongjun <weiyongjun1@huawei.com> wrote:
-> 
->> Fix to return a negative error code from the framebuffer_alloc() error
->> handling case instead of 0, also release regions in some error handing
->> cases.
->>
->> Fixes: cacade1946a4 ("sample: vfio mdev display - guest driver")
->> Reported-by: Hulk Robot <hulkci@huawei.com>
->> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
->> ---
->> v1 -> v2: add missing regions release.
->> ---
->>   samples/vfio-mdev/mdpy-fb.c | 13 +++++++++----
->>   1 file changed, 9 insertions(+), 4 deletions(-)
->>
->> diff --git a/samples/vfio-mdev/mdpy-fb.c b/samples/vfio-mdev/mdpy-fb.c
->> index 21dbf63d6e41..9ec93d90e8a5 100644
->> --- a/samples/vfio-mdev/mdpy-fb.c
->> +++ b/samples/vfio-mdev/mdpy-fb.c
->> @@ -117,22 +117,27 @@ static int mdpy_fb_probe(struct pci_dev *pdev,
->>   	if (format != DRM_FORMAT_XRGB8888) {
->>   		pci_err(pdev, "format mismatch (0x%x != 0x%x)\n",
->>   			format, DRM_FORMAT_XRGB8888);
->> -		return -EINVAL;
->> +		ret = -EINVAL;
->> +		goto err_release_regions;
->>   	}
->>   	if (width < 100	 || width > 10000) {
->>   		pci_err(pdev, "width (%d) out of range\n", width);
->> -		return -EINVAL;
->> +		ret = -EINVAL;
->> +		goto err_release_regions;
->>   	}
->>   	if (height < 100 || height > 10000) {
->>   		pci_err(pdev, "height (%d) out of range\n", height);
->> -		return -EINVAL;
->> +		ret = -EINVAL;
->> +		goto err_release_regions;
->>   	}
->>   	pci_info(pdev, "mdpy found: %dx%d framebuffer\n",
->>   		 width, height);
->>   
->>   	info = framebuffer_alloc(sizeof(struct mdpy_fb_par), &pdev->dev);
->> -	if (!info)
->> +	if (!info) {
->> +		ret = -ENOMEM;
->>   		goto err_release_regions;
->> +	}
->>   	pci_set_drvdata(pdev, info);
->>   	par = info->par;
->>   
->>
-> 
-> Thanks for adding the extra error cases.  Applied to vfio for-linus
-> branch for v5.13.  Thanks,
-> 
-> Alex
-> 
-> 
 
-Hi,
-doesn't the initial pci_enable_device also requires a corresponding 
-pci_disable_device, both in the error handling path, and in the remove 
-function?
+--nCkcUKPtdBEoVDN0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-just my 2c,
+On Mon, Jul 27, 2020 at 01:28:56PM +0530, Akash Asthana wrote:
+>=20
+> On 7/27/2020 1:25 PM, Akash Asthana wrote:
+> >=20
+> > On 11/4/2019 2:52 AM, Colin King wrote:
+> > > From: Colin Ian King <colin.king@canonical.com>
+> > >=20
+> > > There is a spelling mistake in an error message string, fix it.
+> > >=20
+> > > Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-CJ
+Applied to for-next, thanks!
 
+
+--nCkcUKPtdBEoVDN0
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmCtTm8ACgkQFA3kzBSg
+KbZgKRAAnyWAZ+jU7Wvk4KvlmkOuniDeoaabLpp7+s4m0cOKT64cmGkWj/lrHhgs
+vsxQ9sshWV67CM3OojdPUcMh7lrz9RDQi6cS11HTgvAsWWJm2PTtJVGtjzS0CoBv
+WX0k4i285ErYVKwmLXjcxTfEnATiBlWwp5JqiC4+PNiM1KWWZiSWUUiUAHBEWwlO
+dwT3uPg2c+T690QHn2eGxVenIN6nrjbSnBK8/3x8Kyy05+m80XLN99Dy7LdFK3js
+VO69dug210Y3Ms5JPBvyV8nbmlNFuJ5S4PvsJ3i8YJigaAgECAv0nX6+RON0DI9J
+qrjBKVfgTX/KK/gZHSzHkCjBabmImcVrND9xhd/cGmYCKxSfNQrTs1e59uiJrTkm
+fAsooNSnZSaI/N3xpfqY3npa+uk+RlSoCkYeKF9VCHNAIApAPFYNW7y3GAVUNLBF
+uppFxZ9L7k4/ZsGtqfpSla/nOyEhjQMB1JG/16wsb24CkB0Ocq3wePtxpq1VkKtR
+j0NACJ4FrXJPDzloP5L+1FbI5QTGmPnDnT5sZmCOtGcXdsDbch7Vd5M65Dzm9ffF
+b5O8b8exhdTP5Yi/7RTCL9N5Je2k+JvVBVhZxMn3yfZ52m9AHtdmaeuNr4L4ZPtX
+mzPuFUXNLRjYeOoudy5+i9zam2ZbP5XuWoLoSuJ3MLg5FeNyEGg=
+=xvMw
+-----END PGP SIGNATURE-----
+
+--nCkcUKPtdBEoVDN0--
