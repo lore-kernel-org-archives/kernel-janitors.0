@@ -2,125 +2,74 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,HK_RANDOM_FROM,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB473C47087
-	for <kernel-janitors@archiver.kernel.org>; Tue, 25 May 2021 20:49:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2B11C47088
+	for <kernel-janitors@archiver.kernel.org>; Tue, 25 May 2021 22:30:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AC2D66140F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 25 May 2021 20:49:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB4076140B
+	for <kernel-janitors@archiver.kernel.org>; Tue, 25 May 2021 22:30:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231416AbhEYUuk (ORCPT
+        id S232855AbhEYWbm (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 25 May 2021 16:50:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48752 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230445AbhEYUuj (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 25 May 2021 16:50:39 -0400
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDEB3C061574;
-        Tue, 25 May 2021 13:49:07 -0700 (PDT)
-Received: by mail-wm1-x331.google.com with SMTP id y184-20020a1ce1c10000b02901769b409001so13581685wmg.3;
-        Tue, 25 May 2021 13:49:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:content-transfer-encoding:date:message-id:from:to:cc
-         :subject:references:in-reply-to;
-        bh=jII/VVluno3yfO2v6lRJ0YYluonaqN09SkqoJIS1cfw=;
-        b=fGLl/uDUZ+ISpUMFDUVq4paXMAAcK8ivEawXPm/C/YVAyiEPUTIO2tzCtv8WI2nbrH
-         be5r5SldPYICUq5Ben/JBlbhYCk1mj+/Iqkn5PkmvwfF/2pvyiO4mQR8ElDiVAE7Q2x6
-         uBDKeUNW9zqpwJpiLRGO5/ZUsuAe/UuTTUcbsiJ87U8BgyO3ofgQdyDIz+3kvdVlHIku
-         YfDHuwpjjV0du9bxq4NCw1htoCpNhoGXeVGYnItCTmoySovuDOFeR32BsYyGp7MS+dbd
-         MlswfwWXIxRGlwyT67DGBj+kmjyoKXPpsf1UVTI2pq8W/p6Lc0Qe/usnZzV51rHkvZ4p
-         C5+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:date
-         :message-id:from:to:cc:subject:references:in-reply-to;
-        bh=jII/VVluno3yfO2v6lRJ0YYluonaqN09SkqoJIS1cfw=;
-        b=nUwz0sW5BISxktlxdo5ElJi3zi0iiYxQEnbzu0p23X26zzfQV4RHEFzB4ebzsuEifu
-         DEzvwyVejmd6FL3lSg+G5mMZ+bXNPetSG5xMJEKYodum/Y7q9+1U3t+8XF3H+FUKEnkN
-         0vZERgwNnffgCUvCGVErR6FVYqVHPwckvuTEN4fYJEEda543M2+zQXajfWZKeRyJRRnN
-         T93zSgQv3l4iUuZ+CfBERwUVf1CznaCwn7c/G6stMxKH4k83/0XrSui0XW+VlGyvX1dc
-         NIgQ/B1UJY6C7KyD1vRYHu+qBWzkUDCjI8WgozVIoj3tdfeYpPZMH3ViDyBpDmp3/dpq
-         djaw==
-X-Gm-Message-State: AOAM5308lTiwi7bbRaBPZT/EazxgSZd/vUHg6IMAKhbWUIQE0oieBDU8
-        p/Z8TR8ABbDq4i549ycNAHE=
-X-Google-Smtp-Source: ABdhPJzJlfJfIB37PK009nDgE5KqNXiHeyp9sColJ243inXDZKrA09gHbcrlDVRcpswW/LYb8SDsCg==
-X-Received: by 2002:a05:600c:3795:: with SMTP id o21mr18550555wmr.70.1621975746411;
-        Tue, 25 May 2021 13:49:06 -0700 (PDT)
-Received: from localhost (a109-49-46-234.cpe.netcabo.pt. [109.49.46.234])
-        by smtp.gmail.com with ESMTPSA id m11sm11668543wmq.33.2021.05.25.13.49.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 May 2021 13:49:05 -0700 (PDT)
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date:   Tue, 25 May 2021 21:49:04 +0100
-Message-Id: <CBMMEYM3MW7O.2U464BSP8CLQA@arch-thunder>
-From:   "Rui Miguel Silva" <rmfrfs@gmail.com>
-To:     "Wei Yongjun" <weiyongjun1@huawei.com>,
-        "Laurent Pinchart" <laurent.pinchart@ideasonboard.com>,
-        "Steve Longerbeam" <slongerbeam@gmail.com>,
-        "Philipp Zabel" <p.zabel@pengutronix.de>,
-        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Shawn Guo" <shawnguo@kernel.org>,
-        "Sascha Hauer" <s.hauer@pengutronix.de>
-Cc:     <linux-media@vger.kernel.org>, <linux-staging@lists.linux.dev>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <kernel-janitors@vger.kernel.org>, "Hulk Robot" <hulkci@huawei.com>
-Subject: Re: [PATCH -next] media: imx: imx7_mipi_csis: Fix error return code
- in mipi_csis_async_register()
-References: <20210524133552.2365248-1-weiyongjun1@huawei.com>
-In-Reply-To: <20210524133552.2365248-1-weiyongjun1@huawei.com>
+        Tue, 25 May 2021 18:31:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58306 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232782AbhEYWbl (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 25 May 2021 18:31:41 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPS id 3B1716142B;
+        Tue, 25 May 2021 22:30:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1621981811;
+        bh=OP+2crvbUdflDGJs+DZrs5Hsm5swebZhY7rgc9PlKBE=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=uM2XgOdHN/pg7sxi8fpJGFYmT7i4nOO8OI0B+IOeEo/J3jta35kTJNQ+aYnQKhP33
+         +bXK0zKDrUnUBQOf7ITanU3cLPn1VWEnzHCqeIg+hYjrqNQmTI9gH2bqtcb2GL55Nt
+         NAZe58AvHWKBGjxvS6TMpBGAt8IrtZb5TCwCI2gfnQLO+ARQ9HkLTTqI+mBN3XsZ66
+         Ls270nYNwvJypzlrjKxy9hzQcDUs+afHRw6X3iSlW6XzmRxv1pqsc5Z6BxjRmDb2zy
+         Wb5xUWflAsmVWZQfqNJmJaNUYnBRo/q5+153pwcWghxH85vLxvVmL/CeZu/miDfMWY
+         jyqwiJnbL0KzQ==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] net: bridge: remove redundant assignment
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <162198181119.18500.5211226351903654537.git-patchwork-notify@kernel.org>
+Date:   Tue, 25 May 2021 22:30:11 +0000
+References: <YKx3ptXPNbd3Bdiq@fedora>
+In-Reply-To: <YKx3ptXPNbd3Bdiq@fedora>
+To:     Nigel Christian <nigel.l.christian@gmail.com>
+Cc:     roopa@nvidia.com, nikolay@nvidia.com, davem@davemloft.net,
+        kuba@kernel.org, bridge@lists.linux-foundation.org,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Yongjun,
-Thanks for the patch.
+Hello:
 
-On Mon May 24, 2021 at 2:35 PM WEST, Wei Yongjun wrote:
+This patch was applied to netdev/net-next.git (refs/heads/master):
 
-> Fix to return negative error code -EINVAL from the error handling
-> case instead of 0, as done elsewhere in this function.
->
-> Fixes: 88fc81388df9 ("media: imx: imx7_mipi_csis: Reject invalid data-lan=
-es settings")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+On Mon, 24 May 2021 23:05:58 -0500 you wrote:
+> The variable br is assigned a value that is not being read after
+> exiting case IFLA_STATS_LINK_XSTATS_SLAVE. The assignment is
+> redundant and can be removed.
+> 
+> Addresses-Coverity ("Unused value")
+> Signed-off-by: Nigel Christian <nigel.l.christian@gmail.com>
+> 
+> [...]
 
-Looks good to me, thanks.
+Here is the summary with links:
+  - net: bridge: remove redundant assignment
+    https://git.kernel.org/netdev/net-next/c/ccc882f0d838
 
-Acked-by: Rui Miguel Silva <rmfrfs@gmail.com>
-
-------
-Cheers,
-     Rui
-> ---
->  drivers/staging/media/imx/imx7-mipi-csis.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/staging/media/imx/imx7-mipi-csis.c b/drivers/staging=
-/media/imx/imx7-mipi-csis.c
-> index d573f3475d28..9cd3c86fee58 100644
-> --- a/drivers/staging/media/imx/imx7-mipi-csis.c
-> +++ b/drivers/staging/media/imx/imx7-mipi-csis.c
-> @@ -1175,6 +1175,7 @@ static int mipi_csis_async_register(struct csi_stat=
-e *state)
->  		if (vep.bus.mipi_csi2.data_lanes[i] !=3D i + 1) {
->  			dev_err(state->dev,
->  				"data lanes reordering is not supported");
-> +			ret =3D -EINVAL;
->  			goto err_parse;
->  		}
->  	}
-
+You are awesome, thank you!
+--
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
