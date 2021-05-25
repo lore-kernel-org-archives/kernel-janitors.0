@@ -2,106 +2,100 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-23.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6964BC2B9F7
-	for <kernel-janitors@archiver.kernel.org>; Tue, 25 May 2021 03:12:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC23FC2B9F8
+	for <kernel-janitors@archiver.kernel.org>; Tue, 25 May 2021 04:06:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 45BC561042
-	for <kernel-janitors@archiver.kernel.org>; Tue, 25 May 2021 03:12:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7EF026141F
+	for <kernel-janitors@archiver.kernel.org>; Tue, 25 May 2021 04:06:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230153AbhEYDOE (ORCPT
+        id S230108AbhEYEHb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 24 May 2021 23:14:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35406 "EHLO
+        Tue, 25 May 2021 00:07:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47278 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229837AbhEYDOB (ORCPT
+        with ESMTP id S229488AbhEYEHa (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 24 May 2021 23:14:01 -0400
-Received: from mail-vs1-xe34.google.com (mail-vs1-xe34.google.com [IPv6:2607:f8b0:4864:20::e34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B55CC061756
-        for <kernel-janitors@vger.kernel.org>; Mon, 24 May 2021 20:12:31 -0700 (PDT)
-Received: by mail-vs1-xe34.google.com with SMTP id s15so15333466vsi.4
-        for <kernel-janitors@vger.kernel.org>; Mon, 24 May 2021 20:12:31 -0700 (PDT)
+        Tue, 25 May 2021 00:07:30 -0400
+Received: from mail-ua1-x92b.google.com (mail-ua1-x92b.google.com [IPv6:2607:f8b0:4864:20::92b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8977BC061574;
+        Mon, 24 May 2021 21:06:01 -0700 (PDT)
+Received: by mail-ua1-x92b.google.com with SMTP id 105so10055760uak.8;
+        Mon, 24 May 2021 21:06:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hh7q+u3PQs9FnCxo0AI97z4AFr42pPhmERTNRWxYl0c=;
-        b=pPXJSdf1rv8WcUA+8rxTpsWTTY/1xJu459KUDSraz0BvARuyDptlGU7qL5L/isPq+a
-         2rmpSzPpaA+iEDOXysTVWR4m5H1ClEhPlBFApVxWczHVFk4/uQvcl7LpYlXVGxL6NJb+
-         j8SN5ITdF7sSfCrDQCW1fjqiiqL1mUsT6th9/qQ08V380C/xr0sUFL4xNGTfkT2pk5qc
-         y7cfQnInqzZ/C6ae2h5gANNI/GuCEvo/RvHo4WsYr+d0+fmYK9JHLUxb5Vz2M4W0/9cT
-         MNDEv0U95sLCbVG03876RoHCYsv5qvzkHM3sZBryNzw9DlLgWXInbxg1NVwXErXmBv/k
-         lZOQ==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=ZiDan9dXVGzljGcSZKPfVX7WRo0V+2AqnJOcfMOnQww=;
+        b=D5n2ETATta69U/pKGykggX+cHanHnfSc4MGuc/zzkdsYy0gS2VnxMtN1jTzfC2Xi9b
+         EFP4ml6Jn6LiTajZfcR07sevsMrBTcEdKnczR4wW6T9uNy4GGV+jXmwPjOsUNMsKTl26
+         WoHtHm8NzgE2hQSefNie/YnfJV49fsXeFOa/mDJ/rX9CS9jEtGJ/BYfkB09Ae0brt83G
+         fRFx+tLyEs/6NwTZoVm0mgEeW9QGfz9gt+qId6FIpNpqho98MZxeXNSWRir3f9qQjhE0
+         0KYaqCSpp6uJsAAsFiMBCQdww+sjp+3/mm9suTWZViFs2SaOTZWotbks4mUavRRhimFS
+         dMpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hh7q+u3PQs9FnCxo0AI97z4AFr42pPhmERTNRWxYl0c=;
-        b=IJYdky37TdlY/Y3B56i7PLJ74Vfk6aC9/F7kppRvxPJ5t1Cf6r8cs1cdkgdx9X7hNZ
-         nQV+kdv4tO8rJTHwd4pjLdsp3U7N0s9DUpBUWcfHMLcPyPWajx/5GinjdVP4wJYoBEnK
-         wgJuWg1kw9ol+3PWlXBa9G8uqHNKY+8eR478b+Lb/hXN8dJaJ5OVQIm+lslTbriV+v3f
-         LjPKMq3gz0nozaqAp1g4uh0bB/48LrX95elABhfeB6PXbzLBs3uSHnOVa71zH03aP4qM
-         WWlSB2VZa0VyV+7BzSONoPFfGRSHCv8rb297uFkR7eJLHdl/Ibuln/G8etswzjS3daXN
-         pcPw==
-X-Gm-Message-State: AOAM530bIh8KoIYRvqogaJSxIRWxJClKacEWwslYZK0RkRcKxA0a6S8I
-        DXW2Pt3fXKE7crWjJq/Y27uO+Z2IMbQvTFaTqvvMSA==
-X-Google-Smtp-Source: ABdhPJzDNKuzhu/VY8WMVLKih3X9JxaBhy4/5X7QuXPBaO7TvjQysRGO/wkZZ+5IjcGaLvnzDWJWHbChjgKdSmzQ/Y8=
-X-Received: by 2002:a67:d71e:: with SMTP id p30mr25147437vsj.25.1621912350170;
- Mon, 24 May 2021 20:12:30 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=ZiDan9dXVGzljGcSZKPfVX7WRo0V+2AqnJOcfMOnQww=;
+        b=YOZsgZFr9x8elghWtJl+wwSDHNs3ACusaCsEs1Ig8eJLdYnxrdww3HB72Jx/q3gH0X
+         ZN0Fo/icEQpOLDAyXv+ahccANgByFhXdkz5Jss5tGU99azAfi9OlqrtVa0lu1KxY3tpO
+         AezAB9QSJ9tRI1mUE4vAtOdJex35HG2TpJiYM8AMvYKW+GLd7vlGb5bH73i+1sn+6Nwm
+         1/imo4rhm8e9PipQRMM3YzyMl23pC/HYMKUd+vh9WlsWwzKxOSEqudLzxv6TAoMHwb/o
+         eBghxsq6gooXvFFKybKyOdF6qwqI1eepO/hCuJif+/0xfTWYlNyNGsH6D3iUssvT+J3z
+         1VDw==
+X-Gm-Message-State: AOAM531ZyqdgHr58LO4Wk9m4YN0gH5bKsrWxdjlUwvUDtA44ukv6hm1z
+        oc22w+f9tGF0wKzPSHv9EJhWjbmni5tXpaKQ
+X-Google-Smtp-Source: ABdhPJwFqkNf60V+7GW8tjF1W7eozuZ4lQ0psHNdtj6/sAvFyNl0pQUyYOdFzN7XhjNyoab/aIv01w==
+X-Received: by 2002:ab0:4385:: with SMTP id l5mr24758938ual.76.1621915560802;
+        Mon, 24 May 2021 21:06:00 -0700 (PDT)
+Received: from fedora ([187.252.202.191])
+        by smtp.gmail.com with ESMTPSA id 34sm1336421vkn.53.2021.05.24.21.05.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 May 2021 21:06:00 -0700 (PDT)
+Date:   Mon, 24 May 2021 23:05:58 -0500
+From:   Nigel Christian <nigel.l.christian@gmail.com>
+To:     Roopa Prabhu <roopa@nvidia.com>,
+        Nikolay Aleksandrov <nikolay@nvidia.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>
+Cc:     bridge@lists.linux-foundation.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] net: bridge: remove redundant assignment
+Message-ID: <YKx3ptXPNbd3Bdiq@fedora>
 MIME-Version: 1.0
-References: <20210524133704.2432555-1-weiyongjun1@huawei.com>
-In-Reply-To: <20210524133704.2432555-1-weiyongjun1@huawei.com>
-From:   Badhri Jagan Sridharan <badhri@google.com>
-Date:   Mon, 24 May 2021 20:11:53 -0700
-Message-ID: <CAPTae5K=4NpOanziQWA7RmdxYrxwwgfKixKi1SG6LrMZcCh=0w@mail.gmail.com>
-Subject: Re: [PATCH -next] usb: typec: tcpci: Make symbol 'tcpci_apply_rc' static
-To:     Wei Yongjun <weiyongjun1@huawei.com>
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        USB <linux-usb@vger.kernel.org>, kernel-janitors@vger.kernel.org,
-        Hulk Robot <hulkci@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, May 24, 2021 at 6:26 AM Wei Yongjun <weiyongjun1@huawei.com> wrote:
->
-> The sparse tool complains as follows:
->
-> drivers/usb/typec/tcpm/tcpci.c:118:5: warning:
->  symbol 'tcpci_apply_rc' was not declared. Should it be static?
->
-> This symbol is not used outside of tcpci.c, so marks it static.
->
-> Fixes: 7257fbc7c598 ("usb: typec: tcpci: Implement callback for apply_rc")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-Reviewed-by: Badhri Jagan Sridharan <badhri@google.com>
+The variable br is assigned a value that is not being read after
+exiting case IFLA_STATS_LINK_XSTATS_SLAVE. The assignment is
+redundant and can be removed.
 
-> ---
->  drivers/usb/typec/tcpm/tcpci.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/usb/typec/tcpm/tcpci.c b/drivers/usb/typec/tcpm/tcpci.c
-> index 34b5095cc84f..22862345d1ab 100644
-> --- a/drivers/usb/typec/tcpm/tcpci.c
-> +++ b/drivers/usb/typec/tcpm/tcpci.c
-> @@ -115,7 +115,8 @@ static int tcpci_set_cc(struct tcpc_dev *tcpc, enum typec_cc_status cc)
->         return 0;
->  }
->
-> -int tcpci_apply_rc(struct tcpc_dev *tcpc, enum typec_cc_status cc, enum typec_cc_polarity polarity)
-> +static int tcpci_apply_rc(struct tcpc_dev *tcpc, enum typec_cc_status cc,
-> +                         enum typec_cc_polarity polarity)
->  {
->         struct tcpci *tcpci = tcpc_to_tcpci(tcpc);
->         unsigned int reg;
->
+Addresses-Coverity ("Unused value")
+Signed-off-by: Nigel Christian <nigel.l.christian@gmail.com>
+---
+ net/bridge/br_netlink.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/net/bridge/br_netlink.c b/net/bridge/br_netlink.c
+index e4e6e991313e..8642e56059fb 100644
+--- a/net/bridge/br_netlink.c
++++ b/net/bridge/br_netlink.c
+@@ -1644,7 +1644,6 @@ static size_t br_get_linkxstats_size(const struct net_device *dev, int attr)
+ 		p = br_port_get_rtnl(dev);
+ 		if (!p)
+ 			return 0;
+-		br = p->br;
+ 		vg = nbp_vlan_group(p);
+ 		break;
+ 	default:
+-- 
+2.31.1
+
