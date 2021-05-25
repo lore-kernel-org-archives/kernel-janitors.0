@@ -2,96 +2,124 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45576C2B9F8
-	for <kernel-janitors@archiver.kernel.org>; Tue, 25 May 2021 18:52:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A07D1C4707F
+	for <kernel-janitors@archiver.kernel.org>; Tue, 25 May 2021 19:02:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 230A861249
-	for <kernel-janitors@archiver.kernel.org>; Tue, 25 May 2021 18:52:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7ED166141C
+	for <kernel-janitors@archiver.kernel.org>; Tue, 25 May 2021 19:02:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232030AbhEYSxf (ORCPT
+        id S232133AbhEYTDu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 25 May 2021 14:53:35 -0400
-Received: from smtp06.smtpout.orange.fr ([80.12.242.128]:44938 "EHLO
+        Tue, 25 May 2021 15:03:50 -0400
+Received: from smtp06.smtpout.orange.fr ([80.12.242.128]:23407 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231389AbhEYSxe (ORCPT
+        with ESMTP id S231389AbhEYTDu (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 25 May 2021 14:53:34 -0400
-Received: from localhost.localdomain ([86.243.172.93])
+        Tue, 25 May 2021 15:03:50 -0400
+Received: from [192.168.1.18] ([86.243.172.93])
         by mwinf5d64 with ME
-        id 96rz2500221Fzsu036rzjK; Tue, 25 May 2021 20:52:01 +0200
-X-ME-Helo: localhost.localdomain
+        id 972H2500921Fzsu0372JbJ; Tue, 25 May 2021 21:02:19 +0200
+X-ME-Helo: [192.168.1.18]
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 25 May 2021 20:52:01 +0200
+X-ME-Date: Tue, 25 May 2021 21:02:19 +0200
 X-ME-IP: 86.243.172.93
+Subject: Re: [PATCH -next v2] samples: vfio-mdev: fix error handing in
+ mdpy_fb_probe()
+To:     Alex Williamson <alex.williamson@redhat.com>,
+        Wei Yongjun <weiyongjun1@huawei.com>
+Cc:     Gerd Hoffmann <kraxel@redhat.com>,
+        Kirti Wankhede <kwankhede@nvidia.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>, kvm@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+References: <20210520133641.1421378-1-weiyongjun1@huawei.com>
+ <20210524134938.0d736615@x1.home.shazbot.org>
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     gregkh@linuxfoundation.org, jirislaby@kernel.org,
-        akpm@linux-foundation.org, stefani@seibold.net
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [PATCH] tty: nozomi: Fix the error handling path of 'nozomi_card_init()'
-Date:   Tue, 25 May 2021 20:51:57 +0200
-Message-Id: <e28c2e92c7475da25b03d022ea2d6dcf1ba807a2.1621968629.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+Message-ID: <1de50564-b251-2eb7-9bcc-4ce347a85bcb@wanadoo.fr>
+Date:   Tue, 25 May 2021 21:02:17 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.2
 MIME-Version: 1.0
+In-Reply-To: <20210524134938.0d736615@x1.home.shazbot.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The error handling path is broken and we may un-register things that have
-never been registered.
+Le 24/05/2021 à 21:49, Alex Williamson a écrit :
+> On Thu, 20 May 2021 13:36:41 +0000
+> Wei Yongjun <weiyongjun1@huawei.com> wrote:
+> 
+>> Fix to return a negative error code from the framebuffer_alloc() error
+>> handling case instead of 0, also release regions in some error handing
+>> cases.
+>>
+>> Fixes: cacade1946a4 ("sample: vfio mdev display - guest driver")
+>> Reported-by: Hulk Robot <hulkci@huawei.com>
+>> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+>> ---
+>> v1 -> v2: add missing regions release.
+>> ---
+>>   samples/vfio-mdev/mdpy-fb.c | 13 +++++++++----
+>>   1 file changed, 9 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/samples/vfio-mdev/mdpy-fb.c b/samples/vfio-mdev/mdpy-fb.c
+>> index 21dbf63d6e41..9ec93d90e8a5 100644
+>> --- a/samples/vfio-mdev/mdpy-fb.c
+>> +++ b/samples/vfio-mdev/mdpy-fb.c
+>> @@ -117,22 +117,27 @@ static int mdpy_fb_probe(struct pci_dev *pdev,
+>>   	if (format != DRM_FORMAT_XRGB8888) {
+>>   		pci_err(pdev, "format mismatch (0x%x != 0x%x)\n",
+>>   			format, DRM_FORMAT_XRGB8888);
+>> -		return -EINVAL;
+>> +		ret = -EINVAL;
+>> +		goto err_release_regions;
+>>   	}
+>>   	if (width < 100	 || width > 10000) {
+>>   		pci_err(pdev, "width (%d) out of range\n", width);
+>> -		return -EINVAL;
+>> +		ret = -EINVAL;
+>> +		goto err_release_regions;
+>>   	}
+>>   	if (height < 100 || height > 10000) {
+>>   		pci_err(pdev, "height (%d) out of range\n", height);
+>> -		return -EINVAL;
+>> +		ret = -EINVAL;
+>> +		goto err_release_regions;
+>>   	}
+>>   	pci_info(pdev, "mdpy found: %dx%d framebuffer\n",
+>>   		 width, height);
+>>   
+>>   	info = framebuffer_alloc(sizeof(struct mdpy_fb_par), &pdev->dev);
+>> -	if (!info)
+>> +	if (!info) {
+>> +		ret = -ENOMEM;
+>>   		goto err_release_regions;
+>> +	}
+>>   	pci_set_drvdata(pdev, info);
+>>   	par = info->par;
+>>   
+>>
+> 
+> Thanks for adding the extra error cases.  Applied to vfio for-linus
+> branch for v5.13.  Thanks,
+> 
+> Alex
+> 
+> 
 
-Update the loops index accordingly.
+Hi,
+doesn't the initial pci_enable_device also requires a corresponding 
+pci_disable_device, both in the error handling path, and in the remove 
+function?
 
-Fixes: 9842c38e9176 ("kfifo: fix warn_unused_result")
-Suggested-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-PORT_MDM is 0, so it does not really matter, but I wonder why one of the
-for loop starts at PORT_MDM, while the other one explicitly starts at 0.
+just my 2c,
 
-We have the same in the remove function, where 0 is used in both cases.
----
- drivers/tty/nozomi.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/tty/nozomi.c b/drivers/tty/nozomi.c
-index b85d4beabc1f..0c80f25c8c3d 100644
---- a/drivers/tty/nozomi.c
-+++ b/drivers/tty/nozomi.c
-@@ -1378,7 +1378,7 @@ static int nozomi_card_init(struct pci_dev *pdev,
- 			NOZOMI_NAME, dc);
- 	if (unlikely(ret)) {
- 		dev_err(&pdev->dev, "can't request irq %d\n", pdev->irq);
--		goto err_free_kfifo;
-+		goto err_free_all_kfifo;
- 	}
- 
- 	DBG1("base_addr: %p", dc->base_addr);
-@@ -1416,13 +1416,15 @@ static int nozomi_card_init(struct pci_dev *pdev,
- 	return 0;
- 
- err_free_tty:
--	for (i = 0; i < MAX_PORT; ++i) {
-+	for (i--; i >= 0; i--) {
- 		tty_unregister_device(ntty_driver, dc->index_start + i);
- 		tty_port_destroy(&dc->port[i].port);
- 	}
- 	free_irq(pdev->irq, dc);
-+err_free_all_kfifo:
-+	i = MAX_PORT;
- err_free_kfifo:
--	for (i = 0; i < MAX_PORT; i++)
-+	for (i--; i >= PORT_MDM; i--)
- 		kfifo_free(&dc->port[i].fifo_ul);
- err_free_sbuf:
- 	kfree(dc->send_buf);
--- 
-2.30.2
+CJ
 
