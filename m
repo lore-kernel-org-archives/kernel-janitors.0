@@ -2,100 +2,88 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC23FC2B9F8
-	for <kernel-janitors@archiver.kernel.org>; Tue, 25 May 2021 04:06:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F35EDC2B9F8
+	for <kernel-janitors@archiver.kernel.org>; Tue, 25 May 2021 08:54:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7EF026141F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 25 May 2021 04:06:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF56A61419
+	for <kernel-janitors@archiver.kernel.org>; Tue, 25 May 2021 08:54:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230108AbhEYEHb (ORCPT
+        id S231492AbhEYI4J (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 25 May 2021 00:07:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47278 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229488AbhEYEHa (ORCPT
+        Tue, 25 May 2021 04:56:09 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:44732 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230140AbhEYI4J (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 25 May 2021 00:07:30 -0400
-Received: from mail-ua1-x92b.google.com (mail-ua1-x92b.google.com [IPv6:2607:f8b0:4864:20::92b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8977BC061574;
-        Mon, 24 May 2021 21:06:01 -0700 (PDT)
-Received: by mail-ua1-x92b.google.com with SMTP id 105so10055760uak.8;
-        Mon, 24 May 2021 21:06:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=ZiDan9dXVGzljGcSZKPfVX7WRo0V+2AqnJOcfMOnQww=;
-        b=D5n2ETATta69U/pKGykggX+cHanHnfSc4MGuc/zzkdsYy0gS2VnxMtN1jTzfC2Xi9b
-         EFP4ml6Jn6LiTajZfcR07sevsMrBTcEdKnczR4wW6T9uNy4GGV+jXmwPjOsUNMsKTl26
-         WoHtHm8NzgE2hQSefNie/YnfJV49fsXeFOa/mDJ/rX9CS9jEtGJ/BYfkB09Ae0brt83G
-         fRFx+tLyEs/6NwTZoVm0mgEeW9QGfz9gt+qId6FIpNpqho98MZxeXNSWRir3f9qQjhE0
-         0KYaqCSpp6uJsAAsFiMBCQdww+sjp+3/mm9suTWZViFs2SaOTZWotbks4mUavRRhimFS
-         dMpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=ZiDan9dXVGzljGcSZKPfVX7WRo0V+2AqnJOcfMOnQww=;
-        b=YOZsgZFr9x8elghWtJl+wwSDHNs3ACusaCsEs1Ig8eJLdYnxrdww3HB72Jx/q3gH0X
-         ZN0Fo/icEQpOLDAyXv+ahccANgByFhXdkz5Jss5tGU99azAfi9OlqrtVa0lu1KxY3tpO
-         AezAB9QSJ9tRI1mUE4vAtOdJex35HG2TpJiYM8AMvYKW+GLd7vlGb5bH73i+1sn+6Nwm
-         1/imo4rhm8e9PipQRMM3YzyMl23pC/HYMKUd+vh9WlsWwzKxOSEqudLzxv6TAoMHwb/o
-         eBghxsq6gooXvFFKybKyOdF6qwqI1eepO/hCuJif+/0xfTWYlNyNGsH6D3iUssvT+J3z
-         1VDw==
-X-Gm-Message-State: AOAM531ZyqdgHr58LO4Wk9m4YN0gH5bKsrWxdjlUwvUDtA44ukv6hm1z
-        oc22w+f9tGF0wKzPSHv9EJhWjbmni5tXpaKQ
-X-Google-Smtp-Source: ABdhPJwFqkNf60V+7GW8tjF1W7eozuZ4lQ0psHNdtj6/sAvFyNl0pQUyYOdFzN7XhjNyoab/aIv01w==
-X-Received: by 2002:ab0:4385:: with SMTP id l5mr24758938ual.76.1621915560802;
-        Mon, 24 May 2021 21:06:00 -0700 (PDT)
-Received: from fedora ([187.252.202.191])
-        by smtp.gmail.com with ESMTPSA id 34sm1336421vkn.53.2021.05.24.21.05.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 May 2021 21:06:00 -0700 (PDT)
-Date:   Mon, 24 May 2021 23:05:58 -0500
-From:   Nigel Christian <nigel.l.christian@gmail.com>
-To:     Roopa Prabhu <roopa@nvidia.com>,
-        Nikolay Aleksandrov <nikolay@nvidia.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>
-Cc:     bridge@lists.linux-foundation.org, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] net: bridge: remove redundant assignment
-Message-ID: <YKx3ptXPNbd3Bdiq@fedora>
+        Tue, 25 May 2021 04:56:09 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212])
+        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <colin.king@canonical.com>)
+        id 1llSpi-00039G-AK; Tue, 25 May 2021 08:54:38 +0000
+Subject: Re: [PATCH][next] ttyprintk: remove redundant initialization of
+ variable i
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20210518182126.140978-1-colin.king@canonical.com>
+ <YKeqUBZ+Zy/mvZNQ@kroah.com>
+From:   Colin Ian King <colin.king@canonical.com>
+Message-ID: <73809ad0-cdb0-695e-c9aa-55b6f8f3710b@canonical.com>
+Date:   Tue, 25 May 2021 09:54:37 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+In-Reply-To: <YKeqUBZ+Zy/mvZNQ@kroah.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The variable br is assigned a value that is not being read after
-exiting case IFLA_STATS_LINK_XSTATS_SLAVE. The assignment is
-redundant and can be removed.
+On 21/05/2021 13:40, Greg Kroah-Hartman wrote:
+> On Tue, May 18, 2021 at 07:21:26PM +0100, Colin King wrote:
+>> From: Colin Ian King <colin.king@canonical.com>
+>>
+>> The variable i is being initialized with a value that is never read,
+>> it is being updated later on.  The assignment is redundant and can be
+>> removed.
+>>
+>> Addresses-Coverity: ("Unused value")
+>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>> ---
+>>  drivers/char/ttyprintk.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/char/ttyprintk.c b/drivers/char/ttyprintk.c
+>> index 219fa1382396..230b2c9b3e3c 100644
+>> --- a/drivers/char/ttyprintk.c
+>> +++ b/drivers/char/ttyprintk.c
+>> @@ -52,7 +52,7 @@ static void tpk_flush(void)
+>>  
+>>  static int tpk_printk(const unsigned char *buf, int count)
+>>  {
+>> -	int i = tpk_curr;
+>> +	int i;
+>>  
+>>  	for (i = 0; i < count; i++) {
+>>  		if (tpk_curr >= TPK_STR_SIZE) {
+>> -- 
+>> 2.31.1
+>>
+> 
+> This is not ok for what is currently in linux-next :(
 
-Addresses-Coverity ("Unused value")
-Signed-off-by: Nigel Christian <nigel.l.christian@gmail.com>
----
- net/bridge/br_netlink.c | 1 -
- 1 file changed, 1 deletion(-)
+Hmm, it applies cleanly on today's linux-next, do you mind re-apply it?
 
-diff --git a/net/bridge/br_netlink.c b/net/bridge/br_netlink.c
-index e4e6e991313e..8642e56059fb 100644
---- a/net/bridge/br_netlink.c
-+++ b/net/bridge/br_netlink.c
-@@ -1644,7 +1644,6 @@ static size_t br_get_linkxstats_size(const struct net_device *dev, int attr)
- 		p = br_port_get_rtnl(dev);
- 		if (!p)
- 			return 0;
--		br = p->br;
- 		vg = nbp_vlan_group(p);
- 		break;
- 	default:
--- 
-2.31.1
+
+> 
+> greg k-h
+> 
 
