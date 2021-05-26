@@ -2,90 +2,100 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3294C47082
-	for <kernel-janitors@archiver.kernel.org>; Wed, 26 May 2021 14:21:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B0FBC47082
+	for <kernel-janitors@archiver.kernel.org>; Wed, 26 May 2021 14:32:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8F0A360E0C
-	for <kernel-janitors@archiver.kernel.org>; Wed, 26 May 2021 14:21:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77D19613B4
+	for <kernel-janitors@archiver.kernel.org>; Wed, 26 May 2021 14:32:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234657AbhEZOXQ (ORCPT
+        id S234607AbhEZOeY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 26 May 2021 10:23:16 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:59789 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234554AbhEZOXP (ORCPT
+        Wed, 26 May 2021 10:34:24 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:5561 "EHLO
+        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234416AbhEZOeY (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 26 May 2021 10:23:15 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212])
-        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <colin.king@canonical.com>)
-        id 1lluPn-0007xi-2R; Wed, 26 May 2021 14:21:43 +0000
-Subject: Re: [PATCH][next] fs: dlm: Fix memory leak of object mh
-To:     Alexander Ahring Oder Aring <aahringo@redhat.com>
-Cc:     Christine Caulfield <ccaulfie@redhat.com>,
-        David Teigland <teigland@redhat.com>, cluster-devel@redhat.com,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210526134039.3448305-1-colin.king@canonical.com>
- <CAK-6q+jXZ2MGUw3QPKHwoNDMLdTookO7rq9LpGNx=ZGAn1pqOQ@mail.gmail.com>
-From:   Colin Ian King <colin.king@canonical.com>
-Message-ID: <88c69c56-7296-01a7-e283-26811a52243e@canonical.com>
-Date:   Wed, 26 May 2021 15:21:42 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        Wed, 26 May 2021 10:34:24 -0400
+Received: from dggems706-chm.china.huawei.com (unknown [172.30.72.58])
+        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4FqtdK0lHNzmV6V;
+        Wed, 26 May 2021 22:29:57 +0800 (CST)
+Received: from dggeml759-chm.china.huawei.com (10.1.199.138) by
+ dggems706-chm.china.huawei.com (10.3.19.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
+ 15.1.2176.2; Wed, 26 May 2021 22:32:48 +0800
+Received: from localhost.localdomain (10.175.102.38) by
+ dggeml759-chm.china.huawei.com (10.1.199.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2176.2; Wed, 26 May 2021 22:32:48 +0800
+From:   Wei Yongjun <weiyongjun1@huawei.com>
+To:     <weiyongjun1@huawei.com>, Simon Shields <simon@lineageos.org>,
+        "Krzysztof Kozlowski" <krzysztof.kozlowski@canonical.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH -next] ASoC: samsung: midas_wm1811: Fix build error when CONFIG_GPIOLIB is not set
+Date:   Wed, 26 May 2021 14:43:39 +0000
+Message-ID: <20210526144339.2392592-1-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <CAK-6q+jXZ2MGUw3QPKHwoNDMLdTookO7rq9LpGNx=ZGAn1pqOQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.102.38]
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggeml759-chm.china.huawei.com (10.1.199.138)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 26/05/2021 15:19, Alexander Ahring Oder Aring wrote:
-> Hi,
-> 
-> On Wed, May 26, 2021 at 9:40 AM Colin King <colin.king@canonical.com> wrote:
->>
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> There is an error return path that is not kfree'ing mh after
->> it has been successfully allocates.  Fix this by free'ing it.
->>
->> Addresses-Coverity: ("Resource leak")
->> Fixes: a070a91cf140 ("fs: dlm: add more midcomms hooks")
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>  fs/dlm/rcom.c | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/fs/dlm/rcom.c b/fs/dlm/rcom.c
->> index 085f21966c72..19298edc1573 100644
->> --- a/fs/dlm/rcom.c
->> +++ b/fs/dlm/rcom.c
->> @@ -393,6 +393,7 @@ static void receive_rcom_lookup(struct dlm_ls *ls, struct dlm_rcom *rc_in)
->>         if (rc_in->rc_id == 0xFFFFFFFF) {
->>                 log_error(ls, "receive_rcom_lookup dump from %d", nodeid);
->>                 dlm_dump_rsb_name(ls, rc_in->rc_buf, len);
->> +               kfree(mh);
->>                 return;
-> 
-> This seems to be a bigger issue, we cannot revert the buffer
-> allocation with a kfree, we cannot revert it at all. We should avoid
-> any error handling between create_rcom() and send_rcom(). In general
-> between get_buffer/commit_buffer.
-> 
-> I don't see a problem with moving the error handling before
-> create_rcom(). That should fix the issue.
+Fix build error when CONFIG_GPIOLIB is not set:
 
-Good point, I'll send a V2 in a while
+sound/soc/samsung/midas_wm1811.c: In function 'midas_fm_set':
+sound/soc/samsung/midas_wm1811.c:205:3: error:
+ implicit declaration of function 'gpiod_set_value_cansleep';
+ did you mean 'gpio_set_value_cansleep'? [-Werror=implicit-function-declaration]
+  205 |   gpiod_set_value_cansleep(priv->gpio_fm_sel, 1);
+      |   ^~~~~~~~~~~~~~~~~~~~~~~~
+      |   gpio_set_value_cansleep
+sound/soc/samsung/midas_wm1811.c: In function 'midas_probe':
+sound/soc/samsung/midas_wm1811.c:445:22: error:
+ implicit declaration of function 'devm_gpiod_get_optional';
+ did you mean 'devm_clk_get_optional'? [-Werror=implicit-function-declaration]
+  445 |  priv->gpio_fm_sel = devm_gpiod_get_optional(dev, "fm-sel", GPIOD_OUT_HIGH);
+      |                      ^~~~~~~~~~~~~~~~~~~~~~~
+      |                      devm_clk_get_optional
+sound/soc/samsung/midas_wm1811.c:445:61:
+ error: 'GPIOD_OUT_HIGH' undeclared (first use in this function);
+ did you mean 'GPIOF_INIT_HIGH'?
+  445 |  priv->gpio_fm_sel = devm_gpiod_get_optional(dev, "fm-sel", GPIOD_OUT_HIGH);
+      |                                                             ^~~~~~~~~~~~~~
+      |                                                             GPIOF_INIT_HIGH
 
-> 
-> - Alex
-> 
+Fixes: fd0ea9cd9698 ("ASoC: samsung: Add sound support for Midas boards")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ sound/soc/samsung/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
+index a2221ebb1b6a..22be597b1dd9 100644
+--- a/sound/soc/samsung/Kconfig
++++ b/sound/soc/samsung/Kconfig
+@@ -228,6 +228,7 @@ config SND_SOC_SAMSUNG_ARIES_WM8994
+ config SND_SOC_SAMSUNG_MIDAS_WM1811
+ 	tristate "SoC I2S Audio support for Midas boards"
+ 	depends on SND_SOC_SAMSUNG
++	depends on GPIOLIB
+ 	select SND_SAMSUNG_I2S
+ 	select SND_SOC_WM8994
+ 	help
 
