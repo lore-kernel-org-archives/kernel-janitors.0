@@ -2,57 +2,79 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA7F3C2B9F7
-	for <kernel-janitors@archiver.kernel.org>; Wed, 26 May 2021 09:03:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AA77C47088
+	for <kernel-janitors@archiver.kernel.org>; Wed, 26 May 2021 10:43:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AAFC7613CD
-	for <kernel-janitors@archiver.kernel.org>; Wed, 26 May 2021 09:03:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F074C613E1
+	for <kernel-janitors@archiver.kernel.org>; Wed, 26 May 2021 10:43:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233601AbhEZJEm (ORCPT
+        id S234138AbhEZKpU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 26 May 2021 05:04:42 -0400
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:36845 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233165AbhEZJEe (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 26 May 2021 05:04:34 -0400
-Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 5516B60014;
-        Wed, 26 May 2021 09:03:00 +0000 (UTC)
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Michael Walle <michael@walle.cc>
-Cc:     Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] mtd: core: Potential NULL dereference in mtd_otp_size()
-Date:   Wed, 26 May 2021 11:02:59 +0200
-Message-Id: <20210526090259.180775-1-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <YJ6Iw3iNvGycAWV6@mwanda>
-References: 
+        Wed, 26 May 2021 06:45:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53410 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234034AbhEZKpT (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 26 May 2021 06:45:19 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id B8275613D3;
+        Wed, 26 May 2021 10:43:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1622025828;
+        bh=XRJzbP0F2T6dGLVWdrRJRmZqSOX/XFTUkR8WZOHpvJI=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=Pyp7pq2CJoXIYdHTjVHDdRnQxRtSrMXj6R0Nxkdhjmt5xSesET3h0rsrgvuTyHfCO
+         AohLOXcw48UNqP9R0TIjzhv6pJh802C+2R0Of8BOpQnhQy8Osg+SEHX1+VJFt0cd7N
+         dBsWmrp1Hae3EICoXYBiiuJYjUciMOSc085aOqtQYpPLJZHv3EheqsU/h/SR5x2TSS
+         KXEbHuuJSuFgVDs0FZ6In16PW14ZdA4lVqOSUnR538db6Z5qYqDhxXBuUo8PMhQNtF
+         doqDF406lDyN+ZTQOthmqpM1qBuJVyU2jg1RNQtd930Za7+PHB4CPvSLXZncRj8W4k
+         2RmENB5eFcoMA==
+Date:   Wed, 26 May 2021 12:43:45 +0200 (CEST)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     Bixuan Cui <cuibixuan@huawei.com>
+cc:     Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH -next] HID: gt683r: add missing MODULE_DEVICE_TABLE
+In-Reply-To: <20210508031448.53445-1-cuibixuan@huawei.com>
+Message-ID: <nycvar.YFH.7.76.2105261243400.28378@cbobk.fhfr.pm>
+References: <20210508031448.53445-1-cuibixuan@huawei.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-X-linux-mtd-patch-notification: thanks
-X-linux-mtd-patch-commit: b'c3c8c051df3ee5042dd91593593a8b0e008f4c85'
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 2021-05-14 at 14:27:15 UTC, Dan Carpenter wrote:
-> If kmalloc() fails then it could lead to a NULL dereference.  Check and
-> return -ENOMEM on error.
+On Sat, 8 May 2021, Bixuan Cui wrote:
+
+> This patch adds missing MODULE_DEVICE_TABLE definition which generates
+> correct modalias for automatic loading of this driver when it is built
+> as an external module.
 > 
-> Fixes: 4b361cfa8624 ("mtd: core: add OTP nvmem provider support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Reviewed-by: Michael Walle <michael@walle.cc>
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Bixuan Cui <cuibixuan@huawei.com>
+> ---
+>  drivers/hid/hid-gt683r.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/hid/hid-gt683r.c b/drivers/hid/hid-gt683r.c
+> index 898871c8c768..29ccb0accfba 100644
+> --- a/drivers/hid/hid-gt683r.c
+> +++ b/drivers/hid/hid-gt683r.c
+> @@ -54,6 +54,7 @@ static const struct hid_device_id gt683r_led_id[] = {
+>  	{ HID_USB_DEVICE(USB_VENDOR_ID_MSI, USB_DEVICE_ID_MSI_GT683R_LED_PANEL) },
+>  	{ }
+>  };
+> +MODULE_DEVICE_TABLE(hid, gt683r_led_id);
+>  
+>  static void gt683r_brightness_set(struct led_classdev *led_cdev,
 
-Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git mtd/next, thanks.
+Applied, thanks.
 
-Miquel
+-- 
+Jiri Kosina
+SUSE Labs
+
