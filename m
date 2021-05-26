@@ -2,91 +2,92 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FD64C47088
-	for <kernel-janitors@archiver.kernel.org>; Wed, 26 May 2021 14:43:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0145EC47088
+	for <kernel-janitors@archiver.kernel.org>; Wed, 26 May 2021 14:46:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0452761159
-	for <kernel-janitors@archiver.kernel.org>; Wed, 26 May 2021 14:43:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA0AC61159
+	for <kernel-janitors@archiver.kernel.org>; Wed, 26 May 2021 14:46:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234974AbhEZOpX (ORCPT
+        id S235001AbhEZOsM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 26 May 2021 10:45:23 -0400
-Received: from mail-oi1-f179.google.com ([209.85.167.179]:36382 "EHLO
-        mail-oi1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234737AbhEZOpW (ORCPT
+        Wed, 26 May 2021 10:48:12 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:60464 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234970AbhEZOsK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 26 May 2021 10:45:22 -0400
-Received: by mail-oi1-f179.google.com with SMTP id t24so1726876oiw.3;
-        Wed, 26 May 2021 07:43:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Bwx+7lo4SfRWj6YJZuZRRCA4lszy3g5/1sk2W/GIqG8=;
-        b=Ecc9Gj7R5DnY5s+2tOjzyHz+UqdCkYy2AcIkQwnOyCkPMtcjdxVXdN7EZiYGnYSYgr
-         QbvIiRldX+PTuUSNU00a1XFYk+/tq7gu20uZJ+RrwW5crY6/2D4L0Ky4iLQ7Y+9pupKo
-         dQ4b9KB/SapZa3pghlSZANGWtlU3upUmffDhXAlxXct2Yr7wP4Jvj8+KmP3bUt+Ji7h+
-         QDcifHOqlPEt4G8HBomBC1cYbP+oUCQY3khSzr4KDgonpikmbZ+0J4dY6YY8O5Tlsmsp
-         BidcyIMwiCE7DCHNXTUf/hAiG4nJS3NPSFHMp1dAjmdFkS1Tivfw/NF5WSj1evrclQXk
-         6PkQ==
-X-Gm-Message-State: AOAM5311Sl9qTi+X9rv+DsoOBjL9f+n6FljMTGkcB45O4znW8BI90hxh
-        A1SvmexOuLDn5huA/hlfLhEbZTvd8yrEkj5pDjF/1UdQ/68=
-X-Google-Smtp-Source: ABdhPJw/XEgY8ojhUczCLVWlMHRKDt1AP9EPzVWiqzR/icVxLT9qbv6/l4ERqIRVlZZwLbfY0O66rTlT0i4Y5niduus=
-X-Received: by 2002:aca:1910:: with SMTP id l16mr2085180oii.69.1622040231145;
- Wed, 26 May 2021 07:43:51 -0700 (PDT)
+        Wed, 26 May 2021 10:48:10 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <colin.king@canonical.com>)
+        id 1llunN-00018X-LG; Wed, 26 May 2021 14:46:21 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Christine Caulfield <ccaulfie@redhat.com>,
+        David Teigland <teigland@redhat.com>,
+        Alexander Aring <aahringo@redhat.com>, cluster-devel@redhat.com
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH]  fs: dlm: Fix memory leak of object mh
+Date:   Wed, 26 May 2021 15:46:05 +0100
+Message-Id: <20210526144605.3751174-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-References: <20210526141252.3750231-1-colin.king@canonical.com>
-In-Reply-To: <20210526141252.3750231-1-colin.king@canonical.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Wed, 26 May 2021 16:43:40 +0200
-Message-ID: <CAJZ5v0hfi9mZb-9Zb5FGUn1mC9L8hAacpmDDzbDtB+prZczt4A@mail.gmail.com>
-Subject: Re: [PATCH][next] acpi: power: remove redundant initialization of
- variable result
-To:     Colin King <colin.king@canonical.com>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, May 26, 2021 at 4:12 PM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The variable result is being initialized with a value that is never
-> read, it is being updated later on. The assignment is redundant and
-> can be removed.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/acpi/power.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/acpi/power.c b/drivers/acpi/power.c
-> index 97c9a94a1a30..d86865c04f64 100644
-> --- a/drivers/acpi/power.c
-> +++ b/drivers/acpi/power.c
-> @@ -919,7 +919,7 @@ struct acpi_device *acpi_add_power_resource(acpi_handle handle)
->         union acpi_object acpi_object;
->         struct acpi_buffer buffer = { sizeof(acpi_object), &acpi_object };
->         acpi_status status;
-> -       int state, result = -ENODEV;
-> +       int state, result;
->
->         acpi_bus_get_device(handle, &device);
->         if (device)
-> --
+From: Colin Ian King <colin.king@canonical.com>
 
-Equivalent change is made in
+There is an error return path that is not kfree'ing mh after
+it has been successfully allocates.  Fix this by moving the
+call to create_rcom to after the check on rc_in->rc_id check
+to avoid this.
 
-https://patchwork.kernel.org/project/linux-acpi/patch/2786380.e9J7NaK4W3@kreacher/
+Thanks to Alexander Ahring Oder Aring for suggesting the
+correct way to fix this.
 
-Thanks!
+Addresses-Coverity: ("Resource leak")
+Fixes: a070a91cf140 ("fs: dlm: add more midcomms hooks")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+V2: don't kfree the object, instead move the check to before
+    the call to create_rcom
+---
+ fs/dlm/rcom.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/fs/dlm/rcom.c b/fs/dlm/rcom.c
+index 085f21966c72..a7727b9e5e83 100644
+--- a/fs/dlm/rcom.c
++++ b/fs/dlm/rcom.c
+@@ -385,10 +385,6 @@ static void receive_rcom_lookup(struct dlm_ls *ls, struct dlm_rcom *rc_in)
+ 	int error, ret_nodeid, nodeid = rc_in->rc_header.h_nodeid;
+ 	int len = rc_in->rc_header.h_length - sizeof(struct dlm_rcom);
+ 
+-	error = create_rcom(ls, nodeid, DLM_RCOM_LOOKUP_REPLY, 0, &rc, &mh);
+-	if (error)
+-		return;
+-
+ 	/* Old code would send this special id to trigger a debug dump. */
+ 	if (rc_in->rc_id == 0xFFFFFFFF) {
+ 		log_error(ls, "receive_rcom_lookup dump from %d", nodeid);
+@@ -396,6 +392,10 @@ static void receive_rcom_lookup(struct dlm_ls *ls, struct dlm_rcom *rc_in)
+ 		return;
+ 	}
+ 
++	error = create_rcom(ls, nodeid, DLM_RCOM_LOOKUP_REPLY, 0, &rc, &mh);
++	if (error)
++		return;
++
+ 	error = dlm_master_lookup(ls, nodeid, rc_in->rc_buf, len,
+ 				  DLM_LU_RECOVER_MASTER, &ret_nodeid, NULL);
+ 	if (error)
+-- 
+2.31.1
+
