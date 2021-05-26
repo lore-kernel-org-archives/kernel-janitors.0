@@ -3,75 +3,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4C5CC2B9F7
-	for <kernel-janitors@archiver.kernel.org>; Wed, 26 May 2021 08:53:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA7F3C2B9F7
+	for <kernel-janitors@archiver.kernel.org>; Wed, 26 May 2021 09:03:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9099D61408
-	for <kernel-janitors@archiver.kernel.org>; Wed, 26 May 2021 08:53:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AAFC7613CD
+	for <kernel-janitors@archiver.kernel.org>; Wed, 26 May 2021 09:03:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233220AbhEZIzM (ORCPT
+        id S233601AbhEZJEm (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 26 May 2021 04:55:12 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:50994 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233037AbhEZIzL (ORCPT
+        Wed, 26 May 2021 05:04:42 -0400
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:36845 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233165AbhEZJEe (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 26 May 2021 04:55:11 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <colin.king@canonical.com>)
-        id 1llpIJ-0001Yn-JM; Wed, 26 May 2021 08:53:39 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Christine Caulfield <ccaulfie@redhat.com>,
-        David Teigland <teigland@redhat.com>, cluster-devel@redhat.com
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] fs: dlm: Fix spelling mistake "stucked" -> "stuck"
-Date:   Wed, 26 May 2021 09:53:39 +0100
-Message-Id: <20210526085339.6604-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.31.1
+        Wed, 26 May 2021 05:04:34 -0400
+Received: (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 5516B60014;
+        Wed, 26 May 2021 09:03:00 +0000 (UTC)
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Michael Walle <michael@walle.cc>
+Cc:     Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] mtd: core: Potential NULL dereference in mtd_otp_size()
+Date:   Wed, 26 May 2021 11:02:59 +0200
+Message-Id: <20210526090259.180775-1-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <YJ6Iw3iNvGycAWV6@mwanda>
+References: 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+X-linux-mtd-patch-notification: thanks
+X-linux-mtd-patch-commit: b'c3c8c051df3ee5042dd91593593a8b0e008f4c85'
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Fri, 2021-05-14 at 14:27:15 UTC, Dan Carpenter wrote:
+> If kmalloc() fails then it could lead to a NULL dereference.  Check and
+> return -ENOMEM on error.
+> 
+> Fixes: 4b361cfa8624 ("mtd: core: add OTP nvmem provider support")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Reviewed-by: Michael Walle <michael@walle.cc>
 
-There are spelling mistake in log messages. Fix these.
+Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git mtd/next, thanks.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- fs/dlm/midcomms.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/fs/dlm/midcomms.c b/fs/dlm/midcomms.c
-index 35664950f6b7..4e36e418b6bf 100644
---- a/fs/dlm/midcomms.c
-+++ b/fs/dlm/midcomms.c
-@@ -591,7 +591,7 @@ dlm_midcomms_recv_node_lookup(int nodeid, const union dlm_packet *p,
- 					 * was failed, we try to reset and
- 					 * hope it will go on.
- 					 */
--					log_print("reset node %d because shutdown stucked",
-+					log_print("reset node %d because shutdown stuck",
- 						  node->nodeid);
- 
- 					midcomms_node_reset(node);
-@@ -1159,7 +1159,7 @@ void dlm_midcomms_add_member(int nodeid)
- 			 * was failed, we try to reset and
- 			 * hope it will go on.
- 			 */
--			log_print("reset node %d because shutdown stucked",
-+			log_print("reset node %d because shutdown stuck",
- 				  node->nodeid);
- 
- 			midcomms_node_reset(node);
--- 
-2.31.1
-
+Miquel
