@@ -7,36 +7,32 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AED49C47082
-	for <kernel-janitors@archiver.kernel.org>; Wed, 26 May 2021 14:05:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12668C47089
+	for <kernel-janitors@archiver.kernel.org>; Wed, 26 May 2021 14:12:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 94E34613C9
-	for <kernel-janitors@archiver.kernel.org>; Wed, 26 May 2021 14:05:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB66B613D3
+	for <kernel-janitors@archiver.kernel.org>; Wed, 26 May 2021 14:12:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233770AbhEZOGi (ORCPT
+        id S233897AbhEZOO1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 26 May 2021 10:06:38 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:59108 "EHLO
+        Wed, 26 May 2021 10:14:27 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:59533 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233890AbhEZOGh (ORCPT
+        with ESMTP id S233313AbhEZOO0 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 26 May 2021 10:06:37 -0400
+        Wed, 26 May 2021 10:14:26 -0400
 Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
         (Exim 4.93)
         (envelope-from <colin.king@canonical.com>)
-        id 1llu9b-0006g0-Hg; Wed, 26 May 2021 14:04:59 +0000
+        id 1lluHE-0007MV-Vt; Wed, 26 May 2021 14:12:53 +0000
 From:   Colin King <colin.king@canonical.com>
-To:     Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Alistair Popple <apopple@nvidia.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
+To:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] nouveau/svm: Fix missing failure check on call to make_device_exclusive_range
-Date:   Wed, 26 May 2021 15:04:59 +0100
-Message-Id: <20210526140459.3749959-1-colin.king@canonical.com>
+Subject: [PATCH][next] acpi: power: remove redundant initialization of variable result
+Date:   Wed, 26 May 2021 15:12:52 +0100
+Message-Id: <20210526141252.3750231-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -47,35 +43,28 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The call to make_device_exclusive_range can potentially fail leaving
-pointer page not initialized that leads to an uninitialized pointer
-read issue. Fix this by adding a check to see if the call failed and
-returning the error code.
+The variable result is being initialized with a value that is never
+read, it is being updated later on. The assignment is redundant and
+can be removed.
 
-Addresses-Coverity: ("Uninitialized pointer read")
-Fixes: c620bba9828c ("nouveau/svm: implement atomic SVM access")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/gpu/drm/nouveau/nouveau_svm.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/acpi/power.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_svm.c b/drivers/gpu/drm/nouveau/nouveau_svm.c
-index 84726a89e665..b913b4907088 100644
---- a/drivers/gpu/drm/nouveau/nouveau_svm.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_svm.c
-@@ -609,8 +609,10 @@ static int nouveau_atomic_range_fault(struct nouveau_svmm *svmm,
+diff --git a/drivers/acpi/power.c b/drivers/acpi/power.c
+index 97c9a94a1a30..d86865c04f64 100644
+--- a/drivers/acpi/power.c
++++ b/drivers/acpi/power.c
+@@ -919,7 +919,7 @@ struct acpi_device *acpi_add_power_resource(acpi_handle handle)
+ 	union acpi_object acpi_object;
+ 	struct acpi_buffer buffer = { sizeof(acpi_object), &acpi_object };
+ 	acpi_status status;
+-	int state, result = -ENODEV;
++	int state, result;
  
- 		notifier_seq = mmu_interval_read_begin(&notifier->notifier);
- 		mmap_read_lock(mm);
--		make_device_exclusive_range(mm, start, start + PAGE_SIZE,
--					    &page, drm->dev);
-+		ret = make_device_exclusive_range(mm, start, start + PAGE_SIZE,
-+						  &page, drm->dev);
-+		if (ret < 0)
-+			goto out;
- 		mmap_read_unlock(mm);
- 		if (!page) {
- 			ret = -EINVAL;
+ 	acpi_bus_get_device(handle, &device);
+ 	if (device)
 -- 
 2.31.1
 
