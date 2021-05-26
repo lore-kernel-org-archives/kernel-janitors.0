@@ -2,129 +2,101 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3E0BC47082
-	for <kernel-janitors@archiver.kernel.org>; Wed, 26 May 2021 19:14:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B031EC47088
+	for <kernel-janitors@archiver.kernel.org>; Wed, 26 May 2021 19:21:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ADC57613C3
-	for <kernel-janitors@archiver.kernel.org>; Wed, 26 May 2021 19:14:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D5E361248
+	for <kernel-janitors@archiver.kernel.org>; Wed, 26 May 2021 19:21:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233731AbhEZTPn (ORCPT
+        id S233595AbhEZTXG (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 26 May 2021 15:15:43 -0400
-Received: from mga09.intel.com ([134.134.136.24]:4652 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232133AbhEZTPn (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 26 May 2021 15:15:43 -0400
-IronPort-SDR: QMnrwOW15NHCyKQUcsXfEyhKaN+YGpvhU6sYZi0ZHs1jIhYip7cWpAEC84qDsGjnmiqjiybzm3
- yINYXocnJ7fg==
-X-IronPort-AV: E=McAfee;i="6200,9189,9996"; a="202559565"
-X-IronPort-AV: E=Sophos;i="5.82,331,1613462400"; 
-   d="scan'208";a="202559565"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 May 2021 12:13:59 -0700
-IronPort-SDR: dyeO1+srfGdFjB+wH7cI5+UrmQuk0122MlJYispTQe+At95uTTZDMU/dpNC4Zzf+NKevovnIJv
- /X0b4qLx/8Cw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.82,331,1613462400"; 
-   d="scan'208";a="444220112"
-Received: from marshy.an.intel.com (HELO [10.122.105.143]) ([10.122.105.143])
-  by fmsmga008.fm.intel.com with ESMTP; 26 May 2021 12:13:58 -0700
-Subject: Re: [PATCH] firmware: stratix10-svc: Fix a resource leak in an error
- handling path
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        gregkh@linuxfoundation.org, atull@kernel.org
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <0ca3f3ab139c53e846804455a1e7599ee8ae896a.1621621271.git.christophe.jaillet@wanadoo.fr>
-From:   Richard Gong <richard.gong@linux.intel.com>
-Message-ID: <f669ed42-348f-808b-afeb-9528d2ece6ee@linux.intel.com>
-Date:   Wed, 26 May 2021 14:13:12 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Wed, 26 May 2021 15:23:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43796 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232452AbhEZTXC (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 26 May 2021 15:23:02 -0400
+Received: from mail-qt1-x836.google.com (mail-qt1-x836.google.com [IPv6:2607:f8b0:4864:20::836])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A2FBC061756
+        for <kernel-janitors@vger.kernel.org>; Wed, 26 May 2021 12:21:26 -0700 (PDT)
+Received: by mail-qt1-x836.google.com with SMTP id c15so1745834qte.6
+        for <kernel-janitors@vger.kernel.org>; Wed, 26 May 2021 12:21:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=wI7tCNlcaTZmqH6g95a10WXByiu3PTAxzCVAG5uZNco=;
+        b=SM3f/vu2XiZrKAcI7L4W7BwbiSvj1ehZ0sxFk5BfEzmHNgjVe7BHFB9U6lkCE01h52
+         kWEj+xQnqO7fceVIc2CwmBHvDYJ536FMFmcdKNZhH/szoBmrBsS6sLB5dhe67VtEQKbn
+         ST0HkTO80trrnBilylR/5H7rQWiV/D4neNsVX08dKvlmnSM5n9ILkC1OsbKyJEHy+nt0
+         Iju4cArPuwH2Jn/2vznanYAbqSchzzPwXeQPyRid9E4ckMXp8xMY/WUBaWy2kEBavbX6
+         kOhCdvm98E6NzV8ZdCN2VpIvQ+jeilVyKIm5X4kZ0xl87sngJOcVnbb6bzVSPNz0rwj1
+         hSEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=wI7tCNlcaTZmqH6g95a10WXByiu3PTAxzCVAG5uZNco=;
+        b=OK8QFCRufV6Ne4WSbHhnzk6wugKdNt2iHV4ak0iBQTObWwY94jM2AhG0VfQvx9hTAj
+         MdiD1WovoMlBGDq32XW3ZDtty0O1FF+h0E1QQgjCo/ZNJxDxmXGybrCwySW7kuF2vlu/
+         lN/m9vYnt9r2jpHktfeTdXKaqRNlCh64omnaLGFPrOLE6H5ecwTnVFPtX0Z80x6n5K9v
+         l4X/5DGFKeEEjQpWIrZAuSRCx0D/sg2JXwMtYO4f+x2c9N/yi+U5TBnJplL4KDlHrWvZ
+         +fCxIt8AtTnebIpv0w7HRS4rOd44xT7/d4dwWOx+bL5HTGNLB9IFs4xqY/K+XBX0cUlk
+         tJZg==
+X-Gm-Message-State: AOAM533K0q+LDuwNIFa1VXB3uxEQ1k8cyQ/mxmXc5+OYZGxfdK3ZtSCK
+        3NZrMLMme+S6o0Tu0ICDQfhphw==
+X-Google-Smtp-Source: ABdhPJx3twK2Z0UVhtntwGDvGoua/9nmaJnAFQUJsqgCit0fyMZoTch2+UM/cuyHcYXCcGgh630hfw==
+X-Received: by 2002:ac8:4a0a:: with SMTP id x10mr17715979qtq.201.1622056885353;
+        Wed, 26 May 2021 12:21:25 -0700 (PDT)
+Received: from ziepe.ca ([206.223.160.26])
+        by smtp.gmail.com with ESMTPSA id 127sm2172724qkl.116.2021.05.26.12.21.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 May 2021 12:21:24 -0700 (PDT)
+Received: from jgg by mlx with local (Exim 4.94)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1llz5n-00FI2b-Re; Wed, 26 May 2021 16:21:23 -0300
+Date:   Wed, 26 May 2021 16:21:23 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Colin King <colin.king@canonical.com>
+Cc:     =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Alistair Popple <apopple@nvidia.com>, linux-mm@kvack.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][V2][next] mm: selftests: fix potential integer overflow
+ on shift of a int
+Message-ID: <20210526192123.GE1096940@ziepe.ca>
+References: <20210526170530.3766167-1-colin.king@canonical.com>
 MIME-Version: 1.0
-In-Reply-To: <0ca3f3ab139c53e846804455a1e7599ee8ae896a.1621621271.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210526170530.3766167-1-colin.king@canonical.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-
-Hi Jaillet,
-
-Thanks!
-
-On 5/21/21 1:22 PM, Christophe JAILLET wrote:
-> If an error occurs after a successful 'kfifo_alloc()' call, it must be
-> undone by a corresponding 'kfifo_free()' call, as already done in the
-> remove function.
+On Wed, May 26, 2021 at 06:05:30PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> While at it, move the 'platform_device_put()' call to this new error
-> handling path and explicitly return 0 in the success path.
+> The left shift of the int mapped is evaluated using 32 bit arithmetic
+> and then assigned to an unsigned long. In the case where mapped is
+> 0x80000 when PAGE_SHIFT is 12 will lead to the upper bits being
+> sign extended in the unsigned long. Larger values can lead to an
+> int overflow. Avoid this by making mapped an unsigned long.
 > 
-> Fixes: b5dc75c915cd ("firmware: stratix10-svc: extend svc to support new RSU features")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Addresses-Coverity: ("Uninitentional integer overflow")
+> Fixes: 8b2a105c3794 ("mm: selftests for exclusive device memory")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
->   drivers/firmware/stratix10-svc.c | 22 +++++++++++++++-------
->   1 file changed, 15 insertions(+), 7 deletions(-)
 > 
-> diff --git a/drivers/firmware/stratix10-svc.c b/drivers/firmware/stratix10-svc.c
-> index 3aa489dba30a..2a7687911c09 100644
-> --- a/drivers/firmware/stratix10-svc.c
-> +++ b/drivers/firmware/stratix10-svc.c
-> @@ -1034,24 +1034,32 @@ static int stratix10_svc_drv_probe(struct platform_device *pdev)
->   
->   	/* add svc client device(s) */
->   	svc = devm_kzalloc(dev, sizeof(*svc), GFP_KERNEL);
-> -	if (!svc)
-> -		return -ENOMEM;
-> +	if (!svc) {
-> +		ret = -ENOMEM;
-> +		goto err_free_kfifo;
-> +	}
->   
->   	svc->stratix10_svc_rsu = platform_device_alloc(STRATIX10_RSU, 0);
->   	if (!svc->stratix10_svc_rsu) {
->   		dev_err(dev, "failed to allocate %s device\n", STRATIX10_RSU);
-> -		return -ENOMEM;
-> +		ret = -ENOMEM;
-> +		goto err_free_kfifo;
->   	}
->   
->   	ret = platform_device_add(svc->stratix10_svc_rsu);
-> -	if (ret) {
-> -		platform_device_put(svc->stratix10_svc_rsu);
-> -		return ret;
-> -	}
-> +	if (ret)
-> +		goto err_put_device;
-> +
->   	dev_set_drvdata(dev, svc);
->   
->   	pr_info("Intel Service Layer Driver Initialized\n");
->   
-> +	return 0;
-> +
-> +err_put_device:
-> +	platform_device_put(svc->stratix10_svc_rsu);
-> +err_free_kfifo:
-> +	kfifo_free(&controller->svc_fifo);
+> V2: Make mapped an unsigned long rather than casting it to unsigned long
 
-Need for the allocated memory pool as well,
-	if (ctrl->genpool)
-                 gen_pool_destroy(ctrl->genpool);
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
-Rename err_free_kfifo to include both.
-
->   	return ret;
->   }
->   
-> 
-
-Regards,
-Richard
+Jason
