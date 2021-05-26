@@ -2,80 +2,69 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7833FC47082
-	for <kernel-janitors@archiver.kernel.org>; Wed, 26 May 2021 07:46:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19BD9C2B9F7
+	for <kernel-janitors@archiver.kernel.org>; Wed, 26 May 2021 08:50:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 531FD610A0
-	for <kernel-janitors@archiver.kernel.org>; Wed, 26 May 2021 07:46:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF1FC613BC
+	for <kernel-janitors@archiver.kernel.org>; Wed, 26 May 2021 08:50:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233042AbhEZHsJ (ORCPT
+        id S233011AbhEZIw1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 26 May 2021 03:48:09 -0400
-Received: from smtp12.smtpout.orange.fr ([80.12.242.134]:50645 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233040AbhEZHsI (ORCPT
+        Wed, 26 May 2021 04:52:27 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:50918 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232617AbhEZIw0 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 26 May 2021 03:48:08 -0400
-Received: from [192.168.1.18] ([86.243.172.93])
-        by mwinf5d47 with ME
-        id 9KmY2500h21Fzsu03KmZ7X; Wed, 26 May 2021 09:46:35 +0200
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 26 May 2021 09:46:35 +0200
-X-ME-IP: 86.243.172.93
-Subject: Re: [PATCH] mmc: mxs-mmc: Disable the 'reg_vmmc' regulator when
- needed
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Doug Anderson <dianders@chromium.org>,
-        Rui Miguel Silva <rmfrfs@gmail.com>,
-        Chris Ball <cjb@laptop.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-References: <d05074c11962a046ff9c2f457c240432ca8a7194.1621600443.git.christophe.jaillet@wanadoo.fr>
- <CAPDyKFrS3wdYs3AQtjZEOsLzNvxgy1n3EfxZ+a8w8J8rH8kQ-w@mail.gmail.com>
- <7c973bfd-8fc3-026d-351c-dc00e92c8b01@wanadoo.fr>
- <CAPDyKFptO4PRc=kxd9k8CkofGfyfJB6pdxP-wzrNpSHv0+ya0Q@mail.gmail.com>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Message-ID: <fa7e957e-4b3d-6ff6-1f72-e630eda2960d@wanadoo.fr>
-Date:   Wed, 26 May 2021 09:46:32 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.2
+        Wed, 26 May 2021 04:52:26 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <colin.king@canonical.com>)
+        id 1llpFZ-0001IQ-Ir; Wed, 26 May 2021 08:50:49 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Trent Piepho <tpiepho@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] lib/math/rational: Fix spelling mistake "demominator" -> "denominator"
+Date:   Wed, 26 May 2021 09:50:49 +0100
+Message-Id: <20210526085049.6393-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFptO4PRc=kxd9k8CkofGfyfJB6pdxP-wzrNpSHv0+ya0Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 26/05/2021 à 00:47, Ulf Hansson a écrit :
-> If I put together some patch and submit it, would you be able help to
-> run some tests of it, as I don't have access to HW?
+From: Colin Ian King <colin.king@canonical.com>
 
-No, I won't be able to help.
-This only got triggered by a static analysis checker (a own made 
-coccinelle script) and I don't have the hardware to test anything.
+There is a spelling mistake in a literal string. Fix it.
 
-This is why I can't propose an updated proposal. Trial & error 
-development when you can't test by yourself is only counterproductive.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ lib/math/rational-test.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-CJ
-
-> 
-> Kind regards
-> Uffe
-> 
+diff --git a/lib/math/rational-test.c b/lib/math/rational-test.c
+index df6ab5f43e8c..01611ddff420 100644
+--- a/lib/math/rational-test.c
++++ b/lib/math/rational-test.c
+@@ -20,7 +20,7 @@ static const struct rational_test_param test_parameters[] = {
+ 	{ 27,32,	16, 16,		11, 13,    "Use convergent" },
+ 	{ 1155, 7735,	255, 255,	33, 221,   "Exact answer" },
+ 	{ 87, 32,	70, 32,		68, 25,    "Semiconvergent, numerator limit" },
+-	{ 14533, 4626,	15000, 2400,	7433, 2366, "Semiconvergent, demominator limit" },
++	{ 14533, 4626,	15000, 2400,	7433, 2366, "Semiconvergent, denominator limit" },
+ };
+ 
+ static void get_desc(const struct rational_test_param *param, char *desc)
+-- 
+2.31.1
 
