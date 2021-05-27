@@ -2,138 +2,85 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFE96C4707F
-	for <kernel-janitors@archiver.kernel.org>; Thu, 27 May 2021 13:03:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04AAAC4707F
+	for <kernel-janitors@archiver.kernel.org>; Thu, 27 May 2021 13:45:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 990A961378
-	for <kernel-janitors@archiver.kernel.org>; Thu, 27 May 2021 13:03:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCAC1613BC
+	for <kernel-janitors@archiver.kernel.org>; Thu, 27 May 2021 13:45:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236144AbhE0NFV (ORCPT
+        id S236592AbhE0Nr3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 27 May 2021 09:05:21 -0400
-Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:58392 "EHLO
-        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235177AbhE0NFU (ORCPT
+        Thu, 27 May 2021 09:47:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38886 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236561AbhE0Nr3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 27 May 2021 09:05:20 -0400
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 14RD1TOG006432;
-        Thu, 27 May 2021 13:03:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=3UfFyy5WWq+G3MNqvbVrF1Q8T1IkdlRalVMqiwawwmY=;
- b=DUFH16g+rwsRQamxxoAb1oRDaqsbTneITHf7XCM4Ke9qX20fHu2bTkyPldC4ueyDNSJ6
- 2R54gm//XRLXjJOMWqWdfEFwfVXhqFD7cBfNtxb0F7ZR5qjBldaMYTSIAnOIOj5sGh2W
- rIPNtgQGaBSJrodijwuAKmqz+PEPpzFlQEut2Ng5ToQJ+aNXIAxiHXRvYydykWGWz/ze
- LvQZjUCzRf1QF2TPS6l4QYaC+K3GhenaiwVnEcDuZeG0kwJeGUXlUYPeHyO+gud09J7z
- xQXQ4+abmzjI5Kz01mc6pH2hwo7Z4fqLYbEH7VjlJ63IcQwTnuisjHgzebJFj100FfLV 7Q== 
-Received: from oracle.com (userp3030.oracle.com [156.151.31.80])
-        by mx0b-00069f02.pphosted.com with ESMTP id 38sr118dej-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 27 May 2021 13:03:43 +0000
-Received: from userp3030.oracle.com (userp3030.oracle.com [127.0.0.1])
-        by pps.podrdrct (8.16.0.36/8.16.0.36) with SMTP id 14RD3IlQ124771;
-        Thu, 27 May 2021 13:03:42 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by userp3030.oracle.com with ESMTP id 38pq2wd22n-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 27 May 2021 13:03:42 +0000
-Received: from userp3030.oracle.com (userp3030.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 14RD2v7c124171;
-        Thu, 27 May 2021 13:03:41 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3030.oracle.com with ESMTP id 38pq2wd22e-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 27 May 2021 13:03:41 +0000
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 14RD3c0l013294;
-        Thu, 27 May 2021 13:03:39 GMT
-Received: from mwanda (/41.212.42.34)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 27 May 2021 06:03:38 -0700
-Date:   Thu, 27 May 2021 16:03:31 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Marcel Holtmann <marcel@holtmann.org>,
-        Loic Poulain <loic.poulain@intel.com>,
-        Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
-        Loic Poulain <loic.poulain@intel.com>,
-        linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] Bluetooth: hci_intel: prevent reads beyond the end of
- skb->data
-Message-ID: <YK+Yo6c1UuiACSZA@mwanda>
+        Thu, 27 May 2021 09:47:29 -0400
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 329D7C061574
+        for <kernel-janitors@vger.kernel.org>; Thu, 27 May 2021 06:45:55 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id e17so220573lfb.2
+        for <kernel-janitors@vger.kernel.org>; Thu, 27 May 2021 06:45:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=W+RY/ZnJxUazn0U77RqA9l4c/3Pra+EKNP8BXkqQSSo=;
+        b=YqtqCpXaY77DgycIF3WQZ6O3jSe3xuuTR3mSksTjFk4UWlm9pv3ehJXzwbQxIY/2W4
+         bmyONPuytS9+vrVqbbagtVTJlfD9w8zl1zSJqscaodlTRrDfm7Ok74XtnmkpIQf0xpJI
+         42teqaJ5Ca9TieNzzbh2Y0LJ7WLu5JeGwaP1ZQPO4TamblRJqZNdU/X9Ubqs7CnF5zCm
+         qD1DoZoo9FV15TjyCdEYJzed+PmE//6qRK9KqPtk5NdYPhT0YpzbpTeK+08hC8BYU6Z6
+         dJA5NarG75cAlMf8j35puf7D/K00LVDT2oeWkdNj+fHYhQJJ2zf0yUCtrTzXsQ2VWNRW
+         eMjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=W+RY/ZnJxUazn0U77RqA9l4c/3Pra+EKNP8BXkqQSSo=;
+        b=klxWN8dRbDCFQN5sz5b+NrVp6czuZZdU4fNOc/6RYGU/pYXetpxTitKrJoHNIiicjX
+         zq2wOLm2BGsu1mcMIsrArmLXSqQbtRR3QCgkiU4QVPCRSkucS2eC6SilE0FpGnRGff8I
+         JMzJSNEnGBx2RRiQLhonR1BBuhQeJmgPKD97szJz0JZ4nSAkGbtJV+JwbVMJkef6y0sf
+         7QZk23wo6/zZoHk+Dg6DF8Mtob+W4ikuF8BMLAi01412tQMjwiMhsLeCQ0NDhKjquj1U
+         Ku3rC8sI9vrX0jpTmMpx35ihkugLAkH6xxuXKwIrvfuW1JkMlA3/E/gzfcuWvHMEJcKt
+         0f1w==
+X-Gm-Message-State: AOAM532KWC2PbzX07b0Huj4YIrFsr+5+iwh2oEu1Ut2lFmqMYIMRx22D
+        AEbSqlkZrKIaU5b3BXjt2sjlq8Qq7EUeHoyXiQbWBQ==
+X-Google-Smtp-Source: ABdhPJz0SZ/0YT2tnJ88UE0/1hK3tktsGRtCG2FJ2ldHfMYh3qCu27J6/i0yDb7Q55GDD9Ii6r4OuTTTlVAdYpBHOM8=
+X-Received: by 2002:a05:6512:1185:: with SMTP id g5mr2454860lfr.586.1622123153392;
+ Thu, 27 May 2021 06:45:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-X-Proofpoint-GUID: ez703iO3L2x6lMbNG-ox9FgtHJwQhEp0
-X-Proofpoint-ORIG-GUID: ez703iO3L2x6lMbNG-ox9FgtHJwQhEp0
+References: <20201207155106.172057-1-colin.king@canonical.com>
+In-Reply-To: <20201207155106.172057-1-colin.king@canonical.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 27 May 2021 15:45:41 +0200
+Message-ID: <CACRpkdby8f0KjJygdmHLS818z6sVxs5vkV5Fx_X3qNea41NTQQ@mail.gmail.com>
+Subject: Re: [PATCH] ixp4xx: fix spelling mistake in Kconfig "Devce" -> "Device"
+To:     Colin King <colin.king@canonical.com>
+Cc:     Linus Walleij <linusw@kernel.org>, Imre Kaloz <kaloz@openwrt.org>,
+        Krzysztof Halasa <khalasa@piap.pl>,
+        Russell King <linux@armlinux.org.uk>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        kernel-janitors@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There doesn't appear to be any checks to ensure that skb->data is large
-enough in these functions.  For most of these, if we specify a header
-length, then h4_recv_buf() will ensure that all packets are at least the
-minimum length.  The intel_recv_lpm() function needs an additional
-check for LPM_OP_TX_NOTIFY packets.
+On Mon, Dec 7, 2020 at 4:51 PM Colin King <colin.king@canonical.com> wrote:
 
-Fixes: ca93cee5a56e ("Bluetooth: hci_uart: Add basic support for Intel Lightning Peak devices")
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> There is spelling mistake in the prompt text in the Kconfig. Fix it.
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-No signed-off-by because I can't test this and just wanted to collect
-feedback.  This is part of a static checker warning because someone
-reported the hci_event.c read overflows to security@kernel.org.  This
-stuff is quite complicated for static checkers of course and I don't
-understand all the rules yet.  Right now I have about 2000 warnings
-that look like this:
+Patch applied.
 
-drivers/bluetooth/hci_intel.c:877 intel_recv_event() warn: assignment assumes 'skb->len' is '2' bytes
-drivers/bluetooth/hci_intel.c:922 intel_recv_lpm() warn: assignment assumes 'skb->len' is '2' bytes
-drivers/bluetooth/hci_intel.c:1028 intel_dequeue() warn: assignment assumes 'skb->len' is '3' bytes
-
-I think there should be a different additional static checker warning
-for h4_recv_pkt structs like in this patch if you fail to specify a
-.hlen value?
-
-regards,
-dan carpenter
----
- drivers/bluetooth/hci_intel.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/bluetooth/hci_intel.c b/drivers/bluetooth/hci_intel.c
-index 7249b91d9b91..3e4bccacad9b 100644
---- a/drivers/bluetooth/hci_intel.c
-+++ b/drivers/bluetooth/hci_intel.c
-@@ -925,7 +925,7 @@ static int intel_recv_lpm(struct hci_dev *hdev, struct sk_buff *skb)
- 
- 	switch (lpm->opcode) {
- 	case LPM_OP_TX_NOTIFY:
--		if (lpm->dlen < 1) {
-+		if (lpm->dlen < 1 || skb->len < struct_size(lpm, data, 1)) {
- 			bt_dev_err(hu->hdev, "Invalid LPM notification packet");
- 			break;
- 		}
-@@ -959,10 +959,10 @@ static int intel_recv_lpm(struct hci_dev *hdev, struct sk_buff *skb)
- 	.maxlen = HCI_LPM_MAX_SIZE
- 
- static const struct h4_recv_pkt intel_recv_pkts[] = {
--	{ H4_RECV_ACL,    .recv = hci_recv_frame   },
--	{ H4_RECV_SCO,    .recv = hci_recv_frame   },
--	{ H4_RECV_EVENT,  .recv = intel_recv_event },
--	{ INTEL_RECV_LPM, .recv = intel_recv_lpm   },
-+	{ H4_RECV_ACL,    .recv = hci_recv_frame, .hlen = sizeof(struct bt_skb_cb) },
-+	{ H4_RECV_SCO,    .recv = hci_recv_frame, .hlen = sizeof(struct bt_skb_cb) },
-+	{ H4_RECV_EVENT,  .recv = intel_recv_event, .hlen = sizeof(struct hci_event_hdr) },
-+	{ INTEL_RECV_LPM, .recv = intel_recv_lpm, .hlen = sizeof(struct hci_lpm_pkt) },
- };
- 
- static int intel_recv(struct hci_uart *hu, const void *data, int count)
--- 
-2.30.2
-
+Yours,
+Linus Walleij
