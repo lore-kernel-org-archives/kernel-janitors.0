@@ -2,227 +2,148 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,PDS_BAD_THREAD_QP_64,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68BEEC47088
-	for <kernel-janitors@archiver.kernel.org>; Wed, 26 May 2021 23:52:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E141C47089
+	for <kernel-janitors@archiver.kernel.org>; Thu, 27 May 2021 00:30:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 47C80613BE
-	for <kernel-janitors@archiver.kernel.org>; Wed, 26 May 2021 23:52:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE49E6139A
+	for <kernel-janitors@archiver.kernel.org>; Thu, 27 May 2021 00:30:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234025AbhEZXy3 (ORCPT
+        id S234668AbhE0AcU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 26 May 2021 19:54:29 -0400
-Received: from mga17.intel.com ([192.55.52.151]:64600 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232270AbhEZXy3 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 26 May 2021 19:54:29 -0400
-IronPort-SDR: u5AjFweDpvh/72yx4UQLFZurVehMvYqWIsbBpU/MAj2kyQIgGnKCBEzLDSESgEu2lfvWOwE3U4
- IxcNXkkzpZ0Q==
-X-IronPort-AV: E=McAfee;i="6200,9189,9996"; a="182944407"
-X-IronPort-AV: E=Sophos;i="5.82,333,1613462400"; 
-   d="scan'208";a="182944407"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 May 2021 16:52:50 -0700
-IronPort-SDR: kiFtZ+Lz+gSxRiprxflquMVboZ9w7V85IlR8ReaQ6dmGb1Nz66lrgdMzBgPxZbVhKIndLucpur
- /rSc3O95ES1g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.82,333,1613462400"; 
-   d="scan'208";a="480322372"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by fmsmga002.fm.intel.com with ESMTP; 26 May 2021 16:52:50 -0700
-Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2242.4; Wed, 26 May 2021 16:52:49 -0700
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4
- via Frontend Transport; Wed, 26 May 2021 16:52:49 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.168)
- by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2242.4; Wed, 26 May 2021 16:52:48 -0700
+        Wed, 26 May 2021 20:32:20 -0400
+Received: from mail-dm6nam12on2084.outbound.protection.outlook.com ([40.107.243.84]:28544
+        "EHLO NAM12-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S233862AbhE0AcT (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 26 May 2021 20:32:19 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=TsSjib84RbGvYGjAIkLfbecUl7wC2pBrn7mIGQ2WCSriVXpSwLPXvauZVYfdbXzj4pNQcq4PzEvkk4mkJGq9soR6HLJD677afFbPciAYR0yC08rbT7vSbA9GkUbXtOrRzdzRBJM/fttW5f7j/l6o7piQaswrEd2A9o1YZDnJfd3ZtwzD5nObSXUy/IyOmqo9TuOayjO3CyZDxDgCmBqyfnG9QeOgUK2aSvLbQWfDlkVPrWMNMB2xaGubzuMj57/zK6+LeHXGZsbVzeuLashZS12G1mK/a2s6tdT683wIxDkxtwD1rs4JowK5DWhjAzjjhbtbq7nPuwA8JpVC/XDdZg==
+ b=MqicJPO1i3ngsQXN0U7TAgSijIVN/ksAbYM1kBq3Wnabq71owMvdmADPILhDMxn//+jhatE9fM/TVt1ym02ugTfJkSt9K5a+//Y21uE4WAL8GooDtQIeQmmBf3AN3aroxzPrBFpBBg84lMmCNLm3uqRN7F5s/vJL/EGOShKbXQZhEhXZxujoYCM1QjJB/4yLR81RWPhkW9/sBFeApc3+ikv9x9gX8sN/Oev9vyogPwZ/g+kS/oOkcLMu0D3oSw2FHTd991vCmRfYL6Ny7Y4j4frWpfepKcLlv/mjgZ8cKKPeqLvNEl682jDjjhwMNhG2Qbn9sBd2/30mbcrP6jCvuw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=32v3S1CJxmH5O+WALYFhaBBYsMF/PghJug3bHMziKAw=;
- b=d9ZVat3AoEP0fNEnSwPcbsYt6dZ/LWvvVHKfRWytubjL1y5h1wOFXxOBGk8n/Fjb1xlDAGNvUAijj6pgSzVkYkkl/+vdT59LTCgWWnCNaToFEQPBzuykg0+XOd3yiHXkFuAHfmFx60llS/SmIOZUMGD44TNc7KHpeN2vXKWtKmxm13dxOg3iL2QsnpXJcQCYBXIuULX+HY9/r1Rt7R7tgosx7EfNHBfOOZAybqqTEfC11pjPtOGno5M3tc7PtsoDzheNCMnMxY6rB4BCzoc06OcvKK22JstdUcZH+KVxhsisUYceEGvRHvOt5KXIhF4a/s1TKhThy+JAsEZIup36FA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=intel.onmicrosoft.com;
- s=selector2-intel-onmicrosoft-com;
+ bh=hPCfc/GBa63ueEIYB9FyU9I0z4d56lTwx1LDSC4SV3A=;
+ b=Vz8/0L5VB1vyYRIUTNTbZl+bSZ2IMiy8GbzMFpb3DY4sXPNeGWVFF8rSx7uxK34Pvpwlt8yF6VIuef2iiUsgFE9QzoEifyJ7mhu+XSZ6nmBE93xbm7Qo1EvduEL/UnfPYVDYHIgxLHfObHCcoJdc3lJKFuK+ulWLFO76ORZrDsL0W7GO20aYwYcY4NcW2WzWA4Ki/HEZQlfVbdABCf4Y4YJd3zYvF62FOvBAaBA4OL+wx6pD4rOQFGVN7FuUofPqCj6B4bw7sHaUvdVJkbYisiIZ8ON2978OyuOp5O34rINKTqYh79eIoz1AY8L8XghMkRKn9M+9ERIzmEQGEWX+mA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.112.34) smtp.rcpttodomain=lists.freedesktop.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=none sp=none pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=32v3S1CJxmH5O+WALYFhaBBYsMF/PghJug3bHMziKAw=;
- b=uh2GIfLRoDIvih/tEcw8p2+gG3rbz9UJfTsVtlLY2VowAiAX12u07ItVSNNmzDdhH3w2Orek4LQMY5nowMJOCOlQn8cFbwCTMRhvGNc95icz963orMQnDmYd3x0Dnv5MCd4S7/PdXjW55Y9UWFjJA9kdHoJSwkyWYYw+7euUAxk=
-Received: from BY5PR11MB4182.namprd11.prod.outlook.com (2603:10b6:a03:183::10)
- by SJ0PR11MB4976.namprd11.prod.outlook.com (2603:10b6:a03:2d7::5) with
+ bh=hPCfc/GBa63ueEIYB9FyU9I0z4d56lTwx1LDSC4SV3A=;
+ b=ODH/Oq7yQA3YaRQlCJsJWg0Et9RwuQK/co2rS2AqgDrcla7Tjmp9nxSqvFGkAp7tzSiU3U9iwKnb7qRcPu9PhS3RhWXpOjpWYnnuYWHfAUYVMUXzSyTX2zK8ljqxKXyXFQ84b4Eqa0bRSnHKTdhQY8VdCKbZDRW6brXeAIiTxtg1nxlsM+QxpGouWpddkwCVA/jtsYoqMIXXzu8okNXhwZ7Kx5po9OhMTdxW5ihnJbL3z5xnwDee8agE0BwA/XFSeDeJ5lTFVwcjQdQfm/YvlEPma6/ssxsfqhnXCSx0srYb0IGiPBdodblUgGBsPscv1PEd/Y91WX1SNehF1TDimQ==
+Received: from MWHPR10CA0001.namprd10.prod.outlook.com (2603:10b6:301::11) by
+ BN6PR1201MB0114.namprd12.prod.outlook.com (2603:10b6:405:4d::20) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4173.22; Wed, 26 May
- 2021 23:52:47 +0000
-Received: from BY5PR11MB4182.namprd11.prod.outlook.com
- ([fe80::f071:7bd8:d502:a6eb]) by BY5PR11MB4182.namprd11.prod.outlook.com
- ([fe80::f071:7bd8:d502:a6eb%3]) with mapi id 15.20.4150.027; Wed, 26 May 2021
- 23:52:47 +0000
-From:   "Chrisanthus, Anitha" <anitha.chrisanthus@intel.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        "Dea, Edmund J" <edmund.j.dea@intel.com>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        "daniel@ffwll.ch" <daniel@ffwll.ch>,
-        "sam@ravnborg.org" <sam@ravnborg.org>
-CC:     "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: RE: [PATCH] drm/kmb: Fix an error handling path
-Thread-Topic: [PATCH] drm/kmb: Fix an error handling path
-Thread-Index: AQHXTPAusZt7CdpHvU2ZAVNhU3ow06r2dQiA
-Date:   Wed, 26 May 2021 23:52:47 +0000
-Message-ID: <BY5PR11MB41823586394287D8D1D85B9D8C249@BY5PR11MB4182.namprd11.prod.outlook.com>
-References: <ce19f0d78174b0674dc963d134fbdec222250e84.1621457119.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <ce19f0d78174b0674dc963d134fbdec222250e84.1621457119.git.christophe.jaillet@wanadoo.fr>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-version: 11.5.1.3
-dlp-product: dlpe-windows
-dlp-reaction: no-action
-authentication-results: wanadoo.fr; dkim=none (message not signed)
- header.d=none;wanadoo.fr; dmarc=none action=none header.from=intel.com;
-x-originating-ip: [73.41.68.160]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 4fa06a48-6247-46ea-f2e7-08d920a15d58
-x-ms-traffictypediagnostic: SJ0PR11MB4976:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <SJ0PR11MB4976BFD2A8C391B0698039588C249@SJ0PR11MB4976.namprd11.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:4303;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 4xPMiV5VXBUsVd+yPKGTzU1Uu36lKSe8pS04+QtN5rt6vGdCBdRHwNtpzhZr9mt5y8kCllman+oMD8M5C75QLn7tR4RKNa8Uaohv5mQzAwtQKU6fDbRaMaKQM3H/19Dmlxo7rt2hhTm1Q/1JfthVqUfFtb+/KlZBpNJzr4fJeYZXeOy7n4QGNFJVnWhEge/8Yzzfq4V2pX8hBH6t/U9/FHeJO80GjcfxC2uz/tLiirrFUTsfcRYmBEGczdRYYmEPan+hym7/gzdkUlKW1x5c2Ye07xTuxPyp94wMMI6Rz1f52oPFepQN7aPg+rHs3+DPcXxlV9qT083VWDzXrb8LacZUg7xIBxxsQecDiLygANqbZNoqK40w+pBJa73803BfA7SvD7lR+kIX4gN6lseAwXpCnprf6ly8LHDgkkhAtSEWgjNjspdPDJdPGSNRQ55h/HkEm85WCA6wqQTbrgNNe3RRxR2kXJ1clGzal9s041R/vsknA/yKHiJzGdoxEgodTo3oPQ/md0hvw6ukiZoUHEQ/ozAdj9pf+V3cZwQXS1eHIiWwAdT/ey60ZGWYFFycL278HX/KOdHifBfFptFNDrcMiRRDRSdOsQL2AHyq21Q=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR11MB4182.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(376002)(136003)(346002)(396003)(39860400002)(5660300002)(2906002)(71200400001)(64756008)(4326008)(66446008)(66556008)(52536014)(86362001)(9686003)(8676002)(186003)(8936002)(33656002)(122000001)(53546011)(7696005)(6506007)(83380400001)(110136005)(55016002)(26005)(54906003)(66476007)(76116006)(316002)(38100700002)(66946007)(478600001);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata: =?us-ascii?Q?nGnUAIXjhAN3EkgcS+VDiVvbdkBtoK4p03NwqCSqSExtS6LcKKUUJPk6nLE/?=
- =?us-ascii?Q?kQ3GcrAF8SL2IOmL+XNHG2bD2RlZJYN+uvUtFAYfQsLxmM/VGmTguE4xFXKt?=
- =?us-ascii?Q?auHfrQaIloE9oohOXvs21VtAnHYXt2Y7R+r46eJcHoEsqtmTNbZdGIlgq2IZ?=
- =?us-ascii?Q?zHJUkh+r0eH0WDQsO2tgQwkh4PNKt8DNkFB1tT91l9T/6iNjDyslniukonN5?=
- =?us-ascii?Q?n0ftQhKZygy4qm7pVpzhmkNQzMI1c3uSFOd1WnoX/7oo/BLXgqKVEyPsjYFl?=
- =?us-ascii?Q?tKM8GH2UTUiwNhc4kgckkZ6Ndb+PgQnGwb36dU9vomBDcVOU3mCEChZxhoFZ?=
- =?us-ascii?Q?mA4IgUGiPnPVKl4BJpGBXr0yE86xu7naxc9BtpCHU8c2W0qosYAqOFtwHQsO?=
- =?us-ascii?Q?Cfu8Pr55mD/61R6PWE/AW9LiwOEYcg/IXeSIWGoFgeUXCK88IA4crtqPVKZj?=
- =?us-ascii?Q?/rx7cP9M526sODnUUwJj//0COhZdI203PfrN4EZjgFhuMP9NGBNXtpVD28pa?=
- =?us-ascii?Q?fs0KtOLYMJyH8WJNiAOCr34PLO1GzhsVI9vQM/8KmbcedjETXuxp7MzRLG44?=
- =?us-ascii?Q?QchMKkU/CXMtr3RLQHbYdIzhDbj3/e825kx/O16EM06JCZN1XA8WDE9O9rqa?=
- =?us-ascii?Q?pkBvypuogSxxSlqNPD/dOsh4TlozbCQunXTNp74OgeQGSJsd1g07t81x2wfh?=
- =?us-ascii?Q?2D4oOeyW4yanj7cpIMDGAyl777EgHE7KFFjstCl7mxqk6Ybz7HihQE2xchDR?=
- =?us-ascii?Q?e7KkDcaVzQXUI9qGPSIWnlTnKZa3yt+hgo1JMXfQTCQ33AZS1fmi8aQ8dRT9?=
- =?us-ascii?Q?8w4GVtccdlW7Kkq2UGGqsAtl9TXrY9y6LQhFhmxrd53E04HNZj/Ohx0cyEQa?=
- =?us-ascii?Q?EbLEKFteHBbRktqUav6ulbjuIN+hqbxTIUfs4YJ4l7GALO1Ej125GmHJJyoU?=
- =?us-ascii?Q?kV61+N92ihlRtq9Vm2mrv72ruhY0pKiK09o5UStN5vWsbxZfGHcToQO4G9CZ?=
- =?us-ascii?Q?Jqbmw3JGdx50Isr9MqhZfJZmx7F+JfGHZSJN7EpdNejOVSFTryDtXTwyjsZV?=
- =?us-ascii?Q?yklCRmnFH7PFCpvjvT3pjWpp10y+AXQvoyuuTDXvu/aCBJW1s/YoxIdWYTQq?=
- =?us-ascii?Q?xBaIlad8bJK6E3CH8ipMmKkgKpDNvDBALAJQ53kR0k29RPyu8oLaGzInB2PH?=
- =?us-ascii?Q?W+ti+jz2+qa+hcGdAhMYxakDeAJHqI1RyQStbIX2PhOiwvitfKkHTQTJXOvT?=
- =?us-ascii?Q?RVxIYwN+yaq0q6npwZMDtZMvBxfY+z2LIy+w2XTw9eGxS7c5clrGEdP3Uoby?=
- =?us-ascii?Q?fZ0=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4150.25; Thu, 27 May
+ 2021 00:30:39 +0000
+Received: from CO1NAM11FT011.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:301:0:cafe::9a) by MWHPR10CA0001.outlook.office365.com
+ (2603:10b6:301::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4173.20 via Frontend
+ Transport; Thu, 27 May 2021 00:30:39 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
+ smtp.mailfrom=nvidia.com; lists.freedesktop.org; dkim=none (message not
+ signed) header.d=none;lists.freedesktop.org; dmarc=pass action=none
+ header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.112.34 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.112.34; helo=mail.nvidia.com;
+Received: from mail.nvidia.com (216.228.112.34) by
+ CO1NAM11FT011.mail.protection.outlook.com (10.13.175.186) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.4129.25 via Frontend Transport; Thu, 27 May 2021 00:30:39 +0000
+Received: from nvdebian.localnet (172.20.145.6) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 27 May
+ 2021 00:30:36 +0000
+From:   Alistair Popple <apopple@nvidia.com>
+To:     Colin King <colin.king@canonical.com>
+CC:     Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        <dri-devel@lists.freedesktop.org>, <nouveau@lists.freedesktop.org>,
+        <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH][next] nouveau/svm: Fix missing failure check on call to make_device_exclusive_range
+Date:   Thu, 27 May 2021 10:30:34 +1000
+Message-ID: <2050838.rP6W8OkBfs@nvdebian>
+In-Reply-To: <20210526140459.3749959-1-colin.king@canonical.com>
+References: <20210526140459.3749959-1-colin.king@canonical.com>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BY5PR11MB4182.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4fa06a48-6247-46ea-f2e7-08d920a15d58
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 May 2021 23:52:47.6250
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+X-Originating-IP: [172.20.145.6]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 2447ba04-2c43-41cb-6566-08d920a6a743
+X-MS-TrafficTypeDiagnostic: BN6PR1201MB0114:
+X-Microsoft-Antispam-PRVS: <BN6PR1201MB011441F2F0625D7260F4A297DF239@BN6PR1201MB0114.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:3173;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: MkyJOCrYMbBcFI+3vVv1DRIiSCLoBO+dO+CUNAq2iUYejfUNItJ2UtQiOPocqJTue2u422xfwkxtokYieKYw9nlydIBVE+iLzy2m92eivB/xlq92tt9eTMOkUc8sYtUXWgn70S4XQivtZExYYNDsCNZYTwMJj965QgwJn6AyNFGh0kJEkv/qBFf8LVflW96mJt1xBf8zICRBOygRpQL4G2RAfVJOaqezSzweveJ7SnjizNWjRp9AWn4yM8RpQ0Ynk2vqx+MEyOL44ULJ4Ki4VgjVfmC/mZHCGNdeSgZ4WJvCsFuP3/M1n02XAldyVv0BA3FyH4qPdpchRJ/I0xmit1t5TX+42bHNytToWgNVh4sqsaj99Tb6byRTfP4wIi3x+aru3u2fQyENoZpc12KF8Uo3x6kqmd7lsAcUMIIh4RhV0MdR7lfB6ONMiU6/nG/F6D74O3o0nCuHrrRl0EvG6d4WSIDW7BPRjtymw/kXpIu/2b/5rfjY+pKDIE3g1YHjM2WWlJmFzRQS52Idb1gLg20RNjv2/aGrmfWUqojLOO9lUQRdkLa9mdJ6FCufo+JqoW8T7k3GJ/uDI1KrEmMDEGokGNy2lcVrKHAria9ur6jJkGHCqivI09J0Tj629vjPggjcMFWuiXy+fKgF3c7k9gRlsupuOCQqnE/ANbKCsDBOXEUG50DUu6zDxC3UjSv+
+X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(376002)(136003)(346002)(39860400002)(396003)(46966006)(36840700001)(7416002)(6916009)(33716001)(336012)(86362001)(2906002)(9576002)(5660300002)(426003)(186003)(16526019)(9686003)(82310400003)(8936002)(83380400001)(4326008)(8676002)(478600001)(356005)(54906003)(36860700001)(7636003)(36906005)(70206006)(70586007)(26005)(82740400003)(316002)(47076005)(39026012);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 May 2021 00:30:39.1308
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 1JbRzvLzYJvOus4Nuj/dSXpDN8aZr1ef+VKkyii4kbO8Jx80y2CBYS6MypHzptX0uRep9MaiyJGPDVN6OCFUzuPWc0X+G5fDS4+zoA8gQaU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB4976
-X-OriginatorOrg: intel.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2447ba04-2c43-41cb-6566-08d920a6a743
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT011.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR1201MB0114
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Christophe,
-Thanks for the patch, good catch! Patch looks good, few minor comments.
-
-Anitha
-
-> -----Original Message-----
-> From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Sent: Wednesday, May 19, 2021 1:47 PM
-> To: Chrisanthus, Anitha <anitha.chrisanthus@intel.com>; Dea, Edmund J
-> <edmund.j.dea@intel.com>; airlied@linux.ie; daniel@ffwll.ch;
-> sam@ravnborg.org
-> Cc: dri-devel@lists.freedesktop.org; linux-kernel@vger.kernel.org; kernel=
--
-> janitors@vger.kernel.org; Christophe JAILLET <christophe.jaillet@wanadoo.=
-fr>
-> Subject: [PATCH] drm/kmb: Fix an error handling path
->=20
-> If 'platform_get_irq()' fails, it is spurious to call
-> 'of_reserved_mem_device_release()' in the error handling path, because
-> 'of_reserved_mem_device_init() has not been called yet.
->=20
-> Moreover, a previous 'kmb_initialize_clocks()' is unbalanced by a
-> corresponding 'kmb_display_clk_disable()' call, has already done in the
-> remove function.
->=20
-> It is likely that 'kmb_display_clk_disable()' is expected in the error
-> handling path, instead of 'kmb_display_clk_disable()'.
-You mean instead of of_reserved_mem_device_release()
->=20
->=20
-> Also, it is spurious to return directly if 'of_reserved_mem_device_init()=
-'
-> fails.
-> Goto the error handling path instead to free some resources.
->=20
-> Fixes: 7f7b96a8a0a1 ("drm/kmb: Add support for KeemBay Display")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+On Thursday, 27 May 2021 12:04:59 AM AEST Colin King wrote:
+> The call to make_device_exclusive_range can potentially fail leaving
+> pointer page not initialized that leads to an uninitialized pointer
+> read issue. Fix this by adding a check to see if the call failed and
+> returning the error code.
+> 
+> Addresses-Coverity: ("Uninitialized pointer read")
+> Fixes: c620bba9828c ("nouveau/svm: implement atomic SVM access")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
->  drivers/gpu/drm/kmb/kmb_drv.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/kmb/kmb_drv.c
-> b/drivers/gpu/drm/kmb/kmb_drv.c
-> index f64e06e1067d..b41b8789fe57 100644
-> --- a/drivers/gpu/drm/kmb/kmb_drv.c
-> +++ b/drivers/gpu/drm/kmb/kmb_drv.c
-> @@ -138,13 +138,13 @@ static int kmb_hw_init(struct drm_device *drm,
-> unsigned long flags)
->  	irq_lcd =3D platform_get_irq(pdev, 0);
->  	if (irq_lcd < 0) {
->  		drm_err(&kmb->drm, "irq_lcd not found");
-> -		goto setup_fail;
-> +		goto disable_clk_err;
-Keep setup_fail label or something like err_free_clocks
->  	}
->=20
->  	/* Get the optional framebuffer memory resource */
->  	ret =3D of_reserved_mem_device_init(drm->dev);
->  	if (ret && ret !=3D -ENODEV)
-> -		return ret;
-> +		goto disable_clk_err;
->=20
->  	spin_lock_init(&kmb->irq_lock);
->=20
-> @@ -152,8 +152,8 @@ static int kmb_hw_init(struct drm_device *drm,
-> unsigned long flags)
->=20
->  	return 0;
->=20
-> - setup_fail:
-> -	of_reserved_mem_device_release(drm->dev);
-> + disable_clk_err:
-> +	kmb_display_clk_disable(kmb);
->=20
->  	return ret;
->  }
+>  drivers/gpu/drm/nouveau/nouveau_svm.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/nouveau/nouveau_svm.c
+> b/drivers/gpu/drm/nouveau/nouveau_svm.c index 84726a89e665..b913b4907088
+> 100644
+> --- a/drivers/gpu/drm/nouveau/nouveau_svm.c
+> +++ b/drivers/gpu/drm/nouveau/nouveau_svm.c
+> @@ -609,8 +609,10 @@ static int nouveau_atomic_range_fault(struct
+> nouveau_svmm *svmm,
+> 
+>                 notifier_seq = mmu_interval_read_begin(&notifier->notifier);
+> mmap_read_lock(mm);
+> -               make_device_exclusive_range(mm, start, start + PAGE_SIZE,
+> -                                           &page, drm->dev);
+> +               ret = make_device_exclusive_range(mm, start, start +
+> PAGE_SIZE, +                                                 &page,
+> drm->dev); +               if (ret < 0)
+> +                       goto out;
+
+Thanks for spotting, this is fixing get_user_pages() inside 
+make_device_exclusive_range() returning an error. However the check needs to 
+happen after dropping mmap_lock below:
+
+>                 mmap_read_unlock(mm);
+>                 if (!page) {
+>                         ret = -EINVAL;
 > --
-> 2.30.2
+> 2.31.1
+
+
+
 
