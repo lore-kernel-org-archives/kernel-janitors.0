@@ -4,101 +4,98 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D2BFC47089
-	for <kernel-janitors@archiver.kernel.org>; Thu, 27 May 2021 15:03:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA897C4707F
+	for <kernel-janitors@archiver.kernel.org>; Thu, 27 May 2021 15:10:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E4A7D61005
-	for <kernel-janitors@archiver.kernel.org>; Thu, 27 May 2021 15:03:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A04C3613AC
+	for <kernel-janitors@archiver.kernel.org>; Thu, 27 May 2021 15:10:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236718AbhE0PEq convert rfc822-to-8bit (ORCPT
+        id S235400AbhE0PLm (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 27 May 2021 11:04:46 -0400
-Received: from relay11.mail.gandi.net ([217.70.178.231]:54615 "EHLO
-        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231419AbhE0PEp (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 27 May 2021 11:04:45 -0400
-Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay11.mail.gandi.net (Postfix) with ESMTPSA id D2B14100007;
-        Thu, 27 May 2021 15:03:10 +0000 (UTC)
-Date:   Thu, 27 May 2021 17:03:09 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
+        Thu, 27 May 2021 11:11:42 -0400
+Received: from mga06.intel.com ([134.134.136.31]:49130 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235409AbhE0PLh (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 27 May 2021 11:11:37 -0400
+IronPort-SDR: ck1LiCcellxJF00fXeT+iCiZlmKMaDwM8+FDn8IaOcRR6TpFdA3rToSGn2O7gDyaWNOZwbiboz
+ Z2nlOfLpjriQ==
+X-IronPort-AV: E=McAfee;i="6200,9189,9996"; a="263956575"
+X-IronPort-AV: E=Sophos;i="5.82,334,1613462400"; 
+   d="scan'208";a="263956575"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2021 08:08:47 -0700
+IronPort-SDR: Wj929PUHpl8sBYnB2olrul2/4w69SoSFv3GcjDKcMhOdbr0Tj1iG3tjPCIVfFzuZO7zBDTeuUx
+ U2ZLGBMOiqtg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.82,334,1613462400"; 
+   d="scan'208";a="480620895"
+Received: from ranger.igk.intel.com ([10.102.21.164])
+  by fmsmga002.fm.intel.com with ESMTP; 27 May 2021 08:08:43 -0700
+Date:   Thu, 27 May 2021 16:55:49 +0200
+From:   Maciej Fijalkowski <maciej.fijalkowski@intel.com>
 To:     Colin King <colin.king@canonical.com>
-Cc:     Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org,
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        KP Singh <kpsingh@kernel.org>, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, kernel-janitors@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] mtd: rawnand: ensure return variable is
- initialized
-Message-ID: <20210527170309.4d99bc31@xps13>
-In-Reply-To: <20210527145048.795954-1-colin.king@canonical.com>
-References: <20210527145048.795954-1-colin.king@canonical.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Subject: Re: [PATCH][next] bpf: devmap: remove redundant assignment of
+ variable drops
+Message-ID: <20210527145549.GA7570@ranger.igk.intel.com>
+References: <20210527143637.795393-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210527143637.795393-1-colin.king@canonical.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Colin,
-
-Colin King <colin.king@canonical.com> wrote on Thu, 27 May 2021
-15:50:48 +0100:
-
+On Thu, May 27, 2021 at 03:36:37PM +0100, Colin King wrote:
 > From: Colin Ian King <colin.king@canonical.com>
 > 
-> Currently there are corner cases where spec_times is NULL and
-> chip->parameters.onfi or when best_mode is zero where ret is
+> The variable drops is being assigned a value that is never
+> read, it is being updated later on. The assignment is redundant and
+> can be removed.
 
-                       ^
-something is missing here, the sentence is not clear
+Acked-by: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
 
-> not assigned a value and an uninitialized return value can be
-> returned. Fix this by ensuring ret is initialized to -EINVAL.
+Would help if you would have CCed me given the fact that hour ago I
+confirmed that it could be removed :p but no big deal.
 
-I don't see how this situation can happen.
+Thanks!
 
-In both cases, no matter the value of best_mode, the for loop will
-always execute at least one time (mode 0) so ret will be populated.
-
-Maybe the robot does not know that best_mode cannot be negative and
-should be defined unsigned, but the current patch is invalid.
-
-> Addresses-Coverity: ("Uninitialized scalar variable")
-> Fixes: 9d3194bf2aef ("mtd: rawnand: Allow SDR timings to be nacked")
-> Fixes: a9ecc8c814e9 ("mtd: rawnand: Choose the best timings, NV-DDR included")
+> 
+> Addresses-Coverity: ("Unused value")
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
->  drivers/mtd/nand/raw/nand_base.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  kernel/bpf/devmap.c | 2 --
+>  1 file changed, 2 deletions(-)
 > 
-> diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
-> index 57a583149cc0..18db742f650c 100644
-> --- a/drivers/mtd/nand/raw/nand_base.c
-> +++ b/drivers/mtd/nand/raw/nand_base.c
-> @@ -926,7 +926,7 @@ int nand_choose_best_sdr_timings(struct nand_chip *chip,
->  				 struct nand_sdr_timings *spec_timings)
->  {
->  	const struct nand_controller_ops *ops = chip->controller->ops;
-> -	int best_mode = 0, mode, ret;
-> +	int best_mode = 0, mode, ret = -EINVAL;
+> diff --git a/kernel/bpf/devmap.c b/kernel/bpf/devmap.c
+> index f9148daab0e3..fe3873b5d13d 100644
+> --- a/kernel/bpf/devmap.c
+> +++ b/kernel/bpf/devmap.c
+> @@ -388,8 +388,6 @@ static void bq_xmit_all(struct xdp_dev_bulk_queue *bq, u32 flags)
+>  		to_send = dev_map_bpf_prog_run(bq->xdp_prog, bq->q, cnt, dev);
+>  		if (!to_send)
+>  			goto out;
+> -
+> -		drops = cnt - to_send;
+>  	}
 >  
->  	iface->type = NAND_SDR_IFACE;
->  
-> @@ -977,7 +977,7 @@ int nand_choose_best_nvddr_timings(struct nand_chip *chip,
->  				   struct nand_nvddr_timings *spec_timings)
->  {
->  	const struct nand_controller_ops *ops = chip->controller->ops;
-> -	int best_mode = 0, mode, ret;
-> +	int best_mode = 0, mode, ret = 0;
->  
->  	iface->type = NAND_NVDDR_IFACE;
->  
-
-Thanks,
-Miquèl
+>  	sent = dev->netdev_ops->ndo_xdp_xmit(dev, to_send, bq->q, flags);
+> -- 
+> 2.31.1
+> 
