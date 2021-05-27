@@ -5,43 +5,36 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5093BC4708A
-	for <kernel-janitors@archiver.kernel.org>; Thu, 27 May 2021 14:36:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A43AC47089
+	for <kernel-janitors@archiver.kernel.org>; Thu, 27 May 2021 14:50:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 30DBD610FC
-	for <kernel-janitors@archiver.kernel.org>; Thu, 27 May 2021 14:36:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A284611AE
+	for <kernel-janitors@archiver.kernel.org>; Thu, 27 May 2021 14:50:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233820AbhE0OiT (ORCPT
+        id S234828AbhE0Owa (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 27 May 2021 10:38:19 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:39477 "EHLO
+        Thu, 27 May 2021 10:52:30 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:39938 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229603AbhE0OiS (ORCPT
+        with ESMTP id S229753AbhE0Owa (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 27 May 2021 10:38:18 -0400
+        Thu, 27 May 2021 10:52:30 -0400
 Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
         (Exim 4.93)
         (envelope-from <colin.king@canonical.com>)
-        id 1lmH7l-0003Hh-9g; Thu, 27 May 2021 14:36:37 +0000
+        id 1lmHLU-0004e5-VF; Thu, 27 May 2021 14:50:49 +0000
 From:   Colin King <colin.king@canonical.com>
-To:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        KP Singh <kpsingh@kernel.org>, netdev@vger.kernel.org,
-        bpf@vger.kernel.org
+To:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        linux-mtd@lists.infradead.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] bpf: devmap: remove redundant assignment of variable drops
-Date:   Thu, 27 May 2021 15:36:37 +0100
-Message-Id: <20210527143637.795393-1-colin.king@canonical.com>
+Subject: [PATCH][next] mtd: rawnand: ensure return variable is initialized
+Date:   Thu, 27 May 2021 15:50:48 +0100
+Message-Id: <20210527145048.795954-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -52,29 +45,41 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The variable drops is being assigned a value that is never
-read, it is being updated later on. The assignment is redundant and
-can be removed.
+Currently there are corner cases where spec_times is NULL and
+chip->parameters.onfi or when best_mode is zero where ret is
+not assigned a value and an uninitialized return value can be
+returned. Fix this by ensuring ret is initialized to -EINVAL.
 
-Addresses-Coverity: ("Unused value")
+Addresses-Coverity: ("Uninitialized scalar variable")
+Fixes: 9d3194bf2aef ("mtd: rawnand: Allow SDR timings to be nacked")
+Fixes: a9ecc8c814e9 ("mtd: rawnand: Choose the best timings, NV-DDR included")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- kernel/bpf/devmap.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/mtd/nand/raw/nand_base.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/bpf/devmap.c b/kernel/bpf/devmap.c
-index f9148daab0e3..fe3873b5d13d 100644
---- a/kernel/bpf/devmap.c
-+++ b/kernel/bpf/devmap.c
-@@ -388,8 +388,6 @@ static void bq_xmit_all(struct xdp_dev_bulk_queue *bq, u32 flags)
- 		to_send = dev_map_bpf_prog_run(bq->xdp_prog, bq->q, cnt, dev);
- 		if (!to_send)
- 			goto out;
--
--		drops = cnt - to_send;
- 	}
+diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
+index 57a583149cc0..18db742f650c 100644
+--- a/drivers/mtd/nand/raw/nand_base.c
++++ b/drivers/mtd/nand/raw/nand_base.c
+@@ -926,7 +926,7 @@ int nand_choose_best_sdr_timings(struct nand_chip *chip,
+ 				 struct nand_sdr_timings *spec_timings)
+ {
+ 	const struct nand_controller_ops *ops = chip->controller->ops;
+-	int best_mode = 0, mode, ret;
++	int best_mode = 0, mode, ret = -EINVAL;
  
- 	sent = dev->netdev_ops->ndo_xdp_xmit(dev, to_send, bq->q, flags);
+ 	iface->type = NAND_SDR_IFACE;
+ 
+@@ -977,7 +977,7 @@ int nand_choose_best_nvddr_timings(struct nand_chip *chip,
+ 				   struct nand_nvddr_timings *spec_timings)
+ {
+ 	const struct nand_controller_ops *ops = chip->controller->ops;
+-	int best_mode = 0, mode, ret;
++	int best_mode = 0, mode, ret = 0;
+ 
+ 	iface->type = NAND_NVDDR_IFACE;
+ 
 -- 
 2.31.1
 
