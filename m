@@ -2,74 +2,85 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CB74C47089
-	for <kernel-janitors@archiver.kernel.org>; Thu, 27 May 2021 06:10:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DB8EC4707F
+	for <kernel-janitors@archiver.kernel.org>; Thu, 27 May 2021 06:26:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7BEAD613D8
-	for <kernel-janitors@archiver.kernel.org>; Thu, 27 May 2021 06:10:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2AF9613C5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 27 May 2021 06:26:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234895AbhE0GMB (ORCPT
+        id S229635AbhE0G2P (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 27 May 2021 02:12:01 -0400
-Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:52538 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234847AbhE0GMA (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 27 May 2021 02:12:00 -0400
-Received: from localhost.localdomain ([86.243.172.93])
-        by mwinf5d25 with ME
-        id 9iAS2500H21Fzsu03iAThz; Thu, 27 May 2021 08:10:27 +0200
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 27 May 2021 08:10:27 +0200
-X-ME-IP: 86.243.172.93
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     anitha.chrisanthus@intel.com, edmund.j.dea@intel.com,
-        airlied@linux.ie, daniel@ffwll.ch, sam@ravnborg.org
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH v2 2/2] drm/kmb: Do not report 0 (success) in case of error
-Date:   Thu, 27 May 2021 08:10:25 +0200
-Message-Id: <8b7f10d6373e117cc26487e1c6963e637bc01dee.1622095610.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <91d2b0417ccb8497b977e175b0b44417e47405aa.1622095610.git.christophe.jaillet@wanadoo.fr>
-References: <91d2b0417ccb8497b977e175b0b44417e47405aa.1622095610.git.christophe.jaillet@wanadoo.fr>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 27 May 2021 02:28:15 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60922 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235117AbhE0G1p (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 27 May 2021 02:27:45 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1622096772; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=EHhBGYAVvr1rmhh8IHHDQcMfJJfDKceXHtgD4YyEFsw=;
+        b=cg8UG8PtQRdBxN3WZK3BG9bMokXnE9sJR3XnOnvP9vOlee1t8AdYI85y/xV8iop0tKdeg3
+        dZsk+Qlhhc1eGHQl11Ror/RZF6HRxLqK4tSTpxnYMPCey1/aUMIm8ixO6vl826/43hcSwy
+        4AFXpB5rvkLbhVVq3oqhhh7jcGLQ+CE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1622096772;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=EHhBGYAVvr1rmhh8IHHDQcMfJJfDKceXHtgD4YyEFsw=;
+        b=Pqq2MrMqAu8QXsNDhDaSRqtuEymPcw8SfcZkOa6L414QCTjKxphxI7s9zbRow/j78bcYUd
+        4xnwLHnn39yGQUCQ==
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 22126AAA6;
+        Thu, 27 May 2021 06:26:12 +0000 (UTC)
+Date:   Thu, 27 May 2021 08:26:12 +0200
+Message-ID: <s5hfsy88zgb.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Connor McAdams <conmanx360@gmail.com>,
+        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] ALSA: hda/ca0132: Make a const array static, makes object smaller
+In-Reply-To: <20210526160616.3764119-1-colin.king@canonical.com>
+References: <20210526160616.3764119-1-colin.king@canonical.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-'ret' is known to be 0 at this point.
-Reporting the error from the previous 'platform_get_irq()' call is likely,
-so add the missing assignment.
+On Wed, 26 May 2021 18:06:16 +0200,
+Colin King wrote:
+> 
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Don't populate the const array dsp_dma_stream_ids the stack but instead
+> make it static. Makes the object code smaller by 21 bytes.
+> 
+> Before:
+>    text    data     bss     dec     hex filename
+>  189012   70376     192  259580   3f5fc ./sound/pci/hda/patch_ca0132.o
+> 
+> After:
+>    text    data     bss     dec     hex filename
+>  188927   70440     192  259559   3f5e7 ./sound/pci/hda/patch_ca0132.o
+> 
+> (gcc version 10.3.0)
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Fixes: 7f7b96a8a0a1 ("drm/kmb: Add support for KeemBay Display")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-v2: New patch
----
- drivers/gpu/drm/kmb/kmb_drv.c | 1 +
- 1 file changed, 1 insertion(+)
+Thanks, applied.
 
-diff --git a/drivers/gpu/drm/kmb/kmb_drv.c b/drivers/gpu/drm/kmb/kmb_drv.c
-index fa28e42da460..d9e10ac9847c 100644
---- a/drivers/gpu/drm/kmb/kmb_drv.c
-+++ b/drivers/gpu/drm/kmb/kmb_drv.c
-@@ -138,6 +138,7 @@ static int kmb_hw_init(struct drm_device *drm, unsigned long flags)
- 	irq_lcd = platform_get_irq(pdev, 0);
- 	if (irq_lcd < 0) {
- 		drm_err(&kmb->drm, "irq_lcd not found");
-+		ret = irq_lcd;
- 		goto setup_fail;
- 	}
- 
--- 
-2.30.2
 
+Takashi
