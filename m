@@ -2,78 +2,80 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34CD2C4708C
-	for <kernel-janitors@archiver.kernel.org>; Fri, 28 May 2021 05:51:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 590D9C47087
+	for <kernel-janitors@archiver.kernel.org>; Fri, 28 May 2021 07:13:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 045B0613E3
-	for <kernel-janitors@archiver.kernel.org>; Fri, 28 May 2021 05:51:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2888A61358
+	for <kernel-janitors@archiver.kernel.org>; Fri, 28 May 2021 07:13:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234334AbhE1Fwj (ORCPT
+        id S234999AbhE1HOt (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 28 May 2021 01:52:39 -0400
-Received: from helcar.hmeau.com ([216.24.177.18]:49326 "EHLO deadmen.hmeau.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233029AbhE1Fwj (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 28 May 2021 01:52:39 -0400
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtp (Exim 4.92 #5 (Debian))
-        id 1lmVOe-0002RI-OO; Fri, 28 May 2021 13:51:00 +0800
-Received: from herbert by gondobar with local (Exim 4.92)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1lmVOZ-0003gz-Ad; Fri, 28 May 2021 13:50:55 +0800
-Date:   Fri, 28 May 2021 13:50:55 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Wei Yongjun <weiyongjun1@huawei.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Hulk Robot <hulkci@huawei.com>
-Subject: Re: [PATCH -next] crypto: qce - Fix some error handling path
-Message-ID: <20210528055055.GA14152@gondor.apana.org.au>
-References: <20210519141650.3059054-1-weiyongjun1@huawei.com>
+        Fri, 28 May 2021 03:14:49 -0400
+Received: from szxga02-in.huawei.com ([45.249.212.188]:2511 "EHLO
+        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234805AbhE1HOq (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 28 May 2021 03:14:46 -0400
+Received: from dggeml753-chm.china.huawei.com (unknown [172.30.72.53])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4FrwnJ3dS8zYqPY;
+        Fri, 28 May 2021 15:10:28 +0800 (CST)
+Received: from dggpemm500016.china.huawei.com (7.185.36.25) by
+ dggeml753-chm.china.huawei.com (10.1.199.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2176.2; Fri, 28 May 2021 15:13:08 +0800
+Received: from huawei.com (10.67.174.117) by dggpemm500016.china.huawei.com
+ (7.185.36.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.2; Fri, 28 May
+ 2021 15:13:08 +0800
+From:   Ruiqi Gong <gongruiqi1@huawei.com>
+To:     <gongruiqi1@huawei.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+CC:     Wang Weiyang <wangweiyang2@huawei.com>,
+        <linux-mips@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH -next] MIPS: pm-cps: Make '__pcpu_scope_cps_cpu_state' static
+Date:   Fri, 28 May 2021 15:04:37 +0800
+Message-ID: <20210528070437.5780-1-gongruiqi1@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210519141650.3059054-1-weiyongjun1@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.174.117]
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemm500016.china.huawei.com (7.185.36.25)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, May 19, 2021 at 02:16:50PM +0000, Wei Yongjun wrote:
->
-> @@ -448,13 +450,17 @@ qce_aead_async_req_handle(struct crypto_async_request *async_req)
->  	if (ret)
->  		return ret;
+Mark the per-CPU definition of cps_cpu_state as static to fix the following
+sparse tool complain:
 
-Shouldn't this return do the error_free too?
+arch/mips/kernel/pm-cps.c:66:1: warning:
+ symbol '__pcpu_scope_cps_cpu_state' was not declared. Should it be static?
 
->  	dst_nents = dma_map_sg(qce->dev, rctx->dst_sg, rctx->dst_nents, dir_dst);
-> -	if (dst_nents < 0)
-> +	if (dst_nents < 0) {
-> +		ret = dst_nents;
->  		goto error_free;
-> +	}
->  
->  	if (diff_dst) {
->  		src_nents = dma_map_sg(qce->dev, rctx->src_sg, rctx->src_nents, dir_src);
-> -		if (src_nents < 0)
-> +		if (src_nents < 0) {
-> +			ret = src_nents;
->  			goto error_unmap_dst;
-> +		}
->  	} else {
->  		if (IS_CCM(rctx->flags) && IS_DECRYPT(rctx->flags))
->  			src_nents = dst_nents;
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Ruiqi Gong <gongruiqi1@huawei.com>
+---
+ arch/mips/kernel/pm-cps.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-If so please send a follow-up patch.
+diff --git a/arch/mips/kernel/pm-cps.c b/arch/mips/kernel/pm-cps.c
+index 9bf60d7d44d3..32e8f0673e06 100644
+--- a/arch/mips/kernel/pm-cps.c
++++ b/arch/mips/kernel/pm-cps.c
+@@ -63,7 +63,7 @@ static DEFINE_PER_CPU_ALIGNED(cpumask_t, online_coupled);
+ static DEFINE_PER_CPU_ALIGNED(atomic_t, pm_barrier);
+ 
+ /* Saved CPU state across the CPS_PM_POWER_GATED state */
+-DEFINE_PER_CPU_ALIGNED(struct mips_static_suspend_state, cps_cpu_state);
++static DEFINE_PER_CPU_ALIGNED(struct mips_static_suspend_state, cps_cpu_state);
+ 
+ /* A somewhat arbitrary number of labels & relocs for uasm */
+ static struct uasm_label labels[32];
 
-Thanks,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
