@@ -2,62 +2,87 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21CDCC47087
-	for <kernel-janitors@archiver.kernel.org>; Fri, 28 May 2021 07:25:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90E7CC4708C
+	for <kernel-janitors@archiver.kernel.org>; Fri, 28 May 2021 14:34:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 03CC061358
-	for <kernel-janitors@archiver.kernel.org>; Fri, 28 May 2021 07:25:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E7C3613B4
+	for <kernel-janitors@archiver.kernel.org>; Fri, 28 May 2021 14:34:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235817AbhE1H1Y (ORCPT
+        id S235836AbhE1Of4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 28 May 2021 03:27:24 -0400
-Received: from helcar.hmeau.com ([216.24.177.18]:50222 "EHLO deadmen.hmeau.com"
+        Fri, 28 May 2021 10:35:56 -0400
+Received: from mga03.intel.com ([134.134.136.65]:18551 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229642AbhE1H1X (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 28 May 2021 03:27:23 -0400
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtp (Exim 4.92 #5 (Debian))
-        id 1lmWsM-0003af-1Y; Fri, 28 May 2021 15:25:46 +0800
-Received: from herbert by gondobar with local (Exim 4.92)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1lmWsK-0001xb-Ij; Fri, 28 May 2021 15:25:44 +0800
-Date:   Fri, 28 May 2021 15:25:44 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Wei Yongjun <weiyongjun1@huawei.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Hulk Robot <hulkci@huawei.com>
-Subject: Re: [PATCH -next] crypto: qce - Fix some error handling path
-Message-ID: <20210528072544.GE7392@gondor.apana.org.au>
-References: <20210519141650.3059054-1-weiyongjun1@huawei.com>
+        id S232426AbhE1Of4 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 28 May 2021 10:35:56 -0400
+IronPort-SDR: ZDUmCQWng+6srzxGvXbBJP376Ff1e+Ah+9zIuOTl83gPvhnDCjRqkIqwhzMrds0pwcL2zX7RVN
+ HNBn/mDm0cKg==
+X-IronPort-AV: E=McAfee;i="6200,9189,9998"; a="203001122"
+X-IronPort-AV: E=Sophos;i="5.83,229,1616482800"; 
+   d="scan'208";a="203001122"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2021 07:34:19 -0700
+IronPort-SDR: mCew1Qr6BN0c9OArdarjbLKqFVBaxV6YOaThPPq21A6ZJV6X3j7sFEOBsTVXDJxpUeeipySz6N
+ 5twfoJCcjIjg==
+X-IronPort-AV: E=Sophos;i="5.83,229,1616482800"; 
+   d="scan'208";a="415307717"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2021 07:34:16 -0700
+Received: from andy by smile with local (Exim 4.94)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1lmdYz-00FLMQ-TT; Fri, 28 May 2021 17:34:13 +0300
+Date:   Fri, 28 May 2021 17:34:13 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        Wolfram Sang <wsa@kernel.org>,
+        Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
+        kernel-janitors <kernel-janitors@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] MAINTAINERS: adjust to removing i2c designware platform
+ data
+Message-ID: <YLD/ZQiX5VhpWJg7@smile.fi.intel.com>
+References: <20210419061809.15045-1-lukas.bulwahn@gmail.com>
+ <CAHp75Vfv0FQGXrmpDveOf-cBahoDK3uSPHjPU2RNh6mhFxN7vQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210519141650.3059054-1-weiyongjun1@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAHp75Vfv0FQGXrmpDveOf-cBahoDK3uSPHjPU2RNh6mhFxN7vQ@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, May 19, 2021 at 02:16:50PM +0000, Wei Yongjun wrote:
-> Fix to return negative error code from the error handling
-> cases instead of 0.
+On Mon, Apr 19, 2021 at 11:33:16AM +0300, Andy Shevchenko wrote:
+> On Mon, Apr 19, 2021 at 9:38 AM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+> >
+> > Commit 5a517b5bf687 ("i2c: designware: Get rid of legacy platform data")
+> > removes ./include/linux/platform_data/i2c-designware.h, but misses to
+> > adjust the SYNOPSYS DESIGNWARE I2C DRIVER section in MAINTAINERS.
+> >
+> > Hence, ./scripts/get_maintainer.pl --self-test=patterns complains:
+> >
+> >   warning: no file matches F: include/linux/platform_data/i2c-designware.h
+> >
+> > Remove the file entry to this removed file as well.
 > 
-> Fixes: 9363efb4181c ("crypto: qce - Add support for AEAD algorithms")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  drivers/crypto/qce/aead.c | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
+> Oops, I was under the impression I grepped all occurrences, but I have not.
+> 
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> 
+> Thanks for the catch!
 
-Patch applied.  Thanks.
+Wolfram, isn't it forgotten somehow?
+
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+With Best Regards,
+Andy Shevchenko
+
+
