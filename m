@@ -2,65 +2,106 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-20.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D6A1C2B9F7
-	for <kernel-janitors@archiver.kernel.org>; Fri, 28 May 2021 18:56:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38B9DC4708D
+	for <kernel-janitors@archiver.kernel.org>; Fri, 28 May 2021 20:43:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 65F38613EB
-	for <kernel-janitors@archiver.kernel.org>; Fri, 28 May 2021 18:56:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FC82613F1
+	for <kernel-janitors@archiver.kernel.org>; Fri, 28 May 2021 20:43:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229600AbhE1S5i (ORCPT
+        id S229575AbhE1UpU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 28 May 2021 14:57:38 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:45104 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229571AbhE1S5f (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 28 May 2021 14:57:35 -0400
-Received: from ip5f5aa64a.dynamic.kabel-deutschland.de ([95.90.166.74] helo=phil.lan)
-        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        Fri, 28 May 2021 16:45:20 -0400
+Received: from www62.your-server.de ([213.133.104.62]:37180 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229482AbhE1UpT (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 28 May 2021 16:45:19 -0400
+Received: from sslproxy03.your-server.de ([88.198.220.132])
+        by www62.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
+        (Exim 4.92.3)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1lmizB-000G7u-UB; Fri, 28 May 2021 22:21:38 +0200
+Received: from [85.7.101.30] (helo=linux.home)
+        by sslproxy03.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
         (Exim 4.92)
-        (envelope-from <heiko@sntech.de>)
-        id 1lmheG-0006hU-Lv; Fri, 28 May 2021 20:55:56 +0200
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Colin King <colin.king@canonical.com>,
-        Chris Zhong <zyw@rock-chips.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Sandy Huang <hjc@rock-chips.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Guenter Roeck <groeck@chromium.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-rockchip@lists.infradead.org
-Cc:     Heiko Stuebner <heiko@sntech.de>, kernel-janitors@vger.kernel.org,
+        (envelope-from <daniel@iogearbox.net>)
+        id 1lmizB-000WbL-Kt; Fri, 28 May 2021 22:21:37 +0200
+Subject: Re: [PATCH][next] bpf: devmap: remove redundant assignment of
+ variable drops
+To:     Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+        Colin King <colin.king@canonical.com>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        KP Singh <kpsingh@kernel.org>, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, kernel-janitors@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/rockchip: cdn-dp: fix sign extension on an int multiply for a u64 result
-Date:   Fri, 28 May 2021 20:55:53 +0200
-Message-Id: <162222814865.2904787.9681017201633439176.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20200915162049.36434-1-colin.king@canonical.com>
-References: <20200915162049.36434-1-colin.king@canonical.com>
+References: <20210527143637.795393-1-colin.king@canonical.com>
+ <20210527145549.GA7570@ranger.igk.intel.com>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <70c6e7d3-7faf-c4e7-3ae5-78f9a8e4c2b3@iogearbox.net>
+Date:   Fri, 28 May 2021 22:21:36 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210527145549.GA7570@ranger.igk.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.103.2/26184/Fri May 28 13:05:50 2021)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, 15 Sep 2020 17:20:49 +0100, Colin King wrote:
-> The variable bit_per_pix is a u8 and is promoted in the multiplication
-> to an int type and then sign extended to a u64. If the result of the
-> int multiplication is greater than 0x7fffffff then the upper 32 bits will
-> be set to 1 as a result of the sign extension. Avoid this by casting
-> tu_size_reg to u64 to avoid sign extension and also a potential overflow.
+On 5/27/21 4:55 PM, Maciej Fijalkowski wrote:
+> On Thu, May 27, 2021 at 03:36:37PM +0100, Colin King wrote:
+>> From: Colin Ian King <colin.king@canonical.com>
+>>
+>> The variable drops is being assigned a value that is never
+>> read, it is being updated later on. The assignment is redundant and
+>> can be removed.
+> 
+> Acked-by: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
+> 
+> Would help if you would have CCed me given the fact that hour ago I
+> confirmed that it could be removed :p but no big deal.
 
-Applied, thanks!
+Thanks guys, fyi, took in this one for bpf-next [0], since more unneeded
+code removed.
 
-[1/1] drm/rockchip: cdn-dp: fix sign extension on an int multiply for a u64 result
-      commit: ce0cb93a5adb283f577cd4661f511047b5e39028
+   [0] https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git/commit/?id=e8e0f0f484780d7b90a63ea50020ac4bb027178d
 
-Best regards,
--- 
-Heiko Stuebner <heiko@sntech.de>
+>> Addresses-Coverity: ("Unused value")
+>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>> ---
+>>   kernel/bpf/devmap.c | 2 --
+>>   1 file changed, 2 deletions(-)
+>>
+>> diff --git a/kernel/bpf/devmap.c b/kernel/bpf/devmap.c
+>> index f9148daab0e3..fe3873b5d13d 100644
+>> --- a/kernel/bpf/devmap.c
+>> +++ b/kernel/bpf/devmap.c
+>> @@ -388,8 +388,6 @@ static void bq_xmit_all(struct xdp_dev_bulk_queue *bq, u32 flags)
+>>   		to_send = dev_map_bpf_prog_run(bq->xdp_prog, bq->q, cnt, dev);
+>>   		if (!to_send)
+>>   			goto out;
+>> -
+>> -		drops = cnt - to_send;
+>>   	}
+>>   
+>>   	sent = dev->netdev_ops->ndo_xdp_xmit(dev, to_send, bq->q, flags);
+>> -- 
+>> 2.31.1
+>>
+
