@@ -2,105 +2,97 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4FC4C4708C
-	for <kernel-janitors@archiver.kernel.org>; Fri, 28 May 2021 14:49:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28E36C4708C
+	for <kernel-janitors@archiver.kernel.org>; Fri, 28 May 2021 14:54:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AC68B613E3
-	for <kernel-janitors@archiver.kernel.org>; Fri, 28 May 2021 14:49:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05A68613EB
+	for <kernel-janitors@archiver.kernel.org>; Fri, 28 May 2021 14:54:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235484AbhE1Ov1 (ORCPT
+        id S235665AbhE1Oz4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 28 May 2021 10:51:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35160 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234677AbhE1Ov1 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 28 May 2021 10:51:27 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id CDFF6613D4;
-        Fri, 28 May 2021 14:49:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1622213392;
-        bh=HW5gpAOajiaaDbUKDPQUwX1k4WKIkDBYYV5yjj9Tss0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=sHZ2h26nrNJzzgaALyHnTxn/t0jq2asszflc0ijAIknp93GBlRXW3/n6wSPM3a7AH
-         1Igi9EBji7zi2nXeRLKv8MHc3rU+YF9yS12R2+SaZPkByrWcbHFaS/pa2D/ZDagCov
-         hkcBKRxm3b5dybwjoPeXfp2hrPGLb5mnqLfVWXDBP801sstDv3BmECovWz7pNJRlPd
-         inBc8qexF5eplX1fKGJTce8nQP2//V1jAlsktqB3QEgXcA99/xdNG/LyNGTsOeHq1X
-         gaaQRlTJwfSNaAOcsCCM90N5q4aPkYYZhARChiOr2YO5l2Q2uTVzuSi0IdM42meI7t
-         1olDK7YlDcaMA==
-Date:   Fri, 28 May 2021 16:49:49 +0200
-From:   Wolfram Sang <wsa@kernel.org>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Lee Jones <lee.jones@linaro.org>, linux-i2c@vger.kernel.org,
-        Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: adjust to removing i2c designware platform
- data
-Message-ID: <YLEDDbkH9pIufslp@kunai>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Lee Jones <lee.jones@linaro.org>, linux-i2c@vger.kernel.org,
-        Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210419061809.15045-1-lukas.bulwahn@gmail.com>
+        Fri, 28 May 2021 10:55:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38798 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235415AbhE1Ozy (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 28 May 2021 10:55:54 -0400
+Received: from mail-yb1-xb30.google.com (mail-yb1-xb30.google.com [IPv6:2607:f8b0:4864:20::b30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D236AC061574;
+        Fri, 28 May 2021 07:54:18 -0700 (PDT)
+Received: by mail-yb1-xb30.google.com with SMTP id y2so5830922ybq.13;
+        Fri, 28 May 2021 07:54:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=T35D64bBU0WW7+1maAxJ4aFWgw+2odUz3cLA7+UMgEI=;
+        b=DSqqgWowfLrIWaQ4G8FQP8D/Mv3uukUZsXi2LrtxNR8IH8Y9O/NT4D7B4Vh5dUSx8h
+         mLZ+de7qnQF5uIUxdO879yC28hjn6Na8tAdHKbXH9rIwoej2zJzDUeIatOThVFIE2mO7
+         ASWd0Fy648tunLsP0IFZaviDRP9qhL3qljPexrscb456pFL4H/6WDNHySEAWcU5ZYhxk
+         h31+dOy5rTjEBJg0S9x2vrxGQAyrhCwForLfjRl3dy+r5fc4WVVc/+HvZCHCL3ccNYcm
+         k6xoE+XL/yido36VaiSPRMAZy86JeXns+++SPuUGGsOrltHcKLcGtmb2F4JX+faRxIAo
+         Q9oA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=T35D64bBU0WW7+1maAxJ4aFWgw+2odUz3cLA7+UMgEI=;
+        b=BskphTbhcPxsVQe8pJMYmcSzsFrFQaJ/MIuYzNVsBM9e9soQURBXv9iOTZpygT2mse
+         3vBcG6YPFGVhj6LXzKWWdPVYhNFGR6j9tOWXnYyaoxVE1TqvS8teqeYaeJ5WMj9cTnen
+         OVHb8IlhFDhE5ao5Jnmq1kyxCYI0NR8P9AvT9ggghKDO91Vu67C+1gZe/En8AOA4lPdO
+         glxLWsDgzjG3ZF0muJVt4D6FgNSmnr+VhpCtSAzk4RRw2vreuz3yRoY/xzBinUKILrl5
+         w7Z0EA5O7giJIw3OBWG0t4RxQcjeTJl3Y0+UVDEgq1CIi0uTTL1lJeq7pW6ES3BGaAet
+         JyWg==
+X-Gm-Message-State: AOAM531ywJW+9afu5tQQWcnyKC91Tyx8Rw39P2ScUlmHoW/2/6TNTuCw
+        4bLE6HLN3sKlH7IPNpX74/7wJt9i+9g9CFKeOt4=
+X-Google-Smtp-Source: ABdhPJxmdZtok+h3/xyZHsCmdxnesIbAJ+0wLcRSBoka8XapjX0i5YvSL5vVLLAqka8KNoHwNxt11mLqAF6IUvvAWBM=
+X-Received: by 2002:a5b:90d:: with SMTP id a13mr13476356ybq.151.1622213657995;
+ Fri, 28 May 2021 07:54:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="/SYVXHJ05aITRah3"
-Content-Disposition: inline
-In-Reply-To: <20210419061809.15045-1-lukas.bulwahn@gmail.com>
+References: <20210419061809.15045-1-lukas.bulwahn@gmail.com>
+ <CAHp75Vfv0FQGXrmpDveOf-cBahoDK3uSPHjPU2RNh6mhFxN7vQ@mail.gmail.com>
+ <YLD/ZQiX5VhpWJg7@smile.fi.intel.com> <YLECsC9y8ici47Ln@kunai>
+In-Reply-To: <YLECsC9y8ici47Ln@kunai>
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date:   Fri, 28 May 2021 16:54:06 +0200
+Message-ID: <CAKXUXMwB5-7b8XsO=3jq2VxMf-C92VSYBTCArkLF+hhkKWHSzw@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: adjust to removing i2c designware platform data
+To:     Wolfram Sang <wsa@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
+        kernel-janitors <kernel-janitors@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On Fri, May 28, 2021 at 4:48 PM Wolfram Sang <wsa@kernel.org> wrote:
+>
+>
+> > > > Remove the file entry to this removed file as well.
+> > >
+> > > Oops, I was under the impression I grepped all occurrences, but I have not.
+> > >
+> > > Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> > >
+> > > Thanks for the catch!
+> >
+> > Wolfram, isn't it forgotten somehow?
+>
+> I can pick it. I refrained from doing so because Lukas explicitly asked
+> Lee to pick it.
+>
 
---/SYVXHJ05aITRah3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Wolfram, take it. Nobody compiles MAINTAINERS, so it cannot break any build :)
 
-On Mon, Apr 19, 2021 at 08:18:09AM +0200, Lukas Bulwahn wrote:
-> Commit 5a517b5bf687 ("i2c: designware: Get rid of legacy platform data")
-> removes ./include/linux/platform_data/i2c-designware.h, but misses to
-> adjust the SYNOPSYS DESIGNWARE I2C DRIVER section in MAINTAINERS.
->=20
-> Hence, ./scripts/get_maintainer.pl --self-test=3Dpatterns complains:
->=20
->   warning: no file matches F: include/linux/platform_data/i2c-designware.h
->=20
-> Remove the file entry to this removed file as well.
->=20
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-
-Applied to for-current, thanks!
-
-
---/SYVXHJ05aITRah3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmCxAw0ACgkQFA3kzBSg
-Kbbqbw/+JFzwGVl90rpGi1N/ORK4mem/yngh+TDVOYgTyNI8to6K+pz05/RZiM/w
-XTvVniRp554zDdQUUwFoLRo8FmuGvzqwwRG+dqR0rAeQhuap4mS1oya+uz+PB8sx
-dbvmVhjixLQKaI3adwYoWacGgtQzE7lIR0w3JZCdXUqrRM/l8gscNQ7tURGC7nlY
-7hw8SdwST8Cu5mJ0vgl+I3QJxStk4cld2kIKW4y9622T0dDtuGYR/rnzibf6Q4cR
-F1OXRdX3Yt+kYbs5ZGL1Qs0LcsBLSC0mtKFBtAElcFcemxCfD8wXtHANrt4j6sAS
-aTd8abVrPDWKBtoCnpUOkImYl1otkiaIC7MJ/nSOfr01/UrIJdMhTm4XU9572H1B
-kNFL+XGFAggvxhPmQ5QuYVuUqDa+ora5BoN9t7AUs8FZhSkBONUj1NMSVslTWtOj
-mEK9DcFWIWuqvoWCpMz36yKvovFnuEfmqdQ8Yveqe+OQTRo5NNzIJr66sXXSoPH4
-xoGes3RB709eDIYcBa4JK3kjjbqCaFt9Xwphn2jn0QekS23Gr1k8jXiBee74/H9F
-Mm6xtyUSz5pVspS3s8GV427KE2uvKikpbiid7YymdnY7NWxYK162PIrzqRWDtwoV
-jss/oz3HzP+VBU4s9LblTeW2ct7+sv1LzTV2oGubIgbBsxYrcec=
-=zICk
------END PGP SIGNATURE-----
-
---/SYVXHJ05aITRah3--
+Thanks, Lukas
