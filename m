@@ -2,95 +2,164 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UPPERCASE_50_75,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 047D5C4708F
-	for <kernel-janitors@archiver.kernel.org>; Sat, 29 May 2021 07:50:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C045FC4708E
+	for <kernel-janitors@archiver.kernel.org>; Sat, 29 May 2021 12:14:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B9FAB613F0
-	for <kernel-janitors@archiver.kernel.org>; Sat, 29 May 2021 07:50:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 862FF61163
+	for <kernel-janitors@archiver.kernel.org>; Sat, 29 May 2021 12:14:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229614AbhE2Hvr (ORCPT
+        id S229693AbhE2MQD (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 29 May 2021 03:51:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34680 "EHLO
+        Sat, 29 May 2021 08:16:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229559AbhE2Hvr (ORCPT
+        with ESMTP id S229614AbhE2MQC (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 29 May 2021 03:51:47 -0400
-Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A37FC061574;
-        Sat, 29 May 2021 00:50:11 -0700 (PDT)
-Received: by mail-pf1-x430.google.com with SMTP id d78so4983798pfd.10;
-        Sat, 29 May 2021 00:50:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/4SUnmRsEvEoCQbynPnIZ3E8JwoH+A1ueWYI0Pbiw9w=;
-        b=Bx8aiW5rNAKwEkjR6SKvyEIJS+3ogOsQgjgj5HhuviojVf4zBkN8SX0VCChsDIMFzJ
-         4zdsG/FTki/lsUulBvOrAKiG0KvApU5AY7Uhz3rWbsd/PnJWvd2rd1g1mb8rODPfXUJA
-         JL/IPywG198E0YSDix9nYgnsRG13Rz2rpzvKO4c18jXFl0jIU4ekGgZCKNLhYYvcleXb
-         F66vTtk/zXrf0j//zwfW4Q91nIdzDtap7ooTJHfiodeX7iCxiXZ5MEBoQj0IGIVqAVjy
-         WxXWorabWE0Z4mHIel+lNu8sgk6Ugu9BaY/b3ly94U+l/AxPuJqjGCsg84MLKc/8EAp+
-         UyEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/4SUnmRsEvEoCQbynPnIZ3E8JwoH+A1ueWYI0Pbiw9w=;
-        b=OXLRBcPViVlbPm6jUYyrG5h0BDCPAVr+1f2gDuiHaIJ9ZJq1C9g/I23re7zA7pt/QP
-         5iT2hwFpLDVr1EGx3FWdvxwPy5ItGjbCfuK776ath8YxsAcEW048sJiQGIEPTlFflVoX
-         Gs8QR7N58MBwz8lvpqk8J7IGi03sKVF9XvK9JbizjtJsoWkb2xPXxre9PJ8trSHHYJOY
-         RfsfZnR06YIU4mcCaqPLdjY9EwtJ+M/4gZarilquK3CY+7ayKC5B1VX7VZXPOsGIDfrG
-         uj0TxQwznxetJgQDsbZ+iRtLT6rr0ewKwf8YhjWtfobxMJxZwAbUCWnH9ytf5oyqGBtQ
-         ee+g==
-X-Gm-Message-State: AOAM531+LtXeUcmdDX9i/wjAtPVvP6EkRvGBH13gRXvXrOePP96TQu3+
-        kX/LmmAa//bh493ODOxjKm5JPBXtWGq6W4yuwSE=
-X-Google-Smtp-Source: ABdhPJyioiFRUFcnBijlM3oOsk3K1syg/1g997AAdbEmOsAdGRsW49ZQe0KKqQafR6H1BR4vIqJgB+00gcIa1h19Bco=
-X-Received: by 2002:a63:b507:: with SMTP id y7mr12836118pge.74.1622274610413;
- Sat, 29 May 2021 00:50:10 -0700 (PDT)
+        Sat, 29 May 2021 08:16:02 -0400
+Received: from viti.kaiser.cx (viti.kaiser.cx [IPv6:2a01:238:43fe:e600:cd0c:bd4a:7a3:8e9f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B4E7C061574;
+        Sat, 29 May 2021 05:14:24 -0700 (PDT)
+Received: from dslb-188-096-150-056.188.096.pools.vodafone-ip.de ([188.96.150.56] helo=martin-debian-2.paytec.ch)
+        by viti.kaiser.cx with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <martin@kaiser.cx>)
+        id 1lmxr8-00023z-Ib; Sat, 29 May 2021 14:14:18 +0200
+From:   Martin Kaiser <martin@kaiser.cx>
+To:     Larry Finger <Larry.Finger@lwfinger.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Martin Kaiser <martin@kaiser.cx>
+Subject: [PATCH 1/3] staging: rtl8188eu: use IW_HANDLER to declare wext handlers
+Date:   Sat, 29 May 2021 14:13:44 +0200
+Message-Id: <20210529121346.8422-1-martin@kaiser.cx>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20210419061809.15045-1-lukas.bulwahn@gmail.com>
- <CAHp75Vfv0FQGXrmpDveOf-cBahoDK3uSPHjPU2RNh6mhFxN7vQ@mail.gmail.com>
- <YLD/ZQiX5VhpWJg7@smile.fi.intel.com> <YLECsC9y8ici47Ln@kunai>
- <YLEmJVbVwQaMk+dq@smile.fi.intel.com> <20210528181943.GR543307@dell>
-In-Reply-To: <20210528181943.GR543307@dell>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Sat, 29 May 2021 10:49:54 +0300
-Message-ID: <CAHp75VcGMH53xDSQt257f-rfCMZidHfrVQuHd8T8A0zs9fzN5g@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: adjust to removing i2c designware platform data
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Wolfram Sang <wsa@kernel.org>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
-        kernel-janitors <kernel-janitors@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, May 28, 2021 at 9:20 PM Lee Jones <lee.jones@linaro.org> wrote:
-> On Fri, 28 May 2021, Andy Shevchenko wrote:
-> > On Fri, May 28, 2021 at 04:48:16PM +0200, Wolfram Sang wrote:
+Use the IW_HANDLER macro to declare the handler functions for
+wext ioctls.  We don't have to skip unused ioctl numbers manually.
 
-...
+Signed-off-by: Martin Kaiser <martin@kaiser.cx>
+---
+ .../staging/rtl8188eu/os_dep/ioctl_linux.c    | 97 ++++++++-----------
+ 1 file changed, 41 insertions(+), 56 deletions(-)
 
-> > Ah, I see. AFAIR Lee doesn't update his branch frequently, so it might be that
-> > he already applied that but it's not visible to Linux Next.
->
-> I'm not sure whether to find this funny or be offended.
-
-Definitely not about offending anyone. Let's go with funny!
-
+diff --git a/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c b/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
+index 9dacdd595b63..a23ccda6fefe 100644
+--- a/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
++++ b/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
+@@ -2899,62 +2899,47 @@ static int rtw_wx_set_priv(struct net_device *dev,
+ }
+ 
+ static iw_handler rtw_handlers[] = {
+-	NULL,					/* SIOCSIWCOMMIT */
+-	rtw_wx_get_name,		/* SIOCGIWNAME */
+-	dummy,					/* SIOCSIWNWID */
+-	dummy,					/* SIOCGIWNWID */
+-	rtw_wx_set_freq,		/* SIOCSIWFREQ */
+-	rtw_wx_get_freq,		/* SIOCGIWFREQ */
+-	rtw_wx_set_mode,		/* SIOCSIWMODE */
+-	rtw_wx_get_mode,		/* SIOCGIWMODE */
+-	dummy,					/* SIOCSIWSENS */
+-	rtw_wx_get_sens,		/* SIOCGIWSENS */
+-	NULL,					/* SIOCSIWRANGE */
+-	rtw_wx_get_range,		/* SIOCGIWRANGE */
+-	rtw_wx_set_priv,		/* SIOCSIWPRIV */
+-	NULL,					/* SIOCGIWPRIV */
+-	NULL,					/* SIOCSIWSTATS */
+-	NULL,					/* SIOCGIWSTATS */
+-	dummy,					/* SIOCSIWSPY */
+-	dummy,					/* SIOCGIWSPY */
+-	NULL,					/* SIOCGIWTHRSPY */
+-	NULL,					/* SIOCWIWTHRSPY */
+-	rtw_wx_set_wap,		/* SIOCSIWAP */
+-	rtw_wx_get_wap,		/* SIOCGIWAP */
+-	rtw_wx_set_mlme,		/* request MLME operation; uses struct iw_mlme */
+-	dummy,					/* SIOCGIWAPLIST -- depricated */
+-	rtw_wx_set_scan,		/* SIOCSIWSCAN */
+-	rtw_wx_get_scan,		/* SIOCGIWSCAN */
+-	rtw_wx_set_essid,		/* SIOCSIWESSID */
+-	rtw_wx_get_essid,		/* SIOCGIWESSID */
+-	dummy,					/* SIOCSIWNICKN */
+-	rtw_wx_get_nick,		/* SIOCGIWNICKN */
+-	NULL,					/* -- hole -- */
+-	NULL,					/* -- hole -- */
+-	rtw_wx_set_rate,		/* SIOCSIWRATE */
+-	rtw_wx_get_rate,		/* SIOCGIWRATE */
+-	rtw_wx_set_rts,			/* SIOCSIWRTS */
+-	rtw_wx_get_rts,			/* SIOCGIWRTS */
+-	rtw_wx_set_frag,		/* SIOCSIWFRAG */
+-	rtw_wx_get_frag,		/* SIOCGIWFRAG */
+-	dummy,					/* SIOCSIWTXPOW */
+-	dummy,					/* SIOCGIWTXPOW */
+-	dummy,					/* SIOCSIWRETRY */
+-	rtw_wx_get_retry,		/* SIOCGIWRETRY */
+-	rtw_wx_set_enc,			/* SIOCSIWENCODE */
+-	rtw_wx_get_enc,			/* SIOCGIWENCODE */
+-	dummy,					/* SIOCSIWPOWER */
+-	rtw_wx_get_power,		/* SIOCGIWPOWER */
+-	NULL,					/*---hole---*/
+-	NULL,					/*---hole---*/
+-	rtw_wx_set_gen_ie,		/* SIOCSIWGENIE */
+-	NULL,					/* SIOCGWGENIE */
+-	rtw_wx_set_auth,		/* SIOCSIWAUTH */
+-	NULL,					/* SIOCGIWAUTH */
+-	rtw_wx_set_enc_ext,		/* SIOCSIWENCODEEXT */
+-	NULL,					/* SIOCGIWENCODEEXT */
+-	rtw_wx_set_pmkid,		/* SIOCSIWPMKSA */
+-	NULL,					/*---hole---*/
++	IW_HANDLER(SIOCGIWNAME, rtw_wx_get_name),
++	IW_HANDLER(SIOCSIWNWID, dummy),
++	IW_HANDLER(SIOCGIWNWID, dummy),
++	IW_HANDLER(SIOCSIWFREQ, rtw_wx_set_freq),
++	IW_HANDLER(SIOCGIWFREQ, rtw_wx_get_freq),
++	IW_HANDLER(SIOCSIWMODE, rtw_wx_set_mode),
++	IW_HANDLER(SIOCGIWMODE, rtw_wx_get_mode),
++	IW_HANDLER(SIOCSIWSENS, dummy),
++	IW_HANDLER(SIOCGIWSENS, rtw_wx_get_sens),
++	IW_HANDLER(SIOCGIWRANGE, rtw_wx_get_range),
++	IW_HANDLER(SIOCSIWPRIV, rtw_wx_set_priv),
++	IW_HANDLER(SIOCSIWSPY, dummy),
++	IW_HANDLER(SIOCGIWSPY, dummy),
++	IW_HANDLER(SIOCSIWAP, rtw_wx_set_wap),
++	IW_HANDLER(SIOCGIWAP, rtw_wx_get_wap),
++	IW_HANDLER(SIOCSIWMLME, rtw_wx_set_mlme),
++	IW_HANDLER(SIOCGIWAPLIST, dummy),
++	IW_HANDLER(SIOCSIWSCAN, rtw_wx_set_scan),
++	IW_HANDLER(SIOCGIWSCAN, rtw_wx_get_scan),
++	IW_HANDLER(SIOCSIWESSID, rtw_wx_set_essid),
++	IW_HANDLER(SIOCGIWESSID, rtw_wx_get_essid),
++	IW_HANDLER(SIOCSIWNICKN, dummy),
++	IW_HANDLER(SIOCGIWNICKN, rtw_wx_get_nick),
++	IW_HANDLER(SIOCSIWRATE, rtw_wx_set_rate),
++	IW_HANDLER(SIOCGIWRATE, rtw_wx_get_rate),
++	IW_HANDLER(SIOCSIWRTS, rtw_wx_set_rts),
++	IW_HANDLER(SIOCGIWRTS, rtw_wx_get_rts),
++	IW_HANDLER(SIOCSIWFRAG, rtw_wx_set_frag),
++	IW_HANDLER(SIOCGIWFRAG, rtw_wx_get_frag),
++	IW_HANDLER(SIOCSIWTXPOW, dummy),
++	IW_HANDLER(SIOCGIWTXPOW, dummy),
++	IW_HANDLER(SIOCSIWRETRY, dummy),
++	IW_HANDLER(SIOCGIWRETRY, rtw_wx_get_retry),
++	IW_HANDLER(SIOCSIWENCODE, rtw_wx_set_enc),
++	IW_HANDLER(SIOCGIWENCODE, rtw_wx_get_enc),
++	IW_HANDLER(SIOCSIWPOWER, dummy),
++	IW_HANDLER(SIOCGIWPOWER, rtw_wx_get_power),
++	IW_HANDLER(SIOCSIWGENIE, rtw_wx_set_gen_ie),
++	IW_HANDLER(SIOCSIWAUTH, rtw_wx_set_auth),
++	IW_HANDLER(SIOCSIWENCODEEXT, rtw_wx_set_enc_ext),
++	IW_HANDLER(SIOCSIWPMKSA, rtw_wx_set_pmkid),
+ };
+ 
+ static struct iw_statistics *rtw_get_wireless_stats(struct net_device *dev)
 -- 
-With Best Regards,
-Andy Shevchenko
+2.20.1
+
