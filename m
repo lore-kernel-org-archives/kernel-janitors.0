@@ -2,106 +2,95 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38B9DC4708D
-	for <kernel-janitors@archiver.kernel.org>; Fri, 28 May 2021 20:43:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 047D5C4708F
+	for <kernel-janitors@archiver.kernel.org>; Sat, 29 May 2021 07:50:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0FC82613F1
-	for <kernel-janitors@archiver.kernel.org>; Fri, 28 May 2021 20:43:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9FAB613F0
+	for <kernel-janitors@archiver.kernel.org>; Sat, 29 May 2021 07:50:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229575AbhE1UpU (ORCPT
+        id S229614AbhE2Hvr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 28 May 2021 16:45:20 -0400
-Received: from www62.your-server.de ([213.133.104.62]:37180 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229482AbhE1UpT (ORCPT
+        Sat, 29 May 2021 03:51:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34680 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229559AbhE2Hvr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 28 May 2021 16:45:19 -0400
-Received: from sslproxy03.your-server.de ([88.198.220.132])
-        by www62.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
-        (Exim 4.92.3)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1lmizB-000G7u-UB; Fri, 28 May 2021 22:21:38 +0200
-Received: from [85.7.101.30] (helo=linux.home)
-        by sslproxy03.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1lmizB-000WbL-Kt; Fri, 28 May 2021 22:21:37 +0200
-Subject: Re: [PATCH][next] bpf: devmap: remove redundant assignment of
- variable drops
-To:     Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-        Colin King <colin.king@canonical.com>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        KP Singh <kpsingh@kernel.org>, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20210527143637.795393-1-colin.king@canonical.com>
- <20210527145549.GA7570@ranger.igk.intel.com>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <70c6e7d3-7faf-c4e7-3ae5-78f9a8e4c2b3@iogearbox.net>
-Date:   Fri, 28 May 2021 22:21:36 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Sat, 29 May 2021 03:51:47 -0400
+Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A37FC061574;
+        Sat, 29 May 2021 00:50:11 -0700 (PDT)
+Received: by mail-pf1-x430.google.com with SMTP id d78so4983798pfd.10;
+        Sat, 29 May 2021 00:50:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/4SUnmRsEvEoCQbynPnIZ3E8JwoH+A1ueWYI0Pbiw9w=;
+        b=Bx8aiW5rNAKwEkjR6SKvyEIJS+3ogOsQgjgj5HhuviojVf4zBkN8SX0VCChsDIMFzJ
+         4zdsG/FTki/lsUulBvOrAKiG0KvApU5AY7Uhz3rWbsd/PnJWvd2rd1g1mb8rODPfXUJA
+         JL/IPywG198E0YSDix9nYgnsRG13Rz2rpzvKO4c18jXFl0jIU4ekGgZCKNLhYYvcleXb
+         F66vTtk/zXrf0j//zwfW4Q91nIdzDtap7ooTJHfiodeX7iCxiXZ5MEBoQj0IGIVqAVjy
+         WxXWorabWE0Z4mHIel+lNu8sgk6Ugu9BaY/b3ly94U+l/AxPuJqjGCsg84MLKc/8EAp+
+         UyEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/4SUnmRsEvEoCQbynPnIZ3E8JwoH+A1ueWYI0Pbiw9w=;
+        b=OXLRBcPViVlbPm6jUYyrG5h0BDCPAVr+1f2gDuiHaIJ9ZJq1C9g/I23re7zA7pt/QP
+         5iT2hwFpLDVr1EGx3FWdvxwPy5ItGjbCfuK776ath8YxsAcEW048sJiQGIEPTlFflVoX
+         Gs8QR7N58MBwz8lvpqk8J7IGi03sKVF9XvK9JbizjtJsoWkb2xPXxre9PJ8trSHHYJOY
+         RfsfZnR06YIU4mcCaqPLdjY9EwtJ+M/4gZarilquK3CY+7ayKC5B1VX7VZXPOsGIDfrG
+         uj0TxQwznxetJgQDsbZ+iRtLT6rr0ewKwf8YhjWtfobxMJxZwAbUCWnH9ytf5oyqGBtQ
+         ee+g==
+X-Gm-Message-State: AOAM531+LtXeUcmdDX9i/wjAtPVvP6EkRvGBH13gRXvXrOePP96TQu3+
+        kX/LmmAa//bh493ODOxjKm5JPBXtWGq6W4yuwSE=
+X-Google-Smtp-Source: ABdhPJyioiFRUFcnBijlM3oOsk3K1syg/1g997AAdbEmOsAdGRsW49ZQe0KKqQafR6H1BR4vIqJgB+00gcIa1h19Bco=
+X-Received: by 2002:a63:b507:: with SMTP id y7mr12836118pge.74.1622274610413;
+ Sat, 29 May 2021 00:50:10 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20210527145549.GA7570@ranger.igk.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.103.2/26184/Fri May 28 13:05:50 2021)
+References: <20210419061809.15045-1-lukas.bulwahn@gmail.com>
+ <CAHp75Vfv0FQGXrmpDveOf-cBahoDK3uSPHjPU2RNh6mhFxN7vQ@mail.gmail.com>
+ <YLD/ZQiX5VhpWJg7@smile.fi.intel.com> <YLECsC9y8ici47Ln@kunai>
+ <YLEmJVbVwQaMk+dq@smile.fi.intel.com> <20210528181943.GR543307@dell>
+In-Reply-To: <20210528181943.GR543307@dell>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Sat, 29 May 2021 10:49:54 +0300
+Message-ID: <CAHp75VcGMH53xDSQt257f-rfCMZidHfrVQuHd8T8A0zs9fzN5g@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: adjust to removing i2c designware platform data
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Wolfram Sang <wsa@kernel.org>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
+        kernel-janitors <kernel-janitors@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 5/27/21 4:55 PM, Maciej Fijalkowski wrote:
-> On Thu, May 27, 2021 at 03:36:37PM +0100, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> The variable drops is being assigned a value that is never
->> read, it is being updated later on. The assignment is redundant and
->> can be removed.
-> 
-> Acked-by: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
-> 
-> Would help if you would have CCed me given the fact that hour ago I
-> confirmed that it could be removed :p but no big deal.
+On Fri, May 28, 2021 at 9:20 PM Lee Jones <lee.jones@linaro.org> wrote:
+> On Fri, 28 May 2021, Andy Shevchenko wrote:
+> > On Fri, May 28, 2021 at 04:48:16PM +0200, Wolfram Sang wrote:
 
-Thanks guys, fyi, took in this one for bpf-next [0], since more unneeded
-code removed.
+...
 
-   [0] https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git/commit/?id=e8e0f0f484780d7b90a63ea50020ac4bb027178d
+> > Ah, I see. AFAIR Lee doesn't update his branch frequently, so it might be that
+> > he already applied that but it's not visible to Linux Next.
+>
+> I'm not sure whether to find this funny or be offended.
 
->> Addresses-Coverity: ("Unused value")
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>   kernel/bpf/devmap.c | 2 --
->>   1 file changed, 2 deletions(-)
->>
->> diff --git a/kernel/bpf/devmap.c b/kernel/bpf/devmap.c
->> index f9148daab0e3..fe3873b5d13d 100644
->> --- a/kernel/bpf/devmap.c
->> +++ b/kernel/bpf/devmap.c
->> @@ -388,8 +388,6 @@ static void bq_xmit_all(struct xdp_dev_bulk_queue *bq, u32 flags)
->>   		to_send = dev_map_bpf_prog_run(bq->xdp_prog, bq->q, cnt, dev);
->>   		if (!to_send)
->>   			goto out;
->> -
->> -		drops = cnt - to_send;
->>   	}
->>   
->>   	sent = dev->netdev_ops->ndo_xdp_xmit(dev, to_send, bq->q, flags);
->> -- 
->> 2.31.1
->>
+Definitely not about offending anyone. Let's go with funny!
 
+-- 
+With Best Regards,
+Andy Shevchenko
