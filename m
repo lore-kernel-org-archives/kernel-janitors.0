@@ -2,88 +2,116 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D297C47082
-	for <kernel-janitors@archiver.kernel.org>; Sat, 29 May 2021 12:14:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDFC4C4708F
+	for <kernel-janitors@archiver.kernel.org>; Mon, 31 May 2021 06:02:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1B50161184
-	for <kernel-janitors@archiver.kernel.org>; Sat, 29 May 2021 12:14:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7F986023E
+	for <kernel-janitors@archiver.kernel.org>; Mon, 31 May 2021 06:02:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229807AbhE2MQN (ORCPT
+        id S230135AbhEaGEa (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 29 May 2021 08:16:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35362 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229681AbhE2MQN (ORCPT
+        Mon, 31 May 2021 02:04:30 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:60242 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229752AbhEaGE3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 29 May 2021 08:16:13 -0400
-Received: from viti.kaiser.cx (viti.kaiser.cx [IPv6:2a01:238:43fe:e600:cd0c:bd4a:7a3:8e9f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03521C061574;
-        Sat, 29 May 2021 05:14:36 -0700 (PDT)
-Received: from dslb-188-096-150-056.188.096.pools.vodafone-ip.de ([188.96.150.56] helo=martin-debian-2.paytec.ch)
-        by viti.kaiser.cx with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <martin@kaiser.cx>)
-        id 1lmxrN-00023z-1B; Sat, 29 May 2021 14:14:33 +0200
-From:   Martin Kaiser <martin@kaiser.cx>
-To:     Larry Finger <Larry.Finger@lwfinger.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Martin Kaiser <martin@kaiser.cx>
-Subject: [PATCH 3/3] staging: rtl8188eu: remove dummy setfreq handler
-Date:   Sat, 29 May 2021 14:13:46 +0200
-Message-Id: <20210529121346.8422-3-martin@kaiser.cx>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20210529121346.8422-1-martin@kaiser.cx>
+        Mon, 31 May 2021 02:04:29 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 14V5tO26168235;
+        Mon, 31 May 2021 06:02:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=RkCuyZTIfKbViKm2ct9HBLI3OxZ3FAU3iXystEzKEg0=;
+ b=neOutlWnexDUZ9NuqcTeX3al4f2v/hTFBJu5ObjZVsxQcts06N1H+VESTRt5qRTYuzx2
+ BJBcwRgtF0pxVM/psprqW33LTjwgjDhFSsh5n4gcKT9viCMrc34Ub51+ba2A7V1ZOTB8
+ F0hAA3bARJRIFoNmVn/NEx/RT3PJa7DL5p0w6DJzm0iL+oEcGGyPV3P75ugh7lHFiLMk
+ PHCUxkChHKdL+5223xFQwTjzqGVBUkoTMwrb5Fba/oqnunEfpv4wZPrOnY6y9IEYiS7h
+ av2wpZOQLFq7OMzZYSrPE4SzV40yw8ENIstQNWoTVUpsGkla7xTfainIzh7GPszUh//o sg== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 38udjmj2rb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 31 May 2021 06:02:37 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 14V61vsm070675;
+        Mon, 31 May 2021 06:02:36 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by userp3030.oracle.com with ESMTP id 38uaqv4reh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 31 May 2021 06:02:36 +0000
+Received: from userp3030.oracle.com (userp3030.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 14V62Zis071211;
+        Mon, 31 May 2021 06:02:36 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 38uaqv4re2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 31 May 2021 06:02:35 +0000
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 14V62WW9000518;
+        Mon, 31 May 2021 06:02:32 GMT
+Received: from kadam (/41.212.42.34)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Sun, 30 May 2021 23:02:31 -0700
+Date:   Mon, 31 May 2021 09:02:24 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Martin Kaiser <martin@kaiser.cx>
+Cc:     Larry Finger <Larry.Finger@lwfinger.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] staging: rtl8188eu: remove dummy wext handlers
+Message-ID: <20210531060223.GV1955@kadam>
 References: <20210529121346.8422-1-martin@kaiser.cx>
+ <20210529121346.8422-2-martin@kaiser.cx>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210529121346.8422-2-martin@kaiser.cx>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-GUID: vwzM8NlYJXgd2I2ClWWuw44mKaAUpva9
+X-Proofpoint-ORIG-GUID: vwzM8NlYJXgd2I2ClWWuw44mKaAUpva9
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=10000 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 impostorscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 adultscore=0 spamscore=0
+ suspectscore=0 bulkscore=0 priorityscore=1501 mlxlogscore=999 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
+ definitions=main-2105310044
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The setfreq handler contains only a debug print. It returns success
-although the frequency wasn't set.
+On Sat, May 29, 2021 at 02:13:45PM +0200, Martin Kaiser wrote:
+> Remove the wext handlers that link to an empty dummy function.
+> 
+> Signed-off-by: Martin Kaiser <martin@kaiser.cx>
+> ---
+> If no handler is installed for a wext ioctl, the wext core will return
+> -ENOTSUPP to user space. The dummy function returned -1. It could be argued
+> that this change breaks the user space ABI.
+> 
+> However, it's rather unlikely that an application expects a particular wlan
+> driver and chipset when it configures a wireless network. Checking for
+> errno==1 explicitly will already be non-portable as most other drivers set
+> errn==ENOTSUPP for non-existing ioctls.
+> 
 
-Remove this handler and inform callers that this driver does not
-support setfreq.
+The patch is good, but next time, just put all this commentary in the
+commit message.  It has to do with the impact of the patch on userspace
+and it's helpful for the reviewers.  Some reviewers won't need it, but
+I try to target my commit messages at developers who aren't subsystem
+experts.  I also like that it shows you thought about it.
 
-Signed-off-by: Martin Kaiser <martin@kaiser.cx>
----
- drivers/staging/rtl8188eu/os_dep/ioctl_linux.c | 9 ---------
- 1 file changed, 9 deletions(-)
+I recently saw someone claim that "anyone who can review these patches
+will already know what the <SOMETHING> acronym stands for so that's why
+I didn't explain."  And I was like, "Oh wow...  That's a harsh burn on
+me!"
 
-diff --git a/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c b/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
-index 78699999c4fe..ebd61ba93ef0 100644
---- a/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
-+++ b/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
-@@ -667,14 +667,6 @@ static int rtw_wx_get_name(struct net_device *dev,
- 	return 0;
- }
- 
--static int rtw_wx_set_freq(struct net_device *dev,
--			   struct iw_request_info *info,
--			   union iwreq_data *wrqu, char *extra)
--{
--	RT_TRACE(_module_rtl871x_mlme_c_, _drv_notice_, ("+%s\n", __func__));
--	return 0;
--}
--
- static int rtw_wx_get_freq(struct net_device *dev,
- 			   struct iw_request_info *info,
- 			   union iwreq_data *wrqu, char *extra)
-@@ -2894,7 +2886,6 @@ static int rtw_wx_set_priv(struct net_device *dev,
- 
- static iw_handler rtw_handlers[] = {
- 	IW_HANDLER(SIOCGIWNAME, rtw_wx_get_name),
--	IW_HANDLER(SIOCSIWFREQ, rtw_wx_set_freq),
- 	IW_HANDLER(SIOCGIWFREQ, rtw_wx_get_freq),
- 	IW_HANDLER(SIOCSIWMODE, rtw_wx_set_mode),
- 	IW_HANDLER(SIOCGIWMODE, rtw_wx_get_mode),
--- 
-2.20.1
+regards,
+dan carpenter
 
