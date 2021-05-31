@@ -2,62 +2,104 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0A87C47082
-	for <kernel-janitors@archiver.kernel.org>; Mon, 31 May 2021 07:56:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C462C47082
+	for <kernel-janitors@archiver.kernel.org>; Mon, 31 May 2021 10:17:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9E37460FE9
-	for <kernel-janitors@archiver.kernel.org>; Mon, 31 May 2021 07:56:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC660611CA
+	for <kernel-janitors@archiver.kernel.org>; Mon, 31 May 2021 10:17:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230351AbhEaH5l (ORCPT
+        id S231330AbhEaKT2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 31 May 2021 03:57:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40120 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230269AbhEaH5k (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 31 May 2021 03:57:40 -0400
-Received: from viti.kaiser.cx (viti.kaiser.cx [IPv6:2a01:238:43fe:e600:cd0c:bd4a:7a3:8e9f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B19D6C061574;
-        Mon, 31 May 2021 00:56:00 -0700 (PDT)
-Received: from martin by viti.kaiser.cx with local (Exim 4.89)
-        (envelope-from <martin@viti.kaiser.cx>)
-        id 1lncm7-0003sc-UW; Mon, 31 May 2021 09:55:51 +0200
-Date:   Mon, 31 May 2021 09:55:51 +0200
-From:   Martin Kaiser <martin@kaiser.cx>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Larry Finger <Larry.Finger@lwfinger.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] staging: rtl8188eu: remove dummy wext handlers
-Message-ID: <20210531075551.xjlr74wjxhxsrvj3@viti.kaiser.cx>
-References: <20210529121346.8422-1-martin@kaiser.cx>
- <20210529121346.8422-2-martin@kaiser.cx>
- <20210531060223.GV1955@kadam>
+        Mon, 31 May 2021 06:19:28 -0400
+Received: from gofer.mess.org ([88.97.38.141]:58109 "EHLO gofer.mess.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231320AbhEaKTG (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 31 May 2021 06:19:06 -0400
+Received: by gofer.mess.org (Postfix, from userid 1000)
+        id 78152C65C0; Mon, 31 May 2021 11:17:25 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=mess.org; s=2020;
+        t=1622456245; bh=bf7SEBXgrhjrigUxjJ91LJdvxUVGe/MCLngjuc5WRjQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=JBqh+wd0FoIg3SiUDHDd0iS2SLG0rZ9NG8unWUXOyBGBef13lK68A+BydCbf3AqDs
+         Gdx0kyVVmniB1L5NflJimiE0DYQ7LD6D5SexZyQnXljuLjmAe/rstd7spN7SRstbGA
+         UJyNSnqAJvUByN9MH6SY5Yp1R5bV2FdVdV5OhlTqAj/QGSoeX7/7KIQR7bus+S4yFt
+         PEfKvo6Vi8gQtnyLEBbZjqdVCbMplyrmtSb9AydSG99XkclUOePJlJV62EY1t5MPvd
+         I7Z0SLHO1E3Oo0p3ON/9uqJBknO1CLX3/Z9Dp5gcSJ0om2pexLxXAf8eLHqe9koCv3
+         n3Y2+J2/FB/TA==
+Date:   Mon, 31 May 2021 11:17:25 +0100
+From:   Sean Young <sean@mess.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Yasunari.Takiguchi@sony.com, mchehab@kernel.org,
+        narmstrong@baylibre.com, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 1/2] media: cxd2880-spi: Fix an error handling path
+Message-ID: <20210531101725.GB30390@gofer.mess.org>
+References: <28a115d7207b258715a029f822ab88f7a4ee05e6.1621599392.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210531060223.GV1955@kadam>
-User-Agent: NeoMutt/20170113 (1.7.2)
-Sender: Martin Kaiser <martin@viti.kaiser.cx>
+In-Reply-To: <28a115d7207b258715a029f822ab88f7a4ee05e6.1621599392.git.christophe.jaillet@wanadoo.fr>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Dan and all,
+On Fri, May 21, 2021 at 02:18:14PM +0200, Christophe JAILLET wrote:
+> If an error occurs after a successful 'regulator_enable()' call,
+> 'regulator_disable()' must be called.
+> 
+> Fix the error handling path of the probe accordingly.
+> 
+> Fixes: cb496cd472af ("media: cxd2880-spi: Add optional vcc regulator")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/media/spi/cxd2880-spi.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/spi/cxd2880-spi.c b/drivers/media/spi/cxd2880-spi.c
+> index 931ec0727cd3..df1335e7061c 100644
+> --- a/drivers/media/spi/cxd2880-spi.c
+> +++ b/drivers/media/spi/cxd2880-spi.c
+> @@ -524,13 +524,13 @@ cxd2880_spi_probe(struct spi_device *spi)
+>  	if (IS_ERR(dvb_spi->vcc_supply)) {
+>  		if (PTR_ERR(dvb_spi->vcc_supply) == -EPROBE_DEFER) {
+>  			ret = -EPROBE_DEFER;
+> -			goto fail_adapter;
+> +			goto fail_regulator;
+>  		}
+>  		dvb_spi->vcc_supply = NULL;
 
-Thus wrote Dan Carpenter (dan.carpenter@oracle.com):
+vcc_supply is set to null in this path.
 
-> The patch is good, but next time, just put all this commentary in the
-> commit message.
+>  	} else {
+>  		ret = regulator_enable(dvb_spi->vcc_supply);
+>  		if (ret)
+> -			goto fail_adapter;
+> +			goto fail_regulator;
+>  	}
+>  
+>  	dvb_spi->spi = spi;
+> @@ -618,6 +618,9 @@ cxd2880_spi_probe(struct spi_device *spi)
+>  fail_attach:
+>  	dvb_unregister_adapter(&dvb_spi->adapter);
+>  fail_adapter:
+> +	if (!IS_ERR(dvb_spi->vcc_supply))
+> +		regulator_disable(dvb_spi->vcc_supply);
 
-I was asking myself if this "expression of my doubts" should go into the
-commit message or not.
+IS_ERR(NULL) -> false
+regulator_disable will dereference a null pointer.
 
-Thanks for the feedback.
 
-   Martin
+Sean
+
+> +fail_regulator:
+>  	kfree(dvb_spi);
+>  	return ret;
+>  }
+> -- 
+> 2.30.2
