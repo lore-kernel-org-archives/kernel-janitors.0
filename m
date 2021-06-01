@@ -2,66 +2,105 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3EF1C4708F
-	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Jun 2021 10:37:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97FC6C4708F
+	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Jun 2021 10:43:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D407560FEE
-	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Jun 2021 10:37:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F23561090
+	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Jun 2021 10:43:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233076AbhFAKiu (ORCPT
+        id S232694AbhFAKpg (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 1 Jun 2021 06:38:50 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:40070 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230288AbhFAKit (ORCPT
+        Tue, 1 Jun 2021 06:45:36 -0400
+Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:56778 "EHLO
+        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230282AbhFAKpg (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 1 Jun 2021 06:38:49 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <colin.king@canonical.com>)
-        id 1lo1lj-0000wN-Lr; Tue, 01 Jun 2021 10:37:07 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Michal Simek <monstr@monstr.eu>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] arch: microblaze: Fix spelling mistake "vesion" -> "version"
-Date:   Tue,  1 Jun 2021 11:37:07 +0100
-Message-Id: <20210601103707.9701-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.31.1
+        Tue, 1 Jun 2021 06:45:36 -0400
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 151Ag0uY029859;
+        Tue, 1 Jun 2021 10:43:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=Gx79InivmVewarDJyyMOVuflbWM4unS5ErB5h13b2Lw=;
+ b=gB+WLL32hgD4VzXFy1XC5N3VAJUPyY2GBN9nXi8S5ZZozIwng/PV/N7iipnoRHupUwiV
+ gsxJ+5FZCfCnHYsnfh2h4Aos8UtQq7xVY83znarvvFf6Bhi1T7HdmeFik4ceTdLBkPIz
+ w0EvYCpC1lbFNCoHJ3dYCNo1eT5n6fM7mGhpqgpd9cgXfScdXPCZQbKbMSC2RV12NgzO
+ zJ23bzCAquQslCy6ONKWuw3hkOAnmieS8T3i/wQTM8FXWARfQ38FzPny/Z/mKF7FIe7f
+ 2Gms6P/aMqcWuVn5faE2SS30+WquZyIwySlx6sIKDNSt2pNKxFLHuO7t3ejfUTkdPi1N GA== 
+Received: from oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by mx0b-00069f02.pphosted.com with ESMTP id 38vjar0js1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 01 Jun 2021 10:43:49 +0000
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
+        by pps.podrdrct (8.16.0.36/8.16.0.36) with SMTP id 151AhmAG003720;
+        Tue, 1 Jun 2021 10:43:48 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by aserp3030.oracle.com with ESMTP id 38ubnd3n98-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 01 Jun 2021 10:43:48 +0000
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 151AhmgW003708;
+        Tue, 1 Jun 2021 10:43:48 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3030.oracle.com with ESMTP id 38ubnd3n92-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 01 Jun 2021 10:43:48 +0000
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 151AhkJL013285;
+        Tue, 1 Jun 2021 10:43:46 GMT
+Received: from kadam (/41.212.42.34)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 01 Jun 2021 03:43:46 -0700
+Date:   Tue, 1 Jun 2021 13:43:37 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Mel Gorman <mgorman@suse.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Yang Shi <shy828301@gmail.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] mm: thp: fix a double unlock bug
+Message-ID: <20210601104337.GX1955@kadam>
+References: <YLX8uYN01JmfLnlK@mwanda>
+ <20210601100849.GQ3672@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210601100849.GQ3672@suse.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-ORIG-GUID: Qpm2tEc2qMH89MRHSfhoULSDgCa0t8Yn
+X-Proofpoint-GUID: Qpm2tEc2qMH89MRHSfhoULSDgCa0t8Yn
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Tue, Jun 01, 2021 at 11:08:49AM +0100, Mel Gorman wrote:
+> On Tue, Jun 01, 2021 at 12:24:09PM +0300, Dan Carpenter wrote:
+> > We're supposed to be holding the "vmf->ptl" spin_lock when we goto
+> > out_map.  The lock is dropped after if finishes cleaning up.
+> > 
+> > Fixes: 9aff7b33c74a ("mm: thp: refactor NUMA fault handling")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> Ouch.
+> 
+> Acked-by: Mel Gorman <mgorman@suse.de>
+> 
+> However, that git commit is not stable. Instead of Fixes: I would
+> suggest renaming the patch to "mm: thp: refactor NUMA fault handling
+> -fix" and replacing Fixes with "This patch is a fix to the mmotm patch
+> mm-thp-refactor-numa-fault-handling.patch". Andrew usually slots that
+> into the correct place in his quilt series and collapses the fixes before
+> sending to Linus which works better with bisection.
 
-There is a spelling mistake in the comment. Fix it.
+I know that these normally get folded in, but I assumed that Andrew
+would want the Fixes tag so that he could fold them in automatically
+using a mutt alias. #OneClickShopping
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- arch/microblaze/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/microblaze/Makefile b/arch/microblaze/Makefile
-index b41f323e1fde..6d4af39e3890 100644
---- a/arch/microblaze/Makefile
-+++ b/arch/microblaze/Makefile
-@@ -3,7 +3,7 @@ KBUILD_DEFCONFIG := mmu_defconfig
- 
- UTS_SYSNAME = -DUTS_SYSNAME=\"Linux\"
- 
--# What CPU vesion are we building for, and crack it open
-+# What CPU version are we building for, and crack it open
- # as major.minor.rev
- CPU_VER   := $(shell echo $(CONFIG_XILINX_MICROBLAZE0_HW_VER))
- CPU_MAJOR := $(shell echo $(CPU_VER) | cut -d '.' -f 1)
--- 
-2.31.1
-
+regards,
+dan carpenter
