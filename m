@@ -7,98 +7,102 @@ X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F09AC4708F
-	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Jun 2021 09:24:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BE06C47092
+	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Jun 2021 09:26:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 274F961364
-	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Jun 2021 09:24:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E17961364
+	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Jun 2021 09:26:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233465AbhFAJ0L (ORCPT
+        id S233586AbhFAJ1t (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 1 Jun 2021 05:26:11 -0400
-Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:53478 "EHLO
-        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233096AbhFAJ0K (ORCPT
+        Tue, 1 Jun 2021 05:27:49 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:52576 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233225AbhFAJ1t (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 1 Jun 2021 05:26:10 -0400
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 1519DlsP002560;
-        Tue, 1 Jun 2021 09:24:22 GMT
+        Tue, 1 Jun 2021 05:27:49 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 15199CmN126927;
+        Tue, 1 Jun 2021 09:25:53 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
  : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=jN7+gUrA4PoLPxt0TxmBGmGW1ZJ+sWOMQa5ojP8FOLI=;
- b=YJz5eTlNAe93Y94xSW5Ggx6Hh3SGqyCLfHQwcmzOeGNRWCbz2RLtTCPV0snHxX3bM9yH
- MBp9U2cm7kNRD26BZQuU05C88ZXXU7KTQeC/inXuvT5CaLPP2BAzUR3EWChn+BLgGZr9
- owz5zuNGtVCXRenFGuhFBPB2h5XurqhTTPuiHRHd8MXbK/U/4Z9iC/7eXqOngko6rHX0
- QegeB8NGAVsbpnagN8fDUwdmdX5oqCtE7CZyRWzAzOo9XoKROjcGdbtoHpxBByvs5p1b
- cex1L8r4yWmaKpkh5xXRY6h+kzh3MWM+QQHC05i45nfUydj60AsASzaN/3iZhSEOQY/T /g== 
-Received: from oracle.com (userp3030.oracle.com [156.151.31.80])
-        by mx0b-00069f02.pphosted.com with ESMTP id 38vpk2gg3g-1
+ bh=wwB4VSUvKdGzhu1xJP6jPOcXCgeh115bhoXsbDIkYts=;
+ b=kUAZg7E56EW/JNy5ngfcQUNwrba4Vh/MJPSxBA2rKyLD1seXq+aBtZ3X44pLbndf+AeT
+ 7CWbzXlRbwv0XjXL49uOnuS81piQBplQadsUEqwt7+eMJn8bI6YFAy0l9JO3P85niLYj
+ PHUzuFDyscIZ6JNyQlItv9QpYKpPL5Z6BBULAmVkcKqzomrOmaxEj/xZx7KY7EUWPYX7
+ U5CIroogBen9b3zIWvulPKGjIdNZBCC3yQO4WRhVji57MOJc3tlFRlLEEfytBhFr4wvv
+ 4161kAVZS2VRUEDMhLmAlHOm24ipXFQwrUc4Uo+49gfFw2kIN1pRHsdJOLK4HH1tsQTO Zg== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2130.oracle.com with ESMTP id 38ub4cmygw-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 01 Jun 2021 09:24:22 +0000
-Received: from userp3030.oracle.com (userp3030.oracle.com [127.0.0.1])
-        by pps.podrdrct (8.16.0.36/8.16.0.36) with SMTP id 1519HTHJ029745;
-        Tue, 1 Jun 2021 09:24:21 GMT
+        Tue, 01 Jun 2021 09:25:53 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 1519AbLR057280;
+        Tue, 1 Jun 2021 09:25:52 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-        by userp3030.oracle.com with ESMTP id 38uaqw62nu-1
+        by userp3020.oracle.com with ESMTP id 38uycr45yd-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 01 Jun 2021 09:24:21 +0000
-Received: from userp3030.oracle.com (userp3030.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 1519OKuB041457;
-        Tue, 1 Jun 2021 09:24:20 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3030.oracle.com with ESMTP id 38uaqw62nr-1
+        Tue, 01 Jun 2021 09:25:52 +0000
+Received: from userp3020.oracle.com (userp3020.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 1519NOV9084577;
+        Tue, 1 Jun 2021 09:25:52 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 38uycr45xv-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 01 Jun 2021 09:24:20 +0000
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 1519OJRp012577;
-        Tue, 1 Jun 2021 09:24:19 GMT
+        Tue, 01 Jun 2021 09:25:52 +0000
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 1519Pp8o020050;
+        Tue, 1 Jun 2021 09:25:51 GMT
 Received: from mwanda (/41.212.42.34)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 01 Jun 2021 02:24:18 -0700
-Date:   Tue, 1 Jun 2021 12:24:09 +0300
+        with ESMTP ; Tue, 01 Jun 2021 09:25:50 +0000
+Date:   Tue, 1 Jun 2021 12:25:40 +0300
 From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Yang Shi <shy828301@gmail.com>
-Cc:     Mel Gorman <mgorman@suse.de>, linux-mm@kvack.org,
+To:     Mike Kravetz <mike.kravetz@oracle.com>,
+        Mina Almasry <almasrymina@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] mm: thp: fix a double unlock bug
-Message-ID: <YLX8uYN01JmfLnlK@mwanda>
+Subject: [PATCH] mm: hugetlb: checking for IS_ERR() instead of NULL
+Message-ID: <YLX9FCOU0Il8Ejoy@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
-X-Proofpoint-GUID: 5FwNM0G1IyYbJRtmC7W_AiVNZk2TJwOt
-X-Proofpoint-ORIG-GUID: 5FwNM0G1IyYbJRtmC7W_AiVNZk2TJwOt
+X-Proofpoint-GUID: xyYXQHqPAUI61IN86pE8ylRfcFXBAwHi
+X-Proofpoint-ORIG-GUID: xyYXQHqPAUI61IN86pE8ylRfcFXBAwHi
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=10001 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 mlxscore=0
+ mlxlogscore=999 malwarescore=0 bulkscore=0 phishscore=0 lowpriorityscore=0
+ clxscore=1011 impostorscore=0 adultscore=0 suspectscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
+ definitions=main-2106010062
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-We're supposed to be holding the "vmf->ptl" spin_lock when we goto
-out_map.  The lock is dropped after if finishes cleaning up.
+The alloc_migrate_huge_page() doesn't return error pointers, it returns
+NULL.
 
-Fixes: 9aff7b33c74a ("mm: thp: refactor NUMA fault handling")
+Fixes: ab45bc8b5910 ("mm, hugetlb: fix resv_huge_pages underflow on UFFDIO_COPY")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- mm/huge_memory.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ mm/hugetlb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index e353bbc6cee3..caa0148f15bb 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -1465,10 +1465,8 @@ vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf)
- 
- 	pmd = pmd_modify(oldpmd, vma->vm_page_prot);
- 	page = vm_normal_page_pmd(vma, haddr, pmd);
--	if (!page) {
--		spin_unlock(vmf->ptl);
-+	if (!page)
- 		goto out_map;
--	}
- 
- 	/* See similar comment in do_numa_page for explanation */
- 	if (!was_writable)
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 69a4b551c157..3221c94b4749 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -5103,7 +5103,7 @@ int hugetlb_mcopy_atomic_pte(struct mm_struct *dst_mm,
+ 			 */
+ 			page = alloc_migrate_huge_page(h, gfp_mask, node,
+ 						       nodemask);
+-			if (IS_ERR(page)) {
++			if (!page) {
+ 				ret = -ENOMEM;
+ 				goto out;
+ 			}
 -- 
 2.30.2
 
