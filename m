@@ -7,33 +7,36 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD687C47080
-	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Jun 2021 10:22:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86275C4708F
+	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Jun 2021 10:29:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8B4EA613AB
-	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Jun 2021 10:22:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68FCF6124B
+	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Jun 2021 10:29:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232569AbhFAKXp (ORCPT
+        id S233106AbhFAKan (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 1 Jun 2021 06:23:45 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:39655 "EHLO
+        Tue, 1 Jun 2021 06:30:43 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:39865 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230170AbhFAKXo (ORCPT
+        with ESMTP id S231610AbhFAKam (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 1 Jun 2021 06:23:44 -0400
+        Tue, 1 Jun 2021 06:30:42 -0400
 Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
         (Exim 4.93)
         (envelope-from <colin.king@canonical.com>)
-        id 1lo1X7-0007kz-SD; Tue, 01 Jun 2021 10:22:01 +0000
+        id 1lo1dn-0008Rt-OP; Tue, 01 Jun 2021 10:28:55 +0000
 From:   Colin King <colin.king@canonical.com>
-To:     Eli Billauer <eli.billauer@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Larry Finger <Larry.Finger@lwfinger.net>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org,
+        netdev@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] char: xillybus: Fix spelling mistake "overflew" -> "overflowed"
-Date:   Tue,  1 Jun 2021 11:22:01 +0100
-Message-Id: <20210601102201.8489-1-colin.king@canonical.com>
+Subject: [PATCH] b43legacy: Fix spelling mistake "overflew" -> "overflowed"
+Date:   Tue,  1 Jun 2021 11:28:55 +0100
+Message-Id: <20210601102855.8884-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -44,26 +47,26 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-There is a spelling mistake in a dev_err message. Fix it.
+There is a spelling mistake in a comment. Fix it.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/char/xillybus/xillyusb.c | 2 +-
+ drivers/net/wireless/broadcom/b43legacy/main.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/char/xillybus/xillyusb.c b/drivers/char/xillybus/xillyusb.c
-index 1e15706af749..2ec8eca3eeee 100644
---- a/drivers/char/xillybus/xillyusb.c
-+++ b/drivers/char/xillybus/xillyusb.c
-@@ -1000,7 +1000,7 @@ static int process_bulk_in(struct xillybuffer *xb)
- 			return -EIO; /* We got really unexpected data */
- 
- 		if (bytes != fifo_write(fifo, p, bytes, xilly_memcpy)) {
--			dev_err(dev, "Misbehaving FPGA overflew an upstream FIFO!\n");
-+			dev_err(dev, "Misbehaving FPGA overflowed an upstream FIFO!\n");
- 			return -EIO;
- 		}
- 
+diff --git a/drivers/net/wireless/broadcom/b43legacy/main.c b/drivers/net/wireless/broadcom/b43legacy/main.c
+index f64ebff68308..eec3af9c3745 100644
+--- a/drivers/net/wireless/broadcom/b43legacy/main.c
++++ b/drivers/net/wireless/broadcom/b43legacy/main.c
+@@ -391,7 +391,7 @@ void b43legacy_tsf_read(struct b43legacy_wldev *dev, u64 *tsf)
+ 	 * registers, we should take care of register overflows.
+ 	 * In theory, the whole tsf read process should be atomic.
+ 	 * We try to be atomic here, by restaring the read process,
+-	 * if any of the high registers changed (overflew).
++	 * if any of the high registers changed (overflowed).
+ 	 */
+ 	if (dev->dev->id.revision >= 3) {
+ 		u32 low;
 -- 
 2.31.1
 
