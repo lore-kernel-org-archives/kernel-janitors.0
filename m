@@ -2,90 +2,120 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5052C47093
-	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Jun 2021 16:34:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB362C47093
+	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Jun 2021 17:01:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 931BA613CD
-	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Jun 2021 16:34:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8AC03613BC
+	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Jun 2021 17:01:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233758AbhFAQgQ (ORCPT
+        id S233088AbhFARDb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 1 Jun 2021 12:36:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55100 "EHLO
+        Tue, 1 Jun 2021 13:03:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232490AbhFAQgP (ORCPT
+        with ESMTP id S233657AbhFARDa (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 1 Jun 2021 12:36:15 -0400
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE9BBC061574;
-        Tue,  1 Jun 2021 09:34:31 -0700 (PDT)
-Received: by mail-wm1-x332.google.com with SMTP id h3so8602237wmq.3;
-        Tue, 01 Jun 2021 09:34:31 -0700 (PDT)
+        Tue, 1 Jun 2021 13:03:30 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18B38C061574;
+        Tue,  1 Jun 2021 10:01:49 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id g8so14393625ejx.1;
+        Tue, 01 Jun 2021 10:01:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=message-id:date:from:user-agent:mime-version:to:cc:subject
-         :references:in-reply-to:content-transfer-encoding;
-        bh=bvCCBlAI0cegQuZ44NSg9CufixTnatS00Nz8370cpqc=;
-        b=B1Zqq99yrb4FADvGT1FhuXSVWaP6AcDmUNlcQi6xFjSUo47pJZMNWji4W1KBPUoaCp
-         lvevw+NvhaHLcYKL14MSQlkCPvJNc+Z/x3yTNfkPg13IRPDM/G2fy+OGaDDV3pT53IYW
-         l+0OJQBG+t4PJD+x4jV+cWvhhbG3L5X0GEEWWECmrz5hiXstma+b1sH4eaBBgXUvDqBU
-         3MDBvVw9PSHegSv5kGIEvyvuSDQ0WpRpyqmzgesx8/c6KOgxVvD+AeWwWQ6hkRdm9fmw
-         DGTY9V6XIayRNgjs+Vr9j3mMLYCNL8UXs+ynxpteHQtW6TFSWxiPKpO7v8LV0uQ1E6PV
-         Ai0g==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=2tdMgHdLMp8IM7jC5IZbDKAnduWAjqHcLkrz4rLbVJw=;
+        b=QDdsypDCBWSpFP51Zlk6K05ivWsdZ1K8t0n4IJAGOXbMWDV8hi7GNHTjJlB42ZsAfl
+         R2z5gR6Q+L2utD5SGVPceGs+pSEH0PO9Nn4L5QjSiRkcRBfajFfUxr8QSukj7GII/wmI
+         TiWLb2HcZaCFYy4ssXTFmXjncL404VnccboE66AKuTs0UA3FT65QsIUqYW+jGKOuFLku
+         Rwn8LAsx5YiBH9bgCrU26BKzoJR/bMTEEt3pEXAOD8yQqRf5fh5TugQWMQ5/5AFWurAJ
+         oNpvwYi62e5qT8dN8o9mKW/nkRAqDbKF3AtWF+LHktPtsOkjCgOep4p5ODG1TtDi/UbO
+         Eqnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:from:user-agent:mime-version:to
-         :cc:subject:references:in-reply-to:content-transfer-encoding;
-        bh=bvCCBlAI0cegQuZ44NSg9CufixTnatS00Nz8370cpqc=;
-        b=VxsQ02CRiICehvJCCLPTLskh3oNjn8/UO13nXpBH+shJyakdHXm/maJWibqmNlxALk
-         oIEo8+ty8/p59giJ4L/fS/yC3qK0VgTkr2G18YVRV/ofVRXRhabOOxVXad3thTqGuCOd
-         1biZ60y8kY8qwMLnYJEKWBX/qm9lbdnl718njD8o9Kll8QiQifAYJOBvV3vco4w9669E
-         66zNQpwcii4RB/mioARGmdwwSfxd/yiDK/uBRngLzvgKePvsmikDsc1vsttGQiSLyObE
-         R4+LpvVJ0GCQn7f//4D36MbcsOzFqQ/jIepLxIevRbJNH5iMsNG41pAILvxK9dq59qbL
-         FhHw==
-X-Gm-Message-State: AOAM531UqjkSQX3g9bWDXe9vsDV1IOf0WRhkE9Fx+R2L60gkcvfiJ4v7
-        GMXcWpX/fahxYysrxoJ67ECQx93KNds=
-X-Google-Smtp-Source: ABdhPJy6vRXQIIKgw1cvPhmGkU2rDBerzDkGGWkN6tEAETe1C30BNvwsznkZWiue4b4OBsAb6prw4w==
-X-Received: by 2002:a7b:cbc2:: with SMTP id n2mr27692896wmi.69.1622565270396;
-        Tue, 01 Jun 2021 09:34:30 -0700 (PDT)
-Received: from [89.139.227.208] (89-139-227-208.bb.netvision.net.il. [89.139.227.208])
-        by smtp.gmail.com with ESMTPSA id n6sm7208wmq.34.2021.06.01.09.34.28
-        (version=TLS1 cipher=AES128-SHA bits=128/128);
-        Tue, 01 Jun 2021 09:34:29 -0700 (PDT)
-Message-ID: <60B6615F.1050807@gmail.com>
-Date:   Tue, 01 Jun 2021 19:33:35 +0300
-From:   Eli Billauer <eli.billauer@gmail.com>
-User-Agent: Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.1.12) Gecko/20100907 Fedora/3.0.7-1.fc12 Thunderbird/3.0.7
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=2tdMgHdLMp8IM7jC5IZbDKAnduWAjqHcLkrz4rLbVJw=;
+        b=RFb+RYPRz9FJqevKAQIvarzaz2Cd+XU282wzQMJ1I7f+6suGCrN5Z8ieox9NBNRlyy
+         SZ5EU9gNf+EDpRD3mQlQucIreaSWj4jTJO8f3g/0i+z5+D6ipe53qYEzNqFQTATiAony
+         Obpm9aWwalKat67/Ko5FOR4jULTFNpMjeLW+KUPvMVeL6NtIMRud1PNoC+1riAKf+fX8
+         3qWg/99YsLO77YYmLBZXK5M/f7wdLGSSWCm1MzlRxVXsOu9komnaeu9LwQiJoL9IKCzd
+         uvbq3AmSo15XqntWb40lkmax15bAXvy3M1EL423qOreUzLplGuPVBSL8+/MAW46ZWtiD
+         GkMQ==
+X-Gm-Message-State: AOAM533M6F0vrmf+BCNBiyEVJqurcWf+zYE0SYkyCK/wsQzeZgoor9VV
+        2vDdjUcaTKHE86gqwip/who=
+X-Google-Smtp-Source: ABdhPJwoOSKSObg/Q1BlTqp32kvrk7vm1rJBgG4cFo3gK8+/oOwcvuVnHoe7kLfp9YjCuu18EiDL/Q==
+X-Received: by 2002:a17:906:68ca:: with SMTP id y10mr30440536ejr.318.1622566907733;
+        Tue, 01 Jun 2021 10:01:47 -0700 (PDT)
+Received: from localhost ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id n16sm8975571edw.26.2021.06.01.10.01.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Jun 2021 10:01:46 -0700 (PDT)
+Date:   Tue, 1 Jun 2021 19:03:22 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Bixuan Cui <cuibixuan@huawei.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH -next] serial: Add missing MODULE_DEVICE_TABLE
+Message-ID: <YLZoWn6LCEaUNDuk@orome.fritz.box>
+References: <20210410035048.11466-1-cuibixuan@huawei.com>
 MIME-Version: 1.0
-To:     Colin King <colin.king@canonical.com>
-CC:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] char: xillybus: Fix spelling mistake "overflew"
- -> "overflowed"
-References: <20210601102201.8489-1-colin.king@canonical.com>
-In-Reply-To: <20210601102201.8489-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="Lwqq355qEDBFtGXa"
+Content-Disposition: inline
+In-Reply-To: <20210410035048.11466-1-cuibixuan@huawei.com>
+User-Agent: Mutt/2.0.6 (98f8cb83) (2021-03-06)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 01/06/21 13:22, Colin King wrote:
-> There is a spelling mistake in a dev_err message. Fix it.
->
->    
-This is actually a grammar mistake: Overflew is the past of overfly, not 
-overflow.
 
-I stand corrected nevertheless. Thanks.
+--Lwqq355qEDBFtGXa
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-    Eli
+On Sat, Apr 10, 2021 at 11:50:48AM +0800, Bixuan Cui wrote:
+> This patch adds missing MODULE_DEVICE_TABLE definition which generates
+> correct modalias for automatic loading of this driver when it is built
+> as an external module.
+>=20
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Bixuan Cui <cuibixuan@huawei.com>
+> ---
+>  drivers/tty/serial/tegra-tcu.c | 1 +
+>  1 file changed, 1 insertion(+)
 
-Acked-by: Eli Billauer <eli.billauer@gmail.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--Lwqq355qEDBFtGXa
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmC2aFoACgkQ3SOs138+
+s6GFAxAAnBm85h6fWfTsi9P5POEipLrTGS16ajaYbFY97eoZOoNN+9kQ5G8Sgjnm
+ZHFP3lRdaZ3mS79/4yRZLE7shtxZznMkp/PySejDdlt49Kpt4/iezlGxRbmu/vOQ
+lJWU2ixlmORR6WBtRutsWb/tLVqmwWY/cpeZFxaJvOqj6izaDTKnPfoXtth18YHh
+rWCyzMz+vLbzOj/3iKQe0W7skN4e4RAbhohFBpkWD/ZFNSREe5WBsAUNJOKs3o4S
+X6sfcDWwsJoPqZsSF80ZZUmVkcHfnaUwppAZUTA5L4+gz32b5z9Pqol+277Qq8A5
+WnYfdgES15Cihfi4/1LyzcpNWdDRygg2KKF4AkkuwlJJzwLHLny4Ac3QtCzoC+QM
+mOGvUgBktBHTHaTOgX5lYVxTas51Bq7g4WHksxmT1LYZODhKWIqn6qSd7JxG9+C5
+LFSbcu/ubQbbLUnBOF4Pn5hAwiUOXAxRrhxQE5w72n9tsOrrEHqla72fBPHaiogz
+EICGk0jp6yv12Qz8DC8YSwArTDneBy80hl9jojO1HowBBrjbZZF5jIiUJtT8LyT1
+/pAgBMeqOsYa5F4Wu6fcNYCOi4Za2ikNgyFbKPb49yX0o+J7lFyg29HxzGu2Z/LI
+K/P/cbQgLemXPXmrViRgOQ2asN+HejWeAqJ3eQY4GLfVS/fxRQI=
+=PePe
+-----END PGP SIGNATURE-----
+
+--Lwqq355qEDBFtGXa--
