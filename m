@@ -2,107 +2,58 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BE06C47092
-	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Jun 2021 09:26:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25679C47093
+	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Jun 2021 09:51:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5E17961364
-	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Jun 2021 09:26:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C49C61008
+	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Jun 2021 09:51:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233586AbhFAJ1t (ORCPT
+        id S231192AbhFAJxh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 1 Jun 2021 05:27:49 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:52576 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233225AbhFAJ1t (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 1 Jun 2021 05:27:49 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 15199CmN126927;
-        Tue, 1 Jun 2021 09:25:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=wwB4VSUvKdGzhu1xJP6jPOcXCgeh115bhoXsbDIkYts=;
- b=kUAZg7E56EW/JNy5ngfcQUNwrba4Vh/MJPSxBA2rKyLD1seXq+aBtZ3X44pLbndf+AeT
- 7CWbzXlRbwv0XjXL49uOnuS81piQBplQadsUEqwt7+eMJn8bI6YFAy0l9JO3P85niLYj
- PHUzuFDyscIZ6JNyQlItv9QpYKpPL5Z6BBULAmVkcKqzomrOmaxEj/xZx7KY7EUWPYX7
- U5CIroogBen9b3zIWvulPKGjIdNZBCC3yQO4WRhVji57MOJc3tlFRlLEEfytBhFr4wvv
- 4161kAVZS2VRUEDMhLmAlHOm24ipXFQwrUc4Uo+49gfFw2kIN1pRHsdJOLK4HH1tsQTO Zg== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2130.oracle.com with ESMTP id 38ub4cmygw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 01 Jun 2021 09:25:53 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 1519AbLR057280;
-        Tue, 1 Jun 2021 09:25:52 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by userp3020.oracle.com with ESMTP id 38uycr45yd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 01 Jun 2021 09:25:52 +0000
-Received: from userp3020.oracle.com (userp3020.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 1519NOV9084577;
-        Tue, 1 Jun 2021 09:25:52 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3020.oracle.com with ESMTP id 38uycr45xv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 01 Jun 2021 09:25:52 +0000
-Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 1519Pp8o020050;
-        Tue, 1 Jun 2021 09:25:51 GMT
-Received: from mwanda (/41.212.42.34)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 01 Jun 2021 09:25:50 +0000
-Date:   Tue, 1 Jun 2021 12:25:40 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Mike Kravetz <mike.kravetz@oracle.com>,
-        Mina Almasry <almasrymina@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] mm: hugetlb: checking for IS_ERR() instead of NULL
-Message-ID: <YLX9FCOU0Il8Ejoy@mwanda>
+        Tue, 1 Jun 2021 05:53:37 -0400
+Received: from elvis.franken.de ([193.175.24.41]:59984 "EHLO elvis.franken.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230178AbhFAJxh (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 1 Jun 2021 05:53:37 -0400
+Received: from uucp (helo=alpha)
+        by elvis.franken.de with local-bsmtp (Exim 3.36 #1)
+        id 1lo13y-0001KW-00; Tue, 01 Jun 2021 11:51:54 +0200
+Received: by alpha.franken.de (Postfix, from userid 1000)
+        id 14D7EC1B8B; Tue,  1 Jun 2021 11:29:50 +0200 (CEST)
+Date:   Tue, 1 Jun 2021 11:29:50 +0200
+From:   Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To:     Ruiqi Gong <gongruiqi1@huawei.com>
+Cc:     Wang Weiyang <wangweiyang2@huawei.com>, linux-mips@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] MIPS: pm-cps: Make '__pcpu_scope_cps_cpu_state'
+ static
+Message-ID: <20210601092949.GA6961@alpha.franken.de>
+References: <20210528070437.5780-1-gongruiqi1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-X-Proofpoint-GUID: xyYXQHqPAUI61IN86pE8ylRfcFXBAwHi
-X-Proofpoint-ORIG-GUID: xyYXQHqPAUI61IN86pE8ylRfcFXBAwHi
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=10001 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 mlxscore=0
- mlxlogscore=999 malwarescore=0 bulkscore=0 phishscore=0 lowpriorityscore=0
- clxscore=1011 impostorscore=0 adultscore=0 suspectscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
- definitions=main-2106010062
+In-Reply-To: <20210528070437.5780-1-gongruiqi1@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The alloc_migrate_huge_page() doesn't return error pointers, it returns
-NULL.
+On Fri, May 28, 2021 at 03:04:37PM +0800, Ruiqi Gong wrote:
+> Mark the per-CPU definition of cps_cpu_state as static to fix the following
+> sparse tool complain:
+> 
+> arch/mips/kernel/pm-cps.c:66:1: warning:
+>  symbol '__pcpu_scope_cps_cpu_state' was not declared. Should it be static?
 
-Fixes: ab45bc8b5910 ("mm, hugetlb: fix resv_huge_pages underflow on UFFDIO_COPY")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- mm/hugetlb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+did you compile/link a kernel with this patch ? I doubt that since there
+is a refernec to this symbol in arch/mips/kernel/cps-vec.S.
 
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 69a4b551c157..3221c94b4749 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -5103,7 +5103,7 @@ int hugetlb_mcopy_atomic_pte(struct mm_struct *dst_mm,
- 			 */
- 			page = alloc_migrate_huge_page(h, gfp_mask, node,
- 						       nodemask);
--			if (IS_ERR(page)) {
-+			if (!page) {
- 				ret = -ENOMEM;
- 				goto out;
- 			}
+Thomas.
+
 -- 
-2.30.2
-
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
