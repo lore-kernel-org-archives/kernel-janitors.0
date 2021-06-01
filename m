@@ -2,165 +2,131 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_NONE,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3A2FC47082
-	for <kernel-janitors@archiver.kernel.org>; Mon, 31 May 2021 11:57:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E00FC47097
+	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Jun 2021 08:47:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C085E60241
-	for <kernel-janitors@archiver.kernel.org>; Mon, 31 May 2021 11:57:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 026F5613B1
+	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Jun 2021 08:47:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231391AbhEaL7O (ORCPT
+        id S233699AbhFAIti (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 31 May 2021 07:59:14 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:35542 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231292AbhEaL7N (ORCPT
+        Tue, 1 Jun 2021 04:49:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60982 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233654AbhFAItd (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 31 May 2021 07:59:13 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 14VBtNf3167721;
-        Mon, 31 May 2021 11:57:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=Qa7OB0joVIbsqEBqQrEqTWmxDwJ6EILjSJNqOz1k7ag=;
- b=eSbixdL0JIpRPRZKh/4i9HsZrkmv4TIXiD+xxEMKRyG734RMV+4/Y7ELGFN5GkTmHvP+
- tHjw0pcEzmyiRoPk0L4nPpKjR7Nwthj+e7wDp55UHpC8Z7UfwvpY+Z3ddZDZeauQvrg/
- VTbdiamjrfxhipPNTMLQ0fi+HAuBQKY/2TdMNAfbnmtrcPKR9nz2PYN6ZiHon2jD+unC
- X+QoKIGqEup1rVLUwrcfhaNF03lpfxVb271c8JdhTG5EQuHn5ise4e3djiITj38Ocmn6
- o+PXW+s0Lfo07PZNwt65wVjLJf6gaYpjs8AVNah6ACfFg28VzP1w0MZJE74+oBwHr+jI hw== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2130.oracle.com with ESMTP id 38ub4ck241-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 31 May 2021 11:57:24 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 14VBt59Z058899;
-        Mon, 31 May 2021 11:57:24 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by aserp3020.oracle.com with ESMTP id 38ude65r6y-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 31 May 2021 11:57:24 +0000
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 14VBvNlo069604;
-        Mon, 31 May 2021 11:57:23 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 38ude65r6a-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 31 May 2021 11:57:23 +0000
-Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 14VBvMEm025098;
-        Mon, 31 May 2021 11:57:22 GMT
-Received: from kadam (/41.212.42.34)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 31 May 2021 04:57:21 -0700
-Date:   Mon, 31 May 2021 14:57:14 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Sean Young <sean@mess.org>
-Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Yasunari.Takiguchi@sony.com, mchehab@kernel.org,
-        narmstrong@baylibre.com, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 1/2] media: cxd2880-spi: Fix an error handling path
-Message-ID: <20210531115713.GW1955@kadam>
-References: <28a115d7207b258715a029f822ab88f7a4ee05e6.1621599392.git.christophe.jaillet@wanadoo.fr>
- <20210531101725.GB30390@gofer.mess.org>
+        Tue, 1 Jun 2021 04:49:33 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A8D6C0613ED
+        for <kernel-janitors@vger.kernel.org>; Tue,  1 Jun 2021 01:47:51 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id z17so13388270wrq.7
+        for <kernel-janitors@vger.kernel.org>; Tue, 01 Jun 2021 01:47:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=322dbtM46O3QcTbghSB7BeJYNbqpaIfGRgomGDZ93iE=;
+        b=zH0nyqnHcnGVmdTu3YEei5B5TuCrVSjv8yvMBbEalGkFR9tLH/LZP64768STt5ZyEy
+         alL2aGOrrCgn7j9jDB44WS3AlW46a7JY3VRBxQBQnN9AhUqAZfZ37HZNLygt4a9pHaJl
+         ZWMv0eoBWY5M7Zj1/uYTb2ixvr6IuGnbHs37wnikhRwNeJrcp9C/gaZEDS6eiWspZB78
+         tLbPWi92pLFxpM1rBmsLdIl9dQjycXqIEucDR+eeKJtZpPUwfciXOE5SQSQvLNyAOc+u
+         GTCqgIsq31lHP/Y8M/J+rDxluTNF5HgsTCs/mjqZZtC41wwqFxlGjqc849Iw7fhljdTy
+         bfBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=322dbtM46O3QcTbghSB7BeJYNbqpaIfGRgomGDZ93iE=;
+        b=mNKcYrWvPMh8BJ6qELPtQRHPdfR8++rdN5+ci6Z1o+75NmFjmdZtv8LMglnPhcTu2L
+         rzJIW1/fqD4AWWHurg9yxB9FuOChUfWPoz8W/zjYF4pdREhEdMnfoWbMVw61eeoyqdzO
+         3Z70N3leG2s8VldYXScWz4fnkxztrQMoM/sX/XB90qNMuIdlzxc9CBJfkOQD4mrwvjb8
+         IqpSAaH2STZ515NTEfr9vKNTeKesms1SYTrRPQzMKqnEMG8+HcjrIfSPbZJ1nCsPph+/
+         CF4T2+CgvYf2N6+Vcb4Al/pDotJrdkQ6SK026eJhoj1NSYUC+adqmLvmiFdRowkkKgwp
+         9x+A==
+X-Gm-Message-State: AOAM5325zPee8g+FMd3OZmMMdckleSV8DhEJUe9SQE/6YzFfK53rGv20
+        fU7Erko34L0bl62fyTjLUszo6S0cYa0nwIk9
+X-Google-Smtp-Source: ABdhPJwHfm4W7Jg6jHlyp2IqpSdMFmvjQnAuGssRjqPaBcl0npzMlEISc9JhfpSSb8BQzxgFoo0xMw==
+X-Received: by 2002:a5d:6e04:: with SMTP id h4mr26184792wrz.256.1622537269671;
+        Tue, 01 Jun 2021 01:47:49 -0700 (PDT)
+Received: from ?IPv6:2a01:e0a:90c:e290:a3a:d001:6a80:207a? ([2a01:e0a:90c:e290:a3a:d001:6a80:207a])
+        by smtp.gmail.com with ESMTPSA id t1sm2438670wrx.28.2021.06.01.01.47.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Jun 2021 01:47:49 -0700 (PDT)
+Subject: Re: [PATCH] usb: dwc3: meson-g12a: Disable the regulator in the error
+ handling path of the probe
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     balbi@kernel.org, gregkh@linuxfoundation.org, khilman@baylibre.com,
+        jbrunet@baylibre.com, linux-usb@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <79df054046224bbb0716a8c5c2082650290eec86.1621616013.git.christophe.jaillet@wanadoo.fr>
+ <CAFBinCCBo4fYoO=2NiWTEixPuJo2Q=J1o1+yfi4Oc32SLi=GAw@mail.gmail.com>
+From:   Neil Armstrong <narmstrong@baylibre.com>
+Organization: Baylibre
+Message-ID: <455790a9-250d-ff00-6304-fd933409b1fb@baylibre.com>
+Date:   Tue, 1 Jun 2021 10:47:47 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210531101725.GB30390@gofer.mess.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-GUID: 5u8xatuf7NrMIrTDzNMobpelYbbTHkNn
-X-Proofpoint-ORIG-GUID: 5u8xatuf7NrMIrTDzNMobpelYbbTHkNn
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=10000 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 mlxscore=0
- mlxlogscore=999 malwarescore=0 bulkscore=0 phishscore=0 lowpriorityscore=0
- clxscore=1011 impostorscore=0 adultscore=0 suspectscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
- definitions=main-2105310086
+In-Reply-To: <CAFBinCCBo4fYoO=2NiWTEixPuJo2Q=J1o1+yfi4Oc32SLi=GAw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, May 31, 2021 at 11:17:25AM +0100, Sean Young wrote:
-> On Fri, May 21, 2021 at 02:18:14PM +0200, Christophe JAILLET wrote:
-> > If an error occurs after a successful 'regulator_enable()' call,
-> > 'regulator_disable()' must be called.
-> > 
-> > Fix the error handling path of the probe accordingly.
-> > 
-> > Fixes: cb496cd472af ("media: cxd2880-spi: Add optional vcc regulator")
-> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > ---
-> >  drivers/media/spi/cxd2880-spi.c | 7 +++++--
-> >  1 file changed, 5 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/media/spi/cxd2880-spi.c b/drivers/media/spi/cxd2880-spi.c
-> > index 931ec0727cd3..df1335e7061c 100644
-> > --- a/drivers/media/spi/cxd2880-spi.c
-> > +++ b/drivers/media/spi/cxd2880-spi.c
-> > @@ -524,13 +524,13 @@ cxd2880_spi_probe(struct spi_device *spi)
-> >  	if (IS_ERR(dvb_spi->vcc_supply)) {
-> >  		if (PTR_ERR(dvb_spi->vcc_supply) == -EPROBE_DEFER) {
-> >  			ret = -EPROBE_DEFER;
-> > -			goto fail_adapter;
-> > +			goto fail_regulator;
-> >  		}
-> >  		dvb_spi->vcc_supply = NULL;
+On 23/05/2021 18:03, Martin Blumenstingl wrote:
+> Hi Christophe,
 > 
-> vcc_supply is set to null in this path.
+> On Fri, May 21, 2021 at 6:55 PM Christophe JAILLET
+> <christophe.jaillet@wanadoo.fr> wrote:
+>>
+>> If an error occurs after a successful 'regulator_enable()' call,
+>> 'regulator_disable()' must be called.
+>>
+>> Fix the error handling path of the probe accordingly.
+>>
+>> The remove function doesn't need to be fixed, because the
+>> 'regulator_disable()' call is already hidden in 'dwc3_meson_g12a_suspend()'
+>> which is called via 'pm_runtime_set_suspended()' in the remove function.
+>>
+>> Fixes: c99993376f72 ("usb: dwc3: Add Amlogic G12A DWC3 glue")
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> for me this makes sense so:
+> Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+
+> 
+>> ---
+>> Please review carefully.
+>>
+>> I'm not that sure about:
+>>    The remove function doesn't need to be fixed, because the
+>>    'regulator_disable()' call is already hidden in 'dwc3_meson_g12a_suspend()'
+>>    which is called via 'pm_runtime_set_suspended()' in the remove function.
+>>
+>> This is more a guess than anything else!
+> I am not 100% sure about the suspend code-path, so I am hoping that
+> someone else (for example Neil) can also review your patch
+
+Not 100% sure aswell, but the probe function is wrong anyway and must be fixed by this patch, so LGTM.
+
+Neil
+
+> 
+> 
+> Best regards,
+> Martin
 > 
 
-The regulator_enable()/disable() functions should be modified to handle
-NULL pointers.
-
-Btw, the regulator_get_optional() is a very annoying function...
-Normally when there is an optional feature then it returns NULL if the
-option was to have the feature disabled and error pointers if there
-is an error.  Then the surrounding code is expected to check for and
-work with NULL pointers.  The error handling is very simple:
-
-	p = get_feature();
-	if (IS_ERR(p))
-		return PTR_ERR(p);
-
-Or if the function doesn't make sense when the feature is disabled we
-do:
-
-	p = get_feature();
-	if (IS_ERR_OR_NULL(p))
-		return PTR_ERR(p);  // <-- this will return success if
-				    // get_feature() returns NULL
-
-Users want to see errors and be able to fix them.  We shouldn't just
-disable stuff.
-
-It sort of seems like the idea with regulator_get_optional() was to
-return -ENODEV if the user deliberately has the feature off.  That's
-how I would read the code but it doesn't really work because other
-errors can also lead to -ENODEV.
-
-I have examined seven call sites and there are four which treat
-everthing except -ENODEV as a failure and three which only treat
--EPROBE_DEFER as a failure.
-
-I don't know how to fix it at this point, without introducing a new
-wrapper:
-
-struct regulator *devm_regulator_get_optional_v2(struct device *dev,
-						 const char *id)
-{
-	struct regulator *r;
-
-	r = _devm_regulator_get(dev, id, OPTIONAL_GET);
-	if (IS_ERR(r) == -ENODEV)
-		return NULL;
-	return r;
-}
-
-regards,
-dan carpenter
