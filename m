@@ -2,103 +2,90 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.9 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8CF2C47080
-	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Jun 2021 13:41:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5052C47093
+	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Jun 2021 16:34:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C56CE61263
-	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Jun 2021 13:41:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 931BA613CD
+	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Jun 2021 16:34:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234034AbhFANn2 (ORCPT
+        id S233758AbhFAQgQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 1 Jun 2021 09:43:28 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:44777 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234014AbhFANn1 (ORCPT
+        Tue, 1 Jun 2021 12:36:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55100 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232490AbhFAQgP (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 1 Jun 2021 09:43:27 -0400
-Received: from mail-ed1-f72.google.com ([209.85.208.72])
-        by youngberry.canonical.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <krzysztof.kozlowski@canonical.com>)
-        id 1lo4eP-0005yE-QH
-        for kernel-janitors@vger.kernel.org; Tue, 01 Jun 2021 13:41:45 +0000
-Received: by mail-ed1-f72.google.com with SMTP id v18-20020a0564023492b029038d5ad7c8a8so7867590edc.11
-        for <kernel-janitors@vger.kernel.org>; Tue, 01 Jun 2021 06:41:45 -0700 (PDT)
+        Tue, 1 Jun 2021 12:36:15 -0400
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE9BBC061574;
+        Tue,  1 Jun 2021 09:34:31 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id h3so8602237wmq.3;
+        Tue, 01 Jun 2021 09:34:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=message-id:date:from:user-agent:mime-version:to:cc:subject
+         :references:in-reply-to:content-transfer-encoding;
+        bh=bvCCBlAI0cegQuZ44NSg9CufixTnatS00Nz8370cpqc=;
+        b=B1Zqq99yrb4FADvGT1FhuXSVWaP6AcDmUNlcQi6xFjSUo47pJZMNWji4W1KBPUoaCp
+         lvevw+NvhaHLcYKL14MSQlkCPvJNc+Z/x3yTNfkPg13IRPDM/G2fy+OGaDDV3pT53IYW
+         l+0OJQBG+t4PJD+x4jV+cWvhhbG3L5X0GEEWWECmrz5hiXstma+b1sH4eaBBgXUvDqBU
+         3MDBvVw9PSHegSv5kGIEvyvuSDQ0WpRpyqmzgesx8/c6KOgxVvD+AeWwWQ6hkRdm9fmw
+         DGTY9V6XIayRNgjs+Vr9j3mMLYCNL8UXs+ynxpteHQtW6TFSWxiPKpO7v8LV0uQ1E6PV
+         Ai0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=8D2cU9WIH4f91nUainalgp07qa8uXynan7ov41ItFDk=;
-        b=TxnJuLVs9nbo8T4KfO5+gjlP3pY4WtCkgfwlL+tNCZ08yoj0niupFB62VB2KnHe4Tw
-         Wz4CKHNVHEdFzpZIj9j+8nXYRP8oUTJVXwxkhBPa4GHxacWONPaWLsBWnttQFuNp8cGy
-         6Y2ufvTyoodja1dl05wpo9I6k4CvWWYf0+TS6pIdjUur/aCl4E6WDZOjQ6DOyZpqIJTF
-         urC/jmCYG1rZOz4Bioj09xTgz3bjEcWAS8qzH8zD5SAYxkOrVgvqeCfYJ9DeXVk8SnwN
-         MShwedVGA2kdzDVdBNenrS6i3mIeN/EF/R2wADfZKmqyLanpMVEvuUr1su+oJAN2cPMw
-         CCuQ==
-X-Gm-Message-State: AOAM533qEifnSgjIHAZi6I7e30KE/PHnGcOVV5lsDeQMqDeQxKT24D8b
-        yrEcKxeORgzbNeRN6vlS0RUod6eEzZYZcUpJ9Q+kS+99nVOvIasOFdDav/5HTp7G8AwbHm2Iarh
-        jF4iJn1yXCx8L80US5IqLTxeDt6VALoR8dup8ZLitMFgCuw==
-X-Received: by 2002:a17:906:b2d6:: with SMTP id cf22mr15717473ejb.29.1622554905367;
-        Tue, 01 Jun 2021 06:41:45 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyx9+gdpxkVKY3CEoYk/875InpWjxEeImRktiHYPYvqmpR6IVMcbrWVE/3CTLN0JX3pwP5fLg==
-X-Received: by 2002:a17:906:b2d6:: with SMTP id cf22mr15717452ejb.29.1622554905191;
-        Tue, 01 Jun 2021 06:41:45 -0700 (PDT)
-Received: from [192.168.1.115] (xdsl-188-155-185-9.adslplus.ch. [188.155.185.9])
-        by smtp.gmail.com with ESMTPSA id dk9sm7224352ejb.91.2021.06.01.06.41.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Jun 2021 06:41:44 -0700 (PDT)
-Subject: Re: [PATCH v2] NFC: microread: Remove redundant assignment to
- variable err
-To:     Nigel Christian <nigel.l.christian@gmail.com>
-Cc:     netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <YLY3pSMrpbQxIJxO@fedora>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <e58ddaa5-1bc1-dba9-a038-06022e65da59@canonical.com>
-Date:   Tue, 1 Jun 2021 15:41:44 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        h=x-gm-message-state:message-id:date:from:user-agent:mime-version:to
+         :cc:subject:references:in-reply-to:content-transfer-encoding;
+        bh=bvCCBlAI0cegQuZ44NSg9CufixTnatS00Nz8370cpqc=;
+        b=VxsQ02CRiICehvJCCLPTLskh3oNjn8/UO13nXpBH+shJyakdHXm/maJWibqmNlxALk
+         oIEo8+ty8/p59giJ4L/fS/yC3qK0VgTkr2G18YVRV/ofVRXRhabOOxVXad3thTqGuCOd
+         1biZ60y8kY8qwMLnYJEKWBX/qm9lbdnl718njD8o9Kll8QiQifAYJOBvV3vco4w9669E
+         66zNQpwcii4RB/mioARGmdwwSfxd/yiDK/uBRngLzvgKePvsmikDsc1vsttGQiSLyObE
+         R4+LpvVJ0GCQn7f//4D36MbcsOzFqQ/jIepLxIevRbJNH5iMsNG41pAILvxK9dq59qbL
+         FhHw==
+X-Gm-Message-State: AOAM531UqjkSQX3g9bWDXe9vsDV1IOf0WRhkE9Fx+R2L60gkcvfiJ4v7
+        GMXcWpX/fahxYysrxoJ67ECQx93KNds=
+X-Google-Smtp-Source: ABdhPJy6vRXQIIKgw1cvPhmGkU2rDBerzDkGGWkN6tEAETe1C30BNvwsznkZWiue4b4OBsAb6prw4w==
+X-Received: by 2002:a7b:cbc2:: with SMTP id n2mr27692896wmi.69.1622565270396;
+        Tue, 01 Jun 2021 09:34:30 -0700 (PDT)
+Received: from [89.139.227.208] (89-139-227-208.bb.netvision.net.il. [89.139.227.208])
+        by smtp.gmail.com with ESMTPSA id n6sm7208wmq.34.2021.06.01.09.34.28
+        (version=TLS1 cipher=AES128-SHA bits=128/128);
+        Tue, 01 Jun 2021 09:34:29 -0700 (PDT)
+Message-ID: <60B6615F.1050807@gmail.com>
+Date:   Tue, 01 Jun 2021 19:33:35 +0300
+From:   Eli Billauer <eli.billauer@gmail.com>
+User-Agent: Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.1.12) Gecko/20100907 Fedora/3.0.7-1.fc12 Thunderbird/3.0.7
 MIME-Version: 1.0
-In-Reply-To: <YLY3pSMrpbQxIJxO@fedora>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+To:     Colin King <colin.king@canonical.com>
+CC:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] char: xillybus: Fix spelling mistake "overflew"
+ -> "overflowed"
+References: <20210601102201.8489-1-colin.king@canonical.com>
+In-Reply-To: <20210601102201.8489-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 01/06/2021 15:35, Nigel Christian wrote:
-> In the case MICROREAD_CB_TYPE_READER_ALL clang reports a dead code
-> warning. The error code assigned to variable err is already passed
-> to async_cb(). The assignment is redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Nigel Christian <nigel.l.christian@gmail.com>
-> ---
->  drivers/nfc/microread/microread.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/nfc/microread/microread.c b/drivers/nfc/microread/microread.c
-> index 8d3988457c58..b1d3975e8a81 100644
-> --- a/drivers/nfc/microread/microread.c
-> +++ b/drivers/nfc/microread/microread.c
-> @@ -364,7 +364,6 @@ static void microread_im_transceive_cb(void *context, struct sk_buff *skb,
->  	case MICROREAD_CB_TYPE_READER_ALL:
->  		if (err == 0) {
->  			if (skb->len == 0) {
-> -				err = -EPROTO;
->  				kfree_skb(skb);
->  				info->async_cb(info->async_cb_context, NULL,
->  					       -EPROTO);
-> 
+On 01/06/21 13:22, Colin King wrote:
+> There is a spelling mistake in a dev_err message. Fix it.
+>
+>    
+This is actually a grammar mistake: Overflew is the past of overfly, not 
+overflow.
 
+I stand corrected nevertheless. Thanks.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+    Eli
 
-Best regards,
-Krzysztof
+Acked-by: Eli Billauer <eli.billauer@gmail.com>
