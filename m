@@ -2,141 +2,99 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B36DEC47080
-	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Jun 2021 12:58:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C893DC4708F
+	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Jun 2021 13:00:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8C3216139A
-	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Jun 2021 12:58:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94F53613B4
+	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Jun 2021 13:00:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233922AbhFANA0 (ORCPT
+        id S233584AbhFANCT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 1 Jun 2021 09:00:26 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:53452 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233162AbhFANAZ (ORCPT
+        Tue, 1 Jun 2021 09:02:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33888 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233064AbhFANCT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 1 Jun 2021 09:00:25 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 151CtEl8022507;
-        Tue, 1 Jun 2021 12:58:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=k9gZ/x/FrYyAyY2znziCK+W8/UgWcWWFHLXHMDMnlhc=;
- b=yM/Xl3isO4wuRiipwtzRApavPqo5FyoAXMUMFOCNnPRT7DLqG9q/5JC7PFxoHa7LXyHi
- 1vXp+XRzNtxKvx3r5AoWelT7J11cmwev3yBzbW1mfaI1HYFfFfl5oQ5/NEh930RzZ/Fk
- 3qVR1BjzWZhd1Z0u8b5Ejd3g4J9u401q5kVSw8d+UbUZuSh5ljnUNkPw8NHXYBMtLO1x
- 8ntplJ1zXPBU8jPlQJUiTwqHmXvlTyneYQsDvv10Rqdw9lHyAjFnHYTBxf2DaVP/lRU/
- o0dzxE2R24QqHoMbyS2inypKJ18PzDJAE5Qpmus3F56OnsM+ZxGF0oDfL88vz6zI3Z+S 9A== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2130.oracle.com with ESMTP id 38ub4cnehm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 01 Jun 2021 12:58:35 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 151CtDaA093932;
-        Tue, 1 Jun 2021 12:58:35 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by aserp3020.oracle.com with ESMTP id 38ude8uen0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 01 Jun 2021 12:58:35 +0000
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 151CwYsP119096;
-        Tue, 1 Jun 2021 12:58:34 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3020.oracle.com with ESMTP id 38ude8uem0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 01 Jun 2021 12:58:34 +0000
-Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 151CwVom016588;
-        Tue, 1 Jun 2021 12:58:32 GMT
-Received: from kadam (/41.212.42.34)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 01 Jun 2021 05:58:31 -0700
-Date:   Tue, 1 Jun 2021 15:58:20 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Colin King <colin.king@canonical.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] mtd: rawnand: ensure return variable is initialized
-Message-ID: <20210601125819.GZ1955@kadam>
-References: <20210527145048.795954-1-colin.king@canonical.com>
- <20210527170309.4d99bc31@xps13>
- <20210601121401.GY1955@kadam>
+        Tue, 1 Jun 2021 09:02:19 -0400
+Received: from mail-qk1-x729.google.com (mail-qk1-x729.google.com [IPv6:2607:f8b0:4864:20::729])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89806C061574;
+        Tue,  1 Jun 2021 06:00:36 -0700 (PDT)
+Received: by mail-qk1-x729.google.com with SMTP id c20so14104469qkm.3;
+        Tue, 01 Jun 2021 06:00:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=Fw6An070zveYAJQ7tdby9/Ztlto07U6GPJhm66jpGcU=;
+        b=i9wiT7EX/t/133OY0aZzt72AkEqB27Qm0KwFu1HuQHFYbf0T3klVoqOpLw4E4wwJZZ
+         auYzQR9JrDD35Qe8F6OTc7ZJsybvTd87pg7Vc+nvCdIwJS3qy5mKdKf7wCGWrMhzBs30
+         VCwJV337q48G45sgEl1iuFaoiujaVtHVIEPT9cxGNve4CvVbV1WICd8wLpYl4dYatzeK
+         7m2xiaAKc3szaoHQgI4VSgrF6a+MbElVborL5Xs8ezjJ+X4YwmhmKCjuF1YIzlH7nAir
+         YXHiX/9wFzH+bhesOnTXt+sGk0sMnbITuJXv3gwK9lw1NBzQbX/aVQBvBqGz47YDxsRV
+         7lLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=Fw6An070zveYAJQ7tdby9/Ztlto07U6GPJhm66jpGcU=;
+        b=CH2oqAs6rpekNGFzxznfCw8pvC78MvhjOV6N1CkNHeLa9CsbaT/caXLMYJdIFXVHZR
+         hLgmaDU3CHp23o4FXQWC+dGIOEqsukPu98xP5nxU9JLFGAfthX2ulTRqYQdY3aeivW8k
+         1AnW3XROjfyrurnp3Mpz+zQE4llhYFh0DOQHtTdqIo/jQClHZpghWRFA0wtUUAkvats4
+         dy1mSMaQms5HX6L2V5baoGj5XX4rQ1gJDfzt8MlIr0G6f1vXRk0zVyqL39CisLJocTm4
+         2F3yU1wtG8XBqe50n774ZClNGPlcKoSMVpuv1elNzd+l82fa1Qnr0TnUL0mXKT8tVwQp
+         Rvpg==
+X-Gm-Message-State: AOAM531f+r52xui60wi4qXe6mKsv24g9zIQTEVOmYs4oCwL5iFTQbx4F
+        LDkFuiGYgt4LBcfFWndbztv5bRsSz2mTa0MI/ksjbg==
+X-Google-Smtp-Source: ABdhPJx2FCEYNTg8buJha8b17AbLcXHSd+6eS6JmjUsxQTkFctOYegXHzovLaDTaWVEE8PwhI1KHnQ==
+X-Received: by 2002:a05:620a:c0b:: with SMTP id l11mr2014876qki.181.1622552435772;
+        Tue, 01 Jun 2021 06:00:35 -0700 (PDT)
+Received: from fedora (cpe-68-174-153-112.nyc.res.rr.com. [68.174.153.112])
+        by smtp.gmail.com with ESMTPSA id v20sm740015qtq.67.2021.06.01.06.00.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Jun 2021 06:00:35 -0700 (PDT)
+Date:   Tue, 1 Jun 2021 09:00:33 -0400
+From:   Nigel Christian <nigel.l.christian@gmail.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     linux-nfc@lists.01.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] NFC: microread: Pass err variable to async_cb()
+Message-ID: <YLYvcbjuPg1JFr7/@fedora>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210601121401.GY1955@kadam>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-GUID: UiVjigSNNY-G05jAa1HIU_SZIbW0wDYm
-X-Proofpoint-ORIG-GUID: UiVjigSNNY-G05jAa1HIU_SZIbW0wDYm
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=10001 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 mlxscore=0
- mlxlogscore=991 malwarescore=0 bulkscore=0 phishscore=0 lowpriorityscore=0
- clxscore=1015 impostorscore=0 adultscore=0 suspectscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
- definitions=main-2106010088
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Jun 01, 2021 at 03:14:02PM +0300, Dan Carpenter wrote:
-> On Thu, May 27, 2021 at 05:03:09PM +0200, Miquel Raynal wrote:
-> > Hi Colin,
-> > 
-> > Colin King <colin.king@canonical.com> wrote on Thu, 27 May 2021
-> > 15:50:48 +0100:
-> > 
-> > > From: Colin Ian King <colin.king@canonical.com>
-> > > 
-> > > Currently there are corner cases where spec_times is NULL and
-> > > chip->parameters.onfi or when best_mode is zero where ret is
-> > 
-> >                        ^
-> > something is missing here, the sentence is not clear
-> > 
-> > > not assigned a value and an uninitialized return value can be
-> > > returned. Fix this by ensuring ret is initialized to -EINVAL.
-> > 
-> > I don't see how this situation can happen.
-> > 
-> > In both cases, no matter the value of best_mode, the for loop will
-> > always execute at least one time (mode 0) so ret will be populated.
-> > 
-> > Maybe the robot does not know that best_mode cannot be negative and
-> > should be defined unsigned, but the current patch is invalid.
-> >
-> 
-> People think list counter unsigned is a good idea, but it's a terrible
-> idea and has caused hundreds of bugs for me to fix/report over the
-> years.  *grumble*.
+In the case MICROREAD_CB_TYPE_READER_ALL clang reports a dead
+code warning. The error code is being directly passed to 
+async_cb(). Fix this by passing the err variable, which is also
+done in another path.
 
-Imagine if best_mode were unsigned int (and the loop ended on > 0 so it
-wasn't an endless loop).  Then instead of a no-op the loop would iterate
-4 million times.  Each iteration would trigger the WARN_ON()
-onfi_fill_sdr_interface_config().
+Addresses-Coverity: ("Unused value") 
+Signed-off-by: Nigel Christian <nigel.l.christian@gmail.com>
+---
+ drivers/nfc/microread/microread.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I think people believe that the compiler will warn them something like:
-"warning: Assigning a subtract operation to an unsigned!" but the
-compiler is never going to do that.  Unsigned is just a declaration that
-"I'm never going to be surprised so let's make this stuff more dangerous
-and fun!"
-
-There are times where it's appropriate, sure.  But it's mostly unsigned
-long which is correct instead of unsigned int.  If you were to draw a
-number line from 0-U64_MAX then the band between 2-4 million is quite
-skinny and a long way from the zero.  There aren't that many thing which
-fall into the band.  Most numbers are smaller, but once we start talking
-about millions then 4 million is very limitting so we would want to use
-a 64 bit type.
-
-regards,
-dan carpenter
+diff --git a/drivers/nfc/microread/microread.c b/drivers/nfc/microread/microread.c
+index 8d3988457c58..130b0f554016 100644
+--- a/drivers/nfc/microread/microread.c
++++ b/drivers/nfc/microread/microread.c
+@@ -367,7 +367,7 @@ static void microread_im_transceive_cb(void *context, struct sk_buff *skb,
+ 				err = -EPROTO;
+ 				kfree_skb(skb);
+ 				info->async_cb(info->async_cb_context, NULL,
+-					       -EPROTO);
++					       err);
+ 				return;
+ 			}
+ 
+-- 
+2.31.1
 
