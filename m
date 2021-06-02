@@ -7,153 +7,131 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23839C4708F
-	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Jun 2021 15:57:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6B61C47083
+	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Jun 2021 16:01:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0DD8C614A5
-	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Jun 2021 15:57:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C075C61582
+	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Jun 2021 16:01:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232358AbhFBP67 (ORCPT
+        id S232418AbhFBQDS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 2 Jun 2021 11:58:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58932 "EHLO
+        Wed, 2 Jun 2021 12:03:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232101AbhFBP66 (ORCPT
+        with ESMTP id S232523AbhFBQDR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 2 Jun 2021 11:58:58 -0400
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8A78C061574
-        for <kernel-janitors@vger.kernel.org>; Wed,  2 Jun 2021 08:57:15 -0700 (PDT)
-Received: by mail-pj1-x1030.google.com with SMTP id m13-20020a17090b068db02901656cc93a75so3704015pjz.3
-        for <kernel-janitors@vger.kernel.org>; Wed, 02 Jun 2021 08:57:15 -0700 (PDT)
+        Wed, 2 Jun 2021 12:03:17 -0400
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C35BC061574
+        for <kernel-janitors@vger.kernel.org>; Wed,  2 Jun 2021 09:01:17 -0700 (PDT)
+Received: by mail-pj1-x102b.google.com with SMTP id g6-20020a17090adac6b029015d1a9a6f1aso1798216pjx.1
+        for <kernel-janitors@vger.kernel.org>; Wed, 02 Jun 2021 09:01:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=KkGJZaXZXDSCrQrG/Y77bUEuCudfeK6vGe5MZWCEVic=;
-        b=oQwyu9JXVyx+T9XBxWUAOMb5pDcGHbb3+w58MWKh4gSEYKfZhLOWPF3dC/obTam9tD
-         mEwTcP8zobu2fbOcLxNzhVsLZBibsA67pFlyHvMpLpSMi7RjwrOcIub5r4Qqp3hVr7Sx
-         hRIvnviDfMVdnqHpwm53umdicBzqautWgt7iAZIYSwilh0E1OxuQE5baulvjO2MzovBI
-         H6UeFCVJaGUhRPYFVMNXg5o9GW9d2ODmRScd8eG+WahJ8aYFN1d5SzJZZBxCTufol5nn
-         6sSbQgTFYPSbcnIxoTetjSa3mC9MqU8fhpRYYcVBwT3MbUEAa1dNYVbl6nlaQIKNLgAt
-         7TlQ==
+        bh=w9D8gmzd48+7hCu/0laZLimDBPPZQECiByEMKXfVQU0=;
+        b=dS4ZXV+1szYlahKcClW16yvYCi0IKYfsspCtn3ig+zEWoImNwGahfCo5SoQM1p5Xcn
+         OrVBdHweofuCV7gd6E5Cabrrh4UdQTWfzC05bEmD1szngLT3WWA2yL1D8Bv+qW6JJiJ3
+         KvHtsb6D9HbADyIt3eyiyJ4DCQIw85f2lSF8t1na1dFfScFw1C7AvEafBauGOAkuYIov
+         z/uIO88khUmRszG2SriMBcNdMTyrvY+MY/heo68n1CaG97mcdsvhZoKy9bZKtsLFfFlb
+         EI/wfoG+KClgGWeK1ie4D/CYBE5SGcp5CtBsLUcayXKRYFFNvc15zzRxHgIUeUhaY1/W
+         NSQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=KkGJZaXZXDSCrQrG/Y77bUEuCudfeK6vGe5MZWCEVic=;
-        b=qg+xeSkLQLvbHI1HQLJXiU8YUoYIuQWeEiJbfqoM+bnbBRHriE7vz8NPKywdfbcSOI
-         uaAbVrOJvYMi0olfk/mnGmraES0nY+sfVKa2vYXWGLW48NtZAts22pfigMgv48gGW0cf
-         A24iSULIZreEPpB7/RXHlI9+10KCPI9qAjMp2YrrohL8e0rVWajCiY+ePkKN23Y42fyL
-         6LJz1z816Wt75ie79rPPTJwWPUK7WHTdp2f1HrSN4u1Y21bymNb252p+T5sS1L/9yA02
-         /Jd+g4etsEClMTMums3GIcBCxtwkVv+/ugmyL+noCjPSEqdy1ZYiG/9Vp2XkGBc+DYtA
-         4Hcw==
-X-Gm-Message-State: AOAM533VtzpyYCvlFMEJO19MFek+M3SJQDbCJsrehUubuZnZ76hNUhTf
-        /SvMkhNFU/jtPZJTgqGxGE9yPmj+l1LTXl/vwug=
-X-Google-Smtp-Source: ABdhPJwqUIW73E+jbrNSJUKxnaAVhwsbvPSPHVt2JgSAeXYawEJnQf/FHf1C9IYyekxHjLXhZfBW3g==
-X-Received: by 2002:a17:902:8484:b029:101:7016:fb7b with SMTP id c4-20020a1709028484b02901017016fb7bmr24621844plo.23.1622649435268;
-        Wed, 02 Jun 2021 08:57:15 -0700 (PDT)
+        bh=w9D8gmzd48+7hCu/0laZLimDBPPZQECiByEMKXfVQU0=;
+        b=LSkNP9G3oSa1n5GOevGCf2mA06QzWGi+EoGT4eccPS7NerAuoU8B+7X/L+MZ3Aalfv
+         1IzUND37gYIykxRe7J+W3lgp38OAfQ2j9u+rQI68+MaTNqtsBwAs+eIkSVJOAo+oEuuw
+         5Hx89iH6tqJXgK1xoBTRIvRZLJsEEttwQyKC0T+z1nc7kD2X2L4s0duEQHb2pLTlyxlT
+         CgCBKswLHXWMZgx2gdlwOQ1JH+vYV6ApwTT3g8gxi6I1aH18ilu0x3/3Ki+oD3Vya6pX
+         /nnwWnJltzSkJfoPOGss1y5ChhUclUruTq4+7NrguW45Hf7e7s7HYPvBQiW609DBW44v
+         yIig==
+X-Gm-Message-State: AOAM532Jgz6H7hp7hdBLoqP4HIFIsZ2BRgc0IRIfZTox0Xuhi8XAQLET
+        fM47s6J0MLjBaloQoBQYIMY=
+X-Google-Smtp-Source: ABdhPJwlDOXV1qvVUFEeyeE/slmrAUSq77asnDhdQEj+EpL0/zDPhNjHOqo9ENwRGPSposDfnr0usw==
+X-Received: by 2002:a17:902:e551:b029:103:c082:ba with SMTP id n17-20020a170902e551b0290103c08200bamr18389092plf.3.1622649677060;
+        Wed, 02 Jun 2021 09:01:17 -0700 (PDT)
 Received: from fedora ([2604:2000:efc0:108:b082:f3a8:abff:a570])
-        by smtp.gmail.com with ESMTPSA id t14sm203662pgk.21.2021.06.02.08.57.13
+        by smtp.gmail.com with ESMTPSA id r16sm93411pfq.140.2021.06.02.09.01.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jun 2021 08:57:14 -0700 (PDT)
-Date:   Wed, 2 Jun 2021 11:57:08 -0400
+        Wed, 02 Jun 2021 09:01:16 -0700 (PDT)
+Date:   Wed, 2 Jun 2021 12:01:10 -0400
 From:   Nigel Christian <nigel.l.christian@gmail.com>
 To:     Dan Carpenter <dan.carpenter@oracle.com>
 Cc:     kernel-janitors@vger.kernel.org
 Subject: Re: [PATCH] mm: hugetlb: checking for IS_ERR() instead of NULL
-Message-ID: <YLeqVPJnBfXN23Zo@fedora>
+Message-ID: <YLerRlm8j+ySlZi4@fedora>
 References: <YLX9FCOU0Il8Ejoy@mwanda>
  <YLZ0Q6S2A9kxXk6c@fedora>
  <20210601190040.GG24442@kadam>
  <20210601193419.GH24442@kadam>
- <20210602142224.GH1955@kadam>
+ <20210601205006.GA10983@kadam>
+ <20210602144752.GC10983@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210602142224.GH1955@kadam>
+In-Reply-To: <20210602144752.GC10983@kadam>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Jun 02, 2021 at 05:22:24PM +0300, Dan Carpenter wrote:
-> On Tue, Jun 01, 2021 at 10:51:23PM +0300, Dan Carpenter wrote:
-> > Here is my next attempt at this check.
+On Wed, Jun 02, 2021 at 05:47:52PM +0300, Dan Carpenter wrote:
+> On Tue, Jun 01, 2021 at 11:50:06PM +0300, Dan Carpenter wrote:
+> > On Tue, Jun 01, 2021 at 10:51:23PM +0300, Dan Carpenter wrote:
+> > > The other thing which might be interesting is if you pass a NULL
+> > > to IS_ERR() and then dereference the NULL then print a warning about
+> > > that.  This has a lot of overlaps with some of my existing checks, but
+> > > it's still a new idea so it belongs in a separate check.  It's fine and
+> > > good even if one bug triggers a lot of different warnings.  I'll write
+> > > that, hang on, brb.
 > > 
-> > Back in 2009, I used to write Smatch checks which were too complicated.
-> > Ideally, each Smatch check should only print one warning.  The state
-> > engine should only have one custom state, and &undefined and &merged.
-> > That check I sent violated all those rules.
-> > 
-> > The other thing which might be interesting is if you pass a NULL
-> > to IS_ERR() and then dereference the NULL then print a warning about
-> > that.  This has a lot of overlaps with some of my existing checks, but
-> > it's still a new idea so it belongs in a separate check.  It's fine and
-> > good even if one bug triggers a lot of different warnings.  I'll write
-> > that, hang on, brb.
-> > 
-> > regards,
-> > dan carpenter
+> > 100% untested.  :)  I'll test it tonight.
 > > 
 > 
-> This check worked decently enough.  If you want to fix some of the bugs
-> here they are.  I'll look at them in a couple weeks.  I fixed a couple
-> of the first ones I looked at (not listed).
-
-Yes, for sure! I'll get started from the top of the list below (^_^)
+> This test is decent, but I ended up making a few changes:
+> 
+> 1)  My devel version of Smatch had a new bug in it which caused some
+>     false positives.  Fixed now, hopefully.
+  
+Many thanks! Gonna check today.
 
 > 
-> drivers/phy/microchip/sparx5_serdes.c:2474 sparx5_serdes_probe() warn: 'iomem' is not an error pointer
-> drivers/usb/musb/musb_core.c:2483 musb_init_controller() warn: 'musb->dma_controller' is not an error pointer
-> drivers/base/power/domain.c:2566 genpd_dev_pm_detach() warn: 'pd' is not an error pointer
-> drivers/base/power/domain.c:2599 genpd_dev_pm_sync() warn: 'pd' is not an error pointer
-> drivers/pci/controller/pci-ftpci100.c:496 faraday_pci_probe() warn: 'p->bus_clk' is not an error pointer
-> drivers/infiniband/core/cm.c:2348 ib_send_cm_rtu() warn: 'data' is not an error pointer
-> drivers/infiniband/core/cm.c:2761 ib_send_cm_drep() warn: 'data' is not an error pointer
-> drivers/infiniband/core/cm.c:3092 ib_send_cm_mra() warn: 'data' is not an error pointer
-> drivers/bluetooth/btqcomsmd.c:140 btqcomsmd_probe() warn: 'btq->acl_channel' is not an error pointer
-> drivers/bluetooth/btqcomsmd.c:145 btqcomsmd_probe() warn: 'btq->cmd_channel' is not an error pointer
-> drivers/media/platform/sti/bdisp/bdisp-v4l2.c:1402 bdisp_probe() warn: 'bdisp->clock' is not an error pointer
-> drivers/net/ipa/ipa_modem.c:360 ipa_modem_config() warn: 'notifier' is not an error pointer
-> drivers/net/wireless/ath/wcn36xx/main.c:1411 wcn36xx_probe() warn: 'wcn->smd_channel' is not an error pointer
-> drivers/net/can/spi/hi311x.c:854 hi3110_can_probe() warn: 'clk' is not an error pointer
-> drivers/net/can/spi/hi311x.c:941 hi3110_can_probe() warn: 'clk' is not an error pointer
-> net/bridge/br_forward.c:223 br_flood() warn: 'prev' is not an error pointer
-> net/bridge/br_forward.c:313 br_multicast_flood() warn: 'prev' is not an error pointer
+> 2)  The test:
 > 
-> One thing that I realized is that for functions the return NULL when
-> they are configured out like media_device_usb_allocate() is that these
-> are always a one liner:
-
-Interesting. 
+> 	if (get_state_expr(my_id, expr) != &null)
+> 		return;
 > 
-> struct foo *whatever(void) { return NULL; }
+>     check was not strict enough.  I realized that I knew that from
+>     square one but I was lazy.  So now I have introduced a global helper
+>     function and updated the code:
 > 
-> And they're always in the .h file so we have access to them and can add
-> a check for that.
-> 
-> static bool is_one_liner_function(struct expression *fn)
+> bool expr_has_possible_state(int owner, struct expression *expr, struct smatch_state *state)
 > {
->         struct symbol *sym;
->         int lines;
+>         struct sm_state *sm;
 > 
->         if (fn->type != EXPR_SYMBOL || !fn->symbol)
->                 return false;
->         sym = get_base_type(fn->symbol);
->         if (!sym)
->                 return false;
->         if (sym->stmt && sym->stmt->type == STMT_COMPOUND)
->                 lines = ptr_list_size((struct ptr_list *)sym->stmt->stmts);
->         else if (sym->inline_stmt && sym->inline_stmt->type == STMT_COMPOUND)
->                 lines = ptr_list_size((struct ptr_list *)sym->inline_stmt->stmts);
->         else
+>         sm = get_sm_state_expr(owner, expr);
+>         if (!sm)
 >                 return false;
 > 
->         if (lines == 1)
->                 return true;
-> 
->         return false;
+>         return slist_has_state(sm->possible, state);
 > }
+> 
+>     I replaced the test with:
+> 
+> 	if (!expr_has_possible_state(my_id, expr, &null))
+> 
+> 3)  The warning message was too vague and too similar to other warning
+>     messages.  It should be something unique to the test.  It's now:
+> 
+> 	sm_error("potential NULL/IS_ERR bug '%s'", name);
+> 
+> I'll post the results tomorrow.
+
+This is great, will be a nice bug to check for beginners like me.
+
 > 
 > regards,
 > dan carpenter
+> 
