@@ -5,39 +5,41 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A512C47083
-	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Jun 2021 11:26:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5C64C47093
+	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Jun 2021 11:26:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4D83460720
-	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Jun 2021 11:26:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CEEB760C40
+	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Jun 2021 11:26:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232418AbhFBL21 (ORCPT
+        id S232614AbhFBL21 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
         Wed, 2 Jun 2021 07:28:27 -0400
-Received: from szxga03-in.huawei.com ([45.249.212.189]:3393 "EHLO
-        szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232776AbhFBL1t (ORCPT
+Received: from szxga01-in.huawei.com ([45.249.212.187]:7072 "EHLO
+        szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232785AbhFBL1u (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 2 Jun 2021 07:27:49 -0400
-Received: from dggeml759-chm.china.huawei.com (unknown [172.30.72.54])
-        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Fw67c0gRFz665K;
-        Wed,  2 Jun 2021 19:22:20 +0800 (CST)
+        Wed, 2 Jun 2021 07:27:50 -0400
+Received: from dggeml759-chm.china.huawei.com (unknown [172.30.72.53])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Fw68k6WpRzYnC8;
+        Wed,  2 Jun 2021 19:23:18 +0800 (CST)
 Received: from localhost.localdomain (10.175.102.38) by
  dggeml759-chm.china.huawei.com (10.1.199.138) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2176.2; Wed, 2 Jun 2021 19:26:03 +0800
+ 15.1.2176.2; Wed, 2 Jun 2021 19:26:02 +0800
 From:   Wei Yongjun <weiyongjun1@huawei.com>
-To:     <weiyongjun1@huawei.com>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-CC:     <linux-crypto@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+To:     <weiyongjun1@huawei.com>, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Chris Morgan <macromorgan@hotmail.com>
+CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
         <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH -next] crypto: qce: skcipher: fix error return code in qce_skcipher_async_req_handle()
-Date:   Wed, 2 Jun 2021 11:36:45 +0000
-Message-ID: <20210602113645.3038800-1-weiyongjun1@huawei.com>
+Subject: [PATCH -next] ASoC: rk817: Constify static struct snd_soc_dai_ops
+Date:   Wed, 2 Jun 2021 11:36:43 +0000
+Message-ID: <20210602113643.3037374-1-weiyongjun1@huawei.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Type:   text/plain; charset=US-ASCII
@@ -50,38 +52,27 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Fix to return a negative error code from the error handling
-case instead of 0, as done elsewhere in this function.
+The snd_soc_dai_ops structures is only stored in the ops field of a
+snd_soc_dai_driver structure, so make the snd_soc_dai_ops structure
+const to allow the compiler to put it in read-only memory.
 
-Fixes: 1339a7c3ba05 ("crypto: qce: skcipher: Fix incorrect sg count for dma transfers")
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/crypto/qce/skcipher.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ sound/soc/codecs/rk817_codec.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/crypto/qce/skcipher.c b/drivers/crypto/qce/skcipher.c
-index 259418479227..8ff10928f581 100644
---- a/drivers/crypto/qce/skcipher.c
-+++ b/drivers/crypto/qce/skcipher.c
-@@ -124,13 +124,17 @@ qce_skcipher_async_req_handle(struct crypto_async_request *async_req)
- 	rctx->dst_sg = rctx->dst_tbl.sgl;
+diff --git a/sound/soc/codecs/rk817_codec.c b/sound/soc/codecs/rk817_codec.c
+index 17e672b85ee5..9a896e4326c3 100644
+--- a/sound/soc/codecs/rk817_codec.c
++++ b/sound/soc/codecs/rk817_codec.c
+@@ -382,7 +382,7 @@ static int rk817_digital_mute(struct snd_soc_dai *dai, int mute, int stream)
+ 			SNDRV_PCM_FMTBIT_S24_LE |\
+ 			SNDRV_PCM_FMTBIT_S32_LE)
  
- 	dst_nents = dma_map_sg(qce->dev, rctx->dst_sg, rctx->dst_nents, dir_dst);
--	if (dst_nents < 0)
-+	if (dst_nents < 0) {
-+		ret = dst_nents;
- 		goto error_free;
-+	}
- 
- 	if (diff_dst) {
- 		src_nents = dma_map_sg(qce->dev, req->src, rctx->src_nents, dir_src);
--		if (src_nents < 0)
-+		if (src_nents < 0) {
-+			ret = src_nents;
- 			goto error_unmap_dst;
-+		}
- 		rctx->src_sg = req->src;
- 	} else {
- 		rctx->src_sg = rctx->dst_sg;
+-static struct snd_soc_dai_ops rk817_dai_ops = {
++static const struct snd_soc_dai_ops rk817_dai_ops = {
+ 	.hw_params	= rk817_hw_params,
+ 	.set_fmt	= rk817_set_dai_fmt,
+ 	.set_sysclk	= rk817_set_dai_sysclk,
 
