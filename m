@@ -5,38 +5,38 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1409DC47083
-	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Jun 2021 10:28:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0CF5C4708F
+	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Jun 2021 10:37:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F30DC6138C
-	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Jun 2021 10:28:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC1C56138C
+	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Jun 2021 10:37:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232609AbhFBK3t (ORCPT
+        id S233010AbhFBKjk (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 2 Jun 2021 06:29:49 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:51615 "EHLO
+        Wed, 2 Jun 2021 06:39:40 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:51795 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232617AbhFBK3k (ORCPT
+        with ESMTP id S232539AbhFBKjT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 2 Jun 2021 06:29:40 -0400
+        Wed, 2 Jun 2021 06:39:19 -0400
 Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
         (Exim 4.93)
         (envelope-from <colin.king@canonical.com>)
-        id 1loO6E-0000IC-FK; Wed, 02 Jun 2021 10:27:46 +0000
+        id 1loOFW-0001Bi-Eu; Wed, 02 Jun 2021 10:37:22 +0000
 From:   Colin King <colin.king@canonical.com>
 To:     Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>,
         Jaroslav Kysela <perex@perex.cz>,
         Takashi Iwai <tiwai@suse.com>,
-        Chris Morgan <macromorgan@hotmail.com>,
-        Lee Jones <lee.jones@linaro.org>, alsa-devel@alsa-project.org
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        alsa-devel@alsa-project.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] ASoC: rk817: remove redundant assignment to pointer node
-Date:   Wed,  2 Jun 2021 11:27:46 +0100
-Message-Id: <20210602102746.11793-1-colin.king@canonical.com>
+Subject: [PATCH][next] ASoC: rsnd: check for zero node count
+Date:   Wed,  2 Jun 2021 11:37:22 +0100
+Message-Id: <20210602103722.12128-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -47,29 +47,33 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The pointer node is being initialized with a value that is never read and
-it is being updated later with a new value.  The initialization is
-redundant and can be removed.
+The call to rsnd_node_count can potentially return a zero node count
+so add a check for this corner case. (Note that the two other calls
+to rsnd_node_count in the kernel perform this check, so I think it
+justifies adding this). This avoids using a zero nr in a devm_kcalloc
+call.
 
-Addresses-Coverity: ("Unused value")
+Addresses-Coverity: ("Unchecked return value")
+Fixes: c413983eb66a ("ASoC: rsnd: adjust disabled module")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- sound/soc/codecs/rk817_codec.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/sh/rcar/ssiu.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/sound/soc/codecs/rk817_codec.c b/sound/soc/codecs/rk817_codec.c
-index 17e672b85ee5..0d7cc26ded57 100644
---- a/sound/soc/codecs/rk817_codec.c
-+++ b/sound/soc/codecs/rk817_codec.c
-@@ -457,7 +457,7 @@ static const struct snd_soc_component_driver soc_codec_dev_rk817 = {
- static void rk817_codec_parse_dt_property(struct device *dev,
- 					 struct rk817_codec_priv *rk817)
- {
--	struct device_node *node = dev->parent->of_node;
-+	struct device_node *node;
+diff --git a/sound/soc/sh/rcar/ssiu.c b/sound/soc/sh/rcar/ssiu.c
+index 5682c74bb7ff..0d8f97633dd2 100644
+--- a/sound/soc/sh/rcar/ssiu.c
++++ b/sound/soc/sh/rcar/ssiu.c
+@@ -515,6 +515,9 @@ int rsnd_ssiu_probe(struct rsnd_priv *priv)
+ 	else
+ 		nr = priv->ssi_nr;
  
- 	node = of_get_child_by_name(dev->parent->of_node, "codec");
- 	if (!node) {
++	if (!nr)
++		return -EINVAL;
++
+ 	ssiu	= devm_kcalloc(dev, nr, sizeof(*ssiu), GFP_KERNEL);
+ 	if (!ssiu)
+ 		return -ENOMEM;
 -- 
 2.31.1
 
