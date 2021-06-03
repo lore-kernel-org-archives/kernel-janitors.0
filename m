@@ -2,74 +2,83 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 401EEC47096
-	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Jun 2021 13:41:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03CA4C47096
+	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Jun 2021 15:16:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2A84F613E9
-	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Jun 2021 13:41:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD4FA613F1
+	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Jun 2021 15:16:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229957AbhFCNmz (ORCPT
+        id S231863AbhFCPRr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 3 Jun 2021 09:42:55 -0400
-Received: from szxga01-in.huawei.com ([45.249.212.187]:3048 "EHLO
-        szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230245AbhFCNmy (ORCPT
+        Thu, 3 Jun 2021 11:17:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54028 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231803AbhFCPRr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 3 Jun 2021 09:42:54 -0400
-Received: from dggeml759-chm.china.huawei.com (unknown [172.30.72.55])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Fwn3p1xG0zWrKp;
-        Thu,  3 Jun 2021 21:36:22 +0800 (CST)
-Received: from localhost.localdomain (10.175.102.38) by
- dggeml759-chm.china.huawei.com (10.1.199.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2176.2; Thu, 3 Jun 2021 21:41:06 +0800
-From:   Wei Yongjun <weiyongjun1@huawei.com>
-To:     <weiyongjun1@huawei.com>, Dai Ngo <dai.ngo@oracle.com>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Chuck Lever <chuck.lever@oracle.com>
-CC:     <linux-nfs@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        Thu, 3 Jun 2021 11:17:47 -0400
+Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F2E4C06174A;
+        Thu,  3 Jun 2021 08:16:02 -0700 (PDT)
+Received: by fieldses.org (Postfix, from userid 2815)
+        id 852A41BE4; Thu,  3 Jun 2021 11:16:01 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org 852A41BE4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
+        s=default; t=1622733361;
+        bh=7maj1D43kbDLqRcM6Yl8tEaT4EYByuNrC/NaY65rlYc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=OeMNzTcwEnfuaq63wR2xRXNfoZX3Ddg+vTEmfZyA8/6mdShFd5kl+d2onVUbyDGZf
+         BsgBA+HU6eVM6MVGb7h8xCI6DVTFfgFPVM06XtdByrLTsmSIxCK7dycNbxk2MhvVdr
+         c/yLSUWgiwn0S8CqVHytxlCLZ2YmO2HK1T8ZSyec=
+Date:   Thu, 3 Jun 2021 11:16:01 -0400
+From:   "J. Bruce Fields" <bfields@fieldses.org>
+To:     Wei Yongjun <weiyongjun1@huawei.com>
+Cc:     Dai Ngo <dai.ngo@oracle.com>, Chuck Lever <chuck.lever@oracle.com>,
+        linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH -next] NFSD: Fix error return code in nfsd4_interssc_connect()
-Date:   Thu, 3 Jun 2021 13:51:45 +0000
-Message-ID: <20210603135145.972633-1-weiyongjun1@huawei.com>
-X-Mailer: git-send-email 2.25.1
+Subject: Re: [PATCH -next] NFSD: Fix error return code in
+ nfsd4_interssc_connect()
+Message-ID: <20210603151601.GA1815@fieldses.org>
+References: <20210603135145.972633-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.102.38]
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggeml759-chm.china.huawei.com (10.1.199.138)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210603135145.972633-1-weiyongjun1@huawei.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-'status' has been overwritten to 0 after nfsd4_ssc_setup_dul(), this
-cause 0 will be return in vfs_kern_mount() error case. Fix to return
-nfserr_inval in this error case.
+On Thu, Jun 03, 2021 at 01:51:45PM +0000, Wei Yongjun wrote:
+> 'status' has been overwritten to 0 after nfsd4_ssc_setup_dul(), this
+> cause 0 will be return in vfs_kern_mount() error case. Fix to return
+> nfserr_inval in this error case.
 
-Fixes: f4e44b393389 ("NFSD: delay unmount source's export after inter-server copy completed.")
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- fs/nfsd/nfs4proc.c | 1 +
- 1 file changed, 1 insertion(+)
+Is nfserr_inval the correct error?
 
-diff --git a/fs/nfsd/nfs4proc.c b/fs/nfsd/nfs4proc.c
-index 0bd71c6da81d..2bfb6c408dc6 100644
---- a/fs/nfsd/nfs4proc.c
-+++ b/fs/nfsd/nfs4proc.c
-@@ -1323,6 +1323,7 @@ nfsd4_interssc_connect(struct nl4_server *nss, struct svc_rqst *rqstp,
- 	ss_mnt = vfs_kern_mount(type, SB_KERNMOUNT, dev_name, raw_data);
- 	module_put(type->owner);
- 	if (IS_ERR(ss_mnt)) {
-+		status = nfserr_inval;
- 		if (work)
- 			nfsd4_ssc_cancel_dul_work(nn, work);
- 		goto out_free_devname;
+--b.
 
+> 
+> Fixes: f4e44b393389 ("NFSD: delay unmount source's export after inter-server copy completed.")
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ---
+>  fs/nfsd/nfs4proc.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/fs/nfsd/nfs4proc.c b/fs/nfsd/nfs4proc.c
+> index 0bd71c6da81d..2bfb6c408dc6 100644
+> --- a/fs/nfsd/nfs4proc.c
+> +++ b/fs/nfsd/nfs4proc.c
+> @@ -1323,6 +1323,7 @@ nfsd4_interssc_connect(struct nl4_server *nss, struct svc_rqst *rqstp,
+>  	ss_mnt = vfs_kern_mount(type, SB_KERNMOUNT, dev_name, raw_data);
+>  	module_put(type->owner);
+>  	if (IS_ERR(ss_mnt)) {
+> +		status = nfserr_inval;
+>  		if (work)
+>  			nfsd4_ssc_cancel_dul_work(nn, work);
+>  		goto out_free_devname;
