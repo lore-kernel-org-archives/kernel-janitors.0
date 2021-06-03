@@ -2,92 +2,73 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 681AAC47082
-	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Jun 2021 13:12:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78429C47096
+	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Jun 2021 13:19:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 51B6B613E9
-	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Jun 2021 13:12:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D8226101C
+	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Jun 2021 13:19:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231320AbhFCNO1 (ORCPT
+        id S231450AbhFCNUx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 3 Jun 2021 09:14:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52814 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230507AbhFCNO1 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 3 Jun 2021 09:14:27 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id BA5A8613B8;
-        Thu,  3 Jun 2021 13:12:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1622725962;
-        bh=8tSih8TQEldph7biZCjMKrsNnNHCD8lD50ZmP4OjqOs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=HWwdxsnwDy6prcdmSIEV0nkPPHl0DOXqnkHYngVt2dP5gOZQkB1VMnauT1l7QEqVi
-         OHWau7iPqbFoypBecWrowAI9aasPD93DcvTwb7u20P+OR1tlGqAaYbkTxIPpz88dwX
-         lsYNHZ0s1s6HFFD2D8bte4/vw69Cw12XBt/ZHpwP45T0JUUZVyNZokfzn3cP8BBl7U
-         LqwNsXUuchCx1Yr/LSwbMR5BuD9TOaak6OJ9qn3W3lyUR/yV1YxvTXSk2qidEeK6Zs
-         pGDT2Q0Pe/rlnvx3UoZAgwAO12miNIJHSV8nKSVTaLl0WrdQBxOdGblvQET3z3s0D1
-         L37RcVYdiFl5A==
-Date:   Thu, 3 Jun 2021 16:12:38 +0300
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Saeed Mahameed <saeedm@nvidia.com>
-Cc:     Paul Blakey <paulb@nvidia.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net-next] net/mlx5: check for allocation failure in
- mlx5_ft_pool_init()
-Message-ID: <YLjVRjAyP3UpzgVr@unreal>
-References: <YLjNfHuTQ817oUtX@mwanda>
+        Thu, 3 Jun 2021 09:20:53 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:38402 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231441AbhFCNUw (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 3 Jun 2021 09:20:52 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lonFY-0006XL-Hz; Thu, 03 Jun 2021 13:19:04 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Jay Vosburgh <j.vosburgh@gmail.com>,
+        Veaceslav Falico <vfalico@gmail.com>,
+        Andy Gospodarek <andy@greyhouse.net>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] bonding: remove redundant initialization of variable ret
+Date:   Thu,  3 Jun 2021 14:19:04 +0100
+Message-Id: <20210603131904.85093-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YLjNfHuTQ817oUtX@mwanda>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Jun 03, 2021 at 03:39:24PM +0300, Dan Carpenter wrote:
-> Add a check for if the kzalloc() fails.
-> 
-> Fixes: 4a98544d1827 ("net/mlx5: Move chains ft pool to be used by all firmware steering")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/net/ethernet/mellanox/mlx5/core/fs_ft_pool.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/fs_ft_pool.c b/drivers/net/ethernet/mellanox/mlx5/core/fs_ft_pool.c
-> index 526fbb669142..c14590acc772 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/fs_ft_pool.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/fs_ft_pool.c
-> @@ -27,6 +27,8 @@ int mlx5_ft_pool_init(struct mlx5_core_dev *dev)
->  	int i;
->  
->  	ft_pool = kzalloc(sizeof(*ft_pool), GFP_KERNEL);
-> +	if (!ft_pool)
-> +		return -ENOMEM;
->  
->  	for (i = ARRAY_SIZE(FT_POOLS) - 1; i >= 0; i--)
->  		ft_pool->ft_left[i] = FT_SIZE / FT_POOLS[i];
+From: Colin Ian King <colin.king@canonical.com>
 
+The variable ret is being initialized with a value that is never read,
+it is being updated later on.  The assignment is redundant and can be
+removed.
 
-Dan thanks for your patch.
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/bonding/bond_options.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-When reviewed your patch, I spotted another error in the patch from the Fixes line.
+diff --git a/drivers/net/bonding/bond_options.c b/drivers/net/bonding/bond_options.c
+index c9d3604ae129..6fb68eaa647d 100644
+--- a/drivers/net/bonding/bond_options.c
++++ b/drivers/net/bonding/bond_options.c
+@@ -705,7 +705,7 @@ int __bond_opt_set(struct bonding *bond,
+ int __bond_opt_set_notify(struct bonding *bond,
+ 			  unsigned int option, struct bond_opt_value *val)
+ {
+-	int ret = -ENOENT;
++	int ret;
+ 
+ 	ASSERT_RTNL();
+ 
+-- 
+2.31.1
 
-  2955         err = mlx5_ft_pool_init(dev);
-  2956         if (err)
-  2957                 return err;
-  2958
-  2959         steering = kzalloc(sizeof(*steering), GFP_KERNEL);
-  2960         if (!steering)
-  2961                 goto err;
-                       ^^^^^^^^ it will return success, while should return ENOMEM.
-
-Thanks,
-Acked-by: Leon Romanovsky <leonro@nvidia.com>
