@@ -2,139 +2,95 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-5.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C95AC47082
-	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Jun 2021 15:46:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 351D9C47099
+	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Jun 2021 15:55:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4E47661208
-	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Jun 2021 15:46:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E4EF613E9
+	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Jun 2021 15:55:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229849AbhFCPsa (ORCPT
+        id S229885AbhFCP4t (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 3 Jun 2021 11:48:30 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:47084 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229617AbhFCPsa (ORCPT
+        Thu, 3 Jun 2021 11:56:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34356 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229961AbhFCP4r (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 3 Jun 2021 11:48:30 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 153Fj79S170845;
-        Thu, 3 Jun 2021 15:46:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=JqeuEbZiTIXjC3KOdhlbcdTYqDxBV/Ur9X+bVkW1dA0=;
- b=a6geYAtXFfh1waSU7eu0TlnYw1ZWG7KK7KR236BxQtK6P7R/BYZg+B9GbK8PiRh6CvQh
- N1sz8RfGOeyZc4Vnfyi9cv6AZDnt3kByk/V81oA1SSt4XdnO3/0x3ZoLe3X5LFrVG/lc
- fuhLWRz4v0typYv4Pf2g9K2OxneZ4lvHMStq3/36kUlaiZOBjHlF1cGp9tvHIlxg+4ME
- PQaxlnwW6mqnFVXZJ3foO951o2Ahpvfl9GUWG/b925kGVMMe888LKJDRDXHEAZVNDGYK
- TbGoed6V/6OHDjjLyN7N88VYx1GAWf/bY3GK7tdUBbYNMojdeUbnmPLG+tnvZqWW1Pl6 xQ== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2130.oracle.com with ESMTP id 38ub4cutfs-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 03 Jun 2021 15:46:39 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 153Fkb8W064827;
-        Thu, 3 Jun 2021 15:46:39 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by aserp3030.oracle.com with ESMTP id 38ubneyfv7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 03 Jun 2021 15:46:39 +0000
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 153Fkcki064974;
-        Thu, 3 Jun 2021 15:46:38 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3030.oracle.com with ESMTP id 38ubneyfuf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 03 Jun 2021 15:46:38 +0000
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 153FkXVW006379;
-        Thu, 3 Jun 2021 15:46:33 GMT
-Received: from kadam (/41.212.42.34)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 03 Jun 2021 15:46:33 +0000
-Date:   Thu, 3 Jun 2021 18:46:25 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Leon Romanovsky <leon@kernel.org>
-Cc:     Saeed Mahameed <saeedm@nvidia.com>, Paul Blakey <paulb@nvidia.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net-next] net/mlx5: check for allocation failure in
- mlx5_ft_pool_init()
-Message-ID: <20210603154625.GI1955@kadam>
-References: <YLjNfHuTQ817oUtX@mwanda>
- <YLjVRjAyP3UpzgVr@unreal>
+        Thu, 3 Jun 2021 11:56:47 -0400
+Received: from mail-io1-xd32.google.com (mail-io1-xd32.google.com [IPv6:2607:f8b0:4864:20::d32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 624A8C061756
+        for <kernel-janitors@vger.kernel.org>; Thu,  3 Jun 2021 08:54:47 -0700 (PDT)
+Received: by mail-io1-xd32.google.com with SMTP id q7so6854612iob.4
+        for <kernel-janitors@vger.kernel.org>; Thu, 03 Jun 2021 08:54:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=OQ8/izGugLT2mg1DaIwELKOTXax/WeIQBPj5/sAmtrM=;
+        b=sWRObvHAN4uM8PnmujHncknfBPxl21ZOniXu3Dux67+WGcu23NMh3W6RrJOkoxB8QA
+         2OU+0KkLfMZIVPk1kNPOPv7swr00MTbUX6ZKkP/YEFnc/WK+mf58qnArZuxOspM88n0y
+         LpTS5ZXOO2bJ7nVweslbdch4xpF6+GL+r+TVUGMoXsRIw7N1rJM0wvnJabdSSjXtkRnc
+         g4LnDYFI35vBVCcwun/cXvfB+zOKM9jMUBIZnA2+uZFzKEZzUn2jJ/EdPb4vo6PjTHw9
+         N9HUkRZU6hA2vXjjzTFurjLEkd6gbsPzExUJazanOQoj3bVj3VlB/VnM3okLFx+MtMq1
+         /Lbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=OQ8/izGugLT2mg1DaIwELKOTXax/WeIQBPj5/sAmtrM=;
+        b=R5U2fXS/IweIPVPxzOHhSkAQEF6U8D7kP5aFQxwEJsoule6TnqTtpGtHcBo5C7Yj1m
+         ir8sNM4fUIF8w8GJaGV6ZKC8PC1VOCnRlsLvsMYmHbkavvpepxObLV2lNnDXPmm+BvBG
+         NHiW0pjRf95dNd7EuvjsFqj+ketqidQexBDR04E+97L2yGEk2VhMHJiH8VlRSDy42Wm+
+         7LhAJPGwEpEkfeabwjd7HQqWdmsvLsPVkYwS0hCEtaBzwyETx2DxzJcgh+sva/avp4+G
+         wv/ew+8EMk0+A347DTCQ/l2ATQXygV7YdfDvZpc5sh0cLCwa9dGvTM/2/y3Kq5z/AFqB
+         ivdQ==
+X-Gm-Message-State: AOAM531JvwJRGcrcnTP80kBfLHzPPRCxxxxk1zXIb3XboeySfERS0LnR
+        Qw6kgo8s4q0ju9KT2xSqdSTWdA==
+X-Google-Smtp-Source: ABdhPJzaVvt+H2s1I25emL3iM4LnUpQGECU4+1p6n6DiGlCBOlOcFHd7oP51g1mmEsRRfRUYZSP7rA==
+X-Received: by 2002:a6b:7b0a:: with SMTP id l10mr6024iop.120.1622735686716;
+        Thu, 03 Jun 2021 08:54:46 -0700 (PDT)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id x6sm2002769ilg.87.2021.06.03.08.54.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Jun 2021 08:54:46 -0700 (PDT)
+Subject: Re: [PATCH][next] null_blk: Fix null pointer dereference on
+ nullb->disk on blk_cleanup_disk call
+To:     Colin King <colin.king@canonical.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-block@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210602100659.11058-1-colin.king@canonical.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <ce16729c-01c6-7ce8-6c06-c43439186683@kernel.dk>
+Date:   Thu, 3 Jun 2021 09:54:45 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YLjVRjAyP3UpzgVr@unreal>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-GUID: zKS5juQhn23kX7cRcPi15XDD2LSxMgNc
-X-Proofpoint-ORIG-GUID: zKS5juQhn23kX7cRcPi15XDD2LSxMgNc
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=10004 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 mlxscore=0
- mlxlogscore=999 malwarescore=0 bulkscore=0 phishscore=0 lowpriorityscore=0
- clxscore=1015 impostorscore=0 adultscore=0 suspectscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
- definitions=main-2106030106
+In-Reply-To: <20210602100659.11058-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Jun 03, 2021 at 04:12:38PM +0300, Leon Romanovsky wrote:
-> On Thu, Jun 03, 2021 at 03:39:24PM +0300, Dan Carpenter wrote:
-> > Add a check for if the kzalloc() fails.
-> > 
-> > Fixes: 4a98544d1827 ("net/mlx5: Move chains ft pool to be used by all firmware steering")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> >  drivers/net/ethernet/mellanox/mlx5/core/fs_ft_pool.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/drivers/net/ethernet/mellanox/mlx5/core/fs_ft_pool.c b/drivers/net/ethernet/mellanox/mlx5/core/fs_ft_pool.c
-> > index 526fbb669142..c14590acc772 100644
-> > --- a/drivers/net/ethernet/mellanox/mlx5/core/fs_ft_pool.c
-> > +++ b/drivers/net/ethernet/mellanox/mlx5/core/fs_ft_pool.c
-> > @@ -27,6 +27,8 @@ int mlx5_ft_pool_init(struct mlx5_core_dev *dev)
-> >  	int i;
-> >  
-> >  	ft_pool = kzalloc(sizeof(*ft_pool), GFP_KERNEL);
-> > +	if (!ft_pool)
-> > +		return -ENOMEM;
-> >  
-> >  	for (i = ARRAY_SIZE(FT_POOLS) - 1; i >= 0; i--)
-> >  		ft_pool->ft_left[i] = FT_SIZE / FT_POOLS[i];
+On 6/2/21 4:06 AM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> 
-> Dan thanks for your patch.
-> 
-> When reviewed your patch, I spotted another error in the patch from the Fixes line.
-> 
->   2955         err = mlx5_ft_pool_init(dev);
->   2956         if (err)
->   2957                 return err;
->   2958
->   2959         steering = kzalloc(sizeof(*steering), GFP_KERNEL);
->   2960         if (!steering)
->   2961                 goto err;
->                        ^^^^^^^^ it will return success, while should return ENOMEM.
+> The error handling on a nullb->disk allocation currently jumps to
+> out_cleanup_disk that calls blk_cleanup_disk with a null pointer causing
+> a null pointer dereference issue. Fix this by jumping to out_cleanup_tags
+> instead.
 
-Smatch prints a static checker warning for this, but I never finished
-going through the backlog of old "missing error code" warnings.  At one
-point I was down to 38 warnings left but now I see that the backlog is
-62 warnings so people are adding new bugs faster than I'm reviewing
-them...  :P
+Applied, thanks.
 
-I will take care of this tomorrow as a separate patch.  I will just
-report or the other 61 warnings and get the backlog cleared out so that
-I can start checking these better in the future.
-
-regards,
-dan carpenter
+-- 
+Jens Axboe
 
