@@ -2,99 +2,88 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2F08C47096
-	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Jun 2021 09:08:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93188C47082
+	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Jun 2021 09:32:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9D56E613B1
-	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Jun 2021 09:08:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77316613E4
+	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Jun 2021 09:32:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229626AbhFCJJx (ORCPT
+        id S229758AbhFCJeF (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 3 Jun 2021 05:09:53 -0400
-Received: from proxima.lasnet.de ([78.47.171.185]:58296 "EHLO
-        proxima.lasnet.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229506AbhFCJJx (ORCPT
+        Thu, 3 Jun 2021 05:34:05 -0400
+Received: from so254-9.mailgun.net ([198.61.254.9]:14217 "EHLO
+        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229576AbhFCJeE (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 3 Jun 2021 05:09:53 -0400
-X-Greylist: delayed 373 seconds by postgrey-1.27 at vger.kernel.org; Thu, 03 Jun 2021 05:09:52 EDT
-Received: from [IPv6:2003:e9:d722:28a1:9240:5b8a:f037:504] (p200300e9d72228a192405b8af0370504.dip0.t-ipconnect.de [IPv6:2003:e9:d722:28a1:9240:5b8a:f037:504])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        Thu, 3 Jun 2021 05:34:04 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1622712740; h=Date: Message-Id: Cc: To: References:
+ In-Reply-To: From: Subject: Content-Transfer-Encoding: MIME-Version:
+ Content-Type: Sender; bh=HD7eYJ5faNy3m03p+InB6TCp4g/hx1UCjXjENik8p7s=;
+ b=psz38zM9kRFZPrrDxRdS8CsBSgv9IF1q6w/MomgK0JFCzdWmryRl7kUKRRPJjeDiOqY3RNRM
+ pUqyyB0idMKJE7qcPmODvxKTzpknvY7NtSx61Zq3NRr/uqYuRMn/cEQd+ReIHd41pJjYlpkl
+ HIkf4rz04b3SuzmN4mdXiVz2B5Q=
+X-Mailgun-Sending-Ip: 198.61.254.9
+X-Mailgun-Sid: WyI5NDExNyIsICJrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n03.prod.us-west-2.postgun.com with SMTP id
+ 60b8a1a38491191eb3cb1fdd (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 03 Jun 2021 09:32:19
+ GMT
+Sender: kvalo=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 2DDA3C4338A; Thu,  3 Jun 2021 09:32:19 +0000 (UTC)
+Received: from tykki.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: stefan@datenfreihafen.org)
-        by proxima.lasnet.de (Postfix) with ESMTPSA id B82F1C0542;
-        Thu,  3 Jun 2021 11:01:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=datenfreihafen.org;
-        s=2021; t=1622710911;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=EquOF3L85NGLb2EjoTiXBRVqUAA5DMvQV13UsmvqEj8=;
-        b=V1t42NxkMUQBsS21i8B1xRB5X0c/XHSOrjXe01m+OQ2HlF1EWB0++h5b4xOO1CEFYriMWL
-        ++267Qzf0j5t1ktsLufano9KlUwMulqeuoMspOqV4pwJUGMtMOKWYmDGv4/mlIFDwVmP6a
-        t6CwmiCOIqsB1zldc7s693PwVfOWEtn8LzlFHTaXIkH+kxxRyuRQ+bc/ltTavEEigJnBn8
-        Wu7DD0JzTd41A8DaCWtPSSgMr1esvMh+c6VsWal6o84hlyrztWeMB6BswO1yz8LaPaDQx4
-        Y28gzW7S+Zo4FFs7L+Hd6aiNc8HChCt6Qw9EMwGr5lRr7DksnWT24vG1rnui3g==
-Subject: Re: [PATCH net-next] ieee802154: fix error return code in
- ieee802154_llsec_getparams()
-To:     Wei Yongjun <weiyongjun1@huawei.com>,
-        Alexander Aring <alex.aring@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>
-Cc:     linux-wpan@vger.kernel.org, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
-References: <20210519141614.3040055-1-weiyongjun1@huawei.com>
-From:   Stefan Schmidt <stefan@datenfreihafen.org>
-Message-ID: <b8700eed-1791-fd55-4568-dc4efeda35eb@datenfreihafen.org>
-Date:   Thu, 3 Jun 2021 11:01:51 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        (Authenticated sender: kvalo)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9B740C433D3;
+        Thu,  3 Jun 2021 09:32:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9B740C433D3
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20210519141614.3040055-1-weiyongjun1@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] b43legacy: Fix spelling mistake "overflew" ->
+ "overflowed"
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20210601102855.8884-1-colin.king@canonical.com>
+References: <20210601102855.8884-1-colin.king@canonical.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Larry Finger <Larry.Finger@lwfinger.net>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.7.3
+Message-Id: <20210603093219.2DDA3C4338A@smtp.codeaurora.org>
+Date:   Thu,  3 Jun 2021 09:32:19 +0000 (UTC)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello.
+Colin King <colin.king@canonical.com> wrote:
 
-On 19.05.21 16:16, Wei Yongjun wrote:
-> Fix to return negative error code -ENOBUFS from the error handling
-> case instead of 0, as done elsewhere in this function.
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->   net/ieee802154/nl-mac.c | 4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
+> There is a spelling mistake in a comment. Fix it.
 > 
-> diff --git a/net/ieee802154/nl-mac.c b/net/ieee802154/nl-mac.c
-> index 0c1b0770c59e..c23c152860b7 100644
-> --- a/net/ieee802154/nl-mac.c
-> +++ b/net/ieee802154/nl-mac.c
-> @@ -680,8 +680,10 @@ int ieee802154_llsec_getparams(struct sk_buff *skb, struct genl_info *info)
->   	    nla_put_u8(msg, IEEE802154_ATTR_LLSEC_SECLEVEL, params.out_level) ||
->   	    nla_put_u32(msg, IEEE802154_ATTR_LLSEC_FRAME_COUNTER,
->   			be32_to_cpu(params.frame_counter)) ||
-> -	    ieee802154_llsec_fill_key_id(msg, &params.out_key))
-> +	    ieee802154_llsec_fill_key_id(msg, &params.out_key)) {
-> +		rc = -ENOBUFS;
->   		goto out_free;
-> +	}
->   
->   	dev_put(dev);
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
+Patch applied to wireless-drivers-next.git, thanks.
 
-This patch has been applied to the wpan tree and will be
-part of the next pull request to net. Thanks!
+fef1cdbba4d1 b43legacy: Fix spelling mistake "overflew" -> "overflowed"
 
-regards
-Stefan Schmidt
+-- 
+https://patchwork.kernel.org/project/linux-wireless/patch/20210601102855.8884-1-colin.king@canonical.com/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
