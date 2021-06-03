@@ -2,83 +2,162 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-17.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03CA4C47096
-	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Jun 2021 15:16:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A268C47099
+	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Jun 2021 15:22:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DD4FA613F1
-	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Jun 2021 15:16:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6CD6661403
+	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Jun 2021 15:22:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231863AbhFCPRr (ORCPT
+        id S232083AbhFCPX6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 3 Jun 2021 11:17:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54028 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231803AbhFCPRr (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 3 Jun 2021 11:17:47 -0400
-Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F2E4C06174A;
-        Thu,  3 Jun 2021 08:16:02 -0700 (PDT)
-Received: by fieldses.org (Postfix, from userid 2815)
-        id 852A41BE4; Thu,  3 Jun 2021 11:16:01 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org 852A41BE4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
-        s=default; t=1622733361;
-        bh=7maj1D43kbDLqRcM6Yl8tEaT4EYByuNrC/NaY65rlYc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=OeMNzTcwEnfuaq63wR2xRXNfoZX3Ddg+vTEmfZyA8/6mdShFd5kl+d2onVUbyDGZf
-         BsgBA+HU6eVM6MVGb7h8xCI6DVTFfgFPVM06XtdByrLTsmSIxCK7dycNbxk2MhvVdr
-         c/yLSUWgiwn0S8CqVHytxlCLZ2YmO2HK1T8ZSyec=
-Date:   Thu, 3 Jun 2021 11:16:01 -0400
-From:   "J. Bruce Fields" <bfields@fieldses.org>
-To:     Wei Yongjun <weiyongjun1@huawei.com>
-Cc:     Dai Ngo <dai.ngo@oracle.com>, Chuck Lever <chuck.lever@oracle.com>,
-        linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Hulk Robot <hulkci@huawei.com>
-Subject: Re: [PATCH -next] NFSD: Fix error return code in
- nfsd4_interssc_connect()
-Message-ID: <20210603151601.GA1815@fieldses.org>
-References: <20210603135145.972633-1-weiyongjun1@huawei.com>
+        Thu, 3 Jun 2021 11:23:58 -0400
+Received: from mail-bn8nam08on2042.outbound.protection.outlook.com ([40.107.100.42]:16609
+        "EHLO NAM04-BN8-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S232057AbhFCPX5 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 3 Jun 2021 11:23:57 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=R9x067cfQ8zEq3gFIfm8158s9HJ0c//iUBz00Mpc5JQbastqxI10lt+vXfRf1dG/U+3aGFC17dlDY0HTc39vrVPJRVWiFpIkweVJcVYhEdaQ/3dvdRr+FVslUzZWsKqxwJbp1TlOtyjU6OiSC1b45CwHR4BDvlk4CoHHgxt6OrLRczxkMkgIaXZkjtVwp3XyXeFikwb+2fDosddqU9r8pCYCdmbWibCGae0rXu0FlzNLPpm/ESBDTFcKWn/3xqX36kVyAlzJJnhHSDIqHfXoeQbh7hdEeoJImjbVRU/fvuvi7Em67UJHhp8RA1LWDFra63Mhagtw6FaIJPaWTwQM4Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=a9r7AcPB8Y1pANFcNIKl49YnnC7r9+LWitrcxTRYz/g=;
+ b=WsLmWjVJ8Q/Mi6bhumWeeze3sAuxV5oomlbiCOSN+KZJV7cW76mHZQ5ygvfXzuxtXy/DsEcc7XZJJaMrQBV9pbrEqr8uH/ag/WNk/Z2MepzpiOKlKz4j8aL2PxcoNAEnm/Rb1GTn+4AvEhh9Kcww/2SinCo95jA/zoAgj2oP8MZNrN+EXaTQoUosRULeiDqbQTychTassYpyXAYCn8nD4l8gQgpTt+L2A/ZIiFhYadnfzul7FkCi8b9MhltVGVoUofzM5efkjHxuHiWHDJQt0luSPuV4QSu/o9hQCoyo1HWr/1pZuu7j9WxUeI0ArGucSYFTlLeQRXlai6giPBn5xg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=a9r7AcPB8Y1pANFcNIKl49YnnC7r9+LWitrcxTRYz/g=;
+ b=1PLpAK2YTa4pz3BuTv2mA3saU8SXdUtc+WwzbusGU2coYBGc52EFy257V4Rp/FgcUpP1kTzqryw9tk3t6e7JV76nWsWHlDiJvaY8rr7KhQdHzGZ/p65PCKArUod3biI8IdiuCL+ZmRWe1jOlhEp6KAWgzPQqzQJNISeSQJ9cVfI=
+Authentication-Results: vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=none action=none header.from=amd.com;
+Received: from BN9PR12MB5129.namprd12.prod.outlook.com (2603:10b6:408:136::12)
+ by BN9PR12MB5179.namprd12.prod.outlook.com (2603:10b6:408:11c::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4195.23; Thu, 3 Jun
+ 2021 15:22:10 +0000
+Received: from BN9PR12MB5129.namprd12.prod.outlook.com
+ ([fe80::3c78:e58b:fba7:b8dd]) by BN9PR12MB5129.namprd12.prod.outlook.com
+ ([fe80::3c78:e58b:fba7:b8dd%6]) with mapi id 15.20.4195.024; Thu, 3 Jun 2021
+ 15:22:10 +0000
+Subject: Re: [PATCH] drm/amdgpu: remove redundant assignment of variable k
+To:     Colin King <colin.king@canonical.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Xinhui.Pan@amd.com, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210603123440.83936-1-colin.king@canonical.com>
+From:   Felix Kuehling <felix.kuehling@amd.com>
+Message-ID: <1b714f14-723c-5e66-dd1c-b720f4b120fd@amd.com>
+Date:   Thu, 3 Jun 2021 11:22:08 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
+In-Reply-To: <20210603123440.83936-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Originating-IP: [142.116.203.225]
+X-ClientProxiedBy: YT1PR01CA0010.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01::23)
+ To BN9PR12MB5129.namprd12.prod.outlook.com (2603:10b6:408:136::12)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210603135145.972633-1-weiyongjun1@huawei.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from [192.168.2.100] (142.116.203.225) by YT1PR01CA0010.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01::23) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4173.26 via Frontend Transport; Thu, 3 Jun 2021 15:22:09 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: a63c1ab5-7456-442e-c2a2-08d926a35b23
+X-MS-TrafficTypeDiagnostic: BN9PR12MB5179:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <BN9PR12MB5179005B8D0FA9D7C8D7F10E923C9@BN9PR12MB5179.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:5797;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: /C1bd8XCJ/8nBIlhM0H8ypJqxN0FTJrt2H3XmM5ykjj7uQnfjVD+kp9vWd/FrPnMuYt9/a71VVE/Os9tw+VEuxQBT6USB0tPLX9Knv8oBYd05BRamHIuO0KFdzNKzpCK3h+HWIrXbKwtrgY4TiSFaOYBX4NKoXIaV3g0vtJSFupCTJrKtmoyaVM2+af6NiphtQjBbeHe0yYEKYnCz22qH58/Liani6w1VZUgpT81raunqkn4S7Oh7SG/WTmJmx1/OeIccGJdEUVsMIldD2lKsqikUIYrAErvXLQc0l0jVtCmB3yxZAAWDVM3yVXgTTzT7y0vrLlWLMR1xs3HL/e5W4IAPRusUlXuy890t/98OPpExKJqRjumO+mfyi2gyQK2LvxkI0DqYhnHdq5H9ukoxR+nJNdtM1H4OI8+bgkIFg2Zy0mz+fq/qASoD4suEItDHh7QpLi590iC6IaFyrzEB9jQzylwEjuBz3bSJjzKehPLiSXP9MEqpsWSrDuZMH+XCz7B0Tk8vfbnMakbQUgiQ++RpwzuOw3OvSRyFS5objbLzzH9dB7rw9QTKP2r1ebl1efLdq1BUTCBhDu3z4cgIFXvsn14l8cCgAJccV11X3UsiFZAioRIWZELxoL7L1/fhNo6RHYj3/3gC9Wyxbx8YxpZCQ3ze5DeV1i6qWSbTMorStgQYwIqm539GL5o0KGgoGpY5CUeqhVnDFN4GT1LXg==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR12MB5129.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(136003)(376002)(39840400004)(396003)(346002)(83380400001)(6486002)(86362001)(38100700002)(316002)(110136005)(16576012)(2616005)(2906002)(956004)(26005)(8936002)(66556008)(5660300002)(8676002)(66946007)(31696002)(478600001)(66476007)(36756003)(31686004)(4326008)(16526019)(44832011)(186003)(129723003)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: =?utf-8?B?cTYwVmRnS2JpVHY2aUE1V2JVWUQzczdkckl1UHJkTkxBZ2J6ampDUThrT25n?=
+ =?utf-8?B?bTBycEV3NkJhVW9LdHcrVjNGNzlkQWNKRTE2aStjMW02OU1Mbm5pM3oyb1lt?=
+ =?utf-8?B?dEJocWlOS0p6QkNGR2dFVzRSeEpPdm9WTTBYSWZackxlbDBmUmEwVEN2ckZW?=
+ =?utf-8?B?ZUQ1NklYKzRVTzZwbDNmVThFWXpoY1NPbThRRW02R2Y4bnBRM21veWdEdVhj?=
+ =?utf-8?B?Ym9CajkrWDdsa0phM2tWTjYvK250dWMrWno4MThIdmRYWGRpenJZVTR5STZJ?=
+ =?utf-8?B?ZHZaZkVjVUg1b080a2w3Rzk3cmxCUnhUOWd5V2c2Y0NOVlBOZ1hIckx6WjJK?=
+ =?utf-8?B?a0JTblRaMFBNMU5iN2gzbittZkhiTURESnp4bXZmbmpMbmZzeFVsbE5KZmpq?=
+ =?utf-8?B?eXFQdTdJbzBEUHpkMkZ2ZkhPOUFIcW9EUmZQNWUvYnpvN0dTQk1OT1B4WTNy?=
+ =?utf-8?B?ZHpyRHhSTnZmQkt3MWxGMTZJTTdOeElUOHBjRXc1Q2lmelZuT3pNQWRBU3cv?=
+ =?utf-8?B?R09MRnpMY2I2b2V6RllKTUJldkxXQzJNSklQeHJQVHMvUVRkUjNVblQwODR5?=
+ =?utf-8?B?WjZFVWdvZUlRTzl2YlZ5c0NxVFdFTW4venhIdy9scm5XVzVMTU5jemF1RWR0?=
+ =?utf-8?B?Q2J1SjZsQ1RKcTkrS2FaOFhiYWpTekEwSnRSRGs3V0xHSW52V0s1MXpLaHVt?=
+ =?utf-8?B?U09JY3haWGJpNmtGUHdqbkt5ZTh5U2pwY3JXdkdXNjJWTS9Ta0FzdS9yMngz?=
+ =?utf-8?B?MXBKMFRyYmozekliNWdZYVpnbHExQmVvQ0UveTFQeVR3ZUxmQ1NzQysvWGRC?=
+ =?utf-8?B?S2RMS0tJMklBVjhLZktmUStiYzVMcXNYbnJKRVdrejZyeXA2MGpNKzhIbHhn?=
+ =?utf-8?B?RXFaSHR5WWpnYTN5Sjc2QTIwNXV3bVhJYWF1eklueFcvTCt2RHRkMk1KMnFm?=
+ =?utf-8?B?WWg3RzBpL1YvMTF3MmZsbUxydldwYlNUdW9JTG1sSjR1b0dSUWk0Smk3Zm4v?=
+ =?utf-8?B?cDUvRFdMZ0xmdi81WThld0VDUStCdkNKSDNDazhZOHhPRThidnJIUGo5ZFd6?=
+ =?utf-8?B?Zng4R3luVWQ4aytLSzNTdGIxKzlXUHh3YkdnK2lBZ09icmoxbGVDVG9jT3RY?=
+ =?utf-8?B?WmdSQmdaRXJiZzlGaGVOMjErYkhwV3RRemIxeUt3UDZ5UTRLZlRPOVMra3Y5?=
+ =?utf-8?B?dFNIU0gzTG5yY0htR2w4S0NGWHFtTW05MCtFVU40SU5HSk5Ld0I3bnU3T1Iz?=
+ =?utf-8?B?ZWdwSHFSR0k5Z0lWRlBaaDNIOTFXQjhiS3FvUkI1UW5HYjVZMERHSndjNk93?=
+ =?utf-8?B?OWpZNmZGSEZ1MENxM3ZyVWVmMGR1a0tWcG0xQ1pQRFhJNGh4am5pMnovbW9E?=
+ =?utf-8?B?bmZiRTlhSTR3a0J6ZFFtYUVmaGYyMEdoQXZQUWlCVWNydmhURXN1Vk5QcFph?=
+ =?utf-8?B?ZTM3YXdVYmhybFU2Nk04d2t6WW1BdENNWFVHeENnSTA2WnQvb1l4V2MyOTRT?=
+ =?utf-8?B?blJGQ2NraXRIVWdacU9PMk03NGRQUXNyQjdBVWdDWWRlMUZwRTNaVFV2NFJZ?=
+ =?utf-8?B?OEtOeVJsc1Y1blNGQWQzME1pNGZMV1I1VXlsQVZUQkY4bkxwZVpVSFNXQXRo?=
+ =?utf-8?B?bjVidW11NlhiMWFaenhhSW9RZHAxZmVuY1Q1ZFhMeDd4QlBra1cyM05VcDF3?=
+ =?utf-8?B?b3hNQk81V2hHZlRwQU4rV0N1M0NWMGZpZzRCUGEvcmVyY2dhdkpuRy9Hdmtr?=
+ =?utf-8?B?RXpjUzV0eFh3bjBqbnNscHI1d2NLZkxFMzN0Tk1POWFKNjdSK0JHdzJkYmFH?=
+ =?utf-8?B?dVJYVXlmMzIxNUQ3RDRMZz09?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a63c1ab5-7456-442e-c2a2-08d926a35b23
+X-MS-Exchange-CrossTenant-AuthSource: BN9PR12MB5129.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2021 15:22:10.6782
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: orB7aBuk7sLkQ8AX3Utt/QgB9yzGTZA8GGN8YKiV46tp5b0PsDpZDp/1+ZFlMOOLx6Ckyh5w9cj2jp3sMcjykQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN9PR12MB5179
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Jun 03, 2021 at 01:51:45PM +0000, Wei Yongjun wrote:
-> 'status' has been overwritten to 0 after nfsd4_ssc_setup_dul(), this
-> cause 0 will be return in vfs_kern_mount() error case. Fix to return
-> nfserr_inval in this error case.
+Am 2021-06-03 um 8:34 a.m. schrieb Colin King:
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> The variable k is being assigned a value that is never read, the
+> assignment is redundant and can be removed.
+>
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Is nfserr_inval the correct error?
+Reviewed-by: Felix Kuehling <Felix.Kuehling@amd.com>
 
---b.
+I'm applying the patch to amd-staging-drm-next.
 
-> 
-> Fixes: f4e44b393389 ("NFSD: delay unmount source's export after inter-server copy completed.")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Thanks,
+  Felix
+
+
 > ---
->  fs/nfsd/nfs4proc.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/fs/nfsd/nfs4proc.c b/fs/nfsd/nfs4proc.c
-> index 0bd71c6da81d..2bfb6c408dc6 100644
-> --- a/fs/nfsd/nfs4proc.c
-> +++ b/fs/nfsd/nfs4proc.c
-> @@ -1323,6 +1323,7 @@ nfsd4_interssc_connect(struct nl4_server *nss, struct svc_rqst *rqstp,
->  	ss_mnt = vfs_kern_mount(type, SB_KERNMOUNT, dev_name, raw_data);
->  	module_put(type->owner);
->  	if (IS_ERR(ss_mnt)) {
-> +		status = nfserr_inval;
->  		if (work)
->  			nfsd4_ssc_cancel_dul_work(nn, work);
->  		goto out_free_devname;
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c
+> index 2a7bed66d50b..f545dc1248b8 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c
+> @@ -278,7 +278,7 @@ static int amdgpu_amdkfd_remove_eviction_fence(struct amdgpu_bo *bo,
+>  	write_seqcount_end(&resv->seq);
+>  
+>  	/* Drop the references to the removed fences or move them to ef_list */
+> -	for (i = j, k = 0; i < old->shared_count; ++i) {
+> +	for (i = j; i < old->shared_count; ++i) {
+>  		struct dma_fence *f;
+>  
+>  		f = rcu_dereference_protected(new->shared[i],
