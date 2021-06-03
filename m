@@ -7,103 +7,102 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C840C47082
-	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Jun 2021 12:38:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAF2FC47082
+	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Jun 2021 12:39:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 43169613F1
-	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Jun 2021 12:38:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CEF63613E7
+	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Jun 2021 12:39:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230314AbhFCMj4 (ORCPT
+        id S230365AbhFCMlZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 3 Jun 2021 08:39:56 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:46748 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230313AbhFCMjz (ORCPT
+        Thu, 3 Jun 2021 08:41:25 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:46102 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230188AbhFCMlZ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 3 Jun 2021 08:39:55 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 153CUD8a019036;
-        Thu, 3 Jun 2021 12:38:05 GMT
+        Thu, 3 Jun 2021 08:41:25 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 153CUmDR162320;
+        Thu, 3 Jun 2021 12:39:33 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
  : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=PmquORlyAk6Xmrcol2gQbQQUZjJgXb6Pli6NxRXZqkc=;
- b=qYBWT/9Z6luoBh1ApuTW8xzVH+/iWCCbqL1oO4sqWRgQQ7AaeOQVenWjiFEx+iLsBGKc
- ai0jGCDq0zPgN1nBM/TkUmxZNpO2gWzusGp+bl/7k/k2h1aNIFVTwh0+Eq/mMzAhAf1+
- WYoU/2F7s/97OnB5e9P19YTS/fjEmELHk+T4g0u1aZDGaIf7mAp+kD3RLxvChz6k/HUN
- +Hj7/k+YNtAdqOH3wUuTm7/0+JxTq2ECi+7Do+FV3nzhOMOVTJPN9DBKf7jOR+tsbM5g
- YG9VTUI4eLcuDREMbQz/iBgmdsnGrbkiz0BdjVwM4CaMAAkY50l/fo1z+zeTJ3XWamEL AQ== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2130.oracle.com with ESMTP id 38ud1sk7an-1
+ bh=M542x0boGODnUlJz41kxOBy1SWVp7Fwn/02HuLjbGdI=;
+ b=XQWDb3RhNZedNIqo+FUfXm9pwg218R7OEoKqKzdptSri1R6jCjC6hDZhd+1HpVUc1VNd
+ UM9iBE5QvsmW+I4D6UNJHIiDan2psaDZiHBcZJma50vfpJWvYnvBqVoIDYkj7fplxPF2
+ qNu/ib1t/lRoaSeatVREZieGfmQbKu9TywtZ6/JJALO/kNOcVwMEaMM38m26n6bvRXtW
+ hXLDa73iHlPULhefWZ7wKtiPi/7YcvKhDzKIJjMxA3PYvBQoLLuiNW2r0SFN5xeYSWVl
+ 2EvPzVBrZnwJ7fTu9QwlTnA/oYTvrL4kNvbZfIOiH3uroYqM92XrYhEcmYU4W+sj2ayv MA== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 38ue8pk7ba-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 03 Jun 2021 12:38:05 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 153CVmkO114713;
-        Thu, 3 Jun 2021 12:38:04 GMT
+        Thu, 03 Jun 2021 12:39:33 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 153CUpt3146452;
+        Thu, 3 Jun 2021 12:39:32 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-        by aserp3020.oracle.com with ESMTP id 38udeew4tu-1
+        by aserp3030.oracle.com with ESMTP id 38ubneu39x-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 03 Jun 2021 12:38:04 +0000
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 153Cc3vG156750;
-        Thu, 3 Jun 2021 12:38:03 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 38udeew4sw-1
+        Thu, 03 Jun 2021 12:39:32 +0000
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 153CcTdE164461;
+        Thu, 3 Jun 2021 12:39:32 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3030.oracle.com with ESMTP id 38ubneu39q-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 03 Jun 2021 12:38:03 +0000
-Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 153Cbx5V003958;
-        Thu, 3 Jun 2021 12:37:59 GMT
+        Thu, 03 Jun 2021 12:39:31 +0000
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 153CdVAO008677;
+        Thu, 3 Jun 2021 12:39:31 GMT
 Received: from mwanda (/41.212.42.34)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 03 Jun 2021 05:37:59 -0700
-Date:   Thu, 3 Jun 2021 15:37:53 +0300
+        with ESMTP ; Thu, 03 Jun 2021 05:39:30 -0700
+Date:   Thu, 3 Jun 2021 15:39:24 +0300
 From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Peng Tao <tao.peng@primarydata.com>
-Cc:     Anna Schumaker <anna.schumaker@netapp.com>,
-        linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] NFS: Fix a potential NULL dereference in nfs_get_client()
-Message-ID: <YLjNITBTTCCiik/+@mwanda>
+To:     Saeed Mahameed <saeedm@nvidia.com>, Paul Blakey <paulb@nvidia.com>
+Cc:     Leon Romanovsky <leon@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH net-next] net/mlx5: check for allocation failure in
+ mlx5_ft_pool_init()
+Message-ID: <YLjNfHuTQ817oUtX@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
-X-Proofpoint-ORIG-GUID: GVI-kGKw2pK4jFWW9jfR0WOXN2NqXMSJ
-X-Proofpoint-GUID: GVI-kGKw2pK4jFWW9jfR0WOXN2NqXMSJ
+X-Proofpoint-GUID: ka4XI3IZmZpJRXB6GUXXTJK9R06JZvZY
+X-Proofpoint-ORIG-GUID: ka4XI3IZmZpJRXB6GUXXTJK9R06JZvZY
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=10003 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 priorityscore=1501
- suspectscore=0 phishscore=0 lowpriorityscore=0 mlxlogscore=999
- malwarescore=0 clxscore=1011 spamscore=0 impostorscore=0 adultscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2104190000 definitions=main-2106030085
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 impostorscore=0
+ malwarescore=0 adultscore=0 suspectscore=0 lowpriorityscore=0 spamscore=0
+ bulkscore=0 phishscore=0 priorityscore=1501 clxscore=1011 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
+ definitions=main-2106030085
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-None of the callers are expecting NULL returns from nfs_get_client() so
-this code will lead to an Oops.  It's better to return an error
-pointer.  I expect that this is dead code so hopefully no one is
-affected.
+Add a check for if the kzalloc() fails.
 
-Fixes: 31434f496abb ("nfs: check hostname in nfs_get_client")
+Fixes: 4a98544d1827 ("net/mlx5: Move chains ft pool to be used by all firmware steering")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- fs/nfs/client.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/mellanox/mlx5/core/fs_ft_pool.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/nfs/client.c b/fs/nfs/client.c
-index cfeaadf56bf0..330f65727c45 100644
---- a/fs/nfs/client.c
-+++ b/fs/nfs/client.c
-@@ -406,7 +406,7 @@ struct nfs_client *nfs_get_client(const struct nfs_client_initdata *cl_init)
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/fs_ft_pool.c b/drivers/net/ethernet/mellanox/mlx5/core/fs_ft_pool.c
+index 526fbb669142..c14590acc772 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/fs_ft_pool.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/fs_ft_pool.c
+@@ -27,6 +27,8 @@ int mlx5_ft_pool_init(struct mlx5_core_dev *dev)
+ 	int i;
  
- 	if (cl_init->hostname == NULL) {
- 		WARN_ON(1);
--		return NULL;
-+		return ERR_PTR(-EINVAL);
- 	}
+ 	ft_pool = kzalloc(sizeof(*ft_pool), GFP_KERNEL);
++	if (!ft_pool)
++		return -ENOMEM;
  
- 	/* see if the client already exists */
+ 	for (i = ARRAY_SIZE(FT_POOLS) - 1; i >= 0; i--)
+ 		ft_pool->ft_left[i] = FT_SIZE / FT_POOLS[i];
 -- 
 2.30.2
 
