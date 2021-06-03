@@ -2,87 +2,115 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B557C47097
-	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Jun 2021 18:43:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3573CC47082
+	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Jun 2021 19:14:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EB0C1613F3
-	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Jun 2021 18:43:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D74D613E4
+	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Jun 2021 19:14:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230313AbhFCSoq (ORCPT
+        id S229661AbhFCTQh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 3 Jun 2021 14:44:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53938 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230322AbhFCSoq (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 3 Jun 2021 14:44:46 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B5094613F4;
-        Thu,  3 Jun 2021 18:43:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1622745781;
-        bh=TRbzEjqd6F1rvkQqzUZpCxer4BSH6P4i4D6NOAwFxe8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SJsMMI4MXP6sLkNxkoE83JPmAiojQcAr4jtAejzDvnBuIT2pWpzHkkkUgkThOxfck
-         py8jPSVZDyHZK3W+gkBn3rCOwDn/djkIJYORFRohQAp+bcxdK5OgMUBOSM3a/gPFXZ
-         FpIdKY/pnif7YpRZE+W6TU0eOsdJ2sZzjlkeVZWRZBlNNs8B4FYkadG3/IUnBkv7ps
-         IZxiWpzpfWL/xU6QloCYxvJWbxi0G7GHuwIwWKYB+IjpK9etylm6InWW/IFA2Y1gYt
-         FqHT2/v32s6pLoNnV34YTXerb3Y9DyoI8oh7HUwHDWz3LArL0KYHbhqYS1g8dSQFsm
-         GuaYDuQjW1pug==
-From:   Mark Brown <broonie@kernel.org>
-To:     Colin King <colin.king@canonical.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH][next][V2] ASoC: rsnd: check for zero node count
-Date:   Thu,  3 Jun 2021 19:42:01 +0100
-Message-Id: <162274557552.14795.11440858083758467099.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20210603110315.81146-1-colin.king@canonical.com>
-References: <20210603110315.81146-1-colin.king@canonical.com>
+        Thu, 3 Jun 2021 15:16:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50066 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229576AbhFCTQg (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 3 Jun 2021 15:16:36 -0400
+Received: from mail-oi1-x231.google.com (mail-oi1-x231.google.com [IPv6:2607:f8b0:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2BDBC061756;
+        Thu,  3 Jun 2021 12:14:51 -0700 (PDT)
+Received: by mail-oi1-x231.google.com with SMTP id v22so7383698oic.2;
+        Thu, 03 Jun 2021 12:14:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yTcdojc8mwwtA9K2NJaczioq6lgh4tCtax6VLDoB3+8=;
+        b=N1b8Xb6JaD/REB3WoovSCN50+jBsEIUw/t0OZgaPSIKlWS16XgazPhYR+e8T3vIIKb
+         mGjKhYltbPgSyDrPi2qXpjrpNDsrXi58HUBcgrTnhpOOIT0bWt9DZKcYgHJEDeyHjXV6
+         cfq6PqOILEN1tukJd7DKWDW4xcEvAlNI6pyOFEQdx4miovIeAFARR0FpctDoJJZmWVeC
+         9R0oE8g3zYmpxmqJSs3xdHwZJ0e6P2Ku+AisTA9Sh9LmPzDAKZS6y7X0Jp+KIvxcnqJw
+         kLBfpdS3Gh0utaUCTUhRUkT4Z41XOdep7AYj/Ht00C8YHJ9RgowpWHMZ5vNYrI9aQgKT
+         L1VA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yTcdojc8mwwtA9K2NJaczioq6lgh4tCtax6VLDoB3+8=;
+        b=XnrKDij4nAyzIMb58e3ZVVI3S2MeqDQMJPAXR9H4safxi14uycQYrIde+BI+CT5IZP
+         HqkwFExcOrpz5Bdjv9+/SqUB9wrNfmgUcXPBNDF5DuLnOpdT13txUbqv6pu1jI+aJJTO
+         llxENmI9dER7YyePHc49Rui/h6P7Kp2STEWR1KVplAmaqFTZSQ959tDUsVFzBrSzxrPM
+         Anj8n8LYeYAGYVfBcjsxGfk/W2rFuNeEAE8uQHYDpM80zuBjtQw9YvXj2+iVArN+Dd+O
+         qUufZ9UPofx8ruphZsXJIF+5eQi5uTpGJhxnpDkGiTAwsJMdCcULQtMZozJmBExROjnZ
+         LjUQ==
+X-Gm-Message-State: AOAM531kkAnGL+WO/HMk4S05heqQR3WgoyHoUzkZVlkwKK/F8zlgaUpj
+        AvD9eBrswJJyn50860QVX7QOofx8wcvde5rYR1E=
+X-Google-Smtp-Source: ABdhPJy4rqfYmdV0F0ZL0gFISzpsTevYCr4Bh7iAwUynNZmpWVh2h7yvF0xMDmi1+b17doVVsQ57vnkZBY1xBj4z2l0=
+X-Received: by 2002:a05:6808:1592:: with SMTP id t18mr476649oiw.123.1622747691117;
+ Thu, 03 Jun 2021 12:14:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20210603124231.84230-1-colin.king@canonical.com>
+In-Reply-To: <20210603124231.84230-1-colin.king@canonical.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Thu, 3 Jun 2021 15:14:40 -0400
+Message-ID: <CADnq5_P2yPtw1XmXrS8+SxHDMfq_FnVLt-XMDVqz_58YCb3Wog@mail.gmail.com>
+Subject: Re: [PATCH] drm/amd/display: remove variable active_disp
+To:     Colin King <colin.king@canonical.com>
+Cc:     Harry Wentland <harry.wentland@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        xinhui pan <Xinhui.Pan@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>, kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 3 Jun 2021 12:03:15 +0100, Colin King wrote:
-> Most callers of_get_child_count() check that "nr" is non-zero so it
-> causes a static checker warning when we don't do that here.  This
-> does not cause a problem or a crash, but having zero SSUIes does not
-> make sense either so let's add a check.
+Applied.  Thanks!
 
-Applied to
+Alex
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/1] ASoC: rsnd: check for zero node count
-      commit: d66e033910593d99700cd9e2a75698395fcd676f
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+On Thu, Jun 3, 2021 at 8:42 AM Colin King <colin.king@canonical.com> wrote:
+>
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> The variable active_disp is being initialized with a value that
+> is never read, it is being re-assigned immediately afterwards.
+> Clean up the code by removing the need for variable active_disp.
+>
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/gpu/drm/amd/display/dc/bios/bios_parser_helper.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/display/dc/bios/bios_parser_helper.c b/drivers/gpu/drm/amd/display/dc/bios/bios_parser_helper.c
+> index 53d7513b5083..adc710fe4a45 100644
+> --- a/drivers/gpu/drm/amd/display/dc/bios/bios_parser_helper.c
+> +++ b/drivers/gpu/drm/amd/display/dc/bios/bios_parser_helper.c
+> @@ -82,9 +82,6 @@ void bios_set_scratch_critical_state(
+>  uint32_t bios_get_vga_enabled_displays(
+>         struct dc_bios *bios)
+>  {
+> -       uint32_t active_disp = 1;
+> -
+> -       active_disp = REG_READ(BIOS_SCRATCH_3) & 0XFFFF;
+> -       return active_disp;
+> +       return REG_READ(BIOS_SCRATCH_3) & 0XFFFF;
+>  }
+>
+> --
+> 2.31.1
+>
