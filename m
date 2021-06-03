@@ -2,48 +2,99 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-17.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7642C47082
-	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Jun 2021 05:48:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2F08C47096
+	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Jun 2021 09:08:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C805161369
-	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Jun 2021 05:48:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D56E613B1
+	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Jun 2021 09:08:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229697AbhFCFuk (ORCPT
+        id S229626AbhFCJJx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 3 Jun 2021 01:50:40 -0400
-Received: from verein.lst.de ([213.95.11.211]:60403 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229635AbhFCFuk (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 3 Jun 2021 01:50:40 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 25F5F68AFE; Thu,  3 Jun 2021 07:48:54 +0200 (CEST)
-Date:   Thu, 3 Jun 2021 07:48:53 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] null_blk: Fix null pointer dereference on
- nullb->disk on blk_cleanup_disk call
-Message-ID: <20210603054853.GA2650@lst.de>
-References: <20210602100659.11058-1-colin.king@canonical.com>
+        Thu, 3 Jun 2021 05:09:53 -0400
+Received: from proxima.lasnet.de ([78.47.171.185]:58296 "EHLO
+        proxima.lasnet.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229506AbhFCJJx (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 3 Jun 2021 05:09:53 -0400
+X-Greylist: delayed 373 seconds by postgrey-1.27 at vger.kernel.org; Thu, 03 Jun 2021 05:09:52 EDT
+Received: from [IPv6:2003:e9:d722:28a1:9240:5b8a:f037:504] (p200300e9d72228a192405b8af0370504.dip0.t-ipconnect.de [IPv6:2003:e9:d722:28a1:9240:5b8a:f037:504])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        (No client certificate requested)
+        (Authenticated sender: stefan@datenfreihafen.org)
+        by proxima.lasnet.de (Postfix) with ESMTPSA id B82F1C0542;
+        Thu,  3 Jun 2021 11:01:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=datenfreihafen.org;
+        s=2021; t=1622710911;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=EquOF3L85NGLb2EjoTiXBRVqUAA5DMvQV13UsmvqEj8=;
+        b=V1t42NxkMUQBsS21i8B1xRB5X0c/XHSOrjXe01m+OQ2HlF1EWB0++h5b4xOO1CEFYriMWL
+        ++267Qzf0j5t1ktsLufano9KlUwMulqeuoMspOqV4pwJUGMtMOKWYmDGv4/mlIFDwVmP6a
+        t6CwmiCOIqsB1zldc7s693PwVfOWEtn8LzlFHTaXIkH+kxxRyuRQ+bc/ltTavEEigJnBn8
+        Wu7DD0JzTd41A8DaCWtPSSgMr1esvMh+c6VsWal6o84hlyrztWeMB6BswO1yz8LaPaDQx4
+        Y28gzW7S+Zo4FFs7L+Hd6aiNc8HChCt6Qw9EMwGr5lRr7DksnWT24vG1rnui3g==
+Subject: Re: [PATCH net-next] ieee802154: fix error return code in
+ ieee802154_llsec_getparams()
+To:     Wei Yongjun <weiyongjun1@huawei.com>,
+        Alexander Aring <alex.aring@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>
+Cc:     linux-wpan@vger.kernel.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+References: <20210519141614.3040055-1-weiyongjun1@huawei.com>
+From:   Stefan Schmidt <stefan@datenfreihafen.org>
+Message-ID: <b8700eed-1791-fd55-4568-dc4efeda35eb@datenfreihafen.org>
+Date:   Thu, 3 Jun 2021 11:01:51 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210602100659.11058-1-colin.king@canonical.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20210519141614.3040055-1-weiyongjun1@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Looks good,
+Hello.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+On 19.05.21 16:16, Wei Yongjun wrote:
+> Fix to return negative error code -ENOBUFS from the error handling
+> case instead of 0, as done elsewhere in this function.
+> 
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ---
+>   net/ieee802154/nl-mac.c | 4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/net/ieee802154/nl-mac.c b/net/ieee802154/nl-mac.c
+> index 0c1b0770c59e..c23c152860b7 100644
+> --- a/net/ieee802154/nl-mac.c
+> +++ b/net/ieee802154/nl-mac.c
+> @@ -680,8 +680,10 @@ int ieee802154_llsec_getparams(struct sk_buff *skb, struct genl_info *info)
+>   	    nla_put_u8(msg, IEEE802154_ATTR_LLSEC_SECLEVEL, params.out_level) ||
+>   	    nla_put_u32(msg, IEEE802154_ATTR_LLSEC_FRAME_COUNTER,
+>   			be32_to_cpu(params.frame_counter)) ||
+> -	    ieee802154_llsec_fill_key_id(msg, &params.out_key))
+> +	    ieee802154_llsec_fill_key_id(msg, &params.out_key)) {
+> +		rc = -ENOBUFS;
+>   		goto out_free;
+> +	}
+>   
+>   	dev_put(dev);
+
+
+This patch has been applied to the wpan tree and will be
+part of the next pull request to net. Thanks!
+
+regards
+Stefan Schmidt
