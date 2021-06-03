@@ -2,115 +2,82 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3573CC47082
-	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Jun 2021 19:14:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 374E6C47096
+	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Jun 2021 19:17:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0D74D613E4
-	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Jun 2021 19:14:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A5F561042
+	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Jun 2021 19:17:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229661AbhFCTQh (ORCPT
+        id S229719AbhFCTTZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 3 Jun 2021 15:16:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50066 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229576AbhFCTQg (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 3 Jun 2021 15:16:36 -0400
-Received: from mail-oi1-x231.google.com (mail-oi1-x231.google.com [IPv6:2607:f8b0:4864:20::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2BDBC061756;
-        Thu,  3 Jun 2021 12:14:51 -0700 (PDT)
-Received: by mail-oi1-x231.google.com with SMTP id v22so7383698oic.2;
-        Thu, 03 Jun 2021 12:14:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=yTcdojc8mwwtA9K2NJaczioq6lgh4tCtax6VLDoB3+8=;
-        b=N1b8Xb6JaD/REB3WoovSCN50+jBsEIUw/t0OZgaPSIKlWS16XgazPhYR+e8T3vIIKb
-         mGjKhYltbPgSyDrPi2qXpjrpNDsrXi58HUBcgrTnhpOOIT0bWt9DZKcYgHJEDeyHjXV6
-         cfq6PqOILEN1tukJd7DKWDW4xcEvAlNI6pyOFEQdx4miovIeAFARR0FpctDoJJZmWVeC
-         9R0oE8g3zYmpxmqJSs3xdHwZJ0e6P2Ku+AisTA9Sh9LmPzDAKZS6y7X0Jp+KIvxcnqJw
-         kLBfpdS3Gh0utaUCTUhRUkT4Z41XOdep7AYj/Ht00C8YHJ9RgowpWHMZ5vNYrI9aQgKT
-         L1VA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yTcdojc8mwwtA9K2NJaczioq6lgh4tCtax6VLDoB3+8=;
-        b=XnrKDij4nAyzIMb58e3ZVVI3S2MeqDQMJPAXR9H4safxi14uycQYrIde+BI+CT5IZP
-         HqkwFExcOrpz5Bdjv9+/SqUB9wrNfmgUcXPBNDF5DuLnOpdT13txUbqv6pu1jI+aJJTO
-         llxENmI9dER7YyePHc49Rui/h6P7Kp2STEWR1KVplAmaqFTZSQ959tDUsVFzBrSzxrPM
-         Anj8n8LYeYAGYVfBcjsxGfk/W2rFuNeEAE8uQHYDpM80zuBjtQw9YvXj2+iVArN+Dd+O
-         qUufZ9UPofx8ruphZsXJIF+5eQi5uTpGJhxnpDkGiTAwsJMdCcULQtMZozJmBExROjnZ
-         LjUQ==
-X-Gm-Message-State: AOAM531kkAnGL+WO/HMk4S05heqQR3WgoyHoUzkZVlkwKK/F8zlgaUpj
-        AvD9eBrswJJyn50860QVX7QOofx8wcvde5rYR1E=
-X-Google-Smtp-Source: ABdhPJy4rqfYmdV0F0ZL0gFISzpsTevYCr4Bh7iAwUynNZmpWVh2h7yvF0xMDmi1+b17doVVsQ57vnkZBY1xBj4z2l0=
-X-Received: by 2002:a05:6808:1592:: with SMTP id t18mr476649oiw.123.1622747691117;
- Thu, 03 Jun 2021 12:14:51 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210603124231.84230-1-colin.king@canonical.com>
-In-Reply-To: <20210603124231.84230-1-colin.king@canonical.com>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Thu, 3 Jun 2021 15:14:40 -0400
-Message-ID: <CADnq5_P2yPtw1XmXrS8+SxHDMfq_FnVLt-XMDVqz_58YCb3Wog@mail.gmail.com>
-Subject: Re: [PATCH] drm/amd/display: remove variable active_disp
-To:     Colin King <colin.king@canonical.com>
-Cc:     Harry Wentland <harry.wentland@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        xinhui pan <Xinhui.Pan@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>, kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
+        Thu, 3 Jun 2021 15:19:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60566 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229665AbhFCTTZ (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 3 Jun 2021 15:19:25 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id BB883613F4;
+        Thu,  3 Jun 2021 19:17:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1622747860;
+        bh=u0oJXFE+S/xUgS/1dYHPMtGebJ6LFWc8AtAfGtgTMG0=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=DkZRlfVQrtj7slJi7errot4QKWDz/HNlczNmo9mKYz7+PfSATe8N0Q0KD5F2VI1oP
+         /Isb4W2rc5f2n+TLmcErxSlxQ36WXTb1tq/qnJQEU4yNHwpP+dWAgbRDBZwoZ30xI2
+         HDImANT6et69PkTPKgJApyUxunn5HW7BCBOPFrgFPfPJidtE7ZDy95L+cTQkpWU7AZ
+         rjx40iAtVzuRn7ld0ZcKDtVyKt++iy6/6+NZek+q1MWqyGjb8XOvNDBPt13kiaL9xd
+         E6CDsBhxIR2jvYHiLfxgIG5l90vHvl9W22wf8Plgt/4hgjAhwAK+0VzaMcBWEZeYCs
+         r/VfLOi/0X+PQ==
+Message-ID: <1b6a19b9b0d0e5977b7b8671bbd4f9d05ca3a62f.camel@kernel.org>
+Subject: Re: [PATCH net-next] net/mlx5: check for allocation failure in
+ mlx5_ft_pool_init()
+From:   Saeed Mahameed <saeed@kernel.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Paul Blakey <paulb@nvidia.com>
+Cc:     Leon Romanovsky <leon@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
+Date:   Thu, 03 Jun 2021 12:17:39 -0700
+In-Reply-To: <YLjNfHuTQ817oUtX@mwanda>
+References: <YLjNfHuTQ817oUtX@mwanda>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Applied.  Thanks!
-
-Alex
-
-On Thu, Jun 3, 2021 at 8:42 AM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The variable active_disp is being initialized with a value that
-> is never read, it is being re-assigned immediately afterwards.
-> Clean up the code by removing the need for variable active_disp.
->
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+On Thu, 2021-06-03 at 15:39 +0300, Dan Carpenter wrote:
+> Add a check for if the kzalloc() fails.
+> 
+> Fixes: 4a98544d1827 ("net/mlx5: Move chains ft pool to be used by all
+> firmware steering")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > ---
->  drivers/gpu/drm/amd/display/dc/bios/bios_parser_helper.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/display/dc/bios/bios_parser_helper.c b/drivers/gpu/drm/amd/display/dc/bios/bios_parser_helper.c
-> index 53d7513b5083..adc710fe4a45 100644
-> --- a/drivers/gpu/drm/amd/display/dc/bios/bios_parser_helper.c
-> +++ b/drivers/gpu/drm/amd/display/dc/bios/bios_parser_helper.c
-> @@ -82,9 +82,6 @@ void bios_set_scratch_critical_state(
->  uint32_t bios_get_vga_enabled_displays(
->         struct dc_bios *bios)
->  {
-> -       uint32_t active_disp = 1;
-> -
-> -       active_disp = REG_READ(BIOS_SCRATCH_3) & 0XFFFF;
-> -       return active_disp;
-> +       return REG_READ(BIOS_SCRATCH_3) & 0XFFFF;
->  }
->
-> --
-> 2.31.1
->
+>  drivers/net/ethernet/mellanox/mlx5/core/fs_ft_pool.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/fs_ft_pool.c
+> b/drivers/net/ethernet/mellanox/mlx5/core/fs_ft_pool.c
+> index 526fbb669142..c14590acc772 100644
+> --- a/drivers/net/ethernet/mellanox/mlx5/core/fs_ft_pool.c
+> +++ b/drivers/net/ethernet/mellanox/mlx5/core/fs_ft_pool.c
+> @@ -27,6 +27,8 @@ int mlx5_ft_pool_init(struct mlx5_core_dev *dev)
+>         int i;
+>  
+>         ft_pool = kzalloc(sizeof(*ft_pool), GFP_KERNEL);
+> +       if (!ft_pool)
+> +               return -ENOMEM;
+>  
+>         for (i = ARRAY_SIZE(FT_POOLS) - 1; i >= 0; i--)
+>                 ft_pool->ft_left[i] = FT_SIZE / FT_POOLS[i];
+
+applied to net-next-mlx5,
+thanks
+
