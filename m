@@ -2,88 +2,71 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93188C47082
-	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Jun 2021 09:32:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEB22C47096
+	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Jun 2021 10:33:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 77316613E4
-	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Jun 2021 09:32:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B18D8613D6
+	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Jun 2021 10:33:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229758AbhFCJeF (ORCPT
+        id S229980AbhFCKfj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 3 Jun 2021 05:34:05 -0400
-Received: from so254-9.mailgun.net ([198.61.254.9]:14217 "EHLO
-        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229576AbhFCJeE (ORCPT
+        Thu, 3 Jun 2021 06:35:39 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:34023 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229661AbhFCKfj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 3 Jun 2021 05:34:04 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1622712740; h=Date: Message-Id: Cc: To: References:
- In-Reply-To: From: Subject: Content-Transfer-Encoding: MIME-Version:
- Content-Type: Sender; bh=HD7eYJ5faNy3m03p+InB6TCp4g/hx1UCjXjENik8p7s=;
- b=psz38zM9kRFZPrrDxRdS8CsBSgv9IF1q6w/MomgK0JFCzdWmryRl7kUKRRPJjeDiOqY3RNRM
- pUqyyB0idMKJE7qcPmODvxKTzpknvY7NtSx61Zq3NRr/uqYuRMn/cEQd+ReIHd41pJjYlpkl
- HIkf4rz04b3SuzmN4mdXiVz2B5Q=
-X-Mailgun-Sending-Ip: 198.61.254.9
-X-Mailgun-Sid: WyI5NDExNyIsICJrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n03.prod.us-west-2.postgun.com with SMTP id
- 60b8a1a38491191eb3cb1fdd (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 03 Jun 2021 09:32:19
- GMT
-Sender: kvalo=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 2DDA3C4338A; Thu,  3 Jun 2021 09:32:19 +0000 (UTC)
-Received: from tykki.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9B740C433D3;
-        Thu,  3 Jun 2021 09:32:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9B740C433D3
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Thu, 3 Jun 2021 06:35:39 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lokfd-0007e4-Cd; Thu, 03 Jun 2021 10:33:49 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Yazen Ghannam <yazen.ghannam@amd.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Tony Luck <tony.luck@intel.com>,
+        James Morse <james.morse@arm.com>, linux-edac@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] EDAC/mce_amd: Fix typo "FIfo" -> "Fifo"
+Date:   Thu,  3 Jun 2021 11:33:49 +0100
+Message-Id: <20210603103349.79117-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] b43legacy: Fix spelling mistake "overflew" ->
- "overflowed"
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20210601102855.8884-1-colin.king@canonical.com>
-References: <20210601102855.8884-1-colin.king@canonical.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Larry Finger <Larry.Finger@lwfinger.net>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.7.3
-Message-Id: <20210603093219.2DDA3C4338A@smtp.codeaurora.org>
-Date:   Thu,  3 Jun 2021 09:32:19 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake in a comment. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+There is an uppercase letter I in the text instead of a lowercase
+one. Fix this.
 
-Patch applied to wireless-drivers-next.git, thanks.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/edac/mce_amd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-fef1cdbba4d1 b43legacy: Fix spelling mistake "overflew" -> "overflowed"
-
+diff --git a/drivers/edac/mce_amd.c b/drivers/edac/mce_amd.c
+index 43ba0f931629..27d56920b469 100644
+--- a/drivers/edac/mce_amd.c
++++ b/drivers/edac/mce_amd.c
+@@ -431,7 +431,7 @@ static const char * const smca_xgmipcs_mce_desc[] = {
+ 	"Replay Buffer Parity Error",
+ 	"Data Parity Error",
+ 	"Replay Fifo Overflow Error",
+-	"Replay FIfo Underflow Error",
++	"Replay Fifo Underflow Error",
+ 	"Elastic Fifo Overflow Error",
+ 	"Deskew Error",
+ 	"Flow Control CRC Error",
 -- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20210601102855.8884-1-colin.king@canonical.com/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.31.1
 
