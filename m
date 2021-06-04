@@ -2,157 +2,124 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BFA8C07E94
-	for <kernel-janitors@archiver.kernel.org>; Fri,  4 Jun 2021 07:56:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 485C4C07E94
+	for <kernel-janitors@archiver.kernel.org>; Fri,  4 Jun 2021 08:05:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4812A61405
-	for <kernel-janitors@archiver.kernel.org>; Fri,  4 Jun 2021 07:56:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 24613601FE
+	for <kernel-janitors@archiver.kernel.org>; Fri,  4 Jun 2021 08:05:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229996AbhFDH6m (ORCPT
+        id S229958AbhFDIHG (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 4 Jun 2021 03:58:42 -0400
-Received: from mail-bn7nam10on2081.outbound.protection.outlook.com ([40.107.92.81]:43840
-        "EHLO NAM10-BN7-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S229958AbhFDH6m (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 4 Jun 2021 03:58:42 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=S5tlwnbjHPL22haVzjpeS8KV715f92Q7uTU0wgqN1dUfre1BGOOEFEu1x3dRcYtjg21ZNx9bxD+6IAuRZym0EVj0BIq5Rdzx2KCOkK5m2lOtfcpLOEAwOEq8Nl7PHPny0NABlzreC6B5+idUPLl4G7vOPne+WmJ08LwSZZkFI2pBH+9N8om68pol4UlPpIVNd6tl4oPMyeQraioDG8TTrlzc4pEM8iHD7hqJFyzdCY/tHLdNBWxEiW89HSt7WXvNaqXe27w+Dt95eGBagfUsnDeZYiv7FXMRk4P2fmIcNPx8uIbxnUl2QUWNxObH9O0M5CzMAFRO9oilNYq/98rcZw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nouoCAuuwI3hgNGSq06x7QeaswJ9IEE3Vz4a3w+AOjo=;
- b=NStV2SgKni7eTtGTuyJmvPkl1M+bZACtHZeGAjS2DuSo82PCeid1L+RfThRHWAMRHVURKV23qYXy/O69CQADvNgyWJIvAvRkl+BeB0IG0XBf7DpJCNoSHLranz/7+EIiEVTJR9kPEDadDaPDii5AJVYyD8VMjUCEf0gesgPwHX0IDDz8XV8f0tnZB1uTF8WrwzI5thsKYlKzUXsLyNoVNDqMiABfO6jJy4DyxHHX5SCb69y6UCmxuptTISusjuaqzWtOv5XYoDEttAicDISKq+L+mHu7r0nooS4UqMHsRjPL57hUUnjwjA03q+91Zf2ZLUXj3EHS871R5N7vNAwLtQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nouoCAuuwI3hgNGSq06x7QeaswJ9IEE3Vz4a3w+AOjo=;
- b=5lpDdJBgNK19ExcEFNeGRvMNV9d6zat8Byy9ZTM0DAGYBpo3RZWdHFelrmHFsdPIlhH1xHxm06Kwq70kvKW59VBEUCzRHnHBWF4A3dhMZGuqF5nsKhnUktixjkoRTd1TlAFIowGBl9wouNbolRtHiedoKeiHKVFtbgzCuULe+J0=
-Authentication-Results: vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=none action=none header.from=amd.com;
-Received: from MN2PR12MB3775.namprd12.prod.outlook.com (2603:10b6:208:159::19)
- by MN2PR12MB4142.namprd12.prod.outlook.com (2603:10b6:208:1dd::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4195.24; Fri, 4 Jun
- 2021 07:56:55 +0000
-Received: from MN2PR12MB3775.namprd12.prod.outlook.com
- ([fe80::6d4d:4674:1cf6:8d34]) by MN2PR12MB3775.namprd12.prod.outlook.com
- ([fe80::6d4d:4674:1cf6:8d34%6]) with mapi id 15.20.4195.024; Fri, 4 Jun 2021
- 07:56:55 +0000
-Subject: Re: [PATCH] drm/amdgpu: remove redundant assignment of variable k
-To:     Colin King <colin.king@canonical.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>, Xinhui.Pan@amd.com,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210603123440.83936-1-colin.king@canonical.com>
-From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
-Message-ID: <58be2108-ff6e-19c9-a10e-7ced547e2bb3@amd.com>
-Date:   Fri, 4 Jun 2021 09:52:28 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
-In-Reply-To: <20210603123440.83936-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Originating-IP: [178.202.40.45]
-X-ClientProxiedBy: PR2P264CA0031.FRAP264.PROD.OUTLOOK.COM
- (2603:10a6:101:1::19) To MN2PR12MB3775.namprd12.prod.outlook.com
- (2603:10b6:208:159::19)
+        Fri, 4 Jun 2021 04:07:06 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:49892 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229900AbhFDIHF (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 4 Jun 2021 04:07:05 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 154859fU194812;
+        Fri, 4 Jun 2021 08:05:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=jJWOOXSkYAkpt+g7vqJxwxRiAokBtYawViAkg0r5HqI=;
+ b=n/BAzFw9fyHDxD6HPVZz/BaXjAfGynLNBHWiSyq4IrvuWhzCQ9UCaZwF0l3K3vLr366H
+ Is5GRZFy0Bfvj0Qm2RfSIc3z0e0IiUxRFZpSoZE2LtJyr38MMZKLlBTC6pLC1s+5yf9K
+ q4Pk1NZf5AMmEifo6vFGcy7wFAytdLpmYbxUyCmcuKRRZfU+m7WXw7+KhSF5UB+duHYl
+ mcqvwDuiTnT/ho4/+Ea5N+ty8V+Pt0PGH/FZa4+dX2TXkowkA+04ErcgpiGH0oYykl+Y
+ hd2HnBvzFLt8zdnXKi3m/dMPDVC1C8GcNbJG/er4Yv/aohNWmBqYEhfPwZdQ3e5UnFBR bQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2130.oracle.com with ESMTP id 38ub4cwa26-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 04 Jun 2021 08:05:14 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 15481bXu177927;
+        Fri, 4 Jun 2021 08:05:14 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by aserp3020.oracle.com with ESMTP id 38xyn2vufn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 04 Jun 2021 08:05:14 +0000
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 15484kT2008787;
+        Fri, 4 Jun 2021 08:05:13 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 38xyn2vuer-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 04 Jun 2021 08:05:13 +0000
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 15485B1Y010883;
+        Fri, 4 Jun 2021 08:05:11 GMT
+Received: from kadam (/41.212.42.34)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 04 Jun 2021 01:05:10 -0700
+Date:   Fri, 4 Jun 2021 11:05:03 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Oded Gabbay <ogabbay@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] habanalabs/gaudi: remove redundant assignment to
+ variable err
+Message-ID: <20210604080503.GJ1955@kadam>
+References: <20210603131210.84763-1-colin.king@canonical.com>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [192.168.137.54] (178.202.40.45) by PR2P264CA0031.FRAP264.PROD.OUTLOOK.COM (2603:10a6:101:1::19) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4195.15 via Frontend Transport; Fri, 4 Jun 2021 07:56:53 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 5afc996a-e828-4826-e759-08d9272e51de
-X-MS-TrafficTypeDiagnostic: MN2PR12MB4142:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <MN2PR12MB4142B172793B67B1BE0AF386833B9@MN2PR12MB4142.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:4502;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: UHSMDBkveqVthBRXs9IrzokwZtD7yH/8y09+W49wo+EudXwE64kD02Bldmf95vCESqGLRi/aKmULjS7scEISrmU5XH1twqW2Mv/xT0LrXfByur3GyHnyIdAC9kJopYStJ4aiF1wJAwkY7voKWCIRgoHQuTVWUVvshmV3jtBNslG1VRsEPRk+zav+prA9270ftWItBzYE5jQNBTQSetQb5W0InGqhMxLudQp/TvulC9C9o9g5wPMyJghnUOT1x3ffCFdPVU/FzY2Ob41REsFaAjY43rO+vD2LA3V5RjkZ6Wtx0bpGhw4gUXN2V/+ng8+HaJR9MX0Cu+hJH2kmwvDxtI47mUgmnXumuyAUCTgPTCVDbWZX1Zq+ew0DZ76YcOEs2qHQBsCtfGLF097d5hdxv1b15MZjROw8VIUf2zTqMZFhC1zsnPDsyxfAf6owjOzRtE2RHVPlXMTqjn8r1DUNS880iYAAoKaFA7czC3jacXevZwFZX+SeoCn+7xnFd6bM0r923FUtB98FRKkhM1mk+IHI7sopO1vg8DR3WIDm/AzO1z4nviGp+Hc2kGgZaTHR6SOdUm5qQe6F+yWAkBKThvJPzSj74TXMqzhTCn6z/g9GbkBPrTUEHYE3MDrTJp2msY+oLs8I1ans0N4iN1Z8iyI/ilrMQwJfdGRAhFIhhaIjUuxHnZfcqYxhn7gfw2BWiGUG07qwz9fAOi9Gb19v0g==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3775.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(376002)(366004)(136003)(396003)(346002)(39860400002)(8676002)(4326008)(2906002)(6666004)(16576012)(31696002)(16526019)(66574015)(5660300002)(186003)(316002)(2616005)(110136005)(956004)(38100700002)(6486002)(86362001)(66476007)(66556008)(8936002)(31686004)(83380400001)(36756003)(66946007)(26005)(478600001)(129723003)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: =?utf-8?B?cEF4ZDhxU1JERnFKUURuZWFFU2pNK0xhYnRQRDhFVVhjMkg1amJqVlhNby9B?=
- =?utf-8?B?bjhmcnpxUHd2Y2dncXhENktySG9ob0pxbDQ4N1ZRU0FQZy8xZkZmdkp1OHBo?=
- =?utf-8?B?dVhjZWF1MG9XU2FHN3VRRTNhcXdUbjRTSTFBanNoakllVWw1LzlBZ1VCQlVj?=
- =?utf-8?B?Z1ZVMUtqV3gxNDJiaWplQnc3QlVNUGt6OHVMVUJ1eHBHTkd5Y3o0blpWWTNt?=
- =?utf-8?B?L0szcDNUQWo2M2NVY3N5ZCtVVlBpcWxTU0pBU3YrUk1HUVhnV1d6cUF0bjlQ?=
- =?utf-8?B?MnUzUFczeDNidHFMUlpaQVRseXJvYzBVVC84ZTNDdExpUm1wZk5ZRFV3cXQ1?=
- =?utf-8?B?MXFwVVhmTzI0YTY3SnU1MmpROCtaQ09CeWdpbjlWYmJGOUFQdk9tL240Y0Qw?=
- =?utf-8?B?S2VyOTdpMHNyQWNhakpHcW04TGNXM05EbDdtSFEvMlZ2Z3lnYk14cEY5NXRS?=
- =?utf-8?B?S1N0VXcxQXhkUXMvWEtRT1VQa3BJaGxRbWUwLzZWclRoL2pPN3UwTGxjWUxU?=
- =?utf-8?B?SWhCbXMwM2UwRi9sNXk4WUxoU0VmS1Ywcjdyck02ZkFteXhaMlJHeHhIN0RD?=
- =?utf-8?B?anM1dG1qMzVHZFJGNEN0c0FtUjBLTHBxTDVMaGVkOWRDbi8wcVhrYzJhZ0sy?=
- =?utf-8?B?bDIvMGVPc0pqenZmd3ROUFFxNU13NEJNR0hMWHA3dktqVThTS0lVUEIvZ1Bj?=
- =?utf-8?B?UHVTejJ3c3Vrd3BBc3dKWi9RaUdIQmpTUUFTREU3VGtFdk1SUXBEbGRiUHc1?=
- =?utf-8?B?Zkt4ZU5JV0dHV2ZjUDUzazRJRitWY1RSRVVCcEt6ckt3Z0grRFhoOVJBZnVj?=
- =?utf-8?B?Q0hmWWE4Sm1LMFp1UzlNODNic21WWGh4QTFqZEd3Z1MwZDg0QXBDNWd3bmtK?=
- =?utf-8?B?c3ZNTmF6SmVsazlJc0VVcCtUMU1yaVdOeXgyOEZvQ3c5NXEwMHpScXRGQTRM?=
- =?utf-8?B?LzhjMmJQRVZIejkwMEpEQTZ1TDZCOEcrT01MUzd1Q012WVhWaUpRc2RVcnNp?=
- =?utf-8?B?U3MrYktMVE1ESWFNbzhsZHpQcnI5VmFHTGNnNVNjNGVFb3Q5ei84MUNyaUNL?=
- =?utf-8?B?MTluT2llZXdZQUpDRlNZVklIWWp1OWx5NjJvQUJJTXlOSlBnam1uYnpPRVRt?=
- =?utf-8?B?d3c5ZjlqSG0wdzV1Tm5lZ2RMam90STFVeVB6bGdUTTQzYWNPODRmVjRaY0JB?=
- =?utf-8?B?amdEYmdXMnFJK05jaGFhbnNGQzJWWWhtMis3TkovR05mRDd0MzdkNlFFeUx0?=
- =?utf-8?B?bk9QQjRJekJ0Ti8yZ1MvaThVY1F1V3hkVVlRdnVJNmRSeGd3Y2tkYm5wbk9G?=
- =?utf-8?B?em5kWFdUNkJ5dEdmN2lWTHBNb0dKbXFLTVBmaTB6L1VpakhjdktWMTJEZlM1?=
- =?utf-8?B?MkQ2bVNYYUFNMW93RGowNmx1dTVtVE5YVnVxbk5vaGVLamxia2RRM1dZejIr?=
- =?utf-8?B?dUZIVjRBV0svNENZZ0FTY0daMXJiMG9Ubjd5WUV5dVh2WUp5a25jMzF3VXc3?=
- =?utf-8?B?dW9EbzNZajYyVG0zNWZremdOVm5lWUxFS1VqT0JUTElrTXI1L1F5dmQwaWFn?=
- =?utf-8?B?Qzd5bFBNa3NBbFcrSE5PKzhiTENHQlp3aXVCRzJieXdpZ2dMZGxIL1BBbVVV?=
- =?utf-8?B?aS9pczJRM0pkTkFUYWw1TjFOSXkzaHErSzVibUMyRGhSMHFTL0hmUGo0cUVl?=
- =?utf-8?B?ZE10c3pUdCtZTVk3d0c1UktZZEloYUNINE5sd2l5bnNkVkZtU0h6UWxGRTN4?=
- =?utf-8?Q?ndxYf6S4aI6evqrwzNf1Wc8bBlSoPr651/fnX6Y?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5afc996a-e828-4826-e759-08d9272e51de
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3775.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jun 2021 07:56:54.7296
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: IdL79ywZMXRX+4QRLkw/hsd/LPP64O2q6KH171lnpfzywZvJHrkgYM0mRvOfpP3C
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4142
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210603131210.84763-1-colin.king@canonical.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-GUID: WviqR1NcVCWnZldX1R1r5L7NXmfRlcp-
+X-Proofpoint-ORIG-GUID: WviqR1NcVCWnZldX1R1r5L7NXmfRlcp-
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=10004 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 mlxscore=0
+ mlxlogscore=999 malwarescore=0 bulkscore=0 phishscore=0 lowpriorityscore=0
+ clxscore=1015 impostorscore=0 adultscore=0 suspectscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
+ definitions=main-2106040064
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Am 03.06.21 um 14:34 schrieb Colin King:
+On Thu, Jun 03, 2021 at 02:12:10PM +0100, Colin King wrote:
 > From: Colin Ian King <colin.king@canonical.com>
->
-> The variable k is being assigned a value that is never read, the
-> assignment is redundant and can be removed.
->
+> 
+> The variable err is being assigned a value that is never read, the
+> assignment is redundant and can be removed. Also remove some empty
+> lines.
+> 
 > Addresses-Coverity: ("Unused value")
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-
-Reviewed-by: Christian König <christian.koenig@amd.com>
-
 > ---
->   drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c
-> index 2a7bed66d50b..f545dc1248b8 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c
-> @@ -278,7 +278,7 @@ static int amdgpu_amdkfd_remove_eviction_fence(struct amdgpu_bo *bo,
->   	write_seqcount_end(&resv->seq);
->   
->   	/* Drop the references to the removed fences or move them to ef_list */
-> -	for (i = j, k = 0; i < old->shared_count; ++i) {
-> +	for (i = j; i < old->shared_count; ++i) {
->   		struct dma_fence *f;
->   
->   		f = rcu_dereference_protected(new->shared[i],
+>  drivers/misc/habanalabs/gaudi/gaudi.c | 3 ---
+>  1 file changed, 3 deletions(-)
+> 
+> diff --git a/drivers/misc/habanalabs/gaudi/gaudi.c b/drivers/misc/habanalabs/gaudi/gaudi.c
+> index 9e4a6bb3acd1..22f220859b46 100644
+> --- a/drivers/misc/habanalabs/gaudi/gaudi.c
+> +++ b/drivers/misc/habanalabs/gaudi/gaudi.c
+> @@ -7379,9 +7379,6 @@ static int gaudi_hbm_read_interrupts(struct hl_device *hdev, int device,
+>  			device, ch, hbm_ecc_data->first_addr, type,
+>  			hbm_ecc_data->sec_cont_cnt, hbm_ecc_data->sec_cnt,
+>  			hbm_ecc_data->dec_cnt);
+> -
+> -		err = 1;
+> -
+>  		return 0;
+>  	}
+
+Not related to your patch (which seems fine), but I always feel like
+there should be a rule that function which return a mix of negative
+error codes and either zero or one on success should have to have
+documentation explaining why.
+
+It's impossible to tell from the context here and neither of the callers
+check the return.  :P
+
+regards,
+dan carpenter
 
