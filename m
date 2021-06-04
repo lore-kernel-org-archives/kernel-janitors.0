@@ -2,76 +2,105 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D412FC47083
-	for <kernel-janitors@archiver.kernel.org>; Fri,  4 Jun 2021 10:02:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A77FC47083
+	for <kernel-janitors@archiver.kernel.org>; Fri,  4 Jun 2021 10:59:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BB2866136E
-	for <kernel-janitors@archiver.kernel.org>; Fri,  4 Jun 2021 10:02:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0EF20600D3
+	for <kernel-janitors@archiver.kernel.org>; Fri,  4 Jun 2021 10:59:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230116AbhFDKDr (ORCPT
+        id S229999AbhFDLAt (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 4 Jun 2021 06:03:47 -0400
-Received: from szxga08-in.huawei.com ([45.249.212.255]:4307 "EHLO
-        szxga08-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229612AbhFDKDq (ORCPT
+        Fri, 4 Jun 2021 07:00:49 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:33880 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229980AbhFDLAs (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 4 Jun 2021 06:03:46 -0400
-Received: from dggeml759-chm.china.huawei.com (unknown [172.30.72.56])
-        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4FxJ8T6Nyrz1BH78;
-        Fri,  4 Jun 2021 17:57:13 +0800 (CST)
-Received: from localhost.localdomain (10.175.102.38) by
- dggeml759-chm.china.huawei.com (10.1.199.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2176.2; Fri, 4 Jun 2021 18:01:58 +0800
-From:   Wei Yongjun <weiyongjun1@huawei.com>
-To:     <weiyongjun1@huawei.com>, "J. Bruce Fields" <bfields@fieldses.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Dai Ngo <dai.ngo@oracle.com>
-CC:     <linux-nfs@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH -next v2] NFSD: Fix error return code in nfsd4_interssc_connect()
-Date:   Fri, 4 Jun 2021 10:12:37 +0000
-Message-ID: <20210604101237.1661615-1-weiyongjun1@huawei.com>
-X-Mailer: git-send-email 2.25.1
+        Fri, 4 Jun 2021 07:00:48 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: sre)
+        with ESMTPSA id EC6401F43734
+Received: by earth.universe (Postfix, from userid 1000)
+        id 6CADA3C0C95; Fri,  4 Jun 2021 12:58:59 +0200 (CEST)
+Date:   Fri, 4 Jun 2021 12:58:59 +0200
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     Bixuan Cui <cuibixuan@huawei.com>
+Cc:     linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH -next] power: reset: gpio-poweroff: add missing
+ MODULE_DEVICE_TABLE
+Message-ID: <20210604105859.r3odo4zmt2xye66s@earth.universe>
+References: <20210508031459.53589-1-cuibixuan@huawei.com>
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.102.38]
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggeml759-chm.china.huawei.com (10.1.199.138)
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="4e4c6hhugzglxbt4"
+Content-Disposition: inline
+In-Reply-To: <20210508031459.53589-1-cuibixuan@huawei.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-'status' has been overwritten to 0 after nfsd4_ssc_setup_dul(), this
-cause 0 will be return in vfs_kern_mount() error case. Fix to return
-nfserr_nodev in this error.
 
-Fixes: f4e44b393389 ("NFSD: delay unmount source's export after inter-server copy completed.")
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
-v1 -> v2: change to return nfserr_nodev
----
- fs/nfsd/nfs4proc.c | 1 +
- 1 file changed, 1 insertion(+)
+--4e4c6hhugzglxbt4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/fs/nfsd/nfs4proc.c b/fs/nfsd/nfs4proc.c
-index 0bd71c6da81d..b082cbde3e07 100644
---- a/fs/nfsd/nfs4proc.c
-+++ b/fs/nfsd/nfs4proc.c
-@@ -1323,6 +1323,7 @@ nfsd4_interssc_connect(struct nl4_server *nss, struct svc_rqst *rqstp,
- 	ss_mnt = vfs_kern_mount(type, SB_KERNMOUNT, dev_name, raw_data);
- 	module_put(type->owner);
- 	if (IS_ERR(ss_mnt)) {
-+		status = nfserr_nodev;
- 		if (work)
- 			nfsd4_ssc_cancel_dul_work(nn, work);
- 		goto out_free_devname;
+Hi,
 
+On Sat, May 08, 2021 at 11:14:59AM +0800, Bixuan Cui wrote:
+> This patch adds missing MODULE_DEVICE_TABLE definition which generates
+> correct modalias for automatic loading of this driver when it is built
+> as an external module.
+>=20
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Bixuan Cui <cuibixuan@huawei.com>
+> ---
+
+Thanks, queued.
+
+-- Sebastian
+
+>  drivers/power/reset/gpio-poweroff.c | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/drivers/power/reset/gpio-poweroff.c b/drivers/power/reset/gp=
+io-poweroff.c
+> index c5067eb75370..1c5af2fef142 100644
+> --- a/drivers/power/reset/gpio-poweroff.c
+> +++ b/drivers/power/reset/gpio-poweroff.c
+> @@ -90,6 +90,7 @@ static const struct of_device_id of_gpio_poweroff_match=
+[] =3D {
+>  	{ .compatible =3D "gpio-poweroff", },
+>  	{},
+>  };
+> +MODULE_DEVICE_TABLE(of, of_gpio_poweroff_match);
+> =20
+>  static struct platform_driver gpio_poweroff_driver =3D {
+>  	.probe =3D gpio_poweroff_probe,
+>=20
+
+--4e4c6hhugzglxbt4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmC6B2wACgkQ2O7X88g7
++pq4jA/9GMSpYvSqLnbDgN6MPyduQzazfXqxmPDrnHTeFaRdVSz175QXtnWvnR0o
+t48YVNvkPXVUQRKZEqc7Uyqh80MVtvDjlpuPJPzejPXYrfXKloAixIIsa8+G/0G0
+hrPVf9NiNRdj69T5YNN71oBeHwnj9/CW6Cnqye3BVpKmPQ1RXvuo9Tm6VQdWeyr5
+C7CAQuU96UNDJj8RVPLVKNBZb8j0BHUlyybGDQz2hazedfQCP+3dmW+raQd+pAN4
+4r7B47jHE5/zQAxZ9wGwPn1y9HdKeEEITWmRmuWkIi3zYaPbvx/k92BZz9a1uahf
+cXufesdT2Nrm6TgDurfD4Y/oFn2AsSnleg8bAUHR6jRGBgDHppugU2OxNu/eWuo6
+7rq/49xJsSZVEevkJMJySHBAnrvzJtT4hntolJRMkKVB35SS2d33E82/GHZ0JNmN
+AnqOK12ybMp+ri+YvUzge/vC7BGfSIQSMd74BaTDsfbjTtrLXeUmOCJPgf8oPD29
+vUJZf0Y/FB0PIqGjId16GQ+4EnjArx1UrAEiFnTD9N0iLelRn23lWVbKLn1L6vvb
+1weyQV8YGahW6WGwKaa8N3zwsQjv+1xky36xBlzRA4e80QPc88PUp2OO5mpNXuGl
+3IPTzn7hd0qvT9dBbixfo0e3iniWhkvau6tp95uUX56McP/vfI4=
+=0Qok
+-----END PGP SIGNATURE-----
+
+--4e4c6hhugzglxbt4--
