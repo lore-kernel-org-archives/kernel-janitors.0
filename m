@@ -7,35 +7,37 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3407C47082
-	for <kernel-janitors@archiver.kernel.org>; Sat,  5 Jun 2021 13:17:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E216C4743E
+	for <kernel-janitors@archiver.kernel.org>; Sat,  5 Jun 2021 16:53:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C4BED61406
-	for <kernel-janitors@archiver.kernel.org>; Sat,  5 Jun 2021 13:17:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6534E61416
+	for <kernel-janitors@archiver.kernel.org>; Sat,  5 Jun 2021 16:53:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229972AbhFENTh (ORCPT
+        id S229980AbhFEQzk (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 5 Jun 2021 09:19:37 -0400
-Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:59330 "EHLO
+        Sat, 5 Jun 2021 12:55:40 -0400
+Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:45807 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229916AbhFENTg (ORCPT
+        with ESMTP id S229930AbhFEQzj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 5 Jun 2021 09:19:36 -0400
+        Sat, 5 Jun 2021 12:55:39 -0400
 Received: from localhost.localdomain ([86.243.172.93])
-        by mwinf5d78 with ME
-        id DRHj2500C21Fzsu03RHkfm; Sat, 05 Jun 2021 15:17:47 +0200
+        by mwinf5d06 with ME
+        id DUto2500721Fzsu03Uto4N; Sat, 05 Jun 2021 18:53:50 +0200
 X-ME-Helo: localhost.localdomain
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 05 Jun 2021 15:17:47 +0200
+X-ME-Date: Sat, 05 Jun 2021 18:53:50 +0200
 X-ME-IP: 86.243.172.93
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     kishon@ti.com, vkoul@kernel.org, tony@atomide.com
-Cc:     linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] phy: ti: dm816x: Fix the error handling path in 'dm816x_usb_phy_probe()
-Date:   Sat,  5 Jun 2021 15:17:43 +0200
-Message-Id: <ac5136881f6bdec50be19b3bf73b3bc1b15ef1f1.1622898974.git.christophe.jaillet@wanadoo.fr>
+To:     arnd@arndb.de, gregkh@linuxfoundation.org,
+        mihai.carabas@oracle.com, akpm@linux-foundation.org,
+        andriy.shevchenko@linux.intel.com, yuehaibing@huawei.com
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: [PATCH] misc/pvpanic: Remove some dead-code
+Date:   Sat,  5 Jun 2021 18:53:47 +0200
+Message-Id: <8e425618f4042a8ab8366be4d34026972e77bd40.1622911768.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -43,52 +45,31 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Add an error handling path in the probe to release some resources, as
-already done in the remove function.
+'pvpanic_remove()' is referenced only by a 'devm_add_action_or_reset()'
+call in 'devm_pvpanic_probe()'. So, we know that its parameter is non-NULL.
 
-Fixes: 609adde838f4 ("phy: Add a driver for dm816x USB PHY")
+Axe the unneeded check to save a few lines of code.
+
+Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/phy/ti/phy-dm816x-usb.c | 17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
+ drivers/misc/pvpanic/pvpanic.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/phy/ti/phy-dm816x-usb.c b/drivers/phy/ti/phy-dm816x-usb.c
-index 57adc08a89b2..9fe6ea6fdae5 100644
---- a/drivers/phy/ti/phy-dm816x-usb.c
-+++ b/drivers/phy/ti/phy-dm816x-usb.c
-@@ -242,19 +242,28 @@ static int dm816x_usb_phy_probe(struct platform_device *pdev)
+diff --git a/drivers/misc/pvpanic/pvpanic.c b/drivers/misc/pvpanic/pvpanic.c
+index 82770a088d62..02b807c788c9 100644
+--- a/drivers/misc/pvpanic/pvpanic.c
++++ b/drivers/misc/pvpanic/pvpanic.c
+@@ -66,9 +66,6 @@ static void pvpanic_remove(void *param)
+ 	struct pvpanic_instance *pi_cur, *pi_next;
+ 	struct pvpanic_instance *pi = param;
  
- 	pm_runtime_enable(phy->dev);
- 	generic_phy = devm_phy_create(phy->dev, NULL, &ops);
--	if (IS_ERR(generic_phy))
--		return PTR_ERR(generic_phy);
-+	if (IS_ERR(generic_phy)) {
-+		error = PTR_ERR(generic_phy);
-+		goto clk_unprepare;
-+	}
- 
- 	phy_set_drvdata(generic_phy, phy);
- 
- 	phy_provider = devm_of_phy_provider_register(phy->dev,
- 						     of_phy_simple_xlate);
--	if (IS_ERR(phy_provider))
--		return PTR_ERR(phy_provider);
-+	if (IS_ERR(phy_provider)) {
-+		error = PTR_ERR(phy_provider);
-+		goto clk_unprepare;
-+	}
- 
- 	usb_add_phy_dev(&phy->phy);
- 
- 	return 0;
-+
-+clk_unprepare:
-+	pm_runtime_disable(phy->dev);
-+	clk_unprepare(phy->refclk);
-+	return error;
- }
- 
- static int dm816x_usb_phy_remove(struct platform_device *pdev)
+-	if (!pi)
+-		return;
+-
+ 	spin_lock(&pvpanic_lock);
+ 	list_for_each_entry_safe(pi_cur, pi_next, &pvpanic_list, list) {
+ 		if (pi_cur == pi) {
 -- 
 2.30.2
 
