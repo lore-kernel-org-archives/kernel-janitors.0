@@ -2,68 +2,66 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 072FFC4743E
-	for <kernel-janitors@archiver.kernel.org>; Sat,  5 Jun 2021 05:17:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD271C47082
+	for <kernel-janitors@archiver.kernel.org>; Sat,  5 Jun 2021 07:30:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B961761263
-	for <kernel-janitors@archiver.kernel.org>; Sat,  5 Jun 2021 05:17:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9EFD613EA
+	for <kernel-janitors@archiver.kernel.org>; Sat,  5 Jun 2021 07:30:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229902AbhFEFTY convert rfc822-to-8bit (ORCPT
+        id S229963AbhFEHcL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 5 Jun 2021 01:19:24 -0400
-Received: from mail.sch.bme.hu ([152.66.249.140]:16984 "EHLO mail.sch.bme.hu"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229544AbhFEFTX (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 5 Jun 2021 01:19:23 -0400
-Received: from mail-lj1-f181.google.com (209.85.208.181) by
- Exchange2016-1.sch.bme.hu (152.66.249.140) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2176.14; Sat, 5 Jun 2021 07:17:35 +0200
-Received: by mail-lj1-f181.google.com with SMTP id n24so74169lji.2;
-        Fri, 04 Jun 2021 22:17:35 -0700 (PDT)
-X-Gm-Message-State: AOAM5332Xluz9iJEaAXybUoqjSviRuja7yXM8Iw9ubsRyQPWaqKuB6Pk
-        MfJNDjt7d8LsWJEpsPqCZtHiPkAhJpua+WvxHVo=
-X-Google-Smtp-Source: ABdhPJw5LFtYMOrygotozaR7xW0HDr+ScX/qniX2SReclZzmD6wvdVrcqrdjh8JymwxezCLedK8bphcMh4WAugo6wP0=
-X-Received: by 2002:a2e:7f16:: with SMTP id a22mr6185676ljd.360.1622870254662;
- Fri, 04 Jun 2021 22:17:34 -0700 (PDT)
+        Sat, 5 Jun 2021 03:32:11 -0400
+Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:41480 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229892AbhFEHcK (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Sat, 5 Jun 2021 03:32:10 -0400
+Received: from localhost.localdomain ([86.243.172.93])
+        by mwinf5d43 with ME
+        id DKWL2500421Fzsu03KWLD5; Sat, 05 Jun 2021 09:30:22 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 05 Jun 2021 09:30:22 +0200
+X-ME-IP: 86.243.172.93
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     robert.moore@intel.com, erik.kaneda@intel.com,
+        rafael.j.wysocki@intel.com, lenb@kernel.org
+Cc:     linux-acpi@vger.kernel.org, devel@acpica.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] ACPI / NUMA: fix a a typo in a comment
+Date:   Sat,  5 Jun 2021 09:30:19 +0200
+Message-Id: <114091055ede539a924ec675ad4a56284b9314d5.1622878126.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-References: <YJuosd6rew91vlyX@mwanda> <YLqQw6Yc07RecKZs@kunai>
-In-Reply-To: <YLqQw6Yc07RecKZs@kunai>
-From:   =?UTF-8?B?QmVuY2UgQ3PDs2vDoXM=?= <bence98@sch.bme.hu>
-Date:   Sat, 5 Jun 2021 07:17:23 +0200
-X-Gmail-Original-Message-ID: <CACCVKEHuT9gHYazLt7+RFrP7hBJCZvisstJay_DEweGGKx6svA@mail.gmail.com>
-Message-ID: <CACCVKEHuT9gHYazLt7+RFrP7hBJCZvisstJay_DEweGGKx6svA@mail.gmail.com>
-Subject: Re: [PATCH] i2c: cp2615: check for allocation failure in cp2615_i2c_recv()
-To:     Wolfram Sang <wsa@kernel.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        =?UTF-8?B?QmVuY2UgQ3PDs2vDoXM=?= <bence98@sch.bme.hu>,
-        <linux-i2c@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [209.85.208.181]
-X-ClientProxiedBy: Exchange2016-1.sch.bme.hu (152.66.249.140) To
- Exchange2016-1.sch.bme.hu (152.66.249.140)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Sure, though I had hoped Dan would update his patch so that all
-allocation failures return -ENOMEM... Oh well.
+Fix a typo in comment related to the closing #endif of an include-guard.
+s/__ACP_NUMA_H/__ACPI_NUMA_H/
 
-Signed-off-by: Bence Csókás<bence98@sch.bme.hu>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ include/acpi/acpi_numa.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/include/acpi/acpi_numa.h b/include/acpi/acpi_numa.h
+index 40a91ce87e04..68e4d80c1b32 100644
+--- a/include/acpi/acpi_numa.h
++++ b/include/acpi/acpi_numa.h
+@@ -43,4 +43,4 @@ static inline void disable_hmat(void)
+ {
+ }
+ #endif				/* CONFIG_ACPI_HMAT */
+-#endif				/* __ACP_NUMA_H */
++#endif				/* __ACPI_NUMA_H */
+-- 
+2.30.2
 
-Wolfram Sang <wsa@kernel.org> ezt írta (időpont: 2021. jún. 4., P 22:45):
->
-> On Wed, May 12, 2021 at 01:06:41PM +0300, Dan Carpenter wrote:
-> > We need to add a check for if the kzalloc() fails.
-> >
-> > Fixes: 4a7695429ead ("i2c: cp2615: add i2c driver for Silicon Labs' CP2615 Digital Audio Bridge")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> Bence, are you okay with applying this patch as it fixes a bug?
->
