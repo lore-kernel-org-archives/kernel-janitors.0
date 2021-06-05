@@ -4,66 +4,73 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32EFFC47082
-	for <kernel-janitors@archiver.kernel.org>; Sat,  5 Jun 2021 09:06:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16A64C47082
+	for <kernel-janitors@archiver.kernel.org>; Sat,  5 Jun 2021 12:21:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 016E6613E9
-	for <kernel-janitors@archiver.kernel.org>; Sat,  5 Jun 2021 09:06:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF20F611C2
+	for <kernel-janitors@archiver.kernel.org>; Sat,  5 Jun 2021 12:21:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229916AbhFEJIi (ORCPT
+        id S230247AbhFEMWz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 5 Jun 2021 05:08:38 -0400
-Received: from smtp06.smtpout.orange.fr ([80.12.242.128]:19381 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229889AbhFEJIi (ORCPT
+        Sat, 5 Jun 2021 08:22:55 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:47939 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229924AbhFEMWx (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 5 Jun 2021 05:08:38 -0400
-Received: from localhost.localdomain ([86.243.172.93])
-        by mwinf5d86 with ME
-        id DM6o2500821Fzsu03M6oW4; Sat, 05 Jun 2021 11:06:49 +0200
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 05 Jun 2021 11:06:49 +0200
-X-ME-IP: 86.243.172.93
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     alexander.deucher@amd.com, christian.koenig@amd.com,
-        Xinhui.Pan@amd.com, airlied@linux.ie, daniel@ffwll.ch
-Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] drm/amdgpu: Fix a a typo in a comment
-Date:   Sat,  5 Jun 2021 11:06:45 +0200
-Message-Id: <ea7ecbef546a03ef71d65bfe82608bb347e6f3c2.1622883895.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Sat, 5 Jun 2021 08:22:53 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lpVIS-0006jg-4y; Sat, 05 Jun 2021 12:21:00 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Mustafa Ismail <mustafa.ismail@intel.com>,
+        Shiraz Saleem <shiraz.saleem@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] RDMA/irdma: Fix issues with u8 left shift operation
+Date:   Sat,  5 Jun 2021 13:20:59 +0100
+Message-Id: <20210605122059.25105-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-s/than/then/
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+The shifting of the u8 integer info->map[i] the left will be promoted
+to a 32 bit signed int and then sign-extended to a u64. In the event
+that the top bit of the u8 is set then all then all the upper 32 bits
+of the u64 end up as also being set because of the sign-extension.
+Fix this by casting the u8 values to a u64 before the left shift. This
+
+Addresses-Coverity: ("Unitentional integer overflow / bad shift operation")
+Fixes: 3f49d6842569 ("RDMA/irdma: Implement HW Admin Queue OPs")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c | 2 +-
+ drivers/infiniband/hw/irdma/ctrl.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
-index 89ebbf363e27..1476236f5c7c 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
-@@ -662,7 +662,7 @@ static int amdgpu_cs_sync_rings(struct amdgpu_cs_parser *p)
-  * @error:	error number
-  * @backoff:	indicator to backoff the reservation
-  *
-- * If error is set than unvalidate buffer, otherwise just free memory
-+ * If error is set then unvalidate buffer, otherwise just free memory
-  * used by parsing context.
-  **/
- static void amdgpu_cs_parser_fini(struct amdgpu_cs_parser *parser, int error,
+diff --git a/drivers/infiniband/hw/irdma/ctrl.c b/drivers/infiniband/hw/irdma/ctrl.c
+index 5aa112067bce..8bd3aecadaf6 100644
+--- a/drivers/infiniband/hw/irdma/ctrl.c
++++ b/drivers/infiniband/hw/irdma/ctrl.c
+@@ -2157,7 +2157,7 @@ static enum irdma_status_code irdma_sc_set_up_map(struct irdma_sc_cqp *cqp,
+ 		return IRDMA_ERR_RING_FULL;
+ 
+ 	for (i = 0; i < IRDMA_MAX_USER_PRIORITY; i++)
+-		temp |= info->map[i] << (i * 8);
++		temp |= (u64)info->map[i] << (i * 8);
+ 
+ 	set_64bit_val(wqe, 0, temp);
+ 	set_64bit_val(wqe, 40,
 -- 
-2.30.2
+2.31.1
 
