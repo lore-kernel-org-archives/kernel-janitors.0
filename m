@@ -2,110 +2,123 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7025AC4743D
-	for <kernel-janitors@archiver.kernel.org>; Sat,  5 Jun 2021 12:49:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EB03C4743E
+	for <kernel-janitors@archiver.kernel.org>; Sat,  5 Jun 2021 12:56:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 561CE61404
-	for <kernel-janitors@archiver.kernel.org>; Sat,  5 Jun 2021 12:49:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1007A6138C
+	for <kernel-janitors@archiver.kernel.org>; Sat,  5 Jun 2021 12:56:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230010AbhFEMvU (ORCPT
+        id S229964AbhFEM5w (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 5 Jun 2021 08:51:20 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:53190 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229989AbhFEMvT (ORCPT
+        Sat, 5 Jun 2021 08:57:52 -0400
+Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:59223 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229931AbhFEM5w (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 5 Jun 2021 08:51:19 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 155CnMeI118353;
-        Sat, 5 Jun 2021 12:49:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=QGdiQREte4Iq+9DLVqOgLAmRkIXvemHDbtV0ipxRla0=;
- b=tWww5T14QhXoWYJfyUQARnpdpnFO299UlqHs+1YR0xYgeNWRRh4VeYojiuYpllY5zfd0
- oisu3SqYukEDk+yiKRUWIyaqvXtDDYN2o+b6ksgdpTkPszMYrsfAYs3S8Bx/mQKzbzbF
- A0pz/GumTwMNZGir6Pufd3Ib0ymQrxVjMc+Cj4K6JrzEDY/H99mx6IRue6R1In/7H+eG
- eXEvhON+yfefkplX4csrbXsuvaD5/QFDEdY3o0P0wINdURukTGvQACxUfqKUnuozr6ta
- m888cj4ANAuR/XBzimTGsV2td9jwzmIfxwhjV/DtqTfEHo9L84XVBH4czVgFEPHSpbb2 PA== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2130.oracle.com with ESMTP id 38yxsc8eg1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 05 Jun 2021 12:49:22 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 155CifFk010213;
-        Sat, 5 Jun 2021 12:49:22 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by aserp3030.oracle.com with ESMTP id 38yya8yyk0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 05 Jun 2021 12:49:22 +0000
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 155CnL6V014224;
-        Sat, 5 Jun 2021 12:49:21 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3030.oracle.com with ESMTP id 38yya8yyjs-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 05 Jun 2021 12:49:21 +0000
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 155CnI6E026537;
-        Sat, 5 Jun 2021 12:49:18 GMT
-Received: from mwanda (/41.212.42.34)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sat, 05 Jun 2021 12:49:18 +0000
-Date:   Sat, 5 Jun 2021 15:49:10 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     David Rivshin <drivshin@allworx.com>,
-        Jacek Anaszewski <j.anaszewski@samsung.com>,
-        linux-leds@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] leds: leds-is31fl32xx: fix an error in is31fl32xx_parse_dt()
-Message-ID: <YLtyxq0Ty/7Uo4NS@mwanda>
+        Sat, 5 Jun 2021 08:57:52 -0400
+Received: from localhost.localdomain ([86.243.172.93])
+        by mwinf5d78 with ME
+        id DQvx2500221Fzsu03QvxbN; Sat, 05 Jun 2021 14:56:02 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 05 Jun 2021 14:56:02 +0200
+X-ME-IP: 86.243.172.93
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     herbert@gondor.apana.org.au, davem@davemloft.net,
+        gregkh@linuxfoundation.org, acostag.ubuntu@gmail.com,
+        lee.jones@linaro.org, Jampala.Srikanth@cavium.com
+Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] crypto: cavium/nitrox - Fix an erro rhandling path in 'nitrox_probe()'
+Date:   Sat,  5 Jun 2021 14:55:56 +0200
+Message-Id: <26f71d3925541924bfda1dca9114a48db5ffafe4.1622897629.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-X-Proofpoint-ORIG-GUID: d7r8JNgAyREaIxrFd_kT364OPEcdJgGF
-X-Proofpoint-GUID: d7r8JNgAyREaIxrFd_kT364OPEcdJgGF
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=10005 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 impostorscore=0 lowpriorityscore=0
- phishscore=0 suspectscore=0 bulkscore=0 spamscore=0 priorityscore=1501
- mlxscore=0 malwarescore=0 mlxlogscore=999 clxscore=1011 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
- definitions=main-2106050092
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Return -EBUSY if the data is already in use (instead of returning
-success).
+If an error occurs after a successful 'ioremap()' call, it must be undone
+by a corresponding 'iounmap()' call, as already done in the remove
+function.
+Ass a 'pf_sw_fail' label in the error handling path and add the missing
+'iounmap()'.
 
-Fixes: 9d7cffaf99f5 ("leds: Add driver for the ISSI IS31FL32xx family of LED controllers")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+While at it, also add a 'flr_fail' label in the error handling path and use
+it to avoid some code duplication.
+
+Fixes: 14fa93cdcd9b ("crypto: cavium - Add support for CNN55XX adapters.")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-Not tested.  It prints an error so the intention seems clear, but
-sometimes making stuff a failure instead of a success can lead to
-unexpected problems in production.  On the other hand, if this is not
-an error then shouldn't we do a continue instead of a goto err?
+ drivers/crypto/cavium/nitrox/nitrox_main.c | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
- drivers/leds/leds-is31fl32xx.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/leds/leds-is31fl32xx.c b/drivers/leds/leds-is31fl32xx.c
-index 3b55af9a8c58..e6f34464914f 100644
---- a/drivers/leds/leds-is31fl32xx.c
-+++ b/drivers/leds/leds-is31fl32xx.c
-@@ -386,6 +386,7 @@ static int is31fl32xx_parse_dt(struct device *dev,
- 			dev_err(dev,
- 				"Node %pOF 'reg' conflicts with another LED\n",
- 				child);
-+			ret = -EBUSY;
- 			goto err;
- 		}
+diff --git a/drivers/crypto/cavium/nitrox/nitrox_main.c b/drivers/crypto/cavium/nitrox/nitrox_main.c
+index 144d554bd44d..96bc7b5c6532 100644
+--- a/drivers/crypto/cavium/nitrox/nitrox_main.c
++++ b/drivers/crypto/cavium/nitrox/nitrox_main.c
+@@ -424,8 +424,7 @@ static int nitrox_probe(struct pci_dev *pdev,
+ 	err = nitrox_device_flr(pdev);
+ 	if (err) {
+ 		dev_err(&pdev->dev, "FLR failed\n");
+-		pci_disable_device(pdev);
+-		return err;
++		goto flr_fail;
+ 	}
  
+ 	if (!dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64))) {
+@@ -434,16 +433,13 @@ static int nitrox_probe(struct pci_dev *pdev,
+ 		err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
+ 		if (err) {
+ 			dev_err(&pdev->dev, "DMA configuration failed\n");
+-			pci_disable_device(pdev);
+-			return err;
++			goto flr_fail;
+ 		}
+ 	}
+ 
+ 	err = pci_request_mem_regions(pdev, nitrox_driver_name);
+-	if (err) {
+-		pci_disable_device(pdev);
+-		return err;
+-	}
++	if (err)
++		goto flr_fail;
+ 	pci_set_master(pdev);
+ 
+ 	ndev = kzalloc(sizeof(*ndev), GFP_KERNEL);
+@@ -479,7 +475,7 @@ static int nitrox_probe(struct pci_dev *pdev,
+ 
+ 	err = nitrox_pf_sw_init(ndev);
+ 	if (err)
+-		goto ioremap_err;
++		goto pf_sw_fail;
+ 
+ 	err = nitrox_pf_hw_init(ndev);
+ 	if (err)
+@@ -509,12 +505,15 @@ static int nitrox_probe(struct pci_dev *pdev,
+ 	smp_mb__after_atomic();
+ pf_hw_fail:
+ 	nitrox_pf_sw_cleanup(ndev);
++pf_sw_fail:
++	iounmap(ndev->bar_addr);
+ ioremap_err:
+ 	nitrox_remove_from_devlist(ndev);
+ 	kfree(ndev);
+ 	pci_set_drvdata(pdev, NULL);
+ ndev_fail:
+ 	pci_release_mem_regions(pdev);
++flr_fail:
+ 	pci_disable_device(pdev);
+ 	return err;
+ }
 -- 
 2.30.2
 
