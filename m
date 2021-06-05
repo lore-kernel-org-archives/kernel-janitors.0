@@ -7,101 +7,112 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36419C4743D
-	for <kernel-janitors@archiver.kernel.org>; Sat,  5 Jun 2021 12:47:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF9B9C47082
+	for <kernel-janitors@archiver.kernel.org>; Sat,  5 Jun 2021 12:49:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0F9E961357
-	for <kernel-janitors@archiver.kernel.org>; Sat,  5 Jun 2021 12:47:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D49E611AE
+	for <kernel-janitors@archiver.kernel.org>; Sat,  5 Jun 2021 12:49:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229959AbhFEMto (ORCPT
+        id S229959AbhFEMur (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 5 Jun 2021 08:49:44 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:52662 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229931AbhFEMtn (ORCPT
+        Sat, 5 Jun 2021 08:50:47 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:43526 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229916AbhFEMur (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 5 Jun 2021 08:49:43 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 155CjPDq116627;
-        Sat, 5 Jun 2021 12:47:51 GMT
+        Sat, 5 Jun 2021 08:50:47 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 155Ci19S112138;
+        Sat, 5 Jun 2021 12:48:41 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
  : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=iMFhXKZLxPG0U9nDS7/IRnpnxvmykwkh+VOS7a5x93Q=;
- b=gI8bTImaSUOtkWDQcfXvuluzZvcRzuxG4QklvjlKr+TKXIPNka+2jaGHVsfVziAOIh5s
- uFQ0uDcqDdLGB7984ERDCjPJR5di/tUQRYPH6C1DFbK4Ygd2kjhK2FxCLae8rkEg3h2m
- LXT06CSaeCUTLmeth9MIrYgEgNryLrYGA17Lk9VaRaHHmV5bDCF142rsQWaNZsXZLIj5
- VxPgLmBIJVRk/YPO4/D1aPs/8+90IMRlURt7DQMxHYHZUwkN2srkqYTI7HmtQnGulL+M
- brovj/hpymbGE9u/tVb4ooQxuLpZcfDg9E2qb++S6XQhhKiRLaJ0vss3LYN+tazoGOog fg== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2130.oracle.com with ESMTP id 38yxsc8efe-1
+ bh=07BOHHPaJrmXU5W7/AFSyJRb0cJYxMTbyObPQAH3yd0=;
+ b=mGX/IO+Z5uRjA6BmSCsJIH3EHN1cA/bFccMo28wvQn0j8IUKsDqExKMVADpCJdC/z7Lp
+ 6zRGxYM8f43SX1E3tUSViJE2EKutMpZWFaj3b4CFsMKnGejg8C9HJLrn2Xe0SbmaIWRW
+ 2Ocyi/2GNw+spmCOsFvyrFWTfjA3lCtoUHj7FeEg6lK1gSM1clVYGYblku+c55CH2syu
+ smp15iY5RjKRcfq/TF1fO5kwN0z9B4SEy/NKkdmTQnoGwyEY52mORs2Uqp/YEtkLrl4p
+ MOfSPOqvr//GDBwC7T3M552JLcDSgCanAS/eVEZqN1P+yuJqV3nqe0yECGMymmwdy6sO xQ== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 3900ps0cm5-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 05 Jun 2021 12:47:51 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 155CjfH4172447;
-        Sat, 5 Jun 2021 12:47:51 GMT
+        Sat, 05 Jun 2021 12:48:41 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 155CkOwo135464;
+        Sat, 5 Jun 2021 12:48:41 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-        by aserp3020.oracle.com with ESMTP id 3906sk5wjm-1
+        by userp3030.oracle.com with ESMTP id 38yxcsjrq6-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 05 Jun 2021 12:47:51 +0000
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 155ClokD176432;
-        Sat, 5 Jun 2021 12:47:50 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3020.oracle.com with ESMTP id 3906sk5wjd-1
+        Sat, 05 Jun 2021 12:48:41 +0000
+Received: from userp3030.oracle.com (userp3030.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 155Cmem4137233;
+        Sat, 5 Jun 2021 12:48:40 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 38yxcsjrpx-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 05 Jun 2021 12:47:50 +0000
+        Sat, 05 Jun 2021 12:48:40 +0000
 Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 155ClmEm025450;
-        Sat, 5 Jun 2021 12:47:49 GMT
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 155CmW3p012720;
+        Sat, 5 Jun 2021 12:48:32 GMT
 Received: from mwanda (/41.212.42.34)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sat, 05 Jun 2021 05:47:47 -0700
-Date:   Sat, 5 Jun 2021 15:47:28 +0300
+        with ESMTP ; Sat, 05 Jun 2021 05:48:31 -0700
+Date:   Sat, 5 Jun 2021 15:48:16 +0300
 From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     Jason Wang <jasowang@redhat.com>, Eli Cohen <elic@nvidia.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        virtualization@lists.linux-foundation.org,
+To:     Keith Busch <kbusch@kernel.org>
+Cc:     Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Max Gurtovoy <mgurtovoy@nvidia.com>,
+        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
+        Roy Shterman <roys@lightbitslabs.com>,
+        Solganik Alexander <sashas@lightbitslabs.com>,
+        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: [PATCH] vdpa: fix error code in vp_vdpa_probe()
-Message-ID: <YLtyYE8TinOl3IhO@mwanda>
+Subject: [PATCH] nvme-tcp: fix error codes in nvme_tcp_setup_ctrl()
+Message-ID: <YLtykIn+Or0l08oV@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
-X-Proofpoint-ORIG-GUID: 2ENbIDQKvlMH5Q4t1XboRyzZPlVdeU0m
-X-Proofpoint-GUID: 2ENbIDQKvlMH5Q4t1XboRyzZPlVdeU0m
+X-Proofpoint-GUID: c7xZCEaeYkskdruWm_5pWeTmldsdxDrL
+X-Proofpoint-ORIG-GUID: c7xZCEaeYkskdruWm_5pWeTmldsdxDrL
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=10005 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 impostorscore=0 lowpriorityscore=0
- phishscore=0 suspectscore=0 bulkscore=0 spamscore=0 priorityscore=1501
- mlxscore=0 malwarescore=0 mlxlogscore=999 clxscore=1011 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
- definitions=main-2106050092
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 clxscore=1011
+ bulkscore=0 spamscore=0 mlxscore=0 adultscore=0 malwarescore=0
+ phishscore=0 suspectscore=0 lowpriorityscore=0 mlxlogscore=999
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104190000 definitions=main-2106050092
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Return -ENOMEM if vp_modern_map_vq_notify() fails.  Currently it
-returns success.
+These error paths currently return success but they should return
+-EOPNOTSUPP.
 
-Fixes: 11d8ffed00b2 ("vp_vdpa: switch to use vp_modern_map_vq_notify()")
+Fixes: 73ffcefcfca0 ("nvme-tcp: check sgl supported by target")
+Fixes: 3f2304f8c6d6 ("nvme-tcp: add NVMe over TCP host driver")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/vdpa/virtio_pci/vp_vdpa.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/nvme/host/tcp.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/vdpa/virtio_pci/vp_vdpa.c b/drivers/vdpa/virtio_pci/vp_vdpa.c
-index c76ebb531212..e5d92db728d3 100644
---- a/drivers/vdpa/virtio_pci/vp_vdpa.c
-+++ b/drivers/vdpa/virtio_pci/vp_vdpa.c
-@@ -442,6 +442,7 @@ static int vp_vdpa_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 			vp_modern_map_vq_notify(mdev, i,
- 						&vp_vdpa->vring[i].notify_pa);
- 		if (!vp_vdpa->vring[i].notify) {
-+			ret = -ENOMEM;
- 			dev_warn(&pdev->dev, "Fail to map vq notify %d\n", i);
- 			goto err;
- 		}
+diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
+index 34f4b3402f7c..72e9d34c3092 100644
+--- a/drivers/nvme/host/tcp.c
++++ b/drivers/nvme/host/tcp.c
+@@ -1973,11 +1973,13 @@ static int nvme_tcp_setup_ctrl(struct nvme_ctrl *ctrl, bool new)
+ 		return ret;
+ 
+ 	if (ctrl->icdoff) {
++		ret = -EOPNOTSUPP;
+ 		dev_err(ctrl->device, "icdoff is not supported!\n");
+ 		goto destroy_admin;
+ 	}
+ 
+ 	if (!(ctrl->sgls & ((1 << 0) | (1 << 1)))) {
++		ret = -EOPNOTSUPP;
+ 		dev_err(ctrl->device, "Mandatory sgls are not supported!\n");
+ 		goto destroy_admin;
+ 	}
 -- 
 2.30.2
 
