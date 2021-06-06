@@ -2,119 +2,132 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DFB1C47096
-	for <kernel-janitors@archiver.kernel.org>; Sun,  6 Jun 2021 08:33:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECD74C47096
+	for <kernel-janitors@archiver.kernel.org>; Sun,  6 Jun 2021 14:31:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4039961421
-	for <kernel-janitors@archiver.kernel.org>; Sun,  6 Jun 2021 08:33:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5E2061429
+	for <kernel-janitors@archiver.kernel.org>; Sun,  6 Jun 2021 14:31:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230091AbhFFIf2 (ORCPT
+        id S230088AbhFFOdL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 6 Jun 2021 04:35:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58262 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229465AbhFFIf2 (ORCPT
+        Sun, 6 Jun 2021 10:33:11 -0400
+Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:25260 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230050AbhFFOdJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 6 Jun 2021 04:35:28 -0400
-Received: from mail-oi1-x229.google.com (mail-oi1-x229.google.com [IPv6:2607:f8b0:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AED75C061766;
-        Sun,  6 Jun 2021 01:33:23 -0700 (PDT)
-Received: by mail-oi1-x229.google.com with SMTP id a21so14785820oiw.3;
-        Sun, 06 Jun 2021 01:33:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bbNhDWpus7Vqy++elTFF2iEsGgzPW8ROqotG54obcuI=;
-        b=i96N6QWGWm7zvjN3WPpotNGq1GXRkmpKiocix4iI6kyfpJL8oK9v+MeXCZEcDTMVgO
-         Pnv2K3oWkrp+jrr9PglH6OtrZTRc1gB3OjlzoA38ZmnY9d967ic3ObSAMDv2J0qn99I/
-         tU6NkP0sQRLXi/+XkZL+wTAPkH/K7qtCACx1mh+bP9x7phUpjBsBXBmbFXScqGOLKaNQ
-         VHlxIPvoiklXKB+VAxeYBZzgLUWEbgOCy3+cLtrg25iJ7aEnspQRBaiv9O71Vrp11yHB
-         K7QyzIfdYCC7h1ztuOHDyET4ZDVvREqxsU5bZN5ciDKKCK/BA+W4qFVjfTie5Dp6xAbC
-         ntlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bbNhDWpus7Vqy++elTFF2iEsGgzPW8ROqotG54obcuI=;
-        b=jNNYlGzvCzcTbYGm64VCt9FcU5M+O+U17m0Yl8bx/rDR0WCOO4t1floeMf92O477iL
-         BRghaYm8ZuKnfRYJ/v22AjM2PQ/3RAxZDMxSw4gz9GGV2mCNZq6EsiS1enofZLSBjBSe
-         CofL3+o7O2HIftjZ5U9WlfWRXoWUHqpGBoP1v2x6GRRRy/8sKDyUUrP0g8uNwWR8yKWC
-         FymUDZMKSIQAqnK7PtQz00uptAYstVLPUqyadEVPRdmpb6rQjW465lVCzbDFpXDobNiZ
-         MuCioPdzfXfATj9ysMrl4/4JftcAlLtNwC71UKKTGXFHr4dAjsOtCnMakRMQaFL5irEs
-         mjFw==
-X-Gm-Message-State: AOAM531o28fU1CAnPpW43+u22mjlkW8vbopBhIULPxX1F7XtXuC3WSQf
-        2OsJsWytXwEwyj50LCj3DAQFBjynY+vAHOXp2hU=
-X-Google-Smtp-Source: ABdhPJzWUfyh4kFq0ITpR7cEBSO4EzXxXLb47VWIRpLOYiHIbKpHVXyPca9qa6dldU+mPHPado1BGSEP01v5c97xwRo=
-X-Received: by 2002:a05:6808:1146:: with SMTP id u6mr16081901oiu.130.1622968402789;
- Sun, 06 Jun 2021 01:33:22 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210603131210.84763-1-colin.king@canonical.com> <20210604080503.GJ1955@kadam>
-In-Reply-To: <20210604080503.GJ1955@kadam>
-From:   Oded Gabbay <oded.gabbay@gmail.com>
-Date:   Sun, 6 Jun 2021 11:32:56 +0300
-Message-ID: <CAFCwf10jJ1Kea8J9xwYgAbxW3P0L2ryPu5xBTN0cN_Zuxu49Pw@mail.gmail.com>
-Subject: Re: [PATCH] habanalabs/gaudi: remove redundant assignment to variable err
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Colin King <colin.king@canonical.com>,
-        Oded Gabbay <ogabbay@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sun, 6 Jun 2021 10:33:09 -0400
+Received: from localhost.localdomain ([86.243.172.93])
+        by mwinf5d04 with ME
+        id DqXB2500121Fzsu03qXBtD; Sun, 06 Jun 2021 16:31:18 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 06 Jun 2021 16:31:18 +0200
+X-ME-IP: 86.243.172.93
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz,
+        tiwai@suse.com, matthias.bgg@gmail.com,
+        pierre-louis.bossart@linux.intel.com, lumi.lee@mediatek.com,
+        kaichieh.chuang@mediatek.com
+Cc:     alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] ASoC: mediatek: mtk-btcvsd: Fix an error handling path in 'mtk_btcvsd_snd_probe()'
+Date:   Sun,  6 Jun 2021 16:31:09 +0200
+Message-Id: <0c2ba562c3364e61bfbd5b3013a99dfa0d9045d7.1622989685.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Jun 4, 2021 at 11:05 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> On Thu, Jun 03, 2021 at 02:12:10PM +0100, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> >
-> > The variable err is being assigned a value that is never read, the
-> > assignment is redundant and can be removed. Also remove some empty
-> > lines.
-> >
-> > Addresses-Coverity: ("Unused value")
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
-> >  drivers/misc/habanalabs/gaudi/gaudi.c | 3 ---
-> >  1 file changed, 3 deletions(-)
-> >
-> > diff --git a/drivers/misc/habanalabs/gaudi/gaudi.c b/drivers/misc/habanalabs/gaudi/gaudi.c
-> > index 9e4a6bb3acd1..22f220859b46 100644
-> > --- a/drivers/misc/habanalabs/gaudi/gaudi.c
-> > +++ b/drivers/misc/habanalabs/gaudi/gaudi.c
-> > @@ -7379,9 +7379,6 @@ static int gaudi_hbm_read_interrupts(struct hl_device *hdev, int device,
-> >                       device, ch, hbm_ecc_data->first_addr, type,
-> >                       hbm_ecc_data->sec_cont_cnt, hbm_ecc_data->sec_cnt,
-> >                       hbm_ecc_data->dec_cnt);
-> > -
-> > -             err = 1;
-> > -
-> >               return 0;
-> >       }
->
-> Not related to your patch (which seems fine), but I always feel like
-> there should be a rule that function which return a mix of negative
-> error codes and either zero or one on success should have to have
-> documentation explaining why.
->
-> It's impossible to tell from the context here and neither of the callers
-> check the return.  :P
->
-> regards,
-> dan carpenter
->
-I agree and I will change the function to return only 0 on success, or
-standard error value on error.
+If an error occurs after a successful 'of_iomap()' call, it must be undone
+by a corresponding 'iounmap()' call, as already done in the remove
+function.
 
-Anyway, this patch is:
-Reviewed-by: Oded Gabbay <ogabbay@kernel.org>
+While at it, remove the useless initialization of 'ret' at the beginning of
+the function.
+
+Fixes: 4bd8597dc36c ("ASoC: mediatek: add btcvsd driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+This is NOT compile tested.
+
+Even if CONFIG_SND_SOC_MTK_BTCVSD is correctly set in my .config file, I've
+not been able to have this file compiled.
+---
+ sound/soc/mediatek/common/mtk-btcvsd.c | 24 ++++++++++++++++++------
+ 1 file changed, 18 insertions(+), 6 deletions(-)
+
+diff --git a/sound/soc/mediatek/common/mtk-btcvsd.c b/sound/soc/mediatek/common/mtk-btcvsd.c
+index f85b5ea180ec..d884bb7c0fc7 100644
+--- a/sound/soc/mediatek/common/mtk-btcvsd.c
++++ b/sound/soc/mediatek/common/mtk-btcvsd.c
+@@ -1281,7 +1281,7 @@ static const struct snd_soc_component_driver mtk_btcvsd_snd_platform = {
+ 
+ static int mtk_btcvsd_snd_probe(struct platform_device *pdev)
+ {
+-	int ret = 0;
++	int ret;
+ 	int irq_id;
+ 	u32 offset[5] = {0, 0, 0, 0, 0};
+ 	struct mtk_btcvsd_snd *btcvsd;
+@@ -1337,7 +1337,8 @@ static int mtk_btcvsd_snd_probe(struct platform_device *pdev)
+ 	btcvsd->bt_sram_bank2_base = of_iomap(dev->of_node, 1);
+ 	if (!btcvsd->bt_sram_bank2_base) {
+ 		dev_err(dev, "iomap bt_sram_bank2_base fail\n");
+-		return -EIO;
++		ret = -EIO;
++		goto unmap_pkv_err;
+ 	}
+ 
+ 	btcvsd->infra = syscon_regmap_lookup_by_phandle(dev->of_node,
+@@ -1345,7 +1346,8 @@ static int mtk_btcvsd_snd_probe(struct platform_device *pdev)
+ 	if (IS_ERR(btcvsd->infra)) {
+ 		dev_err(dev, "cannot find infra controller: %ld\n",
+ 			PTR_ERR(btcvsd->infra));
+-		return PTR_ERR(btcvsd->infra);
++		ret = PTR_ERR(btcvsd->infra);
++		goto unmap_bank2_err;
+ 	}
+ 
+ 	/* get offset */
+@@ -1354,7 +1356,7 @@ static int mtk_btcvsd_snd_probe(struct platform_device *pdev)
+ 					 ARRAY_SIZE(offset));
+ 	if (ret) {
+ 		dev_warn(dev, "%s(), get offset fail, ret %d\n", __func__, ret);
+-		return ret;
++		goto unmap_bank2_err;
+ 	}
+ 	btcvsd->infra_misc_offset = offset[0];
+ 	btcvsd->conn_bt_cvsd_mask = offset[1];
+@@ -1373,8 +1375,18 @@ static int mtk_btcvsd_snd_probe(struct platform_device *pdev)
+ 	mtk_btcvsd_snd_set_state(btcvsd, btcvsd->tx, BT_SCO_STATE_IDLE);
+ 	mtk_btcvsd_snd_set_state(btcvsd, btcvsd->rx, BT_SCO_STATE_IDLE);
+ 
+-	return devm_snd_soc_register_component(dev, &mtk_btcvsd_snd_platform,
+-					       NULL, 0);
++	ret = devm_snd_soc_register_component(dev, &mtk_btcvsd_snd_platform,
++					      NULL, 0);
++	if (ret)
++		goto unmap_bank2_err;
++
++	return 0;
++
++unmap_bank2_err:
++	iounmap(btcvsd->bt_sram_bank2_base);
++unmap_pkv_err:
++	iounmap(btcvsd->bt_pkv_base);
++	return ret;
+ }
+ 
+ static int mtk_btcvsd_snd_remove(struct platform_device *pdev)
+-- 
+2.30.2
+
