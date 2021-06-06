@@ -7,39 +7,36 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECD74C47096
-	for <kernel-janitors@archiver.kernel.org>; Sun,  6 Jun 2021 14:31:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30727C4743D
+	for <kernel-janitors@archiver.kernel.org>; Sun,  6 Jun 2021 14:49:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C5E2061429
-	for <kernel-janitors@archiver.kernel.org>; Sun,  6 Jun 2021 14:31:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D91161408
+	for <kernel-janitors@archiver.kernel.org>; Sun,  6 Jun 2021 14:49:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230088AbhFFOdL (ORCPT
+        id S230050AbhFFOvO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 6 Jun 2021 10:33:11 -0400
-Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:25260 "EHLO
+        Sun, 6 Jun 2021 10:51:14 -0400
+Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:45149 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230050AbhFFOdJ (ORCPT
+        with ESMTP id S230085AbhFFOvL (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 6 Jun 2021 10:33:09 -0400
+        Sun, 6 Jun 2021 10:51:11 -0400
 Received: from localhost.localdomain ([86.243.172.93])
         by mwinf5d04 with ME
-        id DqXB2500121Fzsu03qXBtD; Sun, 06 Jun 2021 16:31:18 +0200
+        id DqpK2500C21Fzsu03qpKgY; Sun, 06 Jun 2021 16:49:21 +0200
 X-ME-Helo: localhost.localdomain
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 06 Jun 2021 16:31:18 +0200
+X-ME-Date: Sun, 06 Jun 2021 16:49:21 +0200
 X-ME-IP: 86.243.172.93
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz,
-        tiwai@suse.com, matthias.bgg@gmail.com,
-        pierre-louis.bossart@linux.intel.com, lumi.lee@mediatek.com,
-        kaichieh.chuang@mediatek.com
-Cc:     alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+To:     wim@linux-watchdog.org, linux@roeck-us.net,
+        martyn.welch@gefanuc.com
+Cc:     linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] ASoC: mediatek: mtk-btcvsd: Fix an error handling path in 'mtk_btcvsd_snd_probe()'
-Date:   Sun,  6 Jun 2021 16:31:09 +0200
-Message-Id: <0c2ba562c3364e61bfbd5b3013a99dfa0d9045d7.1622989685.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] watchdog: gef_wdt:  Fix an error handling path in 'gef_wdt_probe()'
+Date:   Sun,  6 Jun 2021 16:49:18 +0200
+Message-Id: <3d775a5ac7e26fa5dd4c47f75fef6d5f336de1e3.1622990863.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -51,83 +48,41 @@ If an error occurs after a successful 'of_iomap()' call, it must be undone
 by a corresponding 'iounmap()' call, as already done in the remove
 function.
 
-While at it, remove the useless initialization of 'ret' at the beginning of
-the function.
-
-Fixes: 4bd8597dc36c ("ASoC: mediatek: add btcvsd driver")
+Fixes: 3268b5618f38 ("[WATCHDOG] Basic support for GE Fanuc's FPGA based watchdog timer")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-This is NOT compile tested.
+ drivers/watchdog/gef_wdt.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-Even if CONFIG_SND_SOC_MTK_BTCVSD is correctly set in my .config file, I've
-not been able to have this file compiled.
----
- sound/soc/mediatek/common/mtk-btcvsd.c | 24 ++++++++++++++++++------
- 1 file changed, 18 insertions(+), 6 deletions(-)
-
-diff --git a/sound/soc/mediatek/common/mtk-btcvsd.c b/sound/soc/mediatek/common/mtk-btcvsd.c
-index f85b5ea180ec..d884bb7c0fc7 100644
---- a/sound/soc/mediatek/common/mtk-btcvsd.c
-+++ b/sound/soc/mediatek/common/mtk-btcvsd.c
-@@ -1281,7 +1281,7 @@ static const struct snd_soc_component_driver mtk_btcvsd_snd_platform = {
- 
- static int mtk_btcvsd_snd_probe(struct platform_device *pdev)
+diff --git a/drivers/watchdog/gef_wdt.c b/drivers/watchdog/gef_wdt.c
+index df5406aa7d25..52573176101f 100644
+--- a/drivers/watchdog/gef_wdt.c
++++ b/drivers/watchdog/gef_wdt.c
+@@ -264,6 +264,7 @@ static int gef_wdt_probe(struct platform_device *dev)
  {
--	int ret = 0;
+ 	int timeout = 10;
+ 	u32 freq;
 +	int ret;
- 	int irq_id;
- 	u32 offset[5] = {0, 0, 0, 0, 0};
- 	struct mtk_btcvsd_snd *btcvsd;
-@@ -1337,7 +1337,8 @@ static int mtk_btcvsd_snd_probe(struct platform_device *pdev)
- 	btcvsd->bt_sram_bank2_base = of_iomap(dev->of_node, 1);
- 	if (!btcvsd->bt_sram_bank2_base) {
- 		dev_err(dev, "iomap bt_sram_bank2_base fail\n");
--		return -EIO;
-+		ret = -EIO;
-+		goto unmap_pkv_err;
- 	}
  
- 	btcvsd->infra = syscon_regmap_lookup_by_phandle(dev->of_node,
-@@ -1345,7 +1346,8 @@ static int mtk_btcvsd_snd_probe(struct platform_device *pdev)
- 	if (IS_ERR(btcvsd->infra)) {
- 		dev_err(dev, "cannot find infra controller: %ld\n",
- 			PTR_ERR(btcvsd->infra));
--		return PTR_ERR(btcvsd->infra);
-+		ret = PTR_ERR(btcvsd->infra);
-+		goto unmap_bank2_err;
- 	}
+ 	bus_clk = 133; /* in MHz */
  
- 	/* get offset */
-@@ -1354,7 +1356,7 @@ static int mtk_btcvsd_snd_probe(struct platform_device *pdev)
- 					 ARRAY_SIZE(offset));
- 	if (ret) {
- 		dev_warn(dev, "%s(), get offset fail, ret %d\n", __func__, ret);
--		return ret;
-+		goto unmap_bank2_err;
- 	}
- 	btcvsd->infra_misc_offset = offset[0];
- 	btcvsd->conn_bt_cvsd_mask = offset[1];
-@@ -1373,8 +1375,18 @@ static int mtk_btcvsd_snd_probe(struct platform_device *pdev)
- 	mtk_btcvsd_snd_set_state(btcvsd, btcvsd->tx, BT_SCO_STATE_IDLE);
- 	mtk_btcvsd_snd_set_state(btcvsd, btcvsd->rx, BT_SCO_STATE_IDLE);
+@@ -280,7 +281,15 @@ static int gef_wdt_probe(struct platform_device *dev)
  
--	return devm_snd_soc_register_component(dev, &mtk_btcvsd_snd_platform,
--					       NULL, 0);
-+	ret = devm_snd_soc_register_component(dev, &mtk_btcvsd_snd_platform,
-+					      NULL, 0);
+ 	gef_wdt_handler_disable();	/* in case timer was already running */
+ 
+-	return misc_register(&gef_wdt_miscdev);
++	ret = misc_register(&gef_wdt_miscdev);
 +	if (ret)
-+		goto unmap_bank2_err;
++		goto iounmap_err;
 +
 +	return 0;
 +
-+unmap_bank2_err:
-+	iounmap(btcvsd->bt_sram_bank2_base);
-+unmap_pkv_err:
-+	iounmap(btcvsd->bt_pkv_base);
++iounmap_err:
++	iounmap(gef_wdt_regs);
 +	return ret;
  }
  
- static int mtk_btcvsd_snd_remove(struct platform_device *pdev)
+ static int gef_wdt_remove(struct platform_device *dev)
 -- 
 2.30.2
 
