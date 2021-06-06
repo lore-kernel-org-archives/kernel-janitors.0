@@ -2,95 +2,139 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 542F8C4743D
-	for <kernel-janitors@archiver.kernel.org>; Sat,  5 Jun 2021 23:20:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2404C47082
+	for <kernel-janitors@archiver.kernel.org>; Sun,  6 Jun 2021 00:26:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2DB4661415
-	for <kernel-janitors@archiver.kernel.org>; Sat,  5 Jun 2021 23:20:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84D6861415
+	for <kernel-janitors@archiver.kernel.org>; Sun,  6 Jun 2021 00:26:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230104AbhFEXVx (ORCPT
+        id S230036AbhFFA17 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 5 Jun 2021 19:21:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51996 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230083AbhFEXVw (ORCPT
+        Sat, 5 Jun 2021 20:27:59 -0400
+Received: from wout5-smtp.messagingengine.com ([64.147.123.21]:38571 "EHLO
+        wout5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230025AbhFFA16 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 5 Jun 2021 19:21:52 -0400
-Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3405AC061766;
-        Sat,  5 Jun 2021 16:20:04 -0700 (PDT)
-Received: by mail-pj1-x1035.google.com with SMTP id h16so7613061pjv.2;
-        Sat, 05 Jun 2021 16:20:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=EHOgEydSh9+f0K7RDourUcztPS+43uYqhQL+HmK3gfc=;
-        b=ck/JbiYSkmyLlHgzOC5W05WQSkIN1yegZ0mNuJiIz2oQxqq82ywWjKn0RN4SmGTo3s
-         e2RmljrWNossh37U6FR89v2++5sdRiDdXQRvTjiQPYZ40cnv6Z5HKtfATIAnhwPW2gg+
-         1TmYEnTdX+VR672DZ7QQt+gxjKWgDzNUgdriMN995I+jnLWex2DezAQCvzkPncewP5JW
-         UNddyYwyGGFfO4pgMVLBAaaasGKj4GJIteUt+DU+z5rrNS/j1wfL0kCfs9ekcZ7U7jb8
-         4M1+9Qgu09seQDXyFVKQuw78vuaYW/yxmeZ4qZlZhNcNP5o24CGICbqLMmZ8yLmetnus
-         I/Jw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=EHOgEydSh9+f0K7RDourUcztPS+43uYqhQL+HmK3gfc=;
-        b=MynLSV9hNYOjzEWs2pqzR6hYsm2JIiqzIPq+nh94voSDC8b0lX60WPn9lsT6Xfkqia
-         lMHRs635Yeu7o4Ms57aKcRKsq5Xlz4Ijkga8aaffNZmKVxoNxI4H6TJoWoYsUgKIjsuz
-         KsWLNqUc/jwW84Y3v5zwXU1AUhd3sQySplnOgCgoqpAHkyVObxrC97vN+RLXHPXGWRjh
-         yGpEL9+HGDMmIFDwhplEez0efGWALR5khzyZOtX56go5ml3o/6M3sJwiyL3s3IM+60Pr
-         pBUspJziQrqBIbS1eFfOKyztUBq7g6H7Bm7ePlsfwsocBmD6YYDuAjfUM98xLJKbrwzG
-         8HfQ==
-X-Gm-Message-State: AOAM533lYFlCio26ISRIViF2SP98aRGPKWhng18Rz6m6ENVGkIp8m7Id
-        ww2yxXll5p35oStZx5/H4Po=
-X-Google-Smtp-Source: ABdhPJyhunINVUM8Qu+6CCtPfFcyEZhDYekiYYIchtIxUFECds1bIzuN3AT1+9O6d0G6IPGNLugmNA==
-X-Received: by 2002:a17:902:bf04:b029:fd:7c7c:bbf3 with SMTP id bi4-20020a170902bf04b02900fd7c7cbbf3mr10858171plb.59.1622935202678;
-        Sat, 05 Jun 2021 16:20:02 -0700 (PDT)
-Received: from google.com ([2620:15c:202:201:5762:ab6a:6802:ef65])
-        by smtp.gmail.com with ESMTPSA id z7sm5210936pgr.28.2021.06.05.16.20.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 05 Jun 2021 16:20:01 -0700 (PDT)
-Date:   Sat, 5 Jun 2021 16:19:59 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Eugen Hristev <eugen.hristev@microchip.com>,
-        linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] Input: resistive-adc-touch: Fix uninitialized
- variable 'press'
-Message-ID: <YLwGnzqb2JvKKNnm@google.com>
-References: <20210603220809.155118-1-colin.king@canonical.com>
+        Sat, 5 Jun 2021 20:27:58 -0400
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.west.internal (Postfix) with ESMTP id 7B1EF1605;
+        Sat,  5 Jun 2021 20:26:09 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute3.internal (MEProxy); Sat, 05 Jun 2021 20:26:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
+         h=date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm1; bh=Nsy7FBok3E07qQqMA7OkliRXpBi
+        ITK1Kz/IxExHgNs0=; b=TW0W/YSFl8div1hslQekdgqt4a6LydIpFQ7Tr6cf+k5
+        AMOCFEs05NpDWYn5qyziC4+eByk8to6zjXGxuDPydN5okl2VogmsXDnlwgZP8BFn
+        /Tfx3JZHz2P5mKvUvC1a4CMTK4+WkgpDZAZySj8G2npKtMAqrCW9kuNDL9CtnJGI
+        uwwxQJNoF82zxBSbaKCslf90IabLQu/r26Arc/UHfNS3O4Aq9GQ4RxqoI4TUc+Kg
+        WwDvZqWW1Jre7Ih8vwd0UnNZI5QgrmH22mwZuHbQ5w2fE8tjOILnBlHdrcRBAqWj
+        PVfuq9yy3Kb5ZNVDlZS8/pcfP7AoRJSSRix8EWhsiog==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=Nsy7FB
+        ok3E07qQqMA7OkliRXpBiITK1Kz/IxExHgNs0=; b=PaIu85dfGJ616V73AuMUmG
+        Gkw3yKhfIkJFTrF/oAesuzal0vMgMZcWTJSm3ZxUlC31XcX26atX76ATzJphxuTx
+        K8l3dUaVx0jhUwFa1aR9XmI48wFJ89i9bKJIfESJ5hdcz7VfXVB+JyqWM8aKTFpe
+        3eozb9f7hZJq5X3UQBcwXQOk6O8WWzuKF9cGhqRTYIFGKWuQgQ/YAHvaw00HBIBd
+        xaZiV1LUox+w9Pbo/VnfO+ZConNDN/Ir/y9Zaaja3nlvQbQO7BOn+S7cPWDiEaYt
+        InesurtTnJYIqUFCagmKzCqEKGrw6AZUaNMVNY+4wyFqjJtuMLlhCNnPf0Db+wuA
+        ==
+X-ME-Sender: <xms:IBa8YI5_CSoXyRkuvPV2n2MF3Z1siatI1G5CmU59AQW5CPR-3Pzr7A>
+    <xme:IBa8YJ7_gnFA5s8dq0WkvEf7zBJtuJLw9Di_rgLL7WUj0qMPppYPXYnUKwwtuDoXq
+    3OSXpD8CT6H9JJuajU>
+X-ME-Received: <xmr:IBa8YHcid6eRVaGllj1mFW7dKDK-fN7Me8XPFUfFlmUfemSE29GbTk7Tz9XkEst2ll400rFrhJoitwIEU8qMuej_HDQkFtBbzQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrfedtgedgfeehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefvrghkrghs
+    hhhiucfurghkrghmohhtohcuoehoqdhtrghkrghshhhisehsrghkrghmohgttghhihdrjh
+    hpqeenucggtffrrghtthgvrhhnpeelhfeugedvjefgjefgudekfedutedvtddutdeuieev
+    tddtgeetjeekvdefgeefhfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
+    grihhlfhhrohhmpehoqdhtrghkrghshhhisehsrghkrghmohgttghhihdrjhhp
+X-ME-Proxy: <xmx:IBa8YNICSJNqzywXJ7oFOaIynIJeSLugxQ4q8vn48VhozvzxMFdFPA>
+    <xmx:IBa8YMKjDVoJMp1G-uXrDIcGX18SkcqCehV80RzXbgZxg2gBRIEdWg>
+    <xmx:IBa8YOyhrUx2rvJ54xc-IxbPzfa0q4c2OW_g2VjdKUkBccuDnqmfvQ>
+    <xmx:IRa8YBG42ENDjlpflxIVBbK3lB8mbSB30UdQh7Rn4BVco__ZjWGKVg>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 5 Jun 2021 20:26:06 -0400 (EDT)
+Date:   Sun, 6 Jun 2021 09:26:04 +0900
+From:   Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Clemens Ladisch <clemens@ladisch.de>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] ALSA: firewire-lib: fix error codes for allocation
+ failure
+Message-ID: <20210606002604.GA4284@workstation>
+Mail-Followup-To: Dan Carpenter <dan.carpenter@oracle.com>,
+        Clemens Ladisch <clemens@ladisch.de>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+References: <YLtyL4VoArwVLor1@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210603220809.155118-1-colin.king@canonical.com>
+In-Reply-To: <YLtyL4VoArwVLor1@mwanda>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Colin,
+Hi,
 
-On Thu, Jun 03, 2021 at 11:08:09PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On Sat, Jun 05, 2021 at 03:46:39PM +0300, Dan Carpenter wrote:
+> Return -ENOMEM if kcalloc() fails.  Currently the code returns success.
 > 
-> In the case where st->ch_map[GRTS_CH_PRESSURE] < GRTS_MAX_CHANNELS is false
-> and also st->ch_map[GRTS_CH_Z1] < GRTS_MAX_CHANNELS is false the variable
-> press is not initialized and contains garbage. This affects a later
-> comparison of press < st->pressure_min.
+> Fixes: f9e5ecdfc2c2 ("ALSA: firewire-lib: add replay target to cache sequence of packet")
+> Fixes: 6f24bb8a157c ("ALSA: firewire-lib: pool sequence of packet in IT context independently")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  sound/firewire/amdtp-stream.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/sound/firewire/amdtp-stream.c b/sound/firewire/amdtp-stream.c
+> index 945597ffacc2..b37cec3cc579 100644
+> --- a/sound/firewire/amdtp-stream.c
+> +++ b/sound/firewire/amdtp-stream.c
+> @@ -1625,8 +1625,10 @@ static int amdtp_stream_start(struct amdtp_stream *s, int channel, int speed,
+>  			s->ctx_data.tx.cache.tail = 0;
+>  			s->ctx_data.tx.cache.descs = kcalloc(s->ctx_data.tx.cache.size,
+>  						sizeof(*s->ctx_data.tx.cache.descs), GFP_KERNEL);
+> -			if (!s->ctx_data.tx.cache.descs)
+> +			if (!s->ctx_data.tx.cache.descs) {
+> +				err = -ENOMEM;
+>  				goto err_context;
+> +			}
+>  		}
+>  	} else {
+>  		static const struct {
+> @@ -1643,8 +1645,10 @@ static int amdtp_stream_start(struct amdtp_stream *s, int channel, int speed,
+>  		};
+>  
+>  		s->ctx_data.rx.seq.descs = kcalloc(queue_size, sizeof(*s->ctx_data.rx.seq.descs), GFP_KERNEL);
+> -		if (!s->ctx_data.rx.seq.descs)
+> +		if (!s->ctx_data.rx.seq.descs) {
+> +			err = -ENOMEM;
+>  			goto err_context;
+> +		}
+>  		s->ctx_data.rx.seq.size = queue_size;
+>  		s->ctx_data.rx.seq.tail = 0;
+>  		s->ctx_data.rx.seq.head = 0;
+> -- 
+> 2.30.2
+ 
+Indeed... Nice to catch it.
 
-If neither of the conditions is true, then st->pressure is also false,
-and we will not be evaluating condition involving "press". However it is
-impossible for the compiler/Coverity to figure this out, so I'll apply
-the patch adjusting the description a bit.
+Acked-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 
-Thanks.
 
--- 
-Dmitry
+Thanks
+
+Takashi Sakamoto.
