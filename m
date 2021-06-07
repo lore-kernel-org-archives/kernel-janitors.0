@@ -8,74 +8,70 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9700C47094
-	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Jun 2021 17:18:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58538C47082
+	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Jun 2021 17:21:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AE7AB61073
-	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Jun 2021 17:18:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CAD56102A
+	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Jun 2021 17:21:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230406AbhFGRUf (ORCPT
+        id S230428AbhFGRXg (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 7 Jun 2021 13:20:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34672 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230233AbhFGRUe (ORCPT
+        Mon, 7 Jun 2021 13:23:36 -0400
+Received: from mail-ot1-f50.google.com ([209.85.210.50]:42815 "EHLO
+        mail-ot1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230241AbhFGRXf (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 7 Jun 2021 13:20:34 -0400
-Received: from mail-oi1-x232.google.com (mail-oi1-x232.google.com [IPv6:2607:f8b0:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39ED0C061766;
-        Mon,  7 Jun 2021 10:18:43 -0700 (PDT)
-Received: by mail-oi1-x232.google.com with SMTP id t40so5804468oiw.8;
-        Mon, 07 Jun 2021 10:18:43 -0700 (PDT)
+        Mon, 7 Jun 2021 13:23:35 -0400
+Received: by mail-ot1-f50.google.com with SMTP id w23-20020a9d5a970000b02903d0ef989477so13066357oth.9;
+        Mon, 07 Jun 2021 10:21:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Bs0iIp2b+xLwRPkKeIWpOD/7m4nhQ2yrv+tV+dY2+Dk=;
-        b=ZfJqjDRtbPhKwBfzpuNEpxC+DixbiXqh1fDLnKXYnFPI9Qlf1ttw6aMTd691KAb0Nw
-         ap3EFjQ+F1P/azkjwjFcJeplW20c8Wy6rjIAmiBeQoqKJH06tOpZ1ZxK8mXwXNZmU4Mx
-         z1Zyl6+qqWUh4SVUR92ud5048RIyYmOg+5JJNAI8yoCx9nbMxHazeBm79+GM1fF22BzC
-         LSNRJ7TCk9ni35039MOrYp56Cn62e7XcsMy2W6AAr53IWdOXTJY2MN+62tsZ0I+Aeu6R
-         He586b00SYq/ywaPZ6ehXU4jLQGpDiMhI0UNYVyK9P/mkSM36+TBm2C58avFcUFUoNH7
-         iQdg==
+         :cc;
+        bh=wIsZEzKuedmNrkE8sWmADzsVq5Ce7bsvNlcNsZxTnRY=;
+        b=g13yFXluOkzEJmOZQmZQEQXcaP5WqUhlO0+vdTKZ+lHxSMjjYXxAPEbAfNwkDboqTH
+         qb1kOYOjC10Rb2yEMyYhFHgRGH5aqUBpJqrCgamlEp/drI181Kw1NC0eP/fbQaUGqgjf
+         lhQ8uJNbtt3vMqD3kalgHbYJAztqVaWdAjhcwZHYRliQfsbFSc0aS426zQ9y/5lo9Z1a
+         cHbJ/l3t/8ToWpcggpaX0kcdYI3JX8mUD09TUlFI4VsveMbMVQtazwsktniMjcPPIjXy
+         mpaTh0FgX2P8TbVNDNi7o4rKHl2X3RFUUSKXmkWi3FtgMaVF018evvpg0idGYoIzmrcn
+         nXAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Bs0iIp2b+xLwRPkKeIWpOD/7m4nhQ2yrv+tV+dY2+Dk=;
-        b=hV47wtoBXe0v17Hmi2BsfF1Gqbj17N/DQXi0w8T7BDb8Im5pg/sodNx/hG1G07SlFd
-         l5NVhuMpOX/G/O9/C3XWriNM9TSGABogEfKXQ9nOL5UGxTOHvCPQThzvIOtc9cto6Z1l
-         nwy5yLRTeI78A7kH5ZR7+oRPxRBUYgqgfJ6vQcj5HEf+4kwsAVQh+ZIndIz/5SGFu8EU
-         x2j9KBOffg/3N3rgKQtbd9pZxeagnmRBgoVczaqU7GX0Dcb7lJIXoxo5Ofqd38GBGNdt
-         zG5CYtE2YmZ5aGj4M0bcsvjmXbNBbCVbiyx+dDqzkIG28hebAy5IvvnnMm6z4mDBZfW6
-         Z6fg==
-X-Gm-Message-State: AOAM530pqtPDxj/bpThJTVCPOvn20wH8DuxLJfzoHHULkFu9GWmeq+BM
-        e4H/fdhva3e4qGK9BI7gCYOzSHtk79XadRpTSD+eNGXh
-X-Google-Smtp-Source: ABdhPJyirKNeUEEtw5y9m++p4gcGiiOq1LOMwU9dlkkw7YMYbr+3rPlg1bL7kJG8ZiRpSn4RBR+dXRzlWAbHbNNqDsM=
-X-Received: by 2002:a05:6808:249:: with SMTP id m9mr196398oie.120.1623086319382;
- Mon, 07 Jun 2021 10:18:39 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=wIsZEzKuedmNrkE8sWmADzsVq5Ce7bsvNlcNsZxTnRY=;
+        b=P1lvlSDAFLh+xRxIcR8BnxLvYV4qQAvSj6Uz+J0IzdBneUQKc94hDExQWW5Ip5HkJt
+         LIoXwucTU9QLGsqF4OQ5HF2MeIQOxHqEOK8cKpJdZSiwLHhXydcHvBL2LjIh5ps/c/VY
+         XB1+WdXmUNwARkHnMbTJ4FqtjjmXYl7DfrF49LThk1LXKaEPmoN7vCTKEFIy1+qcK5Hh
+         lRZIJtB6lncd4j8O/KRUonSS36/aD2slARzvU3fEg3mS4IjU23qorbO5QI8wpM9OupSl
+         9M9FsslzQCIj6ryVpNL0S8YN7uT+3MWRi0xqJcBa0ecFYH+VrUsfq3j+a5AED84+7dWi
+         /QvA==
+X-Gm-Message-State: AOAM5323jiXtHFIioZvRp3RO9xerd5mjXaZvYkCrymCyxQfoDLc1XHGZ
+        Ofkx5OxN0mVMcuZfmDgaNLN72ftgKQCx5V6oUuQ=
+X-Google-Smtp-Source: ABdhPJyEPIh1daP/HlBQeYnqMwlKB+lCnze26NeJPRgO+gQi876Ow+pkdIucW4umZTuqTIDRv1izuUb+vrRu7TofTFU=
+X-Received: by 2002:a9d:6548:: with SMTP id q8mr14588598otl.311.1623086431533;
+ Mon, 07 Jun 2021 10:20:31 -0700 (PDT)
 MIME-Version: 1.0
-References: <ea7ecbef546a03ef71d65bfe82608bb347e6f3c2.1622883895.git.christophe.jaillet@wanadoo.fr>
- <99a5eba3-2d2a-65a8-9b03-a3d4043c5ec5@gmail.com>
-In-Reply-To: <99a5eba3-2d2a-65a8-9b03-a3d4043c5ec5@gmail.com>
+References: <20210607115615.83162-1-colin.king@canonical.com>
+In-Reply-To: <20210607115615.83162-1-colin.king@canonical.com>
 From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Mon, 7 Jun 2021 13:18:28 -0400
-Message-ID: <CADnq5_PSw_zLDpdpAgxbUKLH54toLyxL23Ytw0q8G+xBzcaeRQ@mail.gmail.com>
-Subject: Re: [PATCH] drm/amdgpu: Fix a a typo in a comment
-To:     =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>
-Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        "Deucher, Alexander" <alexander.deucher@amd.com>,
-        Christian Koenig <christian.koenig@amd.com>,
+Date:   Mon, 7 Jun 2021 13:20:20 -0400
+Message-ID: <CADnq5_N=++KR_YjOO2DURYfe4Hp3b5=eDVh4Gp7xpcfPXFF8_w@mail.gmail.com>
+Subject: Re: [PATCH][next] drm/amd/display: Fix two spelling mistakes, clean
+ wide lines
+To:     Colin King <colin.king@canonical.com>
+Cc:     Harry Wentland <harry.wentland@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
         xinhui pan <Xinhui.Pan@amd.com>,
-        Dave Airlie <airlied@linux.ie>,
+        David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>,
-        kernel-janitors@vger.kernel.org,
         amd-gfx list <amd-gfx@lists.freedesktop.org>,
         Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>,
+        <dri-devel@lists.freedesktop.org>, kernel-janitors@vger.kernel.org,
         LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -84,38 +80,47 @@ Applied.  Thanks!
 
 Alex
 
-On Mon, Jun 7, 2021 at 6:46 AM Christian K=C3=B6nig
-<ckoenig.leichtzumerken@gmail.com> wrote:
+On Mon, Jun 7, 2021 at 7:58 AM Colin King <colin.king@canonical.com> wrote:
 >
-> Am 05.06.21 um 11:06 schrieb Christophe JAILLET:
-> > s/than/then/
-> >
-> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> From: Colin Ian King <colin.king@canonical.com>
 >
-> Acked-by: Christian K=C3=B6nig <christian.koenig@amd.com>
+> There are two spelling mistakes in dml_print messages, fix these and
+> clear up checkpatch warning on overly wide line length.
 >
-> > ---
-> >   drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c b/drivers/gpu/drm/a=
-md/amdgpu/amdgpu_cs.c
-> > index 89ebbf363e27..1476236f5c7c 100644
-> > --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
-> > +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
-> > @@ -662,7 +662,7 @@ static int amdgpu_cs_sync_rings(struct amdgpu_cs_pa=
-rser *p)
-> >    * @error:  error number
-> >    * @backoff:        indicator to backoff the reservation
-> >    *
-> > - * If error is set than unvalidate buffer, otherwise just free memory
-> > + * If error is set then unvalidate buffer, otherwise just free memory
-> >    * used by parsing context.
-> >    **/
-> >   static void amdgpu_cs_parser_fini(struct amdgpu_cs_parser *parser, in=
-t error,
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  .../drm/amd/display/dc/dml/dcn31/display_mode_vba_31.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
 >
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
+> diff --git a/drivers/gpu/drm/amd/display/dc/dml/dcn31/display_mode_vba_31.c b/drivers/gpu/drm/amd/display/dc/dml/dcn31/display_mode_vba_31.c
+> index c725160a095b..d655655baaba 100644
+> --- a/drivers/gpu/drm/amd/display/dc/dml/dcn31/display_mode_vba_31.c
+> +++ b/drivers/gpu/drm/amd/display/dc/dml/dcn31/display_mode_vba_31.c
+> @@ -1494,10 +1494,11 @@ static bool CalculatePrefetchSchedule(
+>                 dml_print(
+>                                 "DML:  Tsw: %fus = time to fetch enough pixel data and cursor data to feed the scalers init position and detile\n",
+>                                 (double) LinesToRequestPrefetchPixelData * LineTime);
+> -               dml_print("DML: To: %fus - time for propogation from scaler to optc\n", (*DSTYAfterScaler + ((double) (*DSTXAfterScaler) / (double) myPipe->HTotal)) * LineTime);
+> +               dml_print("DML: To: %fus - time for propagation from scaler to optc\n",
+> +                         (*DSTYAfterScaler + ((double) (*DSTXAfterScaler) /
+> +                         (double) myPipe->HTotal)) * LineTime);
+>                 dml_print("DML: Tvstartup - TSetup - Tcalc - Twait - Tpre - To > 0\n");
+> -               dml_print(
+> -                               "DML: Tslack(pre): %fus - time left over in schedule\n",
+> +               dml_print("DML: Tslack(pre): %fus - time left over in schedule\n",
+>                                 VStartup * LineTime - TimeForFetchingMetaPTE - 2 * TimeForFetchingRowInVBlank
+>                                                 - (*DSTYAfterScaler + ((double) (*DSTXAfterScaler) / (double) myPipe->HTotal)) * LineTime - TWait - TCalc - *TSetup);
+>                 dml_print("DML: row_bytes = dpte_row_bytes (per_pipe) = PixelPTEBytesPerRow = : %d\n", PixelPTEBytesPerRow);
+> @@ -3023,7 +3024,8 @@ static void DISPCLKDPPCLKDCFCLKDeepSleepPrefetchParametersWatermarksAndPerforman
+>                         for (k = 0; k < v->NumberOfActivePlanes; ++k) {
+>                                 if (v->ImmediateFlipSupportedForPipe[k] == false) {
+>  #ifdef __DML_VBA_DEBUG__
+> -                                       dml_print("DML::%s: Pipe %0d not supporing iflip\n", __func__, k);
+> +                                       dml_print("DML::%s: Pipe %0d not supporting iflip\n",
+> +                                                 __func__, k);
+>  #endif
+>                                         v->ImmediateFlipSupported = false;
+>                                 }
+> --
+> 2.31.1
+>
