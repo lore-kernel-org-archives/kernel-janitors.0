@@ -2,114 +2,103 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 021C2C47082
-	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Jun 2021 09:35:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62237C47094
+	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Jun 2021 10:47:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CE29F61107
-	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Jun 2021 09:35:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47112611C0
+	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Jun 2021 10:47:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230219AbhFGJhj (ORCPT
+        id S230219AbhFGKtK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 7 Jun 2021 05:37:39 -0400
-Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:50717 "EHLO
-        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229436AbhFGJhi (ORCPT
+        Mon, 7 Jun 2021 06:49:10 -0400
+Received: from mail-wm1-f44.google.com ([209.85.128.44]:42890 "EHLO
+        mail-wm1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230193AbhFGKtI (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 7 Jun 2021 05:37:38 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=chengshuyi@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0UbaGK7H_1623058536;
-Received: from localhost(mailfrom:chengshuyi@linux.alibaba.com fp:SMTPD_---0UbaGK7H_1623058536)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 07 Jun 2021 17:35:44 +0800
-From:   Shuyi Cheng <chengshuyi@linux.alibaba.com>
-To:     chengshuyi@linux.alibaba.com, edumazet@google.com,
-        davem@davemloft.net, kuba@kernel.org, yoshfuji@linux-ipv6.org,
-        dsahern@kernel.org
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH net-next] net: tcp:  Updating MSS, when the sending window is smaller than MSS.
-Date:   Mon,  7 Jun 2021 17:35:34 +0800
-Message-Id: <1623058534-78782-1-git-send-email-chengshuyi@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
+        Mon, 7 Jun 2021 06:49:08 -0400
+Received: by mail-wm1-f44.google.com with SMTP id l7-20020a05600c1d07b02901b0e2ebd6deso1593212wms.1;
+        Mon, 07 Jun 2021 03:47:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=KcIhVJsL3yrPFMmj6Xxxh1AoiEa6qKo1bMNhV5zzVU4=;
+        b=nIfQIgvwVppIuEFSzUQVquUbbMHHEiotd+EFEBy2MJDMpTxLbCzIJy3aL/h4WE87Kn
+         PZmaBHFFRSEyEXosjbP2EZuixX75V/ZhtvLfb3tXHHCLT8xBRROW5+nSD0zJLEcmoeVN
+         No3BFvOuW2XoLcusEFKJVtfhw1/tV5mRmIZHmZJRb8Pp2eAcrbsrB0OQ5rgbeMGngY0n
+         F5UJPn7xyZ2uBXdwMD5qm2oaerqyfBROtOylfHWUtzoeD5hz2o7dCgiBLTpn1poBCd0B
+         DR0ZcEROaNyxZCGESxd5MgNG1KMlm08QE/eQ64AeQ500Wr/hrblXZHFYrAjA34LZIh3F
+         1T6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=KcIhVJsL3yrPFMmj6Xxxh1AoiEa6qKo1bMNhV5zzVU4=;
+        b=cc1JVZIxKZW0a+djyAqq/rFlHGk635qzYj2jb2ueJ60SxYojxsxGxmen//TutYh4ac
+         vmGT0K7lElurg/w8mWrTODV94HmvJVCNVsqATPz9St22v8ytiu6inWHc8pmr4u0kA80V
+         eYENLcsCz/X0AODTKH9ZLQmPLeM8J3RrC3F6jGVmhI0mHcuIHdT4Vq74Uy7rx+RnQn8f
+         5hYW0kLA5srN5X4dk+3QAL/cyUS0Nz0SOpkrt326P7Y3Ypz35G0ajDu474J/ElCf7ryA
+         d9xTW8+LrSLdWdOIS2jy3awRLaz6lqsHzOku+bHsRE9FE3KduZIeX+JH8BOCUtsV1PZR
+         958A==
+X-Gm-Message-State: AOAM530W0qnuTWheOwa2XCPJeI6vIfdjo0PDySMdsf0VguiLXuYFMtMY
+        Y4rI/PEzKWNKQH3TW3Z898wLWAHZLsk=
+X-Google-Smtp-Source: ABdhPJz5mNoADFlUvoQOZLVGYoQSWnoQIBz5yANTWqTzpJFPZOVBzoohGEELM71BXZ+Lolragqs//Q==
+X-Received: by 2002:a05:600c:5122:: with SMTP id o34mr8135390wms.168.1623062776700;
+        Mon, 07 Jun 2021 03:46:16 -0700 (PDT)
+Received: from ?IPv6:2a02:908:1252:fb60:ce67:4e4d:875d:ffeb? ([2a02:908:1252:fb60:ce67:4e4d:875d:ffeb])
+        by smtp.gmail.com with ESMTPSA id v7sm17854646wrf.82.2021.06.07.03.46.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Jun 2021 03:46:16 -0700 (PDT)
+Subject: Re: [PATCH] drm/amdgpu: Fix a a typo in a comment
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        alexander.deucher@amd.com, christian.koenig@amd.com,
+        Xinhui.Pan@amd.com, airlied@linux.ie, daniel@ffwll.ch
+Cc:     kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <ea7ecbef546a03ef71d65bfe82608bb347e6f3c2.1622883895.git.christophe.jaillet@wanadoo.fr>
+From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>
+Message-ID: <99a5eba3-2d2a-65a8-9b03-a3d4043c5ec5@gmail.com>
+Date:   Mon, 7 Jun 2021 12:46:15 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
+MIME-Version: 1.0
+In-Reply-To: <ea7ecbef546a03ef71d65bfe82608bb347e6f3c2.1622883895.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-When the lo network card is used for communication, the tcp server
-reduces the size of the receiving buffer, causing the tcp client
-to have a delay of 200ms. Examples are as follows:
+Am 05.06.21 um 11:06 schrieb Christophe JAILLET:
+> s/than/then/
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Suppose that the MTU of the lo network card is 65536, and the tcp server
-sets the receive buffer size to 42KB. According to the
-tcp_bound_to_half_wnd function, the MSS of the server and client is
-21KB. Then, the tcp server sets the buffer size of the connection to
-16KB. At this time, the MSS of the server is 8KB, and the MSS of the
-client is still 21KB. But it will cause the client to fail to send the
-message, that is, tcp_write_xmit fails. Mainly because tcp_snd_wnd_test
-failed, and then entered the zero window detection phase, resulting in a
-200ms delay.
+Acked-by: Christian König <christian.koenig@amd.com>
 
-Therefore, we mainly modify two places. One is the tcp_current_mss
-function. When the sending window is smaller than the current mss, mss
-needs to be updated. The other is the tcp_bound_to_half_wnd function.
-When the sending window is smaller than the current mss, the mss value
-should be calculated according to the current sending window, not
-max_window.
-
-Signed-off-by: Shuyi Cheng <chengshuyi@linux.alibaba.com>
----
- include/net/tcp.h     | 11 ++++++++---
- net/ipv4/tcp_output.c |  3 ++-
- 2 files changed, 10 insertions(+), 4 deletions(-)
-
-diff --git a/include/net/tcp.h b/include/net/tcp.h
-index e668f1b..fcdef16 100644
---- a/include/net/tcp.h
-+++ b/include/net/tcp.h
-@@ -641,6 +641,11 @@ static inline void tcp_clear_xmit_timers(struct sock *sk)
- static inline int tcp_bound_to_half_wnd(struct tcp_sock *tp, int pktsize)
- {
- 	int cutoff;
-+	int window;
-+
-+	window = tp->max_window;
-+	if (tp->snd_wnd && tp->snd_wnd < pktsize)
-+		window = tp->snd_wnd;
- 
- 	/* When peer uses tiny windows, there is no use in packetizing
- 	 * to sub-MSS pieces for the sake of SWS or making sure there
-@@ -649,10 +654,10 @@ static inline int tcp_bound_to_half_wnd(struct tcp_sock *tp, int pktsize)
- 	 * On the other hand, for extremely large MSS devices, handling
- 	 * smaller than MSS windows in this way does make sense.
- 	 */
--	if (tp->max_window > TCP_MSS_DEFAULT)
--		cutoff = (tp->max_window >> 1);
-+	if (window > TCP_MSS_DEFAULT)
-+		cutoff = (window >> 1);
- 	else
--		cutoff = tp->max_window;
-+		cutoff = window;
- 
- 	if (cutoff && pktsize > cutoff)
- 		return max_t(int, cutoff, 68U - tp->tcp_header_len);
-diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
-index bde781f..88dcdf2 100644
---- a/net/ipv4/tcp_output.c
-+++ b/net/ipv4/tcp_output.c
-@@ -1833,7 +1833,8 @@ unsigned int tcp_current_mss(struct sock *sk)
- 
- 	if (dst) {
- 		u32 mtu = dst_mtu(dst);
--		if (mtu != inet_csk(sk)->icsk_pmtu_cookie)
-+		if (mtu != inet_csk(sk)->icsk_pmtu_cookie ||
-+		    (tp->snd_wnd && tp->snd_wnd < mss_now))
- 			mss_now = tcp_sync_mss(sk, mtu);
- 	}
- 
--- 
-1.8.3.1
+> ---
+>   drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
+> index 89ebbf363e27..1476236f5c7c 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
+> @@ -662,7 +662,7 @@ static int amdgpu_cs_sync_rings(struct amdgpu_cs_parser *p)
+>    * @error:	error number
+>    * @backoff:	indicator to backoff the reservation
+>    *
+> - * If error is set than unvalidate buffer, otherwise just free memory
+> + * If error is set then unvalidate buffer, otherwise just free memory
+>    * used by parsing context.
+>    **/
+>   static void amdgpu_cs_parser_fini(struct amdgpu_cs_parser *parser, int error,
 
