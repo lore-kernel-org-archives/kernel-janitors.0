@@ -2,125 +2,138 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58538C47082
-	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Jun 2021 17:21:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A27CBC47095
+	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Jun 2021 18:08:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3CAD56102A
-	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Jun 2021 17:21:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F5BC60FDA
+	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Jun 2021 18:08:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230428AbhFGRXg (ORCPT
+        id S231209AbhFGSK1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 7 Jun 2021 13:23:36 -0400
-Received: from mail-ot1-f50.google.com ([209.85.210.50]:42815 "EHLO
-        mail-ot1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230241AbhFGRXf (ORCPT
+        Mon, 7 Jun 2021 14:10:27 -0400
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:36541 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230479AbhFGSK0 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 7 Jun 2021 13:23:35 -0400
-Received: by mail-ot1-f50.google.com with SMTP id w23-20020a9d5a970000b02903d0ef989477so13066357oth.9;
-        Mon, 07 Jun 2021 10:21:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wIsZEzKuedmNrkE8sWmADzsVq5Ce7bsvNlcNsZxTnRY=;
-        b=g13yFXluOkzEJmOZQmZQEQXcaP5WqUhlO0+vdTKZ+lHxSMjjYXxAPEbAfNwkDboqTH
-         qb1kOYOjC10Rb2yEMyYhFHgRGH5aqUBpJqrCgamlEp/drI181Kw1NC0eP/fbQaUGqgjf
-         lhQ8uJNbtt3vMqD3kalgHbYJAztqVaWdAjhcwZHYRliQfsbFSc0aS426zQ9y/5lo9Z1a
-         cHbJ/l3t/8ToWpcggpaX0kcdYI3JX8mUD09TUlFI4VsveMbMVQtazwsktniMjcPPIjXy
-         mpaTh0FgX2P8TbVNDNi7o4rKHl2X3RFUUSKXmkWi3FtgMaVF018evvpg0idGYoIzmrcn
-         nXAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wIsZEzKuedmNrkE8sWmADzsVq5Ce7bsvNlcNsZxTnRY=;
-        b=P1lvlSDAFLh+xRxIcR8BnxLvYV4qQAvSj6Uz+J0IzdBneUQKc94hDExQWW5Ip5HkJt
-         LIoXwucTU9QLGsqF4OQ5HF2MeIQOxHqEOK8cKpJdZSiwLHhXydcHvBL2LjIh5ps/c/VY
-         XB1+WdXmUNwARkHnMbTJ4FqtjjmXYl7DfrF49LThk1LXKaEPmoN7vCTKEFIy1+qcK5Hh
-         lRZIJtB6lncd4j8O/KRUonSS36/aD2slARzvU3fEg3mS4IjU23qorbO5QI8wpM9OupSl
-         9M9FsslzQCIj6ryVpNL0S8YN7uT+3MWRi0xqJcBa0ecFYH+VrUsfq3j+a5AED84+7dWi
-         /QvA==
-X-Gm-Message-State: AOAM5323jiXtHFIioZvRp3RO9xerd5mjXaZvYkCrymCyxQfoDLc1XHGZ
-        Ofkx5OxN0mVMcuZfmDgaNLN72ftgKQCx5V6oUuQ=
-X-Google-Smtp-Source: ABdhPJyEPIh1daP/HlBQeYnqMwlKB+lCnze26NeJPRgO+gQi876Ow+pkdIucW4umZTuqTIDRv1izuUb+vrRu7TofTFU=
-X-Received: by 2002:a9d:6548:: with SMTP id q8mr14588598otl.311.1623086431533;
- Mon, 07 Jun 2021 10:20:31 -0700 (PDT)
+        Mon, 7 Jun 2021 14:10:26 -0400
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailout.nyi.internal (Postfix) with ESMTP id E0C625C02C3;
+        Mon,  7 Jun 2021 14:08:34 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Mon, 07 Jun 2021 14:08:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=awxrd.com; h=
+        date:from:to:cc:subject:message-id:in-reply-to:references
+        :mime-version:content-type:content-transfer-encoding; s=fm3; bh=
+        lIBC8OXBc0UOBvvpVKG1lSuscKtvmgtSWseimQKjCfo=; b=h891jaTRSurzEDAW
+        LHcIOjMoEvng3nQ1ZdfO5sIzPV3sHexSyFPCH7+q66yAT4PWEQKkDSy9/S41SgN2
+        2AHD8koQ59p3xdVtVF3EuxG105Y+6fHmyZ9b2AvUumYIAxz0NbfmW7un62+EFa2j
+        9TEj3Wn4jR/n3a5pid/3GZTRSLWb+GHiUFko2VSuXKfI3C2Su39asyQHhKR6OkkE
+        VbPi7sVFjtrx2O84e0nBlgCKllDzdvhloZIwOoekJhuMVtWTyoFnWRfOIJ58+dIn
+        PrD/dAmeOhbn1/2DlpIDMOeydgsCDb9nFsAdOy6QtPRscVLyKKpQBPC7SpGJcszj
+        IG+Z3w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; bh=lIBC8OXBc0UOBvvpVKG1lSuscKtvmgtSWseimQKjC
+        fo=; b=D1AVFrpMUXHbbF6kA++4FtJ9/0KRhh57WcFlLBF/+AdwwvRkzCGmkdhpM
+        OXG8r08CVbFfbMeOZ43AbGsddEhNfane+X/3cQT1NBD50fvhr1tzEnbeBokPkMpV
+        G7saBP4zppoSajT1JyQzDTWk9I/t0m4+0U3pJaJyjfYVU0dNL2Gpy3b82XlDMGWR
+        5+yKkh3bMmRnr2vgbeoomgnygVEOzuzhyuMQ5iNuWzQZQwLtbdVJultZfTPOYsxP
+        NNIY5B4kwtGQnoFKRKszl8VgYMDQdDsP0NQLAX9bq6xHPaAUtu7BmEHHqnGetET5
+        he80GW3lzkTAINW6yV7XMQALv7VfA==
+X-ME-Sender: <xms:omC-YPPntauLKj_uH53AYmprv16w7xM7k7NiwOfGM6YfNcqPslSZAQ>
+    <xme:omC-YJ8w0mBz4pPCK7Wsoo_GDh1mydv7QcbS_kvDAQJgV8fwe5q8OAsn86Shu811t
+    J0oldQJAsMccQF80w>
+X-ME-Received: <xmr:omC-YOTlIb0MeYsh-fHfAJQ3utNBAiIRQwO7CVVwK9W70-clX5D6oJjRbARms3779xlWrczgh7n3DeLIwwIyn3NiiQKPcw5T6pc-uqG6fw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrfedtjedguddvudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepffgr
+    vhhiugcutfhivhhshhhinhcuoegurhhivhhshhhinhesrgifgihrugdrtghomheqnecugg
+    ftrfgrthhtvghrnhepgfevgeelkeffueevtddtffdthfelveffkeeuteevveeuudeltefh
+    feeiieetveehnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghruf
+    hiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegurhhivhhshhhinhesrgifgihr
+    ugdrtghomh
+X-ME-Proxy: <xmx:omC-YDsmDefW7sGK07OK1sLag_1Rn_ayfqsm5-SciHsQl4jT2WFiGg>
+    <xmx:omC-YHcNmtWoRB3ZtisQOGTS_4t065ThoEKkt7UTMhuZ0dAB9Ns_ow>
+    <xmx:omC-YP1BS3fV-I-gLjHY0qHSHW41Iyx0ILiJr8wm-_rejiNfb2N6sw>
+    <xmx:omC-YO6vKMApay17R_L3NoMyNtVOUs3lnKXPeMeIEtgU5CtI1AJSgA>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 7 Jun 2021 14:08:33 -0400 (EDT)
+Date:   Mon, 7 Jun 2021 14:08:55 -0400
+From:   David Rivshin <drivshin@awxrd.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Pavel Machek <pavel@ucw.cz>, David Rivshin <drivshin@allworx.com>,
+        Jacek Anaszewski <j.anaszewski@samsung.com>,
+        linux-leds@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] leds: leds-is31fl32xx: fix an error in
+ is31fl32xx_parse_dt()
+Message-ID: <20210607140855.0f6e82c9.drivshin@awxrd.com>
+In-Reply-To: <YLtyxq0Ty/7Uo4NS@mwanda>
+References: <YLtyxq0Ty/7Uo4NS@mwanda>
+Organization: Allworx
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-References: <20210607115615.83162-1-colin.king@canonical.com>
-In-Reply-To: <20210607115615.83162-1-colin.king@canonical.com>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Mon, 7 Jun 2021 13:20:20 -0400
-Message-ID: <CADnq5_N=++KR_YjOO2DURYfe4Hp3b5=eDVh4Gp7xpcfPXFF8_w@mail.gmail.com>
-Subject: Re: [PATCH][next] drm/amd/display: Fix two spelling mistakes, clean
- wide lines
-To:     Colin King <colin.king@canonical.com>
-Cc:     Harry Wentland <harry.wentland@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        xinhui pan <Xinhui.Pan@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>, kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Applied.  Thanks!
+On Sat, 5 Jun 2021 15:49:10 +0300
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-Alex
-
-On Mon, Jun 7, 2021 at 7:58 AM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> There are two spelling mistakes in dml_print messages, fix these and
-> clear up checkpatch warning on overly wide line length.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Return -EBUSY if the data is already in use (instead of returning
+> success).
+> 
+> Fixes: 9d7cffaf99f5 ("leds: Add driver for the ISSI IS31FL32xx family of LED controllers")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > ---
->  .../drm/amd/display/dc/dml/dcn31/display_mode_vba_31.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/display/dc/dml/dcn31/display_mode_vba_31.c b/drivers/gpu/drm/amd/display/dc/dml/dcn31/display_mode_vba_31.c
-> index c725160a095b..d655655baaba 100644
-> --- a/drivers/gpu/drm/amd/display/dc/dml/dcn31/display_mode_vba_31.c
-> +++ b/drivers/gpu/drm/amd/display/dc/dml/dcn31/display_mode_vba_31.c
-> @@ -1494,10 +1494,11 @@ static bool CalculatePrefetchSchedule(
->                 dml_print(
->                                 "DML:  Tsw: %fus = time to fetch enough pixel data and cursor data to feed the scalers init position and detile\n",
->                                 (double) LinesToRequestPrefetchPixelData * LineTime);
-> -               dml_print("DML: To: %fus - time for propogation from scaler to optc\n", (*DSTYAfterScaler + ((double) (*DSTXAfterScaler) / (double) myPipe->HTotal)) * LineTime);
-> +               dml_print("DML: To: %fus - time for propagation from scaler to optc\n",
-> +                         (*DSTYAfterScaler + ((double) (*DSTXAfterScaler) /
-> +                         (double) myPipe->HTotal)) * LineTime);
->                 dml_print("DML: Tvstartup - TSetup - Tcalc - Twait - Tpre - To > 0\n");
-> -               dml_print(
-> -                               "DML: Tslack(pre): %fus - time left over in schedule\n",
-> +               dml_print("DML: Tslack(pre): %fus - time left over in schedule\n",
->                                 VStartup * LineTime - TimeForFetchingMetaPTE - 2 * TimeForFetchingRowInVBlank
->                                                 - (*DSTYAfterScaler + ((double) (*DSTXAfterScaler) / (double) myPipe->HTotal)) * LineTime - TWait - TCalc - *TSetup);
->                 dml_print("DML: row_bytes = dpte_row_bytes (per_pipe) = PixelPTEBytesPerRow = : %d\n", PixelPTEBytesPerRow);
-> @@ -3023,7 +3024,8 @@ static void DISPCLKDPPCLKDCFCLKDeepSleepPrefetchParametersWatermarksAndPerforman
->                         for (k = 0; k < v->NumberOfActivePlanes; ++k) {
->                                 if (v->ImmediateFlipSupportedForPipe[k] == false) {
->  #ifdef __DML_VBA_DEBUG__
-> -                                       dml_print("DML::%s: Pipe %0d not supporing iflip\n", __func__, k);
-> +                                       dml_print("DML::%s: Pipe %0d not supporting iflip\n",
-> +                                                 __func__, k);
->  #endif
->                                         v->ImmediateFlipSupported = false;
->                                 }
-> --
-> 2.31.1
->
+> Not tested.  It prints an error so the intention seems clear, but
+> sometimes making stuff a failure instead of a success can lead to
+> unexpected problems in production.  On the other hand, if this is not
+> an error then shouldn't we do a continue instead of a goto err?
+
+I originally had it continue (and ignore that LED), but during review 
+Jacek commented [1] that he preferred it to be an error condition 
+instead. It should be noted that this condition involves an invalid 
+devicetree: two (or more) LED sub-nodes on the same controller that 
+specify the same controller channel number. FYI, the error message 
+originally had a bit more detail which might make that more obvious, 
+but it was simplified as part of another cleanup [2]. 
+
+In any event, the end result is that the whole controller will fail to 
+probe, and none of it's LEDs will be available. Because it's not a 
+temporary condition, I don't think -EBUSY is the appropriate return 
+value. 
+There happened to be another patch recently that used -EINVAL [3],
+which I think is more appropriate.
+
+[1] https://lore.kernel.org/linux-leds/56CDD4AA.5030801@samsung.com/
+[2] https://lore.kernel.org/linux-leds/20200917223338.14164-25-marek.behun@nic.cz/
+[2] https://lore.kernel.org/linux-leds/1622545743-21240-1-git-send-email-jiapeng.chong@linux.alibaba.com/
+
+> 
+>  drivers/leds/leds-is31fl32xx.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/leds/leds-is31fl32xx.c b/drivers/leds/leds-is31fl32xx.c
+> index 3b55af9a8c58..e6f34464914f 100644
+> --- a/drivers/leds/leds-is31fl32xx.c
+> +++ b/drivers/leds/leds-is31fl32xx.c
+> @@ -386,6 +386,7 @@ static int is31fl32xx_parse_dt(struct device *dev,
+>  			dev_err(dev,
+>  				"Node %pOF 'reg' conflicts with another LED\n",
+>  				child);
+> +			ret = -EBUSY;
+>  			goto err;
+>  		}
+>  
+
+
