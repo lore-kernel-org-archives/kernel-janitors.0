@@ -7,116 +7,116 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D000C47082
-	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Jun 2021 18:18:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A6C1C47094
+	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Jun 2021 18:18:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 75CE761003
-	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Jun 2021 18:18:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D04661003
+	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Jun 2021 18:18:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230258AbhFGSTx (ORCPT
+        id S230266AbhFGSUJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 7 Jun 2021 14:19:53 -0400
-Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:33952 "EHLO
+        Mon, 7 Jun 2021 14:20:09 -0400
+Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:53858 "EHLO
         mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230212AbhFGSTw (ORCPT
+        by vger.kernel.org with ESMTP id S230212AbhFGSUH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 7 Jun 2021 14:19:52 -0400
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 157IC11Z022654;
-        Mon, 7 Jun 2021 18:17:42 GMT
+        Mon, 7 Jun 2021 14:20:07 -0400
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 157ICVlC023994;
+        Mon, 7 Jun 2021 18:17:55 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
  : subject : message-id : mime-version : content-type : in-reply-to;
- s=corp-2020-01-29; bh=8gavyXVn8ZN3eYSKoYj9s6z0nX8kX834/ZSgK8awUYU=;
- b=hltuRuG7NUTEk9IPlgVZA8lrqUs5loqax8KS5iwslBIGC+CZRRQl0bS/IWnKMcT3IW2Z
- 87qDkCG8mUrpKPjQ+vMCm9Y3TX7TAjlQ0BqJ52CczJaO77x+s4FDRA33A+GUs16OTUGR
- AVqAwaTgUhsvfO5udmm9bIhnYpGjL1zN6DQICkRxnh6VXRtADB2PF+LLAGWJhhALSQBp
- m6xMYLbnr0PRj2mJ2GAwvs2z+0mZ+PiNrI0s3bR9Gkx5a3NOUWrz7QzUk9vkPHNR2VG2
- 3oPLHpLv35JYdRlUUn19wLniU6VxoZaBhNxDC23vERCcE3x4R9wj7jGacPbfCtTv/kTd 2g== 
-Received: from oracle.com (userp3030.oracle.com [156.151.31.80])
-        by mx0b-00069f02.pphosted.com with ESMTP id 391g4g866c-1
+ s=corp-2020-01-29; bh=bZkOoknjmX8oDEJfH2bL8BDO2X8dchwu0SSRQvdxjfY=;
+ b=eh1Pt4rDxANw0QXj0ZKib7lvTXEWaqAnn3scbJkGBXX+VvhqDIIwo+8Pd64FYuVGPGQm
+ M9cgRTOD50EyWjGHGacHR0u/0XB0WM7gyU+IBPiqkOqlvM7hIVEKGtGHEqtE12p1i7ug
+ 8kiMtrUdCSbDPyMIqpCZe6x8QxeFKaGwiQRmFhfTugHmBcDtgBPb12ZLlZibh2RqRbE3
+ 2v3a8XT+epbLE/1/Gj9xzkEb/56XfeiiwveRvVHCcCOdo8i1QhABV+6shYZL4DxVJrG3
+ fZmSfOUpKq32i9hy2pq+XKzdOm1AFZucg2SQo8nkSqQFXahdyliwH1LH+TtyM7Qdwns+ Pg== 
+Received: from oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by mx0b-00069f02.pphosted.com with ESMTP id 391fyr0692-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 07 Jun 2021 18:17:42 +0000
-Received: from userp3030.oracle.com (userp3030.oracle.com [127.0.0.1])
-        by pps.podrdrct (8.16.0.36/8.16.0.36) with SMTP id 157IHflL084502;
-        Mon, 7 Jun 2021 18:17:41 GMT
+        Mon, 07 Jun 2021 18:17:54 +0000
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
+        by pps.podrdrct (8.16.0.36/8.16.0.36) with SMTP id 157IDFiH112383;
+        Mon, 7 Jun 2021 18:17:53 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-        by userp3030.oracle.com with ESMTP id 38yxcu2ujm-1
+        by aserp3030.oracle.com with ESMTP id 38yyaa9uhq-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 07 Jun 2021 18:17:41 +0000
-Received: from userp3030.oracle.com (userp3030.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 157IGANZ082111;
-        Mon, 7 Jun 2021 18:17:40 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3030.oracle.com with ESMTP id 38yxcu2uj6-1
+        Mon, 07 Jun 2021 18:17:53 +0000
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 157IHr7T123860;
+        Mon, 7 Jun 2021 18:17:53 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3030.oracle.com with ESMTP id 38yyaa9uhc-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 07 Jun 2021 18:17:40 +0000
-Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 157IHdb7022002;
-        Mon, 7 Jun 2021 18:17:39 GMT
+        Mon, 07 Jun 2021 18:17:53 +0000
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 157IHpLW006050;
+        Mon, 7 Jun 2021 18:17:51 GMT
 Received: from mwanda (/41.212.42.34)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 07 Jun 2021 11:17:38 -0700
-Date:   Mon, 7 Jun 2021 21:17:30 +0300
+        with ESMTP ; Mon, 07 Jun 2021 11:17:50 -0700
+Date:   Mon, 7 Jun 2021 21:17:43 +0300
 From:   Dan Carpenter <dan.carpenter@oracle.com>
 To:     Larry Finger <Larry.Finger@lwfinger.net>,
         Guenter Roeck <linux@roeck-us.net>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Martin Kaiser <martin@kaiser.cx>,
         Ivan Safonov <insafonov@gmail.com>,
+        Deborah Brouwer <deborahbrouwer3563@gmail.com>,
+        Simon Fong <simon.fodin@gmail.com>,
         Michael Straube <straube.linux@gmail.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Peilin Ye <yepeilin.cs@gmail.com>,
         linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org
-Subject: [PATCH 2/7] staging: rtl8188eu: use safe iterator in tx_beacon_hdl()
-Message-ID: <YL5iunD5ilf+mKPR@mwanda>
+Subject: [PATCH 3/7] staging: rtl8188eu: use safe iterator in
+ dequeue_xmitframes_to_sleeping_queue()
+Message-ID: <YL5ixzKaYKkpHhky@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <YL5iX3Exc0HVYrsi@mwanda>
 X-Mailer: git-send-email haha only kidding
-X-Proofpoint-GUID: VSvwddVPYtjzg5b7Vim5DUCQ86Hr_Yu-
-X-Proofpoint-ORIG-GUID: VSvwddVPYtjzg5b7Vim5DUCQ86Hr_Yu-
+X-Proofpoint-ORIG-GUID: DZMpyLvdr9tFbz0t8jOu5cBlVP-HTSVe
+X-Proofpoint-GUID: DZMpyLvdr9tFbz0t8jOu5cBlVP-HTSVe
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This loop calls list_del_init() on the list iterator so it has to use
-the _safe() iterator or it leads to an endless loop.
+On some code paths the xmitframe_enqueue_for_sleeping_sta() function can
+call list_del_init(&pxmitframe->list) which would lead to a forever loop
+because "pxmitframe" is the list iterator.  Use the _safe version of the
+iterator to prevent this.
 
 Fixes: 23017c8842d2 ("staging: rtl8188eu: Use list iterators and helpers")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/staging/rtl8188eu/core/rtw_mlme_ext.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+ drivers/staging/rtl8188eu/core/rtw_xmit.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c b/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c
-index b4d81d3a856c..42cfa1e95e2c 100644
---- a/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c
-@@ -5378,8 +5378,8 @@ u8 tx_beacon_hdl(struct adapter *padapter, unsigned char *pbuf)
- #ifdef CONFIG_88EU_AP_MODE
- 	else { /* tx bc/mc frames after update TIM */
- 		struct sta_info *psta_bmc;
--		struct list_head *xmitframe_plist, *xmitframe_phead;
--		struct xmit_frame *pxmitframe = NULL;
-+		struct list_head *xmitframe_phead;
-+		struct xmit_frame *pxmitframe, *n;
- 		struct sta_priv *pstapriv = &padapter->stapriv;
+diff --git a/drivers/staging/rtl8188eu/core/rtw_xmit.c b/drivers/staging/rtl8188eu/core/rtw_xmit.c
+index dcc29a74612d..f57e41f817ca 100644
+--- a/drivers/staging/rtl8188eu/core/rtw_xmit.c
++++ b/drivers/staging/rtl8188eu/core/rtw_xmit.c
+@@ -1729,17 +1729,15 @@ int xmitframe_enqueue_for_sleeping_sta(struct adapter *padapter, struct xmit_fra
  
- 		/* for BC/MC Frames */
-@@ -5392,11 +5392,8 @@ u8 tx_beacon_hdl(struct adapter *padapter, unsigned char *pbuf)
- 			spin_lock_bh(&psta_bmc->sleep_q.lock);
+ static void dequeue_xmitframes_to_sleeping_queue(struct adapter *padapter, struct sta_info *psta, struct __queue *pframequeue)
+ {
+-	struct list_head *plist, *phead;
++	struct list_head *phead;
+ 	u8	ac_index;
+ 	struct tx_servq	*ptxservq;
+ 	struct pkt_attrib	*pattrib;
+-	struct xmit_frame	*pxmitframe;
++	struct xmit_frame	*pxmitframe, *n;
+ 	struct hw_xmit *phwxmits =  padapter->xmitpriv.hwxmits;
  
- 			xmitframe_phead = get_list_head(&psta_bmc->sleep_q);
--			list_for_each(xmitframe_plist, xmitframe_phead) {
--				pxmitframe = list_entry(xmitframe_plist,
--							struct xmit_frame,
--							list);
+ 	phead = get_list_head(pframequeue);
+-	list_for_each(plist, phead) {
+-		pxmitframe = list_entry(plist, struct xmit_frame, list);
 -
-+			list_for_each_entry_safe(pxmitframe, n, xmitframe_phead,
-+						 list) {
- 				list_del_init(&pxmitframe->list);
++	list_for_each_entry_safe(pxmitframe, n, phead, list) {
+ 		xmitframe_enqueue_for_sleeping_sta(padapter, pxmitframe);
  
- 				psta_bmc->sleepq_len--;
+ 		pattrib = &pxmitframe->attrib;
 -- 
 2.30.2
 
