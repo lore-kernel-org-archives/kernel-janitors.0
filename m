@@ -2,117 +2,113 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE023C4743D
-	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Jun 2021 02:23:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4270C47082
+	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Jun 2021 06:57:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B53F2611C0
-	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Jun 2021 02:23:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95EAF611ED
+	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Jun 2021 06:57:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230133AbhFGCZk (ORCPT
+        id S230145AbhFGG7F convert rfc822-to-8bit (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 6 Jun 2021 22:25:40 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:45250 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230127AbhFGCZj (ORCPT
+        Mon, 7 Jun 2021 02:59:05 -0400
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:35795 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229436AbhFGG7F (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 6 Jun 2021 22:25:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1623032628;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=gKXQKEfV2Z4yTGR8/n9HJ/fY1JTpc1iMUdaLmNCWqcU=;
-        b=VFyjAR/t3PW0eQWlze4oNRB1LmGYe83Ll0I8WzQThvhBXsC5oCjy594yjWdjt4M7yzNpdl
-        bXjxoTm2EisAK7OSjVI7LrO2iLizRItaibdUobWNNEXuOgyFAnRNpB406wFSsB4mYv5mDi
-        4o0NJAPAkyhzNVKLlOBPVuIawRWv67A=
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com
- [209.85.210.200]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-167-UsXfkggRPsu7NgUhVG_Xzw-1; Sun, 06 Jun 2021 22:23:47 -0400
-X-MC-Unique: UsXfkggRPsu7NgUhVG_Xzw-1
-Received: by mail-pf1-f200.google.com with SMTP id j206-20020a6280d70000b02902e9e02e1654so6965622pfd.6
-        for <kernel-janitors@vger.kernel.org>; Sun, 06 Jun 2021 19:23:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=gKXQKEfV2Z4yTGR8/n9HJ/fY1JTpc1iMUdaLmNCWqcU=;
-        b=co4u013QTl8IuIFyybTUkqmvOSJuZZOrVeT1YUueWkeyPPawd9fAZR+D9580/t0inM
-         KYJpA88bImgrFVgTWlHnYJ9bqSMDohKAyROosSzGwpUnQxqGS7r6AR7z0COBUNqgE/dp
-         EqBD7MSBvkVpFCjZXjMCWIjoEAS6ssmZPgc3QGvqYlU2qxl8nduo0vguWWhPCqafdNDW
-         EdeW7weWz4ZgU6srsF4j9/MtbfMPFA+vca8YPtyUZ1w8dbJc1VaRtjh2A5/4TMTQS1u3
-         r6HGyELwQYmVG9zUaHzmltFhsOO0neJiPRB+9Wj2R9MiEnbgFzP41ZsORJ/D0dbwASMp
-         hU7A==
-X-Gm-Message-State: AOAM533whIRwRw+W0TxvEUPxJOjwnC1EZ3dGaJI+buAPnyk/q8YYMK5p
-        fyqHK/ejfTa7v1jnXSoraPziEZBKAKaKKygwhjlSOz80eEL15qVBHFcSAtDuNfTjY44Wco+Vs6t
-        Mi3MWOwgmbVk7cEd9qXxFC0fa4ldswIpKr+FJHC6PSFE8ypohxpUGZw7yeMWovAoeOpVc2oqY4D
-        mbUB9L
-X-Received: by 2002:a17:902:a5c4:b029:111:18bd:8b9a with SMTP id t4-20020a170902a5c4b029011118bd8b9amr7788427plq.80.1623032626637;
-        Sun, 06 Jun 2021 19:23:46 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJz4hl64MAtqUwyJpFoEpAwj72OAst9tSIBLMe3jlFWSYqIDArB4IxgsQ4l52vekWbHlXbl3CQ==
-X-Received: by 2002:a17:902:a5c4:b029:111:18bd:8b9a with SMTP id t4-20020a170902a5c4b029011118bd8b9amr7788408plq.80.1623032626311;
-        Sun, 06 Jun 2021 19:23:46 -0700 (PDT)
-Received: from wangxiaodeMacBook-Air.local ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id p1sm2741244pfn.212.2021.06.06.19.23.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 06 Jun 2021 19:23:45 -0700 (PDT)
-Subject: Re: [PATCH] vdpa: fix error code in vp_vdpa_probe()
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     Eli Cohen <elic@nvidia.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        virtualization@lists.linux-foundation.org,
-        kernel-janitors@vger.kernel.org
-References: <YLtyYE8TinOl3IhO@mwanda>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <696c510d-b9af-60a4-e517-b2f749a10f41@redhat.com>
-Date:   Mon, 7 Jun 2021 10:23:38 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.11.0
+        Mon, 7 Jun 2021 02:59:05 -0400
+Received: (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 4E9BAE000E;
+        Mon,  7 Jun 2021 06:57:12 +0000 (UTC)
+Date:   Mon, 7 Jun 2021 08:57:11 +0200
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Colin King <colin.king@canonical.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] mtd: rawnand: ensure return variable is
+ initialized
+Message-ID: <20210607085711.65c64c58@xps13>
+In-Reply-To: <20210601121401.GY1955@kadam>
+References: <20210527145048.795954-1-colin.king@canonical.com>
+        <20210527170309.4d99bc31@xps13>
+        <20210601121401.GY1955@kadam>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <YLtyYE8TinOl3IhO@mwanda>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Hi Dan,
 
-‘⁄ 2021/6/5 œ¬ŒÁ8:47, Dan Carpenter –¥µ¿:
-> Return -ENOMEM if vp_modern_map_vq_notify() fails.  Currently it
-> returns success.
->
-> Fixes: 11d8ffed00b2 ("vp_vdpa: switch to use vp_modern_map_vq_notify()")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->   drivers/vdpa/virtio_pci/vp_vdpa.c | 1 +
->   1 file changed, 1 insertion(+)
+Dan Carpenter <dan.carpenter@oracle.com> wrote on Tue, 1 Jun 2021
+15:14:02 +0300:
 
+> On Thu, May 27, 2021 at 05:03:09PM +0200, Miquel Raynal wrote:
+> > Hi Colin,
+> > 
+> > Colin King <colin.king@canonical.com> wrote on Thu, 27 May 2021
+> > 15:50:48 +0100:
+> >   
+> > > From: Colin Ian King <colin.king@canonical.com>
+> > > 
+> > > Currently there are corner cases where spec_times is NULL and
+> > > chip->parameters.onfi or when best_mode is zero where ret is  
+> > 
+> >                        ^
+> > something is missing here, the sentence is not clear
+> >   
+> > > not assigned a value and an uninitialized return value can be
+> > > returned. Fix this by ensuring ret is initialized to -EINVAL.  
+> > 
+> > I don't see how this situation can happen.
+> > 
+> > In both cases, no matter the value of best_mode, the for loop will
+> > always execute at least one time (mode 0) so ret will be populated.
+> > 
+> > Maybe the robot does not know that best_mode cannot be negative and
+> > should be defined unsigned, but the current patch is invalid.
+> >  
+> 
+> People think list counter unsigned is a good idea, but it's a terrible
+> idea and has caused hundreds of bugs for me to fix/report over the
+> years.  *grumble*.
+> 
+> Anyway, I was revisiting this code because it showed up as a Smatch
+> warning and the bug appears to be real.
+> 
+> 	best_mode = fls(chip->parameters.onfi->sdr_timing_modes) - 1;
+> 
+> The "onfi->sdr_timing_modes" comes from the hardware in nand_onfi_detect()
+> and nothing checks that it is non-zero so "best_mode = fls(0) - 1;" is
+> negative and "ret" is uninitialized.
 
-Acked-by: Jason Wang <jasowang@redhat.com>
+In the ONFI specification, the sdr_timing_mode field is defined as
+follow:
 
-Thanks
+SDR timing mode support
+BIT  VALUE MEANING
+6-15 N/A   Reserved (0)
+5    1     supports timing mode 5
+4    1     supports timing mode 4
+3    1     supports timing mode 3
+2    1     supports timing mode 2
+1    1     supports timing mode 1
+0    1     supports timing mode 0, shall be 1
 
+IOW sdr_timing_modes *cannot* be 0, or it is a truly deep and crazily
+impacting hardware bug (so far I am not aware of any chip not returning
+the right timing mode 0 value). Hence my proposal to turn best_mode as
+unsigned. I honestly don't know what is the best option here and am
+fully open to other suggestions to silence the robot.
 
->
-> diff --git a/drivers/vdpa/virtio_pci/vp_vdpa.c b/drivers/vdpa/virtio_pci/vp_vdpa.c
-> index c76ebb531212..e5d92db728d3 100644
-> --- a/drivers/vdpa/virtio_pci/vp_vdpa.c
-> +++ b/drivers/vdpa/virtio_pci/vp_vdpa.c
-> @@ -442,6 +442,7 @@ static int vp_vdpa_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->   			vp_modern_map_vq_notify(mdev, i,
->   						&vp_vdpa->vring[i].notify_pa);
->   		if (!vp_vdpa->vring[i].notify) {
-> +			ret = -ENOMEM;
->   			dev_warn(&pdev->dev, "Fail to map vq notify %d\n", i);
->   			goto err;
->   		}
-
+Thanks,
+Miqu√®l
