@@ -2,74 +2,114 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A0CBC4743F
-	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Jun 2021 09:33:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 021C2C47082
+	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Jun 2021 09:35:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3215E611BE
-	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Jun 2021 09:33:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE29F61107
+	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Jun 2021 09:35:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230233AbhFGJfg convert rfc822-to-8bit (ORCPT
+        id S230219AbhFGJhj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 7 Jun 2021 05:35:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43880 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230228AbhFGJff (ORCPT
+        Mon, 7 Jun 2021 05:37:39 -0400
+Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:50717 "EHLO
+        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229436AbhFGJhi (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 7 Jun 2021 05:35:35 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 345B3C061766
-        for <kernel-janitors@vger.kernel.org>; Mon,  7 Jun 2021 02:33:44 -0700 (PDT)
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1lqBdZ-0007NR-5g; Mon, 07 Jun 2021 11:33:37 +0200
-Received: from pza by lupine with local (Exim 4.92)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1lqBdY-0001RK-8y; Mon, 07 Jun 2021 11:33:36 +0200
-Message-ID: <d6665d84470dfb8ac59d76b97f4f85dc97a754f5.camel@pengutronix.de>
-Subject: Re: [PATCH -next] reset: mchp: sparx5: fix return value check in
- mchp_sparx5_map_io()
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Wei Yongjun <weiyongjun1@huawei.com>,
-        Steen Hegelund <steen.hegelund@microchip.com>,
-        Lars Povlsen <lars.povlsen@microchip.com>,
-        UNGLinuxDriver@microchip.com
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
-Date:   Mon, 07 Jun 2021 11:33:36 +0200
-In-Reply-To: <d222e3a93d192722099994441283193d6ed26a79.camel@pengutronix.de>
-References: <20210519141638.3052456-1-weiyongjun1@huawei.com>
-         <d222e3a93d192722099994441283193d6ed26a79.camel@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-User-Agent: Evolution 3.30.5-1.1 
-MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
+        Mon, 7 Jun 2021 05:37:38 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=chengshuyi@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0UbaGK7H_1623058536;
+Received: from localhost(mailfrom:chengshuyi@linux.alibaba.com fp:SMTPD_---0UbaGK7H_1623058536)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Mon, 07 Jun 2021 17:35:44 +0800
+From:   Shuyi Cheng <chengshuyi@linux.alibaba.com>
+To:     chengshuyi@linux.alibaba.com, edumazet@google.com,
+        davem@davemloft.net, kuba@kernel.org, yoshfuji@linux-ipv6.org,
+        dsahern@kernel.org
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH net-next] net: tcp:  Updating MSS, when the sending window is smaller than MSS.
+Date:   Mon,  7 Jun 2021 17:35:34 +0800
+Message-Id: <1623058534-78782-1-git-send-email-chengshuyi@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, 2021-06-07 at 11:23 +0200, Philipp Zabel wrote:
-> On Wed, 2021-05-19 at 14:16 +0000, Wei Yongjun wrote:
-> > In case of error, the function devm_platform_get_and_ioremap_resource()
-> > returns ERR_PTR() and never returns NULL. The NULL test in the return
-> > value check should be replaced with IS_ERR().
-> > 
-> > Fixes: 453ed4283beb ("reset: mchp: sparx5: add switch reset driver")
-> > Reported-by: Hulk Robot <hulkci@huawei.com>
-> > Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> 
-> Thank you, applied to reset/fixes.
-                        ^^^^^^^^^^^
-reset/next, not fixes.
+When the lo network card is used for communication, the tcp server
+reduces the size of the receiving buffer, causing the tcp client
+to have a delay of 200ms. Examples are as follows:
 
-regards
-Philipp
+Suppose that the MTU of the lo network card is 65536, and the tcp server
+sets the receive buffer size to 42KB. According to the
+tcp_bound_to_half_wnd function, the MSS of the server and client is
+21KB. Then, the tcp server sets the buffer size of the connection to
+16KB. At this time, the MSS of the server is 8KB, and the MSS of the
+client is still 21KB. But it will cause the client to fail to send the
+message, that is, tcp_write_xmit fails. Mainly because tcp_snd_wnd_test
+failed, and then entered the zero window detection phase, resulting in a
+200ms delay.
+
+Therefore, we mainly modify two places. One is the tcp_current_mss
+function. When the sending window is smaller than the current mss, mss
+needs to be updated. The other is the tcp_bound_to_half_wnd function.
+When the sending window is smaller than the current mss, the mss value
+should be calculated according to the current sending window, not
+max_window.
+
+Signed-off-by: Shuyi Cheng <chengshuyi@linux.alibaba.com>
+---
+ include/net/tcp.h     | 11 ++++++++---
+ net/ipv4/tcp_output.c |  3 ++-
+ 2 files changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/include/net/tcp.h b/include/net/tcp.h
+index e668f1b..fcdef16 100644
+--- a/include/net/tcp.h
++++ b/include/net/tcp.h
+@@ -641,6 +641,11 @@ static inline void tcp_clear_xmit_timers(struct sock *sk)
+ static inline int tcp_bound_to_half_wnd(struct tcp_sock *tp, int pktsize)
+ {
+ 	int cutoff;
++	int window;
++
++	window = tp->max_window;
++	if (tp->snd_wnd && tp->snd_wnd < pktsize)
++		window = tp->snd_wnd;
+ 
+ 	/* When peer uses tiny windows, there is no use in packetizing
+ 	 * to sub-MSS pieces for the sake of SWS or making sure there
+@@ -649,10 +654,10 @@ static inline int tcp_bound_to_half_wnd(struct tcp_sock *tp, int pktsize)
+ 	 * On the other hand, for extremely large MSS devices, handling
+ 	 * smaller than MSS windows in this way does make sense.
+ 	 */
+-	if (tp->max_window > TCP_MSS_DEFAULT)
+-		cutoff = (tp->max_window >> 1);
++	if (window > TCP_MSS_DEFAULT)
++		cutoff = (window >> 1);
+ 	else
+-		cutoff = tp->max_window;
++		cutoff = window;
+ 
+ 	if (cutoff && pktsize > cutoff)
+ 		return max_t(int, cutoff, 68U - tp->tcp_header_len);
+diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
+index bde781f..88dcdf2 100644
+--- a/net/ipv4/tcp_output.c
++++ b/net/ipv4/tcp_output.c
+@@ -1833,7 +1833,8 @@ unsigned int tcp_current_mss(struct sock *sk)
+ 
+ 	if (dst) {
+ 		u32 mtu = dst_mtu(dst);
+-		if (mtu != inet_csk(sk)->icsk_pmtu_cookie)
++		if (mtu != inet_csk(sk)->icsk_pmtu_cookie ||
++		    (tp->snd_wnd && tp->snd_wnd < mss_now))
+ 			mss_now = tcp_sync_mss(sk, mtu);
+ 	}
+ 
+-- 
+1.8.3.1
+
