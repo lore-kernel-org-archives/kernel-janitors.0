@@ -2,102 +2,120 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98A79C47082
-	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Jun 2021 14:54:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9700C47094
+	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Jun 2021 17:18:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 86C1760FE5
-	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Jun 2021 14:54:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE7AB61073
+	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Jun 2021 17:18:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230411AbhFGO4Z (ORCPT
+        id S230406AbhFGRUf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 7 Jun 2021 10:56:25 -0400
-Received: from mga06.intel.com ([134.134.136.31]:25357 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231572AbhFGO4S (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 7 Jun 2021 10:56:18 -0400
-IronPort-SDR: 7u5vkF8VvR2IcCmjeoQzHDSGsTCyT6dFPIYJbWf53UGuTQUAj61F8hz/qxzY5DbWdpdZGxaehy
- 5pgumhPmIRLw==
-X-IronPort-AV: E=McAfee;i="6200,9189,10008"; a="265790476"
-X-IronPort-AV: E=Sophos;i="5.83,255,1616482800"; 
-   d="scan'208";a="265790476"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2021 07:54:18 -0700
-IronPort-SDR: TdkeCysUSCbRmlMtBkdOPwRCft8hgjf9nmoC5h8C5EXTA4vdcANl4DPiB1e3S0xH/me/QlRFGh
- qEX90OoUZVEQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.83,255,1616482800"; 
-   d="scan'208";a="551255647"
-Received: from fmsmsx606.amr.corp.intel.com ([10.18.126.86])
-  by orsmga004.jf.intel.com with ESMTP; 07 Jun 2021 07:54:18 -0700
-Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
- fmsmsx606.amr.corp.intel.com (10.18.126.86) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2242.4; Mon, 7 Jun 2021 07:54:17 -0700
-Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
- fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2242.4; Mon, 7 Jun 2021 07:54:17 -0700
-Received: from fmsmsx612.amr.corp.intel.com ([10.18.126.92]) by
- fmsmsx612.amr.corp.intel.com ([10.18.126.92]) with mapi id 15.01.2242.008;
- Mon, 7 Jun 2021 07:54:17 -0700
-From:   "Saleem, Shiraz" <shiraz.saleem@intel.com>
-To:     Colin King <colin.king@canonical.com>,
-        "Ismail, Mustafa" <mustafa.ismail@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        "Jason Gunthorpe" <jgg@ziepe.ca>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>
-CC:     "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH][next] RDMA/irdma: Fix issues with u8 left shift operation
-Thread-Topic: [PATCH][next] RDMA/irdma: Fix issues with u8 left shift
- operation
-Thread-Index: AQHXWgVO6IMJFRhn50eVluBXD9XUGasHHAUQ
-Date:   Mon, 7 Jun 2021 14:54:17 +0000
-Message-ID: <28c79f11c1524d10b6bbe2c375c7c97e@intel.com>
-References: <20210605122059.25105-1-colin.king@canonical.com>
-In-Reply-To: <20210605122059.25105-1-colin.king@canonical.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-reaction: no-action
-dlp-version: 11.5.1.3
-x-originating-ip: [10.1.200.100]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Mon, 7 Jun 2021 13:20:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34672 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230233AbhFGRUe (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 7 Jun 2021 13:20:34 -0400
+Received: from mail-oi1-x232.google.com (mail-oi1-x232.google.com [IPv6:2607:f8b0:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39ED0C061766;
+        Mon,  7 Jun 2021 10:18:43 -0700 (PDT)
+Received: by mail-oi1-x232.google.com with SMTP id t40so5804468oiw.8;
+        Mon, 07 Jun 2021 10:18:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Bs0iIp2b+xLwRPkKeIWpOD/7m4nhQ2yrv+tV+dY2+Dk=;
+        b=ZfJqjDRtbPhKwBfzpuNEpxC+DixbiXqh1fDLnKXYnFPI9Qlf1ttw6aMTd691KAb0Nw
+         ap3EFjQ+F1P/azkjwjFcJeplW20c8Wy6rjIAmiBeQoqKJH06tOpZ1ZxK8mXwXNZmU4Mx
+         z1Zyl6+qqWUh4SVUR92ud5048RIyYmOg+5JJNAI8yoCx9nbMxHazeBm79+GM1fF22BzC
+         LSNRJ7TCk9ni35039MOrYp56Cn62e7XcsMy2W6AAr53IWdOXTJY2MN+62tsZ0I+Aeu6R
+         He586b00SYq/ywaPZ6ehXU4jLQGpDiMhI0UNYVyK9P/mkSM36+TBm2C58avFcUFUoNH7
+         iQdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Bs0iIp2b+xLwRPkKeIWpOD/7m4nhQ2yrv+tV+dY2+Dk=;
+        b=hV47wtoBXe0v17Hmi2BsfF1Gqbj17N/DQXi0w8T7BDb8Im5pg/sodNx/hG1G07SlFd
+         l5NVhuMpOX/G/O9/C3XWriNM9TSGABogEfKXQ9nOL5UGxTOHvCPQThzvIOtc9cto6Z1l
+         nwy5yLRTeI78A7kH5ZR7+oRPxRBUYgqgfJ6vQcj5HEf+4kwsAVQh+ZIndIz/5SGFu8EU
+         x2j9KBOffg/3N3rgKQtbd9pZxeagnmRBgoVczaqU7GX0Dcb7lJIXoxo5Ofqd38GBGNdt
+         zG5CYtE2YmZ5aGj4M0bcsvjmXbNBbCVbiyx+dDqzkIG28hebAy5IvvnnMm6z4mDBZfW6
+         Z6fg==
+X-Gm-Message-State: AOAM530pqtPDxj/bpThJTVCPOvn20wH8DuxLJfzoHHULkFu9GWmeq+BM
+        e4H/fdhva3e4qGK9BI7gCYOzSHtk79XadRpTSD+eNGXh
+X-Google-Smtp-Source: ABdhPJyirKNeUEEtw5y9m++p4gcGiiOq1LOMwU9dlkkw7YMYbr+3rPlg1bL7kJG8ZiRpSn4RBR+dXRzlWAbHbNNqDsM=
+X-Received: by 2002:a05:6808:249:: with SMTP id m9mr196398oie.120.1623086319382;
+ Mon, 07 Jun 2021 10:18:39 -0700 (PDT)
 MIME-Version: 1.0
+References: <ea7ecbef546a03ef71d65bfe82608bb347e6f3c2.1622883895.git.christophe.jaillet@wanadoo.fr>
+ <99a5eba3-2d2a-65a8-9b03-a3d4043c5ec5@gmail.com>
+In-Reply-To: <99a5eba3-2d2a-65a8-9b03-a3d4043c5ec5@gmail.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Mon, 7 Jun 2021 13:18:28 -0400
+Message-ID: <CADnq5_PSw_zLDpdpAgxbUKLH54toLyxL23Ytw0q8G+xBzcaeRQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdgpu: Fix a a typo in a comment
+To:     =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>
+Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        "Deucher, Alexander" <alexander.deucher@amd.com>,
+        Christian Koenig <christian.koenig@amd.com>,
+        xinhui pan <Xinhui.Pan@amd.com>,
+        Dave Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        kernel-janitors@vger.kernel.org,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-PiBTdWJqZWN0OiBbUEFUQ0hdW25leHRdIFJETUEvaXJkbWE6IEZpeCBpc3N1ZXMgd2l0aCB1OCBs
-ZWZ0IHNoaWZ0IG9wZXJhdGlvbg0KPiANCj4gRnJvbTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtp
-bmdAY2Fub25pY2FsLmNvbT4NCj4gDQo+IFRoZSBzaGlmdGluZyBvZiB0aGUgdTggaW50ZWdlciBp
-bmZvLT5tYXBbaV0gdGhlIGxlZnQgd2lsbCBiZSBwcm9tb3RlZCB0byBhIDMyIGJpdA0KPiBzaWdu
-ZWQgaW50IGFuZCB0aGVuIHNpZ24tZXh0ZW5kZWQgdG8gYSB1NjQuIEluIHRoZSBldmVudCB0aGF0
-IHRoZSB0b3AgYml0IG9mIHRoZSB1OCBpcw0KPiBzZXQgdGhlbiBhbGwgdGhlbiBhbGwgdGhlIHVw
-cGVyIDMyIGJpdHMgb2YgdGhlIHU2NCBlbmQgdXAgYXMgYWxzbyBiZWluZyBzZXQgYmVjYXVzZQ0K
-PiBvZiB0aGUgc2lnbi1leHRlbnNpb24uDQo+IEZpeCB0aGlzIGJ5IGNhc3RpbmcgdGhlIHU4IHZh
-bHVlcyB0byBhIHU2NCBiZWZvcmUgdGhlIGxlZnQgc2hpZnQuIFRoaXMNCj4gDQo+IEFkZHJlc3Nl
-cy1Db3Zlcml0eTogKCJVbml0ZW50aW9uYWwgaW50ZWdlciBvdmVyZmxvdyAvIGJhZCBzaGlmdCBv
-cGVyYXRpb24iKQ0KPiBGaXhlczogM2Y0OWQ2ODQyNTY5ICgiUkRNQS9pcmRtYTogSW1wbGVtZW50
-IEhXIEFkbWluIFF1ZXVlIE9QcyIpDQo+IFNpZ25lZC1vZmYtYnk6IENvbGluIElhbiBLaW5nIDxj
-b2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQo+IC0tLQ0KPiAgZHJpdmVycy9pbmZpbmliYW5kL2h3
-L2lyZG1hL2N0cmwuYyB8IDIgKy0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwg
-MSBkZWxldGlvbigtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvaW5maW5pYmFuZC9ody9p
-cmRtYS9jdHJsLmMgYi9kcml2ZXJzL2luZmluaWJhbmQvaHcvaXJkbWEvY3RybC5jDQo+IGluZGV4
-IDVhYTExMjA2N2JjZS4uOGJkM2FlY2FkYWY2IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2luZmlu
-aWJhbmQvaHcvaXJkbWEvY3RybC5jDQo+ICsrKyBiL2RyaXZlcnMvaW5maW5pYmFuZC9ody9pcmRt
-YS9jdHJsLmMNCj4gQEAgLTIxNTcsNyArMjE1Nyw3IEBAIHN0YXRpYyBlbnVtIGlyZG1hX3N0YXR1
-c19jb2RlDQo+IGlyZG1hX3NjX3NldF91cF9tYXAoc3RydWN0IGlyZG1hX3NjX2NxcCAqY3FwLA0K
-PiAgCQlyZXR1cm4gSVJETUFfRVJSX1JJTkdfRlVMTDsNCj4gDQo+ICAJZm9yIChpID0gMDsgaSA8
-IElSRE1BX01BWF9VU0VSX1BSSU9SSVRZOyBpKyspDQo+IC0JCXRlbXAgfD0gaW5mby0+bWFwW2ld
-IDw8IChpICogOCk7DQo+ICsJCXRlbXAgfD0gKHU2NClpbmZvLT5tYXBbaV0gPDwgKGkgKiA4KTsN
-Cj4gDQoNCkFja2VkLWJ5OiBTaGlyYXogU2FsZWVtIDxzaGlyYXouc2FsZWVtQGludGVsLmNvbT4N
-Cg==
+Applied.  Thanks!
+
+Alex
+
+On Mon, Jun 7, 2021 at 6:46 AM Christian K=C3=B6nig
+<ckoenig.leichtzumerken@gmail.com> wrote:
+>
+> Am 05.06.21 um 11:06 schrieb Christophe JAILLET:
+> > s/than/then/
+> >
+> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>
+> Acked-by: Christian K=C3=B6nig <christian.koenig@amd.com>
+>
+> > ---
+> >   drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c b/drivers/gpu/drm/a=
+md/amdgpu/amdgpu_cs.c
+> > index 89ebbf363e27..1476236f5c7c 100644
+> > --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
+> > +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
+> > @@ -662,7 +662,7 @@ static int amdgpu_cs_sync_rings(struct amdgpu_cs_pa=
+rser *p)
+> >    * @error:  error number
+> >    * @backoff:        indicator to backoff the reservation
+> >    *
+> > - * If error is set than unvalidate buffer, otherwise just free memory
+> > + * If error is set then unvalidate buffer, otherwise just free memory
+> >    * used by parsing context.
+> >    **/
+> >   static void amdgpu_cs_parser_fini(struct amdgpu_cs_parser *parser, in=
+t error,
+>
+> _______________________________________________
+> amd-gfx mailing list
+> amd-gfx@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
