@@ -2,51 +2,41 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BC42C47082
-	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Jun 2021 16:09:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EEACC47082
+	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Jun 2021 16:13:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5327061359
-	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Jun 2021 16:09:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 28BCC6108E
+	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Jun 2021 16:13:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234135AbhFHQKt (ORCPT
+        id S232170AbhFHQPL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 8 Jun 2021 12:10:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43312 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233939AbhFHQJQ (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 8 Jun 2021 12:09:16 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A46BB61078;
-        Tue,  8 Jun 2021 16:07:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1623168431;
-        bh=RLYClvzf+9zh8zPCA1AZ11On8MN7nXwqdgFy13xhXyw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KQS6ecLeAgLlnZNbkCA7n22fN+y9GGAl2b/zvkSTdodMboq4PbvxDyZYUEPuOHOGN
-         w28Jb08XSl0n50MnGPVdWm3R6T4BqY1iDgVFA881ALKcWN4l7QMsbDrh8nD7othG3y
-         Mra1Q8FcUj99OydSA8hZs5WJufbcnfxrPMDaVMG5w160NpG7/UqMyXeNAauQnoMTAi
-         Txti6e35BGe+NEx8V0QlUPEcz+aHKcsbp58X7BhLym3kpg5KbqHZ0X1AGVA3FfdDyf
-         5FtVJxlcxkYCHYgdlyfZH1xjXuAKQCAjgUhW59cQYZowYdpUYuyIBvwMm2bCMwlPU1
-         8ONjgJs3efp9w==
-From:   Mark Brown <broonie@kernel.org>
-To:     kaichieh.chuang@mediatek.com, perex@perex.cz, lgirdwood@gmail.com,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        tiwai@suse.com, lumi.lee@mediatek.com, matthias.bgg@gmail.com,
-        pierre-louis.bossart@linux.intel.com
-Cc:     Mark Brown <broonie@kernel.org>,
-        linux-mediatek@lists.infradead.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org
-Subject: Re: [PATCH] ASoC: mediatek: mtk-btcvsd: Fix an error handling path in 'mtk_btcvsd_snd_probe()'
-Date:   Tue,  8 Jun 2021 17:06:37 +0100
-Message-Id: <162316808974.49749.9800374437345817638.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <0c2ba562c3364e61bfbd5b3013a99dfa0d9045d7.1622989685.git.christophe.jaillet@wanadoo.fr>
-References: <0c2ba562c3364e61bfbd5b3013a99dfa0d9045d7.1622989685.git.christophe.jaillet@wanadoo.fr>
+        Tue, 8 Jun 2021 12:15:11 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:40083 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229724AbhFHQPK (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 8 Jun 2021 12:15:10 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lqeLp-0000zO-PA; Tue, 08 Jun 2021 16:13:13 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Dave Airlie <airlied@redhat.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Alon Levy <alevy@redhat.com>,
+        virtualization@lists.linux-foundation.org,
+        spice-devel@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm: qxl: ensure surf.data is ininitialized
+Date:   Tue,  8 Jun 2021 17:13:13 +0100
+Message-Id: <20210608161313.161922-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -54,38 +44,33 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, 6 Jun 2021 16:31:09 +0200, Christophe JAILLET wrote:
-> If an error occurs after a successful 'of_iomap()' call, it must be undone
-> by a corresponding 'iounmap()' call, as already done in the remove
-> function.
-> 
-> While at it, remove the useless initialization of 'ret' at the beginning of
-> the function.
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to
+The object surf is not fully initialized and the uninitialized
+field surf.data is being copied by the call to qxl_bo_create
+via the call to qxl_gem_object_create. Set surf.data to zero
+to ensure garbage data from the stack is not being copied.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+Addresses-Coverity: ("Uninitialized scalar variable")
+Fixes: f64122c1f6ad ("drm: add new QXL driver. (v1.4)")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/qxl/qxl_dumb.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Thanks!
+diff --git a/drivers/gpu/drm/qxl/qxl_dumb.c b/drivers/gpu/drm/qxl/qxl_dumb.c
+index a635d9fdf8ac..d636ba685451 100644
+--- a/drivers/gpu/drm/qxl/qxl_dumb.c
++++ b/drivers/gpu/drm/qxl/qxl_dumb.c
+@@ -58,6 +58,8 @@ int qxl_mode_dumb_create(struct drm_file *file_priv,
+ 	surf.height = args->height;
+ 	surf.stride = pitch;
+ 	surf.format = format;
++	surf.data = 0;
++
+ 	r = qxl_gem_object_create_with_handle(qdev, file_priv,
+ 					      QXL_GEM_DOMAIN_CPU,
+ 					      args->size, &surf, &qobj,
+-- 
+2.31.1
 
-[1/1] ASoC: mediatek: mtk-btcvsd: Fix an error handling path in 'mtk_btcvsd_snd_probe()'
-      commit: b6052c3c7a78f5e2b9756c92ef77c0b56435f107
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
