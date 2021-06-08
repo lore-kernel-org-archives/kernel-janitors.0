@@ -2,86 +2,78 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44836C47082
-	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Jun 2021 15:05:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B972C47082
+	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Jun 2021 15:23:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2ACAB61249
-	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Jun 2021 15:05:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 824DB61285
+	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Jun 2021 15:23:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233775AbhFHPHa (ORCPT
+        id S231276AbhFHPYy (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 8 Jun 2021 11:07:30 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:37612 "EHLO
+        Tue, 8 Jun 2021 11:24:54 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:38425 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233354AbhFHPH3 (ORCPT
+        with ESMTP id S231611AbhFHPYw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 8 Jun 2021 11:07:29 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212])
+        Tue, 8 Jun 2021 11:24:52 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
         (Exim 4.93)
         (envelope-from <colin.king@canonical.com>)
-        id 1lqdIM-00044T-OR; Tue, 08 Jun 2021 15:05:34 +0000
-Subject: NAK: [PATCH][next] net: usb: asix: ax88772: Fix less than zero
- comparison of a u16
-From:   Colin Ian King <colin.king@canonical.com>
+        id 1lqdZ8-0005ai-Sf; Tue, 08 Jun 2021 15:22:54 +0000
+From:   Colin King <colin.king@canonical.com>
 To:     "David S . Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>,
         Oleksij Rempel <linux@rempel-privat.de>,
         linux-usb@vger.kernel.org, netdev@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210608145823.159467-1-colin.king@canonical.com>
-Message-ID: <26127b07-6f9e-12bb-6d2e-edf6819c08f1@canonical.com>
-Date:   Tue, 8 Jun 2021 16:05:33 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+Subject: [PATCH 1/2][next] net: usb: asix: Fix less than zero comparison of a u16
+Date:   Tue,  8 Jun 2021 16:22:48 +0100
+Message-Id: <20210608152249.160333-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-In-Reply-To: <20210608145823.159467-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 08/06/2021 15:58, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The comparison of the u16 priv->phy_addr < 0 is always false because
-> phy_addr is unsigned. Fix this by assigning the return from the call
-> to function asix_read_phy_addr to int ret and using this for the
-> less than zero error check comparison.
-> 
-> Addresses-Coverity: ("Unsigned compared against 0")
-> Fixes: e532a096be0e ("net: usb: asix: ax88772: add phylib support")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/net/usb/asix_devices.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/usb/asix_devices.c b/drivers/net/usb/asix_devices.c
-> index 57dafb3262d9..211c5a87eb15 100644
-> --- a/drivers/net/usb/asix_devices.c
-> +++ b/drivers/net/usb/asix_devices.c
-> @@ -704,9 +704,10 @@ static int ax88772_init_phy(struct usbnet *dev)
->  	struct asix_common_private *priv = dev->driver_priv;
->  	int ret;
->  
-> -	priv->phy_addr = asix_read_phy_addr(dev, true);
-> -	if (priv->phy_addr < 0)
-> +	ret = asix_read_phy_addr(dev, true);
-> +	if (ret < 0)
->  		return priv->phy_addr;
-> +	priv->phy_addr = ret;
->  
->  	snprintf(priv->phy_name, sizeof(priv->phy_name), PHY_ID_FMT,
->  		 priv->mdio->id, priv->phy_addr);
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Wrong commit message. I'll send a new fix.
+The comparison of the u16 priv->phy_addr < 0 is always false because
+phy_addr is unsigned. Fix this by assigning the return from the call
+to function asix_read_phy_addr to int ret and using this for the
+less than zero error check comparison.
 
-Colin
+Addresses-Coverity: ("Unsigned compared against 0")
+Fixes: e532a096be0e ("net: usb: asix: ax88772: add phylib support")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/usb/asix_devices.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/usb/asix_devices.c b/drivers/net/usb/asix_devices.c
+index 57dafb3262d9..211c5a87eb15 100644
+--- a/drivers/net/usb/asix_devices.c
++++ b/drivers/net/usb/asix_devices.c
+@@ -704,9 +704,10 @@ static int ax88772_init_phy(struct usbnet *dev)
+ 	struct asix_common_private *priv = dev->driver_priv;
+ 	int ret;
+ 
+-	priv->phy_addr = asix_read_phy_addr(dev, true);
+-	if (priv->phy_addr < 0)
++	ret = asix_read_phy_addr(dev, true);
++	if (ret < 0)
+ 		return priv->phy_addr;
++	priv->phy_addr = ret;
+ 
+ 	snprintf(priv->phy_name, sizeof(priv->phy_name), PHY_ID_FMT,
+ 		 priv->mdio->id, priv->phy_addr);
+-- 
+2.31.1
+
