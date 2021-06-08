@@ -2,92 +2,49 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4AD5C4743D
-	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Jun 2021 16:26:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE8FFC47082
+	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Jun 2021 16:43:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C6F136128E
-	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Jun 2021 16:26:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D541A6128A
+	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Jun 2021 16:43:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233683AbhFHQ1z convert rfc822-to-8bit (ORCPT
+        id S233033AbhFHQp1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 8 Jun 2021 12:27:55 -0400
-Received: from mga09.intel.com ([134.134.136.24]:41885 "EHLO mga09.intel.com"
+        Tue, 8 Jun 2021 12:45:27 -0400
+Received: from verein.lst.de ([213.95.11.211]:51660 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232790AbhFHQ1z (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 8 Jun 2021 12:27:55 -0400
-IronPort-SDR: MWL3QvJgXPdxlBc7n2z5kKoyf24lY2XZ6GdgVnJMQ/934lXg+MziK6WMAeZxBFx9gAcsh6JtFr
- cSEqbGhgtonA==
-X-IronPort-AV: E=McAfee;i="6200,9189,10009"; a="204846205"
-X-IronPort-AV: E=Sophos;i="5.83,258,1616482800"; 
-   d="scan'208";a="204846205"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jun 2021 09:25:58 -0700
-IronPort-SDR: gNrDCuDq6P5kUMM0H/fvtT4SZTOhS+go+38GOIK6LBYXyf3Hu4VN66TqFRUyF0YaK5jkDyuheh
- kcOzf3KGDgIg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.83,258,1616482800"; 
-   d="scan'208";a="619361419"
-Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
-  by orsmga005.jf.intel.com with ESMTP; 08 Jun 2021 09:25:58 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2242.4; Tue, 8 Jun 2021 09:25:58 -0700
-Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2242.4; Tue, 8 Jun 2021 09:25:57 -0700
-Received: from fmsmsx612.amr.corp.intel.com ([10.18.126.92]) by
- fmsmsx612.amr.corp.intel.com ([10.18.126.92]) with mapi id 15.01.2242.008;
- Tue, 8 Jun 2021 09:25:57 -0700
-From:   "Saleem, Shiraz" <shiraz.saleem@intel.com>
-To:     Baokun Li <libaokun1@huawei.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Ismail, Mustafa" <mustafa.ismail@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-CC:     "weiyongjun1@huawei.com" <weiyongjun1@huawei.com>,
-        "yuehaibing@huawei.com" <yuehaibing@huawei.com>,
-        "yangjihong1@huawei.com" <yangjihong1@huawei.com>,
-        "yukuai3@huawei.com" <yukuai3@huawei.com>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        Hulk Robot <hulkci@huawei.com>
-Subject: RE: [PATCH -next] RDMA/irdma: Use list_move instead of
- list_del/list_add
-Thread-Topic: [PATCH -next] RDMA/irdma: Use list_move instead of
- list_del/list_add
-Thread-Index: AQHXXBKZNDyHXK5C9ESBNIPEsoqujKsKTV3g
-Date:   Tue, 8 Jun 2021 16:25:57 +0000
-Message-ID: <3d6c5848d9a445398a6acd084ee9d3a6@intel.com>
-References: <20210608031041.2820429-1-libaokun1@huawei.com>
-In-Reply-To: <20210608031041.2820429-1-libaokun1@huawei.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-reaction: no-action
-dlp-version: 11.5.1.3
-x-originating-ip: [10.1.200.100]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S229536AbhFHQpZ (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 8 Jun 2021 12:45:25 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 43F1D67373; Tue,  8 Jun 2021 18:43:29 +0200 (CEST)
+Date:   Tue, 8 Jun 2021 18:43:28 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Max Gurtovoy <mgurtovoy@nvidia.com>,
+        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
+        Roy Shterman <roys@lightbitslabs.com>,
+        Solganik Alexander <sashas@lightbitslabs.com>,
+        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] nvme-tcp: fix error codes in nvme_tcp_setup_ctrl()
+Message-ID: <20210608164328.GB12661@lst.de>
+References: <YLtykIn+Or0l08oV@mwanda>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YLtykIn+Or0l08oV@mwanda>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-> Subject: [PATCH -next] RDMA/irdma: Use list_move instead of list_del/list_add
-> 
-> Using list_move() instead of list_del() + list_add().
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
-> ---
+Thanks,
 
-Acked-by: Shiraz Saleem <shiraz.saleem@intel.com>
+applied to nvme-5.14.
