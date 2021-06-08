@@ -2,146 +2,123 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DDA9C47082
-	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Jun 2021 12:55:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6C8BC47082
+	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Jun 2021 13:11:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2A996608FE
-	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Jun 2021 12:55:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD3FA6128A
+	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Jun 2021 13:11:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232705AbhFHM4x (ORCPT
+        id S232682AbhFHNMz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 8 Jun 2021 08:56:53 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:50330 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232614AbhFHM4w (ORCPT
+        Tue, 8 Jun 2021 09:12:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42146 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231162AbhFHNMz (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 8 Jun 2021 08:56:52 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 158Cp3AX134382;
-        Tue, 8 Jun 2021 12:54:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=YBFjEx/YJpCisR8OOkZT8b35xfum0wLphC6LCZINojM=;
- b=LwCg5QjE0G94T5Xb9jFXZyhKcw7a5l9YEkomhc6isBjD/LYnBz01bHw0D+mT8D0BbZYl
- Lm1YuKJe6aA2Z4p2AlrJ37ZnF2sTyNsDFvu/10rD73OCINWRF+7TN4HGOZEsh6yEkz8E
- ly2Idc+DWHqKe/YCKpIl+B4Q6Wydmntis8gD5cPk/Ki9dBGcfeJMbgTS5vyK4T5GWJNT
- 0OR8GO6ZQP1axoMBcYiQP93g7miABtoYHFYcIZBgZ35kMQFfc2ZtFCoTpYaA8pgKAMxp
- ZUOWJG2164QaI9qY+oVDPvovtO4g+9vzLaI7AB7+8cLfUM/BOyKfeHLX0Q7tB6kf3bO+ Ew== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2120.oracle.com with ESMTP id 3914qumh89-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 08 Jun 2021 12:54:56 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 158CoLUC166159;
-        Tue, 8 Jun 2021 12:54:56 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by userp3030.oracle.com with ESMTP id 38yxcupyhn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 08 Jun 2021 12:54:56 +0000
-Received: from userp3030.oracle.com (userp3030.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 158Cstlf173055;
-        Tue, 8 Jun 2021 12:54:55 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 38yxcupyh9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 08 Jun 2021 12:54:55 +0000
-Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 158CstTV009807;
-        Tue, 8 Jun 2021 12:54:55 GMT
-Received: from kadam (/41.212.42.34)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 08 Jun 2021 05:54:54 -0700
-Date:   Tue, 8 Jun 2021 15:54:49 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc:     "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: Re: [bug report] net: pcs: xpcs: convert to phylink_pcs_ops
-Message-ID: <20210608125449.GI10983@kadam>
-References: <YL9hTvz8QOo/+lu7@mwanda>
- <20210608123708.eofu2dlgzop3d667@skbuf>
+        Tue, 8 Jun 2021 09:12:55 -0400
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 835E0C061574;
+        Tue,  8 Jun 2021 06:10:48 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id g8so32575643ejx.1;
+        Tue, 08 Jun 2021 06:10:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=804/bC9Z2zHXp+58/xaswq1VZqZQikziOCC71To0VF8=;
+        b=UVJfC9RW4ya+jxSijO/GKZlBv87RkiJGO9JVLpOMF6lHudL4J0JQIXt5Ify/xTXit0
+         o/m5yGuOfIRk0jXKX6CR6RSwsTOhc9zOoXImYLZG5VZYpCcS+NKp3Ho11KMBF8j1cLmC
+         apqebKtCjr0Rfdyny25NPEPkmUErxQ4TU1rcdzKS4mgy8Yh1Kfzf6g6tYIRh3K/ck+Wr
+         y1lx89aJlRTextrF1kzkAe78LZVmWQBQgCyBWzPXRAaOrJLxxM2+eyCT2JGY/e7pBFuX
+         2Avlov6vXEaCg82CljBvoBm5xLlMnT62DuPzO3JFwRioX32x8E4svIfxZ/SwV4OGd+le
+         4+MA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=804/bC9Z2zHXp+58/xaswq1VZqZQikziOCC71To0VF8=;
+        b=taFcGx8FvyyUEZGPXmGRvdRwutMtHdOOJYpC1+VJ20eKq7kds2wibmPiacZR7kU5fH
+         n+MYxDyRuZZEQ8x0xGM7KRJuFsYBAkEqBEEaSMrgR0EAZbTpG5Wa27vCpwIidozsktrj
+         Hnju1liKIxNzCW51wbyIEcKTgDajjBLFpJQ0wU8dhPBKTURc3OUYDhHt+UBePyRvGccJ
+         vurwMZhfX++Ataq2D/KIl9jkwi0mz0EwcqoyUk9eWDCSiP7JtLQOiVhdDz1dKJR3c57r
+         jBEo+owaj6vWlA0/0LNvbrBk64w6/R31cekLW8GHQP1n9tnRt1c2ntQk4jjitIceGpZE
+         XQ2w==
+X-Gm-Message-State: AOAM5322UVlLwaTeDEOB1YbX9mDbx2MyOOa2R4bYq8OUUOYBRFueMC7b
+        82g4wlEfanbfZo+/fWbvbVA=
+X-Google-Smtp-Source: ABdhPJzEV7bMmQjf7DLkCWVhgYJmV6uYrbhhWeYERRSA/pwyjaF4xwx9h94qWF2xre3wNbv3VcwA8Q==
+X-Received: by 2002:a17:906:606:: with SMTP id s6mr22987987ejb.206.1623157847047;
+        Tue, 08 Jun 2021 06:10:47 -0700 (PDT)
+Received: from localhost.localdomain ([188.26.52.84])
+        by smtp.gmail.com with ESMTPSA id y15sm3220118edd.55.2021.06.08.06.10.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Jun 2021 06:10:46 -0700 (PDT)
+From:   Vladimir Oltean <olteanv@gmail.com>
+To:     Jakub Kicinski <kuba@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc:     Wong Vee Khee <vee.khee.wong@linux.intel.com>,
+        Ong Boon Leong <boon.leong.ong@intel.com>,
+        Michael Sit Wei Hong <michael.wei.hong.sit@intel.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>, kernel-janitors@vger.kernel.org,
+        Vladimir Oltean <vladimir.oltean@nxp.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [PATCH net-next] net: stmmac: fix NPD with phylink_set_pcs if there is no MDIO bus
+Date:   Tue,  8 Jun 2021 16:10:37 +0300
+Message-Id: <20210608131037.4127646-1-olteanv@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210608123708.eofu2dlgzop3d667@skbuf>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-ORIG-GUID: qPUrmBfGsI8xeUx--DriAgHwNv2ogTgQ
-X-Proofpoint-GUID: qPUrmBfGsI8xeUx--DriAgHwNv2ogTgQ
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=10008 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 impostorscore=0 phishscore=0
- spamscore=0 malwarescore=0 clxscore=1015 lowpriorityscore=0
- priorityscore=1501 adultscore=0 mlxscore=0 mlxlogscore=999 bulkscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2104190000 definitions=main-2106080085
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Jun 08, 2021 at 12:37:08PM +0000, Vladimir Oltean wrote:
-> Hello Dan Carpenter,
-> 
-> On Tue, Jun 08, 2021 at 03:23:42PM +0300, Dan Carpenter wrote:
-> > Hello Vladimir Oltean,
-> > 
-> > The patch 11059740e616: "net: pcs: xpcs: convert to phylink_pcs_ops"
-> > from Jun 2, 2021, leads to the following static checker warning:
-> > 
-> > 	drivers/net/ethernet/stmicro/stmmac/stmmac_main.c:1237 stmmac_phy_setup()
-> > 	error: we previously assumed 'mdio_bus_data' could be null (see line 1225)
-> > 
-> > drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> >   1215  static int stmmac_phy_setup(struct stmmac_priv *priv)
-> >   1216  {
-> >   1217          struct stmmac_mdio_bus_data *mdio_bus_data = priv->plat->mdio_bus_data;
-> >                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> >   1218          struct fwnode_handle *fwnode = of_fwnode_handle(priv->plat->phylink_node);
-> >   1219          int mode = priv->plat->phy_interface;
-> >   1220          struct phylink *phylink;
-> >   1221  
-> >   1222          priv->phylink_config.dev = &priv->dev->dev;
-> >   1223          priv->phylink_config.type = PHYLINK_NETDEV;
-> >   1224          priv->phylink_config.pcs_poll = true;
-> >   1225          if (priv->plat->mdio_bus_data)
-> >                     ^^^^^^^^^^^^^^^^^^^^^^^^^
-> > This old code assumes mdio_bus_data can be NULL.
-> > 
-> >   1226                  priv->phylink_config.ovr_an_inband =
-> >   1227                          mdio_bus_data->xpcs_an_inband;
-> >   1228  
-> >   1229          if (!fwnode)
-> >   1230                  fwnode = dev_fwnode(priv->device);
-> >   1231  
-> >   1232          phylink = phylink_create(&priv->phylink_config, fwnode,
-> >   1233                                   mode, &stmmac_phylink_mac_ops);
-> >   1234          if (IS_ERR(phylink))
-> >   1235                  return PTR_ERR(phylink);
-> >   1236  
-> >   1237          if (mdio_bus_data->has_xpcs) {
-> >                     ^^^^^^^^^^^^^^^^^^^^^^^
-> > Unchecked dereference.
-> > 
-> >   1238                  struct mdio_xpcs_args *xpcs = priv->hw->xpcs;
-> >   1239  
-> >   1240                  phylink_set_pcs(phylink, &xpcs->pcs);
-> >   1241          }
-> >   1242  
-> >   1243          priv->phylink = phylink;
-> >   1244          return 0;
-> >   1245  }
-> > 
-> > regards,
-> > dan carpenter
-> 
-> This should be solved here:
-> https://lore.kernel.org/netdev/20210604112825.011148a3@canb.auug.org.au/ 
+From: Vladimir Oltean <vladimir.oltean@nxp.com>
 
-Nope.  That is a fix for merge conflict and it has been removed from
-today's linux-next.  It's unrelated.
+priv->plat->mdio_bus_data is optional, some platforms may not set it,
+however we proceed to look straight at priv->plat->mdio_bus_data->has_xpcs.
 
-regards,
-dan carpenter
+Since the xpcs is instantiated based on the has_xpcs property, we can
+avoid looking at the priv->plat->mdio_bus_data structure altogether and
+just check for the presence of the xpcs pointer.
+
+Fixes: 11059740e616 ("net: pcs: xpcs: convert to phylink_pcs_ops")
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+---
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index dd2fb851c693..ec060ce9bcf2 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -1238,11 +1238,8 @@ static int stmmac_phy_setup(struct stmmac_priv *priv)
+ 	if (IS_ERR(phylink))
+ 		return PTR_ERR(phylink);
+ 
+-	if (mdio_bus_data->has_xpcs) {
+-		struct mdio_xpcs_args *xpcs = priv->hw->xpcs;
+-
+-		phylink_set_pcs(phylink, &xpcs->pcs);
+-	}
++	if (priv->hw->xpcs)
++		phylink_set_pcs(phylink, &priv->hw->xpcs->pcs);
+ 
+ 	priv->phylink = phylink;
+ 	return 0;
+-- 
+2.25.1
+
