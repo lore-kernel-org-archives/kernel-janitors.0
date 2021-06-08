@@ -2,75 +2,92 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EEACC47082
-	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Jun 2021 16:13:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4AD5C4743D
+	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Jun 2021 16:26:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 28BCC6108E
-	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Jun 2021 16:13:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6F136128E
+	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Jun 2021 16:26:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232170AbhFHQPL (ORCPT
+        id S233683AbhFHQ1z convert rfc822-to-8bit (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 8 Jun 2021 12:15:11 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:40083 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229724AbhFHQPK (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 8 Jun 2021 12:15:10 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <colin.king@canonical.com>)
-        id 1lqeLp-0000zO-PA; Tue, 08 Jun 2021 16:13:13 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Dave Airlie <airlied@redhat.com>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Alon Levy <alevy@redhat.com>,
-        virtualization@lists.linux-foundation.org,
-        spice-devel@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm: qxl: ensure surf.data is ininitialized
-Date:   Tue,  8 Jun 2021 17:13:13 +0100
-Message-Id: <20210608161313.161922-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.31.1
+        Tue, 8 Jun 2021 12:27:55 -0400
+Received: from mga09.intel.com ([134.134.136.24]:41885 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232790AbhFHQ1z (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 8 Jun 2021 12:27:55 -0400
+IronPort-SDR: MWL3QvJgXPdxlBc7n2z5kKoyf24lY2XZ6GdgVnJMQ/934lXg+MziK6WMAeZxBFx9gAcsh6JtFr
+ cSEqbGhgtonA==
+X-IronPort-AV: E=McAfee;i="6200,9189,10009"; a="204846205"
+X-IronPort-AV: E=Sophos;i="5.83,258,1616482800"; 
+   d="scan'208";a="204846205"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jun 2021 09:25:58 -0700
+IronPort-SDR: gNrDCuDq6P5kUMM0H/fvtT4SZTOhS+go+38GOIK6LBYXyf3Hu4VN66TqFRUyF0YaK5jkDyuheh
+ kcOzf3KGDgIg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.83,258,1616482800"; 
+   d="scan'208";a="619361419"
+Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
+  by orsmga005.jf.intel.com with ESMTP; 08 Jun 2021 09:25:58 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2242.4; Tue, 8 Jun 2021 09:25:58 -0700
+Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2242.4; Tue, 8 Jun 2021 09:25:57 -0700
+Received: from fmsmsx612.amr.corp.intel.com ([10.18.126.92]) by
+ fmsmsx612.amr.corp.intel.com ([10.18.126.92]) with mapi id 15.01.2242.008;
+ Tue, 8 Jun 2021 09:25:57 -0700
+From:   "Saleem, Shiraz" <shiraz.saleem@intel.com>
+To:     Baokun Li <libaokun1@huawei.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Ismail, Mustafa" <mustafa.ismail@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+CC:     "weiyongjun1@huawei.com" <weiyongjun1@huawei.com>,
+        "yuehaibing@huawei.com" <yuehaibing@huawei.com>,
+        "yangjihong1@huawei.com" <yangjihong1@huawei.com>,
+        "yukuai3@huawei.com" <yukuai3@huawei.com>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        Hulk Robot <hulkci@huawei.com>
+Subject: RE: [PATCH -next] RDMA/irdma: Use list_move instead of
+ list_del/list_add
+Thread-Topic: [PATCH -next] RDMA/irdma: Use list_move instead of
+ list_del/list_add
+Thread-Index: AQHXXBKZNDyHXK5C9ESBNIPEsoqujKsKTV3g
+Date:   Tue, 8 Jun 2021 16:25:57 +0000
+Message-ID: <3d6c5848d9a445398a6acd084ee9d3a6@intel.com>
+References: <20210608031041.2820429-1-libaokun1@huawei.com>
+In-Reply-To: <20210608031041.2820429-1-libaokun1@huawei.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-reaction: no-action
+dlp-version: 11.5.1.3
+x-originating-ip: [10.1.200.100]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+> Subject: [PATCH -next] RDMA/irdma: Use list_move instead of list_del/list_add
+> 
+> Using list_move() instead of list_del() + list_add().
+> 
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+> ---
 
-The object surf is not fully initialized and the uninitialized
-field surf.data is being copied by the call to qxl_bo_create
-via the call to qxl_gem_object_create. Set surf.data to zero
-to ensure garbage data from the stack is not being copied.
-
-Addresses-Coverity: ("Uninitialized scalar variable")
-Fixes: f64122c1f6ad ("drm: add new QXL driver. (v1.4)")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpu/drm/qxl/qxl_dumb.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/gpu/drm/qxl/qxl_dumb.c b/drivers/gpu/drm/qxl/qxl_dumb.c
-index a635d9fdf8ac..d636ba685451 100644
---- a/drivers/gpu/drm/qxl/qxl_dumb.c
-+++ b/drivers/gpu/drm/qxl/qxl_dumb.c
-@@ -58,6 +58,8 @@ int qxl_mode_dumb_create(struct drm_file *file_priv,
- 	surf.height = args->height;
- 	surf.stride = pitch;
- 	surf.format = format;
-+	surf.data = 0;
-+
- 	r = qxl_gem_object_create_with_handle(qdev, file_priv,
- 					      QXL_GEM_DOMAIN_CPU,
- 					      args->size, &surf, &qobj,
--- 
-2.31.1
-
+Acked-by: Shiraz Saleem <shiraz.saleem@intel.com>
