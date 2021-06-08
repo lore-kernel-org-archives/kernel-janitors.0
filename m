@@ -2,107 +2,89 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFCABC47082
-	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Jun 2021 14:15:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57DF3C4743E
+	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Jun 2021 14:28:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 98CDC61078
-	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Jun 2021 14:15:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37B1B610C7
+	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Jun 2021 14:28:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233266AbhFHORL (ORCPT
+        id S233393AbhFHOaa (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 8 Jun 2021 10:17:11 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:42012 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233158AbhFHORL (ORCPT
+        Tue, 8 Jun 2021 10:30:30 -0400
+Received: from szxga01-in.huawei.com ([45.249.212.187]:8095 "EHLO
+        szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233358AbhFHOaR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 8 Jun 2021 10:17:11 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 44F64219C2;
-        Tue,  8 Jun 2021 14:15:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1623161717;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=fNneOMji3fVSsopTxsNXHqXefzeyBsUEJ1N5GuoNAqM=;
-        b=auC3N3CzUBQFpkVRU9Z6XAzFVcDscsX+w6TsY1udv1azVotpS2P0tZOTYTrDBnzrT6SU3g
-        VehIk/xzN0R1PiiTsKJ0rwxKD8gct627vtkYX103ilW6Y3+B56+tHiF1umHvZybeIwtWb+
-        cPDbNWaAbk3FlYqFZ9AT5q61uAzwrNU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1623161717;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=fNneOMji3fVSsopTxsNXHqXefzeyBsUEJ1N5GuoNAqM=;
-        b=mQqphZRbFphCbunAXvv4OgfmeTzjBk866aBGpJvufqLFVuJhNvM+PTTWV1sN1xCI0ztHtd
-        JcynkMQUzO+LihDQ==
-Received: from ds.suse.cz (ds.suse.cz [10.100.12.205])
-        by relay2.suse.de (Postfix) with ESMTP id 2082CA3B84;
-        Tue,  8 Jun 2021 14:15:17 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id 9744FDAF61; Tue,  8 Jun 2021 16:12:33 +0200 (CEST)
-Date:   Tue, 8 Jun 2021 16:12:33 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     Anand Jain <anand.jain@oracle.com>
-Cc:     Baokun Li <libaokun1@huawei.com>, linux-kernel@vger.kernel.org,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, weiyongjun1@huawei.com,
-        yuehaibing@huawei.com, yangjihong1@huawei.com, yukuai3@huawei.com,
-        linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Tue, 8 Jun 2021 10:30:17 -0400
+Received: from dggeml759-chm.china.huawei.com (unknown [172.30.72.53])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4FzswD4DkmzYrKm;
+        Tue,  8 Jun 2021 22:25:32 +0800 (CST)
+Received: from localhost.localdomain (10.175.102.38) by
+ dggeml759-chm.china.huawei.com (10.1.199.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2176.2; Tue, 8 Jun 2021 22:28:21 +0800
+From:   Wei Yongjun <weiyongjun1@huawei.com>
+To:     <weiyongjun1@huawei.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+CC:     <linux-gpio@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
         Hulk Robot <hulkci@huawei.com>
-Subject: Re: [PATCH -next] btrfs: send: use list_move_tail instead of
- list_del/list_add_tail
-Message-ID: <20210608141233.GQ31483@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Anand Jain <anand.jain@oracle.com>,
-        Baokun Li <libaokun1@huawei.com>, linux-kernel@vger.kernel.org,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, weiyongjun1@huawei.com,
-        yuehaibing@huawei.com, yangjihong1@huawei.com, yukuai3@huawei.com,
-        linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Hulk Robot <hulkci@huawei.com>
-References: <20210608031220.2822257-1-libaokun1@huawei.com>
- <e860684e-959b-d126-bb1d-3214878ab995@oracle.com>
+Subject: [PATCH -next] gpio: idt3243x: Fix return value check in idt_gpio_probe()
+Date:   Tue, 8 Jun 2021 14:38:53 +0000
+Message-ID: <20210608143853.4153234-1-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e860684e-959b-d126-bb1d-3214878ab995@oracle.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.102.38]
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggeml759-chm.china.huawei.com (10.1.199.138)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Jun 08, 2021 at 01:16:21PM +0800, Anand Jain wrote:
-> On 8/6/21 11:12 am, Baokun Li wrote:
-> > Using list_move_tail() instead of list_del() + list_add_tail().
-> > 
-> > Reported-by: Hulk Robot <hulkci@huawei.com>
-> > Signed-off-by: Baokun Li <libaokun1@huawei.com>
-> > ---
-> >   fs/btrfs/send.c | 3 +--
-> >   1 file changed, 1 insertion(+), 2 deletions(-)
-> > 
-> > diff --git a/fs/btrfs/send.c b/fs/btrfs/send.c
-> > index bd69db72acc5..a0e51b2416a1 100644
-> > --- a/fs/btrfs/send.c
-> > +++ b/fs/btrfs/send.c
-> > @@ -2083,8 +2083,7 @@ static struct name_cache_entry *name_cache_search(struct send_ctx *sctx,
-> >    */
-> >   static void name_cache_used(struct send_ctx *sctx, struct name_cache_entry *nce)
-> >   {
-> > -	list_del(&nce->list);
-> > -	list_add_tail(&nce->list, &sctx->name_cache_list);
-> > +	list_move_tail(&nce->list, &sctx->name_cache_list);
-> >   }
-> 
-> 
->   Looks good.
->   You can consider open-code name_cache_used() as there is only one user.
+In case of error, the function devm_platform_ioremap_resource_byname()
+returns ERR_PTR() and never returns NULL. The NULL test in the return
+value check should be replaced with IS_ERR().
 
-Yeah sounds like a good idea, with part of the function comment next to
-the list_move_tail.
+Fixes: 4195926aedca ("gpio: Add support for IDT 79RC3243x GPIO controller")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/gpio/gpio-idt3243x.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpio/gpio-idt3243x.c b/drivers/gpio/gpio-idt3243x.c
+index e961acee1571..50003ad2e589 100644
+--- a/drivers/gpio/gpio-idt3243x.c
++++ b/drivers/gpio/gpio-idt3243x.c
+@@ -142,8 +142,8 @@ static int idt_gpio_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	ctrl->gpio = devm_platform_ioremap_resource_byname(pdev, "gpio");
+-	if (!ctrl->gpio)
+-		return -ENOMEM;
++	if (IS_ERR(ctrl->gpio))
++		return PTR_ERR(ctrl->gpio);
+ 
+ 	ctrl->gc.parent = dev;
+ 
+@@ -160,8 +160,8 @@ static int idt_gpio_probe(struct platform_device *pdev)
+ 
+ 	if (device_property_read_bool(dev, "interrupt-controller")) {
+ 		ctrl->pic = devm_platform_ioremap_resource_byname(pdev, "pic");
+-		if (!ctrl->pic)
+-			return -ENOMEM;
++		if (IS_ERR(ctrl->pic))
++			return PTR_ERR(ctrl->pic);
+ 
+ 		parent_irq = platform_get_irq(pdev, 0);
+ 		if (!parent_irq)
+
