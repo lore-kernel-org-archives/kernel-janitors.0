@@ -2,167 +2,86 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1214BC47082
-	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Jun 2021 02:26:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1034C47095
+	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Jun 2021 03:00:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F186161208
-	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Jun 2021 02:26:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A77A561278
+	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Jun 2021 03:00:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231283AbhFHC2m (ORCPT
+        id S230446AbhFHDCg (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 7 Jun 2021 22:28:42 -0400
-Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:53482 "EHLO
-        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230237AbhFHC2l (ORCPT
+        Mon, 7 Jun 2021 23:02:36 -0400
+Received: from szxga01-in.huawei.com ([45.249.212.187]:3093 "EHLO
+        szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230266AbhFHDCf (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 7 Jun 2021 22:28:41 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=alimailimapcm10staff010182156082;MF=chengshuyi@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0UbidshM_1623119206;
-Received: from B-39YZML7H-2200.local(mailfrom:chengshuyi@linux.alibaba.com fp:SMTPD_---0UbidshM_1623119206)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 08 Jun 2021 10:26:47 +0800
-From:   Shuyi Cheng <chengshuyi@linux.alibaba.com>
-Subject: Re: [PATCH net-next] net: tcp: Updating MSS, when the sending window
- is smaller than MSS.
-To:     Eric Dumazet <edumazet@google.com>
-Cc:     David Miller <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        David Ahern <dsahern@kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org, wenan.mao@linux.alibaba.com
-References: <1623058534-78782-1-git-send-email-chengshuyi@linux.alibaba.com>
- <CANn89iLNf+73MsPH7O7wX3PrN26FVLcjw_SmsN6jNwnjrYg4KQ@mail.gmail.com>
-Message-ID: <0e938649-986d-ce79-e3c4-1f29bdcb64e0@linux.alibaba.com>
-Date:   Tue, 8 Jun 2021 10:26:46 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.10.2
+        Mon, 7 Jun 2021 23:02:35 -0400
+Received: from dggemv711-chm.china.huawei.com (unknown [172.30.72.53])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4FzZcR0JkgzWtVM;
+        Tue,  8 Jun 2021 10:55:51 +0800 (CST)
+Received: from dggpeml500020.china.huawei.com (7.185.36.88) by
+ dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Tue, 8 Jun 2021 11:00:40 +0800
+Received: from huawei.com (10.175.127.227) by dggpeml500020.china.huawei.com
+ (7.185.36.88) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.2; Tue, 8 Jun 2021
+ 11:00:39 +0800
+From:   Baokun Li <libaokun1@huawei.com>
+To:     <linux-kernel@vger.kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        "Michal Simek" <michal.simek@xilinx.com>,
+        Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>,
+        Shravya Kumbham <shravya.kumbham@xilinx.com>,
+        Matthew Murrian <matthew.murrian@goctsi.com>,
+        Romain Perier <romain.perier@gmail.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Allen Pais <allen.lkml@gmail.com>
+CC:     <weiyongjun1@huawei.com>, <yuehaibing@huawei.com>,
+        <yangjihong1@huawei.com>, <yukuai3@huawei.com>,
+        <libaokun1@huawei.com>, <dmaengine@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH -next] dmaengine: xilinx_dma: Use list_move_tail instead of list_del/list_add_tail
+Date:   Tue, 8 Jun 2021 11:09:05 +0800
+Message-ID: <20210608030905.2818831-1-libaokun1@huawei.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-In-Reply-To: <CANn89iLNf+73MsPH7O7wX3PrN26FVLcjw_SmsN6jNwnjrYg4KQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.127.227]
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpeml500020.china.huawei.com (7.185.36.88)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Using list_move_tail() instead of list_del() + list_add_tail().
 
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Baokun Li <libaokun1@huawei.com>
+---
+ drivers/dma/xilinx/xilinx_dma.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-On 6/7/21 7:34 PM, Eric Dumazet wrote:
-> On Mon, Jun 7, 2021 at 11:35 AM Shuyi Cheng
-> <chengshuyi@linux.alibaba.com> wrote:
->>
->> When the lo network card is used for communication, the tcp server
->> reduces the size of the receiving buffer, causing the tcp client
->> to have a delay of 200ms. Examples are as follows:
->>
->> Suppose that the MTU of the lo network card is 65536, and the tcp server
->> sets the receive buffer size to 42KB. According to the
->> tcp_bound_to_half_wnd function, the MSS of the server and client is
->> 21KB. Then, the tcp server sets the buffer size of the connection to
->> 16KB. At this time, the MSS of the server is 8KB, and the MSS of the
->> client is still 21KB. But it will cause the client to fail to send the
->> message, that is, tcp_write_xmit fails. Mainly because tcp_snd_wnd_test
->> failed, and then entered the zero window detection phase, resulting in a
->> 200ms delay.
->>
->> Therefore, we mainly modify two places. One is the tcp_current_mss
->> function. When the sending window is smaller than the current mss, mss
->> needs to be updated. The other is the tcp_bound_to_half_wnd function.
->> When the sending window is smaller than the current mss, the mss value
->> should be calculated according to the current sending window, not
->> max_window.
->>
->> Signed-off-by: Shuyi Cheng <chengshuyi@linux.alibaba.com>
->> ---
->>   include/net/tcp.h     | 11 ++++++++---
->>   net/ipv4/tcp_output.c |  3 ++-
->>   2 files changed, 10 insertions(+), 4 deletions(-)
->>
->> diff --git a/include/net/tcp.h b/include/net/tcp.h
->> index e668f1b..fcdef16 100644
->> --- a/include/net/tcp.h
->> +++ b/include/net/tcp.h
->> @@ -641,6 +641,11 @@ static inline void tcp_clear_xmit_timers(struct sock *sk)
->>   static inline int tcp_bound_to_half_wnd(struct tcp_sock *tp, int pktsize)
->>   {
->>          int cutoff;
->> +       int window;
->> +
->> +       window = tp->max_window;
->> +       if (tp->snd_wnd && tp->snd_wnd < pktsize)
->> +               window = tp->snd_wnd;
->>
->>          /* When peer uses tiny windows, there is no use in packetizing
->>           * to sub-MSS pieces for the sake of SWS or making sure there
->> @@ -649,10 +654,10 @@ static inline int tcp_bound_to_half_wnd(struct tcp_sock *tp, int pktsize)
->>           * On the other hand, for extremely large MSS devices, handling
->>           * smaller than MSS windows in this way does make sense.
->>           */
->> -       if (tp->max_window > TCP_MSS_DEFAULT)
->> -               cutoff = (tp->max_window >> 1);
->> +       if (window > TCP_MSS_DEFAULT)
->> +               cutoff = (window >> 1);
->>          else
->> -               cutoff = tp->max_window;
->> +               cutoff = window;
->>
->>          if (cutoff && pktsize > cutoff)
->>                  return max_t(int, cutoff, 68U - tp->tcp_header_len);
->> diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
->> index bde781f..88dcdf2 100644
->> --- a/net/ipv4/tcp_output.c
->> +++ b/net/ipv4/tcp_output.c
->> @@ -1833,7 +1833,8 @@ unsigned int tcp_current_mss(struct sock *sk)
->>
->>          if (dst) {
->>                  u32 mtu = dst_mtu(dst);
->> -               if (mtu != inet_csk(sk)->icsk_pmtu_cookie)
->> +               if (mtu != inet_csk(sk)->icsk_pmtu_cookie ||
->> +                   (tp->snd_wnd && tp->snd_wnd < mss_now))
->>                          mss_now = tcp_sync_mss(sk, mtu);
-> 
->
-> I do not think we want to add code in fast path only to cope with
-> pathological user choices.
-> 
+diff --git a/drivers/dma/xilinx/xilinx_dma.c b/drivers/dma/xilinx/xilinx_dma.c
+index 75c0b8e904e5..77022ef05ac5 100644
+--- a/drivers/dma/xilinx/xilinx_dma.c
++++ b/drivers/dma/xilinx/xilinx_dma.c
+@@ -1411,8 +1411,7 @@ static void xilinx_vdma_start_transfer(struct xilinx_dma_chan *chan)
+ 
+ 	chan->desc_submitcount++;
+ 	chan->desc_pendingcount--;
+-	list_del(&desc->node);
+-	list_add_tail(&desc->node, &chan->active_list);
++	list_move_tail(&desc->node, &chan->active_list);
+ 	if (chan->desc_submitcount == chan->num_frms)
+ 		chan->desc_submitcount = 0;
+ 
 
-Thank you very much for your reply!
-
-I very much agree with your point of view. However, the kernel currently
-accepts the unreasonable RCVBUF set by the developer, that is, the set
-RCVBUF is smaller than MSS. Perhaps, we can avoid setting RCVBUF to be
-smaller than MSS in the sock_setsockopt function. What do you think?
-
-Thanks.
-
-> Maybe it is time to accept the fact that setting the receive buffer
-> size to 42KB is dumb nowadays.
-> 
-> TCP needs to have at least two buffers in flight to avoid 'strange' stalls.
-> 
-> If loopback MTU is 64KB  (and TSO/GRO sizes also can reach 64K), maybe
-> we need to ensure a minimal rcvbuf.
-> 
-> If applications set 42KB window size, they get what they asked for :
-> damn slow TCP communications.
-> 
-> We do not want to make them happy, while increasing cpu costs for 99%
-> of other uses cases which are not trying to make TCP miserable.
-> 
-> I would rather add a sysctl or something to ensure rcvbuf has a
-> minimal sane value, instead of risking subtle TCP regressions.
-> 
-> In 2021, we should not limit ourselves to memory constraints that were
-> common 40 years ago when TCP was invented.
-> 
-> References :
-> commit 9eb5bf838d06aa6ddebe4aca6b5cedcf2eb53b86 net: sock: fix
-> TCP_SKB_MIN_TRUESIZE
-> commit eea86af6b1e18d6fa8dc959e3ddc0100f27aff9f net: sock: adapt
-> SOCK_MIN_RCVBUF and SOCK_MIN_SNDBUF
->
