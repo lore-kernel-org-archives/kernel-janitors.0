@@ -5,34 +5,34 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BC23C4743E
-	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Jun 2021 17:58:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A67BC4743E
+	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Jun 2021 18:11:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1EA8C61360
-	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Jun 2021 17:58:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 331C661246
+	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Jun 2021 18:11:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233987AbhFHSAX (ORCPT
+        id S233763AbhFHSNb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 8 Jun 2021 14:00:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49590 "EHLO
+        Tue, 8 Jun 2021 14:13:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52638 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233932AbhFHSAW (ORCPT
+        with ESMTP id S232789AbhFHSN3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 8 Jun 2021 14:00:22 -0400
+        Tue, 8 Jun 2021 14:13:29 -0400
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89EC5C061574
-        for <kernel-janitors@vger.kernel.org>; Tue,  8 Jun 2021 10:58:29 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99FACC061789
+        for <kernel-janitors@vger.kernel.org>; Tue,  8 Jun 2021 11:11:36 -0700 (PDT)
 Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
         by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <ore@pengutronix.de>)
-        id 1lqfzZ-0006nr-Gj; Tue, 08 Jun 2021 19:58:21 +0200
+        id 1lqgCH-0000FC-QN; Tue, 08 Jun 2021 20:11:29 +0200
 Received: from ore by pty.hi.pengutronix.de with local (Exim 4.89)
         (envelope-from <ore@pengutronix.de>)
-        id 1lqfzY-0003Cp-AE; Tue, 08 Jun 2021 19:58:20 +0200
-Date:   Tue, 8 Jun 2021 19:58:20 +0200
+        id 1lqgCH-000412-6e; Tue, 08 Jun 2021 20:11:29 +0200
+Date:   Tue, 8 Jun 2021 20:11:29 +0200
 From:   Oleksij Rempel <o.rempel@pengutronix.de>
 To:     Colin King <colin.king@canonical.com>
 Cc:     "David S . Miller" <davem@davemloft.net>,
@@ -40,20 +40,21 @@ Cc:     "David S . Miller" <davem@davemloft.net>,
         Oleksij Rempel <linux@rempel-privat.de>,
         linux-usb@vger.kernel.org, netdev@vger.kernel.org,
         kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2][next] net: usb: asix: Fix less than zero comparison
- of a u16
-Message-ID: <20210608175820.fxeaotpomtsywwfh@pengutronix.de>
+Subject: Re: [PATCH 2/2][next] net: usb: asix: ax88772: net: Fix less than
+ zero comparison of a u16
+Message-ID: <20210608181129.7mnuba6dcaemslul@pengutronix.de>
 References: <20210608152249.160333-1-colin.king@canonical.com>
+ <20210608152249.160333-2-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20210608152249.160333-1-colin.king@canonical.com>
+In-Reply-To: <20210608152249.160333-2-colin.king@canonical.com>
 X-Sent-From: Pengutronix Hildesheim
 X-URL:  http://www.pengutronix.de/
 X-IRC:  #ptxdist @freenode
 X-Accept-Language: de,en
 X-Accept-Content-Type: text/plain
-X-Uptime: 19:57:08 up 188 days,  8:03, 50 users,  load average: 0.02, 0.02,
+X-Uptime: 20:00:59 up 188 days,  8:07, 50 users,  load average: 0.04, 0.03,
  0.00
 User-Agent: NeoMutt/20170113 (1.7.2)
 X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
@@ -64,7 +65,7 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Jun 08, 2021 at 04:22:48PM +0100, Colin King wrote:
+On Tue, Jun 08, 2021 at 04:22:49PM +0100, Colin King wrote:
 > From: Colin Ian King <colin.king@canonical.com>
 > 
 > The comparison of the u16 priv->phy_addr < 0 is always false because
@@ -73,38 +74,42 @@ On Tue, Jun 08, 2021 at 04:22:48PM +0100, Colin King wrote:
 > less than zero error check comparison.
 > 
 > Addresses-Coverity: ("Unsigned compared against 0")
-> Fixes: e532a096be0e ("net: usb: asix: ax88772: add phylib support")
+> Fixes: 7e88b11a862a ("net: usb: asix: refactor asix_read_phy_addr() and handle errors on return")
+
+Here is wrong Fixes tag. This assignment was bogus before this patch.
+
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
->  drivers/net/usb/asix_devices.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
+>  drivers/net/usb/ax88172a.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/net/usb/asix_devices.c b/drivers/net/usb/asix_devices.c
-> index 57dafb3262d9..211c5a87eb15 100644
-> --- a/drivers/net/usb/asix_devices.c
-> +++ b/drivers/net/usb/asix_devices.c
-> @@ -704,9 +704,10 @@ static int ax88772_init_phy(struct usbnet *dev)
->  	struct asix_common_private *priv = dev->driver_priv;
->  	int ret;
+> diff --git a/drivers/net/usb/ax88172a.c b/drivers/net/usb/ax88172a.c
+> index 2e2081346740..e24773bb9398 100644
+> --- a/drivers/net/usb/ax88172a.c
+> +++ b/drivers/net/usb/ax88172a.c
+> @@ -205,7 +205,8 @@ static int ax88172a_bind(struct usbnet *dev, struct usb_interface *intf)
+>  		goto free;
+>  	}
 >  
-> -	priv->phy_addr = asix_read_phy_addr(dev, true);
-> -	if (priv->phy_addr < 0)
-> +	ret = asix_read_phy_addr(dev, true);
-> +	if (ret < 0)
->  		return priv->phy_addr;
-
-please add new line here
+> -	priv->phy_addr = asix_read_phy_addr(dev, priv->use_embdphy);
+> +	ret = asix_read_phy_addr(dev, priv->use_embdphy);
 > +	priv->phy_addr = ret;
->  
->  	snprintf(priv->phy_name, sizeof(priv->phy_name), PHY_ID_FMT,
->  		 priv->mdio->id, priv->phy_addr);
+
+Ah.. it is same bug in different color :)
+You probably wonted to do:
+	if (ret < 0)
+		goto free;
+
+	priv->phy_addr = ret;
+
+>  	if (priv->phy_addr < 0) {
+>  		ret = priv->phy_addr;
+>  		goto free;
 > -- 
 > 2.31.1
 > 
+> 
 
-Thank you!
-
-Reviewed-by: Oleksij Rempel <o.rempel@pengutronix.de>
 -- 
 Pengutronix e.K.                           |                             |
 Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
