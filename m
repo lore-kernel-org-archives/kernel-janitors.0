@@ -5,39 +5,40 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 612A4C4743D
-	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Jun 2021 15:23:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F17CC47082
+	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Jun 2021 15:34:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4B7266128E
-	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Jun 2021 15:23:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 838B661002
+	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Jun 2021 15:34:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231663AbhFHPY4 (ORCPT
+        id S232185AbhFHPgK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 8 Jun 2021 11:24:56 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:38424 "EHLO
+        Tue, 8 Jun 2021 11:36:10 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:38698 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230463AbhFHPYw (ORCPT
+        with ESMTP id S231308AbhFHPgJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 8 Jun 2021 11:24:52 -0400
+        Tue, 8 Jun 2021 11:36:09 -0400
 Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
         (Exim 4.93)
         (envelope-from <colin.king@canonical.com>)
-        id 1lqdZ9-0005al-9X; Tue, 08 Jun 2021 15:22:55 +0000
+        id 1lqdk0-0006NO-AB; Tue, 08 Jun 2021 15:34:08 +0000
 From:   Colin King <colin.king@canonical.com>
-To:     "David S . Miller" <davem@davemloft.net>,
+To:     Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        Florian Westphal <fw@strlen.de>,
+        "David S . Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>,
-        Oleksij Rempel <linux@rempel-privat.de>,
-        linux-usb@vger.kernel.org, netdev@vger.kernel.org
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2][next] net: usb: asix: ax88772: net: Fix less than zero comparison of a u16
-Date:   Tue,  8 Jun 2021 16:22:49 +0100
-Message-Id: <20210608152249.160333-2-colin.king@canonical.com>
+Subject: [PATCH][next] etfilter: fix array index out-of-bounds error
+Date:   Tue,  8 Jun 2021 16:34:08 +0100
+Message-Id: <20210608153408.160652-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210608152249.160333-1-colin.king@canonical.com>
-References: <20210608152249.160333-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -47,32 +48,32 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The comparison of the u16 priv->phy_addr < 0 is always false because
-phy_addr is unsigned. Fix this by assigning the return from the call
-to function asix_read_phy_addr to int ret and using this for the
-less than zero error check comparison.
+Currently the array net->nf.hooks_ipv6 is accessed by index hook
+before hook is sanity checked. Fix this by moving the sanity check
+to before the array access.
 
-Addresses-Coverity: ("Unsigned compared against 0")
-Fixes: 7e88b11a862a ("net: usb: asix: refactor asix_read_phy_addr() and handle errors on return")
+Addresses-Coverity: ("Out-of-bounds access")
+Fixes: e2cf17d3774c ("netfilter: add new hook nfnl subsystem")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/usb/ax88172a.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ net/netfilter/nfnetlink_hook.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/usb/ax88172a.c b/drivers/net/usb/ax88172a.c
-index 2e2081346740..e24773bb9398 100644
---- a/drivers/net/usb/ax88172a.c
-+++ b/drivers/net/usb/ax88172a.c
-@@ -205,7 +205,8 @@ static int ax88172a_bind(struct usbnet *dev, struct usb_interface *intf)
- 		goto free;
- 	}
- 
--	priv->phy_addr = asix_read_phy_addr(dev, priv->use_embdphy);
-+	ret = asix_read_phy_addr(dev, priv->use_embdphy);
-+	priv->phy_addr = ret;
- 	if (priv->phy_addr < 0) {
- 		ret = priv->phy_addr;
- 		goto free;
+diff --git a/net/netfilter/nfnetlink_hook.c b/net/netfilter/nfnetlink_hook.c
+index 04586dfa2acd..58fda6ac663b 100644
+--- a/net/netfilter/nfnetlink_hook.c
++++ b/net/netfilter/nfnetlink_hook.c
+@@ -181,9 +181,9 @@ nfnl_hook_entries_head(u8 pf, unsigned int hook, struct net *net, const char *de
+ 		hook_head = rcu_dereference(net->nf.hooks_ipv4[hook]);
+ 		break;
+ 	case NFPROTO_IPV6:
+-		hook_head = rcu_dereference(net->nf.hooks_ipv6[hook]);
+ 		if (hook >= ARRAY_SIZE(net->nf.hooks_ipv6))
+ 			return ERR_PTR(-EINVAL);
++		hook_head = rcu_dereference(net->nf.hooks_ipv6[hook]);
+ 		break;
+ 	case NFPROTO_ARP:
+ #ifdef CONFIG_NETFILTER_FAMILY_ARP
 -- 
 2.31.1
 
