@@ -4,77 +4,76 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42E76C4743D
-	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Jun 2021 14:28:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00BC3C47082
+	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Jun 2021 14:58:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2314261287
-	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Jun 2021 14:28:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E331661183
+	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Jun 2021 14:58:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233403AbhFHOaj (ORCPT
+        id S233714AbhFHPAU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 8 Jun 2021 10:30:39 -0400
-Received: from szxga08-in.huawei.com ([45.249.212.255]:5295 "EHLO
-        szxga08-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233364AbhFHOaU (ORCPT
+        Tue, 8 Jun 2021 11:00:20 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:37430 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233540AbhFHPAT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 8 Jun 2021 10:30:20 -0400
-Received: from dggeml759-chm.china.huawei.com (unknown [172.30.72.56])
-        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Fzssx3k5bz1BK2l;
-        Tue,  8 Jun 2021 22:23:33 +0800 (CST)
-Received: from localhost.localdomain (10.175.102.38) by
- dggeml759-chm.china.huawei.com (10.1.199.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2176.2; Tue, 8 Jun 2021 22:28:23 +0800
-From:   Wei Yongjun <weiyongjun1@huawei.com>
-To:     <weiyongjun1@huawei.com>,
-        =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-CC:     <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH -next] drm/panfrost: Fix missing clk_disable_unprepare() on error in panfrost_clk_init()
-Date:   Tue, 8 Jun 2021 14:38:56 +0000
-Message-ID: <20210608143856.4154766-1-weiyongjun1@huawei.com>
-X-Mailer: git-send-email 2.25.1
+        Tue, 8 Jun 2021 11:00:19 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lqdBP-0003XW-MY; Tue, 08 Jun 2021 14:58:23 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Oleksij Rempel <linux@rempel-privat.de>,
+        linux-usb@vger.kernel.org, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] net: usb: asix: ax88772: Fix less than zero comparison of a u16
+Date:   Tue,  8 Jun 2021 15:58:23 +0100
+Message-Id: <20210608145823.159467-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.102.38]
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggeml759-chm.china.huawei.com (10.1.199.138)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Fix the missing clk_disable_unprepare() before return
-from panfrost_clk_init() in the error handling case.
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: b681af0bc1cc ("drm: panfrost: add optional bus_clock")
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+The comparison of the u16 priv->phy_addr < 0 is always false because
+phy_addr is unsigned. Fix this by assigning the return from the call
+to function asix_read_phy_addr to int ret and using this for the
+less than zero error check comparison.
+
+Addresses-Coverity: ("Unsigned compared against 0")
+Fixes: e532a096be0e ("net: usb: asix: ax88772: add phylib support")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/gpu/drm/panfrost/panfrost_device.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/usb/asix_devices.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/panfrost/panfrost_device.c b/drivers/gpu/drm/panfrost/panfrost_device.c
-index 125ed973feaa..a2a09c51eed7 100644
---- a/drivers/gpu/drm/panfrost/panfrost_device.c
-+++ b/drivers/gpu/drm/panfrost/panfrost_device.c
-@@ -54,7 +54,8 @@ static int panfrost_clk_init(struct panfrost_device *pfdev)
- 	if (IS_ERR(pfdev->bus_clock)) {
- 		dev_err(pfdev->dev, "get bus_clock failed %ld\n",
- 			PTR_ERR(pfdev->bus_clock));
--		return PTR_ERR(pfdev->bus_clock);
-+		err = PTR_ERR(pfdev->bus_clock);
-+		goto disable_clock;
- 	}
+diff --git a/drivers/net/usb/asix_devices.c b/drivers/net/usb/asix_devices.c
+index 57dafb3262d9..211c5a87eb15 100644
+--- a/drivers/net/usb/asix_devices.c
++++ b/drivers/net/usb/asix_devices.c
+@@ -704,9 +704,10 @@ static int ax88772_init_phy(struct usbnet *dev)
+ 	struct asix_common_private *priv = dev->driver_priv;
+ 	int ret;
  
- 	if (pfdev->bus_clock) {
+-	priv->phy_addr = asix_read_phy_addr(dev, true);
+-	if (priv->phy_addr < 0)
++	ret = asix_read_phy_addr(dev, true);
++	if (ret < 0)
+ 		return priv->phy_addr;
++	priv->phy_addr = ret;
+ 
+ 	snprintf(priv->phy_name, sizeof(priv->phy_name), PHY_ID_FMT,
+ 		 priv->mdio->id, priv->phy_addr);
+-- 
+2.31.1
 
