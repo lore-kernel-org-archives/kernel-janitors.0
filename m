@@ -2,87 +2,72 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77B82C48BD1
-	for <kernel-janitors@archiver.kernel.org>; Wed,  9 Jun 2021 07:19:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20926C47095
+	for <kernel-janitors@archiver.kernel.org>; Wed,  9 Jun 2021 07:39:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5FFFD613BC
-	for <kernel-janitors@archiver.kernel.org>; Wed,  9 Jun 2021 07:19:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02EC86135D
+	for <kernel-janitors@archiver.kernel.org>; Wed,  9 Jun 2021 07:39:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237244AbhFIHV2 (ORCPT
+        id S233922AbhFIHky (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 9 Jun 2021 03:21:28 -0400
-Received: from szxga03-in.huawei.com ([45.249.212.189]:5348 "EHLO
-        szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235549AbhFIHV0 (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 9 Jun 2021 03:21:26 -0400
-Received: from dggemv711-chm.china.huawei.com (unknown [172.30.72.56])
-        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4G0JKk74MWz6ttj;
-        Wed,  9 Jun 2021 15:15:38 +0800 (CST)
-Received: from dggpeml500020.china.huawei.com (7.185.36.88) by
- dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Wed, 9 Jun 2021 15:19:30 +0800
-Received: from huawei.com (10.175.127.227) by dggpeml500020.china.huawei.com
- (7.185.36.88) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.2; Wed, 9 Jun 2021
- 15:19:29 +0800
-From:   Baokun Li <libaokun1@huawei.com>
-To:     <linux-kernel@vger.kernel.org>, Rob Clark <robdclark@gmail.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
-CC:     <weiyongjun1@huawei.com>, <yuehaibing@huawei.com>,
-        <yangjihong1@huawei.com>, <yukuai3@huawei.com>,
-        <libaokun1@huawei.com>, <linux-arm-msm@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-media@vger.kernel.org>,
-        <linaro-mm-sig@lists.linaro.org>,
-        <kernel-janitors@vger.kernel.org>, "Hulk Robot" <hulkci@huawei.com>
-Subject: [PATCH -next v2] drm/msm: Use list_move_tail instead of list_del/list_add_tail in msm_gem.c
-Date:   Wed, 9 Jun 2021 15:28:38 +0800
-Message-ID: <20210609072838.1369371-1-libaokun1@huawei.com>
-X-Mailer: git-send-email 2.31.1
+        Wed, 9 Jun 2021 03:40:54 -0400
+Received: from mga02.intel.com ([134.134.136.20]:35878 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233673AbhFIHkx (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 9 Jun 2021 03:40:53 -0400
+IronPort-SDR: U/aD8rpYH2ed20DY3VHHuoDngzMq1E4lDIH1da7b6mDAkOx0U2u9um3+tASiHY5vSulWEDvs7w
+ 2A0WTk1ZGKNw==
+X-IronPort-AV: E=McAfee;i="6200,9189,10009"; a="192132376"
+X-IronPort-AV: E=Sophos;i="5.83,260,1616482800"; 
+   d="scan'208";a="192132376"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2021 00:38:58 -0700
+IronPort-SDR: aymcSzkjsK4Lz0m+QUTmT6eeeCYEHc3zyaPEi7uTXFauEozHlNq4DdtHuYu8BdtzN1usKgamJn
+ CU2VCD9sUJEQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.83,260,1616482800"; 
+   d="scan'208";a="552588612"
+Received: from allen-box.sh.intel.com (HELO [10.239.159.105]) ([10.239.159.105])
+  by fmsmga001.fm.intel.com with ESMTP; 09 Jun 2021 00:38:55 -0700
+Cc:     baolu.lu@linux.intel.com, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iommu: remove redundant assignment to variable agaw
+To:     Colin King <colin.king@canonical.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        iommu@lists.linux-foundation.org
+References: <20210416171826.64091-1-colin.king@canonical.com>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <b83cb027-2944-2477-c0d2-78f57cf6c6cf@linux.intel.com>
+Date:   Wed, 9 Jun 2021 15:37:38 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.127.227]
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpeml500020.china.huawei.com (7.185.36.88)
-X-CFilter-Loop: Reflected
+In-Reply-To: <20210416171826.64091-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Using list_move_tail() instead of list_del() + list_add_tail() in msm_gem.c.
+On 4/17/21 1:18 AM, Colin King wrote:
+> From: Colin Ian King<colin.king@canonical.com>
+> 
+> The variable agaw is initialized with a value that is never
+> read and it is being updated later with a new value as a
+> counter in a for-loop. The initialization is redundant and
+> can be removed.
+> 
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King<colin.king@canonical.com>
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Baokun Li <libaokun1@huawei.com>
----
-V1->V2:
-	CC mailist
+Queued for v5.14. Thanks!
 
- drivers/gpu/drm/msm/msm_gem.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/msm/msm_gem.c b/drivers/gpu/drm/msm/msm_gem.c
-index 1865919368f2..5b7d63d3750a 100644
---- a/drivers/gpu/drm/msm/msm_gem.c
-+++ b/drivers/gpu/drm/msm/msm_gem.c
-@@ -854,8 +854,7 @@ void msm_gem_active_get(struct drm_gem_object *obj, struct msm_gpu *gpu)
- 		mutex_lock(&priv->mm_lock);
- 		if (msm_obj->evictable)
- 			mark_unevictable(msm_obj);
--		list_del(&msm_obj->mm_list);
--		list_add_tail(&msm_obj->mm_list, &gpu->active_list);
-+		list_move_tail(&msm_obj->mm_list, &gpu->active_list);
- 		mutex_unlock(&priv->mm_lock);
- 	}
- }
-
+Best regards,
+baolu
