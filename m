@@ -2,125 +2,83 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 296B2C47082
-	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Jun 2021 22:43:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFF19C4743D
+	for <kernel-janitors@archiver.kernel.org>; Wed,  9 Jun 2021 02:21:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0CDB661351
-	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Jun 2021 22:43:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9F3361287
+	for <kernel-janitors@archiver.kernel.org>; Wed,  9 Jun 2021 02:21:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231186AbhFHWpY (ORCPT
+        id S232565AbhFICXD (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 8 Jun 2021 18:45:24 -0400
-Received: from mail-qk1-f181.google.com ([209.85.222.181]:34615 "EHLO
-        mail-qk1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229526AbhFHWpY (ORCPT
+        Tue, 8 Jun 2021 22:23:03 -0400
+Received: from mail-ed1-f42.google.com ([209.85.208.42]:37462 "EHLO
+        mail-ed1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230306AbhFICXD (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 8 Jun 2021 18:45:24 -0400
-Received: by mail-qk1-f181.google.com with SMTP id k11so20299050qkk.1
-        for <kernel-janitors@vger.kernel.org>; Tue, 08 Jun 2021 15:43:18 -0700 (PDT)
+        Tue, 8 Jun 2021 22:23:03 -0400
+Received: by mail-ed1-f42.google.com with SMTP id b11so26865183edy.4
+        for <kernel-janitors@vger.kernel.org>; Tue, 08 Jun 2021 19:21:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=CiEH93oHxFAht+7aZTEKeBrzaSNOlcRE/Xf1r7kSjCA=;
-        b=Zc3jz63eFflFy1UVb/XgVYb2q+Oj0swYgmxeHSt/JLKGSZW34UgF8esnYCsF0IP7gx
-         YU/1cY18LflhO7EBiqBq0arSQMC9DhTbJaVS19hKY/kQBbib2GHX6bxhfNHBDOMHwXIJ
-         +Y02rE+pMr9WPHLdF5yKRUD8W0fLg+DtMssTOi9lc7D4ZF4//Tiwk+ikn8EwHo8ipJQ9
-         flXVXYyyE3u00z2Q3B/dYxtT5GP95yXptfiMLCMO+BazRWJv06zJgbfv5owqO+PRtPsJ
-         zRe1Pk3TospkQb4K6oZvpsclNPN3Jm7db+KKGFp3PYvPGCLRwFc4/E8NLMJcDNOvAfxL
-         ZXjw==
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0Y1FSEobOe8xalX9xjuNlZS8PBOfMBLSbk/7QTP+PmY=;
+        b=iz2geq+gCBJR3+ViNyaPYvhILn4edEjWx7CTSYlzvWUeIO1YMal+71yIGRGidjTN7q
+         GJB1qOWVvO6oZyI40Hmq5EoKqtmvMMfjF2YNoSHfT24XOn+IbR7A1G70dp6/+kIXUfBe
+         nxvSi+o/peNnCCOSo2hgo6s9u6n6/b1FJJwM+ba16m5heHFW/1S7xcjFTHo6brGsP3y/
+         lni6vJKXCa6YLNaQcAyaxBkpQr5ZTGjRmI0p/A4VrjW6FRomgaOJvk1tv2JT27HwcW02
+         S/RHKpAYZUQFhpauBKN1DfbJSEvp3RWOtX229+cRzPlES72QBq2FVSnCled77EW8C8rX
+         hlKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=CiEH93oHxFAht+7aZTEKeBrzaSNOlcRE/Xf1r7kSjCA=;
-        b=f0hE2jxbF+i5Rvk7BPhX0Nv5cglfknonE/VlbqWIV8L/1eaLDOSXwgIIl4TwoD/JA8
-         EFbUfZ5m6o2Rf/TqqF6KShQyBSFvSf6lq+nRjmpnOjBjP/Xc8K8VVwSpuwMLU63Awojc
-         OxXIe5zKv4k051IbOY3KM565k2jOeXcoTxmOI/GE+zEtAgyPTPmJb4fDjuMrnH0iLnCm
-         Ypd/SDkdUSGSPzKoFlnow1jkJ69nTuvptizYAWS9xCEu/Q2xxTbnU1D5yZrV+8bMJixR
-         4HuwReRcTsvdbG+mAQDc57tAHCj2FNjh4daEHhSTw6rC34Txfdo3C0GwpAX4eklM8gUo
-         4ULg==
-X-Gm-Message-State: AOAM533ic5oweU5mMxxNpXMvwlaOdjn8GKtJnhagM5YLMZkufp/eoWcI
-        lsMslYDGNSaOI4hirT7NwOsAfA==
-X-Google-Smtp-Source: ABdhPJyU+QIql5Y85Kiw+E7Je6AmK+VfYGY88+WbqGXNVf3BQkCaeLT4cnYJP9HeCybWB7I3sWEiVQ==
-X-Received: by 2002:a37:a80e:: with SMTP id r14mr24381754qke.386.1623192138166;
-        Tue, 08 Jun 2021 15:42:18 -0700 (PDT)
-Received: from [192.168.1.93] (pool-71-163-245-5.washdc.fios.verizon.net. [71.163.245.5])
-        by smtp.gmail.com with ESMTPSA id p3sm11444145qti.31.2021.06.08.15.42.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Jun 2021 15:42:17 -0700 (PDT)
-Subject: Re: [PATCH -next] crypto: qce: skcipher: fix error return code in
- qce_skcipher_async_req_handle()
-To:     Wei Yongjun <weiyongjun1@huawei.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     linux-crypto@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
-References: <20210602113645.3038800-1-weiyongjun1@huawei.com>
-From:   Thara Gopinath <thara.gopinath@linaro.org>
-Message-ID: <09514ef3-183f-db3d-7525-aefcb1275383@linaro.org>
-Date:   Tue, 8 Jun 2021 18:42:16 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0Y1FSEobOe8xalX9xjuNlZS8PBOfMBLSbk/7QTP+PmY=;
+        b=rxDhI0f8r4pYafSCQC7GNoYI1Lk2CtrEfsptYGZSR0NALFJlPuvapV6CsZjnyqZJwe
+         yxkKyY5ssKCN3pBKWhwJOVUItqNbsI7b5zYx8SJGoTy7Tm4cwHavhE6DNwe+52xYOIqq
+         7GebIkZdBXvDV9Bwaf5tuk1eU1trGpm/Dt25hiYChVaWmO4xqSFV5wpqH/MVeDaOsVdG
+         guuBqeEEKkCkYhlel1lPR9R5pF8PSKnm1j52LJ86h6ndgHN6tvxq7lworZUdoNC5xYqS
+         Sa9NaNW+LJrBszljH2JSdKn8rtAX/KXX8pV32gAbOX3fX4Nxj1AgghKOdqjmSlnzY2Pf
+         0mhg==
+X-Gm-Message-State: AOAM531bAuofpc3L+uA4CQ+2d9b2xk4DvvpuJKFxzT4PdOwmn8x72Dhc
+        PXg4jJzp6tLSUxv062Po+2Vpq3Z6ygnFR2kWw9cz
+X-Google-Smtp-Source: ABdhPJwvgyH7PZtXzJ1DdgVwdgA0sHZzXneK81NkEzOR+ec3Iiw+5MfM1yjqs6r5lfCPLmJTFqYK2Ouz89eiw9lKPJU=
+X-Received: by 2002:a05:6402:348f:: with SMTP id v15mr16558137edc.135.1623205201671;
+ Tue, 08 Jun 2021 19:20:01 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20210602113645.3038800-1-weiyongjun1@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20210608031150.2821712-1-libaokun1@huawei.com>
+In-Reply-To: <20210608031150.2821712-1-libaokun1@huawei.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 8 Jun 2021 22:19:50 -0400
+Message-ID: <CAHC9VhRF-tvaye00Ck-i6OqjmxCUnn8HfdwMTYAm316i=kGd3A@mail.gmail.com>
+Subject: Re: [PATCH -next] audit: Use list_move instead of list_del/list_add
+To:     Baokun Li <libaokun1@huawei.com>
+Cc:     linux-kernel@vger.kernel.org, Eric Paris <eparis@redhat.com>,
+        weiyongjun1@huawei.com, yuehaibing@huawei.com,
+        yangjihong1@huawei.com, yukuai3@huawei.com, linux-audit@redhat.com,
+        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-
-
-On 6/2/21 7:36 AM, Wei Yongjun wrote:
-> Fix to return a negative error code from the error handling
-> case instead of 0, as done elsewhere in this function.
-> 
-> Fixes: 1339a7c3ba05 ("crypto: qce: skcipher: Fix incorrect sg count for dma transfers")
+On Mon, Jun 7, 2021 at 11:03 PM Baokun Li <libaokun1@huawei.com> wrote:
+>
+> Using list_move() instead of list_del() + list_add().
+>
 > Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+> ---
+>  kernel/audit_tree.c | 12 ++++--------
+>  1 file changed, 4 insertions(+), 8 deletions(-)
 
-Reviewed-by: Thara Gopinath <thara.gopinath@linaro.org>
+Merged into audit/next, thank you.
 
 -- 
-Warm Regards
-Thara
-
-> ---
->   drivers/crypto/qce/skcipher.c | 8 ++++++--
->   1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/crypto/qce/skcipher.c b/drivers/crypto/qce/skcipher.c
-> index 259418479227..8ff10928f581 100644
-> --- a/drivers/crypto/qce/skcipher.c
-> +++ b/drivers/crypto/qce/skcipher.c
-> @@ -124,13 +124,17 @@ qce_skcipher_async_req_handle(struct crypto_async_request *async_req)
->   	rctx->dst_sg = rctx->dst_tbl.sgl;
->   
->   	dst_nents = dma_map_sg(qce->dev, rctx->dst_sg, rctx->dst_nents, dir_dst);
-> -	if (dst_nents < 0)
-> +	if (dst_nents < 0) {
-> +		ret = dst_nents;
->   		goto error_free;
-> +	}
->   
->   	if (diff_dst) {
->   		src_nents = dma_map_sg(qce->dev, req->src, rctx->src_nents, dir_src);
-> -		if (src_nents < 0)
-> +		if (src_nents < 0) {
-> +			ret = src_nents;
->   			goto error_unmap_dst;
-> +		}
->   		rctx->src_sg = req->src;
->   	} else {
->   		rctx->src_sg = rctx->dst_sg;
-> 
-
-
+paul moore
+www.paul-moore.com
