@@ -2,127 +2,124 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 407BAC47095
-	for <kernel-janitors@archiver.kernel.org>; Wed,  9 Jun 2021 09:51:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D943C47095
+	for <kernel-janitors@archiver.kernel.org>; Wed,  9 Jun 2021 09:52:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2AFD961042
-	for <kernel-janitors@archiver.kernel.org>; Wed,  9 Jun 2021 09:51:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5838F61042
+	for <kernel-janitors@archiver.kernel.org>; Wed,  9 Jun 2021 09:52:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238342AbhFIJxo (ORCPT
+        id S238429AbhFIJya (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 9 Jun 2021 05:53:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33064 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238326AbhFIJxm (ORCPT
+        Wed, 9 Jun 2021 05:54:30 -0400
+Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:36312 "EHLO
+        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234390AbhFIJy3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 9 Jun 2021 05:53:42 -0400
-Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 597A1C061574;
-        Wed,  9 Jun 2021 02:51:47 -0700 (PDT)
-Received: by mail-lj1-x22e.google.com with SMTP id z22so14920310ljh.8;
-        Wed, 09 Jun 2021 02:51:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Mbbl8pt+ODA34KdyS+WloGNbfQNhCiN7M0uQW+cvUEM=;
-        b=bOujbOaFFtDatG1AG5ioV3VvdVj+AQRvnsBvIxVgo5hrZDXaBAwYfoDhzfHI3xBeNU
-         prB+b2ediJvU3L4Hqfpc0464PgxknQ4rKsjgkqEGXPiTpywv23UB57msoW95M9dw29gA
-         AWRWCSrZm6t1one+IiB5KWETM6pbo2HEpwk/OSo0uRt+RDmVwIMZATioNyhHxUmiXwXz
-         xnktxtFFFUcEz1EtfOMRfAz6KVqdhdJprfhFCkBorJbJCj9KsrUqw4e9mjdwhAhQBNZo
-         ogVyqF6A53f8+/9qK0AfmdpcdrB/09GIlbZ7HaJATAgTI4DvFlfjmddm+VoXD2v1ZY7l
-         l/Pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=Mbbl8pt+ODA34KdyS+WloGNbfQNhCiN7M0uQW+cvUEM=;
-        b=cvTTUTkW/Li45DekJUbLqokzR7gLeEr8RomZoweR6OqCMXaMH6CEhCZKtfhc4C5iMs
-         ZWXfskIif5KXCFoS5ZSNrsUOUkEq/eoqiaa1rhMWjxZBL0gtHF9q8K654+2fCKgNPCLU
-         T7pfkVryg0ucJTS72xn/O/xlv/Aom60Z2YQPbHxaM75bH/heGmo+MyzxSwvFSCp0A/L6
-         kw/IGMyYbIDNqffgM7/e5aJD1q78NkFTrB11CxnJ3fSQRzcqAqtls1vnQoJ+jfnY4SY4
-         PmxIFEDf2b2t6XfBEBXwZsC3RnGpFZp78EsjQjzI+IAs95GUKAuQiCAK4uhpCqV7YPan
-         Kp8A==
-X-Gm-Message-State: AOAM533NViAshVnSh7iF3Ll7yFal2VtmWBK7taDIYENtlCi813LQ2Jx6
-        1hCS/EibnSAGAac81IOIDbjI2kt4auo=
-X-Google-Smtp-Source: ABdhPJz5V2ESY/LehtRED5paOEjX4yIV+dIM6NbBr+JPM8jskGSdB4Wt8STMRXpCm9cNokIBwO9lIg==
-X-Received: by 2002:a2e:a593:: with SMTP id m19mr22031705ljp.103.1623232305523;
-        Wed, 09 Jun 2021 02:51:45 -0700 (PDT)
-Received: from [192.168.1.100] ([178.176.75.133])
-        by smtp.gmail.com with ESMTPSA id q3sm264804ljp.44.2021.06.09.02.51.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Jun 2021 02:51:45 -0700 (PDT)
-Subject: Re: [PATCH][next] net: usb: asix: ax88772: Fix less than zero
- comparison of a u16
-To:     Colin King <colin.king@canonical.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Oleksij Rempel <linux@rempel-privat.de>,
-        linux-usb@vger.kernel.org, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210608145823.159467-1-colin.king@canonical.com>
-From:   Sergei Shtylyov <sergei.shtylyov@gmail.com>
-Organization: Brain-dead Software
-Message-ID: <5ac017f5-b8cc-6177-888a-318681b36da3@gmail.com>
-Date:   Wed, 9 Jun 2021 12:51:33 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Wed, 9 Jun 2021 05:54:29 -0400
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 1599peam012994;
+        Wed, 9 Jun 2021 09:52:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
+ bh=L0iHNQ1Q5+MsI4CS1WUU69bxPrhaX+CRoYUVxNmpXCY=;
+ b=IwNv9YBIcEKdQI9dJk5LeoSRatPi5FmXdIxuxttIZAZzaVCQusN6EGXgwEgPnvoReA6U
+ UOYm/bEvGQ9q5LzBe7PMO0PlANibDVIzv5QjVKrP6kvQHWJ9g+JTLQcqF7xu8IQZqmIu
+ +twjLNX6aWSEmV1S1zVG8w2M84AmvENYfx/C+pkN58AB0ppG4aBStE/QRCZKr4Ctl36g
+ 9UFX25FpQUUFaWHfuZpHKS3cpIWZkc8/BGLPS2JbGk/DoMS0Tmry23rUHkJsy+PPTsAe
+ 5nZ64AerfP9pK2X4UQsQUTL3qibBhGorpFpuyRtdztjrUlrzSg53wNQoqKGVOx/JIG6o kA== 
+Received: from oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by mx0b-00069f02.pphosted.com with ESMTP id 392ptc83rn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 09 Jun 2021 09:52:25 +0000
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
+        by pps.podrdrct (8.16.0.36/8.16.0.36) with SMTP id 1599pnFp007005;
+        Wed, 9 Jun 2021 09:52:25 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by aserp3020.oracle.com with ESMTP id 3922wug2mh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 09 Jun 2021 09:52:25 +0000
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 1599qO8X010928;
+        Wed, 9 Jun 2021 09:52:24 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3020.oracle.com with ESMTP id 3922wug2kk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 09 Jun 2021 09:52:24 +0000
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 1599qKTs023002;
+        Wed, 9 Jun 2021 09:52:20 GMT
+Received: from mwanda (/41.212.42.34)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 09 Jun 2021 02:52:19 -0700
+Date:   Wed, 9 Jun 2021 12:52:12 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Andrew Lunn <andrew@lunn.ch>,
+        Yang Yingliang <yangyingliang@huawei.com>
+Cc:     Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH 1/2 net-next] net: dsa: qca8k: fix an endian bug in
+ qca8k_get_ethtool_stats()
+Message-ID: <YMCPTLkZumD3Vv/X@mwanda>
 MIME-Version: 1.0
-In-Reply-To: <20210608145823.159467-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+X-Proofpoint-ORIG-GUID: GSl0_WKBTC5_G0XbDKkODo5dcjw1Yl7V
+X-Proofpoint-GUID: GSl0_WKBTC5_G0XbDKkODo5dcjw1Yl7V
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 08.06.2021 17:58, Colin King wrote:
+The "hi" variable is a u64 but the qca8k_read() writes to the top 32
+bits of it.  That will work on little endian systems but it's a bit
+subtle.  It's cleaner to make declare "hi" as a u32.  We will still need
+to cast it when we shift it later on in the function but that's fine.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The comparison of the u16 priv->phy_addr < 0 is always false because
-> phy_addr is unsigned. Fix this by assigning the return from the call
-> to function asix_read_phy_addr to int ret and using this for the
-> less than zero error check comparison.
-> 
-> Addresses-Coverity: ("Unsigned compared against 0")
-> Fixes: e532a096be0e ("net: usb: asix: ax88772: add phylib support")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->   drivers/net/usb/asix_devices.c | 5 +++--
->   1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/usb/asix_devices.c b/drivers/net/usb/asix_devices.c
-> index 57dafb3262d9..211c5a87eb15 100644
-> --- a/drivers/net/usb/asix_devices.c
-> +++ b/drivers/net/usb/asix_devices.c
-> @@ -704,9 +704,10 @@ static int ax88772_init_phy(struct usbnet *dev)
->   	struct asix_common_private *priv = dev->driver_priv;
->   	int ret;
->   
-> -	priv->phy_addr = asix_read_phy_addr(dev, true);
-> -	if (priv->phy_addr < 0)
-> +	ret = asix_read_phy_addr(dev, true);
-> +	if (ret < 0)
->   		return priv->phy_addr;
+Fixes: 7c9896e37807 ("net: dsa: qca8k: check return value of read functions correctly")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/net/dsa/qca8k.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-    It's not yet assigned at this point, should be:
+diff --git a/drivers/net/dsa/qca8k.c b/drivers/net/dsa/qca8k.c
+index 6fe963ba23e8..9df3514d1ff2 100644
+--- a/drivers/net/dsa/qca8k.c
++++ b/drivers/net/dsa/qca8k.c
+@@ -1412,7 +1412,7 @@ qca8k_get_ethtool_stats(struct dsa_switch *ds, int port,
+ 	struct qca8k_priv *priv = (struct qca8k_priv *)ds->priv;
+ 	const struct qca8k_mib_desc *mib;
+ 	u32 reg, i, val;
+-	u64 hi = 0;
++	u32 hi = 0;
+ 	int ret;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(ar8327_mib); i++) {
+@@ -1424,14 +1424,14 @@ qca8k_get_ethtool_stats(struct dsa_switch *ds, int port,
+ 			continue;
+ 
+ 		if (mib->size == 2) {
+-			ret = qca8k_read(priv, reg + 4, (u32 *)&hi);
++			ret = qca8k_read(priv, reg + 4, &hi);
+ 			if (ret < 0)
+ 				continue;
+ 		}
+ 
+ 		data[i] = val;
+ 		if (mib->size == 2)
+-			data[i] |= hi << 32;
++			data[i] |= (u64)hi << 32;
+ 	}
+ }
+ 
+-- 
+2.30.2
 
-		return ret;
-
-> +	priv->phy_addr = ret;
-
-    Assigned only here. :-)
-
->   	snprintf(priv->phy_name, sizeof(priv->phy_name), PHY_ID_FMT,
->   		 priv->mdio->id, priv->phy_addr);
-
-MBR, Sergei
