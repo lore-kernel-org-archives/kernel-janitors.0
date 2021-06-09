@@ -4,66 +4,60 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C532C47095
-	for <kernel-janitors@archiver.kernel.org>; Wed,  9 Jun 2021 07:08:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 927C9C47095
+	for <kernel-janitors@archiver.kernel.org>; Wed,  9 Jun 2021 07:09:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E9A6B61364
-	for <kernel-janitors@archiver.kernel.org>; Wed,  9 Jun 2021 07:08:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65FB661354
+	for <kernel-janitors@archiver.kernel.org>; Wed,  9 Jun 2021 07:09:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237004AbhFIHKa (ORCPT
+        id S236897AbhFIHLB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 9 Jun 2021 03:10:30 -0400
-Received: from szxga03-in.huawei.com ([45.249.212.189]:5346 "EHLO
-        szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234352AbhFIHKI (ORCPT
+        Wed, 9 Jun 2021 03:11:01 -0400
+Received: from szxga08-in.huawei.com ([45.249.212.255]:5303 "EHLO
+        szxga08-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234009AbhFIHKu (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 9 Jun 2021 03:10:08 -0400
-Received: from dggemv704-chm.china.huawei.com (unknown [172.30.72.53])
-        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4G0J4h2xzkz6tqL;
-        Wed,  9 Jun 2021 15:04:20 +0800 (CST)
+        Wed, 9 Jun 2021 03:10:50 -0400
+Received: from dggemv703-chm.china.huawei.com (unknown [172.30.72.55])
+        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4G0J4M2ccYz1BJhn;
+        Wed,  9 Jun 2021 15:04:03 +0800 (CST)
 Received: from dggpeml500020.china.huawei.com (7.185.36.88) by
- dggemv704-chm.china.huawei.com (10.3.19.47) with Microsoft SMTP Server
+ dggemv703-chm.china.huawei.com (10.3.19.46) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Wed, 9 Jun 2021 15:08:11 +0800
+ 15.1.2176.2; Wed, 9 Jun 2021 15:08:55 +0800
 Received: from huawei.com (10.175.127.227) by dggpeml500020.china.huawei.com
  (7.185.36.88) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.2; Wed, 9 Jun 2021
- 15:08:11 +0800
+ 15:08:54 +0800
 From:   Baokun Li <libaokun1@huawei.com>
 To:     <linux-kernel@vger.kernel.org>,
-        Yisen Zhuang <yisen.zhuang@huawei.com>,
-        Salil Mehta <salil.mehta@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Huazhong Tan <tanhuazhong@huawei.com>,
-        Guangbin Huang <huangguangbin2@huawei.com>,
-        "Jian Shen" <shenjian15@huawei.com>,
-        Yufeng Mo <moyufeng@huawei.com>,
-        Guojia Liao <liaoguojia@huawei.com>,
-        Jiaran Zhang <zhangjiaran@huawei.com>
+        VMware Graphics <linux-graphics-maintainer@vmware.com>,
+        Roland Scheidegger <sroland@vmware.com>,
+        Zack Rusin <zackr@vmware.com>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
 CC:     <weiyongjun1@huawei.com>, <yuehaibing@huawei.com>,
         <yangjihong1@huawei.com>, <yukuai3@huawei.com>,
-        <libaokun1@huawei.com>, <netdev@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH net-next v2] net: hns3: use list_move_tail instead of list_del/list_add_tail in hclgevf_main.c
-Date:   Wed, 9 Jun 2021 15:17:20 +0800
-Message-ID: <20210609071720.1346684-1-libaokun1@huawei.com>
+        <libaokun1@huawei.com>, <dri-devel@lists.freedesktop.org>,
+        <kernel-janitors@vger.kernel.org>, "Hulk Robot" <hulkci@huawei.com>
+Subject: [PATCH -next v2] drm/vmwgfx: Use list_move_tail instead of list_del/list_add_tail in vmwgfx_cmdbuf.c
+Date:   Wed, 9 Jun 2021 15:18:03 +0800
+Message-ID: <20210609071803.1347254-1-libaokun1@huawei.com>
 X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Type:   text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7BIT
 X-Originating-IP: [10.175.127.227]
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
  dggpeml500020.china.huawei.com (7.185.36.88)
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Using list_move_tail() instead of list_del() + list_add_tail() in hclgevf_main.c.
+Using list_move_tail() instead of list_del() + list_add_tail() in vmwgfx_cmdbuf.c.
 
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: Baokun Li <libaokun1@huawei.com>
@@ -71,41 +65,21 @@ Signed-off-by: Baokun Li <libaokun1@huawei.com>
 V1->V2:
 	CC mailist
 
- .../hisilicon/hns3/hns3vf/hclgevf_main.c     | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-index f84b3a135c06..52eaf82b7cd7 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-@@ -1536,8 +1536,7 @@ static void hclgevf_sync_from_add_list(struct list_head *add_list,
- 			kfree(mac_node);
- 		} else if (mac_node->state == HCLGEVF_MAC_ACTIVE) {
- 			mac_node->state = HCLGEVF_MAC_TO_DEL;
--			list_del(&mac_node->node);
--			list_add_tail(&mac_node->node, mac_list);
-+			list_move_tail(&mac_node->node, mac_list);
- 		} else {
- 			list_del(&mac_node->node);
- 			kfree(mac_node);
-@@ -1562,8 +1561,7 @@ static void hclgevf_sync_from_del_list(struct list_head *del_list,
- 			list_del(&mac_node->node);
- 			kfree(mac_node);
- 		} else {
--			list_del(&mac_node->node);
--			list_add_tail(&mac_node->node, mac_list);
-+			list_move_tail(&mac_node->node, mac_list);
- 		}
- 	}
- }
-@@ -1599,8 +1597,7 @@ static void hclgevf_sync_mac_list(struct hclgevf_dev *hdev,
- 	list_for_each_entry_safe(mac_node, tmp, list, node) {
- 		switch (mac_node->state) {
- 		case HCLGEVF_MAC_TO_DEL:
--			list_del(&mac_node->node);
--			list_add_tail(&mac_node->node, &tmp_del_list);
-+			list_move_tail(&mac_node->node, &tmp_del_list);
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf.c b/drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf.c
+index 6bb4961e64a5..58417d972b69 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf.c
+@@ -358,8 +358,7 @@ static void vmw_cmdbuf_ctx_submit(struct vmw_cmdbuf_man *man,
  			break;
- 		case HCLGEVF_MAC_TO_ADD:
- 			new_node = kzalloc(sizeof(*new_node), GFP_ATOMIC);
+ 		}
+ 
+-		list_del(&entry->list);
+-		list_add_tail(&entry->list, &ctx->hw_submitted);
++		list_move_tail(&entry->list, &ctx->hw_submitted);
+ 		ctx->num_hw_submitted++;
+ 	}
+ 
 
