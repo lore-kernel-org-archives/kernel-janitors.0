@@ -2,83 +2,91 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFF19C4743D
-	for <kernel-janitors@archiver.kernel.org>; Wed,  9 Jun 2021 02:21:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1B6DC47095
+	for <kernel-janitors@archiver.kernel.org>; Wed,  9 Jun 2021 06:53:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C9F3361287
-	for <kernel-janitors@archiver.kernel.org>; Wed,  9 Jun 2021 02:21:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DD0C61249
+	for <kernel-janitors@archiver.kernel.org>; Wed,  9 Jun 2021 06:53:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232565AbhFICXD (ORCPT
+        id S233953AbhFIGza (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 8 Jun 2021 22:23:03 -0400
-Received: from mail-ed1-f42.google.com ([209.85.208.42]:37462 "EHLO
-        mail-ed1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230306AbhFICXD (ORCPT
+        Wed, 9 Jun 2021 02:55:30 -0400
+Received: from szxga08-in.huawei.com ([45.249.212.255]:5300 "EHLO
+        szxga08-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231902AbhFIGza (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 8 Jun 2021 22:23:03 -0400
-Received: by mail-ed1-f42.google.com with SMTP id b11so26865183edy.4
-        for <kernel-janitors@vger.kernel.org>; Tue, 08 Jun 2021 19:21:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0Y1FSEobOe8xalX9xjuNlZS8PBOfMBLSbk/7QTP+PmY=;
-        b=iz2geq+gCBJR3+ViNyaPYvhILn4edEjWx7CTSYlzvWUeIO1YMal+71yIGRGidjTN7q
-         GJB1qOWVvO6oZyI40Hmq5EoKqtmvMMfjF2YNoSHfT24XOn+IbR7A1G70dp6/+kIXUfBe
-         nxvSi+o/peNnCCOSo2hgo6s9u6n6/b1FJJwM+ba16m5heHFW/1S7xcjFTHo6brGsP3y/
-         lni6vJKXCa6YLNaQcAyaxBkpQr5ZTGjRmI0p/A4VrjW6FRomgaOJvk1tv2JT27HwcW02
-         S/RHKpAYZUQFhpauBKN1DfbJSEvp3RWOtX229+cRzPlES72QBq2FVSnCled77EW8C8rX
-         hlKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0Y1FSEobOe8xalX9xjuNlZS8PBOfMBLSbk/7QTP+PmY=;
-        b=rxDhI0f8r4pYafSCQC7GNoYI1Lk2CtrEfsptYGZSR0NALFJlPuvapV6CsZjnyqZJwe
-         yxkKyY5ssKCN3pBKWhwJOVUItqNbsI7b5zYx8SJGoTy7Tm4cwHavhE6DNwe+52xYOIqq
-         7GebIkZdBXvDV9Bwaf5tuk1eU1trGpm/Dt25hiYChVaWmO4xqSFV5wpqH/MVeDaOsVdG
-         guuBqeEEKkCkYhlel1lPR9R5pF8PSKnm1j52LJ86h6ndgHN6tvxq7lworZUdoNC5xYqS
-         Sa9NaNW+LJrBszljH2JSdKn8rtAX/KXX8pV32gAbOX3fX4Nxj1AgghKOdqjmSlnzY2Pf
-         0mhg==
-X-Gm-Message-State: AOAM531bAuofpc3L+uA4CQ+2d9b2xk4DvvpuJKFxzT4PdOwmn8x72Dhc
-        PXg4jJzp6tLSUxv062Po+2Vpq3Z6ygnFR2kWw9cz
-X-Google-Smtp-Source: ABdhPJwvgyH7PZtXzJ1DdgVwdgA0sHZzXneK81NkEzOR+ec3Iiw+5MfM1yjqs6r5lfCPLmJTFqYK2Ouz89eiw9lKPJU=
-X-Received: by 2002:a05:6402:348f:: with SMTP id v15mr16558137edc.135.1623205201671;
- Tue, 08 Jun 2021 19:20:01 -0700 (PDT)
+        Wed, 9 Jun 2021 02:55:30 -0400
+Received: from dggemv703-chm.china.huawei.com (unknown [172.30.72.56])
+        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4G0Hkg0VWBz1BJml;
+        Wed,  9 Jun 2021 14:48:43 +0800 (CST)
+Received: from dggpeml500020.china.huawei.com (7.185.36.88) by
+ dggemv703-chm.china.huawei.com (10.3.19.46) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Wed, 9 Jun 2021 14:53:34 +0800
+Received: from huawei.com (10.175.127.227) by dggpeml500020.china.huawei.com
+ (7.185.36.88) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.2; Wed, 9 Jun 2021
+ 14:53:34 +0800
+From:   Baokun Li <libaokun1@huawei.com>
+To:     <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+CC:     <weiyongjun1@huawei.com>, <yuehaibing@huawei.com>,
+        <yangjihong1@huawei.com>, <yukuai3@huawei.com>,
+        <libaokun1@huawei.com>, <kernel-janitors@vger.kernel.org>,
+        Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH -next v2] clockevents: Use list_move instead of list_del/list_add in clockevents.c
+Date:   Wed, 9 Jun 2021 15:02:42 +0800
+Message-ID: <20210609070242.1322450-1-libaokun1@huawei.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-References: <20210608031150.2821712-1-libaokun1@huawei.com>
-In-Reply-To: <20210608031150.2821712-1-libaokun1@huawei.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 8 Jun 2021 22:19:50 -0400
-Message-ID: <CAHC9VhRF-tvaye00Ck-i6OqjmxCUnn8HfdwMTYAm316i=kGd3A@mail.gmail.com>
-Subject: Re: [PATCH -next] audit: Use list_move instead of list_del/list_add
-To:     Baokun Li <libaokun1@huawei.com>
-Cc:     linux-kernel@vger.kernel.org, Eric Paris <eparis@redhat.com>,
-        weiyongjun1@huawei.com, yuehaibing@huawei.com,
-        yangjihong1@huawei.com, yukuai3@huawei.com, linux-audit@redhat.com,
-        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.127.227]
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpeml500020.china.huawei.com (7.185.36.88)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Jun 7, 2021 at 11:03 PM Baokun Li <libaokun1@huawei.com> wrote:
->
-> Using list_move() instead of list_del() + list_add().
->
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
-> ---
->  kernel/audit_tree.c | 12 ++++--------
->  1 file changed, 4 insertions(+), 8 deletions(-)
+Using list_move() instead of list_del() + list_add() in clockevents.c.
 
-Merged into audit/next, thank you.
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Baokun Li <libaokun1@huawei.com>
+---
+V1->V2:
+        CC mailist
 
--- 
-paul moore
-www.paul-moore.com
+ kernel/time/clockevents.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/kernel/time/clockevents.c b/kernel/time/clockevents.c
+index 0056d2bed53e..d59ac319f9f4 100644
+--- a/kernel/time/clockevents.c
++++ b/kernel/time/clockevents.c
+@@ -347,8 +347,7 @@ static void clockevents_notify_released(void)
+ 	while (!list_empty(&clockevents_released)) {
+ 		dev = list_entry(clockevents_released.next,
+ 				 struct clock_event_device, list);
+-		list_del(&dev->list);
+-		list_add(&dev->list, &clockevent_devices);
++		list_move(&dev->list, &clockevent_devices);
+ 		tick_check_new_device(dev);
+ 	}
+ }
+@@ -576,8 +575,7 @@ void clockevents_exchange_device(struct clock_event_device *old,
+ 	if (old) {
+ 		module_put(old->owner);
+ 		clockevents_switch_state(old, CLOCK_EVT_STATE_DETACHED);
+-		list_del(&old->list);
+-		list_add(&old->list, &clockevents_released);
++		list_move(&old->list, &clockevents_released);
+ 	}
+ 
+ 	if (new) {
+
