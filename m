@@ -2,87 +2,88 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43305C48BCF
-	for <kernel-janitors@archiver.kernel.org>; Wed,  9 Jun 2021 13:49:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37B7EC48BDF
+	for <kernel-janitors@archiver.kernel.org>; Wed,  9 Jun 2021 14:14:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2DE03610A2
-	for <kernel-janitors@archiver.kernel.org>; Wed,  9 Jun 2021 13:49:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 180D4613AE
+	for <kernel-janitors@archiver.kernel.org>; Wed,  9 Jun 2021 14:14:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236809AbhFINvj (ORCPT
+        id S237710AbhFIOQh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 9 Jun 2021 09:51:39 -0400
-Received: from mail-ej1-f53.google.com ([209.85.218.53]:44973 "EHLO
-        mail-ej1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236782AbhFINvf (ORCPT
+        Wed, 9 Jun 2021 10:16:37 -0400
+Received: from szxga02-in.huawei.com ([45.249.212.188]:3928 "EHLO
+        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237645AbhFIOQg (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 9 Jun 2021 09:51:35 -0400
-Received: by mail-ej1-f53.google.com with SMTP id c10so38598579eja.11;
-        Wed, 09 Jun 2021 06:49:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=oX2BbZy3phYMqo60pEOB/Bur67OS3OOGNSyTUQXA+oc=;
-        b=ljbF8cqutd9zcNe/8N9uNdzCv1sGxkJl7gZuKTyTnjuVEcgYIMtu3nY1Bn1SapkRfk
-         bb9/ZKVn4nJQtTSq8boBuql5SQWL3l4C/B3uLWryV5nbui9yOSO9nygBZn+IUZ37wtOL
-         S5XAb7dlavaypyVyPJ7spBiKm26yvxUOAlZPfSr3Ld6oyeMf1tmjudoIk6NZrQG7TGp7
-         dkiTIeLiG4PLxJ+833JanpdsWyc7wW2RNuhu6Hti86cKMdQjCOWboXIpKM3hkiACXFUG
-         dtFgKbakjCZhoWhFYBlLJsRLJo6yu5Gsd45wET3IuoucpRd8+FMXLuhk0fSBKEz8nYw3
-         iTGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=oX2BbZy3phYMqo60pEOB/Bur67OS3OOGNSyTUQXA+oc=;
-        b=I6TflRyEZIAuXUGkVFkN2zhqzt5SXrmwzmsxriaeboHMw2D9HRvYPn20JNwz/RVgiQ
-         sqr5WbCqklw/w1pxqPBQbfsFlYKV3uQenELv7scMpW0azjLwNsF8yFYTDm4K5SuEsTGs
-         B5QgsyPP1tO2yQywYxmR+1JQN3GC5zissgcF637hBJWKsRJol0EJXq+II/Qyu3Mvbh58
-         mCaQPSssvgKedOt/eMaldlmge/V78oysPT/Q/Ooo7uy+LPoLjD8X1E6suMzjQ2JMEDYr
-         Y4xnXKPJJc/p1zUtLKTky8FXhW5GIk16wiT1z8P7PscopQajsUWmXZ92m/qddCYBNaZh
-         Zjtw==
-X-Gm-Message-State: AOAM5314mR+gsKJSGxtPuywMozeP1R2SCUjxzPVT6MotdVfrLeHO1PC3
-        2kjxOZp6/9cM6Tfngi1zYq59jl9ZihI=
-X-Google-Smtp-Source: ABdhPJyMwwbOcfo89A/O2Eb9/HAKAKRttQNL/3ifDPyTpfWPclouYGW6FyblNrkJHlClS7tbU+DBjg==
-X-Received: by 2002:a17:907:948c:: with SMTP id dm12mr29007706ejc.484.1623246511379;
-        Wed, 09 Jun 2021 06:48:31 -0700 (PDT)
-Received: from skbuf ([188.26.52.84])
-        by smtp.gmail.com with ESMTPSA id lb23sm1157772ejb.73.2021.06.09.06.48.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jun 2021 06:48:30 -0700 (PDT)
-Date:   Wed, 9 Jun 2021 16:48:29 +0300
-From:   Vladimir Oltean <olteanv@gmail.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Andrew Lunn <andrew@lunn.ch>,
-        Yang Yingliang <yangyingliang@huawei.com>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
+        Wed, 9 Jun 2021 10:16:36 -0400
+Received: from dggeml759-chm.china.huawei.com (unknown [172.30.72.54])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4G0TYc6tJDz6vyG;
+        Wed,  9 Jun 2021 22:11:32 +0800 (CST)
+Received: from localhost.localdomain (10.175.102.38) by
+ dggeml759-chm.china.huawei.com (10.1.199.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2176.2; Wed, 9 Jun 2021 22:14:36 +0800
+From:   Wei Yongjun <weiyongjun1@huawei.com>
+To:     <weiyongjun1@huawei.com>, Netanel Belgazal <netanel@amazon.com>,
+        Arthur Kiyanovski <akiyano@amazon.com>,
         "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 2/2 net-next] net: dsa: qca8k: check the correct variable
- in qca8k_set_mac_eee()
-Message-ID: <20210609134829.jill2lt7s2asq4cw@skbuf>
-References: <YMCPTLkZumD3Vv/X@mwanda>
- <YMCPf8lVosAYayXo@mwanda>
+        Jakub Kicinski <kuba@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Shay Agroskin <shayagr@amazon.com>,
+        Sameeh Jubran <sameehj@amazon.com>,
+        Lorenzo Bianconi <lorenzo@kernel.org>
+CC:     <netdev@vger.kernel.org>, <bpf@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH net-next] net: ena: make symbol 'ena_alloc_map_page' static
+Date:   Wed, 9 Jun 2021 14:25:06 +0000
+Message-ID: <20210609142506.1621773-1-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YMCPf8lVosAYayXo@mwanda>
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.102.38]
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggeml759-chm.china.huawei.com (10.1.199.138)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Jun 09, 2021 at 12:53:03PM +0300, Dan Carpenter wrote:
-> This code check "reg" but "ret" was intended so the error handling will
-> never trigger.
-> 
-> Fixes: 7c9896e37807 ("net: dsa: qca8k: check return value of read functions correctly")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
+The sparse tool complains as follows:
 
-Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
+drivers/net/ethernet/amazon/ena/ena_netdev.c:978:13: warning:
+ symbol 'ena_alloc_map_page' was not declared. Should it be static?
+
+This symbol is not used outside of ena_netdev.c, so marks it static.
+
+Fixes: 947c54c395cb ("net: ena: Use dev_alloc() in RX buffer allocation")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/net/ethernet/amazon/ena/ena_netdev.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/amazon/ena/ena_netdev.c b/drivers/net/ethernet/amazon/ena/ena_netdev.c
+index cd6ea59c543c..3bb0e66b2c7e 100644
+--- a/drivers/net/ethernet/amazon/ena/ena_netdev.c
++++ b/drivers/net/ethernet/amazon/ena/ena_netdev.c
+@@ -975,7 +975,8 @@ static void ena_free_all_io_rx_resources(struct ena_adapter *adapter)
+ 		ena_free_rx_resources(adapter, i);
+ }
+ 
+-struct page *ena_alloc_map_page(struct ena_ring *rx_ring, dma_addr_t *dma)
++static struct page *ena_alloc_map_page(struct ena_ring *rx_ring,
++				       dma_addr_t *dma)
+ {
+ 	struct page *page;
+ 
+
