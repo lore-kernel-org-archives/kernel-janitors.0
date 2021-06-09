@@ -4,59 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 834E3C47095
-	for <kernel-janitors@archiver.kernel.org>; Wed,  9 Jun 2021 07:17:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEF87C47095
+	for <kernel-janitors@archiver.kernel.org>; Wed,  9 Jun 2021 07:18:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6628261002
-	for <kernel-janitors@archiver.kernel.org>; Wed,  9 Jun 2021 07:17:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C32BD61289
+	for <kernel-janitors@archiver.kernel.org>; Wed,  9 Jun 2021 07:18:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237225AbhFIHTa (ORCPT
+        id S235494AbhFIHUI (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 9 Jun 2021 03:19:30 -0400
-Received: from szxga01-in.huawei.com ([45.249.212.187]:8110 "EHLO
+        Wed, 9 Jun 2021 03:20:08 -0400
+Received: from szxga01-in.huawei.com ([45.249.212.187]:8111 "EHLO
         szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234118AbhFIHTa (ORCPT
+        with ESMTP id S232746AbhFIHUH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 9 Jun 2021 03:19:30 -0400
-Received: from dggemv703-chm.china.huawei.com (unknown [172.30.72.55])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4G0JJh4Xz6zYrt2;
-        Wed,  9 Jun 2021 15:14:44 +0800 (CST)
+        Wed, 9 Jun 2021 03:20:07 -0400
+Received: from dggemv711-chm.china.huawei.com (unknown [172.30.72.57])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4G0JKQ1GX9zYsXy;
+        Wed,  9 Jun 2021 15:15:22 +0800 (CST)
 Received: from dggpeml500020.china.huawei.com (7.185.36.88) by
- dggemv703-chm.china.huawei.com (10.3.19.46) with Microsoft SMTP Server
+ dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Wed, 9 Jun 2021 15:17:30 +0800
+ 15.1.2176.2; Wed, 9 Jun 2021 15:18:11 +0800
 Received: from huawei.com (10.175.127.227) by dggpeml500020.china.huawei.com
  (7.185.36.88) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.2; Wed, 9 Jun 2021
- 15:17:29 +0800
+ 15:18:11 +0800
 From:   Baokun Li <libaokun1@huawei.com>
-To:     <linux-kernel@vger.kernel.org>,
-        Maximilian Luz <luzmaximilian@gmail.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <mgross@linux.intel.com>
+To:     <linux-kernel@vger.kernel.org>, Peter Chen <peter.chen@kernel.org>,
+        "Pawel Laszczak" <pawell@cadence.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 CC:     <weiyongjun1@huawei.com>, <yuehaibing@huawei.com>,
         <yangjihong1@huawei.com>, <yukuai3@huawei.com>,
-        <libaokun1@huawei.com>, <platform-driver-x86@vger.kernel.org>,
+        <libaokun1@huawei.com>, <linux-usb@vger.kernel.org>,
         <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH -next v2] platform/surface: aggregator: Use list_move_tail instead of list_del/list_add_tail in ssh_request_layer.c
-Date:   Wed, 9 Jun 2021 15:26:38 +0800
-Message-ID: <20210609072638.1358174-1-libaokun1@huawei.com>
+Subject: [PATCH -next v2] usb: cdns3: cdns3-gadget: Use list_move_tail instead of list_del/list_add_tail
+Date:   Wed, 9 Jun 2021 15:27:20 +0800
+Message-ID: <20210609072720.1358527-1-libaokun1@huawei.com>
 X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Type:   text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7BIT
 X-Originating-IP: [10.175.127.227]
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
  dggpeml500020.china.huawei.com (7.185.36.88)
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Using list_move_tail() instead of list_del() + list_add_tail() in ssh_request_layer.c.
+Using list_move_tail() instead of list_del() + list_add_tail().
 
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: Baokun Li <libaokun1@huawei.com>
@@ -64,42 +63,22 @@ Signed-off-by: Baokun Li <libaokun1@huawei.com>
 V1->V2:
 	CC mailist
 
- .../surface/aggregator/ssh_request_layer.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ drivers/usb/cdns3/cdns3-gadget.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/platform/surface/aggregator/ssh_request_layer.c b/drivers/platform/surface/aggregator/ssh_request_layer.c
-index 52a83a8fcf82..fec2d7af2646 100644
---- a/drivers/platform/surface/aggregator/ssh_request_layer.c
-+++ b/drivers/platform/surface/aggregator/ssh_request_layer.c
-@@ -863,9 +863,7 @@ static void ssh_rtl_timeout_reap(struct work_struct *work)
- 		clear_bit(SSH_REQUEST_SF_PENDING_BIT, &r->state);
+diff --git a/drivers/usb/cdns3/cdns3-gadget.c b/drivers/usb/cdns3/cdns3-gadget.c
+index 57adcdbfab5f..5d8c982019af 100644
+--- a/drivers/usb/cdns3/cdns3-gadget.c
++++ b/drivers/usb/cdns3/cdns3-gadget.c
+@@ -430,9 +430,7 @@ static int cdns3_start_all_request(struct cdns3_device *priv_dev,
+ 		if (ret)
+ 			return ret;
  
- 		atomic_dec(&rtl->pending.count);
--		list_del(&r->node);
--
--		list_add_tail(&r->node, &claimed);
-+		list_move_tail(&r->node, &claimed);
- 	}
- 	spin_unlock(&rtl->pending.lock);
- 
-@@ -1204,8 +1202,7 @@ void ssh_rtl_shutdown(struct ssh_rtl *rtl)
- 		smp_mb__before_atomic();
- 		clear_bit(SSH_REQUEST_SF_QUEUED_BIT, &r->state);
- 
--		list_del(&r->node);
--		list_add_tail(&r->node, &claimed);
-+		list_move_tail(&r->node, &claimed);
- 	}
- 	spin_unlock(&rtl->queue.lock);
- 
-@@ -1238,8 +1235,7 @@ void ssh_rtl_shutdown(struct ssh_rtl *rtl)
- 			smp_mb__before_atomic();
- 			clear_bit(SSH_REQUEST_SF_PENDING_BIT, &r->state);
- 
--			list_del(&r->node);
--			list_add_tail(&r->node, &claimed);
-+			list_move_tail(&r->node, &claimed);
- 		}
- 		spin_unlock(&rtl->pending.lock);
+-		list_del(&request->list);
+-		list_add_tail(&request->list,
+-			      &priv_ep->pending_req_list);
++		list_move_tail(&request->list, &priv_ep->pending_req_list);
+ 		if (request->stream_id != 0 || (priv_ep->flags & EP_TDLCHK_EN))
+ 			break;
  	}
 
