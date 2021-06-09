@@ -4,36 +4,35 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DC46C48BCD
-	for <kernel-janitors@archiver.kernel.org>; Wed,  9 Jun 2021 12:00:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F28AC48BCF
+	for <kernel-janitors@archiver.kernel.org>; Wed,  9 Jun 2021 12:06:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 228C8613B1
-	for <kernel-janitors@archiver.kernel.org>; Wed,  9 Jun 2021 12:00:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B47C60FF4
+	for <kernel-janitors@archiver.kernel.org>; Wed,  9 Jun 2021 12:06:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234207AbhFIMCr (ORCPT
+        id S232629AbhFIMIO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 9 Jun 2021 08:02:47 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:40651 "EHLO
+        Wed, 9 Jun 2021 08:08:14 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:40751 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231928AbhFIMCq (ORCPT
+        with ESMTP id S232515AbhFIMIN (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 9 Jun 2021 08:02:46 -0400
+        Wed, 9 Jun 2021 08:08:13 -0400
 Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
         (Exim 4.93)
         (envelope-from <colin.king@canonical.com>)
-        id 1lqwt9-0007jn-2h; Wed, 09 Jun 2021 12:00:51 +0000
+        id 1lqwyP-0008AQ-W2; Wed, 09 Jun 2021 12:06:18 +0000
 From:   Colin King <colin.king@canonical.com>
-To:     Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-rtc@vger.kernel.org
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-staging@lists.linux.dev
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] rtc: v3020: remove redundant initialization of variable retval
-Date:   Wed,  9 Jun 2021 13:00:50 +0100
-Message-Id: <20210609120050.185746-1-colin.king@canonical.com>
+Subject: [PATCH] staging: gdm724x: emove redundant initialization of variable hci_len
+Date:   Wed,  9 Jun 2021 13:06:17 +0100
+Message-Id: <20210609120617.185975-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -44,29 +43,28 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The variable retval is being initialized with a value that is never read,
-it is being updated later on. The assignment is redundant and can be
-removed.
+The variable hci_len is being initialized with a value that is never
+read and it is being updated later with a new value. The initialization
+is redundant and can be removed.
 
 Addresses-Coverity: ("Unused value")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/rtc/rtc-v3020.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/gdm724x/gdm_lte.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/rtc/rtc-v3020.c b/drivers/rtc/rtc-v3020.c
-index d2da92187d56..4e8341c49f51 100644
---- a/drivers/rtc/rtc-v3020.c
-+++ b/drivers/rtc/rtc-v3020.c
-@@ -282,7 +282,7 @@ static int rtc_probe(struct platform_device *pdev)
- {
- 	struct v3020_platform_data *pdata = dev_get_platdata(&pdev->dev);
- 	struct v3020 *chip;
--	int retval = -EBUSY;
-+	int retval;
- 	int i;
+diff --git a/drivers/staging/gdm724x/gdm_lte.c b/drivers/staging/gdm724x/gdm_lte.c
+index 571f47d39484..ad9ed3df9fcf 100644
+--- a/drivers/staging/gdm724x/gdm_lte.c
++++ b/drivers/staging/gdm724x/gdm_lte.c
+@@ -684,7 +684,6 @@ static void gdm_lte_multi_sdu_pkt(struct phy_dev *phy_dev, char *buf, int len)
+ 	u32 nic_type;
+ 	int index;
  
- 	chip = devm_kzalloc(&pdev->dev, sizeof(*chip), GFP_KERNEL);
+-	hci_len = gdm_dev16_to_cpu(endian, multi_sdu->len);
+ 	num_packet = gdm_dev16_to_cpu(endian, multi_sdu->num_packet);
+ 
+ 	for (i = 0; i < num_packet; i++) {
 -- 
 2.31.1
 
