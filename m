@@ -7,58 +7,56 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A35CAC48BCF
-	for <kernel-janitors@archiver.kernel.org>; Wed,  9 Jun 2021 06:57:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54C3CC47095
+	for <kernel-janitors@archiver.kernel.org>; Wed,  9 Jun 2021 06:58:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7D06761289
-	for <kernel-janitors@archiver.kernel.org>; Wed,  9 Jun 2021 06:57:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3AE056124C
+	for <kernel-janitors@archiver.kernel.org>; Wed,  9 Jun 2021 06:58:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234079AbhFIG7B (ORCPT
+        id S234597AbhFIHAD (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 9 Jun 2021 02:59:01 -0400
-Received: from szxga02-in.huawei.com ([45.249.212.188]:3914 "EHLO
-        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234065AbhFIG67 (ORCPT
+        Wed, 9 Jun 2021 03:00:03 -0400
+Received: from szxga01-in.huawei.com ([45.249.212.187]:8106 "EHLO
+        szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233568AbhFIHAC (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 9 Jun 2021 02:58:59 -0400
-Received: from dggemv703-chm.china.huawei.com (unknown [172.30.72.56])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4G0Hrm1ZRCz6wk6;
-        Wed,  9 Jun 2021 14:54:00 +0800 (CST)
+        Wed, 9 Jun 2021 03:00:02 -0400
+Received: from dggemv703-chm.china.huawei.com (unknown [172.30.72.57])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4G0HtC4rxYzYsRm;
+        Wed,  9 Jun 2021 14:55:15 +0800 (CST)
 Received: from dggpeml500020.china.huawei.com (7.185.36.88) by
  dggemv703-chm.china.huawei.com (10.3.19.46) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Wed, 9 Jun 2021 14:57:03 +0800
+ 15.1.2176.2; Wed, 9 Jun 2021 14:58:05 +0800
 Received: from huawei.com (10.175.127.227) by dggpeml500020.china.huawei.com
  (7.185.36.88) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.2; Wed, 9 Jun 2021
- 14:57:03 +0800
+ 14:58:04 +0800
 From:   Baokun Li <libaokun1@huawei.com>
-To:     <linux-kernel@vger.kernel.org>, Felipe Balbi <balbi@kernel.org>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        Zqiang <qiang.zhang@windriver.com>,
-        Wei Ming Chen <jj251510319013@gmail.com>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        Michael R Sweet <msweet@msweet.org>
+To:     <linux-kernel@vger.kernel.org>, Ben Skeggs <bskeggs@redhat.com>,
+        "David Airlie" <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Lyude Paul <lyude@redhat.com>
 CC:     <weiyongjun1@huawei.com>, <yuehaibing@huawei.com>,
         <yangjihong1@huawei.com>, <yukuai3@huawei.com>,
-        <libaokun1@huawei.com>, <linux-usb@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH -next v2] usb: gadget: function: printer: use list_move instead of list_del/list_add
-Date:   Wed, 9 Jun 2021 15:06:12 +0800
-Message-ID: <20210609070612.1325044-1-libaokun1@huawei.com>
+        <libaokun1@huawei.com>, <dri-devel@lists.freedesktop.org>,
+        <nouveau@lists.freedesktop.org>, <kernel-janitors@vger.kernel.org>,
+        Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH -next v2] drm/nouveau/mpeg: use list_move instead of list_del/list_add in nv44.c
+Date:   Wed, 9 Jun 2021 15:07:13 +0800
+Message-ID: <20210609070713.1328686-1-libaokun1@huawei.com>
 X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Type:   text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7BIT
 X-Originating-IP: [10.175.127.227]
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
  dggpeml500020.china.huawei.com (7.185.36.88)
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Using list_move() instead of list_del() + list_add().
+Using list_move() instead of list_del() + list_add() in nv44.c.
 
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: Baokun Li <libaokun1@huawei.com>
@@ -66,21 +64,21 @@ Signed-off-by: Baokun Li <libaokun1@huawei.com>
 V1->V2:
 	CC mailist
 
- drivers/usb/gadget/function/f_printer.c | 3 +--
+ drivers/gpu/drm/nouveau/nvkm/engine/mpeg/nv44.c | 3 +--
  1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/usb/gadget/function/f_printer.c b/drivers/usb/gadget/function/f_printer.c
-index f47fdc1fa7f1..b5112f6974f2 100644
---- a/drivers/usb/gadget/function/f_printer.c
-+++ b/drivers/usb/gadget/function/f_printer.c
-@@ -667,8 +667,7 @@ printer_write(struct file *fd, const char __user *buf, size_t len, loff_t *ptr)
- 		value = usb_ep_queue(dev->in_ep, req, GFP_ATOMIC);
- 		spin_lock(&dev->lock);
- 		if (value) {
--			list_del(&req->list);
--			list_add(&req->list, &dev->tx_reqs);
-+			list_move(&req->list, &dev->tx_reqs);
- 			spin_unlock_irqrestore(&dev->lock, flags);
- 			mutex_unlock(&dev->lock_printer_io);
- 			return -EAGAIN;
+diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/mpeg/nv44.c b/drivers/gpu/drm/nouveau/nvkm/engine/mpeg/nv44.c
+index 521ce43a2871..16acd33764de 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/engine/mpeg/nv44.c
++++ b/drivers/gpu/drm/nouveau/nvkm/engine/mpeg/nv44.c
+@@ -158,8 +158,7 @@ nv44_mpeg_intr(struct nvkm_engine *engine)
+ 	list_for_each_entry(temp, &mpeg->chan, head) {
+ 		if (temp->inst >> 4 == inst) {
+ 			chan = temp;
+-			list_del(&chan->head);
+-			list_add(&chan->head, &mpeg->chan);
++			list_move(&chan->head, &mpeg->chan);
+ 			break;
+ 		}
+ 	}
 
