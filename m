@@ -2,94 +2,104 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96149C48BD1
-	for <kernel-janitors@archiver.kernel.org>; Thu, 10 Jun 2021 07:22:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFBB3C47094
+	for <kernel-janitors@archiver.kernel.org>; Thu, 10 Jun 2021 10:04:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7A87A61359
-	for <kernel-janitors@archiver.kernel.org>; Thu, 10 Jun 2021 07:22:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B181560FDA
+	for <kernel-janitors@archiver.kernel.org>; Thu, 10 Jun 2021 10:04:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229979AbhFJHY0 (ORCPT
+        id S230230AbhFJKGb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 10 Jun 2021 03:24:26 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:40764 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229778AbhFJHYY (ORCPT
+        Thu, 10 Jun 2021 06:06:31 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:54466 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229935AbhFJKGa (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 10 Jun 2021 03:24:24 -0400
-Received: from mail-wm1-f70.google.com ([209.85.128.70])
-        by youngberry.canonical.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <krzysztof.kozlowski@canonical.com>)
-        id 1lrF1H-00006n-Up
-        for kernel-janitors@vger.kernel.org; Thu, 10 Jun 2021 07:22:27 +0000
-Received: by mail-wm1-f70.google.com with SMTP id k5-20020a05600c1c85b02901ac8b854c50so2710691wms.5
-        for <kernel-janitors@vger.kernel.org>; Thu, 10 Jun 2021 00:22:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=7VadSajW5H4JLmd3wkcDKHmTiiBiDnefV2rMQY04z28=;
-        b=l+wsgnm/O0XZ9IPhWX/5qNLrp2dlyqNtfRmL4SOAANjfgGQCZn1CSRHFo9nFSuGpkq
-         pPmXPHLmKR/CvMnhl9NeUCmn2PK4neQ2Th5Ego2w+8YdQNHjRrXdzxs/yawdKeLMA5pE
-         jRtUtCtj9pAEx+nDT3WcBKuQ49fZS6zWMVXCQOYRnXzFGI1ggbDa4YJz/wtKUhelEEG+
-         65EOB9q9MTNwS89FHgmQrAoYcFCVIHGuJPxNg721NGAD7vm+a1GST6sXrIq7pbJdrlOB
-         I0jIIWos3K8BvTtrG2x1+XOIfjYzCCpbg05eVjPIHhAhjBAuSXGVUttS2weXhtV6V+du
-         5j3A==
-X-Gm-Message-State: AOAM533Yy7GBnhNBEhzrQqXc9RTBPJ0MH9Vc2SygduJHdHXwVb3vjCZt
-        RKNZLaYlJ5l1kwNK5SXJ7AfZsbuInvopi945BQeI4M3ERSihfu99vT/Uzvmjyi0h9BGJChBXS3a
-        MXxjYG17ams9hgOObEsCcis+Ne5daXJk5VIQJcRnzxwTbWQ==
-X-Received: by 2002:adf:fc0e:: with SMTP id i14mr3674105wrr.71.1623309745503;
-        Thu, 10 Jun 2021 00:22:25 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwYKqp7/tU/D0jmZXC6cq5GMH3PaAT2LB5mizmzqtiooFKKcoD4gXmpsPoaVVfOWirvKR1XqA==
-X-Received: by 2002:adf:fc0e:: with SMTP id i14mr3674072wrr.71.1623309745252;
-        Thu, 10 Jun 2021 00:22:25 -0700 (PDT)
-Received: from localhost.localdomain (xdsl-188-155-177-222.adslplus.ch. [188.155.177.222])
-        by smtp.gmail.com with ESMTPSA id j11sm2024658wmq.4.2021.06.10.00.22.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Jun 2021 00:22:24 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Joseph Lo <josephl@nvidia.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-tegra@vger.kernel.org,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Qinglang Miao <miaoqinglang@huawei.com>,
-        Yang Li <yang.lee@linux.alibaba.com>,
-        linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] memory: tegra: Delete dead debugfs checking code
-Date:   Thu, 10 Jun 2021 09:22:16 +0200
-Message-Id: <162330973162.9991.7770026774132794997.b4-ty@canonical.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <YMCQDTSyG8UuQoh0@mwanda>
-References: <YMCQDTSyG8UuQoh0@mwanda>
+        Thu, 10 Jun 2021 06:06:30 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 15AA3vn2078475;
+        Thu, 10 Jun 2021 10:04:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
+ bh=lAlXKTUYFVtdYmGMQ6HXL059Okrk6IgLJMPdlUwF2C4=;
+ b=oaHcKDFf3rOWnc11Kr5RMZNEygl3zK3A9YiggP2xONU5/O5TI2m4t4njQEqW+NgtRjC9
+ wJUhWWuJLLSKYdDFUGf/2J4afxveQpRS3SuiKpraqx4HggElbymrkt9O2S1U2NzR3wSX
+ e9a0kJh2pAC9SIr3OxSh5+Ykr1EOLkJ399npMkbLzc/x6DSGL6pCK4I+2v/q7/9R/6MI
+ y0Cnl4oBKsyN/4KcIiFbxDFg9wtH+yNP3Nn2O7vKXIIZLOCninC9rb5grJrkVJVzP8cw
+ qVI+m+GmxUvPirGoBcrkPoJwQ2eLEhJVqOcRBtDoo0oGgXITlmJmI49OYXhV8eXaBrIK VA== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 39017nkjyj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 10 Jun 2021 10:04:29 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 15AA19OY004916;
+        Thu, 10 Jun 2021 10:04:28 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by userp3020.oracle.com with ESMTP id 390k1su7yn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 10 Jun 2021 10:04:28 +0000
+Received: from userp3020.oracle.com (userp3020.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 15AA4S4D009578;
+        Thu, 10 Jun 2021 10:04:28 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 390k1su7yd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 10 Jun 2021 10:04:28 +0000
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 15AA4PXi023282;
+        Thu, 10 Jun 2021 10:04:26 GMT
+Received: from mwanda (/41.212.42.34)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 10 Jun 2021 03:04:25 -0700
+Date:   Thu, 10 Jun 2021 13:04:17 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Radim Pavlik <radim.pavlik@tbs-biometrics.com>
+Cc:     linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] pinctrl: mcp23s08: missing unlock in mcp23s08_irq()
+Message-ID: <YMHjoagGxEfVBW1t@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+X-Proofpoint-GUID: Zj75F3jTtF3FPWtg9tAUQVqv5YWs_Pok
+X-Proofpoint-ORIG-GUID: Zj75F3jTtF3FPWtg9tAUQVqv5YWs_Pok
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=10010 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 spamscore=0
+ mlxlogscore=999 phishscore=0 impostorscore=0 suspectscore=0 clxscore=1011
+ mlxscore=0 malwarescore=0 priorityscore=1501 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
+ definitions=main-2106100066
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 9 Jun 2021 12:55:25 +0300, Dan Carpenter wrote:
-> The debugfs_create_dir() function does not return NULL, it returns error
-> pointers.  But in normal situations like this where the caller is not
-> dereferencing "emc->debugfs.root" then we are not supposed to check the
-> return.  So instead of fixing these checks, we should delete them.
+This code needs to drop the lock before returning.
 
-Applied, thanks!
+Fixes: 897120d41e7a ("pinctrl: mcp23s08: fix race condition in irq handler")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/pinctrl/pinctrl-mcp23s08.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-[1/1] memory: tegra: Delete dead debugfs checking code
-      commit: c7c65703260c88a3e4d7387b2d03023c3625c6d4
-
-Best regards,
+diff --git a/drivers/pinctrl/pinctrl-mcp23s08.c b/drivers/pinctrl/pinctrl-mcp23s08.c
+index 799d596a1a4b..d0259577934e 100644
+--- a/drivers/pinctrl/pinctrl-mcp23s08.c
++++ b/drivers/pinctrl/pinctrl-mcp23s08.c
+@@ -353,7 +353,7 @@ static irqreturn_t mcp23s08_irq(int irq, void *data)
+ 
+ 	if (intf == 0) {
+ 		/* There is no interrupt pending */
+-		return IRQ_HANDLED;
++		goto unlock;
+ 	}
+ 
+ 	if (mcp_read(mcp, MCP_INTCAP, &intcap))
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+2.30.2
+
