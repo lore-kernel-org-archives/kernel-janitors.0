@@ -2,126 +2,95 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46E6CC48BDF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 10 Jun 2021 18:20:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F939C48BDF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 10 Jun 2021 19:54:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 201B861403
-	for <kernel-janitors@archiver.kernel.org>; Thu, 10 Jun 2021 18:20:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 867BC61407
+	for <kernel-janitors@archiver.kernel.org>; Thu, 10 Jun 2021 19:54:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230502AbhFJSV7 (ORCPT
+        id S230336AbhFJT4d (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 10 Jun 2021 14:21:59 -0400
-Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:13996 "EHLO
-        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230307AbhFJSV6 (ORCPT
+        Thu, 10 Jun 2021 15:56:33 -0400
+Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:26351 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229823AbhFJT4c (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 10 Jun 2021 14:21:58 -0400
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15AICnwl032589;
-        Thu, 10 Jun 2021 18:19:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=b9Jx40n4EZl0KxRz6LYxvDgVi0EEguSU/bHr4pn0T6s=;
- b=gwM8cpQqTntpgnj9csTspbJx8/8YNzTmKIizYGiz/K07Vk0RsgKsag3aoUjx0uEggQN8
- gyRW4ifCll16ztR3Vgt0ubJhpmjtK45IYYkPEEDpWCBGyeTg08HVicqn2mv+fcXGBoNF
- 2yiNsReIHj4+ZgHXy84Yr2mkaZZW2PuE0hRv+GZV5Dyru9DlCCvurB/tR2wToZxzKP6C
- i8wSDDlgFJMX91wY4HOamQUnT/qZxvccwU47rM07pzyD1oO4Mu89xq/p2MCjnkZ0zEgC
- harpRR7gRur0nTXUvHqFpe9oLPGKMJ948tMl/twQ8BFRfaNqVJToKHcnP2B+kOt3B0Of Rw== 
-Received: from oracle.com (userp3030.oracle.com [156.151.31.80])
-        by mx0b-00069f02.pphosted.com with ESMTP id 393mkb82kc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 10 Jun 2021 18:19:54 +0000
-Received: from userp3030.oracle.com (userp3030.oracle.com [127.0.0.1])
-        by pps.podrdrct (8.16.0.36/8.16.0.36) with SMTP id 15AIJrae047356;
-        Thu, 10 Jun 2021 18:19:53 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by userp3030.oracle.com with ESMTP id 38yxcwtv3r-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 10 Jun 2021 18:19:53 +0000
-Received: from userp3030.oracle.com (userp3030.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 15AIJqEV047341;
-        Thu, 10 Jun 2021 18:19:52 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3030.oracle.com with ESMTP id 38yxcwtv2q-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 10 Jun 2021 18:19:52 +0000
-Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 15AIJnMG014769;
-        Thu, 10 Jun 2021 18:19:49 GMT
-Received: from kadam (/41.212.42.34)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 10 Jun 2021 11:19:48 -0700
-Date:   Thu, 10 Jun 2021 21:19:38 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Vladimir Oltean <olteanv@gmail.com>
-Cc:     Colin King <colin.king@canonical.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] net: dsa: sja1105: Fix assigned yet unused return
- code rc
-Message-ID: <20210610181937.GA10983@kadam>
-References: <20210609174353.298731-1-colin.king@canonical.com>
- <20210610062358.GH1955@kadam>
- <20210610175124.m56tftv4qjuyxkiq@skbuf>
+        Thu, 10 Jun 2021 15:56:32 -0400
+Received: from localhost.localdomain ([86.243.172.93])
+        by mwinf5d69 with ME
+        id FXuX2500721Fzsu03XuYBA; Thu, 10 Jun 2021 21:54:33 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 10 Jun 2021 21:54:33 +0200
+X-ME-IP: 86.243.172.93
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Yasunari.Takiguchi@sony.com, mchehab@kernel.org,
+        narmstrong@baylibre.com, sean@mess.org
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH v2] media: cxd2880-spi: Fix an error handling path
+Date:   Thu, 10 Jun 2021 21:54:31 +0200
+Message-Id: <40b114d7200d2a87150249f8228b88f7a4ee15e0.1621599392.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210610175124.m56tftv4qjuyxkiq@skbuf>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-ORIG-GUID: OGh04CUjCramFeP3ewrLWSEr4fanSRNf
-X-Proofpoint-GUID: OGh04CUjCramFeP3ewrLWSEr4fanSRNf
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Jun 10, 2021 at 08:51:24PM +0300, Vladimir Oltean wrote:
-> On Thu, Jun 10, 2021 at 09:23:58AM +0300, Dan Carpenter wrote:
-> > On Wed, Jun 09, 2021 at 06:43:53PM +0100, Colin King wrote:
-> > > From: Colin Ian King <colin.king@canonical.com>
-> > > 
-> > > The return code variable rc is being set to return error values in two
-> > > places in sja1105_mdiobus_base_tx_register and yet it is not being
-> > > returned, the function always returns 0 instead. Fix this by replacing
-> > > the return 0 with the return code rc.
-> > > 
-> > > Addresses-Coverity: ("Unused value")
-> > > Fixes: 5a8f09748ee7 ("net: dsa: sja1105: register the MDIO buses for 100base-T1 and 100base-TX")
-> > > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > > ---
-> > >  drivers/net/dsa/sja1105/sja1105_mdio.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/net/dsa/sja1105/sja1105_mdio.c b/drivers/net/dsa/sja1105/sja1105_mdio.c
-> > > index 8dfd06318b23..08517c70cb48 100644
-> > > --- a/drivers/net/dsa/sja1105/sja1105_mdio.c
-> > > +++ b/drivers/net/dsa/sja1105/sja1105_mdio.c
-> > > @@ -171,7 +171,7 @@ static int sja1105_mdiobus_base_tx_register(struct sja1105_private *priv,
-> > >  out_put_np:
-> > >  	of_node_put(np);
-> > >  
-> > > -	return 0;
-> > > +	return rc;
-> > 
-> > Should this function really return success if of_device_is_available()?
-> 
-> If _not_ of_device_is_available you mean? Yup. Nothing wrong with not
-> having an internal MDIO bus. This is a driver which supports switches
-> that do and switches that don't, and even if the node exists, it may
-> have status = "disabled", which is again fine.
-> Or am I misunderstanding the question?
+If an error occurs after a successful 'regulator_enable()' call,
+'regulator_disable()' must be called.
 
-Yeah.  I left out the "!".  That answers the question.  Thanks!
+Fix the error handling path of the probe accordingly.
 
-regards,
-dan carpenter
+Fixes: cb496cd472af ("media: cxd2880-spi: Add optional vcc regulator")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+v2: In case of error 'dvb_spi->vcc_supply' is set to NULL
+    So test for NULL instead of IS_ERR as spotted by Sean Young
+
+v1 was part of a small serie. Patch 2/2 has been applied, so this update
+is now sent as a single patch
+---
+ drivers/media/spi/cxd2880-spi.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/spi/cxd2880-spi.c b/drivers/media/spi/cxd2880-spi.c
+index 931ec0727cd3..df1335e7061c 100644
+--- a/drivers/media/spi/cxd2880-spi.c
++++ b/drivers/media/spi/cxd2880-spi.c
+@@ -524,13 +524,13 @@ cxd2880_spi_probe(struct spi_device *spi)
+ 	if (IS_ERR(dvb_spi->vcc_supply)) {
+ 		if (PTR_ERR(dvb_spi->vcc_supply) == -EPROBE_DEFER) {
+ 			ret = -EPROBE_DEFER;
+-			goto fail_adapter;
++			goto fail_regulator;
+ 		}
+ 		dvb_spi->vcc_supply = NULL;
+ 	} else {
+ 		ret = regulator_enable(dvb_spi->vcc_supply);
+ 		if (ret)
+-			goto fail_adapter;
++			goto fail_regulator;
+ 	}
+ 
+ 	dvb_spi->spi = spi;
+@@ -618,6 +618,9 @@ cxd2880_spi_probe(struct spi_device *spi)
+ fail_attach:
+ 	dvb_unregister_adapter(&dvb_spi->adapter);
+ fail_adapter:
++	if (!dvb_spi->vcc_supply)
++		regulator_disable(dvb_spi->vcc_supply);
++fail_regulator:
+ 	kfree(dvb_spi);
+ 	return ret;
+ }
+-- 
+2.30.2
+
