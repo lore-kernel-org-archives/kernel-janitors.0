@@ -2,167 +2,210 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB863C48BCD
-	for <kernel-janitors@archiver.kernel.org>; Thu, 10 Jun 2021 03:01:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25192C47094
+	for <kernel-janitors@archiver.kernel.org>; Thu, 10 Jun 2021 06:00:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CC0F361418
-	for <kernel-janitors@archiver.kernel.org>; Thu, 10 Jun 2021 03:01:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDAC661364
+	for <kernel-janitors@archiver.kernel.org>; Thu, 10 Jun 2021 06:00:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229802AbhFJDDq (ORCPT
+        id S229725AbhFJGC1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 9 Jun 2021 23:03:46 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:57046 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229557AbhFJDDp (ORCPT
+        Thu, 10 Jun 2021 02:02:27 -0400
+Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:56370 "EHLO
+        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229634AbhFJGC0 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 9 Jun 2021 23:03:45 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 15A2twHI036509;
-        Thu, 10 Jun 2021 03:01:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : message-id : references : date : in-reply-to : content-type :
- mime-version; s=corp-2020-01-29;
- bh=DAbqP0w1sCVB+C8at7yvhIeKrVwHx10jlEVlWPPKkmM=;
- b=sIkCH2vp8JKac/g3DuH8Yy/viHeJZPfMZjVRii9boHsM7CtYvXrowpVDUKW+T61HB0RX
- vHiZweaTALvezX3djTibgJAWpniBoFP30VgWju962lW0dJbKbxZCE6tISJCTaAl4Z88L
- yFtSTY2U7PnJg4w50Dc9x9OLxSDiU/p7NWwVrwDzizViOykPLx4v/TpaQb+PXHk37liH
- zmjflmHA2HosPoffEQX8IDasppBghNgjPlgDArr+COWPJfZLv3tqfNVGyDG0XhjxXkZI
- IFPZfWUtvQeFpsVGmfcDHWWdjNgUryupb7vKVHapi3U7KmLo1JCnSNG3WJSAXNYbanhh xg== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2130.oracle.com with ESMTP id 38yxscjsbx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 10 Jun 2021 03:01:44 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 15A30Reg034686;
-        Thu, 10 Jun 2021 03:01:44 GMT
-Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2045.outbound.protection.outlook.com [104.47.66.45])
-        by userp3030.oracle.com with ESMTP id 38yxcw6srq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 10 Jun 2021 03:01:44 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=AdJA4S5uL/pZS+aoei/eJf/EWkVOu7maIabhLGvq6i4+owRNLrqHQLcrO2GFVkUP7zsaixz4WqSO46jc3RO2PNnx0pUwDXSXY6OlSdCsXYts8G+O9j9NClKr0hYuIkUhj9DymIRrSxN6ZM89GSfokIC2WayS1YHzA4yLGpCPv/3GVmiA1XzoMpfxGr+G4ICl0YzDiQHyPMWe9C/i9UCGBhXgaezptTLd0gRkWXdFy5NtncoSCT55A/xhlFhXw8AJWKW5tr+WUX0BGkgKDvNJGAV6WVdEZkKQqwP8950mNO9aAR6tNvaq/gHoLL4T4kZF+0QlAfxhvjFDn+qpf8PoDA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DAbqP0w1sCVB+C8at7yvhIeKrVwHx10jlEVlWPPKkmM=;
- b=R15dyf7HYBZrlkP5QP4qvDYxap/Un8TrmqDdPYmBWFjQetoOK8l9767D2a24k3VxEi4vefzvnmbLnzzA3tV/WOjryPEo5Uhc/FPXQuYgvZicEVxsL7TCzqft95rgG4iBLv6D0cWu9txfp2aLNAd9KkKNByWZx+LSdF4IO0xE1Bi4MwWSWtjs46haYcDTbV+doBG9MkpRNb/RDMT0RR112ZsZmbc1w8abSr6eiBs9IFtmGyII4j/IjkVbibH/RRHsqmYzsh+hhOV5HQtcUwtOjT9ZdwE7XWc9uxJxRYrAsM8bypKBBotetXlWAthNPatCASP+ZDzRae8n40lOBGdC7Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DAbqP0w1sCVB+C8at7yvhIeKrVwHx10jlEVlWPPKkmM=;
- b=ao6DYYncsltkeyKu+LMv0C46oqnA8lVlVh+0PUQzYTldbGxv2NICbcntlbDS5iNOzQNPlqz7UCARAAHM2RWWpGUZhxtK+JhehIr48RhSSot1ZS5FPYDPZL+A2O1T7UQwCZy+Tc6+bJq2Rda7I6lbLESCtzxZ65eJEiFCLO25gM4=
-Received: from PH0PR10MB4759.namprd10.prod.outlook.com (2603:10b6:510:3d::12)
- by PH0PR10MB4775.namprd10.prod.outlook.com (2603:10b6:510:38::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4195.24; Thu, 10 Jun
- 2021 03:01:41 +0000
-Received: from PH0PR10MB4759.namprd10.prod.outlook.com
- ([fe80::4c61:9532:4af0:8796]) by PH0PR10MB4759.namprd10.prod.outlook.com
- ([fe80::4c61:9532:4af0:8796%7]) with mapi id 15.20.4219.022; Thu, 10 Jun 2021
- 03:01:41 +0000
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Hannes Reinecke <hare@suse.de>,
-        Tomas Henzl <thenzl@redhat.com>,
-        Kashyap Desai <kashyap.desai@broadcom.com>,
-        Himanshu Madhani <himanshu.madhani@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 1/2] scsi: mpi3mr: delete unnecessary NULL check
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <yq1bl8eh184.fsf@ca-mkp.ca.oracle.com>
-References: <YMCJKgykDYtyvY44@mwanda>
-Date:   Wed, 09 Jun 2021 23:01:38 -0400
-In-Reply-To: <YMCJKgykDYtyvY44@mwanda> (Dan Carpenter's message of "Wed, 9 Jun
-        2021 12:26:02 +0300")
-Content-Type: text/plain
-X-Originating-IP: [138.3.200.58]
-X-ClientProxiedBy: SJ0PR13CA0055.namprd13.prod.outlook.com
- (2603:10b6:a03:2c2::30) To PH0PR10MB4759.namprd10.prod.outlook.com
- (2603:10b6:510:3d::12)
+        Thu, 10 Jun 2021 02:02:26 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01424;MF=chengshuyi@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0UbwMPbj_1623304827;
+Received: from B-39YZML7H-2200.local(mailfrom:chengshuyi@linux.alibaba.com fp:SMTPD_---0UbwMPbj_1623304827)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 10 Jun 2021 14:00:28 +0800
+Subject: Re: [PATCH net-next] net: tcp: Updating MSS, when the sending window
+ is smaller than MSS.
+To:     Eric Dumazet <edumazet@google.com>
+Cc:     David Miller <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        David Ahern <dsahern@kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        Mao Wenan <wenan.mao@linux.alibaba.com>
+References: <1623058534-78782-1-git-send-email-chengshuyi@linux.alibaba.com>
+ <CANn89iLNf+73MsPH7O7wX3PrN26FVLcjw_SmsN6jNwnjrYg4KQ@mail.gmail.com>
+ <0e938649-986d-ce79-e3c4-1f29bdcb64e0@linux.alibaba.com>
+ <CANn89iKnT5Ebk5vovFJKHY4Fe7ERkN3ak_Nkqyc=vXL=VWvyPg@mail.gmail.com>
+From:   Shuyi Cheng <chengshuyi@linux.alibaba.com>
+Message-ID: <258e3c94-f479-509c-a4b0-5a881779dd14@linux.alibaba.com>
+Date:   Thu, 10 Jun 2021 14:00:27 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.11.0
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from ca-mkp.ca.oracle.com (138.3.200.58) by SJ0PR13CA0055.namprd13.prod.outlook.com (2603:10b6:a03:2c2::30) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4242.9 via Frontend Transport; Thu, 10 Jun 2021 03:01:40 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 2032c4fe-9e1e-4c1a-4656-08d92bbc1256
-X-MS-TrafficTypeDiagnostic: PH0PR10MB4775:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <PH0PR10MB4775C143F08E8578D6B0C26E8E359@PH0PR10MB4775.namprd10.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: xxTpv1ebkcAQUIxSKRNaxLEzyeI7IEutlx52/DBPDXz8p8TXYRnxDhv0d7iTSQcDrceQQYEl/B9yxaCFE1DnJLjv06LXFE5jpFdR3GN5f6vhhvblOqRyfy8Hfq8yRG/o+VMJxFbRQ+7Rv7qk2DTjd11llu/+BzyuR575+X+rO7kQk0C2pnqMYXEin1wXKqmQ3lbA6cs6tQ11HHsvWsWMZNeOw7sjAABz8qjKpM/fCIni4h6I2mS9hudzZNcU7v1yb2QROkACHJSP8SyYAogUdASDzDIhvQYnigoDFDtBkSLQeVWzxzFHagbBQMZkTa/pSJ6KyOCJMwZcNOhRJOMBLefNe89xu7bxbUqrUnT41vKpWhV3avUVNJXV3l2okrkvt28JK+f3MCw2WG7O4nqG71187Bx3agg+H4R0VbatW4zs+/ixJSbZbA1pnB76RpBm6GTvA7Pj1wDzozBNF9SbbgLNSeN4mzUyVIMFQH6pRjUIkPEqBB/Q67Lqf4D6ZUJYNI3WPXKC6qYru3mEl15eY4iWId0Ji7VkwykyyFdGYPPGAJ7vsUgF0q++1Blvn4IuVGOwfQ8ohM45/WOFktc4SmigWgAmyuN82FSE6rNcMj/4QRQEhB1wrbb/H4HovQxxyvPaTE/hxiEf8k0z9IDqmorOuOZFzTJq/yrRQfKGj9tcjhRDLkvKlCPR5KFVZsGD
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB4759.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(396003)(376002)(346002)(136003)(39860400002)(366004)(6862004)(66946007)(86362001)(66476007)(316002)(54906003)(26005)(5660300002)(83380400001)(16526019)(6636002)(52116002)(8676002)(4326008)(38350700002)(2906002)(8936002)(36916002)(38100700002)(7696005)(186003)(478600001)(956004)(55016002)(558084003)(66556008)(32563001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?uUvlkCDQLWeL7QrXHby7bbLrwXMupezkup3J/l3KsldlxnwI+xJlrgB7RBnO?=
- =?us-ascii?Q?v8NqNyEAHS8vshisScHonX5daU5fO3qIsP5YGiO0P4lqyLe/bogEa1Xmqxbc?=
- =?us-ascii?Q?G9dIc5YmEKD0ELqVJCT292/eQVvY0tQTypbxBcOcoBCxq3i8Pqal1HQkL0kk?=
- =?us-ascii?Q?G3H1KgJM/N2Kvrl+xtde1On+SviB6PbPuWKig8nBcQQH7+G8Tbgk3L1Eha4E?=
- =?us-ascii?Q?QvuT0CNh021hpCjCxkzfgFvi41Bj4V0eCbcZhZkrCYDvY7sZlwGY6wKQFbdg?=
- =?us-ascii?Q?VMQDS0bsnOXqzQiI3Az8XvnpZb2jLLLpnVhp6L3YbhEWiqAIg+9Tvje4w7RS?=
- =?us-ascii?Q?Tl5JRCoy3lazwEwKGUPUFUsVRdEZ8fkMByp92c1AXISJWH3ysV1JAmKJYWIv?=
- =?us-ascii?Q?NgxEvmFoM8+SKFmsmA6UcLgOzDjDh6ldGWkYmTNhHKCDAMcA/eA0u/eboIFA?=
- =?us-ascii?Q?42qtqPdWz29LpTA8QbMeoG72yeyVP+vUU8Nfw6fwd3JLvp+p0neB9jtvvCN+?=
- =?us-ascii?Q?dsG+IqoTUZ262xfWNTFmuDaf54PEFllBiQzLLHnwJH0hINEmre579nPRw6L4?=
- =?us-ascii?Q?4hzvOzhcQO4CsL/bSUOZYRqxh32563H4F4QC5oUcA3vAA8ujT2QxEO2+33pA?=
- =?us-ascii?Q?qUhRvAF2DU1KUDm5gF401GPuPDNvSJB/kznqhzkME9ngW9QXeBnIBM3t711c?=
- =?us-ascii?Q?mEiUaWDjDUTp+mIJGeJS6ijZDpKoxbb8KviN00rrnOISpDfsdH82klFRoUMB?=
- =?us-ascii?Q?WA4rf3u+eYh+JsqxOxRx4IiNVJq6jFHFSwJ7W0Y00nPwjULAGy44ZhsisTOd?=
- =?us-ascii?Q?sk2qrKWzJXKYYpszvrMIblSTZg/SNm8vjPfR0BkBFNKhKNDXiNoHiua+3GZQ?=
- =?us-ascii?Q?ZflQSiwWMvJsRDyJ81xtVAitithaNuqmERSvCeED9Vm3ae2xG5Bvc0/4FNRA?=
- =?us-ascii?Q?5tWlt19nv1EVUXN6NFVKvAOOSxVI4OEXKEEv/prFCNsQy5+iqUYnQAvrAXxt?=
- =?us-ascii?Q?MEafa081LCtX3y3Ka2jdL73rJEWW+V8TVu+N1lQZoWM+ZUvlesvJ2DlFbPM5?=
- =?us-ascii?Q?nhhaKm/D02SsNfNM4sHMpy0b6aA2prysq/eu6jE9JGj0dsrtrmU3AoaZBzGU?=
- =?us-ascii?Q?4h1kUH21zE816gZfSbScSxgZksL64PdPM2R7nH17J/AdXb3aoS7ampuabE+m?=
- =?us-ascii?Q?hthbpttBkOEbMKU58PMItMtRrrRHy/fOC5cA4HpJS6bClxKmKDImZAA+FVDd?=
- =?us-ascii?Q?zRztnm2AOQU0/LctHsiXt8KAjgtKHgXPDNu1wgEL+qPlmIi+FALRf/bgHDrU?=
- =?us-ascii?Q?SNL9L6Vp+k9M6UO4+hUHc0a5?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2032c4fe-9e1e-4c1a-4656-08d92bbc1256
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB4759.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jun 2021 03:01:41.2240
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: MWd2M7lMZQo91xGgem1giRN9kewgxDzVAcB64P0qKylo5m9XiTHg4IEvBQisU9IlC9587dnsn5tzaM7aa2iU1sojZ6fuiEsebG0cjkVCoZQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB4775
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=10010 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 bulkscore=0 mlxscore=0
- spamscore=0 adultscore=0 mlxlogscore=999 suspectscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
- definitions=main-2106100018
-X-Proofpoint-ORIG-GUID: -1IFGhc8BKS2htARtJtJRxM7BmJhDP1s
-X-Proofpoint-GUID: -1IFGhc8BKS2htARtJtJRxM7BmJhDP1s
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=10010 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 impostorscore=0 lowpriorityscore=0
- phishscore=0 suspectscore=0 bulkscore=0 spamscore=0 priorityscore=1501
- mlxscore=0 malwarescore=0 mlxlogscore=999 clxscore=1015 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
- definitions=main-2106100017
+In-Reply-To: <CANn89iKnT5Ebk5vovFJKHY4Fe7ERkN3ak_Nkqyc=vXL=VWvyPg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 
-Dan,
 
-> The "mrioc->intr_info" pointer can't be NULL, but if it could then the
-> second iteration through the loop would Oops.  Let's delete the
-> confusing and impossible NULL check.
+On 6/8/21 11:56 PM, Eric Dumazet wrote:
+> On Tue, Jun 8, 2021 at 4:26 AM Shuyi Cheng <chengshuyi@linux.alibaba.com> wrote:
+>>
+>>
+>>
+>> On 6/7/21 7:34 PM, Eric Dumazet wrote:
+>>> On Mon, Jun 7, 2021 at 11:35 AM Shuyi Cheng
+>>> <chengshuyi@linux.alibaba.com> wrote:
+>>>>
+>>>> When the lo network card is used for communication, the tcp server
+>>>> reduces the size of the receiving buffer, causing the tcp client
+>>>> to have a delay of 200ms. Examples are as follows:
+>>>>
+>>>> Suppose that the MTU of the lo network card is 65536, and the tcp server
+>>>> sets the receive buffer size to 42KB. According to the
+>>>> tcp_bound_to_half_wnd function, the MSS of the server and client is
+>>>> 21KB. Then, the tcp server sets the buffer size of the connection to
+>>>> 16KB. At this time, the MSS of the server is 8KB, and the MSS of the
+>>>> client is still 21KB. But it will cause the client to fail to send the
+>>>> message, that is, tcp_write_xmit fails. Mainly because tcp_snd_wnd_test
+>>>> failed, and then entered the zero window detection phase, resulting in a
+>>>> 200ms delay.
+>>>>
+>>>> Therefore, we mainly modify two places. One is the tcp_current_mss
+>>>> function. When the sending window is smaller than the current mss, mss
+>>>> needs to be updated. The other is the tcp_bound_to_half_wnd function.
+>>>> When the sending window is smaller than the current mss, the mss value
+>>>> should be calculated according to the current sending window, not
+>>>> max_window.
+>>>>
+>>>> Signed-off-by: Shuyi Cheng <chengshuyi@linux.alibaba.com>
+>>>> ---
+>>>>    include/net/tcp.h     | 11 ++++++++---
+>>>>    net/ipv4/tcp_output.c |  3 ++-
+>>>>    2 files changed, 10 insertions(+), 4 deletions(-)
+>>>>
+>>>> diff --git a/include/net/tcp.h b/include/net/tcp.h
+>>>> index e668f1b..fcdef16 100644
+>>>> --- a/include/net/tcp.h
+>>>> +++ b/include/net/tcp.h
+>>>> @@ -641,6 +641,11 @@ static inline void tcp_clear_xmit_timers(struct sock *sk)
+>>>>    static inline int tcp_bound_to_half_wnd(struct tcp_sock *tp, int pktsize)
+>>>>    {
+>>>>           int cutoff;
+>>>> +       int window;
+>>>> +
+>>>> +       window = tp->max_window;
+>>>> +       if (tp->snd_wnd && tp->snd_wnd < pktsize)
+>>>> +               window = tp->snd_wnd;
+>>>>
+>>>>           /* When peer uses tiny windows, there is no use in packetizing
+>>>>            * to sub-MSS pieces for the sake of SWS or making sure there
+>>>> @@ -649,10 +654,10 @@ static inline int tcp_bound_to_half_wnd(struct tcp_sock *tp, int pktsize)
+>>>>            * On the other hand, for extremely large MSS devices, handling
+>>>>            * smaller than MSS windows in this way does make sense.
+>>>>            */
+>>>> -       if (tp->max_window > TCP_MSS_DEFAULT)
+>>>> -               cutoff = (tp->max_window >> 1);
+>>>> +       if (window > TCP_MSS_DEFAULT)
+>>>> +               cutoff = (window >> 1);
+>>>>           else
+>>>> -               cutoff = tp->max_window;
+>>>> +               cutoff = window;
+>>>>
+>>>>           if (cutoff && pktsize > cutoff)
+>>>>                   return max_t(int, cutoff, 68U - tp->tcp_header_len);
+>>>> diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
+>>>> index bde781f..88dcdf2 100644
+>>>> --- a/net/ipv4/tcp_output.c
+>>>> +++ b/net/ipv4/tcp_output.c
+>>>> @@ -1833,7 +1833,8 @@ unsigned int tcp_current_mss(struct sock *sk)
+>>>>
+>>>>           if (dst) {
+>>>>                   u32 mtu = dst_mtu(dst);
+>>>> -               if (mtu != inet_csk(sk)->icsk_pmtu_cookie)
+>>>> +               if (mtu != inet_csk(sk)->icsk_pmtu_cookie ||
+>>>> +                   (tp->snd_wnd && tp->snd_wnd < mss_now))
+>>>>                           mss_now = tcp_sync_mss(sk, mtu);
+>>>
+>>>
+>>> I do not think we want to add code in fast path only to cope with
+>>> pathological user choices.
+>>>
+>>
+>> Thank you very much for your reply!
+>>
+>> I very much agree with your point of view. However, the kernel currently
+>> accepts the unreasonable RCVBUF set by the developer, that is, the set
+>> RCVBUF is smaller than MSS. Perhaps, we can avoid setting RCVBUF to be
+>> smaller than MSS in the sock_setsockopt function. What do you think?
+> 
+> I think this is not trivial to make the limit being MSS dependent,
+> because SO_RCVBUF can be set before connection is attempted.
+> (So the MSS is not yet known)
+>
 
-Applied 1+2 to 5.14/scsi-staging, thanks!
+Thank you very much for your reply!
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+Maybe it's not clear enough that I described it. The scenario where the 
+above problem occurs is precisely because the tcp server sets the size 
+of RCVBUFF to be smaller after the connection is established. Here is a 
+sample code that caused the problem.
+
+# default tcp_rmem is 87380
+tcpServerSocket= socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+tcpServerSocket.bind(server_addr)
+tcpServerSocket.listen()
+while True:
+     connection,client_addr = tcpServerSocket.accept()
+     # Shrink rmem
+     connection.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 16*1024)
+
+Therefore, when the developer calls the sock_setsockopt function to 
+reset RCVBUF, we can use sock to determine the TCP state. When in the 
+connected state, it is not allowed to set RCVBUF smaller than mss.
+
+Thanks.
+
+
+> I would rather simply add a sysctl to set a floor for TCP SO_RCVBUF,
+> and default it to a reasonable value (128KB ?)
+> 
+> The sysctl might be needed for some crazy environments (one million
+> TCP flows on a host with only 8 GB of memory for example...)
+> 
+>>
+>> Thanks.
+>>
+>>> Maybe it is time to accept the fact that setting the receive buffer
+>>> size to 42KB is dumb nowadays.
+>>>
+>>> TCP needs to have at least two buffers in flight to avoid 'strange' stalls.
+>>>
+>>> If loopback MTU is 64KB  (and TSO/GRO sizes also can reach 64K), maybe
+>>> we need to ensure a minimal rcvbuf.
+>>>
+>>> If applications set 42KB window size, they get what they asked for :
+>>> damn slow TCP communications.
+>>>
+>>> We do not want to make them happy, while increasing cpu costs for 99%
+>>> of other uses cases which are not trying to make TCP miserable.
+>>>
+>>> I would rather add a sysctl or something to ensure rcvbuf has a
+>>> minimal sane value, instead of risking subtle TCP regressions.
+>>>
+>>> In 2021, we should not limit ourselves to memory constraints that were
+>>> common 40 years ago when TCP was invented.
+>>>
+>>> References :
+>>> commit 9eb5bf838d06aa6ddebe4aca6b5cedcf2eb53b86 net: sock: fix
+>>> TCP_SKB_MIN_TRUESIZE
+>>> commit eea86af6b1e18d6fa8dc959e3ddc0100f27aff9f net: sock: adapt
+>>> SOCK_MIN_RCVBUF and SOCK_MIN_SNDBUF
+>>>
