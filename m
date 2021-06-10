@@ -2,97 +2,90 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77D68C47094
-	for <kernel-janitors@archiver.kernel.org>; Thu, 10 Jun 2021 13:29:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E14EC47094
+	for <kernel-janitors@archiver.kernel.org>; Thu, 10 Jun 2021 14:17:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5FE4C613FE
-	for <kernel-janitors@archiver.kernel.org>; Thu, 10 Jun 2021 13:29:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 540C7613FE
+	for <kernel-janitors@archiver.kernel.org>; Thu, 10 Jun 2021 14:17:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231172AbhFJNbI (ORCPT
+        id S231320AbhFJOT3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 10 Jun 2021 09:31:08 -0400
-Received: from mail-oo1-f48.google.com ([209.85.161.48]:34492 "EHLO
-        mail-oo1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230188AbhFJNbI (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 10 Jun 2021 09:31:08 -0400
-Received: by mail-oo1-f48.google.com with SMTP id i8-20020a4aa1080000b0290201edd785e7so6775109ool.1;
-        Thu, 10 Jun 2021 06:28:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=usI/+u4XtISFZVHRz7Nuoee8ZW5mOj7emFTwtljSgXE=;
-        b=MUoOo+XzHjn7QZ80fSGELN9sAxIl86paFnEYtXWWlpUHv8QYUn9ousZ5oeK0VZHJXL
-         picEvHYR4QsJ1v1Yprr1nOtW5s3ngLxbzG8mihYkyDdZzdfJzziblXFt/uFRWZeH+eNH
-         Qu1cLUXEVu/iNxSt86Mzkb0yGiMcUt5mbm8x+hcziAwT0sLWF5UrSCHWkp7SWj+JIHvh
-         kzzzABOF1XOty8gwkUA5VrIm9yDG6qKt2/qMszg3AC7WDmhM0CJwTRIXwS5Daw9ZBUlV
-         I6n9gGJ+e8gjZrw32R6i9vYW4/Y5EtPzHFtOAy9iuIxmV1X8B8p1fvVGZjHnIxbmb11r
-         7xAA==
-X-Gm-Message-State: AOAM533AGR9U+Q+lURTxZpqxaH+qXGTI8qdSfNKp+y7lY+4XQfEqogsF
-        Tx+tLzpgs8c7g4dzfgBqGKaQqxOu0KoVIzc3yq8=
-X-Google-Smtp-Source: ABdhPJwBqjvhtrkp9WPzbG4Hw6L1O3KdsOrTkXommgDsWYtjLFOkEkfFrWR46znrKMXBXhvLcon3WaON28lz8M1ia7s=
-X-Received: by 2002:a4a:a9c8:: with SMTP id h8mr2410450oon.1.1623331736507;
- Thu, 10 Jun 2021 06:28:56 -0700 (PDT)
+        Thu, 10 Jun 2021 10:19:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43198 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230387AbhFJOTY (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 10 Jun 2021 10:19:24 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id EB7F2613D9;
+        Thu, 10 Jun 2021 14:17:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1623334648;
+        bh=RsxEWAIXQZfs+po6RGl38wHzZWi2MVveikiBWMNibGA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=H6FObbXCb9egJCrCRk6BZlkp8VdSKvXFpU1mIWh4XaMIAokIiMql2pZt7pp9B8Ipj
+         DnxFKjsbC63dDVQ52j0itePU2TbtLszEwqpWcEWMpcyqQUmCdGu+26y+VAqqmtf5lr
+         aFiN2kmxRXk2MeLsGBFGVhoEsF8vD6eahiD7Fy7Q27H2PL9xht4rKwWVRSmHud5ali
+         OHB3T2fwpHL5wpwCp9fC68aNb0Xsh8kplyKiwS4FAMTc7VnZP29BiuTo8CbuGDxA4l
+         xtud/0UMz4utFQHmTy7Am0kVJv0/uclE4EIeLoxKmUDFkVkT2kMFKmkqrNmEd2smpo
+         greg0Ehg8vgkQ==
+Date:   Thu, 10 Jun 2021 22:17:12 +0800
+From:   Peter Chen <peter.chen@kernel.org>
+To:     Baokun Li <libaokun1@huawei.com>
+Cc:     linux-kernel@vger.kernel.org, Pawel Laszczak <pawell@cadence.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        weiyongjun1@huawei.com, yuehaibing@huawei.com,
+        yangjihong1@huawei.com, yukuai3@huawei.com,
+        linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Hulk Robot <hulkci@huawei.com>
+Subject: Re: [PATCH -next v2] usb: cdns3: cdns3-gadget: Use list_move_tail
+ instead of list_del/list_add_tail
+Message-ID: <20210610141712.GB7839@Peter>
+References: <20210609072720.1358527-1-libaokun1@huawei.com>
 MIME-Version: 1.0
-References: <20210609173312.298414-1-colin.king@canonical.com>
-In-Reply-To: <20210609173312.298414-1-colin.king@canonical.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 10 Jun 2021 15:28:45 +0200
-Message-ID: <CAJZ5v0h962RaReLhKSkOMxb6BT44GAwrFq9qLqChfTH3v__toQ@mail.gmail.com>
-Subject: Re: [PATCH][next] ACPI: scan: ensure ret is initialized to avoid
- garbage being returned
-To:     Colin King <colin.king@canonical.com>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Maximilian Luz <luzmaximilian@gmail.com>,
-        Daniel Scally <djrscally@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210609072720.1358527-1-libaokun1@huawei.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Jun 9, 2021 at 7:33 PM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> In the unlikely event that there are no callback calls made then ret
-> will be returned as an uninitialized value. Clean up static analysis
-> warnings by ensuring ret is initialized.
->
-> Addresses-Coverity: ("Uninitialized scalar variable")
-> Fixes: a9e10e587304 ("ACPI: scan: Extend acpi_walk_dep_device_list()")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+On 21-06-09 15:27:20, Baokun Li wrote:
+> Using list_move_tail() instead of list_del() + list_add_tail().
+> 
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
 > ---
->  drivers/acpi/scan.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
-> index c3067e8bfc47..0945d952f0fc 100644
-> --- a/drivers/acpi/scan.c
-> +++ b/drivers/acpi/scan.c
-> @@ -2151,7 +2151,7 @@ int acpi_walk_dep_device_list(acpi_handle handle,
->                               void *data)
->  {
->         struct acpi_dep_data *dep, *tmp;
-> -       int ret;
-> +       int ret = 0;
->
->         mutex_lock(&acpi_dep_list_lock);
->         list_for_each_entry_safe(dep, tmp, &acpi_dep_list, node) {
-> --
+> V1->V2:
+> 	CC mailist
+> 
+>  drivers/usb/cdns3/cdns3-gadget.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/usb/cdns3/cdns3-gadget.c b/drivers/usb/cdns3/cdns3-gadget.c
+> index 57adcdbfab5f..5d8c982019af 100644
+> --- a/drivers/usb/cdns3/cdns3-gadget.c
+> +++ b/drivers/usb/cdns3/cdns3-gadget.c
+> @@ -430,9 +430,7 @@ static int cdns3_start_all_request(struct cdns3_device *priv_dev,
+>  		if (ret)
+>  			return ret;
+>  
+> -		list_del(&request->list);
+> -		list_add_tail(&request->list,
+> -			      &priv_ep->pending_req_list);
+> +		list_move_tail(&request->list, &priv_ep->pending_req_list);
+>  		if (request->stream_id != 0 || (priv_ep->flags & EP_TDLCHK_EN))
+>  			break;
+>  	}
+> 
 
-Applied with some edits in the subject and changelog.
+Applied, thanks.
 
-Basically, if you make changes like this, please specify which piece
-of code you change in the subject/changelog.
+-- 
 
-Thanks!
+Thanks,
+Peter Chen
+
