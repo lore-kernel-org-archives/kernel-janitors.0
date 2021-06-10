@@ -2,104 +2,111 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFBB3C47094
-	for <kernel-janitors@archiver.kernel.org>; Thu, 10 Jun 2021 10:04:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 470CEC48BDF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 10 Jun 2021 10:05:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B181560FDA
-	for <kernel-janitors@archiver.kernel.org>; Thu, 10 Jun 2021 10:04:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2844660FDA
+	for <kernel-janitors@archiver.kernel.org>; Thu, 10 Jun 2021 10:05:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230230AbhFJKGb (ORCPT
+        id S229961AbhFJKHp (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 10 Jun 2021 06:06:31 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:54466 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229935AbhFJKGa (ORCPT
+        Thu, 10 Jun 2021 06:07:45 -0400
+Received: from mail-yb1-f177.google.com ([209.85.219.177]:38802 "EHLO
+        mail-yb1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229770AbhFJKHo (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 10 Jun 2021 06:06:30 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 15AA3vn2078475;
-        Thu, 10 Jun 2021 10:04:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=lAlXKTUYFVtdYmGMQ6HXL059Okrk6IgLJMPdlUwF2C4=;
- b=oaHcKDFf3rOWnc11Kr5RMZNEygl3zK3A9YiggP2xONU5/O5TI2m4t4njQEqW+NgtRjC9
- wJUhWWuJLLSKYdDFUGf/2J4afxveQpRS3SuiKpraqx4HggElbymrkt9O2S1U2NzR3wSX
- e9a0kJh2pAC9SIr3OxSh5+Ykr1EOLkJ399npMkbLzc/x6DSGL6pCK4I+2v/q7/9R/6MI
- y0Cnl4oBKsyN/4KcIiFbxDFg9wtH+yNP3Nn2O7vKXIIZLOCninC9rb5grJrkVJVzP8cw
- qVI+m+GmxUvPirGoBcrkPoJwQ2eLEhJVqOcRBtDoo0oGgXITlmJmI49OYXhV8eXaBrIK VA== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 39017nkjyj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 10 Jun 2021 10:04:29 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 15AA19OY004916;
-        Thu, 10 Jun 2021 10:04:28 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by userp3020.oracle.com with ESMTP id 390k1su7yn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 10 Jun 2021 10:04:28 +0000
-Received: from userp3020.oracle.com (userp3020.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 15AA4S4D009578;
-        Thu, 10 Jun 2021 10:04:28 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3020.oracle.com with ESMTP id 390k1su7yd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 10 Jun 2021 10:04:28 +0000
-Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 15AA4PXi023282;
-        Thu, 10 Jun 2021 10:04:26 GMT
-Received: from mwanda (/41.212.42.34)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 10 Jun 2021 03:04:25 -0700
-Date:   Thu, 10 Jun 2021 13:04:17 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Radim Pavlik <radim.pavlik@tbs-biometrics.com>
-Cc:     linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] pinctrl: mcp23s08: missing unlock in mcp23s08_irq()
-Message-ID: <YMHjoagGxEfVBW1t@mwanda>
+        Thu, 10 Jun 2021 06:07:44 -0400
+Received: by mail-yb1-f177.google.com with SMTP id m9so33455462ybo.5
+        for <kernel-janitors@vger.kernel.org>; Thu, 10 Jun 2021 03:05:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=y1t1gThwqk4P3CmoGImUqahvI/YhwYgwDOhTQsQgvaA=;
+        b=Fo5PxKwzHWbMPPS1iiWO2GC+MRsiSG+6qXKY/mJ/8+7ab/qIWgpJGQVg99FSMR59zt
+         L+z+SMHv4atQvkUU+725zAvAEtaDTy9Yh0HZGmPZkqEve5SDUZFOBscTmtgsyMenyG8S
+         IAi76+d89mduQPDfXVeeIyAVTDccEEn+imq2ABlI57gwY5WGv1pXTZaqp/BRpHisTPPS
+         GfaHjkwECD96YVgA8t1W0kmiioSEfBzKDGXtbuEV7jmAInCnH7zyVxf0GHB8pyzJZZiO
+         4EAZOM+pokM+kdAIbQR6JsQkllDWaMu7mFrz1GoNVlfNvBL4u4BlbvA7PYQ6pp0ynTax
+         zLNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=y1t1gThwqk4P3CmoGImUqahvI/YhwYgwDOhTQsQgvaA=;
+        b=J+EYGKXha0Sgk22G+NdRqKu5rBM/HwRZiaNg7C//ynpoYUVR7JGYu1ndT2wgLXmU8R
+         w+5XIYhJMAelEh9FQpV7qsB5mvQxMhQN2Dsw3oX6Uw0oFwfydvc/re/zh59nsWhBVUx3
+         cSA04JJebsNMwtvZC/7yo9zmOAS77feJ7cT93jJTTYi9MIAgnEkbu9om/SMt4KStr7jm
+         Qdkgs+ZzJgc5/01ilBdfXlefq7sVc0BqexyeDQTof7ub9fGjlKFNSEsE59lOPy9ZaJ48
+         hBTBBLZ3Qky6yJJjwDG3Ltzl6BQ78SNu7NQUYvfrgQz7kChefLke5GzvAtXflHSqNeze
+         pVpg==
+X-Gm-Message-State: AOAM532/RJ2bL3dSGA5M1EWSOruIlE68ShnH31WsuwCK3Sqh8FZJY4mb
+        BZPbe20QxxXcoN1ueRKkwcJuXql2VbqeHksfN/OrmA==
+X-Google-Smtp-Source: ABdhPJw8FlL5flBN8UKGv2Ytl7fRld47EDaX0RjIibn23UBr+CVj3m34UcaHSCn4L0eFgSgFRwvJl6oK4wC2nEgDyQ4=
+X-Received: by 2002:a05:6902:4b2:: with SMTP id r18mr6636440ybs.446.1623319488149;
+ Thu, 10 Jun 2021 03:04:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-X-Proofpoint-GUID: Zj75F3jTtF3FPWtg9tAUQVqv5YWs_Pok
-X-Proofpoint-ORIG-GUID: Zj75F3jTtF3FPWtg9tAUQVqv5YWs_Pok
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=10010 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 spamscore=0
- mlxlogscore=999 phishscore=0 impostorscore=0 suspectscore=0 clxscore=1011
- mlxscore=0 malwarescore=0 priorityscore=1501 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
- definitions=main-2106100066
+References: <1623058534-78782-1-git-send-email-chengshuyi@linux.alibaba.com>
+ <CANn89iLNf+73MsPH7O7wX3PrN26FVLcjw_SmsN6jNwnjrYg4KQ@mail.gmail.com>
+ <0e938649-986d-ce79-e3c4-1f29bdcb64e0@linux.alibaba.com> <CANn89iKnT5Ebk5vovFJKHY4Fe7ERkN3ak_Nkqyc=vXL=VWvyPg@mail.gmail.com>
+ <258e3c94-f479-509c-a4b0-5a881779dd14@linux.alibaba.com>
+In-Reply-To: <258e3c94-f479-509c-a4b0-5a881779dd14@linux.alibaba.com>
+From:   Eric Dumazet <edumazet@google.com>
+Date:   Thu, 10 Jun 2021 12:04:37 +0200
+Message-ID: <CANn89iL8bkiJdDH110U5uD4mSJM7v9fU8xFa9BXAu4wCf+y13Q@mail.gmail.com>
+Subject: Re: [PATCH net-next] net: tcp: Updating MSS, when the sending window
+ is smaller than MSS.
+To:     Shuyi Cheng <chengshuyi@linux.alibaba.com>
+Cc:     David Miller <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        David Ahern <dsahern@kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        Mao Wenan <wenan.mao@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This code needs to drop the lock before returning.
+On Thu, Jun 10, 2021 at 8:00 AM Shuyi Cheng
+<chengshuyi@linux.alibaba.com> wrote:
 
-Fixes: 897120d41e7a ("pinctrl: mcp23s08: fix race condition in irq handler")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/pinctrl/pinctrl-mcp23s08.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Thank you very much for your reply!
+>
+> Maybe it's not clear enough that I described it. The scenario where the
+> above problem occurs is precisely because the tcp server sets the size
+> of RCVBUFF to be smaller after the connection is established. Here is a
+> sample code that caused the problem.
+>
+> # default tcp_rmem is 87380
 
-diff --git a/drivers/pinctrl/pinctrl-mcp23s08.c b/drivers/pinctrl/pinctrl-mcp23s08.c
-index 799d596a1a4b..d0259577934e 100644
---- a/drivers/pinctrl/pinctrl-mcp23s08.c
-+++ b/drivers/pinctrl/pinctrl-mcp23s08.c
-@@ -353,7 +353,7 @@ static irqreturn_t mcp23s08_irq(int irq, void *data)
- 
- 	if (intf == 0) {
- 		/* There is no interrupt pending */
--		return IRQ_HANDLED;
-+		goto unlock;
- 	}
- 
- 	if (mcp_read(mcp, MCP_INTCAP, &intcap))
--- 
-2.30.2
+Except that this value is overridden at connection establishment.
 
+tcp_rmem[1] is only a floor value, say if you want a reasonable value
+even if MSS == 100
+
+> tcpServerSocket= socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+> tcpServerSocket.bind(server_addr)
+> tcpServerSocket.listen()
+> while True:
+>      connection,client_addr = tcpServerSocket.accept()
+>      # Shrink rmem
+>      connection.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 16*1024)
+>
+> Therefore, when the developer calls the sock_setsockopt function to
+> reset RCVBUF, we can use sock to determine the TCP state. When in the
+> connected state, it is not allowed to set RCVBUF smaller than mss.
+>
+
+Sure, but the application can _also_ set SO_RCVBUF before listen() or connect()
+
+We can not have assumptions about SO_RCVBUF values and socket states.
+Otherwise we would have to add some sk_rcvbuf adjustments every time
+the socket state is changed.
