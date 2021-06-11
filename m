@@ -2,98 +2,71 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B5C7C4743D
-	for <kernel-janitors@archiver.kernel.org>; Fri, 11 Jun 2021 06:06:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8658BC48BD1
+	for <kernel-janitors@archiver.kernel.org>; Fri, 11 Jun 2021 06:13:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 37AA3610A5
-	for <kernel-janitors@archiver.kernel.org>; Fri, 11 Jun 2021 06:06:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7063B61374
+	for <kernel-janitors@archiver.kernel.org>; Fri, 11 Jun 2021 06:13:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231179AbhFKGIB (ORCPT
+        id S231220AbhFKGPn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 11 Jun 2021 02:08:01 -0400
-Received: from szxga02-in.huawei.com ([45.249.212.188]:5501 "EHLO
-        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230251AbhFKGIA (ORCPT
+        Fri, 11 Jun 2021 02:15:43 -0400
+Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:48367 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231200AbhFKGPn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 11 Jun 2021 02:08:00 -0400
-Received: from dggemv711-chm.china.huawei.com (unknown [172.30.72.54])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4G1Vd92BwlzZf3v;
-        Fri, 11 Jun 2021 14:03:09 +0800 (CST)
-Received: from dggpeml500020.china.huawei.com (7.185.36.88) by
- dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Fri, 11 Jun 2021 14:06:00 +0800
-Received: from [10.174.177.174] (10.174.177.174) by
- dggpeml500020.china.huawei.com (7.185.36.88) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Fri, 11 Jun 2021 14:05:59 +0800
-Subject: Re: [PATCH -next] btrfs: send: use list_move_tail instead of
- list_del/list_add_tail
-To:     <dsterba@suse.cz>, Anand Jain <anand.jain@oracle.com>,
-        <linux-kernel@vger.kernel.org>, Chris Mason <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, <weiyongjun1@huawei.com>,
-        <yuehaibing@huawei.com>, <yangjihong1@huawei.com>,
-        <yukuai3@huawei.com>, <linux-btrfs@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
-References: <20210608031220.2822257-1-libaokun1@huawei.com>
- <e860684e-959b-d126-bb1d-3214878ab995@oracle.com>
- <20210608141233.GQ31483@twin.jikos.cz>
-From:   "libaokun (A)" <libaokun1@huawei.com>
-Message-ID: <f7bea721-cda5-0b20-13e3-28c4bd728063@huawei.com>
-Date:   Fri, 11 Jun 2021 14:05:53 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.9.0
+        Fri, 11 Jun 2021 02:15:43 -0400
+Received: from localhost.localdomain ([86.243.172.93])
+        by mwinf5d25 with ME
+        id FiDh2500N21Fzsu03iDh1Y; Fri, 11 Jun 2021 08:13:44 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 11 Jun 2021 08:13:44 +0200
+X-ME-IP: 86.243.172.93
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     chris.snook@gmail.com, davem@davemloft.net, kuba@kernel.org,
+        johannes@sipsolutions.net, bruceshenzk@gmail.com,
+        dan.carpenter@oracle.com
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] alx: Fix an error handling path in 'alx_probe()'
+Date:   Fri, 11 Jun 2021 08:13:39 +0200
+Message-Id: <2d0fa41ff6266f38b04b7e46651878c70d32d5ef.1623391908.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-In-Reply-To: <20210608141233.GQ31483@twin.jikos.cz>
-Content-Type: text/plain; charset="gbk"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.174.177.174]
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpeml500020.china.huawei.com (7.185.36.88)
-X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Thank you for your advice.
+If an error occurs after a 'pci_enable_pcie_error_reporting()' call, it
+must be undone by a corresponding 'pci_disable_pcie_error_reporting()'
+call, as already done in the remove function.
 
-I'm about to send a patch v2 with the changes suggested by you.
+Fixes: ab69bde6b2e9 ("alx: add a simple AR816x/AR817x device driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/ethernet/atheros/alx/main.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Best Regards
+diff --git a/drivers/net/ethernet/atheros/alx/main.c b/drivers/net/ethernet/atheros/alx/main.c
+index 45e380f3b065..11ef1fbe7aee 100644
+--- a/drivers/net/ethernet/atheros/alx/main.c
++++ b/drivers/net/ethernet/atheros/alx/main.c
+@@ -1876,6 +1876,7 @@ static int alx_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	free_netdev(netdev);
+ out_pci_release:
+ 	pci_release_mem_regions(pdev);
++	pci_disable_pcie_error_reporting(pdev);
+ out_pci_disable:
+ 	pci_disable_device(pdev);
+ 	return err;
+-- 
+2.30.2
 
-
-ÔÚ 2021/6/8 22:12, David Sterba Ð´µÀ:
-> On Tue, Jun 08, 2021 at 01:16:21PM +0800, Anand Jain wrote:
->> On 8/6/21 11:12 am, Baokun Li wrote:
->>> Using list_move_tail() instead of list_del() + list_add_tail().
->>>
->>> Reported-by: Hulk Robot <hulkci@huawei.com>
->>> Signed-off-by: Baokun Li <libaokun1@huawei.com>
->>> ---
->>>    fs/btrfs/send.c | 3 +--
->>>    1 file changed, 1 insertion(+), 2 deletions(-)
->>>
->>> diff --git a/fs/btrfs/send.c b/fs/btrfs/send.c
->>> index bd69db72acc5..a0e51b2416a1 100644
->>> --- a/fs/btrfs/send.c
->>> +++ b/fs/btrfs/send.c
->>> @@ -2083,8 +2083,7 @@ static struct name_cache_entry *name_cache_search(struct send_ctx *sctx,
->>>     */
->>>    static void name_cache_used(struct send_ctx *sctx, struct name_cache_entry *nce)
->>>    {
->>> -	list_del(&nce->list);
->>> -	list_add_tail(&nce->list, &sctx->name_cache_list);
->>> +	list_move_tail(&nce->list, &sctx->name_cache_list);
->>>    }
->>
->>    Looks good.
->>    You can consider open-code name_cache_used() as there is only one user.
-> Yeah sounds like a good idea, with part of the function comment next to
-> the list_move_tail.
-> .
