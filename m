@@ -4,70 +4,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E194C48BE5
-	for <kernel-janitors@archiver.kernel.org>; Sat, 12 Jun 2021 12:53:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4DD5C49360
+	for <kernel-janitors@archiver.kernel.org>; Sat, 12 Jun 2021 13:25:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D36066138C
-	for <kernel-janitors@archiver.kernel.org>; Sat, 12 Jun 2021 12:53:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5440E613EA
+	for <kernel-janitors@archiver.kernel.org>; Sat, 12 Jun 2021 13:25:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231218AbhFLMzP (ORCPT
+        id S231325AbhFLN1t (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 12 Jun 2021 08:55:15 -0400
-Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:46658 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231158AbhFLMzP (ORCPT
+        Sat, 12 Jun 2021 09:27:49 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:59935 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230191AbhFLN1t (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 12 Jun 2021 08:55:15 -0400
-Received: from localhost.localdomain ([86.243.172.93])
-        by mwinf5d43 with ME
-        id GCtE2500421Fzsu03CtESd; Sat, 12 Jun 2021 14:53:14 +0200
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 12 Jun 2021 14:53:14 +0200
-X-ME-IP: 86.243.172.93
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     manishc@marvell.com, rahulv@marvell.com,
-        GR-Linux-NIC-Dev@marvell.com, davem@davemloft.net, kuba@kernel.org,
-        amit.salecha@qlogic.com
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] netxen_nic: Fix an error handling path in 'netxen_nic_probe()'
-Date:   Sat, 12 Jun 2021 14:53:12 +0200
-Message-Id: <bb27f74af33b2b5eb238598fbd8aaafa51ccb50c.1623502316.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Sat, 12 Jun 2021 09:27:49 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <colin.king@canonical.com>)
+        id 1ls3e0-0005WN-7j; Sat, 12 Jun 2021 13:25:48 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] leds: flash: Remove redundant initialization of variable ret
+Date:   Sat, 12 Jun 2021 14:25:47 +0100
+Message-Id: <20210612132547.58727-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-If an error occurs after a 'pci_enable_pcie_error_reporting()' call, it
-must be undone by a corresponding 'pci_disable_pcie_error_reporting()'
-call, as already done in the remove function.
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: e87ad5539343 ("netxen: support pci error handlers")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+The variable ret is being initialized with a value that is never read,
+it is being updated later on. The assignment is redundant and can be
+removed.
+
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/ethernet/qlogic/netxen/netxen_nic_main.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/leds/led-class-flash.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/qlogic/netxen/netxen_nic_main.c b/drivers/net/ethernet/qlogic/netxen/netxen_nic_main.c
-index 7e6bac85495d..344ea1143454 100644
---- a/drivers/net/ethernet/qlogic/netxen/netxen_nic_main.c
-+++ b/drivers/net/ethernet/qlogic/netxen/netxen_nic_main.c
-@@ -1602,6 +1602,8 @@ netxen_nic_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	free_netdev(netdev);
+diff --git a/drivers/leds/led-class-flash.c b/drivers/leds/led-class-flash.c
+index 6eeb9effcf65..e4c4fd97bf30 100644
+--- a/drivers/leds/led-class-flash.c
++++ b/drivers/leds/led-class-flash.c
+@@ -92,7 +92,7 @@ static ssize_t flash_strobe_store(struct device *dev,
+ 	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+ 	struct led_classdev_flash *fled_cdev = lcdev_to_flcdev(led_cdev);
+ 	unsigned long state;
+-	ssize_t ret = -EINVAL;
++	ssize_t ret;
  
- err_out_free_res:
-+	if (NX_IS_REVISION_P3(pdev->revision))
-+		pci_disable_pcie_error_reporting(pdev);
- 	pci_release_regions(pdev);
+ 	mutex_lock(&led_cdev->led_access);
  
- err_out_disable_pdev:
 -- 
-2.30.2
+2.31.1
 
