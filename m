@@ -2,69 +2,104 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA783C48BCF
-	for <kernel-janitors@archiver.kernel.org>; Sat, 12 Jun 2021 05:43:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC63FC48BE5
+	for <kernel-janitors@archiver.kernel.org>; Sat, 12 Jun 2021 07:06:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8A84861374
-	for <kernel-janitors@archiver.kernel.org>; Sat, 12 Jun 2021 05:43:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A056A61263
+	for <kernel-janitors@archiver.kernel.org>; Sat, 12 Jun 2021 07:06:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230012AbhFLFlz (ORCPT
+        id S230348AbhFLHIr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 12 Jun 2021 01:41:55 -0400
-Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:53753 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229532AbhFLFlz (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 12 Jun 2021 01:41:55 -0400
-Received: from localhost.localdomain ([86.243.172.93])
-        by mwinf5d17 with ME
-        id G5ft2500E21Fzsu035fth4; Sat, 12 Jun 2021 07:39:55 +0200
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 12 Jun 2021 07:39:55 +0200
-X-ME-IP: 86.243.172.93
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     ogabbay@kernel.org, arnd@arndb.de, gregkh@linuxfoundation.org,
-        obitton@habana.ai, oshpigelman@habana.ai, fkassabri@habana.ai
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] habanalabs: Fix an error handling path in 'hl_pci_probe()'
-Date:   Sat, 12 Jun 2021 07:39:51 +0200
-Message-Id: <e0d146b034576c755cb98018159fa30f8dba2101.1623476278.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Sat, 12 Jun 2021 03:08:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48258 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230229AbhFLHIr (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Sat, 12 Jun 2021 03:08:47 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 0065C61248;
+        Sat, 12 Jun 2021 07:06:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1623481608;
+        bh=X2YGd7IvwLs5/YhL39fN+g8Xt2AWO41M1z0301CaslM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=VfXwA0O8UvREklELiTqek9VlzA8LWrHhKF36DShjyC+PA0B6UBrkCqE4kes7rWCZ3
+         bM2Tt4M9yEY5jTwLCEmRpkhaP9MAd9weHhnJsrfES+MWE7oxURvBYV6dnHes+/XFmI
+         S/9dSM/tY4DmwXtdCLy4XUTUM4lOopLmUbdz1/pc4kCM6CK01V8XjN5uWpzkgqfAVy
+         xaip1+cJ4IUfCbzCxuLF87l+pzE80At+gMzfrl7E9ZtCXSfixOl2slRTLDrCRTXSFU
+         29vs60iYhohvyyg2EHa85kXmTS+c9JLRHnsTqmNrYyTvTO1JCZlH6Z+pWPaq26n9AN
+         1N95EITrq0yRQ==
+Date:   Sat, 12 Jun 2021 12:36:38 +0530
+From:   Manivannan Sadhasivam <mani@kernel.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     hemantk@codeaurora.org, loic.poulain@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] bus: mhi: pci-generic: Add missing
+ 'pci_disable_pcie_error_reporting()' calls
+Message-ID: <20210612070638.GC22149@thinkpad>
+References: <f70c14701f4922d67e717633c91b6c481b59f298.1623445348.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f70c14701f4922d67e717633c91b6c481b59f298.1623445348.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-If an error occurs after a 'pci_enable_pcie_error_reporting()' call, it
-must be undone by a corresponding 'pci_disable_pcie_error_reporting()'
-call, as already done in the remove function.
+On Fri, Jun 11, 2021 at 11:03:50PM +0200, Christophe JAILLET wrote:
+> If an error occurs after a 'pci_enable_pcie_error_reporting()' call, it
+> must be undone by a corresponding 'pci_disable_pcie_error_reporting()'
+> call
+> 
+> Add the missing call in the error handling path of the probe and in the
+> remove function.
+> 
+> Fixes: b012ee6bfe2a ("mhi: pci_generic: Add PCI error handlers")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Fixes: 2e5eda4681f9 ("habanalabs: PCIe Advanced Error Reporting support")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/misc/habanalabs/common/habanalabs_drv.c | 1 +
- 1 file changed, 1 insertion(+)
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-diff --git a/drivers/misc/habanalabs/common/habanalabs_drv.c b/drivers/misc/habanalabs/common/habanalabs_drv.c
-index 64d1530db985..d15b912a347b 100644
---- a/drivers/misc/habanalabs/common/habanalabs_drv.c
-+++ b/drivers/misc/habanalabs/common/habanalabs_drv.c
-@@ -464,6 +464,7 @@ static int hl_pci_probe(struct pci_dev *pdev,
- 	return 0;
- 
- disable_device:
-+	pci_disable_pcie_error_reporting(pdev);
- 	pci_set_drvdata(pdev, NULL);
- 	destroy_hdev(hdev);
- 
--- 
-2.30.2
+Thanks,
+Mani
 
+> ---
+>  drivers/bus/mhi/pci_generic.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/bus/mhi/pci_generic.c b/drivers/bus/mhi/pci_generic.c
+> index 7c810f02a2ef..d84b74396c6a 100644
+> --- a/drivers/bus/mhi/pci_generic.c
+> +++ b/drivers/bus/mhi/pci_generic.c
+> @@ -665,7 +665,7 @@ static int mhi_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+>  
+>  	err = mhi_register_controller(mhi_cntrl, mhi_cntrl_config);
+>  	if (err)
+> -		return err;
+> +		goto err_disable_reporting;
+>  
+>  	/* MHI bus does not power up the controller by default */
+>  	err = mhi_prepare_for_power_up(mhi_cntrl);
+> @@ -699,6 +699,8 @@ static int mhi_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+>  	mhi_unprepare_after_power_down(mhi_cntrl);
+>  err_unregister:
+>  	mhi_unregister_controller(mhi_cntrl);
+> +err_disable_reporting:
+> +	pci_disable_pcie_error_reporting(pdev);
+>  
+>  	return err;
+>  }
+> @@ -721,6 +723,7 @@ static void mhi_pci_remove(struct pci_dev *pdev)
+>  		pm_runtime_get_noresume(&pdev->dev);
+>  
+>  	mhi_unregister_controller(mhi_cntrl);
+> +	pci_disable_pcie_error_reporting(pdev);
+>  }
+>  
+>  static void mhi_pci_shutdown(struct pci_dev *pdev)
+> -- 
+> 2.30.2
+> 
