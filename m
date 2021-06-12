@@ -4,67 +4,69 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4DD5C49360
-	for <kernel-janitors@archiver.kernel.org>; Sat, 12 Jun 2021 13:25:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08D6FC48BCF
+	for <kernel-janitors@archiver.kernel.org>; Sat, 12 Jun 2021 13:46:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5440E613EA
-	for <kernel-janitors@archiver.kernel.org>; Sat, 12 Jun 2021 13:25:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CAAE5613BC
+	for <kernel-janitors@archiver.kernel.org>; Sat, 12 Jun 2021 13:46:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231325AbhFLN1t (ORCPT
+        id S231309AbhFLNsU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 12 Jun 2021 09:27:49 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:59935 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230191AbhFLN1t (ORCPT
+        Sat, 12 Jun 2021 09:48:20 -0400
+Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:56251 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231218AbhFLNsT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 12 Jun 2021 09:27:49 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <colin.king@canonical.com>)
-        id 1ls3e0-0005WN-7j; Sat, 12 Jun 2021 13:25:48 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] leds: flash: Remove redundant initialization of variable ret
-Date:   Sat, 12 Jun 2021 14:25:47 +0100
-Message-Id: <20210612132547.58727-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.31.1
+        Sat, 12 Jun 2021 09:48:19 -0400
+Received: from localhost.localdomain ([86.243.172.93])
+        by mwinf5d43 with ME
+        id GDmB2500121Fzsu03DmBz9; Sat, 12 Jun 2021 15:46:18 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 12 Jun 2021 15:46:18 +0200
+X-ME-IP: 86.243.172.93
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     jesse.brandeburg@intel.com, anthony.l.nguyen@intel.com,
+        davem@davemloft.net, kuba@kernel.org, jeffrey.t.kirsher@intel.com,
+        peter.p.waskiewicz.jr@intel.com
+Cc:     intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] ixgbe: Fix an error handling path in 'ixgbe_probe()'
+Date:   Sat, 12 Jun 2021 15:46:09 +0200
+Message-Id: <e3cc7010f6bd15d8ca49b935847450e92122dee8.1623505485.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+If an error occurs after a 'pci_enable_pcie_error_reporting()' call, it
+must be undone by a corresponding 'pci_disable_pcie_error_reporting()'
+call, as already done in the remove function.
 
-The variable ret is being initialized with a value that is never read,
-it is being updated later on. The assignment is redundant and can be
-removed.
-
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 6fabd715e6d8 ("ixgbe: Implement PCIe AER support")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/leds/led-class-flash.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/intel/ixgbe/ixgbe_main.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/leds/led-class-flash.c b/drivers/leds/led-class-flash.c
-index 6eeb9effcf65..e4c4fd97bf30 100644
---- a/drivers/leds/led-class-flash.c
-+++ b/drivers/leds/led-class-flash.c
-@@ -92,7 +92,7 @@ static ssize_t flash_strobe_store(struct device *dev,
- 	struct led_classdev *led_cdev = dev_get_drvdata(dev);
- 	struct led_classdev_flash *fled_cdev = lcdev_to_flcdev(led_cdev);
- 	unsigned long state;
--	ssize_t ret = -EINVAL;
-+	ssize_t ret;
- 
- 	mutex_lock(&led_cdev->led_access);
- 
+diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
+index 2ac5b82676f3..39fdc46f34f9 100644
+--- a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
++++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
+@@ -11069,6 +11069,7 @@ static int ixgbe_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	disable_dev = !test_and_set_bit(__IXGBE_DISABLED, &adapter->state);
+ 	free_netdev(netdev);
+ err_alloc_etherdev:
++	pci_disable_pcie_error_reporting(pdev);
+ 	pci_release_mem_regions(pdev);
+ err_pci_reg:
+ err_dma:
 -- 
-2.31.1
+2.30.2
 
