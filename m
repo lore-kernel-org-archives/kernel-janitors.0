@@ -2,68 +2,67 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D88FDC48BDF
-	for <kernel-janitors@archiver.kernel.org>; Sun, 13 Jun 2021 20:21:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07536C48BE8
+	for <kernel-janitors@archiver.kernel.org>; Sun, 13 Jun 2021 21:04:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A91686124B
-	for <kernel-janitors@archiver.kernel.org>; Sun, 13 Jun 2021 20:21:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D98EC61354
+	for <kernel-janitors@archiver.kernel.org>; Sun, 13 Jun 2021 21:04:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232021AbhFMUXF (ORCPT
+        id S232117AbhFMVGL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 13 Jun 2021 16:23:05 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:60056 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231842AbhFMUXF (ORCPT
+        Sun, 13 Jun 2021 17:06:11 -0400
+Received: from smtp11.smtpout.orange.fr ([80.12.242.133]:31262 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232020AbhFMVGK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 13 Jun 2021 16:23:05 -0400
-Received: from cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net ([80.193.200.194] helo=localhost)
-        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <colin.king@canonical.com>)
-        id 1lsWbM-000444-7D; Sun, 13 Jun 2021 20:21:00 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Jonathan Corbet <corbet@lwn.net>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Mathieu Chouquet-Stringer <me@mathieu.digital>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] tools: Fix "the the" in a message in kernel-chktaint
-Date:   Sun, 13 Jun 2021 21:20:59 +0100
-Message-Id: <20210613202059.80403-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.31.1
+        Sun, 13 Jun 2021 17:06:10 -0400
+Received: from localhost.localdomain ([86.243.172.93])
+        by mwinf5d46 with ME
+        id Gl462500721Fzsu03l467y; Sun, 13 Jun 2021 23:04:07 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 13 Jun 2021 23:04:07 +0200
+X-ME-IP: 86.243.172.93
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     sathya.prakash@broadcom.com, sreekanth.reddy@broadcom.com,
+        suganath-prabu.subramani@broadcom.com
+Cc:     MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 0/1] scsi: mptctl: switch from 'pci_' to 'dma_' API
+Date:   Sun, 13 Jun 2021 23:04:04 +0200
+Message-Id: <cover.1623617903.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+This cover letter is only there to draw attention on the fact that I'm a bit
+unsure about the use of GFP_KERNEL in 'kbuf_alloc_2_sgl()'.
 
-There is a double "the" in a message in kernel-chktaint, fix it.
+In all conversion that I've done, GFP_USER was never used. I don't fully
+understand the difference between GFP_USER and GFP_KERNEL.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- tools/debugging/kernel-chktaint | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+So please review with care :).
 
-diff --git a/tools/debugging/kernel-chktaint b/tools/debugging/kernel-chktaint
-index 719f18b1edf0..f1af27ce9f20 100755
---- a/tools/debugging/kernel-chktaint
-+++ b/tools/debugging/kernel-chktaint
-@@ -196,7 +196,7 @@ else
- fi
- 
- echo "For a more detailed explanation of the various taint flags see"
--echo " Documentation/admin-guide/tainted-kernels.rst in the the Linux kernel sources"
-+echo " Documentation/admin-guide/tainted-kernels.rst in the Linux kernel sources"
- echo " or https://kernel.org/doc/html/latest/admin-guide/tainted-kernels.html"
- echo "Raw taint value as int/string: $taint/'$out'"
- #EOF#
+
+For the 3 other functions, I'm much more confident. I've put the explanation
+of why I think that GFP_KERNEL is safe in patch 1/1.
+Basically, these functions already call fome functions that can sleep.
+
+
+Christophe JAILLET (1):
+  scsi: mptctl: switch from 'pci_' to 'dma_' API
+
+ drivers/message/fusion/mptctl.c | 82 ++++++++++++++++++++-------------
+ 1 file changed, 49 insertions(+), 33 deletions(-)
+
 -- 
-2.31.1
+2.30.2
 
