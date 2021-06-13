@@ -7,251 +7,63 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17870C48BCF
-	for <kernel-janitors@archiver.kernel.org>; Sun, 13 Jun 2021 13:27:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C7E8C48BDF
+	for <kernel-janitors@archiver.kernel.org>; Sun, 13 Jun 2021 13:41:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EC86061284
-	for <kernel-janitors@archiver.kernel.org>; Sun, 13 Jun 2021 13:27:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 473EA61078
+	for <kernel-janitors@archiver.kernel.org>; Sun, 13 Jun 2021 13:41:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231797AbhFMN3u (ORCPT
+        id S231913AbhFMNnj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 13 Jun 2021 09:29:50 -0400
-Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:59310 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231747AbhFMN3s (ORCPT
+        Sun, 13 Jun 2021 09:43:39 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:53750 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231838AbhFMNnj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 13 Jun 2021 09:29:48 -0400
-Received: from localhost.localdomain ([86.243.172.93])
-        by mwinf5d31 with ME
-        id GdTk2500721Fzsu03dTlg6; Sun, 13 Jun 2021 15:27:46 +0200
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 13 Jun 2021 15:27:46 +0200
-X-ME-IP: 86.243.172.93
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     stefanr@s5r6.in-berlin.de, greg@kroah.com
-Cc:     linux1394-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] firewire: nosy: switch from 'pci_' to 'dma_' API
-Date:   Sun, 13 Jun 2021 15:27:43 +0200
-Message-Id: <e1d7fa558f31abf294659a9d4edcc1e4fc065fab.1623590706.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Sun, 13 Jun 2021 09:43:39 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lsQMr-0003KJ-D7; Sun, 13 Jun 2021 13:41:37 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Evgeniy Dushistov <dushistov@mail.ru>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ufs: remove redundant assignment to pointer p
+Date:   Sun, 13 Jun 2021 14:41:37 +0100
+Message-Id: <20210613134137.74131-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The wrappers in include/linux/pci-dma-compat.h should go away.
+From: Colin Ian King <colin.king@canonical.com>
 
-The patch has been generated with the coccinelle script below and has been
-hand modified to replace GFP_ with a correct flag.
-It has been compile tested.
+The pointer p is being initialized with a value that is never
+read before the function returns. The assignment is redundant
+and can be removed.
 
-When memory is allocated in 'add_card()', GFP_KERNEL can be used because
-this flag is already used a few lines above and no lock is taken in the
-between.
-
-While at it, also remove some useless casting.
-
-@@ @@
--    PCI_DMA_BIDIRECTIONAL
-+    DMA_BIDIRECTIONAL
-
-@@ @@
--    PCI_DMA_TODEVICE
-+    DMA_TO_DEVICE
-
-@@ @@
--    PCI_DMA_FROMDEVICE
-+    DMA_FROM_DEVICE
-
-@@ @@
--    PCI_DMA_NONE
-+    DMA_NONE
-
-@@
-expression e1, e2, e3;
-@@
--    pci_alloc_consistent(e1, e2, e3)
-+    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
-
-@@
-expression e1, e2, e3;
-@@
--    pci_zalloc_consistent(e1, e2, e3)
-+    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_free_consistent(e1, e2, e3, e4)
-+    dma_free_coherent(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_map_single(e1, e2, e3, e4)
-+    dma_map_single(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_unmap_single(e1, e2, e3, e4)
-+    dma_unmap_single(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4, e5;
-@@
--    pci_map_page(e1, e2, e3, e4, e5)
-+    dma_map_page(&e1->dev, e2, e3, e4, e5)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_unmap_page(e1, e2, e3, e4)
-+    dma_unmap_page(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_map_sg(e1, e2, e3, e4)
-+    dma_map_sg(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_unmap_sg(e1, e2, e3, e4)
-+    dma_unmap_sg(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_dma_sync_single_for_cpu(e1, e2, e3, e4)
-+    dma_sync_single_for_cpu(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_dma_sync_single_for_device(e1, e2, e3, e4)
-+    dma_sync_single_for_device(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_dma_sync_sg_for_cpu(e1, e2, e3, e4)
-+    dma_sync_sg_for_cpu(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_dma_sync_sg_for_device(e1, e2, e3, e4)
-+    dma_sync_sg_for_device(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2;
-@@
--    pci_dma_mapping_error(e1, e2)
-+    dma_mapping_error(&e1->dev, e2)
-
-@@
-expression e1, e2;
-@@
--    pci_set_dma_mask(e1, e2)
-+    dma_set_mask(&e1->dev, e2)
-
-@@
-expression e1, e2;
-@@
--    pci_set_consistent_dma_mask(e1, e2)
-+    dma_set_coherent_mask(&e1->dev, e2)
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
-If needed, see post from Christoph Hellwig on the kernel-janitors ML:
-   https://marc.info/?l=kernel-janitors&m=158745678307186&w=4
----
- drivers/firewire/nosy.c | 43 +++++++++++++++++++++++------------------
- 1 file changed, 24 insertions(+), 19 deletions(-)
+ fs/ufs/dir.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/firewire/nosy.c b/drivers/firewire/nosy.c
-index 88ed971e32c0..b0d671db178a 100644
---- a/drivers/firewire/nosy.c
-+++ b/drivers/firewire/nosy.c
-@@ -511,12 +511,12 @@ remove_card(struct pci_dev *dev)
- 		wake_up_interruptible(&client->buffer.wait);
- 	spin_unlock_irq(&lynx->client_list_lock);
- 
--	pci_free_consistent(lynx->pci_device, sizeof(struct pcl),
--			    lynx->rcv_start_pcl, lynx->rcv_start_pcl_bus);
--	pci_free_consistent(lynx->pci_device, sizeof(struct pcl),
--			    lynx->rcv_pcl, lynx->rcv_pcl_bus);
--	pci_free_consistent(lynx->pci_device, PAGE_SIZE,
--			    lynx->rcv_buffer, lynx->rcv_buffer_bus);
-+	dma_free_coherent(&lynx->pci_device->dev, sizeof(struct pcl),
-+			  lynx->rcv_start_pcl, lynx->rcv_start_pcl_bus);
-+	dma_free_coherent(&lynx->pci_device->dev, sizeof(struct pcl),
-+			  lynx->rcv_pcl, lynx->rcv_pcl_bus);
-+	dma_free_coherent(&lynx->pci_device->dev, PAGE_SIZE, lynx->rcv_buffer,
-+			  lynx->rcv_buffer_bus);
- 
- 	iounmap(lynx->registers);
- 	pci_disable_device(dev);
-@@ -532,7 +532,7 @@ add_card(struct pci_dev *dev, const struct pci_device_id *unused)
- 	u32 p, end;
- 	int ret, i;
- 
--	if (pci_set_dma_mask(dev, DMA_BIT_MASK(32))) {
-+	if (dma_set_mask(&dev->dev, DMA_BIT_MASK(32))) {
- 		dev_err(&dev->dev,
- 		    "DMA address limits not supported for PCILynx hardware\n");
- 		return -ENXIO;
-@@ -564,12 +564,16 @@ add_card(struct pci_dev *dev, const struct pci_device_id *unused)
- 		goto fail_deallocate_lynx;
- 	}
- 
--	lynx->rcv_start_pcl = pci_alloc_consistent(lynx->pci_device,
--				sizeof(struct pcl), &lynx->rcv_start_pcl_bus);
--	lynx->rcv_pcl = pci_alloc_consistent(lynx->pci_device,
--				sizeof(struct pcl), &lynx->rcv_pcl_bus);
--	lynx->rcv_buffer = pci_alloc_consistent(lynx->pci_device,
--				RCV_BUFFER_SIZE, &lynx->rcv_buffer_bus);
-+	lynx->rcv_start_pcl = dma_alloc_coherent(&lynx->pci_device->dev,
-+						 sizeof(struct pcl),
-+						 &lynx->rcv_start_pcl_bus,
-+						 GFP_KERNEL);
-+	lynx->rcv_pcl = dma_alloc_coherent(&lynx->pci_device->dev,
-+					   sizeof(struct pcl),
-+					   &lynx->rcv_pcl_bus, GFP_KERNEL);
-+	lynx->rcv_buffer = dma_alloc_coherent(&lynx->pci_device->dev,
-+					      RCV_BUFFER_SIZE,
-+					      &lynx->rcv_buffer_bus, GFP_KERNEL);
- 	if (lynx->rcv_start_pcl == NULL ||
- 	    lynx->rcv_pcl == NULL ||
- 	    lynx->rcv_buffer == NULL) {
-@@ -667,14 +671,15 @@ add_card(struct pci_dev *dev, const struct pci_device_id *unused)
- 
- fail_deallocate_buffers:
- 	if (lynx->rcv_start_pcl)
--		pci_free_consistent(lynx->pci_device, sizeof(struct pcl),
--				lynx->rcv_start_pcl, lynx->rcv_start_pcl_bus);
-+		dma_free_coherent(&lynx->pci_device->dev, sizeof(struct pcl),
-+				  lynx->rcv_start_pcl,
-+				  lynx->rcv_start_pcl_bus);
- 	if (lynx->rcv_pcl)
--		pci_free_consistent(lynx->pci_device, sizeof(struct pcl),
--				lynx->rcv_pcl, lynx->rcv_pcl_bus);
-+		dma_free_coherent(&lynx->pci_device->dev, sizeof(struct pcl),
-+				  lynx->rcv_pcl, lynx->rcv_pcl_bus);
- 	if (lynx->rcv_buffer)
--		pci_free_consistent(lynx->pci_device, PAGE_SIZE,
--				lynx->rcv_buffer, lynx->rcv_buffer_bus);
-+		dma_free_coherent(&lynx->pci_device->dev, PAGE_SIZE,
-+				  lynx->rcv_buffer, lynx->rcv_buffer_bus);
- 	iounmap(lynx->registers);
- 
- fail_deallocate_lynx:
+diff --git a/fs/ufs/dir.c b/fs/ufs/dir.c
+index b721d0bda5e5..23cb6c8787f3 100644
+--- a/fs/ufs/dir.c
++++ b/fs/ufs/dir.c
+@@ -176,7 +176,6 @@ static bool ufs_check_page(struct page *page)
+ 		   rec_len, ufs_get_de_namlen(sb, p));
+ 	goto fail;
+ Eend:
+-	p = (struct ufs_dir_entry *)(kaddr + offs);
+ 	ufs_error(sb, __func__,
+ 		   "entry in directory #%lu spans the page boundary"
+ 		   "offset=%lu",
 -- 
-2.30.2
+2.31.1
 
