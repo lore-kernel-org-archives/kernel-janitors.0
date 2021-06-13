@@ -7,69 +7,226 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47B57C48BCF
-	for <kernel-janitors@archiver.kernel.org>; Sun, 13 Jun 2021 14:07:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2C82C48BCF
+	for <kernel-janitors@archiver.kernel.org>; Sun, 13 Jun 2021 15:11:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 24050611CE
-	for <kernel-janitors@archiver.kernel.org>; Sun, 13 Jun 2021 14:07:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73128611C0
+	for <kernel-janitors@archiver.kernel.org>; Sun, 13 Jun 2021 15:11:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231908AbhFMOJB (ORCPT
+        id S231915AbhFMPNM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 13 Jun 2021 10:09:01 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:54026 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231815AbhFMOJB (ORCPT
+        Sun, 13 Jun 2021 11:13:12 -0400
+Received: from out06.smtpout.orange.fr ([193.252.22.215]:40690 "EHLO
+        out.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231844AbhFMPNL (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 13 Jun 2021 10:09:01 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <colin.king@canonical.com>)
-        id 1lsQlI-0004hS-7m; Sun, 13 Jun 2021 14:06:52 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     "J . Bruce Fields" <bfields@fieldses.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, linux-nfs@vger.kernel.org,
-        netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] rpc: remove redundant initialization of variable status
-Date:   Sun, 13 Jun 2021 15:06:52 +0100
-Message-Id: <20210613140652.75190-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.31.1
+        Sun, 13 Jun 2021 11:13:11 -0400
+X-Greylist: delayed 450 seconds by postgrey-1.27 at vger.kernel.org; Sun, 13 Jun 2021 11:13:11 EDT
+Received: from localhost.localdomain ([86.243.172.93])
+        by mwinf5d66 with ME
+        id Gf3Z2500121Fzsu03f3Z2K; Sun, 13 Jun 2021 17:03:34 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 13 Jun 2021 17:03:34 +0200
+X-ME-IP: 86.243.172.93
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
+        Julia.Lawall@inria.fr, vaibhavgupta40@gmail.com,
+        yangyingliang@huawei.com, tasos@tasossah.com
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] media: saa7134: switch from 'pci_' to 'dma_' API
+Date:   Sun, 13 Jun 2021 17:03:31 +0200
+Message-Id: <166687202d3802c07447b0c150c46ccd8e8cab99.1623596428.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The wrappers in include/linux/pci-dma-compat.h should go away.
 
-The variable status is being initialized with a value that is never
-read, the assignment is redundant and can be removed.
+The patch has been generated with the coccinelle script below and has been
+hand modified to replace GFP_ with a correct flag.
+It has been compile tested.
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+When memory is allocated in 'saa7134_pgtable_alloc()', GFP_KERNEL can be
+used because its 4 callers (one function calls it 2 times, so there is
+only 3 functions that call it):
+
+.hw_params in a struct snd_pcm_ops (saa7134-alsa.c)
+  --> snd_card_saa7134_hw_params   (saa7134-alsa.c)
+    --> saa7134_pgtable_alloc
+==> .hw_params function can use GFP_KERNEL
+
+saa7134_initdev                    (saa7134-core.c)
+  --> saa7134_hwinit1              (saa7134-core.c)
+    --> saa7134_ts_init1           (saa7134-ts.c)
+      --> saa7134_pgtable_alloc
+==> saa7134_initdev already uses GFP_KERNEL
+
+saa7134_initdev                    (saa7134-core.c)
+  --> saa7134_hwinit1              (saa7134-core.c)
+    --> saa7134_video_init1        (saa7134-video.c)
+      --> saa7134_pgtable_alloc    (called 2 times)
+==> saa7134_initdev already uses GFP_KERNEL
+
+and no spin_lock is taken in the between.
+
+@@ @@
+-    PCI_DMA_BIDIRECTIONAL
++    DMA_BIDIRECTIONAL
+
+@@ @@
+-    PCI_DMA_TODEVICE
++    DMA_TO_DEVICE
+
+@@ @@
+-    PCI_DMA_FROMDEVICE
++    DMA_FROM_DEVICE
+
+@@ @@
+-    PCI_DMA_NONE
++    DMA_NONE
+
+@@
+expression e1, e2, e3;
+@@
+-    pci_alloc_consistent(e1, e2, e3)
++    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
+
+@@
+expression e1, e2, e3;
+@@
+-    pci_zalloc_consistent(e1, e2, e3)
++    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_free_consistent(e1, e2, e3, e4)
++    dma_free_coherent(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_map_single(e1, e2, e3, e4)
++    dma_map_single(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_single(e1, e2, e3, e4)
++    dma_unmap_single(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4, e5;
+@@
+-    pci_map_page(e1, e2, e3, e4, e5)
++    dma_map_page(&e1->dev, e2, e3, e4, e5)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_page(e1, e2, e3, e4)
++    dma_unmap_page(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_map_sg(e1, e2, e3, e4)
++    dma_map_sg(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_sg(e1, e2, e3, e4)
++    dma_unmap_sg(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_single_for_cpu(e1, e2, e3, e4)
++    dma_sync_single_for_cpu(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_single_for_device(e1, e2, e3, e4)
++    dma_sync_single_for_device(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_sg_for_cpu(e1, e2, e3, e4)
++    dma_sync_sg_for_cpu(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_sg_for_device(e1, e2, e3, e4)
++    dma_sync_sg_for_device(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2;
+@@
+-    pci_dma_mapping_error(e1, e2)
++    dma_mapping_error(&e1->dev, e2)
+
+@@
+expression e1, e2;
+@@
+-    pci_set_dma_mask(e1, e2)
++    dma_set_mask(&e1->dev, e2)
+
+@@
+expression e1, e2;
+@@
+-    pci_set_consistent_dma_mask(e1, e2)
++    dma_set_coherent_mask(&e1->dev, e2)
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- net/sunrpc/auth_gss/svcauth_gss.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+If needed, see post from Christoph Hellwig on the kernel-janitors ML:
+   https://marc.info/?l=kernel-janitors&m=158745678307186&w=4
+---
+ drivers/media/pci/saa7134/saa7134-core.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/net/sunrpc/auth_gss/svcauth_gss.c b/net/sunrpc/auth_gss/svcauth_gss.c
-index 6dff64374bfe..a81be45f40d9 100644
---- a/net/sunrpc/auth_gss/svcauth_gss.c
-+++ b/net/sunrpc/auth_gss/svcauth_gss.c
-@@ -1275,7 +1275,7 @@ static int gss_proxy_save_rsc(struct cache_detail *cd,
- 	long long ctxh;
- 	struct gss_api_mech *gm = NULL;
- 	time64_t expiry;
--	int status = -EINVAL;
-+	int status;
+diff --git a/drivers/media/pci/saa7134/saa7134-core.c b/drivers/media/pci/saa7134/saa7134-core.c
+index ec8dd41f9ebb..911fd05de31f 100644
+--- a/drivers/media/pci/saa7134/saa7134-core.c
++++ b/drivers/media/pci/saa7134/saa7134-core.c
+@@ -223,7 +223,8 @@ int saa7134_pgtable_alloc(struct pci_dev *pci, struct saa7134_pgtable *pt)
+ 	__le32       *cpu;
+ 	dma_addr_t   dma_addr = 0;
  
- 	memset(&rsci, 0, sizeof(rsci));
- 	/* context handle */
+-	cpu = pci_alloc_consistent(pci, SAA7134_PGTABLE_SIZE, &dma_addr);
++	cpu = dma_alloc_coherent(&pci->dev, SAA7134_PGTABLE_SIZE, &dma_addr,
++				 GFP_KERNEL);
+ 	if (NULL == cpu)
+ 		return -ENOMEM;
+ 	pt->size = SAA7134_PGTABLE_SIZE;
+@@ -254,7 +255,7 @@ void saa7134_pgtable_free(struct pci_dev *pci, struct saa7134_pgtable *pt)
+ {
+ 	if (NULL == pt->cpu)
+ 		return;
+-	pci_free_consistent(pci, pt->size, pt->cpu, pt->dma);
++	dma_free_coherent(&pci->dev, pt->size, pt->cpu, pt->dma);
+ 	pt->cpu = NULL;
+ }
+ 
+@@ -1092,7 +1093,7 @@ static int saa7134_initdev(struct pci_dev *pci_dev,
+ 		dev->pci_lat,
+ 		(unsigned long long)pci_resource_start(pci_dev, 0));
+ 	pci_set_master(pci_dev);
+-	err = pci_set_dma_mask(pci_dev, DMA_BIT_MASK(32));
++	err = dma_set_mask(&pci_dev->dev, DMA_BIT_MASK(32));
+ 	if (err) {
+ 		pr_warn("%s: Oops: no 32bit PCI DMA ???\n", dev->name);
+ 		goto fail1;
 -- 
-2.31.1
+2.30.2
 
