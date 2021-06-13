@@ -2,31 +2,30 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1CDFC48BDF
-	for <kernel-janitors@archiver.kernel.org>; Sun, 13 Jun 2021 08:23:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33D7FC48BE8
+	for <kernel-janitors@archiver.kernel.org>; Sun, 13 Jun 2021 10:26:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D39236120E
-	for <kernel-janitors@archiver.kernel.org>; Sun, 13 Jun 2021 08:23:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D2A861283
+	for <kernel-janitors@archiver.kernel.org>; Sun, 13 Jun 2021 10:26:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231576AbhFMIZa (ORCPT
+        id S231715AbhFMK2A (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 13 Jun 2021 04:25:30 -0400
-Received: from smtp06.smtpout.orange.fr ([80.12.242.128]:27736 "EHLO
+        Sun, 13 Jun 2021 06:28:00 -0400
+Received: from smtp05.smtpout.orange.fr ([80.12.242.127]:47238 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231575AbhFMIZ2 (ORCPT
+        with ESMTP id S231620AbhFMK17 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 13 Jun 2021 04:25:28 -0400
+        Sun, 13 Jun 2021 06:27:59 -0400
 Received: from localhost.localdomain ([86.243.172.93])
-        by mwinf5d41 with ME
-        id GYPS2500221Fzsu03YPSex; Sun, 13 Jun 2021 10:23:26 +0200
+        by mwinf5d10 with ME
+        id GaRw2500M21Fzsu03aRwab; Sun, 13 Jun 2021 12:25:57 +0200
 X-ME-Helo: localhost.localdomain
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 13 Jun 2021 10:23:26 +0200
+X-ME-Date: Sun, 13 Jun 2021 12:25:57 +0200
 X-ME-IP: 86.243.172.93
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 To:     sathya.prakash@broadcom.com, sreekanth.reddy@broadcom.com,
@@ -34,114 +33,32 @@ To:     sathya.prakash@broadcom.com, sreekanth.reddy@broadcom.com,
 Cc:     MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 3/3] scsi: mptbase: use 'dma_set_mask_and_coherent()' to simplify code
-Date:   Sun, 13 Jun 2021 10:23:24 +0200
-Message-Id: <a93e5e750d9d7bbbd873eaa4de2f968341ade7f3.1623571676.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 0/2] scsi: mptsas: switch from 'pci_' to 'dma_' API
+Date:   Sun, 13 Jun 2021 12:25:53 +0200
+Message-Id: <cover.1623579808.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <cover.1623571676.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1623571676.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Use 'dma_set_mask_and_coherent()' instead of
-'dma_set_mask()/dma_set_coherent_mask()', it is less verbose.
+In order to convert this file to the dma_ API, 2 steps are proposed.
 
-While at it, fix a typo in a comment (s/Reseting/Resetting/).
+The first one is purely mechanical. All the updated memory allocations can
+use GFP_KERNEL because of 'mpt_config()' calls. This function can sleep so
+it sounds like a reasonable assumption to use GFP_KERNEL.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-The code about the "1078 errata workaround" (around line 4449) looks
-spurious to me. Test, value of 'dma_mask' and message are all about 35 bit
-addressing, BUT the code uses DMA_BIT_MASK(32).
-Having 35 here would look more logical to me
+The 2nd patch is slighly more subtle. It is sent separatly to ease review.
 
-Just my 2 cents.
----
- drivers/message/fusion/mptbase.c | 30 ++++++++++++------------------
- 1 file changed, 12 insertions(+), 18 deletions(-)
+Christophe JAILLET (2):
+  scsi: mptsas: switch from 'pci_' to 'dma_' API
+  scsi: mptsas: switch from 'pci_' to 'dma_' API in
+    'mptsas_exp_repmanufacture_info()'
 
-diff --git a/drivers/message/fusion/mptbase.c b/drivers/message/fusion/mptbase.c
-index 2add74f92323..ad3f5d8a5f7c 100644
---- a/drivers/message/fusion/mptbase.c
-+++ b/drivers/message/fusion/mptbase.c
-@@ -1665,15 +1665,14 @@ mpt_mapresources(MPT_ADAPTER *ioc)
- 	if (sizeof(dma_addr_t) > 4) {
- 		const uint64_t required_mask = dma_get_required_mask
- 		    (&pdev->dev);
--		if (required_mask > DMA_BIT_MASK(32)
--			&& !dma_set_mask(&pdev->dev, DMA_BIT_MASK(64))
--			&& !dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(64))) {
-+		if (required_mask > DMA_BIT_MASK(32) &&
-+		    !dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64))) {
- 			ioc->dma_mask = DMA_BIT_MASK(64);
- 			dinitprintk(ioc, printk(MYIOC_s_INFO_FMT
- 				": 64 BIT PCI BUS DMA ADDRESSING SUPPORTED\n",
- 				ioc->name));
--		} else if (!dma_set_mask(&pdev->dev, DMA_BIT_MASK(32))
--			   && !dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(32))) {
-+		} else if (!dma_set_mask_and_coherent(&pdev->dev,
-+						      DMA_BIT_MASK(32))) {
- 			ioc->dma_mask = DMA_BIT_MASK(32);
- 			dinitprintk(ioc, printk(MYIOC_s_INFO_FMT
- 				": 32 BIT PCI BUS DMA ADDRESSING SUPPORTED\n",
-@@ -1684,8 +1683,7 @@ mpt_mapresources(MPT_ADAPTER *ioc)
- 			goto out_pci_release_region;
- 		}
- 	} else {
--		if (!dma_set_mask(&pdev->dev, DMA_BIT_MASK(32))
--			&& !dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(32))) {
-+		if (!dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32))) {
- 			ioc->dma_mask = DMA_BIT_MASK(32);
- 			dinitprintk(ioc, printk(MYIOC_s_INFO_FMT
- 				": 32 BIT PCI BUS DMA ADDRESSING SUPPORTED\n",
-@@ -4451,19 +4449,17 @@ PrimeIocFifos(MPT_ADAPTER *ioc)
- 		 */
- 		if (ioc->pcidev->device == MPI_MANUFACTPAGE_DEVID_SAS1078 &&
- 		    ioc->dma_mask > DMA_BIT_MASK(35)) {
--			if (!dma_set_mask(&ioc->pcidev->dev, DMA_BIT_MASK(32))
--			    && !dma_set_coherent_mask(&ioc->pcidev->dev, DMA_BIT_MASK(32))) {
-+			if (!dma_set_mask_and_coherent(&ioc->pcidev->dev,
-+						       DMA_BIT_MASK(32))) {
- 				dma_mask = DMA_BIT_MASK(35);
- 				d36memprintk(ioc, printk(MYIOC_s_DEBUG_FMT
- 				    "setting 35 bit addressing for "
- 				    "Request/Reply/Chain and Sense Buffers\n",
- 				    ioc->name));
- 			} else {
--				/*Reseting DMA mask to 64 bit*/
--				dma_set_mask(&ioc->pcidev->dev,
--					     DMA_BIT_MASK(64));
--				dma_set_coherent_mask(&ioc->pcidev->dev,
--						      DMA_BIT_MASK(64));
-+				/* Resetting DMA mask to 64 bit */
-+				dma_set_mask_and_coherent(&ioc->pcidev->dev,
-+							  DMA_BIT_MASK(64));
- 
- 				printk(MYIOC_s_ERR_FMT
- 				    "failed setting 35 bit addressing for "
-@@ -4599,8 +4595,7 @@ PrimeIocFifos(MPT_ADAPTER *ioc)
- 	}
- 
- 	if (dma_mask == DMA_BIT_MASK(35) &&
--	    !dma_set_mask(&ioc->pcidev->dev, ioc->dma_mask) &&
--	    !dma_set_coherent_mask(&ioc->pcidev->dev, ioc->dma_mask))
-+	    !dma_set_mask_and_coherent(&ioc->pcidev->dev, ioc->dma_mask))
- 		d36memprintk(ioc, printk(MYIOC_s_DEBUG_FMT
- 		    "restoring 64 bit addressing\n", ioc->name));
- 
-@@ -4624,8 +4619,7 @@ PrimeIocFifos(MPT_ADAPTER *ioc)
- 	}
- 
- 	if (dma_mask == DMA_BIT_MASK(35) &&
--	    !dma_set_mask(&ioc->pcidev->dev, DMA_BIT_MASK(64)) &&
--	    !dma_set_coherent_mask(&ioc->pcidev->dev, DMA_BIT_MASK(64)))
-+	    !dma_set_mask_and_coherent(&ioc->pcidev->dev, DMA_BIT_MASK(64)))
- 		d36memprintk(ioc, printk(MYIOC_s_DEBUG_FMT
- 		    "restoring 64 bit addressing\n", ioc->name));
- 
+ drivers/message/fusion/mptsas.c | 138 ++++++++++++++++----------------
+ 1 file changed, 70 insertions(+), 68 deletions(-)
+
 -- 
 2.30.2
 
