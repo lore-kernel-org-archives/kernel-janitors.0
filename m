@@ -2,81 +2,107 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8801CC48BE8
-	for <kernel-janitors@archiver.kernel.org>; Sun, 13 Jun 2021 23:01:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8D77C48BDF
+	for <kernel-janitors@archiver.kernel.org>; Sun, 13 Jun 2021 23:34:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5121B61029
-	for <kernel-janitors@archiver.kernel.org>; Sun, 13 Jun 2021 23:01:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4C4061159
+	for <kernel-janitors@archiver.kernel.org>; Sun, 13 Jun 2021 23:34:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232240AbhFMXDd (ORCPT
+        id S232224AbhFMXgj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 13 Jun 2021 19:03:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52114 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232204AbhFMXDc (ORCPT
+        Sun, 13 Jun 2021 19:36:39 -0400
+Received: from mail-lj1-f181.google.com ([209.85.208.181]:34467 "EHLO
+        mail-lj1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232181AbhFMXgj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 13 Jun 2021 19:03:32 -0400
-Received: from ms.lwn.net (ms.lwn.net [IPv6:2600:3c01:e000:3a1::42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FC83C061574
-        for <kernel-janitors@vger.kernel.org>; Sun, 13 Jun 2021 16:01:30 -0700 (PDT)
-Received: from localhost (unknown [IPv6:2601:281:8300:104d::5f6])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id 88AFF2C0;
-        Sun, 13 Jun 2021 23:01:29 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 88AFF2C0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-        t=1623625289; bh=HWkZpAy5GiOoN68yg+PWLteE0HW8b27h8nvWJlsf8eA=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=EiHDn/sLws+3m2QZ+U59ozfFVdCtGEVSsiPlJgpORScQp/CQYsbcvmkKihOE4c6hi
-         HTj79QzErZBrQkypZBXm501SlJWCk/DgDcEQLsPT393snleeN8SX85Ced8/2ws9EVX
-         WUZdn3UC8NTFrv3yek6HZ57M9JMkXBM3GU2qjQP9bXSjwxfzsmdQmAriGhgF5AzJpw
-         P90ZV6ESrjSmpzWCbbYqhcI9Wnhni8JEIkwM8sv3b21Ff84+5yy+zCdT7KgidFp2cs
-         aALXTNOvilkxMqwClOG7rs7DiIu6FSEOklaRsRfbv1dsh6XAe2xvSPS43ISUYje1IU
-         QZRvnw/Fi4Bwg==
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Colin King <colin.king@canonical.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Mathieu Chouquet-Stringer <me@mathieu.digital>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tools: Fix "the the" in a message in kernel-chktaint
-In-Reply-To: <20210613202059.80403-1-colin.king@canonical.com>
-References: <20210613202059.80403-1-colin.king@canonical.com>
-Date:   Sun, 13 Jun 2021 17:01:29 -0600
-Message-ID: <87sg1lbc8m.fsf@meer.lwn.net>
+        Sun, 13 Jun 2021 19:36:39 -0400
+Received: by mail-lj1-f181.google.com with SMTP id bn21so17617247ljb.1;
+        Sun, 13 Jun 2021 16:34:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vV90fcW15TwLBPqHX4M775nsbVmDSBXQLEB4HxZLGiU=;
+        b=seRI9gnaOlXqsebUbY+0EN2h31nRN9n29+w6E/Yx07jhyfc5lmimOLjlpBQ2ZmWXOt
+         QZZTYfQVaqTB6KlTdUGhCEFyTlFAnEZk1M6iIxWovvkZgJitCEWKbpfz+msd5OjRqAEu
+         458+/fspmIX1Dn+UukB9FpSxC0XvVtmzaaf1lg+jK0OgwaKZ2q8F6LP7SZRuR2yBVtEc
+         brkyT+zIPf0NauAK9rXQhU57B3zcj7sIGrVc0j14pV7NeD/pxu7SWq6Ox/Ac83oLvTjZ
+         zUc4HTEQMmwTmEpvEJ3StL5Hev64Lo/ryfTlpb/yXAjn6y6cjIkkPZ0Anm3wn7++KvF1
+         7LJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vV90fcW15TwLBPqHX4M775nsbVmDSBXQLEB4HxZLGiU=;
+        b=SCZm+Q3zVw+0mU/d4DuOoh1D+iZFv2B1Wa8zAwSFndL2TVomcu6j4Epli024I0LjjW
+         pB+dyJtpb5lJQdtfJfN6Vyc5fPqjYGgATElCx0f0lRxCwHrTTxkEQotgctZbUpFZlypC
+         TzZ2K3/i8uspbtKf2sNe6p6+tGU4F8KVpmUKswg1z7GKCLuVHq2JrP0iSMA/tksYOAx0
+         kJ/8hk23Y3XfcBAZlwdnxghQvR7MMHSQpMbFPFvJ682J2HtuoM58cicmElflck/ucMwd
+         X/U/5OHpFbr2uUkfrERtJO9Y/yifIjWAfs8yqCGsgNQriAhsZqW11jSbODuKjrk8/dBO
+         +G6Q==
+X-Gm-Message-State: AOAM5323/YJGS747RJYnI/0gaLSY+iCtV70QAJfN1zaR0FIubz8pioI1
+        R8NdwX1o/yd7OxMy5SRbRgDI8XCN6b7zt5yIiTmBsxzEMYM=
+X-Google-Smtp-Source: ABdhPJwF5rfK6nFEkoOSqYEGVSSNwf7lZ471cE2ZhMxDz1+qpvKgXjMZibrLWN34Tem81MF0KE0MUFNh7nfE9lFIwpY=
+X-Received: by 2002:a2e:a7ca:: with SMTP id x10mr11349512ljp.218.1623627201751;
+ Sun, 13 Jun 2021 16:33:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20210613140123.74900-1-colin.king@canonical.com>
+In-Reply-To: <20210613140123.74900-1-colin.king@canonical.com>
+From:   Steve French <smfrench@gmail.com>
+Date:   Sun, 13 Jun 2021 18:33:10 -0500
+Message-ID: <CAH2r5msKOBuZzvW83OyN4o5S34U=pBcgLcXPFPywL8c3wV_ixQ@mail.gmail.com>
+Subject: Re: [PATCH] cifs: remove redundant initialization of variable rc
+To:     Colin King <colin.king@canonical.com>
+Cc:     Steve French <sfrench@samba.org>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        samba-technical <samba-technical@lists.samba.org>,
+        kernel-janitors <kernel-janitors@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Colin King <colin.king@canonical.com> writes:
+merged into cifs-2.6.git for-next
 
+On Sun, Jun 13, 2021 at 9:02 AM Colin King <colin.king@canonical.com> wrote:
+>
 > From: Colin Ian King <colin.king@canonical.com>
 >
-> There is a double "the" in a message in kernel-chktaint, fix it.
+> The variable rc is being initialized with a value that is never read, the
+> assignment is redundant and can be removed.
 >
+> Addresses-Coverity: ("Unused value")
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
->  tools/debugging/kernel-chktaint | 2 +-
+>  fs/cifs/cifssmb.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> diff --git a/tools/debugging/kernel-chktaint b/tools/debugging/kernel-chktaint
-> index 719f18b1edf0..f1af27ce9f20 100755
-> --- a/tools/debugging/kernel-chktaint
-> +++ b/tools/debugging/kernel-chktaint
-> @@ -196,7 +196,7 @@ else
->  fi
->  
->  echo "For a more detailed explanation of the various taint flags see"
-> -echo " Documentation/admin-guide/tainted-kernels.rst in the the Linux kernel sources"
-> +echo " Documentation/admin-guide/tainted-kernels.rst in the Linux kernel sources"
+> diff --git a/fs/cifs/cifssmb.c b/fs/cifs/cifssmb.c
+> index 037c44bf48f1..277cb1044cbe 100644
+> --- a/fs/cifs/cifssmb.c
+> +++ b/fs/cifs/cifssmb.c
+> @@ -1238,7 +1238,7 @@ SMBLegacyOpen(const unsigned int xid, struct cifs_tcon *tcon,
+>             int *pOplock, FILE_ALL_INFO *pfile_info,
+>             const struct nls_table *nls_codepage, int remap)
+>  {
+> -       int rc = -EACCES;
+> +       int rc;
+>         OPENX_REQ *pSMB = NULL;
+>         OPENX_RSP *pSMBr = NULL;
+>         int bytes_returned;
+> --
+> 2.31.1
+>
 
-Applied, thanks.
 
-jon
+-- 
+Thanks,
+
+Steve
