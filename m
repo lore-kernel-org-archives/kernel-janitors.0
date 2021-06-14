@@ -8,101 +8,104 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8D77C48BDF
-	for <kernel-janitors@archiver.kernel.org>; Sun, 13 Jun 2021 23:34:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ABF4C48BE6
+	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Jun 2021 08:49:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A4C4061159
-	for <kernel-janitors@archiver.kernel.org>; Sun, 13 Jun 2021 23:34:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69B386138C
+	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Jun 2021 08:49:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232224AbhFMXgj (ORCPT
+        id S232666AbhFNIvU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 13 Jun 2021 19:36:39 -0400
-Received: from mail-lj1-f181.google.com ([209.85.208.181]:34467 "EHLO
-        mail-lj1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232181AbhFMXgj (ORCPT
+        Mon, 14 Jun 2021 04:51:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37570 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232664AbhFNIvT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 13 Jun 2021 19:36:39 -0400
-Received: by mail-lj1-f181.google.com with SMTP id bn21so17617247ljb.1;
-        Sun, 13 Jun 2021 16:34:22 -0700 (PDT)
+        Mon, 14 Jun 2021 04:51:19 -0400
+Received: from mail-oo1-xc2c.google.com (mail-oo1-xc2c.google.com [IPv6:2607:f8b0:4864:20::c2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B7BBC061574;
+        Mon, 14 Jun 2021 01:49:17 -0700 (PDT)
+Received: by mail-oo1-xc2c.google.com with SMTP id j17-20020a0568200231b029024900620310so2470515oob.7;
+        Mon, 14 Jun 2021 01:49:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=vV90fcW15TwLBPqHX4M775nsbVmDSBXQLEB4HxZLGiU=;
-        b=seRI9gnaOlXqsebUbY+0EN2h31nRN9n29+w6E/Yx07jhyfc5lmimOLjlpBQ2ZmWXOt
-         QZZTYfQVaqTB6KlTdUGhCEFyTlFAnEZk1M6iIxWovvkZgJitCEWKbpfz+msd5OjRqAEu
-         458+/fspmIX1Dn+UukB9FpSxC0XvVtmzaaf1lg+jK0OgwaKZ2q8F6LP7SZRuR2yBVtEc
-         brkyT+zIPf0NauAK9rXQhU57B3zcj7sIGrVc0j14pV7NeD/pxu7SWq6Ox/Ac83oLvTjZ
-         zUc4HTEQMmwTmEpvEJ3StL5Hev64Lo/ryfTlpb/yXAjn6y6cjIkkPZ0Anm3wn7++KvF1
-         7LJQ==
+        bh=zhc5KrH7nB+vP5Okxryb0H1oOssNZwvGPDnO0KweY9U=;
+        b=MorrzZBJZZfI2Eoa3wtobeR693l2V/0WBRrC4FXETifIrlWqp0THVdgdgBVc3DHKd2
+         IzdersvWZpPPDTS9SyASCal2DLh7gbZpWWBdJPqfrdH6eZm3YNrgxCSAdYUzLtRbmdRG
+         bHmVStMu8LKY5fwx1+1AcvFq8UNadbc5dUOlWbXhByxJYCzFFScqBHc0Z5zde9tofCKV
+         YQjeNzCWGZO98W0Ap8QO4YZE+Akxxbn0ZqiDThU7CUKMA4lvXjuG/QbWanJGRE45jLIa
+         5ZDYXDYW6WnrUeJeWeZCoR1SOur+fLpse5SipfEz5l66j62z415wDWOeBO1nlGcvvK8A
+         KBRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=vV90fcW15TwLBPqHX4M775nsbVmDSBXQLEB4HxZLGiU=;
-        b=SCZm+Q3zVw+0mU/d4DuOoh1D+iZFv2B1Wa8zAwSFndL2TVomcu6j4Epli024I0LjjW
-         pB+dyJtpb5lJQdtfJfN6Vyc5fPqjYGgATElCx0f0lRxCwHrTTxkEQotgctZbUpFZlypC
-         TzZ2K3/i8uspbtKf2sNe6p6+tGU4F8KVpmUKswg1z7GKCLuVHq2JrP0iSMA/tksYOAx0
-         kJ/8hk23Y3XfcBAZlwdnxghQvR7MMHSQpMbFPFvJ682J2HtuoM58cicmElflck/ucMwd
-         X/U/5OHpFbr2uUkfrERtJO9Y/yifIjWAfs8yqCGsgNQriAhsZqW11jSbODuKjrk8/dBO
-         +G6Q==
-X-Gm-Message-State: AOAM5323/YJGS747RJYnI/0gaLSY+iCtV70QAJfN1zaR0FIubz8pioI1
-        R8NdwX1o/yd7OxMy5SRbRgDI8XCN6b7zt5yIiTmBsxzEMYM=
-X-Google-Smtp-Source: ABdhPJwF5rfK6nFEkoOSqYEGVSSNwf7lZ471cE2ZhMxDz1+qpvKgXjMZibrLWN34Tem81MF0KE0MUFNh7nfE9lFIwpY=
-X-Received: by 2002:a2e:a7ca:: with SMTP id x10mr11349512ljp.218.1623627201751;
- Sun, 13 Jun 2021 16:33:21 -0700 (PDT)
+        bh=zhc5KrH7nB+vP5Okxryb0H1oOssNZwvGPDnO0KweY9U=;
+        b=rzApEInQs1CkJzsTo1+zxzgPwrvT3V1MOwNBJpdbMEJXT9sEx/auEvX6bbqdjLREGv
+         DT6wenJN5d12JUypU6voIOAVyf89sgBOKAVw1x2iynUflU6NmvpCi0Ka85k8hQuyVP16
+         pHuiM4Ml/joJBzGg+JlwMih7v/qRUIhVKDbVJbU6VMEBzX0hEjB2+tWAookSF6wjEVER
+         wwnBwWbrkuCqbEzio7NMWZdLvQx6HQS6KiAtTIV0uCkcMvEpN9VuQAW2tOhU/tfUitVF
+         MKSeCGKC9fKUFZkjGxMhIoU+D+CaMCnIMG0LkZd5J/94GHRTHVL9dxcUe/oam0ksCzvb
+         0GRg==
+X-Gm-Message-State: AOAM5309y8LVWN2mxc6hArSicn0NlJeCWexByNSnCnX+EVjs4mX8RpzM
+        11TguEYhGSBVDLCksjmpM4EHQzNtosSGEbcHU3hmA3uyWVs=
+X-Google-Smtp-Source: ABdhPJx48Q8vH/+qZq1gYLRoTJmGsY/tY/M9GXb80XM1Od6Tsq56xgD13o0XCiqSabUrsw9hJ5S4dhbfk37gYIB7Lo0=
+X-Received: by 2002:a4a:9bcb:: with SMTP id b11mr12139019ook.44.1623660556399;
+ Mon, 14 Jun 2021 01:49:16 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210613140123.74900-1-colin.king@canonical.com>
-In-Reply-To: <20210613140123.74900-1-colin.king@canonical.com>
-From:   Steve French <smfrench@gmail.com>
-Date:   Sun, 13 Jun 2021 18:33:10 -0500
-Message-ID: <CAH2r5msKOBuZzvW83OyN4o5S34U=pBcgLcXPFPywL8c3wV_ixQ@mail.gmail.com>
-Subject: Re: [PATCH] cifs: remove redundant initialization of variable rc
-To:     Colin King <colin.king@canonical.com>
-Cc:     Steve French <sfrench@samba.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        samba-technical <samba-technical@lists.samba.org>,
-        kernel-janitors <kernel-janitors@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
+References: <e0d146b034576c755cb98018159fa30f8dba2101.1623476278.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <e0d146b034576c755cb98018159fa30f8dba2101.1623476278.git.christophe.jaillet@wanadoo.fr>
+From:   Oded Gabbay <oded.gabbay@gmail.com>
+Date:   Mon, 14 Jun 2021 11:48:49 +0300
+Message-ID: <CAFCwf109JLqs+Qb5MUDEjG6EXK09JmH+bJjDXvLhNXOrr2aF3A@mail.gmail.com>
+Subject: Re: [PATCH] habanalabs: Fix an error handling path in 'hl_pci_probe()'
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Oded Gabbay <ogabbay@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ofir Bitton <obitton@habana.ai>,
+        Omer Shpigelman <oshpigelman@habana.ai>,
+        farah kassabri <fkassabri@habana.ai>,
+        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-merged into cifs-2.6.git for-next
-
-On Sun, Jun 13, 2021 at 9:02 AM Colin King <colin.king@canonical.com> wrote:
+On Sat, Jun 12, 2021 at 8:42 AM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
 >
-> From: Colin Ian King <colin.king@canonical.com>
+> If an error occurs after a 'pci_enable_pcie_error_reporting()' call, it
+> must be undone by a corresponding 'pci_disable_pcie_error_reporting()'
+> call, as already done in the remove function.
 >
-> The variable rc is being initialized with a value that is never read, the
-> assignment is redundant and can be removed.
->
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Fixes: 2e5eda4681f9 ("habanalabs: PCIe Advanced Error Reporting support")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->  fs/cifs/cifssmb.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/misc/habanalabs/common/habanalabs_drv.c | 1 +
+>  1 file changed, 1 insertion(+)
 >
-> diff --git a/fs/cifs/cifssmb.c b/fs/cifs/cifssmb.c
-> index 037c44bf48f1..277cb1044cbe 100644
-> --- a/fs/cifs/cifssmb.c
-> +++ b/fs/cifs/cifssmb.c
-> @@ -1238,7 +1238,7 @@ SMBLegacyOpen(const unsigned int xid, struct cifs_tcon *tcon,
->             int *pOplock, FILE_ALL_INFO *pfile_info,
->             const struct nls_table *nls_codepage, int remap)
->  {
-> -       int rc = -EACCES;
-> +       int rc;
->         OPENX_REQ *pSMB = NULL;
->         OPENX_RSP *pSMBr = NULL;
->         int bytes_returned;
+> diff --git a/drivers/misc/habanalabs/common/habanalabs_drv.c b/drivers/misc/habanalabs/common/habanalabs_drv.c
+> index 64d1530db985..d15b912a347b 100644
+> --- a/drivers/misc/habanalabs/common/habanalabs_drv.c
+> +++ b/drivers/misc/habanalabs/common/habanalabs_drv.c
+> @@ -464,6 +464,7 @@ static int hl_pci_probe(struct pci_dev *pdev,
+>         return 0;
+>
+>  disable_device:
+> +       pci_disable_pcie_error_reporting(pdev);
+>         pci_set_drvdata(pdev, NULL);
+>         destroy_hdev(hdev);
+>
 > --
-> 2.31.1
+> 2.30.2
 >
 
+Thanks for catching it.
+This patch is:
+Reviewed-by: Oded Gabbay <ogabbay@kernel.org>
 
--- 
-Thanks,
-
-Steve
+Applied to -next.
+Oded
