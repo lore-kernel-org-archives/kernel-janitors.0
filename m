@@ -2,61 +2,59 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF954C2B9F4
-	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Jun 2021 11:29:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CBCEC49EA3
+	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Jun 2021 11:29:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CC738610A1
-	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Jun 2021 11:29:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B2896115B
+	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Jun 2021 11:29:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235638AbhFNLby (ORCPT
+        id S235688AbhFNLb4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 14 Jun 2021 07:31:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43428 "EHLO
+        Mon, 14 Jun 2021 07:31:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236187AbhFNL3z (ORCPT
+        with ESMTP id S236059AbhFNL3o (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 14 Jun 2021 07:29:55 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0482C061198;
-        Mon, 14 Jun 2021 04:24:10 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id m18so14146542wrv.2;
-        Mon, 14 Jun 2021 04:24:10 -0700 (PDT)
+        Mon, 14 Jun 2021 07:29:44 -0400
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3820C0611FA;
+        Mon, 14 Jun 2021 04:24:00 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id l18-20020a1ced120000b029014c1adff1edso12776846wmh.4;
+        Mon, 14 Jun 2021 04:24:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=xzBiF0deuxW/VmhACuRBNENUpwSYlJ5ATqHOdjxFmsg=;
-        b=S85sOn7tyRrYrw2MxeHOj8uSP5E/fcrrOe30A6f494GDX860/tEaw6a7+VxBW3yZJD
-         woRDtpTGNIMDhEAVzOprAEdKk894yU3ZiJLUprpJzGjwknaaKrXMYE06FD3SnCe9RGlh
-         wjsf3mq43j1HhDvY5WRQc0SJScH6pUDTshpUNARguREig9Eeqzlxw+E1Esh3j5so4eA7
-         l58dGTVQxvak3xNzXoKdthxlGfOe4TKojbbnE7+zu2nzldBseQdRtQWt8Nq18nc5H1Cr
-         cKz9dH7YrNmQRqEw/u4BQJW7UYiEzizhRA0rXPUauLP3EOXDMXKEMu4gAoAKjDcj+Yb3
-         Ja4A==
+        h=from:to:cc:subject:date:message-id;
+        bh=KkYDjNEVEUYWRsNoTrKu5VhSupn5YZcqZPCCTeGuQLE=;
+        b=SB4A5QIKc6qUAIZ+jcYTcKSADf/lridtue5zfa/P6SM+1kOjyKfrklP91/CMSjRNzR
+         FynuIjnZPCci+QQn0SK0sShi1pWnLXkGAklnpAScfFmbnL/wQZfGWIyGq4Dw8f8oHJ1Y
+         CZB0XafCi4mOGZuv54cunVkatH4ZfMZZXyJp1gn3p/+xATYw99s4o3zf/2YsdxtsJoI8
+         rIdIGGw7EhlfR283JEt8yLGA9ljL3qnfpXl5MnpEuMvTjV5ZnYqjXUTcZFNDwFQpUpqh
+         XtE/V6bBXuZarkV06b81erWIbPuo9t/nIuFPuk4SY8R1NzlrrCk5GnJ0/eNFtpCYznqi
+         SPOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=xzBiF0deuxW/VmhACuRBNENUpwSYlJ5ATqHOdjxFmsg=;
-        b=CqxftGIvEOnJwhGNJB0T24GzliIJAxesGr9XjhjJUHgcVWxR/PCBSDrNtDx8PakYl9
-         dMnNkVtKHb7+VncsTT6yU1Ip85PhbZPfJEuSU+RDX+4XYmmya7LINlFL/FVOPBx7EGH5
-         9atafc72NmPJmK0psHtiWM71fNNpdazbMhTJQehLJq8lWiX1c/0mmD9FKNCyXtU9OkKE
-         ze8o6FI7MdkZmxBadu3uy5np2r9rOzzw0nAzwHK5Nk1AnVeFtrqUr6abJeZbjPG7Nwcz
-         oJ4FTxTe1RJCgTOKJpKhiQcbA3aZCPsN1cACkBWgK6mMoqzleFSntK7LrzxD9FIFBczm
-         0++Q==
-X-Gm-Message-State: AOAM531TyzG56kmhulwtjXuN9qCia7gexfQNfyuehUnPBn7aYo8I7PvS
-        y5/+1ob5U8tcN0tWp5AsN6o=
-X-Google-Smtp-Source: ABdhPJxVd1GET6VG6yquZRQLMAYFTpw/1E/W7bGvy98kZXFlNfDihTcWkSaQP5jrZIuTM2tKcFQO5Q==
-X-Received: by 2002:adf:f305:: with SMTP id i5mr18849410wro.29.1623669849477;
-        Mon, 14 Jun 2021 04:24:09 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=KkYDjNEVEUYWRsNoTrKu5VhSupn5YZcqZPCCTeGuQLE=;
+        b=dCPrTEA7U7y+FijX6SOTFjeF0BZdrSR1OBhU/m8/wqOAUo3dMQgxKN2yMTtsshN8Gf
+         IfW/EUKAIik2vXGXRnQY8m8M2WKhu0ZhSBCpg8lD1AgGF8HZlOSbYqf2/Rp5VsMJSOz7
+         pbkI7MqFI0n+h9ysFlubTXPXu2SThj136Bg/oMfYQnnOuxw9ArQhfTq9jP93onS00Jcc
+         VL5qSKyvryLZwY7p4hNvkjBsslFHefgpB8GZ9uy02uoz2oJOodicAyV7MSkLOQ0kLlyj
+         OgqwvPmMFMRpWefLztq5FXHl2z9dGBniveMZ0yueF8JOkXiOTeR5N/HG3Wa52TW//vVM
+         4l9Q==
+X-Gm-Message-State: AOAM531bV8MokqAO57BXxTsZxzHwxlY10V53ReIAEZRgps4oCIh8KE/F
+        JB8YY0+sA3P80o3+XVSb2/E=
+X-Google-Smtp-Source: ABdhPJwMRKNNvHww700Fm13czmA35T1evBYSuPXN6rQDjEwkAhz/muPptE2GB5DfPED68EPgBqHnvw==
+X-Received: by 2002:a1c:7c13:: with SMTP id x19mr32257413wmc.96.1623669839413;
+        Mon, 14 Jun 2021 04:23:59 -0700 (PDT)
 Received: from felia.fritz.box ([2001:16b8:2d62:e800:a8e7:80e:6e34:237d])
-        by smtp.gmail.com with ESMTPSA id w13sm17269485wrc.31.2021.06.14.04.24.08
+        by smtp.gmail.com with ESMTPSA id w13sm17269485wrc.31.2021.06.14.04.23.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jun 2021 04:24:09 -0700 (PDT)
+        Mon, 14 Jun 2021 04:23:58 -0700 (PDT)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
 To:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
 Cc:     Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -67,41 +65,46 @@ Cc:     Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
         Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
         kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH v2 2/3] MAINTAINERS: rectify entry for HIKEY960 ONBOARD USB GPIO HUB DRIVER
-Date:   Mon, 14 Jun 2021 13:23:48 +0200
-Message-Id: <20210614112349.26108-3-lukas.bulwahn@gmail.com>
+Subject: [PATCH v2 0/3] Rectify file references for dt-bindings in MAINTAINERS
+Date:   Mon, 14 Jun 2021 13:23:46 +0200
+Message-Id: <20210614112349.26108-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210614112349.26108-1-lukas.bulwahn@gmail.com>
-References: <20210614112349.26108-1-lukas.bulwahn@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 7a6ff4c4cbc3 ("misc: hisi_hikey_usb: Driver to support onboard USB
-gpio hub on Hikey960") refers to the non-existing file
-./Documentation/devicetree/bindings/misc/hisilicon-hikey-usb.yaml, but this
-commit's patch series does not add any related devicetree binding in misc.
+Hi Rob,
 
-So, just drop this file reference in HIKEY960 ONBOARD USB GPIO HUB DRIVER.
+here is a patch series that cleans up some file references for dt-bindings
+in MAINTAINERS. It applies cleanly on next-20210611.
 
-Fixes: 7a6ff4c4cbc3 ("misc: hisi_hikey_usb: Driver to support onboard USB gpio hub on Hikey960")
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- MAINTAINERS | 1 -
- 1 file changed, 1 deletion(-)
+This is a v2 of the still relevant patches from the first submission
+of the patch series (see Links) send out 2021-03-15 and resent on 2021-04-19.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 5df664744cd2..8e8dfe48afd8 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8344,7 +8344,6 @@ M:	John Stultz <john.stultz@linaro.org>
- L:	linux-kernel@vger.kernel.org
- S:	Maintained
- F:	drivers/misc/hisi_hikey_usb.c
--F:	Documentation/devicetree/bindings/misc/hisilicon-hikey-usb.yaml
- 
- HISILICON PMU DRIVER
- M:	Shaokun Zhang <zhangshaokun@hisilicon.com>
+
+Could you pick this series for your devicetree bindings tree?
+
+No functional change, just cleaning up MAINTAINERS.
+
+Lukas
+
+Link: https://lore.kernel.org/lkml/20210315160451.7469-1-lukas.bulwahn@gmail.com/
+Link: https://lore.kernel.org/lkml/20210419092609.3692-1-lukas.bulwahn@gmail.com/
+
+Adjustment from original to resend version:
+  - drop subsumed patches
+
+Adjustment to resend version:
+  - add Fixes-tags as requested by Nobuhiro Iwamatsu
+
+Lukas Bulwahn (3):
+  MAINTAINERS: rectify entry for ARM/TOSHIBA VISCONTI ARCHITECTURE
+  MAINTAINERS: rectify entry for HIKEY960 ONBOARD USB GPIO HUB DRIVER
+  MAINTAINERS: rectify entry for INTEL KEEM BAY DRM DRIVER
+
+ MAINTAINERS | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
 -- 
 2.17.1
 
