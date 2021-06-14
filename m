@@ -2,109 +2,117 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CBCEC49EA3
-	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Jun 2021 11:29:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3697C48BE8
+	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Jun 2021 11:30:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6B2896115B
-	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Jun 2021 11:29:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1E5A61057
+	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Jun 2021 11:30:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235688AbhFNLb4 (ORCPT
+        id S236078AbhFNLcl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 14 Jun 2021 07:31:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42986 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236059AbhFNL3o (ORCPT
+        Mon, 14 Jun 2021 07:32:41 -0400
+Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:38572 "EHLO
+        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234858AbhFNLaj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 14 Jun 2021 07:29:44 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3820C0611FA;
-        Mon, 14 Jun 2021 04:24:00 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id l18-20020a1ced120000b029014c1adff1edso12776846wmh.4;
-        Mon, 14 Jun 2021 04:24:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=KkYDjNEVEUYWRsNoTrKu5VhSupn5YZcqZPCCTeGuQLE=;
-        b=SB4A5QIKc6qUAIZ+jcYTcKSADf/lridtue5zfa/P6SM+1kOjyKfrklP91/CMSjRNzR
-         FynuIjnZPCci+QQn0SK0sShi1pWnLXkGAklnpAScfFmbnL/wQZfGWIyGq4Dw8f8oHJ1Y
-         CZB0XafCi4mOGZuv54cunVkatH4ZfMZZXyJp1gn3p/+xATYw99s4o3zf/2YsdxtsJoI8
-         rIdIGGw7EhlfR283JEt8yLGA9ljL3qnfpXl5MnpEuMvTjV5ZnYqjXUTcZFNDwFQpUpqh
-         XtE/V6bBXuZarkV06b81erWIbPuo9t/nIuFPuk4SY8R1NzlrrCk5GnJ0/eNFtpCYznqi
-         SPOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=KkYDjNEVEUYWRsNoTrKu5VhSupn5YZcqZPCCTeGuQLE=;
-        b=dCPrTEA7U7y+FijX6SOTFjeF0BZdrSR1OBhU/m8/wqOAUo3dMQgxKN2yMTtsshN8Gf
-         IfW/EUKAIik2vXGXRnQY8m8M2WKhu0ZhSBCpg8lD1AgGF8HZlOSbYqf2/Rp5VsMJSOz7
-         pbkI7MqFI0n+h9ysFlubTXPXu2SThj136Bg/oMfYQnnOuxw9ArQhfTq9jP93onS00Jcc
-         VL5qSKyvryLZwY7p4hNvkjBsslFHefgpB8GZ9uy02uoz2oJOodicAyV7MSkLOQ0kLlyj
-         OgqwvPmMFMRpWefLztq5FXHl2z9dGBniveMZ0yueF8JOkXiOTeR5N/HG3Wa52TW//vVM
-         4l9Q==
-X-Gm-Message-State: AOAM531bV8MokqAO57BXxTsZxzHwxlY10V53ReIAEZRgps4oCIh8KE/F
-        JB8YY0+sA3P80o3+XVSb2/E=
-X-Google-Smtp-Source: ABdhPJwMRKNNvHww700Fm13czmA35T1evBYSuPXN6rQDjEwkAhz/muPptE2GB5DfPED68EPgBqHnvw==
-X-Received: by 2002:a1c:7c13:: with SMTP id x19mr32257413wmc.96.1623669839413;
-        Mon, 14 Jun 2021 04:23:59 -0700 (PDT)
-Received: from felia.fritz.box ([2001:16b8:2d62:e800:a8e7:80e:6e34:237d])
-        by smtp.gmail.com with ESMTPSA id w13sm17269485wrc.31.2021.06.14.04.23.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jun 2021 04:23:58 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
-Cc:     Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        Yu Chen <chenyu56@huawei.com>,
-        Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Joe Perches <joe@perches.com>,
-        Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH v2 0/3] Rectify file references for dt-bindings in MAINTAINERS
-Date:   Mon, 14 Jun 2021 13:23:46 +0200
-Message-Id: <20210614112349.26108-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 14 Jun 2021 07:30:39 -0400
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15EBGNoM008371;
+        Mon, 14 Jun 2021 11:28:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=UBr0mxXGOr/GU1YsyNaM9bJ9e+absS4JOoW0zLQJXyo=;
+ b=Qidcon2UutIn59XAeII/SEUc0ae9kch0lwy6DQOboh+IhZSvGr3bRGbMU5eOz9+O79lF
+ xhITHT+afs7LPB1Rr8zSgZdA1AdwbyEK7M4x7M73mG4/H1+Y+cV4KNX1LxYkNP4hWGbD
+ QP8RdcChcV8i1r1fOJ96i6j9JRKxRG0AwSFiS3ravuf3QsYKbDcaoOKYT2Nj1Sfs48Ht
+ iLLJ5JVYnQSp/cXov8foxVkxNylVe0escf3lSQHSBRNi520RRma9euoQ2lbv85aaUet/
+ cJxrV+dHHd8D1idjXKG7fvP7fkQYqCUzhXgq6Ohz/7aKeVXURphPBFwB3/GuKs7EjqMM VQ== 
+Received: from oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by mx0b-00069f02.pphosted.com with ESMTP id 395y1kr451-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 14 Jun 2021 11:28:28 +0000
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
+        by pps.podrdrct (8.16.0.36/8.16.0.36) with SMTP id 15EBNmM0148015;
+        Mon, 14 Jun 2021 11:28:27 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by aserp3020.oracle.com with ESMTP id 394mr68w0v-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 14 Jun 2021 11:28:27 +0000
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 15EBQthY159302;
+        Mon, 14 Jun 2021 11:28:27 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 394mr68vyx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 14 Jun 2021 11:28:27 +0000
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 15EBSL4J001717;
+        Mon, 14 Jun 2021 11:28:21 GMT
+Received: from kadam (/41.212.42.34)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 14 Jun 2021 04:28:20 -0700
+Date:   Mon, 14 Jun 2021 14:28:12 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: dsa: b53: Fix dereference of null dev
+Message-ID: <20210614112812.GL1955@kadam>
+References: <20210612144407.60259-1-colin.king@canonical.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210612144407.60259-1-colin.king@canonical.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-ORIG-GUID: HcFCDBaJcFp97NqqodYLJviMfx1GWnd_
+X-Proofpoint-GUID: HcFCDBaJcFp97NqqodYLJviMfx1GWnd_
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Rob,
+On Sat, Jun 12, 2021 at 03:44:07PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Currently pointer priv is dereferencing dev before dev is being null
+> checked so a potential null pointer dereference can occur. Fix this
+> by only assigning and using priv if dev is not-null.
+> 
+> Addresses-Coverity: ("Dereference before null check")
+> Fixes: 16994374a6fc ("net: dsa: b53: Make SRAB driver manage port interrupts")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/net/dsa/b53/b53_srab.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/net/dsa/b53/b53_srab.c b/drivers/net/dsa/b53/b53_srab.c
+> index aaa12d73784e..e77ac598f859 100644
+> --- a/drivers/net/dsa/b53/b53_srab.c
+> +++ b/drivers/net/dsa/b53/b53_srab.c
+> @@ -629,11 +629,13 @@ static int b53_srab_probe(struct platform_device *pdev)
+>  static int b53_srab_remove(struct platform_device *pdev)
+>  {
+>  	struct b53_device *dev = platform_get_drvdata(pdev);
+> -	struct b53_srab_priv *priv = dev->priv;
+>  
+> -	b53_srab_intr_set(priv, false);
+> -	if (dev)
+> +	if (dev) {
 
-here is a patch series that cleans up some file references for dt-bindings
-in MAINTAINERS. It applies cleanly on next-20210611.
+This is the remove function and "dev" can't be NULL at this point.
+Better to just remove the NULL check.
 
-This is a v2 of the still relevant patches from the first submission
-of the patch series (see Links) send out 2021-03-15 and resent on 2021-04-19.
-
-
-Could you pick this series for your devicetree bindings tree?
-
-No functional change, just cleaning up MAINTAINERS.
-
-Lukas
-
-Link: https://lore.kernel.org/lkml/20210315160451.7469-1-lukas.bulwahn@gmail.com/
-Link: https://lore.kernel.org/lkml/20210419092609.3692-1-lukas.bulwahn@gmail.com/
-
-Adjustment from original to resend version:
-  - drop subsumed patches
-
-Adjustment to resend version:
-  - add Fixes-tags as requested by Nobuhiro Iwamatsu
-
-Lukas Bulwahn (3):
-  MAINTAINERS: rectify entry for ARM/TOSHIBA VISCONTI ARCHITECTURE
-  MAINTAINERS: rectify entry for HIKEY960 ONBOARD USB GPIO HUB DRIVER
-  MAINTAINERS: rectify entry for INTEL KEEM BAY DRM DRIVER
-
- MAINTAINERS | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
--- 
-2.17.1
+regards,
+dan carpenter
 
