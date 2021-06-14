@@ -2,92 +2,86 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B175C2B9F4
-	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Jun 2021 14:47:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19976C4743C
+	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Jun 2021 14:57:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EA74B6054E
-	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Jun 2021 14:46:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1D4861208
+	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Jun 2021 14:57:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232852AbhFNOtC (ORCPT
+        id S233137AbhFNO7E (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 14 Jun 2021 10:49:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51218 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232798AbhFNOtB (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 14 Jun 2021 10:49:01 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 50B756054E;
-        Mon, 14 Jun 2021 14:46:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1623682003;
-        bh=+o9b6y5kWybkxYBzKA6EBU6w59vTl9WPx7qNYYNQuqs=;
+        Mon, 14 Jun 2021 10:59:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34126 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233110AbhFNO7D (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 14 Jun 2021 10:59:03 -0400
+Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 255F0C061574;
+        Mon, 14 Jun 2021 07:57:00 -0700 (PDT)
+Received: by fieldses.org (Postfix, from userid 2815)
+        id 99C036210; Mon, 14 Jun 2021 10:56:59 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org 99C036210
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
+        s=default; t=1623682619;
+        bh=Nig4SRLFwGTkSDjGzkaXTrnIYKCs+LArMeR6OvYivBM=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=2JTsY/mpVYRSuI8bgbBTK2QoLAz8VnT2unhc+OM7HqRwhTjR+NOZ7SdHkf16txPwt
-         vI5MPtv3CXZqam1quJrb2bnG9Rw37z/ntye/BtpN0J+uEdskBox5fP3SU3pbdKUuYj
-         X03z2/LJ1YQxEliUKkQPNPp7xxt0LZ9Mce6ZZGRs=
-Date:   Mon, 14 Jun 2021 16:46:41 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Martin Kaiser <martin@kaiser.cx>
-Cc:     Larry Finger <Larry.Finger@lwfinger.net>,
-        linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: [PATCH 2/6] staging: rtl8188eu: fix usb_submit_urb error handling
-Message-ID: <YMdr0alJDEGfsqOA@kroah.com>
-References: <20210612180019.20387-1-martin@kaiser.cx>
- <20210612180019.20387-2-martin@kaiser.cx>
+        b=QnqBevZr597BwRamPTMics1AmDeLp4Mh2JrqVI8lYIk0rPPxsNS9IN5faX6TaZGPC
+         BiLI2cuRLMytAyyXZEQOPpATQ12RASHYhw8cGv3yJoH6uqJjgWSAzy9rWea74C6woj
+         UFLWJS2ReEAjN+kAvQRTrcgrU6gh6zhZKZaNqY9A=
+Date:   Mon, 14 Jun 2021 10:56:59 -0400
+From:   "J . Bruce Fields" <bfields@fieldses.org>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Chuck Lever <chuck.lever@oracle.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, linux-nfs@vger.kernel.org,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rpc: remove redundant initialization of variable status
+Message-ID: <20210614145659.GA13304@fieldses.org>
+References: <20210613140652.75190-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210612180019.20387-2-martin@kaiser.cx>
+In-Reply-To: <20210613140652.75190-1-colin.king@canonical.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, Jun 12, 2021 at 08:00:15PM +0200, Martin Kaiser wrote:
-> -EPERM should be handled like any other error.
+Thanks, applied.--b.
 
-Why?  This is not "any other error" for the usb core, right?
-
+On Sun, Jun 13, 2021 at 03:06:52PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Suggested-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Martin Kaiser <martin@kaiser.cx>
+> The variable status is being initialized with a value that is never
+> read, the assignment is redundant and can be removed.
+> 
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
->  drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
+>  net/sunrpc/auth_gss/svcauth_gss.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c b/drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c
-> index ec07b2017fb7..0ceb05f3884f 100644
-> --- a/drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c
-> +++ b/drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c
-> @@ -366,7 +366,6 @@ u32 usb_read_port(struct adapter *adapter, u32 addr, struct recv_buf *precvbuf)
->  	struct usb_device *pusbd = pdvobj->pusbdev;
->  	int err;
->  	unsigned int pipe;
-> -	u32 ret = _SUCCESS;
+> diff --git a/net/sunrpc/auth_gss/svcauth_gss.c b/net/sunrpc/auth_gss/svcauth_gss.c
+> index 6dff64374bfe..a81be45f40d9 100644
+> --- a/net/sunrpc/auth_gss/svcauth_gss.c
+> +++ b/net/sunrpc/auth_gss/svcauth_gss.c
+> @@ -1275,7 +1275,7 @@ static int gss_proxy_save_rsc(struct cache_detail *cd,
+>  	long long ctxh;
+>  	struct gss_api_mech *gm = NULL;
+>  	time64_t expiry;
+> -	int status = -EINVAL;
+> +	int status;
 >  
->  	if (adapter->bDriverStopped || adapter->bSurpriseRemoved ||
->  	    adapter->pwrctrlpriv.pnp_bstop_trx) {
-> @@ -403,10 +402,10 @@ u32 usb_read_port(struct adapter *adapter, u32 addr, struct recv_buf *precvbuf)
->  			  precvbuf);/* context is precvbuf */
->  
->  	err = usb_submit_urb(purb, GFP_ATOMIC);
-> -	if ((err) && (err != (-EPERM)))
-> -		ret = _FAIL;
-
-if -EPERM returns from this function, someone set the "reject" bit on
-the urb.
-
-Can this driver do that?  Where did this check originally come from, as
-it feels like this was added for a good reason.
-
-If this patch is "correct", I need a better changelog text explaining
-why it is so :)
-
-thanks,
-
-greg k-h
+>  	memset(&rsci, 0, sizeof(rsci));
+>  	/* context handle */
+> -- 
+> 2.31.1
