@@ -2,116 +2,106 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3697C48BE8
-	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Jun 2021 11:30:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57EF9C2B9F4
+	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Jun 2021 11:39:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E1E5A61057
-	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Jun 2021 11:30:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B47861185
+	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Jun 2021 11:39:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236078AbhFNLcl (ORCPT
+        id S235123AbhFNLl0 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 14 Jun 2021 07:32:41 -0400
-Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:38572 "EHLO
-        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234858AbhFNLaj (ORCPT
+        Mon, 14 Jun 2021 07:41:26 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:45686 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233353AbhFNLhV (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 14 Jun 2021 07:30:39 -0400
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15EBGNoM008371;
-        Mon, 14 Jun 2021 11:28:28 GMT
+        Mon, 14 Jun 2021 07:37:21 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 15EBYAqb065243;
+        Mon, 14 Jun 2021 11:35:03 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
  : subject : message-id : references : mime-version : content-type :
  in-reply-to; s=corp-2020-01-29;
- bh=UBr0mxXGOr/GU1YsyNaM9bJ9e+absS4JOoW0zLQJXyo=;
- b=Qidcon2UutIn59XAeII/SEUc0ae9kch0lwy6DQOboh+IhZSvGr3bRGbMU5eOz9+O79lF
- xhITHT+afs7LPB1Rr8zSgZdA1AdwbyEK7M4x7M73mG4/H1+Y+cV4KNX1LxYkNP4hWGbD
- QP8RdcChcV8i1r1fOJ96i6j9JRKxRG0AwSFiS3ravuf3QsYKbDcaoOKYT2Nj1Sfs48Ht
- iLLJ5JVYnQSp/cXov8foxVkxNylVe0escf3lSQHSBRNi520RRma9euoQ2lbv85aaUet/
- cJxrV+dHHd8D1idjXKG7fvP7fkQYqCUzhXgq6Ohz/7aKeVXURphPBFwB3/GuKs7EjqMM VQ== 
-Received: from oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by mx0b-00069f02.pphosted.com with ESMTP id 395y1kr451-1
+ bh=tpxItPxD79i/QAY2x5Bbh4wo+vTKY0MzDCdkSRZoFM8=;
+ b=IMy4wnSt0t8I1juhnAOQAc3mw/B6EIgQW9qaq/KFvaDva1pS7y2x7BBd8ecKWyC3dEa8
+ SCDAJD7iVEgozQj0jR+HAWPfYefRH+pkYSPZRTCHxrAOLojysB/4eVXEp5brVO5nXexI
+ W3TaCUD62yzBsK1R75dQ9asOLbbLxnP5ZKtADguyi8V2/hXIs7wx2z9J2oayLLRVflYq
+ HKvdhUxb4GswZhpLrpRQV5Hdx71Ppb2UKWIu45hruzM3G/61UClpu7D2IvEtHUu806V2
+ 3GCSyu/WYbmHwXOussrsgv3CBAZVSFUEjx5/NQOhtZdlDErnXojxlEVOnid7l30YWleJ PQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 394mvnb3ss-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 14 Jun 2021 11:28:28 +0000
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
-        by pps.podrdrct (8.16.0.36/8.16.0.36) with SMTP id 15EBNmM0148015;
-        Mon, 14 Jun 2021 11:28:27 GMT
+        Mon, 14 Jun 2021 11:35:02 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 15EBYu1U193282;
+        Mon, 14 Jun 2021 11:35:02 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-        by aserp3020.oracle.com with ESMTP id 394mr68w0v-1
+        by aserp3020.oracle.com with ESMTP id 394mr6970s-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 14 Jun 2021 11:28:27 +0000
+        Mon, 14 Jun 2021 11:35:02 +0000
 Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 15EBQthY159302;
-        Mon, 14 Jun 2021 11:28:27 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3020.oracle.com with ESMTP id 394mr68vyx-1
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 15EBZ0IU194171;
+        Mon, 14 Jun 2021 11:35:00 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 394mr696qa-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 14 Jun 2021 11:28:27 +0000
-Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 15EBSL4J001717;
-        Mon, 14 Jun 2021 11:28:21 GMT
+        Mon, 14 Jun 2021 11:35:00 +0000
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 15EBYk7E001613;
+        Mon, 14 Jun 2021 11:34:46 GMT
 Received: from kadam (/41.212.42.34)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 14 Jun 2021 04:28:20 -0700
-Date:   Mon, 14 Jun 2021 14:28:12 +0300
+        with ESMTP ; Mon, 14 Jun 2021 11:34:45 +0000
+Date:   Mon, 14 Jun 2021 14:34:39 +0300
 From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Vladimir Oltean <olteanv@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: dsa: b53: Fix dereference of null dev
-Message-ID: <20210614112812.GL1955@kadam>
-References: <20210612144407.60259-1-colin.king@canonical.com>
+To:     Martin Kaiser <martin@kaiser.cx>
+Cc:     Larry Finger <Larry.Finger@lwfinger.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/6] staging: rtl8188eu: remove RT_TRACE and DBG_88E
+ prints from usb_intf.c
+Message-ID: <20210614113439.GM1955@kadam>
+References: <20210612180019.20387-1-martin@kaiser.cx>
+ <20210612180019.20387-6-martin@kaiser.cx>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210612144407.60259-1-colin.king@canonical.com>
+In-Reply-To: <20210612180019.20387-6-martin@kaiser.cx>
 User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-ORIG-GUID: HcFCDBaJcFp97NqqodYLJviMfx1GWnd_
-X-Proofpoint-GUID: HcFCDBaJcFp97NqqodYLJviMfx1GWnd_
+X-Proofpoint-ORIG-GUID: ttSQkChxyfAqucEoy4wdIV8hanVw9u_K
+X-Proofpoint-GUID: ttSQkChxyfAqucEoy4wdIV8hanVw9u_K
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=10014 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 impostorscore=0 mlxscore=0
+ lowpriorityscore=0 malwarescore=0 spamscore=0 bulkscore=0
+ priorityscore=1501 clxscore=1015 mlxlogscore=999 phishscore=0 adultscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104190000 definitions=main-2106140081
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, Jun 12, 2021 at 03:44:07PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On Sat, Jun 12, 2021 at 08:00:19PM +0200, Martin Kaiser wrote:
+> These prints are disabled by default.
 > 
-> Currently pointer priv is dereferencing dev before dev is being null
-> checked so a potential null pointer dereference can occur. Fix this
-> by only assigning and using priv if dev is not-null.
-> 
-> Addresses-Coverity: ("Dereference before null check")
-> Fixes: 16994374a6fc ("net: dsa: b53: Make SRAB driver manage port interrupts")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/net/dsa/b53/b53_srab.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/net/dsa/b53/b53_srab.c b/drivers/net/dsa/b53/b53_srab.c
-> index aaa12d73784e..e77ac598f859 100644
-> --- a/drivers/net/dsa/b53/b53_srab.c
-> +++ b/drivers/net/dsa/b53/b53_srab.c
-> @@ -629,11 +629,13 @@ static int b53_srab_probe(struct platform_device *pdev)
->  static int b53_srab_remove(struct platform_device *pdev)
->  {
->  	struct b53_device *dev = platform_get_drvdata(pdev);
-> -	struct b53_srab_priv *priv = dev->priv;
->  
-> -	b53_srab_intr_set(priv, false);
-> -	if (dev)
-> +	if (dev) {
 
-This is the remove function and "dev" can't be NULL at this point.
-Better to just remove the NULL check.
+Not, just by default.  There is literally no way to enable them.
+
+> Replace the print after dev_alloc_name with proper error handling.
+> 
+
+Ugh...  :(  This part really needs to be done first and in a separate
+patch.  You can delete the RT_TRACE() from that one call site since it's
+on the same line but the subject of the patch needs to say something
+like "check for allocation failure".  It can't be "remove RT_TRACE and
+DBG_88E prints".
+
+The first five of these patch look good though.
 
 regards,
 dan carpenter
