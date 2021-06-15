@@ -2,157 +2,112 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D52EFC48BE8
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Jun 2021 12:10:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D36C9C48BDF
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Jun 2021 12:53:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A8FFD61441
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Jun 2021 12:10:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93EC161468
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Jun 2021 12:53:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230130AbhFOMMj (ORCPT
+        id S230218AbhFOMza (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 15 Jun 2021 08:12:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35444 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229557AbhFOMMj (ORCPT
+        Tue, 15 Jun 2021 08:55:30 -0400
+Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:12512 "EHLO
+        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230079AbhFOMz1 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 15 Jun 2021 08:12:39 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C499DC061574;
-        Tue, 15 Jun 2021 05:10:33 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id a11so18049799wrt.13;
-        Tue, 15 Jun 2021 05:10:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:cc:references:from:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=MnTVDNZDJ8uaspdU4WgOPERRfxkGjiPv5nnzxm+C6TA=;
-        b=LJmckYGcNlTBozVh/1wJp7v7AtkT1IyZX+ToQFDeX7Y8FFiYzb/Xh2J/Kd1olwtZU5
-         OZDGQKtBxqUhJXU2KrRelOwMY4rq+efzlfgGnNzvC52qVHo9omFkVYuIh0QnM+rf7ys9
-         eBfptzCY8AoieVHU9tEj/P7X6NONGeAwtLkxlBJvXa2Baik+IAHs90GfIfJwjznadJ+N
-         P1HElj7PCKZ9yvPkD2qeUFbci69ObY9cBkXcBFvhQAOPmVNGSTd4TujEKM62ZsghZBDj
-         M6BuOGergg1kKTHxcJeBX+6SRnviDyohNwhtTTdgtRreSAEltH5xE84bQ+5pK3zwvmk3
-         VCMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=MnTVDNZDJ8uaspdU4WgOPERRfxkGjiPv5nnzxm+C6TA=;
-        b=OUIiRVkHGOa3o6+WIWf4Nb8mJQ48DUUtqIeFgu2aXH+XMq8JnaiemW78c8FgBf4Umq
-         GqtCkpARdmobhkj+DQBZwTwkFRuiyVOKJpvcAAhN/31Ompj/Qbc+y5g92sz6E3XccPAA
-         VFtfNFuDGHZuqgj/amcvaXtOkEXX8kNwvGXd+dw9bSTYG4ERaocZEqv72S/OVJP85qbs
-         8n2CYxgBURZRTwVdjii8n/e7+SZfmlIdF5h7tXkPKs6+Ed3hYpHiqeZ3L8n1KIHtjdQ3
-         HdPKqPtnos9KC0eK1nlrb3ZRlMvaWqXpy/8EnPYZoUMKGOj9suh7mIcYHhxwqWCoJUPv
-         ZiMg==
-X-Gm-Message-State: AOAM532WpRKsPphKesfMLbGTmwEFRp6Hn3/+y+xlTXko3NNLCtdcrGm3
-        TwcN5hEmZBZ7noKkczeq6/b3H0pDVfecPo1R
-X-Google-Smtp-Source: ABdhPJyZXEKLPhXtFSgYY9uZGPJHsGgBo/xrw+OXrBn7VrqcLFWGTlyPvv8BaooMhvp/V1FoWPA0Ow==
-X-Received: by 2002:a5d:5102:: with SMTP id s2mr24405908wrt.347.1623759032245;
-        Tue, 15 Jun 2021 05:10:32 -0700 (PDT)
-Received: from [192.168.8.197] ([148.252.132.209])
-        by smtp.gmail.com with ESMTPSA id i15sm18244039wmq.23.2021.06.15.05.10.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Jun 2021 05:10:31 -0700 (PDT)
-To:     Colin Ian King <colin.king@canonical.com>,
-        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210615104541.50529-1-colin.king@canonical.com>
- <3dcc6900-8361-d52c-003d-21318aa80156@canonical.com>
- <d606818f-2e13-fbea-970b-eab9080d7f15@gmail.com>
- <067e8830-f6ec-612a-2c8a-8da459f659d1@canonical.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Subject: Re: [PATCH][next] io_uring: Fix incorrect sizeof operator for
- copy_from_user call
-Message-ID: <9b2b2cdf-e273-d188-b022-c821b05ce23b@gmail.com>
-Date:   Tue, 15 Jun 2021 13:10:19 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        Tue, 15 Jun 2021 08:55:27 -0400
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15FCqEAm019421;
+        Tue, 15 Jun 2021 12:53:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=aploqCIcpWnVsbEPSdiKHfqPNxfuEd4QgUs/dMcsioY=;
+ b=Oiu7wYjfIxRn3GpEO4DYiYX1U1PsPe+dLI+bzAR1bv4Cm+rc+JEMfMwa0L2FWb5NaIbA
+ zTal2kEDdD+2J7gRmWP0c59E2PMAss82INnT73WhQ/JcI6Mpr8W3it78Vf8REyLbg8+E
+ 2bvFXqOPQ3crP4LD324oN7KjYQ9I5Ah/2RKubHRqCUG6OU6+oWX/dWK5AOE83D5oz7eK
+ f+BmVw2c5gl3ecen0gSeBYHNBItt+XYzWuUEqaGldHFJXtrmDM70RuB6cSSGq/3wB8r4
+ C3NyktOgu2MMcmfPO5qDN9fa1Bdnz/S6Xtkt322hjNLXcavce2n3g5WV1l/TnjFNj914 +A== 
+Received: from oracle.com (userp3030.oracle.com [156.151.31.80])
+        by mx0b-00069f02.pphosted.com with ESMTP id 395x06gjsf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 15 Jun 2021 12:53:11 +0000
+Received: from userp3030.oracle.com (userp3030.oracle.com [127.0.0.1])
+        by pps.podrdrct (8.16.0.36/8.16.0.36) with SMTP id 15FCrAIf125847;
+        Tue, 15 Jun 2021 12:53:10 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by userp3030.oracle.com with ESMTP id 394j1ufyft-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 15 Jun 2021 12:53:10 +0000
+Received: from userp3030.oracle.com (userp3030.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 15FCp1PM121957;
+        Tue, 15 Jun 2021 12:53:09 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3030.oracle.com with ESMTP id 394j1ufyfa-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 15 Jun 2021 12:53:09 +0000
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 15FCr7dL021533;
+        Tue, 15 Jun 2021 12:53:07 GMT
+Received: from kadam (/41.212.42.34)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 15 Jun 2021 05:53:07 -0700
+Date:   Tue, 15 Jun 2021 15:52:59 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Kalle Valo <kvalo@codeaurora.org>
+Cc:     Arend van Spriel <aspriel@gmail.com>,
+        Matthias Brugger <mbrugger@suse.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Chi-hsien Lin <chi-hsien.lin@infineon.com>,
+        Wright Feng <wright.feng@infineon.com>,
+        Chung-hsien Hsu <chung-hsien.hsu@infineon.com>,
+        Hans deGoede <hdegoede@redhat.com>,
+        linux-wireless@vger.kernel.org,
+        brcm80211-dev-list.pdl@broadcom.com,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] brcmfmac: fix a loop exit condition
+Message-ID: <20210615125259.GB1901@kadam>
+References: <YIKzmoMiTdToaIyP@mwanda>
+ <20210615102656.DBB04C43143@smtp.codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <067e8830-f6ec-612a-2c8a-8da459f659d1@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210615102656.DBB04C43143@smtp.codeaurora.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-ORIG-GUID: OqLDt2x4tzF4SkafUwDhpbc6VAgGyEGf
+X-Proofpoint-GUID: OqLDt2x4tzF4SkafUwDhpbc6VAgGyEGf
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 6/15/21 12:35 PM, Colin Ian King wrote:
-> On 15/06/2021 12:30, Pavel Begunkov wrote:
->> On 6/15/21 11:47 AM, Colin Ian King wrote:
->>> On 15/06/2021 11:45, Colin King wrote:
->>>> From: Colin Ian King <colin.king@canonical.com>
->>>>
->>>> Static analysis is warning that the sizeof being used is should be
->>>> of *data->tags[i] and not data->tags[i]. Although these are the same
->>>> size on 64 bit systems it is not a portable assumption to assume
->>>> this is true for all cases.
->>>>
->>>> Addresses-Coverity: ("Sizeof not portable")
->>>> Fixes: d878c81610e1 ("io_uring: hide rsrc tag copy into generic helpers")
->>>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->>>> ---
->>>>  fs/io_uring.c | 2 +-
->>>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/fs/io_uring.c b/fs/io_uring.c
->>>> index d665c9419ad3..6b1a70449749 100644
->>>> --- a/fs/io_uring.c
->>>> +++ b/fs/io_uring.c
->>>> @@ -7231,7 +7231,7 @@ static int io_rsrc_data_alloc(struct io_ring_ctx *ctx, rsrc_put_fn *do_put,
->>>>  		ret = -EFAULT;
->>>>  		for (i = 0; i < nr; i++) {
->>>>  			if (copy_from_user(io_get_tag_slot(data, i), &utags[i],
->>>> -					   sizeof(data->tags[i])))
->>>> +					   sizeof(*data->tags[i])))
->>>>  				goto fail;
->>>>  		}
->>>>  	}
->>>>
->>
+On Tue, Jun 15, 2021 at 10:26:56AM +0000, Kalle Valo wrote:
+> Dan Carpenter <dan.carpenter@oracle.com> wrote:
 > 
+> > This code is supposed to loop over the whole board_type[] string.  The
+> > current code kind of works just because ascii values start 97 and the
+> > string is likely shorter than that so it will break when we hit the NUL
+> > terminator.  But really the condition should be "i < len" instead of
+> > "i < board_type[i]".
+> > 
+> > Fixes: 29e354ebeeec ("brcmfmac: Transform compatible string for FW loading")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > Reviewed-by: Matthias Brugger <mbrugger@suse.com>
 > 
->> Yep, thanks Colin. I think `sizeof(io_get_tag_slot(data, i))`
->> would be less confusing. Or
->>
->> u64 *tag_slot = io_get_tag_slot(data, i);
->> copy_from_user(tag_slot, ..., sizeof(*tag_slot));
->>
-> BTW, Coverity is complaining about:
+> There was talk about v2, but I don't see it in the patchwork.
 > 
-> 7220                return -ENOMEM;
-> 
-> Wrong sizeof argument (SIZEOF_MISMATCH)
-> 
-> suspicious_sizeof: Passing argument nr * 8UL /* sizeof
-> (data->tags[0][0]) */ to function io_alloc_page_table and then casting
-> the return value to u64 ** is suspicious.
-> 
-> 7221        data->tags = (u64 **)io_alloc_page_table(nr *
-> sizeof(data->tags[0][0]));
 
-Ah, this one. We want it to be indexed linearly, but can't allocate
-as much, so together with io_get_tag_slot() it hides two level
-tables from us, providing linear indexing.
+Ah, crap.  I started to debug Smatch to find out why it wasn't warning
+about some of these bugs and I got a bit carried away writing Smatch
+code and forgot to come back to this.
 
-> 
-> Not sure if that's a false positive or not. This kind of indirection
-> makes my brain melt.
+I will send it tomorrow.
 
-So, this one should be a false positive. But agree about the
-indirection, it's not the first sizeof bug you found. Any
-better ideas how to push it to the type system?
-
-I think something like below would make more sense
-
-#define copy_from_user_typed(from, to) \
-    assert(typeof(from) == typeof(to)),
-    copy_from_user(from, to, sizeof(*from));
-
--- 
-Pavel Begunkov
+regards,
+dan carpenter
