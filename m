@@ -7,91 +7,87 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 209C5C48BDF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Jun 2021 10:27:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54177C48BE8
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Jun 2021 10:43:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 042E061443
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Jun 2021 10:27:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 368626115B
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Jun 2021 10:43:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231680AbhFOK3a (ORCPT
+        id S231641AbhFOKpU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 15 Jun 2021 06:29:30 -0400
-Received: from so254-9.mailgun.net ([198.61.254.9]:22009 "EHLO
+        Tue, 15 Jun 2021 06:45:20 -0400
+Received: from so254-9.mailgun.net ([198.61.254.9]:50647 "EHLO
         so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231712AbhFOK3X (ORCPT
+        with ESMTP id S231605AbhFOKpT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 15 Jun 2021 06:29:23 -0400
+        Tue, 15 Jun 2021 06:45:19 -0400
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1623752839; h=Date: Message-Id: Cc: To: References:
+ s=smtp; t=1623753795; h=Date: Message-Id: Cc: To: References:
  In-Reply-To: From: Subject: Content-Transfer-Encoding: MIME-Version:
- Content-Type: Sender; bh=Gf5Li8EDKHNYJCLqky7WwRi6db9pnqeeN2/vQ5NDl3g=;
- b=XlL9d/5aN/8JYyabGEm2aQ2nSTmxP3o758A2FtBiHIvVQSFYo2uwxPzqIVogGCGlS9KCh9SM
- emJ3kaBxNtOHXqt98zzXoF/F7No4Sn+W9Q4u7JTVz6GEXianqRJo2fdYzpGPh9Qsp0vgKD2O
- VQWc1a3VvDpOhRNttRg5E6AE84s=
+ Content-Type: Sender; bh=vEixlI5ApBU4SsRL5HfZdVOfK5VFbZsTOBHxLTIfwMc=;
+ b=B/qMKX2WmZASL7ilHqJd1//sjll2ZtgN00ddZBuEkYGNZRFA7sWNaicgaYaPkSO/TX7PWlaF
+ j0tHbLzfGWEgtiiPydClsPa2qHb7a60Lgv/W8x9cfeYVVJ/mmbejf9Fjrs2+rChKw1c8BVzx
+ GKnYuuBktE7lI3NKcMHVfvnNBSw=
 X-Mailgun-Sending-Ip: 198.61.254.9
 X-Mailgun-Sid: WyI5NDExNyIsICJrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
 Received: from smtp.codeaurora.org
  (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n04.prod.us-east-1.postgun.com with SMTP id
- 60c88071e27c0cc77f1b6fe1 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 15 Jun 2021 10:26:57
+ smtp-out-n01.prod.us-east-1.postgun.com with SMTP id
+ 60c88442abfd22a3dcd66e24 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 15 Jun 2021 10:43:14
  GMT
 Sender: kvalo=codeaurora.org@mg.codeaurora.org
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id F3DB7C43147; Tue, 15 Jun 2021 10:26:56 +0000 (UTC)
+        id 514CFC433F1; Tue, 15 Jun 2021 10:43:13 +0000 (UTC)
 Received: from tykki.adurom.net (tynnyri.adurom.net [51.15.11.48])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: kvalo)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 517B9C4338A;
-        Tue, 15 Jun 2021 10:26:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 517B9C4338A
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id BA221C433F1;
+        Tue, 15 Jun 2021 10:43:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BA221C433F1
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=kvalo@codeaurora.org
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] brcmfmac: fix a loop exit condition
+Subject: Re: [PATCH] brcmsmac: mac80211_if: Fix a resource leak in an error
+ handling path
 From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <YIKzmoMiTdToaIyP@mwanda>
-References: <YIKzmoMiTdToaIyP@mwanda>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Arend van Spriel <aspriel@gmail.com>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Chi-hsien Lin <chi-hsien.lin@infineon.com>,
-        Wright Feng <wright.feng@infineon.com>,
-        Chung-hsien Hsu <chung-hsien.hsu@infineon.com>,
-        Hans deGoede <hdegoede@redhat.com>,
+In-Reply-To: <8fbc171a1a493b38db5a6f0873c6021fca026a6c.1620852921.git.christophe.jaillet@wanadoo.fr>
+References: <8fbc171a1a493b38db5a6f0873c6021fca026a6c.1620852921.git.christophe.jaillet@wanadoo.fr>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     aspriel@gmail.com, franky.lin@broadcom.com,
+        hante.meuleman@broadcom.com, chi-hsien.lin@infineon.com,
+        wright.feng@infineon.com, chung-hsien.hsu@infineon.com,
+        davem@davemloft.net, kuba@kernel.org,
         linux-wireless@vger.kernel.org,
         brcm80211-dev-list.pdl@broadcom.com,
-        kernel-janitors@vger.kernel.org
+        SHA-cyfmac-dev-list@infineon.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.7.3
-Message-Id: <20210615102656.F3DB7C43147@smtp.codeaurora.org>
-Date:   Tue, 15 Jun 2021 10:26:56 +0000 (UTC)
+Message-Id: <20210615104313.514CFC433F1@smtp.codeaurora.org>
+Date:   Tue, 15 Jun 2021 10:43:13 +0000 (UTC)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
 
-> This code is supposed to loop over the whole board_type[] string.  The
-> current code kind of works just because ascii values start 97 and the
-> string is likely shorter than that so it will break when we hit the NUL
-> terminator.  But really the condition should be "i < len" instead of
-> "i < board_type[i]".
+> If 'brcms_attach()' fails, we must undo the previous 'ieee80211_alloc_hw()'
+> as already done in the remove function.
 > 
-> Fixes: 29e354ebeeec ("brcmfmac: Transform compatible string for FW loading")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Reviewed-by: Matthias Brugger <mbrugger@suse.com>
+> Fixes: 5b435de0d786 ("net: wireless: add brcm80211 drivers")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
 
-There was talk about v2, but I don't see it in the patchwork.
+Patch applied to wireless-drivers-next.git, thanks.
 
-Patch set to Changes Requested.
+9a25344d5177 brcmsmac: mac80211_if: Fix a resource leak in an error handling path
 
 -- 
-https://patchwork.kernel.org/project/linux-wireless/patch/YIKzmoMiTdToaIyP@mwanda/
+https://patchwork.kernel.org/project/linux-wireless/patch/8fbc171a1a493b38db5a6f0873c6021fca026a6c.1620852921.git.christophe.jaillet@wanadoo.fr/
 
 https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
