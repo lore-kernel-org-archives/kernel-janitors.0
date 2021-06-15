@@ -2,106 +2,89 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D878AC48BDF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Jun 2021 13:45:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2B4DC48BE5
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Jun 2021 13:52:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C0D2661369
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Jun 2021 13:45:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC28461474
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Jun 2021 13:52:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230350AbhFONre (ORCPT
+        id S229937AbhFONzC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 15 Jun 2021 09:47:34 -0400
-Received: from m43-7.mailgun.net ([69.72.43.7]:27227 "EHLO m43-7.mailgun.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230523AbhFONrc (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 15 Jun 2021 09:47:32 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1623764728; h=Content-Type: MIME-Version: Message-ID:
- In-Reply-To: Date: References: Subject: Cc: To: From: Sender;
- bh=scxrBwWGr3JyMxv75SuwLWPc8G0Nv56Ryje1L/Thbro=; b=XQ5G175WAH4jjLvQgPBvNLV6h3Q+7Tx//BB0m+wre/yTTC7BsTp7YvT9Dzb3bBsRLOq3JzIM
- opmSbG926O/k/tWhvEZmww1DatIf5x8DT4rvyOdw6Tz+0W0+Nv7pI1RGvJW7TD4EurxOsBE5
- OvdnGnq7URWEOel7IDHPnAWfb1o=
-X-Mailgun-Sending-Ip: 69.72.43.7
-X-Mailgun-Sid: WyI5NDExNyIsICJrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n02.prod.us-west-2.postgun.com with SMTP id
- 60c8aeee2eaeb98b5efa464d (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 15 Jun 2021 13:45:18
- GMT
-Sender: kvalo=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 1740CC43217; Tue, 15 Jun 2021 13:45:18 +0000 (UTC)
-Received: from tykki (tynnyri.adurom.net [51.15.11.48])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id F0503C433D3;
-        Tue, 15 Jun 2021 13:45:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F0503C433D3
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Arend van Spriel <aspriel@gmail.com>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Chi-hsien Lin <chi-hsien.lin@infineon.com>,
-        Wright Feng <wright.feng@infineon.com>,
-        Chung-hsien Hsu <chung-hsien.hsu@infineon.com>,
-        Hans deGoede <hdegoede@redhat.com>,
-        linux-wireless@vger.kernel.org,
-        brcm80211-dev-list.pdl@broadcom.com,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] brcmfmac: fix a loop exit condition
-References: <YIKzmoMiTdToaIyP@mwanda>
-        <20210615102656.DBB04C43143@smtp.codeaurora.org>
-        <20210615125259.GB1901@kadam>
-Date:   Tue, 15 Jun 2021 16:45:11 +0300
-In-Reply-To: <20210615125259.GB1901@kadam> (Dan Carpenter's message of "Tue,
-        15 Jun 2021 15:52:59 +0300")
-Message-ID: <875yyfjl7c.fsf@codeaurora.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Tue, 15 Jun 2021 09:55:02 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:32906 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230211AbhFONzB (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 15 Jun 2021 09:55:01 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lt9Ur-00015i-JP; Tue, 15 Jun 2021 13:52:53 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Vladimir Oltean <olteanv@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next][V2] net: pcs: xpcs: Fix a less than zero u16 comparison error
+Date:   Tue, 15 Jun 2021 14:52:53 +0100
+Message-Id: <20210615135253.59159-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> writes:
+From: Colin Ian King <colin.king@canonical.com>
 
-> On Tue, Jun 15, 2021 at 10:26:56AM +0000, Kalle Valo wrote:
->> Dan Carpenter <dan.carpenter@oracle.com> wrote:
->> 
->> > This code is supposed to loop over the whole board_type[] string.  The
->> > current code kind of works just because ascii values start 97 and the
->> > string is likely shorter than that so it will break when we hit the NUL
->> > terminator.  But really the condition should be "i < len" instead of
->> > "i < board_type[i]".
->> > 
->> > Fixes: 29e354ebeeec ("brcmfmac: Transform compatible string for FW loading")
->> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->> > Reviewed-by: Matthias Brugger <mbrugger@suse.com>
->> 
->> There was talk about v2, but I don't see it in the patchwork.
->
-> Ah, crap.  I started to debug Smatch to find out why it wasn't warning
-> about some of these bugs and I got a bit carried away writing Smatch
-> code and forgot to come back to this.
->
-> I will send it tomorrow.
+Currently the check for the u16 variable val being less than zero is
+always false because val is unsigned. Fix this by using the int
+variable for the assignment and less than zero check.
 
-No worries, take your time :) I just wanted to remind about this, or see
-if patchwork or the mailing list have lost patches again (which has
-happened in the past).
+Addresses-Coverity: ("Unsigned compared against 0")
+Fixes: f7380bba42fd ("net: pcs: xpcs: add support for NXP SJA1110")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+V2: Fix typo in subject and align the following 2 lines after the 
+    val = ret & ... assignment.  Thanks to Vladimir Oltean for spotting
+    these.
+---
+ drivers/net/pcs/pcs-xpcs-nxp.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
+diff --git a/drivers/net/pcs/pcs-xpcs-nxp.c b/drivers/net/pcs/pcs-xpcs-nxp.c
+index de99c37cf2ae..984c9f7f16a8 100644
+--- a/drivers/net/pcs/pcs-xpcs-nxp.c
++++ b/drivers/net/pcs/pcs-xpcs-nxp.c
+@@ -152,13 +152,13 @@ static int nxp_sja1110_pma_config(struct dw_xpcs *xpcs,
+ 	/* Enable TX and RX PLLs and circuits.
+ 	 * Release reset of PMA to enable data flow to/from PCS.
+ 	 */
+-	val = xpcs_read(xpcs, MDIO_MMD_VEND2, SJA1110_POWERDOWN_ENABLE);
+-	if (val < 0)
+-		return val;
++	ret = xpcs_read(xpcs, MDIO_MMD_VEND2, SJA1110_POWERDOWN_ENABLE);
++	if (ret < 0)
++		return ret;
+ 
+-	val &= ~(SJA1110_TXPLL_PD | SJA1110_TXPD | SJA1110_RXCH_PD |
+-		 SJA1110_RXBIAS_PD | SJA1110_RESET_SER_EN |
+-		 SJA1110_RESET_SER | SJA1110_RESET_DES);
++	val = ret & ~(SJA1110_TXPLL_PD | SJA1110_TXPD | SJA1110_RXCH_PD |
++		      SJA1110_RXBIAS_PD | SJA1110_RESET_SER_EN |
++		      SJA1110_RESET_SER | SJA1110_RESET_DES);
+ 	val |= SJA1110_RXPKDETEN | SJA1110_RCVEN;
+ 
+ 	ret = xpcs_write(xpcs, MDIO_MMD_VEND2, SJA1110_POWERDOWN_ENABLE, val);
 -- 
-https://patchwork.kernel.org/project/linux-wireless/list/
+2.31.1
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
