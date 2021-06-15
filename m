@@ -2,77 +2,149 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBD99C2B9F4
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Jun 2021 02:52:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3180CC48BE5
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Jun 2021 06:47:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 96C53613C2
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Jun 2021 02:52:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1153B611C0
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Jun 2021 06:47:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230195AbhFOCyY (ORCPT
+        id S230074AbhFOGtr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 14 Jun 2021 22:54:24 -0400
-Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:36704 "EHLO
-        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229649AbhFOCyY (ORCPT
+        Tue, 15 Jun 2021 02:49:47 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:57382 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230079AbhFOGtq (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 14 Jun 2021 22:54:24 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0UcSuIj8_1623721826;
-Received: from B-D1K7ML85-0059.local(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0UcSuIj8_1623721826)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 15 Jun 2021 09:50:26 +0800
-Subject: Re: [PATCH] ocfs2: remove redundant initialization of variable ret
-To:     Colin King <colin.king@canonical.com>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>, ocfs2-devel@oss.oracle.com
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        akpm <akpm@linux-foundation.org>
-References: <20210613135148.74658-1-colin.king@canonical.com>
-From:   Joseph Qi <joseph.qi@linux.alibaba.com>
-Message-ID: <4e700d47-6973-4db3-a103-e3d8373ec7c2@linux.alibaba.com>
-Date:   Tue, 15 Jun 2021 09:50:26 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.11.0
+        Tue, 15 Jun 2021 02:49:46 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 15F6jXB7116543;
+        Tue, 15 Jun 2021 06:47:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=PdOJ7uhVLoKJ8IudTXgqsqb8p8KH82LJt1NWmmnufdk=;
+ b=qxtukR5YNH/ei1lKq8QmbjHHldRsKE5p6sZMtv2WQUJzt47FtOiYHIDcuEDABFpky0sm
+ 8mvIIH+KvzwD32bj1kWGKADuY+slP+1+9YFqMriNbo5Vp6Qaqe8ok9rKxtF2QiofZsbD
+ BF5nJr8wONuJH/6vj4qnQl/3qWf2RMqj2Irc1d/N8h6kEaxJG6sxXnMPbWSavx50YMIi
+ KQSd0f8U+mYA9nL3R0ulABjWSrVV17Vxp3woviQG318JLg3WnTpBAkouhOMmlMdWWXXY
+ ltWoVa0CR4SiwqLnoQxmEXfXdSo9Rwmu+zZxwoMUnaFSa63qNwLZRQY0kMCgdT5ps+vn LQ== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2130.oracle.com with ESMTP id 394jecdawf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 15 Jun 2021 06:47:34 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 15F6jDnX067338;
+        Tue, 15 Jun 2021 06:47:33 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by aserp3030.oracle.com with ESMTP id 3959ckamh0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 15 Jun 2021 06:47:33 +0000
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 15F6lXwv072668;
+        Tue, 15 Jun 2021 06:47:33 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3030.oracle.com with ESMTP id 3959ckamg3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 15 Jun 2021 06:47:33 +0000
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 15F6lQ8k001325;
+        Tue, 15 Jun 2021 06:47:27 GMT
+Received: from kadam (/41.212.42.34)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 14 Jun 2021 23:47:26 -0700
+Date:   Tue, 15 Jun 2021 09:47:19 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Martin Kaiser <martin@kaiser.cx>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/6] staging: rtl8188eu: fix usb_submit_urb error handling
+Message-ID: <20210615064719.GA2120@kadam>
+References: <20210612180019.20387-1-martin@kaiser.cx>
+ <20210612180019.20387-2-martin@kaiser.cx>
+ <YMdr0alJDEGfsqOA@kroah.com>
 MIME-Version: 1.0
-In-Reply-To: <20210613135148.74658-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YMdr0alJDEGfsqOA@kroah.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-ORIG-GUID: lURhPgTfq9QPm6nTf8f0uMKvBx1t_uCK
+X-Proofpoint-GUID: lURhPgTfq9QPm6nTf8f0uMKvBx1t_uCK
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=10015 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 phishscore=0
+ bulkscore=0 clxscore=1015 mlxlogscore=999 adultscore=0 malwarescore=0
+ spamscore=0 lowpriorityscore=0 impostorscore=0 mlxscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
+ definitions=main-2106150040
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On Mon, Jun 14, 2021 at 04:46:41PM +0200, Greg Kroah-Hartman wrote:
+> On Sat, Jun 12, 2021 at 08:00:15PM +0200, Martin Kaiser wrote:
+> > -EPERM should be handled like any other error.
+> 
+> Why?  This is not "any other error" for the usb core, right?
+> 
 
+Yeah.  It's a fair point that this commit message doesn't say why to do
+it or explain the implications.
 
-On 6/13/21 9:51 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+> > 
+> > Suggested-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > Signed-off-by: Martin Kaiser <martin@kaiser.cx>
+> > ---
+> >  drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c | 7 +++----
+> >  1 file changed, 3 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c b/drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c
+> > index ec07b2017fb7..0ceb05f3884f 100644
+> > --- a/drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c
+> > +++ b/drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c
+> > @@ -366,7 +366,6 @@ u32 usb_read_port(struct adapter *adapter, u32 addr, struct recv_buf *precvbuf)
+> >  	struct usb_device *pusbd = pdvobj->pusbdev;
+> >  	int err;
+> >  	unsigned int pipe;
+> > -	u32 ret = _SUCCESS;
+> >  
+> >  	if (adapter->bDriverStopped || adapter->bSurpriseRemoved ||
+> >  	    adapter->pwrctrlpriv.pnp_bstop_trx) {
+> > @@ -403,10 +402,10 @@ u32 usb_read_port(struct adapter *adapter, u32 addr, struct recv_buf *precvbuf)
+> >  			  precvbuf);/* context is precvbuf */
+> >  
+> >  	err = usb_submit_urb(purb, GFP_ATOMIC);
+> > -	if ((err) && (err != (-EPERM)))
+> > -		ret = _FAIL;
 > 
-> The variable ret is being initialized with a value that is never read, the
-> assignment is redundant and can be removed.
+> if -EPERM returns from this function, someone set the "reject" bit on
+> the urb.
 > 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Can this driver do that?  Where did this check originally come from, as
+> it feels like this was added for a good reason.
+> 
 
-Acked-by: Joseph Qi <joseph.qi@linux.alibaba.com>
-> ---
->  fs/ocfs2/cluster/nodemanager.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/ocfs2/cluster/nodemanager.c b/fs/ocfs2/cluster/nodemanager.c
-> index bb82e6b1ff4e..625c92521416 100644
-> --- a/fs/ocfs2/cluster/nodemanager.c
-> +++ b/fs/ocfs2/cluster/nodemanager.c
-> @@ -824,7 +824,7 @@ static void __exit exit_o2nm(void)
->  
->  static int __init init_o2nm(void)
->  {
-> -	int ret = -1;
-> +	int ret;
->  
->  	o2hb_init();
->  
-> 
+Yeah.  It can cancel urbs in rtw_hal_inirp_deinit().  That function used
+to have a better name, "usb_read_port_cancel" and in retrospect the
+original name was probably better.
+
+I think the reason for that -EPERM was treated differently was because
+originally there were some error messages printed if usb_submit_urb()
+failed.  (They were't actually printed because this code is buggy).  The
+authors probably didn't want to print the error messages but
+accidentally made it return success as well.
+
+There is only one caller that checks the return and it only affects the
+behavior if we race against open.  Can that even happen?  I'm pretty
+sure that returning a failure is the correct behavior but I'm going to
+leave it to Martin to check for absolutely sure.  :P
+
+regards,
+dan carpenter
+
