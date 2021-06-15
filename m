@@ -2,75 +2,77 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A36B1C2B9F4
-	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Jun 2021 19:50:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBD99C2B9F4
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Jun 2021 02:52:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8D48B610A0
-	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Jun 2021 19:50:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96C53613C2
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Jun 2021 02:52:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235110AbhFNTw2 (ORCPT
+        id S230195AbhFOCyY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 14 Jun 2021 15:52:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51598 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234771AbhFNTwZ (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 14 Jun 2021 15:52:25 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 8DC7B6134F;
-        Mon, 14 Jun 2021 19:50:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1623700221;
-        bh=4F1MUKY083YJFpzG4OkmjctvYKwSt3Ga0zgNFWKPBuQ=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=d6pTUNPAuGlxVwu06zyucKtApTgvZTNNdpRQqeZOMEiR5bG7qABgYPuHc2NZ1aBbf
-         YL9PcHf+BbuL2z8RiAUXjnDEnM27sit3IRmlyaa26rpc6e4LX4jiogQQB3kFHGNUxt
-         +BV16Kfp8sbtuv1Nbi1VBwcDlLxUb5ItIWdM0NmH1AWpD0OCkiZja975aiYajYi7tF
-         acCZwyX1q6RYP4VyxQIPhol5TqjzUhU7UKUt6J019JIjJ+YxyZSuaO96sefyLhD04d
-         q3NUanAy0eyGvwLmGFv+mcCM03904aJqaUZ65gjw260oDdBseuJ8qnAhmNm31QPY0L
-         St0Ot+RwuxKSQ==
-Content-Type: text/plain; charset="utf-8"
+        Mon, 14 Jun 2021 22:54:24 -0400
+Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:36704 "EHLO
+        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229649AbhFOCyY (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 14 Jun 2021 22:54:24 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0UcSuIj8_1623721826;
+Received: from B-D1K7ML85-0059.local(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0UcSuIj8_1623721826)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 15 Jun 2021 09:50:26 +0800
+Subject: Re: [PATCH] ocfs2: remove redundant initialization of variable ret
+To:     Colin King <colin.king@canonical.com>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>, ocfs2-devel@oss.oracle.com
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        akpm <akpm@linux-foundation.org>
+References: <20210613135148.74658-1-colin.king@canonical.com>
+From:   Joseph Qi <joseph.qi@linux.alibaba.com>
+Message-ID: <4e700d47-6973-4db3-a103-e3d8373ec7c2@linux.alibaba.com>
+Date:   Tue, 15 Jun 2021 09:50:26 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] ipv6: fib6: remove redundant initialization of variable err
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <162370022152.10983.454236042733995313.git-patchwork-notify@kernel.org>
-Date:   Mon, 14 Jun 2021 19:50:21 +0000
-References: <20210613134636.74416-1-colin.king@canonical.com>
-In-Reply-To: <20210613134636.74416-1-colin.king@canonical.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     davem@davemloft.net, yoshfuji@linux-ipv6.org, dsahern@kernel.org,
-        kuba@kernel.org, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20210613135148.74658-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
 
-This patch was applied to netdev/net-next.git (refs/heads/master):
 
-On Sun, 13 Jun 2021 14:46:36 +0100 you wrote:
+On 6/13/21 9:51 PM, Colin King wrote:
 > From: Colin Ian King <colin.king@canonical.com>
 > 
-> The variable err is being initialized with a value that is never read, the
+> The variable ret is being initialized with a value that is never read, the
 > assignment is redundant and can be removed.
 > 
 > Addresses-Coverity: ("Unused value")
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+Acked-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+> ---
+>  fs/ocfs2/cluster/nodemanager.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> [...]
-
-Here is the summary with links:
-  - ipv6: fib6: remove redundant initialization of variable err
-    https://git.kernel.org/netdev/net-next/c/b5ec0705ffe8
-
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+> diff --git a/fs/ocfs2/cluster/nodemanager.c b/fs/ocfs2/cluster/nodemanager.c
+> index bb82e6b1ff4e..625c92521416 100644
+> --- a/fs/ocfs2/cluster/nodemanager.c
+> +++ b/fs/ocfs2/cluster/nodemanager.c
+> @@ -824,7 +824,7 @@ static void __exit exit_o2nm(void)
+>  
+>  static int __init init_o2nm(void)
+>  {
+> -	int ret = -1;
+> +	int ret;
+>  
+>  	o2hb_init();
+>  
+> 
