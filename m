@@ -2,123 +2,90 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF3D5C48BE5
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Jun 2021 13:36:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADFCFC49EA3
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Jun 2021 13:40:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B444061474
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Jun 2021 13:36:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9BDDA61433
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Jun 2021 13:40:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230208AbhFONiO (ORCPT
+        id S231795AbhFONmc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 15 Jun 2021 09:38:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56248 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231615AbhFONiG (ORCPT
+        Tue, 15 Jun 2021 09:42:32 -0400
+Received: from so254-9.mailgun.net ([198.61.254.9]:56274 "EHLO
+        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231843AbhFONmJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 15 Jun 2021 09:38:06 -0400
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FEEAC061574;
-        Tue, 15 Jun 2021 06:36:00 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id z8so18381726wrp.12;
-        Tue, 15 Jun 2021 06:36:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=1ETlHjLF4DNWkPBtZCHd24Q+TUjKL0nGJVODuHjOW7g=;
-        b=Co418qMT6oHFJRT2fESErSI8KQJgJnFO7h8Ad5E7jXdhni9/CSu0aQc1joPdaRF9Ig
-         /JIobPIRfBZm+iZ00gfiPmUkE9TOhvJrqJLZKBPEvmS8Q0S2XioqJXUuuAYRrpDE7+Lz
-         FRezBhpiVn0vHyfCnBSbR/FMkd90RQy8r3dg/r90lA3pat73IN73ZMn1LCrIxfE/Yiue
-         Yf0rnkaW8bYHIaxWvLiuocA75dz9R/ME0ob206JPws7sym3h/f4h1+MLv7/pw3UZY/Ez
-         0GS/vPnnEAh0WC8kPJbu9HB4CnHevGtfb2OIvkrxomvv5uooDH3akodk8HeVQCh7VJvC
-         Jr/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=1ETlHjLF4DNWkPBtZCHd24Q+TUjKL0nGJVODuHjOW7g=;
-        b=E0E3OPFe/BpvOVrFymR9aq0ptsko5PdRIqVnqrOQ1kc7VqazxYKWThMZdfmonosXSo
-         JTBr7/GFSVRmrm7rhsb6vDU4Q/5RJbqYEKQiU7X6nM+LELQGLnUIMZhYCruuUxlgCaZ/
-         Hv/zasHdAb6mdtXq0Q207loai99bSZv9A6fqNttkKUWBloI/UrvHXo3zNDB9iU4BagD2
-         Q7JNvyGPJG2fg3yKul/SKXiXgiyWLrAkypNOZfRwx3mwQNa6ssw5g5l1+1VD9DdnqleW
-         1DzLuUxH6Ir6LkqwkhH0aqXUJHMZFMS3H3bJOsrm1t8vDRoG516caKbN/OeJSzJmvnLs
-         V5Fw==
-X-Gm-Message-State: AOAM5313ZnFuLd2MSgm7RZiQnKYZxN6Zcf6LRFGUynScMBsuvvyHdUvm
-        68qSBCOmk+D+j92RxHIfd+FdOWB6T+kg5ZaB
-X-Google-Smtp-Source: ABdhPJx8zxygOh6GxQN2YJa+wUMci86P6bk/R5GVT+J0BnL9Se1gJex26K/Z8VGp10qPlFfCzCbxLw==
-X-Received: by 2002:adf:dd0f:: with SMTP id a15mr19414169wrm.321.1623764158577;
-        Tue, 15 Jun 2021 06:35:58 -0700 (PDT)
-Received: from [192.168.8.197] ([148.252.132.209])
-        by smtp.gmail.com with ESMTPSA id c12sm1728554wrw.46.2021.06.15.06.35.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Jun 2021 06:35:58 -0700 (PDT)
-Subject: Re: [PATCH][next][V2] io_uring: Fix incorrect sizeof operator for
- copy_from_user call
-To:     Colin King <colin.king@canonical.com>,
-        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210615130011.57387-1-colin.king@canonical.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Message-ID: <b6790793-c6ab-5d41-d483-3f978557e904@gmail.com>
-Date:   Tue, 15 Jun 2021 14:35:46 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        Tue, 15 Jun 2021 09:42:09 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1623764405; h=Date: Message-Id: Cc: To: References:
+ In-Reply-To: From: Subject: Content-Transfer-Encoding: MIME-Version:
+ Content-Type: Sender; bh=vEqpCBelT4IUf0JN1mGrJD39mXW1ad8pQdp6OTcpw8U=;
+ b=cuEnMC3gs8od0CNkws/B0uTSdOr4pE/9OxqyUlAZY+NWgB7apllHnQadd/zZKTuzxrHp9h3W
+ dwtvcYIB8k5UKi+yEsn9iUnuYdNBTD1ZTgDmaCplqeIfr3T61SPUGJVBeUWrsssYn2BfdHSK
+ vk8OdofPHA4TgENE1+FTS8ipFvM=
+X-Mailgun-Sending-Ip: 198.61.254.9
+X-Mailgun-Sid: WyI5NDExNyIsICJrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n07.prod.us-west-2.postgun.com with SMTP id
+ 60c8ada3b6ccaab753293ce8 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 15 Jun 2021 13:39:47
+ GMT
+Sender: kvalo=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 6C78CC43460; Tue, 15 Jun 2021 13:39:47 +0000 (UTC)
+Received: from tykki.adurom.net (tynnyri.adurom.net [51.15.11.48])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id C5012C4338A;
+        Tue, 15 Jun 2021 13:39:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C5012C4338A
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20210615130011.57387-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] rtlwifi: rtl8723ae: remove redundant initialization of
+ variable rtstatus
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20210513122410.59204-1-colin.king@canonical.com>
+References: <20210513122410.59204-1-colin.king@canonical.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Ping-Ke Shih <pkshih@realtek.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.7.3
+Message-Id: <20210615133947.6C78CC43460@smtp.codeaurora.org>
+Date:   Tue, 15 Jun 2021 13:39:47 +0000 (UTC)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 6/15/21 2:00 PM, Colin King wrote:
+Colin King <colin.king@canonical.com> wrote:
+
 > From: Colin Ian King <colin.king@canonical.com>
 > 
-> Static analysis is warning that the sizeof being used is should be
-> of *data->tags[i] and not data->tags[i]. Although these are the same
-> size on 64 bit systems it is not a portable assumption to assume
-> this is true for all cases.  Fix this by using a temporary pointer
-> tag_slot to make the code a clearer.
+> The variable rtstatus is being initialized with a value that is never
+> read, it is being updated later on. The assignment is redundant and
+> can be removed.
 > 
-> Addresses-Coverity: ("Sizeof not portable")
-> Fixes: d878c81610e1 ("io_uring: hide rsrc tag copy into generic helpers")
+> Addresses-Coverity: ("Unused value")
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
+Patch applied to wireless-drivers-next.git, thanks.
 
-> ---
-> V2: Use temp variable tag_slot, this makes code clearer as suggested by
->     Pavel Begunkov.
-> ---
->  fs/io_uring.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index d665c9419ad3..7538d0878ff5 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -7230,8 +7230,10 @@ static int io_rsrc_data_alloc(struct io_ring_ctx *ctx, rsrc_put_fn *do_put,
->  	if (utags) {
->  		ret = -EFAULT;
->  		for (i = 0; i < nr; i++) {
-> -			if (copy_from_user(io_get_tag_slot(data, i), &utags[i],
-> -					   sizeof(data->tags[i])))
-> +			u64 *tag_slot = io_get_tag_slot(data, i);
-> +
-> +			if (copy_from_user(tag_slot, &utags[i],
-> +					   sizeof(*tag_slot)))
->  				goto fail;
->  		}
->  	}
-> 
+03a1b938cf39 rtlwifi: rtl8723ae: remove redundant initialization of variable rtstatus
 
 -- 
-Pavel Begunkov
+https://patchwork.kernel.org/project/linux-wireless/patch/20210513122410.59204-1-colin.king@canonical.com/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
