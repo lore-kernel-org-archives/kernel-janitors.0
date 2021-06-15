@@ -2,82 +2,99 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-9.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87C11C48BE5
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Jun 2021 14:07:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47F8DC48BDF
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Jun 2021 14:11:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 70FD961446
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Jun 2021 14:07:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2CFE361477
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Jun 2021 14:11:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231519AbhFOOJG (ORCPT
+        id S231466AbhFOONY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 15 Jun 2021 10:09:06 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:33202 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231476AbhFOOJF (ORCPT
+        Tue, 15 Jun 2021 10:13:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36276 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231366AbhFOONJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 15 Jun 2021 10:09:05 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <colin.king@canonical.com>)
-        id 1lt9iO-00029g-Sq; Tue, 15 Jun 2021 14:06:52 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Heiko Schocher <hs@denx.de>, linux-mtd@lists.infradead.org
+        Tue, 15 Jun 2021 10:13:09 -0400
+Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF3F4C06175F;
+        Tue, 15 Jun 2021 07:11:02 -0700 (PDT)
+Received: by mail-pj1-x1035.google.com with SMTP id o88-20020a17090a0a61b029016eeb2adf66so1698598pjo.4;
+        Tue, 15 Jun 2021 07:11:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=O8ALFFCClhnXnTiKsvTsWlZUgDd+IIwt/B3WnpyR8rY=;
+        b=Iaxw+VUwGwNTenChpV1k2CktxntMgYWKzP+OuElPnN4P18WtUHAo2T08FTy4enmYcX
+         hM/N7g8rwBqVkuFUdYM9LwzhaTV18Oz9QudC8iHqjhKCG9xf16o73PTlHRnpDYu/K0WF
+         p3Y+laZcSodX0ue7FcFDdbW5qJ9q6b9YxdNuBYxc1mg582iWWJyfSFQrk2T6f/jdYaLA
+         x2Bp6Ljrgs2NA7eawp/j+Oryz87of1p/T7xulcSP4Z3WU2kkKheTSqkYqw8F80Mz31jK
+         aXK3vGCsrEfHr31vO9oaSDYWMYXboqbPzTWjUC+vOvb8q1/GP5mEz08V6k8+plm1Up74
+         ewKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=O8ALFFCClhnXnTiKsvTsWlZUgDd+IIwt/B3WnpyR8rY=;
+        b=pzeaTCM26zOSS0VqI/OAFfg++w0pjxXUBiS84YgvnLzFcRnJY6XHIdb332st8Wg6zQ
+         Nedq8ITcln2rU+JUE3AciGfSFKHTnTvCY6voNtrtI+eLDaVCAvVb92iW4OKWcLu/Bx64
+         KXbDXBlDVgXFOmxZD9aFr31h08e4XEQ8T65S4jR3ZWPDJcGrAFrWWiRY1Zv0tgGXEvf8
+         OrxlUqEHA7sa8nrDzVVVBQqKB5rX/zjk2bGUZyuRHvJunTLtvRgLgU/9Vpxd2PViuhUA
+         6JVWEahgyqrTV21y17b4gPQj2+wiezaM7jofj3zD8ZnbKcaP5pP75G5ywUCtv3YFdq6K
+         Ol+w==
+X-Gm-Message-State: AOAM5326wqGP9mNK8HHQ4fw8elFKU3ZNQjUCuJGqwhelcLqnh77wGnJa
+        NEWPCaVSjtHmILsfl4Q53p6snjU94zY=
+X-Google-Smtp-Source: ABdhPJw0vKm9FdQKsG0hoeqxUJDXC0FEQYo3JyuE9Wmc+L3FZWZ5OYwm+11VYvW6kCCvzc0iO/B5CQ==
+X-Received: by 2002:a17:90b:3004:: with SMTP id hg4mr5231547pjb.12.1623766261749;
+        Tue, 15 Jun 2021 07:11:01 -0700 (PDT)
+Received: from [10.230.29.202] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id ls17sm2616272pjb.56.2021.06.15.07.10.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Jun 2021 07:11:01 -0700 (PDT)
+Subject: Re: [PATCH][V2] net: dsa: b53: remove redundant null check on dev
+To:     Colin King <colin.king@canonical.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] mtd: devices: mchp48l640: Fix return of uninitialized value in ret
-Date:   Tue, 15 Jun 2021 15:06:52 +0100
-Message-Id: <20210615140652.59521-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.31.1
+References: <20210615090516.5906-1-colin.king@canonical.com>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Message-ID: <55b9ba06-eeb6-f836-6414-9e2dcbbe3d39@gmail.com>
+Date:   Tue, 15 Jun 2021 07:10:53 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Firefox/78.0 Thunderbird/78.10.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210615090516.5906-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-In the case where the read or write lengths are zero bytes the return
-value in variable ret has not been initialized and a garbage value
-is returned. Fix this by initializing ret to zero.
 
-Addresses-Coverity: ("Uninitialized scalar variable")
-Fixes: 88d125026753 ("mtd: devices: add support for microchip 48l640 EERAM")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/mtd/devices/mchp48l640.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On 6/15/2021 2:05 AM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The pointer dev can never be null, the null check is redundant
+> and can be removed. Cleans up a static analysis warning that
+> pointer priv is dereferencing dev before dev is being null
+> checked.
+> 
+> Addresses-Coverity: ("Dereference before null check")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-diff --git a/drivers/mtd/devices/mchp48l640.c b/drivers/mtd/devices/mchp48l640.c
-index efc2003bd13a..0833f41e9d17 100644
---- a/drivers/mtd/devices/mchp48l640.c
-+++ b/drivers/mtd/devices/mchp48l640.c
-@@ -210,7 +210,7 @@ static int mchp48l640_write(struct mtd_info *mtd, loff_t to, size_t len,
- 			    size_t *retlen, const unsigned char *buf)
- {
- 	struct mchp48l640_flash *flash = to_mchp48l640_flash(mtd);
--	int ret;
-+	int ret = 0;
- 	size_t wlen = 0;
- 	loff_t woff = to;
- 	size_t ws;
-@@ -267,7 +267,7 @@ static int mchp48l640_read(struct mtd_info *mtd, loff_t from, size_t len,
- 			   size_t *retlen, unsigned char *buf)
- {
- 	struct mchp48l640_flash *flash = to_mchp48l640_flash(mtd);
--	int ret;
-+	int ret = 0;
- 	size_t wlen = 0;
- 	loff_t woff = from;
- 	size_t ws;
+Acked-by: Florian Fainelli <f.fainelli@gmail.com>
 -- 
-2.31.1
-
+Florian
