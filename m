@@ -2,90 +2,82 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BBFAC48BE5
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Jun 2021 14:04:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87C11C48BE5
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Jun 2021 14:07:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 46F2861459
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Jun 2021 14:04:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70FD961446
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Jun 2021 14:07:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231315AbhFOOG2 (ORCPT
+        id S231519AbhFOOJG (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 15 Jun 2021 10:06:28 -0400
-Received: from so254-9.mailgun.net ([198.61.254.9]:34601 "EHLO
-        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230526AbhFOOGD (ORCPT
+        Tue, 15 Jun 2021 10:09:06 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:33202 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231476AbhFOOJF (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 15 Jun 2021 10:06:03 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1623765839; h=Date: Message-Id: Cc: To: References:
- In-Reply-To: From: Subject: Content-Transfer-Encoding: MIME-Version:
- Content-Type: Sender; bh=uSOjW2PIXQ8WAoXFoxYSHFnVzsjgBvCSgyXBJHrOxfM=;
- b=BUM10G3QQ6ggFU+rtPj0MowNV9ncu/yVPoIpGoCIIS5sghwrz2pAaEvNGSd/5Z53cDXqkTlN
- pAwMuZm/G/cydc6GjBsgoC1IJT3crbm4OLW0PtCHmhzuixdPBIJq3ifDKWm4yvz6JoX29VWi
- +SJ0m9XNSSzHGdxRpCzAQgi/bkw=
-X-Mailgun-Sending-Ip: 198.61.254.9
-X-Mailgun-Sid: WyI5NDExNyIsICJrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n06.prod.us-east-1.postgun.com with SMTP id
- 60c8b2e7f726fa4188bacb27 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 15 Jun 2021 14:02:15
- GMT
-Sender: kvalo=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 73C95C433D3; Tue, 15 Jun 2021 14:02:14 +0000 (UTC)
-Received: from tykki.adurom.net (tynnyri.adurom.net [51.15.11.48])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id CA6C8C433D3;
-        Tue, 15 Jun 2021 14:02:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CA6C8C433D3
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Tue, 15 Jun 2021 10:09:05 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lt9iO-00029g-Sq; Tue, 15 Jun 2021 14:06:52 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Heiko Schocher <hs@denx.de>, linux-mtd@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] mtd: devices: mchp48l640: Fix return of uninitialized value in ret
+Date:   Tue, 15 Jun 2021 15:06:52 +0100
+Message-Id: <20210615140652.59521-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] ath11k: Fix an error handling path in
- 'ath11k_core_fetch_board_data_api_n()'
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <e959eb544f3cb04258507d8e25a6f12eab126bde.1621676864.git.christophe.jaillet@wanadoo.fr>
-References: <e959eb544f3cb04258507d8e25a6f12eab126bde.1621676864.git.christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     davem@davemloft.net, kuba@kernel.org, bperumal@codeaurora.org,
-        akolli@codeaurora.org, milehu@codeaurora.org, lkp@intel.com,
-        ath11k@lists.infradead.org, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.7.3
-Message-Id: <20210615140214.73C95C433D3@smtp.codeaurora.org>
-Date:   Tue, 15 Jun 2021 14:02:14 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> All error paths but this one 'goto err' in order to release some
-> resources.
-> Fix this.
-> 
-> Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+In the case where the read or write lengths are zero bytes the return
+value in variable ret has not been initialized and a garbage value
+is returned. Fix this by initializing ret to zero.
 
-Patch applied to ath-next branch of ath.git, thanks.
+Addresses-Coverity: ("Uninitialized scalar variable")
+Fixes: 88d125026753 ("mtd: devices: add support for microchip 48l640 EERAM")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/mtd/devices/mchp48l640.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-515bda1d1e51 ath11k: Fix an error handling path in ath11k_core_fetch_board_data_api_n()
-
+diff --git a/drivers/mtd/devices/mchp48l640.c b/drivers/mtd/devices/mchp48l640.c
+index efc2003bd13a..0833f41e9d17 100644
+--- a/drivers/mtd/devices/mchp48l640.c
++++ b/drivers/mtd/devices/mchp48l640.c
+@@ -210,7 +210,7 @@ static int mchp48l640_write(struct mtd_info *mtd, loff_t to, size_t len,
+ 			    size_t *retlen, const unsigned char *buf)
+ {
+ 	struct mchp48l640_flash *flash = to_mchp48l640_flash(mtd);
+-	int ret;
++	int ret = 0;
+ 	size_t wlen = 0;
+ 	loff_t woff = to;
+ 	size_t ws;
+@@ -267,7 +267,7 @@ static int mchp48l640_read(struct mtd_info *mtd, loff_t from, size_t len,
+ 			   size_t *retlen, unsigned char *buf)
+ {
+ 	struct mchp48l640_flash *flash = to_mchp48l640_flash(mtd);
+-	int ret;
++	int ret = 0;
+ 	size_t wlen = 0;
+ 	loff_t woff = from;
+ 	size_t ws;
 -- 
-https://patchwork.kernel.org/project/linux-wireless/patch/e959eb544f3cb04258507d8e25a6f12eab126bde.1621676864.git.christophe.jaillet@wanadoo.fr/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.31.1
 
