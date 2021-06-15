@@ -2,93 +2,87 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70069C48BDF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Jun 2021 15:38:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5809C48BDF
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Jun 2021 17:11:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 51DC961492
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Jun 2021 15:38:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9D07613B1
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Jun 2021 17:11:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231308AbhFOPkM (ORCPT
+        id S229893AbhFORNk (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 15 Jun 2021 11:40:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55856 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230076AbhFOPkL (ORCPT
+        Tue, 15 Jun 2021 13:13:40 -0400
+Received: from szxga03-in.huawei.com ([45.249.212.189]:6383 "EHLO
+        szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229528AbhFORNk (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 15 Jun 2021 11:40:11 -0400
-Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E10AC061574;
-        Tue, 15 Jun 2021 08:38:06 -0700 (PDT)
-Received: from [IPv6:2001:4c4c:2228:2400::1000] (20014C4C222824000000000000001000.catv.pool.telekom.hu [IPv6:2001:4c4c:2228:2400::1000])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: hs@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id 4CD6582934;
-        Tue, 15 Jun 2021 17:38:01 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1623771482;
-        bh=Ej4rCqetLA22T9wWq3Szx63Mg97UjXN4quAi/wmiorE=;
-        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=w4UPMvakgrKUQLtejM2GLU9QSfH7jmaSn0I5dlhseWNIAOGyl5FisWyRK0pRjCCvl
-         8kvSrxaNS3XltIoG/0EZVeLWo2y27z6TwDiiMIG+a9vBM4FDOixEDgBOR8mzOYu6x0
-         FXpnQ6KY67mpuZk3BWnfo7c9qwa77Oqr3q4sdT4JtPttbeN9GYQ6eItnTnLyuo2tws
-         91yY9sa0utKNYOmT+xsFkYwEpnQqhn2mTwhPHkVJBquSPSvAZZghMrLP8ZRe7aP8r/
-         /uTyW9EMS/JMqUuI+cYr9w/VBZs70HvQbV4LnqrYXdUFcFUgrV4bZOmfFmiYmE4sQN
-         Oq+Ld8PkTfzvA==
-Reply-To: hs@denx.de
-Subject: Re: [PATCH][next] mtd: devices: mchp48l640: Fix return of
- uninitialized value in ret
-To:     Colin King <colin.king@canonical.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        linux-mtd@lists.infradead.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210615140652.59521-1-colin.king@canonical.com>
-From:   Heiko Schocher <hs@denx.de>
-Message-ID: <b0d971da-ff2e-7ad4-cba7-32a1406b983d@denx.de>
-Date:   Tue, 15 Jun 2021 17:38:05 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        Tue, 15 Jun 2021 13:13:40 -0400
+Received: from dggeml759-chm.china.huawei.com (unknown [172.30.72.53])
+        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4G4F9y1krwz61Wh;
+        Wed, 16 Jun 2021 01:07:34 +0800 (CST)
+Received: from localhost.localdomain (10.175.102.38) by
+ dggeml759-chm.china.huawei.com (10.1.199.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2176.2; Wed, 16 Jun 2021 01:11:32 +0800
+From:   Wei Yongjun <weiyongjun1@huawei.com>
+To:     <weiyongjun1@huawei.com>, Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+CC:     <dri-devel@lists.freedesktop.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH -next] drm/exynos: g2d: fix missing unlock on error in g2d_runqueue_worker()
+Date:   Tue, 15 Jun 2021 17:21:53 +0000
+Message-ID: <20210615172153.2839275-1-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <20210615140652.59521-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.2 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.102.38]
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ dggeml759-chm.china.huawei.com (10.1.199.138)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello Colin,
+Add the missing unlock before return from function g2d_runqueue_worker()
+in the error handling case.
 
-On 15.06.21 16:06, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> In the case where the read or write lengths are zero bytes the return
-> value in variable ret has not been initialized and a garbage value
-> is returned. Fix this by initializing ret to zero.
-> 
-> Addresses-Coverity: ("Uninitialized scalar variable")
-> Fixes: 88d125026753 ("mtd: devices: add support for microchip 48l640 EERAM")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/mtd/devices/mchp48l640.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+Fixes: 445d3bed75de ("drm/exynos: use pm_runtime_resume_and_get()")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_g2d.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Thanks!
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_g2d.c b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+index cab4d2c370a7..0ed665501ac4 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+@@ -897,13 +897,14 @@ static void g2d_runqueue_worker(struct work_struct *work)
+ 			ret = pm_runtime_resume_and_get(g2d->dev);
+ 			if (ret < 0) {
+ 				dev_err(g2d->dev, "failed to enable G2D device.\n");
+-				return;
++				goto out;
+ 			}
+ 
+ 			g2d_dma_start(g2d, g2d->runqueue_node);
+ 		}
+ 	}
+ 
++out:
+ 	mutex_unlock(&g2d->runqueue_mutex);
+ }
+ 
 
-Reviewed-by: Heiko Schocher <hs@denx.de>
-
-bye,
-Heiko
--- 
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-Phone: +49-8142-66989-52   Fax: +49-8142-66989-80   Email: hs@denx.de
