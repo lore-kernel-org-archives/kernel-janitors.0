@@ -2,149 +2,91 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3180CC48BE5
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Jun 2021 06:47:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF168C48BE5
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Jun 2021 08:33:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1153B611C0
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Jun 2021 06:47:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB2A961241
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Jun 2021 08:33:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230074AbhFOGtr (ORCPT
+        id S231249AbhFOIfy (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 15 Jun 2021 02:49:47 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:57382 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230079AbhFOGtq (ORCPT
+        Tue, 15 Jun 2021 04:35:54 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:50875 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231241AbhFOIfo (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 15 Jun 2021 02:49:46 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 15F6jXB7116543;
-        Tue, 15 Jun 2021 06:47:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=PdOJ7uhVLoKJ8IudTXgqsqb8p8KH82LJt1NWmmnufdk=;
- b=qxtukR5YNH/ei1lKq8QmbjHHldRsKE5p6sZMtv2WQUJzt47FtOiYHIDcuEDABFpky0sm
- 8mvIIH+KvzwD32bj1kWGKADuY+slP+1+9YFqMriNbo5Vp6Qaqe8ok9rKxtF2QiofZsbD
- BF5nJr8wONuJH/6vj4qnQl/3qWf2RMqj2Irc1d/N8h6kEaxJG6sxXnMPbWSavx50YMIi
- KQSd0f8U+mYA9nL3R0ulABjWSrVV17Vxp3woviQG318JLg3WnTpBAkouhOMmlMdWWXXY
- ltWoVa0CR4SiwqLnoQxmEXfXdSo9Rwmu+zZxwoMUnaFSa63qNwLZRQY0kMCgdT5ps+vn LQ== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2130.oracle.com with ESMTP id 394jecdawf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 15 Jun 2021 06:47:34 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 15F6jDnX067338;
-        Tue, 15 Jun 2021 06:47:33 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by aserp3030.oracle.com with ESMTP id 3959ckamh0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 15 Jun 2021 06:47:33 +0000
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 15F6lXwv072668;
-        Tue, 15 Jun 2021 06:47:33 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3030.oracle.com with ESMTP id 3959ckamg3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 15 Jun 2021 06:47:33 +0000
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 15F6lQ8k001325;
-        Tue, 15 Jun 2021 06:47:27 GMT
-Received: from kadam (/41.212.42.34)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 14 Jun 2021 23:47:26 -0700
-Date:   Tue, 15 Jun 2021 09:47:19 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Martin Kaiser <martin@kaiser.cx>,
-        Larry Finger <Larry.Finger@lwfinger.net>,
-        linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/6] staging: rtl8188eu: fix usb_submit_urb error handling
-Message-ID: <20210615064719.GA2120@kadam>
-References: <20210612180019.20387-1-martin@kaiser.cx>
- <20210612180019.20387-2-martin@kaiser.cx>
- <YMdr0alJDEGfsqOA@kroah.com>
+        Tue, 15 Jun 2021 04:35:44 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212])
+        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lt4Vs-00013n-RL; Tue, 15 Jun 2021 08:33:36 +0000
+Subject: Re: [PATCH] net: dsa: b53: Fix dereference of null dev
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210612144407.60259-1-colin.king@canonical.com>
+ <20210614112812.GL1955@kadam>
+From:   Colin Ian King <colin.king@canonical.com>
+Message-ID: <60c9a7c8-95f1-2673-abd0-73853483acb0@canonical.com>
+Date:   Tue, 15 Jun 2021 09:33:36 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YMdr0alJDEGfsqOA@kroah.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-ORIG-GUID: lURhPgTfq9QPm6nTf8f0uMKvBx1t_uCK
-X-Proofpoint-GUID: lURhPgTfq9QPm6nTf8f0uMKvBx1t_uCK
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=10015 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 phishscore=0
- bulkscore=0 clxscore=1015 mlxlogscore=999 adultscore=0 malwarescore=0
- spamscore=0 lowpriorityscore=0 impostorscore=0 mlxscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
- definitions=main-2106150040
+In-Reply-To: <20210614112812.GL1955@kadam>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Jun 14, 2021 at 04:46:41PM +0200, Greg Kroah-Hartman wrote:
-> On Sat, Jun 12, 2021 at 08:00:15PM +0200, Martin Kaiser wrote:
-> > -EPERM should be handled like any other error.
+On 14/06/2021 12:28, Dan Carpenter wrote:
+> On Sat, Jun 12, 2021 at 03:44:07PM +0100, Colin King wrote:
+>> From: Colin Ian King <colin.king@canonical.com>
+>>
+>> Currently pointer priv is dereferencing dev before dev is being null
+>> checked so a potential null pointer dereference can occur. Fix this
+>> by only assigning and using priv if dev is not-null.
+>>
+>> Addresses-Coverity: ("Dereference before null check")
+>> Fixes: 16994374a6fc ("net: dsa: b53: Make SRAB driver manage port interrupts")
+>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>> ---
+>>  drivers/net/dsa/b53/b53_srab.c | 8 +++++---
+>>  1 file changed, 5 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/net/dsa/b53/b53_srab.c b/drivers/net/dsa/b53/b53_srab.c
+>> index aaa12d73784e..e77ac598f859 100644
+>> --- a/drivers/net/dsa/b53/b53_srab.c
+>> +++ b/drivers/net/dsa/b53/b53_srab.c
+>> @@ -629,11 +629,13 @@ static int b53_srab_probe(struct platform_device *pdev)
+>>  static int b53_srab_remove(struct platform_device *pdev)
+>>  {
+>>  	struct b53_device *dev = platform_get_drvdata(pdev);
+>> -	struct b53_srab_priv *priv = dev->priv;
+>>  
+>> -	b53_srab_intr_set(priv, false);
+>> -	if (dev)
+>> +	if (dev) {
 > 
-> Why?  This is not "any other error" for the usb core, right?
+> This is the remove function and "dev" can't be NULL at this point.
+> Better to just remove the NULL check.
+
+Will do.
+
 > 
-
-Yeah.  It's a fair point that this commit message doesn't say why to do
-it or explain the implications.
-
-> > 
-> > Suggested-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > Signed-off-by: Martin Kaiser <martin@kaiser.cx>
-> > ---
-> >  drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c | 7 +++----
-> >  1 file changed, 3 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c b/drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c
-> > index ec07b2017fb7..0ceb05f3884f 100644
-> > --- a/drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c
-> > +++ b/drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c
-> > @@ -366,7 +366,6 @@ u32 usb_read_port(struct adapter *adapter, u32 addr, struct recv_buf *precvbuf)
-> >  	struct usb_device *pusbd = pdvobj->pusbdev;
-> >  	int err;
-> >  	unsigned int pipe;
-> > -	u32 ret = _SUCCESS;
-> >  
-> >  	if (adapter->bDriverStopped || adapter->bSurpriseRemoved ||
-> >  	    adapter->pwrctrlpriv.pnp_bstop_trx) {
-> > @@ -403,10 +402,10 @@ u32 usb_read_port(struct adapter *adapter, u32 addr, struct recv_buf *precvbuf)
-> >  			  precvbuf);/* context is precvbuf */
-> >  
-> >  	err = usb_submit_urb(purb, GFP_ATOMIC);
-> > -	if ((err) && (err != (-EPERM)))
-> > -		ret = _FAIL;
+> regards,
+> dan carpenter
 > 
-> if -EPERM returns from this function, someone set the "reject" bit on
-> the urb.
-> 
-> Can this driver do that?  Where did this check originally come from, as
-> it feels like this was added for a good reason.
-> 
-
-Yeah.  It can cancel urbs in rtw_hal_inirp_deinit().  That function used
-to have a better name, "usb_read_port_cancel" and in retrospect the
-original name was probably better.
-
-I think the reason for that -EPERM was treated differently was because
-originally there were some error messages printed if usb_submit_urb()
-failed.  (They were't actually printed because this code is buggy).  The
-authors probably didn't want to print the error messages but
-accidentally made it return success as well.
-
-There is only one caller that checks the return and it only affects the
-behavior if we race against open.  Can that even happen?  I'm pretty
-sure that returning a failure is the correct behavior but I'm going to
-leave it to Martin to check for absolutely sure.  :P
-
-regards,
-dan carpenter
 
