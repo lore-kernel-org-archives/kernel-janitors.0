@@ -7,34 +7,32 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BABEEC48BE5
-	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Jun 2021 13:08:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9555C48BE5
+	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Jun 2021 13:29:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 947C46024A
-	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Jun 2021 13:08:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8829761241
+	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Jun 2021 13:29:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233257AbhFPNKG (ORCPT
+        id S233038AbhFPNcD (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 16 Jun 2021 09:10:06 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:38992 "EHLO
+        Wed, 16 Jun 2021 09:32:03 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:40812 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232842AbhFPNKF (ORCPT
+        with ESMTP id S230187AbhFPNcC (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 16 Jun 2021 09:10:05 -0400
+        Wed, 16 Jun 2021 09:32:02 -0400
 Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
         (Exim 4.93)
         (envelope-from <colin.king@canonical.com>)
-        id 1ltVGw-0002ir-1o; Wed, 16 Jun 2021 13:07:58 +0000
+        id 1ltVc9-000528-DE; Wed, 16 Jun 2021 13:29:53 +0000
 From:   Colin King <colin.king@canonical.com>
-To:     Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-        linux-bluetooth@vger.kernel.org
+To:     Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] Bluetooth: btmrvl: remove redundant continue statement
-Date:   Wed, 16 Jun 2021 14:07:57 +0100
-Message-Id: <20210616130757.10084-1-colin.king@canonical.com>
+Subject: [PATCH] dm: remove redundant continue statement
+Date:   Wed, 16 Jun 2021 14:29:53 +0100
+Message-Id: <20210616132953.11035-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -45,30 +43,27 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The continue statement in the for-loop has no effect,
+The continue statement at the end of a for-loop has no effect,
 remove it.
 
 Addresses-Coverity: ("Continue has no effect")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/bluetooth/btmrvl_sdio.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/md/dm-ps-io-affinity.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/bluetooth/btmrvl_sdio.c b/drivers/bluetooth/btmrvl_sdio.c
-index 33d58b30c5ac..cddd350beba3 100644
---- a/drivers/bluetooth/btmrvl_sdio.c
-+++ b/drivers/bluetooth/btmrvl_sdio.c
-@@ -1461,9 +1461,7 @@ static void btmrvl_sdio_coredump(struct device *dev)
- 					BT_ERR("Allocated buffer not enough");
- 			}
+diff --git a/drivers/md/dm-ps-io-affinity.c b/drivers/md/dm-ps-io-affinity.c
+index 077655cd4fae..cb8e83bfb1a7 100644
+--- a/drivers/md/dm-ps-io-affinity.c
++++ b/drivers/md/dm-ps-io-affinity.c
+@@ -91,7 +91,6 @@ static int ioa_add_path(struct path_selector *ps, struct dm_path *path,
+ 		cpumask_set_cpu(cpu, s->path_mask);
+ 		s->path_map[cpu] = pi;
+ 		refcount_inc(&pi->refcount);
+-		continue;
+ 	}
  
--			if (stat != RDWR_STATUS_DONE) {
--				continue;
--			} else {
-+			if (stat == RDWR_STATUS_DONE) {
- 				BT_INFO("%s done: size=0x%tx",
- 					entry->mem_name,
- 					dbg_ptr - entry->mem_ptr);
+ 	if (refcount_dec_and_test(&pi->refcount)) {
 -- 
 2.31.1
 
