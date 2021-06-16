@@ -2,101 +2,101 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.4 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31DCAC48BE5
-	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Jun 2021 23:04:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7C2AC48BE6
+	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Jun 2021 23:27:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 026C5613C2
-	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Jun 2021 23:04:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CDE861245
+	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Jun 2021 23:27:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234212AbhFPXGH (ORCPT
+        id S234581AbhFPXaD (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 16 Jun 2021 19:06:07 -0400
-Received: from wout5-smtp.messagingengine.com ([64.147.123.21]:60635 "EHLO
-        wout5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231846AbhFPXGH (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 16 Jun 2021 19:06:07 -0400
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.west.internal (Postfix) with ESMTP id E563819B7;
-        Wed, 16 Jun 2021 19:03:59 -0400 (EDT)
-Received: from imap2 ([10.202.2.52])
-  by compute3.internal (MEProxy); Wed, 16 Jun 2021 19:04:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
-        mime-version:message-id:in-reply-to:references:date:from:to:cc
-        :subject:content-type; s=fm3; bh=PO02j9SYy4Fuys7DY1CucmNO5PH1IkV
-        Pa73qEXnyVUk=; b=YuogiRdx2QXF1ySvr2xrBPfLQns/DMRgUb9Y/wZf4OHqi5g
-        zwNoGKiFQ2hYUmNYRa8KHKtOXrT2cPdDD0AxzEfv7XLoAMBc+9nHsSIJhz9CXilM
-        GhwM9Qg2Ssbo4mdZvwIweD1QVcQ5MIJpDWxdMPgdFemBBl/XZUBF+A8KXkj0eJpk
-        pJSd+WN6Vm2xoNPkTsNDCP9Q7jjyItBY3C0ZKu5maBGV+1H1n2crdI0BGwkzFP+x
-        OJIwPqQzQYXK0Ax6JxcSGLjZ4acHN1Q6gGu/lHR/0M3v70TQTUkR5KcxgPSkeMJg
-        H+2dVZdal1BSXbnOSrTz9vJqYihW9bhupa0VAYw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=PO02j9
-        SYy4Fuys7DY1CucmNO5PH1IkVPa73qEXnyVUk=; b=b5PnAMLVWSDKdbEo8EWUN8
-        V+8i8a1QdMNW4fWXRIXlWsfVwLiVhrOWCPnO2bE8w0phO3HnQF4ah3UQj70xyhKe
-        B23XpcduqyABKgba3swsYDCls+vi1bbxTRQ6dYbwgnncxKAG5mjHRulJJUXTHInn
-        l5g3ggi68Kr1KcxRcRReuBk4UxjY6tcCBl/DX+rSfIPthCL1gtb02+MhjrEtjVsH
-        rPLZ+0Y1VeLarLAFFNvLjVcMOBw94bOmzt0zRcKBNe4/Wus1VbF+LgUgOI/4LPYW
-        lzwRex7Ph5w8oRKeDT2p3F/D+iR6IyEzsyAsbJ4UZDELZaiOz+HCb73Ctn4Ym5zg
-        ==
-X-ME-Sender: <xms:XoPKYBJpH2jtt7pDG71yvrzoJd4nhGdpOYF9Ow4bI_UvJeFbkgJ6fw>
-    <xme:XoPKYNIEVE4GnGSjYKQ3v2ZRxEhDmjrW5qUMHAIlNWMC27b7FG8O0y1DjDekBLLU2
-    vtm86RWEJggeGUtBA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrfeeftddgudegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvffutgesthdtredtreerjeenucfhrhhomhepfdetnhgu
-    rhgvficulfgvfhhfvghrhidfuceorghnughrvgifsegrjhdrihgurdgruheqnecuggftrf
-    grthhtvghrnhepuddttdekueeggedvtddtueekiedutdfguedutdefieeuteefieelteet
-    vddthfeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    eprghnughrvgifsegrjhdrihgurdgruh
-X-ME-Proxy: <xmx:XoPKYJsRE1vyMZI2WKvrt9dNizdy3lKOiAYzapsHGXKgb0Yd2wZGMQ>
-    <xmx:XoPKYCYtt9IBBtNCfnITaXWBEMLsM930c_RWAeuFmmMDSShT0Rx2sQ>
-    <xmx:XoPKYIYh2hk82XCAXK0sRpJ4p2HimScYIdb49pqqLMvj_Q-lSSHn7Q>
-    <xmx:X4PKYHz1pVOmPlTrK-xyOMUnlzcEgUkIkMzYHBwunJYpOiiCIjI6pQ>
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id CAA02A00079; Wed, 16 Jun 2021 19:03:58 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.5.0-alpha0-526-gf020ecf851-fm-20210616.001-gf020ecf8
-Mime-Version: 1.0
-Message-Id: <9902c945-4651-4023-bede-6833392b3811@www.fastmail.com>
-In-Reply-To: <20210616162913.15259-1-colin.king@canonical.com>
-References: <20210616162913.15259-1-colin.king@canonical.com>
-Date:   Thu, 17 Jun 2021 08:33:38 +0930
-From:   "Andrew Jeffery" <andrew@aj.id.au>
-To:     "Colin King" <colin.king@canonical.com>,
-        "Corey Minyard" <minyard@acm.org>, "Joel Stanley" <joel@jms.id.au>,
-        openipmi-developer@lists.sourceforge.net,
-        linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org
+        Wed, 16 Jun 2021 19:30:03 -0400
+Received: from mga06.intel.com ([134.134.136.31]:30915 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234508AbhFPXaD (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 16 Jun 2021 19:30:03 -0400
+IronPort-SDR: 9Fl8ijXuZvj1oEDZcUZ+JKxEr5QmhhgIVu9MjzrjBWBbzjTQDlIvmAr0lSZmZrgUCXgNgD0Jh5
+ XB9iCLay9VcA==
+X-IronPort-AV: E=McAfee;i="6200,9189,10017"; a="267420483"
+X-IronPort-AV: E=Sophos;i="5.83,278,1616482800"; 
+   d="scan'208";a="267420483"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2021 16:27:53 -0700
+IronPort-SDR: c/uhERQyM+sCgOUqZHbGxAylMWWwjSLqhn+8dqVDprMkHlPe6u7GA6VFA4cVP64YtyRNR/QyBq
+ +DtCdxpl9d1A==
+X-IronPort-AV: E=Sophos;i="5.83,278,1616482800"; 
+   d="scan'208";a="479269628"
+Received: from jekeller-mobl1.amr.corp.intel.com (HELO [10.209.42.204]) ([10.209.42.204])
+  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2021 16:27:52 -0700
+Subject: Re: [PATCH][next] ice: remove redundant continue statement in a
+ for-loop
+To:     Colin King <colin.king@canonical.com>,
+        Jesse Brandeburg <jesse.brandeburg@intel.com>,
+        Tony Nguyen <anthony.l.nguyen@intel.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: =?UTF-8?Q?Re:_[PATCH][next]_ipmi:_kcs=5Fbmc=5Faspeed:_Fix_less_than_zero?=
- =?UTF-8?Q?_comparison_of_a_unsigned_int?=
-Content-Type: text/plain
+References: <20210615142847.60161-1-colin.king@canonical.com>
+From:   Jacob Keller <jacob.e.keller@intel.com>
+Organization: Intel Corporation
+Message-ID: <2a347503-9879-0a13-555b-a007acfdec3c@intel.com>
+Date:   Wed, 16 Jun 2021 16:27:50 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
+MIME-Version: 1.0
+In-Reply-To: <20210615142847.60161-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 
 
-On Thu, 17 Jun 2021, at 01:59, Colin King wrote:
+On 6/15/2021 7:28 AM, Colin King wrote:
 > From: Colin Ian King <colin.king@canonical.com>
 > 
-> The comparisons of the unsigned int hw_type to less than zero always
-> false because it is unsigned. Fix this by using an int for the
-> assignment and less than zero check.
+> The continue statement in the for-loop is redundant. Re-work the hw_lock
+> check to remove it.
 > 
-
-> Addresses-Coverity: ("Unsigned compared against 0")
-> Fixes: 9d2df9a0ad80 ("ipmi: kcs_bmc_aspeed: Implement KCS SerIRQ configuration")
+> Addresses-Coverity: ("Continue has no effect")
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
 
-Thanks for catching that.
+Yep, that logic makes more sense.
 
-Andrew
+Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
+
+>  drivers/net/ethernet/intel/ice/ice_ptp_hw.c | 10 ++++------
+>  1 file changed, 4 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/intel/ice/ice_ptp_hw.c b/drivers/net/ethernet/intel/ice/ice_ptp_hw.c
+> index 267312fad59a..3eca0e4eab0b 100644
+> --- a/drivers/net/ethernet/intel/ice/ice_ptp_hw.c
+> +++ b/drivers/net/ethernet/intel/ice/ice_ptp_hw.c
+> @@ -410,13 +410,11 @@ bool ice_ptp_lock(struct ice_hw *hw)
+>  	for (i = 0; i < MAX_TRIES; i++) {
+>  		hw_lock = rd32(hw, PFTSYN_SEM + (PFTSYN_SEM_BYTES * hw->pf_id));
+>  		hw_lock = hw_lock & PFTSYN_SEM_BUSY_M;
+> -		if (hw_lock) {
+> -			/* Somebody is holding the lock */
+> -			usleep_range(10000, 20000);
+> -			continue;
+> -		} else {
+> +		if (!hw_lock)
+>  			break;
+> -		}
+> +
+> +		/* Somebody is holding the lock */
+> +		usleep_range(10000, 20000);
+>  	}
+>  
+>  	return !hw_lock;
+> 
