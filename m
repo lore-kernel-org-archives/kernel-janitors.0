@@ -2,70 +2,89 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C52EAC48BE8
-	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Jun 2021 14:26:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC5F1C48BE6
+	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Jun 2021 14:45:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AF1D26101A
-	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Jun 2021 14:26:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD4EE611BE
+	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Jun 2021 14:45:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234052AbhFPO25 (ORCPT
+        id S234080AbhFPOrl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 16 Jun 2021 10:28:57 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:42674 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234038AbhFPO2r (ORCPT
+        Wed, 16 Jun 2021 10:47:41 -0400
+Received: from out3-smtp.messagingengine.com ([66.111.4.27]:40799 "EHLO
+        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233854AbhFPOrl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 16 Jun 2021 10:28:47 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <colin.king@canonical.com>)
-        id 1ltWV3-0001Qt-Su; Wed, 16 Jun 2021 14:26:37 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     James Smart <james.smart@broadcom.com>,
-        Ram Vegesna <ram.vegesna@broadcom.com>,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] scsi: elx: efct: Fix spelling mistake "Unexected" -> "Unexpected"
-Date:   Wed, 16 Jun 2021 15:26:37 +0100
-Message-Id: <20210616142637.12706-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.31.1
+        Wed, 16 Jun 2021 10:47:41 -0400
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id B835F5C00F3;
+        Wed, 16 Jun 2021 10:45:34 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Wed, 16 Jun 2021 10:45:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=sYpgCz
+        WHYl66W6Ocpn+vjd08IOtt1QAuugKpx0HgzHo=; b=ZdCoJ0UlQEf924MZj8zpgd
+        WHfwsddsmDnzDhIXcXy7Q53xWc9QuLjKJZr2F2YJ82iJLQlA243dWSuLt6NVBqJc
+        XzWK/Agku1ij0hbtud6+DsdfD8BooUbzNlvQo3RGf7ftk+X0aPlw/ahw4GVHiaUq
+        mLFJNRW6dfhVrZkbvQVxf/uXo688pGqB15RA8yWYFAZAO2mC7UbJbk01usU6PY5f
+        nj4jYdqimxB5I/qRJbvS0xppEV8iQjNlD63JwfiJFCS/csjYJLXNv6/nlhVK/2Wi
+        KAWC3uxg0HqS7zUscKPeG/7g7UnfDV97b3ZHhQ07zj/xrz5Du6lKXv/hB32YAbxQ
+        ==
+X-ME-Sender: <xms:jg7KYDls9JrEo2QQ9T-l8BGwWdXnZ6z8nZNTkQbomW40aJF7EydebQ>
+    <xme:jg7KYG1mzw0yDRUy98m41K6bXGNeHw-LIHERXMHYeJSd5jX1kp1aQ_Wk2BQ54xTId
+    UGsCquPfxub9qk>
+X-ME-Received: <xmr:jg7KYJriMCFTKrxoc9BZyUAoLMfNHH5X4KWWf8QbsXHS7zY_NcABRVYWJHl95iZ-7Jex4NQB3kCp5uA0n9IuVXxsyID8GA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrfedvledgkeduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehttdortddttddvnecuhfhrohhmpefkughoucfu
+    tghhihhmmhgvlhcuoehiughoshgthhesihguohhstghhrdhorhhgqeenucggtffrrghtth
+    gvrhhnpefgjeevhfdvgeeiudekteduveegueejfefffeefteekkeeuueehjeduledtjeeu
+    udenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehiug
+    hoshgthhesihguohhstghhrdhorhhg
+X-ME-Proxy: <xmx:jg7KYLlDQsTpoFkfwYj13SmmgK2yeJWYoJWTYB2WZ7HXKLLP9W330A>
+    <xmx:jg7KYB3Q3jGRoD6Dcf5wisdbQWDjLJmVO9S8yv0tBNsqitjDb-wrng>
+    <xmx:jg7KYKtGe-xkbNhRPPrQdNV6TZwXi4Xgx4nSXxqaW3JvGewrTbDL6A>
+    <xmx:jg7KYJ-3xKlKYsxsof6UQN_VMAcy-NhKZ43jZLaXnNEgtE0gs2W1Dg>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 16 Jun 2021 10:45:33 -0400 (EDT)
+Date:   Wed, 16 Jun 2021 17:45:29 +0300
+From:   Ido Schimmel <idosch@idosch.org>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Jiri Pirko <jiri@nvidia.com>, Ido Schimmel <idosch@nvidia.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mlxsw: spectrum_router: remove redundant continue
+ statement
+Message-ID: <YMoOiXEJJvvknbIJ@shredder>
+References: <20210616130258.9779-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210616130258.9779-1-colin.king@canonical.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Wed, Jun 16, 2021 at 02:02:58PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The continue statement at the end of a for-loop has no effect,
+> remove it.
+> 
+> Addresses-Coverity: ("Continue has no effect")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-There is a spelling mistake in a efc_log_info message. Fix it.
+For net-next:
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/scsi/elx/efct/efct_driver.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Ido Schimmel <idosch@nvidia.com>
 
-diff --git a/drivers/scsi/elx/efct/efct_driver.c b/drivers/scsi/elx/efct/efct_driver.c
-index 2fa5996fc0d5..eab68fd9337a 100644
---- a/drivers/scsi/elx/efct/efct_driver.c
-+++ b/drivers/scsi/elx/efct/efct_driver.c
-@@ -372,7 +372,7 @@ efct_request_firmware_update(struct efct *efct)
- 		efct_fw_reset(efct);
- 		break;
- 	default:
--		efc_log_info(efct, "Unexected value change_status:%d\n",
-+		efc_log_info(efct, "Unexpected value change_status:%d\n",
- 			     fw_change_status);
- 		break;
- 	}
--- 
-2.31.1
-
+Thanks
