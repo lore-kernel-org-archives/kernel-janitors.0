@@ -2,107 +2,128 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F73DC48BE5
-	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Jun 2021 18:54:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A790EC48BE5
+	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Jun 2021 19:02:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3205F613C1
-	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Jun 2021 18:54:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A9BC61245
+	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Jun 2021 19:02:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232006AbhFPS4p (ORCPT
+        id S232250AbhFPTEk (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 16 Jun 2021 14:56:45 -0400
-Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:27764 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232172AbhFPS4o (ORCPT
+        Wed, 16 Jun 2021 15:04:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58452 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232246AbhFPTEj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 16 Jun 2021 14:56:44 -0400
-Received: from localhost.localdomain ([86.243.172.93])
-        by mwinf5d88 with ME
-        id Huub2500G21Fzsu03uucKk; Wed, 16 Jun 2021 20:54:36 +0200
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 16 Jun 2021 20:54:36 +0200
-X-ME-IP: 86.243.172.93
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Julia.Lawall@inria.fr, Gilles.Muller@inria.fr,
-        nicolas.palix@imag.fr, michal.lkml@markovi.net
-Cc:     cocci@systeme.lip6.fr, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] Coccinelle: remove pci_[z]alloc_consistent from api/alloc/alloc_cast.cocci
-Date:   Wed, 16 Jun 2021 20:54:34 +0200
-Message-Id: <9ea05b27750d20f61217c88c3ec63f3e2420678a.1623869587.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Wed, 16 Jun 2021 15:04:39 -0400
+Received: from mail-oi1-x22e.google.com (mail-oi1-x22e.google.com [IPv6:2607:f8b0:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83D53C061574;
+        Wed, 16 Jun 2021 12:02:33 -0700 (PDT)
+Received: by mail-oi1-x22e.google.com with SMTP id x196so3592574oif.10;
+        Wed, 16 Jun 2021 12:02:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:reply-to:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=UOqLQQmsoCxqiYwODGOxvwScag2+ijPfJja63uXJkvM=;
+        b=QKlM7nFUoB6J9K6LCVtW4wLxrfvSkz/9/nDxNyxDziZoJE7UBptRchMsuVPPsv/Hh6
+         0hoMsU+kE/siiKIoEARnj+zwFE8PmjgdODBmhLSDyKIQnUHb5mT7rlhid2dRz4RZKI/1
+         vm4AD/ORdZWtQjEHXa03hMC9KsTCZM+Vu+kDID2Vzbbo1Zy1tCzn9xoJLK9bGpIWQ0M3
+         X/Hvi9oD4cMfRkNHQ7PZvIQb4wcnbP5lJsan/SoaGrXV6dn7us3t/odsNRmWZL50gXrH
+         tXos9ISMyX0/UUW/opRzLItk0oDWUNvFsoT4dfNaFMLJ19g29AeyElaIe2MR1hrrlcVG
+         VX5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :reply-to:references:mime-version:content-disposition:in-reply-to;
+        bh=UOqLQQmsoCxqiYwODGOxvwScag2+ijPfJja63uXJkvM=;
+        b=YjQa/OCv5374ugRtSavGSg4napRZ+R8w1mZCMf1GlOKAX1HqqGmKzaGgAP6yuaQZ84
+         NLc4/HNkE7lcI4qFBnu2CHCYKyCDRuFG/3s3b1mc5QM2qPj1KeOrA0RK28XSEr8kpEhR
+         uJh4MuKQMWSiAaEdhpBtJ+0xudJwL7b274TxG+vFTJ+3+t63n3hEd65t582NWX/FRsRg
+         n89gIhHedEG1lKIEvmcIcNNZ13BBovkluzy+zLG5VOi322HIETfiga/XUt1Vv4nJDTkz
+         qxL9gGE5N2hRywsxm1STMzpLik7VIrzFoQLjJAz6ebKqgmJEtb1UhS+Clgaat9vZHStM
+         fXGA==
+X-Gm-Message-State: AOAM532GWQGENa4VIQL0ajb7t0MT5/Q/H+RaKo7TeCdiPpJWewSNaSbK
+        faNajjUkyFhR/zCdGYXDBg==
+X-Google-Smtp-Source: ABdhPJzogjBWC3Po3+HvkfTYzT7IZOBBIi2tfx6vpj5GURwwDUR39OAgLN+pokD5M0qf1LT+kBQ+bQ==
+X-Received: by 2002:aca:281a:: with SMTP id 26mr8138043oix.142.1623870152808;
+        Wed, 16 Jun 2021 12:02:32 -0700 (PDT)
+Received: from serve.minyard.net ([47.184.156.158])
+        by smtp.gmail.com with ESMTPSA id p9sm694118otl.64.2021.06.16.12.02.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Jun 2021 12:02:31 -0700 (PDT)
+Sender: Corey Minyard <tcminyard@gmail.com>
+Received: from minyard.net (unknown [IPv6:2001:470:b8f6:1b:742a:6ad4:30ea:e332])
+        by serve.minyard.net (Postfix) with ESMTPSA id B2FF61800E7;
+        Wed, 16 Jun 2021 19:02:30 +0000 (UTC)
+Date:   Wed, 16 Jun 2021 14:02:29 -0500
+From:   Corey Minyard <minyard@acm.org>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>,
+        openipmi-developer@lists.sourceforge.net,
+        linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] ipmi: kcs_bmc_aspeed: Fix less than zero
+ comparison of a unsigned int
+Message-ID: <20210616190229.GG2921206@minyard.net>
+Reply-To: minyard@acm.org
+References: <20210616162913.15259-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210616162913.15259-1-colin.king@canonical.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-'pci_alloc_consistent()' and 'pci_zalloc_consistent()' are about to be
-removed from the kernel.
-So, there is no point any more for searching for these identifiers.
+On Wed, Jun 16, 2021 at 05:29:13PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The comparisons of the unsigned int hw_type to less than zero always
+> false because it is unsigned. Fix this by using an int for the
+> assignment and less than zero check.
 
-Simplify the script.
+Thanks, I added this to my tree.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- scripts/coccinelle/api/alloc/alloc_cast.cocci | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+-corey
 
-diff --git a/scripts/coccinelle/api/alloc/alloc_cast.cocci b/scripts/coccinelle/api/alloc/alloc_cast.cocci
-index f6f0ccdb6409..ef8a97bb5f38 100644
---- a/scripts/coccinelle/api/alloc/alloc_cast.cocci
-+++ b/scripts/coccinelle/api/alloc/alloc_cast.cocci
-@@ -34,8 +34,8 @@ type T;
-   \(kmalloc\|kzalloc\|kcalloc\|kmem_cache_alloc\|kmem_cache_zalloc\|
-    kmem_cache_alloc_node\|kmalloc_node\|kzalloc_node\|vmalloc\|vzalloc\|
-    dma_alloc_coherent\|devm_kmalloc\|devm_kzalloc\|
--   kvmalloc\|kvzalloc\|kvmalloc_node\|kvzalloc_node\|pci_alloc_consistent\|
--   pci_zalloc_consistent\|kmem_alloc\|kmem_zalloc\|kmem_zone_alloc\|
-+   kvmalloc\|kvzalloc\|kvmalloc_node\|kvzalloc_node\|
-+   kmem_alloc\|kmem_zalloc\|kmem_zone_alloc\|
-    kmem_zone_zalloc\|vmalloc_node\|vzalloc_node\)(...)
- 
- //----------------------------------------------------------
-@@ -57,8 +57,8 @@ type r1.T;
-   \(kmalloc\|kzalloc\|kcalloc\|kmem_cache_alloc\|kmem_cache_zalloc\|
-    kmem_cache_alloc_node\|kmalloc_node\|kzalloc_node\|vmalloc\|vzalloc\|
-    dma_alloc_coherent\|devm_kmalloc\|devm_kzalloc\|
--   kvmalloc\|kvzalloc\|kvmalloc_node\|kvzalloc_node\|pci_alloc_consistent\|
--   pci_zalloc_consistent\|kmem_alloc\|kmem_zalloc\|kmem_zone_alloc\|
-+   kvmalloc\|kvzalloc\|kvmalloc_node\|kvzalloc_node\|
-+   kmem_alloc\|kmem_zalloc\|kmem_zone_alloc\|
-    kmem_zone_zalloc\|vmalloc_node\|vzalloc_node\)(...)
- 
- //----------------------------------------------------------
-@@ -80,8 +80,8 @@ type r1.T;
-   \(kmalloc\|kzalloc\|kcalloc\|kmem_cache_alloc\|kmem_cache_zalloc\|
-    kmem_cache_alloc_node\|kmalloc_node\|kzalloc_node\|vmalloc\|vzalloc\|
-    dma_alloc_coherent\|devm_kmalloc\|devm_kzalloc\|
--   kvmalloc\|kvzalloc\|kvmalloc_node\|kvzalloc_node\|pci_alloc_consistent\|
--   pci_zalloc_consistent\|kmem_alloc\|kmem_zalloc\|kmem_zone_alloc\|
-+   kvmalloc\|kvzalloc\|kvmalloc_node\|kvzalloc_node\|
-+   kmem_alloc\|kmem_zalloc\|kmem_zone_alloc\|
-    kmem_zone_zalloc\|vmalloc_node\|vzalloc_node\)(...)
- 
- //----------------------------------------------------------
-@@ -97,8 +97,8 @@ position p;
-   \(kmalloc\|kzalloc\|kcalloc\|kmem_cache_alloc\|kmem_cache_zalloc\|
-    kmem_cache_alloc_node\|kmalloc_node\|kzalloc_node\|vmalloc\|vzalloc\|
-    dma_alloc_coherent\|devm_kmalloc\|devm_kzalloc\|
--   kvmalloc\|kvzalloc\|kvmalloc_node\|kvzalloc_node\|pci_alloc_consistent\|
--   pci_zalloc_consistent\|kmem_alloc\|kmem_zalloc\|kmem_zone_alloc\|
-+   kvmalloc\|kvzalloc\|kvmalloc_node\|kvzalloc_node\|
-+   kmem_alloc\|kmem_zalloc\|kmem_zone_alloc\|
-    kmem_zone_zalloc\|vmalloc_node\|vzalloc_node\)(...)
- 
- @script:python depends on org@
--- 
-2.30.2
-
+> 
+> Addresses-Coverity: ("Unsigned compared against 0")
+> Fixes: 9d2df9a0ad80 ("ipmi: kcs_bmc_aspeed: Implement KCS SerIRQ configuration")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/char/ipmi/kcs_bmc_aspeed.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/char/ipmi/kcs_bmc_aspeed.c b/drivers/char/ipmi/kcs_bmc_aspeed.c
+> index 0401089f8895..92a37b33494c 100644
+> --- a/drivers/char/ipmi/kcs_bmc_aspeed.c
+> +++ b/drivers/char/ipmi/kcs_bmc_aspeed.c
+> @@ -301,13 +301,15 @@ static inline int aspeed_kcs_map_serirq_type(u32 dt_type)
+>  static int aspeed_kcs_config_upstream_irq(struct aspeed_kcs_bmc *priv, u32 id, u32 dt_type)
+>  {
+>  	unsigned int mask, val, hw_type;
+> +	int ret;
+>  
+>  	if (id > 15)
+>  		return -EINVAL;
+>  
+> -	hw_type = aspeed_kcs_map_serirq_type(dt_type);
+> -	if (hw_type < 0)
+> -		return hw_type;
+> +	ret = aspeed_kcs_map_serirq_type(dt_type);
+> +	if (ret < 0)
+> +		return ret;
+> +	hw_type = ret;
+>  
+>  	priv->upstream_irq.mode = aspeed_kcs_irq_serirq;
+>  	priv->upstream_irq.id = id;
+> -- 
+> 2.31.1
+> 
