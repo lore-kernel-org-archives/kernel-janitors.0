@@ -2,75 +2,96 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39175C48BE6
-	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Jun 2021 19:50:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BEADC48BE6
+	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Jun 2021 20:34:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1FF1D613BF
-	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Jun 2021 19:50:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 591CB613C1
+	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Jun 2021 20:34:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232990AbhFPTwQ (ORCPT
+        id S233522AbhFPUg4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 16 Jun 2021 15:52:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55176 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232968AbhFPTwN (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 16 Jun 2021 15:52:13 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id C2044613D8;
-        Wed, 16 Jun 2021 19:50:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1623873006;
-        bh=/vPuRinRAI0UX3EKBFeOHiRQsklNUdf6VkgcsIsyJ9Y=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=AN+i3NEJMvvlXChUziwWYaE62Owru/UoyQ/mEQllJMzbF8hBbLSJOqjLplDZByoLy
-         0nX74wfOtBiJVnRmoZSNQjBYWKd3dzcyBr+rf7O+rgb7X9H1c4oO1yDzx9BoTBv68+
-         sv6ycxNxD2XStqxG5P2PNSCOMolF4MLsEBGAxfq03t4pa3EczTxNM1/bQdEj9X5kmd
-         WWtfWHDLI0pAIFMf2nIZPLewCXJAeOh5xuIjfllzJ0o+0bK+R5orL2I8WXYXsjiENm
-         qIAaVaCHhnsbwJAfloYqB4b+KS3hIFNAyAxdoHvJoOIiW7OWad04jywO3NCaesGOXr
-         zgJMpv35c/Dxg==
-Content-Type: text/plain; charset="utf-8"
+        Wed, 16 Jun 2021 16:36:56 -0400
+Received: from smtp11.smtpout.orange.fr ([80.12.242.133]:27782 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233510AbhFPUgz (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 16 Jun 2021 16:36:55 -0400
+Received: from localhost.localdomain ([86.243.172.93])
+        by mwinf5d21 with ME
+        id Hwag2500A21Fzsu03wag3C; Wed, 16 Jun 2021 22:34:42 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Wed, 16 Jun 2021 22:34:42 +0200
+X-ME-IP: 86.243.172.93
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     wangzhou1@hisilicon.com, vkoul@kernel.org
+Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] dmaengine: hisi_dma: Remove some useless code
+Date:   Wed, 16 Jun 2021 22:34:38 +0200
+Message-Id: <4f8932e2d0d8d092bf60272511100030e013bc72.1623875508.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] mlxsw: spectrum_router: remove redundant continue statement
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <162387300676.13042.13822119163379917626.git-patchwork-notify@kernel.org>
-Date:   Wed, 16 Jun 2021 19:50:06 +0000
-References: <20210616130258.9779-1-colin.king@canonical.com>
-In-Reply-To: <20210616130258.9779-1-colin.king@canonical.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     jiri@nvidia.com, idosch@nvidia.com, davem@davemloft.net,
-        kuba@kernel.org, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+When using 'pcim_enable_device()', 'pci_alloc_irq_vectors()' is
+auto-magically a managed function.
 
-This patch was applied to netdev/net-next.git (refs/heads/master):
+It is useless (but harmless) to record an action to explicitly call
+'pci_free_irq_vectors()'.
 
-On Wed, 16 Jun 2021 14:02:58 +0100 you wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The continue statement at the end of a for-loop has no effect,
-> remove it.
-> 
-> Addresses-Coverity: ("Continue has no effect")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> 
-> [...]
+So keep things simple, comment why and how these resources are freed, axe
+some useless code and save some memory.
 
-Here is the summary with links:
-  - mlxsw: spectrum_router: remove redundant continue statement
-    https://git.kernel.org/netdev/net-next/c/fb0a1dacf2be
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/dma/hisi_dma.c | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
 
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+diff --git a/drivers/dma/hisi_dma.c b/drivers/dma/hisi_dma.c
+index a259ee010e9b..c855a0e4f9ff 100644
+--- a/drivers/dma/hisi_dma.c
++++ b/drivers/dma/hisi_dma.c
+@@ -133,11 +133,6 @@ static inline void hisi_dma_update_bit(void __iomem *addr, u32 pos, bool val)
+ 	writel_relaxed(tmp, addr);
+ }
+ 
+-static void hisi_dma_free_irq_vectors(void *data)
+-{
+-	pci_free_irq_vectors(data);
+-}
+-
+ static void hisi_dma_pause_dma(struct hisi_dma_dev *hdma_dev, u32 index,
+ 			       bool pause)
+ {
+@@ -544,6 +539,7 @@ static int hisi_dma_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	pci_set_drvdata(pdev, hdma_dev);
+ 	pci_set_master(pdev);
+ 
++	/* This will be freed by 'pcim_release()'. See 'pcim_enable_device()' */
+ 	ret = pci_alloc_irq_vectors(pdev, HISI_DMA_MSI_NUM, HISI_DMA_MSI_NUM,
+ 				    PCI_IRQ_MSI);
+ 	if (ret < 0) {
+@@ -551,10 +547,6 @@ static int hisi_dma_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 		return ret;
+ 	}
+ 
+-	ret = devm_add_action_or_reset(dev, hisi_dma_free_irq_vectors, pdev);
+-	if (ret)
+-		return ret;
+-
+ 	dma_dev = &hdma_dev->dma_dev;
+ 	dma_cap_set(DMA_MEMCPY, dma_dev->cap_mask);
+ 	dma_dev->device_free_chan_resources = hisi_dma_free_chan_resources;
+-- 
+2.30.2
 
