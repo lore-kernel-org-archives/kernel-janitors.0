@@ -2,109 +2,69 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0897BC48BE5
-	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Jun 2021 08:21:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF816C48BE5
+	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Jun 2021 13:03:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D2C476115C
-	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Jun 2021 08:21:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A31A861209
+	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Jun 2021 13:03:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232083AbhFPIYC (ORCPT
+        id S233176AbhFPNFJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 16 Jun 2021 04:24:02 -0400
-Received: from new2-smtp.messagingengine.com ([66.111.4.224]:36523 "EHLO
-        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231727AbhFPIYB (ORCPT
+        Wed, 16 Jun 2021 09:05:09 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:38871 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232223AbhFPNFI (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 16 Jun 2021 04:24:01 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 5E96158044E;
-        Wed, 16 Jun 2021 04:21:55 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Wed, 16 Jun 2021 04:21:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:content-transfer-encoding:in-reply-to; s=fm3; bh=o
-        z1afSZtH4HEgY3zg42iH1DY//zDW8wKRe4vHaTi0y0=; b=lN5SUX1uagJ28V30k
-        RC1tmY6DI9XAlPzOqVSgDgaMxG/WoeiuBWcBHIdcB1CXm3e4bqlqrWI/tgyNvqQY
-        yDt1jRi5zrXeechHiBDfSvLWt5RFInLKRWIVKMadud5QfJdauxI4/nL7swM22SIf
-        twheS0P6OfgJsj5/inWXrlarPgGVHEDeZG8kyeel1AXPSPpYaDW8zqRMDXFY8ziX
-        WHcF1E6/pISk7f1Z3cPoMl5dqVwmltX/ND8byzqGhrBMJMzjva9KD2tCSBvA8nfq
-        HJBX+raIEVE+do2fz8IMPl9i4JdqzdtlNe79s7m90CLs19qunnb5tI9S1n2jo/O+
-        Qf2JA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=oz1afSZtH4HEgY3zg42iH1DY//zDW8wKRe4vHaTi0
-        y0=; b=bmm63I7VxeIVqq+/FRSF68A0XI3F7eCYsCEWYOYvN1IcHMho3Bdb6+tvM
-        e7SKSNiRkCRWKx6dobT/WP/YAa/xq65u/NtfnnVMYZ+mnRTbV2Gx14tWEhF7j8yF
-        EEygGeX03XWAv7RVxGALJS1arH8DAcyzqkdTpwDhhlHOaD7kLh6d+i9BPyav4Mzf
-        jWBujeIa9fdV2xmFhMXQb/ZK+wYvHHVQTRugeJkLmt00uNtcsF3JWKZBmWIDSaYY
-        ha+Lj/10tSQ6bJeHQ+NlGmDHfqzXw5nSIYljfpr0K6AnLAF5dnbdBjQlL0Qwcsbv
-        5TDTJJyIPJmabmRS9GZYJJWQ1fl2w==
-X-ME-Sender: <xms:obTJYJOBnmrghJOugX0l7MBAFgaXxK24GMDyHJDS5x7AqgI2oYQsrQ>
-    <xme:obTJYL9ZYQPVBcCEYKzC09vp6b72sKxTvr1EJpQG27SYuu22iiqXyr32n20BZGSV1
-    0cyGdsTzK1Vye7DNEQ>
-X-ME-Received: <xmr:obTJYIQoiTyb_IzglrDMyDVN10hTgNvkwd0EdPYKBhREetI-NuAbsVZEE8LInqvQLOwGRZhl4-D7T5Piw4oqTIbi60qx6ZmCOzGm>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrfedvledgtdefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtugfgjgesthhqredttddtvdenucfhrhhomhepofgrgihi
-    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
-    htthgvrhhnpefgjeettdejgffgffdvteeutdehtdehgeehueetkeefgefhtdetjeekledu
-    gedvudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    hmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:obTJYFtEYBd5JB3YPDZATxYUAH4HBhQzopmQFc2JT6yom3hYs_AKhg>
-    <xmx:obTJYBehjpvFtceQCmkSwIDKUK91vq3Ur-_q277EsSdqEljlrGN9fw>
-    <xmx:obTJYB3dj1QPCy50MWLCnS4Dt_uVahxFGaGwFY93tEPsoEMJFzD3FA>
-    <xmx:o7TJYP26NQO9-XFDXfXaF0wuXvyOuehZel8F6E58MuvraDMDZVh_PQ>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 16 Jun 2021 04:21:53 -0400 (EDT)
-Date:   Wed, 16 Jun 2021 10:21:51 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Wei Yongjun <weiyongjun1@huawei.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Cheng-Yi Chiang <cychiang@chromium.org>,
-        Stephan Gerhold <stephan@gerhold.net>,
-        Shengjiu Wang <shengjiu.wang@nxp.com>,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
-Subject: Re: [PATCH -next] ASoC: hdmi-codec: Make symbol
- 'hdmi_codec_controls' static
-Message-ID: <20210616082151.mrcbswfpponkleve@gilmour>
-References: <20210615172156.2840576-1-weiyongjun1@huawei.com>
+        Wed, 16 Jun 2021 09:05:08 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <colin.king@canonical.com>)
+        id 1ltVC6-0002IQ-K6; Wed, 16 Jun 2021 13:02:58 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Jiri Pirko <jiri@nvidia.com>, Ido Schimmel <idosch@nvidia.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] mlxsw: spectrum_router: remove redundant continue statement
+Date:   Wed, 16 Jun 2021 14:02:58 +0100
+Message-Id: <20210616130258.9779-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210615172156.2840576-1-weiyongjun1@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Jun 15, 2021 at 05:21:56PM +0000, Wei Yongjun wrote:
-> The sparse tool complains as follows:
->=20
-> sound/soc/codecs/hdmi-codec.c:750:25: warning:
->  symbol 'hdmi_codec_controls' was not declared. Should it be static?
->=20
-> This symbol is not used outside of hdmi-codec.c, so marks it static.
->=20
-> Fixes: 366b45b97448 ("ASoC: hdmi-codec: Rework to support more controls")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Maxime Ripard <maxime@cerno.tech>
+The continue statement at the end of a for-loop has no effect,
+remove it.
 
-Thanks!
-Maxime
+Addresses-Coverity: ("Continue has no effect")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c
+index bc47ed766878..7e221ef01437 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c
+@@ -5407,7 +5407,6 @@ mlxsw_sp_rt6_nexthop(struct mlxsw_sp_nexthop_group *nh_grp,
+ 		    ipv6_addr_equal((const struct in6_addr *) &nh->gw_addr,
+ 				    &rt->fib6_nh->fib_nh_gw6))
+ 			return nh;
+-		continue;
+ 	}
+ 
+ 	return NULL;
+-- 
+2.31.1
+
