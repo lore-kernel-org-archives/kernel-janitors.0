@@ -4,72 +4,69 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6A19C48BE8
-	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Jun 2021 17:16:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 463E2C48BE5
+	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Jun 2021 18:43:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 796A96109D
-	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Jun 2021 17:16:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D1D4613EF
+	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Jun 2021 18:43:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230411AbhFPRSb (ORCPT
+        id S232020AbhFPSpt (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 16 Jun 2021 13:18:31 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:48832 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230167AbhFPRSb (ORCPT
+        Wed, 16 Jun 2021 14:45:49 -0400
+Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:47312 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232016AbhFPSps (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 16 Jun 2021 13:18:31 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <colin.king@canonical.com>)
-        id 1ltZ9J-0007JM-HA; Wed, 16 Jun 2021 17:16:21 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     James Smart <james.smart@broadcom.com>,
-        Ram Vegesna <ram.vegesna@broadcom.com>,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Hannes Reinecke <hare@suse.de>, linux-scsi@vger.kernel.org,
-        target-devel@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] scsi: elx: efct: remove redundant initialization of variable lun
-Date:   Wed, 16 Jun 2021 18:16:21 +0100
-Message-Id: <20210616171621.16176-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.31.1
+        Wed, 16 Jun 2021 14:45:48 -0400
+Received: from localhost.localdomain ([86.243.172.93])
+        by mwinf5d88 with ME
+        id Huje2500H21Fzsu03ujeaS; Wed, 16 Jun 2021 20:43:40 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Wed, 16 Jun 2021 20:43:40 +0200
+X-ME-IP: 86.243.172.93
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     ajit.khaparde@broadcom.com, sriharsha.basavapatna@broadcom.com,
+        somnath.kotur@broadcom.com, davem@davemloft.net, kuba@kernel.org,
+        sathya.perla@emulex.com
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] be2net: Fix an error handling path in 'be_probe()'
+Date:   Wed, 16 Jun 2021 20:43:37 +0200
+Message-Id: <971dd676b5f6a9986c5b4b0c85cf14fa667d53a2.1623868840.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+If an error occurs after a 'pci_enable_pcie_error_reporting()' call, it
+must be undone by a corresponding 'pci_disable_pcie_error_reporting()'
+call, as already done in the remove function.
 
-The variable lun is being initialized with a value that is never
-read, it is being updated later on. The assignment is redundant and
-can be removed.
-
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: d6b6d9877878 ("be2net: use PCIe AER capability")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/scsi/elx/efct/efct_unsol.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/emulex/benet/be_main.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/scsi/elx/efct/efct_unsol.c b/drivers/scsi/elx/efct/efct_unsol.c
-index a9384c9acfde..e6addab66a60 100644
---- a/drivers/scsi/elx/efct/efct_unsol.c
-+++ b/drivers/scsi/elx/efct/efct_unsol.c
-@@ -342,7 +342,7 @@ efct_dispatch_fcp_cmd(struct efct_node *node, struct efc_hw_sequence *seq)
- 	struct fc_frame_header *fchdr = seq->header->dma.virt;
- 	struct fcp_cmnd	*cmnd = NULL;
- 	struct efct_io *io = NULL;
--	u32 lun = U32_MAX;
-+	u32 lun;
- 
- 	if (!seq->payload) {
- 		efc_log_err(efct, "Sequence payload is NULL.\n");
+diff --git a/drivers/net/ethernet/emulex/benet/be_main.c b/drivers/net/ethernet/emulex/benet/be_main.c
+index b6eba29d8e99..7968568bbe21 100644
+--- a/drivers/net/ethernet/emulex/benet/be_main.c
++++ b/drivers/net/ethernet/emulex/benet/be_main.c
+@@ -5897,6 +5897,7 @@ static int be_probe(struct pci_dev *pdev, const struct pci_device_id *pdev_id)
+ unmap_bars:
+ 	be_unmap_pci_bars(adapter);
+ free_netdev:
++	pci_disable_pcie_error_reporting(pdev);
+ 	free_netdev(netdev);
+ rel_reg:
+ 	pci_release_regions(pdev);
 -- 
-2.31.1
+2.30.2
 
