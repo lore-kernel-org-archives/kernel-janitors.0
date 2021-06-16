@@ -2,96 +2,101 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BEADC48BE6
-	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Jun 2021 20:34:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31DCAC48BE5
+	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Jun 2021 23:04:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 591CB613C1
-	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Jun 2021 20:34:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 026C5613C2
+	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Jun 2021 23:04:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233522AbhFPUg4 (ORCPT
+        id S234212AbhFPXGH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 16 Jun 2021 16:36:56 -0400
-Received: from smtp11.smtpout.orange.fr ([80.12.242.133]:27782 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233510AbhFPUgz (ORCPT
+        Wed, 16 Jun 2021 19:06:07 -0400
+Received: from wout5-smtp.messagingengine.com ([64.147.123.21]:60635 "EHLO
+        wout5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231846AbhFPXGH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 16 Jun 2021 16:36:55 -0400
-Received: from localhost.localdomain ([86.243.172.93])
-        by mwinf5d21 with ME
-        id Hwag2500A21Fzsu03wag3C; Wed, 16 Jun 2021 22:34:42 +0200
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 16 Jun 2021 22:34:42 +0200
-X-ME-IP: 86.243.172.93
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     wangzhou1@hisilicon.com, vkoul@kernel.org
-Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] dmaengine: hisi_dma: Remove some useless code
-Date:   Wed, 16 Jun 2021 22:34:38 +0200
-Message-Id: <4f8932e2d0d8d092bf60272511100030e013bc72.1623875508.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 16 Jun 2021 19:06:07 -0400
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.west.internal (Postfix) with ESMTP id E563819B7;
+        Wed, 16 Jun 2021 19:03:59 -0400 (EDT)
+Received: from imap2 ([10.202.2.52])
+  by compute3.internal (MEProxy); Wed, 16 Jun 2021 19:04:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
+        mime-version:message-id:in-reply-to:references:date:from:to:cc
+        :subject:content-type; s=fm3; bh=PO02j9SYy4Fuys7DY1CucmNO5PH1IkV
+        Pa73qEXnyVUk=; b=YuogiRdx2QXF1ySvr2xrBPfLQns/DMRgUb9Y/wZf4OHqi5g
+        zwNoGKiFQ2hYUmNYRa8KHKtOXrT2cPdDD0AxzEfv7XLoAMBc+9nHsSIJhz9CXilM
+        GhwM9Qg2Ssbo4mdZvwIweD1QVcQ5MIJpDWxdMPgdFemBBl/XZUBF+A8KXkj0eJpk
+        pJSd+WN6Vm2xoNPkTsNDCP9Q7jjyItBY3C0ZKu5maBGV+1H1n2crdI0BGwkzFP+x
+        OJIwPqQzQYXK0Ax6JxcSGLjZ4acHN1Q6gGu/lHR/0M3v70TQTUkR5KcxgPSkeMJg
+        H+2dVZdal1BSXbnOSrTz9vJqYihW9bhupa0VAYw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=PO02j9
+        SYy4Fuys7DY1CucmNO5PH1IkVPa73qEXnyVUk=; b=b5PnAMLVWSDKdbEo8EWUN8
+        V+8i8a1QdMNW4fWXRIXlWsfVwLiVhrOWCPnO2bE8w0phO3HnQF4ah3UQj70xyhKe
+        B23XpcduqyABKgba3swsYDCls+vi1bbxTRQ6dYbwgnncxKAG5mjHRulJJUXTHInn
+        l5g3ggi68Kr1KcxRcRReuBk4UxjY6tcCBl/DX+rSfIPthCL1gtb02+MhjrEtjVsH
+        rPLZ+0Y1VeLarLAFFNvLjVcMOBw94bOmzt0zRcKBNe4/Wus1VbF+LgUgOI/4LPYW
+        lzwRex7Ph5w8oRKeDT2p3F/D+iR6IyEzsyAsbJ4UZDELZaiOz+HCb73Ctn4Ym5zg
+        ==
+X-ME-Sender: <xms:XoPKYBJpH2jtt7pDG71yvrzoJd4nhGdpOYF9Ow4bI_UvJeFbkgJ6fw>
+    <xme:XoPKYNIEVE4GnGSjYKQ3v2ZRxEhDmjrW5qUMHAIlNWMC27b7FG8O0y1DjDekBLLU2
+    vtm86RWEJggeGUtBA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrfeeftddgudegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvffutgesthdtredtreerjeenucfhrhhomhepfdetnhgu
+    rhgvficulfgvfhhfvghrhidfuceorghnughrvgifsegrjhdrihgurdgruheqnecuggftrf
+    grthhtvghrnhepuddttdekueeggedvtddtueekiedutdfguedutdefieeuteefieelteet
+    vddthfeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    eprghnughrvgifsegrjhdrihgurdgruh
+X-ME-Proxy: <xmx:XoPKYJsRE1vyMZI2WKvrt9dNizdy3lKOiAYzapsHGXKgb0Yd2wZGMQ>
+    <xmx:XoPKYCYtt9IBBtNCfnITaXWBEMLsM930c_RWAeuFmmMDSShT0Rx2sQ>
+    <xmx:XoPKYIYh2hk82XCAXK0sRpJ4p2HimScYIdb49pqqLMvj_Q-lSSHn7Q>
+    <xmx:X4PKYHz1pVOmPlTrK-xyOMUnlzcEgUkIkMzYHBwunJYpOiiCIjI6pQ>
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id CAA02A00079; Wed, 16 Jun 2021 19:03:58 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.5.0-alpha0-526-gf020ecf851-fm-20210616.001-gf020ecf8
+Mime-Version: 1.0
+Message-Id: <9902c945-4651-4023-bede-6833392b3811@www.fastmail.com>
+In-Reply-To: <20210616162913.15259-1-colin.king@canonical.com>
+References: <20210616162913.15259-1-colin.king@canonical.com>
+Date:   Thu, 17 Jun 2021 08:33:38 +0930
+From:   "Andrew Jeffery" <andrew@aj.id.au>
+To:     "Colin King" <colin.king@canonical.com>,
+        "Corey Minyard" <minyard@acm.org>, "Joel Stanley" <joel@jms.id.au>,
+        openipmi-developer@lists.sourceforge.net,
+        linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: =?UTF-8?Q?Re:_[PATCH][next]_ipmi:_kcs=5Fbmc=5Faspeed:_Fix_less_than_zero?=
+ =?UTF-8?Q?_comparison_of_a_unsigned_int?=
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-When using 'pcim_enable_device()', 'pci_alloc_irq_vectors()' is
-auto-magically a managed function.
 
-It is useless (but harmless) to record an action to explicitly call
-'pci_free_irq_vectors()'.
 
-So keep things simple, comment why and how these resources are freed, axe
-some useless code and save some memory.
+On Thu, 17 Jun 2021, at 01:59, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The comparisons of the unsigned int hw_type to less than zero always
+> false because it is unsigned. Fix this by using an int for the
+> assignment and less than zero check.
+> 
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/dma/hisi_dma.c | 10 +---------
- 1 file changed, 1 insertion(+), 9 deletions(-)
+> Addresses-Coverity: ("Unsigned compared against 0")
+> Fixes: 9d2df9a0ad80 ("ipmi: kcs_bmc_aspeed: Implement KCS SerIRQ configuration")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-diff --git a/drivers/dma/hisi_dma.c b/drivers/dma/hisi_dma.c
-index a259ee010e9b..c855a0e4f9ff 100644
---- a/drivers/dma/hisi_dma.c
-+++ b/drivers/dma/hisi_dma.c
-@@ -133,11 +133,6 @@ static inline void hisi_dma_update_bit(void __iomem *addr, u32 pos, bool val)
- 	writel_relaxed(tmp, addr);
- }
- 
--static void hisi_dma_free_irq_vectors(void *data)
--{
--	pci_free_irq_vectors(data);
--}
--
- static void hisi_dma_pause_dma(struct hisi_dma_dev *hdma_dev, u32 index,
- 			       bool pause)
- {
-@@ -544,6 +539,7 @@ static int hisi_dma_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 	pci_set_drvdata(pdev, hdma_dev);
- 	pci_set_master(pdev);
- 
-+	/* This will be freed by 'pcim_release()'. See 'pcim_enable_device()' */
- 	ret = pci_alloc_irq_vectors(pdev, HISI_DMA_MSI_NUM, HISI_DMA_MSI_NUM,
- 				    PCI_IRQ_MSI);
- 	if (ret < 0) {
-@@ -551,10 +547,6 @@ static int hisi_dma_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 		return ret;
- 	}
- 
--	ret = devm_add_action_or_reset(dev, hisi_dma_free_irq_vectors, pdev);
--	if (ret)
--		return ret;
--
- 	dma_dev = &hdma_dev->dma_dev;
- 	dma_cap_set(DMA_MEMCPY, dma_dev->cap_mask);
- 	dma_dev->device_free_chan_resources = hisi_dma_free_chan_resources;
--- 
-2.30.2
+Thanks for catching that.
 
+Andrew
