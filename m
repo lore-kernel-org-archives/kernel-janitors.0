@@ -5,34 +5,37 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9555C48BE5
-	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Jun 2021 13:29:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 251D7C48BE6
+	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Jun 2021 14:19:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8829761241
-	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Jun 2021 13:29:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA90261076
+	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Jun 2021 14:19:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233038AbhFPNcD (ORCPT
+        id S233679AbhFPOWD (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 16 Jun 2021 09:32:03 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:40812 "EHLO
+        Wed, 16 Jun 2021 10:22:03 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:42452 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230187AbhFPNcC (ORCPT
+        with ESMTP id S233208AbhFPOWC (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 16 Jun 2021 09:32:02 -0400
+        Wed, 16 Jun 2021 10:22:02 -0400
 Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
         (Exim 4.93)
         (envelope-from <colin.king@canonical.com>)
-        id 1ltVc9-000528-DE; Wed, 16 Jun 2021 13:29:53 +0000
+        id 1ltWOV-0000u0-0N; Wed, 16 Jun 2021 14:19:51 +0000
 From:   Colin King <colin.king@canonical.com>
-To:     Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com
+To:     Saeed Mahameed <saeedm@nvidia.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] dm: remove redundant continue statement
-Date:   Wed, 16 Jun 2021 14:29:53 +0100
-Message-Id: <20210616132953.11035-1-colin.king@canonical.com>
+Subject: [PATCH][next] net/mlx5: Fix spelling mistake "enught" -> "enough"
+Date:   Wed, 16 Jun 2021 15:19:50 +0100
+Message-Id: <20210616141950.12389-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -43,27 +46,26 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The continue statement at the end of a for-loop has no effect,
-remove it.
+There is a spelling mistake in a mlx5_core_err error message. Fix it.
 
-Addresses-Coverity: ("Continue has no effect")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/md/dm-ps-io-affinity.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/net/ethernet/mellanox/mlx5/core/pci_irq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/md/dm-ps-io-affinity.c b/drivers/md/dm-ps-io-affinity.c
-index 077655cd4fae..cb8e83bfb1a7 100644
---- a/drivers/md/dm-ps-io-affinity.c
-+++ b/drivers/md/dm-ps-io-affinity.c
-@@ -91,7 +91,6 @@ static int ioa_add_path(struct path_selector *ps, struct dm_path *path,
- 		cpumask_set_cpu(cpu, s->path_mask);
- 		s->path_map[cpu] = pi;
- 		refcount_inc(&pi->refcount);
--		continue;
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/pci_irq.c b/drivers/net/ethernet/mellanox/mlx5/core/pci_irq.c
+index 27de8da8edf7..b25f764daa08 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/pci_irq.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/pci_irq.c
+@@ -479,7 +479,7 @@ static int irq_pools_init(struct mlx5_core_dev *dev, int sf_vec, int pf_vec)
+ 	if (!mlx5_sf_max_functions(dev))
+ 		return 0;
+ 	if (sf_vec < MLX5_IRQ_VEC_COMP_BASE_SF) {
+-		mlx5_core_err(dev, "Not enught IRQs for SFs. SF may run at lower performance\n");
++		mlx5_core_err(dev, "Not enough IRQs for SFs. SF may run at lower performance\n");
+ 		return 0;
  	}
  
- 	if (refcount_dec_and_test(&pi->refcount)) {
 -- 
 2.31.1
 
