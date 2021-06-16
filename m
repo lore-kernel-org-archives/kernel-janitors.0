@@ -2,128 +2,78 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A790EC48BE5
-	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Jun 2021 19:02:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1DBBC48BE5
+	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Jun 2021 19:10:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7A9BC61245
-	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Jun 2021 19:02:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A18E1613CB
+	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Jun 2021 19:10:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232250AbhFPTEk (ORCPT
+        id S232349AbhFPTMK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 16 Jun 2021 15:04:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58452 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232246AbhFPTEj (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 16 Jun 2021 15:04:39 -0400
-Received: from mail-oi1-x22e.google.com (mail-oi1-x22e.google.com [IPv6:2607:f8b0:4864:20::22e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83D53C061574;
-        Wed, 16 Jun 2021 12:02:33 -0700 (PDT)
-Received: by mail-oi1-x22e.google.com with SMTP id x196so3592574oif.10;
-        Wed, 16 Jun 2021 12:02:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:reply-to:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=UOqLQQmsoCxqiYwODGOxvwScag2+ijPfJja63uXJkvM=;
-        b=QKlM7nFUoB6J9K6LCVtW4wLxrfvSkz/9/nDxNyxDziZoJE7UBptRchMsuVPPsv/Hh6
-         0hoMsU+kE/siiKIoEARnj+zwFE8PmjgdODBmhLSDyKIQnUHb5mT7rlhid2dRz4RZKI/1
-         vm4AD/ORdZWtQjEHXa03hMC9KsTCZM+Vu+kDID2Vzbbo1Zy1tCzn9xoJLK9bGpIWQ0M3
-         X/Hvi9oD4cMfRkNHQ7PZvIQb4wcnbP5lJsan/SoaGrXV6dn7us3t/odsNRmWZL50gXrH
-         tXos9ISMyX0/UUW/opRzLItk0oDWUNvFsoT4dfNaFMLJ19g29AeyElaIe2MR1hrrlcVG
-         VX5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :reply-to:references:mime-version:content-disposition:in-reply-to;
-        bh=UOqLQQmsoCxqiYwODGOxvwScag2+ijPfJja63uXJkvM=;
-        b=YjQa/OCv5374ugRtSavGSg4napRZ+R8w1mZCMf1GlOKAX1HqqGmKzaGgAP6yuaQZ84
-         NLc4/HNkE7lcI4qFBnu2CHCYKyCDRuFG/3s3b1mc5QM2qPj1KeOrA0RK28XSEr8kpEhR
-         uJh4MuKQMWSiAaEdhpBtJ+0xudJwL7b274TxG+vFTJ+3+t63n3hEd65t582NWX/FRsRg
-         n89gIhHedEG1lKIEvmcIcNNZ13BBovkluzy+zLG5VOi322HIETfiga/XUt1Vv4nJDTkz
-         qxL9gGE5N2hRywsxm1STMzpLik7VIrzFoQLjJAz6ebKqgmJEtb1UhS+Clgaat9vZHStM
-         fXGA==
-X-Gm-Message-State: AOAM532GWQGENa4VIQL0ajb7t0MT5/Q/H+RaKo7TeCdiPpJWewSNaSbK
-        faNajjUkyFhR/zCdGYXDBg==
-X-Google-Smtp-Source: ABdhPJzogjBWC3Po3+HvkfTYzT7IZOBBIi2tfx6vpj5GURwwDUR39OAgLN+pokD5M0qf1LT+kBQ+bQ==
-X-Received: by 2002:aca:281a:: with SMTP id 26mr8138043oix.142.1623870152808;
-        Wed, 16 Jun 2021 12:02:32 -0700 (PDT)
-Received: from serve.minyard.net ([47.184.156.158])
-        by smtp.gmail.com with ESMTPSA id p9sm694118otl.64.2021.06.16.12.02.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jun 2021 12:02:31 -0700 (PDT)
-Sender: Corey Minyard <tcminyard@gmail.com>
-Received: from minyard.net (unknown [IPv6:2001:470:b8f6:1b:742a:6ad4:30ea:e332])
-        by serve.minyard.net (Postfix) with ESMTPSA id B2FF61800E7;
-        Wed, 16 Jun 2021 19:02:30 +0000 (UTC)
-Date:   Wed, 16 Jun 2021 14:02:29 -0500
-From:   Corey Minyard <minyard@acm.org>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>,
-        openipmi-developer@lists.sourceforge.net,
-        linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] ipmi: kcs_bmc_aspeed: Fix less than zero
- comparison of a unsigned int
-Message-ID: <20210616190229.GG2921206@minyard.net>
-Reply-To: minyard@acm.org
-References: <20210616162913.15259-1-colin.king@canonical.com>
+        Wed, 16 Jun 2021 15:12:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48380 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232296AbhFPTMJ (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 16 Jun 2021 15:12:09 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPS id 5AFCC611CE;
+        Wed, 16 Jun 2021 19:10:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1623870603;
+        bh=yzlIDihKnNvjknOPU2lHi5fsnt7+4ZwDFrQLheoFmTM=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=BK7Xv0RRI5lUngVut4W+X4ZaK14b3J/PL77EM6Of+bwp8+3ItpIsv/1/GG5bXteDY
+         c74CH+H6OXy1rFXc9UQkQs9Fu/qYRh1gBEDP050wgDUyufzNo8ZGEHDIgzO3pXaOrK
+         fk4MyVp1xgRETvHE/6FUbqc2/0EbvVEOEQPZlP6a3yh1UfBgSzJAa9LVzrxQ10ScJO
+         rIvfAN2aRyKiqPLX+fwODBZCzIlC7fNily+7UmE6N950kMukvZSc8Me9jJkg3BBRbz
+         d9C5BYnxj+InjpZKto0du/AiHCMITx6kLBFnkdvB+ZoagK9JfnpQAYXax6pjGf5nI/
+         xNpilpvP/MoXw==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210616162913.15259-1-colin.king@canonical.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] net: stmmac: Fix error return code in
+ ingenic_mac_probe()
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <162387060328.23352.18155798235650955751.git-patchwork-notify@kernel.org>
+Date:   Wed, 16 Jun 2021 19:10:03 +0000
+References: <20210615172155.2839938-1-weiyongjun1@huawei.com>
+In-Reply-To: <20210615172155.2839938-1-weiyongjun1@huawei.com>
+To:     Wei Yongjun <weiyongjun1@huawei.com>
+Cc:     zhouyanjie@wanyeetech.com, peppe.cavallaro@st.com,
+        alexandre.torgue@foss.st.com, joabreu@synopsys.com,
+        davem@davemloft.net, kuba@kernel.org, mcoquelin.stm32@gmail.com,
+        netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org,
+        kernel-janitors@vger.kernel.org, hulkci@huawei.com
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Jun 16, 2021 at 05:29:13PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The comparisons of the unsigned int hw_type to less than zero always
-> false because it is unsigned. Fix this by using an int for the
-> assignment and less than zero check.
+Hello:
 
-Thanks, I added this to my tree.
+This patch was applied to netdev/net-next.git (refs/heads/master):
 
--corey
+On Tue, 15 Jun 2021 17:21:55 +0000 you wrote:
+> Fix to return a negative error code from the error handling
+> case instead of 0, as done elsewhere in this function.
+> 
+> Fixes: 2bb4b98b60d7 ("net: stmmac: Add Ingenic SoCs MAC support.")
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> 
+> [...]
 
-> 
-> Addresses-Coverity: ("Unsigned compared against 0")
-> Fixes: 9d2df9a0ad80 ("ipmi: kcs_bmc_aspeed: Implement KCS SerIRQ configuration")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/char/ipmi/kcs_bmc_aspeed.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/char/ipmi/kcs_bmc_aspeed.c b/drivers/char/ipmi/kcs_bmc_aspeed.c
-> index 0401089f8895..92a37b33494c 100644
-> --- a/drivers/char/ipmi/kcs_bmc_aspeed.c
-> +++ b/drivers/char/ipmi/kcs_bmc_aspeed.c
-> @@ -301,13 +301,15 @@ static inline int aspeed_kcs_map_serirq_type(u32 dt_type)
->  static int aspeed_kcs_config_upstream_irq(struct aspeed_kcs_bmc *priv, u32 id, u32 dt_type)
->  {
->  	unsigned int mask, val, hw_type;
-> +	int ret;
->  
->  	if (id > 15)
->  		return -EINVAL;
->  
-> -	hw_type = aspeed_kcs_map_serirq_type(dt_type);
-> -	if (hw_type < 0)
-> -		return hw_type;
-> +	ret = aspeed_kcs_map_serirq_type(dt_type);
-> +	if (ret < 0)
-> +		return ret;
-> +	hw_type = ret;
->  
->  	priv->upstream_irq.mode = aspeed_kcs_irq_serirq;
->  	priv->upstream_irq.id = id;
-> -- 
-> 2.31.1
-> 
+Here is the summary with links:
+  - [net-next] net: stmmac: Fix error return code in ingenic_mac_probe()
+    https://git.kernel.org/netdev/net-next/c/61273f9d8314
+
+You are awesome, thank you!
+--
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
