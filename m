@@ -5,36 +5,38 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0254EC48BE6
-	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Jun 2021 16:29:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56C90C48BE5
+	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Jun 2021 17:04:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D978961241
-	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Jun 2021 16:29:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43FD1613B9
+	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Jun 2021 17:04:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235379AbhFPQbj (ORCPT
+        id S230519AbhFPRGd (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 16 Jun 2021 12:31:39 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:47566 "EHLO
+        Wed, 16 Jun 2021 13:06:33 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:48305 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234654AbhFPQbi (ORCPT
+        with ESMTP id S231424AbhFPRGR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 16 Jun 2021 12:31:38 -0400
+        Wed, 16 Jun 2021 13:06:17 -0400
 Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
         (Exim 4.93)
         (envelope-from <colin.king@canonical.com>)
-        id 1ltYPh-0003ld-IQ; Wed, 16 Jun 2021 16:29:13 +0000
+        id 1ltYxO-0006KD-6q; Wed, 16 Jun 2021 17:04:02 +0000
 From:   Colin King <colin.king@canonical.com>
-To:     Corey Minyard <minyard@acm.org>, Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        openipmi-developer@lists.sourceforge.net,
-        linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org
+To:     James Smart <james.smart@broadcom.com>,
+        Ram Vegesna <ram.vegesna@broadcom.com>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Hannes Reinecke <hare@suse.de>, linux-scsi@vger.kernel.org,
+        target-devel@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] ipmi: kcs_bmc_aspeed: Fix less than zero comparison of a unsigned int
-Date:   Wed, 16 Jun 2021 17:29:13 +0100
-Message-Id: <20210616162913.15259-1-colin.king@canonical.com>
+Subject: [PATCH][next] scsi: elx: libefc: Fix less than zero comparison of a unsigned int
+Date:   Wed, 16 Jun 2021 18:04:01 +0100
+Message-Id: <20210616170401.15831-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -45,40 +47,29 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The comparisons of the unsigned int hw_type to less than zero always
-false because it is unsigned. Fix this by using an int for the
-assignment and less than zero check.
+The comparison of the u32 variable rc to less than zero always
+false because it is unsigned. Fix this by making it an int.
 
 Addresses-Coverity: ("Unsigned compared against 0")
-Fixes: 9d2df9a0ad80 ("ipmi: kcs_bmc_aspeed: Implement KCS SerIRQ configuration")
+Fixes: 202bfdffae27 ("scsi: elx: libefc: FC node ELS and state handling")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/char/ipmi/kcs_bmc_aspeed.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/scsi/elx/libefc/efc_device.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/char/ipmi/kcs_bmc_aspeed.c b/drivers/char/ipmi/kcs_bmc_aspeed.c
-index 0401089f8895..92a37b33494c 100644
---- a/drivers/char/ipmi/kcs_bmc_aspeed.c
-+++ b/drivers/char/ipmi/kcs_bmc_aspeed.c
-@@ -301,13 +301,15 @@ static inline int aspeed_kcs_map_serirq_type(u32 dt_type)
- static int aspeed_kcs_config_upstream_irq(struct aspeed_kcs_bmc *priv, u32 id, u32 dt_type)
+diff --git a/drivers/scsi/elx/libefc/efc_device.c b/drivers/scsi/elx/libefc/efc_device.c
+index 31a688bce6e9..725ca2a23fb2 100644
+--- a/drivers/scsi/elx/libefc/efc_device.c
++++ b/drivers/scsi/elx/libefc/efc_device.c
+@@ -15,7 +15,7 @@
+ void
+ efc_d_send_prli_rsp(struct efc_node *node, u16 ox_id)
  {
- 	unsigned int mask, val, hw_type;
-+	int ret;
+-	u32 rc = EFC_SCSI_CALL_COMPLETE;
++	int rc = EFC_SCSI_CALL_COMPLETE;
+ 	struct efc *efc = node->efc;
  
- 	if (id > 15)
- 		return -EINVAL;
- 
--	hw_type = aspeed_kcs_map_serirq_type(dt_type);
--	if (hw_type < 0)
--		return hw_type;
-+	ret = aspeed_kcs_map_serirq_type(dt_type);
-+	if (ret < 0)
-+		return ret;
-+	hw_type = ret;
- 
- 	priv->upstream_irq.mode = aspeed_kcs_irq_serirq;
- 	priv->upstream_irq.id = id;
+ 	node->ls_acc_oxid = ox_id;
 -- 
 2.31.1
 
