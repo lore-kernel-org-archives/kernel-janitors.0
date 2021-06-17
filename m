@@ -7,32 +7,32 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CF0CC2B9F4
-	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Jun 2021 12:04:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BDDFC2B9F4
+	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Jun 2021 12:08:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 65A2061209
-	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Jun 2021 12:04:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA133610EA
+	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Jun 2021 12:08:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232693AbhFQMGU (ORCPT
+        id S232717AbhFQMKv (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 17 Jun 2021 08:06:20 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:44666 "EHLO
+        Thu, 17 Jun 2021 08:10:51 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:44765 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231527AbhFQMGU (ORCPT
+        with ESMTP id S232705AbhFQMKv (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 17 Jun 2021 08:06:20 -0400
+        Thu, 17 Jun 2021 08:10:51 -0400
 Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
         (Exim 4.93)
         (envelope-from <colin.king@canonical.com>)
-        id 1ltqkl-0004dB-B5; Thu, 17 Jun 2021 12:04:11 +0000
+        id 1ltqp3-0005BX-Nj; Thu, 17 Jun 2021 12:08:37 +0000
 From:   Colin King <colin.king@canonical.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-staging@lists.linux.dev
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: rts5208: remove redundant continue statement
-Date:   Thu, 17 Jun 2021 13:04:11 +0100
-Message-Id: <20210617120411.11612-1-colin.king@canonical.com>
+To:     Pan Bian <bianpan2016@163.com>, Jan Kara <jack@suse.cz>,
+        linux-kernel@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org
+Subject: [PATCH] isofs: remove redundant continue statement
+Date:   Thu, 17 Jun 2021 13:08:37 +0100
+Message-Id: <20210617120837.11994-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -43,27 +43,28 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The continue statement at the end of a for-loop has no effect,
+The continue statement in the while-loop has no effect,
 remove it.
 
 Addresses-Coverity: ("Continue has no effect")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/staging/rts5208/ms.c | 1 -
- 1 file changed, 1 deletion(-)
+ fs/isofs/dir.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/staging/rts5208/ms.c b/drivers/staging/rts5208/ms.c
-index 9001570a8c94..c6ad34a7fa33 100644
---- a/drivers/staging/rts5208/ms.c
-+++ b/drivers/staging/rts5208/ms.c
-@@ -2406,7 +2406,6 @@ static int ms_build_l2p_tbl(struct rtsx_chip *chip, int seg_no)
- 
- 		(void)ms_arbitrate_l2p(chip, phy_blk,
- 				log_blk - ms_start_idx[seg_no], us1, us2);
+diff --git a/fs/isofs/dir.c b/fs/isofs/dir.c
+index b9e6a7ec78be..eb2f8273e6f1 100644
+--- a/fs/isofs/dir.c
++++ b/fs/isofs/dir.c
+@@ -235,8 +235,6 @@ static int do_isofs_readdir(struct inode *inode, struct file *file,
+ 				break;
+ 		}
+ 		ctx->pos += de_len;
+-
 -		continue;
  	}
- 
- 	segment->build_flag = 1;
+ 	if (bh)
+ 		brelse(bh);
 -- 
 2.31.1
 
