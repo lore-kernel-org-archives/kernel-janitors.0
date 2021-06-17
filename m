@@ -5,102 +5,99 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+	UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EBEEC2B9F4
-	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Jun 2021 13:38:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A3DDC49EA2
+	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Jun 2021 13:38:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0E12A610A3
-	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Jun 2021 13:38:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80AA2613D6
+	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Jun 2021 13:38:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232875AbhFQNkM (ORCPT
+        id S232880AbhFQNka (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 17 Jun 2021 09:40:12 -0400
-Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:26302 "EHLO
+        Thu, 17 Jun 2021 09:40:30 -0400
+Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:50000 "EHLO
         mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232071AbhFQNkM (ORCPT
+        by vger.kernel.org with ESMTP id S231454AbhFQNk1 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 17 Jun 2021 09:40:12 -0400
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15HDVavx028406;
-        Thu, 17 Jun 2021 13:37:46 GMT
+        Thu, 17 Jun 2021 09:40:27 -0400
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15HDWc0q017390;
+        Thu, 17 Jun 2021 13:38:12 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
  : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=zE3j2Enhao1E66i+SdrltR4Eo5w6687dBGPeyUl6wBs=;
- b=CPMGPUci7B8uu9qqTaMRA12RxKpKBlk/lMDV2c40s72SN18lJ/TulHMd5KmwwRS2vrKp
- b7S8pvBdicZ1ZuiDUwmZYSuHSOVYPjJUxTG+yc/s90/WbFOtvTUjke+7LcYwOxH/uesW
- BvRe2uqMns4oM1ie/MoJl+gB9D9Q7p5D6pzKYQv4L/1WupiXmL8eCtbZ3cl3cObnHyi9
- qNowM1QMzk/usCW+kfFZvB+0cKwOsxTZ2LxEy33N9Jg9gPAVlP/EpU4wcyQuZSZztX48
- +9vaDJMrP7qTgjgJvyu5Ilh7f+RraLa5Pl4uNzE1yVk8NYyd4aMUUajrKzLsu91K/1Wy rg== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by mx0b-00069f02.pphosted.com with ESMTP id 397w1y13jm-1
+ bh=ybK073aC2hYRjNZrPNq6PmQL/NypsUqZHzxuvLpbpeU=;
+ b=A+9DKbDL5TofL2KfE5vdN3/V5Ru7Ox2/ccfHH4gOxA3I/piw4QjkSb/HGWNd4ysZCsWl
+ K8M6GRDH5q6geZVHirFad8ZQVNs98BEXbUQJYAzOK8TG7XHHilZ/qGqe4bZ5frS6tLkg
+ VgE9rWLAaz1Mn4MZxYZQLjtK/WefDOTcFrk1Cn4R3ACMHFLLytNPUMwNIsu8T3zivZrn
+ N8KwAar8stlbGqwzB9hETfFpnAhjYTeUh1fzMHqS3JxxCAzIHOFIBfdFnPieA3L3H06e
+ Ca7oijCVbh9m/txjD93VLTpVQQIo5iMw9VHIoVV/U1JNPTKrWhE6UHX7NqV4LyhQkiIZ ng== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by mx0b-00069f02.pphosted.com with ESMTP id 396tr0vk1s-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 17 Jun 2021 13:37:45 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 15HDUuB7102021;
-        Thu, 17 Jun 2021 13:37:44 GMT
+        Thu, 17 Jun 2021 13:38:12 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 15HDVYLo115397;
+        Thu, 17 Jun 2021 13:38:11 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-        by userp3030.oracle.com with ESMTP id 396waq5ym0-1
+        by userp3020.oracle.com with ESMTP id 396waxn0ub-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 17 Jun 2021 13:37:44 +0000
-Received: from userp3030.oracle.com (userp3030.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 15HDUtlk101912;
-        Thu, 17 Jun 2021 13:37:43 GMT
+        Thu, 17 Jun 2021 13:38:11 +0000
+Received: from userp3020.oracle.com (userp3020.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 15HDZ3va122708;
+        Thu, 17 Jun 2021 13:38:10 GMT
 Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3030.oracle.com with ESMTP id 396waq5ygf-1
+        by userp3020.oracle.com with ESMTP id 396waxn0tq-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 17 Jun 2021 13:37:43 +0000
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 15HDbYkg005013;
-        Thu, 17 Jun 2021 13:37:35 GMT
+        Thu, 17 Jun 2021 13:38:10 +0000
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 15HDc7TP005323;
+        Thu, 17 Jun 2021 13:38:09 GMT
 Received: from mwanda (/102.222.70.252)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 17 Jun 2021 06:37:33 -0700
-Date:   Thu, 17 Jun 2021 16:37:25 +0300
+        with ESMTP ; Thu, 17 Jun 2021 13:38:06 +0000
+Date:   Thu, 17 Jun 2021 16:37:59 +0300
 From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Manivannan Sadhasivam <mani@kernel.org>
-Cc:     Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] mtd: rawnand: Add a check in of_get_nand_secure_regions()
-Message-ID: <YMtQFXE0F1w7mUh+@mwanda>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] clk: renesas: fix a double free on error
+Message-ID: <YMtQN++uwH41TAg0@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
-X-Proofpoint-ORIG-GUID: y8_E4bor5i1y9sjIhzYPGkMtqm2sB-xz
-X-Proofpoint-GUID: y8_E4bor5i1y9sjIhzYPGkMtqm2sB-xz
+X-Proofpoint-GUID: I3XzZxjHhWlO4QMXSyhP0g1vZ43p413X
+X-Proofpoint-ORIG-GUID: I3XzZxjHhWlO4QMXSyhP0g1vZ43p413X
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Check for whether of_property_count_elems_of_size() returns a negative
-error code.
+The "clock" pointer is allocated with devm_kzalloc() so freeing it
+here will lead to a double free.
 
-Fixes: 13b89768275d ("mtd: rawnand: Add support for secure regions in NAND memory")
+Fixes: ef3c613ccd68 ("clk: renesas: Add CPG core wrapper for RZ/G2L SoC")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/mtd/nand/raw/nand_base.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/renesas/renesas-rzg2l-cpg.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
-index 57a583149cc0..cbba46432e39 100644
---- a/drivers/mtd/nand/raw/nand_base.c
-+++ b/drivers/mtd/nand/raw/nand_base.c
-@@ -5231,8 +5231,8 @@ static int of_get_nand_secure_regions(struct nand_chip *chip)
- 	int nr_elem, i, j;
+diff --git a/drivers/clk/renesas/renesas-rzg2l-cpg.c b/drivers/clk/renesas/renesas-rzg2l-cpg.c
+index 5009b9e48b13..9516fb4d93e2 100644
+--- a/drivers/clk/renesas/renesas-rzg2l-cpg.c
++++ b/drivers/clk/renesas/renesas-rzg2l-cpg.c
+@@ -473,7 +473,6 @@ rzg2l_cpg_register_mod_clk(const struct rzg2l_mod_clk *mod,
+ fail:
+ 	dev_err(dev, "Failed to register %s clock %s: %ld\n", "module",
+ 		mod->name, PTR_ERR(clk));
+-	kfree(clock);
+ }
  
- 	nr_elem = of_property_count_elems_of_size(dn, "secure-regions", sizeof(u64));
--	if (!nr_elem)
--		return 0;
-+	if (nr_elem <= 0)
-+		return nr_elem;
- 
- 	chip->nr_secure_regions = nr_elem / 2;
- 	chip->secure_regions = kcalloc(chip->nr_secure_regions, sizeof(*chip->secure_regions),
+ #define rcdev_to_priv(x)	container_of(x, struct rzg2l_cpg_priv, rcdev)
 -- 
 2.30.2
 
