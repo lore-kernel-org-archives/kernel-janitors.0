@@ -2,80 +2,89 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ECBDC2B9F4
-	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Jun 2021 12:38:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AA87C49361
+	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Jun 2021 12:42:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 085DA610CA
-	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Jun 2021 12:38:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 346E461209
+	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Jun 2021 12:42:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231514AbhFQMki (ORCPT
+        id S231667AbhFQMoT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 17 Jun 2021 08:40:38 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:47819 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231497AbhFQMkf (ORCPT
+        Thu, 17 Jun 2021 08:44:19 -0400
+Received: from mail-oi1-f172.google.com ([209.85.167.172]:44680 "EHLO
+        mail-oi1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231623AbhFQMoR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 17 Jun 2021 08:40:35 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <colin.king@canonical.com>)
-        id 1ltrHu-0000mh-Fr; Thu, 17 Jun 2021 12:38:26 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] usb: host: u132-hcd: remove redundant continue statements
-Date:   Thu, 17 Jun 2021 13:38:26 +0100
-Message-Id: <20210617123826.13764-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.31.1
+        Thu, 17 Jun 2021 08:44:17 -0400
+Received: by mail-oi1-f172.google.com with SMTP id a26so6352630oie.11;
+        Thu, 17 Jun 2021 05:42:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZSdAlA7229AxqrvmWdPuLysFFr809Vi8uOO0GFEEjMw=;
+        b=ELHNd6J+FpRjo+CVRo048k3dVS1UX1ifYoaIXhem/qCrzmi+b1ZFT/WUnCtNMZ2n0j
+         2WvdkZjXYfCrkrcTqZvVmSIz5LJsvID7awBjxpteUmvem9nW2Rnhc4PO2c2VWjIXYWM7
+         y7E25aKkALzj+hekr3IN8TH4RVwFlhCTtGjDeJ75m+TPE57NY+s9d/KTUBWUbMDysXBk
+         6zrpbxQAMEYoFAVSJS175oijXASmtCG10waAjLCd2ZNZOL45BlHUfEwwIC7wVhVZyGz6
+         MDgDgyFjirlNEHFKnRBIENpVWcmdCmgrWpuwJGewajkNTfcqQXS18y0QNlAsa/QF7h7C
+         hMFw==
+X-Gm-Message-State: AOAM530uGyUe0kpmalslyDtE2A7bKFmhPJoa3mK2XXchJjw+1+ymlp/W
+        jLHd+qTn0Makn7Y92kuY9oTugg731HMbHISR1m4=
+X-Google-Smtp-Source: ABdhPJyE4Uc9tX5vAYC9Hgs0pgYC//1t7VmAuqfGpxl5H4EJ9A4L6d22+T+E0aFHoRGx302POKyLAz9pOTxy0/VeyIM=
+X-Received: by 2002:aca:49c7:: with SMTP id w190mr10723282oia.157.1623933730094;
+ Thu, 17 Jun 2021 05:42:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20210615172157.2841280-1-weiyongjun1@huawei.com>
+In-Reply-To: <20210615172157.2841280-1-weiyongjun1@huawei.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 17 Jun 2021 14:41:59 +0200
+Message-ID: <CAJZ5v0jW0VKi1m_5oNyMtEgKVA3=WuEdiDU_1=p6Ezm5zvUSog@mail.gmail.com>
+Subject: Re: [PATCH -next] ACPI: PRM: make symbol 'prm_module_list' static
+To:     Wei Yongjun <weiyongjun1@huawei.com>
+Cc:     Erik Kaneda <erik.kaneda@intel.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Tue, Jun 15, 2021 at 7:11 PM Wei Yongjun <weiyongjun1@huawei.com> wrote:
+>
+> The sparse tool complains as follows:
+>
+> drivers/acpi/prmt.c:53:1: warning:
+>  symbol 'prm_module_list' was not declared. Should it be static?
+>
+> This symbol is not used outside of prmt.c, so marks it static.
+>
+> Fixes: cefc7ca46235 ("ACPI: PRM: implement OperationRegion handler for the PlatformRtMechanism subtype")
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ---
+>  drivers/acpi/prmt.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/acpi/prmt.c b/drivers/acpi/prmt.c
+> index 33c274698d07..31cf9aee5edd 100644
+> --- a/drivers/acpi/prmt.c
+> +++ b/drivers/acpi/prmt.c
+> @@ -50,7 +50,7 @@ struct prm_context_buffer {
+>  #pragma pack()
+>
+>
+> -LIST_HEAD(prm_module_list);
+> +static LIST_HEAD(prm_module_list);
+>
+>  struct prm_handler_info {
+>         guid_t guid;
+>
 
-There are continue statements at the end of loops that have
-no effect and are redundant. Remove them.
-
-Addresses-Coverity: ("Continue has no effect")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/usb/host/u132-hcd.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/usb/host/u132-hcd.c b/drivers/usb/host/u132-hcd.c
-index 5a783c423d8e..ae882d76612b 100644
---- a/drivers/usb/host/u132-hcd.c
-+++ b/drivers/usb/host/u132-hcd.c
-@@ -2392,8 +2392,7 @@ static int dequeue_from_overflow_chain(struct u132 *u132,
- 			urb->error_count = 0;
- 			usb_hcd_giveback_urb(hcd, urb, 0);
- 			return 0;
--		} else
--			continue;
-+		}
- 	}
- 	dev_err(&u132->platform_dev->dev, "urb=%p not found in endp[%d]=%p ring"
- 		"[%d] %c%c usb_endp=%d usb_addr=%d size=%d next=%04X last=%04X"
-@@ -2448,8 +2447,7 @@ static int u132_endp_urb_dequeue(struct u132 *u132, struct u132_endp *endp,
- 				urb_slot = &endp->urb_list[ENDP_QUEUE_MASK &
- 					queue_scan];
- 				break;
--			} else
--				continue;
-+			}
- 		}
- 		while (++queue_list < ENDP_QUEUE_SIZE && --queue_size > 0) {
- 			*urb_slot = endp->urb_list[ENDP_QUEUE_MASK &
--- 
-2.31.1
-
+Applied, thanks!
