@@ -2,82 +2,99 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97F2FC49EA2
-	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Jun 2021 14:48:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39FD0C2B9F4
+	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Jun 2021 15:12:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 81115613E3
-	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Jun 2021 14:48:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DD7461412
+	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Jun 2021 15:12:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232115AbhFQOuv (ORCPT
+        id S233149AbhFQPO3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 17 Jun 2021 10:50:51 -0400
-Received: from mail-ua1-f51.google.com ([209.85.222.51]:40508 "EHLO
-        mail-ua1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231759AbhFQOuu (ORCPT
+        Thu, 17 Jun 2021 11:14:29 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:53368 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230442AbhFQPO2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 17 Jun 2021 10:50:50 -0400
-Received: by mail-ua1-f51.google.com with SMTP id r9so830473ual.7;
-        Thu, 17 Jun 2021 07:48:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DLTXApXv60sqdh5K9ydoNzUe24XMsQP0xX4ggOlS8M4=;
-        b=rXVEycDSLOwi+50quGoNBO2fCJuAFr3CkFCCGD795Cc5+Pb55893uAsDAp6A4OfQV6
-         NduCVGPtKb5wr7y0eUIjmRFcXVJrjR57s20XoQzjCKWbz9ztuVnLKLCWw1VVhf4ibcmb
-         Br43dedHoODk6I2RGrawXBYW8gQCeAP5sKj8rYKOcIuebesxLeGC+OVhKmnDC/8FHZBX
-         gZpUfakoqCfAVbA2uUR12+o4/XD+zeXlYs3SMHlPGIxima4Km7zv29zWA+9sM95/HYNF
-         pwplIRYkandUlJpEqNc98n7p10ZIDA5PkifIeg4yL+nwJZ+W8ZtCef8hOLL3JWxOLzCE
-         aB7Q==
-X-Gm-Message-State: AOAM531K2GiOckorPyS37ru+EOy8i4ryK41bHW3C6WUi3XANeJf37PLj
-        pOBctkjtf5BXBDmSroFskuteoxPVk71MBiCz1/4=
-X-Google-Smtp-Source: ABdhPJy+EUCoZIZHnb1pLH4PfGavFmnh2lM9r2zalq/xyPsKZhU9c98PXlA1TkXHaih4yvdy6NzxlwMBqTJs51DzL0s=
-X-Received: by 2002:ab0:63d9:: with SMTP id i25mr5817183uap.106.1623941320943;
- Thu, 17 Jun 2021 07:48:40 -0700 (PDT)
+        Thu, 17 Jun 2021 11:14:28 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id BE08721ACB;
+        Thu, 17 Jun 2021 15:12:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1623942736; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=xJaBEgLS13ix01z8I4sBTdZd9WzGYZM0wzpnPPvaRUQ=;
+        b=k8TBMNzyQn1IBCLAah8LLHXhCrkANfsvZ2l0Ck0nPEV0deRHr6+s0FZ/MPeqlb6PP5bErX
+        ww5DmowOrIBVwWvsfDGZtOirsB/5rax/VXb8wkZaHWqaAiCw0AGFYW74MfLt7EyFin9/rX
+        leKvCsfgphzby6E7QQDJitDuIWgOMEo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1623942736;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=xJaBEgLS13ix01z8I4sBTdZd9WzGYZM0wzpnPPvaRUQ=;
+        b=HQOFpW9aEkehZncoyerG/cYtiuw96ujH86+m2mRPxpq+ff/zmPRKUYsgvMiKJ7srNxx8cB
+        E7dzqdtMp3vqOLBg==
+Received: from quack2.suse.cz (unknown [10.100.200.198])
+        by relay2.suse.de (Postfix) with ESMTP id AF14BA3B83;
+        Thu, 17 Jun 2021 15:12:16 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 857BD1F2C68; Thu, 17 Jun 2021 17:12:16 +0200 (CEST)
+Date:   Thu, 17 Jun 2021 17:12:16 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Pan Bian <bianpan2016@163.com>, Jan Kara <jack@suse.cz>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] isofs: remove redundant continue statement
+Message-ID: <20210617151216.GH32587@quack2.suse.cz>
+References: <20210617120837.11994-1-colin.king@canonical.com>
 MIME-Version: 1.0
-References: <YMtYs7LVveYH4eRe@mwanda>
-In-Reply-To: <YMtYs7LVveYH4eRe@mwanda>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 17 Jun 2021 16:48:28 +0200
-Message-ID: <CAMuHMdVUGHpoRJ0na3cwxEBnWkNr1pN+tdWZ7XzzncPeNGqHZw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] clk: renesas: fix a double free on error
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210617120837.11994-1-colin.king@canonical.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Jun 17, 2021 at 4:14 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> The "pll_clk" and "clock" pointers are allocated with devm_kzalloc() so
-> freeing them with kfree() will lead to a double free.  This would only
-> happen if probe failed, and the system is not bootable.
->
-> Fixes: ef3c613ccd68 ("clk: renesas: Add CPG core wrapper for RZ/G2L SoC")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+On Thu 17-06-21 13:08:37, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The continue statement in the while-loop has no effect,
+> remove it.
+> 
+> Addresses-Coverity: ("Continue has no effect")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+Thanks! I've added the patch to my tree.
+
+								Honza
+
 > ---
-> V2: Fix "pll_clk" as well.
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v5.15.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+>  fs/isofs/dir.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/fs/isofs/dir.c b/fs/isofs/dir.c
+> index b9e6a7ec78be..eb2f8273e6f1 100644
+> --- a/fs/isofs/dir.c
+> +++ b/fs/isofs/dir.c
+> @@ -235,8 +235,6 @@ static int do_isofs_readdir(struct inode *inode, struct file *file,
+>  				break;
+>  		}
+>  		ctx->pos += de_len;
+> -
+> -		continue;
+>  	}
+>  	if (bh)
+>  		brelse(bh);
+> -- 
+> 2.31.1
+> 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
