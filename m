@@ -2,106 +2,118 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B24DEC48BE5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Jun 2021 14:04:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67465C49EA2
+	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Jun 2021 14:14:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 904D6611CA
-	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Jun 2021 14:04:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4DECF613A9
+	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Jun 2021 14:14:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232894AbhFQOGu (ORCPT
+        id S231683AbhFQOQi (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 17 Jun 2021 10:06:50 -0400
-Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:24182 "EHLO
+        Thu, 17 Jun 2021 10:16:38 -0400
+Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:45548 "EHLO
         mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231379AbhFQOGt (ORCPT
+        by vger.kernel.org with ESMTP id S231668AbhFQOQi (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 17 Jun 2021 10:06:49 -0400
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15HE47SJ030567;
-        Thu, 17 Jun 2021 14:04:34 GMT
+        Thu, 17 Jun 2021 10:16:38 -0400
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15HE6nZr000981;
+        Thu, 17 Jun 2021 14:14:24 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=X122xVqcUXzpyLXHaZ8i9ilxts8FulAU1Z8QQaImU58=;
- b=Xhz6GITz+ynj1RL208H7Bhiu6pn7QhQkg1O+ZDZjW0TUKkm91aiKUbzwcfZEB2KL+gZY
- R04WOkRTx7kx4SDjvWot50eAJwi7ZSJE5i47oNut8VxP49J2ReJnOJYmjBsSRdmzOtbS
- fqvJ5fuBtn382fkZB7xDpXS0iynyoZ0ezDG6x+9YZsfWpU/tMQ/JuEqUbvJh1q10Bprz
- 6dTL91KKqpxD3UOyKxXQPFb82FlPNLCPUOOtV42g4ghImUimmxwcKte0h5YCdQ3vNEQi
- Qtdc2EUyMxeO4KE8aPXjpfuMrEVM/Cf4588EjCmWndOty2Kk8cnz6dS4035bU/Lxv3qb /Q== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by mx0b-00069f02.pphosted.com with ESMTP id 397jnqt7k6-1
+ : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
+ bh=ElwLcusX/AAtxLXNAvMp31H9RCAgTlB9ROzyF4I46B8=;
+ b=fCKdUmBkFOipiqUxFI1wiLvhNfoXfKMNbPzyQVepxuJvbIKkwGfufOVRwu8biQPsakv0
+ mfcf6s4jLe33JVIlIMFAZekkjYIvPDf8sYfk8H/WZ+qCHjCC84ewzCxIdvawsYiY9oYD
+ F8Z+NGssPuyYz3SsoTHyRdRp+RrmbzrtFhAQAQCCdPJShO0qWTiVjxPxBQN7BdyGay4N
+ 9GrYw9oITtV5aBJF92ZpnCp2zsbz44pM2c1JIYpLtxuzozqyvqrA/He5L+kyRQxMl2Mz
+ wpFDKGp1bgqiOH/VGt3QFcTVsW6ioJOZlU0ikwfevUL2TBqAoL5n9o82gs/PrF2NAqS6 ng== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by mx0b-00069f02.pphosted.com with ESMTP id 397mpthxym-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 17 Jun 2021 14:04:33 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 15HE1O4T196154;
-        Thu, 17 Jun 2021 14:04:32 GMT
+        Thu, 17 Jun 2021 14:14:24 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 15HEBBPV157821;
+        Thu, 17 Jun 2021 14:14:23 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-        by aserp3030.oracle.com with ESMTP id 396wavmnrq-1
+        by aserp3020.oracle.com with ESMTP id 396wavng7b-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 17 Jun 2021 14:04:32 +0000
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 15HE4WND007146;
-        Thu, 17 Jun 2021 14:04:32 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3030.oracle.com with ESMTP id 396wavmnr2-1
+        Thu, 17 Jun 2021 14:14:23 +0000
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 15HEEMov175165;
+        Thu, 17 Jun 2021 14:14:22 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 396wavng6y-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 17 Jun 2021 14:04:32 +0000
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 15HE4T4O022210;
-        Thu, 17 Jun 2021 14:04:30 GMT
-Received: from kadam (/102.222.70.252)
+        Thu, 17 Jun 2021 14:14:22 +0000
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 15HEEJn9005844;
+        Thu, 17 Jun 2021 14:14:20 GMT
+Received: from mwanda (/102.222.70.252)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 17 Jun 2021 07:04:28 -0700
-Date:   Thu, 17 Jun 2021 17:04:22 +0300
+        with ESMTP ; Thu, 17 Jun 2021 07:14:18 -0700
+Date:   Thu, 17 Jun 2021 17:14:11 +0300
 From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         Biju Das <biju.das.jz@bp.renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] clk: renesas: fix a double free on error
-Message-ID: <20210617140421.GP1901@kadam>
-References: <YMtQN++uwH41TAg0@mwanda>
- <CAMuHMdUfMSPa2Oh1s+V=QR+XLv2tVYoJt2sjwdNZeobE76AZwg@mail.gmail.com>
+Subject: [PATCH v2 1/2] clk: renesas: fix a double free on error
+Message-ID: <YMtYs7LVveYH4eRe@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdUfMSPa2Oh1s+V=QR+XLv2tVYoJt2sjwdNZeobE76AZwg@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-GUID: oLEbfcptfZLpCFpU7wnwFYUbXgmm0TY0
-X-Proofpoint-ORIG-GUID: oLEbfcptfZLpCFpU7wnwFYUbXgmm0TY0
+X-Mailer: git-send-email haha only kidding
+X-Proofpoint-GUID: rGxk-g23yV22GIcsr363oC-EZNuAaxtH
+X-Proofpoint-ORIG-GUID: rGxk-g23yV22GIcsr363oC-EZNuAaxtH
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Jun 17, 2021 at 03:45:50PM +0200, Geert Uytterhoeven wrote:
-> Hi Dan,
-> 
-> On Thu, Jun 17, 2021 at 3:38 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> > The "clock" pointer is allocated with devm_kzalloc() so freeing it
-> > here will lead to a double free.
-> >
-> > Fixes: ef3c613ccd68 ("clk: renesas: Add CPG core wrapper for RZ/G2L SoC")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> Thanks for your patch!
-> 
-> While the double free is unlikely to happen (the error is not
-> propagated upstream, and the driver cannot be unloaded), kernel
-> test robot reported two of these errors.  The other one is at line 202.
-> Care to fix that as well?
+The "pll_clk" and "clock" pointers are allocated with devm_kzalloc() so
+freeing them with kfree() will lead to a double free.  This would only
+happen if probe failed, and the system is not bootable.
 
-Yeah, sure.  I'll clean up the NULL vs error pointer mixing as well.
+Fixes: ef3c613ccd68 ("clk: renesas: Add CPG core wrapper for RZ/G2L SoC")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+V2: Fix "pll_clk" as well.
 
-regards,
-dan carpenter
+ drivers/clk/renesas/renesas-rzg2l-cpg.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
+
+diff --git a/drivers/clk/renesas/renesas-rzg2l-cpg.c b/drivers/clk/renesas/renesas-rzg2l-cpg.c
+index 5009b9e48b13..7ba36f19896f 100644
+--- a/drivers/clk/renesas/renesas-rzg2l-cpg.c
++++ b/drivers/clk/renesas/renesas-rzg2l-cpg.c
+@@ -199,11 +199,7 @@ rzg2l_cpg_pll_clk_register(const struct cpg_core_clk *core,
+ 	pll_clk->priv = priv;
+ 	pll_clk->type = core->type;
+ 
+-	clk = clk_register(NULL, &pll_clk->hw);
+-	if (IS_ERR(clk))
+-		kfree(pll_clk);
+-
+-	return clk;
++	return clk_register(NULL, &pll_clk->hw);
+ }
+ 
+ static struct clk
+@@ -473,7 +469,6 @@ rzg2l_cpg_register_mod_clk(const struct rzg2l_mod_clk *mod,
+ fail:
+ 	dev_err(dev, "Failed to register %s clock %s: %ld\n", "module",
+ 		mod->name, PTR_ERR(clk));
+-	kfree(clock);
+ }
+ 
+ #define rcdev_to_priv(x)	container_of(x, struct rzg2l_cpg_priv, rcdev)
+-- 
+2.30.2
 
