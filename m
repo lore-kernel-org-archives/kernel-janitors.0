@@ -2,80 +2,87 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16E7DC49361
-	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Jun 2021 12:48:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 468FAC2B9F4
+	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Jun 2021 13:13:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E7A336135C
-	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Jun 2021 12:48:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27D276109D
+	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Jun 2021 13:13:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231897AbhFQMuL (ORCPT
+        id S232200AbhFQNPl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 17 Jun 2021 08:50:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47242 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231887AbhFQMuK (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 17 Jun 2021 08:50:10 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 6E9B3610CA;
-        Thu, 17 Jun 2021 12:48:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1623934083;
-        bh=GFVeKqW983HVBr2jewK0aWIWpdIf+9EG330tW3Fn3no=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tX7F5Iz6WrbBLZurLErapJlX8kyh2Jn459o3ZcftS/4S2W+0seq0y7fQ8F9mO+Fsw
-         8GRTQLe1LQcKLEAd20B78gaMc5ugkbTY5dCcsnuwaMN6LY/flS6ISpqCa19zehfvGv
-         SHQZY6ayi+M2O3qCFJtNjQ+FZqYxks3YP4/NOot/AcEbciU7ZnF8P49UndWinA3QHn
-         hb8hpQ0Nmi2zlaXqGHN2KaAnoiQIanU8yX2wvw3LaYrrkuBRl46g52JxdxPbEVk25I
-         8W0gjR/nUnbTEMkGbKfu3d4mAT+8Movpg8bnfHBeEwhA9X9L1rWp2IDWGjCA6gX+Wo
-         J2rqhGGz4NOHA==
-Date:   Thu, 17 Jun 2021 13:47:41 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Wei Yongjun <weiyongjun1@huawei.com>
-Cc:     Alistair Francis <alistair@alistair23.me>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Hulk Robot <hulkci@huawei.com>
-Subject: Re: [PATCH -next] regulator: sy7636a: Add terminate entry for
- platform_device_id tables
-Message-ID: <20210617124741.GA14305@sirena.org.uk>
-References: <20210617024838.1023794-1-weiyongjun1@huawei.com>
+        Thu, 17 Jun 2021 09:15:41 -0400
+Received: from szxga02-in.huawei.com ([45.249.212.188]:7474 "EHLO
+        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231466AbhFQNPj (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 17 Jun 2021 09:15:39 -0400
+Received: from dggemv704-chm.china.huawei.com (unknown [172.30.72.56])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4G5MqY3RW1zZj6j;
+        Thu, 17 Jun 2021 21:10:33 +0800 (CST)
+Received: from dggpeml500020.china.huawei.com (7.185.36.88) by
+ dggemv704-chm.china.huawei.com (10.3.19.47) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Thu, 17 Jun 2021 21:13:29 +0800
+Received: from huawei.com (10.175.127.227) by dggpeml500020.china.huawei.com
+ (7.185.36.88) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.2; Thu, 17 Jun
+ 2021 21:13:29 +0800
+From:   Baokun Li <libaokun1@huawei.com>
+To:     <libaokun1@huawei.com>, Namjae Jeon <namjae.jeon@samsung.com>,
+        "Sergey Senozhatsky" <sergey.senozhatsky@gmail.com>,
+        Steve French <sfrench@samba.org>,
+        Hyunchul Lee <hyc.lee@gmail.com>
+CC:     <linux-cifs@vger.kernel.org>,
+        <linux-cifsd-devel@lists.sourceforge.net>,
+        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH -next] cifsd: convert list_for_each to entry variant in smb_common.c
+Date:   Thu, 17 Jun 2021 21:22:28 +0800
+Message-ID: <20210617132228.689945-1-libaokun1@huawei.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="LZvS9be/3tNcYl/X"
-Content-Disposition: inline
-In-Reply-To: <20210617024838.1023794-1-weiyongjun1@huawei.com>
-X-Cookie: divorce, n:
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.127.227]
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpeml500020.china.huawei.com (7.185.36.88)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+convert list_for_each() to list_for_each_entry() where
+applicable.
 
---LZvS9be/3tNcYl/X
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Baokun Li <libaokun1@huawei.com>
+---
+ fs/cifsd/smb_common.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-On Thu, Jun 17, 2021 at 02:48:38AM +0000, Wei Yongjun wrote:
-> Make sure platform_device_id tables are NULL terminated.
+diff --git a/fs/cifsd/smb_common.c b/fs/cifsd/smb_common.c
+index 039030968b50..d74b2ce08187 100644
+--- a/fs/cifsd/smb_common.c
++++ b/fs/cifsd/smb_common.c
+@@ -481,15 +481,13 @@ int ksmbd_smb_check_shared_mode(struct file *filp, struct ksmbd_file *curr_fp)
+ {
+ 	int rc = 0;
+ 	struct ksmbd_file *prev_fp;
+-	struct list_head *cur;
+ 
+ 	/*
+ 	 * Lookup fp in master fp list, and check desired access and
+ 	 * shared mode between previous open and current open.
+ 	 */
+ 	read_lock(&curr_fp->f_ci->m_lock);
+-	list_for_each(cur, &curr_fp->f_ci->m_fp_list) {
+-		prev_fp = list_entry(cur, struct ksmbd_file, node);
++	list_for_each_entry(prev_fp, &curr_fp->f_ci->m_fp_list, node) {
+ 		if (file_inode(filp) != FP_INODE(prev_fp))
+ 			continue;
+ 
 
-This doesn't apply against current code, please check and resend.
-
---LZvS9be/3tNcYl/X
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmDLRGwACgkQJNaLcl1U
-h9CXoQf/UXmn28hP+PMygnpofYpb+LaIaXOk/eh3+7g5vl5HcbYnOiruzA8gaagG
-UFmWE1V7CFnzsNhNWr0UaaeLLf99Q714yB6JyoyZloyqUs/eIHM1bpZZv/wl3TZY
-B+XyRRBOsg7+0Q5SOqGewt77sghKEXjLOuHLwIVAYquEIooYDeWDME0mxUGITA2k
-wMdEBbi2p7upwrsj1sBJkGE1D3zBe7UE9ue0vaGf67Gk4yjSMJuDp5+cHVFXdG12
-eX1Q4APq63PkgNAwMBW0Mv9w8XFP5hy9VtRB7bno8I+xilvtqz/UCI4mBhwwbGiT
-uovCg/aoQVaVk7fzbgrg4LnVMefEzA==
-=9Tbc
------END PGP SIGNATURE-----
-
---LZvS9be/3tNcYl/X--
