@@ -2,101 +2,79 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.4 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7C2AC48BE6
-	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Jun 2021 23:27:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C28B7C48BE5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Jun 2021 02:38:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8CDE861245
-	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Jun 2021 23:27:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A26BC613E9
+	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Jun 2021 02:38:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234581AbhFPXaD (ORCPT
+        id S230312AbhFQCk1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 16 Jun 2021 19:30:03 -0400
-Received: from mga06.intel.com ([134.134.136.31]:30915 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234508AbhFPXaD (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 16 Jun 2021 19:30:03 -0400
-IronPort-SDR: 9Fl8ijXuZvj1oEDZcUZ+JKxEr5QmhhgIVu9MjzrjBWBbzjTQDlIvmAr0lSZmZrgUCXgNgD0Jh5
- XB9iCLay9VcA==
-X-IronPort-AV: E=McAfee;i="6200,9189,10017"; a="267420483"
-X-IronPort-AV: E=Sophos;i="5.83,278,1616482800"; 
-   d="scan'208";a="267420483"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2021 16:27:53 -0700
-IronPort-SDR: c/uhERQyM+sCgOUqZHbGxAylMWWwjSLqhn+8dqVDprMkHlPe6u7GA6VFA4cVP64YtyRNR/QyBq
- +DtCdxpl9d1A==
-X-IronPort-AV: E=Sophos;i="5.83,278,1616482800"; 
-   d="scan'208";a="479269628"
-Received: from jekeller-mobl1.amr.corp.intel.com (HELO [10.209.42.204]) ([10.209.42.204])
-  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2021 16:27:52 -0700
-Subject: Re: [PATCH][next] ice: remove redundant continue statement in a
- for-loop
-To:     Colin King <colin.king@canonical.com>,
-        Jesse Brandeburg <jesse.brandeburg@intel.com>,
-        Tony Nguyen <anthony.l.nguyen@intel.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210615142847.60161-1-colin.king@canonical.com>
-From:   Jacob Keller <jacob.e.keller@intel.com>
-Organization: Intel Corporation
-Message-ID: <2a347503-9879-0a13-555b-a007acfdec3c@intel.com>
-Date:   Wed, 16 Jun 2021 16:27:50 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Wed, 16 Jun 2021 22:40:27 -0400
+Received: from szxga08-in.huawei.com ([45.249.212.255]:7311 "EHLO
+        szxga08-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230103AbhFQCk1 (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 16 Jun 2021 22:40:27 -0400
+Received: from dggeml759-chm.china.huawei.com (unknown [172.30.72.57])
+        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4G55hC6gltz1BNMk;
+        Thu, 17 Jun 2021 10:33:15 +0800 (CST)
+Received: from localhost.localdomain (10.175.102.38) by
+ dggeml759-chm.china.huawei.com (10.1.199.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2176.2; Thu, 17 Jun 2021 10:38:17 +0800
+From:   Wei Yongjun <weiyongjun1@huawei.com>
+To:     <weiyongjun1@huawei.com>, James Smart <jsmart2021@gmail.com>,
+        James Smart <james.smart@broadcom.com>,
+        Ram Vegesna <ram.vegesna@broadcom.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Daniel Wagner <dwagner@suse.de>, Hannes Reinecke <hare@suse.de>
+CC:     <linux-scsi@vger.kernel.org>, <target-devel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH -next] scsi: elx: efct: Fix error handling in efct_hw_init()
+Date:   Thu, 17 Jun 2021 02:48:37 +0000
+Message-ID: <20210617024837.1023069-1-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <20210615142847.60161-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.102.38]
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggeml759-chm.china.huawei.com (10.1.199.138)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Fix to return negative error code -ENOMEM from the error handling
+case instead of 0, also fix typo in error message.
 
+Fixes: 4df84e846624 ("scsi: elx: efct: Driver initialization routines")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/scsi/elx/efct/efct_hw.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-On 6/15/2021 7:28 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The continue statement in the for-loop is redundant. Re-work the hw_lock
-> check to remove it.
-> 
-> Addresses-Coverity: ("Continue has no effect")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
+diff --git a/drivers/scsi/elx/efct/efct_hw.c b/drivers/scsi/elx/efct/efct_hw.c
+index ce4736c41564..6324683f9e8e 100644
+--- a/drivers/scsi/elx/efct/efct_hw.c
++++ b/drivers/scsi/elx/efct/efct_hw.c
+@@ -1044,8 +1044,8 @@ efct_hw_init(struct efct_hw *hw)
+ 	 */
+ 	hw->wq_reqtag_pool = efct_hw_reqtag_pool_alloc(hw);
+ 	if (!hw->wq_reqtag_pool) {
+-		efc_log_err(hw->os, "efct_hw_reqtag_init failed %d\n", rc);
+-		return rc;
++		efc_log_err(hw->os, "efct_hw_reqtag_pool_alloc failed\n");
++		return -ENOMEM;
+ 	}
+ 
+ 	rc = efct_hw_setup_io(hw);
 
-Yep, that logic makes more sense.
-
-Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
-
->  drivers/net/ethernet/intel/ice/ice_ptp_hw.c | 10 ++++------
->  1 file changed, 4 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/intel/ice/ice_ptp_hw.c b/drivers/net/ethernet/intel/ice/ice_ptp_hw.c
-> index 267312fad59a..3eca0e4eab0b 100644
-> --- a/drivers/net/ethernet/intel/ice/ice_ptp_hw.c
-> +++ b/drivers/net/ethernet/intel/ice/ice_ptp_hw.c
-> @@ -410,13 +410,11 @@ bool ice_ptp_lock(struct ice_hw *hw)
->  	for (i = 0; i < MAX_TRIES; i++) {
->  		hw_lock = rd32(hw, PFTSYN_SEM + (PFTSYN_SEM_BYTES * hw->pf_id));
->  		hw_lock = hw_lock & PFTSYN_SEM_BUSY_M;
-> -		if (hw_lock) {
-> -			/* Somebody is holding the lock */
-> -			usleep_range(10000, 20000);
-> -			continue;
-> -		} else {
-> +		if (!hw_lock)
->  			break;
-> -		}
-> +
-> +		/* Somebody is holding the lock */
-> +		usleep_range(10000, 20000);
->  	}
->  
->  	return !hw_lock;
-> 
