@@ -2,118 +2,113 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8781EC48BE5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Jun 2021 07:42:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A47D0C2B9F4
+	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Jun 2021 07:51:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6CC40613CB
-	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Jun 2021 07:42:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8ECB0613CE
+	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Jun 2021 07:51:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229729AbhFQHo4 (ORCPT
+        id S230118AbhFQHxu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 17 Jun 2021 03:44:56 -0400
-Received: from szxga01-in.huawei.com ([45.249.212.187]:4828 "EHLO
-        szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229666AbhFQHox (ORCPT
+        Thu, 17 Jun 2021 03:53:50 -0400
+Received: from out3-smtp.messagingengine.com ([66.111.4.27]:59115 "EHLO
+        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230075AbhFQHxu (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 17 Jun 2021 03:44:53 -0400
-Received: from dggemv711-chm.china.huawei.com (unknown [172.30.72.53])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4G5DRR5w96zXglR;
-        Thu, 17 Jun 2021 15:37:39 +0800 (CST)
-Received: from dggpeml500020.china.huawei.com (7.185.36.88) by
- dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Thu, 17 Jun 2021 15:42:41 +0800
-Received: from huawei.com (10.175.127.227) by dggpeml500020.china.huawei.com
- (7.185.36.88) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.2; Thu, 17 Jun
- 2021 15:42:41 +0800
-From:   Baokun Li <libaokun1@huawei.com>
-To:     <libaokun1@huawei.com>, Namjae Jeon <namjae.jeon@samsung.com>,
-        "Sergey Senozhatsky" <sergey.senozhatsky@gmail.com>,
-        Steve French <sfrench@samba.org>,
-        Hyunchul Lee <hyc.lee@gmail.com>
-CC:     <linux-cifs@vger.kernel.org>,
-        <linux-cifsd-devel@lists.sourceforge.net>,
-        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH -next v2] cifsd: convert list_for_each to entry variant in smb2pdu.c
-Date:   Thu, 17 Jun 2021 15:51:39 +0800
-Message-ID: <20210617075139.3282382-1-libaokun1@huawei.com>
-X-Mailer: git-send-email 2.31.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.127.227]
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpeml500020.china.huawei.com (7.185.36.88)
-X-CFilter-Loop: Reflected
+        Thu, 17 Jun 2021 03:53:50 -0400
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.nyi.internal (Postfix) with ESMTP id CEFA65C0148;
+        Thu, 17 Jun 2021 03:51:42 -0400 (EDT)
+Received: from imap8 ([10.202.2.58])
+  by compute3.internal (MEProxy); Thu, 17 Jun 2021 03:51:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alistair23.me;
+         h=mime-version:message-id:in-reply-to:references:date:from:to
+        :cc:subject:content-type; s=fm1; bh=J34v4eOphiFCnJRg9JzBcmNrvB6Q
+        3Mbiylwq8e7rvEI=; b=LGsdpL+h2D29ZXAsXztwJ7sXGkPJ2JIoIc7f2uih+07w
+        D0iIAyw/ki2xWFCa6gi9VUvLOVLAISyTAmJ7adYJN+KhOgaqX7A5+9Odwx5CgTjV
+        QtidJ7or0iM5nvtHzg8lQhrQEtSg5+diA0ZsJoibG7eMlZSz2gyAQOzgqrhX2UQs
+        xHn5oINhdDWxCxNo7yEQXUCHGzpkU/6QHpzvhm8nZLQn2SyIc7tuyabFnOpmsiBW
+        nWPdTgQy6CFTy/6FEQnzGNlzudsE0gw5Aod4j9YuTLIEhVoYPo7Kvn0nI9rkejWb
+        e6w5vK6dtjAQLq+V3mBqNB+gRcZqp9nI5Rf0ZuCkzg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=J34v4e
+        OphiFCnJRg9JzBcmNrvB6Q3Mbiylwq8e7rvEI=; b=jqMVp5gU7EamanV78S7Vnq
+        UFqXZTEbXe+ncufwd0wjfa7PaaAGK3ItG8ik88bw6pFerWFPJr245Id6WwmUGQFR
+        NiaoRLQPIZK7SmqCT8HhsRktuIvza6IHBkCqswVwCO2f8WsjQ+wP40HtdLSpEfrF
+        BRwgPcb8ryoEfoyi8uGBDJuJCJ6ttt3ng7hloJegOyxDIFUqGaYftq8wvOHbMQfo
+        8CrMfyvTeKkLe225+eOHQXKyQtBqYenY0FM1CGOd+eDFsEXsr45tUjkZy49IvPBL
+        1rtyP0CojXu/ko2QJd+cu2f/aObqm45ZtSXjUsGDFfyhPLIxMy8hfV5VFTwT76Jw
+        ==
+X-ME-Sender: <xms:Dv_KYMQOAGGKconR3bqUDQQn9WrnOZ2XQfPZO4QoyWQcFnOGdI-NEA>
+    <xme:Dv_KYJx98DaBdoLj0paDao64kZRAJRzduntXA_FxYzJX2nkdYqQjHaet9A4wgrmNM
+    LBJNzbDxdO48QdOlKk>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrfeeftddguddvtdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefofgggkfgjfhffhffvufgtsehttdertderreejnecuhfhrohhmpeetlhhi
+    shhtrghirhcuoegrlhhishhtrghirhesrghlihhsthgrihhrvdefrdhmvgeqnecuggftrf
+    grthhtvghrnhepffehffffleduieeitdehudelteevueevgeduuddtjeekvddvvdeugfel
+    udekhfehnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    eprghlihhsthgrihhrsegrlhhishhtrghirhdvfedrmhgv
+X-ME-Proxy: <xmx:Dv_KYJ37b4CuIGa6UGKT95_OXxBAUaBoN4Z29xEWnjs1atCIrjdlLw>
+    <xmx:Dv_KYACcXKvMeIRH2vxCw31C321fbT8IXHAq_ODoFWsdUAPwWrMXuA>
+    <xmx:Dv_KYFgw2jaCEUjXyqk__meQP7qijn1GTZ-ay_NrcJqL8bn-6a5NpQ>
+    <xmx:Dv_KYIvwqfc1sfavfGDM_aBPUJpeV3dYRbae72YGF1rtKTpjkZ_qHQ>
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 6D0813A0430; Thu, 17 Jun 2021 03:51:42 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.5.0-alpha0-526-gf020ecf851-fm-20210616.001-gf020ecf8
+Mime-Version: 1.0
+Message-Id: <587cea0c-ebf5-470f-8c40-d49532b14a5c@www.fastmail.com>
+In-Reply-To: <20210617024838.1023794-1-weiyongjun1@huawei.com>
+References: <20210617024838.1023794-1-weiyongjun1@huawei.com>
+Date:   Thu, 17 Jun 2021 17:51:22 +1000
+From:   Alistair <alistair@alistair23.me>
+To:     "Wei Yongjun" <weiyongjun1@huawei.com>,
+        "Liam Girdwood" <lgirdwood@gmail.com>,
+        "Mark Brown" <broonie@kernel.org>
+Cc:     "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org, "Hulk Robot" <hulkci@huawei.com>
+Subject: =?UTF-8?Q?Re:_[PATCH_-next]_regulator:_sy7636a:_Add_terminate_entry_for_?=
+ =?UTF-8?Q?platform=5Fdevice=5Fid_tables?=
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-convert list_for_each() to list_for_each_entry() where
-applicable.
+On Thu, Jun 17, 2021, at 12:48 PM, Wei Yongjun wrote:
+> Make sure platform_device_id tables are NULL terminated.
+> 
+> Fixes: 8c485bedfb78 ("regulator: sy7636a: Initial commit")
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Baokun Li <libaokun1@huawei.com>
----
-V1->V2:
-        Modified Patch Title
+Reviewed-by: Alistair Francis <alistair@alistair23.me>
 
- fs/cifsd/smb2pdu.c | 15 ++++-----------
- 1 file changed, 4 insertions(+), 11 deletions(-)
+Alistair
 
-diff --git a/fs/cifsd/smb2pdu.c b/fs/cifsd/smb2pdu.c
-index ac15a9287310..22ef1d9eed1b 100644
---- a/fs/cifsd/smb2pdu.c
-+++ b/fs/cifsd/smb2pdu.c
-@@ -74,10 +74,7 @@ static inline int check_session_id(struct ksmbd_conn *conn, u64 id)
- struct channel *lookup_chann_list(struct ksmbd_session *sess)
- {
- 	struct channel *chann;
--	struct list_head *t;
--
--	list_for_each(t, &sess->ksmbd_chann_list) {
--		chann = list_entry(t, struct channel, chann_list);
-+	list_for_each_entry(chann, &sess->ksmbd_chann_list, chann_list) {
- 		if (chann && chann->conn == sess->conn)
- 			return chann;
- 	}
-@@ -6258,7 +6255,6 @@ int smb2_cancel(struct ksmbd_work *work)
- 	struct smb2_hdr *hdr = work->request_buf;
- 	struct smb2_hdr *chdr;
- 	struct ksmbd_work *cancel_work = NULL;
--	struct list_head *tmp;
- 	int canceled = 0;
- 	struct list_head *command_list;
- 
-@@ -6269,9 +6265,8 @@ int smb2_cancel(struct ksmbd_work *work)
- 		command_list = &conn->async_requests;
- 
- 		spin_lock(&conn->request_lock);
--		list_for_each(tmp, command_list) {
--			cancel_work = list_entry(tmp, struct ksmbd_work,
--						 async_request_entry);
-+		list_for_each_entry(cancel_work, command_list,
-+				    async_request_entry) {
- 			chdr = cancel_work->request_buf;
- 
- 			if (cancel_work->async_id !=
-@@ -6290,9 +6285,7 @@ int smb2_cancel(struct ksmbd_work *work)
- 		command_list = &conn->requests;
- 
- 		spin_lock(&conn->request_lock);
--		list_for_each(tmp, command_list) {
--			cancel_work = list_entry(tmp, struct ksmbd_work,
--						 request_entry);
-+		list_for_each_entry(cancel_work, command_list, request_entry) {
- 			chdr = cancel_work->request_buf;
- 
- 			if (chdr->MessageId != hdr->MessageId ||
--- 
-2.31.1
-
+> ---
+> drivers/regulator/sy7636a-regulator.c | 1 +
+> 1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/regulator/sy7636a-regulator.c b/drivers/regulator/sy7636a-regulator.c
+> index c384c2b6ac46..672b7055131d 100644
+> --- a/drivers/regulator/sy7636a-regulator.c
+> +++ b/drivers/regulator/sy7636a-regulator.c
+> @@ -110,6 +110,7 @@ static int sy7636a_regulator_probe(struct platform_device *pdev)
+>  
+> static const struct platform_device_id sy7636a_regulator_id_table[] = {
+> { "sy7636a-regulator", },
+> + {},
+> };
+> MODULE_DEVICE_TABLE(platform, sy7636a_regulator_id_table);
+>  
+> 
+> 
