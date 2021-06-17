@@ -2,73 +2,107 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 770D3C49EA2
-	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Jun 2021 02:38:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96231C48BE8
+	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Jun 2021 03:00:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5926A60FDC
-	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Jun 2021 02:38:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B3326102A
+	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Jun 2021 03:00:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230438AbhFQCk2 (ORCPT
+        id S230393AbhFQDC3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 16 Jun 2021 22:40:28 -0400
-Received: from szxga03-in.huawei.com ([45.249.212.189]:7337 "EHLO
-        szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230208AbhFQCk1 (ORCPT
+        Wed, 16 Jun 2021 23:02:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50910 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229456AbhFQDC2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 16 Jun 2021 22:40:27 -0400
-Received: from dggeml759-chm.china.huawei.com (unknown [172.30.72.54])
-        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4G55jR1RLQz6y4r;
-        Thu, 17 Jun 2021 10:34:19 +0800 (CST)
-Received: from localhost.localdomain (10.175.102.38) by
- dggeml759-chm.china.huawei.com (10.1.199.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2176.2; Thu, 17 Jun 2021 10:38:18 +0800
-From:   Wei Yongjun <weiyongjun1@huawei.com>
-To:     <weiyongjun1@huawei.com>,
-        Alistair Francis <alistair@alistair23.me>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH -next] regulator: sy7636a: Add terminate entry for platform_device_id tables
-Date:   Thu, 17 Jun 2021 02:48:38 +0000
-Message-ID: <20210617024838.1023794-1-weiyongjun1@huawei.com>
-X-Mailer: git-send-email 2.25.1
+        Wed, 16 Jun 2021 23:02:28 -0400
+Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9E44C061574;
+        Wed, 16 Jun 2021 20:00:19 -0700 (PDT)
+Received: by mail-yb1-xb2e.google.com with SMTP id f84so6100774ybg.0;
+        Wed, 16 Jun 2021 20:00:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rl7FowVa5JRhUXtNcoTre9DnDT9sbwPZ6e1vTMQ7R8g=;
+        b=m5+r0C726adGv7oVjW3mB/8OJJfm5slErt3FnMT5J8XqiiNAx9S/FXKOQOoAgkHDUr
+         kPPeWy++WMMH6XDADfcHd4udk5qzLFk9mMZaji0KZ6Jq1cLpeECWXgynprLPnlGwU01T
+         4pE20LMoGJ3xUmsslWGRJHYlYp28Qv45K4F2RYLDyFj3j35dq6hViOR8JFGvc1jULkJL
+         scVTWr4vq+RE3vfET8u2wzYjHmQjMrG2uWFg2jk566CLIz7rsNoR1q8CVjdt21C+6i1w
+         zhMdMpB0UE5EObh9UhzKCTH4hU0rXr/HlaeBewf8zl8tW2UAJx91QLPn7/TsuzQnJcnA
+         DicA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rl7FowVa5JRhUXtNcoTre9DnDT9sbwPZ6e1vTMQ7R8g=;
+        b=ZqUI/VC78bMuNSwGYlKSQeM1XlVAKXEhhlqlmD/FWA+eFzHbgWc9f+n+bO/Xnom2w/
+         NgWiVpY94YlQs07A1Vl+KW+5sA3sDw7Fxr03S3wb2bODYca6vEMRswHZgzEJeBaX2cel
+         C6wj/qhQpgY1qwNbBegMRUFvedxP83ae5++0sW97ixE0LYyexRaDJBep6kzu6tOCIC5Q
+         6toda3Y2BHVZZaK6lBUGoadF55yDzSk84FGVZ7AmX9c3O22AQmfdMFfMZW2Ly76OZiQb
+         iSdtgj5QBjo7Iz0MkxcEWwO0ebrM5MR5zvb1wMyp1sEj7a1/WgIvyVYnHzQ94ISEvHZm
+         GwCA==
+X-Gm-Message-State: AOAM533pqtEpOOlxRDuQF5MXDn2b0U5R4pGcrHSrHxMB0DWe4oBHbtUv
+        ohwwFc/ddH0+fyBVS74/Xevy2SeR9KhOkoyPH/8=
+X-Google-Smtp-Source: ABdhPJyL73jrYb6zGXj7T7ouu2eU/5urBJ3TGHq4QdPpGdxAQMaLgQ1/Le76vH/gkRfzcuhnm0eS7PN48A57JNg2Ci8=
+X-Received: by 2002:a25:9942:: with SMTP id n2mr3173195ybo.230.1623898818963;
+ Wed, 16 Jun 2021 20:00:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.102.38]
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggeml759-chm.china.huawei.com (10.1.199.138)
-X-CFilter-Loop: Reflected
+References: <1623809076-97907-1-git-send-email-chengshuyi@linux.alibaba.com>
+In-Reply-To: <1623809076-97907-1-git-send-email-chengshuyi@linux.alibaba.com>
+From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date:   Wed, 16 Jun 2021 20:00:08 -0700
+Message-ID: <CAEf4BzbEHmBhmLfTKH6VkHSJgkZEHR6kf7+mJCitjMXPvtWt=Q@mail.gmail.com>
+Subject: Re: [PATCH bpf-next] bpf: Fix typo in kernel/bpf/bpf_lsm.c
+To:     Shuyi Cheng <chengshuyi@linux.alibaba.com>
+Cc:     KP Singh <kpsingh@kernel.org>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>, Martin Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        john fastabend <john.fastabend@gmail.com>,
+        bpf <bpf@vger.kernel.org>, Networking <netdev@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Make sure platform_device_id tables are NULL terminated.
+On Tue, Jun 15, 2021 at 7:04 PM Shuyi Cheng
+<chengshuyi@linux.alibaba.com> wrote:
+>
+> Signed-off-by: Shuyi Cheng <chengshuyi@linux.alibaba.com>
+> ---
 
-Fixes: 8c485bedfb78 ("regulator: sy7636a: Initial commit")
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/regulator/sy7636a-regulator.c | 1 +
- 1 file changed, 1 insertion(+)
+Applied to bpf-next, adding a minimal commit message. Please always
+provide a commit message, however minimal it is.
 
-diff --git a/drivers/regulator/sy7636a-regulator.c b/drivers/regulator/sy7636a-regulator.c
-index c384c2b6ac46..672b7055131d 100644
---- a/drivers/regulator/sy7636a-regulator.c
-+++ b/drivers/regulator/sy7636a-regulator.c
-@@ -110,6 +110,7 @@ static int sy7636a_regulator_probe(struct platform_device *pdev)
- 
- static const struct platform_device_id sy7636a_regulator_id_table[] = {
- 	{ "sy7636a-regulator", },
-+	{},
- };
- MODULE_DEVICE_TABLE(platform, sy7636a_regulator_id_table);
- 
-
+>  kernel/bpf/bpf_lsm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
+> index 5efb2b2..99ada85 100644
+> --- a/kernel/bpf/bpf_lsm.c
+> +++ b/kernel/bpf/bpf_lsm.c
+> @@ -125,7 +125,7 @@ static bool bpf_ima_inode_hash_allowed(const struct bpf_prog *prog)
+>  }
+>
+>  /* The set of hooks which are called without pagefaults disabled and are allowed
+> - * to "sleep" and thus can be used for sleeable BPF programs.
+> + * to "sleep" and thus can be used for sleepable BPF programs.
+>   */
+>  BTF_SET_START(sleepable_lsm_hooks)
+>  BTF_ID(func, bpf_lsm_bpf)
+> --
+> 1.8.3.1
+>
