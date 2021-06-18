@@ -2,88 +2,51 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D800C48BE8
-	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Jun 2021 12:08:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAB26C49EA2
+	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Jun 2021 13:20:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3040E613EC
-	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Jun 2021 12:08:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83450613ED
+	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Jun 2021 13:20:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233366AbhFRMK0 (ORCPT
+        id S233127AbhFRNWY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 18 Jun 2021 08:10:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49486 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231193AbhFRMK0 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 18 Jun 2021 08:10:26 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 6F075613D5;
-        Fri, 18 Jun 2021 12:08:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624018097;
-        bh=W1o+CtHQ3nflhXuylff+5ooBPcB3nszbMcr8gK1ECAY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U9iObKIw/Y3iPA306gh7V3nqI+vPDwJ/Ehrti6IOl+5YqSETUEe0V1uzCG2FJC8ZO
-         iGLQanQpsvwCxcYdZFjJsF9LxwCmuSOLQLmVCQwXJz8eG0jk1Og0jqA4s2+1wX1Q8l
-         w3GlU+3fZmx9cxLccxxHTyliM4KTEZ9FV2YTTFanX6cMGAlJJuCnPgaWLhhZ3JwS9B
-         Rh7hMkK6wEhA5ZSuC6IGL1GZDx7P7RtO4aQ2vrg+Ku+r6fm0QcDfiEb0tAsI9h3XiI
-         6xuf34xU7Qn2RTYAeL4YRxVZvBIm9YUuyUmHb2fAedIECFk+ZY/NBA8jB+k6WHN602
-         d0ufjkLi0ynTA==
-From:   Mark Brown <broonie@kernel.org>
-To:     Lee Jones <lee.jones@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Wei Yongjun <weiyongjun1@huawei.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Chris Morgan <macromorgan@hotmail.com>,
-        Takashi Iwai <tiwai@suse.com>
-Cc:     Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
-        Hulk Robot <hulkci@huawei.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] ASoC: rk817: Constify static struct snd_soc_dai_ops
-Date:   Fri, 18 Jun 2021 13:07:53 +0100
-Message-Id: <162401758813.52682.3182841658896977708.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20210602113643.3037374-1-weiyongjun1@huawei.com>
-References: <20210602113643.3037374-1-weiyongjun1@huawei.com>
+        Fri, 18 Jun 2021 09:22:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57784 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230438AbhFRNWX (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 18 Jun 2021 09:22:23 -0400
+Received: from theia.8bytes.org (8bytes.org [IPv6:2a01:238:4383:600:38bc:a715:4b6d:a889])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46D87C061574;
+        Fri, 18 Jun 2021 06:20:14 -0700 (PDT)
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 4F3A93A7; Fri, 18 Jun 2021 15:20:12 +0200 (CEST)
+Date:   Fri, 18 Jun 2021 15:20:11 +0200
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Colin King <colin.king@canonical.com>
+Cc:     David Woodhouse <dwmw2@infradead.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Will Deacon <will@kernel.org>,
+        iommu@lists.linux-foundation.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] iommu/vt-d: Fix dereference of pointer info before
+ it is null checked
+Message-ID: <YMydiy0SPPMlrFUt@8bytes.org>
+References: <20210611135024.32781-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210611135024.32781-1-colin.king@canonical.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 2 Jun 2021 11:36:43 +0000, Wei Yongjun wrote:
-> The snd_soc_dai_ops structures is only stored in the ops field of a
-> snd_soc_dai_driver structure, so make the snd_soc_dai_ops structure
-> const to allow the compiler to put it in read-only memory.
+On Fri, Jun 11, 2021 at 02:50:24PM +0100, Colin King wrote:
+>  drivers/iommu/intel/iommu.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
 
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/1] ASoC: rk817: Constify static struct snd_soc_dai_ops
-      commit: 45ce213392df07b9e2443666c0910e1617882cf3
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+Applied, thanks.
