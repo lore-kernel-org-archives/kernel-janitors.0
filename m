@@ -7,43 +7,46 @@ X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E942EC48BDF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Jun 2021 19:20:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 593AAC49361
+	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Jun 2021 19:20:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CE4BB60041
-	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Jun 2021 19:20:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41F0061284
+	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Jun 2021 19:20:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235508AbhFRTWV (ORCPT
+        id S235467AbhFRTWX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 18 Jun 2021 15:22:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33910 "EHLO mail.kernel.org"
+        Fri, 18 Jun 2021 15:22:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33958 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235383AbhFRTWQ (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        id S235435AbhFRTWQ (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
         Fri, 18 Jun 2021 15:22:16 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 87A30613F2;
+Received: by mail.kernel.org (Postfix) with ESMTPS id AB2C0613F9;
         Fri, 18 Jun 2021 19:20:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1624044006;
-        bh=mYgWKU/yFlFwqULnKKlEddjTohRi2vp79RE6lcadDus=;
+        bh=HZ4786m59RuoK2hhVqx9AEvfGS19lUp25OPPq29lkUU=;
         h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=Ya1dUiVpey5BGTaPAgG72l5NSbk68K6gUlnuPIXj4nIU8PKKmPHpMDXzOINxdXnfx
-         A/bDEC+eXvijvwpWL1eMpChIlzrHUN1fvQz8oq49AFc2yokrMSATP6siskPrQNL++K
-         oZRw9cYtNFFj3zSsv2wo/qlZ+CIQKwDBUgnaVsz7h50bLds0uI25eidLsBo1V3rF0u
-         6DU/Vm6HlW6IfxIgpA/XR+/OtWfGHHtziyON1A+CxhX05y1UG41Pzodoa+5IMTbUcE
-         NJMsfnOTnk2sN70bXfiH/CfB7DejDeN+votONz8/cQtg0QkobwID/HAuKWC7vrN3Vd
-         B03WSkZX8V5KQ==
+        b=m2OgkkTsdmofpAAu+W1ppBUgg89bpi+1Rut7sSdt4QOX6ZIbFyLif7ypQ6aA9wbDU
+         +gaLLp7pX/cIr1d3ak3nb/YXyOoBCqpjRZvUolGJxw4RsExGqy2Z749K4WvUnarJ9G
+         CBNVDmLMxX7RS/B6IcVMKj2YSCD44wPK/yl9n0vtH1CFeznK0ul49HoIZ+ZTCqYti3
+         9dmnEQhninmnPpwIjfL8s+AKlz08LFngtHSp+2R62c5ugzIWHd17Zi/ebJcfoqBe4z
+         c0fJK90vs8Vpa4E8ZyAYo63WkC7rga5LTcxlZSOSDTQMkAWuhSiCe9B2T35tqHuufu
+         dGroWBUz9RBdA==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net: bridge: remove redundant continue statement
+Subject: Re: [PATCH] net: stmmac: remove redundant continue statement
 From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <162404400650.12339.9396305686886729563.git-patchwork-notify@kernel.org>
+Message-Id: <162404400663.12339.191732752255079680.git-patchwork-notify@kernel.org>
 Date:   Fri, 18 Jun 2021 19:20:06 +0000
-References: <20210618100155.101386-1-colin.king@canonical.com>
-In-Reply-To: <20210618100155.101386-1-colin.king@canonical.com>
+References: <20210618094425.100395-1-colin.king@canonical.com>
+In-Reply-To: <20210618094425.100395-1-colin.king@canonical.com>
 To:     Colin King <colin.king@canonical.com>
-Cc:     roopa@nvidia.com, davem@davemloft.net, kuba@kernel.org,
-        bridge@lists.linux-foundation.org, netdev@vger.kernel.org,
+Cc:     peppe.cavallaro@st.com, alexandre.torgue@foss.st.com,
+        joabreu@synopsys.com, davem@davemloft.net, kuba@kernel.org,
+        mcoquelin.stm32@gmail.com, netdev@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org,
         kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
@@ -53,11 +56,10 @@ Hello:
 
 This patch was applied to netdev/net-next.git (refs/heads/master):
 
-On Fri, 18 Jun 2021 11:01:55 +0100 you wrote:
+On Fri, 18 Jun 2021 10:44:25 +0100 you wrote:
 > From: Colin Ian King <colin.king@canonical.com>
 > 
-> The continue statement at the end of a for-loop has no effect,
-> invert the if expression and remove the continue.
+> The continue statement in the for-loop has no effect, remove it.
 > 
 > Addresses-Coverity: ("Continue has no effect")
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
@@ -65,8 +67,8 @@ On Fri, 18 Jun 2021 11:01:55 +0100 you wrote:
 > [...]
 
 Here is the summary with links:
-  - net: bridge: remove redundant continue statement
-    https://git.kernel.org/netdev/net-next/c/040c12570e68
+  - net: stmmac: remove redundant continue statement
+    https://git.kernel.org/netdev/net-next/c/c44924c532fb
 
 You are awesome, thank you!
 --
