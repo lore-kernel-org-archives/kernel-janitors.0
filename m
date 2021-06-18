@@ -2,161 +2,88 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,PDS_BAD_THREAD_QP_64,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABAE3C49361
-	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Jun 2021 11:26:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D800C48BE8
+	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Jun 2021 12:08:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 87F186121D
-	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Jun 2021 11:26:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3040E613EC
+	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Jun 2021 12:08:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232499AbhFRL26 (ORCPT
+        id S233366AbhFRMK0 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 18 Jun 2021 07:28:58 -0400
-Received: from mx01-sz.bfs.de ([194.94.69.67]:57501 "EHLO mx02-sz.bfs.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S230211AbhFRL25 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 18 Jun 2021 07:28:57 -0400
-X-Greylist: delayed 442 seconds by postgrey-1.27 at vger.kernel.org; Fri, 18 Jun 2021 07:28:56 EDT
-Received: from SRVEX01-SZ.bfs.intern (exchange-sz.bfs.de [10.129.90.31])
-        by mx02-sz.bfs.de (Postfix) with ESMTPS id D38592036A;
-        Fri, 18 Jun 2021 13:19:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bfs.de; s=dkim201901;
-        t=1624015162;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=6Sf1jJFf55RokYxOxUqnGEPETR4mtSWMzKaN1vm6iLI=;
-        b=pnGlJKQrhwYq3IO1NBLZOUL96dnYgmMOZggQ+xj/+w7/OriXowbtoOAkcoJAtmeczjSgu+
-        E2eDcSDNsXhGmAEgBIOlNH6eeOeEjDIwu1tY6BUKyvtVTAJC6/Ju9bKdoRpgBxedzdmEyC
-        nUCh/fuGVCQT+O71puJxSXXLii7/oo4XW/8hOVx2/qe0reiU9NYgEetE6ylZO93jhGGYr4
-        yly/xmgdkhOxLcGt1o5Dm04EQoBGvmvxoxi4sQAXGv9Fy2UPzgi+2pUgUC+Gvj4RAFG0N+
-        q3XmxP6HowTgMIx9D+AbcoF69n7gD9Ov0+buJaxygpBbnpxu5vD1EbV1XUfDJw==
-Received: from SRVEX01-SZ.bfs.intern (10.129.90.31) by SRVEX01-SZ.bfs.intern
- (10.129.90.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2242.4; Fri, 18 Jun
- 2021 13:19:22 +0200
-Received: from SRVEX01-SZ.bfs.intern ([fe80::7d2d:f9cb:2761:d24a]) by
- SRVEX01-SZ.bfs.intern ([fe80::7d2d:f9cb:2761:d24a%13]) with mapi id
- 15.01.2242.008; Fri, 18 Jun 2021 13:19:22 +0200
-From:   Walter Harms <wharms@bfs.de>
-To:     Colin King <colin.king@canonical.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
-CC:     "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: AW: [PATCH] power: supply: axp288_fuel_gauge: remove redundant
- continue statement
-Thread-Topic: [PATCH] power: supply: axp288_fuel_gauge: remove redundant
- continue statement
-Thread-Index: AQHXZCRywpoHegcj9UOOPqNPgVoldKsZnTXV
-Date:   Fri, 18 Jun 2021 11:19:22 +0000
-Message-ID: <5d5dad5246f442e5aa96bdc50ac4b1f1@bfs.de>
-References: <20210618092924.99722-1-colin.king@canonical.com>
-In-Reply-To: <20210618092924.99722-1-colin.king@canonical.com>
-Accept-Language: de-DE, en-US
-Content-Language: de-DE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.137.16.39]
-x-tm-as-product-ver: SMEX-14.0.0.3080-8.6.1012-26226.007
-x-tm-as-result: No-10-1.409600-5.000000
-x-tmase-matchedrid: /Km4Ih+9Qr3RubRCcrbc5grcxrzwsv5u3dCmvEa6IiGoLZarzrrPmZ1b
-        YL8THayDD2+lbncX+drDQarzgp+9/iLSA2Bw59G2/Ca4Pt73t1vpkhHAf9djV4TsLX8FtFkZJoK
-        OQUqn/5630GP8pin5GSKkzMT7+4oopksMyXDdOswSEYfcJF0pRdbmwqk6BanYgl2XJFQkkUzbVX
-        rtTxQ4GIQYFtaFqqBpca9nyMIMgSX1s8eCOeeiYMd3b2o5YTuS1Mc6SC5sKVZjLp8Cm8vwF0Ac6
-        DyoS2rIj6kCfX0Edc7YHvNzW+2PibzJWOoHHj0fdXu122+iJtor9gVlOIN/6lgddECnPRgBngIg
-        pj8eDcByZ8zcONpAscRB0bsfrpPI0PU0TdJoUtdoKNKOurla0u2hb42X2dnm2zNE80aHT3PbT/7
-        fT/J5Kwi6gPHfOj9eM4TT+mdxOrYdMNjrgX++DAt7yDiJzSPk5VUPePG8fKjf0ic5zgpSMaAgCg
-        KCG9lmDP7ys8dRrrEdy+NYmKKLmfF5QO2l9GkN
-x-tm-as-user-approved-sender: No
-x-tm-as-user-blocked-sender: No
-x-tmase-result: 10-1.409600-5.000000
-x-tmase-version: SMEX-14.0.0.3080-8.6.1012-26226.007
-x-tm-snts-smtp: 2B1ACD1591E103B3F857EFA8872585A80CCBB00CCFD89C3A60296AAD8DE812BB2000:9
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 18 Jun 2021 08:10:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49486 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231193AbhFRMK0 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 18 Jun 2021 08:10:26 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 6F075613D5;
+        Fri, 18 Jun 2021 12:08:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1624018097;
+        bh=W1o+CtHQ3nflhXuylff+5ooBPcB3nszbMcr8gK1ECAY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=U9iObKIw/Y3iPA306gh7V3nqI+vPDwJ/Ehrti6IOl+5YqSETUEe0V1uzCG2FJC8ZO
+         iGLQanQpsvwCxcYdZFjJsF9LxwCmuSOLQLmVCQwXJz8eG0jk1Og0jqA4s2+1wX1Q8l
+         w3GlU+3fZmx9cxLccxxHTyliM4KTEZ9FV2YTTFanX6cMGAlJJuCnPgaWLhhZ3JwS9B
+         Rh7hMkK6wEhA5ZSuC6IGL1GZDx7P7RtO4aQ2vrg+Ku+r6fm0QcDfiEb0tAsI9h3XiI
+         6xuf34xU7Qn2RTYAeL4YRxVZvBIm9YUuyUmHb2fAedIECFk+ZY/NBA8jB+k6WHN602
+         d0ufjkLi0ynTA==
+From:   Mark Brown <broonie@kernel.org>
+To:     Lee Jones <lee.jones@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Wei Yongjun <weiyongjun1@huawei.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Chris Morgan <macromorgan@hotmail.com>,
+        Takashi Iwai <tiwai@suse.com>
+Cc:     Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
+        Hulk Robot <hulkci@huawei.com>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] ASoC: rk817: Constify static struct snd_soc_dai_ops
+Date:   Fri, 18 Jun 2021 13:07:53 +0100
+Message-Id: <162401758813.52682.3182841658896977708.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20210602113643.3037374-1-weiyongjun1@huawei.com>
+References: <20210602113643.3037374-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
-X-Spamd-Result: default: False [-15.00 / 7.00];
-         ARC_NA(0.00)[];
-         TO_DN_EQ_ADDR_SOME(0.00)[];
-         HAS_XOIP(0.00)[];
-         FROM_HAS_DN(0.00)[];
-         TO_DN_SOME(0.00)[];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         MIME_GOOD(-0.10)[text/plain];
-         DKIM_SIGNED(0.00)[bfs.de:s=dkim201901];
-         RCPT_COUNT_SEVEN(0.00)[7];
-         WHITELIST_LOCAL_IP(-15.00)[10.129.90.31];
-         NEURAL_HAM(-0.00)[-1.000];
-         RCVD_NO_TLS_LAST(0.10)[];
-         FROM_EQ_ENVFROM(0.00)[];
-         MIME_TRACE(0.00)[0:+];
-         RCVD_COUNT_TWO(0.00)[2];
-         MID_RHS_MATCH_FROM(0.00)[];
-         BAYES_HAM(-0.00)[25.71%]
-Authentication-Results: mx02-sz.bfs.de;
-        none
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Just a remark:
-the function fuel_gauge_reg_readb() is reporting via dev_err().
-But some callers are reporting also. Maybe someone should take
-a look.
-The valid return seems >=3D0 so removing the dev_err seems an option.
+On Wed, 2 Jun 2021 11:36:43 +0000, Wei Yongjun wrote:
+> The snd_soc_dai_ops structures is only stored in the ops field of a
+> snd_soc_dai_driver structure, so make the snd_soc_dai_ops structure
+> const to allow the compiler to put it in read-only memory.
 
-jm2c,
- re,
- wh
-________________________________________
-Von: Colin King <colin.king@canonical.com>
-Gesendet: Freitag, 18. Juni 2021 11:29:24
-An: Sebastian Reichel; Hans de Goede; Chen-Yu Tsai; linux-pm@vger.kernel.or=
-g
-Cc: kernel-janitors@vger.kernel.org; linux-kernel@vger.kernel.org
-Betreff: [PATCH] power: supply: axp288_fuel_gauge: remove redundant continu=
-e statement
+Applied to
 
-WARNUNG: Diese E-Mail kam von au=DFerhalb der Organisation. Klicken Sie nic=
-ht auf Links oder =F6ffnen Sie keine Anh=E4nge, es sei denn, Sie kennen den=
-/die Absender*in und wissen, dass der Inhalt sicher ist.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
+Thanks!
 
-From: Colin Ian King <colin.king@canonical.com>
+[1/1] ASoC: rk817: Constify static struct snd_soc_dai_ops
+      commit: 45ce213392df07b9e2443666c0910e1617882cf3
 
-The continue statement at the end of a for-loop has no effect,
-invert the if expression and remove the continue.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/power/supply/axp288_fuel_gauge.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-diff --git a/drivers/power/supply/axp288_fuel_gauge.c b/drivers/power/suppl=
-y/axp288_fuel_gauge.c
-index 39e16ecb7638..20e63609ab47 100644
---- a/drivers/power/supply/axp288_fuel_gauge.c
-+++ b/drivers/power/supply/axp288_fuel_gauge.c
-@@ -142,9 +142,7 @@ static int fuel_gauge_reg_readb(struct axp288_fg_info *=
-info, int reg)
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-        for (i =3D 0; i < NR_RETRY_CNT; i++) {
-                ret =3D regmap_read(info->regmap, reg, &val);
--               if (ret =3D=3D -EBUSY)
--                       continue;
--               else
-+               if (ret !=3D -EBUSY)
-                        break;
-        }
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
---
-2.31.1
-
+Thanks,
+Mark
