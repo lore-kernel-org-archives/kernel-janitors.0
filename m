@@ -2,88 +2,109 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 160A9C48BE8
-	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Jun 2021 19:21:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F065C48BDF
+	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Jun 2021 19:47:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F124461260
-	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Jun 2021 19:21:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F4376127C
+	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Jun 2021 19:47:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234382AbhFRTXU (ORCPT
+        id S230377AbhFRTtR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 18 Jun 2021 15:23:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55080 "EHLO
+        Fri, 18 Jun 2021 15:49:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232203AbhFRTXU (ORCPT
+        with ESMTP id S229591AbhFRTtR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 18 Jun 2021 15:23:20 -0400
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40596C061574;
-        Fri, 18 Jun 2021 12:21:10 -0700 (PDT)
-Received: by mail-lf1-x131.google.com with SMTP id q20so18374119lfo.2;
-        Fri, 18 Jun 2021 12:21:10 -0700 (PDT)
+        Fri, 18 Jun 2021 15:49:17 -0400
+Received: from mail-oi1-x232.google.com (mail-oi1-x232.google.com [IPv6:2607:f8b0:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D43BC061574;
+        Fri, 18 Jun 2021 12:47:06 -0700 (PDT)
+Received: by mail-oi1-x232.google.com with SMTP id d19so11738057oic.7;
+        Fri, 18 Jun 2021 12:47:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NUD8G36VdsiWC+n5lUqd4hu3Ex5au9XROzjkjPU2dP8=;
-        b=IzJZ3MvKB72AkKG9jjEGQSnFkYIn542CcJXVkiQKpix92CvAx7y/WuuLAv1Xs+C+CX
-         N854TOa+OWVSdHnNZ1CZNHPhCnywcx+Fpg6fZqC48LR00A5b/XYGCkqNPxpb07iiVaHC
-         BfsKu6rMtqeej80nhcG2/Ff4I6EbShg+h+pamaBMxgpo1lo4ixx6Saw7Sk5XC+WFjle1
-         amvUxVVh5mAWyAG2JMnG5qh5wJ0mFbAnc581SR4C2NLaXKMa153JSTw36/rnKVwYnrzO
-         bFxt/Mr6ojNYUsHXp/4TkxorH+xHW0dgTh32YafQ5TbTXhznj8KfNdzzoWBoKnPuVhV6
-         pXrA==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=J2h/rtErddJtuwrYdyLo1SQwC1ntbYiJsiSR6HTN2Og=;
+        b=NQCE/gZocnMZcvq8elnPGBJBPteCqw+j5NMJkwvZGaywf4fnqM+DHpRyWBhw3fxOdk
+         kUf5eDB4fnwnQTiCKKL3P0Fka2T9gjFLLnd23ThJ27tpsc4mkCx8at/XyAaEv964FljA
+         /Kjs5Ad/9R/JtS0Oj7nYJ9DIlrBIzScOetvP17xegQjejFZP6099nGoNqAw+EHHhBvVw
+         IkKC0EAzamiMDT+KSJkp/+WZplr2VWguLiOl27rFY9Sou2efBGfUNZJaCL9COicI0rAn
+         HSw3+f5GtdVRTs3j8iz5b9MqBauMCMJJII5IHz2Jlwrw84zSVxBF+ohqoC5ynX5z8ZNM
+         53qw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NUD8G36VdsiWC+n5lUqd4hu3Ex5au9XROzjkjPU2dP8=;
-        b=pf90z13LJFhUpBgzZMAb+AeSJbGRtr3fmXlUVj9KxwwIWCppfaGcfrjWM1PTEUr2J9
-         edHNfk1iA5Dhxy4NAsozc7EyzACT1DYSfCaVtpARo1HkoB7caIZm28reVrszqmVzl3uT
-         qd3QyjSPlB6sLXAGjIiU6DtT7ZOsDrA3AC/OnJGaY5rwLFKIyH9/se+C8ac14Qck7sNx
-         H0zXiCcNkN+F8y8vyj69ET6eFNSTm7W9um+Nmw4aLUg1ucBioUneebtZmYMUbP8aGXgw
-         GEwGa4GKlYOEMJvXhYSH7DVBbE/Tp4mPHC0xKq5PZVtk0vY6fcBhIhhcENxGOpnW7Rrd
-         s1cw==
-X-Gm-Message-State: AOAM533Sc5IzkDQkvKR9dcCWlO3PAc2XYpDk2L4fWKe2nEQeUXdeVTqj
-        J3QOMzeHU6/r2bOwxIGGPRsMVt9ZUDquA3kaNHA=
-X-Google-Smtp-Source: ABdhPJyGIKidY1tG/LXuXRUf1mMo5ZxqEZVwQ9e0WaUYsuo2c8MfdNNalTrFIqThoXFLfBcSBo+JcxkC0f9t8j/xwRc=
-X-Received: by 2002:a05:6512:3e0b:: with SMTP id i11mr4483889lfv.139.1624044068616;
- Fri, 18 Jun 2021 12:21:08 -0700 (PDT)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=J2h/rtErddJtuwrYdyLo1SQwC1ntbYiJsiSR6HTN2Og=;
+        b=TCEAULAoqRRiihQyndxThvyohmeUKCV2NMIjohWGujL3qzIZDibTUZOWqnlgna9Jg9
+         qUfA1ueJtrPOC5/fblsxUUBlm8FwSXczl3s4zRYpxq8oMVMNTd5N1DUd5V56T2W2bKqD
+         pqDamwqXdr23j9yXrv3A5gJldt/2+brNcMemJYRbY2oFveMUrOisvfcRqwRkLJmdGALe
+         B7Rzy4SzD5MfrzkTm4nVGWzmhlx49QLtm+9sie3YT00ueTn0sZ2QBFvSkVQNtUIs5gcG
+         x/i+ULnFFGYCXgFc66FAXNiVYxlf9ebO5NN9H2UGheFaiJPpvNK5xDglIpFyZzRRWNf/
+         /rbg==
+X-Gm-Message-State: AOAM5325jsrZMazvJBpuVk6sS6dfESRlY+nq3ugufIDyZ/rKM5Vy0/7B
+        f+derCneEkEy22IqQ18Au4M=
+X-Google-Smtp-Source: ABdhPJy/xWdCw8eQDigk1I4QrsBJKp+amnflfMZHsUPuGB3phbXrPgbaYhdb56ZOGvgL+x5oUB/SXA==
+X-Received: by 2002:aca:acd3:: with SMTP id v202mr15889329oie.176.1624045625885;
+        Fri, 18 Jun 2021 12:47:05 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id s187sm2012770oig.6.2021.06.18.12.47.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Jun 2021 12:47:05 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date:   Fri, 18 Jun 2021 12:47:04 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Robert Marko <robert.marko@sartura.hr>,
+        Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] hwmon: (pmbus/dps920ab) Delete some dead code
+Message-ID: <20210618194704.GC1664689@roeck-us.net>
+References: <YMyjmR54ErLtc1sH@mwanda>
 MIME-Version: 1.0
-References: <20210618183524.590186-1-colin.king@canonical.com>
-In-Reply-To: <20210618183524.590186-1-colin.king@canonical.com>
-From:   Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
-Date:   Fri, 18 Jun 2021 21:20:57 +0200
-Message-ID: <CAMeQTsaEO_FVrC-X8GC765xDa=MQxd8Pwn2X1VPndhU5MYw20A@mail.gmail.com>
-Subject: Re: [PATCH] drm/gma500/oaktrail_lvds: replace continue with break
-To:     Colin King <colin.king@canonical.com>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        kernel-janitors@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YMyjmR54ErLtc1sH@mwanda>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Jun 18, 2021 at 8:35 PM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Currently a loop scans through the connector list checking
-> for connectors that do not match a specific criteria. The
-> use of the continue statement is a little unintuitive and
-> can confuse static analysis checking.  Invert the criteria
-> matching logic and use a break to terminate the loop once
-> the first suitable connector has been found.
->
-> Thanks to Patrik Jakobsson for explaining the original
-> intent of the code and suggesting this change.
+On Fri, Jun 18, 2021 at 04:46:01PM +0300, Dan Carpenter wrote:
+> The debugfs_create_dir() function returns error pointers, it doesn't
+> return NULL.  But debugfs functions don't need to be checked in normal
+> situations and we can just delete this code.
+> 
+> Fixes: 1f442e213ce5 ("hwmon: (pmbus) Add driver for Delta DPS-920AB PSU")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied to drm-misc-next
+Applied.
 
-Thanks for the patch!
+Thanks,
+Guenter
+
+> ---
+>  drivers/hwmon/pmbus/dps920ab.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/hwmon/pmbus/dps920ab.c b/drivers/hwmon/pmbus/dps920ab.c
+> index bd2df2a3c8e3..d3941f6eb29a 100644
+> --- a/drivers/hwmon/pmbus/dps920ab.c
+> +++ b/drivers/hwmon/pmbus/dps920ab.c
+> @@ -119,8 +119,6 @@ static void dps920ab_init_debugfs(struct dps920ab_data *data, struct i2c_client
+>  		return;
+>  
+>  	debugfs_dir = debugfs_create_dir(client->name, root);
+> -	if (!debugfs_dir)
+> -		return;
+>  
+>  	debugfs_create_file("mfr_id",
+>  			    0400,
+> -- 
+> 2.30.2
+> 
