@@ -7,100 +7,94 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 023A4C49EA2
-	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Jun 2021 13:44:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 608C8C49361
+	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Jun 2021 13:45:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E8EDB61248
-	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Jun 2021 13:44:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3693461248
+	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Jun 2021 13:45:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233969AbhFRNrG (ORCPT
+        id S233726AbhFRNrv (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 18 Jun 2021 09:47:06 -0400
-Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:65332 "EHLO
-        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231855AbhFRNrG (ORCPT
+        Fri, 18 Jun 2021 09:47:51 -0400
+Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:40144 "EHLO
+        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229782AbhFRNrt (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 18 Jun 2021 09:47:06 -0400
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15IDhrhY010803;
-        Fri, 18 Jun 2021 13:44:37 GMT
+        Fri, 18 Jun 2021 09:47:49 -0400
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15IDgsAD030678;
+        Fri, 18 Jun 2021 13:45:36 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
  : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=FluAY6HgIzMDqkeeKmecM2WfpkpmZL6tgXmZI0hFMgU=;
- b=scjwU88SHNObbORJ+sYovhCb8iDxbzrcREmqBkDWDAStwot+DBW9x17+yz7mFSGp9G8a
- ff+U5xH1jFpcI31wA7VhvtjgjOVERZN5CqdVJFnWBq1loDyqTMxvlEDArj/8b5xjpfap
- hnrHj+SSn3ytRi2ImMAD+TpU5L/hvbiTxCHs72YCjFwBdgxr78+tfvRy9Zkii5TZ4wD1
- Scxn63pc42k8VAfC5STQozCy69xucyyPOvsjNYkd9m0B0sirm6exxfPRvZWWREcypW7J
- n9PGtvS0RLTPv73nwICfhpUaW8hUVHW8ClvxIG8A9jVa3fjtfHWC0VQ4CGofLzuQDxLH GQ== 
-Received: from oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by mx0b-00069f02.pphosted.com with ESMTP id 397w1y398h-1
+ bh=1YJmO/I1GDlFwi4XZmigbTFuokV86Zbeko9gDrEF1/I=;
+ b=Bmk1fMwj72Ots9R4lglavhaUszBYlytRRDqstKfX71U5DHlbEWkF2/fN1GEk0ioRwP3f
+ Ie18W2/bmgI9QVOT3zOTXPwDfdPdFEN+UOQmeqe/5uwH59J0eWtSADl1/bVsBK0/pWwu
+ LrypYCnZBwLPDnTGg7t0NLhkLT67xy6pHsRmxF5cnh3+dYE5UWD5+1SH+HiCy3XyWF63
+ aq/lftbZ2yhwhxARxlZlBAaEflvkUgUuI9JHsFlgGxBcfwBU2yb2rEilRk4npf9f1VV6
+ QG0QETSiPXZxuco+vUrsyZcG1738ZFBG3r6jz4PunLEMShqp5NwzsCEVkVAwxI+iK85n CQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by mx0b-00069f02.pphosted.com with ESMTP id 397mptm1xm-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 18 Jun 2021 13:44:37 +0000
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
-        by pps.podrdrct (8.16.0.36/8.16.0.36) with SMTP id 15IDiarG103154;
-        Fri, 18 Jun 2021 13:44:36 GMT
+        Fri, 18 Jun 2021 13:45:36 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 15IDfIXN086792;
+        Fri, 18 Jun 2021 13:45:35 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-        by aserp3020.oracle.com with ESMTP id 396waxy563-1
+        by aserp3020.oracle.com with ESMTP id 396waxy6va-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 18 Jun 2021 13:44:36 +0000
+        Fri, 18 Jun 2021 13:45:35 +0000
 Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 15IDiahj103133;
-        Fri, 18 Jun 2021 13:44:36 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3020.oracle.com with ESMTP id 396waxy55k-1
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 15IDjZRo107358;
+        Fri, 18 Jun 2021 13:45:35 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 396waxy6uq-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 18 Jun 2021 13:44:36 +0000
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 15IDiXLW016901;
-        Fri, 18 Jun 2021 13:44:33 GMT
+        Fri, 18 Jun 2021 13:45:34 +0000
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 15IDjTNe005044;
+        Fri, 18 Jun 2021 13:45:31 GMT
 Received: from mwanda (/102.222.70.252)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 18 Jun 2021 13:44:32 +0000
-Date:   Fri, 18 Jun 2021 16:44:24 +0300
+        with ESMTP ; Fri, 18 Jun 2021 06:45:29 -0700
+Date:   Fri, 18 Jun 2021 16:45:22 +0300
 From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Dmitry Osipenko <digetx@gmail.com>
-Cc:     Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Svyatoslav Ryhel <clamor95@gmail.com>,
-        Ion Agorria <ion@agorria.com>, alsa-devel@alsa-project.org,
-        linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] ASoC: tegra: Fix a NULL vs IS_ERR() check
-Message-ID: <YMyjOKFsPe9SietU@mwanda>
+To:     Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>
+Cc:     Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
+        linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] blk-mq: fix an IS_ERR() vs NULL bug
+Message-ID: <YMyjci35WBqrtqG+@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
-X-Proofpoint-ORIG-GUID: RudKXr0sEGZo39jcPkSRPU__TXjDmtST
-X-Proofpoint-GUID: RudKXr0sEGZo39jcPkSRPU__TXjDmtST
+X-Proofpoint-GUID: yL8gISbLYqOgcWJJTp8Zu8tet7fAEC1U
+X-Proofpoint-ORIG-GUID: yL8gISbLYqOgcWJJTp8Zu8tet7fAEC1U
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The tegra_machine_parse_phandle() function doesn't return NULL, it returns
+The __blk_mq_alloc_disk() function doesn't return NULLs it returns
 error pointers.
 
-Fixes: cc8f70f56039 ("ASoC: tegra: Unify ASoC machine drivers")
+Fixes: b461dfc49eb6 ("blk-mq: add the blk_mq_alloc_disk APIs")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- sound/soc/tegra/tegra_asoc_machine.c | 2 +-
+ include/linux/blk-mq.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/tegra/tegra_asoc_machine.c b/sound/soc/tegra/tegra_asoc_machine.c
-index a53aec361a77..735909310a26 100644
---- a/sound/soc/tegra/tegra_asoc_machine.c
-+++ b/sound/soc/tegra/tegra_asoc_machine.c
-@@ -409,7 +409,7 @@ int tegra_asoc_machine_probe(struct platform_device *pdev)
- 		return PTR_ERR(np_codec);
- 
- 	np_i2s = tegra_machine_parse_phandle(dev, "nvidia,i2s-controller");
--	if (!np_i2s)
-+	if (IS_ERR(np_i2s))
- 		return PTR_ERR(np_i2s);
- 
- 	card->dai_link->cpus->of_node = np_i2s;
+diff --git a/include/linux/blk-mq.h b/include/linux/blk-mq.h
+index 02a4aab0aeac..fd2de2b422ed 100644
+--- a/include/linux/blk-mq.h
++++ b/include/linux/blk-mq.h
+@@ -431,7 +431,7 @@ enum {
+ 	static struct lock_class_key __key;				\
+ 	struct gendisk *__disk = __blk_mq_alloc_disk(set, queuedata);	\
+ 									\
+-	if (__disk)							\
++	if (!IS_ERR(__disk))						\
+ 		lockdep_init_map(&__disk->lockdep_map,			\
+ 			"(bio completion)", &__key, 0);			\
+ 	__disk;								\
 -- 
 2.30.2
 
