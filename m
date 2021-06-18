@@ -2,121 +2,106 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+X-Spam-Status: No, score=-20.8 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B55DCC48BE8
-	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Jun 2021 08:19:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E59D1C49361
+	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Jun 2021 08:37:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9BDB26121D
-	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Jun 2021 08:19:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9E62613B9
+	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Jun 2021 08:37:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232803AbhFRIV6 (ORCPT
+        id S233256AbhFRIj4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 18 Jun 2021 04:21:58 -0400
-Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:64254 "EHLO
+        Fri, 18 Jun 2021 04:39:56 -0400
+Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:22132 "EHLO
         mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232409AbhFRIV6 (ORCPT
+        by vger.kernel.org with ESMTP id S231855AbhFRIjz (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 18 Jun 2021 04:21:58 -0400
+        Fri, 18 Jun 2021 04:39:55 -0400
 Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15I8HOc2028683;
-        Fri, 18 Jun 2021 08:19:14 GMT
+        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15I8VRJm021263;
+        Fri, 18 Jun 2021 08:37:41 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- content-transfer-encoding : in-reply-to; s=corp-2020-01-29;
- bh=fv4pfXaAByNncMHfBjHvaP9PumDCscygQU7MAcT/KyY=;
- b=Yv61xQJKtlOoQRYXBXhA43KKAp2AcEmYO35ytdherM6W4fHZj0NUDYXNteE1FbOvNIRl
- V24y71vva6U+aIRFZTOzgXcneOvZXI/6W4NpW3M1no0TdgGdb7XGY5wOCikomG+K2Zju
- lC7M2B1qk9q7daQfUjPdEPAP6Ph6gNv2Uvf2jmBPsiidGPzRIiGD5gE7WuaMCXSck0Lw
- Ng5crRNpBzO5I9Sf7Z01RjVCswYPnmmCLeN8o1wP24Lu2pHtadldXRAFfu2Aq+ddjEiy
- NBM6CPOL2s0g8dJsYJV6ACknwR16UbdKs8pO+Zo4tnvWakGqjMgi91jovMkVDUvzODG9 TA== 
-Received: from oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by mx0b-00069f02.pphosted.com with ESMTP id 397w1y2pt7-1
+ : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
+ bh=iXmA2kYJS+r4Xe0FDNKeogg/oAJA0bHydZas7lXjRoA=;
+ b=MlFLQRA4Geu15h3+AyqYmvlyB18yyUKEDBKKDmWZSPbKsCZMY4k4m6amZSjuOVHspA75
+ mwmmYusKYyxzYA/o88plJzrEyVxAkcXRS0iLH9zfR5xkW3n6rhw6cmklsem1vJWg1tsV
+ +pb0HaZA0A6PxHFYHTHwPdAiZI+e8tvIoisFqI8CNkU/xSVrQMraF+OGPCe2+ztuUPRj
+ ATfpMwyp94ABM4EWtmsxE3mx2TyWTrSq2UX5fmqxrLt0CSNi1+qK309qy7XgFhFQj63X
+ G7/Yh6fiNSJ9JX2Ev18zF/Sgcc96SILzZNn6WqN+I6k8A5Yf1a41Ew3VjdkQAvaogEZ8 VA== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by mx0b-00069f02.pphosted.com with ESMTP id 397w1y2r37-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 18 Jun 2021 08:19:14 +0000
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
-        by pps.podrdrct (8.16.0.36/8.16.0.36) with SMTP id 15I8JD82001646;
-        Fri, 18 Jun 2021 08:19:13 GMT
+        Fri, 18 Jun 2021 08:37:41 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 15I8ZPmJ038676;
+        Fri, 18 Jun 2021 08:37:40 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-        by aserp3030.oracle.com with ESMTP id 396wawh25h-1
+        by aserp3030.oracle.com with ESMTP id 396wawhf7d-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 18 Jun 2021 08:19:13 +0000
+        Fri, 18 Jun 2021 08:37:40 +0000
 Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 15I8JDQ8001552;
-        Fri, 18 Jun 2021 08:19:13 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3030.oracle.com with ESMTP id 396wawh24r-1
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 15I8bJZM042909;
+        Fri, 18 Jun 2021 08:37:39 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3030.oracle.com with ESMTP id 396wawhf74-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 18 Jun 2021 08:19:13 +0000
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 15I8J8ul009470;
-        Fri, 18 Jun 2021 08:19:08 GMT
-Received: from kadam (/102.222.70.252)
+        Fri, 18 Jun 2021 08:37:39 +0000
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 15I8bV2R015132;
+        Fri, 18 Jun 2021 08:37:31 GMT
+Received: from mwanda (/102.222.70.252)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 18 Jun 2021 01:19:08 -0700
-Date:   Fri, 18 Jun 2021 11:19:00 +0300
+        with ESMTP ; Fri, 18 Jun 2021 01:37:30 -0700
+Date:   Fri, 18 Jun 2021 11:37:21 +0300
 From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     "libaokun (A)" <libaokun1@huawei.com>
-Cc:     Namjae Jeon <namjae.jeon@samsung.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steve French <sfrench@samba.org>,
-        Hyunchul Lee <hyc.lee@gmail.com>, linux-cifs@vger.kernel.org,
-        linux-cifsd-devel@lists.sourceforge.net,
-        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
-Subject: Re: [PATCH -next] cifsd: fix WARNING: convert list_for_each to entry
- variant in smb2pdu.c
-Message-ID: <20210618081900.GR1901@kadam>
-References: <20210617064653.3193618-1-libaokun1@huawei.com>
- <20210617092639.GD1861@kadam>
- <fa589904-ac16-fb97-bb7a-df081954d363@huawei.com>
- <20210618051400.GG1861@kadam>
- <4adc3507-6b34-1f23-36cb-21336d5e8e91@huawei.com>
+To:     Alex Deucher <alexander.deucher@amd.com>,
+        Dave Airlie <airlied@redhat.com>
+Cc:     Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] drm/amdgpu: fix amdgpu_preempt_mgr_new()
+Message-ID: <YMxbQXg/Wqm0ACxt@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4adc3507-6b34-1f23-36cb-21336d5e8e91@huawei.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-ORIG-GUID: FfdhD8auGzzzxW_fIvfq1GYeF08m_AbP
-X-Proofpoint-GUID: FfdhD8auGzzzxW_fIvfq1GYeF08m_AbP
+X-Mailer: git-send-email haha only kidding
+X-Proofpoint-ORIG-GUID: O9dxSdX-U6cfZyGxH_AnkP1JpiesTef7
+X-Proofpoint-GUID: O9dxSdX-U6cfZyGxH_AnkP1JpiesTef7
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Jun 18, 2021 at 03:47:12PM +0800, libaokun (A) wrote:
-> 在 2021/6/18 13:14, Dan Carpenter 写道:
-> > On Fri, Jun 18, 2021 at 09:44:37AM +0800, libaokun (A) wrote:
-> > > I don't know what the difference is between
-> > > 
-> > > list_for_each_entry() and list_for_each() for 'struct channel *chann',
-> > > 
-> > > but I don't think there's any difference here.
-> > Correct.  There is no difference, but Coccinelle is smart enough to
-> > parse list_for_each_entry() and it's not smart enough to parse
-> > list_for_each().
-> > 
-> > > Would you give me more detial about this, please?
-> > There is a Coccinelle script scripts/coccinelle/iterators/itnull.cocci
-> > which will complain about the NULL check in the new code so this patch
-> > will introduce a new warning.  We may as well remove the unnecessary
-> > NULL check and avoid the warning.
-> > 
-> > regards,
-> > dan carpenter
-> > 
-> > .
-> 
-> I get your point, but this bug has nothing to do with my patch.
-> 
-> It's  from e2f34481b24d(cifsd: add server-side procedures for SMB3).
-> 
+There is a reversed if statement in amdgpu_preempt_mgr_new() so it
+always returns -ENOMEM.
 
-Fine, but when Hulk Robot reports the new warning and someone fixes it,
-I'm going to insist that the Fixes tag points to your patch.  ;)
+Fixes: 09b020bb05a5 ("Merge tag 'drm-misc-next-2021-06-09' of git://anongit.freedesktop.org/drm/drm-misc into drm-next")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_preempt_mgr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-regards,
-dan carpenter
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_preempt_mgr.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_preempt_mgr.c
+index f6aff7ce5160..d02c8637f909 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_preempt_mgr.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_preempt_mgr.c
+@@ -71,7 +71,7 @@ static int amdgpu_preempt_mgr_new(struct ttm_resource_manager *man,
+ 	struct amdgpu_preempt_mgr *mgr = to_preempt_mgr(man);
+ 
+ 	*res = kzalloc(sizeof(**res), GFP_KERNEL);
+-	if (*res)
++	if (!*res)
+ 		return -ENOMEM;
+ 
+ 	ttm_resource_init(tbo, place, *res);
+-- 
+2.30.2
 
