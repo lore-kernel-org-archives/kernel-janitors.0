@@ -2,111 +2,160 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 347A6C49EA2
-	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Jun 2021 03:32:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8305CC49361
+	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Jun 2021 03:53:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1DAEF6128B
-	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Jun 2021 03:32:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 541E16113C
+	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Jun 2021 03:53:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232238AbhFRDem (ORCPT
+        id S231282AbhFRDzv (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 17 Jun 2021 23:34:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39646 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232079AbhFRDel (ORCPT
+        Thu, 17 Jun 2021 23:55:51 -0400
+Received: from szxga08-in.huawei.com ([45.249.212.255]:8269 "EHLO
+        szxga08-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230137AbhFRDzu (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 17 Jun 2021 23:34:41 -0400
-Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA0E3C06175F
-        for <kernel-janitors@vger.kernel.org>; Thu, 17 Jun 2021 20:32:31 -0700 (PDT)
-Received: by mail-pg1-x533.google.com with SMTP id w31so6653030pga.6
-        for <kernel-janitors@vger.kernel.org>; Thu, 17 Jun 2021 20:32:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=1IR2Jtwu8aWSfR50DxaFiQcomIN7MP6Klsy7f1btCzI=;
-        b=TtMv60lza7lNizDysWmmBY57vOoGikPqFdk0B+a5JlDmUhvJPek2Y+q9Omq+R3+B2w
-         ytlzcFCqwdBfo8K8WT4sR399ZKqYlmspHEk3mXH7Ne69p66UX+1Qr0GrnZkPb66BN/Lv
-         9t6SOXBbI15cJrifYX03qatIhO7ieAAPs6mD+Gv1nanvG5OmS0+xzBkOgNvoREYNYxEZ
-         LIP8yp6/O/8ULcITglX0svfJzbg0wcST6jc6nLLWuemQbjazFo2TPy2vsAnU+i8vvVZ6
-         Mgmv3uFgwrhVlHcZpFoluSG0vF8ip10pkMuLm3IcM9u3aPRveQTiw1l8tYK2AEg7MSb2
-         Lx6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=1IR2Jtwu8aWSfR50DxaFiQcomIN7MP6Klsy7f1btCzI=;
-        b=pZ7puypEvlAKka/kh0NfX9kS8SwMrNz6ITevaw3H3BuKlDa3RFZDe3dmRqVH8ibMoL
-         5vxSQYwBI2yUdNtJVeDZK3Em7hWt2GHYRjb8RFfE/Fxf/oQ7LsL4qeTxpGwAjktwLkfo
-         /kBaMzj+VgL7noKZk8T3OuaWMT6FzmKGhZprfE0whpADjGPAO4x2C1ppAUEC+IcUZs3t
-         l9l1mpbkm7N6b2HSHlaMGgQw3X4ONqVsQ0EKA8Eq6Kj5/yxqtn1Y+2RbmX0ypIQ4O+/D
-         aTVtq4Sl/dXP26srvrinhhoqq864M/ujq54PVzEEF6L4UOQ33RtZ18jMN+eCswfo44II
-         h/EA==
-X-Gm-Message-State: AOAM533vgm+LP2sK5w+GpiEopRsAFOuSFKFmWRsc3TiYzJyPrP+r0jW/
-        xTj01F8byCaqUDOxCLxC8g2+YQ==
-X-Google-Smtp-Source: ABdhPJyZujAfTBJoBP8IoVxzcmnKXOahTuBWcxxJtVS8tTuDE26rzuzY5dgIrUd7sosptn/B+2loYg==
-X-Received: by 2002:a63:1011:: with SMTP id f17mr8066798pgl.274.1623987151163;
-        Thu, 17 Jun 2021 20:32:31 -0700 (PDT)
-Received: from localhost ([136.185.134.182])
-        by smtp.gmail.com with ESMTPSA id r14sm6072661pgm.28.2021.06.17.20.32.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Jun 2021 20:32:30 -0700 (PDT)
-Date:   Fri, 18 Jun 2021 09:02:28 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] opp: remove redundant continue statement
-Message-ID: <20210618033228.mork47zl3xydwb34@vireshk-i7>
-References: <20210617135020.16415-1-colin.king@canonical.com>
+        Thu, 17 Jun 2021 23:55:50 -0400
+Received: from dggemv711-chm.china.huawei.com (unknown [172.30.72.55])
+        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4G5lJh0CjNz1BN5G;
+        Fri, 18 Jun 2021 11:48:36 +0800 (CST)
+Received: from dggpeml500020.china.huawei.com (7.185.36.88) by
+ dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Fri, 18 Jun 2021 11:53:38 +0800
+Received: from huawei.com (10.175.127.227) by dggpeml500020.china.huawei.com
+ (7.185.36.88) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.2; Fri, 18 Jun
+ 2021 11:53:38 +0800
+From:   Baokun Li <libaokun1@huawei.com>
+To:     <libaokun1@huawei.com>, Steve French <sfrench@samba.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+CC:     <linux-kernel@vger.kernel.org>, <linux-cifs@vger.kernel.org>,
+        <samba-technical@lists.samba.org>,
+        <kernel-janitors@vger.kernel.org>, "Hulk Robot" <hulkci@huawei.com>
+Subject: [PATCH -next v2] cifs: convert list_for_each to entry variant in smb2misc.c
+Date:   Fri, 18 Jun 2021 12:02:32 +0800
+Message-ID: <20210618040232.2550645-1-libaokun1@huawei.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210617135020.16415-1-colin.king@canonical.com>
-User-Agent: NeoMutt/20180716-391-311a52
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.127.227]
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpeml500020.china.huawei.com (7.185.36.88)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 17-06-21, 14:50, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The continue statement at the end of a for-loop has no effect,
-> remove it.
-> 
-> Addresses-Coverity: ("Continue has no effect")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/opp/of.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/opp/of.c b/drivers/opp/of.c
-> index 9573facce53a..d298e38aaf7e 100644
-> --- a/drivers/opp/of.c
-> +++ b/drivers/opp/of.c
-> @@ -197,10 +197,8 @@ static void _opp_table_alloc_required_tables(struct opp_table *opp_table,
->  		required_opp_tables[i] = _find_table_of_opp_np(required_np);
->  		of_node_put(required_np);
->  
-> -		if (IS_ERR(required_opp_tables[i])) {
-> +		if (IS_ERR(required_opp_tables[i]))
->  			lazy = true;
-> -			continue;
-> -		}
->  	}
+convert list_for_each() to list_for_each_entry() where
+applicable.
 
-I had to merge this with:
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Baokun Li <libaokun1@huawei.com>
+---
+V1->V2:
+	Convert the missing list_for_each to entry
 
-"opp: Allow required-opps to be used for non genpd use cases"
+ fs/cifs/smb2misc.c | 33 ++++++++-------------------------
+ 1 file changed, 8 insertions(+), 25 deletions(-)
 
-Thanks for the report anyway :)
-
+diff --git a/fs/cifs/smb2misc.c b/fs/cifs/smb2misc.c
+index 06d555d4da9a..aba048153f79 100644
+--- a/fs/cifs/smb2misc.c
++++ b/fs/cifs/smb2misc.c
+@@ -164,12 +164,10 @@ smb2_check_message(char *buf, unsigned int len, struct TCP_Server_Info *srvr)
+ 		struct smb2_transform_hdr *thdr =
+ 			(struct smb2_transform_hdr *)buf;
+ 		struct cifs_ses *ses = NULL;
+-		struct list_head *tmp;
+ 
+ 		/* decrypt frame now that it is completely read in */
+ 		spin_lock(&cifs_tcp_ses_lock);
+-		list_for_each(tmp, &srvr->smb_ses_list) {
+-			ses = list_entry(tmp, struct cifs_ses, smb_ses_list);
++		list_for_each_entry(ses, &srvr->smb_ses_list, smb_ses_list) {
+ 			if (ses->Suid == thdr->SessionId)
+ 				break;
+ 
+@@ -548,7 +546,6 @@ static bool
+ smb2_tcon_has_lease(struct cifs_tcon *tcon, struct smb2_lease_break *rsp)
+ {
+ 	__u8 lease_state;
+-	struct list_head *tmp;
+ 	struct cifsFileInfo *cfile;
+ 	struct cifsInodeInfo *cinode;
+ 	int ack_req = le32_to_cpu(rsp->Flags &
+@@ -556,8 +553,7 @@ smb2_tcon_has_lease(struct cifs_tcon *tcon, struct smb2_lease_break *rsp)
+ 
+ 	lease_state = le32_to_cpu(rsp->NewLeaseState);
+ 
+-	list_for_each(tmp, &tcon->openFileList) {
+-		cfile = list_entry(tmp, struct cifsFileInfo, tlist);
++	list_for_each_entry(cfile, &tcon->openFileList, tlist) {
+ 		cinode = CIFS_I(d_inode(cfile->dentry));
+ 
+ 		if (memcmp(cinode->lease_key, rsp->LeaseKey,
+@@ -618,7 +614,6 @@ static bool
+ smb2_is_valid_lease_break(char *buffer)
+ {
+ 	struct smb2_lease_break *rsp = (struct smb2_lease_break *)buffer;
+-	struct list_head *tmp, *tmp1, *tmp2;
+ 	struct TCP_Server_Info *server;
+ 	struct cifs_ses *ses;
+ 	struct cifs_tcon *tcon;
+@@ -628,15 +623,9 @@ smb2_is_valid_lease_break(char *buffer)
+ 
+ 	/* look up tcon based on tid & uid */
+ 	spin_lock(&cifs_tcp_ses_lock);
+-	list_for_each(tmp, &cifs_tcp_ses_list) {
+-		server = list_entry(tmp, struct TCP_Server_Info, tcp_ses_list);
+-
+-		list_for_each(tmp1, &server->smb_ses_list) {
+-			ses = list_entry(tmp1, struct cifs_ses, smb_ses_list);
+-
+-			list_for_each(tmp2, &ses->tcon_list) {
+-				tcon = list_entry(tmp2, struct cifs_tcon,
+-						  tcon_list);
++	list_for_each_entry(server, &cifs_tcp_ses_list, tcp_ses_list) {
++		list_for_each_entry(ses, &server->smb_ses_list, smb_ses_list) {
++			list_for_each_entry(tcon, &ses->tcon_list, tcon_list) {
+ 				spin_lock(&tcon->open_file_lock);
+ 				cifs_stats_inc(
+ 				    &tcon->stats.cifs_stats.num_oplock_brks);
+@@ -687,7 +676,6 @@ bool
+ smb2_is_valid_oplock_break(char *buffer, struct TCP_Server_Info *server)
+ {
+ 	struct smb2_oplock_break *rsp = (struct smb2_oplock_break *)buffer;
+-	struct list_head *tmp, *tmp1, *tmp2;
+ 	struct cifs_ses *ses;
+ 	struct cifs_tcon *tcon;
+ 	struct cifsInodeInfo *cinode;
+@@ -710,16 +698,11 @@ smb2_is_valid_oplock_break(char *buffer, struct TCP_Server_Info *server)
+ 
+ 	/* look up tcon based on tid & uid */
+ 	spin_lock(&cifs_tcp_ses_lock);
+-	list_for_each(tmp, &server->smb_ses_list) {
+-		ses = list_entry(tmp, struct cifs_ses, smb_ses_list);
+-
+-		list_for_each(tmp1, &ses->tcon_list) {
+-			tcon = list_entry(tmp1, struct cifs_tcon, tcon_list);
++	list_for_each_entry(ses, &server->smb_ses_list, smb_ses_list) {
++		list_for_each_entry(tcon, &ses->tcon_list, tcon_list) {
+ 
+ 			spin_lock(&tcon->open_file_lock);
+-			list_for_each(tmp2, &tcon->openFileList) {
+-				cfile = list_entry(tmp2, struct cifsFileInfo,
+-						     tlist);
++			list_for_each_entry(cfile, &tcon->openFileList, tlist) {
+ 				if (rsp->PersistentFid !=
+ 				    cfile->fid.persistent_fid ||
+ 				    rsp->VolatileFid !=
 -- 
-viresh
+2.31.1
+
