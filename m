@@ -2,77 +2,88 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 593AAC49361
-	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Jun 2021 19:20:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 160A9C48BE8
+	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Jun 2021 19:21:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 41F0061284
-	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Jun 2021 19:20:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F124461260
+	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Jun 2021 19:21:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235467AbhFRTWX (ORCPT
+        id S234382AbhFRTXU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 18 Jun 2021 15:22:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33958 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235435AbhFRTWQ (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 18 Jun 2021 15:22:16 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id AB2C0613F9;
-        Fri, 18 Jun 2021 19:20:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624044006;
-        bh=HZ4786m59RuoK2hhVqx9AEvfGS19lUp25OPPq29lkUU=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=m2OgkkTsdmofpAAu+W1ppBUgg89bpi+1Rut7sSdt4QOX6ZIbFyLif7ypQ6aA9wbDU
-         +gaLLp7pX/cIr1d3ak3nb/YXyOoBCqpjRZvUolGJxw4RsExGqy2Z749K4WvUnarJ9G
-         CBNVDmLMxX7RS/B6IcVMKj2YSCD44wPK/yl9n0vtH1CFeznK0ul49HoIZ+ZTCqYti3
-         9dmnEQhninmnPpwIjfL8s+AKlz08LFngtHSp+2R62c5ugzIWHd17Zi/ebJcfoqBe4z
-         c0fJK90vs8Vpa4E8ZyAYo63WkC7rga5LTcxlZSOSDTQMkAWuhSiCe9B2T35tqHuufu
-         dGroWBUz9RBdA==
-Content-Type: text/plain; charset="utf-8"
+        Fri, 18 Jun 2021 15:23:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55080 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232203AbhFRTXU (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 18 Jun 2021 15:23:20 -0400
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40596C061574;
+        Fri, 18 Jun 2021 12:21:10 -0700 (PDT)
+Received: by mail-lf1-x131.google.com with SMTP id q20so18374119lfo.2;
+        Fri, 18 Jun 2021 12:21:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NUD8G36VdsiWC+n5lUqd4hu3Ex5au9XROzjkjPU2dP8=;
+        b=IzJZ3MvKB72AkKG9jjEGQSnFkYIn542CcJXVkiQKpix92CvAx7y/WuuLAv1Xs+C+CX
+         N854TOa+OWVSdHnNZ1CZNHPhCnywcx+Fpg6fZqC48LR00A5b/XYGCkqNPxpb07iiVaHC
+         BfsKu6rMtqeej80nhcG2/Ff4I6EbShg+h+pamaBMxgpo1lo4ixx6Saw7Sk5XC+WFjle1
+         amvUxVVh5mAWyAG2JMnG5qh5wJ0mFbAnc581SR4C2NLaXKMa153JSTw36/rnKVwYnrzO
+         bFxt/Mr6ojNYUsHXp/4TkxorH+xHW0dgTh32YafQ5TbTXhznj8KfNdzzoWBoKnPuVhV6
+         pXrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NUD8G36VdsiWC+n5lUqd4hu3Ex5au9XROzjkjPU2dP8=;
+        b=pf90z13LJFhUpBgzZMAb+AeSJbGRtr3fmXlUVj9KxwwIWCppfaGcfrjWM1PTEUr2J9
+         edHNfk1iA5Dhxy4NAsozc7EyzACT1DYSfCaVtpARo1HkoB7caIZm28reVrszqmVzl3uT
+         qd3QyjSPlB6sLXAGjIiU6DtT7ZOsDrA3AC/OnJGaY5rwLFKIyH9/se+C8ac14Qck7sNx
+         H0zXiCcNkN+F8y8vyj69ET6eFNSTm7W9um+Nmw4aLUg1ucBioUneebtZmYMUbP8aGXgw
+         GEwGa4GKlYOEMJvXhYSH7DVBbE/Tp4mPHC0xKq5PZVtk0vY6fcBhIhhcENxGOpnW7Rrd
+         s1cw==
+X-Gm-Message-State: AOAM533Sc5IzkDQkvKR9dcCWlO3PAc2XYpDk2L4fWKe2nEQeUXdeVTqj
+        J3QOMzeHU6/r2bOwxIGGPRsMVt9ZUDquA3kaNHA=
+X-Google-Smtp-Source: ABdhPJyGIKidY1tG/LXuXRUf1mMo5ZxqEZVwQ9e0WaUYsuo2c8MfdNNalTrFIqThoXFLfBcSBo+JcxkC0f9t8j/xwRc=
+X-Received: by 2002:a05:6512:3e0b:: with SMTP id i11mr4483889lfv.139.1624044068616;
+ Fri, 18 Jun 2021 12:21:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net: stmmac: remove redundant continue statement
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <162404400663.12339.191732752255079680.git-patchwork-notify@kernel.org>
-Date:   Fri, 18 Jun 2021 19:20:06 +0000
-References: <20210618094425.100395-1-colin.king@canonical.com>
-In-Reply-To: <20210618094425.100395-1-colin.king@canonical.com>
+References: <20210618183524.590186-1-colin.king@canonical.com>
+In-Reply-To: <20210618183524.590186-1-colin.king@canonical.com>
+From:   Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
+Date:   Fri, 18 Jun 2021 21:20:57 +0200
+Message-ID: <CAMeQTsaEO_FVrC-X8GC765xDa=MQxd8Pwn2X1VPndhU5MYw20A@mail.gmail.com>
+Subject: Re: [PATCH] drm/gma500/oaktrail_lvds: replace continue with break
 To:     Colin King <colin.king@canonical.com>
-Cc:     peppe.cavallaro@st.com, alexandre.torgue@foss.st.com,
-        joabreu@synopsys.com, davem@davemloft.net, kuba@kernel.org,
-        mcoquelin.stm32@gmail.com, netdev@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        kernel-janitors@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
-
-This patch was applied to netdev/net-next.git (refs/heads/master):
-
-On Fri, 18 Jun 2021 10:44:25 +0100 you wrote:
+On Fri, Jun 18, 2021 at 8:35 PM Colin King <colin.king@canonical.com> wrote:
+>
 > From: Colin Ian King <colin.king@canonical.com>
-> 
-> The continue statement in the for-loop has no effect, remove it.
-> 
-> Addresses-Coverity: ("Continue has no effect")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> 
-> [...]
+>
+> Currently a loop scans through the connector list checking
+> for connectors that do not match a specific criteria. The
+> use of the continue statement is a little unintuitive and
+> can confuse static analysis checking.  Invert the criteria
+> matching logic and use a break to terminate the loop once
+> the first suitable connector has been found.
+>
+> Thanks to Patrik Jakobsson for explaining the original
+> intent of the code and suggesting this change.
 
-Here is the summary with links:
-  - net: stmmac: remove redundant continue statement
-    https://git.kernel.org/netdev/net-next/c/c44924c532fb
+Applied to drm-misc-next
 
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Thanks for the patch!
