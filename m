@@ -2,101 +2,200 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+X-Spam-Status: No, score=-17.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFCC7C48BE8
-	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Jun 2021 13:46:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4953CC48BE8
+	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Jun 2021 13:53:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8DFE961159
-	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Jun 2021 13:46:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B2E8613E2
+	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Jun 2021 13:53:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233430AbhFRNsf (ORCPT
+        id S234212AbhFRNzg (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 18 Jun 2021 09:48:35 -0400
-Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:4664 "EHLO
-        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229782AbhFRNse (ORCPT
+        Fri, 18 Jun 2021 09:55:36 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:46802 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234119AbhFRNzf (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 18 Jun 2021 09:48:34 -0400
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15IDhuWW017244;
-        Fri, 18 Jun 2021 13:46:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=9raDCdunyKVJWbeCbttvLe3JNktRfAi9rmwb3NHQ8EY=;
- b=RiCoe3Gwu3ODAGVanV7vd9PItQa6NrGAJBlgTO5hJIEWnF/fYlNKaAxhvAtgS9KjIwUX
- TlAZlDFF5zHxvRbh6pP0Cj09AnNULwhGtEegyWGB5EO8jVDu4MNKT1WH1/VrjzWjJWFw
- NQPttD3LljZGntTBj8ty++bRY/b85yeXDauK89xjh1WJG2XDly1iqCHIY4qqGKc10Gjm
- TLOkQpbOF+TIXBg4Pa9fL2970pB0QHYE6Yw0Wk9J+AO3VLshNIFH/TQhiyZZHyAV4jsc
- Gb5bmL9DsRTiP8tjReyilabdQhiLnQTSca4xYHGKfhJBik1t/sRsb7dfKtDbHCFvO2Yw yA== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by mx0b-00069f02.pphosted.com with ESMTP id 39893qswy8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 18 Jun 2021 13:46:11 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 15IDfQg8150446;
-        Fri, 18 Jun 2021 13:46:10 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by aserp3030.oracle.com with ESMTP id 396wawrfn9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 18 Jun 2021 13:46:10 +0000
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 15IDkAme164152;
-        Fri, 18 Jun 2021 13:46:10 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3030.oracle.com with ESMTP id 396wawrfn2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 18 Jun 2021 13:46:10 +0000
-Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 15IDk849017872;
-        Fri, 18 Jun 2021 13:46:08 GMT
-Received: from mwanda (/102.222.70.252)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 18 Jun 2021 13:46:07 +0000
-Date:   Fri, 18 Jun 2021 16:46:01 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Robert Marko <robert.marko@sartura.hr>
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] hwmon: (pmbus/dps920ab) Delete some dead code
-Message-ID: <YMyjmR54ErLtc1sH@mwanda>
+        Fri, 18 Jun 2021 09:55:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1624024406;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=P/mlf3E91IxDGki9DJUtyEv6dP68LA3nvEkze77PADI=;
+        b=di5hUEj69Zz+1cKS1hFmX5mdkVUNu3lFty+ge8nffdnxgjVjZVh+ay9iRSBqjqYcJlQs/+
+        lCV3cFR8wceFmhJzvj081Im68i3lduvWGlQaDIFIpfPmO8k0vOeRqdid98MDEcm6J2+HVs
+        7V3N7kzaoOetronCGhddjSTXNyIIHOc=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-335-8YvWFAbWOYKqlzq6fvvm0g-1; Fri, 18 Jun 2021 09:53:24 -0400
+X-MC-Unique: 8YvWFAbWOYKqlzq6fvvm0g-1
+Received: by mail-ej1-f72.google.com with SMTP id n8-20020a1709067b48b02904171dc68f87so3969988ejo.21
+        for <kernel-janitors@vger.kernel.org>; Fri, 18 Jun 2021 06:53:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=P/mlf3E91IxDGki9DJUtyEv6dP68LA3nvEkze77PADI=;
+        b=ErYtEmhcQedpZme2Z3kWfaG8yQ05/kiet5Cp5+jHo6UCzSdViqbIHmCuhnNailo1JV
+         QHR5nB2iEiNQdfxoGuG9RRKe7zvMBXzo0H/14ZNGsTYxWwI18Kfroq9KwTY30MLu8/IW
+         K0QMssTTYbfi7CFtk9IBZC206UhcREFk6hNYLKf//DTpEtYjCBii9TO31Q6mLD7WaTII
+         aczzman8vyLqKgOeP9whYUMxLfOxQdAhqU1uNY6h+7S0z+MXCd1QEXP2iHULVmzwYV4R
+         237uKo9CPwhxYzNPlCiZDbe1CKO5vTkCGZ3nl8dLnY5uwARjvVSqOoBsfJv4IrAO0jhC
+         R5MA==
+X-Gm-Message-State: AOAM530UdxRSPxL9syxUogbJOggkPPRLsTzBNkJXtXtM0jGzoSzEAdkT
+        dQdacd9vYbWKpPHITZMwgqltDyQ0JGzIw1601tIknUoRkaCbT0Tanlwe+Gb1S1Lfqs2FePBC2WV
+        O25UEtYqXVxTKH4lgASKcdKnB2R+e
+X-Received: by 2002:a05:6402:31ba:: with SMTP id dj26mr5123214edb.71.1624024403742;
+        Fri, 18 Jun 2021 06:53:23 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJyTsF/0Cs/2BceDIqNAQD06Z7C0XH4tntVdthlt9jCkRfrIbPEznJ7emZ4sC946B20lOowpNw==
+X-Received: by 2002:a05:6402:31ba:: with SMTP id dj26mr5123196edb.71.1624024403599;
+        Fri, 18 Jun 2021 06:53:23 -0700 (PDT)
+Received: from x1.localdomain (2001-1c00-0c1e-bf00-1054-9d19-e0f0-8214.cable.dynamic.v6.ziggo.nl. [2001:1c00:c1e:bf00:1054:9d19:e0f0:8214])
+        by smtp.gmail.com with ESMTPSA id de6sm780838edb.77.2021.06.18.06.53.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Jun 2021 06:53:23 -0700 (PDT)
+Subject: Re: AW: [PATCH] power: supply: axp288_fuel_gauge: remove redundant
+ continue statement
+To:     Walter Harms <wharms@bfs.de>,
+        Colin King <colin.king@canonical.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
+Cc:     "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20210618092924.99722-1-colin.king@canonical.com>
+ <5d5dad5246f442e5aa96bdc50ac4b1f1@bfs.de>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <bac7f313-6696-7973-4261-27bf59055425@redhat.com>
+Date:   Fri, 18 Jun 2021 15:53:22 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-X-Proofpoint-ORIG-GUID: b1ZdGEb3FyCqpBmr2hOzcTI5uVE6jMrD
-X-Proofpoint-GUID: b1ZdGEb3FyCqpBmr2hOzcTI5uVE6jMrD
+In-Reply-To: <5d5dad5246f442e5aa96bdc50ac4b1f1@bfs.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The debugfs_create_dir() function returns error pointers, it doesn't
-return NULL.  But debugfs functions don't need to be checked in normal
-situations and we can just delete this code.
+Hi,
 
-Fixes: 1f442e213ce5 ("hwmon: (pmbus) Add driver for Delta DPS-920AB PSU")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/hwmon/pmbus/dps920ab.c | 2 --
- 1 file changed, 2 deletions(-)
+On 6/18/21 1:19 PM, Walter Harms wrote:
+> Just a remark:
+> the function fuel_gauge_reg_readb() is reporting via dev_err().
+> But some callers are reporting also. Maybe someone should take
+> a look.
+> The valid return seems >=0 so removing the dev_err seems an option.
 
-diff --git a/drivers/hwmon/pmbus/dps920ab.c b/drivers/hwmon/pmbus/dps920ab.c
-index bd2df2a3c8e3..d3941f6eb29a 100644
---- a/drivers/hwmon/pmbus/dps920ab.c
-+++ b/drivers/hwmon/pmbus/dps920ab.c
-@@ -119,8 +119,6 @@ static void dps920ab_init_debugfs(struct dps920ab_data *data, struct i2c_client
- 		return;
- 
- 	debugfs_dir = debugfs_create_dir(client->name, root);
--	if (!debugfs_dir)
--		return;
- 
- 	debugfs_create_file("mfr_id",
- 			    0400,
--- 
-2.30.2
+Actually the whole register reading code in this driver needs to
+be reworked.
+
+The AXP288 PMIC also controls voltage-planes which are used by
+the CPU-cores and the i915 GPU which are part of the Intel SoCs
+with which this PMIC is used.
+
+This means that the PMU of the SoC needs to also talk to it
+over the same I2C bus when CPU-cores / the GPU changes C-states
+or ramp up/down their frequency.
+
+To avoid conflicts there is a special handshake with both the
+PMU itself (taking something resembling a mutex by a hw-handshake)
+as well as with the i915 driver. This handshake is hidden inside
+the i2c-adapter driver, so you don't see it in the code here.
+This handshake is also the whole reason why the regmap_read may
+return -EBUSY.
+
+This handshake is quite expensive and currently it is done for
+every single regmap_read (the handshake is many times as
+expensive as the actual I2C read) and updating the fuel-gauge
+status does quite a lot of reads.
+
+A while ago I changed the underlying code so that AXP288
+drivers can acquire access to the bus once; then do a bunch
+of regmap accesses and then release the bus again.
+
+A user who was having some stability issues has been working
+(offlist) on a patch to use a register cache which gets updated
+periodically (like how many hwmon drivers work) and then have
+all the psy property accesses come from the cache. This allows
+acquiring the bus once; do all the reads to fill the cache;
+and then release it again.  I need to review his code; but
+I've not gotten around to that yet (I really need to make
+time for this).
+
+Once we switch to this register-cache approach, then the whole
+fuel_gauge_reg_readb() wrapper can go away since then we no
+longer need to worry about EBUSY errors (once we have acquired
+the bus these cannot happen).
+
+TL;DR: you are right that there are some cleanups possible here,
+but the entire thing is going to be rewritten soon, so it is
+probably best to just leave it as is for now.
+
+Regards,
+
+Hans
+
+
+
+
+
+
+
+
+
+
+
+
+> 
+> jm2c,
+>  re,
+>  wh
+> ________________________________________
+> Von: Colin King <colin.king@canonical.com>
+> Gesendet: Freitag, 18. Juni 2021 11:29:24
+> An: Sebastian Reichel; Hans de Goede; Chen-Yu Tsai; linux-pm@vger.kernel.org
+> Cc: kernel-janitors@vger.kernel.org; linux-kernel@vger.kernel.org
+> Betreff: [PATCH] power: supply: axp288_fuel_gauge: remove redundant continue statement
+> 
+> WARNUNG: Diese E-Mail kam von außerhalb der Organisation. Klicken Sie nicht auf Links oder öffnen Sie keine Anhänge, es sei denn, Sie kennen den/die Absender*in und wissen, dass der Inhalt sicher ist.
+> 
+> 
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The continue statement at the end of a for-loop has no effect,
+> invert the if expression and remove the continue.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/power/supply/axp288_fuel_gauge.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/power/supply/axp288_fuel_gauge.c b/drivers/power/supply/axp288_fuel_gauge.c
+> index 39e16ecb7638..20e63609ab47 100644
+> --- a/drivers/power/supply/axp288_fuel_gauge.c
+> +++ b/drivers/power/supply/axp288_fuel_gauge.c
+> @@ -142,9 +142,7 @@ static int fuel_gauge_reg_readb(struct axp288_fg_info *info, int reg)
+> 
+>         for (i = 0; i < NR_RETRY_CNT; i++) {
+>                 ret = regmap_read(info->regmap, reg, &val);
+> -               if (ret == -EBUSY)
+> -                       continue;
+> -               else
+> +               if (ret != -EBUSY)
+>                         break;
+>         }
+> 
+> --
+> 2.31.1
+> 
 
