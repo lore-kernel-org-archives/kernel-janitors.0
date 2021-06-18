@@ -2,137 +2,105 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6D1EC49361
-	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Jun 2021 21:18:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59466C49361
+	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Jun 2021 22:50:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9C5C561279
-	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Jun 2021 21:18:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B8566008E
+	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Jun 2021 22:50:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234580AbhFRVU6 (ORCPT
+        id S235063AbhFRWwl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 18 Jun 2021 17:20:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53526 "EHLO
+        Fri, 18 Jun 2021 18:52:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45954 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234574AbhFRVU5 (ORCPT
+        with ESMTP id S233892AbhFRWwk (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 18 Jun 2021 17:20:57 -0400
-Received: from mail-oo1-xc35.google.com (mail-oo1-xc35.google.com [IPv6:2607:f8b0:4864:20::c35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED9C3C061574
-        for <kernel-janitors@vger.kernel.org>; Fri, 18 Jun 2021 14:18:46 -0700 (PDT)
-Received: by mail-oo1-xc35.google.com with SMTP id z14-20020a4a984e0000b029024a8c622149so2780516ooi.10
-        for <kernel-janitors@vger.kernel.org>; Fri, 18 Jun 2021 14:18:46 -0700 (PDT)
+        Fri, 18 Jun 2021 18:52:40 -0400
+Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB526C061574;
+        Fri, 18 Jun 2021 15:50:29 -0700 (PDT)
+Received: by mail-pg1-x532.google.com with SMTP id i34so3430364pgl.9;
+        Fri, 18 Jun 2021 15:50:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=i0K+CAkNDpvB9BB97WZi89Hi6upuBxwc1H/Mi+DoJdg=;
-        b=fnkDSVaxmmiYYY7PApmGvgt3XGZMKQQuXdKVCe8SV5LmeC02fsTYaSifl9w/lKEHex
-         1Z4pBuWzh9z0n4hEZBwZENE71tqMxeS5wpROgfbo1WuaMGjwZPc1kjqx+CjzQMhJysKo
-         wnEN6bmn8EindP4YDnEdnDMtpRivzjOF8QCxsz3woF3poD2CS8v7/1Rv15/ISBXBHxht
-         Q+ec7OplAgnu7st7fbSptLw3eqt+rjdvA3PtcnFCs3mt0lCh1SDD3DboCKfo/cBzTPhU
-         Wd7E19I+l5gfE+AyJC2lQBpO26flNLHi1WG7YivbYHRfepAl0NA1jA/2ZX/E4MEAA6b2
-         Ikdg==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=SNyDGkX9Ukd5scsSsx1mRm+k+4LOQgsMRHMLkmzl73k=;
+        b=Tzl4zMuYNWzbP5/C6fLlIy37r5yYy0/qQCJCG6LbJWYTkgQFXGdAWQlMod5SMbhoKb
+         Ph+JZ0jL0x1J1Lah+wDUSX7/cEPctjDHKjIfmiNWyvrflA3eU+bimC6Bsai3/HlCDXBk
+         H+y9VvWTA0ZwtipohajMg6FNsHedLmALsJJ0z9QRoaqQvVMrZ5gL0SsRAKLzFvNGqqzv
+         wLPELf5p6kLY5nEv6Yvzx0LLLgscWXhHK6XrNSe6QvegmynBmWon+xesskooq6SKwiGf
+         iPXVfCUpHcjDZTCU7/tgj2Gus2Isb3ckF3mLVsNBdTU8qHgt3rbxCsWAGDihjI5IZxQD
+         7oXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=i0K+CAkNDpvB9BB97WZi89Hi6upuBxwc1H/Mi+DoJdg=;
-        b=t9sU/qkW16sAH6Zu6drJj7tCeOAXLRjDVr+NpkKGTMGecFZmayh3bFR7Lf68hRlrQK
-         XfL4LbwThxvm70Lc+QDmB2zz518RDRNdwWJfWYfX71ryD49ELOvJ9ocyUNsttYiMv/rX
-         ySiv2TGjtW5XRUpVQ+VNVDXwuFhQe1jJHNa1162tdF9HTMKEypDR22lMVaMmDEMwjcq0
-         OTa40XsBeT1OlPUotXPDLVkmjbs0n8A1f1dV/zTYVIp6IS7CVdyWewETR+c6rI1ZZA5z
-         Ior5+GGDRXW/xgcy4WDx8XkEkOvcJAxLUfyLbJWRqooQExzJI+VsuBwQbWfUmYY592gP
-         HEmQ==
-X-Gm-Message-State: AOAM530WuM1STP7Sq+PI0Ii73r/EvBTl8bf2MxvcWHJYeLcUtZ2h+dDS
-        +QlB3+uYk7y93bVZx9vE3qOzNW86zA9WR8liSpo=
-X-Google-Smtp-Source: ABdhPJwAdPB2OKndxiBb3QLHU+rMPZGzghYSrerKY4S9jGUMqziKf7k9wPNnlVoECnFAIi2jVZbvAGsi+JDiVVIGxbk=
-X-Received: by 2002:a4a:2242:: with SMTP id z2mr10559229ooe.90.1624051126161;
- Fri, 18 Jun 2021 14:18:46 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=SNyDGkX9Ukd5scsSsx1mRm+k+4LOQgsMRHMLkmzl73k=;
+        b=D4dcQbC9zstPPrIZIyb9UsHefWUnkKS1XuSVYxCKxgXt4RKB2LJhAPS2iLjTRW207R
+         4VThEb/IRi/Nw9GqeT52G6b2plDIa2zUOe0XuR/fKL/iaYRfENeCPRLCs8o85UZNUhUO
+         huUYIl6Qu9IlsbwitnRBd2sQDHsrtgerlWb0SJGdl7xxz5kTYjKIl6ktR4GmkoVqz6Nj
+         OIjbi2wzaWGyhpTxfhM8LDOnYIRYvsNllqGkGw0+2GUaeTu0wjGCh6MBS3hfZPfs44kU
+         0fxr7aNIMEwnZGDwvXvsJm3JnaRB9Gr1tuh5SzvJp4JzBJAOTIuLZWrEucpRi1lvrrQU
+         tXmw==
+X-Gm-Message-State: AOAM532euQLFaT9UV46Pz5KFOGvM9dE626dMEGN/TihZLZuhNfmwN3U3
+        kIyb+X69pR8qOGfMF+cn9ZIESD+L9nc=
+X-Google-Smtp-Source: ABdhPJzXDtxt0EPBs1yBhC5rZmwo4WwV7vOF2JNkyC+v/CKUxbK5agTtt73wTl77N3/3peKNoAYzrw==
+X-Received: by 2002:aa7:9901:0:b029:2ff:17ed:feaf with SMTP id z1-20020aa799010000b02902ff17edfeafmr7145045pff.34.1624056629409;
+        Fri, 18 Jun 2021 15:50:29 -0700 (PDT)
+Received: from [192.168.1.27] (ip174-67-196-173.oc.oc.cox.net. [174.67.196.173])
+        by smtp.gmail.com with ESMTPSA id 11sm8892018pfh.182.2021.06.18.15.50.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Jun 2021 15:50:29 -0700 (PDT)
+Subject: Re: [PATCH][next] scsi: elx: efct: remove redundant initialization of
+ variable lun
+To:     Colin King <colin.king@canonical.com>,
+        James Smart <james.smart@broadcom.com>,
+        Ram Vegesna <ram.vegesna@broadcom.com>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Hannes Reinecke <hare@suse.de>, linux-scsi@vger.kernel.org,
+        target-devel@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210616171621.16176-1-colin.king@canonical.com>
+From:   James Smart <jsmart2021@gmail.com>
+Message-ID: <3be6287a-9ac3-2837-11b2-a0270522a607@gmail.com>
+Date:   Fri, 18 Jun 2021 15:50:27 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.2
 MIME-Version: 1.0
-References: <YMxbQXg/Wqm0ACxt@mwanda> <fadcee22-d830-c1be-09f0-9788b98c45ec@amd.com>
- <adee15a2-f531-688c-1121-7504163ae441@amd.com>
-In-Reply-To: <adee15a2-f531-688c-1121-7504163ae441@amd.com>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Fri, 18 Jun 2021 17:18:34 -0400
-Message-ID: <CADnq5_MtwTXEv=HitiyBfdSyBb-izSRiR3W=zxKNKRNvxdKO1A@mail.gmail.com>
-Subject: Re: [PATCH] drm/amdgpu: fix amdgpu_preempt_mgr_new()
-To:     Felix Kuehling <felix.kuehling@amd.com>
-Cc:     =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Dave Airlie <airlied@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
-        kernel-janitors@vger.kernel.org,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Daniel Vetter <daniel@ffwll.ch>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20210616171621.16176-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Jun 18, 2021 at 11:40 AM Felix Kuehling <felix.kuehling@amd.com> wr=
-ote:
->
-> Am 2021-06-18 um 4:39 a.m. schrieb Christian K=C3=B6nig:
-> > Am 18.06.21 um 10:37 schrieb Dan Carpenter:
-> >> There is a reversed if statement in amdgpu_preempt_mgr_new() so it
-> >> always returns -ENOMEM.
-> >>
-> >> Fixes: 09b020bb05a5 ("Merge tag 'drm-misc-next-2021-06-09' of
-> >> git://anongit.freedesktop.org/drm/drm-misc into drm-next")
-> >> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> >
-> > Most be some fallout from merging it with the TTM changes.
-> >
-> > Anyway, patch is Reviewed-by: Christian K=C3=B6nig <christian.koenig@am=
-d.com>
->
-> This is obviously not for amd-staging-drm-next. Christian, are you going
-> to apply it to the relevant branches?
+On 6/16/2021 10:16 AM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The variable lun is being initialized with a value that is never
+> read, it is being updated later on. The assignment is redundant and
+> can be removed.
+> 
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>   drivers/scsi/elx/efct/efct_unsol.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
 
-I've applied it to my drm-next branch.
+Thanks
 
-Alex
+Reviewed-by: James Smart <jsmart2021@gmail.com>
 
+-- james
 
->
-> Thanks,
->   Felix
->
->
-> >
-> > Thanks,
-> > Christian.
-> >
-> >> ---
-> >>   drivers/gpu/drm/amd/amdgpu/amdgpu_preempt_mgr.c | 2 +-
-> >>   1 file changed, 1 insertion(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_preempt_mgr.c
-> >> b/drivers/gpu/drm/amd/amdgpu/amdgpu_preempt_mgr.c
-> >> index f6aff7ce5160..d02c8637f909 100644
-> >> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_preempt_mgr.c
-> >> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_preempt_mgr.c
-> >> @@ -71,7 +71,7 @@ static int amdgpu_preempt_mgr_new(struct
-> >> ttm_resource_manager *man,
-> >>       struct amdgpu_preempt_mgr *mgr =3D to_preempt_mgr(man);
-> >>         *res =3D kzalloc(sizeof(**res), GFP_KERNEL);
-> >> -    if (*res)
-> >> +    if (!*res)
-> >>           return -ENOMEM;
-> >>         ttm_resource_init(tbo, place, *res);
-> >
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
