@@ -2,112 +2,139 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B6F1C2B9F4
-	for <kernel-janitors@archiver.kernel.org>; Sat, 19 Jun 2021 19:12:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14BB5C2B9F4
+	for <kernel-janitors@archiver.kernel.org>; Sat, 19 Jun 2021 20:14:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 19ABF61042
-	for <kernel-janitors@archiver.kernel.org>; Sat, 19 Jun 2021 19:12:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E565060FE5
+	for <kernel-janitors@archiver.kernel.org>; Sat, 19 Jun 2021 20:14:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234985AbhFSTOk (ORCPT
+        id S230144AbhFSUQh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 19 Jun 2021 15:14:40 -0400
-Received: from so254-9.mailgun.net ([198.61.254.9]:21479 "EHLO
-        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231601AbhFSTOj (ORCPT
+        Sat, 19 Jun 2021 16:16:37 -0400
+Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:44401 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229712AbhFSUQh (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 19 Jun 2021 15:14:39 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1624129948; h=Message-ID: References: In-Reply-To: Subject:
- Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
- MIME-Version: Sender; bh=v1aNjp9Lda9GSx5Lj2kSSJlN8OFxXPLTUfIdUdht+Y4=;
- b=BdfxO/FUabCuqhntHF/aZNNhWKzEnYr2oylD4WaOqipYVg/hPWTfg/mU2ryZI5JuLe7aIApB
- lOZfOulaKwcUrUNkCfqPpCPRs7ruyZJ/bZo86fEluf1N3M+gFdlB9tmCIG8VxPreQjoO2hZ/
- VKZtQMQO38+aNP91Ymj1Ux7g1xk=
-X-Mailgun-Sending-Ip: 198.61.254.9
-X-Mailgun-Sid: WyI5NDExNyIsICJrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n06.prod.us-east-1.postgun.com with SMTP id
- 60ce418a6ddc3305c4bfd0e6 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Sat, 19 Jun 2021 19:12:10
- GMT
-Sender: subashab=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 07C69C43217; Sat, 19 Jun 2021 19:12:10 +0000 (UTC)
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: subashab)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3C948C433F1;
-        Sat, 19 Jun 2021 19:12:09 +0000 (UTC)
+        Sat, 19 Jun 2021 16:16:37 -0400
+Received: from localhost.localdomain ([86.243.172.93])
+        by mwinf5d18 with ME
+        id K8EM2500721Fzsu038EMqf; Sat, 19 Jun 2021 22:14:24 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 19 Jun 2021 22:14:24 +0200
+X-ME-IP: 86.243.172.93
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Larry.Finger@lwfinger.net, gregkh@linuxfoundation.org,
+        insafonov@gmail.com, linux@roeck-us.net, straube.linux@gmail.com,
+        gustavoars@kernel.org, liushixin2@huawei.com,
+        yepeilin.cs@gmail.com, phil@philpotter.co.uk
+Cc:     linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 1/2] staging: rtl8188eu: remove "rtw_ieee80211_back_actioncode"
+Date:   Sat, 19 Jun 2021 22:14:20 +0200
+Message-Id: <6b6d8d81e7b2115e9206d2960ce09e1b2e8b6381.1624132543.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Sat, 19 Jun 2021 13:12:09 -0600
-From:   subashab@codeaurora.org
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Sean Tranchetti <stranche@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net-next] net: qualcomm: rmnet: fix two pointer math bugs
-In-Reply-To: <YM32lkJIJdSgpR87@mwanda>
-References: <YM32lkJIJdSgpR87@mwanda>
-Message-ID: <027ae9e2ddc18f0ed30c5d9c7075c8b9@codeaurora.org>
-X-Sender: subashab@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 2021-06-19 07:52, Dan Carpenter wrote:
-> We recently changed these two pointers from void pointers to struct
-> pointers and it breaks the pointer math so now the "txphdr" points
-> beyond the end of the buffer.
-> 
-> Fixes: 56a967c4f7e5 ("net: qualcomm: rmnet: Remove some unneeded 
-> casts")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/net/ethernet/qualcomm/rmnet/rmnet_map_data.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/qualcomm/rmnet/rmnet_map_data.c
-> b/drivers/net/ethernet/qualcomm/rmnet/rmnet_map_data.c
-> index 3ee5c1a8b46e..3676976c875b 100644
-> --- a/drivers/net/ethernet/qualcomm/rmnet/rmnet_map_data.c
-> +++ b/drivers/net/ethernet/qualcomm/rmnet/rmnet_map_data.c
-> @@ -168,7 +168,7 @@ static void
-> rmnet_map_complement_ipv4_txporthdr_csum_field(struct iphdr *ip4h)
->  	void *txphdr;
->  	u16 *csum;
-> 
-> -	txphdr = ip4h + ip4h->ihl * 4;
-> +	txphdr = (void *)ip4h + ip4h->ihl * 4;
-> 
->  	if (ip4h->protocol == IPPROTO_TCP || ip4h->protocol == IPPROTO_UDP) {
->  		csum = (u16 *)rmnet_map_get_csum_field(ip4h->protocol, txphdr);
-> @@ -203,7 +203,7 @@
-> rmnet_map_complement_ipv6_txporthdr_csum_field(struct ipv6hdr *ip6h)
->  	void *txphdr;
->  	u16 *csum;
-> 
-> -	txphdr = ip6h + sizeof(struct ipv6hdr);
-> +	txphdr = ip6h + 1;
-> 
->  	if (ip6h->nexthdr == IPPROTO_TCP || ip6h->nexthdr == IPPROTO_UDP) {
->  		csum = (u16 *)rmnet_map_get_csum_field(ip6h->nexthdr, txphdr);
+This enum is the same as "ieee80211_back_actioncode" in
+"include/linux/ieee80211.h".
 
-Hi Dan
+Update the code accordingly and remove useless comment.
 
-Thanks for fixing this. Could you cast the ip4h to char* instead of 
-void*.
-Looks like gcc might raise issues if -Wpointer-arith is used.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/staging/rtl8188eu/core/rtw_mlme_ext.c | 14 +++++++-------
+ drivers/staging/rtl8188eu/include/ieee80211.h |  7 -------
+ 2 files changed, 7 insertions(+), 14 deletions(-)
 
-https://gcc.gnu.org/onlinedocs/gcc-4.5.0/gcc/Pointer-Arith.html#Pointer-Arith
+diff --git a/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c b/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c
+index 6107257900c2..eb2202a11aa7 100644
+--- a/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c
++++ b/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c
+@@ -1744,7 +1744,7 @@ unsigned int send_delba(struct adapter *padapter, u8 initiator, u8 *addr)
+ 	if (initiator == 0) { /*  recipient */
+ 		for (tid = 0; tid < MAXTID; tid++) {
+ 			if (psta->recvreorder_ctrl[tid].enable) {
+-				issue_action_BA(padapter, addr, RTW_WLAN_ACTION_DELBA, (((tid << 1) | initiator) & 0x1F));
++				issue_action_BA(padapter, addr, WLAN_ACTION_DELBA, (((tid << 1) | initiator) & 0x1F));
+ 				psta->recvreorder_ctrl[tid].enable = false;
+ 				psta->recvreorder_ctrl[tid].indicate_seq = 0xffff;
+ 			}
+@@ -1752,7 +1752,7 @@ unsigned int send_delba(struct adapter *padapter, u8 initiator, u8 *addr)
+ 	} else if (initiator == 1) { /*  originator */
+ 		for (tid = 0; tid < MAXTID; tid++) {
+ 			if (psta->htpriv.agg_enable_bitmap & BIT(tid)) {
+-				issue_action_BA(padapter, addr, RTW_WLAN_ACTION_DELBA, (((tid << 1) | initiator) & 0x1F));
++				issue_action_BA(padapter, addr, WLAN_ACTION_DELBA, (((tid << 1) | initiator) & 0x1F));
+ 				psta->htpriv.agg_enable_bitmap &= ~BIT(tid);
+ 				psta->htpriv.candidate_tid_bitmap &= ~BIT(tid);
+ 			}
+@@ -3426,16 +3426,16 @@ static unsigned int OnAction_back(struct adapter *padapter,
+ 			return _SUCCESS;
+ 		action = frame_body[1];
+ 		switch (action) {
+-		case RTW_WLAN_ACTION_ADDBA_REQ: /* ADDBA request */
++		case WLAN_ACTION_ADDBA_REQ:
+ 			memcpy(&pmlmeinfo->ADDBA_req, &frame_body[2], sizeof(struct ADDBA_request));
+ 			process_addba_req(padapter, (u8 *)&pmlmeinfo->ADDBA_req, addr);
+ 
+ 			/* 37 = reject ADDBA Req */
+ 			issue_action_BA(padapter, addr,
+-					RTW_WLAN_ACTION_ADDBA_RESP,
++					WLAN_ACTION_ADDBA_RESP,
+ 					pmlmeinfo->accept_addba_req ? 0 : 37);
+ 			break;
+-		case RTW_WLAN_ACTION_ADDBA_RESP: /* ADDBA response */
++		case WLAN_ACTION_ADDBA_RESP:
+ 			status = get_unaligned_le16(&frame_body[3]);
+ 			tid = (frame_body[5] >> 2) & 0x7;
+ 			if (status == 0) {	/* successful */
+@@ -3445,7 +3445,7 @@ static unsigned int OnAction_back(struct adapter *padapter,
+ 				psta->htpriv.agg_enable_bitmap &= ~BIT(tid);
+ 			}
+ 			break;
+-		case RTW_WLAN_ACTION_DELBA: /* DELBA */
++		case WLAN_ACTION_DELBA:
+ 			if ((frame_body[3] & BIT(3)) == 0) {
+ 				psta->htpriv.agg_enable_bitmap &= ~(1 << ((frame_body[3] >> 4) & 0xf));
+ 				psta->htpriv.candidate_tid_bitmap &= ~(1 << ((frame_body[3] >> 4) & 0xf));
+@@ -5068,7 +5068,7 @@ u8 add_ba_hdl(struct adapter *padapter, unsigned char *pbuf)
+ 
+ 	if (((pmlmeinfo->state & WIFI_FW_ASSOC_SUCCESS) && (pmlmeinfo->HT_enable)) ||
+ 	    ((pmlmeinfo->state & 0x03) == WIFI_FW_AP_STATE)) {
+-		issue_action_BA(padapter, pparm->addr, RTW_WLAN_ACTION_ADDBA_REQ, (u16)pparm->tid);
++		issue_action_BA(padapter, pparm->addr, WLAN_ACTION_ADDBA_REQ, (u16)pparm->tid);
+ 		mod_timer(&psta->addba_retry_timer,
+ 			  jiffies + msecs_to_jiffies(ADDBA_TO));
+ 	} else {
+diff --git a/drivers/staging/rtl8188eu/include/ieee80211.h b/drivers/staging/rtl8188eu/include/ieee80211.h
+index cb6940d2aeab..4becf4edaa25 100644
+--- a/drivers/staging/rtl8188eu/include/ieee80211.h
++++ b/drivers/staging/rtl8188eu/include/ieee80211.h
+@@ -546,13 +546,6 @@ enum _PUBLIC_ACTION {
+ 	ACT_PUBLIC_MAX
+ };
+ 
+-/* BACK action code */
+-enum rtw_ieee80211_back_actioncode {
+-	RTW_WLAN_ACTION_ADDBA_REQ = 0,
+-	RTW_WLAN_ACTION_ADDBA_RESP = 1,
+-	RTW_WLAN_ACTION_DELBA = 2,
+-};
+-
+ /* HT features action code */
+ enum rtw_ieee80211_ht_actioncode {
+ 	RTW_WLAN_ACTION_NOTIFY_CH_WIDTH = 0,
+-- 
+2.30.2
+
