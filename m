@@ -2,40 +2,40 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.9 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01DC1C48BDF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75032C49EA3
 	for <kernel-janitors@archiver.kernel.org>; Sun, 20 Jun 2021 17:53:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DBB8F61007
-	for <kernel-janitors@archiver.kernel.org>; Sun, 20 Jun 2021 17:53:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5FC4361264
+	for <kernel-janitors@archiver.kernel.org>; Sun, 20 Jun 2021 17:53:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230202AbhFTR4C (ORCPT
+        id S230225AbhFTR4E (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 20 Jun 2021 13:56:02 -0400
+        Sun, 20 Jun 2021 13:56:04 -0400
 Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230031AbhFTRzq (ORCPT
+        with ESMTP id S230052AbhFTRzs (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 20 Jun 2021 13:55:46 -0400
+        Sun, 20 Jun 2021 13:55:48 -0400
 Received: from viti.kaiser.cx (viti.kaiser.cx [IPv6:2a01:238:43fe:e600:cd0c:bd4a:7a3:8e9f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39FE6C061574;
-        Sun, 20 Jun 2021 10:53:32 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0E38C061760;
+        Sun, 20 Jun 2021 10:53:35 -0700 (PDT)
 Received: from dslb-084-059-235-131.084.059.pools.vodafone-ip.de ([84.59.235.131] helo=martin-debian-2.paytec.ch)
         by viti.kaiser.cx with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.89)
         (envelope-from <martin@kaiser.cx>)
-        id 1lv1dS-00012S-LR; Sun, 20 Jun 2021 19:53:30 +0200
+        id 1lv1dV-00012S-Pr; Sun, 20 Jun 2021 19:53:33 +0200
 From:   Martin Kaiser <martin@kaiser.cx>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org,
         linux-kernel@vger.kernel.org, Martin Kaiser <martin@kaiser.cx>
-Subject: [PATCH 07/13] staging: rtl8188eu: remove RT_TRACE and MSG_88E prints from usb_halinit.c
-Date:   Sun, 20 Jun 2021 19:52:55 +0200
-Message-Id: <20210620175301.14988-7-martin@kaiser.cx>
+Subject: [PATCH 10/13] staging: rtl8188eu: remove RT_TRACE prints from pwrseqcmd.c
+Date:   Sun, 20 Jun 2021 19:52:58 +0200
+Message-Id: <20210620175301.14988-10-martin@kaiser.cx>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20210620175301.14988-1-martin@kaiser.cx>
 References: <20210620175301.14988-1-martin@kaiser.cx>
@@ -50,95 +50,73 @@ Take another step in that direction.
 
 Signed-off-by: Martin Kaiser <martin@kaiser.cx>
 ---
- drivers/staging/rtl8188eu/hal/usb_halinit.c | 21 ---------------------
- 1 file changed, 21 deletions(-)
+ drivers/staging/rtl8188eu/hal/pwrseqcmd.c | 24 -----------------------
+ 1 file changed, 24 deletions(-)
 
-diff --git a/drivers/staging/rtl8188eu/hal/usb_halinit.c b/drivers/staging/rtl8188eu/hal/usb_halinit.c
-index dcdf868b394d..3ecc0186fea0 100644
---- a/drivers/staging/rtl8188eu/hal/usb_halinit.c
-+++ b/drivers/staging/rtl8188eu/hal/usb_halinit.c
-@@ -664,7 +664,6 @@ u32 rtl8188eu_hal_init(struct adapter *Adapter)
- 	HAL_INIT_PROFILE_TAG(HAL_INIT_STAGES_INIT_PW_ON);
- 	status = rtw_hal_power_on(Adapter);
- 	if (status == _FAIL) {
--		RT_TRACE(_module_hci_hal_init_c_, _drv_err_, ("Failed to init power on!\n"));
- 		goto exit;
- 	}
+diff --git a/drivers/staging/rtl8188eu/hal/pwrseqcmd.c b/drivers/staging/rtl8188eu/hal/pwrseqcmd.c
+index fb3b0f5e8f28..cec2ff879f5d 100644
+--- a/drivers/staging/rtl8188eu/hal/pwrseqcmd.c
++++ b/drivers/staging/rtl8188eu/hal/pwrseqcmd.c
+@@ -25,27 +25,12 @@ u8 rtl88eu_pwrseqcmdparsing(struct adapter *padapter, u8 cut_vers,
+ 	do {
+ 		pwrcfgcmd = pwrseqcmd[aryidx];
  
-@@ -704,7 +703,6 @@ u32 rtl8188eu_hal_init(struct adapter *Adapter)
- 			Adapter->bFWReady = false;
- 			return status;
+-		RT_TRACE(_module_hal_init_c_, _drv_info_,
+-			 ("%s: offset(%#x) cut_msk(%#x)"
+-			  " cmd(%#x)"
+-			  "msk(%#x) value(%#x)\n",
+-			  __func__,
+-			  GET_PWR_CFG_OFFSET(pwrcfgcmd),
+-			  GET_PWR_CFG_CUT_MASK(pwrcfgcmd),
+-			  GET_PWR_CFG_CMD(pwrcfgcmd),
+-			  GET_PWR_CFG_MASK(pwrcfgcmd),
+-			  GET_PWR_CFG_VALUE(pwrcfgcmd)));
+-
+ 		/* Only Handle the command whose CUT is matched */
+ 		if (GET_PWR_CFG_CUT_MASK(pwrcfgcmd) & cut_vers) {
+ 			switch (GET_PWR_CFG_CMD(pwrcfgcmd)) {
+ 			case PWR_CMD_READ:
+-				RT_TRACE(_module_hal_init_c_, _drv_info_,
+-					 ("%s: PWR_CMD_READ\n", __func__));
+ 				break;
+ 			case PWR_CMD_WRITE:
+-				RT_TRACE(_module_hal_init_c_, _drv_info_,
+-					 ("%s: PWR_CMD_WRITE\n", __func__));
+ 				offset = GET_PWR_CFG_OFFSET(pwrcfgcmd);
+ 
+ 				/*  Read the value from system register */
+@@ -59,9 +44,6 @@ u8 rtl88eu_pwrseqcmdparsing(struct adapter *padapter, u8 cut_vers,
+ 				usb_write8(padapter, offset, value);
+ 				break;
+ 			case PWR_CMD_POLLING:
+-				RT_TRACE(_module_hal_init_c_, _drv_info_,
+-					 ("%s: PWR_CMD_POLLING\n", __func__));
+-
+ 				poll_bit = false;
+ 				offset = GET_PWR_CFG_OFFSET(pwrcfgcmd);
+ 				do {
+@@ -79,8 +61,6 @@ u8 rtl88eu_pwrseqcmdparsing(struct adapter *padapter, u8 cut_vers,
+ 				} while (!poll_bit);
+ 				break;
+ 			case PWR_CMD_DELAY:
+-				RT_TRACE(_module_hal_init_c_, _drv_info_,
+-					 ("%s: PWR_CMD_DELAY\n", __func__));
+ 				if (GET_PWR_CFG_VALUE(pwrcfgcmd) == PWRSEQ_DELAY_US)
+ 					udelay(GET_PWR_CFG_OFFSET(pwrcfgcmd));
+ 				else
+@@ -88,12 +68,8 @@ u8 rtl88eu_pwrseqcmdparsing(struct adapter *padapter, u8 cut_vers,
+ 				break;
+ 			case PWR_CMD_END:
+ 				/* When this command is parsed, end the process */
+-				RT_TRACE(_module_hal_init_c_, _drv_info_,
+-					 ("%s: PWR_CMD_END\n", __func__));
+ 				return true;
+ 			default:
+-				RT_TRACE(_module_hal_init_c_, _drv_err_,
+-					 ("%s: Unknown CMD!!\n", __func__));
+ 				break;
+ 			}
  		}
--		RT_TRACE(_module_hci_hal_init_c_, _drv_info_, ("Initializeadapt8192CSdio(): Download Firmware Success!!\n"));
- 		Adapter->bFWReady = true;
- 	}
- 	rtl8188e_InitializeFirmwareVars(Adapter);
-@@ -725,7 +723,6 @@ u32 rtl8188eu_hal_init(struct adapter *Adapter)
- 	HAL_INIT_PROFILE_TAG(HAL_INIT_STAGES_INIT_LLTT);
- 	status =  InitLLTTable(Adapter, txpktbuf_bndy);
- 	if (status == _FAIL) {
--		RT_TRACE(_module_hci_hal_init_c_, _drv_err_, ("Failed to init LLT table\n"));
- 		goto exit;
- 	}
- 
-@@ -861,8 +858,6 @@ static void CardDisableRTL8188EU(struct adapter *Adapter)
- {
- 	u8 val8;
- 
--	RT_TRACE(_module_hci_hal_init_c_, _drv_info_, ("%s\n", __func__));
--
- 	/* Stop Tx Report Timer. 0x4EC[Bit1]=b'0 */
- 	val8 = usb_read8(Adapter, REG_TX_RPT_CTRL);
- 	usb_write8(Adapter, REG_TX_RPT_CTRL, val8 & (~BIT(1)));
-@@ -954,14 +949,10 @@ u32 rtw_hal_inirp_init(struct adapter *Adapter)
- 
- 	status = _SUCCESS;
- 
--	RT_TRACE(_module_hci_hal_init_c_, _drv_info_,
--		 ("===> usb_inirp_init\n"));
--
- 	/* issue Rx irp to receive data */
- 	precvbuf = precvpriv->precv_buf;
- 	for (i = 0; i < NR_RECVBUFF; i++) {
- 		if (!usb_read_port(Adapter, RECV_BULK_IN_ADDR, precvbuf)) {
--			RT_TRACE(_module_hci_hal_init_c_, _drv_err_, ("usb_rx_init: usb_read_port error\n"));
- 			status = _FAIL;
- 			goto exit;
- 		}
-@@ -970,9 +961,6 @@ u32 rtw_hal_inirp_init(struct adapter *Adapter)
- 	}
- 
- exit:
--
--	RT_TRACE(_module_hci_hal_init_c_, _drv_info_, ("<=== usb_inirp_init\n"));
--
- 	return status;
- }
- 
-@@ -1016,8 +1004,6 @@ static void Hal_EfuseParseMACAddr_8188EU(struct adapter *adapt, u8 *hwinfo, bool
- 		/* Read Permanent MAC address */
- 		memcpy(eeprom->mac_addr, &hwinfo[EEPROM_MAC_ADDR_88EU], ETH_ALEN);
- 	}
--	RT_TRACE(_module_hci_hal_init_c_, _drv_notice_,
--		 ("%s: Permanent Address = %pM\n", __func__, eeprom->mac_addr));
- }
- 
- static void readAdapterInfo_8188EU(struct adapter *adapt)
-@@ -1056,14 +1042,7 @@ static void _ReadPROMContent(struct adapter *Adapter)
- 
- void rtw_hal_read_chip_info(struct adapter *Adapter)
- {
--	unsigned long start = jiffies;
--
--	MSG_88E("====> %s\n", __func__);
--
- 	_ReadPROMContent(Adapter);
--
--	MSG_88E("<==== %s in %d ms\n", __func__,
--		jiffies_to_msecs(jiffies - start));
- }
- 
- #define GPIO_DEBUG_PORT_NUM 0
 -- 
 2.20.1
 
