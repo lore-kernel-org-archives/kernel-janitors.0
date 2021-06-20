@@ -7,98 +7,148 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 001BCC48BDF
-	for <kernel-janitors@archiver.kernel.org>; Sun, 20 Jun 2021 17:41:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60654C48BDF
+	for <kernel-janitors@archiver.kernel.org>; Sun, 20 Jun 2021 17:53:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C784960232
-	for <kernel-janitors@archiver.kernel.org>; Sun, 20 Jun 2021 17:41:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26B846112D
+	for <kernel-janitors@archiver.kernel.org>; Sun, 20 Jun 2021 17:53:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229890AbhFTRns (ORCPT
+        id S229940AbhFTRzl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 20 Jun 2021 13:43:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36924 "EHLO
+        Sun, 20 Jun 2021 13:55:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39474 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229659AbhFTRnr (ORCPT
+        with ESMTP id S229875AbhFTRzi (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 20 Jun 2021 13:43:47 -0400
+        Sun, 20 Jun 2021 13:55:38 -0400
 Received: from viti.kaiser.cx (viti.kaiser.cx [IPv6:2a01:238:43fe:e600:cd0c:bd4a:7a3:8e9f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E800C061574;
-        Sun, 20 Jun 2021 10:41:34 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93556C061756;
+        Sun, 20 Jun 2021 10:53:25 -0700 (PDT)
 Received: from dslb-084-059-235-131.084.059.pools.vodafone-ip.de ([84.59.235.131] helo=martin-debian-2.paytec.ch)
         by viti.kaiser.cx with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.89)
         (envelope-from <martin@kaiser.cx>)
-        id 1lv1Rn-0000xJ-K2; Sun, 20 Jun 2021 19:41:27 +0200
+        id 1lv1dL-00012S-GI; Sun, 20 Jun 2021 19:53:23 +0200
 From:   Martin Kaiser <martin@kaiser.cx>
-To:     Larry Finger <Larry.Finger@lwfinger.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Martin Kaiser <martin@kaiser.cx>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [PATCH v2] staging: rtl8188eu: fix usb_submit_urb error handling
-Date:   Sun, 20 Jun 2021 19:40:57 +0200
-Message-Id: <20210620174057.10201-1-martin@kaiser.cx>
+        linux-kernel@vger.kernel.org, Martin Kaiser <martin@kaiser.cx>
+Subject: [PATCH 02/13] staging: rtl8188eu: remove RT_TRACE prints from usb_intf.c
+Date:   Sun, 20 Jun 2021 19:52:50 +0200
+Message-Id: <20210620175301.14988-2-martin@kaiser.cx>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20210612180019.20387-1-martin@kaiser.cx>
-References: <20210612180019.20387-1-martin@kaiser.cx>
+In-Reply-To: <20210620175301.14988-1-martin@kaiser.cx>
+References: <20210620175301.14988-1-martin@kaiser.cx>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-usb_read_port prepares a bulk in urb and calls usb_submit_urb to pass the
-usb to the usb core. It seems wrong that usb_read_port returns success to
-its caller if usb_submit_urb failed with -EPERM.
+Eventually, all driver-specific debug prints should be removed.
+Take another step in that direction.
 
-According to drivers/usb/core/urb.c, usb_submit_urb returns -EPERM when
-an urb is resubmitted after being cancelled by usb_kill_urb etc.
-
-The only caller who checks the return value of usb_read_port is
-rtw_hal_inirp_init. This function submits the bulk in urbs for the first
-time after the netdevice is opened. We'll not receive -EPERM from
-usb_submit_urb in this case. The urbs are resubmitted by
-read_port_complete, which does not check for errors from usb_read_port.
-
-This driver may kill pending bulk in urbs when the netdevice is closed when
-the driver is unloaded or the system goes to sleep. I don't think that this
-will interrupt an ongoing netdev open.
-
-Suggested-by: Dan Carpenter <dan.carpenter@oracle.com>
 Signed-off-by: Martin Kaiser <martin@kaiser.cx>
 ---
-v2:
- - improved the commit message based on explanations from Greg and Dan
+ drivers/staging/rtl8188eu/os_dep/usb_intf.c | 28 +--------------------
+ 1 file changed, 1 insertion(+), 27 deletions(-)
 
- drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c b/drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c
-index ec07b2017fb7..0ceb05f3884f 100644
---- a/drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c
-+++ b/drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c
-@@ -366,7 +366,6 @@ u32 usb_read_port(struct adapter *adapter, u32 addr, struct recv_buf *precvbuf)
- 	struct usb_device *pusbd = pdvobj->pusbdev;
- 	int err;
- 	unsigned int pipe;
--	u32 ret = _SUCCESS;
+diff --git a/drivers/staging/rtl8188eu/os_dep/usb_intf.c b/drivers/staging/rtl8188eu/os_dep/usb_intf.c
+index ee209b2fe4fe..b7e2692c35f3 100644
+--- a/drivers/staging/rtl8188eu/os_dep/usb_intf.c
++++ b/drivers/staging/rtl8188eu/os_dep/usb_intf.c
+@@ -143,16 +143,6 @@ static void usb_dvobj_deinit(struct usb_interface *usb_intf)
  
- 	if (adapter->bDriverStopped || adapter->bSurpriseRemoved ||
- 	    adapter->pwrctrlpriv.pnp_bstop_trx) {
-@@ -403,10 +402,10 @@ u32 usb_read_port(struct adapter *adapter, u32 addr, struct recv_buf *precvbuf)
- 			  precvbuf);/* context is precvbuf */
+ void usb_intf_stop(struct adapter *padapter)
+ {
+-	RT_TRACE(_module_hci_intfs_c_, _drv_err_, ("+%s\n", __func__));
+-
+-	/* disable_hw_interrupt */
+-	if (!padapter->bSurpriseRemoved) {
+-		/* device still exists, so driver can do i/o operation */
+-		/* TODO: */
+-		RT_TRACE(_module_hci_intfs_c_, _drv_err_,
+-			 ("SurpriseRemoved == false\n"));
+-	}
+-
+ 	/* cancel in irp */
+ 	rtw_hal_inirp_deinit(padapter);
  
- 	err = usb_submit_urb(purb, GFP_ATOMIC);
--	if ((err) && (err != (-EPERM)))
--		ret = _FAIL;
-+	if (err)
-+		return _FAIL;
+@@ -160,14 +150,10 @@ void usb_intf_stop(struct adapter *padapter)
+ 	usb_write_port_cancel(padapter);
  
--	return ret;
-+	return _SUCCESS;
+ 	/* todo:cancel other irps */
+-
+-	RT_TRACE(_module_hci_intfs_c_, _drv_err_, ("-%s\n", __func__));
  }
  
- void rtw_hal_inirp_deinit(struct adapter *padapter)
+ static void rtw_dev_unload(struct adapter *padapter)
+ {
+-	RT_TRACE(_module_hci_intfs_c_, _drv_err_, ("+%s\n", __func__));
+-
+ 	if (padapter->bup) {
+ 		pr_debug("===> %s\n", __func__);
+ 		padapter->bDriverStopped = true;
+@@ -186,14 +172,9 @@ static void rtw_dev_unload(struct adapter *padapter)
+ 		}
+ 
+ 		padapter->bup = false;
+-	} else {
+-		RT_TRACE(_module_hci_intfs_c_, _drv_err_,
+-			 ("r871x_dev_unload():padapter->bup == false\n"));
+ 	}
+ 
+ 	pr_debug("<=== %s\n", __func__);
+-
+-	RT_TRACE(_module_hci_intfs_c_, _drv_err_, ("-%s\n", __func__));
+ }
+ 
+ static int rtw_suspend(struct usb_interface *pusb_intf, pm_message_t message)
+@@ -366,8 +347,6 @@ static int rtw_usb_if1_init(struct usb_interface *pusb_intf)
+ 
+ 	/* step 5. */
+ 	if (rtw_init_drv_sw(padapter) == _FAIL) {
+-		RT_TRACE(_module_hci_intfs_c_, _drv_err_,
+-			 ("Initialize driver software resource Failed!\n"));
+ 		err = -ENOMEM;
+ 		goto free_hal_data;
+ 	}
+@@ -388,10 +367,8 @@ static int rtw_usb_if1_init(struct usb_interface *pusb_intf)
+ 
+ 	/*  alloc dev name after read efuse. */
+ 	err = dev_alloc_name(pnetdev, padapter->registrypriv.ifname);
+-	if (err < 0) {
+-		RT_TRACE(_module_os_intfs_c_, _drv_err_, ("dev_alloc_name, fail!\n"));
++	if (err < 0)
+ 		goto free_hal_data;
+-	}
+ 
+ 	netif_carrier_off(pnetdev);
+ 
+@@ -403,7 +380,6 @@ static int rtw_usb_if1_init(struct usb_interface *pusb_intf)
+ 	/* step 6. Tell the network stack we exist */
+ 	err = register_netdev(pnetdev);
+ 	if (err) {
+-		RT_TRACE(_module_hci_intfs_c_, _drv_err_, ("register_netdev() failed\n"));
+ 		goto free_hal_data;
+ 	}
+ 
+@@ -480,7 +456,6 @@ static void rtw_dev_remove(struct usb_interface *pusb_intf)
+ 	struct adapter *padapter = dvobj->if1;
+ 
+ 	pr_debug("+%s\n", __func__);
+-	RT_TRACE(_module_hci_intfs_c_, _drv_err_, ("+dev_remove()\n"));
+ 
+ 	if (!pusb_intf->unregistering)
+ 		padapter->bSurpriseRemoved = true;
+@@ -494,7 +469,6 @@ static void rtw_dev_remove(struct usb_interface *pusb_intf)
+ 
+ 	usb_dvobj_deinit(pusb_intf);
+ 
+-	RT_TRACE(_module_hci_intfs_c_, _drv_err_, ("-dev_remove()\n"));
+ 	pr_debug("-r871xu_dev_remove, done\n");
+ }
+ 
 -- 
 2.20.1
 
