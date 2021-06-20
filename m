@@ -4,41 +4,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07596C48BDF
-	for <kernel-janitors@archiver.kernel.org>; Sun, 20 Jun 2021 09:49:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2927AC48BDF
+	for <kernel-janitors@archiver.kernel.org>; Sun, 20 Jun 2021 13:28:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C8FB560231
-	for <kernel-janitors@archiver.kernel.org>; Sun, 20 Jun 2021 09:49:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B87160FF2
+	for <kernel-janitors@archiver.kernel.org>; Sun, 20 Jun 2021 13:28:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229603AbhFTJv6 (ORCPT
+        id S229683AbhFTNab (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 20 Jun 2021 05:51:58 -0400
-Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:28347 "EHLO
+        Sun, 20 Jun 2021 09:30:31 -0400
+Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:53754 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229524AbhFTJv5 (ORCPT
+        with ESMTP id S229654AbhFTNa0 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 20 Jun 2021 05:51:57 -0400
+        Sun, 20 Jun 2021 09:30:26 -0400
 Received: from localhost.localdomain ([86.243.172.93])
-        by mwinf5d58 with ME
-        id KMph2500g21Fzsu03MpiTb; Sun, 20 Jun 2021 11:49:44 +0200
+        by mwinf5d33 with ME
+        id KRU82500G21Fzsu03RU97r; Sun, 20 Jun 2021 15:28:13 +0200
 X-ME-Helo: localhost.localdomain
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 20 Jun 2021 11:49:44 +0200
+X-ME-Date: Sun, 20 Jun 2021 15:28:13 +0200
 X-ME-IP: 86.243.172.93
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     yisen.zhuang@huawei.com, salil.mehta@huawei.com,
-        davem@davemloft.net, kuba@kernel.org, huangguangbin2@huawei.com,
-        tanhuazhong@huawei.com, zhangjiaran@huawei.com,
-        moyufeng@huawei.com, lipeng321@huawei.com
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
+To:     jesse.brandeburg@intel.com, anthony.l.nguyen@intel.com,
+        davem@davemloft.net, kuba@kernel.org, david.m.ertman@intel.com,
+        shiraz.saleem@intel.com
+Cc:     intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] net: hns3: Fix a memory leak in an error handling path in 'hclge_handle_error_info_log()'
-Date:   Sun, 20 Jun 2021 11:49:40 +0200
-Message-Id: <bcf0186881d4a735fb1d356546c0cf00da40bb36.1624182453.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] ice: Fix a memory leak in an error handling path in 'ice_pf_dcb_cfg()'
+Date:   Sun, 20 Jun 2021 15:28:06 +0200
+Message-Id: <0302ff0ced7f38b0076c08ce351477d338bbe548.1624195601.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -49,29 +48,34 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 If this 'kzalloc()' fails we must free some resources as in all the other
 error handling paths of this function.
 
-Fixes: 2e2deee7618b ("net: hns3: add the RAS compatibility adaptation solution")
+Fixes: 348048e724a0 ("ice: Implement iidc operations")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c | 6 ++++--
+'event' is allocated and freed just a few lines below. It looks like a
+small structure, so maybe a better fix would be to avoid the
+kzalloc/kfree and use a local variable instead.
+Another solution
+---
+ drivers/net/ethernet/intel/ice/ice_dcb_lib.c | 6 ++++--
  1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c
-index bad9fda19398..ec9a7f8bc3fe 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c
-@@ -2330,8 +2330,10 @@ int hclge_handle_error_info_log(struct hnae3_ae_dev *ae_dev)
- 	buf_size = buf_len / sizeof(u32);
+diff --git a/drivers/net/ethernet/intel/ice/ice_dcb_lib.c b/drivers/net/ethernet/intel/ice/ice_dcb_lib.c
+index 857dc62da7a8..926cf748c5ec 100644
+--- a/drivers/net/ethernet/intel/ice/ice_dcb_lib.c
++++ b/drivers/net/ethernet/intel/ice/ice_dcb_lib.c
+@@ -316,8 +316,10 @@ int ice_pf_dcb_cfg(struct ice_pf *pf, struct ice_dcbx_cfg *new_cfg, bool locked)
  
- 	desc_data = kzalloc(buf_len, GFP_KERNEL);
--	if (!desc_data)
+ 	/* Notify AUX drivers about impending change to TCs */
+ 	event = kzalloc(sizeof(*event), GFP_KERNEL);
+-	if (!event)
 -		return -ENOMEM;
-+	if (!desc_data) {
++	if (!event) {
 +		ret = -ENOMEM;
-+		goto err_desc;
++		goto free_cfg;
 +	}
  
- 	buf = kzalloc(buf_len, GFP_KERNEL);
- 	if (!buf) {
+ 	set_bit(IIDC_EVENT_BEFORE_TC_CHANGE, event->type);
+ 	ice_send_event_to_aux(pf, event);
 -- 
 2.30.2
 
