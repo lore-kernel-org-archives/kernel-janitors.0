@@ -2,55 +2,57 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65798C48BDF
-	for <kernel-janitors@archiver.kernel.org>; Sun, 20 Jun 2021 20:33:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31F71C48BDF
+	for <kernel-janitors@archiver.kernel.org>; Sun, 20 Jun 2021 20:45:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3D1516101D
-	for <kernel-janitors@archiver.kernel.org>; Sun, 20 Jun 2021 20:33:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F2466108E
+	for <kernel-janitors@archiver.kernel.org>; Sun, 20 Jun 2021 20:45:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229984AbhFTUfn (ORCPT
+        id S229905AbhFTUsG (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 20 Jun 2021 16:35:43 -0400
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:57085 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229632AbhFTUfl (ORCPT
+        Sun, 20 Jun 2021 16:48:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48990 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229632AbhFTUsF (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 20 Jun 2021 16:35:41 -0400
-Received: (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 8383B240008;
-        Sun, 20 Jun 2021 20:33:26 +0000 (UTC)
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Colin King <colin.king@canonical.com>, linux-rtc@vger.kernel.org,
-        Alessandro Zummo <a.zummo@towertech.it>
-Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] rtc: v3020: remove redundant initialization of variable retval
-Date:   Sun, 20 Jun 2021 22:33:23 +0200
-Message-Id: <162422118505.1090685.17421473715592582970.b4-ty@bootlin.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210609120050.185746-1-colin.king@canonical.com>
-References: <20210609120050.185746-1-colin.king@canonical.com>
+        Sun, 20 Jun 2021 16:48:05 -0400
+Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [IPv6:2a0a:51c0:0:12e:520::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C82AEC061574;
+        Sun, 20 Jun 2021 13:45:52 -0700 (PDT)
+Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
+        (envelope-from <fw@strlen.de>)
+        id 1lv4K2-0003IO-AO; Sun, 20 Jun 2021 22:45:38 +0200
+Date:   Sun, 20 Jun 2021 22:45:38 +0200
+From:   Florian Westphal <fw@strlen.de>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        Florian Westphal <fw@strlen.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net-next] netfilter: nfnetlink_hook: fix check for
+ snprintf() overflow
+Message-ID: <20210620204538.GB10010@breakpoint.cc>
+References: <YM33YmacZTH820Cv@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YM33YmacZTH820Cv@mwanda>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 9 Jun 2021 13:00:50 +0100, Colin King wrote:
-> The variable retval is being initialized with a value that is never read,
-> it is being updated later on. The assignment is redundant and can be
-> removed.
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> The kernel version of snprintf() can't return negatives.  The
+> "ret > (int)sizeof(sym)" check is off by one because and it should be
+> >=.  Finally, we need to set a negative error code.
 
-Applied, thanks!
-
-[1/1] rtc: v3020: remove redundant initialization of variable retval
-      commit: fc3c335226a92f69aa01061e66b60ace88475dd3
-
-Best regards,
--- 
-Alexandre Belloni <alexandre.belloni@bootlin.com>
+Reviewed-by: Florian Westphal <fw@strlen.de>
