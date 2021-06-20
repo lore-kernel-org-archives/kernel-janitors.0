@@ -2,75 +2,86 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 180DFC49EA2
-	for <kernel-janitors@archiver.kernel.org>; Sun, 20 Jun 2021 13:43:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04442C48BDF
+	for <kernel-janitors@archiver.kernel.org>; Sun, 20 Jun 2021 15:50:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EA52A61078
-	for <kernel-janitors@archiver.kernel.org>; Sun, 20 Jun 2021 13:43:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD8DF60724
+	for <kernel-janitors@archiver.kernel.org>; Sun, 20 Jun 2021 15:50:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229627AbhFTNpr (ORCPT
+        id S229866AbhFTPwn convert rfc822-to-8bit (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 20 Jun 2021 09:45:47 -0400
-Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:35888 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229604AbhFTNpq (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 20 Jun 2021 09:45:46 -0400
-Received: from localhost.localdomain ([86.243.172.93])
-        by mwinf5d33 with ME
-        id KRjW2500A21Fzsu03RjWtS; Sun, 20 Jun 2021 15:43:31 +0200
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 20 Jun 2021 15:43:31 +0200
-X-ME-IP: 86.243.172.93
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com,
-        wei.liu@kernel.org, decui@microsoft.com, davem@davemloft.net,
-        kuba@kernel.org, shacharr@microsoft.com, gustavoars@kernel.org
-Cc:     linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] net: mana: Fix a memory leak in an error handling path in 'mana_create_txq()'
-Date:   Sun, 20 Jun 2021 15:43:28 +0200
-Message-Id: <578bcaa1a9d6916c86aaecf65f205492affb6fc8.1624196430.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Sun, 20 Jun 2021 11:52:43 -0400
+Received: from mga09.intel.com ([134.134.136.24]:6923 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229658AbhFTPwm (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Sun, 20 Jun 2021 11:52:42 -0400
+IronPort-SDR: tffdjx2aE7xFXM2GrxVoMFLP5MCPInwz2aMu6htk5obtJlfXpDLwttrLqeCqOegpGZO3YULJd2
+ HGtY/0jwuFzQ==
+X-IronPort-AV: E=McAfee;i="6200,9189,10021"; a="206679084"
+X-IronPort-AV: E=Sophos;i="5.83,287,1616482800"; 
+   d="scan'208";a="206679084"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2021 08:50:29 -0700
+IronPort-SDR: Hi7UQq4myHc8fBrrS89Qmi2EkDTi+zkEZq7MSE0DM6shP2m45nenXziPxDLFwStRcCGNxaOj0M
+ 7GYYLZsWKVVg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.83,287,1616482800"; 
+   d="scan'208";a="451933471"
+Received: from fmsmsx605.amr.corp.intel.com ([10.18.126.85])
+  by orsmga008.jf.intel.com with ESMTP; 20 Jun 2021 08:50:29 -0700
+Received: from bgsmsx605.gar.corp.intel.com (10.67.234.7) by
+ fmsmsx605.amr.corp.intel.com (10.18.126.85) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2242.4; Sun, 20 Jun 2021 08:50:28 -0700
+Received: from bgsmsx606.gar.corp.intel.com (10.67.234.8) by
+ BGSMSX605.gar.corp.intel.com (10.67.234.7) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2242.4; Sun, 20 Jun 2021 21:20:26 +0530
+Received: from bgsmsx606.gar.corp.intel.com ([10.67.234.8]) by
+ BGSMSX606.gar.corp.intel.com ([10.67.234.8]) with mapi id 15.01.2242.008;
+ Sun, 20 Jun 2021 21:20:26 +0530
+From:   "Kumar, M Chetan" <m.chetan.kumar@intel.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+CC:     linuxwwan <linuxwwan@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Subject: RE: [PATCH net-next] net: iosm: remove an unnecessary NULL check
+Thread-Topic: [PATCH net-next] net: iosm: remove an unnecessary NULL check
+Thread-Index: AQHXZRI798ezFD6cdU64vYoI1XicEasdDYyQ
+Date:   Sun, 20 Jun 2021 15:50:25 +0000
+Message-ID: <c3c02130b88d43f4bbd3d69bc277b596@intel.com>
+References: <YM32XksFPUbN2Oyi@mwanda>
+In-Reply-To: <YM32XksFPUbN2Oyi@mwanda>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-version: 11.5.1.3
+dlp-reaction: no-action
+dlp-product: dlpe-windows
+x-originating-ip: [10.223.10.1]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-If this test fails we must free some resources as in all the other error
-handling paths of this function.
+> The address of &ipc_mux->ul_adb can't be NULL because it points to the
+> middle of a non-NULL struct.
+> 
+> Fixes: 9413491e20e1 ("net: iosm: encode or decode datagram")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  drivers/net/wwan/iosm/iosm_ipc_mux_codec.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Fixes: ca9c54d2d6a5 ("net: mana: Add a driver for Microsoft Azure Network Adapter (MANA)")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/net/ethernet/microsoft/mana/mana_en.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c b/drivers/net/ethernet/microsoft/mana/mana_en.c
-index 46aee2c49f1b..fff78900fc8a 100644
---- a/drivers/net/ethernet/microsoft/mana/mana_en.c
-+++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
-@@ -1230,8 +1230,10 @@ static int mana_create_txq(struct mana_port_context *apc,
- 
- 		cq->gdma_id = cq->gdma_cq->id;
- 
--		if (WARN_ON(cq->gdma_id >= gc->max_num_cqs))
--			return -EINVAL;
-+		if (WARN_ON(cq->gdma_id >= gc->max_num_cqs)) {
-+			err = -EINVAL;
-+			goto out;
-+		}
- 
- 		gc->cq_table[cq->gdma_id] = cq->gdma_cq;
- 
--- 
-2.30.2
-
+Thanks,
+Reviewed-by: M Chetan Kumar <m.chetan.kumar@intel.com>
