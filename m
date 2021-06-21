@@ -2,108 +2,139 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58560C48BE5
-	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Jun 2021 07:18:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77BC7C48BE5
+	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Jun 2021 09:23:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3C77C61208
-	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Jun 2021 07:18:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E830611C1
+	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Jun 2021 09:23:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230013AbhFUHU7 (ORCPT
+        id S230450AbhFUJZV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 21 Jun 2021 03:20:59 -0400
-Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:41532 "EHLO
-        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229597AbhFUHU6 (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 21 Jun 2021 03:20:58 -0400
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15L7BOdf016599;
-        Mon, 21 Jun 2021 07:18:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=5eb/oECVSzdI5E9j6u2cJRlEk2Z/x4pyxZIvvDsUMOw=;
- b=JsSmKgkVF/rVIcWTdSmJ3R9rAZqbRDgusXxhIvfBfiRlcxti1/V1kEhX5DFugVWfsJaB
- DwUaxV+bVuvzj+e1j/YEv5INhi2/UbEI3vWS2hdOgxRhhCkl0RaPPgwLF6SHxN2hHWCe
- 05iEWCEmZjgHUww2QzxmvkXTu4HPRvhtsMymaOh0ZuQsPHuA7atltlzuAQjRvLsnSL8D
- M9EkUK185OUtHNEJD1UNi0u1NSfQiYsdY7cO5atIs9hJGgY0HitVI8AecoRPKuhh6F3D
- Z8XkRk383zQyz5cXj1jpxxN57/gmiMZAPLm3ow/umvDxfwxYoBHlVku5eMXXQxcvpr/y Zw== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by mx0b-00069f02.pphosted.com with ESMTP id 39994r2ay7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 21 Jun 2021 07:18:41 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 15L7B7gb160859;
-        Mon, 21 Jun 2021 07:18:40 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by userp3030.oracle.com with ESMTP id 3995pu7dyk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 21 Jun 2021 07:18:40 +0000
-Received: from userp3030.oracle.com (userp3030.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 15L7BucK162747;
-        Mon, 21 Jun 2021 07:18:39 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3030.oracle.com with ESMTP id 3995pu7dy8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 21 Jun 2021 07:18:39 +0000
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 15L7IcGA027293;
-        Mon, 21 Jun 2021 07:18:38 GMT
-Received: from kadam (/102.222.70.252)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 21 Jun 2021 07:18:37 +0000
-Date:   Mon, 21 Jun 2021 10:18:31 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     subashab@codeaurora.org
-Cc:     Sean Tranchetti <stranche@codeaurora.org>,
+        Mon, 21 Jun 2021 05:25:21 -0400
+Received: from mail-mw2nam10on2113.outbound.protection.outlook.com ([40.107.94.113]:54753
+        "EHLO NAM10-MW2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S230411AbhFUJZU (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 21 Jun 2021 05:25:20 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=a81zfzRdKL9oPCFLvDgxOaW5SQRNqPWKU16RcgqL5TtdsDmUnnbfV+dgvfveuFL6FcbknbcAnkDO4zgJC46HkwYLdIzi+Y0TAT7tKx8tZffFKQolRZ4JNbIK2dYLJIZlyKKkJxAiGhyF2m9miMubchDzofvJSkBAoR84UhnHGekwGIhthKj4IBJd3Q3izK3X6YgCz/sIxPp/k0UlUet+1RnMuNSGJwHjKaPIRKvAFmup61PzzPNMhoACsp4yWBjykeh3zjoSJJYzHhUfFM5uUXmTJVUWq3Be3HFVy3/saa73U/B3lA10EZZZk/RnFvOgyNLrGRUqpu4/G7zgNqgtNQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oHh2oIVWk68BMNVvWMlL1e6/WvNUknX/Ywxo9LmDuyQ=;
+ b=GhCYL6gzd79Og5p5mmKcVzUr/Pn1Rw4WlbQ+BQP2Wry+b1ID+OmHtzg/UYh2gmU7CPRT+pAXxVZww+Qzp21/FW3YWPXB67YZ/It2Lj9sPyVhSZ44ynzDSwgnaaj+zEiI58R9lrlHJHOkITuQG3AP+w8T4bbhKz2BYxyafSZu/gUsMAZKFHG/iwu/pjnw9Ij98pXczqYiaO9HcjeZ3fwqgj6sQKWMQHNhmkd2aHJvlTSHnvk4c/DdZEfb0B7c0CSmFH6RKQX/vZ0cRCAwIg0jYM6U6XPQZWVTStaepXlTO6KkcBCkRvOovYGDLqm6EXDR3ENoTcYk/FDNzyULwGbOLw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=corigine.com; dmarc=pass action=none header.from=corigine.com;
+ dkim=pass header.d=corigine.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=corigine.onmicrosoft.com; s=selector2-corigine-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oHh2oIVWk68BMNVvWMlL1e6/WvNUknX/Ywxo9LmDuyQ=;
+ b=N0aOE0Ea4a3I9P4mRN6Z4xP/VTFS5Q6GVGkIuuwdo93nM9uoSoVywc9iC40HnTSth0+/hDghhHV1HEOiyGM1a3WtyID8WoKnRqLi7kFLYfMjHd/sbSgCrPp/sz1/lMyc/6nflzb76vdEa/gpObWkQLGZEq6YjKVivwJ4YrsZX/4=
+Authentication-Results: corigine.com; dkim=none (message not signed)
+ header.d=none;corigine.com; dmarc=none action=none header.from=corigine.com;
+Received: from PH0PR13MB4842.namprd13.prod.outlook.com (2603:10b6:510:78::6)
+ by PH0PR13MB4828.namprd13.prod.outlook.com (2603:10b6:510:93::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4264.9; Mon, 21 Jun
+ 2021 09:23:04 +0000
+Received: from PH0PR13MB4842.namprd13.prod.outlook.com
+ ([fe80::4596:4181:eeee:7a8a]) by PH0PR13MB4842.namprd13.prod.outlook.com
+ ([fe80::4596:4181:eeee:7a8a%9]) with mapi id 15.20.4264.017; Mon, 21 Jun 2021
+ 09:23:04 +0000
+Date:   Mon, 21 Jun 2021 11:22:57 +0200
+From:   Simon Horman <simon.horman@corigine.com>
+To:     Louis Peens <louis.peens@corigine.com>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Jakub Kicinski <kuba@kernel.org>,
         "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+        Yinjun Zhang <yinjun.zhang@corigine.com>,
+        oss-drivers@corigine.com, netdev@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net-next] net: qualcomm: rmnet: fix two pointer math bugs
-Message-ID: <20210621071831.GB1901@kadam>
-References: <YM32lkJIJdSgpR87@mwanda>
- <027ae9e2ddc18f0ed30c5d9c7075c8b9@codeaurora.org>
- <20210621071158.GA1901@kadam>
-MIME-Version: 1.0
+Subject: Re: [PATCH net-next] nfp: flower-ct: check for error in
+ nfp_fl_ct_offload_nft_flow()
+Message-ID: <20210621092255.GA26859@corigine.com>
+References: <YM321r7Enw8sGj0X@mwanda>
+ <94d89b59-fe5b-d959-e2f0-9e42ebf73636@corigine.com>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210621071158.GA1901@kadam>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-ORIG-GUID: NMMFNvMHdypto3gaDsxBITf0BEwpebZk
-X-Proofpoint-GUID: NMMFNvMHdypto3gaDsxBITf0BEwpebZk
+In-Reply-To: <94d89b59-fe5b-d959-e2f0-9e42ebf73636@corigine.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Originating-IP: [2001:982:756:703:d63d:7eff:fe99:ac9d]
+X-ClientProxiedBy: AM0PR04CA0116.eurprd04.prod.outlook.com
+ (2603:10a6:208:55::21) To PH0PR13MB4842.namprd13.prod.outlook.com
+ (2603:10b6:510:78::6)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from corigine.com (2001:982:756:703:d63d:7eff:fe99:ac9d) by AM0PR04CA0116.eurprd04.prod.outlook.com (2603:10a6:208:55::21) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4242.16 via Frontend Transport; Mon, 21 Jun 2021 09:23:02 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 768939d1-3901-451e-997c-08d934962c2d
+X-MS-TrafficTypeDiagnostic: PH0PR13MB4828:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <PH0PR13MB48289E89402B493FA09AE477E80A9@PH0PR13MB4828.namprd13.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:1468;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: zeOFvQi27EGk1+e4nXQC7/ggtOas9xOMP8UjyKBSuo+0sJjunvDXbrrYOTiL2/5eboCDAg5sDiDGnKHfRgzNfcJmq0Ods1FW9lvQr9uKMYjPP0mdLMVaf8JnRgnMa8hrdHmgN0fW6R5sl4evcN1UTD2zW16JxS4V5ArrmgkBuFIzBIIWbCEAL45N1cU8FzBEp1QVkEDGkJoMtbv1ENiWKhy1aIlIO5DkTBcm3jiCvF6s0fLUsvFk9zWREaQrcyb4920C7YHn387VmbRwiaULix/dNr0CAT7seNr0C3Imi4RQvjayBM9/a58pFfKxCyPQmrZUwVLo0fDRHTZx5EWUsL+k4lc2n/c1+qy4Ak6OuzYSUR9FLOddbfmvGShoThXEWEtOlVbfaXK2uYM3SZmC6cPH+mWL8USuVcU6rX2HnV2atHcHF4ZtLaX0jkZiL/eAMzGhkTy+no21+DcZkN7/thJdcmmPf27LJ4Akc3l84+agn2RpP5z6xUbyNpLDoC2R7eMWzkoGKiol4NtewGYnG+KicqzpWbWfqXRtE0cKacHnLwaeId6SH5hUhlwr/Hj2YToi6iFWjByInmmFFonRriwidiicvWbbbwCgMCx26kOQrHiTK+Ic0dmFM3gJlSSlaVO8FxpygwMS8UKmGofRiQ==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR13MB4842.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(346002)(136003)(376002)(366004)(396003)(39830400003)(6862004)(8936002)(7696005)(2616005)(2906002)(52116002)(5660300002)(4326008)(83380400001)(86362001)(316002)(54906003)(6666004)(53546011)(1076003)(37006003)(44832011)(55016002)(8886007)(36756003)(8676002)(6636002)(16526019)(33656002)(186003)(4744005)(66476007)(66946007)(66556008)(38100700002)(478600001);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?MjfNIiGPWyWtXm/XyjI/UY1q8c3SvufldMGeTUzbQhkK1bmXYtK+dUBLEwZg?=
+ =?us-ascii?Q?xA4GSxf4vP0HmsH2VEZOr/R3JGZsOJDrslFHTBVRtr2OLf1OR3NeJqqiK5Qr?=
+ =?us-ascii?Q?TfDeno4lqe0FdGxYKYCOV+8xHKzvy/uofZ0wLI55cCCZvmxbROD8zSIV6QBx?=
+ =?us-ascii?Q?6Ob3v59aJt8ubFs21WK7ebC9Nh9Ycy351waAlqtWU1N9Z2bz87L2K0FqHA8Q?=
+ =?us-ascii?Q?xGwFcUzmDa+7fBmiXZJiV7eetJksS33gYCFLQj2Gll7vnbwk15D1npdsSnZ+?=
+ =?us-ascii?Q?SkQ0mvrS1F5G05hZjrAYYayLxMK97hRYk/DS02IKGM3qcFw3Y3rqa2067FdY?=
+ =?us-ascii?Q?0ep0PiBTpGXxxVcvqclbCG6RzFvN13BzZ+NbdWrCKtZ4SBAPCATdg+MQ0ZK5?=
+ =?us-ascii?Q?b60RLCy8DQctW6lY2MvwVPzBtUUjdjE6mWbpeZTUHdtUSWeVb1b3c6oYN3ER?=
+ =?us-ascii?Q?A5pL/hmDzBFA9anpH4xTH9dxCYm94YP9kMFxiZp/XSuhj+eASU8DOPcQHMOK?=
+ =?us-ascii?Q?GYYZchioPZMslk3ipyb5sHoD5MYDgCgHKGLCQm5V0Lq6Hituxe9vQ12Lpj3A?=
+ =?us-ascii?Q?RPBB9MTLruKCHwuW9lWbr7wP73JZf5wyG/mloRRk9wUj7m508B2owd9QsDh4?=
+ =?us-ascii?Q?j/Q/B/p5ldS9TZB9Ljp5sSDnAXauU5PT7EqjSDvQL8mdZg7t73iVQtbwpplN?=
+ =?us-ascii?Q?FolyVR89+I5xu3dBrdfs73OutXP6dJUPmB24fbm2/RmOJ/YdiohCECN1OSqO?=
+ =?us-ascii?Q?wIZkKK0GCjfwoVKuAYfeV+FQpOVDAIsmorBkLnaCVDsCjqc9sAohHBS+g0+n?=
+ =?us-ascii?Q?yk5TqzCE1ePIrF7ZnvvN91iaFNFM6cBzQ0XwdUv2zBrfFlhuT0/wd4VQibeM?=
+ =?us-ascii?Q?/JwoQoHwG1jES4FHBHuXbmyo0bYkfbkc6BAZxFk0do9xammOBdIjpGCfz2Ok?=
+ =?us-ascii?Q?vsGL60ksEQ9D69GYdXZzYAZ7pR6HWr213QqEk3FW6E/w9Y6rnvyFCMYrQxF7?=
+ =?us-ascii?Q?L/P93rwRxMenrrmQ70OfDz/7J6yaIfLJdItptao83NdjenII9sFsPLLT9MMi?=
+ =?us-ascii?Q?NSoWUcTQJklpKhg+FlACYCWetcT+jcxnb9HA96erMPE8sLX9Xalb3rAK3J2v?=
+ =?us-ascii?Q?/SmQacw44YQeNtnvVFN9hHwl0SKpik2V8nGYi7rSg2B0qAl0MLaRkENC0ROw?=
+ =?us-ascii?Q?M+eFg7cnkV2VDYk5IYR2ESfKorcu7atmRFvrR+tPWzb6k5H3WPjsgsE08HnD?=
+ =?us-ascii?Q?SPGnPYe54gM7d00hcUIBDBzcgCWE6IVeNZ9+zh/2z1haGLA8uxFl40sFOsIW?=
+ =?us-ascii?Q?/sjdBfZTUqPl0W6yD2bEaB0HvtZWGjUT4gWz6ANlqZxIqaE/5PBXdUaIp3T9?=
+ =?us-ascii?Q?1sNUHh8u3ZQArZuIn+yJuDkNTXV6?=
+X-OriginatorOrg: corigine.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 768939d1-3901-451e-997c-08d934962c2d
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR13MB4842.namprd13.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jun 2021 09:23:04.4204
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fe128f2c-073b-4c20-818e-7246a585940c
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: liigYlt9VyIVoqPfMwUR2UtJ8Nnqcv+pr18d3S5EqJr170lHW5Zf9JgzuNkcZH/fx8xRPD/l7ib95yUPzBSadAwDOsrtwcgcgRa0n3oLTxs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR13MB4828
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Jun 21, 2021 at 10:11:58AM +0300, Dan Carpenter wrote:
-> On Sat, Jun 19, 2021 at 01:12:09PM -0600, subashab@codeaurora.org wrote:
-> > On 2021-06-19 07:52, Dan Carpenter wrote:
-> > 
-> > Hi Dan
-> > 
-> > Thanks for fixing this. Could you cast the ip4h to char* instead of void*.
-> > Looks like gcc might raise issues if -Wpointer-arith is used.
-> > 
-> > https://gcc.gnu.org/onlinedocs/gcc-4.5.0/gcc/Pointer-Arith.html#Pointer-Arith
+On Mon, Jun 21, 2021 at 07:15:08AM +0200, Louis Peens wrote:
 > 
-> The fix for that is to not enable -Wpointer-arith.  The warning is dumb.
+> 
+> On 2021/06/19 15:53, Dan Carpenter wrote:
+> > The nfp_fl_ct_add_flow() function can fail so we need to check for
+> > failure.
+> > 
+> > Fixes: 95255017e0a8 ("nfp: flower-ct: add nft flows to nft list")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Ah, of course, thank you.
+> Reviewed-by: Louis Peens <louis.peens@corigine.com>
 
-Sorry, that was uncalled for and not correct.  The GCC warning would be
-useful if we were trying to write portable userspace code.  But in the
-kernel the kernel uses GCC extensions a lot.
+Likewise, thanks.
 
-The Clang compiler can also compile the kernel these days.  But it had
-to add support for a bunch of GCC extensions to make that work.  Really
-most of linux userspace is written with GCC in mind so Clang had to do
-this anyway.
+Reviewed-by: Simon Horman <simon.horman@corigine.com>
 
-So we will never enable -Wpointer-arith in the kernel because there is
-no need.
-
-regards,
-dan carpenter
