@@ -2,49 +2,49 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-21.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47D92C49EA4
-	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Jun 2021 19:20:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD1D1C4743C
+	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Jun 2021 19:20:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2563E61360
-	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Jun 2021 19:20:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BDB3C6128C
+	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Jun 2021 19:20:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231613AbhFUTWW (ORCPT
+        id S231667AbhFUTWZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 21 Jun 2021 15:22:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50248 "EHLO mail.kernel.org"
+        Mon, 21 Jun 2021 15:22:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50278 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231481AbhFUTWT (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        id S231495AbhFUTWT (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
         Mon, 21 Jun 2021 15:22:19 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id EF7D461351;
-        Mon, 21 Jun 2021 19:20:04 +0000 (UTC)
+Received: by mail.kernel.org (Postfix) with ESMTPS id 186ED6135D;
+        Mon, 21 Jun 2021 19:20:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1624303205;
-        bh=r+ZdvtoFNtsAffyGlL8zVimZ7LoCVJMtdCcgQNyKqzA=;
+        bh=l9FBgRorjyY0WGNvcNv/KLuTbN+PP2BdonCV1ZyXiu0=;
         h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=Kdx+LCDlw3JusP5FoPCSfkN2mBkb7kaI15ualiKjamTvnO34MDZLEP2xsA1CVHSoZ
-         vxon2D2cqjeBIPF4LKD2HFqNeQHJaek2ld8U8dbiZgeqz9bEOPAEwl9tqlfONkZcaY
-         DThf09MhTgXA/mgrQ696O9VsJOLy6vh7i/j69PgGTi7DykQn+/Alx4Uwt2Q7Klc9l6
-         W2wuJrqsDvzdkEPSl2t6KAZg6fCv3NivX5bAxLpD0368i9n2SwOT9+0fmQS97hR+eL
-         DfG6Y4TPkW8b5WqASX4j9Emm4J/tUrXeTIFAtzDi4XbPhtPdWqpmoVe6+uzUGUzOXB
-         XqqMTdQW+jDuQ==
+        b=BnyRcUF5e+9KJFXDZuleziIYRlhNPC81SpT3MZT8xiScTJLYtP/pbDpYIgeHMwrsa
+         ypwPs6o42wH4wU0zmSd44PpkCExZNPzITRK1ciGLJwqgEHHmEBDBGKyCd/1kmpCfQ1
+         uvuXjHbGd90G734KcJwtVP+BDS1Cpf6BNgM93Gq/9ABWhBjbcyt5FXAAOlRoS3NnYu
+         7JWINqnDyEOMwkYfoWpom2UWKh0cEmngHvcRqsuGl17myKoWKeOf58w3uzQfwKzERT
+         b3sXeFUWNUSNC3TKT/elSFLmuu8JEjpYkTg+4Olx+OBTSTWp2h63H2G9ERdEdkxY2I
+         dQbFzZrUX2cSg==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next 1/2] net: hns3: fix different snprintf() limit
+Subject: Re: [PATCH net-next] net/smc: Fix ENODATA tests in
+ smc_nl_get_fback_stats()
 From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <162430320494.6988.10698969626781207552.git-patchwork-notify@kernel.org>
-Date:   Mon, 21 Jun 2021 19:20:04 +0000
-References: <YM31etbBvDRf+bgS@mwanda>
-In-Reply-To: <YM31etbBvDRf+bgS@mwanda>
+Message-Id: <162430320503.6988.10664396793932851537.git-patchwork-notify@kernel.org>
+Date:   Mon, 21 Jun 2021 19:20:05 +0000
+References: <YM32HV7psa+PrmbV@mwanda>
+In-Reply-To: <YM32HV7psa+PrmbV@mwanda>
 To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     yisen.zhuang@huawei.com, salil.mehta@huawei.com,
-        davem@davemloft.net, kuba@kernel.org, huangguangbin2@huawei.com,
-        moyufeng@huawei.com, tanhuazhong@huawei.com,
+Cc:     kgraul@linux.ibm.com, guvenc@linux.ibm.com, davem@davemloft.net,
+        kuba@kernel.org, linux-s390@vger.kernel.org,
         netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
@@ -52,25 +52,21 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 Hello:
 
-This series was applied to netdev/net-next.git (refs/heads/master):
+This patch was applied to netdev/net-next.git (refs/heads/master):
 
-On Sat, 19 Jun 2021 16:47:38 +0300 you wrote:
-> This patch doesn't affect runtime at all, it's just a correctness issue.
+On Sat, 19 Jun 2021 16:50:21 +0300 you wrote:
+> These functions return negative ENODATA but the minus sign was left out
+> in the tests.
 > 
-> The ptp->info.name[] buffer has 16 characters but the snprintf() limit
-> was capped at 32 characters.  Fortunately, HCLGE_DRIVER_NAME is "hclge"
-> which isn't close to 16 characters so we're fine.
-> 
-> Fixes: 0bf5eb788512 ("net: hns3: add support for PTP")
+> Fixes: f0dd7bf5e330 ("net/smc: Add netlink support for SMC fallback statistics")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> [...]
+> ---
+>  net/smc/smc_stats.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 
 Here is the summary with links:
-  - [net-next,1/2] net: hns3: fix different snprintf() limit
-    https://git.kernel.org/netdev/net-next/c/faebad853455
-  - [net-next,2/2] net: hns3: fix a double shift bug
-    https://git.kernel.org/netdev/net-next/c/956c3ae411b2
+  - [net-next] net/smc: Fix ENODATA tests in smc_nl_get_fback_stats()
+    https://git.kernel.org/netdev/net-next/c/1a1100d53f12
 
 You are awesome, thank you!
 --
