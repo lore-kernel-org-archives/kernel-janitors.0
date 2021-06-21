@@ -2,102 +2,131 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A938C49EBC
-	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Jun 2021 16:48:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 088CCC48BE5
+	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Jun 2021 17:03:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 78F2861405
-	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Jun 2021 16:48:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E12E16102A
+	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Jun 2021 17:02:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230302AbhFUQuO (ORCPT
+        id S230505AbhFURFN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 21 Jun 2021 12:50:14 -0400
-Received: from m43-7.mailgun.net ([69.72.43.7]:11945 "EHLO m43-7.mailgun.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231997AbhFUQrK (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 21 Jun 2021 12:47:10 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1624293895; h=Message-ID: References: In-Reply-To: Subject:
- Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
- MIME-Version: Sender; bh=LU0zPN4GX3XCm4hKXqrE80vqb5CPyJoAnWvr33F6kow=;
- b=Mg3d200mTZP+JzJI6tG9gKpeILuyJkUMdYomR2Ez0oRVPiRzEtrTPNa2Py9jQX2fkeoK4/JZ
- xWSouGy2nYtZI5Kc74k72Nt0DPrFtwnLY5zAfxGoC9AHH/WpQo42+C7q0ajEENTWwFvN2vOb
- 9jlGgfge+XsJITKSAB85Q55HvLk=
-X-Mailgun-Sending-Ip: 69.72.43.7
-X-Mailgun-Sid: WyI5NDExNyIsICJrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n06.prod.us-west-2.postgun.com with SMTP id
- 60d0c2058491191eb315316f (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Mon, 21 Jun 2021 16:44:53
- GMT
-Sender: subashab=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 5B9BAC072A5; Mon, 21 Jun 2021 16:44:53 +0000 (UTC)
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: subashab)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id A910BC072A5;
-        Mon, 21 Jun 2021 16:44:51 +0000 (UTC)
+        Mon, 21 Jun 2021 13:05:13 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54150 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S231182AbhFURFI (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 21 Jun 2021 13:05:08 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15LGXdmU068889;
+        Mon, 21 Jun 2021 13:02:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=Ck4zrruLN6Q+BRtf9tzSXqr9rmK0Z63cbgwIx55ZHMo=;
+ b=EnvEaTZn47OU9iO2JGhXrEhjlVH68fGraUezLiB51t6XBLOBD4DiawcZSXQyoKQMiVAR
+ O33EmiJOzNYLAH0IKyqekPrNop3iK8yQF+a70sJmvZ1YaafiTnCPKfgopSoF9g3oLMWr
+ nJhjPczCWNHHvZWdKjYCIH+nRFhgYa1tL7Wau0jLtFvJacM4WhTYxtWYNI8PACXfFzJl
+ O/jXS3MfpsgR0cfvqLydwFMLTB35EihT+3/h7bH5WLR40kzdDfJJ5QkoYdUuStkAxYY2
+ fit7Jtgwgi7eNJCh4qe8WGls6+7DrOByGkCq3BecAoX/Z+3+qePBV1is1xdcusKgfgy5 Lw== 
+Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 39avw740u7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 21 Jun 2021 13:02:47 -0400
+Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
+        by ppma04dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 15LH2dU3006246;
+        Mon, 21 Jun 2021 17:02:47 GMT
+Received: from b01cxnp22036.gho.pok.ibm.com (b01cxnp22036.gho.pok.ibm.com [9.57.198.26])
+        by ppma04dal.us.ibm.com with ESMTP id 39987951ry-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 21 Jun 2021 17:02:46 +0000
+Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 15LH2koo8192850
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 21 Jun 2021 17:02:46 GMT
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2B8A928058;
+        Mon, 21 Jun 2021 17:02:46 +0000 (GMT)
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5074C2805C;
+        Mon, 21 Jun 2021 17:02:45 +0000 (GMT)
+Received: from [9.171.11.231] (unknown [9.171.11.231])
+        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTPS;
+        Mon, 21 Jun 2021 17:02:45 +0000 (GMT)
+Subject: Re: [PATCH net-next] net/smc: Fix ENODATA tests in
+ smc_nl_get_fback_stats()
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Karsten Graul <kgraul@linux.ibm.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, linux-s390@vger.kernel.org,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <YM32HV7psa+PrmbV@mwanda>
+From:   Guvenc Gulce <guvenc@linux.ibm.com>
+Message-ID: <b3ba0dfa-6367-8e75-6348-f78e1cb7c7e1@linux.ibm.com>
+Date:   Mon, 21 Jun 2021 19:02:44 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+In-Reply-To: <YM32HV7psa+PrmbV@mwanda>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Date:   Mon, 21 Jun 2021 10:44:51 -0600
-From:   subashab@codeaurora.org
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Sean Tranchetti <stranche@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net-next] net: qualcomm: rmnet: fix two pointer math bugs
-In-Reply-To: <20210621071831.GB1901@kadam>
-References: <YM32lkJIJdSgpR87@mwanda>
- <027ae9e2ddc18f0ed30c5d9c7075c8b9@codeaurora.org>
- <20210621071158.GA1901@kadam> <20210621071831.GB1901@kadam>
-Message-ID: <d03a69ce5a06f50230700b0e94e50193@codeaurora.org>
-X-Sender: subashab@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: -dCY8FVOsiesYUhlt5CHYApnLmIcwxOd
+X-Proofpoint-GUID: -dCY8FVOsiesYUhlt5CHYApnLmIcwxOd
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
+ definitions=2021-06-21_06:2021-06-21,2021-06-21 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
+ phishscore=0 mlxlogscore=999 suspectscore=0 impostorscore=0 spamscore=0
+ bulkscore=0 clxscore=1011 lowpriorityscore=0 adultscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
+ definitions=main-2106210097
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 2021-06-21 01:18, Dan Carpenter wrote:
-> On Mon, Jun 21, 2021 at 10:11:58AM +0300, Dan Carpenter wrote:
->> On Sat, Jun 19, 2021 at 01:12:09PM -0600, subashab@codeaurora.org 
->> wrote:
->> > On 2021-06-19 07:52, Dan Carpenter wrote:
->> >
->> > Hi Dan
->> >
->> > Thanks for fixing this. Could you cast the ip4h to char* instead of void*.
->> > Looks like gcc might raise issues if -Wpointer-arith is used.
->> >
->> > https://gcc.gnu.org/onlinedocs/gcc-4.5.0/gcc/Pointer-Arith.html#Pointer-Arith
->> 
->> The fix for that is to not enable -Wpointer-arith.  The warning is 
->> dumb.
-> 
-> Sorry, that was uncalled for and not correct.  The GCC warning would be
-> useful if we were trying to write portable userspace code.  But in the
-> kernel the kernel uses GCC extensions a lot.
-> 
-> The Clang compiler can also compile the kernel these days.  But it had
-> to add support for a bunch of GCC extensions to make that work.  Really
-> most of linux userspace is written with GCC in mind so Clang had to do
-> this anyway.
-> 
-> So we will never enable -Wpointer-arith in the kernel because there is
-> no need.
-> 
-> regards,
-> dan carpenter
 
-Thanks for the clarification.
 
-Reviewed-by: Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>
+On 19/06/2021 15:50, Dan Carpenter wrote:
+> These functions return negative ENODATA but the minus sign was left out
+> in the tests.
+>
+> Fixes: f0dd7bf5e330 ("net/smc: Add netlink support for SMC fallback statistics")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>   net/smc/smc_stats.c | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/net/smc/smc_stats.c b/net/smc/smc_stats.c
+> index 614013e3b574..e80e34f7ac15 100644
+> --- a/net/smc/smc_stats.c
+> +++ b/net/smc/smc_stats.c
+> @@ -393,17 +393,17 @@ int smc_nl_get_fback_stats(struct sk_buff *skb, struct netlink_callback *cb)
+>   			continue;
+>   		if (!skip_serv) {
+>   			rc_srv = smc_nl_get_fback_details(skb, cb, k, is_srv);
+> -			if (rc_srv && rc_srv != ENODATA)
+> +			if (rc_srv && rc_srv != -ENODATA)
+>   				break;
+>   		} else {
+>   			skip_serv = 0;
+>   		}
+>   		rc_clnt = smc_nl_get_fback_details(skb, cb, k, !is_srv);
+> -		if (rc_clnt && rc_clnt != ENODATA) {
+> +		if (rc_clnt && rc_clnt != -ENODATA) {
+>   			skip_serv = 1;
+>   			break;
+>   		}
+> -		if (rc_clnt == ENODATA && rc_srv == ENODATA)
+> +		if (rc_clnt == -ENODATA && rc_srv == -ENODATA)
+>   			break;
+>   	}
+>   	mutex_unlock(&net->smc.mutex_fback_rsn);
+
+Acked-by: Guvenc Gulce <guvenc@linux.ibm.com>
+
+Thanks for preparing the fix.
