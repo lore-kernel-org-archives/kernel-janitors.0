@@ -2,57 +2,94 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FE19C48BE5
-	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Jun 2021 06:34:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBBEBC48BE5
+	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Jun 2021 07:12:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5C87A6100A
-	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Jun 2021 06:34:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4B4561208
+	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Jun 2021 07:12:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229641AbhFUGgo (ORCPT
+        id S229789AbhFUHOa (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 21 Jun 2021 02:36:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34122 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229576AbhFUGgo (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 21 Jun 2021 02:36:44 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7EA8661002;
-        Mon, 21 Jun 2021 06:34:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624257270;
-        bh=J2UkjNiDVlVLQCJc+TT6Np0y26TvHkmM1b5v6axIous=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Kmx6UT26l9lheOTOv4SaHpTyau3Qad/NwftoNAxG7GI/0N3d+t+V0Ci5gY5rQ8mSw
-         bB7Liuut68rsh5j9mRkj4KJfVbfSclSH4wK4RiP3H2s9CQD0qsNnC1BulTaAtWk+L7
-         F9E4eUWBtSMZn6qgVo4VDX/IG22dT6QfyI8z5vo67e6GblkYrI3duZpGe22kFjUi3p
-         vHIkHYBKnhBX2NBzm8muvisi15f5sIpHDpNCAbb1CRI+m/g7kAIrVBGJ123xF8ssJp
-         hfeZe/FWnVY39mlwHK3Yqrk94GoJGLq0BneeLwPXZojrRR+GcAohYZpY4iDSmgDZkT
-         cijKiU26z1KbQ==
-Date:   Mon, 21 Jun 2021 12:04:26 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     kishon@ti.com, tony@atomide.com, linux-phy@lists.infradead.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] phy: ti: dm816x: Fix the error handling path in
- 'dm816x_usb_phy_probe()
-Message-ID: <YNAy8hlj3upzshnD@vkoul-mobl>
-References: <ac5136881f6bdec50be19b3bf73b3bc1b15ef1f1.1622898974.git.christophe.jaillet@wanadoo.fr>
+        Mon, 21 Jun 2021 03:14:30 -0400
+Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:51918 "EHLO
+        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229597AbhFUHO3 (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 21 Jun 2021 03:14:29 -0400
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15L7C8cC032499;
+        Mon, 21 Jun 2021 07:12:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=EQqERGEjxu/SgUzY5JPFO9RhKV43wJBMWs4lIpjFDpE=;
+ b=QERhmGKlPztaucY5nM4ZCBNmt1LRLvTEPwyx135SvVViAgTYzNtm+7j/pxXyEcSW9W8c
+ j1vjG2q4nHeP2Dtb6/+ujTGZs+dDdEqS5uu0p2/exwznW21Gt/aSGdzKwEoj0OCs+lzx
+ aZmZfxqTscIvoZlxZw/5YEolmgPjlNZsNvhvMTDY064glhRlmDGSGsyUT8PlB0echoun
+ Tik+l6JGJ7pYO6yKosAaF7aJLPwYyM3uPlXWHkhEyYwl/0JPtYyRxpCBgps1GRHVD7Qo
+ ErNg3Lmayueiqv/GTvBbyI7tGSnt2CJBLFYhG0NSsZCiBFrN1/ZPRuRR9I5N8628dlzc Kg== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by mx0b-00069f02.pphosted.com with ESMTP id 39acyq8kbg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 21 Jun 2021 07:12:10 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 15L7BNso028635;
+        Mon, 21 Jun 2021 07:12:09 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by aserp3020.oracle.com with ESMTP id 3998d59ejq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 21 Jun 2021 07:12:09 +0000
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 15L7C9io032231;
+        Mon, 21 Jun 2021 07:12:09 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 3998d59ehj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 21 Jun 2021 07:12:09 +0000
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 15L7C6D0004658;
+        Mon, 21 Jun 2021 07:12:07 GMT
+Received: from kadam (/102.222.70.252)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 21 Jun 2021 00:12:06 -0700
+Date:   Mon, 21 Jun 2021 10:11:58 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     subashab@codeaurora.org
+Cc:     Sean Tranchetti <stranche@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net-next] net: qualcomm: rmnet: fix two pointer math bugs
+Message-ID: <20210621071158.GA1901@kadam>
+References: <YM32lkJIJdSgpR87@mwanda>
+ <027ae9e2ddc18f0ed30c5d9c7075c8b9@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ac5136881f6bdec50be19b3bf73b3bc1b15ef1f1.1622898974.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <027ae9e2ddc18f0ed30c5d9c7075c8b9@codeaurora.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-GUID: MKak_c4ZnJtBgcj5hbueOmquQxUQqkm_
+X-Proofpoint-ORIG-GUID: MKak_c4ZnJtBgcj5hbueOmquQxUQqkm_
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 05-06-21, 15:17, Christophe JAILLET wrote:
-> Add an error handling path in the probe to release some resources, as
-> already done in the remove function.
+On Sat, Jun 19, 2021 at 01:12:09PM -0600, subashab@codeaurora.org wrote:
+> On 2021-06-19 07:52, Dan Carpenter wrote:
+> 
+> Hi Dan
+> 
+> Thanks for fixing this. Could you cast the ip4h to char* instead of void*.
+> Looks like gcc might raise issues if -Wpointer-arith is used.
+> 
+> https://gcc.gnu.org/onlinedocs/gcc-4.5.0/gcc/Pointer-Arith.html#Pointer-Arith
 
-Applied, thanks
+The fix for that is to not enable -Wpointer-arith.  The warning is dumb.
 
--- 
-~Vinod
+regards,
+dan carpenter
