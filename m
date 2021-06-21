@@ -2,48 +2,48 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-21.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1182BC48BC2
-	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Jun 2021 19:20:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAE5AC48BC2
+	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Jun 2021 19:30:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EB08061352
-	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Jun 2021 19:20:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6A446134F
+	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Jun 2021 19:30:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231743AbhFUTW0 (ORCPT
+        id S231481AbhFUTcU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 21 Jun 2021 15:22:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50280 "EHLO mail.kernel.org"
+        Mon, 21 Jun 2021 15:32:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52566 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231518AbhFUTWT (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 21 Jun 2021 15:22:19 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 1EF426135A;
-        Mon, 21 Jun 2021 19:20:05 +0000 (UTC)
+        id S231241AbhFUTcU (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 21 Jun 2021 15:32:20 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPS id 920516135A;
+        Mon, 21 Jun 2021 19:30:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624303205;
-        bh=5h/JTYuu+ee8W6bD2Exd1he3+J6TBvc/xljPEnpSyyk=;
+        s=k20201202; t=1624303805;
+        bh=sRn980rAY7YHKmboo5WdEUsaHvywLVtJadvruAzKVv4=;
         h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=OUrn7XHmBQUodsWXXQztG1sK3DuTZZp4zOlCTnnz3nS6dYvblOc42pKqn9msxlnCp
-         x+oT7LEc20MYtnj25WncfJYo51GKfTYHWItVNIM8bPoJJvXfvGwIqhhS+YwIR6nc5g
-         GRMAVLgTBc8cP7n+EtmajuUBfmpuJj0qn3KwsRV/a/P54Kt67/91RoTOmwORWP2lG7
-         zI4C7ZDBJxEHY4V5Uz7oWKYzsqWfF4L00zeK36WWoPRB4f7e7FabVSza8fezFY71Wl
-         Vs/O1qd45eboYBwTvCzGqzlKxthF6pn8VgnnI1Uwb2X3UzVipEnb/wEaLXtMCbM1Y1
-         HQu5aWro2BvWA==
+        b=sQiR1zYlGxJ61F3qD4/ArVmkDqVdVswsvLdlyz9KjLKhShopif9ZvNDejGVpFVZ6t
+         BkcFQYJx1eQmSmJsOkyXhkueItKVbudpkfy2hP70jV+AzuVkbjagmlRwJ3KCXyTkR2
+         KbYnp/E86f24gsckMNhS1g+Tiq/tTsjrCixyX9J4uaG+EKxQzuxN061to57BusRuEo
+         ot081M7MiNvrWmH+CHlFQ9wfbAKu136d9mtvhrA06VnevGygtKLFiR/O/JMS/X5vJk
+         RGR/jpaENFgvl5byuaFfTTUSarDbqcxc9ZJJBZHXOV/wtemVwRAJIv3HxI1QdrvVkl
+         3eFHobz/ZXDdg==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] net: iosm: remove an unnecessary NULL check
+Subject: Re: [PATCH net-next] net: qualcomm: rmnet: fix two pointer math bugs
 From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <162430320507.6988.18060097000636332929.git-patchwork-notify@kernel.org>
-Date:   Mon, 21 Jun 2021 19:20:05 +0000
-References: <YM32XksFPUbN2Oyi@mwanda>
-In-Reply-To: <YM32XksFPUbN2Oyi@mwanda>
+Message-Id: <162430380554.11970.17234328038547135962.git-patchwork-notify@kernel.org>
+Date:   Mon, 21 Jun 2021 19:30:05 +0000
+References: <YM32lkJIJdSgpR87@mwanda>
+In-Reply-To: <YM32lkJIJdSgpR87@mwanda>
 To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     m.chetan.kumar@intel.com, linuxwwan@intel.com, davem@davemloft.net,
-        kuba@kernel.org, netdev@vger.kernel.org,
+Cc:     subashab@codeaurora.org, stranche@codeaurora.org,
+        davem@davemloft.net, kuba@kernel.org, netdev@vger.kernel.org,
         kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
@@ -53,19 +53,19 @@ Hello:
 
 This patch was applied to netdev/net-next.git (refs/heads/master):
 
-On Sat, 19 Jun 2021 16:51:26 +0300 you wrote:
-> The address of &ipc_mux->ul_adb can't be NULL because it points to the
-> middle of a non-NULL struct.
+On Sat, 19 Jun 2021 16:52:22 +0300 you wrote:
+> We recently changed these two pointers from void pointers to struct
+> pointers and it breaks the pointer math so now the "txphdr" points
+> beyond the end of the buffer.
 > 
-> Fixes: 9413491e20e1 ("net: iosm: encode or decode datagram")
+> Fixes: 56a967c4f7e5 ("net: qualcomm: rmnet: Remove some unneeded casts")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/net/wwan/iosm/iosm_ipc_mux_codec.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> [...]
 
 Here is the summary with links:
-  - [net-next] net: iosm: remove an unnecessary NULL check
-    https://git.kernel.org/netdev/net-next/c/d5fff4629bea
+  - [net-next] net: qualcomm: rmnet: fix two pointer math bugs
+    https://git.kernel.org/netdev/net-next/c/753ba09aa3ea
 
 You are awesome, thank you!
 --
