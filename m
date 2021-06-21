@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-21.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D85D1C4743C
-	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Jun 2021 21:40:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 915ECC48BE5
+	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Jun 2021 21:50:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B9CAA6134F
-	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Jun 2021 21:40:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 741586128C
+	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Jun 2021 21:50:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231625AbhFUVmT (ORCPT
+        id S231892AbhFUVwV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 21 Jun 2021 17:42:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42646 "EHLO mail.kernel.org"
+        Mon, 21 Jun 2021 17:52:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45576 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231321AbhFUVmT (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 21 Jun 2021 17:42:19 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 8A9E1610C7;
-        Mon, 21 Jun 2021 21:40:04 +0000 (UTC)
+        id S231460AbhFUVwT (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 21 Jun 2021 17:52:19 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPS id 7C33961289;
+        Mon, 21 Jun 2021 21:50:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624311604;
-        bh=XbOOzVLK3eCRXK7wGpriIjlSKnBU7IQXgHg3u1HZU3I=;
+        s=k20201202; t=1624312204;
+        bh=nSY1EDhSqPYXZn65k5TZP64JbbnKiLYup0swSnr5/xQ=;
         h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=bYDLhp9HPZSzUts9rj4IpwI7jP9BxfV18c669DdO0lD9BB63JoP/nmXZSOj0BqndX
-         E9tkyCSqO7SzTkCiVyEsDXo7Kv7CmoHq5G/CTYyCStHBwU5+9l+Pi65IaH7MITVB2E
-         W746/oUIfhfryyHlsrV9nOvcD9VDf0obLTBlP4C8D1W4RqGhPF55TQOcfBJb6s79OY
-         v4/SRXKYpTYrHYZ/PogYiEZ/Y1x3pyRsASyVrJG6lXacd5hxo3HNQo6JTg55+YzJqr
-         kYtIs4d8+cJllGh2oq62SULZG2mvmDI7hp2Gh0majjddE9+VCq+rvM+RSR6y6jSxhZ
-         MAgpSrkgkOyQg==
+        b=kEeYRGs74SmGqXDReWcvSrI1oxNhDAHC7Hj8JWVAT4n0JknECTY8JyBYcQS9LqtXE
+         e4aw9eAjuBeiset6QAE1rH2AaP6iP9GupIkNDkywiT0Q8cd6MikMsVAvpd2yxZcEPd
+         6LcVOd+lH/bJCaYOdT6jp+YKTPEdgMAxXxTtqL/KT4I0r5vYHt7JRTHcE9hC83GbXV
+         B9Upv9zaVBRpHHNIV+9q1a35nvsRP1Pd2QlePD/iTLp2eTUi4E3yCKyD26ZpPVG+md
+         Xoy2j/vPenTUvknXbSpr4JJap5TWVXoBSdPutD5IgXwHnAYqFiZf/bndRs6aa9Ls98
+         bWxn/l/E+D9rw==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net: hns3: Fix a memory leak in an error handling path in
- 'hclge_handle_error_info_log()'
+Subject: Re: [PATCH] net: mana: Fix a memory leak in an error handling path in
+ 'mana_create_txq()'
 From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <162431160448.11017.15355294728321979722.git-patchwork-notify@kernel.org>
-Date:   Mon, 21 Jun 2021 21:40:04 +0000
-References: <bcf0186881d4a735fb1d356546c0cf00da40bb36.1624182453.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <bcf0186881d4a735fb1d356546c0cf00da40bb36.1624182453.git.christophe.jaillet@wanadoo.fr>
+Message-Id: <162431220444.17422.9240732393045987278.git-patchwork-notify@kernel.org>
+Date:   Mon, 21 Jun 2021 21:50:04 +0000
+References: <578bcaa1a9d6916c86aaecf65f205492affb6fc8.1624196430.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <578bcaa1a9d6916c86aaecf65f205492affb6fc8.1624196430.git.christophe.jaillet@wanadoo.fr>
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     yisen.zhuang@huawei.com, salil.mehta@huawei.com,
-        davem@davemloft.net, kuba@kernel.org, huangguangbin2@huawei.com,
-        tanhuazhong@huawei.com, zhangjiaran@huawei.com,
-        moyufeng@huawei.com, lipeng321@huawei.com, netdev@vger.kernel.org,
+Cc:     kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com,
+        wei.liu@kernel.org, decui@microsoft.com, davem@davemloft.net,
+        kuba@kernel.org, shacharr@microsoft.com, gustavoars@kernel.org,
+        linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
@@ -54,21 +54,21 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 Hello:
 
-This patch was applied to netdev/net-next.git (refs/heads/master):
+This patch was applied to netdev/net.git (refs/heads/master):
 
-On Sun, 20 Jun 2021 11:49:40 +0200 you wrote:
-> If this 'kzalloc()' fails we must free some resources as in all the other
-> error handling paths of this function.
+On Sun, 20 Jun 2021 15:43:28 +0200 you wrote:
+> If this test fails we must free some resources as in all the other error
+> handling paths of this function.
 > 
-> Fixes: 2e2deee7618b ("net: hns3: add the RAS compatibility adaptation solution")
+> Fixes: ca9c54d2d6a5 ("net: mana: Add a driver for Microsoft Azure Network Adapter (MANA)")
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->  drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c | 6 ++++--
+>  drivers/net/ethernet/microsoft/mana/mana_en.c | 6 ++++--
 >  1 file changed, 4 insertions(+), 2 deletions(-)
 
 Here is the summary with links:
-  - net: hns3: Fix a memory leak in an error handling path in 'hclge_handle_error_info_log()'
-    https://git.kernel.org/netdev/net-next/c/b40d7af798a0
+  - net: mana: Fix a memory leak in an error handling path in 'mana_create_txq()'
+    https://git.kernel.org/netdev/net/c/b90788459cd6
 
 You are awesome, thank you!
 --
