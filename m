@@ -2,39 +2,38 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-21.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 811ECC48BE5
-	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Jun 2021 15:17:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E372C4743C
+	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Jun 2021 15:22:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 63E6D61059
-	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Jun 2021 15:17:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4340E61002
+	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Jun 2021 15:22:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230102AbhFUPTr (ORCPT
+        id S230071AbhFUPZM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 21 Jun 2021 11:19:47 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:50788 "EHLO
+        Mon, 21 Jun 2021 11:25:12 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:50931 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229876AbhFUPTp (ORCPT
+        with ESMTP id S230057AbhFUPZL (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 21 Jun 2021 11:19:45 -0400
+        Mon, 21 Jun 2021 11:25:11 -0400
 Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
         (Exim 4.93)
         (envelope-from <colin.king@canonical.com>)
-        id 1lvLfz-0001Of-OX; Mon, 21 Jun 2021 15:17:27 +0000
+        id 1lvLlB-0001q5-GW; Mon, 21 Jun 2021 15:22:49 +0000
 From:   Colin King <colin.king@canonical.com>
-To:     Hannes Reinecke <hare@suse.com>,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org
+To:     Richard Weinberger <richard@nod.at>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        linux-mtd@lists.infradead.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: aic7xxx: Fix unintentional sign extension issue on left shift of u8
-Date:   Mon, 21 Jun 2021 16:17:27 +0100
-Message-Id: <20210621151727.20667-1-colin.king@canonical.com>
+Subject: [PATCH] ubifs: Remove a redundant null check on pointer lp
+Date:   Mon, 21 Jun 2021 16:22:49 +0100
+Message-Id: <20210621152249.20901-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -45,36 +44,30 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The shifting of the u8 integer returned fom ahc_inb(ahc, port+3) by
-24 bits to the left will be promoted to a 32 bit signed int and then
-sign-extended to a u64. In the event that the top bit of the u8
-is set then all then all the upper 32 bits of the u64 end up as
-also being set because of the sign-extension. Fix this by
-casting the u8 values to a u64 before the 24 bit left shift.
+An earlier fix to replace an IS_ERR check on lp with a null check
+on lp didn't remove a following null check on lp. The second null
+check is redundant and can be removed.
 
-[ This dates back to 2002, I found the offending commit from the git
-history git://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git,
-commit f58eb66c0b0a ("Update aic7xxx driver to 6.2.10...") ]
-
-Addresses-Coverity: ("Unintended sign extension")
+Addresses-Coverity: ("Logically dead code")
+Fixes: c770cd5190ba ("ubifs: fix an IS_ERR() vs NULL check")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/scsi/aic7xxx/aic7xxx_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/ubifs/gc.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/scsi/aic7xxx/aic7xxx_core.c b/drivers/scsi/aic7xxx/aic7xxx_core.c
-index 4b04ab8908f8..a396f048a031 100644
---- a/drivers/scsi/aic7xxx/aic7xxx_core.c
-+++ b/drivers/scsi/aic7xxx/aic7xxx_core.c
-@@ -493,7 +493,7 @@ ahc_inq(struct ahc_softc *ahc, u_int port)
- 	return ((ahc_inb(ahc, port))
- 	      | (ahc_inb(ahc, port+1) << 8)
- 	      | (ahc_inb(ahc, port+2) << 16)
--	      | (ahc_inb(ahc, port+3) << 24)
-+	      | (((uint64_t)ahc_inb(ahc, port+3)) << 24)
- 	      | (((uint64_t)ahc_inb(ahc, port+4)) << 32)
- 	      | (((uint64_t)ahc_inb(ahc, port+5)) << 40)
- 	      | (((uint64_t)ahc_inb(ahc, port+6)) << 48)
+diff --git a/fs/ubifs/gc.c b/fs/ubifs/gc.c
+index 7cc22d7317ea..465beea52176 100644
+--- a/fs/ubifs/gc.c
++++ b/fs/ubifs/gc.c
+@@ -899,8 +899,6 @@ int ubifs_gc_start_commit(struct ubifs_info *c)
+ 			err = -ENOMEM;
+ 			goto out;
+ 		}
+-		if (!lp)
+-			break;
+ 		idx_gc = kmalloc(sizeof(struct ubifs_gced_idx_leb), GFP_NOFS);
+ 		if (!idx_gc) {
+ 			err = -ENOMEM;
 -- 
 2.31.1
 
