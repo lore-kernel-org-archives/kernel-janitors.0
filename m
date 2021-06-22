@@ -2,84 +2,71 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81576C49EA4
-	for <kernel-janitors@archiver.kernel.org>; Tue, 22 Jun 2021 19:42:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BD84C2B9F4
+	for <kernel-janitors@archiver.kernel.org>; Tue, 22 Jun 2021 20:01:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 70DEB613AD
-	for <kernel-janitors@archiver.kernel.org>; Tue, 22 Jun 2021 19:42:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0B2061352
+	for <kernel-janitors@archiver.kernel.org>; Tue, 22 Jun 2021 20:01:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232741AbhFVToQ (ORCPT
+        id S232733AbhFVUDy (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 22 Jun 2021 15:44:16 -0400
-Received: from smtp06.smtpout.orange.fr ([80.12.242.128]:46135 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232464AbhFVToN (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 22 Jun 2021 15:44:13 -0400
-Received: from localhost.localdomain ([86.243.172.93])
-        by mwinf5d82 with ME
-        id LKdq2500821Fzsu03Kdq5B; Tue, 22 Jun 2021 21:37:52 +0200
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 22 Jun 2021 21:37:52 +0200
-X-ME-IP: 86.243.172.93
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     pawell@cadence.com, gregkh@linuxfoundation.org, peter.chen@nxp.com
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] usb: cdnsp: Fix the IMAN_IE_SET and IMAN_IE_CLEAR macro.
-Date:   Tue, 22 Jun 2021 21:37:48 +0200
-Message-Id: <d12bfcc9cbffb89e27b120668821b3c4f09b6755.1624390584.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Tue, 22 Jun 2021 16:03:54 -0400
+Received: from mga14.intel.com ([192.55.52.115]:61221 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232631AbhFVUDx (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 22 Jun 2021 16:03:53 -0400
+IronPort-SDR: X3SxHqFPGfttkAaj9Hk9qwVapG69HYn0N+w3C1JjKkEZI77qriNYyb2lNZfTEUI89GSWpjR8gY
+ KLrvOnOsvhkw==
+X-IronPort-AV: E=McAfee;i="6200,9189,10023"; a="206950589"
+X-IronPort-AV: E=Sophos;i="5.83,292,1616482800"; 
+   d="scan'208";a="206950589"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jun 2021 13:01:36 -0700
+IronPort-SDR: 8hahmznFqm5PHxWRsE2eJLWpDrpgLQckv0RvoVNkUXdNboXWTlsL1oLDCmKVfO3nyuooV1Czu8
+ wTldUNzGyufQ==
+X-IronPort-AV: E=Sophos;i="5.83,292,1616482800"; 
+   d="scan'208";a="444720043"
+Received: from paasikivi.fi.intel.com ([10.237.72.42])
+  by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jun 2021 13:01:33 -0700
+Received: from paasikivi.fi.intel.com (localhost [127.0.0.1])
+        by paasikivi.fi.intel.com (Postfix) with SMTP id E79DE201E4;
+        Tue, 22 Jun 2021 23:01:31 +0300 (EEST)
+Date:   Tue, 22 Jun 2021 23:01:31 +0300
+From:   Sakari Ailus <sakari.ailus@linux.intel.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] media: v4l2-subdev: fix some NULL vs IS_ERR() checks
+Message-ID: <20210622200131.GC3@paasikivi.fi.intel.com>
+References: <YNH0WU7BcQ/60UNG@mwanda>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YNH0WU7BcQ/60UNG@mwanda>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-IMAN_IE is BIT(1), so these macro are respectively equivalent to BIT(1)
-and 0, whatever the value of 'p'.
+On Tue, Jun 22, 2021 at 05:31:53PM +0300, Dan Carpenter wrote:
+> The v4l2_subdev_alloc_state() function returns error pointers, it
+> doesn't return NULL.
+> 
+> Fixes: 0d346d2a6f54 ("media: v4l2-subdev: add subdev-wide state struct")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-The purpose was to set and reset a single bit in 'p'.
-Fix these macros to do that correctly.
+Thanks, Dan!
 
-Fixes: e93e58d27402 ("usb: cdnsp: Device side header file for CDNSP driver")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-This patch is speculative. It is not tested.
-Please, review with care.
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-Actually, the usage of these macros is:
-   readl(somewhere)
-   set or reset the IMAN_IE bit
-   write(somewhere)
-So it is likely that we want to preserve the other bits read. Otherwise,
-the code could be much simpler.
----
- drivers/usb/cdns3/cdnsp-gadget.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/usb/cdns3/cdnsp-gadget.h b/drivers/usb/cdns3/cdnsp-gadget.h
-index 783ca8ffde00..f740fa6089d8 100644
---- a/drivers/usb/cdns3/cdnsp-gadget.h
-+++ b/drivers/usb/cdns3/cdnsp-gadget.h
-@@ -383,8 +383,8 @@ struct cdnsp_intr_reg {
- #define IMAN_IE			BIT(1)
- #define IMAN_IP			BIT(0)
- /* bits 2:31 need to be preserved */
--#define IMAN_IE_SET(p)		(((p) & IMAN_IE) | 0x2)
--#define IMAN_IE_CLEAR(p)	(((p) & IMAN_IE) & ~(0x2))
-+#define IMAN_IE_SET(p)		((p) | IMAN_IE)
-+#define IMAN_IE_CLEAR(p)	((p) & ~IMAN_IE)
- 
- /* IMOD - Interrupter Moderation Register - irq_control bitmasks. */
- /*
 -- 
-2.30.2
-
+Sakari Ailus
