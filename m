@@ -2,109 +2,82 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A5FEC2B9F4
-	for <kernel-janitors@archiver.kernel.org>; Tue, 22 Jun 2021 11:52:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 358A2C2B9F4
+	for <kernel-janitors@archiver.kernel.org>; Tue, 22 Jun 2021 12:15:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 01282611CE
-	for <kernel-janitors@archiver.kernel.org>; Tue, 22 Jun 2021 11:52:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22D756115A
+	for <kernel-janitors@archiver.kernel.org>; Tue, 22 Jun 2021 12:15:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230523AbhFVLyl (ORCPT
+        id S230393AbhFVMRv (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 22 Jun 2021 07:54:41 -0400
-Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:54268 "EHLO
-        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230452AbhFVLyk (ORCPT
+        Tue, 22 Jun 2021 08:17:51 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:49742 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231174AbhFVMRu (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 22 Jun 2021 07:54:40 -0400
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15MBlcTV020562;
-        Tue, 22 Jun 2021 11:51:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=Yr1p6Q/+eK8PSMXu3bRpZ+9sRs4I6GuoLZCsW4oDY58=;
- b=N8UnPMEU8s2a+4wJAnG+dXSdLytfP13glQGh0OjmJzjgWUaMHxme7qqDvS4EiRG4IDHw
- Di+cSnRauZwpjNOrlAhxVeo8GuPMd0cXvhXWGuSx5sUc0ZGZ9sqghNons21u0uVzzKLb
- tyaLv+tSXs+Bmdt+dKivO3EDRDKAqWs5JmVPv/hxSsjqi+PXKRrvekOfToac2OCufjyR
- 9d9k7i2z0nzG4R5mA/5yjEyf4IAbplH60+RNJxlhHXaoyriHIw+Uk9NO9XpYY/inMvWs
- z0dZADnjm9G15Carm5UgMlq6vROSG099X62LdNJjTMP2bhGQleZI0U6OQFDH9ACTiL7K pQ== 
-Received: from oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by mx0b-00069f02.pphosted.com with ESMTP id 39ap66k4da-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 22 Jun 2021 11:51:57 +0000
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
-        by pps.podrdrct (8.16.0.36/8.16.0.36) with SMTP id 15MBpuli075091;
-        Tue, 22 Jun 2021 11:51:56 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by aserp3030.oracle.com with ESMTP id 3996md9yf9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 22 Jun 2021 11:51:56 +0000
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 15MBpu74075065;
-        Tue, 22 Jun 2021 11:51:56 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3030.oracle.com with ESMTP id 3996md9yep-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 22 Jun 2021 11:51:56 +0000
-Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by aserv0121.oracle.com (8.14.4/8.14.4) with ESMTP id 15MBpqFV027216;
-        Tue, 22 Jun 2021 11:51:53 GMT
-Received: from mwanda (/102.222.70.252)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 22 Jun 2021 04:51:51 -0700
-Date:   Tue, 22 Jun 2021 14:51:43 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Giuseppe Cavallaro <peppe.cavallaro@st.com>
-Cc:     Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Qing Zhang <zhangqing@loongson.cn>,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>, netdev@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH net-next] stmmac: dwmac-loongson: fix uninitialized variable
- in loongson_dwmac_probe()
-Message-ID: <YNHOz8Aqo7Y1ZwO+@mwanda>
+        Tue, 22 Jun 2021 08:17:50 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 15MCFFQZ053902;
+        Tue, 22 Jun 2021 07:15:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1624364115;
+        bh=VXl+turadXEnbo1KvsAjQeLsr8jDoDct/9xwVEpSP24=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=vfk9zw3qA8STy8oMrHARhDBi+4Pq2AgjZ+aUCsfAaTshQKPMGcAV4+FeD6VVo2Lwc
+         8j1+UBTA78bzjRGfcOYucXfY/GRPFUk7tXWwHEXgHR+EL4yBqzDuMx877X0OSgzTb/
+         HxtG2RtZt0pFNEMEhDXm6PEaa4n9gVUtEnqAC8a0=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 15MCFEjD048546
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 22 Jun 2021 07:15:15 -0500
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Tue, 22
+ Jun 2021 07:15:14 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2 via
+ Frontend Transport; Tue, 22 Jun 2021 07:15:14 -0500
+Received: from ula0132425.ent.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 15MCFBHg049752;
+        Tue, 22 Jun 2021 07:15:11 -0500
+From:   Vignesh Raghavendra <vigneshr@ti.com>
+To:     Michael Walle <michael@walle.cc>, <linux-mtd@lists.infradead.org>,
+        Colin King <colin.king@canonical.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Pratyush Yadav <p.yadav@ti.com>,
+        Richard Weinberger <richard@nod.at>
+CC:     Vignesh Raghavendra <vigneshr@ti.com>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH] mtd: spi-nor: remove redundant continue statement
+Date:   Tue, 22 Jun 2021 17:44:47 +0530
+Message-ID: <162436407038.6751.408040408294040312.b4-ty@ti.com>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20210618093331.100006-1-colin.king@canonical.com>
+References: <20210618093331.100006-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-X-Proofpoint-ORIG-GUID: KMVqZT6IYIXJZ4cLfD0rpbGgeJbEfcFI
-X-Proofpoint-GUID: KMVqZT6IYIXJZ4cLfD0rpbGgeJbEfcFI
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The "mdio" variable is never set to false.  Also it should be a bool
-type instead of int.
+On Fri, 18 Jun 2021 10:33:31 +0100, Colin King wrote:
+> The continue statement at the end of a for-loop has no effect,
+> invert the if expression and remove the continue.
 
-Fixes: 30bba69d7db4 ("stmmac: pci: Add dwmac support for Loongson")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Applied to spi-nor/next, thanks!
+[1/1] mtd: spi-nor: remove redundant continue statement
+      https://git.kernel.org/mtd/c/c17e5c85b3
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
-index 8cd4e2e8ec40..e108b0d2bd28 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
-@@ -49,7 +49,8 @@ static int loongson_dwmac_probe(struct pci_dev *pdev, const struct pci_device_id
- {
- 	struct plat_stmmacenet_data *plat;
- 	struct stmmac_resources res;
--	int ret, i, mdio;
-+	bool mdio = false;
-+	int ret, i;
- 	struct device_node *np;
- 
- 	np = dev_of_node(&pdev->dev);
--- 
-2.30.2
+--
+Regards
+Vignesh
 
