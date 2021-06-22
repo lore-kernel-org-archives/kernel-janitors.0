@@ -2,82 +2,106 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 358A2C2B9F4
-	for <kernel-janitors@archiver.kernel.org>; Tue, 22 Jun 2021 12:15:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D042FC2B9F4
+	for <kernel-janitors@archiver.kernel.org>; Tue, 22 Jun 2021 13:09:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 22D756115A
-	for <kernel-janitors@archiver.kernel.org>; Tue, 22 Jun 2021 12:15:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6E3C6113E
+	for <kernel-janitors@archiver.kernel.org>; Tue, 22 Jun 2021 13:09:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230393AbhFVMRv (ORCPT
+        id S229913AbhFVNLc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 22 Jun 2021 08:17:51 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:49742 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231174AbhFVMRu (ORCPT
+        Tue, 22 Jun 2021 09:11:32 -0400
+Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:18576 "EHLO
+        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229786AbhFVNLc (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 22 Jun 2021 08:17:50 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 15MCFFQZ053902;
-        Tue, 22 Jun 2021 07:15:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1624364115;
-        bh=VXl+turadXEnbo1KvsAjQeLsr8jDoDct/9xwVEpSP24=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=vfk9zw3qA8STy8oMrHARhDBi+4Pq2AgjZ+aUCsfAaTshQKPMGcAV4+FeD6VVo2Lwc
-         8j1+UBTA78bzjRGfcOYucXfY/GRPFUk7tXWwHEXgHR+EL4yBqzDuMx877X0OSgzTb/
-         HxtG2RtZt0pFNEMEhDXm6PEaa4n9gVUtEnqAC8a0=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 15MCFEjD048546
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 22 Jun 2021 07:15:15 -0500
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Tue, 22
- Jun 2021 07:15:14 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2 via
- Frontend Transport; Tue, 22 Jun 2021 07:15:14 -0500
-Received: from ula0132425.ent.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 15MCFBHg049752;
-        Tue, 22 Jun 2021 07:15:11 -0500
-From:   Vignesh Raghavendra <vigneshr@ti.com>
-To:     Michael Walle <michael@walle.cc>, <linux-mtd@lists.infradead.org>,
-        Colin King <colin.king@canonical.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        Pratyush Yadav <p.yadav@ti.com>,
-        Richard Weinberger <richard@nod.at>
-CC:     Vignesh Raghavendra <vigneshr@ti.com>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH] mtd: spi-nor: remove redundant continue statement
-Date:   Tue, 22 Jun 2021 17:44:47 +0530
-Message-ID: <162436407038.6751.408040408294040312.b4-ty@ti.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20210618093331.100006-1-colin.king@canonical.com>
-References: <20210618093331.100006-1-colin.king@canonical.com>
+        Tue, 22 Jun 2021 09:11:32 -0400
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15MD7YWJ016699;
+        Tue, 22 Jun 2021 13:09:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
+ bh=nNGhc4wVJo2amK5VSNy7N7O6Kcp1UZjvj4FvRgNDlDU=;
+ b=gVzJ8fnTUgU5WtWYj6Ff099RIDwila0KKyhfLqNc0q2DxEM5eXGFyfV01TY58zsX8C7N
+ PLAV44lfsC2D7j5ODt1/pFd7vFDvl02RG7JAoi47mpP1jCmNbxgYTCVo+wVSkXev2+mX
+ 5AU2MZgPQNthPjnlISpg7QC/SKmohKsbZY2mGJ14mVw3EoiuCnK9KIUoP2MiLR66Mhxk
+ s4IniOrM4ZiK3F9QB/XAManTAV6vs3m9U/EalzyCCjH4RtzZ2ZmH2W6rXPIDpyqHcUUo
+ OgE2nyDXZY/jIvMA9aTLtW82nOtccJsOP3dtnA9gi8rt1EogPTNqehKZeqFRdlUY3mdy YQ== 
+Received: from oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by mx0b-00069f02.pphosted.com with ESMTP id 39ap66k9va-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 22 Jun 2021 13:09:02 +0000
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
+        by pps.podrdrct (8.16.0.36/8.16.0.36) with SMTP id 15MD67RX147909;
+        Tue, 22 Jun 2021 13:09:01 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by aserp3020.oracle.com with ESMTP id 3998d7e3ax-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 22 Jun 2021 13:09:01 +0000
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 15MD71pv151810;
+        Tue, 22 Jun 2021 13:09:00 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 3998d7e3a8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 22 Jun 2021 13:09:00 +0000
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 15MD8xKO009280;
+        Tue, 22 Jun 2021 13:08:59 GMT
+Received: from mwanda (/102.222.70.252)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 22 Jun 2021 06:08:59 -0700
+Date:   Tue, 22 Jun 2021 16:08:52 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Jassi Brar <jassisinghbrar@gmail.com>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Yongqiang Niu <yongqiang.niu@mediatek.com>,
+        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] mailbox: mtk-cmdq: Fix uninitialized variable in
+ cmdq_mbox_flush()
+Message-ID: <YNHg5NuJILrrBIZ/@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+X-Proofpoint-ORIG-GUID: 8p3wwlkN12fs7dM7rr5b_8Wf51qeErBx
+X-Proofpoint-GUID: 8p3wwlkN12fs7dM7rr5b_8Wf51qeErBx
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 18 Jun 2021 10:33:31 +0100, Colin King wrote:
-> The continue statement at the end of a for-loop has no effect,
-> invert the if expression and remove the continue.
+The "cb" pointer needs to be initialized before can assign
+"data.data = cb->data;".
 
-Applied to spi-nor/next, thanks!
-[1/1] mtd: spi-nor: remove redundant continue statement
-      https://git.kernel.org/mtd/c/c17e5c85b3
+Fixes: 4a3cb0303984 ("mailbox: mtk-cmdq: Use mailbox rx_callback")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/mailbox/mtk-cmdq-mailbox.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---
-Regards
-Vignesh
+diff --git a/drivers/mailbox/mtk-cmdq-mailbox.c b/drivers/mailbox/mtk-cmdq-mailbox.c
+index 301e65b9527a..67a42b514429 100644
+--- a/drivers/mailbox/mtk-cmdq-mailbox.c
++++ b/drivers/mailbox/mtk-cmdq-mailbox.c
+@@ -455,10 +455,10 @@ static int cmdq_mbox_flush(struct mbox_chan *chan, unsigned long timeout)
+ 
+ 	list_for_each_entry_safe(task, tmp, &thread->task_busy_list,
+ 				 list_entry) {
++		cb = &task->pkt->async_cb;
+ 		data.sta = -ECONNABORTED;
+ 		data.data = cb->data;
+ 		data.pkt = task->pkt;
+-		cb = &task->pkt->async_cb;
+ 		if (cb->cb)
+ 			cb->cb(data);
+ 
+-- 
+2.30.2
 
