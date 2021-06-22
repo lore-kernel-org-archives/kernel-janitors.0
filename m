@@ -2,83 +2,99 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 627CAC2B9F4
-	for <kernel-janitors@archiver.kernel.org>; Tue, 22 Jun 2021 06:50:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 411EBC2B9F4
+	for <kernel-janitors@archiver.kernel.org>; Tue, 22 Jun 2021 07:34:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4DD0761356
-	for <kernel-janitors@archiver.kernel.org>; Tue, 22 Jun 2021 06:50:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 228B16128C
+	for <kernel-janitors@archiver.kernel.org>; Tue, 22 Jun 2021 07:34:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231289AbhFVGwz (ORCPT
+        id S229912AbhFVHgc convert rfc822-to-8bit (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 22 Jun 2021 02:52:55 -0400
-Received: from mga01.intel.com ([192.55.52.88]:54218 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230357AbhFVGwt (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 22 Jun 2021 02:52:49 -0400
-IronPort-SDR: jAHWt+u0Bh/O22IVizBuQCkwRSogPS8NF4riiylzGgH46+1QtFrm2JjUC0nCJw0m4p79nSGngR
- 1KVu1QftVmfg==
-X-IronPort-AV: E=McAfee;i="6200,9189,10022"; a="228549729"
-X-IronPort-AV: E=Sophos;i="5.83,291,1616482800"; 
-   d="scan'208";a="228549729"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2021 23:50:29 -0700
-IronPort-SDR: 8unCcfD5ddFdqBvR0Zig+AEb7mF+wfvk+nfcu68tYWrtcJNnPk1H4LOXccr7XEBA5YYYft4D1u
- Sg2smDxwYhHg==
-X-IronPort-AV: E=Sophos;i="5.83,291,1616482800"; 
-   d="scan'208";a="452498302"
-Received: from unknown (HELO [10.185.169.18]) ([10.185.169.18])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2021 23:50:23 -0700
-Subject: Re: [PATCH] igc: Fix an error handling path in 'igc_probe()'
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        jesse.brandeburg@intel.com, anthony.l.nguyen@intel.com,
-        davem@davemloft.net, kuba@kernel.org
-Cc:     intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        "Neftin, Sasha" <sasha.neftin@intel.com>,
-        "Edri, Michael" <michael.edri@intel.com>
-References: <f24ae8234fedd1689fa0116038e10e4d3a033802.1623527947.git.christophe.jaillet@wanadoo.fr>
-From:   "Neftin, Sasha" <sasha.neftin@intel.com>
-Message-ID: <ae67bbc1-3bd9-c64c-b507-d2fd30da08e0@intel.com>
-Date:   Tue, 22 Jun 2021 09:50:21 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Tue, 22 Jun 2021 03:36:32 -0400
+Received: from lithops.sigma-star.at ([195.201.40.130]:53460 "EHLO
+        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229677AbhFVHgc (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 22 Jun 2021 03:36:32 -0400
+X-Greylist: delayed 599 seconds by postgrey-1.27 at vger.kernel.org; Tue, 22 Jun 2021 03:36:32 EDT
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id B1CAA606BA3F;
+        Tue, 22 Jun 2021 09:24:15 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id URpEKndo4VDj; Tue, 22 Jun 2021 09:24:15 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 5D6A261BC7C5;
+        Tue, 22 Jun 2021 09:24:15 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id Tx88bZgyxVTX; Tue, 22 Jun 2021 09:24:15 +0200 (CEST)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 320C961BC7B2;
+        Tue, 22 Jun 2021 09:24:15 +0200 (CEST)
+Date:   Tue, 22 Jun 2021 09:24:15 +0200 (CEST)
+From:   Richard Weinberger <richard@nod.at>
+To:     chengzhihao1 <chengzhihao1@huawei.com>
+Cc:     Colin Ian King <colin.king@canonical.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        kernel-janitors <kernel-janitors@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Message-ID: <1471996381.142265.1624346654994.JavaMail.zimbra@nod.at>
+In-Reply-To: <f2ea606a-4a05-8d14-4380-d96ca0f981a1@huawei.com>
+References: <20210621152249.20901-1-colin.king@canonical.com> <f2ea606a-4a05-8d14-4380-d96ca0f981a1@huawei.com>
+Subject: Re: [PATCH] ubifs: Remove a redundant null check on pointer lp
 MIME-Version: 1.0
-In-Reply-To: <f24ae8234fedd1689fa0116038e10e4d3a033802.1623527947.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-Originating-IP: [195.201.40.130]
+X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF78 (Linux)/8.8.12_GA_3809)
+Thread-Topic: ubifs: Remove a redundant null check on pointer lp
+Thread-Index: ZwnP86hcvaby+ZSpOm73bGFflCebzw==
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 6/12/2021 23:00, Christophe JAILLET wrote:
-> If an error occurs after a 'pci_enable_pcie_error_reporting()' call, it
-> must be undone by a corresponding 'pci_disable_pcie_error_reporting()'
-> call, as already done in the remove function.
-> 
-> Fixes: c9a11c23ceb6 ("igc: Add netdev")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->   drivers/net/ethernet/intel/igc/igc_main.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/net/ethernet/intel/igc/igc_main.c b/drivers/net/ethernet/intel/igc/igc_main.c
-> index 3f6b6d4543a8..6389a41cacc1 100644
-> --- a/drivers/net/ethernet/intel/igc/igc_main.c
-> +++ b/drivers/net/ethernet/intel/igc/igc_main.c
-> @@ -6057,6 +6057,7 @@ static int igc_probe(struct pci_dev *pdev,
->   err_ioremap:
->   	free_netdev(netdev);
->   err_alloc_etherdev:
-> +	pci_disable_pcie_error_reporting(pdev);
->   	pci_release_mem_regions(pdev);
->   err_pci_reg:
->   err_dma:
-> 
-Thanks for this patch.
-Acked-by: Sasha Neftin <sasha.neftin@intel.com>
+----- Ursprüngliche Mail -----
+> I just found out about it today thanks to your patch. Commit
+> c770cd5190ba ("ubifs: fix an IS_ERR() vs NULL check") did import a new
+> problem that ubifs_gc_start_commit() may return -ENOMEM while syncing fs.
+> I guess ubifs_fast_find_frdi_idx() return NULL pointer is the
+> termination condition in while-loop, which means we cannot get a
+> freeable index LEB in ubifs_gc_start_commit().
+
+Good catch! :-)
+
+>> -		if (!lp)
+>> -			break;
+>>   		idx_gc = kmalloc(sizeof(struct ubifs_gced_idx_leb), GFP_NOFS);
+>>   		if (!idx_gc) {
+>>   			err = -ENOMEM;
+>> 
+> BTW, the following modifications may be what you want?
+> diff --git a/fs/ubifs/gc.c b/fs/ubifs/gc.c
+> index 7cc22d7317ea..b1f276599b04 100644
+> --- a/fs/ubifs/gc.c
+> +++ b/fs/ubifs/gc.c
+> @@ -895,10 +895,6 @@ int ubifs_gc_start_commit(struct ubifs_info *c)
+>         /* Record index freeable LEBs for unmapping after commit */
+>         while (1) {
+>                 lp = ubifs_fast_find_frdi_idx(c);
+> -               if (!lp) {
+> -                       err = -ENOMEM;
+> -                       goto out;
+> -               }
+>                 if (!lp)
+>                         break;
+>                 idx_gc = kmalloc(sizeof(struct ubifs_gced_idx_leb),
+> GFP_NOFS);
+
+I'll drop Dan's patch from -next. Do you want to send a followup patch which removes the
+in vain check?
+
+Thanks,
+//richard
