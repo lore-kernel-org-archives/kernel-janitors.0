@@ -4,81 +4,102 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8CECC2B9F4
-	for <kernel-janitors@archiver.kernel.org>; Tue, 22 Jun 2021 08:31:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C64CBC48BE5
+	for <kernel-janitors@archiver.kernel.org>; Tue, 22 Jun 2021 10:42:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 95A176128C
-	for <kernel-janitors@archiver.kernel.org>; Tue, 22 Jun 2021 08:31:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3E31613AB
+	for <kernel-janitors@archiver.kernel.org>; Tue, 22 Jun 2021 10:42:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229890AbhFVIeH (ORCPT
+        id S229888AbhFVKot (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 22 Jun 2021 04:34:07 -0400
-Received: from mga02.intel.com ([134.134.136.20]:9523 "EHLO mga02.intel.com"
+        Tue, 22 Jun 2021 06:44:49 -0400
+Received: from foss.arm.com ([217.140.110.172]:46596 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229628AbhFVIeH (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 22 Jun 2021 04:34:07 -0400
-IronPort-SDR: IPThxi2VB99ay812jsrB0XPHj1OqaMIBqIE8AXIZ6zb+imGGk96xbv26aOG4YJW3IYRwX0CwQB
- g/Skx8YTnTZg==
-X-IronPort-AV: E=McAfee;i="6200,9189,10022"; a="194150643"
-X-IronPort-AV: E=Sophos;i="5.83,291,1616482800"; 
-   d="scan'208";a="194150643"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jun 2021 01:31:34 -0700
-IronPort-SDR: JWFZFk1oPOMYrDwszmAKBB9hfqFqn3B9kATAqjc1YYWnE9dSSmT4N2lIRkf0QjbGCJ635WjV49
- 1d5ilXF2yhqw==
-X-IronPort-AV: E=Sophos;i="5.83,291,1616482800"; 
-   d="scan'208";a="452528472"
-Received: from unknown (HELO [10.185.169.18]) ([10.185.169.18])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jun 2021 01:31:31 -0700
-Subject: Re: [Intel-wired-lan] [PATCH] e1000e: Fix an error handling path in
- 'e1000_probe()'
+        id S229612AbhFVKot (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 22 Jun 2021 06:44:49 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3FC0C11D4;
+        Tue, 22 Jun 2021 03:42:33 -0700 (PDT)
+Received: from lpieralisi (e121166-lin.cambridge.arm.com [10.1.196.255])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DF26B3F694;
+        Tue, 22 Jun 2021 03:42:31 -0700 (PDT)
+Date:   Tue, 22 Jun 2021 11:42:10 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        jesse.brandeburg@intel.com, anthony.l.nguyen@intel.com,
-        davem@davemloft.net, kuba@kernel.org,
-        "Edri, Michael" <michael.edri@intel.com>
-Cc:     netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        intel-wired-lan@lists.osuosl.org, linux-kernel@vger.kernel.org,
-        "Neftin, Sasha" <sasha.neftin@intel.com>
-References: <2651bb1778490c45d963122619fe3403fdf6b9de.1623819901.git.christophe.jaillet@wanadoo.fr>
-From:   "Neftin, Sasha" <sasha.neftin@intel.com>
-Message-ID: <9622d773-323a-3022-e447-0586defd3732@intel.com>
-Date:   Tue, 22 Jun 2021 11:31:29 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        thierry.reding@gmail.com
+Cc:     robh@kernel.org, bhelgaas@google.com, jonathanh@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        vidyas@nvidia.com
+Subject: Re: [PATCH 1/3] PCI: tegra: Fix OF node reference leak
+Message-ID: <20210622104145.GA24565@lpieralisi>
+References: <55b11e9a7fa2987fbc0869d68ae59888954d65e2.1620148539.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-In-Reply-To: <2651bb1778490c45d963122619fe3403fdf6b9de.1623819901.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <55b11e9a7fa2987fbc0869d68ae59888954d65e2.1620148539.git.christophe.jaillet@wanadoo.fr>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 6/16/2021 08:05, Christophe JAILLET wrote:
-> If an error occurs after a 'pci_enable_pcie_error_reporting()' call, it
-> must be undone by a corresponding 'pci_disable_pcie_error_reporting()'
-> call, as already done in the remove function.
+On Tue, May 04, 2021 at 07:17:42PM +0200, Christophe JAILLET wrote:
+> Commit 9e38e690ace3 ("PCI: tegra: Fix OF node reference leak") has fixed
+> some node reference leaks in this function but missed some of them.
 > 
-> Fixes: 111b9dc5c981 ("e1000e: add aer support")
+> In fact, having 'port' referenced in the 'rp' structure is not enough to
+> prevent the leak, until 'rp' is actually added in the 'pcie->ports' list.
+> 
+> Add the missing 'goto err_node_put' accordingly.
+> 
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->   drivers/net/ethernet/intel/e1000e/netdev.c | 1 +
->   1 file changed, 1 insertion(+)
+>  drivers/pci/controller/pci-tegra.c | 13 ++++++++-----
+>  1 file changed, 8 insertions(+), 5 deletions(-)
+
+Thierry, Jon, Vidya,
+
+please review this series when you have time, thanks.
+
+Lorenzo
+
+> diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
+> index 8069bd9232d4..006bf0346dec 100644
+> --- a/drivers/pci/controller/pci-tegra.c
+> +++ b/drivers/pci/controller/pci-tegra.c
+> @@ -2193,13 +2193,15 @@ static int tegra_pcie_parse_dt(struct tegra_pcie *pcie)
+>  		rp->np = port;
+>  
+>  		rp->base = devm_pci_remap_cfg_resource(dev, &rp->regs);
+> -		if (IS_ERR(rp->base))
+> -			return PTR_ERR(rp->base);
+> +		if (IS_ERR(rp->base)) {
+> +			err = PTR_ERR(rp->base);
+> +			goto err_node_put;
+> +		}
+>  
+>  		label = devm_kasprintf(dev, GFP_KERNEL, "pex-reset-%u", index);
+>  		if (!label) {
+> -			dev_err(dev, "failed to create reset GPIO label\n");
+> -			return -ENOMEM;
+> +			err = -ENOMEM;
+> +			goto err_node_put;
+>  		}
+>  
+>  		/*
+> @@ -2217,7 +2219,8 @@ static int tegra_pcie_parse_dt(struct tegra_pcie *pcie)
+>  			} else {
+>  				dev_err(dev, "failed to get reset GPIO: %ld\n",
+>  					PTR_ERR(rp->reset_gpio));
+> -				return PTR_ERR(rp->reset_gpio);
+> +				err = PTR_ERR(rp->reset_gpio);
+> +				goto err_node_put;
+>  			}
+>  		}
+>  
+> -- 
+> 2.30.2
 > 
-> diff --git a/drivers/net/ethernet/intel/e1000e/netdev.c b/drivers/net/ethernet/intel/e1000e/netdev.c
-> index 5435606149b0..c8aa69fd0405 100644
-> --- a/drivers/net/ethernet/intel/e1000e/netdev.c
-> +++ b/drivers/net/ethernet/intel/e1000e/netdev.c
-> @@ -7662,6 +7662,7 @@ static int e1000_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
->   err_ioremap:
->   	free_netdev(netdev);
->   err_alloc_etherdev:
-> +	pci_disable_pcie_error_reporting(pdev);
->   	pci_release_mem_regions(pdev);
->   err_pci_reg:
->   err_dma:
-> 
-Acked-by: Sasha Neftin <sasha.neftin@intel.com>
