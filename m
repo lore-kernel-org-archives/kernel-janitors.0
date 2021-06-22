@@ -2,77 +2,110 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-21.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 915ECC48BE5
-	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Jun 2021 21:50:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4180EC4743C
+	for <kernel-janitors@archiver.kernel.org>; Tue, 22 Jun 2021 02:38:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 741586128C
-	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Jun 2021 21:50:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E0D06120D
+	for <kernel-janitors@archiver.kernel.org>; Tue, 22 Jun 2021 02:38:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231892AbhFUVwV (ORCPT
+        id S231478AbhFVClM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 21 Jun 2021 17:52:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45576 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231460AbhFUVwT (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 21 Jun 2021 17:52:19 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 7C33961289;
-        Mon, 21 Jun 2021 21:50:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624312204;
-        bh=nSY1EDhSqPYXZn65k5TZP64JbbnKiLYup0swSnr5/xQ=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=kEeYRGs74SmGqXDReWcvSrI1oxNhDAHC7Hj8JWVAT4n0JknECTY8JyBYcQS9LqtXE
-         e4aw9eAjuBeiset6QAE1rH2AaP6iP9GupIkNDkywiT0Q8cd6MikMsVAvpd2yxZcEPd
-         6LcVOd+lH/bJCaYOdT6jp+YKTPEdgMAxXxTtqL/KT4I0r5vYHt7JRTHcE9hC83GbXV
-         B9Upv9zaVBRpHHNIV+9q1a35nvsRP1Pd2QlePD/iTLp2eTUi4E3yCKyD26ZpPVG+md
-         Xoy2j/vPenTUvknXbSpr4JJap5TWVXoBSdPutD5IgXwHnAYqFiZf/bndRs6aa9Ls98
-         bWxn/l/E+D9rw==
-Content-Type: text/plain; charset="utf-8"
+        Mon, 21 Jun 2021 22:41:12 -0400
+Received: from szxga08-in.huawei.com ([45.249.212.255]:8287 "EHLO
+        szxga08-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231293AbhFVClM (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 21 Jun 2021 22:41:12 -0400
+Received: from dggemv711-chm.china.huawei.com (unknown [172.30.72.57])
+        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4G89ST0mxYz1BQKK;
+        Tue, 22 Jun 2021 10:33:45 +0800 (CST)
+Received: from dggema761-chm.china.huawei.com (10.1.198.203) by
+ dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
+ 15.1.2176.2; Tue, 22 Jun 2021 10:38:53 +0800
+Received: from [10.174.178.46] (10.174.178.46) by
+ dggema761-chm.china.huawei.com (10.1.198.203) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2176.2; Tue, 22 Jun 2021 10:38:53 +0800
+Subject: Re: [PATCH] ubifs: Remove a redundant null check on pointer lp
+To:     Colin King <colin.king@canonical.com>,
+        Richard Weinberger <richard@nod.at>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        <linux-mtd@lists.infradead.org>
+CC:     <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20210621152249.20901-1-colin.king@canonical.com>
+From:   Zhihao Cheng <chengzhihao1@huawei.com>
+Message-ID: <f2ea606a-4a05-8d14-4380-d96ca0f981a1@huawei.com>
+Date:   Tue, 22 Jun 2021 10:38:52 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
+In-Reply-To: <20210621152249.20901-1-colin.king@canonical.com>
+Content-Type: text/plain; charset="gbk"; format=flowed
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net: mana: Fix a memory leak in an error handling path in
- 'mana_create_txq()'
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <162431220444.17422.9240732393045987278.git-patchwork-notify@kernel.org>
-Date:   Mon, 21 Jun 2021 21:50:04 +0000
-References: <578bcaa1a9d6916c86aaecf65f205492affb6fc8.1624196430.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <578bcaa1a9d6916c86aaecf65f205492affb6fc8.1624196430.git.christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com,
-        wei.liu@kernel.org, decui@microsoft.com, davem@davemloft.net,
-        kuba@kernel.org, shacharr@microsoft.com, gustavoars@kernel.org,
-        linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+X-Originating-IP: [10.174.178.46]
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggema761-chm.china.huawei.com (10.1.198.203)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
-
-This patch was applied to netdev/net.git (refs/heads/master):
-
-On Sun, 20 Jun 2021 15:43:28 +0200 you wrote:
-> If this test fails we must free some resources as in all the other error
-> handling paths of this function.
+ÔÚ 2021/6/21 23:22, Colin King Ð´µÀ:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Fixes: ca9c54d2d6a5 ("net: mana: Add a driver for Microsoft Azure Network Adapter (MANA)")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> An earlier fix to replace an IS_ERR check on lp with a null check
+> on lp didn't remove a following null check on lp. The second null
+> check is redundant and can be removed.
+> 
+> Addresses-Coverity: ("Logically dead code")
+> Fixes: c770cd5190ba ("ubifs: fix an IS_ERR() vs NULL check")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
->  drivers/net/ethernet/microsoft/mana/mana_en.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+>   fs/ubifs/gc.c | 2 --
+>   1 file changed, 2 deletions(-)
+> 
+> diff --git a/fs/ubifs/gc.c b/fs/ubifs/gc.c
+> index 7cc22d7317ea..465beea52176 100644
+> --- a/fs/ubifs/gc.c
+> +++ b/fs/ubifs/gc.c
+> @@ -899,8 +899,6 @@ int ubifs_gc_start_commit(struct ubifs_info *c)
+>   			err = -ENOMEM;
+>   			goto out;
+>   		}
+Hi Colin,
+I just found out about it today thanks to your patch. Commit 
+c770cd5190ba ("ubifs: fix an IS_ERR() vs NULL check") did import a new 
+problem that ubifs_gc_start_commit() may return -ENOMEM while syncing fs.
+I guess ubifs_fast_find_frdi_idx() return NULL pointer is the 
+termination condition in while-loop, which means we cannot get a 
+freeable index LEB in ubifs_gc_start_commit().
 
-Here is the summary with links:
-  - net: mana: Fix a memory leak in an error handling path in 'mana_create_txq()'
-    https://git.kernel.org/netdev/net/c/b90788459cd6
-
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+> -		if (!lp)
+> -			break;
+>   		idx_gc = kmalloc(sizeof(struct ubifs_gced_idx_leb), GFP_NOFS);
+>   		if (!idx_gc) {
+>   			err = -ENOMEM;
+> 
+BTW, the following modifications may be what you want?
+diff --git a/fs/ubifs/gc.c b/fs/ubifs/gc.c
+index 7cc22d7317ea..b1f276599b04 100644
+--- a/fs/ubifs/gc.c
++++ b/fs/ubifs/gc.c
+@@ -895,10 +895,6 @@ int ubifs_gc_start_commit(struct ubifs_info *c)
+         /* Record index freeable LEBs for unmapping after commit */
+         while (1) {
+                 lp = ubifs_fast_find_frdi_idx(c);
+-               if (!lp) {
+-                       err = -ENOMEM;
+-                       goto out;
+-               }
+                 if (!lp)
+                         break;
+                 idx_gc = kmalloc(sizeof(struct ubifs_gced_idx_leb), 
+GFP_NOFS);
