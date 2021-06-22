@@ -5,103 +5,135 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+	UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D042FC2B9F4
-	for <kernel-janitors@archiver.kernel.org>; Tue, 22 Jun 2021 13:09:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 604D2C2B9F4
+	for <kernel-janitors@archiver.kernel.org>; Tue, 22 Jun 2021 14:32:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B6E3C6113E
-	for <kernel-janitors@archiver.kernel.org>; Tue, 22 Jun 2021 13:09:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42D61611CA
+	for <kernel-janitors@archiver.kernel.org>; Tue, 22 Jun 2021 14:32:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229913AbhFVNLc (ORCPT
+        id S230481AbhFVOec (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 22 Jun 2021 09:11:32 -0400
-Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:18576 "EHLO
-        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229786AbhFVNLc (ORCPT
+        Tue, 22 Jun 2021 10:34:32 -0400
+Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:10742 "EHLO
+        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231655AbhFVOeb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 22 Jun 2021 09:11:32 -0400
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15MD7YWJ016699;
-        Tue, 22 Jun 2021 13:09:02 GMT
+        Tue, 22 Jun 2021 10:34:31 -0400
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15MEVYBV012854;
+        Tue, 22 Jun 2021 14:32:11 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
  : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=nNGhc4wVJo2amK5VSNy7N7O6Kcp1UZjvj4FvRgNDlDU=;
- b=gVzJ8fnTUgU5WtWYj6Ff099RIDwila0KKyhfLqNc0q2DxEM5eXGFyfV01TY58zsX8C7N
- PLAV44lfsC2D7j5ODt1/pFd7vFDvl02RG7JAoi47mpP1jCmNbxgYTCVo+wVSkXev2+mX
- 5AU2MZgPQNthPjnlISpg7QC/SKmohKsbZY2mGJ14mVw3EoiuCnK9KIUoP2MiLR66Mhxk
- s4IniOrM4ZiK3F9QB/XAManTAV6vs3m9U/EalzyCCjH4RtzZ2ZmH2W6rXPIDpyqHcUUo
- OgE2nyDXZY/jIvMA9aTLtW82nOtccJsOP3dtnA9gi8rt1EogPTNqehKZeqFRdlUY3mdy YQ== 
-Received: from oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by mx0b-00069f02.pphosted.com with ESMTP id 39ap66k9va-1
+ bh=92CyqA6/aSemzL7DWgbz3Tw61baadIkgZx9F6vQTcAw=;
+ b=t4BSIq1EzZwagac4gs6jGUqrSwCvpn9QIPyrvbX/QKuKwVkKU08Eg9dzArq5jkd0xnnv
+ M3123M8wjtU70a59j01K3uW7uSTmIh/H/Brqwcdu3aZHOM4pZ9XcUSH9J/K5kgA73l+8
+ ButbEcfgnp0ixJ++TfP48gPSylom6XQf/rSkFKN7LxusTryaz2jJmHWNG3XIDYWaxVMs
+ FtJcgpO8XerK0ZZuRXB9SU/5T3UUNoxJkqr0Jq1KZT9x9XzByZcUCmha7bIJ09iXjdhh
+ 0ZWWYm7SkUlnvkpUegIYIYVj7dytoG52IGOAqJPzkwRiJY0jksrJTdNU6netJRXjY1D9 pw== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by mx0b-00069f02.pphosted.com with ESMTP id 39aqqvubjt-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 22 Jun 2021 13:09:02 +0000
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
-        by pps.podrdrct (8.16.0.36/8.16.0.36) with SMTP id 15MD67RX147909;
-        Tue, 22 Jun 2021 13:09:01 GMT
+        Tue, 22 Jun 2021 14:32:11 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 15MEVtiQ045085;
+        Tue, 22 Jun 2021 14:32:10 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-        by aserp3020.oracle.com with ESMTP id 3998d7e3ax-1
+        by aserp3030.oracle.com with ESMTP id 3996mdjtuh-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 22 Jun 2021 13:09:01 +0000
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 15MD71pv151810;
-        Tue, 22 Jun 2021 13:09:00 GMT
+        Tue, 22 Jun 2021 14:32:10 +0000
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 15MEW61p047011;
+        Tue, 22 Jun 2021 14:32:06 GMT
 Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 3998d7e3a8-1
+        by aserp3030.oracle.com with ESMTP id 3996mdjtqm-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 22 Jun 2021 13:09:00 +0000
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 15MD8xKO009280;
-        Tue, 22 Jun 2021 13:08:59 GMT
+        Tue, 22 Jun 2021 14:32:05 +0000
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 15MEW12F014822;
+        Tue, 22 Jun 2021 14:32:01 GMT
 Received: from mwanda (/102.222.70.252)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 22 Jun 2021 06:08:59 -0700
-Date:   Tue, 22 Jun 2021 16:08:52 +0300
+        with ESMTP ; Tue, 22 Jun 2021 07:32:00 -0700
+Date:   Tue, 22 Jun 2021 17:31:53 +0300
 From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Jassi Brar <jassisinghbrar@gmail.com>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Yongqiang Niu <yongqiang.niu@mediatek.com>,
-        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] mailbox: mtk-cmdq: Fix uninitialized variable in
- cmdq_mbox_flush()
-Message-ID: <YNHg5NuJILrrBIZ/@mwanda>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] media: v4l2-subdev: fix some NULL vs IS_ERR() checks
+Message-ID: <YNH0WU7BcQ/60UNG@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
-X-Proofpoint-ORIG-GUID: 8p3wwlkN12fs7dM7rr5b_8Wf51qeErBx
-X-Proofpoint-GUID: 8p3wwlkN12fs7dM7rr5b_8Wf51qeErBx
+X-Proofpoint-ORIG-GUID: GAV83A8_oJr1VJNM41yd3-aVb1bUriad
+X-Proofpoint-GUID: GAV83A8_oJr1VJNM41yd3-aVb1bUriad
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The "cb" pointer needs to be initialized before can assign
-"data.data = cb->data;".
+The v4l2_subdev_alloc_state() function returns error pointers, it
+doesn't return NULL.
 
-Fixes: 4a3cb0303984 ("mailbox: mtk-cmdq: Use mailbox rx_callback")
+Fixes: 0d346d2a6f54 ("media: v4l2-subdev: add subdev-wide state struct")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/mailbox/mtk-cmdq-mailbox.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/platform/vsp1/vsp1_entity.c | 4 ++--
+ drivers/staging/media/tegra-video/vi.c | 4 ++--
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 4 ++--
+ 3 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/mailbox/mtk-cmdq-mailbox.c b/drivers/mailbox/mtk-cmdq-mailbox.c
-index 301e65b9527a..67a42b514429 100644
---- a/drivers/mailbox/mtk-cmdq-mailbox.c
-+++ b/drivers/mailbox/mtk-cmdq-mailbox.c
-@@ -455,10 +455,10 @@ static int cmdq_mbox_flush(struct mbox_chan *chan, unsigned long timeout)
+diff --git a/drivers/media/platform/vsp1/vsp1_entity.c b/drivers/media/platform/vsp1/vsp1_entity.c
+index 6f51e5c75543..823c15facd1b 100644
+--- a/drivers/media/platform/vsp1/vsp1_entity.c
++++ b/drivers/media/platform/vsp1/vsp1_entity.c
+@@ -676,9 +676,9 @@ int vsp1_entity_init(struct vsp1_device *vsp1, struct vsp1_entity *entity,
+ 	 * rectangles.
+ 	 */
+ 	entity->config = v4l2_subdev_alloc_state(&entity->subdev);
+-	if (entity->config == NULL) {
++	if (IS_ERR(entity->config)) {
+ 		media_entity_cleanup(&entity->subdev.entity);
+-		return -ENOMEM;
++		return PTR_ERR(entity->config);
+ 	}
  
- 	list_for_each_entry_safe(task, tmp, &thread->task_busy_list,
- 				 list_entry) {
-+		cb = &task->pkt->async_cb;
- 		data.sta = -ECONNABORTED;
- 		data.data = cb->data;
- 		data.pkt = task->pkt;
--		cb = &task->pkt->async_cb;
- 		if (cb->cb)
- 			cb->cb(data);
+ 	return 0;
+diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
+index 89709cd06d4d..d321790b07d9 100644
+--- a/drivers/staging/media/tegra-video/vi.c
++++ b/drivers/staging/media/tegra-video/vi.c
+@@ -508,8 +508,8 @@ static int __tegra_channel_try_format(struct tegra_vi_channel *chan,
+ 		return -ENODEV;
  
+ 	sd_state = v4l2_subdev_alloc_state(subdev);
+-	if (!sd_state)
+-		return -ENOMEM;
++	if (IS_ERR(sd_state))
++		return PTR_ERR(sd_state);
+ 	/*
+ 	 * Retrieve the format information and if requested format isn't
+ 	 * supported, keep the current format.
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index cca15a10c0b3..0d141155f0e3 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -253,8 +253,8 @@ static int rvin_try_format(struct rvin_dev *vin, u32 which,
+ 	int ret;
+ 
+ 	sd_state = v4l2_subdev_alloc_state(sd);
+-	if (sd_state == NULL)
+-		return -ENOMEM;
++	if (IS_ERR(sd_state))
++		return PTR_ERR(sd_state);
+ 
+ 	if (!rvin_format_from_pixel(vin, pix->pixelformat))
+ 		pix->pixelformat = RVIN_DEFAULT_FORMAT;
 -- 
 2.30.2
 
