@@ -2,81 +2,88 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD701C49EA4
-	for <kernel-janitors@archiver.kernel.org>; Wed, 23 Jun 2021 18:24:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41ADCC4743C
+	for <kernel-janitors@archiver.kernel.org>; Wed, 23 Jun 2021 19:12:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B584B61220
-	for <kernel-janitors@archiver.kernel.org>; Wed, 23 Jun 2021 18:24:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16399610A0
+	for <kernel-janitors@archiver.kernel.org>; Wed, 23 Jun 2021 19:12:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230036AbhFWS1L (ORCPT
+        id S229726AbhFWTPN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 23 Jun 2021 14:27:11 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:39813 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229890AbhFWS07 (ORCPT
+        Wed, 23 Jun 2021 15:15:13 -0400
+Received: from pb-smtp1.pobox.com ([64.147.108.70]:53301 "EHLO
+        pb-smtp1.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229660AbhFWTPN (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 23 Jun 2021 14:26:59 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <colin.king@canonical.com>)
-        id 1lw7YD-0008WV-J8; Wed, 23 Jun 2021 18:24:37 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Selvin Xavier <selvin.xavier@broadcom.com>,
-        Devesh Sharma <devesh.sharma@broadcom.com>,
-        Naresh Kumar PBS <nareshkumar.pbs@broadcom.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Leon Romanovsky <leon@kernel.org>, linux-rdma@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next][V2] RDMA/bnxt_re: Fix uninitialized struct bit field rsvd1
-Date:   Wed, 23 Jun 2021 19:24:37 +0100
-Message-Id: <20210623182437.163801-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.31.1
+        Wed, 23 Jun 2021 15:15:13 -0400
+Received: from pb-smtp1.pobox.com (unknown [127.0.0.1])
+        by pb-smtp1.pobox.com (Postfix) with ESMTP id 85FD9DB42F;
+        Wed, 23 Jun 2021 15:12:54 -0400 (EDT)
+        (envelope-from tdavies@darkphysics.net)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=pobox.com; h=date:from
+        :to:subject:message-id:references:mime-version:content-type
+        :in-reply-to; s=sasl; bh=2wSwZoUV0BkpVfQ4NaFgz9pv1d03ftI8MRES2Cx
+        KeXU=; b=W5ii4S8W2nF3Yh/MqkoiUjZteR9HTm016zp43rfsQGTnJ3ztJ9alZyW
+        OSY5CJp7Yk6Hlgu0iejWWmSfHOlPjvtESAvJNNmtFboWXhbFTuK2QkAXsiZDg2VC
+        0mNQ9dSr5+G1eOpOfcEdY+6zynrZYkdLdy/4uWeSFBWAFVPERlpE=
+Received: from pb-smtp1.nyi.icgroup.com (unknown [127.0.0.1])
+        by pb-smtp1.pobox.com (Postfix) with ESMTP id 7EAB3DB42D;
+        Wed, 23 Jun 2021 15:12:54 -0400 (EDT)
+        (envelope-from tdavies@darkphysics.net)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=darkphysics.net;
+ h=date:from:to:subject:message-id:references:mime-version:content-type:in-reply-to; s=2019-09.pbsmtp; bh=2wSwZoUV0BkpVfQ4NaFgz9pv1d03ftI8MRES2CxKeXU=; b=TQeTHrj9QsMNgeYWeJpq4+fA6AnaTuIoh6xFJvmCNIZdDFJ0X8OxZpn0W3+7u7TcNrL6vk1PFXH8gqBstGyhaSvpYImSSe2rWvrDeKbwwW3ih1af/rk7X3P7SDi1OuzhPy+ZYA3Em6l3bOgUu5+esZUXQSsZP7xemX9u0JihqM8=
+Received: from oatmeal.darkphysics (unknown [24.19.107.226])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by pb-smtp1.pobox.com (Postfix) with ESMTPSA id 79E5ADB42C;
+        Wed, 23 Jun 2021 15:12:53 -0400 (EDT)
+        (envelope-from tdavies@darkphysics.net)
+Date:   Wed, 23 Jun 2021 12:12:46 -0700
+From:   Tree Davies <tdavies@darkphysics.net>
+To:     kernel-janitors@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/1] net/e1000e: Fix spelling mistake "The" -> "This"
+Message-ID: <20210623191245.GA32122@oatmeal.darkphysics>
+References: <20210622221938.GA30762@oatmeal.darkphysics>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210622221938.GA30762@oatmeal.darkphysics>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Pobox-Relay-ID: 02C8137C-D457-11EB-9BB5-8B3BC6D8090B-45285927!pb-smtp1.pobox.com
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Tue, Jun 22, 2021 at 03:19:40PM -0700, Tree Davies wrote:
+> There is a spelling mistake in the comment block.
+> 
+> Signed-off-by: Tree Davies <tdavies@darkphysics.net>
+> ---
+>  drivers/net/ethernet/intel/e1000e/netdev.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/ethernet/intel/e1000e/netdev.c b/drivers/net/ethernet/intel/e1000e/netdev.c
+> index 88e9035b75cf..ff267cf75ef8 100644
+> --- a/drivers/net/ethernet/intel/e1000e/netdev.c
+> +++ b/drivers/net/ethernet/intel/e1000e/netdev.c
+> @@ -7674,7 +7674,7 @@ static int e1000_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+>   * @pdev: PCI device information struct
+>   *
+>   * e1000_remove is called by the PCI subsystem to alert the driver
+> - * that it should release a PCI device.  The could be caused by a
+> + * that it should release a PCI device.  This could be caused by a
+>   * Hot-Plug event, or because the driver is going to be removed from
+>   * memory.
+>   **/
+> -- 
+> 2.20.1
+>
 
-The bit field rsvd1 in resp is not being initialized and garbage data
-is being copied from the stack back to userspace via the ib_copy_to_udata
-call. Fix this by setting the entire struct resp to zero; this will ensure
-that further new bit fields in the future will be zero'd too.
-
-Addresses-Coverity: ("Uninitialized scalar variable")
-Fixes: 879740517dab ("RDMA/bnxt_re: Update ABI to pass wqe-mode to user space")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
-
-V2: set entire struct resp to zero rather than the new field. Thanks to
-    Jason Gunthorpe for suggesting this improved fix.
-
----
- drivers/infiniband/hw/bnxt_re/ib_verbs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/infiniband/hw/bnxt_re/ib_verbs.c b/drivers/infiniband/hw/bnxt_re/ib_verbs.c
-index 5955713234cb..6d4508794342 100644
---- a/drivers/infiniband/hw/bnxt_re/ib_verbs.c
-+++ b/drivers/infiniband/hw/bnxt_re/ib_verbs.c
-@@ -3844,7 +3844,7 @@ int bnxt_re_alloc_ucontext(struct ib_ucontext *ctx, struct ib_udata *udata)
- 		container_of(ctx, struct bnxt_re_ucontext, ib_uctx);
- 	struct bnxt_re_dev *rdev = to_bnxt_re_dev(ibdev, ibdev);
- 	struct bnxt_qplib_dev_attr *dev_attr = &rdev->dev_attr;
--	struct bnxt_re_uctx_resp resp;
-+	struct bnxt_re_uctx_resp resp = {};
- 	u32 chip_met_rev_num = 0;
- 	int rc;
- 
--- 
-2.31.1
-
+Adding linux-kernel@  
