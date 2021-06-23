@@ -2,124 +2,72 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C444C48BC2
-	for <kernel-janitors@archiver.kernel.org>; Wed, 23 Jun 2021 21:25:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3D1DC48BC2
+	for <kernel-janitors@archiver.kernel.org>; Wed, 23 Jun 2021 21:25:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5C53460D07
-	for <kernel-janitors@archiver.kernel.org>; Wed, 23 Jun 2021 21:25:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B377C60D07
+	for <kernel-janitors@archiver.kernel.org>; Wed, 23 Jun 2021 21:25:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229864AbhFWV1X (ORCPT
+        id S229915AbhFWV2I (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 23 Jun 2021 17:27:23 -0400
-Received: from ciao.gmane.io ([116.202.254.214]:57266 "EHLO ciao.gmane.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229755AbhFWV1X (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 23 Jun 2021 17:27:23 -0400
-X-Greylist: delayed 301 seconds by postgrey-1.27 at vger.kernel.org; Wed, 23 Jun 2021 17:27:23 EDT
-Received: from list by ciao.gmane.io with local (Exim 4.92)
-        (envelope-from <glkj-kernel-janitors-2@m.gmane-mx.org>)
-        id 1lwAHy-00012l-IS
-        for kernel-janitors@vger.kernel.org; Wed, 23 Jun 2021 23:20:02 +0200
-X-Injected-Via-Gmane: http://gmane.org/
-To:     kernel-janitors@vger.kernel.org
+        Wed, 23 Jun 2021 17:28:08 -0400
+Received: from smtp11.smtpout.orange.fr ([80.12.242.133]:27925 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229853AbhFWV2I (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 23 Jun 2021 17:28:08 -0400
+Received: from localhost.localdomain ([86.243.172.93])
+        by mwinf5d90 with ME
+        id LlRm2500721Fzsu03lRmLM; Wed, 23 Jun 2021 23:25:49 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Wed, 23 Jun 2021 23:25:49 +0200
+X-ME-IP: 86.243.172.93
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] ASoC: da7219: Fix an out-of-bound read in an error
- handling path
-Date:   Wed, 23 Jun 2021 23:13:46 +0200
-Message-ID: <8e0d461a-c633-0162-b9e6-c2166bc013fe@wanadoo.fr>
-References: <4fdde55198294a07f04933f7cef937fcb654c901.1624425670.git.christophe.jaillet@wanadoo.fr>
- <20210623094655.GB2116@kadam>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+To:     kvalo@codeaurora.org, davem@davemloft.net, kuba@kernel.org
+Cc:     ath11k@lists.infradead.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] ath11k: Remove some duplicate code
+Date:   Wed, 23 Jun 2021 23:25:44 +0200
+Message-Id: <a65952db7f4eb8aaaa654b77dcd4930482f5c49b.1624483438.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20210623094655.GB2116@kadam>
-Content-Language: en-US
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
-Message-ID: <20210623211346.SirTrdj6tJt0eOF_FBULbI3HN_TJhTaZNO20FfkH214@z>
 
-Le 23/06/2021 à 11:46, Dan Carpenter a écrit :
-> On Wed, Jun 23, 2021 at 07:22:45AM +0200, Christophe JAILLET wrote:
->> If 'of_clk_add_hw_provider()' fails, the previous 'for' loop will have
->> run completely and 'i' is know to be 'DA7219_DAI_NUM_CLKS'.
->>
->> In such a case, there will be an out-of-bounds access when using
->> 'da7219->dai_clks_lookup[i]' and '&da7219->dai_clks_hw[i]'.
->>
->> To avoid that, add a new label, 'err_free_all', which set the expected
->> value of 'i' in such a case.
->>
->> Fixes: 78013a1cf297 ("ASoC: da7219: Fix clock handling around codec level probe")
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->>   sound/soc/codecs/da7219.c | 4 +++-
->>   1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/sound/soc/codecs/da7219.c b/sound/soc/codecs/da7219.c
->> index 13009d08b09a..1e8b491d1fd3 100644
->> --- a/sound/soc/codecs/da7219.c
->> +++ b/sound/soc/codecs/da7219.c
->> @@ -2204,12 +2204,14 @@ static int da7219_register_dai_clks(struct snd_soc_component *component)
->>   					     da7219->clk_hw_data);
->>   		if (ret) {
->>   			dev_err(dev, "Failed to register clock provider\n");
->> -			goto err;
->> +			goto err_free_all;
->>   		}
->>   	}
->>   
->>   	return 0;
->>   
->> +err_free_all:
->> +	i = DA7219_DAI_NUM_CLKS - 1;
->>   err:
->>   	do {
->>   		if (da7219->dai_clks_lookup[i])
-> 
-> This do while statement is wrong and it leads to potentially calling
-> clk_hw_unregister() on clks that haven't been registered.
+'ATH11K_HE_MCS_MAX' is 11, so these 2 blocks of code are exactly the same.
+Remove the one that uses a hard-coded constant.
 
-Obviously right.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/wireless/ath/ath11k/dp_rx.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-Thanks for the review Dan.
-I'll send a v2 in the coming days.
-
-CJ
-> 
-> I think that calling clk_hw_unregister() on unregistered clocks is
-> supposed to okay but I found a case where it leads to a WARN_ON()
-> (Nothing else harmful).  It's in __clk_register() if the alloc_clk()
-> fails:
-> 
-> 	hw->clk = alloc_clk(core, NULL, NULL);
->          if (IS_ERR(hw->clk)) {
->                  ret = PTR_ERR(hw->clk);
->                  goto fail_create_clk;  // <- forgot to set hw->clk = NULL
->          }
-> 
-> The better way to handle errors from loops is to clean up partial
-> iterations before doing the goto.  So add a clk_hw_unregister() if the
-> dai_clk_lookup = clkdev_hw_create() assignment fails.  Then use a
-> while (--i >= 0) loop in the unwind section:
-> 
-> err_free_all:
-> 	i = DA7219_DAI_NUM_CLKS;
-> err:
-> 	while (--i >= 0) {
-> 
-> regards,
-> dan carpenter
-> 
-> 
-
+diff --git a/drivers/net/wireless/ath/ath11k/dp_rx.c b/drivers/net/wireless/ath/ath11k/dp_rx.c
+index 603d2f93ac18..9a224817630a 100644
+--- a/drivers/net/wireless/ath/ath11k/dp_rx.c
++++ b/drivers/net/wireless/ath/ath11k/dp_rx.c
+@@ -1406,11 +1406,6 @@ ath11k_update_per_peer_tx_stats(struct ath11k *ar,
+ 	 * Firmware rate's control to be skipped for this?
+ 	 */
+ 
+-	if (flags == WMI_RATE_PREAMBLE_HE && mcs > 11) {
+-		ath11k_warn(ab, "Invalid HE mcs %d peer stats",  mcs);
+-		return;
+-	}
+-
+ 	if (flags == WMI_RATE_PREAMBLE_HE && mcs > ATH11K_HE_MCS_MAX) {
+ 		ath11k_warn(ab, "Invalid HE mcs %d peer stats",  mcs);
+ 		return;
+-- 
+2.30.2
 
