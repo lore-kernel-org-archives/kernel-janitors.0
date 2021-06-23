@@ -7,50 +7,46 @@ X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC145C48BC2
-	for <kernel-janitors@archiver.kernel.org>; Wed, 23 Jun 2021 21:13:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C444C48BC2
+	for <kernel-janitors@archiver.kernel.org>; Wed, 23 Jun 2021 21:25:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BD33561350
-	for <kernel-janitors@archiver.kernel.org>; Wed, 23 Jun 2021 21:13:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C53460D07
+	for <kernel-janitors@archiver.kernel.org>; Wed, 23 Jun 2021 21:25:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229800AbhFWVQK (ORCPT
+        id S229864AbhFWV1X (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 23 Jun 2021 17:16:10 -0400
-Received: from smtp11.smtpout.orange.fr ([80.12.242.133]:40875 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229688AbhFWVQJ (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 23 Jun 2021 17:16:09 -0400
-Received: from [192.168.1.18] ([86.243.172.93])
-        by mwinf5d90 with ME
-        id LlDn2500Q21Fzsu03lDnbG; Wed, 23 Jun 2021 23:13:49 +0200
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 23 Jun 2021 23:13:49 +0200
-X-ME-IP: 86.243.172.93
+        Wed, 23 Jun 2021 17:27:23 -0400
+Received: from ciao.gmane.io ([116.202.254.214]:57266 "EHLO ciao.gmane.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229755AbhFWV1X (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 23 Jun 2021 17:27:23 -0400
+X-Greylist: delayed 301 seconds by postgrey-1.27 at vger.kernel.org; Wed, 23 Jun 2021 17:27:23 EDT
+Received: from list by ciao.gmane.io with local (Exim 4.92)
+        (envelope-from <glkj-kernel-janitors-2@m.gmane-mx.org>)
+        id 1lwAHy-00012l-IS
+        for kernel-janitors@vger.kernel.org; Wed, 23 Jun 2021 23:20:02 +0200
+X-Injected-Via-Gmane: http://gmane.org/
+To:     kernel-janitors@vger.kernel.org
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Subject: Re: [PATCH] ASoC: da7219: Fix an out-of-bound read in an error
  handling path
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     alsa-devel@alsa-project.org, support.opensource@diasemi.com,
-        lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, tiwai@suse.com,
-        broonie@kernel.org, Adam.Thomson.Opensource@diasemi.com
-Newsgroups: gmane.linux.alsa.devel,gmane.linux.kernel,gmane.linux.kernel.janitors
+Date:   Wed, 23 Jun 2021 23:13:46 +0200
+Message-ID: <8e0d461a-c633-0162-b9e6-c2166bc013fe@wanadoo.fr>
 References: <4fdde55198294a07f04933f7cef937fcb654c901.1624425670.git.christophe.jaillet@wanadoo.fr>
  <20210623094655.GB2116@kadam>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Message-ID: <8e0d461a-c633-0162-b9e6-c2166bc013fe@wanadoo.fr>
-Date:   Wed, 23 Jun 2021 23:13:46 +0200
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
  Thunderbird/78.11.0
-MIME-Version: 1.0
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 In-Reply-To: <20210623094655.GB2116@kadam>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
+Message-ID: <20210623211346.SirTrdj6tJt0eOF_FBULbI3HN_TJhTaZNO20FfkH214@z>
 
 Le 23/06/2021 à 11:46, Dan Carpenter a écrit :
 > On Wed, Jun 23, 2021 at 07:22:45AM +0200, Christophe JAILLET wrote:
@@ -125,4 +121,5 @@ CJ
 > dan carpenter
 > 
 > 
+
 
