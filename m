@@ -2,145 +2,145 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 118C9C4743C
-	for <kernel-janitors@archiver.kernel.org>; Wed, 23 Jun 2021 09:48:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23394C4743C
+	for <kernel-janitors@archiver.kernel.org>; Wed, 23 Jun 2021 11:29:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DED026112D
-	for <kernel-janitors@archiver.kernel.org>; Wed, 23 Jun 2021 09:48:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F13F961076
+	for <kernel-janitors@archiver.kernel.org>; Wed, 23 Jun 2021 11:29:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230138AbhFWJuS (ORCPT
+        id S230121AbhFWLcB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 23 Jun 2021 05:50:18 -0400
-Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:19176 "EHLO
-        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229833AbhFWJuS (ORCPT
+        Wed, 23 Jun 2021 07:32:01 -0400
+Received: from de-smtp-delivery-102.mimecast.com ([194.104.109.102]:45065 "EHLO
+        de-smtp-delivery-102.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230031AbhFWLcA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 23 Jun 2021 05:50:18 -0400
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15N9ZWor021240;
-        Wed, 23 Jun 2021 09:47:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=FA+wKCvEqhPL++IUAHUQdMEuak2t5x5+jh4eWW+pcyg=;
- b=ogBxUl36I7sVZ27nLgITcq3jsMiGbHXYZunKDllpR1LKEQ53uLOd0XtXjg9EAE4KOXBE
- NNoteLvlfB27v4/29NARzeGBrmfHA91xh8UnueK/pPlYpm6MrAMUXKRSGk4sYV6vl9OL
- t9B9PddMhiA0ooVRancKGN4Wy/RpBJY1gs9NrYrRjDoZ26ABWX77ayKYCoHeWKXlOt+i
- mnO4IaUjcVO29E2t5Z0ztGTf7JYt8uwRB8omO2K4XjkN0yVXPNlv201S4oTQjQhqazIq
- JR2Z/f4nwtyIUSgTuGGyV3SxV7K3bFEubHoLvAm0+ehlWR2Dh+ntmzpaaQ2mkkbMHjpM 4A== 
-Received: from oracle.com (userp3030.oracle.com [156.151.31.80])
-        by mx0b-00069f02.pphosted.com with ESMTP id 39aqqvwe8d-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 23 Jun 2021 09:47:11 +0000
-Received: from userp3030.oracle.com (userp3030.oracle.com [127.0.0.1])
-        by pps.podrdrct (8.16.0.36/8.16.0.36) with SMTP id 15N9kv8W182759;
-        Wed, 23 Jun 2021 09:47:10 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by userp3030.oracle.com with ESMTP id 3995pxyyju-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 23 Jun 2021 09:47:10 +0000
-Received: from userp3030.oracle.com (userp3030.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 15N9l9fU183647;
-        Wed, 23 Jun 2021 09:47:09 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 3995pxyyhn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 23 Jun 2021 09:47:09 +0000
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 15N9l4r9018569;
-        Wed, 23 Jun 2021 09:47:05 GMT
-Received: from kadam (/102.222.70.252)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 23 Jun 2021 02:47:04 -0700
-Date:   Wed, 23 Jun 2021 12:46:55 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     support.opensource@diasemi.com, lgirdwood@gmail.com,
-        broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
-        Adam.Thomson.Opensource@diasemi.com, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] ASoC: da7219: Fix an out-of-bound read in an error
- handling path
-Message-ID: <20210623094655.GB2116@kadam>
-References: <4fdde55198294a07f04933f7cef937fcb654c901.1624425670.git.christophe.jaillet@wanadoo.fr>
+        Wed, 23 Jun 2021 07:32:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=mimecast20200619;
+        t=1624447782;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=oYMchobsyO1/l5ZFtFet20yHjD5yny2xSfdM7kiI4OU=;
+        b=Bc8MpfvGoKaqSeYtPDJRBVsMlbDaHHaFd3QV8Y0TqpB59UZevdd73mVQ7Rlu7kRhBqZ70u
+        fA7D58kshg8L2zishzKztQDcai69EH3du3ALEwEz7Y2PT5b5LKI0smwRwxLUdfTvuLwWC/
+        MQ0YS/QcCca3pwssDuMHzOP+PPTMbWg=
+Received: from EUR04-DB3-obe.outbound.protection.outlook.com
+ (mail-db3eur04lp2053.outbound.protection.outlook.com [104.47.12.53]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ de-mta-25-XomPvFXyPSaNKlf5bOLxXg-1; Wed, 23 Jun 2021 13:29:40 +0200
+X-MC-Unique: XomPvFXyPSaNKlf5bOLxXg-1
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=evUrycrVeinvrMUPQYfMpnfNXbCe6QCfcCmjevqjWX3Oh7HjiSejKaMSPVz3WERn/rOgIsME12lt/iqkA0SfKeKRlUa7GW0bzW4CZ3Hp82ZdpXKXe59RiT+1QWK1EW0CJRogH6zWxcH0QItyVlLwrNHx0rpWT4kVAuN5ZKrDKTIrFypXLAmhYvJ9+gKy4JAA2RXoiePz40kdEFCvorxnCmXZECOgmeDSKQAKLU7eH1SNpQaqm+jHV50LpCEhrPnmPPCOSCm5CL9cPi48slr2dh62ik5m+VxkEiLfJtoH6cXH3Yr2vjlBoOaZs3ak/A4j6+L8vq85OHPQg6H2OqeGYw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oYMchobsyO1/l5ZFtFet20yHjD5yny2xSfdM7kiI4OU=;
+ b=BkAAYBLfmzpjlpX+JYTA7UKzvfTyWnQLCZ4wYRrBbptx4MuHLD/YU1ng4bRvJNiq681H9kkfohSssOPw9j/ay5R6YVVVTQfI6Tip1ZWod22wpX9Xw84G55Z7dh/91D3pzn2u7r92hyhiex5bbdOmf8PjR/6YvgJfPK6vWkqGJuP9NYmqGay6HW68zHrPEx79KiEyrZ8E6deXrCAb3dlBhHPcLL1xVVO9VS2OF9O3c1HLy7tPIQa8iszHYc3zwbkWFU9WCSFvQsfxZlReEgiNQQdJHC5vhvCUXvUORw9cRaCfywFFkLiNoMqeN8Laka8uTb7v4VD9t0vY2kNACOrpWg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=suse.com; dmarc=pass action=none header.from=suse.com;
+ dkim=pass header.d=suse.com; arc=none
+Authentication-Results: oracle.com; dkim=none (message not signed)
+ header.d=none;oracle.com; dmarc=none action=none header.from=suse.com;
+Received: from VI1PR0402MB3359.eurprd04.prod.outlook.com (2603:10a6:803:3::28)
+ by VI1PR04MB6912.eurprd04.prod.outlook.com (2603:10a6:803:134::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4264.18; Wed, 23 Jun
+ 2021 11:29:38 +0000
+Received: from VI1PR0402MB3359.eurprd04.prod.outlook.com
+ ([fe80::18e7:6a19:208d:179d]) by VI1PR0402MB3359.eurprd04.prod.outlook.com
+ ([fe80::18e7:6a19:208d:179d%6]) with mapi id 15.20.4242.023; Wed, 23 Jun 2021
+ 11:29:38 +0000
+From:   =?utf-8?Q?Aur=C3=A9lien?= Aptel <aaptel@suse.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Steve French <sfrench@samba.org>
+Cc:     Baokun Li <libaokun1@huawei.com>, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] cifs: fix NULL dereference in smb2_check_message()
+In-Reply-To: <YNHCq6N9bAODxvnp@mwanda>
+References: <YNHCq6N9bAODxvnp@mwanda>
+Date:   Wed, 23 Jun 2021 13:29:37 +0200
+Message-ID: <87eecsrf8e.fsf@suse.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Originating-IP: [2003:fa:70a:9978:e3b4:c6e6:8f68:a927]
+X-ClientProxiedBy: ZR0P278CA0042.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:1d::11) To VI1PR0402MB3359.eurprd04.prod.outlook.com
+ (2603:10a6:803:3::28)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4fdde55198294a07f04933f7cef937fcb654c901.1624425670.git.christophe.jaillet@wanadoo.fr>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-ORIG-GUID: KXRfO7fq66-Z4md6qkgM-t4DEuQv-mgZ
-X-Proofpoint-GUID: KXRfO7fq66-Z4md6qkgM-t4DEuQv-mgZ
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from localhost (2003:fa:70a:9978:e3b4:c6e6:8f68:a927) by ZR0P278CA0042.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:1d::11) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4264.18 via Frontend Transport; Wed, 23 Jun 2021 11:29:38 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 31ba8201-4c63-4bd1-eba7-08d9363a2fae
+X-MS-TrafficTypeDiagnostic: VI1PR04MB6912:
+X-Microsoft-Antispam-PRVS: <VI1PR04MB69122AC862180F850802E554A8089@VI1PR04MB6912.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:1728;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: B4TP9+eGzcE1ceiVAtP5+x9oNBxuT/GXmXcuoRZ0Oxe4V9DFXURxTOBCpTKsA+eAXwTDjJtsfkpg0nkWMKKdA2po7E70z+ylr7LMuf/7oDN9jq0iI7Ee41l0Doe53KhR+uu0g0gZJK99abU4szdbgKF+L8KbEwyhtMH/thpfq2IcZzzjS3Q5p8DKshrSf4mGF60xBJvflgCF+hishXwz+NWifs/dxQ84RYiTnRfxQ1jnJmcIBTW80XKA+QxfLHSXkwmt2LA2yQUpOWHkTAwqk/PyRbqG77Zyaij6HpUDSR82FQ3NNYJtz/Jibv1p/3AkihuRN/tgS/9eaj/503RN7ik1y8wwhUse+eG9rR9cMYzHHoJ6U7yRw0xQdzSWGajpuLEmMBO5dec3rFJLzZhTxI3JMSsKOLQgdqJ93djTWU+ew0tRzZemfQbHEtBuE5R9y84jmZ9ad7u5w1h5S7bkNazT3cCPA5BycmP9kmMQAUlRLrTz+y+XC/dflWp88vEd2YYfufDruvUbe8UyvFA/J8JMIyt4F5AL3ay8IXDhuiXjASz3L7xjrVgKGhtlpCjuBUhMS0ncVXPysJJ6Mqw/yxR3xtxafa7Qj02nUE57rXg=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR0402MB3359.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(39860400002)(346002)(136003)(366004)(376002)(396003)(478600001)(6496006)(186003)(16526019)(6486002)(5660300002)(4326008)(110136005)(66946007)(558084003)(2906002)(2616005)(66476007)(8676002)(8936002)(66556008)(86362001)(36756003)(316002)(38100700002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?RlZvbGNUZlpDVlR1bVNYcnpNdWpZbDRHRFJVQ2NzUUd1RTZNQUtxdXRERk05?=
+ =?utf-8?B?Nkt3dnZMbjdUTGNoUWpwdEZkcVJtRVFZVDhPRHE4dFJVOERET1VHNS9nRG1s?=
+ =?utf-8?B?aHhXRGUzaWs4RVNmblNpbDhZRmN0MHdVYmRKNXA5c3JuYVVXLzZKUkdSeElS?=
+ =?utf-8?B?amZjVVQ3TWVLNm5xOVpnRlFjeHJIWVZhNDFZTTdLTU1ndDI4b2YxdFJqSHNv?=
+ =?utf-8?B?UlBQSEFZWk9kczk3eUF1K1RiaDE3cFpwNE5waWRZUXlaMGx4VFU4Q0ZpZ0w4?=
+ =?utf-8?B?ZDFGbS8wRFRwVTZZVjEvbW9jL21IK0p1enBvc3ZNWFFvNDJWdmMyNCs1Q2Ra?=
+ =?utf-8?B?THdzZ2JFOEIya0xOeFRUam9uZWw4NTBGeEU3b0tUQkhIOG5seEt1MkhIMlhj?=
+ =?utf-8?B?VXlCNkhsdWZScEpZZHp4b2JjSk9VMjh3UVpBNExMVHhHWG9tSkpIdDVqYzhX?=
+ =?utf-8?B?bzVheEIwTDVQL2NpSVJDQkNteEJTQVFCSTFCOHF3OFYyZGw2Z2ZaY0pScjFI?=
+ =?utf-8?B?bDl1N3liQjgwYWUzOEJJMzFIZzdZeEpyVGlpVExSakVEME5VSWRBZFU3Q2Yv?=
+ =?utf-8?B?VnFta3ZmUHNxZ1BEYWJpakRWRjI1R2JFTUVPS2RFN0Y2WVgvZkV5b2tyWUhK?=
+ =?utf-8?B?enk4Qm9JOW5KYlhUbmxVSkg0bk9yeXF0ZUhlVGZuYmEzYjV1RDE2Q2N2ZVNC?=
+ =?utf-8?B?SWM0R1N6anR5b3R6N2lja3FYMEgxTXhmZ0VOeEhIRmpGMEFIZ3lBaVZYMDdR?=
+ =?utf-8?B?TkFnR08wc201S3huek0yTDRkc2tqcWtPaGNsK3QwVmNkMys5UGdJalhTQlNv?=
+ =?utf-8?B?RFlPNWRoMkRPbkFkbHBES2VOWjl2RlBqVVZvVFl2MTJPK1hFVS96cndSZzdW?=
+ =?utf-8?B?a1FidGV0eG1YWHRmcERXVDV0dnU4UnpkR1BYcnQ2ZEhpQXE3MkhseFU5UkQr?=
+ =?utf-8?B?b09BV05MNkszNVhBbm1VbVdOc1MzbnE4Q1dTcGNCTjZnVGZ0emQwMjhCUk0y?=
+ =?utf-8?B?dmJlSlZyVkZHMEpwWHFPRWJwQnVOVlc2cHdSWXZmcklzdFRNdW1sY2Z5akNX?=
+ =?utf-8?B?aVQyTExsVUdNZmFmZUtPZzFKS3hJQVh6c0dEczRLQ1VFUHRYRnlyTkxWbVo5?=
+ =?utf-8?B?OWZ6cFIvM2lHT2pzQ3pJQkloUWZzeHdoa2hyM1kvZUp5aE1oYkJyN3lETXlH?=
+ =?utf-8?B?blZnYkNVNDRhbUFYQ3U0L0MxSy9MZUJkMnR0S1hFYnNKcnN4SE5hQSt0cUdP?=
+ =?utf-8?B?WGlSNUp0T1lZVGV3Z0k1M0QzWTlSdzU2Ti8rdFdiMFhwUVZuSGZ6ZWM2Y083?=
+ =?utf-8?B?SDE4K2pjZDdyK0VINUkwbVc1ejRIOEVic0RvVm9jMjJRUkNDUjJoVHo2NjZp?=
+ =?utf-8?B?VzVuN2hpMjdwbk9aSU1YUUYwZ3pjWVNwU3FPVHFZckFWeVQ5TXRhTEN0cjRT?=
+ =?utf-8?B?ZEdWK0xsQmdaUnY5VWxBWEpudGZ2NFhQMDJiOWx5WklEWW5OUHc3OUVrREEy?=
+ =?utf-8?B?YWphNTE4a2dSZ2FIUlA3bUlxb2NTb1B2SGIzWmRaTUVFVmUybXdTTUV2SW1w?=
+ =?utf-8?B?UEZ4QldmNS9iVVg3Nm14ODFscyt1ZnNRSE14QXo2UkJGcUlRNTZEUXcwLzJT?=
+ =?utf-8?B?aEZnODJaVHpEeVpOYVcwU09RK1BabnlzQkxDckQ2L2VuRDc1SHBzdjJOUVRO?=
+ =?utf-8?B?a3NPc1pWNW1jamhkWVVyMWVEcUhHejRqV1prYlhRcWlYSTFPSTlSa2FPUldN?=
+ =?utf-8?B?TnNFeTRaZThjU0lXVVVhb2t4TWRBWUx3VndVdk82cGNFMDA4dHY4NkNldk1F?=
+ =?utf-8?B?ZUtEUXVuZkR3Rm8xSVd5Nmt4MWpzWkg5anpiZTErM3pBNDVwaHBEWExYUHNa?=
+ =?utf-8?Q?ytxz9BMRnEefy?=
+X-OriginatorOrg: suse.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 31ba8201-4c63-4bd1-eba7-08d9363a2fae
+X-MS-Exchange-CrossTenant-AuthSource: VI1PR0402MB3359.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jun 2021 11:29:38.6544
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: f7a17af6-1c5c-4a36-aa8b-f5be247aa4ba
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: DccjDMHBgdXsW/vAJQlxwoqV3+vBgkxeSb/tK5CY5oo3CialfxNvwBF4xfoirK6h
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB6912
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Jun 23, 2021 at 07:22:45AM +0200, Christophe JAILLET wrote:
-> If 'of_clk_add_hw_provider()' fails, the previous 'for' loop will have
-> run completely and 'i' is know to be 'DA7219_DAI_NUM_CLKS'.
-> 
-> In such a case, there will be an out-of-bounds access when using
-> 'da7219->dai_clks_lookup[i]' and '&da7219->dai_clks_hw[i]'.
-> 
-> To avoid that, add a new label, 'err_free_all', which set the expected
-> value of 'i' in such a case.
-> 
-> Fixes: 78013a1cf297 ("ASoC: da7219: Fix clock handling around codec level probe")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  sound/soc/codecs/da7219.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/sound/soc/codecs/da7219.c b/sound/soc/codecs/da7219.c
-> index 13009d08b09a..1e8b491d1fd3 100644
-> --- a/sound/soc/codecs/da7219.c
-> +++ b/sound/soc/codecs/da7219.c
-> @@ -2204,12 +2204,14 @@ static int da7219_register_dai_clks(struct snd_soc_component *component)
->  					     da7219->clk_hw_data);
->  		if (ret) {
->  			dev_err(dev, "Failed to register clock provider\n");
-> -			goto err;
-> +			goto err_free_all;
->  		}
->  	}
->  
->  	return 0;
->  
-> +err_free_all:
-> +	i = DA7219_DAI_NUM_CLKS - 1;
->  err:
->  	do {
->  		if (da7219->dai_clks_lookup[i])
 
-This do while statement is wrong and it leads to potentially calling
-clk_hw_unregister() on clks that haven't been registered.
+Reviewed-by: Aurelien Aptel <aaptel@suse.com>
 
-I think that calling clk_hw_unregister() on unregistered clocks is
-supposed to okay but I found a case where it leads to a WARN_ON()
-(Nothing else harmful).  It's in __clk_register() if the alloc_clk()
-fails:
-
-	hw->clk = alloc_clk(core, NULL, NULL);
-        if (IS_ERR(hw->clk)) {
-                ret = PTR_ERR(hw->clk);
-                goto fail_create_clk;  // <- forgot to set hw->clk = NULL
-        }
-
-The better way to handle errors from loops is to clean up partial
-iterations before doing the goto.  So add a clk_hw_unregister() if the
-dai_clk_lookup = clkdev_hw_create() assignment fails.  Then use a
-while (--i >= 0) loop in the unwind section:
-
-err_free_all:
-	i = DA7219_DAI_NUM_CLKS;
-err:
-	while (--i >= 0) {
-
-regards,
-dan carpenter
+--=20
+Aur=C3=A9lien Aptel / SUSE Labs Samba Team
+GPG: 1839 CB5F 9F5B FB9B AA97  8C99 03C8 A49B 521B D5D3
+SUSE Software Solutions Germany GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, D=
+E
+GF: Felix Imend=C3=B6rffer, Mary Higgins, Sri Rasiah HRB 247165 (AG M=C3=BC=
+nchen)
 
