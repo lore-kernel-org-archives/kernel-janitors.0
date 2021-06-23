@@ -2,84 +2,80 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC6FCC4743C
-	for <kernel-janitors@archiver.kernel.org>; Wed, 23 Jun 2021 12:56:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A3BDC48BC2
+	for <kernel-janitors@archiver.kernel.org>; Wed, 23 Jun 2021 14:08:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9BF8A610F7
-	for <kernel-janitors@archiver.kernel.org>; Wed, 23 Jun 2021 12:56:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77F8C6023E
+	for <kernel-janitors@archiver.kernel.org>; Wed, 23 Jun 2021 14:08:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230286AbhFWM67 (ORCPT
+        id S231186AbhFWOLA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 23 Jun 2021 08:58:59 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:38544 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230019AbhFWM66 (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 23 Jun 2021 08:58:58 -0400
-Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1E1C99AA;
-        Wed, 23 Jun 2021 14:56:40 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1624453000;
-        bh=MOq5yt8/oq2a0B9Z3C+/bOxpANloWJvF0E5s3omCJS4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=leq6EKfUOeunGG32fL0YLu5TTPeD5p+UygbcWb6aTKIFxPgkZF+PjDKNTx7q5v7WO
-         5HT++Eoc7VotPXvROA6weF/arvUU15PXhjtJ5xarYiepgzMNFDjFcF5gwvjFe1ZJRQ
-         pf25W9RHmD1OD/6v/7A0H1jK/ZPzRu00iLbNlgRk=
-Date:   Wed, 23 Jun 2021 15:56:10 +0300
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] media: v4l2-subdev: fix some NULL vs IS_ERR() checks
-Message-ID: <YNMvarFl/KU1pGCG@pendragon.ideasonboard.com>
-References: <YNH0WU7BcQ/60UNG@mwanda>
- <YNH87qd4eJOR296R@pendragon.ideasonboard.com>
- <20210622155858.GN1861@kadam>
- <YNKdqFNSrSBXVNqo@pendragon.ideasonboard.com>
- <20210623090325.GA2116@kadam>
+        Wed, 23 Jun 2021 10:11:00 -0400
+Received: from mga07.intel.com ([134.134.136.100]:16386 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230274AbhFWOLA (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 23 Jun 2021 10:11:00 -0400
+IronPort-SDR: 4iBSV607JQCUAL8h7od7dwf7Grq1hpNWws7Bd3QtIaFTXqvD8StqOfGfpppcQN8Uf/jM0DoFvh
+ bBgw9gUVZkiw==
+X-IronPort-AV: E=McAfee;i="6200,9189,10024"; a="271113513"
+X-IronPort-AV: E=Sophos;i="5.83,294,1616482800"; 
+   d="scan'208";a="271113513"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2021 07:08:40 -0700
+IronPort-SDR: vYprr8R9IUpUo6IDIn7or13zowPRhoIFjSUSFNMl5HEjTyplSdILSjLsKZRD/txvBkuTaVIR0E
+ HpjXIQlyGPFg==
+X-IronPort-AV: E=Sophos;i="5.83,294,1616482800"; 
+   d="scan'208";a="556155669"
+Received: from silpixa00400314.ir.intel.com (HELO silpixa00400314) ([10.237.222.51])
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2021 07:08:38 -0700
+Date:   Wed, 23 Jun 2021 15:08:31 +0100
+From:   Giovanni Cabiddu <giovanni.cabiddu@intel.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        Qinglang Miao <miaoqinglang@huawei.com>, qat-linux@intel.com,
+        linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] crypto: qat: ratelimit invalid ioctl message and print
+ the invalid cmd
+Message-ID: <YNNAX92NdKi1BRBT@silpixa00400314>
+References: <20210622151608.23741-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210623090325.GA2116@kadam>
+In-Reply-To: <20210622151608.23741-1-colin.king@canonical.com>
+Organization: Intel Research and Development Ireland Ltd - Co. Reg. #308263 -
+ Collinstown Industrial Park, Leixlip, County Kildare - Ireland
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Jun 23, 2021 at 12:03:26PM +0300, Dan Carpenter wrote:
-> On Wed, Jun 23, 2021 at 05:34:16AM +0300, Laurent Pinchart wrote:
-> > 
-> > Do you think an annotation could still help, by making it explicit in
-> > headers whether a function returns NULL or an error pointer, thus
-> > helping developers get it right in the first place ?
+On Tue, Jun 22, 2021 at 04:16:08PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Not really.  It wouldn't help with Smatch.  I really think error pointer
-> bugs are handled pretty well currently.  Sometimes I have seen syzbot
-> find them before the static checkers but I don't see them affecting
-> users and production kernels.
+> Currently incorrect QAT ioctls can spam the kernel log with error messages
+> of the form "QAT: Invalid ioctl" if a userspace program uses the wrong
+> ioctl command. Quench the messages by ratelimiting them and also print
+> the invalid command being used as that is useful to know.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Just a minor comment on the commit message:
+crypto: qat: ratelimit invalid ioctl message and print
+           ^
+Patches to the qat driver have the following headline:
+        crypto: qat -
+not
+        crypto: qat:
 
-I meant to ask if it would be useful for developers, not for smatch.
-When I use a function and have to figure out whether to use IS_ERR() or
-!= NULL, I first look at the header, and most of the time I then need to
-find the corresponding implementation, wherever it may be. If we had an
-annotation, the second step could be skipped. Of course the annotation
-would need to match the implementation, and that's an area where smatch
-could help.
 
-> There are few other things that Smatch looks for like passing positives,
-> valid pointers or NULLs to PTR_ERR().  I do wish that when functions
-> return a mix of negative error codes, 0 and 1 that they had comment
-> explaining what the 1 means.
+Apart from that
+Acked-by: Giovanni Cabiddu <giovanni.cabiddu@intel.com>
 
--- 
 Regards,
 
-Laurent Pinchart
+-- 
+Giovanni
