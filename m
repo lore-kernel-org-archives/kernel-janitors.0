@@ -2,49 +2,42 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C66F2C49EA4
-	for <kernel-janitors@archiver.kernel.org>; Wed, 23 Jun 2021 16:09:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2720C4743C
+	for <kernel-janitors@archiver.kernel.org>; Wed, 23 Jun 2021 17:12:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A361C61241
-	for <kernel-janitors@archiver.kernel.org>; Wed, 23 Jun 2021 16:09:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4586611AC
+	for <kernel-janitors@archiver.kernel.org>; Wed, 23 Jun 2021 17:12:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230283AbhFWQL5 (ORCPT
+        id S229999AbhFWROY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 23 Jun 2021 12:11:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50724 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230015AbhFWQLy (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 23 Jun 2021 12:11:54 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 71143611CB;
-        Wed, 23 Jun 2021 16:09:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624464577;
-        bh=ndUQ3TYporJmT1LvwXbbjxKXfjQvidrtfBX+LWqpbcI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QnXyq/fdrKkwRtwrcDwVhE/MXeqT+5wI76qD6FVtPDA0U1ZlZmgaZNhrjeqbKzEVG
-         tsiBFAxiVi0UpvwgU+mDMJ/IRq7Mo7t4e6IyOGEJzVYMW2lZ1Fu2eT2upduF4dN9Ne
-         nk6YXxh8ka+ZjC1w0oOx80YwsdNwyjHmj6B11xtnmVoiaqWQliUliyB/9QBeQCV5ff
-         j/lrK/K7bNyXLfXqfbtgKOiK1s3Cmf1raCuzPbqBEiDTLVqc86NRufIZMyf4QhN/aL
-         uuJZY4j11K/EJo7wV5pgAXkFTOwEkJcNFY4g1MyTPbU1Mj8uGA9sv65oDB1U0S9jLe
-         q6Wwdfu7K9dUg==
-From:   Mark Brown <broonie@kernel.org>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        linux-power@fi.rohmeurope.com,
-        Colin King <colin.king@canonical.com>
-Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH][next] regulator: bd9576: Fix uninitializes variable may_have_irqs
-Date:   Wed, 23 Jun 2021 17:08:54 +0100
-Message-Id: <162446430310.55481.3940596483000012413.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20210622144730.22821-1-colin.king@canonical.com>
-References: <20210622144730.22821-1-colin.king@canonical.com>
+        Wed, 23 Jun 2021 13:14:24 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:37939 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229688AbhFWROX (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 23 Jun 2021 13:14:23 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lw6Pz-0008Oj-69; Wed, 23 Jun 2021 17:12:03 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Selvin Xavier <selvin.xavier@broadcom.com>,
+        Devesh Sharma <devesh.sharma@broadcom.com>,
+        Naresh Kumar PBS <nareshkumar.pbs@broadcom.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Leon Romanovsky <leon@kernel.org>, linux-rdma@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] RDMA/bnxt_re: Fix uninitialized struct bit field rsvd1
+Date:   Wed, 23 Jun 2021 18:12:02 +0100
+Message-Id: <20210623171202.161107-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -52,35 +45,33 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, 22 Jun 2021 15:47:30 +0100, Colin King wrote:
-> The boolean variable may_have_irqs is not ininitialized and is
-> only being set to true in the case where chip is ROHM_CHIP_TYPE_BD9576.
-> Fix this by ininitialized may_have_irqs to false.
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to
+The bit field rsvd1 in resp is not being initialized and garbage data
+is being copied from the stack back to userspace via the ib_copy_to_udata
+call. Fix this by setting rsvd1 to zero. Also remove some whitespace.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+Addresses-Coverity: ("Uninitialized scalar variable")
+Fixes: 879740517dab ("RDMA/bnxt_re: Update ABI to pass wqe-mode to user space")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/infiniband/hw/bnxt_re/ib_verbs.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Thanks!
+diff --git a/drivers/infiniband/hw/bnxt_re/ib_verbs.c b/drivers/infiniband/hw/bnxt_re/ib_verbs.c
+index 5955713234cb..45398f1777aa 100644
+--- a/drivers/infiniband/hw/bnxt_re/ib_verbs.c
++++ b/drivers/infiniband/hw/bnxt_re/ib_verbs.c
+@@ -3880,7 +3880,8 @@ int bnxt_re_alloc_ucontext(struct ib_ucontext *ctx, struct ib_udata *udata)
+ 	resp.pg_size = PAGE_SIZE;
+ 	resp.cqe_sz = sizeof(struct cq_base);
+ 	resp.max_cqd = dev_attr->max_cq_wqes;
+-	resp.rsvd    = 0;
++	resp.rsvd = 0;
++	resp.rsvd1 = 0;
+ 
+ 	resp.comp_mask |= BNXT_RE_UCNTX_CMASK_HAVE_MODE;
+ 	resp.mode = rdev->chip_ctx->modes.wqe_mode;
+-- 
+2.31.1
 
-[1/1] regulator: bd9576: Fix uninitializes variable may_have_irqs
-      commit: ddf275b219ab22bc07c14ac88c290694089dced0
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
