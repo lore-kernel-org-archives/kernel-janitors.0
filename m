@@ -2,81 +2,149 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A453C49EA6
-	for <kernel-janitors@archiver.kernel.org>; Thu, 24 Jun 2021 19:57:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0649CC49EA6
+	for <kernel-janitors@archiver.kernel.org>; Thu, 24 Jun 2021 21:05:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1A662613B3
-	for <kernel-janitors@archiver.kernel.org>; Thu, 24 Jun 2021 19:57:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9EFB601FE
+	for <kernel-janitors@archiver.kernel.org>; Thu, 24 Jun 2021 21:05:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232753AbhFXT7p (ORCPT
+        id S232284AbhFXVIQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 24 Jun 2021 15:59:45 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:48621 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232178AbhFXT7n (ORCPT
+        Thu, 24 Jun 2021 17:08:16 -0400
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:51385 "EHLO
+        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230116AbhFXVIP (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 24 Jun 2021 15:59:43 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <colin.king@canonical.com>)
-        id 1lwVTT-00047p-DD; Thu, 24 Jun 2021 19:57:19 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@netfilter.org>,
-        Florian Westphal <fw@strlen.de>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] netfilter: nf_tables: Fix dereference of null pointer flow
-Date:   Thu, 24 Jun 2021 20:57:18 +0100
-Message-Id: <20210624195718.170796-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.31.1
+        Thu, 24 Jun 2021 17:08:15 -0400
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id 5B0645C00E5;
+        Thu, 24 Jun 2021 17:05:55 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Thu, 24 Jun 2021 17:05:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
+         h=date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm1; bh=9jMAnkKABHSlUcjl0Zbwdrv+Qzw
+        4CH1IFEmMt+CBJQM=; b=nuN9S+LNn5VAyRaKqfsXBGPZxheCRq79sIDUlTillPD
+        vaCbwLLzr9CuIQxNF7L6r8qv+BM8VEKVYJgZQzDw7gkzOu+rQ23FJ9yoJqj3Wy2o
+        6X7aetKdQkbvzSa6seVCvulVj/wr0b9zXETQ3SV06yBgVNaovOzY2AsZ1zAPSSTE
+        RDn3hlVquDnOHoWk8cTDQVcqoegWnPr23JR06PAEL72Ur9Pv2/9X1qXD5sV/HPMD
+        0Y3vUZV1iLvibVyu45h6Ie9+RjbDa1cHYo71aKbdWRZ/u47SyqpXvtpbhXSrh7X2
+        re0rYiiI1AdONfxCO6gEQeM/6pHZ83pi82w1bMPQnGg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=9jMAnk
+        KABHSlUcjl0Zbwdrv+Qzw4CH1IFEmMt+CBJQM=; b=f5ewB02t+PjuIZteLhi8Hq
+        1UV0AA+y4qceBWA7esCLDrt4V20nk7gGQp/Egihq9D0zc7rsIA5gWuNAk98mayz+
+        Waa9pdFcUQThjlfrTFHYr9kC4jUPNzNq3TrCODYqeIWROyD9tjVK5BniBVbdzeos
+        XM/cFcgQ6QiXm4c62e3CHlUTKvYi7Tku0/jbDvEfFSrx1xYygGQ4FypyrK8vEBmb
+        ws1wOzmGK3Z2PDQwTshywvFXQNu9BNZiCq2TFOm0kARshVkwhUCIooXYvJcg9l1t
+        lqGNg0bmqyQd0u7M1gqOGfOjBP65SkrrijkpU+7NDqbf732w8+MV2ZZR0dS4NlkQ
+        ==
+X-ME-Sender: <xms:svPUYEMueiidqgq16_ztAa09NU9HGwvTqLleVpXAipf2WOe1AOq3XQ>
+    <xme:svPUYK8AUAnC0RTQ8439GYYggBI0XG8gZXXc2obO_XMwt8K6K43SuhWdX662PIV6A
+    6TiL-eTjvtKwf11w_0>
+X-ME-Received: <xmr:svPUYLTcYTKnD4thJAxJTQamsmWIgDZQ7x4iDKxypdPfiEunTqW4ioISEq6cTPrwiOUFP5b56jBWScKq229nTWvpxQEPLmrplQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrfeeghedgudehiecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepvfgrkhgr
+    shhhihcuufgrkhgrmhhothhouceoohdqthgrkhgrshhhihesshgrkhgrmhhotggthhhird
+    hjpheqnecuggftrfgrthhtvghrnheplefhueegvdejgfejgfdukeefudetvddtuddtueei
+    vedttdegteejkedvfeegfefhnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomhepohdqthgrkhgrshhhihesshgrkhgrmhhotggthhhirdhjph
+X-ME-Proxy: <xmx:svPUYMscyDJRqGzKm13nuhyRgI7cfVSN8yA1W75AfT2bbiPnPh9Zpg>
+    <xmx:svPUYMdoejo9qy75YeXIjiZ35vgfQGIabRibdyJbFxIW7zN1Nm_8xg>
+    <xmx:svPUYA0DnIpF5irAI7k6GC2SQp1AYBAYsazth9ELtOlkXpAypFSyhg>
+    <xmx:s_PUYBHksf2rMTAHbYTUReF8omVVDW3p4TbArw94j50D5U6_65xDew>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 24 Jun 2021 17:05:52 -0400 (EDT)
+Date:   Fri, 25 Jun 2021 06:05:50 +0900
+From:   Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     clemens@ladisch.de, perex@perex.cz, tiwai@suse.com,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] ALSA: firewire-lib: Fix 'amdtp_domain_start()' when no
+ AMDTP_OUT_STREAM stream is found
+Message-ID: <YNTzrtrmDBdg2ec6@workstation>
+Mail-Followup-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        clemens@ladisch.de, perex@perex.cz, tiwai@suse.com,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <9c9a53a4905984a570ba5672cbab84f2027dedc1.1624560484.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9c9a53a4905984a570ba5672cbab84f2027dedc1.1624560484.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hi,
 
-In the case where chain->flags & NFT_CHAIN_HW_OFFLOAD is false then
-nft_flow_rule_create is not called and flow is NULL. The subsequent
-error handling execution via label err_destroy_flow_rule will lead
-to a null pointer dereference on flow when calling nft_flow_rule_destroy.
-Since the error path to err_destroy_flow_rule has to cater for null
-and non-null flows, only call nft_flow_rule_destroy if flow is non-null
-to fix this issue.
+On Thu, Jun 24, 2021 at 08:49:36PM +0200, Christophe JAILLET wrote:
+> The intent here is to return an error code if we don't find what we are
+> looking for in the 'list_for_each_entry()' loop.
+> 
+> 's' is not NULL if the list is empty or if we scan the complete list.
+> Introduce a new 'found' variable to handle such cases.
+> 
+> Fixes: 60dd49298ec5 ("ALSA: firewire-lib: handle several AMDTP streams in callback handler of IRQ target")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> We could test with" if (list_entry_is_head(s, &d->streams, list))"
+> instead, but I find it much less readable.
+> ---
+>  sound/firewire/amdtp-stream.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/sound/firewire/amdtp-stream.c b/sound/firewire/amdtp-stream.c
+> index aad9778d1c4d..9be2260e4ca2 100644
+> --- a/sound/firewire/amdtp-stream.c
+> +++ b/sound/firewire/amdtp-stream.c
+> @@ -1943,6 +1943,7 @@ int amdtp_domain_start(struct amdtp_domain *d, unsigned int tx_init_skip_cycles,
+>  	unsigned int events_per_period = d->events_per_period;
+>  	unsigned int queue_size;
+>  	struct amdtp_stream *s;
+> +	bool found = false;
+>  	int err;
+>  
+>  	if (replay_seq) {
+> @@ -1955,10 +1956,12 @@ int amdtp_domain_start(struct amdtp_domain *d, unsigned int tx_init_skip_cycles,
+>  
+>  	// Select an IT context as IRQ target.
+>  	list_for_each_entry(s, &d->streams, list) {
+> -		if (s->direction == AMDTP_OUT_STREAM)
+> +		if (s->direction == AMDTP_OUT_STREAM) {
+> +			found = true;
+>  			break;
+> +		}
+>  	}
+> -	if (!s)
+> +	if (!found)
+>  		return -ENXIO;
+>  	d->irq_target = s;
+>  
+> -- 
+> 2.30.2
 
-Addresses-Coverity: ("Explicity null dereference")
-Fixes: 3c5e44622011 ("netfilter: nf_tables: memleak in hw offload abort path")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- net/netfilter/nf_tables_api.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Indeed. Nice to catch it. The bug affects Linux kernel v5.5 or later.
 
-diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
-index 390d4466567f..de182d1f7c4e 100644
---- a/net/netfilter/nf_tables_api.c
-+++ b/net/netfilter/nf_tables_api.c
-@@ -3446,7 +3446,8 @@ static int nf_tables_newrule(struct sk_buff *skb, const struct nfnl_info *info,
- 	return 0;
- 
- err_destroy_flow_rule:
--	nft_flow_rule_destroy(flow);
-+	if (flow)
-+		nft_flow_rule_destroy(flow);
- err_release_rule:
- 	nf_tables_rule_release(&ctx, rule);
- err_release_expr:
--- 
-2.31.1
+Acked-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 
+In kernel v5.10 or later, we can use 'list_entry_is_head()' macro added
+by a commit e130816164e2 ("include/linux/list.h: add a macro to test if
+entry is pointing to the head"). However the development of ALSA firewire
+stack is out-of-tree repository for my convenience to backport it to kernel
+v4.17 or later (I need testers...), so I prefer your change.
+
+
+Thanks
+
+Takashi Sakamoto
