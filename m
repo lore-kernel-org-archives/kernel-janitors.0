@@ -2,107 +2,90 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E345C49EA5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 24 Jun 2021 17:34:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EC67C49EA5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 24 Jun 2021 18:49:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 264C3613EE
-	for <kernel-janitors@archiver.kernel.org>; Thu, 24 Jun 2021 17:34:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38FC5613CC
+	for <kernel-janitors@archiver.kernel.org>; Thu, 24 Jun 2021 18:49:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232174AbhFXRhL (ORCPT
+        id S232521AbhFXSwR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 24 Jun 2021 13:37:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58568 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229721AbhFXRhK (ORCPT
+        Thu, 24 Jun 2021 14:52:17 -0400
+Received: from smtp12.smtpout.orange.fr ([80.12.242.134]:49516 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232481AbhFXSwR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 24 Jun 2021 13:37:10 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DF60C061574;
-        Thu, 24 Jun 2021 10:34:51 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id mj3so3336498ejb.4;
-        Thu, 24 Jun 2021 10:34:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+1dHCIjVGu+VUQzg64ApXX1v4ulkFxMzGJoEo7mlEN8=;
-        b=AARHRFZK4+BCpIFSAR4Ai01+dvIC2tHWRomTVTb1qj8A98A4rj7a7RL0a1YxshGXjS
-         ylJERtxccirnh2JtFVERSbZqjqFkZv151h58DU7fxtNvk1ymxTwBWWxeK4CRSorRYFX3
-         ZH3KmSFqkl+0HpUw+VOEJPP+aZsXVDgdooZjimavAs28OTJ+5nW7jqV+w2VtbIyI875S
-         JDEA8jR5UG1z465hHft34VuKxHIYrEfwcZwk6JTrJ/qGaWKaRZPXFasqE5z8e2nzzQMG
-         uXVmd7OVicFr2VZlaFpLatGxVSRkMPTjImm4rK45atjpd8bgjoYlhpjMHni+J2lrE74m
-         44vA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+1dHCIjVGu+VUQzg64ApXX1v4ulkFxMzGJoEo7mlEN8=;
-        b=YULjqUZyxxazIk8p+0A/+qIXMwMwKdDJDfAPBrh+IUiB2lRqcaJOulpFqach9816zQ
-         qIxoKUoZqcWZ4UTgEGMV00HJim2I1YbCuaC0+BLJfA9wvl4ax3b8SBiWvHT1WlCA4T2W
-         0KMl0wrGO3DFi0KjjSwv2EajNCT4HiKQRWVxIE3Y1e+c7AYTIq3cyFtj83vmINI+kHNr
-         oY9ZDRkRpJpCJwUcARgwWqvHLoM6yoQLtR75oK6KAWjj0bJ9cSADENQaLWpybz3QWptx
-         FJVLdOrVOqtfJ9nuiLYwhwqKLeEYuGehzVeYaebXyIWMfGy9YEM93Su726nTWFOuh7JF
-         Dd0w==
-X-Gm-Message-State: AOAM533cPMkcaPFR4UUePffJVONIA7m2J+YNUB8EwzUclj7lPbdoZxqb
-        TB9tzfCVyW9KOqG8Eeb5HB5pMjynjP5nsK3jCOM=
-X-Google-Smtp-Source: ABdhPJwtErtzq1+hHcQMB5rM9v6vcBduXUsJyHaoWqc3HwRhLcDrty3aCQ7bdHIlsFcpiQypqmQkzot764eK+TZffv8=
-X-Received: by 2002:a17:906:3d3:: with SMTP id c19mr6297403eja.202.1624556090041;
- Thu, 24 Jun 2021 10:34:50 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210621100519.10257-1-colin.king@canonical.com>
-In-Reply-To: <20210621100519.10257-1-colin.king@canonical.com>
-From:   Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Date:   Fri, 25 Jun 2021 02:34:38 +0900
-Message-ID: <CAKFNMomw60BGObwF2ZOFriFwPnEk5hFZgC-5vJwJjPnrW3RyPw@mail.gmail.com>
-Subject: Re: [PATCH] nilfs2: remove redundant continue statement in a while-loop
-To:     Colin King <colin.king@canonical.com>
-Cc:     linux-nilfs <linux-nilfs@vger.kernel.org>,
+        Thu, 24 Jun 2021 14:52:17 -0400
+Received: from localhost.localdomain ([86.243.172.93])
+        by mwinf5d23 with ME
+        id M6pu2500121Fzsu036puNL; Thu, 24 Jun 2021 20:49:56 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 24 Jun 2021 20:49:56 +0200
+X-ME-IP: 86.243.172.93
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     clemens@ladisch.de, o-takashi@sakamocchi.jp, perex@perex.cz,
+        tiwai@suse.com
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] ALSA: firewire-lib: Fix 'amdtp_domain_start()' when no AMDTP_OUT_STREAM stream is found
+Date:   Thu, 24 Jun 2021 20:49:36 +0200
+Message-Id: <9c9a53a4905984a570ba5672cbab84f2027dedc1.1624560484.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Thank you.  This change is correct also in view of the expected
-behavior of the function
-(it really is unnecessary).
-I will send this to upstream.
+The intent here is to return an error code if we don't find what we are
+looking for in the 'list_for_each_entry()' loop.
 
-Regards,
-Ryusuke Konishi
+'s' is not NULL if the list is empty or if we scan the complete list.
+Introduce a new 'found' variable to handle such cases.
 
-On Mon, Jun 21, 2021 at 7:05 PM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The continue statement at the end of the while-loop is redundant,
-> remove it.
->
-> Addresses-Coverity: ("Continue has no effect")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  fs/nilfs2/btree.c | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/fs/nilfs2/btree.c b/fs/nilfs2/btree.c
-> index f42ab57201e7..ab9ec073330f 100644
-> --- a/fs/nilfs2/btree.c
-> +++ b/fs/nilfs2/btree.c
-> @@ -738,7 +738,6 @@ static int nilfs_btree_lookup_contig(const struct nilfs_bmap *btree,
->                         if (ptr2 != ptr + cnt || ++cnt == maxblocks)
->                                 goto end;
->                         index++;
-> -                       continue;
->                 }
->                 if (level == maxlevel)
->                         break;
-> --
-> 2.31.1
->
+Fixes: 60dd49298ec5 ("ALSA: firewire-lib: handle several AMDTP streams in callback handler of IRQ target")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+We could test with" if (list_entry_is_head(s, &d->streams, list))"
+instead, but I find it much less readable.
+---
+ sound/firewire/amdtp-stream.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/sound/firewire/amdtp-stream.c b/sound/firewire/amdtp-stream.c
+index aad9778d1c4d..9be2260e4ca2 100644
+--- a/sound/firewire/amdtp-stream.c
++++ b/sound/firewire/amdtp-stream.c
+@@ -1943,6 +1943,7 @@ int amdtp_domain_start(struct amdtp_domain *d, unsigned int tx_init_skip_cycles,
+ 	unsigned int events_per_period = d->events_per_period;
+ 	unsigned int queue_size;
+ 	struct amdtp_stream *s;
++	bool found = false;
+ 	int err;
+ 
+ 	if (replay_seq) {
+@@ -1955,10 +1956,12 @@ int amdtp_domain_start(struct amdtp_domain *d, unsigned int tx_init_skip_cycles,
+ 
+ 	// Select an IT context as IRQ target.
+ 	list_for_each_entry(s, &d->streams, list) {
+-		if (s->direction == AMDTP_OUT_STREAM)
++		if (s->direction == AMDTP_OUT_STREAM) {
++			found = true;
+ 			break;
++		}
+ 	}
+-	if (!s)
++	if (!found)
+ 		return -ENXIO;
+ 	d->irq_target = s;
+ 
+-- 
+2.30.2
+
