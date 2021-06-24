@@ -2,90 +2,73 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EC67C49EA5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 24 Jun 2021 18:49:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49D12C49EA6
+	for <kernel-janitors@archiver.kernel.org>; Thu, 24 Jun 2021 19:18:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 38FC5613CC
-	for <kernel-janitors@archiver.kernel.org>; Thu, 24 Jun 2021 18:49:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D61E613E3
+	for <kernel-janitors@archiver.kernel.org>; Thu, 24 Jun 2021 19:18:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232521AbhFXSwR (ORCPT
+        id S232762AbhFXTU6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 24 Jun 2021 14:52:17 -0400
-Received: from smtp12.smtpout.orange.fr ([80.12.242.134]:49516 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232481AbhFXSwR (ORCPT
+        Thu, 24 Jun 2021 15:20:58 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:47904 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232370AbhFXTU5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 24 Jun 2021 14:52:17 -0400
-Received: from localhost.localdomain ([86.243.172.93])
-        by mwinf5d23 with ME
-        id M6pu2500121Fzsu036puNL; Thu, 24 Jun 2021 20:49:56 +0200
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 24 Jun 2021 20:49:56 +0200
-X-ME-IP: 86.243.172.93
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     clemens@ladisch.de, o-takashi@sakamocchi.jp, perex@perex.cz,
-        tiwai@suse.com
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] ALSA: firewire-lib: Fix 'amdtp_domain_start()' when no AMDTP_OUT_STREAM stream is found
-Date:   Thu, 24 Jun 2021 20:49:36 +0200
-Message-Id: <9c9a53a4905984a570ba5672cbab84f2027dedc1.1624560484.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Thu, 24 Jun 2021 15:20:57 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lwUrx-0001gb-T8; Thu, 24 Jun 2021 19:18:34 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Luca Coelho <luciano.coelho@intel.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] iwlwifi: Fix error return on failed kmalloc
+Date:   Thu, 24 Jun 2021 20:18:33 +0100
+Message-Id: <20210624191833.170036-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The intent here is to return an error code if we don't find what we are
-looking for in the 'list_for_each_entry()' loop.
+From: Colin Ian King <colin.king@canonical.com>
 
-'s' is not NULL if the list is empty or if we scan the complete list.
-Introduce a new 'found' variable to handle such cases.
+Currently the failing kmalloc sets package to the -ENOMEM error
+return value however the error is returned by variable data. Fix this
+by setting data to the error code instead.
 
-Fixes: 60dd49298ec5 ("ALSA: firewire-lib: handle several AMDTP streams in callback handler of IRQ target")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Addresses-Coverity: ("Unused value")
+Fixes: 9dad325f9d57 ("iwlwifi: support loading the reduced power table from UEFI")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
-We could test with" if (list_entry_is_head(s, &d->streams, list))"
-instead, but I find it much less readable.
----
- sound/firewire/amdtp-stream.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/net/wireless/intel/iwlwifi/fw/uefi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/firewire/amdtp-stream.c b/sound/firewire/amdtp-stream.c
-index aad9778d1c4d..9be2260e4ca2 100644
---- a/sound/firewire/amdtp-stream.c
-+++ b/sound/firewire/amdtp-stream.c
-@@ -1943,6 +1943,7 @@ int amdtp_domain_start(struct amdtp_domain *d, unsigned int tx_init_skip_cycles,
- 	unsigned int events_per_period = d->events_per_period;
- 	unsigned int queue_size;
- 	struct amdtp_stream *s;
-+	bool found = false;
- 	int err;
+diff --git a/drivers/net/wireless/intel/iwlwifi/fw/uefi.c b/drivers/net/wireless/intel/iwlwifi/fw/uefi.c
+index a7c79d814aa4..c2c8078278f7 100644
+--- a/drivers/net/wireless/intel/iwlwifi/fw/uefi.c
++++ b/drivers/net/wireless/intel/iwlwifi/fw/uefi.c
+@@ -229,7 +229,7 @@ void *iwl_uefi_get_reduced_power(struct iwl_trans *trans, size_t *len)
  
- 	if (replay_seq) {
-@@ -1955,10 +1956,12 @@ int amdtp_domain_start(struct amdtp_domain *d, unsigned int tx_init_skip_cycles,
- 
- 	// Select an IT context as IRQ target.
- 	list_for_each_entry(s, &d->streams, list) {
--		if (s->direction == AMDTP_OUT_STREAM)
-+		if (s->direction == AMDTP_OUT_STREAM) {
-+			found = true;
- 			break;
-+		}
+ 	package = kmalloc(package_size, GFP_KERNEL);
+ 	if (!package) {
+-		package = ERR_PTR(-ENOMEM);
++		data = ERR_PTR(-ENOMEM);
+ 		goto out;
  	}
--	if (!s)
-+	if (!found)
- 		return -ENXIO;
- 	d->irq_target = s;
  
 -- 
-2.30.2
+2.31.1
 
