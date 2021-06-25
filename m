@@ -6,119 +6,103 @@ X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38134C48BC2
-	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Jun 2021 13:47:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 611F1C2B9F4
+	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Jun 2021 14:32:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1C253617ED
-	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Jun 2021 13:47:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4051C61954
+	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Jun 2021 14:32:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230114AbhFYNtX (ORCPT
+        id S231445AbhFYOeY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 25 Jun 2021 09:49:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47920 "EHLO
+        Fri, 25 Jun 2021 10:34:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58062 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229573AbhFYNtW (ORCPT
+        with ESMTP id S229958AbhFYOeX (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 25 Jun 2021 09:49:22 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBD27C061574;
-        Fri, 25 Jun 2021 06:47:01 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id l12so9949755wrt.3;
-        Fri, 25 Jun 2021 06:47:01 -0700 (PDT)
+        Fri, 25 Jun 2021 10:34:23 -0400
+Received: from mail-oi1-x22c.google.com (mail-oi1-x22c.google.com [IPv6:2607:f8b0:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0624C061574;
+        Fri, 25 Jun 2021 07:32:02 -0700 (PDT)
+Received: by mail-oi1-x22c.google.com with SMTP id b2so9128933oiy.6;
+        Fri, 25 Jun 2021 07:32:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=K4T35kD9xdE5WREeUdRDi4V+8bz/uyfDnLKIKbIbAGs=;
-        b=BspRsGbBqSD/LW13d+9o097IQx/JIngS+aSPkCI73oCFfeR24NAC/+o0zhPjetLM0O
-         7Zgd7Klvk4xAwOZ37l17Kq0CnY7cvQxE/KPzSVFiup/UKY2KiruRngPNffoQiKgcKs3j
-         QohQ67uTnX+A1EADMhFGahMfsRrktt2rAAtyhGlMmfvXOsFGAoNY/faSNR4NK7reKi8y
-         LOVDI9AA1GR3FKNu+VaHRfTfjEcbIBZxjHghS4XDgk5puyEn1HUZ38IH+7d7s25NfuzL
-         eQYz9Ax5VAmzXb9tKBRQ24bN8J8QL07Ppfnk77QmWy1bLLlCFW2efY4M+4Wf/MqC6uPU
-         RDRQ==
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=dx2H69bQZWe4QiR6B44Q6ulGDcDSCCRcTocULSn2htk=;
+        b=IYBd5p6Lf/paDH3Nzq0LPbYINT+V98oPEOhAQ198Pivg2bPy/LCmX18r7p3YFHWXps
+         HQJkk2DFgEl+bG8eyHgoT6Et5j6E5HjN139h8wxrj7iaoJqjPr98aOiOrnSka0Qgdv8M
+         oqy/VVz4Y+XZyYDvezOvU5knakwkudzN5huY6w3yb9/lmftLYmhbHcpl2bxLQZMJ7i+v
+         LxI36moJKTG0MniQkzGkn4PCtkKSV/VhsLps/V5bgkBYWlXpIFg8+8CjWtkaFM1bR3kf
+         pOEdedCbTjDyYGtxee0KaJG/dgY/kW8z4LRVCFt3Z2s/MJjeemggEGyO4tAfAuFrMEZi
+         C5/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=K4T35kD9xdE5WREeUdRDi4V+8bz/uyfDnLKIKbIbAGs=;
-        b=Rkr67I0JcxNsA3ZlKkBPXKlTx0bnFkeNzLftf2Q+Gzr89F/PiWcm7NZhwlAgITRIrm
-         8465Pe9VUEV1e9hU9G04jM2wZJqc+9lkXinzraSVfgmTGoPr+yEj+eQ0w367EYXdhbRP
-         ISCe8aehwzhsIU1WejkTWEPJbNx5kF8uDUftY5Bpg29BPkZgjRKV6heaS4inGDQeKcUP
-         AqqP81RTnjmYIV59EH7qq/VGAxo/4IpDUbXfjtfjPGdGQFnyuenYUB9lJ/PX3GPPujhv
-         hYOv7JFGfl2xDexWQuAgUC7O97A+MQ9fjJn8uOjAgP4FbB3cbsg6/Hn67zpoRXnozEi/
-         Mwjw==
-X-Gm-Message-State: AOAM530aWCj2HcCOBdJSzgC3dU8EwTt+ZdCXmet5HOfqWY75XtA+o/PH
-        SCa5fEJJm7gxFHgYm/NdJSaja2uj3yw=
-X-Google-Smtp-Source: ABdhPJyobzir6OgOS1lVuoSu2oun8E+Pds/0/hGTISw94w/WwxovQx6+ER6Bf3Na7RlQCzk1CLj+ZA==
-X-Received: by 2002:adf:f84a:: with SMTP id d10mr10941707wrq.34.1624628820556;
-        Fri, 25 Jun 2021 06:47:00 -0700 (PDT)
-Received: from [192.168.1.211] ([2.29.20.116])
-        by smtp.gmail.com with ESMTPSA id e12sm6190225wrw.34.2021.06.25.06.46.59
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=dx2H69bQZWe4QiR6B44Q6ulGDcDSCCRcTocULSn2htk=;
+        b=fytmBMVPctjBafdlgMXyabmHdtlHjkLBt1Fr5Pr5KLJqgZzZjmuCMQB4naBc1wyFvu
+         OO7GWxx59d8Y8xa4iqZdXHWSaGKP4nOQ/WxTushvgIA6uJGg+SNOBZFMC9IWG8WS/kB5
+         bWVcpAQp+uwg5bizqfGHotDsxbcIrd2oJxf8ackcoxLswqTjx2xdCInypuAYi54D7srK
+         i9atOvnayXUGRU04q+NBvuwTAlpMDiK6UdNCUsjTUsy8q6VWchFy/xS0P2Q9EOa8Hjj8
+         lhyoRI2iD8LZ1KijgnBuL9VtmttQehuRd26CGh63oul0QEBX8k0dgeF1fp1SYdCGLNGQ
+         CjaQ==
+X-Gm-Message-State: AOAM531++5DdmUFkHwShPc/GyhKgZRfDNJ7JbJAZ64pTWsZKT5iDX3vv
+        vHGqgnRFId/7JKEH/FJ+4Sk4J7aKQOQ=
+X-Google-Smtp-Source: ABdhPJxRQQi4HSht8EfIzGo6t/SKJBBGSEk7sACVLFy9k35pOMatUdJkXD5aIDw5sv6EPO4/ExTJxA==
+X-Received: by 2002:aca:cf0a:: with SMTP id f10mr9303456oig.167.1624631522165;
+        Fri, 25 Jun 2021 07:32:02 -0700 (PDT)
+Received: from ?IPv6:2603:8081:140c:1a00:8bf2:41e6:f3a9:1be4? (2603-8081-140c-1a00-8bf2-41e6-f3a9-1be4.res6.spectrum.com. [2603:8081:140c:1a00:8bf2:41e6:f3a9:1be4])
+        by smtp.gmail.com with ESMTPSA id f6sm40833oop.31.2021.06.25.07.32.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Jun 2021 06:47:00 -0700 (PDT)
-Subject: Re: [PATCH] platform/x86: intel_skl_int3472: Uninitialized variable
- in skl_int3472_handle_gpio_resources()
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <mgross@linux.intel.com>,
-        platform-driver-x86@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <YNXTkLNtiTDlFlZa@mwanda>
-From:   Daniel Scally <djrscally@gmail.com>
-Message-ID: <540fe796-00d0-bef5-5b89-11f387aa8006@gmail.com>
-Date:   Fri, 25 Jun 2021 14:46:59 +0100
+        Fri, 25 Jun 2021 07:32:01 -0700 (PDT)
+Subject: Re: [PATCH] RDMA/rxe: missing unlock on error in get_srq_wqe()
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Zhu Yanjun <zyjzyj2000@gmail.com>
+Cc:     Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <YNXUCmnPsSkPyhkm@mwanda>
+From:   Bob Pearson <rpearsonhpe@gmail.com>
+Message-ID: <3e04bfeb-708e-d636-bf81-82dc2076db6c@gmail.com>
+Date:   Fri, 25 Jun 2021 09:32:01 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-In-Reply-To: <YNXTkLNtiTDlFlZa@mwanda>
+In-Reply-To: <YNXUCmnPsSkPyhkm@mwanda>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Dan, thanks for the patch
-
-On 25/06/2021 14:01, Dan Carpenter wrote:
-> This function returns negative error codes, zero (to indicate that
-> everything has been completed successfully) and one (to indicate that
-> more resources need to be handled still).
->
-> This code prints an uninitialized error message when the function
-> returns one which potentially leads to an Oops.
-
-
-Ah! In the default case of the switch, took me a while to see that.
-Thanks very much, good catch.
-
-
-Reviewed-by: Daniel Scally <djrscally@gmail.com>
-
->
-> Fixes: 5de691bffe57 ("platform/x86: Add intel_skl_int3472 driver")
+On 6/25/21 8:03 AM, Dan Carpenter wrote:
+> This error path needs to unlock before returning.
+> 
+> Fixes: ec0fa2445c18 ("RDMA/rxe: Fix over copying in get_srq_wqe")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > ---
->  .../platform/x86/intel/int3472/intel_skl_int3472_discrete.c   | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/platform/x86/intel/int3472/intel_skl_int3472_discrete.c b/drivers/platform/x86/intel/int3472/intel_skl_int3472_discrete.c
-> index 17c6fe830765..9fe0a2527e1c 100644
-> --- a/drivers/platform/x86/intel/int3472/intel_skl_int3472_discrete.c
-> +++ b/drivers/platform/x86/intel/int3472/intel_skl_int3472_discrete.c
-> @@ -286,10 +286,10 @@ static int skl_int3472_handle_gpio_resources(struct acpi_resource *ares,
->  	int3472->ngpios++;
->  	ACPI_FREE(obj);
+> I'm sort of surprised this one wasn't caught in testing...
+> 
+>  drivers/infiniband/sw/rxe/rxe_resp.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/infiniband/sw/rxe/rxe_resp.c b/drivers/infiniband/sw/rxe/rxe_resp.c
+> index 72cdb170b67b..3743dc39b60c 100644
+> --- a/drivers/infiniband/sw/rxe/rxe_resp.c
+> +++ b/drivers/infiniband/sw/rxe/rxe_resp.c
+> @@ -314,6 +314,7 @@ static enum resp_states get_srq_wqe(struct rxe_qp *qp)
 >  
-> -	if (ret)
-> +	if (ret < 0)
->  		return dev_err_probe(int3472->dev, ret, err_msg);
->  
-> -	return 0;
-> +	return ret;
->  }
->  
->  static int skl_int3472_parse_crs(struct int3472_discrete_device *int3472)
+>  	/* don't trust user space data */
+>  	if (unlikely(wqe->dma.num_sge > srq->rq.max_sge)) {
+> +		spin_unlock_bh(&srq->rq.consumer_lock);
+>  		pr_warn("%s: invalid num_sge in SRQ entry\n", __func__);
+>  		return RESPST_ERR_MALFORMED_WQE;
+>  	}
+> 
+
+This is correct. Thanks.
+Bob Pearson 
