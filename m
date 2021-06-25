@@ -5,107 +5,97 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.9 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+	UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29E61C48BC2
-	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Jun 2021 13:02:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33721C49EA7
+	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Jun 2021 13:03:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0BB6061930
-	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Jun 2021 13:02:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E62F61929
+	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Jun 2021 13:03:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230151AbhFYNEx (ORCPT
+        id S230151AbhFYNFm (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 25 Jun 2021 09:04:53 -0400
-Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:33904 "EHLO
-        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229712AbhFYNEx (ORCPT
+        Fri, 25 Jun 2021 09:05:42 -0400
+Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:64130 "EHLO
+        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229712AbhFYNFl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 25 Jun 2021 09:04:53 -0400
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15PCpjbb023528;
-        Fri, 25 Jun 2021 13:01:28 GMT
+        Fri, 25 Jun 2021 09:05:41 -0400
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15PD2B8l018209;
+        Fri, 25 Jun 2021 13:03:17 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
  : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=JoMgCM2mWh+cflax6bMzpHUaLShUgL4dkzapj7/udcw=;
- b=TFRs++GZ0x2+HGAPd+EnyTGMTqmw+M9QHNh/zAheumVmKK2P0gVzlk3xRQvoGUTjT/1m
- Od35OpkZCfpNaisURp8MsZNevO7L+bJaD4OKdADxJCAJdx8h2w8ex16qomzJVHNiZG74
- 1pbTX1QJ5cfMO5qPkxMQOjOZ7HaRm2JypSb0RZhLP0s/V1BEnODcHt+smgimdIhyDQtQ
- nPiP26kbjgSJJ9rvl+dC8wl2Dh5lAbDIivNWfm0m5zj8GJkE3jfhIQNgoyqnxtVZLDnh
- 9DLMTk45SEdSuTLCfkajlSY+cmsijbTshV+CA0ZjYfoQmZTRmEE2s8FkFh/uCgf1QZgU 9Q== 
+ bh=ITP1MH3m241ptYlgCn0u0jldmC7ori0GDyZfgxqd5a8=;
+ b=XTMUBKtDcRoLN8e03mruLRqhslv7Ivu5PY1HUWiYlczAZ4Psb/G6PDUn/SeStay7cB1E
+ /TjGESYcfqvH8RKhiwUtnz+dflEGnUbBzpI2PP09OO+48W1D+BDcSwZ6Mz9sO2xajvQ4
+ teslV4RlmuEPH2MsE9FTqhoGXCn+TwvHi3eUCCqbx22/6Sz3oYaLea/31UuEPdKHhwC/
+ tZtJFG9YmSn14DIxyLjuG0iKehqUbYWPZ7SbuLl5qEswT4UJPqgEh34mBLZRewDqSvor
+ I+MJc6YrTaO4LSlAXu2mu4EI440OGlZMmbbbSu1YKruYm3K5C4l5uoXCPewk2AhN2YDo nA== 
 Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by mx0b-00069f02.pphosted.com with ESMTP id 39d24m1ah9-1
+        by mx0b-00069f02.pphosted.com with ESMTP id 39d2pe9977-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 25 Jun 2021 13:01:28 +0000
+        Fri, 25 Jun 2021 13:03:17 +0000
 Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 15PD1OOx051676;
-        Fri, 25 Jun 2021 13:01:27 GMT
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 15PD1OBm051648;
+        Fri, 25 Jun 2021 13:03:15 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-        by userp3030.oracle.com with ESMTP id 39d23y255w-1
+        by userp3030.oracle.com with ESMTP id 39d23y27mg-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 25 Jun 2021 13:01:27 +0000
+        Fri, 25 Jun 2021 13:03:15 +0000
 Received: from userp3030.oracle.com (userp3030.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 15PD1Qod051911;
-        Fri, 25 Jun 2021 13:01:26 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3030.oracle.com with ESMTP id 39d23y24y3-1
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 15PD21lo053816;
+        Fri, 25 Jun 2021 13:03:14 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 39d23y27kn-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 25 Jun 2021 13:01:26 +0000
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by aserv0121.oracle.com (8.14.4/8.14.4) with ESMTP id 15PD1Bc8021145;
-        Fri, 25 Jun 2021 13:01:11 GMT
+        Fri, 25 Jun 2021 13:03:14 +0000
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 15PD3De0030317;
+        Fri, 25 Jun 2021 13:03:13 GMT
 Received: from mwanda (/102.222.70.252)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 25 Jun 2021 13:01:11 +0000
-Date:   Fri, 25 Jun 2021 16:01:04 +0300
+        with ESMTP ; Fri, 25 Jun 2021 06:03:12 -0700
+Date:   Fri, 25 Jun 2021 16:03:06 +0300
 From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Daniel Scally <djrscally@gmail.com>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <mgross@linux.intel.com>,
-        platform-driver-x86@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] platform/x86: intel_skl_int3472: Uninitialized variable in
- skl_int3472_handle_gpio_resources()
-Message-ID: <YNXTkLNtiTDlFlZa@mwanda>
+To:     Zhu Yanjun <zyjzyj2000@gmail.com>,
+        Bob Pearson <rpearsonhpe@gmail.com>
+Cc:     Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] RDMA/rxe: missing unlock on error in get_srq_wqe()
+Message-ID: <YNXUCmnPsSkPyhkm@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
-X-Proofpoint-ORIG-GUID: YsRKOxb4MovEtjy-xEC6smUC8ZMKVRMB
-X-Proofpoint-GUID: YsRKOxb4MovEtjy-xEC6smUC8ZMKVRMB
+X-Proofpoint-GUID: ilusytOlfk-QwfjvnG_0JnGSXW4hVBts
+X-Proofpoint-ORIG-GUID: ilusytOlfk-QwfjvnG_0JnGSXW4hVBts
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This function returns negative error codes, zero (to indicate that
-everything has been completed successfully) and one (to indicate that
-more resources need to be handled still).
+This error path needs to unlock before returning.
 
-This code prints an uninitialized error message when the function
-returns one which potentially leads to an Oops.
-
-Fixes: 5de691bffe57 ("platform/x86: Add intel_skl_int3472 driver")
+Fixes: ec0fa2445c18 ("RDMA/rxe: Fix over copying in get_srq_wqe")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- .../platform/x86/intel/int3472/intel_skl_int3472_discrete.c   | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I'm sort of surprised this one wasn't caught in testing...
 
-diff --git a/drivers/platform/x86/intel/int3472/intel_skl_int3472_discrete.c b/drivers/platform/x86/intel/int3472/intel_skl_int3472_discrete.c
-index 17c6fe830765..9fe0a2527e1c 100644
---- a/drivers/platform/x86/intel/int3472/intel_skl_int3472_discrete.c
-+++ b/drivers/platform/x86/intel/int3472/intel_skl_int3472_discrete.c
-@@ -286,10 +286,10 @@ static int skl_int3472_handle_gpio_resources(struct acpi_resource *ares,
- 	int3472->ngpios++;
- 	ACPI_FREE(obj);
+ drivers/infiniband/sw/rxe/rxe_resp.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/infiniband/sw/rxe/rxe_resp.c b/drivers/infiniband/sw/rxe/rxe_resp.c
+index 72cdb170b67b..3743dc39b60c 100644
+--- a/drivers/infiniband/sw/rxe/rxe_resp.c
++++ b/drivers/infiniband/sw/rxe/rxe_resp.c
+@@ -314,6 +314,7 @@ static enum resp_states get_srq_wqe(struct rxe_qp *qp)
  
--	if (ret)
-+	if (ret < 0)
- 		return dev_err_probe(int3472->dev, ret, err_msg);
- 
--	return 0;
-+	return ret;
- }
- 
- static int skl_int3472_parse_crs(struct int3472_discrete_device *int3472)
+ 	/* don't trust user space data */
+ 	if (unlikely(wqe->dma.num_sge > srq->rq.max_sge)) {
++		spin_unlock_bh(&srq->rq.consumer_lock);
+ 		pr_warn("%s: invalid num_sge in SRQ entry\n", __func__);
+ 		return RESPST_ERR_MALFORMED_WQE;
+ 	}
 -- 
 2.30.2
 
