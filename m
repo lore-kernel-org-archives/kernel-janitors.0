@@ -2,122 +2,172 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.4 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10D45C2B9F4
-	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Jun 2021 10:33:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42EEFC48BC2
+	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Jun 2021 11:04:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EC6C561444
-	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Jun 2021 10:33:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2349A61450
+	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Jun 2021 11:04:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231434AbhFYKfx (ORCPT
+        id S230326AbhFYLHA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 25 Jun 2021 06:35:53 -0400
-Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:26518 "EHLO
-        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230379AbhFYKfv (ORCPT
+        Fri, 25 Jun 2021 07:07:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39618 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229974AbhFYLGx (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 25 Jun 2021 06:35:51 -0400
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15PAC0Lx003048;
-        Fri, 25 Jun 2021 10:33:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=7kXzU6VQY7lM9RFtj3Mn30bxf9x5MvbukVSQFWdLIZY=;
- b=shLe6ys8iFsFYHDOZvl26wehMyAZpyOcBMPgpa/Y9ApffGJJCBLvHj8/3wXmktB5glND
- ysiu+bscHge3edzw3lyRnjyM+9P51rLe23FPQn5oLzViS3jk+MiXIFBckxBdV7C+V2JF
- 2EsXHayTySklTvB0+CGC+dZ92Y2WriziuC+hCJNqZ6t481Sr+/UuQCBJcVbgfw1xyrSC
- Qv5ufAYKO1ZK8bX7jruIKBgmm6SYEqENjwHLoP26Z7X3Jjv+uZClpO3n/aoE/5TPjvKT
- uDlnT40DTd5dWz0ckpeDS92XXF7/H/n2qoK5jLMx12Xl0iU07VHKG7pWpjbB+/skrHzs Ng== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by mx0b-00069f02.pphosted.com with ESMTP id 39d2kxs0v1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 25 Jun 2021 10:33:19 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 15PABQ2i094051;
-        Fri, 25 Jun 2021 10:33:18 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by userp3020.oracle.com with ESMTP id 39dbb15rpe-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 25 Jun 2021 10:33:18 +0000
-Received: from userp3020.oracle.com (userp3020.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 15PASHaK149866;
-        Fri, 25 Jun 2021 10:33:17 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3020.oracle.com with ESMTP id 39dbb15rng-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 25 Jun 2021 10:33:17 +0000
-Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by aserv0121.oracle.com (8.14.4/8.14.4) with ESMTP id 15PAXFOI031239;
-        Fri, 25 Jun 2021 10:33:16 GMT
-Received: from kadam (/102.222.70.252)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 25 Jun 2021 03:33:14 -0700
-Date:   Fri, 25 Jun 2021 13:33:04 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Pablo Neira Ayuso <pablo@netfilter.org>
-Cc:     Colin King <colin.king@canonical.com>,
-        Jozsef Kadlecsik <kadlec@netfilter.org>,
-        Florian Westphal <fw@strlen.de>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] netfilter: nf_tables: Fix dereference of null
- pointer flow
-Message-ID: <20210625103304.GI2040@kadam>
-References: <20210624195718.170796-1-colin.king@canonical.com>
- <20210625095901.GH2040@kadam>
- <20210625102021.GA32352@salvia>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210625102021.GA32352@salvia>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-GUID: agBZSEvUiaAafEXSUMxVl_YcRlBC2KJn
-X-Proofpoint-ORIG-GUID: agBZSEvUiaAafEXSUMxVl_YcRlBC2KJn
+        Fri, 25 Jun 2021 07:06:53 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 315C1C061574;
+        Fri, 25 Jun 2021 04:04:31 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id yy20so6723654ejb.6;
+        Fri, 25 Jun 2021 04:04:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=oMTJ/QkeVmFE4EFKrFNWUVeXA/smXrujx1nehRVMF44=;
+        b=VUGuKRFUKSkdLoBalHfnYSj33Nqf+3byDGN4+vDZDEwwKqJfJhSZsJjTDn4E9Xpy1W
+         uMhjPzRH9sCAtCrTdCZvkfjHGKrMuEaCMQrxl8Rir9Wby9WLUnBfHIFvoN2O0xksNf1w
+         MHLrxY1Bkc29o3Q9SfAH/AgSX8WYj2ayfTXdwjYsvJYitattujYNNpo8qoHS3FI2dutR
+         mUUbVOrjHwfkGICanaFXTSrhXaBtYnyLnkgsaMSS7oLeaf5l/I/0NGRkgdBmgfBj74YA
+         0AV2YGzE1vXVtwpjgkqHvTLS9bzPbiXchPds8BRJToNMI38TIFlJtitPY7F9WNAOaOTH
+         YDXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=oMTJ/QkeVmFE4EFKrFNWUVeXA/smXrujx1nehRVMF44=;
+        b=GAdT043pGA0r1JKWvRhtzxTYKbDFG8bc1jfB2ZvcBQCpKU108nDGYMU2BbPT3zY0/m
+         KLmT6ylklcVqGMSfND/w75yL+8Du5mAsKKQOSHtbMMM0swyTMZvNbJW5HYLGg1sGE6rj
+         5xASCf5Ko1ddaP+LD33Kg0Ru0LxKzzyLji5Duz8cW0BDX6HumFxWFv++AHVjRGyYOJTT
+         Kg155LKYlA5kpW7XWcmsaakOjn57gvD/hKwgQOLqKH7qyyMJyzXihQzjZKWLiDGlEfMs
+         5EadUkSpwuTcPrcGI2TL6ZtvSD2z4HJi3blvSliNuxXCsLi7xewIx+jtNG5sXBU7HXbg
+         xB3A==
+X-Gm-Message-State: AOAM5303uPoXhVXCtdoDWJrK6pPUjttw2uzKhDRqamrSmfnaf1rUcgWJ
+        IwCHgXCatYEz4Tq7ikEFmKs=
+X-Google-Smtp-Source: ABdhPJxmTfE/ss/bnHF0xXzRsXUc2iIkWDwkPT7ifIa4hBcUSM7q7KCO96+UqjufJvNNPPKUY5GwSQ==
+X-Received: by 2002:a17:906:dbdc:: with SMTP id yc28mr10245592ejb.444.1624619069705;
+        Fri, 25 Jun 2021 04:04:29 -0700 (PDT)
+Received: from felia.fritz.box ([2001:16b8:3852:f400:9496:6480:6c8a:4419])
+        by smtp.gmail.com with ESMTPSA id v28sm2659665ejk.84.2021.06.25.04.04.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Jun 2021 04:04:29 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        linux-mips@vger.kernel.org
+Cc:     "Maciej W . Rozycki" <macro@orcam.me.uk>,
+        Tiezhu Yang <yangtiezhu@loongson.cn>, Willy Tarreau <w@1wt.eu>,
+        linux-edac@vger.kernel.org, linux-hams@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH v2 0/3] Remove dead linux-mips.org references
+Date:   Fri, 25 Jun 2021 13:04:16 +0200
+Message-Id: <20210625110419.24503-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Jun 25, 2021 at 12:20:21PM +0200, Pablo Neira Ayuso wrote:
-> Hi,
-> 
-> On Fri, Jun 25, 2021 at 12:59:01PM +0300, Dan Carpenter wrote:
-> > Btw, why is there no clean up if nft_table_validate() fails?
-> 
-> See below.
-> 
-> > net/netfilter/nf_tables_api.c
-> >   3432                                  list_add_tail_rcu(&rule->list, &old_rule->list);
-> >   3433                          else
-> >   3434                                  list_add_rcu(&rule->list, &chain->rules);
-> >   3435                  }
-> >   3436          }
-> >   3437          kvfree(expr_info);
-> >   3438          chain->use++;
-> >   3439  
-> >   3440          if (flow)
-> >   3441                  nft_trans_flow_rule(trans) = flow;
-> >   3442  
-> >   3443          if (nft_net->validate_state == NFT_VALIDATE_DO)
-> >   3444                  return nft_table_validate(net, table);
-> >                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> > The cleanup for this would be quite involved unfortunately...  Not
-> > necessarily something to attempt without being able to test the code.
-> 
-> At this stage, the transaction has been already registered in the
-> list, and the nf_tables_abort() path takes care of undoing what has
-> been updated in the preparation phase.
-> 
+Dear all,
 
-Ah...  Thanks.
+on 2021-02-22, I reported that:
 
-regards,
-dan carpenter
+The domain lookup for linux-mips.org fails for quite some time now. Hence,
+webpages, the patchwork instance and Ralf Baechle's email there is not
+reachable anymore.
+
+In the discussion of that patch series, Kurt Martin promised to get
+linux-mips.org back online. Four months have now passed and the webpage is
+still not back online. So, I suggest to remove these dead references.
+Probably, we do not lose much if the linux-mips.org webpage never comes back.
+
+The domain lookup for linux-mips.org fails for quite some time now. Hence,
+webpages, the patchwork instance and Ralf Baechle's email there is not
+reachable anymore.
+
+Here is in more detail what I did to create this patch series:
+
+First, I updated all sections in MAINTAINERS for references with linux-mips.org.
+Then, I also quickly scanned through the whole git tree for linux-mips.org
+references, and step-wise filtered out obvious copyright holder lines and
+references to old email addresses.
+
+  git ls-files | xargs grep "linux-mips.org" | \
+    grep -v -i "Copyright" | grep -v -i "MODULE_AUTHOR" | grep -v -i "written" | \
+    grep -v "Ralf" | grep -v "Maciej" | grep -v "Yoichi" | grep -v "Ladislav"
+
+I removed dead references or replaced them with their living counterparts if
+available. However, these two cases remain and somebody might want to have a look:
+
+  1. case in ./arch/mips/include/asm/page.h:
+
+<snip>
+/*
+ * RELOC_HIDE was originally added by 6007b903dfe5f1d13e0c711ac2894bdd4a61b1ad
+ * (lmo) rsp. 8431fd094d625b94d364fe393076ccef88e6ce18 (kernel.org).  The
+ * discussion can be found in
+ * https://lore.kernel.org/lkml/a2ebde260608230500o3407b108hc03debb9da6e62c@mail.gmail.com
+ *
+ * It is unclear if the misscompilations mentioned in
+ * https://lore.kernel.org/lkml/1281303490-390-1-git-send-email-namhyung@gmail.com
+ * also affect MIPS so we keep this one until GCC 3.x has been retired
+ * before we can apply https://patchwork.linux-mips.org/patch/1541/
+ */
+</snip>
+
+  Decision: Keep as is. Although GCC 3.x is long retired, it is unclear what
+  https://patchwork.linux-mips.org/patch/1541/ is and if it has been already
+  applied or not.
+  Question: does anyone know how to identify this patch?
+
+
+  2. case in ./drivers/parport/parport_ip32.c:
+
+    linux-mips.org tree is referred to in an old To do item:
+
+<snip>
+ * To do:
+ *
+ *      Fully implement ECP mode.
+ *      EPP and ECP mode need to be tested.  I currently do not own any
+ *      peripheral supporting these extended mode, and cannot test them.
+ *      If DMA mode works well, decide if support for PIO FIFO modes should be
+ *      dropped.
+ *      Use the io{read,write} family functions when they become available in
+ *      the linux-mips.org tree.  Note: the MIPS specific functions readsb()
+ *      and writesb() are to be translated by ioread8_rep() and iowrite8_rep()
+ *      respectively.
+</snip>
+
+  Decision: Keep as is; anyone that wants to follow up on this will probably
+  understand that the reference is outdated anyway.
+
+
+Please comment on these clean-up patches on this administrative topic.
+
+Patch set applies cleanly on next-20210624.
+
+
+Changes since v1: https://lore.kernel.org/lkml/20210222161905.1153-1-lukas.bulwahn@gmail.com/
+  Patches
+    "arch: mips: update references to current linux-mips list"
+    "MIPS: SGI-IP27: fix spelling in Copyright"
+  has been already applied.
+
+Lukas Bulwahn (3):
+  MAINTAINERS: mark sections from Ralf Baechle orphan
+  MAINTAINERS: remove linux-mips.org references
+  arch: mips: remove dead references
+
+ MAINTAINERS                   | 20 ++++++--------------
+ arch/mips/Kconfig             |  8 +-------
+ arch/mips/jazz/Kconfig        | 12 +++---------
+ tools/include/nolibc/nolibc.h |  3 +--
+ 4 files changed, 11 insertions(+), 32 deletions(-)
+
+-- 
+2.17.1
 
