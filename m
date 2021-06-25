@@ -2,115 +2,134 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44748C2B9F4
-	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Jun 2021 15:04:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFEABC48BC2
+	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Jun 2021 15:49:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 20CD261864
-	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Jun 2021 15:04:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC90661952
+	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Jun 2021 15:49:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231936AbhFYPHM (ORCPT
+        id S229826AbhFYPwI (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 25 Jun 2021 11:07:12 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:59600 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230172AbhFYPHL (ORCPT
+        Fri, 25 Jun 2021 11:52:08 -0400
+Received: from angie.orcam.me.uk ([78.133.224.34]:59976 "EHLO
+        angie.orcam.me.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229630AbhFYPwH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 25 Jun 2021 11:07:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1624633490;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=U784+kGQqcCr9NWBnyFTpTP/sKm8NiDEcS8cZIq6yn8=;
-        b=S6dIAlSheseIQRfdczSNkQrehkhub4a+OfE1IM3dlZkPOtZTVmZsFe5KoLEy9zNXvnOKIn
-        4qdOwl1o/fPGfFHNhAV43KTJbqwTAABszqLyYyHyo/G2RY6npqVAIuSHuFplesNztmtTiW
-        jC1g7tVY6WhD+fWW8qHX25AD6Mjx/k0=
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com
- [209.85.166.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-380-R6whGtjUOPuDJVQ4zqpu7g-1; Fri, 25 Jun 2021 11:04:49 -0400
-X-MC-Unique: R6whGtjUOPuDJVQ4zqpu7g-1
-Received: by mail-io1-f71.google.com with SMTP id p7-20020a5d8d070000b02904c0978ed194so7171849ioj.10
-        for <kernel-janitors@vger.kernel.org>; Fri, 25 Jun 2021 08:04:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:organization:mime-version:content-transfer-encoding;
-        bh=U784+kGQqcCr9NWBnyFTpTP/sKm8NiDEcS8cZIq6yn8=;
-        b=Yt4zAjrkACWFQambViNLhKTDYukTdqA4MFvKsTgZa2W2rmcx6yNc/+nfIx1C4YQ75Q
-         0/5pmzhDDAawySu8RfWYf+x+9KG3qsoJo9mnvy3FE0XATeGXFxMvOn2wpZPu7kuzFrP+
-         DNVm7EHmGGiMbo5vLTwHggwRSl94XwcYSHeTCwIXA0LD5nOJpqXAt/d87RKkxXbqNGPB
-         sazzw+4pVwk7E7AK5n3XD6E03xpJ6U0W0Vb1pmH1eRqySjGHfDdGgl601HH8dgw+wP1k
-         SjQpIsar+wtdyNmtEI4w21FSjz+N8af+BE6k8Xa0eGl2vE7wIgQeUzq4o6JmeODboEKG
-         7K9A==
-X-Gm-Message-State: AOAM530LQYcWdeug4xzeHiWnBQ8S1jOyAL2Z3/lcOFki8G2f2EfEla5a
-        /h+a2thi9x+fLqeUsLoFhFvjZw65eHpz3HQyroLLKB+my1yXvBKoIDedGF+6jB2orWcLk0nUful
-        PNp0yC70RAoG7j7+Euwj6jpn+c+Od
-X-Received: by 2002:a05:6638:22b8:: with SMTP id z24mr9807422jas.45.1624633488179;
-        Fri, 25 Jun 2021 08:04:48 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwzHo3Pd4rMQyb88LBoWup/eibouQovuOWOs36nrmVeMMSDgJerkFrYbrEbXTS/xEUTpliAzg==
-X-Received: by 2002:a05:6638:22b8:: with SMTP id z24mr9807409jas.45.1624633488077;
-        Fri, 25 Jun 2021 08:04:48 -0700 (PDT)
-Received: from redhat.com (c-73-14-100-188.hsd1.co.comcast.net. [73.14.100.188])
-        by smtp.gmail.com with ESMTPSA id m184sm3393220ioa.17.2021.06.25.08.04.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Jun 2021 08:04:47 -0700 (PDT)
-Date:   Fri, 25 Jun 2021 09:04:46 -0600
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Kirti Wankhede <kwankhede@nvidia.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>, kvm@vger.kernel.org,
+        Fri, 25 Jun 2021 11:52:07 -0400
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+        id E9E1592009C; Fri, 25 Jun 2021 17:49:44 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by angie.orcam.me.uk (Postfix) with ESMTP id E628892009B;
+        Fri, 25 Jun 2021 17:49:44 +0200 (CEST)
+Date:   Fri, 25 Jun 2021 17:49:44 +0200 (CEST)
+From:   "Maciej W. Rozycki" <macro@orcam.me.uk>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Kurt Martin <kmartin@wavecomp.com>
+cc:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        linux-mips@vger.kernel.org, Tiezhu Yang <yangtiezhu@loongson.cn>,
+        Willy Tarreau <w@1wt.eu>,
+        "Maciej W. Rozycki" <macro@linux-mips.org>,
+        linux-edac@vger.kernel.org, linux-hams@vger.kernel.org,
         kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] vfio/mdpy: Fix memory leak of object
- mdev_state->vconfig
-Message-ID: <20210625090446.46da71e7.alex.williamson@redhat.com>
-In-Reply-To: <20210622183710.28954-1-colin.king@canonical.com>
-References: <20210622183710.28954-1-colin.king@canonical.com>
-Organization: Red Hat
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+Subject: Re: [PATCH v2 0/3] Remove dead linux-mips.org references
+In-Reply-To: <20210625110419.24503-1-lukas.bulwahn@gmail.com>
+Message-ID: <alpine.DEB.2.21.2106251722470.37803@angie.orcam.me.uk>
+References: <20210625110419.24503-1-lukas.bulwahn@gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, 22 Jun 2021 19:37:10 +0100
-Colin King <colin.king@canonical.com> wrote:
+[Adding Ralf and Kurt to the list of recipients.]
 
-> From: Colin Ian King <colin.king@canonical.com>
+On Fri, 25 Jun 2021, Lukas Bulwahn wrote:
+
+> The domain lookup for linux-mips.org fails for quite some time now. Hence,
+> webpages, the patchwork instance and Ralf Baechle's email there is not
+> reachable anymore.
+
+ Well, mail forwarding has now been set up for my old LMO address, and so 
+I believe for Ralf's.  Any other resources remain unavailable.
+
+> In the discussion of that patch series, Kurt Martin promised to get
+> linux-mips.org back online. Four months have now passed and the webpage is
+> still not back online. So, I suggest to remove these dead references.
+> Probably, we do not lose much if the linux-mips.org webpage never comes back.
+
+ While most resources have been migrated I think the wiki was unique and 
+valuable.  Perhaps we could preserve read-only references to archive.org 
+dumps?  It's not clear to me what our policy is here though, if any.
+
+> The domain lookup for linux-mips.org fails for quite some time now. Hence,
+> webpages, the patchwork instance and Ralf Baechle's email there is not
+> reachable anymore.
+
+ Let's see if the copy of this message intended for Ralf bounces.
+
+> I removed dead references or replaced them with their living counterparts if
+> available. However, these two cases remain and somebody might want to have a look:
 > 
-> In the case where the call to vfio_register_group_dev fails the error
-> return path kfree's mdev_state but not mdev_state->vconfig. Fix this
-> by kfree'ing mdev_state->vconfig before returning.
+>   1. case in ./arch/mips/include/asm/page.h:
 > 
-> Addresses-Coverity: ("Resource leak")
-> Fixes: 437e41368c01 ("vfio/mdpy: Convert to use vfio_register_group_dev()")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  samples/vfio-mdev/mdpy.c | 1 +
->  1 file changed, 1 insertion(+)
+> <snip>
+> /*
+>  * RELOC_HIDE was originally added by 6007b903dfe5f1d13e0c711ac2894bdd4a61b1ad
+>  * (lmo) rsp. 8431fd094d625b94d364fe393076ccef88e6ce18 (kernel.org).  The
+>  * discussion can be found in
+>  * https://lore.kernel.org/lkml/a2ebde260608230500o3407b108hc03debb9da6e62c@mail.gmail.com
+>  *
+>  * It is unclear if the misscompilations mentioned in
+>  * https://lore.kernel.org/lkml/1281303490-390-1-git-send-email-namhyung@gmail.com
+>  * also affect MIPS so we keep this one until GCC 3.x has been retired
+>  * before we can apply https://patchwork.linux-mips.org/patch/1541/
+>  */
+> </snip>
 > 
-> diff --git a/samples/vfio-mdev/mdpy.c b/samples/vfio-mdev/mdpy.c
-> index 7e9c9df0f05b..393c9df6f6a0 100644
-> --- a/samples/vfio-mdev/mdpy.c
-> +++ b/samples/vfio-mdev/mdpy.c
-> @@ -261,6 +261,7 @@ static int mdpy_probe(struct mdev_device *mdev)
->  
->  	ret = vfio_register_group_dev(&mdev_state->vdev);
->  	if (ret) {
-> +		kfree(mdev_state->vconfig);
->  		kfree(mdev_state);
->  		return ret;
->  	}
+>   Decision: Keep as is. Although GCC 3.x is long retired, it is unclear what
+>   https://patchwork.linux-mips.org/patch/1541/ is and if it has been already
+>   applied or not.
+>   Question: does anyone know how to identify this patch?
 
-Applied to vfio next branch for v5.14, thanks!
+ It's on archive.org, marked rejected:
 
-Alex
+<https://web.archive.org/web/20180829170737/https://patchwork.linux-mips.org/patch/1541/>
 
+or alternatively: <https://lore.kernel.org/patchwork/patch/210989/> (with 
+no proper status).  Given the note it might make sense to re-evaluate the 
+patch.  Thanks for the heads-up!
+
+>   2. case in ./drivers/parport/parport_ip32.c:
+> 
+>     linux-mips.org tree is referred to in an old To do item:
+> 
+> <snip>
+>  * To do:
+>  *
+>  *      Fully implement ECP mode.
+>  *      EPP and ECP mode need to be tested.  I currently do not own any
+>  *      peripheral supporting these extended mode, and cannot test them.
+>  *      If DMA mode works well, decide if support for PIO FIFO modes should be
+>  *      dropped.
+>  *      Use the io{read,write} family functions when they become available in
+>  *      the linux-mips.org tree.  Note: the MIPS specific functions readsb()
+>  *      and writesb() are to be translated by ioread8_rep() and iowrite8_rep()
+>  *      respectively.
+> </snip>
+> 
+>   Decision: Keep as is; anyone that wants to follow up on this will probably
+>   understand that the reference is outdated anyway.
+
+ Note that a copy of the LMO tree remains available online at: 
+<git://git.kernel.org/pub/scm/linux/kernel/git/ralf/linux.git>, so any 
+references or git commit IDs are reachable.  Perhaps it would be good to 
+add an actual reference somewhere though.
+
+  Maciej
