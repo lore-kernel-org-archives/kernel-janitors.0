@@ -7,105 +7,99 @@ X-Spam-Status: No, score=-15.9 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83021C2B9F4
-	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Jun 2021 15:00:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56D4CC48BC2
+	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Jun 2021 15:04:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 639A861864
-	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Jun 2021 15:00:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17E9861972
+	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Jun 2021 15:01:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231720AbhFYPCx (ORCPT
+        id S231819AbhFYPDt (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 25 Jun 2021 11:02:53 -0400
-Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:17078 "EHLO
+        Fri, 25 Jun 2021 11:03:49 -0400
+Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:35142 "EHLO
         mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229653AbhFYPCw (ORCPT
+        by vger.kernel.org with ESMTP id S229653AbhFYPDs (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 25 Jun 2021 11:02:52 -0400
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15PEunDr028653;
-        Fri, 25 Jun 2021 15:00:24 GMT
+        Fri, 25 Jun 2021 11:03:48 -0400
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15PEuIdr028437;
+        Fri, 25 Jun 2021 14:59:10 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
  : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=R3UUkLIxm/AmMV3IJTJTXNwAbhgOyICacczkE14XPLg=;
- b=stvEjRtLt+e+OfddZWLc6TaLgoZdQu13bEAoknNrYDcobYqzTXk3URcUcosIRttQsbrA
- /EnYZ0UXH+pQJTIjW5+cZgeP4r1oB6CkAqtgn0RqulOFIaG1sdbcN3/L5QU27WGawDyH
- oJBfFgNPzs5ynHswCgGBl9AHuigQe0udS6UU07aF40MbrXnanh44/atHnyayf7SJtwaY
- AgT0yiwEAmW+wqfoc4AsvDK4hHp+rSmny4Pec1kh5oNb3WKLl2vAViDgy15bL5Fc9ZRE
- LrOZZyDnhh4Z26ismo1JXv3wrtKv32BSWNsiLC58J1aMfpSGKeBSBm1LjEZvkpYJjnUA ug== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by mx0b-00069f02.pphosted.com with ESMTP id 39d27esjkj-1
+ bh=tbDoPXETfKm0wSWVuyJVc016FawRN91LSq+bkmm8CnA=;
+ b=Pkge9wdirVh+MYeWjF3UVAapC0I49JTHjCpViaw0J2sL2UElv+98p4OUMtK7/LgvTu2a
+ TKVQ9wGNEsY9c0amAXtn4vCpYPqoLSGqUgnzpECirWCpe1X6D4F76CDjj0Gig8BA/9e4
+ 1ERCmAax+pis+SYox34iletlh4upLb83N6xtpk5EbEjyfrtde2wtz1RoOyxtj8UIMOxI
+ ZPNFZzUlZ0kkXAcY8MFOliZtcZJL7LMxBTAYRBsIAO5/1ORX2PeiErnjsZGkh/iWCna1
+ i+M5rUmhopnh2jyWZkxFj8GIBEeGbRRwJ76klvnMxrvMqtvz5+eOV2mGNKuwXrq2GWuI oA== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by mx0b-00069f02.pphosted.com with ESMTP id 39d2pe9j04-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 25 Jun 2021 15:00:24 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 15PEtNo6019143;
-        Fri, 25 Jun 2021 15:00:22 GMT
+        Fri, 25 Jun 2021 14:59:10 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 15PEtmVJ099579;
+        Fri, 25 Jun 2021 14:59:09 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-        by userp3030.oracle.com with ESMTP id 39d23y7d84-1
+        by aserp3030.oracle.com with ESMTP id 39d2pyayy7-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 25 Jun 2021 15:00:22 +0000
-Received: from userp3030.oracle.com (userp3030.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 15PEwP8o031787;
-        Fri, 25 Jun 2021 15:00:22 GMT
+        Fri, 25 Jun 2021 14:59:09 +0000
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 15PEtxEt100498;
+        Fri, 25 Jun 2021 14:59:08 GMT
 Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3030.oracle.com with ESMTP id 39d23y7d5v-1
+        by aserp3030.oracle.com with ESMTP id 39d2pyayxe-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 25 Jun 2021 15:00:22 +0000
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 15PF0Gjh027858;
-        Fri, 25 Jun 2021 15:00:16 GMT
+        Fri, 25 Jun 2021 14:59:08 +0000
+Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 15PEx3c6026879;
+        Fri, 25 Jun 2021 14:59:03 GMT
 Received: from mwanda (/102.222.70.252)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 25 Jun 2021 08:00:16 -0700
-Date:   Fri, 25 Jun 2021 18:00:09 +0300
+        with ESMTP ; Fri, 25 Jun 2021 07:59:02 -0700
+Date:   Fri, 25 Jun 2021 17:58:54 +0300
 From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Marcel Holtmann <marcel@holtmann.org>,
-        =?iso-8859-1?Q?Fr=E9d=E9ric?= Dalleau 
-        <frederic.dalleau@linux.intel.com>
-Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
-        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-        Gustavo Padovan <gustavo.padovan@collabora.co.uk>,
-        linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] Bluetooth: sco: prevent information leak in
- sco_conn_defer_accept()
-Message-ID: <YNXveZZwzS3crmHH@mwanda>
+To:     Felix Fietkau <nbd@nbd.name>
+Cc:     Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Shayne Chen <shayne.chen@mediatek.com>,
+        linux-wireless@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] mt76: mt7915: fix info leak in mt7915_mcu_set_pre_cal()
+Message-ID: <YNXvLvrvllpXgCIn@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
-X-Proofpoint-GUID: e15vRjHMF6J31MkXcwjM9L_eBo_jMSUG
-X-Proofpoint-ORIG-GUID: e15vRjHMF6J31MkXcwjM9L_eBo_jMSUG
+X-Proofpoint-GUID: U5TCpDAlYzxOuFnYxZj1yGN63XwzthFs
+X-Proofpoint-ORIG-GUID: U5TCpDAlYzxOuFnYxZj1yGN63XwzthFs
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Smatch complains that some of these struct members are not initialized
-leading to a stack information disclosure:
+Zero out all the unused members of "req" so that we don't disclose
+stack information.
 
-    net/bluetooth/sco.c:778 sco_conn_defer_accept() warn:
-    check that 'cp.retrans_effort' doesn't leak information
-
-This seems like a valid warning.  I've added a default case to fix
-this issue.  It's sort of unusual to have case SCO_AIRMODE_CVSD,
-followed by a default case but I think it's nicely readable.  :)
-
-Fixes: 2f69a82acf6f ("Bluetooth: Use voice setting in deferred SCO connection request")
+Fixes: 495184ac91bb ("mt76: mt7915: add support for applying pre-calibration data")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- net/bluetooth/sco.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/wireless/mediatek/mt76/mt7915/mcu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/bluetooth/sco.c b/net/bluetooth/sco.c
-index d9a4e88dacbb..e2ee00fea64b 100644
---- a/net/bluetooth/sco.c
-+++ b/net/bluetooth/sco.c
-@@ -770,6 +770,7 @@ static void sco_conn_defer_accept(struct hci_conn *conn, u16 setting)
- 			cp.retrans_effort = 0x02;
- 			break;
- 		case SCO_AIRMODE_CVSD:
-+		default:
- 			cp.max_latency = cpu_to_le16(0xffff);
- 			cp.retrans_effort = 0xff;
- 			break;
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7915/mcu.c b/drivers/net/wireless/mediatek/mt76/mt7915/mcu.c
+index 863aa18b3024..21769e4f6bc7 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7915/mcu.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7915/mcu.c
+@@ -3481,7 +3481,7 @@ static int mt7915_mcu_set_pre_cal(struct mt7915_dev *dev, u8 idx,
+ 		u8 idx;
+ 		u8 rsv[4];
+ 		__le32 len;
+-	} req;
++	} req = {};
+ 	struct sk_buff *skb;
+ 
+ 	skb = mt76_mcu_msg_alloc(&dev->mt76, NULL, sizeof(req) + len);
 -- 
 2.30.2
 
