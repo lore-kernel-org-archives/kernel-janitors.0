@@ -2,149 +2,195 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-20.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0649CC49EA6
-	for <kernel-janitors@archiver.kernel.org>; Thu, 24 Jun 2021 21:05:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64F0FC49EA5
+	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Jun 2021 02:05:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C9EFB601FE
-	for <kernel-janitors@archiver.kernel.org>; Thu, 24 Jun 2021 21:05:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40786613B9
+	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Jun 2021 02:05:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232284AbhFXVIQ (ORCPT
+        id S233055AbhFYCHq (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 24 Jun 2021 17:08:16 -0400
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:51385 "EHLO
-        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230116AbhFXVIP (ORCPT
+        Thu, 24 Jun 2021 22:07:46 -0400
+Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:51724 "EHLO
+        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232942AbhFYCHp (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 24 Jun 2021 17:08:15 -0400
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 5B0645C00E5;
-        Thu, 24 Jun 2021 17:05:55 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Thu, 24 Jun 2021 17:05:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
-         h=date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=9jMAnkKABHSlUcjl0Zbwdrv+Qzw
-        4CH1IFEmMt+CBJQM=; b=nuN9S+LNn5VAyRaKqfsXBGPZxheCRq79sIDUlTillPD
-        vaCbwLLzr9CuIQxNF7L6r8qv+BM8VEKVYJgZQzDw7gkzOu+rQ23FJ9yoJqj3Wy2o
-        6X7aetKdQkbvzSa6seVCvulVj/wr0b9zXETQ3SV06yBgVNaovOzY2AsZ1zAPSSTE
-        RDn3hlVquDnOHoWk8cTDQVcqoegWnPr23JR06PAEL72Ur9Pv2/9X1qXD5sV/HPMD
-        0Y3vUZV1iLvibVyu45h6Ie9+RjbDa1cHYo71aKbdWRZ/u47SyqpXvtpbhXSrh7X2
-        re0rYiiI1AdONfxCO6gEQeM/6pHZ83pi82w1bMPQnGg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=9jMAnk
-        KABHSlUcjl0Zbwdrv+Qzw4CH1IFEmMt+CBJQM=; b=f5ewB02t+PjuIZteLhi8Hq
-        1UV0AA+y4qceBWA7esCLDrt4V20nk7gGQp/Egihq9D0zc7rsIA5gWuNAk98mayz+
-        Waa9pdFcUQThjlfrTFHYr9kC4jUPNzNq3TrCODYqeIWROyD9tjVK5BniBVbdzeos
-        XM/cFcgQ6QiXm4c62e3CHlUTKvYi7Tku0/jbDvEfFSrx1xYygGQ4FypyrK8vEBmb
-        ws1wOzmGK3Z2PDQwTshywvFXQNu9BNZiCq2TFOm0kARshVkwhUCIooXYvJcg9l1t
-        lqGNg0bmqyQd0u7M1gqOGfOjBP65SkrrijkpU+7NDqbf732w8+MV2ZZR0dS4NlkQ
-        ==
-X-ME-Sender: <xms:svPUYEMueiidqgq16_ztAa09NU9HGwvTqLleVpXAipf2WOe1AOq3XQ>
-    <xme:svPUYK8AUAnC0RTQ8439GYYggBI0XG8gZXXc2obO_XMwt8K6K43SuhWdX662PIV6A
-    6TiL-eTjvtKwf11w_0>
-X-ME-Received: <xmr:svPUYLTcYTKnD4thJAxJTQamsmWIgDZQ7x4iDKxypdPfiEunTqW4ioISEq6cTPrwiOUFP5b56jBWScKq229nTWvpxQEPLmrplQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrfeeghedgudehiecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepvfgrkhgr
-    shhhihcuufgrkhgrmhhothhouceoohdqthgrkhgrshhhihesshgrkhgrmhhotggthhhird
-    hjpheqnecuggftrfgrthhtvghrnheplefhueegvdejgfejgfdukeefudetvddtuddtueei
-    vedttdegteejkedvfeegfefhnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomhepohdqthgrkhgrshhhihesshgrkhgrmhhotggthhhirdhjph
-X-ME-Proxy: <xmx:svPUYMscyDJRqGzKm13nuhyRgI7cfVSN8yA1W75AfT2bbiPnPh9Zpg>
-    <xmx:svPUYMdoejo9qy75YeXIjiZ35vgfQGIabRibdyJbFxIW7zN1Nm_8xg>
-    <xmx:svPUYA0DnIpF5irAI7k6GC2SQp1AYBAYsazth9ELtOlkXpAypFSyhg>
-    <xmx:s_PUYBHksf2rMTAHbYTUReF8omVVDW3p4TbArw94j50D5U6_65xDew>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 24 Jun 2021 17:05:52 -0400 (EDT)
-Date:   Fri, 25 Jun 2021 06:05:50 +0900
-From:   Takashi Sakamoto <o-takashi@sakamocchi.jp>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     clemens@ladisch.de, perex@perex.cz, tiwai@suse.com,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] ALSA: firewire-lib: Fix 'amdtp_domain_start()' when no
- AMDTP_OUT_STREAM stream is found
-Message-ID: <YNTzrtrmDBdg2ec6@workstation>
-Mail-Followup-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        clemens@ladisch.de, perex@perex.cz, tiwai@suse.com,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <9c9a53a4905984a570ba5672cbab84f2027dedc1.1624560484.git.christophe.jaillet@wanadoo.fr>
+        Thu, 24 Jun 2021 22:07:45 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R641e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=chengshuyi@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0UdZHJqO_1624586721;
+Received: from B-39YZML7H-2200.local(mailfrom:chengshuyi@linux.alibaba.com fp:SMTPD_---0UdZHJqO_1624586721)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 25 Jun 2021 10:05:22 +0800
+Subject: Re: [PATCH bpf-next] libbpf: Introduce 'custom_btf_path' to
+ 'bpf_obj_open_opts'.
+To:     Daniel Borkmann <daniel@iogearbox.net>, ast@kernel.org,
+        andrii@kernel.org, kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
+        john.fastabend@gmail.com, kpsingh@kernel.org
+Cc:     netdev@vger.kernel.org, bpf@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <1624507409-114522-1-git-send-email-chengshuyi@linux.alibaba.com>
+ <8ca15bab-ec66-657d-570a-278deff0b1a3@iogearbox.net>
+From:   Shuyi Cheng <chengshuyi@linux.alibaba.com>
+Message-ID: <e8a17455-e3e7-d259-b7ae-154cfa6f1a0a@linux.alibaba.com>
+Date:   Fri, 25 Jun 2021 10:05:19 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9c9a53a4905984a570ba5672cbab84f2027dedc1.1624560484.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <8ca15bab-ec66-657d-570a-278deff0b1a3@iogearbox.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi,
 
-On Thu, Jun 24, 2021 at 08:49:36PM +0200, Christophe JAILLET wrote:
-> The intent here is to return an error code if we don't find what we are
-> looking for in the 'list_for_each_entry()' loop.
+
+On 6/24/21 11:06 PM, Daniel Borkmann wrote:
+> On 6/24/21 6:03 AM, Shuyi Cheng wrote:
+>> In order to enable the older kernel to use the CO-RE feature, load the
+>> vmlinux btf of the specified path.
+>>
+>> Learn from Andrii's comments in [0], add the custom_btf_path parameter
+>> to bpf_obj_open_opts, you can directly use the skeleton's
+>> <objname>_bpf__open_opts function to pass in the custom_btf_path
+>> parameter.
+>>
+>> Prior to this, there was also a developer who provided a patch with
+>> similar functions. It is a pity that the follow-up did not continue to
+>> advance. See [1].
+>>
+>>     [0]https://lore.kernel.org/bpf/CAEf4BzbJZLjNoiK8_VfeVg_Vrg=9iYFv+po-38SMe=UzwDKJ=Q@mail.gmail.com/#t 
+>>
+>>     [1]https://yhbt.net/lore/all/CAEf4Bzbgw49w2PtowsrzKQNcxD4fZRE6AKByX-5-dMo-+oWHHA@mail.gmail.com/ 
+>>
+>>
+>> Signed-off-by: Shuyi Cheng <chengshuyi@linux.alibaba.com>
+>> ---
+>>   tools/lib/bpf/libbpf.c | 23 ++++++++++++++++++++---
+>>   tools/lib/bpf/libbpf.h |  6 +++++-
+>>   2 files changed, 25 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+>> index 1e04ce7..518b19f 100644
+>> --- a/tools/lib/bpf/libbpf.c
+>> +++ b/tools/lib/bpf/libbpf.c
+>> @@ -509,6 +509,8 @@ struct bpf_object {
+>>       void *priv;
+>>       bpf_object_clear_priv_t clear_priv;
+>> +    char *custom_btf_path;
+>> +
 > 
-> 's' is not NULL if the list is empty or if we scan the complete list.
-> Introduce a new 'found' variable to handle such cases.
+> nit: This should rather go to the 'Parse and load BTF vmlinux if any of 
+> [...]'
+> section of struct bpf_object, and for consistency, I'd keep the btf_ 
+> prefix,
+> like: char *btf_custom_path
 > 
-> Fixes: 60dd49298ec5 ("ALSA: firewire-lib: handle several AMDTP streams in callback handler of IRQ target")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> We could test with" if (list_entry_is_head(s, &d->streams, list))"
-> instead, but I find it much less readable.
-> ---
->  sound/firewire/amdtp-stream.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
+
+Thank you very much for your reply.
+
+Agree.
+
+
+>>       char path[];
+>>   };
+>>   #define obj_elf_valid(o)    ((o)->efile.elf)
+>> @@ -2679,8 +2681,15 @@ static int bpf_object__load_vmlinux_btf(struct 
+>> bpf_object *obj, bool force)
+>>       if (!force && !obj_needs_vmlinux_btf(obj))
+>>           return 0;
+>> -    obj->btf_vmlinux = libbpf_find_kernel_btf();
+>> -    err = libbpf_get_error(obj->btf_vmlinux);
+>> +    if (obj->custom_btf_path) {
+>> +        obj->btf_vmlinux = btf__parse(obj->custom_btf_path, NULL);
+>> +        err = libbpf_get_error(obj->btf_vmlinux);
+>> +        pr_debug("loading custom vmlinux BTF '%s': %d\n", 
+>> obj->custom_btf_path, err);
+>> +    } else {
+>> +        obj->btf_vmlinux = libbpf_find_kernel_btf();
+>> +        err = libbpf_get_error(obj->btf_vmlinux);
+>> +    }
 > 
-> diff --git a/sound/firewire/amdtp-stream.c b/sound/firewire/amdtp-stream.c
-> index aad9778d1c4d..9be2260e4ca2 100644
-> --- a/sound/firewire/amdtp-stream.c
-> +++ b/sound/firewire/amdtp-stream.c
-> @@ -1943,6 +1943,7 @@ int amdtp_domain_start(struct amdtp_domain *d, unsigned int tx_init_skip_cycles,
->  	unsigned int events_per_period = d->events_per_period;
->  	unsigned int queue_size;
->  	struct amdtp_stream *s;
-> +	bool found = false;
->  	int err;
->  
->  	if (replay_seq) {
-> @@ -1955,10 +1956,12 @@ int amdtp_domain_start(struct amdtp_domain *d, unsigned int tx_init_skip_cycles,
->  
->  	// Select an IT context as IRQ target.
->  	list_for_each_entry(s, &d->streams, list) {
-> -		if (s->direction == AMDTP_OUT_STREAM)
-> +		if (s->direction == AMDTP_OUT_STREAM) {
-> +			found = true;
->  			break;
-> +		}
->  	}
-> -	if (!s)
-> +	if (!found)
->  		return -ENXIO;
->  	d->irq_target = s;
->  
-> -- 
-> 2.30.2
+> Couldn't we do something like (only compile-tested):
+> 
 
-Indeed. Nice to catch it. The bug affects Linux kernel v5.5 or later.
+Your approach is very inspiring to me. But I did it for two reasons.
 
-Acked-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+1. When the developer specifies btf_custom_path, btf should only be 
+loaded from btf_custom_path;
+2. Now pahole supports saving vmlinux's btf in raw format, so the old 
+kernel can provide btf in elf format or raw format. see [0].
 
-In kernel v5.10 or later, we can use 'list_entry_is_head()' macro added
-by a commit e130816164e2 ("include/linux/list.h: add a macro to test if
-entry is pointing to the head"). However the development of ALSA firewire
-stack is out-of-tree repository for my convenience to backport it to kernel
-v4.17 or later (I need testers...), so I prefer your change.
+	[0] 
+https://git.kernel.org/pub/scm/devel/pahole/pahole.git/tree/pahole.c#n1157
 
+What do you think?
+	
+Regards,
+Shuyi
 
-Thanks
+> diff --git a/tools/lib/bpf/btf.c b/tools/lib/bpf/btf.c
+> index b46760b93bb4..5b88ce3e483c 100644
+> --- a/tools/lib/bpf/btf.c
+> +++ b/tools/lib/bpf/btf.c
+> @@ -4394,7 +4394,7 @@ static int btf_dedup_remap_types(struct btf_dedup *d)
+>    * Probe few well-known locations for vmlinux kernel image and try to 
+> load BTF
+>    * data out of it to use for target BTF.
+>    */
+> -struct btf *libbpf_find_kernel_btf(void)
+> +static struct btf *__libbpf_find_kernel_btf(char *btf_custom_path)
+>   {
+>       struct {
+>           const char *path_fmt;
+> @@ -4402,6 +4402,8 @@ struct btf *libbpf_find_kernel_btf(void)
+>       } locations[] = {
+>           /* try canonical vmlinux BTF through sysfs first */
+>           { "/sys/kernel/btf/vmlinux", true /* raw BTF */ },
+> +        /* try user defined vmlinux ELF if a path was specified */
+> +        { btf_custom_path },
+>           /* fall back to trying to find vmlinux ELF on disk otherwise */
+>           { "/boot/vmlinux-%1$s" },
+>           { "/lib/modules/%1$s/vmlinux-%1$s" },
+> @@ -4419,11 +4421,11 @@ struct btf *libbpf_find_kernel_btf(void)
+>       uname(&buf);
+> 
+>       for (i = 0; i < ARRAY_SIZE(locations); i++) {
+> +        if (!locations[i].path_fmt)
+> +            continue;
+>           snprintf(path, PATH_MAX, locations[i].path_fmt, buf.release);
+> -
+>           if (access(path, R_OK))
+>               continue;
+> -
+>           if (locations[i].raw_btf)
+>               btf = btf__parse_raw(path);
+>           else
+> @@ -4440,6 +4442,11 @@ struct btf *libbpf_find_kernel_btf(void)
+>       return libbpf_err_ptr(-ESRCH);
+>   }
+> 
+> +struct btf *libbpf_find_kernel_btf(void)
+> +{
+> +    return __libbpf_find_kernel_btf(NULL);
+> +}
+> +
+>   int btf_type_visit_type_ids(struct btf_type *t, type_id_visit_fn 
+> visit, void *ctx)
+>   {
+>       int i, n, err;
+> 
+> And then you just call it as:
+> 
+>      obj->btf_vmlinux = __libbpf_find_kernel_btf(obj->btf_custom_path);
+>      err = libbpf_get_error(obj->btf_vmlinux);
+> 
+>>       if (err) {
+>>           pr_warn("Error loading vmlinux BTF: %d\n", err);
+>>           obj->btf_vmlinux = NULL;
 
-Takashi Sakamoto
