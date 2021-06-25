@@ -2,112 +2,82 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF479C49EA7
-	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Jun 2021 14:33:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75A19C2B9F4
+	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Jun 2021 14:54:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A8AB861954
-	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Jun 2021 14:33:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BA4D6196C
+	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Jun 2021 14:54:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229653AbhFYOgJ (ORCPT
+        id S231772AbhFYO5I (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 25 Jun 2021 10:36:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58458 "EHLO
+        Fri, 25 Jun 2021 10:57:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34956 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229782AbhFYOgI (ORCPT
+        with ESMTP id S229653AbhFYO5F (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 25 Jun 2021 10:36:08 -0400
-Received: from mail-ot1-x331.google.com (mail-ot1-x331.google.com [IPv6:2607:f8b0:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DACCDC061574;
-        Fri, 25 Jun 2021 07:33:47 -0700 (PDT)
-Received: by mail-ot1-x331.google.com with SMTP id d21-20020a9d72d50000b02904604cda7e66so7677911otk.7;
-        Fri, 25 Jun 2021 07:33:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=qqeATMBZejC8yRXeEKlHGvYeEJLetyhWZWrc9LwJ/dg=;
-        b=czIY6In9ksxB2HKCtxW6TBA85vEX0euV7IrPv+oKlQrOId2UMvGi3hzpJBJcvVTx0J
-         HdrhJcnPBFv/iSAo+bzd3zjOeJ3nIzugzVcsPSPtYlSqYDkrkAGDc5KF0Nr5C3EEPx1i
-         eyJ3d+QTJETtaRLET6b3spba8cPpc48MK1bz0SAAFINOQd8xht6QMLIPdR+xxQD5k91B
-         424+UZWZsjiIh2tvWcf0/HiaO0+8AWPxP0NVouxLir0kbWl71RpZ5WfwdQWi8nqyP5v4
-         uBWWKy7ltji6IyYfcwL0gf+adGQ68Omb3LO+IBS3DMvHIxPZWAD/9jL4BxhUwpWuYAsY
-         4dDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=qqeATMBZejC8yRXeEKlHGvYeEJLetyhWZWrc9LwJ/dg=;
-        b=mWyqEDZ0OLQcOCyxcPe01EH95Z3ownvXxAOfyiCbvnoyWSm6+tKGkT0GNGtj5RmhZc
-         EGE/pDuMSxWXDwzgvfJYSnr5fb6dE2YM6cITK1I0PGrcAx6TDhz0RtFiC9vwNjm0N7K5
-         57mGzZyAIDDWMVWaF/iZuskmoQkqyqJZipmOCBvf2Xv9u/eWSRVqU0B17nXkZubBVUmp
-         rp9mfErtWzBRAKqpj7MuHxOpMIsngAPpqpDbxxMmcXFp6tpTyBOUFB/aVCvYyYDuHXjx
-         2xG+wbM2U93a9kIJLXWoe9un6KJcg0wXCGrCeQPCpLWNfPfOCJt/lpoLBXEzba+5A2jW
-         CXoQ==
-X-Gm-Message-State: AOAM531mhaQQZLpr1TmCmd5MzC7euZ5N8n3YtO7JewYnU99VFjHNK8NK
-        63IQ1AClowhfG+2HOAWOdASucAoxLv4=
-X-Google-Smtp-Source: ABdhPJytP4mbR6qwvbtnbvwuHtwYZEdrkubPyuLkttLrxk/SznA9OTiaME3ualga29qRZokCQffDKg==
-X-Received: by 2002:a9d:4b98:: with SMTP id k24mr10102210otf.359.1624631627206;
-        Fri, 25 Jun 2021 07:33:47 -0700 (PDT)
-Received: from ?IPv6:2603:8081:140c:1a00:8bf2:41e6:f3a9:1be4? (2603-8081-140c-1a00-8bf2-41e6-f3a9-1be4.res6.spectrum.com. [2603:8081:140c:1a00:8bf2:41e6:f3a9:1be4])
-        by smtp.gmail.com with ESMTPSA id m68sm301114oig.9.2021.06.25.07.33.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Jun 2021 07:33:47 -0700 (PDT)
-Subject: Re: [PATCH] RDMA/rxe: missing unlock on error in get_srq_wqe()
-From:   Bob Pearson <rpearsonhpe@gmail.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Zhu Yanjun <zyjzyj2000@gmail.com>
-Cc:     Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <YNXUCmnPsSkPyhkm@mwanda>
- <3e04bfeb-708e-d636-bf81-82dc2076db6c@gmail.com>
-Message-ID: <211ac4e5-0a4a-35b9-8a5e-1c7d9c3bb395@gmail.com>
-Date:   Fri, 25 Jun 2021 09:33:46 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Fri, 25 Jun 2021 10:57:05 -0400
+Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60409C061574;
+        Fri, 25 Jun 2021 07:54:44 -0700 (PDT)
+Received: by fieldses.org (Postfix, from userid 2815)
+        id 6EA616208; Fri, 25 Jun 2021 10:54:43 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org 6EA616208
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
+        s=default; t=1624632883;
+        bh=p4xrL//6v4PCv9apCr092hPA5bf7dpEAKaU7i4sG2Os=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=muJG09KUGUXMfG2wKP4iy5zL6mAqtMz6dtE8C3u3Ct7S/tG1f6HtQ/Bue+blMwOqI
+         kuMjFV8qm+0A1zCxYj+vpYQMlbr0X8gf/vcse91kmfnD6aTDVFwzirIGkMtAXHJpf8
+         tefNZdNXoheoRYaICWMqiAOmaELBUBhWcsdpa0GQ=
+Date:   Fri, 25 Jun 2021 10:54:43 -0400
+From:   "J . Bruce Fields" <bfields@fieldses.org>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] nfsd: remove redundant assignment to pointer 'this'
+Message-ID: <20210625145443.GA26192@fieldses.org>
+References: <20210513151639.73435-1-colin.king@canonical.com>
 MIME-Version: 1.0
-In-Reply-To: <3e04bfeb-708e-d636-bf81-82dc2076db6c@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210513151639.73435-1-colin.king@canonical.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 6/25/21 9:32 AM, Bob Pearson wrote:
-> On 6/25/21 8:03 AM, Dan Carpenter wrote:
->> This error path needs to unlock before returning.
->>
->> Fixes: ec0fa2445c18 ("RDMA/rxe: Fix over copying in get_srq_wqe")
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->> ---
->> I'm sort of surprised this one wasn't caught in testing...
->>
->>  drivers/infiniband/sw/rxe/rxe_resp.c | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/infiniband/sw/rxe/rxe_resp.c b/drivers/infiniband/sw/rxe/rxe_resp.c
->> index 72cdb170b67b..3743dc39b60c 100644
->> --- a/drivers/infiniband/sw/rxe/rxe_resp.c
->> +++ b/drivers/infiniband/sw/rxe/rxe_resp.c
->> @@ -314,6 +314,7 @@ static enum resp_states get_srq_wqe(struct rxe_qp *qp)
->>  
->>  	/* don't trust user space data */
->>  	if (unlikely(wqe->dma.num_sge > srq->rq.max_sge)) {
->> +		spin_unlock_bh(&srq->rq.consumer_lock);
->>  		pr_warn("%s: invalid num_sge in SRQ entry\n", __func__);
->>  		return RESPST_ERR_MALFORMED_WQE;
->>  	}
->>
+Sorry, overlooked this before somehow; applied for 5.14.--b.
+
+On Thu, May 13, 2021 at 04:16:39PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> This is correct. Thanks.
-> Bob Pearson 
+> The pointer 'this' is being initialized with a value that is never read
+> and it is being updated later with a new value. The initialization is
+> redundant and can be removed.
 > 
-Should say
-Reviewed-by: Bob Pearson <rpearsonhpe@gmail.com>
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  fs/nfsd/nfs4proc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/nfsd/nfs4proc.c b/fs/nfsd/nfs4proc.c
+> index f4ce93d7f26e..712df4b7dcb2 100644
+> --- a/fs/nfsd/nfs4proc.c
+> +++ b/fs/nfsd/nfs4proc.c
+> @@ -3232,7 +3232,7 @@ bool nfsd4_spo_must_allow(struct svc_rqst *rqstp)
+>  {
+>  	struct nfsd4_compoundres *resp = rqstp->rq_resp;
+>  	struct nfsd4_compoundargs *argp = rqstp->rq_argp;
+> -	struct nfsd4_op *this = &argp->ops[resp->opcnt - 1];
+> +	struct nfsd4_op *this;
+>  	struct nfsd4_compound_state *cstate = &resp->cstate;
+>  	struct nfs4_op_map *allow = &cstate->clp->cl_spo_must_allow;
+>  	u32 opiter;
+> -- 
+> 2.30.2
