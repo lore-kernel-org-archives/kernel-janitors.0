@@ -2,266 +2,85 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89BA9C49EA6
-	for <kernel-janitors@archiver.kernel.org>; Sat, 26 Jun 2021 15:30:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFCABC49EA7
+	for <kernel-janitors@archiver.kernel.org>; Sat, 26 Jun 2021 16:52:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6129261C41
-	for <kernel-janitors@archiver.kernel.org>; Sat, 26 Jun 2021 15:30:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB6CC61C39
+	for <kernel-janitors@archiver.kernel.org>; Sat, 26 Jun 2021 16:52:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230112AbhFZP1k (ORCPT
+        id S230442AbhFZQzF (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 26 Jun 2021 11:27:40 -0400
-Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:35418 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229952AbhFZP1h (ORCPT
+        Sat, 26 Jun 2021 12:55:05 -0400
+Received: from mail-oi1-f173.google.com ([209.85.167.173]:41584 "EHLO
+        mail-oi1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230354AbhFZQzE (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 26 Jun 2021 11:27:37 -0400
-Received: from localhost.localdomain ([86.243.172.93])
-        by mwinf5d78 with ME
-        id MrR62500921Fzsu03rR6lY; Sat, 26 Jun 2021 17:25:11 +0200
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 26 Jun 2021 17:25:11 +0200
-X-ME-IP: 86.243.172.93
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     kvalo@codeaurora.org, davem@davemloft.net, kuba@kernel.org,
-        jirislaby@kernel.org, mickflemm@gmail.com, mcgrof@kernel.org
-Cc:     ath9k-devel@qca.qualcomm.com, ath10k@lists.infradead.org,
-        ath11k@lists.infradead.org, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] ath: switch from 'pci_' to 'dma_' API
-Date:   Sat, 26 Jun 2021 17:25:04 +0200
-Message-Id: <9150bd6cde9ad592aff8ee3ad94dffa90b004e89.1624720959.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Sat, 26 Jun 2021 12:55:04 -0400
+Received: by mail-oi1-f173.google.com with SMTP id t40so15415941oiw.8;
+        Sat, 26 Jun 2021 09:52:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RjZxnCKisu/yuzm/zETycG8rc5tC3RzprLyQlbTug+k=;
+        b=Isftq1UNErzdesqAEC5Xpl6aw+KheApI5VPBxaacd0pDFZ5gIow9ns7L6D1Uvo6cKG
+         nL3QVSKLtRpfBTKW6Qrl+q7vgIdObvvF8s7FQIcbQq6GvPqSNnvEgWqfICwhJcn/6tYG
+         RYlENqDVpCvt/nT9f8Bp1THsHgGBEGqbthe3KAyFy+KnAwiBfmCQCp3of9rwE9HJUb1r
+         ZRiurocZejtE9Z4GopvXYMZVpN7ojGGYGdIxqGxlFCAcY/NJem1Yc586aTL6gb8GZKv8
+         jo2yBxYgxkplYtyGpkgxv78pJBZxmg3JA8VD4sMSzjHoMf21PFr6EiFlJWP6OMAGPsvg
+         RRKg==
+X-Gm-Message-State: AOAM53386eepEm5CnR07snW7zwT9u+H8t8F6g2Bm3/6O/c5tgLmaDAPH
+        pd6OYU5/2Q3pMMm3ngCu3YXd03M6YbN3rmovj1k=
+X-Google-Smtp-Source: ABdhPJyC5a301nKdQKjA2vzaDvUaVKdwf4Qr5aWApiVCV+yMVGfkYFXsZGAJvjRNQhA8AeUHlFWL/Eit5p59ZFQn3tk=
+X-Received: by 2002:aca:c60c:: with SMTP id w12mr15647925oif.46.1624726359841;
+ Sat, 26 Jun 2021 09:52:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210625110419.24503-1-lukas.bulwahn@gmail.com> <20210625110419.24503-4-lukas.bulwahn@gmail.com>
+In-Reply-To: <20210625110419.24503-4-lukas.bulwahn@gmail.com>
+From:   =?UTF-8?Q?Philippe_Mathieu=2DDaud=C3=A9?= <f4bug@amsat.org>
+Date:   Sat, 26 Jun 2021 18:52:28 +0200
+Message-ID: <CAAdtpL6CMAbBPJr3La31Y3AYY48TjLZhDHjKWjUJxXdBS--Xmw@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] arch: mips: remove dead references
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        "Maciej W . Rozycki" <macro@orcam.me.uk>
+Cc:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
+        Tiezhu Yang <yangtiezhu@loongson.cn>, Willy Tarreau <w@1wt.eu>,
+        linux-edac@vger.kernel.org, linux-hams@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The wrappers in include/linux/pci-dma-compat.h should go away.
+On Fri, Jun 25, 2021 at 1:05 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+>
+> The domain lookup for linux-mips.org fails for quite some time now.
+> Further, the two links:
+>
+>   http://decstation.unix-ag.org/
 
-The patch has been generated with the coccinelle script below.
+https://web.archive.org/web/20061010210936/http://decstation.unix-ag.org/
 
-While at it, some 'dma_set_mask()/dma_set_coherent_mask()' have been
-updated to a much less verbose 'dma_set_mask_and_coherent()'.
+>   http://www.computer-refuge.org/classiccmp/ftp.digital.com/pub/DEC/TriAdd/
 
-@@ @@
--    PCI_DMA_BIDIRECTIONAL
-+    DMA_BIDIRECTIONAL
+https://web.archive.org/web/20050205114151/ftp.digital.com/pub/DEC/TriAdd/
 
-@@ @@
--    PCI_DMA_TODEVICE
-+    DMA_TO_DEVICE
+> refer to old webpages or contain no further technical information.
 
-@@ @@
--    PCI_DMA_FROMDEVICE
-+    DMA_FROM_DEVICE
+FWIW the information is still online somewhere.
 
-@@ @@
--    PCI_DMA_NONE
-+    DMA_NONE
-
-@@
-expression e1, e2, e3;
-@@
--    pci_alloc_consistent(e1, e2, e3)
-+    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
-
-@@
-expression e1, e2, e3;
-@@
--    pci_zalloc_consistent(e1, e2, e3)
-+    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_free_consistent(e1, e2, e3, e4)
-+    dma_free_coherent(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_map_single(e1, e2, e3, e4)
-+    dma_map_single(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_unmap_single(e1, e2, e3, e4)
-+    dma_unmap_single(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4, e5;
-@@
--    pci_map_page(e1, e2, e3, e4, e5)
-+    dma_map_page(&e1->dev, e2, e3, e4, e5)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_unmap_page(e1, e2, e3, e4)
-+    dma_unmap_page(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_map_sg(e1, e2, e3, e4)
-+    dma_map_sg(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_unmap_sg(e1, e2, e3, e4)
-+    dma_unmap_sg(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_dma_sync_single_for_cpu(e1, e2, e3, e4)
-+    dma_sync_single_for_cpu(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_dma_sync_single_for_device(e1, e2, e3, e4)
-+    dma_sync_single_for_device(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_dma_sync_sg_for_cpu(e1, e2, e3, e4)
-+    dma_sync_sg_for_cpu(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_dma_sync_sg_for_device(e1, e2, e3, e4)
-+    dma_sync_sg_for_device(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2;
-@@
--    pci_dma_mapping_error(e1, e2)
-+    dma_mapping_error(&e1->dev, e2)
-
-@@
-expression e1, e2;
-@@
--    pci_set_dma_mask(e1, e2)
-+    dma_set_mask(&e1->dev, e2)
-
-@@
-expression e1, e2;
-@@
--    pci_set_consistent_dma_mask(e1, e2)
-+    dma_set_coherent_mask(&e1->dev, e2)
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/net/wireless/ath/ath10k/pci.c |  9 +--------
- drivers/net/wireless/ath/ath11k/pci.c | 10 ++--------
- drivers/net/wireless/ath/ath5k/pci.c  |  2 +-
- drivers/net/wireless/ath/ath9k/pci.c  |  8 +-------
- 4 files changed, 5 insertions(+), 24 deletions(-)
-
-diff --git a/drivers/net/wireless/ath/ath10k/pci.c b/drivers/net/wireless/ath/ath10k/pci.c
-index 71878ab35b93..4d4e2f91e15c 100644
---- a/drivers/net/wireless/ath/ath10k/pci.c
-+++ b/drivers/net/wireless/ath/ath10k/pci.c
-@@ -3393,19 +3393,12 @@ static int ath10k_pci_claim(struct ath10k *ar)
- 	}
- 
- 	/* Target expects 32 bit DMA. Enforce it. */
--	ret = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
-+	ret = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
- 	if (ret) {
- 		ath10k_err(ar, "failed to set dma mask to 32-bit: %d\n", ret);
- 		goto err_region;
- 	}
- 
--	ret = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(32));
--	if (ret) {
--		ath10k_err(ar, "failed to set consistent dma mask to 32-bit: %d\n",
--			   ret);
--		goto err_region;
--	}
--
- 	pci_set_master(pdev);
- 
- 	/* Arrange for access to Target SoC registers. */
-diff --git a/drivers/net/wireless/ath/ath11k/pci.c b/drivers/net/wireless/ath/ath11k/pci.c
-index 646ad79f309c..5abb38cc3b55 100644
---- a/drivers/net/wireless/ath/ath11k/pci.c
-+++ b/drivers/net/wireless/ath/ath11k/pci.c
-@@ -933,20 +933,14 @@ static int ath11k_pci_claim(struct ath11k_pci *ab_pci, struct pci_dev *pdev)
- 		goto disable_device;
- 	}
- 
--	ret = pci_set_dma_mask(pdev, DMA_BIT_MASK(ATH11K_PCI_DMA_MASK));
-+	ret = dma_set_mask_and_coherent(&pdev->dev,
-+					DMA_BIT_MASK(ATH11K_PCI_DMA_MASK));
- 	if (ret) {
- 		ath11k_err(ab, "failed to set pci dma mask to %d: %d\n",
- 			   ATH11K_PCI_DMA_MASK, ret);
- 		goto release_region;
- 	}
- 
--	ret = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(ATH11K_PCI_DMA_MASK));
--	if (ret) {
--		ath11k_err(ab, "failed to set pci consistent dma mask to %d: %d\n",
--			   ATH11K_PCI_DMA_MASK, ret);
--		goto release_region;
--	}
--
- 	pci_set_master(pdev);
- 
- 	ab->mem_len = pci_resource_len(pdev, ATH11K_PCI_BAR_NUM);
-diff --git a/drivers/net/wireless/ath/ath5k/pci.c b/drivers/net/wireless/ath/ath5k/pci.c
-index 43b4ae86e5fb..86b8cb975b1a 100644
---- a/drivers/net/wireless/ath/ath5k/pci.c
-+++ b/drivers/net/wireless/ath/ath5k/pci.c
-@@ -191,7 +191,7 @@ ath5k_pci_probe(struct pci_dev *pdev,
- 	}
- 
- 	/* XXX 32-bit addressing only */
--	ret = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
-+	ret = dma_set_mask(&pdev->dev, DMA_BIT_MASK(32));
- 	if (ret) {
- 		dev_err(&pdev->dev, "32-bit DMA not available\n");
- 		goto err_dis;
-diff --git a/drivers/net/wireless/ath/ath9k/pci.c b/drivers/net/wireless/ath/ath9k/pci.c
-index cff9af3af38d..a074e23013c5 100644
---- a/drivers/net/wireless/ath/ath9k/pci.c
-+++ b/drivers/net/wireless/ath/ath9k/pci.c
-@@ -896,18 +896,12 @@ static int ath_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 	if (pcim_enable_device(pdev))
- 		return -EIO;
- 
--	ret =  pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
-+	ret = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
- 	if (ret) {
- 		pr_err("32-bit DMA not available\n");
- 		return ret;
- 	}
- 
--	ret = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(32));
--	if (ret) {
--		pr_err("32-bit DMA consistent DMA enable failed\n");
--		return ret;
--	}
--
- 	/*
- 	 * Cache line size is used to size and align various
- 	 * structures used to communicate with the hardware.
--- 
-2.30.2
-
+> Remove all those dead references.
+>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+>  arch/mips/Kconfig             |  8 +-------
+>  arch/mips/jazz/Kconfig        | 12 +++---------
+>  tools/include/nolibc/nolibc.h |  3 +--
+>  3 files changed, 5 insertions(+), 18 deletions(-)
