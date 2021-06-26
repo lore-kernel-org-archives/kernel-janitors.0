@@ -2,65 +2,92 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.5 required=3.0 tests=BAYES_00,
+	DKIM_ADSP_CUSTOM_MED,DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70B16C49EA7
-	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Jun 2021 23:09:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CF38C2B9F4
+	for <kernel-janitors@archiver.kernel.org>; Sat, 26 Jun 2021 02:48:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4EF0E61454
-	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Jun 2021 23:09:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7507D6196E
+	for <kernel-janitors@archiver.kernel.org>; Sat, 26 Jun 2021 02:48:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229884AbhFYXMR (ORCPT
+        id S229906AbhFZCul (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 25 Jun 2021 19:12:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42150 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229816AbhFYXMR (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 25 Jun 2021 19:12:17 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A600861948;
-        Fri, 25 Jun 2021 23:09:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624662595;
-        bh=79KnoWVb+3ep/BJmoVJPl2luYOgjPam8atccGxUFaqQ=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=afbd9dOByB5ZJoy1Yuzqzoy0I76srrttw3RdcEfSI2cuhk4/6o3+HK2+YUcLe7EAO
-         1hfs7BtAnbQpMUiwHZ/jrZKV9T6kfCvNWdz6OGyQCGvH/3gHD6ItiSbeYuQZRppnT/
-         ANz4yxUD6AREKu1JXaF/tTDJgQrFwAVNoRlplHaCSXf7zQUlnZD6Sax/q7l1Y/GqNn
-         EwGx8fMg/LhQlYgYXjDwKshVNPsAtQPH8F5ICi/ZUg+UnQ24peY1I3UuADbc1+Hi32
-         uJONiwABm4CJHlB0LvQE8b5Bvc3xddIaWNkSCLq0GacRzdTcIu96U4L6+Bc19GAQFs
-         UTZWq7YAMmTPg==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <71a9fed5f762a71248b8ac73c0a15af82f3ce1e2.1619867987.git.christophe.jaillet@wanadoo.fr>
-References: <71a9fed5f762a71248b8ac73c0a15af82f3ce1e2.1619867987.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] clk: zynqmp: pll: Remove some dead code
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        jolly.shah@xilinx.com, michal.simek@xilinx.com,
-        mturquette@baylibre.com, quanyang.wang@windriver.com,
-        rajan.vaja@xilinx.com, shubhrajyoti.datta@xilinx.com,
-        tejasp@xilinx.com
-Date:   Fri, 25 Jun 2021 16:09:54 -0700
-Message-ID: <162466259437.3259633.17315460513843756213@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+        Fri, 25 Jun 2021 22:50:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51280 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229782AbhFZCuk (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 25 Jun 2021 22:50:40 -0400
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3432EC061574;
+        Fri, 25 Jun 2021 19:48:19 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id o35-20020a05600c5123b02901e6a7a3266cso4619769wms.1;
+        Fri, 25 Jun 2021 19:48:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=W4W0h5ZxQxl/maMOY4I4A6dXT+t4265XjPPnKLXbiPM=;
+        b=kS0WaHZLnlCZEzUnM+F+QCEHop05C1M+Gec9M9TfnT0oSiUzBmBbiCH8jp2OZZ9V0w
+         lUcgNT60VGBD2ji6tyiTi2djcWbX1AvJB65vfRTPAnv0buDbYFimBi7xmKDoGnDVmRhp
+         OHehkk5gjMaIsBUhw/2ftdcKNUob2UUfbVpO+T35s8GU0gJxxYKb+LVroYB00jqOJUPD
+         rN35mvNBhJ/XtSFUhDcuDVKg9qRlyB0DrVG1+qz00Xz0FHRb2dPbS4Cv62gNrUh3ZbP+
+         KQAgNp40wcjzC89MnrXt/VeeZmnNelcDjWOjmYEMzuVOVGOZW8/QMYu3/q8HuZ4CnNT2
+         Nuww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=W4W0h5ZxQxl/maMOY4I4A6dXT+t4265XjPPnKLXbiPM=;
+        b=tArmvKcLnJcQ5pQxzkoxXXE+P7oU4lGzJ2/D1427FhTD8LHpE2XQ9QCtP3C+WVzP7x
+         3s87Ht7znvXCHJO4m0cVdBXiFLqFTIIydUCVAaVKItV05Z4XkSB+17GUcwAjHotHLhsL
+         Yo6fgqllp+/533xP0ckadACcziSHlZn0pVKvrIE0H1ac3MGg17sODRrtJLErI8mDsx1I
+         omAn7wdtIs7AlbH1nLPxOQlNYCVvTJbl95JtBDKr0SdntJdlpVLFlyCfPKn+8qt5EQVi
+         JvQ5UHmq4z2R18n2AAqgbYgtfjpxFS8qyU2HYhi+ft12uQurv7i5DuIoSdwQZqwn3sMz
+         I9Cw==
+X-Gm-Message-State: AOAM532MXEApGm+wdGB8xzqleduLvkH2j3BsV9zFQ7SrU12AnqhTJoSc
+        ZWvQqAbjFHnJW1vD2DxiD4FYasaCaUY=
+X-Google-Smtp-Source: ABdhPJxIsB5gyjNwrNP2c758iV0ZUCwEifSyRWCsks3vgkdh9iffOqvYJZaMA3GMJhuiyntRS5CDfA==
+X-Received: by 2002:a7b:ce0a:: with SMTP id m10mr14400982wmc.149.1624675696703;
+        Fri, 25 Jun 2021 19:48:16 -0700 (PDT)
+Received: from localhost.localdomain ([197.2.60.97])
+        by smtp.gmail.com with ESMTPSA id v5sm12689422wml.26.2021.06.25.19.48.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Jun 2021 19:48:16 -0700 (PDT)
+From:   Khaled Romdhani <khaledromdhani216@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Khaled Romdhani <khaledromdhani216@gmail.com>
+Subject: [PATCH-next] samples/kobject: Fix spelling mistake "tree" -> "three"
+Date:   Sat, 26 Jun 2021 03:44:31 +0100
+Message-Id: <20210626024431.7252-1-khaledromdhani216@gmail.com>
+X-Mailer: git-send-email 2.17.1
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Quoting Christophe JAILLET (2021-05-01 04:24:32)
-> 'clk_hw_set_rate_range()' does not return any error code and 'ret' is
-> known to be 0 at this point, so this message can never be displayed.
->=20
-> Remove it.
->=20
-> Fixes: 3fde0e16d016 ("drivers: clk: Add ZynqMP clock driver")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
+There is a spelling mistake in the comment block. Fix it.
 
-Applied to clk-next
+Signed-off-by: Khaled Romdhani <khaledromdhani216@gmail.com>
+---
+ samples/kobject/kset-example.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/samples/kobject/kset-example.c b/samples/kobject/kset-example.c
+index c8010f126808..48589740346f 100644
+--- a/samples/kobject/kset-example.c
++++ b/samples/kobject/kset-example.c
+@@ -15,7 +15,7 @@
+ /*
+  * This module shows how to create a kset in sysfs called
+  * /sys/kernel/kset-example
+- * Then tree kobjects are created and assigned to this kset, "foo", "baz",
++ * Then three kobjects are created and assigned to this kset, "foo", "baz",
+  * and "bar".  In those kobjects, attributes of the same name are also
+  * created and if an integer is written to these files, it can be later
+  * read out of it.
+-- 
+2.17.1
+
