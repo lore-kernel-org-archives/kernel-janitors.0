@@ -2,78 +2,86 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DATE_IN_PAST_12_24,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C79FC49EA6
-	for <kernel-janitors@archiver.kernel.org>; Sun, 27 Jun 2021 15:54:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36CB7C49EA6
+	for <kernel-janitors@archiver.kernel.org>; Sun, 27 Jun 2021 21:21:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 809B1619C6
-	for <kernel-janitors@archiver.kernel.org>; Sun, 27 Jun 2021 15:54:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1554761C35
+	for <kernel-janitors@archiver.kernel.org>; Sun, 27 Jun 2021 21:21:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230523AbhF0P5B (ORCPT
+        id S231645AbhF0VXa (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 27 Jun 2021 11:57:01 -0400
-Received: from smtp01.smtpout.orange.fr ([80.12.242.123]:25827 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230225AbhF0P5A (ORCPT
+        Sun, 27 Jun 2021 17:23:30 -0400
+Received: from smtprelay0096.hostedemail.com ([216.40.44.96]:38804 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S231636AbhF0VX3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 27 Jun 2021 11:57:00 -0400
-Received: from localhost.localdomain ([86.243.172.93])
-        by mwinf5d54 with ME
-        id NFuY2500E21Fzsu03FuYhQ; Sun, 27 Jun 2021 17:54:33 +0200
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 27 Jun 2021 17:54:33 +0200
-X-ME-IP: 86.243.172.93
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com,
-        ulf.hansson@linaro.org, maz@kernel.org, gustavoars@kernel.org,
-        jckuo@nvidia.com
-Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] soc/tegra: Fix an error handling path in 'tegra_powergate_power_up()'
-Date:   Sun, 27 Jun 2021 17:54:31 +0200
-Message-Id: <46d3af4a83e2e7b680c857e8969167f0d2d94841.1624809134.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Sun, 27 Jun 2021 17:23:29 -0400
+X-Greylist: delayed 525 seconds by postgrey-1.27 at vger.kernel.org; Sun, 27 Jun 2021 17:23:29 EDT
+Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
+        by smtpgrave02.hostedemail.com (Postfix) with ESMTP id 4A67C18028B6B;
+        Sun, 27 Jun 2021 21:12:20 +0000 (UTC)
+Received: from omf07.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 0D552182CED2A;
+        Sun, 27 Jun 2021 21:12:18 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf07.hostedemail.com (Postfix) with ESMTPA id D3A45315D78;
+        Sun, 27 Jun 2021 21:12:15 +0000 (UTC)
+Message-ID: <4c3900ab7d9493e3ce516d3f03ed1de17c1fcb10.camel@perches.com>
+Subject: Re: [PATCH v2 0/3] Remove dead linux-mips.org references
+From:   Joe Perches <joe@perches.com>
+To:     "Maciej W. Rozycki" <macro@orcam.me.uk>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Kurt Martin <kmartin@wavecomp.com>
+Cc:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        linux-mips@vger.kernel.org, Tiezhu Yang <yangtiezhu@loongson.cn>,
+        Willy Tarreau <w@1wt.eu>,
+        "Maciej W. Rozycki" <macro@linux-mips.org>,
+        linux-edac@vger.kernel.org, linux-hams@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <alpine.DEB.2.21.2106251722470.37803@angie.orcam.me.uk>
+References: <20210625110419.24503-1-lukas.bulwahn@gmail.com>
+         <alpine.DEB.2.21.2106251722470.37803@angie.orcam.me.uk>
+Content-Type: text/plain; charset="ISO-8859-1"
 MIME-Version: 1.0
+Date:   Sat, 26 Jun 2021 16:45:02 -0700
+User-Agent: Evolution 3.40.0-1 
 Content-Transfer-Encoding: 8bit
+X-Rspamd-Server: rspamout01
+X-Rspamd-Queue-Id: D3A45315D78
+X-Stat-Signature: 51ppnfim499fwps5bzrtzxauy98arc7f
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Session-ID: U2FsdGVkX19Z0wJIIGI4YrqBWx6kzmLHiegdDfERt2s=
+X-HE-Tag: 1624828335-632179
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-If an error occurs after a successful 'tegra_powergate_enable_clocks()'
-call, it must be undone by a 'tegra_powergate_disable_clocks()' call, as
-already done in the below and above error handling paths of this function.
+On Fri, 2021-06-25 at 17:49 +0200, Maciej W. Rozycki wrote:
+> [Adding Ralf and Kurt to the list of recipients.]
+> 
+> On Fri, 25 Jun 2021, Lukas Bulwahn wrote:
+> 
+> > The domain lookup for linux-mips.org fails for quite some time now. Hence,
+> > webpages, the patchwork instance and Ralf Baechle's email there is not
+> > reachable anymore.
+> 
+>  Well, mail forwarding has now been set up for my old LMO address, and so 
+> I believe for Ralf's.  Any other resources remain unavailable.
+> 
+> > In the discussion of that patch series, Kurt Martin promised to get
+> > linux-mips.org back online. Four months have now passed and the webpage is
+> > still not back online. So, I suggest to remove these dead references.
+> > Probably, we do not lose much if the linux-mips.org webpage never comes back.
+> 
+>  While most resources have been migrated I think the wiki was unique and 
+> valuable.  Perhaps we could preserve read-only references to archive.org 
+> dumps?  It's not clear to me what our policy is here though, if any.
 
-Update the 'goto' to branch at the correct place of the error handling
-path.
+Perhaps better to wholesale copy the content and keep it
+around somewhere else like lore.kernel.org.
 
-Fixes: a38045121bf4 ("soc/tegra: pmc: Add generic PM domain support")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-/!\ This patch is speculative /!\
-Review with care.
----
- drivers/soc/tegra/pmc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index ea62f84d1c8b..b8ef9506f3de 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -782,7 +782,7 @@ static int tegra_powergate_power_up(struct tegra_powergate *pg,
- 
- 	err = reset_control_deassert(pg->reset);
- 	if (err)
--		goto powergate_off;
-+		goto disable_clks;
- 
- 	usleep_range(10, 20);
- 
--- 
-2.30.2
 
