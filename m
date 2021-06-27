@@ -4,39 +4,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D1CBC48BC2
-	for <kernel-janitors@archiver.kernel.org>; Sun, 27 Jun 2021 11:59:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C79FC49EA6
+	for <kernel-janitors@archiver.kernel.org>; Sun, 27 Jun 2021 15:54:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 23C5161C3D
-	for <kernel-janitors@archiver.kernel.org>; Sun, 27 Jun 2021 11:59:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 809B1619C6
+	for <kernel-janitors@archiver.kernel.org>; Sun, 27 Jun 2021 15:54:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230098AbhF0MCE (ORCPT
+        id S230523AbhF0P5B (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 27 Jun 2021 08:02:04 -0400
-Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:19011 "EHLO
+        Sun, 27 Jun 2021 11:57:01 -0400
+Received: from smtp01.smtpout.orange.fr ([80.12.242.123]:25827 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229702AbhF0MCD (ORCPT
+        with ESMTP id S230225AbhF0P5A (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 27 Jun 2021 08:02:03 -0400
+        Sun, 27 Jun 2021 11:57:00 -0400
 Received: from localhost.localdomain ([86.243.172.93])
-        by mwinf5d79 with ME
-        id NBzd2500E21Fzsu03BzeWK; Sun, 27 Jun 2021 13:59:38 +0200
+        by mwinf5d54 with ME
+        id NFuY2500E21Fzsu03FuYhQ; Sun, 27 Jun 2021 17:54:33 +0200
 X-ME-Helo: localhost.localdomain
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 27 Jun 2021 13:59:38 +0200
+X-ME-Date: Sun, 27 Jun 2021 17:54:33 +0200
 X-ME-IP: 86.243.172.93
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     agross@kernel.org, bjorn.andersson@linaro.org, kishon@ti.com,
-        vkoul@kernel.org
-Cc:     linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+To:     thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com,
+        ulf.hansson@linaro.org, maz@kernel.org, gustavoars@kernel.org,
+        jckuo@nvidia.com
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] phy: qcom-qmp: Fix an error handling path in 'qcom_qmp_phy_power_on()'
-Date:   Sun, 27 Jun 2021 13:59:35 +0200
-Message-Id: <3c641172c5b57dce56872d63c52dfae2645cc2d1.1624795081.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] soc/tegra: Fix an error handling path in 'tegra_powergate_power_up()'
+Date:   Sun, 27 Jun 2021 17:54:31 +0200
+Message-Id: <46d3af4a83e2e7b680c857e8969167f0d2d94841.1624809134.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -44,36 +45,35 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-If an error occurs after a successful 'clk_prepare_enable()' call, it must
-be undone by a 'clk_disable_unprepare()' call, as already done in another
-error handling path of this function.
+If an error occurs after a successful 'tegra_powergate_enable_clocks()'
+call, it must be undone by a 'tegra_powergate_disable_clocks()' call, as
+already done in the below and above error handling paths of this function.
 
 Update the 'goto' to branch at the correct place of the error handling
 path.
 
+Fixes: a38045121bf4 ("soc/tegra: pmc: Add generic PM domain support")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
 /!\ This patch is speculative /!\
 Review with care.
-
-I've not been able to identify a Fixes tag.
 ---
- drivers/phy/qualcomm/phy-qcom-qmp.c | 2 +-
+ drivers/soc/tegra/pmc.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/phy/qualcomm/phy-qcom-qmp.c b/drivers/phy/qualcomm/phy-qcom-qmp.c
-index cfe359488f5c..25006d80d347 100644
---- a/drivers/phy/qualcomm/phy-qcom-qmp.c
-+++ b/drivers/phy/qualcomm/phy-qcom-qmp.c
-@@ -4504,7 +4504,7 @@ static int qcom_qmp_phy_power_on(struct phy *phy)
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index ea62f84d1c8b..b8ef9506f3de 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -782,7 +782,7 @@ static int tegra_powergate_power_up(struct tegra_powergate *pg,
  
- 	ret = reset_control_deassert(qmp->ufs_reset);
- 	if (ret)
--		goto err_lane_rst;
-+		goto err_pcs_ready;
+ 	err = reset_control_deassert(pg->reset);
+ 	if (err)
+-		goto powergate_off;
++		goto disable_clks;
  
- 	qcom_qmp_phy_configure(pcs_misc, cfg->regs, cfg->pcs_misc_tbl,
- 			       cfg->pcs_misc_tbl_num);
+ 	usleep_range(10, 20);
+ 
 -- 
 2.30.2
 
