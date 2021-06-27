@@ -1,140 +1,76 @@
 Return-Path: <kernel-janitors-owner@kernel.org>
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+	aws-us-west-2-korg-lkml-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5272FC49EA6
-	for <kernel-janitors@archiver.kernel.org>; Sun, 27 Jun 2021 04:51:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 923C0C48BC2
+	for <kernel-janitors@archiver.kernel.org>; Sun, 27 Jun 2021 11:46:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 23B6F61422
-	for <kernel-janitors@archiver.kernel.org>; Sun, 27 Jun 2021 04:51:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63125619A1
+	for <kernel-janitors@archiver.kernel.org>; Sun, 27 Jun 2021 11:46:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229678AbhF0EyR (ORCPT
+        id S230188AbhF0Ls7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 27 Jun 2021 00:54:17 -0400
-Received: from smtp07.smtpout.orange.fr ([80.12.242.129]:56710 "EHLO
+        Sun, 27 Jun 2021 07:48:59 -0400
+Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:46395 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229507AbhF0EyQ (ORCPT
+        with ESMTP id S229825AbhF0Ls6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 27 Jun 2021 00:54:16 -0400
-Received: from [192.168.1.18] ([86.243.172.93])
-        by mwinf5d42 with ME
-        id N4rq2500221Fzsu034rqeR; Sun, 27 Jun 2021 06:51:51 +0200
-X-ME-Helo: [192.168.1.18]
+        Sun, 27 Jun 2021 07:48:58 -0400
+Received: from localhost.localdomain ([86.243.172.93])
+        by mwinf5d79 with ME
+        id NBmT2500921Fzsu03BmToT; Sun, 27 Jun 2021 13:46:33 +0200
+X-ME-Helo: localhost.localdomain
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 27 Jun 2021 06:51:51 +0200
+X-ME-Date: Sun, 27 Jun 2021 13:46:33 +0200
 X-ME-IP: 86.243.172.93
-Subject: Re: [PATCH] Coccinelle: Update and rename
- api/alloc/pci_free_consistent.cocci
-To:     Julia Lawall <julia.lawall@inria.fr>
-Cc:     Gilles.Muller@inria.fr, nicolas.palix@imag.fr,
-        michal.lkml@markovi.net, cocci@systeme.lip6.fr,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Newsgroups: gmane.linux.kernel,gmane.comp.version-control.coccinelle,gmane.linux.kernel.janitors
-References: <edc2fdb429d184d05a70956ced00845bca2d4fe9.1623871406.git.christophe.jaillet@wanadoo.fr>
- <alpine.DEB.2.22.394.2106262154280.3562@hadrien>
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Message-ID: <65419e5b-6c82-cf5a-071a-a3421f6b846a@wanadoo.fr>
-Date:   Sun, 27 Jun 2021 06:51:48 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+To:     kishon@ti.com, tjoseph@cadence.com, lorenzo.pieralisi@arm.com,
+        robh@kernel.org, kw@linux.com, bhelgaas@google.com
+Cc:     linux-omap@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] PCI: j721e: Fix an error handling path in 'j721e_pcie_probe()'
+Date:   Sun, 27 Jun 2021 13:46:24 +0200
+Message-Id: <db477b0cb444891a17c4bb424467667dc30d0bab.1624794264.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.22.394.2106262154280.3562@hadrien>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 26/06/2021 à 21:55, Julia Lawall a écrit :
-> 
-> 
-> On Wed, 16 Jun 2021, Christophe JAILLET wrote:
-> 
->> 'pci_alloc_consistent()' is about to be removed from the kernel.
->> It is now more useful to check for dma_alloc_coherent/dma_free_coherent.
-> 
-> dma_alloc_coherent has four arguments, and in the script there are only
-> three.  Is the number of arguments to dma_alloc_coherent going to change?
+If an error occurs after a successful 'cdns_pcie_init_phy()' call, it must
+be undone by a 'cdns_pcie_disable_phy()' call, as already done above and
+below.
 
-I don't think so.
+Update the 'goto' to branch at the correct place of the error handling
+path.
 
-Just a stupid "typo" from my side.
+Fixes: 49e0efdce791 ("PCI: j721e: Add support to provide refclk to PCIe connector")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/pci/controller/cadence/pci-j721e.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-CJ
-
-> 
-> julia
-> 
-> 
->>
->> So change the script accordingly and rename it.
->>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->> Not sure that the script works.
->> There are 718 'dma_alloc_coherent' calls in 5.13-rc6. It is surprising
->> to have no match at all, not even a single false positive.
->> ---
->>   ..._consistent.cocci => dma_free_coherent.cocci} | 16 ++++++++--------
->>   1 file changed, 8 insertions(+), 8 deletions(-)
->>   rename scripts/coccinelle/free/{pci_free_consistent.cocci => dma_free_coherent.cocci} (52%)
->>
->> diff --git a/scripts/coccinelle/free/pci_free_consistent.cocci b/scripts/coccinelle/free/dma_free_coherent.cocci
->> similarity index 52%
->> rename from scripts/coccinelle/free/pci_free_consistent.cocci
->> rename to scripts/coccinelle/free/dma_free_coherent.cocci
->> index d51e92556b42..75f159e7b6d7 100644
->> --- a/scripts/coccinelle/free/pci_free_consistent.cocci
->> +++ b/scripts/coccinelle/free/dma_free_coherent.cocci
->> @@ -1,10 +1,10 @@
->>   // SPDX-License-Identifier: GPL-2.0-only
->> -/// Find missing pci_free_consistent for every pci_alloc_consistent.
->> +/// Find missing dma_free_coherent for every dma_alloc_coherent.
->>   ///
->>   // Confidence: Moderate
->>   // Copyright: (C) 2013 Petr Strnad.
->>   // URL: http://coccinelle.lip6.fr/
->> -// Keywords: pci_free_consistent, pci_alloc_consistent
->> +// Keywords: dma_free_coherent, dma_alloc_coherent
->>   // Options: --no-includes --include-headers
->>
->>   virtual report
->> @@ -17,12 +17,12 @@ position p1,p2;
->>   type T;
->>   @@
->>
->> -id = pci_alloc_consistent@p1(x,y,&z)
->> +id = dma_alloc_coherent@p1(x,y,&z)
->>   ... when != e = id
->>   if (id == NULL || ...) { ... return ...; }
->> -... when != pci_free_consistent(x,y,id,z)
->> -    when != if (id) { ... pci_free_consistent(x,y,id,z) ... }
->> -    when != if (y) { ... pci_free_consistent(x,y,id,z) ... }
->> +... when != dma_free_coherent(x,y,id,z)
->> +    when != if (id) { ... dma_free_coherent(x,y,id,z) ... }
->> +    when != if (y) { ... dma_free_coherent(x,y,id,z) ... }
->>       when != e = (T)id
->>       when exists
->>   (
->> @@ -40,7 +40,7 @@ p1 << search.p1;
->>   p2 << search.p2;
->>   @@
->>
->> -msg = "ERROR: missing pci_free_consistent; pci_alloc_consistent on line %s and return without freeing on line %s" % (p1[0].line,p2[0].line)
->> +msg = "ERROR: missing dma_free_coherent; dma_alloc_coherent on line %s and return without freeing on line %s" % (p1[0].line,p2[0].line)
->>   coccilib.report.print_report(p2[0],msg)
->>
->>   @script:python depends on org@
->> @@ -48,6 +48,6 @@ p1 << search.p1;
->>   p2 << search.p2;
->>   @@
->>
->> -msg = "ERROR: missing pci_free_consistent; pci_alloc_consistent on line %s and return without freeing on line %s" % (p1[0].line,p2[0].line)
->> +msg = "ERROR: missing dma_free_coherent; dma_alloc_coherent on line %s and return without freeing on line %s" % (p1[0].line,p2[0].line)
->>   cocci.print_main(msg,p1)
->>   cocci.print_secs("",p2)
->> --
->> 2.30.2
->>
->>
-> 
+diff --git a/drivers/pci/controller/cadence/pci-j721e.c b/drivers/pci/controller/cadence/pci-j721e.c
+index 35e61048e133..8933db6ab1af 100644
+--- a/drivers/pci/controller/cadence/pci-j721e.c
++++ b/drivers/pci/controller/cadence/pci-j721e.c
+@@ -424,7 +424,7 @@ static int j721e_pcie_probe(struct platform_device *pdev)
+ 		ret = clk_prepare_enable(clk);
+ 		if (ret) {
+ 			dev_err(dev, "failed to enable pcie_refclk\n");
+-			goto err_get_sync;
++			goto err_pcie_setup;
+ 		}
+ 		pcie->refclk = clk;
+ 
+-- 
+2.30.2
 
