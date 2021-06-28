@@ -2,66 +2,107 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBD37C48BC2
-	for <kernel-janitors@archiver.kernel.org>; Mon, 28 Jun 2021 03:31:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA172C49EAB
+	for <kernel-janitors@archiver.kernel.org>; Mon, 28 Jun 2021 06:00:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C2EEF61C2A
-	for <kernel-janitors@archiver.kernel.org>; Mon, 28 Jun 2021 03:31:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91DB161C3D
+	for <kernel-janitors@archiver.kernel.org>; Mon, 28 Jun 2021 06:00:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232072AbhF1Ddy (ORCPT
+        id S232152AbhF1GCZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 27 Jun 2021 23:33:54 -0400
-Received: from helcar.hmeau.com ([216.24.177.18]:51012 "EHLO deadmen.hmeau.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231933AbhF1Ddy (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 27 Jun 2021 23:33:54 -0400
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtp (Exim 4.92 #5 (Debian))
-        id 1lxhzV-0001rm-8F; Mon, 28 Jun 2021 11:31:21 +0800
-Received: from herbert by gondobar with local (Exim 4.92)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1lxhzO-0002n8-RB; Mon, 28 Jun 2021 11:31:14 +0800
-Date:   Mon, 28 Jun 2021 11:31:14 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Qinglang Miao <miaoqinglang@huawei.com>, qat-linux@intel.com,
-        linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] crypto: qat: ratelimit invalid ioctl message and print
- the invalid cmd
-Message-ID: <20210628033114.GA10694@gondor.apana.org.au>
-References: <20210622151608.23741-1-colin.king@canonical.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210622151608.23741-1-colin.king@canonical.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 28 Jun 2021 02:02:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35380 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232035AbhF1GCY (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 28 Jun 2021 02:02:24 -0400
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E49B7C061574;
+        Sun, 27 Jun 2021 22:59:58 -0700 (PDT)
+Received: by mail-ej1-x62c.google.com with SMTP id ot9so26839192ejb.8;
+        Sun, 27 Jun 2021 22:59:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=scSC9FPsYN/R9j9GdoOTllx+3vsFm/mdFb9quS7rzYI=;
+        b=CvkBdWJ4oRn3YEcWbcwFITff9TmL8QkVvNknoOvc+VIryWWpkukvvnRSeLaRxuRyRx
+         xxTchDptzszJ0mWnMfZF2sOuZex6+/I+ZcJeFhHfsCGTCGTKwdDDTZ5lWzHSZZ4VQ2vV
+         WgOisHH+PeWPSC/hH8st9jhLZ7atUtuyG4cTolspIR4wLQE6uIS4bFxgcMEdTPdmTeIu
+         jioYCz245+TXgZrEGfvxhOFLZYIc3RMqjH6G5SBcTBPzLQTd5KNQBp4SUb1d52Fib7iZ
+         YR/bHDrKSCfckCpA7nGIkVWw0Tu/Y9HfiAPRBjHQv9n/pFTItEkx89vPOh0eCnwEWldi
+         KJIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=scSC9FPsYN/R9j9GdoOTllx+3vsFm/mdFb9quS7rzYI=;
+        b=i5arh1IC55kUbAFhbgoQTnNUI/IMtt6iL3w/b0us4ut0gKmd1yqTQqgn2uH3t3BLO0
+         W2a+rmURzGZ5l5+hl+xlXwm/t2foHLOi59OC+J6DxByQ9/yHdQZ/6b2q9/883lOqIFaV
+         8WEkcL0t3QfYtvBqnnMKdKmOPC0i281adWK7+TCVfwGlXvXPBdeE8MIx2YtGa3dEFU8u
+         v1J/v/x0B62z/JoVnOo8zt6oXXUp38rkTQdlY4O8jEKw0i2YS59HsUnaKc7TTtnDjq2m
+         +n/6VhVlQivelhxJvs56LG9JTiK7ketEAi/KOYFyii+5iuLh41yrP1fl/bK1tX9qo5fE
+         i/Sw==
+X-Gm-Message-State: AOAM531W/rRumb0UYCqzVTz/B1cyVIod+aQRFWdB5Py4862WmhXAoEZE
+        hBtQdit/6AAsqMaEOfqU4zY=
+X-Google-Smtp-Source: ABdhPJyrxn4mzQxG8eukm5nYIsde35AYVsofSIBJyVphFWkFl2j+jeThJ3JncoFe8AYj4eVgwD46AA==
+X-Received: by 2002:a17:906:a38d:: with SMTP id k13mr23284181ejz.250.1624859996821;
+        Sun, 27 Jun 2021 22:59:56 -0700 (PDT)
+Received: from felia.fritz.box ([2001:16b8:2dc2:cc00:2831:3317:971d:3f75])
+        by smtp.gmail.com with ESMTPSA id e21sm6390506ejy.54.2021.06.27.22.59.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 27 Jun 2021 22:59:55 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Sami Tolvanen <samitolvanen@google.com>,
+        Bill Wendling <wcw@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        clang-built-linux@googlegroups.com, linux-kernel@vger.kernel.org
+Cc:     Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] pgo: rectify comment to proper kernel-doc syntax
+Date:   Mon, 28 Jun 2021 07:59:47 +0200
+Message-Id: <20210628055947.6948-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Jun 22, 2021 at 04:16:08PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently incorrect QAT ioctls can spam the kernel log with error messages
-> of the form "QAT: Invalid ioctl" if a userspace program uses the wrong
-> ioctl command. Quench the messages by ratelimiting them and also print
-> the invalid command being used as that is useful to know.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/crypto/qat/qat_common/adf_ctl_drv.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+The command ./scripts/kernel-doc -none kernel/pgo/pgo.h warns:
 
-Patch applied.  Thanks.
+  kernel/pgo/pgo.h:112: warning: cannot understand function prototype: 'struct llvm_prf_value_node_data '
+
+This is due to a slightly invalid use of kernel-doc syntax for the comment
+of this struct, that must have probably just slipped through refactoring
+and review before.
+
+Rectify the comment to proper kernel-doc syntax.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Kees, please pick this quick minor fix into your pgo tree.
+
+ kernel/pgo/pgo.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/pgo/pgo.h b/kernel/pgo/pgo.h
+index ba3f8499254a..04fbf3bcde1e 100644
+--- a/kernel/pgo/pgo.h
++++ b/kernel/pgo/pgo.h
+@@ -103,7 +103,7 @@ struct llvm_prf_data {
+ } __aligned(LLVM_INSTR_PROF_DATA_ALIGNMENT);
+ 
+ /**
+- * structure llvm_prf_value_node_data - represents the data part of the struct
++ * struct llvm_prf_value_node_data - represents the data part of the struct
+  *   llvm_prf_value_node data structure.
+  * @value: the value counters.
+  * @count: the counters' count.
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.17.1
+
