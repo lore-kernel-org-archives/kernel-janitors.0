@@ -2,98 +2,95 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.4 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 604F1C11F68
-	for <kernel-janitors@archiver.kernel.org>; Tue, 29 Jun 2021 09:14:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B592CC11F68
+	for <kernel-janitors@archiver.kernel.org>; Tue, 29 Jun 2021 10:29:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 323B561DE0
-	for <kernel-janitors@archiver.kernel.org>; Tue, 29 Jun 2021 09:14:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99FB861D85
+	for <kernel-janitors@archiver.kernel.org>; Tue, 29 Jun 2021 10:29:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232738AbhF2JQg (ORCPT
+        id S233037AbhF2KcZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 29 Jun 2021 05:16:36 -0400
-Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:50232 "EHLO
-        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232719AbhF2JQf (ORCPT
+        Tue, 29 Jun 2021 06:32:25 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:34477 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232772AbhF2KcY (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 29 Jun 2021 05:16:35 -0400
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15T9BZxs019108;
-        Tue, 29 Jun 2021 09:13:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=3uiZYuUOjauVOsZgzfaYSUWXb+SRYERHDQtIEya4rTw=;
- b=csUjMjQlJfXZqkpMZWLmjHpH4yY2ksJs47jEg3ulUw8pZpTKZmtx0OB3COestD5vWuOD
- zIlQUkxCXTQgui2w5qhbm9CJQwv+lSbEWOJeCmxuHci5GfQrIISkFmATctg5lBIPiwzB
- 4o1hT9P6eGZD9pMqIuFQU2ZOyIhzslGQ0gWgbrm7BG6KbDfw+KRLaf6t9ErRP1XcX6mj
- lWYlqqhhLSLxhSOlg4PzKVtBYoia6wEZH024PeXVQE9OXtYSVI+RqdbX8+1fDsqPJ3/J
- ZoM59inP/skrIevczX+9eBU3oz36VnnZzHiiwuto5yo8oitTdokqKu6y4jBrugOVZuch 7w== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by mx0b-00069f02.pphosted.com with ESMTP id 39fpu2h188-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 29 Jun 2021 09:13:19 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 15T95p6x080641;
-        Tue, 29 Jun 2021 09:13:18 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by aserp3020.oracle.com with ESMTP id 39dv257v0r-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 29 Jun 2021 09:13:18 +0000
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 15T99AMB090054;
-        Tue, 29 Jun 2021 09:13:18 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3020.oracle.com with ESMTP id 39dv257v0a-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 29 Jun 2021 09:13:17 +0000
-Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 15T9DAtM032729;
-        Tue, 29 Jun 2021 09:13:10 GMT
-Received: from kadam (/102.222.70.252)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 29 Jun 2021 02:13:10 -0700
-Date:   Tue, 29 Jun 2021 12:13:02 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Andreas Fink <afink@list.fink.org>
-Cc:     Vlad Yasevich <vyasevich@gmail.com>,
-        Xin Long <lucien.xin@gmail.com>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, linux-sctp@vger.kernel.org,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net] sctp: prevent info leak in sctp_make_heartbeat()
-Message-ID: <20210629091302.GP2040@kadam>
-References: <YNrXoNAiQama8Us8@mwanda>
- <886e4daf-c239-c1ce-da52-4b4684449908@list.fink.org>
+        Tue, 29 Jun 2021 06:32:24 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lyB08-0000Lx-BV; Tue, 29 Jun 2021 10:29:56 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] clk: lmk04832: Fix spelling mistakes in dev_err messages and comments
+Date:   Tue, 29 Jun 2021 11:29:56 +0100
+Message-Id: <20210629102956.17901-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <886e4daf-c239-c1ce-da52-4b4684449908@list.fink.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-GUID: LtB3j_nw1p3r7RQTzOflNbk3kZRiH54U
-X-Proofpoint-ORIG-GUID: LtB3j_nw1p3r7RQTzOflNbk3kZRiH54U
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Jun 29, 2021 at 10:23:49AM +0200, Andreas Fink wrote:
-> Does that gcc extension work with all compilers, especially clang?
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-I had to look up the thread where this was discussed.
+There are handful of spelling mistakes in two dev_err error messages
+and comments. Fix them.
 
-https://lore.kernel.org/lkml/20200731045301.GI75549@unreal/
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/clk/clk-lmk04832.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-I was wrong.  It started as a GCC extension but was made part of the
-standard in C11.  So we should be good.
+diff --git a/drivers/clk/clk-lmk04832.c b/drivers/clk/clk-lmk04832.c
+index 0cd76e626c3d..274c1004e938 100644
+--- a/drivers/clk/clk-lmk04832.c
++++ b/drivers/clk/clk-lmk04832.c
+@@ -519,7 +519,7 @@ static long lmk04832_vco_round_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	vco_rate = lmk04832_calc_pll2_params(*prate, rate, &n, &p, &r);
+ 	if (vco_rate < 0) {
+-		dev_err(lmk->dev, "PLL2 parmeters out of range\n");
++		dev_err(lmk->dev, "PLL2 parameters out of range\n");
+ 		return vco_rate;
+ 	}
+ 
+@@ -550,7 +550,7 @@ static int lmk04832_vco_set_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	vco_rate = lmk04832_calc_pll2_params(prate, rate, &n, &p, &r);
+ 	if (vco_rate < 0) {
+-		dev_err(lmk->dev, "failed to determine PLL2 parmeters\n");
++		dev_err(lmk->dev, "failed to determine PLL2 parameters\n");
+ 		return vco_rate;
+ 	}
+ 
+@@ -573,7 +573,7 @@ static int lmk04832_vco_set_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	/*
+ 	 * PLL2_N registers must be programmed after other PLL2 dividers are
+-	 * programed to ensure proper VCO frequency calibration
++	 * programmed to ensure proper VCO frequency calibration
+ 	 */
+ 	ret = regmap_write(lmk->regmap, LMK04832_REG_PLL2_N_0,
+ 			   FIELD_GET(0x030000, n));
+@@ -1120,7 +1120,7 @@ static int lmk04832_dclk_set_rate(struct clk_hw *hw, unsigned long rate,
+ 		return -EINVAL;
+ 	}
+ 
+-	/* Enable Duty Cycle Corretion */
++	/* Enable Duty Cycle Correction */
+ 	if (dclk_div == 1) {
+ 		ret = regmap_update_bits(lmk->regmap,
+ 					 LMK04832_REG_CLKOUT_CTRL3(dclk->id),
+-- 
+2.31.1
 
-https://lore.kernel.org/lkml/20200731140452.GE24045@ziepe.ca/
-
-regards,
-dan carpenter
