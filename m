@@ -2,72 +2,104 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.4 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CD3CC11F69
-	for <kernel-janitors@archiver.kernel.org>; Tue, 29 Jun 2021 17:23:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03F5DC11F67
+	for <kernel-janitors@archiver.kernel.org>; Tue, 29 Jun 2021 18:55:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5F8E761CBE
-	for <kernel-janitors@archiver.kernel.org>; Tue, 29 Jun 2021 17:23:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9FFA61D88
+	for <kernel-janitors@archiver.kernel.org>; Tue, 29 Jun 2021 18:55:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232362AbhF2RZ1 (ORCPT
+        id S234521AbhF2S6W (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 29 Jun 2021 13:25:27 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:45314 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232386AbhF2RZY (ORCPT
+        Tue, 29 Jun 2021 14:58:22 -0400
+Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:35534 "EHLO
+        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233859AbhF2S6W (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 29 Jun 2021 13:25:24 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <colin.king@canonical.com>)
-        id 1lyHRm-0003BW-2k; Tue, 29 Jun 2021 17:22:54 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Lee Jones <lee.jones@linaro.org>,
-        linux-pwm@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] pwm: ep93xx: Fix read of uninitialized variable ret
-Date:   Tue, 29 Jun 2021 18:22:53 +0100
-Message-Id: <20210629172253.43131-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.31.1
+        Tue, 29 Jun 2021 14:58:22 -0400
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15TIkgPV027056;
+        Tue, 29 Jun 2021 18:55:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=Uez3zmCeo9MNeRjvJ2k7OPOSq3odxVfykahqSpzgico=;
+ b=JxAQtA0rokHvkBWQtf4P4W+VTGJEZMA3prc6VqTFWqD0blSfT/+YQDrGJqyxSBjium3d
+ ViZctl7+56KZgZlko101GG4dMVmkOF4UDX7RterIYnMvqW+BMi/D8QUbgXoyJEA1pfUM
+ gcKNqeiPAWxi4toT43XWNcWjGtFrnW7FTYNTXLnvLjaIG0dsry7mCrnHJORgo86IS/3+
+ l73PkfVvfiR5dX+rrJAH6Fm+lAluKrG+MAtM/4ESC34qmUycCWqXpfs4DKivVypAK8Tq
+ HjppvOV4BohQ/kwiyf+o9lB7dMcCyd3JYJDuQ8z02WRzbWQt1dGpNArWYWTs5aFi8Lqy ZQ== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by mx0b-00069f02.pphosted.com with ESMTP id 39f174mhru-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 29 Jun 2021 18:55:24 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 15TIk5Md146027;
+        Tue, 29 Jun 2021 18:55:24 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by aserp3030.oracle.com with ESMTP id 39dt9febbt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 29 Jun 2021 18:55:24 +0000
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 15TItN2D174336;
+        Tue, 29 Jun 2021 18:55:23 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3030.oracle.com with ESMTP id 39dt9febax-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 29 Jun 2021 18:55:23 +0000
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 15TItLVo020629;
+        Tue, 29 Jun 2021 18:55:21 GMT
+Received: from kadam (/102.222.70.252)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 29 Jun 2021 11:55:20 -0700
+Date:   Tue, 29 Jun 2021 21:55:14 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Colin Ian King <colin.king@canonical.com>
+Cc:     Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>
+Subject: Re: [PATCH][next] trace: osnoise: Fix u64 less than zero comparison
+Message-ID: <20210629185513.GC1983@kadam>
+References: <20210629165245.42157-1-colin.king@canonical.com>
+ <c74e711e-71c9-df9c-8406-b9e92ef12da0@redhat.com>
+ <e36f61af-4fbe-42cf-f26d-229f940e8fc9@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e36f61af-4fbe-42cf-f26d-229f940e8fc9@canonical.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-GUID: DeMh1JNdm_WOGmIMMpKCkAIBZcWIScLp
+X-Proofpoint-ORIG-GUID: DeMh1JNdm_WOGmIMMpKCkAIBZcWIScLp
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Tue, Jun 29, 2021 at 06:21:32PM +0100, Colin Ian King wrote:
+> On 29/06/2021 18:19, Daniel Bristot de Oliveira wrote:
+> > On 6/29/21 6:52 PM, Colin King wrote:
+> >> From: Colin Ian King <colin.king@canonical.com>
+> >>
+> >> The less than zero comparison of the u64 variable 'noise' is always
+> >> false because the variable is unsigned. Since the time_sub macro
+> >> can potentially return an -ve vale, make the variable a s64 to
+> >> fix the issue.
+> > 
+> > Ops! concurrent bug fixing.
+> 
+> Well, shows static analysis is doing it's thing and I'm not being
+> vigilant enough by spotting that Dan found it earlier :-)
 
-There is a potential path in function ep93xx_pwm_apply where ret is
-never assigned a value and it is checked for an error code. Fix this
-by ensuring ret is zero'd in the success path to avoid this issue.
+Nah.  I don't normally CC kernel-janitors on bug reports.  I sometimes
+do on netdev stuff because Dave told me ten years ago that static
+analysis noise on the list was an annoying thing.  And actually on that
+one I didn't CC anyone actually, Oops.
 
-Addresses-Coverity: ("Uninitialized scalar variable")
-Fixes: f6ef94edf0f6 ("pwm: ep93xx: Unfold legacy callbacks into ep93xx_pwm_apply()")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/pwm/pwm-ep93xx.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/pwm/pwm-ep93xx.c b/drivers/pwm/pwm-ep93xx.c
-index 70fa2957f9d3..8a3d781e6514 100644
---- a/drivers/pwm/pwm-ep93xx.c
-+++ b/drivers/pwm/pwm-ep93xx.c
-@@ -137,6 +137,7 @@ static int ep93xx_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
- 				writew(duty_cycles, base + EP93XX_PWMx_DUTY_CYCLE);
- 				writew(period_cycles, base + EP93XX_PWMx_TERM_COUNT);
- 			}
-+			ret = 0;
- 		} else {
- 			ret = -EINVAL;
- 		}
--- 
-2.31.1
+regards,
+dan carpenter
 
