@@ -2,104 +2,75 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.4 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03F5DC11F67
-	for <kernel-janitors@archiver.kernel.org>; Tue, 29 Jun 2021 18:55:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61E4AC11F67
+	for <kernel-janitors@archiver.kernel.org>; Tue, 29 Jun 2021 19:00:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C9FFA61D88
-	for <kernel-janitors@archiver.kernel.org>; Tue, 29 Jun 2021 18:55:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E85461DE7
+	for <kernel-janitors@archiver.kernel.org>; Tue, 29 Jun 2021 19:00:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234521AbhF2S6W (ORCPT
+        id S234343AbhF2TCc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 29 Jun 2021 14:58:22 -0400
-Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:35534 "EHLO
-        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233859AbhF2S6W (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 29 Jun 2021 14:58:22 -0400
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15TIkgPV027056;
-        Tue, 29 Jun 2021 18:55:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=Uez3zmCeo9MNeRjvJ2k7OPOSq3odxVfykahqSpzgico=;
- b=JxAQtA0rokHvkBWQtf4P4W+VTGJEZMA3prc6VqTFWqD0blSfT/+YQDrGJqyxSBjium3d
- ViZctl7+56KZgZlko101GG4dMVmkOF4UDX7RterIYnMvqW+BMi/D8QUbgXoyJEA1pfUM
- gcKNqeiPAWxi4toT43XWNcWjGtFrnW7FTYNTXLnvLjaIG0dsry7mCrnHJORgo86IS/3+
- l73PkfVvfiR5dX+rrJAH6Fm+lAluKrG+MAtM/4ESC34qmUycCWqXpfs4DKivVypAK8Tq
- HjppvOV4BohQ/kwiyf+o9lB7dMcCyd3JYJDuQ8z02WRzbWQt1dGpNArWYWTs5aFi8Lqy ZQ== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by mx0b-00069f02.pphosted.com with ESMTP id 39f174mhru-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 29 Jun 2021 18:55:24 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 15TIk5Md146027;
-        Tue, 29 Jun 2021 18:55:24 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by aserp3030.oracle.com with ESMTP id 39dt9febbt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 29 Jun 2021 18:55:24 +0000
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 15TItN2D174336;
-        Tue, 29 Jun 2021 18:55:23 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3030.oracle.com with ESMTP id 39dt9febax-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 29 Jun 2021 18:55:23 +0000
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 15TItLVo020629;
-        Tue, 29 Jun 2021 18:55:21 GMT
-Received: from kadam (/102.222.70.252)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 29 Jun 2021 11:55:20 -0700
-Date:   Tue, 29 Jun 2021 21:55:14 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Colin Ian King <colin.king@canonical.com>
-Cc:     Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>
-Subject: Re: [PATCH][next] trace: osnoise: Fix u64 less than zero comparison
-Message-ID: <20210629185513.GC1983@kadam>
-References: <20210629165245.42157-1-colin.king@canonical.com>
- <c74e711e-71c9-df9c-8406-b9e92ef12da0@redhat.com>
- <e36f61af-4fbe-42cf-f26d-229f940e8fc9@canonical.com>
+        Tue, 29 Jun 2021 15:02:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54720 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232094AbhF2TCb (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 29 Jun 2021 15:02:31 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPS id 2F25461DE5;
+        Tue, 29 Jun 2021 19:00:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1624993204;
+        bh=kHIQ9n74ASJOye2s0tXY0e89z9X+QDhc+t9+xuDVMYo=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=PYqxjTRmpub1yOWt3YEJgwUwufKmChO83fzQ+JfnD/Paj4CVlo+nfeJtx73X2/cbg
+         uNQcCzfrTeO8arOie3qvUFlzeFbpsM/6IC56YC5Dr1Qj/E0W/UrP6ktHnUlg4zHJEH
+         a2fZ5WohCRt9OYdq7vpdJ3mEA0QliDvaiyHeHDWS4RpklRSnfWfY0wGLPKpB2PAoY2
+         B0Hc+c6Y3aQrnnaK5N/Qwh4XaEGZWPpRxkwmLwXQ6cDUBPBIQU7p/+WtyJkV84BROD
+         flHiCAhov0CvGlrhzq87Et3Lepk+e9dOhWihUPdhAeTs3GvFNWV6939iLE96jF+DCQ
+         TIahV+krbfvQg==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e36f61af-4fbe-42cf-f26d-229f940e8fc9@canonical.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-GUID: DeMh1JNdm_WOGmIMMpKCkAIBZcWIScLp
-X-Proofpoint-ORIG-GUID: DeMh1JNdm_WOGmIMMpKCkAIBZcWIScLp
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] gve: DQO: Fix off by one in gve_rx_dqo()
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <162499320413.1879.5822204313483043178.git-patchwork-notify@kernel.org>
+Date:   Tue, 29 Jun 2021 19:00:04 +0000
+References: <YNrY6WwCYGoWMZZe@mwanda>
+In-Reply-To: <YNrY6WwCYGoWMZZe@mwanda>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     csully@google.com, bcf@google.com, sagis@google.com,
+        jonolson@google.com, davem@davemloft.net, kuba@kernel.org,
+        willemb@google.com, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Jun 29, 2021 at 06:21:32PM +0100, Colin Ian King wrote:
-> On 29/06/2021 18:19, Daniel Bristot de Oliveira wrote:
-> > On 6/29/21 6:52 PM, Colin King wrote:
-> >> From: Colin Ian King <colin.king@canonical.com>
-> >>
-> >> The less than zero comparison of the u64 variable 'noise' is always
-> >> false because the variable is unsigned. Since the time_sub macro
-> >> can potentially return an -ve vale, make the variable a s64 to
-> >> fix the issue.
-> > 
-> > Ops! concurrent bug fixing.
+Hello:
+
+This patch was applied to netdev/net-next.git (refs/heads/master):
+
+On Tue, 29 Jun 2021 11:25:13 +0300 you wrote:
+> The rx->dqo.buf_states[] array is allocated in gve_rx_alloc_ring_dqo()
+> and it has rx->dqo.num_buf_states so this > needs to >= to prevent an
+> out of bounds access.
 > 
-> Well, shows static analysis is doing it's thing and I'm not being
-> vigilant enough by spotting that Dan found it earlier :-)
+> Fixes: 9b8dd5e5ea48 ("gve: DQO: Add RX path")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> [...]
 
-Nah.  I don't normally CC kernel-janitors on bug reports.  I sometimes
-do on netdev stuff because Dave told me ten years ago that static
-analysis noise on the list was an annoying thing.  And actually on that
-one I didn't CC anyone actually, Oops.
+Here is the summary with links:
+  - [net-next] gve: DQO: Fix off by one in gve_rx_dqo()
+    https://git.kernel.org/netdev/net-next/c/ecd89c02da85
 
-regards,
-dan carpenter
+You are awesome, thank you!
+--
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
