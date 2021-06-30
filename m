@@ -2,121 +2,120 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.9 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9248DC11F68
-	for <kernel-janitors@archiver.kernel.org>; Wed, 30 Jun 2021 13:52:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48A3FC11F68
+	for <kernel-janitors@archiver.kernel.org>; Wed, 30 Jun 2021 14:05:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7CD2C61374
-	for <kernel-janitors@archiver.kernel.org>; Wed, 30 Jun 2021 13:52:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31F6E61437
+	for <kernel-janitors@archiver.kernel.org>; Wed, 30 Jun 2021 14:05:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236383AbhF3Nyl (ORCPT
+        id S235733AbhF3OIA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 30 Jun 2021 09:54:41 -0400
-Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:59022 "EHLO
-        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236109AbhF3Nwv (ORCPT
+        Wed, 30 Jun 2021 10:08:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49426 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235420AbhF3OHJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 30 Jun 2021 09:52:51 -0400
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15UDfXDh020892;
-        Wed, 30 Jun 2021 13:50:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=gxvmoy9Dm0QHZAcllLD8c4qXIakvoZbI9zBILnD+bQ8=;
- b=dnZqc6Id2cZlUwwfSn8igWkZqYpITmLpvZWecXdIueSN+yvdN5z/Jf29+Bx/LIhvz3VM
- 13hHTJvn7+O1K48sLkYzTnm26BByhLl21fRwF7OAFt2KnWqvLSlPUNfF1e0cByAQjEWz
- N40lZW03bOdyUQgvnsy5OlxzuL9/mylThedWF4KVE79r6saMBkwPqpIgF1Tu24lIHSJl
- xqWAoPyGqwsxs6n2IogRcQs5gHik7wX+2vlKGsPurdngHM+BZfAAsiprcebDI0qZUniM
- 8m8ZdFCbDpr1ze9IncrPY97NiG8+Xiy0M/tQuM6jINLrLbsD7b49TBh498r8Q/ehFBo/ rw== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by mx0b-00069f02.pphosted.com with ESMTP id 39gha4924c-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 30 Jun 2021 13:50:15 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 15UDo4K8008838;
-        Wed, 30 Jun 2021 13:50:13 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by userp3020.oracle.com with ESMTP id 39ee0x9ygt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 30 Jun 2021 13:50:13 +0000
-Received: from userp3020.oracle.com (userp3020.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 15UDo7Pk009175;
-        Wed, 30 Jun 2021 13:50:07 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3020.oracle.com with ESMTP id 39ee0x9y42-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 30 Jun 2021 13:50:06 +0000
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by aserv0121.oracle.com (8.14.4/8.14.4) with ESMTP id 15UDnph9006288;
-        Wed, 30 Jun 2021 13:49:52 GMT
-Received: from mwanda (/102.222.70.252)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 30 Jun 2021 06:49:51 -0700
-Date:   Wed, 30 Jun 2021 16:49:43 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Liam Beguin <lvb@xiphos.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] clk: lmk04832: fix checks for allocation failure
-Message-ID: <YNx2dyvB6MkVlsrl@mwanda>
+        Wed, 30 Jun 2021 10:07:09 -0400
+Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F5C1C0617A8;
+        Wed, 30 Jun 2021 07:04:16 -0700 (PDT)
+Received: by mail-lj1-x22c.google.com with SMTP id k21so3476965ljh.2;
+        Wed, 30 Jun 2021 07:04:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=57vYDWtaiAc9fCqO279XfLyvE20qvnTCvRyRXxlPmgg=;
+        b=jAyYP64udX37D3pFHoVvKXOKf/Y4VbO6LowSd9VeDV6VfPWc+bXfUK+PMkpepVH3Bp
+         jVP2gRZf2Etdvgc31YlomCyMWCnGxFQqN381nKXatw/zG9cdB/VZF7UxPXCQt2Zy0ZQ2
+         zXjeyK2E6OPn6xA4ohdg6vNymxpwtmHysVtPdu4WI45CTbsBG23WuuftbEJ9tQuqWplj
+         m728AUXnnlOTYzIseByCBXoJyXipeyZpjyOGaKTMuO2KDfEB8ssAp1NqsuZFyw4n1qGa
+         z4vbfOKitKRrO0sHtBNWVaZe6vvpGGWjZPy4Rb/OdWXCdcn2lMKlzygG4JSC6Aq3L3Rg
+         wT7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=57vYDWtaiAc9fCqO279XfLyvE20qvnTCvRyRXxlPmgg=;
+        b=po6iAWbTGhvZA6GszK5PlRAMJ7uyqWu404CNd3NERYJaMKP/R6p/2yA/st5FAqv4Q+
+         TJMKNPnZxH9LM0pxNyAKON/7CxtNkZPsiBmEJcBoz6oS+moUxAwH5yPBrUQ7uW9KnizE
+         qyJeFT2TRHyq9fLJzyPzry3jLCxc0f+koVyo7vy5vmIzk4rvDm6sS7NsMQJjdsMEwXcN
+         aOQzRAvotsXkoU+ZGWOObqEEUDciiF5GltWOVtO9JgYytNqc7RLhXybzUkU4WgLSeZZo
+         tckIUPCkV+DoViPH5vroO8BTcfaec3LKXI7znY9FjROiy9vx3dlzjVZFWLhT80kaf0C6
+         28vA==
+X-Gm-Message-State: AOAM531erhv/HBheqgz+funzK0Qdn8iMZTFg3OhUyjUJQ/eAa5mxJ3a/
+        V3K5RgxBkjF3qwbjW3kCWyoQ84WNeZp7CQRn
+X-Google-Smtp-Source: ABdhPJy/2s9U8czt+fFFdv6oHM3g32XncInGR8IEojZ5SGHDCn98TDgZkw4S+KzOn64r++ck2UAYNg==
+X-Received: by 2002:a2e:9c18:: with SMTP id s24mr2330139lji.249.1625061854376;
+        Wed, 30 Jun 2021 07:04:14 -0700 (PDT)
+Received: from [10.0.0.40] (91-155-111-71.elisa-laajakaista.fi. [91.155.111.71])
+        by smtp.gmail.com with ESMTPSA id o15sm1565990lfu.134.2021.06.30.07.04.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Jun 2021 07:04:13 -0700 (PDT)
+Subject: Re: [PATCH] ASoC: ti: delete some dead code in omap_abe_probe()
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Jarkko Nikula <jarkko.nikula@bitmer.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-omap@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <YNxTHXz58dhgbFtG@mwanda>
+From:   =?UTF-8?Q?P=c3=a9ter_Ujfalusi?= <peter.ujfalusi@gmail.com>
+Message-ID: <24479ba7-6fc3-fce1-735d-b611d056412e@gmail.com>
+Date:   Wed, 30 Jun 2021 17:04:15 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-X-Proofpoint-ORIG-GUID: 7J7-hZDfLzB_7yS3cx_hlf0_RpupVvCF
-X-Proofpoint-GUID: 7J7-hZDfLzB_7yS3cx_hlf0_RpupVvCF
+In-Reply-To: <YNxTHXz58dhgbFtG@mwanda>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The devm_kcalloc() function returns NULL on error, it never returns
-error pointers so these conditions need to be fixed.
 
-Fixes: 3bc61cfd6f4a ("clk: add support for the lmk04832")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/clk/clk-lmk04832.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/clk/clk-lmk04832.c b/drivers/clk/clk-lmk04832.c
-index 0cd76e626c3d..66ad5cbe7029 100644
---- a/drivers/clk/clk-lmk04832.c
-+++ b/drivers/clk/clk-lmk04832.c
-@@ -1425,23 +1425,23 @@ static int lmk04832_probe(struct spi_device *spi)
- 
- 	lmk->dclk = devm_kcalloc(lmk->dev, info->num_channels >> 1,
- 				 sizeof(struct lmk_dclk), GFP_KERNEL);
--	if (IS_ERR(lmk->dclk)) {
--		ret = PTR_ERR(lmk->dclk);
-+	if (!lmk->dclk) {
-+		ret = -ENOMEM;
- 		goto err_disable_oscin;
- 	}
- 
- 	lmk->clkout = devm_kcalloc(lmk->dev, info->num_channels,
- 				   sizeof(*lmk->clkout), GFP_KERNEL);
--	if (IS_ERR(lmk->clkout)) {
--		ret = PTR_ERR(lmk->clkout);
-+	if (!lmk->clkout) {
-+		ret = -ENOMEM;
- 		goto err_disable_oscin;
- 	}
- 
- 	lmk->clk_data = devm_kzalloc(lmk->dev, struct_size(lmk->clk_data, hws,
- 							   info->num_channels),
- 				     GFP_KERNEL);
--	if (IS_ERR(lmk->clk_data)) {
--		ret = PTR_ERR(lmk->clk_data);
-+	if (!lmk->clk_data) {
-+		ret = -ENOMEM;
- 		goto err_disable_oscin;
- 	}
- 
+On 30/06/2021 14:18, Dan Carpenter wrote:
+> This code checks "priv->mclk_freq" twice and the second check is not
+> required.  The code is left over from when removed support for legacy
+> boot.
+
+Good find, thank you!
+
+Acked-by: Peter Ujfalusi <peter.ujfalusi@gmail.com>
+
+> Fixes: 8fe120b5a665 ("ASoC: omap-abe-twl6040: Remove support for pdata (legacy boot)")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  sound/soc/ti/omap-abe-twl6040.c | 5 -----
+>  1 file changed, 5 deletions(-)
+> 
+> diff --git a/sound/soc/ti/omap-abe-twl6040.c b/sound/soc/ti/omap-abe-twl6040.c
+> index 91cc9a4f44d7..2e3d1eea77c1 100644
+> --- a/sound/soc/ti/omap-abe-twl6040.c
+> +++ b/sound/soc/ti/omap-abe-twl6040.c
+> @@ -292,11 +292,6 @@ static int omap_abe_probe(struct platform_device *pdev)
+>  
+>  	card->fully_routed = 1;
+>  
+> -	if (!priv->mclk_freq) {
+> -		dev_err(&pdev->dev, "MCLK frequency missing\n");
+> -		return -ENODEV;
+> -	}
+> -
+>  	card->dai_link = priv->dai_links;
+>  	card->num_links = num_links;
+>  
+> 
+
 -- 
-2.30.2
-
+Péter
