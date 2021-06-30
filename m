@@ -2,99 +2,106 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-15.9 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 223FDC11F65
-	for <kernel-janitors@archiver.kernel.org>; Wed, 30 Jun 2021 13:32:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55F1BC11F76
+	for <kernel-janitors@archiver.kernel.org>; Wed, 30 Jun 2021 13:47:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0CCC2613DC
-	for <kernel-janitors@archiver.kernel.org>; Wed, 30 Jun 2021 13:32:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CBE361437
+	for <kernel-janitors@archiver.kernel.org>; Wed, 30 Jun 2021 13:47:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234768AbhF3NfJ (ORCPT
+        id S235126AbhF3Ntq (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 30 Jun 2021 09:35:09 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:55580 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234882AbhF3NfH (ORCPT
+        Wed, 30 Jun 2021 09:49:46 -0400
+Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:21038 "EHLO
+        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235039AbhF3Ntp (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 30 Jun 2021 09:35:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1625059957;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=B29ak5IExuV5xQ1UDepJEEmvvBRdoZ1X4KzbA2i8hEA=;
-        b=RkYILSBCb6t5tgujBehohOGsQrD64RpXL0lJaXDHah3aGAqHFC8/Pp3TAHrCcqDkKfkWlT
-        NUf+GRz/p/mZ56phGl35bcf40vJj/u2qtRgeSW2Qcc/IGWjy52xC6//YNQ1VRp6dUlSrDQ
-        dZtmEQ+tBgJ3kzi1/A34tgV735ml+Hc=
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
- [209.85.208.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-518-7mb3zk_uMdOI2TyCJymXEA-1; Wed, 30 Jun 2021 09:32:36 -0400
-X-MC-Unique: 7mb3zk_uMdOI2TyCJymXEA-1
-Received: by mail-ed1-f70.google.com with SMTP id ee28-20020a056402291cb0290394a9a0bfaeso1173999edb.6
-        for <kernel-janitors@vger.kernel.org>; Wed, 30 Jun 2021 06:32:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=B29ak5IExuV5xQ1UDepJEEmvvBRdoZ1X4KzbA2i8hEA=;
-        b=efGhmHfxM92iITaerCBaCZtDfisMRv453ZSGauiX8w2BicSI+F5uJwYvX1vJXrCnhZ
-         6uaNX0pNurWif2Dl9Cozp1OP2bY0TK2XfxW7Kl6bicIF4xAvqDj8QbMxTEQfbPn69KzA
-         8j0zFW8TFsD/kjGBhinJnmcHOu1DFO8y7r1GhWw0Jg6QkkmQ6XRaNAm+K+Jfz8VFunyL
-         G4aIvsSNOrinasRG8YEcFrtDO6oG0+NsHYIRef9w/8NdrFeCI6C45Zufg8lH6kjFnrOA
-         vPzJXJFeQFybvSQ3tq2A9UJ5cSocyOpYNsurGn0jgLpdgf+X2Ix4wurV0Z8bbSbIwJiz
-         0K/A==
-X-Gm-Message-State: AOAM533EXNjzHnNAdwkYcjnYY0PNGvyDwjUeonWsCFh2WQU+unHk9pX4
-        LL97XtkhAez9RIRc3APiQDJqovENzNKL68xFIFisest+YEHRvm0hwAQKDynAuURx0AeVjJ9BJbf
-        ZwQIwKJR5eSxqpATizM+ngJWrBRuF
-X-Received: by 2002:a17:906:dbec:: with SMTP id yd12mr34810483ejb.102.1625059955163;
-        Wed, 30 Jun 2021 06:32:35 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzQ5GhWHaEAX58lymQvyY8OwdxenbawrCEZf5DE+XckN7hrGGFvvP7XTqTStlpUqZk2fj1vcQ==
-X-Received: by 2002:a17:906:dbec:: with SMTP id yd12mr34810464ejb.102.1625059954972;
-        Wed, 30 Jun 2021 06:32:34 -0700 (PDT)
-Received: from x1.bristot.me (host-79-46-33-140.retail.telecomitalia.it. [79.46.33.140])
-        by smtp.gmail.com with ESMTPSA id q5sm9396081ejc.117.2021.06.30.06.32.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Jun 2021 06:32:34 -0700 (PDT)
-Subject: Re: [PATCH][next] trace: osnoise: Fix u64 less than zero comparison
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Colin King <colin.king@canonical.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Ingo Molnar <mingo@redhat.com>
-References: <20210629165245.42157-1-colin.king@canonical.com>
- <c74e711e-71c9-df9c-8406-b9e92ef12da0@redhat.com>
- <20210630090544.13c0a4df@oasis.local.home>
-From:   Daniel Bristot de Oliveira <bristot@redhat.com>
-Message-ID: <2b6cf10b-d1e1-d0a4-f27e-79625d55e6c9@redhat.com>
-Date:   Wed, 30 Jun 2021 15:32:32 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Wed, 30 Jun 2021 09:49:45 -0400
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15UDgnuw001791;
+        Wed, 30 Jun 2021 13:47:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
+ bh=z+LDutZH0urZ87b+8AQ/NNjQzIHfjBaCRTM6UUAttgU=;
+ b=okChKBybudDzRdcGK6YQVHExedY1tyJyq7Mn/aRg445Q4pzCamhmmavmAedSWKGzqxaF
+ 9TllbC7seVM0eLIodVBQ1KIG9xdm4SNtOAZ7LsVro9jJJAy+zgECmF0LYLnOsTj0LR2c
+ CtNTNa8dOxNKVP4rSX3d9Czu8IrEpSGNtyfM+S21tkKLucPz1bToqgyVCVAaJoDXxBle
+ JzbTm2mq363zxIaw5EUfCV08OtM5zpWPJUiBneSw90jaNZ/hbpv5ui1RjBjLLTeMiStU
+ lOOJoKNdYZRH/mO77AyccHMIkGpa3lyIPysXAVEx8fo1RZS6iXweOwNGy8MBS2KuHMO/ HA== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by mx0b-00069f02.pphosted.com with ESMTP id 39gguq1254-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 30 Jun 2021 13:47:07 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 15UDe59C071080;
+        Wed, 30 Jun 2021 13:47:06 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by aserp3030.oracle.com with ESMTP id 39dt9h4jx6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 30 Jun 2021 13:47:06 +0000
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 15UDl5Mm100976;
+        Wed, 30 Jun 2021 13:47:05 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 39dt9h4jwr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 30 Jun 2021 13:47:05 +0000
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 15UDl4Vm024783;
+        Wed, 30 Jun 2021 13:47:04 GMT
+Received: from mwanda (/102.222.70.252)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 30 Jun 2021 06:47:03 -0700
+Date:   Wed, 30 Jun 2021 16:46:51 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Lee Jones <lee.jones@linaro.org>, linux-pwm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] pwm: ep93xx: Fix uninitialized variable bug in
+ ep93xx_pwm_apply()
+Message-ID: <YNx1y8PlSLehZVIY@mwanda>
 MIME-Version: 1.0
-In-Reply-To: <20210630090544.13c0a4df@oasis.local.home>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+X-Proofpoint-ORIG-GUID: jnggKSkJ1roDwESKAcPbsCmeJqVJyvbP
+X-Proofpoint-GUID: jnggKSkJ1roDwESKAcPbsCmeJqVJyvbP
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 6/30/21 3:05 PM, Steven Rostedt wrote:
-> On Tue, 29 Jun 2021 19:19:25 +0200
-> Daniel Bristot de Oliveira <bristot@redhat.com> wrote:
-> 
->>> Addresses-Coverity: ("Unsigned compared against 0")
->>> Fixes: bce29ac9ce0b ("trace: Add osnoise tracer")
->>> Signed-off-by: Colin Ian King <colin.king@canonical.com>  
->> Steven, can we merge the flags?
-> I don't usually do that. 
+Smatch found a potential uninitialized variable in ep93xx_pwm_apply():
 
-Ack!
+    drivers/pwm/pwm-ep93xx.c:147 ep93xx_pwm_apply()
+    error: uninitialized symbol 'ret'.
 
--- Daniel
+Initialize "ret" to zero at the start to solve this issue.
+
+Fixes: f6ef94edf0f6 ("pwm: ep93xx: Unfold legacy callbacks into ep93xx_pwm_apply()")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/pwm/pwm-ep93xx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pwm/pwm-ep93xx.c b/drivers/pwm/pwm-ep93xx.c
+index 70fa2957f9d3..ffa79248c1e1 100644
+--- a/drivers/pwm/pwm-ep93xx.c
++++ b/drivers/pwm/pwm-ep93xx.c
+@@ -61,7 +61,7 @@ static void ep93xx_pwm_free(struct pwm_chip *chip, struct pwm_device *pwm)
+ static int ep93xx_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+ 			    const struct pwm_state *state)
+ {
+-	int ret;
++	int ret = 0;
+ 	struct ep93xx_pwm *ep93xx_pwm = to_ep93xx_pwm(chip);
+ 	bool enabled = state->enabled;
+ 
+-- 
+2.30.2
 
