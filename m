@@ -2,120 +2,93 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48A3FC11F68
-	for <kernel-janitors@archiver.kernel.org>; Wed, 30 Jun 2021 14:05:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AF3BC11F68
+	for <kernel-janitors@archiver.kernel.org>; Wed, 30 Jun 2021 15:36:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 31F6E61437
-	for <kernel-janitors@archiver.kernel.org>; Wed, 30 Jun 2021 14:05:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EEC7461466
+	for <kernel-janitors@archiver.kernel.org>; Wed, 30 Jun 2021 15:36:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235733AbhF3OIA (ORCPT
+        id S235836AbhF3Pil (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 30 Jun 2021 10:08:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49426 "EHLO
+        Wed, 30 Jun 2021 11:38:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41760 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235420AbhF3OHJ (ORCPT
+        with ESMTP id S235466AbhF3Pik (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 30 Jun 2021 10:07:09 -0400
-Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F5C1C0617A8;
-        Wed, 30 Jun 2021 07:04:16 -0700 (PDT)
-Received: by mail-lj1-x22c.google.com with SMTP id k21so3476965ljh.2;
-        Wed, 30 Jun 2021 07:04:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=57vYDWtaiAc9fCqO279XfLyvE20qvnTCvRyRXxlPmgg=;
-        b=jAyYP64udX37D3pFHoVvKXOKf/Y4VbO6LowSd9VeDV6VfPWc+bXfUK+PMkpepVH3Bp
-         jVP2gRZf2Etdvgc31YlomCyMWCnGxFQqN381nKXatw/zG9cdB/VZF7UxPXCQt2Zy0ZQ2
-         zXjeyK2E6OPn6xA4ohdg6vNymxpwtmHysVtPdu4WI45CTbsBG23WuuftbEJ9tQuqWplj
-         m728AUXnnlOTYzIseByCBXoJyXipeyZpjyOGaKTMuO2KDfEB8ssAp1NqsuZFyw4n1qGa
-         z4vbfOKitKRrO0sHtBNWVaZe6vvpGGWjZPy4Rb/OdWXCdcn2lMKlzygG4JSC6Aq3L3Rg
-         wT7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=57vYDWtaiAc9fCqO279XfLyvE20qvnTCvRyRXxlPmgg=;
-        b=po6iAWbTGhvZA6GszK5PlRAMJ7uyqWu404CNd3NERYJaMKP/R6p/2yA/st5FAqv4Q+
-         TJMKNPnZxH9LM0pxNyAKON/7CxtNkZPsiBmEJcBoz6oS+moUxAwH5yPBrUQ7uW9KnizE
-         qyJeFT2TRHyq9fLJzyPzry3jLCxc0f+koVyo7vy5vmIzk4rvDm6sS7NsMQJjdsMEwXcN
-         aOQzRAvotsXkoU+ZGWOObqEEUDciiF5GltWOVtO9JgYytNqc7RLhXybzUkU4WgLSeZZo
-         tckIUPCkV+DoViPH5vroO8BTcfaec3LKXI7znY9FjROiy9vx3dlzjVZFWLhT80kaf0C6
-         28vA==
-X-Gm-Message-State: AOAM531erhv/HBheqgz+funzK0Qdn8iMZTFg3OhUyjUJQ/eAa5mxJ3a/
-        V3K5RgxBkjF3qwbjW3kCWyoQ84WNeZp7CQRn
-X-Google-Smtp-Source: ABdhPJy/2s9U8czt+fFFdv6oHM3g32XncInGR8IEojZ5SGHDCn98TDgZkw4S+KzOn64r++ck2UAYNg==
-X-Received: by 2002:a2e:9c18:: with SMTP id s24mr2330139lji.249.1625061854376;
-        Wed, 30 Jun 2021 07:04:14 -0700 (PDT)
-Received: from [10.0.0.40] (91-155-111-71.elisa-laajakaista.fi. [91.155.111.71])
-        by smtp.gmail.com with ESMTPSA id o15sm1565990lfu.134.2021.06.30.07.04.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Jun 2021 07:04:13 -0700 (PDT)
-Subject: Re: [PATCH] ASoC: ti: delete some dead code in omap_abe_probe()
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Jarkko Nikula <jarkko.nikula@bitmer.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        linux-omap@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <YNxTHXz58dhgbFtG@mwanda>
-From:   =?UTF-8?Q?P=c3=a9ter_Ujfalusi?= <peter.ujfalusi@gmail.com>
-Message-ID: <24479ba7-6fc3-fce1-735d-b611d056412e@gmail.com>
-Date:   Wed, 30 Jun 2021 17:04:15 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Wed, 30 Jun 2021 11:38:40 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9AAFC061756
+        for <kernel-janitors@vger.kernel.org>; Wed, 30 Jun 2021 08:36:11 -0700 (PDT)
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1lycFw-0005CI-LS; Wed, 30 Jun 2021 17:36:04 +0200
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1lycFu-0003fc-Gl; Wed, 30 Jun 2021 17:36:02 +0200
+Date:   Wed, 30 Jun 2021 17:36:00 +0200
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Colin King <colin.king@canonical.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>, linux-pwm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] pwm: ep93xx: Fix uninitialized variable bug in
+ ep93xx_pwm_apply()
+Message-ID: <20210630153600.327ff7vcrx76lw26@pengutronix.de>
+References: <YNx1y8PlSLehZVIY@mwanda>
 MIME-Version: 1.0
-In-Reply-To: <YNxTHXz58dhgbFtG@mwanda>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="vphn4jk3p3wcvnpg"
+Content-Disposition: inline
+In-Reply-To: <YNx1y8PlSLehZVIY@mwanda>
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 
+--vphn4jk3p3wcvnpg
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 30/06/2021 14:18, Dan Carpenter wrote:
-> This code checks "priv->mclk_freq" twice and the second check is not
-> required.  The code is left over from when removed support for legacy
-> boot.
+Hello,
 
-Good find, thank you!
+this problem was found already earlier by Colin King:
 
-Acked-by: Peter Ujfalusi <peter.ujfalusi@gmail.com>
+	https://lore.kernel.org/r/20210629172253.43131-1-colin.king@canonical.com
 
-> Fixes: 8fe120b5a665 ("ASoC: omap-abe-twl6040: Remove support for pdata (legacy boot)")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  sound/soc/ti/omap-abe-twl6040.c | 5 -----
->  1 file changed, 5 deletions(-)
-> 
-> diff --git a/sound/soc/ti/omap-abe-twl6040.c b/sound/soc/ti/omap-abe-twl6040.c
-> index 91cc9a4f44d7..2e3d1eea77c1 100644
-> --- a/sound/soc/ti/omap-abe-twl6040.c
-> +++ b/sound/soc/ti/omap-abe-twl6040.c
-> @@ -292,11 +292,6 @@ static int omap_abe_probe(struct platform_device *pdev)
->  
->  	card->fully_routed = 1;
->  
-> -	if (!priv->mclk_freq) {
-> -		dev_err(&pdev->dev, "MCLK frequency missing\n");
-> -		return -ENODEV;
-> -	}
-> -
->  	card->dai_link = priv->dai_links;
->  	card->num_links = num_links;
->  
-> 
+I'm fine with either change.
 
--- 
-Péter
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--vphn4jk3p3wcvnpg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmDcj10ACgkQwfwUeK3K
+7AmM7wf/e97AoCAkzfOVrEkGepxK6NtmYvP59bREHrSkc6WWjRtwhe2PoHG/IzdH
+aDSuq2c0fk3SAcfocPBHKg87iTOPR6sQb/f853pze5fdURgJy46DzcRT1bEjnXlf
+0iSbHWiLmtYQVfidvopKrazQz/6OPxpm+1NLH6Qsia7YxZhaO/9XHJPQuXIQphq0
+zfnr8jHnB25yuo32GCMb1lQg4poOVvLXpIY1IWME910jn8JT9/Ui8lUiN1bIkR9d
+Hkksrq+KLHFa+opJLcLg2D9V8Y+gXycS3xmm0XU3EyUJrJc11ZPFiPgfGXl3i+Xr
+ar3u5ALK5GVQG+QhxSQMC4AY/JJWIw==
+=12r2
+-----END PGP SIGNATURE-----
+
+--vphn4jk3p3wcvnpg--
