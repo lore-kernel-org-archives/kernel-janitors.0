@@ -5,102 +5,117 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.9 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+	UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55F1BC11F76
-	for <kernel-janitors@archiver.kernel.org>; Wed, 30 Jun 2021 13:47:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9248DC11F68
+	for <kernel-janitors@archiver.kernel.org>; Wed, 30 Jun 2021 13:52:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3CBE361437
-	for <kernel-janitors@archiver.kernel.org>; Wed, 30 Jun 2021 13:47:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CD2C61374
+	for <kernel-janitors@archiver.kernel.org>; Wed, 30 Jun 2021 13:52:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235126AbhF3Ntq (ORCPT
+        id S236383AbhF3Nyl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 30 Jun 2021 09:49:46 -0400
-Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:21038 "EHLO
-        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235039AbhF3Ntp (ORCPT
+        Wed, 30 Jun 2021 09:54:41 -0400
+Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:59022 "EHLO
+        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S236109AbhF3Nwv (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 30 Jun 2021 09:49:45 -0400
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15UDgnuw001791;
-        Wed, 30 Jun 2021 13:47:07 GMT
+        Wed, 30 Jun 2021 09:52:51 -0400
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15UDfXDh020892;
+        Wed, 30 Jun 2021 13:50:15 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
  : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=z+LDutZH0urZ87b+8AQ/NNjQzIHfjBaCRTM6UUAttgU=;
- b=okChKBybudDzRdcGK6YQVHExedY1tyJyq7Mn/aRg445Q4pzCamhmmavmAedSWKGzqxaF
- 9TllbC7seVM0eLIodVBQ1KIG9xdm4SNtOAZ7LsVro9jJJAy+zgECmF0LYLnOsTj0LR2c
- CtNTNa8dOxNKVP4rSX3d9Czu8IrEpSGNtyfM+S21tkKLucPz1bToqgyVCVAaJoDXxBle
- JzbTm2mq363zxIaw5EUfCV08OtM5zpWPJUiBneSw90jaNZ/hbpv5ui1RjBjLLTeMiStU
- lOOJoKNdYZRH/mO77AyccHMIkGpa3lyIPysXAVEx8fo1RZS6iXweOwNGy8MBS2KuHMO/ HA== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by mx0b-00069f02.pphosted.com with ESMTP id 39gguq1254-1
+ bh=gxvmoy9Dm0QHZAcllLD8c4qXIakvoZbI9zBILnD+bQ8=;
+ b=dnZqc6Id2cZlUwwfSn8igWkZqYpITmLpvZWecXdIueSN+yvdN5z/Jf29+Bx/LIhvz3VM
+ 13hHTJvn7+O1K48sLkYzTnm26BByhLl21fRwF7OAFt2KnWqvLSlPUNfF1e0cByAQjEWz
+ N40lZW03bOdyUQgvnsy5OlxzuL9/mylThedWF4KVE79r6saMBkwPqpIgF1Tu24lIHSJl
+ xqWAoPyGqwsxs6n2IogRcQs5gHik7wX+2vlKGsPurdngHM+BZfAAsiprcebDI0qZUniM
+ 8m8ZdFCbDpr1ze9IncrPY97NiG8+Xiy0M/tQuM6jINLrLbsD7b49TBh498r8Q/ehFBo/ rw== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by mx0b-00069f02.pphosted.com with ESMTP id 39gha4924c-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 30 Jun 2021 13:47:07 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 15UDe59C071080;
-        Wed, 30 Jun 2021 13:47:06 GMT
+        Wed, 30 Jun 2021 13:50:15 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 15UDo4K8008838;
+        Wed, 30 Jun 2021 13:50:13 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-        by aserp3030.oracle.com with ESMTP id 39dt9h4jx6-1
+        by userp3020.oracle.com with ESMTP id 39ee0x9ygt-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 30 Jun 2021 13:47:06 +0000
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 15UDl5Mm100976;
-        Wed, 30 Jun 2021 13:47:05 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3030.oracle.com with ESMTP id 39dt9h4jwr-1
+        Wed, 30 Jun 2021 13:50:13 +0000
+Received: from userp3020.oracle.com (userp3020.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 15UDo7Pk009175;
+        Wed, 30 Jun 2021 13:50:07 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3020.oracle.com with ESMTP id 39ee0x9y42-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 30 Jun 2021 13:47:05 +0000
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 15UDl4Vm024783;
-        Wed, 30 Jun 2021 13:47:04 GMT
+        Wed, 30 Jun 2021 13:50:06 +0000
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by aserv0121.oracle.com (8.14.4/8.14.4) with ESMTP id 15UDnph9006288;
+        Wed, 30 Jun 2021 13:49:52 GMT
 Received: from mwanda (/102.222.70.252)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 30 Jun 2021 06:47:03 -0700
-Date:   Wed, 30 Jun 2021 16:46:51 +0300
+        with ESMTP ; Wed, 30 Jun 2021 06:49:51 -0700
+Date:   Wed, 30 Jun 2021 16:49:43 +0300
 From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Lee Jones <lee.jones@linaro.org>, linux-pwm@vger.kernel.org,
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Liam Beguin <lvb@xiphos.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] pwm: ep93xx: Fix uninitialized variable bug in
- ep93xx_pwm_apply()
-Message-ID: <YNx1y8PlSLehZVIY@mwanda>
+Subject: [PATCH] clk: lmk04832: fix checks for allocation failure
+Message-ID: <YNx2dyvB6MkVlsrl@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
-X-Proofpoint-ORIG-GUID: jnggKSkJ1roDwESKAcPbsCmeJqVJyvbP
-X-Proofpoint-GUID: jnggKSkJ1roDwESKAcPbsCmeJqVJyvbP
+X-Proofpoint-ORIG-GUID: 7J7-hZDfLzB_7yS3cx_hlf0_RpupVvCF
+X-Proofpoint-GUID: 7J7-hZDfLzB_7yS3cx_hlf0_RpupVvCF
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Smatch found a potential uninitialized variable in ep93xx_pwm_apply():
+The devm_kcalloc() function returns NULL on error, it never returns
+error pointers so these conditions need to be fixed.
 
-    drivers/pwm/pwm-ep93xx.c:147 ep93xx_pwm_apply()
-    error: uninitialized symbol 'ret'.
-
-Initialize "ret" to zero at the start to solve this issue.
-
-Fixes: f6ef94edf0f6 ("pwm: ep93xx: Unfold legacy callbacks into ep93xx_pwm_apply()")
+Fixes: 3bc61cfd6f4a ("clk: add support for the lmk04832")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/pwm/pwm-ep93xx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/clk-lmk04832.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/pwm/pwm-ep93xx.c b/drivers/pwm/pwm-ep93xx.c
-index 70fa2957f9d3..ffa79248c1e1 100644
---- a/drivers/pwm/pwm-ep93xx.c
-+++ b/drivers/pwm/pwm-ep93xx.c
-@@ -61,7 +61,7 @@ static void ep93xx_pwm_free(struct pwm_chip *chip, struct pwm_device *pwm)
- static int ep93xx_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
- 			    const struct pwm_state *state)
- {
--	int ret;
-+	int ret = 0;
- 	struct ep93xx_pwm *ep93xx_pwm = to_ep93xx_pwm(chip);
- 	bool enabled = state->enabled;
+diff --git a/drivers/clk/clk-lmk04832.c b/drivers/clk/clk-lmk04832.c
+index 0cd76e626c3d..66ad5cbe7029 100644
+--- a/drivers/clk/clk-lmk04832.c
++++ b/drivers/clk/clk-lmk04832.c
+@@ -1425,23 +1425,23 @@ static int lmk04832_probe(struct spi_device *spi)
+ 
+ 	lmk->dclk = devm_kcalloc(lmk->dev, info->num_channels >> 1,
+ 				 sizeof(struct lmk_dclk), GFP_KERNEL);
+-	if (IS_ERR(lmk->dclk)) {
+-		ret = PTR_ERR(lmk->dclk);
++	if (!lmk->dclk) {
++		ret = -ENOMEM;
+ 		goto err_disable_oscin;
+ 	}
+ 
+ 	lmk->clkout = devm_kcalloc(lmk->dev, info->num_channels,
+ 				   sizeof(*lmk->clkout), GFP_KERNEL);
+-	if (IS_ERR(lmk->clkout)) {
+-		ret = PTR_ERR(lmk->clkout);
++	if (!lmk->clkout) {
++		ret = -ENOMEM;
+ 		goto err_disable_oscin;
+ 	}
+ 
+ 	lmk->clk_data = devm_kzalloc(lmk->dev, struct_size(lmk->clk_data, hws,
+ 							   info->num_channels),
+ 				     GFP_KERNEL);
+-	if (IS_ERR(lmk->clk_data)) {
+-		ret = PTR_ERR(lmk->clk_data);
++	if (!lmk->clk_data) {
++		ret = -ENOMEM;
+ 		goto err_disable_oscin;
+ 	}
  
 -- 
 2.30.2
