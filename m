@@ -5,61 +5,62 @@ X-Spam-Level:
 X-Spam-Status: No, score=-23.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B419C11F64
-	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Jul 2021 20:32:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F8BDC11F64
+	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Jul 2021 20:34:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 18B2D61263
-	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Jul 2021 20:32:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60F17613FB
+	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Jul 2021 20:34:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236010AbhGAUeJ (ORCPT
+        id S236388AbhGAUgt (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 1 Jul 2021 16:34:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57890 "EHLO
+        Thu, 1 Jul 2021 16:36:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235995AbhGAUeI (ORCPT
+        with ESMTP id S236356AbhGAUgt (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 1 Jul 2021 16:34:08 -0400
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C242C061764
-        for <kernel-janitors@vger.kernel.org>; Thu,  1 Jul 2021 13:31:36 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id a15so14071003lfr.6
-        for <kernel-janitors@vger.kernel.org>; Thu, 01 Jul 2021 13:31:36 -0700 (PDT)
+        Thu, 1 Jul 2021 16:36:49 -0400
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F2A5C061764
+        for <kernel-janitors@vger.kernel.org>; Thu,  1 Jul 2021 13:34:16 -0700 (PDT)
+Received: by mail-lj1-x230.google.com with SMTP id h6so10226932ljl.8
+        for <kernel-janitors@vger.kernel.org>; Thu, 01 Jul 2021 13:34:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=IIqiTHzvPeiEeTMDYxBD0+2ajqNYadEaJR3wIFIk5BI=;
-        b=as3k7HeJ7RWliEFqiLEQpPMum0otGZnYZUo51Xg+QYAp6caHf+/jTcAPvrHctTe651
-         eIBM2DOmqj8gxn5Dci1nsUGBjzi7wTE1xXbmw5h78e5++1GmFvbp3J8lv63UwZAsf6Ev
-         87Rz3v29NQ1My+XXslx3QCqbFXL7T+Ftiv9Vg3e190XYhRztREK/WrGBKkvq4KJyHgg3
-         2dPci++JR3wliN+DOlyLhZUnMkFvq2P2+txpK6EozsT79V8QRaUI37GuWEW2fAPwnoFl
-         x/ZdcMSUeY5A41pgmnT/rlgDe3oJS+sg73oNyBxRJIoUfdr6o9Vnux0vTFPYSy/nrGDX
-         pLNA==
+        bh=LMMTpunk2rCY31/itiEgvN4IOL4r5+Mqwa9/O4MKcGk=;
+        b=iUtWrJWg8vB/1Z560py1lFcKOiE+AKpkTVqxbYO0senY7UUa+tTV30pIWsx6stA3B8
+         HUSTPJC3htDuwxtdvw3HYctOIW3vxp53ItnI41pKocoqhJ2bxuz3GXfo9lK1Ka1h7zTO
+         EdnrfRt8Gv74bxgHfm+CCZje+pihTV6ZYxCOhlgKkWVsa/amhVi26SaRNCEupQbbHcRf
+         8s3aiOWCxUjzNUupHRPCmCy10jp/ZY+lYdC/y7tuZZm2ESWeaEXq5Y9zChAMiTHU15tE
+         CQR5bJgG1n4HPp/HeyHnsRNLBi28aKqo0dhhyPmy3xbgcFZyCWPBk+eIuwNz5G90xWSe
+         AGzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=IIqiTHzvPeiEeTMDYxBD0+2ajqNYadEaJR3wIFIk5BI=;
-        b=oAbOQJTd7qxcKmyGAABPD6x/iZdrpffPlOV+gyfAC2rHaszah9uCmCGse2K+9/gIG0
-         vOWpACXfEoYjjUlKaLe4HlrVD6yN/5Pw4inhv80fOnkFR2qHBu/CY2bDy9WS4VLPDshf
-         YH8IXjLoRD3g8HjCWaNgAO6HjQwDFyjtRAOrdebX8KhB6dPEfOo+TT0zpG8/SfIJIXsW
-         VuON3P9plXI6C596Hs/RbBoCucamuFs8682K/ThbJCGpejO1uNSn/RSBaXQBUtEE8wXC
-         aASoLTvyKnEk6I0/RWj9C1f1U5SzX3nRdq5NeciujDrehkiGujCQvRxcNiIjiRM3q/1q
-         06hw==
-X-Gm-Message-State: AOAM533PAIbIH6yaVUNGGdaA3ajxk7dqoReRmfzY42dfIxrP42PU79TY
-        dCdqPdm1lg8KAE38uAWj/CF7Z6RhnfadIImiTG9lHw==
-X-Google-Smtp-Source: ABdhPJzPRISLX9bFvv96SpCwfJRfNJxbsLpLaGY7HN/9msigZ2lAicrh9p1LsfjuohprWcJWUGExVDXP1/Pw5xJb3eQ=
-X-Received: by 2002:ac2:5519:: with SMTP id j25mr1095541lfk.431.1625171494324;
- Thu, 01 Jul 2021 13:31:34 -0700 (PDT)
+        bh=LMMTpunk2rCY31/itiEgvN4IOL4r5+Mqwa9/O4MKcGk=;
+        b=flvqmcFiG3X8+11ZZEZzG6WvMaOoTbc4N7Fh4shy57lmHZhQQr0yLNkehCsE5zLbQd
+         sH3feEv/N+qctamzNe/uEgvKk9ekCx+Ng4CvfFAuRk/6YFR+6nNzp18pj+kpDpG8oXSw
+         mj9V7G0DZutJFJvdsuZDwl/ojthcve0cp6uxx8+YD0HdAbsUpB2Fe/0/Fckkp8LZwd6m
+         g/McnOKOC/sXtBn1uhBvzwPe2MS6Ph19MycmJ9/g8siuMM2u2cjmFvjAnAmZ8HAKA49e
+         Hb77V/WIvPCXK3DKq6K/G4+R07Xriz3pAjoT6f/bmIenL79wBydJzx+5lb9naruOWnRE
+         FrpA==
+X-Gm-Message-State: AOAM533SB1J3FG24TVCcYbZbiIWNScA6kTyAaElAQtmwpji05ZU5Snv7
+        QXrvGFKK56yZc+QvVVmiTv5IMHoy1wqtSYZnBhvUFQ==
+X-Google-Smtp-Source: ABdhPJwq8trRBKUDEGBZw1/PLvi4+9lccj2M21zGmy72qGV+weTWBPo4kUOoRMab4y9/E20e8wEFKIm19jzLq5gf7RE=
+X-Received: by 2002:a05:651c:b12:: with SMTP id b18mr1060720ljr.260.1625171654416;
+ Thu, 01 Jul 2021 13:34:14 -0700 (PDT)
 MIME-Version: 1.0
 References: <f5dbb1ed01d13d4eac2b719db42cb02bf8166ceb.1625170569.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <f5dbb1ed01d13d4eac2b719db42cb02bf8166ceb.1625170569.git.christophe.jaillet@wanadoo.fr>
+ <2a1bcfa7f84f63ab2076175c6a5c0a5a181d3bcb.1625170569.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <2a1bcfa7f84f63ab2076175c6a5c0a5a181d3bcb.1625170569.git.christophe.jaillet@wanadoo.fr>
 From:   Catherine Sullivan <csully@google.com>
-Date:   Thu, 1 Jul 2021 13:30:57 -0700
-Message-ID: <CAH_-1qy5uTBMw0ExLVzdOi6GffisPVs1B5xappyu+gA4H6ZGcg@mail.gmail.com>
-Subject: Re: [PATCH net v2 1/2] gve: Fix an error handling path in 'gve_probe()'
+Date:   Thu, 1 Jul 2021 13:33:37 -0700
+Message-ID: <CAH_-1qwt9qjUhrs0nkvu6cg+0K26XR1on2pHf0Q7jLc2V46U7A@mail.gmail.com>
+Subject: Re: [PATCH net v2 2/2] gve: Propagate error codes to caller
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Cc:     Sagi Shahar <sagis@google.com>, Jon Olson <jonolson@google.com>,
         David Miller <davem@davemloft.net>, kuba@kernel.org,
@@ -77,48 +78,51 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 On Thu, Jul 1, 2021 at 1:18 PM Christophe JAILLET
 <christophe.jaillet@wanadoo.fr> wrote:
 >
-> If the 'register_netdev() call fails, we must release the resources
-> allocated by the previous 'gve_init_priv()' call, as already done in the
-> remove function.
+> If 'gve_probe()' fails, we should propagate the error code, instead of
+> hard coding a -ENXIO value.
+> Make sure that all error handling paths set a correct value for 'err'.
 >
-> Add a new label and the missing 'gve_teardown_priv_resources()' in the
-> error handling path.
->
-> Fixes: 893ce44df565 ("gve: Add basic driver framework for Compute Engine Virtual NIC")
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
 Reviewed-by: Catherine Sullivan <csully@google.com>
 
 > ---
-> v2: Fix a typo in the label name
+> v2: Unchanged
 >     The previous serie had 3 patches. Now their are only 2
 > ---
->  drivers/net/ethernet/google/gve/gve_main.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
+>  drivers/net/ethernet/google/gve/gve_main.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 >
 > diff --git a/drivers/net/ethernet/google/gve/gve_main.c b/drivers/net/ethernet/google/gve/gve_main.c
-> index 867e87af3432..44262c9f9ec2 100644
+> index 44262c9f9ec2..c03984b26db4 100644
 > --- a/drivers/net/ethernet/google/gve/gve_main.c
 > +++ b/drivers/net/ethernet/google/gve/gve_main.c
-> @@ -1565,7 +1565,7 @@ static int gve_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+> @@ -1469,7 +1469,7 @@ static int gve_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
 >
->         err = register_netdev(dev);
+>         err = pci_enable_device(pdev);
 >         if (err)
-> -               goto abort_with_wq;
-> +               goto abort_with_gve_init;
+> -               return -ENXIO;
+> +               return err;
 >
->         dev_info(&pdev->dev, "GVE version %s\n", gve_version_str);
->         dev_info(&pdev->dev, "GVE queue format %d\n", (int)priv->queue_format);
-> @@ -1573,6 +1573,9 @@ static int gve_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
->         queue_work(priv->gve_wq, &priv->service_task);
->         return 0;
+>         err = pci_request_regions(pdev, "gvnic-cfg");
+>         if (err)
+> @@ -1512,6 +1512,7 @@ static int gve_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+>         dev = alloc_etherdev_mqs(sizeof(*priv), max_tx_queues, max_rx_queues);
+>         if (!dev) {
+>                 dev_err(&pdev->dev, "could not allocate netdev\n");
+> +               err = -ENOMEM;
+>                 goto abort_with_db_bar;
+>         }
+>         SET_NETDEV_DEV(dev, &pdev->dev);
+> @@ -1593,7 +1594,7 @@ static int gve_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
 >
-> +abort_with_gve_init:
-> +       gve_teardown_priv_resources(priv);
-> +
->  abort_with_wq:
->         destroy_workqueue(priv->gve_wq);
+>  abort_with_enabled:
+>         pci_disable_device(pdev);
+> -       return -ENXIO;
+> +       return err;
+>  }
 >
+>  static void gve_remove(struct pci_dev *pdev)
 > --
 > 2.30.2
 >
