@@ -2,84 +2,79 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1396AC11F68
-	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Jul 2021 11:40:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF6D9C11F6B
+	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Jul 2021 12:06:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ED7F661420
-	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Jul 2021 11:40:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C73D5613E0
+	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Jul 2021 12:06:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232029AbhGBLnT (ORCPT
+        id S232057AbhGBMIl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 2 Jul 2021 07:43:19 -0400
-Received: from m43-7.mailgun.net ([69.72.43.7]:38950 "EHLO m43-7.mailgun.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231933AbhGBLnS (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 2 Jul 2021 07:43:18 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1625226047; h=Date: Message-Id: Cc: To: References:
- In-Reply-To: From: Subject: Content-Transfer-Encoding: MIME-Version:
- Content-Type: Sender; bh=Avzvx99wwDIP2UbQgBX/dKZfsj1Y5q+1YnQq3u4uMgQ=;
- b=jwI/JIhuZ+0PSOXKh+pqnxs3mL8/dYp9E8g8tC5y0yOw82PS+WcnaWUmJv717zuo4Mtj3Y7V
- JGEl1OeALsQjrK50auf+QOlvVA0KYVZMcjYUNOhANfy8y40vP/wEh81j2KFGUpY5tku4G6bI
- MXFgEnWSR3oWGxlx4YFoZ+QspyE=
-X-Mailgun-Sending-Ip: 69.72.43.7
-X-Mailgun-Sid: WyI5NDExNyIsICJrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n07.prod.us-east-1.postgun.com with SMTP id
- 60defb355e3e57240b7cba62 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Fri, 02 Jul 2021 11:40:37
- GMT
-Sender: kvalo=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 5D187C433F1; Fri,  2 Jul 2021 11:40:36 +0000 (UTC)
-Received: from tykki.adurom.net (tynnyri.adurom.net [51.15.11.48])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id A5C19C433D3;
-        Fri,  2 Jul 2021 11:40:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A5C19C433D3
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Fri, 2 Jul 2021 08:08:41 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:59357 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231975AbhGBMI3 (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 2 Jul 2021 08:08:29 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lzHv5-0006TO-1f; Fri, 02 Jul 2021 12:05:19 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, lyude@redhat.com,
+        Dave Airlie <airlied@redhat.com>,
+        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/nouveau: Remove redundant error check on variable ret
+Date:   Fri,  2 Jul 2021 13:05:18 +0100
+Message-Id: <20210702120518.17740-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] ath11k: Remove some duplicate code
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <a65952db7f4eb8aaaa654b77dcd4930482f5c49b.1624483438.git.christophe.jaillet@wanadoo.fr>
-References: <a65952db7f4eb8aaaa654b77dcd4930482f5c49b.1624483438.git.christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     davem@davemloft.net, kuba@kernel.org, ath11k@lists.infradead.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.7.3
-Message-Id: <20210702114036.5D187C433F1@smtp.codeaurora.org>
-Date:   Fri,  2 Jul 2021 11:40:36 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> 'ATH11K_HE_MCS_MAX' is 11, so these 2 blocks of code are exactly the same.
-> Remove the one that uses a hard-coded constant.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+The call to drm_dp_aux_init never returns an error code and there
+is no error return being assigned to variable ret. The check for
+an error in ret is always false since ret is still zero from the
+start of the function so the init error check and error message
+is redundant and can be removed.
 
-Patch applied to ath-next branch of ath.git, thanks.
+Addresses-Coverity: ("Logically dead code")
+Fixes: fd43ad9d47e7 ("drm/nouveau/kms/nv50-: Move AUX adapter reg to connector late register/early unregister")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/nouveau/nouveau_connector.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-0791ba2bc7d3 ath11k: Remove some duplicate code
-
+diff --git a/drivers/gpu/drm/nouveau/nouveau_connector.c b/drivers/gpu/drm/nouveau/nouveau_connector.c
+index 22b83a6577eb..f37e5f28a93f 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_connector.c
++++ b/drivers/gpu/drm/nouveau/nouveau_connector.c
+@@ -1362,12 +1362,6 @@ nouveau_connector_create(struct drm_device *dev,
+ 			 dcbe->hasht, dcbe->hashm);
+ 		nv_connector->aux.name = kstrdup(aux_name, GFP_KERNEL);
+ 		drm_dp_aux_init(&nv_connector->aux);
+-		if (ret) {
+-			NV_ERROR(drm, "Failed to init AUX adapter for sor-%04x-%04x: %d\n",
+-				 dcbe->hasht, dcbe->hashm, ret);
+-			kfree(nv_connector);
+-			return ERR_PTR(ret);
+-		}
+ 		fallthrough;
+ 	default:
+ 		funcs = &nouveau_connector_funcs;
 -- 
-https://patchwork.kernel.org/project/linux-wireless/patch/a65952db7f4eb8aaaa654b77dcd4930482f5c49b.1624483438.git.christophe.jaillet@wanadoo.fr/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.31.1
 
