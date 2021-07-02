@@ -2,114 +2,69 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.4 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F422C11F68
-	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Jul 2021 08:34:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBDD8C11F68
+	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Jul 2021 11:11:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 29CED613F1
-	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Jul 2021 08:34:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91812613F4
+	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Jul 2021 11:11:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230415AbhGBIgk (ORCPT
+        id S231700AbhGBLOX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 2 Jul 2021 04:36:40 -0400
-Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:34474 "EHLO
-        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230166AbhGBIgj (ORCPT
+        Fri, 2 Jul 2021 07:14:23 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:58442 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230424AbhGBLOX (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 2 Jul 2021 04:36:39 -0400
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 1628HB0Y023539;
-        Fri, 2 Jul 2021 08:34:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=p1fdxON4YZiX04AnQjMpcG7PIg89DU/zakNCxmA8d5U=;
- b=xrYdjuOW3hKCFKgXnQz0nfUx8p6t1v26rX+dJgCSUuVKfel1pzEJY8lELYS1JZ7KHJqN
- mArOc3sFZ3QfC0jxn+AgjR5R6wpTXFu5vqCWW323s5TXuCOs8wqcDbbCD2TMBn7tNktr
- ynr+Ig5hvBTUoYIgTsd//lgb4UAUGpqnAAnpsD0O6u7Zk4r496Tt5EJS93R/Lrfzb3Ff
- IFpLjy1QJM6PRIrlFfcDQmUUCZCh9fy8/tpbCr1ann6oALkFD69Vu9PTRTC2VYtKhb7e
- 2D9mm120UZPlPNqNngPUM7E0N+Bcuu27FUYX73ZNQe5nqz9ViGvXr2dM4WbiOM3UO5Da Rg== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by mx0b-00069f02.pphosted.com with ESMTP id 39gguq4yf1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 02 Jul 2021 08:34:02 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 1628GCJv016939;
-        Fri, 2 Jul 2021 08:34:01 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by userp3020.oracle.com with ESMTP id 39ee12t8ye-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 02 Jul 2021 08:34:01 +0000
-Received: from userp3020.oracle.com (userp3020.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 1628Xxou063457;
-        Fri, 2 Jul 2021 08:34:00 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3020.oracle.com with ESMTP id 39ee12t8x7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 02 Jul 2021 08:33:59 +0000
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 1628Xvkg011095;
-        Fri, 2 Jul 2021 08:33:57 GMT
-Received: from kadam (/102.222.70.252)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 02 Jul 2021 08:33:56 +0000
-Date:   Fri, 2 Jul 2021 11:33:47 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Jeroen de Borst <jeroendb@google.com>, csully@google.com,
-        sagis@google.com, jonolson@google.com, davem@davemloft.net,
-        kuba@kernel.org, awogbemila@google.com, willemb@google.com,
-        yangchun@google.com, bcf@google.com, kuozhao@google.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 0/3] gve: Fixes and clean-up
-Message-ID: <20210702083347.GU2040@kadam>
-References: <cover.1625118581.git.christophe.jaillet@wanadoo.fr>
- <CAErkTsQLP9_y-Am3MN-O4vZXe3cTKHfYMwkFk-9YWWPLAQM1cw@mail.gmail.com>
- <29632746-3234-1991-040d-3c0dfb3b3acb@wanadoo.fr>
+        Fri, 2 Jul 2021 07:14:23 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lzH5J-0002z5-UC; Fri, 02 Jul 2021 11:11:50 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     tim@cyberelk.net, Jens Axboe <axboe@kernel.dk>,
+        linux-block@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] paride: remove redudant space character check
+Date:   Fri,  2 Jul 2021 12:11:49 +0100
+Message-Id: <20210702111149.15517-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <29632746-3234-1991-040d-3c0dfb3b3acb@wanadoo.fr>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-ORIG-GUID: GV9X0QQKB7necXf1VDT28w9qquFJCvrv
-X-Proofpoint-GUID: GV9X0QQKB7necXf1VDT28w9qquFJCvrv
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Jul 01, 2021 at 07:42:48PM +0200, Christophe JAILLET wrote:
-> > one for net (with the first 2
-> > patches) and one for net-next (with the cleanup one)?
-> 
-> I've never worked with net and net-next directly.
-> If just adding net and net-next after [PATCH] in the subject of the mail,
-> yes, I can do it if it helps.
+From: Colin Ian King <colin.king@canonical.com>
 
-I have a separate tree that I use for sending net patches.  I generally
-write my patches against linux-next and then postpone sending them until
-the next day.
+The check for variable l being a space character is always false, l can
+never be a space character. The check is redundant and can be removed.
 
-Then I open my patch in mutt.
-cd tmp_tree/
-../switch_to_net.sh
-cat /var/tmp/mutt-speke-1000-511162-9994856746594827871 | patch -p1 --dry-run
-If that applies then I "net" to the subject.  Otherwise I do a
-`../switch_to_net-next.sh` verify it applies and send that.
+Addresses-Coverity: ("Logically dead code")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/block/paride/pg.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Once in a while I will have to modify my patches to apply cleanly
-against the net tree.
-
-It's a pain in the butt and I get it wrong disappointingly often.  I
-only do it for networking.  Not for linux-wireless.  There is another
-tree where they complain if you don't add a tree to their patches but I
-forget what it is...  (I don't use the process for them, only for
-networking).
-
-regards,
-dan carpenter
+diff --git a/drivers/block/paride/pg.c b/drivers/block/paride/pg.c
+index 3b5882bfb736..2f7aa8521395 100644
+--- a/drivers/block/paride/pg.c
++++ b/drivers/block/paride/pg.c
+@@ -429,8 +429,6 @@ static void xs(char *buf, char *targ, int len)
+ 		if (c != ' ' && c != l)
+ 			l = *targ++ = c;
+ 	}
+-	if (l == ' ')
+-		targ--;
+ 	*targ = '\0';
+ }
+ 
+-- 
+2.31.1
 
