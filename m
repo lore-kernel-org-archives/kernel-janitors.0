@@ -5,36 +5,37 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF6D9C11F6B
-	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Jul 2021 12:06:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3017EC11F69
+	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Jul 2021 13:15:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C73D5613E0
-	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Jul 2021 12:06:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 147BA61429
+	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Jul 2021 13:15:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232057AbhGBMIl (ORCPT
+        id S232525AbhGBNST (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 2 Jul 2021 08:08:41 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:59357 "EHLO
+        Fri, 2 Jul 2021 09:18:19 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:33076 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231975AbhGBMI3 (ORCPT
+        with ESMTP id S232484AbhGBNSS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 2 Jul 2021 08:08:29 -0400
+        Fri, 2 Jul 2021 09:18:18 -0400
 Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
         (Exim 4.93)
         (envelope-from <colin.king@canonical.com>)
-        id 1lzHv5-0006TO-1f; Fri, 02 Jul 2021 12:05:19 +0000
+        id 1lzJ1D-0003O6-0J; Fri, 02 Jul 2021 13:15:43 +0000
 From:   Colin King <colin.king@canonical.com>
-To:     Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, lyude@redhat.com,
-        Dave Airlie <airlied@redhat.com>,
-        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
+To:     Nilesh Javali <njavali@marvell.com>,
+        GR-QLogic-Storage-Upstream@marvell.com,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/nouveau: Remove redundant error check on variable ret
-Date:   Fri,  2 Jul 2021 13:05:18 +0100
-Message-Id: <20210702120518.17740-1-colin.king@canonical.com>
+Subject: [PATCH] scsi: qla2xxx: remove redundant continue statement in a for-loop
+Date:   Fri,  2 Jul 2021 14:15:42 +0100
+Message-Id: <20210702131542.19880-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -45,36 +46,27 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The call to drm_dp_aux_init never returns an error code and there
-is no error return being assigned to variable ret. The check for
-an error in ret is always false since ret is still zero from the
-start of the function so the init error check and error message
-is redundant and can be removed.
+The continue statement at the end of the for-loop is redundant,
+remove it.
 
-Addresses-Coverity: ("Logically dead code")
-Fixes: fd43ad9d47e7 ("drm/nouveau/kms/nv50-: Move AUX adapter reg to connector late register/early unregister")
+Addresses-Coverity: ("Continue has no effect")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/gpu/drm/nouveau/nouveau_connector.c | 6 ------
- 1 file changed, 6 deletions(-)
+ drivers/scsi/qla2xxx/qla_sup.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_connector.c b/drivers/gpu/drm/nouveau/nouveau_connector.c
-index 22b83a6577eb..f37e5f28a93f 100644
---- a/drivers/gpu/drm/nouveau/nouveau_connector.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_connector.c
-@@ -1362,12 +1362,6 @@ nouveau_connector_create(struct drm_device *dev,
- 			 dcbe->hasht, dcbe->hashm);
- 		nv_connector->aux.name = kstrdup(aux_name, GFP_KERNEL);
- 		drm_dp_aux_init(&nv_connector->aux);
--		if (ret) {
--			NV_ERROR(drm, "Failed to init AUX adapter for sor-%04x-%04x: %d\n",
--				 dcbe->hasht, dcbe->hashm, ret);
--			kfree(nv_connector);
--			return ERR_PTR(ret);
--		}
- 		fallthrough;
- 	default:
- 		funcs = &nouveau_connector_funcs;
+diff --git a/drivers/scsi/qla2xxx/qla_sup.c b/drivers/scsi/qla2xxx/qla_sup.c
+index 060c89237777..a0aeba69513d 100644
+--- a/drivers/scsi/qla2xxx/qla_sup.c
++++ b/drivers/scsi/qla2xxx/qla_sup.c
+@@ -2936,7 +2936,6 @@ qla28xx_write_flash_data(scsi_qla_host_t *vha, uint32_t *dwptr, uint32_t faddr,
+ 		liter += dburst - 1;
+ 		faddr += dburst - 1;
+ 		dwptr += dburst - 1;
+-		continue;
+ 	}
+ 
+ write_protect:
 -- 
 2.31.1
 
