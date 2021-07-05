@@ -2,98 +2,137 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE177C07E98
-	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Jul 2021 06:42:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93119C07E98
+	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Jul 2021 07:43:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8FFD7613B6
-	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Jul 2021 06:42:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B34461396
+	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Jul 2021 07:43:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229919AbhGEGop (ORCPT
+        id S230025AbhGEHqC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 5 Jul 2021 02:44:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60276 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229881AbhGEGoo (ORCPT
+        Mon, 5 Jul 2021 03:46:02 -0400
+Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:35471 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229999AbhGEHqB (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 5 Jul 2021 02:44:44 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FE0BC061574
-        for <kernel-janitors@vger.kernel.org>; Sun,  4 Jul 2021 23:42:08 -0700 (PDT)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1m0IIt-0008Sy-6o; Mon, 05 Jul 2021 08:42:03 +0200
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1m0IIq-00038G-R2; Mon, 05 Jul 2021 08:42:00 +0200
-Date:   Mon, 5 Jul 2021 08:42:00 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Colin King <colin.king@canonical.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>, linux-pwm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] pwm: ep93xx: Fix uninitialized variable bug in
- ep93xx_pwm_apply()
-Message-ID: <20210705064200.adl72wngfidov7xn@pengutronix.de>
-References: <YNx1y8PlSLehZVIY@mwanda>
- <20210630153600.327ff7vcrx76lw26@pengutronix.de>
+        Mon, 5 Jul 2021 03:46:01 -0400
+Received: from ubuntu-CJ.passengers.t26.sncf ([109.190.253.13])
+        by mwinf5d50 with ME
+        id RKjC250060J6jfR03KjFor; Mon, 05 Jul 2021 09:43:21 +0200
+X-ME-Helo: ubuntu-CJ.passengers.t26.sncf
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 05 Jul 2021 09:43:21 +0200
+X-ME-IP: 109.190.253.13
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Larry.Finger@lwfinger.net, florian.c.schilhabel@googlemail.com,
+        gregkh@linuxfoundation.org, insafonov@gmail.com,
+        zhansayabagdaulet@gmail.com, mike.ximing.chen@intel.com
+Cc:     linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] staging: rtl8712: Remove some unused #define and enum
+Date:   Mon,  5 Jul 2021 09:43:07 +0200
+Message-Id: <6d5b505e7de20fdaba1831557baee1daf4656845.1625470822.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="kks4xpy4yqeqdftx"
-Content-Disposition: inline
-In-Reply-To: <20210630153600.327ff7vcrx76lw26@pengutronix.de>
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+These #define and the enum WIFI_REG_DOMAIN are unused.
+They can be removed.
 
---kks4xpy4yqeqdftx
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only
+---
+ drivers/staging/rtl8712/wifi.h | 48 ----------------------------------
+ 1 file changed, 48 deletions(-)
 
-Hello,
+diff --git a/drivers/staging/rtl8712/wifi.h b/drivers/staging/rtl8712/wifi.h
+index 577a95c62d6c..b8acb9c7395d 100644
+--- a/drivers/staging/rtl8712/wifi.h
++++ b/drivers/staging/rtl8712/wifi.h
+@@ -20,26 +20,10 @@
+ #define WLAN_HDR_A3_LEN		24
+ #define WLAN_HDR_A3_QOS_LEN	26
+ 
+-#define P80211CAPTURE_VERSION	0x80211001
+-
+ enum WIFI_FRAME_TYPE {
+ 	WIFI_QOS_DATA_TYPE	= (BIT(7) | BIT(3)),	/*!< QoS Data */
+ };
+ 
+-enum WIFI_REG_DOMAIN {
+-	DOMAIN_FCC	= 1,
+-	DOMAIN_IC	= 2,
+-	DOMAIN_ETSI	= 3,
+-	DOMAIN_SPAIN	= 4,
+-	DOMAIN_FRANCE	= 5,
+-	DOMAIN_MKK	= 6,
+-	DOMAIN_ISRAEL	= 7,
+-	DOMAIN_MKK1	= 8,
+-	DOMAIN_MKK2	= 9,
+-	DOMAIN_MKK3	= 10,
+-	DOMAIN_MAX
+-};
+-
+ #define SetToDs(pbuf) ({ \
+ 	*(__le16 *)(pbuf) |= cpu_to_le16(IEEE80211_FCTL_TODS); \
+ })
+@@ -194,46 +178,14 @@ static inline unsigned char *get_hdr_bssid(unsigned char *pframe)
+ 	return sa;
+ }
+ 
+-/*-----------------------------------------------------------------------------
+- *		Below is for the security related definition
+- *-----------------------------------------------------------------------------
+- */
+-#define _ASOCREQ_IE_OFFSET_	4	/* excluding wlan_hdr */
+-#define	_ASOCRSP_IE_OFFSET_	6
+-#define _REASOCREQ_IE_OFFSET_	10
+-#define _REASOCRSP_IE_OFFSET_	6
+-#define _PROBEREQ_IE_OFFSET_	0
+-#define	_PROBERSP_IE_OFFSET_	12
+-#define _AUTH_IE_OFFSET_	6
+-#define _DEAUTH_IE_OFFSET_	0
+-#define _BEACON_IE_OFFSET_	12
+-
+-#define _FIXED_IE_LENGTH_	_BEACON_IE_OFFSET_
+-
+ /* ---------------------------------------------------------------------------
+  *			Below is the fixed elements...
+  * ---------------------------------------------------------------------------
+  */
+-#define _AUTH_ALGM_NUM_			2
+-#define _AUTH_SEQ_NUM_			2
+ #define _BEACON_ITERVAL_		2
+ #define _CAPABILITY_			2
+-#define _CURRENT_APADDR_		6
+-#define _LISTEN_INTERVAL_		2
+-#define _RSON_CODE_				2
+-#define _ASOC_ID_				2
+-#define _STATUS_CODE_			2
+ #define _TIMESTAMP_				8
+ 
+-#define AUTH_ODD_TO				0
+-#define AUTH_EVEN_TO			1
+-
+-/*-----------------------------------------------------------------------------
+- *			Below is the definition for 802.11i / 802.1x
+- *------------------------------------------------------------------------------
+- */
+-#define _IEEE8021X_MGT_			1	/*WPA */
+-#define _IEEE8021X_PSK_			2	/* WPA with pre-shared key */
+ 
+ /*-----------------------------------------------------------------------------
+  *			Below is the definition for WMM
+-- 
+2.27.0
 
-On Wed, Jun 30, 2021 at 05:36:00PM +0200, Uwe Kleine-K=F6nig wrote:
-> this problem was found already earlier by Colin King:
->=20
-> 	https://lore.kernel.org/r/20210629172253.43131-1-colin.king@canonical.com
->=20
-> I'm fine with either change.
-
-FTR: Thierry applied Colin's patch, so I'm discarding this one from
-patchwork as not applicable.
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---kks4xpy4yqeqdftx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmDiqa8ACgkQwfwUeK3K
-7AkIqAf+JkteW/uZUQyk1+Ob90zPhNWHL/Zs1ADVtXTLffha5f+XU3LmDxcvzGsg
-D+j0gfnClBIRFLEVnNh5+heuERDz7zmMZEyrDt28NPa3uEMHPBMh4RQLnM832vUY
-pzk8H0F8DFs6pin9ToDYsFIvo0jSruZl6WwGEtPoTSMab6wNAqaIOfJp4JetICC9
-EzJApcGhIHykl0RzRrfHGQzZxG5TdIRLvOCt588ybmcXopfnPmhzx1TKUKDfZTbn
-VDNDWMkC71zrUcybzhP5nF3xYcRlpyxO/VIOdNS0esZ/WjFD3HPenrcNY3+FUgkP
-R0Y+/DZNe3TUHViXDNacm2c4XP+jpw==
-=QLDn
------END PGP SIGNATURE-----
-
---kks4xpy4yqeqdftx--
