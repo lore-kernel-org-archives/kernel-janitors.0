@@ -2,93 +2,98 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B90BC07E95
-	for <kernel-janitors@archiver.kernel.org>; Sun,  4 Jul 2021 15:27:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE177C07E98
+	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Jul 2021 06:42:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 318B2613E5
-	for <kernel-janitors@archiver.kernel.org>; Sun,  4 Jul 2021 15:27:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8FFD7613B6
+	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Jul 2021 06:42:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229557AbhGDPaa (ORCPT
+        id S229919AbhGEGop (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 4 Jul 2021 11:30:30 -0400
-Received: from pb-smtp2.pobox.com ([64.147.108.71]:64609 "EHLO
-        pb-smtp2.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229539AbhGDPaa (ORCPT
+        Mon, 5 Jul 2021 02:44:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60276 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229881AbhGEGoo (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 4 Jul 2021 11:30:30 -0400
-Received: from pb-smtp2.pobox.com (unknown [127.0.0.1])
-        by pb-smtp2.pobox.com (Postfix) with ESMTP id B8E88BB61E;
-        Sun,  4 Jul 2021 11:27:54 -0400 (EDT)
-        (envelope-from nico@fluxnic.net)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=pobox.com; h=date:from
-        :to:cc:subject:in-reply-to:message-id:references:mime-version
-        :content-type; s=sasl; bh=V/1t9Mn1a6sicAT1L3K4yl60YZZOfQbgaqgDSO
-        Tmal8=; b=G61zAq5TIF1rdiKmUe63uotbepJ19+SQ2ZT4EVLlWYLLXDnlqzmzyF
-        24R1LJScIQfrQH+Nh8YFPpKO382QRjQASqPItOloGX0l4mPVplcWzeSJfDRHtG3x
-        45FVCZBnFZh8DG4+LZPeBR9sfBFlRzWZ+taDiBJ7YuYU2TdgjjIUQ=
-Received: from pb-smtp2.nyi.icgroup.com (unknown [127.0.0.1])
-        by pb-smtp2.pobox.com (Postfix) with ESMTP id B1604BB61C;
-        Sun,  4 Jul 2021 11:27:54 -0400 (EDT)
-        (envelope-from nico@fluxnic.net)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=fluxnic.net;
- h=date:from:to:cc:subject:in-reply-to:message-id:references:mime-version:content-type; s=2016-12.pbsmtp; bh=V/1t9Mn1a6sicAT1L3K4yl60YZZOfQbgaqgDSOTmal8=; b=YDVzzKvdxL4RmizmQMYDKTvkHgChrJv8K8o+napspDIrdU0xPrLEI6snlSj3tktWRoRU3PWZydH/HQYQsJEU5IAG59DwqZ+766tK/UWh9GfeGHTp6OeWAdwrgxPmoVa0kThIVuJtp8/JAYFit0mbPBuIE5sdiIJzRxXf3Ocretk=
-Received: from yoda.home (unknown [96.21.170.108])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by pb-smtp2.pobox.com (Postfix) with ESMTPSA id 34D92BB61B;
-        Sun,  4 Jul 2021 11:27:54 -0400 (EDT)
-        (envelope-from nico@fluxnic.net)
-Received: from xanadu.home (xanadu.home [192.168.2.2])
-        by yoda.home (Postfix) with ESMTPSA id 3BEBF2DA0064;
-        Sun,  4 Jul 2021 11:27:53 -0400 (EDT)
-Date:   Sun, 4 Jul 2021 11:27:53 -0400 (EDT)
-From:   Nicolas Pitre <nico@fluxnic.net>
-To:     Colin King <colin.king@canonical.com>
-cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cramfs: Fix spelling mistake "adressed" -> "addressed"
-In-Reply-To: <20210704092521.34660-1-colin.king@canonical.com>
-Message-ID: <p5681o7-4p56-n873-61o3-96p7ons97or8@syhkavp.arg>
-References: <20210704092521.34660-1-colin.king@canonical.com>
+        Mon, 5 Jul 2021 02:44:44 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FE0BC061574
+        for <kernel-janitors@vger.kernel.org>; Sun,  4 Jul 2021 23:42:08 -0700 (PDT)
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1m0IIt-0008Sy-6o; Mon, 05 Jul 2021 08:42:03 +0200
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1m0IIq-00038G-R2; Mon, 05 Jul 2021 08:42:00 +0200
+Date:   Mon, 5 Jul 2021 08:42:00 +0200
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Colin King <colin.king@canonical.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>, linux-pwm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] pwm: ep93xx: Fix uninitialized variable bug in
+ ep93xx_pwm_apply()
+Message-ID: <20210705064200.adl72wngfidov7xn@pengutronix.de>
+References: <YNx1y8PlSLehZVIY@mwanda>
+ <20210630153600.327ff7vcrx76lw26@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Pobox-Relay-ID: 66E80622-DCDC-11EB-8306-FD8818BA3BAF-78420484!pb-smtp2.pobox.com
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="kks4xpy4yqeqdftx"
+Content-Disposition: inline
+In-Reply-To: <20210630153600.327ff7vcrx76lw26@pengutronix.de>
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, 4 Jul 2021, Colin King wrote:
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake in the Kconfig text. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+--kks4xpy4yqeqdftx
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Nicolas Pitre <nico@fluxnic.net>
+Hello,
 
-> ---
->  fs/cramfs/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/cramfs/Kconfig b/fs/cramfs/Kconfig
-> index d98cef0dbb6b..a8af8c6ac15d 100644
-> --- a/fs/cramfs/Kconfig
-> +++ b/fs/cramfs/Kconfig
-> @@ -38,7 +38,7 @@ config CRAMFS_MTD
->  	default y if !CRAMFS_BLOCKDEV
->  	help
->  	  This option allows the CramFs driver to load data directly from
-> -	  a linear adressed memory range (usually non volatile memory
-> +	  a linear addressed memory range (usually non volatile memory
->  	  like flash) instead of going through the block device layer.
->  	  This saves some memory since no intermediate buffering is
->  	  necessary.
-> -- 
-> 2.31.1
-> 
-> 
+On Wed, Jun 30, 2021 at 05:36:00PM +0200, Uwe Kleine-K=F6nig wrote:
+> this problem was found already earlier by Colin King:
+>=20
+> 	https://lore.kernel.org/r/20210629172253.43131-1-colin.king@canonical.com
+>=20
+> I'm fine with either change.
+
+FTR: Thierry applied Colin's patch, so I'm discarding this one from
+patchwork as not applicable.
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--kks4xpy4yqeqdftx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmDiqa8ACgkQwfwUeK3K
+7AkIqAf+JkteW/uZUQyk1+Ob90zPhNWHL/Zs1ADVtXTLffha5f+XU3LmDxcvzGsg
+D+j0gfnClBIRFLEVnNh5+heuERDz7zmMZEyrDt28NPa3uEMHPBMh4RQLnM832vUY
+pzk8H0F8DFs6pin9ToDYsFIvo0jSruZl6WwGEtPoTSMab6wNAqaIOfJp4JetICC9
+EzJApcGhIHykl0RzRrfHGQzZxG5TdIRLvOCt588ybmcXopfnPmhzx1TKUKDfZTbn
+VDNDWMkC71zrUcybzhP5nF3xYcRlpyxO/VIOdNS0esZ/WjFD3HPenrcNY3+FUgkP
+R0Y+/DZNe3TUHViXDNacm2c4XP+jpw==
+=QLDn
+-----END PGP SIGNATURE-----
+
+--kks4xpy4yqeqdftx--
