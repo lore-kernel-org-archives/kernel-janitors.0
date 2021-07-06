@@ -5,44 +5,36 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28102C11F6A
-	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Jul 2021 12:03:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E5F9C07E9B
+	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Jul 2021 12:34:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 13D7C620E9
-	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Jul 2021 12:03:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 061466044F
+	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Jul 2021 12:34:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237078AbhGFMGC (ORCPT
+        id S233456AbhGFMhY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 6 Jul 2021 08:06:02 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:56353 "EHLO
+        Tue, 6 Jul 2021 08:37:24 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:56609 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238318AbhGFLuC (ORCPT
+        with ESMTP id S241050AbhGFMHr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 6 Jul 2021 07:50:02 -0400
+        Tue, 6 Jul 2021 08:07:47 -0400
 Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
         (Exim 4.93)
         (envelope-from <colin.king@canonical.com>)
-        id 1m0jWT-0006JW-8k; Tue, 06 Jul 2021 11:45:53 +0000
+        id 1m0jp0-0007eU-7T; Tue, 06 Jul 2021 12:05:02 +0000
 From:   Colin King <colin.king@canonical.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        linux-perf-users@vger.kernel.org
+To:     Namjae Jeon <namjae.jeon@samsung.com>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Steve French <sfrench@samba.org>,
+        Hyunchul Lee <hyc.lee@gmail.com>, linux-cifs@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] perf/x86/intel/uncore: Fix integer overflow on 23 bit left shift of a u32
-Date:   Tue,  6 Jul 2021 12:45:53 +0100
-Message-Id: <20210706114553.28249-1-colin.king@canonical.com>
+Subject: [PATCH][next] ksmbd: Fix read on the uninitialized pointer sess
+Date:   Tue,  6 Jul 2021 13:05:01 +0100
+Message-Id: <20210706120501.28776-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -53,37 +45,31 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The u32 variable pci_dword is being masked with 0x1fffffff and then left
-shifted 23 places. The shift is a u32 operation,so a value of 0x200 or
-more in pci_dword will overflow the u32 and only the bottow 32 bits
-are assigned to addr. I don't believe this was the original intent.
-Fix this by casting pci_dword to a resource_size_t to ensure no
-overflow occurs.
+There is a error handling case that passes control to label out_err
+without pointer sess being assigned a value. The unassigned pointer
+may be any garbage value and so the test of rc < 0 && sess maybe
+true leading to sess being passed to the call to ksmbd_session_destroy.
+Fix this by setting sess to NULL in this corner case.
 
-Note that the mask and 12 bit left shift operation does not need this
-because the mask SNR_IMC_MMIO_MEM0_MASK and shift is always a 32 bit
-value.
-
-Fixes: ee49532b38dd ("perf/x86/intel/uncore: Add IMC uncore support for Snow Ridge")
-Addresses-Coverity: ("Unintentional integer overflow")
+Addresses-Coverity: ("Uninitialized pointer read")
+Fixes: f5a544e3bab7 ("ksmbd: add support for SMB3 multichannel")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- arch/x86/events/intel/uncore_snbep.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/ksmbd/smb2pdu.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/x86/events/intel/uncore_snbep.c b/arch/x86/events/intel/uncore_snbep.c
-index 48419dad3b17..7518143850df 100644
---- a/arch/x86/events/intel/uncore_snbep.c
-+++ b/arch/x86/events/intel/uncore_snbep.c
-@@ -4827,7 +4827,7 @@ static int snr_uncore_mmio_map(struct intel_uncore_box *box,
- 		return -ENODEV;
- 
- 	pci_read_config_dword(pdev, SNR_IMC_MMIO_BASE_OFFSET, &pci_dword);
--	addr = (pci_dword & SNR_IMC_MMIO_BASE_MASK) << 23;
-+	addr = ((resource_size_t)pci_dword & SNR_IMC_MMIO_BASE_MASK) << 23;
- 
- 	pci_read_config_dword(pdev, mem_offset, &pci_dword);
- 	addr |= (pci_dword & SNR_IMC_MMIO_MEM0_MASK) << 12;
+diff --git a/fs/ksmbd/smb2pdu.c b/fs/ksmbd/smb2pdu.c
+index dda90812feef..ad976dbbb0b6 100644
+--- a/fs/ksmbd/smb2pdu.c
++++ b/fs/ksmbd/smb2pdu.c
+@@ -1615,6 +1615,7 @@ int smb2_sess_setup(struct ksmbd_work *work)
+ 	} else if ((conn->dialect < SMB30_PROT_ID ||
+ 		    server_conf.flags & KSMBD_GLOBAL_FLAG_SMB3_MULTICHANNEL) &&
+ 		   (req->Flags & SMB2_SESSION_REQ_FLAG_BINDING)) {
++		sess = NULL;
+ 		rc = -EACCES;
+ 		goto out_err;
+ 	} else {
 -- 
 2.31.1
 
