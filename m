@@ -2,183 +2,292 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26A0BC07E9E
-	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Jul 2021 00:52:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 006E3C07E96
+	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Jul 2021 08:50:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 05E646196C
-	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Jul 2021 00:52:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7B416198E
+	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Jul 2021 08:50:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229811AbhGFAy4 (ORCPT
+        id S230427AbhGFIwn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 5 Jul 2021 20:54:56 -0400
-Received: from mail-co1nam11on2073.outbound.protection.outlook.com ([40.107.220.73]:65472
-        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S229783AbhGFAyx (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 5 Jul 2021 20:54:53 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=mT3MzTbZN/7eqs4kfuKDidR5JOEw2kPvd1HD8GW5ZkLwOS7PrtHfnBuPUeBghjCuIcTCFBnyFkwQI33hCxYSr1773ZtotKbLbGH54ic6rq5nDYLMDjziVqj97EdmbnSVyZKJLPphpw2lY1YMEiJJcBwvfyvP6JjhP9hbxiEyWiofYZiGMWcmoIbCz6nIhIi4RrTMt6S4+dJ/i8aJMcXGnDt2dxUra0BaJ9PUPXdXN9IcEZJOBk8wD9fcFd9Iv5s+ZYZ+aStaSMLtbNQuW3XgCbkW57caq+IUVVi+Ykvrh4Ydzbag3JgNkn6S3ES7A7kftK3gJX9Fhur2GlVsQE09/w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=41bfLhI6d3IfIzfJ3JRC2Lhkk3UOuqbn68hp3GBdZro=;
- b=k2mYnpLmGntQJ7AF8+Dri8KITp0OF+Rh+Fun0S6HkraDWy7OQoJai9VwkClcuZsqM/s0XVhjUC1FWAr6dEo7b7jw0+VCCh7CA4MCX+6jQM/QdMjwLEELUcGrR/42Hg+xuMK1mDNQwxLZW446RKzKsC4HSTrlWs7M/1J6+be6VLqIxTQXVeOQheVEobaEu9PKTZUDJm/ino/jx9ilEmbPDsfGthJ5rbiuytPtJrHUvH39QFW/GGDxO9seJpszCpPg1rM66Z2w6n/+7/zBD7V1S2+gDEMPXQg2/hIZr/iohyvCOQTD6HrJYUz0oBsuJHJp8Tx9mXzLUtIyHD9w3exKpw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=41bfLhI6d3IfIzfJ3JRC2Lhkk3UOuqbn68hp3GBdZro=;
- b=V1Jkwsi78UAa/QIaWyGIzcGXmzBz0ObPyBtARrUx3wPbcUKiJ8OaQDMhgh15MzPjyiPs06p/BWw12+aNwzmq8XWGdeyfpQY2xN2ktwkrhpO5XSgy4/uXVbpCyIKPTEx3zEHtQ5uv3r2i95Job3R4gJKw2dIxwEHCHKmB2ZdbfpY=
-Authentication-Results: vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=none action=none header.from=amd.com;
-Received: from DM6PR12MB3962.namprd12.prod.outlook.com (2603:10b6:5:1ce::21)
- by DM6PR12MB4699.namprd12.prod.outlook.com (2603:10b6:5:36::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4242.19; Tue, 6 Jul
- 2021 00:52:14 +0000
-Received: from DM6PR12MB3962.namprd12.prod.outlook.com
- ([fe80::50f2:699c:121d:f257]) by DM6PR12MB3962.namprd12.prod.outlook.com
- ([fe80::50f2:699c:121d:f257%4]) with mapi id 15.20.4287.033; Tue, 6 Jul 2021
- 00:52:13 +0000
-Subject: Re: [PATCH 1/4] drm/amdgpu: fix a signedness bug in
- __verify_ras_table_checksum()
-From:   Luben Tuikov <luben.tuikov@amd.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Alex Deucher <alexander.deucher@amd.com>
-Cc:     =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Hawking Zhang <Hawking.Zhang@amd.com>,
-        Guchun Chen <guchun.chen@amd.com>,
-        John Clements <john.clements@amd.com>,
-        Dennis Li <Dennis.Li@amd.com>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
-References: <YOAsdyWeZAHF0oll@mwanda>
- <bb78075f-2249-8311-2f75-c0dfaa333ec4@amd.com>
-Message-ID: <c60af259-f8ab-f495-ebc3-6b58af91c708@amd.com>
-Date:   Mon, 5 Jul 2021 20:52:11 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
-In-Reply-To: <bb78075f-2249-8311-2f75-c0dfaa333ec4@amd.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-CA
-X-Originating-IP: [108.162.138.69]
-X-ClientProxiedBy: YT1PR01CA0027.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01::40)
- To DM6PR12MB3962.namprd12.prod.outlook.com (2603:10b6:5:1ce::21)
+        Tue, 6 Jul 2021 04:52:43 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:51767 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230295AbhGFIwn (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 6 Jul 2021 04:52:43 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <colin.king@canonical.com>)
+        id 1m0gmE-0001VT-Rv; Tue, 06 Jul 2021 08:49:58 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Sunil Goutham <sgoutham@marvell.com>,
+        Linu Cherian <lcherian@marvell.com>,
+        Geetha sowjanya <gakula@marvell.com>,
+        Jerin Jacob <jerinj@marvell.com>,
+        hariprasad <hkelam@marvell.com>,
+        Subbaraya Sundeep <sbhatta@marvell.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] octeontx2-af: Fix a handful of spelling mistakes and typos
+Date:   Tue,  6 Jul 2021 09:49:58 +0100
+Message-Id: <20210706084958.17209-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from localhost.localdomain (108.162.138.69) by YT1PR01CA0027.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01::40) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4287.23 via Frontend Transport; Tue, 6 Jul 2021 00:52:12 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: d8fe59f2-9fd1-4012-fa3a-08d940184b20
-X-MS-TrafficTypeDiagnostic: DM6PR12MB4699:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <DM6PR12MB4699D2927817306705FEF86A991B9@DM6PR12MB4699.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: EmhZFtC/qI8d0UG8NslOOrgJCMhg06qa4zGvMVMRk+vgkEZ97EYE/QEFr+e+kU8btTwH43Qhs9X6Lmo3QfA3MQ5q5/BWButV+43KkGqscsFldukZOqxNgmz8iNwyv32GonnU95Ou/xsdmkqrmEKSIRSHkaBcrej9z/7euOhvjNxsjnxRzv2zDcoBiR2j/+gN5Bu3Sql+rTEvir8S9hYaNTQ7stnICZhT8YlIZDx+5L4+gkVLiHsJzWLCbkaQGpHQYDeQQhC/DXq5JmwcNp5dEkrLMjEJEMuiPL8wCN9fwqFZv3hZmGQGAIDn2+sEiTwl5VWF/fZ+FaVQ53FQRj3nhrrUaL9wR5pCZ+fzGBd0LTGe6JyDvJSKLEaqqGtjydg03j5v4QBFpwDzKCG3PPSdUSM0EqINCCCgco8aH+HAhxn0aebAMEIckNWXF/LCdI9UNNWAaQMF36qnGZmLr2GOctTx933FFr/Mh9H8EXWZSIysxTYmqzPvCEP9Enbvtdog9fTcTwdwmjzWU1vnfBIqMtEwZKX8PGNIccG4K2ImkZ6DEVm8hhEbBzVhU7OvN7a9K/Vn8pc/Nx0TqfJivt78OxKZ359ZHH4qyT3nrByn8LBBbK7ZvbeqDivUQYDOGCD6AQeg5yn4XZpJ/jG4x7+5FhH3R5vDLlc2WqWH1h4MYT+wmDgr7IMQg5Gv02LkKUAo1yPMAOnvcYUBlR/OjnK5n25O9U1/o/iCti4OTzSaN8w=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3962.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(346002)(366004)(39860400002)(396003)(136003)(376002)(55236004)(186003)(2616005)(16526019)(36756003)(66946007)(6512007)(66556008)(5660300002)(26005)(31686004)(83380400001)(6636002)(110136005)(66476007)(31696002)(44832011)(2906002)(53546011)(4326008)(6506007)(316002)(956004)(86362001)(8676002)(38100700002)(54906003)(478600001)(8936002)(6486002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?N09FdDRnY1A5V2JMK0RnTWpmSklKMzIwTjBRQnVEZUpndWh2ODdzUXRDcC92?=
- =?utf-8?B?VWQ2OFVNcWM3QmVmaGpUTjU3YW53V2JDaXc1c2lhaytTaFFVU2dFdzZaV3VQ?=
- =?utf-8?B?aFdXNE80cURRV1RnaG9jUTBZeEZHcVR5SVpYaEFrSzJTN3dZTlEvczRQM2Vi?=
- =?utf-8?B?cUF6cWwweERnL1pjY0hYUU0yQ2NBSnEwYjlKZlVFMkx6c2orRm40QmNiR2F4?=
- =?utf-8?B?TE56cEltSDBRenN5TmRjMkswRjF2aUxCZ3kvalZLcFA1bGFvdTNvMDlOK1Z4?=
- =?utf-8?B?VmxZbFdmSFQvVHRrTUNrbjVkNnFCaCtsUHdXdDdCRmRVcHpoWWpkYWVNZzJq?=
- =?utf-8?B?VjJ3Z29iblpoNjhGVEhXeDl6L2ZsYTB2emRKdnc5eTRTNDhCVkR2Qmpja28z?=
- =?utf-8?B?d1dXWGhPd2wrYzIyaXBFZ3k4alV1T2hobGk5UWg5TWZSZHgvTXVnbksrK3FL?=
- =?utf-8?B?Q0dJVldldk91QStpUzNrQS84ZXRRemVjM3NQTm9TZXVTSVJERXVMQ3BaOTkx?=
- =?utf-8?B?NXpHM3NaN1M3RHJwdXpmSDRyVTNYODVsQmdrLzNQTWNlQldWR01JTFcrTlU2?=
- =?utf-8?B?bHZnWXhmQ1J4eFI1MWpHekVVZGpFRHhJVVR3QnFrd1BrM2dPdi9sT0hNWDRG?=
- =?utf-8?B?OTJFWE4xOHI2eWh2ZjFXRjdEQ1FIeVBETzRQSCsrU1JGYVFZbDIyTWNDVDVl?=
- =?utf-8?B?aE1ReXdZSGI3SGlMSEx6MmdhcHNaUXl4WGltckVsL3FGV2paVkthOFlkdTlw?=
- =?utf-8?B?Z0xwT21Qd080ajFwd2V2NzBlb2VPUWNBZysrMHlBbGpua21zVlRLMWVvdS9O?=
- =?utf-8?B?WjdjejdPclhESFNFeTJOTWUzb3NOaGsyL2lOMXAyM1pXU1dFQ3U1c3VKd1Rx?=
- =?utf-8?B?Tzd6SEFnQURMREFhTnVGRkZpZ21IaHVTT1BEbGJIUUJjckJ4VDNSKytxT1pk?=
- =?utf-8?B?b202TnJuck9Pblh4Q1RBOVFDc1l4TnQ2Z0VQUDQ2aVNoOHdBdHVDTzV6ZGx3?=
- =?utf-8?B?TUh2NnIxR24rbGw5N2xkOWZYMFJjQ2c1Y1IzNWZVZHRCc0h3QmVHb2Mza2FO?=
- =?utf-8?B?bEVuMDU5ZDdxVnRUTkNUVmFwaStFT0hPQjlqSkluZlJjSUFCTjVuSnJ0a0dJ?=
- =?utf-8?B?QnFnNUZUTGJ4S3IyT0tGSXJyU0R3RjZBTUVhUVMrZ0N1Sm03YWs5aEhleGMz?=
- =?utf-8?B?aDJDQWxoZUNXb1BVbDZOTER2Vm1TSVpyM1VPVkRnR2xNNmkvSFVzMEwyUmZH?=
- =?utf-8?B?Mno1RHRsRDV6ejZ0ZUIxQXhEMmZOeUF0UXh6Y1pJNWpPbmZQdDJ5UVlmRFFM?=
- =?utf-8?B?dEJaYTQwYVFEVXNXUCtjL0ZaRUFhZ0QxMHl5WW9HS1JQV09XMEpxVWsrNW9a?=
- =?utf-8?B?SktDbzZyL2NZcTdDVlMwcVB6MzcvVkFlSXFoaVh0Z0lIREFYOExRbDVEaEJh?=
- =?utf-8?B?d3k4SnRDRjFQK01QRVJENCt2VTFvcmtHL3Y0dWNBOUVhNDhtdS8ybXk0QU00?=
- =?utf-8?B?cEVaYlUrMTg2ekkzV0dwaVFMcmJIcU9aTUNDTEo1TEpndE0vQ1hidkFKL2hB?=
- =?utf-8?B?SG8yQmQrNnh2R1Zjd0xVUllFRTBUL21YbWpMRytLQnRDRkUyZXp6a1lTamh0?=
- =?utf-8?B?SmdyRlJvVU9xdURRN2Jpd3dRUmxpdVI4TE0yTTJBQkFKeUpoWUh0VFBvOTdG?=
- =?utf-8?B?cnlsdXBhcnpuZTRGbUxBTzN1anRqL0pYTVVuMytESEVVQ3NHcjdESVE5WWg5?=
- =?utf-8?Q?5jv8Hb67bJa/9w9R5KrXz5S62HT/Z3ViQuKdtu2?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d8fe59f2-9fd1-4012-fa3a-08d940184b20
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3962.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jul 2021 00:52:13.5989
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6p9Au5sZ05UhF4JPbQzmgXp5P8iipkcwCboa2aB5EbnMQo9iw/3hTM5J680lNwoY
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4699
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Alex,
+From: Colin Ian King <colin.king@canonical.com>
 
-I think we should pull these through amd-staging-drm-next.
+There are quite a few spelling mistakes in dev_err error messages
+and comments. Fix these.
 
-Regards,
-Luben
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/marvell/octeontx2/af/cgx.c  |  4 ++--
+ drivers/net/ethernet/marvell/octeontx2/af/ptp.c  |  4 ++--
+ .../ethernet/marvell/octeontx2/af/rvu_cn10k.c    | 10 +++++-----
+ .../ethernet/marvell/octeontx2/af/rvu_debugfs.c  |  4 ++--
+ .../net/ethernet/marvell/octeontx2/af/rvu_nix.c  | 16 ++++++++--------
+ .../net/ethernet/marvell/octeontx2/af/rvu_npc.c  | 12 ++++++------
+ 6 files changed, 25 insertions(+), 25 deletions(-)
 
-On 2021-07-04 11:18 a.m., Luben Tuikov wrote:
-> Series is,
-> Reviewed-by: Luben Tuikov <luben.tuikov@amd.com>
->
-> Regards,
-> Luben
->
-> On 2021-07-03 5:44 a.m., Dan Carpenter wrote:
->> If amdgpu_eeprom_read() returns a negative error code then the error
->> handling checks:
->>
->> 	if (res < buf_size) {
->>
->> The problem is that "buf_size" is a u32 so negative values are type
->> promoted to a high positive values and the condition is false.  Fix
->> this by changing the type of "buf_size" to int.
->>
->> Fixes: 79beb6114014 ("drm/amdgpu: Optimize EEPROM RAS table I/O")
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->> ---
->> It's hard for me to tell the exact upper bound that "buf_size" can be,
->> but if it's over USHRT_MAX then we are well toasted.
->>
->>  drivers/gpu/drm/amd/amdgpu/amdgpu_ras_eeprom.c | 3 +--
->>  1 file changed, 1 insertion(+), 2 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ras_eeprom.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ras_eeprom.c
->> index fc70620369e4..f07a456506ef 100644
->> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ras_eeprom.c
->> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ras_eeprom.c
->> @@ -978,9 +978,8 @@ const struct file_operations amdgpu_ras_debugfs_eeprom_table_ops = {
->>  static int __verify_ras_table_checksum(struct amdgpu_ras_eeprom_control *control)
->>  {
->>  	struct amdgpu_device *adev = to_amdgpu_device(control);
->> -	int res;
->> +	int buf_size, res;
->>  	u8  csum, *buf, *pp;
->> -	u32 buf_size;
->>  
->>  	buf_size = RAS_TABLE_HEADER_SIZE +
->>  		control->ras_num_recs * RAS_TABLE_RECORD_SIZE;
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/cgx.c b/drivers/net/ethernet/marvell/octeontx2/af/cgx.c
+index 9169849881bf..7b548bd7238c 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/cgx.c
++++ b/drivers/net/ethernet/marvell/octeontx2/af/cgx.c
+@@ -972,7 +972,7 @@ static int cgx_link_usertable_index_map(int speed)
+ static void set_mod_args(struct cgx_set_link_mode_args *args,
+ 			 u32 speed, u8 duplex, u8 autoneg, u64 mode)
+ {
+-	/* Fill default values incase of user did not pass
++	/* Fill default values in case of user did not pass
+ 	 * valid parameters
+ 	 */
+ 	if (args->duplex == DUPLEX_UNKNOWN)
+@@ -1183,7 +1183,7 @@ static irqreturn_t cgx_fwi_event_handler(int irq, void *data)
+ 		/* Ensure response is updated before thread context starts */
+ 		smp_wmb();
+ 
+-		/* There wont be separate events for link change initiated from
++		/* There won't be separate events for link change initiated from
+ 		 * software; Hence report the command responses as events
+ 		 */
+ 		if (cgx_cmdresp_is_linkevent(event))
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/ptp.c b/drivers/net/ethernet/marvell/octeontx2/af/ptp.c
+index 1ee37853f338..4ceda6cdacf9 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/ptp.c
++++ b/drivers/net/ethernet/marvell/octeontx2/af/ptp.c
+@@ -117,7 +117,7 @@ static int ptp_adjfine(struct ptp *ptp, long scaled_ppm)
+ 
+ 	/* The hardware adds the clock compensation value to the PTP clock
+ 	 * on every coprocessor clock cycle. Typical convention is that it
+-	 * represent number of nanosecond betwen each cycle. In this
++	 * represent number of nanosecond between each cycle. In this
+ 	 * convention compensation value is in 64 bit fixed-point
+ 	 * representation where upper 32 bits are number of nanoseconds
+ 	 * and lower is fractions of nanosecond.
+@@ -127,7 +127,7 @@ static int ptp_adjfine(struct ptp *ptp, long scaled_ppm)
+ 	 * arithmetic on following formula
+ 	 * comp = tbase + tbase * scaled_ppm / (1M * 2^16)
+ 	 * where tbase is the basic compensation value calculated
+-	 * initialy in the probe function.
++	 * initially in the probe function.
+ 	 */
+ 	comp = ((u64)1000000000ull << 32) / ptp->clock_rate;
+ 	/* convert scaled_ppm to ppb */
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_cn10k.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_cn10k.c
+index 8d48b64485c6..cd8c07e14c28 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_cn10k.c
++++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_cn10k.c
+@@ -62,7 +62,7 @@ static int rvu_get_lmtaddr(struct rvu *rvu, u16 pcifunc,
+ 	int err;
+ 
+ 	if (!iova) {
+-		dev_err(rvu->dev, "%s Requested Null address for transulation\n", __func__);
++		dev_err(rvu->dev, "%s Requested Null address for translation\n", __func__);
+ 		return -EINVAL;
+ 	}
+ 
+@@ -74,12 +74,12 @@ static int rvu_get_lmtaddr(struct rvu *rvu, u16 pcifunc,
+ 
+ 	err = rvu_poll_reg(rvu, BLKADDR_RVUM, RVU_AF_SMMU_ADDR_RSP_STS, BIT_ULL(0), false);
+ 	if (err) {
+-		dev_err(rvu->dev, "%s LMTLINE iova transulation failed\n", __func__);
++		dev_err(rvu->dev, "%s LMTLINE iova translation failed\n", __func__);
+ 		return err;
+ 	}
+ 	val = rvu_read64(rvu, BLKADDR_RVUM, RVU_AF_SMMU_ADDR_RSP_STS);
+ 	if (val & ~0x1ULL) {
+-		dev_err(rvu->dev, "%s LMTLINE iova transulation failed err:%llx\n", __func__, val);
++		dev_err(rvu->dev, "%s LMTLINE iova translation failed err:%llx\n", __func__, val);
+ 		return -EIO;
+ 	}
+ 	/* PA[51:12] = RVU_AF_SMMU_TLN_FLIT1[60:21]
+@@ -243,7 +243,7 @@ int rvu_set_channels_base(struct rvu *rvu)
+ 	/* If programmable channels are present then configure
+ 	 * channels such that all channel numbers are contiguous
+ 	 * leaving no holes. This way the new CPT channels can be
+-	 * accomodated. The order of channel numbers assigned is
++	 * accommodated. The order of channel numbers assigned is
+ 	 * LBK, SDP, CGX and CPT.
+ 	 */
+ 	hw->sdp_chan_base = hw->lbk_chan_base + hw->lbk_links *
+@@ -294,7 +294,7 @@ static void rvu_lbk_set_channels(struct rvu *rvu)
+ 	u16 chans;
+ 
+ 	/* To loopback packets between multiple NIX blocks
+-	 * mutliple LBK blocks are needed. With two NIX blocks,
++	 * multiple LBK blocks are needed. With two NIX blocks,
+ 	 * four LBK blocks are needed and each LBK block
+ 	 * source and destination are as follows:
+ 	 * LBK0 - source NIX0 and destination NIX1
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c
+index 370d4ca1e5ed..637d7c0052f2 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c
++++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c
+@@ -431,7 +431,7 @@ static void print_npa_qsize(struct seq_file *m, struct rvu_pfvf *pfvf)
+ /* The 'qsize' entry dumps current Aura/Pool context Qsize
+  * and each context's current enable/disable status in a bitmap.
+  */
+-static int rvu_dbg_qsize_display(struct seq_file *filp, void *unsused,
++static int rvu_dbg_qsize_display(struct seq_file *filp, void *unused,
+ 				 int blktype)
+ {
+ 	void (*print_qsize)(struct seq_file *filp,
+@@ -2141,7 +2141,7 @@ static void rvu_print_npc_mcam_info(struct seq_file *s,
+ 	}
+ }
+ 
+-static int rvu_dbg_npc_mcam_info_display(struct seq_file *filp, void *unsued)
++static int rvu_dbg_npc_mcam_info_display(struct seq_file *filp, void *unused)
+ {
+ 	struct rvu *rvu = filp->private;
+ 	int pf, vf, numvfs, blkaddr;
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c
+index aeae37704428..a611d43bc09a 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c
++++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c
+@@ -398,11 +398,11 @@ static int rvu_nix_get_bpid(struct rvu *rvu, struct nix_bp_cfg_req *req,
+ 	pfvf = rvu_get_pfvf(rvu, req->hdr.pcifunc);
+ 
+ 	/* Backpressure IDs range division
+-	 * CGX channles are mapped to (0 - 191) BPIDs
+-	 * LBK channles are mapped to (192 - 255) BPIDs
+-	 * SDP channles are mapped to (256 - 511) BPIDs
++	 * CGX channels are mapped to (0 - 191) BPIDs
++	 * LBK channels are mapped to (192 - 255) BPIDs
++	 * SDP channels are mapped to (256 - 511) BPIDs
+ 	 *
+-	 * Lmac channles and bpids mapped as follows
++	 * Lmac channels and bpids mapped as follows
+ 	 * cgx(0)_lmac(0)_chan(0 - 15) = bpid(0 - 15)
+ 	 * cgx(0)_lmac(1)_chan(0 - 15) = bpid(16 - 31) ....
+ 	 * cgx(1)_lmac(0)_chan(0 - 15) = bpid(64 - 79) ....
+@@ -1491,7 +1491,7 @@ static int nix_check_txschq_alloc_req(struct rvu *rvu, int lvl, u16 pcifunc,
+ 		return 0;
+ 	}
+ 
+-	/* Get free SCHQ count and check if request can be accomodated */
++	/* Get free SCHQ count and check if request can be accommodated */
+ 	if (hw->cap.nix_fixed_txschq_mapping) {
+ 		nix_get_txschq_range(rvu, pcifunc, link, &start, &end);
+ 		schq = start + (pcifunc & RVU_PFVF_FUNC_MASK);
+@@ -1625,7 +1625,7 @@ int rvu_mbox_handler_nix_txsch_alloc(struct rvu *rvu,
+ 	mutex_lock(&rvu->rsrc_lock);
+ 
+ 	/* Check if request is valid as per HW capabilities
+-	 * and can be accomodated.
++	 * and can be accommodated.
+ 	 */
+ 	for (lvl = 0; lvl < NIX_TXSCH_LVL_CNT; lvl++) {
+ 		rc = nix_check_txschq_alloc_req(rvu, lvl, pcifunc, nix_hw, req);
+@@ -3041,7 +3041,7 @@ static int reserve_flowkey_alg_idx(struct rvu *rvu, int blkaddr, u32 flow_cfg)
+ 			    NIX_AF_RX_FLOW_KEY_ALGX_FIELDX(hw->flowkey.in_use,
+ 							   fid), field[fid]);
+ 
+-	/* Store the flow_cfg for futher lookup */
++	/* Store the flow_cfg for further lookup */
+ 	rc = hw->flowkey.in_use;
+ 	hw->flowkey.flowkey[rc] = flow_cfg;
+ 	hw->flowkey.in_use++;
+@@ -3723,7 +3723,7 @@ static int rvu_nix_block_init(struct rvu *rvu, struct nix_hw *nix_hw)
+ 				    (ltdefs->rx_apad1.ltype_match << 4) |
+ 				    ltdefs->rx_apad1.ltype_mask);
+ 
+-			/* Receive ethertype defination register defines layer
++			/* Receive ethertype definition register defines layer
+ 			 * information in NPC_RESULT_S to identify the Ethertype
+ 			 * location in L2 header. Used for Ethertype overwriting
+ 			 * in inline IPsec flow.
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc.c
+index 3612e0a2cab3..35ef314a8b23 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc.c
++++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc.c
+@@ -1048,7 +1048,7 @@ void npc_enadis_default_mce_entry(struct rvu *rvu, u16 pcifunc,
+ 		return;
+ 	}
+ 
+-	/* return incase mce list is not enabled */
++	/* return in case mce list is not enabled */
+ 	pfvf = rvu_get_pfvf(rvu, pcifunc & ~RVU_PFVF_FUNC_MASK);
+ 	if (hw->cap.nix_rx_multicast && is_vf(pcifunc) &&
+ 	    type != NIXLF_BCAST_ENTRY && !pfvf->use_mce_list)
+@@ -2298,7 +2298,7 @@ npc_get_mcam_search_range_priority(struct npc_mcam *mcam,
+ 	 * - If reference entry is not in hprio zone then
+ 	 *      search range: ref_entry to end.
+ 	 * - If reference entry is in hprio zone and if
+-	 *   request can be accomodated in non-hprio zone then
++	 *   request can be accommodated in non-hprio zone then
+ 	 *      search range: 'start of middle zone' to 'end'
+ 	 * - else search in reverse, so that less number of hprio
+ 	 *   zone entries are allocated.
+@@ -2325,7 +2325,7 @@ npc_get_mcam_search_range_priority(struct npc_mcam *mcam,
+ 	 * - If reference entry is not in lprio zone then
+ 	 *      search range: 0 to ref_entry.
+ 	 * - If reference entry is in lprio zone and if
+-	 *   request can be accomodated in middle zone then
++	 *   request can be accommodated in middle zone then
+ 	 *      search range: 'hprio_end' to 'lprio_start'
+ 	 */
+ 
+@@ -2376,7 +2376,7 @@ static int npc_mcam_alloc_entries(struct npc_mcam *mcam, u16 pcifunc,
+ 	 * Reverse bitmap is used to allocate entries
+ 	 * - when a higher priority entry is requested
+ 	 * - when available free entries are less.
+-	 * Lower priority ones out of avaialble free entries are always
++	 * Lower priority ones out of available free entries are always
+ 	 * chosen when 'high vs low' question arises.
+ 	 */
+ 
+@@ -2397,7 +2397,7 @@ static int npc_mcam_alloc_entries(struct npc_mcam *mcam, u16 pcifunc,
+ 	hp_fcnt = npc_mcam_get_free_count(mcam->bmap, 0, mcam->hprio_end);
+ 	fcnt = mcam->bmap_fcnt - lp_fcnt - hp_fcnt;
+ 
+-	/* Check if request can be accomodated in the middle zone */
++	/* Check if request can be accommodated in the middle zone */
+ 	if (fcnt > req->count) {
+ 		start = mcam->hprio_end;
+ 		end = mcam->lprio_start;
+@@ -2461,7 +2461,7 @@ static int npc_mcam_alloc_entries(struct npc_mcam *mcam, u16 pcifunc,
+ 		}
+ 	}
+ 
+-	/* If allocating requested no of entries is unsucessful,
++	/* If allocating requested no of entries is unsuccessful,
+ 	 * expand the search range to full bitmap length and retry.
+ 	 */
+ 	if (!req->priority && (rsp->count < req->count) &&
+-- 
+2.31.1
 
