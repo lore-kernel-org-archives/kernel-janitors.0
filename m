@@ -2,103 +2,207 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE4E4C07E9C
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Jul 2021 19:52:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1189C07E95
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Jul 2021 20:52:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BF10661CC1
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Jul 2021 19:52:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AEBF161CD2
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Jul 2021 20:52:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231708AbhGGTyt (ORCPT
+        id S231748AbhGGUzZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 7 Jul 2021 15:54:49 -0400
-Received: from mail-ed1-f46.google.com ([209.85.208.46]:46000 "EHLO
-        mail-ed1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230359AbhGGTyt (ORCPT
+        Wed, 7 Jul 2021 16:55:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42082 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230229AbhGGUzZ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 7 Jul 2021 15:54:49 -0400
-Received: by mail-ed1-f46.google.com with SMTP id t3so4952192edt.12;
-        Wed, 07 Jul 2021 12:52:07 -0700 (PDT)
+        Wed, 7 Jul 2021 16:55:25 -0400
+Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75C80C061574;
+        Wed,  7 Jul 2021 13:52:44 -0700 (PDT)
+Received: by mail-yb1-xb29.google.com with SMTP id b13so5331915ybk.4;
+        Wed, 07 Jul 2021 13:52:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Sk8sHu6LCd2EXAfBmiWFJrRWB8lEE1Gj41aKiaDQM8M=;
+        b=IeNuCJJp9EceruFg/UtNe/J+C+vGnrAAXxtxF0a29KPcNHcffU3owIxVBqcArpI7vc
+         T/SGJA1iooGK46dgHVKnAiN42fEB1ZnJNw2+qb5MDYVoMQxKlc2BeLs5S7NEM21rz+OW
+         58waRJ+T8wLhKzooBNsq33aWZ9/yEKDTpOsSMAII27J/c7zCDNSNavLw2642J6TrtNPM
+         2giOI0BCwIBoCs+zxlYn5tt0lYuRklOnseWEM8/hDf27zo7nHIN6CGkvBMUhRUp3eAng
+         1Fufm/SjQAdQzeo/ZB9QZbvfJuhHIk9ek27MtHLt/tSa/VGatsaMkQ2c2Yr2Q1PeIy2D
+         ynbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=URduaW50lsVABZMTcWqniUjdimmoK+Mx3tzbD4O0S0c=;
-        b=tp7LDq7q84kwrouqsTlh5IG8bskNwTRRGMlKD+B86oeVds6X8Rta0STLCkCzVP7rlH
-         rZT/B696cba7p3B3lbQXTxopJY6V7EHKSxxIVm+q6V+KTXblUn++jjswea1nvYlWQiGg
-         CEA57KAG+c+XPKUkJkiZFOJiDFMIfoO9nreVHeL3jE02sZMy/5mqI8FDI7xNQGOOWpDj
-         V03tGmlM2M2NW9beIuMTsjriqHruAzzb8jn92HBLqvUd9c84W9pxvqfLT4NBm5PL+Bji
-         0LFPe1Z8LKBNwJq096yZnDseesKeC/XrjL8CI9kM1K947+2JrcuUmVHw6wMRnsXSmMTv
-         cLaw==
-X-Gm-Message-State: AOAM5306xeZqKoa8pZ0kdpzS4A4fnuIgOi0aJa+Esadwxp7+1u6+rn7c
-        r46j6lzPrnAFUb4SOE92kts=
-X-Google-Smtp-Source: ABdhPJwczzpgZW/l6CYw6xMSEcrMRQzjEX1rXbOx0YnkNsKZDpnFuKYfvJLKK5FguvXS8xtQAKUuUQ==
-X-Received: by 2002:a05:6402:30af:: with SMTP id df15mr3080906edb.19.1625687527405;
-        Wed, 07 Jul 2021 12:52:07 -0700 (PDT)
-Received: from rocinante ([95.155.85.46])
-        by smtp.gmail.com with ESMTPSA id f9sm24949edw.88.2021.07.07.12.52.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Jul 2021 12:52:06 -0700 (PDT)
-Date:   Wed, 7 Jul 2021 21:52:05 +0200
-From:   Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     thierry.reding@gmail.com, lorenzo.pieralisi@arm.com,
-        robh@kernel.org, bhelgaas@google.com, jonathanh@nvidia.com,
-        linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 3/3] PCI: tegra: make const array err_msg static
-Message-ID: <20210707195205.GA6952@rocinante>
-References: <55b11e9a7fa2987fbc0869d68ae59888954d65e2.1620148539.git.christophe.jaillet@wanadoo.fr>
- <5f3f35296b944b94546cc7d1e9cc6186484620d8.1620148539.git.christophe.jaillet@wanadoo.fr>
- <20210705223152.GA142312@rocinante>
- <a3d48884-9e47-8623-6fc5-6c52f4ca0568@wanadoo.fr>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Sk8sHu6LCd2EXAfBmiWFJrRWB8lEE1Gj41aKiaDQM8M=;
+        b=foOoBqoJ4C7Uvb6B94+6ZF26ptGWIWgd9hYADOtrJ90jBWLbucatv5kwMVrPmoyMMa
+         CS3SrYHnaasBQW2a4hswF0opxBlOMimyxY59Xhz494eYzNdNg502rZDLA1VvATnrmqRO
+         IFCul7oECshMv+XRXO8O/aFJPR8jdkYHTiJj/jyvNukYztsarDfotGFSGufp4FTD8AhK
+         cGkh2LfYZNWo/xBUZwX7x13rAMLzezm4OZgFv2sTnq6y5rCKny4bgqB22E9o+/1BqcRZ
+         j4/OrAcHTExW4OnYaaZkdfZlnJb82IeNfzg+pM8Dpsa/psZyU7GZMQzPX5uQfYwYarPw
+         qKJw==
+X-Gm-Message-State: AOAM530v7jn3HJbR3r2Kv0rvtSCut5OtYdZ4nO6NNLfpyQKO5IlRD+pG
+        oDOvN34u4UWzn4TxnefRZMeWjpv0Zo3IfVud+rA=
+X-Google-Smtp-Source: ABdhPJyBSIXwel6YwRDisY/XdfX9ohxrKOhqrd6iG8lRYS3BKYhBicfPBRmYGXQKj+RWQMulNGJCA+iWIo+8VdNDOD0=
+X-Received: by 2002:a25:9942:: with SMTP id n2mr34854535ybo.230.1625691163601;
+ Wed, 07 Jul 2021 13:52:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <a3d48884-9e47-8623-6fc5-6c52f4ca0568@wanadoo.fr>
+References: <1624507409-114522-1-git-send-email-chengshuyi@linux.alibaba.com>
+In-Reply-To: <1624507409-114522-1-git-send-email-chengshuyi@linux.alibaba.com>
+From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date:   Wed, 7 Jul 2021 13:52:32 -0700
+Message-ID: <CAEf4BzaGjEC4t1OefDo11pj2-HfNy0BLhs_G2UREjRNTmb2u=A@mail.gmail.com>
+Subject: Re: [PATCH bpf-next] libbpf: Introduce 'custom_btf_path' to 'bpf_obj_open_opts'.
+To:     Shuyi Cheng <chengshuyi@linux.alibaba.com>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>, Martin Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        john fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>,
+        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Christophe,
+On Wed, Jun 23, 2021 at 9:04 PM Shuyi Cheng
+<chengshuyi@linux.alibaba.com> wrote:
+>
+> In order to enable the older kernel to use the CO-RE feature, load the
+> vmlinux btf of the specified path.
+>
+> Learn from Andrii's comments in [0], add the custom_btf_path parameter
+> to bpf_obj_open_opts, you can directly use the skeleton's
+> <objname>_bpf__open_opts function to pass in the custom_btf_path
+> parameter.
+>
+> Prior to this, there was also a developer who provided a patch with
+> similar functions. It is a pity that the follow-up did not continue to
+> advance. See [1].
+>
+>         [0]https://lore.kernel.org/bpf/CAEf4BzbJZLjNoiK8_VfeVg_Vrg=9iYFv+po-38SMe=UzwDKJ=Q@mail.gmail.com/#t
+>         [1]https://yhbt.net/lore/all/CAEf4Bzbgw49w2PtowsrzKQNcxD4fZRE6AKByX-5-dMo-+oWHHA@mail.gmail.com/
+>
+> Signed-off-by: Shuyi Cheng <chengshuyi@linux.alibaba.com>
+> ---
+>  tools/lib/bpf/libbpf.c | 23 ++++++++++++++++++++---
+>  tools/lib/bpf/libbpf.h |  6 +++++-
+>  2 files changed, 25 insertions(+), 4 deletions(-)
+>
+> diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+> index 1e04ce7..518b19f 100644
+> --- a/tools/lib/bpf/libbpf.c
+> +++ b/tools/lib/bpf/libbpf.c
+> @@ -509,6 +509,8 @@ struct bpf_object {
+>         void *priv;
+>         bpf_object_clear_priv_t clear_priv;
+>
+> +       char *custom_btf_path;
+> +
+>         char path[];
+>  };
+>  #define obj_elf_valid(o)       ((o)->efile.elf)
+> @@ -2679,8 +2681,15 @@ static int bpf_object__load_vmlinux_btf(struct bpf_object *obj, bool force)
+>         if (!force && !obj_needs_vmlinux_btf(obj))
+>                 return 0;
+>
+> -       obj->btf_vmlinux = libbpf_find_kernel_btf();
+> -       err = libbpf_get_error(obj->btf_vmlinux);
+> +       if (obj->custom_btf_path) {
+> +               obj->btf_vmlinux = btf__parse(obj->custom_btf_path, NULL);
+> +               err = libbpf_get_error(obj->btf_vmlinux);
+> +               pr_debug("loading custom vmlinux BTF '%s': %d\n", obj->custom_btf_path, err);
+> +       } else {
+> +               obj->btf_vmlinux = libbpf_find_kernel_btf();
+> +               err = libbpf_get_error(obj->btf_vmlinux);
+> +       }
 
-[...]
-> > These should be trivial to fix.  The two pertaining to "quoted string
-> > split across lines" would be something that we might or might not decide
-> > to do anything about this - technically, as per the Linux kernel coding
-> > style [1], we ought to fix this... but, this particular case is not
-> > a terrible example, so I will leave this at your discretion.
-> > 
-> > What do you think?
-> 
-> Hi,
-> I don't think it worth it.
-> 
-> Even for patch 2/3 about 'seq_printf' --> 'seq_puts' conversion, I'm not
-> fully convinced myself that is useful.
 
-I personally believe it's a good change.
+I think it will be more flexible to treat custom_btf as an vmlinux BTF
+override, just like [1] did. I can see how in some situations users
+might want to treat this custom BTF as either a replacement of vmlinux
+BTF or as an augmentation of vmlinux BTF for the purpose of extra
+custom CO-RE relocations (e.g., something along the XDP hints that
+were discussed recently). For now it's probably enough to implement
+"custom BTF is a replacement for vmlinux BTF" policy and, if
+necessary, add "custom BTF is in addition to vmlinux BTF" later with
+extra opts flag/field.
 
-For a literal string without any formatting using the seq_printf() is
-much more involved for no reason, but aside of this small performance
-improvement, it also has some value in demonstrating the correct usage
-patterns - people spent more time reading kernel code and looking at how
-to do things and use things to base their work on, so setting some
-example is not a bad idea.
+Keep in mind that this custom BTF is only useful for BPF CO-RE
+relocation. Any other kernel feature relying on vmlinux BTF (e.g.,
+fentry) won't work with custom BTF because it expects correct BTF type
+IDs.
 
-Albeit, it's a matter of point of view too, I suppose.
 
-> Too trivial clean-ups only mess-up 'git blame' for no real added value.
+> +
+>         if (err) {
+>                 pr_warn("Error loading vmlinux BTF: %d\n", err);
+>                 obj->btf_vmlinux = NULL;
+> @@ -7554,7 +7563,7 @@ int bpf_program__load(struct bpf_program *prog, char *license, __u32 kern_ver)
+>  __bpf_object__open(const char *path, const void *obj_buf, size_t obj_buf_sz,
+>                    const struct bpf_object_open_opts *opts)
+>  {
+> -       const char *obj_name, *kconfig;
+> +       const char *obj_name, *kconfig, *tmp_btf_path;
+>         struct bpf_program *prog;
+>         struct bpf_object *obj;
+>         char tmp_name[64];
+> @@ -7584,6 +7593,13 @@ int bpf_program__load(struct bpf_program *prog, char *license, __u32 kern_ver)
+>         obj = bpf_object__new(path, obj_buf, obj_buf_sz, obj_name);
+>         if (IS_ERR(obj))
+>                 return obj;
+> +
+> +       tmp_btf_path = OPTS_GET(opts, custom_btf_path, NULL);
+> +       if (tmp_btf_path && strlen(tmp_btf_path) < PATH_MAX) {
 
-Yes, there is a fine line with these.
+if strlen() is >= PATH_MAX you'll just silently ignore it? We should
+either truncate silently (because PATH_MAX is totally reasonable
+assumption) or error out.
 
-> If you want these clean-ups, I can send a patch for it, but checkpatch
-> output need sometimes to be ignored on files already in the tree. At least,
-> this is my point of view.
-
-No worries!  Thank you for giving it some thought!  I appreciate it. :)
-
-	Krzysztof
+> +               obj->custom_btf_path = strdup(tmp_btf_path);
+> +               if (!obj->custom_btf_path)
+> +                       return ERR_PTR(-ENOMEM);
+> +       }
+>
+>         kconfig = OPTS_GET(opts, kconfig, NULL);
+>         if (kconfig) {
+> @@ -8702,6 +8718,7 @@ void bpf_object__close(struct bpf_object *obj)
+>         for (i = 0; i < obj->nr_maps; i++)
+>                 bpf_map__destroy(&obj->maps[i]);
+>
+> +       zfree(&obj->custom_btf_path);
+>         zfree(&obj->kconfig);
+>         zfree(&obj->externs);
+>         obj->nr_extern = 0;
+> diff --git a/tools/lib/bpf/libbpf.h b/tools/lib/bpf/libbpf.h
+> index 6e61342..16e0f01 100644
+> --- a/tools/lib/bpf/libbpf.h
+> +++ b/tools/lib/bpf/libbpf.h
+> @@ -94,8 +94,12 @@ struct bpf_object_open_opts {
+>          * system Kconfig for CONFIG_xxx externs.
+>          */
+>         const char *kconfig;
+> +       /* Specify the path of vmlinux btf to facilitate the use of CO-RE features
+> +        * in the old kernel.
+> +        */
+> +       char *custom_btf_path;
+>  };
+> -#define bpf_object_open_opts__last_field kconfig
+> +#define bpf_object_open_opts__last_field custom_btf_path
+>
+>  LIBBPF_API struct bpf_object *bpf_object__open(const char *path);
+>  LIBBPF_API struct bpf_object *
+> --
+> 1.8.3.1
+>
