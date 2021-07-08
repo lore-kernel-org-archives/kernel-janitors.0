@@ -2,129 +2,108 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC08CC07E95
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jul 2021 00:35:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8C46C07E95
+	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jul 2021 03:11:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9165E61C7F
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jul 2021 00:35:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99CA961C9C
+	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jul 2021 03:11:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230191AbhGHAij (ORCPT
+        id S230359AbhGHDOO convert rfc822-to-8bit (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 7 Jul 2021 20:38:39 -0400
-Received: from mailout1.samsung.com ([203.254.224.24]:42608 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230192AbhGHAii (ORCPT
+        Wed, 7 Jul 2021 23:14:14 -0400
+Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:57561 "EHLO
+        out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230244AbhGHDON (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 7 Jul 2021 20:38:38 -0400
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20210708003556epoutp01c35512a4d203e2c9a800201892e6d542~Pqa41vFUe1200912009epoutp01N
-        for <kernel-janitors@vger.kernel.org>; Thu,  8 Jul 2021 00:35:56 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20210708003556epoutp01c35512a4d203e2c9a800201892e6d542~Pqa41vFUe1200912009epoutp01N
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1625704556;
-        bh=EwrYyQcpWawI5Fld5oT8ahpOoWoON5EpWbrDsjKH02o=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=LS23Jmx5B9ZJ4uadnBGKWYZmrvvyu2jeOAecP+IICVvhtb9uq1tuHIW3f98BzJw4m
-         0rzZ94a+qpikC1fC74O3nx2xRFZPt1n8p6GPr08T9RGLRlUovAs8OVIyXc5rgQw5EW
-         mzmzMjhQQnoTFj0tT/TIPG5nHgJSGRJWIn5I9WLg=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20210708003555epcas1p39c983a949a8f362b82e00c044a78636d~Pqa4mG7wR0889208892epcas1p3P;
-        Thu,  8 Jul 2021 00:35:55 +0000 (GMT)
-Received: from epsmges1p2.samsung.com (unknown [182.195.40.160]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4GKy5701Qrz4x9Px; Thu,  8 Jul
-        2021 00:35:55 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        52.45.09551.86846E06; Thu,  8 Jul 2021 09:35:52 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20210708003552epcas1p171e154ff767c38ed9f4b64c5d6466278~Pqa1HAesx1011610116epcas1p1y;
-        Thu,  8 Jul 2021 00:35:52 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20210708003552epsmtrp2a467242d855159c4d3bf12ffa2b333ab~Pqa1GL3a20910209102epsmtrp2g;
-        Thu,  8 Jul 2021 00:35:52 +0000 (GMT)
-X-AuditID: b6c32a36-2c9ff7000000254f-a2-60e648683e24
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        21.18.08394.86846E06; Thu,  8 Jul 2021 09:35:52 +0900 (KST)
-Received: from namjaejeon01 (unknown [10.89.31.77]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20210708003551epsmtip26a9c16e2a6e25a864147242e374b6b22~Pqa04M1Rs2039720397epsmtip2d;
-        Thu,  8 Jul 2021 00:35:51 +0000 (GMT)
-From:   "Namjae Jeon" <namjae.jeon@samsung.com>
-To:     "'Dan Carpenter'" <dan.carpenter@oracle.com>
-Cc:     "'Sergey Senozhatsky'" <senozhatsky@chromium.org>,
-        "'Steve French'" <sfrench@samba.org>,
-        "'Hyunchul Lee'" <hyc.lee@gmail.com>, <linux-cifs@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-In-Reply-To: <YOV+xDbnpDrR/Ipj@mwanda>
-Subject: RE: [PATCH] ksmbd: use kasprintf() in ksmbd_vfs_xattr_stream_name()
-Date:   Thu, 8 Jul 2021 09:35:51 +0900
-Message-ID: <002101d77391$348b5e40$9da21ac0$@samsung.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQKbYNqOz5tmC91+maLhZR2jJDEFjwF2ph+WqaSq03A=
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprAJsWRmVeSWpSXmKPExsWy7bCmgW6Gx7MEgwfTNS1e/5vOYnHt/nt2
-        i623pC1e/N/FbLF74yI2i46XR5kd2DxmN1xk8dg56y67x8ent1g85u7qY/T4vEkugDUqxyYj
-        NTEltUghNS85PyUzL91WyTs43jne1MzAUNfQ0sJcSSEvMTfVVsnFJ0DXLTMH6AAlhbLEnFKg
-        UEBicbGSvp1NUX5pSapCRn5xia1SakFKToGhQYFecWJucWleul5yfq6VoYGBkSlQZUJOxrON
-        cxgL5jBVLLj2hrWB8QljFyMHh4SAicSvafldjFwcQgI7GCUedO1hhnA+MUo07HnDCOF8Y5SY
-        +7KHvYuRE6zj+McN7BCJvYwSh25cZ4JwXjBK7NrVwARSxSagK/Hvz342EFtEwEDi3skXLCBF
-        zALHGCV2zp7MCJLgFFCTmPaxH6xBWMBH4u3RnywgNouAisT2s2tZQQ7kFbCUeHLRFyTMKyAo
-        cXLmE7ASZgF5ie1v5zBDXKQg8fPpMrByEQErid3zQiFKRCRmd7aBvSMhMJVD4uXihSwQ9S4S
-        bTdPQdnCEq+Ob4H6TEri87u9bBB2ucSJk7+YIOwaiQ3z9rFDwstYoudFCYjJLKApsX6XPkSF
-        osTO33MZIdbySbz72sMKUc0r0dEmBFGiKtF36TDUQGmJrvYP7BMYlWYh+WsWkr9mIXlgFsKy
-        BYwsqxjFUguKc9NTiw0LjJCjehMjOGlqme1gnPT2g94hRiYOxkOMEhzMSiK8jA5PE4R4UxIr
-        q1KL8uOLSnNSiw8xmgIDeiKzlGhyPjBt55XEG5oaGRsbW5iYmZuZGiuJ8+5kO5QgJJCeWJKa
-        nZpakFoE08fEwSnVwJTBflojRX3h9bBqO49UTz2eL2ZZdycGtNVke25blJYYZu9xMpRj2tTT
-        X38IzZnnausj9Dtb4P2j3sJzP813S0reDxJ3U5S/tz1I0mpWQuVq/+SC93ePlWW9k/mj9WjD
-        SlfWEom1zd+rSx7FtKRfuGfwWmgb58XKJYte6/+4rpZU+/9Bp1pwyOIF/+ceWi8671iOHuMW
-        tUl2AqVWxSkfcgRFZawfHPJal1p2d/283jOfypQ9fBpqpnl4FIiuf5Z4oaP3opRXSabRnkhb
-        1pvi7ToqHi8WtbhHCc1dffHsNb8IvdIFQadOMzGfSaqs9GB7tMhI8MsVee2dlkEBqVOq71yS
-        LVgToBe845SX56YfSizFGYmGWsxFxYkATDI3RSMEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrJLMWRmVeSWpSXmKPExsWy7bCSvG6Gx7MEgw1HWSxe/5vOYnHt/nt2
-        i623pC1e/N/FbLF74yI2i46XR5kd2DxmN1xk8dg56y67x8ent1g85u7qY/T4vEkugDWKyyYl
-        NSezLLVI3y6BK+PZxjmMBXOYKhZce8PawPiEsYuRk0NCwETi+McN7F2MXBxCArsZJfbeWsoM
-        kZCWOHbiDJDNAWQLSxw+XAxR84xRon9lLxtIDZuArsS/P/vBbBEBA4l7J1+wgBQxC5xilLhz
-        7SjYBiGBcolrD5+D2ZwCahLTPvYzgdjCAj4Sb4/+ZAGxWQRUJLafXcsKsoxXwFLiyUVfkDCv
-        gKDEyZlPWEDCzAJ6Em0bwaYwC8hLbH87B+pMBYmfT5eBdYoIWEnsnhcKUSIiMbuzjXkCo/As
-        JINmIQyahWTQLCQdCxhZVjFKphYU56bnFhsWGOallusVJ+YWl+al6yXn525iBMeOluYOxu2r
-        PugdYmTiYDzEKMHBrCTCy+jwNEGINyWxsiq1KD++qDQntfgQozQHi5I474Wuk/FCAumJJanZ
-        qakFqUUwWSYOTqkGJt0fLz4/814W/fdAjujvHLGvZzYzm008eHVF+Jwzuscv/L98+QD3ldfK
-        en8S+iMa7qX4RuyUWrBbc64JM/vkpMW8k4Lq1T/FNawXXO1o8yLurlSC2qTcbZZbf1055rTz
-        4737Xa++T/FYYmitYbVp6plLFRuWRPl9qbpxTJt//Zl9/OndJ7fr2JpUlKzql0z6eWWnilNo
-        JGe82psTzrV7uHL+KfjOWLbhM0Pq4cyvpQ/m3Hi4zldSaFlgw9pX1s6qfGrzJd/qapSeU77C
-        ErgmNXl22KlO85SZn5jq1+w9IbPAti7zmM4Vl6VeKs++maie2THpPtOpoN2X6i4UHU5ce0NH
-        6FSR2Db+Pptpqyv2pZYosRRnJBpqMRcVJwIAwAhMqgwDAAA=
-X-CMS-MailID: 20210708003552epcas1p171e154ff767c38ed9f4b64c5d6466278
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20210707101617epcas1p12eede31054d5985ad00297f45102bcd5
-References: <CGME20210707101617epcas1p12eede31054d5985ad00297f45102bcd5@epcas1p1.samsung.com>
-        <YOV+xDbnpDrR/Ipj@mwanda>
+        Wed, 7 Jul 2021 23:14:13 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R861e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=zhaoyan.liao@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0Uf4GV0k_1625713889;
+Received: from 30.250.200.142(mailfrom:zhaoyan.liao@linux.alibaba.com fp:SMTPD_---0Uf4GV0k_1625713889)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 08 Jul 2021 11:11:30 +0800
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 14.0 \(3654.40.0.2.32\))
+Subject: Re: [PATCH] use 64bit timer for hpet
+From:   Linux <zhaoyan.liao@linux.alibaba.com>
+In-Reply-To: <875yxmqw2s.ffs@nanos.tec.linutronix.de>
+Date:   Thu, 8 Jul 2021 11:11:28 +0800
+Cc:     mingo@redhat.com, hpa@zytor.com, dwmw@amazon.co.uk,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        songmuchun@bytedance.com, likunkun@bytedance.com,
+        guancheng.rjk@alibaba-inc.com, duanxiongchun@bytedance.com,
+        wenan.mao@linux.alibaba.com
+Content-Transfer-Encoding: 8BIT
+Message-Id: <8A96C0F7-FBE4-4B23-8565-E814401BF927@linux.alibaba.com>
+References: <1625213625-25745-1-git-send-email-zhaoyan.liao@linux.alibaba.com>
+ <875yxmqw2s.ffs@nanos.tec.linutronix.de>
+To:     Thomas Gleixner <tglx@linutronix.de>
+X-Mailer: Apple Mail (2.3654.40.0.2.32)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-> Simplify the code by using kasprintf().  This also silences a Smatch
-> warning:
+Gleixner,
+
+> Seriously? The wrap-around time for 32bit HPET @24MHz is ~3 minutes.
+
+In some cases, our system will be very busy, and the timeout of 3 minutes 
+is not an exaggeration. Then, the system considers that the tsc clock is 
+inaccurate and switches the tsc clock to the hpet clock, which brings 
+greater performance overhead.
+
+> Aside of that the reason why the kernel does not support 64bit HPET is
+> that there are HPETs which advertise 64bit support, but the
+> implementation is buggy.
+
+Can you tell me what is the buggy with the 64-bit hpet clock? In my opinion, 
+it is unreasonable to use a lower-bit width clock to calibrate a higher-bit width
+ clock, and the hardware already supports the higher-bit width.
+
+
+> 2021年7月7日 下午6:04，Thomas Gleixner <tglx@linutronix.de> 写道：
 > 
->     fs/ksmbd/vfs.c:1725 ksmbd_vfs_xattr_stream_name()
->     warn: inconsistent indenting
+> Liao,
 > 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Thanks for your patch. I will apply.
+> On Fri, Jul 02 2021 at 16:13, zhaoyan liao wrote:
+>> The kernel judges whether the tsc clock is accurate in the
+>> clocksource_watchdog background thread function. The hpet clock source
+>> is 32-bit, but tsc is 64-bit. Therefore, when the system is busy and the
+>> clocksource_watchdog cannot be scheduled in time, the hpet clock may
+>> overflow and cause the system to misjudge tsc as unreliable.
+> 
+> Seriously? The wrap-around time for 32bit HPET @24MHz is ~3 minutes.
+> 
+>> In this case, we recommend that the kernel adopts the 64-bit hpet clock
+>> by default to keep the width of the two clock sources the same to reduce
+>> misjudgment. Some CPU models may not support 64-bit hpet, but according
+>> to the description of the CPU's register manual, it does not affect our
+>> reading action.
+> 
+> So much for the theory.
+> 
+>> -#define HPET_MASK			CLOCKSOURCE_MASK(32)
+>> +#define HPET_MASK			CLOCKSOURCE_MASK(64)
+> 
+> How is that valid for a 32bit HPET? This breaks the clocksource.
+> 
+>> +inline unsigned long hpet_readq(unsigned int a)
+>> +{
+>> +	return readq(hpet_virt_address + a);
+> 
+> Breaks 32bit build immediately.
+> 
+> Aside of that the reason why the kernel does not support 64bit HPET is
+> that there are HPETs which advertise 64bit support, but the
+> implementation is buggy.
+> 
+> IOW, while this works for your hardware this breaks quite some parts of
+> the universe. Not really a good approach.
+> 
+> Thanks,
+> 
+>        tglx
 
