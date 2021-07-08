@@ -2,133 +2,159 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55C16C07E96
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jul 2021 11:17:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E1C7C07E96
+	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jul 2021 13:07:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3AB016197F
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jul 2021 11:17:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5308D61413
+	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jul 2021 13:07:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231605AbhGHLT6 (ORCPT
+        id S231628AbhGHNKQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 8 Jul 2021 07:19:58 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:50930 "EHLO
-        galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231576AbhGHLT6 (ORCPT
+        Thu, 8 Jul 2021 09:10:16 -0400
+Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:37254 "EHLO
+        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230080AbhGHNKP (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 8 Jul 2021 07:19:58 -0400
-From:   Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1625743035;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=NcpsbVMpIl7rwujvGTZxy9jB4Ph0ZDxg+aiwErH2oWs=;
-        b=AJcSXUwqSB8MZcqc8T6juuyshncxwjo0+jIlwJ4Npc0DIAxf8aKgtLLBKP2I0HNFgq/HSz
-        mUpthfjbwy8zksYt09xRyp1bE/g8K7VY2opN47Scp7135vcdQGJD5ST0K+YDFy6Sejdbek
-        EsAXQZbuwSNOKd6UigJQay7iv5u/OApr/PV3wqOxCgtt/SM3WuICNHqCi1Y0qnOuLHnJC9
-        ze70dyP6sFHN9jxynV717d6JItIL85ImBvTsL5aCgn57TZ9t+7d+lXjjlj3vM1Ul3xv/px
-        pPiHOWva5/6FuWeqY7Dprm4SED7hwUBGjX/a9Yy/jmo38Xln9x9SUhH/6WBgDw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1625743035;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=NcpsbVMpIl7rwujvGTZxy9jB4Ph0ZDxg+aiwErH2oWs=;
-        b=VH5MlYMZqy1lDOFWqOJ+eWAVctvO7vcuUeef4LYRuey/UtQuFVEy6cYQE9pRrxzLvrCmUD
-        FxUfPiz5tmK3I5Bg==
-To:     Linux <zhaoyan.liao@linux.alibaba.com>
-Cc:     mingo@redhat.com, hpa@zytor.com, dwmw@amazon.co.uk,
+        Thu, 8 Jul 2021 09:10:15 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R941e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01424;MF=chengshuyi@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0Uf7.lIJ_1625749643;
+Received: from localhost(mailfrom:chengshuyi@linux.alibaba.com fp:SMTPD_---0Uf7.lIJ_1625749643)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 08 Jul 2021 21:07:31 +0800
+From:   Shuyi Cheng <chengshuyi@linux.alibaba.com>
+To:     ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+        kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
+        john.fastabend@gmail.com, kpsingh@kernel.org
+Cc:     netdev@vger.kernel.org, bpf@vger.kernel.org,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        songmuchun@bytedance.com, likunkun@bytedance.com,
-        guancheng.rjk@alibaba-inc.com, duanxiongchun@bytedance.com,
-        wenan.mao@linux.alibaba.com
-Subject: Re: [PATCH] use 64bit timer for hpet
-In-Reply-To: <8A96C0F7-FBE4-4B23-8565-E814401BF927@linux.alibaba.com>
-References: <1625213625-25745-1-git-send-email-zhaoyan.liao@linux.alibaba.com> <875yxmqw2s.ffs@nanos.tec.linutronix.de> <8A96C0F7-FBE4-4B23-8565-E814401BF927@linux.alibaba.com>
-Date:   Thu, 08 Jul 2021 13:17:14 +0200
-Message-ID: <87o8bdoy11.ffs@nanos.tec.linutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+        Shuyi Cheng <chengshuyi@linux.alibaba.com>
+Subject: [PATCH bpf-next v2] libbpf: Introduce 'btf_custom_path' to 'bpf_obj_open_opts'.
+Date:   Thu,  8 Jul 2021 21:07:02 +0800
+Message-Id: <1625749622-119334-1-git-send-email-chengshuyi@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Liao!
+In order to enable the older kernel to use the CO-RE feature, load the
+vmlinux btf of the specified path.
 
-On Thu, Jul 08 2021 at 11:11, Linux wrote:
->> 2021=E5=B9=B47=E6=9C=887=E6=97=A5 =E4=B8=8B=E5=8D=886:04=EF=BC=8CThomas =
-Gleixner <tglx@linutronix.de> =E5=86=99=E9=81=93=EF=BC=9A
->> Seriously? The wrap-around time for 32bit HPET @24MHz is ~3 minutes.
->
-> In some cases, our system will be very busy, and the timeout of 3 minutes=
-=20
-> is not an exaggeration. Then, the system considers that the tsc clock is=
-=20
-> inaccurate and switches the tsc clock to the hpet clock, which brings=20
-> greater performance overhead.
+Learn from Andrii's comments in [0], add the btf_custom_path parameter
+to bpf_obj_open_opts, you can directly use the skeleton's
+<objname>_bpf__open_opts function to pass in the btf_custom_path
+parameter.
 
-Sorry, keeping the softirq from running for 3 minutes is simply out of
-spec. If the sysadmin decides to do so, then he can keep the pieces.
+Prior to this, there was also a developer who provided a patch with
+similar functions. It is a pity that the follow-up did not continue to
+advance. See [1].
 
->> Aside of that the reason why the kernel does not support 64bit HPET is
->> that there are HPETs which advertise 64bit support, but the
->> implementation is buggy.
->
-> Can you tell me what is the buggy with the 64-bit hpet clock?
+	[0]https://lore.kernel.org/bpf/CAEf4BzbJZLjNoiK8_VfeVg_Vrg=9iYFv+po-38SMe=UzwDKJ=Q@mail.gmail.com/#t
+	[1]https://yhbt.net/lore/all/CAEf4Bzbgw49w2PtowsrzKQNcxD4fZRE6AKByX-5-dMo-+oWHHA@mail.gmail.com/
 
-I forgot the details, but when I tried moving HPET to 64bit it did not
-work on one of my machines due to an erratum and other people reported
-similar issues on different CPUs/chipsets.
-
-TBH, I'm not interested at all to chase down these buggy implementations
-and have yet another pile of quirks.
-
-> In my opinion, it is unreasonable to use a lower-bit width clock to
-> calibrate a higher-bit width clock, and the hardware already supports
-> the higher-bit width.
-
-There is nothing unreasonable with that, really:
-
-   1) This is not about calibration. It's a sanity check to catch
-      broken TSC implementations.
-
-      Aside of that it _IS_ very reasonable for calibration. We even
-      calibrate TSC via the PIT if we can't get the frequency from
-      the firmware.
-
-   2) Expecting that the softirq runs within 3 minutes is very
-      reasonable.
-
-   3) On modern machines this is usually not longer necessary. If you
-      are confident that the TSC on your system is stable then you
-      can disable the watchdog via the kernel command line.
-
-      There is also effort underway to come up with reasonable
-      conditions to avoid the watchdog on those CPUs in the first place.
-
-   4) For any system which actually has to use HPET the 64bit HPET is
-      overhead. HPET access is slow enough already.
-
-   5) 32bit HPET has to be supported as well and just claiming that a
-      64bit access on 32bit HPET does not matter is just wishful
-      thinking. Aside of breaking 32bit kernels along the way which
-      is just a NONO.
-=20=20=20=20=20=20
-#4 and #5 were the main reason why I gave up on it - aside of the
-discovery that there are broken implementations out there.
-
-So no, there is really no compelling reason to support 64bit HPETs.
-
-Thanks,
-
-        tglx
+Cc: Andrii Nakryiko <andrii@kernel.org>
+Cc: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Shuyi Cheng <chengshuyi@linux.alibaba.com>
 ---
-P.S: Please trim your replies.
+v1: https://lore.kernel.org/bpf/CAEf4BzaGjEC4t1OefDo11pj2-HfNy0BLhs_G2UREjRNTmb2u=A@mail.gmail.com/t/#m4d9f7c6761fbd2b436b5dfe491cd864b70225804
+v1->v2:
+-- Change custom_btf_path to btf_custom_path.
+-- If the length of btf_custom_path of bpf_obj_open_opts is too long, 
+   return ERR_PTR(-ENAMETOOLONG).
+-- Add `custom BTF is in addition to vmlinux BTF`
+   with btf_custom_path field.
+
+ tools/lib/bpf/libbpf.c | 27 ++++++++++++++++++++++++---
+ tools/lib/bpf/libbpf.h |  6 +++++-
+ 2 files changed, 29 insertions(+), 4 deletions(-)
+
+diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+index 1e04ce7..aed156c 100644
+--- a/tools/lib/bpf/libbpf.c
++++ b/tools/lib/bpf/libbpf.c
+@@ -494,6 +494,10 @@ struct bpf_object {
+ 	struct btf *btf;
+ 	struct btf_ext *btf_ext;
+ 
++	/* custom BTF is in addition to vmlinux BTF (i.e., Use the CO-RE
++	 * feature in the old kernel).
++	 */
++	char *btf_custom_path;
+ 	/* Parse and load BTF vmlinux if any of the programs in the object need
+ 	 * it at load time.
+ 	 */
+@@ -2679,8 +2683,15 @@ static int bpf_object__load_vmlinux_btf(struct bpf_object *obj, bool force)
+ 	if (!force && !obj_needs_vmlinux_btf(obj))
+ 		return 0;
+ 
+-	obj->btf_vmlinux = libbpf_find_kernel_btf();
+-	err = libbpf_get_error(obj->btf_vmlinux);
++	if (obj->btf_custom_path) {
++		obj->btf_vmlinux = btf__parse(obj->btf_custom_path, NULL);
++		err = libbpf_get_error(obj->btf_vmlinux);
++		pr_debug("loading custom vmlinux BTF '%s': %d\n", obj->btf_custom_path, err);
++	} else {
++		obj->btf_vmlinux = libbpf_find_kernel_btf();
++		err = libbpf_get_error(obj->btf_vmlinux);
++	}
++
+ 	if (err) {
+ 		pr_warn("Error loading vmlinux BTF: %d\n", err);
+ 		obj->btf_vmlinux = NULL;
+@@ -7554,7 +7565,7 @@ int bpf_program__load(struct bpf_program *prog, char *license, __u32 kern_ver)
+ __bpf_object__open(const char *path, const void *obj_buf, size_t obj_buf_sz,
+ 		   const struct bpf_object_open_opts *opts)
+ {
+-	const char *obj_name, *kconfig;
++	const char *obj_name, *kconfig, *btf_tmp_path;
+ 	struct bpf_program *prog;
+ 	struct bpf_object *obj;
+ 	char tmp_name[64];
+@@ -7584,6 +7595,15 @@ int bpf_program__load(struct bpf_program *prog, char *license, __u32 kern_ver)
+ 	obj = bpf_object__new(path, obj_buf, obj_buf_sz, obj_name);
+ 	if (IS_ERR(obj))
+ 		return obj;
++
++	btf_tmp_path = OPTS_GET(opts, btf_custom_path, NULL);
++	if (btf_tmp_path) {
++		if (strlen(btf_tmp_path) >= PATH_MAX)
++			return ERR_PTR(-ENAMETOOLONG);
++		obj->btf_custom_path = strdup(btf_tmp_path);
++		if (!obj->btf_custom_path)
++			return ERR_PTR(-ENOMEM);
++	}
+ 
+ 	kconfig = OPTS_GET(opts, kconfig, NULL);
+ 	if (kconfig) {
+@@ -8702,6 +8722,7 @@ void bpf_object__close(struct bpf_object *obj)
+ 	for (i = 0; i < obj->nr_maps; i++)
+ 		bpf_map__destroy(&obj->maps[i]);
+ 
++	zfree(&obj->btf_custom_path);
+ 	zfree(&obj->kconfig);
+ 	zfree(&obj->externs);
+ 	obj->nr_extern = 0;
+diff --git a/tools/lib/bpf/libbpf.h b/tools/lib/bpf/libbpf.h
+index 6e61342..5002d1f 100644
+--- a/tools/lib/bpf/libbpf.h
++++ b/tools/lib/bpf/libbpf.h
+@@ -94,8 +94,12 @@ struct bpf_object_open_opts {
+ 	 * system Kconfig for CONFIG_xxx externs.
+ 	 */
+ 	const char *kconfig;
++	/* custom BTF is in addition to vmlinux BTF (i.e., Use the CO-RE
++	 * feature in the old kernel).
++	 */
++	char *btf_custom_path;
+ };
+-#define bpf_object_open_opts__last_field kconfig
++#define bpf_object_open_opts__last_field btf_custom_path
+ 
+ LIBBPF_API struct bpf_object *bpf_object__open(const char *path);
+ LIBBPF_API struct bpf_object *
+-- 
+1.8.3.1
+
