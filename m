@@ -2,108 +2,75 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-22.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8C46C07E95
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jul 2021 03:11:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCE18C07E96
+	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jul 2021 04:00:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 99CA961C9C
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jul 2021 03:11:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD0A561CE4
+	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jul 2021 04:00:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230359AbhGHDOO convert rfc822-to-8bit (ORCPT
+        id S229489AbhGHECp (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 7 Jul 2021 23:14:14 -0400
-Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:57561 "EHLO
-        out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230244AbhGHDON (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 7 Jul 2021 23:14:13 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R861e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=zhaoyan.liao@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0Uf4GV0k_1625713889;
-Received: from 30.250.200.142(mailfrom:zhaoyan.liao@linux.alibaba.com fp:SMTPD_---0Uf4GV0k_1625713889)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 08 Jul 2021 11:11:30 +0800
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 14.0 \(3654.40.0.2.32\))
-Subject: Re: [PATCH] use 64bit timer for hpet
-From:   Linux <zhaoyan.liao@linux.alibaba.com>
-In-Reply-To: <875yxmqw2s.ffs@nanos.tec.linutronix.de>
-Date:   Thu, 8 Jul 2021 11:11:28 +0800
-Cc:     mingo@redhat.com, hpa@zytor.com, dwmw@amazon.co.uk,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        songmuchun@bytedance.com, likunkun@bytedance.com,
-        guancheng.rjk@alibaba-inc.com, duanxiongchun@bytedance.com,
-        wenan.mao@linux.alibaba.com
-Content-Transfer-Encoding: 8BIT
-Message-Id: <8A96C0F7-FBE4-4B23-8565-E814401BF927@linux.alibaba.com>
-References: <1625213625-25745-1-git-send-email-zhaoyan.liao@linux.alibaba.com>
- <875yxmqw2s.ffs@nanos.tec.linutronix.de>
-To:     Thomas Gleixner <tglx@linutronix.de>
-X-Mailer: Apple Mail (2.3654.40.0.2.32)
+        Thu, 8 Jul 2021 00:02:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57652 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229467AbhGHECo (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 8 Jul 2021 00:02:44 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPS id 6DF4861CDE;
+        Thu,  8 Jul 2021 04:00:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1625716803;
+        bh=gaLB7CEkwL3YfQy/zTvUokaDhs+24Y7DrwCLjqi5zpc=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=u1MGKLuma4Vj/LsTcmaE6NMZ8w4lpy+RFMBsrRvoL7Ba0bQX5J3DKSL2DPR9lSFks
+         Gar4JOcw9XTK/6Lf2kvO4NNNtt+muSjST5iEvdZgs8BGuMsVVrfTRxJxN3SlEQZ9n2
+         ljvWCqwcSPSHdCvV27olT5eknt/MzCUosZx5MB3X9DQyHabKBhx3wM4qYvVysEjwAl
+         iUHp7OwpKAf9E+dxwi595BQrY3638gu6ahB/Ny8xS6fMayqisMPjEB0uFdkqjSa+r3
+         SxnNDEKvTDHhUK0y4TV6VnQ/nbu4MUpgimmknulXhKOqUNZV+42NwX9vK8GqLvgs2N
+         ZzYhnzGzuA/kQ==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net] sock: unlock on error in sock_setsockopt()
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <162571680337.17275.10785864640779511123.git-patchwork-notify@kernel.org>
+Date:   Thu, 08 Jul 2021 04:00:03 +0000
+References: <YOV7XH5Sqx+ZHghC@mwanda>
+In-Reply-To: <YOV7XH5Sqx+ZHghC@mwanda>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     davem@davemloft.net, yangbo.lu@nxp.com, kuba@kernel.org,
+        pabeni@redhat.com, edumazet@google.com,
+        mathew.j.martineau@linux.intel.com, aahringo@redhat.com,
+        linmiaohe@huawei.com, fw@strlen.de, xiangxia.m.yue@gmail.com,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Gleixner,
+Hello:
 
-> Seriously? The wrap-around time for 32bit HPET @24MHz is ~3 minutes.
+This patch was applied to netdev/net.git (refs/heads/master):
 
-In some cases, our system will be very busy, and the timeout of 3 minutes 
-is not an exaggeration. Then, the system considers that the tsc clock is 
-inaccurate and switches the tsc clock to the hpet clock, which brings 
-greater performance overhead.
+On Wed, 7 Jul 2021 13:01:00 +0300 you wrote:
+> If copy_from_sockptr() then we need to unlock before returning.
+> 
+> Fixes: d463126e23f1 ("net: sock: extend SO_TIMESTAMPING for PHC binding")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  net/core/sock.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
 
-> Aside of that the reason why the kernel does not support 64bit HPET is
-> that there are HPETs which advertise 64bit support, but the
-> implementation is buggy.
+Here is the summary with links:
+  - [net] sock: unlock on error in sock_setsockopt()
+    https://git.kernel.org/netdev/net/c/271dbc318432
 
-Can you tell me what is the buggy with the 64-bit hpet clock? In my opinion, 
-it is unreasonable to use a lower-bit width clock to calibrate a higher-bit width
- clock, and the hardware already supports the higher-bit width.
+You are awesome, thank you!
+--
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-
-> 2021年7月7日 下午6:04，Thomas Gleixner <tglx@linutronix.de> 写道：
-> 
-> Liao,
-> 
-> On Fri, Jul 02 2021 at 16:13, zhaoyan liao wrote:
->> The kernel judges whether the tsc clock is accurate in the
->> clocksource_watchdog background thread function. The hpet clock source
->> is 32-bit, but tsc is 64-bit. Therefore, when the system is busy and the
->> clocksource_watchdog cannot be scheduled in time, the hpet clock may
->> overflow and cause the system to misjudge tsc as unreliable.
-> 
-> Seriously? The wrap-around time for 32bit HPET @24MHz is ~3 minutes.
-> 
->> In this case, we recommend that the kernel adopts the 64-bit hpet clock
->> by default to keep the width of the two clock sources the same to reduce
->> misjudgment. Some CPU models may not support 64-bit hpet, but according
->> to the description of the CPU's register manual, it does not affect our
->> reading action.
-> 
-> So much for the theory.
-> 
->> -#define HPET_MASK			CLOCKSOURCE_MASK(32)
->> +#define HPET_MASK			CLOCKSOURCE_MASK(64)
-> 
-> How is that valid for a 32bit HPET? This breaks the clocksource.
-> 
->> +inline unsigned long hpet_readq(unsigned int a)
->> +{
->> +	return readq(hpet_virt_address + a);
-> 
-> Breaks 32bit build immediately.
-> 
-> Aside of that the reason why the kernel does not support 64bit HPET is
-> that there are HPETs which advertise 64bit support, but the
-> implementation is buggy.
-> 
-> IOW, while this works for your hardware this breaks quite some parts of
-> the universe. Not really a good approach.
-> 
-> Thanks,
-> 
->        tglx
 
