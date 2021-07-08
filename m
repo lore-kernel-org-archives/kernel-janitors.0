@@ -2,87 +2,133 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BB11C07E96
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jul 2021 05:08:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55C16C07E96
+	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jul 2021 11:17:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E1422619A5
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jul 2021 05:08:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3AB016197F
+	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jul 2021 11:17:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229680AbhGHFLP (ORCPT
+        id S231605AbhGHLT6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 8 Jul 2021 01:11:15 -0400
-Received: from smtp13.smtpout.orange.fr ([80.12.242.135]:59419 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S229644AbhGHFLO (ORCPT
+        Thu, 8 Jul 2021 07:19:58 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:50930 "EHLO
+        galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231576AbhGHLT6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 8 Jul 2021 01:11:14 -0400
-Received: from localhost.localdomain ([86.243.172.93])
-        by mwinf5d71 with ME
-        id SV8U2500221Fzsu03V8UiH; Thu, 08 Jul 2021 07:08:32 +0200
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 08 Jul 2021 07:08:32 +0200
-X-ME-IP: 86.243.172.93
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     dave.jiang@intel.com, vkoul@kernel.org
-Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] dmaengine: idxd: Simplify code and axe the use of a deprecated API
-Date:   Thu,  8 Jul 2021 07:08:26 +0200
-Message-Id: <70c8a3bc67e41c5fefb526ecd64c5174c1e2dc76.1625720835.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Thu, 8 Jul 2021 07:19:58 -0400
+From:   Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1625743035;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=NcpsbVMpIl7rwujvGTZxy9jB4Ph0ZDxg+aiwErH2oWs=;
+        b=AJcSXUwqSB8MZcqc8T6juuyshncxwjo0+jIlwJ4Npc0DIAxf8aKgtLLBKP2I0HNFgq/HSz
+        mUpthfjbwy8zksYt09xRyp1bE/g8K7VY2opN47Scp7135vcdQGJD5ST0K+YDFy6Sejdbek
+        EsAXQZbuwSNOKd6UigJQay7iv5u/OApr/PV3wqOxCgtt/SM3WuICNHqCi1Y0qnOuLHnJC9
+        ze70dyP6sFHN9jxynV717d6JItIL85ImBvTsL5aCgn57TZ9t+7d+lXjjlj3vM1Ul3xv/px
+        pPiHOWva5/6FuWeqY7Dprm4SED7hwUBGjX/a9Yy/jmo38Xln9x9SUhH/6WBgDw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1625743035;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=NcpsbVMpIl7rwujvGTZxy9jB4Ph0ZDxg+aiwErH2oWs=;
+        b=VH5MlYMZqy1lDOFWqOJ+eWAVctvO7vcuUeef4LYRuey/UtQuFVEy6cYQE9pRrxzLvrCmUD
+        FxUfPiz5tmK3I5Bg==
+To:     Linux <zhaoyan.liao@linux.alibaba.com>
+Cc:     mingo@redhat.com, hpa@zytor.com, dwmw@amazon.co.uk,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        songmuchun@bytedance.com, likunkun@bytedance.com,
+        guancheng.rjk@alibaba-inc.com, duanxiongchun@bytedance.com,
+        wenan.mao@linux.alibaba.com
+Subject: Re: [PATCH] use 64bit timer for hpet
+In-Reply-To: <8A96C0F7-FBE4-4B23-8565-E814401BF927@linux.alibaba.com>
+References: <1625213625-25745-1-git-send-email-zhaoyan.liao@linux.alibaba.com> <875yxmqw2s.ffs@nanos.tec.linutronix.de> <8A96C0F7-FBE4-4B23-8565-E814401BF927@linux.alibaba.com>
+Date:   Thu, 08 Jul 2021 13:17:14 +0200
+Message-ID: <87o8bdoy11.ffs@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The wrappers in include/linux/pci-dma-compat.h should go away.
+Liao!
 
-Replace 'pci_set_dma_mask/pci_set_consistent_dma_mask' by an equivalent
-and less verbose 'dma_set_mask_and_coherent()' call.
+On Thu, Jul 08 2021 at 11:11, Linux wrote:
+>> 2021=E5=B9=B47=E6=9C=887=E6=97=A5 =E4=B8=8B=E5=8D=886:04=EF=BC=8CThomas =
+Gleixner <tglx@linutronix.de> =E5=86=99=E9=81=93=EF=BC=9A
+>> Seriously? The wrap-around time for 32bit HPET @24MHz is ~3 minutes.
+>
+> In some cases, our system will be very busy, and the timeout of 3 minutes=
+=20
+> is not an exaggeration. Then, the system considers that the tsc clock is=
+=20
+> inaccurate and switches the tsc clock to the hpet clock, which brings=20
+> greater performance overhead.
 
-Even if the code may look different, it should have exactly the same
-run-time behavior.
-If pci_set_dma_mask(64) fails and pci_set_dma_mask(32) succeeds, then
-pci_set_consistent_dma_mask(64) will also fail.
+Sorry, keeping the softirq from running for 3 minutes is simply out of
+spec. If the sysadmin decides to do so, then he can keep the pieces.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> Aside of that the reason why the kernel does not support 64bit HPET is
+>> that there are HPETs which advertise 64bit support, but the
+>> implementation is buggy.
+>
+> Can you tell me what is the buggy with the 64-bit hpet clock?
+
+I forgot the details, but when I tried moving HPET to 64bit it did not
+work on one of my machines due to an erratum and other people reported
+similar issues on different CPUs/chipsets.
+
+TBH, I'm not interested at all to chase down these buggy implementations
+and have yet another pile of quirks.
+
+> In my opinion, it is unreasonable to use a lower-bit width clock to
+> calibrate a higher-bit width clock, and the hardware already supports
+> the higher-bit width.
+
+There is nothing unreasonable with that, really:
+
+   1) This is not about calibration. It's a sanity check to catch
+      broken TSC implementations.
+
+      Aside of that it _IS_ very reasonable for calibration. We even
+      calibrate TSC via the PIT if we can't get the frequency from
+      the firmware.
+
+   2) Expecting that the softirq runs within 3 minutes is very
+      reasonable.
+
+   3) On modern machines this is usually not longer necessary. If you
+      are confident that the TSC on your system is stable then you
+      can disable the watchdog via the kernel command line.
+
+      There is also effort underway to come up with reasonable
+      conditions to avoid the watchdog on those CPUs in the first place.
+
+   4) For any system which actually has to use HPET the 64bit HPET is
+      overhead. HPET access is slow enough already.
+
+   5) 32bit HPET has to be supported as well and just claiming that a
+      64bit access on 32bit HPET does not matter is just wishful
+      thinking. Aside of breaking 32bit kernels along the way which
+      is just a NONO.
+=20=20=20=20=20=20
+#4 and #5 were the main reason why I gave up on it - aside of the
+discovery that there are broken implementations out there.
+
+So no, there is really no compelling reason to support 64bit HPETs.
+
+Thanks,
+
+        tglx
 ---
-If needed, see post from Christoph Hellwig on the kernel-janitors ML:
-   https://marc.info/?l=kernel-janitors&m=158745678307186&w=4
----
- drivers/dma/idxd/init.c | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/dma/idxd/init.c b/drivers/dma/idxd/init.c
-index c8ae41d36040..de300ba38b14 100644
---- a/drivers/dma/idxd/init.c
-+++ b/drivers/dma/idxd/init.c
-@@ -637,15 +637,9 @@ static int idxd_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 	}
- 
- 	dev_dbg(dev, "Set DMA masks\n");
--	rc = pci_set_dma_mask(pdev, DMA_BIT_MASK(64));
-+	rc = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
- 	if (rc)
--		rc = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
--	if (rc)
--		goto err;
--
--	rc = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(64));
--	if (rc)
--		rc = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(32));
-+		rc = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
- 	if (rc)
- 		goto err;
- 
--- 
-2.30.2
-
+P.S: Please trim your replies.
