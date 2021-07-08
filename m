@@ -2,75 +2,84 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-22.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCE18C07E96
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jul 2021 04:00:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5588C07E96
+	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jul 2021 04:30:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AD0A561CE4
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jul 2021 04:00:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D9D761CB0
+	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jul 2021 04:30:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229489AbhGHECp (ORCPT
+        id S229594AbhGHEd2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 8 Jul 2021 00:02:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57652 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229467AbhGHECo (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 8 Jul 2021 00:02:44 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 6DF4861CDE;
-        Thu,  8 Jul 2021 04:00:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625716803;
-        bh=gaLB7CEkwL3YfQy/zTvUokaDhs+24Y7DrwCLjqi5zpc=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=u1MGKLuma4Vj/LsTcmaE6NMZ8w4lpy+RFMBsrRvoL7Ba0bQX5J3DKSL2DPR9lSFks
-         Gar4JOcw9XTK/6Lf2kvO4NNNtt+muSjST5iEvdZgs8BGuMsVVrfTRxJxN3SlEQZ9n2
-         ljvWCqwcSPSHdCvV27olT5eknt/MzCUosZx5MB3X9DQyHabKBhx3wM4qYvVysEjwAl
-         iUHp7OwpKAf9E+dxwi595BQrY3638gu6ahB/Ny8xS6fMayqisMPjEB0uFdkqjSa+r3
-         SxnNDEKvTDHhUK0y4TV6VnQ/nbu4MUpgimmknulXhKOqUNZV+42NwX9vK8GqLvgs2N
-         ZzYhnzGzuA/kQ==
-Content-Type: text/plain; charset="utf-8"
+        Thu, 8 Jul 2021 00:33:28 -0400
+Received: from smtp13.smtpout.orange.fr ([80.12.242.135]:47499 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S229579AbhGHEd1 (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 8 Jul 2021 00:33:27 -0400
+Received: from localhost.localdomain ([86.243.172.93])
+        by mwinf5d71 with ME
+        id SUWk2500421Fzsu03UWk09; Thu, 08 Jul 2021 06:30:45 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 08 Jul 2021 06:30:45 +0200
+X-ME-IP: 86.243.172.93
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     mani@kernel.org, hemantk@codeaurora.org
+Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] bus: mhi: pci_generic: Simplify code and axe the use of a deprecated API
+Date:   Thu,  8 Jul 2021 06:30:37 +0200
+Message-Id: <bb3dc436fe142309a2334549db782c5ebb80a2be.1625718497.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] sock: unlock on error in sock_setsockopt()
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <162571680337.17275.10785864640779511123.git-patchwork-notify@kernel.org>
-Date:   Thu, 08 Jul 2021 04:00:03 +0000
-References: <YOV7XH5Sqx+ZHghC@mwanda>
-In-Reply-To: <YOV7XH5Sqx+ZHghC@mwanda>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     davem@davemloft.net, yangbo.lu@nxp.com, kuba@kernel.org,
-        pabeni@redhat.com, edumazet@google.com,
-        mathew.j.martineau@linux.intel.com, aahringo@redhat.com,
-        linmiaohe@huawei.com, fw@strlen.de, xiangxia.m.yue@gmail.com,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+The wrappers in include/linux/pci-dma-compat.h should go away.
 
-This patch was applied to netdev/net.git (refs/heads/master):
+Replace 'pci_set_dma_mask/pci_set_consistent_dma_mask' by an equivalent
+and less verbose 'dma_set_mask_and_coherent()' call.
 
-On Wed, 7 Jul 2021 13:01:00 +0300 you wrote:
-> If copy_from_sockptr() then we need to unlock before returning.
-> 
-> Fixes: d463126e23f1 ("net: sock: extend SO_TIMESTAMPING for PHC binding")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  net/core/sock.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+If needed, see post from Christoph Hellwig on the kernel-janitors ML:
+   https://marc.info/?l=kernel-janitors&m=158745678307186&w=4
+---
+ drivers/bus/mhi/pci_generic.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-Here is the summary with links:
-  - [net] sock: unlock on error in sock_setsockopt()
-    https://git.kernel.org/netdev/net/c/271dbc318432
-
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+diff --git a/drivers/bus/mhi/pci_generic.c b/drivers/bus/mhi/pci_generic.c
+index bb0326883470..dd3199de07e2 100644
+--- a/drivers/bus/mhi/pci_generic.c
++++ b/drivers/bus/mhi/pci_generic.c
+@@ -510,18 +510,12 @@ static int mhi_pci_claim(struct mhi_controller *mhi_cntrl,
+ 	mhi_cntrl->regs = pcim_iomap_table(pdev)[bar_num];
+ 	mhi_cntrl->reg_len = pci_resource_len(pdev, bar_num);
+ 
+-	err = pci_set_dma_mask(pdev, dma_mask);
++	err = dma_set_mask_and_coherent(&pdev->dev, dma_mask);
+ 	if (err) {
+ 		dev_err(&pdev->dev, "Cannot set proper DMA mask\n");
+ 		return err;
+ 	}
+ 
+-	err = pci_set_consistent_dma_mask(pdev, dma_mask);
+-	if (err) {
+-		dev_err(&pdev->dev, "set consistent dma mask failed\n");
+-		return err;
+-	}
+-
+ 	pci_set_master(pdev);
+ 
+ 	return 0;
+-- 
+2.30.2
 
