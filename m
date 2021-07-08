@@ -2,40 +2,40 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5588C07E96
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jul 2021 04:30:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BB11C07E96
+	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jul 2021 05:08:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9D9D761CB0
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jul 2021 04:30:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1422619A5
+	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Jul 2021 05:08:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229594AbhGHEd2 (ORCPT
+        id S229680AbhGHFLP (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 8 Jul 2021 00:33:28 -0400
-Received: from smtp13.smtpout.orange.fr ([80.12.242.135]:47499 "EHLO
+        Thu, 8 Jul 2021 01:11:15 -0400
+Received: from smtp13.smtpout.orange.fr ([80.12.242.135]:59419 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S229579AbhGHEd1 (ORCPT
+        with ESMTP id S229644AbhGHFLO (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 8 Jul 2021 00:33:27 -0400
+        Thu, 8 Jul 2021 01:11:14 -0400
 Received: from localhost.localdomain ([86.243.172.93])
         by mwinf5d71 with ME
-        id SUWk2500421Fzsu03UWk09; Thu, 08 Jul 2021 06:30:45 +0200
+        id SV8U2500221Fzsu03V8UiH; Thu, 08 Jul 2021 07:08:32 +0200
 X-ME-Helo: localhost.localdomain
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 08 Jul 2021 06:30:45 +0200
+X-ME-Date: Thu, 08 Jul 2021 07:08:32 +0200
 X-ME-IP: 86.243.172.93
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     mani@kernel.org, hemantk@codeaurora.org
-Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     dave.jiang@intel.com, vkoul@kernel.org
+Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] bus: mhi: pci_generic: Simplify code and axe the use of a deprecated API
-Date:   Thu,  8 Jul 2021 06:30:37 +0200
-Message-Id: <bb3dc436fe142309a2334549db782c5ebb80a2be.1625718497.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] dmaengine: idxd: Simplify code and axe the use of a deprecated API
+Date:   Thu,  8 Jul 2021 07:08:26 +0200
+Message-Id: <70c8a3bc67e41c5fefb526ecd64c5174c1e2dc76.1625720835.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -48,38 +48,41 @@ The wrappers in include/linux/pci-dma-compat.h should go away.
 Replace 'pci_set_dma_mask/pci_set_consistent_dma_mask' by an equivalent
 and less verbose 'dma_set_mask_and_coherent()' call.
 
+Even if the code may look different, it should have exactly the same
+run-time behavior.
+If pci_set_dma_mask(64) fails and pci_set_dma_mask(32) succeeds, then
+pci_set_consistent_dma_mask(64) will also fail.
+
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
 If needed, see post from Christoph Hellwig on the kernel-janitors ML:
    https://marc.info/?l=kernel-janitors&m=158745678307186&w=4
 ---
- drivers/bus/mhi/pci_generic.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ drivers/dma/idxd/init.c | 10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/bus/mhi/pci_generic.c b/drivers/bus/mhi/pci_generic.c
-index bb0326883470..dd3199de07e2 100644
---- a/drivers/bus/mhi/pci_generic.c
-+++ b/drivers/bus/mhi/pci_generic.c
-@@ -510,18 +510,12 @@ static int mhi_pci_claim(struct mhi_controller *mhi_cntrl,
- 	mhi_cntrl->regs = pcim_iomap_table(pdev)[bar_num];
- 	mhi_cntrl->reg_len = pci_resource_len(pdev, bar_num);
- 
--	err = pci_set_dma_mask(pdev, dma_mask);
-+	err = dma_set_mask_and_coherent(&pdev->dev, dma_mask);
- 	if (err) {
- 		dev_err(&pdev->dev, "Cannot set proper DMA mask\n");
- 		return err;
+diff --git a/drivers/dma/idxd/init.c b/drivers/dma/idxd/init.c
+index c8ae41d36040..de300ba38b14 100644
+--- a/drivers/dma/idxd/init.c
++++ b/drivers/dma/idxd/init.c
+@@ -637,15 +637,9 @@ static int idxd_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
  	}
  
--	err = pci_set_consistent_dma_mask(pdev, dma_mask);
--	if (err) {
--		dev_err(&pdev->dev, "set consistent dma mask failed\n");
--		return err;
--	}
+ 	dev_dbg(dev, "Set DMA masks\n");
+-	rc = pci_set_dma_mask(pdev, DMA_BIT_MASK(64));
++	rc = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
+ 	if (rc)
+-		rc = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
+-	if (rc)
+-		goto err;
 -
- 	pci_set_master(pdev);
+-	rc = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(64));
+-	if (rc)
+-		rc = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(32));
++		rc = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
+ 	if (rc)
+ 		goto err;
  
- 	return 0;
 -- 
 2.30.2
 
