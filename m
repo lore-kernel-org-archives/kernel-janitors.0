@@ -2,163 +2,88 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74068C07E9E
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Jul 2021 09:49:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 005F8C07E9B
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Jul 2021 12:39:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5A0746135C
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Jul 2021 09:49:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE62C6135B
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Jul 2021 12:39:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232035AbhGIJwi (ORCPT
+        id S231696AbhGIMm1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 9 Jul 2021 05:52:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52830 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229503AbhGIJwi (ORCPT
+        Fri, 9 Jul 2021 08:42:27 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:35444
+        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231252AbhGIMm0 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 9 Jul 2021 05:52:38 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4856C0613DD;
-        Fri,  9 Jul 2021 02:49:53 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id nd37so15144626ejc.3;
-        Fri, 09 Jul 2021 02:49:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0aJWJwlheU/lxeAZzdOHAS4FN13/EFK+YqXAzvN5kvA=;
-        b=d695sFGxQwFyekLevettu75ZqH6H5Lwg4BPfxmn7KqfSAeO742acSx2XsIp2ooAH07
-         Ib/H1TkwCzk4EnU0br94r0XTKBQMR6f/ZZGRDeok8NGXm/Q/jXbc7MEP9P/ywvr55ETe
-         Bl75SKxi0lFTIlJgphm8/ZLloSPWEePoYnlGuyLZL40+Q1u9jjEkoYY3zs2jC5+/lf0V
-         bUwc88keTa7+G279yWQHMBlW4OC0GkF7g8xB3JRANMvd/JnD0JjUFjikzUzVjyJzYYvP
-         pLu4gbqBMlDSBkMZH4u4xI0wFkV0WBQ+OCWcqTvvqshnSwQh1FgDS+qr8u2HmQ0tyF+O
-         eo7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0aJWJwlheU/lxeAZzdOHAS4FN13/EFK+YqXAzvN5kvA=;
-        b=ffH3sXZD4FOqMe/b/ogrF3z0bJXp5Q7cfx+5t2sqLynG4UdObhMIZizbOuTqQtqbMx
-         2rqvaTrFqhqf625o5s5Wd+uZWrrHvOXfpUgmXQxWQZegERteMHCWnBmyNSOb3mlXNR1c
-         3rvNOtQeXEZlHdt3k+wGryXxYyWWPlJ9ld7bxEhafsa6i0y6EicnQGJcqW5KF5eQfwjC
-         BkFlWTb5c/cEgu3Zkt7pnk49FTfBySyJPdosrKk2FI9y313N9ZCCIYxINHNlz2fsUB3O
-         wKtQFzTR+K7hKltwaTIv9vYOkhdm7tqMEKDhImN99C4IM9rNCHXftfhSpK5yAjvomHC1
-         hA1A==
-X-Gm-Message-State: AOAM531EPkuzW+eX0Z/KVf+QxNzEOhmOFNf9Q+Xty9yAlAMTnDyVQdGj
-        MDpEMR/Gq9e7SbRXtspeOHcZjFF3xEfMmstfbjY=
-X-Google-Smtp-Source: ABdhPJyxMIZfMRItVQXXR8ywaQSFGfyISBm/1wxd9gGEGyjz1aO+QsdZ7kuRIFPTSt395NzQYK2DF5WSH6xQ53GQkZ0=
-X-Received: by 2002:a17:906:3006:: with SMTP id 6mr37123721ejz.73.1625824192379;
- Fri, 09 Jul 2021 02:49:52 -0700 (PDT)
-MIME-Version: 1.0
-References: <YOfu5Zb2kpN/0Prn@mwanda>
-In-Reply-To: <YOfu5Zb2kpN/0Prn@mwanda>
-From:   Dongliang Mu <mudongliangabcd@gmail.com>
-Date:   Fri, 9 Jul 2021 17:49:26 +0800
-Message-ID: <CAD-N9QV-x3pzwN4HvpR9w04NnVHs1aafASQvD+gpTWg01K_YUw@mail.gmail.com>
-Subject: Re: [PATCH] media: rockchip/rga: fix a use after free in rga_probe()
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Jacob Chen <jacob-chen@iotwrt.com>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
+        Fri, 9 Jul 2021 08:42:26 -0400
+X-Greylist: delayed 557 seconds by postgrey-1.27 at vger.kernel.org; Fri, 09 Jul 2021 08:42:26 EDT
+Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 9E669401BE;
+        Fri,  9 Jul 2021 12:30:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1625833825;
+        bh=7DIMw7gcT9RZtVRuhmo1ekcgPYs2ZhAhj5BeekhHQlA=;
+        h=From:To:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=XAzVQQPLTZ8Dpwm2dBhXdyuzdwjTpLdLOt56pTkg53wNNoYfJtgUi4ibX2ZnadA57
+         TS5hWfdWx0EY8/15NhWFtyZPidkLhjNTMXZXBaFHvqhNmMjY0lDThzCqKJ5JkjTZaE
+         fLFyjGxu3zT2KNUOoIq3pvIlQwV2UBGwlDf85jR+xb5S8nJBCk3Bb9d0gDq76APW9r
+         THueWmF9wCcImJ23Sgq78nVTIWsTgVbzckChU7q5U9YlZ08JuATp9TVJvN4nRpEOkk
+         zHVXdWUxuCH/+VW9NpjIDFIBAKnQCQk687JKmMNkJtfq1CcWYgB7Eqcex8V9dNte0P
+         FunWrlDcdbHbw==
+From:   Colin King <colin.king@canonical.com>
+To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Hans Verkuil <hansverk@cisco.com>, linux-media@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] media: venus: venc: Fix potential null pointer dereference on pointer fmt
+Date:   Fri,  9 Jul 2021 13:30:25 +0100
+Message-Id: <20210709123025.456006-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.31.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Jul 9, 2021 at 2:38 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> The video_device_release() frees the "vfd" pointer so passing it to
-> video_unregister_device() on the next line results in a use after free.
-> Calling video_unregister_device() on a device that hasn't been
-> registered is supposed to be a no-op so that can be removed.  The paths
-> with to goto unreg_video_dev have a memory leak and should be updated to
-> goto rel_vdev instead.
->
-> Fixes: f7e7b48e6d79 ("[media] rockchip/rga: v4l2 m2m support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/media/platform/rockchip/rga/rga.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/media/platform/rockchip/rga/rga.c b/drivers/media/platform/rockchip/rga/rga.c
-> index bf3fd71ec3af..37f7fd060c38 100644
-> --- a/drivers/media/platform/rockchip/rga/rga.c
-> +++ b/drivers/media/platform/rockchip/rga/rga.c
-> @@ -863,12 +863,12 @@ static int rga_probe(struct platform_device *pdev)
->         if (IS_ERR(rga->m2m_dev)) {
->                 v4l2_err(&rga->v4l2_dev, "Failed to init mem2mem device\n");
->                 ret = PTR_ERR(rga->m2m_dev);
-> -               goto unreg_video_dev;
-> +               goto rel_vdev;
->         }
->
->         ret = pm_runtime_resume_and_get(rga->dev);
->         if (ret < 0)
-> -               goto unreg_video_dev;
-> +               goto rel_vdev;
->
->         rga->version.major = (rga_read(rga, RGA_VERSION_INFO) >> 24) & 0xFF;
->         rga->version.minor = (rga_read(rga, RGA_VERSION_INFO) >> 20) & 0x0F;
-> @@ -904,8 +904,6 @@ static int rga_probe(struct platform_device *pdev)
->
->  rel_vdev:
->         video_device_release(vfd);
-> -unreg_video_dev:
-> -       video_unregister_device(rga->vfd);
->  unreg_v4l2_dev:
->         v4l2_device_unregister(&rga->v4l2_dev);
->  err_put_clk:
+From: Colin Ian King <colin.king@canonical.com>
 
-From the analysis of rga_probe and rga_remove function, the init and
-cleanup functions are in pairs as follows:
+Currently the call to find_format can potentially return a NULL to
+fmt and the nullpointer is later dereferenced on the assignment of
+pixmp->num_planes = fmt->num_planes.  Fix this by adding a NULL pointer
+check and returning NULL for the failure case.
 
-        pm_runtime_enable(rga->dev);
+Addresses-Coverity: ("Dereference null return")
+Fixes: aaaa93eda64b ("[media] media: venus: venc: add video encoder files")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/platform/qcom/venus/venc.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-        ret = v4l2_device_register(&pdev->dev, &rga->v4l2_dev);
+diff --git a/drivers/media/platform/qcom/venus/venc.c b/drivers/media/platform/qcom/venus/venc.c
+index 8dd49d4f124c..1d62e38065d6 100644
+--- a/drivers/media/platform/qcom/venus/venc.c
++++ b/drivers/media/platform/qcom/venus/venc.c
+@@ -183,6 +183,8 @@ venc_try_fmt_common(struct venus_inst *inst, struct v4l2_format *f)
+ 		else
+ 			return NULL;
+ 		fmt = find_format(inst, pixmp->pixelformat, f->type);
++		if (!fmt)
++			return NULL;
+ 	}
+ 
+ 	pixmp->width = clamp(pixmp->width, frame_width_min(inst),
+-- 
+2.31.1
 
-        vfd = video_device_alloc();
-
-        rga->m2m_dev = v4l2_m2m_init(&rga_m2m_ops);
-
-        rga->cmdbuf_virt = dma_alloc_attrs(rga->dev, RGA_CMDBUF_SIZE,
-                                           &rga->cmdbuf_phy, GFP_KERNEL,
-                                           DMA_ATTR_WRITE_COMBINE);
-
-        rga->src_mmu_pages =
-                (unsigned int *)__get_free_pages(GFP_KERNEL | __GFP_ZERO, 3);
-        rga->dst_mmu_pages =
-                (unsigned int *)__get_free_pages(GFP_KERNEL | __GFP_ZERO, 3);
-
-        ret = video_register_device(vfd, VFL_TYPE_VIDEO, -1);
-        ......
-        video_unregister_device(rga->vfd);
-
-        free_pages((unsigned long)rga->src_mmu_pages, 3);
-        free_pages((unsigned long)rga->dst_mmu_pages, 3);
-
-        dma_free_attrs(rga->dev, RGA_CMDBUF_SIZE, rga->cmdbuf_virt,
-                       rga->cmdbuf_phy, DMA_ATTR_WRITE_COMBINE);
-
-        v4l2_m2m_release(rga->m2m_dev);
-
-        video_device_release(rga->vfd);
-
-        v4l2_device_unregister(&rga->v4l2_dev);
-
-        pm_runtime_disable(rga->dev);
-
-So I think the error handling code is more complex than this patch. ;(
-
-> --
-> 2.30.2
->
