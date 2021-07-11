@@ -2,79 +2,69 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A240C07E95
-	for <kernel-janitors@archiver.kernel.org>; Sun, 11 Jul 2021 01:27:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97D0CC07E96
+	for <kernel-janitors@archiver.kernel.org>; Sun, 11 Jul 2021 06:13:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EFA4361185
-	for <kernel-janitors@archiver.kernel.org>; Sun, 11 Jul 2021 01:27:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B771611C0
+	for <kernel-janitors@archiver.kernel.org>; Sun, 11 Jul 2021 06:13:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230168AbhGKBaK (ORCPT
+        id S229846AbhGKGP4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 10 Jul 2021 21:30:10 -0400
-Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:8780 "EHLO
-        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229640AbhGKBaK (ORCPT
+        Sun, 11 Jul 2021 02:15:56 -0400
+Received: from smtp07.smtpout.orange.fr ([80.12.242.129]:31666 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229544AbhGKGPz (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 10 Jul 2021 21:30:10 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=chengshuyi@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0UfKzX5f_1625966840;
-Received: from B-39YZML7H-2200.local(mailfrom:chengshuyi@linux.alibaba.com fp:SMTPD_---0UfKzX5f_1625966840)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Sun, 11 Jul 2021 09:27:20 +0800
-Subject: Re: [PATCH bpf-next v3 2/2] libbpf: Fix the possible memory leak
- caused by obj->kconfig
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
-        kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
-        john.fastabend@gmail.com, kpsingh@kernel.org,
-        netdev@vger.kernel.org, bpf@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <1625798873-55442-1-git-send-email-chengshuyi@linux.alibaba.com>
- <1625798873-55442-3-git-send-email-chengshuyi@linux.alibaba.com>
- <20210710144248.GA1931@kadam>
-From:   Shuyi Cheng <chengshuyi@linux.alibaba.com>
-Message-ID: <03eac45f-cc30-f9d3-ab36-892e5757e01b@linux.alibaba.com>
-Date:   Sun, 11 Jul 2021 09:27:20 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.11.0
+        Sun, 11 Jul 2021 02:15:55 -0400
+Received: from localhost.localdomain ([86.243.172.93])
+        by mwinf5d42 with ME
+        id TiCz2500L21Fzsu03iD0j0; Sun, 11 Jul 2021 08:13:07 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 11 Jul 2021 08:13:07 +0200
+X-ME-IP: 86.243.172.93
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     giovanni.cabiddu@intel.com, herbert@gondor.apana.org.au,
+        davem@davemloft.net, tomaszx.kowalik@intel.com,
+        marco.chiappero@intel.com, andriy.shevchenko@linux.intel.com,
+        fiona.trahe@intel.com, wojciech.ziemba@intel.com,
+        ztong0001@gmail.com, qat-linux@intel.com
+Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 0/3] crypto: qat - Fixes and clean-ups
+Date:   Sun, 11 Jul 2021 08:12:57 +0200
+Message-Id: <cover.1625983602.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-In-Reply-To: <20210710144248.GA1931@kadam>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+The only link between these 3 patches are that they are all related to
+'drivers/crypto/qat'.
 
 
-On 7/10/21 10:42 PM, Dan Carpenter wrote:
-> On Fri, Jul 09, 2021 at 10:47:53AM +0800, Shuyi Cheng wrote:
->> When obj->kconfig is NULL, ERR_PTR(-ENOMEM) should not be returned
->> directly, err=-ENOMEM should be set, and then goto out.
->>
-> 
-> The commit message needs to say what the problem is that the patch is
-> fixing.  Here is a better commit message:
-> 
-> [PATCH bpf-next v3 2/2] libbpf: Fix the possible memory leak on error
-> 
-> If the strdup() fails then we need to call bpf_object__close(obj) to
-> avoid a resource leak.
-> 
-> Add a Fixes tag as well.
+Christophe JAILLET (3):
+  crypto: qat - Simplify code and axe the use of a deprecated API
+  crypto: qat - Disable AER if an error occurs in probe functions
+  crypto: qat - Fix a typo in a comment
 
-Agree, Thanks.
+ drivers/crypto/qat/qat_4xxx/adf_drv.c       |  8 ++------
+ drivers/crypto/qat/qat_c3xxx/adf_drv.c      | 15 ++++++---------
+ drivers/crypto/qat/qat_c3xxxvf/adf_drv.c    |  9 ++-------
+ drivers/crypto/qat/qat_c62x/adf_drv.c       | 15 ++++++---------
+ drivers/crypto/qat/qat_c62xvf/adf_drv.c     |  9 ++-------
+ drivers/crypto/qat/qat_common/adf_aer.c     |  2 +-
+ drivers/crypto/qat/qat_dh895xcc/adf_drv.c   | 15 ++++++---------
+ drivers/crypto/qat/qat_dh895xccvf/adf_drv.c |  9 ++-------
+ 8 files changed, 27 insertions(+), 55 deletions(-)
 
-After Andrii reviews the patch, I will resend a new patch.
+-- 
+2.30.2
 
-regards,
-Shuyi
-
-> 
-> regards,
-> dan carpenter
-> 
