@@ -3,81 +3,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70B43C07E95
-	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Jul 2021 20:09:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A240C07E95
+	for <kernel-janitors@archiver.kernel.org>; Sun, 11 Jul 2021 01:27:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4E5F061353
-	for <kernel-janitors@archiver.kernel.org>; Sat, 10 Jul 2021 20:09:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFA4361185
+	for <kernel-janitors@archiver.kernel.org>; Sun, 11 Jul 2021 01:27:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230476AbhGJUMD (ORCPT
+        id S230168AbhGKBaK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 10 Jul 2021 16:12:03 -0400
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:44487
-        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229515AbhGJUMC (ORCPT
+        Sat, 10 Jul 2021 21:30:10 -0400
+Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:8780 "EHLO
+        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229640AbhGKBaK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 10 Jul 2021 16:12:02 -0400
-IronPort-HdrOrdr: =?us-ascii?q?A9a23=3Ay1++66M4chlPfMBcTsajsMiBIKoaSvp037BL?=
- =?us-ascii?q?7TEUdfU7SKelfqyV9sjzkCWUtN9zYgBEpTnjAsm9qBrnnPZICMsqTNSftWLd1l?=
- =?us-ascii?q?dAQrsP0WKv+UyDJwTOst8Y76tmfqRkYeecMXFxh6/BjzWFLw=3D=3D?=
-X-IronPort-AV: E=Sophos;i="5.84,229,1620684000"; 
-   d="scan'208";a="387686079"
-Received: from 173.121.68.85.rev.sfr.net (HELO hadrien) ([85.68.121.173])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jul 2021 22:09:15 +0200
-Date:   Sat, 10 Jul 2021 22:09:15 +0200 (CEST)
-From:   Julia Lawall <julia.lawall@inria.fr>
-X-X-Sender: jll@hadrien
-To:     Joe Perches <joe@perches.com>
-cc:     cocci <cocci@systeme.lip6.fr>, LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Subject: Re: cocci script to convert linux-kernel allocs with BITS_TO_LONGS
- to bitmap_alloc
-In-Reply-To: <afd3a282ca57a4a400c8bae9879a7c57bc507c59.camel@perches.com>
-Message-ID: <alpine.DEB.2.22.394.2107102207560.46528@hadrien>
-References: <08b89608cfb1280624d1a89ead6547069f9a4c31.camel@perches.com>  <alpine.DEB.2.22.394.2107102149140.46528@hadrien> <afd3a282ca57a4a400c8bae9879a7c57bc507c59.camel@perches.com>
-User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
+        Sat, 10 Jul 2021 21:30:10 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=chengshuyi@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0UfKzX5f_1625966840;
+Received: from B-39YZML7H-2200.local(mailfrom:chengshuyi@linux.alibaba.com fp:SMTPD_---0UfKzX5f_1625966840)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Sun, 11 Jul 2021 09:27:20 +0800
+Subject: Re: [PATCH bpf-next v3 2/2] libbpf: Fix the possible memory leak
+ caused by obj->kconfig
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+        kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
+        john.fastabend@gmail.com, kpsingh@kernel.org,
+        netdev@vger.kernel.org, bpf@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <1625798873-55442-1-git-send-email-chengshuyi@linux.alibaba.com>
+ <1625798873-55442-3-git-send-email-chengshuyi@linux.alibaba.com>
+ <20210710144248.GA1931@kadam>
+From:   Shuyi Cheng <chengshuyi@linux.alibaba.com>
+Message-ID: <03eac45f-cc30-f9d3-ab36-892e5757e01b@linux.alibaba.com>
+Date:   Sun, 11 Jul 2021 09:27:20 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20210710144248.GA1931@kadam>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 
 
-On Sat, 10 Jul 2021, Joe Perches wrote:
+On 7/10/21 10:42 PM, Dan Carpenter wrote:
+> On Fri, Jul 09, 2021 at 10:47:53AM +0800, Shuyi Cheng wrote:
+>> When obj->kconfig is NULL, ERR_PTR(-ENOMEM) should not be returned
+>> directly, err=-ENOMEM should be set, and then goto out.
+>>
+> 
+> The commit message needs to say what the problem is that the patch is
+> fixing.  Here is a better commit message:
+> 
+> [PATCH bpf-next v3 2/2] libbpf: Fix the possible memory leak on error
+> 
+> If the strdup() fails then we need to call bpf_object__close(obj) to
+> avoid a resource leak.
+> 
+> Add a Fixes tag as well.
 
-> On Sat, 2021-07-10 at 21:50 +0200, Julia Lawall wrote:
-> > On Fri, 9 Jul 2021, Joe Perches wrote:
-> >
-> > > Here is a cocci script to convert various types of bitmap allocations
-> > > that use BITS_TO_LONGS to the more typical bitmap_alloc functions.
-> > >
-> > > Perhaps something like it could be added to scripts/coccinelle.
-> > > The diff produced by the script is also below.
-> > >
-> > > $ cat bitmap_allocs.cocci
-> > > // typical uses of bitmap allocations
-> []
-> > > @@
-> > > expression val;
-> > > expression e1;
-> > > expression e2;
-> > > @@
-> > >
-> > > -	val = kcalloc(BITS_TO_LONGS(e1), sizeof(*val), e2)
-> > > +	val = bitmap_zalloc(e1, e2)
-> >
-> > Is there something that guarantees that val has a type that has a size that
-> > is the same as a long?
->
-> no, but afaict, all do.
+Agree, Thanks.
 
-It might be nicer for the val metavariable to be declared as
-{long,unsigned long} val;, although that might lose some results if the
-type is something else that has the same size.  I can check what is the
-impact of adding that constraint.
+After Andrii reviews the patch, I will resend a new patch.
 
-julia
+regards,
+Shuyi
+
+> 
+> regards,
+> dan carpenter
+> 
