@@ -2,250 +2,74 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-15.9 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1508AC07E96
-	for <kernel-janitors@archiver.kernel.org>; Sun, 11 Jul 2021 14:51:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CBF8C07E96
+	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Jul 2021 01:46:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E62B7611AC
-	for <kernel-janitors@archiver.kernel.org>; Sun, 11 Jul 2021 14:51:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E75836044F
+	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Jul 2021 01:46:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233712AbhGKOy3 (ORCPT
+        id S229818AbhGLBtn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 11 Jul 2021 10:54:29 -0400
-Received: from out07.smtpout.orange.fr ([193.252.22.91]:43612 "EHLO
-        out.smtpout.orange.fr" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S233371AbhGKOy2 (ORCPT
+        Sun, 11 Jul 2021 21:49:43 -0400
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:53105 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229812AbhGLBtm (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 11 Jul 2021 10:54:28 -0400
-Received: from localhost.localdomain ([86.243.172.93])
-        by mwinf5d67 with ME
-        id Tqrb2500921Fzsu03qrbGm; Sun, 11 Jul 2021 16:51:39 +0200
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 11 Jul 2021 16:51:39 +0200
-X-ME-IP: 86.243.172.93
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     m.chetan.kumar@intel.com, linuxwwan@intel.com,
-        loic.poulain@linaro.org, ryazanov.s.a@gmail.com,
-        johannes@sipsolutions.net, davem@davemloft.net, kuba@kernel.org
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] net: wwan: iosm: switch from 'pci_' to 'dma_' API
-Date:   Sun, 11 Jul 2021 16:51:33 +0200
-Message-Id: <dd34ecd3c8afe5a9a29e026035a4a11c63e033ae.1626014972.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Sun, 11 Jul 2021 21:49:42 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0UfQgodm_1626054412;
+Received: from B-D1K7ML85-0059.local(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0UfQgodm_1626054412)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Mon, 12 Jul 2021 09:46:53 +0800
+Subject: Re: [PATCH] ocfs2: remove an unnecessary condition
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Mark Fasheh <mark@fasheh.com>, Larry Chen <lchen@suse.com>,
+        akpm <akpm@linux-foundation.org>
+Cc:     Joel Becker <jlbec@evilplan.org>, ocfs2-devel@oss.oracle.com,
+        kernel-janitors@vger.kernel.org
+References: <YOcItgIXtisi3MaO@mwanda>
+From:   Joseph Qi <joseph.qi@linux.alibaba.com>
+Message-ID: <132a151e-3a09-5583-279c-748702752eba@linux.alibaba.com>
+Date:   Mon, 12 Jul 2021 09:46:52 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <YOcItgIXtisi3MaO@mwanda>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The wrappers in include/linux/pci-dma-compat.h should go away.
 
-The patch has been generated with the coccinelle script below and has been
-hand modified to replace GFP_ with a correct flag.
-It has been compile tested.
 
-When memory is allocated in 'ipc_protocol_init()' GFP_KERNEL can be used
-because this flag is already used a few lines above and no lock is
-acquired in the between.
+On 7/8/21 10:16 PM, Dan Carpenter wrote:
+> The case where "tmp_oh" is NULL is handled at the start of the function.
+> At this point we know it's non-NULL so this will always return 1.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-When memory is allocated in 'ipc_protocol_msg_prepipe_open()' GFP_ATOMIC
-should be used because this flag is already used a few lines above.
-
-@@
-@@
--    PCI_DMA_BIDIRECTIONAL
-+    DMA_BIDIRECTIONAL
-
-@@
-@@
--    PCI_DMA_TODEVICE
-+    DMA_TO_DEVICE
-
-@@
-@@
--    PCI_DMA_FROMDEVICE
-+    DMA_FROM_DEVICE
-
-@@
-@@
--    PCI_DMA_NONE
-+    DMA_NONE
-
-@@
-expression e1, e2, e3;
-@@
--    pci_alloc_consistent(e1, e2, e3)
-+    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
-
-@@
-expression e1, e2, e3;
-@@
--    pci_zalloc_consistent(e1, e2, e3)
-+    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_free_consistent(e1, e2, e3, e4)
-+    dma_free_coherent(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_map_single(e1, e2, e3, e4)
-+    dma_map_single(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_unmap_single(e1, e2, e3, e4)
-+    dma_unmap_single(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4, e5;
-@@
--    pci_map_page(e1, e2, e3, e4, e5)
-+    dma_map_page(&e1->dev, e2, e3, e4, e5)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_unmap_page(e1, e2, e3, e4)
-+    dma_unmap_page(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_map_sg(e1, e2, e3, e4)
-+    dma_map_sg(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_unmap_sg(e1, e2, e3, e4)
-+    dma_unmap_sg(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_dma_sync_single_for_cpu(e1, e2, e3, e4)
-+    dma_sync_single_for_cpu(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_dma_sync_single_for_device(e1, e2, e3, e4)
-+    dma_sync_single_for_device(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_dma_sync_sg_for_cpu(e1, e2, e3, e4)
-+    dma_sync_sg_for_cpu(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_dma_sync_sg_for_device(e1, e2, e3, e4)
-+    dma_sync_sg_for_device(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2;
-@@
--    pci_dma_mapping_error(e1, e2)
-+    dma_mapping_error(&e1->dev, e2)
-
-@@
-expression e1, e2;
-@@
--    pci_set_dma_mask(e1, e2)
-+    dma_set_mask(&e1->dev, e2)
-
-@@
-expression e1, e2;
-@@
--    pci_set_consistent_dma_mask(e1, e2)
-+    dma_set_coherent_mask(&e1->dev, e2)
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-If needed, see post from Christoph Hellwig on the kernel-janitors ML:
-   https://marc.info/?l=kernel-janitors&m=158745678307186&w=4
-
-When memory is allocated in 'ipc_protocol_msg_prepipe_open()', I think
-that GFP_KERNEL could be used, but I've not dug enough to be sure. So,
-better safe that sorry.
----
- drivers/net/wwan/iosm/iosm_ipc_protocol.c     | 10 +++++-----
- drivers/net/wwan/iosm/iosm_ipc_protocol_ops.c | 13 ++++++-------
- 2 files changed, 11 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/net/wwan/iosm/iosm_ipc_protocol.c b/drivers/net/wwan/iosm/iosm_ipc_protocol.c
-index 834d8b146a94..63fc7012f09f 100644
---- a/drivers/net/wwan/iosm/iosm_ipc_protocol.c
-+++ b/drivers/net/wwan/iosm/iosm_ipc_protocol.c
-@@ -239,9 +239,9 @@ struct iosm_protocol *ipc_protocol_init(struct iosm_imem *ipc_imem)
- 	ipc_protocol->old_msg_tail = 0;
- 
- 	ipc_protocol->p_ap_shm =
--		pci_alloc_consistent(ipc_protocol->pcie->pci,
--				     sizeof(*ipc_protocol->p_ap_shm),
--				     &ipc_protocol->phy_ap_shm);
-+		dma_alloc_coherent(&ipc_protocol->pcie->pci->dev,
-+				   sizeof(*ipc_protocol->p_ap_shm),
-+				   &ipc_protocol->phy_ap_shm, GFP_KERNEL);
- 
- 	if (!ipc_protocol->p_ap_shm) {
- 		dev_err(ipc_protocol->dev, "pci shm alloc error");
-@@ -275,8 +275,8 @@ struct iosm_protocol *ipc_protocol_init(struct iosm_imem *ipc_imem)
- 
- void ipc_protocol_deinit(struct iosm_protocol *proto)
- {
--	pci_free_consistent(proto->pcie->pci, sizeof(*proto->p_ap_shm),
--			    proto->p_ap_shm, proto->phy_ap_shm);
-+	dma_free_coherent(&proto->pcie->pci->dev, sizeof(*proto->p_ap_shm),
-+			  proto->p_ap_shm, proto->phy_ap_shm);
- 
- 	ipc_pm_deinit(proto);
- 	kfree(proto);
-diff --git a/drivers/net/wwan/iosm/iosm_ipc_protocol_ops.c b/drivers/net/wwan/iosm/iosm_ipc_protocol_ops.c
-index 91109e27efd3..a53ad97abb98 100644
---- a/drivers/net/wwan/iosm/iosm_ipc_protocol_ops.c
-+++ b/drivers/net/wwan/iosm/iosm_ipc_protocol_ops.c
-@@ -74,9 +74,9 @@ static int ipc_protocol_msg_prepipe_open(struct iosm_protocol *ipc_protocol,
- 		return -ENOMEM;
- 
- 	/* Allocate the transfer descriptors for the pipe. */
--	tdr = pci_alloc_consistent(ipc_protocol->pcie->pci,
--				   pipe->nr_of_entries * sizeof(*tdr),
--				   &pipe->phy_tdr_start);
-+	tdr = dma_alloc_coherent(&ipc_protocol->pcie->pci->dev,
-+				 pipe->nr_of_entries * sizeof(*tdr),
-+				 &pipe->phy_tdr_start, GFP_ATOMIC);
- 	if (!tdr) {
- 		kfree(skbr);
- 		dev_err(ipc_protocol->dev, "tdr alloc error");
-@@ -492,10 +492,9 @@ void ipc_protocol_pipe_cleanup(struct iosm_protocol *ipc_protocol,
- 
- 	/* Free and reset the td and skbuf circular buffers. kfree is save! */
- 	if (pipe->tdr_start) {
--		pci_free_consistent(ipc_protocol->pcie->pci,
--				    sizeof(*pipe->tdr_start) *
--					    pipe->nr_of_entries,
--				    pipe->tdr_start, pipe->phy_tdr_start);
-+		dma_free_coherent(&ipc_protocol->pcie->pci->dev,
-+				  sizeof(*pipe->tdr_start) * pipe->nr_of_entries,
-+				  pipe->tdr_start, pipe->phy_tdr_start);
- 
- 		pipe->tdr_start = NULL;
- 	}
--- 
-2.30.2
-
+Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+> ---
+>  fs/ocfs2/dlmglue.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/ocfs2/dlmglue.c b/fs/ocfs2/dlmglue.c
+> index 48fd369c29a4..33fbdc823278 100644
+> --- a/fs/ocfs2/dlmglue.c
+> +++ b/fs/ocfs2/dlmglue.c
+> @@ -2721,7 +2721,7 @@ int ocfs2_inode_lock_tracker(struct inode *inode,
+>  			return status;
+>  		}
+>  	}
+> -	return tmp_oh ? 1 : 0;
+> +	return 1;
+>  }
+>  
+>  void ocfs2_inode_unlock_tracker(struct inode *inode,
+> 
