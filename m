@@ -2,148 +2,88 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6D02C07E9C
-	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Jul 2021 14:25:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6062BC07E99
+	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Jul 2021 14:38:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B82B76115B
-	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Jul 2021 14:25:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42E3E6115C
+	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Jul 2021 14:38:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234935AbhGLO2e (ORCPT
+        id S235242AbhGLOkt (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 12 Jul 2021 10:28:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55814 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234869AbhGLO2d (ORCPT
+        Mon, 12 Jul 2021 10:40:49 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:37570
+        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231194AbhGLOks (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 12 Jul 2021 10:28:33 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05A0EC0613E5
-        for <kernel-janitors@vger.kernel.org>; Mon, 12 Jul 2021 07:25:44 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id f9so20223340wrq.11
-        for <kernel-janitors@vger.kernel.org>; Mon, 12 Jul 2021 07:25:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=lhrZD67b45ok4ysvAU2S6ZIKtsWTYc9YLH5eVabdcKc=;
-        b=XGziL+Njv0FnQe3+dd3+FvcAuLySoyuxlEHAkFVYmot6FHU1Nlqn9plIYketzMq7Mb
-         Z+TMR0HQk5knJUzSyI5x4GYKWkmiey7SaHdSvkbJNSlNWkTZaAa8CQXmQ3tB8/lVKo4E
-         HPrwh9cO0zsmEjhRtftdFrRAY3d6iVSvk+GKc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to;
-        bh=lhrZD67b45ok4ysvAU2S6ZIKtsWTYc9YLH5eVabdcKc=;
-        b=Kro8Sf/qBLFwgvnUERvx2EB0Hrp01GQsY4bHiOsk3ra9C/sD3Kc/mUt7DK0s2y1HS/
-         4iTMECylnCdAP7v8QgajVfU9itnhq/NG2x7ZBvuN+nkXms3bmf5q9N8t3cc3AgtWgpC0
-         NRaC6AUQWesW9hw0pIg43Ps/OCo8eQ8qD+eTTyWjDnNaYs6p/JgK7orcvbrOEVmAQuLG
-         FZlG91GcIdK5SmOpDOnOFcgrMObw96aKy2n2w5+TutTUScM9NNQYWIftwJ7xjjElUqlc
-         qGGUehp/1PgNzAADOBHjSuRr7Dt33SQXn1T9g1Otr3cvO9G7oqydI4tyVWiYP2wukeiW
-         HWnA==
-X-Gm-Message-State: AOAM5334acBsP47z2QGdxEcRpjna3oNAZgbih0BN0cjq4RP45178svfk
-        6w/0bSiJ8iScxAGI01YNLqbBbA==
-X-Google-Smtp-Source: ABdhPJzl5rlfgjEBCFpPzUHIRJ7G2S/f4rnhKq2fAOpbWSmjhpIFRCWhy5xoPSEiQoX9xSjGlPGeLw==
-X-Received: by 2002:adf:ed08:: with SMTP id a8mr26649274wro.375.1626099943574;
-        Mon, 12 Jul 2021 07:25:43 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id v21sm9209078wml.5.2021.07.12.07.25.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Jul 2021 07:25:42 -0700 (PDT)
-Date:   Mon, 12 Jul 2021 16:25:41 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Julia Lawall <Julia.Lawall@inria.fr>
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        kernel-janitors@vger.kernel.org,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/of: free the right object
-Message-ID: <YOxQ5TbkNrqCGBDJ@phenom.ffwll.local>
-Mail-Followup-To: Julia Lawall <Julia.Lawall@inria.fr>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        kernel-janitors@vger.kernel.org, Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-References: <20210709200717.3676376-1-Julia.Lawall@inria.fr>
+        Mon, 12 Jul 2021 10:40:48 -0400
+Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 24CAA4057E;
+        Mon, 12 Jul 2021 14:37:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1626100671;
+        bh=0Fb2DTYmyckSADo+MG8A3tiLWuW/JPbmDFjok+wCZlc=;
+        h=From:To:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=gMdixbqI9GaYD+O63wFbCuHysdl2XdINIedaORXhApehUH+rW+0rWiR1S+9pjIuGJ
+         MS7dl9Hi3HQIbHBzi40bGTC/QYBE9HROnazq7PRPa4vVTzMe7lZDghJEvad+cUiCam
+         CTtNxLAlinxQw+i5q4XqOr1P3MALVeMEKVSk8vu7BGGIhDC/KY3wi7Lvva4qVYiGSf
+         5l4Yj/H5JFYx0jMjRGWYAwY9wEdDGbeJYBCLRdmEJRtEXvcULEF24I8re3C7c+idZN
+         7Ljb+VFA2fHI+BkXx+6U8c4J1SnsDjCSMFS8jFUufrxsflLKej1v4jRbR//+Gm+Tqc
+         c+llUoRbjFzQA==
+From:   Colin King <colin.king@canonical.com>
+To:     Sunil Goutham <sgoutham@marvell.com>,
+        Geetha sowjanya <gakula@marvell.com>,
+        Subbaraya Sundeep <sbhatta@marvell.com>,
+        hariprasad <hkelam@marvell.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] octeontx2-pf: Fix uninitialized boolean variable pps
+Date:   Mon, 12 Jul 2021 15:37:50 +0100
+Message-Id: <20210712143750.100890-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210709200717.3676376-1-Julia.Lawall@inria.fr>
-X-Operating-System: Linux phenom 5.10.0-7-amd64 
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Jul 09, 2021 at 10:07:17PM +0200, Julia Lawall wrote:
-> There is no need to free a NULL value.  Instead, free the object
-> that is leaking due to the iterator.
-> 
-> The semantic patch that finds this problem is as follows:
-> 
-> // <smpl>
-> @@
-> expression x,e;
-> identifier f;
-> @@
->  x = f(...);
->  if (x == NULL) {
-> 	... when any
-> 	    when != x = e
-> *	of_node_put(x);
-> 	...
->  }
-> // </smpl>
-> 
-> Fixes: 6529007522de ("drm: of: Add drm_of_lvds_get_dual_link_pixel_order")
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to drm-misc-next, thanks for your patch.
+In the case where act->id is FLOW_ACTION_POLICE and also
+act->police.rate_bytes_ps > 0 or act->police.rate_pkt_ps is not > 0
+the boolean variable pps contains an uninitialized value when
+function otx2_tc_act_set_police is called. Fix this by initializing
+pps to false.
 
-Random rant about this for_each_child_of_node():
-- not documented with kerneldoc
-- very dangerous since the seemingly correct usage leaks
+Addresses-Coverity: ("Uninitialized scalar variable)"
+Fixes: 68fbff68dbea ("octeontx2-pf: Add police action for TC flower")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/marvell/octeontx2/nic/otx2_tc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-What we've done here for similar refcounted iterators is a 3 step process:
-- iter_init()
-- for_each_iter() macro
-- iter_fini(), which has to be always called after iter_init and cleans up
-  the last reference.
-
-Then it's a lot more obvious that you call iter_fini() when you break out
-of a loop. Trying to hide that in the for_each macro is a bit much.
-
-Cheers, Daniel
-
-> 
-> ---
->  drivers/gpu/drm/drm_of.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_of.c b/drivers/gpu/drm/drm_of.c
-> index ca04c34e8251..197c57477344 100644
-> --- a/drivers/gpu/drm/drm_of.c
-> +++ b/drivers/gpu/drm/drm_of.c
-> @@ -315,7 +315,7 @@ static int drm_of_lvds_get_remote_pixels_type(
->  
->  		remote_port = of_graph_get_remote_port(endpoint);
->  		if (!remote_port) {
-> -			of_node_put(remote_port);
-> +			of_node_put(endpoint);
->  			return -EPIPE;
->  		}
->  
-> 
-
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_tc.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_tc.c
+index 905fc02a7dfe..972b202b9884 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_tc.c
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_tc.c
+@@ -288,7 +288,7 @@ static int otx2_tc_parse_actions(struct otx2_nic *nic,
+ 	struct otx2_nic *priv;
+ 	u32 burst, mark = 0;
+ 	u8 nr_police = 0;
+-	bool pps;
++	bool pps = false;
+ 	u64 rate;
+ 	int i;
+ 
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+2.31.1
+
