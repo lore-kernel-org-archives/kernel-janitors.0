@@ -2,74 +2,139 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.9 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CBF8C07E96
-	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Jul 2021 01:46:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69A54C07E99
+	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Jul 2021 04:52:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E75836044F
-	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Jul 2021 01:46:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4EEB861002
+	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Jul 2021 04:52:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229818AbhGLBtn (ORCPT
+        id S230342AbhGLEz1 convert rfc822-to-8bit (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 11 Jul 2021 21:49:43 -0400
-Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:53105 "EHLO
-        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229812AbhGLBtm (ORCPT
+        Mon, 12 Jul 2021 00:55:27 -0400
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:56122 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229477AbhGLEz0 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 11 Jul 2021 21:49:42 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0UfQgodm_1626054412;
-Received: from B-D1K7ML85-0059.local(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0UfQgodm_1626054412)
+        Mon, 12 Jul 2021 00:55:26 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=zhaoyan.liao@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0UfRdTTt_1626065556;
+Received: from 30.43.41.248(mailfrom:zhaoyan.liao@linux.alibaba.com fp:SMTPD_---0UfRdTTt_1626065556)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 12 Jul 2021 09:46:53 +0800
-Subject: Re: [PATCH] ocfs2: remove an unnecessary condition
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Mark Fasheh <mark@fasheh.com>, Larry Chen <lchen@suse.com>,
-        akpm <akpm@linux-foundation.org>
-Cc:     Joel Becker <jlbec@evilplan.org>, ocfs2-devel@oss.oracle.com,
-        kernel-janitors@vger.kernel.org
-References: <YOcItgIXtisi3MaO@mwanda>
-From:   Joseph Qi <joseph.qi@linux.alibaba.com>
-Message-ID: <132a151e-3a09-5583-279c-748702752eba@linux.alibaba.com>
-Date:   Mon, 12 Jul 2021 09:46:52 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.11.0
-MIME-Version: 1.0
-In-Reply-To: <YOcItgIXtisi3MaO@mwanda>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+          Mon, 12 Jul 2021 12:52:37 +0800
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 14.0 \(3654.40.0.2.32\))
+Subject: Re: [PATCH] use 64bit timer for hpet
+From:   Linux <zhaoyan.liao@linux.alibaba.com>
+In-Reply-To: <87o8bdoy11.ffs@nanos.tec.linutronix.de>
+Date:   Mon, 12 Jul 2021 12:52:36 +0800
+Cc:     mingo@redhat.com, hpa@zytor.com, dwmw@amazon.co.uk,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        songmuchun@bytedance.com, likunkun@bytedance.com,
+        guancheng.rjk@alibaba-inc.com, duanxiongchun@bytedance.com,
+        wenan.mao@linux.alibaba.com
+Content-Transfer-Encoding: 8BIT
+Message-Id: <2CC6F5DA-B186-4A06-92B4-B763386F0D0A@linux.alibaba.com>
+References: <1625213625-25745-1-git-send-email-zhaoyan.liao@linux.alibaba.com>
+ <875yxmqw2s.ffs@nanos.tec.linutronix.de>
+ <8A96C0F7-FBE4-4B23-8565-E814401BF927@linux.alibaba.com>
+ <87o8bdoy11.ffs@nanos.tec.linutronix.de>
+To:     Thomas Gleixner <tglx@linutronix.de>
+X-Mailer: Apple Mail (2.3654.40.0.2.32)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Gleixner,
+
+> Sorry, keeping the softirq from running for 3 minutes is simply out of
+> spec. If the sysadmin decides to do so, then he can keep the pieces.
+
+It is because the kernel thread is busy that the clocksource_watchdog 
+thread is not scheduled, not softirq.
+
+>   4) For any system which actually has to use HPET the 64bit HPET is
+>      overhead. HPET access is slow enough already.
+I agree with your opinion. If it is unreasonable to use a 64-bit HPET timer, 
+is there any other more reasonable method to avoid misjudgment of the 
+tsc clock?
+I will also try to switch to other methods.
+Thanks
+           Zhaoyan Liao
 
 
-On 7/8/21 10:16 PM, Dan Carpenter wrote:
-> The case where "tmp_oh" is NULL is handled at the start of the function.
-> At this point we know it's non-NULL so this will always return 1.
+
+> 2021年7月8日 下午7:17，Thomas Gleixner <tglx@linutronix.de> 写道：
 > 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+> Liao!
+> 
+> On Thu, Jul 08 2021 at 11:11, Linux wrote:
+>>> 2021年7月7日 下午6:04，Thomas Gleixner <tglx@linutronix.de> 写道：
+>>> Seriously? The wrap-around time for 32bit HPET @24MHz is ~3 minutes.
+>> 
+>> In some cases, our system will be very busy, and the timeout of 3 minutes 
+>> is not an exaggeration. Then, the system considers that the tsc clock is 
+>> inaccurate and switches the tsc clock to the hpet clock, which brings 
+>> greater performance overhead.
+> 
+> Sorry, keeping the softirq from running for 3 minutes is simply out of
+> spec. If the sysadmin decides to do so, then he can keep the pieces.
+> 
+>>> Aside of that the reason why the kernel does not support 64bit HPET is
+>>> that there are HPETs which advertise 64bit support, but the
+>>> implementation is buggy.
+>> 
+>> Can you tell me what is the buggy with the 64-bit hpet clock?
+> 
+> I forgot the details, but when I tried moving HPET to 64bit it did not
+> work on one of my machines due to an erratum and other people reported
+> similar issues on different CPUs/chipsets.
+> 
+> TBH, I'm not interested at all to chase down these buggy implementations
+> and have yet another pile of quirks.
+> 
+>> In my opinion, it is unreasonable to use a lower-bit width clock to
+>> calibrate a higher-bit width clock, and the hardware already supports
+>> the higher-bit width.
+> 
+> There is nothing unreasonable with that, really:
+> 
+>   1) This is not about calibration. It's a sanity check to catch
+>      broken TSC implementations.
+> 
+>      Aside of that it _IS_ very reasonable for calibration. We even
+>      calibrate TSC via the PIT if we can't get the frequency from
+>      the firmware.
+> 
+>   2) Expecting that the softirq runs within 3 minutes is very
+>      reasonable.
+> 
+>   3) On modern machines this is usually not longer necessary. If you
+>      are confident that the TSC on your system is stable then you
+>      can disable the watchdog via the kernel command line.
+> 
+>      There is also effort underway to come up with reasonable
+>      conditions to avoid the watchdog on those CPUs in the first place.
+> 
+>   4) For any system which actually has to use HPET the 64bit HPET is
+>      overhead. HPET access is slow enough already.
+> 
+>   5) 32bit HPET has to be supported as well and just claiming that a
+>      64bit access on 32bit HPET does not matter is just wishful
+>      thinking. Aside of breaking 32bit kernels along the way which
+>      is just a NONO.
+> 
+> #4 and #5 were the main reason why I gave up on it - aside of the
+> discovery that there are broken implementations out there.
+> 
+> So no, there is really no compelling reason to support 64bit HPETs.
+> 
+> Thanks,
+> 
+>        tglx
 > ---
->  fs/ocfs2/dlmglue.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/ocfs2/dlmglue.c b/fs/ocfs2/dlmglue.c
-> index 48fd369c29a4..33fbdc823278 100644
-> --- a/fs/ocfs2/dlmglue.c
-> +++ b/fs/ocfs2/dlmglue.c
-> @@ -2721,7 +2721,7 @@ int ocfs2_inode_lock_tracker(struct inode *inode,
->  			return status;
->  		}
->  	}
-> -	return tmp_oh ? 1 : 0;
-> +	return 1;
->  }
->  
->  void ocfs2_inode_unlock_tracker(struct inode *inode,
-> 
+> P.S: Please trim your replies.
+
