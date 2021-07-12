@@ -2,82 +2,76 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AACA5C07E99
-	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Jul 2021 16:24:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9790C07E99
+	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Jul 2021 18:30:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8CEE060724
-	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Jul 2021 16:24:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8386261241
+	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Jul 2021 18:30:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233633AbhGLQ1V (ORCPT
+        id S235890AbhGLScw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 12 Jul 2021 12:27:21 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:45336
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233609AbhGLQ1U (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 12 Jul 2021 12:27:20 -0400
-Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id B36104049F;
-        Mon, 12 Jul 2021 16:24:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1626107070;
-        bh=nzUQ5PQkQlYn/Cllz//w9vdJHqABUsXTabedhTI0/K4=;
-        h=From:To:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=RY1+fQlFVSitDYQDBfHlgiutDVkphMnUDk0iOZpE5+aFNj6+ACLQJ4F1C753bqkBU
-         MNqz1azyPoK47wkwzwja8fRoWEZzg067AKndURsdKknu8gm/87UL//adRoZwhIhgnI
-         21kj8EclG039FiMUtKy0rKU4oimdaq7omQzD1CT/5McMqfEovGzPrIOhK/I9D4rOKn
-         fhh7r9w+eovE9+euRyz9q1Ryhn9KBcCcluwkSdbotPAIQoHVDnX4i11K7Sx3PaWghX
-         PBnB5IDjav+f1c9KGEw9pOoEC/wqkw92GsteVnxa8EOBO/Ri2u07mHu3LuyJSeOF7m
-         vyxjfDS9+ZOAA==
-From:   Colin King <colin.king@canonical.com>
-To:     Bob Peterson <rpeterso@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Abhi Das <adas@redhat.com>, cluster-devel@redhat.com
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] gfs2: Fix memory leak of object lsi on error return path
-Date:   Mon, 12 Jul 2021 17:24:30 +0100
-Message-Id: <20210712162430.104913-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.31.1
-MIME-Version: 1.0
+        Mon, 12 Jul 2021 14:32:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40828 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230477AbhGLScw (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 12 Jul 2021 14:32:52 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPS id 9FA5F61186;
+        Mon, 12 Jul 2021 18:30:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1626114603;
+        bh=53oJ2AU+FZK9jxaEkJqYWcoLJ24v7HhvSVfykiOy/WU=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=HgAIqQK5HpNgUX+zGdangvHWamccRH9KMGJnNwuQ8EEeTjnaqzyypXNOJ07xGm+As
+         m1s8cyoWCsXn1yALlZN+eDo15rgeQstzpyeMR0NT/Gis/Pc8GSE7s515YMMaZSbHDf
+         IQC75x7O9bMF3V6Bj5JbypOASJGurerrMt8wlCFDi+XDzvWL/FIxj/pprEJ3X7tacB
+         N0s9JgDnCu0ZkQKBnfj7k5Yj+RDsNHauqEorPn5dFM9XXWEiCbdz8xQhN6haKvFG6P
+         Rut7dgysuRsHQzV8LcQv6KsNiS7QF7qKeadmMJb0tjOJVLD2RUSue20Rzto/4DaePc
+         1zKs0obc4IBWA==
 Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] octeontx2-pf: Fix uninitialized boolean variable pps
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <162611460359.21721.179484108889864194.git-patchwork-notify@kernel.org>
+Date:   Mon, 12 Jul 2021 18:30:03 +0000
+References: <20210712143750.100890-1-colin.king@canonical.com>
+In-Reply-To: <20210712143750.100890-1-colin.king@canonical.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     sgoutham@marvell.com, gakula@marvell.com, sbhatta@marvell.com,
+        hkelam@marvell.com, davem@davemloft.net, kuba@kernel.org,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hello:
 
-In the case where IS_ERR(lsi->si_sc_inode) is true the error exit path
-to free_local does not kfree the allocated object lsi leading to a memory
-leak. Fix this by kfree'ing lst before taking the error exit path.
+This patch was applied to netdev/net.git (refs/heads/master):
 
-Addresses-Coverity: ("Resource leak")
-Fixes: 97fd734ba17e ("gfs2: lookup local statfs inodes prior to journal recovery")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- fs/gfs2/ops_fstype.c | 1 +
- 1 file changed, 1 insertion(+)
+On Mon, 12 Jul 2021 15:37:50 +0100 you wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> In the case where act->id is FLOW_ACTION_POLICE and also
+> act->police.rate_bytes_ps > 0 or act->police.rate_pkt_ps is not > 0
+> the boolean variable pps contains an uninitialized value when
+> function otx2_tc_act_set_police is called. Fix this by initializing
+> pps to false.
+> 
+> [...]
 
-diff --git a/fs/gfs2/ops_fstype.c b/fs/gfs2/ops_fstype.c
-index 5f4504dd0875..bd3b3be1a473 100644
---- a/fs/gfs2/ops_fstype.c
-+++ b/fs/gfs2/ops_fstype.c
-@@ -677,6 +677,7 @@ static int init_statfs(struct gfs2_sbd *sdp)
- 			error = PTR_ERR(lsi->si_sc_inode);
- 			fs_err(sdp, "can't find local \"sc\" file#%u: %d\n",
- 			       jd->jd_jid, error);
-+			kfree(lsi);
- 			goto free_local;
- 		}
- 		lsi->si_jid = jd->jd_jid;
--- 
-2.31.1
+Here is the summary with links:
+  - octeontx2-pf: Fix uninitialized boolean variable pps
+    https://git.kernel.org/netdev/net/c/71ce9d92fc70
+
+You are awesome, thank you!
+--
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
