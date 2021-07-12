@@ -2,90 +2,79 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37A25C11F9C
-	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Jul 2021 08:39:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00B13C07E9B
+	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Jul 2021 09:14:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2AA8C6115A
-	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Jul 2021 08:39:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D82236100B
+	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Jul 2021 09:14:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377680AbhGLIme (ORCPT
+        id S1358032AbhGLJRd (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 12 Jul 2021 04:42:34 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:40922
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1350572AbhGLIht (ORCPT
+        Mon, 12 Jul 2021 05:17:33 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:39882 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1346555AbhGLJQe (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 12 Jul 2021 04:37:49 -0400
-Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id D9AEB40325;
-        Mon, 12 Jul 2021 08:34:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1626078888;
-        bh=Pzh4dpmLwQ8NXTWOU/AqP/Io9WI9Fmjor6J5jI85EO0=;
-        h=From:To:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=SE/XbkgzHSQIP+rm00RAY7rkDNB4P1AZ0BxglE+wU9yj8Bo1qx+U8WoxuE9loYbW2
-         din6bNOnctHusKV5Ts344LcS4cNGjez01//8ZHCU1f9hvo/XNLmUgKiKMpxJjcBJZ3
-         JLzrLV7Bd+R+Oka5aKhnIo/WOeMeGRUgc6V+ZlL5K2hL2pZZqjGLx94AYOjZeoT/qn
-         5xVGvupiXxZ/QKO4I4Tz85TTgiwHY2FK5qjeIIj6czpTYuhFm/901KHU6dp1m/c7vX
-         Om13gXg4ianchA/iOqBhXrWSaiFSN/Sm+7IFnKgx2rKB+dGZ1S+hts0XzrA3kmAVxI
-         vU3nS2OEQ5eiA==
-From:   Colin King <colin.king@canonical.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <kafai@fb.com>, Yonghong Song <yhs@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>,
-        linux-perf-users@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] perf tools: Fix spelling mistake "falied" -> "failed"
-Date:   Mon, 12 Jul 2021 09:34:48 +0100
-Message-Id: <20210712083448.26317-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.31.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Mon, 12 Jul 2021 05:16:34 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 6625022138;
+        Mon, 12 Jul 2021 09:13:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1626081223; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=hqRJFUYPrxlcoHHM4i5lEdjJpg9DF8FHcayW7Habd7I=;
+        b=SXjk2s43kkwSjkFx0w17ZpcVDVAo1W/Bu6q33XILfye4yYC4kaeXdwQV+i4ipTVqvldqwT
+        8wMkzf1KtksWKmPML/VP79bSw5TlEu7OIY7nSQ7mfDxE0VgxxyYZhnbmiWbz/Dn/sh9CHx
+        CXB+CrI7hxlqHky+GNjFso4QaUM1J3E=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1626081223;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=hqRJFUYPrxlcoHHM4i5lEdjJpg9DF8FHcayW7Habd7I=;
+        b=wdoZVY/ke0WkcAjNWUm9wjKCs+CiYA1XSzhGfEoSULA8O9zCeeMY1X8myfyiLJTvgcqrP0
+        ZDkCE/8Gw/b0U+Bg==
+Received: from alsa1.suse.de (alsa1.suse.de [10.160.4.42])
+        by relay2.suse.de (Postfix) with ESMTP id 47864A3B87;
+        Mon, 12 Jul 2021 09:13:43 +0000 (UTC)
+Date:   Mon, 12 Jul 2021 11:13:43 +0200
+Message-ID: <s5hr1g33neg.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Connor McAdams <conmanx360@gmail.com>,
+        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ALSA: hda/ca0132: remove redundant initialization of variable status
+In-Reply-To: <20210709152938.460763-1-colin.king@canonical.com>
+References: <20210709152938.460763-1-colin.king@canonical.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Fri, 09 Jul 2021 17:29:38 +0200,
+Colin King wrote:
+> 
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The variable status is being initialized with a value that is never
+> read, the assignment is redundant and can be removed.
+> 
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-There is a spelling mistake in a pr_err error message. Fix it.
+Thanks, applied.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- tools/perf/util/bpf_counter_cgroup.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/bpf_counter_cgroup.c b/tools/perf/util/bpf_counter_cgroup.c
-index 89aa5e71db1a..4139b4deee77 100644
---- a/tools/perf/util/bpf_counter_cgroup.c
-+++ b/tools/perf/util/bpf_counter_cgroup.c
-@@ -266,7 +266,7 @@ static int bperf_cgrp__read(struct evsel *evsel)
- 		idx = evsel->core.idx;
- 		err = bpf_map_lookup_elem(reading_map_fd, &idx, values);
- 		if (err) {
--			pr_err("bpf map lookup falied: idx=%u, event=%s, cgrp=%s\n",
-+			pr_err("bpf map lookup failed: idx=%u, event=%s, cgrp=%s\n",
- 			       idx, evsel__name(evsel), evsel->cgrp->name);
- 			goto out;
- 		}
--- 
-2.31.1
-
+Takashi
