@@ -2,81 +2,90 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40590C11F66
-	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Jul 2021 07:32:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37A25C11F9C
+	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Jul 2021 08:39:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 28CE461400
-	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Jul 2021 07:32:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2AA8C6115A
+	for <kernel-janitors@archiver.kernel.org>; Mon, 12 Jul 2021 08:39:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345469AbhGLHeI (ORCPT
+        id S1377680AbhGLIme (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 12 Jul 2021 03:34:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40442 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346687AbhGLHbD (ORCPT
+        Mon, 12 Jul 2021 04:42:34 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:40922
+        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1350572AbhGLIht (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 12 Jul 2021 03:31:03 -0400
-Received: from galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 332DEC005F24;
-        Mon, 12 Jul 2021 00:25:44 -0700 (PDT)
-From:   Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1626074738;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=icbIB7QTKPXqI/o8Y0H/OIL5w65Qd9ZrzW3+ozldd6k=;
-        b=KIY5hoSrZleZkQd3Hr1NDdrVjxzCLM/ECRW+fWSNVeFZ6HqiY81KzsQV6Y2/NAwhLIMfO4
-        pFw+tsKXA4mQLwuu1N3BHyRE/fgIHsmizXnInfHdl11nLJay6Lxn8mmoPTYmwTC3RQyyz4
-        bfdEcJ7aRhCw6TIo99cnjO656sfcCBi3TSBURBmEKr1IZcfzKuYB3fEsP7OklV//9GbhMI
-        UmPth8dCaBnPpW2rO3RaK3ZXcx0I2ArXu+Hi4RcCJzJwvX9EaKc6F9r9ess7ZLOkzi0IUA
-        qAkOt8SeYYVF3CKtsYSjzLpS+GBn0/aCny4A1zBOxpUG0y9CgwfWVMq3fhHNPA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1626074738;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=icbIB7QTKPXqI/o8Y0H/OIL5w65Qd9ZrzW3+ozldd6k=;
-        b=6SAQG5Jk/rtsvH7besLKDUpbdQKd3pcgfIe1n8Dl3FCahXf4nMtBqM5NuHtS2n4GIMFhIh
-        +cYaVHiOn8aJtBDA==
-To:     Linux <zhaoyan.liao@linux.alibaba.com>
-Cc:     mingo@redhat.com, hpa@zytor.com, dwmw@amazon.co.uk,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        songmuchun@bytedance.com, likunkun@bytedance.com,
-        guancheng.rjk@alibaba-inc.com, duanxiongchun@bytedance.com,
-        wenan.mao@linux.alibaba.com
-Subject: Re: [PATCH] use 64bit timer for hpet
-In-Reply-To: <2CC6F5DA-B186-4A06-92B4-B763386F0D0A@linux.alibaba.com>
-References: <1625213625-25745-1-git-send-email-zhaoyan.liao@linux.alibaba.com> <875yxmqw2s.ffs@nanos.tec.linutronix.de> <8A96C0F7-FBE4-4B23-8565-E814401BF927@linux.alibaba.com> <87o8bdoy11.ffs@nanos.tec.linutronix.de> <2CC6F5DA-B186-4A06-92B4-B763386F0D0A@linux.alibaba.com>
-Date:   Mon, 12 Jul 2021 09:25:38 +0200
-Message-ID: <875yxgngct.ffs@nanos.tec.linutronix.de>
+        Mon, 12 Jul 2021 04:37:49 -0400
+Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id D9AEB40325;
+        Mon, 12 Jul 2021 08:34:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1626078888;
+        bh=Pzh4dpmLwQ8NXTWOU/AqP/Io9WI9Fmjor6J5jI85EO0=;
+        h=From:To:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=SE/XbkgzHSQIP+rm00RAY7rkDNB4P1AZ0BxglE+wU9yj8Bo1qx+U8WoxuE9loYbW2
+         din6bNOnctHusKV5Ts344LcS4cNGjez01//8ZHCU1f9hvo/XNLmUgKiKMpxJjcBJZ3
+         JLzrLV7Bd+R+Oka5aKhnIo/WOeMeGRUgc6V+ZlL5K2hL2pZZqjGLx94AYOjZeoT/qn
+         5xVGvupiXxZ/QKO4I4Tz85TTgiwHY2FK5qjeIIj6czpTYuhFm/901KHU6dp1m/c7vX
+         Om13gXg4ianchA/iOqBhXrWSaiFSN/Sm+7IFnKgx2rKB+dGZ1S+hts0XzrA3kmAVxI
+         vU3nS2OEQ5eiA==
+From:   Colin King <colin.king@canonical.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <kafai@fb.com>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>,
+        linux-perf-users@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] perf tools: Fix spelling mistake "falied" -> "failed"
+Date:   Mon, 12 Jul 2021 09:34:48 +0100
+Message-Id: <20210712083448.26317-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Liao,
+From: Colin Ian King <colin.king@canonical.com>
 
-On Mon, Jul 12 2021 at 12:52, Linux wrote:
->> Sorry, keeping the softirq from running for 3 minutes is simply out of
->> spec. If the sysadmin decides to do so, then he can keep the pieces.
->
-> It is because the kernel thread is busy that the clocksource_watchdog 
-> thread is not scheduled, not softirq.
+There is a spelling mistake in a pr_err error message. Fix it.
 
-Which thread?
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ tools/perf/util/bpf_counter_cgroup.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The clocksource watchdog runs from a timer_list timer callback in
-softirq context. Even if the softirq is switched to the softirq thread
-then still my argument of starving that for 3 minutes still stands.
+diff --git a/tools/perf/util/bpf_counter_cgroup.c b/tools/perf/util/bpf_counter_cgroup.c
+index 89aa5e71db1a..4139b4deee77 100644
+--- a/tools/perf/util/bpf_counter_cgroup.c
++++ b/tools/perf/util/bpf_counter_cgroup.c
+@@ -266,7 +266,7 @@ static int bperf_cgrp__read(struct evsel *evsel)
+ 		idx = evsel->core.idx;
+ 		err = bpf_map_lookup_elem(reading_map_fd, &idx, values);
+ 		if (err) {
+-			pr_err("bpf map lookup falied: idx=%u, event=%s, cgrp=%s\n",
++			pr_err("bpf map lookup failed: idx=%u, event=%s, cgrp=%s\n",
+ 			       idx, evsel__name(evsel), evsel->cgrp->name);
+ 			goto out;
+ 		}
+-- 
+2.31.1
 
-This is _not_ a kernel problem. Overcommitment is a admin problem.
-
-Thanks,
-
-        tglx
