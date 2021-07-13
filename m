@@ -2,88 +2,71 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F380EC07E9A
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Jul 2021 01:43:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2F76C07E95
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Jul 2021 04:58:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CBBD861008
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Jul 2021 01:43:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFB946120A
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Jul 2021 04:58:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231775AbhGMBqC convert rfc822-to-8bit (ORCPT
+        id S230477AbhGMFBn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 12 Jul 2021 21:46:02 -0400
-Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:53618 "EHLO
-        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230000AbhGMBqB (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 12 Jul 2021 21:46:01 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R951e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=zhaoyan.liao@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0UfdImcp_1626140589;
-Received: from 30.43.68.19(mailfrom:zhaoyan.liao@linux.alibaba.com fp:SMTPD_---0UfdImcp_1626140589)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 13 Jul 2021 09:43:10 +0800
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 14.0 \(3654.40.0.2.32\))
-Subject: Re: [PATCH] use 64bit timer for hpet
-From:   Linux <zhaoyan.liao@linux.alibaba.com>
-In-Reply-To: <875yxgngct.ffs@nanos.tec.linutronix.de>
-Date:   Tue, 13 Jul 2021 09:43:09 +0800
-Cc:     mingo@redhat.com, hpa@zytor.com, dwmw@amazon.co.uk,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        songmuchun@bytedance.com, likunkun@bytedance.com,
-        guancheng.rjk@alibaba-inc.com, duanxiongchun@bytedance.com,
-        wenan.mao@linux.alibaba.com
-Content-Transfer-Encoding: 8BIT
-Message-Id: <C8CF5E7F-58D9-4FD7-B138-50C66620BE33@linux.alibaba.com>
-References: <1625213625-25745-1-git-send-email-zhaoyan.liao@linux.alibaba.com>
- <875yxmqw2s.ffs@nanos.tec.linutronix.de>
- <8A96C0F7-FBE4-4B23-8565-E814401BF927@linux.alibaba.com>
- <87o8bdoy11.ffs@nanos.tec.linutronix.de>
- <2CC6F5DA-B186-4A06-92B4-B763386F0D0A@linux.alibaba.com>
- <875yxgngct.ffs@nanos.tec.linutronix.de>
-To:     Thomas Gleixner <tglx@linutronix.de>
-X-Mailer: Apple Mail (2.3654.40.0.2.32)
+        Tue, 13 Jul 2021 01:01:43 -0400
+Received: from mga11.intel.com ([192.55.52.93]:8072 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229470AbhGMFBn (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 13 Jul 2021 01:01:43 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10043"; a="207080215"
+X-IronPort-AV: E=Sophos;i="5.84,235,1620716400"; 
+   d="scan'208";a="207080215"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2021 21:58:54 -0700
+X-IronPort-AV: E=Sophos;i="5.84,235,1620716400"; 
+   d="scan'208";a="492567823"
+Received: from mckumar-mobl.gar.corp.intel.com (HELO [10.215.202.204]) ([10.215.202.204])
+  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2021 21:58:51 -0700
+Subject: Re: [PATCH] net: wwan: iosm: switch from 'pci_' to 'dma_' API
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linuxwwan@intel.com, loic.poulain@linaro.org,
+        ryazanov.s.a@gmail.com, johannes@sipsolutions.net,
+        davem@davemloft.net, kuba@kernel.org
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <dd34ecd3c8afe5a9a29e026035a4a11c63e033ae.1626014972.git.christophe.jaillet@wanadoo.fr>
+From:   "Kumar, M Chetan" <m.chetan.kumar@intel.com>
+Message-ID: <754912a3-d1fe-516f-d64b-e8a70a93d570@intel.com>
+Date:   Tue, 13 Jul 2021 10:28:48 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
+MIME-Version: 1.0
+In-Reply-To: <dd34ecd3c8afe5a9a29e026035a4a11c63e033ae.1626014972.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-OK, Thank you for your patience. the last question:
-> I forgot the details, but when I tried moving HPET to 64bit it did not
-> work on one of my machines due to an erratum and other people reported
-> similar issues on different CPUs/chipsets.
+On 7/11/2021 8:21 PM, Christophe JAILLET wrote:
+> The wrappers in include/linux/pci-dma-compat.h should go away.
 > 
-> TBH, I'm not interested at all to chase down these buggy implementations
-> and have yet another pile of quirks.
+> The patch has been generated with the coccinelle script below and has been
+> hand modified to replace GFP_ with a correct flag.
+> It has been compile tested.
+> 
+> When memory is allocated in 'ipc_protocol_init()' GFP_KERNEL can be used
+> because this flag is already used a few lines above and no lock is
+> acquired in the between.
+> 
+> When memory is allocated in 'ipc_protocol_msg_prepipe_open()' GFP_ATOMIC
+> should be used because this flag is already used a few lines above.
 
-Can you tell me the erranum or issue link at that time? This is very important
- to us.
+Thanks,
+Reviewed-by: M Chetan Kumar <m.chetan.kumar@intel.com>
 
-Thank you very much.
-
-
-> 2021年7月12日 下午3:25，Thomas Gleixner <tglx@linutronix.de> 写道：
-> 
-> Liao,
-> 
-> On Mon, Jul 12 2021 at 12:52, Linux wrote:
->>> Sorry, keeping the softirq from running for 3 minutes is simply out of
->>> spec. If the sysadmin decides to do so, then he can keep the pieces.
->> 
->> It is because the kernel thread is busy that the clocksource_watchdog 
->> thread is not scheduled, not softirq.
-> 
-> Which thread?
-> 
-> The clocksource watchdog runs from a timer_list timer callback in
-> softirq context. Even if the softirq is switched to the softirq thread
-> then still my argument of starving that for 3 minutes still stands.
-> 
-> This is _not_ a kernel problem. Overcommitment is a admin problem.
-> 
-> Thanks,
-> 
->        tglx
-
+Regards,
+Chetan
