@@ -2,283 +2,163 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,UPPERCASE_50_75 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B229C07E95
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Jul 2021 18:24:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57480C07E95
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Jul 2021 19:43:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CD8ED613AF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Jul 2021 18:23:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39A1D61152
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Jul 2021 19:43:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231499AbhGMS0t (ORCPT
+        id S234366AbhGMTqn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 13 Jul 2021 14:26:49 -0400
-Received: from smtprelay0067.hostedemail.com ([216.40.44.67]:55492 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S229478AbhGMS0t (ORCPT
+        Tue, 13 Jul 2021 15:46:43 -0400
+Received: from smtprelay-out1.synopsys.com ([149.117.87.133]:34072 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229478AbhGMTqm (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 13 Jul 2021 14:26:49 -0400
-Received: from omf13.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 212A3181D3CCD;
-        Tue, 13 Jul 2021 18:23:58 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf13.hostedemail.com (Postfix) with ESMTPA id 8DFFC1124F4;
-        Tue, 13 Jul 2021 18:23:57 +0000 (UTC)
-Message-ID: <6cb78d8885bafa5e203b9a32be86b45e08f12ec2.camel@perches.com>
-Subject: trivial script to find unused CONFIG_<FOO> uses in #ifdef blocks
-From:   Joe Perches <joe@perches.com>
-To:     kernel-janitors <kernel-janitors@vger.kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>
-Date:   Tue, 13 Jul 2021 11:23:55 -0700
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.40.0-1 
+        Tue, 13 Jul 2021 15:46:42 -0400
+Received: from mailhost.synopsys.com (us03-mailhost2.synopsys.com [10.4.17.18])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (Client CN "mailhost.synopsys.com", Issuer "SNPSica2" (verified OK))
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 69ECEC0B5E;
+        Tue, 13 Jul 2021 19:43:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1626205432; bh=zREO98CJoThiO+ibqaR6r0RdgXVAqU6H7mA0WNucf28=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+        b=lvFcI4f3yi5IVUAPXAe8Iv0uqk2KXaR1aI2LsfaKMikbARbhJgHUgeUzX5v6MpqOJ
+         LcqAukp018InkOwcR6RsaFaSBR0PpmS8uClcHPmIAiu/ocUmYya4kO5s0i8g3wgcv9
+         azdKX1ze0eFZLlM26R5fn6lgaBfoL0FmvwcSRxrj8urjXIrMpBbWcVoRdzgPSwqCTH
+         2amV557ZA5li0P1kMqJWEibr0FcMHpOYDf4blveiyjOxkZ64V1pxzSKlMPP+bOZ+sL
+         iNBstwMvuUK9kLQWAWcyXFJifu6jxpugC0DhZ0aSs9oXHHeBM7LbTBtDmah4+SYTug
+         D41mcftFnb8Vw==
+Received: from o365relay-in.synopsys.com (sv2-o365relay3.synopsys.com [10.202.1.139])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (Client CN "o365relay-in.synopsys.com", Issuer "Entrust Certification Authority - L1K" (verified OK))
+        by mailhost.synopsys.com (Postfix) with ESMTPS id 441E6A0081;
+        Tue, 13 Jul 2021 19:43:50 +0000 (UTC)
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam08lp2042.outbound.protection.outlook.com [104.47.74.42])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client CN "mail.protection.outlook.com", Issuer "DigiCert Cloud Services CA-1" (verified OK))
+        by o365relay-in.synopsys.com (Postfix) with ESMTPS id D6A32400CC;
+        Tue, 13 Jul 2021 19:43:48 +0000 (UTC)
+Authentication-Results: o365relay-in.synopsys.com; dmarc=pass (p=reject dis=none) header.from=synopsys.com
+Authentication-Results: o365relay-in.synopsys.com; spf=pass smtp.mailfrom=vgupta@synopsys.com
+Authentication-Results: o365relay-in.synopsys.com;
+        dkim=pass (1024-bit key; unprotected) header.d=synopsys.com header.i=@synopsys.com header.b="oIpzrbij";
+        dkim-atps=neutral
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=iLzbqcdfCFcBk2m20SXOyUGla2PegqoKdeSynGPbGJOeLw1mkiYdxY+FCQeI+UrxsY0wny5DeLVaNT4BuJpWF4ZjLvEdpqT1X98eWGlZjluOXqOe1kxK9p6upxu9qQJwrEXkCQml86Gl6b1u2aFuH7Bm9Fe3RBpJca7GAJkB0ajdB70VRuyLjAMKnYaIsi1nJrG5EJiC6NqpL8FrgDqIuvLdtk2GH0fJvXflWAockR6UYhhC1+nVWUDonBWJuYqg3aRFx6hy5jkaLH2wdxyquCsE+uxIl3zHtqPju8XQlT+lajtw+oSm6MRJ6nffW9dQXRRAolH1zpioukcxDQgcOw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zREO98CJoThiO+ibqaR6r0RdgXVAqU6H7mA0WNucf28=;
+ b=PFc6IYclWVR4k0nybFvA5Ls8JYVuoZQtJKPxIKszW3po3SjeL8dmW3NmSZZ6sig0fwaqjg+ZtVuO2EduG7XoRXp2r48RNbiOChSrTwM5rHG52xs6QrrYVQm/Ner3xytoq6oeMo0xMfGjDsk+14dAYOK4QTdy/0a8QpGJpvqUtkGp/f/xNJ/QLYWkMiNpL96PVqq0GoxrhJFARqrqjfn6kHXYEGlpNldyOQleBAR17uc/DvDcv7KdG4RNSGJ14HZGc+i/mPlMdCFQOhuVR9IEXNrfVEC+1v1dCc5vCSOpCE0S4jOWgyhaHwLhbCYNTh/UfLtrY6nPPY8xNWbXDfOa3g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=synopsys.com; dmarc=pass action=none header.from=synopsys.com;
+ dkim=pass header.d=synopsys.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=synopsys.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zREO98CJoThiO+ibqaR6r0RdgXVAqU6H7mA0WNucf28=;
+ b=oIpzrbijuNyCvA2Gc+Cs3Fz36UOruqZNarz+6/ymK1Jf6S9de3VUZJit8gB+dfZsuV6I4jkSa+Yar3VzBcFrAMUNZFrN7TIvnw2f67ycIIbkjM+Fh42lYI093gZGaadLtMGFjioc/du2bu1JfgzsACWuFCiMJyG0Klnf/Vj6tbM=
+Received: from BYAPR12MB3479.namprd12.prod.outlook.com (2603:10b6:a03:dc::26)
+ by BY5PR12MB3684.namprd12.prod.outlook.com (2603:10b6:a03:1a2::32) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4308.21; Tue, 13 Jul
+ 2021 19:43:45 +0000
+Received: from BYAPR12MB3479.namprd12.prod.outlook.com
+ ([fe80::acbd:42ac:9bab:39ee]) by BYAPR12MB3479.namprd12.prod.outlook.com
+ ([fe80::acbd:42ac:9bab:39ee%3]) with mapi id 15.20.4308.027; Tue, 13 Jul 2021
+ 19:43:45 +0000
+X-SNPS-Relay: synopsys.com
+From:   Vineet Gupta <Vineet.Gupta1@synopsys.com>
+To:     Colin King <colin.king@canonical.com>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>
+CC:     "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] arc: Fix spelling mistake and grammar in Kconfig
+Thread-Topic: [PATCH] arc: Fix spelling mistake and grammar in Kconfig
+Thread-Index: AQHXcLb0XIClqFVISU6Z8woP/h1rnqtBXVkA
+Date:   Tue, 13 Jul 2021 19:43:45 +0000
+Message-ID: <d502f16f-d78c-93d3-e261-bf0122713f72@synopsys.com>
+References: <20210704092824.34886-1-colin.king@canonical.com>
+In-Reply-To: <20210704092824.34886-1-colin.king@canonical.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
+authentication-results: canonical.com; dkim=none (message not signed)
+ header.d=none;canonical.com; dmarc=none action=none header.from=synopsys.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 87d7e331-e2ac-4c01-dcb3-08d9463686f5
+x-ms-traffictypediagnostic: BY5PR12MB3684:
+x-microsoft-antispam-prvs: <BY5PR12MB368470B8C1E6AD5A94BBA264B6149@BY5PR12MB3684.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:1265;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: Ph2E8UWM0pn5xRTz+1nx+EUkNJq8DAkA+uveb+bx6kK27kO74vTeyInrljdF2Ifb88+wPAN7Gq3B+/cY3fZ33zm5MWIzwmGeG8lJRVVQ+D89wXiEYsYKtnu1ja9TXiTtlB6JmP76rT9bZ1bpF0iMGnw17LnEm0rjeEW48jEB6yc3VQF9Z19cFQ6SGIwPonLFD2AjodD2hR8ZKayldF4SW12R/w7McfptJeA8wUVopFE5YWrbTl/XXXZfyy4STY7luE7pbOahD5Ufuf8IRVmEsmwCnT903Y+eXf7mYlsh9mrX2Tsh9hIR/zyFJMf3efdudym8ZmdS35Nnwqtpmt+z5a4bIgisBnQS2hxE3AjH/gKgI6Dw+mBIoPLI+f4EWkN9sd/UuO7a8jvlP7D2ZT3LCLiDEpX0Oj+U8XZsIMjvjD2cOAK1zOWCOv88MOC+LpfmGyt/M7J2C9FZz6Hrvp0Fgdu34wL2kb6yYh0IPmR+AfCfRzCK/13bk0FO8HhmXbCTCrRMSh8ZY40l9TwbCQ+L+5Lpe546k2ihwoZGOKtPHmJ5RdarXikowa8nB15FxLeLVpBR8gLNSzUWb36lqa7KBx67hbmiQgh8cbJfm9colGujBnA0qaMuLgHo07Px3e4tMrwIWRPxBa527M0QstU0hbAQ8xMb35mW4ORUveC1mLGPopDS0mUSSap+1B94wnoUVVrcphoG8wf/8UKWz2r71cpkud1yFP8BjJkQI9ms5xo=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR12MB3479.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(376002)(136003)(396003)(39860400002)(346002)(66446008)(66476007)(2906002)(36756003)(66946007)(26005)(54906003)(478600001)(122000001)(6512007)(2616005)(31686004)(64756008)(86362001)(66556008)(38100700002)(76116006)(186003)(5660300002)(53546011)(6486002)(8676002)(316002)(31696002)(110136005)(4326008)(6506007)(8936002)(558084003)(71200400001)(45980500001)(43740500002);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?Z2F6bVBJRHl0Q1dFeVBDazYvbXk2K0hqQlRpekQ3Ym9yRUtwTktHUllpZmJM?=
+ =?utf-8?B?dmdZbllnalRFak1MK0VrVDFsMTV2Z080QW5TNStGNXo0Y1V6TzZoYmU3WnNH?=
+ =?utf-8?B?dG5RV0ZwQXl2c1ZJSFI1NWJqYVFFTVhudEVHWUI2ZW1BdVRhWGtTekFUQnNS?=
+ =?utf-8?B?RWd5OEIxMnZ4V1ZJTUZyck4xcmlEb2tpVWZHUk9ERkhDc1hGRll2cEI1TUQ3?=
+ =?utf-8?B?WTBWdFFYcDl0eWROZzZMak1EM1NzZDFKRXdWZjIveVdwOFltZDM5WXU3cWdv?=
+ =?utf-8?B?alJ4WVZXVGJiYlhyNS95OGJwM05xTUdjSyt0cFdEMmpPSDRIL2JtNFhTZzFT?=
+ =?utf-8?B?NlBENUtnTUdpVmlRMEczQnNNMXM5Z0JJUmFuRGk5Q0VrK0prWHlsMi85azRw?=
+ =?utf-8?B?S2RpR3hmWk1nYTlXNzB0VzJmN2RSbFNUUzJ2eXdORDltUjBwbStKbVNSSHBV?=
+ =?utf-8?B?a1MwZVdROGgzY094RTMvSjJHYTZhS2Z5NE5qa08rZ1M3VWdxUU5rQTNCU0ty?=
+ =?utf-8?B?UFFhM1RnYithTy9jb2Nud1dwOGwxUzc3UjJDMTNRZEc1YnR4RmNka1ZldCs4?=
+ =?utf-8?B?UzRmeHdKcDl1R3FQd3YvVkpid1h4QXY4amt2Z2kySWhHTnl0WTJ0cEdzdm9h?=
+ =?utf-8?B?aUVlQUU5U2thWllmWmhKRUVKdjZOeFZXdEFFWXV3TC8vY1orT1kzR3BScnZw?=
+ =?utf-8?B?M0JiYWdhaXBIR2podDdFRk1nMm1HckhRZVlEVWtUYkc3V3JFaFg5ZEQwVXR6?=
+ =?utf-8?B?M0hOR2ZRdWtLc3g4Vm9jS0JrYXdaTVplZmZnSlpTM3M3alFoL0pSeWJ0dFJP?=
+ =?utf-8?B?YTU4VEd6MmdhZ3hWZk9ZMTU3TEVLd3E3ejdmbzVrcURla1hmdGdrczBta2ty?=
+ =?utf-8?B?aXl5UWlxYmxhZGhpNURYSHZFU2RmaWljQitiaHVVQU5JWHNMSk1HaGd6a0RR?=
+ =?utf-8?B?OUxGU3ZoYWdHRHhJL0JHTkVRaEdBMVZ4eUpmMExVOTNnRnpUZnowNHJSUmxv?=
+ =?utf-8?B?dG8vd2MyN2V6WkF4NndZYUJCMTlOYkJVa04xN0VvWHFFMjV2ZHozVlNOMGVV?=
+ =?utf-8?B?Znd5OW8wbCtraEFEVG9wakNEL2FOdjBJOUhtZC9vTVVLeEdmWDYwSDBiY2tU?=
+ =?utf-8?B?ZFg2NHFxYjVzcnhtYTJocFhXcmk5RXFsT1NlRUpSSEVJcU1YUGNJUFoyb3Jq?=
+ =?utf-8?B?WWdxNHV0ZTBBVnVGZWo3VGtaQ01xWWxPSjJhZkdDVXgwbXorREsyYURlWHhv?=
+ =?utf-8?B?algvTzZjRFovKzkyVlJETDdqY1FiaXYzOEN5Wk5WY0FsRXRoVGpZenZuZWRD?=
+ =?utf-8?B?eUFZbFdOczFBcitHbEFMNnNOU1hTV21xOFlKNE8ycDAxNUFkR2FxaWk4ajlP?=
+ =?utf-8?B?Q1BQcXlHU3lQbjZTanhRZFZOeExseGdrcEJKWEpBOS9CZ0Q2Tkx5anB3bEZj?=
+ =?utf-8?B?eGgyOXJBUjFacDVmZ25YNnZXOWdNdXJuUzBmVVRoT2pRS3NQOFZ5cTR3VkNH?=
+ =?utf-8?B?c0tXUWtsWGo0N2tqYkRzeVh4eGNYZWMvVHk5Q2RSMS9BbFBZR3ExdHEraGhv?=
+ =?utf-8?B?NFlxRVFwdXJaa0NRY2hIODBNTGNzUHEvME5LQ2NhaHlJbTVIckFUU1VQTkgw?=
+ =?utf-8?B?SDJIclloN1JTdUlEMVRJZTJDaHdrd0tTYVFISlJ6SjUrWTFGK0trNVR6OGla?=
+ =?utf-8?B?RUtvWmIycEFlWkRSTDFsR1drL1JxUTN5UkVyeDk0d0laS3ZrTytWTmRiSUFn?=
+ =?utf-8?Q?IwInvX0JFV4m/gVbzo=3D?=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <98D59F3A2F77654AB16F348C34BEAA07@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Server: rspamout05
-X-Rspamd-Queue-Id: 8DFFC1124F4
-X-Stat-Signature: b7h8m76qpxzgcyngrbqcm1435qu5a5mh
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX1/DpiOIDDDO1qu6fPcRfsktG5/LD6FxNdc=
-X-HE-Tag: 1626200637-79179
+X-OriginatorOrg: synopsys.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR12MB3479.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 87d7e331-e2ac-4c01-dcb3-08d9463686f5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jul 2021 19:43:45.4894
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: c33c9f88-1eb7-4099-9700-16013fd9e8aa
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: qYVsfk55qrBlOwoBP3oJ4ZUCrAAsMdmPO6n3TsmIACO06QL+vUEq/ZA4gA91lLMR7RI6s/ISLuz//OYvDXxzMA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB3684
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-A kernel janitorial task could be to remove blocks of code like:
-
-	#ifdef CONFIG_<FOO>
-		...
-	#endif
-
-where the config <FOO> symbol is not used in any Kconfig file.
-
-Here is a trivial script to find these apparently unused Kconfig entries
-that are in #ifdef CONFIG_<FOO> blocks and its current output of -next.
-
-An example removal is: https://lore.kernel.org/lkml/997c0cdbd57752252d87129185a973c7d42e491f.camel@perches.com/T/#u
-
-Be aware that some of the entries below are false positives.
-
-For instance 1:
-	CONFIG_X86_X32_ABI which is defined and exported in
-	arch/x86/Makefile:export CONFIG_X86_X32_ABI
-
-And it's possible other entries are typos of actual Kconfig symbols.
-
-For instance 2:
-	CONFIG_CPU_HAS_FP is likely a typo of CONFIG_CPU_HAS_FPU
-
-	arch/csky/kernel/traps.c:#ifdef CONFIG_CPU_HAS_FPU
-	arch/csky/kernel/traps.c:#ifdef CONFIG_CPU_HAS_FPU
-	arch/csky/kernel/traps.c:#ifdef CONFIG_CPU_HAS_FP
-	arch/csky/kernel/traps.c:#ifdef CONFIG_CPU_HAS_FP
-
-But some of the referenced #ifdef blocks in the kernel source tree
-could be completely removed.
-
-Some of these entries are leftovers from code that once was enabled,
-others are just entries that were never possible to enable.
-
-$ git grep -P '^\s*#\s*if(?:def\s+|\s+defined\s*\(?\s*)CONFIG_[A-Z0-9_]+' | \
-  grep -oh -P '\bCONFIG_[A-Z0-9_]+\b' | \
-  sort | sed -e 's/^CONFIG_//' -e 's/_MODULE$//' | uniq | \
-  while read config ; do \
-    echo CONFIG_$config; \
-    git grep -w $config -- '*/Kconfig*' | \
-    wc -l; \
-  done | \
-  grep -B1 '^0'
-CONFIG_ACORNSCSI_CONSTANTS
-0
---
-CONFIG_AS_CFI_VAL_OFFSET
-0
---
-CONFIG_ASYNC_TX_CHANNEL_SWITCH
-0
---
-CONFIG_B43_PCMCIA
-0
---
-CONFIG_BAND_CBAND
-0
-CONFIG_BAND_LBAND
-0
-CONFIG_BAND_SBAND
-0
-CONFIG_BAND_UHF
-0
-CONFIG_BAND_VHF
-0
---
-CONFIG_CAAM_QI
-0
---
-CONFIG_COMET_EARLY_UART_DEBUG
-0
---
-CONFIG_CPU_H300H
-0
---
-CONFIG_CPU_HAS_FP
-0
---
-CONFIG_CPU_SUBTYPE_ST40
-0
---
-CONFIG_DBX500_PRCMU_QOS_POWER
-0
---
-CONFIG_DEBUG_LL_SER3
-0
---
-CONFIG_DEBUG_SHIRQ_FIXME
-0
---
-CONFIG_DEBUG_ZTE_ZX
-0
---
-CONFIG_DIO_CONSTANTS
-0
---
-CONFIG_DRM_AMD_DC_DMUB
-0
---
-CONFIG_EXTRA_DEBUG_CHECKS
-0
---
-CONFIG_FSCACHE_OBJECT_LIST
-0
---
-CONFIG_FSL_DPA_PIRQ_FAST
-0
-CONFIG_FSL_DPA_PIRQ_SLOW
-0
---
-CONFIG_FUSION_MAX_FC_SGE
-0
---
-CONFIG_HP_HOOK_WORKAROUND
-0
---
-CONFIG_IEEE80211_DEBUG
-0
---
-CONFIG_IMX_GPT_ICAP
-0
---
-CONFIG_IPX_INTERN
-0
-CONFIG_IRDA
-0
---
-CONFIG_LMC_IGNORE_HARDWARE_HANDSHAKE
-0
---
-CONFIG_MY_KUNIT_TEST
-0
---
-CONFIG_NCR53C8XX_PREFETCH
-0
---
-CONFIG_NET_FUNKINESS
-0
---
-CONFIG_NILFS_POSIX_ACL
-0
-CONFIG_NILFS_XATTR
-0
---
-CONFIG_NOUVEAU_I2C_INTERNAL
-0
---
-CONFIG_OLPC_XO1_5_SCI
-0
---
-CONFIG_OPEN_FPU_DZE
-0
-CONFIG_OPEN_FPU_IDE
-0
-CONFIG_OPEN_FPU_IOE
-0
-CONFIG_OPEN_FPU_IXE
-0
-CONFIG_OPEN_FPU_OFE
-0
-CONFIG_OPEN_FPU_UFE
-0
---
-CONFIG_PAGE_SIZE_1MB
-0
---
-CONFIG_PINCTRL_DB8540
-0
---
-CONFIG_PM_SUSPEND
-0
---
-CONFIG_PPC_EARLY_DEBUG_MICROWATT
-0
---
-CONFIG_PXA_FICP
-0
---
-CONFIG_SA1100_CT6001
-0
---
-CONFIG_SBMAC_COALESCE
-0
---
-CONFIG_SCSI_NCR53C8XX_DISABLE_MPARITY_CHECK
-0
-CONFIG_SCSI_NCR53C8XX_DISABLE_PARITY_CHECK
-0
-CONFIG_SCSI_NCR53C8XX_FORCE_SYNC_NEGO
-0
-CONFIG_SCSI_NCR53C8XX_IARB
-0
-CONFIG_SCSI_NCR53C8XX_INTEGRITY_CHECK
-0
---
-CONFIG_SCSI_NCR53C8XX_NO_WORD_TRANSFERS
-0
---
-CONFIG_SGI_IP35
-0
---
-CONFIG_SOC_SAMA7
-0
---
-CONFIG_SOMETHING
-0
---
-CONFIG_SSB_DEBUG
-0
---
-CONFIG_STANDARD_DAB
-0
-CONFIG_STANDARD_DVBT
-0
---
-CONFIG_SYS_ISDBT
-0
---
-CONFIG_TASKS_RCU_TRACE
-0
---
-CONFIG_TUNER_DIB0090_P1B_SUPPORT
-0
---
-CONFIG_UM
-0
---
-CONFIG_WD33C93_PIO
-0
---
-CONFIG_X86_X32_ABI
-0
-
-
-
+T24gNy80LzIxIDI6MjggQU0sIENvbGluIEtpbmcgd3JvdGU6DQo+IEZyb206IENvbGluIElhbiBL
+aW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQo+DQo+IFRoZXJlIGlzIGEgc3BlbGxpbmcg
+bWlzdGFrZSBhbmQgaW5jb3JyZWN0IGdyYW1tYXIgaW4gdGhlIEtjb25maWcNCj4gdGV4dC4gRml4
+IHRoZW0uDQo+DQo+IFNpZ25lZC1vZmYtYnk6IENvbGluIElhbiBLaW5nIDxjb2xpbi5raW5nQGNh
+bm9uaWNhbC5jb20+DQoNClRoeCBmb3IgdGhlIGZpeC4gQWRkZWQgdG8gZm9yLWN1cnINCg0KLVZp
+bmVldA0K
