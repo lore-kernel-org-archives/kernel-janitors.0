@@ -2,144 +2,88 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3D85C07E9A
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Jul 2021 00:02:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F380EC07E9A
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Jul 2021 01:43:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CD06A61158
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Jul 2021 00:02:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CBBD861008
+	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Jul 2021 01:43:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233469AbhGMAFB (ORCPT
+        id S231775AbhGMBqC convert rfc822-to-8bit (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 12 Jul 2021 20:05:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46422 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230099AbhGMAFA (ORCPT
+        Mon, 12 Jul 2021 21:46:02 -0400
+Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:53618 "EHLO
+        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230000AbhGMBqB (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 12 Jul 2021 20:05:00 -0400
-Received: from mail-yb1-xb30.google.com (mail-yb1-xb30.google.com [IPv6:2607:f8b0:4864:20::b30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09B6DC0613DD;
-        Mon, 12 Jul 2021 17:02:11 -0700 (PDT)
-Received: by mail-yb1-xb30.google.com with SMTP id a16so31846450ybt.8;
-        Mon, 12 Jul 2021 17:02:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1XFbfONQrym8mWajHQrDI6DaCktdaoVNGOfVNXqTlqU=;
-        b=dFuo6cSgucUqZuu2e1mCUzI76+ZbW+FwTOnXkPhopfaqqdCvv54WRJwT9SOkXZ9zvB
-         T+4TSQSOPmLL9yZlxlGzV+JanROOHXB2j14q69PUbh02cUdK+EdBmoqMx9BoLfuJR/F/
-         eYYeLPuH9Og4ZXL5SarOHtAPy1H/aTUqIzcv4+hWcJryPblOR60mJpgimNMODPbqI+Re
-         GH2u1FAge19dg8I3sP26/fWtyqz4vXsO+6fueMpHQ6hWrdTWWQaauPjW2FKnavAav9Aj
-         b9V4CKEgIPsBRES2Cbd7Ld0X/fVCM4ChmCEquO49LAJpVfY2Nql/GGdfy9XOZZGomtot
-         5GVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1XFbfONQrym8mWajHQrDI6DaCktdaoVNGOfVNXqTlqU=;
-        b=JME83li+8S3v5z92ay3yvZHOeEXUQzeMBDSL7mqW+q3r8k1Ixe10BPUfx1LmK63Ccb
-         uTWb1hO3jwHAxl3OysIbMdm/3ecOupen9rosgZFzGD3RxO6UnPIj2ZueUd8F6qKyQhCQ
-         xQbCD0NF+y2vMVDGy2L5ez4J/B81smJDk1NFg70z9A2COPqhvshYQDn9N7tY0s19oIGw
-         IMMzNqXM93mllET1OmsD0VaHMSHM5APU+QmO4fitYwEz07IIkEnPHtScEOkznZArMI6i
-         3TIL72YsBI51O8iKNVQtRC5GS3jidpCnfRObI4tBw88c77z9vyALmZ9fUd4mdk5kTsPE
-         Uh9A==
-X-Gm-Message-State: AOAM530Lpibw3jkQw++rv1TfyhLw61vbudzP6YRs8++dnVdtKx2Rx+fl
-        ljhW2TKG649uTL2JJbNuWxbFzTsEZwQSSF1mwOM=
-X-Google-Smtp-Source: ABdhPJxfmS8rAuGqe5Gx3gBkVhzBs921u4akX2EPI7WTdjUZOq6zhHh1HyDDXSZmfEtal+GHBRE+TQ3236wW2/bwu/g=
-X-Received: by 2002:a25:3787:: with SMTP id e129mr2026342yba.459.1626134530328;
- Mon, 12 Jul 2021 17:02:10 -0700 (PDT)
-MIME-Version: 1.0
-References: <1625798873-55442-1-git-send-email-chengshuyi@linux.alibaba.com>
-In-Reply-To: <1625798873-55442-1-git-send-email-chengshuyi@linux.alibaba.com>
-From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Mon, 12 Jul 2021 17:01:59 -0700
-Message-ID: <CAEf4BzY2cdT44bfbMus=gei27ViqGE1BtGo6XrErSsOCnqtVJg@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v3 0/2] libbpf: Introduce 'btf_custom_path' to 'bpf_obj_open_opts'
-To:     Shuyi Cheng <chengshuyi@linux.alibaba.com>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>, Martin Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        john fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>,
-        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 12 Jul 2021 21:46:01 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R951e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=zhaoyan.liao@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0UfdImcp_1626140589;
+Received: from 30.43.68.19(mailfrom:zhaoyan.liao@linux.alibaba.com fp:SMTPD_---0UfdImcp_1626140589)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 13 Jul 2021 09:43:10 +0800
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 14.0 \(3654.40.0.2.32\))
+Subject: Re: [PATCH] use 64bit timer for hpet
+From:   Linux <zhaoyan.liao@linux.alibaba.com>
+In-Reply-To: <875yxgngct.ffs@nanos.tec.linutronix.de>
+Date:   Tue, 13 Jul 2021 09:43:09 +0800
+Cc:     mingo@redhat.com, hpa@zytor.com, dwmw@amazon.co.uk,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        songmuchun@bytedance.com, likunkun@bytedance.com,
+        guancheng.rjk@alibaba-inc.com, duanxiongchun@bytedance.com,
+        wenan.mao@linux.alibaba.com
+Content-Transfer-Encoding: 8BIT
+Message-Id: <C8CF5E7F-58D9-4FD7-B138-50C66620BE33@linux.alibaba.com>
+References: <1625213625-25745-1-git-send-email-zhaoyan.liao@linux.alibaba.com>
+ <875yxmqw2s.ffs@nanos.tec.linutronix.de>
+ <8A96C0F7-FBE4-4B23-8565-E814401BF927@linux.alibaba.com>
+ <87o8bdoy11.ffs@nanos.tec.linutronix.de>
+ <2CC6F5DA-B186-4A06-92B4-B763386F0D0A@linux.alibaba.com>
+ <875yxgngct.ffs@nanos.tec.linutronix.de>
+To:     Thomas Gleixner <tglx@linutronix.de>
+X-Mailer: Apple Mail (2.3654.40.0.2.32)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Jul 8, 2021 at 7:48 PM Shuyi Cheng <chengshuyi@linux.alibaba.com> wrote:
->
-> Patch 1: Add 'btf_custom_path' to 'bpf_obj_open_opts', allow developers
-> to use custom btf to perform CO-RE relocation.
->
-> Patch 2: Fixed the memory leak problem pointed out by Andrii.
->
+OK, Thank you for your patience. the last question:
+> I forgot the details, but when I tried moving HPET to 64bit it did not
+> work on one of my machines due to an erratum and other people reported
+> similar issues on different CPUs/chipsets.
+> 
+> TBH, I'm not interested at all to chase down these buggy implementations
+> and have yet another pile of quirks.
 
-Please note that the cover letter should have a high-level overview of
-what the set of patches you are sending is doing, not just a
-changelog. So in this case, as an example for the future
-contributions, I'd write something like this:
+Can you tell me the erranum or issue link at that time? This is very important
+ to us.
 
-```
-This patch set adds the ability to point to a custom BTF for the
-purposes of BPF CO-RE relocations. This is useful for using BPF CO-RE
-on old kernels that don't yet natively support kernel (vmlinux) BTF
-and thus libbpf needs application's help in locating kernel BTF
-generated separately from the kernel itself. This was already possible
-to do through bpf_object__load's attribute struct, but that makes it
-inconvenient to use with BPF skeleton, which only allows to specify
-bpf_object_open_opts during the open step. Thus, add the ability to
-override vmlinux BTF at open time.
-
-Patch #1 adds libbpf changes. Patch #2 fixes pre-existing memory leak
-detected during the code review. Patch #3 switches existing selftests
-to using open_opts for custom BTF.
-```
-
-BTW, see the description above about selftests (fictional patch #3).
-Please update selftests core_autosize.c and core_reloc.c to use the
-new functionality instead of load_attr.target_btf_path. It's a general
-rule to always add a new test or update existing test to utilize newly
-added functionality. That way we can know that it actually works as
-expected.
+Thank you very much.
 
 
-> Changelog:
-> ----------
->
-> v2: https://lore.kernel.org/bpf/CAEf4Bza_ua+tjxdhyy4nZ8Boeo+scipWmr_1xM1pC6N5wyuhAA@mail.gmail.com/T/#mf9cf86ae0ffa96180ac29e4fd12697eb70eccd0f
-> v2->v3:
-> --- Load the BTF specified by btf_custom_path to btf_vmlinux_override
->     instead of btf_bmlinux.
-> --- Fix the memory leak that may be introduced by the second version
->     of the patch.
-> --- Add a new patch to fix the possible memory leak caused by
->     obj->kconfig.
->
-> v1: https://lore.kernel.org/bpf/CAEf4BzaGjEC4t1OefDo11pj2-HfNy0BLhs_G2UREjRNTmb2u=A@mail.gmail.com/t/#m4d9f7c6761fbd2b436b5dfe491cd864b70225804
-> v1->v2:
-> -- Change custom_btf_path to btf_custom_path.
-> -- If the length of btf_custom_path of bpf_obj_open_opts is too long,
->    return ERR_PTR(-ENAMETOOLONG).
-> -- Add `custom BTF is in addition to vmlinux BTF`
->    with btf_custom_path field.
->
-> Shuyi Cheng (2):
->   libbpf: Introduce 'btf_custom_path' to 'bpf_obj_open_opts'
->   libbpf: Fix the possible memory leak caused by obj->kconfig
->
->  tools/lib/bpf/libbpf.c | 52 ++++++++++++++++++++++++++++++++++++++++++++++----
->  tools/lib/bpf/libbpf.h |  6 +++++-
->  2 files changed, 53 insertions(+), 5 deletions(-)
->
-> --
-> 1.8.3.1
->
+> 2021年7月12日 下午3:25，Thomas Gleixner <tglx@linutronix.de> 写道：
+> 
+> Liao,
+> 
+> On Mon, Jul 12 2021 at 12:52, Linux wrote:
+>>> Sorry, keeping the softirq from running for 3 minutes is simply out of
+>>> spec. If the sysadmin decides to do so, then he can keep the pieces.
+>> 
+>> It is because the kernel thread is busy that the clocksource_watchdog 
+>> thread is not scheduled, not softirq.
+> 
+> Which thread?
+> 
+> The clocksource watchdog runs from a timer_list timer callback in
+> softirq context. Even if the softirq is switched to the softirq thread
+> then still my argument of starving that for 3 minutes still stands.
+> 
+> This is _not_ a kernel problem. Overcommitment is a admin problem.
+> 
+> Thanks,
+> 
+>        tglx
+
