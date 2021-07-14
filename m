@@ -7,36 +7,35 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1AACC07E9A
-	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Jul 2021 08:32:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16D08C07E9A
+	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Jul 2021 11:14:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DAE90613AB
-	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Jul 2021 08:32:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE668613AB
+	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Jul 2021 11:14:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238596AbhGNIfb (ORCPT
+        id S238915AbhGNLRh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 14 Jul 2021 04:35:31 -0400
-Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:59190 "EHLO
+        Wed, 14 Jul 2021 07:17:37 -0400
+Received: from smtp04.smtpout.orange.fr ([80.12.242.126]:23370 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238591AbhGNIfa (ORCPT
+        with ESMTP id S229899AbhGNLRh (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 14 Jul 2021 04:35:30 -0400
+        Wed, 14 Jul 2021 07:17:37 -0400
 Received: from localhost.localdomain ([86.243.172.93])
-        by mwinf5d85 with ME
-        id UwYb2500C21Fzsu03wYbte; Wed, 14 Jul 2021 10:32:37 +0200
+        by mwinf5d27 with ME
+        id UzEj2500A21Fzsu03zEj6Q; Wed, 14 Jul 2021 13:14:44 +0200
 X-ME-Helo: localhost.localdomain
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 14 Jul 2021 10:32:37 +0200
+X-ME-Date: Wed, 14 Jul 2021 13:14:44 +0200
 X-ME-IP: 86.243.172.93
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     jiri@nvidia.com, idosch@nvidia.com, davem@davemloft.net,
-        kuba@kernel.org
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     jic23@kernel.org, lars@metafoo.de
+Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] net: switchdev: Simplify 'mlxsw_sp_mc_write_mdb_entry()'
-Date:   Wed, 14 Jul 2021 10:32:33 +0200
-Message-Id: <fbc480268644caf24aef68a3b893bdaef71d7306.1626251484.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 1/2] iio: buffer: Save a few cycles in 'iio_scan_mask_set()'
+Date:   Wed, 14 Jul 2021 13:14:41 +0200
+Message-Id: <89d8a766eb971eda1ee362444a8711037bdb208c.1626261211.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -44,53 +43,31 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Use 'bitmap_alloc()/bitmap_free()' instead of hand-writing it.
-This makes the code less verbose.
-
-Also, use 'bitmap_alloc()' instead of 'bitmap_zalloc()' because the bitmap
+Use 'bitmap_alloc()' instead of 'bitmap_zalloc()' because the bitmap
 is fully overridden by a 'bitmap_copy()' call just after its allocation.
 
-While at it, remove an extra and unneeded space.
+While at it, fix the style of a NULL check.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ drivers/iio/industrialio-buffer.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
-index c5ef9aa64efe..61911fed6aeb 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
-@@ -1569,7 +1569,6 @@ mlxsw_sp_mc_write_mdb_entry(struct mlxsw_sp *mlxsw_sp,
- {
- 	long *flood_bitmap;
- 	int num_of_ports;
--	int alloc_size;
- 	u16 mid_idx;
- 	int err;
+diff --git a/drivers/iio/industrialio-buffer.c b/drivers/iio/industrialio-buffer.c
+index fdd623407b96..6d4776a7f002 100644
+--- a/drivers/iio/industrialio-buffer.c
++++ b/drivers/iio/industrialio-buffer.c
+@@ -354,8 +354,8 @@ static int iio_scan_mask_set(struct iio_dev *indio_dev,
+ 	const unsigned long *mask;
+ 	unsigned long *trialmask;
  
-@@ -1579,18 +1578,17 @@ mlxsw_sp_mc_write_mdb_entry(struct mlxsw_sp *mlxsw_sp,
- 		return false;
- 
- 	num_of_ports = mlxsw_core_max_ports(mlxsw_sp->core);
--	alloc_size = sizeof(long) * BITS_TO_LONGS(num_of_ports);
--	flood_bitmap = kzalloc(alloc_size, GFP_KERNEL);
-+	flood_bitmap = bitmap_alloc(num_of_ports, GFP_KERNEL);
- 	if (!flood_bitmap)
- 		return false;
- 
--	bitmap_copy(flood_bitmap,  mid->ports_in_mid, num_of_ports);
-+	bitmap_copy(flood_bitmap, mid->ports_in_mid, num_of_ports);
- 	mlxsw_sp_mc_get_mrouters_bitmap(flood_bitmap, bridge_device, mlxsw_sp);
- 
- 	mid->mid = mid_idx;
- 	err = mlxsw_sp_port_smid_full_entry(mlxsw_sp, mid_idx, flood_bitmap,
- 					    bridge_device->mrouter);
--	kfree(flood_bitmap);
-+	bitmap_free(flood_bitmap);
- 	if (err)
- 		return false;
- 
+-	trialmask = bitmap_zalloc(indio_dev->masklength, GFP_KERNEL);
+-	if (trialmask == NULL)
++	trialmask = bitmap_alloc(indio_dev->masklength, GFP_KERNEL);
++	if (!trialmask)
+ 		return -ENOMEM;
+ 	if (!indio_dev->masklength) {
+ 		WARN(1, "Trying to set scanmask prior to registering buffer\n");
 -- 
 2.30.2
 
