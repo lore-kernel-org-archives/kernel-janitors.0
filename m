@@ -2,94 +2,86 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD725C07E9A
-	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Jul 2021 15:50:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCB94C07E9A
+	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Jul 2021 17:08:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B52386128D
-	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Jul 2021 15:50:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A540E613C0
+	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Jul 2021 17:08:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239709AbhGNPxH (ORCPT
+        id S230024AbhGNRLV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 14 Jul 2021 11:53:07 -0400
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:35653 "EHLO
-        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239625AbhGNPxH (ORCPT
+        Wed, 14 Jul 2021 13:11:21 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:51998
+        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229845AbhGNRLV (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 14 Jul 2021 11:53:07 -0400
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.nyi.internal (Postfix) with ESMTP id 7063F5C017D;
-        Wed, 14 Jul 2021 11:50:15 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Wed, 14 Jul 2021 11:50:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=ipmtRU
-        Igf3L0in0VPeRm8RyFb6KTk8DzNVYnk43l6F4=; b=XzleKI3T9tGTqYto49SUZ/
-        0Ogn296RCdDA5VKZF67nQEYwHOkt/j8OvIr6/S3ykMz0lowucHMdM+VvBQWnQH9+
-        JRJ+u/EW2zxx9WU8pakPxVGC1fQj1Dgz1SgDrBYJBw1N3BOQxa6WZIAG2yM2UqR4
-        ILi3vg++owqKcd6pHHPXXrFUKu7+z0qniK7AUZtfD3rHHZSM5kkv1+zOH/k858YA
-        f39ixV6fgIPFqvJ3NmRnzB2zGsuUqn3ZzSwgga2HN0NCiGD/itc68PhKHdNBAcQV
-        /9rd79jqG2XUlJFjHwStxf2HRz4kPNCTE6+Nzsvb5qkOrRL+4JQR0X+4ghSbw2oQ
-        ==
-X-ME-Sender: <xms:twfvYFWsvCsKay1Iq4ha84H6YJNuo9sfYhFOek2bEX5LtfhoTDdp_w>
-    <xme:twfvYFnae_6HWVw66hAqBM9RP7L6eC-L-5fBetlJuqBsLoKHNZQY84FY8IXI9X42h
-    09V0Z8myf38G_U>
-X-ME-Received: <xmr:twfvYBZGVBDiW8taH0jgjPlQ8p85LUgqVU1BwiIcuUf2cB2Dqvglm-HPOENlkzLskHGQ9X68cXL8xmrtFyl0kXUBGo07jQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudekgdeltdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepkfguohcuufgt
-    hhhimhhmvghluceoihguohhstghhsehiughoshgthhdrohhrgheqnecuggftrfgrthhtvg
-    hrnhepgfevgfevueduueffieffheeifffgjeelvedtteeuteeuffekvefggfdtudfgkeev
-    necuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtne
-    curfgrrhgrmhepmhgrihhlfhhrohhmpehiughoshgthhesihguohhstghhrdhorhhg
-X-ME-Proxy: <xmx:twfvYIUHBaDGZBFVQxACPkUTOC5mwUC0_cuTet1TvjMfgku1akHvzQ>
-    <xmx:twfvYPl1xSe1BwzHE3eFCMw8LLHFZ5d70XfA4qA4eKxrQQi4yfSqSA>
-    <xmx:twfvYFeNg4eXLs2-jBdn4vVaamz9O84q5b-FJHar7i5JxJCE4CAT0Q>
-    <xmx:twfvYKvxwW3TYqmACVbHQDNMaaQ_5-83WH8tafBRfG4G0p2fxjSwjA>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 14 Jul 2021 11:50:14 -0400 (EDT)
-Date:   Wed, 14 Jul 2021 18:50:09 +0300
-From:   Ido Schimmel <idosch@idosch.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     jiri@nvidia.com, idosch@nvidia.com, davem@davemloft.net,
-        kuba@kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] net: switchdev: Simplify 'mlxsw_sp_mc_write_mdb_entry()'
-Message-ID: <YO8HsWjq0Y1S08Uj@shredder>
-References: <fbc480268644caf24aef68a3b893bdaef71d7306.1626251484.git.christophe.jaillet@wanadoo.fr>
+        Wed, 14 Jul 2021 13:11:21 -0400
+Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id D841540616;
+        Wed, 14 Jul 2021 17:08:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1626282508;
+        bh=DAhaMqtw5C577LQ/86AWeIBpEHxNYnclBIEh7gDqyRs=;
+        h=From:To:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=hGj93JOz4sro6FFib6OFcRkkCEj08LkdkXruz9NsF78S3lLGUa9Zc5u/sxX5Si9YR
+         3x3gsuFUNOyJa/sno36q9lWN6smJKvXRRPX9MgdnteZZcQE7w3bBStaxfkGuqIPUTW
+         uCX3mdzNcdbgsApBlI83EgTGE/ke8I7SGfX9z413ZwPf7sX/45f+Tu6gPEmOPudLMG
+         cfeydL7tviF3q9igjU2ar3tPL+ypF+CPkhAULnoUl16h2LclBPPSEzwK5qvN0EpVtG
+         syz3WWkyOrdiY7nEULFP2zsFwZZPeuyYf9b9C6ttX4+r5VeGQhZHh66kEpZ+e7kUjE
+         WMsSubseTWtog==
+From:   Colin King <colin.king@canonical.com>
+To:     Evan Quan <evan.quan@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Pan@vger.kernel.org, Xinhui <Xinhui.Pan@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/amd/powerplay: remove redundant assignment to usTMax
+Date:   Wed, 14 Jul 2021 18:08:28 +0100
+Message-Id: <20210714170828.147618-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fbc480268644caf24aef68a3b893bdaef71d7306.1626251484.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Jul 14, 2021 at 10:32:33AM +0200, Christophe JAILLET wrote:
-> Use 'bitmap_alloc()/bitmap_free()' instead of hand-writing it.
-> This makes the code less verbose.
-> 
-> Also, use 'bitmap_alloc()' instead of 'bitmap_zalloc()' because the bitmap
-> is fully overridden by a 'bitmap_copy()' call just after its allocation.
-> 
-> While at it, remove an extra and unneeded space.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Colin Ian King <colin.king@canonical.com>
 
-For net-next:
+Struct element usTMax is being assigned a hard coded value that
+is never read and it is being re-assigned a new value immediately
+afterwards. The assignment is redundant and can be removed.
 
-Reviewed-by: Ido Schimmel <idosch@nvidia.com>
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/pm/powerplay/hwmgr/process_pptables_v1_0.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Note that net-next is closed [1] so you might need to re-submit, if it
-does not open soon.
+diff --git a/drivers/gpu/drm/amd/pm/powerplay/hwmgr/process_pptables_v1_0.c b/drivers/gpu/drm/amd/pm/powerplay/hwmgr/process_pptables_v1_0.c
+index f2a55c1413f5..20e528c166f9 100644
+--- a/drivers/gpu/drm/amd/pm/powerplay/hwmgr/process_pptables_v1_0.c
++++ b/drivers/gpu/drm/amd/pm/powerplay/hwmgr/process_pptables_v1_0.c
+@@ -977,8 +977,6 @@ static int init_thermal_controller(
+ 			= le16_to_cpu(tonga_fan_table->usPWMMed);
+ 		hwmgr->thermal_controller.advanceFanControlParameters.usPWMHigh
+ 			= le16_to_cpu(tonga_fan_table->usPWMHigh);
+-		hwmgr->thermal_controller.advanceFanControlParameters.usTMax
+-			= 10900;                  /* hard coded */
+ 		hwmgr->thermal_controller.advanceFanControlParameters.usTMax
+ 			= le16_to_cpu(tonga_fan_table->usTMax);
+ 		hwmgr->thermal_controller.advanceFanControlParameters.ucFanControlMode
+-- 
+2.31.1
 
-Thanks for the patch.
-
-[1] http://vger.kernel.org/~davem/net-next.html
