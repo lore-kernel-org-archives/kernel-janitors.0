@@ -2,83 +2,92 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1523C11F66
-	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Jul 2021 11:14:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68C4FC11F66
+	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Jul 2021 15:23:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A27F8613B0
-	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Jul 2021 11:14:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5242C613C8
+	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Jul 2021 15:23:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239010AbhGNLRr (ORCPT
+        id S239593AbhGNP0i (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 14 Jul 2021 07:17:47 -0400
-Received: from smtp04.smtpout.orange.fr ([80.12.242.126]:44115 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238774AbhGNLRq (ORCPT
+        Wed, 14 Jul 2021 11:26:38 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:46606
+        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232406AbhGNP0h (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 14 Jul 2021 07:17:46 -0400
-Received: from localhost.localdomain ([86.243.172.93])
-        by mwinf5d27 with ME
-        id UzEt2500721Fzsu03zEu7G; Wed, 14 Jul 2021 13:14:54 +0200
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 14 Jul 2021 13:14:54 +0200
-X-ME-IP: 86.243.172.93
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     jic23@kernel.org, lars@metafoo.de
-Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 2/2] iio: buffer: Move a sanity check at the beginning of 'iio_scan_mask_set()'
-Date:   Wed, 14 Jul 2021 13:14:51 +0200
-Message-Id: <98a351adda1908c306e981b9cc86d3dbc79eb5ec.1626261211.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <89d8a766eb971eda1ee362444a8711037bdb208c.1626261211.git.christophe.jaillet@wanadoo.fr>
-References: <89d8a766eb971eda1ee362444a8711037bdb208c.1626261211.git.christophe.jaillet@wanadoo.fr>
+        Wed, 14 Jul 2021 11:26:37 -0400
+Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 520EF40654;
+        Wed, 14 Jul 2021 15:23:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1626276224;
+        bh=72qzdMBzZ6eMaJYmHwsc2NemfPaJZzLq1bqMqHhsBIw=;
+        h=From:To:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=WWmfTHO5fy04N8BwwyXNkxa3Smryn6bqCj51yBOHmfSgzFe6vrUTe92XuZVxZNW+S
+         dO3NKGqyEXbu3KqQzscpvV0Y1/cKBzMey+dL57Nv2SDl+aXFHeFKoRr0kKHeQqJIvr
+         K8qM2qbXPjCzFa5xSHCMtYHJuVlCjDxag+jEDO0aAscNjHxo4Bzas1ISvO9PVu/eyT
+         q8wwHYgCyq1ugckANJkgGr/3ZH6MIZWPSEG8Ukbvrazw04ggjtxsIpadgcfQBHqoVB
+         mGrwiHWHiWW7mbyOYHf+KZ8cLaLHkywgoZesaXjEOS1kUkIQOZbISR4ZXAy5HRbn/N
+         ARDc91Np5E9ag==
+From:   Colin King <colin.king@canonical.com>
+To:     Derek Chickles <dchickles@marvell.com>,
+        Satanand Burla <sburla@marvell.com>,
+        Felix Manlunas <fmanlunas@marvell.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Raghu Vatsavayi <rvatsavayi@caviumnetworks.com>,
+        netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] liquidio: Fix unintentional sign extension issue on left shift of u16
+Date:   Wed, 14 Jul 2021 16:23:43 +0100
+Message-Id: <20210714152343.144795-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This is more standard to have sanity checks at the entry of a function,
-instead of allocating some memory first and having to free it if a
-condition is not met.
+From: Colin Ian King <colin.king@canonical.com>
 
-Shuffle code a bit to check 'masklength' before calling 'bitmap_alloc()'
+Shifting the u16 integer oct->pcie_port by CN23XX_PKT_INPUT_CTL_MAC_NUM_POS
+(29) bits will be promoted to a 32 bit signed int and then sign-extended
+to a u64. In the cases where oct->pcie_port where bit 2 is set (e.g. 3..7)
+the shifted value will be sign extended and the top 32 bits of the result
+will be set.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Fix this by casting the u16 values to a u64 before the 29 bit left shift.
+
+Addresses-Coverity: ("Unintended sign extension")
+
+Fixes: 3451b97cce2d ("liquidio: CN23XX register setup")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/iio/industrialio-buffer.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iio/industrialio-buffer.c b/drivers/iio/industrialio-buffer.c
-index 6d4776a7f002..a95cc2da56be 100644
---- a/drivers/iio/industrialio-buffer.c
-+++ b/drivers/iio/industrialio-buffer.c
-@@ -354,13 +354,14 @@ static int iio_scan_mask_set(struct iio_dev *indio_dev,
- 	const unsigned long *mask;
- 	unsigned long *trialmask;
+diff --git a/drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c b/drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c
+index 4cddd628d41b..9ed3d1ab2ca5 100644
+--- a/drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c
++++ b/drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c
+@@ -420,7 +420,7 @@ static int cn23xx_pf_setup_global_input_regs(struct octeon_device *oct)
+ 	 * bits 32:47 indicate the PVF num.
+ 	 */
+ 	for (q_no = 0; q_no < ern; q_no++) {
+-		reg_val = oct->pcie_port << CN23XX_PKT_INPUT_CTL_MAC_NUM_POS;
++		reg_val = (u64)oct->pcie_port << CN23XX_PKT_INPUT_CTL_MAC_NUM_POS;
  
--	trialmask = bitmap_alloc(indio_dev->masklength, GFP_KERNEL);
--	if (!trialmask)
--		return -ENOMEM;
- 	if (!indio_dev->masklength) {
- 		WARN(1, "Trying to set scanmask prior to registering buffer\n");
--		goto err_invalid_mask;
-+		return -EINVAL;
- 	}
-+
-+	trialmask = bitmap_alloc(indio_dev->masklength, GFP_KERNEL);
-+	if (!trialmask)
-+		return -ENOMEM;
- 	bitmap_copy(trialmask, buffer->scan_mask, indio_dev->masklength);
- 	set_bit(bit, trialmask);
- 
+ 		/* for VF assigned queues. */
+ 		if (q_no < oct->sriov_info.pf_srn) {
 -- 
-2.30.2
+2.31.1
 
