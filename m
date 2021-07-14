@@ -2,92 +2,94 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68C4FC11F66
-	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Jul 2021 15:23:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD725C07E9A
+	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Jul 2021 15:50:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5242C613C8
-	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Jul 2021 15:23:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B52386128D
+	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Jul 2021 15:50:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239593AbhGNP0i (ORCPT
+        id S239709AbhGNPxH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 14 Jul 2021 11:26:38 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:46606
-        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232406AbhGNP0h (ORCPT
+        Wed, 14 Jul 2021 11:53:07 -0400
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:35653 "EHLO
+        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S239625AbhGNPxH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 14 Jul 2021 11:26:37 -0400
-Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 520EF40654;
-        Wed, 14 Jul 2021 15:23:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1626276224;
-        bh=72qzdMBzZ6eMaJYmHwsc2NemfPaJZzLq1bqMqHhsBIw=;
-        h=From:To:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=WWmfTHO5fy04N8BwwyXNkxa3Smryn6bqCj51yBOHmfSgzFe6vrUTe92XuZVxZNW+S
-         dO3NKGqyEXbu3KqQzscpvV0Y1/cKBzMey+dL57Nv2SDl+aXFHeFKoRr0kKHeQqJIvr
-         K8qM2qbXPjCzFa5xSHCMtYHJuVlCjDxag+jEDO0aAscNjHxo4Bzas1ISvO9PVu/eyT
-         q8wwHYgCyq1ugckANJkgGr/3ZH6MIZWPSEG8Ukbvrazw04ggjtxsIpadgcfQBHqoVB
-         mGrwiHWHiWW7mbyOYHf+KZ8cLaLHkywgoZesaXjEOS1kUkIQOZbISR4ZXAy5HRbn/N
-         ARDc91Np5E9ag==
-From:   Colin King <colin.king@canonical.com>
-To:     Derek Chickles <dchickles@marvell.com>,
-        Satanand Burla <sburla@marvell.com>,
-        Felix Manlunas <fmanlunas@marvell.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Raghu Vatsavayi <rvatsavayi@caviumnetworks.com>,
-        netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] liquidio: Fix unintentional sign extension issue on left shift of u16
-Date:   Wed, 14 Jul 2021 16:23:43 +0100
-Message-Id: <20210714152343.144795-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.31.1
+        Wed, 14 Jul 2021 11:53:07 -0400
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailout.nyi.internal (Postfix) with ESMTP id 7063F5C017D;
+        Wed, 14 Jul 2021 11:50:15 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute1.internal (MEProxy); Wed, 14 Jul 2021 11:50:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=ipmtRU
+        Igf3L0in0VPeRm8RyFb6KTk8DzNVYnk43l6F4=; b=XzleKI3T9tGTqYto49SUZ/
+        0Ogn296RCdDA5VKZF67nQEYwHOkt/j8OvIr6/S3ykMz0lowucHMdM+VvBQWnQH9+
+        JRJ+u/EW2zxx9WU8pakPxVGC1fQj1Dgz1SgDrBYJBw1N3BOQxa6WZIAG2yM2UqR4
+        ILi3vg++owqKcd6pHHPXXrFUKu7+z0qniK7AUZtfD3rHHZSM5kkv1+zOH/k858YA
+        f39ixV6fgIPFqvJ3NmRnzB2zGsuUqn3ZzSwgga2HN0NCiGD/itc68PhKHdNBAcQV
+        /9rd79jqG2XUlJFjHwStxf2HRz4kPNCTE6+Nzsvb5qkOrRL+4JQR0X+4ghSbw2oQ
+        ==
+X-ME-Sender: <xms:twfvYFWsvCsKay1Iq4ha84H6YJNuo9sfYhFOek2bEX5LtfhoTDdp_w>
+    <xme:twfvYFnae_6HWVw66hAqBM9RP7L6eC-L-5fBetlJuqBsLoKHNZQY84FY8IXI9X42h
+    09V0Z8myf38G_U>
+X-ME-Received: <xmr:twfvYBZGVBDiW8taH0jgjPlQ8p85LUgqVU1BwiIcuUf2cB2Dqvglm-HPOENlkzLskHGQ9X68cXL8xmrtFyl0kXUBGo07jQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudekgdeltdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepkfguohcuufgt
+    hhhimhhmvghluceoihguohhstghhsehiughoshgthhdrohhrgheqnecuggftrfgrthhtvg
+    hrnhepgfevgfevueduueffieffheeifffgjeelvedtteeuteeuffekvefggfdtudfgkeev
+    necuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtne
+    curfgrrhgrmhepmhgrihhlfhhrohhmpehiughoshgthhesihguohhstghhrdhorhhg
+X-ME-Proxy: <xmx:twfvYIUHBaDGZBFVQxACPkUTOC5mwUC0_cuTet1TvjMfgku1akHvzQ>
+    <xmx:twfvYPl1xSe1BwzHE3eFCMw8LLHFZ5d70XfA4qA4eKxrQQi4yfSqSA>
+    <xmx:twfvYFeNg4eXLs2-jBdn4vVaamz9O84q5b-FJHar7i5JxJCE4CAT0Q>
+    <xmx:twfvYKvxwW3TYqmACVbHQDNMaaQ_5-83WH8tafBRfG4G0p2fxjSwjA>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 14 Jul 2021 11:50:14 -0400 (EDT)
+Date:   Wed, 14 Jul 2021 18:50:09 +0300
+From:   Ido Schimmel <idosch@idosch.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     jiri@nvidia.com, idosch@nvidia.com, davem@davemloft.net,
+        kuba@kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] net: switchdev: Simplify 'mlxsw_sp_mc_write_mdb_entry()'
+Message-ID: <YO8HsWjq0Y1S08Uj@shredder>
+References: <fbc480268644caf24aef68a3b893bdaef71d7306.1626251484.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fbc480268644caf24aef68a3b893bdaef71d7306.1626251484.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Wed, Jul 14, 2021 at 10:32:33AM +0200, Christophe JAILLET wrote:
+> Use 'bitmap_alloc()/bitmap_free()' instead of hand-writing it.
+> This makes the code less verbose.
+> 
+> Also, use 'bitmap_alloc()' instead of 'bitmap_zalloc()' because the bitmap
+> is fully overridden by a 'bitmap_copy()' call just after its allocation.
+> 
+> While at it, remove an extra and unneeded space.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Shifting the u16 integer oct->pcie_port by CN23XX_PKT_INPUT_CTL_MAC_NUM_POS
-(29) bits will be promoted to a 32 bit signed int and then sign-extended
-to a u64. In the cases where oct->pcie_port where bit 2 is set (e.g. 3..7)
-the shifted value will be sign extended and the top 32 bits of the result
-will be set.
+For net-next:
 
-Fix this by casting the u16 values to a u64 before the 29 bit left shift.
+Reviewed-by: Ido Schimmel <idosch@nvidia.com>
 
-Addresses-Coverity: ("Unintended sign extension")
+Note that net-next is closed [1] so you might need to re-submit, if it
+does not open soon.
 
-Fixes: 3451b97cce2d ("liquidio: CN23XX register setup")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks for the patch.
 
-diff --git a/drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c b/drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c
-index 4cddd628d41b..9ed3d1ab2ca5 100644
---- a/drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c
-+++ b/drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c
-@@ -420,7 +420,7 @@ static int cn23xx_pf_setup_global_input_regs(struct octeon_device *oct)
- 	 * bits 32:47 indicate the PVF num.
- 	 */
- 	for (q_no = 0; q_no < ern; q_no++) {
--		reg_val = oct->pcie_port << CN23XX_PKT_INPUT_CTL_MAC_NUM_POS;
-+		reg_val = (u64)oct->pcie_port << CN23XX_PKT_INPUT_CTL_MAC_NUM_POS;
- 
- 		/* for VF assigned queues. */
- 		if (q_no < oct->sriov_info.pf_srn) {
--- 
-2.31.1
-
+[1] http://vger.kernel.org/~davem/net-next.html
