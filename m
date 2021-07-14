@@ -2,70 +2,64 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0887AC07E95
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Jul 2021 23:09:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A37DC11F66
+	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Jul 2021 04:51:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D643A610D1
-	for <kernel-janitors@archiver.kernel.org>; Tue, 13 Jul 2021 23:09:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48698613B2
+	for <kernel-janitors@archiver.kernel.org>; Wed, 14 Jul 2021 04:51:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236671AbhGMXMQ (ORCPT
+        id S237798AbhGNEy0 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 13 Jul 2021 19:12:16 -0400
-Received: from smtprelay0070.hostedemail.com ([216.40.44.70]:49996 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S235417AbhGMXMQ (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 13 Jul 2021 19:12:16 -0400
-Received: from omf09.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 508902C5A4;
-        Tue, 13 Jul 2021 23:09:25 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf09.hostedemail.com (Postfix) with ESMTPA id 7F83A1E04D8;
-        Tue, 13 Jul 2021 23:09:24 +0000 (UTC)
-Message-ID: <42a843710a652e110b71ab6beafc3a3e6e11dfd3.camel@perches.com>
-Subject: Re: cocci script to convert linux-kernel allocs with BITS_TO_LONGS
- to bitmap_alloc
-From:   Joe Perches <joe@perches.com>
-To:     Julia Lawall <julia.lawall@inria.fr>
-Cc:     cocci <cocci@systeme.lip6.fr>, LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Date:   Tue, 13 Jul 2021 16:09:22 -0700
-In-Reply-To: <alpine.DEB.2.22.394.2107132332030.3024@hadrien>
-References: <08b89608cfb1280624d1a89ead6547069f9a4c31.camel@perches.com>
-         <alpine.DEB.2.22.394.2107102149140.46528@hadrien>
-         <afd3a282ca57a4a400c8bae9879a7c57bc507c59.camel@perches.com>
-         <alpine.DEB.2.22.394.2107132332030.3024@hadrien>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.40.0-1 
+        Wed, 14 Jul 2021 00:54:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37924 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229451AbhGNEy0 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 14 Jul 2021 00:54:26 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 3EBBD61279;
+        Wed, 14 Jul 2021 04:51:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1626238295;
+        bh=ZUuKx8JUJUmAx8O6JtJM11rFRkviag38sXcb2U31Y2Y=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=iVvRo1AP76edOth0nlVVrqbWbIg6NcMriHwPlxW++0vwUIdMjis9TXndtpwJ+lMrs
+         UdLmoTljf/bZEY+zIe8vyoRMoGhWjB2+DvMKqDaVPtvnOBCR/9VFJLu4MnxQJ8KkTN
+         5OmRul+imMIee/tqpv4G/yizpbmtdrXbZGF2X09X5rej4FvPYzMtMXHG5/wLrq1uaU
+         1tc+tqNZgX7eVilU7JY9FkfHPEkLTU3bWvyq2w60Ycn11HLHW+eRagluwBIwPeHygj
+         uuTFcJ5VapNXqb86sZaoSjluLGmyRn1X2iPXzPKuP4HmOXFnvHNYRBFhulbwqhFZY9
+         6lVGAOidc6g6w==
+Date:   Wed, 14 Jul 2021 10:21:31 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     dave.jiang@intel.com, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] dmaengine: idxd: Simplify code and axe the use of a
+ deprecated API
+Message-ID: <YO5tU2KWW1Sabk35@matsya>
+References: <70c8a3bc67e41c5fefb526ecd64c5174c1e2dc76.1625720835.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: uztexi7wie66gnpui9nawg7xurxs43hk
-X-Rspamd-Server: rspamout01
-X-Rspamd-Queue-Id: 7F83A1E04D8
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX19+E355a2jKrTaUCYH65AOx1cK8B6P3fac=
-X-HE-Tag: 1626217764-847900
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <70c8a3bc67e41c5fefb526ecd64c5174c1e2dc76.1625720835.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, 2021-07-13 at 23:33 +0200, Julia Lawall wrote:
-> > > On Fri, 9 Jul 2021, Joe Perches wrote:
-> > > > Here is a cocci script to convert various types of bitmap allocations
-> > > > that use BITS_TO_LONGS to the more typical bitmap_alloc functions.
+On 08-07-21, 07:08, Christophe JAILLET wrote:
+> The wrappers in include/linux/pci-dma-compat.h should go away.
 > 
-> I see that there is also a bitmap_free.  Maybe the rule should be
-> introducing that as well?
+> Replace 'pci_set_dma_mask/pci_set_consistent_dma_mask' by an equivalent
+> and less verbose 'dma_set_mask_and_coherent()' call.
+> 
+> Even if the code may look different, it should have exactly the same
+> run-time behavior.
+> If pci_set_dma_mask(64) fails and pci_set_dma_mask(32) succeeds, then
+> pci_set_consistent_dma_mask(64) will also fail.
 
-Yes, but as far as I know, it's difficult for coccinelle to convert
-the kfree() calls of any previous bitmap_alloc to bitmap_free as
-most frequently the kfree() call is in a separate function.
+Applied, thanks
 
-Please do it if you know how, you're probably the best in the world
-at coccinelle.  I don't know how...
-
-cheers, Joe
-
+-- 
+~Vinod
