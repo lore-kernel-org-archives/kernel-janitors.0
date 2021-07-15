@@ -5,51 +5,47 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC3BFC07E96
-	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Jul 2021 13:58:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFE8AC47E48
+	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Jul 2021 14:08:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A49B8613D4
-	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Jul 2021 13:58:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB3E2613D3
+	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Jul 2021 14:08:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238236AbhGOOBV (ORCPT
+        id S238596AbhGOOKy (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 15 Jul 2021 10:01:21 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:44394
+        Thu, 15 Jul 2021 10:10:54 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:44920
         "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229637AbhGOOBU (ORCPT
+        by vger.kernel.org with ESMTP id S236086AbhGOOKx (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 15 Jul 2021 10:01:20 -0400
+        Thu, 15 Jul 2021 10:10:53 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 69DFA408AD;
-        Thu, 15 Jul 2021 13:58:26 +0000 (UTC)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 781DD40667;
+        Thu, 15 Jul 2021 14:07:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1626357506;
-        bh=Cl2Z4fkPQ4YWZ9DFZjI76elK6rvIDL5Xxs/GYAwsJ5c=;
+        s=20210705; t=1626358079;
+        bh=APYp9urHojI4rl75uCY+A2+u3xV4Ds1D+plCvqGn2Yc=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=c+f5DW3fRovP4PppXJ+3G7D63Ukw1ThI+F0iU3Tf10NiIJsAdYH3khUy3HBmzF+Qh
-         YfTyiwyAqg8CCEd9IL19IrC4QnQ2/ruTR/SvbupN5zCiThC+wBPHbIgXlul6aSjh28
-         1Y8u9chciqu2vZZWEAUdKFaL0qAXqyh0olA/bf2GzFqe5JCP2MJkXivuE6WdAd1+cM
-         KnUnkJGJSRpNgZ06BcDpY3rqVcCn4uGPkThKZwnOZH9c7HTIcJOtawCL/n6u/yQkIc
-         MaTyYGmCmtJ90q8oe2bRGefJRebg6ntmfkTYsGhvWtwxRpAowKNSCAW/vDVTT7IVbA
-         OmsbL2Aahppfg==
+        b=WMIzLRLteGXuLOd8xT/W78DY+T3u7OT60sfvJmCM0P41ukI1kOyHja8wkMCgoPklT
+         GSNYkR+8ey9HEqC5Ked5p+enhc9XGAvc0OR36LaDqcBMnviX4cLJLD4Ccd5SvMcu1d
+         PcIqfqvTrJqBDXXWmjFVnFWsOqD1ZjqBoSKQTV9LTJ0iNLFlqTrWIHZTAFWTHUFCC6
+         hT9RY5wJEgBoc5zWBdwRZJO3WGtny2q5OsA9xcJcilgy6KGFhZKr++hwSa0Lm9I1Kg
+         caDLOYDqC81I4tJfkGX+Ft+8CWkEwe7v1Sd+7oAmRypxVfNwuBB4LhrIMU2NMfXPII
+         V8Wjie/Q38OrQ==
 From:   Colin King <colin.king@canonical.com>
-To:     Borislav Petkov <bp@alien8.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        James Morse <james.morse@arm.com>,
-        Robert Richter <rric@kernel.org>,
-        Doug Thompson <dougthompson@xmission.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-edac@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drivers/edac: add missing macro arguments and missing macro edac_pci_remove_sysfs
-Date:   Thu, 15 Jul 2021 14:58:26 +0100
-Message-Id: <20210715135826.26241-1-colin.king@canonical.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org
+Subject: [PATCH] serial: 8250: 8250_omap: make a const array static, makes object smaller
+Date:   Thu, 15 Jul 2021 15:07:59 +0100
+Message-Id: <20210715140759.27244-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -60,33 +56,38 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The macros edac_pci_handle_pe and edac_pci_handle_npe are missing their
-arguments and don't match the function prototypes they replace. Also
-macro edac_pci_remove_sysfs is missing. Fix this by adding in the missing
-arguments and missing macro.
+Don't populate the const array k3_soc_devices on the stack but instead it
+static. Makes the object code smaller by 44 bytes:
 
-Fixes: d4c1465b7de9 ("drivers/edac: fix edac_pci sysfs")
+Before:
+   text    data     bss     dec     hex filename
+  31628    5609     128   37365    91f5 drivers/tty/serial/8250/8250_omap.o
+
+After:
+   text    data     bss     dec     hex filename
+  31520    5673     128   37321    91c9 drivers/tty/serial/8250/8250_omap.o
+Reduction of 44 bytes
+
+(gcc version 10.3.0)
+
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/edac/edac_module.h | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/tty/serial/8250/8250_omap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/edac/edac_module.h b/drivers/edac/edac_module.h
-index aa1f91688eb8..ed194ba2c207 100644
---- a/drivers/edac/edac_module.h
-+++ b/drivers/edac/edac_module.h
-@@ -123,8 +123,9 @@ extern void edac_pci_handle_npe(struct edac_pci_ctl_info *pci,
- #define edac_sysfs_pci_teardown()
- #define edac_pci_get_check_errors()
- #define edac_pci_get_poll_msec()
--#define edac_pci_handle_pe()
--#define edac_pci_handle_npe()
-+#define edac_pci_remove_sysfs(pci)
-+#define edac_pci_handle_pe(pci, msg)
-+#define edac_pci_handle_npe(pci, msg)
- #endif				/* CONFIG_PCI */
- 
- #endif				/* __EDAC_MODULE_H__ */
+diff --git a/drivers/tty/serial/8250/8250_omap.c b/drivers/tty/serial/8250/8250_omap.c
+index 79418d4beb48..b81d1bdc7b88 100644
+--- a/drivers/tty/serial/8250/8250_omap.c
++++ b/drivers/tty/serial/8250/8250_omap.c
+@@ -538,7 +538,7 @@ static void omap_8250_pm(struct uart_port *port, unsigned int state,
+ static void omap_serial_fill_features_erratas(struct uart_8250_port *up,
+ 					      struct omap8250_priv *priv)
+ {
+-	const struct soc_device_attribute k3_soc_devices[] = {
++	static const struct soc_device_attribute k3_soc_devices[] = {
+ 		{ .family = "AM65X",  },
+ 		{ .family = "J721E", .revision = "SR1.0" },
+ 		{ /* sentinel */ }
 -- 
 2.31.1
 
