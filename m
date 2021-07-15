@@ -2,81 +2,88 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-14.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4078BC636CA
-	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Jul 2021 17:50:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C7DEC636C8
+	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Jul 2021 19:58:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1B494613CF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Jul 2021 17:50:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C46361380
+	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Jul 2021 19:58:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235772AbhGORw6 (ORCPT
+        id S241864AbhGOUA4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 15 Jul 2021 13:52:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60796 "EHLO mail.kernel.org"
+        Thu, 15 Jul 2021 16:00:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47308 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229865AbhGORw6 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 15 Jul 2021 13:52:58 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 660B661360;
-        Thu, 15 Jul 2021 17:50:04 +0000 (UTC)
+        id S1345186AbhGOT5l (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 15 Jul 2021 15:57:41 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9EF73613BB;
+        Thu, 15 Jul 2021 19:54:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1626371404;
-        bh=/y2o9rz72cNl4SHNPlmoEJDG2nI4CFOe4D13LRdLEOM=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=nlBzrBHBmr/ynpZlEJkhD910f+vP1D328A9ceJsE22hAkR6iMghQmXc1p5EcXKOL8
-         K9wQ4/K6KYJsbfsIA5YIyaJL8XfQgJUz35KJhT21mYOD8A4TOoHvjlpBkd9oeDAjPh
-         ryOK6pPwsgDuaTL9yzPiVxVCBeSzmeiVWxgGGudQMK4DTCCrITr+XYqTh9o5B1vH1Q
-         i2W2nQpNfNm029qDKOrLtcgLLVzpKB+bwRLnQ4G6vUyWnXW9YjKfH+TpFYJRTTqEH3
-         j6rSgCccbglT9181zjq7eOWR8vSixO3FKYgFyi+8ekB98ix2DPIrYQrz4xezSI29co
-         R7V+bKVFd406Q==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] s390/bpf: perform r1 range checking before accessing
- jit->seen_reg[r1]
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <162637140434.23218.4971515886855258652.git-patchwork-notify@kernel.org>
-Date:   Thu, 15 Jul 2021 17:50:04 +0000
-References: <20210715125712.24690-1-colin.king@canonical.com>
-In-Reply-To: <20210715125712.24690-1-colin.king@canonical.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     iii@linux.ibm.com, hca@linux.ibm.com, gor@linux.ibm.com,
-        borntraeger@de.ibm.com, ast@kernel.org, daniel@iogearbox.net,
-        andrii@kernel.org, songliubraving@fb.com, yhs@fb.com,
-        john.fastabend@gmail.com, kpsingh@kernel.org,
-        holzheu@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
-        netdev@vger.kernel.org, bpf@vger.kernel.org,
-        linux-s390@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        s=k20201202; t=1626378888;
+        bh=xLfV2Xzoq8UnSTpc2A9kdDwCb0yJZGzCeCFP8zdZ6T0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=nW7X3pvKpKyyKQ+wqSHdjqnHi72GKi9DcurDSCnhQj74uZ9NBbhh0zz2BKD2D9XrK
+         LkGZH/vx4VNtZK4rKc2oICzbMwduM7KoNuTHgHPUDGu/AYpZpV7DuqyQqip82ugH3e
+         GupWaSkha67CQj/AzXRt7vU9IDv+NSkflIyBWiJ2Ak4Wo0MrwG1I4LOBW/BN1STTMu
+         Im25sblKJ37F0E6S67Tkp7s9qTfP7f+xJH6MCS/OANa+359hEez/xbGn1iSPc0ZwJ1
+         KIvGkYBjT0Twy/wUQYvJpvi8dxn8paO/AeYV20SHK+G3sDDDfa2d4JVC702135yP27
+         /FFQXBIjFsYbA==
+From:   Mark Brown <broonie@kernel.org>
+To:     Colin King <colin.king@canonical.com>,
+        Liam Girdwood <lgirdwood@gmail.com>
+Cc:     Mark Brown <broonie@kernel.org>, kernel-janitors@vger.kernel.org,
         linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] regulator: rt6245: make a const array func_base static, makes object smaller
+Date:   Thu, 15 Jul 2021 20:54:00 +0100
+Message-Id: <162637868448.27563.16170731868799436759.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20210715141531.27672-1-colin.king@canonical.com>
+References: <20210715141531.27672-1-colin.king@canonical.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
-
-This patch was applied to bpf/bpf.git (refs/heads/master):
-
-On Thu, 15 Jul 2021 13:57:12 +0100 you wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On Thu, 15 Jul 2021 15:15:31 +0100, Colin King wrote:
+> Don't populate the const array func_base on the stack but instead it
+> static. Makes the object code smaller by 55 bytes:
 > 
-> Currently array jit->seen_reg[r1] is being accessed before the range
-> checking of index r1. The range changing on r1 should be performed
-> first since it will avoid any potential out-of-range accesses on the
-> array seen_reg[] and also it is more optimal to perform checks on
-> r1 before fetching data from the array.  Fix this by swapping the
-> order of the checks before the array access.
+> Before:
+>    text    data     bss     dec    hex filename
+>    6422    3216      64    9702   25e6 drivers/regulator/rt6245-regulator.o
 > 
 > [...]
 
-Here is the summary with links:
-  - s390/bpf: perform r1 range checking before accessing jit->seen_reg[r1]
-    https://git.kernel.org/bpf/bpf/c/91091656252f
+Applied to
 
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
 
+Thanks!
 
+[1/1] regulator: rt6245: make a const array func_base static, makes object smaller
+      commit: 508f8ccd993d1ff5c9a3092f179f33bd7a825bac
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
