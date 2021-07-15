@@ -2,52 +2,49 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35CFEC07E96
-	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Jul 2021 16:31:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02097C07E96
+	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Jul 2021 16:40:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 171F8613F7
-	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Jul 2021 16:31:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C89F36128D
+	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Jul 2021 16:40:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231518AbhGOQeW (ORCPT
+        id S229635AbhGOQnO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 15 Jul 2021 12:34:22 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:47440
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230162AbhGOQeV (ORCPT
+        Thu, 15 Jul 2021 12:43:14 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:54608
+        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232585AbhGOQnN (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 15 Jul 2021 12:34:21 -0400
+        Thu, 15 Jul 2021 12:43:13 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id DA24140610;
-        Thu, 15 Jul 2021 16:31:22 +0000 (UTC)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id E2DF640666;
+        Thu, 15 Jul 2021 16:40:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1626366682;
-        bh=WBJgrOW3MINuGhTOEsZu5eF68Bgr1H9uid+GCE87DZc=;
+        s=20210705; t=1626367219;
+        bh=uc6vqNzYpIOeLZJmcJkkuLJwSOwkwnW/xayvsUoJ5hw=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=cIToF8MA2D7c+v77Ze3s3Tw89cydPSM/RNOGI8FIGZq1YLvc87fCUF3BH/V5lPRxp
-         IAGM9uIytx99z5xJD04V/jObuu8SZRvtic4JJbllSVK0HUdp/gNenpoSn9CaBBCadp
-         rxJnicqqZptu+ZOoTyMCWxVpdTNPR3c/YBg2ljx9trMw42JLtkMLcW4c0xnXf2NmTN
-         r0T6dTfuIFSFTtNiujnERUmSjAsYwPggc1rn+vZhoxYNgZup39j6AsWSbovZgpe0kj
-         Vshx9nSo6eV0jN9clM5R3mBsh6O8aa7FJmTOqguflC73ABqr47b4eRUDqo6DUUrfuM
-         Msa7wX6fsG0nw==
+        b=h8YYOxOj/sX4kxryH7r0bb2umD2NKquSbF1r25wzHN1fqXURTu8GQSyyymkHhdyG3
+         CqrN+ocOuHpVOGialoWpPnoIdlmqvYpAFeg/dODtoNUx1n83Ra6dxwYa+v8zknNfeP
+         Z0kYGXjFj/yyPRT0856sVHBPrdB7MxFSxPX51+nF9IP7x8sOokFQxmkPa1ma/kn5R/
+         VkNxt/hes8ZVyCvBO7MLS3/H72kikkDxuntBIxqNC1T5koxip02o/RoS902vwJo4Uk
+         gm8YiRIn/kc5hzEcdwtLCQhDfPWDm22xRvmz/ZKw71koODg8uu9vnTz3gXetvvbVWI
+         liwEFqUpVUn5w==
 From:   Colin King <colin.king@canonical.com>
-To:     array@vger.kernel.org, initializers@vger.kernel.org,
-        Chris Brannon <chris@the-brannons.com>,
-        Kirk Reiser <kirk@reisers.ca>,
-        Samuel Thibault <samuel.thibault@ens-lyon.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        speakup@linux-speakup.org
+To:     Valentin Schneider <valentin.schneider@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] speakup: use C99 syntax for array initializers
-Date:   Thu, 15 Jul 2021 17:31:22 +0100
-Message-Id: <20210715163122.62220-1-colin.king@canonical.com>
+Subject: [PATCH][next] smpboot: remove inline from __always_inline'd function idle_init
+Date:   Thu, 15 Jul 2021 17:40:18 +0100
+Message-Id: <20210715164018.62712-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -58,41 +55,28 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The older obsolete array initializer syntax is currently being used
-for some of the array elements. Fix this by using the preferred C99
-array initializers syntax.
+Declaring a idle_init as inline when it is __always_inline is redundant
+so this can be removed. Also swap the order of __always_inline and void
+to match the more usual coding style.
 
-Fixes: 5b5140bf5182 ("speakup: Separate out translations for bright colors names")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/accessibility/speakup/i18n.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ kernel/smpboot.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/accessibility/speakup/i18n.c b/drivers/accessibility/speakup/i18n.c
-index bc7b47d1876f..d62079b1661f 100644
---- a/drivers/accessibility/speakup/i18n.c
-+++ b/drivers/accessibility/speakup/i18n.c
-@@ -90,13 +90,13 @@ static char *speakup_default_msgs[MSG_LAST_INDEX] = {
- 	[MSG_COLOR_YELLOW] = "yellow",
- 	[MSG_COLOR_WHITE] = "white",
- 	[MSG_COLOR_GREY] = "grey",
--	[MSG_COLOR_BRIGHTBLUE] "bright blue",
--	[MSG_COLOR_BRIGHTGREEN] "bright green",
--	[MSG_COLOR_BRIGHTCYAN] "bright cyan",
--	[MSG_COLOR_BRIGHTRED] "bright red",
--	[MSG_COLOR_BRIGHTMAGENTA] "bright magenta",
--	[MSG_COLOR_BRIGHTYELLOW] "bright yellow",
--	[MSG_COLOR_BRIGHTWHITE] "bright white",
-+	[MSG_COLOR_BRIGHTBLUE] = "bright blue",
-+	[MSG_COLOR_BRIGHTGREEN] = "bright green",
-+	[MSG_COLOR_BRIGHTCYAN] = "bright cyan",
-+	[MSG_COLOR_BRIGHTRED] = "bright red",
-+	[MSG_COLOR_BRIGHTMAGENTA] = "bright magenta",
-+	[MSG_COLOR_BRIGHTYELLOW] = "bright yellow",
-+	[MSG_COLOR_BRIGHTWHITE] = "bright white",
+diff --git a/kernel/smpboot.c b/kernel/smpboot.c
+index 21b7953f8242..cf6acab78538 100644
+--- a/kernel/smpboot.c
++++ b/kernel/smpboot.c
+@@ -47,7 +47,7 @@ void __init idle_thread_set_boot_cpu(void)
+  *
+  * Creates the thread if it does not exist.
+  */
+-static inline void __always_inline idle_init(unsigned int cpu)
++static __always_inline void idle_init(unsigned int cpu)
+ {
+ 	struct task_struct *tsk = per_cpu(idle_threads, cpu);
  
- 	/* Names of key states. */
- 	[MSG_STATE_DOUBLE] = "double",
 -- 
 2.31.1
 
