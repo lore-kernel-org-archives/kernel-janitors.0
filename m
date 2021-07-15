@@ -2,81 +2,52 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02097C07E96
-	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Jul 2021 16:40:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27318C07E96
+	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Jul 2021 16:53:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C89F36128D
-	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Jul 2021 16:40:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10A17613EB
+	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Jul 2021 16:53:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229635AbhGOQnO (ORCPT
+        id S235928AbhGOQ4f (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 15 Jul 2021 12:43:14 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:54608
-        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232585AbhGOQnN (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 15 Jul 2021 12:43:13 -0400
-Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id E2DF640666;
-        Thu, 15 Jul 2021 16:40:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1626367219;
-        bh=uc6vqNzYpIOeLZJmcJkkuLJwSOwkwnW/xayvsUoJ5hw=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=h8YYOxOj/sX4kxryH7r0bb2umD2NKquSbF1r25wzHN1fqXURTu8GQSyyymkHhdyG3
-         CqrN+ocOuHpVOGialoWpPnoIdlmqvYpAFeg/dODtoNUx1n83Ra6dxwYa+v8zknNfeP
-         Z0kYGXjFj/yyPRT0856sVHBPrdB7MxFSxPX51+nF9IP7x8sOokFQxmkPa1ma/kn5R/
-         VkNxt/hes8ZVyCvBO7MLS3/H72kikkDxuntBIxqNC1T5koxip02o/RoS902vwJo4Uk
-         gm8YiRIn/kc5hzEcdwtLCQhDfPWDm22xRvmz/ZKw71koODg8uu9vnTz3gXetvvbVWI
-         liwEFqUpVUn5w==
-From:   Colin King <colin.king@canonical.com>
-To:     Valentin Schneider <valentin.schneider@arm.com>,
+        Thu, 15 Jul 2021 12:56:35 -0400
+Received: from foss.arm.com ([217.140.110.172]:55170 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229695AbhGOQ4f (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 15 Jul 2021 12:56:35 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 60D286D;
+        Thu, 15 Jul 2021 09:53:41 -0700 (PDT)
+Received: from e113632-lin (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 93E883F7D8;
+        Thu, 15 Jul 2021 09:53:40 -0700 (PDT)
+From:   Valentin Schneider <valentin.schneider@arm.com>
+To:     Colin King <colin.king@canonical.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Ingo Molnar <mingo@kernel.org>
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] smpboot: remove inline from __always_inline'd function idle_init
-Date:   Thu, 15 Jul 2021 17:40:18 +0100
-Message-Id: <20210715164018.62712-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.31.1
+Subject: Re: [PATCH][next] smpboot: remove inline from __always_inline'd function idle_init
+In-Reply-To: <20210715164018.62712-1-colin.king@canonical.com>
+References: <20210715164018.62712-1-colin.king@canonical.com>
+Date:   Thu, 15 Jul 2021 17:53:34 +0100
+Message-ID: <87czrjmsc1.mognet@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On 15/07/21 17:40, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> Declaring a idle_init as inline when it is __always_inline is redundant
+> so this can be removed. Also swap the order of __always_inline and void
+> to match the more usual coding style.
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Declaring a idle_init as inline when it is __always_inline is redundant
-so this can be removed. Also swap the order of __always_inline and void
-to match the more usual coding style.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- kernel/smpboot.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/smpboot.c b/kernel/smpboot.c
-index 21b7953f8242..cf6acab78538 100644
---- a/kernel/smpboot.c
-+++ b/kernel/smpboot.c
-@@ -47,7 +47,7 @@ void __init idle_thread_set_boot_cpu(void)
-  *
-  * Creates the thread if it does not exist.
-  */
--static inline void __always_inline idle_init(unsigned int cpu)
-+static __always_inline void idle_init(unsigned int cpu)
- {
- 	struct task_struct *tsk = per_cpu(idle_threads, cpu);
- 
--- 
-2.31.1
-
+Reviewed-by: Valentin Schneider <valentin.schneider@arm.com>
