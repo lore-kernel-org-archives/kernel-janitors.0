@@ -2,59 +2,139 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA537C636C8
-	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Jul 2021 23:08:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2F95C12002
+	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Jul 2021 04:49:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C974E613E3
-	for <kernel-janitors@archiver.kernel.org>; Thu, 15 Jul 2021 23:08:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B498C613E9
+	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Jul 2021 04:49:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231626AbhGOXLs (ORCPT
+        id S232300AbhGPEws (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 15 Jul 2021 19:11:48 -0400
-Received: from mslow1.mail.gandi.net ([217.70.178.240]:50131 "EHLO
-        mslow1.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231246AbhGOXLr (ORCPT
+        Fri, 16 Jul 2021 00:52:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51294 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229822AbhGPEwr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 15 Jul 2021 19:11:47 -0400
-Received: from relay6-d.mail.gandi.net (unknown [217.70.183.198])
-        by mslow1.mail.gandi.net (Postfix) with ESMTP id 08C41C72D4
-        for <kernel-janitors@vger.kernel.org>; Thu, 15 Jul 2021 23:08:52 +0000 (UTC)
-Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 86C8EC0006;
-        Thu, 15 Jul 2021 23:08:28 +0000 (UTC)
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Colin King <colin.king@canonical.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        linux-mtd@lists.infradead.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mtd: rawnand: Fix a couple of spelling mistakes in Kconfig
-Date:   Fri, 16 Jul 2021 01:08:28 +0200
-Message-Id: <20210715230828.222684-1-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20210704094705.37175-1-colin.king@canonical.com>
-References: 
+        Fri, 16 Jul 2021 00:52:47 -0400
+Received: from mail-yb1-xb35.google.com (mail-yb1-xb35.google.com [IPv6:2607:f8b0:4864:20::b35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2145AC06175F;
+        Thu, 15 Jul 2021 21:49:53 -0700 (PDT)
+Received: by mail-yb1-xb35.google.com with SMTP id c16so6090989ybl.9;
+        Thu, 15 Jul 2021 21:49:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PkyEPk/4wB7JABAl75ww38Y0BngqhgSDP8waOBjAM9g=;
+        b=eZpw18yXkJC5JJZpR7mX8LlyMfjOiOARt0UIrVJdb+X0sJWYxATl71Z5qkolyBRZyu
+         qfCkOmkEzwOEh7NXDXJh81aJKMADCuvKZrJpPEdLAdLACbc7NfmZ9za2LqcbbdNIOHvv
+         zjh2Huotb4PLkQQQjj9UZqJZ4r9uhXl8cHsSYAWTy8iLP73pyfQgyzphPQ5/HjIUM89p
+         WrrZi+e4VGyvIzWv3W2bpl8KNo3xK9P9zVKg1gVHUbPOJNltCd7KwOa8FlMwOuW8uhUr
+         jF6N5hHxUMqhfp2Rk/4cyxqo+G5qlumllEVNTnH+/50EVDw28nCTbMLSuWYWPgRb6PPG
+         A5vg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PkyEPk/4wB7JABAl75ww38Y0BngqhgSDP8waOBjAM9g=;
+        b=IFbJNEkyFl0oLYY4PlxqD3B0H8qKrAp4f1ES5pHNdx6uWAfC/687ckueM5EVMA7G25
+         5XxrT/gj7KBKmancpoWQ52kYiwROW38Z2vxGHxdfLQ4pdhxtq3Vsee9EHamgDfKqdH4Z
+         CIUPiSzR8v2EjoLfMxrOupA/0wBelTg/1VJq51/P0ihLNKa8G5hGAjZqvfe+qNBQP276
+         BXhZTFSQSv5OMiuJHZUZVPEtkCYje/MJPw17CdM/lqunEgh/PslUcw0iQ4gMdOSk3KVe
+         XnqWcjR0IkCalHzjNkMdsP/bVsH029cWWz7iC7MTRjbYuxWwRw8xSDgWlM9C/6JoeS9m
+         0PNw==
+X-Gm-Message-State: AOAM5336dLzsqfX2mQEpkFfJbBS5radxhxJVrMUR/HnrdlT0FK9hKzTR
+        jn2DMjKLFGCigH0RSxo6mjFftihivrPSGsYHhQc=
+X-Google-Smtp-Source: ABdhPJzdWbSDPWr4RvQEq7NkKlhLkXhqjCu2LPtLjSY0MS5Lf84i7tkBSrkt7A7bY7Yyp0rz40Qq1Avu6tIhlE56Yv0=
+X-Received: by 2002:a25:b203:: with SMTP id i3mr10217027ybj.260.1626410992260;
+ Thu, 15 Jul 2021 21:49:52 -0700 (PDT)
 MIME-Version: 1.0
-X-linux-mtd-patch-notification: thanks
-X-linux-mtd-patch-commit: b'c5b9ee9c361f52cd319135b9ec7fe684d5e2e026'
-Content-Transfer-Encoding: 8bit
+References: <1626180159-112996-1-git-send-email-chengshuyi@linux.alibaba.com>
+In-Reply-To: <1626180159-112996-1-git-send-email-chengshuyi@linux.alibaba.com>
+From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date:   Thu, 15 Jul 2021 21:49:41 -0700
+Message-ID: <CAEf4BzaDMeZ5+v4enTA6m3OJrQsNXY9G8e9uchhaeQmauTTiiQ@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v4 0/3] Add btf_custom_path in bpf_obj_open_opts
+To:     Shuyi Cheng <chengshuyi@linux.alibaba.com>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>, Martin Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        john fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>,
+        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, 2021-07-04 at 09:47:05 UTC, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There are two spelling mistakes in the Kconfig text. Fix them.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+On Tue, Jul 13, 2021 at 5:43 AM Shuyi Cheng
+<chengshuyi@linux.alibaba.com> wrote:
+>
+> This patch set adds the ability to point to a custom BTF for the
+> purposes of BPF CO-RE relocations. This is useful for using BPF CO-RE
+> on old kernels that don't yet natively support kernel (vmlinux) BTF
+> and thus libbpf needs application's help in locating kernel BTF
+> generated separately from the kernel itself. This was already possible
+> to do through bpf_object__load's attribute struct, but that makes it
+> inconvenient to use with BPF skeleton, which only allows to specify
+> bpf_object_open_opts during the open step. Thus, add the ability to
+> override vmlinux BTF at open time.
+>
+> Patch #1 adds libbpf changes.
+> Patch #2 fixes pre-existing memory leak detected during the code review.
+> Patch #3 switches existing selftests to using open_opts for custom BTF.
+>
 
-Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git nand/next, thanks.
+LGTM with some minor things I'll adjust while applying (which I'll
+point out in respective patches). So no need to re-send anything.
+Thanks.
 
-Miquel
+> Changelog:
+> ----------
+>
+> v3: https://lore.kernel.org/bpf/CAEf4BzY2cdT44bfbMus=gei27ViqGE1BtGo6XrErSsOCnqtVJg@mail.gmail.com/T/#m877eed1d4cf0a1d3352d3f3d6c5ff158be45c542
+> v3->v4:
+> --- Follow Andrii's suggestion to modify cover letter description.
+> --- Delete function bpf_object__load_override_btf.
+> --- Follow Dan's suggestion to add fixes tag and modify commit msg to patch #2.
+> --- Add pathch #3 to switch existing selftests to using open_opts.
+>
+> v2: https://lore.kernel.org/bpf/CAEf4Bza_ua+tjxdhyy4nZ8Boeo+scipWmr_1xM1pC6N5wyuhAA@mail.gmail.com/T/#mf9cf86ae0ffa96180ac29e4fd12697eb70eccd0f
+> v2->v3:
+> --- Load the BTF specified by btf_custom_path to btf_vmlinux_override
+>     instead of btf_bmlinux.
+> --- Fix the memory leak that may be introduced by the second version
+>     of the patch.
+> --- Add a new patch to fix the possible memory leak caused by
+>     obj->kconfig.
+>
+> v1: https://lore.kernel.org/bpf/CAEf4BzaGjEC4t1OefDo11pj2-HfNy0BLhs_G2UREjRNTmb2u=A@mail.gmail.com/t/#m4d9f7c6761fbd2b436b5dfe491cd864b70225804
+> v1->v2:
+> -- Change custom_btf_path to btf_custom_path.
+> -- If the length of btf_custom_path of bpf_obj_open_opts is too long,
+>    return ERR_PTR(-ENAMETOOLONG).
+> -- Add `custom BTF is in addition to vmlinux BTF`
+>    with btf_custom_path field.
+>
+> Shuyi Cheng (3):
+>   libbpf: Introduce 'btf_custom_path' to 'bpf_obj_open_opts'
+>   libbpf: Fix the possible memory leak on error
+>   selftests/bpf: switches existing selftests to using open_opts for custom BTF
+>
+>  tools/lib/bpf/libbpf.c                             | 42 +++++++++++++++++-----
+>  tools/lib/bpf/libbpf.h                             |  9 ++++-
+>  .../selftests/bpf/prog_tests/core_autosize.c       | 22 ++++++------
+>  .../testing/selftests/bpf/prog_tests/core_reloc.c  | 28 +++++++--------
+>  4 files changed, 66 insertions(+), 35 deletions(-)
+>
+> --
+> 1.8.3.1
+>
