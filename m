@@ -2,152 +2,96 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45C01C636CB
-	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Jul 2021 20:27:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BA53C636CA
+	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Jul 2021 22:44:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 25AEF61158
-	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Jul 2021 20:27:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3E49611AE
+	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Jul 2021 22:44:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233726AbhGPUai (ORCPT
+        id S232154AbhGPWrV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 16 Jul 2021 16:30:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39186 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230256AbhGPUa3 (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 16 Jul 2021 16:30:29 -0400
-Received: from mail-yb1-xb2c.google.com (mail-yb1-xb2c.google.com [IPv6:2607:f8b0:4864:20::b2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EC0CC06175F;
-        Fri, 16 Jul 2021 13:27:30 -0700 (PDT)
-Received: by mail-yb1-xb2c.google.com with SMTP id g5so16800081ybu.10;
-        Fri, 16 Jul 2021 13:27:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Fuja+LyNz+8bpE28EdXAb+X5z2zGCSBcQGCKwS58Tz4=;
-        b=Gh+Kd3/+WYGpUVk+HIfN2I4zqP+p+4dODDCEr6d0hurdj/g4oYMkTwkHg0e4SPaFwO
-         0hYlEE1FjFinPJEfgkPd6929XgCQyUbUBUljhyBikELYjMUsphbDc5gen96bpJh8m4en
-         5aPywQXZsKMWK36ViJheRfj/EZO5Aww6E3TJF7zPzvS4dcYTdHRc06lMT0b+3CjW+Kgp
-         wPyaW3d+xTemRxlk78BbxYl15nOh1U09ZZX5bkdYr0hPAIrGpac05fTppSPAA6Hn4nNZ
-         DxSoSSZKmWl0j5nVg4l/2y32vMvU+1Iu9qBgkjFD18PGr+c8GW1WidcQiCI/PMpmSe+1
-         +u0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Fuja+LyNz+8bpE28EdXAb+X5z2zGCSBcQGCKwS58Tz4=;
-        b=hR8rB5X79IpZVMG3j7EOHoGNAib5v6qYoCcI/m59ecuzymrtmY1REH4a16kl4Z1zJ1
-         L/7j2/04C5+4Kqa6s5E+B5HcAuAkjNncHYe+OemXzPkKz/fvqGJrADaK9TdzvbrWiXSX
-         Jl6kBHsmG46FTcyUzhttUOv0CRpMFzGIEQNdxQBOURafsbWmwftg2oHqhlk1PEoZ3+ax
-         bhvBG5DLKCQvcw96MOyFyvuBt1BI45xTShOYuA9uUHVaShqNZd/z2+foK25wWd91NTHI
-         9qg8HGAuo9yLSO9BFGISCmT+BY0b1Lzn3HWr7mRti6iyAZEJW6r/neMRFWAiVuM2qCPz
-         D+tQ==
-X-Gm-Message-State: AOAM531RSN4YKjcJgjrEH0GKrclxXTgy53rBBp+Rooex+FvIRxt1MJ9j
-        hWTxc7fdZBbsphqOIUtmQnanmARLMOj+3MkASw8=
-X-Google-Smtp-Source: ABdhPJyUar9OhEg8ZRbxdS4XlvJr4AOPjGqSaRDmC4wjGHyigeraHB9lCC8nqZwMKvvPhJGp0q1sd34p109m5GBxYEg=
-X-Received: by 2002:a25:3787:: with SMTP id e129mr14598431yba.459.1626467249385;
- Fri, 16 Jul 2021 13:27:29 -0700 (PDT)
+        Fri, 16 Jul 2021 18:47:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45588 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230227AbhGPWrV (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 16 Jul 2021 18:47:21 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 66878613DF;
+        Fri, 16 Jul 2021 22:44:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1626475465;
+        bh=+OtcNEH2sKfz8tajetndVWNnt7tYpjOCK9SU/b98tao=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jRzcMCH/WjUxv97dnBAZ4X0kYnhoD5Npnt4MhsENvjeJ/2rxDWwAfIXfVLHbTbPWZ
+         5uNPIkKUus4JNKc6TT95RCjeDZchP8866bfmZgVOI0T2b0+hLdofOqZueCtShss9iI
+         zpbe80RFG6Qra0fsMtbYySfMHljnM4qA2jYpybJreCEVZZ7VcCsQjxnW0XzQn/iFC2
+         BiK+oGb3JGbnWaSBbpeUj/ShEpviMpbSbkF3/UqYQj5ndZGUqB0ChgNYDUgwnRZAMT
+         oAYSw8JBHFkTodLmyTNjhNn9LTyDvog8N0zByBQRW1Iqlza+9TCExHkH8/OrfdivY4
+         01azUqG4Wm1Ww==
+Date:   Fri, 16 Jul 2021 15:44:21 -0700
+From:   Nathan Chancellor <nathan@kernel.org>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Valentin Schneider <valentin.schneider@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] smpboot: remove inline from __always_inline'd
+ function idle_init
+Message-ID: <YPILxbDHCC2EN/3u@archlinux-ax161>
+References: <20210715164018.62712-1-colin.king@canonical.com>
 MIME-Version: 1.0
-References: <1626180159-112996-1-git-send-email-chengshuyi@linux.alibaba.com> <1626180159-112996-4-git-send-email-chengshuyi@linux.alibaba.com>
-In-Reply-To: <1626180159-112996-4-git-send-email-chengshuyi@linux.alibaba.com>
-From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Fri, 16 Jul 2021 13:27:18 -0700
-Message-ID: <CAEf4Bza3X410=1ryu4xZ+5ST2=69CB9BDusBrLMX=VSsXtnuDQ@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v4 3/3] selftests/bpf: Switches existing
- selftests to using open_opts for custom BTF
-To:     Shuyi Cheng <chengshuyi@linux.alibaba.com>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>, Martin Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        john fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>,
-        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210715164018.62712-1-colin.king@canonical.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Jul 13, 2021 at 5:43 AM Shuyi Cheng
-<chengshuyi@linux.alibaba.com> wrote:
->
-> This patch mainly replaces the bpf_object_load_attr of
-> the core_autosize.c and core_reloc.c files with bpf_object_open_opts.
->
-> Signed-off-by: Shuyi Cheng <chengshuyi@linux.alibaba.com>
+On Thu, Jul 15, 2021 at 05:40:18PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Declaring a idle_init as inline when it is __always_inline is redundant
+> so this can be removed. Also swap the order of __always_inline and void
+> to match the more usual coding style.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+This resolves a clang warning that I see:
+
+kernel/smpboot.c:50:20: error: duplicate 'inline' declaration specifier [-Werror,-Wduplicate-decl-specifier]
+static inline void __always_inline idle_init(unsigned int cpu)
+                   ^
+./include/linux/compiler_attributes.h:65:41: note: expanded from macro '__always_inline'
+#define __always_inline                 inline __attribute__((__always_inline__))
+                                        ^
+./include/linux/compiler_types.h:149:16: note: expanded from macro 'inline'
+#define inline inline __gnu_inline __inline_maybe_unused notrace
+               ^
+1 error generated.
+
+Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+
 > ---
->  .../selftests/bpf/prog_tests/core_autosize.c       | 22 ++++++++---------
->  .../testing/selftests/bpf/prog_tests/core_reloc.c  | 28 ++++++++++------------
->  2 files changed, 24 insertions(+), 26 deletions(-)
->
-
-So I applied this, but it's obvious you haven't bothered even
-*building* selftests, because it had at least one compilation warning
-and one compilation *error*, not building test_progs at all. I've
-noted stuff I fixed (and still remember) below. I understand it might
-be your first kernel contribution, but it's not acceptable to submit
-patches that don't build. Next time please be more thorough.
-
-[...]
-
->
-> -       load_attr.obj = skel->obj;
-> -       load_attr.target_btf_path = btf_file;
-> -       err = bpf_object__load_xattr(&load_attr);
-> +       err = bpf_object__load(skel);
-
-This didn't compile outright, because it should have been
-test_core_autosize__load(skel).
-
->         if (!ASSERT_ERR(err, "bad_prog_load"))
->                 goto cleanup;
->
-> diff --git a/tools/testing/selftests/bpf/prog_tests/core_reloc.c b/tools/testing/selftests/bpf/prog_tests/core_reloc.c
-> index d02e064..10eb2407 100644
-> --- a/tools/testing/selftests/bpf/prog_tests/core_reloc.c
-> +++ b/tools/testing/selftests/bpf/prog_tests/core_reloc.c
-> @@ -816,7 +816,7 @@ static size_t roundup_page(size_t sz)
->  void test_core_reloc(void)
+>  kernel/smpboot.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/kernel/smpboot.c b/kernel/smpboot.c
+> index 21b7953f8242..cf6acab78538 100644
+> --- a/kernel/smpboot.c
+> +++ b/kernel/smpboot.c
+> @@ -47,7 +47,7 @@ void __init idle_thread_set_boot_cpu(void)
+>   *
+>   * Creates the thread if it does not exist.
+>   */
+> -static inline void __always_inline idle_init(unsigned int cpu)
+> +static __always_inline void idle_init(unsigned int cpu)
 >  {
->         const size_t mmap_sz = roundup_page(sizeof(struct data));
-> -       struct bpf_object_load_attr load_attr = {};
-> +       struct bpf_object_open_opts open_opts = {};
->         struct core_reloc_test_case *test_case;
->         const char *tp_name, *probe_name;
->         int err, i, equal;
-> @@ -846,9 +846,17 @@ void test_core_reloc(void)
->                                 continue;
->                 }
->
-> -               obj = bpf_object__open_file(test_case->bpf_obj_file, NULL);
-> +               if (test_case->btf_src_file) {
-> +                       err = access(test_case->btf_src_file, R_OK);
-> +                       if (!ASSERT_OK(err, "btf_src_file"))
-> +                               goto cleanup;
-> +               }
-> +
-> +               open_opts.btf_custom_path = test_case->btf_src_file;
-
-This was reporting a valid warning about dropping const modifier. For
-good reason, becyase btf_custom_path in open_opts should have been
-`const char *`, I fixed that.
-
-> +               open_opts.sz = sizeof(struct bpf_object_open_opts);
-> +               obj = bpf_object__open_file(test_case->bpf_obj_file, &open_opts);
->                 if (!ASSERT_OK_PTR(obj, "obj_open"))
-> -                       continue;
-> +                       goto cleanup;
->
->                 probe_name = "raw_tracepoint/sys_enter";
->                 tp_name = "sys_enter";
-
-[...]
+>  	struct task_struct *tsk = per_cpu(idle_threads, cpu);
+>  
+> -- 
+> 2.31.1
+> 
