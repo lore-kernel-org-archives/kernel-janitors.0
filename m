@@ -2,96 +2,139 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BA53C636CA
-	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Jul 2021 22:44:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7EB0C12002
+	for <kernel-janitors@archiver.kernel.org>; Sat, 17 Jul 2021 01:15:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F3E49611AE
-	for <kernel-janitors@archiver.kernel.org>; Fri, 16 Jul 2021 22:44:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DAC3613E7
+	for <kernel-janitors@archiver.kernel.org>; Sat, 17 Jul 2021 01:15:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232154AbhGPWrV (ORCPT
+        id S232184AbhGQBSt (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 16 Jul 2021 18:47:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45588 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230227AbhGPWrV (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 16 Jul 2021 18:47:21 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 66878613DF;
-        Fri, 16 Jul 2021 22:44:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1626475465;
-        bh=+OtcNEH2sKfz8tajetndVWNnt7tYpjOCK9SU/b98tao=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jRzcMCH/WjUxv97dnBAZ4X0kYnhoD5Npnt4MhsENvjeJ/2rxDWwAfIXfVLHbTbPWZ
-         5uNPIkKUus4JNKc6TT95RCjeDZchP8866bfmZgVOI0T2b0+hLdofOqZueCtShss9iI
-         zpbe80RFG6Qra0fsMtbYySfMHljnM4qA2jYpybJreCEVZZ7VcCsQjxnW0XzQn/iFC2
-         BiK+oGb3JGbnWaSBbpeUj/ShEpviMpbSbkF3/UqYQj5ndZGUqB0ChgNYDUgwnRZAMT
-         oAYSw8JBHFkTodLmyTNjhNn9LTyDvog8N0zByBQRW1Iqlza+9TCExHkH8/OrfdivY4
-         01azUqG4Wm1Ww==
-Date:   Fri, 16 Jul 2021 15:44:21 -0700
-From:   Nathan Chancellor <nathan@kernel.org>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Valentin Schneider <valentin.schneider@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] smpboot: remove inline from __always_inline'd
- function idle_init
-Message-ID: <YPILxbDHCC2EN/3u@archlinux-ax161>
-References: <20210715164018.62712-1-colin.king@canonical.com>
+        Fri, 16 Jul 2021 21:18:49 -0400
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:43251 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229753AbhGQBSt (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 16 Jul 2021 21:18:49 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=chengshuyi@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0Ug.os52_1626484550;
+Received: from B-39YZML7H-2200.local(mailfrom:chengshuyi@linux.alibaba.com fp:SMTPD_---0Ug.os52_1626484550)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Sat, 17 Jul 2021 09:15:50 +0800
+Subject: Re: [PATCH bpf-next v4 1/3] libbpf: Introduce 'btf_custom_path' to
+ 'bpf_obj_open_opts'
+To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>, Martin Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        john fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>,
+        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+References: <1626180159-112996-1-git-send-email-chengshuyi@linux.alibaba.com>
+ <1626180159-112996-2-git-send-email-chengshuyi@linux.alibaba.com>
+ <CAEf4BzawyyJ0hhvmSM8ba817VffOV2O3qG49fqh+VFseiixigA@mail.gmail.com>
+From:   Shuyi Cheng <chengshuyi@linux.alibaba.com>
+Message-ID: <0fa3b7f1-7928-eff9-1644-df3384171bcd@linux.alibaba.com>
+Date:   Sat, 17 Jul 2021 09:15:50 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210715164018.62712-1-colin.king@canonical.com>
+In-Reply-To: <CAEf4BzawyyJ0hhvmSM8ba817VffOV2O3qG49fqh+VFseiixigA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Jul 15, 2021 at 05:40:18PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+
+
+On 7/16/21 12:51 PM, Andrii Nakryiko wrote:
+> On Tue, Jul 13, 2021 at 5:43 AM Shuyi Cheng
+> <chengshuyi@linux.alibaba.com> wrote:
+>>
+>> btf_custom_path allows developers to load custom BTF, and subsequent
+>> CO-RE will use custom BTF for relocation.
+>>
+>> Learn from Andrii's comments in [0], add the btf_custom_path parameter
+>> to bpf_obj_open_opts, you can directly use the skeleton's
+>> <objname>_bpf__open_opts function to pass in the btf_custom_path
+>> parameter.
+>>
+>> Prior to this, there was also a developer who provided a patch with
+>> similar functions. It is a pity that the follow-up did not continue to
+>> advance. See [1].
+>>
+>>          [0]https://lore.kernel.org/bpf/CAEf4BzbJZLjNoiK8_VfeVg_Vrg=9iYFv+po-38SMe=UzwDKJ=Q@mail.gmail.com/#t
+>>          [1]https://yhbt.net/lore/all/CAEf4Bzbgw49w2PtowsrzKQNcxD4fZRE6AKByX-5-dMo-+oWHHA@mail.gmail.com/
+>>
+>> Signed-off-by: Shuyi Cheng <chengshuyi@linux.alibaba.com>
+>> ---
+>>   tools/lib/bpf/libbpf.c | 36 ++++++++++++++++++++++++++++++------
+>>   tools/lib/bpf/libbpf.h |  9 ++++++++-
+>>   2 files changed, 38 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+>> index 1e04ce7..6e11a7b 100644
+>> --- a/tools/lib/bpf/libbpf.c
+>> +++ b/tools/lib/bpf/libbpf.c
+>> @@ -498,6 +498,13 @@ struct bpf_object {
+>>           * it at load time.
+>>           */
+>>          struct btf *btf_vmlinux;
+>> +       /* Path to the custom BTF to be used for BPF CO-RE relocations.
+>> +        * This custom BTF completely replaces the use of vmlinux BTF
+>> +        * for the purpose of CO-RE relocations.
+>> +        * NOTE: any other BPF feature (e.g., fentry/fexit programs,
+>> +        * struct_ops, etc) will need actual kernel BTF at /sys/kernel/btf/vmlinux.
+>> +        */
 > 
-> Declaring a idle_init as inline when it is __always_inline is redundant
-> so this can be removed. Also swap the order of __always_inline and void
-> to match the more usual coding style.
+> this comment completely duplicates the one from bpf_object_open_opts,
+> I'll remove or shorten it
 > 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-
-This resolves a clang warning that I see:
-
-kernel/smpboot.c:50:20: error: duplicate 'inline' declaration specifier [-Werror,-Wduplicate-decl-specifier]
-static inline void __always_inline idle_init(unsigned int cpu)
-                   ^
-./include/linux/compiler_attributes.h:65:41: note: expanded from macro '__always_inline'
-#define __always_inline                 inline __attribute__((__always_inline__))
-                                        ^
-./include/linux/compiler_types.h:149:16: note: expanded from macro 'inline'
-#define inline inline __gnu_inline __inline_maybe_unused notrace
-               ^
-1 error generated.
-
-Reviewed-by: Nathan Chancellor <nathan@kernel.org>
-
-> ---
->  kernel/smpboot.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>> +       char *btf_custom_path;
+>>          /* vmlinux BTF override for CO-RE relocations */
+>>          struct btf *btf_vmlinux_override;
+>>          /* Lazily initialized kernel module BTFs */
+>> @@ -2645,10 +2652,6 @@ static bool obj_needs_vmlinux_btf(const struct bpf_object *obj)
+>>          struct bpf_program *prog;
+>>          int i;
+>>
+>> -       /* CO-RE relocations need kernel BTF */
+>> -       if (obj->btf_ext && obj->btf_ext->core_relo_info.len)
+>> -               return true;
+>> -
+>>          /* Support for typed ksyms needs kernel BTF */
+>>          for (i = 0; i < obj->nr_extern; i++) {
+>>                  const struct extern_desc *ext;
+>> @@ -2665,6 +2668,13 @@ static bool obj_needs_vmlinux_btf(const struct bpf_object *obj)
+>>                          return true;
+>>          }
+>>
+>> +       /* CO-RE relocations need kernel BTF, only when btf_custom_path
+>> +        * is not specified
+>> +        */
+>> +       if (obj->btf_ext && obj->btf_ext->core_relo_info.len
+>> +               && !obj->btf_custom_path)
+>> +               return true;
 > 
-> diff --git a/kernel/smpboot.c b/kernel/smpboot.c
-> index 21b7953f8242..cf6acab78538 100644
-> --- a/kernel/smpboot.c
-> +++ b/kernel/smpboot.c
-> @@ -47,7 +47,7 @@ void __init idle_thread_set_boot_cpu(void)
->   *
->   * Creates the thread if it does not exist.
->   */
-> -static inline void __always_inline idle_init(unsigned int cpu)
-> +static __always_inline void idle_init(unsigned int cpu)
->  {
->  	struct task_struct *tsk = per_cpu(idle_threads, cpu);
->  
-> -- 
-> 2.31.1
+> not sure why you moved it, I'll move it back to minimize code churn
+
+You're right. 👍
+
+regards,
+Shuyi
+> 
+>> +
+>>          return false;
+>>   }
+>>
+> 
+> [...]
 > 
