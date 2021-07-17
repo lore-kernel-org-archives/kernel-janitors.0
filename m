@@ -2,93 +2,79 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.5 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7F61C636C9
-	for <kernel-janitors@archiver.kernel.org>; Sat, 17 Jul 2021 09:13:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6D72C636CB
+	for <kernel-janitors@archiver.kernel.org>; Sat, 17 Jul 2021 16:56:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8C2EA613C4
-	for <kernel-janitors@archiver.kernel.org>; Sat, 17 Jul 2021 09:13:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9468E61159
+	for <kernel-janitors@archiver.kernel.org>; Sat, 17 Jul 2021 16:56:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232540AbhGQJQf (ORCPT
+        id S231862AbhGQQ7R (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 17 Jul 2021 05:16:35 -0400
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:35503 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229781AbhGQJQe (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 17 Jul 2021 05:16:34 -0400
-Received: (Authenticated sender: ralf@linux-mips.org)
-        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id A074220005;
-        Sat, 17 Jul 2021 09:13:33 +0000 (UTC)
-Date:   Sat, 17 Jul 2021 11:13:31 +0200
-From:   Ralf Baechle <ralf@linux-mips.org>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
-        "Maciej W . Rozycki" <macro@orcam.me.uk>,
-        Tiezhu Yang <yangtiezhu@loongson.cn>, Willy Tarreau <w@1wt.eu>,
-        linux-edac@vger.kernel.org, linux-hams@vger.kernel.org,
-        kernel-janitors <kernel-janitors@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/3] MAINTAINERS: mark sections from Ralf Baechle
- orphan
-Message-ID: <YPKfO/d5rjG+C/fG@linux-mips.org>
-References: <20210625110419.24503-1-lukas.bulwahn@gmail.com>
- <20210625110419.24503-2-lukas.bulwahn@gmail.com>
- <CAKXUXMxFBaBneVZf3WCCYJ8Theu55Nf-gFe=hs5u3mMVd41mTw@mail.gmail.com>
+        Sat, 17 Jul 2021 12:59:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40958 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232010AbhGQQ7I (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Sat, 17 Jul 2021 12:59:08 -0400
+Received: from jic23-huawei (cpc108967-cmbg20-2-0-cust86.5-4.cable.virginm.net [81.101.6.87])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 97118610F9;
+        Sat, 17 Jul 2021 16:56:09 +0000 (UTC)
+Date:   Sat, 17 Jul 2021 17:58:32 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     lars@metafoo.de, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 1/2] iio: buffer: Save a few cycles in
+ 'iio_scan_mask_set()'
+Message-ID: <20210717175832.2f3f8116@jic23-huawei>
+In-Reply-To: <89d8a766eb971eda1ee362444a8711037bdb208c.1626261211.git.christophe.jaillet@wanadoo.fr>
+References: <89d8a766eb971eda1ee362444a8711037bdb208c.1626261211.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKXUXMxFBaBneVZf3WCCYJ8Theu55Nf-gFe=hs5u3mMVd41mTw@mail.gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, Jul 17, 2021 at 09:03:05AM +0200, Lukas Bulwahn wrote:
+On Wed, 14 Jul 2021 13:14:41 +0200
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
 
-> So, given the feedback on this overall patch set from Maciej and Kurt:
-> - the domain lookup for linux-mips.org does resolve again.
-> - the patchwork instance moved.
-> - Ralf Baechle's email now does at least forward somewhere.
+> Use 'bitmap_alloc()' instead of 'bitmap_zalloc()' because the bitmap
+> is fully overridden by a 'bitmap_copy()' call just after its allocation.
+> 
+> While at it, fix the style of a NULL check.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Applied to the togreg branch of iio.git and pushed out as testing for the autobuilders
+to poke at it.
 
-Sorry, the site suffered a complete collapse after a hardware failure
-earlier this year - and I couldn't even get the failed drive replaced at
-the hoster as I didn't have the privilege of opening a ticket; that was
-only possible to the owner of the master account, a former MIPS employee
-who for health reasons no longer is with the company.  The parent company
-of MIPS Wavecomp going through bankrupcy proceedings didn't help resolving
-the situation either.
+Thanks,
 
-Anyway, there's progress on that front and I hope to get replacement
-hardware within the next week or so.
+Jonathan
 
-The failed drive of the lmo server hardware changed its behavioud allowing
-me to reboot the system again on July 1st.  I had given up on the old
-hardware in frustration so Kurt deserves the credits for getting me to try
-again.
-No data was lost in the crash itself.  I'm now working on fixing all the
-failed subsystems, primarily due to a major OS upgrade by several releases,
-some old to-do list items and changes in the environment that affect the
-system.  The time required to do so is enormous; I've done virtually
-nothing else since 1st of July.
+> ---
+>  drivers/iio/industrialio-buffer.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/iio/industrialio-buffer.c b/drivers/iio/industrialio-buffer.c
+> index fdd623407b96..6d4776a7f002 100644
+> --- a/drivers/iio/industrialio-buffer.c
+> +++ b/drivers/iio/industrialio-buffer.c
+> @@ -354,8 +354,8 @@ static int iio_scan_mask_set(struct iio_dev *indio_dev,
+>  	const unsigned long *mask;
+>  	unsigned long *trialmask;
+>  
+> -	trialmask = bitmap_zalloc(indio_dev->masklength, GFP_KERNEL);
+> -	if (trialmask == NULL)
+> +	trialmask = bitmap_alloc(indio_dev->masklength, GFP_KERNEL);
+> +	if (!trialmask)
+>  		return -ENOMEM;
+>  	if (!indio_dev->masklength) {
+>  		WARN(1, "Trying to set scanmask prior to registering buffer\n");
 
-I've put an writeup about the system status to
-https://www.linux-mips.org/wiki/System_Recovery_Status which I'm
-keeping updated as work progresses.
-
-As for the MAINTAINERS for the ham radio protocols - AX.25 use
-is going down for many years and so is NET\ROM.  ROSE has always
-been a very rare protocol but all three stacks still have active
-users.  With that said, I doubt somebody to do active development
-and maintenace will be found.  So maybe leave my name in but
-lower to "Odd Fixes" which has been the reality for years even
-before I took over and imho is how it should be continued.
-
-At this point my immediate priorities are the full restoration of
-the lmo server and after that linux-ax25.org will need TLC and I want
-those to be completed before diving into code again.
-
-  Ralf
