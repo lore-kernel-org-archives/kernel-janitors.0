@@ -2,140 +2,117 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80D72C636CA
-	for <kernel-janitors@archiver.kernel.org>; Sat, 17 Jul 2021 01:40:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 456FCC636C9
+	for <kernel-janitors@archiver.kernel.org>; Sat, 17 Jul 2021 06:52:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 54ED8613E7
-	for <kernel-janitors@archiver.kernel.org>; Sat, 17 Jul 2021 01:40:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1441861357
+	for <kernel-janitors@archiver.kernel.org>; Sat, 17 Jul 2021 06:52:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232010AbhGQBmz (ORCPT
+        id S230306AbhGQGz3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 16 Jul 2021 21:42:55 -0400
-Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:53472 "EHLO
-        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231772AbhGQBmz (ORCPT
+        Sat, 17 Jul 2021 02:55:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34536 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230171AbhGQGz2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 16 Jul 2021 21:42:55 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R741e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=alimailimapcm10staff010182156082;MF=chengshuyi@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0Ug.Dp-t_1626485996;
-Received: from B-39YZML7H-2200.local(mailfrom:chengshuyi@linux.alibaba.com fp:SMTPD_---0Ug.Dp-t_1626485996)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Sat, 17 Jul 2021 09:39:57 +0800
-Subject: Re: [PATCH bpf-next v4 3/3] selftests/bpf: Switches existing
- selftests to using open_opts for custom BTF
-To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>, Martin Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        john fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>,
-        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-References: <1626180159-112996-1-git-send-email-chengshuyi@linux.alibaba.com>
- <1626180159-112996-4-git-send-email-chengshuyi@linux.alibaba.com>
- <CAEf4Bza3X410=1ryu4xZ+5ST2=69CB9BDusBrLMX=VSsXtnuDQ@mail.gmail.com>
-From:   Shuyi Cheng <chengshuyi@linux.alibaba.com>
-Message-ID: <7400a2b2-1e1e-0981-3966-43492305534c@linux.alibaba.com>
-Date:   Sat, 17 Jul 2021 09:39:56 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.11.0
+        Sat, 17 Jul 2021 02:55:28 -0400
+Received: from mail-yb1-xb2c.google.com (mail-yb1-xb2c.google.com [IPv6:2607:f8b0:4864:20::b2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 815A8C06175F;
+        Fri, 16 Jul 2021 23:52:32 -0700 (PDT)
+Received: by mail-yb1-xb2c.google.com with SMTP id k184so18513238ybf.12;
+        Fri, 16 Jul 2021 23:52:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=fj4r/axWRIO6jSTkcRS6R08Hk59RDdA00RhrYBvWubg=;
+        b=PTmyJ9xuIut1vhuWMO/d0Zk/gcwgE0m2uYvkM3OcYBxo1lK07xxCASqH6KPVdIcbwB
+         O5X1X9we+GG4MGX+Wdp/or8XRYjo3q88MNgI67HDI2by+Mh3QJpei/OZFn61YSk2fU/d
+         OmnIlWWyBx4DVKy9zYNBRPd0NZEKVnTIdOYjPHJaGBQKvBWwzrjmXOsGiJs19pMP+iD6
+         qje39jgGTUS/wa2WY0VJV3hizLG961fQ43YXLd19dnhxa4KEJ2ZBhMkvaG0k3o/MC2+W
+         SGvANFiHZRzkqHjSYDIA61hBZUw8bNaVomP/aQZgJJ9gFTaOKqtKb61t61r2qm8LZimc
+         m9hA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=fj4r/axWRIO6jSTkcRS6R08Hk59RDdA00RhrYBvWubg=;
+        b=qDQU5uiSRxhQjCgR7c1L5T6spjeaKvkigckb1d6ewm26iUF06MVsGNwhj0dw15+VZd
+         UZU0NVoM1jDkx2lBcP1zrWUS9kjwc2D+9R6XKnB4+DaXrvEocna0zy3tLlOJ0NMhHHU5
+         cn1NtAE4OQ2ZF2jVsrhdi/5hkPEngOdWgx0+9g7Vvz5MLwoOkUOyHsJs3HieqY9HJsAI
+         +cGb9SiBcY/zokX35XuyF3bf8z+fxhwL0pAiDhA6afwiUhiq/g30oA2cbotsG9/GR0GU
+         8J1SI2JxFhzsbcgOq7oCsejI/Fd8PKu2R1bet/EAgd+1gfkt5zwzJidsxfBoGfTo8Zrj
+         dYeA==
+X-Gm-Message-State: AOAM532urc/3LQMcBoJirD4xO9lmouKunsPOrtvwD3LGX5oGPI5fLrXI
+        hCn5VBDxAMEN4CCHJcCbPQ6zlZ4++tfNklNHddA=
+X-Google-Smtp-Source: ABdhPJxBC15IDzQUHtW2/hmOwt6Vr+EC9eCrxIa0dfDCiEk87DOwUJW5i36noGZM43J5WJiMKdkZqyxphaBBISA9G9M=
+X-Received: by 2002:a25:ab26:: with SMTP id u35mr18449800ybi.151.1626504751445;
+ Fri, 16 Jul 2021 23:52:31 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAEf4Bza3X410=1ryu4xZ+5ST2=69CB9BDusBrLMX=VSsXtnuDQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20210625110419.24503-1-lukas.bulwahn@gmail.com>
+ <20210625110419.24503-4-lukas.bulwahn@gmail.com> <CAAdtpL6CMAbBPJr3La31Y3AYY48TjLZhDHjKWjUJxXdBS--Xmw@mail.gmail.com>
+In-Reply-To: <CAAdtpL6CMAbBPJr3La31Y3AYY48TjLZhDHjKWjUJxXdBS--Xmw@mail.gmail.com>
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date:   Sat, 17 Jul 2021 08:52:20 +0200
+Message-ID: <CAKXUXMxJS-H7ZtM0deSN493aQACTtbHH+y8C-f3XKANsH3UCHg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] arch: mips: remove dead references
+To:     =?UTF-8?Q?Philippe_Mathieu=2DDaud=C3=A9?= <f4bug@amsat.org>
+Cc:     "Maciej W . Rozycki" <macro@orcam.me.uk>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
+        Tiezhu Yang <yangtiezhu@loongson.cn>, Willy Tarreau <w@1wt.eu>,
+        linux-edac@vger.kernel.org, linux-hams@vger.kernel.org,
+        kernel-janitors <kernel-janitors@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On Sat, Jun 26, 2021 at 6:52 PM Philippe Mathieu-Daud=C3=A9 <f4bug@amsat.or=
+g> wrote:
+>
+> On Fri, Jun 25, 2021 at 1:05 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> w=
+rote:
+> >
+> > The domain lookup for linux-mips.org fails for quite some time now.
+> > Further, the two links:
+> >
+> >   http://decstation.unix-ag.org/
+>
+> https://web.archive.org/web/20061010210936/http://decstation.unix-ag.org/
+>
+> >   http://www.computer-refuge.org/classiccmp/ftp.digital.com/pub/DEC/Tri=
+Add/
+>
+> https://web.archive.org/web/20050205114151/ftp.digital.com/pub/DEC/TriAdd=
+/
+>
+> > refer to old webpages or contain no further technical information.
+>
+> FWIW the information is still online somewhere.
 
+Thanks, I prefer not to reference archive.org links, because I do not
+think that is generally a good practice. But maybe somebody with some
+mild interest in this architecture can support scanning through the
+archived web pages and we store any information still worth mentioning
+in the kernel Documentation?
 
-On 7/17/21 4:27 AM, Andrii Nakryiko wrote:
-> On Tue, Jul 13, 2021 at 5:43 AM Shuyi Cheng
-> <chengshuyi@linux.alibaba.com> wrote:
->>
->> This patch mainly replaces the bpf_object_load_attr of
->> the core_autosize.c and core_reloc.c files with bpf_object_open_opts.
->>
->> Signed-off-by: Shuyi Cheng <chengshuyi@linux.alibaba.com>
->> ---
->>   .../selftests/bpf/prog_tests/core_autosize.c       | 22 ++++++++---------
->>   .../testing/selftests/bpf/prog_tests/core_reloc.c  | 28 ++++++++++------------
->>   2 files changed, 24 insertions(+), 26 deletions(-)
->>
-> 
-> So I applied this, but it's obvious you haven't bothered even
-> *building* selftests, because it had at least one compilation warning
-> and one compilation *error*, not building test_progs at all. I've
-> noted stuff I fixed (and still remember) below. I understand it might
-> be your first kernel contribution, but it's not acceptable to submit
-> patches that don't build. Next time please be more thorough.
-> 
+Lukas
 
-I'm very sorry, it was my fault. Although I learned a lot from libbpf, 
-there is still a lot to learn and improve. Thank you very much for your 
-advice and the very powerful libbpf.
-
-regards,
-Shuyi
-
-> [...]
-> 
->>
->> -       load_attr.obj = skel->obj;
->> -       load_attr.target_btf_path = btf_file;
->> -       err = bpf_object__load_xattr(&load_attr);
->> +       err = bpf_object__load(skel);
-> 
-> This didn't compile outright, because it should have been
-> test_core_autosize__load(skel).
-> 
->>          if (!ASSERT_ERR(err, "bad_prog_load"))
->>                  goto cleanup;
->>
->> diff --git a/tools/testing/selftests/bpf/prog_tests/core_reloc.c b/tools/testing/selftests/bpf/prog_tests/core_reloc.c
->> index d02e064..10eb2407 100644
->> --- a/tools/testing/selftests/bpf/prog_tests/core_reloc.c
->> +++ b/tools/testing/selftests/bpf/prog_tests/core_reloc.c
->> @@ -816,7 +816,7 @@ static size_t roundup_page(size_t sz)
->>   void test_core_reloc(void)
->>   {
->>          const size_t mmap_sz = roundup_page(sizeof(struct data));
->> -       struct bpf_object_load_attr load_attr = {};
->> +       struct bpf_object_open_opts open_opts = {};
->>          struct core_reloc_test_case *test_case;
->>          const char *tp_name, *probe_name;
->>          int err, i, equal;
->> @@ -846,9 +846,17 @@ void test_core_reloc(void)
->>                                  continue;
->>                  }
->>
->> -               obj = bpf_object__open_file(test_case->bpf_obj_file, NULL);
->> +               if (test_case->btf_src_file) {
->> +                       err = access(test_case->btf_src_file, R_OK);
->> +                       if (!ASSERT_OK(err, "btf_src_file"))
->> +                               goto cleanup;
->> +               }
->> +
->> +               open_opts.btf_custom_path = test_case->btf_src_file;
-> 
-> This was reporting a valid warning about dropping const modifier. For
-> good reason, becyase btf_custom_path in open_opts should have been
-> `const char *`, I fixed that.
-> 
->> +               open_opts.sz = sizeof(struct bpf_object_open_opts);
->> +               obj = bpf_object__open_file(test_case->bpf_obj_file, &open_opts);
->>                  if (!ASSERT_OK_PTR(obj, "obj_open"))
->> -                       continue;
->> +                       goto cleanup;
->>
->>                  probe_name = "raw_tracepoint/sys_enter";
->>                  tp_name = "sys_enter";
-> 
-> [...]
-> 
+>
+> > Remove all those dead references.
+> >
+> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> > ---
+> >  arch/mips/Kconfig             |  8 +-------
+> >  arch/mips/jazz/Kconfig        | 12 +++---------
+> >  tools/include/nolibc/nolibc.h |  3 +--
+> >  3 files changed, 5 insertions(+), 18 deletions(-)
