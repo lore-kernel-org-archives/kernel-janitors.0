@@ -2,75 +2,90 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.5 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BA60C636C8
-	for <kernel-janitors@archiver.kernel.org>; Sun, 18 Jul 2021 14:42:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4D25C636CA
+	for <kernel-janitors@archiver.kernel.org>; Sun, 18 Jul 2021 17:37:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6820861184
-	for <kernel-janitors@archiver.kernel.org>; Sun, 18 Jul 2021 14:42:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 74B46611AE
+	for <kernel-janitors@archiver.kernel.org>; Sun, 18 Jul 2021 17:37:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234004AbhGROpP (ORCPT
+        id S229660AbhGRRkY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 18 Jul 2021 10:45:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52572 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233958AbhGROpP (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 18 Jul 2021 10:45:15 -0400
-Received: from jic23-huawei (cpc108967-cmbg20-2-0-cust86.5-4.cable.virginm.net [81.101.6.87])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F0EC66108B;
-        Sun, 18 Jul 2021 14:42:14 +0000 (UTC)
-Date:   Sun, 18 Jul 2021 15:44:39 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: light: si1145: remove redundant continue statement
-Message-ID: <20210718154439.32d89fa4@jic23-huawei>
-In-Reply-To: <20210617081312.151746-1-colin.king@canonical.com>
-References: <20210617081312.151746-1-colin.king@canonical.com>
-X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+        Sun, 18 Jul 2021 13:40:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35526 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229503AbhGRRkY (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Sun, 18 Jul 2021 13:40:24 -0400
+Received: from viti.kaiser.cx (viti.kaiser.cx [IPv6:2a01:238:43fe:e600:cd0c:bd4a:7a3:8e9f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7638DC061762;
+        Sun, 18 Jul 2021 10:37:25 -0700 (PDT)
+Received: from dslb-178-004-206-019.178.004.pools.vodafone-ip.de ([178.4.206.19] helo=martin-debian-2.paytec.ch)
+        by viti.kaiser.cx with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <martin@kaiser.cx>)
+        id 1m5Aj8-0006oR-PA; Sun, 18 Jul 2021 19:37:18 +0200
+From:   Martin Kaiser <martin@kaiser.cx>
+To:     Larry Finger <Larry.Finger@lwfinger.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Martin Kaiser <martin@kaiser.cx>
+Subject: [PATCH 01/10] staging: rtl8188eu: merge two functions
+Date:   Sun, 18 Jul 2021 19:36:01 +0200
+Message-Id: <20210718173610.894-1-martin@kaiser.cx>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 17 Jun 2021 09:13:12 +0100
-Colin King <colin.king@canonical.com> wrote:
+All that rtw_hal_read_chip_info does is call _ReadPROMContent. Merge the
+two functions.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The continue statement at the end of a for-loop has no effect,
-> remove it.
-> 
-> Addresses-Coverity: ("Continue has no effect")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Applied.
+Signed-off-by: Martin Kaiser <martin@kaiser.cx>
+---
+ drivers/staging/rtl8188eu/hal/usb_halinit.c | 15 ++++-----------
+ 1 file changed, 4 insertions(+), 11 deletions(-)
 
-Thanks,
-
-Jonathan
-
-> ---
->  drivers/iio/light/si1145.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/iio/light/si1145.c b/drivers/iio/light/si1145.c
-> index e2abad48b9f4..e8f6cdf26f22 100644
-> --- a/drivers/iio/light/si1145.c
-> +++ b/drivers/iio/light/si1145.c
-> @@ -220,7 +220,6 @@ static int __si1145_command_reset(struct si1145_data *data)
->  			return -ETIMEDOUT;
->  		}
->  		msleep(SI1145_COMMAND_MINSLEEP_MS);
-> -		continue;
->  	}
->  }
->  
+diff --git a/drivers/staging/rtl8188eu/hal/usb_halinit.c b/drivers/staging/rtl8188eu/hal/usb_halinit.c
+index 05c67e7d23ad..56de6071eb72 100644
+--- a/drivers/staging/rtl8188eu/hal/usb_halinit.c
++++ b/drivers/staging/rtl8188eu/hal/usb_halinit.c
+@@ -990,25 +990,18 @@ static void readAdapterInfo_8188EU(struct adapter *adapt)
+ 	Hal_ReadThermalMeter_88E(adapt, eeprom->efuse_eeprom_data, eeprom->bautoload_fail_flag);
+ }
+ 
+-static void _ReadPROMContent(struct adapter *Adapter)
++void rtw_hal_read_chip_info(struct adapter *Adapter)
+ {
+ 	struct eeprom_priv *eeprom = GET_EEPROM_EFUSE_PRIV(Adapter);
+-	u8 eeValue;
++	u8 eeValue = usb_read8(Adapter, REG_9346CR);
+ 
+-	/* check system boot selection */
+-	eeValue = usb_read8(Adapter, REG_9346CR);
+-	eeprom->EepromOrEfuse		= (eeValue & BOOT_FROM_EEPROM) ? true : false;
+-	eeprom->bautoload_fail_flag	= (eeValue & EEPROM_EN) ? false : true;
++	eeprom->EepromOrEfuse = (eeValue & BOOT_FROM_EEPROM) ? true : false;
++	eeprom->bautoload_fail_flag = (eeValue & EEPROM_EN) ? false : true;
+ 
+ 	Hal_InitPGData88E(Adapter);
+ 	readAdapterInfo_8188EU(Adapter);
+ }
+ 
+-void rtw_hal_read_chip_info(struct adapter *Adapter)
+-{
+-	_ReadPROMContent(Adapter);
+-}
+-
+ #define GPIO_DEBUG_PORT_NUM 0
+ static void rtl8192cu_trigger_gpio_0(struct adapter *adapt)
+ {
+-- 
+2.20.1
 
