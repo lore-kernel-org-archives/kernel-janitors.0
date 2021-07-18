@@ -2,111 +2,75 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.5 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ADD0C636CA
-	for <kernel-janitors@archiver.kernel.org>; Sat, 17 Jul 2021 21:05:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BA60C636C8
+	for <kernel-janitors@archiver.kernel.org>; Sun, 18 Jul 2021 14:42:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3490061008
-	for <kernel-janitors@archiver.kernel.org>; Sat, 17 Jul 2021 21:05:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6820861184
+	for <kernel-janitors@archiver.kernel.org>; Sun, 18 Jul 2021 14:42:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235461AbhGQVID (ORCPT
+        id S234004AbhGROpP (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 17 Jul 2021 17:08:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51276 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231542AbhGQVIB (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 17 Jul 2021 17:08:01 -0400
-X-Greylist: delayed 352 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 17 Jul 2021 14:05:04 PDT
-Received: from smtp.gentoo.org (smtp.gentoo.org [IPv6:2001:470:ea4a:1:5054:ff:fec7:86e4])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 256F1C061762;
-        Sat, 17 Jul 2021 14:05:04 -0700 (PDT)
-From:   Joshua Kinard <kumba@gentoo.org>
-Subject: Re: [PATCH v2 1/3] MAINTAINERS: mark sections from Ralf Baechle
- orphan
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>
-Cc:     "Maciej W . Rozycki" <macro@orcam.me.uk>,
-        Tiezhu Yang <yangtiezhu@loongson.cn>, Willy Tarreau <w@1wt.eu>,
-        linux-edac@vger.kernel.org, linux-hams@vger.kernel.org,
-        kernel-janitors <kernel-janitors@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20210625110419.24503-1-lukas.bulwahn@gmail.com>
- <20210625110419.24503-2-lukas.bulwahn@gmail.com>
- <CAKXUXMxFBaBneVZf3WCCYJ8Theu55Nf-gFe=hs5u3mMVd41mTw@mail.gmail.com>
-Openpgp: preference=signencrypt
-Message-ID: <c9e6753b-ce4d-fe63-1b4d-fc37cca77a3b@gentoo.org>
-Date:   Sat, 17 Jul 2021 16:59:08 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Sun, 18 Jul 2021 10:45:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52572 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233958AbhGROpP (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Sun, 18 Jul 2021 10:45:15 -0400
+Received: from jic23-huawei (cpc108967-cmbg20-2-0-cust86.5-4.cable.virginm.net [81.101.6.87])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F0EC66108B;
+        Sun, 18 Jul 2021 14:42:14 +0000 (UTC)
+Date:   Sun, 18 Jul 2021 15:44:39 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: light: si1145: remove redundant continue statement
+Message-ID: <20210718154439.32d89fa4@jic23-huawei>
+In-Reply-To: <20210617081312.151746-1-colin.king@canonical.com>
+References: <20210617081312.151746-1-colin.king@canonical.com>
+X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <CAKXUXMxFBaBneVZf3WCCYJ8Theu55Nf-gFe=hs5u3mMVd41mTw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 7/17/2021 03:03, Lukas Bulwahn wrote:
-> On Fri, Jun 25, 2021 at 1:04 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
->>
->> The domain lookup for linux-mips.org fails for quite some time now. Hence,
->> webpages, the patchwork instance and Ralf Baechle's email there is not
->> reachable anymore.
->>
-> 
-> There has not been any specific comment on marking kernel parts solely
-> "maintained" by Ralf Baechle as Orphan.
-> 
-> So, given the feedback on this overall patch set from Maciej and Kurt:
-> - the domain lookup for linux-mips.org does resolve again.
-> - the patchwork instance moved.
-> - Ralf Baechle's email now does at least forward somewhere.
-> 
-> However, it still holds that:
-> 
-> Ralf Baechle has not been active since February 2018; so, set all
-> MAINTAINERS sections with Ralf as sole maintainer to Orphan, and give
-> others a chance to claim maintainership if these sections are still of
-> interest.
-> 
-> I suggest that independent of the other patches in this patch set, I
-> rework the commit message of this patch here (basically dropping the
-> first sentence) and send out a final patch for this subject that
-> Thomas can then pick.
-> 
-> Any comments or rejections to that suggestion?
-> 
-> Lukas
+On Thu, 17 Jun 2021 09:13:12 +0100
+Colin King <colin.king@canonical.com> wrote:
 
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The continue statement at the end of a for-loop has no effect,
+> remove it.
+> 
+> Addresses-Coverity: ("Continue has no effect")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Applied.
 
->> @@ -9654,9 +9652,8 @@ F:        Documentation/devicetree/bindings/iio/gyroscope/invensense,mpu3050.yaml
->>  F:     drivers/iio/gyro/mpu3050*
->>
->>  IOC3 ETHERNET DRIVER
->> -M:     Ralf Baechle <ralf@linux-mips.org>
->>  L:     linux-mips@vger.kernel.org
->> -S:     Maintained
->> +S:     Orphan
->>  F:     drivers/net/ethernet/sgi/ioc3-eth.c
+Thanks,
 
-Thomas virtually re-wrote this driver, so it is probably more appropriate to
-leave it as maintained, but mark him as the maintainer.
+Jonathan
 
--- 
-Joshua Kinard
-Gentoo/MIPS
-kumba@gentoo.org
-rsa6144/5C63F4E3F5C6C943 2015-04-27
-177C 1972 1FB8 F254 BAD0 3E72 5C63 F4E3 F5C6 C943
+> ---
+>  drivers/iio/light/si1145.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/iio/light/si1145.c b/drivers/iio/light/si1145.c
+> index e2abad48b9f4..e8f6cdf26f22 100644
+> --- a/drivers/iio/light/si1145.c
+> +++ b/drivers/iio/light/si1145.c
+> @@ -220,7 +220,6 @@ static int __si1145_command_reset(struct si1145_data *data)
+>  			return -ETIMEDOUT;
+>  		}
+>  		msleep(SI1145_COMMAND_MINSLEEP_MS);
+> -		continue;
+>  	}
+>  }
+>  
 
-"The past tempts us, the present confuses us, the future frightens us.  And
-our lives slip away, moment by moment, lost in that vast, terrible in-between."
-
---Emperor Turhan, Centauri Republic
