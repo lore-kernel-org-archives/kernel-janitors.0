@@ -2,81 +2,92 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39508C07E9D
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Jul 2021 14:38:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1946C07E9B
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Jul 2021 17:04:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2148C6115B
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Jul 2021 14:38:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D12360E0C
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Jul 2021 17:04:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241084AbhGSN5W (ORCPT
+        id S1347741AbhGSQXs (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 19 Jul 2021 09:57:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33522 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S241054AbhGSN5R (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 19 Jul 2021 09:57:17 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 49DB861107;
-        Mon, 19 Jul 2021 14:37:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1626705476;
-        bh=VNwdS0+8c9WbGN3K5A5MZ3wG/e+O8rjIniWqtVydlw8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BOJ5IEM2OpxchkGJILvsPCVblPpGHWfvF6iEE9LzWKDgXppgK8DYn3J0OIrazAMV1
-         KO33DjU9ujzMGMgn8O1d0pCLwnxom/idp2ReGECAZDTlaDT0EnmWUWPQ6YBiTmaZQ0
-         x9T1lrqX/BWESBmkZLzq0Qg2K7ujXHva0XRDQaubfx8lbaFIubSIPcvuhtpiGnSltt
-         n1OyEKHENrrBtmt6yiQSDy+TCYfZqZloO6u9KzxCbmRpUROVvtZFi01FYuRL4V9XZN
-         vlealkPHmtxAWH4jvA8LrnDLPFWByTyYEwQ4I/g5YeUCDInnHpJE8w8jhuONL2fwFx
-         1ojOJ1/igEb7Q==
-From:   Mark Brown <broonie@kernel.org>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Colin King <colin.king@canonical.com>
-Cc:     Mark Brown <broonie@kernel.org>, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] regulator: Fix a couple of spelling mistakes in Kconfig
-Date:   Mon, 19 Jul 2021 15:37:43 +0100
-Message-Id: <162670521669.50753.17260706438616909217.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20210719103429.15544-1-colin.king@canonical.com>
-References: <20210719103429.15544-1-colin.king@canonical.com>
+        Mon, 19 Jul 2021 12:23:48 -0400
+Received: from smtp06.smtpout.orange.fr ([80.12.242.128]:19578 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1349685AbhGSQVp (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 19 Jul 2021 12:21:45 -0400
+Received: from localhost.localdomain ([80.15.159.30])
+        by mwinf5d82 with ME
+        id X52H2500Q0feRjk0352JKU; Mon, 19 Jul 2021 19:02:19 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 19 Jul 2021 19:02:19 +0200
+X-ME-IP: 80.15.159.30
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     mustafa.ismail@intel.com, shiraz.saleem@intel.com,
+        dledford@redhat.com, jgg@ziepe.ca
+Cc:     linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] RDMA/irdma: Improve the way 'cqp_request' structures are cleaned when they are recycled
+Date:   Mon, 19 Jul 2021 19:02:15 +0200
+Message-Id: <7f93f2a2c2fd18ddfeb99339d175b85ffd1c6398.1626713915.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, 19 Jul 2021 11:34:29 +0100, Colin King wrote:
-> There are a couple of spelling mistakes in the Kconfig text. Fix them.
+A set of IRDMA_CQP_SW_SQSIZE_2048 (i.e. 2048) 'cqp_request' are
+pre-allocated and zeroed in 'irdma_create_cqp()' (hw.c).  These
+structures are managed with the 'cqp->cqp_avail_reqs' list which keeps
+track of available entries.
 
-Applied to
+In 'irdma_free_cqp_request()' (utils.c), when an entry is recycled and goes
+back to the 'cqp_avail_reqs' list, some fields are reseted.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+However, one of these fields, 'compl_info', is initialized within
+'irdma_alloc_and_get_cqp_request()'.
 
-Thanks!
+Move the corresponding memset to 'irdma_free_cqp_request()' so that the
+clean-up is done in only one place. This makes the logic more easy to
+understand.
 
-[1/1] regulator: Fix a couple of spelling mistakes in Kconfig
-      commit: f020e4d0b4016f5592d082cc3a1db430c567c4dc
+This also saves this memset in the case that the 'cqp_avail_reqs' list is
+empty and a new 'cqp_request' structure must be allocated. This memset is
+useless, because the structure is already kzalloc'ed.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/infiniband/hw/irdma/utils.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+diff --git a/drivers/infiniband/hw/irdma/utils.c b/drivers/infiniband/hw/irdma/utils.c
+index 5bbe44e54f9a..66711024d38b 100644
+--- a/drivers/infiniband/hw/irdma/utils.c
++++ b/drivers/infiniband/hw/irdma/utils.c
+@@ -445,7 +445,6 @@ struct irdma_cqp_request *irdma_alloc_and_get_cqp_request(struct irdma_cqp *cqp,
+ 
+ 	cqp_request->waiting = wait;
+ 	refcount_set(&cqp_request->refcnt, 1);
+-	memset(&cqp_request->compl_info, 0, sizeof(cqp_request->compl_info));
+ 
+ 	return cqp_request;
+ }
+@@ -475,6 +474,7 @@ void irdma_free_cqp_request(struct irdma_cqp *cqp,
+ 		cqp_request->request_done = false;
+ 		cqp_request->callback_fcn = NULL;
+ 		cqp_request->waiting = false;
++		memset(&cqp_request->compl_info, 0, sizeof(cqp_request->compl_info));
+ 
+ 		spin_lock_irqsave(&cqp->req_lock, flags);
+ 		list_add_tail(&cqp_request->list, &cqp->cqp_avail_reqs);
+-- 
+2.30.2
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
