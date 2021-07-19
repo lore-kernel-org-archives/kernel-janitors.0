@@ -2,87 +2,76 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F244C07E9B
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Jul 2021 10:34:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82ECFC07E9D
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Jul 2021 13:44:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1441061006
-	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Jul 2021 10:34:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 680A36115B
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Jul 2021 13:44:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236289AbhGSJxv (ORCPT
+        id S240148AbhGSNEO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 19 Jul 2021 05:53:51 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:47206
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235440AbhGSJxv (ORCPT
+        Mon, 19 Jul 2021 09:04:14 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:51322 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240133AbhGSNEM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 19 Jul 2021 05:53:51 -0400
-Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 272FC40334;
-        Mon, 19 Jul 2021 10:34:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1626690870;
-        bh=oD0uyN5gHA69IbTnnbd6ii92QeiCFwsBKCa7VtjsOp8=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=p3RfhgLW4LF4rmf7I9Hq2e7Ay9l58gFnwmJm19NIr1bnkA2yRT737hF9y3UpXd3VC
-         2V5VnURhQLvcpqoTMq3nNHGZR+nYnGWKNrSW8+LZbc+TPpamgtuwtrlEnZMIMVZyvn
-         2sJOB62r9J+8avlZwMwAMfnqPOmzK9Ko06X/tlM6oAbAN+0l5TNcWsF3K6fGhyuzWM
-         9U4uqacf/bsYjGzBnD4DQs1zo0Ihx9pNXBh8hsiyC9eZax/A0sEzueB3yrUYbwSTcR
-         lyV3fltBZyWbWnXXAJ9R2IkRuLSDVJkhOqm/9bLGZbqSMvxDsPyo/pOa4NTtvkPmc7
-         bK1IRNITu5q2g==
-From:   Colin King <colin.king@canonical.com>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] regulator: Fix a couple of spelling mistakes in Kconfig
-Date:   Mon, 19 Jul 2021 11:34:29 +0100
-Message-Id: <20210719103429.15544-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.31.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Mon, 19 Jul 2021 09:04:12 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id AA01022355;
+        Mon, 19 Jul 2021 13:44:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1626702291; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=YJwyvBjHB8ZM2yh3ivPWr6JnuP52juZEURFrxcX+zJ0=;
+        b=H4T2rSUIz6SSTJMHc+hulYFN+svT7tadU1HGm8NDh7JHsxsv13Nm6DLXRjGJa8nd1oIE7x
+        +W3BnDiynPYsVILVFt2uhhsr+RK3P29UpWYwH1SHf7Ndrp9g++bm/pyfFMElYiDyHhE7Vp
+        lgF9flFF2HtgOhADDqpbPFhLwqcP+OY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1626702291;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=YJwyvBjHB8ZM2yh3ivPWr6JnuP52juZEURFrxcX+zJ0=;
+        b=aAjgw+pjDi7WnzzGDiOV+/cJwrwg580ycpA50f+rBjsRq4aBgXCPfwLmD3fnypLGwCwkd7
+        CNoRWXj2dpuDlXBQ==
+Received: from alsa1.suse.de (alsa1.suse.de [10.160.4.42])
+        by relay2.suse.de (Postfix) with ESMTP id 93846A3B89;
+        Mon, 19 Jul 2021 13:44:51 +0000 (UTC)
+Date:   Mon, 19 Jul 2021 15:44:51 +0200
+Message-ID: <s5heebus9ik.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sound: Fix spelling mistake "synchronization" -> "synchronization"
+In-Reply-To: <20210719103044.15315-1-colin.king@canonical.com>
+References: <20210719103044.15315-1-colin.king@canonical.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Mon, 19 Jul 2021 12:30:44 +0200,
+Colin King wrote:
+> 
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> There is a spelling mistake in the Kconfig text. Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-There are a couple of spelling mistakes in the Kconfig text. Fix them.
+Thanks, applied.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/regulator/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
-index 6562d4c243b0..c63d5faa883c 100644
---- a/drivers/regulator/Kconfig
-+++ b/drivers/regulator/Kconfig
-@@ -1044,7 +1044,7 @@ config REGULATOR_RT6160
- 	help
- 	  This adds support for voltage regulator in Richtek RT6160.
- 	  This device automatically change voltage output mode from
--	  Buck or Boost. The mode transistion depend on the input source voltage.
-+	  Buck or Boost. The mode transition depend on the input source voltage.
- 	  The wide output range is from 2025mV to 5200mV and can be used on most
- 	  common application scenario.
- 
-@@ -1053,7 +1053,7 @@ config REGULATOR_RT6245
- 	depends on I2C
- 	select REGMAP_I2C
- 	help
--	  This adds supprot for Richtek RT6245 voltage regulator.
-+	  This adds support for Richtek RT6245 voltage regulator.
- 	  It can support up to 14A output current and adjustable output voltage
- 	  from 0.4375V to 1.3875V, per step 12.5mV.
- 
--- 
-2.31.1
-
+Takashi
