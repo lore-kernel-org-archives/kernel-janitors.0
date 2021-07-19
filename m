@@ -2,191 +2,170 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31A41C636CB
-	for <kernel-janitors@archiver.kernel.org>; Sun, 18 Jul 2021 17:37:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43560C636CA
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Jul 2021 01:31:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1CE446120A
-	for <kernel-janitors@archiver.kernel.org>; Sun, 18 Jul 2021 17:37:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1AFF761029
+	for <kernel-janitors@archiver.kernel.org>; Mon, 19 Jul 2021 01:31:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231902AbhGRRkv (ORCPT
+        id S233807AbhGSBey (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 18 Jul 2021 13:40:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35594 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230273AbhGRRki (ORCPT
+        Sun, 18 Jul 2021 21:34:54 -0400
+Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:24436 "EHLO
+        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233713AbhGSBex (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 18 Jul 2021 13:40:38 -0400
-Received: from viti.kaiser.cx (viti.kaiser.cx [IPv6:2a01:238:43fe:e600:cd0c:bd4a:7a3:8e9f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FAFCC061762;
-        Sun, 18 Jul 2021 10:37:40 -0700 (PDT)
-Received: from dslb-178-004-206-019.178.004.pools.vodafone-ip.de ([178.4.206.19] helo=martin-debian-2.paytec.ch)
-        by viti.kaiser.cx with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <martin@kaiser.cx>)
-        id 1m5AjP-0006oR-G9; Sun, 18 Jul 2021 19:37:35 +0200
-From:   Martin Kaiser <martin@kaiser.cx>
-To:     Larry Finger <Larry.Finger@lwfinger.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Martin Kaiser <martin@kaiser.cx>
-Subject: [PATCH 10/10] staging: rtl8188eu: remove cut_mask field from wl_pwr_cfg
-Date:   Sun, 18 Jul 2021 19:36:10 +0200
-Message-Id: <20210718173610.894-10-martin@kaiser.cx>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20210718173610.894-1-martin@kaiser.cx>
-References: <20210718173610.894-1-martin@kaiser.cx>
+        Sun, 18 Jul 2021 21:34:53 -0400
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 16J1VfbD030539;
+        Mon, 19 Jul 2021 01:31:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : message-id : references : date : in-reply-to : content-type :
+ mime-version; s=corp-2021-07-09;
+ bh=G/e9BuedRifjwOulIhD/SbGVQF9PS8AlvXyaAOCpycE=;
+ b=bEvGHU4THSPlnupj17xc6mKMz8zOGFh/TV/OlVv99StZNO1TJM9Ney29ygKxaHENAleE
+ DBHeHFq/VbThE/pYZjNXP2p64bFCWehT/mAMQlhGaji74LZIaDKmqzKDspP29ol8JTtA
+ wyyuO21aiDMiAm6qhL/C8BNZ6gRP66GVUr3yEaXerJMMyCx4/OJc7mQbfc6YGxL6Rp2/
+ 1XFEi1x3iHKXwT/e8VE+ynPIicxfYR2B2d/x/IHnp64gaZHNvHykio9KlO0C1upcFRCg
+ z09gHXFhe9hEI7iI99t0GRITUCFcShQNry9uS+OGMTzoAPB/nNXq4RoZOEeQEQeAZmkC 0g== 
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : message-id : references : date : in-reply-to : content-type :
+ mime-version; s=corp-2020-01-29;
+ bh=G/e9BuedRifjwOulIhD/SbGVQF9PS8AlvXyaAOCpycE=;
+ b=XyYJ/aNNPfY1RMmTdPtBubJ1eaqmQI6eOHI+/uwuye3BROThfDo7EcQetZkVagtYs3Sq
+ l5FHIQzaMSaMwfuSwN8XeBNLZs+cADHgfh4xpEVz/vXoGVuiuvKbwK+IAIQLcgTFv7bY
+ R92DsUYig3HTPAog1OInv+fq50MTszgBJz2up1hgyS+0Gh1mTxqfWEHznR2ZjkFN87WO
+ Th3mIHepWyfrzWHxr+BOdzKa1STErAZ5SvLIoMGkB/51Z+FTYiMkMcYM74H4tKHNhjaT
+ MaZNY5rqN0p1638ld2IPIo7oOL5nL+BRt49Nu2VglPFRUYtc5w6kEBV4UTftexDkLyvV Rg== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by mx0b-00069f02.pphosted.com with ESMTP id 39up031vn9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 19 Jul 2021 01:31:50 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 16J1FBGi120216;
+        Mon, 19 Jul 2021 01:31:50 GMT
+Received: from nam04-dm6-obe.outbound.protection.outlook.com (mail-dm6nam08lp2041.outbound.protection.outlook.com [104.47.73.41])
+        by aserp3030.oracle.com with ESMTP id 39upe7b6nn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 19 Jul 2021 01:31:49 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ihLk1CnTBHU9eKx8LDuDAngkiDJQhPZvduxt1wqZn9IYX4bAN3PJFp2s7DNy6i5kzPadhx3gPSCKgLbZs5iiyOpXc2n0eslFmVa2d2QSTOToUE2HMr1BXFIi/X8h/BBzb0nM2H62poUAmNZlFymRPGrWkG2UnKQmP5wFmgjLu3MMfEiPZoaUUvFgpW7SvS3kT52ZJLmNFU0A8HA3bLHhftvB91p/stBELaAAFU3urzY1f+LpahtXEclWC4UmZnHJ4eOXa/4LfLV/D+38Ewi1xYpixSQjmVTVK5eG5P+jD3zKtGxpoauuj1z1CPaZVq99xGprvQP7cCy+doNn6OrJmg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=G/e9BuedRifjwOulIhD/SbGVQF9PS8AlvXyaAOCpycE=;
+ b=RPxRsgb0as7eA72vhby5E+Zwj5eXsnP8kMnFLOH/PdoX3lMMOo8rj/03XZsxa5g1MF6kDlfWDaqKpjkonJGoZSdyAm7d7KOZYFke2BFgoF1FW9b/N6VvBpVkk5QXAhjZurcMfa4Y1V1DlspwWvcBc8JuX5VE4b1ivB9CtVxCmXwlAke1HhtZBE7DNWKYe/PIJSyIGa+imI7qHilvhBMQ32vWbK1xc/L6pS0Y7ZuKsyyRvU4UL1c9CF2h3Po+6Ftm72XV9TfOJMxqt7yWC7BHnwPFyDgsDfaKTaW3ioqXbjkv8ZVi9I/uVJIi4z9eBqa05yhEnLF4eEV29M/vUBkDDQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=G/e9BuedRifjwOulIhD/SbGVQF9PS8AlvXyaAOCpycE=;
+ b=E9x3px0LSx/T0FZOAxvJbXAc+3L3raIuKI9L7r6vBJulXvc3jbUVsALlcGB+hojycrmSN/y4MMxgjE1Z64J9bGeUXG3zz9pARFPbA6c5L5ejXZvi1+wMdKFY1Rn+zmPkzVXX2kUmSDNWRTnATJYD/I9OrmIlfOWIg/sA/5jQVzc=
+Authentication-Results: canonical.com; dkim=none (message not signed)
+ header.d=none;canonical.com; dmarc=none action=none header.from=oracle.com;
+Received: from PH0PR10MB4759.namprd10.prod.outlook.com (2603:10b6:510:3d::12)
+ by PH0PR10MB4613.namprd10.prod.outlook.com (2603:10b6:510:33::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4331.24; Mon, 19 Jul
+ 2021 01:31:48 +0000
+Received: from PH0PR10MB4759.namprd10.prod.outlook.com
+ ([fe80::153e:22d1:d177:d4f1]) by PH0PR10MB4759.namprd10.prod.outlook.com
+ ([fe80::153e:22d1:d177:d4f1%8]) with mapi id 15.20.4331.032; Mon, 19 Jul 2021
+ 01:31:48 +0000
+To:     Colin King <colin.king@canonical.com>
+Cc:     Nilesh Javali <njavali@marvell.com>,
+        GR-QLogic-Storage-Upstream@marvell.com,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scsi: qla2xxx: remove redundant continue statement in a
+ for-loop
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <yq1fswb143s.fsf@ca-mkp.ca.oracle.com>
+References: <20210702131542.19880-1-colin.king@canonical.com>
+Date:   Sun, 18 Jul 2021 21:31:44 -0400
+In-Reply-To: <20210702131542.19880-1-colin.king@canonical.com> (Colin King's
+        message of "Fri, 2 Jul 2021 14:15:42 +0100")
+Content-Type: text/plain
+X-ClientProxiedBy: SN1PR12CA0097.namprd12.prod.outlook.com
+ (2603:10b6:802:21::32) To PH0PR10MB4759.namprd10.prod.outlook.com
+ (2603:10b6:510:3d::12)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from ca-mkp.ca.oracle.com (138.3.200.58) by SN1PR12CA0097.namprd12.prod.outlook.com (2603:10b6:802:21::32) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4331.21 via Frontend Transport; Mon, 19 Jul 2021 01:31:47 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 0d386158-9b8a-4452-3a55-08d94a54fa10
+X-MS-TrafficTypeDiagnostic: PH0PR10MB4613:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <PH0PR10MB46136C0D596D5081A17DDEC78EE19@PH0PR10MB4613.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:7219;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: MO8B0jXJ3DdpSzrFzmOZ2JeXuxrWNnM2OAF/lJcvrKjCKxifpmpoz1u9K/57DvkoPvEuA7mm/zx/jdXEHqhad+t3M7zx2wLMuRisYUsXlPcOrbpKwOUoVjZAizlVCebXsHyVm7FqnQ+uyLFXeAC6khBaNH4zvqDNVnBdQvuL2RoguxQSgtY06wBBr+trCxYoxK9vNRzCdcZWUCobNwKWlQmEa1bhCFcpNWxgzaWteoqTr6GPQREP8z6dvJYtp+Ix74Qxp+J3tYWTSpfKLweZCgXbBGjNFj1ID65ulPgUy+IR+PJQ8piXwCIXVnilox/RfsTRpgGAwXFSowXgQjzWsgyQwsjoq9ObByUxh0D/P0arYWD9q3yaFvRsGZmX8edB8YpyUOQorQGenOO/7Eu3jnRkO4ifJhX/iOVKxLFbUQVK66vAX2UrbtTyHYKNFIwJribP8qId2Uh52NAnTZWbLA4XrkechvwQR7ty8O/POfIOq0/aA3FtXSr+q1lkGop9RHDGKuAvfl15j1Nz5bY7hPsFKzwlt3ihITsh+oXsa6zpGke59FZ5+f4rxOis7Awn8+ExV9xWlmQ1n6LUklnLVKXfPANPcUO4xcyizcBfQxITpTm3xDxj63HY8zgJx2YNQPfPTglMaVlKZ0LEdA8S3r3iIz853+AdfEw3r7SlFkZIeNk0WoYq+JKQUuZuPwJSCJzuKenVCUilm/Z9p/239w==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB4759.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(39860400002)(136003)(376002)(366004)(396003)(346002)(8676002)(4326008)(558084003)(55016002)(38350700002)(38100700002)(8936002)(86362001)(6666004)(6916009)(2906002)(478600001)(66946007)(66476007)(66556008)(5660300002)(956004)(36916002)(26005)(54906003)(52116002)(7696005)(316002)(186003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?TSPjoszhgKkf9EPrJrCjPTjZ1ce2xLTr6XeQspFWVA4WWL6dLvsAcz0e4e7u?=
+ =?us-ascii?Q?mLUiUv1d0iqUje0kX4IL1tsaXSHGhAIxWvnnP+9wxJ34LYShhHhuEj+QQUpH?=
+ =?us-ascii?Q?F7SJrU1ZiZnaFmG5IyoO4dnUZx0ES43MfxBQXIlb1+jeD5kFkuYc4MMNtKut?=
+ =?us-ascii?Q?vgudIy1plpsCqFGZrx1U4GA8aqCZveOOhfBTV8IeZrivH+ORlgdfIzGSFHTv?=
+ =?us-ascii?Q?sThyCWdtLK0Crlh2i7hDVV+3l1xtEm0lzjJiUrCOewKz23pJWitrif1qISdG?=
+ =?us-ascii?Q?Xl+ZP0o0HTKiFUyZ+JLbUzJ1zVISYA7jteuK9ok4NtiWQ1FiOY6WryE/+2rg?=
+ =?us-ascii?Q?ve+LQYtZvAkHqsh8MejJoDcdDK72d7YT8X8XNT+e13EcGaCacBszKWPZV3Be?=
+ =?us-ascii?Q?65I293ohNoryMbmza+DWfPhUgrNY3wWgQr7UYXcMJyXO7fxepai0BYB+wVs7?=
+ =?us-ascii?Q?/EY72ugxIV1256Etm/ebV+3gHzP67LWEzMkapPcQ9aFpjJaQOvSdLG+19NGa?=
+ =?us-ascii?Q?b8iwQ6Vqz3OJkrFrzarjynZyGI4j40sw9Wg9gWF81ItO9Z5VXkRNhWwGhNLQ?=
+ =?us-ascii?Q?WBagD/GeEbYQlR/WGPj6eLOXCnwZKBi+XLdR66CUwvQ0l5cJUEatLKV3ldb4?=
+ =?us-ascii?Q?jVyoJhlObjrSuIe9ZzJidthsVAL/pAsLNMpMjDj7Ps0Cxu8Ygb563wpREy9F?=
+ =?us-ascii?Q?cmh8k8gK935iNKZpFL9uFw+nO1++YModRwXyLrrtxqguAZLSVL3RqAT3ICHG?=
+ =?us-ascii?Q?YH91jIpOesK9PMnDoMwPtbaT0LsStVPw5IoLq1feylptstGT5jWTAqAoZ3Fj?=
+ =?us-ascii?Q?Rq2+xnqHWYIN/SygiLRvgmfPEKg9P6UoMMxbhg5MNrVKJvNRBz2LtN7hngBW?=
+ =?us-ascii?Q?RBj4hvenBHhq9kcRIL5KTJKShlGVj6q1uzFvWnrL+xOjHz7jJUetsYB+dVDZ?=
+ =?us-ascii?Q?A82qpLLXKS2N51hjEvvTa0U5UGSYgVZJV/SOevNm+C299Zq7AfulICooqt6P?=
+ =?us-ascii?Q?h3uQEHQxZtXp8Hr6RGSy/pJciLzgqfZ8tWe31ln91w1Gm5cL96oZcpSzXwue?=
+ =?us-ascii?Q?MMClqMZ0X8oP/6hJNYboT0enDF+1v2J87t29cZ1Y/zGoj1xsGH7W6FDgCcg0?=
+ =?us-ascii?Q?HreFKQ19+QUx/bDvjj4VmOy/yGzJTXOKAJ8HOKioVRG5kLO1GoMimrTb4wVz?=
+ =?us-ascii?Q?bnySBReXav61ezfQJS8Va7RwUU/JwPLhI7CWOtYvMvYFjtxUfC6ikAh0DeAt?=
+ =?us-ascii?Q?oHQ1n7GdLAGpjpcJWqgI3lyFYF0mJHuJJy7bSDwxNzzIsDkAWANdrARPGaCK?=
+ =?us-ascii?Q?G0hw0oX9/+gkJMuc40uezz8F?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0d386158-9b8a-4452-3a55-08d94a54fa10
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB4759.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jul 2021 01:31:48.4215
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: dMettjGrtuPR20roHzSuF5aKSjPcbqjKL5QaFXx4CQn3kVFqPhLnbmXpeY10xrsQaPnIp61YU0sdG/8vJ5tsdR9MkwqMvrwYKZ/oYToXQ8g=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB4613
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=10049 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 suspectscore=0 bulkscore=0
+ malwarescore=0 phishscore=0 mlxlogscore=999 mlxscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
+ definitions=main-2107190006
+X-Proofpoint-GUID: utpO84LMmZ9W_PZn3p4ZL43osipQiyvy
+X-Proofpoint-ORIG-GUID: utpO84LMmZ9W_PZn3p4ZL43osipQiyvy
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-We're no longer matching power transitions and commands against a
-power cut version mask.
 
-The cut_mask field from struct wl_pwr_cfg can be removed. It was set to
-PWR_CUT_ALL_MSK for all remaining commands.
+Colin,
 
-Signed-off-by: Martin Kaiser <martin@kaiser.cx>
----
- drivers/staging/rtl8188eu/include/pwrseq.h    | 56 +++++++++----------
- drivers/staging/rtl8188eu/include/pwrseqcmd.h |  1 -
- 2 files changed, 28 insertions(+), 29 deletions(-)
+> The continue statement at the end of the for-loop is redundant, remove
+> it.
 
-diff --git a/drivers/staging/rtl8188eu/include/pwrseq.h b/drivers/staging/rtl8188eu/include/pwrseq.h
-index caa6bf71da77..5a7b4206d240 100644
---- a/drivers/staging/rtl8188eu/include/pwrseq.h
-+++ b/drivers/staging/rtl8188eu/include/pwrseq.h
-@@ -34,21 +34,21 @@
- 	 * },
- 	 * comment here
- 	 */								\
--	{0x0006, PWR_CUT_ALL_MSK, PWR_CMD_POLLING, BIT(1), BIT(1)}, \
-+	{0x0006, PWR_CMD_POLLING, BIT(1), BIT(1)}, \
- 	/* wait till 0x04[17] = 1    power ready*/	\
--	{0x0002, PWR_CUT_ALL_MSK, PWR_CMD_WRITE, BIT(0) | BIT(1), 0}, \
-+	{0x0002, PWR_CMD_WRITE, BIT(0) | BIT(1), 0}, \
- 	/* 0x02[1:0] = 0	reset BB*/				\
--	{0x0026, PWR_CUT_ALL_MSK, PWR_CMD_WRITE, BIT(7), BIT(7)}, \
-+	{0x0026, PWR_CMD_WRITE, BIT(7), BIT(7)}, \
- 	/*0x24[23] = 2b'01 schmit trigger */				\
--	{0x0005, PWR_CUT_ALL_MSK, PWR_CMD_WRITE, BIT(7), 0}, \
-+	{0x0005, PWR_CMD_WRITE, BIT(7), 0}, \
- 	/* 0x04[15] = 0 disable HWPDN (control by DRV)*/		\
--	{0x0005, PWR_CUT_ALL_MSK, PWR_CMD_WRITE, BIT(4) | BIT(3), 0}, \
-+	{0x0005, PWR_CMD_WRITE, BIT(4) | BIT(3), 0}, \
- 	/*0x04[12:11] = 2b'00 disable WL suspend*/			\
--	{0x0005, PWR_CUT_ALL_MSK, PWR_CMD_WRITE, BIT(0), BIT(0)}, \
-+	{0x0005, PWR_CMD_WRITE, BIT(0), BIT(0)}, \
- 	/*0x04[8] = 1 polling until return 0*/				\
--	{0x0005, PWR_CUT_ALL_MSK, PWR_CMD_POLLING, BIT(0), 0}, \
-+	{0x0005, PWR_CMD_POLLING, BIT(0), 0}, \
- 	/*wait till 0x04[8] = 0*/					\
--	{0x0023, PWR_CUT_ALL_MSK, PWR_CMD_WRITE, BIT(4), 0}, \
-+	{0x0023, PWR_CMD_WRITE, BIT(4), 0}, \
- 	/*LDO normal mode*/
- 
- #define RTL8188E_TRANS_ACT_TO_CARDEMU					\
-@@ -57,13 +57,13 @@
- 	 * },
- 	 * comments here
- 	 */								\
--	{0x001F, PWR_CUT_ALL_MSK, PWR_CMD_WRITE, 0xFF, 0}, \
-+	{0x001F, PWR_CMD_WRITE, 0xFF, 0}, \
- 	/*0x1F[7:0] = 0 turn off RF*/					\
--	{0x0023, PWR_CUT_ALL_MSK, PWR_CMD_WRITE, BIT(4), BIT(4)}, \
-+	{0x0023, PWR_CMD_WRITE, BIT(4), BIT(4)}, \
- 	/*LDO Sleep mode*/						\
--	{0x0005, PWR_CUT_ALL_MSK, PWR_CMD_WRITE, BIT(1), BIT(1)}, \
-+	{0x0005, PWR_CMD_WRITE, BIT(1), BIT(1)}, \
- 	/*0x04[9] = 1 turn off MAC by HW state machine*/		\
--	{0x0005, PWR_CUT_ALL_MSK, PWR_CMD_POLLING, BIT(1), 0}, \
-+	{0x0005, PWR_CMD_POLLING, BIT(1), 0}, \
- 	/*wait till 0x04[9] = 0 polling until return 0 to disable*/
- 
- #define RTL8188E_TRANS_CARDEMU_TO_CARDDIS				\
-@@ -72,15 +72,15 @@
- 	 * value },
- 	 * comments here
- 	 */								\
--	{0x0026, PWR_CUT_ALL_MSK, PWR_CMD_WRITE, BIT(7), BIT(7)}, \
-+	{0x0026, PWR_CMD_WRITE, BIT(7), BIT(7)}, \
- 	/*0x24[23] = 2b'01 schmit trigger */				\
--	{0x0005, PWR_CUT_ALL_MSK, PWR_CMD_WRITE, BIT(3) | BIT(4), BIT(3)}, \
-+	{0x0005, PWR_CMD_WRITE, BIT(3) | BIT(4), BIT(3)}, \
- 	/*0x04[12:11] = 2b'01 enable WL suspend*/			\
--	{0x0007, PWR_CUT_ALL_MSK, PWR_CMD_WRITE, 0xFF, 0}, \
-+	{0x0007, PWR_CMD_WRITE, 0xFF, 0}, \
- 	/* 0x04[31:30] = 2b'10 enable enable bandgap mbias in suspend */\
--	{0x0041, PWR_CUT_ALL_MSK, PWR_CMD_WRITE, BIT(4), 0}, \
-+	{0x0041, PWR_CMD_WRITE, BIT(4), 0}, \
- 	/*Clear SIC_EN register 0x40[12] = 1'b0 */			\
--	{0xfe10, PWR_CUT_ALL_MSK, PWR_CMD_WRITE, BIT(4), BIT(4)}, \
-+	{0xfe10, PWR_CMD_WRITE, BIT(4), BIT(4)}, \
- 	/*Set USB suspend enable local register  0xfe10[4]=1 */
- 
- /* This is used by driver for LPSRadioOff Procedure, not for FW LPS Step */
-@@ -90,24 +90,24 @@
- 	 * value },
- 	 * comments here
- 	 */								\
--	{0x0522, PWR_CUT_ALL_MSK, PWR_CMD_WRITE, 0xFF, 0x7F},/*Tx Pause*/ \
--	{0x05F8, PWR_CUT_ALL_MSK, PWR_CMD_POLLING, 0xFF, 0}, \
-+	{0x0522, PWR_CMD_WRITE, 0xFF, 0x7F},/*Tx Pause*/ \
-+	{0x05F8, PWR_CMD_POLLING, 0xFF, 0}, \
- 	/*Should be zero if no packet is transmitting*/			\
--	{0x05F9, PWR_CUT_ALL_MSK, PWR_CMD_POLLING, 0xFF, 0}, \
-+	{0x05F9, PWR_CMD_POLLING, 0xFF, 0}, \
- 	/*Should be zero if no packet is transmitting*/			\
--	{0x05FA, PWR_CUT_ALL_MSK, PWR_CMD_POLLING, 0xFF, 0}, \
-+	{0x05FA, PWR_CMD_POLLING, 0xFF, 0}, \
- 	/*Should be zero if no packet is transmitting*/			\
--	{0x05FB, PWR_CUT_ALL_MSK, PWR_CMD_POLLING, 0xFF, 0}, \
-+	{0x05FB, PWR_CMD_POLLING, 0xFF, 0}, \
- 	/*Should be zero if no packet is transmitting*/			\
--	{0x0002, PWR_CUT_ALL_MSK, PWR_CMD_WRITE, BIT(0), 0}, \
-+	{0x0002, PWR_CMD_WRITE, BIT(0), 0}, \
- 	/*CCK and OFDM are disabled,and clock are gated*/		\
--	{0x0002, PWR_CUT_ALL_MSK, PWR_CMD_DELAY, 0,	PWRSEQ_DELAY_US}, \
-+	{0x0002, PWR_CMD_DELAY, 0,	PWRSEQ_DELAY_US}, \
- 	/*Delay 1us*/ \
--	{0x0100, PWR_CUT_ALL_MSK, PWR_CMD_WRITE, 0xFF, 0x3F}, \
-+	{0x0100, PWR_CMD_WRITE, 0xFF, 0x3F}, \
- 	/*Reset MAC TRX*/ \
--	{0x0101, PWR_CUT_ALL_MSK, PWR_CMD_WRITE, BIT(1), 0}, \
-+	{0x0101, PWR_CMD_WRITE, BIT(1), 0}, \
- 	/*check if removed later*/\
--	{0x0553, PWR_CUT_ALL_MSK, PWR_CMD_WRITE, BIT(5), BIT(5)}, \
-+	{0x0553, PWR_CMD_WRITE, BIT(5), BIT(5)}, \
- 	/*Respond TxOK to scheduler*/
- 
- #define RTL8188E_TRANS_END						\
-@@ -116,7 +116,7 @@
- 	 * value },
- 	 * comments here
- 	 */								\
--	{0xFFFF, PWR_CUT_ALL_MSK, PWR_CMD_END, 0, 0},
-+	{0xFFFF, PWR_CMD_END, 0, 0},
- 
- extern struct wl_pwr_cfg rtl8188E_power_on_flow
- 		[RTL8188E_TRANS_CARDEMU_TO_ACT_STEPS + RTL8188E_TRANS_END_STEPS];
-diff --git a/drivers/staging/rtl8188eu/include/pwrseqcmd.h b/drivers/staging/rtl8188eu/include/pwrseqcmd.h
-index a5eb95fc58b9..bfa0405cccde 100644
---- a/drivers/staging/rtl8188eu/include/pwrseqcmd.h
-+++ b/drivers/staging/rtl8188eu/include/pwrseqcmd.h
-@@ -33,7 +33,6 @@ enum pwrseq_cmd_delat_unit {
- 
- struct wl_pwr_cfg {
- 	u16 offset;
--	u8 cut_msk;
- 	u8 cmd:4;
- 	u8 msk;
- 	u8 value;
+Applied to 5.15/scsi-staging, thanks!
+
 -- 
-2.20.1
-
+Martin K. Petersen	Oracle Linux Engineering
