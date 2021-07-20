@@ -5,51 +5,47 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1AACC07E9B
-	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Jul 2021 16:07:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C05D4C636C8
+	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Jul 2021 16:13:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DA805610D2
-	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Jul 2021 16:07:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB02461001
+	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Jul 2021 16:13:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238419AbhGTP07 (ORCPT
+        id S230436AbhGTPcq (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 20 Jul 2021 11:26:59 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:38996
+        Tue, 20 Jul 2021 11:32:46 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:39970
         "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234905AbhGTPRO (ORCPT
+        by vger.kernel.org with ESMTP id S238592AbhGTP1X (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 20 Jul 2021 11:17:14 -0400
+        Tue, 20 Jul 2021 11:27:23 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id EFFF2408B7;
-        Tue, 20 Jul 2021 15:57:26 +0000 (UTC)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 65E4C405FC;
+        Tue, 20 Jul 2021 16:07:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1626796652;
-        bh=3II+PC97VCoKt9T8F7pnL4yTXL+6p6xVAwlLpzbPYU8=;
+        s=20210705; t=1626797280;
+        bh=BamL6ieKcOJ11og7wi6bzdOGpaM7S+jvOc9FCtOg8M8=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=wamHC7s9ZUcpEsWL5kOnny8dJU+Awirb8oRm5Y/2RXgjZks+aV2HQ4AeH20sGvBfr
-         iKhGC44hNjMmWGN43/ATPYl6wJWfQAqCB1bdaCDGrSwlUgnRA0pblL5D5nAB+8lx8h
-         ywKKsN+sAyQDiz1SIGH8oUU9j74gI1yoP+kZoVT0WORkTjdVC5omewH8nZB+hmmtjr
-         jytKz61f4ZqLSA+xZa2XpSK1ppdU+nJEdGHkTggapNtj+tWO6bkIaWsPQcpyNRnPYD
-         0dkR4mBDPq3vhn4HA7FNTKggBMCUW3arWN1KeozryRPMx9AoC3FkjL70jdBLZNHz8R
-         tO8eAJ/BfoBzA==
+        b=NyfLiqebzsym5tHDre5MuWTGGfK9ZUZ2cmBcjhN2wcgbuiCv5eUZFfLq+eZHn2L/i
+         ZVl8gZeIr2MoF+Q77zTFpILtEQK8awIOFz5H6wVC7IL9mHlzlENMYDGwsfP4TdkWvB
+         tvGOVz1p/h+pazRcJWxCugaWoCEVzn10CUqkAt0YXzh/rcx6FDXoZaXBN6yWDXuqrH
+         x5anBAj6g/FSJVTS6lXGYqK5P0CHjNMQbqeAM9fk67gONo2Vdc4do2r6DlwQq8ur4T
+         qlpR42+NfoCprnEceF7nkjKqFc5S0m/WETkDZCre9+cNn3Iwf/RYFV0s81HU427CcS
+         C9ngs5Hlxrz1g==
 From:   Colin King <colin.king@canonical.com>
-To:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Lucas De Marchi <lucas.demarchi@intel.com>,
-        Anusha Srivatsa <anusha.srivatsa@intel.com>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+To:     Yasunari Takiguchi <Yasunari.Takiguchi@sony.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Sean Young <sean@mess.org>, linux-media@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/i915/xelpd: Fix unsigned compared to less than zero error
-Date:   Tue, 20 Jul 2021 16:57:26 +0100
-Message-Id: <20210720155726.73628-1-colin.king@canonical.com>
+Subject: [PATCH][next] media: cxd2880-spi: Fix a null pointer dereference on error handling path
+Date:   Tue, 20 Jul 2021 17:07:49 +0100
+Message-Id: <20210720160749.73928-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -60,32 +56,32 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The subtraction of fw->size - offset is operating on two unsigned
-integers and the result is unsigned and hence the less than zero
-comparison will always to be false. Fix this by casting fw->size
-from a size_t to a ssize_t to ensure the result can be signed to
-allow a less than zero result.
+Currently the null pointer check on dvb_spi->vcc_supply is inverted and
+this leads to only null values of the dvb_spi->vcc_supply being passed
+to the call of regulator_disable causing null pointer dereferences.
+Fix this by only calling regulator_disable if dvb_spi->vcc_supply is
+not null.
 
-Addresses-Coverity: ("Unsigned compared against 0")
-Fixes: 3d5928a168a9 ("drm/i915/xelpd: Pipe A DMC plugging")
+Addresses-Coverity: ("Dereference after null check")
+Fixes: dcb014582101 ("media: cxd2880-spi: Fix an error handling path")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/gpu/drm/i915/display/intel_dmc.c | 2 +-
+ drivers/media/spi/cxd2880-spi.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/i915/display/intel_dmc.c b/drivers/gpu/drm/i915/display/intel_dmc.c
-index f8789d4543bf..dde1f243d375 100644
---- a/drivers/gpu/drm/i915/display/intel_dmc.c
-+++ b/drivers/gpu/drm/i915/display/intel_dmc.c
-@@ -645,7 +645,7 @@ static void parse_dmc_fw(struct drm_i915_private *dev_priv,
- 			continue;
- 
- 		offset = readcount + dmc->dmc_info[id].dmc_offset * 4;
--		if (fw->size - offset < 0) {
-+		if ((ssize_t)fw->size - offset < 0) {
- 			drm_err(&dev_priv->drm, "Reading beyond the fw_size\n");
- 			continue;
- 		}
+diff --git a/drivers/media/spi/cxd2880-spi.c b/drivers/media/spi/cxd2880-spi.c
+index b91a1e845b97..506f52c1af10 100644
+--- a/drivers/media/spi/cxd2880-spi.c
++++ b/drivers/media/spi/cxd2880-spi.c
+@@ -618,7 +618,7 @@ cxd2880_spi_probe(struct spi_device *spi)
+ fail_attach:
+ 	dvb_unregister_adapter(&dvb_spi->adapter);
+ fail_adapter:
+-	if (!dvb_spi->vcc_supply)
++	if (dvb_spi->vcc_supply)
+ 		regulator_disable(dvb_spi->vcc_supply);
+ fail_regulator:
+ 	kfree(dvb_spi);
 -- 
 2.31.1
 
