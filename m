@@ -2,169 +2,107 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A72D8C07E9B
-	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Jul 2021 08:29:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF02CC07E9B
+	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Jul 2021 12:23:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8C572610A0
-	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Jul 2021 08:29:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE19261165
+	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Jul 2021 12:23:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234050AbhGTHsx (ORCPT
+        id S235455AbhGTLmz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 20 Jul 2021 03:48:53 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:53960
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232349AbhGTHsu (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 20 Jul 2021 03:48:50 -0400
-Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 8E5FA404A2;
-        Tue, 20 Jul 2021 08:29:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1626769767;
-        bh=CC18GBbjPHCdP1gYvQIWC86yDSWhY5wuo6EYPhoHKD0=;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-         MIME-Version:Content-Type;
-        b=S/IlXY962gz4RCNv/Vl+M+/z6FCsjXFHc5w7KU9mfr1adh9AXtWgpx7GQDbFLRBYN
-         Ih0nFcmPsJWWm6bHTee+ykSCemBfsmcjdhNLr9B0hhx7lEgEvyNJHIG4jiuPr/7Uka
-         edolGhjd8+dnzvErPvQqWHtRxDNTXdAdZAXYRV6lSiMJQ/IZ7BK3e57UoQ//kidKeE
-         m7A3Ls6/Fy7+apNpcOjvrMSkkXnTCplJ5aReUoTp4VI2PjSbAf8z2tGTY8FNTFdtX3
-         HDtkjadjfBYu2n6do9Hcr+6I2CwXBfBiUikwDL1TbSQq4STfplfieR5dsDQI3orDT3
-         SoLHViO5Odz+Q==
-From:   Colin King <colin.king@canonical.com>
-To:     Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][V2][next] power: supply: ab8500: clean up warnings found by checkpatch
-Date:   Tue, 20 Jul 2021 09:29:22 +0100
-Message-Id: <20210720082922.6398-2-colin.king@canonical.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210720082922.6398-1-colin.king@canonical.com>
-References: <20210720082922.6398-1-colin.king@canonical.com>
+        Tue, 20 Jul 2021 07:42:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33178 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S236874AbhGTLmk (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 20 Jul 2021 07:42:40 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9E85661165;
+        Tue, 20 Jul 2021 12:23:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1626783792;
+        bh=k3u8kVux9MZ9aUC3HoK/CusB+Yi3Q/t7dbfUVU7znNo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=YAlToWw6aOZLePABIn2HAXF+uAnzv+QapStGGsYQegZtpptH1zLoy2hLFK+48tIlQ
+         wjYkxMwBn37OVQkBauBGy+aF7eh3th9UeG4AbmGbJVldn3wIZOqZ2vtsOVcH8mKbVO
+         cTQ3D1UbjtDGkyyiOwgU6o5TUDei8ZTEoXFrSUIRAkC87ebV8emtK0D4ZqxLL+US3h
+         X2weJd6lg4ru7eASwjqMCYf90P0wiSfe3Z4jDTt6MFXCojK+fA8gVjSg1Frepl76V/
+         6X8F4lhEoPMYhQA0/pG5J4kyZW7PEUjN/vXRjejSPSf2ojPFzZvT1gN0fIepm5fi0/
+         pjIWx66FzHMng==
+Date:   Tue, 20 Jul 2021 15:23:08 +0300
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     mustafa.ismail@intel.com, shiraz.saleem@intel.com,
+        dledford@redhat.com, jgg@ziepe.ca, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] RDMA/irdma: Improve the way 'cqp_request' structures are
+ cleaned when they are recycled
+Message-ID: <YPbALA/P5+NsC7MO@unreal>
+References: <7f93f2a2c2fd18ddfeb99339d175b85ffd1c6398.1626713915.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7f93f2a2c2fd18ddfeb99339d175b85ffd1c6398.1626713915.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Mon, Jul 19, 2021 at 07:02:15PM +0200, Christophe JAILLET wrote:
+> A set of IRDMA_CQP_SW_SQSIZE_2048 (i.e. 2048) 'cqp_request' are
+> pre-allocated and zeroed in 'irdma_create_cqp()' (hw.c).  These
+> structures are managed with the 'cqp->cqp_avail_reqs' list which keeps
+> track of available entries.
+> 
+> In 'irdma_free_cqp_request()' (utils.c), when an entry is recycled and goes
+> back to the 'cqp_avail_reqs' list, some fields are reseted.
+> 
+> However, one of these fields, 'compl_info', is initialized within
+> 'irdma_alloc_and_get_cqp_request()'.
+> 
+> Move the corresponding memset to 'irdma_free_cqp_request()' so that the
+> clean-up is done in only one place. This makes the logic more easy to
+> understand.
 
-Clean up a handful of checkpatch warnings:
- - static const char * array should probably be static const char * const
- - function arguments should have identifier names
- - else should follow close brace '}'
- - suspect code indent for conditional statements
- - unnecessary parentheses in an if condition
- - avoid multiple line dereference
- - remove debug showing function execution, ftrace can trace these better
- - prefer 'long' over 'long int' as the int is unnecessary
+I'm not so sure. The function irdma_alloc_and_get_cqp_request() returns
+prepared cqp_request and all users expect that it will returned cleaned
+one. The reliance on some other place to clear part of the structure is
+prone to errors.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
-V2: Fix subject, s/cppcheck/checkpatch/
-    Remove debug, ftrace can track these better.
----
- drivers/power/supply/ab8500_chargalg.c | 24 ++++++++++--------------
- 1 file changed, 10 insertions(+), 14 deletions(-)
+Thanks
 
-diff --git a/drivers/power/supply/ab8500_chargalg.c b/drivers/power/supply/ab8500_chargalg.c
-index 46b0c9fedebb..ff4b26b1ceca 100644
---- a/drivers/power/supply/ab8500_chargalg.c
-+++ b/drivers/power/supply/ab8500_chargalg.c
-@@ -123,7 +123,7 @@ enum ab8500_chargalg_states {
- 	STATE_WD_EXPIRED,
- };
- 
--static const char *states[] = {
-+static const char * const states[] = {
- 	"HANDHELD_INIT",
- 	"HANDHELD",
- 	"CHG_NOT_OK_INIT",
-@@ -274,8 +274,8 @@ static enum power_supply_property ab8500_chargalg_props[] = {
- 
- struct ab8500_chargalg_sysfs_entry {
- 	struct attribute attr;
--	ssize_t (*show)(struct ab8500_chargalg *, char *);
--	ssize_t (*store)(struct ab8500_chargalg *, const char *, size_t);
-+	ssize_t (*show)(struct ab8500_chargalg *di, char *buf);
-+	ssize_t (*store)(struct ab8500_chargalg *di, const char *buf, size_t length);
- };
- 
- /**
-@@ -526,8 +526,7 @@ static int ab8500_chargalg_kick_watchdog(struct ab8500_chargalg *di)
- 			di->usb_chg->ops.kick_wd(di->usb_chg);
- 
- 		return di->ac_chg->ops.kick_wd(di->ac_chg);
--	}
--	else if (di->usb_chg && di->usb_chg->ops.kick_wd &&
-+	} else if (di->usb_chg && di->usb_chg->ops.kick_wd &&
- 			di->chg_info.online_chg & USB_CHG)
- 		return di->usb_chg->ops.kick_wd(di->usb_chg);
- 
-@@ -750,8 +749,8 @@ static void ab8500_chargalg_check_temp(struct ab8500_chargalg *di)
- 			di->t_hyst_norm = 0;
- 			di->t_hyst_lowhigh = di->bm->temp_hysteresis;
- 		} else {
--		/* Within hysteresis */
--		dev_dbg(di->dev, "Within hysteresis limit temp: %d "
-+			/* Within hysteresis */
-+			dev_dbg(di->dev, "Within hysteresis limit temp: %d "
- 				"hyst_lowhigh %d, hyst normal %d\n",
- 				di->batt_data.temp, di->t_hyst_lowhigh,
- 				di->t_hyst_norm);
-@@ -867,7 +866,7 @@ static enum maxim_ret ab8500_chargalg_chg_curr_maxim(struct ab8500_chargalg *di)
- 
- 	di->ccm.wait_cnt = 0;
- 
--	if ((di->batt_data.inst_curr > di->ccm.original_iset)) {
-+	if (di->batt_data.inst_curr > di->ccm.original_iset) {
- 		dev_dbg(di->dev, " Maximization Ibat (%dmA) too high"
- 			" (limit %dmA) (current iset: %dmA)!\n",
- 			di->batt_data.inst_curr, di->ccm.original_iset,
-@@ -1545,8 +1544,7 @@ static void ab8500_chargalg_algorithm(struct ab8500_chargalg *di)
- 
- 	case STATE_WAIT_FOR_RECHARGE:
- 		if (di->batt_data.percent <=
--		    di->bm->bat_type[di->bm->batt_id].
--		    recharge_cap)
-+		    di->bm->bat_type[di->bm->batt_id].recharge_cap)
- 			ab8500_chargalg_state_to(di, STATE_NORMAL_INIT);
- 		break;
- 
-@@ -1676,8 +1674,6 @@ static void ab8500_chargalg_wd_work(struct work_struct *work)
- 	struct ab8500_chargalg *di = container_of(work,
- 		struct ab8500_chargalg, chargalg_wd_work.work);
- 
--	dev_dbg(di->dev, "ab8500_chargalg_wd_work\n");
--
- 	ret = ab8500_chargalg_kick_watchdog(di);
- 	if (ret < 0)
- 		dev_err(di->dev, "failed to kick watchdog\n");
-@@ -1754,7 +1750,7 @@ static ssize_t ab8500_chargalg_curr_step_show(struct ab8500_chargalg *di,
- static ssize_t ab8500_chargalg_curr_step_store(struct ab8500_chargalg *di,
- 					       const char *buf, size_t length)
- {
--	long int param;
-+	long param;
- 	int ret;
- 
- 	ret = kstrtol(buf, 10, &param);
-@@ -1787,7 +1783,7 @@ static ssize_t ab8500_chargalg_en_show(struct ab8500_chargalg *di,
- static ssize_t ab8500_chargalg_en_store(struct ab8500_chargalg *di,
- 	const char *buf, size_t length)
- {
--	long int param;
-+	long param;
- 	int ac_usb;
- 	int ret;
- 
--- 
-2.31.1
-
+> 
+> This also saves this memset in the case that the 'cqp_avail_reqs' list is
+> empty and a new 'cqp_request' structure must be allocated. This memset is
+> useless, because the structure is already kzalloc'ed.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/infiniband/hw/irdma/utils.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/infiniband/hw/irdma/utils.c b/drivers/infiniband/hw/irdma/utils.c
+> index 5bbe44e54f9a..66711024d38b 100644
+> --- a/drivers/infiniband/hw/irdma/utils.c
+> +++ b/drivers/infiniband/hw/irdma/utils.c
+> @@ -445,7 +445,6 @@ struct irdma_cqp_request *irdma_alloc_and_get_cqp_request(struct irdma_cqp *cqp,
+>  
+>  	cqp_request->waiting = wait;
+>  	refcount_set(&cqp_request->refcnt, 1);
+> -	memset(&cqp_request->compl_info, 0, sizeof(cqp_request->compl_info));
+>  
+>  	return cqp_request;
+>  }
+> @@ -475,6 +474,7 @@ void irdma_free_cqp_request(struct irdma_cqp *cqp,
+>  		cqp_request->request_done = false;
+>  		cqp_request->callback_fcn = NULL;
+>  		cqp_request->waiting = false;
+> +		memset(&cqp_request->compl_info, 0, sizeof(cqp_request->compl_info));
+>  
+>  		spin_lock_irqsave(&cqp->req_lock, flags);
+>  		list_add_tail(&cqp_request->list, &cqp->cqp_avail_reqs);
+> -- 
+> 2.30.2
+> 
