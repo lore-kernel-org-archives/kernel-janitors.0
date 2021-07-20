@@ -2,51 +2,52 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-18.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,PLING_QUERY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94B53C07E9B
-	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Jul 2021 12:48:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3B35C07E9B
+	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Jul 2021 13:03:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7A9DA60FF2
-	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Jul 2021 12:48:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A92BC6101E
+	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Jul 2021 13:03:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238403AbhGTMHm (ORCPT
+        id S237868AbhGTMXR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 20 Jul 2021 08:07:42 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:37622
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238360AbhGTMHi (ORCPT
+        Tue, 20 Jul 2021 08:23:17 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:53142
+        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231526AbhGTMWr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 20 Jul 2021 08:07:38 -0400
+        Tue, 20 Jul 2021 08:22:47 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 665A4418F8;
-        Tue, 20 Jul 2021 12:48:13 +0000 (UTC)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 5CD2940624;
+        Tue, 20 Jul 2021 13:03:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1626785295;
-        bh=0ItI7io0GTWcShfB9OXndSkWcyxA3F74Ps+6kGgGN+g=;
+        s=20210705; t=1626786197;
+        bh=PQfJRURFWXwxKi9tGQBBw5EhD752Jp+9489PeReXm7s=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=Wr7zJECXlIJa89fP1PUCdovg3nBJTNJJHJmTEzVJ/ds/vH+WmeGEOfTiwF2C9QSuH
-         YDV3O+7+jpKKTVRxio39/vf0GQwXiyCjxXkQElA2myNiYpebcyvONf+1ug8MyKaKOB
-         BNy5GejUy8gzYUJSwOwNA+Ap96VdNa/2us8cSlDMzTBn9xed4p4uwv9qT76SB9bZ8H
-         kHE/QBgD/AQNcr9ZLHJHv9cHeOy5X3K29ufZ9v404NGPuIxXSTJA3uvMi3hCMlugr9
-         2DzjWYliXm96SqiBZM4mnl8RhknXoX810ziFLKZ+7soNViKh2RX2fLfFlNoz93LDtl
-         OdwHxza0lIdKw==
+        b=DIklFQHYUL8u1LIL9v/eIds5ob53wIJfgg2kcQbHdHUWwq54qjHQcrHU0LORih4lB
+         F1v0X2UBbN5kkMhH0K4IPFhdI8YGtVInuN4KlpwOopyo/OnhDOLYER//RxFMCfSOCp
+         fyL2h5NqIdCPvm6N2OJFgP89tcNJebLWEDCFYkDguK2q89LiRVyItPduyBwVkmSFlk
+         vxQPzuU0qqBc6sfTJzhr0anr7Iy5sO4yO8U53xIgO1LlKxLlF9wW5XwBgJCUmKrXme
+         uiHN9jd3FgHWdv8TKmj6wCEMcO59hMBxDNqbEdm5ITEuIq1Q8xPNkoZECECSr0Ctus
+         lGpXwZAW2o1pQ==
 From:   Colin King <colin.king@canonical.com>
-To:     Chas Williams <3chas3@gmail.com>,
+To:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
         Nathan Chancellor <nathan@kernel.org>,
         Nick Desaulniers <ndesaulniers@google.com>,
-        linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org,
-        clang-built-linux@googlegroups.com
+        netdev@vger.kernel.org, clang-built-linux@googlegroups.com
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] atm: idt77252: clean up trigraph warning on ??) string
-Date:   Tue, 20 Jul 2021 13:48:13 +0100
-Message-Id: <20210720124813.59331-1-colin.king@canonical.com>
+Subject: [PATCH] net: marvell: clean up trigraph warning on ??! string
+Date:   Tue, 20 Jul 2021 14:03:11 +0100
+Message-Id: <20210720130311.59805-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -57,31 +58,31 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The character sequence ??) is a trigraph and causes the following
+The character sequence ??! is a trigraph and causes the following
 clang warning:
 
-drivers/atm/idt77252.c:3544:35: warning: trigraph ignored [-Wtrigraphs]
+drivers/net/ethernet/marvell/mvneta.c:2604:39: warning: trigraph ignored [-Wtrigraphs]
 
 Clean this by replacing it with single ?.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/atm/idt77252.c | 2 +-
+ drivers/net/ethernet/marvell/mvneta.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/atm/idt77252.c b/drivers/atm/idt77252.c
-index 9e4bd751db79..81ce81a75fc6 100644
---- a/drivers/atm/idt77252.c
-+++ b/drivers/atm/idt77252.c
-@@ -3536,7 +3536,7 @@ static int idt77252_preset(struct idt77252_dev *card)
- 		return -1;
+diff --git a/drivers/net/ethernet/marvell/mvneta.c b/drivers/net/ethernet/marvell/mvneta.c
+index 76a7777c746d..fc4dbcc58f5f 100644
+--- a/drivers/net/ethernet/marvell/mvneta.c
++++ b/drivers/net/ethernet/marvell/mvneta.c
+@@ -2666,7 +2666,7 @@ static int mvneta_tx_tso(struct sk_buff *skb, struct net_device *dev,
+ 		return 0;
+ 
+ 	if (skb_headlen(skb) < (skb_transport_offset(skb) + tcp_hdrlen(skb))) {
+-		pr_info("*** Is this even  possible???!?!?\n");
++		pr_info("*** Is this even possible?\n");
+ 		return 0;
  	}
- 	if (!(pci_command & PCI_COMMAND_IO)) {
--		printk("%s: PCI_COMMAND: %04x (???)\n",
-+		printk("%s: PCI_COMMAND: %04x (?)\n",
- 		       card->name, pci_command);
- 		deinit_card(card);
- 		return (-1);
+ 
 -- 
 2.31.1
 
