@@ -2,75 +2,85 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	PLING_QUERY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F125EC636C9
-	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Jul 2021 14:41:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC45EC07E95
+	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Jul 2021 15:58:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D9E5461208
-	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Jul 2021 14:41:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A34D26113B
+	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Jul 2021 15:58:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240211AbhGTOAz (ORCPT
+        id S239232AbhGTPRf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 20 Jul 2021 10:00:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47498 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S239999AbhGTNup (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 20 Jul 2021 09:50:45 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 5CB9561244;
-        Tue, 20 Jul 2021 14:30:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1626791406;
-        bh=yqPfKPvezPfquBcaYh/moLLHAyfcdAjJqajDiNGMRow=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=kLtUnEPEpJH36c/9XM0M2zqHxNq7lU+Oc8lh6tZag4CfXqiPwSt9Bv7t/Z1wu6OH5
-         s6y7+vfkbLK0kD2E10DiYNneutGGe/szX+0mFMQD9Bl6YTanczlfLC8LehWd5JKsrC
-         QWAnvGVI7jk28gRgmScKUh7N63E4fLUVR/YU1hzY4/Qk3FOSK+XgDDvXa8pBU5EMqf
-         Vyo1jGfPTPwYM0rw2rzpKHdIZaKeBlFnOsjJSj7Idcmh2/5myE9siT3o7qKJeDm7bS
-         IqXpVcsd9gZFiQE/6qqhnZvlZu+Hqfh0xRGtV+F0KCwuXwxGUF6udegyOmMAARl4Ha
-         DG0dREYg/z/Ig==
-Content-Type: text/plain; charset="utf-8"
+        Tue, 20 Jul 2021 11:17:35 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:33958
+        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S241915AbhGTO5w (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 20 Jul 2021 10:57:52 -0400
+Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 8CF2D40601;
+        Tue, 20 Jul 2021 15:37:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1626795469;
+        bh=vSe9B2XKzwjqZRJOAWXj0xGJqQPCF7dn+Fs2x2z3Q1I=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=AWXqm5bpaoeROqEvOTnTWyCjK4OkcAn9n7m1/mRm13jhExQrZuXnXvdpW96IMiphy
+         grMU6M85EtazGbM+1gKalYq8jm5SoubL/fwFxMIMXerLFz/YRZuaHnZiannfgZIjV9
+         Q8zP/eoKSnFbGPCnI0sFWFa+j/FD6WxQdqbJymskqIqh0Z8iFwtqzZopoowtDmbOip
+         cS/80tYRdfAx2wRpvtQIXVcT34nNJi0G64YDvf4PA49+ymeytfN6RCa+isSeArvxp8
+         W28rja8512PMiUUx6Lt95FEMcOwgPIo6/Y5j6YvC3g//9gl3h8zTxVoSyziCxzR+s0
+         qk4o7F3MEjuIQ==
+From:   Colin King <colin.king@canonical.com>
+To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] ALSA: opti9xx: fix missing { } around an if block
+Date:   Tue, 20 Jul 2021 16:37:41 +0100
+Message-Id: <20210720153741.73230-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net: marvell: clean up trigraph warning on ??! string
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <162679140634.23944.13639576500085016559.git-patchwork-notify@kernel.org>
-Date:   Tue, 20 Jul 2021 14:30:06 +0000
-References: <20210720130311.59805-1-colin.king@canonical.com>
-In-Reply-To: <20210720130311.59805-1-colin.king@canonical.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     thomas.petazzoni@bootlin.com, davem@davemloft.net, kuba@kernel.org,
-        nathan@kernel.org, ndesaulniers@google.com, netdev@vger.kernel.org,
-        clang-built-linux@googlegroups.com,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+From: Colin Ian King <colin.king@canonical.com>
 
-This patch was applied to netdev/net-next.git (refs/heads/master):
+Currently the { } braces are missing around an if block causing subsequent
+code after the return to become unreachable. Fix this by adding the
+missing { }.
 
-On Tue, 20 Jul 2021 14:03:11 +0100 you wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The character sequence ??! is a trigraph and causes the following
-> clang warning:
-> 
-> drivers/net/ethernet/marvell/mvneta.c:2604:39: warning: trigraph ignored [-Wtrigraphs]
-> 
-> [...]
+Addresses-Coverity: ("Structurally dead code")
+Fixes: 2973ee4a5b54 ("ALSA: opti9xx: Allocate resources with device-managed APIs")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/isa/opti9xx/opti92x-ad1848.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Here is the summary with links:
-  - net: marvell: clean up trigraph warning on ??! string
-    https://git.kernel.org/netdev/net-next/c/fa660684e531
-
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+diff --git a/sound/isa/opti9xx/opti92x-ad1848.c b/sound/isa/opti9xx/opti92x-ad1848.c
+index 8988de8cca96..4beeb32fe2a7 100644
+--- a/sound/isa/opti9xx/opti92x-ad1848.c
++++ b/sound/isa/opti9xx/opti92x-ad1848.c
+@@ -1096,9 +1096,10 @@ static int snd_opti9xx_pnp_probe(struct pnp_card_link *pcard,
+ 	if (error)
+ 		return error;
+ 	error = snd_opti9xx_read_check(card, chip);
+-	if (error)
++	if (error) {
+ 		snd_printk(KERN_ERR "OPTI chip not found\n");
+ 		return error;
++	}
+ 	error = snd_opti9xx_probe(card);
+ 	if (error < 0)
+ 		return error;
+-- 
+2.31.1
 
