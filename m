@@ -2,87 +2,128 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,PLING_QUERY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3B35C07E9B
-	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Jul 2021 13:03:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37B54C07E95
+	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Jul 2021 13:07:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A92BC6101E
-	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Jul 2021 13:03:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0700161186
+	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Jul 2021 13:07:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237868AbhGTMXR (ORCPT
+        id S235524AbhGTM0c (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 20 Jul 2021 08:23:17 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:53142
-        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231526AbhGTMWr (ORCPT
+        Tue, 20 Jul 2021 08:26:32 -0400
+Received: from smtp11.smtpout.orange.fr ([80.12.242.133]:22233 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238455AbhGTMZX (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 20 Jul 2021 08:22:47 -0400
-Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 5CD2940624;
-        Tue, 20 Jul 2021 13:03:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1626786197;
-        bh=PQfJRURFWXwxKi9tGQBBw5EhD752Jp+9489PeReXm7s=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=DIklFQHYUL8u1LIL9v/eIds5ob53wIJfgg2kcQbHdHUWwq54qjHQcrHU0LORih4lB
-         F1v0X2UBbN5kkMhH0K4IPFhdI8YGtVInuN4KlpwOopyo/OnhDOLYER//RxFMCfSOCp
-         fyL2h5NqIdCPvm6N2OJFgP89tcNJebLWEDCFYkDguK2q89LiRVyItPduyBwVkmSFlk
-         vxQPzuU0qqBc6sfTJzhr0anr7Iy5sO4yO8U53xIgO1LlKxLlF9wW5XwBgJCUmKrXme
-         uiHN9jd3FgHWdv8TKmj6wCEMcO59hMBxDNqbEdm5ITEuIq1Q8xPNkoZECECSr0Ctus
-         lGpXwZAW2o1pQ==
-From:   Colin King <colin.king@canonical.com>
-To:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        netdev@vger.kernel.org, clang-built-linux@googlegroups.com
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] net: marvell: clean up trigraph warning on ??! string
-Date:   Tue, 20 Jul 2021 14:03:11 +0100
-Message-Id: <20210720130311.59805-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.31.1
+        Tue, 20 Jul 2021 08:25:23 -0400
+Received: from [192.168.1.102] ([80.15.159.30])
+        by mwinf5d34 with ME
+        id XR5v2500f0feRjk03R5wRC; Tue, 20 Jul 2021 15:05:57 +0200
+X-ME-Helo: [192.168.1.102]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 20 Jul 2021 15:05:57 +0200
+X-ME-IP: 80.15.159.30
+Subject: Re: [PATCH] RDMA/irdma: Improve the way 'cqp_request' structures are
+ cleaned when they are recycled
+To:     leon@kernel.org
+Cc:     mustafa.ismail@intel.com, shiraz.saleem@intel.com,
+        dledford@redhat.com, jgg@ziepe.ca, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        christophe.jaillet@wanadoo.fr
+References: <7f93f2a2c2fd18ddfeb99339d175b85ffd1c6398.1626713915.git.christophe.jaillet@wanadoo.fr>
+ <YPbALA/P5+NsC7MO@unreal>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Message-ID: <629bc34e-ef41-9af6-9ed7-71865251a62c@wanadoo.fr>
+Date:   Tue, 20 Jul 2021 15:05:55 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <YPbALA/P5+NsC7MO@unreal>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Le 20/07/2021 à 14:23, Leon Romanovsky a écrit :
+> On Mon, Jul 19, 2021 at 07:02:15PM +0200, Christophe JAILLET wrote:
+>> A set of IRDMA_CQP_SW_SQSIZE_2048 (i.e. 2048) 'cqp_request' are
+>> pre-allocated and zeroed in 'irdma_create_cqp()' (hw.c).  These
+>> structures are managed with the 'cqp->cqp_avail_reqs' list which keeps
+>> track of available entries.
+>>
+>> In 'irdma_free_cqp_request()' (utils.c), when an entry is recycled and goes
+>> back to the 'cqp_avail_reqs' list, some fields are reseted.
+>>
+>> However, one of these fields, 'compl_info', is initialized within
+>> 'irdma_alloc_and_get_cqp_request()'.
+>>
+>> Move the corresponding memset to 'irdma_free_cqp_request()' so that the
+>> clean-up is done in only one place. This makes the logic more easy to
+>> understand.
+> 
+> I'm not so sure. The function irdma_alloc_and_get_cqp_request() returns
+> prepared cqp_request and all users expect that it will returned cleaned
+> one. The reliance on some other place to clear part of the structure is
+> prone to errors.
 
-The character sequence ??! is a trigraph and causes the following
-clang warning:
+Ok, so maybe, moving:
+	cqp_request->request_done = false;
+	cqp_request->callback_fcn = NULL;
+	cqp_request->waiting = false;
+from 'irdma_free_cqp_request()' to 'irdma_alloc_and_get_cqp_request()' 
+to make explicit what is reseted makes more sense?
 
-drivers/net/ethernet/marvell/mvneta.c:2604:39: warning: trigraph ignored [-Wtrigraphs]
+ From my point of view, it is same same: all (re)initialization are done 
+at 1 place only.
 
-Clean this by replacing it with single ?.
+This would also avoid setting 'waiting' twice (once to false in 
+'irdma_free_cqp_request()' and one to 'wait' 
+'irdma_alloc_and_get_cqp_request()')
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/ethernet/marvell/mvneta.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/marvell/mvneta.c b/drivers/net/ethernet/marvell/mvneta.c
-index 76a7777c746d..fc4dbcc58f5f 100644
---- a/drivers/net/ethernet/marvell/mvneta.c
-+++ b/drivers/net/ethernet/marvell/mvneta.c
-@@ -2666,7 +2666,7 @@ static int mvneta_tx_tso(struct sk_buff *skb, struct net_device *dev,
- 		return 0;
- 
- 	if (skb_headlen(skb) < (skb_transport_offset(skb) + tcp_hdrlen(skb))) {
--		pr_info("*** Is this even  possible???!?!?\n");
-+		pr_info("*** Is this even possible?\n");
- 		return 0;
- 	}
- 
--- 
-2.31.1
+CJ
+> 
+> Thanks
+> 
+>>
+>> This also saves this memset in the case that the 'cqp_avail_reqs' list is
+>> empty and a new 'cqp_request' structure must be allocated. This memset is
+>> useless, because the structure is already kzalloc'ed.
+>>
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
+>> ---
+>>   drivers/infiniband/hw/irdma/utils.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/infiniband/hw/irdma/utils.c b/drivers/infiniband/hw/irdma/utils.c
+>> index 5bbe44e54f9a..66711024d38b 100644
+>> --- a/drivers/infiniband/hw/irdma/utils.c
+>> +++ b/drivers/infiniband/hw/irdma/utils.c
+>> @@ -445,7 +445,6 @@ struct irdma_cqp_request *irdma_alloc_and_get_cqp_request(struct irdma_cqp *cqp,
+>>   
+>>   	cqp_request->waiting = wait;
+>>   	refcount_set(&cqp_request->refcnt, 1);
+>> -	memset(&cqp_request->compl_info, 0, sizeof(cqp_request->compl_info));
+>>   
+>>   	return cqp_request;
+>>   }
+>> @@ -475,6 +474,7 @@ void irdma_free_cqp_request(struct irdma_cqp *cqp,
+>>   		cqp_request->request_done = false;
+>>   		cqp_request->callback_fcn = NULL;
+>>   		cqp_request->waiting = false;
+>> +		memset(&cqp_request->compl_info, 0, sizeof(cqp_request->compl_info));
+>>   
+>>   		spin_lock_irqsave(&cqp->req_lock, flags);
+>>   		list_add_tail(&cqp_request->list, &cqp->cqp_avail_reqs);
+>> -- 
+>> 2.30.2
+>>
+> 
 
