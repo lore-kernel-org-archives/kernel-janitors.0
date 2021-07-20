@@ -2,93 +2,166 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90808C07E9D
-	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Jul 2021 02:33:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87323C07E95
+	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Jul 2021 08:29:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 686D16100C
-	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Jul 2021 02:33:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 664F8610A0
+	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Jul 2021 08:29:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237015AbhGTBw4 (ORCPT
+        id S233785AbhGTHsv (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 19 Jul 2021 21:52:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41594 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1443892AbhGSXFX (ORCPT
+        Tue, 20 Jul 2021 03:48:51 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:40278
+        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232313AbhGTHst (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 19 Jul 2021 19:05:23 -0400
-Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D01EC0613DC;
-        Mon, 19 Jul 2021 16:45:49 -0700 (PDT)
-Received: by mail-pj1-x102e.google.com with SMTP id me13-20020a17090b17cdb0290173bac8b9c9so841454pjb.3;
-        Mon, 19 Jul 2021 16:45:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Kgz2eeVTrVAZCaEOYMJ8unFPgBOAegGaTDFor4hhW4k=;
-        b=N8skB0g0RIgY1yzrP9QUxgAtO1Ujzw0uwpwRfp4/+YEbM5V5uGIU/pIhNhUjEvJXuU
-         GZdN0luA9lLUWDP2TvHLvThvWgL4qXFSOxnd4PbS55epYSTa/2X6bk+KbiLWQA4OIGaA
-         RrjA+ulBZktLrY3cXH/NWSNzOz/4GRz8KREvkkA5YgyRmta5voc8JkyOIoz6hpejThNj
-         hp01K2lhc/A1IpgDQY9bNwxt/O71v7J1QeJocywcRyArUVuNkjtEOuxs4Z9VZpy44DUh
-         OKT+Upu+XAFsYv+50Yl5Kplm/QQmadSkMIhwhmVIIvc3SEagVGEKlFpKFspprauzLFmU
-         jczQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Kgz2eeVTrVAZCaEOYMJ8unFPgBOAegGaTDFor4hhW4k=;
-        b=Tr0O3EA6nnCLq5MGuQD5Zd6Hcg51LT7zNchgrazVck4Rk2MpGME/WVyowtBMJVrXx2
-         QAkZ4RUpvAk9L0aZfi8nweKSmAW8fZybZcaQE+PnFpRdlyLULMwZdRvUaXedXxdYx0oq
-         vOzPlS8ck8pJdZDcD1HUDhfoYVQXWVkpMNB3vMqImz+Ep/SYa5/d3CgritT5/Z7GOcGi
-         HotiZmbCcJLIq5VmpGhLxydY7H/Xqluv3GR7GpasrGtnuHBajX+p7lSDvg47NSBMTmvR
-         zd0loLtXXMxyd8uXqDXbl1bkhfWBHx0ahOKcaBekROvDla6OKg2GpT0LKf+QcdVDsdII
-         0Bww==
-X-Gm-Message-State: AOAM531jFiiUE2YMl2ASdmmEAeI34gSRdN4t6RVtBlFN3hyj0c+21bGo
-        uEm5B/oxhsRQ/Ax4qKHl5sCGAE+UMLG0OQ==
-X-Google-Smtp-Source: ABdhPJznQaIL8aTRdjnJbwpMIkbHjt56z2F9GQB00BrJMdFii30BhscOIYnTKHlP7+Vap9p2z57r4w==
-X-Received: by 2002:a17:902:6904:b029:fb:42b6:e952 with SMTP id j4-20020a1709026904b02900fb42b6e952mr21325342plk.16.1626738348512;
-        Mon, 19 Jul 2021 16:45:48 -0700 (PDT)
-Received: from [10.67.49.104] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id x189sm2335158pfx.99.2021.07.19.16.45.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Jul 2021 16:45:47 -0700 (PDT)
-Subject: Re: [PATCH] serial: 8250_bcm7271: use NULL to initialized a null
- pointer
-To:     Colin King <colin.king@canonical.com>,
-        Al Cooper <alcooperx@gmail.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        linux-serial@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
+        Tue, 20 Jul 2021 03:48:49 -0400
+Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 1F44A40616;
+        Tue, 20 Jul 2021 08:29:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1626769767;
+        bh=CC18GBbjPHCdP1gYvQIWC86yDSWhY5wuo6EYPhoHKD0=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=PDkr2jfw1Fwqmn2/VgXCC0szB3APZO14mwi27lrYmeahKW3nRCfHGcjo4rOWCVdPb
+         TTuI2HvKBm1h/S98Vvx3vqd4FdSbxa3mi1GDOlb8FkY71gcr4hNVodY6JD63Iulyvr
+         EzQ65YEamYLa2waT2yjwdIXNwaBTiYGMA0T28tm3gUjwhr3ejcYScsee1MlJr853Ad
+         ebg53rZ4s01n+lWdSe5tWUcDveT5A9Eu9su+Tv8+S3HqgZYWVQ2vqVLFYTKUQc0XQk
+         cwaB1Y5TsyLIa8yfo9HHyaX0drSBZmb685V6Y1IclMEzq57xEGdUAUNbYaNPoE2Ev4
+         jop4Fntl5RWWQ==
+From:   Colin King <colin.king@canonical.com>
+To:     Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210719095533.14017-1-colin.king@canonical.com>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <e926854a-39ca-262e-0fb4-eaf96ab0063a@gmail.com>
-Date:   Mon, 19 Jul 2021 16:45:41 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+Subject: [PATCH][V2][next] power: supply: ab8500: clean up warnings found by checkpatch
+Date:   Tue, 20 Jul 2021 09:29:21 +0100
+Message-Id: <20210720082922.6398-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-In-Reply-To: <20210719095533.14017-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 7/19/21 2:55 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Pointer membase is currently being in initialized with zero rather
-> than NULL. Fix this.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Florian Fainelli <f.fainelli@gmail.com>
+Clean up a handful of checkpatch warnings:
+ - static const char * array should probably be static const char * const
+ - function arguments should have identifier names
+ - else should follow close brace '}'
+ - suspect code indent for conditional statements
+ - unnecessary parentheses in an if condition
+ - avoid multiple line dereference
+ - remove debug showing function execution, ftrace can trace these better
+ - prefer 'long' over 'long int' as the int is unnecessary
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+V2: Fix subject, s/cppcheck/checkpatch/
+    Remove debug, ftrace can track these better.
+---
+ drivers/power/supply/ab8500_chargalg.c | 24 ++++++++++--------------
+ 1 file changed, 10 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/power/supply/ab8500_chargalg.c b/drivers/power/supply/ab8500_chargalg.c
+index 46b0c9fedebb..ff4b26b1ceca 100644
+--- a/drivers/power/supply/ab8500_chargalg.c
++++ b/drivers/power/supply/ab8500_chargalg.c
+@@ -123,7 +123,7 @@ enum ab8500_chargalg_states {
+ 	STATE_WD_EXPIRED,
+ };
+ 
+-static const char *states[] = {
++static const char * const states[] = {
+ 	"HANDHELD_INIT",
+ 	"HANDHELD",
+ 	"CHG_NOT_OK_INIT",
+@@ -274,8 +274,8 @@ static enum power_supply_property ab8500_chargalg_props[] = {
+ 
+ struct ab8500_chargalg_sysfs_entry {
+ 	struct attribute attr;
+-	ssize_t (*show)(struct ab8500_chargalg *, char *);
+-	ssize_t (*store)(struct ab8500_chargalg *, const char *, size_t);
++	ssize_t (*show)(struct ab8500_chargalg *di, char *buf);
++	ssize_t (*store)(struct ab8500_chargalg *di, const char *buf, size_t length);
+ };
+ 
+ /**
+@@ -526,8 +526,7 @@ static int ab8500_chargalg_kick_watchdog(struct ab8500_chargalg *di)
+ 			di->usb_chg->ops.kick_wd(di->usb_chg);
+ 
+ 		return di->ac_chg->ops.kick_wd(di->ac_chg);
+-	}
+-	else if (di->usb_chg && di->usb_chg->ops.kick_wd &&
++	} else if (di->usb_chg && di->usb_chg->ops.kick_wd &&
+ 			di->chg_info.online_chg & USB_CHG)
+ 		return di->usb_chg->ops.kick_wd(di->usb_chg);
+ 
+@@ -750,8 +749,8 @@ static void ab8500_chargalg_check_temp(struct ab8500_chargalg *di)
+ 			di->t_hyst_norm = 0;
+ 			di->t_hyst_lowhigh = di->bm->temp_hysteresis;
+ 		} else {
+-		/* Within hysteresis */
+-		dev_dbg(di->dev, "Within hysteresis limit temp: %d "
++			/* Within hysteresis */
++			dev_dbg(di->dev, "Within hysteresis limit temp: %d "
+ 				"hyst_lowhigh %d, hyst normal %d\n",
+ 				di->batt_data.temp, di->t_hyst_lowhigh,
+ 				di->t_hyst_norm);
+@@ -867,7 +866,7 @@ static enum maxim_ret ab8500_chargalg_chg_curr_maxim(struct ab8500_chargalg *di)
+ 
+ 	di->ccm.wait_cnt = 0;
+ 
+-	if ((di->batt_data.inst_curr > di->ccm.original_iset)) {
++	if (di->batt_data.inst_curr > di->ccm.original_iset) {
+ 		dev_dbg(di->dev, " Maximization Ibat (%dmA) too high"
+ 			" (limit %dmA) (current iset: %dmA)!\n",
+ 			di->batt_data.inst_curr, di->ccm.original_iset,
+@@ -1545,8 +1544,7 @@ static void ab8500_chargalg_algorithm(struct ab8500_chargalg *di)
+ 
+ 	case STATE_WAIT_FOR_RECHARGE:
+ 		if (di->batt_data.percent <=
+-		    di->bm->bat_type[di->bm->batt_id].
+-		    recharge_cap)
++		    di->bm->bat_type[di->bm->batt_id].recharge_cap)
+ 			ab8500_chargalg_state_to(di, STATE_NORMAL_INIT);
+ 		break;
+ 
+@@ -1676,8 +1674,6 @@ static void ab8500_chargalg_wd_work(struct work_struct *work)
+ 	struct ab8500_chargalg *di = container_of(work,
+ 		struct ab8500_chargalg, chargalg_wd_work.work);
+ 
+-	dev_dbg(di->dev, "ab8500_chargalg_wd_work\n");
+-
+ 	ret = ab8500_chargalg_kick_watchdog(di);
+ 	if (ret < 0)
+ 		dev_err(di->dev, "failed to kick watchdog\n");
+@@ -1754,7 +1750,7 @@ static ssize_t ab8500_chargalg_curr_step_show(struct ab8500_chargalg *di,
+ static ssize_t ab8500_chargalg_curr_step_store(struct ab8500_chargalg *di,
+ 					       const char *buf, size_t length)
+ {
+-	long int param;
++	long param;
+ 	int ret;
+ 
+ 	ret = kstrtol(buf, 10, &param);
+@@ -1787,7 +1783,7 @@ static ssize_t ab8500_chargalg_en_show(struct ab8500_chargalg *di,
+ static ssize_t ab8500_chargalg_en_store(struct ab8500_chargalg *di,
+ 	const char *buf, size_t length)
+ {
+-	long int param;
++	long param;
+ 	int ac_usb;
+ 	int ret;
+ 
 -- 
-Florian
+2.31.1
+
