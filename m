@@ -2,128 +2,75 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	PLING_QUERY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37B54C07E95
-	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Jul 2021 13:07:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F125EC636C9
+	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Jul 2021 14:41:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0700161186
-	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Jul 2021 13:07:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9E5461208
+	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Jul 2021 14:41:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235524AbhGTM0c (ORCPT
+        id S240211AbhGTOAz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 20 Jul 2021 08:26:32 -0400
-Received: from smtp11.smtpout.orange.fr ([80.12.242.133]:22233 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238455AbhGTMZX (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 20 Jul 2021 08:25:23 -0400
-Received: from [192.168.1.102] ([80.15.159.30])
-        by mwinf5d34 with ME
-        id XR5v2500f0feRjk03R5wRC; Tue, 20 Jul 2021 15:05:57 +0200
-X-ME-Helo: [192.168.1.102]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 20 Jul 2021 15:05:57 +0200
-X-ME-IP: 80.15.159.30
-Subject: Re: [PATCH] RDMA/irdma: Improve the way 'cqp_request' structures are
- cleaned when they are recycled
-To:     leon@kernel.org
-Cc:     mustafa.ismail@intel.com, shiraz.saleem@intel.com,
-        dledford@redhat.com, jgg@ziepe.ca, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        christophe.jaillet@wanadoo.fr
-References: <7f93f2a2c2fd18ddfeb99339d175b85ffd1c6398.1626713915.git.christophe.jaillet@wanadoo.fr>
- <YPbALA/P5+NsC7MO@unreal>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Message-ID: <629bc34e-ef41-9af6-9ed7-71865251a62c@wanadoo.fr>
-Date:   Tue, 20 Jul 2021 15:05:55 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Tue, 20 Jul 2021 10:00:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47498 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S239999AbhGTNup (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 20 Jul 2021 09:50:45 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPS id 5CB9561244;
+        Tue, 20 Jul 2021 14:30:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1626791406;
+        bh=yqPfKPvezPfquBcaYh/moLLHAyfcdAjJqajDiNGMRow=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=kLtUnEPEpJH36c/9XM0M2zqHxNq7lU+Oc8lh6tZag4CfXqiPwSt9Bv7t/Z1wu6OH5
+         s6y7+vfkbLK0kD2E10DiYNneutGGe/szX+0mFMQD9Bl6YTanczlfLC8LehWd5JKsrC
+         QWAnvGVI7jk28gRgmScKUh7N63E4fLUVR/YU1hzY4/Qk3FOSK+XgDDvXa8pBU5EMqf
+         Vyo1jGfPTPwYM0rw2rzpKHdIZaKeBlFnOsjJSj7Idcmh2/5myE9siT3o7qKJeDm7bS
+         IqXpVcsd9gZFiQE/6qqhnZvlZu+Hqfh0xRGtV+F0KCwuXwxGUF6udegyOmMAARl4Ha
+         DG0dREYg/z/Ig==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <YPbALA/P5+NsC7MO@unreal>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] net: marvell: clean up trigraph warning on ??! string
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <162679140634.23944.13639576500085016559.git-patchwork-notify@kernel.org>
+Date:   Tue, 20 Jul 2021 14:30:06 +0000
+References: <20210720130311.59805-1-colin.king@canonical.com>
+In-Reply-To: <20210720130311.59805-1-colin.king@canonical.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     thomas.petazzoni@bootlin.com, davem@davemloft.net, kuba@kernel.org,
+        nathan@kernel.org, ndesaulniers@google.com, netdev@vger.kernel.org,
+        clang-built-linux@googlegroups.com,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 20/07/2021 à 14:23, Leon Romanovsky a écrit :
-> On Mon, Jul 19, 2021 at 07:02:15PM +0200, Christophe JAILLET wrote:
->> A set of IRDMA_CQP_SW_SQSIZE_2048 (i.e. 2048) 'cqp_request' are
->> pre-allocated and zeroed in 'irdma_create_cqp()' (hw.c).  These
->> structures are managed with the 'cqp->cqp_avail_reqs' list which keeps
->> track of available entries.
->>
->> In 'irdma_free_cqp_request()' (utils.c), when an entry is recycled and goes
->> back to the 'cqp_avail_reqs' list, some fields are reseted.
->>
->> However, one of these fields, 'compl_info', is initialized within
->> 'irdma_alloc_and_get_cqp_request()'.
->>
->> Move the corresponding memset to 'irdma_free_cqp_request()' so that the
->> clean-up is done in only one place. This makes the logic more easy to
->> understand.
+Hello:
+
+This patch was applied to netdev/net-next.git (refs/heads/master):
+
+On Tue, 20 Jul 2021 14:03:11 +0100 you wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> I'm not so sure. The function irdma_alloc_and_get_cqp_request() returns
-> prepared cqp_request and all users expect that it will returned cleaned
-> one. The reliance on some other place to clear part of the structure is
-> prone to errors.
-
-Ok, so maybe, moving:
-	cqp_request->request_done = false;
-	cqp_request->callback_fcn = NULL;
-	cqp_request->waiting = false;
-from 'irdma_free_cqp_request()' to 'irdma_alloc_and_get_cqp_request()' 
-to make explicit what is reseted makes more sense?
-
- From my point of view, it is same same: all (re)initialization are done 
-at 1 place only.
-
-This would also avoid setting 'waiting' twice (once to false in 
-'irdma_free_cqp_request()' and one to 'wait' 
-'irdma_alloc_and_get_cqp_request()')
-
-
-CJ
+> The character sequence ??! is a trigraph and causes the following
+> clang warning:
 > 
-> Thanks
+> drivers/net/ethernet/marvell/mvneta.c:2604:39: warning: trigraph ignored [-Wtrigraphs]
 > 
->>
->> This also saves this memset in the case that the 'cqp_avail_reqs' list is
->> empty and a new 'cqp_request' structure must be allocated. This memset is
->> useless, because the structure is already kzalloc'ed.
->>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
->> ---
->>   drivers/infiniband/hw/irdma/utils.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/infiniband/hw/irdma/utils.c b/drivers/infiniband/hw/irdma/utils.c
->> index 5bbe44e54f9a..66711024d38b 100644
->> --- a/drivers/infiniband/hw/irdma/utils.c
->> +++ b/drivers/infiniband/hw/irdma/utils.c
->> @@ -445,7 +445,6 @@ struct irdma_cqp_request *irdma_alloc_and_get_cqp_request(struct irdma_cqp *cqp,
->>   
->>   	cqp_request->waiting = wait;
->>   	refcount_set(&cqp_request->refcnt, 1);
->> -	memset(&cqp_request->compl_info, 0, sizeof(cqp_request->compl_info));
->>   
->>   	return cqp_request;
->>   }
->> @@ -475,6 +474,7 @@ void irdma_free_cqp_request(struct irdma_cqp *cqp,
->>   		cqp_request->request_done = false;
->>   		cqp_request->callback_fcn = NULL;
->>   		cqp_request->waiting = false;
->> +		memset(&cqp_request->compl_info, 0, sizeof(cqp_request->compl_info));
->>   
->>   		spin_lock_irqsave(&cqp->req_lock, flags);
->>   		list_add_tail(&cqp_request->list, &cqp->cqp_avail_reqs);
->> -- 
->> 2.30.2
->>
-> 
+> [...]
+
+Here is the summary with links:
+  - net: marvell: clean up trigraph warning on ??! string
+    https://git.kernel.org/netdev/net-next/c/fa660684e531
+
+You are awesome, thank you!
+--
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
