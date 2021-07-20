@@ -2,107 +2,86 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF02CC07E9B
-	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Jul 2021 12:23:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94B53C07E9B
+	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Jul 2021 12:48:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DE19261165
-	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Jul 2021 12:23:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A9DA60FF2
+	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Jul 2021 12:48:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235455AbhGTLmz (ORCPT
+        id S238403AbhGTMHm (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 20 Jul 2021 07:42:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33178 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236874AbhGTLmk (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 20 Jul 2021 07:42:40 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 9E85661165;
-        Tue, 20 Jul 2021 12:23:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1626783792;
-        bh=k3u8kVux9MZ9aUC3HoK/CusB+Yi3Q/t7dbfUVU7znNo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YAlToWw6aOZLePABIn2HAXF+uAnzv+QapStGGsYQegZtpptH1zLoy2hLFK+48tIlQ
-         wjYkxMwBn37OVQkBauBGy+aF7eh3th9UeG4AbmGbJVldn3wIZOqZ2vtsOVcH8mKbVO
-         cTQ3D1UbjtDGkyyiOwgU6o5TUDei8ZTEoXFrSUIRAkC87ebV8emtK0D4ZqxLL+US3h
-         X2weJd6lg4ru7eASwjqMCYf90P0wiSfe3Z4jDTt6MFXCojK+fA8gVjSg1Frepl76V/
-         6X8F4lhEoPMYhQA0/pG5J4kyZW7PEUjN/vXRjejSPSf2ojPFzZvT1gN0fIepm5fi0/
-         pjIWx66FzHMng==
-Date:   Tue, 20 Jul 2021 15:23:08 +0300
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     mustafa.ismail@intel.com, shiraz.saleem@intel.com,
-        dledford@redhat.com, jgg@ziepe.ca, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] RDMA/irdma: Improve the way 'cqp_request' structures are
- cleaned when they are recycled
-Message-ID: <YPbALA/P5+NsC7MO@unreal>
-References: <7f93f2a2c2fd18ddfeb99339d175b85ffd1c6398.1626713915.git.christophe.jaillet@wanadoo.fr>
+        Tue, 20 Jul 2021 08:07:42 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:37622
+        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S238360AbhGTMHi (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 20 Jul 2021 08:07:38 -0400
+Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 665A4418F8;
+        Tue, 20 Jul 2021 12:48:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1626785295;
+        bh=0ItI7io0GTWcShfB9OXndSkWcyxA3F74Ps+6kGgGN+g=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=Wr7zJECXlIJa89fP1PUCdovg3nBJTNJJHJmTEzVJ/ds/vH+WmeGEOfTiwF2C9QSuH
+         YDV3O+7+jpKKTVRxio39/vf0GQwXiyCjxXkQElA2myNiYpebcyvONf+1ug8MyKaKOB
+         BNy5GejUy8gzYUJSwOwNA+Ap96VdNa/2us8cSlDMzTBn9xed4p4uwv9qT76SB9bZ8H
+         kHE/QBgD/AQNcr9ZLHJHv9cHeOy5X3K29ufZ9v404NGPuIxXSTJA3uvMi3hCMlugr9
+         2DzjWYliXm96SqiBZM4mnl8RhknXoX810ziFLKZ+7soNViKh2RX2fLfFlNoz93LDtl
+         OdwHxza0lIdKw==
+From:   Colin King <colin.king@canonical.com>
+To:     Chas Williams <3chas3@gmail.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org,
+        clang-built-linux@googlegroups.com
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] atm: idt77252: clean up trigraph warning on ??) string
+Date:   Tue, 20 Jul 2021 13:48:13 +0100
+Message-Id: <20210720124813.59331-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7f93f2a2c2fd18ddfeb99339d175b85ffd1c6398.1626713915.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Jul 19, 2021 at 07:02:15PM +0200, Christophe JAILLET wrote:
-> A set of IRDMA_CQP_SW_SQSIZE_2048 (i.e. 2048) 'cqp_request' are
-> pre-allocated and zeroed in 'irdma_create_cqp()' (hw.c).  These
-> structures are managed with the 'cqp->cqp_avail_reqs' list which keeps
-> track of available entries.
-> 
-> In 'irdma_free_cqp_request()' (utils.c), when an entry is recycled and goes
-> back to the 'cqp_avail_reqs' list, some fields are reseted.
-> 
-> However, one of these fields, 'compl_info', is initialized within
-> 'irdma_alloc_and_get_cqp_request()'.
-> 
-> Move the corresponding memset to 'irdma_free_cqp_request()' so that the
-> clean-up is done in only one place. This makes the logic more easy to
-> understand.
+From: Colin Ian King <colin.king@canonical.com>
 
-I'm not so sure. The function irdma_alloc_and_get_cqp_request() returns
-prepared cqp_request and all users expect that it will returned cleaned
-one. The reliance on some other place to clear part of the structure is
-prone to errors.
+The character sequence ??) is a trigraph and causes the following
+clang warning:
 
-Thanks
+drivers/atm/idt77252.c:3544:35: warning: trigraph ignored [-Wtrigraphs]
 
-> 
-> This also saves this memset in the case that the 'cqp_avail_reqs' list is
-> empty and a new 'cqp_request' structure must be allocated. This memset is
-> useless, because the structure is already kzalloc'ed.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/infiniband/hw/irdma/utils.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/infiniband/hw/irdma/utils.c b/drivers/infiniband/hw/irdma/utils.c
-> index 5bbe44e54f9a..66711024d38b 100644
-> --- a/drivers/infiniband/hw/irdma/utils.c
-> +++ b/drivers/infiniband/hw/irdma/utils.c
-> @@ -445,7 +445,6 @@ struct irdma_cqp_request *irdma_alloc_and_get_cqp_request(struct irdma_cqp *cqp,
->  
->  	cqp_request->waiting = wait;
->  	refcount_set(&cqp_request->refcnt, 1);
-> -	memset(&cqp_request->compl_info, 0, sizeof(cqp_request->compl_info));
->  
->  	return cqp_request;
->  }
-> @@ -475,6 +474,7 @@ void irdma_free_cqp_request(struct irdma_cqp *cqp,
->  		cqp_request->request_done = false;
->  		cqp_request->callback_fcn = NULL;
->  		cqp_request->waiting = false;
-> +		memset(&cqp_request->compl_info, 0, sizeof(cqp_request->compl_info));
->  
->  		spin_lock_irqsave(&cqp->req_lock, flags);
->  		list_add_tail(&cqp_request->list, &cqp->cqp_avail_reqs);
-> -- 
-> 2.30.2
-> 
+Clean this by replacing it with single ?.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/atm/idt77252.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/atm/idt77252.c b/drivers/atm/idt77252.c
+index 9e4bd751db79..81ce81a75fc6 100644
+--- a/drivers/atm/idt77252.c
++++ b/drivers/atm/idt77252.c
+@@ -3536,7 +3536,7 @@ static int idt77252_preset(struct idt77252_dev *card)
+ 		return -1;
+ 	}
+ 	if (!(pci_command & PCI_COMMAND_IO)) {
+-		printk("%s: PCI_COMMAND: %04x (???)\n",
++		printk("%s: PCI_COMMAND: %04x (?)\n",
+ 		       card->name, pci_command);
+ 		deinit_card(card);
+ 		return (-1);
+-- 
+2.31.1
+
