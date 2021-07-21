@@ -5,44 +5,45 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17DA9C636C9
-	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Jul 2021 12:04:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2B38C12002
+	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Jul 2021 12:09:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EADC7610F7
-	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Jul 2021 12:04:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 669526120E
+	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Jul 2021 12:09:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238419AbhGULXc (ORCPT
+        id S234275AbhGUL2n (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 21 Jul 2021 07:23:32 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:48238
+        Wed, 21 Jul 2021 07:28:43 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:48536
         "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238184AbhGULVM (ORCPT
+        by vger.kernel.org with ESMTP id S232704AbhGUL2m (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 21 Jul 2021 07:21:12 -0400
+        Wed, 21 Jul 2021 07:28:42 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id AC0A13F24D;
-        Wed, 21 Jul 2021 12:01:47 +0000 (UTC)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 188623F232;
+        Wed, 21 Jul 2021 12:09:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1626868908;
-        bh=4rNr75iyy/j1TQd7Pr+dzCy4gKd7n5s0DoW6abDmq8Q=;
+        s=20210705; t=1626869356;
+        bh=s+IgBHSjMVguwTJ1v1phSYhp0UVRG7GTntf1zs/ccdA=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=jWgWr3fGBqcLb8uG/vUpfQLwqcb2LKm7kS/9qpV5tWi99kj0WWTi6cpk+YRxmlUcy
-         z2uQFX81eCVQSY9NipHZrYVhQWhsNn8C39a+ci61CUdB9147UdUL4WYaoIIJ45cnkl
-         NLjnXnKPFrYHVmsz7uef7iTVlrFX/69MQzLHQmQlyzTvPK2E6hutNba4aPMBlFw9Qp
-         K4RNIOSLyKATOL/E53/WEic/zuFAGTAZ9DYQDitYUEcc1l7yPKlZu7dOJWJjEDT4fq
-         1tP8UANdVFOCIPMOpLOnuhRRSEckUrd8FHaFR4YnwfTt03wpYS0wxmOvD0T5YgJDRS
-         AnKc6QyHebKvg==
+        b=fa3Pqu8VvsOFAcuoegZDShf92wKk1ii8pxeOVEu954d6Tx49IBsQ8rBcfaHreJ8CP
+         ZJY6VLaSW0ZYI9lWZwoac1iH4LmSnv/cpHJUGB1j+H7NSNM0BwBhbaa2nWWf5Y/o9F
+         8iT9yIaqpS4HvcSBSmEPi4u8RmJoaUV9MAzrypLQiJNI46rTkCvya4cUjX7hJtPbAY
+         t1PA0xXB6ZkduBRJgrxj2Hj8Z3MWLSSqP5RorLbZpX7HhvN/3/Fk8TRkx66y0Kp1OV
+         wwp4qKgc/YD1t3wyTAoAbhLrMmCZ7aOKUtuVQPLspgtNrj5zK2ZZyNzOsksGybaGjs
+         Ygh/s/uHFglUw==
 From:   Colin King <colin.king@canonical.com>
-To:     Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org
-Subject: [PATCH] posix-timers: remove redundant initialization of variable ret
-Date:   Wed, 21 Jul 2021 13:01:47 +0100
-Message-Id: <20210721120147.109570-1-colin.king@canonical.com>
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ftrace: remove redundant initialization of variable ret
+Date:   Wed, 21 Jul 2021 13:09:15 +0100
+Message-Id: <20210721120915.122278-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -60,22 +61,22 @@ can be removed.
 Addresses-Coverity: ("Unused value")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- kernel/time/posix-timers.c | 2 +-
+ kernel/trace/ftrace.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
-index dd5697d7347b..3913222e7bcf 100644
---- a/kernel/time/posix-timers.c
-+++ b/kernel/time/posix-timers.c
-@@ -336,7 +336,7 @@ void posixtimer_rearm(struct kernel_siginfo *info)
- int posix_timer_event(struct k_itimer *timr, int si_private)
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index e6fb3e6e1ffc..baa9463bcf76 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -7544,7 +7544,7 @@ int ftrace_is_dead(void)
+  */
+ int register_ftrace_function(struct ftrace_ops *ops)
  {
- 	enum pid_type type;
 -	int ret = -1;
 +	int ret;
- 	/*
- 	 * FIXME: if ->sigq is queued we can race with
- 	 * dequeue_signal()->posixtimer_rearm().
+ 
+ 	ftrace_ops_init(ops);
+ 
 -- 
 2.31.1
 
