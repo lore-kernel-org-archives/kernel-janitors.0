@@ -2,93 +2,90 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47274C07E9B
-	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Jul 2021 17:24:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49EAFC07E9B
+	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Jul 2021 05:11:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 35FDD60FED
-	for <kernel-janitors@archiver.kernel.org>; Tue, 20 Jul 2021 17:24:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26D5260FED
+	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Jul 2021 05:11:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231493AbhGTQnO (ORCPT
+        id S232934AbhGUEbN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 20 Jul 2021 12:43:14 -0400
-Received: from mga09.intel.com ([134.134.136.24]:23531 "EHLO mga09.intel.com"
+        Wed, 21 Jul 2021 00:31:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46112 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231910AbhGTQmv (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 20 Jul 2021 12:42:51 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10051"; a="211286204"
-X-IronPort-AV: E=Sophos;i="5.84,255,1620716400"; 
-   d="scan'208";a="211286204"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jul 2021 10:19:31 -0700
-X-IronPort-AV: E=Sophos;i="5.84,255,1620716400"; 
-   d="scan'208";a="462117412"
-Received: from tjathaud-mobl.amr.corp.intel.com (HELO ldmartin-desk2) ([10.255.230.66])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jul 2021 10:19:27 -0700
-Date:   Tue, 20 Jul 2021 10:19:27 -0700
-From:   Lucas De Marchi <lucas.demarchi@intel.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Anusha Srivatsa <anusha.srivatsa@intel.com>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] drm/i915/xelpd: Fix unsigned compared to less than
- zero error
-Message-ID: <20210720171927.joohdb6lykm7j64t@ldmartin-desk2>
-X-Patchwork-Hint: comment
-References: <20210720155726.73628-1-colin.king@canonical.com>
+        id S232512AbhGUEaw (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 21 Jul 2021 00:30:52 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 5348A60FE7;
+        Wed, 21 Jul 2021 05:11:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1626844290;
+        bh=pHR2j/1bWtegDLobNbANc0THMPZSOJdmsO6JZSbVrvE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=J6vKnKOXleULywJpU2/cJo1wUEgINlSqz+X3/vhpRUHMVbyrFw8cAF3eniYRXbIcX
+         ooVQAQ55DDXEUPMEKxCHncH47HJpZo3LpJQpF0TrM5Sb141gYAaF/+QFDahjfp0mZz
+         xWTweK9B+tqUcrVYS8qC7qpXQJtWaQfl6jlh0Jr0O+YmBUtCAWchWXaJANZYtP2QEI
+         F5jIJgjo4+c46dT4gm4LwFuF7d2WGx8Zh0SLzrlvLwAG7uIaWs2PcxGNg+ZwhnOY1V
+         ie0CclnW/SbXKuPyrN9hX5r3ohW2zh1bYuw69p7Uv6iwduEMdA/VS59vT/E89YVMUA
+         4oRawwzvbkmHQ==
+Date:   Wed, 21 Jul 2021 08:11:26 +0300
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     mustafa.ismail@intel.com, shiraz.saleem@intel.com,
+        dledford@redhat.com, jgg@ziepe.ca, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] RDMA/irdma: Improve the way 'cqp_request' structures are
+ cleaned when they are recycled
+Message-ID: <YPesftdeBpzJUhMZ@unreal>
+References: <7f93f2a2c2fd18ddfeb99339d175b85ffd1c6398.1626713915.git.christophe.jaillet@wanadoo.fr>
+ <YPbALA/P5+NsC7MO@unreal>
+ <629bc34e-ef41-9af6-9ed7-71865251a62c@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20210720155726.73628-1-colin.king@canonical.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <629bc34e-ef41-9af6-9ed7-71865251a62c@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Jul 20, 2021 at 04:57:26PM +0100, Colin King wrote:
->From: Colin Ian King <colin.king@canonical.com>
->
->The subtraction of fw->size - offset is operating on two unsigned
->integers and the result is unsigned and hence the less than zero
->comparison will always to be false. Fix this by casting fw->size
->from a size_t to a ssize_t to ensure the result can be signed to
->allow a less than zero result.
->
->Addresses-Coverity: ("Unsigned compared against 0")
->Fixes: 3d5928a168a9 ("drm/i915/xelpd: Pipe A DMC plugging")
->Signed-off-by: Colin Ian King <colin.king@canonical.com>
+On Tue, Jul 20, 2021 at 03:05:55PM +0200, Christophe JAILLET wrote:
+> Le 20/07/2021 à 14:23, Leon Romanovsky a écrit :
+> > On Mon, Jul 19, 2021 at 07:02:15PM +0200, Christophe JAILLET wrote:
+> > > A set of IRDMA_CQP_SW_SQSIZE_2048 (i.e. 2048) 'cqp_request' are
+> > > pre-allocated and zeroed in 'irdma_create_cqp()' (hw.c).  These
+> > > structures are managed with the 'cqp->cqp_avail_reqs' list which keeps
+> > > track of available entries.
+> > > 
+> > > In 'irdma_free_cqp_request()' (utils.c), when an entry is recycled and goes
+> > > back to the 'cqp_avail_reqs' list, some fields are reseted.
+> > > 
+> > > However, one of these fields, 'compl_info', is initialized within
+> > > 'irdma_alloc_and_get_cqp_request()'.
+> > > 
+> > > Move the corresponding memset to 'irdma_free_cqp_request()' so that the
+> > > clean-up is done in only one place. This makes the logic more easy to
+> > > understand.
+> > 
+> > I'm not so sure. The function irdma_alloc_and_get_cqp_request() returns
+> > prepared cqp_request and all users expect that it will returned cleaned
+> > one. The reliance on some other place to clear part of the structure is
+> > prone to errors.
+> 
+> Ok, so maybe, moving:
+> 	cqp_request->request_done = false;
+> 	cqp_request->callback_fcn = NULL;
+> 	cqp_request->waiting = false;
+> from 'irdma_free_cqp_request()' to 'irdma_alloc_and_get_cqp_request()' to
+> make explicit what is reseted makes more sense?
 
+I think so, but it requires double check that these cleared values are
+not used after irdma_free_cqp_request().
 
-Reviewed-by: Lucas De Marchi <lucas.demarchi@intel.com>
+This is another reason why clearing fields after _free_ routine is
+mostly wrong. It hides errors when data is accessed after release.
 
-thanks
-Lucas De Marchi
-
->---
-> drivers/gpu/drm/i915/display/intel_dmc.c | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
->
->diff --git a/drivers/gpu/drm/i915/display/intel_dmc.c b/drivers/gpu/drm/i915/display/intel_dmc.c
->index f8789d4543bf..dde1f243d375 100644
->--- a/drivers/gpu/drm/i915/display/intel_dmc.c
->+++ b/drivers/gpu/drm/i915/display/intel_dmc.c
->@@ -645,7 +645,7 @@ static void parse_dmc_fw(struct drm_i915_private *dev_priv,
-> 			continue;
->
-> 		offset = readcount + dmc->dmc_info[id].dmc_offset * 4;
->-		if (fw->size - offset < 0) {
->+		if ((ssize_t)fw->size - offset < 0) {
-> 			drm_err(&dev_priv->drm, "Reading beyond the fw_size\n");
-> 			continue;
-> 		}
->-- 
->2.31.1
->
+Thanks
