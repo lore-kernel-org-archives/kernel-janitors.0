@@ -2,85 +2,72 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ADB7C6377A
-	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Jul 2021 22:12:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E057C63799
+	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Jul 2021 14:14:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6B21E61246
-	for <kernel-janitors@archiver.kernel.org>; Wed, 21 Jul 2021 22:12:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5462D6128C
+	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Jul 2021 14:14:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229927AbhGUVb0 (ORCPT
+        id S232350AbhGVNeA convert rfc822-to-8bit (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 21 Jul 2021 17:31:26 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:56636
-        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229608AbhGUVb0 (ORCPT
+        Thu, 22 Jul 2021 09:34:00 -0400
+Received: from coyote.holtmann.net ([212.227.132.17]:54008 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232328AbhGVNdi (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 21 Jul 2021 17:31:26 -0400
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net [80.193.200.194])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 0FE4A3F235;
-        Wed, 21 Jul 2021 22:11:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1626905521;
-        bh=J0x7Mk1L5wZTTEhmdsCR4xaxJH/q6r74SfQ+T3WO81M=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=F6JXIqyfwgCM+QUxviWiUftXatS9E5+eLjw7iO0ub1ji0ezhfiSrm/+fL3OmjxjSE
-         vyEfMYJhtGrNJysNmegfjHqnvckALkM6ag2h0aLI0CjJFiRd36oLI4mJ9C4QlFb996
-         +8kIO/BsfR7N+mbTmoOoVRuBCuLQTv2eNFE0SeyXMCcEK6BwkN9V3jXL6RfPjLtnXt
-         nZgb7r3MLubAJu3kX5JYA+VX6xsMhnt5DsftPh3j8AWsYY2ZLx7MJaYwiQ3oXIP15j
-         UdFubKABTdh8XFwCJxDW/5xHmHyVHKF1A7BpmBkJWLlJVuG0xCvqKx8YfAd2w3pThw
-         c56ujzTWR35ow==
-From:   Colin King <colin.king@canonical.com>
-To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm: Fix space indentations, replace with tabs
-Date:   Wed, 21 Jul 2021 23:11:48 +0100
-Message-Id: <20210721221148.18127-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.31.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Thu, 22 Jul 2021 09:33:38 -0400
+Received: from smtpclient.apple (p5b3d2eb8.dip0.t-ipconnect.de [91.61.46.184])
+        by mail.holtmann.org (Postfix) with ESMTPSA id 07BE8CECDC;
+        Thu, 22 Jul 2021 16:14:10 +0200 (CEST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 14.0 \(3654.100.0.2.22\))
+Subject: Re: [PATCH] Bluetooth: sco: prevent information leak in
+ sco_conn_defer_accept()
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <YNXveZZwzS3crmHH@mwanda>
+Date:   Thu, 22 Jul 2021 16:14:09 +0200
+Cc:     =?utf-8?B?RnLDqWTDqXJpYyBEYWxsZWF1?= 
+        <frederic.dalleau@linux.intel.com>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+        Gustavo Padovan <gustavo.padovan@collabora.co.uk>,
+        linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <2679DCD8-2606-4341-921A-1CC0B2DA3057@holtmann.org>
+References: <YNXveZZwzS3crmHH@mwanda>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+X-Mailer: Apple Mail (2.3654.100.0.2.22)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hi Dan,
 
-A couple of statements are indented with spaces, clean this up
-by replacing spaces with tabs.
+> Smatch complains that some of these struct members are not initialized
+> leading to a stack information disclosure:
+> 
+>    net/bluetooth/sco.c:778 sco_conn_defer_accept() warn:
+>    check that 'cp.retrans_effort' doesn't leak information
+> 
+> This seems like a valid warning.  I've added a default case to fix
+> this issue.  It's sort of unusual to have case SCO_AIRMODE_CVSD,
+> followed by a default case but I think it's nicely readable.  :)
+> 
+> Fixes: 2f69a82acf6f ("Bluetooth: Use voice setting in deferred SCO connection request")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> net/bluetooth/sco.c | 1 +
+> 1 file changed, 1 insertion(+)
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpu/drm/drm_ioctl.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I actually prefer a separate default statement since otherwise I get confused. Your patch with that minor change has been applied to bluetooth-next tree.
 
-diff --git a/drivers/gpu/drm/drm_ioctl.c b/drivers/gpu/drm/drm_ioctl.c
-index f454e0424086..c023da67ca7a 100644
---- a/drivers/gpu/drm/drm_ioctl.c
-+++ b/drivers/gpu/drm/drm_ioctl.c
-@@ -834,8 +834,8 @@ long drm_ioctl(struct file *filp,
- 	if (drm_dev_is_unplugged(dev))
- 		return -ENODEV;
- 
--       if (DRM_IOCTL_TYPE(cmd) != DRM_IOCTL_BASE)
--               return -ENOTTY;
-+	if (DRM_IOCTL_TYPE(cmd) != DRM_IOCTL_BASE)
-+		return -ENOTTY;
- 
- 	is_driver_ioctl = nr >= DRM_COMMAND_BASE && nr < DRM_COMMAND_END;
- 
--- 
-2.31.1
+Regards
+
+Marcel
 
