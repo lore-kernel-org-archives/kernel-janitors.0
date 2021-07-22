@@ -2,83 +2,157 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4785C4338F
-	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Jul 2021 19:15:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6801C4338F
+	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Jul 2021 20:05:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C92BF60E74
-	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Jul 2021 19:15:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C28E760EB1
+	for <kernel-janitors@archiver.kernel.org>; Thu, 22 Jul 2021 20:05:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230084AbhGVSe7 (ORCPT
+        id S230126AbhGVTZP (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 22 Jul 2021 14:34:59 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:35132
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229545AbhGVSe6 (ORCPT
+        Thu, 22 Jul 2021 15:25:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39494 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229649AbhGVTZO (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 22 Jul 2021 14:34:58 -0400
-Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 71D863F22F;
-        Thu, 22 Jul 2021 19:15:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1626981332;
-        bh=bxMMbXX93B1Hfa8C300wVht3IrDjfwUTd6RgHVXgqNU=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=iTWIB/CbkA9YteyjaTLS+/Z3eSTjcqX6eOGjprgFnR5uBhTp8xG08zn2nuZQXNB1C
-         NCdibv2Gk5mUhNlfyz64vXrFl/9z1AdbqI8J85zmygKN1YksONyKX4D4qoALBZjLUp
-         xHQt49xhflDa71Atu/b7LZ+7WLY9ZMdLqbsfDhLaUSzOEgDUXAYTVsZ0TYDkV11Qyx
-         v9WI0BZSU0GWKJD02W/1+lq6XQ9IVpfPmzFYm6VUL0dZWUZHvomLLK7QZN8NRGD0rw
-         BzPwW3NeirCIahl0obJyBI/7/IfeulnWwXhAGr+/T6LY7OibT0QfWzh3k0eiG3+48H
-         81M46oObXIrWA==
-From:   Colin King <colin.king@canonical.com>
-To:     Vladimir Oltean <olteanv@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
+        Thu, 22 Jul 2021 15:25:14 -0400
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16DE9C061575;
+        Thu, 22 Jul 2021 13:05:48 -0700 (PDT)
+Received: by mail-ed1-x532.google.com with SMTP id dj21so8344320edb.0;
+        Thu, 22 Jul 2021 13:05:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=n6sggzgTkVk4//C61mJiDT041uOw3JW87CcdidLGV9U=;
+        b=MP0DpBzLHm6ZTMUfSGaxtAEtNFK6HBSYZ8sDIWQ17WjlxzBIOrXmHkWfTwUb4XID4+
+         db4HJQzcWT2F8cvpcQd7+D4MuBfoH6XjFK6w+CH8BdInnsHDKtzf97O27YHDfo4Lqa7s
+         463Q/IyNf7KOLN136Pkc0GMESiprMn0wMXuEPiYKRa0+y1uUkVl8XBVpbrx4kZSp/Qxu
+         UgCtOx2ixaL9iXqQgq2TAY4f/mppcE+kTPlGvyQFyp3LJNsQSJwf7x9HMBHlR97KvVCE
+         OyNmkESkTUPKQAPJTEmLEKsQ23RYaPd/aXyhPWwkidCjd7r+FszcdKs7YLPGwO9ML7HI
+         zd3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=n6sggzgTkVk4//C61mJiDT041uOw3JW87CcdidLGV9U=;
+        b=EF3bfkpk4/RdWhvS95xUURVfpgJclQxWzPcju5HRHms2VoC49xGHggvFb3RPJqKcps
+         TAoF3nyAz7Ehkdg8asxfQo9qDBKEjHZHWKVzZEz8vCnj/g19FWZ/3vNnAJP/MUDlUKb3
+         D5JMQHsPgDO79HnqHblF+OslUkTYOn81s7ZLH3oksqhg7hA+ZhhluSRBeT+noT8uVtz1
+         s43PX3UaaxeKDXrCKWKKvzZBrNxgzaUQ6zuqCDuLkmJzuXYdRLaG+alrJBvWIChEAi9v
+         kDXRReIOEvtUz6u8Difc/8nsomvifNbkQSIbDU4uHuc1ViIrXsIBmmf9KlpvJDk3Ha7b
+         9ebQ==
+X-Gm-Message-State: AOAM530eKmzPlfCDWfzOcz2pf+z3f58EGm2fAYorWSmbHDBBm7iqpFJU
+        uTQlj5bbUvf5cmX3uaY59DI=
+X-Google-Smtp-Source: ABdhPJwzgK5u5serwWfWzvSjBfWa5SiSftEo5EJbk+QcCyUFBUqy2zelVHcW0dY++Ge0GkUGDqb8VQ==
+X-Received: by 2002:a05:6402:18c4:: with SMTP id x4mr1510052edy.350.1626984346665;
+        Thu, 22 Jul 2021 13:05:46 -0700 (PDT)
+Received: from skbuf ([82.76.66.29])
+        by smtp.gmail.com with ESMTPSA id kj26sm10048348ejc.24.2021.07.22.13.05.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Jul 2021 13:05:46 -0700 (PDT)
+Date:   Thu, 22 Jul 2021 23:05:44 +0300
+From:   Vladimir Oltean <olteanv@gmail.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Andrew Lunn <andrew@lunn.ch>,
         Vivien Didelot <vivien.didelot@gmail.com>,
         Florian Fainelli <f.fainelli@gmail.com>,
         "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] net: dsa: sja1105: remove redundant re-assignment of pointer table
-Date:   Thu, 22 Jul 2021 20:15:29 +0100
-Message-Id: <20210722191529.11013-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.31.1
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] net: dsa: sja1105: remove redundant re-assignment
+ of pointer table
+Message-ID: <20210722200544.qvl3sj57qph2whrw@skbuf>
+References: <20210722191529.11013-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210722191529.11013-1-colin.king@canonical.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Thu, Jul 22, 2021 at 08:15:29PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The pointer table is being re-assigned with a value that is never
+> read. The assignment is redundant and can be removed.
+> 
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/net/dsa/sja1105/sja1105_main.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/net/dsa/sja1105/sja1105_main.c b/drivers/net/dsa/sja1105/sja1105_main.c
+> index 6618abba23b3..c65dba3111d7 100644
+> --- a/drivers/net/dsa/sja1105/sja1105_main.c
+> +++ b/drivers/net/dsa/sja1105/sja1105_main.c
+> @@ -2157,8 +2157,6 @@ static int sja1105_build_vlan_table(struct sja1105_private *priv)
+>  	if (!new_vlan)
+>  		return -ENOMEM;
+>  
+> -	table = &priv->static_config.tables[BLK_IDX_VLAN_LOOKUP];
+> -
+>  	for (i = 0; i < VLAN_N_VID; i++)
+>  		new_vlan[i].vlanid = VLAN_N_VID;
+>  
+> -- 
+> 2.31.1
+> 
 
-The pointer table is being re-assigned with a value that is never
-read. The assignment is redundant and can be removed.
+Oh my, what an interesting bug you uncovered.
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/dsa/sja1105/sja1105_main.c | 2 --
- 1 file changed, 2 deletions(-)
+That duplicate assignment was introduced in commit 3f01c91aab92 ("net:
+dsa: sja1105: implement VLAN retagging for dsa_8021q sub-VLANs") and
+used to read:
 
-diff --git a/drivers/net/dsa/sja1105/sja1105_main.c b/drivers/net/dsa/sja1105/sja1105_main.c
-index 6618abba23b3..c65dba3111d7 100644
---- a/drivers/net/dsa/sja1105/sja1105_main.c
-+++ b/drivers/net/dsa/sja1105/sja1105_main.c
-@@ -2157,8 +2157,6 @@ static int sja1105_build_vlan_table(struct sja1105_private *priv)
- 	if (!new_vlan)
- 		return -ENOMEM;
- 
+	table = &priv->static_config.tables[BLK_IDX_VLAN_LOOKUP];
+	new_retagging = kcalloc(SJA1105_MAX_RETAGGING_COUNT,
+				table->ops->unpacked_entry_size, GFP_KERNEL);
+
+In retrospect, it should have been:
+
+	table = &priv->static_config.tables[BLK_IDX_RETAGGING];
+
+because we must allocate SJA1105_MAX_RETAGGING_COUNT elements of the
+size of one VLAN retagging entry, and not of one VLAN lookup entry.
+
+In commit 0fac6aa098ed ("net: dsa: sja1105: delete the
+best_effort_vlan_filtering mode") I deleted everything that had to do
+with VLAN retagging but left this behind because it didn't say RETAGGING
+on it.
+
+	[BLK_IDX_VLAN_LOOKUP] = {
+		.unpacked_entry_size = sizeof(struct sja1105_vlan_lookup_entry),
+	},
+	[BLK_IDX_RETAGGING] = {
+		.unpacked_entry_size = sizeof(struct sja1105_retagging_entry),
+	},
+
+and if you look at them, struct sja1105_retagging_entry has 7 u64
+fields, while struct sja1105_vlan_lookup_entry has 6 elements (actually
+since commit 3e77e59bf8cf ("net: dsa: sja1105: add support for the
+SJA1110 switch family") it also has 7.
+
+The point is, between commit 3f01c91aab92 and commit 3e77e59bf8cf, the
+driver allocated 8 bytes too few per VLAN retagging entry, or multiplied
+by 32 (the value of SJA1105_MAX_RETAGGING_COUNT), it only allocates
+enough memory for 27.4 VLAN retagging entries. So any attempt to access
+VLAN retagging entries 27-31 in this function would trigger an out of
+bounds memory access.
+
+Could you please also send a patch for the "net" tree with this, and the
+explanation above?
+
 -	table = &priv->static_config.tables[BLK_IDX_VLAN_LOOKUP];
--
- 	for (i = 0; i < VLAN_N_VID; i++)
- 		new_vlan[i].vlanid = VLAN_N_VID;
- 
--- 
-2.31.1
++	table = &priv->static_config.tables[BLK_IDX_RETAGGING];
 
+Thanks.
