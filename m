@@ -2,116 +2,95 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A484C4338F
-	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Jul 2021 12:24:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBAFEC4338F
+	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Jul 2021 12:33:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 788B060EE2
-	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Jul 2021 12:24:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5A6960E8C
+	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Jul 2021 12:33:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234750AbhGWLoM (ORCPT
+        id S234847AbhGWLwZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 23 Jul 2021 07:44:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34900 "EHLO
+        Fri, 23 Jul 2021 07:52:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234726AbhGWLoL (ORCPT
+        with ESMTP id S234774AbhGWLwK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 23 Jul 2021 07:44:11 -0400
-Received: from mail-ot1-x335.google.com (mail-ot1-x335.google.com [IPv6:2607:f8b0:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53840C061575;
-        Fri, 23 Jul 2021 05:24:45 -0700 (PDT)
-Received: by mail-ot1-x335.google.com with SMTP id z6-20020a9d24860000b02904d14e47202cso1861286ota.4;
-        Fri, 23 Jul 2021 05:24:45 -0700 (PDT)
+        Fri, 23 Jul 2021 07:52:10 -0400
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 609FFC061575;
+        Fri, 23 Jul 2021 05:32:43 -0700 (PDT)
+Received: by mail-ej1-x62f.google.com with SMTP id v21so3525708ejg.1;
+        Fri, 23 Jul 2021 05:32:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:reply-to:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=t2Symr9KuFJEPAV72a+i75cWNYGzF1LQQeEf4EUxAZo=;
-        b=V8YEP+xfPM0EKJb1BLXAfsAsZheHK7HN/Cfm2yulIZ5muRp3FaXSKrFCv2xb/KPfJp
-         xv04yZtC2E56XsFXN3Qex1GGNzltTxoAY+eNMJ9F95n2wU1DW3CWn4/q/H21rK3q0QL4
-         7biClPtQTrkCe+dHfY+x6cfSomeGINeJIsdfT2g0bBgGSGcF5ICCm7Zl+hySWjLB+K2b
-         krOgWuknqTwmtn4k0Ku3PkdFpAmfBBiOO82gX/gZVd2eicVjnVrecTNEuYWKkTjKr9aS
-         hi95PBxcxRLAubbURXU3Nw+jqxmVdMuYQWVQx+eAnFWHOg21HD8pFVGJN4dDbRl8APTo
-         PV5g==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=4eXnfuScHfsV7rofEB9joSoTQrqRx34K2n6dw7298vg=;
+        b=e5jn4llumeWQi+0sxNQhQMPzQookjYlzUdSMY23eLBbxPtVxanyaetk2ULm/lEgneI
+         WfQexS9Hm0CeuApBRKuwwhRoTAsiFoGgsyPQqsJhVeZPmdlt4jZjcJPxfXAGZLuR+qNu
+         5u8fJ+10Gw5SNaI3yK1Pw2FU1sHwf3RIOm5Yvb4/7/xNAmf04NYxRVcvAg2vrMovCufx
+         TlWjUA//v7F+OCWreXPXX9b8q1+taJDih5/NV2uztSq49zcIf/FCtRiYqTt3GtBVDpmn
+         ZWYKz+BQHeTpQ8kwt344ksbaHuLlacFg+g/FgSBcADwcHON4eS5h3u95RZ5OL/KX3OYi
+         3ZOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :reply-to:references:mime-version:content-disposition:in-reply-to;
-        bh=t2Symr9KuFJEPAV72a+i75cWNYGzF1LQQeEf4EUxAZo=;
-        b=qohJgatLrNOplY/dKe/eNBN/VI7LxVCVPNgGs2tK0BIDljz6aRtSp+CLH6KWgLCSkK
-         xlg7EaHSpk0SmyIAl9m1m3VY1wiJ/m1mIFBSLHuyrSI90eBtrrLW2+vnz57q03qbyicC
-         s0jbfTifFFy7xA6dRK1MFwD+fW0evCj9FhWkXB3QDiFrzwQwd1cEv8S0HIRbTUtb4BNb
-         hK7d1KMjMdIvmcKOHAT8WXRcc1EQj6O4sCxzIq1MviCzH97JyriwvzmxytFCHLpxpCaf
-         zXCKZKYasQkxOFL1gEi2GjNapXheCxOWzqhNNJ+Bf3zTAaI1ALbLdCnI+H2edZpZkgQk
-         SiLg==
-X-Gm-Message-State: AOAM53228Rqa5wbcVWxhlTbz5QSdzLqRz9bpDkE0aYBycdcWudZLRsvP
-        xFgovVU6R8rUuLc2Syedeg==
-X-Google-Smtp-Source: ABdhPJy8gHqpZvxm7eEtoQaPmkDy1f7x/bbkHq1veXt4C0r+zuxodWrO9SmmDcZKiXpO/pwvCKEGSA==
-X-Received: by 2002:a9d:4813:: with SMTP id c19mr2923124otf.208.1627043084573;
-        Fri, 23 Jul 2021 05:24:44 -0700 (PDT)
-Received: from serve.minyard.net (serve.minyard.net. [2001:470:b8f6:1b::1])
-        by smtp.gmail.com with ESMTPSA id c26sm2984518otu.38.2021.07.23.05.24.42
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=4eXnfuScHfsV7rofEB9joSoTQrqRx34K2n6dw7298vg=;
+        b=Ju3JLOUOfG3XrjAuPYhqZSM7QBFPhfOFOxmW7m2gLLARNGdce5c/ksHekEpJOM8jNb
+         QkjemvBaOOaJAjjH19LDwFbwJLiA1nze7rTLjOtEPWsbcXEt/rgK1Vjvox80s9rlNiwM
+         GhgLumPyYcaAP7qX8yYVAI+UdDr8j4SGjL36CJJ4VF71EFhG1NE6wuzcO5RE8VRaAXdk
+         w2Y9nd9sdU0jMVoc/sox4fBkpki3Xz21CNKX1sPM+Q80GFWtCmUKtw5NuaE7dHTX2jQH
+         f5Vezw82GTv5vGbwXCzUF3MfUIf8vZbevdYOp+IpT2XBa1vfrTKCRMJLeTABmzXYGlpJ
+         baTA==
+X-Gm-Message-State: AOAM530mJKNHImPk14TnvWNnl1gym74fJDvEpM+YQqUQXwNhvIf9EsRK
+        jmqwkcRcZaAivGvMC0Gq4sY=
+X-Google-Smtp-Source: ABdhPJyWPoe5TH3pAz1ZGvHvUd02BxjjuD1Z/PSIA7ldLGL6crGhQ5jNGVrXCWM3gKqKRq1TcbPDZg==
+X-Received: by 2002:a17:906:58c9:: with SMTP id e9mr4473180ejs.144.1627043561442;
+        Fri, 23 Jul 2021 05:32:41 -0700 (PDT)
+Received: from skbuf ([82.76.66.29])
+        by smtp.gmail.com with ESMTPSA id dg20sm51967edb.13.2021.07.23.05.32.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Jul 2021 05:24:43 -0700 (PDT)
-Sender: Corey Minyard <tcminyard@gmail.com>
-Received: from minyard.net (unknown [IPv6:2001:470:b8f6:1b:2d56:5547:21b6:aeca])
-        by serve.minyard.net (Postfix) with ESMTPSA id BDF3818005A;
-        Fri, 23 Jul 2021 12:24:41 +0000 (UTC)
-Date:   Fri, 23 Jul 2021 07:24:40 -0500
-From:   Corey Minyard <minyard@acm.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Quan Nguyen <quan@os.amperecomputing.com>,
-        openipmi-developer@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] ipmi: ssif_bmc: Return -EFAULT if copy_from_user() fails
-Message-ID: <20210723122440.GM3406@minyard.net>
-Reply-To: minyard@acm.org
-References: <20210723084459.GA21470@kili>
+        Fri, 23 Jul 2021 05:32:40 -0700 (PDT)
+Date:   Fri, 23 Jul 2021 15:32:39 +0300
+From:   Vladimir Oltean <olteanv@gmail.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] net: dsa: sja1105: remove redundant re-assignment
+ of pointer table
+Message-ID: <20210723123239.y2b3g3gea2ku2euq@skbuf>
+References: <20210722191529.11013-1-colin.king@canonical.com>
+ <20210722200544.qvl3sj57qph2whrw@skbuf>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210723084459.GA21470@kili>
+In-Reply-To: <20210722200544.qvl3sj57qph2whrw@skbuf>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Jul 23, 2021 at 11:44:59AM +0300, Dan Carpenter wrote:
-> The copy_from_user() function returns the number of bytes remaining to
-> be copied but we should return -EFAULT here.
-
-Yep, this is in my queue.
-
-Thanks,
-
--corey
-
+On Thu, Jul 22, 2021 at 11:05:44PM +0300, Vladimir Oltean wrote:
+> Could you please also send a patch for the "net" tree with this, and the
+> explanation above?
 > 
-> Fixes: 007888f365c9 ("ipmi: ssif_bmc: Add SSIF BMC driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/char/ipmi/ssif_bmc.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/char/ipmi/ssif_bmc.c b/drivers/char/ipmi/ssif_bmc.c
-> index b15c05622e72..ce8cd8364a3f 100644
-> --- a/drivers/char/ipmi/ssif_bmc.c
-> +++ b/drivers/char/ipmi/ssif_bmc.c
-> @@ -85,9 +85,8 @@ static ssize_t ssif_bmc_write(struct file *file, const char __user *buf, size_t
->  	if (count > sizeof(struct ssif_msg))
->  		return -EINVAL;
->  
-> -	ret = copy_from_user(&msg, buf, count);
-> -	if (ret)
-> -		return ret;
-> +	if (copy_from_user(&msg, buf, count))
-> +		return -EFAULT;
->  
->  	if (!msg.len || count < ssif_msg_len(&msg))
->  		return -EINVAL;
-> -- 
-> 2.20.1
-> 
+> -	table = &priv->static_config.tables[BLK_IDX_VLAN_LOOKUP];
+> +	table = &priv->static_config.tables[BLK_IDX_RETAGGING];
+
+I think it's best for me to just send that patch. I will send it towards
+the "stable" trees directly, to avoid all sorts of conflicts with "net"
+and "net-next" (as mentioned, the VLAN retagging code is going away).
+
+For this patch towards net-next:
+
+Reviewed-by: Vladimir Oltean <vladimir.oltean@nxp.com>
