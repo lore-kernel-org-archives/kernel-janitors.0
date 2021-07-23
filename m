@@ -2,75 +2,140 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF9CDC4338F
-	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Jul 2021 15:41:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CEA8C432BE
+	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Jul 2021 17:21:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 91C3B60EB5
-	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Jul 2021 15:41:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4484F60F02
+	for <kernel-janitors@archiver.kernel.org>; Fri, 23 Jul 2021 17:21:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235568AbhGWPBX (ORCPT
+        id S231430AbhGWQky (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 23 Jul 2021 11:01:23 -0400
-Received: from smtp05.smtpout.orange.fr ([80.12.242.127]:52654 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235524AbhGWPBW (ORCPT
+        Fri, 23 Jul 2021 12:40:54 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:51134
+        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231166AbhGWQkx (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 23 Jul 2021 11:01:22 -0400
-Received: from localhost.localdomain ([80.15.159.30])
-        by mwinf5d09 with ME
-        id Yfhu2500B0feRjk03fhu3D; Fri, 23 Jul 2021 17:41:55 +0200
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 23 Jul 2021 17:41:55 +0200
-X-ME-IP: 80.15.159.30
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     jikos@kernel.org, benjamin.tissoires@redhat.com
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] HID: logitech-hidpp: Use 'atomic_inc_return' instead of hand-writing it
-Date:   Fri, 23 Jul 2021 17:41:52 +0200
-Message-Id: <1091bc38881086be28d561adca042caba234f3f2.1627054657.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Fri, 23 Jul 2021 12:40:53 -0400
+Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id AC9073F325;
+        Fri, 23 Jul 2021 17:21:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1627060884;
+        bh=7FQD/B711wUP78UGWXd/xXfRyIQyD6tfXLIddfxdlcc=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=MIpg2zVyane9SunkaQ6m9KeX6+ptvvm8nBjPPToZ+jE+O8Udpx2/Hbt3KIM9AsnKT
+         15av06BGurLcNcGDj6vbShhx7AEj2S5U1YUJVBo9G4n5qkVO+o03wYR+ClVinO47rd
+         YMzTHOBW3XCPNf1b6cwBNLfQTObnplThPTRn+cf7LMBC9zC8dIWVJNMT5cCleyilum
+         +jYVy0XJ0ILlsAQMEspBu4tpIAeQsH2wBw3i+HsmtuGkTjr3kJUlkfl4wsxcDgIDcY
+         /D1H9HfoBkcbFQEKQWuVU5VAosMEY1/JylzJ5x8vS2kVVbFDoK7MVAjg+GNLXzAPKS
+         yPzFytvYsyq/g==
+From:   Colin King <colin.king@canonical.com>
+To:     James Bottomley <jejb@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] security: keys: trusted: Fix memory leaks on allocated blob
+Date:   Fri, 23 Jul 2021 18:21:21 +0100
+Message-Id: <20210723172121.156687-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This function logs a warning if the workqueue gets too big.
-In order to save a few cycles, use 'atomic_inc_return()' instead of an
-'atomic_inc()/atomic_read()' sequence.
+From: Colin Ian King <colin.king@canonical.com>
 
-This axes a line of code and saves a 'atomic_read()' call.
+There are several error return paths that don't kfree the allocated
+blob, leading to memory leaks. Ensure blob is initialized to null as
+some of the error return paths in function tpm2_key_decode do not
+change blob. Add an error return path to kfree blob and use this on
+the current leaky returns.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Addresses-Coverity: ("Resource leak")
+Fixes: f2219745250f ("security: keys: trusted: use ASN.1 TPM2 key format for the blobs")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/hid/hid-logitech-hidpp.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ security/keys/trusted-keys/trusted_tpm2.c | 30 ++++++++++++++++-------
+ 1 file changed, 21 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/hid/hid-logitech-hidpp.c b/drivers/hid/hid-logitech-hidpp.c
-index 61635e629469..a7fa35245c2e 100644
---- a/drivers/hid/hid-logitech-hidpp.c
-+++ b/drivers/hid/hid-logitech-hidpp.c
-@@ -2240,11 +2240,10 @@ static int hidpp_ff_queue_work(struct hidpp_ff_private_data *data, int effect_id
- 	wd->size = size;
- 	memcpy(wd->params, params, size);
+diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
+index 0165da386289..930c67f98611 100644
+--- a/security/keys/trusted-keys/trusted_tpm2.c
++++ b/security/keys/trusted-keys/trusted_tpm2.c
+@@ -366,7 +366,7 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
+ 	unsigned int private_len;
+ 	unsigned int public_len;
+ 	unsigned int blob_len;
+-	u8 *blob, *pub;
++	u8 *blob = NULL, *pub;
+ 	int rc;
+ 	u32 attrs;
  
--	atomic_inc(&data->workqueue_size);
-+	s = atomic_inc_return(&data->workqueue_size);
- 	queue_work(data->wq, &wd->work);
+@@ -378,22 +378,30 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
+ 	}
  
- 	/* warn about excessive queue size */
--	s = atomic_read(&data->workqueue_size);
- 	if (s >= 20 && s % 20 == 0)
- 		hid_warn(data->hidpp->hid_dev, "Force feedback command queue contains %d commands, causing substantial delays!", s);
+ 	/* new format carries keyhandle but old format doesn't */
+-	if (!options->keyhandle)
+-		return -EINVAL;
++	if (!options->keyhandle) {
++		rc = -EINVAL;
++		goto err;
++	}
  
+ 	/* must be big enough for at least the two be16 size counts */
+-	if (payload->blob_len < 4)
+-		return -EINVAL;
++	if (payload->blob_len < 4) {
++		rc = -EINVAL;
++		goto err;
++	}
+ 
+ 	private_len = get_unaligned_be16(blob);
+ 
+ 	/* must be big enough for following public_len */
+-	if (private_len + 2 + 2 > (payload->blob_len))
+-		return -E2BIG;
++	if (private_len + 2 + 2 > (payload->blob_len)) {
++		rc = -E2BIG;
++		goto err;
++	}
+ 
+ 	public_len = get_unaligned_be16(blob + 2 + private_len);
+-	if (private_len + 2 + public_len + 2 > payload->blob_len)
+-		return -E2BIG;
++	if (private_len + 2 + public_len + 2 > payload->blob_len) {
++		rc = -E2BIG;
++		goto err;
++	}
+ 
+ 	pub = blob + 2 + private_len + 2;
+ 	/* key attributes are always at offset 4 */
+@@ -441,6 +449,10 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
+ 		rc = -EPERM;
+ 
+ 	return rc;
++
++err:
++	kfree(blob);
++	return rc;
+ }
+ 
+ /**
 -- 
-2.30.2
+2.31.1
 
