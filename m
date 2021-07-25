@@ -7,35 +7,35 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A14BC4320A
-	for <kernel-janitors@archiver.kernel.org>; Sun, 25 Jul 2021 15:59:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ABD7C43216
+	for <kernel-janitors@archiver.kernel.org>; Sun, 25 Jul 2021 15:59:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 635BB60F38
-	for <kernel-janitors@archiver.kernel.org>; Sun, 25 Jul 2021 15:59:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 480EE60F38
+	for <kernel-janitors@archiver.kernel.org>; Sun, 25 Jul 2021 15:59:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231453AbhGYPTY (ORCPT
+        id S231470AbhGYPTY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
         Sun, 25 Jul 2021 11:19:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38372 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231371AbhGYPTA (ORCPT
+        with ESMTP id S231373AbhGYPTB (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 25 Jul 2021 11:19:00 -0400
+        Sun, 25 Jul 2021 11:19:01 -0400
 Received: from viti.kaiser.cx (viti.kaiser.cx [IPv6:2a01:238:43fe:e600:cd0c:bd4a:7a3:8e9f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B900C061757;
-        Sun, 25 Jul 2021 08:59:30 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82282C061760;
+        Sun, 25 Jul 2021 08:59:31 -0700 (PDT)
 Received: from dslb-188-096-139-014.188.096.pools.vodafone-ip.de ([188.96.139.14] helo=martin-debian-2.paytec.ch)
         by viti.kaiser.cx with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.89)
         (envelope-from <martin@kaiser.cx>)
-        id 1m7gXI-0000SM-L4; Sun, 25 Jul 2021 17:59:28 +0200
+        id 1m7gXJ-0000SM-J0; Sun, 25 Jul 2021 17:59:29 +0200
 From:   Martin Kaiser <martin@kaiser.cx>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org,
         linux-kernel@vger.kernel.org, Martin Kaiser <martin@kaiser.cx>
-Subject: [PATCH 06/18] staging: rtl8188eu: remove another unused enum
-Date:   Sun, 25 Jul 2021 17:58:50 +0200
-Message-Id: <20210725155902.32433-6-martin@kaiser.cx>
+Subject: [PATCH 07/18] staging: rtl8188eu: remove a bunch of unused defines
+Date:   Sun, 25 Jul 2021 17:58:51 +0200
+Message-Id: <20210725155902.32433-7-martin@kaiser.cx>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20210725155902.32433-1-martin@kaiser.cx>
 References: <20210725155902.32433-1-martin@kaiser.cx>
@@ -45,30 +45,30 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The rt_eeprom_type enum is not used. Remove it.
+Only RF_CHANGE_BY_PS is used by this driver, the other
+RF_CHANGE_BY_... defines can be removed.
 
 Signed-off-by: Martin Kaiser <martin@kaiser.cx>
 ---
- drivers/staging/rtl8188eu/include/hal_intf.h | 6 ------
- 1 file changed, 6 deletions(-)
+ drivers/staging/rtl8188eu/include/hal_intf.h | 4 ----
+ 1 file changed, 4 deletions(-)
 
 diff --git a/drivers/staging/rtl8188eu/include/hal_intf.h b/drivers/staging/rtl8188eu/include/hal_intf.h
-index 8aa4ebd6440f..4328431d6015 100644
+index 4328431d6015..8396659f6acb 100644
 --- a/drivers/staging/rtl8188eu/include/hal_intf.h
 +++ b/drivers/staging/rtl8188eu/include/hal_intf.h
-@@ -105,12 +105,6 @@ enum hal_odm_variable {
+@@ -105,11 +105,7 @@ enum hal_odm_variable {
  	HAL_ODM_WIFI_DISPLAY_STATE,
  };
  
--enum rt_eeprom_type {
--	EEPROM_93C46,
--	EEPROM_93C56,
--	EEPROM_BOOT_EFUSE,
--};
--
- #define RF_CHANGE_BY_INIT	0
- #define RF_CHANGE_BY_IPS	BIT(28)
+-#define RF_CHANGE_BY_INIT	0
+-#define RF_CHANGE_BY_IPS	BIT(28)
  #define RF_CHANGE_BY_PS		BIT(29)
+-#define RF_CHANGE_BY_HW		BIT(30)
+-#define RF_CHANGE_BY_SW		BIT(31)
+ 
+ enum hardware_type {
+ 	HARDWARE_TYPE_RTL8188EU,
 -- 
 2.20.1
 
