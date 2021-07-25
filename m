@@ -2,85 +2,83 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.3 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA502C4320A
-	for <kernel-janitors@archiver.kernel.org>; Sun, 25 Jul 2021 16:00:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75218C4338F
+	for <kernel-janitors@archiver.kernel.org>; Sun, 25 Jul 2021 16:32:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C523B60F44
-	for <kernel-janitors@archiver.kernel.org>; Sun, 25 Jul 2021 16:00:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 466EA60F39
+	for <kernel-janitors@archiver.kernel.org>; Sun, 25 Jul 2021 16:32:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231552AbhGYPT3 (ORCPT
+        id S230364AbhGYPvq (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 25 Jul 2021 11:19:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38408 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231382AbhGYPTF (ORCPT
+        Sun, 25 Jul 2021 11:51:46 -0400
+Received: from smtp04.smtpout.orange.fr ([80.12.242.126]:35714 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230310AbhGYPvq (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 25 Jul 2021 11:19:05 -0400
-Received: from viti.kaiser.cx (viti.kaiser.cx [IPv6:2a01:238:43fe:e600:cd0c:bd4a:7a3:8e9f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11F53C061757;
-        Sun, 25 Jul 2021 08:59:36 -0700 (PDT)
-Received: from dslb-188-096-139-014.188.096.pools.vodafone-ip.de ([188.96.139.14] helo=martin-debian-2.paytec.ch)
-        by viti.kaiser.cx with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <martin@kaiser.cx>)
-        id 1m7gXO-0000SM-32; Sun, 25 Jul 2021 17:59:34 +0200
-From:   Martin Kaiser <martin@kaiser.cx>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+        Sun, 25 Jul 2021 11:51:46 -0400
+Received: from [192.168.1.18] ([86.243.172.93])
+        by mwinf5d27 with ME
+        id ZUYA2500B21Fzsu03UYAaA; Sun, 25 Jul 2021 18:32:14 +0200
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 25 Jul 2021 18:32:14 +0200
+X-ME-IP: 86.243.172.93
+Subject: Re: [PATCH 09/18] staging: rtl8188eu: remove unused _HAL_INTF_C_
+ define
+To:     Martin Kaiser <martin@kaiser.cx>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Martin Kaiser <martin@kaiser.cx>
-Subject: [PATCH 12/18] staging: rtl8188eu: remove unused IntrMask
-Date:   Sun, 25 Jul 2021 17:58:56 +0200
-Message-Id: <20210725155902.32433-12-martin@kaiser.cx>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20210725155902.32433-1-martin@kaiser.cx>
+        linux-kernel@vger.kernel.org
 References: <20210725155902.32433-1-martin@kaiser.cx>
+ <20210725155902.32433-9-martin@kaiser.cx>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Message-ID: <2bfef837-e8f6-0a89-b0ac-967de12ed067@wanadoo.fr>
+Date:   Sun, 25 Jul 2021 18:32:10 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 MIME-Version: 1.0
+In-Reply-To: <20210725155902.32433-9-martin@kaiser.cx>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The IntrMask array is set but never read. Remove it.
+Le 25/07/2021 à 17:58, Martin Kaiser a écrit :
+> This define can be removed.
+> 
+> Signed-off-by: Martin Kaiser <martin@kaiser.cx>
+> ---
+>   drivers/staging/rtl8188eu/hal/hal_intf.c | 1 -
+>   1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/staging/rtl8188eu/hal/hal_intf.c b/drivers/staging/rtl8188eu/hal/hal_intf.c
+> index f09620c54e69..3e132e00c81c 100644
+> --- a/drivers/staging/rtl8188eu/hal/hal_intf.c
+> +++ b/drivers/staging/rtl8188eu/hal/hal_intf.c
+> @@ -5,7 +5,6 @@
+>    *
+>    ******************************************************************************/
+>   
+> -#define _HAL_INTF_C_
+>   #include <hal_intf.h>
+>   
+>   uint rtw_hal_init(struct adapter *adapt)
+> 
 
-Signed-off-by: Martin Kaiser <martin@kaiser.cx>
----
- drivers/staging/rtl8188eu/hal/usb_halinit.c      | 2 --
- drivers/staging/rtl8188eu/include/rtl8188e_hal.h | 1 -
- 2 files changed, 3 deletions(-)
+Hi,
 
-diff --git a/drivers/staging/rtl8188eu/hal/usb_halinit.c b/drivers/staging/rtl8188eu/hal/usb_halinit.c
-index 62013999c569..aaa68356d211 100644
---- a/drivers/staging/rtl8188eu/hal/usb_halinit.c
-+++ b/drivers/staging/rtl8188eu/hal/usb_halinit.c
-@@ -118,11 +118,9 @@ static void _InitInterrupt(struct adapter *Adapter)
- 	/*  HIMR - */
- 	imr = IMR_PSTIMEOUT_88E | IMR_TBDER_88E | IMR_CPWM_88E | IMR_CPWM2_88E;
- 	usb_write32(Adapter, REG_HIMR_88E, imr);
--	Adapter->HalData->IntrMask[0] = imr;
- 
- 	imr_ex = IMR_TXERR_88E | IMR_RXERR_88E | IMR_TXFOVW_88E | IMR_RXFOVW_88E;
- 	usb_write32(Adapter, REG_HIMRE_88E, imr_ex);
--	Adapter->HalData->IntrMask[1] = imr_ex;
- 
- 	/*  REG_USB_SPECIAL_OPTION - BIT(4) */
- 	/*  0; Use interrupt endpoint to upload interrupt pkt */
-diff --git a/drivers/staging/rtl8188eu/include/rtl8188e_hal.h b/drivers/staging/rtl8188eu/include/rtl8188e_hal.h
-index 9aba67233c24..7d95943fc05e 100644
---- a/drivers/staging/rtl8188eu/include/rtl8188e_hal.h
-+++ b/drivers/staging/rtl8188eu/include/rtl8188e_hal.h
-@@ -262,7 +262,6 @@ struct hal_data_8188e {
- 
- 	/*  Interrupt relatd register information. */
- 	u32	IntArray[3];/* HISR0,HISR1,HSISR */
--	u32	IntrMask[3];
- 	u8	C2hArray[16];
- 	u8	UsbTxAggMode;
- 	u8	UsbTxAggDescNum;
--- 
-2.20.1
+This one looks like an include guard.
 
+#ifndef _HAL_INTF_C_
+#define _HAL_INTF_C_
+...
+#endif /* _HAL_INTF_C_ */
+
+?
