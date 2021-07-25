@@ -7,72 +7,89 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62EA0C432BE
-	for <kernel-janitors@archiver.kernel.org>; Sun, 25 Jul 2021 15:59:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38716C43214
+	for <kernel-janitors@archiver.kernel.org>; Sun, 25 Jul 2021 15:59:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 46B9D60F46
-	for <kernel-janitors@archiver.kernel.org>; Sun, 25 Jul 2021 15:59:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2324E60F23
+	for <kernel-janitors@archiver.kernel.org>; Sun, 25 Jul 2021 15:59:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231402AbhGYPTQ (ORCPT
+        id S231415AbhGYPTU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 25 Jul 2021 11:19:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38350 "EHLO
+        Sun, 25 Jul 2021 11:19:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38356 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231356AbhGYPS5 (ORCPT
+        with ESMTP id S231358AbhGYPS5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
         Sun, 25 Jul 2021 11:18:57 -0400
 Received: from viti.kaiser.cx (viti.kaiser.cx [IPv6:2a01:238:43fe:e600:cd0c:bd4a:7a3:8e9f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40261C061757;
-        Sun, 25 Jul 2021 08:59:27 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C0EAC061760;
+        Sun, 25 Jul 2021 08:59:28 -0700 (PDT)
 Received: from dslb-188-096-139-014.188.096.pools.vodafone-ip.de ([188.96.139.14] helo=martin-debian-2.paytec.ch)
         by viti.kaiser.cx with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.89)
         (envelope-from <martin@kaiser.cx>)
-        id 1m7gXA-0000SM-Sl; Sun, 25 Jul 2021 17:59:20 +0200
+        id 1m7gXF-0000SM-Ko; Sun, 25 Jul 2021 17:59:25 +0200
 From:   Martin Kaiser <martin@kaiser.cx>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org,
         linux-kernel@vger.kernel.org, Martin Kaiser <martin@kaiser.cx>
-Subject: [PATCH 01/18] staging: rtl8188eu: remove unused defines
-Date:   Sun, 25 Jul 2021 17:58:45 +0200
-Message-Id: <20210725155902.32433-1-martin@kaiser.cx>
+Subject: [PATCH 03/18] staging: rtl8188eu: remove HW_VAR_TXPAUSE
+Date:   Sun, 25 Jul 2021 17:58:47 +0200
+Message-Id: <20210725155902.32433-3-martin@kaiser.cx>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20210725155902.32433-1-martin@kaiser.cx>
+References: <20210725155902.32433-1-martin@kaiser.cx>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Now that power cut mask is not used any more, we can also remove the
-defines for power cut masks.
+The "HAL layer variable" HW_VAR_TXPAUSE is not used in this driver.
+Remove its define and the code for setting and for reading a value.
 
 Signed-off-by: Martin Kaiser <martin@kaiser.cx>
 ---
- drivers/staging/rtl8188eu/include/pwrseqcmd.h | 11 -----------
- 1 file changed, 11 deletions(-)
+ drivers/staging/rtl8188eu/hal/usb_halinit.c  | 6 ------
+ drivers/staging/rtl8188eu/include/hal_intf.h | 1 -
+ 2 files changed, 7 deletions(-)
 
-diff --git a/drivers/staging/rtl8188eu/include/pwrseqcmd.h b/drivers/staging/rtl8188eu/include/pwrseqcmd.h
-index bfa0405cccde..bbf4f302c9f4 100644
---- a/drivers/staging/rtl8188eu/include/pwrseqcmd.h
-+++ b/drivers/staging/rtl8188eu/include/pwrseqcmd.h
-@@ -15,17 +15,6 @@
- #define PWR_CMD_DELAY		0x03
- #define PWR_CMD_END		0x04
- 
--/* The value of cut_msk: 8 bits */
--#define PWR_CUT_TESTCHIP_MSK	BIT(0)
--#define PWR_CUT_A_MSK		BIT(1)
--#define PWR_CUT_B_MSK		BIT(2)
--#define PWR_CUT_C_MSK		BIT(3)
--#define PWR_CUT_D_MSK		BIT(4)
--#define PWR_CUT_E_MSK		BIT(5)
--#define PWR_CUT_F_MSK		BIT(6)
--#define PWR_CUT_G_MSK		BIT(7)
--#define PWR_CUT_ALL_MSK		0xFF
--
- enum pwrseq_cmd_delat_unit {
- 	PWRSEQ_DELAY_US,
- 	PWRSEQ_DELAY_MS,
+diff --git a/drivers/staging/rtl8188eu/hal/usb_halinit.c b/drivers/staging/rtl8188eu/hal/usb_halinit.c
+index 633feae0fca5..79e86ed8798e 100644
+--- a/drivers/staging/rtl8188eu/hal/usb_halinit.c
++++ b/drivers/staging/rtl8188eu/hal/usb_halinit.c
+@@ -1178,9 +1178,6 @@ void rtw_hal_set_hwreg(struct adapter *Adapter, u8 variable, u8 *val)
+ 			usb_write8(Adapter, REG_INIRTS_RATE_SEL, RateIndex);
+ 		}
+ 		break;
+-	case HW_VAR_TXPAUSE:
+-		usb_write8(Adapter, REG_TXPAUSE, *((u8 *)val));
+-		break;
+ 	case HW_VAR_BCN_FUNC:
+ 		hw_var_set_bcn_func(Adapter, variable, val);
+ 		break;
+@@ -1613,9 +1610,6 @@ void rtw_hal_get_hwreg(struct adapter *Adapter, u8 variable, u8 *val)
+ 	case HW_VAR_BASIC_RATE:
+ 		*((u16 *)(val)) = Adapter->HalData->BasicRateSet;
+ 		fallthrough;
+-	case HW_VAR_TXPAUSE:
+-		val[0] = usb_read8(Adapter, REG_TXPAUSE);
+-		break;
+ 	case HW_VAR_BCN_VALID:
+ 		/* BCN_VALID, BIT16 of REG_TDECTRL = BIT0 of REG_TDECTRL+2 */
+ 		val[0] = (BIT(0) & usb_read8(Adapter, REG_TDECTRL + 2)) ? true : false;
+diff --git a/drivers/staging/rtl8188eu/include/hal_intf.h b/drivers/staging/rtl8188eu/include/hal_intf.h
+index e2ce71db3fa1..ad0a6bd5f510 100644
+--- a/drivers/staging/rtl8188eu/include/hal_intf.h
++++ b/drivers/staging/rtl8188eu/include/hal_intf.h
+@@ -18,7 +18,6 @@ enum hw_variables {
+ 	HW_VAR_BSSID,
+ 	HW_VAR_INIT_RTS_RATE,
+ 	HW_VAR_BASIC_RATE,
+-	HW_VAR_TXPAUSE,
+ 	HW_VAR_BCN_FUNC,
+ 	HW_VAR_CORRECT_TSF,
+ 	HW_VAR_CHECK_BSSID,
 -- 
 2.20.1
 
