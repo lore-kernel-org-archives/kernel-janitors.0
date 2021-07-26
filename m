@@ -6,57 +6,57 @@ X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C447AC432BE
-	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Jul 2021 14:30:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68A71C4338F
+	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Jul 2021 14:30:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B122660F6D
-	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Jul 2021 14:30:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FEFE60F90
+	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Jul 2021 14:30:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234374AbhGZNtv (ORCPT
+        id S234532AbhGZNty (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 26 Jul 2021 09:49:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57426 "EHLO
+        Mon, 26 Jul 2021 09:49:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234452AbhGZNtt (ORCPT
+        with ESMTP id S234498AbhGZNtx (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 26 Jul 2021 09:49:49 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11FF4C061757;
-        Mon, 26 Jul 2021 07:30:17 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id j2so11299944wrx.9;
-        Mon, 26 Jul 2021 07:30:16 -0700 (PDT)
+        Mon, 26 Jul 2021 09:49:53 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEE46C0613C1;
+        Mon, 26 Jul 2021 07:30:20 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id d131-20020a1c1d890000b02902516717f562so117848wmd.3;
+        Mon, 26 Jul 2021 07:30:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=OYJH8WVN7p/hRjDk7AHd6O2dIHni5gF45DfiSQQ1ZSk=;
-        b=KzcK6c7Serdrruue33VewS2DrKQW4yc7H9fVtCRt0t475VVytYX1jtr8Z6ch4UQH9k
-         1gahpAaM1vybQ2PjHm0jhiwP8Bwq2hR7RjdywkbZlj8LJPgx+h4fHRC2Y1OBR7X84lbm
-         4D+XVioo+xAgdwRZphwDu5/pe3bTPXnMsMwDu6rhUv9lV+w1nP/wYcoomT0u8FJTPiba
-         V3dXNUwpq9nXbmnF9yZZ4vMp1U8FPkXsq131OyjpdOQ20iVMQMPW7xCL2GmgWlOv8vci
-         GCO8O1c9rBycj9Jh1Osx5FNY6CDAUNa0g4UOBmfpwGCclXbaZK7XStJty+RBjzYSeji1
-         D0Mg==
+        bh=Z1qdjxYz3IXUJf5O0KYb5AZybd97sac2EulDbLZCJcM=;
+        b=Vpf0/81ZRJmGHYfW3A35bPyDRQWmpoYAZ8RFAnwY7bKdfg8TRIqae9vA4XhUPxp6IR
+         Y175ORlODbwkxKqHJ5JLLpyR4B6uTOANfIxaxxU/1JiBppjndCahSB5wVeQNhGBCUbDi
+         mil1Yi0ILmw5EXMo5EWDYGT0XNOz/pHblJBcrDCWQ69trwoem/lIdjA93skD8FraZPUS
+         Q2Hm4/57VzSYcBNR6L4rkiKPbTehnle3Fs/9/EDhhzblDiX9YKgcNx9bGnlgW+EAoYhd
+         SY1isV8IVWEeA3BRkUAsmCvUjs8Cc832XCOmkY7UNRPR30lMFI4AvpQKjwToZ1OkGSs9
+         QkKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=OYJH8WVN7p/hRjDk7AHd6O2dIHni5gF45DfiSQQ1ZSk=;
-        b=V0EaCI0l2ERQalKQGEOWdAGgZ7plgWoDPC0AwPQ+qyaw+k6RNRXvVt4ehuJnOruuZI
-         CcHAtqJIC/ZCCFIosv727Ymu3Bcj154aAJ3DQQrMu3RRpM2APiNMT0ljq7y/30iEd+E0
-         qFFbNz9rbtyT53kkyGr7MiJUXGYYGznmmL56eNmYXreVqcNC8HdfOsM5gRbMnyW+QHFE
-         S0NB7BFqr/Q4d0CxCcv/vnh03Opbhbta66LnrSXg0ogr1vMSVMoMcY45i4HxlTf2wMoO
-         o4w27JdMkvzGA+ZdVfQ343dph4htrPmrCRLm80ta50RGNt/VuoGIjIn0bkC2rL1uN6jv
-         Cifg==
-X-Gm-Message-State: AOAM530hW05Do+gajB5ZxRQ8ngv6M/sWS0pr9QT3SmVO2LqEeNXFVxFO
-        cqYEruT2k1Dyp7Ag8zcv1cQ=
-X-Google-Smtp-Source: ABdhPJx1971jZQpEYPn0Tg3fcJKdtG1MlFbID/ONtP3qNKfUtaUqX5jp35HjV8Y/+ZrsChTrRFixsA==
-X-Received: by 2002:a5d:6692:: with SMTP id l18mr6109404wru.85.1627309815615;
-        Mon, 26 Jul 2021 07:30:15 -0700 (PDT)
+        bh=Z1qdjxYz3IXUJf5O0KYb5AZybd97sac2EulDbLZCJcM=;
+        b=obv0nGWdQRCJGTecUikuy+F7FToZvGQ2jTC1RSSs7jGneqTt2bjfr2I+ZrXUf/e/Is
+         S+eYXYF9nyKIDUjqf/xn6nD65Rf/DXH9g0B/MbRygLTgwNnNphIKLODlQbujh/c7svNG
+         u1EDGaK62nq9ZJ0yf3YKUxiD+rmEIIKXsGsmtmsAGOi3Xmq3JMkrcZ2Sj4V6p0h5wIHO
+         KKMqV7DjOxtewaZ4y36TZJgF/L9a3L2Q5E5SAiM3KJj8MjODsW1fMLqr7iWBu80nFvoJ
+         1+JwP/4RBMLu7DjW27+gIE6vK3NyMXG4F4VFrltjapVRSP/itCAAaLCST5rndTsVgOGu
+         LmSA==
+X-Gm-Message-State: AOAM533qQx7dfNRbL2lwVNfWJfpoRETdtKvhu/SX+0AToX+Vi3+i5NtD
+        9sY+qs5bhy6cv+VufbMz0qg=
+X-Google-Smtp-Source: ABdhPJyrX6LvEfxzSe+NpYlIuwTn3KzuT3329Kv7ie00EYKhqQPa3J/pjLs082PKp1P7SzGoEcwbQQ==
+X-Received: by 2002:a1c:a78a:: with SMTP id q132mr9269048wme.76.1627309819374;
+        Mon, 26 Jul 2021 07:30:19 -0700 (PDT)
 Received: from felia.fritz.box ([2001:16b8:2d1a:1100:c32:37a3:94e9:cfea])
-        by smtp.gmail.com with ESMTPSA id o17sm9176609wmp.31.2021.07.26.07.30.14
+        by smtp.gmail.com with ESMTPSA id o17sm9176609wmp.31.2021.07.26.07.30.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Jul 2021 07:30:15 -0700 (PDT)
+        Mon, 26 Jul 2021 07:30:19 -0700 (PDT)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
 To:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
 Cc:     Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -80,9 +80,9 @@ Cc:     Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
         Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
         kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH v3 5/8] MAINTAINERS: rectify entry for ALLWINNER HARDWARE SPINLOCK SUPPORT
-Date:   Mon, 26 Jul 2021 16:29:40 +0200
-Message-Id: <20210726142943.27008-6-lukas.bulwahn@gmail.com>
+Subject: [PATCH v3 7/8] MAINTAINERS: rectify entry for ARM/ASPEED I2C DRIVER
+Date:   Mon, 26 Jul 2021 16:29:42 +0200
+Message-Id: <20210726142943.27008-8-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20210726142943.27008-1-lukas.bulwahn@gmail.com>
 References: <20210726142943.27008-1-lukas.bulwahn@gmail.com>
@@ -90,17 +90,14 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit f9e784dcb63f ("dt-bindings: hwlock: add sun6i_hwspinlock") adds
-Documentation/devicetree/bindings/hwlock/allwinner,sun6i-a31-hwspinlock.yaml,
-but the related commit 3c881e05c814 ("hwspinlock: add sun6i hardware
-spinlock support") adds a file reference to allwinner,sun6i-hwspinlock.yaml
-instead.
+Commit 810e4441946c ("dt-bindings: aspeed-i2c: Convert txt to yaml format")
+converts i2c-aspeed.txt to aspeed,i2c.yaml, but missed to adjust its
+reference in MAINTAINERS.
 
-Hence, ./scripts/get_maintainer.pl --self-test=patterns complains:
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about
+a broken reference.
 
-  warning: no file matches  F:  Documentation/devicetree/bindings/hwlock/allwinner,sun6i-hwspinlock.yaml
-
-Rectify this file reference in ALLWINNER HARDWARE SPINLOCK SUPPORT.
+Rectify this file reference in ARM/ASPEED I2C DRIVER.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
@@ -108,18 +105,18 @@ Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index c5a407015e2d..8f36b6763073 100644
+index 07810c3211df..0fe43695b58c 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -755,7 +755,7 @@ F:	drivers/crypto/allwinner/
- ALLWINNER HARDWARE SPINLOCK SUPPORT
- M:	Wilken Gottwalt <wilken.gottwalt@posteo.net>
+@@ -1720,7 +1720,7 @@ R:	Joel Stanley <joel@jms.id.au>
+ L:	linux-i2c@vger.kernel.org
+ L:	openbmc@lists.ozlabs.org (moderated for non-subscribers)
  S:	Maintained
--F:	Documentation/devicetree/bindings/hwlock/allwinner,sun6i-hwspinlock.yaml
-+F:	Documentation/devicetree/bindings/hwlock/allwinner,sun6i-a31-hwspinlock.yaml
- F:	drivers/hwspinlock/sun6i_hwspinlock.c
- 
- ALLWINNER THERMAL DRIVER
+-F:	Documentation/devicetree/bindings/i2c/i2c-aspeed.txt
++F:	Documentation/devicetree/bindings/i2c/aspeed,i2c.yaml
+ F:	Documentation/devicetree/bindings/interrupt-controller/aspeed,ast2400-i2c-ic.txt
+ F:	drivers/i2c/busses/i2c-aspeed.c
+ F:	drivers/irqchip/irq-aspeed-i2c-ic.c
 -- 
 2.17.1
 
