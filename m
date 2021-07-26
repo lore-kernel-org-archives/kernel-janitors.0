@@ -6,117 +6,109 @@ X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 588CDC4338F
-	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Jul 2021 14:30:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10B29C4338F
+	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Jul 2021 14:50:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3D4AF60F6D
-	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Jul 2021 14:30:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5BC560E78
+	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Jul 2021 14:50:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234624AbhGZNuB (ORCPT
+        id S234637AbhGZOJc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 26 Jul 2021 09:50:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57508 "EHLO
+        Mon, 26 Jul 2021 10:09:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33906 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234585AbhGZNt6 (ORCPT
+        with ESMTP id S233206AbhGZOJc (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 26 Jul 2021 09:49:58 -0400
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C1FDC061799;
-        Mon, 26 Jul 2021 07:30:24 -0700 (PDT)
-Received: by mail-wm1-x32c.google.com with SMTP id k14-20020a05600c1c8eb02901f13dd1672aso117435wms.0;
-        Mon, 26 Jul 2021 07:30:23 -0700 (PDT)
+        Mon, 26 Jul 2021 10:09:32 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3F12C061757;
+        Mon, 26 Jul 2021 07:49:59 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id c16so1569218wrp.13;
+        Mon, 26 Jul 2021 07:49:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=zmEnUninoDDVw6qOk4K+IxgHAla5sREvr231jQJ9B0I=;
-        b=eHpAfXjWNyt5wEuObsyvgqyo/sdjJa66t3ti+AkrFWIxkSqIOEMwfGuVpXZDY9cATW
-         dyO3SC117JeiNXe8V1JmHvD6YRUCjvOQi5Bj/SO8Pip4dOBDbnIXyPxUBSfbSNR2icAL
-         Rd3my0wKQGeea6Lii1vlOCt6hEVW5KLLBwn8MVJ4TX2B6L5djN1TqvtFdMz0rlhGV5Zw
-         jAXftFC16bxD3PkwqkoPIV5oo/LnE/JYLVbqqWynSJLa2bfjXmqoghwDfoagdSDEaHtx
-         UYHs4A6e1uJmYHMlKk7rfx0xfa85CqoWh0Eutpz+Tk7044iTdZuYYCXvfJwz1ogICVii
-         4epA==
+        h=from:to:cc:subject:date:message-id;
+        bh=xLmMVn1uoLATlywyndSzCwv/MROV9xIhKUlgFoTwd7k=;
+        b=JlM/3iQLY7TfHfUPiWz2d2R/A8LnY1phSqqsMTbyRdF+6wMhlD9S+CmVkFcPZWx0P3
+         kVVuvFfBIamUbsXqv+ba3OMyb0GkECfrL+lFWYtOVty5GmYKF5DN18gcSqMbLwqzB3Lp
+         K2vbQZnEUQyNlG5VmeWMT17DJ9z5yWrJFiwuvf084qye+5QHTrf7paHWK7u1AMOzf3vz
+         MnMzQK0yXeZcwyxQ6lKekh/EbSGmUHiPQSIl6nN950wvprkhGwbDPX7APkZ+JivWq2OV
+         ej9Lgv4RW2wAUedkNqRUhStDLHgviXoyqlV3olLq2o+8L4FiRfIwyEaZir7J8zA8/wlM
+         wSaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=zmEnUninoDDVw6qOk4K+IxgHAla5sREvr231jQJ9B0I=;
-        b=Qo0vN02g5l4qFc1wz6FKsFMU6xnBid2aS3s5DEOdzEKcVYXZCWVsfQyhp3HGc4cWh1
-         niO191YFUwYqp5RUaijRSVVNCqyaTI7gbTBAN9PuMzkaGPcbKNnfh6ADjbiLq3sRj5tv
-         L+OltZQsw78D/NYSl3dV8yNiqdPcdTBurZiE83lrXR2Ag3D//mL0MMZRIt6yHNvZAuAx
-         OrvCcs6wSQ/gYEfz8y8f9WpGsExlyGABxHk3RKPmbwlbcFeaooYCknWV2XIw2RIOzaK7
-         pGblClTqcZthYsRJv0sKDSv/dx8jp1/wjt7I4w9kUCdRsWJz0PCKW00w90SDBPORBlqu
-         YUFQ==
-X-Gm-Message-State: AOAM5310aeEYmx3Txj4FTJishruUOVgy7runG2W0OZRIjWiFF8umfqLQ
-        kRO0V9/8zaQQ4yh4rOUqxl8=
-X-Google-Smtp-Source: ABdhPJxGTJM0zz6F/vsL6XdmIWYJioSRVoob3A+gGjhpcQv21j1pkZcYYWtPDuJAutBRZVkAVPv+mg==
-X-Received: by 2002:a1c:3505:: with SMTP id c5mr26528052wma.53.1627309821219;
-        Mon, 26 Jul 2021 07:30:21 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=xLmMVn1uoLATlywyndSzCwv/MROV9xIhKUlgFoTwd7k=;
+        b=N6sgXMKUsqcQArWY//II3EIixB59OE8slCOOXvD0QczL6hbcKB0v65CahRBNiNH0D0
+         bbNR5JkEsZAi8SdExwh3fcwxKz9lFsKR+4fqwn2jGFzIacPyGWuJhr+UJSLRqsxoyAdy
+         yJv9k2tyN+FN4285up88XTlvH9EqBmVoT0Fe1a/OoYnjmfSKGYowZejLrGujo7xjMAqb
+         Fa9Khico11vynmZefXc8HD92ewmbpgeLVimTfmOYZkxkHOpmCQV2KeB67f87D9sOjvsv
+         jJgnBvRUR2zCLpflvmgFTjG5fk/U4Rt5G/3Aq3R8duZHrE3/v6X4NGMUsS4pFmTWdIRM
+         rOzQ==
+X-Gm-Message-State: AOAM5337vqk9EQzOgpzf1+cfwfjBHjzgRhU/2mwhwINTLuj9wBKyzYRS
+        KrpCGO2zvOa+ESgeyo4DUZE=
+X-Google-Smtp-Source: ABdhPJxlbCS5XzYEqJbNfoMho+XsFVH5CnPgy+fdBeBMGxuBsqfFlF3fLjhd7F0oc4QoPCEF7oc6ow==
+X-Received: by 2002:adf:e90e:: with SMTP id f14mr380018wrm.191.1627310998260;
+        Mon, 26 Jul 2021 07:49:58 -0700 (PDT)
 Received: from felia.fritz.box ([2001:16b8:2d1a:1100:c32:37a3:94e9:cfea])
-        by smtp.gmail.com with ESMTPSA id o17sm9176609wmp.31.2021.07.26.07.30.20
+        by smtp.gmail.com with ESMTPSA id q19sm13480481wmq.38.2021.07.26.07.49.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Jul 2021 07:30:20 -0700 (PDT)
+        Mon, 26 Jul 2021 07:49:57 -0700 (PDT)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
-Cc:     Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        Yu Chen <chenyu56@huawei.com>,
-        Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Naga Sureshkumar Relli <nagasure@xilinx.com>,
-        Hans Ulli Kroll <ulli.kroll@googlemail.com>,
-        Deepak Saxena <dsaxena@plexity.net>,
-        Mirela Rabulea <mirela.rabulea@nxp.com>,
-        Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
-        Wilken Gottwalt <wilken.gottwalt@posteo.net>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Joakim Zhang <qiangqing.zhang@nxp.com>,
-        Joe Perches <joe@perches.com>,
+To:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>,
+        linux-mtd@lists.infradead.org,
         Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
         kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH v3 8/8] MAINTAINERS: rectify entry for FREESCALE IMX / MXC FEC DRIVER
-Date:   Mon, 26 Jul 2021 16:29:43 +0200
-Message-Id: <20210726142943.27008-9-lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: repair Miquel Raynal's email address
+Date:   Mon, 26 Jul 2021 16:49:49 +0200
+Message-Id: <20210726144949.10439-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210726142943.27008-1-lukas.bulwahn@gmail.com>
-References: <20210726142943.27008-1-lukas.bulwahn@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 96e4781b3d93 ("dt-bindings: net: fec: convert fsl,*fec bindings to
-yaml") converts fsl-fec.txt to fsl,fec.yaml,  but missed to adjust its
-reference in MAINTAINERS.
+Commit d70c6b026069 ("MAINTAINERS: Add PL353 NAND controller entry") and
+commit 813d52799ad2 ("MAINTAINERS: Add PL353 SMC entry") adds Miquel
+Raynal as maintainer with an obvious invalid email address, which can be
+easily fixed.
 
-Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about
-a broken reference.
-
-Repair this file reference in FREESCALE IMX / MXC FEC DRIVER.
+Repair this copy-and-paste error in Miquel Raynal's email address.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Miquel, please pick or ack this patch.
+Krzysztof, please pick this patch if Miquel does not.
+
+ MAINTAINERS | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 0fe43695b58c..187c76bb42d4 100644
+index d69b2d4646be..f31922d0503a 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -7365,7 +7365,7 @@ FREESCALE IMX / MXC FEC DRIVER
- M:	Joakim Zhang <qiangqing.zhang@nxp.com>
- L:	netdev@vger.kernel.org
+@@ -1476,7 +1476,7 @@ F:	drivers/amba/
+ F:	include/linux/amba/bus.h
+ 
+ ARM PRIMECELL PL35X NAND CONTROLLER DRIVER
+-M:	Miquel Raynal <miquel.raynal@bootlin.com@bootlin.com>
++M:	Miquel Raynal <miquel.raynal@bootlin.com>
+ M:	Naga Sureshkumar Relli <nagasure@xilinx.com>
+ L:	linux-mtd@lists.infradead.org
  S:	Maintained
--F:	Documentation/devicetree/bindings/net/fsl-fec.txt
-+F:	Documentation/devicetree/bindings/net/fsl,fec.yaml
- F:	drivers/net/ethernet/freescale/fec.h
- F:	drivers/net/ethernet/freescale/fec_main.c
- F:	drivers/net/ethernet/freescale/fec_ptp.c
+@@ -1484,7 +1484,7 @@ F:	Documentation/devicetree/bindings/mtd/arm,pl353-nand-r2p1.yaml
+ F:	drivers/mtd/nand/raw/pl35x-nand-controller.c
+ 
+ ARM PRIMECELL PL35X SMC DRIVER
+-M:	Miquel Raynal <miquel.raynal@bootlin.com@bootlin.com>
++M:	Miquel Raynal <miquel.raynal@bootlin.com>
+ M:	Naga Sureshkumar Relli <nagasure@xilinx.com>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ S:	Maintained
 -- 
 2.17.1
 
