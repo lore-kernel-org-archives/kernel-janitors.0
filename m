@@ -2,167 +2,132 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 131CDC432BE
-	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Jul 2021 11:44:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3236FC4320A
+	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Jul 2021 14:29:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EF92260C51
-	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Jul 2021 11:44:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E5CE60F5B
+	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Jul 2021 14:29:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233607AbhGZLEI (ORCPT
+        id S233792AbhGZNt2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 26 Jul 2021 07:04:08 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:34996
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233371AbhGZLEH (ORCPT
+        Mon, 26 Jul 2021 09:49:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57310 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233206AbhGZNt1 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 26 Jul 2021 07:04:07 -0400
-Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 258C13F357;
-        Mon, 26 Jul 2021 11:44:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1627299874;
-        bh=k6BQBYMxs42A0l5eZc18V3p4ovBk2bBgUoL8N/8VpPs=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=V2nQr5gmN7GdiofCc/F5kLnGNPeOGwMBcaYD1biglTrOmrJsYIq5zmQnR+LmgMNrf
-         cCGd7RgAZio8T68t6nuVKyurJxYN+ilV/VTW4GLT/KSc4NJUsFBaghNxm7dIdFouua
-         sz2ViYIijWuj9uJu7rjJael6ydRxKxHAGJJkapeIgwk9FqxmMYYkUpRH2ZJVwlVxtu
-         adTVR8yaHVxkse/obCsQUoyAWShCH/Zl2Yk2cGx9qV8SUKXj6ec4A7luXgfR6ZHyZQ
-         9LfCTrc0S9CWu3Dh1BU166jFe7E4xY5v/YjdE/v29u4l4AbG1a5xxgTP5bY8zln1lZ
-         JDXp37hlebV0A==
-From:   Colin King <colin.king@canonical.com>
-To:     James Bottomley <jejb@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][V2] security: keys: trusted: Fix memory leaks on allocated blob
-Date:   Mon, 26 Jul 2021 12:44:31 +0100
-Message-Id: <20210726114431.18042-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.31.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Mon, 26 Jul 2021 09:49:27 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5590EC061757;
+        Mon, 26 Jul 2021 07:29:55 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id k4so5455816wms.3;
+        Mon, 26 Jul 2021 07:29:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=HDpUHKg/kY2KkYhHuvMxZt0YPwDDfMu+KZC12Q0UV78=;
+        b=KovvZSSJQw087KUMruN0DHnK5cOUrEqWPatS3z3BljJM9aGUR6csD1w2X/jbgmO6qG
+         uD4LlecQqQLcwFskhaNslSJPHjGE9l4kpnLz9D+yeOYZhAiJVwmfpkWog4KwPam1Rfwx
+         XnEc9ZZsaY7NF4lJQOswQd8lYX5Wc5nno+JKBzqWecG5/y4GGrSh6/KbFkJ/vS2xNY1h
+         PiYs7sx6ST+XYl4eGbdVhueKUH/JlmjDh0It1+lNv4BEl1MzyP4G3XA1XCy3QkJPdIBN
+         FW/qet/88WOayIT7ZK3QMPR/paIb0Nq+2GFj+Pbo4Qd8wka6LoffKwoxtuUaexo12VAn
+         GzoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=HDpUHKg/kY2KkYhHuvMxZt0YPwDDfMu+KZC12Q0UV78=;
+        b=Wiq74JcFCgQqC990p1Y52uHD8gwtw2nya9jZukqNLx4avOVfE+LFRw2+4vapyRbBjo
+         9Txr75prhsRQw3mvGwEpryOI88s+G+ysTA2jbUztDcwa6Ao0sZSNv+KTKVBAtX30gIhT
+         h5AvqOecQr/JGzMIOnX/zy+GHf6ubjLRuOlWPwgkaGfQIP/TsuCoYAN0cNCx1EX5tS45
+         ES5cQgAYjJvr7vP5iZUK71Y0Gwobndn5eP7PFSpACwBiBe5OP9EQD+prPpLggnf46UDC
+         a6tfbzkRrG1bDRPlZnM0obFmyiUOu+mzuGGxqfkSTUHfb3IJSF5bALYlo39t86BGTW7j
+         ZKmw==
+X-Gm-Message-State: AOAM530Oqy4p9H6EtdWg3Ay/7gSAYtJk5xtLVERul6lSyXsxN5QDU0Y3
+        KEhnFITymbqz1Z1aHIV/lRA=
+X-Google-Smtp-Source: ABdhPJwhmylNNpZJlBcjxMjO69MVjFBeW1YKTTw/WbYW+DR6RSUIAM3jnCtGNkq6mNf/NeplTPn0lQ==
+X-Received: by 2002:a1c:7314:: with SMTP id d20mr17138782wmb.167.1627309793778;
+        Mon, 26 Jul 2021 07:29:53 -0700 (PDT)
+Received: from felia.fritz.box ([2001:16b8:2d1a:1100:c32:37a3:94e9:cfea])
+        by smtp.gmail.com with ESMTPSA id o17sm9176609wmp.31.2021.07.26.07.29.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Jul 2021 07:29:53 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
+Cc:     Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+        Yu Chen <chenyu56@huawei.com>,
+        Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Naga Sureshkumar Relli <nagasure@xilinx.com>,
+        Hans Ulli Kroll <ulli.kroll@googlemail.com>,
+        Deepak Saxena <dsaxena@plexity.net>,
+        Mirela Rabulea <mirela.rabulea@nxp.com>,
+        Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
+        Wilken Gottwalt <wilken.gottwalt@posteo.net>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Joakim Zhang <qiangqing.zhang@nxp.com>,
+        Joe Perches <joe@perches.com>,
+        Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH v3 0/8]  Rectify file references for dt-bindings in MAINTAINERS
+Date:   Mon, 26 Jul 2021 16:29:35 +0200
+Message-Id: <20210726142943.27008-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hi Rob,
 
-There are several error return paths that don't kfree the allocated
-blob, leading to memory leaks. Ensure blob is initialized to null as
-some of the error return paths in function tpm2_key_decode do not
-change blob. Add an error return path to kfree blob and use this on
-the current leaky returns.
+here is a patch series that cleans up some file references for dt-bindings
+in MAINTAINERS. It applies cleanly on next-202106723.
 
-Addresses-Coverity: ("Resource leak")
-Fixes: f2219745250f ("security: keys: trusted: use ASN.1 TPM2 key format for the blobs")
-Acked-by: Sumit Garg <sumit.garg@linaro.org>
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+This is a v3 of the still relevant patches from the first submission
+of the patch series (see Links) send out 2021-03-15 and resent on 2021-04-19.
 
----
+It now further includes more clean-up, see patches 4 to 8.
 
-V2: Add a couple more leaky return path fixes as noted by Sumit Garg
-    Add the if (blob != payload->blob) check on the kfree as
-    noted by Dan Carpenter
+Could you pick this series for your devicetree bindings tree?
 
----
- security/keys/trusted-keys/trusted_tpm2.c | 39 ++++++++++++++++-------
- 1 file changed, 27 insertions(+), 12 deletions(-)
+No functional change, just cleaning up MAINTAINERS.
 
-diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
-index 0165da386289..a2cfdfdf17fa 100644
---- a/security/keys/trusted-keys/trusted_tpm2.c
-+++ b/security/keys/trusted-keys/trusted_tpm2.c
-@@ -366,7 +366,7 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
- 	unsigned int private_len;
- 	unsigned int public_len;
- 	unsigned int blob_len;
--	u8 *blob, *pub;
-+	u8 *blob = NULL, *pub;
- 	int rc;
- 	u32 attrs;
- 
-@@ -378,22 +378,30 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
- 	}
- 
- 	/* new format carries keyhandle but old format doesn't */
--	if (!options->keyhandle)
--		return -EINVAL;
-+	if (!options->keyhandle) {
-+		rc = -EINVAL;
-+		goto err;
-+	}
- 
- 	/* must be big enough for at least the two be16 size counts */
--	if (payload->blob_len < 4)
--		return -EINVAL;
-+	if (payload->blob_len < 4) {
-+		rc = -EINVAL;
-+		goto err;
-+	}
- 
- 	private_len = get_unaligned_be16(blob);
- 
- 	/* must be big enough for following public_len */
--	if (private_len + 2 + 2 > (payload->blob_len))
--		return -E2BIG;
-+	if (private_len + 2 + 2 > (payload->blob_len)) {
-+		rc = -E2BIG;
-+		goto err;
-+	}
- 
- 	public_len = get_unaligned_be16(blob + 2 + private_len);
--	if (private_len + 2 + public_len + 2 > payload->blob_len)
--		return -E2BIG;
-+	if (private_len + 2 + public_len + 2 > payload->blob_len) {
-+		rc = -E2BIG;
-+		goto err;
-+	}
- 
- 	pub = blob + 2 + private_len + 2;
- 	/* key attributes are always at offset 4 */
-@@ -406,12 +414,14 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
- 		payload->migratable = 1;
- 
- 	blob_len = private_len + public_len + 4;
--	if (blob_len > payload->blob_len)
--		return -E2BIG;
-+	if (blob_len > payload->blob_len) {
-+		rc = -E2BIG;
-+		goto err;
-+	}
- 
- 	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_LOAD);
- 	if (rc)
--		return rc;
-+		goto err;
- 
- 	tpm_buf_append_u32(&buf, options->keyhandle);
- 	tpm2_buf_append_auth(&buf, TPM2_RS_PW,
-@@ -441,6 +451,11 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
- 		rc = -EPERM;
- 
- 	return rc;
-+
-+err:
-+	if (blob != payload->blob)
-+		kfree(blob);
-+	return rc;
- }
- 
- /**
+Lukas
+
+Link: https://lore.kernel.org/lkml/20210315160451.7469-1-lukas.bulwahn@gmail.com/
+Link: https://lore.kernel.org/lkml/20210419092609.3692-1-lukas.bulwahn@gmail.com/
+Link: https://lore.kernel.org/lkml/20210614112349.26108-1-lukas.bulwahn@gmail.com/
+
+Adjustment from original to resend version:
+  - drop subsumed patches
+
+Adjustment to resend version:
+  - add Fixes-tags as requested by Nobuhiro Iwamatsu
+
+Adjustment to v2:
+  - add more clean-up for file references on dt-bindings
+
+Lukas Bulwahn (8):
+  MAINTAINERS: rectify entry for ARM/TOSHIBA VISCONTI ARCHITECTURE
+  MAINTAINERS: rectify entry for HIKEY960 ONBOARD USB GPIO HUB DRIVER
+  MAINTAINERS: rectify entry for INTEL KEEM BAY DRM DRIVER
+  MAINTAINERS: rectify entries with documentation-file-ref check
+  MAINTAINERS: rectify entry for ALLWINNER HARDWARE SPINLOCK SUPPORT
+  MAINTAINERS: rectify entries to mtd-physmap.yaml
+  MAINTAINERS: rectify entry for ARM/ASPEED I2C DRIVER
+  MAINTAINERS: rectify entry for FREESCALE IMX / MXC FEC DRIVER
+
+ MAINTAINERS | 31 +++++++++++++++----------------
+ 1 file changed, 15 insertions(+), 16 deletions(-)
+
 -- 
-2.31.1
+2.17.1
 
