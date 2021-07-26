@@ -2,174 +2,123 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 861A3C432BE
-	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Jul 2021 05:33:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D1F8C4338F
+	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Jul 2021 07:58:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6406560F02
-	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Jul 2021 05:33:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59A1A60F57
+	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Jul 2021 07:58:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231664AbhGZEw4 (ORCPT
+        id S232316AbhGZHSE convert rfc822-to-8bit (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 26 Jul 2021 00:52:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47726 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229683AbhGZEwz (ORCPT
+        Mon, 26 Jul 2021 03:18:04 -0400
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:38457 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232068AbhGZHSE (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 26 Jul 2021 00:52:55 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84162C061765
-        for <kernel-janitors@vger.kernel.org>; Sun, 25 Jul 2021 22:33:23 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id h14so13340580lfv.7
-        for <kernel-janitors@vger.kernel.org>; Sun, 25 Jul 2021 22:33:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PRU68iKUPw5S0tl4mVxd5yJKI+6qFQ7X97+eA0nBCAE=;
-        b=p6sLAgt5tOdHwc0wNad/P+hdEygwdLuthLS5kmbCb6gazGK8X1ASirlTkcieZGF86K
-         sYjq6RB/lXQ46mN1HDPlF93oERNTXG6b3WkN3YEc5DDKl5rDFu8PGo8+8cmXMIUUpx+D
-         4LW+OWCkmkHeKYwwOpOrPkh0D1+f727nFn0jSDTSHmNZov17Ih9kE1wcCVxA8iKxVnv6
-         3nwWTv90vVtw0hqXi4WuQACKsK4UELXPezda6iEZcs2ibfjqvXb9Ye1KgYbqUmQuJ4QX
-         YUtEkV80FAugV7VEK4wz4I32PPJZAtUGa5CYp52ovSzdnXwtEt9xm7KG5cPWNFM74FXx
-         5BrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PRU68iKUPw5S0tl4mVxd5yJKI+6qFQ7X97+eA0nBCAE=;
-        b=sZ/kNA13NUgFl1En2DC3fZwWdiirxdVktNZCfhSRnLQexIlJyDN7skOisZn32gg5A9
-         AxNl5DquA6OTuOtyQZG+XryUGa4cA7iW2sjGRnM7eGg3bSsYqBrBDJ2DbcTHVPCbPxki
-         Y4a87lyv/gSHY5umGZdolzCxA9OOaQxklo5Xp2AR0hBLgl5B5idzyTpO8i4ugf9biNte
-         hO+Z2lnp0OjTC7+zjWw3kPR51yF/i/cRdqSEhVM5FJOXxdehaH/31/X76XDbyaN9pDo/
-         VcQ5xXwAHxOCPBmmfpwwRdCwPa57/wifdNid/g00tseryICTidMlTsQEGGSWZigkHupw
-         8J5g==
-X-Gm-Message-State: AOAM531L4b8hH5x2LL9vYYg8zDKJ65R1Pn+hu1hFY8T0g9LuQGj3dGQG
-        MjChjXaP4GnqPIfT2b9KWFSZmRhMTq6X2c/JW/R5YQ==
-X-Google-Smtp-Source: ABdhPJySjGAMkvYVAYkYNpAfNDgDRSCahZbm8y1hFRqwSZ3PmVRMxfjoqqrcouvYItmqWhyW1BiT/rzUxlkL0kC3RcE=
-X-Received: by 2002:a19:c757:: with SMTP id x84mr11736748lff.302.1627277601795;
- Sun, 25 Jul 2021 22:33:21 -0700 (PDT)
+        Mon, 26 Jul 2021 03:18:04 -0400
+Received: (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 3F4401C0003;
+        Mon, 26 Jul 2021 07:58:30 +0000 (UTC)
+Date:   Mon, 26 Jul 2021 09:58:29 +0200
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Manivannan Sadhasivam <mani@kernel.org>
+Cc:     Martin Kaiser <martin@kaiser.cx>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] mtd: rawnand: Add a check in
+ of_get_nand_secure_regions()
+Message-ID: <20210726095829.63af18b2@xps13>
+In-Reply-To: <20210724160308.GA62321@thinkpad>
+References: <YMtQFXE0F1w7mUh+@mwanda>
+        <20210715225045.66185-1-miquel.raynal@bootlin.com>
+        <20210724142712.GA24036@martin-debian-1.paytec.ch>
+        <20210724160308.GA62321@thinkpad>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20210723172121.156687-1-colin.king@canonical.com>
-In-Reply-To: <20210723172121.156687-1-colin.king@canonical.com>
-From:   Sumit Garg <sumit.garg@linaro.org>
-Date:   Mon, 26 Jul 2021 11:03:10 +0530
-Message-ID: <CAFA6WYOugaWGj-RoHzikk8L_-vHY6XX8NOKoJL08--Oh4WeM6w@mail.gmail.com>
-Subject: Re: [PATCH] security: keys: trusted: Fix memory leaks on allocated blob
-To:     Colin King <colin.king@canonical.com>
-Cc:     James Bottomley <jejb@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
-        "open list:SECURITY SUBSYSTEM" 
-        <linux-security-module@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Colin,
+Hi Mani,
 
-On Fri, 23 Jul 2021 at 22:51, Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> There are several error return paths that don't kfree the allocated
-> blob, leading to memory leaks. Ensure blob is initialized to null as
-> some of the error return paths in function tpm2_key_decode do not
-> change blob. Add an error return path to kfree blob and use this on
-> the current leaky returns.
->
+Manivannan Sadhasivam <mani@kernel.org> wrote on Sat, 24 Jul 2021
+21:33:08 +0530:
 
-It looks like there are still leaky return paths left such as
-tpm_buf_init() failure etc. which needs to be fixed as well.
+> On Sat, Jul 24, 2021 at 04:27:30PM +0200, Martin Kaiser wrote:
+> > Hi all,
+> > 
+> > Thus wrote Miquel Raynal (miquel.raynal@bootlin.com):
+> >   
+> > > On Thu, 2021-06-17 at 13:37:25 UTC, Dan Carpenter wrote:  
+> > > > Check for whether of_property_count_elems_of_size() returns a negative
+> > > > error code.  
+> >   
+> > > > Fixes: 13b89768275d ("mtd: rawnand: Add support for secure regions in NAND memory")
+> > > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > > > Reviewed-by: Manivannan Sadhasivam <mani@kernel.org>  
+> >   
+> > > Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git mtd/fixes, thanks.  
+> > 
+> > I'm running linux-next on an imx25 system with the following flash chip
+> > 
+> > [    1.997539] nand: device found, Manufacturer ID: 0x98, Chip ID: 0xaa
+> > [    2.004134] nand: Toshiba NAND 256MiB 1,8V 8-bit
+> > [    2.008917] nand: 256 MiB, SLC, erase size: 128 KiB, page size: 2048, OOB size: 128
+> > 
+> > The system is using the drivers/mtd/nand/raw/mxc_nand.c driver.
+> > 
+> > Since this commit appeared in linux-next, mxc_nand's probe function fails
+> > with -EINVAL, taking this path
+> > 
+> > mxcnd_probe
+> >    nand_scan
+> >       nand_scan_with_ids
+> >          nand_scan_tail
+> >             of_get_nand_secure_regions
+> > 
+> > nr_elem = of_property_count_elems_of_size(dn, "secure-regions", sizeof(u64));
+> > returns -EINVAL as there's no secure-regions property in my device tree.
+> >   
+> 
+> Doh! Sorry for missing this.
+> 
+> > We should certainly handle negative error codes before we calculate
+> > chip->nr_secure_regions = nr_elem / 2
+> > but a missing secure-regions property is a valid case and should not make
+> > the probe fail.
+> >   
+> 
+> Absolutely!
+> 
+> > If the property exists, but the device-tree entry is incorrect
+> > and of_property_count_elems_of_size returns -ENODATA, we might print a
+> > warning and ignore the entry.
+> >   
+> 
+> Hmm, I think it is best to error out in this case as the user has got DT wrong.
+> 
+> > What do you think?
+> >   
+> 
+> Since of_property_count_elems_of_size() returns -EINVAL if the length is not
+> a multiple of sizeof(u64), we can't just ignore -EINVAL.
+> 
+> So I think we can just check for the existence of the property before invoking
+> of_get_nand_secure_regions(). Miquel, what do you think?
 
-With that addressed, feel free to add:
+Yes please add this check and we should be good.
 
-Acked-by: Sumit Garg <sumit.garg@linaro.org>
-
--Sumit
-
-> Addresses-Coverity: ("Resource leak")
-> Fixes: f2219745250f ("security: keys: trusted: use ASN.1 TPM2 key format for the blobs")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  security/keys/trusted-keys/trusted_tpm2.c | 30 ++++++++++++++++-------
->  1 file changed, 21 insertions(+), 9 deletions(-)
->
-> diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
-> index 0165da386289..930c67f98611 100644
-> --- a/security/keys/trusted-keys/trusted_tpm2.c
-> +++ b/security/keys/trusted-keys/trusted_tpm2.c
-> @@ -366,7 +366,7 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
->         unsigned int private_len;
->         unsigned int public_len;
->         unsigned int blob_len;
-> -       u8 *blob, *pub;
-> +       u8 *blob = NULL, *pub;
->         int rc;
->         u32 attrs;
->
-> @@ -378,22 +378,30 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
->         }
->
->         /* new format carries keyhandle but old format doesn't */
-> -       if (!options->keyhandle)
-> -               return -EINVAL;
-> +       if (!options->keyhandle) {
-> +               rc = -EINVAL;
-> +               goto err;
-> +       }
->
->         /* must be big enough for at least the two be16 size counts */
-> -       if (payload->blob_len < 4)
-> -               return -EINVAL;
-> +       if (payload->blob_len < 4) {
-> +               rc = -EINVAL;
-> +               goto err;
-> +       }
->
->         private_len = get_unaligned_be16(blob);
->
->         /* must be big enough for following public_len */
-> -       if (private_len + 2 + 2 > (payload->blob_len))
-> -               return -E2BIG;
-> +       if (private_len + 2 + 2 > (payload->blob_len)) {
-> +               rc = -E2BIG;
-> +               goto err;
-> +       }
->
->         public_len = get_unaligned_be16(blob + 2 + private_len);
-> -       if (private_len + 2 + public_len + 2 > payload->blob_len)
-> -               return -E2BIG;
-> +       if (private_len + 2 + public_len + 2 > payload->blob_len) {
-> +               rc = -E2BIG;
-> +               goto err;
-> +       }
->
->         pub = blob + 2 + private_len + 2;
->         /* key attributes are always at offset 4 */
-> @@ -441,6 +449,10 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
->                 rc = -EPERM;
->
->         return rc;
-> +
-> +err:
-> +       kfree(blob);
-> +       return rc;
->  }
->
->  /**
-> --
-> 2.31.1
->
+Thanks,
+Miquèl
