@@ -2,113 +2,88 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10B29C4338F
-	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Jul 2021 14:50:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE903C432BE
+	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Jul 2021 15:34:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D5BC560E78
-	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Jul 2021 14:50:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C161460F22
+	for <kernel-janitors@archiver.kernel.org>; Mon, 26 Jul 2021 15:34:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234637AbhGZOJc (ORCPT
+        id S234952AbhGZOxw convert rfc822-to-8bit (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 26 Jul 2021 10:09:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33906 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233206AbhGZOJc (ORCPT
+        Mon, 26 Jul 2021 10:53:52 -0400
+Received: from mslow1.mail.gandi.net ([217.70.178.240]:57043 "EHLO
+        mslow1.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234546AbhGZOxv (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 26 Jul 2021 10:09:32 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3F12C061757;
-        Mon, 26 Jul 2021 07:49:59 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id c16so1569218wrp.13;
-        Mon, 26 Jul 2021 07:49:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=xLmMVn1uoLATlywyndSzCwv/MROV9xIhKUlgFoTwd7k=;
-        b=JlM/3iQLY7TfHfUPiWz2d2R/A8LnY1phSqqsMTbyRdF+6wMhlD9S+CmVkFcPZWx0P3
-         kVVuvFfBIamUbsXqv+ba3OMyb0GkECfrL+lFWYtOVty5GmYKF5DN18gcSqMbLwqzB3Lp
-         K2vbQZnEUQyNlG5VmeWMT17DJ9z5yWrJFiwuvf084qye+5QHTrf7paHWK7u1AMOzf3vz
-         MnMzQK0yXeZcwyxQ6lKekh/EbSGmUHiPQSIl6nN950wvprkhGwbDPX7APkZ+JivWq2OV
-         ej9Lgv4RW2wAUedkNqRUhStDLHgviXoyqlV3olLq2o+8L4FiRfIwyEaZir7J8zA8/wlM
-         wSaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=xLmMVn1uoLATlywyndSzCwv/MROV9xIhKUlgFoTwd7k=;
-        b=N6sgXMKUsqcQArWY//II3EIixB59OE8slCOOXvD0QczL6hbcKB0v65CahRBNiNH0D0
-         bbNR5JkEsZAi8SdExwh3fcwxKz9lFsKR+4fqwn2jGFzIacPyGWuJhr+UJSLRqsxoyAdy
-         yJv9k2tyN+FN4285up88XTlvH9EqBmVoT0Fe1a/OoYnjmfSKGYowZejLrGujo7xjMAqb
-         Fa9Khico11vynmZefXc8HD92ewmbpgeLVimTfmOYZkxkHOpmCQV2KeB67f87D9sOjvsv
-         jJgnBvRUR2zCLpflvmgFTjG5fk/U4Rt5G/3Aq3R8duZHrE3/v6X4NGMUsS4pFmTWdIRM
-         rOzQ==
-X-Gm-Message-State: AOAM5337vqk9EQzOgpzf1+cfwfjBHjzgRhU/2mwhwINTLuj9wBKyzYRS
-        KrpCGO2zvOa+ESgeyo4DUZE=
-X-Google-Smtp-Source: ABdhPJxlbCS5XzYEqJbNfoMho+XsFVH5CnPgy+fdBeBMGxuBsqfFlF3fLjhd7F0oc4QoPCEF7oc6ow==
-X-Received: by 2002:adf:e90e:: with SMTP id f14mr380018wrm.191.1627310998260;
-        Mon, 26 Jul 2021 07:49:58 -0700 (PDT)
-Received: from felia.fritz.box ([2001:16b8:2d1a:1100:c32:37a3:94e9:cfea])
-        by smtp.gmail.com with ESMTPSA id q19sm13480481wmq.38.2021.07.26.07.49.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Jul 2021 07:49:57 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>,
-        linux-mtd@lists.infradead.org,
+        Mon, 26 Jul 2021 10:53:51 -0400
+Received: from relay6-d.mail.gandi.net (unknown [217.70.183.198])
+        by mslow1.mail.gandi.net (Postfix) with ESMTP id E58BACA908;
+        Mon, 26 Jul 2021 15:29:32 +0000 (UTC)
+Received: (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 613B2C0008;
+        Mon, 26 Jul 2021 15:29:03 +0000 (UTC)
+Date:   Mon, 26 Jul 2021 17:29:02 +0200
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+        Yu Chen <chenyu56@huawei.com>,
+        Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Naga Sureshkumar Relli <nagasure@xilinx.com>,
+        Hans Ulli Kroll <ulli.kroll@googlemail.com>,
+        Deepak Saxena <dsaxena@plexity.net>,
+        Mirela Rabulea <mirela.rabulea@nxp.com>,
+        Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
+        Wilken Gottwalt <wilken.gottwalt@posteo.net>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Joakim Zhang <qiangqing.zhang@nxp.com>,
+        Joe Perches <joe@perches.com>,
         Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: repair Miquel Raynal's email address
-Date:   Mon, 26 Jul 2021 16:49:49 +0200
-Message-Id: <20210726144949.10439-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 6/8] MAINTAINERS: rectify entries to mtd-physmap.yaml
+Message-ID: <20210726172902.4ce8892f@xps13>
+In-Reply-To: <20210726142943.27008-7-lukas.bulwahn@gmail.com>
+References: <20210726142943.27008-1-lukas.bulwahn@gmail.com>
+        <20210726142943.27008-7-lukas.bulwahn@gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit d70c6b026069 ("MAINTAINERS: Add PL353 NAND controller entry") and
-commit 813d52799ad2 ("MAINTAINERS: Add PL353 SMC entry") adds Miquel
-Raynal as maintainer with an obvious invalid email address, which can be
-easily fixed.
+Hi Lukas,
 
-Repair this copy-and-paste error in Miquel Raynal's email address.
+Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote on Mon, 26 Jul 2021
+16:29:41 +0200:
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-Miquel, please pick or ack this patch.
-Krzysztof, please pick this patch if Miquel does not.
+> Commit 63f8e9e0ac65 ("dt-bindings: mtd: Convert mtd-physmap to DT schema")
+> aggregated, amongst others, arm-versatile.txt and cypress,hyperflash.txt,
+> into mtd-physmap.yaml in ./Documentation/devicetree/bindings/mtd/.
+> 
+> The two .txt files are however mentioned in MAINTAINERS; hence,
+> ./scripts/get_maintainer.pl --self-test=patterns complains about broken
+> references.
+> 
+> Refer to mtd-physmap.yaml, so that the maintainers and reviewers of
+> ARM INTEGRATOR, VERSATILE AND REALVIEW SUPPORT and HYPERBUS SUPPORT are
+> informed on any changes in the yaml file.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
- MAINTAINERS | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d69b2d4646be..f31922d0503a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1476,7 +1476,7 @@ F:	drivers/amba/
- F:	include/linux/amba/bus.h
- 
- ARM PRIMECELL PL35X NAND CONTROLLER DRIVER
--M:	Miquel Raynal <miquel.raynal@bootlin.com@bootlin.com>
-+M:	Miquel Raynal <miquel.raynal@bootlin.com>
- M:	Naga Sureshkumar Relli <nagasure@xilinx.com>
- L:	linux-mtd@lists.infradead.org
- S:	Maintained
-@@ -1484,7 +1484,7 @@ F:	Documentation/devicetree/bindings/mtd/arm,pl353-nand-r2p1.yaml
- F:	drivers/mtd/nand/raw/pl35x-nand-controller.c
- 
- ARM PRIMECELL PL35X SMC DRIVER
--M:	Miquel Raynal <miquel.raynal@bootlin.com@bootlin.com>
-+M:	Miquel Raynal <miquel.raynal@bootlin.com>
- M:	Naga Sureshkumar Relli <nagasure@xilinx.com>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- S:	Maintained
--- 
-2.17.1
-
+Thanks,
+Miquèl
