@@ -2,50 +2,52 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3449C432BE
-	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Jul 2021 15:47:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5615FC4338F
+	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Jul 2021 17:33:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CD05161B52
-	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Jul 2021 15:47:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2FDDB60F91
+	for <kernel-janitors@archiver.kernel.org>; Tue, 27 Jul 2021 17:33:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237089AbhG0PrF (ORCPT
+        id S229809AbhG0RdV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 27 Jul 2021 11:47:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52204 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229537AbhG0PrE (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 27 Jul 2021 11:47:04 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 1242761B66;
-        Tue, 27 Jul 2021 15:47:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627400824;
-        bh=C91IOFLpn/xlTe/YVqK/AkLDbvPKJZILi/jlymQD7Mw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pZ66KAPYPX8myWetK+eJPLri9mdjl2h4JEvsee0o/ZItxGSCv7hxi3BnYY5yp3PcH
-         4xQtaubLk9ii3LtvHgD1G7OkSPUMkXQ4O0TTdUnFADFRIIatGtkYr6C/LAVZDb5/6n
-         WBYRcd31vG8OhKBvBeCBXOkfhLfEBivie+ubJ/LmE00nyusreAktEH3Z/3Y79W+oIj
-         dmdMRsRntLWF8fbrLQu0QhyBe7XJikNiUeSma2MOIR+tSepeifCXiIEy9DWOjX0CsW
-         XPNcaywtzmNDnEPqfn0j2fwgDcAjoMxlSiwlKfTvE0/4Biamt38hKsE2/wWAKLztvk
-         riAhgcdKvBNdw==
-From:   Mark Brown <broonie@kernel.org>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Vijendar Mukunda <Vijendar.Mukunda@amd.com>
-Cc:     Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Subject: Re: [PATCH] ASoC: amd: fix an IS_ERR() vs NULL bug in probe
-Date:   Tue, 27 Jul 2021 16:46:26 +0100
-Message-Id: <162739969149.18968.15163991241105613933.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20210727081756.GA19121@kili>
-References: <20210727081756.GA19121@kili>
+        Tue, 27 Jul 2021 13:33:21 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:36472
+        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229453AbhG0RdV (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 27 Jul 2021 13:33:21 -0400
+Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 93F3F3F22C;
+        Tue, 27 Jul 2021 17:33:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1627407199;
+        bh=cBQwGCAj7Np0JZQGOqZ79HMB7qL2mXEkmrdNgg4EJ4E=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=mfTD8IsCtnM8DhI3A9RQumKOhdpf7ZkKijfXkyOWFCQko26ZHn5khfdTsC/i6ttXy
+         6WUd8CwBtSFSMHHXsGfQx9cjBy20PSAYjLCQLj9JdjKsuzdnx8QAg1p1lDrd3h0kGF
+         mFBD7q0kubdi1Ks4c0Tw8FK7FD0Vq9IbA4bp2PqJbTCDbRfVimCiT5ckbDriwtH+Gg
+         728Pksb2SVbSble2fxbYTg/8ls7rwjRrHoVhkhCxlBcT0S78ZLGnC5wKCprbo1m+vY
+         MkhxwqTCsiSxmmL1z6FYFohA942fyGoqweUHiR6RAIkMJNowfBHEAOmOqK/GRi4gQX
+         eT+Kp6H2/WdJA==
+From:   Colin King <colin.king@canonical.com>
+To:     Jesse Brandeburg <jesse.brandeburg@intel.com>,
+        Tony Nguyen <anthony.l.nguyen@intel.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] i40e: Fix spelling mistake "dissable" -> "disable"
+Date:   Tue, 27 Jul 2021 18:33:18 +0100
+Message-Id: <20210727173318.78154-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -53,34 +55,28 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, 27 Jul 2021 11:17:56 +0300, Dan Carpenter wrote:
-> The devm_ioremap() function returns NULL on error, it doesn't return
-> error pointers.
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to
+There is a spelling mistake in a dev_info message. Fix it.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/intel/i40e/i40e_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks!
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_main.c b/drivers/net/ethernet/intel/i40e/i40e_main.c
+index b4a57251256a..4eb9005e85da 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_main.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_main.c
+@@ -4638,7 +4638,7 @@ void i40e_vsi_stop_rings(struct i40e_vsi *vsi)
+ 		err = i40e_control_wait_rx_q(pf, pf_q, false);
+ 		if (err)
+ 			dev_info(&pf->pdev->dev,
+-				 "VSI seid %d Rx ring %d dissable timeout\n",
++				 "VSI seid %d Rx ring %d disable timeout\n",
+ 				 vsi->seid, pf_q);
+ 	}
+ 
+-- 
+2.31.1
 
-[1/1] ASoC: amd: fix an IS_ERR() vs NULL bug in probe
-      commit: 37108ef45ae9021d23174ce89e76ad41443090bf
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
