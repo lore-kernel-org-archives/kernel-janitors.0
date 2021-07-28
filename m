@@ -2,112 +2,87 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B273BC4338F
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jul 2021 23:17:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DCFDC4338F
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jul 2021 23:28:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 801EE60F9B
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jul 2021 23:17:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 712AD61039
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jul 2021 23:28:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232554AbhG1XRv (ORCPT
+        id S232654AbhG1X2V (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 28 Jul 2021 19:17:51 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:42151 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232116AbhG1XRv (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 28 Jul 2021 19:17:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1627514268;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=yPDkVTZ8b83r4TbJSlWFDW+2FFM5TXW1fN7erbN+dQI=;
-        b=OD+3fKIlEDj5K2HHg/7fNAF8hQum9odFT+ufLcdQgUfQqqaU77gKRNar2WUTJwgNSnn20n
-        eKCcmhByFdDzPfEtC7CzmSrJaP2291IlLtHgk8G4QaXY6yGs2Gqv3iwuWOK12EcqramYd3
-        18dKkU8suierzIlJlKqOJyigkbj0Mjw=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-526-g8N0YRntPdy75u2261pkGg-1; Wed, 28 Jul 2021 19:17:46 -0400
-X-MC-Unique: g8N0YRntPdy75u2261pkGg-1
-Received: by mail-qt1-f199.google.com with SMTP id k2-20020ac847820000b029024ea3acef5bso1842301qtq.12
-        for <kernel-janitors@vger.kernel.org>; Wed, 28 Jul 2021 16:17:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=yPDkVTZ8b83r4TbJSlWFDW+2FFM5TXW1fN7erbN+dQI=;
-        b=SyVaPCLfbxJ5H8o+Z+pesUK1bBkxZl+CrvHzo6mN4n4DmUSjroyd/cuyasQHBn5HGf
-         Bp81GVpheg/24YY61czfIatUUYrMseuUanIOfJL1zmz7ITsNJdEkbUfe7K9KUt5d8J4b
-         Vm0KgL337hCIqc5afNGZZczjlAEuZLcf3dmoemAwQB+jrN9/hblSDlKlOnmMharB71nq
-         P1ZIjzFyvO0w9SmwOpKfU+rjgnyKFpnXbt2EMU02rQgp9sWF53WEkPVWbU8NspJLPYLm
-         vsR/1lWU2kVundDepJTgZ8Xft8OxFJALk6EbwobaP4D3i/grYq5Qw604/Fvua1ZN6oLc
-         Hu7w==
-X-Gm-Message-State: AOAM5336BOUIKKuFDqCzNa1sn/2bCyx5mvSw2wgErl2eyhWjCXp3E1jF
-        eHwlW1Y7pFO3VcczB03jLpaRxn/ER9a1dSJQmrCzAl2XcQ2WEBzJaFxWMiGkDRBprIlLWaqbmPH
-        4qzxCwN0KGFHyGHkxjCnJq+J293rl
-X-Received: by 2002:a37:b0a:: with SMTP id 10mr2186638qkl.291.1627514266123;
-        Wed, 28 Jul 2021 16:17:46 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyXAgP9lkJWoLrU3pYzWQ9f0mbAUQ4I6TKaLd4nsL8jBdRO7aVFQFKVPcznO0D3SmBXEvMXYQ==
-X-Received: by 2002:a37:b0a:: with SMTP id 10mr2186621qkl.291.1627514265949;
-        Wed, 28 Jul 2021 16:17:45 -0700 (PDT)
-Received: from localhost.localdomain (075-142-250-213.res.spectrum.com. [75.142.250.213])
-        by smtp.gmail.com with ESMTPSA id q184sm794947qkd.35.2021.07.28.16.17.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Jul 2021 16:17:45 -0700 (PDT)
-Subject: Re: [PATCH] fpga: Fix spelling mistake "eXchnage" -> "exchange" in
- Kconfig
-To:     Colin King <colin.king@canonical.com>,
-        Moritz Fischer <mdf@kernel.org>, linux-fpga@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210728215150.191914-1-colin.king@canonical.com>
-From:   Tom Rix <trix@redhat.com>
-Message-ID: <5e7b2e4a-aaf6-81f2-2b08-5a9adcbbee57@redhat.com>
-Date:   Wed, 28 Jul 2021 16:17:43 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        Wed, 28 Jul 2021 19:28:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49598 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232609AbhG1X2U (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 28 Jul 2021 19:28:20 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 040DF6101B;
+        Wed, 28 Jul 2021 23:28:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1627514898;
+        bh=O+//6IJ/VPQ62CUgWxVD82JUZheq3ea8zHr1YC2khU4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=JQRw58bjtYCNMizbYEe/o+pyprfdExpIxGQFN8yiWlY/viVeE9z5mPuo7P9AbOf12
+         DmSP8aCGhgGnPH97bGg58DnLnLoTJbMRDyYomYKzdqbdHZp6d5jGwyLCILSYTPpJlu
+         5haPpcGiN60gzdNNgqJmLvTpfkFiXVk0LZQxflLDdLhKbXKrck5aZTa+0nIeZfP91H
+         Nkcdy9QrP/WQw+eYNC7rj5MOSrvUWKwegmGcywAf54m3brX0L8Ad08OPNU8p4mZhKj
+         fMTJrID7/Lvu3Ki+RYc2ly7qnbfLdBliMEpe3fdMVEm97IVcp95vGjoXuW2XbAJxPv
+         YgovX1W/vvg0A==
+From:   Mark Brown <broonie@kernel.org>
+To:     Jie Yang <yang.jie@linux.intel.com>,
+        Cezary Rojewski <cezary.rojewski@intel.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Colin King <colin.king@canonical.com>,
+        alsa-devel@alsa-project.org
+Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] ASoC: Intel: Fix spelling contraction "cant" -> "can't"
+Date:   Thu, 29 Jul 2021 00:27:55 +0100
+Message-Id: <162751391069.10122.6012833198246486438.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20210728103602.171817-1-colin.king@canonical.com>
+References: <20210728103602.171817-1-colin.king@canonical.com>
 MIME-Version: 1.0
-In-Reply-To: <20210728215150.191914-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On Wed, 28 Jul 2021 11:36:02 +0100, Colin King wrote:
+> There is a spelling mistake in a dev_err message. Fix it.
 
-On 7/28/21 2:51 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> There is a spelling mistake in the Kconfig text. Fix it.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->   drivers/fpga/Kconfig | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
-> index 16793bfc2bb4..991b3f361ec9 100644
-> --- a/drivers/fpga/Kconfig
-> +++ b/drivers/fpga/Kconfig
-> @@ -119,7 +119,7 @@ config XILINX_PR_DECOUPLER
->   	depends on HAS_IOMEM
->   	help
->   	  Say Y to enable drivers for Xilinx LogiCORE PR Decoupler
-> -	  or Xilinx Dynamic Function eXchnage AIX Shutdown Manager.
-> +	  or Xilinx Dynamic Function eXchange AIX Shutdown Manager.
->   	  The PR Decoupler exists in the FPGA fabric to isolate one
->   	  region of the FPGA from the busses while that region is
->   	  being reprogrammed during partial reconfig.
+Applied to
 
-Looks good, thanks
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-Reviewed-by: Tom Rix <trix@redhat.com>
+Thanks!
 
+[1/1] ASoC: Intel: Fix spelling contraction "cant" -> "can't"
+      commit: 0f6b04adb58d80e7fb5f8d9229ad22c9931c3bd1
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
