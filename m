@@ -2,81 +2,78 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5DEBC4320A
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jul 2021 09:42:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4F51C4320A
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jul 2021 10:26:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 954E360F9D
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jul 2021 09:42:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BC6D60F0F
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jul 2021 10:26:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235520AbhG1Jma (ORCPT
+        id S232113AbhG1K0T (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 28 Jul 2021 05:42:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52826 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231408AbhG1Jma (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 28 Jul 2021 05:42:30 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id BC89060F9D;
-        Wed, 28 Jul 2021 09:42:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627465348;
-        bh=VZ4nuzu7jAy+8jU0B3ANq2x2GkmAKRJmZDAGE5IMJb8=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=HACUT0BYikOpdBcL487VulSuuDq/eOsQ9aDIDix3jUv0jHosw4sLOzRFNxR/6S+Tv
-         3t46kH3gak4PFyVpcjK0/GccovYK7W0eXS2I20LFHKFQ/2rOhNZJZf+ox7FxhgFaqr
-         tDuLdGj7XW7YDNGHGL2F8KzsKk5n3mjjZykJshkf7Njjj/loHZmpnNI/tKwQ1aaGIY
-         vdD997j/UZJr7saHQysWuoy6nWdn/SS5S/wA3QfQrLzISXC4dJ3sI02PzOBrs0eXOe
-         OAAbxhZR+bEsAwTQqP+vgfAVf2ekrU12JlkCH5sYlH8Sdpz7WTIip9U4/kGDGpXeY4
-         jAGMvuj5P5vMw==
-Date:   Wed, 28 Jul 2021 11:42:25 +0200 (CEST)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Colin King <colin.king@canonical.com>
-cc:     linux-usb@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] USB HID: Fix spelling mistake "Uninterruptable" ->
- "Uninterruptible"
-In-Reply-To: <20210719102731.15107-1-colin.king@canonical.com>
-Message-ID: <nycvar.YFH.7.76.2107281142210.8253@cbobk.fhfr.pm>
-References: <20210719102731.15107-1-colin.king@canonical.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        Wed, 28 Jul 2021 06:26:19 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:52686
+        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229574AbhG1K0R (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 28 Jul 2021 06:26:17 -0400
+Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id C49E13F32F;
+        Wed, 28 Jul 2021 10:26:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1627467974;
+        bh=RzFO0WvxXjGz6K02P8hc8WjBrShTRvNxHsMes42WDWA=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=V35G4kXwPgcaICMLJz8EqKIbR/HJ6Megt927S7f3dYO9prJmBXboiO8tdXxvbvrAs
+         Lv8dHjB21kw7JPywxiagv6LMDyTy6FyM9BZtGAUpjYzGs5UuJyo+J6EYAprJv03POp
+         hjKftKHMgV+0eCQRl9Wo3qGeeM2dCPkzpfUyXjUtNUIf2f59ZgMz/mXSvmB5TEHNLC
+         XWUaEXlbVPJAp72XDgKgZzLRCHYZjv8h49KLpNwsg7yxUfnznpvc9lzi6HGvLEYQyD
+         TXsZZYPgtbUmlzXcGrqt46wWVPksf5teQ0bQLwdxwZH0qkmyo0Zd4i4nvXo9806eEc
+         PGYg6zLAaYeqA==
+From:   Colin King <colin.king@canonical.com>
+To:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        linux-mips@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] MIPS: Alchemy: Fix spelling contraction "cant" -> "can't"
+Date:   Wed, 28 Jul 2021 11:26:12 +0100
+Message-Id: <20210728102612.171012-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, 19 Jul 2021, Colin King wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake in the Kconfig text. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/hid/usbhid/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/hid/usbhid/Kconfig b/drivers/hid/usbhid/Kconfig
-> index dcf3a235870f..7c2032f7f44d 100644
-> --- a/drivers/hid/usbhid/Kconfig
-> +++ b/drivers/hid/usbhid/Kconfig
-> @@ -38,7 +38,7 @@ config USB_HIDDEV
->  	help
->  	  Say Y here if you want to support HID devices (from the USB
->  	  specification standpoint) that aren't strictly user interface
-> -	  devices, like monitor controls and Uninterruptable Power Supplies.
-> +	  devices, like monitor controls and Uninterruptible Power Supplies.
->  
->  	  This module supports these devices separately using a separate
->  	  event interface on /dev/usb/hiddevX (char 180:96 to 180:111).
+There is a spelling mistake in a pr_warn message. Fix it.
 
-Applied, thanks.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ arch/mips/alchemy/devboards/db1200.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/arch/mips/alchemy/devboards/db1200.c b/arch/mips/alchemy/devboards/db1200.c
+index 421d651433b6..1864eb935ca5 100644
+--- a/arch/mips/alchemy/devboards/db1200.c
++++ b/arch/mips/alchemy/devboards/db1200.c
+@@ -835,7 +835,7 @@ int __init db1200_dev_setup(void)
+ 	if (!IS_ERR(c)) {
+ 		pfc = clk_round_rate(c, 50000000);
+ 		if ((pfc < 1) || (abs(50000000 - pfc) > 2500000))
+-			pr_warn("DB1200: cant get I2C close to 50MHz\n");
++			pr_warn("DB1200: can't get I2C close to 50MHz\n");
+ 		else
+ 			clk_set_rate(c, pfc);
+ 		clk_prepare_enable(c);
 -- 
-Jiri Kosina
-SUSE Labs
+2.31.1
 
