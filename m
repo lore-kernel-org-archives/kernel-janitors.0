@@ -2,104 +2,112 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A830C4338F
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jul 2021 22:55:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B273BC4338F
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jul 2021 23:17:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DE78360EFD
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jul 2021 22:55:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 801EE60F9B
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jul 2021 23:17:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232181AbhG1Wzu (ORCPT
+        id S232554AbhG1XRv (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 28 Jul 2021 18:55:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42432 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232163AbhG1Wzt (ORCPT
+        Wed, 28 Jul 2021 19:17:51 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:42151 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232116AbhG1XRv (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 28 Jul 2021 18:55:49 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD683C061757;
-        Wed, 28 Jul 2021 15:55:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description;
-        bh=iXq6gtJgg/KgevAKbbPdcmL6v/tjqWXVyd71VWdu32g=; b=aI/AM99FpdL/zSIAo7Uo0E+CGl
-        +6s2Jzg6JH7umPO7PnUwe9u26jTVXQ90CLsXspPyQcEh6GF7iq/xzNwOlz9QtYBUO1+Jior47Leye
-        UHbOSgx9TfIJDmqaHIgYJpSATyZdCW09tJqjuopHP0ufQWUcBHwe0z5TPdOJcDcLU9iP6dQQr1abz
-        ocoaW5D52xHSV9dtD/KAKwJ/Z4yAkC+zsAnAxwyZkj6mQFREHGcJ9yVQeohCgBX+xuqgGk4EodYGz
-        wMCm3iDoURIPA+0kNsRrt1HPIOqu5kml7t1whfX/Ns632XWKij1/cjzkovQ3wo+iurrNMmiIZOtlb
-        1dFvZjgg==;
-Received: from [2601:1c0:6280:3f0::aefb]
-        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m8sSo-002Vco-EI; Wed, 28 Jul 2021 22:55:46 +0000
-Subject: Re: patch suggestion: Kconfig symbols
-To:     Joe Perches <joe@perches.com>
-Cc:     linux-kernel-mentees@lists.linuxfoundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors <kernel-janitors@vger.kernel.org>
-References: <295b8f8c-4264-9f32-6723-9d2d574021ac@infradead.org>
- <e77e2329bdafdbea538be0d7edb8a9d7d3e45990.camel@perches.com>
- <09db53b9-7edf-44fc-c6b7-7c4e9198a2d4@infradead.org>
- <733d2747b67a8a172333b51bacbf77fe@perches.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <a89eefda-df18-0965-e56c-a1b73975b8c3@infradead.org>
-Date:   Wed, 28 Jul 2021 15:55:45 -0700
+        Wed, 28 Jul 2021 19:17:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1627514268;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=yPDkVTZ8b83r4TbJSlWFDW+2FFM5TXW1fN7erbN+dQI=;
+        b=OD+3fKIlEDj5K2HHg/7fNAF8hQum9odFT+ufLcdQgUfQqqaU77gKRNar2WUTJwgNSnn20n
+        eKCcmhByFdDzPfEtC7CzmSrJaP2291IlLtHgk8G4QaXY6yGs2Gqv3iwuWOK12EcqramYd3
+        18dKkU8suierzIlJlKqOJyigkbj0Mjw=
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
+ [209.85.160.199]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-526-g8N0YRntPdy75u2261pkGg-1; Wed, 28 Jul 2021 19:17:46 -0400
+X-MC-Unique: g8N0YRntPdy75u2261pkGg-1
+Received: by mail-qt1-f199.google.com with SMTP id k2-20020ac847820000b029024ea3acef5bso1842301qtq.12
+        for <kernel-janitors@vger.kernel.org>; Wed, 28 Jul 2021 16:17:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=yPDkVTZ8b83r4TbJSlWFDW+2FFM5TXW1fN7erbN+dQI=;
+        b=SyVaPCLfbxJ5H8o+Z+pesUK1bBkxZl+CrvHzo6mN4n4DmUSjroyd/cuyasQHBn5HGf
+         Bp81GVpheg/24YY61czfIatUUYrMseuUanIOfJL1zmz7ITsNJdEkbUfe7K9KUt5d8J4b
+         Vm0KgL337hCIqc5afNGZZczjlAEuZLcf3dmoemAwQB+jrN9/hblSDlKlOnmMharB71nq
+         P1ZIjzFyvO0w9SmwOpKfU+rjgnyKFpnXbt2EMU02rQgp9sWF53WEkPVWbU8NspJLPYLm
+         vsR/1lWU2kVundDepJTgZ8Xft8OxFJALk6EbwobaP4D3i/grYq5Qw604/Fvua1ZN6oLc
+         Hu7w==
+X-Gm-Message-State: AOAM5336BOUIKKuFDqCzNa1sn/2bCyx5mvSw2wgErl2eyhWjCXp3E1jF
+        eHwlW1Y7pFO3VcczB03jLpaRxn/ER9a1dSJQmrCzAl2XcQ2WEBzJaFxWMiGkDRBprIlLWaqbmPH
+        4qzxCwN0KGFHyGHkxjCnJq+J293rl
+X-Received: by 2002:a37:b0a:: with SMTP id 10mr2186638qkl.291.1627514266123;
+        Wed, 28 Jul 2021 16:17:46 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJyXAgP9lkJWoLrU3pYzWQ9f0mbAUQ4I6TKaLd4nsL8jBdRO7aVFQFKVPcznO0D3SmBXEvMXYQ==
+X-Received: by 2002:a37:b0a:: with SMTP id 10mr2186621qkl.291.1627514265949;
+        Wed, 28 Jul 2021 16:17:45 -0700 (PDT)
+Received: from localhost.localdomain (075-142-250-213.res.spectrum.com. [75.142.250.213])
+        by smtp.gmail.com with ESMTPSA id q184sm794947qkd.35.2021.07.28.16.17.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 Jul 2021 16:17:45 -0700 (PDT)
+Subject: Re: [PATCH] fpga: Fix spelling mistake "eXchnage" -> "exchange" in
+ Kconfig
+To:     Colin King <colin.king@canonical.com>,
+        Moritz Fischer <mdf@kernel.org>, linux-fpga@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210728215150.191914-1-colin.king@canonical.com>
+From:   Tom Rix <trix@redhat.com>
+Message-ID: <5e7b2e4a-aaf6-81f2-2b08-5a9adcbbee57@redhat.com>
+Date:   Wed, 28 Jul 2021 16:17:43 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-In-Reply-To: <733d2747b67a8a172333b51bacbf77fe@perches.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20210728215150.191914-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 7/28/21 2:30 PM, Joe Perches wrote:
-> On 2021-07-28 12:41, Randy Dunlap wrote:
->> On 7/28/21 8:37 AM, Joe Perches wrote:
->>> On Mon, 2021-07-26 at 17:21 -0700, Randy Dunlap wrote:
->>>> Running scripts/checkkconfigsymbols.py reports several hundred (maybe thousand)
->>>> Kconfig symbols that are used questionably. Lots of these are false positives
->>>> but lots of the remainder could use some cleaning up.
->>> []
->>>> False positive example:
->>>>
->>>> XCHOFFLD_MEM
->>>> Referencing files: drivers/scsi/qla2xxx/qla_mbx.c
->>>> Similar symbols: OF_PMEM, CXL_MEM, CXL_PMEM
->>>>
->>>> The Referencing source file does this:
->>>> #define CONFIG_XCHOFFLD_MEM    0x3
->>>>
->>>> which is legitimate, so no change is needed.
->>>
->>> Legitimate is perhaps dubious.
->>>
->>> It might be better if Kconfig has exclusive use of CONFIG_<foo> naming so
->>> renaming all the other existing CONFIG_<foo> defines might be appropriate.
->>
->> I would prefer that as well -- maybe 15 years ago.
->> But I think it's too invasive to make that change now.
-> 
-> I do not think it's that invasive.
-> 
-> It's something that doesn't have to be done immediately either.
-> 
-> It's not too many macro defines and not too many uses of those defines.
 
-OK :)
+On 7/28/21 2:51 PM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> There is a spelling mistake in the Kconfig text. Fix it.
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>   drivers/fpga/Kconfig | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
+> index 16793bfc2bb4..991b3f361ec9 100644
+> --- a/drivers/fpga/Kconfig
+> +++ b/drivers/fpga/Kconfig
+> @@ -119,7 +119,7 @@ config XILINX_PR_DECOUPLER
+>   	depends on HAS_IOMEM
+>   	help
+>   	  Say Y to enable drivers for Xilinx LogiCORE PR Decoupler
+> -	  or Xilinx Dynamic Function eXchnage AIX Shutdown Manager.
+> +	  or Xilinx Dynamic Function eXchange AIX Shutdown Manager.
+>   	  The PR Decoupler exists in the FPGA fabric to isolate one
+>   	  region of the FPGA from the busses while that region is
+>   	  being reprogrammed during partial reconfig.
 
-I'm not trying to prevent such a change.
+Looks good, thanks
 
-Getting the exclusive use of CONFIG_symbols being dedicated to
-Kconfig namespace is the bug hurdle (IMO).
-
--- 
-~Randy
+Reviewed-by: Tom Rix <trix@redhat.com>
 
