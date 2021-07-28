@@ -2,304 +2,143 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F595C4320A
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jul 2021 18:21:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F478C4338F
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jul 2021 19:41:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 87E446101C
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jul 2021 18:21:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCAD060234
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jul 2021 19:41:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229719AbhG1SVe (ORCPT
+        id S230526AbhG1Tlz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 28 Jul 2021 14:21:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37038 "EHLO
+        Wed, 28 Jul 2021 15:41:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229542AbhG1SVd (ORCPT
+        with ESMTP id S229542AbhG1Tly (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 28 Jul 2021 14:21:33 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AADF1C061757;
-        Wed, 28 Jul 2021 11:21:30 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id n11so2034249wmd.2;
-        Wed, 28 Jul 2021 11:21:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=aF3/VHib9GfO0nFJBohIRSm4KR3E1di5VfkCUNhyYTc=;
-        b=j+7JSdyL/y+5Tp4kgvBfv3a7O8SxDct7cjXFxt3kfO/nBdrjysT8zMYTtmjcjmICNe
-         xXtbgscX5Z0OO2TGenxgzYhXqChAYsMPuE9fLcrY9TZtp3bbRqYTnkU3W1it9aR9oxTs
-         /v02VoW84XyvkeNvrYtqh6CQGDoQDDz1s6G4NMTxlSbXIMfdT05h/dXKstyEPoePxH2I
-         HeZwsjiPBjbjexDG8zIAI1QxlM/cASCcmgVGwALVa66j6CeDbILQqX+Phg4+t/OT6goC
-         npeNIatPb4N8bnvQAhNzyfwiViindBb/BAgUbh2gX2h54t86yGRFpLKg6AUGjq2lr+K1
-         hfyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=aF3/VHib9GfO0nFJBohIRSm4KR3E1di5VfkCUNhyYTc=;
-        b=GeK+jEEZUFRqi8Cmq1NMwBHEGfMUfg964BKRXSeMECGXVEMdoFsWNWXz6d0kGAS7do
-         C6pvuyxA588wwdaoVvCEGF5oJ867kY3FTBO2Afp4i9kdkCMQTTV060xXdBGI9vwqrsN0
-         xyUdnXczN1enQoirPitxAxCVnHBRGLqAhUdVnx3YEJrScdgbKCF3aExy668Z+vl22HGb
-         5x+lrJ1FWtHy3JEAHJUcgtQHQEi4bwVPrBJt7usHgB5wsYC7Ova0gIcrTo5Tuchu5Nl+
-         HIUV+BLI+OSqVG89gcoZJdm1h2PjP2m0PHjJdliET/TL1jgTsapTwFv0kEGomH7OFuIc
-         EhFQ==
-X-Gm-Message-State: AOAM530YXPDgMdwoRPKNWyhwtc7rsOjpzNiK5Xi3YmKSPp5o+FI01EIS
-        RpMU0gOyTDxULWbhuptRx+4=
-X-Google-Smtp-Source: ABdhPJx0eEbkPeH6aJH3m0u5RZgt9e6APmNbopPFI39+3QwRNHGBoeSXptg7zSKawFDABm59R+KI5g==
-X-Received: by 2002:a05:600c:2e4a:: with SMTP id q10mr10720693wmf.133.1627496489195;
-        Wed, 28 Jul 2021 11:21:29 -0700 (PDT)
-Received: from felia.fritz.box ([2001:16b8:2d7f:fa00:1d1c:996c:af83:88fd])
-        by smtp.gmail.com with ESMTPSA id i5sm620880wrs.85.2021.07.28.11.21.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Jul 2021 11:21:28 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Randy Dunlap <rdunlap@infradead.org>
-Cc:     x86@kernel.org, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        uclinux-h8-devel@lists.sourceforge.jp, linux-ia64@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] arch: Kconfig: clean up obsolete use of HAVE_IDE
-Date:   Wed, 28 Jul 2021 20:21:15 +0200
-Message-Id: <20210728182115.4401-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 28 Jul 2021 15:41:54 -0400
+Received: from bombadil.infradead.org (unknown [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C85E3C061757;
+        Wed, 28 Jul 2021 12:41:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description;
+        bh=kVr7sHcyBuZCQYYlaPyTL9FSPOIymPuNuk0yOiZXUvw=; b=tfVqvGVQrMSfAZoSEu6d8AjwnQ
+        NGXY9HxI0iAWxvoFjqFUye+0D/IJxLniS07LcS2HxhNtYD6F6EQEd16dmt3x7q8ps4VkM8JpJLqKj
+        ToAaYqH0R0nfRVs0j2pk0BjuSCk/BSblBxDmlp9wMGmBwZ5voqP2Z1rDtqgLKDnjhx+EA4qUy/27n
+        kw6P7i0b0l4gjHp4yN8TgY9p521sAXdz8XKTa09oIEhfSqtE9Sl3Qu++yaqmu7amXZgjsnDv6IRQO
+        W7fykpx4CuzhIF6qD0UuxM7RAhbfYq5uVTSsG7Avx6scd+Tj3w8KMmAsRCk6Vu9bmDh7CFh+aOT1n
+        UOhJpp9A==;
+Received: from [2601:1c0:6280:3f0::aefb]
+        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1m8pQu-002ELm-W8; Wed, 28 Jul 2021 19:41:37 +0000
+Subject: Re: patch suggestion: Kconfig symbols
+To:     Joe Perches <joe@perches.com>,
+        linux-kernel-mentees@lists.linuxfoundation.org
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors <kernel-janitors@vger.kernel.org>
+References: <295b8f8c-4264-9f32-6723-9d2d574021ac@infradead.org>
+ <e77e2329bdafdbea538be0d7edb8a9d7d3e45990.camel@perches.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <09db53b9-7edf-44fc-c6b7-7c4e9198a2d4@infradead.org>
+Date:   Wed, 28 Jul 2021 12:41:33 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
+MIME-Version: 1.0
+In-Reply-To: <e77e2329bdafdbea538be0d7edb8a9d7d3e45990.camel@perches.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The arch-specific Kconfig files use HAVE_IDE to indicate if IDE is
-supported.
+On 7/28/21 8:37 AM, Joe Perches wrote:
+> On Mon, 2021-07-26 at 17:21 -0700, Randy Dunlap wrote:
+>> Running scripts/checkkconfigsymbols.py reports several hundred (maybe thousand)
+>> Kconfig symbols that are used questionably. Lots of these are false positives
+>> but lots of the remainder could use some cleaning up.
+> []
+>> False positive example:
+>>
+>> XCHOFFLD_MEM
+>> Referencing files: drivers/scsi/qla2xxx/qla_mbx.c
+>> Similar symbols: OF_PMEM, CXL_MEM, CXL_PMEM
+>>
+>> The Referencing source file does this:
+>> #define CONFIG_XCHOFFLD_MEM	0x3
+>>
+>> which is legitimate, so no change is needed.
+> 
+> Legitimate is perhaps dubious.
+> 
+> It might be better if Kconfig has exclusive use of CONFIG_<foo> naming so
+> renaming all the other existing CONFIG_<foo> defines might be appropriate.
 
-As IDE support and the HAVE_IDE config vanishes with commit b7fb14d3ac63
-("ide: remove the legacy ide driver"), there is no need to mention
-HAVE_IDE in all those arch-specific Kconfig files.
+I would prefer that as well -- maybe 15 years ago.
+But I think it's too invasive to make that change now.
 
-The issue was identified with ./scripts/checkkconfigsymbols.py.
+> 
+> $ git grep -P '^\s*#\s*define\s+CONFIG_[A-Z]+\b'
+> arch/alpha/kernel/smc37c93x.c:#define CONFIG_CONTROL            0x02
+> arch/sh/drivers/pci/ops-sh4.c:#define CONFIG_CMD(bus, devfn, where) \
+> arch/sh/include/asm/smc37c93x.h:#define CONFIG_PORT             0x3f0
+> arch/sh/include/asm/smc37c93x.h:#define CONFIG_ENTER            0x55
+> arch/sh/include/asm/smc37c93x.h:#define CONFIG_EXIT             0xaa
+> arch/sparc/kernel/pcic.c:#define CONFIG_CMD(bus, device_fn, where) (0x80000000 | (((unsigned int)bus) << 16) | (((unsigned int)device_fn) << 8) | (where & ~3))
+> arch/um/drivers/mconsole_kern.h:#define CONFIG_CHUNK(str, size, current, chunk, end) \
+> drivers/atm/he.h:#define CONFIG_RSRA            0x00000
+> drivers/atm/he.h:#define CONFIG_RCMLBM          0x08000
+> drivers/atm/he.h:#define CONFIG_RCMABR          0x0d800
+> drivers/atm/he.h:#define CONFIG_RSRB            0x0e000
+> drivers/atm/he.h:#define CONFIG_TSRA            0x00000
+> drivers/atm/he.h:#define CONFIG_TSRB            0x08000
+> drivers/atm/he.h:#define CONFIG_TSRC            0x0c000
+> drivers/atm/he.h:#define CONFIG_TSRD            0x0e000
+> drivers/atm/he.h:#define CONFIG_TMABR           0x0f000
+> drivers/atm/he.h:#define CONFIG_TPDBA           0x10000
+> drivers/comedi/drivers/ni_at_a2150.c:#define CONFIG_REG         0x0
+> drivers/crypto/atmel-i2c.h:#define CONFIG_ZONE                  0
+> drivers/dma/idxd/perfmon.h:#define CONFIG_RESET         0x0000000000000001
+> drivers/gpu/drm/amd/amdgpu/sid.h:#define        CONFIG_MEMSIZE                                  0x150A
+> drivers/gpu/drm/amd/amdgpu/sid.h:#define CONFIG_CNTL    0x1509
+> drivers/gpu/drm/radeon/cikd.h:#define   CONFIG_MEMSIZE                                  0x5428
+> drivers/gpu/drm/radeon/evergreend.h:#define     CONFIG_MEMSIZE                                  0x5428
+> drivers/gpu/drm/radeon/nid.h:#define    CONFIG_MEMSIZE                                  0x5428
+> drivers/gpu/drm/radeon/r600d.h:#define  CONFIG_MEMSIZE                                  0x5428
+> drivers/gpu/drm/radeon/r600d.h:#define CONFIG_CNTL                                      0x5424
+> drivers/gpu/drm/radeon/rv515d.h:#define CONFIG_MEMSIZE                  0x00F8
+> drivers/gpu/drm/radeon/rv770d.h:#define CONFIG_MEMSIZE                                  0x5428
+> drivers/gpu/drm/radeon/sid.h:#define    CONFIG_MEMSIZE                                  0x5428
+> drivers/macintosh/therm_adt746x.c:#define CONFIG_REG   0x40
+> drivers/memory/ti-aemif.c:#define CONFIG_MASK   (TA(TA_MAX) | \
+> drivers/mtd/spi-nor/controllers/aspeed-smc.c:#define CONFIG_REG                 0x0
+> drivers/net/ethernet/smsc/smc91x.h:#define CONFIG_REG(lp)       SMC_REG(lp, 0x0000,     1)
+> drivers/net/ethernet/smsc/smc91x.h:#define CONFIG_GPCNTRL       0x0400  // Inverse value drives pin nCNTRL
+> drivers/net/ethernet/smsc/smc91x.h:#define CONFIG_DEFAULT       (CONFIG_EPH_POWER_EN)
+> drivers/pcmcia/cs_internal.h:#define CONFIG_LOCKED              0x01
+> drivers/pinctrl/mvebu/pinctrl-dove.c:#define CONFIG_PMU BIT(4)
+> drivers/staging/vt6655/device_cfg.h:#define CONFIG_PATH            "/etc/vntconfiguration.dat"
+> drivers/staging/vt6656/device.h:#define CONFIG_PATH                     "/etc/vntconfiguration.dat"
+> drivers/thermal/qcom/tsens-8960.c:#define CONFIG_ADDR           0x3640
+> drivers/thermal/qcom/tsens-8960.c:#define CONFIG_MASK           0xf
+> drivers/usb/host/xhci.h:#define CONFIG_CIE              (1 << 9)
+> drivers/video/fbdev/geode/display_gx1.h:#define CONFIG_GCR  0xb8
+> tools/power/x86/intel-speed-select/isst.h:#define CONFIG_TDP                            0x7f
+> tools/power/x86/intel-speed-select/isst.h:#define CONFIG_CLOS                           0xd0
+> tools/testing/selftests/powerpc/copyloops/asm/ppc_asm.h:#define CONFIG_ALTIVEC
+> tools/testing/selftests/powerpc/stringloops/asm/ppc_asm.h:#define CONFIG_ALTIVEC
+> tools/testing/selftests/rcutorture/formal/srcu-cbmc/src/config.h:#define CONFIG_SMP
+> tools/virtio/linux/kernel.h:#define CONFIG_SMP
+> 
+> 
 
-Fixes: b7fb14d3ac63 ("ide: remove the legacy ide driver")
-Suggested-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- arch/alpha/Kconfig            | 1 -
- arch/arm/Kconfig              | 6 ------
- arch/arm/mach-davinci/Kconfig | 1 -
- arch/h8300/Kconfig.cpu        | 1 -
- arch/ia64/Kconfig             | 1 -
- arch/m68k/Kconfig             | 1 -
- arch/mips/Kconfig             | 1 -
- arch/parisc/Kconfig           | 1 -
- arch/powerpc/Kconfig          | 1 -
- arch/sh/Kconfig               | 1 -
- arch/sparc/Kconfig            | 1 -
- arch/x86/Kconfig              | 1 -
- arch/xtensa/Kconfig           | 1 -
- 13 files changed, 18 deletions(-)
 
-diff --git a/arch/alpha/Kconfig b/arch/alpha/Kconfig
-index 77d3280dc678..a6d4c2f744e3 100644
---- a/arch/alpha/Kconfig
-+++ b/arch/alpha/Kconfig
-@@ -14,7 +14,6 @@ config ALPHA
- 	select PCI_SYSCALL if PCI
- 	select HAVE_AOUT
- 	select HAVE_ASM_MODVERSIONS
--	select HAVE_IDE
- 	select HAVE_PCSPKR_PLATFORM
- 	select HAVE_PERF_EVENTS
- 	select NEED_DMA_MAP_STATE
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 82f908fa5676..2fb7012c3246 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -95,7 +95,6 @@ config ARM
- 	select HAVE_FUNCTION_TRACER if !XIP_KERNEL
- 	select HAVE_GCC_PLUGINS
- 	select HAVE_HW_BREAKPOINT if PERF_EVENTS && (CPU_V6 || CPU_V6K || CPU_V7)
--	select HAVE_IDE if PCI || ISA || PCMCIA
- 	select HAVE_IRQ_TIME_ACCOUNTING
- 	select HAVE_KERNEL_GZIP
- 	select HAVE_KERNEL_LZ4
-@@ -361,7 +360,6 @@ config ARCH_FOOTBRIDGE
- 	bool "FootBridge"
- 	select CPU_SA110
- 	select FOOTBRIDGE
--	select HAVE_IDE
- 	select NEED_MACH_IO_H if !MMU
- 	select NEED_MACH_MEMORY_H
- 	help
-@@ -430,7 +428,6 @@ config ARCH_PXA
- 	select GENERIC_IRQ_MULTI_HANDLER
- 	select GPIO_PXA
- 	select GPIOLIB
--	select HAVE_IDE
- 	select IRQ_DOMAIN
- 	select PLAT_PXA
- 	select SPARSE_IRQ
-@@ -446,7 +443,6 @@ config ARCH_RPC
- 	select ARM_HAS_SG_CHAIN
- 	select CPU_SA110
- 	select FIQ
--	select HAVE_IDE
- 	select HAVE_PATA_PLATFORM
- 	select ISA_DMA_API
- 	select LEGACY_TIMER_TICK
-@@ -469,7 +465,6 @@ config ARCH_SA1100
- 	select CPU_SA1100
- 	select GENERIC_IRQ_MULTI_HANDLER
- 	select GPIOLIB
--	select HAVE_IDE
- 	select IRQ_DOMAIN
- 	select ISA
- 	select NEED_MACH_MEMORY_H
-@@ -505,7 +500,6 @@ config ARCH_OMAP1
- 	select GENERIC_IRQ_CHIP
- 	select GENERIC_IRQ_MULTI_HANDLER
- 	select GPIOLIB
--	select HAVE_IDE
- 	select HAVE_LEGACY_CLK
- 	select IRQ_DOMAIN
- 	select NEED_MACH_IO_H if PCCARD
-diff --git a/arch/arm/mach-davinci/Kconfig b/arch/arm/mach-davinci/Kconfig
-index de11030748d0..1d3aef84287d 100644
---- a/arch/arm/mach-davinci/Kconfig
-+++ b/arch/arm/mach-davinci/Kconfig
-@@ -9,7 +9,6 @@ menuconfig ARCH_DAVINCI
- 	select PM_GENERIC_DOMAINS_OF if PM && OF
- 	select REGMAP_MMIO
- 	select RESET_CONTROLLER
--	select HAVE_IDE
- 	select PINCTRL_SINGLE
- 
- if ARCH_DAVINCI
-diff --git a/arch/h8300/Kconfig.cpu b/arch/h8300/Kconfig.cpu
-index 2b9cbaf41cd0..e4467d40107d 100644
---- a/arch/h8300/Kconfig.cpu
-+++ b/arch/h8300/Kconfig.cpu
-@@ -44,7 +44,6 @@ config H8300_H8MAX
- 	bool "H8MAX"
- 	select H83069
- 	select RAMKERNEL
--	select HAVE_IDE
- 	help
- 	  H8MAX Evaluation Board Support
- 	  More Information. (Japanese Only)
-diff --git a/arch/ia64/Kconfig b/arch/ia64/Kconfig
-index cf425c2c63af..4993c7ac7ff6 100644
---- a/arch/ia64/Kconfig
-+++ b/arch/ia64/Kconfig
-@@ -25,7 +25,6 @@ config IA64
- 	select HAVE_ASM_MODVERSIONS
- 	select HAVE_UNSTABLE_SCHED_CLOCK
- 	select HAVE_EXIT_THREAD
--	select HAVE_IDE
- 	select HAVE_KPROBES
- 	select HAVE_KRETPROBES
- 	select HAVE_FTRACE_MCOUNT_RECORD
-diff --git a/arch/m68k/Kconfig b/arch/m68k/Kconfig
-index 96989ad46f66..d632a1d576f9 100644
---- a/arch/m68k/Kconfig
-+++ b/arch/m68k/Kconfig
-@@ -23,7 +23,6 @@ config M68K
- 	select HAVE_DEBUG_BUGVERBOSE
- 	select HAVE_EFFICIENT_UNALIGNED_ACCESS if !CPU_HAS_NO_UNALIGNED
- 	select HAVE_FUTEX_CMPXCHG if MMU && FUTEX
--	select HAVE_IDE
- 	select HAVE_MOD_ARCH_SPECIFIC
- 	select HAVE_UID16
- 	select MMU_GATHER_NO_RANGE if MMU
-diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-index cee6087cd686..6dfb27d531dd 100644
---- a/arch/mips/Kconfig
-+++ b/arch/mips/Kconfig
-@@ -71,7 +71,6 @@ config MIPS
- 	select HAVE_FUNCTION_TRACER
- 	select HAVE_GCC_PLUGINS
- 	select HAVE_GENERIC_VDSO
--	select HAVE_IDE
- 	select HAVE_IOREMAP_PROT
- 	select HAVE_IRQ_EXIT_ON_IRQ_STACK
- 	select HAVE_IRQ_TIME_ACCOUNTING
-diff --git a/arch/parisc/Kconfig b/arch/parisc/Kconfig
-index bde9907bc5b2..4f8c1fbf8f2f 100644
---- a/arch/parisc/Kconfig
-+++ b/arch/parisc/Kconfig
-@@ -3,7 +3,6 @@ config PARISC
- 	def_bool y
- 	select ARCH_32BIT_OFF_T if !64BIT
- 	select ARCH_MIGHT_HAVE_PC_PARPORT
--	select HAVE_IDE
- 	select HAVE_FUNCTION_TRACER
- 	select HAVE_FUNCTION_GRAPH_TRACER
- 	select HAVE_SYSCALL_TRACEPOINTS
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index 53db06ba4223..2e213ec6ec05 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -220,7 +220,6 @@ config PPC
- 	select HAVE_HARDLOCKUP_DETECTOR_ARCH	if PPC_BOOK3S_64 && SMP
- 	select HAVE_HARDLOCKUP_DETECTOR_PERF	if PERF_EVENTS && HAVE_PERF_EVENTS_NMI && !HAVE_HARDLOCKUP_DETECTOR_ARCH
- 	select HAVE_HW_BREAKPOINT		if PERF_EVENTS && (PPC_BOOK3S || PPC_8xx)
--	select HAVE_IDE
- 	select HAVE_IOREMAP_PROT
- 	select HAVE_IRQ_EXIT_ON_IRQ_STACK
- 	select HAVE_IRQ_TIME_ACCOUNTING
-diff --git a/arch/sh/Kconfig b/arch/sh/Kconfig
-index 45a0549421cd..b683b69a4556 100644
---- a/arch/sh/Kconfig
-+++ b/arch/sh/Kconfig
-@@ -39,7 +39,6 @@ config SUPERH
- 	select HAVE_FUTEX_CMPXCHG if FUTEX
- 	select HAVE_FTRACE_MCOUNT_RECORD
- 	select HAVE_HW_BREAKPOINT
--	select HAVE_IDE if HAS_IOPORT_MAP
- 	select HAVE_IOREMAP_PROT if MMU && !X2TLB
- 	select HAVE_KERNEL_BZIP2
- 	select HAVE_KERNEL_GZIP
-diff --git a/arch/sparc/Kconfig b/arch/sparc/Kconfig
-index c5fa7932b550..f0c0f955e169 100644
---- a/arch/sparc/Kconfig
-+++ b/arch/sparc/Kconfig
-@@ -19,7 +19,6 @@ config SPARC
- 	select OF
- 	select OF_PROMTREE
- 	select HAVE_ASM_MODVERSIONS
--	select HAVE_IDE
- 	select HAVE_ARCH_KGDB if !SMP || SPARC64
- 	select HAVE_ARCH_TRACEHOOK
- 	select HAVE_ARCH_SECCOMP if SPARC64
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 89a286d5e4b9..ff0769cd4b31 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -202,7 +202,6 @@ config X86
- 	select HAVE_FUNCTION_TRACER
- 	select HAVE_GCC_PLUGINS
- 	select HAVE_HW_BREAKPOINT
--	select HAVE_IDE
- 	select HAVE_IOREMAP_PROT
- 	select HAVE_IRQ_EXIT_ON_IRQ_STACK	if X86_64
- 	select HAVE_IRQ_TIME_ACCOUNTING
-diff --git a/arch/xtensa/Kconfig b/arch/xtensa/Kconfig
-index 1bdb55c2d0c1..b843902ad9fd 100644
---- a/arch/xtensa/Kconfig
-+++ b/arch/xtensa/Kconfig
-@@ -327,7 +327,6 @@ config XTENSA_PLATFORM_ISS
- 
- config XTENSA_PLATFORM_XT2000
- 	bool "XT2000"
--	select HAVE_IDE
- 	help
- 	  XT2000 is the name of Tensilica's feature-rich emulation platform.
- 	  This hardware is capable of running a full Linux distribution.
 -- 
-2.17.1
+~Randy
 
