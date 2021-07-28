@@ -2,113 +2,66 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 773C6C4320A
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jul 2021 05:06:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 189DDC4320A
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jul 2021 06:35:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5E6B860E78
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jul 2021 05:06:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0DB860187
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jul 2021 06:35:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230450AbhG1FGR (ORCPT
+        id S234867AbhG1GfZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 28 Jul 2021 01:06:17 -0400
-Received: from mout01.posteo.de ([185.67.36.65]:57433 "EHLO mout01.posteo.de"
+        Wed, 28 Jul 2021 02:35:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35400 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229599AbhG1FGR (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 28 Jul 2021 01:06:17 -0400
-Received: from submission (posteo.de [89.146.220.130]) 
-        by mout01.posteo.de (Postfix) with ESMTPS id 672C8240027
-        for <kernel-janitors@vger.kernel.org>; Wed, 28 Jul 2021 07:06:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.net; s=2017;
-        t=1627448774; bh=zwaz/1puC1BrOgvpuLqtmc0DM3Amg63/saOUUCdJnhg=;
-        h=Date:From:To:Cc:Subject:From;
-        b=ICD1kisduv585UraVWWQ4Wiq6rsJr8/OIwOq7oj0GIa/LW98cauufkgIU1T0VV0NJ
-         jzE8QeYI75PeVqliUcXovgI2f5U+/bItTtDQbFsiYFnnBeim87gl06Hpfj5hxbGQPF
-         IgRY4oCMNlPj/jDpVnoGplPT9ImyVLhZBMfDB4OsuXKHqTQs3nSQJ7yYGqpaZsuYPC
-         ZFWJpxgVhCMB6GAxw5VNk5qdksxFdRysCDzVRpXuWb3+WS0Eay3axCRdg3P5IaMWIq
-         B5wvBw6CEVNu0P0G7zav5XDIgjWTn4yNiTQZbFNOKq3BuH0HhxgkPhcDD2MtcnJtip
-         Zm9nOmmaLST3A==
-Received: from customer (localhost [127.0.0.1])
-        by submission (posteo.de) with ESMTPSA id 4GZM7j18k2z6tmQ;
-        Wed, 28 Jul 2021 07:06:09 +0200 (CEST)
-Date:   Wed, 28 Jul 2021 05:06:08 +0000
-From:   Wilken Gottwalt <wilken.gottwalt@posteo.net>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        Yu Chen <chenyu56@huawei.com>,
-        Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Naga Sureshkumar Relli <nagasure@xilinx.com>,
-        Hans Ulli Kroll <ulli.kroll@googlemail.com>,
-        Deepak Saxena <dsaxena@plexity.net>,
-        Mirela Rabulea <mirela.rabulea@nxp.com>,
-        Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Joakim Zhang <qiangqing.zhang@nxp.com>,
-        Joe Perches <joe@perches.com>,
-        Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 5/8] MAINTAINERS: rectify entry for ALLWINNER
- HARDWARE SPINLOCK SUPPORT
-Message-ID: <20210728070608.5f5b8d14@monster.powergraphx.local>
-In-Reply-To: <20210726142943.27008-6-lukas.bulwahn@gmail.com>
-References: <20210726142943.27008-1-lukas.bulwahn@gmail.com>
-        <20210726142943.27008-6-lukas.bulwahn@gmail.com>
+        id S233670AbhG1GfU (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 28 Jul 2021 02:35:20 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 18103601FE;
+        Wed, 28 Jul 2021 06:35:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1627454119;
+        bh=/F4quowviUqBgU6xUZEdvyD7ZkAGro7MOFqKiLTxMiY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=TSR44dGrzPJWGOIVySOQTfpJ7rtSUyoDou208+49rDQbkFjlBbMSGKqL114eZlBnO
+         lUwCSG6hGbjQx/fmk81zxszmjXTp9HDUSqpMBnGXRAKdlgZhwfngX3zj6IAuSMWN19
+         H7zFS8jK/RgYPICpipsrY4wuG0jJ3mWQArDYup1Ezd6IecdZ5lqSk/BeZayBQiF7zm
+         EI9dAwVpCZCchNlyOAocQkVu+yVcqsMSqvMzQ0XJvZNd6oGWTButXU67evOc8H47P/
+         8Bxfxr6YWQyeUmKOpHpPsvhG5G9XBjq5GaOgKLeijc7WDDBryGWSuZ8I0+v+O8GX5v
+         V473H4NuRDEJg==
+Date:   Wed, 28 Jul 2021 12:05:13 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Baokun Li <libaokun1@huawei.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Michal Simek <michal.simek@xilinx.com>,
+        Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>,
+        Shravya Kumbham <shravya.kumbham@xilinx.com>,
+        Matthew Murrian <matthew.murrian@goctsi.com>,
+        Romain Perier <romain.perier@gmail.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Allen Pais <allen.lkml@gmail.com>, weiyongjun1@huawei.com,
+        yuehaibing@huawei.com, yangjihong1@huawei.com, yukuai3@huawei.com,
+        dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+Subject: Re: [PATCH -next] dmaengine: xilinx_dma: Use list_move_tail instead
+ of list_del/list_add_tail
+Message-ID: <YQD6oediFBgOuW7l@matsya>
+References: <20210608030905.2818831-1-libaokun1@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210608030905.2818831-1-libaokun1@huawei.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, 26 Jul 2021 16:29:40 +0200
-Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+On 08-06-21, 11:09, Baokun Li wrote:
+> Using list_move_tail() instead of list_del() + list_add_tail().
 
-> Commit f9e784dcb63f ("dt-bindings: hwlock: add sun6i_hwspinlock") adds
-> Documentation/devicetree/bindings/hwlock/allwinner,sun6i-a31-hwspinlock.yaml,
-> but the related commit 3c881e05c814 ("hwspinlock: add sun6i hardware
-> spinlock support") adds a file reference to allwinner,sun6i-hwspinlock.yaml
-> instead.
-> 
-> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains:
-> 
->   warning: no file matches  F:
-> Documentation/devicetree/bindings/hwlock/allwinner,sun6i-hwspinlock.yaml
-> 
-> Rectify this file reference in ALLWINNER HARDWARE SPINLOCK SUPPORT.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index c5a407015e2d..8f36b6763073 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -755,7 +755,7 @@ F:	drivers/crypto/allwinner/
->  ALLWINNER HARDWARE SPINLOCK SUPPORT
->  M:	Wilken Gottwalt <wilken.gottwalt@posteo.net>
->  S:	Maintained
-> -F:	Documentation/devicetree/bindings/hwlock/allwinner,sun6i-hwspinlock.yaml
-> +F:	Documentation/devicetree/bindings/hwlock/allwinner,sun6i-a31-hwspinlock.yaml
->  F:	drivers/hwspinlock/sun6i_hwspinlock.c
->  
->  ALLWINNER THERMAL DRIVER
+Applied, thanks
 
-Uh, yeah, totally missed that. Thank you for fixing this.
-
-Reviewed-by: Wilken Gottwalt <wilken.gottwalt@posteo.net>
-
-greetings,
-Will
+-- 
+~Vinod
