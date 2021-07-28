@@ -5,45 +5,45 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9810EC4338F
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jul 2021 21:48:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FC62C4320A
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jul 2021 21:51:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 787E060F59
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jul 2021 21:48:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62FC960F12
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jul 2021 21:51:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231784AbhG1VsK (ORCPT
+        id S231865AbhG1Vv7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 28 Jul 2021 17:48:10 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:41750
-        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230156AbhG1VsJ (ORCPT
+        Wed, 28 Jul 2021 17:51:59 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:56100
+        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230156AbhG1Vv7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 28 Jul 2021 17:48:09 -0400
+        Wed, 28 Jul 2021 17:51:59 -0400
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net [80.193.200.194])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 0F1503F22A;
-        Wed, 28 Jul 2021 21:48:03 +0000 (UTC)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id EE8283F228;
+        Wed, 28 Jul 2021 21:51:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1627508886;
-        bh=KTx7uSHZFWtdvze48agVBSI9iZgb4TB+WGbELF87yVo=;
+        s=20210705; t=1627509116;
+        bh=7A9PJEk1zQ7CyaYPHPeDtT58e8/56nw5lQvVXu6g2gA=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=ZKK/b0cFdj90WL36PnosAuS6AGPi+VcD6ZZml2KZl6SyA1mM0VUQsyfrEf05kjVZ/
-         328t5Iq0W93TF/JQuiQLHJNhpoFIvmDtxKwWvO/PRx3Gf3VTakR84ga+DXSyHaeztf
-         8MxH8Wt2jz4lYiel+V0Bn0+Gr9nej/J6c4Z0Dr9sEVAquGfA/fco8d87I7idqlG+lN
-         YTR0F3RYnVPqQVxU/FAusnAfHPbTCVHaHZ0t8jrq/Ag7Xk/yxPFJa6//Q23Wt0QP8l
-         EXCm9IwTr5QPXRn+qShMXcUvW2//evOf5RScYWLeOH26ZqjYrs18xnbwhjOkpUv0b8
-         crRyl0/bNJK1w==
+        b=wZtz7qeijstDNi9RFF4FSHttSaYpcry7t4QXm7VKXyLfdNOWUvFg+70aU9VMFJeFv
+         30k5g1e1xg8wyXX4JpX4ahHwW7Abl88PuL9z80mcyAdVbDAvjwc63/LZm9qtrdeub7
+         5VvJcv/kTGgdhjqGA+OQFn1hTNsBccdEnV4V9DqnV7+9fNk4DnXfh65T70Z9U5FsLu
+         3S5O4JEQ9fOiITcR/mZFVuQUHF1Nfad6tEm5weIjWoby1G/uNpvMyju2LTOwrAaog1
+         MsFQFsOocp7i0XYsrhQD7hn7/dY8q81RiVweaFwm2SfNu8i7A0ELP4qMU7Sh3EZE6S
+         o+TQ2LvrNRCCg==
 From:   Colin King <colin.king@canonical.com>
-To:     Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>
+To:     Moritz Fischer <mdf@kernel.org>, Tom Rix <trix@redhat.com>,
+        linux-fpga@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] trace: Fix spelling contraction "wont" -> "won't" in Kconfig
-Date:   Wed, 28 Jul 2021 22:48:02 +0100
-Message-Id: <20210728214802.191667-1-colin.king@canonical.com>
+Subject: [PATCH] fpga: Fix spelling mistake "eXchnage" -> "exchange" in Kconfig
+Date:   Wed, 28 Jul 2021 22:51:50 +0100
+Message-Id: <20210728215150.191914-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -58,22 +58,22 @@ There is a spelling mistake in the Kconfig text. Fix it.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- kernel/trace/Kconfig | 2 +-
+ drivers/fpga/Kconfig | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
-index d567b1717c4c..61f5d91b4bdd 100644
---- a/kernel/trace/Kconfig
-+++ b/kernel/trace/Kconfig
-@@ -857,7 +857,7 @@ config RING_BUFFER_RECORD_RECURSION
- 	default y
+diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
+index 16793bfc2bb4..991b3f361ec9 100644
+--- a/drivers/fpga/Kconfig
++++ b/drivers/fpga/Kconfig
+@@ -119,7 +119,7 @@ config XILINX_PR_DECOUPLER
+ 	depends on HAS_IOMEM
  	help
- 	  The ring buffer has its own internal recursion. Although when
--	  recursion happens it wont cause harm because of the protection,
-+	  recursion happens it won't cause harm because of the protection,
- 	  but it does cause an unwanted overhead. Enabling this option will
- 	  place where recursion was detected into the ftrace "recursed_functions"
- 	  file.
+ 	  Say Y to enable drivers for Xilinx LogiCORE PR Decoupler
+-	  or Xilinx Dynamic Function eXchnage AIX Shutdown Manager.
++	  or Xilinx Dynamic Function eXchange AIX Shutdown Manager.
+ 	  The PR Decoupler exists in the FPGA fabric to isolate one
+ 	  region of the FPGA from the busses while that region is
+ 	  being reprogrammed during partial reconfig.
 -- 
 2.31.1
 
