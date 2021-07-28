@@ -2,89 +2,78 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02C20C4338F
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jul 2021 21:30:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9810EC4338F
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jul 2021 21:48:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D36616069E
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jul 2021 21:30:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 787E060F59
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jul 2021 21:48:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231716AbhG1Va7 (ORCPT
+        id S231784AbhG1VsK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 28 Jul 2021 17:30:59 -0400
-Received: from smtprelay0175.hostedemail.com ([216.40.44.175]:43824 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S230156AbhG1Va6 (ORCPT
+        Wed, 28 Jul 2021 17:48:10 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:41750
+        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230156AbhG1VsJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 28 Jul 2021 17:30:58 -0400
-Received: from omf03.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay05.hostedemail.com (Postfix) with ESMTP id B560E180D0797;
-        Wed, 28 Jul 2021 21:30:55 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf03.hostedemail.com (Postfix) with ESMTPA id 640A113D99;
-        Wed, 28 Jul 2021 21:30:55 +0000 (UTC)
+        Wed, 28 Jul 2021 17:48:09 -0400
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net [80.193.200.194])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 0F1503F22A;
+        Wed, 28 Jul 2021 21:48:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1627508886;
+        bh=KTx7uSHZFWtdvze48agVBSI9iZgb4TB+WGbELF87yVo=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=ZKK/b0cFdj90WL36PnosAuS6AGPi+VcD6ZZml2KZl6SyA1mM0VUQsyfrEf05kjVZ/
+         328t5Iq0W93TF/JQuiQLHJNhpoFIvmDtxKwWvO/PRx3Gf3VTakR84ga+DXSyHaeztf
+         8MxH8Wt2jz4lYiel+V0Bn0+Gr9nej/J6c4Z0Dr9sEVAquGfA/fco8d87I7idqlG+lN
+         YTR0F3RYnVPqQVxU/FAusnAfHPbTCVHaHZ0t8jrq/Ag7Xk/yxPFJa6//Q23Wt0QP8l
+         EXCm9IwTr5QPXRn+qShMXcUvW2//evOf5RScYWLeOH26ZqjYrs18xnbwhjOkpUv0b8
+         crRyl0/bNJK1w==
+From:   Colin King <colin.king@canonical.com>
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] trace: Fix spelling contraction "wont" -> "won't" in Kconfig
+Date:   Wed, 28 Jul 2021 22:48:02 +0100
+Message-Id: <20210728214802.191667-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Date:   Wed, 28 Jul 2021 14:30:54 -0700
-From:   Joe Perches <joe@perches.com>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     linux-kernel-mentees@lists.linuxfoundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors <kernel-janitors@vger.kernel.org>
-Subject: Re: patch suggestion: Kconfig symbols
-In-Reply-To: <09db53b9-7edf-44fc-c6b7-7c4e9198a2d4@infradead.org>
-References: <295b8f8c-4264-9f32-6723-9d2d574021ac@infradead.org>
- <e77e2329bdafdbea538be0d7edb8a9d7d3e45990.camel@perches.com>
- <09db53b9-7edf-44fc-c6b7-7c4e9198a2d4@infradead.org>
-User-Agent: Roundcube Webmail/1.4.11
-Message-ID: <733d2747b67a8a172333b51bacbf77fe@perches.com>
-X-Sender: joe@perches.com
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: 1rkzgomx86n88r4rw5msropwwmhpsboi
-X-Rspamd-Server: rspamout01
-X-Rspamd-Queue-Id: 640A113D99
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX1/hNJ9eNNNyc+Lzlm6mkIzHlx1pO20mbns=
-X-HE-Tag: 1627507855-712796
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 2021-07-28 12:41, Randy Dunlap wrote:
-> On 7/28/21 8:37 AM, Joe Perches wrote:
->> On Mon, 2021-07-26 at 17:21 -0700, Randy Dunlap wrote:
->>> Running scripts/checkkconfigsymbols.py reports several hundred (maybe 
->>> thousand)
->>> Kconfig symbols that are used questionably. Lots of these are false 
->>> positives
->>> but lots of the remainder could use some cleaning up.
->> []
->>> False positive example:
->>> 
->>> XCHOFFLD_MEM
->>> Referencing files: drivers/scsi/qla2xxx/qla_mbx.c
->>> Similar symbols: OF_PMEM, CXL_MEM, CXL_PMEM
->>> 
->>> The Referencing source file does this:
->>> #define CONFIG_XCHOFFLD_MEM	0x3
->>> 
->>> which is legitimate, so no change is needed.
->> 
->> Legitimate is perhaps dubious.
->> 
->> It might be better if Kconfig has exclusive use of CONFIG_<foo> naming 
->> so
->> renaming all the other existing CONFIG_<foo> defines might be 
->> appropriate.
-> 
-> I would prefer that as well -- maybe 15 years ago.
-> But I think it's too invasive to make that change now.
+From: Colin Ian King <colin.king@canonical.com>
 
-I do not think it's that invasive.
+There is a spelling mistake in the Kconfig text. Fix it.
 
-It's something that doesn't have to be done immediately either.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ kernel/trace/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-It's not too many macro defines and not too many uses of those defines.
+diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
+index d567b1717c4c..61f5d91b4bdd 100644
+--- a/kernel/trace/Kconfig
++++ b/kernel/trace/Kconfig
+@@ -857,7 +857,7 @@ config RING_BUFFER_RECORD_RECURSION
+ 	default y
+ 	help
+ 	  The ring buffer has its own internal recursion. Although when
+-	  recursion happens it wont cause harm because of the protection,
++	  recursion happens it won't cause harm because of the protection,
+ 	  but it does cause an unwanted overhead. Enabling this option will
+ 	  place where recursion was detected into the ftrace "recursed_functions"
+ 	  file.
+-- 
+2.31.1
+
