@@ -2,55 +2,61 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F478C4338F
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jul 2021 19:41:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE8BFC432BE
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jul 2021 19:53:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DCAD060234
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jul 2021 19:41:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 885356104F
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jul 2021 19:53:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230526AbhG1Tlz (ORCPT
+        id S231261AbhG1Txj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 28 Jul 2021 15:41:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55262 "EHLO
+        Wed, 28 Jul 2021 15:53:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57836 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229542AbhG1Tly (ORCPT
+        with ESMTP id S230289AbhG1Txi (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 28 Jul 2021 15:41:54 -0400
-Received: from bombadil.infradead.org (unknown [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C85E3C061757;
-        Wed, 28 Jul 2021 12:41:52 -0700 (PDT)
+        Wed, 28 Jul 2021 15:53:38 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89F32C061757;
+        Wed, 28 Jul 2021 12:53:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
         Subject:Sender:Reply-To:Content-ID:Content-Description;
-        bh=kVr7sHcyBuZCQYYlaPyTL9FSPOIymPuNuk0yOiZXUvw=; b=tfVqvGVQrMSfAZoSEu6d8AjwnQ
-        NGXY9HxI0iAWxvoFjqFUye+0D/IJxLniS07LcS2HxhNtYD6F6EQEd16dmt3x7q8ps4VkM8JpJLqKj
-        ToAaYqH0R0nfRVs0j2pk0BjuSCk/BSblBxDmlp9wMGmBwZ5voqP2Z1rDtqgLKDnjhx+EA4qUy/27n
-        kw6P7i0b0l4gjHp4yN8TgY9p521sAXdz8XKTa09oIEhfSqtE9Sl3Qu++yaqmu7amXZgjsnDv6IRQO
-        W7fykpx4CuzhIF6qD0UuxM7RAhbfYq5uVTSsG7Avx6scd+Tj3w8KMmAsRCk6Vu9bmDh7CFh+aOT1n
-        UOhJpp9A==;
+        bh=ceYcn2BX8bAIVCFE8i/J5S2LBC9zV6/rYm2vca9y+zQ=; b=CbeXGXPtzC+++YgD0UKs3sCy4z
+        xjIr2ccAUu8H1jL4QUMfTB39zViFf56ayjzZi2T+pyDMcOuFqrGpSUuEsx7kmRSSFI1Lnb4QROgsz
+        BZ7rB3SsLcKQD2pb7KyvPyT+J5tztT+NwkZrQMNxK7pFmj8gCKI4+0PDnVimm1wxeH6HASB75HMWb
+        uGvf3CRDW2Dgd3bB9/rGbedgA8x3IDtFaTCO6L3w1PWQzgII6RsdMKQ1K18s+s2ez4rhf0Bj2f2hW
+        dpU8E8W2SWb9TQaCJqguSH2zqOSNSKYtkaBFpJu9ZYIGAUzcoM7u2FUrNfaZQcWuJgxKtnBwAaDWC
+        dfiv6KQQ==;
 Received: from [2601:1c0:6280:3f0::aefb]
         by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m8pQu-002ELm-W8; Wed, 28 Jul 2021 19:41:37 +0000
-Subject: Re: patch suggestion: Kconfig symbols
-To:     Joe Perches <joe@perches.com>,
-        linux-kernel-mentees@lists.linuxfoundation.org
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors <kernel-janitors@vger.kernel.org>
-References: <295b8f8c-4264-9f32-6723-9d2d574021ac@infradead.org>
- <e77e2329bdafdbea538be0d7edb8a9d7d3e45990.camel@perches.com>
+        id 1m8pcQ-002Ej4-1H; Wed, 28 Jul 2021 19:53:30 +0000
+Subject: Re: [PATCH] arch: Kconfig: clean up obsolete use of HAVE_IDE
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
+Cc:     x86@kernel.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        uclinux-h8-devel@lists.sourceforge.jp, linux-ia64@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <20210728182115.4401-1-lukas.bulwahn@gmail.com>
 From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <09db53b9-7edf-44fc-c6b7-7c4e9198a2d4@infradead.org>
-Date:   Wed, 28 Jul 2021 12:41:33 -0700
+Message-ID: <0dcbd285-0fab-cc58-7f1a-013263f9cb45@infradead.org>
+Date:   Wed, 28 Jul 2021 12:53:29 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.11.0
 MIME-Version: 1.0
-In-Reply-To: <e77e2329bdafdbea538be0d7edb8a9d7d3e45990.camel@perches.com>
+In-Reply-To: <20210728182115.4401-1-lukas.bulwahn@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -58,84 +64,39 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 7/28/21 8:37 AM, Joe Perches wrote:
-> On Mon, 2021-07-26 at 17:21 -0700, Randy Dunlap wrote:
->> Running scripts/checkkconfigsymbols.py reports several hundred (maybe thousand)
->> Kconfig symbols that are used questionably. Lots of these are false positives
->> but lots of the remainder could use some cleaning up.
-> []
->> False positive example:
->>
->> XCHOFFLD_MEM
->> Referencing files: drivers/scsi/qla2xxx/qla_mbx.c
->> Similar symbols: OF_PMEM, CXL_MEM, CXL_PMEM
->>
->> The Referencing source file does this:
->> #define CONFIG_XCHOFFLD_MEM	0x3
->>
->> which is legitimate, so no change is needed.
+On 7/28/21 11:21 AM, Lukas Bulwahn wrote:
+> The arch-specific Kconfig files use HAVE_IDE to indicate if IDE is
+> supported.
 > 
-> Legitimate is perhaps dubious.
+> As IDE support and the HAVE_IDE config vanishes with commit b7fb14d3ac63
+> ("ide: remove the legacy ide driver"), there is no need to mention
+> HAVE_IDE in all those arch-specific Kconfig files.
 > 
-> It might be better if Kconfig has exclusive use of CONFIG_<foo> naming so
-> renaming all the other existing CONFIG_<foo> defines might be appropriate.
+> The issue was identified with ./scripts/checkkconfigsymbols.py.
+> 
+> Fixes: b7fb14d3ac63 ("ide: remove the legacy ide driver")
+> Suggested-by: Randy Dunlap <rdunlap@infradead.org>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-I would prefer that as well -- maybe 15 years ago.
-But I think it's too invasive to make that change now.
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
 
-> 
-> $ git grep -P '^\s*#\s*define\s+CONFIG_[A-Z]+\b'
-> arch/alpha/kernel/smc37c93x.c:#define CONFIG_CONTROL            0x02
-> arch/sh/drivers/pci/ops-sh4.c:#define CONFIG_CMD(bus, devfn, where) \
-> arch/sh/include/asm/smc37c93x.h:#define CONFIG_PORT             0x3f0
-> arch/sh/include/asm/smc37c93x.h:#define CONFIG_ENTER            0x55
-> arch/sh/include/asm/smc37c93x.h:#define CONFIG_EXIT             0xaa
-> arch/sparc/kernel/pcic.c:#define CONFIG_CMD(bus, device_fn, where) (0x80000000 | (((unsigned int)bus) << 16) | (((unsigned int)device_fn) << 8) | (where & ~3))
-> arch/um/drivers/mconsole_kern.h:#define CONFIG_CHUNK(str, size, current, chunk, end) \
-> drivers/atm/he.h:#define CONFIG_RSRA            0x00000
-> drivers/atm/he.h:#define CONFIG_RCMLBM          0x08000
-> drivers/atm/he.h:#define CONFIG_RCMABR          0x0d800
-> drivers/atm/he.h:#define CONFIG_RSRB            0x0e000
-> drivers/atm/he.h:#define CONFIG_TSRA            0x00000
-> drivers/atm/he.h:#define CONFIG_TSRB            0x08000
-> drivers/atm/he.h:#define CONFIG_TSRC            0x0c000
-> drivers/atm/he.h:#define CONFIG_TSRD            0x0e000
-> drivers/atm/he.h:#define CONFIG_TMABR           0x0f000
-> drivers/atm/he.h:#define CONFIG_TPDBA           0x10000
-> drivers/comedi/drivers/ni_at_a2150.c:#define CONFIG_REG         0x0
-> drivers/crypto/atmel-i2c.h:#define CONFIG_ZONE                  0
-> drivers/dma/idxd/perfmon.h:#define CONFIG_RESET         0x0000000000000001
-> drivers/gpu/drm/amd/amdgpu/sid.h:#define        CONFIG_MEMSIZE                                  0x150A
-> drivers/gpu/drm/amd/amdgpu/sid.h:#define CONFIG_CNTL    0x1509
-> drivers/gpu/drm/radeon/cikd.h:#define   CONFIG_MEMSIZE                                  0x5428
-> drivers/gpu/drm/radeon/evergreend.h:#define     CONFIG_MEMSIZE                                  0x5428
-> drivers/gpu/drm/radeon/nid.h:#define    CONFIG_MEMSIZE                                  0x5428
-> drivers/gpu/drm/radeon/r600d.h:#define  CONFIG_MEMSIZE                                  0x5428
-> drivers/gpu/drm/radeon/r600d.h:#define CONFIG_CNTL                                      0x5424
-> drivers/gpu/drm/radeon/rv515d.h:#define CONFIG_MEMSIZE                  0x00F8
-> drivers/gpu/drm/radeon/rv770d.h:#define CONFIG_MEMSIZE                                  0x5428
-> drivers/gpu/drm/radeon/sid.h:#define    CONFIG_MEMSIZE                                  0x5428
-> drivers/macintosh/therm_adt746x.c:#define CONFIG_REG   0x40
-> drivers/memory/ti-aemif.c:#define CONFIG_MASK   (TA(TA_MAX) | \
-> drivers/mtd/spi-nor/controllers/aspeed-smc.c:#define CONFIG_REG                 0x0
-> drivers/net/ethernet/smsc/smc91x.h:#define CONFIG_REG(lp)       SMC_REG(lp, 0x0000,     1)
-> drivers/net/ethernet/smsc/smc91x.h:#define CONFIG_GPCNTRL       0x0400  // Inverse value drives pin nCNTRL
-> drivers/net/ethernet/smsc/smc91x.h:#define CONFIG_DEFAULT       (CONFIG_EPH_POWER_EN)
-> drivers/pcmcia/cs_internal.h:#define CONFIG_LOCKED              0x01
-> drivers/pinctrl/mvebu/pinctrl-dove.c:#define CONFIG_PMU BIT(4)
-> drivers/staging/vt6655/device_cfg.h:#define CONFIG_PATH            "/etc/vntconfiguration.dat"
-> drivers/staging/vt6656/device.h:#define CONFIG_PATH                     "/etc/vntconfiguration.dat"
-> drivers/thermal/qcom/tsens-8960.c:#define CONFIG_ADDR           0x3640
-> drivers/thermal/qcom/tsens-8960.c:#define CONFIG_MASK           0xf
-> drivers/usb/host/xhci.h:#define CONFIG_CIE              (1 << 9)
-> drivers/video/fbdev/geode/display_gx1.h:#define CONFIG_GCR  0xb8
-> tools/power/x86/intel-speed-select/isst.h:#define CONFIG_TDP                            0x7f
-> tools/power/x86/intel-speed-select/isst.h:#define CONFIG_CLOS                           0xd0
-> tools/testing/selftests/powerpc/copyloops/asm/ppc_asm.h:#define CONFIG_ALTIVEC
-> tools/testing/selftests/powerpc/stringloops/asm/ppc_asm.h:#define CONFIG_ALTIVEC
-> tools/testing/selftests/rcutorture/formal/srcu-cbmc/src/config.h:#define CONFIG_SMP
-> tools/virtio/linux/kernel.h:#define CONFIG_SMP
-> 
+Thanks.
+
+> ---
+>  arch/alpha/Kconfig            | 1 -
+>  arch/arm/Kconfig              | 6 ------
+>  arch/arm/mach-davinci/Kconfig | 1 -
+>  arch/h8300/Kconfig.cpu        | 1 -
+>  arch/ia64/Kconfig             | 1 -
+>  arch/m68k/Kconfig             | 1 -
+>  arch/mips/Kconfig             | 1 -
+>  arch/parisc/Kconfig           | 1 -
+>  arch/powerpc/Kconfig          | 1 -
+>  arch/sh/Kconfig               | 1 -
+>  arch/sparc/Kconfig            | 1 -
+>  arch/x86/Kconfig              | 1 -
+>  arch/xtensa/Kconfig           | 1 -
+>  13 files changed, 18 deletions(-)
 > 
 
 
