@@ -2,63 +2,103 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-20.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 180D3C4320A
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jul 2021 12:19:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD447C4320A
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jul 2021 14:43:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ECA4F600CD
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jul 2021 12:19:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FC0461019
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jul 2021 14:43:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236246AbhG1MTX (ORCPT
+        id S236939AbhG1OnO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 28 Jul 2021 08:19:23 -0400
-Received: from mga17.intel.com ([192.55.52.151]:6135 "EHLO mga17.intel.com"
+        Wed, 28 Jul 2021 10:43:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53528 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234880AbhG1MTM (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 28 Jul 2021 08:19:12 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10058"; a="192930922"
-X-IronPort-AV: E=Sophos;i="5.84,276,1620716400"; 
-   d="scan'208";a="192930922"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jul 2021 05:18:57 -0700
-X-IronPort-AV: E=Sophos;i="5.84,276,1620716400"; 
-   d="scan'208";a="506438470"
-Received: from crojewsk-mobl1.ger.corp.intel.com (HELO [10.213.23.4]) ([10.213.23.4])
-  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jul 2021 05:18:54 -0700
-Subject: Re: [PATCH] ASoC: Intel: Fix spelling contraction "cant" -> "can't"
-To:     Colin King <colin.king@canonical.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210728103602.171817-1-colin.king@canonical.com>
-From:   Cezary Rojewski <cezary.rojewski@intel.com>
-Message-ID: <f95103b4-2527-b469-cd77-3afe4973abae@intel.com>
-Date:   Wed, 28 Jul 2021 14:18:53 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+        id S236837AbhG1OnN (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 28 Jul 2021 10:43:13 -0400
+Received: from oasis.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 497C26069E;
+        Wed, 28 Jul 2021 14:43:11 +0000 (UTC)
+Date:   Wed, 28 Jul 2021 10:43:04 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Tzvetomir Stoyanov <tz.stoyanov@gmail.com>,
+        linux-trace-devel@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND] MAINTAINERS: add TRACE EVENT LIBRARY section
+Message-ID: <20210728104304.24805770@oasis.local.home>
+In-Reply-To: <20210728065748.19989-1-lukas.bulwahn@gmail.com>
+References: <20210728065748.19989-1-lukas.bulwahn@gmail.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20210728103602.171817-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 2021-07-28 12:36 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake in a dev_err message. Fix it.
-> 
+On Wed, 28 Jul 2021 08:57:48 +0200
+Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
 
-Thank you for the fix.
+> The git history shows that the files under ./tools/lib/traceevent/ are
+> being developed and maintained by Tzetomir Stoyanov and Steven Rostedt
+> and are discussed on linux-trace-devel list.
+> 
+> Add a suitable section in MAINTAINERS for patches to reach them.
+> 
+> This was identified with a small script that finds all files only
+> belonging to "THE REST" according to the current MAINTAINERS file, and I
+> acted upon its output.
 
-Reviewed-by: Cezary Rojewski <cezary.rojewski@intel.com>
+Hmm, this is now an obsolete library, as future work is being developed at:
+
+  https://git.kernel.org/pub/scm/libs/libtrace/libtraceevent.git/
+
+We probably want people to start using that instead, and eventually
+remove the tools/lib/traceveent/ directory entirely.
+
+-- Steve
+
+
+
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> ---
+> applies cleanly on next-20210726
+> 
+> RFC patch (from early 2020) here: https://lore.kernel.org/lkml/20200201161931.29665-1-lukas.bulwahn@gmail.com/
+> 
+> also copied Steven's Acked-by from the RFC patch.
+> 
+> Arnaldo, please pick this quick patch.
+> 
+>  MAINTAINERS | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 2eb730101689..5a1863b93a9a 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -18828,6 +18828,13 @@ Q:	https://patchwork.kernel.org/project/linux-integrity/list/
+>  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git
+>  F:	drivers/char/tpm/
+>  
+> +TRACE EVENT LIBRARY
+> +M:	Tzvetomir Stoyanov <tz.stoyanov@gmail.com>
+> +M:	Steven Rostedt <rostedt@goodmis.org>
+> +L:	linux-trace-devel@vger.kernel.org
+> +S:	Maintained
+> +F:	tools/lib/traceevent/
+> +
+>  TRACING
+>  M:	Steven Rostedt <rostedt@goodmis.org>
+>  M:	Ingo Molnar <mingo@redhat.com>
+
