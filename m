@@ -2,78 +2,104 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FC62C4320A
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jul 2021 21:51:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A830C4338F
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jul 2021 22:55:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 62FC960F12
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jul 2021 21:51:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE78360EFD
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jul 2021 22:55:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231865AbhG1Vv7 (ORCPT
+        id S232181AbhG1Wzu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 28 Jul 2021 17:51:59 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:56100
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230156AbhG1Vv7 (ORCPT
+        Wed, 28 Jul 2021 18:55:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42432 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232163AbhG1Wzt (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 28 Jul 2021 17:51:59 -0400
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net [80.193.200.194])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id EE8283F228;
-        Wed, 28 Jul 2021 21:51:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1627509116;
-        bh=7A9PJEk1zQ7CyaYPHPeDtT58e8/56nw5lQvVXu6g2gA=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=wZtz7qeijstDNi9RFF4FSHttSaYpcry7t4QXm7VKXyLfdNOWUvFg+70aU9VMFJeFv
-         30k5g1e1xg8wyXX4JpX4ahHwW7Abl88PuL9z80mcyAdVbDAvjwc63/LZm9qtrdeub7
-         5VvJcv/kTGgdhjqGA+OQFn1hTNsBccdEnV4V9DqnV7+9fNk4DnXfh65T70Z9U5FsLu
-         3S5O4JEQ9fOiITcR/mZFVuQUHF1Nfad6tEm5weIjWoby1G/uNpvMyju2LTOwrAaog1
-         MsFQFsOocp7i0XYsrhQD7hn7/dY8q81RiVweaFwm2SfNu8i7A0ELP4qMU7Sh3EZE6S
-         o+TQ2LvrNRCCg==
-From:   Colin King <colin.king@canonical.com>
-To:     Moritz Fischer <mdf@kernel.org>, Tom Rix <trix@redhat.com>,
-        linux-fpga@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] fpga: Fix spelling mistake "eXchnage" -> "exchange" in Kconfig
-Date:   Wed, 28 Jul 2021 22:51:50 +0100
-Message-Id: <20210728215150.191914-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.31.1
+        Wed, 28 Jul 2021 18:55:49 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD683C061757;
+        Wed, 28 Jul 2021 15:55:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description;
+        bh=iXq6gtJgg/KgevAKbbPdcmL6v/tjqWXVyd71VWdu32g=; b=aI/AM99FpdL/zSIAo7Uo0E+CGl
+        +6s2Jzg6JH7umPO7PnUwe9u26jTVXQ90CLsXspPyQcEh6GF7iq/xzNwOlz9QtYBUO1+Jior47Leye
+        UHbOSgx9TfIJDmqaHIgYJpSATyZdCW09tJqjuopHP0ufQWUcBHwe0z5TPdOJcDcLU9iP6dQQr1abz
+        ocoaW5D52xHSV9dtD/KAKwJ/Z4yAkC+zsAnAxwyZkj6mQFREHGcJ9yVQeohCgBX+xuqgGk4EodYGz
+        wMCm3iDoURIPA+0kNsRrt1HPIOqu5kml7t1whfX/Ns632XWKij1/cjzkovQ3wo+iurrNMmiIZOtlb
+        1dFvZjgg==;
+Received: from [2601:1c0:6280:3f0::aefb]
+        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1m8sSo-002Vco-EI; Wed, 28 Jul 2021 22:55:46 +0000
+Subject: Re: patch suggestion: Kconfig symbols
+To:     Joe Perches <joe@perches.com>
+Cc:     linux-kernel-mentees@lists.linuxfoundation.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors <kernel-janitors@vger.kernel.org>
+References: <295b8f8c-4264-9f32-6723-9d2d574021ac@infradead.org>
+ <e77e2329bdafdbea538be0d7edb8a9d7d3e45990.camel@perches.com>
+ <09db53b9-7edf-44fc-c6b7-7c4e9198a2d4@infradead.org>
+ <733d2747b67a8a172333b51bacbf77fe@perches.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <a89eefda-df18-0965-e56c-a1b73975b8c3@infradead.org>
+Date:   Wed, 28 Jul 2021 15:55:45 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <733d2747b67a8a172333b51bacbf77fe@perches.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On 7/28/21 2:30 PM, Joe Perches wrote:
+> On 2021-07-28 12:41, Randy Dunlap wrote:
+>> On 7/28/21 8:37 AM, Joe Perches wrote:
+>>> On Mon, 2021-07-26 at 17:21 -0700, Randy Dunlap wrote:
+>>>> Running scripts/checkkconfigsymbols.py reports several hundred (maybe thousand)
+>>>> Kconfig symbols that are used questionably. Lots of these are false positives
+>>>> but lots of the remainder could use some cleaning up.
+>>> []
+>>>> False positive example:
+>>>>
+>>>> XCHOFFLD_MEM
+>>>> Referencing files: drivers/scsi/qla2xxx/qla_mbx.c
+>>>> Similar symbols: OF_PMEM, CXL_MEM, CXL_PMEM
+>>>>
+>>>> The Referencing source file does this:
+>>>> #define CONFIG_XCHOFFLD_MEM    0x3
+>>>>
+>>>> which is legitimate, so no change is needed.
+>>>
+>>> Legitimate is perhaps dubious.
+>>>
+>>> It might be better if Kconfig has exclusive use of CONFIG_<foo> naming so
+>>> renaming all the other existing CONFIG_<foo> defines might be appropriate.
+>>
+>> I would prefer that as well -- maybe 15 years ago.
+>> But I think it's too invasive to make that change now.
+> 
+> I do not think it's that invasive.
+> 
+> It's something that doesn't have to be done immediately either.
+> 
+> It's not too many macro defines and not too many uses of those defines.
 
-There is a spelling mistake in the Kconfig text. Fix it.
+OK :)
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/fpga/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I'm not trying to prevent such a change.
 
-diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
-index 16793bfc2bb4..991b3f361ec9 100644
---- a/drivers/fpga/Kconfig
-+++ b/drivers/fpga/Kconfig
-@@ -119,7 +119,7 @@ config XILINX_PR_DECOUPLER
- 	depends on HAS_IOMEM
- 	help
- 	  Say Y to enable drivers for Xilinx LogiCORE PR Decoupler
--	  or Xilinx Dynamic Function eXchnage AIX Shutdown Manager.
-+	  or Xilinx Dynamic Function eXchange AIX Shutdown Manager.
- 	  The PR Decoupler exists in the FPGA fabric to isolate one
- 	  region of the FPGA from the busses while that region is
- 	  being reprogrammed during partial reconfig.
+Getting the exclusive use of CONFIG_symbols being dedicated to
+Kconfig namespace is the bug hurdle (IMO).
+
 -- 
-2.31.1
+~Randy
 
