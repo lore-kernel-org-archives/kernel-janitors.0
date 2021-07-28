@@ -7,44 +7,48 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2246C4338F
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jul 2021 10:33:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57EE9C4338F
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jul 2021 10:36:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D3C6160FC4
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jul 2021 10:33:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3839D60FC2
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jul 2021 10:36:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235729AbhG1KdB (ORCPT
+        id S233125AbhG1KgH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 28 Jul 2021 06:33:01 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:53222
+        Wed, 28 Jul 2021 06:36:07 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:53378
         "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236013AbhG1KdA (ORCPT
+        by vger.kernel.org with ESMTP id S232231AbhG1KgG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 28 Jul 2021 06:33:00 -0400
+        Wed, 28 Jul 2021 06:36:06 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id D4D9E3F10D;
-        Wed, 28 Jul 2021 10:32:54 +0000 (UTC)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 286E63F245;
+        Wed, 28 Jul 2021 10:36:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1627468378;
-        bh=XNO1mrfFFBkuWhQ9luWLXC9e6Sd/brZvm/BfQzCu/60=;
+        s=20210705; t=1627468564;
+        bh=X0DrZSFLZf175Lh2Gia6ktHZuwvpS8paTwWSPxV8GHA=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=A0E1Ewc9Hjw2p/eCM4HgbdnyQ0uRRC0T3ej+jpp+246828u6zaW7dnIjoxNlaqVwd
-         VUJT4U913YowuC2e+b0K947MI2or739H4kEgcvljrGynSf2lRatKHV5jVOO5T2B7HS
-         YL3OP3Lp6M+ZrbodTaPlr5yDsbeRsYX0mBcQ+ZwRRR7RrvWfE+ZLsOH7rlCu9Gum5s
-         QJf6j6DZY/qBH7NaMIMn9U/E7kC1rD6kqtVwE4XBPkOVAtVvR6QVT085yL3ON78Jai
-         ySpum3qbgSm91lavMmuVlwuVRQF+ePBOKCVDLbF3gJHos7Byu8jTwl1MQGpvyIMWkC
-         lZ7IvuSMgc6jA==
+        b=T6Y2WsacwjCrVOGIAr0Do6u3JceM7xIZX3vQxqhljqaU74Qw8MZf9tQobWPEnxyTX
+         1emVK4+0r/5KP+BzYfWjEo/QG0dv5rm3Y0jJigCN5qLXd8DiM7eVbNKxpXJI4AteuR
+         NLsta805WyClfdupYkSPOBbQTHbYNtWyPoY8h2gJroexvxJOX6KWsTSY0kh0ghVPCR
+         eRxc8Y9JNozJ7ZQQVAU1MgHf3GvgbsmHIpoubS7RC7k4m598VZIpCLoP17M1dk4NyT
+         FFDZDM4o5kUgEa5u6AwVUYdQDQdkLg42eZtUqEhKqBcmF1/3XOgpoMxt353ZwkRYpI
+         uGemIUG0atygA==
 From:   Colin King <colin.king@canonical.com>
-To:     Maxim Levitsky <maximlevitsky@gmail.com>,
-        Alex Dubov <oakad@yahoo.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
+To:     Cezary Rojewski <cezary.rojewski@intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Jie Yang <yang.jie@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ms_block: Fix spelling contraction "cant" -> "can't"
-Date:   Wed, 28 Jul 2021 11:32:54 +0100
-Message-Id: <20210728103254.171546-1-colin.king@canonical.com>
+Subject: [PATCH] ASoC: Intel: Fix spelling contraction "cant" -> "can't"
+Date:   Wed, 28 Jul 2021 11:36:02 +0100
+Message-Id: <20210728103602.171817-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -55,26 +59,26 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-There is a spelling mistake in a pr_err message. Fix it.
+There is a spelling mistake in a dev_err message. Fix it.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/memstick/core/ms_block.c | 2 +-
+ sound/soc/intel/atom/sst/sst_ipc.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/memstick/core/ms_block.c b/drivers/memstick/core/ms_block.c
-index 4a4573fa7b0f..acf36676e388 100644
---- a/drivers/memstick/core/ms_block.c
-+++ b/drivers/memstick/core/ms_block.c
-@@ -1105,7 +1105,7 @@ static u16 msb_get_free_block(struct msb_data *msb, int zone)
- 	dbg_verbose("result of the free blocks scan: pba %d", pba);
- 
- 	if (pba == msb->block_count || (msb_get_zone_from_pba(pba)) != zone) {
--		pr_err("BUG: cant get a free block");
-+		pr_err("BUG: can't get a free block");
- 		msb->read_only = true;
- 		return MS_BLOCK_INVALID;
- 	}
+diff --git a/sound/soc/intel/atom/sst/sst_ipc.c b/sound/soc/intel/atom/sst/sst_ipc.c
+index a8a9aa0057d3..4e8382097e61 100644
+--- a/sound/soc/intel/atom/sst/sst_ipc.c
++++ b/sound/soc/intel/atom/sst/sst_ipc.c
+@@ -128,7 +128,7 @@ int sst_post_message_mrfld(struct intel_sst_drv *sst_drv_ctx,
+ 		while (header.p.header_high.part.busy) {
+ 			if (loop_count > 25) {
+ 				dev_err(sst_drv_ctx->dev,
+-					"sst: Busy wait failed, cant send this msg\n");
++					"sst: Busy wait failed, can't send this msg\n");
+ 				retval = -EBUSY;
+ 				goto out;
+ 			}
 -- 
 2.31.1
 
