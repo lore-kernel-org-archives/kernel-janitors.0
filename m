@@ -4,43 +4,44 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-18.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F38D3C432BE
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jul 2021 09:26:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5DEBC4320A
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jul 2021 09:42:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DBE8360F02
-	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jul 2021 09:26:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 954E360F9D
+	for <kernel-janitors@archiver.kernel.org>; Wed, 28 Jul 2021 09:42:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235529AbhG1J0O (ORCPT
+        id S235520AbhG1Jma (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 28 Jul 2021 05:26:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48948 "EHLO mail.kernel.org"
+        Wed, 28 Jul 2021 05:42:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52826 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235473AbhG1J0M (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 28 Jul 2021 05:26:12 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 16F2E60F9B;
-        Wed, 28 Jul 2021 09:26:09 +0000 (UTC)
+        id S231408AbhG1Jma (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 28 Jul 2021 05:42:30 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id BC89060F9D;
+        Wed, 28 Jul 2021 09:42:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627464371;
-        bh=Qv6oknRfy/lFOSK4PBJ3JRHaeIYDqqUboFmgVYep0s0=;
+        s=k20201202; t=1627465348;
+        bh=VZ4nuzu7jAy+8jU0B3ANq2x2GkmAKRJmZDAGE5IMJb8=;
         h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=iiaezIF62WzrWubvEwIfGJAnsveT7j1UiYctavK3OaLrAhv3mqrJaCthiPNj0t6AK
-         NMWRqjN4VfsHGekMxeNNleS1UhIwkbLoZyP+m5l3wpx8clQj9raMz0xTURkkGXrZvW
-         aYWdTZ43e3nqJHQzIAkpNnP15AUj6rw28yfSuWvYtqogxgA8t0nBLtVMnD7oOltHXe
-         slHE1lfT/zYg+RiOyH1qy7c/3B2gVW/fZ+dSaqiGOk9NcDEaUVRk11ku6UPnZAE5C0
-         JsaXMFOOoSkhSgPcsXUog1J36hgQpsY4NoPgfT4haQrof2E8IXWuvygglFNHWqmsP1
-         VNWmgKed+t3zg==
-Date:   Wed, 28 Jul 2021 11:26:08 +0200 (CEST)
+        b=HACUT0BYikOpdBcL487VulSuuDq/eOsQ9aDIDix3jUv0jHosw4sLOzRFNxR/6S+Tv
+         3t46kH3gak4PFyVpcjK0/GccovYK7W0eXS2I20LFHKFQ/2rOhNZJZf+ox7FxhgFaqr
+         tDuLdGj7XW7YDNGHGL2F8KzsKk5n3mjjZykJshkf7Njjj/loHZmpnNI/tKwQ1aaGIY
+         vdD997j/UZJr7saHQysWuoy6nWdn/SS5S/wA3QfQrLzISXC4dJ3sI02PzOBrs0eXOe
+         OAAbxhZR+bEsAwTQqP+vgfAVf2ekrU12JlkCH5sYlH8Sdpz7WTIip9U4/kGDGpXeY4
+         jAGMvuj5P5vMw==
+Date:   Wed, 28 Jul 2021 11:42:25 +0200 (CEST)
 From:   Jiri Kosina <jikos@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-cc:     benjamin.tissoires@redhat.com, linux-input@vger.kernel.org,
+To:     Colin King <colin.king@canonical.com>
+cc:     linux-usb@vger.kernel.org, linux-input@vger.kernel.org,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] HID: fix typo in Kconfig
-In-Reply-To: <13c5bff1d50addbb2249b40632fcef0095231ca4.1627052845.git.christophe.jaillet@wanadoo.fr>
-Message-ID: <nycvar.YFH.7.76.2107281126030.8253@cbobk.fhfr.pm>
-References: <13c5bff1d50addbb2249b40632fcef0095231ca4.1627052845.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] USB HID: Fix spelling mistake "Uninterruptable" ->
+ "Uninterruptible"
+In-Reply-To: <20210719102731.15107-1-colin.king@canonical.com>
+Message-ID: <nycvar.YFH.7.76.2107281142210.8253@cbobk.fhfr.pm>
+References: <20210719102731.15107-1-colin.king@canonical.com>
 User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -48,29 +49,30 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 23 Jul 2021, Christophe JAILLET wrote:
+On Mon, 19 Jul 2021, Colin King wrote:
 
-> There is a missing space in "relyingon".
-> Add it.
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> There is a spelling mistake in the Kconfig text. Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
->  drivers/hid/Kconfig | 2 +-
+>  drivers/hid/usbhid/Kconfig | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
-> index 160554903ef9..76937f716fbe 100644
-> --- a/drivers/hid/Kconfig
-> +++ b/drivers/hid/Kconfig
-> @@ -576,7 +576,7 @@ config HID_LOGITECH_HIDPP
->  	depends on HID_LOGITECH
->  	select POWER_SUPPLY
+> diff --git a/drivers/hid/usbhid/Kconfig b/drivers/hid/usbhid/Kconfig
+> index dcf3a235870f..7c2032f7f44d 100644
+> --- a/drivers/hid/usbhid/Kconfig
+> +++ b/drivers/hid/usbhid/Kconfig
+> @@ -38,7 +38,7 @@ config USB_HIDDEV
 >  	help
-> -	Support for Logitech devices relyingon the HID++ Logitech specification
-> +	Support for Logitech devices relying on the HID++ Logitech specification
+>  	  Say Y here if you want to support HID devices (from the USB
+>  	  specification standpoint) that aren't strictly user interface
+> -	  devices, like monitor controls and Uninterruptable Power Supplies.
+> +	  devices, like monitor controls and Uninterruptible Power Supplies.
 >  
->  	Say Y if you want support for Logitech devices relying on the HID++
->  	specification. Such devices are the various Logitech Touchpads (T650,
+>  	  This module supports these devices separately using a separate
+>  	  event interface on /dev/usb/hiddevX (char 180:96 to 180:111).
 
 Applied, thanks.
 
