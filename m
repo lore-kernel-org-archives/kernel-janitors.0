@@ -2,60 +2,59 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CADEC4320A
-	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Jul 2021 09:53:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC4B7C4338F
+	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Jul 2021 09:55:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 238D761057
-	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Jul 2021 09:53:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB21661054
+	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Jul 2021 09:55:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235544AbhG2Jx5 (ORCPT
+        id S235197AbhG2JzI (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 29 Jul 2021 05:53:57 -0400
-Received: from elvis.franken.de ([193.175.24.41]:32864 "EHLO elvis.franken.de"
+        Thu, 29 Jul 2021 05:55:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51180 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231488AbhG2Jx4 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 29 Jul 2021 05:53:56 -0400
-Received: from uucp (helo=alpha)
-        by elvis.franken.de with local-bsmtp (Exim 3.36 #1)
-        id 1m92jg-00021m-00; Thu, 29 Jul 2021 11:53:52 +0200
-Received: by alpha.franken.de (Postfix, from userid 1000)
-        id 4BF29C11F4; Thu, 29 Jul 2021 11:44:46 +0200 (CEST)
-Date:   Thu, 29 Jul 2021 11:44:46 +0200
-From:   Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To:     Colin King <colin.king@canonical.com>
-Cc:     linux-mips@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MIPS: Alchemy: Fix spelling contraction "cant" -> "can't"
-Message-ID: <20210729094446.GA8286@alpha.franken.de>
-References: <20210728102612.171012-1-colin.king@canonical.com>
+        id S233574AbhG2JzH (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 29 Jul 2021 05:55:07 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id F2A83600D1;
+        Thu, 29 Jul 2021 09:55:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1627552504;
+        bh=6MCZQOWDwAjXZLFKP7B3hl83n9ZGDtph9tn8wBRmULU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=YIAv2Sqm257OoIchknyzr+koxjpnIgSzOavCzdvj4Wq6RbdU8JG+3NHUXuaAPUFIf
+         h1jPJThC1qt6yZ7MSGeVFz70pm/uMKohmm21eUOc7vhRDWjmT68n86enWdU43VEaIZ
+         wxwWkp4BPFkQJOvwYmkO1kRPEwRXcUU4+jDE8q0g=
+Date:   Thu, 29 Jul 2021 11:55:02 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Joe Perches <joe@perches.com>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        kernel-janitors <kernel-janitors@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: patch suggestion: Kconfig symbols
+Message-ID: <YQJ69m8rb8KiiTEI@kroah.com>
+References: <295b8f8c-4264-9f32-6723-9d2d574021ac@infradead.org>
+ <e77e2329bdafdbea538be0d7edb8a9d7d3e45990.camel@perches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210728102612.171012-1-colin.king@canonical.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <e77e2329bdafdbea538be0d7edb8a9d7d3e45990.camel@perches.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Jul 28, 2021 at 11:26:12AM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake in a pr_warn message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  arch/mips/alchemy/devboards/db1200.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed, Jul 28, 2021 at 08:37:26AM -0700, Joe Perches wrote:
+> drivers/staging/vt6655/device_cfg.h:#define CONFIG_PATH            "/etc/vntconfiguration.dat"
+> drivers/staging/vt6656/device.h:#define CONFIG_PATH                     "/etc/vntconfiguration.dat"
 
-applied to mips-next.
+This can be removed right now, I'll go do that, this is totally
+unused...
 
-Thomas.
+thanks,
 
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+greg k-h
