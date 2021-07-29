@@ -2,59 +2,82 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC4B7C4338F
-	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Jul 2021 09:55:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DDC3C432BE
+	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Jul 2021 11:27:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CB21661054
-	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Jul 2021 09:55:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 332A760E9B
+	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Jul 2021 11:27:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235197AbhG2JzI (ORCPT
+        id S236043AbhG2L1u (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 29 Jul 2021 05:55:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51180 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233574AbhG2JzH (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 29 Jul 2021 05:55:07 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id F2A83600D1;
-        Thu, 29 Jul 2021 09:55:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1627552504;
-        bh=6MCZQOWDwAjXZLFKP7B3hl83n9ZGDtph9tn8wBRmULU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YIAv2Sqm257OoIchknyzr+koxjpnIgSzOavCzdvj4Wq6RbdU8JG+3NHUXuaAPUFIf
-         h1jPJThC1qt6yZ7MSGeVFz70pm/uMKohmm21eUOc7vhRDWjmT68n86enWdU43VEaIZ
-         wxwWkp4BPFkQJOvwYmkO1kRPEwRXcUU4+jDE8q0g=
-Date:   Thu, 29 Jul 2021 11:55:02 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Joe Perches <joe@perches.com>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        kernel-janitors <kernel-janitors@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: patch suggestion: Kconfig symbols
-Message-ID: <YQJ69m8rb8KiiTEI@kroah.com>
-References: <295b8f8c-4264-9f32-6723-9d2d574021ac@infradead.org>
- <e77e2329bdafdbea538be0d7edb8a9d7d3e45990.camel@perches.com>
+        Thu, 29 Jul 2021 07:27:50 -0400
+Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:17062 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234595AbhG2L1t (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 29 Jul 2021 07:27:49 -0400
+Received: from localhost.localdomain ([86.243.172.93])
+        by mwinf5d05 with ME
+        id azTi2500F21Fzsu03zTjaB; Thu, 29 Jul 2021 13:27:44 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 29 Jul 2021 13:27:44 +0200
+X-ME-IP: 86.243.172.93
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     wg@grandegger.com, mkl@pengutronix.de, davem@davemloft.net,
+        kuba@kernel.org, angelo@kernel-space.org
+Cc:     linux-can@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] can: flexcan: Fix an uninitialized variable issue
+Date:   Thu, 29 Jul 2021 13:27:42 +0200
+Message-Id: <a55780a2f4c8f1895b6bcbac4d3f8312b2731079.1627557857.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e77e2329bdafdbea538be0d7edb8a9d7d3e45990.camel@perches.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Jul 28, 2021 at 08:37:26AM -0700, Joe Perches wrote:
-> drivers/staging/vt6655/device_cfg.h:#define CONFIG_PATH            "/etc/vntconfiguration.dat"
-> drivers/staging/vt6656/device.h:#define CONFIG_PATH                     "/etc/vntconfiguration.dat"
+If both 'clk_ipg' and 'clk_per' are NULL, we return an un-init value.
+So set 'err' to 0, to return success in such a case.
 
-This can be removed right now, I'll go do that, this is totally
-unused...
+Fixes: d9cead75b1c6 ("can: flexcan: add mcf5441x support")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Another way to fix it is to remove the NULL checks for 'clk_ipg' and
+'clk_per' that been added in commit d9cead75b1c6.
 
-thanks,
+They look useless to me because 'clk_prepare_enable()' returns 0 if it is
+passed a NULL pointer.
+Having these explicit tests is maybe informational (i.e. these pointers
+can really be NULL) or have been added to silent a compiler or a static
+checker.
 
-greg k-h
+So, in case, I've left the tests and just fixed the un-init 'err' variable
+issue.
+---
+ drivers/net/can/flexcan.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/can/flexcan.c b/drivers/net/can/flexcan.c
+index 54ffb796a320..7734229aa078 100644
+--- a/drivers/net/can/flexcan.c
++++ b/drivers/net/can/flexcan.c
+@@ -649,7 +649,7 @@ static inline void flexcan_error_irq_disable(const struct flexcan_priv *priv)
+ 
+ static int flexcan_clks_enable(const struct flexcan_priv *priv)
+ {
+-	int err;
++	int err = 0;
+ 
+ 	if (priv->clk_ipg) {
+ 		err = clk_prepare_enable(priv->clk_ipg);
+-- 
+2.30.2
+
