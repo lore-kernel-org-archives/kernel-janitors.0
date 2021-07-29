@@ -2,126 +2,95 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C4E2C432BE
-	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Jul 2021 16:27:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E32BC4320A
+	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Jul 2021 18:56:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0C78F60EC0
-	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Jul 2021 16:27:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1962E60F00
+	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Jul 2021 18:56:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230164AbhG2Q1j (ORCPT
+        id S229921AbhG2S4Y (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 29 Jul 2021 12:27:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34394 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229878AbhG2Q1j (ORCPT
+        Thu, 29 Jul 2021 14:56:24 -0400
+Received: from mail-pl1-f173.google.com ([209.85.214.173]:36409 "EHLO
+        mail-pl1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229721AbhG2S4Y (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 29 Jul 2021 12:27:39 -0400
-Received: from mail-oo1-xc2e.google.com (mail-oo1-xc2e.google.com [IPv6:2607:f8b0:4864:20::c2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCB3CC061765;
-        Thu, 29 Jul 2021 09:27:34 -0700 (PDT)
-Received: by mail-oo1-xc2e.google.com with SMTP id y16-20020a4ad6500000b0290258a7ff4058so1714105oos.10;
-        Thu, 29 Jul 2021 09:27:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=wccDcOIxHNoamIBs8+qI6cGQUyc31knn7IGUD84IWoI=;
-        b=Gi6LIfs9OvoxHljklLH6u2B9MqdkFBOeLMUStKM35DZ710RYV1kO+msYERWa6S3C2G
-         dUuL+42LKQP4hzVVvc2oWyNfpt2NxH/dbnpik+YT8m4pC3RrPiFTNaWLxYIhCcWmqLmD
-         rV6dhmZHY8+j/PRuNy0KFmoxLox25zcM4CX+mjvrSIc2Gz9b5+2QvghrEVI7zhuBikaW
-         yx2KbG7aQoYzmwID0T0Tn+IDftwP7gFw2l5n/0efCVi4XLPVteBQ8MPCIi3LYsugjM4/
-         0FWJ0tB/hTa0gj2OrtTahqHRqoTUiMSD6+v6vbXJAz+QwQnWAHmfJzOPOydrPIZLb12P
-         HWsg==
+        Thu, 29 Jul 2021 14:56:24 -0400
+Received: by mail-pl1-f173.google.com with SMTP id i10so8089120pla.3;
+        Thu, 29 Jul 2021 11:56:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=wccDcOIxHNoamIBs8+qI6cGQUyc31knn7IGUD84IWoI=;
-        b=UI4QzSD+dcs9pGQBiAz3NbeXZ6LF0U2Ong5BG0Y27N7K+BokGZFR7f+zlkPcatvyJi
-         /0mnbmbMKsMXtzWsKDgFNMnOFNQoCjwnmNk1Oh4l4nwRYuFmPrIgg4I11UyeF0J2BcEo
-         JfniJVg12ERBVBPbTNQq47eCwAa7ZqMmW/GlXL9pBSIrlSn3zpdGp1U4tIKPTAUfSosz
-         TqLzFbzidSqxkYrsBQSXeNLugtLKJhIrgIm+dypQKuRLDDfZM0RjQRx7Qh1CU0V5cHlR
-         z3FTvSaOyyBogfVT1BHTAUI1HCEnls44MAfINTUPR++ufsDIECOcJDG0hsCYEUfQlk+8
-         wutA==
-X-Gm-Message-State: AOAM5331BWscNPWMyVq2baHD6CxfZbh1kb/VVSttRDs8gOFjuyrmPzzn
-        BPaKgywJOV+tDq4y5SvQZFkhJwsl4P8=
-X-Google-Smtp-Source: ABdhPJzx11z/wO9bOtkouRxSASlYujObu13PzWtD5mUe7KEWY08XL6Clk9UGPlizniiwYVOBvlrfrQ==
-X-Received: by 2002:a4a:cb0e:: with SMTP id r14mr3561068ooq.70.1627576053889;
-        Thu, 29 Jul 2021 09:27:33 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id y19sm540815ooa.2.2021.07.29.09.27.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Jul 2021 09:27:33 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Subject: Re: [PATCH] watchdog: Fix an invalid memory access in
- 'watchdog_cdev_unregister()'
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        wim@linux-watchdog.org, curtis.klein@hpe.com
-Cc:     linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <dcb65e66acd1a50d65635b35d0d340846c7d10c7.1627575359.git.christophe.jaillet@wanadoo.fr>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <af32d970-b96e-724b-7f5e-c9544f8aee6a@roeck-us.net>
-Date:   Thu, 29 Jul 2021 09:27:31 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=vZz6/zHGUZj0w4zzvD5XxkPjFsO7iiACq/aqBQfXYfY=;
+        b=hWS0IF2BeY6WCeTwBgYXcevV+Tj5FARbbaHVFvWkaQ9quPNV1aL39Pf6hQW7eVDCqs
+         LD0Spg2UT1lnfE3lKxUytAgKurjUDbPfY/zpE55LNkqvE0KoH9+sWc0dzWxbZCYysT+5
+         3auPsku6h7jCQEK71Guv8nuUFKNdkNLUbn16Uvh/OCdCVs4PfF51EHklqcIl7wHr42ol
+         p3UHmNNRvHUjIQyMevIF9qJfH+ld99DVKsPWi8DrCbdyG4tPxxFovpInL0C4F7B7uVCG
+         tynNqQWu0NlmhVMb/D/lbz+AGnSWBUR3EDExeBCSFZeatIulZ2/WYXtvTDX7I6ngr46O
+         FxmA==
+X-Gm-Message-State: AOAM53207afvwRp2+28XOOFDi4qNlmHoEW1hJkCqORvHZdErb0e/fd7y
+        arY/aFofW1+Vji9II4BoMsM=
+X-Google-Smtp-Source: ABdhPJzqPWAA/c+5+2iWGXnZ9kzG9DQCVPBhatZ4/Uv0WZh6q7/W4S9GrrJZkcLiwjUoX154ziQGYg==
+X-Received: by 2002:a65:52c2:: with SMTP id z2mr5051930pgp.225.1627584979766;
+        Thu, 29 Jul 2021 11:56:19 -0700 (PDT)
+Received: from localhost ([2601:647:5b00:6f70:be34:681b:b1e9:776f])
+        by smtp.gmail.com with ESMTPSA id y7sm4109211pfi.204.2021.07.29.11.56.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Jul 2021 11:56:19 -0700 (PDT)
+Date:   Thu, 29 Jul 2021 11:56:18 -0700
+From:   Moritz Fischer <mdf@kernel.org>
+To:     Tom Rix <trix@redhat.com>
+Cc:     Colin King <colin.king@canonical.com>,
+        Moritz Fischer <mdf@kernel.org>, linux-fpga@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fpga: Fix spelling mistake "eXchnage" -> "exchange" in
+ Kconfig
+Message-ID: <YQL50nVGliJu36ZR@epycbox.lan>
+References: <20210728215150.191914-1-colin.king@canonical.com>
+ <5e7b2e4a-aaf6-81f2-2b08-5a9adcbbee57@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <dcb65e66acd1a50d65635b35d0d340846c7d10c7.1627575359.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5e7b2e4a-aaf6-81f2-2b08-5a9adcbbee57@redhat.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 7/29/21 9:16 AM, Christophe JAILLET wrote:
-> A few lines before 'watchdog_hrtimer_pretimeout_stop(wdd)', we explicitly
-> set 'wdd->wd_data' to NULL.
-> So, it is more than likely than this call will lead to an invalid
-> memory access.
+On Wed, Jul 28, 2021 at 04:17:43PM -0700, Tom Rix wrote:
 > 
-> Move this call before the 'wdd->wd_data = NULL;'
+> On 7/28/21 2:51 PM, Colin King wrote:
+> > From: Colin Ian King <colin.king@canonical.com>
+> > 
+> > There is a spelling mistake in the Kconfig text. Fix it.
+> > 
+> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> > ---
+> >   drivers/fpga/Kconfig | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
+> > index 16793bfc2bb4..991b3f361ec9 100644
+> > --- a/drivers/fpga/Kconfig
+> > +++ b/drivers/fpga/Kconfig
+> > @@ -119,7 +119,7 @@ config XILINX_PR_DECOUPLER
+> >   	depends on HAS_IOMEM
+> >   	help
+> >   	  Say Y to enable drivers for Xilinx LogiCORE PR Decoupler
+> > -	  or Xilinx Dynamic Function eXchnage AIX Shutdown Manager.
+> > +	  or Xilinx Dynamic Function eXchange AIX Shutdown Manager.
+> >   	  The PR Decoupler exists in the FPGA fabric to isolate one
+> >   	  region of the FPGA from the busses while that region is
+> >   	  being reprogrammed during partial reconfig.
 > 
-> Fixes: 7b7d2fdc8c3e ("watchdog: Add hrtimer-based pretimeout feature")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Completely untested!
-> Not sure at all, that it is the way to fix it.
-
-Nice catch. Should be ok.
-
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-
-> ---
->   drivers/watchdog/watchdog_dev.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
+> Looks good, thanks
 > 
-> diff --git a/drivers/watchdog/watchdog_dev.c b/drivers/watchdog/watchdog_dev.c
-> index 3bab32485273..ffd8f1a82355 100644
-> --- a/drivers/watchdog/watchdog_dev.c
-> +++ b/drivers/watchdog/watchdog_dev.c
-> @@ -1096,6 +1096,8 @@ static void watchdog_cdev_unregister(struct watchdog_device *wdd)
->   		watchdog_stop(wdd);
->   	}
->   
-> +	watchdog_hrtimer_pretimeout_stop(wdd);
-> +
->   	mutex_lock(&wd_data->lock);
->   	wd_data->wdd = NULL;
->   	wdd->wd_data = NULL;
-> @@ -1103,7 +1105,6 @@ static void watchdog_cdev_unregister(struct watchdog_device *wdd)
->   
->   	hrtimer_cancel(&wd_data->timer);
->   	kthread_cancel_work_sync(&wd_data->work);
-> -	watchdog_hrtimer_pretimeout_stop(wdd);
->   
->   	put_device(&wd_data->dev);
->   }
+> Reviewed-by: Tom Rix <trix@redhat.com>
 > 
+Applied to for-next,
 
+Moritz
