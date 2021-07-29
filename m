@@ -2,103 +2,84 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.4 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58906C4320A
-	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Jul 2021 16:13:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 881FCC432BE
+	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Jul 2021 16:17:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 41ECF604DB
-	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Jul 2021 16:13:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D47C60E9B
+	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Jul 2021 16:17:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229769AbhG2QNl (ORCPT
+        id S230144AbhG2QRF (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 29 Jul 2021 12:13:41 -0400
-Received: from mga04.intel.com ([192.55.52.120]:42247 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229485AbhG2QNl (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 29 Jul 2021 12:13:41 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10060"; a="211035522"
-X-IronPort-AV: E=Sophos;i="5.84,278,1620716400"; 
-   d="scan'208";a="211035522"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2021 09:12:04 -0700
-X-IronPort-AV: E=Sophos;i="5.84,278,1620716400"; 
-   d="scan'208";a="465130370"
-Received: from djiang5-mobl1.amr.corp.intel.com (HELO [10.209.170.107]) ([10.209.170.107])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2021 09:12:04 -0700
-Subject: Re: [PATCH] dmaengine: idxd: Fix a possible NULL pointer dereference
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        vkoul@kernel.org, dan.j.williams@intel.com
-Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <77f0dc4f3966591d1f0cffb614a94085f8895a85.1627560174.git.christophe.jaillet@wanadoo.fr>
-From:   Dave Jiang <dave.jiang@intel.com>
-Message-ID: <44c9607e-2cde-02b9-7e4e-68578a775fb3@intel.com>
-Date:   Thu, 29 Jul 2021 09:12:03 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+        Thu, 29 Jul 2021 12:17:05 -0400
+Received: from smtp11.smtpout.orange.fr ([80.12.242.133]:39762 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230036AbhG2QRF (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 29 Jul 2021 12:17:05 -0400
+Received: from localhost.localdomain ([86.243.172.93])
+        by mwinf5d46 with ME
+        id b4Gz2500421Fzsu034GzEF; Thu, 29 Jul 2021 18:17:00 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 29 Jul 2021 18:17:00 +0200
+X-ME-IP: 86.243.172.93
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     wim@linux-watchdog.org, linux@roeck-us.net, curtis.klein@hpe.com
+Cc:     linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] watchdog: Fix an invalid memory access in 'watchdog_cdev_unregister()'
+Date:   Thu, 29 Jul 2021 18:16:58 +0200
+Message-Id: <dcb65e66acd1a50d65635b35d0d340846c7d10c7.1627575359.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-In-Reply-To: <77f0dc4f3966591d1f0cffb614a94085f8895a85.1627560174.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+A few lines before 'watchdog_hrtimer_pretimeout_stop(wdd)', we explicitly
+set 'wdd->wd_data' to NULL.
+So, it is more than likely than this call will lead to an invalid
+memory access.
 
-On 7/29/2021 5:04 AM, Christophe JAILLET wrote:
-> 'device_driver_attach()' dereferences its first argument (i.e. 'alt_drv')
-> so it must not be NULL.
-> Simplify the error handling logic about NULL 'alt_drv' in order to be
-> more robust and future-proof.
->
-> Fixes: 568b2126466f ("dmaengine: idxd: fix uninit var for alt_drv")
-> Fixes: 6e7f3ee97bbe ("dmaengine: idxd: move dsa_drv support to compatible mode")
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Move this call before the 'wdd->wd_data = NULL;'
 
+Fixes: 7b7d2fdc8c3e ("watchdog: Add hrtimer-based pretimeout feature")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Completely untested!
+Not sure at all, that it is the way to fix it.
+---
+ drivers/watchdog/watchdog_dev.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Thanks for the cleanup.
+diff --git a/drivers/watchdog/watchdog_dev.c b/drivers/watchdog/watchdog_dev.c
+index 3bab32485273..ffd8f1a82355 100644
+--- a/drivers/watchdog/watchdog_dev.c
++++ b/drivers/watchdog/watchdog_dev.c
+@@ -1096,6 +1096,8 @@ static void watchdog_cdev_unregister(struct watchdog_device *wdd)
+ 		watchdog_stop(wdd);
+ 	}
+ 
++	watchdog_hrtimer_pretimeout_stop(wdd);
++
+ 	mutex_lock(&wd_data->lock);
+ 	wd_data->wdd = NULL;
+ 	wdd->wd_data = NULL;
+@@ -1103,7 +1105,6 @@ static void watchdog_cdev_unregister(struct watchdog_device *wdd)
+ 
+ 	hrtimer_cancel(&wd_data->timer);
+ 	kthread_cancel_work_sync(&wd_data->work);
+-	watchdog_hrtimer_pretimeout_stop(wdd);
+ 
+ 	put_device(&wd_data->dev);
+ }
+-- 
+2.30.2
 
-Acked-by: Dave Jiang <dave.jiang@intel.com>
-
-> ---
->   drivers/dma/idxd/compat.c | 15 ++++-----------
->   1 file changed, 4 insertions(+), 11 deletions(-)
->
-> diff --git a/drivers/dma/idxd/compat.c b/drivers/dma/idxd/compat.c
-> index d7616c240dcd..3df21615f888 100644
-> --- a/drivers/dma/idxd/compat.c
-> +++ b/drivers/dma/idxd/compat.c
-> @@ -45,23 +45,16 @@ static ssize_t bind_store(struct device_driver *drv, const char *buf, size_t cou
->   	idxd_dev = confdev_to_idxd_dev(dev);
->   	if (is_idxd_dev(idxd_dev)) {
->   		alt_drv = driver_find("idxd", bus);
-> -		if (!alt_drv)
-> -			return -ENODEV;
->   	} else if (is_idxd_wq_dev(idxd_dev)) {
->   		struct idxd_wq *wq = confdev_to_wq(dev);
->   
-> -		if (is_idxd_wq_kernel(wq)) {
-> +		if (is_idxd_wq_kernel(wq))
->   			alt_drv = driver_find("dmaengine", bus);
-> -			if (!alt_drv)
-> -				return -ENODEV;
-> -		} else if (is_idxd_wq_user(wq)) {
-> +		else if (is_idxd_wq_user(wq))
->   			alt_drv = driver_find("user", bus);
-> -			if (!alt_drv)
-> -				return -ENODEV;
-> -		} else {
-> -			return -ENODEV;
-> -		}
->   	}
-> +	if (!alt_drv)
-> +		return -ENODEV;
->   
->   	rc = device_driver_attach(alt_drv, dev);
->   	if (rc < 0)
