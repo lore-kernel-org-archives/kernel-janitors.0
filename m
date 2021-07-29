@@ -2,95 +2,76 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E32BC4320A
-	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Jul 2021 18:56:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6265C4338F
+	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Jul 2021 19:49:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1962E60F00
-	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Jul 2021 18:56:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9130B604DC
+	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Jul 2021 19:49:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229921AbhG2S4Y (ORCPT
+        id S229834AbhG2Tth (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 29 Jul 2021 14:56:24 -0400
-Received: from mail-pl1-f173.google.com ([209.85.214.173]:36409 "EHLO
-        mail-pl1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229721AbhG2S4Y (ORCPT
+        Thu, 29 Jul 2021 15:49:37 -0400
+Received: from smtp13.smtpout.orange.fr ([80.12.242.135]:59267 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S229642AbhG2Ttg (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 29 Jul 2021 14:56:24 -0400
-Received: by mail-pl1-f173.google.com with SMTP id i10so8089120pla.3;
-        Thu, 29 Jul 2021 11:56:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=vZz6/zHGUZj0w4zzvD5XxkPjFsO7iiACq/aqBQfXYfY=;
-        b=hWS0IF2BeY6WCeTwBgYXcevV+Tj5FARbbaHVFvWkaQ9quPNV1aL39Pf6hQW7eVDCqs
-         LD0Spg2UT1lnfE3lKxUytAgKurjUDbPfY/zpE55LNkqvE0KoH9+sWc0dzWxbZCYysT+5
-         3auPsku6h7jCQEK71Guv8nuUFKNdkNLUbn16Uvh/OCdCVs4PfF51EHklqcIl7wHr42ol
-         p3UHmNNRvHUjIQyMevIF9qJfH+ld99DVKsPWi8DrCbdyG4tPxxFovpInL0C4F7B7uVCG
-         tynNqQWu0NlmhVMb/D/lbz+AGnSWBUR3EDExeBCSFZeatIulZ2/WYXtvTDX7I6ngr46O
-         FxmA==
-X-Gm-Message-State: AOAM53207afvwRp2+28XOOFDi4qNlmHoEW1hJkCqORvHZdErb0e/fd7y
-        arY/aFofW1+Vji9II4BoMsM=
-X-Google-Smtp-Source: ABdhPJzqPWAA/c+5+2iWGXnZ9kzG9DQCVPBhatZ4/Uv0WZh6q7/W4S9GrrJZkcLiwjUoX154ziQGYg==
-X-Received: by 2002:a65:52c2:: with SMTP id z2mr5051930pgp.225.1627584979766;
-        Thu, 29 Jul 2021 11:56:19 -0700 (PDT)
-Received: from localhost ([2601:647:5b00:6f70:be34:681b:b1e9:776f])
-        by smtp.gmail.com with ESMTPSA id y7sm4109211pfi.204.2021.07.29.11.56.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Jul 2021 11:56:19 -0700 (PDT)
-Date:   Thu, 29 Jul 2021 11:56:18 -0700
-From:   Moritz Fischer <mdf@kernel.org>
-To:     Tom Rix <trix@redhat.com>
-Cc:     Colin King <colin.king@canonical.com>,
-        Moritz Fischer <mdf@kernel.org>, linux-fpga@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fpga: Fix spelling mistake "eXchnage" -> "exchange" in
- Kconfig
-Message-ID: <YQL50nVGliJu36ZR@epycbox.lan>
-References: <20210728215150.191914-1-colin.king@canonical.com>
- <5e7b2e4a-aaf6-81f2-2b08-5a9adcbbee57@redhat.com>
+        Thu, 29 Jul 2021 15:49:36 -0400
+Received: from localhost.localdomain ([86.243.172.93])
+        by mwinf5d56 with ME
+        id b7pU2500D21Fzsu037pUqA; Thu, 29 Jul 2021 21:49:31 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 29 Jul 2021 21:49:31 +0200
+X-ME-IP: 86.243.172.93
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     narmstrong@baylibre.com, mchehab@kernel.org, khilman@baylibre.com,
+        jbrunet@baylibre.com, martin.blumenstingl@googlemail.com,
+        hverkuil-cisco@xs4all.nl
+Cc:     linux-media@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] media: meson-ge2d: Fix rotation parameter changes detection in 'ge2d_s_ctrl()'
+Date:   Thu, 29 Jul 2021 21:49:25 +0200
+Message-Id: <6cb8efcadcf8c856efb32b7692fc9bf3241e3bc3.1627588010.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5e7b2e4a-aaf6-81f2-2b08-5a9adcbbee57@redhat.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Jul 28, 2021 at 04:17:43PM -0700, Tom Rix wrote:
-> 
-> On 7/28/21 2:51 PM, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > There is a spelling mistake in the Kconfig text. Fix it.
-> > 
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
-> >   drivers/fpga/Kconfig | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
-> > index 16793bfc2bb4..991b3f361ec9 100644
-> > --- a/drivers/fpga/Kconfig
-> > +++ b/drivers/fpga/Kconfig
-> > @@ -119,7 +119,7 @@ config XILINX_PR_DECOUPLER
-> >   	depends on HAS_IOMEM
-> >   	help
-> >   	  Say Y to enable drivers for Xilinx LogiCORE PR Decoupler
-> > -	  or Xilinx Dynamic Function eXchnage AIX Shutdown Manager.
-> > +	  or Xilinx Dynamic Function eXchange AIX Shutdown Manager.
-> >   	  The PR Decoupler exists in the FPGA fabric to isolate one
-> >   	  region of the FPGA from the busses while that region is
-> >   	  being reprogrammed during partial reconfig.
-> 
-> Looks good, thanks
-> 
-> Reviewed-by: Tom Rix <trix@redhat.com>
-> 
-Applied to for-next,
+There is likely a typo here. To be consistent, we should compare
+'fmt.height' with 'ctx->out.pix_fmt.height', not 'ctx->out.pix_fmt.width'.
 
-Moritz
+Fixes: 59a635327ca7 ("media: meson: Add M2M driver for the Amlogic GE2D Accelerator Unit")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+I've not looked deeply in the code, but why is this test needed in the
+first place?
+Couldn't we assigned 'ctx->out.pix_fmt = fmt' un-conditionally?
+---
+ drivers/media/platform/meson/ge2d/ge2d.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/platform/meson/ge2d/ge2d.c b/drivers/media/platform/meson/ge2d/ge2d.c
+index a1393fefa8ae..be22bb60e7cf 100644
+--- a/drivers/media/platform/meson/ge2d/ge2d.c
++++ b/drivers/media/platform/meson/ge2d/ge2d.c
+@@ -780,7 +780,7 @@ static int ge2d_s_ctrl(struct v4l2_ctrl *ctrl)
+ 		 * parameters, take them in account
+ 		 */
+ 		if (fmt.width != ctx->out.pix_fmt.width ||
+-		    fmt.height != ctx->out.pix_fmt.width ||
++		    fmt.height != ctx->out.pix_fmt.height ||
+ 		    fmt.bytesperline > ctx->out.pix_fmt.bytesperline ||
+ 		    fmt.sizeimage > ctx->out.pix_fmt.sizeimage)
+ 			ctx->out.pix_fmt = fmt;
+-- 
+2.30.2
+
