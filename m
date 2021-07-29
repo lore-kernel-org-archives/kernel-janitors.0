@@ -2,76 +2,69 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6265C4338F
-	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Jul 2021 19:49:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5229C4320A
+	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Jul 2021 22:34:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9130B604DC
-	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Jul 2021 19:49:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6B0E60F5E
+	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Jul 2021 22:34:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229834AbhG2Tth (ORCPT
+        id S232559AbhG2Web (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 29 Jul 2021 15:49:37 -0400
-Received: from smtp13.smtpout.orange.fr ([80.12.242.135]:59267 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S229642AbhG2Ttg (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 29 Jul 2021 15:49:36 -0400
-Received: from localhost.localdomain ([86.243.172.93])
-        by mwinf5d56 with ME
-        id b7pU2500D21Fzsu037pUqA; Thu, 29 Jul 2021 21:49:31 +0200
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 29 Jul 2021 21:49:31 +0200
-X-ME-IP: 86.243.172.93
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     narmstrong@baylibre.com, mchehab@kernel.org, khilman@baylibre.com,
-        jbrunet@baylibre.com, martin.blumenstingl@googlemail.com,
-        hverkuil-cisco@xs4all.nl
-Cc:     linux-media@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] media: meson-ge2d: Fix rotation parameter changes detection in 'ge2d_s_ctrl()'
-Date:   Thu, 29 Jul 2021 21:49:25 +0200
-Message-Id: <6cb8efcadcf8c856efb32b7692fc9bf3241e3bc3.1627588010.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Thu, 29 Jul 2021 18:34:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55396 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229707AbhG2Web (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 29 Jul 2021 18:34:31 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D4A9660F5E;
+        Thu, 29 Jul 2021 22:34:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1627598067;
+        bh=zomzZNfjR8p+XnfC2Ygez//VpjpDJhcWVwtbsVajGZE=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=u9pYx5HPjUcguJUWuZ3CXUOA1cUY6WMmhzShjlTT16ASyqfnO31mZYzzr8ZLzHmb+
+         pmMAhRJIdbiwPVemK4PtuQ/U++NcsiJpS0Y9VsWxaedUTRlo69DhrWxd8lCCi/oT/T
+         NuWdLy1ptYxZKOPqCjZy/utKChZaMmRbvPjCpCDen8RY9DBnTS3y3rDldA+lG/QiQX
+         D4bMd21++NamRkpoYTY1cmQ/mjw/hSD+MhQ2aMuYtkGkcFkdhCiiIMD8JNu8vWTAYo
+         d8ap60LCF03UKjuIkCe1cKrhNzCyoYt8lWxusxvK+QGOR4zJp7Y+eE1LgrWgVWC524
+         vrrhePm9IzNLg==
+Received: by mail-oo1-f48.google.com with SMTP id s21-20020a4ae5550000b02902667598672bso1960789oot.12;
+        Thu, 29 Jul 2021 15:34:27 -0700 (PDT)
+X-Gm-Message-State: AOAM530KXDyaDbvxk7sFUFyGbe0ShAnJ8nG3bQk3c9kr8Li566vNreub
+        yRZJR8mCDKqqmrElXq1tddhwZk33CYoGgi4obwo=
+X-Google-Smtp-Source: ABdhPJweEgBucApLcnd9Jb/lRMVDGvXqX4x1eyUtjZAcbMsS1od7T87oBIZaspAKPDGc+OJsWglCPWhODueQlz2e91s=
+X-Received: by 2002:a4a:da0f:: with SMTP id e15mr4473094oou.53.1627598067214;
+ Thu, 29 Jul 2021 15:34:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Received: by 2002:ac9:5a4e:0:0:0:0:0 with HTTP; Thu, 29 Jul 2021 15:34:26
+ -0700 (PDT)
+In-Reply-To: <20210729141534.GB1267@kili>
+References: <20210729141534.GB1267@kili>
+From:   Namjae Jeon <linkinjeon@kernel.org>
+Date:   Fri, 30 Jul 2021 07:34:26 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd-GOQ08YZeCu=3D8pTOa6Zq36QhtTvQ9yp=RgPXF1ifEw@mail.gmail.com>
+Message-ID: <CAKYAXd-GOQ08YZeCu=3D8pTOa6Zq36QhtTvQ9yp=RgPXF1ifEw@mail.gmail.com>
+Subject: Re: [PATCH] ksmbd: fix an oops in error handling in smb2_open()
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Namjae Jeon <namjae.jeon@samsung.com>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Steve French <sfrench@samba.org>,
+        Hyunchul Lee <hyc.lee@gmail.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        linux-cifs@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is likely a typo here. To be consistent, we should compare
-'fmt.height' with 'ctx->out.pix_fmt.height', not 'ctx->out.pix_fmt.width'.
-
-Fixes: 59a635327ca7 ("media: meson: Add M2M driver for the Amlogic GE2D Accelerator Unit")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-I've not looked deeply in the code, but why is this test needed in the
-first place?
-Couldn't we assigned 'ctx->out.pix_fmt = fmt' un-conditionally?
----
- drivers/media/platform/meson/ge2d/ge2d.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/media/platform/meson/ge2d/ge2d.c b/drivers/media/platform/meson/ge2d/ge2d.c
-index a1393fefa8ae..be22bb60e7cf 100644
---- a/drivers/media/platform/meson/ge2d/ge2d.c
-+++ b/drivers/media/platform/meson/ge2d/ge2d.c
-@@ -780,7 +780,7 @@ static int ge2d_s_ctrl(struct v4l2_ctrl *ctrl)
- 		 * parameters, take them in account
- 		 */
- 		if (fmt.width != ctx->out.pix_fmt.width ||
--		    fmt.height != ctx->out.pix_fmt.width ||
-+		    fmt.height != ctx->out.pix_fmt.height ||
- 		    fmt.bytesperline > ctx->out.pix_fmt.bytesperline ||
- 		    fmt.sizeimage > ctx->out.pix_fmt.sizeimage)
- 			ctx->out.pix_fmt = fmt;
--- 
-2.30.2
-
+2021-07-29 23:15 GMT+09:00, Dan Carpenter <dan.carpenter@oracle.com>:
+> If smb2_get_name() then "name" is an error pointer.  In the clean up
+> code, we try to kfree() it and that will lead to an Oops.  Set it to
+> NULL instead.
+>
+> Fixes: e2f34481b24d ("cifsd: add server-side procedures for SMB3")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+I will apply, Thanks for your patch!
