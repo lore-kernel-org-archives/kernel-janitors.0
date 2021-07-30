@@ -7,45 +7,42 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CA4EC432BE
-	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Jul 2021 09:51:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAC37C4338F
+	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Jul 2021 10:07:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 267E560041
-	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Jul 2021 09:51:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A763A60E76
+	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Jul 2021 10:07:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238499AbhG3JvD (ORCPT
+        id S238420AbhG3KHY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 30 Jul 2021 05:51:03 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:51976
+        Fri, 30 Jul 2021 06:07:24 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:53370
         "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238447AbhG3Jus (ORCPT
+        by vger.kernel.org with ESMTP id S238404AbhG3KHQ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 30 Jul 2021 05:50:48 -0400
+        Fri, 30 Jul 2021 06:07:16 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 25B883F112;
-        Fri, 30 Jul 2021 09:50:31 +0000 (UTC)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id EF69C3F110;
+        Fri, 30 Jul 2021 10:07:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1627638638;
-        bh=YK/QXYKtOtVXVIFn4gCLUCZeIPFhKc4MjoA0AhD8gYc=;
+        s=20210705; t=1627639631;
+        bh=Jhq/1IlrtOSAQtOrAABmocJHmXPN2QNcHDbWLf6fdHk=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=MYX9DglRtGitHkflKpZaTCP5xpmESK+l3RIUBKUzWlJEBXkM5czOJi5T590rnN/yq
-         hHEEiPCJYGgaD1z/IA5XL1C6MeZXpobW7srjS0w56oD8EXaVMJ+hdXyr2Y66bVWQTW
-         YMZSGD9coPJERUcinUpN/m9E3/z5a+HYIfYiRiptKLBXee+ZwYD6VJfxH95ywf7Q9S
-         G9O/8kt5RhZdu/H6qOQFMdkBBa4gDq1DzM3FVtNfsQYa8WF20Y8b4JYmGn9Nzuo/Av
-         1V12iOvkQY/v5EcXRc23riAk8JURBE1R5vLCVRHg2DM0njnB6DWr1VWsRlMV/BI02T
-         4eQQZnBeEgWgg==
+        b=Ok+V5PVmWgwUWAfWMW0cPxsK+FAD/wWDvAIIIlBMDI8ohtGX8/5YiDFYnYuBRB43q
+         novlh4b6tnq5TSwx3dVvNnxwYx6jETSB7l18Ongf1PXgATDKAPJWe8zZrzH0iqtFMI
+         yrv9RmVdVNeljSKn4XrYgfDuVl8pDVAVWgP0csIa64WpkjyW6K2T3uj8UlKd6XuqgJ
+         VT5G9Ri8CeL4CfAovYNiw6ZwXF80033i5yVQu6fQVvM4I5o+8+qs/0b05roRZXivwu
+         By2SM7Lit5XHNqbaEr9D2xPEgzEqibbBKDvid6JL3rCgxWpwAoNx5+OFNi9zVBd/99
+         DA7AM+aXmW7Uw==
 From:   Colin King <colin.king@canonical.com>
-To:     Khalid Aziz <khalid@gonehiking.org>,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org
+To:     Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: BusLogic: use %X for u32 sized integer rather than %lX
-Date:   Fri, 30 Jul 2021 10:50:31 +0100
-Message-Id: <20210730095031.26981-1-colin.king@canonical.com>
+Subject: [PATCH] parport: remove non-zero check on count
+Date:   Fri, 30 Jul 2021 11:07:10 +0100
+Message-Id: <20210730100710.27405-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -56,30 +53,34 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-An earlier fix changed the print format specifier for adapter->bios_addr
-to use %lX however the integer is a u32 so the fix was wrong. Fix this
-by using the correct %X format specifier.
+The check for count appears to be incorrect since a non-zero count
+check occurs a couple of statements earlier. Currently the check is
+always false and the dev->port->irq != PARPORT_IRQ_NONE part of the
+check is never tested and the if statement is dead-code. Fix this
+by removing the check on count.
 
-Addresses-Coverity: ("Invalid type in argument")
-Fixes: 43622697117c ("scsi: BusLogic: use %lX for unsigned long rather than %X")
+Note that this code is pre-git history, so I can't find a sha for
+it.
+
+Addresses-Coverity: ("Logically dead code")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/scsi/BusLogic.c | 2 +-
+ drivers/parport/ieee1284_ops.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/BusLogic.c b/drivers/scsi/BusLogic.c
-index adddcd589941..bd615db5c58c 100644
---- a/drivers/scsi/BusLogic.c
-+++ b/drivers/scsi/BusLogic.c
-@@ -1711,7 +1711,7 @@ static bool __init blogic_reportconfig(struct blogic_adapter *adapter)
- 	if (adapter->adapter_bus_type != BLOGIC_PCI_BUS) {
- 		blogic_info("  DMA Channel: None, ", adapter);
- 		if (adapter->bios_addr > 0)
--			blogic_info("BIOS Address: 0x%lX, ", adapter,
-+			blogic_info("BIOS Address: 0x%X, ", adapter,
- 					adapter->bios_addr);
- 		else
- 			blogic_info("BIOS Address: None, ", adapter);
+diff --git a/drivers/parport/ieee1284_ops.c b/drivers/parport/ieee1284_ops.c
+index 2c11bd3fe1fd..17061f1df0f4 100644
+--- a/drivers/parport/ieee1284_ops.c
++++ b/drivers/parport/ieee1284_ops.c
+@@ -518,7 +518,7 @@ size_t parport_ieee1284_ecp_read_data (struct parport *port,
+ 				goto out;
+ 
+ 			/* Yield the port for a while. */
+-			if (count && dev->port->irq != PARPORT_IRQ_NONE) {
++			if (dev->port->irq != PARPORT_IRQ_NONE) {
+ 				parport_release (dev);
+ 				schedule_timeout_interruptible(msecs_to_jiffies(40));
+ 				parport_claim_or_block (dev);
 -- 
 2.31.1
 
