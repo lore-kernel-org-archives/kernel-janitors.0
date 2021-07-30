@@ -2,126 +2,99 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F27BC4338F
-	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Jul 2021 10:50:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10A4DC4338F
+	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Jul 2021 11:54:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1CCBA60462
-	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Jul 2021 10:50:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E09D560EE6
+	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Jul 2021 11:54:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238460AbhG3Ku5 (ORCPT
+        id S238779AbhG3LyL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 30 Jul 2021 06:50:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41770 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238383AbhG3Ku5 (ORCPT
+        Fri, 30 Jul 2021 07:54:11 -0400
+Received: from mail-vs1-f43.google.com ([209.85.217.43]:44557 "EHLO
+        mail-vs1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238687AbhG3LyJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 30 Jul 2021 06:50:57 -0400
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C454EC061765
-        for <kernel-janitors@vger.kernel.org>; Fri, 30 Jul 2021 03:50:50 -0700 (PDT)
-Received: by mail-wm1-x32f.google.com with SMTP id n21so5685715wmq.5
-        for <kernel-janitors@vger.kernel.org>; Fri, 30 Jul 2021 03:50:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=9m/EKCN/FomdF8fORY1RUYBXPIVRzqaRTRpfCcIDSAQ=;
-        b=djNGTQcKjfbqXno2TU4kzE8+bWPIkBcMS9BIhXTf9TNoDidYc9kqclfq8RmLqIk/lx
-         2yfO3g/PgyOgDTNqcoH/4Kok8qtZbJ4zIiXXdk1VSZX8H1FNgWTdPa/UNwCmtkn4I7fX
-         ksmlLD9CSZ387SMVfUWH9vit4yd1tAQGOMIbvLlXNcsxka/03bLKyKfni2CBiBmJOLX4
-         V8PN6qDLQiP4QbQmCmqzpL2Jhc6a0IkTBj+gr6y54H84l2NNVEE74M6gpWORda3Emm7o
-         WrtZFfwzLRNAFh7bN3ImcJwXB6qjkcKD0BHJQjg4L2VaCSavItXUvnXeJkL7vbeIQoBN
-         hyFg==
+        Fri, 30 Jul 2021 07:54:09 -0400
+Received: by mail-vs1-f43.google.com with SMTP id t2so5247878vsa.11;
+        Fri, 30 Jul 2021 04:54:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=9m/EKCN/FomdF8fORY1RUYBXPIVRzqaRTRpfCcIDSAQ=;
-        b=Q+VqFgKvwYN43zw2Fw1K1JbruCAXYyKqCy5hwnUFVyL3EdDhn64YZjsd6hqN7y3Cna
-         XkhSkV8B3eM7vPZWGDH0Rm1tzdyU8fegDtQwHbPpEObF09WLVeIYI7RleNOLOpG2oLKB
-         xF5bCtPg5dfiSjDIwrZJNqSDcS/D3EmesU7w1XVYgbZQjeMIxe9Ugle7rS9nHbvcPjsi
-         aYkgVPnNlq/zjw01yTDpWYlChNZZCb5PnRfg6c3viJ9WTtFeXXtocbtxH3FJa8XL06Dw
-         SER1xVKFAa9HUdkToBvCVguaGhgGA1UIFgF8VI8X25mFSF0lbB7gqDIoFTpv9LCVsGRn
-         h1wQ==
-X-Gm-Message-State: AOAM530DwMEDBgbpZuHnXtf/ZcQusZzQglYRGwQGQYb1qi7hHVBU03eh
-        gErTdwF4m85F1ZXFiOiG76ReQeSJjem7uaow
-X-Google-Smtp-Source: ABdhPJyX2LPYtmDUIpLqk9QfpHzwX2Hi9pA9KWy971nLG+S5hAFH4mLa1h+i1LAHXYSq0S9IbQRwfw==
-X-Received: by 2002:a1c:a98a:: with SMTP id s132mr2128944wme.131.1627642248857;
-        Fri, 30 Jul 2021 03:50:48 -0700 (PDT)
-Received: from ?IPv6:2001:861:44c0:66c0:2c71:4cb8:38f7:a2a0? ([2001:861:44c0:66c0:2c71:4cb8:38f7:a2a0])
-        by smtp.gmail.com with ESMTPSA id w13sm1265284wrq.91.2021.07.30.03.50.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 30 Jul 2021 03:50:48 -0700 (PDT)
-Subject: Re: [PATCH] media: meson-ge2d: Fix rotation parameter changes
- detection in 'ge2d_s_ctrl()'
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        mchehab@kernel.org, khilman@baylibre.com, jbrunet@baylibre.com,
-        martin.blumenstingl@googlemail.com, hverkuil-cisco@xs4all.nl
-Cc:     linux-media@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <6cb8efcadcf8c856efb32b7692fc9bf3241e3bc3.1627588010.git.christophe.jaillet@wanadoo.fr>
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Organization: Baylibre
-Message-ID: <0fdd2990-7a4f-07cb-384e-e5c5a11452a8@baylibre.com>
-Date:   Fri, 30 Jul 2021 12:50:47 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=10AbK6xK8RHobfuB2T0I9ydjpvpHcTKY9gPukwHCGGA=;
+        b=YmhSWe4ysVoxpkFxv01nZcYjbowvxAt4AmXoLUb1J5l/9+OVzYtM/U91iSFuVd4j1T
+         OOh41vU1X7Q5YEO2iFZlnSlMyK8akuCce5aqJaFeb4HurZk5i/1LZIHnxTCeF8Fjwtop
+         KUappP524ABfwUd2AFwE09lg8Mmuo06WYnD5+apwUDyOJO5MIUq+Jvy/N2IttQwvOgF3
+         R3LydwxxLjPTHCsCKY7xgLlYA4CXleO5UPOae10xxjHpDHHgznosWs8JvYeCihUtzmTY
+         3duBjo7i7c1jqowm3jL2a8f78hL5inxsc9ylnmUxBqxfWiZUdlSJjQ3TXUE3/9wK14Pc
+         H5vw==
+X-Gm-Message-State: AOAM5303d4WMe9j/oJTT97blA0+lnvq55eCvWzmCWUDxkPK+X74oFZj1
+        hH9ZuWXv8hGKrJNelNzFSAfwu74ds1W7dXLHTiM=
+X-Google-Smtp-Source: ABdhPJz4vdafBihdMrOKEMxBFoPjbpJQjxu69DET98mge7/3K8Au1C7Ct04O+Z9CWQAOZ0tklY4nnHzuyfbZq+wo9hQ=
+X-Received: by 2002:a05:6102:321c:: with SMTP id r28mr1030174vsf.40.1627646043462;
+ Fri, 30 Jul 2021 04:54:03 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <6cb8efcadcf8c856efb32b7692fc9bf3241e3bc3.1627588010.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20210728182115.4401-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20210728182115.4401-1-lukas.bulwahn@gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 30 Jul 2021 13:53:52 +0200
+Message-ID: <CAMuHMdXt4tYHcgPNUZ0ZQ9iKhmZ_dC=ub=Ha35xDy+jR2-CroQ@mail.gmail.com>
+Subject: Re: [PATCH] arch: Kconfig: clean up obsolete use of HAVE_IDE
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        alpha <linux-alpha@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:H8/300 ARCHITECTURE" 
+        <uclinux-h8-devel@lists.sourceforge.jp>,
+        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        sparclinux <sparclinux@vger.kernel.org>,
+        "open list:TENSILICA XTENSA PORT (xtensa)" 
+        <linux-xtensa@linux-xtensa.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi,
+On Wed, Jul 28, 2021 at 8:21 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+> The arch-specific Kconfig files use HAVE_IDE to indicate if IDE is
+> supported.
+>
+> As IDE support and the HAVE_IDE config vanishes with commit b7fb14d3ac63
+> ("ide: remove the legacy ide driver"), there is no need to mention
+> HAVE_IDE in all those arch-specific Kconfig files.
+>
+> The issue was identified with ./scripts/checkkconfigsymbols.py.
+>
+> Fixes: b7fb14d3ac63 ("ide: remove the legacy ide driver")
+> Suggested-by: Randy Dunlap <rdunlap@infradead.org>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-On 29/07/2021 21:49, Christophe JAILLET wrote:
-> There is likely a typo here. To be consistent, we should compare
-> 'fmt.height' with 'ctx->out.pix_fmt.height', not 'ctx->out.pix_fmt.width'.
+>  arch/m68k/Kconfig             | 1 -
 
-You're right, it's typo.
+Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-> 
-> Fixes: 59a635327ca7 ("media: meson: Add M2M driver for the Amlogic GE2D Accelerator Unit")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> I've not looked deeply in the code, but why is this test needed in the
-> first place?
-> Couldn't we assigned 'ctx->out.pix_fmt = fmt' un-conditionally?
+Gr{oetje,eeting}s,
 
-We could indeed, and with the typo you discovered it's already the case so the test could go away.
+                        Geert
 
-> ---
->  drivers/media/platform/meson/ge2d/ge2d.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/meson/ge2d/ge2d.c b/drivers/media/platform/meson/ge2d/ge2d.c
-> index a1393fefa8ae..be22bb60e7cf 100644
-> --- a/drivers/media/platform/meson/ge2d/ge2d.c
-> +++ b/drivers/media/platform/meson/ge2d/ge2d.c
-> @@ -780,7 +780,7 @@ static int ge2d_s_ctrl(struct v4l2_ctrl *ctrl)
->  		 * parameters, take them in account
->  		 */
->  		if (fmt.width != ctx->out.pix_fmt.width ||
-> -		    fmt.height != ctx->out.pix_fmt.width ||
-> +		    fmt.height != ctx->out.pix_fmt.height ||
->  		    fmt.bytesperline > ctx->out.pix_fmt.bytesperline ||
->  		    fmt.sizeimage > ctx->out.pix_fmt.sizeimage)
->  			ctx->out.pix_fmt = fmt;
-> 
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
-
-(please keep it if you re-spin by removing the test entirely)
-
-Neil
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
