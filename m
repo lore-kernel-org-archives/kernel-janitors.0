@@ -5,47 +5,47 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B317C4338F
-	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Jul 2021 07:54:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CA4EC432BE
+	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Jul 2021 09:51:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 53D2360FED
-	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Jul 2021 07:54:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 267E560041
+	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Jul 2021 09:51:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237914AbhG3HyO (ORCPT
+        id S238499AbhG3JvD (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 30 Jul 2021 03:54:14 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:43472
+        Fri, 30 Jul 2021 05:51:03 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:51976
         "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S237851AbhG3HyO (ORCPT
+        by vger.kernel.org with ESMTP id S238447AbhG3Jus (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 30 Jul 2021 03:54:14 -0400
+        Fri, 30 Jul 2021 05:50:48 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id CE3513F0FD;
-        Fri, 30 Jul 2021 07:54:08 +0000 (UTC)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 25B883F112;
+        Fri, 30 Jul 2021 09:50:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1627631648;
-        bh=G8dnFS/VJuY2eMdGcNAfSAELq2LIUnvG4Ahde4qXVcY=;
+        s=20210705; t=1627638638;
+        bh=YK/QXYKtOtVXVIFn4gCLUCZeIPFhKc4MjoA0AhD8gYc=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=nJNgyqQu1SjV/CA5seVDj4v87xbVHXsiUVbuIwuCVYPa9BzFYGQ37diHdLMkwSpgb
-         +p1NrW/93SCZuSxlPyFP2qfhAmer2XXDYZbaLlfHS1aBNe3x5IYXk0yg1dLtaNT93V
-         kSq9lUSOH9L6ywR/WFK+30wGwKsdA7FZCtgxFLLn2njmn0mtniVN2tKMuBVZQ61hjs
-         if4wqcM5xZ/CCxtaVCF16rRD6T7o5rvWZvGTPQ3MDTDTkchWoLLl82CLcVhrDmutpq
-         c6Oy57Foemkch1zfgIu+5IFBfQcPczr/5ueqzsdo480N4VSuhVxWD9CeXzOyKDLBZe
-         +ygAPdj5d7dfQ==
+        b=MYX9DglRtGitHkflKpZaTCP5xpmESK+l3RIUBKUzWlJEBXkM5czOJi5T590rnN/yq
+         hHEEiPCJYGgaD1z/IA5XL1C6MeZXpobW7srjS0w56oD8EXaVMJ+hdXyr2Y66bVWQTW
+         YMZSGD9coPJERUcinUpN/m9E3/z5a+HYIfYiRiptKLBXee+ZwYD6VJfxH95ywf7Q9S
+         G9O/8kt5RhZdu/H6qOQFMdkBBa4gDq1DzM3FVtNfsQYa8WF20Y8b4JYmGn9Nzuo/Av
+         1V12iOvkQY/v5EcXRc23riAk8JURBE1R5vLCVRHg2DM0njnB6DWr1VWsRlMV/BI02T
+         4eQQZnBeEgWgg==
 From:   Colin King <colin.king@canonical.com>
-To:     Georgi Djakov <djakov@kernel.org>,
-        Akash Asthana <akashast@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-pm@vger.kernel.org
+To:     Khalid Aziz <khalid@gonehiking.org>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] interconnect: Fix undersized devress_alloc allocation
-Date:   Fri, 30 Jul 2021 08:54:08 +0100
-Message-Id: <20210730075408.19945-1-colin.king@canonical.com>
+Subject: [PATCH] scsi: BusLogic: use %X for u32 sized integer rather than %lX
+Date:   Fri, 30 Jul 2021 10:50:31 +0100
+Message-Id: <20210730095031.26981-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -56,29 +56,30 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The expression sizeof(**ptr) for the void **ptr is just 1 rather than
-the size of a pointer. Fix this by using sizeof(*ptr).
+An earlier fix changed the print format specifier for adapter->bios_addr
+to use %lX however the integer is a u32 so the fix was wrong. Fix this
+by using the correct %X format specifier.
 
-Addresses-Coverity: ("Wrong sizeof argument")
-Fixes: e145d9a184f2 ("interconnect: Add devm_of_icc_get() as exported API for users")
+Addresses-Coverity: ("Invalid type in argument")
+Fixes: 43622697117c ("scsi: BusLogic: use %lX for unsigned long rather than %X")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/interconnect/core.c | 2 +-
+ drivers/scsi/BusLogic.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
-index 55aa8d108c6d..9050ca1f4285 100644
---- a/drivers/interconnect/core.c
-+++ b/drivers/interconnect/core.c
-@@ -403,7 +403,7 @@ struct icc_path *devm_of_icc_get(struct device *dev, const char *name)
- {
- 	struct icc_path **ptr, *path;
- 
--	ptr = devres_alloc(devm_icc_release, sizeof(**ptr), GFP_KERNEL);
-+	ptr = devres_alloc(devm_icc_release, sizeof(*ptr), GFP_KERNEL);
- 	if (!ptr)
- 		return ERR_PTR(-ENOMEM);
- 
+diff --git a/drivers/scsi/BusLogic.c b/drivers/scsi/BusLogic.c
+index adddcd589941..bd615db5c58c 100644
+--- a/drivers/scsi/BusLogic.c
++++ b/drivers/scsi/BusLogic.c
+@@ -1711,7 +1711,7 @@ static bool __init blogic_reportconfig(struct blogic_adapter *adapter)
+ 	if (adapter->adapter_bus_type != BLOGIC_PCI_BUS) {
+ 		blogic_info("  DMA Channel: None, ", adapter);
+ 		if (adapter->bios_addr > 0)
+-			blogic_info("BIOS Address: 0x%lX, ", adapter,
++			blogic_info("BIOS Address: 0x%X, ", adapter,
+ 					adapter->bios_addr);
+ 		else
+ 			blogic_info("BIOS Address: None, ", adapter);
 -- 
 2.31.1
 
