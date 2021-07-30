@@ -2,84 +2,90 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.4 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33B07C4338F
-	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Jul 2021 06:56:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86FC8C4320A
+	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Jul 2021 07:17:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1026760F9B
-	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Jul 2021 06:56:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A12860F0F
+	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Jul 2021 07:17:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237638AbhG3G4p (ORCPT
+        id S237686AbhG3HRG (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 30 Jul 2021 02:56:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42778 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237463AbhG3G4p (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 30 Jul 2021 02:56:45 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C549E60F6B;
-        Fri, 30 Jul 2021 06:56:38 +0000 (UTC)
-Subject: Re: [PATCH] m68k: coldfire: return success for clk_enable(NULL)
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Defang Bo <bodefang@126.com>, Steven King <sfking@fdwdc.com>,
-        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-References: <20210729122702.GA27150@kili>
-From:   Greg Ungerer <gerg@linux-m68k.org>
-Message-ID: <10e74100-2f3b-6c71-3e13-ba9a33766bf1@linux-m68k.org>
-Date:   Fri, 30 Jul 2021 16:56:36 +1000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Fri, 30 Jul 2021 03:17:06 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:56978
+        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230273AbhG3HRG (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 30 Jul 2021 03:17:06 -0400
+Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id E40EE3F0FF;
+        Fri, 30 Jul 2021 07:16:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1627629420;
+        bh=Bxi4+gVVY7RYVNsZmSxbI2QT4hl08RVLKb5YuD0/vnA=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=vnwdWLoh0qTfJ7WUGbqHFlZ7uh/kRdoDkKiiwU+I3APP6kLRUeVHqLmsoAx5iQUr/
+         5zWuyNteG+wmdDMTFvrVF0lCR11+h+Q+wWzKNo7TVwzNP4iwiAPouL49/XArnt03w/
+         9UTG1DXKX2DCa6tJmEkHHYsK3fZLxksNDXr6j/HtBUh/C/4PrDDxqGM7tp7Onny81m
+         WLQzpBYK2kUZpO/MW9LT98tke5QEcfKy/dGpEC7aCCj3q1PP3yf3ZAhZWR8x+6lZXf
+         zk+CdtTQw7W4VuSd9DTUJzAVbvfwinl8MgxvpV8VatoviEXYhmes3OYkftQueR3Gp9
+         mLaqOtPy13z/A==
+From:   Colin King <colin.king@canonical.com>
+To:     Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Lee Jones <lee.jones@linaro.org>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Pradeep Goudagunta <pgoudagunta@nvidia.com>,
+        Marek Belisko <marek@goldelico.com>, linux-iio@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] iio: adc: Fix incorrect exit of for-loop
+Date:   Fri, 30 Jul 2021 08:16:51 +0100
+Message-Id: <20210730071651.17394-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-In-Reply-To: <20210729122702.GA27150@kili>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-On 29/7/21 10:27 pm, Dan Carpenter wrote:
-> The clk_enable is supposed work when CONFIG_HAVE_CLK is false, but it
-> returns -EINVAL.  That means some drivers fail during probe.
-> 
-> [    1.680000] flexcan: probe of flexcan.0 failed with error -22
-> 
-> Fixes: c1fb1bf64bb6 ("m68k: let clk_enable() return immediately if clk is NULL")
-> Fixes: bea8bcb12da0 ("m68knommu: Add support for the Coldfire m5441x.")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Currently the for-loop that scans for the optimial adc_period iterates
+through all the possible adc_period levels because the exit logic in
+the loop is inverted. I believe the comparison should be swapped and
+the continue replaced with a break to exit the loop at the correct
+point.
 
-Thanks Dan.
-Applied to the m68knommu git tree, for-next branch, with Marc's Acked-by added.
+Addresses-Coverity: ("Continue has no effect")
+Fixes: e08e19c331fb ("iio:adc: add iio driver for Palmas (twl6035/7) gpadc")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/iio/adc/palmas_gpadc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Regards
-Greg
+diff --git a/drivers/iio/adc/palmas_gpadc.c b/drivers/iio/adc/palmas_gpadc.c
+index 6ef09609be9f..f9c8385c72d3 100644
+--- a/drivers/iio/adc/palmas_gpadc.c
++++ b/drivers/iio/adc/palmas_gpadc.c
+@@ -664,8 +664,8 @@ static int palmas_adc_wakeup_configure(struct palmas_gpadc *adc)
+ 
+ 	adc_period = adc->auto_conversion_period;
+ 	for (i = 0; i < 16; ++i) {
+-		if (((1000 * (1 << i)) / 32) < adc_period)
+-			continue;
++		if (((1000 * (1 << i)) / 32) >= adc_period)
++			break;
+ 	}
+ 	if (i > 0)
+ 		i--;
+-- 
+2.31.1
 
-
-> ---
-> I can't actually compile test this, but it's correct.
-> 
->   arch/m68k/coldfire/clk.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/m68k/coldfire/clk.c b/arch/m68k/coldfire/clk.c
-> index 2ed841e94111..d03b6c4aa86b 100644
-> --- a/arch/m68k/coldfire/clk.c
-> +++ b/arch/m68k/coldfire/clk.c
-> @@ -78,7 +78,7 @@ int clk_enable(struct clk *clk)
->   	unsigned long flags;
->   
->   	if (!clk)
-> -		return -EINVAL;
-> +		return 0;
->   
->   	spin_lock_irqsave(&clk_lock, flags);
->   	if ((clk->enabled++ == 0) && clk->clk_ops)
-> 
