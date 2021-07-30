@@ -2,69 +2,105 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5229C4320A
-	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Jul 2021 22:34:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57B52C4338F
+	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Jul 2021 06:48:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C6B0E60F5E
-	for <kernel-janitors@archiver.kernel.org>; Thu, 29 Jul 2021 22:34:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30C7A603E9
+	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Jul 2021 06:48:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232559AbhG2Web (ORCPT
+        id S237556AbhG3Gsc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 29 Jul 2021 18:34:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55396 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229707AbhG2Web (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 29 Jul 2021 18:34:31 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D4A9660F5E;
-        Thu, 29 Jul 2021 22:34:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627598067;
-        bh=zomzZNfjR8p+XnfC2Ygez//VpjpDJhcWVwtbsVajGZE=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=u9pYx5HPjUcguJUWuZ3CXUOA1cUY6WMmhzShjlTT16ASyqfnO31mZYzzr8ZLzHmb+
-         pmMAhRJIdbiwPVemK4PtuQ/U++NcsiJpS0Y9VsWxaedUTRlo69DhrWxd8lCCi/oT/T
-         NuWdLy1ptYxZKOPqCjZy/utKChZaMmRbvPjCpCDen8RY9DBnTS3y3rDldA+lG/QiQX
-         D4bMd21++NamRkpoYTY1cmQ/mjw/hSD+MhQ2aMuYtkGkcFkdhCiiIMD8JNu8vWTAYo
-         d8ap60LCF03UKjuIkCe1cKrhNzCyoYt8lWxusxvK+QGOR4zJp7Y+eE1LgrWgVWC524
-         vrrhePm9IzNLg==
-Received: by mail-oo1-f48.google.com with SMTP id s21-20020a4ae5550000b02902667598672bso1960789oot.12;
-        Thu, 29 Jul 2021 15:34:27 -0700 (PDT)
-X-Gm-Message-State: AOAM530KXDyaDbvxk7sFUFyGbe0ShAnJ8nG3bQk3c9kr8Li566vNreub
-        yRZJR8mCDKqqmrElXq1tddhwZk33CYoGgi4obwo=
-X-Google-Smtp-Source: ABdhPJweEgBucApLcnd9Jb/lRMVDGvXqX4x1eyUtjZAcbMsS1od7T87oBIZaspAKPDGc+OJsWglCPWhODueQlz2e91s=
-X-Received: by 2002:a4a:da0f:: with SMTP id e15mr4473094oou.53.1627598067214;
- Thu, 29 Jul 2021 15:34:27 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:ac9:5a4e:0:0:0:0:0 with HTTP; Thu, 29 Jul 2021 15:34:26
- -0700 (PDT)
-In-Reply-To: <20210729141534.GB1267@kili>
-References: <20210729141534.GB1267@kili>
-From:   Namjae Jeon <linkinjeon@kernel.org>
-Date:   Fri, 30 Jul 2021 07:34:26 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd-GOQ08YZeCu=3D8pTOa6Zq36QhtTvQ9yp=RgPXF1ifEw@mail.gmail.com>
-Message-ID: <CAKYAXd-GOQ08YZeCu=3D8pTOa6Zq36QhtTvQ9yp=RgPXF1ifEw@mail.gmail.com>
-Subject: Re: [PATCH] ksmbd: fix an oops in error handling in smb2_open()
+        Fri, 30 Jul 2021 02:48:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38536 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237452AbhG3Gsb (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 30 Jul 2021 02:48:31 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C65FEC061765
+        for <kernel-janitors@vger.kernel.org>; Thu, 29 Jul 2021 23:48:27 -0700 (PDT)
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=bjornoya.blackshift.org)
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mkl@pengutronix.de>)
+        id 1m9MJh-0003zF-Ll; Fri, 30 Jul 2021 08:48:21 +0200
+Received: from pengutronix.de (unknown [IPv6:2a03:f580:87bc:d400:999f:536:c369:29ed])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (Client did not present a certificate)
+        (Authenticated sender: mkl-all@blackshift.org)
+        by smtp.blackshift.org (Postfix) with ESMTPSA id A2C2565B751;
+        Fri, 30 Jul 2021 06:48:18 +0000 (UTC)
+Date:   Fri, 30 Jul 2021 08:48:17 +0200
+From:   Marc Kleine-Budde <mkl@pengutronix.de>
 To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Namjae Jeon <namjae.jeon@samsung.com>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Steve French <sfrench@samba.org>,
-        Hyunchul Lee <hyc.lee@gmail.com>,
-        Ronnie Sahlberg <lsahlber@redhat.com>,
-        linux-cifs@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Cc:     Wolfgang Grandegger <wg@grandegger.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+        Oliver Hartkopp <socketcan@hartkopp.net>,
+        Akshay Bhat <akshay.bhat@timesys.com>,
+        linux-can@vger.kernel.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net] can: hi311x: fix a signedness bug in hi3110_cmd()
+Message-ID: <20210730064817.jktiyy4rodvgjppi@pengutronix.de>
+References: <20210729141246.GA1267@kili>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="o4rz6babiigy7wze"
+Content-Disposition: inline
+In-Reply-To: <20210729141246.GA1267@kili>
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-2021-07-29 23:15 GMT+09:00, Dan Carpenter <dan.carpenter@oracle.com>:
-> If smb2_get_name() then "name" is an error pointer.  In the clean up
-> code, we try to kfree() it and that will lead to an Oops.  Set it to
-> NULL instead.
->
-> Fixes: e2f34481b24d ("cifsd: add server-side procedures for SMB3")
+
+--o4rz6babiigy7wze
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On 29.07.2021 17:12:46, Dan Carpenter wrote:
+> The hi3110_cmd() is supposed to return zero on success and negative
+> error codes on failure, but it was accidentally declared as a u8 when
+> it needs to be an int type.
+>=20
+> Fixes: 57e83fb9b746 ("can: hi311x: Add Holt HI-311x CAN driver")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-I will apply, Thanks for your patch!
+
+Applied to linux-can/testing.
+
+Thanks,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde           |
+Embedded Linux                   | https://www.pengutronix.de  |
+Vertretung West/Dortmund         | Phone: +49-231-2826-924     |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-5555 |
+
+--o4rz6babiigy7wze
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEK3kIWJt9yTYMP3ehqclaivrt76kFAmEDoK8ACgkQqclaivrt
+76k+sggArSfN5Qz1jEA+oE2PvBMy73+C8oCKI/tIS4bI55e2MienYaZLbKr5z4a/
+xMuXRU2FQJEts0k8OCnSqR0HTdbVm8vTsK1nOS9r6cb2Wn6TSserdCg9AewBdEFY
+fCxQ/VdgHeYWErNL+uWOHM45eoW1AmFVO+JCzaGsqCkj02/UomLM7LNX079pkhrb
+MWM46nCWVsRGrcY0gVHf8HyX+cuDxXDfRNU/oCKnPYEopdoCktFs2hVANhaKxa/0
+SrIToyAGlCqk1d1TJEZOJ38/N6uts+w9JgFUYFk3Ufn7hg23S/yllCUr9fk6h/wx
+8/o2LaP3OyYPyDChsWR3ATDvXIDb6g==
+=QFrE
+-----END PGP SIGNATURE-----
+
+--o4rz6babiigy7wze--
