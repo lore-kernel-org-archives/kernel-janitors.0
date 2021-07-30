@@ -7,47 +7,45 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86FC8C4320A
-	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Jul 2021 07:17:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B317C4338F
+	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Jul 2021 07:54:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6A12860F0F
-	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Jul 2021 07:17:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53D2360FED
+	for <kernel-janitors@archiver.kernel.org>; Fri, 30 Jul 2021 07:54:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237686AbhG3HRG (ORCPT
+        id S237914AbhG3HyO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 30 Jul 2021 03:17:06 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:56978
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230273AbhG3HRG (ORCPT
+        Fri, 30 Jul 2021 03:54:14 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:43472
+        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S237851AbhG3HyO (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 30 Jul 2021 03:17:06 -0400
+        Fri, 30 Jul 2021 03:54:14 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id E40EE3F0FF;
-        Fri, 30 Jul 2021 07:16:51 +0000 (UTC)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id CE3513F0FD;
+        Fri, 30 Jul 2021 07:54:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1627629420;
-        bh=Bxi4+gVVY7RYVNsZmSxbI2QT4hl08RVLKb5YuD0/vnA=;
+        s=20210705; t=1627631648;
+        bh=G8dnFS/VJuY2eMdGcNAfSAELq2LIUnvG4Ahde4qXVcY=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=vnwdWLoh0qTfJ7WUGbqHFlZ7uh/kRdoDkKiiwU+I3APP6kLRUeVHqLmsoAx5iQUr/
-         5zWuyNteG+wmdDMTFvrVF0lCR11+h+Q+wWzKNo7TVwzNP4iwiAPouL49/XArnt03w/
-         9UTG1DXKX2DCa6tJmEkHHYsK3fZLxksNDXr6j/HtBUh/C/4PrDDxqGM7tp7Onny81m
-         WLQzpBYK2kUZpO/MW9LT98tke5QEcfKy/dGpEC7aCCj3q1PP3yf3ZAhZWR8x+6lZXf
-         zk+CdtTQw7W4VuSd9DTUJzAVbvfwinl8MgxvpV8VatoviEXYhmes3OYkftQueR3Gp9
-         mLaqOtPy13z/A==
+        b=nJNgyqQu1SjV/CA5seVDj4v87xbVHXsiUVbuIwuCVYPa9BzFYGQ37diHdLMkwSpgb
+         +p1NrW/93SCZuSxlPyFP2qfhAmer2XXDYZbaLlfHS1aBNe3x5IYXk0yg1dLtaNT93V
+         kSq9lUSOH9L6ywR/WFK+30wGwKsdA7FZCtgxFLLn2njmn0mtniVN2tKMuBVZQ61hjs
+         if4wqcM5xZ/CCxtaVCF16rRD6T7o5rvWZvGTPQ3MDTDTkchWoLLl82CLcVhrDmutpq
+         c6Oy57Foemkch1zfgIu+5IFBfQcPczr/5ueqzsdo480N4VSuhVxWD9CeXzOyKDLBZe
+         +ygAPdj5d7dfQ==
 From:   Colin King <colin.king@canonical.com>
-To:     Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Lee Jones <lee.jones@linaro.org>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Pradeep Goudagunta <pgoudagunta@nvidia.com>,
-        Marek Belisko <marek@goldelico.com>, linux-iio@vger.kernel.org
+To:     Georgi Djakov <djakov@kernel.org>,
+        Akash Asthana <akashast@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-pm@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] iio: adc: Fix incorrect exit of for-loop
-Date:   Fri, 30 Jul 2021 08:16:51 +0100
-Message-Id: <20210730071651.17394-1-colin.king@canonical.com>
+Subject: [PATCH] interconnect: Fix undersized devress_alloc allocation
+Date:   Fri, 30 Jul 2021 08:54:08 +0100
+Message-Id: <20210730075408.19945-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -58,34 +56,29 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Currently the for-loop that scans for the optimial adc_period iterates
-through all the possible adc_period levels because the exit logic in
-the loop is inverted. I believe the comparison should be swapped and
-the continue replaced with a break to exit the loop at the correct
-point.
+The expression sizeof(**ptr) for the void **ptr is just 1 rather than
+the size of a pointer. Fix this by using sizeof(*ptr).
 
-Addresses-Coverity: ("Continue has no effect")
-Fixes: e08e19c331fb ("iio:adc: add iio driver for Palmas (twl6035/7) gpadc")
+Addresses-Coverity: ("Wrong sizeof argument")
+Fixes: e145d9a184f2 ("interconnect: Add devm_of_icc_get() as exported API for users")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/iio/adc/palmas_gpadc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/interconnect/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iio/adc/palmas_gpadc.c b/drivers/iio/adc/palmas_gpadc.c
-index 6ef09609be9f..f9c8385c72d3 100644
---- a/drivers/iio/adc/palmas_gpadc.c
-+++ b/drivers/iio/adc/palmas_gpadc.c
-@@ -664,8 +664,8 @@ static int palmas_adc_wakeup_configure(struct palmas_gpadc *adc)
+diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
+index 55aa8d108c6d..9050ca1f4285 100644
+--- a/drivers/interconnect/core.c
++++ b/drivers/interconnect/core.c
+@@ -403,7 +403,7 @@ struct icc_path *devm_of_icc_get(struct device *dev, const char *name)
+ {
+ 	struct icc_path **ptr, *path;
  
- 	adc_period = adc->auto_conversion_period;
- 	for (i = 0; i < 16; ++i) {
--		if (((1000 * (1 << i)) / 32) < adc_period)
--			continue;
-+		if (((1000 * (1 << i)) / 32) >= adc_period)
-+			break;
- 	}
- 	if (i > 0)
- 		i--;
+-	ptr = devres_alloc(devm_icc_release, sizeof(**ptr), GFP_KERNEL);
++	ptr = devres_alloc(devm_icc_release, sizeof(*ptr), GFP_KERNEL);
+ 	if (!ptr)
+ 		return ERR_PTR(-ENOMEM);
+ 
 -- 
 2.31.1
 
