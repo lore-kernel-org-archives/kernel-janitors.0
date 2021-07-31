@@ -2,104 +2,88 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+X-Spam-Status: No, score=-15.5 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55B33C4320A
-	for <kernel-janitors@archiver.kernel.org>; Sat, 31 Jul 2021 12:40:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9E58C4338F
+	for <kernel-janitors@archiver.kernel.org>; Sat, 31 Jul 2021 13:46:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3FA8A6052B
-	for <kernel-janitors@archiver.kernel.org>; Sat, 31 Jul 2021 12:40:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C5D560EEA
+	for <kernel-janitors@archiver.kernel.org>; Sat, 31 Jul 2021 13:46:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233092AbhGaMk6 (ORCPT
+        id S233409AbhGaNpq (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 31 Jul 2021 08:40:58 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:55296
-        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232692AbhGaMk5 (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 31 Jul 2021 08:40:57 -0400
-Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        Sat, 31 Jul 2021 09:45:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42846 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233367AbhGaNpV (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Sat, 31 Jul 2021 09:45:21 -0400
+Received: from jic23-huawei (cpc108967-cmbg20-2-0-cust86.5-4.cable.virginm.net [81.101.6.87])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 753DA3F0A8;
-        Sat, 31 Jul 2021 12:40:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1627735249;
-        bh=WmppQV2MYziB7/h7Q9+1v9o0+Fs4+5hGMgdCIXdYWlE=;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-         MIME-Version:Content-Type;
-        b=wBgNYQm0hDv5l3lbaflmQrk2gx4/xLXmvgoKToO/EQ2eXXfXsFsqJO+9k/xFAgK5Y
-         OXli37WVFc1ew44JhiLeGwTCLezOOaZgJ1U7/jYBCuhXQ8pqOpvo7nPF0zKwPtiN+b
-         SwPuvFk258yapl4rqqJ8BjaTtZi/c4lRMtsZD49tXm0xO3UMxF4AsZHWU/TPxCwNIR
-         dT1nd2YBlzDuXk43T7esgwymw6zrViog60XHzkKYovAwX/yWQEG6QcToXSZmJSyrA2
-         gzMSS03Zl4LtmN1ZKsjlHtiafiZ1rBROa12etRyfQgWgYGe6VMRM2WKPN80F2rQPxB
-         W2Gz31QLcJW6Q==
-From:   Colin King <colin.king@canonical.com>
-To:     Ping-Ke Shih <pkshih@realtek.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] rtlwifi: rtl8192de:  make arrays static const, makes object smaller
-Date:   Sat, 31 Jul 2021 13:40:44 +0100
-Message-Id: <20210731124044.101927-2-colin.king@canonical.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210731124044.101927-1-colin.king@canonical.com>
-References: <20210731124044.101927-1-colin.king@canonical.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id B3C8E61042;
+        Sat, 31 Jul 2021 13:44:53 +0000 (UTC)
+Date:   Sat, 31 Jul 2021 14:47:32 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Lars-Peter Clausen <lars@metafoo.de>,
+        Lee Jones <lee.jones@linaro.org>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Pradeep Goudagunta <pgoudagunta@nvidia.com>,
+        Marek Belisko <marek@goldelico.com>, linux-iio@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: adc: Fix incorrect exit of for-loop
+Message-ID: <20210731144732.57777e20@jic23-huawei>
+In-Reply-To: <20210730071651.17394-1-colin.king@canonical.com>
+References: <20210730071651.17394-1-colin.king@canonical.com>
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Fri, 30 Jul 2021 08:16:51 +0100
+Colin King <colin.king@canonical.com> wrote:
 
-Don't populate arrays the stack but instead make them static const
-Makes the object code smaller by 852 bytes.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Currently the for-loop that scans for the optimial adc_period iterates
+> through all the possible adc_period levels because the exit logic in
+> the loop is inverted. I believe the comparison should be swapped and
+> the continue replaced with a break to exit the loop at the correct
+> point.
+> 
+> Addresses-Coverity: ("Continue has no effect")
+> Fixes: e08e19c331fb ("iio:adc: add iio driver for Palmas (twl6035/7) gpadc")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+ouch.
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
- 128211	  44250	   1024	 173485	  2a5ad	../realtek/rtlwifi/rtl8192de/phy.o
+Applied to the fixes togreg branch of iio.git and marked for stable.
 
-After:
-   text	   data	    bss	    dec	    hex	filename
- 127199	  44410	   1024	 172633	  2a259	../realtek/rtlwifi/rtl8192de/phy.o
+Thanks,
 
-(gcc version 10.2.0)
+Jonathan
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/wireless/realtek/rtlwifi/rtl8192de/phy.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/phy.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/phy.c
-index 4eaa40d73baf..79956254f798 100644
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/phy.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/phy.c
-@@ -1354,7 +1354,7 @@ static void _rtl92d_phy_switch_rf_setting(struct ieee80211_hw *hw, u8 channel)
- 
- u8 rtl92d_get_rightchnlplace_for_iqk(u8 chnl)
- {
--	u8 channel_all[59] = {
-+	static const u8 channel_all[59] = {
- 		1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
- 		36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58,
- 		60, 62, 64, 100, 102, 104, 106, 108, 110, 112,
-@@ -3220,7 +3220,7 @@ void rtl92d_phy_config_macphymode_info(struct ieee80211_hw *hw)
- u8 rtl92d_get_chnlgroup_fromarray(u8 chnl)
- {
- 	u8 group;
--	u8 channel_info[59] = {
-+	static const u8 channel_info[59] = {
- 		1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
- 		36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56,
- 		58, 60, 62, 64, 100, 102, 104, 106, 108,
--- 
-2.31.1
+> ---
+>  drivers/iio/adc/palmas_gpadc.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/palmas_gpadc.c b/drivers/iio/adc/palmas_gpadc.c
+> index 6ef09609be9f..f9c8385c72d3 100644
+> --- a/drivers/iio/adc/palmas_gpadc.c
+> +++ b/drivers/iio/adc/palmas_gpadc.c
+> @@ -664,8 +664,8 @@ static int palmas_adc_wakeup_configure(struct palmas_gpadc *adc)
+>  
+>  	adc_period = adc->auto_conversion_period;
+>  	for (i = 0; i < 16; ++i) {
+> -		if (((1000 * (1 << i)) / 32) < adc_period)
+> -			continue;
+> +		if (((1000 * (1 << i)) / 32) >= adc_period)
+> +			break;
+>  	}
+>  	if (i > 0)
+>  		i--;
 
