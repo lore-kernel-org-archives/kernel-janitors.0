@@ -2,276 +2,92 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9203C4338F
-	for <kernel-janitors@archiver.kernel.org>; Sat, 31 Jul 2021 07:10:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75EBCC4338F
+	for <kernel-janitors@archiver.kernel.org>; Sat, 31 Jul 2021 12:40:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9F33761042
-	for <kernel-janitors@archiver.kernel.org>; Sat, 31 Jul 2021 07:10:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48B7961042
+	for <kernel-janitors@archiver.kernel.org>; Sat, 31 Jul 2021 12:40:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230199AbhGaHKP (ORCPT
+        id S232965AbhGaMk5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 31 Jul 2021 03:10:15 -0400
-Received: from out06.smtpout.orange.fr ([193.252.22.215]:34591 "EHLO
-        out.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229758AbhGaHKP (ORCPT
+        Sat, 31 Jul 2021 08:40:57 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:39810
+        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232690AbhGaMk4 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 31 Jul 2021 03:10:15 -0400
-Received: from localhost.localdomain ([86.243.172.93])
-        by mwinf5d21 with ME
-        id bjA02500g21Fzsu03jA1bv; Sat, 31 Jul 2021 09:10:06 +0200
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 31 Jul 2021 09:10:06 +0200
-X-ME-IP: 86.243.172.93
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     dchickles@marvell.com, sburla@marvell.com, fmanlunas@marvell.com,
-        davem@davemloft.net, kuba@kernel.org, sgoutham@marvell.com
-Cc:     netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] cavium: switch from 'pci_' to 'dma_' API
-Date:   Sat, 31 Jul 2021 09:10:00 +0200
-Message-Id: <27c2b1a5152add2b3ecdfded40f562c5e4abed14.1627714392.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Sat, 31 Jul 2021 08:40:56 -0400
+Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 572F73F0FD;
+        Sat, 31 Jul 2021 12:40:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1627735249;
+        bh=oUq6gPgdLVraYDRbQRFMm2OILuIbppCsvEd0SKiqGuE=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=Qa+aNlMgECRGFRqmuzEkdbaBsr2JR/J5l8wJ3pc+dtD11jqap5mt9b/P7TC/4xXBl
+         0OEPEBnnFhiTkNqBhauRBAWPTzvHYhb95qg4/+PS3AVrxOX05hqx3pI4K8mBvY4zCb
+         kn4i/AJxg0sOZNjwc1c6W2Vq6jIfL+C1VBWK1eFDsqbS02RvJeOFJIE6GZ1LbYn8Wa
+         Q/ofzr1RCPDMixYNcaDUvV3qq820sBk+whGGKu5wSxar+zI4lZHJxPxVeo9qPN4x/E
+         Hx/+1FrTEAudD/eKN/0/kfIn49m/7GVUPtpqwBKufJTEKL2/tnfjp21eaFR2OxyG5W
+         BhTPlHcd3UGyg==
+From:   Colin King <colin.king@canonical.com>
+To:     Ping-Ke Shih <pkshih@realtek.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] rtlwifi: rtl8192de: Remove redundant variable initializations
+Date:   Sat, 31 Jul 2021 13:40:43 +0100
+Message-Id: <20210731124044.101927-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The wrappers in include/linux/pci-dma-compat.h should go away.
+From: Colin Ian King <colin.king@canonical.com>
 
-The patch has been generated with the coccinelle script below. It has been
-hand modified to use 'dma_set_mask_and_coherent()' instead of
-'pci_set_dma_mask()/pci_set_consistent_dma_mask()' when applicable.
+The variables rtstatus and place are being initialized with a values that
+are never read, the initializations are redundant and can be removed.
 
-It has been compile tested.
-
-
-@@
-@@
--    PCI_DMA_BIDIRECTIONAL
-+    DMA_BIDIRECTIONAL
-
-@@
-@@
--    PCI_DMA_TODEVICE
-+    DMA_TO_DEVICE
-
-@@
-@@
--    PCI_DMA_FROMDEVICE
-+    DMA_FROM_DEVICE
-
-@@
-@@
--    PCI_DMA_NONE
-+    DMA_NONE
-
-@@
-expression e1, e2, e3;
-@@
--    pci_alloc_consistent(e1, e2, e3)
-+    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
-
-@@
-expression e1, e2, e3;
-@@
--    pci_zalloc_consistent(e1, e2, e3)
-+    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_free_consistent(e1, e2, e3, e4)
-+    dma_free_coherent(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_map_single(e1, e2, e3, e4)
-+    dma_map_single(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_unmap_single(e1, e2, e3, e4)
-+    dma_unmap_single(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4, e5;
-@@
--    pci_map_page(e1, e2, e3, e4, e5)
-+    dma_map_page(&e1->dev, e2, e3, e4, e5)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_unmap_page(e1, e2, e3, e4)
-+    dma_unmap_page(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_map_sg(e1, e2, e3, e4)
-+    dma_map_sg(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_unmap_sg(e1, e2, e3, e4)
-+    dma_unmap_sg(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_dma_sync_single_for_cpu(e1, e2, e3, e4)
-+    dma_sync_single_for_cpu(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_dma_sync_single_for_device(e1, e2, e3, e4)
-+    dma_sync_single_for_device(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_dma_sync_sg_for_cpu(e1, e2, e3, e4)
-+    dma_sync_sg_for_cpu(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_dma_sync_sg_for_device(e1, e2, e3, e4)
-+    dma_sync_sg_for_device(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2;
-@@
--    pci_dma_mapping_error(e1, e2)
-+    dma_mapping_error(&e1->dev, e2)
-
-@@
-expression e1, e2;
-@@
--    pci_set_dma_mask(e1, e2)
-+    dma_set_mask(&e1->dev, e2)
-
-@@
-expression e1, e2;
-@@
--    pci_set_consistent_dma_mask(e1, e2)
-+    dma_set_coherent_mask(&e1->dev, e2)
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
-If needed, see post from Christoph Hellwig on the kernel-janitors ML:
-   https://marc.info/?l=kernel-janitors&m=158745678307186&w=4
----
- drivers/net/ethernet/cavium/liquidio/lio_main.c    | 4 ++--
- drivers/net/ethernet/cavium/liquidio/lio_vf_main.c | 4 ++--
- drivers/net/ethernet/cavium/thunder/nic_main.c     | 8 +-------
- drivers/net/ethernet/cavium/thunder/nicvf_main.c   | 8 +-------
- 4 files changed, 6 insertions(+), 18 deletions(-)
+ drivers/net/wireless/realtek/rtlwifi/rtl8192de/phy.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/cavium/liquidio/lio_main.c b/drivers/net/ethernet/cavium/liquidio/lio_main.c
-index a4a5209a9386..af116ef83bad 100644
---- a/drivers/net/ethernet/cavium/liquidio/lio_main.c
-+++ b/drivers/net/ethernet/cavium/liquidio/lio_main.c
-@@ -1457,7 +1457,7 @@ static void free_netsgbuf(void *buf)
- 	while (frags--) {
- 		skb_frag_t *frag = &skb_shinfo(skb)->frags[i - 1];
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/phy.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/phy.c
+index 76dd881ef9bb..4eaa40d73baf 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/phy.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/phy.c
+@@ -681,7 +681,7 @@ static bool _rtl92d_phy_bb_config(struct ieee80211_hw *hw)
+ 	struct rtl_priv *rtlpriv = rtl_priv(hw);
+ 	struct rtl_phy *rtlphy = &(rtlpriv->phy);
+ 	struct rtl_efuse *rtlefuse = rtl_efuse(rtl_priv(hw));
+-	bool rtstatus = true;
++	bool rtstatus;
  
--		pci_unmap_page((lio->oct_dev)->pci_dev,
-+		dma_unmap_page(&lio->oct_dev->pci_dev->dev,
- 			       g->sg[(i >> 2)].ptr[(i & 3)],
- 			       skb_frag_size(frag), DMA_TO_DEVICE);
- 		i++;
-@@ -1500,7 +1500,7 @@ static void free_netsgbuf_with_resp(void *buf)
- 	while (frags--) {
- 		skb_frag_t *frag = &skb_shinfo(skb)->frags[i - 1];
+ 	rtl_dbg(rtlpriv, COMP_INIT, DBG_TRACE, "==>\n");
+ 	rtstatus = _rtl92d_phy_config_bb_with_headerfile(hw,
+@@ -1362,7 +1362,7 @@ u8 rtl92d_get_rightchnlplace_for_iqk(u8 chnl)
+ 		132, 134, 136, 138, 140, 149, 151, 153, 155,
+ 		157, 159, 161, 163, 165
+ 	};
+-	u8 place = chnl;
++	u8 place;
  
--		pci_unmap_page((lio->oct_dev)->pci_dev,
-+		dma_unmap_page(&lio->oct_dev->pci_dev->dev,
- 			       g->sg[(i >> 2)].ptr[(i & 3)],
- 			       skb_frag_size(frag), DMA_TO_DEVICE);
- 		i++;
-diff --git a/drivers/net/ethernet/cavium/liquidio/lio_vf_main.c b/drivers/net/ethernet/cavium/liquidio/lio_vf_main.c
-index 3085dd455a17..c6fe0f2a4d0e 100644
---- a/drivers/net/ethernet/cavium/liquidio/lio_vf_main.c
-+++ b/drivers/net/ethernet/cavium/liquidio/lio_vf_main.c
-@@ -843,7 +843,7 @@ static void free_netsgbuf(void *buf)
- 	while (frags--) {
- 		skb_frag_t *frag = &skb_shinfo(skb)->frags[i - 1];
- 
--		pci_unmap_page((lio->oct_dev)->pci_dev,
-+		dma_unmap_page(&lio->oct_dev->pci_dev->dev,
- 			       g->sg[(i >> 2)].ptr[(i & 3)],
- 			       skb_frag_size(frag), DMA_TO_DEVICE);
- 		i++;
-@@ -887,7 +887,7 @@ static void free_netsgbuf_with_resp(void *buf)
- 	while (frags--) {
- 		skb_frag_t *frag = &skb_shinfo(skb)->frags[i - 1];
- 
--		pci_unmap_page((lio->oct_dev)->pci_dev,
-+		dma_unmap_page(&lio->oct_dev->pci_dev->dev,
- 			       g->sg[(i >> 2)].ptr[(i & 3)],
- 			       skb_frag_size(frag), DMA_TO_DEVICE);
- 		i++;
-diff --git a/drivers/net/ethernet/cavium/thunder/nic_main.c b/drivers/net/ethernet/cavium/thunder/nic_main.c
-index 9361f964bb9b..691e1475d55e 100644
---- a/drivers/net/ethernet/cavium/thunder/nic_main.c
-+++ b/drivers/net/ethernet/cavium/thunder/nic_main.c
-@@ -1322,18 +1322,12 @@ static int nic_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 		goto err_disable_device;
- 	}
- 
--	err = pci_set_dma_mask(pdev, DMA_BIT_MASK(48));
-+	err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(48));
- 	if (err) {
- 		dev_err(dev, "Unable to get usable DMA configuration\n");
- 		goto err_release_regions;
- 	}
- 
--	err = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(48));
--	if (err) {
--		dev_err(dev, "Unable to get 48-bit DMA for consistent allocations\n");
--		goto err_release_regions;
--	}
--
- 	/* MAP PF's configuration registers */
- 	nic->reg_base = pcim_iomap(pdev, PCI_CFG_REG_BAR_NUM, 0);
- 	if (!nic->reg_base) {
-diff --git a/drivers/net/ethernet/cavium/thunder/nicvf_main.c b/drivers/net/ethernet/cavium/thunder/nicvf_main.c
-index efaaa57d4ed5..d1667b759522 100644
---- a/drivers/net/ethernet/cavium/thunder/nicvf_main.c
-+++ b/drivers/net/ethernet/cavium/thunder/nicvf_main.c
-@@ -2130,18 +2130,12 @@ static int nicvf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 		goto err_disable_device;
- 	}
- 
--	err = pci_set_dma_mask(pdev, DMA_BIT_MASK(48));
-+	err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(48));
- 	if (err) {
- 		dev_err(dev, "Unable to get usable DMA configuration\n");
- 		goto err_release_regions;
- 	}
- 
--	err = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(48));
--	if (err) {
--		dev_err(dev, "unable to get 48-bit DMA for consistent allocations\n");
--		goto err_release_regions;
--	}
--
- 	qcount = netif_get_num_default_rss_queues();
- 
- 	/* Restrict multiqset support only for host bound VFs */
+ 	if (chnl > 14) {
+ 		for (place = 14; place < sizeof(channel_all); place++) {
 -- 
-2.30.2
+2.31.1
 
