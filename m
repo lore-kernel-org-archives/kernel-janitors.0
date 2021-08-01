@@ -2,112 +2,110 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14853C4338F
-	for <kernel-janitors@archiver.kernel.org>; Sun,  1 Aug 2021 07:08:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD27EC4338F
+	for <kernel-janitors@archiver.kernel.org>; Sun,  1 Aug 2021 08:05:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E2FC660F5A
-	for <kernel-janitors@archiver.kernel.org>; Sun,  1 Aug 2021 07:08:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8AE9E61054
+	for <kernel-janitors@archiver.kernel.org>; Sun,  1 Aug 2021 08:05:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229560AbhHAHCH (ORCPT
+        id S231462AbhHAIF6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 1 Aug 2021 03:02:07 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:35518
-        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229491AbhHAHCH (ORCPT
+        Sun, 1 Aug 2021 04:05:58 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:34294 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230087AbhHAIF5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 1 Aug 2021 03:02:07 -0400
-Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id C64A03F043;
-        Sun,  1 Aug 2021 07:01:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1627801318;
-        bh=+HpTVz5U1M1CbazRL6I2mcQm73rzee+6pr/cjaG2uhM=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
-        b=PVUNmQekRl8uvj2Rrj3vAWQ8Lo/c7T6jnHhSFDeMYu+ppeb5j03G4TjqWghZTxlKg
-         liueEj4kSEL0PaYSrJBAd+5KAqpDEKX18ILzJAo9Mv0AwrWbsbbBHtW7BIK8igSOSO
-         RyDtvoTEnqVWA+nIAPqx3ORDWRI9n4RkVM5KDMg+GwvckMibmFtrGH27LyO4l107MC
-         5e6mRVZxP6pX8+TBjif9KN0O0aItIQ05QbHL/pwJJS+g+V95IsP0VnbOcIK+VUhlT4
-         oU9xF0TzpmwGDFCelu5CaV3t2s6Teyr9txRrUf99SV/xgG+dfHjvEdp+jZWxRK0j3f
-         P5ISisFVBjwLA==
-From:   Colin King <colin.king@canonical.com>
-To:     Andrew Lunn <andrew@lunn.ch>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Antoine Tenart <atenart@kernel.org>, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] net: phy: mscc: make some arrays static const, makes object smaller
-Date:   Sun,  1 Aug 2021 08:01:55 +0100
-Message-Id: <20210801070155.139057-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.31.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Sun, 1 Aug 2021 04:05:57 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 2869622047;
+        Sun,  1 Aug 2021 08:05:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1627805149; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=bShZYYYw9gzAU9l1zpGdsOfxjisudXefIX46w2pnN4U=;
+        b=iPH8gy39Dns6MSRve5hLOOrolMWynGDNHVYEukQjhusgVTwrz1vFsKpQCYHvQtfeP442Im
+        hcxlQuuEArF28yE5TEU2Q0t5r3Fy2rL6MFG2udK7ZRJntSdiy1lYRDMOcRdhraMB8wlHoI
+        UtUJTlyTc+uVoKgTXFamrVD/8ckfpQQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1627805149;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=bShZYYYw9gzAU9l1zpGdsOfxjisudXefIX46w2pnN4U=;
+        b=vWketJyJpjbP1Q8vDq02caFxrWnT6rbMFUMJKtBkfeEAggOsZjEUQB2LIpNx4+S4E8ll4g
+        6ddIZ3+e+07q4ZCA==
+Received: from alsa1.suse.de (alsa1.suse.de [10.160.4.42])
+        by relay2.suse.de (Postfix) with ESMTP id 1ECEEA3BA8;
+        Sun,  1 Aug 2021 08:05:49 +0000 (UTC)
+Date:   Sun, 01 Aug 2021 10:05:49 +0200
+Message-ID: <s5h5ywp1teq.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ALSA: usb-audio: make array static const, makes object smaller
+In-Reply-To: <20210801062548.137770-1-colin.king@canonical.com>
+References: <20210801062548.137770-1-colin.king@canonical.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Sun, 01 Aug 2021 08:25:48 +0200,
+Colin King wrote:
+> 
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Don't populate array names_to_check on the stack but instead it
+> static.  Makes the object code smaller by 56 bytes.
+> 
+> Before:
+>    text    data     bss     dec     hex filename
+>  103512   34380       0  137892   21aa4 ./sound/usb/mixer.o
+> 
+> After:
+>    text    data     bss     dec     hex filename
+>  103264   34572       0  137836   21a6c ./sound/usb/mixer.o
+> 
+> gcc version 10.2.0)
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  sound/usb/mixer.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/sound/usb/mixer.c b/sound/usb/mixer.c
+> index f4cdaf1ba44a..aec2499284a5 100644
+> --- a/sound/usb/mixer.c
+> +++ b/sound/usb/mixer.c
+> @@ -1572,8 +1572,9 @@ static size_t append_ctl_name(struct snd_kcontrol *kctl, const char *str)
+>  static void check_no_speaker_on_headset(struct snd_kcontrol *kctl,
+>  					struct snd_card *card)
+>  {
+> -	const char *names_to_check[] = {
+> -		"Headset", "headset", "Headphone", "headphone", NULL};
+> +	static const char *names_to_check[] = {
+> +		"Headset", "headset", "Headphone", "headphone", NULL
+> +	};
 
-Don't populate arrays on the stack but instead them static const.
-Makes the object code smaller by 280 bytes.
+checkpatch complains like:
+  WARNING: static const char * array should probably be static const
+  char * const
 
-Before:
-   text    data     bss     dec     hex filename
-  24142    4368     192   28702    701e ./drivers/net/phy/mscc/mscc_ptp.o
+Could you check and resubmit if it's right?
 
-After:
-   text    data     bss     dec     hex filename
-  23830    4400     192   28422    6f06 ./drivers/net/phy/mscc/mscc_ptp.o
 
-(gcc version 10.2.0)
+thanks,
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/phy/mscc/mscc_ptp.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/net/phy/mscc/mscc_ptp.c b/drivers/net/phy/mscc/mscc_ptp.c
-index 924ed5b034a4..edb951695b13 100644
---- a/drivers/net/phy/mscc/mscc_ptp.c
-+++ b/drivers/net/phy/mscc/mscc_ptp.c
-@@ -506,7 +506,7 @@ static int vsc85xx_ptp_cmp_init(struct phy_device *phydev, enum ts_blk blk)
- {
- 	struct vsc8531_private *vsc8531 = phydev->priv;
- 	bool base = phydev->mdio.addr == vsc8531->ts_base_addr;
--	u8 msgs[] = {
-+	static const u8 msgs[] = {
- 		PTP_MSGTYPE_SYNC,
- 		PTP_MSGTYPE_DELAY_REQ
- 	};
-@@ -847,7 +847,7 @@ static int vsc85xx_ts_ptp_action_flow(struct phy_device *phydev, enum ts_blk blk
- static int vsc85xx_ptp_conf(struct phy_device *phydev, enum ts_blk blk,
- 			    bool one_step, bool enable)
- {
--	u8 msgs[] = {
-+	static const u8 msgs[] = {
- 		PTP_MSGTYPE_SYNC,
- 		PTP_MSGTYPE_DELAY_REQ
- 	};
-@@ -1268,8 +1268,8 @@ static void vsc8584_set_input_clk_configured(struct phy_device *phydev)
- static int __vsc8584_init_ptp(struct phy_device *phydev)
- {
- 	struct vsc8531_private *vsc8531 = phydev->priv;
--	u32 ltc_seq_e[] = { 0, 400000, 0, 0, 0 };
--	u8  ltc_seq_a[] = { 8, 6, 5, 4, 2 };
-+	static const u32 ltc_seq_e[] = { 0, 400000, 0, 0, 0 };
-+	static const u8  ltc_seq_a[] = { 8, 6, 5, 4, 2 };
- 	u32 val;
- 
- 	if (!vsc8584_is_1588_input_clk_configured(phydev)) {
--- 
-2.31.1
-
+Takashi
