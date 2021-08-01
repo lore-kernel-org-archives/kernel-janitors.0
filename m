@@ -2,88 +2,92 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.5 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9E58C4338F
-	for <kernel-janitors@archiver.kernel.org>; Sat, 31 Jul 2021 13:46:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D3FFC4338F
+	for <kernel-janitors@archiver.kernel.org>; Sun,  1 Aug 2021 06:26:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8C5D560EEA
-	for <kernel-janitors@archiver.kernel.org>; Sat, 31 Jul 2021 13:46:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13A8061054
+	for <kernel-janitors@archiver.kernel.org>; Sun,  1 Aug 2021 06:26:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233409AbhGaNpq (ORCPT
+        id S230199AbhHAG0V (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 31 Jul 2021 09:45:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42846 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233367AbhGaNpV (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 31 Jul 2021 09:45:21 -0400
-Received: from jic23-huawei (cpc108967-cmbg20-2-0-cust86.5-4.cable.virginm.net [81.101.6.87])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Sun, 1 Aug 2021 02:26:21 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:34098
+        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230356AbhHAG0E (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Sun, 1 Aug 2021 02:26:04 -0400
+Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B3C8E61042;
-        Sat, 31 Jul 2021 13:44:53 +0000 (UTC)
-Date:   Sat, 31 Jul 2021 14:47:32 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Lars-Peter Clausen <lars@metafoo.de>,
-        Lee Jones <lee.jones@linaro.org>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Pradeep Goudagunta <pgoudagunta@nvidia.com>,
-        Marek Belisko <marek@goldelico.com>, linux-iio@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: adc: Fix incorrect exit of for-loop
-Message-ID: <20210731144732.57777e20@jic23-huawei>
-In-Reply-To: <20210730071651.17394-1-colin.king@canonical.com>
-References: <20210730071651.17394-1-colin.king@canonical.com>
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.30; x86_64-pc-linux-gnu)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 5BF423F10D;
+        Sun,  1 Aug 2021 06:25:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1627799154;
+        bh=CzjCXhgl0a3d1ieMBVQ+XZEZoQi8gWaJjxi2fu4cq5E=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=l0vqmorMAPZIl0H+3yk13NHRpVICt/c0IN+RqRegnFA+u0JzXwm4dk4mLCtDT2rOp
+         CxEdQK8FwEd99CZTNgmKXlzHcPC16tLId1N+7Hgh3M5laWu3nQnXrnypgy2ojYCFPQ
+         Dflzt9tyWBBVB7lwGoPaG6MXF2puGBFv2PJtzZamtt7BZOpNeDR7sGbgszKMen+gjJ
+         MdnwF+3uE2M9gqJlLa3qwNT0MTIH8aheCZ5qXZcv8lhKDRA8slOEgedO5XHKnDzL7g
+         EW0T2pM3VI2400orB+tYgVyqueIEAt9yKsLMHzD2S1hFnyPBDWtQoM4x3ecHKsvkMN
+         yxo1jryPTC9hg==
+From:   Colin King <colin.king@canonical.com>
+To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ALSA: usb-audio: make array static const, makes object smaller
+Date:   Sun,  1 Aug 2021 07:25:48 +0100
+Message-Id: <20210801062548.137770-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 30 Jul 2021 08:16:51 +0100
-Colin King <colin.king@canonical.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently the for-loop that scans for the optimial adc_period iterates
-> through all the possible adc_period levels because the exit logic in
-> the loop is inverted. I believe the comparison should be swapped and
-> the continue replaced with a break to exit the loop at the correct
-> point.
-> 
-> Addresses-Coverity: ("Continue has no effect")
-> Fixes: e08e19c331fb ("iio:adc: add iio driver for Palmas (twl6035/7) gpadc")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-ouch.
+Don't populate array names_to_check on the stack but instead it
+static.  Makes the object code smaller by 56 bytes.
 
-Applied to the fixes togreg branch of iio.git and marked for stable.
+Before:
+   text    data     bss     dec     hex filename
+ 103512   34380       0  137892   21aa4 ./sound/usb/mixer.o
 
-Thanks,
+After:
+   text    data     bss     dec     hex filename
+ 103264   34572       0  137836   21a6c ./sound/usb/mixer.o
 
-Jonathan
+gcc version 10.2.0)
 
-> ---
->  drivers/iio/adc/palmas_gpadc.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/palmas_gpadc.c b/drivers/iio/adc/palmas_gpadc.c
-> index 6ef09609be9f..f9c8385c72d3 100644
-> --- a/drivers/iio/adc/palmas_gpadc.c
-> +++ b/drivers/iio/adc/palmas_gpadc.c
-> @@ -664,8 +664,8 @@ static int palmas_adc_wakeup_configure(struct palmas_gpadc *adc)
->  
->  	adc_period = adc->auto_conversion_period;
->  	for (i = 0; i < 16; ++i) {
-> -		if (((1000 * (1 << i)) / 32) < adc_period)
-> -			continue;
-> +		if (((1000 * (1 << i)) / 32) >= adc_period)
-> +			break;
->  	}
->  	if (i > 0)
->  		i--;
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/usb/mixer.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/sound/usb/mixer.c b/sound/usb/mixer.c
+index f4cdaf1ba44a..aec2499284a5 100644
+--- a/sound/usb/mixer.c
++++ b/sound/usb/mixer.c
+@@ -1572,8 +1572,9 @@ static size_t append_ctl_name(struct snd_kcontrol *kctl, const char *str)
+ static void check_no_speaker_on_headset(struct snd_kcontrol *kctl,
+ 					struct snd_card *card)
+ {
+-	const char *names_to_check[] = {
+-		"Headset", "headset", "Headphone", "headphone", NULL};
++	static const char *names_to_check[] = {
++		"Headset", "headset", "Headphone", "headphone", NULL
++	};
+ 	const char **s;
+ 	bool found = false;
+ 
+-- 
+2.31.1
 
