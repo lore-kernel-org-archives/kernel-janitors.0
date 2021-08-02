@@ -2,78 +2,90 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-14.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22333C4338F
-	for <kernel-janitors@archiver.kernel.org>; Mon,  2 Aug 2021 16:20:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54EFDC4338F
+	for <kernel-janitors@archiver.kernel.org>; Mon,  2 Aug 2021 20:44:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0D9D661104
-	for <kernel-janitors@archiver.kernel.org>; Mon,  2 Aug 2021 16:20:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36638610FE
+	for <kernel-janitors@archiver.kernel.org>; Mon,  2 Aug 2021 20:44:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232426AbhHBQUQ (ORCPT
+        id S232294AbhHBUok (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 2 Aug 2021 12:20:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38088 "EHLO mail.kernel.org"
+        Mon, 2 Aug 2021 16:44:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59178 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230265AbhHBQUP (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 2 Aug 2021 12:20:15 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id F27B960FC1;
-        Mon,  2 Aug 2021 16:20:05 +0000 (UTC)
+        id S232216AbhHBUoj (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 2 Aug 2021 16:44:39 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 4540E604D7;
+        Mon,  2 Aug 2021 20:44:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627921206;
-        bh=Yv6GiKzovgvY4BupnBuaNGO2kjtQHYIoI4v4ZNWyTe8=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=ktJjajctVuMcbdQ4eqqD0jlvMaIOjsfY+Blbp9H819CMQlG21ew4X1BsQswBuBIwy
-         EmxYgmy7SJIFZUicTMN/QZz76Kuhxvg+uOxddf7Bjsq4wHQwK+YBSwrRK+ivF+4Xo7
-         DXrBRFDLhzC6f2FL9HSjpApnMOeSbXNC5F5yyhaaM7MB4L4vhhjcfT0ZIDjJphtTpT
-         SgtXFi+D0LROZDjLtR/c0wgvvW7r4mu889aPOcIwgUUaCd26d/+uuR75OsSn9LTkzF
-         hu077RTTBBz+pmqnHDx25J0sPwZqJChaqrefRjevvyH7B+bcmvzt1GSWNknkLQYvlf
-         bS47DpwgvlQ+g==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net: phy: mscc: make some arrays static const,
- makes object smaller
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <162792120593.11903.14519905240994948263.git-patchwork-notify@kernel.org>
-Date:   Mon, 02 Aug 2021 16:20:05 +0000
-References: <20210801070155.139057-1-colin.king@canonical.com>
-In-Reply-To: <20210801070155.139057-1-colin.king@canonical.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
-        davem@davemloft.net, kuba@kernel.org, atenart@kernel.org,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        s=k20201202; t=1627937069;
+        bh=knoH2cdCXTM2mbLN1i5m2fnGMDLvpU6bTazpD8ALCvY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=PIKntqSSOeVJCJZrboiUiQMe+ehZnhNMRZqzmWtCaWWzVhF+GPu2djKQnb8h8OL90
+         qduhWNjrDtqtKHRW8rez+UXZkmXM9funm0bCK2Mz//V4twUpxWJfoNAmmSii4rAgE5
+         vatjacrAaVJzjx+VgTb85DL9Jjac1P0W9phQ/pYlh9YNDLP0zskL6cqyC6ArFC4JQp
+         jaj9Y7G8Px9mUUxFl6Ja8kus3pn9H1dcO3v7fz7Glw1EqKj1humN9Fg2wC5c9CwUNJ
+         AgVXoAbVSvEZfPfGGtbAO0z7jHfS0eAVROhHERjeNar+nHzh8111rYj9SiGNseM1WM
+         a8YUyQaLuX0TQ==
+From:   Mark Brown <broonie@kernel.org>
+To:     Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Colin King <colin.king@canonical.com>,
+        alsa-devel@alsa-project.org
+Cc:     Mark Brown <broonie@kernel.org>, kernel-janitors@vger.kernel.org,
         linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ASoC: tlv320aic32x4: make array clocks static, makes object smaller
+Date:   Mon,  2 Aug 2021 21:44:12 +0100
+Message-Id: <162793640673.55982.9347751869143903771.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20210801064807.138641-1-colin.king@canonical.com>
+References: <20210801064807.138641-1-colin.king@canonical.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
-
-This patch was applied to netdev/net-next.git (refs/heads/master):
-
-On Sun,  1 Aug 2021 08:01:55 +0100 you wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Don't populate arrays on the stack but instead them static const.
-> Makes the object code smaller by 280 bytes.
+On Sun, 1 Aug 2021 07:48:07 +0100, Colin King wrote:
+> Don't populate the array clocks on the stack but instead it
+> static. Makes the object code smaller by 316 bytes.
 > 
 > Before:
 >    text    data     bss     dec     hex filename
->   24142    4368     192   28702    701e ./drivers/net/phy/mscc/mscc_ptp.o
+>   63668   28264       0   91932   1671c ./sound/soc/codecs/tlv320aic32x4.o
 > 
 > [...]
 
-Here is the summary with links:
-  - net: phy: mscc: make some arrays static const, makes object smaller
-    https://git.kernel.org/netdev/net-next/c/1187c8c4642d
+Applied to
 
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
+Thanks!
 
+[1/1] ASoC: tlv320aic32x4: make array clocks static, makes object smaller
+      commit: ea9df9840fd5d766b9e98b0073890de4be68b062
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
