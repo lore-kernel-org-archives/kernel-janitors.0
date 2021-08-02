@@ -2,126 +2,75 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C72BDC4338F
-	for <kernel-janitors@archiver.kernel.org>; Mon,  2 Aug 2021 10:39:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7112C4338F
+	for <kernel-janitors@archiver.kernel.org>; Mon,  2 Aug 2021 14:20:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A498760F9F
-	for <kernel-janitors@archiver.kernel.org>; Mon,  2 Aug 2021 10:39:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE9BD60555
+	for <kernel-janitors@archiver.kernel.org>; Mon,  2 Aug 2021 14:20:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233219AbhHBKj5 (ORCPT
+        id S234605AbhHBOUh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 2 Aug 2021 06:39:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48584 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231357AbhHBKj4 (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 2 Aug 2021 06:39:56 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60B01C06175F;
-        Mon,  2 Aug 2021 03:39:46 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id cb3so8172438ejb.1;
-        Mon, 02 Aug 2021 03:39:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=7RZbialLtg71jkrVBr3pVt1310vgnsx2TbyqnfrzzjA=;
-        b=uG0SyCLks1zalQ3u2A5k/P8DG9LyB9J55tLHYo/UA0nL4G0SGi5VYxM/CWnBs7E5pX
-         tLPN9D2Man9FMoeJIy6VX6zfYaz2G4KnJqDatgc39KiFZTf/9IFbBUsRA2skKghIA8mc
-         7jW5ERlvnaEse9aOfWtSgG71+kkDW7L7b5f1uEYeOCMzbS0WGVR+HvRVV8F0jbqIc5KE
-         Ir6HOVPyX35sCxQuThO+WSHq46IY62f5BWuSQuQs9o9ar0UwNqkR5Dx2sroj9OMxYMgk
-         NvGf9bfM6lZyXEIZypScknsh5TcAorRjb5cHBVWYrmJDCLj1w2C5g0uDP78KWrlhqcTR
-         Ll0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=7RZbialLtg71jkrVBr3pVt1310vgnsx2TbyqnfrzzjA=;
-        b=iJ9+03p8kVybyGRT2g4ADUCimNbwjdVPtwyYLR8MZHKYAnOeCH7o+TERLLKW4xLQGh
-         N+TQhtYDOCASEqK63CM5e5PAMfxkYwUdvu1i2nRPiIy3tuvCfmjGO6iywljw+XwcjxIG
-         QRufhTYsHKZtUMoZlPv8fC/p4ayG3wAIMQEsG9qnwocB0O2JFvNnx3VEvSigy7DahA80
-         FAl97L9EOcEk7mznu0VGNnXo8qL4ejlj+hCnDcFURYDwIjexVQjf8g2ngXyHXKfWuTdT
-         gA30SLRrzvO03vcOTkXyegNaGlMKVc1K3gnsBXix7tRYBMm3esLIPlSlQBuboUPIvc39
-         XjlA==
-X-Gm-Message-State: AOAM532bSVQNbTQWN7bO5ZgbxPSvHoOZz9H7k3oh8JJpI9Pv3nH2mOD1
-        4Gp7CyYD8WhgvSKiNgbNWl3d4C/xjOE=
-X-Google-Smtp-Source: ABdhPJz3oJwSjC5GJg+587uGZagCAVZtmznvepO/C6Yxn5oV5PSg8Xg66b7ZCGku9AvQpf9/2O7VrA==
-X-Received: by 2002:a17:907:2d28:: with SMTP id gs40mr15033869ejc.193.1627900784909;
-        Mon, 02 Aug 2021 03:39:44 -0700 (PDT)
-Received: from [192.168.0.108] ([77.127.114.213])
-        by smtp.gmail.com with ESMTPSA id cz3sm5786151edb.11.2021.08.02.03.39.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Aug 2021 03:39:44 -0700 (PDT)
-Subject: Re: [PATCH] net/mlx4: make the array states static const, makes
- object smaller
-To:     Colin King <colin.king@canonical.com>,
-        Tariq Toukan <tariqt@nvidia.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210801153742.147304-1-colin.king@canonical.com>
-From:   Tariq Toukan <ttoukan.linux@gmail.com>
-Message-ID: <6a85a949-22ab-2934-da15-ff5f6c84bb52@gmail.com>
-Date:   Mon, 2 Aug 2021 13:39:42 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+        Mon, 2 Aug 2021 10:20:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36824 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S236458AbhHBOUW (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 2 Aug 2021 10:20:22 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPS id 774BF61029;
+        Mon,  2 Aug 2021 14:20:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1627914007;
+        bh=aA+DZslmPStiTUWZaOPkeOB9KFkUCERmtFZuhkcNalA=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=Np54+P/Q3UY6sdUBVkzAL2jWHzmZX2A1tbgPqMJw1h4dJbgdhMxCZFS/0n1mtO1eN
+         IXAcWNMbQClVXQMDMzHZ4i+/RlqWF+stlN/7esmMdAgV5PAkC1pphWAo7F6oOfCxTA
+         obkaxUHc2PvdomYXKqHGwGoUdapcIVa2043Y3t/wmVb31GnI1EZ6QErT1jzeAiJ1WL
+         7I1BHZSjHrn2wwh/v8LYWPK7ZMX112w4s37zAUP8np1E67WZsqQeMw637PZ2TX5N2O
+         tHCckEwoaRLGCjfSe0XCErYao3CxAitJnok2ve03hOSC0Jfed8Bv4asuuPcNyEOAzZ
+         yAcRUfpiBPO3w==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20210801153742.147304-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] cavium: switch from 'pci_' to 'dma_' API
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <162791400746.18419.15767649410545938098.git-patchwork-notify@kernel.org>
+Date:   Mon, 02 Aug 2021 14:20:07 +0000
+References: <27c2b1a5152add2b3ecdfded40f562c5e4abed14.1627714392.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <27c2b1a5152add2b3ecdfded40f562c5e4abed14.1627714392.git.christophe.jaillet@wanadoo.fr>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     dchickles@marvell.com, sburla@marvell.com, fmanlunas@marvell.com,
+        davem@davemloft.net, kuba@kernel.org, sgoutham@marvell.com,
+        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Hello:
+
+This patch was applied to netdev/net-next.git (refs/heads/master):
+
+On Sat, 31 Jul 2021 09:10:00 +0200 you wrote:
+> The wrappers in include/linux/pci-dma-compat.h should go away.
+> 
+> The patch has been generated with the coccinelle script below. It has been
+> hand modified to use 'dma_set_mask_and_coherent()' instead of
+> 'pci_set_dma_mask()/pci_set_consistent_dma_mask()' when applicable.
+> 
+> It has been compile tested.
+> 
+> [...]
+
+Here is the summary with links:
+  - cavium: switch from 'pci_' to 'dma_' API
+    https://git.kernel.org/netdev/net-next/c/1e0dd56e962e
+
+You are awesome, thank you!
+--
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
-On 8/1/2021 6:37 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Don't populate the array states on the stack but instead it
-> static const. Makes the object code smaller by 79 bytes.
-> 
-> Before:
->     text   data   bss    dec    hex filename
->    21309   8304   192  29805   746d drivers/net/ethernet/mellanox/mlx4/qp.o
-> 
-> After:
->     text   data   bss    dec    hex filename
->    21166   8368   192  29726   741e drivers/net/ethernet/mellanox/mlx4/qp.o
-> 
-> (gcc version 10.2.0)
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->   drivers/net/ethernet/mellanox/mlx4/qp.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/mellanox/mlx4/qp.c b/drivers/net/ethernet/mellanox/mlx4/qp.c
-> index 427e7a31862c..2584bc038f94 100644
-> --- a/drivers/net/ethernet/mellanox/mlx4/qp.c
-> +++ b/drivers/net/ethernet/mellanox/mlx4/qp.c
-> @@ -917,7 +917,7 @@ int mlx4_qp_to_ready(struct mlx4_dev *dev, struct mlx4_mtt *mtt,
->   {
->   	int err;
->   	int i;
-> -	enum mlx4_qp_state states[] = {
-> +	static const enum mlx4_qp_state states[] = {
->   		MLX4_QP_STATE_RST,
->   		MLX4_QP_STATE_INIT,
->   		MLX4_QP_STATE_RTR,
-> 
-
-Reviewed-by: Tariq Toukan <tariqt@nvidia.com>
-Thanks for your patch.
-
-Regards,
-Tariq
