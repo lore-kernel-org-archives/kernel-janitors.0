@@ -2,124 +2,93 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BFCDC4338F
-	for <kernel-janitors@archiver.kernel.org>; Tue,  3 Aug 2021 08:56:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E9CAC4320A
+	for <kernel-janitors@archiver.kernel.org>; Tue,  3 Aug 2021 08:59:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 46FD360E09
-	for <kernel-janitors@archiver.kernel.org>; Tue,  3 Aug 2021 08:56:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27DE160EB9
+	for <kernel-janitors@archiver.kernel.org>; Tue,  3 Aug 2021 08:59:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234823AbhHCI4Z (ORCPT
+        id S234740AbhHCI7b (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 3 Aug 2021 04:56:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60462 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234690AbhHCI4Y (ORCPT
+        Tue, 3 Aug 2021 04:59:31 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:35448
+        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234418AbhHCI7b (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 3 Aug 2021 04:56:24 -0400
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A881C06175F
-        for <kernel-janitors@vger.kernel.org>; Tue,  3 Aug 2021 01:56:14 -0700 (PDT)
-Received: by mail-pj1-x1034.google.com with SMTP id dw2-20020a17090b0942b0290177cb475142so2911974pjb.2
-        for <kernel-janitors@vger.kernel.org>; Tue, 03 Aug 2021 01:56:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=philpotter-co-uk.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2VSBHI2kOyfU03u1WdUTP9YGD6lc5dbX5FmCawILdkw=;
-        b=xFyAfNKpx2lHljwdqXYLDuofUx/eI05GpD7CjNHjSTi8OzGQi6nhKb/M67VmZsIo5l
-         zgZZMg9JuCvYqwMt6HwWXuvZlVcen+VNhITVZNn4VZTLdo+zZbl7k3bQocWzR1lfvnJ7
-         s7/ZpmzSnx7ciwZjQm/x3Z8Q1fpQXLy31V2OBrGTPPOrUvlUGeDxFcW4pbce1HRnLZxc
-         6qHPZEcN5kwzyUwpTQ2ivR8gwSTDz4lFkNNr40VrvmoFb2MOnfpLCyv2Tk8a7nPJmiAI
-         xD9ScBoY0hevG7RuaXFXFPu+TS+nThE779jNPUZbARFbaoeVb/gxUO3BPVihQ5zEIpsK
-         tBOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2VSBHI2kOyfU03u1WdUTP9YGD6lc5dbX5FmCawILdkw=;
-        b=AhiCFqHrp5G6oz43Xo3XrPlF+1lMF6UeA3VoX+ZmM/ClG9TveWCtNJZ+9QWsfJe+X5
-         rP0DSm3jT5d+JXMHdMIe7lP1i9JYujcBY/7LEY9PrTrTx/IDVH5Va/+zIGVeNoDPDMnn
-         5xXl1Fy/SkQRI80ZrQy2+auHrOuHdSB2FxhPxbIQtYMNE90rz+HfyucsVTInFEjFbazv
-         GovSrpbssResAEIYN4n+ShtCiN/EXWECs0+5B4xt3frJuo2CoRiTiYbQc3dNscWR7A52
-         dcmmuoAUk42QU/TvWMWgAmS4DG4MSmhpap0km2gvHcBoHfusCYSHc8/YueVgakPidXa/
-         lPvg==
-X-Gm-Message-State: AOAM531pQwp3L46D+izOfv5EG7bP6sAp0khMr5+XXQcA5cbITMn/XChQ
-        pa1kEQjCp2vMOaeuucnuR9m7911A2ckmcl+o8R0rxg==
-X-Google-Smtp-Source: ABdhPJzPp7C0RinR/iokila0E0mzC0TMDoH9Ys8TEaTlWqVMLd+0B6mNL7o+4jpCfMcAD5navb9xQle/6NO9/YMqSJs=
-X-Received: by 2002:a17:903:2302:b029:12c:bb4f:cbdf with SMTP id
- d2-20020a1709032302b029012cbb4fcbdfmr6974312plh.22.1627980973355; Tue, 03 Aug
- 2021 01:56:13 -0700 (PDT)
+        Tue, 3 Aug 2021 04:59:31 -0400
+Received: from [10.172.193.212] (1.general.cking.uk.vpn [10.172.193.212])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 479B73F351;
+        Tue,  3 Aug 2021 08:59:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1627981159;
+        bh=zELCh9ra4UtYmy8Y/TSDhcIk1+Y5vnqIJaopipf2xoM=;
+        h=Subject:From:To:Cc:References:Message-ID:Date:MIME-Version:
+         In-Reply-To:Content-Type;
+        b=mk5/jUjgrFamS0emhuW53jEmFb2QGZ/KvZLj/NnG0jCUJsIWVADqJYCNMesejSHas
+         JKBXs85FCPu3LcgKABvju+XwOR6Elt1Pn7VtzmtyutxTJHu7QbkaYnB4KCMrBSoA6f
+         ZVDZ+wjOlp7ks5h4weupB2P6YnBpV3NeQgwPvNBeQjSaEabruYIyAzGOztKPvLImzv
+         WZYhUOv+gT6nGKVT4LCVtEFtwfBdvNGt+McRJrmysKxSMakehCu4vK9OfNVmaZHhnk
+         35U1PFLBcYGgZ/M2zxEO/CqhaJVTLQJEsVm/RX562FvCIdRBo5WrxK6cv4CJCtbXLL
+         XGzOI1wy9sYzQ==
+Subject: NAK: [PATCH][next] staging: r8188eu: Fix spelling mistake "Cancle" ->
+ "Cancel"
+From:   Colin Ian King <colin.king@canonical.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-staging@lists.linux.dev
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210803085331.320859-1-colin.king@canonical.com>
+Message-ID: <ff4ad2de-6db7-1ff3-1e4b-4d4fd4eaf122@canonical.com>
+Date:   Tue, 3 Aug 2021 09:59:18 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 MIME-Version: 1.0
-References: <20210803071811.8142-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20210803071811.8142-1-lukas.bulwahn@gmail.com>
-From:   Phillip Potter <phil@philpotter.co.uk>
-Date:   Tue, 3 Aug 2021 09:56:02 +0100
-Message-ID: <CAA=Fs0=V_gcfDUxn1m9OkR78cht0S=j02BsHajG1A3vuGTqQJw@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: update STAGING - REALTEK RTL8188EU DRIVERS
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Larry Finger <Larry.Finger@lwfinger.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-staging@lists.linux.dev,
-        Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
-        kernel-janitors@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20210803085331.320859-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, 3 Aug 2021 at 08:18, Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
->
-> Commit 55dfa29b43d2 ("staging: rtl8188eu: remove rtl8188eu driver from
-> staging dir") removes ./drivers/staging/rtl8188eu, but misses to adjust
-> the STAGING - REALTEK RTL8188EU DRIVERS section in MAINTAINERS.
->
-> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains:
->
->   no file matches    F:    drivers/staging/rtl8188eu/
->
-> A refurnished rtl8188eu driver is available in ./drivers/staging/r8188eu/
-> and there is no existing section in MAINTAINERS for that directory.
->
-> So, reuse the STAGING - REALTEK RTL8188EU DRIVERS section and point to the
-> refurnished driver with its current developers and maintainers according
-> to the current git log.
->
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+On 03/08/2021 09:53, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> There are spelling mistakes in a RT_TRACE message and a comment. Fix them.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
-> applies cleanly on next-20210803
->
-> Philipp, Larry, please ack.
->
-> Greg, please pick this minor cleanup on your staging-next tree.
->
->  MAINTAINERS | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 36aee8517ab0..ef32c02b3e4d 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -17723,8 +17723,9 @@ F:      drivers/staging/olpc_dcon/
->
->  STAGING - REALTEK RTL8188EU DRIVERS
->  M:     Larry Finger <Larry.Finger@lwfinger.net>
-> -S:     Odd Fixes
-> -F:     drivers/staging/rtl8188eu/
-> +M:     Phillip Potter <phil@philpotter.co.uk>
-> +S:     Supported
-> +F:     drivers/staging/r8188eu/
->
->  STAGING - REALTEK RTL8712U DRIVERS
->  M:     Larry Finger <Larry.Finger@lwfinger.net>
-> --
-> 2.17.1
->
-Sorry, not sure how I missed this :-)
+>  drivers/staging/r8188eu/core/rtw_mlme.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/staging/r8188eu/core/rtw_mlme.c b/drivers/staging/r8188eu/core/rtw_mlme.c
+> index a6d62074289f..a2c1e03e874f 100644
+> --- a/drivers/staging/r8188eu/core/rtw_mlme.c
+> +++ b/drivers/staging/r8188eu/core/rtw_mlme.c
+> @@ -1243,11 +1243,10 @@ void rtw_joinbss_event_prehandle(struct adapter *adapter, u8 *pbuf)
+>  					RT_TRACE(_module_rtl871x_mlme_c_, _drv_info_, ("adhoc mode, fw_state:%x", get_fwstate(pmlmepriv)));
+>  				}
+>  
+> -			/* s5. Cancle assoc_timer */
+> +			/* s5. Cancel assoc_timer */
+>  			_cancel_timer(&pmlmepriv->assoc_timer, &timer_cancelled);
+>  
+> -			RT_TRACE(_module_rtl871x_mlme_c_, _drv_info_, ("Cancle assoc_timer\n"));
+> -
+> +			RT_TRACE(_module_rtl871x_mlme_c_, _drv_info_, ("cancel assoc_timer\n"));
+>  		} else {
+>  			RT_TRACE(_module_rtl871x_mlme_c_, _drv_err_, ("rtw_joinbss_event_callback err: fw_state:%x", get_fwstate(pmlmepriv)));
+>  			spin_unlock_bh(&pmlmepriv->scanned_queue.lock);
+> 
 
-Acked-by: Phillip Potter <phil@philpotter.co.uk>
+NAK. I've found a bunch more typos in this driver, I'll send a V2
+including this fix.
+
+Colin
