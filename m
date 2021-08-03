@@ -2,114 +2,98 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2B0DC43214
-	for <kernel-janitors@archiver.kernel.org>; Tue,  3 Aug 2021 11:36:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B820C4338F
+	for <kernel-janitors@archiver.kernel.org>; Tue,  3 Aug 2021 12:28:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AA83360560
-	for <kernel-janitors@archiver.kernel.org>; Tue,  3 Aug 2021 11:36:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 269FB60F70
+	for <kernel-janitors@archiver.kernel.org>; Tue,  3 Aug 2021 12:28:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235844AbhHCLhF (ORCPT
+        id S235533AbhHCM2w (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 3 Aug 2021 07:37:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43520 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235816AbhHCLg7 (ORCPT
+        Tue, 3 Aug 2021 08:28:52 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:49830
+        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235309AbhHCM2w (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 3 Aug 2021 07:36:59 -0400
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93002C061798;
-        Tue,  3 Aug 2021 04:36:35 -0700 (PDT)
-Received: by mail-wr1-x436.google.com with SMTP id m12so20180095wru.12;
-        Tue, 03 Aug 2021 04:36:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=PrYYzdKoM6W71eqcIHLFEPh0q9EP2OIxcHsT7WnN/G4=;
-        b=hRhks1I/oGA0EkKtCA2m6OnUsrR4kk50TWZcVSV1Z0RKa99ytTBUVMKy9/PxwYb95D
-         D+bWcdJG/COXWFCnNLyeij46Lyz/OpFW7A4vzbSSShKZW7CD3eHAk1Y/DNS3vCW65nDS
-         uOMvXKuofwaqdZsyM7SVTZHT2fEYWRm52aDDZnfRk1qHQENOFCMuL5vUbNtuQHaxImu4
-         5PvPumBnfau4XeZlcRcDdnc2livLnNAnqQGY3m7hSBQamexBoDeM5YTfLjZhdxT/ZjD3
-         OpEisDyABlAQJxjeB67ENr559aEc7bMTbc8XL6sBoj9OWCfdcJnWVoW/94I3M0C2ucrF
-         F5pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=PrYYzdKoM6W71eqcIHLFEPh0q9EP2OIxcHsT7WnN/G4=;
-        b=hZ+wQHP3zDZvidah6SUO7cVajGBTTsLo9JHo3JIqMZIyLptlfVKQJjmmpRFxq3O0oz
-         DmmkCbLCg+pE33rNVzLmpB99IT91XODM6b1pN9+lijesh/jwBxEuFbu/SnQ1FVDtFVmN
-         WVndUhEWKOaViqcRZRrVZcMieWec/bmTOJ5vzIfDp4+bnWo14xGIdR1r90mn4or3KlPt
-         FRlkCzLg9HE4H2mgDP+V6M6/frc16xwb8qtsECYOh1hWj3yKQzCz3DfFcCrdCAJnrJEX
-         dkXfuX2mQ0kVXU/uvUX40WdYyf7pGCxnTuyxqNj4xLyPBaka5Ax+FgUuccfaQSVLOjxQ
-         r4Jw==
-X-Gm-Message-State: AOAM530ZuukVC9jNlXrJ/41vCCorDFuAs4eLYwM+pCu2IMiIgAVfRiv/
-        DxMlIAekh/unYDaepUPphwo=
-X-Google-Smtp-Source: ABdhPJwNNZqZUBOfqtvhzzeT/J3aPn60sYQPoG3Pyi6vu7iyq7tWarSXcurlyIFKuR3whMTHs4alWw==
-X-Received: by 2002:a5d:4688:: with SMTP id u8mr22699843wrq.65.1627990594165;
-        Tue, 03 Aug 2021 04:36:34 -0700 (PDT)
-Received: from felia.fritz.box ([2001:16b8:2de7:c500:a5d6:9db:2c2c:b89d])
-        by smtp.gmail.com with ESMTPSA id m14sm13961364wrs.56.2021.08.03.04.36.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Aug 2021 04:36:32 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, Randy Dunlap <rdunlap@infradead.org>
-Cc:     "H . Peter Anvin" <hpa@zytor.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Lubomir Rintel <lkundrak@v3.sk>, Pavel Machek <pavel@ucw.cz>,
-        Lee Jones <lee.jones@linaro.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        platform-driver-x86@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH 9/9] x86: ia32.h: adjust comment for endif of CONFIG_IA32_EMULATION
-Date:   Tue,  3 Aug 2021 13:35:31 +0200
-Message-Id: <20210803113531.30720-10-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210803113531.30720-1-lukas.bulwahn@gmail.com>
-References: <20210803113531.30720-1-lukas.bulwahn@gmail.com>
+        Tue, 3 Aug 2021 08:28:52 -0400
+Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id D154A3F09C;
+        Tue,  3 Aug 2021 12:28:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1627993719;
+        bh=oXGtMXBZ6/OGmpA64zDaYIoChgBpydPk9ddxo6Jrg+c=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=cl6lKJkA1kWqtnek77yG6ZDauzengYEyslQAmlke+/fKzcUd5URP+119L6+WU4+0J
+         vufZbJu/7E2+bvdxVwlBBfgO9FEyuOOOtAH9/9kPLQPfuDDZHO0Dna27WuGK2J+aBr
+         yGtbQOaRQ+gu2mUOXIbDzUpN1kT73/BC48lbrSUPKJbD3A+R8xzguds9yWO2QdOBmm
+         +/2kl6c0ZOMYamQv3YsqP8Ydziv70so/hF/HmYgzV325PQq4i7P49ryTu19ixD0yIe
+         KCbhtM5JuEMLA0Ti84hcJaT4Klobkthv1o1AQwto30KyIFZtsMrgtBkM9eA7JHLMeI
+         vwJQ9N/nJjkPA==
+From:   Colin King <colin.king@canonical.com>
+To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][V2] ALSA: usb-audio: make array static const, makes object smaller
+Date:   Tue,  3 Aug 2021 13:28:39 +0100
+Message-Id: <20210803122839.7143-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.31.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The content of the ia32 header is guarded by
-"ifdef CONFIG_IA32_EMULATION". The comment on the corresponding endif
-refers slightly mismatching to CONFIG_IA32_SUPPORT instead.
+From: Colin Ian King <colin.king@canonical.com>
 
-Hence, ./scripts/checkkconfigsymbols.py warns:
+Don't populate array names_to_check on the stack but instead it
+static.  Makes the object code smaller by 56 bytes.  Also clean
+up checkpatch warning by adding extra const for names_to_check
+and pointer s.
 
-IA32_SUPPORT
-Referencing files: arch/x86/include/asm/ia32.h
+Before:
+    text    data     bss     dec     hex filename
+  103512   34380       0  137892   21aa4 ./sound/usb/mixer.o
 
-Adjust the comment on endif to the actual ifdef condition.
+After:
+    text    data     bss     dec     hex filename
+  103264   34572       0  137836   21a6c ./sound/usb/mixer.o
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+(gcc version 10.2.0)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- arch/x86/include/asm/ia32.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/ia32.h b/arch/x86/include/asm/ia32.h
-index 2c5f7861d373..fada857f0a1e 100644
---- a/arch/x86/include/asm/ia32.h
-+++ b/arch/x86/include/asm/ia32.h
-@@ -68,6 +68,6 @@ extern void ia32_pick_mmap_layout(struct mm_struct *mm);
+V2: Clean up checkpatch warning on const-ness for names_to_check.
+    Add extra const to clean up build warning on pointer s.
+---
+ sound/usb/mixer.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/sound/usb/mixer.c b/sound/usb/mixer.c
+index db7cb6b6dc4e..43bc59575a6e 100644
+--- a/sound/usb/mixer.c
++++ b/sound/usb/mixer.c
+@@ -1572,9 +1572,9 @@ static size_t append_ctl_name(struct snd_kcontrol *kctl, const char *str)
+ static void check_no_speaker_on_headset(struct snd_kcontrol *kctl,
+ 					struct snd_card *card)
+ {
+-	const char *names_to_check[] = {
++	static const char * const names_to_check[] = {
+ 		"Headset", "headset", "Headphone", "headphone", NULL};
+-	const char **s;
++	const char * const *s;
+ 	bool found = false;
  
- #endif
- 
--#endif /* !CONFIG_IA32_SUPPORT */
-+#endif /* CONFIG_IA32_EMULATION */
- 
- #endif /* _ASM_X86_IA32_H */
+ 	if (strcmp("Speaker", kctl->id.name))
 -- 
-2.17.1
+2.31.1
 
