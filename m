@@ -5,53 +5,57 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 423C3C4320E
-	for <kernel-janitors@archiver.kernel.org>; Tue,  3 Aug 2021 14:50:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 209CDC4338F
+	for <kernel-janitors@archiver.kernel.org>; Tue,  3 Aug 2021 15:09:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2C76E60F35
-	for <kernel-janitors@archiver.kernel.org>; Tue,  3 Aug 2021 14:50:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07AA660184
+	for <kernel-janitors@archiver.kernel.org>; Tue,  3 Aug 2021 15:09:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236109AbhHCOuD (ORCPT
+        id S236599AbhHCPJf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 3 Aug 2021 10:50:03 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:55830
+        Tue, 3 Aug 2021 11:09:35 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:57128
         "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234524AbhHCOuC (ORCPT
+        by vger.kernel.org with ESMTP id S236685AbhHCPJT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 3 Aug 2021 10:50:02 -0400
+        Tue, 3 Aug 2021 11:09:19 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 0C69B3F0FA;
-        Tue,  3 Aug 2021 14:49:50 +0000 (UTC)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 87E4E3F070;
+        Tue,  3 Aug 2021 15:09:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1628002190;
-        bh=AuuIcnFkWh+0MWsN35BTfKmOqzjfjcwoZ+u0/Q+59dA=;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-         MIME-Version:Content-Type;
-        b=vOBGGw6eyp2iriBNOPZLV0Nhg8P7OFyNNQ+oAgd8xLrM/8Z4Q+O6m+Q/o4D4iyjxX
-         fvYUzcC+l2f1IAnX9jaCNmm9Rv9NYRHBoVC/tZ7kP5SQAzNEtzsC/z7ah+jJ9IXgUC
-         KxEX1Yql0IEYOS9xKgbqezIEDzj2RLW7a1hq8paQioN48IyIf6WbNoWxaWDJwSjwRU
-         oE4VBuoeZ19FQq1yjTaeFaYFIJtgRTn260dygEVDl/FMGsyNfPPKqXUdA/R6WJYIYT
-         9uKTmidrgNAtZc3wmiU5ikkObfXjmt1RQcoRmk569yy9k7Bufx5znKIOKlKSnJFHpL
-         YYAXG0vc/jQgw==
+        s=20210705; t=1628003344;
+        bh=yujcAW928JS1+WAa5ppXQvA0AiE4xUVDj/s66hatc0A=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=mREzlHPwx8jgCXwCQp5AweexjLomZrqnpv852tP8GEMfnDNQ9EJZuB1sab7bJNrGk
+         D7QfrRHgwLxawch47XtG9QsCVQPOGIvpgWHr9SDIg4f0MgRHnL21bIUQVP2+lKueKF
+         rQOEhkLmppi2Cu5ldSdAZmpjBIL8PyThXJuBTn8v47zgboCQ+mtaKrMNVaCgRcR76q
+         +rGSxnkpHTe/HkOjautuv4a3h4TvjTJX2hajKOnSSLz9oXKWYardQxD98JjMDR3Igu
+         jr//IdPSl+37xIHBh7CDoSUnpfddVTA3gkeTcmcXkrDffArQJxK9mAkPKq6n45huO4
+         F+/KQhEPocRXw==
 From:   Colin King <colin.king@canonical.com>
-To:     Ping-Ke Shih <pkshih@realtek.com>,
+To:     Arend van Spriel <aspriel@gmail.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Chi-hsien Lin <chi-hsien.lin@infineon.com>,
+        Wright Feng <wright.feng@infineon.com>,
+        Chung-hsien Hsu <chung-hsien.hsu@infineon.com>,
         Kalle Valo <kvalo@codeaurora.org>,
         "David S . Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, Joe Perches <joe@perches.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3][V2] rtlwifi: rtl8192de: make arrays static const, makes object smaller
-Date:   Tue,  3 Aug 2021 15:49:48 +0100
-Message-Id: <20210803144949.79433-2-colin.king@canonical.com>
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-wireless@vger.kernel.org,
+        brcm80211-dev-list.pdl@broadcom.com,
+        SHA-cyfmac-dev-list@infineon.com, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] brcmfmac: firmware: Fix uninitialized variable ret
+Date:   Tue,  3 Aug 2021 16:09:04 +0100
+Message-Id: <20210803150904.80119-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210803144949.79433-1-colin.king@canonical.com>
-References: <20210803144949.79433-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -61,113 +65,30 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Don't populate arrays the stack but instead make them static const. Replace
-array channel_info with channel_all since it contains the same data as
-channel_all. Makes object code smaller by 961 bytes.
+Currently the variable ret is uninitialized and is only set if
+the pointer alt_path is non-null. Fix this by ininitializing ret
+to zero.
 
-Before:
-   text	   data	    bss	    dec	   hex	filename
- 128147	  44250	   1024	 173421	 2a56d	../realtek/rtlwifi/rtl8192de/phy.o
-
-After
-   text	   data	    bss	    dec	   hex	filename
- 127122	  44314	   1024	 172460	 2a1ac	../realtek/rtlwifi/rtl8192de/phy.o
-
-(gcc version 10.2.0)
-
+Addresses-Coverity: ("Uninitialized scalar variable")
+Fixes: 5ff013914c62 ("brcmfmac: firmware: Allow per-board firmware binaries")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/firmware.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-V2: Remove channel_info and replace with channel_all since it is the
-    same as channel_info. Thanks to Joe Perches for spotting this.
----
- .../wireless/realtek/rtlwifi/rtl8192de/phy.c  | 48 ++++++++-----------
- 1 file changed, 20 insertions(+), 28 deletions(-)
-
-diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/phy.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/phy.c
-index 50c2d8f6f9c0..8ae69d914312 100644
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/phy.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/phy.c
-@@ -160,6 +160,15 @@ static u32 targetchnl_2g[TARGET_CHNL_NUM_2G] = {
- 	25711, 25658, 25606, 25554, 25502, 25451, 25328
- };
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/firmware.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/firmware.c
+index adfdfc654b10..4f387e868120 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/firmware.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/firmware.c
+@@ -680,7 +680,7 @@ int brcmf_fw_get_firmwares(struct device *dev, struct brcmf_fw_request *req,
+ 	struct brcmf_fw_item *first = &req->items[0];
+ 	struct brcmf_fw *fwctx;
+ 	char *alt_path;
+-	int ret;
++	int ret = 0;
  
-+static const u8 channel_all[59] = {
-+	1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
-+	36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58,
-+	60, 62, 64, 100, 102, 104, 106, 108, 110, 112,
-+	114, 116, 118, 120, 122, 124, 126, 128,	130,
-+	132, 134, 136, 138, 140, 149, 151, 153, 155,
-+	157, 159, 161, 163, 165
-+};
-+
- static u32 _rtl92d_phy_calculate_bit_shift(u32 bitmask)
- {
- 	u32 i = ffs(bitmask);
-@@ -1354,14 +1363,6 @@ static void _rtl92d_phy_switch_rf_setting(struct ieee80211_hw *hw, u8 channel)
- 
- u8 rtl92d_get_rightchnlplace_for_iqk(u8 chnl)
- {
--	u8 channel_all[59] = {
--		1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
--		36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58,
--		60, 62, 64, 100, 102, 104, 106, 108, 110, 112,
--		114, 116, 118, 120, 122, 124, 126, 128,	130,
--		132, 134, 136, 138, 140, 149, 151, 153, 155,
--		157, 159, 161, 163, 165
--	};
- 	u8 place = chnl;
- 
- 	if (chnl > 14) {
-@@ -3220,37 +3221,28 @@ void rtl92d_phy_config_macphymode_info(struct ieee80211_hw *hw)
- u8 rtl92d_get_chnlgroup_fromarray(u8 chnl)
- {
- 	u8 group;
--	u8 channel_info[59] = {
--		1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
--		36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56,
--		58, 60, 62, 64, 100, 102, 104, 106, 108,
--		110, 112, 114, 116, 118, 120, 122, 124,
--		126, 128, 130, 132, 134, 136, 138, 140,
--		149, 151, 153, 155, 157, 159, 161, 163,
--		165
--	};
- 
--	if (channel_info[chnl] <= 3)
-+	if (channel_all[chnl] <= 3)
- 		group = 0;
--	else if (channel_info[chnl] <= 9)
-+	else if (channel_all[chnl] <= 9)
- 		group = 1;
--	else if (channel_info[chnl] <= 14)
-+	else if (channel_all[chnl] <= 14)
- 		group = 2;
--	else if (channel_info[chnl] <= 44)
-+	else if (channel_all[chnl] <= 44)
- 		group = 3;
--	else if (channel_info[chnl] <= 54)
-+	else if (channel_all[chnl] <= 54)
- 		group = 4;
--	else if (channel_info[chnl] <= 64)
-+	else if (channel_all[chnl] <= 64)
- 		group = 5;
--	else if (channel_info[chnl] <= 112)
-+	else if (channel_all[chnl] <= 112)
- 		group = 6;
--	else if (channel_info[chnl] <= 126)
-+	else if (channel_all[chnl] <= 126)
- 		group = 7;
--	else if (channel_info[chnl] <= 140)
-+	else if (channel_all[chnl] <= 140)
- 		group = 8;
--	else if (channel_info[chnl] <= 153)
-+	else if (channel_all[chnl] <= 153)
- 		group = 9;
--	else if (channel_info[chnl] <= 159)
-+	else if (channel_all[chnl] <= 159)
- 		group = 10;
- 	else
- 		group = 11;
+ 	brcmf_dbg(TRACE, "enter: dev=%s\n", dev_name(dev));
+ 	if (!fw_cb)
 -- 
 2.31.1
 
