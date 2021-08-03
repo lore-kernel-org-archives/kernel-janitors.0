@@ -2,84 +2,138 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30D9DC4338F
-	for <kernel-janitors@archiver.kernel.org>; Tue,  3 Aug 2021 10:56:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3888BC4338F
+	for <kernel-janitors@archiver.kernel.org>; Tue,  3 Aug 2021 11:06:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1015B61037
-	for <kernel-janitors@archiver.kernel.org>; Tue,  3 Aug 2021 10:56:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 168CC60F48
+	for <kernel-janitors@archiver.kernel.org>; Tue,  3 Aug 2021 11:06:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235463AbhHCK4g (ORCPT
+        id S235329AbhHCLGr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 3 Aug 2021 06:56:36 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:43394
-        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235204AbhHCK4g (ORCPT
+        Tue, 3 Aug 2021 07:06:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36272 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234156AbhHCLGr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 3 Aug 2021 06:56:36 -0400
-Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 678F63F237;
-        Tue,  3 Aug 2021 10:56:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1627988177;
-        bh=yxPaty2Fj2e6kypVOL8AW6aRDjC9TLR/sMRLnpj4poI=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=H53X2GtdV+4IPOVm9WB60IjnnvAqmFQ4jGNoetu4mPD0YXwNfpEnCOx1mL8FanQVW
-         fVRgKudX22XjAR/Fmhsm0O0ZB4LlHSr5inwn7I2MTU7WDPM+3IK6rRHIl8Pxf1VKJg
-         2LjgFG0/TebLRWPnSVyDVFqngtKHgtkSU3OuyFmbcNo9xQhAqHmgxTYi2YH97BOgUr
-         kQTNnqGma/Af0Oz/UtBJiddtzdd0nqok21xxozfJT0WHxw3/JdW4yU56zu77csz2fn
-         r0vxxmguvTkHjvfqYEic5kepyTfEiArIh2O9/23yo/9YGKKL/eZmfSaO6o9pLZHfwo
-         NB3RV7jXQhdWA==
-From:   Colin King <colin.king@canonical.com>
-To:     Sunil Goutham <sgoutham@marvell.com>,
-        Linu Cherian <lcherian@marvell.com>,
-        Geetha sowjanya <gakula@marvell.com>,
-        Jerin Jacob <jerinj@marvell.com>,
-        hariprasad <hkelam@marvell.com>,
-        Subbaraya Sundeep <sbhatta@marvell.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] octeontx2-af: Fix spelling mistake "Makesure" -> "Make sure"
-Date:   Tue,  3 Aug 2021 11:56:17 +0100
-Message-Id: <20210803105617.338546-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.31.1
+        Tue, 3 Aug 2021 07:06:47 -0400
+Received: from mail-oi1-x22b.google.com (mail-oi1-x22b.google.com [IPv6:2607:f8b0:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 545B9C061757;
+        Tue,  3 Aug 2021 04:06:36 -0700 (PDT)
+Received: by mail-oi1-x22b.google.com with SMTP id a19so27753228oiw.6;
+        Tue, 03 Aug 2021 04:06:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=uUCMsyWVC5nqDt+/pqXl+IAnxIIadmdGAWl6iK82XkQ=;
+        b=pHGEN430fPFq577eTfEEJ/NxMt/7LmXFXeurWJv4SI3xPyUA69XqxNxJuI4YGHYsa3
+         AZgs9i5AJ6Nhm8qdEaHR51SkZJ2l5H+8HBtFoXet/F+O0b/A28pwgghP44Wgd6a2FUZK
+         +32vbOfZOiXSWn8bVYY862TR+MS5STiSqBVbixpgQkVYAVCBAYwUbdjAWDVIol9O1pXc
+         HQTKeMZkDcBnT1oHtBSLO8tEA3RmhkKf/L2P4OCEk2ytbjAFxK/IVZNiuAL9n9+5IeBe
+         64PvNzs93tsgBNfsZOt9+dN66KEP1u8LypyQkmGcIDQcw2vdNgm2GRDPz7i+bpPRXcxx
+         P3GQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=uUCMsyWVC5nqDt+/pqXl+IAnxIIadmdGAWl6iK82XkQ=;
+        b=OytgaY0KjwyLaLx/dwPHo1t4+liONgGzXMjTTWJQs6ek9NagfeOxEvZJZz32Ml9Ynw
+         ss2a5ItoJx0m7ZF2OWRx+2l5T9hJBb2Qo37qPS0R4u+X7daNkpoVY3O8H6Kn1gBrIAVB
+         9kbkS2Y6RcLOaab15MyRIG9J8Qv/HapTjkP319hltCm5OiGFE7qi7JDTPsHHgtmbHRS0
+         ni1QU0T2YT+C5kUXyacJa2YLk16zyr8VTxMpRAY9DPjUkp2r/7I9cjw8MmypbD50yKy8
+         krt7vYZJ6ocoyiJuZgzw5bRgEss4Z6su96Y/1w5gvl26/7AJPZdqAUBZ/rm3OLeiG4c7
+         1OCg==
+X-Gm-Message-State: AOAM531/e2Z3RreP/YiSDwXlrHu4xZ7e84fnXwNgwvKD7t8MnXS9viGj
+        U0M5sWkGSrr65LUD8qQy/H+xebnHii0=
+X-Google-Smtp-Source: ABdhPJygUKdOxCVVuEgHQp7Q0u4U5nfxIyXQ6vnHRcQ28N4gAV66JxiHI25ikJUnPJ7AlNVmgZzArw==
+X-Received: by 2002:a05:6808:188a:: with SMTP id bi10mr14346372oib.73.1627988795500;
+        Tue, 03 Aug 2021 04:06:35 -0700 (PDT)
+Received: from 2603-8090-2005-39b3-0000-0000-0000-1010.res6.spectrum.com (2603-8090-2005-39b3-0000-0000-0000-1010.res6.spectrum.com. [2603:8090:2005:39b3::1010])
+        by smtp.gmail.com with ESMTPSA id c2sm2192783ooo.28.2021.08.03.04.06.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Aug 2021 04:06:34 -0700 (PDT)
+Sender: Larry Finger <larry.finger@gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: update STAGING - REALTEK RTL8188EU DRIVERS
+To:     Phillip Potter <phil@philpotter.co.uk>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-staging@lists.linux.dev,
+        Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
+        kernel-janitors@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20210803071811.8142-1-lukas.bulwahn@gmail.com>
+ <CAA=Fs0=V_gcfDUxn1m9OkR78cht0S=j02BsHajG1A3vuGTqQJw@mail.gmail.com>
+From:   Larry Finger <Larry.Finger@lwfinger.net>
+Message-ID: <5e1c7274-61c8-87fd-a281-11d9e7cbbfb4@lwfinger.net>
+Date:   Tue, 3 Aug 2021 06:06:27 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAA=Fs0=V_gcfDUxn1m9OkR78cht0S=j02BsHajG1A3vuGTqQJw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
-
-There is a spelling mistake in a NL_SET_ERR_MSG_MOD message. Fix it.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/ethernet/marvell/octeontx2/af/rvu_devlink.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_devlink.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_devlink.c
-index f95573a66ed4..6f963b2f54a7 100644
---- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_devlink.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_devlink.c
-@@ -1397,7 +1397,7 @@ static int rvu_af_dl_dwrr_mtu_validate(struct devlink *devlink, u32 id,
- 		NL_SET_ERR_MSG_MOD(extack,
- 				   "Changing DWRR MTU is not supported when there are active NIXLFs");
- 		NL_SET_ERR_MSG_MOD(extack,
--				   "Makesure none of the PF/VF interfaces are initialized and retry");
-+				   "Make sure none of the PF/VF interfaces are initialized and retry");
- 		return -EOPNOTSUPP;
- 	}
- 
--- 
-2.31.1
+On 8/3/21 3:56 AM, Phillip Potter wrote:
+> On Tue, 3 Aug 2021 at 08:18, Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+>>
+>> Commit 55dfa29b43d2 ("staging: rtl8188eu: remove rtl8188eu driver from
+>> staging dir") removes ./drivers/staging/rtl8188eu, but misses to adjust
+>> the STAGING - REALTEK RTL8188EU DRIVERS section in MAINTAINERS.
+>>
+>> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains:
+>>
+>>    no file matches    F:    drivers/staging/rtl8188eu/
+>>
+>> A refurnished rtl8188eu driver is available in ./drivers/staging/r8188eu/
+>> and there is no existing section in MAINTAINERS for that directory.
+>>
+>> So, reuse the STAGING - REALTEK RTL8188EU DRIVERS section and point to the
+>> refurnished driver with its current developers and maintainers according
+>> to the current git log.
+>>
+>> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+>> ---
+>> applies cleanly on next-20210803
+>>
+>> Philipp, Larry, please ack.
+>>
+>> Greg, please pick this minor cleanup on your staging-next tree.
+>>
+>>   MAINTAINERS | 5 +++--
+>>   1 file changed, 3 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index 36aee8517ab0..ef32c02b3e4d 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -17723,8 +17723,9 @@ F:      drivers/staging/olpc_dcon/
+>>
+>>   STAGING - REALTEK RTL8188EU DRIVERS
+>>   M:     Larry Finger <Larry.Finger@lwfinger.net>
+>> -S:     Odd Fixes
+>> -F:     drivers/staging/rtl8188eu/
+>> +M:     Phillip Potter <phil@philpotter.co.uk>
+>> +S:     Supported
+>> +F:     drivers/staging/r8188eu/
+>>
+>>   STAGING - REALTEK RTL8712U DRIVERS
+>>   M:     Larry Finger <Larry.Finger@lwfinger.net>
+>> --
+>> 2.17.1
+>>
+> Sorry, not sure how I missed this :-)
+> 
+> Acked-by: Phillip Potter <phil@philpotter.co.uk>
+> 
+Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
 
