@@ -2,91 +2,93 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1305C4338F
-	for <kernel-janitors@archiver.kernel.org>; Tue,  3 Aug 2021 14:03:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D443AC4338F
+	for <kernel-janitors@archiver.kernel.org>; Tue,  3 Aug 2021 14:05:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 87DC860F94
-	for <kernel-janitors@archiver.kernel.org>; Tue,  3 Aug 2021 14:03:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA85360EC0
+	for <kernel-janitors@archiver.kernel.org>; Tue,  3 Aug 2021 14:05:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236476AbhHCODt (ORCPT
+        id S236406AbhHCOF4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 3 Aug 2021 10:03:49 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:52536
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236412AbhHCODr (ORCPT
+        Tue, 3 Aug 2021 10:05:56 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:47400 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236045AbhHCOFz (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 3 Aug 2021 10:03:47 -0400
-Received: from [10.172.193.212] (1.general.cking.uk.vpn [10.172.193.212])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 385F23F045;
-        Tue,  3 Aug 2021 14:03:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1627999415;
-        bh=2Eega8M+8xNrGY1tf+6f/bUwq+O7naUIVBjSVZIM+lQ=;
-        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-         In-Reply-To:Content-Type;
-        b=gANBUft+YMWDKu/Em7/tBio1TyPV4dBdccZapxpWh7EctofgoDOcopVqnZZxPI+38
-         7OWuGpKVw5Bxh5Avv1bN+czI03GjFesN//JRt9fUkXzw5liEfnqzE0Iu8nJPcDeFWU
-         q5JHE+k+OB1hahc1viwkpN9FeTcdHqfM5jQ5KdNBlHDj9K07OgUM0q0OELEP4T/bZy
-         Hz3+SVFJIQw8T5mlOiyQM+Gso+QAer2nKuUvsNON1x4fmLNoPQqjBsDlsBs+2aFzOA
-         GSGMtsvDSRTfbSnRJDo8Xhts+8bEmZGcHBhEZZMykZB6Srh29FKM+Z0rmCiKVCTfzF
-         cGb56iYHeQB6w==
-Subject: Re: [PATCH 1/2] rtlwifi: rtl8192de: Remove redundant variable
- initializations
-To:     Joe Perches <joe@perches.com>, Ping-Ke Shih <pkshih@realtek.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210731124044.101927-1-colin.king@canonical.com>
- <3f55848b4612d1b17d95a4c36bec1dee2b1814f1.camel@perches.com>
-From:   Colin Ian King <colin.king@canonical.com>
-Message-ID: <35877a55-3dc3-abb1-5aa4-1d7edaa85602@canonical.com>
-Date:   Tue, 3 Aug 2021 15:03:34 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
-MIME-Version: 1.0
-In-Reply-To: <3f55848b4612d1b17d95a4c36bec1dee2b1814f1.camel@perches.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Tue, 3 Aug 2021 10:05:55 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 843672003F;
+        Tue,  3 Aug 2021 14:05:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1627999543; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=KB9J6Yc/9eRj2qPkgvDqfREMnT7BDt/roGrjEKRDPyo=;
+        b=Ns3csEQPJq7kDx9y1hp638rKj5iQdiKUKbipvtGsXi36DTY9Tng7AXFNNNPKqIPOmcY7Rg
+        EmVjOd4BIHw7jgUXhh8bfwHE0V4p/icnEcpwqTgdsDLEfRoh9zPUaU+MtLFLl43EnFd3Z0
+        owU2CtFhF+if90FpT6QCV5l/aWBvRLo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1627999543;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=KB9J6Yc/9eRj2qPkgvDqfREMnT7BDt/roGrjEKRDPyo=;
+        b=+pFfeUa+Ix2NTtlc4wifs7o18heExOFldNIRWWN0dQplxACrjpjzhHdQKI2ghVAFTsHJzk
+        6cdoYIMxiQbcj4BA==
+Received: from alsa1.suse.de (alsa1.suse.de [10.160.4.42])
+        by relay2.suse.de (Postfix) with ESMTP id 72B92A3BD1;
+        Tue,  3 Aug 2021 14:05:43 +0000 (UTC)
+Date:   Tue, 03 Aug 2021 16:05:43 +0200
+Message-ID: <s5hmtpyvd1k.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][V2] ALSA: usb-audio: make array static const, makes object smaller
+In-Reply-To: <20210803122839.7143-1-colin.king@canonical.com>
+References: <20210803122839.7143-1-colin.king@canonical.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 02/08/2021 09:35, Joe Perches wrote:
-> On Sat, 2021-07-31 at 13:40 +0100, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> The variables rtstatus and place are being initialized with a values that
->> are never read, the initializations are redundant and can be removed.
+On Tue, 03 Aug 2021 14:28:39 +0200,
+Colin King wrote:
 > 
-> trivia:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
->> diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/phy.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/phy.c
-> []
->> @@ -1362,7 +1362,7 @@ u8 rtl92d_get_rightchnlplace_for_iqk(u8 chnl)
->>  		132, 134, 136, 138, 140, 149, 151, 153, 155,
->>  		157, 159, 161, 163, 165
->>  	};
->> -	u8 place = chnl;
->> +	u8 place;
->>  
->>
->>  	if (chnl > 14) {
->>  		for (place = 14; place < sizeof(channel_all); place++) {
+> Don't populate array names_to_check on the stack but instead it
+> static.  Makes the object code smaller by 56 bytes.  Also clean
+> up checkpatch warning by adding extra const for names_to_check
+> and pointer s.
 > 
-> This line should probably be
+> Before:
+>     text    data     bss     dec     hex filename
+>   103512   34380       0  137892   21aa4 ./sound/usb/mixer.o
 > 
-> 		for (place = 14; place < ARRAY_SIZE(channel_all); place++) {
+> After:
+>     text    data     bss     dec     hex filename
+>   103264   34572       0  137836   21a6c ./sound/usb/mixer.o
 > 
+> (gcc version 10.2.0)
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+> 
+> V2: Clean up checkpatch warning on const-ness for names_to_check.
+>     Add extra const to clean up build warning on pointer s.
 
-Nice catch, will send a V2.
+Thanks, applied.
+
+
+Takashi
