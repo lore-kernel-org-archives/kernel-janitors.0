@@ -2,104 +2,98 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5F21C4320A
-	for <kernel-janitors@archiver.kernel.org>; Tue,  3 Aug 2021 18:12:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3676C4338F
+	for <kernel-janitors@archiver.kernel.org>; Tue,  3 Aug 2021 19:14:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B2D5A60EC0
-	for <kernel-janitors@archiver.kernel.org>; Tue,  3 Aug 2021 18:12:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D205B61037
+	for <kernel-janitors@archiver.kernel.org>; Tue,  3 Aug 2021 19:14:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238874AbhHCSMt (ORCPT
+        id S239473AbhHCTOc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 3 Aug 2021 14:12:49 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:41352
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238829AbhHCSMr (ORCPT
+        Tue, 3 Aug 2021 15:14:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45006 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239447AbhHCTOc (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 3 Aug 2021 14:12:47 -0400
-Received: from [10.172.193.212] (1.general.cking.uk.vpn [10.172.193.212])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id F01C73F35B;
-        Tue,  3 Aug 2021 18:12:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1628014354;
-        bh=yQXpzRt+qukZtH49AvXR+lZq2BKkun/fs7KiYXTefVQ=;
-        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-         In-Reply-To:Content-Type;
-        b=sU9leV7Hl0yx62sOaASnlhuYnbY7ubcsZiPetMuI0Rn5Sg0XRn32mrsOhqFb30bhH
-         YvhvOqdvUaChbu5H0zgpz2hUFrLAQ99NpyE4IJE0adRc4Q379rfGyx3oNhMTBw4sYm
-         iS0ae76svGlqGK1PxpTsoVJw/lSSeB1fM7vS1c4nEtN/gc+1vU1CZG1xYK8Gvm4/J0
-         G6KKzlV719/SkELeCh2C8vUj0+yMOUBHHmf5mC+YVb+AlCuLH6Iu/j9W9UOla1qCVX
-         aI3L/9EllxRTJUaBjgn74udfOIJww/V35uO6tEiDh17Y7LOcrA1cAhaVoNymdGGz9j
-         7nSZHRiw1TE/w==
-Subject: Re: [PATCH 3/3] rtlwifi: rtl8192de: fix array size limit in for-loop
-To:     Joe Perches <joe@perches.com>, Ping-Ke Shih <pkshih@realtek.com>,
+        Tue, 3 Aug 2021 15:14:32 -0400
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CA65C061764
+        for <kernel-janitors@vger.kernel.org>; Tue,  3 Aug 2021 12:14:20 -0700 (PDT)
+Received: by mail-lf1-x134.google.com with SMTP id u3so289498lff.9
+        for <kernel-janitors@vger.kernel.org>; Tue, 03 Aug 2021 12:14:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=o0KpkzuHgK9GvKRz84YUwSFRZoVYeFdlCPtHyXWJQI4=;
+        b=IhVvc2zO0gVenINJka9gU+HwzPs2chpbN81UxmimQd2DrzkYTxm58GZq29MO5pPrqO
+         /b1z92x2EQLw7KwxaepO60QJxHJfmkD4ODPtUrnthsHL/gv5/gwORNIwMCzIzM2rwLd3
+         +qRbm3O2pt1vJ1vzGeoeZp0BBj/Jr5gZVANa0nWwTlgd59plD4greZN1+qurDjT46QhC
+         NKNFR5yWdCfqPq2mJNpvb5Gj+DC2QnwuGUswMZ5efFinEjjCF7xUnkz/A+PNvqBlEMOz
+         IWE0sQoSSqjUMHW3BCXee39qartNBPLd7H+v6iSMe6sFtM7ZVaCK+PBx1DrGYIdXb98F
+         eFWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=o0KpkzuHgK9GvKRz84YUwSFRZoVYeFdlCPtHyXWJQI4=;
+        b=AxqRnhD6cwQa2lIQG0mwvxHY5zOSjzLWSKu3OSnhRwt1qSeT3YTspwEa/X+6H7xAAv
+         vsB4EK8gF82koh6loeJEmjfsElb/3pLRTRW5/6zjQ5rbvgcpEOgDTn3JxWasgCERI1Ya
+         SxRUei/mIz64QEQwehsBcFsToSfXstDDG/TjBOt4/j9rJkZBt1rra1FbLEqroMLW4/7y
+         fJwJows3C602LEbX/Ggv8+G8FmqbwQLj38dMJEaOXv6INfGMVSWIep7eR6gJpQ7ceu7M
+         eHDN7S0msNfKlGgON14mhO82rEDG0kTGs2uAcnGCgU59FvDAwLSHVihnP8eoRejYbOUK
+         q/Bw==
+X-Gm-Message-State: AOAM532jUsAiLqBW5d5mUhA71Cra17K7BdICpXIT3sA2+f8IdXxTpgIm
+        /D2KRIPNq50Mu0jivADpkzaCYqwnXRxTUaAiqKvjMQ==
+X-Google-Smtp-Source: ABdhPJxhNGyqsLT6k8Bxnxe0BQDXXGxD/VmjU/Ju+m5Ftr+9Ql55KKi1LMJz+or4Ekd3G8wphgKajB3wLeYYk6dLDuc=
+X-Received: by 2002:ac2:5d4a:: with SMTP id w10mr17773309lfd.529.1628018058868;
+ Tue, 03 Aug 2021 12:14:18 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210803150904.80119-1-colin.king@canonical.com>
+In-Reply-To: <20210803150904.80119-1-colin.king@canonical.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 3 Aug 2021 21:14:07 +0200
+Message-ID: <CACRpkdZ5u-C8uH2pCr1689v_ndyzqevDDksXvtPYv=FfD=x_xg@mail.gmail.com>
+Subject: Re: [PATCH][next] brcmfmac: firmware: Fix uninitialized variable ret
+To:     Colin King <colin.king@canonical.com>
+Cc:     Arend van Spriel <aspriel@gmail.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Chi-hsien Lin <chi-hsien.lin@infineon.com>,
+        Wright Feng <wright.feng@infineon.com>,
+        Chung-hsien Hsu <chung-hsien.hsu@infineon.com>,
         Kalle Valo <kvalo@codeaurora.org>,
         "David S . Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210803144949.79433-1-colin.king@canonical.com>
- <20210803144949.79433-3-colin.king@canonical.com>
- <39b42c868d1aa01bb421733aac32f072dc85e393.camel@perches.com>
-From:   Colin Ian King <colin.king@canonical.com>
-Message-ID: <3ce51250-bf32-97a6-a7e1-f49b27116907@canonical.com>
-Date:   Tue, 3 Aug 2021 19:12:33 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
-MIME-Version: 1.0
-In-Reply-To: <39b42c868d1aa01bb421733aac32f072dc85e393.camel@perches.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        brcm80211-dev-list.pdl@broadcom.com,
+        SHA-cyfmac-dev-list@infineon.com, netdev <netdev@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 03/08/2021 19:11, Joe Perches wrote:
-> On Tue, 2021-08-03 at 15:49 +0100, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> Currently the size of the entire array is being used in a for-loop
->> for the element count. While this works since the elements are u8
->> sized, it is preferred to use ARRAY_SIZE to get the element count
->> of the array.
-> []
->> diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/phy.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/phy.c
-> []
->> @@ -1366,7 +1366,7 @@ u8 rtl92d_get_rightchnlplace_for_iqk(u8 chnl)
->>  	u8 place = chnl;
->>
->>  	if (chnl > 14) {
->> -		for (place = 14; place < sizeof(channel_all); place++) {
->> +		for (place = 14; place < ARRAY_SIZE(channel_all); place++) {
->>  			if (channel_all[place] == chnl)
->>  				return place - 13;
->>  		}
-> 
-> Thanks.
-> 
-> It seems a relatively common copy/paste use in rtlwifi
+On Tue, Aug 3, 2021 at 5:09 PM Colin King <colin.king@canonical.com> wrote:
 
-Urgh. Let's drop patch 3/3 for the moment. I'll send a fix later on, I'm
-kinda tied up for the next 24 hours.
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> Currently the variable ret is uninitialized and is only set if
+> the pointer alt_path is non-null. Fix this by ininitializing ret
+> to zero.
+>
+> Addresses-Coverity: ("Uninitialized scalar variable")
+> Fixes: 5ff013914c62 ("brcmfmac: firmware: Allow per-board firmware binaries")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
+Nice catch!
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-> 
-> $ git grep -P -n 'for\b.*<\s*sizeof\s*\(\s*\w+\w*\)\s*;' drivers/net/wireless/realtek/rtlwifi/
-> drivers/net/wireless/realtek/rtlwifi/rtl8192de/phy.c:893:               for (place = 14; place < sizeof(channel5g); place++) {
-> drivers/net/wireless/realtek/rtlwifi/rtl8192de/phy.c:1368:              for (place = 14; place < sizeof(channel_all); place++) {
-> drivers/net/wireless/realtek/rtlwifi/rtl8192de/phy.c:2430:      for (i = 0; i < sizeof(channel5g); i++)
-> drivers/net/wireless/realtek/rtlwifi/rtl8192ee/phy.c:2781:              for (place = 14; place < sizeof(channel_all); place++) {
-> drivers/net/wireless/realtek/rtlwifi/rtl8723be/phy.c:2170:              for (place = 14; place < sizeof(channel_all); place++) {
-> drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c:3610:              for (place = 14; place < sizeof(channel_all); place++)
-> 
-> 
-> 
-
+Yours,
+Linus Walleij
