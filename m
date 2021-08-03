@@ -2,98 +2,99 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B820C4338F
-	for <kernel-janitors@archiver.kernel.org>; Tue,  3 Aug 2021 12:28:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EF69C43214
+	for <kernel-janitors@archiver.kernel.org>; Tue,  3 Aug 2021 14:03:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 269FB60F70
-	for <kernel-janitors@archiver.kernel.org>; Tue,  3 Aug 2021 12:28:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0540660EC0
+	for <kernel-janitors@archiver.kernel.org>; Tue,  3 Aug 2021 14:03:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235533AbhHCM2w (ORCPT
+        id S236421AbhHCODb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 3 Aug 2021 08:28:52 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:49830
-        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235309AbhHCM2w (ORCPT
+        Tue, 3 Aug 2021 10:03:31 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:52508
+        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S236195AbhHCODb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 3 Aug 2021 08:28:52 -0400
-Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
+        Tue, 3 Aug 2021 10:03:31 -0400
+Received: from [10.172.193.212] (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id D154A3F09C;
-        Tue,  3 Aug 2021 12:28:39 +0000 (UTC)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id D59013F079;
+        Tue,  3 Aug 2021 14:03:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1627993719;
-        bh=oXGtMXBZ6/OGmpA64zDaYIoChgBpydPk9ddxo6Jrg+c=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=cl6lKJkA1kWqtnek77yG6ZDauzengYEyslQAmlke+/fKzcUd5URP+119L6+WU4+0J
-         vufZbJu/7E2+bvdxVwlBBfgO9FEyuOOOtAH9/9kPLQPfuDDZHO0Dna27WuGK2J+aBr
-         yGtbQOaRQ+gu2mUOXIbDzUpN1kT73/BC48lbrSUPKJbD3A+R8xzguds9yWO2QdOBmm
-         +/2kl6c0ZOMYamQv3YsqP8Ydziv70so/hF/HmYgzV325PQq4i7P49ryTu19ixD0yIe
-         KCbhtM5JuEMLA0Ti84hcJaT4Klobkthv1o1AQwto30KyIFZtsMrgtBkM9eA7JHLMeI
-         vwJQ9N/nJjkPA==
-From:   Colin King <colin.king@canonical.com>
-To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org
+        s=20210705; t=1627999399;
+        bh=bOi9tqA3zB1OAVNkRWRD6erwRTSHLcX4UwSrN5PadMQ=;
+        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+         In-Reply-To:Content-Type;
+        b=bOkft6cWnSZJwBLrtE0pVxKk/36KmGhn3StueXmGRbCzm3MsIMRskS/5LMbn4vhO/
+         NmwWa92b97cZ8uoz3991eUaZLNyS25dQ+aANc/a1PjigiG8STBy1TqnLqkIh+AblaF
+         RWBA+MKMECJDt/bJIz68QmPX5LHGElDFbm/lD/A2AHnPcwNSmPbFW/CMMiWPv+CHQ2
+         cqBYaOAWcsXCUp4yug0K3Q7oNaeKWKFjLyf2/4xBr+LSLhBjCA7clgtOb94b/S3SG2
+         ttUDem7wM0U1+HoUmsclboE6laSzS2+JyFJYd18Fvlf4saC2j4x9q8l+tJj65r9jkM
+         QTBlhpXXk4c6A==
+Subject: Re: [PATCH 2/2] rtlwifi: rtl8192de: make arrays static const, makes
+ object smaller
+To:     Joe Perches <joe@perches.com>, Ping-Ke Shih <pkshih@realtek.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][V2] ALSA: usb-audio: make array static const, makes object smaller
-Date:   Tue,  3 Aug 2021 13:28:39 +0100
-Message-Id: <20210803122839.7143-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.31.1
+References: <20210731124044.101927-1-colin.king@canonical.com>
+ <20210731124044.101927-2-colin.king@canonical.com>
+ <e96786f5772f8ed01ab3153e0d5d66820b2e920a.camel@perches.com>
+From:   Colin Ian King <colin.king@canonical.com>
+Message-ID: <7b203ff8-a19a-4fb7-d003-558adaa08407@canonical.com>
+Date:   Tue, 3 Aug 2021 15:03:18 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <e96786f5772f8ed01ab3153e0d5d66820b2e920a.camel@perches.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
-
-Don't populate array names_to_check on the stack but instead it
-static.  Makes the object code smaller by 56 bytes.  Also clean
-up checkpatch warning by adding extra const for names_to_check
-and pointer s.
-
-Before:
-    text    data     bss     dec     hex filename
-  103512   34380       0  137892   21aa4 ./sound/usb/mixer.o
-
-After:
-    text    data     bss     dec     hex filename
-  103264   34572       0  137836   21a6c ./sound/usb/mixer.o
-
-(gcc version 10.2.0)
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
-
-V2: Clean up checkpatch warning on const-ness for names_to_check.
-    Add extra const to clean up build warning on pointer s.
----
- sound/usb/mixer.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/sound/usb/mixer.c b/sound/usb/mixer.c
-index db7cb6b6dc4e..43bc59575a6e 100644
---- a/sound/usb/mixer.c
-+++ b/sound/usb/mixer.c
-@@ -1572,9 +1572,9 @@ static size_t append_ctl_name(struct snd_kcontrol *kctl, const char *str)
- static void check_no_speaker_on_headset(struct snd_kcontrol *kctl,
- 					struct snd_card *card)
- {
--	const char *names_to_check[] = {
-+	static const char * const names_to_check[] = {
- 		"Headset", "headset", "Headphone", "headphone", NULL};
--	const char **s;
-+	const char * const *s;
- 	bool found = false;
- 
- 	if (strcmp("Speaker", kctl->id.name))
--- 
-2.31.1
+On 02/08/2021 09:35, Joe Perches wrote:
+> On Sat, 2021-07-31 at 13:40 +0100, Colin King wrote:
+>> From: Colin Ian King <colin.king@canonical.com>
+>>
+>> Don't populate arrays the stack but instead make them static const
+>> Makes the object code smaller by 852 bytes.
+> []
+>> diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/phy.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/phy.c
+> []
+>> @@ -1354,7 +1354,7 @@ static void _rtl92d_phy_switch_rf_setting(struct ieee80211_hw *hw, u8 channel)
+>>  
+>>
+>>  u8 rtl92d_get_rightchnlplace_for_iqk(u8 chnl)
+>>  {
+>> -	u8 channel_all[59] = {
+>> +	static const u8 channel_all[59] = {
+>>  		1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+>>  		36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58,
+>>  		60, 62, 64, 100, 102, 104, 106, 108, 110, 112,
+>> @@ -3220,7 +3220,7 @@ void rtl92d_phy_config_macphymode_info(struct ieee80211_hw *hw)
+>>  u8 rtl92d_get_chnlgroup_fromarray(u8 chnl)
+>>  {
+>>  	u8 group;
+>> -	u8 channel_info[59] = {
+>> +	static const u8 channel_info[59] = {
+>>  		1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+>>  		36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56,
+>>  		58, 60, 62, 64, 100, 102, 104, 106, 108,
+> 
+> These two arrays (channel_info and channel_all) are identical but
+> laid out differently and could be combined and use a single name.
+> 
+Good spot, will send a V2.
+> 
 
