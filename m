@@ -2,136 +2,96 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 035FDC4320A
-	for <kernel-janitors@archiver.kernel.org>; Tue,  3 Aug 2021 15:13:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD082C4338F
+	for <kernel-janitors@archiver.kernel.org>; Tue,  3 Aug 2021 15:15:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D5258603E7
-	for <kernel-janitors@archiver.kernel.org>; Tue,  3 Aug 2021 15:13:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8ECEA60295
+	for <kernel-janitors@archiver.kernel.org>; Tue,  3 Aug 2021 15:15:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236058AbhHCPNM (ORCPT
+        id S236331AbhHCPQI (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 3 Aug 2021 11:13:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41254 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235607AbhHCPNK (ORCPT
+        Tue, 3 Aug 2021 11:16:08 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:57534
+        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234206AbhHCPQH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 3 Aug 2021 11:13:10 -0400
-Received: from mail-yb1-xb2f.google.com (mail-yb1-xb2f.google.com [IPv6:2607:f8b0:4864:20::b2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA82BC061757;
-        Tue,  3 Aug 2021 08:12:58 -0700 (PDT)
-Received: by mail-yb1-xb2f.google.com with SMTP id p145so19741390ybg.6;
-        Tue, 03 Aug 2021 08:12:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0MA4yBUv23BbJVAOn10I0A8H8/n6Yml4qJZDjujIkSo=;
-        b=JjNxfdKHLCtFD2XS5K70ZXQA2WcJLb5IdcPen4uyEfQUBbimCjc171tfxZeYtP8rM4
-         W9ZQg3+D+c81v3CGYG7ucquebzCRHerHH57GzrfHk1wx3KwcRf4KYl7iW0Y7hqH/f2yM
-         s5FZcMsUo6tS4xeHdOwu9fUh0HRZH5bmNgcDsASGJ3zsGXSFfd5uEEv06J7Btj/OEz6B
-         rNrGMnqAykS8PGrxzAAkX+eTBi5aZ87b3C0OXAs2KyndgwKGaO1IjkaEJu5tC0vmcGdI
-         C0F6dweKUaDb/wqnP48Fxj+h4GmLm3pRWDpHPGgMvDmr9k81fuCq6T47L4XfkvWMSIZL
-         zfCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0MA4yBUv23BbJVAOn10I0A8H8/n6Yml4qJZDjujIkSo=;
-        b=lz2DsAw8cIouHxgFkixv3irzu0uBVZQwoVEFsOdww01kMnKqIzjgVndrFaygw6vUbf
-         o4CMkCG7U1m6VhHjKGzbiLuGQEFcSxbE+3+4VejrDq3CrZEuWxM43f+6sQPwK6n794r6
-         LyMeCB0Ur0LOHeBX0e+hwOJfBkGX7+cyPmpvHq6r/G3ZYJFIF9H6eO2IExR/jiiMpvCC
-         kI56guRT0SNcO4TkFudMl7nknFbBvMBxkkQCp3mvSK2qQoZkZ1+LdwbDCUQtF626w+zP
-         QcV0VXOvrEOlsnnJoUC96j4Vevcku6wQ2Cvq1ZhHBan721EQ8pgR8VRP16rrfzfYc/Fp
-         T9uQ==
-X-Gm-Message-State: AOAM533lGBPtTQy+xK2JDfM628Pk2vBb2jVZdsrJQJ3ntag3OFkaZWK7
-        WOlxVoIKjsjge/vZPSST8mVRPgpBkHNbNBuyjBs=
-X-Google-Smtp-Source: ABdhPJxLLhOuge4lnR2ARgHXuM36tY3HcPDFl47HIWEO4m4676WjV7JTLeLnfVbbWsXbk5W2gMxOcuEvnlYqvQJpYLA=
-X-Received: by 2002:a25:3046:: with SMTP id w67mr29095940ybw.134.1628003578010;
- Tue, 03 Aug 2021 08:12:58 -0700 (PDT)
+        Tue, 3 Aug 2021 11:16:07 -0400
+Received: from [10.172.193.212] (1.general.cking.uk.vpn [10.172.193.212])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 284AB3F070;
+        Tue,  3 Aug 2021 15:15:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1628003755;
+        bh=XxRTNfvCsCZZOY4PoI1ruoqNXeZxwETY+pJxOCsiVdE=;
+        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+         In-Reply-To:Content-Type;
+        b=tKNn5vwUayiaXsVY7ahH5QBOP1I45/1oCvVk8cdN2Fag/79mvzkadQq/hn/0DImRl
+         2C87kQYINlNym8rZyA9g2uu5KwWxzAkmKRqb3mAJ2YU4xd+Xr7miPJWwgvNCR/c34+
+         IY6zLQspic/zDuEjgXVmWw982c2AQRwwybP9AOeMJvVhAzdZcAue2itOngfu57ienQ
+         ywRQYHmz0yjOD4R3n1kzu8JC+yuQ9kHiWalymA5Ppdsyy/Mvz4wC6WWNXUbi6OzGOD
+         wcIWBYfM+hNnMmRcgit0NuSa7oL8OYEigFOVJ3vu9BxtF1CQy4FRJtJjs83PCYMACx
+         vyRM/kQRktbwg==
+Subject: Re: [PATCH 2/3][V2] rtlwifi: rtl8192de: make arrays static const,
+ makes object smaller
+To:     Joe Perches <joe@perches.com>, Ping-Ke Shih <pkshih@realtek.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210803144949.79433-1-colin.king@canonical.com>
+ <20210803144949.79433-2-colin.king@canonical.com>
+ <e07dfde8aa6616887c74817bed1166510b5583dd.camel@perches.com>
+From:   Colin Ian King <colin.king@canonical.com>
+Message-ID: <4e1d8a60-0af8-97d5-b95c-7d91502825e5@canonical.com>
+Date:   Tue, 3 Aug 2021 16:15:54 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 MIME-Version: 1.0
-References: <20210803113531.30720-1-lukas.bulwahn@gmail.com> <f9074e8d-9314-9d7d-7bf5-5b5538c8be8d@intel.com>
-In-Reply-To: <f9074e8d-9314-9d7d-7bf5-5b5538c8be8d@intel.com>
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date:   Tue, 3 Aug 2021 17:12:47 +0200
-Message-ID: <CAKXUXMxQ83T7beOTuZ928=-eo2Tsr94TGxsaYh3+MHOJrDO8Bg@mail.gmail.com>
-Subject: Re: [PATCH 0/9] Kconfig symbol clean-up on ./arch/x86/
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        X86 ML <x86@kernel.org>, Randy Dunlap <rdunlap@infradead.org>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Lubomir Rintel <lkundrak@v3.sk>, Pavel Machek <pavel@ucw.cz>,
-        Lee Jones <lee.jones@linaro.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        platform-driver-x86@vger.kernel.org,
-        kernel-janitors <kernel-janitors@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <e07dfde8aa6616887c74817bed1166510b5583dd.camel@perches.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Aug 3, 2021 at 4:32 PM Dave Hansen <dave.hansen@intel.com> wrote:
->
-> On 8/3/21 4:35 AM, Lukas Bulwahn wrote:
-> >   - a reference to STRICT_IOMEM in arch/x86/mm/init.c
-> >     unclear to me: which exact config this refers to
->
-> Are you referring to the reference in this comment?
->
-> > +       /*
-> > +        * This must follow RAM test, since System RAM is considered a
-> > +        * restricted resource under CONFIG_STRICT_IOMEM.
-> > +        */
-> > +       if (iomem_is_exclusive(pagenr << PAGE_SHIFT)) {
-> > +               /* Low 1MB bypasses iomem restrictions. */
-> > +               if (pagenr < 256)
-> > +                       return 1;
-> ...
->
+On 03/08/2021 16:09, Joe Perches wrote:
+> On Tue, 2021-08-03 at 15:49 +0100, Colin King wrote:
+>> Don't populate arrays the stack but instead make them static const. Replace
+>> array channel_info with channel_all since it contains the same data as
+>> channel_all. Makes object code smaller by 961 bytes.
+> []
+>> diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/phy.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/phy.c
+> []
+>> @@ -160,6 +160,15 @@ static u32 targetchnl_2g[TARGET_CHNL_NUM_2G] = {
+>>  	25711, 25658, 25606, 25554, 25502, 25451, 25328
+>>  };
+>>
+>> +static const u8 channel_all[59] = {
+> 
+> I don't believe there is a significant value in sizing the array
+> as 59 instead of letting the compiler count the elements.
 
-Yes, that is what I referred to.
+I was reluctant to remove this as I supposed the original had it in for
+a purpose, e.g. to ensure that the array was not populated with more
+data than intended. Does it make much of a difference?
 
-> That came from here:
->
-> > commit a4866aa812518ed1a37d8ea0c881dc946409de94
-> > Author: Kees Cook <keescook@chromium.org>
-> > Date:   Wed Apr 5 09:39:08 2017 -0700
-> >
-> >     mm: Tighten x86 /dev/mem with zeroing reads
->
-> Which also added this hunk:
->
-> >  #ifdef CONFIG_STRICT_DEVMEM
-> > +static inline int page_is_allowed(unsigned long pfn)
-> > +{
-> > +       return devmem_is_allowed(pfn);
-> > +}
->
-> and talks about CONFIG_STRICT_DEVMEM in the changelog:
->
-> >     mm: Tighten x86 /dev/mem with zeroing reads
-> >
-> >     Under CONFIG_STRICT_DEVMEM, reading System RAM through /dev/mem is
-> >     disallowed. However, on x86, the first 1MB was always allowed for BIOS
-> ...
->
-> It's a pretty safe guess that STRICT_IOMEM refers to CONFIG_STRICT_DEVMEM.
+> 
+>> +	1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+>> +	36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58,
+>> +	60, 62, 64, 100, 102, 104, 106, 108, 110, 112,
+>> +	114, 116, 118, 120, 122, 124, 126, 128,	130,
+>> +	132, 134, 136, 138, 140, 149, 151, 153, 155,
+>> +	157, 159, 161, 163, 165
+>> +};
+> 
+> 
 
-Thanks, Dave.
-
-If the maintainers consider updates to comments making them consistent
-with the code as worth being picked, I will turn your analysis into a
-proper commit message and provide a patch to update that comment.
-
-Lukas
