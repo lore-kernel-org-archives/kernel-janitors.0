@@ -2,83 +2,107 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F061AC432BE
-	for <kernel-janitors@archiver.kernel.org>; Wed,  4 Aug 2021 12:15:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADBFBC4338F
+	for <kernel-janitors@archiver.kernel.org>; Wed,  4 Aug 2021 12:34:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D334860F22
-	for <kernel-janitors@archiver.kernel.org>; Wed,  4 Aug 2021 12:15:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8822860F02
+	for <kernel-janitors@archiver.kernel.org>; Wed,  4 Aug 2021 12:34:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238016AbhHDMPo (ORCPT
+        id S237569AbhHDMes (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 4 Aug 2021 08:15:44 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:46956
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236350AbhHDMPo (ORCPT
+        Wed, 4 Aug 2021 08:34:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56602 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235639AbhHDMes (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 4 Aug 2021 08:15:44 -0400
-Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 7DFA63F0FF;
-        Wed,  4 Aug 2021 12:15:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1628079330;
-        bh=Vupsdv0RPAeK1I9qqidHNj9oHtZHv80qP1aQFhD3ryw=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=wExr9J9Km7F5akPcRZABV8xo1GbwAdFdvbo6hG088WyXhyxey2bnGSFNZMCL4iZts
-         5H13NcAt4YEgR4OlTlxaCfYaxkRChQwvsKKj1POEQvbEalEM9xhQ1eveK6y3HztMw9
-         6iLUI8H8YWjSIUJZS9HU6uDlMSL3RzSHXtRtO/zSPfK/zMMtWEjL6Wxp3RAIfP2yf8
-         pHrWnAoxr3V7yA5RmXtfybfJA3fbPJwZMzYcCv+1YfzqSwfCnuGH0+ZdQb6DgFiq2h
-         JW3hnKMgGLCDyFnZT+pmmnD3zS9TlgzqXPWN5ZHq67eju8euxVConPy7+TcI3kcMVM
-         pomKHDbA4c3WA==
-From:   Colin King <colin.king@canonical.com>
-To:     Jeremy Kerr <jk@codeconstruct.com.au>,
-        Matt Johnston <matt@codeconstruct.com.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] mctp: remove duplicated assignment of pointer hdr
-Date:   Wed,  4 Aug 2021 13:15:30 +0100
-Message-Id: <20210804121530.110521-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.31.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Wed, 4 Aug 2021 08:34:48 -0400
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02769C0613D5;
+        Wed,  4 Aug 2021 05:34:35 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id h24-20020a1ccc180000b029022e0571d1a0so1356388wmb.5;
+        Wed, 04 Aug 2021 05:34:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=T7y3XoKx560IIuodiyJF+1EGhUXPpmwekuXB+OdFOz4=;
+        b=n9pC7MBO5MmUgT0EmL1pM3aubyN710oo5qB+xQyN4X08wASge/2ZfbZxlzjE44VIGo
+         T67r9ZIvHM/DUgjzYRS7FrTsh/SckcDlVpBERW1U1c6Vm2Z1EitptWOettxtzrHA2PCK
+         Oo/EZUN9+1hpVsezW80/mGWzlhD+26IqCvDDute+uNiW9l75iO2gPdB4uQWUArAIT7Ht
+         /Afs+yrXrAG4Uvg1O5QNNKIs/855OJynS3H3M9luymfLoR9h96ep/n47F+bjyxYmj5m7
+         a+RsMM+h3kEeEmq+aUomXofG3ZBsZWmHctO2CZV8BmC//Bhi/1EFoaY9V97eXiorZz7S
+         yXsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=T7y3XoKx560IIuodiyJF+1EGhUXPpmwekuXB+OdFOz4=;
+        b=GuOy/OX1PiTcgQ7R1hMb38/SoS35YPKrOJMxO3+MkDxTEG5mdOCoxDUxSfnksOCFY8
+         rLMlRG9KSn8Yum/XT1bb7U70NuTJfbwqKVsWgaDiNiI/cSVHITsnpw9hkETx8YuAwLQg
+         NF0M5T5xvOgTa98kzhWoi0hnmfVjVdJ9Lk4nla1aZhHQnWgULgxwwmo+c782JlckqAg2
+         X7BOoIV10U3B7GD5+AoRTZoJqtZaOKsHi3cer+C0NaNr8GwdFau48xyqBeQBp5V/l2b7
+         PICdNRFlzzVO+HxUf/ucVklYXiTsyr+hTVYC3cOQ2N5b18NAm8of6leSzjciIsu01OJw
+         aHrg==
+X-Gm-Message-State: AOAM532UfpjE//h71SMJhKmsUEwEj49wRmXn8q0IeaYvRYjISwxi7Nic
+        V8Wzgxd6IB8GdWHRzxX5xpaLEKeKkSk=
+X-Google-Smtp-Source: ABdhPJzgnQ6FVcLyLBH3abz/FShyYq886TUhMfAGMuepHLepG5xOg2dUzT24+pNWvIbWkUyMRkbFTQ==
+X-Received: by 2002:a05:600c:259:: with SMTP id 25mr23867004wmj.57.1628080473469;
+        Wed, 04 Aug 2021 05:34:33 -0700 (PDT)
+Received: from felia.fritz.box ([2001:16b8:2d4a:5b00:f5aa:e9bf:ac96:6276])
+        by smtp.gmail.com with ESMTPSA id g138sm2620158wmg.32.2021.08.04.05.34.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Aug 2021 05:34:33 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
+Cc:     Randy Dunlap <rdunlap@infradead.org>, Pavel Machek <pavel@ucw.cz>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH 0/2] More (hopefully final) Kconfig clean-up after IDE removal 
+Date:   Wed,  4 Aug 2021 14:34:24 +0200
+Message-Id: <20210804123426.16947-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Dear Christoph, dear Jens,
 
-The pointer hdr is being initialized and also re-assigned with the
-same value from the call to function mctp_hdr. Static analysis reports
-that the initializated value is unused. The second assignment is
-duplicated and can be removed.
+here is a follow-up to the issue of Kconfig references to obsolete IDE configs,
+which I first identified and addressed in commit 094121ef815f ("arch: Kconfig:
+clean up obsolete use of HAVE_IDE").
 
-Addresses-Coverity: ("Unused value").
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- net/mctp/af_mctp.c | 1 -
- 1 file changed, 1 deletion(-)
+Following checkkconfigsymbols.py indications, this patch series cleans up all
+references to removed IDE Kconfig symbol throughout the current kernel tree.
 
-diff --git a/net/mctp/af_mctp.c b/net/mctp/af_mctp.c
-index 84f722d31fd7..a9526ac29dff 100644
---- a/net/mctp/af_mctp.c
-+++ b/net/mctp/af_mctp.c
-@@ -170,7 +170,6 @@ static int mctp_recvmsg(struct socket *sock, struct msghdr *msg, size_t len,
- 		/* TODO: expand mctp_skb_cb for header fields? */
- 		struct mctp_hdr *hdr = mctp_hdr(skb);
- 
--		hdr = mctp_hdr(skb);
- 		addr = msg->msg_name;
- 		addr->smctp_family = AF_MCTP;
- 		addr->smctp_network = cb->net;
+Pavel, Sekhar, Bartosz, you are CCed, just to let know about minor follow-up
+cleanup in your files.
+
+Christoph, please review and ack.
+
+Jens, please pick these two further clean-up patches.
+
+
+Best regards,
+
+Lukas
+
+Lukas Bulwahn (2):
+  leds: trigger: remove reference to obsolete CONFIG_IDE_GD_ATA
+  arm: davinci: remove reference to obsolete BLK_DEV_PALMCHIP_BK3710
+
+ arch/arm/mach-davinci/board-dm644x-evm.c  | 3 +--
+ arch/arm/mach-davinci/board-dm646x-evm.c  | 3 +--
+ arch/arm/mach-davinci/board-neuros-osd2.c | 3 +--
+ drivers/leds/trigger/Kconfig              | 2 +-
+ 4 files changed, 4 insertions(+), 7 deletions(-)
+
 -- 
-2.31.1
+2.17.1
 
