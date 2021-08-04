@@ -7,43 +7,45 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB8E7C4338F
-	for <kernel-janitors@archiver.kernel.org>; Wed,  4 Aug 2021 12:07:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F061AC432BE
+	for <kernel-janitors@archiver.kernel.org>; Wed,  4 Aug 2021 12:15:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AFD0660E96
-	for <kernel-janitors@archiver.kernel.org>; Wed,  4 Aug 2021 12:07:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D334860F22
+	for <kernel-janitors@archiver.kernel.org>; Wed,  4 Aug 2021 12:15:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237999AbhHDMHN (ORCPT
+        id S238016AbhHDMPo (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 4 Aug 2021 08:07:13 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:49500
-        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S237987AbhHDMHL (ORCPT
+        Wed, 4 Aug 2021 08:15:44 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:46956
+        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S236350AbhHDMPo (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 4 Aug 2021 08:07:11 -0400
+        Wed, 4 Aug 2021 08:15:44 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 83E143F22C;
-        Wed,  4 Aug 2021 12:06:58 +0000 (UTC)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 7DFA63F0FF;
+        Wed,  4 Aug 2021 12:15:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1628078818;
-        bh=I5iMEiYeK7cuE7cXx3He18rSygUas33plv7CQH+qomo=;
+        s=20210705; t=1628079330;
+        bh=Vupsdv0RPAeK1I9qqidHNj9oHtZHv80qP1aQFhD3ryw=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=oKgu7LLaNOTt74RaPSZyRHkmp5yWtEGV147IXE6ePMGAtzEwc0Q3bi7MTOcmT1zqP
-         zdl5NTXsCx0JnZ+RrgfaS6r1pKra/92ZJNnZWQvnKXDM3Zk+pwmLJV4h+tOS3mEETb
-         Pe6Jlmu3qrq3qWjcBLYim9LMX5qln+CNNWofZH2ieZPKA028GXTKaqaYtPfLbA8jXq
-         UZOORXeRoiIy+BKStZp5cILJ/iFT9yk7qsPqufOmIYbUPhx+TDhT4EYaRScEW4MJOj
-         4a8JHR7c4nYX+zDZGcKtBtgF3Tc9btIjbja0mcBvaooRkmYMazEHPXG9anUjIm16mJ
-         B0Az3PkkL0amw==
+        b=wExr9J9Km7F5akPcRZABV8xo1GbwAdFdvbo6hG088WyXhyxey2bnGSFNZMCL4iZts
+         5H13NcAt4YEgR4OlTlxaCfYaxkRChQwvsKKj1POEQvbEalEM9xhQ1eveK6y3HztMw9
+         6iLUI8H8YWjSIUJZS9HU6uDlMSL3RzSHXtRtO/zSPfK/zMMtWEjL6Wxp3RAIfP2yf8
+         pHrWnAoxr3V7yA5RmXtfybfJA3fbPJwZMzYcCv+1YfzqSwfCnuGH0+ZdQb6DgFiq2h
+         JW3hnKMgGLCDyFnZT+pmmnD3zS9TlgzqXPWN5ZHq67eju8euxVConPy7+TcI3kcMVM
+         pomKHDbA4c3WA==
 From:   Colin King <colin.king@canonical.com>
-To:     "Eric W . Biederman" <ebiederm@xmission.com>,
-        Alexey Gladkov <legion@kernel.org>
+To:     Jeremy Kerr <jk@codeconstruct.com.au>,
+        Matt Johnston <matt@codeconstruct.com.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] kernel/user.c: Fix spelling mistake "cpunter" -> "counter"
-Date:   Wed,  4 Aug 2021 13:06:58 +0100
-Message-Id: <20210804120658.110124-1-colin.king@canonical.com>
+Subject: [PATCH][next] mctp: remove duplicated assignment of pointer hdr
+Date:   Wed,  4 Aug 2021 13:15:30 +0100
+Message-Id: <20210804121530.110521-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -54,26 +56,29 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-There is a spelling mistake in a panic message. Fix it.
+The pointer hdr is being initialized and also re-assigned with the
+same value from the call to function mctp_hdr. Static analysis reports
+that the initializated value is unused. The second assignment is
+duplicated and can be removed.
 
+Addresses-Coverity: ("Unused value").
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- kernel/user.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/mctp/af_mctp.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/kernel/user.c b/kernel/user.c
-index a2673f940506..7fc40af8d8ac 100644
---- a/kernel/user.c
-+++ b/kernel/user.c
-@@ -223,7 +223,7 @@ static int __init uid_cache_init(void)
- 		INIT_HLIST_HEAD(uidhash_table + n);
+diff --git a/net/mctp/af_mctp.c b/net/mctp/af_mctp.c
+index 84f722d31fd7..a9526ac29dff 100644
+--- a/net/mctp/af_mctp.c
++++ b/net/mctp/af_mctp.c
+@@ -170,7 +170,6 @@ static int mctp_recvmsg(struct socket *sock, struct msghdr *msg, size_t len,
+ 		/* TODO: expand mctp_skb_cb for header fields? */
+ 		struct mctp_hdr *hdr = mctp_hdr(skb);
  
- 	if (percpu_counter_init(&root_user.epoll_watches, 0, GFP_KERNEL))
--		panic("percpu cpunter alloc failed");
-+		panic("percpu counter alloc failed");
- 
- 	/* Insert the root user immediately (init already runs as root) */
- 	spin_lock_irq(&uidhash_lock);
+-		hdr = mctp_hdr(skb);
+ 		addr = msg->msg_name;
+ 		addr->smctp_family = AF_MCTP;
+ 		addr->smctp_network = cb->net;
 -- 
 2.31.1
 
