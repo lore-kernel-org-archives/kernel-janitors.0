@@ -2,113 +2,96 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AE60C4338F
-	for <kernel-janitors@archiver.kernel.org>; Wed,  4 Aug 2021 08:47:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45C55C4320A
+	for <kernel-janitors@archiver.kernel.org>; Wed,  4 Aug 2021 08:50:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4E12660ED6
-	for <kernel-janitors@archiver.kernel.org>; Wed,  4 Aug 2021 08:47:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2DBC760F02
+	for <kernel-janitors@archiver.kernel.org>; Wed,  4 Aug 2021 08:50:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235694AbhHDIr7 (ORCPT
+        id S236731AbhHDIu0 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 4 Aug 2021 04:47:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60812 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235582AbhHDIr5 (ORCPT
+        Wed, 4 Aug 2021 04:50:26 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:57546
+        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S236698AbhHDIu0 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 4 Aug 2021 04:47:57 -0400
-X-Greylist: delayed 342 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 04 Aug 2021 01:47:45 PDT
-Received: from smtp-out.kfki.hu (smtp-out.kfki.hu [IPv6:2001:738:5001::48])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DC63C0613D5
-        for <kernel-janitors@vger.kernel.org>; Wed,  4 Aug 2021 01:47:45 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        by smtp2.kfki.hu (Postfix) with ESMTP id 818FECC0109;
-        Wed,  4 Aug 2021 10:42:00 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at smtp2.kfki.hu
-Received: from smtp2.kfki.hu ([127.0.0.1])
-        by localhost (smtp2.kfki.hu [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP; Wed,  4 Aug 2021 10:41:58 +0200 (CEST)
-Received: from blackhole.kfki.hu (blackhole.szhk.kfki.hu [148.6.240.2])
-        by smtp2.kfki.hu (Postfix) with ESMTP id 460A8CC0108;
-        Wed,  4 Aug 2021 10:41:58 +0200 (CEST)
-Received: by blackhole.kfki.hu (Postfix, from userid 1000)
-        id EDA7C340D60; Wed,  4 Aug 2021 10:41:57 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by blackhole.kfki.hu (Postfix) with ESMTP id E9301340D5D;
-        Wed,  4 Aug 2021 10:41:57 +0200 (CEST)
-Date:   Wed, 4 Aug 2021 10:41:57 +0200 (CEST)
-From:   Jozsef Kadlecsik <kadlec@netfilter.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-cc:     Pablo Neira Ayuso <pablo@netfilter.org>,
-        Florian Westphal <fw@strlen.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] netfilter: ipset: fix uninitialized variable bug
-In-Reply-To: <20210804083322.GB32730@kili>
-Message-ID: <a832cb21-1fe-62c-9ba8-f867488efade@netfilter.org>
-References: <20210804083322.GB32730@kili>
+        Wed, 4 Aug 2021 04:50:26 -0400
+Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 462303F228;
+        Wed,  4 Aug 2021 08:50:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1628067011;
+        bh=uoN7wGE5rbSl+FPh+rcsfSGaxUcJTJN+JDTF5R0gekM=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=jyn93kzwWGLXLHY27T1HMAEijIkPHDbWXwQBg1JgY7wQkNTl6k19RoQElzmIQUQrb
+         YEsIUp4CnAXP6dKplHJCY6hP+bkZjFo0Yb+QLtcVM8RSkP6qMAeG1hu/PsSNbJlULZ
+         mACFEhde9r66wt6lNk170YzzEv5+oRp+zAFFOEGoTrIQ3f0I2/d7NP95eX22Cf06SZ
+         7Tcmz4njUsqZq/oJFUBxajHsT57ixVYo0kDQ35X0tfpSHzflVpJ9NQCp8z4CG34PGW
+         mg0Wks0Jgg63Jyo0UFN4fYcavkXRwF/qjfdeMRm434YIONzQf/lHwOE21jtEhmoq3A
+         EK8FoQ/6bN5Gw==
+From:   Colin King <colin.king@canonical.com>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Steven Toth <stoth@kernellabs.com>,
+        "Igor M . Liplianin" <liplianin@netup.ru>,
+        Mijhail Moreyra <mijhail.moreyra@gmail.com>,
+        linux-media@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] media: cx23885: Fix snd_card_free call on null card pointer
+Date:   Wed,  4 Aug 2021 09:50:10 +0100
+Message-Id: <20210804085010.103607-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Dan,
+From: Colin Ian King <colin.king@canonical.com>
 
-On Wed, 4 Aug 2021, Dan Carpenter wrote:
+Currently a call to snd_card_new that fails will set card with a NULL
+pointer, this causes a null pointer dereference on the error cleanup
+path when card it passed to snd_card_free. Fix this by adding a new
+error exit path that does not call snd_card_free and exiting via this
+new path.
 
-> This condition doesn't work because "port_to" is not initialized until
-> the next line.  Move the condition down.
+Addresses-Coverity: ("Explicit null dereference")
+Fixes: 9e44d63246a9 ("[media] cx23885: Add ALSA support")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/pci/cx23885/cx23885-alsa.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-You are right - Nathan Chancellor already sent the same fix and I acked 
-it. Thanks!
-
-Best regards,
-Jozsef
+diff --git a/drivers/media/pci/cx23885/cx23885-alsa.c b/drivers/media/pci/cx23885/cx23885-alsa.c
+index ab14d35214aa..25dc8d4dc5b7 100644
+--- a/drivers/media/pci/cx23885/cx23885-alsa.c
++++ b/drivers/media/pci/cx23885/cx23885-alsa.c
+@@ -550,7 +550,7 @@ struct cx23885_audio_dev *cx23885_audio_register(struct cx23885_dev *dev)
+ 			   SNDRV_DEFAULT_IDX1, SNDRV_DEFAULT_STR1,
+ 			THIS_MODULE, sizeof(struct cx23885_audio_dev), &card);
+ 	if (err < 0)
+-		goto error;
++		goto error_msg;
  
-> Fixes: 7fb6c63025ff ("netfilter: ipset: Limit the maximal range of consecutive elements to add/delete")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  net/netfilter/ipset/ip_set_hash_ipportnet.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/net/netfilter/ipset/ip_set_hash_ipportnet.c b/net/netfilter/ipset/ip_set_hash_ipportnet.c
-> index b293aa1ff258..7df94f437f60 100644
-> --- a/net/netfilter/ipset/ip_set_hash_ipportnet.c
-> +++ b/net/netfilter/ipset/ip_set_hash_ipportnet.c
-> @@ -246,9 +246,6 @@ hash_ipportnet4_uadt(struct ip_set *set, struct nlattr *tb[],
->  		ip_set_mask_from_to(ip, ip_to, cidr);
->  	}
->  
-> -	if (((u64)ip_to - ip + 1)*(port_to - port + 1) > IPSET_MAX_RANGE)
-> -		return -ERANGE;
-> -
->  	port_to = port = ntohs(e.port);
->  	if (tb[IPSET_ATTR_PORT_TO]) {
->  		port_to = ip_set_get_h16(tb[IPSET_ATTR_PORT_TO]);
-> @@ -256,6 +253,9 @@ hash_ipportnet4_uadt(struct ip_set *set, struct nlattr *tb[],
->  			swap(port, port_to);
->  	}
->  
-> +	if (((u64)ip_to - ip + 1)*(port_to - port + 1) > IPSET_MAX_RANGE)
-> +		return -ERANGE;
-> +
->  	ip2_to = ip2_from;
->  	if (tb[IPSET_ATTR_IP2_TO]) {
->  		ret = ip_set_get_hostipaddr4(tb[IPSET_ATTR_IP2_TO], &ip2_to);
-> -- 
-> 2.20.1
-> 
-> 
+ 	chip = (struct cx23885_audio_dev *) card->private_data;
+ 	chip->dev = dev;
+@@ -576,6 +576,7 @@ struct cx23885_audio_dev *cx23885_audio_register(struct cx23885_dev *dev)
+ 
+ error:
+ 	snd_card_free(card);
++error_msg:
+ 	pr_err("%s(): Failed to register analog audio adapter\n",
+ 	       __func__);
+ 
+-- 
+2.31.1
 
--
-E-mail  : kadlec@blackhole.kfki.hu, kadlecsik.jozsef@wigner.hu
-PGP key : https://wigner.hu/~kadlec/pgp_public_key.txt
-Address : Wigner Research Centre for Physics
-          H-1525 Budapest 114, POB. 49, Hungary
