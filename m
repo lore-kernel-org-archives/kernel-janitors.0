@@ -2,96 +2,99 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45C55C4320A
-	for <kernel-janitors@archiver.kernel.org>; Wed,  4 Aug 2021 08:50:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84330C4338F
+	for <kernel-janitors@archiver.kernel.org>; Wed,  4 Aug 2021 09:40:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2DBC760F02
-	for <kernel-janitors@archiver.kernel.org>; Wed,  4 Aug 2021 08:50:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D87860F22
+	for <kernel-janitors@archiver.kernel.org>; Wed,  4 Aug 2021 09:40:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236731AbhHDIu0 (ORCPT
+        id S237183AbhHDJk0 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 4 Aug 2021 04:50:26 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:57546
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236698AbhHDIu0 (ORCPT
+        Wed, 4 Aug 2021 05:40:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44830 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237035AbhHDJkY (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 4 Aug 2021 04:50:26 -0400
-Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 462303F228;
-        Wed,  4 Aug 2021 08:50:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1628067011;
-        bh=uoN7wGE5rbSl+FPh+rcsfSGaxUcJTJN+JDTF5R0gekM=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=jyn93kzwWGLXLHY27T1HMAEijIkPHDbWXwQBg1JgY7wQkNTl6k19RoQElzmIQUQrb
-         YEsIUp4CnAXP6dKplHJCY6hP+bkZjFo0Yb+QLtcVM8RSkP6qMAeG1hu/PsSNbJlULZ
-         mACFEhde9r66wt6lNk170YzzEv5+oRp+zAFFOEGoTrIQ3f0I2/d7NP95eX22Cf06SZ
-         7Tcmz4njUsqZq/oJFUBxajHsT57ixVYo0kDQ35X0tfpSHzflVpJ9NQCp8z4CG34PGW
-         mg0Wks0Jgg63Jyo0UFN4fYcavkXRwF/qjfdeMRm434YIONzQf/lHwOE21jtEhmoq3A
-         EK8FoQ/6bN5Gw==
-From:   Colin King <colin.king@canonical.com>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Steven Toth <stoth@kernellabs.com>,
-        "Igor M . Liplianin" <liplianin@netup.ru>,
-        Mijhail Moreyra <mijhail.moreyra@gmail.com>,
-        linux-media@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] media: cx23885: Fix snd_card_free call on null card pointer
-Date:   Wed,  4 Aug 2021 09:50:10 +0100
-Message-Id: <20210804085010.103607-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.31.1
+        Wed, 4 Aug 2021 05:40:24 -0400
+Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61B4FC0613D5
+        for <kernel-janitors@vger.kernel.org>; Wed,  4 Aug 2021 02:40:10 -0700 (PDT)
+Received: by mail-lj1-x22e.google.com with SMTP id l17so1873926ljn.2
+        for <kernel-janitors@vger.kernel.org>; Wed, 04 Aug 2021 02:40:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Dwt1pPxaPlppnEdG2BBARqg+gr0qeyGOYTvgq1+24I4=;
+        b=TKYJ3vhtDJpHViw53658tSsP/2Ny7Dzfcrp16GZt7l3OPk+yTni2/0bxZjeZmzwQd7
+         HrqTjcUJ59ns8m6fubf3plRKASTH8gGPywRiji0tdIvjGsgUQqwzPD3KGuLFpnh7PMsI
+         X5yNWwVehSx22lbrTu99WnA9T0H7GV9G9CWKu0+EW7g6AVj8dx5ysX5uVxSpqNLRwwDX
+         cTj8AowCzEDRLOd/nAT6kJfLGgvF09C6GAPX79TZVZKZlMszZlXDxE8YM0HOetbCaNo9
+         Dqui4J7H3FZN2kjmtyXjlFxeZnUpuvnSc+uBFuEwgBG0gooNc7/DA4g0Bt74pWOFjvhI
+         1Okg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Dwt1pPxaPlppnEdG2BBARqg+gr0qeyGOYTvgq1+24I4=;
+        b=XGHtWgMzPxOn21hC1IncXgFKVDeqhn19Ifel06h7O3fMvVaz/ONoe5JF0igTPVSC56
+         8GdSs97NaYyUNbd5v2XcNPRls11gfdnTk9rGGkKS3fmqYNppXghWChPGdOfy+DvBkqHV
+         OM5WyTGngBMWlhHPxJ0uLKWsKo2Ebfe7nQpTirC3TCfomg0KAefiIU2HQ3FMe1UI1uQH
+         UlStnfGvqeD5lSb6HgugGH/806mUcvBhW0tM3GI1TfkNg/5m4DfiND10YyYOxYaPyqcP
+         H9OmdoSCThYt8cQz50uy4tEAGybyEhe6g1E16qtlAUxF/9/TSqDVkFGZ5QPbJngu0S0j
+         M1jg==
+X-Gm-Message-State: AOAM531B2YsxsLhzU5pb/VLqCzKSx7Yf3XlqE3yLkvINb89irwb7nj8d
+        IVhIGje31ixNT9GYWRcv3mQklV9Wi/NFtNu5t1U8Mg==
+X-Google-Smtp-Source: ABdhPJx0yVHn+0/LjY8mjyTRVXlhmqLZHqwyttvFKqsMg34/DYMTPoH4VFFhU/I9ApQLOL5R/669b4+a7tzG2XXVjxE=
+X-Received: by 2002:a2e:b819:: with SMTP id u25mr6449140ljo.438.1628070008760;
+ Wed, 04 Aug 2021 02:40:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20210804082348.GA32730@kili>
+In-Reply-To: <20210804082348.GA32730@kili>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 4 Aug 2021 11:39:57 +0200
+Message-ID: <CACRpkdYfc7oRV9OWQayATU90fcP_q0fQZEgY7C1hLBxpvszezQ@mail.gmail.com>
+Subject: Re: [PATCH] brcmfmac: uninitialized variable in brcmf_fw_get_firmwares()
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Arend van Spriel <aspriel@gmail.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Chi-hsien Lin <chi-hsien.lin@infineon.com>,
+        Wright Feng <wright.feng@infineon.com>,
+        Chung-hsien Hsu <chung-hsien.hsu@infineon.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Zheng Yongjun <zhengyongjun3@huawei.com>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        brcm80211-dev-list.pdl@broadcom.com,
+        SHA-cyfmac-dev-list@infineon.com, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Wed, Aug 4, 2021 at 10:24 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-Currently a call to snd_card_new that fails will set card with a NULL
-pointer, this causes a null pointer dereference on the error cleanup
-path when card it passed to snd_card_free. Fix this by adding a new
-error exit path that does not call snd_card_free and exiting via this
-new path.
+> The "ret" variable is used without being initialized when "alt_path" is
+> false.
+>
+> Fixes: 5ff013914c62 ("brcmfmac: firmware: Allow per-board firmware binaries")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Addresses-Coverity: ("Explicit null dereference")
-Fixes: 9e44d63246a9 ("[media] cx23885: Add ALSA support")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/media/pci/cx23885/cx23885-alsa.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Thanks Dan!
 
-diff --git a/drivers/media/pci/cx23885/cx23885-alsa.c b/drivers/media/pci/cx23885/cx23885-alsa.c
-index ab14d35214aa..25dc8d4dc5b7 100644
---- a/drivers/media/pci/cx23885/cx23885-alsa.c
-+++ b/drivers/media/pci/cx23885/cx23885-alsa.c
-@@ -550,7 +550,7 @@ struct cx23885_audio_dev *cx23885_audio_register(struct cx23885_dev *dev)
- 			   SNDRV_DEFAULT_IDX1, SNDRV_DEFAULT_STR1,
- 			THIS_MODULE, sizeof(struct cx23885_audio_dev), &card);
- 	if (err < 0)
--		goto error;
-+		goto error_msg;
- 
- 	chip = (struct cx23885_audio_dev *) card->private_data;
- 	chip->dev = dev;
-@@ -576,6 +576,7 @@ struct cx23885_audio_dev *cx23885_audio_register(struct cx23885_dev *dev)
- 
- error:
- 	snd_card_free(card);
-+error_msg:
- 	pr_err("%s(): Failed to register analog audio adapter\n",
- 	       __func__);
- 
--- 
-2.31.1
+But yesterday I sent another patch which incidentally fixes
+this too:
+https://lore.kernel.org/linux-wireless/20210803232746.3389570-1-linus.walleij@linaro.org/T/#u
 
+As you can see in the last hunk of that patch ret is now
+unconditionally assigned on both forks of the
+if/else-clause.
+
+Yours,
+Linus Walleij
