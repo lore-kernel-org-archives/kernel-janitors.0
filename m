@@ -2,84 +2,94 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-17.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E733DC4338F
-	for <kernel-janitors@archiver.kernel.org>; Wed,  4 Aug 2021 13:32:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0713C4338F
+	for <kernel-janitors@archiver.kernel.org>; Wed,  4 Aug 2021 13:35:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CC20360F41
-	for <kernel-janitors@archiver.kernel.org>; Wed,  4 Aug 2021 13:32:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5B2F60E96
+	for <kernel-janitors@archiver.kernel.org>; Wed,  4 Aug 2021 13:35:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238206AbhHDNc4 (ORCPT
+        id S238320AbhHDNfd (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 4 Aug 2021 09:32:56 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:54146
-        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S237941AbhHDNcz (ORCPT
+        Wed, 4 Aug 2021 09:35:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42324 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238266AbhHDNf3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 4 Aug 2021 09:32:55 -0400
-Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id AF01A3F04C;
-        Wed,  4 Aug 2021 13:32:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1628083961;
-        bh=sFRnlrCxX4UfbV0wRKIURUJvUdmMhm6lKn2cYdUX8LI=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=wLuaugkFgbJ2PegPAOA1YAQW3RXBSRnIBRsjNG5RN5mDOjZ/yj1gSBGYTqh8G2z9s
-         m3RbPWgoNGwZImFRismYTa3B5Yxn/YJ3ue7MbrMXxk6kBrJo0AvUKz5sRBQFCreMWZ
-         r/O4j16cMMyMozxLqFSWW32TArl3AdfJxmczKAZDfqAqyBHmtZLrYz1RQtIqImWykJ
-         LbOpWaQQGgxHD3P9qOQuJCNY0Uv8K0ME5yK+0rhBCI+RvQZaKDFY744SIz3zKk3EQz
-         vH7WtqtJ7r3PItpNAurcGE8ZMDHe8VphG+DoIliIy5MA51uV70I5/926ZtPId9iwjP
-         KroMCOzF078eQ==
-From:   Colin King <colin.king@canonical.com>
-To:     Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Can Guo <cang@codeaurora.org>, linux-scsi@vger.kernel.org
+        Wed, 4 Aug 2021 09:35:29 -0400
+Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D44EC0613D5;
+        Wed,  4 Aug 2021 06:35:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+        :In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:
+        Sender:Reply-To:Content-ID:Content-Description;
+        bh=4hk+HApOCK63oaKmJFSctQEwtZoOxqs0pPNX/2Vu9NQ=; b=bR4T43FsUV/4qxec5DQLuuGUU7
+        7YJ275gzeIhu7I+BKww2Q2mu2pwBfz5gxW7FfTKS3ovZQplGWM9hqOOk0zNI5BsVd7LVFZMQUiJR3
+        WyF/MfWQyvYDZlpywa2svU7VUUETwhCi7p9HgeDtqcmUvDwJK9IJ8m96P5MlVieHCqwgEmwW7F+HU
+        JpeSOyvBfzACIBLtMjzngircc64R/5Pqp6JA9TTCh5pQ3afEHZadHe7S8aDq+axGS32A4KdQxdcZO
+        /L55Fk+z8hphHi4luNU439MKXcZd3yY4qzCKdeqNvU3xlugCSKDWPq+3e+EN8G/TADmA2z3hdfSBl
+        K5fBJb6A==;
+Received: from [2601:1c0:6280:3f0:e65e:37ff:febd:ee53]
+        by desiato.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mBH3C-005kix-60; Wed, 04 Aug 2021 13:35:14 +0000
+Subject: Re: [PATCH][next] kernel/user.c: Fix spelling mistake "cpunter" ->
+ "counter"
+To:     Colin King <colin.king@canonical.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Alexey Gladkov <legion@kernel.org>
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: ufs: ufshpb: Remove redundant initialization of variable lba
-Date:   Wed,  4 Aug 2021 14:32:41 +0100
-Message-Id: <20210804133241.113509-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.31.1
+References: <20210804120658.110124-1-colin.king@canonical.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <e67d1ff8-f872-c1af-7f1c-03ac9e9d7d2e@infradead.org>
+Date:   Wed, 4 Aug 2021 06:35:09 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210804120658.110124-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On 8/4/21 5:06 AM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> There is a spelling mistake in a panic message. Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>   kernel/user.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/kernel/user.c b/kernel/user.c
+> index a2673f940506..7fc40af8d8ac 100644
+> --- a/kernel/user.c
+> +++ b/kernel/user.c
+> @@ -223,7 +223,7 @@ static int __init uid_cache_init(void)
+>   		INIT_HLIST_HEAD(uidhash_table + n);
+>   
+>   	if (percpu_counter_init(&root_user.epoll_watches, 0, GFP_KERNEL))
+> -		panic("percpu cpunter alloc failed");
+> +		panic("percpu counter alloc failed");
+>   
+>   	/* Insert the root user immediately (init already runs as root) */
+>   	spin_lock_irq(&uidhash_lock);
+> 
 
-The variable lba is being initialized with a value that is never
-read, it is being updated later on. The assignment is redundant and
-can be removed.
+Nick Piggin has reworded that panic message text in a patch
+yesterday so this patch isn't needed.
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/scsi/ufs/ufshcd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+https://lore.kernel.org/lkml/1628051945.fens3r99ox.astroid@bobo.none/
 
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index 40d371f6e147..e3cd033b6885 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -371,7 +371,7 @@ static void ufshcd_add_uic_command_trace(struct ufs_hba *hba,
- static void ufshcd_add_command_trace(struct ufs_hba *hba, unsigned int tag,
- 				     enum ufs_trace_str_t str_t)
- {
--	u64 lba = -1;
-+	u64 lba;
- 	u8 opcode = 0, group_id = 0;
- 	u32 intr, doorbell;
- 	struct ufshcd_lrb *lrbp = &hba->lrb[tag];
+
+thanks.
 -- 
-2.31.1
+~Randy
 
