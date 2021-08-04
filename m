@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9F0EC432BE
-	for <kernel-janitors@archiver.kernel.org>; Wed,  4 Aug 2021 12:59:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36C0FC4338F
+	for <kernel-janitors@archiver.kernel.org>; Wed,  4 Aug 2021 13:13:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A5CE560F41
-	for <kernel-janitors@archiver.kernel.org>; Wed,  4 Aug 2021 12:59:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19ACD60F43
+	for <kernel-janitors@archiver.kernel.org>; Wed,  4 Aug 2021 13:13:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237434AbhHDM70 (ORCPT
+        id S237934AbhHDNOA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 4 Aug 2021 08:59:26 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:49338
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236777AbhHDM7W (ORCPT
+        Wed, 4 Aug 2021 09:14:00 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:52892
+        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233389AbhHDNOA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 4 Aug 2021 08:59:22 -0400
+        Wed, 4 Aug 2021 09:14:00 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 99F253F0F9;
-        Wed,  4 Aug 2021 12:59:07 +0000 (UTC)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 5D6A63F345;
+        Wed,  4 Aug 2021 13:13:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1628081947;
-        bh=gRYiPHltXl1ab4ROKl548BWP/IqBGUAthHnSDS3smEw=;
+        s=20210705; t=1628082826;
+        bh=GU76vS3zmj8v0SxHCXRV3HKNjBU0sXuJiHmGfPWWMSI=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=rUEGUoWsIo5Q0hwJx0wDVffZe1p7bBrU/MjUaAXMADlSYYHWOF/nC32quaBeWo0ER
-         BZpPdoWtYm8WSZ1EQ0QhUDK2PzgHqICAHAhsTfrIqR/qeUqauea8+K/kUnsJ58uqUS
-         rWCAP/QjzKcHqz5owAcjxsA4IYlstfLOdKOejyH8tlfZOmiZbdOj5HZI4LG6IsP8fX
-         f/YekIg9NaH85GEIyIQLmK9/qUfbGo4RD7Wt0056wH2VCwX8cwDFACITiyIbdPY6ye
-         Dg9YOACgKB+QMCQs6PoIhlEmkirMnkbvaCAjZgmEqinza6mK2Ll8Acs3I6DcTKG8Vz
-         Vjr1rcDi2L07g==
+        b=DF1/CnOs6uTSot8vdmfpt/+fVTAF4bkx9It3A2AwTahqesisySR3rA2bPifAjb9GC
+         c3uAntwWi07cR2yqAr4hocgBzJ27yrBKX1pzAb0V0zDVlQOs2bGpB/Jt8SV8FpaAW/
+         wGTYlp0KorupKXCXV7ypOhHwMhxvZhSBce6R9Fexb9pBfUqPSqvzf7jHK164iWEf0j
+         Vv2o5p9Ya6bzaAxhU0uMriiYMSds8moY7szI9cvYhX/YcfA0cEQ8RBG3P7ygoqW1Zp
+         0KOgfnJYiBH4w4Z/zrCeYH+BK/HzUNvFjuA/uGn6A4qM4gO4+tr8fs5h4/eIQ7t2/y
+         yY2OppcnBbj2w==
 From:   Colin King <colin.king@canonical.com>
-To:     Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ruslan Bilovol <ruslan.bilovol@gmail.com>,
-        linux-usb@vger.kernel.org
+To:     Nilesh Javali <njavali@marvell.com>,
+        GR-QLogic-Storage-Upstream@marvell.com,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] usb: gadget: f_uac2: remove redundant assignments to pointer i_feature
-Date:   Wed,  4 Aug 2021 13:59:07 +0100
-Message-Id: <20210804125907.111654-1-colin.king@canonical.com>
+Subject: [PATCH][next[next]] scsi: qla2xxx: Remove redundant initialization of variable num_cnt
+Date:   Wed,  4 Aug 2021 14:13:44 +0100
+Message-Id: <20210804131344.112635-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -56,42 +57,29 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Pointer i_feature is being initialized with a value and then immediately
-re-assigned a new value in the next statement. Fix this by replacing the
-the redundant initialization with the following assigned value.
+The variable num_cnt is being initialized with a value that is never
+read, it is being updated later on. The assignment is redundant and
+can be removed.
 
 Addresses-Coverity: ("Unused value")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/usb/gadget/function/f_uac2.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+ drivers/scsi/qla2xxx/qla_edif.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/gadget/function/f_uac2.c b/drivers/usb/gadget/function/f_uac2.c
-index b9edc6787f79..3c34995276e7 100644
---- a/drivers/usb/gadget/function/f_uac2.c
-+++ b/drivers/usb/gadget/function/f_uac2.c
-@@ -970,17 +970,13 @@ afunc_bind(struct usb_configuration *cfg, struct usb_function *fn)
- 	std_as_in_if1_desc.iInterface = us[STR_AS_IN_ALT1].id;
- 
- 	if (FUOUT_EN(uac2_opts)) {
--		u8 *i_feature = (u8 *)out_feature_unit_desc;
--
--		i_feature = (u8 *)out_feature_unit_desc +
--					out_feature_unit_desc->bLength - 1;
-+		u8 *i_feature = (u8 *)out_feature_unit_desc +
-+				out_feature_unit_desc->bLength - 1;
- 		*i_feature = us[STR_FU_OUT].id;
- 	}
- 	if (FUIN_EN(uac2_opts)) {
--		u8 *i_feature = (u8 *)in_feature_unit_desc;
--
--		i_feature = (u8 *)in_feature_unit_desc +
--					in_feature_unit_desc->bLength - 1;
-+		u8 *i_feature = (u8 *)in_feature_unit_desc +
-+				in_feature_unit_desc->bLength - 1;
- 		*i_feature = us[STR_FU_IN].id;
- 	}
- 
+diff --git a/drivers/scsi/qla2xxx/qla_edif.c b/drivers/scsi/qla2xxx/qla_edif.c
+index fde410989c03..2db954a7aaf1 100644
+--- a/drivers/scsi/qla2xxx/qla_edif.c
++++ b/drivers/scsi/qla2xxx/qla_edif.c
+@@ -875,7 +875,7 @@ static int
+ qla_edif_app_getfcinfo(scsi_qla_host_t *vha, struct bsg_job *bsg_job)
+ {
+ 	int32_t			rval = 0;
+-	int32_t			num_cnt = 1;
++	int32_t			num_cnt;
+ 	struct fc_bsg_reply	*bsg_reply = bsg_job->reply;
+ 	struct app_pinfo_req	app_req;
+ 	struct app_pinfo_reply	*app_reply;
 -- 
 2.31.1
 
