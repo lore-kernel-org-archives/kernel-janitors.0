@@ -2,73 +2,127 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B5D7C4320E
-	for <kernel-janitors@archiver.kernel.org>; Thu,  5 Aug 2021 18:37:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10A57C4338F
+	for <kernel-janitors@archiver.kernel.org>; Thu,  5 Aug 2021 18:44:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8477060F01
-	for <kernel-janitors@archiver.kernel.org>; Thu,  5 Aug 2021 18:37:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECE2961040
+	for <kernel-janitors@archiver.kernel.org>; Thu,  5 Aug 2021 18:44:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241374AbhHEShg (ORCPT
+        id S241606AbhHESov (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 5 Aug 2021 14:37:36 -0400
-Received: from smtp06.smtpout.orange.fr ([80.12.242.128]:26907 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241364AbhHEShf (ORCPT
+        Thu, 5 Aug 2021 14:44:51 -0400
+Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:22754 "EHLO
+        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S241592AbhHESou (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 5 Aug 2021 14:37:35 -0400
-Received: from localhost.localdomain ([217.128.214.245])
-        by mwinf5d63 with ME
-        id dudJ250055JEng903udJWQ; Thu, 05 Aug 2021 20:37:20 +0200
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 05 Aug 2021 20:37:20 +0200
-X-ME-IP: 217.128.214.245
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     alexander.deucher@amd.com, christian.koenig@amd.com,
-        Xinhui.Pan@amd.com, airlied@linux.ie, daniel@ffwll.ch,
-        ray.huang@amd.com, evan.quan@amd.com, Xiaojian.Du@amd.com,
-        kevin1.wang@amd.com, Jinzhou.Su@amd.com
-Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] drm/amd/pm: Fix a memory leak in an error handling path in 'vangogh_tables_init()'
-Date:   Thu,  5 Aug 2021 20:37:14 +0200
-Message-Id: <fd28a9cec24a8d32ebb26dd857c399d0a15acdd5.1628188477.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Thu, 5 Aug 2021 14:44:50 -0400
+IronPort-HdrOrdr: =?us-ascii?q?A9a23=3Ayn/lL6Ff6gNM5rP5pLqE+ceALOsnbusQ8zAX?=
+ =?us-ascii?q?PidKOHlom62j5qKTdZsgvyMc5Ax9ZJhCo6HiBEDjexLhHPdOiOF7AV7FZmXbUQ?=
+ =?us-ascii?q?CTQr2Kg7GM/9StIU3DytI=3D?=
+X-IronPort-AV: E=Sophos;i="5.84,296,1620684000"; 
+   d="scan'208";a="522913201"
+Received: from 173.121.68.85.rev.sfr.net (HELO hadrien) ([85.68.121.173])
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Aug 2021 20:44:34 +0200
+Date:   Thu, 5 Aug 2021 20:44:34 +0200 (CEST)
+From:   Julia Lawall <julia.lawall@inria.fr>
+X-X-Sender: jll@hadrien
+To:     Joe Perches <joe@perches.com>
+cc:     Julia Lawall <julia.lawall@inria.fr>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Andy Whitcroft <apw@canonical.com>,
+        cocci <cocci@systeme.lip6.fr>,
+        Dwaipayan Ray <dwaipayanray1@gmail.com>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] checkpatch: prefer = {} initializations to = {0}
+In-Reply-To: <83ffab14de1c2af00d38d532ffecdda1f9e936ab.camel@perches.com>
+Message-ID: <alpine.DEB.2.22.394.2108052043260.16100@hadrien>
+References: <20210805104353.GD26417@kili>  <117021b44dc9ba570a0f48736d14a267a8701d0a.camel@perches.com>  <e07845c0348f389756b76e34b4728a95aa48038a.camel@perches.com>  <alpine.DEB.2.22.394.2108052016220.16100@hadrien>
+ <83ffab14de1c2af00d38d532ffecdda1f9e936ab.camel@perches.com>
+User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-'watermarks_table' must be freed instead 'clocks_table', because
-'clocks_table' is known to be NULL at this point and 'watermarks_table' is
-never freed if the last kzalloc fails.
 
-Fixes: c98ee89736b8 ("drm/amd/pm: add the fine grain tuning function for vangogh")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/gpu/drm/amd/pm/swsmu/smu11/vangogh_ppt.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/pm/swsmu/smu11/vangogh_ppt.c b/drivers/gpu/drm/amd/pm/swsmu/smu11/vangogh_ppt.c
-index 335b3c70e1a7..06eea917284e 100644
---- a/drivers/gpu/drm/amd/pm/swsmu/smu11/vangogh_ppt.c
-+++ b/drivers/gpu/drm/amd/pm/swsmu/smu11/vangogh_ppt.c
-@@ -256,7 +256,7 @@ static int vangogh_tables_init(struct smu_context *smu)
- 	return 0;
- 
- err3_out:
--	kfree(smu_table->clocks_table);
-+	kfree(smu_table->watermarks_table);
- err2_out:
- 	kfree(smu_table->gpu_metrics_table);
- err1_out:
--- 
-2.30.2
+On Thu, 5 Aug 2021, Joe Perches wrote:
 
+> On Thu, 2021-08-05 at 20:17 +0200, Julia Lawall wrote:
+> > On Thu, 5 Aug 2021, Joe Perches wrote:
+> > > On Thu, 2021-08-05 at 05:27 -0700, Joe Perches wrote:
+> > > > On Thu, 2021-08-05 at 13:43 +0300, Dan Carpenter wrote:
+> > > > > The "= {};" style empty struct initializer is preferred over = {0}.
+> > > > > It avoids the situation where the first struct member is a pointer and
+> > > > > that generates a Sparse warning about assigning using zero instead of
+> > > > > NULL.  Also it's just nicer to look at.
+> > >
+> > > Perhaps a cocci script like the below could help too:
+> > >
+> > > $ cat zero_init_struct.cocci
+> > > @@
+> > > identifier name;
+> > > identifier t;
+> > > @@
+> > >
+> > > 	struct name t = {
+> > > -	       0
+> > > 	};
+> > >
+> > > @@
+> > > identifier name;
+> > > identifier t;
+> > > identifier member;
+> > > @@
+> > >
+> > > 	struct name t = {
+> > > 	       ...,
+> > > 		.member = {
+> > > -		0
+> > > 		},
+> > > 		...,
+> > > 	};
+> >
+> > My test turns up over 1900 occurrences.  There is the question of whether
+> > {} or { } is preferred.  The above semantic patch replaces {0} by {} and
+> > ( 0 } by { }.
+>
+> I saw that and I don't recall how to force one style or another
+> to be output.
+
+If you remove something and put it back, then Coccinelle takes care of
+pretty printing it.  So the following produces {} everywhere.  Fortunately
+Dan seems to prefer that...
+
+@@
+identifier name;
+identifier t;
+@@
+
+        struct name t =
+-              {0}
++              {}
+        ;
+
+@@
+identifier name;
+identifier t;
+identifier member;
+@@
+
+        struct name t = {
+               ...,
+                .member =
+-               {0}
++               {}
+                ,
+                ...,
+        };
+
+julia
