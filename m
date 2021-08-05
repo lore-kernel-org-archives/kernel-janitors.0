@@ -2,74 +2,73 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-21.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1221C4338F
-	for <kernel-janitors@archiver.kernel.org>; Thu,  5 Aug 2021 12:40:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 140B3C4320A
+	for <kernel-janitors@archiver.kernel.org>; Thu,  5 Aug 2021 13:06:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AF5756115B
-	for <kernel-janitors@archiver.kernel.org>; Thu,  5 Aug 2021 12:40:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E6ED860EE4
+	for <kernel-janitors@archiver.kernel.org>; Thu,  5 Aug 2021 13:06:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241420AbhHEMkU (ORCPT
+        id S241595AbhHENGt convert rfc822-to-8bit (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 5 Aug 2021 08:40:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56700 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S240239AbhHEMkU (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 5 Aug 2021 08:40:20 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 4161461132;
-        Thu,  5 Aug 2021 12:40:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1628167206;
-        bh=ADpxBt6oVgoGxWYom3C0Sco4vqfS6lH69mv3genZHKs=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=ojuGc8EVftD25TXgKTt+5Cx+3HFgMDuT7h4HbJurYbKMB+rq3ymptG5dCDWpot5oP
-         aSPf2omEsh6uJwS6sUD9V9pplZibiEBg6VgSPBmE9o705eV0R8fsbiQrbuEciQqFqp
-         NQRJZ6slDt/Ntoh2sBOANJwpESrOKUWM5SmKn4CgWOcP+K5zfddqsFVLja0/QYCxDB
-         LaUiMTuxqXvnwSO7oNN0+iofz7PDk5EnPCDth3tyzVd6+GPtXmu+rvpQBDnu5LGMeq
-         ZuvlNhBbZZ0vTMJlTS3SAAM78mH/pbrqmY618g3bBvmWHNRo++/UHUzwzxHnktQ0ch
-         Zba3o46vQeetA==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] bnx2x: fix an error code in bnx2x_nic_load()
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <162816720620.10114.11424792100720509562.git-patchwork-notify@kernel.org>
-Date:   Thu, 05 Aug 2021 12:40:06 +0000
-References: <20210805103826.GB26417@kili>
-In-Reply-To: <20210805103826.GB26417@kili>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     aelior@marvell.com, skalluru@marvell.com,
-        GR-everest-linux-l2@marvell.com, eilong@broadcom.com,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+        Thu, 5 Aug 2021 09:06:49 -0400
+Received: from coyote.holtmann.net ([212.227.132.17]:53490 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240184AbhHENGt (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 5 Aug 2021 09:06:49 -0400
+Received: from smtpclient.apple (p5b3d23f8.dip0.t-ipconnect.de [91.61.35.248])
+        by mail.holtmann.org (Postfix) with ESMTPSA id CC48ECECF0;
+        Thu,  5 Aug 2021 15:06:32 +0200 (CEST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 14.0 \(3654.100.0.2.22\))
+Subject: Re: [PATCH] Bluetooth: increase BTNAMSIZ to 21 chars to fix potential
+ buffer overflow
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <20210804150951.116814-1-colin.king@canonical.com>
+Date:   Thu, 5 Aug 2021 15:06:32 +0200
+Cc:     Karsten Keil <isdn@linux-pingi.de>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Andrei Emeltchenko <andrei.emeltchenko@intel.com>,
+        Gustavo Padovan <gustavo.padovan@collabora.co.uk>,
+        "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>,
+        BlueZ <linux-bluetooth@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <B3E07F67-11A7-4E96-B59D-2FE6D48BB538@holtmann.org>
+References: <20210804150951.116814-1-colin.king@canonical.com>
+To:     Colin King <colin.king@canonical.com>
+X-Mailer: Apple Mail (2.3654.100.0.2.22)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+Hi Colin,
 
-This patch was applied to netdev/net.git (refs/heads/master):
-
-On Thu, 5 Aug 2021 13:38:26 +0300 you wrote:
-> Set the error code if bnx2x_alloc_fw_stats_mem() fails.  The current
-> code returns success.
+> An earlier commit replaced using batostr to using %pMR sprintf for the
+> construction of session->name. Static analysis detected that this new
+> method can use a total of 21 characters (including the trailing '\0')
+> so we need to increase the BTNAMSIZ from 18 to 21 to fix potential
+> buffer overflows.
 > 
-> Fixes: ad5afc89365e ("bnx2x: Separate VF and PF logic")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Addresses-Coverity: ("Out-of-bounds write")
+> Fixes: fcb73338ed53 ("Bluetooth: Use %pMR in sprintf/seq_printf instead of batostr")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
->  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> net/bluetooth/cmtp/cmtp.h | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Here is the summary with links:
-  - [net] bnx2x: fix an error code in bnx2x_nic_load()
-    https://git.kernel.org/netdev/net/c/fb653827c758
+patch has been applied to bluetooth-next tree.
 
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Regards
 
+Marcel
 
