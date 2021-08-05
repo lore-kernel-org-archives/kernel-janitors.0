@@ -2,68 +2,64 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CF41C43216
-	for <kernel-janitors@archiver.kernel.org>; Thu,  5 Aug 2021 14:14:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5786C4338F
+	for <kernel-janitors@archiver.kernel.org>; Thu,  5 Aug 2021 15:02:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EE86161157
-	for <kernel-janitors@archiver.kernel.org>; Thu,  5 Aug 2021 14:14:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7ECE36104F
+	for <kernel-janitors@archiver.kernel.org>; Thu,  5 Aug 2021 15:02:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241962AbhHEOOx (ORCPT
+        id S234862AbhHEPCp (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 5 Aug 2021 10:14:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38978 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240404AbhHEOOw (ORCPT
+        Thu, 5 Aug 2021 11:02:45 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:56198 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230183AbhHEPCo (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 5 Aug 2021 10:14:52 -0400
-Received: from mail-yb1-xb34.google.com (mail-yb1-xb34.google.com [IPv6:2607:f8b0:4864:20::b34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 837B4C0613D5;
-        Thu,  5 Aug 2021 07:14:37 -0700 (PDT)
-Received: by mail-yb1-xb34.google.com with SMTP id k65so9144284yba.13;
-        Thu, 05 Aug 2021 07:14:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RK1qIQUMLDg26C++g8PqjRfyq8ZGyPCSWDvxnpYfF8E=;
-        b=QFvAV2RCqJkzoxy7/W3L7MVfZqX3besaGBVzK05YOrnnOwyEmlws+PFW9OL/RMDCzT
-         NYDqsmuTEVLewksne2ox5GqyJr+a5Oq6XuQQjHWFj6OotFRhzMTKqE6EufJMGZAb8Du2
-         E6pTfj499rC36OliUWBBAXqtg6a1pCriuU47DKL118KBYkF+gZQVap+r8XKWypEI5Zv3
-         jjNoRgL7OLhqRfsaYjmJbZ1+HWFRtZgnIPtuRqc93xiBPeaKaoSuiEsc/evKWm060DiX
-         qm1KoOR6c0yIWO4bW12EoFD+tTF7CdnG3qBkfo2zg6KUaYoGYsxMIEM0DY8vW6MJ14+L
-         XBHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RK1qIQUMLDg26C++g8PqjRfyq8ZGyPCSWDvxnpYfF8E=;
-        b=BK7VZsLumrhystWmtLnca2cOrghaX/W10XcVxF9KGk1gOBrFZ4n5mo7+BS6Xt8XAq/
-         q+LnTKkd+l3F2eTr0csoGL0sGB5jSZO17QkvTISwSTaQjiZRg6C9KGtIVarAULzIeNAk
-         3TbirX2/71ja57cCostN8s/Dlg1RqxL+SnUXHSenxwH2eVdIwGyzi2TtYTkVPGX4RR42
-         VGY5nPAjsBUMNsSv7kNiXzmkFIolqbu5T2wjyabyqeT0m8548vynSW+Tt1VR3cW79NQp
-         YUScDBUvzbJA3WNEPX7epXFOmS3DWNXy8OZXHgWt5t9328PzNTT99bg1HUKxKIidI20L
-         rcDA==
-X-Gm-Message-State: AOAM533Zlc6J3F6q1ieuOuKqfuMYXB81Wa21PKyF/yme+zOGgOLFTNvj
-        /HLKXuuZR+Nfnkv7wMj6MrzoUjFZmSMzYR6IN+o=
-X-Google-Smtp-Source: ABdhPJwRz3wgEoQPBbgKhhXkeK2ovD55mNvz/+/sT0GE7D2gSwrAphc8StUK2qzf3Q7v7Gq/Ri/AR/VzzcrC0eR8QBQ=
-X-Received: by 2002:a25:b948:: with SMTP id s8mr6272708ybm.281.1628172876679;
- Thu, 05 Aug 2021 07:14:36 -0700 (PDT)
+        Thu, 5 Aug 2021 11:02:44 -0400
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 219791FE64;
+        Thu,  5 Aug 2021 15:02:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1628175749; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=XBK6IDDHWir8GbqzNbSxQd2rcyeh6iwFHMXEOR7Cd7o=;
+        b=TyTJnqK2IFF5JfLfK6NM9rplT46p5M5K3Oc9hXIOb5jsjA2QMalN5oGXaOLOHct3MRBlSK
+        MCDj9WqRmjkhRAXDMkKuu6msxn+QcNJ8/5l8t8mexW8gBjrj0qOCcdH7JDIzL0+xUPPUoW
+        8lRjjhrtV2TvR9t2sTQp6s8GOH0nJqA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1628175749;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=XBK6IDDHWir8GbqzNbSxQd2rcyeh6iwFHMXEOR7Cd7o=;
+        b=+OmDeC/9K2yV1ceP67qrgpXKjMVK3LpPatD/mrHoHpJEeh1WEr260Fqr++YH20p0A5Rfz6
+        ngLzls8O4onNZbBA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 0937413DA8;
+        Thu,  5 Aug 2021 15:02:29 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id dQC2AYX9C2ErcAAAMHmgww
+        (envelope-from <dbueso@suse.de>); Thu, 05 Aug 2021 15:02:29 +0000
 MIME-Version: 1.0
-References: <20210805133213.700-1-lukas.bulwahn@gmail.com> <CAK8P3a3aNuxaEtAiewd+Wjc8hKtca0NrcV2kykkNC-qKT_HhzQ@mail.gmail.com>
-In-Reply-To: <CAK8P3a3aNuxaEtAiewd+Wjc8hKtca0NrcV2kykkNC-qKT_HhzQ@mail.gmail.com>
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date:   Thu, 5 Aug 2021 16:14:25 +0200
-Message-ID: <CAKXUXMxsx5V-ONCxaNaLd3mw_=Epca1eUg3SRsf3+QrTK07yXA@mail.gmail.com>
-Subject: Re: [PATCH] rbtree: remove unneeded explicit alignment in struct rb_node
+Date:   Thu, 05 Aug 2021 08:02:28 -0700
+From:   Davidlohr Bueso <dbueso@suse.de>
 To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Michel Lespinasse <michel@lespinasse.org>,
-        Davidlohr Bueso <dbueso@suse.de>,
+Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Michel Lespinasse <michel@lespinasse.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Mete Polat <metepolat2000@gmail.com>,
         Jesper Nilsson <jesper@jni.nu>,
@@ -71,67 +67,33 @@ Cc:     Michel Lespinasse <michel@lespinasse.org>,
         Ingo Molnar <mingo@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Randy Dunlap <rdunlap@infradead.org>,
-        kernel-janitors <kernel-janitors@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Geert Uytterhoeven <geert@linux-m68k.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH] rbtree: remove unneeded explicit alignment in struct
+ rb_node
+In-Reply-To: <CAK8P3a3aNuxaEtAiewd+Wjc8hKtca0NrcV2kykkNC-qKT_HhzQ@mail.gmail.com>
+References: <20210805133213.700-1-lukas.bulwahn@gmail.com>
+ <CAK8P3a3aNuxaEtAiewd+Wjc8hKtca0NrcV2kykkNC-qKT_HhzQ@mail.gmail.com>
+User-Agent: Roundcube Webmail
+Message-ID: <50ad4c8b848bd371b4b42959167ef03d@suse.de>
+X-Sender: dbueso@suse.de
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Aug 5, 2021 at 4:02 PM Arnd Bergmann <arnd@arndb.de> wrote:
->
-> On Thu, Aug 5, 2021 at 3:32 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
-> >
-> > Commit e977145aeaad ("[RBTREE] Add explicit alignment to sizeof(long) for
-> > struct rb_node.") adds an explicit alignment to the struct rb_node due to
-> > some speciality of the CRIS architecture.
-> >
-> > The support for the CRIS architecture was removed with commit c690eddc2f3b
-> > ("CRIS: Drop support for the CRIS port")
-> >
-> > So, remove this now unneeded explicit alignment in struct rb_node as well.
-> >
-> > This basically reverts commit e977145aeaad ("[RBTREE] Add explicit
-> > alignment to sizeof(long) for struct rb_node.").
-> >
-> > Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> > Reported-by: Mete Polat <metepolat2000@gmail.com>
-> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> > ---
-> > applies cleanly on next-20210804, but only x86 compile-checked.
-> >
-> > Michel, Davidlohr, Jesper, David, please ack.
-> >
-> > Mete, you might want to re-run your RBT test suite for this change.
-> >
-> > Andrew, once acked, please pick this minor cleanup into your tree.
->
-> Do you know why it needed the extra alignment on cris at the time?
->
-
-I basically only know what David Woodhouse wrote in his commit message:
-
-"... allegedly it was necessary for struct address_space on CRIS,
-because it otherwise ended up being only byte-aligned."
-
+On 2021-08-05 07:02, Arnd Bergmann wrote:
 > The revert would appear to change the alignment to 16 bits instead
-> of 32 bits on m68k as well (not 8 bits as on cris), but I don't know if that
+> of 32 bits on m68k as well (not 8 bits as on cris), but I don't know if 
+> that
 > can cause problems there.
->
 
-I guess this patch would need to be exposed to testing on the various
-architectures. I personally can only serve with testing x86 and maybe
-with a bit of some arm architecture.
+Yeah I tried this a while back and it broke m68k, so it was a no go:
 
-Should we CC the various architecture mailing lists and maintainers on
-such a patch, or is that just noise for these maintainers?
+https://lore.kernel.org/lkml/CAMuHMdXeZvJ0X6Ah2CpLRoQJm+YhxAWBt-rUpxoyfOLTcHp+0g@mail.gmail.com/
 
-Or could we just quickly pick this up into anyone's (Andrew's) tree
-for linux-next and expose it to wider testing on other architectures
-that way? If we see the patch cause failures (rbtree is widely used in
-mm, fs, etc. and hence boot up would probably already fail), then we
-know and we can adjust the comment with a patch v2 to know for the
-future that this alignment is also relevant for other architectures.
-
-Lukas
+Thanks,
+Davidlohr
