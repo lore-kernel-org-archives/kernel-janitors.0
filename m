@@ -2,50 +2,63 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41603C4338F
-	for <kernel-janitors@archiver.kernel.org>; Thu,  5 Aug 2021 15:10:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5B95C4338F
+	for <kernel-janitors@archiver.kernel.org>; Thu,  5 Aug 2021 17:20:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2275160EEA
-	for <kernel-janitors@archiver.kernel.org>; Thu,  5 Aug 2021 15:10:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE07E61040
+	for <kernel-janitors@archiver.kernel.org>; Thu,  5 Aug 2021 17:20:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241814AbhHEPKk (ORCPT
+        id S239579AbhHERUp (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 5 Aug 2021 11:10:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51726 "EHLO
+        Thu, 5 Aug 2021 13:20:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54026 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233201AbhHEPKk (ORCPT
+        with ESMTP id S239562AbhHERUo (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 5 Aug 2021 11:10:40 -0400
-Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 196D0C061765;
-        Thu,  5 Aug 2021 08:10:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=eSJtsF6Jeti9fhWnHbLl2fELMn0F+2fN4MBTm3vWTW0=; b=MlcIUmoXpg52Stjx4LMJuW97mw
-        C2qZUotjUrwxXQShT5OTm1MEIacvPBuJxY78NRoO/UUbmvLYE8ntiPRjgn8VPaXlQTYTFQbNIQ7Pr
-        9xeBsNOuh1g8ha+eJgwu76QV/UpoeEAhDbFFBznTYi8u9PETyyAsLNc3amnANgMXarEBdpcZTJJw4
-        Q0lghQDit4CRVN9CThoiSDTLPv2z2xs4f/sKCTBp5Hhjom9WncXuYqJaaEQ1YMETq48ssLN/w+897
-        +NohM/qzPW7fnt5D3c9O1ABDUxbx45gq8QRChsNADCGukjTEnDXYxuolSgMosWTnsM61I1TiyJou4
-        Td/0XmYQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by desiato.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mBf0d-0065gm-6d; Thu, 05 Aug 2021 15:10:11 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id D7B4830027B;
-        Thu,  5 Aug 2021 17:10:08 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id BC1A4299CE2A6; Thu,  5 Aug 2021 17:10:08 +0200 (CEST)
-Date:   Thu, 5 Aug 2021 17:10:08 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
+        Thu, 5 Aug 2021 13:20:44 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42DDEC061765;
+        Thu,  5 Aug 2021 10:20:30 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id c9so7513053wri.8;
+        Thu, 05 Aug 2021 10:20:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Yewv8eLDuGQeemlSPQSqp+7rB89rcOX4qDuzzTlqfT8=;
+        b=EsowHEOyEYYrO9vnkTAEE8IY9xW1VG4R14262m++D4LfZdV/Aj7s3UlE2WKcuz2mFz
+         MzW/pNBbbBDnPK2q3yGTwqs4TBr04kU1+bnOFW4xPtcV2PcASq5Mig+iXVaBIusf2bs2
+         jpv85JF/RDxHA6QL81xnes3joy4MYEUeQJFdwrujN3ThNPQSSx1w8ZPjRChaE6wpvF4c
+         ixAYbvjs7qWGmWc0JMfhE13FaHlHBlCnawj0w1c0jTzfAXV8J7HFUyxzJx9SBYhYBXiD
+         fQueO7HqbgcldgMjOuvg7871gDH/TixuNQcwiicG3A4dNA0eJGIR0EKnMq79DDq/Om5g
+         2n3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Yewv8eLDuGQeemlSPQSqp+7rB89rcOX4qDuzzTlqfT8=;
+        b=kW5FtSvPfomQWNNWTtlmBmcEHYfNcYOFTE+zGckzHrSELvI9f7Czgh7E9b9GmwceE8
+         /rzLKwjo+1F5WNsPoXBOu9ewFEOruxQyXjAxDRMfzosK2cavufNIP5tM/kpCuxmLlPLG
+         x+zjqwrEzFu7vVeaqzwsbydAKgukz6efMPO+z0Q9+6k9tVB28SOSLeKcPJFY7jK18295
+         YaqMfQ29YNGqXXCCwc5G9OM54cvCgIhgyMiLOj81fPmXlN3U7mUozedWyWY9+IdXMGJP
+         zoz3OM0a0O+IY71RZpGdSCcGXSuoyhOrJd+Jy6oKhM23juBrbD6/vln/TSI8JUuDd0eu
+         B2zg==
+X-Gm-Message-State: AOAM533qVSQ2FFdKZJXEs/jpoKy9dqmJiXVSYMUqHnH4k7NBacM5k+vD
+        aFsRVA/1QYNvTfLFTH+l30I=
+X-Google-Smtp-Source: ABdhPJxCiTfqldjm4hmLDiEc6fvPdlmv3Z2zkV8UiudjVMrbhWeJgGjYXREJlzrxpvyDVmrlFQL0Fg==
+X-Received: by 2002:adf:f74f:: with SMTP id z15mr6555518wrp.54.1628184028927;
+        Thu, 05 Aug 2021 10:20:28 -0700 (PDT)
+Received: from precision (aftr-62-216-202-140.dynamic.mnet-online.de. [62.216.202.140])
+        by smtp.gmail.com with ESMTPSA id d7sm6872606wrs.39.2021.08.05.10.20.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Aug 2021 10:20:28 -0700 (PDT)
+Date:   Thu, 5 Aug 2021 19:20:26 +0200
+From:   Mete Polat <metepolat2000@gmail.com>
 To:     Davidlohr Bueso <dbueso@suse.de>
 Cc:     Arnd Bergmann <arnd@arndb.de>,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>,
@@ -55,13 +68,14 @@ Cc:     Arnd Bergmann <arnd@arndb.de>,
         Jesper Nilsson <jesper@jni.nu>,
         David Woodhouse <dwmw2@infradead.org>,
         Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
         Randy Dunlap <rdunlap@infradead.org>,
         kernel-janitors@vger.kernel.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Geert Uytterhoeven <geert@linux-m68k.org>
 Subject: Re: [PATCH] rbtree: remove unneeded explicit alignment in struct
  rb_node
-Message-ID: <YQv/UGiAddAS1T77@hirez.programming.kicks-ass.net>
+Message-ID: <YQwd2puXiSiUWEE1@precision>
 References: <20210805133213.700-1-lukas.bulwahn@gmail.com>
  <CAK8P3a3aNuxaEtAiewd+Wjc8hKtca0NrcV2kykkNC-qKT_HhzQ@mail.gmail.com>
  <50ad4c8b848bd371b4b42959167ef03d@suse.de>
@@ -84,6 +98,24 @@ On Thu, Aug 05, 2021 at 08:02:28AM -0700, Davidlohr Bueso wrote:
 > 
 > https://lore.kernel.org/lkml/CAMuHMdXeZvJ0X6Ah2CpLRoQJm+YhxAWBt-rUpxoyfOLTcHp+0g@mail.gmail.com/
 
-I'm still thinking that any architecture that doesn't respect natural
-alignment is playing with fire. For giggles we should put a runtime
-alignment check in READ_ONCE() and see what goes *bang*.
+The problem is that the field '__rb_parent_color' in struct rb_node is
+storing the color AND the pointer to the parent node at the same time.
+The color is stored in the least significant bit which is fine when
+rb_node is at least 16-bit aligned. I guess, it does not work on m68k
+because the makro
+
+#define __rb_parent(pc)    ((struct rb_node *)(pc & ~3))
+
+used to retrieve the parent pointer zeros the first two bits, not only
+the first one.
+
+Maybe the effiency to store this one color bit in another field was
+required in the early days but I think moving the color to a seperate
+field is really the better way to go. It also makes reasoning about the
+algorithm easier.
+
+I will create a patch.
+
+Mete
+> 
+> Thanks, Davidlohr
