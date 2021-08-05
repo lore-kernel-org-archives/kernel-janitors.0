@@ -2,73 +2,121 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 140B3C4320A
-	for <kernel-janitors@archiver.kernel.org>; Thu,  5 Aug 2021 13:06:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55657C4338F
+	for <kernel-janitors@archiver.kernel.org>; Thu,  5 Aug 2021 13:32:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E6ED860EE4
-	for <kernel-janitors@archiver.kernel.org>; Thu,  5 Aug 2021 13:06:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3ACF561154
+	for <kernel-janitors@archiver.kernel.org>; Thu,  5 Aug 2021 13:32:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241595AbhHENGt convert rfc822-to-8bit (ORCPT
+        id S241694AbhHENcl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 5 Aug 2021 09:06:49 -0400
-Received: from coyote.holtmann.net ([212.227.132.17]:53490 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240184AbhHENGt (ORCPT
+        Thu, 5 Aug 2021 09:32:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57388 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S241105AbhHENck (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 5 Aug 2021 09:06:49 -0400
-Received: from smtpclient.apple (p5b3d23f8.dip0.t-ipconnect.de [91.61.35.248])
-        by mail.holtmann.org (Postfix) with ESMTPSA id CC48ECECF0;
-        Thu,  5 Aug 2021 15:06:32 +0200 (CEST)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 14.0 \(3654.100.0.2.22\))
-Subject: Re: [PATCH] Bluetooth: increase BTNAMSIZ to 21 chars to fix potential
- buffer overflow
-From:   Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <20210804150951.116814-1-colin.king@canonical.com>
-Date:   Thu, 5 Aug 2021 15:06:32 +0200
-Cc:     Karsten Keil <isdn@linux-pingi.de>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Andrei Emeltchenko <andrei.emeltchenko@intel.com>,
-        Gustavo Padovan <gustavo.padovan@collabora.co.uk>,
-        "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>,
-        BlueZ <linux-bluetooth@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8BIT
-Message-Id: <B3E07F67-11A7-4E96-B59D-2FE6D48BB538@holtmann.org>
-References: <20210804150951.116814-1-colin.king@canonical.com>
-To:     Colin King <colin.king@canonical.com>
-X-Mailer: Apple Mail (2.3654.100.0.2.22)
+        Thu, 5 Aug 2021 09:32:40 -0400
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BE72C061765;
+        Thu,  5 Aug 2021 06:32:25 -0700 (PDT)
+Received: by mail-wr1-x430.google.com with SMTP id j2so6546227wrx.9;
+        Thu, 05 Aug 2021 06:32:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=dHJuAB+xH7J0mncxBxd5BocIPg1XkQeb/gIAfBL3s+U=;
+        b=n6j6tdNshoCHO7CTjpjun0anYAB2neTObKuk4IDrMJNM4F1YakP/K7SO1wDsu/ptMk
+         8lQ+uGQq6JlDec/wNIV22I+OmgBgWtp8BqdzpgxAMmVgN1jrZZ70dbrouOo3kW5dJEL5
+         F22uMKwqe0aZFVw05p2kqc8l4PRIqRBihfcqrBmrb8oBN0KHm21dJqfoZNFasvnkyxc3
+         BEgq5GZX+OyL40btin4wrN9V1coYhKsMix3w7tANMy/lvoCiGKuK5W48tzWA9qyi1JkD
+         FgLGQXXhKx3cyG6TlsbIAkGVitrzOTPcoDJhVpl6D1p29hb2i51ZZPeMLnz9HSP/a9Tm
+         EnPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=dHJuAB+xH7J0mncxBxd5BocIPg1XkQeb/gIAfBL3s+U=;
+        b=ecsNVadLqYv5R0/MPMVM0Kc325N/xZttxf2tCNtNofm2ZIrwAIQlI+cbfIWeGFe+w4
+         lYeBf18hct1BZ3OpYc0D5eBCoxPfGZn2mhfDnaezgBdrcfQkAq6GlUIcDJDhzprNuLuP
+         6l5BLLAny42k9kGEALL+65o0nCnBuu5+pRHtMf+dhF7mDBt4L46rimRpqL6YXADOxUJ8
+         44KM2QrIkjNrgvtepf/9HvoxFhzgBg7n9oIIBKH14DxBa6JNK79F3qkVTuxeNe3m1Ocy
+         NrOQlXgb1ZMtHJ5GswyZyjzdmEihPw7Dhf6+sgmxdO1je2rBryGUl63RDyO58qF5V0gR
+         bBbA==
+X-Gm-Message-State: AOAM530UL3GgNb4nOJNRikMa+yoQnJ94ydnD4H1i9lpdQ4tiz6OLW4rM
+        0EjpjXT2IvfjFnwFdy/daKE=
+X-Google-Smtp-Source: ABdhPJxoWV7qwbvb3z3P2LC52eAOK7PjxTI1IJY5Sy2LLR+SCMUkEvQ71G/KfSiUTazlJBeYcKobjg==
+X-Received: by 2002:adf:fe89:: with SMTP id l9mr5496502wrr.396.1628170344007;
+        Thu, 05 Aug 2021 06:32:24 -0700 (PDT)
+Received: from felia.fritz.box ([2001:16b8:2df9:c900:f529:5713:68f8:707e])
+        by smtp.gmail.com with ESMTPSA id y197sm9578759wmc.7.2021.08.05.06.32.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Aug 2021 06:32:23 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Michel Lespinasse <michel@lespinasse.org>,
+        Davidlohr Bueso <dbueso@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mete Polat <metepolat2000@gmail.com>
+Cc:     Jesper Nilsson <jesper@jni.nu>, Arnd Bergmann <arnd@arndb.de>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] rbtree: remove unneeded explicit alignment in struct rb_node
+Date:   Thu,  5 Aug 2021 15:32:13 +0200
+Message-Id: <20210805133213.700-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Colin,
+Commit e977145aeaad ("[RBTREE] Add explicit alignment to sizeof(long) for
+struct rb_node.") adds an explicit alignment to the struct rb_node due to
+some speciality of the CRIS architecture.
 
-> An earlier commit replaced using batostr to using %pMR sprintf for the
-> construction of session->name. Static analysis detected that this new
-> method can use a total of 21 characters (including the trailing '\0')
-> so we need to increase the BTNAMSIZ from 18 to 21 to fix potential
-> buffer overflows.
-> 
-> Addresses-Coverity: ("Out-of-bounds write")
-> Fixes: fcb73338ed53 ("Bluetooth: Use %pMR in sprintf/seq_printf instead of batostr")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
-> net/bluetooth/cmtp/cmtp.h | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
+The support for the CRIS architecture was removed with commit c690eddc2f3b
+("CRIS: Drop support for the CRIS port")
 
-patch has been applied to bluetooth-next tree.
+So, remove this now unneeded explicit alignment in struct rb_node as well.
 
-Regards
+This basically reverts commit e977145aeaad ("[RBTREE] Add explicit
+alignment to sizeof(long) for struct rb_node.").
 
-Marcel
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Reported-by: Mete Polat <metepolat2000@gmail.com>
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+applies cleanly on next-20210804, but only x86 compile-checked.
+
+Michel, Davidlohr, Jesper, David, please ack.
+
+Mete, you might want to re-run your RBT test suite for this change.
+
+Andrew, once acked, please pick this minor cleanup into your tree.
+
+ include/linux/rbtree.h | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/include/linux/rbtree.h b/include/linux/rbtree.h
+index d31ecaf4fdd3..e9390be1ba67 100644
+--- a/include/linux/rbtree.h
++++ b/include/linux/rbtree.h
+@@ -25,8 +25,7 @@ struct rb_node {
+ 	unsigned long  __rb_parent_color;
+ 	struct rb_node *rb_right;
+ 	struct rb_node *rb_left;
+-} __attribute__((aligned(sizeof(long))));
+-    /* The alignment might seem pointless, but allegedly CRIS needs it */
++};
+ 
+ struct rb_root {
+ 	struct rb_node *rb_node;
+-- 
+2.17.1
 
