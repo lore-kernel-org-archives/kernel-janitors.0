@@ -2,87 +2,119 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E53EDC4338F
-	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Aug 2021 08:40:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D6C8C4338F
+	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Aug 2021 08:59:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CB3A261163
-	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Aug 2021 08:40:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 128F661184
+	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Aug 2021 08:59:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242857AbhHFIky (ORCPT
+        id S243986AbhHFI7w (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 6 Aug 2021 04:40:54 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:32934 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S242910AbhHFIkw (ORCPT
+        Fri, 6 Aug 2021 04:59:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38532 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S243725AbhHFI7v (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 6 Aug 2021 04:40:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1628239236;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=tHov3y4SzmkkW5jDcMFWWiMdIHJrFRJZsW5hu3bt+0g=;
-        b=LlIfREwkpkMMzF3KhLGdeOARd2uRMlk/VR4Zk9a/vGa7PVIHHCYj6Z2Z4p/yMkldWncF/F
-        1YhHK/IGaoUhwJGtZLc9P9hvLA4C384NR4Vh5TNWuXqeM9PSFe5iPwfrzh8mYm8mDhivue
-        JB4EeC6BfHfvzt/NWhTzs+jvrDRrN5M=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-382-BBZtXrlyOxC1R44IWNpgtQ-1; Fri, 06 Aug 2021 04:40:35 -0400
-X-MC-Unique: BBZtXrlyOxC1R44IWNpgtQ-1
-Received: by mail-qv1-f72.google.com with SMTP id z25-20020a0ca9590000b029033ba243ffa1so5937123qva.0
-        for <kernel-janitors@vger.kernel.org>; Fri, 06 Aug 2021 01:40:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tHov3y4SzmkkW5jDcMFWWiMdIHJrFRJZsW5hu3bt+0g=;
-        b=BGdE/WlhAdKGpXud6GJd51TWl7jVzzEnDx5g4LMHlykHUDUP377/TG51NDIPLYsZKE
-         4ZdPDkzQsdL65YOT69xcDIAhOpH3hihLToHyn55j17JdOlsK90HSnPkNd2sHSwjj6PAz
-         v0F4lw7TxonYUC1RS2eu8+9EiCd9N9cbwwQiM3yWtWaw8bwrtg42EPB3OpK2Q+5DvybM
-         yonI1jaim7duX6whHjm0hNrIHl5Mlvx0vBpkPYhVhd9YGxHmbmdOzLuxdTSdkrkBhrm7
-         OC7iu5ZPz2F71NGPpo3HPJvg8GyJ7Lv7C6q4GsAswPt6NwMI1cj9w3hl1CrIEx+2EAxj
-         pLUg==
-X-Gm-Message-State: AOAM530CNSQ7kqW4Vag+oyOlAZ3jpNcmMa9EawKEHyfHBSBn/ZeBHci7
-        wgQPGxus6EBrFxqntOTQaL3OQtEaEU89zjzYoKpG/FtbqmBQGVt/pBp/msZHh+fpbr/QpN8JXY2
-        txQhQSqz1Ng3ogNHNmnJDdK4BlLdU9zhRt4bp2xXAS5Zp
-X-Received: by 2002:a0c:e6a4:: with SMTP id j4mr9833974qvn.16.1628239235104;
-        Fri, 06 Aug 2021 01:40:35 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzG8yeXhfv/qxy3RiueRJVQNA47VYPxJN/st1UyOvkbJ5Wt6DTvXY+KGruJHT5/zgeTCZHf/m3QIq/MjDPTKcc=
-X-Received: by 2002:a0c:e6a4:: with SMTP id j4mr9833967qvn.16.1628239234943;
- Fri, 06 Aug 2021 01:40:34 -0700 (PDT)
+        Fri, 6 Aug 2021 04:59:51 -0400
+X-Greylist: delayed 408 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 06 Aug 2021 01:59:36 PDT
+Received: from server.lespinasse.org (server.lespinasse.org [IPv6:2001:470:82ab::100:0])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30783C061798;
+        Fri,  6 Aug 2021 01:59:36 -0700 (PDT)
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed;
+ d=lespinasse.org; i=@lespinasse.org; q=dns/txt; s=srv-27-ed;
+ t=1628239965; h=date : from : to : cc : subject : message-id :
+ references : mime-version : content-type : in-reply-to : from;
+ bh=UbkOx+RiPeviUAZM//LdNu+blKLz8d3daJ2nJJ8f2Gk=;
+ b=ujcPzzSi0eQs+tOluBwExEx4xapFiawvdWeMEKOK9l2O9i7jFH50EpYIQGSWE61KkGIyp
+ kRpt1vRDkHF2gYxDA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lespinasse.org;
+ i=@lespinasse.org; q=dns/txt; s=srv-27-rsa; t=1628239965; h=date :
+ from : to : cc : subject : message-id : references : mime-version :
+ content-type : in-reply-to : from;
+ bh=UbkOx+RiPeviUAZM//LdNu+blKLz8d3daJ2nJJ8f2Gk=;
+ b=BiuXknetVFYI6eAD7P9nL2jo5IDPBBGeYkX5mBps6FHhSMhvIKBSez5uEljvljOieduGD
+ XGllINGgOUbqi5JHE3XIBJh08h5L4znHaYfPMs+BXZ34bZX+pJaRx9TH8Qw+ctkWUU8HYb1
+ I7PRCSnvBlK0TFkHUGdeiifpATKJBLIpthdDVDOe84EMwI2OZeompICcX//lC0u0ss2Only
+ 4RX1aDK275Kev2pLE1eSIF8jzVGDHOK+xERuNWS1vJDyrfVXLpiN7m/u21cigPXwz1fWmpI
+ 92HteC63+hJQsn7V7KVaPTGYyRiVnukzZLr+p6O+SEi3XJ1IF3fu61oEUDmQ==
+Received: by server.lespinasse.org (Postfix, from userid 1000)
+        id A1946160937; Fri,  6 Aug 2021 01:52:45 -0700 (PDT)
+Date:   Fri, 6 Aug 2021 01:52:45 -0700
+From:   Michel Lespinasse <michel@lespinasse.org>
+To:     Mete Polat <metepolat2000@gmail.com>
+Cc:     Davidlohr Bueso <dbueso@suse.de>, Arnd Bergmann <arnd@arndb.de>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Michel Lespinasse <michel@lespinasse.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jesper Nilsson <jesper@jni.nu>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        kernel-janitors@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] rbtree: remove unneeded explicit alignment in struct
+ rb_node
+Message-ID: <20210806085245.GB14650@lespinasse.org>
+References: <20210805133213.700-1-lukas.bulwahn@gmail.com>
+ <CAK8P3a3aNuxaEtAiewd+Wjc8hKtca0NrcV2kykkNC-qKT_HhzQ@mail.gmail.com>
+ <50ad4c8b848bd371b4b42959167ef03d@suse.de>
+ <YQwd2puXiSiUWEE1@precision>
 MIME-Version: 1.0
-References: <20210806083818.GA2797@kili>
-In-Reply-To: <20210806083818.GA2797@kili>
-From:   Miklos Szeredi <mszeredi@redhat.com>
-Date:   Fri, 6 Aug 2021 10:40:24 +0200
-Message-ID: <CAOssrKdVn2uvQXTdMgMgEiPTHgoem0Acavq0aB5BMo=ynwJyGQ@mail.gmail.com>
-Subject: Re: [bug report] fuse: move fget() to fuse_get_tree()
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YQwd2puXiSiUWEE1@precision>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Aug 6, 2021 at 10:38 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> Hello Miklos Szeredi,
->
-> The patch ff12b2314569: "fuse: move fget() to fuse_get_tree()" from
-> Aug 4, 2021, leads to the following static checker warning:
->
->         fs/fuse/inode.c:1557 fuse_fill_super()
->         error: uninitialized symbol 'err'.
+On Thu, Aug 05, 2021 at 07:20:26PM +0200, Mete Polat wrote:
+> On Thu, Aug 05, 2021 at 08:02:28AM -0700, Davidlohr Bueso wrote:
+> > On 2021-08-05 07:02, Arnd Bergmann wrote:
+> > > The revert would appear to change the alignment to 16 bits instead
+> > > of 32 bits on m68k as well (not 8 bits as on cris), but I don't know if
+> > > that
+> > > can cause problems there.
+> > 
+> > Yeah I tried this a while back and it broke m68k, so it was a no go:
+> > 
+> > https://lore.kernel.org/lkml/CAMuHMdXeZvJ0X6Ah2CpLRoQJm+YhxAWBt-rUpxoyfOLTcHp+0g@mail.gmail.com/
+> 
+> The problem is that the field '__rb_parent_color' in struct rb_node is
+> storing the color AND the pointer to the parent node at the same time.
+> The color is stored in the least significant bit which is fine when
+> rb_node is at least 16-bit aligned. I guess, it does not work on m68k
+> because the makro
+> 
+> #define __rb_parent(pc)    ((struct rb_node *)(pc & ~3))
+> 
+> used to retrieve the parent pointer zeros the first two bits, not only
+> the first one.
+> 
+> Maybe the effiency to store this one color bit in another field was
+> required in the early days but I think moving the color to a seperate
+> field is really the better way to go. It also makes reasoning about the
+> algorithm easier.
+> 
+> I will create a patch.
 
-Hi,
+I think moving the color to a separate word would be costly, both in space
+(growing the struct rb_node) and in time. Feel free to try it, but I would
+expect the rbtree performance tests to regress significantly.
 
-This is already fixed in the latest tree.
+__rb_parent() could probably be modified - it only needs to mask one bit,
+I'm not sure why it masks two.
 
-Thanks,
-Miklos
+As to what would happen on 68k... hard to say, but I expect it should
+be fine (if the compiler cared for the structs to be aligned, it
+should do it on its own). Still, not sure how to test that either.
 
+-- 
+Michel "walken" Lespinasse
