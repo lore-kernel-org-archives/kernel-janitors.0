@@ -2,115 +2,60 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E7D8C4338F
-	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Aug 2021 19:58:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95984C4338F
+	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Aug 2021 20:03:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 102D761050
-	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Aug 2021 19:58:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7722C60F22
+	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Aug 2021 20:03:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244305AbhHFT6q (ORCPT
+        id S244522AbhHFUDh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 6 Aug 2021 15:58:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47764 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232086AbhHFT6o (ORCPT
+        Fri, 6 Aug 2021 16:03:37 -0400
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:62789 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S244501AbhHFUDd (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 6 Aug 2021 15:58:44 -0400
-Received: from mail-ot1-x332.google.com (mail-ot1-x332.google.com [IPv6:2607:f8b0:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AE0EC0613CF;
-        Fri,  6 Aug 2021 12:58:27 -0700 (PDT)
-Received: by mail-ot1-x332.google.com with SMTP id e13-20020a056830200db02904f06fa2790cso10204528otp.1;
-        Fri, 06 Aug 2021 12:58:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=44uVScQ9Gw/XAJ45c0vruto85d4GkUi4W4Jmj+tsVH8=;
-        b=UlGtN2N+/E7iiZYxJKvzovkSO19giQwJd+k/KHky2IbaJkpv1Uak4W1uJn6H8BFiiU
-         G+xiGSKGeR+7ThNnHhDMmpUIROTHWo5oXjIWRUmY1IlldNyqs4V6G/GWO3ysIoNqa/wh
-         vZAarLxtlCu5ja19o3NIDmGyWxIf19NLbIbmwNmasbzJMDcsvWFSFYCy2+ClNx8Ih4Ok
-         UNa5v/n7S/SzlZ9icFqH6a/jd+XiAssHlSLipwEbvxLmhNu2dvEgmGmd3HVhMjzgP6kz
-         zIcc9/unMPkbQvBMHMGRoAJ9tPRVbr85crNJUdz8tSqqO9veN61s/GoH2EoQWrkESm3B
-         0E1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=44uVScQ9Gw/XAJ45c0vruto85d4GkUi4W4Jmj+tsVH8=;
-        b=HpcEuA7O8LUvbwVP7Db+pUZq8L/qtZSlIX89HV0TV2gBZon4KrgJak8z1kQd2tdkg+
-         xVBG/al7IJfTrcPnLzHqhz0lsKFyh/eVsPkeFJJgeZp8aA8qVDieVqpMeyJhKg4h4ado
-         oba8rAwvhqhlDXC1FF1ascepn/eWIYl6RZOqicT1ltSPkE4Zzn9PekHv/6CMwz5bDBze
-         25/VIPwKxGvfEIMnPqh3xsBJbnHpnYykQl63MqOx09J1ken3w8OZlApqlO3iTEJB0WpI
-         I9+04klqWAFzSoGLBWoOiC2DkoBhESXBRa1uZRuZhRDdxtoeXAW63zRdfRjb6zxNK3k+
-         78SA==
-X-Gm-Message-State: AOAM532GZhl1Dd0FNpMq8tFGxuCFq0r+n7MwL/BfuUWgBfC4HLWMrBNC
-        GoGpI5eP5NYmIfqCktHa6n52STZp//F2bAR5VIU=
-X-Google-Smtp-Source: ABdhPJzE0kiTi3tio0eqHLhmqmarjNSaTtD71nxdFJt5HsgC+bAt6RW84ZuEyZFn6YnA0ktX645N1rir1CpUrop9OAI=
-X-Received: by 2002:a9d:5a15:: with SMTP id v21mr7881368oth.132.1628279906863;
- Fri, 06 Aug 2021 12:58:26 -0700 (PDT)
+        Fri, 6 Aug 2021 16:03:33 -0400
+Received: (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id 548D940006;
+        Fri,  6 Aug 2021 20:03:14 +0000 (UTC)
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>,
+        linux-mtd@lists.infradead.org,
+        Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: repair Miquel Raynal's email address
+Date:   Fri,  6 Aug 2021 22:03:13 +0200
+Message-Id: <20210806200313.393719-1-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20210726144949.10439-1-lukas.bulwahn@gmail.com>
+References: 
 MIME-Version: 1.0
-References: <20210806111615.11803-1-colin.king@canonical.com>
-In-Reply-To: <20210806111615.11803-1-colin.king@canonical.com>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Fri, 6 Aug 2021 15:58:15 -0400
-Message-ID: <CADnq5_Nh57mfc+aXCGxy9+V2DFCEH0wO0Lcj1B9Qk93otY_t3w@mail.gmail.com>
-Subject: Re: [PATCH] drm/amd/display: Remove redundant initialization of
- variable eng_id
-To:     Colin King <colin.king@canonical.com>
-Cc:     Harry Wentland <harry.wentland@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        xinhui pan <Xinhui.Pan@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, Jun Lei <Jun.Lei@amd.com>,
-        Jimmy Kizito <Jimmy.Kizito@amd.com>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>, kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-linux-mtd-patch-notification: thanks
+X-linux-mtd-patch-commit: b'5c2f387b48f063dd8a0c119d3659df8f3e2d88bb'
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Applied.  Thanks!
+On Mon, 2021-07-26 at 14:49:49 UTC, Lukas Bulwahn wrote:
+> Commit d70c6b026069 ("MAINTAINERS: Add PL353 NAND controller entry") and
+> commit 813d52799ad2 ("MAINTAINERS: Add PL353 SMC entry") adds Miquel
+> Raynal as maintainer with an obvious invalid email address, which can be
+> easily fixed.
+> 
+> Repair this copy-and-paste error in Miquel Raynal's email address.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-Alex
+Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git nand/next, thanks.
 
-On Fri, Aug 6, 2021 at 7:16 AM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The variable eng_id is being initialized with a value that is never
-> read, it is being re-assigned on the next statment. The assignment
-> is redundant and can be removed.
->
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/gpu/drm/amd/display/dc/core/dc_link_enc_cfg.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_link_enc_cfg.c b/drivers/gpu/drm/amd/display/dc/core/dc_link_enc_cfg.c
-> index 1a89d565c92e..de80a9ea4cfa 100644
-> --- a/drivers/gpu/drm/amd/display/dc/core/dc_link_enc_cfg.c
-> +++ b/drivers/gpu/drm/amd/display/dc/core/dc_link_enc_cfg.c
-> @@ -305,7 +305,7 @@ struct link_encoder *link_enc_cfg_get_next_avail_link_enc(
->         const struct dc_state *state)
->  {
->         struct link_encoder *link_enc = NULL;
-> -       enum engine_id eng_id = ENGINE_ID_UNKNOWN;
-> +       enum engine_id eng_id;
->
->         eng_id = find_first_avail_link_enc(dc->ctx, state);
->         if (eng_id != ENGINE_ID_UNKNOWN)
-> --
-> 2.31.1
->
+Miquel
