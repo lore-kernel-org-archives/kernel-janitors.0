@@ -2,161 +2,140 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC996C4338F
-	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Aug 2021 15:09:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D9E6C432BE
+	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Aug 2021 15:23:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CF03760EB9
-	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Aug 2021 15:09:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82A2161179
+	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Aug 2021 15:23:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243305AbhHFPJb (ORCPT
+        id S244563AbhHFPXf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 6 Aug 2021 11:09:31 -0400
-Received: from mail-mw2nam10on2062.outbound.protection.outlook.com ([40.107.94.62]:57377
-        "EHLO NAM10-MW2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S242756AbhHFPJa (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 6 Aug 2021 11:09:30 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=hNZyUatnbY1UxED366SGP3StoowZR4OB065NKmwCkzG8wi1T7+GacmsJ3PfbzhBAT/V3cRWINPK357wxwyN5oSbF3gmNOmbs8vX68OonAU46Oj2YEIZmeaUOFDUbd3jDSiFVzY4vKDe7uM6jjPkRhAmhgFWrV9u5NEAWSEvQ2B4R4GGCbh5KiHkE8UxJWmvursdX9kYI/bZkElplFxmoE7iI//3526PcZNGmhCPufid8GrT3kaX/lNUntyo8CuQvDFjW68Vjgk+MJ5PEpxyTa4gldlAZvOxVhLO+hv9f505fFDIv5Ipw3zRjbfR90hlKLxLnVN8+lxn+LX+xNJyN3g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qPE5oTdqQv0rdL5gDZdNlzOpVxtbGPFUWiTFxr57Skc=;
- b=B6DAR0MZQmU58SxXrWSk9BQR0N6YOGEyvumYX8j4UXY5Kd2LVFA8P7Jc/AhQ5+PQB5+uPW5HBacKL13JjZuTUwtHmLh7rox/6aIru28bx7n0zgjQqTMtbYBhIEGP7XxH6ZpgY6/nbWNz9hfCTp+P1iufyMsorh8I846rVI9l6R4XmKqE+8WtG8Ik77A/H+Ua740HL2yb3UjOzko5ej4cFHN8KMt1ZgSCDFDUn6fxJJogZbaRs+C4cg7tr80KTTfkvElu8EPS8Gwkro11Ig2m1YMtrokJr8+VWxCFwWmeDWoioS45lLmNtxusT6HzhmCXDxwlQWGPc/L6FF76tjVSrQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qPE5oTdqQv0rdL5gDZdNlzOpVxtbGPFUWiTFxr57Skc=;
- b=oFKaKqz9HsQkr/EeoJO+CsCbX+5kZn7F/vaUrRZ85JasuXoEW/HmXw6pb+4GiefDDRbwj+WA6b7GPLZtSy/4Q35Wblivpck3yzi9Nj0g7O8nEgma1pH+/91SH7ohzgwLnDcGJLuShAO/o35L7AopF9magk6yeTww8n4qStpg6rY=
-Authentication-Results: vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=none action=none header.from=amd.com;
-Received: from MN2PR12MB3775.namprd12.prod.outlook.com (2603:10b6:208:159::19)
- by BL0PR12MB4899.namprd12.prod.outlook.com (2603:10b6:208:1cf::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4394.17; Fri, 6 Aug
- 2021 15:09:10 +0000
-Received: from MN2PR12MB3775.namprd12.prod.outlook.com
- ([fe80::6c9e:1e08:7617:f756]) by MN2PR12MB3775.namprd12.prod.outlook.com
- ([fe80::6c9e:1e08:7617:f756%5]) with mapi id 15.20.4394.019; Fri, 6 Aug 2021
- 15:09:10 +0000
-Subject: Re: [PATCH] drm/amdgpu: check for allocation failure in
- amdgpu_vkms_sw_init()
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Ryan Taylor <Ryan.Taylor@amd.com>
-Cc:     "Pan, Xinhui" <Xinhui.Pan@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
-References: <20210806150518.GC15586@kili>
-From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
-Message-ID: <ca0cfa01-e1ef-1ee8-8adc-ebd4fa253e70@amd.com>
-Date:   Fri, 6 Aug 2021 17:09:05 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
-In-Reply-To: <20210806150518.GC15586@kili>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-ClientProxiedBy: PR3P250CA0006.EURP250.PROD.OUTLOOK.COM
- (2603:10a6:102:57::11) To MN2PR12MB3775.namprd12.prod.outlook.com
- (2603:10b6:208:159::19)
+        Fri, 6 Aug 2021 11:23:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42896 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S244667AbhHFPXK (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 6 Aug 2021 11:23:10 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27FE4C061371;
+        Fri,  6 Aug 2021 08:22:13 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id o7-20020a05600c5107b0290257f956e02dso9257660wms.1;
+        Fri, 06 Aug 2021 08:22:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=4hP5EFCo5371tB5JgIut0p+iw6oHDNxFxSxtkYd2mP0=;
+        b=UlZnp+lfGGHy4+bRfTqLgXqKXdnc10XVCiL8ICCsf/cLMkFpA+1EnYD4wH2bXHsT57
+         nSPdgVl5vcK4nyZebLWtFu2pfRxBPZZrOyNiKngJg6+rwOWNZ2Ve25BBKjJqMMzkTUSL
+         QZ6EHsC26K2A3lpaCm+zmWviONfIoHfXsYQvRZ1+Cx3mdwfbeA9Kc/Sb8U/VIysVlntz
+         dFPivCDGq5yYzdnvOu+GiKf8G2wo5r/Dpl5lQmOs96oG1uF+y7VSI/ZSaR9GCBWvbHSp
+         o6t+ngaestGl7RoeSUBgcUiuNB5CTxZ6sdLJRqHCAHbc/l7W0tbxkfRSctz6HrXNNrgI
+         rc6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=4hP5EFCo5371tB5JgIut0p+iw6oHDNxFxSxtkYd2mP0=;
+        b=fdW2movEq/hKlRXVxN7D+Lw6uHK9WYqVimcB/ocZMf87XDb6t0hdx2tXeTmr4ia0Zo
+         1+psQmPrsZ6jmFGG6Bz7BKpnMtlyBYOWKXqQ7y+yRtb8Imhp6kzCSaJaQ9jARCti6VFa
+         najC1ivlbEAgczIEN+8lqvGdcNKVPg51Up9bzZwwq8UKCp5yb/XidV5vqhtY9nnyAuFs
+         tcOWJkSr7DOK5cPHlkAIYKz8Ae2AyTwKefCjJbW/aljYsmsHxnlKohEioEYf4j9OcI7M
+         LrnvDr5GegTpZbWHesP7kqWV608JTaTwPJMwmGLX7FQHuF5vHwZUX/6XRW0kRx4N0kx3
+         jlsw==
+X-Gm-Message-State: AOAM530MKHLd1+0GIK6g40KY0hcoqhTq5l6hteOA4RhXb2rK68BY2SFE
+        yYIIcB2t6z4Zr5I436w40TWSFUmXdyuLCaZD
+X-Google-Smtp-Source: ABdhPJyrExZu6DwoTxsC65fugZwJekFV9gpV8k/RTLbJBOCe+a2FR4z1r7FLDq1rJvPlsXMBwj5NLA==
+X-Received: by 2002:a1c:208e:: with SMTP id g136mr20873244wmg.142.1628263331754;
+        Fri, 06 Aug 2021 08:22:11 -0700 (PDT)
+Received: from precision (aftr-62-216-202-158.dynamic.mnet-online.de. [62.216.202.158])
+        by smtp.gmail.com with ESMTPSA id h14sm9844922wrp.55.2021.08.06.08.22.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Aug 2021 08:22:11 -0700 (PDT)
+Date:   Fri, 6 Aug 2021 17:22:08 +0200
+From:   Mete Polat <metepolat2000@gmail.com>
+To:     Michel Lespinasse <michel@lespinasse.org>,
+        Davidlohr Bueso <dbueso@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Jesper Nilsson <jesper@jni.nu>, Arnd Bergmann <arnd@arndb.de>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        kernel-janitors@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>
+Subject: [PATCH v2] rbtree: remove unneeded explicit alignment in struct
+ rb_node
+Message-ID: <YQ1ToK8EMdAO4CyH@precision>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [IPv6:2a02:908:1252:fb60:18c9:395b:c9ab:9837] (2a02:908:1252:fb60:18c9:395b:c9ab:9837) by PR3P250CA0006.EURP250.PROD.OUTLOOK.COM (2603:10a6:102:57::11) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4394.15 via Frontend Transport; Fri, 6 Aug 2021 15:09:08 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: e2ebd3f3-f4e0-46cd-ce9a-08d958ec24a2
-X-MS-TrafficTypeDiagnostic: BL0PR12MB4899:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <BL0PR12MB48994B46EA0AB987489025E383F39@BL0PR12MB4899.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:3383;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 7UFFNiaTtir5ClVnxTG1+IU3uYox72xgDYyVjJgnCXekjejYvcgRfPOIHw/hPeMwMwpN/DBVXVxq/5WXtTOu+NeYwt5D+GDzSJuHc2rBTM7TIsN+Yaqx2gi83Fb5lRS8XNwN8hyX//kuIZHUbKNZMaGelEJ6L7xXgurjwkwqf5AOu4UaasoJBtrFLJj/GlCvnexnxv+KcFu8s3et4G3hWApf6gSkyKwjYDU9rFDP73t/Q4PiKdYfSU9HDsv3c7/E1D/KaBwyxDJ1BgChaeQlyWN9LzYMNP+kn8F/Lfq9fmKGieTSv38RqJBqcn9x6V0cfenKMNuLgvMJQ/dtcTNfwoapAkjT54qYR9CbVhTE4hCxJzYozCEjIAw50XCgcJvduroUYG/a6y3c684g54gpvdSXVuwtAHbLcr9X46AbB9z8gbg41X3tZzrCLYEYmKttq7L3o5o62P/vnBKcf+U54nHJVZvdyu7B7l10UZkXZfmardEsdcen84SNfIOu2il3Wy3IE3buJto7dIUkFfFJOnvfPZlDc51Ww5wfwpMx5DKTVV8Pr9Q6sX7tg+vPDcBV/Ni7lxsq45mdvLsES2muiKK+BASZFUNC8tM6JfzENBsaw3AhUNqIyORtYPd8V8UHsZzcCputYb4JZI4TNRYWjCMsjxmS738IRJqTysW+vqB/sS8OKveaIY7KZ9ILL6ZYL0jmhD6Qx1v7AJe4EH+75oWxl5tfopESRUZZs8qAEyI=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3775.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(39860400002)(136003)(396003)(366004)(346002)(376002)(4744005)(31686004)(186003)(36756003)(66556008)(6486002)(2906002)(6636002)(66946007)(66476007)(2616005)(8676002)(5660300002)(86362001)(6666004)(31696002)(110136005)(54906003)(8936002)(478600001)(38100700002)(316002)(4326008)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?cXhyd0ZYSEw1T2w0RmVuRmI1dHZLR1FXczNtdXpjMEYvQndnUDAzSHM5am9q?=
- =?utf-8?B?SC9RRUM3Rzl4bE9OczZmOFJPcmtITGVGc200ZURVNktxakRkbkh2UVQzZkdp?=
- =?utf-8?B?bkNTRU05dk5zclBEZ1RiNW5lcEVPdVAvdiszWWR2Tkg3Z2dVSEllKzlzaUEr?=
- =?utf-8?B?T1RycngxUGZOM0UycFFVVkxnODlqR3ZrUENBRUdlaldWMDlmQ3NESUlFZDBt?=
- =?utf-8?B?TjllbDhQSWVKVjl6QjR4bGl4YW0wc1pyTGN4ZGpGM0c5WTA3Rk1BTjE0WWFO?=
- =?utf-8?B?K3hjMnpXYlFBZFhpS1JaaHdVR3ZLNm95R3RBRGkyT2hkdkRUbFFremVKSmlF?=
- =?utf-8?B?bEJ6NGtYSzFuOUptUUtTbFdDd2dwMGFEUnM5VXIydERPUWlZbE51cURkaFNk?=
- =?utf-8?B?UE84WmRaV0psZ1ZsZHJzZE5BU05nYnlZS1ZMdjlKY2I4NCtMZFdXa29aOU1N?=
- =?utf-8?B?K2trT3BJZnpGdi9za2VkSGNzY0QrLzFKT3l5YWFYSDhYd3loTDBWb2ZyeDVy?=
- =?utf-8?B?NkIybldFSnRNVmQ3Tis0U2xpM2c4SEtqR0lzSjNCVXNabjAwK2pLVkhqY3hj?=
- =?utf-8?B?MzBQWmJwVmNPYWY0KzFra2owekEzcE41QXNtQS9rNEpIK3ZyNkU1bnBnd0RC?=
- =?utf-8?B?bm9LamV1VEFpZldQMTBhYTJ6VUhGVUZ1NFdnMlgxVENmd3FTWnRzZTVkcHRj?=
- =?utf-8?B?QjVOeWVVajVlbzlSZE1VT3dZMFZ5MTZhMUhoTXpMNWc0REU4OEVPdkFJTVZp?=
- =?utf-8?B?QXFkcGxlblJZSU9VUlF1VFd3TUVka0JmYmYxdVZKVWpRWG1uek44MHhDaTBT?=
- =?utf-8?B?Nis2bUExYS9UZlBYeXlSQ3B0aXhVRHNtcGg5cG5aZHRmL1dRa3l3Nm4zYkJU?=
- =?utf-8?B?aTdrU000eHRPMmlocHFHckpGazA4UGlLQnp0cVVHcXBBd1V0NFliQ1R2L0dQ?=
- =?utf-8?B?S2JtNS9LQmI5Sk15Y2dBUDJhUlpMc05QajNNQWVsTDYxbCtueC80cDhCeXRN?=
- =?utf-8?B?VFVMYUlYcVpCMERDM1h0ZklPY0swejduUnBYL09zZ0VDMHgwTTd2enFRQzVv?=
- =?utf-8?B?emRZTTNmMFJjK2YzY0NsSVM5MFpTVVBNaGQ2ODR4THJKQTdQMzRlTWN5TXo3?=
- =?utf-8?B?TzRHRzlHUkVxK2RFS3ZyZFVMU1B0ZUVCOXdQQWV5MW5SajU1anJOaElnVlQx?=
- =?utf-8?B?TUdYYnNUVHlBQXRsbzZoSEYybjJReE9hZGU3RjY1RFUzMlFnRGZkeC9XLzl1?=
- =?utf-8?B?UjgvOExvcTdPWnozZk84T0dZclVEQjF1L1RyNlRRcHZla1dKVjkvMTVIWm5J?=
- =?utf-8?B?WW4yM0ZRMjFmOElJSFJXdW1JTmhBSTVvWjBVWTlCcVFHN1BsM2k1ZTQwS2hC?=
- =?utf-8?B?RC9uYlVBSG1lZlNaeDRLTDdUZ0NZbzJpcUpxU21ncEdzM1oyRVp0cmtoRFJp?=
- =?utf-8?B?d1lydmtVRU1sWUhaY1Jka3hEL2xxc2pJQWp4ZkJwcWV5V0lhS3JKTmlZTUt1?=
- =?utf-8?B?ZHhVdVN2emdjYmRZVXJweUJqZ0g0Y1VJalMwMU9hdk5PRzZndjRDb3RJTTBm?=
- =?utf-8?B?Tlo3TFAyUDZwc3h5eFUvM3hOc0lKT0hTOWVrQ0pPY1FOcUZlS3N3ZjQrV1pn?=
- =?utf-8?B?aForR0tVbmdaRUV3WGFHQXV1QWFDWXpuWXlPc0hoa3U2bk9LZDJlMEZ1WHZX?=
- =?utf-8?B?eWlsVzdhM1FSbWtOam9pVHZ3N2VLajNTWDBHdzRTMXhQUEZBU1h2UXRCbFMr?=
- =?utf-8?B?cTMvcHpxTmVtTmtyWVc2SW5qcHpYbDdxSVRXa3JsenpaaWRFeU1LMmRFSVRn?=
- =?utf-8?B?Zmw2MlRIYmJtR1ZDMmlOOE5EMldNRzd0RmhUOEI1QTIwNmJWN29DbUdjbUcy?=
- =?utf-8?Q?ilPA4Fg7cyQXS?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e2ebd3f3-f4e0-46cd-ce9a-08d958ec24a2
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3775.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2021 15:09:10.2130
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: CP7HfP7bYVqWDpe8Ob1JNjdCeo9h2l1a/XMATU5rZBt4SpAMCCmYSwCsUg5KnCz6
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR12MB4899
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Am 06.08.21 um 17:05 schrieb Dan Carpenter:
-> Check whether the kcalloc() fails and return -ENOMEM if it does.
->
-> Fixes: eeba0b9046fc ("drm/amdgpu: create amdgpu_vkms (v4)")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Commit e977145aeaad ("[RBTREE] Add explicit alignment to sizeof(long) for
+struct rb_node.") adds an explicit alignment to the struct rb_node due to
+some speciality of the CRIS architecture.
 
-Reviewed-by: Christian König <christian.koenig@amd.com>
+The support for the CRIS architecture was removed with commit c690eddc2f3b
+("CRIS: Drop support for the CRIS port")
 
-> ---
->   drivers/gpu/drm/amd/amdgpu/amdgpu_vkms.c | 2 ++
->   1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vkms.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_vkms.c
-> index 50bdc39733aa..ce982afeff91 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vkms.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vkms.c
-> @@ -482,6 +482,8 @@ static int amdgpu_vkms_sw_init(void *handle)
->   		return r;
->   
->   	adev->amdgpu_vkms_output = kcalloc(adev->mode_info.num_crtc, sizeof(struct amdgpu_vkms_output), GFP_KERNEL);
+So, remove this now unneeded explicit alignment in struct rb_node as well.
 
-Is the line above not a bit long?
+This basically reverts commit e977145aeaad ("[RBTREE] Add explicit
+alignment to sizeof(long) for struct rb_node.").
 
-> +	if (!adev->amdgpu_vkms_output)
-> +		return -ENOMEM;
->   
->   	/* allocate crtcs, encoders, connectors */
->   	for (i = 0; i < adev->mode_info.num_crtc; i++) {
+The rbtree node color is stored in the LSB of '__rb_parent_color'.
+Only mask the first bit in '__rb_parent()', otherwise it modifies the
+node's parent address on m68k.
+
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Reported-by: Mete Polat <metepolat2000@gmail.com>
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Signed-off-by: Mete Polat <metepolat2000@gmail.com>
+---
+I have tested it on x86, but not on m68k. Can you ack that Geert?
+
+ include/linux/rbtree.h           | 3 +--
+ include/linux/rbtree_augmented.h | 2 +-
+ 2 files changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/include/linux/rbtree.h b/include/linux/rbtree.h
+index d31ecaf4fdd3..e9390be1ba67 100644
+--- a/include/linux/rbtree.h
++++ b/include/linux/rbtree.h
+@@ -25,8 +25,7 @@ struct rb_node {
+ 	unsigned long  __rb_parent_color;
+ 	struct rb_node *rb_right;
+ 	struct rb_node *rb_left;
+-} __attribute__((aligned(sizeof(long))));
+-    /* The alignment might seem pointless, but allegedly CRIS needs it */
++};
+ 
+ struct rb_root {
+ 	struct rb_node *rb_node;
+diff --git a/include/linux/rbtree_augmented.h b/include/linux/rbtree_augmented.h
+index d1c53e9d8c75..94b6a0f4499e 100644
+--- a/include/linux/rbtree_augmented.h
++++ b/include/linux/rbtree_augmented.h
+@@ -145,7 +145,7 @@ RB_DECLARE_CALLBACKS(RBSTATIC, RBNAME,					      \
+ #define	RB_RED		0
+ #define	RB_BLACK	1
+ 
+-#define __rb_parent(pc)    ((struct rb_node *)(pc & ~3))
++#define __rb_parent(pc)    ((struct rb_node *)(pc & ~1))
+ 
+ #define __rb_color(pc)     ((pc) & 1)
+ #define __rb_is_black(pc)  __rb_color(pc)
+-- 
+2.32.0
 
