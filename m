@@ -2,89 +2,121 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DC07C4320A
-	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Aug 2021 17:45:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AADA7C43216
+	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Aug 2021 19:50:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3E0AA61181
-	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Aug 2021 17:45:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7DDB161184
+	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Aug 2021 19:50:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241751AbhHFRpg (ORCPT
+        id S244032AbhHFTvA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 6 Aug 2021 13:45:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46438 "EHLO
+        Fri, 6 Aug 2021 15:51:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46016 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231776AbhHFRpe (ORCPT
+        with ESMTP id S232157AbhHFTvA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 6 Aug 2021 13:45:34 -0400
-Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35F0DC0613CF;
-        Fri,  6 Aug 2021 10:45:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=qRduPNPCLfBMTFYoq3QGcw3w+yL4nRTomePXW3/qUjU=; b=iqeWAgdtlkNbV8x9UpOR22Kofq
-        vOZK1ssLyeBoWZ6PDtdLTbF21sQzm4KeIOOlGD0Xs6Dkf3ypCp/Vp1wesR8+RiSCT+im1Oc3gxOJW
-        dBrg/iKozPAmVjNh/ri6w0VGgybsTFZp+m445sNHeCCR+TPBcqloIfDTZ/njdo/hUHXpah+E6g70s
-        sWhe6WJ8RsenGANYYvYfV+vEntvL8O1lGzL5pldMrAPdLCNSLq/uGNbEit2kSIBbF6GS4EnRcRSNC
-        Ib4lvbL2z90SJV7tSOi2SPnoXv9ooHjtQAzdrDVQnDLeEuCBhJH1rDYfTrSnYRQydKkGTvyf8DJK5
-        4SItqBXA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
-        by desiato.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mC3tz-006QB3-Ln; Fri, 06 Aug 2021 17:45:00 +0000
-Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 5E17498632E; Fri,  6 Aug 2021 19:44:57 +0200 (CEST)
-Date:   Fri, 6 Aug 2021 19:44:57 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Mete Polat <metepolat2000@gmail.com>
-Cc:     Michel Lespinasse <michel@lespinasse.org>,
-        Davidlohr Bueso <dbueso@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Jesper Nilsson <jesper@jni.nu>, Arnd Bergmann <arnd@arndb.de>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        kernel-janitors@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>
-Subject: Re: [PATCH v2] rbtree: remove unneeded explicit alignment in struct
- rb_node
-Message-ID: <20210806174457.GA2184@worktop.programming.kicks-ass.net>
-References: <YQ1ToK8EMdAO4CyH@precision>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YQ1ToK8EMdAO4CyH@precision>
+        Fri, 6 Aug 2021 15:51:00 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F122BC0613CF;
+        Fri,  6 Aug 2021 12:50:42 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id n12so2364675wrr.2;
+        Fri, 06 Aug 2021 12:50:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=7O3R+/YLffFIYvFcx+ISW6vN6f2/4fupamLlutQquIc=;
+        b=c50ZRqd7ZJ6rDenkIu2zwLRWu610VC1kr2a2yRbI76WF7Ote8TGhdSFADq/5c50sOj
+         d2rmnjr4Zl4jJm/bMbKe4V19IKJ340mNqZmMtTjiW+y/hXbWI6uL7tZyVeXBDjXnUTPb
+         9N5lmDPxY74qUdW5DOzuPsX1DraD09dg3FU/mfLcXUfDefz/D4km6HWrjio+7btOe9jA
+         VTPC55FP80lSZaOjnmG+QNCBx3tNIKuG2Jlq69+4UgvEtIf6i3OIjr7arnXdQUEP0Jsa
+         WxKpMeWC6RD4yon3wE4dJlmGBy5TtNDqTAuVdonMVKAOHo9N8EtL2BqNY9NU29jl/O9m
+         9SLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=7O3R+/YLffFIYvFcx+ISW6vN6f2/4fupamLlutQquIc=;
+        b=Rqu5aDbk6y9XQzuwmqlPFmSZkppjbJ7By3iXKJzQkH6jDEJEqKnD73uGcEhwNjXDCg
+         aGK0GIGMjg4874cJGL9lM9N3sNm8d+3JzfF+aENqCk/yP3Svxm80nwXuhD5hKURcD4KR
+         2+Vk12Ahxm5zquB4h0L59a3i1hY/fnGFbPrlcpoCsV97GdHrTt496UHz7ngOLws/DlJt
+         CYyLyzQkXvY9t9rpCOVTdUIj0VPVyKpYnOieadL6UlbhTg5qN96yLh5pUQOG54/ltBrr
+         a/v12VzSgHkXSO93LheOMVfquFiSanNjEcUBW87lIoXb/7mZ0cvy6PaE0eJ4TW3j5IUi
+         sZBw==
+X-Gm-Message-State: AOAM532k+KnJGDIovMQpDHYbzzDUbby4BazHq3d2eJJcForzzbuvItwO
+        eoJevBxrxQpq9Mj1D5y1oiw=
+X-Google-Smtp-Source: ABdhPJyVkry3+m5663VZZQh74vfTfSXLCzeg+mztE3FgXtryBM4F/fD+UDroRS8T07tJ8EED0JtNcw==
+X-Received: by 2002:a5d:49c8:: with SMTP id t8mr12342235wrs.365.1628279441558;
+        Fri, 06 Aug 2021 12:50:41 -0700 (PDT)
+Received: from felia.fritz.box ([2001:16b8:2dc9:8d00:2198:3536:ca51:cd82])
+        by smtp.gmail.com with ESMTPSA id y197sm13477902wmc.7.2021.08.06.12.50.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Aug 2021 12:50:41 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>
+Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jiri Kosina <jikos@kernel.org>, live-patching@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Miroslav Benes <mbenes@suse.cz>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>, stable@vger.kernel.org
+Subject: [PATCH] tracing: define needed config DYNAMIC_FTRACE_WITH_ARGS
+Date:   Fri,  6 Aug 2021 21:50:27 +0200
+Message-Id: <20210806195027.16808-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Aug 06, 2021 at 05:22:08PM +0200, Mete Polat wrote:
-> Commit e977145aeaad ("[RBTREE] Add explicit alignment to sizeof(long) for
-> struct rb_node.") adds an explicit alignment to the struct rb_node due to
-> some speciality of the CRIS architecture.
-> 
-> The support for the CRIS architecture was removed with commit c690eddc2f3b
-> ("CRIS: Drop support for the CRIS port")
-> 
-> So, remove this now unneeded explicit alignment in struct rb_node as well.
-> 
-> This basically reverts commit e977145aeaad ("[RBTREE] Add explicit
-> alignment to sizeof(long) for struct rb_node.").
-> 
-> The rbtree node color is stored in the LSB of '__rb_parent_color'.
-> Only mask the first bit in '__rb_parent()', otherwise it modifies the
-> node's parent address on m68k.
+Commit 2860cd8a2353 ("livepatch: Use the default ftrace_ops instead of
+REGS when ARGS is available") intends to enable config LIVEPATCH when
+ftrace with ARGS is available. However, the chain of configs to enable
+LIVEPATCH is incomplete, as HAVE_DYNAMIC_FTRACE_WITH_ARGS is available,
+but the definition of DYNAMIC_FTRACE_WITH_ARGS, combining DYNAMIC_FTRACE
+and HAVE_DYNAMIC_FTRACE_WITH_ARGS, needed to enable LIVEPATCH, is missing
+in the commit.
 
-I still don't believe for a second this will actually work. We rely on
-rcu_assign_pointer() and rcu_dereference() to work on the
-rb_{left,right} members, and I don't think any architecture can provide
-single copy atomic loads and stores that are not naturally aligned (eg.
-when they straddle a cache or page boundary).
+Fortunately, ./scripts/checkkconfigsymbols.py detects this and warns:
+
+DYNAMIC_FTRACE_WITH_ARGS
+Referencing files: kernel/livepatch/Kconfig
+
+So, define the config DYNAMIC_FTRACE_WITH_ARGS analogously to the already
+existing similar configs, DYNAMIC_FTRACE_WITH_REGS and
+DYNAMIC_FTRACE_WITH_DIRECT_CALLS, in ./kernel/trace/Kconfig to connect the
+chain of configs.
+
+Fixes: 2860cd8a2353 ("livepatch: Use the default ftrace_ops instead of REGS when ARGS is available")
+Cc: <stable@vger.kernel.org> # 5.10.x
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+
+Steven, thanks for the quick response; please pick this quick config fix.
+
+ kernel/trace/Kconfig | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
+index d567b1717c4c..3ee23f4d437f 100644
+--- a/kernel/trace/Kconfig
++++ b/kernel/trace/Kconfig
+@@ -219,6 +219,11 @@ config DYNAMIC_FTRACE_WITH_DIRECT_CALLS
+ 	depends on DYNAMIC_FTRACE_WITH_REGS
+ 	depends on HAVE_DYNAMIC_FTRACE_WITH_DIRECT_CALLS
+ 
++config DYNAMIC_FTRACE_WITH_ARGS
++	def_bool y
++	depends on DYNAMIC_FTRACE
++	depends on HAVE_DYNAMIC_FTRACE_WITH_ARGS
++
+ config FUNCTION_PROFILER
+ 	bool "Kernel function profiler"
+ 	depends on FUNCTION_TRACER
+-- 
+2.17.1
 
