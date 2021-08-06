@@ -2,97 +2,106 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 223A4C4320E
-	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Aug 2021 12:50:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A39BC4320A
+	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Aug 2021 13:07:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0686D61184
-	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Aug 2021 12:50:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F98460EEA
+	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Aug 2021 13:07:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343840AbhHFMu3 (ORCPT
+        id S1343969AbhHFNIM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 6 Aug 2021 08:50:29 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:55206
-        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1343844AbhHFMtu (ORCPT
+        Fri, 6 Aug 2021 09:08:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40204 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240896AbhHFNIL (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 6 Aug 2021 08:49:50 -0400
-Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id B1A773F0A3;
-        Fri,  6 Aug 2021 12:49:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1628254172;
-        bh=xLL7KcCcVibNluvYyGE+ueFwARuKpLLEcqYrSzigE5U=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=bR2M1qwA5Xf9NWVVRqMjdx479fRGFjSBBNtoK/YxI+/nG9o1IsuGZtlC4mZZhzfXT
-         q60WXROLI6xZVd1ic6CJjaeCmniyGpRcsLxR1ggJV+UlLky4Ipj8Yk9oTFOXE8SYi+
-         QfEtekE0XHlXrd1wveJG9lI4RxFsm2dOt1EDNzHUYGwANgTl/kibrINvzNzgtbgL0k
-         RpVM1dOMQC4lM8dv15Eq8IIYA0frxt2Q+rre02I4DKTIRXj74t/748WmRUE3CKjeci
-         NLtPKAb40OFbww9PuZL47PXo0w7WeLSDsZKjCd1fokppFTiJEEuqj0QTIRnqavS3Js
-         WQw7DHKveDrpg==
-From:   Colin King <colin.king@canonical.com>
-To:     "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-        linux-parisc@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] tulip: Remove deadcode on startup true condition
-Date:   Fri,  6 Aug 2021 13:49:32 +0100
-Message-Id: <20210806124932.14981-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.31.1
+        Fri, 6 Aug 2021 09:08:11 -0400
+Received: from mail-vs1-xe34.google.com (mail-vs1-xe34.google.com [IPv6:2607:f8b0:4864:20::e34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90AFBC061799
+        for <kernel-janitors@vger.kernel.org>; Fri,  6 Aug 2021 06:07:55 -0700 (PDT)
+Received: by mail-vs1-xe34.google.com with SMTP id v16so5184196vss.7
+        for <kernel-janitors@vger.kernel.org>; Fri, 06 Aug 2021 06:07:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yAkFgA6ayFCQ35+fxkCF9bjG6/D1dToRvqM+H1Um3y4=;
+        b=d8GSk8vNGP4g1KnQ6vn8HV0XbO1MFJsevfH7fq1mX7kJ5wGKdj7J/WauQrDk9xAzw5
+         JD2iLzDnjYZSzN/zcGfDrxjl221GgkHTQpb37J+kUviAiWakqW5r+peQ628Lg5ILpKJW
+         v+xz4eb0Nh0cycE5VlFQZ5lWWYXvx5z3I+DZ89KVDp+xWyV00a9JeoK+yOl54KtrhCZQ
+         dff7dRQ+y63TvI6Ab0PaokLc4QcDWe4EnxlvzwM6gQyZQbiWHsXlJuRU0eUsno9xW5VL
+         3FDlZLBuqMjVTZZtI6+mMpGMxEL+lkZdpl8oFG814nX7MDmKwBC2+FI/7f6ZoAkQ7EKl
+         WDEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yAkFgA6ayFCQ35+fxkCF9bjG6/D1dToRvqM+H1Um3y4=;
+        b=Bgeh6769uhd6uVI98BsOvtPzB+2tr1OFp/K8PG3eBmVh/fq4Xo5OS5O8g0jaEUIxae
+         pZqPB03Y0CqMaATUU44ZUhIlP1Z2n/wFYksIX2Tq/EAV5cY0/y5JuiZ4GBRC0IHWhaQ7
+         dVl9G7++XyjIDZmrPebPB2aRzPTPPpN1qagXMVklcZ3kklcTpiiUtHlloB5w2pQ+DL4k
+         IvNaVva9DFwx92iOw2QHOnvC7io6QHf6PiAche9sdayQIt94pttq00P5Nj45CIC07qwB
+         sKDRfFXfqAFyivKTn3Uai+du943Vfw9BST8VnlRXAaWI3qWDMM4GIaiqElWOY+Gj8yZo
+         zvCg==
+X-Gm-Message-State: AOAM531OTlbPVFgBo/KG6SqmaU5DWyw1wpJA6G0ny0dfXcKlayBcdCaj
+        aYyGeYRbkhUWmS+1sUefN72zOKG6z23NP9VRWjQH9A==
+X-Google-Smtp-Source: ABdhPJyjQaYrSUWr+Z6bMmgeC3I1HQ7Ic4G79Y7CFOiMvN5VcHtZ/DRWy4T083Q7Ken98y0vPa52raI9qCNdo8YZxYY=
+X-Received: by 2002:a67:328f:: with SMTP id y137mr9009010vsy.34.1628255274831;
+ Fri, 06 Aug 2021 06:07:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20210728103254.171546-1-colin.king@canonical.com>
+In-Reply-To: <20210728103254.171546-1-colin.king@canonical.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Fri, 6 Aug 2021 15:07:18 +0200
+Message-ID: <CAPDyKFq89jK0K09HBwn8Wi5bMYh8b61TrvihPsrE=EfT50ztqQ@mail.gmail.com>
+Subject: Re: [PATCH] ms_block: Fix spelling contraction "cant" -> "can't"
+To:     Colin King <colin.king@canonical.com>
+Cc:     Maxim Levitsky <maximlevitsky@gmail.com>,
+        Alex Dubov <oakad@yahoo.com>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Wed, 28 Jul 2021 at 12:32, Colin King <colin.king@canonical.com> wrote:
+>
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> There is a spelling mistake in a pr_err message. Fix it.
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-The true check on the variable startable in the ternary operator
-is always false because the previous if statement handles the true
-condition for startable. Hence the ternary check is dead code and
-can be removed.
+Applied for next, thanks!
 
-Addresses-Coverity: ("Logically dead code")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/ethernet/dec/tulip/media.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Kind regards
+Uffe
 
-diff --git a/drivers/net/ethernet/dec/tulip/media.c b/drivers/net/ethernet/dec/tulip/media.c
-index 011604787b8e..55d6fc99f40b 100644
---- a/drivers/net/ethernet/dec/tulip/media.c
-+++ b/drivers/net/ethernet/dec/tulip/media.c
-@@ -355,21 +355,21 @@ void tulip_select_media(struct net_device *dev, int startup)
- 		} else if (startup) {
- 			/* Start with 10mbps to do autonegotiation. */
- 			iowrite32(0x32, ioaddr + CSR12);
- 			new_csr6 = 0x00420000;
- 			iowrite32(0x0001B078, ioaddr + 0xB8);
- 			iowrite32(0x0201B078, ioaddr + 0xB8);
- 		} else if (dev->if_port == 3  ||  dev->if_port == 5) {
- 			iowrite32(0x33, ioaddr + CSR12);
- 			new_csr6 = 0x01860000;
- 			/* Trigger autonegotiation. */
--			iowrite32(startup ? 0x0201F868 : 0x0001F868, ioaddr + 0xB8);
-+			iowrite32(0x0001F868, ioaddr + 0xB8);
- 		} else {
- 			iowrite32(0x32, ioaddr + CSR12);
- 			new_csr6 = 0x00420000;
- 			iowrite32(0x1F078, ioaddr + 0xB8);
- 		}
- 	} else {					/* Unknown chip type with no media table. */
- 		if (tp->default_port == 0)
- 			dev->if_port = tp->mii_cnt ? 11 : 3;
- 		if (tulip_media_cap[dev->if_port] & MediaIsMII) {
- 			new_csr6 = 0x020E0000;
--- 
-2.31.1
 
+> ---
+>  drivers/memstick/core/ms_block.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/memstick/core/ms_block.c b/drivers/memstick/core/ms_block.c
+> index 4a4573fa7b0f..acf36676e388 100644
+> --- a/drivers/memstick/core/ms_block.c
+> +++ b/drivers/memstick/core/ms_block.c
+> @@ -1105,7 +1105,7 @@ static u16 msb_get_free_block(struct msb_data *msb, int zone)
+>         dbg_verbose("result of the free blocks scan: pba %d", pba);
+>
+>         if (pba == msb->block_count || (msb_get_zone_from_pba(pba)) != zone) {
+> -               pr_err("BUG: cant get a free block");
+> +               pr_err("BUG: can't get a free block");
+>                 msb->read_only = true;
+>                 return MS_BLOCK_INVALID;
+>         }
+> --
+> 2.31.1
+>
