@@ -2,107 +2,83 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0B10C4338F
-	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Aug 2021 10:18:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3F1DC4338F
+	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Aug 2021 11:06:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A58B560E97
-	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Aug 2021 10:18:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB5A761181
+	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Aug 2021 11:06:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245016AbhHFKTE (ORCPT
+        id S245305AbhHFLGT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 6 Aug 2021 06:19:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57356 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245012AbhHFKTD (ORCPT
+        Fri, 6 Aug 2021 07:06:19 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:47986
+        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S245299AbhHFLGS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 6 Aug 2021 06:19:03 -0400
-Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AD96C061799;
-        Fri,  6 Aug 2021 03:18:48 -0700 (PDT)
-Received: by mail-yb1-xb2e.google.com with SMTP id w17so14224036ybl.11;
-        Fri, 06 Aug 2021 03:18:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=LzEtfxryBMdUSVfN39cmcYQbMbUOl3wT0TLgCQg+7nU=;
-        b=n/VEjbsrp/jmlTJBuiaAL+/o7MmspX6tZ4MUlXNkn99axHY7v0XRq5WcbEy/e6XcUM
-         rujMBDwQF4aeCDdTLF7UxPMuUoDSD7iZ1NLR86jYGFdbxU9AuujIyu62Px+mRxx8aH3M
-         AJzvDXo0KiDXSC3lKdPnAjuOZqiuDLXNpu+9/zvWauH1ayGta/4B7yhZfO6P0kA2CsBC
-         3Q0x8o+94tu7gh3LXGVnOWaKwxBwsasHf3aneIeMT+ElnkH6S82HeFJiweGvtWvJVUtI
-         0bzkpZtEyzKSDEYZjGE13pMZdB8YHSVt/q/LN0M6u55O4azW4Bb4FZQR5ATOfX/bcS0D
-         /ICQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=LzEtfxryBMdUSVfN39cmcYQbMbUOl3wT0TLgCQg+7nU=;
-        b=TzFJVlo7NYNXTuzoarMr0WLu6gFTqi9OLI75TQD3UUKSO5itRsOKxSQO+1Wy1T6870
-         xXbcTQfnwGO5cyHm8aNCHmwW/wmHY35Ip7hmHk385x992CabJztcv8kP/QQLfngEOPoK
-         Mm/aT/L8cDlCjvac7YCBIQmMWXF16mtmKY+FhKb/GqkzONNqyf/AWV9v6b6UHH+3G9Mk
-         3LLBXiWvL8w929FZrUX9QrjB0pzAMm9mytyIPNx0QOf40eHjctxE4pYN3zzOlGIwXgIQ
-         6jpfes279YneJqZUdPK+pgfvrj1qOybU7Ej2+5+sNvD1ttMlg7qKYTLPNs94tXEedb+J
-         oumg==
-X-Gm-Message-State: AOAM531l1cZ/VQ729wQA2xDOsVNPODhLLrE6Ky5j4AnU6ksd9MgWA0HC
-        BpkdvQIt5srOsx/yxjKq5ZYKyGAkRfBMQlNrZI0ALs9dxt0=
-X-Google-Smtp-Source: ABdhPJyF6mGCLqWiOgPVDpAIAG12HTcwQD2KqRYPDACH+OUl1Ie1xlU7VOGs5wy87t1BKMkjWb40SZgKYfMn0//vnGA=
-X-Received: by 2002:a25:8b86:: with SMTP id j6mr11295871ybl.470.1628245127476;
- Fri, 06 Aug 2021 03:18:47 -0700 (PDT)
+        Fri, 6 Aug 2021 07:06:18 -0400
+Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 9FA603F109;
+        Fri,  6 Aug 2021 11:06:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1628247961;
+        bh=l6Crxr7OCP95ZsjBftxKKMqfoQ4lcuoG+yhpbemOXu0=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=oN0z2sFHSpBGlOta2FnY8Ao9EE9iL/YOWKCyNDeGYYEUhJ6mboXufR37rKoXie46e
+         bGlptR5u6SFgWmFqQ0OjHPdFD+RE6sH8BxMaeA76g+DaTsgnqkk5cEZkctoGneNWAw
+         jdLWxU2utggd6w3m2hIzw5Tsk5YAj5Z1QoVXDv2M0MfJfC+I5rr8NdiV0KUo0ZQzBS
+         exD5JhZQgi/Wsfp9beW6PUXQFR4n/fUFMpMa77pjV51FJpK2w6I26QZsIlbVHlDydk
+         /p7vDntJKfJ7qe4TOg9Q6MsLodm6QE1FXFvD46CzhElz3hfgEJCB6KrqkKs0IkCZDd
+         XxULMTABC5Cnw==
+From:   Colin King <colin.king@canonical.com>
+To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        =?UTF-8?q?Roger=20Pau=20Monn=C3=A9?= <roger.pau@citrix.com>,
+        Jens Axboe <axboe@kernel.dk>, xen-devel@lists.xenproject.org,
+        linux-block@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] xen-blkfront: Remove redundant assignment to variable err
+Date:   Fri,  6 Aug 2021 12:06:01 +0100
+Message-Id: <20210806110601.11386-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date:   Fri, 6 Aug 2021 12:18:36 +0200
-Message-ID: <CAKXUXMwT2zS9fgyQHKUUiqo8ynZBdx2UEUu1WnV_q0OCmknqhw@mail.gmail.com>
-Subject: Reference to non-existing DYNAMIC_FTRACE_WITH_ARGS
-To:     "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Cc:     live-patching@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Miroslav Benes <mbenes@suse.cz>,
-        kernel-janitors <kernel-janitors@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Steven,
+From: Colin Ian King <colin.king@canonical.com>
 
-Commit 2860cd8a2353 ("livepatch: Use the default ftrace_ops instead of
-REGS when ARGS is available") adds a dependency on a non-existing
-config DYNAMIC_FTRACE_WITH_ARGS, see diff:
+The variable err is being assigned a value that is never read, the
+assignment is redundant and can be removed.
 
-diff --git a/kernel/livepatch/Kconfig b/kernel/livepatch/Kconfig
-index 54102deb50ba..53d51ed619a3 100644
---- a/kernel/livepatch/Kconfig
-+++ b/kernel/livepatch/Kconfig
-@@ -6,7 +6,7 @@ config HAVE_LIVEPATCH
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/block/xen-blkfront.c | 1 -
+ 1 file changed, 1 deletion(-)
 
- config LIVEPATCH
-        bool "Kernel Live Patching"
--       depends on DYNAMIC_FTRACE_WITH_REGS
-+       depends on DYNAMIC_FTRACE_WITH_REGS || DYNAMIC_FTRACE_WITH_ARGS
-        depends on MODULES
-        depends on SYSFS
-        depends on KALLSYMS_ALL
+diff --git a/drivers/block/xen-blkfront.c b/drivers/block/xen-blkfront.c
+index d83fee21f6c5..715bfa8aca7f 100644
+--- a/drivers/block/xen-blkfront.c
++++ b/drivers/block/xen-blkfront.c
+@@ -1092,7 +1092,6 @@ static int xlvbd_alloc_gendisk(blkif_sector_t capacity,
+ 	err = xlbd_reserve_minors(minor, nr_minors);
+ 	if (err)
+ 		return err;
+-	err = -ENODEV;
+ 
+ 	memset(&info->tag_set, 0, sizeof(info->tag_set));
+ 	info->tag_set.ops = &blkfront_mq_ops;
+-- 
+2.31.1
 
-
-Did you intend to depend on the existing "HAVE_DYNAMIC_FTRACE_WITH_ARGS" here?
-
-Or did you intend to add a new config DYNAMIC_FTRACE_WITH_ARGS
-analogously to DYNAMIC_FTRACE_WITH_REGS as defined in
-./kernel/trace/Kconfig (see below)?
-
-config DYNAMIC_FTRACE_WITH_REGS
-        def_bool y
-        depends on DYNAMIC_FTRACE
-        depends on HAVE_DYNAMIC_FTRACE_WITH_REGS
-
-I am happy to provide a patch, once I understand what was intended here.
-
-Lukas
