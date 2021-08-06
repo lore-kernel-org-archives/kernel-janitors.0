@@ -2,98 +2,110 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EE45C4338F
-	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Aug 2021 11:33:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FFE3C4320A
+	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Aug 2021 11:56:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EC7E160FE7
-	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Aug 2021 11:33:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00DB961102
+	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Aug 2021 11:56:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245558AbhHFLdd (ORCPT
+        id S243267AbhHFL4r (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 6 Aug 2021 07:33:33 -0400
-Received: from relay.smtp-ext.broadcom.com ([192.19.166.231]:41038 "EHLO
-        relay.smtp-ext.broadcom.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S245540AbhHFLdc (ORCPT
+        Fri, 6 Aug 2021 07:56:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51784 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229578AbhHFL4q (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 6 Aug 2021 07:33:32 -0400
-X-Greylist: delayed 598 seconds by postgrey-1.27 at vger.kernel.org; Fri, 06 Aug 2021 07:33:32 EDT
-Received: from bld-lvn-bcawlan-34.lvn.broadcom.net (bld-lvn-bcawlan-34.lvn.broadcom.net [10.75.138.137])
-        by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id F0C167FFA;
-        Fri,  6 Aug 2021 04:23:17 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com F0C167FFA
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
-        s=dkimrelay; t=1628248998;
-        bh=Jr1JdI9/CVhnPEppjM4hGw5lZqvxFIHWJWTGtlGgjvw=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=FeFEiAVkrPA13FeM5iTdS5lcG1xWHt+sLhfpLXqlgpjL4ZAfnE+vWXrXoXK3sH6C7
-         u4ilFNKmqTAiSoh9RJfvgEB2DIZRjlcoOpp8iMO6lHOf9AjDiiUeiWkMyFZbFfVsz2
-         lRd2H1k1I/ifAY+8HwhbUAnV6Rs2tmziYhS2SFL0=
-Received: from [10.230.42.155] (unknown [10.230.42.155])
-        by bld-lvn-bcawlan-34.lvn.broadcom.net (Postfix) with ESMTPSA id 068E31874BD;
-        Fri,  6 Aug 2021 04:23:11 -0700 (PDT)
-Subject: Re: [PATCH][next] brcmfmac: firmware: Fix uninitialized variable ret
-To:     Kalle Valo <kvalo@codeaurora.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     Colin King <colin.king@canonical.com>,
-        Arend van Spriel <aspriel@gmail.com>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Chi-hsien Lin <chi-hsien.lin@infineon.com>,
-        Wright Feng <wright.feng@infineon.com>,
-        Chung-hsien Hsu <chung-hsien.hsu@infineon.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        brcm80211-dev-list.pdl@broadcom.com,
-        SHA-cyfmac-dev-list@infineon.com, netdev <netdev@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <20210803150904.80119-1-colin.king@canonical.com>
- <CACRpkdZ5u-C8uH2pCr1689v_ndyzqevDDksXvtPYv=FfD=x_xg@mail.gmail.com>
- <875ywkc80d.fsf@codeaurora.org>
-From:   Arend van Spriel <arend.vanspriel@broadcom.com>
-Message-ID: <96709926-30c6-457e-3e80-eb7ad6e9d778@broadcom.com>
-Date:   Fri, 6 Aug 2021 13:23:08 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
-MIME-Version: 1.0
-In-Reply-To: <875ywkc80d.fsf@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Fri, 6 Aug 2021 07:56:46 -0400
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5399FC061798;
+        Fri,  6 Aug 2021 04:56:29 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id m28-20020a05600c3b1cb02902b5a8c22575so5727632wms.0;
+        Fri, 06 Aug 2021 04:56:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=xxcVP1unxQRf/ma4cBAw6r/5ynUOn9I8kcb6t03qdg8=;
+        b=KmpYP3BE+cpz+pElv0OWJBLzo3/xIuvq6uh/veRCW2SSq0AcAWTQVgRa9UU3JVcDpo
+         KPP9//VsYE8H7VHboJOQ6KzAVunWP8/1tGbsWCSk5v0IOl0Yy2lWfp+/y4PdkrYrGO04
+         PCUpVVNBag26yTzqCaIRcMjafZS5PtD/2WIJahUaewAf5Uu/OeAGdpGlXvTTSrmhc0SB
+         Vg7a29cY5yIVTqtwxWKveg/UrfoUVsZjvz2p1kf0ITrj4Z9Dgo/5cIkw7uIDGUYgfuFb
+         M/X9acr4R2leiRKc9InK6ryWne5pZyghXK0ehd0nBd8iTeHk9Ad7oj40MIvIabLmwa0E
+         0pBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=xxcVP1unxQRf/ma4cBAw6r/5ynUOn9I8kcb6t03qdg8=;
+        b=i4gnRwoXDhyzH0U80UGsQ5HSheqIwJ7mxCRmty9uJTXGHWrqxQjlhMVUYr3fF2KxNc
+         H/4FOnhSzuhJASUmrR21wPZDLWkvXAztDY24vN/ppyFa5qPMCn2Jpa82af/W4VJxflpx
+         yops00GV8QbT+r3P2qEHFAHiS00qr7Qpzqwd0YuxB7/CaGw6r7z+K0rnZ8aQ6+MXz2Yz
+         XJWIIE18b1ZpfPe6Q5wRtT0pzFURwR6mj9k23/GGRvWtkt4mJjSnEV+hsXJT93BJ8yCG
+         R0mePq/pXFeQQXOYot/Yfw6DWt5e4GXUay+j2UIt+zrIAJHm3Y0S0/VNMlPXUMDVVUn0
+         y+Cg==
+X-Gm-Message-State: AOAM531nUPC99plZggKSZx4refxeVnDkVk7oMxb9xvQQ1R96Psm3xnwP
+        W4uhTKRx/XMtow2xjzt9/h7M1kJPPQc=
+X-Google-Smtp-Source: ABdhPJz3R2vkklO+frfNX6r8aHKE/hIze3yPOvVFk5GPsQnq76HPSuv7pbeeg5nYhh+efbUjTnfXOA==
+X-Received: by 2002:a05:600c:4f49:: with SMTP id m9mr17814809wmq.82.1628250987602;
+        Fri, 06 Aug 2021 04:56:27 -0700 (PDT)
+Received: from felia.fritz.box ([2001:16b8:2dc9:8d00:2198:3536:ca51:cd82])
+        by smtp.gmail.com with ESMTPSA id b20sm9195179wmj.48.2021.08.06.04.56.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Aug 2021 04:56:27 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Nicholas Piggin <npiggin@gmail.com>
+Cc:     Masahiro Yamada <masahiroy@kernel.org>,
+        Babu Moger <babu.moger@oracle.com>,
+        Don Zickus <dzickus@redhat.com>, linux-kbuild@vger.kernel.org,
+        Randy Dunlap <rdunlap@infradead.org>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] Kconfig.debug: drop selecting non-existing HARDLOCKUP_DETECTOR_ARCH
+Date:   Fri,  6 Aug 2021 13:56:18 +0200
+Message-Id: <20210806115618.22088-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 05-08-2021 15:53, Kalle Valo wrote:
-> Linus Walleij <linus.walleij@linaro.org> writes:
-> 
->> On Tue, Aug 3, 2021 at 5:09 PM Colin King <colin.king@canonical.com> wrote:
->>
->>> From: Colin Ian King <colin.king@canonical.com>
->>>
->>> Currently the variable ret is uninitialized and is only set if
->>> the pointer alt_path is non-null. Fix this by ininitializing ret
->>> to zero.
->>>
->>> Addresses-Coverity: ("Uninitialized scalar variable")
->>> Fixes: 5ff013914c62 ("brcmfmac: firmware: Allow per-board firmware binaries")
->>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->>
->> Nice catch!
->> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> 
-> I assume this will be fixed by Linus' patch "brcmfmac: firmware: Fix
-> firmware loading" and I should drop Colin's patch, correct?
+Commit 05a4a9527931 ("kernel/watchdog: split up config options") adds a
+new config HARDLOCKUP_DETECTOR, which selects the non-existing config
+HARDLOCKUP_DETECTOR_ARCH.
 
-That would be my assumption as well, but not sure when he will submit 
-another revision of it. You probably know what to do ;-)
+Hence, ./scripts/checkkconfigsymbols.py warns:
 
-Regards,
-Arend
+HARDLOCKUP_DETECTOR_ARCH
+Referencing files: lib/Kconfig.debug
+
+Simply drop selecting the non-existing HARDLOCKUP_DETECTOR_ARCH.
+
+Fixes: 05a4a9527931 ("kernel/watchdog: split up config options")
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Nicholas, please review and ack.
+
+Andrew, please pick this quick cleanup once Nicholas has acked it.
+
+ lib/Kconfig.debug | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index 090fb54ecff1..b6b951b0ed46 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -1061,7 +1061,6 @@ config HARDLOCKUP_DETECTOR
+ 	depends on HAVE_HARDLOCKUP_DETECTOR_PERF || HAVE_HARDLOCKUP_DETECTOR_ARCH
+ 	select LOCKUP_DETECTOR
+ 	select HARDLOCKUP_DETECTOR_PERF if HAVE_HARDLOCKUP_DETECTOR_PERF
+-	select HARDLOCKUP_DETECTOR_ARCH if HAVE_HARDLOCKUP_DETECTOR_ARCH
+ 	help
+ 	  Say Y here to enable the kernel to act as a watchdog to detect
+ 	  hard lockups.
+-- 
+2.17.1
+
