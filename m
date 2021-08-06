@@ -2,83 +2,107 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 094CCC4338F
-	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Aug 2021 11:23:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECE13C432BE
+	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Aug 2021 11:28:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D5FC661176
-	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Aug 2021 11:23:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5541611C9
+	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Aug 2021 11:28:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245450AbhHFLXa (ORCPT
+        id S245444AbhHFL2t (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 6 Aug 2021 07:23:30 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:49210
-        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231173AbhHFLXa (ORCPT
+        Fri, 6 Aug 2021 07:28:49 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:46186
+        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S245371AbhHFL2r (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 6 Aug 2021 07:23:30 -0400
-Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
+        Fri, 6 Aug 2021 07:28:47 -0400
+Received: from [10.172.193.212] (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 7CB9C3F049;
-        Fri,  6 Aug 2021 11:23:13 +0000 (UTC)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id E19764065E;
+        Fri,  6 Aug 2021 11:28:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1628248993;
-        bh=H1p/HXx7/C4MAn4Q4UfTW04vI5AaqbugvXyofQ0obOw=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=TpI9lSCmRlzMVuV3y9ww8ZdpkNWG4J8Gk5L//ujzTGfFHwA99qmPBv7ndCCzlLsSp
-         P9vyYOC2j+zHjDjv6fakqwsYGzLCb6MnHvmBaswtRVQSbf+SBuLVZ87CKGHeuHmF8C
-         4CsjJOr+l8RKrTxbmn6F8f6+LevmfWVZhFc4wKynJU/AYOmJmJrAL34KYFNFWpjYnJ
-         OLMMCWNlHhpR2GeUTZUeGFjqGsOaw1IhQQox9pnSaLvPk35RzZcV2BVUN8eafQcRTH
-         SDSiWFV2XgA9tD/D7nkF6tqwuyjyIBZiIG8mYF5b6KdEI0Q4IC8hytIJfu0ci600XW
-         SNJSlI4VXl/KQ==
-From:   Colin King <colin.king@canonical.com>
-To:     Karan Tilak Kumar <kartilak@cisco.com>,
-        Sesidhar Baddela <sebaddel@cisco.com>,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: snic: Remove redundant assignment to variable ret
-Date:   Fri,  6 Aug 2021 12:23:13 +0100
-Message-Id: <20210806112313.12434-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.31.1
+        s=20210705; t=1628249310;
+        bh=TSF6syblnU+wYbj7noZ2K9gDs7lGPeoRUp1P79rvg7w=;
+        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+         In-Reply-To:Content-Type;
+        b=rLiwQ60cBvjSxqmgY/q8PBEs0eDonpUuvxGqCCCANYZehYbTN9nocTlIWu+cqPZWI
+         YTsM2PGBM3zHpkilwfjZO9I8p541EoD0un7uVZ+8p4MKCKQ7bnXRRZhGQLoEemGe8y
+         9uG2WQ8T3KexgkMcDWKnnYShk+tGaRJ5Fx2gpLISt/gxQc0uJ/iVVjt5yWweVhbYFG
+         MJB9VzYli3lZGZS6wFsz0FOZ5GzLg0ZX5ySAOZPYUtl1a7nuVcpYyPaqwRZVvzhTWl
+         TwILdGJJqxDIlYzxNoTB7MLOM6k4X94hMYwV0BtkXgtBcH6dFEbjn2sM1vnsl2IJbJ
+         XIxZwueXEFquw==
+Subject: Re: [PATCH][next] brcmfmac: firmware: Fix uninitialized variable ret
+To:     Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     Arend van Spriel <aspriel@gmail.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Chi-hsien Lin <chi-hsien.lin@infineon.com>,
+        Wright Feng <wright.feng@infineon.com>,
+        Chung-hsien Hsu <chung-hsien.hsu@infineon.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        brcm80211-dev-list.pdl@broadcom.com,
+        SHA-cyfmac-dev-list@infineon.com, netdev <netdev@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <20210803150904.80119-1-colin.king@canonical.com>
+ <CACRpkdZ5u-C8uH2pCr1689v_ndyzqevDDksXvtPYv=FfD=x_xg@mail.gmail.com>
+ <875ywkc80d.fsf@codeaurora.org>
+ <96709926-30c6-457e-3e80-eb7ad6e9d778@broadcom.com>
+From:   Colin Ian King <colin.king@canonical.com>
+Message-ID: <b2034ac5-0080-a2fb-32ef-61ad50dfd248@canonical.com>
+Date:   Fri, 6 Aug 2021 12:28:29 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <96709926-30c6-457e-3e80-eb7ad6e9d778@broadcom.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On 06/08/2021 12:23, Arend van Spriel wrote:
+> On 05-08-2021 15:53, Kalle Valo wrote:
+>> Linus Walleij <linus.walleij@linaro.org> writes:
+>>
+>>> On Tue, Aug 3, 2021 at 5:09 PM Colin King <colin.king@canonical.com>
+>>> wrote:
+>>>
+>>>> From: Colin Ian King <colin.king@canonical.com>
+>>>>
+>>>> Currently the variable ret is uninitialized and is only set if
+>>>> the pointer alt_path is non-null. Fix this by ininitializing ret
+>>>> to zero.
+>>>>
+>>>> Addresses-Coverity: ("Uninitialized scalar variable")
+>>>> Fixes: 5ff013914c62 ("brcmfmac: firmware: Allow per-board firmware
+>>>> binaries")
+>>>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>>>
+>>> Nice catch!
+>>> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+>>
+>> I assume this will be fixed by Linus' patch "brcmfmac: firmware: Fix
+>> firmware loading" and I should drop Colin's patch, correct?
+> 
+> That would be my assumption as well, but not sure when he will submit
+> another revision of it. You probably know what to do ;-)
 
-The variable ret is being initialized with a value that is never read,
-the assignment is redundant and can be removed.
+I'd prefer my patch to be dropped in preference to Linus' fix.
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/scsi/snic/snic_scsi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/scsi/snic/snic_scsi.c b/drivers/scsi/snic/snic_scsi.c
-index 6dd0ff188bb4..92f5b65c2a27 100644
---- a/drivers/scsi/snic/snic_scsi.c
-+++ b/drivers/scsi/snic/snic_scsi.c
-@@ -2383,7 +2383,7 @@ snic_host_reset(struct scsi_cmnd *sc)
- {
- 	struct Scsi_Host *shost = sc->device->host;
- 	u32 start_time  = jiffies;
--	int ret = FAILED;
-+	int ret;
- 
- 	SNIC_SCSI_DBG(shost,
- 		      "host reset:sc %p sc_cmd 0x%x req %p tag %d flags 0x%llx\n",
--- 
-2.31.1
+> 
+> Regards,
+> Arend
 
