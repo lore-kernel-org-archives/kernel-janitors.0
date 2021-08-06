@@ -2,121 +2,116 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AADA7C43216
-	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Aug 2021 19:50:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F319FC4320E
+	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Aug 2021 19:57:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7DDB161184
-	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Aug 2021 19:50:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D01CE61131
+	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Aug 2021 19:57:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244032AbhHFTvA (ORCPT
+        id S244258AbhHFT5s (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 6 Aug 2021 15:51:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46016 "EHLO
+        Fri, 6 Aug 2021 15:57:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47550 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232157AbhHFTvA (ORCPT
+        with ESMTP id S244269AbhHFT5p (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 6 Aug 2021 15:51:00 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F122BC0613CF;
-        Fri,  6 Aug 2021 12:50:42 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id n12so2364675wrr.2;
-        Fri, 06 Aug 2021 12:50:42 -0700 (PDT)
+        Fri, 6 Aug 2021 15:57:45 -0400
+Received: from mail-oi1-x231.google.com (mail-oi1-x231.google.com [IPv6:2607:f8b0:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 141BCC0613CF
+        for <kernel-janitors@vger.kernel.org>; Fri,  6 Aug 2021 12:57:29 -0700 (PDT)
+Received: by mail-oi1-x231.google.com with SMTP id o185so13585766oih.13
+        for <kernel-janitors@vger.kernel.org>; Fri, 06 Aug 2021 12:57:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=7O3R+/YLffFIYvFcx+ISW6vN6f2/4fupamLlutQquIc=;
-        b=c50ZRqd7ZJ6rDenkIu2zwLRWu610VC1kr2a2yRbI76WF7Ote8TGhdSFADq/5c50sOj
-         d2rmnjr4Zl4jJm/bMbKe4V19IKJ340mNqZmMtTjiW+y/hXbWI6uL7tZyVeXBDjXnUTPb
-         9N5lmDPxY74qUdW5DOzuPsX1DraD09dg3FU/mfLcXUfDefz/D4km6HWrjio+7btOe9jA
-         VTPC55FP80lSZaOjnmG+QNCBx3tNIKuG2Jlq69+4UgvEtIf6i3OIjr7arnXdQUEP0Jsa
-         WxKpMeWC6RD4yon3wE4dJlmGBy5TtNDqTAuVdonMVKAOHo9N8EtL2BqNY9NU29jl/O9m
-         9SLw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=MF/jpY158To6EQXX0lXK4wBeAKXkbUZOPZcMLvj2pKA=;
+        b=hrNvxp1VsGcKekVYog+ETgyNkvHKn2ouDTTHSJ90MKkTVJfZ0JnAyjzIkbRaoiKTKW
+         fFSI+fxLToydj8cuARGoYpZNci95367d+eMwpeIuzc2Ah+rpKJNosDJNxLH6VPCGqQJV
+         w5qtT3/Rdm1ho0gWOfPUgNa64c3L7KyCmlMKYiphe9IvTrwdDc7q3Mwaigvhy/JRzPyW
+         aA+tQCfA/O2vj9T6LWdtN9NwYMFmWTS845LeNRjy54UrQ7ouGY2IbAxqmjj79qps275t
+         nyuvoThRuK85u1Bp/rWd3AMQHJPTavkbFsTiDjv+NlSIhCHDJaPqFx15QwsQzkjgWkbw
+         0m1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=7O3R+/YLffFIYvFcx+ISW6vN6f2/4fupamLlutQquIc=;
-        b=Rqu5aDbk6y9XQzuwmqlPFmSZkppjbJ7By3iXKJzQkH6jDEJEqKnD73uGcEhwNjXDCg
-         aGK0GIGMjg4874cJGL9lM9N3sNm8d+3JzfF+aENqCk/yP3Svxm80nwXuhD5hKURcD4KR
-         2+Vk12Ahxm5zquB4h0L59a3i1hY/fnGFbPrlcpoCsV97GdHrTt496UHz7ngOLws/DlJt
-         CYyLyzQkXvY9t9rpCOVTdUIj0VPVyKpYnOieadL6UlbhTg5qN96yLh5pUQOG54/ltBrr
-         a/v12VzSgHkXSO93LheOMVfquFiSanNjEcUBW87lIoXb/7mZ0cvy6PaE0eJ4TW3j5IUi
-         sZBw==
-X-Gm-Message-State: AOAM532k+KnJGDIovMQpDHYbzzDUbby4BazHq3d2eJJcForzzbuvItwO
-        eoJevBxrxQpq9Mj1D5y1oiw=
-X-Google-Smtp-Source: ABdhPJyVkry3+m5663VZZQh74vfTfSXLCzeg+mztE3FgXtryBM4F/fD+UDroRS8T07tJ8EED0JtNcw==
-X-Received: by 2002:a5d:49c8:: with SMTP id t8mr12342235wrs.365.1628279441558;
-        Fri, 06 Aug 2021 12:50:41 -0700 (PDT)
-Received: from felia.fritz.box ([2001:16b8:2dc9:8d00:2198:3536:ca51:cd82])
-        by smtp.gmail.com with ESMTPSA id y197sm13477902wmc.7.2021.08.06.12.50.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Aug 2021 12:50:41 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>
-Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jiri Kosina <jikos@kernel.org>, live-patching@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Miroslav Benes <mbenes@suse.cz>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>, stable@vger.kernel.org
-Subject: [PATCH] tracing: define needed config DYNAMIC_FTRACE_WITH_ARGS
-Date:   Fri,  6 Aug 2021 21:50:27 +0200
-Message-Id: <20210806195027.16808-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=MF/jpY158To6EQXX0lXK4wBeAKXkbUZOPZcMLvj2pKA=;
+        b=Q57qVLOX7BmvQWrPR6XnQH+05w++0thBCISTTVEJVnOKu6gOx9WvVaCp4UQOWWp6X7
+         aD9rgVCwLodS8O9PdkxHZ/SuMy1Uf95YTxB/WPVUJrsleOm1+J2hXOp2EM6cL8SEGFni
+         upEJ4FQybvZVAS+1iokES0xKS7wClzUj3kvDCblnGWSlzLahbBnU+1Ani4xEu8KMqpKo
+         j3TzZzhzV/n72A/anXXggwd1KKCJmCndq5gD8yYJOu5RK0ksFsWmJlo5RFRaEOBTev1B
+         df2Bp7Mn1KRrZZPGmSVQpIrCPQJHAOQSOYT8PY+JdnpGY+9gHmmeW4pgGG81gNVuUMoU
+         G3hA==
+X-Gm-Message-State: AOAM531tSTC7QOqASq4DuY+YJyMmv24XWmHZU1/qfu/eMwnwonC7N4xA
+        QGSnLTD037bIz59wrEI2Uydzw2pCNmT6z8tFTjk=
+X-Google-Smtp-Source: ABdhPJzRSNKmGvNbvRyoSzgRq6E+O9Kzd/sBqr3+djhVmtJy0dMvFGmqRCJDI3aD25wsE4BhCgiQB1bIvJpgQ/eJycQ=
+X-Received: by 2002:a05:6808:6d2:: with SMTP id m18mr8542725oih.120.1628279848481;
+ Fri, 06 Aug 2021 12:57:28 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210806150518.GC15586@kili> <ca0cfa01-e1ef-1ee8-8adc-ebd4fa253e70@amd.com>
+In-Reply-To: <ca0cfa01-e1ef-1ee8-8adc-ebd4fa253e70@amd.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Fri, 6 Aug 2021 15:57:17 -0400
+Message-ID: <CADnq5_OceaWQUjrOWmOykKKVhD+KbE6F_Wq16CyBFPrCQD6vBQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdgpu: check for allocation failure in amdgpu_vkms_sw_init()
+To:     =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Ryan Taylor <Ryan.Taylor@amd.com>,
+        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 2860cd8a2353 ("livepatch: Use the default ftrace_ops instead of
-REGS when ARGS is available") intends to enable config LIVEPATCH when
-ftrace with ARGS is available. However, the chain of configs to enable
-LIVEPATCH is incomplete, as HAVE_DYNAMIC_FTRACE_WITH_ARGS is available,
-but the definition of DYNAMIC_FTRACE_WITH_ARGS, combining DYNAMIC_FTRACE
-and HAVE_DYNAMIC_FTRACE_WITH_ARGS, needed to enable LIVEPATCH, is missing
-in the commit.
+Applied.  Thanks!
 
-Fortunately, ./scripts/checkkconfigsymbols.py detects this and warns:
+Alex
 
-DYNAMIC_FTRACE_WITH_ARGS
-Referencing files: kernel/livepatch/Kconfig
-
-So, define the config DYNAMIC_FTRACE_WITH_ARGS analogously to the already
-existing similar configs, DYNAMIC_FTRACE_WITH_REGS and
-DYNAMIC_FTRACE_WITH_DIRECT_CALLS, in ./kernel/trace/Kconfig to connect the
-chain of configs.
-
-Fixes: 2860cd8a2353 ("livepatch: Use the default ftrace_ops instead of REGS when ARGS is available")
-Cc: <stable@vger.kernel.org> # 5.10.x
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-
-Steven, thanks for the quick response; please pick this quick config fix.
-
- kernel/trace/Kconfig | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
-index d567b1717c4c..3ee23f4d437f 100644
---- a/kernel/trace/Kconfig
-+++ b/kernel/trace/Kconfig
-@@ -219,6 +219,11 @@ config DYNAMIC_FTRACE_WITH_DIRECT_CALLS
- 	depends on DYNAMIC_FTRACE_WITH_REGS
- 	depends on HAVE_DYNAMIC_FTRACE_WITH_DIRECT_CALLS
- 
-+config DYNAMIC_FTRACE_WITH_ARGS
-+	def_bool y
-+	depends on DYNAMIC_FTRACE
-+	depends on HAVE_DYNAMIC_FTRACE_WITH_ARGS
-+
- config FUNCTION_PROFILER
- 	bool "Kernel function profiler"
- 	depends on FUNCTION_TRACER
--- 
-2.17.1
-
+On Fri, Aug 6, 2021 at 11:09 AM Christian K=C3=B6nig
+<christian.koenig@amd.com> wrote:
+>
+> Am 06.08.21 um 17:05 schrieb Dan Carpenter:
+> > Check whether the kcalloc() fails and return -ENOMEM if it does.
+> >
+> > Fixes: eeba0b9046fc ("drm/amdgpu: create amdgpu_vkms (v4)")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>
+> Reviewed-by: Christian K=C3=B6nig <christian.koenig@amd.com>
+>
+> > ---
+> >   drivers/gpu/drm/amd/amdgpu/amdgpu_vkms.c | 2 ++
+> >   1 file changed, 2 insertions(+)
+> >
+> > diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vkms.c b/drivers/gpu/drm=
+/amd/amdgpu/amdgpu_vkms.c
+> > index 50bdc39733aa..ce982afeff91 100644
+> > --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vkms.c
+> > +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vkms.c
+> > @@ -482,6 +482,8 @@ static int amdgpu_vkms_sw_init(void *handle)
+> >               return r;
+> >
+> >       adev->amdgpu_vkms_output =3D kcalloc(adev->mode_info.num_crtc, si=
+zeof(struct amdgpu_vkms_output), GFP_KERNEL);
+>
+> Is the line above not a bit long?
+>
+> > +     if (!adev->amdgpu_vkms_output)
+> > +             return -ENOMEM;
+> >
+> >       /* allocate crtcs, encoders, connectors */
+> >       for (i =3D 0; i < adev->mode_info.num_crtc; i++) {
+>
