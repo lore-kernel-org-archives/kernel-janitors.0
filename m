@@ -2,95 +2,118 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D82BC4338F
-	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Aug 2021 11:57:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2FDFC4320A
+	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Aug 2021 12:35:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 58229610CB
-	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Aug 2021 11:57:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B808E61163
+	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Aug 2021 12:35:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245751AbhHFL5x (ORCPT
+        id S1343732AbhHFMfk (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 6 Aug 2021 07:57:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52060 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229578AbhHFL5w (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 6 Aug 2021 07:57:52 -0400
-Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B434C061798;
-        Fri,  6 Aug 2021 04:57:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=GTrZgcQBlZ0LVEw7tZM1GzfrNVvDF1A9jOYPKV5T1co=; b=akN2yaj8Ns/RZ4oltMMVdxaS4T
-        WjKJ7Mcrzr2knc0QO9b3cCsKs/gsErwqco94GhO47SEZbplYDNLhPnw+nxGa7HVLiwIWdrfrmai/C
-        NHmonw2kBwweLrT/u0k3cqtAw9DqAOlfg3gL5n5eSMd+oao2+Tyhe5rYjWJkw1iHEafcz/VfVBuNg
-        KzjfvOaEd7E/qRKFzKaufc5q62e+3pfLQFC2/74PR2tzbCjyzvjYo4qyUC08/CX3Rp0SbXrIh5a5o
-        dk0/tgP2u5V6hhnbcr8bdfOM4IWP7NyyLOeI0jhf2BJuQqwbEF+RY7J7zsbWAjMBZhzzEz+oYJL+P
-        k7AIIAvw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by desiato.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mByTc-006MJU-75; Fri, 06 Aug 2021 11:57:24 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 816C630003A;
-        Fri,  6 Aug 2021 13:57:21 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 298E520292D1B; Fri,  6 Aug 2021 13:57:21 +0200 (CEST)
-Date:   Fri, 6 Aug 2021 13:57:21 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Michel Lespinasse <michel@lespinasse.org>
-Cc:     Mete Polat <metepolat2000@gmail.com>,
-        Davidlohr Bueso <dbueso@suse.de>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jesper Nilsson <jesper@jni.nu>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
+        Fri, 6 Aug 2021 08:35:40 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:17712 "EHLO m43-7.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1343709AbhHFMfj (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 6 Aug 2021 08:35:39 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1628253324; h=Content-Type: MIME-Version: Message-ID:
+ In-Reply-To: Date: References: Subject: Cc: To: From: Sender;
+ bh=N2y4oRCNfmsOR5AcLj7KTqZExbR4TqZaeaiHeBAWq7o=; b=S0MIYlKVBti4dThUFgq/St1y19X91dbIPDdqqYO6c6m8K1Pz90t811ScuU8+UhenB+Xinkb/
+ XdWHCAmHj3m229b+CU0XhDDyAoV2I+dLQ+7jNCl1sn+a7mITy1UdHnXetByoGP1LXCGD+IEs
+ K+JmHkN5gweB3qcuZikNP5N2PxI=
+X-Mailgun-Sending-Ip: 69.72.43.7
+X-Mailgun-Sid: WyI5NDExNyIsICJrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n07.prod.us-east-1.postgun.com with SMTP id
+ 610d2c815c73bba6fbbc3541 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Fri, 06 Aug 2021 12:35:13
+ GMT
+Sender: kvalo=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 81AB6C43145; Fri,  6 Aug 2021 12:35:12 +0000 (UTC)
+Received: from tykki (tynnyri.adurom.net [51.15.11.48])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D3A5AC433F1;
+        Fri,  6 Aug 2021 12:35:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D3A5AC433F1
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+To:     Colin Ian King <colin.king@canonical.com>
+Cc:     Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Arend van Spriel <aspriel@gmail.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Chi-hsien Lin <chi-hsien.lin@infineon.com>,
+        Wright Feng <wright.feng@infineon.com>,
+        Chung-hsien Hsu <chung-hsien.hsu@infineon.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        brcm80211-dev-list.pdl@broadcom.com,
+        SHA-cyfmac-dev-list@infineon.com, netdev <netdev@vger.kernel.org>,
         kernel-janitors@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] rbtree: remove unneeded explicit alignment in struct
- rb_node
-Message-ID: <YQ0joVCrc0hTxRXK@hirez.programming.kicks-ass.net>
-References: <20210805133213.700-1-lukas.bulwahn@gmail.com>
- <CAK8P3a3aNuxaEtAiewd+Wjc8hKtca0NrcV2kykkNC-qKT_HhzQ@mail.gmail.com>
- <50ad4c8b848bd371b4b42959167ef03d@suse.de>
- <YQwd2puXiSiUWEE1@precision>
- <20210806085245.GB14650@lespinasse.org>
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH][next] brcmfmac: firmware: Fix uninitialized variable ret
+References: <20210803150904.80119-1-colin.king@canonical.com>
+        <CACRpkdZ5u-C8uH2pCr1689v_ndyzqevDDksXvtPYv=FfD=x_xg@mail.gmail.com>
+        <875ywkc80d.fsf@codeaurora.org>
+        <96709926-30c6-457e-3e80-eb7ad6e9d778@broadcom.com>
+        <b2034ac5-0080-a2fb-32ef-61ad50dfd248@canonical.com>
+Date:   Fri, 06 Aug 2021 15:35:05 +0300
+In-Reply-To: <b2034ac5-0080-a2fb-32ef-61ad50dfd248@canonical.com> (Colin Ian
+        King's message of "Fri, 6 Aug 2021 12:28:29 +0100")
+Message-ID: <87eeb6bvk6.fsf@codeaurora.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210806085245.GB14650@lespinasse.org>
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Aug 06, 2021 at 01:52:45AM -0700, Michel Lespinasse wrote:
-> I think moving the color to a separate word would be costly, both in space
-> (growing the struct rb_node) and in time. Feel free to try it, but I would
-> expect the rbtree performance tests to regress significantly.
-> 
-> __rb_parent() could probably be modified - it only needs to mask one bit,
-> I'm not sure why it masks two.
-> 
-> As to what would happen on 68k... hard to say, but I expect it should
-> be fine (if the compiler cared for the structs to be aligned, it
-> should do it on its own). Still, not sure how to test that either.
+Colin Ian King <colin.king@canonical.com> writes:
 
-Somewhere, on the infinite length TODO list, I have an item to implement
-threaded RB trees, which would need the LSB of the left and right words
-too.
+> On 06/08/2021 12:23, Arend van Spriel wrote:
+>> On 05-08-2021 15:53, Kalle Valo wrote:
+>>> Linus Walleij <linus.walleij@linaro.org> writes:
+>>>
+>>>> On Tue, Aug 3, 2021 at 5:09 PM Colin King <colin.king@canonical.com>
+>>>> wrote:
+>>>>
+>>>>> From: Colin Ian King <colin.king@canonical.com>
+>>>>>
+>>>>> Currently the variable ret is uninitialized and is only set if
+>>>>> the pointer alt_path is non-null. Fix this by ininitializing ret
+>>>>> to zero.
+>>>>>
+>>>>> Addresses-Coverity: ("Uninitialized scalar variable")
+>>>>> Fixes: 5ff013914c62 ("brcmfmac: firmware: Allow per-board firmware
+>>>>> binaries")
+>>>>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>>>>
+>>>> Nice catch!
+>>>> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+>>>
+>>> I assume this will be fixed by Linus' patch "brcmfmac: firmware: Fix
+>>> firmware loading" and I should drop Colin's patch, correct?
+>> 
+>> That would be my assumption as well, but not sure when he will submit
+>> another revision of it. You probably know what to do ;-)
+>
+> I'd prefer my patch to be dropped in preference to Linus' fix.
 
-In general, the kernel is overflowing with code that (ab)uses the LSBs
-of pointers and relies on at least natural alignment. There is
-absolutely no point in fixing just this one instance.
+Ok, I'll then drop Colin's patch.
+
+-- 
+https://patchwork.kernel.org/project/linux-wireless/list/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
