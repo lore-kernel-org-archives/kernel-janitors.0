@@ -2,74 +2,88 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-21.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA715C4338F
-	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Aug 2021 22:50:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B25CC4338F
+	for <kernel-janitors@archiver.kernel.org>; Sat,  7 Aug 2021 01:18:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A5130610CB
-	for <kernel-janitors@archiver.kernel.org>; Fri,  6 Aug 2021 22:50:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47F58611C6
+	for <kernel-janitors@archiver.kernel.org>; Sat,  7 Aug 2021 01:18:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243413AbhHFWuW (ORCPT
+        id S229935AbhHGBSd (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 6 Aug 2021 18:50:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35354 "EHLO mail.kernel.org"
+        Fri, 6 Aug 2021 21:18:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51934 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232199AbhHFWuV (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 6 Aug 2021 18:50:21 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 81A3961158;
-        Fri,  6 Aug 2021 22:50:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1628290205;
-        bh=+veC6O9A+A1Jr8yW7O4HZa9d3V82QULRT9YwF4duKGw=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=Pwv9GkZ/LBLpnpLrJH+ms95r8Qr30VO2PPgwvjmpI0g6MqC4hgt/nQw2Mhut0fLlD
-         tG9jHtpHwwFSDFaD0FZyBkjk9GhCzmpI/BbWJ8dr23ca+OlQqRB/WFUpmq+62baJ11
-         rZRIVHyBcrYbjopruEBAJD9Uhl3PL1L4FVTBzv7DIa759SH+pDLYsCFoNWsC6X6chi
-         eKdiWv8wgIHmflfqkJSYQZR/dkR7z/fI7SKi1nfMTMl/TEhMa6UpCFi6urOzYs7pnF
-         jAhgEZGQ3E9nH2tHo6AJrhtb/z1bSlNZgg7xHwZJAXTO3aJTD7TpqkVC4CVV/VSt50
-         mAchoz903gAig==
-Content-Type: text/plain; charset="utf-8"
+        id S229749AbhHGBSc (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 6 Aug 2021 21:18:32 -0400
+Received: from oasis.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4B81461186;
+        Sat,  7 Aug 2021 01:18:15 +0000 (UTC)
+Date:   Fri, 6 Aug 2021 21:18:08 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jiri Kosina <jikos@kernel.org>, live-patching@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Miroslav Benes <mbenes@suse.cz>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH] tracing: define needed config DYNAMIC_FTRACE_WITH_ARGS
+Message-ID: <20210806211808.6d927880@oasis.local.home>
+In-Reply-To: <20210806195027.16808-1-lukas.bulwahn@gmail.com>
+References: <20210806195027.16808-1-lukas.bulwahn@gmail.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] vrf: fix NULL dereference in vrf_finish_output()
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <162829020548.2223.7594444447207533817.git-patchwork-notify@kernel.org>
-Date:   Fri, 06 Aug 2021 22:50:05 +0000
-References: <20210806150435.GB15586@kili>
-In-Reply-To: <20210806150435.GB15586@kili>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     dsahern@kernel.org, vvs@virtuozzo.com, davem@davemloft.net,
-        kuba@kernel.org, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+On Fri,  6 Aug 2021 21:50:27 +0200
+Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
 
-This patch was applied to netdev/net-next.git (refs/heads/master):
-
-On Fri, 6 Aug 2021 18:04:35 +0300 you wrote:
-> The "skb" pointer is NULL on this error path so we can't dereference it.
-> Use "dev" instead.
+> Commit 2860cd8a2353 ("livepatch: Use the default ftrace_ops instead of
+> REGS when ARGS is available") intends to enable config LIVEPATCH when
+> ftrace with ARGS is available. However, the chain of configs to enable
+> LIVEPATCH is incomplete, as HAVE_DYNAMIC_FTRACE_WITH_ARGS is available,
+> but the definition of DYNAMIC_FTRACE_WITH_ARGS, combining DYNAMIC_FTRACE
+> and HAVE_DYNAMIC_FTRACE_WITH_ARGS, needed to enable LIVEPATCH, is missing
+> in the commit.
 > 
-> Fixes: 14ee70ca89e6 ("vrf: use skb_expand_head in vrf_finish_output")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Fortunately, ./scripts/checkkconfigsymbols.py detects this and warns:
+> 
+> DYNAMIC_FTRACE_WITH_ARGS
+> Referencing files: kernel/livepatch/Kconfig
+> 
+> So, define the config DYNAMIC_FTRACE_WITH_ARGS analogously to the already
+> existing similar configs, DYNAMIC_FTRACE_WITH_REGS and
+> DYNAMIC_FTRACE_WITH_DIRECT_CALLS, in ./kernel/trace/Kconfig to connect the
+> chain of configs.
+> 
+> Fixes: 2860cd8a2353 ("livepatch: Use the default ftrace_ops instead of REGS when ARGS is available")
+> Cc: <stable@vger.kernel.org> # 5.10.x
+
+FYI, we don't add # 5.10.x anymore. The Fixes tag above is what
+determines where it gets backported to.
+
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 > ---
->  drivers/net/vrf.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> Steven, thanks for the quick response; please pick this quick config fix.
 
-Here is the summary with links:
-  - [net-next] vrf: fix NULL dereference in vrf_finish_output()
-    https://git.kernel.org/netdev/net-next/c/06669e6880be
+I placed it in my queue to go into the 5.14-rc cycle.
 
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Since this affects live kernel patching, can I get a Tested-by from one
+of the live kernel patching  folks?
 
+Thanks!
 
+-- Steve
