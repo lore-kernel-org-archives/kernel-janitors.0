@@ -7,72 +7,69 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1839DC4338F
-	for <kernel-janitors@archiver.kernel.org>; Sun,  8 Aug 2021 06:21:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5052FC4320A
+	for <kernel-janitors@archiver.kernel.org>; Sun,  8 Aug 2021 06:21:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E25C061019
-	for <kernel-janitors@archiver.kernel.org>; Sun,  8 Aug 2021 06:21:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E94C61002
+	for <kernel-janitors@archiver.kernel.org>; Sun,  8 Aug 2021 06:21:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229613AbhHHGWK (ORCPT
+        id S230155AbhHHGWM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 8 Aug 2021 02:22:10 -0400
-Received: from szxga02-in.huawei.com ([45.249.212.188]:13401 "EHLO
-        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229473AbhHHGWK (ORCPT
+        Sun, 8 Aug 2021 02:22:12 -0400
+Received: from szxga01-in.huawei.com ([45.249.212.187]:7809 "EHLO
+        szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229516AbhHHGWL (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 8 Aug 2021 02:22:10 -0400
-Received: from dggeml759-chm.china.huawei.com (unknown [172.30.72.53])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Gj8Cm0gMJzck54;
-        Sun,  8 Aug 2021 14:18:12 +0800 (CST)
+        Sun, 8 Aug 2021 02:22:11 -0400
+Received: from dggeml759-chm.china.huawei.com (unknown [172.30.72.54])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Gj8Hl0RxHzYmHp;
+        Sun,  8 Aug 2021 14:21:39 +0800 (CST)
 Received: from localhost.localdomain (10.175.102.38) by
  dggeml759-chm.china.huawei.com (10.1.199.138) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2176.2; Sun, 8 Aug 2021 14:21:48 +0800
+ 15.1.2176.2; Sun, 8 Aug 2021 14:21:49 +0800
 From:   Wei Yongjun <weiyongjun1@huawei.com>
-To:     <weiyongjun1@huawei.com>, Huang Jianan <huangjianan@oppo.com>,
-        Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>
-CC:     <linux-erofs@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH -next] erofs: make symbol 'erofs_iomap_ops' static
-Date:   Sun, 8 Aug 2021 06:33:43 +0000
-Message-ID: <20210808063343.255817-1-weiyongjun1@huawei.com>
+To:     <weiyongjun1@huawei.com>, Loic Poulain <loic.poulain@linaro.org>,
+        Sergey Ryazanov <ryazanov.s.a@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>
+CC:     <netdev@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH net-next] wwan: mhi: Fix missing spin_lock_init() in mhi_mbim_probe()
+Date:   Sun, 8 Aug 2021 06:33:44 +0000
+Message-ID: <20210808063344.255867-1-weiyongjun1@huawei.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Type:   text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7BIT
 X-Originating-IP: [10.175.102.38]
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
  dggeml759-chm.china.huawei.com (10.1.199.138)
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The sparse tool complains as follows:
+The driver allocates the spinlock but not initialize it.
+Use spin_lock_init() on it to initialize it correctly.
 
-fs/erofs/data.c:150:24: warning:
- symbol 'erofs_iomap_ops' was not declared. Should it be static?
-
-This symbol is not used outside of data.c, so marks it static.
-
-Fixes: 3e9ce908c114 ("erofs: iomap support for non-tailpacking DIO")
+Fixes: aa730a9905b7 ("net: wwan: Add MHI MBIM network driver")
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- fs/erofs/data.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wwan/mhi_wwan_mbim.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/erofs/data.c b/fs/erofs/data.c
-index 4ea10b31790c..b2a22aabc9bc 100644
---- a/fs/erofs/data.c
-+++ b/fs/erofs/data.c
-@@ -147,7 +147,7 @@ static int erofs_iomap_end(struct inode *inode, loff_t pos, loff_t length,
- 	return written;
- }
+diff --git a/drivers/net/wwan/mhi_wwan_mbim.c b/drivers/net/wwan/mhi_wwan_mbim.c
+index f37232fb29c0..377529bbf124 100644
+--- a/drivers/net/wwan/mhi_wwan_mbim.c
++++ b/drivers/net/wwan/mhi_wwan_mbim.c
+@@ -601,6 +601,7 @@ static int mhi_mbim_probe(struct mhi_device *mhi_dev, const struct mhi_device_id
+ 	if (!mbim)
+ 		return -ENOMEM;
  
--const struct iomap_ops erofs_iomap_ops = {
-+static const struct iomap_ops erofs_iomap_ops = {
- 	.iomap_begin = erofs_iomap_begin,
- 	.iomap_end = erofs_iomap_end,
- };
++	spin_lock_init(&mbim->tx_lock);
+ 	dev_set_drvdata(&mhi_dev->dev, mbim);
+ 	mbim->mdev = mhi_dev;
+ 	mbim->mru = mhi_dev->mhi_cntrl->mru ? mhi_dev->mhi_cntrl->mru : MHI_DEFAULT_MRU;
 
