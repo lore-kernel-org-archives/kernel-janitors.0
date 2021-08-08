@@ -2,85 +2,77 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33F4CC4338F
-	for <kernel-janitors@archiver.kernel.org>; Sat,  7 Aug 2021 22:50:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1839DC4338F
+	for <kernel-janitors@archiver.kernel.org>; Sun,  8 Aug 2021 06:21:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 191DA60FE7
-	for <kernel-janitors@archiver.kernel.org>; Sat,  7 Aug 2021 22:50:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E25C061019
+	for <kernel-janitors@archiver.kernel.org>; Sun,  8 Aug 2021 06:21:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229945AbhHGWuT (ORCPT
+        id S229613AbhHHGWK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 7 Aug 2021 18:50:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59506 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229809AbhHGWuQ (ORCPT
+        Sun, 8 Aug 2021 02:22:10 -0400
+Received: from szxga02-in.huawei.com ([45.249.212.188]:13401 "EHLO
+        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229473AbhHHGWK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 7 Aug 2021 18:50:16 -0400
-Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED939C0613CF
-        for <kernel-janitors@vger.kernel.org>; Sat,  7 Aug 2021 15:49:56 -0700 (PDT)
-Received: by mail-lj1-x22c.google.com with SMTP id m18so6431487ljo.1
-        for <kernel-janitors@vger.kernel.org>; Sat, 07 Aug 2021 15:49:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=o3qubOv31EtfKaNfHjdn82lhl+sbwGCg3V0u0FRk8QU=;
-        b=Y5j9Tu28amnZUpN7zY3veiU+uMmDpe7mXmuIxCaWmknHVC9q/wX1UIEStgoXdiliru
-         sCB9DqfQoYAh5RKWrnXgvRcICfc/f0fcV42tLxdpKas7JSPMdVhHDM6yrLRFNFDkNuuD
-         VohfMEWE745XxofOXaDtB+auVIkcBbPrH7KR5pbVcbyorTCxcXj4UEBM/gHIIAPDoveI
-         LVzyqtK+Ac7BuSOw0eBATVVbSSg8p24ja7WNFNtBYAsaSzBvltwlFx4dXEHczCxozscK
-         hbyiYi5E5KXBh0dYZ5Sr1ItPhOyil7Vs8jSU/nUaD2Bzav7+bc2FnzrYGG32Pb69w9jT
-         6TJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=o3qubOv31EtfKaNfHjdn82lhl+sbwGCg3V0u0FRk8QU=;
-        b=XMasA0/KK5htVbCbpBg/eogNI9YMj4RtfigL/zN/VG33dFRsVo+1XxN0P0O1HxqINm
-         ND0zj7kO+aUZKeRxD5gS537YeIAxVb0/JxnNftrCyr/RCz4zIsQW1+B2pL4THSmO//QK
-         MirRfvWIWQcuX00SrRrkOPo3kgjmSCgQOhUSVmWib5i/3ZcbMvKjNQkJJgImAYfcBRDN
-         roJZDAOd58juN9vqAUwWSAGZ9TDGgnUnKJL4PrWuxoE+lOdcza8a4mL1nxbaYAeTxgrs
-         cdWk3sPbUyMKhND+DhmPZYHtchS1i73lc8QgqAz7doxxZZDMLvF/7keLCBgbqmAxWnJM
-         LPHg==
-X-Gm-Message-State: AOAM531VYFKpHR77bd+EA/NChjGHvBY0fjZrz59Jejm9xQJ/a/Lr2aP5
-        cMmYM2REM1QGpXz7rQ62xKmjzAHUgY6KE98sy3paEg==
-X-Google-Smtp-Source: ABdhPJy37zMjQasEWY5yuOKqQeAD/LtnA/iupXOAzZdWOxAY1eLppLhmy87rbgJCog2CdlEf1M473Rw22pP5qV2Xf4A=
-X-Received: by 2002:a2e:b819:: with SMTP id u25mr10702122ljo.438.1628376595192;
- Sat, 07 Aug 2021 15:49:55 -0700 (PDT)
+        Sun, 8 Aug 2021 02:22:10 -0400
+Received: from dggeml759-chm.china.huawei.com (unknown [172.30.72.53])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Gj8Cm0gMJzck54;
+        Sun,  8 Aug 2021 14:18:12 +0800 (CST)
+Received: from localhost.localdomain (10.175.102.38) by
+ dggeml759-chm.china.huawei.com (10.1.199.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2176.2; Sun, 8 Aug 2021 14:21:48 +0800
+From:   Wei Yongjun <weiyongjun1@huawei.com>
+To:     <weiyongjun1@huawei.com>, Huang Jianan <huangjianan@oppo.com>,
+        Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>
+CC:     <linux-erofs@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH -next] erofs: make symbol 'erofs_iomap_ops' static
+Date:   Sun, 8 Aug 2021 06:33:43 +0000
+Message-ID: <20210808063343.255817-1-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20210806150000.GA15586@kili>
-In-Reply-To: <20210806150000.GA15586@kili>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sun, 8 Aug 2021 00:49:44 +0200
-Message-ID: <CACRpkdZgSUyL99166Hoz_8_Gw0ApQOhFbUwBUecMb8XJVn4X_Q@mail.gmail.com>
-Subject: Re: [PATCH] bus: ixp4xx: return on error in ixp4xx_exp_probe()
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Linus Walleij <linusw@kernel.org>, Imre Kaloz <kaloz@openwrt.org>,
-        Krzysztof Halasa <khalasa@piap.pl>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.102.38]
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggeml759-chm.china.huawei.com (10.1.199.138)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Aug 6, 2021 at 5:00 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+The sparse tool complains as follows:
 
-> This code was intended to return an error code if regmap_read() fails
-> but the return statement was missing.
->
-> Fixes: 1c953bda90ca ("bus: ixp4xx: Add a driver for IXP4xx expansion bus")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+fs/erofs/data.c:150:24: warning:
+ symbol 'erofs_iomap_ops' was not declared. Should it be static?
 
-Ooops that's a bug.
+This symbol is not used outside of data.c, so marks it static.
 
-Patch applied, I will relay this to the ARM SoC tree.
+Fixes: 3e9ce908c114 ("erofs: iomap support for non-tailpacking DIO")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ fs/erofs/data.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Yours,
-Linus Walleij
+diff --git a/fs/erofs/data.c b/fs/erofs/data.c
+index 4ea10b31790c..b2a22aabc9bc 100644
+--- a/fs/erofs/data.c
++++ b/fs/erofs/data.c
+@@ -147,7 +147,7 @@ static int erofs_iomap_end(struct inode *inode, loff_t pos, loff_t length,
+ 	return written;
+ }
+ 
+-const struct iomap_ops erofs_iomap_ops = {
++static const struct iomap_ops erofs_iomap_ops = {
+ 	.iomap_begin = erofs_iomap_begin,
+ 	.iomap_end = erofs_iomap_end,
+ };
+
