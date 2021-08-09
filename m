@@ -2,73 +2,75 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB299C4338F
-	for <kernel-janitors@archiver.kernel.org>; Mon,  9 Aug 2021 03:06:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F705C43216
+	for <kernel-janitors@archiver.kernel.org>; Mon,  9 Aug 2021 09:20:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 982F560FD8
-	for <kernel-janitors@archiver.kernel.org>; Mon,  9 Aug 2021 03:06:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D60361055
+	for <kernel-janitors@archiver.kernel.org>; Mon,  9 Aug 2021 09:20:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232670AbhHIDGq (ORCPT
+        id S234436AbhHIJU2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 8 Aug 2021 23:06:46 -0400
-Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:40919 "EHLO
-        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229891AbhHIDGq (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 8 Aug 2021 23:06:46 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01424;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0UiLXKxy_1628478382;
-Received: from B-P7TQMD6M-0146.local(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0UiLXKxy_1628478382)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 09 Aug 2021 11:06:23 +0800
-Date:   Mon, 9 Aug 2021 11:06:22 +0800
-From:   Gao Xiang <hsiangkao@linux.alibaba.com>
-To:     "weiyongjun (A)" <weiyongjun1@huawei.com>
-Cc:     Chao Yu <chao@kernel.org>, Huang Jianan <huangjianan@oppo.com>,
-        Gao Xiang <xiang@kernel.org>, linux-erofs@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Hulk Robot <hulkci@huawei.com>
-Subject: Re: [PATCH -next] erofs: make symbol 'erofs_iomap_ops' static
-Message-ID: <YRCbrtHZjo9oZfol@B-P7TQMD6M-0146.local>
-References: <20210808063343.255817-1-weiyongjun1@huawei.com>
- <YQ/ZxZkNCtWGO6X4@B-P7TQMD6M-0146.local>
- <4ddfb962-97fc-28b0-0006-197574a1ec00@kernel.org>
- <82bae76e-8811-22d4-0b75-f58df1153def@huawei.com>
+        Mon, 9 Aug 2021 05:20:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36394 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234349AbhHIJU0 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 9 Aug 2021 05:20:26 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPS id 751AD610A1;
+        Mon,  9 Aug 2021 09:20:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1628500806;
+        bh=dyB6k7gx7p1UgqVPtpoRpaBC6qnvvZUq5R8yHOybFOI=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=oqIWgpK7gKz5A8oZV0Psak7VD72T4jmf8DRv45+BmUk1uNcsLspatD3g1dtIWPDDG
+         AT49TEDQDrpk9GGLsNV2bUVuk7HbZwP4WBZpEBmXibuNxBMZegDS6EJBcmP38CQhPn
+         /8cshFpH2c+6V8lSrFdcx3sc2L1uBK3ORxtC2jzEgDhrakzM7hXh+9KN5RIqgwW01Y
+         L7+6DFJZQ32WtnugQqnM4bnuCL8q3YR1wzFUHD/M4Bv0DuI7NmvHzrV34A8r6uWbfF
+         Fk7IYBtXCsVpoe+BwC7lCqBByf8Wp+HYc87NljkR+co8oZ7eXFXHkFHMsNdr3YSqsl
+         wNWfECVcy8/pQ==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <82bae76e-8811-22d4-0b75-f58df1153def@huawei.com>
+Subject: Re: [PATCH net-next] wwan: mhi: Fix missing spin_lock_init() in
+ mhi_mbim_probe()
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <162850080643.12236.562671529597026467.git-patchwork-notify@kernel.org>
+Date:   Mon, 09 Aug 2021 09:20:06 +0000
+References: <20210808063344.255867-1-weiyongjun1@huawei.com>
+In-Reply-To: <20210808063344.255867-1-weiyongjun1@huawei.com>
+To:     Wei Yongjun <weiyongjun1@huawei.com>
+Cc:     loic.poulain@linaro.org, ryazanov.s.a@gmail.com,
+        davem@davemloft.net, kuba@kernel.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, hulkci@huawei.com
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Aug 09, 2021 at 10:49:31AM +0800, weiyongjun (A) wrote:
-> 
-> 在 2021/8/9 7:56, Chao Yu 写道:
-> > On 2021/8/8 21:19, Gao Xiang wrote:
-> > > On Sun, Aug 08, 2021 at 06:33:43AM +0000, Wei Yongjun wrote:
-> > > > The sparse tool complains as follows:
-> > > > 
-> > > > fs/erofs/data.c:150:24: warning:
-> > > >   symbol 'erofs_iomap_ops' was not declared. Should it be static?
-> > > > 
-> > > > This symbol is not used outside of data.c, so marks it static.
-> > 
-> > Thanks for the patch, I guess it will be better to fix in original patch
-> > if you don't mind.
-> 
-> 
-> Yes, better to fix in original patch.
+Hello:
 
-Ok, I'll merge this into the original patch this tomorrow.
-(Anyway, thanks for the report!)
+This patch was applied to netdev/net-next.git (refs/heads/master):
 
-Thanks,
-Gao Xiang
-
+On Sun, 8 Aug 2021 06:33:44 +0000 you wrote:
+> The driver allocates the spinlock but not initialize it.
+> Use spin_lock_init() on it to initialize it correctly.
 > 
-> Regards.
+> Fixes: aa730a9905b7 ("net: wwan: Add MHI MBIM network driver")
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next] wwan: mhi: Fix missing spin_lock_init() in mhi_mbim_probe()
+    https://git.kernel.org/netdev/net-next/c/94c0a6fbd5cf
+
+You are awesome, thank you!
+--
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
