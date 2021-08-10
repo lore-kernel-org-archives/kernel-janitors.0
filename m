@@ -2,94 +2,62 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9628FC4320A
-	for <kernel-janitors@archiver.kernel.org>; Tue, 10 Aug 2021 19:39:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD2F5C4338F
+	for <kernel-janitors@archiver.kernel.org>; Tue, 10 Aug 2021 23:13:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7463C60F94
-	for <kernel-janitors@archiver.kernel.org>; Tue, 10 Aug 2021 19:39:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A059261058
+	for <kernel-janitors@archiver.kernel.org>; Tue, 10 Aug 2021 23:13:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230363AbhHJTkV (ORCPT
+        id S235253AbhHJXNr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 10 Aug 2021 15:40:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52134 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230056AbhHJTkU (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 10 Aug 2021 15:40:20 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2DB6C0613C1;
-        Tue, 10 Aug 2021 12:39:57 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id x12so4318864wrr.11;
-        Tue, 10 Aug 2021 12:39:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=jGkcpHQgdiXrS5Od7hLZ7BhCcru2V3NWm4a1KfAmayw=;
-        b=ODFpxicpFNqiuCFYCmGDotmv11hnwg7d03gLkyHKtFRuBPieFDvmyiZv7GFQWoHceL
-         xe0ecO5MhgSXBq6GmsGRdxcrf5y5u+YmyG9e8UIkI/RBsQ64ri+pveZAFL84RfLS80GG
-         IxcvJtKIRzTqyizXTwv2yfTM9KaRl3k3SLZIRPBffgZ6lSLsZEJjTEyDtTtqpPgVEIbV
-         7z8oU9i5cRWF6h21RXjRRuNVXJx2UzkT8c8Ptno4BM8A6/AVwftwXqxMsJMqBJ5Y5G+n
-         vU7mdxW9ef+8SUSEsFEBhjUDrWzMTtEkG1MtZowTb1SuOfXimSs+ysRWGeuGj8HHJCG/
-         u6aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=jGkcpHQgdiXrS5Od7hLZ7BhCcru2V3NWm4a1KfAmayw=;
-        b=hu+0Zg63bQ6ED/MeYxLTrRodk8PYw3dxv1ygrojNeUYcyBekFVlAL3og8NyK7m8Sf3
-         tcIkHTxudwial4pXn7Jq5oZhvNlCJ7En2OIYIc40kFeWxqtUkto1zTKERP/lKeqv38gm
-         wjghJUsN3dlG8+wt/gQt5Bc21zj3AHhMT7PUi/XcsG/wvb/ii+auPg0C9CEfNZ9N5cHh
-         4pCtQWf7vnLTMbYA3htkZ5Em0BY2hW2aI/pCRykr8VENc14/Bkz5I8yHE+qmndbMRd2h
-         sw/OHsdiRP+ADT/Iuso6JFuJK1rMDA/cQz57gqTreEATyGC+J3+whVfWNMnngKrjrCCX
-         NLzQ==
-X-Gm-Message-State: AOAM530htrWtLrUpweKeQEAlNe+ZfWM3nibYXqcnUAoL+Y7CaHIWhqiC
-        MMknKtuP+lIRJ3lF5e5pWEQ=
-X-Google-Smtp-Source: ABdhPJzjDREO51W2+CCUdnqImQBctZMvD1VPZnHtkBb8stzXeuZGaFZfx21FQ/W40sFNW8c5SiFo4w==
-X-Received: by 2002:a5d:58cd:: with SMTP id o13mr14110704wrf.421.1628624396257;
-        Tue, 10 Aug 2021 12:39:56 -0700 (PDT)
-Received: from gmail.com (aftr-62-216-202-192.dynamic.mnet-online.de. [62.216.202.192])
-        by smtp.gmail.com with ESMTPSA id o24sm3626463wmm.37.2021.08.10.12.39.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Aug 2021 12:39:55 -0700 (PDT)
-Date:   Tue, 10 Aug 2021 21:39:52 +0200
-From:   Mete Polat <metepolat2000@gmail.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Michel Lespinasse <michel@lespinasse.org>,
+        Tue, 10 Aug 2021 19:13:47 -0400
+Received: from mailout.comhem.se ([82.99.18.63]:44456 "EHLO mailout.comhem.se"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235192AbhHJXNq (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 10 Aug 2021 19:13:46 -0400
+X-Greylist: delayed 529 seconds by postgrey-1.27 at vger.kernel.org; Tue, 10 Aug 2021 19:13:46 EDT
+Received: from mail.jni.nu (c188-150-64-249.bredband.tele2.se [188.150.64.249])
+        by mailout.comhem.se (Postfix) with ESMTPS id 545DC44030C;
+        Tue, 10 Aug 2021 23:04:32 +0000 (UTC)
+Received: by mail.jni.nu (Postfix, from userid 1000)
+        id 1181C2D608CC; Wed, 11 Aug 2021 00:46:11 +0200 (CEST)
+Date:   Wed, 11 Aug 2021 00:46:11 +0200
+From:   Jesper Nilsson <jesper@jni.nu>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Michel Lespinasse <michel@lespinasse.org>,
         Davidlohr Bueso <dbueso@suse.de>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Jesper Nilsson <jesper@jni.nu>, Arnd Bergmann <arnd@arndb.de>,
+        Mete Polat <metepolat2000@gmail.com>,
+        Jesper Nilsson <jesper@jni.nu>,
         David Woodhouse <dwmw2@infradead.org>,
         Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
         Randy Dunlap <rdunlap@infradead.org>,
         kernel-janitors@vger.kernel.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>
-Subject: Re: [PATCH v2] rbtree: remove unneeded explicit alignment in struct
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] rbtree: remove unneeded explicit alignment in struct
  rb_node
-Message-ID: <YRLWCNS/O9/yKdqg@gmail.com>
-References: <YQ1ToK8EMdAO4CyH@precision>
- <CAMuHMdUzeN54PtKXQxJ0SDtrWSUMFHbae2a66iD7i075Ls1Y6A@mail.gmail.com>
+Message-ID: <YRMBs0FhqFZPDuNP@jni.nu>
+References: <20210805133213.700-1-lukas.bulwahn@gmail.com>
+ <CAK8P3a3aNuxaEtAiewd+Wjc8hKtca0NrcV2kykkNC-qKT_HhzQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdUzeN54PtKXQxJ0SDtrWSUMFHbae2a66iD7i075Ls1Y6A@mail.gmail.com>
+In-Reply-To: <CAK8P3a3aNuxaEtAiewd+Wjc8hKtca0NrcV2kykkNC-qKT_HhzQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Aug 09, 2021 at 02:25:35PM +0200, Geert Uytterhoeven wrote:
-> Hi Mete,
-> 
-> On Fri, Aug 6, 2021 at 5:22 PM Mete Polat <metepolat2000@gmail.com> wrote:
+On Thu, Aug 05, 2021 at 04:02:22PM +0200, Arnd Bergmann wrote:
+> On Thu, Aug 5, 2021 at 3:32 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+> >
 > > Commit e977145aeaad ("[RBTREE] Add explicit alignment to sizeof(long) for
 > > struct rb_node.") adds an explicit alignment to the struct rb_node due to
 > > some speciality of the CRIS architecture.
@@ -102,127 +70,43 @@ On Mon, Aug 09, 2021 at 02:25:35PM +0200, Geert Uytterhoeven wrote:
 > > This basically reverts commit e977145aeaad ("[RBTREE] Add explicit
 > > alignment to sizeof(long) for struct rb_node.").
 > >
-> > The rbtree node color is stored in the LSB of '__rb_parent_color'.
-> > Only mask the first bit in '__rb_parent()', otherwise it modifies the
-> > node's parent address on m68k.
-> >
 > > Reported-by: Randy Dunlap <rdunlap@infradead.org>
 > > Reported-by: Mete Polat <metepolat2000@gmail.com>
 > > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> > Signed-off-by: Mete Polat <metepolat2000@gmail.com>
 > > ---
-> > I have tested it on x86, but not on m68k. Can you ack that Geert?
-> 
-> Unfortunately not.  Just booting on ARAnyM gives:
-> 
-> Unable to handle kernel access at virtual address 84abc227
-> Oops: 00000000
-> Modules linked in:
-> PC: [<b45b0005>] 0xb45b0005
-> SR: 2700  SP: fc24ede1  a2: 01322b40
-> d0: b45aff7c    d1: 00002708    d2: 00000000    d3: 0033a6a4
-> d4: 00000005    d5: 95847357    a0: b45b0005    a1: 000f4240
-> Process sh (pid: 402, task=672891a8)
-> Frame format=7 eff addr=b45b0005 ssw=0546 faddr=b45b0005
-> wb 1 stat/addr/data: 0000 00000000 00000000
-> wb 2 stat/addr/data: 0000 00000000 00000000
-> wb 3 stat/addr/data: 0000 b45b0005 00000000
-> push data: 00000000 00000000 00000000 00000000
-> Stack from 0131debc:
->         0004ddf4 0122e0a4 0122e0a4 00477c26 00000000 00000000 00000005 95847357
->         00002708 0004558e 0033ab30 00000002 01003180 0047273c 0131df88 0033a6a4
->         00477c3a 00477c24 0004dfee 00000005 95847357 00002708 0000000f 00000001
->         9915a000 0000000d 0004d430 01322b40 00000001 00002604 00000000 00006e50
->         00000001 00000000 0004560c 0000000d 00000000 00000000 efc3aa78 efc3aa78
->         c0158c0c 8009ff68 0047273c efc3aa64 c01537a8 0131df8c 000456b6 0047273c
-> Call Trace: [<0004ddf4>] __hrtimer_run_queues.constprop.0+0xba/0x144
->  [<00002708>] calibrate_delay+0xd6/0x18a
->  [<0004558e>] __irq_wake_thread+0x0/0x40
->  [<0033ab30>] printk+0x0/0x18
->  [<0033a6a4>] warn_slowpath_fmt+0x0/0x62
->  [<0004dfee>] hrtimer_run_queues+0xb4/0xc0
->  [<00002708>] calibrate_delay+0xd6/0x18a
->  [<0004d430>] update_process_times+0x38/0x8c
->  [<00002604>] wait_for_initramfs+0x30/0x58
->  [<00006e50>] mfp_timer_c_handler+0x2c/0x3c
->  [<0004560c>] __handle_irq_event_percpu+0x3e/0xcc
->  [<000456b6>] handle_irq_event_percpu+0x1c/0x52
->  [<0004570a>] handle_irq_event+0x1e/0x30
->  [<00047aa2>] handle_simple_irq+0x4a/0x4e
->  [<00045062>] handle_irq_desc+0x1e/0x28
->  [<00002cac>] do_IRQ+0x20/0x32
->  [<00002bcc>] user_irqvec_fixup+0xc/0x14
->  [<0010c00b>] mb_cache_create+0x47/0xdc
-> 
-> Code: dde0 dde0 dde0 dde0 dde0 dde0 dde0 dde0 Bad PC value.
-> Disabling lock debugging due to kernel taint
-> Kernel panic - not syncing: Aiee, killing interrupt handler!
-> ---[ end Kernel panic - not syncing: Aiee, killing interrupt handler! ]---
-> 
-> > --- a/include/linux/rbtree.h
-> > +++ b/include/linux/rbtree.h
-> > @@ -25,8 +25,7 @@ struct rb_node {
-> >         unsigned long  __rb_parent_color;
-> >         struct rb_node *rb_right;
-> >         struct rb_node *rb_left;
-> > -} __attribute__((aligned(sizeof(long))));
-> > -    /* The alignment might seem pointless, but allegedly CRIS needs it */
-> > +};
+> > applies cleanly on next-20210804, but only x86 compile-checked.
 > >
-> >  struct rb_root {
-> >         struct rb_node *rb_node;
-> > diff --git a/include/linux/rbtree_augmented.h b/include/linux/rbtree_augmented.h
-> > index d1c53e9d8c75..94b6a0f4499e 100644
-> > --- a/include/linux/rbtree_augmented.h
-> > +++ b/include/linux/rbtree_augmented.h
-> > @@ -145,7 +145,7 @@ RB_DECLARE_CALLBACKS(RBSTATIC, RBNAME,                                            \
-> >  #define        RB_RED          0
-> >  #define        RB_BLACK        1
+> > Michel, Davidlohr, Jesper, David, please ack.
 > >
-> > -#define __rb_parent(pc)    ((struct rb_node *)(pc & ~3))
-> > +#define __rb_parent(pc)    ((struct rb_node *)(pc & ~1))
+> > Mete, you might want to re-run your RBT test suite for this change.
+> >
+> > Andrew, once acked, please pick this minor cleanup into your tree.
 > 
-> Are you sure you can do this, i.e. that nothing else relies on the
-> alignment to (at least) 4 bytes?
+> Do you know why it needed the extra alignment on cris at the time?
 
-I am quite sure that the RBT algorithm itself only relies on the LSB,
-but I am unsure yet if RCU requires this natural alignment as Peter
-mentioned.
+The problem for CRIS was that the architecture always had packed
+structs (there was no way to avoid it in GCC) and CRIS could all data
+on any byte boundary.
 
-> 
-> There is another definition of rb_parent().  If I make a similar change there:
-> 
-> --- a/include/linux/rbtree.h
-> +++ b/include/linux/rbtree.h
-> @@ -31,7 +31,7 @@ struct rb_root {
->         struct rb_node *rb_node;
->  };
-> 
-> -#define rb_parent(r)   ((struct rb_node *)((r)->__rb_parent_color & ~3))
-> +#define rb_parent(r)   ((struct rb_node *)((r)->__rb_parent_color & ~1))
-> 
->  #define RB_ROOT        (struct rb_root) { NULL, }
->  #define        rb_entry(ptr, type, member) container_of(ptr, type, member)
-> 
-> the system boots on ARAnyM, but I prefer to be a bit cautious...
+That was ok for normal pointers in structs, all pointers would be allocated
+inside the same page and it didn't matter that they were aligned on odd byte
+addresses for the CPU (except for being a little slower)
 
-Ah yes I forgot that the same makro is also defined in the other header
-file as well; and similary in some other locations:
+However, when the lowest bits were used as flags, that would clash on CRIS since
+all bits were valid and possible address bits, so any sub-struct in a struct might be
+aligned on an odd address, and using the pointer to the sub-struct would inadvertently
+set the flag bits.
 
-./scripts/gdb/linux/rbtree.py:
-parent = gdb.Value(node['__rb_parent_color'] & ~3)
-./tools/include/linux/rbtree.h:
-#define rb_parent(r)   ((struct rb_node *)((r)->__rb_parent_color & ~3))
+That's why just adding a forced alignment on the sub-struct fixed the problem,
+since the compiler would respect such alignments, and thus leave the lower bits
+free for trickery.
 
+> The revert would appear to change the alignment to 16 bits instead
+> of 32 bits on m68k as well (not 8 bits as on cris), but I don't know if that
+> can cause problems there.
+> 
+>         Arnd
 
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-> -- 
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+/^JN - Jesper Nilsson
+--
+                  Jesper Nilsson -- jesper_at_jni.nu
