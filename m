@@ -2,96 +2,108 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A138C4338F
-	for <kernel-janitors@archiver.kernel.org>; Wed, 11 Aug 2021 13:33:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F220C4338F
+	for <kernel-janitors@archiver.kernel.org>; Wed, 11 Aug 2021 20:04:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 688B860FC0
-	for <kernel-janitors@archiver.kernel.org>; Wed, 11 Aug 2021 13:33:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27E4E60EB5
+	for <kernel-janitors@archiver.kernel.org>; Wed, 11 Aug 2021 20:04:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231869AbhHKNeO (ORCPT
+        id S231474AbhHKUFH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 11 Aug 2021 09:34:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44276 "EHLO
+        Wed, 11 Aug 2021 16:05:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231859AbhHKNeN (ORCPT
+        with ESMTP id S229655AbhHKUFH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 11 Aug 2021 09:34:13 -0400
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 771BCC061765
-        for <kernel-janitors@vger.kernel.org>; Wed, 11 Aug 2021 06:33:49 -0700 (PDT)
-Received: by mail-lf1-x12c.google.com with SMTP id x27so5781188lfu.5
-        for <kernel-janitors@vger.kernel.org>; Wed, 11 Aug 2021 06:33:49 -0700 (PDT)
+        Wed, 11 Aug 2021 16:05:07 -0400
+Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EF69C061765
+        for <kernel-janitors@vger.kernel.org>; Wed, 11 Aug 2021 13:04:43 -0700 (PDT)
+Received: by mail-pj1-x1033.google.com with SMTP id lw7-20020a17090b1807b029017881cc80b7so11417312pjb.3
+        for <kernel-janitors@vger.kernel.org>; Wed, 11 Aug 2021 13:04:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=UpMZAUiu4CHidBpx9zRuTRmjPXDZ5iwYMFLqgNELNuE=;
-        b=FfCZF8D4xFPjIX1+di0EhQfTW4wx0dhjkLAqyPBwWNhOGN8XvxqM3fXl+tvJTFnlem
-         v2bXWWauVd0qZ1ptB2PtX+WPcZW45fAtlrjIlssMtnwZMrnqoG4MIlO2jO9+loGK5DeV
-         FknQsDTiHHjON/r60/6+mnFfD1yEqa1+LlXPoqtEj4JQzwOsTR+CP5rvIznsAJUUKz3/
-         WTbasN5+5bAvp45BpC9JPoFoLKSU0eeOaJYlwKOeh3YKUkrD4n7NmL/98JMQQ3gl3ami
-         2xmHhmRP/Mh1DOCt0Or/0i16maEj31JnmXSBZN0We8elI7aFpBQn5qDHK5F2tqK1er0j
-         QCpw==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VyEloO5NuZnfEA7RZ2POxf5Rh/PQr26isx/nqb15obc=;
+        b=NlQ0UiUrv8XFsYk2bpM3cdLANYU1Vb4cMHq4+nPU2C0cAk2iM87/g9iVO4FVXAlwkv
+         IbkH2pvf99gLvkZcAWsE4xIWZo07/wnr9xp/kVikgPXY4ZP5NnEhexMo9AXcMxNSao50
+         nkQGoNKTi//x30c3Cca1L8RUMmrKHne4kENOpFLWUtAcfyulg5pHG8vATnKs9uU7IrU3
+         CX0EFcqcTdFzQfGTl3mT9TNN2746LHHZbPUc/0AuFVrXBV92OzOpwZblYMY3wKMRZody
+         N/2Monw2uOIelUSYj3eKE/LfYLRS6DgxBz3aES9Oc9p5jQJ1ZeP6XwJQOAV2XnNLmISi
+         HS1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=UpMZAUiu4CHidBpx9zRuTRmjPXDZ5iwYMFLqgNELNuE=;
-        b=juP/juLyOpbtqlArXKNYiI6BVz3/5R7xNQVdgwgFJ1/csobMO6SbJij9VY82UWJtPL
-         5QtwoEpO6d1oxe3f5EWUow42JiG3mN0okcPSCpjUy9mC9JFPrq6DoMNfGzOXTH30dtKC
-         B0Hne5WuJXd3VO6pWzgCVgWHPVL1lBVcSNV4uvHAvuYnM6lLxn7AZEXz80izXNOsaUDO
-         Yp01L+/wXflDAKTsvt3iO83S7QBf1Y0SIWbtNaXsDCtCJUFsqN99HFYX4ATBt1eTfHTu
-         mDeOc1k68yWfS50cdEaqhKwGWi+8ZGrVel2c+ni85dQX1KLLmxmG4MfkpHIYWkCvX+Nj
-         eXsg==
-X-Gm-Message-State: AOAM530CFAx2W2J4N7A3Q+h9QadJWic5K0XLVsNa3MIivLMU3EaewjlY
-        8QA5371jUBSejOdQMNiCS6rwA6S2sjpoy3y0HYd/kA==
-X-Google-Smtp-Source: ABdhPJw/s61tPbcLYdIVemcOcuVHrDRJbkbD9xzP1eg2Tu6BRNW+LPTD/jTUlAvQbqg/p3pm6Ne4iiLVxITFONIXJuA=
-X-Received: by 2002:a19:c7cd:: with SMTP id x196mr25216383lff.465.1628688827875;
- Wed, 11 Aug 2021 06:33:47 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VyEloO5NuZnfEA7RZ2POxf5Rh/PQr26isx/nqb15obc=;
+        b=MBeCYAgaKt1bdtMCC4PieoLT3BBwBVg3EjJGSYy/0EUzf7XxU1kTdn8CDDhh3OQ7t9
+         kc3PwYFztN3WwRPNdoqTwWn2ijwk6m0lg0xODzG7nLy3biceQfelsJT742V1ydBGJhlm
+         fv6X+bA6MPEJULDpFFsCUdZN9mFEdHCerfEXMiP/6CfWLN6smXUpOCFt5eww8D4Tc8Wh
+         UiLaina1btumKsckblx5JDSEbEDYwRAO/5WrBaTEdGE8o5xEd7ISupiS/bH60ZHijPEp
+         gSmtVmZP5WZpCOBFLlA/YQgN09wlvO8muvIXfJQdk0zvm+bjtCEzTiv8uEY9MACKsUVJ
+         WSwA==
+X-Gm-Message-State: AOAM532FKTeR9qSqueqvifJwDAJt05CppRi+ufTblicKNUMfYEp6CfVv
+        v0Tavtb/kReGKLY92RLw+W+hUInuHn89oA==
+X-Google-Smtp-Source: ABdhPJxz7DnFARZWJTw0vW6MpOqvMynoyl4oCi0uOj3wfSXZGjiXI1vqa9SdSjOOkTEpQ6hURl2iXg==
+X-Received: by 2002:a17:90b:1d81:: with SMTP id pf1mr304875pjb.88.1628712282695;
+        Wed, 11 Aug 2021 13:04:42 -0700 (PDT)
+Received: from localhost.localdomain ([103.18.170.218])
+        by smtp.gmail.com with ESMTPSA id fv2sm274284pjb.53.2021.08.11.13.04.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Aug 2021 13:04:42 -0700 (PDT)
+From:   amartyach98 <chamartya98@gmail.com>
+To:     kernel-janitors@vger.kernel.org
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH] This is my first patch! this patch added KERN_DEBUG macro to a printk function
+Date:   Thu, 12 Aug 2021 01:34:34 +0530
+Message-Id: <20210811200434.4909-1-chamartya98@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20210810191724.24452-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20210810191724.24452-1-lukas.bulwahn@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 11 Aug 2021 15:33:37 +0200
-Message-ID: <CACRpkdaoheT3b8oZkQCUOVw9bdioG+b5BW4T5-Hj8dHoD5yX0Q@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: adjust ARM/NOMADIK/Ux500 ARCHITECTURES to
- file renaming
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Lee Jones <lee.jones@linaro.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
-        kernel-janitors@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Aug 10, 2021 at 9:17 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-> Commit 8f00b3c41ae7 ("mfd: db8500-prcmu: Rename register header") renames
-> dbx500-prcmu-regs.h to db8500-prcmu-regs.h in ./drivers/mfd/, but misses
-> to adjust the ARM/NOMADIK/Ux500 ARCHITECTURES section in MAINTAINERS.
->
-> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains:
->
->   warning: no file matches    F:    drivers/mfd/dbx500*
->
-> Remove the obsolete file entry after this file renaming.
->
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> applies cleanly on next-20210810
->
-> Linus, Lee, please pick this patch on your -next tree on top of the patch
-> mentioned above.
+---
+ Makefile                 | 2 +-
+ drivers/scsi/ncr53c8xx.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Thanks for fixing this Lukas, I see Lee already applied the patch!
+diff --git a/Makefile b/Makefile
+index 9ca176ff1e40..eae1314a5b86 100644
+--- a/Makefile
++++ b/Makefile
+@@ -2,7 +2,7 @@
+ VERSION = 5
+ PATCHLEVEL = 14
+ SUBLEVEL = 0
+-EXTRAVERSION = -rc4
++EXTRAVERSION = -rc5
+ NAME = Opossums on Parade
+ 
+ # *DOCUMENTATION*
+diff --git a/drivers/scsi/ncr53c8xx.c b/drivers/scsi/ncr53c8xx.c
+index c76e9f05d042..38fee537e689 100644
+--- a/drivers/scsi/ncr53c8xx.c
++++ b/drivers/scsi/ncr53c8xx.c
+@@ -8526,7 +8526,7 @@ void ncr53c8xx_release(struct Scsi_Host *host)
+ {
+ 	struct host_data *host_data = shost_priv(host);
+ #ifdef DEBUG_NCR53C8XX
+-	printk("ncr53c8xx: release\n");
++	printk(KERN_DEBUG "ncr53c8xx: release\n");
+ #endif
+ 	if (host_data->ncb)
+ 		ncr_detach(host_data->ncb);
+-- 
+2.25.1
 
-Yours,
-Linus Walleij
