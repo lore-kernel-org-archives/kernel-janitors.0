@@ -2,70 +2,56 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42359C4338F
-	for <kernel-janitors@archiver.kernel.org>; Thu, 12 Aug 2021 15:19:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73DA1C4338F
+	for <kernel-janitors@archiver.kernel.org>; Thu, 12 Aug 2021 19:16:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1E1F46108C
-	for <kernel-janitors@archiver.kernel.org>; Thu, 12 Aug 2021 15:19:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FF876103A
+	for <kernel-janitors@archiver.kernel.org>; Thu, 12 Aug 2021 19:16:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236850AbhHLPUO (ORCPT
+        id S229905AbhHLTRM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 12 Aug 2021 11:20:14 -0400
-Received: from ale.deltatee.com ([204.191.154.188]:37382 "EHLO
-        ale.deltatee.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235696AbhHLPUO (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 12 Aug 2021 11:20:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=deltatee.com; s=20200525; h=Subject:In-Reply-To:MIME-Version:Date:
-        Message-ID:From:References:Cc:To:content-disposition;
-        bh=PKp4W4qwnsg62z2wXCRhtczYMFeb9uAucEAPy5+yRUc=; b=lfGL4sZtOMz/KSu32rwX/F8Vz+
-        uvP9Is+dxbnsyP5LEBqi72g0z2SYPz3EcCOTyAmgK4N/RNxXfM8pObUdj8byxvjU5z3jpjeTZh3i3
-        g1SVCgxp9PnvNXsIUQp3BLbGAAxIcEgNoEiT1URrAdmm8mCoO1hzD9gLqWjexNPqI1RN9j65xC2Fg
-        UExBquvZ6knB4LTnotRCP8IGsQeUlNHQVukclxqyYt6Ne2eIzMUl6FqAatwyOh6dGZ5PLltVyijIg
-        T3FmC/7Oq0Pm1ovMBtcq8EzRT0UgKuvG3MRwFHIsRAtUuq6AQmiNrf146DlFGYD4ox72HllpzbMY8
-        NEuDraNA==;
-Received: from s0106a84e3fe8c3f3.cg.shawcable.net ([24.64.144.200] helo=[192.168.0.10])
-        by ale.deltatee.com with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.92)
-        (envelope-from <logang@deltatee.com>)
-        id 1mECUh-0000xt-Fq; Thu, 12 Aug 2021 09:19:48 -0600
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Cc:     Alex Williamson <alex.williamson@redhat.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Thu, 12 Aug 2021 15:17:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35996 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229554AbhHLTRL (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 12 Aug 2021 15:17:11 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 3162360EFE;
+        Thu, 12 Aug 2021 19:16:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1628795805;
+        bh=J5uyPdx+WRfWEYcLFMnAKChnf2yXlxrYuvCB3WS17mY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=qKM7x9e839DKYHhoV4KkRvK/36wpXBIDh8j0P6+DBZDMKZMB5Zhrfzbo2QgO8MuP4
+         E3yKU8zVtTBVwNI40pcdSI9YzGLfcLMPowpq/1iYx6V2oEmehhMthF1+nXvfmaxOVk
+         YGRiMrkpJuVErMgcx9OFHdu9Ns0Zj0ETgekY7A3+g74/4Loi/Mgdz7MplMK4VWfEeN
+         hGWRBEYPAZYeptvnmj8QOim0ch/KdTzwSC50C87mPQv7Wqct7LK0Ab/dLVe7fUnUym
+         ErKY0oxUwmH/evVgYoFm984+q89+TyM11ZXnMIu38e3xGJ0Dc4TwFrgWR4//+w/P/z
+         8NH3h8xV9+y6A==
+Date:   Thu, 12 Aug 2021 14:16:43 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
         Stephen Bates <sbates@raithlin.com>, linux-pci@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-References: <20210812070004.GC31863@kili>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <065519bd-d73c-0d0e-182d-6431914d0e8d@deltatee.com>
-Date:   Thu, 12 Aug 2021 09:19:42 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
-MIME-Version: 1.0
-In-Reply-To: <20210812070004.GC31863@kili>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 24.64.144.200
-X-SA-Exim-Rcpt-To: kernel-janitors@vger.kernel.org, linux-pci@vger.kernel.org, sbates@raithlin.com, christian.koenig@amd.com, alex.williamson@redhat.com, bhelgaas@google.com, dan.carpenter@oracle.com
-X-SA-Exim-Mail-From: logang@deltatee.com
 Subject: Re: [PATCH] PCI: fix a scheduling in atomic bug
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Message-ID: <20210812191643.GA2499987@bjorn-Precision-5520>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210812070004.GC31863@kili>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-
-
-
-On 2021-08-12 1:00 a.m., Dan Carpenter wrote:
+On Thu, Aug 12, 2021 at 10:00:04AM +0300, Dan Carpenter wrote:
 > This function is often called with a spinlock held so the allocation has
 > to be atomic.  The call tree is:
 > 
@@ -76,14 +62,26 @@ On 2021-08-12 1:00 a.m., Dan Carpenter wrote:
 > Fixes: 07d8d7e57c28 ("PCI: Make specifying PCI devices in kernel parameters reusable")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-This looks good to me, but I think the fixes tag is wrong.
-pci_dev_str_match_path() was introduced in this patch:
+Applied with Logan's Reviewed-by and Fixes: update to pci/misc for
+v5.15, thanks!
 
-Fixes: 45db33709ccc ("PCI: Allow specifying devices using a base bus and
-path of devfns")
-
-Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
-
-Thanks,
-
-Logan
+> ---
+>  drivers/pci/pci.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index 6714c58ce321..71baf5ff48fc 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -269,7 +269,7 @@ static int pci_dev_str_match_path(struct pci_dev *dev, const char *path,
+>  
+>  	*endptr = strchrnul(path, ';');
+>  
+> -	wpath = kmemdup_nul(path, *endptr - path, GFP_KERNEL);
+> +	wpath = kmemdup_nul(path, *endptr - path, GFP_ATOMIC);
+>  	if (!wpath)
+>  		return -ENOMEM;
+>  
+> -- 
+> 2.20.1
+> 
