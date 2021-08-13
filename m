@@ -2,43 +2,36 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35375C4338F
-	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Aug 2021 14:33:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0CF5C4338F
+	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Aug 2021 15:00:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1AF70610A4
-	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Aug 2021 14:33:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B79E3610FD
+	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Aug 2021 15:00:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240647AbhHMOdi (ORCPT
+        id S241095AbhHMPBV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 13 Aug 2021 10:33:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34822 "EHLO mail.kernel.org"
+        Fri, 13 Aug 2021 11:01:21 -0400
+Received: from foss.arm.com ([217.140.110.172]:54396 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S240638AbhHMOdh (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 13 Aug 2021 10:33:37 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 635FD60F36;
-        Fri, 13 Aug 2021 14:33:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1628865191;
-        bh=qvwL98T6cFe2Y5vJWvp7Ip3FI+1vuxrallktmBOzxPQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=AtCOoTooXnFazv9toErMswqnyTuGT8vAb2T2Urk8jDe6T7wSPcMSSQr3ovy6y4CSU
-         jBq6j5lgRZ+xyapnrUnlh8W50nwaUK8ut7dbjWXXFfAt5qXis/q+iZKvI1fwxAA+Ev
-         k4y2S0/9ny9IcbOHP74G4fowSuazoOyLurcxK1Hoyu5iSvZ6AFQ15pd+ENXrnIep1Z
-         IlN+95iGwpxivc76a6qlRIuxvYtqGvuXuqVc35S1TbfvnmAzF1mvRblRcu4WQLimap
-         9VfzOB5EVVEtDg0LanY6kPGJJvHBVGef69qcgIjbM0LLaXdh3BLprPL327nCImuQhI
-         JlMHieBQg7HoQ==
-Date:   Fri, 13 Aug 2021 15:32:50 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Robin Murphy <robin.murphy@arm.com>
+        id S241033AbhHMPBV (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 13 Aug 2021 11:01:21 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 29EBE1042;
+        Fri, 13 Aug 2021 08:00:54 -0700 (PDT)
+Received: from [10.57.36.146] (unknown [10.57.36.146])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0BC443F718;
+        Fri, 13 Aug 2021 08:00:51 -0700 (PDT)
+Subject: Re: [PATCH] PCI: rockchip-dwc: Potential error pointer dereference in
+ probe
+To:     Mark Brown <broonie@kernel.org>
 Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Simon Xue <xxm@rock-chips.com>, Rob Herring <robh@kernel.org>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?= <kw@linux.com>,
         Bjorn Helgaas <bhelgaas@google.com>,
         Heiko Stuebner <heiko@sntech.de>,
         Liam Girdwood <lgirdwood@gmail.com>,
@@ -46,56 +39,48 @@ Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
         Shawn Lin <shawn.lin@rock-chips.com>,
         linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] PCI: rockchip-dwc: Potential error pointer dereference
- in probe
-Message-ID: <20210813143250.GA5209@sirena.org.uk>
 References: <20210813113338.GA30697@kili>
- <01b7c3da-1c58-c1d9-6a54-0ce30ca76097@arm.com>
- <20210813135412.GA7722@kadam>
+ <01b7c3da-1c58-c1d9-6a54-0ce30ca76097@arm.com> <20210813135412.GA7722@kadam>
  <2917a1c8-d59b-43b1-1650-228d20dfc070@arm.com>
+ <20210813143250.GA5209@sirena.org.uk>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <566c26bb-c488-8c86-f47e-6a748b9b6c77@arm.com>
+Date:   Fri, 13 Aug 2021 16:00:45 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="G4iJoqBmSsgzjUCe"
-Content-Disposition: inline
-In-Reply-To: <2917a1c8-d59b-43b1-1650-228d20dfc070@arm.com>
-X-Cookie: E Pluribus Unix
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20210813143250.GA5209@sirena.org.uk>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On 2021-08-13 15:32, Mark Brown wrote:
+> On Fri, Aug 13, 2021 at 03:01:10PM +0100, Robin Murphy wrote:
+> 
+>> Indeed I've thought before that it would be nice if regulators worked like
+>> GPIOs, where the absence of an optional one does give you NULL, and most of
+>> the API is also NULL-safe. Probably a pretty big job though...
+> 
+> It also encourages *really* bad practice with error handling, and in
+> general there are few use cases for optional regulators where there's
+> not some other actions that need to be taken in the case where the
+> supply isn't there (elimintating some operating points or features,
+> reconfiguring power internally and so on).  If we genuninely don't need
+> to do anything special one wonders why we're trying to turn the power on
+> in the first place.
 
---G4iJoqBmSsgzjUCe
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Sure, once you get into it, regulators are arguably a rather deeper area 
+than GPIOs, so in terms of the NULL-safe aspect anything beyond 
+enable/disable - for the sake of keeping trivial usage simple - would be 
+pretty questionable for sure.
 
-On Fri, Aug 13, 2021 at 03:01:10PM +0100, Robin Murphy wrote:
+A lot of the usage of regulator_get_optional() seems to be just making 
+sure some external thing is powered between probe() and remove() if it's 
+not hard-wired already, so maybe something like a 
+devm_regulator_get_optional_enabled() could be an answer to that 
+argument without even touching the underlying API.
 
-> Indeed I've thought before that it would be nice if regulators worked like
-> GPIOs, where the absence of an optional one does give you NULL, and most of
-> the API is also NULL-safe. Probably a pretty big job though...
-
-It also encourages *really* bad practice with error handling, and in
-general there are few use cases for optional regulators where there's
-not some other actions that need to be taken in the case where the
-supply isn't there (elimintating some operating points or features,
-reconfiguring power internally and so on).  If we genuninely don't need
-to do anything special one wonders why we're trying to turn the power on
-in the first place.
-
---G4iJoqBmSsgzjUCe
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmEWgpEACgkQJNaLcl1U
-h9AFSAf+JfSBsijmhQEBvXaLJeAoZdPUWetw39rGAJkXJoXq1TDlPVwIyY6YsI7f
-qhFuXZUU4IB1aUamDPTaGSznNZvr4qcwBWQWgERCbcaeGvVKsKs6KSBFhkWeRsJy
-bjb2cBok90u+J+1M/nkshvcBs5CGy//o5dOoGkbpPDc8Q8uMjSIn/VaUi1YGezKn
-ZMS+zy//JJg0Rnt2R5/z9ITFrczy6JoN/beCYqX+NQ4inOGIInr6Qh4zSduCrGFU
-yUrKwixOg/6ziNCT9lCnCZfRSHiy2Vi3EwY6kw9A3ZGRy4/YC/DJq5xZr/POU0BH
-Mn7sQqyXaDzxJ57fKC4yDTAJZ0b3cQ==
-=hknS
------END PGP SIGNATURE-----
-
---G4iJoqBmSsgzjUCe--
+Robin.
