@@ -2,105 +2,108 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DABBCC4338F
-	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Aug 2021 16:01:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50F10C43214
+	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Aug 2021 17:13:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BC86E61038
-	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Aug 2021 16:01:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36EC56113D
+	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Aug 2021 17:13:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241447AbhHMQCE (ORCPT
+        id S229965AbhHMROR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 13 Aug 2021 12:02:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41678 "EHLO mail.kernel.org"
+        Fri, 13 Aug 2021 13:14:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35360 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S241349AbhHMQCD (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 13 Aug 2021 12:02:03 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 30C7E60FC4;
-        Fri, 13 Aug 2021 16:01:35 +0000 (UTC)
+        id S230131AbhHMROB (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 13 Aug 2021 13:14:01 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 8BA1C60F91;
+        Fri, 13 Aug 2021 17:12:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1628870496;
-        bh=eLebXlVu6RTNHtlBr3MavHA+nmxGCpm8/vDDNL6AUJE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TCPNX7RlFSfcKvVLfK2y3Jl5XFpmpFMn/kFwVRo0Yoh5n0Dt39MJ/G2VOFkSu6EaT
-         81qqm+Tirad290QNC5mwKRYU1AC01XG7bh1YNmctzFD3PlIyPZIg9KwvYYaAPKPVOP
-         exymlxMegRBNS7Sv1uMS4fWU20aC52D/6AGCf70RKaPModZQq+tL4MJDOhp0Zh7b0r
-         zz/FnO5Glda91rNuaxbJL6z3+Px/1ru3G0HO056j2qeNaOzhkvPTdbOZWVqXdLWdDt
-         s5GSNFMIzjgMoNTI/a6CTsBJ3/6nYaspQ09ogRyn+1Wm5IN2nwX0/zdoYQsRk1UlEL
-         0zVjmIWLErASA==
-Date:   Fri, 13 Aug 2021 17:01:16 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Robin Murphy <robin.murphy@arm.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Simon Xue <xxm@rock-chips.com>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Kever Yang <kever.yang@rock-chips.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        PCI <linux-pci@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] PCI: rockchip-dwc: Potential error pointer dereference
- in probe
-Message-ID: <20210813160116.GE5209@sirena.org.uk>
-References: <20210813113338.GA30697@kili>
- <01b7c3da-1c58-c1d9-6a54-0ce30ca76097@arm.com>
- <CAL_JsqJ4Dadf00pJxEDd14zbWyN99s1A2L4fxZSkZddeg2pV6g@mail.gmail.com>
- <81b9a25d-f12f-90e0-0b05-b5e396f14c08@arm.com>
- <CAL_JsqLWVLRDdkR62BSv69oW3QCLVebgpU1TKtxvzZmD4wuP4Q@mail.gmail.com>
+        s=k20201202; t=1628874734;
+        bh=E0Rd8uuRj9V4s/5yGBq/lhcjLlVd74GgQ8rhT3/6j30=;
+        h=From:To:Cc:Subject:Date:From;
+        b=I7vDjYOooR5E8ZiW45+6N1xtm/mJrPRPb5euk0MUhVfuKc70li+mGDWSl7rEqCNal
+         VOtH/VfAENMm4DX3NV4NI8HNHpB46LuykNqvljA4xEcq7/Z7tMVdIeB5wFE5U/0Zzo
+         l61AEPIU5XtzQWTdyhg8ApGEA6dRaNgVKR664feL0ft0K7tZOqDRQdG/FVG2Ecq3Tj
+         64Tr224tTPLOsuEDF/gAW+MU7ag0UPygynlPfj+okX6sLHym8ICUpFCs+x3g45WTvb
+         Iys7/GqrN7KogTtmrhw+RCePqdi27xK/Fm50R3tzBkITRLVa16ByxeVWOhExaWgG8B
+         W7Z7wDEHg+9BA==
+From:   Nathan Chancellor <nathan@kernel.org>
+To:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc:     John Harrison <John.C.Harrison@Intel.com>,
+        Matthew Brost <matthew.brost@intel.com>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com,
+        kernel-janitors@vger.kernel.org,
+        Nathan Chancellor <nathan@kernel.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [PATCH] drm/i915/selftest: Fix use of err in igt_reset_{fail,nop}_engine()
+Date:   Fri, 13 Aug 2021 10:11:58 -0700
+Message-Id: <20210813171158.2665823-1-nathan@kernel.org>
+X-Mailer: git-send-email 2.33.0.rc2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="imjhCm/Pyz7Rq5F2"
-Content-Disposition: inline
-In-Reply-To: <CAL_JsqLWVLRDdkR62BSv69oW3QCLVebgpU1TKtxvzZmD4wuP4Q@mail.gmail.com>
-X-Cookie: E Pluribus Unix
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Clang warns:
 
---imjhCm/Pyz7Rq5F2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+In file included from drivers/gpu/drm/i915/gt/intel_reset.c:1514:
+drivers/gpu/drm/i915/gt/selftest_hangcheck.c:465:62: warning: variable
+'err' is uninitialized when used here [-Wuninitialized]
+        pr_err("[%s] Create context failed: %d!\n", engine->name, err);
+                                                                  ^~~
+...
+drivers/gpu/drm/i915/gt/selftest_hangcheck.c:580:62: warning: variable
+'err' is uninitialized when used here [-Wuninitialized]
+        pr_err("[%s] Create context failed: %d!\n", engine->name, err);
+                                                                  ^~~
+...
+2 warnings generated.
 
-On Fri, Aug 13, 2021 at 10:57:44AM -0500, Rob Herring wrote:
-> On Fri, Aug 13, 2021 at 8:47 AM Robin Murphy <robin.murphy@arm.com> wrote:
+This appears to be a copy and paste issue. Use ce directly using the %pe
+specifier to pretty print the error code so that err is not used
+uninitialized in these functions.
 
-> > In fact it's the other way round - "optional" in this case is for when
-> > the supply may legitimately not exist so the driver may or may not need
-> > to handle it, so it can return -ENODEV if a regulator isn't described by
-> > firmware. A non-optional regulator is assumed to represent a necessary
-> > supply, so if there's nothing described by firmware you get the (valid)
-> > dummy regulator back.
+Fixes: 3a7b72665ea5 ("drm/i915/selftest: Bump selftest timeouts for hangcheck")
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+---
+ drivers/gpu/drm/i915/gt/selftest_hangcheck.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> Ah yes, regulators is the oddball. Surely no one else will assume the
-> same behavior of _optional() variants across subsystems... ;)
+diff --git a/drivers/gpu/drm/i915/gt/selftest_hangcheck.c b/drivers/gpu/drm/i915/gt/selftest_hangcheck.c
+index 08f011f893b2..2c1ed32ca5ac 100644
+--- a/drivers/gpu/drm/i915/gt/selftest_hangcheck.c
++++ b/drivers/gpu/drm/i915/gt/selftest_hangcheck.c
+@@ -462,7 +462,7 @@ static int igt_reset_nop_engine(void *arg)
+ 
+ 		ce = intel_context_create(engine);
+ 		if (IS_ERR(ce)) {
+-			pr_err("[%s] Create context failed: %d!\n", engine->name, err);
++			pr_err("[%s] Create context failed: %pe!\n", engine->name, ce);
+ 			return PTR_ERR(ce);
+ 		}
+ 
+@@ -577,7 +577,7 @@ static int igt_reset_fail_engine(void *arg)
+ 
+ 		ce = intel_context_create(engine);
+ 		if (IS_ERR(ce)) {
+-			pr_err("[%s] Create context failed: %d!\n", engine->name, err);
++			pr_err("[%s] Create context failed: %pe!\n", engine->name, ce);
+ 			return PTR_ERR(ce);
+ 		}
+ 
 
-It would be silly to copy the *whole* pattern!
+base-commit: 927dfdd09d8c03ba100ed0c8c3915f8e1d1f5556
+-- 
+2.33.0.rc2
 
---imjhCm/Pyz7Rq5F2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmEWl0sACgkQJNaLcl1U
-h9AWngf9EmuXkHFWSOYnfO7Y0ZVqCKtx2n3Z4yWOugf8kKVfrU/Jl4Vd5eE/P5gF
-5OVayvHPX8JCwCtV/EPX6vQQoGbPD6rbNyWmsRkCN73iqT3WBIieZqEDmbvNo9UI
-bW30zehOnqz2NuSie+qk0RZ23hLVdhEVbidMVnZjnXUtiPHR8K6e5o4ugdXBnasP
-LuAzqewWfVnzglouTgPJbWu52Gf9R6TO/k1OC8UhFEQP+nk8tEnOGZel7nuHMBdD
-5E469rHqG/n2gMyGPVVIQckcgGokMjnF1nwyQ6O5fLRMAQVpf4WHRUybcsjzbDx+
-KBQxF1a6o8r3bOPWZcAEdLM5DjJLHw==
-=NuQM
------END PGP SIGNATURE-----
-
---imjhCm/Pyz7Rq5F2--
