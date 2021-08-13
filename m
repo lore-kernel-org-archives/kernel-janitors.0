@@ -2,108 +2,71 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50F10C43214
-	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Aug 2021 17:13:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A74E3C4338F
+	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Aug 2021 23:34:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 36EC56113D
-	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Aug 2021 17:13:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F041610FA
+	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Aug 2021 23:34:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229965AbhHMROR (ORCPT
+        id S235794AbhHMXeg (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 13 Aug 2021 13:14:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35360 "EHLO mail.kernel.org"
+        Fri, 13 Aug 2021 19:34:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34780 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230131AbhHMROB (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 13 Aug 2021 13:14:01 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 8BA1C60F91;
-        Fri, 13 Aug 2021 17:12:12 +0000 (UTC)
+        id S235776AbhHMXef (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 13 Aug 2021 19:34:35 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 26340610EA;
+        Fri, 13 Aug 2021 23:34:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1628874734;
-        bh=E0Rd8uuRj9V4s/5yGBq/lhcjLlVd74GgQ8rhT3/6j30=;
-        h=From:To:Cc:Subject:Date:From;
-        b=I7vDjYOooR5E8ZiW45+6N1xtm/mJrPRPb5euk0MUhVfuKc70li+mGDWSl7rEqCNal
-         VOtH/VfAENMm4DX3NV4NI8HNHpB46LuykNqvljA4xEcq7/Z7tMVdIeB5wFE5U/0Zzo
-         l61AEPIU5XtzQWTdyhg8ApGEA6dRaNgVKR664feL0ft0K7tZOqDRQdG/FVG2Ecq3Tj
-         64Tr224tTPLOsuEDF/gAW+MU7ag0UPygynlPfj+okX6sLHym8ICUpFCs+x3g45WTvb
-         Iys7/GqrN7KogTtmrhw+RCePqdi27xK/Fm50R3tzBkITRLVa16ByxeVWOhExaWgG8B
-         W7Z7wDEHg+9BA==
-From:   Nathan Chancellor <nathan@kernel.org>
-To:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc:     John Harrison <John.C.Harrison@Intel.com>,
-        Matthew Brost <matthew.brost@intel.com>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com,
-        kernel-janitors@vger.kernel.org,
-        Nathan Chancellor <nathan@kernel.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [PATCH] drm/i915/selftest: Fix use of err in igt_reset_{fail,nop}_engine()
-Date:   Fri, 13 Aug 2021 10:11:58 -0700
-Message-Id: <20210813171158.2665823-1-nathan@kernel.org>
-X-Mailer: git-send-email 2.33.0.rc2
+        s=k20201202; t=1628897648;
+        bh=tKafd6vECbPEMazy83H7Z+3j1QWPve7a1WWuqNbDzxI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=aCwww65gyLPOi0lL60q9Q20jxDYE5yRFH8FCYxrOB+CyLc/NNHeYRQuTracAG+2FM
+         JT5uGGtEFVBiRKuofJL2vFmjUqfLlGEeudCNNxw+JKD/ffTZUuRpUNgd2IQYZhlm41
+         Dtr8hWLcpmswR86swRtuBlWTZnKDc3AFewZJ5uq4idaW6pigsGXRa2uBMPSi2BYcNy
+         Z5SEjsVVz2mdd4SUvpwr+YQYlePXnxqe+1Xu/fDVOdCFY56pPyBqupnuJ2Tlj+W9Wk
+         jMWHkHTlglAXSPTU8Vl7oPQwcdXEecYUlnT7YzfsqltJWQH7i9NGyeK6RDD0vtiNOf
+         cppP63hYMSsRg==
+Date:   Fri, 13 Aug 2021 16:34:07 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        Madalin Bucur <madalin.bucur@nxp.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] Kconfig symbol clean-up on net
+Message-ID: <20210813163407.3bde8d47@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+In-Reply-To: <20210812083806.28434-1-lukas.bulwahn@gmail.com>
+References: <20210812083806.28434-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Clang warns:
+On Thu, 12 Aug 2021 10:38:03 +0200 Lukas Bulwahn wrote:
+> The script ./scripts/checkkconfigsymbols.py warns on invalid references to
+> Kconfig symbols (often, minor typos, name confusions or outdated references).
+> 
+> This patch series addresses all issues reported by
+> ./scripts/checkkconfigsymbols.py in ./net/ and ./drivers/net/ for Kconfig
+> and Makefile files. Issues in the Kconfig and Makefile files indicate some
+> shortcomings in the overall build definitions, and often are true actionable
+> issues to address.
+> 
+> These issues can be identified and filtered by:
+> 
+>   ./scripts/checkkconfigsymbols.py \
+>   | grep -E "(drivers/)?net/.*(Kconfig|Makefile)" -B 1 -A 1
+> 
+> After applying this patch series on linux-next (next-20210811), the command
+> above yields no further issues to address.
 
-In file included from drivers/gpu/drm/i915/gt/intel_reset.c:1514:
-drivers/gpu/drm/i915/gt/selftest_hangcheck.c:465:62: warning: variable
-'err' is uninitialized when used here [-Wuninitialized]
-        pr_err("[%s] Create context failed: %d!\n", engine->name, err);
-                                                                  ^~~
-...
-drivers/gpu/drm/i915/gt/selftest_hangcheck.c:580:62: warning: variable
-'err' is uninitialized when used here [-Wuninitialized]
-        pr_err("[%s] Create context failed: %d!\n", engine->name, err);
-                                                                  ^~~
-...
-2 warnings generated.
+FWIW there's also:
 
-This appears to be a copy and paste issue. Use ce directly using the %pe
-specifier to pretty print the error code so that err is not used
-uninitialized in these functions.
-
-Fixes: 3a7b72665ea5 ("drm/i915/selftest: Bump selftest timeouts for hangcheck")
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Nathan Chancellor <nathan@kernel.org>
----
- drivers/gpu/drm/i915/gt/selftest_hangcheck.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/i915/gt/selftest_hangcheck.c b/drivers/gpu/drm/i915/gt/selftest_hangcheck.c
-index 08f011f893b2..2c1ed32ca5ac 100644
---- a/drivers/gpu/drm/i915/gt/selftest_hangcheck.c
-+++ b/drivers/gpu/drm/i915/gt/selftest_hangcheck.c
-@@ -462,7 +462,7 @@ static int igt_reset_nop_engine(void *arg)
- 
- 		ce = intel_context_create(engine);
- 		if (IS_ERR(ce)) {
--			pr_err("[%s] Create context failed: %d!\n", engine->name, err);
-+			pr_err("[%s] Create context failed: %pe!\n", engine->name, ce);
- 			return PTR_ERR(ce);
- 		}
- 
-@@ -577,7 +577,7 @@ static int igt_reset_fail_engine(void *arg)
- 
- 		ce = intel_context_create(engine);
- 		if (IS_ERR(ce)) {
--			pr_err("[%s] Create context failed: %d!\n", engine->name, err);
-+			pr_err("[%s] Create context failed: %pe!\n", engine->name, ce);
- 			return PTR_ERR(ce);
- 		}
- 
-
-base-commit: 927dfdd09d8c03ba100ed0c8c3915f8e1d1f5556
--- 
-2.33.0.rc2
-
+arch/arm/configs/ixp4xx_defconfig:79:CONFIG_IPX=m
