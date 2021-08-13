@@ -2,91 +2,91 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4831C4338F
-	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Aug 2021 14:01:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F50EC4338F
+	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Aug 2021 14:01:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 90029610F7
-	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Aug 2021 14:01:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EEE3D60F57
+	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Aug 2021 14:01:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240698AbhHMOBp (ORCPT
+        id S240767AbhHMOCC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 13 Aug 2021 10:01:45 -0400
-Received: from foss.arm.com ([217.140.110.172]:53878 "EHLO foss.arm.com"
+        Fri, 13 Aug 2021 10:02:02 -0400
+Received: from mga09.intel.com ([134.134.136.24]:12776 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234353AbhHMOBp (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 13 Aug 2021 10:01:45 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3EB551042;
-        Fri, 13 Aug 2021 07:01:18 -0700 (PDT)
-Received: from [10.57.36.146] (unknown [10.57.36.146])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1EC0A3F718;
-        Fri, 13 Aug 2021 07:01:15 -0700 (PDT)
-Subject: Re: [PATCH] PCI: rockchip-dwc: Potential error pointer dereference in
- probe
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Simon Xue <xxm@rock-chips.com>, Rob Herring <robh@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?= <kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Kever Yang <kever.yang@rock-chips.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, kernel-janitors@vger.kernel.org
-References: <20210813113338.GA30697@kili>
- <01b7c3da-1c58-c1d9-6a54-0ce30ca76097@arm.com> <20210813135412.GA7722@kadam>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <2917a1c8-d59b-43b1-1650-228d20dfc070@arm.com>
-Date:   Fri, 13 Aug 2021 15:01:10 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        id S240703AbhHMOCB (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 13 Aug 2021 10:02:01 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10074"; a="215555621"
+X-IronPort-AV: E=Sophos;i="5.84,319,1620716400"; 
+   d="scan'208";a="215555621"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2021 07:01:11 -0700
+X-IronPort-AV: E=Sophos;i="5.84,319,1620716400"; 
+   d="scan'208";a="422873063"
+Received: from pheino-mobl.ger.corp.intel.com (HELO [10.249.254.189]) ([10.249.254.189])
+  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2021 07:01:08 -0700
+Subject: Re: [PATCH] drm/i915/gt: Potential error pointer dereference in
+ pinned_context()
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Chris Wilson <chris@chris-wilson.co.uk>
+Cc:     Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Matthew Auld <matthew.auld@intel.com>,
+        Jason Ekstrand <jason@jlekstrand.net>,
+        Lucas De Marchi <lucas.demarchi@intel.com>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        kernel-janitors@vger.kernel.org
+References: <20210813113600.GC30697@kili>
+From:   =?UTF-8?Q?Thomas_Hellstr=c3=b6m?= 
+        <thomas.hellstrom@linux.intel.com>
+Message-ID: <866cce10-f983-23d5-06db-b0effc11e50f@linux.intel.com>
+Date:   Fri, 13 Aug 2021 16:01:06 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-In-Reply-To: <20210813135412.GA7722@kadam>
+In-Reply-To: <20210813113600.GC30697@kili>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 2021-08-13 14:54, Dan Carpenter wrote:
-> On Fri, Aug 13, 2021 at 01:55:38PM +0100, Robin Murphy wrote:
->> On 2021-08-13 12:33, Dan Carpenter wrote:
->>> If devm_regulator_get_optional() returns an error pointer, then we
->>> should return it to the user.  The current code makes an exception
->>> for -ENODEV that will result in an error pointer dereference on the
->>> next line when it calls regulator_enable().  Remove the exception.
->>
->> Doesn't this break the apparent intent of the regulator being optional,
->> though?
-> 
-> Argh...  Crap.  My patch is wrong, but the bug is real.
 
-Yeah, I guess this probably wants to follow the same pattern as 
-rockchip_pcie_set_vpcie() in the older driver, where it's the regulator 
-API calls which get wrapped in checks.
-
-> This code should follow the standard kernel idiom of returning error
-> pointers when there are errors and returning NULL when an optional
-> feature is disabled.  The problem with returning a Special Error code
-> to mean "disabled" is that someone will use the Special Error code to
-> mean an error.
-> 
-> And that has already sort of happened, because _regulator_get() returns
-> -ENODEV which would will cause the Oops I described in my patch.
-> 
-> Ugh...  The correct thing is to convert it to NULL/error pointers.  I
-> have not looked at how hard that is though...
-
-Indeed I've thought before that it would be nice if regulators worked 
-like GPIOs, where the absence of an optional one does give you NULL, and 
-most of the API is also NULL-safe. Probably a pretty big job though...
+On 8/13/21 1:36 PM, Dan Carpenter wrote:
+> If the intel_engine_create_pinned_context() function returns an error
+> pointer, then dereferencing "ce" will Oops.  Use "vm" instead of
+> "ce->vm".
+>
+> Fixes: cf586021642d ("drm/i915/gt: Pipelined page migration")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>   drivers/gpu/drm/i915/gt/intel_migrate.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/i915/gt/intel_migrate.c b/drivers/gpu/drm/i915/gt/intel_migrate.c
+> index d0a7c934fd3b..1dac21aa7e5c 100644
+> --- a/drivers/gpu/drm/i915/gt/intel_migrate.c
+> +++ b/drivers/gpu/drm/i915/gt/intel_migrate.c
+> @@ -177,7 +177,7 @@ static struct intel_context *pinned_context(struct intel_gt *gt)
+>   	ce = intel_engine_create_pinned_context(engine, vm, SZ_512K,
+>   						I915_GEM_HWS_MIGRATE,
+>   						&key, "migrate");
+> -	i915_vm_put(ce->vm);
+> +	i915_vm_put(vm);
+>   	return ce;
+>   }
+>   
 
 Thanks,
-Robin.
+
+Reviewed-by: Thomas Hellström <thomas.hellstrom@linux.intel.com>
+
+
