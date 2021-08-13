@@ -2,54 +2,60 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A74E3C4338F
-	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Aug 2021 23:34:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13DD1C4338F
+	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Aug 2021 23:40:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7F041610FA
-	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Aug 2021 23:34:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D903C610FE
+	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Aug 2021 23:40:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235794AbhHMXeg (ORCPT
+        id S235523AbhHMXke (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 13 Aug 2021 19:34:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34780 "EHLO mail.kernel.org"
+        Fri, 13 Aug 2021 19:40:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35248 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235776AbhHMXef (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 13 Aug 2021 19:34:35 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 26340610EA;
-        Fri, 13 Aug 2021 23:34:08 +0000 (UTC)
+        id S235330AbhHMXkd (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 13 Aug 2021 19:40:33 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPS id 51F71610F7;
+        Fri, 13 Aug 2021 23:40:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1628897648;
-        bh=tKafd6vECbPEMazy83H7Z+3j1QWPve7a1WWuqNbDzxI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=aCwww65gyLPOi0lL60q9Q20jxDYE5yRFH8FCYxrOB+CyLc/NNHeYRQuTracAG+2FM
-         JT5uGGtEFVBiRKuofJL2vFmjUqfLlGEeudCNNxw+JKD/ffTZUuRpUNgd2IQYZhlm41
-         Dtr8hWLcpmswR86swRtuBlWTZnKDc3AFewZJ5uq4idaW6pigsGXRa2uBMPSi2BYcNy
-         Z5SEjsVVz2mdd4SUvpwr+YQYlePXnxqe+1Xu/fDVOdCFY56pPyBqupnuJ2Tlj+W9Wk
-         jMWHkHTlglAXSPTU8Vl7oPQwcdXEecYUlnT7YzfsqltJWQH7i9NGyeK6RDD0vtiNOf
-         cppP63hYMSsRg==
-Date:   Fri, 13 Aug 2021 16:34:07 -0700
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        Madalin Bucur <madalin.bucur@nxp.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] Kconfig symbol clean-up on net
-Message-ID: <20210813163407.3bde8d47@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
-In-Reply-To: <20210812083806.28434-1-lukas.bulwahn@gmail.com>
-References: <20210812083806.28434-1-lukas.bulwahn@gmail.com>
+        s=k20201202; t=1628898006;
+        bh=CAaltIe3U8fklVm2P7fWtZ5GM3sbUCb1660w6Pm9VAs=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=jS20W7L0bLKig4xkAClgg98wUorzcLWpST3lRrIGN56lhK0SDvJLqpuaK8fqN0wm0
+         nzrhhFzvK++cPhHwh9gCPHhgFwsaBjh1Au/HEbpjfbdHOy9qtXD18RtBWGUp6cAuZX
+         gs5IdYVuSmgefIQ9gVSxlEXAA2YXTZt2eolyWfItjn8ukw/kN3AW9rRY+loiiUHLdU
+         mUK55DQHqalWnEs3RBCemK4oFpw/R+/XZ92VUT7fF4VvHLWh4M+fmmzrdhy5O5Lj4i
+         9tQABQgar9a7fxMZdyzhZyYfBmf+0K6enwKN7wTI9rhRA9cNIKdDpFyYGZeBsMPSB8
+         HWIHI2xBuNDng==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH 0/3] Kconfig symbol clean-up on net
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <162889800627.16789.15412408508624833169.git-patchwork-notify@kernel.org>
+Date:   Fri, 13 Aug 2021 23:40:06 +0000
+References: <20210812083806.28434-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20210812083806.28434-1-lukas.bulwahn@gmail.com>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     davem@davemloft.net, kuba@kernel.org, netdev@vger.kernel.org,
+        madalin.bucur@nxp.com, rdunlap@infradead.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 12 Aug 2021 10:38:03 +0200 Lukas Bulwahn wrote:
+Hello:
+
+This series was applied to netdev/net-next.git (refs/heads/master):
+
+On Thu, 12 Aug 2021 10:38:03 +0200 you wrote:
+> Dear David, dear Jakub,
+> 
 > The script ./scripts/checkkconfigsymbols.py warns on invalid references to
 > Kconfig symbols (often, minor typos, name confusions or outdated references).
 > 
@@ -59,14 +65,19 @@ On Thu, 12 Aug 2021 10:38:03 +0200 Lukas Bulwahn wrote:
 > shortcomings in the overall build definitions, and often are true actionable
 > issues to address.
 > 
-> These issues can be identified and filtered by:
-> 
->   ./scripts/checkkconfigsymbols.py \
->   | grep -E "(drivers/)?net/.*(Kconfig|Makefile)" -B 1 -A 1
-> 
-> After applying this patch series on linux-next (next-20210811), the command
-> above yields no further issues to address.
+> [...]
 
-FWIW there's also:
+Here is the summary with links:
+  - [1/3] net: Kconfig: remove obsolete reference to config MICROBLAZE_64K_PAGES
+    https://git.kernel.org/netdev/net-next/c/4fb464db9c72
+  - [2/3] net: 802: remove dead leftover after ipx driver removal
+    https://git.kernel.org/netdev/net-next/c/d8d9ba8dc9c7
+  - [3/3] net: dpaa_eth: remove dead select in menuconfig FSL_DPAA_ETH
+    https://git.kernel.org/netdev/net-next/c/f75d81556a38
 
-arch/arm/configs/ixp4xx_defconfig:79:CONFIG_IPX=m
+You are awesome, thank you!
+--
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
