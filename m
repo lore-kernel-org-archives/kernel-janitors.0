@@ -2,206 +2,121 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE16BC4320E
-	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Aug 2021 15:53:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B737C432BE
+	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Aug 2021 15:54:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9504A61155
-	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Aug 2021 15:53:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 01662610FF
+	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Aug 2021 15:54:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241461AbhHMPyW (ORCPT
+        id S241521AbhHMPyi (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 13 Aug 2021 11:54:22 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:57574 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241418AbhHMPyW (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 13 Aug 2021 11:54:22 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: sre)
-        with ESMTPSA id A8F7C1F40E8C
-Received: by earth.universe (Postfix, from userid 1000)
-        id 4B5E23C0C99; Fri, 13 Aug 2021 17:53:51 +0200 (CEST)
-Date:   Fri, 13 Aug 2021 17:53:51 +0200
-From:   Sebastian Reichel <sebastian.reichel@collabora.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][V2][next] power: supply: ab8500: clean up warnings found
- by checkpatch
-Message-ID: <20210813155351.dj67imzn5nfpdf3d@earth.universe>
-References: <20210720082922.6398-1-colin.king@canonical.com>
+        Fri, 13 Aug 2021 11:54:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40360 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S241487AbhHMPyh (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 13 Aug 2021 11:54:37 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 29E29601FD;
+        Fri, 13 Aug 2021 15:54:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1628870050;
+        bh=tJWVgi5froVJvA8ey2vsX+89Npe4dBRwLUBJHkjVxxU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=bSAdvmE+CD8W/vpFYSjqLytsYxktaeVxeQW3Jxkim70RLVERPDJMnGQkecCWcRlxa
+         aqREybTG41HncW8Lp8kOKktqfWUjNHVvuOjhjQe9ppr+WjONx/3uhIulEPVEIyM/yG
+         jWfZ/h4qzyc9IHkCYvo47+RM6Phl9bZPMcP834OumIlPHz5o1tLMrEIO9a7ajcw6Q7
+         IJ2ZbTSR2AgJAllxB1n8uY6yOQfN2f8osQNECE1P73UcsVkiuQDcjS3NVy+wluIojD
+         6DB4UWsdbXaje0HmVc4/p3Tu2FgRU2XrvsHuBvVWwAA14T1JxOAYmMqGdYJ2fkTsI/
+         zfw0s4opj+hwA==
+Date:   Fri, 13 Aug 2021 16:53:50 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Robin Murphy <robin.murphy@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Simon Xue <xxm@rock-chips.com>, Rob Herring <robh@kernel.org>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Kever Yang <kever.yang@rock-chips.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] PCI: rockchip-dwc: Potential error pointer dereference
+ in probe
+Message-ID: <20210813155350.GC5209@sirena.org.uk>
+References: <20210813113338.GA30697@kili>
+ <01b7c3da-1c58-c1d9-6a54-0ce30ca76097@arm.com>
+ <20210813135412.GA7722@kadam>
+ <2917a1c8-d59b-43b1-1650-228d20dfc070@arm.com>
+ <20210813143250.GA5209@sirena.org.uk>
+ <20210813154505.GC7722@kadam>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="lewwtmsomymedhht"
+        protocol="application/pgp-signature"; boundary="TYecfFk8j8mZq+dy"
 Content-Disposition: inline
-In-Reply-To: <20210720082922.6398-1-colin.king@canonical.com>
+In-Reply-To: <20210813154505.GC7722@kadam>
+X-Cookie: E Pluribus Unix
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 
---lewwtmsomymedhht
+--TYecfFk8j8mZq+dy
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Fri, Aug 13, 2021 at 06:45:05PM +0300, Dan Carpenter wrote:
+> On Fri, Aug 13, 2021 at 03:32:50PM +0100, Mark Brown wrote:
+> > On Fri, Aug 13, 2021 at 03:01:10PM +0100, Robin Murphy wrote:
 
-On Tue, Jul 20, 2021 at 09:29:21AM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+> > > Indeed I've thought before that it would be nice if regulators worked=
+ like
+> > > GPIOs, where the absence of an optional one does give you NULL, and m=
+ost of
+> > > the API is also NULL-safe. Probably a pretty big job though...
+
+> > It also encourages *really* bad practice with error handling
+
+> I'm not necessarily 100% positive what you mean by this.  I think you
+> mean you don't like when people pass invalid pointers to free functions?
+
+No, it's the case where people don't bother checking if they got the
+regulator in the first place, don't bother checking if when they tried
+to enable the regulator that actually worked, and don't do whatever
+extra handling they need to do to configure the system for the fact that
+one of the power supplies is missing.  It really only helps in the case
+where you can just ignore the regulator completely.
+
+> But making regulator code NULL-safe wouldn't affect error handling
+> because NULL wouldn't be an error.
 >=20
-> Clean up a handful of checkpatch warnings:
->  - static const char * array should probably be static const char * const
->  - function arguments should have identifier names
->  - else should follow close brace '}'
->  - suspect code indent for conditional statements
->  - unnecessary parentheses in an if condition
->  - avoid multiple line dereference
->  - remove debug showing function execution, ftrace can trace these better
->  - prefer 'long' over 'long int' as the int is unnecessary
->=20
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
-> V2: Fix subject, s/cppcheck/checkpatch/
->     Remove debug, ftrace can track these better.
-> ---
+> 	p =3D get_optional();
+> 	if (IS_ERR(p))
+> 		return PTR_ERR(p);
+> 	enable(p);
 
-Thanks, queued.
+Your example already misses the error handling on enable...
 
--- Sebastian
-
->  drivers/power/supply/ab8500_chargalg.c | 24 ++++++++++--------------
->  1 file changed, 10 insertions(+), 14 deletions(-)
->=20
-> diff --git a/drivers/power/supply/ab8500_chargalg.c b/drivers/power/suppl=
-y/ab8500_chargalg.c
-> index 46b0c9fedebb..ff4b26b1ceca 100644
-> --- a/drivers/power/supply/ab8500_chargalg.c
-> +++ b/drivers/power/supply/ab8500_chargalg.c
-> @@ -123,7 +123,7 @@ enum ab8500_chargalg_states {
->  	STATE_WD_EXPIRED,
->  };
-> =20
-> -static const char *states[] =3D {
-> +static const char * const states[] =3D {
->  	"HANDHELD_INIT",
->  	"HANDHELD",
->  	"CHG_NOT_OK_INIT",
-> @@ -274,8 +274,8 @@ static enum power_supply_property ab8500_chargalg_pro=
-ps[] =3D {
-> =20
->  struct ab8500_chargalg_sysfs_entry {
->  	struct attribute attr;
-> -	ssize_t (*show)(struct ab8500_chargalg *, char *);
-> -	ssize_t (*store)(struct ab8500_chargalg *, const char *, size_t);
-> +	ssize_t (*show)(struct ab8500_chargalg *di, char *buf);
-> +	ssize_t (*store)(struct ab8500_chargalg *di, const char *buf, size_t le=
-ngth);
->  };
-> =20
->  /**
-> @@ -526,8 +526,7 @@ static int ab8500_chargalg_kick_watchdog(struct ab850=
-0_chargalg *di)
->  			di->usb_chg->ops.kick_wd(di->usb_chg);
-> =20
->  		return di->ac_chg->ops.kick_wd(di->ac_chg);
-> -	}
-> -	else if (di->usb_chg && di->usb_chg->ops.kick_wd &&
-> +	} else if (di->usb_chg && di->usb_chg->ops.kick_wd &&
->  			di->chg_info.online_chg & USB_CHG)
->  		return di->usb_chg->ops.kick_wd(di->usb_chg);
-> =20
-> @@ -750,8 +749,8 @@ static void ab8500_chargalg_check_temp(struct ab8500_=
-chargalg *di)
->  			di->t_hyst_norm =3D 0;
->  			di->t_hyst_lowhigh =3D di->bm->temp_hysteresis;
->  		} else {
-> -		/* Within hysteresis */
-> -		dev_dbg(di->dev, "Within hysteresis limit temp: %d "
-> +			/* Within hysteresis */
-> +			dev_dbg(di->dev, "Within hysteresis limit temp: %d "
->  				"hyst_lowhigh %d, hyst normal %d\n",
->  				di->batt_data.temp, di->t_hyst_lowhigh,
->  				di->t_hyst_norm);
-> @@ -867,7 +866,7 @@ static enum maxim_ret ab8500_chargalg_chg_curr_maxim(=
-struct ab8500_chargalg *di)
-> =20
->  	di->ccm.wait_cnt =3D 0;
-> =20
-> -	if ((di->batt_data.inst_curr > di->ccm.original_iset)) {
-> +	if (di->batt_data.inst_curr > di->ccm.original_iset) {
->  		dev_dbg(di->dev, " Maximization Ibat (%dmA) too high"
->  			" (limit %dmA) (current iset: %dmA)!\n",
->  			di->batt_data.inst_curr, di->ccm.original_iset,
-> @@ -1545,8 +1544,7 @@ static void ab8500_chargalg_algorithm(struct ab8500=
-_chargalg *di)
-> =20
->  	case STATE_WAIT_FOR_RECHARGE:
->  		if (di->batt_data.percent <=3D
-> -		    di->bm->bat_type[di->bm->batt_id].
-> -		    recharge_cap)
-> +		    di->bm->bat_type[di->bm->batt_id].recharge_cap)
->  			ab8500_chargalg_state_to(di, STATE_NORMAL_INIT);
->  		break;
-> =20
-> @@ -1676,8 +1674,6 @@ static void ab8500_chargalg_wd_work(struct work_str=
-uct *work)
->  	struct ab8500_chargalg *di =3D container_of(work,
->  		struct ab8500_chargalg, chargalg_wd_work.work);
-> =20
-> -	dev_dbg(di->dev, "ab8500_chargalg_wd_work\n");
-> -
->  	ret =3D ab8500_chargalg_kick_watchdog(di);
->  	if (ret < 0)
->  		dev_err(di->dev, "failed to kick watchdog\n");
-> @@ -1754,7 +1750,7 @@ static ssize_t ab8500_chargalg_curr_step_show(struc=
-t ab8500_chargalg *di,
->  static ssize_t ab8500_chargalg_curr_step_store(struct ab8500_chargalg *d=
-i,
->  					       const char *buf, size_t length)
->  {
-> -	long int param;
-> +	long param;
->  	int ret;
-> =20
->  	ret =3D kstrtol(buf, 10, &param);
-> @@ -1787,7 +1783,7 @@ static ssize_t ab8500_chargalg_en_show(struct ab850=
-0_chargalg *di,
->  static ssize_t ab8500_chargalg_en_store(struct ab8500_chargalg *di,
->  	const char *buf, size_t length)
->  {
-> -	long int param;
-> +	long param;
->  	int ac_usb;
->  	int ret;
-> =20
-> --=20
-> 2.31.1
->=20
-
---lewwtmsomymedhht
+--TYecfFk8j8mZq+dy
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmEWlYgACgkQ2O7X88g7
-+ppDoA/7B0JZuIjapZNNyPrc+2hDpJOBtiTyT/1zqaRTfREcBFd7ns700z8+attk
-kSJmbfg13v4kKr/SfaJ3r6galSfdJTJJo9xH/qsdJy9towapyKubU78y3lMRzv1v
-GqpXh3GGq/jJ3clokRI4AlT6ngKjrh7tx/1czHfl31PuOYp2WwUuMEDXX01NHVX5
-BWL6YNX45EPuba+2CJNmaqOBU0PmToca44uf46XNnPAq6cuR2WhtGWYm/2zm40c1
-5Sg6vr+YB5X2qX457LnHyC9Y+YSA2WQFGjEZ2lW2hmG1MyCSRYWz+XcKgDUQJxgX
-6QQZRR+NQL7AhldrSxSBS/DH9VV79Zdgn/nrnSoFFvgbB/PwlhbRmWk5F0PfdXbO
-bynoTeEXefLySFUzNDGPwIgUtJkXwbxx0RO0ViqNrpeGQEWBEG6yHrmthY8CbY3O
-+r0JOhfhhB+YRzio4rQLEt7b9NkgH5VWlz7vzgmIrIFqxFG2vi3PyWp9lNHfD7fQ
-N1mH6JUTLMS2jvtUSnJSkj5VpI16wFaFZms0JtRIO0MjMae9/ELI6uI6ewYNAtLp
-nicG/lJg9kiz2XuyVHg19TVBOtUTOs9sot9iopZ1HXMgbVqD9+NlHuVID0yFtri8
-IEmK9wA/ULZAltFumR57RbjWArqwgHUkjvXqXTDkpopZi7ihWz4=
-=mZ7a
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmEWlY0ACgkQJNaLcl1U
+h9C+gQf/ViZcfsBNoNvLiykQAQseACeSDusRgV0howjP0zujMhkdfwwpnudqKcsf
+DbhucuvGyD0G27s4xKKb1J4oU7r8ogVSNgc2eGyIciT85dsSVFGn1wYCVICmxCQk
+0s+rakCrDjbTYunX9f7k/0JhzxJ43Q432DY+ro1vEc0Iwi9ZeEg+cGAjg6JVwxYW
+2+5djM+OKFuB8nlXSxlRu+bUaD7/40Mgz4nvWMC97esw9SbMvPJqisaIfjuh6im6
+9e+Olu8uN4clwg4UcSgwnOiKM0lvgMf1XQZzpzlWkuHY/ffo1jVrmGGACaEg40AW
+XdY2AeFvANNrXHSvhHIt3xREICEjEg==
+=qDSo
 -----END PGP SIGNATURE-----
 
---lewwtmsomymedhht--
+--TYecfFk8j8mZq+dy--
