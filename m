@@ -2,36 +2,42 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0CF5C4338F
-	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Aug 2021 15:00:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93444C4338F
+	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Aug 2021 15:31:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B79E3610FD
-	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Aug 2021 15:00:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7496260F91
+	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Aug 2021 15:31:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241095AbhHMPBV (ORCPT
+        id S236818AbhHMPbb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 13 Aug 2021 11:01:21 -0400
-Received: from foss.arm.com ([217.140.110.172]:54396 "EHLO foss.arm.com"
+        Fri, 13 Aug 2021 11:31:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37584 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S241033AbhHMPBV (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 13 Aug 2021 11:01:21 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 29EBE1042;
-        Fri, 13 Aug 2021 08:00:54 -0700 (PDT)
-Received: from [10.57.36.146] (unknown [10.57.36.146])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0BC443F718;
-        Fri, 13 Aug 2021 08:00:51 -0700 (PDT)
-Subject: Re: [PATCH] PCI: rockchip-dwc: Potential error pointer dereference in
- probe
-To:     Mark Brown <broonie@kernel.org>
+        id S236719AbhHMPba (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 13 Aug 2021 11:31:30 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 3121660EFE;
+        Fri, 13 Aug 2021 15:31:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1628868663;
+        bh=JwwGuM2BqIZs9zpC6YK9XxufVemngqiGneP+sZSA5EE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nY+lSNQfv/TGRqXFuBK6yyZ+uB+4HSKjc/j9LO6e58ZoSk14cW/PUEQNjB5DLvLhN
+         lMhrIUjU/WuzgPgUU6//eeGHdLehuYWzFyVKlqQlvqK0zwN4Nj1FvtXYUP4fTqPt3i
+         to1skHlqSY4vjJrIVdPn5AArct8g1S6Qoq8rLlD4yPGEUhdqNoDSU9Vd930ZB8+keI
+         x8AdZ/iwxMZWnG6JUYDnHDzxlMTmlWHYZ8IZc0UOquPLKMwHY/Gkx9skO4wLDHtNU4
+         OQDQ5X+H9Wn/Ask4Ayu162cwaIIPmc1OfTzU0RomfWNpzzxgAYqoWxqH5EHXTfskEd
+         xSlpw2OeXKg2w==
+Date:   Fri, 13 Aug 2021 16:30:43 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Robin Murphy <robin.murphy@arm.com>
 Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Simon Xue <xxm@rock-chips.com>, Rob Herring <robh@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?= <kw@linux.com>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
         Bjorn Helgaas <bhelgaas@google.com>,
         Heiko Stuebner <heiko@sntech.de>,
         Liam Girdwood <lgirdwood@gmail.com>,
@@ -39,48 +45,77 @@ Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
         Shawn Lin <shawn.lin@rock-chips.com>,
         linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] PCI: rockchip-dwc: Potential error pointer dereference
+ in probe
+Message-ID: <20210813153043.GB5209@sirena.org.uk>
 References: <20210813113338.GA30697@kili>
- <01b7c3da-1c58-c1d9-6a54-0ce30ca76097@arm.com> <20210813135412.GA7722@kadam>
+ <01b7c3da-1c58-c1d9-6a54-0ce30ca76097@arm.com>
+ <20210813135412.GA7722@kadam>
  <2917a1c8-d59b-43b1-1650-228d20dfc070@arm.com>
  <20210813143250.GA5209@sirena.org.uk>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <566c26bb-c488-8c86-f47e-6a748b9b6c77@arm.com>
-Date:   Fri, 13 Aug 2021 16:00:45 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+ <566c26bb-c488-8c86-f47e-6a748b9b6c77@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20210813143250.GA5209@sirena.org.uk>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="b5gNqxB1S1yM7hjW"
+Content-Disposition: inline
+In-Reply-To: <566c26bb-c488-8c86-f47e-6a748b9b6c77@arm.com>
+X-Cookie: E Pluribus Unix
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 2021-08-13 15:32, Mark Brown wrote:
-> On Fri, Aug 13, 2021 at 03:01:10PM +0100, Robin Murphy wrote:
-> 
->> Indeed I've thought before that it would be nice if regulators worked like
->> GPIOs, where the absence of an optional one does give you NULL, and most of
->> the API is also NULL-safe. Probably a pretty big job though...
-> 
-> It also encourages *really* bad practice with error handling, and in
-> general there are few use cases for optional regulators where there's
-> not some other actions that need to be taken in the case where the
-> supply isn't there (elimintating some operating points or features,
-> reconfiguring power internally and so on).  If we genuninely don't need
-> to do anything special one wonders why we're trying to turn the power on
-> in the first place.
 
-Sure, once you get into it, regulators are arguably a rather deeper area 
-than GPIOs, so in terms of the NULL-safe aspect anything beyond 
-enable/disable - for the sake of keeping trivial usage simple - would be 
-pretty questionable for sure.
+--b5gNqxB1S1yM7hjW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-A lot of the usage of regulator_get_optional() seems to be just making 
-sure some external thing is powered between probe() and remove() if it's 
-not hard-wired already, so maybe something like a 
-devm_regulator_get_optional_enabled() could be an answer to that 
-argument without even touching the underlying API.
+On Fri, Aug 13, 2021 at 04:00:45PM +0100, Robin Murphy wrote:
+> On 2021-08-13 15:32, Mark Brown wrote:
 
-Robin.
+> > It also encourages *really* bad practice with error handling, and in
+> > general there are few use cases for optional regulators where there's
+> > not some other actions that need to be taken in the case where the
+> > supply isn't there (elimintating some operating points or features,
+> > reconfiguring power internally and so on).  If we genuninely don't need
+> > to do anything special one wonders why we're trying to turn the power on
+> > in the first place.
+
+> Sure, once you get into it, regulators are arguably a rather deeper area
+> than GPIOs, so in terms of the NULL-safe aspect anything beyond
+> enable/disable - for the sake of keeping trivial usage simple - would be
+> pretty questionable for sure.
+
+enable and disable are among my biggest worries frankly, if the device
+was supposed to have power and that didn't work then there's probably
+some kind of issue.
+
+> A lot of the usage of regulator_get_optional() seems to be just making sure
+> some external thing is powered between probe() and remove() if it's not
+> hard-wired already, so maybe something like a
+> devm_regulator_get_optional_enabled() could be an answer to that argument
+> without even touching the underlying API.
+
+I'm fairly sure a lot of the regulator_get_optional() usage is just
+abuse of the API, every so often I get fed up enough to send patches
+converting users that look like you describe to normal regulator API
+calls.  People really don't get the dummy regulator stuff and seem to
+think that _get_optional() is what you use to avoid writing any error
+handling code :(
+
+--b5gNqxB1S1yM7hjW
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmEWkCIACgkQJNaLcl1U
+h9A88Af/fCT+eznJ+OGWktrk7Ss4jZUVj0ZLLoXhrm38qQ1Sm9WRQr1d4TETmjlY
+L6xIUzkJae36oARdmMDMBCOHytAdCL5Lu55IkKXcISEWFqGJB3Yi5Ea3ddW2F03H
+zHXEo0Pcn8OXoipdFM/LYNVYy3YqAlhPWFCA4fVw2w95RBj4R477UF+Vd7LLaP8x
+8xriyUuvHtZ7Kh56e3kBvtBxxQkzR+aOoLPI/bj0gapS7PIOOuLfrltPB3fRyb65
+7oXj276oOT7SmYeLVkAPQxbtEcMrHwPFKB7LoAZcTTdsVu69QsNEPjQzrTyYzLnl
+ZtjyaaqarWXZHcu1tJKDUQqN8evk/Q==
+=b8Pd
+-----END PGP SIGNATURE-----
+
+--b5gNqxB1S1yM7hjW--
