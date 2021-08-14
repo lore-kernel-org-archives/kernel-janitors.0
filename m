@@ -2,82 +2,129 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13DD1C4338F
-	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Aug 2021 23:40:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1291FC4338F
+	for <kernel-janitors@archiver.kernel.org>; Sat, 14 Aug 2021 13:59:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D903C610FE
-	for <kernel-janitors@archiver.kernel.org>; Fri, 13 Aug 2021 23:40:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D946C60F48
+	for <kernel-janitors@archiver.kernel.org>; Sat, 14 Aug 2021 13:59:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235523AbhHMXke (ORCPT
+        id S238239AbhHNN76 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 13 Aug 2021 19:40:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35248 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235330AbhHMXkd (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 13 Aug 2021 19:40:33 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 51F71610F7;
-        Fri, 13 Aug 2021 23:40:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1628898006;
-        bh=CAaltIe3U8fklVm2P7fWtZ5GM3sbUCb1660w6Pm9VAs=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=jS20W7L0bLKig4xkAClgg98wUorzcLWpST3lRrIGN56lhK0SDvJLqpuaK8fqN0wm0
-         nzrhhFzvK++cPhHwh9gCPHhgFwsaBjh1Au/HEbpjfbdHOy9qtXD18RtBWGUp6cAuZX
-         gs5IdYVuSmgefIQ9gVSxlEXAA2YXTZt2eolyWfItjn8ukw/kN3AW9rRY+loiiUHLdU
-         mUK55DQHqalWnEs3RBCemK4oFpw/R+/XZ92VUT7fF4VvHLWh4M+fmmzrdhy5O5Lj4i
-         9tQABQgar9a7fxMZdyzhZyYfBmf+0K6enwKN7wTI9rhRA9cNIKdDpFyYGZeBsMPSB8
-         HWIHI2xBuNDng==
-Content-Type: text/plain; charset="utf-8"
+        Sat, 14 Aug 2021 09:59:58 -0400
+Received: from smtp04.smtpout.orange.fr ([80.12.242.126]:54090 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232315AbhHNN7z (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Sat, 14 Aug 2021 09:59:55 -0400
+Received: from [192.168.1.18] ([90.126.253.178])
+        by mwinf5d27 with ME
+        id hRzN250073riaq203RzNel; Sat, 14 Aug 2021 15:59:25 +0200
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 14 Aug 2021 15:59:25 +0200
+X-ME-IP: 90.126.253.178
+Subject: Re: [PATCH] checkpatch: prefer = {} initializations to = {0}
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        Leon Romanovsky <leon@kernel.org>
+Cc:     Joe Perches <joe@perches.com>,
+        Dwaipayan Ray <dwaipayanray1@gmail.com>,
+        Andy Whitcroft <apw@canonical.com>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Julia Lawall <julia.lawall@inria.fr>
+Newsgroups: gmane.linux.kernel,gmane.linux.kernel.janitors
+References: <20210805104353.GD26417@kili>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Message-ID: <1b94e688-a070-998a-3014-96bcbaed4cae@wanadoo.fr>
+Date:   Sat, 14 Aug 2021 15:59:22 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
+In-Reply-To: <20210805104353.GD26417@kili>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH 0/3] Kconfig symbol clean-up on net
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <162889800627.16789.15412408508624833169.git-patchwork-notify@kernel.org>
-Date:   Fri, 13 Aug 2021 23:40:06 +0000
-References: <20210812083806.28434-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20210812083806.28434-1-lukas.bulwahn@gmail.com>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     davem@davemloft.net, kuba@kernel.org, netdev@vger.kernel.org,
-        madalin.bucur@nxp.com, rdunlap@infradead.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+Hi all,
 
-This series was applied to netdev/net-next.git (refs/heads/master):
-
-On Thu, 12 Aug 2021 10:38:03 +0200 you wrote:
-> Dear David, dear Jakub,
+Le 05/08/2021 à 12:43, Dan Carpenter a écrit :
+> The "= {};" style empty struct initializer is preferred over = {0}.
+> It avoids the situation where the first struct member is a pointer and
+> that generates a Sparse warning about assigning using zero instead of
+> NULL.  Also it's just nicer to look at.
 > 
-> The script ./scripts/checkkconfigsymbols.py warns on invalid references to
-> Kconfig symbols (often, minor typos, name confusions or outdated references).
+> Some people complain that {} is less portable but the kernel has
+> different portability requirements from userspace so this is not a
+> issue that we care about.
 > 
-> This patch series addresses all issues reported by
-> ./scripts/checkkconfigsymbols.py in ./net/ and ./drivers/net/ for Kconfig
-> and Makefile files. Issues in the Kconfig and Makefile files indicate some
-> shortcomings in the overall build definitions, and often are true actionable
-> issues to address.
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>   scripts/checkpatch.pl | 6 ++++++
+>   1 file changed, 6 insertions(+)
 > 
-> [...]
+> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> index 461d4221e4a4..32c8a0ca6fd0 100755
+> --- a/scripts/checkpatch.pl
+> +++ b/scripts/checkpatch.pl
+> @@ -4029,6 +4029,12 @@ sub process {
+>   			     "Using $1 is unnecessary\n" . $herecurr);
+>   		}
+>   
+> +# prefer = {}; to = {0};
+> +		if ($line =~ /= \{ *0 *\}/) {
+> +			WARN("ZERO_INITIALIZER",
+> +			     "= {} is preferred over = {0}\n" . $herecurr);
+> +		}
+> +
+>   # Check for potential 'bare' types
+>   		my ($stat, $cond, $line_nr_next, $remain_next, $off_next,
+>   		    $realline_next);
+> 
 
-Here is the summary with links:
-  - [1/3] net: Kconfig: remove obsolete reference to config MICROBLAZE_64K_PAGES
-    https://git.kernel.org/netdev/net-next/c/4fb464db9c72
-  - [2/3] net: 802: remove dead leftover after ipx driver removal
-    https://git.kernel.org/netdev/net-next/c/d8d9ba8dc9c7
-  - [3/3] net: dpaa_eth: remove dead select in menuconfig FSL_DPAA_ETH
-    https://git.kernel.org/netdev/net-next/c/f75d81556a38
+[1] and [2] state that {} and {0} don't have the same effect. So if 
+correct, this is not only a matter of style.
 
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+When testing with gcc 10.3.0, I arrived at the conclusion that both {} 
+and {0} HAVE the same behavior (i.e the whole structure and included 
+structures are completely zeroed) and I don't have a C standard to check 
+what the rules are.
+gcc online doc didn't help me either.
+
+To test, I wrote a trivial C program, compiled it with gcc -S and looked 
+at the assembly files.
 
 
+Maybe, if it is an undefined behavior, other compilers behave 
+differently than gcc.
+
+
+However, the 2 persons listed bellow have a much better Linux and C 
+background than me. So it is likely that my testings were too naive.
+
+
+Can someone provide some rational or compiler output that confirms that 
+{} and {0} are not the same?
+
+Because if confirmed, I guess that there is some clean-up work to do all 
+over the code, not only to please Sparse!
+
+
+Thanks in advance.
+CJ
+
+
+
+[1]: Russell King - 
+https://lore.kernel.org/netdev/YRFGxxkNyJDxoGWu@shredder/T/#efe1b6c7862b7ca9588c2734f04be5ef94e03d446
+
+[2]: Leon Romanovsky - 
+https://lore.kernel.org/netdev/YRFGxxkNyJDxoGWu@shredder/T/#efe1b6c7862b7ca9588c2734f04be5ef94e03d446
