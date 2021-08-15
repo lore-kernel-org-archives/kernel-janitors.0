@@ -2,113 +2,84 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EE72C4338F
-	for <kernel-janitors@archiver.kernel.org>; Sat, 14 Aug 2021 20:20:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DEC1C4320E
+	for <kernel-janitors@archiver.kernel.org>; Sun, 15 Aug 2021 21:40:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8619060F4B
-	for <kernel-janitors@archiver.kernel.org>; Sat, 14 Aug 2021 20:20:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3188760551
+	for <kernel-janitors@archiver.kernel.org>; Sun, 15 Aug 2021 21:40:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232803AbhHNUVD (ORCPT
+        id S231202AbhHOVkc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 14 Aug 2021 16:21:03 -0400
-Received: from smtp11.smtpout.orange.fr ([80.12.242.133]:30116 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229489AbhHNUVD (ORCPT
+        Sun, 15 Aug 2021 17:40:32 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:59428
+        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229935AbhHOVkc (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 14 Aug 2021 16:21:03 -0400
-Received: from [192.168.1.18] ([90.126.253.178])
-        by mwinf5d21 with ME
-        id hYLR250073riaq203YLSxi; Sat, 14 Aug 2021 22:20:32 +0200
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 14 Aug 2021 22:20:32 +0200
-X-ME-IP: 90.126.253.178
-Subject: Re: [PATCH] checkpatch: prefer = {} initializations to = {0}
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
-        Leon Romanovsky <leon@kernel.org>,
-        Joe Perches <joe@perches.com>,
-        Dwaipayan Ray <dwaipayanray1@gmail.com>,
-        Andy Whitcroft <apw@canonical.com>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Julia Lawall <julia.lawall@inria.fr>
-References: <20210805104353.GD26417@kili>
- <1b94e688-a070-998a-3014-96bcbaed4cae@wanadoo.fr>
- <YRfYr0fsM1R7O5x6@zeniv-ca.linux.org.uk>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Message-ID: <ac38ab19-bfab-0d83-079c-adc9fe6d4924@wanadoo.fr>
-Date:   Sat, 14 Aug 2021 22:20:25 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Sun, 15 Aug 2021 17:40:32 -0400
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net [80.193.200.194])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 722CE3F105;
+        Sun, 15 Aug 2021 21:39:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1629063593;
+        bh=To/roSNPwpACvahNmxSV8eOGz8/vn9OEVd54wbHH0M8=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=IUB08UJ6OCwbikGR7AON9oDovGqBPGO0lbd9y1MW5UqYW0Ql/zq/HdWqAiewu2gkU
+         k1RJHNTpUUhwBd6zu608WCBD6HtIfHi2khOuFmFu/tQYv0I4/Bxi+mNbHycfEa16RC
+         qNxyx2zkhNFpXKv8p7KCajIa47Hteqz0giHSeFgDda++bkUrKnaig4qaTXMA13VDHv
+         viFdqGSq0+fYE2TIPw/C2RkgAE37YJNXEFZNZ4mBIHJ9L1O2B9mK82eC9sXCtUAZLU
+         F2IHzvN/peWiX9feFTaLrmm0UVgsWJwvHWa84ijGjTlmmnOBibqLhigQIXmPpsscnt
+         WseQKPHEUhtdw==
+From:   Colin King <colin.king@canonical.com>
+To:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>, netdev@vger.kernel.org,
+        bpf@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] bpf, tests: Fix spelling mistake "shoft" -> "shift"
+Date:   Sun, 15 Aug 2021 22:39:50 +0100
+Message-Id: <20210815213950.47751-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-In-Reply-To: <YRfYr0fsM1R7O5x6@zeniv-ca.linux.org.uk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 14/08/2021 à 16:52, Al Viro a écrit :
-> On Sat, Aug 14, 2021 at 03:59:22PM +0200, Christophe JAILLET wrote:
-> 
->>> +# prefer = {}; to = {0};
->>> +		if ($line =~ /= \{ *0 *\}/) {
->>> +			WARN("ZERO_INITIALIZER",
->>> +			     "= {} is preferred over = {0}\n" . $herecurr);
-> 
-> Sigh...  "is preferred over" by whom?  Use the active voice, would you?
-> 
->> [1] and [2] state that {} and {0} don't have the same effect. So if correct,
->> this is not only a matter of style.
->>
->> When testing with gcc 10.3.0, I arrived at the conclusion that both {} and
->> {0} HAVE the same behavior (i.e the whole structure and included structures
->> are completely zeroed) and I don't have a C standard to check what the rules
->> are.
->> gcc online doc didn't help me either.
-> 
-> http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1256.pdf, but empty
-> initializer-list is gccism anyway.
-> 
-> Section 6.7.8 is the one to look through there.
-> 
->> Can someone provide some rational or compiler output that confirms that {}
->> and {0} are not the same?
-> 
-> Easily: compare
-> 	int x[] = {0};
-> and
-> 	int x[] = {};
-> 
-> For more obscure example,
-> 	int x = {0};
-> is valid, if pointless, but
-> 	int x = {};
-> will be rejected even by gcc.
-> 
-> Incidentally, do *NOT* assume that initializer will do anything with padding
-> in a structure, no matter how you spell it.  Neither {} nor {0} nor explicit
-> initializer for each member of struct do anything to the padding.  memset()
-> does, but anything short of that leaves the padding contents unspecified.
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks for the explanations and exemples.
+There is a spelling mistake in a literal string. Fix it.
 
-IIUC, code like [1] may leak some data (1 char) because of the layout of 
-'struct atyclk' and we have the erroneous feeling that it is fully 
-initialized, because of the "{ 0 }".
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ lib/test_bpf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Correct?
+diff --git a/lib/test_bpf.c b/lib/test_bpf.c
+index 44d8197bbffb..77fe6fde56c5 100644
+--- a/lib/test_bpf.c
++++ b/lib/test_bpf.c
+@@ -5163,7 +5163,7 @@ static struct bpf_test tests[] = {
+ 		{ { 0, -1 } }
+ 	},
+ 	{
+-		"ALU64_ARSH_K: Zero shoft",
++		"ALU64_ARSH_K: Zero shift",
+ 		.u.insns_int = {
+ 			BPF_LD_IMM64(R0, 0x8123456789abcdefLL),
+ 			BPF_ALU64_IMM(BPF_ARSH, R0, 0),
+-- 
+2.32.0
 
-CJ
-
-[1]: 
-https://elixir.bootlin.com/linux/v5.14-rc5/source/drivers/video/fbdev/aty/atyfb_base.c#L1859
