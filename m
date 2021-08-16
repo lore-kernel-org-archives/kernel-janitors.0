@@ -2,119 +2,117 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-21.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 863F3C4338F
-	for <kernel-janitors@archiver.kernel.org>; Mon, 16 Aug 2021 07:23:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40C8DC4338F
+	for <kernel-janitors@archiver.kernel.org>; Mon, 16 Aug 2021 07:57:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 631BB61A8C
-	for <kernel-janitors@archiver.kernel.org>; Mon, 16 Aug 2021 07:23:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2744661AE3
+	for <kernel-janitors@archiver.kernel.org>; Mon, 16 Aug 2021 07:57:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234003AbhHPHYZ (ORCPT
+        id S234475AbhHPH6K (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 16 Aug 2021 03:24:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50526 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233725AbhHPHYZ (ORCPT
+        Mon, 16 Aug 2021 03:58:10 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:57824
+        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234572AbhHPH4k (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 16 Aug 2021 03:24:25 -0400
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [IPv6:2001:4d48:ad52:32c8:5054:ff:fe00:142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02BE9C061764;
-        Mon, 16 Aug 2021 00:23:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=KpEK3KVv4gdJEMERAyk5EYCGJBKw8tT8UtZLGJNCPAw=; b=QxNmD8G1f0oZcP7EGYLwHP3wk
-        8gkPE5GbcwcTtH/GIh+KBR1vVM5Fh1Pqe2A9dhLh11HPntRDCm7PXvvj8KlNTpP384LAG1p/O8cXL
-        bdeNsvfSjnTt8YHdfdNBJ2fv/pgASv0CfMbVir4BbXjByU5v6Lv20ZE3XP2AzpKq5ic/olS5Whk0+
-        S/reez+avL4MI9pqCguARKTd6qMpVx7fvwgqC/WeV5BGzMMDJTV4pGfPrlVdWw4UkhId8Y0vHrqbi
-        dAq0EOUt+PlENuDRmSipiyKTbtOAUJYLuyKXIq7oei0qfGv9pK4X/SAUWOZyJdgbOpslw6zWO77yI
-        Noylnv8wA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:47356)
-        by pandora.armlinux.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1mFWyJ-0007RQ-Qx; Mon, 16 Aug 2021 08:23:47 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1mFWyH-0007nW-1w; Mon, 16 Aug 2021 08:23:45 +0100
-Date:   Mon, 16 Aug 2021 08:23:45 +0100
-From:   "Russell King (Oracle)" <linux@armlinux.org.uk>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Leon Romanovsky <leon@kernel.org>,
-        Joe Perches <joe@perches.com>,
-        Dwaipayan Ray <dwaipayanray1@gmail.com>,
-        Andy Whitcroft <apw@canonical.com>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Julia Lawall <julia.lawall@inria.fr>
-Subject: Re: [PATCH] checkpatch: prefer = {} initializations to = {0}
-Message-ID: <20210816072344.GG22278@shell.armlinux.org.uk>
-References: <20210805104353.GD26417@kili>
- <1b94e688-a070-998a-3014-96bcbaed4cae@wanadoo.fr>
- <YRfYr0fsM1R7O5x6@zeniv-ca.linux.org.uk>
- <20210816065552.GE1931@kadam>
+        Mon, 16 Aug 2021 03:56:40 -0400
+Received: from [10.172.193.212] (1.general.cking.uk.vpn [10.172.193.212])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 9A4EB3F04E;
+        Mon, 16 Aug 2021 07:55:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1629100554;
+        bh=W1ishUz8mHqehwd2h6l+5o4J0QmpazRWbS0Pi/fqFb4=;
+        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+         In-Reply-To:Content-Type;
+        b=GiLnTMNy3wdzNYHXYh5Tmcp5wib5D4B8WNvXehZfm7TRXOlYuzY0MiiRXfSlybf3I
+         MoMcxZIsalRbbWp+bFmdY7YMPpFz4g4t7rWWdrgDymaDe+zCiCfK3zjlUGmSqKHVFB
+         XmTLY/v1F7r7f2fWWrWE5FyBOuXV/1NbO10kc+V3/xHDmtf7fLSHRCUG0YiQKMCHHL
+         TBs8Y2jJoYsogkqUPe6SomO8HOZRxBqJFAj5sI16rx5mts9pTXlsa/76oM/DC2RAYM
+         gWxlh1sBeLrlJjO1BYe5aWfvXelJdj5uoEGtNmwCm2hMX9g7KDg8/ZGx115m2gK2AI
+         LXt14C4g8cxug==
+Subject: Re: [PATCH] leds: flash: Remove redundant initialization of variable
+ ret
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     linux-leds@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20210612132547.58727-1-colin.king@canonical.com>
+ <20210816065110.GA7500@duo.ucw.cz>
+From:   Colin Ian King <colin.king@canonical.com>
+Message-ID: <1864790c-4547-9e19-e6ed-c9b342e0c6aa@canonical.com>
+Date:   Mon, 16 Aug 2021 08:55:54 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210816065552.GE1931@kadam>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <20210816065110.GA7500@duo.ucw.cz>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Aug 16, 2021 at 09:55:53AM +0300, Dan Carpenter wrote:
-> On Sat, Aug 14, 2021 at 02:52:31PM +0000, Al Viro wrote:
-> > On Sat, Aug 14, 2021 at 03:59:22PM +0200, Christophe JAILLET wrote:
-> > 
-> > > > +# prefer = {}; to = {0};
-> > > > +		if ($line =~ /= \{ *0 *\}/) {
-> > > > +			WARN("ZERO_INITIALIZER",
-> > > > +			     "= {} is preferred over = {0}\n" . $herecurr);
-> > 
-> > Sigh...  "is preferred over" by whom?  Use the active voice, would you?
-> > 
-> > > [1] and [2] state that {} and {0} don't have the same effect. So if correct,
-> > > this is not only a matter of style.
-> > > 
-> > > When testing with gcc 10.3.0, I arrived at the conclusion that both {} and
-> > > {0} HAVE the same behavior (i.e the whole structure and included structures
-> > > are completely zeroed) and I don't have a C standard to check what the rules
-> > > are.
-> > > gcc online doc didn't help me either.
-> > 
-> > http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1256.pdf, but empty
-> > initializer-list is gccism anyway.
-> > 
-> > Section 6.7.8 is the one to look through there.
+On 16/08/2021 07:51, Pavel Machek wrote:
+> Hi!
 > 
-> That's out of date.  It changed in C11.  Both = { 0 } and = { } will
-> clear out struct holes. The = { } GCC extension has always initialized
-> struct holes.
+>> From: Colin Ian King <colin.king@canonical.com>
+>>
+>> The variable ret is being initialized with a value that is never read,
+>> it is being updated later on. The assignment is redundant and can be
+>> removed.
+>>
+>> Addresses-Coverity: ("Unused value")
+>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > 
-> http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1548.pdf
+> I did this instead; hopefully that's okay with everyone.
 > 
-> For partial initializations then all the padding is zeroed.
-> Unfortunately if you fully initialize the struct then padding is not
-> initialized.
+> Best regards,
+> 							Pavel
 
-If we're going to discuss which C standard applies to the kernel,
-then...
+Thanks, looks good to me.
 
-As Kbuild passes -std=gnu89, the kernel expects C89 behaviour with
-GNU extensions from the compiler, both C99 and C11 are not that
-relevant, although the GNU extensions include some bits from these
-standards.
+Colin
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 40Mbps down 10Mbps up. Decent connectivity at last!
+> 
+> commit 654933ae7d32f278eecd0bb0f175785574ac4775
+> Author: Pavel Machek <pavel@ucw.cz>
+> Date:   Mon Aug 16 08:47:08 2021 +0200
+> 
+>     leds: flash: Remove redundant initialization of variable ret
+>     
+>     Adjust initialization not to trigger Coverity warnings.
+>     
+>     Reported-by: Colin Ian King <colin.king@canonical.com>
+>     Signed-off-by: Pavel Machek <pavel@ucw.cz>
+> 
+> diff --git a/drivers/leds/led-class-flash.c b/drivers/leds/led-class-flash.c
+> index 6eeb9effcf65..185e17055317 100644
+> --- a/drivers/leds/led-class-flash.c
+> +++ b/drivers/leds/led-class-flash.c
+> @@ -92,14 +92,12 @@ static ssize_t flash_strobe_store(struct device *dev,
+>  	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+>  	struct led_classdev_flash *fled_cdev = lcdev_to_flcdev(led_cdev);
+>  	unsigned long state;
+> -	ssize_t ret = -EINVAL;
+> +	ssize_t ret = -EBUSY;
+>  
+>  	mutex_lock(&led_cdev->led_access);
+>  
+> -	if (led_sysfs_is_disabled(led_cdev)) {
+> -		ret = -EBUSY;
+> +	if (led_sysfs_is_disabled(led_cdev))
+>  		goto unlock;
+> -	}
+>  
+>  	ret = kstrtoul(buf, 10, &state);
+>  	if (ret)
+> 
+> 
+
