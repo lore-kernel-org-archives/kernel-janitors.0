@@ -2,149 +2,114 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B6EEC4338F
-	for <kernel-janitors@archiver.kernel.org>; Mon, 16 Aug 2021 10:13:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B4F4C4320A
+	for <kernel-janitors@archiver.kernel.org>; Mon, 16 Aug 2021 10:29:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6651B61B95
-	for <kernel-janitors@archiver.kernel.org>; Mon, 16 Aug 2021 10:13:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BFBA61BB4
+	for <kernel-janitors@archiver.kernel.org>; Mon, 16 Aug 2021 10:29:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230511AbhHPKNs (ORCPT
+        id S235747AbhHPKaU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 16 Aug 2021 06:13:48 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:44486
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229739AbhHPKNs (ORCPT
+        Mon, 16 Aug 2021 06:30:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37136 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231355AbhHPKaU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 16 Aug 2021 06:13:48 -0400
-Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 5A89B4066D;
-        Mon, 16 Aug 2021 10:13:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1629108789;
-        bh=ekQSJfklDT9uSnv9OoKFyRnMJCNZF91NF2do21ZeR1c=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=fpOKtBN7+f2B4banU1KlQoTzq/QNBTKsS4+3MS12hzONxJN14FYx5Zpy7mFnEo8OX
-         HL6myAexAApj11yuxhNPt9WgQ3wwReh+lEqCsMpsHmQdDSsSzWL7XJtiYF77zxwUvn
-         I32KsiGss4foz6PjjFymgT9bboYM2KxnkwEqPfVflNC4amxs/NE/T+TAb8ljWep1c/
-         nLgmiu5sDD+G/QF1JtaCaxIpoBoN7Jr7Fno+aW2GKd4T86Y2ISdlxObKmF9OSdqCFH
-         V7lPunEGLOy9nbbl7evkFjdcnVx3cQbd3aZxCo5lg5E6gCzRQYqJRMpasSvnBBM0BA
-         4tDXUjqX5wD1w==
-From:   Colin King <colin.king@canonical.com>
-To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        ntfs3@lists.linux.dev
+        Mon, 16 Aug 2021 06:30:20 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF9DAC061764;
+        Mon, 16 Aug 2021 03:29:48 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id g138so11231713wmg.4;
+        Mon, 16 Aug 2021 03:29:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zC6T7bwIy4U4vQbxXdGtxZMXQsi3PtjnTtfgcrsYRhE=;
+        b=FPOqA7xi7oANwZC58CFFSVRXHbzeGBVYfw1vS8K9e5GA/5tjXBZiCMTP96f+Z0+7Nu
+         MFIVrTtQEnh411BFcqJYmumAHifswyjhxeIv1D5Lmmd2mfIeZ6v1c9WBQ7g/gnRcq8Fx
+         spHvJ9NdNpSAmxKMgTUswYW/6m9LjknaNWh1mnMcGzc0uyKdMMxima0Lnlyzk3TJ0s/d
+         zwtGzAJ1rBcnhsJKRtqHkSJE9gK5STDWJUaUV3dfV4vczF5fJIXEnOIiyHNjjwjAI3kE
+         nNBN8kd/EXbtiO3Mbvc8UvOEchgf3DuOBnNG0f+8+G8L92RUt+KNJAA9jL2IKEztSmE3
+         0RDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zC6T7bwIy4U4vQbxXdGtxZMXQsi3PtjnTtfgcrsYRhE=;
+        b=WvRmPN51iiem2y9DAmuNrz2jtqda+bYP4RIYa9rMJkDBwxRccUGx7pJkTwoRKluQsf
+         XmyZg2kB+1dERc5V17i7qIVfXk+h6guUhVLofupZtrb5UbxaX+AWzFVQin80aDpXc+Y0
+         8GHo6FI0OfBc7ZKWszJbcdJhT+Th7fWaPOjoHIFvdFHYhXLdZx2DmIyB0PnoiPNgh2CC
+         MIiAq0fVwIw14T0fZykjsbQ6NUO1iBMfu5ghEmRHastIcJP1V9CjnzaLkHYnuBoBenAl
+         DnnIZYLcgXuFozX2oFgPr9H2ADQQK8C6FZ25c3nPqbLuRuofRq3AOvYPTgEhRxXuxgvl
+         BFbA==
+X-Gm-Message-State: AOAM530O+e+okCwtWqHrppYo96Vxq7KCIbBSot6zr2pNFq0ui+B7US1E
+        uopy7EerjbSL8UsEj5h26Ik=
+X-Google-Smtp-Source: ABdhPJxj9jwaASRpwTTbZVwcKbG924+JuU0ncGwiIXxe1ss32NyyWPXMUmc+Nec+9/r0sbHas2oXGw==
+X-Received: by 2002:a05:600c:1d01:: with SMTP id l1mr13472797wms.178.1629109787293;
+        Mon, 16 Aug 2021 03:29:47 -0700 (PDT)
+Received: from localhost.localdomain (arl-84-90-178-246.netvisao.pt. [84.90.178.246])
+        by smtp.gmail.com with ESMTPSA id e3sm11767136wrv.65.2021.08.16.03.29.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Aug 2021 03:29:46 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        James Hartley <james.hartley@sondrel.com>,
+        linux-mips@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kari Argillander <kari.argillander@gmail.com>
-Subject: [PATCH][next][V2] fs/ntfs3: Fix various spelling mistakes
-Date:   Mon, 16 Aug 2021 11:13:08 +0100
-Message-Id: <20210816101308.67769-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.32.0
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: adjust PISTACHIO SOC SUPPORT after its retirement
+Date:   Mon, 16 Aug 2021 12:29:42 +0200
+Message-Id: <20210816102942.6976-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Commit 104f942b2832 ("MIPS: Retire MACH_PISTACHIO") removes
+./arch/mips/pistachio/ and ./arch/mips/configs/pistachio_defconfig, but
+misses to adjust the corresponding section PISTACHIO SOC SUPPORT
+in MAINTAINERS.
 
-There is a spelling mistake in a ntfs_err error message. Also
-fix various spelling mistakes in comments.
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains:
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Reviewed-by Kari Argillander <kari.argillander@gmail.com>
+  warning: no file matches    F:    arch/mips/configs/pistachio*_defconfig
+  warning: no file matches    F:    arch/mips/pistachio/
+
+Adjust the PISTACHIO SOC SUPPORT after its retirement.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
-V2: Also fix spelling mistakes in comments, thanks to Kari Argillander 
-    for noting that these need fixing too.
----
- fs/ntfs3/debug.h                 | 2 +-
- fs/ntfs3/lib/decompress_common.c | 2 +-
- fs/ntfs3/run.c                   | 2 +-
- fs/ntfs3/super.c                 | 4 ++--
- fs/ntfs3/upcase.c                | 2 +-
- 5 files changed, 6 insertions(+), 6 deletions(-)
+applies cleanly on next-20210816
 
-diff --git a/fs/ntfs3/debug.h b/fs/ntfs3/debug.h
-index dfaa4c79dc6d..15ac42185e5b 100644
---- a/fs/ntfs3/debug.h
-+++ b/fs/ntfs3/debug.h
-@@ -3,7 +3,7 @@
-  *
-  * Copyright (C) 2019-2021 Paragon Software GmbH, All rights reserved.
-  *
-- * useful functions for debuging
-+ * useful functions for debugging
-  */
+Jiaxun, James, please ack. 
+Thomas, please pick this minor non-urgent clean-up patch on mips-next.
+
+ MAINTAINERS | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 1a2d3ee2711e..8276e59406e4 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -14802,8 +14802,6 @@ M:	James Hartley <james.hartley@sondrel.com>
+ L:	linux-mips@vger.kernel.org
+ S:	Odd Fixes
+ F:	arch/mips/boot/dts/img/pistachio*
+-F:	arch/mips/configs/pistachio*_defconfig
+-F:	arch/mips/pistachio/
  
- // clang-format off
-diff --git a/fs/ntfs3/lib/decompress_common.c b/fs/ntfs3/lib/decompress_common.c
-index 83c9e93aea77..850d8e8c8f1f 100644
---- a/fs/ntfs3/lib/decompress_common.c
-+++ b/fs/ntfs3/lib/decompress_common.c
-@@ -292,7 +292,7 @@ int make_huffman_decode_table(u16 decode_table[], const u32 num_syms,
- 				 * of as simply the root of the tree.  The
- 				 * representation of these internal nodes is
- 				 * simply the index of the left child combined
--				 * with the special bits 0xC000 to distingush
-+				 * with the special bits 0xC000 to distinguish
- 				 * the entry from direct mapping and leaf node
- 				 * entries.
- 				 */
-diff --git a/fs/ntfs3/run.c b/fs/ntfs3/run.c
-index 5cdf6efe67e0..f9c362ac672e 100644
---- a/fs/ntfs3/run.c
-+++ b/fs/ntfs3/run.c
-@@ -949,7 +949,7 @@ int run_unpack(struct runs_tree *run, struct ntfs_sb_info *sbi, CLST ino,
- 		if (next_vcn > 0x100000000ull || (lcn + len) > 0x100000000ull) {
- 			ntfs_err(
- 				sbi->sb,
--				"This driver is compiled whitout CONFIG_NTFS3_64BIT_CLUSTER (like windows driver).\n"
-+				"This driver is compiled without CONFIG_NTFS3_64BIT_CLUSTER (like windows driver).\n"
- 				"Volume contains 64 bits run: vcn %llx, lcn %llx, len %llx.\n"
- 				"Activate CONFIG_NTFS3_64BIT_CLUSTER to process this case",
- 				vcn64, lcn, len);
-diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
-index 6be13e256c1a..84d4f389f685 100644
---- a/fs/ntfs3/super.c
-+++ b/fs/ntfs3/super.c
-@@ -124,7 +124,7 @@ void ntfs_inode_printk(struct inode *inode, const char *fmt, ...)
- /*
-  * Shared memory struct.
-  *
-- * on-disk ntfs's upcase table is created by ntfs formater
-+ * on-disk ntfs's upcase table is created by ntfs formatter
-  * 'upcase' table is 128K bytes of memory
-  * we should read it into memory when mounting
-  * Several ntfs volumes likely use the same 'upcase' table
-@@ -1208,7 +1208,7 @@ static int ntfs_fill_super(struct super_block *sb, void *data, int silent)
- 	sbi->def_entries = 1;
- 	done = sizeof(struct ATTR_DEF_ENTRY);
- 	sbi->reparse.max_size = MAXIMUM_REPARSE_DATA_BUFFER_SIZE;
--	sbi->ea_max_size = 0x10000; /* default formater value */
-+	sbi->ea_max_size = 0x10000; /* default formatter value */
- 
- 	while (done + sizeof(struct ATTR_DEF_ENTRY) <= bytes) {
- 		u32 t32 = le32_to_cpu(t->type);
-diff --git a/fs/ntfs3/upcase.c b/fs/ntfs3/upcase.c
-index 9617382aca64..b53943538f9f 100644
---- a/fs/ntfs3/upcase.c
-+++ b/fs/ntfs3/upcase.c
-@@ -27,7 +27,7 @@ static inline u16 upcase_unicode_char(const u16 *upcase, u16 chr)
- /*
-  * Thanks Kari Argillander <kari.argillander@gmail.com> for idea and implementation 'bothcase'
-  *
-- * Straigth way to compare names:
-+ * Straight way to compare names:
-  * - case insensitive
-  * - if name equals and 'bothcases' then
-  * - case sensitive
+ PKTCDVD DRIVER
+ M:	linux-block@vger.kernel.org
 -- 
-2.32.0
+2.26.2
 
