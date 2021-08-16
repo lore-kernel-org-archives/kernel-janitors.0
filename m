@@ -8,67 +8,67 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A22DC4320A
-	for <kernel-janitors@archiver.kernel.org>; Mon, 16 Aug 2021 14:00:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEE59C4338F
+	for <kernel-janitors@archiver.kernel.org>; Mon, 16 Aug 2021 15:11:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 10A70632FB
-	for <kernel-janitors@archiver.kernel.org>; Mon, 16 Aug 2021 14:00:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7C57606A5
+	for <kernel-janitors@archiver.kernel.org>; Mon, 16 Aug 2021 15:11:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231744AbhHPOAv (ORCPT
+        id S232634AbhHPPMJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 16 Aug 2021 10:00:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57508 "EHLO
+        Mon, 16 Aug 2021 11:12:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231859AbhHPOA2 (ORCPT
+        with ESMTP id S229550AbhHPPMI (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 16 Aug 2021 10:00:28 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8726BC0612A9;
-        Mon, 16 Aug 2021 06:59:37 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id z9so23713487wrh.10;
-        Mon, 16 Aug 2021 06:59:37 -0700 (PDT)
+        Mon, 16 Aug 2021 11:12:08 -0400
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AAE3C061764;
+        Mon, 16 Aug 2021 08:11:37 -0700 (PDT)
+Received: by mail-wr1-x430.google.com with SMTP id k8so5180160wrn.3;
+        Mon, 16 Aug 2021 08:11:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=KZutF4knfsOuF8Cv0WuZd4fBJstx8+dJNDUrpHSR5Vs=;
-        b=IabavD9KFls6I9KUiTe51j9br3DeNKSgVE7+mmsIZRHz0USNduyx8sMF2GS0bkAaD2
-         RqF5tIs3hm5fMte83Jy/ne0nQ6mvuaDwKx/gjNxZ6ThciabLsABGrRobFt0FbJW/j7ve
-         EopjjYZCHdUQ15qg1eI9cVfC3tWBCuECilkbZruZGpjauo5XPwo6vUrK5h/CytB8/IyZ
-         TWmSjZCpDUbt7SWGoh6ytEv+2ZdnRuaLJPkNDfOrOlUu21nlXC4kan24kQeCZK3oWF23
-         xhpfveSS+D3AuxtLgsX4H2lR4P+bNpGg9iBx77rHU3SZTDEUfxl+PWhVJfWnvxfH73Cs
-         uyLg==
+        bh=i91Xnqm0s2YZ0wkXrlBd/CQ8uFNBQwcWmTXkV70rIO8=;
+        b=mXdRnI5akKj/2CuINhEgUlHbpAoHAZSDRJnbwmVbtvgPXfvFUxvuDBqWx1tpiytRHU
+         5aD9IqSBD0sZRqy47eQrp92oOibMRpkkBVnR9rdT3AACT9S7b6dlRRsyNK8EF9+hLjjO
+         X4KaLVLHWjj1ADCuP6J1uh4k/I6OdK51pGNMQqgQFnr7whdYILGYdgtqVToIXihW/rML
+         e0FQ834UrzX1Hp06QfMTAmpFB7qg6jRaaB1j4jJKK1Iu/zikRKZiHT2dKor66bSMzh0f
+         JReTYPq/Zx4PBaK5VhBXkp/sEM8M1C0lQfFnlG7MSoiJERbhfSLrvosnhG3yuPUKHqMz
+         XDrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=KZutF4knfsOuF8Cv0WuZd4fBJstx8+dJNDUrpHSR5Vs=;
-        b=IbKe/PxNJ3WKLbP+oEoXbSzScVi/CCBcVBmfsh5nm7FBQaMRqjaaETcq4AwE5a0oWM
-         lNAYaoqqbBQm/UdLbvkmQS3SBA7dJUsI/NLvnuMJCk6RI/7eSqzOgESlFYVgZI6xeQCA
-         QY/WzVzS/5dM377NoGQfSsptt4djaV9w5L5ASGbrwGTHVxFc8sHFeHiHzO+mCbF3Nkyz
-         J983pgJFj5QTG7RlrogaPeQvX8UQEZxGSE/fUbZb4hlD74SRuQJOvkDcABpptNljZTHY
-         0WHKoA04vpavBDzi2fNrg9ix0ozG/QNSrBq1vVOq7IJnMvahMkJnb4stXtVdIt6IfZFj
-         OK3A==
-X-Gm-Message-State: AOAM532p/zlNQVyOqk3+jKDNeCphFSCOHIvkUeZ98SpJrG2IGaiX6NC0
-        dfQCR01Zn5F7H+IQiCVBQOk=
-X-Google-Smtp-Source: ABdhPJy+Q+4j8nqBRSzx6Z9tbZZ5EqsU+MprxZP86/ilnLcVEKX6wtCdxRv9oY0sEDeO94qwZrdWbg==
-X-Received: by 2002:adf:fc45:: with SMTP id e5mr18410368wrs.127.1629122376151;
-        Mon, 16 Aug 2021 06:59:36 -0700 (PDT)
+        bh=i91Xnqm0s2YZ0wkXrlBd/CQ8uFNBQwcWmTXkV70rIO8=;
+        b=hCfh0wJ+NbDYioU6iTB71Qt8UN5U2b4UyQOSJ9haCov9K5U0yCamUw5gUiaXG7ab29
+         rw7rb8mgNNwCWyNX30jgYs0fJcIVRfPB6OUhlasAajgI1w3CwyCbYFSNCEm0hTRsPQn0
+         DcghdXULcmF9fILyffzsH/6De0qOM6ts/cphpG31KsBhFRDbakrQDrMAgjG+kn9KzQiy
+         22DXTDFpQ/1ClHDO3ife0NHLc2QKdrZS6Un7HehjVnmSEZjQWpHYNRX9aLWlEIDIcQ2Q
+         CsC5fCdMRqRUKYMqeNetLbTUiOyeHklBQQ/8bztF7+bDI63+5BdeAQcqZQ0hxClRzEVm
+         isYA==
+X-Gm-Message-State: AOAM533ob1JdZL4t9f2LVrXqWPhtOc8LhuHvzo0mn7H8IepTPnZDC5bx
+        icNbm0vE4mu4H1MhydSQhols0SThfxI=
+X-Google-Smtp-Source: ABdhPJyrIFmc2g7RMEQbjesHou0XyfLg8Uy6JrHQ6MaqqmM5XtDs8yBL0ugBNJRt7ZgZ/GO0FZCpGA==
+X-Received: by 2002:adf:f7c5:: with SMTP id a5mr18905085wrq.355.1629126695647;
+        Mon, 16 Aug 2021 08:11:35 -0700 (PDT)
 Received: from localhost.localdomain (arl-84-90-178-246.netvisao.pt. [84.90.178.246])
-        by smtp.gmail.com with ESMTPSA id r129sm10697693wmr.7.2021.08.16.06.59.34
+        by smtp.gmail.com with ESMTPSA id w14sm11795011wrt.23.2021.08.16.08.11.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Aug 2021 06:59:35 -0700 (PDT)
+        Mon, 16 Aug 2021 08:11:35 -0700 (PDT)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org
+To:     Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        linux-arm-kernel@lists.infradead.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] clk: qcom: adjust selects for SM_VIDEOCC_8150 and SM_VIDEOCC_8250
-Date:   Mon, 16 Aug 2021 15:59:30 +0200
-Message-Id: <20210816135930.11810-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH] pcmcia: clean up dead drivers for CompuLab CM-X255/CM-X270 boards
+Date:   Mon, 16 Aug 2021 17:01:15 +0200
+Message-Id: <20210816150115.12889-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -76,54 +76,345 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 5658e8cf1a8a ("clk: qcom: add video clock controller driver for
-SM8150") and commit 0e94711a1f29 ("clk: qcom: add video clock controller
-driver for SM8250") add config SM_VIDEOCC_8150 and config SM_VIDEOCC_8250,
-which select the non-existing configs SDM_GCC_8150 and SDM_GCC_8250,
-respectively.
+Commit 9d3239147d6d ("ARM: pxa: remove Compulab pxa2xx boards") removes
+the config MACH_ARMCORE in ./arch/arm/mach-pxa/Kconfig.
 
-Hence, ./scripts/checkkconfigsymbols.py warns:
+Hence, ./scripts/checkkconfigsymbols.py warns on non-existing configs:
 
-SDM_GCC_8150
-Referencing files: drivers/clk/qcom/Kconfig
+MACH_ARMCORE
+Referencing files: drivers/pcmcia/Kconfig, drivers/pcmcia/Makefile
 
-SDM_GCC_8250
-Referencing files: drivers/clk/qcom/Kconfig
-
-It is probably just a typo (or naming confusion of using SM_GCC_xxx and
-SDM_GCC_xxx for various Qualcomm clock drivers) in the config definitions
-for config SM_VIDEOCC_8150 and SM_VIDEOCC_8250, and intends to select the
-existing SM_GCC_8150 and SM_GCC_8250, respectively.
-
-Adjust the selects to the existing configs.
+Clean up the dead remains of pcmcia drivers for Compulab pxa2xx boards.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- drivers/clk/qcom/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pcmcia/Kconfig          |   2 +-
+ drivers/pcmcia/Makefile         |   2 -
+ drivers/pcmcia/pxa2xx_cm_x255.c | 124 --------------------------------
+ drivers/pcmcia/pxa2xx_cm_x270.c | 103 --------------------------
+ drivers/pcmcia/pxa2xx_cm_x2xx.c |  44 ------------
+ 5 files changed, 1 insertion(+), 274 deletions(-)
+ delete mode 100644 drivers/pcmcia/pxa2xx_cm_x255.c
+ delete mode 100644 drivers/pcmcia/pxa2xx_cm_x270.c
+ delete mode 100644 drivers/pcmcia/pxa2xx_cm_x2xx.c
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index 85b090a8d9c6..6c54d810d615 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -579,7 +579,7 @@ config SM_GPUCC_8250
+diff --git a/drivers/pcmcia/Kconfig b/drivers/pcmcia/Kconfig
+index d13b8d1a780a..ab53eab635f6 100644
+--- a/drivers/pcmcia/Kconfig
++++ b/drivers/pcmcia/Kconfig
+@@ -209,7 +209,7 @@ config PCMCIA_PXA2XX
+ 	tristate "PXA2xx support"
+ 	depends on ARM && ARCH_PXA && PCMCIA
+ 	depends on (ARCH_LUBBOCK || MACH_MAINSTONE || PXA_SHARPSL \
+-		    || MACH_ARMCORE || ARCH_PXA_PALM || TRIZEPS_PCMCIA \
++		    || ARCH_PXA_PALM || TRIZEPS_PCMCIA \
+ 		    || ARCOM_PCMCIA || ARCH_PXA_ESERIES || MACH_STARGATE2 \
+ 		    || MACH_VPAC270 || MACH_BALLOON3 || MACH_COLIBRI \
+ 		    || MACH_COLIBRI320 || MACH_H4700)
+diff --git a/drivers/pcmcia/Makefile b/drivers/pcmcia/Makefile
+index d82c07c4806b..2d5657cfc49c 100644
+--- a/drivers/pcmcia/Makefile
++++ b/drivers/pcmcia/Makefile
+@@ -48,10 +48,8 @@ sa1100_cs-$(CONFIG_SA1100_H3100)		+= sa1100_h3600.o
+ sa1100_cs-$(CONFIG_SA1100_H3600)		+= sa1100_h3600.o
+ sa1100_cs-$(CONFIG_SA1100_SIMPAD)		+= sa1100_simpad.o
  
- config SM_VIDEOCC_8150
- 	tristate "SM8150 Video Clock Controller"
--	select SDM_GCC_8150
-+	select SM_GCC_8150
- 	select QCOM_GDSC
- 	help
- 	  Support for the video clock controller on SM8150 devices.
-@@ -588,7 +588,7 @@ config SM_VIDEOCC_8150
- 
- config SM_VIDEOCC_8250
- 	tristate "SM8250 Video Clock Controller"
--	select SDM_GCC_8250
-+	select SM_GCC_8250
- 	select QCOM_GDSC
- 	help
- 	  Support for the video clock controller on SM8250 devices.
+-pxa2xx_cm_x2xx_cs-y				+= pxa2xx_cm_x2xx.o pxa2xx_cm_x255.o pxa2xx_cm_x270.o
+ pxa2xx-obj-$(CONFIG_MACH_MAINSTONE)		+= pxa2xx_mainstone.o
+ pxa2xx-obj-$(CONFIG_PXA_SHARPSL)		+= pxa2xx_sharpsl.o
+-pxa2xx-obj-$(CONFIG_MACH_ARMCORE)		+= pxa2xx_cm_x2xx_cs.o
+ pxa2xx-obj-$(CONFIG_ARCOM_PCMCIA)		+= pxa2xx_viper.o
+ pxa2xx-obj-$(CONFIG_TRIZEPS_PCMCIA)		+= pxa2xx_trizeps4.o
+ pxa2xx-obj-$(CONFIG_MACH_PALMTX)		+= pxa2xx_palmtx.o
+diff --git a/drivers/pcmcia/pxa2xx_cm_x255.c b/drivers/pcmcia/pxa2xx_cm_x255.c
+deleted file mode 100644
+index c0b6b846fbaa..000000000000
+--- a/drivers/pcmcia/pxa2xx_cm_x255.c
++++ /dev/null
+@@ -1,124 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-only
+-/*
+- * linux/drivers/pcmcia/pxa/pxa_cm_x255.c
+- *
+- * Compulab Ltd., 2003, 2007, 2008
+- * Mike Rapoport <mike@compulab.co.il>
+- */
+-
+-#include <linux/platform_device.h>
+-#include <linux/irq.h>
+-#include <linux/delay.h>
+-#include <linux/gpio.h>
+-#include <linux/export.h>
+-
+-#include "soc_common.h"
+-
+-#define GPIO_PCMCIA_SKTSEL	(54)
+-#define GPIO_PCMCIA_S0_CD_VALID	(16)
+-#define GPIO_PCMCIA_S1_CD_VALID	(17)
+-#define GPIO_PCMCIA_S0_RDYINT	(6)
+-#define GPIO_PCMCIA_S1_RDYINT	(8)
+-#define GPIO_PCMCIA_RESET	(9)
+-
+-static int cmx255_pcmcia_hw_init(struct soc_pcmcia_socket *skt)
+-{
+-	int ret = gpio_request(GPIO_PCMCIA_RESET, "PCCard reset");
+-	if (ret)
+-		return ret;
+-	gpio_direction_output(GPIO_PCMCIA_RESET, 0);
+-
+-	if (skt->nr == 0) {
+-		skt->stat[SOC_STAT_CD].gpio = GPIO_PCMCIA_S0_CD_VALID;
+-		skt->stat[SOC_STAT_CD].name = "PCMCIA0 CD";
+-		skt->stat[SOC_STAT_RDY].gpio = GPIO_PCMCIA_S0_RDYINT;
+-		skt->stat[SOC_STAT_RDY].name = "PCMCIA0 RDY";
+-	} else {
+-		skt->stat[SOC_STAT_CD].gpio = GPIO_PCMCIA_S1_CD_VALID;
+-		skt->stat[SOC_STAT_CD].name = "PCMCIA1 CD";
+-		skt->stat[SOC_STAT_RDY].gpio = GPIO_PCMCIA_S1_RDYINT;
+-		skt->stat[SOC_STAT_RDY].name = "PCMCIA1 RDY";
+-	}
+-
+-	return 0;
+-}
+-
+-static void cmx255_pcmcia_shutdown(struct soc_pcmcia_socket *skt)
+-{
+-	gpio_free(GPIO_PCMCIA_RESET);
+-}
+-
+-
+-static void cmx255_pcmcia_socket_state(struct soc_pcmcia_socket *skt,
+-				       struct pcmcia_state *state)
+-{
+-	state->vs_3v  = 0;
+-	state->vs_Xv  = 0;
+-}
+-
+-
+-static int cmx255_pcmcia_configure_socket(struct soc_pcmcia_socket *skt,
+-					  const socket_state_t *state)
+-{
+-	switch (skt->nr) {
+-	case 0:
+-		if (state->flags & SS_RESET) {
+-			gpio_set_value(GPIO_PCMCIA_SKTSEL, 0);
+-			udelay(1);
+-			gpio_set_value(GPIO_PCMCIA_RESET, 1);
+-			udelay(10);
+-			gpio_set_value(GPIO_PCMCIA_RESET, 0);
+-		}
+-		break;
+-	case 1:
+-		if (state->flags & SS_RESET) {
+-			gpio_set_value(GPIO_PCMCIA_SKTSEL, 1);
+-			udelay(1);
+-			gpio_set_value(GPIO_PCMCIA_RESET, 1);
+-			udelay(10);
+-			gpio_set_value(GPIO_PCMCIA_RESET, 0);
+-		}
+-		break;
+-	}
+-
+-	return 0;
+-}
+-
+-static struct pcmcia_low_level cmx255_pcmcia_ops __initdata = {
+-	.owner			= THIS_MODULE,
+-	.hw_init		= cmx255_pcmcia_hw_init,
+-	.hw_shutdown		= cmx255_pcmcia_shutdown,
+-	.socket_state		= cmx255_pcmcia_socket_state,
+-	.configure_socket	= cmx255_pcmcia_configure_socket,
+-	.nr			= 1,
+-};
+-
+-static struct platform_device *cmx255_pcmcia_device;
+-
+-int __init cmx255_pcmcia_init(void)
+-{
+-	int ret;
+-
+-	cmx255_pcmcia_device = platform_device_alloc("pxa2xx-pcmcia", -1);
+-
+-	if (!cmx255_pcmcia_device)
+-		return -ENOMEM;
+-
+-	ret = platform_device_add_data(cmx255_pcmcia_device, &cmx255_pcmcia_ops,
+-				       sizeof(cmx255_pcmcia_ops));
+-
+-	if (ret == 0) {
+-		printk(KERN_INFO "Registering cm-x255 PCMCIA interface.\n");
+-		ret = platform_device_add(cmx255_pcmcia_device);
+-	}
+-
+-	if (ret)
+-		platform_device_put(cmx255_pcmcia_device);
+-
+-	return ret;
+-}
+-
+-void __exit cmx255_pcmcia_exit(void)
+-{
+-	platform_device_unregister(cmx255_pcmcia_device);
+-}
+diff --git a/drivers/pcmcia/pxa2xx_cm_x270.c b/drivers/pcmcia/pxa2xx_cm_x270.c
+deleted file mode 100644
+index 36e35da5f887..000000000000
+--- a/drivers/pcmcia/pxa2xx_cm_x270.c
++++ /dev/null
+@@ -1,103 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-only
+-/*
+- * linux/drivers/pcmcia/pxa/pxa_cm_x270.c
+- *
+- * Compulab Ltd., 2003, 2007, 2008
+- * Mike Rapoport <mike@compulab.co.il>
+- */
+-
+-#include <linux/platform_device.h>
+-#include <linux/irq.h>
+-#include <linux/delay.h>
+-#include <linux/gpio.h>
+-#include <linux/export.h>
+-
+-#include "soc_common.h"
+-
+-#define GPIO_PCMCIA_S0_CD_VALID	(84)
+-#define GPIO_PCMCIA_S0_RDYINT	(82)
+-#define GPIO_PCMCIA_RESET	(53)
+-
+-static int cmx270_pcmcia_hw_init(struct soc_pcmcia_socket *skt)
+-{
+-	int ret = gpio_request(GPIO_PCMCIA_RESET, "PCCard reset");
+-	if (ret)
+-		return ret;
+-	gpio_direction_output(GPIO_PCMCIA_RESET, 0);
+-
+-	skt->stat[SOC_STAT_CD].gpio = GPIO_PCMCIA_S0_CD_VALID;
+-	skt->stat[SOC_STAT_CD].name = "PCMCIA0 CD";
+-	skt->stat[SOC_STAT_RDY].gpio = GPIO_PCMCIA_S0_RDYINT;
+-	skt->stat[SOC_STAT_RDY].name = "PCMCIA0 RDY";
+-
+-	return ret;
+-}
+-
+-static void cmx270_pcmcia_shutdown(struct soc_pcmcia_socket *skt)
+-{
+-	gpio_free(GPIO_PCMCIA_RESET);
+-}
+-
+-
+-static void cmx270_pcmcia_socket_state(struct soc_pcmcia_socket *skt,
+-				       struct pcmcia_state *state)
+-{
+-	state->vs_3v  = 0;
+-	state->vs_Xv  = 0;
+-}
+-
+-
+-static int cmx270_pcmcia_configure_socket(struct soc_pcmcia_socket *skt,
+-					  const socket_state_t *state)
+-{
+-	switch (skt->nr) {
+-	case 0:
+-		if (state->flags & SS_RESET) {
+-			gpio_set_value(GPIO_PCMCIA_RESET, 1);
+-			udelay(10);
+-			gpio_set_value(GPIO_PCMCIA_RESET, 0);
+-		}
+-		break;
+-	}
+-
+-	return 0;
+-}
+-
+-static struct pcmcia_low_level cmx270_pcmcia_ops __initdata = {
+-	.owner			= THIS_MODULE,
+-	.hw_init		= cmx270_pcmcia_hw_init,
+-	.hw_shutdown		= cmx270_pcmcia_shutdown,
+-	.socket_state		= cmx270_pcmcia_socket_state,
+-	.configure_socket	= cmx270_pcmcia_configure_socket,
+-	.nr			= 1,
+-};
+-
+-static struct platform_device *cmx270_pcmcia_device;
+-
+-int __init cmx270_pcmcia_init(void)
+-{
+-	int ret;
+-
+-	cmx270_pcmcia_device = platform_device_alloc("pxa2xx-pcmcia", -1);
+-
+-	if (!cmx270_pcmcia_device)
+-		return -ENOMEM;
+-
+-	ret = platform_device_add_data(cmx270_pcmcia_device, &cmx270_pcmcia_ops,
+-				       sizeof(cmx270_pcmcia_ops));
+-
+-	if (ret == 0) {
+-		printk(KERN_INFO "Registering cm-x270 PCMCIA interface.\n");
+-		ret = platform_device_add(cmx270_pcmcia_device);
+-	}
+-
+-	if (ret)
+-		platform_device_put(cmx270_pcmcia_device);
+-
+-	return ret;
+-}
+-
+-void __exit cmx270_pcmcia_exit(void)
+-{
+-	platform_device_unregister(cmx270_pcmcia_device);
+-}
+diff --git a/drivers/pcmcia/pxa2xx_cm_x2xx.c b/drivers/pcmcia/pxa2xx_cm_x2xx.c
+deleted file mode 100644
+index 14eae238131d..000000000000
+--- a/drivers/pcmcia/pxa2xx_cm_x2xx.c
++++ /dev/null
+@@ -1,44 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-only
+-/*
+- * linux/drivers/pcmcia/pxa/pxa_cm_x2xx.c
+- *
+- * Compulab Ltd., 2003, 2007, 2008
+- * Mike Rapoport <mike@compulab.co.il>
+- */
+-
+-#include <linux/module.h>
+-
+-#include <asm/mach-types.h>
+-#include <mach/hardware.h>
+-
+-int cmx255_pcmcia_init(void);
+-int cmx270_pcmcia_init(void);
+-void cmx255_pcmcia_exit(void);
+-void cmx270_pcmcia_exit(void);
+-
+-static int __init cmx2xx_pcmcia_init(void)
+-{
+-	int ret = -ENODEV;
+-
+-	if (machine_is_armcore() && cpu_is_pxa25x())
+-		ret = cmx255_pcmcia_init();
+-	else if (machine_is_armcore() && cpu_is_pxa27x())
+-		ret = cmx270_pcmcia_init();
+-
+-	return ret;
+-}
+-
+-static void __exit cmx2xx_pcmcia_exit(void)
+-{
+-	if (machine_is_armcore() && cpu_is_pxa25x())
+-		cmx255_pcmcia_exit();
+-	else if (machine_is_armcore() && cpu_is_pxa27x())
+-		cmx270_pcmcia_exit();
+-}
+-
+-module_init(cmx2xx_pcmcia_init);
+-module_exit(cmx2xx_pcmcia_exit);
+-
+-MODULE_LICENSE("GPL");
+-MODULE_AUTHOR("Mike Rapoport <mike@compulab.co.il>");
+-MODULE_DESCRIPTION("CM-x2xx PCMCIA driver");
 -- 
 2.26.2
 
