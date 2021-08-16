@@ -2,116 +2,110 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-21.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FE05C4338F
-	for <kernel-janitors@archiver.kernel.org>; Mon, 16 Aug 2021 09:21:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82FF2C4338F
+	for <kernel-janitors@archiver.kernel.org>; Mon, 16 Aug 2021 09:41:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8438561B60
-	for <kernel-janitors@archiver.kernel.org>; Mon, 16 Aug 2021 09:21:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DDBD61B07
+	for <kernel-janitors@archiver.kernel.org>; Mon, 16 Aug 2021 09:41:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235407AbhHPJVo (ORCPT
+        id S235336AbhHPJll (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 16 Aug 2021 05:21:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49568 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234976AbhHPJVl (ORCPT
+        Mon, 16 Aug 2021 05:41:41 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:36462
+        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231673AbhHPJll (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 16 Aug 2021 05:21:41 -0400
-Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C7F2C061764;
-        Mon, 16 Aug 2021 02:21:10 -0700 (PDT)
-Received: by mail-lj1-x233.google.com with SMTP id x7so26117724ljn.10;
-        Mon, 16 Aug 2021 02:21:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=LRGTep3WsU+Qw2wPyD0TPeWbvx3jLV3VOTw3AosQyrw=;
-        b=SDWyTdBV2GC4jhjZo9gBA0jLN02KUIYJKfsEbg2upo2CyFYbaLJ9ga6s6KiDXHwUP3
-         zSYSCJtTamSjd6aAEHd/ok8McsvxWbacjW1ucFvopK6Q+aOmzO6AfrQcG/AKZMv9RTBo
-         82r/pzZUGgtBk5ubCX/4WUpe7WNlc232526GmQkMFb+58b3wz/7h4MEZmU6yqm32LGHK
-         K08zexCjo0DVEpUylLJss6f4Vl2Gpu/Tht8+g/gzuDLT4/sfHeCE+w7tnBZot7hysoOO
-         cT9w8Vq7PXAgnQpP3deyxuiSGz3Y3Ad0nbWuDqAGbczWxq7UCiIXcC4RjN5bzvWGgUTO
-         1gmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=LRGTep3WsU+Qw2wPyD0TPeWbvx3jLV3VOTw3AosQyrw=;
-        b=HhbLFnl9tc2GCl1lknGIMZAlECV2o0czSM3LJIOXe1+Jeqo44QrSc0z3USStRUAanj
-         3hfGqw4j5FT8cp547Z7ikH8n74M/I20c3+un2t6Snyclioy2+5SDjq9cUNK+9SDqtzp3
-         cJ4rdacarf5FxjTWSvxnbLGfwxUsJYZldDs+UAJWDBX1xJtFfV9PQxWDdY+qMJ7BqsuZ
-         3t3Wsy0tpI9Fx3HoSV19aRPxMD+0FJl+X2meSLYBkSdmKprQv10mfB0NdsjI5HOwyaJf
-         0+LXyO58iX9Ur/uKT7agRKLn2JvHnyWTUcTYmBUPymNm5eNiIUjarw6geTHcimQtImfM
-         ELDg==
-X-Gm-Message-State: AOAM5326Or0SCME9o9A8o4sjoxY7lL9QTCeAiCrYIDvdn8l8+/kp8vII
-        gyLTs2LEuf6KSDGY59REw2M=
-X-Google-Smtp-Source: ABdhPJzO+FrFTFOwYSmImZr6cKTBG0yqdqmaB2mOGYXr255dgIOYWX9fsBHuEKDbLuiPuOJTsoO1Ww==
-X-Received: by 2002:a2e:9ccc:: with SMTP id g12mr11531219ljj.121.1629105668764;
-        Mon, 16 Aug 2021 02:21:08 -0700 (PDT)
-Received: from kari-VirtualBox (85-23-89-224.bb.dnainternet.fi. [85.23.89.224])
-        by smtp.gmail.com with ESMTPSA id y3sm1106454ljj.121.2021.08.16.02.21.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Aug 2021 02:21:08 -0700 (PDT)
-Date:   Mon, 16 Aug 2021 12:21:06 +0300
-From:   Kari Argillander <kari.argillander@gmail.com>
-To:     Colin King <colin.king@canonical.com>
+        Mon, 16 Aug 2021 05:41:41 -0400
+Received: from [10.172.193.212] (1.general.cking.uk.vpn [10.172.193.212])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id ABDF140C95;
+        Mon, 16 Aug 2021 09:41:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1629106868;
+        bh=j/mWkt5O9homqNmYOpU5RrzA5utHDfXtb6pRWVNiUxk=;
+        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+         In-Reply-To:Content-Type;
+        b=Y971+ePiwSXqQbhNLGiWdgGiTEOTrmSI3VKYWGS8QJquSgfG1vgLg3WL9qqqFy0Xl
+         s4eXo3IVJsSiInyhldVyymgS6RdpjqHOaMNulZGLZGkj8yodUDJjg8jYw1Fbo4iwHL
+         1MNn3NoOdaiMihyPI6xrDZF8eNu+eObpq6G2s1JJpZWzg6BiXvqED81AsZOlx8S3CS
+         QzheQBUDUh3J3Rhv7FtFkNF48bQhDnoCmqQEWFX+Buy0icO3q58bYLA0cHjXDwHQ5J
+         hAhMOG7LB/ds1qgqiYVFsOHUA7sz5zE7oZlQO+MQlwxjIyePhJHVZSkzf4OqPI2vEz
+         eDQprqODJHLoA==
+Subject: Re: [PATCH] fs/ntfs3: Fix spelling mistake "whitout" -> "without"
+To:     Kari Argillander <kari.argillander@gmail.com>
 Cc:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
         ntfs3@lists.linux.dev, kernel-janitors@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs/ntfs3: Fix spelling mistake "whitout" -> "without"
-Message-ID: <20210816092106.s5oexqqztctaa544@kari-VirtualBox>
 References: <20210816081401.5825-1-colin.king@canonical.com>
+ <20210816092106.s5oexqqztctaa544@kari-VirtualBox>
+From:   Colin Ian King <colin.king@canonical.com>
+Message-ID: <f987fb3d-0037-fe9c-52fe-78d528c85b07@canonical.com>
+Date:   Mon, 16 Aug 2021 10:41:07 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210816081401.5825-1-colin.king@canonical.com>
+In-Reply-To: <20210816092106.s5oexqqztctaa544@kari-VirtualBox>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Aug 16, 2021 at 09:14:01AM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On 16/08/2021 10:21, Kari Argillander wrote:
+> On Mon, Aug 16, 2021 at 09:14:01AM +0100, Colin King wrote:
+>> From: Colin Ian King <colin.king@canonical.com>
+>>
+>> There is a spelling mistake in a ntfs_err error message. Fix it.
+>>
+>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>> ---
+>>  fs/ntfs3/run.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/fs/ntfs3/run.c b/fs/ntfs3/run.c
+>> index 5cdf6efe67e0..f9c362ac672e 100644
+>> --- a/fs/ntfs3/run.c
+>> +++ b/fs/ntfs3/run.c
+>> @@ -949,7 +949,7 @@ int run_unpack(struct runs_tree *run, struct ntfs_sb_info *sbi, CLST ino,
+>>  		if (next_vcn > 0x100000000ull || (lcn + len) > 0x100000000ull) {
+>>  			ntfs_err(
+>>  				sbi->sb,
+>> -				"This driver is compiled whitout CONFIG_NTFS3_64BIT_CLUSTER (like windows driver).\n"
+>> +				"This driver is compiled without CONFIG_NTFS3_64BIT_CLUSTER (like windows driver).\n"
+>>  				"Volume contains 64 bits run: vcn %llx, lcn %llx, len %llx.\n"
+>>  				"Activate CONFIG_NTFS3_64BIT_CLUSTER to process this case",
+>>  				vcn64, lcn, len);
 > 
-> There is a spelling mistake in a ntfs_err error message. Fix it.
+> There is still other spelling typos what codespell catch. Why you just
+> fix this one?
+
+Normally there are so many spelling mistakes in comments in the kernel I
+ignore these, as life it too short. I'm trying to first fix the
+user-facing text messages in errors and warnings etc..
+
 > 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  fs/ntfs3/run.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> codespell -L iput,te,fo,ane,filp fs/ntfs3
+> 	fs/ntfs3/debug.h:6: debuging ==> debugging
+> 	fs/ntfs3/run.c:952: whitout ==> without, whiteout
+> 	fs/ntfs3/super.c:127: formater ==> formatter
+> 	fs/ntfs3/super.c:1211: formater ==> formatter
+> 	fs/ntfs3/upcase.c:30: Straigth ==> Straight
+> 	fs/ntfs3/lib/decompress_common.c:295: distingush ==> distinguish
 > 
-> diff --git a/fs/ntfs3/run.c b/fs/ntfs3/run.c
-> index 5cdf6efe67e0..f9c362ac672e 100644
-> --- a/fs/ntfs3/run.c
-> +++ b/fs/ntfs3/run.c
-> @@ -949,7 +949,7 @@ int run_unpack(struct runs_tree *run, struct ntfs_sb_info *sbi, CLST ino,
->  		if (next_vcn > 0x100000000ull || (lcn + len) > 0x100000000ull) {
->  			ntfs_err(
->  				sbi->sb,
-> -				"This driver is compiled whitout CONFIG_NTFS3_64BIT_CLUSTER (like windows driver).\n"
-> +				"This driver is compiled without CONFIG_NTFS3_64BIT_CLUSTER (like windows driver).\n"
->  				"Volume contains 64 bits run: vcn %llx, lcn %llx, len %llx.\n"
->  				"Activate CONFIG_NTFS3_64BIT_CLUSTER to process this case",
->  				vcn64, lcn, len);
 
-There is still other spelling typos what codespell catch. Why you just
-fix this one?
+Yep, I'll fix these later in a V2.
 
-codespell -L iput,te,fo,ane,filp fs/ntfs3
-	fs/ntfs3/debug.h:6: debuging ==> debugging
-	fs/ntfs3/run.c:952: whitout ==> without, whiteout
-	fs/ntfs3/super.c:127: formater ==> formatter
-	fs/ntfs3/super.c:1211: formater ==> formatter
-	fs/ntfs3/upcase.c:30: Straigth ==> Straight
-	fs/ntfs3/lib/decompress_common.c:295: distingush ==> distinguish
-
-If just this gets in then:
-Reviewed-by Kari Argillander <kari.argillander@gmail.com>
-
-If you send v2 I will tag that again.
+> If just this gets in then:
+> Reviewed-by Kari Argillander <kari.argillander@gmail.com>
+> 
+> If you send v2 I will tag that again.
+> 
 
