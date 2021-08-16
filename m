@@ -2,95 +2,128 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D66CC4320A
-	for <kernel-janitors@archiver.kernel.org>; Mon, 16 Aug 2021 12:55:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A22DC4320A
+	for <kernel-janitors@archiver.kernel.org>; Mon, 16 Aug 2021 14:00:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1CE4563275
-	for <kernel-janitors@archiver.kernel.org>; Mon, 16 Aug 2021 12:55:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10A70632FB
+	for <kernel-janitors@archiver.kernel.org>; Mon, 16 Aug 2021 14:00:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230265AbhHPMz6 (ORCPT
+        id S231744AbhHPOAv (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 16 Aug 2021 08:55:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52178 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229593AbhHPMz6 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 16 Aug 2021 08:55:58 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B8E626328A;
-        Mon, 16 Aug 2021 12:55:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1629118526;
-        bh=y6ldsfrCTtxUqXgvB/kfPMN6tTYDjZWOZxwxQpHrYtA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=iOQq81NGSayBnzQ4XdWllErmXHxAihi6OTHlQPt2LH3IqwO3JcqZehXWSMbs9N8kp
-         8BC3QlSd6eY0oApVWLjTE3nMlbfiEfH+Z6Vpv6ph3CxQ77lcUNwe4fSEWJjc9ekzLB
-         fhEu82fdauoIRYbSbz/O3S8I0e2DNS/tjfr7oFomguFMpMBbDza436Mke2U0Sf9lwH
-         kLj7vGcO2hEY6F/Q9b5USQUdsiAq6und7QqZzcpG+Rbg7EMXgRclrfouVAvIkGBBwh
-         iqh5GUtQJ35INapwl7BY4rQNq4NmOWoVuTGjOBVjy1GiJvrQypP28ogVdFL7YMsVvS
-         dkIw8w6pwQerA==
-Received: by mail-ot1-f41.google.com with SMTP id m7-20020a9d4c87000000b0051875f56b95so3718832otf.6;
-        Mon, 16 Aug 2021 05:55:26 -0700 (PDT)
-X-Gm-Message-State: AOAM530z//FiYiGO0oyRrVLlWv+xFU2PZVUirue33ySSBzEJnrm54u7N
-        ppzEM/G1+qCjX1bDK1xFuBynfQ3qo140yzltuBI=
-X-Google-Smtp-Source: ABdhPJxxMd3mBbuMB6M/CvVY1X6k7ltHvdrpDJub2UxaA78qfpiO8zqM8iqbzU5xcidaKUALMnaiixcKIl4DhyZW/Ss=
-X-Received: by 2002:a9d:5c2:: with SMTP id 60mr12177072otd.77.1629118526103;
- Mon, 16 Aug 2021 05:55:26 -0700 (PDT)
+        Mon, 16 Aug 2021 10:00:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57508 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231859AbhHPOA2 (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 16 Aug 2021 10:00:28 -0400
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8726BC0612A9;
+        Mon, 16 Aug 2021 06:59:37 -0700 (PDT)
+Received: by mail-wr1-x42b.google.com with SMTP id z9so23713487wrh.10;
+        Mon, 16 Aug 2021 06:59:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KZutF4knfsOuF8Cv0WuZd4fBJstx8+dJNDUrpHSR5Vs=;
+        b=IabavD9KFls6I9KUiTe51j9br3DeNKSgVE7+mmsIZRHz0USNduyx8sMF2GS0bkAaD2
+         RqF5tIs3hm5fMte83Jy/ne0nQ6mvuaDwKx/gjNxZ6ThciabLsABGrRobFt0FbJW/j7ve
+         EopjjYZCHdUQ15qg1eI9cVfC3tWBCuECilkbZruZGpjauo5XPwo6vUrK5h/CytB8/IyZ
+         TWmSjZCpDUbt7SWGoh6ytEv+2ZdnRuaLJPkNDfOrOlUu21nlXC4kan24kQeCZK3oWF23
+         xhpfveSS+D3AuxtLgsX4H2lR4P+bNpGg9iBx77rHU3SZTDEUfxl+PWhVJfWnvxfH73Cs
+         uyLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KZutF4knfsOuF8Cv0WuZd4fBJstx8+dJNDUrpHSR5Vs=;
+        b=IbKe/PxNJ3WKLbP+oEoXbSzScVi/CCBcVBmfsh5nm7FBQaMRqjaaETcq4AwE5a0oWM
+         lNAYaoqqbBQm/UdLbvkmQS3SBA7dJUsI/NLvnuMJCk6RI/7eSqzOgESlFYVgZI6xeQCA
+         QY/WzVzS/5dM377NoGQfSsptt4djaV9w5L5ASGbrwGTHVxFc8sHFeHiHzO+mCbF3Nkyz
+         J983pgJFj5QTG7RlrogaPeQvX8UQEZxGSE/fUbZb4hlD74SRuQJOvkDcABpptNljZTHY
+         0WHKoA04vpavBDzi2fNrg9ix0ozG/QNSrBq1vVOq7IJnMvahMkJnb4stXtVdIt6IfZFj
+         OK3A==
+X-Gm-Message-State: AOAM532p/zlNQVyOqk3+jKDNeCphFSCOHIvkUeZ98SpJrG2IGaiX6NC0
+        dfQCR01Zn5F7H+IQiCVBQOk=
+X-Google-Smtp-Source: ABdhPJy+Q+4j8nqBRSzx6Z9tbZZ5EqsU+MprxZP86/ilnLcVEKX6wtCdxRv9oY0sEDeO94qwZrdWbg==
+X-Received: by 2002:adf:fc45:: with SMTP id e5mr18410368wrs.127.1629122376151;
+        Mon, 16 Aug 2021 06:59:36 -0700 (PDT)
+Received: from localhost.localdomain (arl-84-90-178-246.netvisao.pt. [84.90.178.246])
+        by smtp.gmail.com with ESMTPSA id r129sm10697693wmr.7.2021.08.16.06.59.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Aug 2021 06:59:35 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] clk: qcom: adjust selects for SM_VIDEOCC_8150 and SM_VIDEOCC_8250
+Date:   Mon, 16 Aug 2021 15:59:30 +0200
+Message-Id: <20210816135930.11810-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-References: <20210816124433.10411-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20210816124433.10411-1-lukas.bulwahn@gmail.com>
-From:   Ard Biesheuvel <ardb@kernel.org>
-Date:   Mon, 16 Aug 2021 14:55:15 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXFEGK_3RDXcO3kvCVQvOvoCLgRtQsR=pEbSaiY7erVJrQ@mail.gmail.com>
-Message-ID: <CAMj1kXFEGK_3RDXcO3kvCVQvOvoCLgRtQsR=pEbSaiY7erVJrQ@mail.gmail.com>
-Subject: Re: [PATCH] crypto: remove rmd320 in Makefile
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, 16 Aug 2021 at 14:44, Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
->
-> Commit 93f64202926f ("crypto: rmd320 - remove RIPE-MD 320 hash algorithm")
-> removes the Kconfig and code, but misses to adjust the Makefile.
->
-> Hence, ./scripts/checkkconfigsymbols.py warns:
->
-> CRYPTO_RMD320
-> Referencing files: crypto/Makefile
->
-> Remove the missing piece of this code removal.
->
-> Fixes: 93f64202926f ("crypto: rmd320 - remove RIPE-MD 320 hash algorithm")
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Commit 5658e8cf1a8a ("clk: qcom: add video clock controller driver for
+SM8150") and commit 0e94711a1f29 ("clk: qcom: add video clock controller
+driver for SM8250") add config SM_VIDEOCC_8150 and config SM_VIDEOCC_8250,
+which select the non-existing configs SDM_GCC_8150 and SDM_GCC_8250,
+respectively.
 
-Acked-by: Ard Biesheuvel <ardb@kernel.org>
+Hence, ./scripts/checkkconfigsymbols.py warns:
 
-> ---
->  crypto/Makefile | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/crypto/Makefile b/crypto/Makefile
-> index 10526d4559b8..c633f15a0481 100644
-> --- a/crypto/Makefile
-> +++ b/crypto/Makefile
-> @@ -74,7 +74,6 @@ obj-$(CONFIG_CRYPTO_NULL2) += crypto_null.o
->  obj-$(CONFIG_CRYPTO_MD4) += md4.o
->  obj-$(CONFIG_CRYPTO_MD5) += md5.o
->  obj-$(CONFIG_CRYPTO_RMD160) += rmd160.o
-> -obj-$(CONFIG_CRYPTO_RMD320) += rmd320.o
->  obj-$(CONFIG_CRYPTO_SHA1) += sha1_generic.o
->  obj-$(CONFIG_CRYPTO_SHA256) += sha256_generic.o
->  obj-$(CONFIG_CRYPTO_SHA512) += sha512_generic.o
-> --
-> 2.26.2
->
+SDM_GCC_8150
+Referencing files: drivers/clk/qcom/Kconfig
+
+SDM_GCC_8250
+Referencing files: drivers/clk/qcom/Kconfig
+
+It is probably just a typo (or naming confusion of using SM_GCC_xxx and
+SDM_GCC_xxx for various Qualcomm clock drivers) in the config definitions
+for config SM_VIDEOCC_8150 and SM_VIDEOCC_8250, and intends to select the
+existing SM_GCC_8150 and SM_GCC_8250, respectively.
+
+Adjust the selects to the existing configs.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ drivers/clk/qcom/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index 85b090a8d9c6..6c54d810d615 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -579,7 +579,7 @@ config SM_GPUCC_8250
+ 
+ config SM_VIDEOCC_8150
+ 	tristate "SM8150 Video Clock Controller"
+-	select SDM_GCC_8150
++	select SM_GCC_8150
+ 	select QCOM_GDSC
+ 	help
+ 	  Support for the video clock controller on SM8150 devices.
+@@ -588,7 +588,7 @@ config SM_VIDEOCC_8150
+ 
+ config SM_VIDEOCC_8250
+ 	tristate "SM8250 Video Clock Controller"
+-	select SDM_GCC_8250
++	select SM_GCC_8250
+ 	select QCOM_GDSC
+ 	help
+ 	  Support for the video clock controller on SM8250 devices.
+-- 
+2.26.2
+
