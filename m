@@ -2,97 +2,113 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AE58C4338F
-	for <kernel-janitors@archiver.kernel.org>; Mon, 16 Aug 2021 05:25:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFF76C4320A
+	for <kernel-janitors@archiver.kernel.org>; Mon, 16 Aug 2021 06:51:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4C2BC61A04
-	for <kernel-janitors@archiver.kernel.org>; Mon, 16 Aug 2021 05:25:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD0C061A7B
+	for <kernel-janitors@archiver.kernel.org>; Mon, 16 Aug 2021 06:51:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233301AbhHPF0E (ORCPT
+        id S233654AbhHPGvn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 16 Aug 2021 01:26:04 -0400
-Received: from smtp11.smtpout.orange.fr ([80.12.242.133]:19196 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233353AbhHPF0C (ORCPT
+        Mon, 16 Aug 2021 02:51:43 -0400
+Received: from jabberwock.ucw.cz ([46.255.230.98]:41322 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233376AbhHPGvm (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 16 Aug 2021 01:26:02 -0400
-Received: from pop-os.home ([90.126.253.178])
-        by mwinf5d03 with ME
-        id i5RW250023riaq2035RWZ9; Mon, 16 Aug 2021 07:25:30 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 16 Aug 2021 07:25:30 +0200
-X-ME-IP: 90.126.253.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     srinivas.kandagatla@linaro.org, bgoswami@codeaurora.org,
-        lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz,
-        tiwai@suse.com, vkoul@kernel.org
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 3/3] ASoC: wcd9335: Disable irq on slave ports in the remove function
-Date:   Mon, 16 Aug 2021 07:25:28 +0200
-Message-Id: <8f761244d79bd4c098af8a482be9121d3a486d1b.1629091028.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <cover.1629091028.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1629091028.git.christophe.jaillet@wanadoo.fr>
+        Mon, 16 Aug 2021 02:51:42 -0400
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id 7BBD71C0B77; Mon, 16 Aug 2021 08:51:10 +0200 (CEST)
+Date:   Mon, 16 Aug 2021 08:51:10 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Colin King <colin.king@canonical.com>
+Cc:     linux-leds@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] leds: flash: Remove redundant initialization of variable
+ ret
+Message-ID: <20210816065110.GA7500@duo.ucw.cz>
+References: <20210612132547.58727-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="PEIAKu/WMn1b1Hv9"
+Content-Disposition: inline
+In-Reply-To: <20210612132547.58727-1-colin.king@canonical.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The probe calls 'wcd9335_setup_irqs()' to enable interrupts on all slave
-ports.
-This must be undone in the remove function.
 
-Add a 'wcd9335_teardown_irqs()' function that undoes 'wcd9335_setup_irqs()'
-function, and call it from the remove function.
+--PEIAKu/WMn1b1Hv9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: 20aedafdf492 ("ASoC: wcd9335: add support to wcd9335 codec")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-As said in the cover letter, this patch is COMPLETELY speculative. It is
-untested.
-Review with care, because I don't know if it make sense!
----
- sound/soc/codecs/wcd9335.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Hi!
 
-diff --git a/sound/soc/codecs/wcd9335.c b/sound/soc/codecs/wcd9335.c
-index 47fe68edea3a..d885ced34f60 100644
---- a/sound/soc/codecs/wcd9335.c
-+++ b/sound/soc/codecs/wcd9335.c
-@@ -4076,6 +4076,16 @@ static int wcd9335_setup_irqs(struct wcd9335_codec *wcd)
- 	return ret;
- }
- 
-+static void wcd9335_teardown_irqs(struct wcd9335_codec *wcd)
-+{
-+	int i;
-+
-+	/* disable interrupts on all slave ports */
-+	for (i = 0; i < WCD9335_SLIM_NUM_PORT_REG; i++)
-+		regmap_write(wcd->if_regmap, WCD9335_SLIM_PGD_PORT_INT_EN0 + i,
-+			     0x00);
-+}
-+
- static void wcd9335_cdc_sido_ccl_enable(struct wcd9335_codec *wcd,
- 					bool ccl_flag)
- {
-@@ -4878,6 +4888,7 @@ static void wcd9335_codec_remove(struct snd_soc_component *comp)
- 	struct wcd9335_codec *wcd = dev_get_drvdata(comp->dev);
- 
- 	wcd_clsh_ctrl_free(wcd->clsh_ctrl);
-+	wcd9335_teardown_irqs(wcd);
- }
- 
- static int wcd9335_codec_set_sysclk(struct snd_soc_component *comp,
--- 
-2.30.2
+> From: Colin Ian King <colin.king@canonical.com>
+>=20
+> The variable ret is being initialized with a value that is never read,
+> it is being updated later on. The assignment is redundant and can be
+> removed.
+>=20
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
+I did this instead; hopefully that's okay with everyone.
+
+Best regards,
+							Pavel
+
+commit 654933ae7d32f278eecd0bb0f175785574ac4775
+Author: Pavel Machek <pavel@ucw.cz>
+Date:   Mon Aug 16 08:47:08 2021 +0200
+
+    leds: flash: Remove redundant initialization of variable ret
+   =20
+    Adjust initialization not to trigger Coverity warnings.
+   =20
+    Reported-by: Colin Ian King <colin.king@canonical.com>
+    Signed-off-by: Pavel Machek <pavel@ucw.cz>
+
+diff --git a/drivers/leds/led-class-flash.c b/drivers/leds/led-class-flash.c
+index 6eeb9effcf65..185e17055317 100644
+--- a/drivers/leds/led-class-flash.c
++++ b/drivers/leds/led-class-flash.c
+@@ -92,14 +92,12 @@ static ssize_t flash_strobe_store(struct device *dev,
+ 	struct led_classdev *led_cdev =3D dev_get_drvdata(dev);
+ 	struct led_classdev_flash *fled_cdev =3D lcdev_to_flcdev(led_cdev);
+ 	unsigned long state;
+-	ssize_t ret =3D -EINVAL;
++	ssize_t ret =3D -EBUSY;
+=20
+ 	mutex_lock(&led_cdev->led_access);
+=20
+-	if (led_sysfs_is_disabled(led_cdev)) {
+-		ret =3D -EBUSY;
++	if (led_sysfs_is_disabled(led_cdev))
+ 		goto unlock;
+-	}
+=20
+ 	ret =3D kstrtoul(buf, 10, &state);
+ 	if (ret)
+
+
+--=20
+http://www.livejournal.com/~pavelmachek
+
+--PEIAKu/WMn1b1Hv9
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCYRoK3gAKCRAw5/Bqldv6
+8j8dAJ4ofrlkLRgyhMsj+wAlN16lq/bCRgCeN7K/b+N0KrTKckmebbrTfnoryCs=
+=RFL6
+-----END PGP SIGNATURE-----
+
+--PEIAKu/WMn1b1Hv9--
