@@ -5,68 +5,69 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35F88C4338F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 08:13:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCC3DC4320A
+	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 08:42:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1BE7560F58
-	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 08:13:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4CC360EFE
+	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 08:42:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234795AbhHQIOM (ORCPT
+        id S239465AbhHQImj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 17 Aug 2021 04:14:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54116 "EHLO
+        Tue, 17 Aug 2021 04:42:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60978 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234907AbhHQIOJ (ORCPT
+        with ESMTP id S239475AbhHQImh (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 17 Aug 2021 04:14:09 -0400
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B38B4C061764;
-        Tue, 17 Aug 2021 01:13:36 -0700 (PDT)
-Received: by mail-wr1-x436.google.com with SMTP id r7so27387021wrs.0;
-        Tue, 17 Aug 2021 01:13:36 -0700 (PDT)
+        Tue, 17 Aug 2021 04:42:37 -0400
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDECCC0613CF;
+        Tue, 17 Aug 2021 01:42:03 -0700 (PDT)
+Received: by mail-wm1-x32d.google.com with SMTP id 79-20020a1c0452000000b002e6cf79e572so1293472wme.1;
+        Tue, 17 Aug 2021 01:42:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=iNpthpH15DTu8RBKV54iW5xxSqBJuNP9jmT6bY/RyzI=;
-        b=SYuRfmkAQID5TSGEej3B7UcoooTqvAkRvJBZtd0w8B59UoFCHCLor1rAj2H9z9rz02
-         XfOpgkIqLAx6Tt5MmEkouYU4MDeaOdESwbM58EzsJhu5tDk8J3kBcZQRR4KUIeQRTfvL
-         /dIJuoDpCTxZg18Yawlctau9mcWOWscSWhz3OAwnLQ8xsfpapUpu519rZoB4ugcNAhVe
-         laYrbTo8LVKT+iRmuK36JCr4iNtzaQI4MhYuyAffI1N61O82Buxuo1jXRNiNh3cBqLXr
-         OZ1f2qosqJIJKtYABn/KqgFHrH3yrZZQ3GcPiYflSBkt0bwMsk0Hw0bSge4SLMYJYWAk
-         KGLQ==
+        bh=8qalcxJZSAoenJ2mSdG7qlNEBuHFgwiIsTwgVJuQxk0=;
+        b=ht8yRhloawgIJiHlAISbi+RuwDm/dDfdDMeo57txgPIodpCpr5bxw1+irSjmlqsdYL
+         9Srw7AqXvkPNAYLXJMThjIH6LN9cyFUJC8XDl2x0Uo6mN1w5fmxjvcrckYwG/R1h0Hcv
+         ziIVnXo58gNhu/HbPH3ve7kcZslOBkKftdyHd+EOQOV1U/9wdnWPgSdWijxBRVMRzao2
+         2rchP0+aVpA/IWSLv4YeLovGGlry6HYyxcFuFNcLW+TFPiURZCB7p4T+uub65uKgaYSr
+         HoiC61f0M/A1jDRrKpSeQAi4uLBgOV7EszocmWCBvsb0lzQtjWiPnbIl9PaG+AeglhUW
+         Gmsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=iNpthpH15DTu8RBKV54iW5xxSqBJuNP9jmT6bY/RyzI=;
-        b=BBGMqEC2WxQ/M5krDxbu++bYWrKB8wBT1dOlHkrQWSgCq21niaHaaGfbLwrFv9N/yk
-         TmZSJEdN1rb8huySsxj4UBebd/WvN5GVRFYOd0NUFiR1ssDG671mPRQflh9CoSznwa1n
-         PNouqhjmulov9Oy7mugZ+dVBszaxKptnK8uvzQOBFtd4719ENWtZl4ziYiESH6ng+9cz
-         l7ZE3JXhheEw36KCuAGTkIsfX0ePV4kQ1gUSNBL6Me3JFejISIRmFn9/VIOIOJ7+YKkP
-         1bZXlYXPmwC7G2LefFb+zJ6Xf4f6PghZudHoqAjPM1fWuMD+TEMFN+wwVunuL3RV8yFw
-         NhGA==
-X-Gm-Message-State: AOAM530tblGZkrZNk3I6Lc5jMYt6P+q/pOgMyy1CllWlrBFVWc0k9qoM
-        4Rrxifi6fwW7LeWLhnwnyNU=
-X-Google-Smtp-Source: ABdhPJznDK9eFcziNqrHnwEoQ1pvWyUZdNXCVFVd7bPm4KmDsli2JR1yB6astmQBNaCefQmEHUqfdw==
-X-Received: by 2002:a5d:6948:: with SMTP id r8mr2365968wrw.136.1629188015292;
-        Tue, 17 Aug 2021 01:13:35 -0700 (PDT)
+        bh=8qalcxJZSAoenJ2mSdG7qlNEBuHFgwiIsTwgVJuQxk0=;
+        b=eiEMvVtoHhRBTx1ZDReIq7mM6czeuNUxmlDpCGMlOrfKbd+U7OXUTjzMp9HJKJuATF
+         sZYFaDh0BlElbKMR4tzehH6FE0cuy4pm4cNt20ZY+yTeuS8FOWFe6lDUGmZBUYhFPToF
+         SaI1JvTVk1QQAGhmZbAe1FstKj/YEwi7Ik1jCxG6mgp/y3+99ByxIl5zHVE0q/EOjNFj
+         crKVAFb8qRJUSAWHGQCnk8YkWgR0sWAvyXnwndC8tyLB6CTbxj4CLFJ54vpjd5pXW2W1
+         yzwbR6kfUaMZSENCIOit5faMJ1awayY4IHaKfLwMN8VP9/zqy7BKdwVwJy5cqwINDkv8
+         kxnQ==
+X-Gm-Message-State: AOAM531FVhciAYaY5YHZYW9HsiMhMMW1w5G8BPr7RF6xPGdkaWuULaSD
+        fk1U1HCh6NcHnjUIlI1w8lU=
+X-Google-Smtp-Source: ABdhPJyZKkIE+C84W/G4rSFiKHZjSSJjbiSqkmFeJcz2qchGApyeiFuGu9f6Rjs+C/BRMBzyTlgRcQ==
+X-Received: by 2002:a05:600c:a08:: with SMTP id z8mr2123242wmp.52.1629189722426;
+        Tue, 17 Aug 2021 01:42:02 -0700 (PDT)
 Received: from localhost.localdomain (arl-84-90-178-246.netvisao.pt. [84.90.178.246])
-        by smtp.gmail.com with ESMTPSA id b12sm1316604wmd.42.2021.08.17.01.13.34
+        by smtp.gmail.com with ESMTPSA id o125sm1378907wme.15.2021.08.17.01.42.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Aug 2021 01:13:34 -0700 (PDT)
+        Tue, 17 Aug 2021 01:42:02 -0700 (PDT)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     Mustafa Ismail <mustafa.ismail@intel.com>,
+        Shiraz Saleem <shiraz.saleem@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] iio: gyro: remove dead config dependencies on INPUT_MPU3050
-Date:   Tue, 17 Aug 2021 10:13:30 +0200
-Message-Id: <20210817081330.9645-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH] rdma: irdma: Rectify selection in config INFINIBAND_IRDMA
+Date:   Tue, 17 Aug 2021 10:41:58 +0200
+Message-Id: <20210817084158.10095-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -74,34 +75,32 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit b1fe0cf06f92 ("Input: delete MPU3050 driver") deletes the superseded
-MPU3050 driver and its corresponding config INPUT_MPU3050.
+In Kconfig, references to other config do not use the prefix "CONFIG_".
 
-The dependencies on the superseding driver in ./drivers/iio/gyro/Kconfig
-to ensure that the two drivers are not built into the same kernel is a dead
-dependency and not required anymore.
+Commit fa0cf568fd76 ("RDMA/irdma: Add irdma Kconfig/Makefile and remove
+i40iw") selects config CONFIG_AUXILIARY_BUS in config INFINIBAND_IRDMA,
+but intended to select config AUXILIARY_BUS.
 
-So, remove those config dependencies on INPUT_MPU3050 for MPU3050_I2C.
-
-This issue was detected with ./scripts/checkkconfigsymbols.py.
+Rectify this selection in config INFINIBAND_IRDMA.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- drivers/iio/gyro/Kconfig | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/infiniband/hw/irdma/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iio/gyro/Kconfig b/drivers/iio/gyro/Kconfig
-index 20b5ac7ab66a..a672f7d12bbb 100644
---- a/drivers/iio/gyro/Kconfig
-+++ b/drivers/iio/gyro/Kconfig
-@@ -126,7 +126,6 @@ config MPU3050
- 
- config MPU3050_I2C
- 	tristate "Invensense MPU3050 devices on I2C"
--	depends on !(INPUT_MPU3050=y || INPUT_MPU3050=m)
- 	depends on I2C
- 	select MPU3050
- 	select REGMAP_I2C
+diff --git a/drivers/infiniband/hw/irdma/Kconfig b/drivers/infiniband/hw/irdma/Kconfig
+index dab88286d549..b6f9c41bca51 100644
+--- a/drivers/infiniband/hw/irdma/Kconfig
++++ b/drivers/infiniband/hw/irdma/Kconfig
+@@ -6,7 +6,7 @@ config INFINIBAND_IRDMA
+ 	depends on PCI
+ 	depends on ICE && I40E
+ 	select GENERIC_ALLOCATOR
+-	select CONFIG_AUXILIARY_BUS
++	select AUXILIARY_BUS
+ 	help
+ 	  This is an Intel(R) Ethernet Protocol Driver for RDMA driver
+ 	  that support E810 (iWARP/RoCE) and X722 (iWARP) network devices.
 -- 
 2.26.2
 
