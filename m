@@ -2,86 +2,60 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B2D7C4338F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 16:32:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D647C4320A
+	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 16:49:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E9F2D60BD3
-	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 16:32:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E0F460EBC
+	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 16:49:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229912AbhHQQcq (ORCPT
+        id S230431AbhHQQuC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 17 Aug 2021 12:32:46 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:48658
-        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229699AbhHQQcp (ORCPT
+        Tue, 17 Aug 2021 12:50:02 -0400
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:31329 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231494AbhHQQuA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 17 Aug 2021 12:32:45 -0400
-Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id E86DD3F10B;
-        Tue, 17 Aug 2021 16:32:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1629217925;
-        bh=GQiZ4NCYIdMlQCu6k9AbZJfoOt7wFTTTHg5Ly6rcD3c=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=DbFta4S9x0rtecgklYwYCzYbjr/LcPVip9RUs/PJC/PaTEdO7zuD5UoP314D/4PX/
-         w+GVEdaNmI8+s9xw/3LpmhEooNg+f5HtGO5S2cpLj7aNondxMC5LBD8XmNFwpo6fNz
-         /aZoHmzdpDAvUmij69QuaNEo8S06k0fmqjSo3u7vluqV7/t6lLWPSdeZhuuAsu2bFj
-         evfN36Pkh88s3ZBfDX49wpzI5u+aWcQ70AomNvj8Oipp1bC5fj3/ucH3TwLubZOnW/
-         uFYBlyxr2U9hJNouKAJRtEuYgxAWOB/N7EAVrNd6vKClP8GzKtnc3jVi2lHZahQ67z
-         vgpmiqWLX4hpA==
-From:   Colin King <colin.king@canonical.com>
-To:     Dave Airlie <airlied@redhat.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        dri-devel@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/mgag200: Fix uninitialized variable delta
-Date:   Tue, 17 Aug 2021 17:32:04 +0100
-Message-Id: <20210817163204.494166-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.32.0
+        Tue, 17 Aug 2021 12:50:00 -0400
+Received: (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 93559240007;
+        Tue, 17 Aug 2021 16:49:25 +0000 (UTC)
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        linux-mtd@lists.infradead.org
+Cc:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        linux-mips@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mtd: maps: remove dead MTD map driver for PMC-Sierra MSP boards
+Date:   Tue, 17 Aug 2021 18:49:25 +0200
+Message-Id: <20210817164925.109210-1-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20210817104531.12675-1-lukas.bulwahn@gmail.com>
+References: 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+X-linux-mtd-patch-notification: thanks
+X-linux-mtd-patch-commit: b'60d0607998d6080db7af1d5bd8c9391f766fe697'
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Tue, 2021-08-17 at 10:45:31 UTC, Lukas Bulwahn wrote:
+> Commit 1b00767fd8e1 ("MIPS: Remove PMC MSP71xx platform") removes the
+> config PMC_MSP in ./arch/mips/Kconfig.
+> 
+> Hence, since then, the corresponding MTD map driver for PMC-Sierra MSP
+> boards is dead code. Remove this dead driver.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-The variable delta is not initialized and this will cause unexpected
-behaviour with the comparison of tmpdelta < delta. Fix this by setting
-it to 0xffffffff. This matches the behaviour as in the similar function
-mgag200_pixpll_compute_g200se_04.
+Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git mtd/next, thanks.
 
-Addresses-Coverity: ("Uninitialized scalar variable")
-Fixes: 2545ac960364 ("drm/mgag200: Abstract pixel PLL via struct mgag200_pll")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpu/drm/mgag200/mgag200_pll.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/gpu/drm/mgag200/mgag200_pll.c b/drivers/gpu/drm/mgag200/mgag200_pll.c
-index 7c903cf19c0d..18f1a6dd019a 100644
---- a/drivers/gpu/drm/mgag200/mgag200_pll.c
-+++ b/drivers/gpu/drm/mgag200/mgag200_pll.c
-@@ -125,6 +125,7 @@ static int mgag200_pixpll_compute_g200se_00(struct mgag200_pll *pixpll, long clo
- 
- 	m = n = p = s = 0;
- 	permitteddelta = clock * 5 / 1000;
-+	delta = 0xffffffff;
- 
- 	for (testp = 8; testp > 0; testp /= 2) {
- 		if (clock * testp > vcomax)
--- 
-2.32.0
-
+Miquel
