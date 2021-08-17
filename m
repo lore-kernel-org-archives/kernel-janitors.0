@@ -2,176 +2,108 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78D33C4338F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 18:22:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6930EC432BE
+	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 19:04:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5163660F22
-	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 18:22:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 540D760FBF
+	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 19:04:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233075AbhHQSXH (ORCPT
+        id S232351AbhHQTFU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 17 Aug 2021 14:23:07 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:51220 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232589AbhHQSXG (ORCPT
+        Tue, 17 Aug 2021 15:05:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35334 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230040AbhHQTFR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 17 Aug 2021 14:23:06 -0400
-Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 0F46821FAF;
-        Tue, 17 Aug 2021 18:22:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1629224552; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=592Le2NNIvfUfPQaModD+0yXTQ2wJpPTjpnad97qY4E=;
-        b=ERYJSEpQSLVPRGZqkuo8kqCRy3IRqJ37kCS6po/gCe3KKIcsrJXp9NFsquig39lksoSUe1
-        hf+7/Lhp8N4hynr2BehiSeKmoP1+72O8kyCKxBQsjDSNblDtTqJFFBPuhnSTDK4rdJTR6X
-        ZXhb7E1uDijS6CMSQ7YIzriJ/y303hk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1629224552;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=592Le2NNIvfUfPQaModD+0yXTQ2wJpPTjpnad97qY4E=;
-        b=eNcIfmV3G1nw2UjGv+wniOJTMijL5gsj1YwpsIMth+syv29g1AbU9N38RPmqQEBeW58TxE
-        HeMikag8tfkUC0Bw==
-Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap1.suse-dmz.suse.de (Postfix) with ESMTPS id C51BB136BF;
-        Tue, 17 Aug 2021 18:22:31 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap1.suse-dmz.suse.de with ESMTPSA
-        id EUvhLmf+G2G7fwAAGKfGzw
-        (envelope-from <tzimmermann@suse.de>); Tue, 17 Aug 2021 18:22:31 +0000
-To:     Colin King <colin.king@canonical.com>,
-        Dave Airlie <airlied@redhat.com>,
+        Tue, 17 Aug 2021 15:05:17 -0400
+Received: from mail-ot1-x336.google.com (mail-ot1-x336.google.com [IPv6:2607:f8b0:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEA1BC061764;
+        Tue, 17 Aug 2021 12:04:43 -0700 (PDT)
+Received: by mail-ot1-x336.google.com with SMTP id l36-20020a0568302b24b0290517526ce5e3so18665787otv.11;
+        Tue, 17 Aug 2021 12:04:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=u4qQshwhjGofU9gYqtNNSGNhs8pTO6YRe0feCXXBafg=;
+        b=RQvXDpXqE5V/Ur6Ae2DKHVTbcnuUm0Dt97KFZlTwrU1PdhC7vhQQe9vvJIE15qB2in
+         uRGEQ6IwB++3lJoH05/NllbgsC6MOey2t70WMzlKeYTIfaX92UpuSudKBR12nbL7vF39
+         hSgywBWHCxRT/y9ttyJ1rjXDkxNb8pW3PJk+EZVgTNYWMx2kakP7R+LqB4GfLdnkoeXs
+         WnsijLY3CPtY1QZxkBO0ui6NNFfYLUV6zPHUkLYZc7+RijCyoWc3ZlAS0KgT5g50OZUq
+         euqzIT0ExRE3pgxvE2Hu0XJD0HPW39bVdHM/EYtwYs8OCEDf/sC3W4q4BruJpeV+MuhJ
+         Zofg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=u4qQshwhjGofU9gYqtNNSGNhs8pTO6YRe0feCXXBafg=;
+        b=bJqG2ynPRoTbfcO9Mpo1ATjkydihM7ucOQEG+Ug47bw4hWElkt4y4HhAZwbmiisV6W
+         nKAYDAU2/z9UNZjMtg+3tpS+Uj5f3Y1FIWaL3cC15c1CHSs9R2KCUTGwSPMBsG/hZlWq
+         LL9DWhXyud4ATPeF1K7tXKWG3VQmYjRWH9zCu1mEfuUZLroDiVFnlz2i6GIm8hQzZvru
+         fgzMf5iUPnQRGrOKK7+PAipLmgLVw7TdQRWHKadLtJhBmJZ+bMCUVEDqTveSFp9lld8J
+         Rr8mNRwlpY6Ffb2WTdlPeHMByE/pGNIz6z0M0VKRzOwYpfnfFfnHB2PyYaaU8qPF3xVP
+         xzvA==
+X-Gm-Message-State: AOAM5319L7okIAKqclldVfQkIyGoSuK6JYKIBvh/c5OJn+F4LhWL21YI
+        6A2YKAxPBASUk6PFwRvjUiBdm6cPHETG/K6waEw=
+X-Google-Smtp-Source: ABdhPJyF/9SNxCUOO7tAZXfi09hq9gJD0GdsSiKZ6CGVJRU/11gcFjpDwisz8vGeaOkCgfSVSGkxYiTYC/wNsc68QxA=
+X-Received: by 2002:a05:6830:4:: with SMTP id c4mr3836459otp.23.1629227083396;
+ Tue, 17 Aug 2021 12:04:43 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210817143514.33609-1-colin.king@canonical.com>
+In-Reply-To: <20210817143514.33609-1-colin.king@canonical.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Tue, 17 Aug 2021 15:04:32 -0400
+Message-ID: <CADnq5_Nb+2UKPGN5tBqzFuLyBR6KLWtXroxUh24wXVZHB5tHag@mail.gmail.com>
+Subject: Re: [PATCH][next] drm/amd/pm: Fix spelling mistake "firwmare" -> "firmware"
+To:     Colin King <colin.king@canonical.com>
+Cc:     Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        xinhui pan <Xinhui.Pan@amd.com>,
         David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        dri-devel@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210817163204.494166-1-colin.king@canonical.com>
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-Subject: Re: [PATCH][next] drm/mgag200: Fix uninitialized variable delta
-Message-ID: <bc94e837-9b56-55ba-1e68-1cba79ac038a@suse.de>
-Date:   Tue, 17 Aug 2021 20:22:31 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
-MIME-Version: 1.0
-In-Reply-To: <20210817163204.494166-1-colin.king@canonical.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="X1xtbZPmJ37zC9vbH4rYBE4W1I3UPJVJ9"
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>, kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---X1xtbZPmJ37zC9vbH4rYBE4W1I3UPJVJ9
-Content-Type: multipart/mixed; boundary="dZ23NRPhjOaTV5youl9bhpVXI7uEGEb9c";
- protected-headers="v1"
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: Colin King <colin.king@canonical.com>, Dave Airlie <airlied@redhat.com>,
- David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
- Sam Ravnborg <sam@ravnborg.org>, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-ID: <bc94e837-9b56-55ba-1e68-1cba79ac038a@suse.de>
-Subject: Re: [PATCH][next] drm/mgag200: Fix uninitialized variable delta
-References: <20210817163204.494166-1-colin.king@canonical.com>
-In-Reply-To: <20210817163204.494166-1-colin.king@canonical.com>
+Applied.  Thanks!
 
---dZ23NRPhjOaTV5youl9bhpVXI7uEGEb9c
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+Alex
 
-Hi
-
-Am 17.08.21 um 18:32 schrieb Colin King:
+On Tue, Aug 17, 2021 at 10:35 AM Colin King <colin.king@canonical.com> wrote:
+>
 > From: Colin Ian King <colin.king@canonical.com>
->=20
-> The variable delta is not initialized and this will cause unexpected
-> behaviour with the comparison of tmpdelta < delta. Fix this by setting
-> it to 0xffffffff. This matches the behaviour as in the similar function=
-
-> mgag200_pixpll_compute_g200se_04.
->=20
-> Addresses-Coverity: ("Uninitialized scalar variable")
-> Fixes: 2545ac960364 ("drm/mgag200: Abstract pixel PLL via struct mgag20=
-0_pll")
+>
+> There is a spelling mistake in a dev_err error message. Fix it.
+>
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-
-Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
-
-But the commit message needs Fixes etc. I just sent out a patch for this =
-
-issue myself. I'd like to merge both patches' tags and commit the result =
-
-under your name. (You were first.) Is that ok for you?
-
-Best regards
-Thomas
-
 > ---
->   drivers/gpu/drm/mgag200/mgag200_pll.c | 1 +
->   1 file changed, 1 insertion(+)
->=20
-> diff --git a/drivers/gpu/drm/mgag200/mgag200_pll.c b/drivers/gpu/drm/mg=
-ag200/mgag200_pll.c
-> index 7c903cf19c0d..18f1a6dd019a 100644
-> --- a/drivers/gpu/drm/mgag200/mgag200_pll.c
-> +++ b/drivers/gpu/drm/mgag200/mgag200_pll.c
-> @@ -125,6 +125,7 @@ static int mgag200_pixpll_compute_g200se_00(struct =
-mgag200_pll *pixpll, long clo
->  =20
->   	m =3D n =3D p =3D s =3D 0;
->   	permitteddelta =3D clock * 5 / 1000;
-> +	delta =3D 0xffffffff;
->  =20
->   	for (testp =3D 8; testp > 0; testp /=3D 2) {
->   		if (clock * testp > vcomax)
->=20
-
---=20
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-(HRB 36809, AG N=C3=BCrnberg)
-Gesch=C3=A4ftsf=C3=BChrer: Felix Imend=C3=B6rffer
-
-
---dZ23NRPhjOaTV5youl9bhpVXI7uEGEb9c--
-
---X1xtbZPmJ37zC9vbH4rYBE4W1I3UPJVJ9
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature"
-
------BEGIN PGP SIGNATURE-----
-
-wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmEb/mcFAwAAAAAACgkQlh/E3EQov+DF
-1RAAvJbQFxESitPZaG4A6dqm04TyJ1HRS/X4G3bze086dnX6DlaqL1zybmYtfl27rr07XADWcJmp
-eOvnaP3hOUoG4LXbNDcR6nLa89Kuav8ZfpwsTypZJzj/QymxGmkE3PGVcPU5taKiM1jJW5Yn7A4H
-fZkAN+ay6LfAfsKjcjpYl7FWt4vnewm3zQUPtlQp+ApnCqSXwKEPSf8Q8bbxxg6E0p4gXQw0BFTU
-UXZRa/aqf4BmaMX84HSK4f3DYFPsHNpvDJykQ5VVakh95xc4dvfYMKAnNLzUdsXbEI8gu42AHp8i
-U75Del97S3mjq46D7eJTBU3Y9Ywrp3kAnfuPdkR2og7fzBHzDQL9BU7/p7lJ5pKDr84ggkTswV7w
-qvhJGLSawoAmfhBfhaeufV5Fu/O5tL1QEikcKnOuWBsDq1uYuhyfgQ0Ioq9EvOxBZLS+E/d89v3s
-JUuq5rEeTiDHX1JtoMLlx8UeCKaJjskwUHcXCWYilNtzGiYjUm2l4KzpusaLiDKAqQsprAbuVpkc
-DyEb7HHfzFnXEdAde9DCchjnN1u1TJAkNOUpFHMUOsU/3lGCOgo66Bcml9WaakGrFHwfqiZ2yeYe
-JnudzAVdDtZQA1nqqvSDUOaKyn6St3Gb+M2AxPEUtLvH6Vak4nDPGclectl4HtziYdqmY95F+zrH
-MlU=
-=xus4
------END PGP SIGNATURE-----
-
---X1xtbZPmJ37zC9vbH4rYBE4W1I3UPJVJ9--
+>  drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0.c b/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0.c
+> index 5d2605df32e8..a0e50f23b1dd 100644
+> --- a/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0.c
+> +++ b/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0.c
+> @@ -311,7 +311,7 @@ static int smu_v13_0_get_pptable_from_firmware(struct smu_context *smu, void **t
+>         version_major = le16_to_cpu(hdr->header.header_version_major);
+>         version_minor = le16_to_cpu(hdr->header.header_version_minor);
+>         if (version_major != 2) {
+> -               dev_err(adev->dev, "Unsupported smu firwmare version %d.%d\n",
+> +               dev_err(adev->dev, "Unsupported smu firmware version %d.%d\n",
+>                         version_major, version_minor);
+>                 return -EINVAL;
+>         }
+> --
+> 2.32.0
+>
