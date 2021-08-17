@@ -5,51 +5,48 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEBD9C4338F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 17:08:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90F12C432BE
+	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 17:21:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9B09060FD9
-	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 17:08:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 747F960F39
+	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 17:21:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231281AbhHQRJS (ORCPT
+        id S231570AbhHQRVr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 17 Aug 2021 13:09:18 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:56726
+        Tue, 17 Aug 2021 13:21:47 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:57576
         "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229700AbhHQRJR (ORCPT
+        by vger.kernel.org with ESMTP id S229723AbhHQRVr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 17 Aug 2021 13:09:17 -0400
+        Tue, 17 Aug 2021 13:21:47 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id AD0933F0B9;
-        Tue, 17 Aug 2021 17:08:42 +0000 (UTC)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 9971F3F336;
+        Tue, 17 Aug 2021 17:21:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1629220122;
-        bh=WJBXkkU1tHc8E8eo8Usv6y0V0Z9Qgiu/DplUySoP91s=;
+        s=20210705; t=1629220872;
+        bh=cnxPmKp+RyLu2md5DjVc5e+v+zyOhG6XgMhIx28x8+8=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=anFq0wsiYvXoedRMVYYKBJlaFe4IRTL41by7WARaDZFAfL9YofQcSVJTnYkSm7yPu
-         jlqQvHRdJp5OUwIunUOfcSZP5MlZtoRxDpSBwdaMNg4/qgVYMj+ps6366ON/TLxRJf
-         2foqSWHaPdYwCRpSkSULec1DOkdC3LSZWdtzsoI1oadmEpx1DiEkT1rMUff7G8GO7x
-         RtyvDQrTA796S7rfHD5V1TVJrGDQcsYiUCC2zv5H9cOcRILXdvYpOAUaxxyZXTiQxq
-         EQ0VEaVqXhX8x4ad2IXmkMBWh7zy1i0H0lSd1obaB9V0KQl8FcakBLAaUUU4ivQS6D
-         z5wbV61JPViqg==
+        b=mI1HRmsEIdO1o+FJEGWTJgzlDYOXxIgNwbxirg4xLBQEC5lb/NySOyoP/QaMg1gHN
+         6+sU5JuAoFv7AzGU/sffv/y0y05EjeaDc35xz0v+Ekw2RucxNUNCcg+cXYFcQxhpwg
+         DAIfb6pTTJkkcxRBx22stMj6dtWn57Feo0TtBpcdA5LvemVI99Z4ll8gRwUkY1Cp/T
+         6q/ss3k7sXBHM59qBb4qmsYiFzMTS/XKRAxFt1r5++rat50pVBjMppcbMBh+Yr3OMk
+         rGmtbkiJNO+4Gq52py3M7giZXPK3Upf8+n1A6qtyNyU98T2iCAHx9ldE3Nabw6ZE3+
+         FwHRnun1FaylQ==
 From:   Colin King <colin.king@canonical.com>
-To:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>, netdev@vger.kernel.org,
-        bpf@vger.kernel.org
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] bpf: remove redundant initialization of variable allow
-Date:   Tue, 17 Aug 2021 18:08:42 +0100
-Message-Id: <20210817170842.495440-1-colin.king@canonical.com>
+Subject: [PATCH][next] iio: adc: Fix -EBUSY timeout error return
+Date:   Tue, 17 Aug 2021 18:21:11 +0100
+Message-Id: <20210817172111.495897-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -60,32 +57,32 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The variable allow is being initialized with a value that is never read, it
-is being updated later on. The assignment is redundant and can be removed.
+Currently when a timeout occurs in rzg2l_adc_hw_init the error -EBUSY is
+assigned to ret but the error code is used as the function is hard-coded
+to return 0.  The variable ret is 0 before entering the while-loop hence
+the fix is just to return ret at the end of the function to return the
+success 0 or -EBUSY return code.
 
 Addresses-Coverity: ("Unused value")
+Fixes: d484c21bacfa ("iio: adc: Add driver for Renesas RZ/G2L A/D converter")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- kernel/bpf/cgroup.c | 2 +-
+ drivers/iio/adc/rzg2l_adc.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/bpf/cgroup.c b/kernel/bpf/cgroup.c
-index a1dedba4c174..9f35928bab0a 100644
---- a/kernel/bpf/cgroup.c
-+++ b/kernel/bpf/cgroup.c
-@@ -1133,11 +1133,11 @@ int __cgroup_bpf_check_dev_permission(short dev_type, u32 major, u32 minor,
- 	struct bpf_cgroup_dev_ctx ctx = {
- 		.access_type = (access << 16) | dev_type,
- 		.major = major,
- 		.minor = minor,
- 	};
--	int allow = 1;
-+	int allow;
+diff --git a/drivers/iio/adc/rzg2l_adc.c b/drivers/iio/adc/rzg2l_adc.c
+index 9996d5eef289..868b183e75ea 100644
+--- a/drivers/iio/adc/rzg2l_adc.c
++++ b/drivers/iio/adc/rzg2l_adc.c
+@@ -401,7 +401,7 @@ static int rzg2l_adc_hw_init(struct rzg2l_adc *adc)
+ exit_hw_init:
+ 	clk_disable_unprepare(adc->pclk);
  
- 	rcu_read_lock();
- 	cgrp = task_dfl_cgroup(current);
- 	allow = BPF_PROG_RUN_ARRAY_CG(cgrp->bpf.effective[type], &ctx,
- 				      bpf_prog_run);
+-	return 0;
++	return ret;
+ }
+ 
+ static void rzg2l_adc_pm_runtime_disable(void *data)
 -- 
 2.32.0
 
