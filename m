@@ -2,106 +2,83 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5B3CC4338F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 10:54:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BABDC4320A
+	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 12:48:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 890C760F58
-	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 10:54:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E95060EE4
+	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 12:48:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236199AbhHQKyn (ORCPT
+        id S236658AbhHQMsy (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 17 Aug 2021 06:54:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35360 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231515AbhHQKyl (ORCPT
+        Tue, 17 Aug 2021 08:48:54 -0400
+Received: from mout.kundenserver.de ([212.227.126.133]:37555 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229539AbhHQMsx (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 17 Aug 2021 06:54:41 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46C28C061764;
-        Tue, 17 Aug 2021 03:54:08 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id q11so27916442wrr.9;
-        Tue, 17 Aug 2021 03:54:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=r6aKZ3mStglJ8KXopXqTnAueM8I8iIX9uDZNRcE4ZkQ=;
-        b=XvkhlW57JehYDlkQR+aFLFe55cOvPWo7ekebsd6AoR54n43kZXdV104IKDDsNzEAlX
-         FGJwTHbKr6v4BiFe0TGkhf/AMlY5bnRCO62vCb5kyIVy6f5qbJxnDvH5H1YnZfvw26xc
-         TWBAwlyuNtuEqJb5WvaV5zb7SXpiqjGQq2yhU8HFQpNLwXNE8KB+Yskjl+G0fH2ZJr4Q
-         nGQYlAYZmqS1axjGpUAMvab6XF5DXHB5aavBsmsyuyA0dJVldGOYVeDdxZ2AGgWJqpHd
-         N93nOi9YM569vvIRirqN+xZczOk2S65eGO8oc9++07+389++n31xWtE7bQdpaXFFLIig
-         5y+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=r6aKZ3mStglJ8KXopXqTnAueM8I8iIX9uDZNRcE4ZkQ=;
-        b=I7l9yP8gwI5yvIitcJ207VnwkEqonXij26DDHZJT8KN5pcIRwHbPrXv4say6rziC0q
-         dwXykj0Kv58jXsvIjihOU0UlFWDddYPywuYxiHNxK7WbGQLdL47AMlsXAqjfwmxKac6D
-         pNV9IQi9K2rn/lNk9AfqwjIoyDhzKcv0+zdI7duTR2ysNwfxGf660Tz8vfkbY1mWWGSc
-         hIKWu8omBBx6RjMTdAj4IzylcjYcMHlhdmO/R0m56QGMDWBgGABpXykUE5sbKVBtThZa
-         sJ7Gb2eonUP7vxFvJ3Nu4byLZ5eUZ6FiIoBab4d07MLpknwREofY3BOgGP+HFsClYEB7
-         6v7Q==
-X-Gm-Message-State: AOAM5330VwEUeUkgSinOX03Y1eZr2cNHKwvxkUrZEhJTsrE9MgUCYZOi
-        uZu0OpjFXOp+525M3dNR3MY=
-X-Google-Smtp-Source: ABdhPJxt71/S0VMg7VpAnRd1AlHxkO+lFHesTMJDu0H/ALoSAr0RfvRLaVxRttmPZ6sz0oDM4aZMJw==
-X-Received: by 2002:adf:ab0e:: with SMTP id q14mr3270642wrc.171.1629197646878;
-        Tue, 17 Aug 2021 03:54:06 -0700 (PDT)
-Received: from localhost.localdomain (arl-84-90-178-246.netvisao.pt. [84.90.178.246])
-        by smtp.gmail.com with ESMTPSA id i21sm2029840wrb.62.2021.08.17.03.54.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Aug 2021 03:54:06 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Gow <davidgow@google.com>, linux-staging@lists.linux.dev
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] clk: staging: correct reference to config IOMEM to config HAS_IOMEM
-Date:   Tue, 17 Aug 2021 12:54:04 +0200
-Message-Id: <20210817105404.13146-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.26.2
+        Tue, 17 Aug 2021 08:48:53 -0400
+Received: from mail-wr1-f45.google.com ([209.85.221.45]) by
+ mrelayeu.kundenserver.de (mreue011 [213.165.67.97]) with ESMTPSA (Nemesis) id
+ 1MYNeM-1mbRY10Oji-00VPid; Tue, 17 Aug 2021 14:48:19 +0200
+Received: by mail-wr1-f45.google.com with SMTP id r7so28533985wrs.0;
+        Tue, 17 Aug 2021 05:48:18 -0700 (PDT)
+X-Gm-Message-State: AOAM530tTjOCDONB2supLX0YLTXJSp5vqdjYfeMajHbqEQPdIf22iFxv
+        vxt4YlVNjMx++zaRDE+Gkq475EtEw86cv3itynU=
+X-Google-Smtp-Source: ABdhPJzvLqUOdaDgcFLGV+XABbDpM4mCjcx48HbWxenpfaJrBkKR511cR4DsLPHZVVEVdbkZvTd3qw+I95Y1M2XpA5A=
+X-Received: by 2002:adf:e107:: with SMTP id t7mr3868804wrz.165.1629204498645;
+ Tue, 17 Aug 2021 05:48:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210817100845.11626-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20210817100845.11626-1-lukas.bulwahn@gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 17 Aug 2021 14:48:02 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a0iPsbMr1QN4Rg7hhgkGO0n956SpoDH_Wt+OcFbye1__w@mail.gmail.com>
+Message-ID: <CAK8P3a0iPsbMr1QN4Rg7hhgkGO0n956SpoDH_Wt+OcFbye1__w@mail.gmail.com>
+Subject: Re: [PATCH] watchdog: remove dead iop watchdog timer driver
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, kernel-janitors@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:nwkCjRYMlfl9G/dxqoPDJVtxiQ8/tlfkkCrdGDBO0wxBKu5dhXK
+ +3v3qdWwcOgvi1oP+XHo1xoLR14PLergVoU+rS3fbmdycCrdtjN1+9UR/FWemOsDXAKLorp
+ jKXtkuQ9xkqnxrbNOWG2pEwQ1uL/GzAP7sfl3E1mB9Gs9X5Uw7UfViqXH/TUs5at5vm4ifR
+ 9UDcGHkefm9SLuh3L79Dw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:kR92IiCwtpk=:nnsFKJRLVV68bQQW/M9lAE
+ Cr2BZy0R0qJEQkRh6WbluHdc3n5PkY6Btf6ti87wS1c9lkvMMSMUnoKgvMQMeM1k4tX92GJ9i
+ QXeMxJNa13Ogvd1EJri+bHr3QT/sDLgrFnHV6as3T3JpsX0scjj9RaO5fQ5vAq8HDERN7i1s2
+ /3QooNGRAWQtHjSI1ZfV8Qce4CtkjSON1zI8OESiQsnaQ2q9OBZ+jCri38lGIyORqma5rhdI4
+ vTFFb1wzRAz9mBFFrjBflsQ0cOn7CdaW3MpUkESa6g6UCNPO/E/YAqZzkG0Rs2mwXn5la1Qxd
+ 1SkE289T3RcBM1X4J4P71YuXfQRu3nMijrtaZP3pn87BZofQnpvdkDSyreAGMgqGTTiXPMwo1
+ kkEYMKv48kiWycgb8AC6A1xIYyt8tAeauZjrKNx7vMwV573HC0vD8LCGiApu7KUQnoeRIVw0l
+ TuNlP+8NXM0yDJ+5aiw/3WbFTjYRzbEor5sPFekp09PCQ9vUzoU1DHTiFsmtM0xQbV7fe7Ozl
+ +5RuSIfBccncWwKnQPihNCuuwrrHJyTpcYwL+nVXwi3mb518xkCxWGI1hlf4W3J9o0M3oYtGC
+ j6QZYPChzQMQF58NQoSCkuF7T7FcAmRWAlmjCcxSMJEUBQxbk+3SX4Ze1xw8nwhexK6wbAHeM
+ aOw8bE7zHZjhiMvESb4hPBKD4sqQ1EL0Lg4LY7Q3aY44IKg0PypTchOVqAFkRs0vmkrjztIk7
+ zQrHVPTlnxwnhX+/C7BTfj3j3yzmX/vTF1cK7K19m5hq7op3W9Ky80KeTSFMllCGWAw5AsMbS
+ DCdW1zeFEEYNdYNMSTHHRpEe/KPpg8OLFnYtdJ0g9WTKXya5vFepzivuAx0OJCylTj8FNzS
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 0a0a66c984b3 ("clk: staging: Specify IOMEM dependency for Xilinx
-Clocking Wizard driver") introduces a dependency on the non-existing config
-IOMEM, which basically makes it impossible to include this driver into any
-build. Fortunately, ./scripts/checkkconfigsymbols.py warns:
+On Tue, Aug 17, 2021 at 12:08 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+>
+> Commit 59d3ae9a5bf6 ("ARM: remove Intel iop33x and iop13xx support")
+> removes the config ARCH_IOP13XX in ./arch/arm/Kconfig.
+>
+> Hence, since then, the corresponding iop watchdog timer driver is dead
+> code. Remove this dead driver.
+>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-IOMEM
-Referencing files: drivers/staging/clocking-wizard/Kconfig
+I would add a reference to ec2e32ca661e ("watchdog: iop_wdt only builds for
+mach-iop13xx") in the changelog, before that it could be selected but
+did not build.
 
-The config for IOMEM support is called HAS_IOMEM. Correct this reference to
-the intended config.
-
-Fixes: 0a0a66c984b3 ("clk: staging: Specify IOMEM dependency for Xilinx Clocking Wizard driver")
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- drivers/staging/clocking-wizard/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/staging/clocking-wizard/Kconfig b/drivers/staging/clocking-wizard/Kconfig
-index 69cf51445f08..2324b5d73788 100644
---- a/drivers/staging/clocking-wizard/Kconfig
-+++ b/drivers/staging/clocking-wizard/Kconfig
-@@ -5,6 +5,6 @@
- 
- config COMMON_CLK_XLNX_CLKWZRD
- 	tristate "Xilinx Clocking Wizard"
--	depends on COMMON_CLK && OF && IOMEM
-+	depends on COMMON_CLK && OF && HAS_IOMEM
- 	help
- 	  Support for the Xilinx Clocking Wizard IP core clock generator.
--- 
-2.26.2
-
+Acked-by: Arnd Bergmann <arnd@arndb.de>
