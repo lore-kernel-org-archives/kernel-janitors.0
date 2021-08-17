@@ -2,106 +2,75 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B624C432BE
-	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 08:48:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A5E7C432BE
+	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 09:28:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 043E360F39
-	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 08:48:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A03C60F35
+	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 09:28:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239136AbhHQIst (ORCPT
+        id S235559AbhHQJ3A (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 17 Aug 2021 04:48:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34142 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234880AbhHQIst (ORCPT
+        Tue, 17 Aug 2021 05:29:00 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:35242 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234347AbhHQJ27 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 17 Aug 2021 04:48:49 -0400
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76A18C061764;
-        Tue, 17 Aug 2021 01:48:16 -0700 (PDT)
-Received: by mail-wr1-x436.google.com with SMTP id q10so27448930wro.2;
-        Tue, 17 Aug 2021 01:48:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=UvsOH8jtQe+4Kanh6E/MrBCjFWLS1TOh5zSyYH4PboQ=;
-        b=LbR8LaJuOhBakcLFAAFQ2PSM/njYxfneXxDeDQYlanx3FENXuAF6gIa2xv7Wo1X2c2
-         R9OvMZUC5T3QXMdttlxfunjDSmS0SpioQKYCVIkhzwtq3u4dP8lMsia9ZL9A8x0102Nr
-         oim0c7sOWji/ztnYQeIzF18NgS9SkJtTLWsAqYrJd22trjBcZtNyJplcdFZrXqv/OkX3
-         HVgg4pi0RVbrICIsacxYUOjtNVCTWRfOdE53LABlXoMXTYZav5Cu1iN/mahqaUmtJ27E
-         4a9/JyDuXPfQWqt3DUcIe9xwZTDPxR+b2hNiao1jTATo1UFeXqaApMu09Tz5Nryua+eK
-         7/dw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=UvsOH8jtQe+4Kanh6E/MrBCjFWLS1TOh5zSyYH4PboQ=;
-        b=N8e7XF24i6EK9S2VSQU/j6jNf5gmsPaZd2Ynp7Z78NSY/O5w6CpBXkI3ThqP8xsQGN
-         fNIgL4maG5A5DG4hAMX0Kzil1SbpZJj0LjvrZ1EjJpDjNs4xnN/jILsA/gAx0Vcu5V7Q
-         6aoNQeyfyJQtziZQnoZWFLwnAdLbq1jaNW5aU30827A7/aCTMydzaQMBPx7rtq/+2oVt
-         yPnn/9D7otfghAaxD/w/AoHZDkxK4pbeAc602jgiU3+gXStajPTHTs09v5t2iVTJnaeE
-         UDFRK8zHfL6mH96vbKLybc3fKJoCQp7d5HwB0X+8HeE9ZJgx6qM3p7TgRRRkHh/t6K0D
-         8qIg==
-X-Gm-Message-State: AOAM532aCkSg33iCcXRhPIjp3ptl2hBkyN3E1/t5khJMzRVlwd2NCJSt
-        g+iv+VfQxWroXfK9sO6OEMo=
-X-Google-Smtp-Source: ABdhPJy2o8VurqIMFUNktoLextNJhp00f0HEhzkQIq8R2VbnLDV0HaQAeUr+eat2ZRGeJzfbzYVdIw==
-X-Received: by 2002:adf:f741:: with SMTP id z1mr2597669wrp.201.1629190095036;
-        Tue, 17 Aug 2021 01:48:15 -0700 (PDT)
-Received: from localhost.localdomain (arl-84-90-178-246.netvisao.pt. [84.90.178.246])
-        by smtp.gmail.com with ESMTPSA id o14sm1302899wms.2.2021.08.17.01.48.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Aug 2021 01:48:14 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tue, 17 Aug 2021 05:28:59 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id A601F21E2E;
+        Tue, 17 Aug 2021 09:28:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1629192505; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=uSz0qBmjS9Oie0OcboEtBo514k1ie0fSH0PaWE6RX64=;
+        b=wt6P/diQH3RbdGN7pndS+lACfxzsrFjNHKVMSsG49U8U98GCt7ch1VCLWfY6lnnLI2hnc4
+        p4rVzvv4H/TMv9jgfrB0nRzaTAewu5mORvJQr+hZI9actPo8iqfpC6F9TyLv2iNSmaeDlx
+        kmT6v4gAcF5I/Ltk1IkYSYQMc/5tY+o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1629192505;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=uSz0qBmjS9Oie0OcboEtBo514k1ie0fSH0PaWE6RX64=;
+        b=S3e91dfXKcp/RbRIm7zsTJChVBBTBHg5ZycM9l2AlV+cOz0Af1iiJOl4ltuFKC/41P1TTh
+        nl6QUdQ+xQGk+QDw==
+Received: from pobox.suse.cz (pobox.suse.cz [10.100.2.14])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 86DD7A3B91;
+        Tue, 17 Aug 2021 09:28:25 +0000 (UTC)
+Date:   Tue, 17 Aug 2021 11:28:25 +0200 (CEST)
+From:   Miroslav Benes <mbenes@suse.cz>
+To:     Steven Rostedt <rostedt@goodmis.org>
+cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jiri Kosina <jikos@kernel.org>, live-patching@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
         kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] hwmon: remove amd_energy driver in Makefile
-Date:   Tue, 17 Aug 2021 10:48:11 +0200
-Message-Id: <20210817084811.10673-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.26.2
+        stable@vger.kernel.org
+Subject: Re: [PATCH] tracing: define needed config DYNAMIC_FTRACE_WITH_ARGS
+In-Reply-To: <20210806211808.6d927880@oasis.local.home>
+Message-ID: <alpine.LSU.2.21.2108171126040.26111@pobox.suse.cz>
+References: <20210806195027.16808-1-lukas.bulwahn@gmail.com> <20210806211808.6d927880@oasis.local.home>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 9049572fb145 ("hwmon: Remove amd_energy driver") removes the driver,
-but misses to adjust the Makefile.
+> I placed it in my queue to go into the 5.14-rc cycle.
+> 
+> Since this affects live kernel patching, can I get a Tested-by from one
+> of the live kernel patching  folks?
 
-Hence, ./scripts/checkkconfigsymbols.py warns:
+I see it got merged, but anyway it looks good to me. Thanks for fixing it.
 
-SENSORS_AMD_ENERGY
-Referencing files: drivers/hwmon/Makefile
-
-Remove the missing piece of this driver removal.
-
-Fixes: 9049572fb145 ("hwmon: Remove amd_energy driver")
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- drivers/hwmon/Makefile | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/hwmon/Makefile b/drivers/hwmon/Makefile
-index 53a8f4b500b8..4b33421746c0 100644
---- a/drivers/hwmon/Makefile
-+++ b/drivers/hwmon/Makefile
-@@ -45,7 +45,6 @@ obj-$(CONFIG_SENSORS_ADT7462)	+= adt7462.o
- obj-$(CONFIG_SENSORS_ADT7470)	+= adt7470.o
- obj-$(CONFIG_SENSORS_ADT7475)	+= adt7475.o
- obj-$(CONFIG_SENSORS_AHT10)	+= aht10.o
--obj-$(CONFIG_SENSORS_AMD_ENERGY) += amd_energy.o
- obj-$(CONFIG_SENSORS_APPLESMC)	+= applesmc.o
- obj-$(CONFIG_SENSORS_ARM_SCMI)	+= scmi-hwmon.o
- obj-$(CONFIG_SENSORS_ARM_SCPI)	+= scpi-hwmon.o
--- 
-2.26.2
-
+Miroslav
