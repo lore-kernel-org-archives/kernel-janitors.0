@@ -2,80 +2,106 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 802FAC4338F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 08:09:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35F88C4338F
+	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 08:13:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6494360F22
-	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 08:09:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1BE7560F58
+	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 08:13:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234745AbhHQIKG (ORCPT
+        id S234795AbhHQIOM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 17 Aug 2021 04:10:06 -0400
-Received: from mout.kundenserver.de ([212.227.126.134]:51755 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234581AbhHQIKE (ORCPT
+        Tue, 17 Aug 2021 04:14:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54116 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234907AbhHQIOJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 17 Aug 2021 04:10:04 -0400
-Received: from mail-wm1-f43.google.com ([209.85.128.43]) by
- mrelayeu.kundenserver.de (mreue012 [213.165.67.97]) with ESMTPSA (Nemesis) id
- 1MUl4z-1mfvUR1giP-00Qg8l; Tue, 17 Aug 2021 10:09:30 +0200
-Received: by mail-wm1-f43.google.com with SMTP id c8-20020a7bc008000000b002e6e462e95fso1234439wmb.2;
-        Tue, 17 Aug 2021 01:09:30 -0700 (PDT)
-X-Gm-Message-State: AOAM532/nYoVYQdaPNTDw/HJAla55xHpS/5pQ2ITJ01MNb4kgq3EOarN
-        CpWh2KXxroCQzhSQTghMZwGntd848CqgIz3kG0g=
-X-Google-Smtp-Source: ABdhPJw/hVeF2oi552UuzFwFxuAsd7BwTOC7LdXLOiMZcArDyclXg5p1pniYYafsm/+Q1D9cOD+vthsEizxoC+Abkac=
-X-Received: by 2002:a05:600c:1991:: with SMTP id t17mr2051915wmq.120.1629187769866;
- Tue, 17 Aug 2021 01:09:29 -0700 (PDT)
+        Tue, 17 Aug 2021 04:14:09 -0400
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B38B4C061764;
+        Tue, 17 Aug 2021 01:13:36 -0700 (PDT)
+Received: by mail-wr1-x436.google.com with SMTP id r7so27387021wrs.0;
+        Tue, 17 Aug 2021 01:13:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=iNpthpH15DTu8RBKV54iW5xxSqBJuNP9jmT6bY/RyzI=;
+        b=SYuRfmkAQID5TSGEej3B7UcoooTqvAkRvJBZtd0w8B59UoFCHCLor1rAj2H9z9rz02
+         XfOpgkIqLAx6Tt5MmEkouYU4MDeaOdESwbM58EzsJhu5tDk8J3kBcZQRR4KUIeQRTfvL
+         /dIJuoDpCTxZg18Yawlctau9mcWOWscSWhz3OAwnLQ8xsfpapUpu519rZoB4ugcNAhVe
+         laYrbTo8LVKT+iRmuK36JCr4iNtzaQI4MhYuyAffI1N61O82Buxuo1jXRNiNh3cBqLXr
+         OZ1f2qosqJIJKtYABn/KqgFHrH3yrZZQ3GcPiYflSBkt0bwMsk0Hw0bSge4SLMYJYWAk
+         KGLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=iNpthpH15DTu8RBKV54iW5xxSqBJuNP9jmT6bY/RyzI=;
+        b=BBGMqEC2WxQ/M5krDxbu++bYWrKB8wBT1dOlHkrQWSgCq21niaHaaGfbLwrFv9N/yk
+         TmZSJEdN1rb8huySsxj4UBebd/WvN5GVRFYOd0NUFiR1ssDG671mPRQflh9CoSznwa1n
+         PNouqhjmulov9Oy7mugZ+dVBszaxKptnK8uvzQOBFtd4719ENWtZl4ziYiESH6ng+9cz
+         l7ZE3JXhheEw36KCuAGTkIsfX0ePV4kQ1gUSNBL6Me3JFejISIRmFn9/VIOIOJ7+YKkP
+         1bZXlYXPmwC7G2LefFb+zJ6Xf4f6PghZudHoqAjPM1fWuMD+TEMFN+wwVunuL3RV8yFw
+         NhGA==
+X-Gm-Message-State: AOAM530tblGZkrZNk3I6Lc5jMYt6P+q/pOgMyy1CllWlrBFVWc0k9qoM
+        4Rrxifi6fwW7LeWLhnwnyNU=
+X-Google-Smtp-Source: ABdhPJznDK9eFcziNqrHnwEoQ1pvWyUZdNXCVFVd7bPm4KmDsli2JR1yB6astmQBNaCefQmEHUqfdw==
+X-Received: by 2002:a5d:6948:: with SMTP id r8mr2365968wrw.136.1629188015292;
+        Tue, 17 Aug 2021 01:13:35 -0700 (PDT)
+Received: from localhost.localdomain (arl-84-90-178-246.netvisao.pt. [84.90.178.246])
+        by smtp.gmail.com with ESMTPSA id b12sm1316604wmd.42.2021.08.17.01.13.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Aug 2021 01:13:34 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] iio: gyro: remove dead config dependencies on INPUT_MPU3050
+Date:   Tue, 17 Aug 2021 10:13:30 +0200
+Message-Id: <20210817081330.9645-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-References: <20210817072842.8640-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20210817072842.8640-1-lukas.bulwahn@gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 17 Aug 2021 10:09:14 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a1H-Of2LC9Yp36PB+dhAwvirohSVDo1y9nWshyZytWqNw@mail.gmail.com>
-Message-ID: <CAK8P3a1H-Of2LC9Yp36PB+dhAwvirohSVDo1y9nWshyZytWqNw@mail.gmail.com>
-Subject: Re: [PATCH] input: remove dead CSR Prima2 PWRC driver
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, kernel-janitors@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:2QKq/FQd5pk2kzFN5fPpXezwU69TUHVu0OZ9SSDS1TFm+ae8FJQ
- w3AlHn+C7tssZge064OTegWIogTtYV9PybKm5pUegLVj+l3j2peZ9ZCxwTPMPR3NLZESUQf
- eZWFyKVZbLcc+lWBRvxiNXqWBZx5OCSJh1wlPSVVNT1d16npJkzwtbAJkHy31JqAt6IcdXh
- MDi7ORAAVLDaG/Lb1Qtig==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:N+LggpEY3oM=:xLXGheIGd65UuAakDmsOib
- oeOSWQ2aSXgwWyHa5+p2hBATg04TKHgKAHUT4kDt+hQbir0nOzD2zMSfp0ROfSng5Ya2dSqAU
- VBR8EeSbIZeNAdk9lHBvPyQF0Ls7+LD0I5WDAQAwzHXcax37dRHAHCy/drBCo7ZpzBowkU6v0
- B4WiAdWE0/trNxJTM7dYtN23uf/Juiqi2HCgLtzF9NtdB7s1FqucgJk+a+JHzu27RQqrhnW9Q
- JgMBEBXkaKgR7HT4iQHZPNOcdffCEawPwbVnataFKBFZd6ZlxlCfhoMorVQx7d3+zKKmgz/4N
- T7l9nMx3mRgMXhuZlirQh/0gp6kXUsIW2GoW4KZUQJzW/gS9Ep1jj0TioN0ouXP8q7VmeCzsi
- xAJcNchb5dLO+fwKBwC6AKJGkJoJ1Y7Gz4FqxAjZW6aFTwFzIz1gUYk6yaOitkN7WaUGYQiis
- pHTYSb4EHu7qWW/FUuatZwa8q1wuIrlOrBSFYdssCPNLci6806TDGyAd1B1Tr+U3A/9RZzJxw
- LnAii/EHP1Cgal9MR2mmYmhLihdRlBXShNLLCdiy2IV0n1DgpTNp+dMy0pV+b+XN0DrgQR9hv
- iZ3YJvToTfINR1/iaivi7fG9XgDxlYKymL2S3YysJ2W/3dqp7ed29Kwk7ZIJgyjUL8bvrHHPn
- ixJTpmWduVlqrH0RAObAc2+r9iZzSvRgHEDiUfTTNhOA81oLb5HRNs+zHFvNni1Nbkujs+lO6
- vT4ScnPv4AB77WsQBUq+acYUDYunSVMaVo0zOrBupuQFwltvx0L0rJnJUPoe4Y9DIYfyEEP94
- U0JmSfx6C80OSi34YxHBWCzf65ldhi+NqdDXdtmCnEBEte0Krv6uzoIufrefBXuPs5YdgSV
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Aug 17, 2021 at 9:29 AM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
->
-> Commit f3a732843acc ("ARM: remove sirf prima2/atlas platforms") removes
-> the config ARCH_SIRF in ./arch/arm/mach-prima2/Kconfig.
->
-> Hence, since then, the corresponding CSR Prima2 PWRC Driver is dead code.
-> Remove this dead driver.
->
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Commit b1fe0cf06f92 ("Input: delete MPU3050 driver") deletes the superseded
+MPU3050 driver and its corresponding config INPUT_MPU3050.
 
-Good catch!
+The dependencies on the superseding driver in ./drivers/iio/gyro/Kconfig
+to ensure that the two drivers are not built into the same kernel is a dead
+dependency and not required anymore.
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+So, remove those config dependencies on INPUT_MPU3050 for MPU3050_I2C.
+
+This issue was detected with ./scripts/checkkconfigsymbols.py.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ drivers/iio/gyro/Kconfig | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/iio/gyro/Kconfig b/drivers/iio/gyro/Kconfig
+index 20b5ac7ab66a..a672f7d12bbb 100644
+--- a/drivers/iio/gyro/Kconfig
++++ b/drivers/iio/gyro/Kconfig
+@@ -126,7 +126,6 @@ config MPU3050
+ 
+ config MPU3050_I2C
+ 	tristate "Invensense MPU3050 devices on I2C"
+-	depends on !(INPUT_MPU3050=y || INPUT_MPU3050=m)
+ 	depends on I2C
+ 	select MPU3050
+ 	select REGMAP_I2C
+-- 
+2.26.2
+
