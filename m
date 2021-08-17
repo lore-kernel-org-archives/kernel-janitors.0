@@ -2,60 +2,90 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D647C4320A
-	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 16:49:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEBD9C4338F
+	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 17:08:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4E0F460EBC
-	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 16:49:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B09060FD9
+	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 17:08:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230431AbhHQQuC (ORCPT
+        id S231281AbhHQRJS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 17 Aug 2021 12:50:02 -0400
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:31329 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231494AbhHQQuA (ORCPT
+        Tue, 17 Aug 2021 13:09:18 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:56726
+        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229700AbhHQRJR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 17 Aug 2021 12:50:00 -0400
-Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 93559240007;
-        Tue, 17 Aug 2021 16:49:25 +0000 (UTC)
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        linux-mtd@lists.infradead.org
-Cc:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        linux-mips@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mtd: maps: remove dead MTD map driver for PMC-Sierra MSP boards
-Date:   Tue, 17 Aug 2021 18:49:25 +0200
-Message-Id: <20210817164925.109210-1-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20210817104531.12675-1-lukas.bulwahn@gmail.com>
-References: 
+        Tue, 17 Aug 2021 13:09:17 -0400
+Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id AD0933F0B9;
+        Tue, 17 Aug 2021 17:08:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1629220122;
+        bh=WJBXkkU1tHc8E8eo8Usv6y0V0Z9Qgiu/DplUySoP91s=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=anFq0wsiYvXoedRMVYYKBJlaFe4IRTL41by7WARaDZFAfL9YofQcSVJTnYkSm7yPu
+         jlqQvHRdJp5OUwIunUOfcSZP5MlZtoRxDpSBwdaMNg4/qgVYMj+ps6366ON/TLxRJf
+         2foqSWHaPdYwCRpSkSULec1DOkdC3LSZWdtzsoI1oadmEpx1DiEkT1rMUff7G8GO7x
+         RtyvDQrTA796S7rfHD5V1TVJrGDQcsYiUCC2zv5H9cOcRILXdvYpOAUaxxyZXTiQxq
+         EQ0VEaVqXhX8x4ad2IXmkMBWh7zy1i0H0lSd1obaB9V0KQl8FcakBLAaUUU4ivQS6D
+         z5wbV61JPViqg==
+From:   Colin King <colin.king@canonical.com>
+To:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>, netdev@vger.kernel.org,
+        bpf@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] bpf: remove redundant initialization of variable allow
+Date:   Tue, 17 Aug 2021 18:08:42 +0100
+Message-Id: <20210817170842.495440-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-X-linux-mtd-patch-notification: thanks
-X-linux-mtd-patch-commit: b'60d0607998d6080db7af1d5bd8c9391f766fe697'
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, 2021-08-17 at 10:45:31 UTC, Lukas Bulwahn wrote:
-> Commit 1b00767fd8e1 ("MIPS: Remove PMC MSP71xx platform") removes the
-> config PMC_MSP in ./arch/mips/Kconfig.
-> 
-> Hence, since then, the corresponding MTD map driver for PMC-Sierra MSP
-> boards is dead code. Remove this dead driver.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git mtd/next, thanks.
+The variable allow is being initialized with a value that is never read, it
+is being updated later on. The assignment is redundant and can be removed.
 
-Miquel
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ kernel/bpf/cgroup.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/bpf/cgroup.c b/kernel/bpf/cgroup.c
+index a1dedba4c174..9f35928bab0a 100644
+--- a/kernel/bpf/cgroup.c
++++ b/kernel/bpf/cgroup.c
+@@ -1133,11 +1133,11 @@ int __cgroup_bpf_check_dev_permission(short dev_type, u32 major, u32 minor,
+ 	struct bpf_cgroup_dev_ctx ctx = {
+ 		.access_type = (access << 16) | dev_type,
+ 		.major = major,
+ 		.minor = minor,
+ 	};
+-	int allow = 1;
++	int allow;
+ 
+ 	rcu_read_lock();
+ 	cgrp = task_dfl_cgroup(current);
+ 	allow = BPF_PROG_RUN_ARRAY_CG(cgrp->bpf.effective[type], &ctx,
+ 				      bpf_prog_run);
+-- 
+2.32.0
+
