@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01DB3C4320A
-	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 14:35:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B2D7C4338F
+	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 16:32:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DCDD460EFE
-	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 14:35:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9F2D60BD3
+	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 16:32:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238014AbhHQOfy (ORCPT
+        id S229912AbhHQQcq (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 17 Aug 2021 10:35:54 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:40618
+        Tue, 17 Aug 2021 12:32:46 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:48658
         "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S240138AbhHQOft (ORCPT
+        by vger.kernel.org with ESMTP id S229699AbhHQQcp (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 17 Aug 2021 10:35:49 -0400
+        Tue, 17 Aug 2021 12:32:45 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 6B5413F048;
-        Tue, 17 Aug 2021 14:35:14 +0000 (UTC)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id E86DD3F10B;
+        Tue, 17 Aug 2021 16:32:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1629210914;
-        bh=1C3RL56RVkTtjUJ5LyJ+r/R+GvbQ9mFn4F8qtny9s2k=;
+        s=20210705; t=1629217925;
+        bh=GQiZ4NCYIdMlQCu6k9AbZJfoOt7wFTTTHg5Ly6rcD3c=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=JvX+vmsqMmsyRFlQ3TsEoUx03iIGB03sT2UXJiDN4aTLtTUekRTcQZzw91FTqKoT/
-         u/ANURKihylRWxCtr/eRKMpVftJ8B/VBTdUNPtFs7uo3c3R2WGN+SUFR3ZscG1lV98
-         c3NwcFumQf89t34i1F+AGr5uWFAqDvxzuZ0rv+GEbrPKcRFlBHAxOMv7dzqwJXu79f
-         py9MvzdZbhpuGEHfG648gtD4/eoOCpGxRjwJsAB3G2wynTP700K4NrueXWvS1H70AV
-         ofF6RzrebYurdGhrP78RJGR7/xzQ8MjLclvLTF1zJ35vhTZ26Jq3LWRKPwtd+s+Uxx
-         TvH+b/0UqPZjg==
+        b=DbFta4S9x0rtecgklYwYCzYbjr/LcPVip9RUs/PJC/PaTEdO7zuD5UoP314D/4PX/
+         w+GVEdaNmI8+s9xw/3LpmhEooNg+f5HtGO5S2cpLj7aNondxMC5LBD8XmNFwpo6fNz
+         /aZoHmzdpDAvUmij69QuaNEo8S06k0fmqjSo3u7vluqV7/t6lLWPSdeZhuuAsu2bFj
+         evfN36Pkh88s3ZBfDX49wpzI5u+aWcQ70AomNvj8Oipp1bC5fj3/ucH3TwLubZOnW/
+         uFYBlyxr2U9hJNouKAJRtEuYgxAWOB/N7EAVrNd6vKClP8GzKtnc3jVi2lHZahQ67z
+         vgpmiqWLX4hpA==
 From:   Colin King <colin.king@canonical.com>
-To:     Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Xinhui.Pan@amd.com, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
+To:     Dave Airlie <airlied@redhat.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Sam Ravnborg <sam@ravnborg.org>,
         dri-devel@lists.freedesktop.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/amd/pm: Fix spelling mistake "firwmare" -> "firmware"
-Date:   Tue, 17 Aug 2021 15:35:14 +0100
-Message-Id: <20210817143514.33609-1-colin.king@canonical.com>
+Subject: [PATCH][next] drm/mgag200: Fix uninitialized variable delta
+Date:   Tue, 17 Aug 2021 17:32:04 +0100
+Message-Id: <20210817163204.494166-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -57,26 +58,30 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-There is a spelling mistake in a dev_err error message. Fix it.
+The variable delta is not initialized and this will cause unexpected
+behaviour with the comparison of tmpdelta < delta. Fix this by setting
+it to 0xffffffff. This matches the behaviour as in the similar function
+mgag200_pixpll_compute_g200se_04.
 
+Addresses-Coverity: ("Uninitialized scalar variable")
+Fixes: 2545ac960364 ("drm/mgag200: Abstract pixel PLL via struct mgag200_pll")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/mgag200/mgag200_pll.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0.c b/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0.c
-index 5d2605df32e8..a0e50f23b1dd 100644
---- a/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0.c
-+++ b/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0.c
-@@ -311,7 +311,7 @@ static int smu_v13_0_get_pptable_from_firmware(struct smu_context *smu, void **t
- 	version_major = le16_to_cpu(hdr->header.header_version_major);
- 	version_minor = le16_to_cpu(hdr->header.header_version_minor);
- 	if (version_major != 2) {
--		dev_err(adev->dev, "Unsupported smu firwmare version %d.%d\n",
-+		dev_err(adev->dev, "Unsupported smu firmware version %d.%d\n",
- 			version_major, version_minor);
- 		return -EINVAL;
- 	}
+diff --git a/drivers/gpu/drm/mgag200/mgag200_pll.c b/drivers/gpu/drm/mgag200/mgag200_pll.c
+index 7c903cf19c0d..18f1a6dd019a 100644
+--- a/drivers/gpu/drm/mgag200/mgag200_pll.c
++++ b/drivers/gpu/drm/mgag200/mgag200_pll.c
+@@ -125,6 +125,7 @@ static int mgag200_pixpll_compute_g200se_00(struct mgag200_pll *pixpll, long clo
+ 
+ 	m = n = p = s = 0;
+ 	permitteddelta = clock * 5 / 1000;
++	delta = 0xffffffff;
+ 
+ 	for (testp = 8; testp > 0; testp /= 2) {
+ 		if (clock * testp > vcomax)
 -- 
 2.32.0
 
