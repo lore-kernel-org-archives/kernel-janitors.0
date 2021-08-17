@@ -2,87 +2,176 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-19.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90F12C432BE
-	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 17:21:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78D33C4338F
+	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 18:22:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 747F960F39
-	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 17:21:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5163660F22
+	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 18:22:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231570AbhHQRVr (ORCPT
+        id S233075AbhHQSXH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 17 Aug 2021 13:21:47 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:57576
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229723AbhHQRVr (ORCPT
+        Tue, 17 Aug 2021 14:23:07 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:51220 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232589AbhHQSXG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 17 Aug 2021 13:21:47 -0400
-Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
+        Tue, 17 Aug 2021 14:23:06 -0400
+Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 9971F3F336;
-        Tue, 17 Aug 2021 17:21:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1629220872;
-        bh=cnxPmKp+RyLu2md5DjVc5e+v+zyOhG6XgMhIx28x8+8=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=mI1HRmsEIdO1o+FJEGWTJgzlDYOXxIgNwbxirg4xLBQEC5lb/NySOyoP/QaMg1gHN
-         6+sU5JuAoFv7AzGU/sffv/y0y05EjeaDc35xz0v+Ekw2RucxNUNCcg+cXYFcQxhpwg
-         DAIfb6pTTJkkcxRBx22stMj6dtWn57Feo0TtBpcdA5LvemVI99Z4ll8gRwUkY1Cp/T
-         6q/ss3k7sXBHM59qBb4qmsYiFzMTS/XKRAxFt1r5++rat50pVBjMppcbMBh+Yr3OMk
-         rGmtbkiJNO+4Gq52py3M7giZXPK3Upf8+n1A6qtyNyU98T2iCAHx9ldE3Nabw6ZE3+
-         FwHRnun1FaylQ==
-From:   Colin King <colin.king@canonical.com>
-To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 0F46821FAF;
+        Tue, 17 Aug 2021 18:22:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1629224552; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=592Le2NNIvfUfPQaModD+0yXTQ2wJpPTjpnad97qY4E=;
+        b=ERYJSEpQSLVPRGZqkuo8kqCRy3IRqJ37kCS6po/gCe3KKIcsrJXp9NFsquig39lksoSUe1
+        hf+7/Lhp8N4hynr2BehiSeKmoP1+72O8kyCKxBQsjDSNblDtTqJFFBPuhnSTDK4rdJTR6X
+        ZXhb7E1uDijS6CMSQ7YIzriJ/y303hk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1629224552;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=592Le2NNIvfUfPQaModD+0yXTQ2wJpPTjpnad97qY4E=;
+        b=eNcIfmV3G1nw2UjGv+wniOJTMijL5gsj1YwpsIMth+syv29g1AbU9N38RPmqQEBeW58TxE
+        HeMikag8tfkUC0Bw==
+Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap1.suse-dmz.suse.de (Postfix) with ESMTPS id C51BB136BF;
+        Tue, 17 Aug 2021 18:22:31 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap1.suse-dmz.suse.de with ESMTPSA
+        id EUvhLmf+G2G7fwAAGKfGzw
+        (envelope-from <tzimmermann@suse.de>); Tue, 17 Aug 2021 18:22:31 +0000
+To:     Colin King <colin.king@canonical.com>,
+        Dave Airlie <airlied@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        dri-devel@lists.freedesktop.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] iio: adc: Fix -EBUSY timeout error return
-Date:   Tue, 17 Aug 2021 18:21:11 +0100
-Message-Id: <20210817172111.495897-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.32.0
+References: <20210817163204.494166-1-colin.king@canonical.com>
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+Subject: Re: [PATCH][next] drm/mgag200: Fix uninitialized variable delta
+Message-ID: <bc94e837-9b56-55ba-1e68-1cba79ac038a@suse.de>
+Date:   Tue, 17 Aug 2021 20:22:31 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210817163204.494166-1-colin.king@canonical.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="X1xtbZPmJ37zC9vbH4rYBE4W1I3UPJVJ9"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--X1xtbZPmJ37zC9vbH4rYBE4W1I3UPJVJ9
+Content-Type: multipart/mixed; boundary="dZ23NRPhjOaTV5youl9bhpVXI7uEGEb9c";
+ protected-headers="v1"
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: Colin King <colin.king@canonical.com>, Dave Airlie <airlied@redhat.com>,
+ David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+ Sam Ravnborg <sam@ravnborg.org>, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-ID: <bc94e837-9b56-55ba-1e68-1cba79ac038a@suse.de>
+Subject: Re: [PATCH][next] drm/mgag200: Fix uninitialized variable delta
+References: <20210817163204.494166-1-colin.king@canonical.com>
+In-Reply-To: <20210817163204.494166-1-colin.king@canonical.com>
 
-Currently when a timeout occurs in rzg2l_adc_hw_init the error -EBUSY is
-assigned to ret but the error code is used as the function is hard-coded
-to return 0.  The variable ret is 0 before entering the while-loop hence
-the fix is just to return ret at the end of the function to return the
-success 0 or -EBUSY return code.
+--dZ23NRPhjOaTV5youl9bhpVXI7uEGEb9c
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-Addresses-Coverity: ("Unused value")
-Fixes: d484c21bacfa ("iio: adc: Add driver for Renesas RZ/G2L A/D converter")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/iio/adc/rzg2l_adc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi
 
-diff --git a/drivers/iio/adc/rzg2l_adc.c b/drivers/iio/adc/rzg2l_adc.c
-index 9996d5eef289..868b183e75ea 100644
---- a/drivers/iio/adc/rzg2l_adc.c
-+++ b/drivers/iio/adc/rzg2l_adc.c
-@@ -401,7 +401,7 @@ static int rzg2l_adc_hw_init(struct rzg2l_adc *adc)
- exit_hw_init:
- 	clk_disable_unprepare(adc->pclk);
- 
--	return 0;
-+	return ret;
- }
- 
- static void rzg2l_adc_pm_runtime_disable(void *data)
--- 
-2.32.0
+Am 17.08.21 um 18:32 schrieb Colin King:
+> From: Colin Ian King <colin.king@canonical.com>
+>=20
+> The variable delta is not initialized and this will cause unexpected
+> behaviour with the comparison of tmpdelta < delta. Fix this by setting
+> it to 0xffffffff. This matches the behaviour as in the similar function=
 
+> mgag200_pixpll_compute_g200se_04.
+>=20
+> Addresses-Coverity: ("Uninitialized scalar variable")
+> Fixes: 2545ac960364 ("drm/mgag200: Abstract pixel PLL via struct mgag20=
+0_pll")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+
+But the commit message needs Fixes etc. I just sent out a patch for this =
+
+issue myself. I'd like to merge both patches' tags and commit the result =
+
+under your name. (You were first.) Is that ok for you?
+
+Best regards
+Thomas
+
+> ---
+>   drivers/gpu/drm/mgag200/mgag200_pll.c | 1 +
+>   1 file changed, 1 insertion(+)
+>=20
+> diff --git a/drivers/gpu/drm/mgag200/mgag200_pll.c b/drivers/gpu/drm/mg=
+ag200/mgag200_pll.c
+> index 7c903cf19c0d..18f1a6dd019a 100644
+> --- a/drivers/gpu/drm/mgag200/mgag200_pll.c
+> +++ b/drivers/gpu/drm/mgag200/mgag200_pll.c
+> @@ -125,6 +125,7 @@ static int mgag200_pixpll_compute_g200se_00(struct =
+mgag200_pll *pixpll, long clo
+>  =20
+>   	m =3D n =3D p =3D s =3D 0;
+>   	permitteddelta =3D clock * 5 / 1000;
+> +	delta =3D 0xffffffff;
+>  =20
+>   	for (testp =3D 8; testp > 0; testp /=3D 2) {
+>   		if (clock * testp > vcomax)
+>=20
+
+--=20
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
+(HRB 36809, AG N=C3=BCrnberg)
+Gesch=C3=A4ftsf=C3=BChrer: Felix Imend=C3=B6rffer
+
+
+--dZ23NRPhjOaTV5youl9bhpVXI7uEGEb9c--
+
+--X1xtbZPmJ37zC9vbH4rYBE4W1I3UPJVJ9
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature"
+
+-----BEGIN PGP SIGNATURE-----
+
+wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmEb/mcFAwAAAAAACgkQlh/E3EQov+DF
+1RAAvJbQFxESitPZaG4A6dqm04TyJ1HRS/X4G3bze086dnX6DlaqL1zybmYtfl27rr07XADWcJmp
+eOvnaP3hOUoG4LXbNDcR6nLa89Kuav8ZfpwsTypZJzj/QymxGmkE3PGVcPU5taKiM1jJW5Yn7A4H
+fZkAN+ay6LfAfsKjcjpYl7FWt4vnewm3zQUPtlQp+ApnCqSXwKEPSf8Q8bbxxg6E0p4gXQw0BFTU
+UXZRa/aqf4BmaMX84HSK4f3DYFPsHNpvDJykQ5VVakh95xc4dvfYMKAnNLzUdsXbEI8gu42AHp8i
+U75Del97S3mjq46D7eJTBU3Y9Ywrp3kAnfuPdkR2og7fzBHzDQL9BU7/p7lJ5pKDr84ggkTswV7w
+qvhJGLSawoAmfhBfhaeufV5Fu/O5tL1QEikcKnOuWBsDq1uYuhyfgQ0Ioq9EvOxBZLS+E/d89v3s
+JUuq5rEeTiDHX1JtoMLlx8UeCKaJjskwUHcXCWYilNtzGiYjUm2l4KzpusaLiDKAqQsprAbuVpkc
+DyEb7HHfzFnXEdAde9DCchjnN1u1TJAkNOUpFHMUOsU/3lGCOgo66Bcml9WaakGrFHwfqiZ2yeYe
+JnudzAVdDtZQA1nqqvSDUOaKyn6St3Gb+M2AxPEUtLvH6Vak4nDPGclectl4HtziYdqmY95F+zrH
+MlU=
+=xus4
+-----END PGP SIGNATURE-----
+
+--X1xtbZPmJ37zC9vbH4rYBE4W1I3UPJVJ9--
