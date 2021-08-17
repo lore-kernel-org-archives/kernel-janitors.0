@@ -2,72 +2,71 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D4ADC4320A
-	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 07:11:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F24A9C4320A
+	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 07:28:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0505060F5C
-	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 07:11:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC49760F41
+	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 07:28:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238432AbhHQHMG (ORCPT
+        id S238631AbhHQH3V (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 17 Aug 2021 03:12:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39816 "EHLO
+        Tue, 17 Aug 2021 03:29:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43752 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233688AbhHQHMG (ORCPT
+        with ESMTP id S238619AbhHQH3V (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 17 Aug 2021 03:12:06 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D332C061764;
-        Tue, 17 Aug 2021 00:11:33 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id j12-20020a05600c1c0c00b002e6d80c902dso1454532wms.4;
-        Tue, 17 Aug 2021 00:11:32 -0700 (PDT)
+        Tue, 17 Aug 2021 03:29:21 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F768C061796;
+        Tue, 17 Aug 2021 00:28:48 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id x12so27108837wrr.11;
+        Tue, 17 Aug 2021 00:28:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=JpAYEtBYP24QK9Fy/Ow+uf4hp5yoI/DRZsKp8Rcdp7Y=;
-        b=mYSjMg2PU4AvB0yGdJt1/zwJXCptrWHqMCtb89bPHvtkljWiR7m82jnJ19r1vAOb/R
-         QlBL6o8pjuihTM6Lk9h6mZ60u6Z29PEp+aiee9TiaPm+p+5LEf9CmtqtoDWu2NkVYMlr
-         qgYtDpKenXWij2IjdZutd89B4JoAemx4AvvN/rmRVkSrVqHxGyAeTd8iEVtVUg8a/nw2
-         2xDxto/x6d9G1DrZSDwlYccST3u1ZoVjXmeCTpNw9P4O/a8mzOn5uoHL5mB9feeNXjTe
-         RQeOZ9F9H1GA5p5m9jdXbnrsaSAM/H8oKqkyfL0PNGB8TAlC/4VgQocICdriDFdJHURf
-         2TLA==
+        bh=7j8rw4Ujz5x983gg53sxPnn1dxlWsFVFzGa4/yW9Tik=;
+        b=CSdlKeGJARJ0qiBtgTglHjTG9kwi9s3KxhYFZtXyfN6xyGs1x3IrTkDrhAKhuSE8KW
+         JKHhi0PHMbtSiHakmEuxtwv78dfmukEWX8ibj7DEkQhbYztyxqAp152tBSG0zD2kTX61
+         uO2zjc430kURV5KZky2VCeuNOPCeyJY/f/GVNY+jZVqTgSGTK38B6s7hpUzw2fQKUjbv
+         rcdW8wM2hSGABUvXRjfSBS/r24Ev07DKSDQzCJTwVdZpQGAvvKYOrOTIBPKxFsTeJPlG
+         buI6BO++8SRohvy6iMR36FSqacv86RDa97syWD/IZ+ioN1wpQAXbtg8vHRheJB/IORoF
+         /S4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=JpAYEtBYP24QK9Fy/Ow+uf4hp5yoI/DRZsKp8Rcdp7Y=;
-        b=hlU/VPZXdLY53/7AH5vrVc8oUam/uV7O4yT/rZCP4w9LnApJ6Yrt2zrot3YiI3kX7/
-         Wpob+VM/oqaIkZH0N5+5gLQ1xoFrut/dQ1nGC66YyBJW7UXcli0COuL6aIGvkknosruz
-         tBdHqQPRFxlNJJGeUGssb5jgKzHVsDBU5Lg+Gt1WJghXl0yPNkW+cHnfO6XIZh0m76g6
-         t/Nd98SWcje7ntXkxHHKXx1eZWvRzTdTvuUGGJSGwSmUEtsat8Ka9/dNStl5ApbHztlE
-         +iLQmpuKEd/wBzt09Vq4BJij9tvc7yy1wjJuUBK4gqQEmmF1S6dkof4DcWAYh1Hx0Qwt
-         Tjng==
-X-Gm-Message-State: AOAM531bZfcn1Gm4/c253jcrWvnfzoxAOR74Fkrx432RL6d4+1Q04LS7
-        5G01Uqbkn3eVlF0Ao5FcIR3syTeQdls=
-X-Google-Smtp-Source: ABdhPJw7VX8B1g7kdMNTWBwWSnupImXzrVt49lJGyX5rRQCP3jJLJ7eKh/FhLAI1ILnQ0VZAyMHfig==
-X-Received: by 2002:a05:600c:4fd3:: with SMTP id o19mr1829157wmq.34.1629184291406;
-        Tue, 17 Aug 2021 00:11:31 -0700 (PDT)
+        bh=7j8rw4Ujz5x983gg53sxPnn1dxlWsFVFzGa4/yW9Tik=;
+        b=j9Hl/dFbxGzGHHzFoRovXxdfasO5mJ2ATWhwn79KoMsmnx7Xb10HebuHlaZPKDRvZ2
+         v4m3ay0hTGvdEWIgZtwG0ugW/4TpZy/VmQMwinDWjBJ6RfMuHtedamNi9oUZvxVRgefJ
+         VyHn/F3UdQFt0tluoe+9g9S2sJS8vFLmoPa/iN1Lg/uejAyyhHKxyPvKdwTsr89NZXBn
+         FgSSbxK4rQbQUGDrq5YlC6Cw6e+uAi1vFcKl9Fa25v2rnvK+b5kRypvolSjvP+q/H9gc
+         uZRS9ZuEH6Ysyw2tI4UhNe80ssC3wdpoytpzNP589+32Gh2kni5tCwy832MyMHIVknsb
+         5PpQ==
+X-Gm-Message-State: AOAM5305OHWClejXrGDF/XL3d1tCZFJj5vczrarQn4kScsmj+laHVGOs
+        4lGvWtUoJ4oryAr48h9KtZfYPgwTfhg=
+X-Google-Smtp-Source: ABdhPJwLhN7zuVO8nILdK/mXM7xXpdii13sReyRkHuFWrY5iA8AesN/joQtjmMiqIW4DOj13DJPiMw==
+X-Received: by 2002:a5d:54ca:: with SMTP id x10mr2239553wrv.101.1629185326889;
+        Tue, 17 Aug 2021 00:28:46 -0700 (PDT)
 Received: from localhost.localdomain (arl-84-90-178-246.netvisao.pt. [84.90.178.246])
-        by smtp.gmail.com with ESMTPSA id d4sm1340458wrc.34.2021.08.17.00.11.30
+        by smtp.gmail.com with ESMTPSA id i8sm1175056wma.7.2021.08.17.00.28.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Aug 2021 00:11:30 -0700 (PDT)
+        Tue, 17 Aug 2021 00:28:46 -0700 (PDT)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-i2c@vger.kernel.org
-Cc:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        linux-mips@vger.kernel.org, kernel-janitors@vger.kernel.org,
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input@vger.kernel.org
+Cc:     Arnd Bergmann <arnd@arndb.de>, kernel-janitors@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] i2c: remove dead PMC MSP TWI/SMBus/I2C driver
-Date:   Tue, 17 Aug 2021 09:11:26 +0200
-Message-Id: <20210817071126.8096-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH] input: remove dead CSR Prima2 PWRC driver
+Date:   Tue, 17 Aug 2021 09:28:42 +0200
+Message-Id: <20210817072842.8640-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -75,660 +74,266 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 1b00767fd8e1 ("MIPS: Remove PMC MSP71xx platform") removes the
-config PMC_MSP in ./arch/mips/Kconfig.
+Commit f3a732843acc ("ARM: remove sirf prima2/atlas platforms") removes
+the config ARCH_SIRF in ./arch/arm/mach-prima2/Kconfig.
 
-Hence, since then, the corresponding PMC MSP TWI/SMBus/I2C driver is
-dead code. Remove this dead driver.
+Hence, since then, the corresponding CSR Prima2 PWRC Driver is dead code.
+Remove this dead driver.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
-Wolfram, please pick this minor non-urgent clean-up patch.
+ drivers/input/misc/Kconfig         |  10 --
+ drivers/input/misc/Makefile        |   1 -
+ drivers/input/misc/sirfsoc-onkey.c | 207 -----------------------------
+ 3 files changed, 218 deletions(-)
+ delete mode 100644 drivers/input/misc/sirfsoc-onkey.c
 
- drivers/i2c/busses/Kconfig      |   9 -
- drivers/i2c/busses/Makefile     |   1 -
- drivers/i2c/busses/i2c-pmcmsp.c | 600 --------------------------------
- 3 files changed, 610 deletions(-)
- delete mode 100644 drivers/i2c/busses/i2c-pmcmsp.c
-
-diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-index 10acece9d7b9..23b2eca45bce 100644
---- a/drivers/i2c/busses/Kconfig
-+++ b/drivers/i2c/busses/Kconfig
-@@ -866,15 +866,6 @@ config I2C_PCA_PLATFORM
- 	  This driver can also be built as a module.  If so, the module
- 	  will be called i2c-pca-platform.
+diff --git a/drivers/input/misc/Kconfig b/drivers/input/misc/Kconfig
+index ae01507b7afd..dd5227cf8696 100644
+--- a/drivers/input/misc/Kconfig
++++ b/drivers/input/misc/Kconfig
+@@ -799,16 +799,6 @@ config INPUT_XEN_KBDDEV_FRONTEND
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called xen-kbdfront.
  
--config I2C_PMCMSP
--	tristate "PMC MSP I2C TWI Controller"
--	depends on PMC_MSP || COMPILE_TEST
+-config INPUT_SIRFSOC_ONKEY
+-	tristate "CSR SiRFSoC power on/off/suspend key support"
+-	depends on ARCH_SIRF && OF
+-	default y
 -	help
--	  This driver supports the PMC TWI controller on MSP devices.
+-	  Say Y here if you want to support for the SiRFSoC power on/off/suspend key
+-	  in Linux, after you press the onkey, system will suspend.
 -
--	  This driver can also be built as module. If so, the module
--	  will be called i2c-pmcmsp.
+-	  If unsure, say N.
 -
- config I2C_PNX
- 	tristate "I2C bus support for Philips PNX and NXP LPC targets"
- 	depends on ARCH_LPC32XX || COMPILE_TEST
-diff --git a/drivers/i2c/busses/Makefile b/drivers/i2c/busses/Makefile
-index 69e9963615f6..afdb84902dd2 100644
---- a/drivers/i2c/busses/Makefile
-+++ b/drivers/i2c/busses/Makefile
-@@ -86,7 +86,6 @@ obj-$(CONFIG_I2C_OMAP)		+= i2c-omap.o
- obj-$(CONFIG_I2C_OWL)		+= i2c-owl.o
- obj-$(CONFIG_I2C_PASEMI)	+= i2c-pasemi.o
- obj-$(CONFIG_I2C_PCA_PLATFORM)	+= i2c-pca-platform.o
--obj-$(CONFIG_I2C_PMCMSP)	+= i2c-pmcmsp.o
- obj-$(CONFIG_I2C_PNX)		+= i2c-pnx.o
- obj-$(CONFIG_I2C_PXA)		+= i2c-pxa.o
- obj-$(CONFIG_I2C_PXA_PCI)	+= i2c-pxa-pci.o
-diff --git a/drivers/i2c/busses/i2c-pmcmsp.c b/drivers/i2c/busses/i2c-pmcmsp.c
+ config INPUT_IDEAPAD_SLIDEBAR
+ 	tristate "IdeaPad Laptop Slidebar"
+ 	depends on INPUT
+diff --git a/drivers/input/misc/Makefile b/drivers/input/misc/Makefile
+index 2a0943507467..b92c53a6b5ae 100644
+--- a/drivers/input/misc/Makefile
++++ b/drivers/input/misc/Makefile
+@@ -73,7 +73,6 @@ obj-$(CONFIG_INPUT_GPIO_ROTARY_ENCODER)	+= rotary_encoder.o
+ obj-$(CONFIG_INPUT_RK805_PWRKEY)	+= rk805-pwrkey.o
+ obj-$(CONFIG_INPUT_SC27XX_VIBRA)	+= sc27xx-vibra.o
+ obj-$(CONFIG_INPUT_SGI_BTNS)		+= sgi_btns.o
+-obj-$(CONFIG_INPUT_SIRFSOC_ONKEY)	+= sirfsoc-onkey.o
+ obj-$(CONFIG_INPUT_SOC_BUTTON_ARRAY)	+= soc_button_array.o
+ obj-$(CONFIG_INPUT_SPARCSPKR)		+= sparcspkr.o
+ obj-$(CONFIG_INPUT_STPMIC1_ONKEY)  	+= stpmic1_onkey.o
+diff --git a/drivers/input/misc/sirfsoc-onkey.c b/drivers/input/misc/sirfsoc-onkey.c
 deleted file mode 100644
-index 5d89c7c1b3a8..000000000000
---- a/drivers/i2c/busses/i2c-pmcmsp.c
+index 7982bf8fb839..000000000000
+--- a/drivers/input/misc/sirfsoc-onkey.c
 +++ /dev/null
-@@ -1,600 +0,0 @@
+@@ -1,207 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-or-later
 -/*
-- * Specific bus support for PMC-TWI compliant implementation on MSP71xx.
+- * Power key driver for SiRF PrimaII
 - *
-- * Copyright 2005-2007 PMC-Sierra, Inc.
-- *
-- *  This program is free software; you can redistribute  it and/or modify it
-- *  under  the terms of  the GNU General  Public License as published by the
-- *  Free Software Foundation;  either version 2 of the  License, or (at your
-- *  option) any later version.
-- *
-- *  THIS  SOFTWARE  IS PROVIDED   ``AS  IS'' AND   ANY  EXPRESS OR IMPLIED
-- *  WARRANTIES,   INCLUDING, BUT NOT  LIMITED  TO, THE IMPLIED WARRANTIES OF
-- *  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN
-- *  NO  EVENT  SHALL   THE AUTHOR  BE    LIABLE FOR ANY   DIRECT, INDIRECT,
-- *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-- *  NOT LIMITED   TO, PROCUREMENT OF  SUBSTITUTE GOODS  OR SERVICES; LOSS OF
-- *  USE, DATA,  OR PROFITS; OR  BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-- *  ANY THEORY OF LIABILITY, WHETHER IN  CONTRACT, STRICT LIABILITY, OR TORT
-- *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
-- *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+- * Copyright (c) 2013 - 2014 Cambridge Silicon Radio Limited, a CSR plc group
+- * company.
 - */
 -
--#include <linux/kernel.h>
 -#include <linux/module.h>
--#include <linux/platform_device.h>
--#include <linux/i2c.h>
 -#include <linux/interrupt.h>
--#include <linux/completion.h>
--#include <linux/mutex.h>
 -#include <linux/delay.h>
--#include <linux/io.h>
+-#include <linux/platform_device.h>
+-#include <linux/input.h>
+-#include <linux/rtc/sirfsoc_rtciobrg.h>
+-#include <linux/of.h>
+-#include <linux/workqueue.h>
 -
--#define DRV_NAME	"pmcmsptwi"
--
--#define MSP_TWI_SF_CLK_REG_OFFSET	0x00
--#define MSP_TWI_HS_CLK_REG_OFFSET	0x04
--#define MSP_TWI_CFG_REG_OFFSET		0x08
--#define MSP_TWI_CMD_REG_OFFSET		0x0c
--#define MSP_TWI_ADD_REG_OFFSET		0x10
--#define MSP_TWI_DAT_0_REG_OFFSET	0x14
--#define MSP_TWI_DAT_1_REG_OFFSET	0x18
--#define MSP_TWI_INT_STS_REG_OFFSET	0x1c
--#define MSP_TWI_INT_MSK_REG_OFFSET	0x20
--#define MSP_TWI_BUSY_REG_OFFSET		0x24
--
--#define MSP_TWI_INT_STS_DONE			(1 << 0)
--#define MSP_TWI_INT_STS_LOST_ARBITRATION	(1 << 1)
--#define MSP_TWI_INT_STS_NO_RESPONSE		(1 << 2)
--#define MSP_TWI_INT_STS_DATA_COLLISION		(1 << 3)
--#define MSP_TWI_INT_STS_BUSY			(1 << 4)
--#define MSP_TWI_INT_STS_ALL			0x1f
--
--#define MSP_MAX_BYTES_PER_RW		8
--#define MSP_MAX_POLL			5
--#define MSP_POLL_DELAY			10
--#define MSP_IRQ_TIMEOUT			(MSP_MAX_POLL * MSP_POLL_DELAY)
--
--/* IO Operation macros */
--#define pmcmsptwi_readl		__raw_readl
--#define pmcmsptwi_writel	__raw_writel
--
--/* TWI command type */
--enum pmcmsptwi_cmd_type {
--	MSP_TWI_CMD_WRITE	= 0,	/* Write only */
--	MSP_TWI_CMD_READ	= 1,	/* Read only */
--	MSP_TWI_CMD_WRITE_READ	= 2,	/* Write then Read */
+-struct sirfsoc_pwrc_drvdata {
+-	u32			pwrc_base;
+-	struct input_dev	*input;
+-	struct delayed_work	work;
 -};
 -
--/* The possible results of the xferCmd */
--enum pmcmsptwi_xfer_result {
--	MSP_TWI_XFER_OK	= 0,
--	MSP_TWI_XFER_TIMEOUT,
--	MSP_TWI_XFER_BUSY,
--	MSP_TWI_XFER_DATA_COLLISION,
--	MSP_TWI_XFER_NO_RESPONSE,
--	MSP_TWI_XFER_LOST_ARBITRATION,
--};
+-#define PWRC_ON_KEY_BIT			(1 << 0)
 -
--/* Corresponds to a PMCTWI clock configuration register */
--struct pmcmsptwi_clock {
--	u8 filter;	/* Bits 15:12,	default = 0x03 */
--	u16 clock;	/* Bits 9:0,	default = 0x001f */
--};
+-#define PWRC_INT_STATUS			0xc
+-#define PWRC_INT_MASK			0x10
+-#define PWRC_PIN_STATUS			0x14
+-#define PWRC_KEY_DETECT_UP_TIME		20	/* ms*/
 -
--struct pmcmsptwi_clockcfg {
--	struct pmcmsptwi_clock standard;  /* The standard/fast clock config */
--	struct pmcmsptwi_clock highspeed; /* The highspeed clock config */
--};
--
--/* Corresponds to the main TWI configuration register */
--struct pmcmsptwi_cfg {
--	u8 arbf;	/* Bits 15:12,	default=0x03 */
--	u8 nak;		/* Bits 11:8,	default=0x03 */
--	u8 add10;	/* Bit 7,	default=0x00 */
--	u8 mst_code;	/* Bits 6:4,	default=0x00 */
--	u8 arb;		/* Bit 1,	default=0x01 */
--	u8 highspeed;	/* Bit 0,	default=0x00 */
--};
--
--/* A single pmctwi command to issue */
--struct pmcmsptwi_cmd {
--	u16 addr;	/* The slave address (7 or 10 bits) */
--	enum pmcmsptwi_cmd_type type;	/* The command type */
--	u8 write_len;	/* Number of bytes in the write buffer */
--	u8 read_len;	/* Number of bytes in the read buffer */
--	u8 *write_data;	/* Buffer of characters to send */
--	u8 *read_data;	/* Buffer to fill with incoming data */
--};
--
--/* The private data */
--struct pmcmsptwi_data {
--	void __iomem *iobase;			/* iomapped base for IO */
--	int irq;				/* IRQ to use (0 disables) */
--	struct completion wait;			/* Completion for xfer */
--	struct mutex lock;			/* Used for threadsafeness */
--	enum pmcmsptwi_xfer_result last_result;	/* result of last xfer */
--};
--
--/* The default settings */
--static const struct pmcmsptwi_clockcfg pmcmsptwi_defclockcfg = {
--	.standard = {
--		.filter	= 0x3,
--		.clock	= 0x1f,
--	},
--	.highspeed = {
--		.filter	= 0x3,
--		.clock	= 0x1f,
--	},
--};
--
--static const struct pmcmsptwi_cfg pmcmsptwi_defcfg = {
--	.arbf		= 0x03,
--	.nak		= 0x03,
--	.add10		= 0x00,
--	.mst_code	= 0x00,
--	.arb		= 0x01,
--	.highspeed	= 0x00,
--};
--
--static struct pmcmsptwi_data pmcmsptwi_data;
--
--static struct i2c_adapter pmcmsptwi_adapter;
--
--/* inline helper functions */
--static inline u32 pmcmsptwi_clock_to_reg(
--			const struct pmcmsptwi_clock *clock)
+-static int sirfsoc_pwrc_is_on_key_down(struct sirfsoc_pwrc_drvdata *pwrcdrv)
 -{
--	return ((clock->filter & 0xf) << 12) | (clock->clock & 0x03ff);
+-	u32 state = sirfsoc_rtc_iobrg_readl(pwrcdrv->pwrc_base +
+-							PWRC_PIN_STATUS);
+-	return !(state & PWRC_ON_KEY_BIT); /* ON_KEY is active low */
 -}
 -
--static inline u32 pmcmsptwi_cfg_to_reg(const struct pmcmsptwi_cfg *cfg)
+-static void sirfsoc_pwrc_report_event(struct work_struct *work)
 -{
--	return ((cfg->arbf & 0xf) << 12) |
--		((cfg->nak & 0xf) << 8) |
--		((cfg->add10 & 0x1) << 7) |
--		((cfg->mst_code & 0x7) << 4) |
--		((cfg->arb & 0x1) << 1) |
--		(cfg->highspeed & 0x1);
--}
+-	struct sirfsoc_pwrc_drvdata *pwrcdrv =
+-		container_of(work, struct sirfsoc_pwrc_drvdata, work.work);
 -
--static inline void pmcmsptwi_reg_to_cfg(u32 reg, struct pmcmsptwi_cfg *cfg)
--{
--	cfg->arbf = (reg >> 12) & 0xf;
--	cfg->nak = (reg >> 8) & 0xf;
--	cfg->add10 = (reg >> 7) & 0x1;
--	cfg->mst_code = (reg >> 4) & 0x7;
--	cfg->arb = (reg >> 1) & 0x1;
--	cfg->highspeed = reg & 0x1;
--}
--
--/*
-- * Sets the current clock configuration
-- */
--static void pmcmsptwi_set_clock_config(const struct pmcmsptwi_clockcfg *cfg,
--					struct pmcmsptwi_data *data)
--{
--	mutex_lock(&data->lock);
--	pmcmsptwi_writel(pmcmsptwi_clock_to_reg(&cfg->standard),
--				data->iobase + MSP_TWI_SF_CLK_REG_OFFSET);
--	pmcmsptwi_writel(pmcmsptwi_clock_to_reg(&cfg->highspeed),
--				data->iobase + MSP_TWI_HS_CLK_REG_OFFSET);
--	mutex_unlock(&data->lock);
--}
--
--/*
-- * Gets the current TWI bus configuration
-- */
--static void pmcmsptwi_get_twi_config(struct pmcmsptwi_cfg *cfg,
--					struct pmcmsptwi_data *data)
--{
--	mutex_lock(&data->lock);
--	pmcmsptwi_reg_to_cfg(pmcmsptwi_readl(
--				data->iobase + MSP_TWI_CFG_REG_OFFSET), cfg);
--	mutex_unlock(&data->lock);
--}
--
--/*
-- * Sets the current TWI bus configuration
-- */
--static void pmcmsptwi_set_twi_config(const struct pmcmsptwi_cfg *cfg,
--					struct pmcmsptwi_data *data)
--{
--	mutex_lock(&data->lock);
--	pmcmsptwi_writel(pmcmsptwi_cfg_to_reg(cfg),
--				data->iobase + MSP_TWI_CFG_REG_OFFSET);
--	mutex_unlock(&data->lock);
--}
--
--/*
-- * Parses the 'int_sts' register and returns a well-defined error code
-- */
--static enum pmcmsptwi_xfer_result pmcmsptwi_get_result(u32 reg)
--{
--	if (reg & MSP_TWI_INT_STS_LOST_ARBITRATION) {
--		dev_dbg(&pmcmsptwi_adapter.dev,
--			"Result: Lost arbitration\n");
--		return MSP_TWI_XFER_LOST_ARBITRATION;
--	} else if (reg & MSP_TWI_INT_STS_NO_RESPONSE) {
--		dev_dbg(&pmcmsptwi_adapter.dev,
--			"Result: No response\n");
--		return MSP_TWI_XFER_NO_RESPONSE;
--	} else if (reg & MSP_TWI_INT_STS_DATA_COLLISION) {
--		dev_dbg(&pmcmsptwi_adapter.dev,
--			"Result: Data collision\n");
--		return MSP_TWI_XFER_DATA_COLLISION;
--	} else if (reg & MSP_TWI_INT_STS_BUSY) {
--		dev_dbg(&pmcmsptwi_adapter.dev,
--			"Result: Bus busy\n");
--		return MSP_TWI_XFER_BUSY;
+-	if (sirfsoc_pwrc_is_on_key_down(pwrcdrv)) {
+-		schedule_delayed_work(&pwrcdrv->work,
+-			msecs_to_jiffies(PWRC_KEY_DETECT_UP_TIME));
+-	} else {
+-		input_event(pwrcdrv->input, EV_KEY, KEY_POWER, 0);
+-		input_sync(pwrcdrv->input);
 -	}
--
--	dev_dbg(&pmcmsptwi_adapter.dev, "Result: Operation succeeded\n");
--	return MSP_TWI_XFER_OK;
 -}
 -
--/*
-- * In interrupt mode, handle the interrupt.
-- * NOTE: Assumes data->lock is held.
-- */
--static irqreturn_t pmcmsptwi_interrupt(int irq, void *ptr)
+-static irqreturn_t sirfsoc_pwrc_isr(int irq, void *dev_id)
 -{
--	struct pmcmsptwi_data *data = ptr;
+-	struct sirfsoc_pwrc_drvdata *pwrcdrv = dev_id;
+-	u32 int_status;
 -
--	u32 reason = pmcmsptwi_readl(data->iobase +
--					MSP_TWI_INT_STS_REG_OFFSET);
--	pmcmsptwi_writel(reason, data->iobase + MSP_TWI_INT_STS_REG_OFFSET);
+-	int_status = sirfsoc_rtc_iobrg_readl(pwrcdrv->pwrc_base +
+-							PWRC_INT_STATUS);
+-	sirfsoc_rtc_iobrg_writel(int_status & ~PWRC_ON_KEY_BIT,
+-				 pwrcdrv->pwrc_base + PWRC_INT_STATUS);
 -
--	dev_dbg(&pmcmsptwi_adapter.dev, "Got interrupt 0x%08x\n", reason);
--	if (!(reason & MSP_TWI_INT_STS_DONE))
--		return IRQ_NONE;
--
--	data->last_result = pmcmsptwi_get_result(reason);
--	complete(&data->wait);
+-	input_event(pwrcdrv->input, EV_KEY, KEY_POWER, 1);
+-	input_sync(pwrcdrv->input);
+-	schedule_delayed_work(&pwrcdrv->work,
+-			      msecs_to_jiffies(PWRC_KEY_DETECT_UP_TIME));
 -
 -	return IRQ_HANDLED;
 -}
 -
--/*
-- * Probe for and register the device and return 0 if there is one.
-- */
--static int pmcmsptwi_probe(struct platform_device *pldev)
+-static void sirfsoc_pwrc_toggle_interrupts(struct sirfsoc_pwrc_drvdata *pwrcdrv,
+-					   bool enable)
 -{
--	struct resource *res;
--	int rc = -ENODEV;
+-	u32 int_mask;
 -
--	/* get the static platform resources */
--	res = platform_get_resource(pldev, IORESOURCE_MEM, 0);
--	if (!res) {
--		dev_err(&pldev->dev, "IOMEM resource not found\n");
--		goto ret_err;
--	}
--
--	/* reserve the memory region */
--	if (!request_mem_region(res->start, resource_size(res),
--				pldev->name)) {
--		dev_err(&pldev->dev,
--			"Unable to get memory/io address region %pap\n",
--			&res->start);
--		rc = -EBUSY;
--		goto ret_err;
--	}
--
--	/* remap the memory */
--	pmcmsptwi_data.iobase = ioremap(res->start,
--						resource_size(res));
--	if (!pmcmsptwi_data.iobase) {
--		dev_err(&pldev->dev,
--			"Unable to ioremap address %pap\n", &res->start);
--		rc = -EIO;
--		goto ret_unreserve;
--	}
--
--	/* request the irq */
--	pmcmsptwi_data.irq = platform_get_irq(pldev, 0);
--	if (pmcmsptwi_data.irq) {
--		rc = request_irq(pmcmsptwi_data.irq, &pmcmsptwi_interrupt,
--				 IRQF_SHARED, pldev->name, &pmcmsptwi_data);
--		if (rc == 0) {
--			/*
--			 * Enable 'DONE' interrupt only.
--			 *
--			 * If you enable all interrupts, you will get one on
--			 * error and another when the operation completes.
--			 * This way you only have to handle one interrupt,
--			 * but you can still check all result flags.
--			 */
--			pmcmsptwi_writel(MSP_TWI_INT_STS_DONE,
--					pmcmsptwi_data.iobase +
--					MSP_TWI_INT_MSK_REG_OFFSET);
--		} else {
--			dev_warn(&pldev->dev,
--				"Could not assign TWI IRQ handler "
--				"to irq %d (continuing with poll)\n",
--				pmcmsptwi_data.irq);
--			pmcmsptwi_data.irq = 0;
--		}
--	}
--
--	init_completion(&pmcmsptwi_data.wait);
--	mutex_init(&pmcmsptwi_data.lock);
--
--	pmcmsptwi_set_clock_config(&pmcmsptwi_defclockcfg, &pmcmsptwi_data);
--	pmcmsptwi_set_twi_config(&pmcmsptwi_defcfg, &pmcmsptwi_data);
--
--	printk(KERN_INFO DRV_NAME ": Registering MSP71xx I2C adapter\n");
--
--	pmcmsptwi_adapter.dev.parent = &pldev->dev;
--	platform_set_drvdata(pldev, &pmcmsptwi_adapter);
--	i2c_set_adapdata(&pmcmsptwi_adapter, &pmcmsptwi_data);
--
--	rc = i2c_add_adapter(&pmcmsptwi_adapter);
--	if (rc)
--		goto ret_unmap;
--
--	return 0;
--
--ret_unmap:
--	if (pmcmsptwi_data.irq) {
--		pmcmsptwi_writel(0,
--			pmcmsptwi_data.iobase + MSP_TWI_INT_MSK_REG_OFFSET);
--		free_irq(pmcmsptwi_data.irq, &pmcmsptwi_data);
--	}
--
--	iounmap(pmcmsptwi_data.iobase);
--
--ret_unreserve:
--	release_mem_region(res->start, resource_size(res));
--
--ret_err:
--	return rc;
+-	int_mask = sirfsoc_rtc_iobrg_readl(pwrcdrv->pwrc_base + PWRC_INT_MASK);
+-	if (enable)
+-		int_mask |= PWRC_ON_KEY_BIT;
+-	else
+-		int_mask &= ~PWRC_ON_KEY_BIT;
+-	sirfsoc_rtc_iobrg_writel(int_mask, pwrcdrv->pwrc_base + PWRC_INT_MASK);
 -}
 -
--/*
-- * Release the device and return 0 if there is one.
-- */
--static int pmcmsptwi_remove(struct platform_device *pldev)
+-static int sirfsoc_pwrc_open(struct input_dev *input)
 -{
--	struct resource *res;
+-	struct sirfsoc_pwrc_drvdata *pwrcdrv = input_get_drvdata(input);
 -
--	i2c_del_adapter(&pmcmsptwi_adapter);
--
--	if (pmcmsptwi_data.irq) {
--		pmcmsptwi_writel(0,
--			pmcmsptwi_data.iobase + MSP_TWI_INT_MSK_REG_OFFSET);
--		free_irq(pmcmsptwi_data.irq, &pmcmsptwi_data);
--	}
--
--	iounmap(pmcmsptwi_data.iobase);
--
--	res = platform_get_resource(pldev, IORESOURCE_MEM, 0);
--	release_mem_region(res->start, resource_size(res));
+-	sirfsoc_pwrc_toggle_interrupts(pwrcdrv, true);
 -
 -	return 0;
 -}
 -
--/*
-- * Polls the 'busy' register until the command is complete.
-- * NOTE: Assumes data->lock is held.
-- */
--static void pmcmsptwi_poll_complete(struct pmcmsptwi_data *data)
+-static void sirfsoc_pwrc_close(struct input_dev *input)
 -{
--	int i;
+-	struct sirfsoc_pwrc_drvdata *pwrcdrv = input_get_drvdata(input);
 -
--	for (i = 0; i < MSP_MAX_POLL; i++) {
--		u32 val = pmcmsptwi_readl(data->iobase +
--						MSP_TWI_BUSY_REG_OFFSET);
--		if (val == 0) {
--			u32 reason = pmcmsptwi_readl(data->iobase +
--						MSP_TWI_INT_STS_REG_OFFSET);
--			pmcmsptwi_writel(reason, data->iobase +
--						MSP_TWI_INT_STS_REG_OFFSET);
--			data->last_result = pmcmsptwi_get_result(reason);
--			return;
--		}
--		udelay(MSP_POLL_DELAY);
--	}
--
--	dev_dbg(&pmcmsptwi_adapter.dev, "Result: Poll timeout\n");
--	data->last_result = MSP_TWI_XFER_TIMEOUT;
+-	sirfsoc_pwrc_toggle_interrupts(pwrcdrv, false);
+-	cancel_delayed_work_sync(&pwrcdrv->work);
 -}
 -
--/*
-- * Do the transfer (low level):
-- *   May use interrupt-driven or polling, depending on if an IRQ is
-- *   presently registered.
-- * NOTE: Assumes data->lock is held.
-- */
--static enum pmcmsptwi_xfer_result pmcmsptwi_do_xfer(
--			u32 reg, struct pmcmsptwi_data *data)
+-static const struct of_device_id sirfsoc_pwrc_of_match[] = {
+-	{ .compatible = "sirf,prima2-pwrc" },
+-	{},
+-};
+-MODULE_DEVICE_TABLE(of, sirfsoc_pwrc_of_match);
+-
+-static int sirfsoc_pwrc_probe(struct platform_device *pdev)
 -{
--	dev_dbg(&pmcmsptwi_adapter.dev, "Writing cmd reg 0x%08x\n", reg);
--	pmcmsptwi_writel(reg, data->iobase + MSP_TWI_CMD_REG_OFFSET);
--	if (data->irq) {
--		unsigned long timeleft = wait_for_completion_timeout(
--						&data->wait, MSP_IRQ_TIMEOUT);
--		if (timeleft == 0) {
--			dev_dbg(&pmcmsptwi_adapter.dev,
--				"Result: IRQ timeout\n");
--			complete(&data->wait);
--			data->last_result = MSP_TWI_XFER_TIMEOUT;
--		}
--	} else
--		pmcmsptwi_poll_complete(data);
+-	struct device_node *np = pdev->dev.of_node;
+-	struct sirfsoc_pwrc_drvdata *pwrcdrv;
+-	int irq;
+-	int error;
 -
--	return data->last_result;
--}
--
--/*
-- * Helper routine, converts 'pmctwi_cmd' struct to register format
-- */
--static inline u32 pmcmsptwi_cmd_to_reg(const struct pmcmsptwi_cmd *cmd)
--{
--	return ((cmd->type & 0x3) << 8) |
--		(((cmd->write_len - 1) & 0x7) << 4) |
--		((cmd->read_len - 1) & 0x7);
--}
--
--/*
-- * Do the transfer (high level)
-- */
--static enum pmcmsptwi_xfer_result pmcmsptwi_xfer_cmd(
--			struct pmcmsptwi_cmd *cmd,
--			struct pmcmsptwi_data *data)
--{
--	enum pmcmsptwi_xfer_result retval;
--
--	mutex_lock(&data->lock);
--	dev_dbg(&pmcmsptwi_adapter.dev,
--		"Setting address to 0x%04x\n", cmd->addr);
--	pmcmsptwi_writel(cmd->addr, data->iobase + MSP_TWI_ADD_REG_OFFSET);
--
--	if (cmd->type == MSP_TWI_CMD_WRITE ||
--	    cmd->type == MSP_TWI_CMD_WRITE_READ) {
--		u64 tmp = be64_to_cpup((__be64 *)cmd->write_data);
--		tmp >>= (MSP_MAX_BYTES_PER_RW - cmd->write_len) * 8;
--		dev_dbg(&pmcmsptwi_adapter.dev, "Writing 0x%016llx\n", tmp);
--		pmcmsptwi_writel(tmp & 0x00000000ffffffffLL,
--				data->iobase + MSP_TWI_DAT_0_REG_OFFSET);
--		if (cmd->write_len > 4)
--			pmcmsptwi_writel(tmp >> 32,
--				data->iobase + MSP_TWI_DAT_1_REG_OFFSET);
+-	pwrcdrv = devm_kzalloc(&pdev->dev, sizeof(struct sirfsoc_pwrc_drvdata),
+-			       GFP_KERNEL);
+-	if (!pwrcdrv) {
+-		dev_info(&pdev->dev, "Not enough memory for the device data\n");
+-		return -ENOMEM;
 -	}
 -
--	retval = pmcmsptwi_do_xfer(pmcmsptwi_cmd_to_reg(cmd), data);
--	if (retval != MSP_TWI_XFER_OK)
--		goto xfer_err;
--
--	if (cmd->type == MSP_TWI_CMD_READ ||
--	    cmd->type == MSP_TWI_CMD_WRITE_READ) {
--		int i;
--		u64 rmsk = ~(0xffffffffffffffffLL << (cmd->read_len * 8));
--		u64 tmp = (u64)pmcmsptwi_readl(data->iobase +
--					MSP_TWI_DAT_0_REG_OFFSET);
--		if (cmd->read_len > 4)
--			tmp |= (u64)pmcmsptwi_readl(data->iobase +
--					MSP_TWI_DAT_1_REG_OFFSET) << 32;
--		tmp &= rmsk;
--		dev_dbg(&pmcmsptwi_adapter.dev, "Read 0x%016llx\n", tmp);
--
--		for (i = 0; i < cmd->read_len; i++)
--			cmd->read_data[i] = tmp >> i;
+-	/*
+-	 * We can't use of_iomap because pwrc is not mapped in memory,
+-	 * the so-called base address is only offset in rtciobrg
+-	 */
+-	error = of_property_read_u32(np, "reg", &pwrcdrv->pwrc_base);
+-	if (error) {
+-		dev_err(&pdev->dev,
+-			"unable to find base address of pwrc node in dtb\n");
+-		return error;
 -	}
 -
--xfer_err:
--	mutex_unlock(&data->lock);
+-	pwrcdrv->input = devm_input_allocate_device(&pdev->dev);
+-	if (!pwrcdrv->input)
+-		return -ENOMEM;
 -
--	return retval;
+-	pwrcdrv->input->name = "sirfsoc pwrckey";
+-	pwrcdrv->input->phys = "pwrc/input0";
+-	pwrcdrv->input->evbit[0] = BIT_MASK(EV_KEY);
+-	input_set_capability(pwrcdrv->input, EV_KEY, KEY_POWER);
+-
+-	INIT_DELAYED_WORK(&pwrcdrv->work, sirfsoc_pwrc_report_event);
+-
+-	pwrcdrv->input->open = sirfsoc_pwrc_open;
+-	pwrcdrv->input->close = sirfsoc_pwrc_close;
+-
+-	input_set_drvdata(pwrcdrv->input, pwrcdrv);
+-
+-	/* Make sure the device is quiesced */
+-	sirfsoc_pwrc_toggle_interrupts(pwrcdrv, false);
+-
+-	irq = platform_get_irq(pdev, 0);
+-	error = devm_request_irq(&pdev->dev, irq,
+-				 sirfsoc_pwrc_isr, 0,
+-				 "sirfsoc_pwrc_int", pwrcdrv);
+-	if (error) {
+-		dev_err(&pdev->dev, "unable to claim irq %d, error: %d\n",
+-			irq, error);
+-		return error;
+-	}
+-
+-	error = input_register_device(pwrcdrv->input);
+-	if (error) {
+-		dev_err(&pdev->dev,
+-			"unable to register input device, error: %d\n",
+-			error);
+-		return error;
+-	}
+-
+-	dev_set_drvdata(&pdev->dev, pwrcdrv);
+-	device_init_wakeup(&pdev->dev, 1);
+-
+-	return 0;
 -}
 -
--/* -- Algorithm functions -- */
--
--/*
-- * Sends an i2c command out on the adapter
-- */
--static int pmcmsptwi_master_xfer(struct i2c_adapter *adap,
--				struct i2c_msg *msg, int num)
+-static int __maybe_unused sirfsoc_pwrc_resume(struct device *dev)
 -{
--	struct pmcmsptwi_data *data = i2c_get_adapdata(adap);
--	struct pmcmsptwi_cmd cmd;
--	struct pmcmsptwi_cfg oldcfg, newcfg;
--	int ret;
+-	struct sirfsoc_pwrc_drvdata *pwrcdrv = dev_get_drvdata(dev);
+-	struct input_dev *input = pwrcdrv->input;
 -
--	if (num == 2) {
--		struct i2c_msg *nextmsg = msg + 1;
+-	/*
+-	 * Do not mask pwrc interrupt as we want pwrc work as a wakeup source
+-	 * if users touch X_ONKEY_B, see arch/arm/mach-prima2/pm.c
+-	 */
+-	mutex_lock(&input->mutex);
+-	if (input_device_enabled(input))
+-		sirfsoc_pwrc_toggle_interrupts(pwrcdrv, true);
+-	mutex_unlock(&input->mutex);
 -
--		cmd.type = MSP_TWI_CMD_WRITE_READ;
--		cmd.write_len = msg->len;
--		cmd.write_data = msg->buf;
--		cmd.read_len = nextmsg->len;
--		cmd.read_data = nextmsg->buf;
--	} else if (msg->flags & I2C_M_RD) {
--		cmd.type = MSP_TWI_CMD_READ;
--		cmd.read_len = msg->len;
--		cmd.read_data = msg->buf;
--		cmd.write_len = 0;
--		cmd.write_data = NULL;
--	} else {
--		cmd.type = MSP_TWI_CMD_WRITE;
--		cmd.read_len = 0;
--		cmd.read_data = NULL;
--		cmd.write_len = msg->len;
--		cmd.write_data = msg->buf;
--	}
--
--	cmd.addr = msg->addr;
--
--	if (msg->flags & I2C_M_TEN) {
--		pmcmsptwi_get_twi_config(&newcfg, data);
--		memcpy(&oldcfg, &newcfg, sizeof(oldcfg));
--
--		/* Set the special 10-bit address flag */
--		newcfg.add10 = 1;
--
--		pmcmsptwi_set_twi_config(&newcfg, data);
--	}
--
--	/* Execute the command */
--	ret = pmcmsptwi_xfer_cmd(&cmd, data);
--
--	if (msg->flags & I2C_M_TEN)
--		pmcmsptwi_set_twi_config(&oldcfg, data);
--
--	dev_dbg(&adap->dev, "I2C %s of %d bytes %s\n",
--		(msg->flags & I2C_M_RD) ? "read" : "write", msg->len,
--		(ret == MSP_TWI_XFER_OK) ? "succeeded" : "failed");
--
--	if (ret != MSP_TWI_XFER_OK) {
--		/*
--		 * TODO: We could potentially loop and retry in the case
--		 * of MSP_TWI_XFER_TIMEOUT.
--		 */
--		return -EIO;
--	}
--
--	return num;
+-	return 0;
 -}
 -
--static u32 pmcmsptwi_i2c_func(struct i2c_adapter *adapter)
--{
--	return I2C_FUNC_I2C | I2C_FUNC_10BIT_ADDR |
--		I2C_FUNC_SMBUS_BYTE | I2C_FUNC_SMBUS_BYTE_DATA |
--		I2C_FUNC_SMBUS_WORD_DATA | I2C_FUNC_SMBUS_PROC_CALL;
--}
+-static SIMPLE_DEV_PM_OPS(sirfsoc_pwrc_pm_ops, NULL, sirfsoc_pwrc_resume);
 -
--static const struct i2c_adapter_quirks pmcmsptwi_i2c_quirks = {
--	.flags = I2C_AQ_COMB_WRITE_THEN_READ | I2C_AQ_NO_ZERO_LEN,
--	.max_write_len = MSP_MAX_BYTES_PER_RW,
--	.max_read_len = MSP_MAX_BYTES_PER_RW,
--	.max_comb_1st_msg_len = MSP_MAX_BYTES_PER_RW,
--	.max_comb_2nd_msg_len = MSP_MAX_BYTES_PER_RW,
+-static struct platform_driver sirfsoc_pwrc_driver = {
+-	.probe		= sirfsoc_pwrc_probe,
+-	.driver		= {
+-		.name	= "sirfsoc-pwrc",
+-		.pm	= &sirfsoc_pwrc_pm_ops,
+-		.of_match_table = sirfsoc_pwrc_of_match,
+-	}
 -};
 -
--/* -- Initialization -- */
+-module_platform_driver(sirfsoc_pwrc_driver);
 -
--static const struct i2c_algorithm pmcmsptwi_algo = {
--	.master_xfer	= pmcmsptwi_master_xfer,
--	.functionality	= pmcmsptwi_i2c_func,
--};
--
--static struct i2c_adapter pmcmsptwi_adapter = {
--	.owner		= THIS_MODULE,
--	.class		= I2C_CLASS_HWMON | I2C_CLASS_SPD,
--	.algo		= &pmcmsptwi_algo,
--	.quirks		= &pmcmsptwi_i2c_quirks,
--	.name		= DRV_NAME,
--};
--
--static struct platform_driver pmcmsptwi_driver = {
--	.probe  = pmcmsptwi_probe,
--	.remove	= pmcmsptwi_remove,
--	.driver = {
--		.name	= DRV_NAME,
--	},
--};
--
--module_platform_driver(pmcmsptwi_driver);
--
--MODULE_DESCRIPTION("PMC MSP TWI/SMBus/I2C driver");
--MODULE_LICENSE("GPL");
--MODULE_ALIAS("platform:" DRV_NAME);
+-MODULE_LICENSE("GPL v2");
+-MODULE_AUTHOR("Binghua Duan <Binghua.Duan@csr.com>, Xianglong Du <Xianglong.Du@csr.com>");
+-MODULE_DESCRIPTION("CSR Prima2 PWRC Driver");
+-MODULE_ALIAS("platform:sirfsoc-pwrc");
 -- 
 2.26.2
 
