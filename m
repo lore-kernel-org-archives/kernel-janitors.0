@@ -2,108 +2,95 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6930EC432BE
-	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 19:04:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B54CC432BE
+	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 19:18:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 540D760FBF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 19:04:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1DDAE6103A
+	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 19:18:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232351AbhHQTFU (ORCPT
+        id S232560AbhHQTT0 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 17 Aug 2021 15:05:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35334 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230040AbhHQTFR (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 17 Aug 2021 15:05:17 -0400
-Received: from mail-ot1-x336.google.com (mail-ot1-x336.google.com [IPv6:2607:f8b0:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEA1BC061764;
-        Tue, 17 Aug 2021 12:04:43 -0700 (PDT)
-Received: by mail-ot1-x336.google.com with SMTP id l36-20020a0568302b24b0290517526ce5e3so18665787otv.11;
-        Tue, 17 Aug 2021 12:04:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=u4qQshwhjGofU9gYqtNNSGNhs8pTO6YRe0feCXXBafg=;
-        b=RQvXDpXqE5V/Ur6Ae2DKHVTbcnuUm0Dt97KFZlTwrU1PdhC7vhQQe9vvJIE15qB2in
-         uRGEQ6IwB++3lJoH05/NllbgsC6MOey2t70WMzlKeYTIfaX92UpuSudKBR12nbL7vF39
-         hSgywBWHCxRT/y9ttyJ1rjXDkxNb8pW3PJk+EZVgTNYWMx2kakP7R+LqB4GfLdnkoeXs
-         WnsijLY3CPtY1QZxkBO0ui6NNFfYLUV6zPHUkLYZc7+RijCyoWc3ZlAS0KgT5g50OZUq
-         euqzIT0ExRE3pgxvE2Hu0XJD0HPW39bVdHM/EYtwYs8OCEDf/sC3W4q4BruJpeV+MuhJ
-         Zofg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=u4qQshwhjGofU9gYqtNNSGNhs8pTO6YRe0feCXXBafg=;
-        b=bJqG2ynPRoTbfcO9Mpo1ATjkydihM7ucOQEG+Ug47bw4hWElkt4y4HhAZwbmiisV6W
-         nKAYDAU2/z9UNZjMtg+3tpS+Uj5f3Y1FIWaL3cC15c1CHSs9R2KCUTGwSPMBsG/hZlWq
-         LL9DWhXyud4ATPeF1K7tXKWG3VQmYjRWH9zCu1mEfuUZLroDiVFnlz2i6GIm8hQzZvru
-         fgzMf5iUPnQRGrOKK7+PAipLmgLVw7TdQRWHKadLtJhBmJZ+bMCUVEDqTveSFp9lld8J
-         Rr8mNRwlpY6Ffb2WTdlPeHMByE/pGNIz6z0M0VKRzOwYpfnfFfnHB2PyYaaU8qPF3xVP
-         xzvA==
-X-Gm-Message-State: AOAM5319L7okIAKqclldVfQkIyGoSuK6JYKIBvh/c5OJn+F4LhWL21YI
-        6A2YKAxPBASUk6PFwRvjUiBdm6cPHETG/K6waEw=
-X-Google-Smtp-Source: ABdhPJyF/9SNxCUOO7tAZXfi09hq9gJD0GdsSiKZ6CGVJRU/11gcFjpDwisz8vGeaOkCgfSVSGkxYiTYC/wNsc68QxA=
-X-Received: by 2002:a05:6830:4:: with SMTP id c4mr3836459otp.23.1629227083396;
- Tue, 17 Aug 2021 12:04:43 -0700 (PDT)
+        Tue, 17 Aug 2021 15:19:26 -0400
+Received: from www.zeus03.de ([194.117.254.33]:59748 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230424AbhHQTTZ (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 17 Aug 2021 15:19:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=k1; bh=/aB9UcRE0xbSGZHvwWL6knc/HMwV
+        yCnR6lMxHCqob6E=; b=QRIcAy8r31gEgoCNPfYKwofztBQ3PQMtTdyotCxNQX/y
+        m2StNAS4cukMqmZrf521iA+lvqpU+Z8Fja2jtNbrFaVWA7ksgpFUTjrH1wvTLMGY
+        GYz3IInOQG2w/blF4PgJ2fYVuDkplnRegwECcBqW+EfGJY9mQJjvJnUeRqp6pJo=
+Received: (qmail 440148 invoked from network); 17 Aug 2021 21:18:50 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 17 Aug 2021 21:18:50 +0200
+X-UD-Smtp-Session: l3s3148p1@j/XbL8bJcr0gAwDPXwvcAP/VyhUm9O2C
+Date:   Tue, 17 Aug 2021 21:18:46 +0200
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     linux-i2c@vger.kernel.org,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        linux-mips@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] i2c: remove dead PMC MSP TWI/SMBus/I2C driver
+Message-ID: <YRwLlixqfmSpfkHu@kunai>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>, linux-i2c@vger.kernel.org,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        linux-mips@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20210817071126.8096-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
-References: <20210817143514.33609-1-colin.king@canonical.com>
-In-Reply-To: <20210817143514.33609-1-colin.king@canonical.com>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Tue, 17 Aug 2021 15:04:32 -0400
-Message-ID: <CADnq5_Nb+2UKPGN5tBqzFuLyBR6KLWtXroxUh24wXVZHB5tHag@mail.gmail.com>
-Subject: Re: [PATCH][next] drm/amd/pm: Fix spelling mistake "firwmare" -> "firmware"
-To:     Colin King <colin.king@canonical.com>
-Cc:     Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        xinhui pan <Xinhui.Pan@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>, kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="DLo/ViROfErRTOk2"
+Content-Disposition: inline
+In-Reply-To: <20210817071126.8096-1-lukas.bulwahn@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Applied.  Thanks!
 
-Alex
+--DLo/ViROfErRTOk2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 17, 2021 at 10:35 AM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> There is a spelling mistake in a dev_err error message. Fix it.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+On Tue, Aug 17, 2021 at 09:11:26AM +0200, Lukas Bulwahn wrote:
+> Commit 1b00767fd8e1 ("MIPS: Remove PMC MSP71xx platform") removes the
+> config PMC_MSP in ./arch/mips/Kconfig.
+>=20
+> Hence, since then, the corresponding PMC MSP TWI/SMBus/I2C driver is
+> dead code. Remove this dead driver.
+>=20
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 > ---
->  drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0.c b/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0.c
-> index 5d2605df32e8..a0e50f23b1dd 100644
-> --- a/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0.c
-> +++ b/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0.c
-> @@ -311,7 +311,7 @@ static int smu_v13_0_get_pptable_from_firmware(struct smu_context *smu, void **t
->         version_major = le16_to_cpu(hdr->header.header_version_major);
->         version_minor = le16_to_cpu(hdr->header.header_version_minor);
->         if (version_major != 2) {
-> -               dev_err(adev->dev, "Unsupported smu firwmare version %d.%d\n",
-> +               dev_err(adev->dev, "Unsupported smu firmware version %d.%d\n",
->                         version_major, version_minor);
->                 return -EINVAL;
->         }
-> --
-> 2.32.0
->
+> Wolfram, please pick this minor non-urgent clean-up patch.
+
+With pleasure! Applied to for-next, thanks Lukas!
+
+
+--DLo/ViROfErRTOk2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmEcC5MACgkQFA3kzBSg
+Kba0dA/7BCrPXz4DeCI+tF2El9apJj05+JpYKMEYGKcIDHUGVs8GE+CAvHarO4vU
+2Uq1Q4L7e3/nTTxr+AoxzivTmTungZrK+m04/YI2K/h3sdnaxVsZISliTvA6pWzG
+5UoBEg41KS8hZdRkQpiuduVFbwY8HMKhMHiYDFsG1NV/AArbDB/TMbmCsoSuiGvs
+n+p8g3nDohx71c2ozOOIeYv8fl02d9pBdSlQhW2CDuZSu14o9Ll/jvcXEpvw8pUJ
+kK/P9HsFRv6vtQ6bgsAEhlTEnvVjg/WJI3qgMfBevHisxzRGuOgos/1BXaCruC1h
+4tESk/xVeig3ujLu+n30cmvtIVgjcgUVMnSK2yyvUXW+pKDPO046/MCyGup/zGu3
+7NKJsu6LJPDE2nmvcNMUs5RK6AjFUzYzlhggNidWoc8FKMv/WEUVticklhdafj/3
+RtAbtynOCl1kCrDX1RjPQEBwV4yIFPyyeWmNwfuNQyOSH8ZvWHkBhsnz2EkfCtPw
+ue2tLiMVvVJbdpV6uqIF9BzNTrff1j0OoeYsOmZa3SHcX4fRni+CTUIw8Q3RnGFI
+iKoSHlZtjRbGfBoGsUleLF8wmzqeUEgQcn3GjWOt84FBgBAtFFnmw8S+Byj8mSY6
+Zlsn4NZOTniW6wH5DbdKkvrpSp+Xo3iJHSV5YkAzym8opwOK4S4=
+=WI0P
+-----END PGP SIGNATURE-----
+
+--DLo/ViROfErRTOk2--
