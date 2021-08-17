@@ -2,123 +2,248 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 158E1C4320A
-	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 07:29:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15AB7C432BE
+	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 08:01:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EAE7C60F39
-	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 07:29:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F24B660FBF
+	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 08:01:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238724AbhHQH3l (ORCPT
+        id S234906AbhHQIB7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 17 Aug 2021 03:29:41 -0400
-Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:55975 "EHLO
-        wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238686AbhHQH3g (ORCPT
+        Tue, 17 Aug 2021 04:01:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51176 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234446AbhHQIB7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 17 Aug 2021 03:29:36 -0400
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailout.west.internal (Postfix) with ESMTP id AD03F3200A53;
-        Tue, 17 Aug 2021 03:29:01 -0400 (EDT)
-Received: from imap44 ([10.202.2.94])
-  by compute2.internal (MEProxy); Tue, 17 Aug 2021 03:29:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-        mime-version:message-id:in-reply-to:references:date:from:to:cc
-        :subject:content-type:content-transfer-encoding; s=fm2; bh=f4BJm
-        aXPeOR0NzrRNCFBmQihQRU+JQae6tFVvnTRcXE=; b=HpmX2HLrbLl19k+TW1zN7
-        iDJv20yl72UUgmFm+DZ3gaNbRuu+SKUTO2IrsT5UCgC7sy24yeEqFcnQ7tIiTF4e
-        VOqLlcmU9kCJk+ADDYHlz5nwAkZ7+nyIKIYFLpeeuB/YI58VH8QhSuo7IDOgLkpS
-        WHSgNm2KZLLFTTgbApWsY9GCAQWneZHNxoWlLe3YTkZhWKW3ihJ9s/kobkKuA9Le
-        XEaNBgvgVw2EBhPAIYvCLobLlSoIeoBz/U9rQqAq09MSeTj3ibF9mksE09jKzmZF
-        eThi2EBXRwHlV1S9okgoBAr/juC6kbpHNk9pjPXsSG67T3sbIAvxMOGZeCKcshGf
-        A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=f4BJmaXPeOR0NzrRNCFBmQihQRU+JQae6tFVvnTRc
-        XE=; b=a1dLufU4G2nsgv0uxDDar5JoLCigSU9rdki55zMTOcKb5eK49HLN4KmGz
-        O2SprD01GwWyVywf3yaCnHgzW0AdIjHqv27On26mYYeWGkwj1L73g/ONLQP1EP/A
-        jGjL+kQMfDGO0dEW1gsbJ7i/DtJHKGcPWX6hyNAv91+icClYWWBBdQDLAgyzcy9+
-        /aApxHNo8djfCJDqFPJu4UzjEzyzzEsHxNfFezbMe+23ejUqnaIUDMYI5ttEr/C0
-        Ny4lry78s+cZ93VZ/keMgeldACwnx/pvpQCDJo7AZf630W4unxV6U3rl/lu0wgCO
-        nMgzLgFaIq1fRoy/yoxJ68Lw5eLKw==
-X-ME-Sender: <xms:PGUbYcSlGpC4sv0TnOofBycewgqqnXO45rCrvA8vnRB5STcDSeczjQ>
-    <xme:PGUbYZzI7FyHxYYLd8BLAEd9-ycOIvFkCIUN8uUAiBTYNlXZk7uya0RFxgKf4cuWd
-    JRE_HxM-U6Yr4whOYo>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrledvgdduudekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvffutgfgsehtqhertderreejnecuhfhrohhmpedflfhi
-    rgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomh
-    eqnecuggftrfgrthhtvghrnhepfeetgeekveeftefhgfduheegvdeuuddvieefvddvlefh
-    feehkeetfeeukedtfeejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrg
-    hilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomh
-X-ME-Proxy: <xmx:PGUbYZ3qPXz_MDS8jwfPSPOj3kYBh4XQFBaQzntdM5HDaOU-VjET0g>
-    <xmx:PGUbYQBfxTpyT-Yj8dc_x2MJbVqIm3K7FXNs44BlYCFV6ZgNJlQHHg>
-    <xmx:PGUbYVg3pylnscJ89HfttXCq7dQL7qkX-8wk149U0f7SEgdMWhluzA>
-    <xmx:PWUbYaux1SRbqGkzutCQ3IDFfBOC-nuCzzmOaQpbbaWvlIDOlOfsOw>
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 7E34AFA0AA4; Tue, 17 Aug 2021 03:29:00 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.5.0-alpha0-1118-g75eff666e5-fm-20210816.002-g75eff666
-Mime-Version: 1.0
-Message-Id: <fba1c1da-3943-4d33-a65d-422fcacfc7e3@www.fastmail.com>
-In-Reply-To: <20210816105326.8050-1-lukas.bulwahn@gmail.com>
-References: <20210816105326.8050-1-lukas.bulwahn@gmail.com>
-Date:   Tue, 17 Aug 2021 15:28:37 +0800
-From:   "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To:     "Lukas Bulwahn" <lukas.bulwahn@gmail.com>,
-        "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
-        "Rahul Bedarkar" <rahulbedarkar89@gmail.com>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: =?UTF-8?Q?Re:_[PATCH_v2]_MAINTAINERS:_adjust_PISTACHIO_SOC_SUPPORT_after?=
- =?UTF-8?Q?_its_retirement?=
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+        Tue, 17 Aug 2021 04:01:59 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93792C061764;
+        Tue, 17 Aug 2021 01:01:26 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id w24so5349774wmi.5;
+        Tue, 17 Aug 2021 01:01:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=aS9xpuWQ7cV7oWrmqXRiXydvlbggR6/xVxVxKlldG2A=;
+        b=pFGPUp4kSUKg9FmnRTvYONtxyYCteiKQTidHOzpn6LqXrk11oui65PlZuQC4jl/Dzl
+         PrNpKd4BU67Z6DxDXkgX57sL+CKNq9qSW2+zjc7cp8PnUu4GwFgmDO9Qz8pkLu9phyMp
+         uvNs1jsf0CtBqtDfAyRf3cRQZPOn3eVyG651vGQU6f/uIAjiD3eQM6PVeBz25mPkvw5+
+         pZOpH6bBwBIa0vwwAGR3P22uFXGExi300wrmkYwzK7m4OsGMb/4/EpWGa3XVhVUlGAzN
+         wFqfnet19/msSI7mAdGBzwTSFmXCH8m9tTq5/PxYTsFUxPdIQyWJzsDDjZ3CN4Gbhk0d
+         6z3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=aS9xpuWQ7cV7oWrmqXRiXydvlbggR6/xVxVxKlldG2A=;
+        b=IxNBTSJL745ZYhRrUquYZRrwdvTciFgnmvbfBClv8iK2kcVBgQh3VyrD7tLim0v6BQ
+         9dUGW5AtLRVQBjR/ft5sVwvtFk+cJRdOWWO0Rh+zkqw8y4/LNg9+Dv81k1toTqlxhKQN
+         F5xAyWha9NkpLul9i1lsIIdiLbD7epeNbqD4cAmsq3QWo4feXLLk8uLEo6I7xSVVUXS5
+         gkH1xZmgJuo1ePainegMPaAZr2bOjTlipjnWAbxyqYdqcTk8EDrIsLxyg8HiA8t7Z7TX
+         saaipieeekLsPZ962Y+FpdkQjOuSBoXfgYpiAeItkYBHtdhs0KRyVkXY+/iTlTVWhaDE
+         2FVw==
+X-Gm-Message-State: AOAM532UOsLUEgAGkgqUxUQO3YS1czLuoFBYRQniJffdyXU9/OOyAb+K
+        LT76MvJpNUWBnxrur5YCxu4=
+X-Google-Smtp-Source: ABdhPJxLlkljaDHAjvjfXeQNfMj5qQ/PYZEDlt79p5gmmxYTpHZSjdIMfwaeazfI5FPMDkOEK3Kwiw==
+X-Received: by 2002:a05:600c:4e87:: with SMTP id f7mr2053403wmq.42.1629187285139;
+        Tue, 17 Aug 2021 01:01:25 -0700 (PDT)
+Received: from localhost.localdomain (arl-84-90-178-246.netvisao.pt. [84.90.178.246])
+        by smtp.gmail.com with ESMTPSA id n3sm1269212wmi.0.2021.08.17.01.01.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Aug 2021 01:01:24 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Fabio Estevam <festevam@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-gpio@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] gpio: remove the obsolete MX35 3DS BOARD MC9S08DZ60 GPIO functions
+Date:   Tue, 17 Aug 2021 10:01:18 +0200
+Message-Id: <20210817080118.9201-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.26.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Commit e1324ece2af4 ("ARM: imx: Remove i.MX35 board files") removes the
+config MACH_MX35_3DS in arch/arm/mach-imx/Kconfig.
 
+Hence, since then, the MX35 3DS BOARD MC9S08DZ60 GPIO functions are dead
+code as its config GPIO_MC9S08DZ60 depends on the config MACH_MX35_3DS.
 
-=E5=9C=A82021=E5=B9=B48=E6=9C=8816=E6=97=A5=E5=85=AB=E6=9C=88 =E4=B8=8B=E5=
-=8D=886:53=EF=BC=8CLukas Bulwahn=E5=86=99=E9=81=93=EF=BC=9A
-> Commit 104f942b2832 ("MIPS: Retire MACH_PISTACHIO") removes
-> ./arch/mips/pistachio/ and ./arch/mips/configs/pistachio_defconfig, but
-> misses to adjust the corresponding section PISTACHIO SOC SUPPORT
-> in MAINTAINERS.
->=20
-> Hence, ./scripts/get_maintainer.pl --self-test=3Dpatterns complains:
->=20
->   warning: no file matches    F:    arch/mips/configs/pistachio*_defco=
-nfig
->   warning: no file matches    F:    arch/mips/pistachio/
->=20
-> As James Hartley is not reachable with the provided email address, the
-> remaining dtsi file, arch/mips/boot/dts/img/pistachio.dtsi, must be
-> maintained by its only user pistachio_marduk.dts, which is part of MAR=
-DUK
-> (CREATOR CI40) DEVICE TREE SUPPORT.
->=20
-> Add maintenance of pistachio.dtsi to that section and drop the PISTACH=
-IO
-> SOC SUPPORT after its retirement.
->=20
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> applies cleanly on next-20210816
->=20
-> Jiaxun, Rahul, please ack.=20
+Luckily, ./scripts/checkkconfigsymbols.py warns on non-existing configs:
 
-Acked-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+MACH_MX35_3DS
+Referencing files: drivers/gpio/Kconfig
 
-Thanks
+Remove the obsolete MX35 3DS BOARD MC9S08DZ60 GPIO functions.
 
-> Thomas, please pick this minor non-urgent clean-up patch on mips-next.
->=20
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ drivers/gpio/Kconfig           |   6 --
+ drivers/gpio/Makefile          |   1 -
+ drivers/gpio/gpio-mc9s08dz60.c | 112 ---------------------------------
+ 3 files changed, 119 deletions(-)
+ delete mode 100644 drivers/gpio/gpio-mc9s08dz60.c
+
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index fab571016adf..9a494cab5dbf 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -1010,12 +1010,6 @@ config GPIO_MAX732X_IRQ
+ 	  Say yes here to enable the max732x to be used as an interrupt
+ 	  controller. It requires the driver to be built in the kernel.
+ 
+-config GPIO_MC9S08DZ60
+-	bool "MX35 3DS BOARD MC9S08DZ60 GPIO functions"
+-	depends on I2C=y && MACH_MX35_3DS
+-	help
+-	  Select this to enable the MC9S08DZ60 GPIO driver
+-
+ config GPIO_PCA953X
+ 	tristate "PCA95[357]x, PCA9698, TCA64xx, and MAX7310 I/O ports"
+ 	select REGMAP_I2C
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index 32a32659866a..7856222ae855 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -92,7 +92,6 @@ obj-$(CONFIG_GPIO_MAX77620)		+= gpio-max77620.o
+ obj-$(CONFIG_GPIO_MAX77650)		+= gpio-max77650.o
+ obj-$(CONFIG_GPIO_MB86S7X)		+= gpio-mb86s7x.o
+ obj-$(CONFIG_GPIO_MC33880)		+= gpio-mc33880.o
+-obj-$(CONFIG_GPIO_MC9S08DZ60)		+= gpio-mc9s08dz60.o
+ obj-$(CONFIG_GPIO_MENZ127)		+= gpio-menz127.o
+ obj-$(CONFIG_GPIO_MERRIFIELD)		+= gpio-merrifield.o
+ obj-$(CONFIG_GPIO_ML_IOH)		+= gpio-ml-ioh.o
+diff --git a/drivers/gpio/gpio-mc9s08dz60.c b/drivers/gpio/gpio-mc9s08dz60.c
+deleted file mode 100644
+index a9f17cebd5ed..000000000000
+--- a/drivers/gpio/gpio-mc9s08dz60.c
++++ /dev/null
+@@ -1,112 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-or-later
+-/*
+- * Copyright 2009-2012 Freescale Semiconductor, Inc. All Rights Reserved.
+- *
+- * Author: Wu Guoxing <b39297@freescale.com>
+- */
+-
+-#include <linux/kernel.h>
+-#include <linux/init.h>
+-#include <linux/slab.h>
+-#include <linux/i2c.h>
+-#include <linux/gpio/driver.h>
+-
+-#define GPIO_GROUP_NUM 2
+-#define GPIO_NUM_PER_GROUP 8
+-#define GPIO_NUM (GPIO_GROUP_NUM*GPIO_NUM_PER_GROUP)
+-
+-struct mc9s08dz60 {
+-	struct i2c_client *client;
+-	struct gpio_chip chip;
+-};
+-
+-static void mc9s_gpio_to_reg_and_bit(int offset, u8 *reg, u8 *bit)
+-{
+-	*reg = 0x20 + offset / GPIO_NUM_PER_GROUP;
+-	*bit = offset % GPIO_NUM_PER_GROUP;
+-}
+-
+-static int mc9s08dz60_get_value(struct gpio_chip *gc, unsigned offset)
+-{
+-	u8 reg, bit;
+-	s32 value;
+-	struct mc9s08dz60 *mc9s = gpiochip_get_data(gc);
+-
+-	mc9s_gpio_to_reg_and_bit(offset, &reg, &bit);
+-	value = i2c_smbus_read_byte_data(mc9s->client, reg);
+-
+-	return (value >= 0) ? (value >> bit) & 0x1 : 0;
+-}
+-
+-static int mc9s08dz60_set(struct mc9s08dz60 *mc9s, unsigned offset, int val)
+-{
+-	u8 reg, bit;
+-	s32 value;
+-
+-	mc9s_gpio_to_reg_and_bit(offset, &reg, &bit);
+-	value = i2c_smbus_read_byte_data(mc9s->client, reg);
+-	if (value >= 0) {
+-		if (val)
+-			value |= 1 << bit;
+-		else
+-			value &= ~(1 << bit);
+-
+-		return i2c_smbus_write_byte_data(mc9s->client, reg, value);
+-	} else
+-		return value;
+-
+-}
+-
+-
+-static void mc9s08dz60_set_value(struct gpio_chip *gc, unsigned offset, int val)
+-{
+-	struct mc9s08dz60 *mc9s = gpiochip_get_data(gc);
+-
+-	mc9s08dz60_set(mc9s, offset, val);
+-}
+-
+-static int mc9s08dz60_direction_output(struct gpio_chip *gc,
+-				       unsigned offset, int val)
+-{
+-	struct mc9s08dz60 *mc9s = gpiochip_get_data(gc);
+-
+-	return mc9s08dz60_set(mc9s, offset, val);
+-}
+-
+-static int mc9s08dz60_probe(struct i2c_client *client,
+-			    const struct i2c_device_id *id)
+-{
+-	struct mc9s08dz60 *mc9s;
+-
+-	mc9s = devm_kzalloc(&client->dev, sizeof(*mc9s), GFP_KERNEL);
+-	if (!mc9s)
+-		return -ENOMEM;
+-
+-	mc9s->chip.label = client->name;
+-	mc9s->chip.base = -1;
+-	mc9s->chip.parent = &client->dev;
+-	mc9s->chip.owner = THIS_MODULE;
+-	mc9s->chip.ngpio = GPIO_NUM;
+-	mc9s->chip.can_sleep = true;
+-	mc9s->chip.get = mc9s08dz60_get_value;
+-	mc9s->chip.set = mc9s08dz60_set_value;
+-	mc9s->chip.direction_output = mc9s08dz60_direction_output;
+-	mc9s->client = client;
+-	i2c_set_clientdata(client, mc9s);
+-
+-	return devm_gpiochip_add_data(&client->dev, &mc9s->chip, mc9s);
+-}
+-
+-static const struct i2c_device_id mc9s08dz60_id[] = {
+-	{"mc9s08dz60", 0},
+-	{},
+-};
+-
+-static struct i2c_driver mc9s08dz60_i2c_driver = {
+-	.driver = {
+-		.name = "mc9s08dz60",
+-	},
+-	.probe = mc9s08dz60_probe,
+-	.id_table = mc9s08dz60_id,
+-};
+-builtin_i2c_driver(mc9s08dz60_i2c_driver);
+-- 
+2.26.2
+
