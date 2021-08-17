@@ -2,94 +2,111 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85FECC43214
-	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 20:22:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79923C4320A
+	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 21:55:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6A09C61042
-	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 20:22:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A9666103A
+	for <kernel-janitors@archiver.kernel.org>; Tue, 17 Aug 2021 21:55:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235186AbhHQUXN (ORCPT
+        id S235435AbhHQV4J (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 17 Aug 2021 16:23:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53300 "EHLO
+        Tue, 17 Aug 2021 17:56:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234601AbhHQUXK (ORCPT
+        with ESMTP id S233928AbhHQV4I (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 17 Aug 2021 16:23:10 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFDE0C06129D;
-        Tue, 17 Aug 2021 13:22:31 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id i9so22992294lfg.10;
-        Tue, 17 Aug 2021 13:22:31 -0700 (PDT)
+        Tue, 17 Aug 2021 17:56:08 -0400
+Received: from mail-ot1-x32c.google.com (mail-ot1-x32c.google.com [IPv6:2607:f8b0:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11B08C061764;
+        Tue, 17 Aug 2021 14:55:35 -0700 (PDT)
+Received: by mail-ot1-x32c.google.com with SMTP id c19-20020a9d6153000000b0051829acbfc7so219555otk.9;
+        Tue, 17 Aug 2021 14:55:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tdArbszDF0w5Eojonc3/z7aHZTmugHtPfpWzsgEPiog=;
-        b=DaWtZ1GqM4zkpnwiMS9GIDx0jpdrMeJ9ObnsMHPNwRq5WBqzIOJStvdW9Z+tUebaOM
-         IVvyH6NaqltMsUwVD5mrr+o+d2CLVE1MEKfEDkfcmithMJOUHkD/tq8IW4MejrfbSMI2
-         dLJeiTJ0Dm5ZvkIlb4QFVPI8GyR71Gkv3nHKzNSubYtZ5H4zyGqlY55o2t5aQPs5ucEP
-         WTsI8NRex5zu3hXrCmOi0cjAKVMKjqqTOB3of6gy/Aqur37VjRyxBgu+v9HG3i5pkoU1
-         tb2mx3z2PndeeEhCMoEXEIikuuPbWmeMWnvx7TZMgxAy1kMbvB2etwVGVkrRnIjfnvdq
-         8AAA==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=rAW4lU/RJvKOFz0SR+OmypjLALjP6fD0yLpDz8M0/vE=;
+        b=rLfwX9mAQGzSs2M5Vri3NNozYyJTwOYNfC+vfvhgAw+36QDDelZNtABBDv6RZEpvbI
+         6WW0rCEDemJ2bT1tQFG45JUTqIBG8TfEv5SHWvacACOIkces337g4zkUGrz5jX1AtB/F
+         vqjRP7L9ciJts/cxIKWDj3NyRO4vJFUakzpDRMhLlctEQ6rBjNxenhglBwwy7zeh7M+2
+         gacNfgP7wahNgMYBPuMGzsJbhcVv0yj7yjf3fXDhVsNs+rLyHQ3CaOEbNpkJpVTmEejS
+         ynvOLGl1SiZuwcQ8hP/hdiMFqXhLwKV0C/0Sf6b57RBoQAFhfkv0iaeaa4gmp4+hO3nT
+         MAMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tdArbszDF0w5Eojonc3/z7aHZTmugHtPfpWzsgEPiog=;
-        b=P/L1BJgbE0zZMoy04pNyic4QrTO0nRWDUaPkqNRgDfgT89ZFFpX0v7lOjU02xgYECr
-         Qu+D1QAvseAz82CCEtxIcpT43GNXBswHQtO87KfqO4xAMfMffJq7mHP5/snzaeTMH+XQ
-         tYMgCQuiRnWSen4Tw3NHC8xfidr8OIer97NosWHc27mwCEeuiAIPQPd7uT12OEQlKr9w
-         7WhKRpCr4JBPKxJIYSOpToQfwaI3Bbd51o/ZlEqWROWkc2DVA04q8n1xkD1hGzSfsojC
-         Y4PDQO69y8t2exUS+qlk1ljudpOgw+x04eYd5CJXnJV7TSSpfKdlS185KGCADYRW45hc
-         ebeA==
-X-Gm-Message-State: AOAM532eEppGPTu42c+UXBePJCKU03eOiyIcKi8gtMBI6uyFg0NnsKhV
-        HPxN9MXG0vk8h9yYK/AQiDUYCgxcKR7H/8ezjl4=
-X-Google-Smtp-Source: ABdhPJxGQcT9nkUnf9D6jfUmhvH074lalPuRiL4/yEaY5ZQBcAbNGbPO7prV5tDUlhPuXcsaVU6MwQLFzUMStGTqNbw=
-X-Received: by 2002:a05:6512:ac3:: with SMTP id n3mr3585311lfu.583.1629231750178;
- Tue, 17 Aug 2021 13:22:30 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210817080118.9201-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20210817080118.9201-1-lukas.bulwahn@gmail.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Tue, 17 Aug 2021 17:22:19 -0300
-Message-ID: <CAOMZO5CaH6GQbMaXNj+Zg_=hTXtQSoHb7DfHeqfxBmOvzvkPWA@mail.gmail.com>
-Subject: Re: [PATCH] gpio: remove the obsolete MX35 3DS BOARD MC9S08DZ60 GPIO functions
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=rAW4lU/RJvKOFz0SR+OmypjLALjP6fD0yLpDz8M0/vE=;
+        b=DTZ6RffUC2MaqTq9ip6H/okciqT4EuFMJr2Gk4UjhprjdmzVR5HuVvRhcdxpbrmXmb
+         mqDVjj+KEeFNMPWz/EG+7cSq2SKqlrT+GQusuJ4wHlRS6kGOfnaDueUCqYLjlQ0SDLSC
+         B8++TT7BKyrqJC9kSq8paxBy35+6xt+s43CWlUJTbm/QfM2zbM7nYMVeT9sLMASfZ3Jw
+         EtfdcEZGevM9hPtDbVM4pLoWPhqFZzfD6ob2GSNiRXibY+19iQBA0cAvHA2XBKC00gl6
+         mNE5Xy04UqY5A6rmxm6/0XtIwLd/qHT+bzxk7q1ecD1xD3R+uHlaLsDAKhTCMKSpHBir
+         erRA==
+X-Gm-Message-State: AOAM531PRdpjtCz2aEV7PY0vgr6PCAyF4IFEAGetVi30xSZtaQoD3nEe
+        5DIPdS3LriiOnTXTAHRxjsU=
+X-Google-Smtp-Source: ABdhPJyXlMiFqSZFkfwoB7TTrvIk/perMWhdiWzRtwiL0zCZgay8BQOmbKt+t6CyHvvYIRYGEdD3Iw==
+X-Received: by 2002:a05:6830:2a06:: with SMTP id y6mr4088503otu.134.1629237334432;
+        Tue, 17 Aug 2021 14:55:34 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id z25sm771568oic.24.2021.08.17.14.55.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Aug 2021 14:55:33 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date:   Tue, 17 Aug 2021 14:55:32 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
 To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] hwmon: remove amd_energy driver in Makefile
+Message-ID: <20210817215532.GA471009@roeck-us.net>
+References: <20210817084811.10673-1-lukas.bulwahn@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210817084811.10673-1-lukas.bulwahn@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Lukas,
-
-On Tue, Aug 17, 2021 at 5:01 AM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
->
-> Commit e1324ece2af4 ("ARM: imx: Remove i.MX35 board files") removes the
-> config MACH_MX35_3DS in arch/arm/mach-imx/Kconfig.
->
-> Hence, since then, the MX35 3DS BOARD MC9S08DZ60 GPIO functions are dead
-> code as its config GPIO_MC9S08DZ60 depends on the config MACH_MX35_3DS.
->
-> Luckily, ./scripts/checkkconfigsymbols.py warns on non-existing configs:
->
-> MACH_MX35_3DS
-> Referencing files: drivers/gpio/Kconfig
->
-> Remove the obsolete MX35 3DS BOARD MC9S08DZ60 GPIO functions.
->
+On Tue, Aug 17, 2021 at 10:48:11AM +0200, Lukas Bulwahn wrote:
+> Commit 9049572fb145 ("hwmon: Remove amd_energy driver") removes the driver,
+> but misses to adjust the Makefile.
+> 
+> Hence, ./scripts/checkkconfigsymbols.py warns:
+> 
+> SENSORS_AMD_ENERGY
+> Referencing files: drivers/hwmon/Makefile
+> 
+> Remove the missing piece of this driver removal.
+> 
+> Fixes: 9049572fb145 ("hwmon: Remove amd_energy driver")
 > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
+Applied.
+
+Thanks,
+Guenter
+
+> ---
+>  drivers/hwmon/Makefile | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/hwmon/Makefile b/drivers/hwmon/Makefile
+> index 53a8f4b500b8..4b33421746c0 100644
+> --- a/drivers/hwmon/Makefile
+> +++ b/drivers/hwmon/Makefile
+> @@ -45,7 +45,6 @@ obj-$(CONFIG_SENSORS_ADT7462)	+= adt7462.o
+>  obj-$(CONFIG_SENSORS_ADT7470)	+= adt7470.o
+>  obj-$(CONFIG_SENSORS_ADT7475)	+= adt7475.o
+>  obj-$(CONFIG_SENSORS_AHT10)	+= aht10.o
+> -obj-$(CONFIG_SENSORS_AMD_ENERGY) += amd_energy.o
+>  obj-$(CONFIG_SENSORS_APPLESMC)	+= applesmc.o
+>  obj-$(CONFIG_SENSORS_ARM_SCMI)	+= scmi-hwmon.o
+>  obj-$(CONFIG_SENSORS_ARM_SCPI)	+= scpi-hwmon.o
