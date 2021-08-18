@@ -7,35 +7,36 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69C9FC4320A
-	for <kernel-janitors@archiver.kernel.org>; Wed, 18 Aug 2021 20:56:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3BB6C4338F
+	for <kernel-janitors@archiver.kernel.org>; Wed, 18 Aug 2021 21:22:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4F8326102A
-	for <kernel-janitors@archiver.kernel.org>; Wed, 18 Aug 2021 20:56:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F581610A5
+	for <kernel-janitors@archiver.kernel.org>; Wed, 18 Aug 2021 21:22:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233737AbhHRU4i (ORCPT
+        id S233770AbhHRVWk (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 18 Aug 2021 16:56:38 -0400
-Received: from smtp05.smtpout.orange.fr ([80.12.242.127]:21502 "EHLO
+        Wed, 18 Aug 2021 17:22:40 -0400
+Received: from smtp05.smtpout.orange.fr ([80.12.242.127]:25980 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233378AbhHRU4h (ORCPT
+        with ESMTP id S229965AbhHRVWj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 18 Aug 2021 16:56:37 -0400
+        Wed, 18 Aug 2021 17:22:39 -0400
 Received: from pop-os.home ([90.126.253.178])
         by mwinf5d40 with ME
-        id j8vy250093riaq2038vzRl; Wed, 18 Aug 2021 22:56:01 +0200
+        id j9N1250013riaq2039N1R2; Wed, 18 Aug 2021 23:22:02 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 18 Aug 2021 22:56:01 +0200
+X-ME-Date: Wed, 18 Aug 2021 23:22:02 +0200
 X-ME-IP: 90.126.253.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     broonie@kernel.org, zhangqing@loongson.cn
-Cc:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     leoyang.li@nxp.com
+Cc:     linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] spi: coldfire-qspi: Use clk_disable_unprepare in the remove function
-Date:   Wed, 18 Aug 2021 22:55:56 +0200
-Message-Id: <ee91792ddba61342b0d3284cd4558a2b0016c4e7.1629319838.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] soc: fsl: guts: Fix a resource leak in the error handling path of 'fsl_guts_probe()'
+Date:   Wed, 18 Aug 2021 23:21:59 +0200
+Message-Id: <b12e8c5c5d6ab3061d9504de8fbaefcad6bbc385.1629321668.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -43,28 +44,81 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-'clk_prepare_enable()' is used in the probe, so 'clk_disable_unprepare()'
-should be used in the remove function to be consistent.
+If an error occurs after 'of_find_node_by_path()', the reference taken for
+'root' will never be released and some memory will leak.
 
-Fixes: 499de01c5c0b ("spi: coldfire-qspi: Use clk_prepare_enable and clk_disable_unprepare")
+Instead of adding an error handling path and modifying all the
+'return -SOMETHING' into 'goto errorpath', use 'devm_add_action_or_reset()'
+to release the reference when needed.
+
+Simplify the remove function accordingly.
+
+As an extra benefit, the 'root' global variable can now be removed as well.
+
+Fixes: 3c0d64e867ed ("soc: fsl: guts: reuse machine name from device tree")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/spi/spi-coldfire-qspi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Compile tested only
+---
+ drivers/soc/fsl/guts.c | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/spi/spi-coldfire-qspi.c b/drivers/spi/spi-coldfire-qspi.c
-index 8996115ce736..263ce9047327 100644
---- a/drivers/spi/spi-coldfire-qspi.c
-+++ b/drivers/spi/spi-coldfire-qspi.c
-@@ -444,7 +444,7 @@ static int mcfqspi_remove(struct platform_device *pdev)
- 	mcfqspi_wr_qmr(mcfqspi, MCFQSPI_QMR_MSTR);
+diff --git a/drivers/soc/fsl/guts.c b/drivers/soc/fsl/guts.c
+index d5e9a5f2c087..4d9476c7b87c 100644
+--- a/drivers/soc/fsl/guts.c
++++ b/drivers/soc/fsl/guts.c
+@@ -28,7 +28,6 @@ struct fsl_soc_die_attr {
+ static struct guts *guts;
+ static struct soc_device_attribute soc_dev_attr;
+ static struct soc_device *soc_dev;
+-static struct device_node *root;
  
- 	mcfqspi_cs_teardown(mcfqspi);
--	clk_disable(mcfqspi->clk);
-+	clk_disable_unprepare(mcfqspi->clk);
  
+ /* SoC die attribute definition for QorIQ platform */
+@@ -136,14 +135,23 @@ static u32 fsl_guts_get_svr(void)
+ 	return svr;
+ }
+ 
++static void fsl_guts_put_root(void *data)
++{
++	struct device_node *root = data;
++
++	of_node_put(root);
++}
++
+ static int fsl_guts_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *np = pdev->dev.of_node;
+ 	struct device *dev = &pdev->dev;
++	struct device_node *root;
+ 	struct resource *res;
+ 	const struct fsl_soc_die_attr *soc_die;
+ 	const char *machine;
+ 	u32 svr;
++	int ret;
+ 
+ 	/* Initialize guts */
+ 	guts = devm_kzalloc(dev, sizeof(*guts), GFP_KERNEL);
+@@ -159,6 +167,10 @@ static int fsl_guts_probe(struct platform_device *pdev)
+ 
+ 	/* Register soc device */
+ 	root = of_find_node_by_path("/");
++	ret = devm_add_action_or_reset(dev, fsl_guts_put_root, root);
++	if (ret)
++		return ret;
++
+ 	if (of_property_read_string(root, "model", &machine))
+ 		of_property_read_string_index(root, "compatible", 0, &machine);
+ 	if (machine)
+@@ -197,7 +209,7 @@ static int fsl_guts_probe(struct platform_device *pdev)
+ static int fsl_guts_remove(struct platform_device *dev)
+ {
+ 	soc_device_unregister(soc_dev);
+-	of_node_put(root);
++
  	return 0;
  }
+ 
 -- 
 2.30.2
 
