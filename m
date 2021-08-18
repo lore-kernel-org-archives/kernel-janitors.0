@@ -2,120 +2,87 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B121C432BE
-	for <kernel-janitors@archiver.kernel.org>; Wed, 18 Aug 2021 12:41:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23029C4338F
+	for <kernel-janitors@archiver.kernel.org>; Wed, 18 Aug 2021 13:09:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 24AE461076
-	for <kernel-janitors@archiver.kernel.org>; Wed, 18 Aug 2021 12:41:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0A4F61058
+	for <kernel-janitors@archiver.kernel.org>; Wed, 18 Aug 2021 13:09:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236468AbhHRMmL (ORCPT
+        id S236084AbhHRNKE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 18 Aug 2021 08:42:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53140 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236320AbhHRMmH (ORCPT
+        Wed, 18 Aug 2021 09:10:04 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:45552
+        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233634AbhHRNKD (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 18 Aug 2021 08:42:07 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31645C061764;
-        Wed, 18 Aug 2021 05:41:33 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id w21-20020a7bc1150000b02902e69ba66ce6so1700937wmi.1;
-        Wed, 18 Aug 2021 05:41:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=BdAGUCyYQ4noYy9BmzZUbXym0YMYKVh78nm2c4sCaNo=;
-        b=QYgwx9dlaH3RyUx/fnHN4Y6omSMw5U3O0ah91g35q7jVcI4dHVdFaNlCAdci13bVeR
-         suo33HFIYdKFnq4fJ4fe46eLIB0DEHfW0gQnunFK9UotHj+5C6KGF12/5QBzbiS3jZ2y
-         SVCHPCM+ztoxWXAZEzGNQgqBpc58ZaKALwgm6IBzLYv6HDimXgIBNTwo//C71fOLZlAn
-         nK2XD5wDJEFm7z1KFGODM6Cm2Dwk4eb8pq5hH05OTNlMSqKAH0lLMvYmJx+uU6orLu7x
-         wUTLsYC51JHA00/WP57cFAUcyotGJsTNCjdZy2QSY24l4JotdNC4vwjc6WdVuXGB/aiw
-         aNfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=BdAGUCyYQ4noYy9BmzZUbXym0YMYKVh78nm2c4sCaNo=;
-        b=lmYbCqA2JYBhM83/PhvrFBUPexWycku2FZPX21L+JDqChdtbWq+6tVrBgRY9G+lKyX
-         EpfGdFIWDQTLPlU7CCt2XVtXtdHiy57Qu5yxZpXtSEYgeYGhxvssQTgPwQKazbtO1Vfx
-         SzuRecNhuRhg1yKN1AbE3FUFhqz/WtHQDLnKhS1rJFSpdE2s4pE4COCtEbTFZX5hK7k9
-         bCWjK9lgX6tgpNrxgfAiaPhAETCq2UjecoCvyxY1RulUUc9DQnxedHIoWLAy2ovPRkqd
-         Qr1nEj3U2sELOxVQVTivoB+QD7+Fv0eIkP5L+r3peTz7suAT9Wginf6rToQ3SiwknWSV
-         jdHA==
-X-Gm-Message-State: AOAM532yZy07VgBIDfZFEpqWnjS4590OYt/I5fCBaRysWFfIkoQ+RAmd
-        9CT01t2EUw+rIUarE6XWZYg=
-X-Google-Smtp-Source: ABdhPJyZRhqaYkeCZQae/8p1e2NVcwuFX4TMTiDaEpXsViXU87cjD/bV2wjYHtpTMOTxNDHl4WsObQ==
-X-Received: by 2002:a05:600c:4ba4:: with SMTP id e36mr8524581wmp.82.1629290491753;
-        Wed, 18 Aug 2021 05:41:31 -0700 (PDT)
-Received: from localhost.localdomain (arl-84-90-178-246.netvisao.pt. [84.90.178.246])
-        by smtp.gmail.com with ESMTPSA id a11sm5720454wrq.6.2021.08.18.05.41.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Aug 2021 05:41:31 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org
-Cc:     Sandy Huang <hjc@rock-chips.com>,
-        =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
-        Emma Anholt <emma@anholt.net>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH 5/5] drm: omap: remove obsolete selection of OMAP2_DSS in config DRM_OMAP
-Date:   Wed, 18 Aug 2021 14:41:14 +0200
-Message-Id: <20210818124114.28545-6-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20210818124114.28545-1-lukas.bulwahn@gmail.com>
-References: <20210818124114.28545-1-lukas.bulwahn@gmail.com>
+        Wed, 18 Aug 2021 09:10:03 -0400
+Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 90FE93F365;
+        Wed, 18 Aug 2021 13:09:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1629292167;
+        bh=QMhCbedXXvfVQwxEGtSlSAh2lNaKHZKflzfnmOrUTkQ=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=AtOBMCfNpcjamwO08GaAI2nojeY8t/OJFmBe62bTltjc1FkRysUYWru+2I+p8oMlB
+         qqQOJ7Vd9ZC61vPL4Vj6BRldg8eaR1TBzdLncA7212RK7gm8KIj7wRE8PUWkyRex8X
+         qam7rQT4YmpjBfm0bW4NOUjiyfaKWSKpH6agwQRlk5lATZ9Jm/1j3FPsyvTUWEM52C
+         a09Jqoey7XUjXilqWZTaC19GBeGsjj3J+Cepqvu03S5JofsyGejxvLoRDvoxsNHL9m
+         xNw2FW5vtDMdCUjYQLO8+yoJxD1JmXF/azzLC8uBZJLg4cTDFv1M/fNm/fBGWrgsXI
+         o/Wm/VsEEB00g==
+From:   Colin King <colin.king@canonical.com>
+To:     Sunil Goutham <sgoutham@marvell.com>,
+        Linu Cherian <lcherian@marvell.com>,
+        Geetha sowjanya <gakula@marvell.com>,
+        Jerin Jacob <jerinj@marvell.com>,
+        Subbaraya Sundeep <sbhatta@marvell.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] octeontx2-af: remove redudant second error check on variable err
+Date:   Wed, 18 Aug 2021 14:09:27 +0100
+Message-Id: <20210818130927.33895-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 55b68fb856b5 ("drm/omap: squash omapdrm sub-modules into one")
-removes the config OMAP2_DSS in ./drivers/gpu/drm/omapdrm/dss/Kconfig,
-while moving the other configs into./drivers/gpu/drm/omapdrm/Kconfig, but
-misses to remove an obsolete selection of OMAP2_DSS in config DRM_OMAP.
+From: Colin Ian King <colin.king@canonical.com>
 
-Hence, ./scripts/checkkconfigsymbols.py warns:
+A recent change added error checking messages and failed to remove one
+of the previous error checks. There are now two checks on variable err
+so the second one is redundant dead code and can be removed.
 
-OMAP2_DSS
-Referencing files: drivers/gpu/drm/omapdrm/Kconfig
-
-Remove this reference in an obsolete selection.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Addresses-Coverity: ("Logically dead code")
+Fixes: a83bdada06bf ("octeontx2-af: Add debug messages for failures")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/gpu/drm/omapdrm/Kconfig | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/net/ethernet/marvell/octeontx2/af/rvu.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/omapdrm/Kconfig b/drivers/gpu/drm/omapdrm/Kconfig
-index e7281da5bc6a..d6e4df291d6f 100644
---- a/drivers/gpu/drm/omapdrm/Kconfig
-+++ b/drivers/gpu/drm/omapdrm/Kconfig
-@@ -3,7 +3,6 @@ config DRM_OMAP
- 	tristate "OMAP DRM"
- 	depends on DRM
- 	depends on ARCH_OMAP2PLUS || ARCH_MULTIPLATFORM
--	select OMAP2_DSS
- 	select DRM_KMS_HELPER
- 	select VIDEOMODE_HELPERS
- 	select HDMI
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu.c
+index fb50df93b54e..c2438ba5e2ec 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/rvu.c
++++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu.c
+@@ -1031,8 +1031,6 @@ static int rvu_setup_hw_resources(struct rvu *rvu)
+ 			"%s: Failed to allocate CPT1 LF bitmap\n", __func__);
+ 		return err;
+ 	}
+-	if (err)
+-		return err;
+ 
+ 	/* Allocate memory for PFVF data */
+ 	rvu->pf = devm_kcalloc(rvu->dev, hw->total_pfs,
 -- 
-2.26.2
+2.32.0
 
