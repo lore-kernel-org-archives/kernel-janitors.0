@@ -2,112 +2,169 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C47EFC4338F
-	for <kernel-janitors@archiver.kernel.org>; Wed, 18 Aug 2021 07:12:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8343C4338F
+	for <kernel-janitors@archiver.kernel.org>; Wed, 18 Aug 2021 12:41:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B1D9661053
-	for <kernel-janitors@archiver.kernel.org>; Wed, 18 Aug 2021 07:12:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B18B561051
+	for <kernel-janitors@archiver.kernel.org>; Wed, 18 Aug 2021 12:41:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238376AbhHRHMt (ORCPT
+        id S234948AbhHRMlw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 18 Aug 2021 03:12:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59578 "EHLO
+        Wed, 18 Aug 2021 08:41:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53042 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239108AbhHRHM0 (ORCPT
+        with ESMTP id S231500AbhHRMlw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 18 Aug 2021 03:12:26 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9127DC06179A;
-        Wed, 18 Aug 2021 00:11:51 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id x12so1824185wrr.11;
-        Wed, 18 Aug 2021 00:11:51 -0700 (PDT)
+        Wed, 18 Aug 2021 08:41:52 -0400
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5ED5EC061764;
+        Wed, 18 Aug 2021 05:41:17 -0700 (PDT)
+Received: by mail-wm1-x32d.google.com with SMTP id q11-20020a7bce8b0000b02902e6880d0accso4334015wmj.0;
+        Wed, 18 Aug 2021 05:41:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=FUltDGbcXfm3L3aKEFjmaGZSqXkkHLKLtJ13isiVEoQ=;
-        b=dLfHj03e0E8HEqiG5P2c9osIlABLNIaht2LMk0gC92MgsC5sQkRq2g+g2TzOWFi0UX
-         6W7P9P+CW1XG2af32Dbv5QhIBdqFaqjeb1SssG+kj4rwMSe74Dxs8xfmlp6AEKweRioN
-         /A6mtcB3u5vVRW8GRRaU95w5uAumtPCo52FL3C7aiE/mGrUXXaty6JLRVDngV0VdFB4I
-         kOTlTdthYkCMzB9XecExfdah1/gdV6VFfRrjfsDZ8k31/eMY9CgqZGQaA0775RHZqNRj
-         RU1elpQvYamRCbiqkDyOf9bUqKSN6/8q40MfbnPtN+A2jbUSmxzhSCgZd+RZo2uyCYhJ
-         vkpQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=uZAPhX+VRT0+zIBhSL6SCOTLLnMplq+LWNcok53Ws3w=;
+        b=onfEfOxQYoF+a8qU2x61VOBJrzjDHAstnxzW6zGSre5KbQdBOVly2I7x26Hl2lZNbp
+         pQ4rKO4AxWQR1KjtXdb7p/CRqlG8kPScH6MCMZWXyww5UI2qbboFWfJqP6E4NCu97cw4
+         Oo4gKbsyojmv/mu1wiy7qWGirW88V2ncIvrTXLVayf3qRR7QPLyF9158IBmBYQSkxYft
+         i4w1xUFEGwpGYXcxkGWpOXXKtqm8hSEHtvm7T4Buf3bFEMFDyQy70D5wditE/oW/1hM4
+         BCKco4zzy98f/ZBod4dlTsepd9D4/r+zJfnCBzxx+Px8XV1Zg4fGs3azs6Mj3qimHHsW
+         X3UA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=FUltDGbcXfm3L3aKEFjmaGZSqXkkHLKLtJ13isiVEoQ=;
-        b=ahH0ykYLTTPAhaVQJ9ZLGdLY50P7SUU6QOUSaEYCXttC+RpAhbnnh/ARKQtsr6Hjjk
-         QgGo1AByc7CUiBAQSXF5038vNk9VfxBRN4Qt0ObCmqyT+1Woec99gPjeGPqRz81jOfEO
-         ca36vO/fyGCORrZHxTnzdCKdqGEaOgCc+8ZucIX10+HoslWhJQHcZl8uq5DJrbj4327t
-         X95iDv5fbdnxQrgHc62LyXSomtXmBtyPUgyshuVggSf+/063y7fomN9jhoF9BGxlAFAr
-         Fl9nleXWIN/Jdbxpd1+EpdBs/oBjp+YNtG2B3VyrGRbTPvQK3JlLI5WGTn3QdrsqmeNG
-         YHNQ==
-X-Gm-Message-State: AOAM532cb6vqcfQTvo5JOKxenclLw/uliQYjV93T0/XdpThp1a44bwLg
-        Rma2Pdz46K142Q49oUKZTvQ=
-X-Google-Smtp-Source: ABdhPJyfWLzgLWSk53JT1d3llQfEeYHOYhA95fVRuSVdzS94w2Pos6wRnvQPxVc9MUuS5mNxbC7VqQ==
-X-Received: by 2002:a5d:61c1:: with SMTP id q1mr8658881wrv.87.1629270710074;
-        Wed, 18 Aug 2021 00:11:50 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=uZAPhX+VRT0+zIBhSL6SCOTLLnMplq+LWNcok53Ws3w=;
+        b=oYa4LroGPCkziVnEcF5jFDp27EbFhz3Xxv7dTOsTXMtuZo2E13AgUQX9g2wMFsBp73
+         nVV7wiH5KEAYSmO1rRijdnz5oOystqclV9jKHo+Zn029d+eUJIS0g4loEI3hucXlkfRt
+         CHW+UO+xzyxkaMMtRPxHo/G56pW1Gu3p9fabHIQMFFJt5XZVpELVN2uCwWs1QX7rgzm/
+         ztIyfuIQwY5IgNbRm1ZN/FV44OfZB19sUnbDDRLNiIhhAJdwVyQvchjUou9E369Tt/8x
+         vSRk+oOs6nkSrQrCy2dC83tXsFs5gKMKqBmZbuGfKh/W7xqWIy6R9q/5z093T9x2cJaD
+         7Zqw==
+X-Gm-Message-State: AOAM531kOyDlNKtXSno0nVhQu2mAH9VCcs4RvRci4aj/nHcMKHSbPVv1
+        IiJr/oFhMUP37QjqU/GL8Ts=
+X-Google-Smtp-Source: ABdhPJwMNKElc3mMVCtoj2HEUn6d5ePvfz81G1zAIxYIDk10lE9hSomFsNs711+ZPErCAs0lDCkW8w==
+X-Received: by 2002:a7b:cf31:: with SMTP id m17mr8258237wmg.109.1629290475788;
+        Wed, 18 Aug 2021 05:41:15 -0700 (PDT)
 Received: from localhost.localdomain (arl-84-90-178-246.netvisao.pt. [84.90.178.246])
-        by smtp.gmail.com with ESMTPSA id r10sm4925729wrp.28.2021.08.18.00.11.48
+        by smtp.gmail.com with ESMTPSA id a11sm5720454wrq.6.2021.08.18.05.41.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Aug 2021 00:11:49 -0700 (PDT)
+        Wed, 18 Aug 2021 05:41:15 -0700 (PDT)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        linux-usb@vger.kernel.org
-Cc:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        linux-mips@vger.kernel.org,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org
+Cc:     Sandy Huang <hjc@rock-chips.com>,
+        =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
+        Emma Anholt <emma@anholt.net>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org,
         kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH 3/3] usb: remove reference to deleted config STB03xxx
-Date:   Wed, 18 Aug 2021 09:11:37 +0200
-Message-Id: <20210818071137.22711-4-lukas.bulwahn@gmail.com>
+Subject: [PATCH 0/5] Kconfig symbol clean-up on gpu
+Date:   Wed, 18 Aug 2021 14:41:09 +0200
+Message-Id: <20210818124114.28545-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20210818071137.22711-1-lukas.bulwahn@gmail.com>
-References: <20210818071137.22711-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 7583b63c343c ("powerpc/40x: Remove STB03xxx") removes the config
-STB03xxx, but left a reference in ./drivers/usb/Kconfig behind.
+Dear DRM maintainers,
 
-Hence, ./scripts/checkkconfigsymbols.py warns:
+The script ./scripts/checkkconfigsymbols.py warns on invalid references to
+Kconfig symbols (often, minor typos, name confusions or outdated references).
 
-STB03xxx
-Referencing files: drivers/usb/Kconfig
+This patch series addresses all issues reported by ./scripts/checkkconfigsymbols.py
+in ./drivers/gpu/ for Kconfig and Makefile files. Issues in the Kconfig and
+Makefile files indicate some shortcomings in the overall build definitions, and
+often are true actionable issues to address.
 
-Remove this reference to the deleted config.
+These issues can be identified and filtered by:
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- drivers/usb/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+  ./scripts/checkkconfigsymbols.py | grep -E "drivers/gpu/.*(Kconfig|Makefile)" -B 1 -A 1
 
-diff --git a/drivers/usb/Kconfig b/drivers/usb/Kconfig
-index 26475b409b53..578a439e71b5 100644
---- a/drivers/usb/Kconfig
-+++ b/drivers/usb/Kconfig
-@@ -11,7 +11,7 @@ config USB_OHCI_BIG_ENDIAN_MMIO
- 
- config USB_OHCI_LITTLE_ENDIAN
- 	bool
--	default n if STB03xxx || PPC_MPC52xx
-+	default n if PPC_MPC52xx
- 	default y
- 
- config USB_EHCI_BIG_ENDIAN_MMIO
+After applying this patch series on linux-next (next-20210817), the command
+above yields just one further issues to address:
+
+DRM_AMD_DC_DCE11_0
+Referencing files: drivers/gpu/drm/amd/display/dc/dce100/Makefile
+
+  Conclusion: No action required.
+  Rationale:
+    drivers/gpu/drm/amd/display/dc/dce100/Makefile refers to
+    DRM_AMD_DC_DCE11_0 in a comment, after an "ifdef 0".
+
+
+Please pick this patch series into your drm-next tree.
+
+Best regards,
+
+Lukas
+
+Lukas Bulwahn (5):
+  drm: rockchip: remove reference to non-existing config DRM_RGB
+  drm: amdgpu: remove obsolete reference to config CHASH
+  drm: v3d: correct reference to config ARCH_BRCMSTB
+  drm: zte: remove obsolete DRM Support for ZTE SoCs
+  drm: omap: remove obsolete selection of OMAP2_DSS in config DRM_OMAP
+
+ drivers/gpu/drm/Kconfig              |   1 -
+ drivers/gpu/drm/Makefile             |   1 -
+ drivers/gpu/drm/omapdrm/Kconfig      |   1 -
+ drivers/gpu/drm/rockchip/Kconfig     |   1 -
+ drivers/gpu/drm/v3d/Kconfig          |   2 +-
+ drivers/gpu/drm/zte/Kconfig          |  10 -
+ drivers/gpu/drm/zte/Makefile         |  10 -
+ drivers/gpu/drm/zte/zx_common_regs.h |  28 -
+ drivers/gpu/drm/zte/zx_drm_drv.c     | 184 ------
+ drivers/gpu/drm/zte/zx_drm_drv.h     |  34 -
+ drivers/gpu/drm/zte/zx_hdmi.c        | 760 ----------------------
+ drivers/gpu/drm/zte/zx_hdmi_regs.h   |  66 --
+ drivers/gpu/drm/zte/zx_plane.c       | 537 ----------------
+ drivers/gpu/drm/zte/zx_plane.h       |  26 -
+ drivers/gpu/drm/zte/zx_plane_regs.h  | 120 ----
+ drivers/gpu/drm/zte/zx_tvenc.c       | 400 ------------
+ drivers/gpu/drm/zte/zx_tvenc_regs.h  |  27 -
+ drivers/gpu/drm/zte/zx_vga.c         | 527 ---------------
+ drivers/gpu/drm/zte/zx_vga_regs.h    |  33 -
+ drivers/gpu/drm/zte/zx_vou.c         | 921 ---------------------------
+ drivers/gpu/drm/zte/zx_vou.h         |  64 --
+ drivers/gpu/drm/zte/zx_vou_regs.h    | 212 ------
+ 22 files changed, 1 insertion(+), 3964 deletions(-)
+ delete mode 100644 drivers/gpu/drm/zte/Kconfig
+ delete mode 100644 drivers/gpu/drm/zte/Makefile
+ delete mode 100644 drivers/gpu/drm/zte/zx_common_regs.h
+ delete mode 100644 drivers/gpu/drm/zte/zx_drm_drv.c
+ delete mode 100644 drivers/gpu/drm/zte/zx_drm_drv.h
+ delete mode 100644 drivers/gpu/drm/zte/zx_hdmi.c
+ delete mode 100644 drivers/gpu/drm/zte/zx_hdmi_regs.h
+ delete mode 100644 drivers/gpu/drm/zte/zx_plane.c
+ delete mode 100644 drivers/gpu/drm/zte/zx_plane.h
+ delete mode 100644 drivers/gpu/drm/zte/zx_plane_regs.h
+ delete mode 100644 drivers/gpu/drm/zte/zx_tvenc.c
+ delete mode 100644 drivers/gpu/drm/zte/zx_tvenc_regs.h
+ delete mode 100644 drivers/gpu/drm/zte/zx_vga.c
+ delete mode 100644 drivers/gpu/drm/zte/zx_vga_regs.h
+ delete mode 100644 drivers/gpu/drm/zte/zx_vou.c
+ delete mode 100644 drivers/gpu/drm/zte/zx_vou.h
+ delete mode 100644 drivers/gpu/drm/zte/zx_vou_regs.h
+
 -- 
 2.26.2
 
