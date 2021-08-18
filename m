@@ -2,123 +2,119 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3BB6C4338F
-	for <kernel-janitors@archiver.kernel.org>; Wed, 18 Aug 2021 21:22:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D775DC4338F
+	for <kernel-janitors@archiver.kernel.org>; Wed, 18 Aug 2021 21:51:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8F581610A5
-	for <kernel-janitors@archiver.kernel.org>; Wed, 18 Aug 2021 21:22:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BAEF561107
+	for <kernel-janitors@archiver.kernel.org>; Wed, 18 Aug 2021 21:51:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233770AbhHRVWk (ORCPT
+        id S234362AbhHRVwY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 18 Aug 2021 17:22:40 -0400
-Received: from smtp05.smtpout.orange.fr ([80.12.242.127]:25980 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229965AbhHRVWj (ORCPT
+        Wed, 18 Aug 2021 17:52:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40646 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234009AbhHRVwX (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 18 Aug 2021 17:22:39 -0400
-Received: from pop-os.home ([90.126.253.178])
-        by mwinf5d40 with ME
-        id j9N1250013riaq2039N1R2; Wed, 18 Aug 2021 23:22:02 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 18 Aug 2021 23:22:02 +0200
-X-ME-IP: 90.126.253.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     leoyang.li@nxp.com
-Cc:     linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] soc: fsl: guts: Fix a resource leak in the error handling path of 'fsl_guts_probe()'
-Date:   Wed, 18 Aug 2021 23:21:59 +0200
-Message-Id: <b12e8c5c5d6ab3061d9504de8fbaefcad6bbc385.1629321668.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Wed, 18 Aug 2021 17:52:23 -0400
+Received: from mail-oi1-x232.google.com (mail-oi1-x232.google.com [IPv6:2607:f8b0:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFE4CC061764;
+        Wed, 18 Aug 2021 14:51:48 -0700 (PDT)
+Received: by mail-oi1-x232.google.com with SMTP id u10so5534320oiw.4;
+        Wed, 18 Aug 2021 14:51:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WrbViX0wQKvaWuCri+CZMKvsdsPMmbuJGU6REqdEujk=;
+        b=gRJochQghrev713LVE7XNVqpfWWXVIyAf41WsqX4eUKV1pbw8wDGju2iA+oUaIo3ix
+         ConEdxYiBmm4dBGFFVOiAA7xxs96VAsznRjW2hwZdQSAn/cegC16eU4NjwLtgN7vR/CT
+         WsV3YQxSZn0cKR9dC5AyZzA8473gIaN7KXVrMErJrFSm1a52JXXcP3QBiXJWdDXAmdQr
+         cLNfP4CX2Ec0VzQhh66J9XTaT5sJ6D7lgRjT0x41RqPuh6txxUCO8qZSj7j4cXc2NY2+
+         YKQfFXarxLig+iT4qeGm9clvf3Z10R/gd36BP6Z1Fg/D298mW9ZnqEGAkJDd3E7MqhbT
+         NX7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WrbViX0wQKvaWuCri+CZMKvsdsPMmbuJGU6REqdEujk=;
+        b=gPxltkbNmmtnMpdyAgW/iWxhTxl3ntGHudi8JwxUfLHqdkwzKcZlFLv2qoSKA6k/gR
+         Ea+FQkmQ+oIwS9h4NyYVao8GN7cBpMGYfRy1+oKY6SsNkrMBWhigOA6ZXWor1oHCl7ng
+         yw41UHWSGHKcTx+N72IrSVo/4KncWn2qj7Tb/ssSxslZMW0DnUgBGUgF5pgDwt9mmLpR
+         0xwl7x3UThxb81n5k5YXsFtJmlwEcFIyIhCeMdN06IgSeCy/j6EUoceG1toILE02l778
+         nOFUzC/x52XW8v/EFx7upHTyriAGKDoTUrqdraHXQUGw1/qPw+iS2Wi79rl350o4hoek
+         JTpw==
+X-Gm-Message-State: AOAM5318GYHloc2CcUf8i9CCv9iZxpYYahiRq7DCjk2h3vrZunINNPvU
+        LJuq2jy2L9uR4HOfqhXnBDt9xUJ/t65jxob+HIw=
+X-Google-Smtp-Source: ABdhPJyb/T3+O4GXm462bouKYg/m2oSAgVUac1M9v28NUTBTso2dAhydO9+ec4Xvzly/53MqwkSj1Nat/NIzcxop9vE=
+X-Received: by 2002:a05:6808:1390:: with SMTP id c16mr216682oiw.123.1629323508125;
+ Wed, 18 Aug 2021 14:51:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210818124114.28545-1-lukas.bulwahn@gmail.com> <20210818124114.28545-3-lukas.bulwahn@gmail.com>
+In-Reply-To: <20210818124114.28545-3-lukas.bulwahn@gmail.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Wed, 18 Aug 2021 17:51:36 -0400
+Message-ID: <CADnq5_MiTXcAu1kK3-9m=nFoT+SxF9SBv9wYgm2-WNVt_85RQA@mail.gmail.com>
+Subject: Re: [PATCH 2/5] drm: amdgpu: remove obsolete reference to config CHASH
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>,
+        Sandy Huang <hjc@rock-chips.com>,
+        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+        Emma Anholt <emma@anholt.net>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-rockchip@lists.infradead.org,
+        kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-If an error occurs after 'of_find_node_by_path()', the reference taken for
-'root' will never be released and some memory will leak.
+Applied.  Thanks!
 
-Instead of adding an error handling path and modifying all the
-'return -SOMETHING' into 'goto errorpath', use 'devm_add_action_or_reset()'
-to release the reference when needed.
+Alex
 
-Simplify the remove function accordingly.
-
-As an extra benefit, the 'root' global variable can now be removed as well.
-
-Fixes: 3c0d64e867ed ("soc: fsl: guts: reuse machine name from device tree")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only
----
- drivers/soc/fsl/guts.c | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/soc/fsl/guts.c b/drivers/soc/fsl/guts.c
-index d5e9a5f2c087..4d9476c7b87c 100644
---- a/drivers/soc/fsl/guts.c
-+++ b/drivers/soc/fsl/guts.c
-@@ -28,7 +28,6 @@ struct fsl_soc_die_attr {
- static struct guts *guts;
- static struct soc_device_attribute soc_dev_attr;
- static struct soc_device *soc_dev;
--static struct device_node *root;
- 
- 
- /* SoC die attribute definition for QorIQ platform */
-@@ -136,14 +135,23 @@ static u32 fsl_guts_get_svr(void)
- 	return svr;
- }
- 
-+static void fsl_guts_put_root(void *data)
-+{
-+	struct device_node *root = data;
-+
-+	of_node_put(root);
-+}
-+
- static int fsl_guts_probe(struct platform_device *pdev)
- {
- 	struct device_node *np = pdev->dev.of_node;
- 	struct device *dev = &pdev->dev;
-+	struct device_node *root;
- 	struct resource *res;
- 	const struct fsl_soc_die_attr *soc_die;
- 	const char *machine;
- 	u32 svr;
-+	int ret;
- 
- 	/* Initialize guts */
- 	guts = devm_kzalloc(dev, sizeof(*guts), GFP_KERNEL);
-@@ -159,6 +167,10 @@ static int fsl_guts_probe(struct platform_device *pdev)
- 
- 	/* Register soc device */
- 	root = of_find_node_by_path("/");
-+	ret = devm_add_action_or_reset(dev, fsl_guts_put_root, root);
-+	if (ret)
-+		return ret;
-+
- 	if (of_property_read_string(root, "model", &machine))
- 		of_property_read_string_index(root, "compatible", 0, &machine);
- 	if (machine)
-@@ -197,7 +209,7 @@ static int fsl_guts_probe(struct platform_device *pdev)
- static int fsl_guts_remove(struct platform_device *dev)
- {
- 	soc_device_unregister(soc_dev);
--	of_node_put(root);
-+
- 	return 0;
- }
- 
--- 
-2.30.2
-
+On Wed, Aug 18, 2021 at 8:41 AM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+>
+> Commit 04ed8459f334 ("drm/amdgpu: remove chash") removes the chash
+> architecture and its corresponding config CHASH.
+>
+> There is still a reference to CHASH in the config DRM_AMDGPU in
+> ./drivers/gpu/drm/Kconfig.
+>
+> Remove this obsolete reference to config CHASH.
+>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+>  drivers/gpu/drm/Kconfig | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
+> index f3bc90baca61..8fc40317f2b7 100644
+> --- a/drivers/gpu/drm/Kconfig
+> +++ b/drivers/gpu/drm/Kconfig
+> @@ -257,7 +257,6 @@ config DRM_AMDGPU
+>         select HWMON
+>         select BACKLIGHT_CLASS_DEVICE
+>         select INTERVAL_TREE
+> -       select CHASH
+>         help
+>           Choose this option if you have a recent AMD Radeon graphics card.
+>
+> --
+> 2.26.2
+>
