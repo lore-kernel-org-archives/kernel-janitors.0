@@ -7,130 +7,64 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55ECEC4338F
-	for <kernel-janitors@archiver.kernel.org>; Wed, 18 Aug 2021 19:32:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69C9FC4320A
+	for <kernel-janitors@archiver.kernel.org>; Wed, 18 Aug 2021 20:56:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3C35160F4C
-	for <kernel-janitors@archiver.kernel.org>; Wed, 18 Aug 2021 19:32:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F8326102A
+	for <kernel-janitors@archiver.kernel.org>; Wed, 18 Aug 2021 20:56:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233260AbhHRTd1 (ORCPT
+        id S233737AbhHRU4i (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 18 Aug 2021 15:33:27 -0400
-Received: from smtp13.smtpout.orange.fr ([80.12.242.135]:37242 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S233283AbhHRTd0 (ORCPT
+        Wed, 18 Aug 2021 16:56:38 -0400
+Received: from smtp05.smtpout.orange.fr ([80.12.242.127]:21502 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233378AbhHRU4h (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 18 Aug 2021 15:33:26 -0400
+        Wed, 18 Aug 2021 16:56:37 -0400
 Received: from pop-os.home ([90.126.253.178])
-        by mwinf5d76 with ME
-        id j7Yq250033riaq2037YqsC; Wed, 18 Aug 2021 21:32:50 +0200
+        by mwinf5d40 with ME
+        id j8vy250093riaq2038vzRl; Wed, 18 Aug 2021 22:56:01 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 18 Aug 2021 21:32:50 +0200
+X-ME-Date: Wed, 18 Aug 2021 22:56:01 +0200
 X-ME-IP: 90.126.253.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     alcooperx@gmail.com, balbi@kernel.org, gregkh@linuxfoundation.org,
-        f.fainelli@gmail.com
-Cc:     linux-usb@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+To:     broonie@kernel.org, zhangqing@loongson.cn
+Cc:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 2/2] usb: bdc: Fix a resource leak in the error handling path of 'bdc_probe()'
-Date:   Wed, 18 Aug 2021 21:32:49 +0200
-Message-Id: <f8a4a6897deb0c8cb2e576580790303550f15fcd.1629314734.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] spi: coldfire-qspi: Use clk_disable_unprepare in the remove function
+Date:   Wed, 18 Aug 2021 22:55:56 +0200
+Message-Id: <ee91792ddba61342b0d3284cd4558a2b0016c4e7.1629319838.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <0c5910979f39225d5d8fe68c9ab1c147c68ddee1.1629314734.git.christophe.jaillet@wanadoo.fr>
-References: <0c5910979f39225d5d8fe68c9ab1c147c68ddee1.1629314734.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-If an error occurs after a successful 'clk_prepare_enable()' call, it must
-be undone by a corresponding 'clk_disable_unprepare()' call.
-This call is already present in the remove function.
+'clk_prepare_enable()' is used in the probe, so 'clk_disable_unprepare()'
+should be used in the remove function to be consistent.
 
-Add this call in the error handling path and reorder the code so that the
-'clk_prepare_enable()' call happens later in the function.
-The goal is to have as much managed resources functions as possible
-before the 'clk_prepare_enable()' call in order to keep the error handling
-path simple.
-
-While at it, remove the now unneeded 'clk' variable.
-
-Fixes: c87dca047849 ("usb: bdc: Add clock enable for new chips with a separate BDC clock")
+Fixes: 499de01c5c0b ("spi: coldfire-qspi: Use clk_prepare_enable and clk_disable_unprepare")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-Review with care.
-I don't like shuffling code like that because of possible side effect.
-Moving the code related to this clk looks fine to me, but who knows...
----
- drivers/usb/gadget/udc/bdc/bdc_core.c | 27 +++++++++++++--------------
- 1 file changed, 13 insertions(+), 14 deletions(-)
+ drivers/spi/spi-coldfire-qspi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/gadget/udc/bdc/bdc_core.c b/drivers/usb/gadget/udc/bdc/bdc_core.c
-index 251db57e51fa..fa1a3908ec3b 100644
---- a/drivers/usb/gadget/udc/bdc/bdc_core.c
-+++ b/drivers/usb/gadget/udc/bdc/bdc_core.c
-@@ -488,27 +488,14 @@ static int bdc_probe(struct platform_device *pdev)
- 	int irq;
- 	u32 temp;
- 	struct device *dev = &pdev->dev;
--	struct clk *clk;
- 	int phy_num;
+diff --git a/drivers/spi/spi-coldfire-qspi.c b/drivers/spi/spi-coldfire-qspi.c
+index 8996115ce736..263ce9047327 100644
+--- a/drivers/spi/spi-coldfire-qspi.c
++++ b/drivers/spi/spi-coldfire-qspi.c
+@@ -444,7 +444,7 @@ static int mcfqspi_remove(struct platform_device *pdev)
+ 	mcfqspi_wr_qmr(mcfqspi, MCFQSPI_QMR_MSTR);
  
- 	dev_dbg(dev, "%s()\n", __func__);
+ 	mcfqspi_cs_teardown(mcfqspi);
+-	clk_disable(mcfqspi->clk);
++	clk_disable_unprepare(mcfqspi->clk);
  
--	clk = devm_clk_get_optional(dev, "sw_usbd");
--	if (IS_ERR(clk))
--		return PTR_ERR(clk);
--
--	ret = clk_prepare_enable(clk);
--	if (ret) {
--		dev_err(dev, "could not enable clock\n");
--		return ret;
--	}
--
- 	bdc = devm_kzalloc(dev, sizeof(*bdc), GFP_KERNEL);
- 	if (!bdc)
- 		return -ENOMEM;
- 
--	bdc->clk = clk;
--
- 	bdc->regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(bdc->regs))
- 		return PTR_ERR(bdc->regs);
-@@ -545,10 +532,20 @@ static int bdc_probe(struct platform_device *pdev)
- 		}
- 	}
- 
-+	bdc->clk = devm_clk_get_optional(dev, "sw_usbd");
-+	if (IS_ERR(bdc->clk))
-+		return PTR_ERR(bdc->clk);
-+
-+	ret = clk_prepare_enable(bdc->clk);
-+	if (ret) {
-+		dev_err(dev, "could not enable clock\n");
-+		return ret;
-+	}
-+
- 	ret = bdc_phy_init(bdc);
- 	if (ret) {
- 		dev_err(bdc->dev, "BDC phy init failure:%d\n", ret);
--		return ret;
-+		goto disable_clk;
- 	}
- 
- 	temp = bdc_readl(bdc->regs, BDC_BDCCAP1);
-@@ -581,6 +578,8 @@ static int bdc_probe(struct platform_device *pdev)
- 	bdc_hw_exit(bdc);
- phycleanup:
- 	bdc_phy_exit(bdc);
-+disable_clk:
-+	clk_disable_unprepare(bdc->clk);
- 	return ret;
+ 	return 0;
  }
- 
 -- 
 2.30.2
 
