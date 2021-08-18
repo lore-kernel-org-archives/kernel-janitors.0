@@ -2,81 +2,125 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B255C4338F
-	for <kernel-janitors@archiver.kernel.org>; Wed, 18 Aug 2021 07:00:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E786DC4320A
+	for <kernel-janitors@archiver.kernel.org>; Wed, 18 Aug 2021 07:11:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2671A61056
-	for <kernel-janitors@archiver.kernel.org>; Wed, 18 Aug 2021 07:00:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2B6661042
+	for <kernel-janitors@archiver.kernel.org>; Wed, 18 Aug 2021 07:11:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238343AbhHRHAi (ORCPT
+        id S238952AbhHRHMV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 18 Aug 2021 03:00:38 -0400
-Received: from jabberwock.ucw.cz ([46.255.230.98]:47120 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237636AbhHRHAh (ORCPT
+        Wed, 18 Aug 2021 03:12:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59520 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239029AbhHRHMR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 18 Aug 2021 03:00:37 -0400
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 0950C1C0B77; Wed, 18 Aug 2021 09:00:02 +0200 (CEST)
-Date:   Wed, 18 Aug 2021 09:00:01 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 1/2] leds: trigger: remove reference to obsolete
- CONFIG_IDE_GD_ATA
-Message-ID: <20210818070001.GD22282@amd>
-References: <20210804123426.16947-1-lukas.bulwahn@gmail.com>
- <20210804123426.16947-2-lukas.bulwahn@gmail.com>
+        Wed, 18 Aug 2021 03:12:17 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE18EC061796;
+        Wed, 18 Aug 2021 00:11:42 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id q11-20020a7bce8b0000b02902e6880d0accso3694576wmj.0;
+        Wed, 18 Aug 2021 00:11:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vBcT9Ehn8+rYzZMI98f1umNL2Nc3VUU+xC0Yy1mTns4=;
+        b=hyLXsxw32h4vZiIfWeGI1ExAtevZHYxhPqtH+JlMtiR7qQsqgFhOButjBhVu12IUZl
+         8i2zUs0rjsRZ13d4LwTSyzJTQWsJPR4S921VHCZ+uFrWHTUrkp3Y+SEyS80+nfhVQy8d
+         R3tuk6bO1ImDMdYvck4n6pVCrA/DjQ9NwAfiAAIcj+LOmMaaYsLVBPnr2+OL+bQ9lva6
+         YduByW2qsOex68WIBk6btulxKZyVo0iv1JW1XelXSKyTTYwfMc6DUGtqwp6ztFL3Jnyg
+         k7CldYJBgsqeooS4ur88XNxL7KiOgGtjO4P6HY7zVUJuppXbH0hEU7QSCN/RwmFfafh6
+         nPAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vBcT9Ehn8+rYzZMI98f1umNL2Nc3VUU+xC0Yy1mTns4=;
+        b=T8/2W2VdUadZeDkRL91HRHzokugErs3NAeU8i7fKXROEVyXqydB0/8ugjWLt+7KRtm
+         woihvTBmib8ssa89icczNw3qyBCRdORno4uPXBAFE3waEjETIDvl9lM1OgWjP9sc0feI
+         EeeN3b6rwxjY5NYAuEoL0K26Z6pXCpCSL1mtPhuM24knv0A42iDmKGeJH6se+LdR9rcF
+         zenfUWbvi9K0KxPKa62KF9HCMaVeMOWk+NkHKFMIq6V6HXuLGtvv0ejTCtfQcjnaVblN
+         qFoqvyrbvj0XjURxfX/qYEHfBg6h39Z0/WY+F1zZ2+yIH+zH6gJpaoPLcFxjzBvabdMT
+         O+1g==
+X-Gm-Message-State: AOAM533hSsoVpe5B4Vwsh2AwRmcwmrsrlU1HbIm8zC0MHHpSDfJ+QNjU
+        FDGPmo2J+dNv6Kg5pcwPef8=
+X-Google-Smtp-Source: ABdhPJxsyyz4OJQia2wbMYotlnmt+XTl4NZIX4lJ8YAP3muJWbAy9X8wlXBdzsNLEwld4d7dZxHb7w==
+X-Received: by 2002:a1c:f314:: with SMTP id q20mr7085027wmq.154.1629270701246;
+        Wed, 18 Aug 2021 00:11:41 -0700 (PDT)
+Received: from localhost.localdomain (arl-84-90-178-246.netvisao.pt. [84.90.178.246])
+        by smtp.gmail.com with ESMTPSA id r10sm4925729wrp.28.2021.08.18.00.11.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Aug 2021 00:11:40 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        linux-usb@vger.kernel.org
+Cc:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        linux-mips@vger.kernel.org,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH 0/3] Kconfig symbol clean-up on usb
+Date:   Wed, 18 Aug 2021 09:11:34 +0200
+Message-Id: <20210818071137.22711-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="gE7i1rD7pdK0Ng3j"
-Content-Disposition: inline
-In-Reply-To: <20210804123426.16947-2-lukas.bulwahn@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Dear Greg,
 
---gE7i1rD7pdK0Ng3j
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The script ./scripts/checkkconfigsymbols.py warns on invalid references to
+Kconfig symbols (often, minor typos, name confusions or outdated references).
 
-On Wed 2021-08-04 14:34:25, Lukas Bulwahn wrote:
-> Commit b7fb14d3ac63 ("ide: remove the legacy ide driver") removes the
-> definition of the config IDE_GD_ATA.
->=20
-> So, remove the obsolete reference in ./drivers/leds/trigger/Kconfig.
->=20
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+This patch series addresses all issues reported by ./scripts/checkkconfigsymbols.py
+in ./drivers/usb/ for Kconfig and Makefile files. Issues in the Kconfig and
+Makefile files indicate some shortcomings in the overall build definitions, and
+often are true actionable issues to address.
 
-Thanks, applied.
-								Pavel
-							=09
---=20
-http://www.livejournal.com/~pavelmachek
+These issues can be identified and filtered by:
 
---gE7i1rD7pdK0Ng3j
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+  ./scripts/checkkconfigsymbols.py | grep -E "drivers/usb/.*(Kconfig|Makefile)" -B 1 -A 1
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+After applying this patch series on linux-next (next-20210816), the command
+above yields just one further issues to address:
 
-iEYEARECAAYFAmEcr/EACgkQMOfwapXb+vLMBQCfdCzU/lz/6A94DTCvwmlxTCuq
-DBMAnjyLKaVaJOMw0tLpHn5I835/BdZH
-=NVt6
------END PGP SIGNATURE-----
+ARCH_VERSAL
+Referencing files: drivers/usb/dwc3/Kconfig
 
---gE7i1rD7pdK0Ng3j--
+For this remaining issue, I already contacted Manish Narani, the contributor of
+./drivers/usb/dwc3/, to clarify the intent of that config dependency.
+
+Please pick this patch series into your usb-next tree.
+
+Best regards,
+
+Lukas
+
+Lukas Bulwahn (3):
+  usb: host: remove dead EHCI support for on-chip PMC MSP71xx USB
+    controller
+  usb: host: remove line for obsolete config USB_HWA_HCD
+  usb: remove reference to deleted config STB03xxx
+
+ drivers/usb/Kconfig            |   2 +-
+ drivers/usb/Makefile           |   1 -
+ drivers/usb/host/Kconfig       |   9 -
+ drivers/usb/host/ehci-hcd.c    |   5 -
+ drivers/usb/host/ehci-pmcmsp.c | 328 ---------------------------------
+ 5 files changed, 1 insertion(+), 344 deletions(-)
+ delete mode 100644 drivers/usb/host/ehci-pmcmsp.c
+
+-- 
+2.26.2
+
