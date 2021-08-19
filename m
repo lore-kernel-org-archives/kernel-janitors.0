@@ -2,45 +2,35 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AE52C4338F
-	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 14:51:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 600F5C432BE
+	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 15:10:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E27B5610A1
-	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 14:51:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45C5C60F11
+	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 15:10:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240613AbhHSOvj (ORCPT
+        id S239151AbhHSPLG (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 19 Aug 2021 10:51:39 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:48986
-        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S240137AbhHSOvi (ORCPT
+        Thu, 19 Aug 2021 11:11:06 -0400
+Received: from smtprelay0182.hostedemail.com ([216.40.44.182]:39118 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S238460AbhHSPLG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 19 Aug 2021 10:51:38 -0400
-Received: from [10.172.193.212] (1.general.cking.uk.vpn [10.172.193.212])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 3DB5C3F0A1;
-        Thu, 19 Aug 2021 14:51:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1629384661;
-        bh=g7+5SiZ8+Zdbn9VAz4P1W/9KWe16JYM3cVTVLOgS95s=;
-        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-         In-Reply-To:Content-Type;
-        b=gOLn84vqcd8NU0jf1pXAr0R+vj7wOgDSiUfOL5Ach94xt12f+5RdQNO+C1YjJcmIS
-         8YuWcnDMzooqjd83MjBTbO3neWRahGq9Sr7RNU0mRuwIJ3VZAgfhFeif+24Ko3UB2G
-         zcg84zwqS9aCET8kDoY/DnF9HzgR1jqHHfhLn+0KEIlNluoDP+9s+eh0sF95F60VZq
-         iyWgU3wyQUneCwqvqkjB5nUm7PK3ojTBlQe9TPj82l2wf4JtT5vow2EEXNWh9os5Aj
-         Cqzn401sbJ0hm8doqnIPZfKZ8YXJvfoN06FKxKefJHcOEZQU5scSvbbhAAzb1n/fh/
-         5MdiauE0R5ZZw==
-Subject: Re: [PATCH] drm/bridge/tc358767: make the array ext_div static const,
- makes object smaller
-To:     Joe Perches <joe@perches.com>, Andrzej Hajda <a.hajda@samsung.com>,
+        Thu, 19 Aug 2021 11:11:06 -0400
+Received: from omf19.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id AE46D26DD3;
+        Thu, 19 Aug 2021 15:10:26 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf19.hostedemail.com (Postfix) with ESMTPA id B4AEE20D772;
+        Thu, 19 Aug 2021 15:10:24 +0000 (UTC)
+Message-ID: <930fbf0e3b17a78c64a32d26fcf9aed46c5d6d88.camel@perches.com>
+Subject: Re: [PATCH] drm/bridge/tc358767: make the array ext_div static
+ const, makes object smaller
+From:   Joe Perches <joe@perches.com>
+To:     Colin Ian King <colin.king@canonical.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
         Neil Armstrong <narmstrong@baylibre.com>,
         Robert Foss <robert.foss@linaro.org>,
         Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
@@ -50,89 +40,39 @@ To:     Joe Perches <joe@perches.com>, Andrzej Hajda <a.hajda@samsung.com>,
         Daniel Vetter <daniel@ffwll.ch>,
         dri-devel@lists.freedesktop.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Thu, 19 Aug 2021 08:10:23 -0700
+In-Reply-To: <c4378876-74b0-4f80-05b7-dcd809bb47a1@canonical.com>
 References: <20210819133839.10745-1-colin.king@canonical.com>
- <0a2ea4e54d7bfd61b45cc070eee6b62e8da82190.camel@perches.com>
- <913b96bc-f5c4-1a26-c5f7-70a9d0ab3f53@canonical.com>
- <3da667b1b415b19325c034dcb389a201fa46cfd3.camel@perches.com>
-From:   Colin Ian King <colin.king@canonical.com>
-Message-ID: <c4378876-74b0-4f80-05b7-dcd809bb47a1@canonical.com>
-Date:   Thu, 19 Aug 2021 15:51:00 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+         <0a2ea4e54d7bfd61b45cc070eee6b62e8da82190.camel@perches.com>
+         <913b96bc-f5c4-1a26-c5f7-70a9d0ab3f53@canonical.com>
+         <3da667b1b415b19325c034dcb389a201fa46cfd3.camel@perches.com>
+         <c4378876-74b0-4f80-05b7-dcd809bb47a1@canonical.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.40.0-1 
 MIME-Version: 1.0
-In-Reply-To: <3da667b1b415b19325c034dcb389a201fa46cfd3.camel@perches.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: dwmfzc5xuegxfms4xm4a7wiw1xyirjk8
+X-Rspamd-Server: rspamout02
+X-Rspamd-Queue-Id: B4AEE20D772
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Session-ID: U2FsdGVkX1/I4h/4/Jwrq9yDdzp3ajPSpHN+nWw4Yzk=
+X-HE-Tag: 1629385824-254300
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 19/08/2021 15:40, Joe Perches wrote:
-> On Thu, 2021-08-19 at 14:54 +0100, Colin Ian King wrote:
->> On 19/08/2021 14:51, Joe Perches wrote:
->>> On Thu, 2021-08-19 at 14:38 +0100, Colin King wrote:
->>>> From: Colin Ian King <colin.king@canonical.com>
->>>>
->>>> Don't populate the array ext_div on the stack but instead it
->>>> static const. Makes the object code smaller by 118 bytes:
->>>>
->>>> Before:
->>>>    text    data    bss     dec    hex filename
->>>>   39449   17500    128   57077   def5 ./drivers/gpu/drm/bridge/tc358767.o
->>>>
->>>> After:
->>>>    text    data    bss     dec    hex filename
->>>>   39235   17596    128   56959   de7f ./drivers/gpu/drm/bridge/tc358767.o
->>>
->>> Why is text smaller and data larger with this change?
->>
->> There are less instructions being used with the change since it's not
->> shoving the array data onto the stack at run time. Instead the array is
->> being stored in the data section and there is less object code required
->> to access the data.
-> 
-> Ah.  It's really because it's not a minimal compilation ala defconfig >
-> I think you should really stop making these size comparisons with
-> .config uses that are not based on a defconfig as a whole lot of other
-> things are going on.
+On Thu, 2021-08-19 at 15:51 +0100, Colin Ian King wrote:
 
-I'm using allmodconfig, which I believe is a legitimate configuration,
-especially since distros so build kernels with lots of modules.
-I'll double check on this though in case I've made a mistake.
+> it still makes sense for these kind of
+> janitorial changes as it makes sense to constify arrays when they are
+> read-only and making them static is sensible for const data.
 
-> 
-> Please notice that the object sizes are significantly smaller below:
-> 
-> So with an x86-64 defconfig and this compilation unit enabled with
-> CONFIG_OF enabled and CONFIG_DRM_TOSHIBA_TC358767=y, with gcc 10.3
-> and this change the object size actually increases a bit.
-> 
-> $ size drivers/gpu/drm/bridge/tc358767.o*
->    text	   data	    bss	    dec	    hex	filename
->   13554	    268	      1	  13823	   35ff	drivers/gpu/drm/bridge/tc358767.o.new
->   13548	    268	      1	  13817	   35f9	drivers/gpu/drm/bridge/tc358767.o.old>
-> objdump -h shows these differences:
-> 
-> .old:
->   0 .text         00001e1f  0000000000000000  0000000000000000  00000040  2**4
->                   CONTENTS, ALLOC, LOAD, RELOC, READONLY, CODE
-> [...]
->  14 .rodata       000005ae  0000000000000000  0000000000000000  000046e0  2**5
->                   CONTENTS, ALLOC, LOAD, RELOC, READONLY, DATA
-> 
-> .new:
->   0 .text         00001e05  0000000000000000  0000000000000000  00000040  2**4
->                   CONTENTS, ALLOC, LOAD, RELOC, READONLY, CODE
-> [...]
->  11 .rodata       000005ce  0000000000000000  0000000000000000  00004600  2**5
->                   CONTENTS, ALLOC, LOAD, RELOC, READONLY, DATA
+I'm not disagreeing. Marking unmodifiable arrays as const is generally
+useful for readers.  Decent compilers though can _mostly_ determine
+whether or not an array is used as const and whether the array can be
+placed in a readonly section and is not required to be in a writable one.
 
-ACK. Understood.  Even so, it still makes sense for these kind of
-janitorial changes as it makes sense to constify arrays when they are
-read-only and making them static is sensible for const data.
+But the object sizes deltas you show with an allmodconfig are misleading.
+At a minimum I think you should show the output sizes as allmodconfig.
 
-> 
-> cheers, Joe
-> 
 
