@@ -2,112 +2,100 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2CA0C432BE
-	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 22:39:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3243C4338F
+	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 23:20:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C2F8E610A6
-	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 22:39:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABCFA610A3
+	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 23:20:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236724AbhHSWk0 (ORCPT
+        id S236566AbhHSXVA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 19 Aug 2021 18:40:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44848 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236508AbhHSWk0 (ORCPT
+        Thu, 19 Aug 2021 19:21:00 -0400
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:29802 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S233512AbhHSXVA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 19 Aug 2021 18:40:26 -0400
-Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37F5FC061757
-        for <kernel-janitors@vger.kernel.org>; Thu, 19 Aug 2021 15:39:49 -0700 (PDT)
-Received: by mail-pg1-x532.google.com with SMTP id y23so7284018pgi.7
-        for <kernel-janitors@vger.kernel.org>; Thu, 19 Aug 2021 15:39:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=axtens.net; s=google;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=WX/qJVOnuFAI2moIv6OF4lqewvc4NdGxWkCdYilIaS4=;
-        b=dIr051qis+9TSdlqlxkVlLOVanqfmbLXpUhEciivJ12h+asK6W8Lb8B1xQ5SOFx0ed
-         hBWa5vXbV5b1XLr52yfjhKR12+utTBNZO8Ms6rSiPQtoDnQJGUQfsRj1N9qnjRpMnSko
-         tbJ3maAALuUqpegMFAmcYb5xUkx8ZNp9IKaEg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=WX/qJVOnuFAI2moIv6OF4lqewvc4NdGxWkCdYilIaS4=;
-        b=dOG4UCuayUgzLjhETH1wSNvsrwuZ9gxv9Ry6wzyqJdGEq1ERVslzDCGZtFSr2z++nw
-         7gp43RJmR2wNcoMAy9xkCvTDzeeSZwxfn2webiccAYb+VlPB60hN2flIz5FXpgEoZaKB
-         QzJy12lMk9nUE/US0rZw9q2uK50WMUSpmoxkFu+lxDwRHNqPwv8UTBHLfuLCc2/QClx0
-         gshxbWDml2HraLDf+UODDIk1JunS0Zg5nFY+zXubrHwHXUdbdYBeiM/s8Yjqz3Ri8ymd
-         VMV/w9YIeoNtJIEatR1BVqj3ydoJ+sc8Igf3StHbM0AcFgEE+BUVMnwFgge+N/Z6lhrY
-         X1YA==
-X-Gm-Message-State: AOAM532LYRpvyzYvbBUVWm7Sto0CqRwN9cJSMeKc7CnP1/CudxOFnmek
-        2NUNadBchZSs4i5aRsGTjDdSqA==
-X-Google-Smtp-Source: ABdhPJydtoDgmtfFU7iCvzmfD+6LAiNa/sBr8PkQ4fFuCRed3yo4/Qn+wZAYqYuVMFMYpSUN+dNGhA==
-X-Received: by 2002:aa7:8e56:0:b029:3cd:c2ec:6c1c with SMTP id d22-20020aa78e560000b02903cdc2ec6c1cmr16390211pfr.80.1629412788706;
-        Thu, 19 Aug 2021 15:39:48 -0700 (PDT)
-Received: from localhost ([2001:4479:e000:e400:3a83:f47e:d5a3:378a])
-        by smtp.gmail.com with ESMTPSA id x69sm4639869pfc.59.2021.08.19.15.39.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Aug 2021 15:39:48 -0700 (PDT)
-From:   Daniel Axtens <dja@axtens.net>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Paul Mackerras <paulus@ozlabs.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michael Neuling <mikey@neuling.org>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        kernel-janitors@vger.kernel.org, stable@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] powerpc: kvm: remove obsolete and unneeded select
-In-Reply-To: <20210819113954.17515-2-lukas.bulwahn@gmail.com>
-References: <20210819113954.17515-1-lukas.bulwahn@gmail.com>
- <20210819113954.17515-2-lukas.bulwahn@gmail.com>
-Date:   Fri, 20 Aug 2021 08:39:45 +1000
-Message-ID: <87sfz59hzi.fsf@dja-thinkpad.axtens.net>
+        Thu, 19 Aug 2021 19:21:00 -0400
+X-UUID: 4fe051843262477f8a5670667e4230c6-20210820
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=QfeDJW3m4L57kRx1ekiwSC66ZVnjMitRsEcL77yqUug=;
+        b=h7lLzP6r8j9QVwh0abLzRZYUGWTNl1b5cM4qRCRgD364hb8GohNxIXYOYsk5tdb0Qeja+dyvrJ474JYdVZ0gMMOYTL1/Ownbt6GFuWGBVdl8pDp8874ArEWWFgoTeo7OazhTiqTQV/LTNgqEatWFGiDAQiZi91Wgi65EN64E7qM=;
+X-UUID: 4fe051843262477f8a5670667e4230c6-20210820
+Received: from mtkcas36.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
+        (envelope-from <houlong.wei@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 483222040; Fri, 20 Aug 2021 07:20:21 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS33N2.mediatek.inc
+ (172.27.4.76) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Fri, 20 Aug
+ 2021 07:20:13 +0800
+Received: from mhfsdcap04 (10.17.3.154) by MTKCAS36.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Fri, 20 Aug 2021 07:20:12 +0800
+Message-ID: <6cb09965bce5bffe97fc00faecfffae9d3b38b3d.camel@mediatek.com>
+Subject: Re: [PATCH] media: mtk-vpu: Fix a resource leak in the error
+ handling path of 'mtk_vpu_probe()'
+From:   houlong wei <houlong.wei@mediatek.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Minghsiu Tsai =?UTF-8?Q?=28=E8=94=A1=E6=98=8E=E4=BF=AE=29?= 
+        <Minghsiu.Tsai@mediatek.com>,
+        Andrew-CT Chen =?UTF-8?Q?=28=E9=99=B3=E6=99=BA=E8=BF=AA=29?= 
+        <Andrew-CT.Chen@mediatek.com>,
+        Tiffany Lin =?UTF-8?Q?=28=E6=9E=97=E6=85=A7=E7=8F=8A=29?= 
+        <tiffany.lin@mediatek.com>,
+        "mchehab@kernel.org" <mchehab@kernel.org>,
+        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+        "hans.verkuil@cisco.com" <hans.verkuil@cisco.com>
+CC:     "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        <houlong.wei@mediatek.com>
+Date:   Fri, 20 Aug 2021 07:20:13 +0800
+In-Reply-To: <3d4ba5d254044567653a006b18971658ec69560f.1629404378.git.christophe.jaillet@wanadoo.fr>
+References: <3d4ba5d254044567653a006b18971658ec69560f.1629404378.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
 MIME-Version: 1.0
-Content-Type: text/plain
+X-TM-SNTS-SMTP: 814C1EEA859FBE07EB023142BB288BF8A660564BFC7F2A04322B36A3694EEE642000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Lukas,
+T24gRnJpLCAyMDIxLTA4LTIwIGF0IDA0OjIxICswODAwLCBDaHJpc3RvcGhlIEpBSUxMRVQgd3Jv
+dGU6DQo+IEEgc3VjY2Vzc2Z1bCAnY2xrX3ByZXBhcmUoKScgY2FsbCBzaG91bGQgYmUgYmFsYW5j
+ZWQgYnkgYQ0KPiBjb3JyZXNwb25kaW5nDQo+ICdjbGtfdW5wcmVwYXJlKCknIGNhbGwgaW4gdGhl
+IGVycm9yIGhhbmRsaW5nIHBhdGggb2YgdGhlIHByb2JlLCBhcw0KPiBhbHJlYWR5DQo+IGRvbmUg
+aW4gdGhlIHJlbW92ZSBmdW5jdGlvbi4NCj4gDQo+IFVwZGF0ZSB0aGUgZXJyb3IgaGFuZGxpbmcg
+cGF0aCBhY2NvcmRpbmdseS4NCj4gDQo+IEZpeGVzOiAzMDAzYTE4MGVmNmIgKCJbbWVkaWFdIFZQ
+VTogbWVkaWF0ZWs6IHN1cHBvcnQgTWVkaWF0ZWsgVlBVIikNCj4gU2lnbmVkLW9mZi1ieTogQ2hy
+aXN0b3BoZSBKQUlMTEVUIDxjaHJpc3RvcGhlLmphaWxsZXRAd2FuYWRvby5mcj4NCj4gLS0tDQo+
+IA0KUmV2aWV3ZWQtYnk6IEhvdWxvbmcgV2VpIDxob3Vsb25nLndlaUBtZWRpYXRlay5jb20+DQoN
+Cj4gIGRyaXZlcnMvbWVkaWEvcGxhdGZvcm0vbXRrLXZwdS9tdGtfdnB1LmMgfCA1ICsrKystDQo+
+ICAxIGZpbGUgY2hhbmdlZCwgNCBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pDQo+IA0KPiBk
+aWZmIC0tZ2l0IGEvZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS9tdGstdnB1L210a192cHUuYw0KPiBi
+L2RyaXZlcnMvbWVkaWEvcGxhdGZvcm0vbXRrLXZwdS9tdGtfdnB1LmMNCj4gaW5kZXggZWMyOTBk
+ZGU1OWNmLi43ZjE2NDdkYTBhZGUgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvbWVkaWEvcGxhdGZv
+cm0vbXRrLXZwdS9tdGtfdnB1LmMNCj4gKysrIGIvZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS9tdGst
+dnB1L210a192cHUuYw0KPiBAQCAtODQ4LDcgKzg0OCw4IEBAIHN0YXRpYyBpbnQgbXRrX3ZwdV9w
+cm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlDQo+ICpwZGV2KQ0KPiAgCXZwdS0+d2R0LndxID0g
+Y3JlYXRlX3NpbmdsZXRocmVhZF93b3JrcXVldWUoInZwdV93ZHQiKTsNCj4gIAlpZiAoIXZwdS0+
+d2R0LndxKSB7DQo+ICAJCWRldl9lcnIoZGV2LCAiaW5pdGlhbGl6ZSB3ZHQgd29ya3F1ZXVlIGZh
+aWxlZFxuIik7DQo+IC0JCXJldHVybiAtRU5PTUVNOw0KPiArCQlyZXQgPSAtRU5PTUVNOw0KPiAr
+CQlnb3RvIGNsa191bnByZXBhcmU7DQo+ICAJfQ0KPiAgCUlOSVRfV09SSygmdnB1LT53ZHQud3Ms
+IHZwdV93ZHRfcmVzZXRfZnVuYyk7DQo+ICAJbXV0ZXhfaW5pdCgmdnB1LT52cHVfbXV0ZXgpOw0K
+PiBAQCAtOTQyLDYgKzk0Myw4IEBAIHN0YXRpYyBpbnQgbXRrX3ZwdV9wcm9iZShzdHJ1Y3QgcGxh
+dGZvcm1fZGV2aWNlDQo+ICpwZGV2KQ0KPiAgCXZwdV9jbG9ja19kaXNhYmxlKHZwdSk7DQo+ICB3
+b3JrcXVldWVfZGVzdHJveToNCj4gIAlkZXN0cm95X3dvcmtxdWV1ZSh2cHUtPndkdC53cSk7DQo+
+ICtjbGtfdW5wcmVwYXJlOg0KPiArCWNsa191bnByZXBhcmUodnB1LT5jbGspOw0KPiAgDQo+ICAJ
+cmV0dXJuIHJldDsNCj4gIH0NCj4gLS0gDQo+IDIuMzAuMg0KPiANCg==
 
-> diff --git a/arch/powerpc/kvm/Kconfig b/arch/powerpc/kvm/Kconfig
-> index e45644657d49..ff581d70f20c 100644
-> --- a/arch/powerpc/kvm/Kconfig
-> +++ b/arch/powerpc/kvm/Kconfig
-> @@ -38,7 +38,6 @@ config KVM_BOOK3S_32_HANDLER
->  config KVM_BOOK3S_64_HANDLER
->  	bool
->  	select KVM_BOOK3S_HANDLER
-> -	select PPC_DAWR_FORCE_ENABLE
-
-I looked at some of the history here. It looks like this select was left
-over from an earlier version of the patch series that added PPC_DAWR: v2
-of the series has a new symbol PPC_DAWR_FORCE_ENABLE but by version 4
-that new symbol had disappeared but the select had not.
-
-v2: https://lore.kernel.org/linuxppc-dev/20190513071703.25243-1-mikey@neuling.org/
-v5: https://lore.kernel.org/linuxppc-dev/20190604030037.9424-2-mikey@neuling.org/
-
-The rest of the patch reasoning makes sense to me: DAWR support will be
-selected anyway by virtue of PPC64->PPC_DAWR so there's no need to try
-to select it again anyway.
-
-Reviewed-by: Daniel Axtens <dja@axtens.net>
-
-Kind regards,
-Daniel
-
->  
->  config KVM_BOOK3S_PR_POSSIBLE
->  	bool
-> -- 
-> 2.26.2
