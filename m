@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C424DC4338F
-	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 11:58:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0E8FC432BE
+	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 12:04:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9C5C161130
-	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 11:58:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B5A786112E
+	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 12:04:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238586AbhHSL6w (ORCPT
+        id S238931AbhHSMFV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 19 Aug 2021 07:58:52 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:51638
+        Thu, 19 Aug 2021 08:05:21 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:51948
         "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238105AbhHSL6v (ORCPT
+        by vger.kernel.org with ESMTP id S238105AbhHSMFV (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 19 Aug 2021 07:58:51 -0400
+        Thu, 19 Aug 2021 08:05:21 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 3806D3F367;
-        Thu, 19 Aug 2021 11:58:14 +0000 (UTC)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 977413F328;
+        Thu, 19 Aug 2021 12:04:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1629374294;
-        bh=8tUdKXborkpkb9B6b8mLjUQl9KMTxCxIx0f8+/7UNMw=;
+        s=20210705; t=1629374683;
+        bh=QUE+Hz7hicyzL2G0Uw8v/suyW1F/+qww9QoZPWvoHqY=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=SDJK6/QhUK5RkJwZcNgFVm5RKHNgwJYNJ4KqpO1ygEl8ImlqjU3jSENI8NwJsIWlO
-         lSzrufbs99yLGvbbHPZsoQit/q3+2wx8xPdj+E7FRJ4jvzZLpiAeqwmzUdlM70RS5X
-         SFJsFw5lokxBAUmRNvANppXjzhtZS4lHWsRw4zGGoXfEQwoM7wIghYbKslQCIlViqs
-         bR2bibyzQJPcSrRBC4EPrtxvpAGaHA/lwcwtFNyqSvuBtAbu/HQYrRfJ9AwfC5Gm0w
-         gpsQynOOv3T/iJA8n/F8k1r2bySHUlBTqXu5V90zbQ00I6C4hfLDBHKz54Sb/nFQi7
-         iC4Y7ZIaOuBYg==
+        b=Zxfo5gIWEgwYXJKX9Yv8VfkD9cB+DuhbtRR14+jv/2PoUDagdODjcAAfgvk/BRqWM
+         eHdOLeju7mDV/m3L9ErakhO/+JLbyb/fdttrBERrbItm+K6snYHpoOSffnhSf0KquA
+         duQyJsTyMNzvkB6/LEzmXuNFlb9vfLjddQaSuvzJWMfS/lCUH1UjLLCb4ygfsefzxb
+         X+4qle46s1bqTO78peg7Zkd/Hiu4y8cQW/8NaG9VfbuyTj5OBx7iC3q+AfWroRyII+
+         fnmPPQrtyMPgTM6dHQLJ1petxBw1USD9LaHXew1Ah4zn/JugC8+Yl+WGKIjXgkn1WT
+         vAVoH42/K+frw==
 From:   Colin King <colin.king@canonical.com>
-To:     Yisen Zhuang <yisen.zhuang@huawei.com>,
-        Salil Mehta <salil.mehta@huawei.com>,
+To:     Grygorii Strashko <grygorii.strashko@ti.com>,
         "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Huazhong Tan <tanhuazhong@huawei.com>, netdev@vger.kernel.org
+        Jakub Kicinski <kuba@kernel.org>, linux-omap@vger.kernel.org,
+        netdev@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] net: hns3: make array spec_opcode static const, makes object smaller
-Date:   Thu, 19 Aug 2021 12:58:13 +0100
-Message-Id: <20210819115813.6692-1-colin.king@canonical.com>
+Subject: [PATCH] net: ethernet: ti: cpsw: make array stpa static const, makes object smaller
+Date:   Thu, 19 Aug 2021 13:04:43 +0100
+Message-Id: <20210819120443.7083-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -57,59 +56,37 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Don't populate the array spec_opcode on the stack but instead it
-static const. Makes the object code smaller by 158 bytes:
+Don't populate the array stpa on the stack but instead it
+static const. Makes the object code smaller by 81 bytes:
 
 Before:
-   text   data   bss     dec    hex filename
-  12271   3976   128   16375   3ff7 .../hisilicon/hns3/hns3pf/hclge_cmd.o
+   text    data   bss    dec    hex filename
+  54993   17248     0  72241  11a31 ./drivers/net/ethernet/ti/cpsw_new.o
 
 After:
-   text   data   bss     dec    hex filename
-  12017   4072   128   16217   3f59 .../hisilicon/hns3/hns3pf/hclge_cmd.o
+   text    data   bss    dec    hex filename
+  54784   17376     0  72160  119e0 ./drivers/net/ethernet/ti/cpsw_new.o
 
 (gcc version 10.3.0)
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- .../hisilicon/hns3/hns3pf/hclge_cmd.c         | 24 ++++++++++---------
- 1 file changed, 13 insertions(+), 11 deletions(-)
+ drivers/net/ethernet/ti/cpsw_new.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c
-index 887297e37cf3..13042f1cac6f 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c
-@@ -169,17 +169,19 @@ static bool hclge_is_special_opcode(u16 opcode)
- 	/* these commands have several descriptors,
- 	 * and use the first one to save opcode and return value
- 	 */
--	u16 spec_opcode[] = {HCLGE_OPC_STATS_64_BIT,
--			     HCLGE_OPC_STATS_32_BIT,
--			     HCLGE_OPC_STATS_MAC,
--			     HCLGE_OPC_STATS_MAC_ALL,
--			     HCLGE_OPC_QUERY_32_BIT_REG,
--			     HCLGE_OPC_QUERY_64_BIT_REG,
--			     HCLGE_QUERY_CLEAR_MPF_RAS_INT,
--			     HCLGE_QUERY_CLEAR_PF_RAS_INT,
--			     HCLGE_QUERY_CLEAR_ALL_MPF_MSIX_INT,
--			     HCLGE_QUERY_CLEAR_ALL_PF_MSIX_INT,
--			     HCLGE_QUERY_ALL_ERR_INFO};
-+	static const u16 spec_opcode[] = {
-+		HCLGE_OPC_STATS_64_BIT,
-+		HCLGE_OPC_STATS_32_BIT,
-+		HCLGE_OPC_STATS_MAC,
-+		HCLGE_OPC_STATS_MAC_ALL,
-+		HCLGE_OPC_QUERY_32_BIT_REG,
-+		HCLGE_OPC_QUERY_64_BIT_REG,
-+		HCLGE_QUERY_CLEAR_MPF_RAS_INT,
-+		HCLGE_QUERY_CLEAR_PF_RAS_INT,
-+		HCLGE_QUERY_CLEAR_ALL_MPF_MSIX_INT,
-+		HCLGE_QUERY_CLEAR_ALL_PF_MSIX_INT,
-+		HCLGE_QUERY_ALL_ERR_INFO
-+	};
- 	int i;
+diff --git a/drivers/net/ethernet/ti/cpsw_new.c b/drivers/net/ethernet/ti/cpsw_new.c
+index 85d05b9be2b8..534d39f729e2 100644
+--- a/drivers/net/ethernet/ti/cpsw_new.c
++++ b/drivers/net/ethernet/ti/cpsw_new.c
+@@ -502,7 +502,7 @@ static void cpsw_restore(struct cpsw_priv *priv)
  
- 	for (i = 0; i < ARRAY_SIZE(spec_opcode); i++) {
+ static void cpsw_init_stp_ale_entry(struct cpsw_common *cpsw)
+ {
+-	char stpa[] = {0x01, 0x80, 0xc2, 0x0, 0x0, 0x0};
++	static const char stpa[] = {0x01, 0x80, 0xc2, 0x0, 0x0, 0x0};
+ 
+ 	cpsw_ale_add_mcast(cpsw->ale, stpa,
+ 			   ALE_PORT_HOST, ALE_SUPER, 0,
 -- 
 2.32.0
 
