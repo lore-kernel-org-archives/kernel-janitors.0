@@ -8,56 +8,56 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36AA3C4338F
-	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 11:23:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A93FC432BE
+	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 11:23:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1F9A8610D2
+	by mail.kernel.org (Postfix) with ESMTP id E2A3461130
 	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 11:23:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238931AbhHSLYB (ORCPT
+        id S239275AbhHSLYD (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 19 Aug 2021 07:24:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56050 "EHLO
+        Thu, 19 Aug 2021 07:24:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56058 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238840AbhHSLXr (ORCPT
+        with ESMTP id S238891AbhHSLXs (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 19 Aug 2021 07:23:47 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F8CCC061764;
-        Thu, 19 Aug 2021 04:23:07 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id v4so8496339wro.12;
-        Thu, 19 Aug 2021 04:23:07 -0700 (PDT)
+        Thu, 19 Aug 2021 07:23:48 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E86C1C0613D9;
+        Thu, 19 Aug 2021 04:23:10 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id z9so8513672wrh.10;
+        Thu, 19 Aug 2021 04:23:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=REhMgVT+6ZjXEXXRs/yP5w88X232Fgpi2cGGVzDaXxE=;
-        b=FCtD7ltyWf3bpyNg5ZfOHC5FxFeGOP5a3gpqgR0ke4i/yDDEUenPouhSHdH9vqfOPN
-         fhMIWL0W1o2h5w6n5EDUmO5hY0UXJiiAzrZK7aX4ZZGoWvWC6w7pW1vbY8KXLWkBwqLu
-         HVE886JOmbB2Nl5cZRu6CP2iH11GrlP4H0UcGUTF0SRG/Xj7rfuLNHG1Q75qdF2iElT/
-         c0+0X3K8YO3lhntVsRzhLiFCw0q/kwD22JneBZYLuO3VeF2UJI5Fm2hKQp6GqgZ1uyHl
-         kQ7bM/IduESIr4fb5Rka8A1YUiOZ70ediQ5Sc3HBUL4DeNygbVWLh80qQMmvXEswoDdk
-         0hEQ==
+        bh=BdAGUCyYQ4noYy9BmzZUbXym0YMYKVh78nm2c4sCaNo=;
+        b=dh0h2hzZb2yroUpq/SL+knwkJ21CNnxU/3mS7j6DNE7Y2XImBRQOxf0N0hBLYWNCzT
+         ffd8uBCBYXnuFu61ChDmzfYshuGB2BFxSbB0Y4M+JE/21wxCUsxQtSS9jBkeoj9xjwUy
+         VXSZxmMRTuoqIUSOkDLjT/NqApdoMI5s7YXUgkR0HinZS5eRWOD1Dhva+0hy2miSuRf3
+         gSjc62iWfD1MZMHgyw8T7V09Pd8V0M0QBAbog2hiDoxlTY0MqReCsnGHQT8YCo9UvHGc
+         0Ej6DOcy0aewKCnzR085IyLr3xXNKkoKaWertz6jsUDOKnfcN+369p911UROvaIuIvyH
+         5yyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=REhMgVT+6ZjXEXXRs/yP5w88X232Fgpi2cGGVzDaXxE=;
-        b=j9360DyBL+FEI46yn6xnqFDcNFcTJwkxvG53FdYoqKwPJ210rXDH9Zl9VyWjwL54Sv
-         FuO5E8+kyt2F2ooLwz8ToapotQs6ubgTiopAo1R1GFaRU0nZd6w6inALSAB2CZ/0QOAV
-         nxYSaVg5VQDQrKNtLAIV6RrvtXX10QxgK6COf0bJB97Bwynh8depQVSdsBTopTyrLn8F
-         T9L9oOEc7fexdsb51MeK8CdTxo0F5D5mYhtEDf5uTFqJt+1bBjPUmC8StrZOZvV9LJY+
-         uJ8Q0aBIBF98xGB++rRZelq+YYO37+6iNWikVa5lysBu7/TZ8uAx1Mx0sIW2IENLfnV+
-         kzJg==
-X-Gm-Message-State: AOAM532OEofZ69wY/riu1sRwPO8mK8ELMJlMJqmlGKHAsAoGZPm81u5M
-        BfiDtidNsL9fn0U7eM61G5c=
-X-Google-Smtp-Source: ABdhPJyaHdxhTqOlTcWI8sTuvcompSykYd56hFn/HeiPFc2a40cOfBUyvMjZRb5YBRBK/Z0BCwYQcg==
-X-Received: by 2002:a5d:6b92:: with SMTP id n18mr3277419wrx.343.1629372186181;
-        Thu, 19 Aug 2021 04:23:06 -0700 (PDT)
+        bh=BdAGUCyYQ4noYy9BmzZUbXym0YMYKVh78nm2c4sCaNo=;
+        b=BhuujzQ52Ozpd8D9m2JWZexGx1uIL+wJufXw70YCeuD+i/pyuc5M+h/ekzYpbxV3Ke
+         bW5rCc9zYnK9qRxsNvCcGK9JK9oN0v3W+YE1wHDBEu521xJWFG1ddCmhZxupoqs/jvJa
+         c+GczYbT6rJ+OPree040/km6YBFaQtfgQU+W2zxjcGR9IgGv2oIvf93cBQ1uGgqNikeY
+         SsKK+V5BgjFQW+iS/YWcP8SFJTpHWEBNnyrPeC1pRD2kbKCa1bLgwARm2FeWn4Pdpxfj
+         pQkpiMs8VbdL55K5wVX8Crqtu+bZQeYxRVn8uVovV3LAL3kj5jnlma6tuPPYHHBPhV5P
+         OGvA==
+X-Gm-Message-State: AOAM531T1Nm2PJKncBciM1ufSd/0Nh4BmGyyoDBOD8ZB8BRzL5SF0C++
+        mf+F/6o8YYZG6goJJMdgWqQ=
+X-Google-Smtp-Source: ABdhPJz+nHXkVSWGA9lE/VQL6I22gEojvvk17S+GegjyVvKGMS14tNYNEWxpb3EtYyN5IiPOsZL4Kw==
+X-Received: by 2002:adf:e889:: with SMTP id d9mr3103968wrm.223.1629372189558;
+        Thu, 19 Aug 2021 04:23:09 -0700 (PDT)
 Received: from localhost.localdomain (arl-84-90-178-246.netvisao.pt. [84.90.178.246])
-        by smtp.gmail.com with ESMTPSA id r1sm2700388wrt.24.2021.08.19.04.23.04
+        by smtp.gmail.com with ESMTPSA id r1sm2700388wrt.24.2021.08.19.04.23.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Aug 2021 04:23:05 -0700 (PDT)
+        Thu, 19 Aug 2021 04:23:09 -0700 (PDT)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
 To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Maxime Ripard <mripard@kernel.org>,
@@ -74,9 +74,9 @@ Cc:     Sandy Huang <hjc@rock-chips.com>,
         linux-rockchip@lists.infradead.org,
         kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH v2 3/5] drm: v3d: correct reference to config ARCH_BRCMSTB
-Date:   Thu, 19 Aug 2021 13:22:51 +0200
-Message-Id: <20210819112253.16484-4-lukas.bulwahn@gmail.com>
+Subject: [PATCH v2 5/5] drm: omap: remove obsolete selection of OMAP2_DSS in config DRM_OMAP
+Date:   Thu, 19 Aug 2021 13:22:53 +0200
+Message-Id: <20210819112253.16484-6-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20210819112253.16484-1-lukas.bulwahn@gmail.com>
 References: <20210819112253.16484-1-lukas.bulwahn@gmail.com>
@@ -86,33 +86,35 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 57692c94dcbe ("drm/v3d: Introduce a new DRM driver for Broadcom V3D
-V3.x+") adds the config DRM_V3D, which depends on "ARCH_BCMSTB".
+Commit 55b68fb856b5 ("drm/omap: squash omapdrm sub-modules into one")
+removes the config OMAP2_DSS in ./drivers/gpu/drm/omapdrm/dss/Kconfig,
+while moving the other configs into./drivers/gpu/drm/omapdrm/Kconfig, but
+misses to remove an obsolete selection of OMAP2_DSS in config DRM_OMAP.
 
-Although, a bit confusing: all Broadcom architectures in
-./arch/arm/mach-bcm/Kconfig have the prefix "ARCH_BCM", except for
-ARCH_BRCMSTB, i.e., the config for Broadcom BCM7XXX based boards.
+Hence, ./scripts/checkkconfigsymbols.py warns:
 
-So, correct the reference ARCH_BCMSTB to the intended ARCH_BRCMSTB.
+OMAP2_DSS
+Referencing files: drivers/gpu/drm/omapdrm/Kconfig
+
+Remove this reference in an obsolete selection.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- drivers/gpu/drm/v3d/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/omapdrm/Kconfig | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/v3d/Kconfig b/drivers/gpu/drm/v3d/Kconfig
-index 9a5c44606337..e973ec487484 100644
---- a/drivers/gpu/drm/v3d/Kconfig
-+++ b/drivers/gpu/drm/v3d/Kconfig
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0-only
- config DRM_V3D
- 	tristate "Broadcom V3D 3.x and newer"
--	depends on ARCH_BCM || ARCH_BCMSTB || COMPILE_TEST
-+	depends on ARCH_BCM || ARCH_BRCMSTB || COMPILE_TEST
+diff --git a/drivers/gpu/drm/omapdrm/Kconfig b/drivers/gpu/drm/omapdrm/Kconfig
+index e7281da5bc6a..d6e4df291d6f 100644
+--- a/drivers/gpu/drm/omapdrm/Kconfig
++++ b/drivers/gpu/drm/omapdrm/Kconfig
+@@ -3,7 +3,6 @@ config DRM_OMAP
+ 	tristate "OMAP DRM"
  	depends on DRM
- 	depends on COMMON_CLK
- 	depends on MMU
+ 	depends on ARCH_OMAP2PLUS || ARCH_MULTIPLATFORM
+-	select OMAP2_DSS
+ 	select DRM_KMS_HELPER
+ 	select VIDEOMODE_HELPERS
+ 	select HDMI
 -- 
 2.26.2
 
