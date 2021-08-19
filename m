@@ -2,88 +2,132 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AFC7C4338F
-	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 17:20:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FD2CC4320A
+	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 17:26:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4233561075
-	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 17:20:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A282610A1
+	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 17:26:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231826AbhHSRV1 (ORCPT
+        id S231863AbhHSR1c (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 19 Aug 2021 13:21:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55926 "EHLO
+        Thu, 19 Aug 2021 13:27:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231137AbhHSRVZ (ORCPT
+        with ESMTP id S229659AbhHSR1c (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 19 Aug 2021 13:21:25 -0400
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03D0AC061575;
-        Thu, 19 Aug 2021 10:20:49 -0700 (PDT)
-Received: by mail-pj1-x1034.google.com with SMTP id mq2-20020a17090b3802b0290178911d298bso5292447pjb.1;
-        Thu, 19 Aug 2021 10:20:48 -0700 (PDT)
+        Thu, 19 Aug 2021 13:27:32 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B61E5C061575;
+        Thu, 19 Aug 2021 10:26:55 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id q11-20020a7bce8b0000b02902e6880d0accso7336046wmj.0;
+        Thu, 19 Aug 2021 10:26:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pEeRuc7JZ778PLVAxtNHdGEKV+ow6emdptixqFeRsss=;
-        b=Qk98zra5kuNn7pTwcbR3orAMjpWQF64WVlJgYoNFx7Ssj44qU5Gv4udHjRCbRqAyrh
-         sT2yo1SM5TVBeibgQVlq8GhwYPcWjUQWGOFv4TBsT/EzNQt9Wb+cZO6Fer6N+PBhuLG/
-         e9UoOAoGvyqw4LuoZs5PzO3Rt0kzvwpfdafXKfmDA+64O0OwapHVzcRiZ8p+TSyYWW7L
-         yDDj98vMw+7M7pDCHTLjLtrkyQvCFM/H3I9RUpzCQ0DztNysgaCturUwtoGzfERHi7iX
-         /AhIb4RrhFKUZo0OM5G70UmtQd8J2YdrSnoL4teQ5iOK/gFwJpC+9af9ywQ+d+imsNxz
-         6a0g==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=tqPjKZJYc+Rc6IoAOJPSNmiYR/t0jKijcOgUY37edWs=;
+        b=UKwXjzKaoEc5/NslWFN2wPzawo7BQF8Dd1WpKvc30+hq9J3w0JBA6B3L1CBMmA2a5s
+         AP2KyIImocC+zTVJzsTXtraHhAT5Zlft22JJYyOwXg0voYYI9wlzN3kDAbIdygncIbgE
+         cyUnWce8byW5kP/4dygHRw/55N0UnYd7QaKpPN6+rO3xBf5WG/SrCZHmcco5CBJxhVV7
+         v58bRJfdYXv2ddjPpEgz0NZtZA6SQMIYM/hASSCZt1pcNdZIIiuDE/NELQwbnT3dLWI5
+         X4n1BzfV+uE1qVbmX63h2s4BtJDFEQUROcrVyCWDFFPYWv8a9Ya3ZIZyN/WetWE5etSc
+         a7VA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pEeRuc7JZ778PLVAxtNHdGEKV+ow6emdptixqFeRsss=;
-        b=VxOsNzlukvOS2VLehhr/05IxKujP/un3KkvIav9phDXWKIjiCbvP9w8WXSnFVYQJV+
-         o56cDUg+8726HIb/k3wjVrZe8Mq5kmXtYqA7FzLueUc/0VZZI17F1qvvpFWk7DuEt0U1
-         ZdJASp8tqjYJtXr3un/Kvbs14svM9eFTpwQh4iKcYoTtFxGxo6nqM6T6r1JE+Gj68dLL
-         8/iEqrL375PO3wvBVtnA4b0Dpk1WPGrV4zKu83rlOf3zZwTRRrf+rGiH9rIAu7QEDA5h
-         DOG4cPb5R79km3BD/Hg3HlvV8VmZ/q4sZfzZGtsDT+zBdSep1+RrBUqWzz+Zr6A/XUW8
-         Azvg==
-X-Gm-Message-State: AOAM532BaO8UvjfCJIjJw0q4Bg6ksbKfzVfOtN8Sn2hZQdX5b9IOzhlp
-        ECDgCmiFaDro15TkKORJLquboFBGePuwunkWvBY=
-X-Google-Smtp-Source: ABdhPJzJ09NqeJwEhvPjmgm7DkwvN+0K0VrKxT8M4ChoBU9e9Y7OgzKabAalajUDF6sLaiVgHuXpCtSZNiRkc8vknYg=
-X-Received: by 2002:a17:902:ced0:b029:12d:4ce1:ce3a with SMTP id
- d16-20020a170902ced0b029012d4ce1ce3amr12652051plg.0.1629393648072; Thu, 19
- Aug 2021 10:20:48 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=tqPjKZJYc+Rc6IoAOJPSNmiYR/t0jKijcOgUY37edWs=;
+        b=kmAfjlWZly8A1xIN0Qo7q3OAMd+Gd23pz0EVEfSb4+rSs9jioh3qPjhP5s6QSsr4l/
+         0IJrgU2j6mFqwOORYKQrw3H6L6zlpU+vnr6LEzCbCExZR9o+gIDc4o61FylO8GDIXLB2
+         /OX0CIVLI1JvClCnp0Qg+e/kQ7gG/C9eVla1r/ziqSlcRhA/VMiL2KvcnkJKFKZJTGjP
+         wo8BIxDihr68e5iCE513zgM4yeyEFN6o3cKu7i6Nezp/llkb3FMjho1snNidh+5JvXTQ
+         MvVGuYCETceCe9jBBXqycQ5DLWAra3JeVjR7plAnmS6YCQMJOvy/HfXaKoft/709dqRC
+         ViqQ==
+X-Gm-Message-State: AOAM531IiD8OnD82RLdE4x2sDVsU3jx/oSmspPxJXxuXcHyyEf0eSYeS
+        C9hpzuXBftrXpsHivZrmldY=
+X-Google-Smtp-Source: ABdhPJx/ACEOBEfmZTXAcFQSWohX6lKYmcC6JhEjsNcjX5sQ25KOGTDPXA5b26qqTG/e+l2UsDh+NQ==
+X-Received: by 2002:a7b:c188:: with SMTP id y8mr14869752wmi.174.1629394014372;
+        Thu, 19 Aug 2021 10:26:54 -0700 (PDT)
+Received: from localhost ([217.111.27.204])
+        by smtp.gmail.com with ESMTPSA id s141sm2968005wme.6.2021.08.19.10.26.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Aug 2021 10:26:53 -0700 (PDT)
+Date:   Thu, 19 Aug 2021 19:26:52 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] memory: tegra: make the array list static const, makes
+ object smaller
+Message-ID: <YR6UXM7QXEBGGqLK@orome.fritz.box>
+References: <20210819133155.10441-1-colin.king@canonical.com>
 MIME-Version: 1.0
-References: <20210817172111.495897-1-colin.king@canonical.com> <OSZPR01MB7019DD199CB1B9A4521A3C28AAFF9@OSZPR01MB7019.jpnprd01.prod.outlook.com>
-In-Reply-To: <OSZPR01MB7019DD199CB1B9A4521A3C28AAFF9@OSZPR01MB7019.jpnprd01.prod.outlook.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 19 Aug 2021 20:20:08 +0300
-Message-ID: <CAHp75VdWFTi4oSWG45NunJwpe=LdMhAMEAEJh21ML2QXszgS+A@mail.gmail.com>
-Subject: Re: [PATCH][next] iio: adc: Fix -EBUSY timeout error return
-To:     Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc:     Colin King <colin.king@canonical.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="1FRMoKE3dAd72QSM"
+Content-Disposition: inline
+In-Reply-To: <20210819133155.10441-1-colin.king@canonical.com>
+User-Agent: Mutt/2.1.1 (e2a89abc) (2021-07-12)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Aug 18, 2021 at 6:51 PM Prabhakar Mahadev Lad
-<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
 
-> with the subject changed to above: Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+--1FRMoKE3dAd72QSM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Always put your tags in a single tag per single line. This will allow
-tools to catch them up automatically.
+On Thu, Aug 19, 2021 at 02:31:55PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>=20
+> Don't populate the array list on the stack but instead it
+> static const. Makes the object code smaller by 110 bytes:
+>=20
+> Before:
+>    text    data     bss     dec     hex filename
+>   37713   21992      64   59769    e979 .../tegra/tegra210-emc-cc-r21021.o
+>=20
+> After:
+>    text    data     bss     dec     hex filename
+>   37539   22056      64   59659    e90b .../tegra/tegra210-emc-cc-r21021.o
+>=20
+> (gcc version 10.3.0)
+>=20
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/memory/tegra/tegra210-emc-cc-r21021.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
--- 
-With Best Regards,
-Andy Shevchenko
+Wow, didn't think this was going to save us 110 bytes. Nice one!
+
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--1FRMoKE3dAd72QSM
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmEelFwACgkQ3SOs138+
+s6EtiQ/+PRW3IczZwEf01/WL6npwB+KWyu6/aa59MqPgwKSgLXkAKRkHYvjzsBu3
+hZZ7Qbik/IIH2SjtCy8VOYj+gV5pBfUedOLFaxxIhlWjxzE6fNtlVdixOOlSzWeS
+xf7rjpWWBfMppuiRiUa7wLX0KqZls9sDQHde2GOrn0KJG7NkSCs4KnhfZ9qssInp
+b8ruwvuWUD3heMJtPCSHGB18g83lZXLK42F6ENO7zJGntCta14lOrsVCFIog5CTa
+29p4UKJ1z+iQKhqS0ObJjZZ3PmkIYYjiC9Dn8OJuE/t+qqWWSXuB6r/Vh7KNQt76
+3Wu7Cxg5wDBC2K6esa3PWzfRCbAf+lMx65q3dwOsEbzDbGdGmL6qQlbbTQFCmBhW
+66Mw7QTGV1tb/Zhie1x8DcChbjKMKfE4DGOwz7XTWa3EoSk0tptp6J6ZTZCL9YVk
+i0aJbBZpgtHM90VrHLrnf1HVxMeGLgU7wCUfYt6fKU3+hvCvb6r+NDhnYmQagvoH
+tEpadwAmDa0Q8x4iglqKwxA67+tDIKZ8MpMBmwv4OYJ/X3OZm3VQT83qk75qGnx6
+w6GDFW83VzJAOYF1xLTBceZ/GCYO9Upvlo4n7nxs01BzT3IllQELj/VgkmC/O6sg
+rD9kHMOlQJMhIx0hAbcd3LLx0b2FJk04gXgEkQhXKEVsa4so2Ko=
+=uw+z
+-----END PGP SIGNATURE-----
+
+--1FRMoKE3dAd72QSM--
