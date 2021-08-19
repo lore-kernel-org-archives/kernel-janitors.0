@@ -2,97 +2,75 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2745C432BE
-	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 12:17:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDCEDC4338F
+	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 12:30:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7743D61166
-	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 12:17:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B46F561152
+	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 12:30:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239187AbhHSMRa (ORCPT
+        id S239049AbhHSMao (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 19 Aug 2021 08:17:30 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:36268
-        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238357AbhHSMR3 (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 19 Aug 2021 08:17:29 -0400
-Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 5676440C9E;
-        Thu, 19 Aug 2021 12:16:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1629375411;
-        bh=jsGWeGecQ1kWffqrQvCeBJMCWUwwxyDVLr5Pq+OBIQA=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=qP8naA+8cHCYt7YbKmUmxvC6slgIAPThy+wi0iVhtyAfdCqx9ER7XSNn07hEcq/cK
-         vfRm4ryOD58AaJU5bZrlnwXHOFqSsKT3H10wOxYI/I5OEE9B8rNjX6RGJwPVgFYbcw
-         Q5QHbslXwLOWR7v0DzgAZ+izOq5w62VNEaPSWP3H6Hg9RPJvvpXs+FNniIo/iGwfVg
-         KqphZBwMoKpjLR4gRaXdCukhRXULbIcSfzAkSCt3DfyvBslVHN5qklx/WHUYPNDOUs
-         Y4rWP15bLPnpJSWcxlxIoZJrkwAJBxHzu4WQ3KBUdVzqgRs8/bfcSKMVvNgOEiOUlh
-         aBhFM03CDAIdg==
-From:   Colin King <colin.king@canonical.com>
-To:     Amitkumar Karwar <amitkarwar@gmail.com>,
-        Ganapathi Bhat <ganapathi017@gmail.com>,
-        Sharvari Harisangam <sharvari.harisangam@nxp.com>,
-        Xinming Hu <huxinming820@gmail.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] mwifiex: make arrays static const, makes object smaller
-Date:   Thu, 19 Aug 2021 13:16:51 +0100
-Message-Id: <20210819121651.7566-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.32.0
-MIME-Version: 1.0
+        Thu, 19 Aug 2021 08:30:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47370 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231179AbhHSMan (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 19 Aug 2021 08:30:43 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPS id 4A4CF6113E;
+        Thu, 19 Aug 2021 12:30:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1629376207;
+        bh=iqXcFMJvuCaJ4en8Q1z3xwM8yoR3225squLbfZ5v02c=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=OTyRPzSf3mdJdQLXiSUtQQKNexP8WDifaRPiZOJo0/T5IYdkbbfM0MQfucbQPA+nK
+         l6+crepuO8cOJ+fH1t96MIhPrdQfFIohMKURg9mF7NhIvXLDzMjB5cV5HciTvI3M6t
+         lZ29cN+rf4jaH+SZTrhiYi48gv2VJSS27tXO+RQswD7O0ebpIwD1DISkeB9cPA6fIr
+         x+B1sTX9qFXqSlalUGoZEiCUlGUmh0fwkrqU8S1b5jMf0iMC3i028c48Jk7VV4o32l
+         xDYZ/ROaLt4RFtQQdApzPKlTs9ahBW2J+cW4d1K4W/yT8FLmiIdu7pHZ85YCToBOD1
+         hGuvQerpyZvng==
 Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] hinic: make array speeds static const, makes object smaller
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <162937620725.15458.10480464318828001268.git-patchwork-notify@kernel.org>
+Date:   Thu, 19 Aug 2021 12:30:07 +0000
+References: <20210819115253.6324-1-colin.king@canonical.com>
+In-Reply-To: <20210819115253.6324-1-colin.king@canonical.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     luobin9@huawei.com, davem@davemloft.net, kuba@kernel.org,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hello:
 
-Don't populate the arrays wpa_oui and wps_oui on the stack but
-instead them static const. Makes the object code smaller by 63 bytes:
+This patch was applied to netdev/net-next.git (refs/heads/master):
 
-Before:
-   text   data  bss     dec    hex filename
-  29453   5451   64   34968   8898 .../wireless/marvell/mwifiex/sta_ioctl.o
+On Thu, 19 Aug 2021 12:52:53 +0100 you wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Don't populate the array speeds on the stack but instead it
+> static const. Makes the object code smaller by 17 bytes:
+> 
+> Before:
+>    text    data     bss     dec     hex filename
+>   39987   14200      64   54251    d3eb .../huawei/hinic/hinic_sriov.o
+> 
+> [...]
 
-After:
-   text	  data  bss     dec    hex filename
-  29356	  5611   64   35031   88d7 ../wireless/marvell/mwifiex/sta_ioctl.o
+Here is the summary with links:
+  - hinic: make array speeds static const, makes object smaller
+    https://git.kernel.org/netdev/net-next/c/36d5825babbc
 
-(gcc version 10.3.0)
+You are awesome, thank you!
+--
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/wireless/marvell/mwifiex/sta_ioctl.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c b/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c
-index 653f9e094256..fb3b11cf123b 100644
---- a/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c
-+++ b/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c
-@@ -1325,8 +1325,8 @@ mwifiex_set_gen_ie_helper(struct mwifiex_private *priv, u8 *ie_data_ptr,
- 			  u16 ie_len)
- {
- 	struct ieee_types_vendor_header *pvendor_ie;
--	const u8 wpa_oui[] = { 0x00, 0x50, 0xf2, 0x01 };
--	const u8 wps_oui[] = { 0x00, 0x50, 0xf2, 0x04 };
-+	static const u8 wpa_oui[] = { 0x00, 0x50, 0xf2, 0x01 };
-+	static const u8 wps_oui[] = { 0x00, 0x50, 0xf2, 0x04 };
- 	u16 unparsed_len = ie_len, cur_ie_len;
- 
- 	/* If the passed length is zero, reset the buffer */
--- 
-2.32.0
 
