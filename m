@@ -2,110 +2,93 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0627C4338F
-	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 12:38:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5E40C4338F
+	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 12:50:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C04856023D
-	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 12:38:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 806AC610FF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 12:50:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239151AbhHSMix (ORCPT
+        id S239457AbhHSMu5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 19 Aug 2021 08:38:53 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:43278 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239049AbhHSMiw (ORCPT
+        Thu, 19 Aug 2021 08:50:57 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:38912
+        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S238878AbhHSMu4 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 19 Aug 2021 08:38:52 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 17JCc3Nf108100;
-        Thu, 19 Aug 2021 07:38:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1629376683;
-        bh=z1nW+g9zIkHpaw+tccxrzmsOSrGAMOhi/urgSnCFWcM=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=hu6jzrWizw+T2dcaXZNxO7qrJ6h4jSnEeCRr6C8ca3+ownMWYEacHq5wbVt0aiYkk
-         wqjL+N9oCgPX6l9RTPR4RqEzsOA6J4hSRSxhtLngTi56G1spPooOOTsRD7zb+B82CH
-         3nAlvpG/n6bBYMAS4XCcPcRGPqMe5M1b5NRriqpg=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 17JCc2NP032752
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 19 Aug 2021 07:38:02 -0500
-Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Thu, 19
- Aug 2021 07:38:01 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2 via
- Frontend Transport; Thu, 19 Aug 2021 07:38:01 -0500
-Received: from [10.250.233.2] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 17JCbxBQ038396;
-        Thu, 19 Aug 2021 07:37:59 -0500
-Subject: Re: [PATCH -next] PCI: endpoint: Fix missing unlock on error in
- pci_epf_add_vepf()
-To:     Wei Yongjun <weiyongjun1@huawei.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-CC:     <linux-pci@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        Hulk Robot <hulkci@huawei.com>
-References: <20210819080655.316468-1-weiyongjun1@huawei.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <b0e3a9b9-3a7b-6d17-aa5d-16001677aca7@ti.com>
-Date:   Thu, 19 Aug 2021 18:07:58 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Thu, 19 Aug 2021 08:50:56 -0400
+Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id B15643F110;
+        Thu, 19 Aug 2021 12:50:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1629377418;
+        bh=NlpNbKBlI8kqdEuf1BReGDXjCIxIm5jBGMFuDPejO0w=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=jwaRhOCOuGRf9Ewe7FgdXMvPb49/D1vy5Cemnsx/RsO+VKPtDveRERHEsiYTjT1X5
+         IiGmx0pj+PhPQ/uH7O4tVXQqAljKWl2SjwLzhXvq6Gw3LNr6aY7V4FJJCGjWLeULPv
+         9p2QouV+WVSkgmMY1x23klII44FpwEV1FQFZewTft2tIr+95e/Ws1kPcBNrzWmCek+
+         J+mDZAu09HpmUg5SGfSLknygRNAnfnxtQyWudN6+jgRJcEaY9GbXltXB52EOonj1+c
+         M22F3vdy01up8OPI1W0wuYxM1T6H95ALiSWMkFvyuMXTPPZN8owT8oZROfHk+RndM7
+         PP7cD+8S3dUJw==
+From:   Colin King <colin.king@canonical.com>
+To:     Amitkumar Karwar <amitkarwar@gmail.com>,
+        Siva Rebbagondla <siva8118@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] rsi: make array fsm_state static const, makes object smaller
+Date:   Thu, 19 Aug 2021 13:50:18 +0100
+Message-Id: <20210819125018.8577-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-In-Reply-To: <20210819080655.316468-1-weiyongjun1@huawei.com>
 Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Wei,
+From: Colin Ian King <colin.king@canonical.com>
 
-On 19/08/21 1:36 pm, Wei Yongjun wrote:
-> Add the missing unlock before return from function pci_epf_add_vepf()
-> in the error handling case.
-> 
-> Fixes: b64215ff2b5e ("PCI: endpoint: Add support to add virtual function in endpoint core")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Don't populate the array fsm_state on the stack but instead it
+static const. Makes the object code smaller by 154 bytes:
 
-Thanks for the patch. Since I had to resend the series, I squashed this
-patch into the original series
+Before:
+   text	   data	    bss	    dec	    hex	filename
+   9213	   3904	      0	  13117	   333d	.../wireless/rsi/rsi_91x_debugfs.o
 
-https://lore.kernel.org/r/20210819123343.1951-3-kishon@ti.com
+After:
+   text	   data	    bss	    dec	    hex	filename
+   8995	   3968	      0	  12963	   32a3	.../wireless/rsi/rsi_91x_debugfs.o
 
-Thanks
-Kishon
+(gcc version 10.3.0)
 
-> ---
->  drivers/pci/endpoint/pci-epf-core.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/endpoint/pci-epf-core.c b/drivers/pci/endpoint/pci-epf-core.c
-> index ec286ee5d04c..8aea16380870 100644
-> --- a/drivers/pci/endpoint/pci-epf-core.c
-> +++ b/drivers/pci/endpoint/pci-epf-core.c
-> @@ -200,8 +200,10 @@ int pci_epf_add_vepf(struct pci_epf *epf_pf, struct pci_epf *epf_vf)
->  	mutex_lock(&epf_pf->lock);
->  	vfunc_no = find_first_zero_bit(&epf_pf->vfunction_num_map,
->  				       BITS_PER_LONG);
-> -	if (vfunc_no >= BITS_PER_LONG)
-> +	if (vfunc_no >= BITS_PER_LONG) {
-> +		mutex_unlock(&epf_pf->lock);
->  		return -EINVAL;
-> +	}
->  
->  	set_bit(vfunc_no, &epf_pf->vfunction_num_map);
->  	epf_vf->vfunc_no = vfunc_no;
-> 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/rsi/rsi_91x_debugfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/rsi/rsi_91x_debugfs.c b/drivers/net/wireless/rsi/rsi_91x_debugfs.c
+index 24a417ea2ae7..f404ca4c38e8 100644
+--- a/drivers/net/wireless/rsi/rsi_91x_debugfs.c
++++ b/drivers/net/wireless/rsi/rsi_91x_debugfs.c
+@@ -117,7 +117,7 @@ static int rsi_stats_read(struct seq_file *seq, void *data)
+ {
+ 	struct rsi_common *common = seq->private;
+ 
+-	unsigned char fsm_state[][32] = {
++	static const unsigned char fsm_state[][32] = {
+ 		"FSM_FW_NOT_LOADED",
+ 		"FSM_CARD_NOT_READY",
+ 		"FSM_COMMON_DEV_PARAMS_SENT",
+-- 
+2.32.0
+
