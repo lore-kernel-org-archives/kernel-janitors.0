@@ -2,97 +2,94 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB8D7C432BE
-	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 17:39:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 980C5C4338F
+	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 17:57:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8954F610A1
-	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 17:39:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CEC66109F
+	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 17:57:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231561AbhHSRkG (ORCPT
+        id S232969AbhHSR5v (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 19 Aug 2021 13:40:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60314 "EHLO
+        Thu, 19 Aug 2021 13:57:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36210 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229520AbhHSRkF (ORCPT
+        with ESMTP id S229520AbhHSR5u (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 19 Aug 2021 13:40:05 -0400
-Received: from mail-yb1-xb2c.google.com (mail-yb1-xb2c.google.com [IPv6:2607:f8b0:4864:20::b2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 402FFC061575;
-        Thu, 19 Aug 2021 10:39:29 -0700 (PDT)
-Received: by mail-yb1-xb2c.google.com with SMTP id m193so13758447ybf.9;
-        Thu, 19 Aug 2021 10:39:29 -0700 (PDT)
+        Thu, 19 Aug 2021 13:57:50 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4285DC061575
+        for <kernel-janitors@vger.kernel.org>; Thu, 19 Aug 2021 10:57:14 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id a201-20020a1c7fd2000000b002e6d33447f9so5800357wmd.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 19 Aug 2021 10:57:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=g64bEUOGnUgUs+DzbHBHBOodT6css7EVktoxeKzWQEM=;
-        b=eoDSZYvqSB8bJgtZRWfkeMH4EX1qopHU31cPOp2EIVyzpSLRKgqcCoCSkf1LZpw32F
-         1pkmt+UW3sAfYxv+P8O1hYIKf408b13yiH5QtYGiV3sF82e9PN0L7y38VIlIUCF9Wg+H
-         eewpLOha/CLKg0OoV7LSQ5sqhjmQqN1EK+4wdxpHmyxH69jNZve/FKPiBZG1jFDe6egg
-         MAS1/PkdRfl2vmUtOq0f3vjDcCssu8kx9damejetWFwXGsamlGYVQ0rr9MPVvfXMZjyu
-         X6GrFhksNYkD/HchePJ1hoRYMqcTqrB38+jNRJ2ZJRJo3cprk0iqNZ+dEfOd7SGfCGz9
-         +oUQ==
+        bh=qp2znENGjNE6am4araAHOS3yFZnocvS1VA7PpjH0CYg=;
+        b=mkYlZ5ZKQ7rA1IysviyTzbO+MGnjWk9cRypg2AqlmTBKatavByifoW/1orDHXzvPRy
+         GHH8QqZH7YMR8gx6MyVk/8AoVy4agGQ/xR4E6cS+5qmuYkNrGSt1xOT3QA5695YWFayp
+         6Nvzoottrg7I5MTA67cfj1kFnCI89UdL00x1ae0OKH/h17UNOesCsONtpovzZ3xommbR
+         1wIRAPGeJK521Ql9T+1QD3hY4MXokCJlc5SHaRdZ5R9N1+Yu1Sav+ddjPLwPXdATpXgq
+         tXsvYVHptyn8a++LRaJYqBqxWefmVT+Ixqa5RW0VeDaywjUCTownCI0uFfXTmxs9IH6m
+         kumw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=g64bEUOGnUgUs+DzbHBHBOodT6css7EVktoxeKzWQEM=;
-        b=BTzm9juBhbZ7BtS7kFMPPhnyuFWJ0xIaM7TcePw7GPN5/5KgMjd/qT4pq8jwE+qN2a
-         L27UZe4PwfbzQxFLxhlUgmByfOin1ebPx0A+TMe8tOQdLm9bupJ75BstOnXZZqLTge9J
-         lOIMaRm/gHqGagLVXEIBKIQkiFGxAdav2CzQdn5/v6imiTpUd8U5DLHnky8gwjspoq5w
-         vyp7n+KzSStcM73bWR5zm61Ic2mBKWaWBWXSnV9WawLWL65/wzyWZ454KRs/Hnt88mD7
-         q2VTiDDilF0EHhHe+BTdh2STm61LISvIPXI4Nl4R/jFcUgu4ACq9cuUtDwFm4U+pmtD8
-         qSJw==
-X-Gm-Message-State: AOAM530eYdc7F+DeWgl6aA5V8ZspF12f0KajEBJMYb1C2GSTF8Q4YcMN
-        xRi9DTgHvGYdxvwxcGdAdoI2/DcozM6Axku779g=
-X-Google-Smtp-Source: ABdhPJwZy8x0cRGTqE0c4ivPPX2xImAbsC9Z6rV7yS2b7qK44Vt2sjRUhNr20juNI/h83f/41Hb5cCvsFcYr6eBQsOw=
-X-Received: by 2002:a25:bd89:: with SMTP id f9mr19534861ybh.222.1629394768464;
- Thu, 19 Aug 2021 10:39:28 -0700 (PDT)
+        bh=qp2znENGjNE6am4araAHOS3yFZnocvS1VA7PpjH0CYg=;
+        b=GMNb2ckuYnaBpiryVI7KVaowriyuMUckXVcP1tNrfjKCujYIaAiEholg/Uy+IUqami
+         L69AUp5/GW5ftOS2nIJUqPCpPjtCTaFNDhhtVupia8pAani/aVbXve3069BY5Q8FUOFn
+         G6jlKtDM7/2M0/E/trBDFskvVEmYPFTmvM61CNjmc+pRR7LQoZaGUfxBdfwQEMb3xpxS
+         Grpk37wq9GmUs+LLwxHGuoKL507sYCihNEfD4sVU4rHs6bK2xzvLRRRfsxsOc1ts8I7y
+         +J4nwPtQ3Z7d4tfF8eWPK6vmBrVsHjW2dC7M9qryR6GP8Fyepqc+YuZSpXszvnUGxiNj
+         rMcA==
+X-Gm-Message-State: AOAM533Nel8Q34ADbM42/cpJgmCOBZwSOs20HKpeMNIpgcE+CnZKCvvl
+        0cCUzueAQJI0EFdxDsPd+p0Vw5SW2yzw76j5lJovgA==
+X-Google-Smtp-Source: ABdhPJxg35G3Ri2pIoXnwotEAV+S/DBC2+/pO/JqBlYi7QTbklhJWunGwvnywU1M/QOFsjx+ZaZbaATVwVQ4vW/BZOg=
+X-Received: by 2002:a7b:cb02:: with SMTP id u2mr14670231wmj.103.1629395832665;
+ Thu, 19 Aug 2021 10:57:12 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210817172111.495897-1-colin.king@canonical.com>
- <OSZPR01MB7019DD199CB1B9A4521A3C28AAFF9@OSZPR01MB7019.jpnprd01.prod.outlook.com>
- <CAHp75VdWFTi4oSWG45NunJwpe=LdMhAMEAEJh21ML2QXszgS+A@mail.gmail.com>
-In-Reply-To: <CAHp75VdWFTi4oSWG45NunJwpe=LdMhAMEAEJh21ML2QXszgS+A@mail.gmail.com>
-From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date:   Thu, 19 Aug 2021 18:39:02 +0100
-Message-ID: <CA+V-a8ugKC8z2=0usUca4eYFLTHEorxdtmdmbE5vXZDo_Ob5vA@mail.gmail.com>
-Subject: Re: [PATCH][next] iio: adc: Fix -EBUSY timeout error return
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Colin King <colin.king@canonical.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20210817105404.13146-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20210817105404.13146-1-lukas.bulwahn@gmail.com>
+From:   David Gow <davidgow@google.com>
+Date:   Fri, 20 Aug 2021 01:57:01 +0800
+Message-ID: <CABVgOSnPVy0St9QHHt_ePFqFmR2MWzLK4BKmky2k2+ABECZbkw@mail.gmail.com>
+Subject: Re: [PATCH] clk: staging: correct reference to config IOMEM to config HAS_IOMEM
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Aug 19, 2021 at 6:21 PM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
+On Tue, Aug 17, 2021 at 6:54 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
 >
-> On Wed, Aug 18, 2021 at 6:51 PM Prabhakar Mahadev Lad
-> <prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+> Commit 0a0a66c984b3 ("clk: staging: Specify IOMEM dependency for Xilinx
+> Clocking Wizard driver") introduces a dependency on the non-existing config
+> IOMEM, which basically makes it impossible to include this driver into any
+> build. Fortunately, ./scripts/checkkconfigsymbols.py warns:
 >
-> > with the subject changed to above: Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> IOMEM
+> Referencing files: drivers/staging/clocking-wizard/Kconfig
 >
-Again with the above fixed:
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> The config for IOMEM support is called HAS_IOMEM. Correct this reference to
+> the intended config.
+>
+> Fixes: 0a0a66c984b3 ("clk: staging: Specify IOMEM dependency for Xilinx Clocking Wizard driver")
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
 
-> Always put your tags in a single tag per single line. This will allow
-> tools to catch them up automatically.
->
-My bad, fixed that now.
+Whoops! Thanks for picking up on this: I thought I'd fixed it, but it
+was actually for another driver.
+
+Reviewed-by: David Gow <davidgow@google.com>
 
 Cheers,
-Prabhakar
+-- David
