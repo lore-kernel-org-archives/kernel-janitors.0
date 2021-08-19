@@ -2,96 +2,112 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2F65C4338F
-	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 20:52:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2CA0C432BE
+	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 22:39:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CEBD6610A5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 20:52:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2F8E610A6
+	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 22:39:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235809AbhHSUxU (ORCPT
+        id S236724AbhHSWk0 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 19 Aug 2021 16:53:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48652 "EHLO
+        Thu, 19 Aug 2021 18:40:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235771AbhHSUxU (ORCPT
+        with ESMTP id S236508AbhHSWk0 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 19 Aug 2021 16:53:20 -0400
-Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AED73C061756;
-        Thu, 19 Aug 2021 13:52:43 -0700 (PDT)
-Received: by mail-yb1-xb32.google.com with SMTP id m193so14711263ybf.9;
-        Thu, 19 Aug 2021 13:52:43 -0700 (PDT)
+        Thu, 19 Aug 2021 18:40:26 -0400
+Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37F5FC061757
+        for <kernel-janitors@vger.kernel.org>; Thu, 19 Aug 2021 15:39:49 -0700 (PDT)
+Received: by mail-pg1-x532.google.com with SMTP id y23so7284018pgi.7
+        for <kernel-janitors@vger.kernel.org>; Thu, 19 Aug 2021 15:39:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=azek7wC6yuM/sM3dWu6T7jqtDYysj0o8NC23ukK8+Xo=;
-        b=BMvVa5Nid54c33zqHeYmI6Jrj9RjtFVyUeC5gXyoBfW4SAIEL3n4RV0n48j0NPVrLl
-         9lTQw+U68bTeXb2qtn/x9bz40g28oICv/0kTLk8zRJ2PQ/MaGhvfGgOP0Tf7BTpZLGzV
-         9XSsD6ihtax+xY6hSnT7OYtiJx/ijHs3M8WYClgOlC4mfLdsy2fmL7yJZq07F0fVlA/Z
-         +GLt4ekvXeM6aHd4B4XCULlMG+Cf4Z7IuDXvwl0hwLjHQdSf3g8c8CW2KV086yoFCds/
-         GN11zG7pT9ibby3SbSIUuwT0v1m0nNo9Bb8ueW4MsZIbOrmEfRTGaJfmJrCVyJHtZOXr
-         4nPg==
+        d=axtens.net; s=google;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=WX/qJVOnuFAI2moIv6OF4lqewvc4NdGxWkCdYilIaS4=;
+        b=dIr051qis+9TSdlqlxkVlLOVanqfmbLXpUhEciivJ12h+asK6W8Lb8B1xQ5SOFx0ed
+         hBWa5vXbV5b1XLr52yfjhKR12+utTBNZO8Ms6rSiPQtoDnQJGUQfsRj1N9qnjRpMnSko
+         tbJ3maAALuUqpegMFAmcYb5xUkx8ZNp9IKaEg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=azek7wC6yuM/sM3dWu6T7jqtDYysj0o8NC23ukK8+Xo=;
-        b=rYU2eQ8y44/X864nwt3bTdmLkodMEjIedJ7dziFlYWbDaX5Uuyl8hXs21T0jSQkhKw
-         a46LpCgX2hfCpsi7JGtgpOIkNSEa/G3GGxM9haTqlb+JwGBTobkIeuqZlcSlxUAx4bnX
-         RqirB28LvGjd1RPwahUDlD1XV1eP6OWGVPgmSp0/SfUdLOrrMPzyFIT4oMGtXUrbJgh9
-         FBmSgFAg/OCxIWiZ4mgConECQUFZp/r/9pE+Uldw/kjSto6XI8aBxe8xTzOMupv186ys
-         58BX2mGvMGzsH/S8poyuKS7nOXcakO3abLBWtCkgP+BApDLvjLIBfclvZ92pxwS+OgJo
-         jTJg==
-X-Gm-Message-State: AOAM530h9BIwI3/dO9hfhWvB69xLgkEkUuQsZzGFerQcFF2Q82ypHdJq
-        L8j1qc5KUkqc3HdG1voptUc2RNPrNSN+RqRUE4o=
-X-Google-Smtp-Source: ABdhPJyAXjgRAxLCTvyJfZ51e3JOTUz+HoNsRK0NGqLn3owFT54FaMd6xNAmyQrAMVz8RpRI/8HgHFLRiduOxsLHH6w=
-X-Received: by 2002:a25:c083:: with SMTP id c125mr2857848ybf.331.1629406362921;
- Thu, 19 Aug 2021 13:52:42 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=WX/qJVOnuFAI2moIv6OF4lqewvc4NdGxWkCdYilIaS4=;
+        b=dOG4UCuayUgzLjhETH1wSNvsrwuZ9gxv9Ry6wzyqJdGEq1ERVslzDCGZtFSr2z++nw
+         7gp43RJmR2wNcoMAy9xkCvTDzeeSZwxfn2webiccAYb+VlPB60hN2flIz5FXpgEoZaKB
+         QzJy12lMk9nUE/US0rZw9q2uK50WMUSpmoxkFu+lxDwRHNqPwv8UTBHLfuLCc2/QClx0
+         gshxbWDml2HraLDf+UODDIk1JunS0Zg5nFY+zXubrHwHXUdbdYBeiM/s8Yjqz3Ri8ymd
+         VMV/w9YIeoNtJIEatR1BVqj3ydoJ+sc8Igf3StHbM0AcFgEE+BUVMnwFgge+N/Z6lhrY
+         X1YA==
+X-Gm-Message-State: AOAM532LYRpvyzYvbBUVWm7Sto0CqRwN9cJSMeKc7CnP1/CudxOFnmek
+        2NUNadBchZSs4i5aRsGTjDdSqA==
+X-Google-Smtp-Source: ABdhPJydtoDgmtfFU7iCvzmfD+6LAiNa/sBr8PkQ4fFuCRed3yo4/Qn+wZAYqYuVMFMYpSUN+dNGhA==
+X-Received: by 2002:aa7:8e56:0:b029:3cd:c2ec:6c1c with SMTP id d22-20020aa78e560000b02903cdc2ec6c1cmr16390211pfr.80.1629412788706;
+        Thu, 19 Aug 2021 15:39:48 -0700 (PDT)
+Received: from localhost ([2001:4479:e000:e400:3a83:f47e:d5a3:378a])
+        by smtp.gmail.com with ESMTPSA id x69sm4639869pfc.59.2021.08.19.15.39.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Aug 2021 15:39:48 -0700 (PDT)
+From:   Daniel Axtens <dja@axtens.net>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Paul Mackerras <paulus@ozlabs.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Neuling <mikey@neuling.org>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        kernel-janitors@vger.kernel.org, stable@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] powerpc: kvm: remove obsolete and unneeded select
+In-Reply-To: <20210819113954.17515-2-lukas.bulwahn@gmail.com>
+References: <20210819113954.17515-1-lukas.bulwahn@gmail.com>
+ <20210819113954.17515-2-lukas.bulwahn@gmail.com>
+Date:   Fri, 20 Aug 2021 08:39:45 +1000
+Message-ID: <87sfz59hzi.fsf@dja-thinkpad.axtens.net>
 MIME-Version: 1.0
-References: <20210730100710.27405-1-colin.king@canonical.com>
-In-Reply-To: <20210730100710.27405-1-colin.king@canonical.com>
-From:   Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Date:   Thu, 19 Aug 2021 21:52:07 +0100
-Message-ID: <CADVatmOudaqZBr+cX_AXwKmDRd2LRTe=C=_bavEki0fdhWkADg@mail.gmail.com>
-Subject: Re: [PATCH] parport: remove non-zero check on count
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     kernel-janitors <kernel-janitors@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Colin King <colin.king@canonical.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Jul 30, 2021 at 11:07 AM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The check for count appears to be incorrect since a non-zero count
-> check occurs a couple of statements earlier. Currently the check is
-> always false and the dev->port->irq != PARPORT_IRQ_NONE part of the
-> check is never tested and the if statement is dead-code. Fix this
-> by removing the check on count.
->
-> Note that this code is pre-git history, so I can't find a sha for
-> it.
->
-> Addresses-Coverity: ("Logically dead code")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Hi Lukas,
 
-Acked-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+> diff --git a/arch/powerpc/kvm/Kconfig b/arch/powerpc/kvm/Kconfig
+> index e45644657d49..ff581d70f20c 100644
+> --- a/arch/powerpc/kvm/Kconfig
+> +++ b/arch/powerpc/kvm/Kconfig
+> @@ -38,7 +38,6 @@ config KVM_BOOK3S_32_HANDLER
+>  config KVM_BOOK3S_64_HANDLER
+>  	bool
+>  	select KVM_BOOK3S_HANDLER
+> -	select PPC_DAWR_FORCE_ENABLE
 
-Greg, can you please take it through your tree..
-I think you might not have it in your queue as you were not in the
-original recipient list, if so, I can send it after adding my Ack to
-it.
+I looked at some of the history here. It looks like this select was left
+over from an earlier version of the patch series that added PPC_DAWR: v2
+of the series has a new symbol PPC_DAWR_FORCE_ENABLE but by version 4
+that new symbol had disappeared but the select had not.
 
--- 
-Regards
-Sudip
+v2: https://lore.kernel.org/linuxppc-dev/20190513071703.25243-1-mikey@neuling.org/
+v5: https://lore.kernel.org/linuxppc-dev/20190604030037.9424-2-mikey@neuling.org/
+
+The rest of the patch reasoning makes sense to me: DAWR support will be
+selected anyway by virtue of PPC64->PPC_DAWR so there's no need to try
+to select it again anyway.
+
+Reviewed-by: Daniel Axtens <dja@axtens.net>
+
+Kind regards,
+Daniel
+
+>  
+>  config KVM_BOOK3S_PR_POSSIBLE
+>  	bool
+> -- 
+> 2.26.2
