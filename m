@@ -2,83 +2,96 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C26DC432BE
-	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 20:48:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2F65C4338F
+	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 20:52:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DC77E610D2
-	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 20:48:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CEBD6610A5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 20:52:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235375AbhHSUsu (ORCPT
+        id S235809AbhHSUxU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 19 Aug 2021 16:48:50 -0400
-Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:51236 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235074AbhHSUst (ORCPT
+        Thu, 19 Aug 2021 16:53:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48652 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235771AbhHSUxU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 19 Aug 2021 16:48:49 -0400
-Received: from pop-os.home ([90.126.253.178])
-        by mwinf5d33 with ME
-        id jYoA250083riaq203YoA3d; Thu, 19 Aug 2021 22:48:10 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 19 Aug 2021 22:48:10 +0200
-X-ME-IP: 90.126.253.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     mans@mansr.com, wsa@kernel.org
-Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] i2c: xlr: Fix a resource leak in the error handling path of 'xlr_i2c_probe()'
-Date:   Thu, 19 Aug 2021 22:48:08 +0200
-Message-Id: <e928fd285b37599e1f6648d0b963de8ed7773166.1629405992.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Thu, 19 Aug 2021 16:53:20 -0400
+Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AED73C061756;
+        Thu, 19 Aug 2021 13:52:43 -0700 (PDT)
+Received: by mail-yb1-xb32.google.com with SMTP id m193so14711263ybf.9;
+        Thu, 19 Aug 2021 13:52:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=azek7wC6yuM/sM3dWu6T7jqtDYysj0o8NC23ukK8+Xo=;
+        b=BMvVa5Nid54c33zqHeYmI6Jrj9RjtFVyUeC5gXyoBfW4SAIEL3n4RV0n48j0NPVrLl
+         9lTQw+U68bTeXb2qtn/x9bz40g28oICv/0kTLk8zRJ2PQ/MaGhvfGgOP0Tf7BTpZLGzV
+         9XSsD6ihtax+xY6hSnT7OYtiJx/ijHs3M8WYClgOlC4mfLdsy2fmL7yJZq07F0fVlA/Z
+         +GLt4ekvXeM6aHd4B4XCULlMG+Cf4Z7IuDXvwl0hwLjHQdSf3g8c8CW2KV086yoFCds/
+         GN11zG7pT9ibby3SbSIUuwT0v1m0nNo9Bb8ueW4MsZIbOrmEfRTGaJfmJrCVyJHtZOXr
+         4nPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=azek7wC6yuM/sM3dWu6T7jqtDYysj0o8NC23ukK8+Xo=;
+        b=rYU2eQ8y44/X864nwt3bTdmLkodMEjIedJ7dziFlYWbDaX5Uuyl8hXs21T0jSQkhKw
+         a46LpCgX2hfCpsi7JGtgpOIkNSEa/G3GGxM9haTqlb+JwGBTobkIeuqZlcSlxUAx4bnX
+         RqirB28LvGjd1RPwahUDlD1XV1eP6OWGVPgmSp0/SfUdLOrrMPzyFIT4oMGtXUrbJgh9
+         FBmSgFAg/OCxIWiZ4mgConECQUFZp/r/9pE+Uldw/kjSto6XI8aBxe8xTzOMupv186ys
+         58BX2mGvMGzsH/S8poyuKS7nOXcakO3abLBWtCkgP+BApDLvjLIBfclvZ92pxwS+OgJo
+         jTJg==
+X-Gm-Message-State: AOAM530h9BIwI3/dO9hfhWvB69xLgkEkUuQsZzGFerQcFF2Q82ypHdJq
+        L8j1qc5KUkqc3HdG1voptUc2RNPrNSN+RqRUE4o=
+X-Google-Smtp-Source: ABdhPJyAXjgRAxLCTvyJfZ51e3JOTUz+HoNsRK0NGqLn3owFT54FaMd6xNAmyQrAMVz8RpRI/8HgHFLRiduOxsLHH6w=
+X-Received: by 2002:a25:c083:: with SMTP id c125mr2857848ybf.331.1629406362921;
+ Thu, 19 Aug 2021 13:52:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210730100710.27405-1-colin.king@canonical.com>
+In-Reply-To: <20210730100710.27405-1-colin.king@canonical.com>
+From:   Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Date:   Thu, 19 Aug 2021 21:52:07 +0100
+Message-ID: <CADVatmOudaqZBr+cX_AXwKmDRd2LRTe=C=_bavEki0fdhWkADg@mail.gmail.com>
+Subject: Re: [PATCH] parport: remove non-zero check on count
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     kernel-janitors <kernel-janitors@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Colin King <colin.king@canonical.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-A successful 'clk_prepare()' call should be balanced by a corresponding
-'clk_unprepare()' call in the error handling path of the probe, as already
-done in the remove function.
+On Fri, Jul 30, 2021 at 11:07 AM Colin King <colin.king@canonical.com> wrote:
+>
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> The check for count appears to be incorrect since a non-zero count
+> check occurs a couple of statements earlier. Currently the check is
+> always false and the dev->port->irq != PARPORT_IRQ_NONE part of the
+> check is never tested and the if statement is dead-code. Fix this
+> by removing the check on count.
+>
+> Note that this code is pre-git history, so I can't find a sha for
+> it.
+>
+> Addresses-Coverity: ("Logically dead code")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-More specifically, 'clk_prepare_enable()' is used, but 'clk_disable()' is
-also already called. So just the unprepare step has still to be done.
+Acked-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 
-Update the error handling path accordingly.
+Greg, can you please take it through your tree..
+I think you might not have it in your queue as you were not in the
+original recipient list, if so, I can send it after adding my Ack to
+it.
 
-Fixes: 75d31c2372e4 ("i2c: xlr: add support for Sigma Designs controller variant")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/i2c/busses/i2c-xlr.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/i2c/busses/i2c-xlr.c b/drivers/i2c/busses/i2c-xlr.c
-index 126d1393e548..9ce20652d494 100644
---- a/drivers/i2c/busses/i2c-xlr.c
-+++ b/drivers/i2c/busses/i2c-xlr.c
-@@ -431,11 +431,15 @@ static int xlr_i2c_probe(struct platform_device *pdev)
- 	i2c_set_adapdata(&priv->adap, priv);
- 	ret = i2c_add_numbered_adapter(&priv->adap);
- 	if (ret < 0)
--		return ret;
-+		goto err_unprepare_clk;
- 
- 	platform_set_drvdata(pdev, priv);
- 	dev_info(&priv->adap.dev, "Added I2C Bus.\n");
- 	return 0;
-+
-+err_unprepare_clk:
-+	clk_unprepare(clk);
-+	return ret;
- }
- 
- static int xlr_i2c_remove(struct platform_device *pdev)
 -- 
-2.30.2
-
+Regards
+Sudip
