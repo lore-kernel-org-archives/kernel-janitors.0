@@ -5,55 +5,47 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E044BC4338F
-	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 12:55:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D1FEC4320A
+	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 13:32:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C43226023B
-	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 12:55:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 11DC5610A1
+	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 13:32:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239184AbhHSM4b (ORCPT
+        id S240009AbhHSNcd (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 19 Aug 2021 08:56:31 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:39300
+        Thu, 19 Aug 2021 09:32:33 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:41934
         "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235893AbhHSM4a (ORCPT
+        by vger.kernel.org with ESMTP id S230136AbhHSNcd (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 19 Aug 2021 08:56:30 -0400
+        Thu, 19 Aug 2021 09:32:33 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 26A773F110;
-        Thu, 19 Aug 2021 12:55:53 +0000 (UTC)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id DA5F23F044;
+        Thu, 19 Aug 2021 13:31:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1629377753;
-        bh=R7cOArTeMf4Z+13kjZUeEM64BDVv4YsvBwyzgpNCHT4=;
+        s=20210705; t=1629379915;
+        bh=QNrlCPUm5xY2lORj8En3iXz+Yo+rOOaxovjyl8qzhhU=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=Ha/DTwuhAetyPC9+ngOydDWPtgLNhFqPCxIuYlyn96w+FBrrwWPtlg6+3iJ5YCP/r
-         oRl0HaWFPpinfRc0FL8j08IVBg3jpgIF0IsAkfjXruVcLeC1LLjtvSmupRu4yPxXHw
-         bCJmzqdQlrE2MuczaQFQTAcS3BTFP+uDB46rnVUbPfNRecIAuRRKJ544dWG31rgtN7
-         gjKCnPGiv7jBOa4HCbdGVi8Y1eoXIOmCiy2PkbIZvOYC2c3I3ztD2K0Kz+bf8C75rh
-         BPtyRS0CIPZ+Q3CxXmzOuRScGWuO/HZ/G1Ds31jIL5cFG9/3u2b6Du0WH2CprE/9bX
-         q8exiF4MWamDA==
+        b=onGuGVPIoYamLAqrNVuuvH/3eeZxDBEYyN/NCvX/e2/oJOmv8l1sTnNRA7+91I8MT
+         PF5kQYDC1wAtggkfg31PFUkPecTEfnz0V6HZG+2V9vrbiqsuy7xICtAZfvW65p7Ym+
+         12lNK7I8Gqa6kVgRjjbwoCKONKGCOBgb42K0k7wRZaNbMkJA+2Px/PUnLedKTxHNxi
+         KSQEp8cY7pK/er4i4aQY9zxqq0ktAqspCX87W0CovthZhY9UHTzUPkjx7X7epACfsm
+         wnO76210RGTt1ZHgHQ381huhBQXFruiagzVz/gTaQuVbcJq3pWjw51PTvRDTu8eyBj
+         IpJqnhl0t1AOQ==
 From:   Colin King <colin.king@canonical.com>
-To:     Arend van Spriel <aspriel@gmail.com>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Chi-hsien Lin <chi-hsien.lin@infineon.com>,
-        Wright Feng <wright.feng@infineon.com>,
-        Chung-hsien Hsu <chung-hsien.hsu@infineon.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        linux-wireless@vger.kernel.org,
-        brcm80211-dev-list.pdl@broadcom.com,
-        SHA-cyfmac-dev-list@infineon.com, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org
-Subject: [PATCH] brcmsmac: make array addr static const, makes object smaller
-Date:   Thu, 19 Aug 2021 13:55:52 +0100
-Message-Id: <20210819125552.8888-1-colin.king@canonical.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-kernel@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [PATCH] memory: tegra: make the array list static const, makes object smaller
+Date:   Thu, 19 Aug 2021 14:31:55 +0100
+Message-Id: <20210819133155.10441-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -64,37 +56,37 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Don't populate the array addr on the stack but instead it
-static const. Makes the object code smaller by 79 bytes:
+Don't populate the array list on the stack but instead it
+static const. Makes the object code smaller by 110 bytes:
 
 Before:
-   text   data   bss     dec    hex filename
- 176015  54652   128  230795  3858b .../broadcom/brcm80211/brcmsmac/main.o
+   text    data     bss     dec     hex filename
+  37713   21992      64   59769    e979 .../tegra/tegra210-emc-cc-r21021.o
 
 After:
-   text   data   bss     dec    hex filename
- 175872  54716   128  230716  3853c .../broadcom/brcm80211/brcmsmac/main.o
+   text    data     bss     dec     hex filename
+  37539   22056      64   59659    e90b .../tegra/tegra210-emc-cc-r21021.o
 
 (gcc version 10.3.0)
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/wireless/broadcom/brcm80211/brcmsmac/main.c | 2 +-
+ drivers/memory/tegra/tegra210-emc-cc-r21021.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/main.c b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/main.c
-index 26de1bd7fee9..8ddfc3d06687 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/main.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/main.c
-@@ -704,7 +704,7 @@ static void brcms_c_write_inits(struct brcms_hardware *wlc_hw,
- static void brcms_c_write_mhf(struct brcms_hardware *wlc_hw, u16 *mhfs)
+diff --git a/drivers/memory/tegra/tegra210-emc-cc-r21021.c b/drivers/memory/tegra/tegra210-emc-cc-r21021.c
+index 0ebfa8eccf0c..550d6b2dda30 100644
+--- a/drivers/memory/tegra/tegra210-emc-cc-r21021.c
++++ b/drivers/memory/tegra/tegra210-emc-cc-r21021.c
+@@ -478,7 +478,7 @@ static u32 periodic_compensation_handler(struct tegra210_emc *emc, u32 type,
+ static u32 tegra210_emc_r21021_periodic_compensation(struct tegra210_emc *emc)
  {
- 	u8 idx;
--	u16 addr[] = {
-+	static const u16 addr[] = {
- 		M_HOST_FLAGS1, M_HOST_FLAGS2, M_HOST_FLAGS3, M_HOST_FLAGS4,
- 		M_HOST_FLAGS5
- 	};
+ 	u32 emc_cfg, emc_cfg_o, emc_cfg_update, del, value;
+-	u32 list[] = {
++	static const u32 list[] = {
+ 		EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_0,
+ 		EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_1,
+ 		EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_2,
 -- 
 2.32.0
 
