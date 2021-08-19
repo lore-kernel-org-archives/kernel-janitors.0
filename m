@@ -2,79 +2,94 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0734CC4320A
-	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 19:30:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82E29C4338F
+	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 20:05:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E8A096108D
-	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 19:30:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 621E7610E6
+	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 20:05:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234511AbhHSTan (ORCPT
+        id S232021AbhHSUGR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 19 Aug 2021 15:30:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58182 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234085AbhHSTan (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 19 Aug 2021 15:30:43 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 9CA84610D2;
-        Thu, 19 Aug 2021 19:30:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1629401406;
-        bh=bEx6LXRrdT/hyT1DNn/TgFlDeBlztpjIpQNw6xGTcwM=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=unZQeAXtOhwfvGcyQVhVkZ0n2eoL1s3zwnduB3m4/PR1d7Unb0ryHFnVbLtcK6mMV
-         3QO39IWeiHOtWIV2Lx1xCQZROMmYH0hvjJGLqoTVijsMgdtnAsUrVMs5mxOftyJw2C
-         lSAkKd9TsGdZpJTzzpCDnCEn/f+u38SVGIFjIGJRc2aF+/ryF04+VxjY4Ct4DRy+jP
-         PofpXzo+aUHJGMPKm3ZUUidbhLaY8bTWcRlNd19tjODH2QQ2fsCxy35CYzyahIkaRd
-         ZSPv0sb3gok4bn3/n9ovGSq89XF1tdjgUVdZ0qCfrppcGmLZe2R8HVo1vclQHu+gWG
-         46VEugkfyU4tA==
-Content-Type: text/plain; charset="utf-8"
+        Thu, 19 Aug 2021 16:06:17 -0400
+Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:38641 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230506AbhHSUGQ (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 19 Aug 2021 16:06:16 -0400
+Received: from pop-os.home ([90.126.253.178])
+        by mwinf5d33 with ME
+        id jY5V2500D3riaq203Y5V99; Thu, 19 Aug 2021 22:05:32 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 19 Aug 2021 22:05:32 +0200
+X-ME-IP: 90.126.253.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     stanimir.varbanov@linaro.org, agross@kernel.org,
+        bjorn.andersson@linaro.org, mchehab@kernel.org,
+        hverkuil-cisco@xs4all.nl, acourbot@chromium.org
+Cc:     linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] media: venus: core: Fix a resource leak in the error handling path of 'venus_probe()'
+Date:   Thu, 19 Aug 2021 22:05:28 +0200
+Message-Id: <ea6bddd4da925fcd3016cdb3fc8d40d2311c55a4.1629403336.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH][next] octeontx2-af: remove redudant second error check on
- variable err
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <162940140660.416.16309844801419100643.git-patchwork-notify@kernel.org>
-Date:   Thu, 19 Aug 2021 19:30:06 +0000
-References: <20210818130927.33895-1-colin.king@canonical.com>
-In-Reply-To: <20210818130927.33895-1-colin.king@canonical.com>
-To:     Colin Ian King <colin.king@canonical.com>
-Cc:     sgoutham@marvell.com, lcherian@marvell.com, gakula@marvell.com,
-        jerinj@marvell.com, sbhatta@marvell.com, davem@davemloft.net,
-        kuba@kernel.org, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+A successful 'of_platform_populate()' call should be balanced by a
+corresponding 'of_platform_depopulate()' call in the error handling path
+of the probe, as already done in the remove function.
 
-This patch was applied to netdev/net-next.git (refs/heads/master):
+A successful 'venus_firmware_init()' call should be balanced by a
+corresponding 'venus_firmware_deinit()' call in the error handling path
+of the probe, as already done in the remove function.
 
-On Wed, 18 Aug 2021 14:09:27 +0100 you wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> A recent change added error checking messages and failed to remove one
-> of the previous error checks. There are now two checks on variable err
-> so the second one is redundant dead code and can be removed.
-> 
-> Addresses-Coverity: ("Logically dead code")
-> Fixes: a83bdada06bf ("octeontx2-af: Add debug messages for failures")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> 
-> [...]
+Update the error handling path accordingly.
 
-Here is the summary with links:
-  - [next] octeontx2-af: remove redudant second error check on variable err
-    https://git.kernel.org/netdev/net-next/c/9e5f10fe577b
+Fixes: f9799fcce4bb ("media: venus: firmware: register separate platform_device for firmware loader")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/media/platform/qcom/venus/core.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+diff --git a/drivers/media/platform/qcom/venus/core.c b/drivers/media/platform/qcom/venus/core.c
+index 91b15842c555..9cb0ab7d1677 100644
+--- a/drivers/media/platform/qcom/venus/core.c
++++ b/drivers/media/platform/qcom/venus/core.c
+@@ -349,11 +349,11 @@ static int venus_probe(struct platform_device *pdev)
+ 
+ 	ret = venus_firmware_init(core);
+ 	if (ret)
+-		goto err_runtime_disable;
++		goto err_of_depopulate;
+ 
+ 	ret = venus_boot(core);
+ 	if (ret)
+-		goto err_runtime_disable;
++		goto err_firmware_deinit;
+ 
+ 	ret = hfi_core_resume(core, true);
+ 	if (ret)
+@@ -385,6 +385,10 @@ static int venus_probe(struct platform_device *pdev)
+ 	v4l2_device_unregister(&core->v4l2_dev);
+ err_venus_shutdown:
+ 	venus_shutdown(core);
++err_firmware_deinit:
++	venus_firmware_deinit(core);
++err_of_depopulate:
++	of_platform_depopulate(dev);
+ err_runtime_disable:
+ 	pm_runtime_put_noidle(dev);
+ 	pm_runtime_set_suspended(dev);
+-- 
+2.30.2
 
