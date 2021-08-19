@@ -2,95 +2,94 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAAF6C4338F
-	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 11:51:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEFC2C432BE
+	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 11:53:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B37A060BD3
-	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 11:51:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 995F060BD3
+	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 11:53:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238314AbhHSLvm (ORCPT
+        id S239029AbhHSLxf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 19 Aug 2021 07:51:42 -0400
-Received: from pegase2.c-s.fr ([93.17.235.10]:54737 "EHLO pegase2.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S238105AbhHSLvl (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 19 Aug 2021 07:51:41 -0400
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-        by localhost (Postfix) with ESMTP id 4Gr34l5TcZz9sVF;
-        Thu, 19 Aug 2021 13:51:03 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-        by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 8ARKzqg-cxod; Thu, 19 Aug 2021 13:51:03 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase2.c-s.fr (Postfix) with ESMTP id 4Gr34l4VMRz9sV3;
-        Thu, 19 Aug 2021 13:51:03 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 3ED028B764;
-        Thu, 19 Aug 2021 13:51:03 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id IQcQ15z_cd96; Thu, 19 Aug 2021 13:51:03 +0200 (CEST)
-Received: from [172.25.230.102] (po15451.idsi0.si.c-s.fr [172.25.230.102])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id E94A48B836;
-        Thu, 19 Aug 2021 13:51:02 +0200 (CEST)
-Subject: Re: [PATCH v2 0/2] Kconfig symbol fixes on powerpc
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Paul Mackerras <paulus@ozlabs.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michael Neuling <mikey@neuling.org>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Cc:     stable@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20210819113954.17515-1-lukas.bulwahn@gmail.com>
-From:   Christophe Leroy <christophe.leroy@csgroup.eu>
-Message-ID: <2784c69e-898d-3a40-a0f7-b7769a57980b@csgroup.eu>
-Date:   Thu, 19 Aug 2021 13:50:57 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        Thu, 19 Aug 2021 07:53:35 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:35100
+        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S238931AbhHSLxc (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 19 Aug 2021 07:53:32 -0400
+Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id B103B40C9E;
+        Thu, 19 Aug 2021 11:52:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1629373973;
+        bh=mkX3WqTYJzJnBaXl1A6JVddRvb9bCbWsb2Y1VU0m9sU=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=nHdXC2snZsKBvplIDZh1wJANkWMmG3V69OrCTxKzs5wC2kOtRXtmQvIqRNbUoBfm6
+         unkPcKnbR/uuvlXm2UIbTZ4R0MgUcpCUM9D/NsNOVVxqqtKdaVPPBX0Nx2QK7f+YMe
+         1e0eFTYCDZke/P2qjJblJjyvGscbEoD7kkhS6hb2WmHHttv4vNaefK25pRdX89DkB5
+         T23KoCV0Yo6qvMpTgcwTIzJo/rP56tnrItaN3XelgUMLu01tIoHgYjOwpNbN1Elv10
+         Rx2yCCz9mwxbTarGw7OtG1crfZYDEYHftmaqTVbb+LOvbdyt7AKfiq0m09oGx2EgHu
+         73s1V6E0uqiGQ==
+From:   Colin King <colin.king@canonical.com>
+To:     Bin Luo <luobin9@huawei.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] hinic: make array speeds static const, makes object smaller
+Date:   Thu, 19 Aug 2021 12:52:53 +0100
+Message-Id: <20210819115253.6324-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-In-Reply-To: <20210819113954.17515-1-lukas.bulwahn@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+Don't populate the array speeds on the stack but instead it
+static const. Makes the object code smaller by 17 bytes:
 
-Le 19/08/2021 à 13:39, Lukas Bulwahn a écrit :
-> Dear powerpc maintainers,
-> 
-> The script ./scripts/checkkconfigsymbols.py warns on invalid references to
-> Kconfig symbols (often, minor typos, name confusions or outdated references).
-> 
-> This patch series addresses all issues reported by
-> ./scripts/checkkconfigsymbols.py in ./drivers/usb/ for Kconfig and Makefile
-> files. Issues in the Kconfig and Makefile files indicate some shortcomings in
-> the overall build definitions, and often are true actionable issues to address.
-> 
-> These issues can be identified and filtered by:
-> 
->    ./scripts/checkkconfigsymbols.py | grep -E "arch/powerpc/.*(Kconfig|Makefile)" -B 1 -A 1
-> 
-> After applying this patch series on linux-next (next-20210817), the command
-> above yields just two false positives (SHELL, r13) due to tool shortcomings.
-> 
-> As these two patches are fixes, please consider if they are suitable for
-> backporting to stable.
-> 
-> v1 -> v2:
->    Followed Christophe Leroy's comment and drop the obsolete select.
-> 
+Before:
+   text    data     bss     dec     hex filename
+  39987   14200      64   54251    d3eb .../huawei/hinic/hinic_sriov.o
 
+After:
+   text    data     bss     dec     hex filename
+  39906   14264      64   54234    d3da .../huawei/hinic/hinic_sriov.o
 
-No need to change anything now, but as your two patches are completely independent, you could have 
-submitted them separately. That would have avoided to resend both when changing the first one only.
+(gcc version 10.3.0)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/huawei/hinic/hinic_sriov.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/huawei/hinic/hinic_sriov.c b/drivers/net/ethernet/huawei/hinic/hinic_sriov.c
+index f8a26459ff65..a78c398bf5b2 100644
+--- a/drivers/net/ethernet/huawei/hinic/hinic_sriov.c
++++ b/drivers/net/ethernet/huawei/hinic/hinic_sriov.c
+@@ -836,8 +836,10 @@ int hinic_ndo_set_vf_trust(struct net_device *netdev, int vf, bool setting)
+ int hinic_ndo_set_vf_bw(struct net_device *netdev,
+ 			int vf, int min_tx_rate, int max_tx_rate)
+ {
+-	u32 speeds[] = {SPEED_10, SPEED_100, SPEED_1000, SPEED_10000,
+-			SPEED_25000, SPEED_40000, SPEED_100000};
++	static const u32 speeds[] = {
++		SPEED_10, SPEED_100, SPEED_1000, SPEED_10000,
++		SPEED_25000, SPEED_40000, SPEED_100000
++	};
+ 	struct hinic_dev *nic_dev = netdev_priv(netdev);
+ 	struct hinic_port_cap port_cap = { 0 };
+ 	enum hinic_port_link_state link_state;
+-- 
+2.32.0
+
