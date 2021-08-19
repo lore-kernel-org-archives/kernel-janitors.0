@@ -2,77 +2,112 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A039C4338F
-	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 07:55:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D25C6C4320A
+	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 09:32:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1884061139
-	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 07:55:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B66DF60240
+	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 09:32:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236826AbhHSHzx (ORCPT
+        id S237594AbhHSJdG (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 19 Aug 2021 03:55:53 -0400
-Received: from szxga03-in.huawei.com ([45.249.212.189]:14276 "EHLO
-        szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229927AbhHSHzw (ORCPT
+        Thu, 19 Aug 2021 05:33:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58250 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229745AbhHSJdG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 19 Aug 2021 03:55:52 -0400
-Received: from dggeml759-chm.china.huawei.com (unknown [172.30.72.53])
-        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4GqxrT6VDlz80tY;
-        Thu, 19 Aug 2021 15:55:05 +0800 (CST)
-Received: from localhost.localdomain (10.175.102.38) by
- dggeml759-chm.china.huawei.com (10.1.199.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2176.2; Thu, 19 Aug 2021 15:55:14 +0800
-From:   Wei Yongjun <weiyongjun1@huawei.com>
-To:     <weiyongjun1@huawei.com>, Kishon Vijay Abraham I <kishon@ti.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-CC:     <linux-pci@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH -next] PCI: endpoint: Fix missing unlock on error in pci_epf_add_vepf()
-Date:   Thu, 19 Aug 2021 08:06:55 +0000
-Message-ID: <20210819080655.316468-1-weiyongjun1@huawei.com>
-X-Mailer: git-send-email 2.25.1
+        Thu, 19 Aug 2021 05:33:06 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDE78C061575;
+        Thu, 19 Aug 2021 02:32:29 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id h13so8093073wrp.1;
+        Thu, 19 Aug 2021 02:32:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jmf3umRfv4KMZ4uQ33/nDRLk5ExaW9fT/xorODYlDPc=;
+        b=enn9Mp7+BHj8C9UfShybnnOLllZFUZKmPD3lFyG54k9reTcqpk5AkxO9UJohwcucyj
+         iwQTIO2npa3wA1k0iA2wE7V6z7SL4ojVklZY5i3FEqRvn4HUvKcbQ+iVNkQcHlP7P8nr
+         dXs64snQ0/F7klMWbgLLpuhDGlDvVjRT9uF99TOej9/zM8aB3aYGTX9Hk99Aq3NgP67C
+         pvBBzhwuDuAw+apun2yEkKhFWNpwf6PX6pShYpQQ3XwfqIQk6/Ctee1Vw+Ufu54fgaqN
+         D2xY7doZWziyJqOA9Jdc0P2uVWDFEqq5lt2ctpWfR9hckwMDAbkGL8XMJ/LOJGqy4Wui
+         AlYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jmf3umRfv4KMZ4uQ33/nDRLk5ExaW9fT/xorODYlDPc=;
+        b=ZBROK+rI2aIW4X1H5M0xDyck1VXOIEQfGWbFZTokqutDoZ5g3reP/lzq0zUEy1dC1S
+         gplRn+AXQCipKw2ansqISGmtDuMMBQtR37aO98exobECzXcqNfFJnpmKqtWLeKvdFlFX
+         q7uYqr5AxMrsjD2woFUP6Dz8Dqx3ppafj9dU/YiOLC122GSxfB6x20nRERhCCd7IT+CA
+         cid5EIbZHMiX9uJ5wAOF1vCm5AxzlhOkFEKdIcUWQiks85TwuzXSiqqx0ltaqdTDvnOy
+         OFCVUwWp/pLUM4rs33FAypUk0H4brH+rjrLEjPrbDdOWzGhs09qNeUiJj3YUOyJEucZ0
+         TrNw==
+X-Gm-Message-State: AOAM531AZKqioJNkjxFBUWrKIBUV2MfEh5LJbo9qLJfBI1z2xjv/9prj
+        Tw/Xf3aGPhOm05TZjBWuv9Y=
+X-Google-Smtp-Source: ABdhPJyWWlLboikpd2then9nHSZfdRg9YfDbpOedyAGwGxARsjMptNU5YHc3mcTz52AsxgCxk/sorw==
+X-Received: by 2002:adf:fa11:: with SMTP id m17mr2592459wrr.323.1629365548547;
+        Thu, 19 Aug 2021 02:32:28 -0700 (PDT)
+Received: from localhost.localdomain (arl-84-90-178-246.netvisao.pt. [84.90.178.246])
+        by smtp.gmail.com with ESMTPSA id h11sm8485061wmc.23.2021.08.19.02.32.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Aug 2021 02:32:28 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Paul Mackerras <paulus@ozlabs.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Neuling <mikey@neuling.org>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Cc:     stable@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH 0/2] Kconfig symbol fixes on powerpc
+Date:   Thu, 19 Aug 2021 11:32:24 +0200
+Message-Id: <20210819093226.13955-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.102.38]
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggeml759-chm.china.huawei.com (10.1.199.138)
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Add the missing unlock before return from function pci_epf_add_vepf()
-in the error handling case.
+Dear powerpc maintainers,
 
-Fixes: b64215ff2b5e ("PCI: endpoint: Add support to add virtual function in endpoint core")
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/pci/endpoint/pci-epf-core.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+The script ./scripts/checkkconfigsymbols.py warns on invalid references to
+Kconfig symbols (often, minor typos, name confusions or outdated references).
 
-diff --git a/drivers/pci/endpoint/pci-epf-core.c b/drivers/pci/endpoint/pci-epf-core.c
-index ec286ee5d04c..8aea16380870 100644
---- a/drivers/pci/endpoint/pci-epf-core.c
-+++ b/drivers/pci/endpoint/pci-epf-core.c
-@@ -200,8 +200,10 @@ int pci_epf_add_vepf(struct pci_epf *epf_pf, struct pci_epf *epf_vf)
- 	mutex_lock(&epf_pf->lock);
- 	vfunc_no = find_first_zero_bit(&epf_pf->vfunction_num_map,
- 				       BITS_PER_LONG);
--	if (vfunc_no >= BITS_PER_LONG)
-+	if (vfunc_no >= BITS_PER_LONG) {
-+		mutex_unlock(&epf_pf->lock);
- 		return -EINVAL;
-+	}
- 
- 	set_bit(vfunc_no, &epf_pf->vfunction_num_map);
- 	epf_vf->vfunc_no = vfunc_no;
+This patch series addresses all issues reported by
+./scripts/checkkconfigsymbols.py in ./drivers/usb/ for Kconfig and Makefile
+files. Issues in the Kconfig and Makefile files indicate some shortcomings in
+the overall build definitions, and often are true actionable issues to address.
+
+These issues can be identified and filtered by:
+
+  ./scripts/checkkconfigsymbols.py | grep -E "arch/powerpc/.*(Kconfig|Makefile)" -B 1 -A 1
+
+After applying this patch series on linux-next (next-20210817), the command
+above yields just two false positives (SHELL, r13) due to tool shortcomings.
+
+As these two patches are fixes, please consider if they are suitable for
+backporting to stable.
+
+
+Lukas
+
+Lukas Bulwahn (2):
+  powerpc: kvm: rectify selection to PPC_DAWR
+  powerpc: rectify selection to ARCH_ENABLE_SPLIT_PMD_PTLOCK
+
+ arch/powerpc/kvm/Kconfig               | 2 +-
+ arch/powerpc/platforms/Kconfig.cputype | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+-- 
+2.26.2
 
