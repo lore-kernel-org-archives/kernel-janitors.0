@@ -2,95 +2,79 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB550C432BE
-	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 19:22:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0734CC4320A
+	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 19:30:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9295760F39
-	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 19:22:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8A096108D
+	for <kernel-janitors@archiver.kernel.org>; Thu, 19 Aug 2021 19:30:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234780AbhHSTXO (ORCPT
+        id S234511AbhHSTan (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 19 Aug 2021 15:23:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56932 "EHLO mail.kernel.org"
+        Thu, 19 Aug 2021 15:30:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58182 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234706AbhHSTXN (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 19 Aug 2021 15:23:13 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 0E119610A0;
-        Thu, 19 Aug 2021 19:22:35 +0000 (UTC)
+        id S234085AbhHSTan (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 19 Aug 2021 15:30:43 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPS id 9CA84610D2;
+        Thu, 19 Aug 2021 19:30:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1629400956;
-        bh=hjanTyI3N9VyIXFopjH48AbrKtMvCkP6wd0U5aKuEHM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZPcyTnsUdognRf0uS/SnvDWG8oK3+/BsQay7ExsRyKgzV5TT/XWrL4nga3lwwSKZP
-         fiMnksbLLlbXNaNBna5PlAPzMCZT0iNVOIne7Nb69k4QzxgKvIuqmw/BOx+ojq1TKi
-         gUZhz0fpal7VU8p2B5TKDgX2P26NZFbVS6gCq3xCx9h9PmY6mf/VrKlv3lm2/3h0Ha
-         DiixDjenXQ9I6FxVCQ2bOtHCtdPezRxbP3yXl40ORldbu/lPOpn0UwCQMX0gBmGMxT
-         4qbtMBaRsjtAWdvS18q+0lrS7gSObwSiLY6vbQua5Lf+1k+Pt9eVsZFoHTl4dojPa4
-         CuppptZDsxWlQ==
-From:   Mark Brown <broonie@kernel.org>
-To:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>,
-        Colin King <colin.king@canonical.com>,
-        Takashi Iwai <tiwai@suse.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Liam Girdwood <lgirdwood@gmail.com>
-Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] ASoC: uniphier: make arrays mul and div static const, makes object smaller
-Date:   Thu, 19 Aug 2021 20:22:08 +0100
-Message-Id: <162940023650.48070.9595577624316730352.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20210818151746.38520-1-colin.king@canonical.com>
-References: <20210818151746.38520-1-colin.king@canonical.com>
-MIME-Version: 1.0
+        s=k20201202; t=1629401406;
+        bh=bEx6LXRrdT/hyT1DNn/TgFlDeBlztpjIpQNw6xGTcwM=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=unZQeAXtOhwfvGcyQVhVkZ0n2eoL1s3zwnduB3m4/PR1d7Unb0ryHFnVbLtcK6mMV
+         3QO39IWeiHOtWIV2Lx1xCQZROMmYH0hvjJGLqoTVijsMgdtnAsUrVMs5mxOftyJw2C
+         lSAkKd9TsGdZpJTzzpCDnCEn/f+u38SVGIFjIGJRc2aF+/ryF04+VxjY4Ct4DRy+jP
+         PofpXzo+aUHJGMPKm3ZUUidbhLaY8bTWcRlNd19tjODH2QQ2fsCxy35CYzyahIkaRd
+         ZSPv0sb3gok4bn3/n9ovGSq89XF1tdjgUVdZ0qCfrppcGmLZe2R8HVo1vclQHu+gWG
+         46VEugkfyU4tA==
 Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH][next] octeontx2-af: remove redudant second error check on
+ variable err
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <162940140660.416.16309844801419100643.git-patchwork-notify@kernel.org>
+Date:   Thu, 19 Aug 2021 19:30:06 +0000
+References: <20210818130927.33895-1-colin.king@canonical.com>
+In-Reply-To: <20210818130927.33895-1-colin.king@canonical.com>
+To:     Colin Ian King <colin.king@canonical.com>
+Cc:     sgoutham@marvell.com, lcherian@marvell.com, gakula@marvell.com,
+        jerinj@marvell.com, sbhatta@marvell.com, davem@davemloft.net,
+        kuba@kernel.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 18 Aug 2021 16:17:46 +0100, Colin King wrote:
+Hello:
+
+This patch was applied to netdev/net-next.git (refs/heads/master):
+
+On Wed, 18 Aug 2021 14:09:27 +0100 you wrote:
 > From: Colin Ian King <colin.king@canonical.com>
 > 
-> Don't populate the arrays mul and div on the stack but instead make them
-> static const. Makes the object code smaller by 4 bytes.
+> A recent change added error checking messages and failed to remove one
+> of the previous error checks. There are now two checks on variable err
+> so the second one is redundant dead code and can be removed.
 > 
-> Before:
->    text    data     bss     dec     hex filename
->   16226    4984      64   21274    531a ./sound/soc/uniphier/aio-cpu.o
+> Addresses-Coverity: ("Logically dead code")
+> Fixes: a83bdada06bf ("octeontx2-af: Add debug messages for failures")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > 
 > [...]
 
-Applied to
+Here is the summary with links:
+  - [next] octeontx2-af: remove redudant second error check on variable err
+    https://git.kernel.org/netdev/net-next/c/9e5f10fe577b
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+You are awesome, thank you!
+--
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-Thanks!
 
-[1/1] ASoC: uniphier: make arrays mul and div static const, makes object smaller
-      commit: 5d925d9823aaf18d55fab784bd4ef11f80fe1099
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
