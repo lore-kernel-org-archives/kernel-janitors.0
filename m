@@ -2,116 +2,86 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-18.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49C64C4320A
-	for <kernel-janitors@archiver.kernel.org>; Fri, 20 Aug 2021 12:09:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF51AC432BE
+	for <kernel-janitors@archiver.kernel.org>; Fri, 20 Aug 2021 12:21:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1BF1D60F25
-	for <kernel-janitors@archiver.kernel.org>; Fri, 20 Aug 2021 12:09:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A860A60FE6
+	for <kernel-janitors@archiver.kernel.org>; Fri, 20 Aug 2021 12:21:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240189AbhHTMJk (ORCPT
+        id S240340AbhHTMVu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 20 Aug 2021 08:09:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58618 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239997AbhHTMJf (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 20 Aug 2021 08:09:35 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CBDEC061756;
-        Fri, 20 Aug 2021 05:08:56 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id q11so13949607wrr.9;
-        Fri, 20 Aug 2021 05:08:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=xX8QN7d/XFWwmEHcKdCeyQmpM6FgPCJTtiiYzun1nck=;
-        b=kH4HIamt7oILiZuSApPBXZnoQFLtCuckve57zFz8cX9t/D0ZtrdMIBwOUUKRu8xDcu
-         njkuMtV4HDsQddnx0Md0jZFue2C4wRZc28Nn6lREOdQvA9NGrae7T1R0Vp4rNKVhdink
-         n+YiHQKhsE9YtliitiNoIxoNAeTOEcpqkWhHHfgm+zOul4yKn64rIpqDmHk3ugQvYx5I
-         9P0B1jJPnO48StytsxkNkuzAblt0NlXGxCp7FBMCBD+1e8s1Ju5e/V0v5o0zps693vRZ
-         ZLQT9kuu3qDnoxH3DCdmeD7QVsrql/+pqdnss3D3JbtTPjtkomC91S3sNX9yEbnGjoBB
-         mU8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=xX8QN7d/XFWwmEHcKdCeyQmpM6FgPCJTtiiYzun1nck=;
-        b=mO2PdedQffEt+ZRz7CJ0evn2j9eyuPXljwjpSLmqeHxfXTjU56hW1U7XncIbux7UDq
-         iL2XR2D+bECjX+Aopnksjbn2xHjxNOAW+ZOsjRghFR1ZMzwuG8jG6G5GHP+t0w/G1X9F
-         W9kGOVPXRl5I70H5w+Zpjp5YgvHm8uqlX/GZvmpdRQalPrnv1pw/BE+lLy6JCidnlTZx
-         Cf9FAWjtYGHYi0cHjO6Bahxd+/uzSp9hAGchJkt/Cu7S9qwecJ1EyGAN453SmSRRdI6H
-         s4lkyC89K8ri0YO/S5Gs+V8oaVbP6LhzyW9HvHa0oJhcRghKwD8DTChBF2OI/6ea6nRN
-         sWgQ==
-X-Gm-Message-State: AOAM531bjjV21+nKRMXQWXooX2OA/czz54bik/dpj+zVTradFOWfgI3Y
-        PSJdZcuv0ZDPP7nzHLEKEEc=
-X-Google-Smtp-Source: ABdhPJz15XRXK+GbAJ5vixyecTYGr4CF9zYwwiwYVn4Z+PLL4hgegHZg4GyJe3sRZKAsk76v0pQZJg==
-X-Received: by 2002:adf:ed50:: with SMTP id u16mr9801083wro.174.1629461334826;
-        Fri, 20 Aug 2021 05:08:54 -0700 (PDT)
-Received: from localhost.localdomain (arl-84-90-178-246.netvisao.pt. [84.90.178.246])
-        by smtp.gmail.com with ESMTPSA id u5sm5683785wrr.94.2021.08.20.05.08.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Aug 2021 05:08:54 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-ext4@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] ext4: scope ret locally in ext4_try_to_trim_range()
-Date:   Fri, 20 Aug 2021 14:08:53 +0200
-Message-Id: <20210820120853.23134-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.26.2
+        Fri, 20 Aug 2021 08:21:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34338 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S240526AbhHTMVq (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 20 Aug 2021 08:21:46 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 80C2860FE6;
+        Fri, 20 Aug 2021 12:21:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1629462068;
+        bh=XokPNaEZzCBVxZsGy8OxFfqbu3eCtU/5yezA3ayFAVE=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=fuaiNjmrqEGqEyZ0Td9kJzBEOFdZR1XtiyRqYRBAUQ6cgnwHen8DbRX1WbhDLK4sp
+         fg6t0e/X0bIo6ghCAbHQ4q9OnJheCUDkzcUXuEFzkjQbx7hyOFhjM3lw9N6R5DZwwS
+         RyuV/ZootL/25yfGBgx2+OonSLAzV6yuay+Z3AVYD4HFCoa52ip+zot/jdv5hL4C7p
+         dOGRUroa2bfHf/xlXOQ8bsqpH9YjwyfQh+vNORkDGJKXNiUGtcf6gH/+MOD7xXJ3LJ
+         glioz7ThqLAz2ypXdFWdGdlgCir6VygZ51YKIjoDkcFcvv0Hb+X7dpqXcSR+4mkVDj
+         TO2qcKyKmczKQ==
+Date:   Fri, 20 Aug 2021 14:21:05 +0200 (CEST)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+cc:     benjamin.tissoires@redhat.com, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] HID: logitech-hidpp: Use 'atomic_inc_return' instead of
+ hand-writing it
+In-Reply-To: <1091bc38881086be28d561adca042caba234f3f2.1627054657.git.christophe.jaillet@wanadoo.fr>
+Message-ID: <nycvar.YFH.7.76.2108201420570.15313@cbobk.fhfr.pm>
+References: <1091bc38881086be28d561adca042caba234f3f2.1627054657.git.christophe.jaillet@wanadoo.fr>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-As commit 6920b3913235 ("ext4: add new helper interface
-ext4_try_to_trim_range()") moves some code into the separate function
-ext4_try_to_trim_range(), the use of the variable ret within that
-function is more limited and can be adjusted as well.
+On Fri, 23 Jul 2021, Christophe JAILLET wrote:
 
-Scope the use of the variable ret locally and drop dead assignments.
+> This function logs a warning if the workqueue gets too big.
+> In order to save a few cycles, use 'atomic_inc_return()' instead of an
+> 'atomic_inc()/atomic_read()' sequence.
+> 
+> This axes a line of code and saves a 'atomic_read()' call.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/hid/hid-logitech-hidpp.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/hid/hid-logitech-hidpp.c b/drivers/hid/hid-logitech-hidpp.c
+> index 61635e629469..a7fa35245c2e 100644
+> --- a/drivers/hid/hid-logitech-hidpp.c
+> +++ b/drivers/hid/hid-logitech-hidpp.c
+> @@ -2240,11 +2240,10 @@ static int hidpp_ff_queue_work(struct hidpp_ff_private_data *data, int effect_id
+>  	wd->size = size;
+>  	memcpy(wd->params, params, size);
+>  
+> -	atomic_inc(&data->workqueue_size);
+> +	s = atomic_inc_return(&data->workqueue_size);
+>  	queue_work(data->wq, &wd->work);
+>  
+>  	/* warn about excessive queue size */
+> -	s = atomic_read(&data->workqueue_size);
+>  	if (s >= 20 && s % 20 == 0)
+>  		hid_warn(data->hidpp->hid_dev, "Force feedback command queue contains %d commands, causing substantial delays!", s);
 
-No functional change.
+Applied, thank you.
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- fs/ext4/mballoc.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-index e89db3396203..f4c0a37431cd 100644
---- a/fs/ext4/mballoc.c
-+++ b/fs/ext4/mballoc.c
-@@ -6301,7 +6301,6 @@ __releases(ext4_group_lock_ptr(sb, e4b->bd_group))
- {
- 	ext4_grpblk_t next, count, free_count;
- 	void *bitmap;
--	int ret = 0;
- 
- 	bitmap = e4b->bd_bitmap;
- 	start = (e4b->bd_info->bb_first_free > start) ?
-@@ -6316,10 +6315,9 @@ __releases(ext4_group_lock_ptr(sb, e4b->bd_group))
- 		next = mb_find_next_bit(bitmap, max + 1, start);
- 
- 		if ((next - start) >= minblocks) {
--			ret = ext4_trim_extent(sb, start, next - start, e4b);
-+			int ret = ext4_trim_extent(sb, start, next - start, e4b);
- 			if (ret && ret != -EOPNOTSUPP)
- 				break;
--			ret = 0;
- 			count += next - start;
- 		}
- 		free_count += next - start;
 -- 
-2.26.2
+Jiri Kosina
+SUSE Labs
 
