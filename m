@@ -2,113 +2,91 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6948CC4320A
-	for <kernel-janitors@archiver.kernel.org>; Fri, 20 Aug 2021 18:43:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 762F0C4338F
+	for <kernel-janitors@archiver.kernel.org>; Fri, 20 Aug 2021 18:59:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 43E6A61130
-	for <kernel-janitors@archiver.kernel.org>; Fri, 20 Aug 2021 18:43:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F134610FF
+	for <kernel-janitors@archiver.kernel.org>; Fri, 20 Aug 2021 18:59:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230165AbhHTSoV (ORCPT
+        id S236287AbhHTTAA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 20 Aug 2021 14:44:21 -0400
-Received: from smtp05.smtpout.orange.fr ([80.12.242.127]:21846 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229927AbhHTSoU (ORCPT
+        Fri, 20 Aug 2021 15:00:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41924 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229512AbhHTTAA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 20 Aug 2021 14:44:20 -0400
-Received: from pop-os.home ([90.126.253.178])
-        by mwinf5d10 with ME
-        id jujb250043riaq203ujboP; Fri, 20 Aug 2021 20:43:41 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 20 Aug 2021 20:43:41 +0200
-X-ME-IP: 90.126.253.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     f.fainelli@gmail.com, rjui@broadcom.com, sbranden@broadcom.com,
-        nsaenz@kernel.org, wsa@kernel.org, krzk@kernel.org,
-        stefan.wahren@i2se.com, nh6z@nh6z.net, eric@anholt.net
-Cc:     linux-i2c@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] i2c: bcm2835: Fix the error handling in 'bcm2835_i2c_probe()'
-Date:   Fri, 20 Aug 2021 20:43:33 +0200
-Message-Id: <338008c444af4785a07fb5a402b60225a4964ae9.1629484876.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Fri, 20 Aug 2021 15:00:00 -0400
+Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DC70C061575;
+        Fri, 20 Aug 2021 11:59:22 -0700 (PDT)
+Received: by mail-pj1-x1035.google.com with SMTP id m24-20020a17090a7f98b0290178b1a81700so7905190pjl.4;
+        Fri, 20 Aug 2021 11:59:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=UMgLcGCOIGAExCm8sckl+Lt/uavQl14EGAuUCVTCWy8=;
+        b=gFDrqAlqryS77RGQGNGE7irxi/q3PsUV+9dkWQmYPCAO6HUxVObyLCbfyXaOVcpBjN
+         Q84hh5Q0fsLrreb0F5hmd/rXcaW4CkLBed7+aj2PyWWOAIHyqu6rN7xxf+/s6Kr9mnY/
+         vLG/YPDmt/f2Dwjd6S+r/RxbSDYIYruuiQbKIBEjOJAndLbpm0+OfwVgZ++v/6fyEOEN
+         qInggiO4IlT3NkE3mnlEQ/I5nh5nVoZ8XOc9KGK+ni2tHC3LlBDeXDVx5JTh2GUhklg9
+         2/qMfgGi87l1AqA7mDssiuznvoyADQGpa45YgvB6qrR4MVC8lVbJ46Hl/6gPoW7WHLy3
+         l4IA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=UMgLcGCOIGAExCm8sckl+Lt/uavQl14EGAuUCVTCWy8=;
+        b=qx9g2ZhegwLdT1cmeNHvD8eiIoHM+2CrFEb5Ny8hYVpgEp7AyOLLu+JgA6Fa//kRmJ
+         hzJMVIKOBJ5ljWGDZjDmQ6ntr5czqWZiA37ajq1hRkL9cedaloSlDDP2UDZQoGeF47xR
+         mWLRxPa27wDT550dXXx1JK0uGLNo8PN02pYaJ5JLdMEfXTFz8iNDGEU/hSFSNr4C+nZ7
+         KdvaMw/J9C6VncVfAhnBl0kDZXo0VrzXQvh47LB2ps2Plh89YnE+/volTxQ561FBGqD1
+         4cSYwG6oTl4SxZ5q4RrFacqViv8lx9dvfFYA9TPatFFSEVQzaS7S4+mYZKJYGrTYS/nx
+         g7fQ==
+X-Gm-Message-State: AOAM531TGEZ9p4JdFoMWyTb1/1MKvSMBB67vBIw6mtTJGvOyLD6xbnyA
+        uU4uzP/s5WI1cHWTIJpqAFv7z7+uAb6lsWmo3dQ=
+X-Google-Smtp-Source: ABdhPJwTArERq85qlE2hbN0lMc2U+2dPkQuwCoivAw9VvQvAlZeJ2MT4yqJWMN78Zl68NR8WKALuJYcuHzPIEYK6lYo=
+X-Received: by 2002:a17:90a:4d8d:: with SMTP id m13mr5951574pjh.190.1629485961902;
+ Fri, 20 Aug 2021 11:59:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From:   Tech Zhou <zhouinamerica@gmail.com>
+Date:   Fri, 20 Aug 2021 14:59:11 -0400
+Message-ID: <CAJwUSPsYzRpGkCXXHgqPW25w-rSAoNwRPYmUmbGx=VffThWFyA@mail.gmail.com>
+Subject: [PATCH] Fix spelling error in arch/powerpc/kernel/traps.c
+To:     Karan Tilak Kumar <kartilak@cisco.com>,
+        Sesidhar Baddela <sebaddel@cisco.com>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Some resource should be released if an error occurs in
-'bcm2835_i2c_probe()'.
-Add an error handling path and the needed 'clk_disable_unprepare()' and
-'clk_rate_exclusive_put()' calls.
+I found a spelling error in arch/powerpc/kernel/traps.c. Please let me
+know if you have any concerns / questions. This is my first patch!
 
-While at it, rework the bottom of the function to use this newly added
-error handling path and have an explicit and more standard "return 0;" at
-the end of the normal path.
-
-Fixes: bebff81fb8b9 ("i2c: bcm2835: Model Divider in CCF")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Changjun Zhou <zhouinamerica@gmail.com>
 ---
- drivers/i2c/busses/i2c-bcm2835.c | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
+ arch/powerpc/kernel/traps.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/i2c/busses/i2c-bcm2835.c b/drivers/i2c/busses/i2c-bcm2835.c
-index 37443edbf754..a2f19b4c2402 100644
---- a/drivers/i2c/busses/i2c-bcm2835.c
-+++ b/drivers/i2c/busses/i2c-bcm2835.c
-@@ -449,13 +449,14 @@ static int bcm2835_i2c_probe(struct platform_device *pdev)
- 	ret = clk_prepare_enable(i2c_dev->bus_clk);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Couldn't prepare clock");
--		return ret;
-+		goto err_put_exclusive_rate;
- 	}
- 
- 	irq = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
- 	if (!irq) {
- 		dev_err(&pdev->dev, "No IRQ resource\n");
--		return -ENODEV;
-+		ret = -ENODEV;
-+		goto err_disable_unprepare_clk;
- 	}
- 	i2c_dev->irq = irq->start;
- 
-@@ -463,7 +464,7 @@ static int bcm2835_i2c_probe(struct platform_device *pdev)
- 			  dev_name(&pdev->dev), i2c_dev);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Could not request IRQ\n");
--		return -ENODEV;
-+		goto err_disable_unprepare_clk;
- 	}
- 
- 	adap = &i2c_dev->adapter;
-@@ -481,7 +482,16 @@ static int bcm2835_i2c_probe(struct platform_device *pdev)
- 
- 	ret = i2c_add_adapter(adap);
- 	if (ret)
--		free_irq(i2c_dev->irq, i2c_dev);
-+		goto err_free_irq;
-+
-+	return 0;
-+
-+err_free_irq:
-+	free_irq(i2c_dev->irq, i2c_dev);
-+err_disable_unprepare_clk:
-+	clk_disable_unprepare(i2c_dev->bus_clk);
-+err_put_exclusive_rate:
-+	clk_rate_exclusive_put(i2c_dev->bus_clk);
- 
- 	return ret;
- }
--- 
-2.30.2
-
+diff --git a/arch/powerpc/kernel/traps.c b/arch/powerpc/kernel/traps.c
+index d56254f05e17..7355db219269 100644
+--- a/arch/powerpc/kernel/traps.c
++++ b/arch/powerpc/kernel/traps.c
+@@ -1522,7 +1522,7 @@ static void do_program_check(struct pt_regs *regs)
+         * SIGILL. The subsequent cases all relate to emulating instructions
+         * which we should only do for userspace. We also do not want to enable
+         * interrupts for kernel faults because that might lead to further
+-        * faults, and loose the context of the original exception.
++        * faults, and lose the context of the original exception.
+         */
+        if (!user_mode(regs))
+                goto sigill;
+--
