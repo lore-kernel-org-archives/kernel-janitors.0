@@ -2,46 +2,48 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF51AC432BE
-	for <kernel-janitors@archiver.kernel.org>; Fri, 20 Aug 2021 12:21:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2E6CC432BE
+	for <kernel-janitors@archiver.kernel.org>; Fri, 20 Aug 2021 12:54:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A860A60FE6
-	for <kernel-janitors@archiver.kernel.org>; Fri, 20 Aug 2021 12:21:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83CBC610FA
+	for <kernel-janitors@archiver.kernel.org>; Fri, 20 Aug 2021 12:54:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240340AbhHTMVu (ORCPT
+        id S240401AbhHTMzC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 20 Aug 2021 08:21:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34338 "EHLO mail.kernel.org"
+        Fri, 20 Aug 2021 08:55:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40912 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S240526AbhHTMVq (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 20 Aug 2021 08:21:46 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 80C2860FE6;
-        Fri, 20 Aug 2021 12:21:07 +0000 (UTC)
+        id S237828AbhHTMzC (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 20 Aug 2021 08:55:02 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id DD5CE60F91;
+        Fri, 20 Aug 2021 12:54:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1629462068;
-        bh=XokPNaEZzCBVxZsGy8OxFfqbu3eCtU/5yezA3ayFAVE=;
+        s=k20201202; t=1629464064;
+        bh=ycRBYGBaMrCVvvELyUF5fqHohvrHAleMx1NJmLwP5zk=;
         h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=fuaiNjmrqEGqEyZ0Td9kJzBEOFdZR1XtiyRqYRBAUQ6cgnwHen8DbRX1WbhDLK4sp
-         fg6t0e/X0bIo6ghCAbHQ4q9OnJheCUDkzcUXuEFzkjQbx7hyOFhjM3lw9N6R5DZwwS
-         RyuV/ZootL/25yfGBgx2+OonSLAzV6yuay+Z3AVYD4HFCoa52ip+zot/jdv5hL4C7p
-         dOGRUroa2bfHf/xlXOQ8bsqpH9YjwyfQh+vNORkDGJKXNiUGtcf6gH/+MOD7xXJ3LJ
-         glioz7ThqLAz2ypXdFWdGdlgCir6VygZ51YKIjoDkcFcvv0Hb+X7dpqXcSR+4mkVDj
-         TO2qcKyKmczKQ==
-Date:   Fri, 20 Aug 2021 14:21:05 +0200 (CEST)
+        b=eHxfpKiooDow4gSee4dRv+oKAMolL0+ff1TDnYFvFUzpZ582b2/MBciohGFPdnbxd
+         E3WnJggayHh0jfqm0xkBSik9ENJh8ZfcPh1sYLaySJ2LV+9c1oBw7FZtEVsBNESNuz
+         Iyhvtn5P8+gyM9HKGzLe300WmjfiCzTWO4ywdCnHUF22fQ+ygIAY2zsum6qxvYZ8If
+         CyFEDBM+b2QpwYFhxj+xkoo3jietNET9qlNByWAT172SsAlfbeUV34OP1JaXvLsks/
+         NVjA9tMsyTTX0L3KyuHMmVoKN8VXSzYslOW0P59srIT1l0QX6uL0Qoj/oxk8MznooL
+         pa391NzRbZ7hA==
+Date:   Fri, 20 Aug 2021 14:54:21 +0200 (CEST)
 From:   Jiri Kosina <jikos@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-cc:     benjamin.tissoires@redhat.com, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] HID: logitech-hidpp: Use 'atomic_inc_return' instead of
- hand-writing it
-In-Reply-To: <1091bc38881086be28d561adca042caba234f3f2.1627054657.git.christophe.jaillet@wanadoo.fr>
-Message-ID: <nycvar.YFH.7.76.2108201420570.15313@cbobk.fhfr.pm>
-References: <1091bc38881086be28d561adca042caba234f3f2.1627054657.git.christophe.jaillet@wanadoo.fr>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+cc:     Dario Pagani <dario.pagani.146@gmail.com>,
+        Kim Kuparinen <kimi.h.kuparinen@gmail.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-input@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] HID: thrustmaster: clean up Makefile and adapt quirks
+In-Reply-To: <20210810102148.9764-1-lukas.bulwahn@gmail.com>
+Message-ID: <nycvar.YFH.7.76.2108201454100.15313@cbobk.fhfr.pm>
+References: <20210810102148.9764-1-lukas.bulwahn@gmail.com>
 User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -49,37 +51,28 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 23 Jul 2021, Christophe JAILLET wrote:
+On Tue, 10 Aug 2021, Lukas Bulwahn wrote:
 
-> This function logs a warning if the workqueue gets too big.
-> In order to save a few cycles, use 'atomic_inc_return()' instead of an
-> 'atomic_inc()/atomic_read()' sequence.
+> Commit c49c33637802 ("HID: support for initialization of some Thrustmaster
+> wheels") messed up the Makefile and quirks during the refactoring of this
+> commit.
 > 
-> This axes a line of code and saves a 'atomic_read()' call.
+> Luckily, ./scripts/checkkconfigsymbols.py warns on non-existing configs:
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/hid/hid-logitech-hidpp.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+> HID_TMINIT
+> Referencing files: drivers/hid/Makefile, drivers/hid/hid-quirks.c
 > 
-> diff --git a/drivers/hid/hid-logitech-hidpp.c b/drivers/hid/hid-logitech-hidpp.c
-> index 61635e629469..a7fa35245c2e 100644
-> --- a/drivers/hid/hid-logitech-hidpp.c
-> +++ b/drivers/hid/hid-logitech-hidpp.c
-> @@ -2240,11 +2240,10 @@ static int hidpp_ff_queue_work(struct hidpp_ff_private_data *data, int effect_id
->  	wd->size = size;
->  	memcpy(wd->params, params, size);
->  
-> -	atomic_inc(&data->workqueue_size);
-> +	s = atomic_inc_return(&data->workqueue_size);
->  	queue_work(data->wq, &wd->work);
->  
->  	/* warn about excessive queue size */
-> -	s = atomic_read(&data->workqueue_size);
->  	if (s >= 20 && s % 20 == 0)
->  		hid_warn(data->hidpp->hid_dev, "Force feedback command queue contains %d commands, causing substantial delays!", s);
+> Following the discussion (see Link), CONFIG_HID_THRUSTMASTER is the
+> intended config for CONFIG_HID_TMINIT and the file hid-tminit.c was
+> actually added as hid-thrustmaster.c.
+> 
+> So, clean up Makefile and adapt quirks to that refactoring.
+> 
+> Fixes: c49c33637802 ("HID: support for initialization of some Thrustmaster wheels")
+> Link: https://lore.kernel.org/linux-input/CAKXUXMx6dByO03f3dX0X5zjvQp0j2AhJBg0vQFDmhZUhtKxRxw@mail.gmail.com/
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-Applied, thank you.
+Applied, thanks Lukas.
 
 -- 
 Jiri Kosina
