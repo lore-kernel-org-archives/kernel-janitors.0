@@ -7,26 +7,26 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17CABC4338F
-	for <kernel-janitors@archiver.kernel.org>; Fri, 20 Aug 2021 15:37:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE409C432BE
+	for <kernel-janitors@archiver.kernel.org>; Fri, 20 Aug 2021 15:38:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 01D6560F44
-	for <kernel-janitors@archiver.kernel.org>; Fri, 20 Aug 2021 15:37:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C154860BD3
+	for <kernel-janitors@archiver.kernel.org>; Fri, 20 Aug 2021 15:38:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241107AbhHTPig (ORCPT
+        id S241138AbhHTPio (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 20 Aug 2021 11:38:36 -0400
-Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:24226 "EHLO
+        Fri, 20 Aug 2021 11:38:44 -0400
+Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:28119 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241103AbhHTPif (ORCPT
+        with ESMTP id S241107AbhHTPin (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 20 Aug 2021 11:38:35 -0400
+        Fri, 20 Aug 2021 11:38:43 -0400
 Received: from pop-os.home ([90.126.253.178])
         by mwinf5d04 with ME
-        id jrdw2500b3riaq203rdwzy; Fri, 20 Aug 2021 17:37:57 +0200
+        id jre42500U3riaq203re415; Fri, 20 Aug 2021 17:38:05 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 20 Aug 2021 17:37:57 +0200
+X-ME-Date: Fri, 20 Aug 2021 17:38:05 +0200
 X-ME-IP: 90.126.253.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
@@ -35,9 +35,9 @@ To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 1/3] gpio: mpc8xxx: Fix a resources leak in the error handling path of 'mpc8xxx_probe()'
-Date:   Fri, 20 Aug 2021 17:37:55 +0200
-Message-Id: <800564ff82277544269add84bf78a5321e1090ed.1629472813.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 2/3] gpio: mpc8xxx: Fix a potential double iounmap call in 'mpc8xxx_probe()'
+Date:   Fri, 20 Aug 2021 17:38:03 +0200
+Message-Id: <5341e631dc93902ef13840807163a2883764b8ed.1629472813.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <cover.1629472813.git.christophe.jaillet@wanadoo.fr>
 References: <cover.1629472813.git.christophe.jaillet@wanadoo.fr>
@@ -47,34 +47,70 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 698b8eeaed72 ("gpio/mpc8xxx: change irq handler from chained to normal")
-has introduced a new 'goto err;' at the very end of the function, but has
-not updated the error handling path accordingly.
+Commit 76c47d1449fc ("gpio: mpc8xxx: Add ACPI support") has switched to a
+managed version when dealing with 'mpc8xxx_gc->regs'. So the corresponding
+'iounmap()' call in the error handling path and in the remove should be
+removed to avoid a double unmap.
 
-Add the now missing 'irq_domain_remove()' call which balances a previous
-'irq_domain_create_linear() call.
+This also allows some simplification in the probe. All the error handling
+paths related to managed resources can be direct returns and a NULL check
+in what remains in the error handling path can be removed.
 
-Fixes: 698b8eeaed72 ("gpio/mpc8xxx: change irq handler from chained to normal")
+Fixes: 76c47d1449fc ("gpio: mpc8xxx: Add ACPI support")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-Is the 'irq_set_chained_handler_and_data()' of the remove function also
-needed here?
----
- drivers/gpio/gpio-mpc8xxx.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpio/gpio-mpc8xxx.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
-index 67dc38976ab6..241bcc80612e 100644
+index 241bcc80612e..fa4aaeced3f1 100644
 --- a/drivers/gpio/gpio-mpc8xxx.c
 +++ b/drivers/gpio/gpio-mpc8xxx.c
-@@ -416,6 +416,8 @@ static int mpc8xxx_probe(struct platform_device *pdev)
+@@ -332,7 +332,7 @@ static int mpc8xxx_probe(struct platform_device *pdev)
+ 				 mpc8xxx_gc->regs + GPIO_DIR, NULL,
+ 				 BGPIOF_BIG_ENDIAN);
+ 		if (ret)
+-			goto err;
++			return ret;
+ 		dev_dbg(&pdev->dev, "GPIO registers are LITTLE endian\n");
+ 	} else {
+ 		ret = bgpio_init(gc, &pdev->dev, 4,
+@@ -342,7 +342,7 @@ static int mpc8xxx_probe(struct platform_device *pdev)
+ 				 BGPIOF_BIG_ENDIAN
+ 				 | BGPIOF_BIG_ENDIAN_BYTE_ORDER);
+ 		if (ret)
+-			goto err;
++			return ret;
+ 		dev_dbg(&pdev->dev, "GPIO registers are BIG endian\n");
+ 	}
+ 
+@@ -384,7 +384,7 @@ static int mpc8xxx_probe(struct platform_device *pdev)
+ 	if (ret) {
+ 		dev_err(&pdev->dev,
+ 			"GPIO chip registration failed with status %d\n", ret);
+-		goto err;
++		return ret;
+ 	}
+ 
+ 	mpc8xxx_gc->irqn = platform_get_irq(pdev, 0);
+@@ -416,9 +416,7 @@ static int mpc8xxx_probe(struct platform_device *pdev)
  
  	return 0;
  err:
-+	if (mpc8xxx_gc->irq)
-+		irq_domain_remove(mpc8xxx_gc->irq);
- 	iounmap(mpc8xxx_gc->regs);
+-	if (mpc8xxx_gc->irq)
+-		irq_domain_remove(mpc8xxx_gc->irq);
+-	iounmap(mpc8xxx_gc->regs);
++	irq_domain_remove(mpc8xxx_gc->irq);
  	return ret;
+ }
+ 
+@@ -432,7 +430,6 @@ static int mpc8xxx_remove(struct platform_device *pdev)
+ 	}
+ 
+ 	gpiochip_remove(&mpc8xxx_gc->gc);
+-	iounmap(mpc8xxx_gc->regs);
+ 
+ 	return 0;
  }
 -- 
 2.30.2
