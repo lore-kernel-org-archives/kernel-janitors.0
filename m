@@ -2,78 +2,84 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB2EBC432BE
-	for <kernel-janitors@archiver.kernel.org>; Sat, 21 Aug 2021 14:57:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAE99C4320A
+	for <kernel-janitors@archiver.kernel.org>; Sat, 21 Aug 2021 17:27:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A2D4761208
-	for <kernel-janitors@archiver.kernel.org>; Sat, 21 Aug 2021 14:57:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9E3561245
+	for <kernel-janitors@archiver.kernel.org>; Sat, 21 Aug 2021 17:27:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232202AbhHUO6R (ORCPT
+        id S231674AbhHUR20 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 21 Aug 2021 10:58:17 -0400
-Received: from smtp07.smtpout.orange.fr ([80.12.242.129]:60135 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230259AbhHUO6Q (ORCPT
+        Sat, 21 Aug 2021 13:28:26 -0400
+Received: from so254-9.mailgun.net ([198.61.254.9]:21348 "EHLO
+        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229973AbhHUR20 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 21 Aug 2021 10:58:16 -0400
-Received: from pop-os.home ([90.126.253.178])
-        by mwinf5d87 with ME
-        id kExX2500F3riaq203ExYwV; Sat, 21 Aug 2021 16:57:36 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 21 Aug 2021 16:57:36 +0200
-X-ME-IP: 90.126.253.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     agust@denx.de, mpe@ellerman.id.au, benh@kernel.crashing.org,
-        paulus@samba.org, alex.popov@linux.com
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] powerpc/512x: Fix an error handling path in 'mpc512x_lpbfifo_kick()'
-Date:   Sat, 21 Aug 2021 16:57:30 +0200
-Message-Id: <3d57a9d4ff752a4ff1dd977552641795dc9db83f.1629557783.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Sat, 21 Aug 2021 13:28:26 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1629566866; h=Date: Message-Id: Cc: To: References:
+ In-Reply-To: From: Subject: Content-Transfer-Encoding: MIME-Version:
+ Content-Type: Sender; bh=zcQTWiIsHxCsYBfM4GYF5S4NkmPnRYPd1iC/ufT7aVg=;
+ b=X079OEkeiIZu+ahvss0YSjeTxMGzi+lL3NT1cBBPIiLVvTi9N+Dp+XdYB78OMTYqRGWTcddh
+ 9beiWULZv0DN2SGi9Y8K6Komh8LQz5qMbQenwlK+KHtyhr9umhAY3/hr9IQRxfKPqocmWQgy
+ oDflAMrtT7qYjT7SI9+0SA0sf1g=
+X-Mailgun-Sending-Ip: 198.61.254.9
+X-Mailgun-Sid: WyI5NDExNyIsICJrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n06.prod.us-west-2.postgun.com with SMTP id
+ 6121377de19abc795995dca2 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Sat, 21 Aug 2021 17:27:25
+ GMT
+Sender: kvalo=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 5F9DCC4360D; Sat, 21 Aug 2021 17:27:25 +0000 (UTC)
+Received: from tykki.adurom.net (tynnyri.adurom.net [51.15.11.48])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D5524C4338F;
+        Sat, 21 Aug 2021 17:27:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org D5524C4338F
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] rsi: fix error code in rsi_load_9116_firmware()
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20210805103746.GA26417@kili>
+References: <20210805103746.GA26417@kili>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Amitkumar Karwar <amitkarwar@gmail.com>,
+        Siva Rebbagondla <siva8118@gmail.com>,
+        linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.7.3
+Message-Id: <20210821172725.5F9DCC4360D@smtp.codeaurora.org>
+Date:   Sat, 21 Aug 2021 17:27:25 +0000 (UTC)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-At this point 'dma_map_single()' has not been called yet, so there is no
-point in branching in the error handling path to undo it.
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-Use a direct return instead.
+> This code returns success if the kmemdup() fails, but obviously it
+> should return -ENOMEM instead.
+> 
+> Fixes: e5a1ecc97e5f ("rsi: add firmware loading for 9116 device")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Fixes: 1a4bb93f7955 ("powerpc/512x: add LocalPlus Bus FIFO device driver")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-This patch is speculative. Review with care.
----
- arch/powerpc/platforms/512x/mpc512x_lpbfifo.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Patch applied to wireless-drivers-next.git, thanks.
 
-diff --git a/arch/powerpc/platforms/512x/mpc512x_lpbfifo.c b/arch/powerpc/platforms/512x/mpc512x_lpbfifo.c
-index 04bf6ecf7d55..85e0fa7d902b 100644
---- a/arch/powerpc/platforms/512x/mpc512x_lpbfifo.c
-+++ b/arch/powerpc/platforms/512x/mpc512x_lpbfifo.c
-@@ -240,10 +240,8 @@ static int mpc512x_lpbfifo_kick(void)
- 	dma_conf.src_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
- 
- 	/* Make DMA channel work with LPB FIFO data register */
--	if (dma_dev->device_config(lpbfifo.chan, &dma_conf)) {
--		ret = -EINVAL;
--		goto err_dma_prep;
--	}
-+	if (dma_dev->device_config(lpbfifo.chan, &dma_conf))
-+		return -EINVAL;
- 
- 	sg_init_table(&sg, 1);
- 
+d0f8430332a1 rsi: fix error code in rsi_load_9116_firmware()
+
 -- 
-2.30.2
+https://patchwork.kernel.org/project/linux-wireless/patch/20210805103746.GA26417@kili/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
