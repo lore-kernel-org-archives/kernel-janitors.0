@@ -7,36 +7,37 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBFA4C4338F
-	for <kernel-janitors@archiver.kernel.org>; Sat, 21 Aug 2021 10:37:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D228FC4338F
+	for <kernel-janitors@archiver.kernel.org>; Sat, 21 Aug 2021 11:13:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B932661208
-	for <kernel-janitors@archiver.kernel.org>; Sat, 21 Aug 2021 10:37:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB6D36120A
+	for <kernel-janitors@archiver.kernel.org>; Sat, 21 Aug 2021 11:13:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234200AbhHUKiH (ORCPT
+        id S234205AbhHULNj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 21 Aug 2021 06:38:07 -0400
-Received: from smtp13.smtpout.orange.fr ([80.12.242.135]:22195 "EHLO
+        Sat, 21 Aug 2021 07:13:39 -0400
+Received: from smtp13.smtpout.orange.fr ([80.12.242.135]:36637 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S234096AbhHUKiG (ORCPT
+        with ESMTP id S229968AbhHULNi (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 21 Aug 2021 06:38:06 -0400
+        Sat, 21 Aug 2021 07:13:38 -0400
 Received: from pop-os.home ([90.126.253.178])
         by mwinf5d73 with ME
-        id kAdR250043riaq203AdR54; Sat, 21 Aug 2021 12:37:26 +0200
+        id kBCu250093riaq203BCvsi; Sat, 21 Aug 2021 13:12:58 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 21 Aug 2021 12:37:26 +0200
+X-ME-Date: Sat, 21 Aug 2021 13:12:58 +0200
 X-ME-IP: 90.126.253.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     jic23@kernel.org, lars@metafoo.de, andy.shevchenko@gmail.com,
-        angelo.compagnucci@gmail.com
-Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
+To:     mirela.rabulea@nxp.com, linux-imx@nxp.com, mchehab@kernel.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, hverkuil-cisco@xs4all.nl
+Cc:     linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] iio: adc128s052: Fix the error handling path of 'adc128_probe()'
-Date:   Sat, 21 Aug 2021 12:37:24 +0200
-Message-Id: <85189f1cfcf6f5f7b42d8730966f2a074b07b5f5.1629542160.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] media: imx-jpeg: Fix the error handling path of 'mxc_jpeg_probe()'
+Date:   Sat, 21 Aug 2021 13:12:53 +0200
+Message-Id: <925bbb0c4c7d7b197ade5bb282d7be8a44921845.1629544232.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -44,36 +45,31 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-A successful 'regulator_enable()' call should be balanced by a
-corresponding 'regulator_disable()' call in the error handling path of the
-probe, as already done in the remove function.
+A successful 'mxc_jpeg_attach_pm_domains()' call should be balanced by a
+corresponding 'mxc_jpeg_detach_pm_domains()' call in the error handling
+path of the probe, as already done in the remove function.
 
 Update the error handling path accordingly.
 
-Fixes: 913b86468674 ("iio: adc: Add TI ADC128S052")
+Fixes: 2db16c6ed72c ("media: imx-jpeg: Add V4L2 driver for i.MX8 JPEG Encoder/Decoder")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/iio/adc/ti-adc128s052.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/media/platform/imx-jpeg/mxc-jpeg.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/iio/adc/ti-adc128s052.c b/drivers/iio/adc/ti-adc128s052.c
-index 3143f35a6509..83c1ae07b3e9 100644
---- a/drivers/iio/adc/ti-adc128s052.c
-+++ b/drivers/iio/adc/ti-adc128s052.c
-@@ -171,7 +171,13 @@ static int adc128_probe(struct spi_device *spi)
- 	mutex_init(&adc->lock);
+diff --git a/drivers/media/platform/imx-jpeg/mxc-jpeg.c b/drivers/media/platform/imx-jpeg/mxc-jpeg.c
+index 755138063ee6..a0c520678c6d 100644
+--- a/drivers/media/platform/imx-jpeg/mxc-jpeg.c
++++ b/drivers/media/platform/imx-jpeg/mxc-jpeg.c
+@@ -2088,6 +2088,8 @@ static int mxc_jpeg_probe(struct platform_device *pdev)
+ 	v4l2_device_unregister(&jpeg->v4l2_dev);
  
- 	ret = iio_device_register(indio_dev);
-+	if (ret)
-+		goto err_disable_regulator;
- 
-+	return 0;
+ err_register:
++	mxc_jpeg_detach_pm_domains(jpeg);
 +
-+err_disable_regulator:
-+	regulator_disable(adc->reg);
+ err_irq:
  	return ret;
  }
- 
 -- 
 2.30.2
 
