@@ -4,57 +4,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F08A7C4338F
-	for <kernel-janitors@archiver.kernel.org>; Sat, 21 Aug 2021 17:32:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24C58C432BE
+	for <kernel-janitors@archiver.kernel.org>; Sat, 21 Aug 2021 17:33:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CBF9061242
-	for <kernel-janitors@archiver.kernel.org>; Sat, 21 Aug 2021 17:32:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E1A961247
+	for <kernel-janitors@archiver.kernel.org>; Sat, 21 Aug 2021 17:33:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231434AbhHURdH (ORCPT
+        id S232475AbhHUReT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 21 Aug 2021 13:33:07 -0400
-Received: from so254-9.mailgun.net ([198.61.254.9]:44302 "EHLO
-        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230183AbhHURdG (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 21 Aug 2021 13:33:06 -0400
+        Sat, 21 Aug 2021 13:34:19 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:59980 "EHLO m43-7.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230525AbhHUReS (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Sat, 21 Aug 2021 13:34:18 -0400
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1629567147; h=Date: Message-Id: Cc: To: References:
+ s=smtp; t=1629567219; h=Date: Message-Id: Cc: To: References:
  In-Reply-To: From: Subject: Content-Transfer-Encoding: MIME-Version:
- Content-Type: Sender; bh=2BboqZtCczhs7Gj5gmMKaCpliJBrP2gnrnXMEhNrp9U=;
- b=EDmmvxaP72lWkOiUe/gSVk04K+W/4JMvKxZPXA2/bFaFsxRjDtW7DAzCJcgPgobSRdr9OojP
- 58iBmBQaHMxlgi3ESYd8mzuq0lKCZVsa0R+OukhrG6XMH6cbLgUQorSbm/GmmahPzVAv9yK2
- OqqIZLGXRo9JXFezN7Aye212nN8=
-X-Mailgun-Sending-Ip: 198.61.254.9
+ Content-Type: Sender; bh=7P7XvqXwR3y9ufX9OkElug4XupgxxMi91Dp1grkomrQ=;
+ b=JL3DZt/9gHWB8gVIpkh2wl0kipuk43Njdhi158QGxMJhX/+1pAkQ+zJ8hJomvLbGd4V1VEg3
+ +/JPnB42A20C6hI4yTKG2EamZM49XFAqCptccHVDOpfRVt7GtswJEjW+HFEInAhYZVPupSps
+ +9kbZojzCvw+Mxa6PXuQVinqyQk=
+X-Mailgun-Sending-Ip: 69.72.43.7
 X-Mailgun-Sid: WyI5NDExNyIsICJrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
 Received: from smtp.codeaurora.org
  (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n01.prod.us-west-2.postgun.com with SMTP id
- 6121388ff588e42af1471065 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Sat, 21 Aug 2021 17:31:59
+ smtp-out-n06.prod.us-west-2.postgun.com with SMTP id
+ 612138f2e19abc79599a581e (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Sat, 21 Aug 2021 17:33:38
  GMT
 Sender: kvalo=codeaurora.org@mg.codeaurora.org
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 7AED7C43616; Sat, 21 Aug 2021 17:31:59 +0000 (UTC)
+        id 4EFECC4360C; Sat, 21 Aug 2021 17:33:38 +0000 (UTC)
 Received: from tykki.adurom.net (tynnyri.adurom.net [51.15.11.48])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: kvalo)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id CCD6DC4338F;
-        Sat, 21 Aug 2021 17:31:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org CCD6DC4338F
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id AA694C4338F;
+        Sat, 21 Aug 2021 17:33:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org AA694C4338F
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=codeaurora.org
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH 3/3] rtlwifi: rtl8192de: fix array size limit in for-loop
+Subject: Re: [PATCH 1/3][RESEND] rtlwifi: rtl8192de: Remove redundant variable
+ initializations
 From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20210803144949.79433-3-colin.king@canonical.com>
-References: <20210803144949.79433-3-colin.king@canonical.com>
+In-Reply-To: <20210803144949.79433-1-colin.king@canonical.com>
+References: <20210803144949.79433-1-colin.king@canonical.com>
 To:     Colin King <colin.king@canonical.com>
 Cc:     Ping-Ke Shih <pkshih@realtek.com>,
         "David S . Miller" <davem@davemloft.net>,
@@ -63,8 +63,8 @@ Cc:     Ping-Ke Shih <pkshih@realtek.com>,
         kernel-janitors@vger.kernel.org, Joe Perches <joe@perches.com>,
         linux-kernel@vger.kernel.org
 User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.7.3
-Message-Id: <20210821173159.7AED7C43616@smtp.codeaurora.org>
-Date:   Sat, 21 Aug 2021 17:31:59 +0000 (UTC)
+Message-Id: <20210821173338.4EFECC4360C@smtp.codeaurora.org>
+Date:   Sat, 21 Aug 2021 17:33:38 +0000 (UTC)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -73,21 +73,20 @@ Colin King <colin.king@canonical.com> wrote:
 
 > From: Colin Ian King <colin.king@canonical.com>
 > 
-> Currently the size of the entire array is being used in a for-loop
-> for the element count. While this works since the elements are u8
-> sized, it is preferred to use ARRAY_SIZE to get the element count
-> of the array.
+> The variables rtstatus and place are being initialized with a values
+> that are never read, the initializations are redundant and can be removed.
 > 
-> Kudos to Joe Perches for spotting this issue.
-> 
+> Addresses-Coverity: ("Unused value")
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Acked-by: Ping-Ke Shih <pkshih@realtek.com>
 
-Dropped per Colin's request.
+2 patches applied to wireless-drivers-next.git, thanks.
 
-Patch set to Changes Requested.
+369956ae5720 rtlwifi: rtl8192de: Remove redundant variable initializations
+b05897ca8c82 rtlwifi: rtl8192de: make arrays static const, makes object smaller
 
 -- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20210803144949.79433-3-colin.king@canonical.com/
+https://patchwork.kernel.org/project/linux-wireless/patch/20210803144949.79433-1-colin.king@canonical.com/
 
 https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
