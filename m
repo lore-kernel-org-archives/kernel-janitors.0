@@ -2,84 +2,82 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 737A8C4338F
-	for <kernel-janitors@archiver.kernel.org>; Sat, 21 Aug 2021 07:58:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F22B2C432BE
+	for <kernel-janitors@archiver.kernel.org>; Sat, 21 Aug 2021 09:25:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3C466611C9
-	for <kernel-janitors@archiver.kernel.org>; Sat, 21 Aug 2021 07:58:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D13D261213
+	for <kernel-janitors@archiver.kernel.org>; Sat, 21 Aug 2021 09:25:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233018AbhHUH7d (ORCPT
+        id S233465AbhHUJZ7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 21 Aug 2021 03:59:33 -0400
-Received: from smtp05.smtpout.orange.fr ([80.12.242.127]:31539 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232957AbhHUH7a (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 21 Aug 2021 03:59:30 -0400
-Received: from pop-os.home ([90.126.253.178])
-        by mwinf5d09 with ME
-        id k7yn2500M3riaq2037ynGU; Sat, 21 Aug 2021 09:58:50 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 21 Aug 2021 09:58:50 +0200
-X-ME-IP: 90.126.253.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
-        boris.brezillon@collabora.com, lee.jones@linaro.org,
-        segher@kernel.crashing.org, dwmw2@infradead.org
-Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] mtd: rawnand: cafe: Fix a resource leak in the error handling path of 'cafe_nand_probe()'
-Date:   Sat, 21 Aug 2021 09:58:45 +0200
-Message-Id: <fd313d3fb787458bcc73189e349f481133a2cdc9.1629532640.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Sat, 21 Aug 2021 05:25:59 -0400
+Received: from elvis.franken.de ([193.175.24.41]:41928 "EHLO elvis.franken.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233296AbhHUJZ7 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Sat, 21 Aug 2021 05:25:59 -0400
+Received: from uucp (helo=alpha)
+        by elvis.franken.de with local-bsmtp (Exim 3.36 #1)
+        id 1mHNFe-0005Uw-01; Sat, 21 Aug 2021 11:25:18 +0200
+Received: by alpha.franken.de (Postfix, from userid 1000)
+        id 369D5C086C; Sat, 21 Aug 2021 10:41:24 +0200 (CEST)
+Date:   Sat, 21 Aug 2021 10:41:24 +0200
+From:   Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Rahul Bedarkar <rahulbedarkar89@gmail.com>,
+        linux-mips@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] MAINTAINERS: adjust PISTACHIO SOC SUPPORT after its
+ retirement
+Message-ID: <20210821084124.GB3555@alpha.franken.de>
+References: <20210816105326.8050-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210816105326.8050-1-lukas.bulwahn@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-A successful 'init_rs_non_canonical()' call should be balanced by a
-corresponding 'free_rs()' call in the error handling path of the probe, as
-already done in the remove function.
+On Mon, Aug 16, 2021 at 12:53:26PM +0200, Lukas Bulwahn wrote:
+> Commit 104f942b2832 ("MIPS: Retire MACH_PISTACHIO") removes
+> ./arch/mips/pistachio/ and ./arch/mips/configs/pistachio_defconfig, but
+> misses to adjust the corresponding section PISTACHIO SOC SUPPORT
+> in MAINTAINERS.
+> 
+> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains:
+> 
+>   warning: no file matches    F:    arch/mips/configs/pistachio*_defconfig
+>   warning: no file matches    F:    arch/mips/pistachio/
+> 
+> As James Hartley is not reachable with the provided email address, the
+> remaining dtsi file, arch/mips/boot/dts/img/pistachio.dtsi, must be
+> maintained by its only user pistachio_marduk.dts, which is part of MARDUK
+> (CREATOR CI40) DEVICE TREE SUPPORT.
+> 
+> Add maintenance of pistachio.dtsi to that section and drop the PISTACHIO
+> SOC SUPPORT after its retirement.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+> applies cleanly on next-20210816
+> 
+> Jiaxun, Rahul, please ack. 
+> Thomas, please pick this minor non-urgent clean-up patch on mips-next.
+> 
+>  MAINTAINERS | 10 +---------
+>  1 file changed, 1 insertion(+), 9 deletions(-)
 
-Update the error handling path accordingly.
+applied to mips-next.
 
-Fixes: 8c61b7a7f4d4 ("[MTD] [NAND] Use rslib for CAFÉ ECC")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/mtd/nand/raw/cafe_nand.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Thomas.
 
-diff --git a/drivers/mtd/nand/raw/cafe_nand.c b/drivers/mtd/nand/raw/cafe_nand.c
-index d0e8ffd55c22..cba2eaddb0fc 100644
---- a/drivers/mtd/nand/raw/cafe_nand.c
-+++ b/drivers/mtd/nand/raw/cafe_nand.c
-@@ -751,7 +751,7 @@ static int cafe_nand_probe(struct pci_dev *pdev,
- 			  "CAFE NAND", mtd);
- 	if (err) {
- 		dev_warn(&pdev->dev, "Could not register IRQ %d\n", pdev->irq);
--		goto out_ior;
-+		goto our_free_rs;
- 	}
- 
- 	/* Disable master reset, enable NAND clock */
-@@ -795,6 +795,8 @@ static int cafe_nand_probe(struct pci_dev *pdev,
- 	/* Disable NAND IRQ in global IRQ mask register */
- 	cafe_writel(cafe, ~1 & cafe_readl(cafe, GLOBAL_IRQ_MASK), GLOBAL_IRQ_MASK);
- 	free_irq(pdev->irq, mtd);
-+ our_free_rs:
-+	free_rs(cafe->rs);
-  out_ior:
- 	pci_iounmap(pdev, cafe->mmio);
-  out_free_mtd:
 -- 
-2.30.2
-
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
