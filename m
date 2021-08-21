@@ -2,104 +2,241 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16C1BC4338F
-	for <kernel-janitors@archiver.kernel.org>; Sat, 21 Aug 2021 19:20:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C772FC4320A
+	for <kernel-janitors@archiver.kernel.org>; Sat, 21 Aug 2021 20:55:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 03D5E61245
-	for <kernel-janitors@archiver.kernel.org>; Sat, 21 Aug 2021 19:20:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D4CE6124E
+	for <kernel-janitors@archiver.kernel.org>; Sat, 21 Aug 2021 20:55:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230486AbhHUTVZ (ORCPT
+        id S230234AbhHUUzp (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 21 Aug 2021 15:21:25 -0400
-Received: from m43-7.mailgun.net ([69.72.43.7]:24212 "EHLO m43-7.mailgun.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229914AbhHUTVX (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 21 Aug 2021 15:21:23 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1629573643; h=Date: Message-Id: Cc: To: References:
- In-Reply-To: From: Subject: Content-Transfer-Encoding: MIME-Version:
- Content-Type: Sender; bh=uU3flCSn+iSXZF50k3teJibmCKL3vWrmBnwznoFYZGw=;
- b=q97HT5JrXJWMBojwU72wIPWaKlqkgamBownFKAnC74No3hJI/hp4q0EWmCgkcb1MfDYzn879
- CpjdosA6d2RBZmF+34rRlglkAaXldRDHUWPl7tS9SR8rIrwqgGZlf9IBymclXek7ycLkZRkl
- r4Hwpmoa6aNhqcqIs1HjdAU4hnU=
-X-Mailgun-Sending-Ip: 69.72.43.7
-X-Mailgun-Sid: WyI5NDExNyIsICJrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n04.prod.us-west-2.postgun.com with SMTP id
- 6121520034bfa7697987cce7 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Sat, 21 Aug 2021 19:20:32
- GMT
-Sender: kvalo=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id E1BE5C43617; Sat, 21 Aug 2021 19:20:32 +0000 (UTC)
-Received: from tykki.adurom.net (tynnyri.adurom.net [51.15.11.48])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1A513C4338F;
-        Sat, 21 Aug 2021 19:20:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org 1A513C4338F
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Sat, 21 Aug 2021 16:55:45 -0400
+Received: from out05.smtpout.orange.fr ([193.252.22.214]:32061 "EHLO
+        out.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230125AbhHUUzo (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Sat, 21 Aug 2021 16:55:44 -0400
+Received: from pop-os.home ([90.126.253.178])
+        by mwinf5d69 with ME
+        id kLuz250043riaq203LuzY0; Sat, 21 Aug 2021 22:55:02 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 21 Aug 2021 22:55:02 +0200
+X-ME-IP: 90.126.253.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     m.chetan.kumar@intel.com, linuxwwan@intel.com,
+        loic.poulain@linaro.org, ryazanov.s.a@gmail.com,
+        johannes@sipsolutions.net, davem@davemloft.net, kuba@kernel.org
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] net: wwan: iosm: switch from 'pci_' to 'dma_' API
+Date:   Sat, 21 Aug 2021 22:54:57 +0200
+Message-Id: <a0a70eb0a65f16d870ecf2a14d7a8e931bc63d2e.1629579202.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] brcmsmac: make array addr static const,
- makes object smaller
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20210819125552.8888-1-colin.king@canonical.com>
-References: <20210819125552.8888-1-colin.king@canonical.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Arend van Spriel <aspriel@gmail.com>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Chi-hsien Lin <chi-hsien.lin@infineon.com>,
-        Wright Feng <wright.feng@infineon.com>,
-        Chung-hsien Hsu <chung-hsien.hsu@infineon.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        linux-wireless@vger.kernel.org,
-        brcm80211-dev-list.pdl@broadcom.com,
-        SHA-cyfmac-dev-list@infineon.com, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.7.3
-Message-Id: <20210821192032.E1BE5C43617@smtp.codeaurora.org>
-Date:   Sat, 21 Aug 2021 19:20:32 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote:
+The wrappers in include/linux/pci-dma-compat.h should go away.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Don't populate the array addr on the stack but instead it
-> static const. Makes the object code smaller by 79 bytes:
-> 
-> Before:
->    text   data   bss     dec    hex filename
->  176015  54652   128  230795  3858b .../broadcom/brcm80211/brcmsmac/main.o
-> 
-> After:
->    text   data   bss     dec    hex filename
->  175872  54716   128  230716  3853c .../broadcom/brcm80211/brcmsmac/main.o
-> 
-> (gcc version 10.3.0)
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+The patch has been generated with the coccinelle script below and has been
+hand modified to replace GFP_ with a correct flag.
+It has been compile tested.
 
-Patch applied to wireless-drivers-next.git, thanks.
+'ipc_protocol_init()' can use GFP_KERNEL, because this flag is already used
+by a 'kzalloc()' call a few lines above.
 
-0dc62413c882 brcmsmac: make array addr static const, makes object smaller
+'ipc_protocol_msg_prepipe_open()' must use GFP_ATOMIC, because this flag is
+already used by a 'kcalloc()' call a few lines above.
 
+@@ @@
+-    PCI_DMA_BIDIRECTIONAL
++    DMA_BIDIRECTIONAL
+
+@@ @@
+-    PCI_DMA_TODEVICE
++    DMA_TO_DEVICE
+
+@@ @@
+-    PCI_DMA_FROMDEVICE
++    DMA_FROM_DEVICE
+
+@@ @@
+-    PCI_DMA_NONE
++    DMA_NONE
+
+@@
+expression e1, e2, e3;
+@@
+-    pci_alloc_consistent(e1, e2, e3)
++    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
+
+@@
+expression e1, e2, e3;
+@@
+-    pci_zalloc_consistent(e1, e2, e3)
++    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_free_consistent(e1, e2, e3, e4)
++    dma_free_coherent(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_map_single(e1, e2, e3, e4)
++    dma_map_single(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_single(e1, e2, e3, e4)
++    dma_unmap_single(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4, e5;
+@@
+-    pci_map_page(e1, e2, e3, e4, e5)
++    dma_map_page(&e1->dev, e2, e3, e4, e5)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_page(e1, e2, e3, e4)
++    dma_unmap_page(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_map_sg(e1, e2, e3, e4)
++    dma_map_sg(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_sg(e1, e2, e3, e4)
++    dma_unmap_sg(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_single_for_cpu(e1, e2, e3, e4)
++    dma_sync_single_for_cpu(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_single_for_device(e1, e2, e3, e4)
++    dma_sync_single_for_device(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_sg_for_cpu(e1, e2, e3, e4)
++    dma_sync_sg_for_cpu(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_sg_for_device(e1, e2, e3, e4)
++    dma_sync_sg_for_device(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2;
+@@
+-    pci_dma_mapping_error(e1, e2)
++    dma_mapping_error(&e1->dev, e2)
+
+@@
+expression e1, e2;
+@@
+-    pci_set_dma_mask(e1, e2)
++    dma_set_mask(&e1->dev, e2)
+
+@@
+expression e1, e2;
+@@
+-    pci_set_consistent_dma_mask(e1, e2)
++    dma_set_coherent_mask(&e1->dev, e2)
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+If needed, see post from Christoph Hellwig on the kernel-janitors ML:
+   https://marc.info/?l=kernel-janitors&m=158745678307186&w=4
+---
+ drivers/net/wwan/iosm/iosm_ipc_protocol.c     | 10 +++++-----
+ drivers/net/wwan/iosm/iosm_ipc_protocol_ops.c | 13 ++++++-------
+ 2 files changed, 11 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/net/wwan/iosm/iosm_ipc_protocol.c b/drivers/net/wwan/iosm/iosm_ipc_protocol.c
+index 834d8b146a94..63fc7012f09f 100644
+--- a/drivers/net/wwan/iosm/iosm_ipc_protocol.c
++++ b/drivers/net/wwan/iosm/iosm_ipc_protocol.c
+@@ -239,9 +239,9 @@ struct iosm_protocol *ipc_protocol_init(struct iosm_imem *ipc_imem)
+ 	ipc_protocol->old_msg_tail = 0;
+ 
+ 	ipc_protocol->p_ap_shm =
+-		pci_alloc_consistent(ipc_protocol->pcie->pci,
+-				     sizeof(*ipc_protocol->p_ap_shm),
+-				     &ipc_protocol->phy_ap_shm);
++		dma_alloc_coherent(&ipc_protocol->pcie->pci->dev,
++				   sizeof(*ipc_protocol->p_ap_shm),
++				   &ipc_protocol->phy_ap_shm, GFP_KERNEL);
+ 
+ 	if (!ipc_protocol->p_ap_shm) {
+ 		dev_err(ipc_protocol->dev, "pci shm alloc error");
+@@ -275,8 +275,8 @@ struct iosm_protocol *ipc_protocol_init(struct iosm_imem *ipc_imem)
+ 
+ void ipc_protocol_deinit(struct iosm_protocol *proto)
+ {
+-	pci_free_consistent(proto->pcie->pci, sizeof(*proto->p_ap_shm),
+-			    proto->p_ap_shm, proto->phy_ap_shm);
++	dma_free_coherent(&proto->pcie->pci->dev, sizeof(*proto->p_ap_shm),
++			  proto->p_ap_shm, proto->phy_ap_shm);
+ 
+ 	ipc_pm_deinit(proto);
+ 	kfree(proto);
+diff --git a/drivers/net/wwan/iosm/iosm_ipc_protocol_ops.c b/drivers/net/wwan/iosm/iosm_ipc_protocol_ops.c
+index 35d590743d3a..c6b032f95d2e 100644
+--- a/drivers/net/wwan/iosm/iosm_ipc_protocol_ops.c
++++ b/drivers/net/wwan/iosm/iosm_ipc_protocol_ops.c
+@@ -74,9 +74,9 @@ static int ipc_protocol_msg_prepipe_open(struct iosm_protocol *ipc_protocol,
+ 		return -ENOMEM;
+ 
+ 	/* Allocate the transfer descriptors for the pipe. */
+-	tdr = pci_alloc_consistent(ipc_protocol->pcie->pci,
+-				   pipe->nr_of_entries * sizeof(*tdr),
+-				   &pipe->phy_tdr_start);
++	tdr = dma_alloc_coherent(&ipc_protocol->pcie->pci->dev,
++				 pipe->nr_of_entries * sizeof(*tdr),
++				 &pipe->phy_tdr_start, GFP_ATOMIC);
+ 	if (!tdr) {
+ 		kfree(skbr);
+ 		dev_err(ipc_protocol->dev, "tdr alloc error");
+@@ -492,10 +492,9 @@ void ipc_protocol_pipe_cleanup(struct iosm_protocol *ipc_protocol,
+ 
+ 	/* Free and reset the td and skbuf circular buffers. kfree is save! */
+ 	if (pipe->tdr_start) {
+-		pci_free_consistent(ipc_protocol->pcie->pci,
+-				    sizeof(*pipe->tdr_start) *
+-					    pipe->nr_of_entries,
+-				    pipe->tdr_start, pipe->phy_tdr_start);
++		dma_free_coherent(&ipc_protocol->pcie->pci->dev,
++				  sizeof(*pipe->tdr_start) * pipe->nr_of_entries,
++				  pipe->tdr_start, pipe->phy_tdr_start);
+ 
+ 		pipe->tdr_start = NULL;
+ 	}
 -- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20210819125552.8888-1-colin.king@canonical.com/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.30.2
 
