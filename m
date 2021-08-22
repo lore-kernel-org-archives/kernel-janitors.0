@@ -5,38 +5,41 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02E61C4338F
-	for <kernel-janitors@archiver.kernel.org>; Sun, 22 Aug 2021 07:00:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 436C8C4320E
+	for <kernel-janitors@archiver.kernel.org>; Sun, 22 Aug 2021 07:39:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C3B3E6127B
-	for <kernel-janitors@archiver.kernel.org>; Sun, 22 Aug 2021 07:00:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2243061283
+	for <kernel-janitors@archiver.kernel.org>; Sun, 22 Aug 2021 07:39:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231674AbhHVHAk (ORCPT
+        id S231674AbhHVHkd (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 22 Aug 2021 03:00:40 -0400
-Received: from smtp04.smtpout.orange.fr ([80.12.242.126]:46592 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231622AbhHVHAk (ORCPT
+        Sun, 22 Aug 2021 03:40:33 -0400
+Received: from out02.smtpout.orange.fr ([193.252.22.211]:42989 "EHLO
+        out.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230272AbhHVHkc (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 22 Aug 2021 03:00:40 -0400
+        Sun, 22 Aug 2021 03:40:32 -0400
 Received: from pop-os.home ([90.126.253.178])
         by mwinf5d59 with ME
-        id kWzx250083riaq203Wzx1S; Sun, 22 Aug 2021 08:59:58 +0200
+        id kXfn2500K3riaq203XfnP5; Sun, 22 Aug 2021 09:39:50 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 22 Aug 2021 08:59:58 +0200
+X-ME-Date: Sun, 22 Aug 2021 09:39:50 +0200
 X-ME-IP: 90.126.253.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     rain.1986.08.12@gmail.com, zyjzyj2000@gmail.com,
-        davem@davemloft.net, kuba@kernel.org
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
+To:     nbd@nbd.name, lorenzo.bianconi83@gmail.com, ryder.lee@mediatek.com,
+        davem@davemloft.net, kvalo@codeaurora.org, kuba@kernel.org,
+        matthias.bgg@gmail.com
+Cc:     linux-wireless@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] forcedeth: switch from 'pci_' to 'dma_' API
-Date:   Sun, 22 Aug 2021 08:59:56 +0200
-Message-Id: <099a3b5974f6b2be8770e180823e2883209a3691.1629615550.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] mt76: switch from 'pci_' to 'dma_' API
+Date:   Sun, 22 Aug 2021 09:39:45 +0200
+Message-Id: <83b2da6ff8a07d576fa3627051daa705aba37a3c.1629617782.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -47,10 +50,6 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 The wrappers in include/linux/pci-dma-compat.h should go away.
 
 The patch has been generated with the coccinelle script below.
-
-It has been hand modified to use 'dma_set_mask_and_coherent()' instead of
-'pci_set_dma_mask()/pci_set_consistent_dma_mask()' when applicable.
-This is less verbose.
 
 It has been compile tested.
 
@@ -176,30 +175,92 @@ Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 If needed, see post from Christoph Hellwig on the kernel-janitors ML:
    https://marc.info/?l=kernel-janitors&m=158745678307186&w=4
 ---
- drivers/net/ethernet/nvidia/forcedeth.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ drivers/net/wireless/mediatek/mt76/mt7603/pci.c | 2 +-
+ drivers/net/wireless/mediatek/mt76/mt7615/pci.c | 2 +-
+ drivers/net/wireless/mediatek/mt76/mt76x0/pci.c | 2 +-
+ drivers/net/wireless/mediatek/mt76/mt76x2/pci.c | 2 +-
+ drivers/net/wireless/mediatek/mt76/mt7915/pci.c | 2 +-
+ drivers/net/wireless/mediatek/mt76/mt7921/pci.c | 2 +-
+ 6 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/ethernet/nvidia/forcedeth.c b/drivers/net/ethernet/nvidia/forcedeth.c
-index 8724d6a9ed02..ef3fb4cc90af 100644
---- a/drivers/net/ethernet/nvidia/forcedeth.c
-+++ b/drivers/net/ethernet/nvidia/forcedeth.c
-@@ -5782,15 +5782,11 @@ static int nv_probe(struct pci_dev *pci_dev, const struct pci_device_id *id)
- 		np->desc_ver = DESC_VER_3;
- 		np->txrxctl_bits = NVREG_TXRXCTL_DESC_3;
- 		if (dma_64bit) {
--			if (pci_set_dma_mask(pci_dev, DMA_BIT_MASK(39)))
-+			if (dma_set_mask_and_coherent(&pci_dev->dev, DMA_BIT_MASK(39)))
- 				dev_info(&pci_dev->dev,
- 					 "64-bit DMA failed, using 32-bit addressing\n");
- 			else
- 				dev->features |= NETIF_F_HIGHDMA;
--			if (pci_set_consistent_dma_mask(pci_dev, DMA_BIT_MASK(39))) {
--				dev_info(&pci_dev->dev,
--					 "64-bit DMA (consistent) failed, using 32-bit ring buffers\n");
--			}
- 		}
- 	} else if (id->driver_data & DEV_HAS_LARGEDESC) {
- 		/* packet format 2: supports jumbo frames */
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7603/pci.c b/drivers/net/wireless/mediatek/mt76/mt7603/pci.c
+index aa6cb668b012..3d94cdb4314a 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7603/pci.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7603/pci.c
+@@ -28,7 +28,7 @@ mt76pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 
+ 	pci_set_master(pdev);
+ 
+-	ret = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
++	ret = dma_set_mask(&pdev->dev, DMA_BIT_MASK(32));
+ 	if (ret)
+ 		return ret;
+ 
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/pci.c b/drivers/net/wireless/mediatek/mt76/mt7615/pci.c
+index 11f169cdd603..7a54ea6a86d0 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7615/pci.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7615/pci.c
+@@ -39,7 +39,7 @@ static int mt7615_pci_probe(struct pci_dev *pdev,
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	ret = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
++	ret = dma_set_mask(&pdev->dev, DMA_BIT_MASK(32));
+ 	if (ret)
+ 		goto error;
+ 
+diff --git a/drivers/net/wireless/mediatek/mt76/mt76x0/pci.c b/drivers/net/wireless/mediatek/mt76/mt76x0/pci.c
+index b795e7245c07..92ddb8c68938 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt76x0/pci.c
++++ b/drivers/net/wireless/mediatek/mt76/mt76x0/pci.c
+@@ -176,7 +176,7 @@ mt76x0e_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 
+ 	pci_set_master(pdev);
+ 
+-	ret = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
++	ret = dma_set_mask(&pdev->dev, DMA_BIT_MASK(32));
+ 	if (ret)
+ 		return ret;
+ 
+diff --git a/drivers/net/wireless/mediatek/mt76/mt76x2/pci.c b/drivers/net/wireless/mediatek/mt76/mt76x2/pci.c
+index adf288e50e21..fb8de1833937 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt76x2/pci.c
++++ b/drivers/net/wireless/mediatek/mt76/mt76x2/pci.c
+@@ -47,7 +47,7 @@ mt76x2e_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 
+ 	pci_set_master(pdev);
+ 
+-	ret = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
++	ret = dma_set_mask(&pdev->dev, DMA_BIT_MASK(32));
+ 	if (ret)
+ 		return ret;
+ 
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7915/pci.c b/drivers/net/wireless/mediatek/mt76/mt7915/pci.c
+index 340b364da5f0..c79b526346e7 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7915/pci.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7915/pci.c
+@@ -251,7 +251,7 @@ static int mt7915_pci_probe(struct pci_dev *pdev,
+ 
+ 	pci_set_master(pdev);
+ 
+-	ret = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
++	ret = dma_set_mask(&pdev->dev, DMA_BIT_MASK(32));
+ 	if (ret)
+ 		return ret;
+ 
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7921/pci.c b/drivers/net/wireless/mediatek/mt76/mt7921/pci.c
+index c3905bcab360..7e8cff3a1b94 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7921/pci.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7921/pci.c
+@@ -128,7 +128,7 @@ static int mt7921_pci_probe(struct pci_dev *pdev,
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	ret = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
++	ret = dma_set_mask(&pdev->dev, DMA_BIT_MASK(32));
+ 	if (ret)
+ 		goto err_free_pci_vec;
+ 
 -- 
 2.30.2
 
