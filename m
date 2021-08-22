@@ -7,35 +7,38 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D67AC4338F
-	for <kernel-janitors@archiver.kernel.org>; Sun, 22 Aug 2021 20:49:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51F25C432BE
+	for <kernel-janitors@archiver.kernel.org>; Sun, 22 Aug 2021 21:06:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 02D4661357
-	for <kernel-janitors@archiver.kernel.org>; Sun, 22 Aug 2021 20:49:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 305D461051
+	for <kernel-janitors@archiver.kernel.org>; Sun, 22 Aug 2021 21:06:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233019AbhHVUt5 (ORCPT
+        id S233513AbhHVVG5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 22 Aug 2021 16:49:57 -0400
-Received: from smtp04.smtpout.orange.fr ([80.12.242.126]:23872 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232799AbhHVUt4 (ORCPT
+        Sun, 22 Aug 2021 17:06:57 -0400
+Received: from out02.smtpout.orange.fr ([193.252.22.211]:60785 "EHLO
+        out.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232539AbhHVVG4 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 22 Aug 2021 16:49:56 -0400
+        Sun, 22 Aug 2021 17:06:56 -0400
 Received: from pop-os.home ([90.126.253.178])
         by mwinf5d51 with ME
-        id kkpD250093riaq203kpD9o; Sun, 22 Aug 2021 22:49:14 +0200
+        id kl6A250043riaq203l6Aw9; Sun, 22 Aug 2021 23:06:12 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 22 Aug 2021 22:49:14 +0200
+X-ME-Date: Sun, 22 Aug 2021 23:06:12 +0200
 X-ME-IP: 90.126.253.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     luobin9@huawei.com, davem@davemloft.net, kuba@kernel.org
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
+        rodrigo.vivi@intel.com, airlied@linux.ie, daniel@ffwll.ch,
+        zhenyuw@linux.intel.com, zhi.a.wang@intel.com
+Cc:     intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        intel-gvt-dev@lists.freedesktop.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] hinic: switch from 'pci_' to 'dma_' API
-Date:   Sun, 22 Aug 2021 22:49:12 +0200
-Message-Id: <b5a92ba4aef427a07d0b35e5cc48a9555634b8ec.1629665282.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] drm/i915: switch from 'pci_' to 'dma_' API
+Date:   Sun, 22 Aug 2021 23:06:09 +0200
+Message-Id: <dbf1018fb773785e0b3b40e601246ed6438e645e.1629666258.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -46,10 +49,6 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 The wrappers in include/linux/pci-dma-compat.h should go away.
 
 The patch has been generated with the coccinelle script below.
-
-It has been hand modified to use 'dma_set_mask_and_coherent()' instead of
-'pci_set_dma_mask()/pci_set_consistent_dma_mask()' when applicable.
-This is less verbose.
 
 It has been compile tested.
 
@@ -174,52 +173,154 @@ Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 If needed, see post from Christoph Hellwig on the kernel-janitors ML:
    https://marc.info/?l=kernel-janitors&m=158745678307186&w=4
 ---
- drivers/net/ethernet/huawei/hinic/hinic_main.c | 17 ++---------------
- 1 file changed, 2 insertions(+), 15 deletions(-)
+ drivers/gpu/drm/i915/gt/intel_region_lmem.c |  4 ++--
+ drivers/gpu/drm/i915/gvt/gtt.c              | 16 ++++++++--------
+ drivers/gpu/drm/i915/gvt/kvmgt.c            |  4 ++--
+ drivers/gpu/drm/i915/i915_gem_gtt.c         |  4 ++--
+ 4 files changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/net/ethernet/huawei/hinic/hinic_main.c b/drivers/net/ethernet/huawei/hinic/hinic_main.c
-index 881d0b247561..ae707e305684 100644
---- a/drivers/net/ethernet/huawei/hinic/hinic_main.c
-+++ b/drivers/net/ethernet/huawei/hinic/hinic_main.c
-@@ -1392,28 +1392,16 @@ static int hinic_probe(struct pci_dev *pdev,
+diff --git a/drivers/gpu/drm/i915/gt/intel_region_lmem.c b/drivers/gpu/drm/i915/gt/intel_region_lmem.c
+index a74b72f50cc9..afb35d2e5c73 100644
+--- a/drivers/gpu/drm/i915/gt/intel_region_lmem.c
++++ b/drivers/gpu/drm/i915/gt/intel_region_lmem.c
+@@ -32,7 +32,7 @@ static int init_fake_lmem_bar(struct intel_memory_region *mem)
+ 	mem->remap_addr = dma_map_resource(i915->drm.dev,
+ 					   mem->region.start,
+ 					   mem->fake_mappable.size,
+-					   PCI_DMA_BIDIRECTIONAL,
++					   DMA_BIDIRECTIONAL,
+ 					   DMA_ATTR_FORCE_CONTIGUOUS);
+ 	if (dma_mapping_error(i915->drm.dev, mem->remap_addr)) {
+ 		drm_mm_remove_node(&mem->fake_mappable);
+@@ -62,7 +62,7 @@ static void release_fake_lmem_bar(struct intel_memory_region *mem)
+ 	dma_unmap_resource(mem->i915->drm.dev,
+ 			   mem->remap_addr,
+ 			   mem->fake_mappable.size,
+-			   PCI_DMA_BIDIRECTIONAL,
++			   DMA_BIDIRECTIONAL,
+ 			   DMA_ATTR_FORCE_CONTIGUOUS);
+ }
  
- 	pci_set_master(pdev);
+diff --git a/drivers/gpu/drm/i915/gvt/gtt.c b/drivers/gpu/drm/i915/gvt/gtt.c
+index e5c2fdfc20e3..fb4e96a3e79e 100644
+--- a/drivers/gpu/drm/i915/gvt/gtt.c
++++ b/drivers/gpu/drm/i915/gvt/gtt.c
+@@ -745,7 +745,7 @@ static void ppgtt_free_spt(struct intel_vgpu_ppgtt_spt *spt)
+ 	trace_spt_free(spt->vgpu->id, spt, spt->guest_page.type);
  
--	err = pci_set_dma_mask(pdev, DMA_BIT_MASK(64));
-+	err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
- 	if (err) {
- 		dev_warn(&pdev->dev, "Couldn't set 64-bit DMA mask\n");
--		err = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
-+		err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
- 		if (err) {
- 			dev_err(&pdev->dev, "Failed to set DMA mask\n");
- 			goto err_dma_mask;
- 		}
+ 	dma_unmap_page(kdev, spt->shadow_page.mfn << I915_GTT_PAGE_SHIFT, 4096,
+-		       PCI_DMA_BIDIRECTIONAL);
++		       DMA_BIDIRECTIONAL);
+ 
+ 	radix_tree_delete(&spt->vgpu->gtt.spt_tree, spt->shadow_page.mfn);
+ 
+@@ -849,7 +849,7 @@ static struct intel_vgpu_ppgtt_spt *ppgtt_alloc_spt(
+ 	 */
+ 	spt->shadow_page.type = type;
+ 	daddr = dma_map_page(kdev, spt->shadow_page.page,
+-			     0, 4096, PCI_DMA_BIDIRECTIONAL);
++			     0, 4096, DMA_BIDIRECTIONAL);
+ 	if (dma_mapping_error(kdev, daddr)) {
+ 		gvt_vgpu_err("fail to map dma addr\n");
+ 		ret = -EINVAL;
+@@ -865,7 +865,7 @@ static struct intel_vgpu_ppgtt_spt *ppgtt_alloc_spt(
+ 	return spt;
+ 
+ err_unmap_dma:
+-	dma_unmap_page(kdev, daddr, PAGE_SIZE, PCI_DMA_BIDIRECTIONAL);
++	dma_unmap_page(kdev, daddr, PAGE_SIZE, DMA_BIDIRECTIONAL);
+ err_free_spt:
+ 	free_spt(spt);
+ 	return ERR_PTR(ret);
+@@ -2410,7 +2410,7 @@ static int alloc_scratch_pages(struct intel_vgpu *vgpu,
  	}
  
--	err = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(64));
--	if (err) {
--		dev_warn(&pdev->dev,
--			 "Couldn't set 64-bit consistent DMA mask\n");
--		err = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(32));
--		if (err) {
--			dev_err(&pdev->dev,
--				"Failed to set consistent DMA mask\n");
--			goto err_dma_consistent_mask;
--		}
--	}
--
- 	err = nic_dev_init(pdev);
- 	if (err) {
- 		dev_err(&pdev->dev, "Failed to initialize NIC device\n");
-@@ -1424,7 +1412,6 @@ static int hinic_probe(struct pci_dev *pdev,
- 	return 0;
+ 	daddr = dma_map_page(dev, virt_to_page(scratch_pt), 0,
+-			4096, PCI_DMA_BIDIRECTIONAL);
++			4096, DMA_BIDIRECTIONAL);
+ 	if (dma_mapping_error(dev, daddr)) {
+ 		gvt_vgpu_err("fail to dmamap scratch_pt\n");
+ 		__free_page(virt_to_page(scratch_pt));
+@@ -2461,7 +2461,7 @@ static int release_scratch_page_tree(struct intel_vgpu *vgpu)
+ 		if (vgpu->gtt.scratch_pt[i].page != NULL) {
+ 			daddr = (dma_addr_t)(vgpu->gtt.scratch_pt[i].page_mfn <<
+ 					I915_GTT_PAGE_SHIFT);
+-			dma_unmap_page(dev, daddr, 4096, PCI_DMA_BIDIRECTIONAL);
++			dma_unmap_page(dev, daddr, 4096, DMA_BIDIRECTIONAL);
+ 			__free_page(vgpu->gtt.scratch_pt[i].page);
+ 			vgpu->gtt.scratch_pt[i].page = NULL;
+ 			vgpu->gtt.scratch_pt[i].page_mfn = 0;
+@@ -2741,7 +2741,7 @@ int intel_gvt_init_gtt(struct intel_gvt *gvt)
+ 	}
  
- err_nic_dev_init:
--err_dma_consistent_mask:
- err_dma_mask:
- 	pci_release_regions(pdev);
+ 	daddr = dma_map_page(dev, virt_to_page(page), 0,
+-			4096, PCI_DMA_BIDIRECTIONAL);
++			4096, DMA_BIDIRECTIONAL);
+ 	if (dma_mapping_error(dev, daddr)) {
+ 		gvt_err("fail to dmamap scratch ggtt page\n");
+ 		__free_page(virt_to_page(page));
+@@ -2755,7 +2755,7 @@ int intel_gvt_init_gtt(struct intel_gvt *gvt)
+ 		ret = setup_spt_oos(gvt);
+ 		if (ret) {
+ 			gvt_err("fail to initialize SPT oos\n");
+-			dma_unmap_page(dev, daddr, 4096, PCI_DMA_BIDIRECTIONAL);
++			dma_unmap_page(dev, daddr, 4096, DMA_BIDIRECTIONAL);
+ 			__free_page(gvt->gtt.scratch_page);
+ 			return ret;
+ 		}
+@@ -2779,7 +2779,7 @@ void intel_gvt_clean_gtt(struct intel_gvt *gvt)
+ 	dma_addr_t daddr = (dma_addr_t)(gvt->gtt.scratch_mfn <<
+ 					I915_GTT_PAGE_SHIFT);
  
+-	dma_unmap_page(dev, daddr, 4096, PCI_DMA_BIDIRECTIONAL);
++	dma_unmap_page(dev, daddr, 4096, DMA_BIDIRECTIONAL);
+ 
+ 	__free_page(gvt->gtt.scratch_page);
+ 
+diff --git a/drivers/gpu/drm/i915/gvt/kvmgt.c b/drivers/gpu/drm/i915/gvt/kvmgt.c
+index 7efa386449d1..20b82fb036f8 100644
+--- a/drivers/gpu/drm/i915/gvt/kvmgt.c
++++ b/drivers/gpu/drm/i915/gvt/kvmgt.c
+@@ -328,7 +328,7 @@ static int gvt_dma_map_page(struct intel_vgpu *vgpu, unsigned long gfn,
+ 		return ret;
+ 
+ 	/* Setup DMA mapping. */
+-	*dma_addr = dma_map_page(dev, page, 0, size, PCI_DMA_BIDIRECTIONAL);
++	*dma_addr = dma_map_page(dev, page, 0, size, DMA_BIDIRECTIONAL);
+ 	if (dma_mapping_error(dev, *dma_addr)) {
+ 		gvt_vgpu_err("DMA mapping failed for pfn 0x%lx, ret %d\n",
+ 			     page_to_pfn(page), ret);
+@@ -344,7 +344,7 @@ static void gvt_dma_unmap_page(struct intel_vgpu *vgpu, unsigned long gfn,
+ {
+ 	struct device *dev = vgpu->gvt->gt->i915->drm.dev;
+ 
+-	dma_unmap_page(dev, dma_addr, size, PCI_DMA_BIDIRECTIONAL);
++	dma_unmap_page(dev, dma_addr, size, DMA_BIDIRECTIONAL);
+ 	gvt_unpin_guest_page(vgpu, gfn, size);
+ }
+ 
+diff --git a/drivers/gpu/drm/i915/i915_gem_gtt.c b/drivers/gpu/drm/i915/i915_gem_gtt.c
+index 36489be4896b..cd5f2348a187 100644
+--- a/drivers/gpu/drm/i915/i915_gem_gtt.c
++++ b/drivers/gpu/drm/i915/i915_gem_gtt.c
+@@ -30,7 +30,7 @@ int i915_gem_gtt_prepare_pages(struct drm_i915_gem_object *obj,
+ 	do {
+ 		if (dma_map_sg_attrs(obj->base.dev->dev,
+ 				     pages->sgl, pages->nents,
+-				     PCI_DMA_BIDIRECTIONAL,
++				     DMA_BIDIRECTIONAL,
+ 				     DMA_ATTR_SKIP_CPU_SYNC |
+ 				     DMA_ATTR_NO_KERNEL_MAPPING |
+ 				     DMA_ATTR_NO_WARN))
+@@ -64,7 +64,7 @@ void i915_gem_gtt_finish_pages(struct drm_i915_gem_object *obj,
+ 		usleep_range(100, 250);
+ 
+ 	dma_unmap_sg(i915->drm.dev, pages->sgl, pages->nents,
+-		     PCI_DMA_BIDIRECTIONAL);
++		     DMA_BIDIRECTIONAL);
+ }
+ 
+ /**
 -- 
 2.30.2
 
