@@ -7,35 +7,36 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3560DC4338F
-	for <kernel-janitors@archiver.kernel.org>; Sun, 22 Aug 2021 19:02:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E7E7C4338F
+	for <kernel-janitors@archiver.kernel.org>; Sun, 22 Aug 2021 19:12:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0E7CF61181
-	for <kernel-janitors@archiver.kernel.org>; Sun, 22 Aug 2021 19:02:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B29E61206
+	for <kernel-janitors@archiver.kernel.org>; Sun, 22 Aug 2021 19:12:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232245AbhHVTDI (ORCPT
+        id S232633AbhHVTN0 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 22 Aug 2021 15:03:08 -0400
-Received: from smtp04.smtpout.orange.fr ([80.12.242.126]:27894 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231520AbhHVTDI (ORCPT
+        Sun, 22 Aug 2021 15:13:26 -0400
+Received: from out02.smtpout.orange.fr ([193.252.22.211]:40260 "EHLO
+        out.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229850AbhHVTNZ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 22 Aug 2021 15:03:08 -0400
+        Sun, 22 Aug 2021 15:13:25 -0400
 Received: from pop-os.home ([90.126.253.178])
         by mwinf5d51 with ME
-        id kj2Q250063riaq203j2Q48; Sun, 22 Aug 2021 21:02:25 +0200
+        id kjCi250013riaq203jCiV0; Sun, 22 Aug 2021 21:12:42 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 22 Aug 2021 21:02:25 +0200
+X-ME-Date: Sun, 22 Aug 2021 21:12:42 +0200
 X-ME-IP: 90.126.253.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     davem@davemloft.net, kuba@kernel.org
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
+To:     tariqt@nvidia.com, davem@davemloft.net, kuba@kernel.org,
+        saeedm@nvidia.com, leon@kernel.org
+Cc:     netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] net: 8139cp: switch from 'pci_' to 'dma_' API
-Date:   Sun, 22 Aug 2021 21:02:23 +0200
-Message-Id: <7d235ccb64d5713b2eec38f10e75d425c15ceef7.1629658846.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] net/mellanox: switch from 'pci_' to 'dma_' API
+Date:   Sun, 22 Aug 2021 21:12:41 +0200
+Message-Id: <33167c57d1aaec10f130fe7604d6db3a43cfa381.1629659490.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -175,130 +176,164 @@ Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 If needed, see post from Christoph Hellwig on the kernel-janitors ML:
    https://marc.info/?l=kernel-janitors&m=158745678307186&w=4
 ---
- drivers/net/ethernet/realtek/8139cp.c | 31 +++++++++++----------------
- 1 file changed, 12 insertions(+), 19 deletions(-)
+ drivers/net/ethernet/mellanox/mlx4/en_rx.c     |  4 ++--
+ drivers/net/ethernet/mellanox/mlx4/en_tx.c     | 14 +++++++-------
+ drivers/net/ethernet/mellanox/mlx4/main.c      | 13 ++-----------
+ drivers/net/ethernet/mellanox/mlx5/core/main.c | 16 ++--------------
+ 4 files changed, 13 insertions(+), 34 deletions(-)
 
-diff --git a/drivers/net/ethernet/realtek/8139cp.c b/drivers/net/ethernet/realtek/8139cp.c
-index edc61906694f..2b84b4565e64 100644
---- a/drivers/net/ethernet/realtek/8139cp.c
-+++ b/drivers/net/ethernet/realtek/8139cp.c
-@@ -514,7 +514,7 @@ static int cp_rx_poll(struct napi_struct *napi, int budget)
+diff --git a/drivers/net/ethernet/mellanox/mlx4/en_rx.c b/drivers/net/ethernet/mellanox/mlx4/en_rx.c
+index 442991d91c15..7f6d3b82c29b 100644
+--- a/drivers/net/ethernet/mellanox/mlx4/en_rx.c
++++ b/drivers/net/ethernet/mellanox/mlx4/en_rx.c
+@@ -991,7 +991,7 @@ void mlx4_en_calc_rx_buf(struct net_device *dev)
+ 		 * expense of more costly truesize accounting
+ 		 */
+ 		priv->frag_info[0].frag_stride = PAGE_SIZE;
+-		priv->dma_dir = PCI_DMA_BIDIRECTIONAL;
++		priv->dma_dir = DMA_BIDIRECTIONAL;
+ 		priv->rx_headroom = XDP_PACKET_HEADROOM;
+ 		i = 1;
+ 	} else {
+@@ -1021,7 +1021,7 @@ void mlx4_en_calc_rx_buf(struct net_device *dev)
+ 			buf_size += frag_size;
+ 			i++;
  		}
- 
- 		new_mapping = dma_map_single(&cp->pdev->dev, new_skb->data, buflen,
--					 PCI_DMA_FROMDEVICE);
-+					 DMA_FROM_DEVICE);
- 		if (dma_mapping_error(&cp->pdev->dev, new_mapping)) {
- 			dev->stats.rx_dropped++;
- 			kfree_skb(new_skb);
-@@ -522,7 +522,7 @@ static int cp_rx_poll(struct napi_struct *napi, int budget)
- 		}
- 
- 		dma_unmap_single(&cp->pdev->dev, mapping,
--				 buflen, PCI_DMA_FROMDEVICE);
-+				 buflen, DMA_FROM_DEVICE);
- 
- 		/* Handle checksum offloading for incoming packets. */
- 		if (cp_rx_csum_ok(status))
-@@ -666,7 +666,7 @@ static void cp_tx (struct cp_private *cp)
- 
- 		dma_unmap_single(&cp->pdev->dev, le64_to_cpu(txd->addr),
- 				 cp->tx_opts[tx_tail] & 0xffff,
--				 PCI_DMA_TODEVICE);
-+				 DMA_TO_DEVICE);
- 
- 		if (status & LastFrag) {
- 			if (status & (TxError | TxFIFOUnder)) {
-@@ -724,7 +724,7 @@ static void unwind_tx_frag_mapping(struct cp_private *cp, struct sk_buff *skb,
- 		txd = &cp->tx_ring[index];
- 		this_frag = &skb_shinfo(skb)->frags[frag];
- 		dma_unmap_single(&cp->pdev->dev, le64_to_cpu(txd->addr),
--				 skb_frag_size(this_frag), PCI_DMA_TODEVICE);
-+				 skb_frag_size(this_frag), DMA_TO_DEVICE);
+-		priv->dma_dir = PCI_DMA_FROMDEVICE;
++		priv->dma_dir = DMA_FROM_DEVICE;
+ 		priv->rx_headroom = 0;
  	}
- }
  
-@@ -781,7 +781,7 @@ static netdev_tx_t cp_start_xmit (struct sk_buff *skb,
- 		dma_addr_t mapping;
- 
- 		len = skb->len;
--		mapping = dma_map_single(&cp->pdev->dev, skb->data, len, PCI_DMA_TODEVICE);
-+		mapping = dma_map_single(&cp->pdev->dev, skb->data, len, DMA_TO_DEVICE);
- 		if (dma_mapping_error(&cp->pdev->dev, mapping))
- 			goto out_dma_error;
- 
-@@ -810,7 +810,7 @@ static netdev_tx_t cp_start_xmit (struct sk_buff *skb,
- 		first_eor = eor;
- 		first_len = skb_headlen(skb);
- 		first_mapping = dma_map_single(&cp->pdev->dev, skb->data,
--					       first_len, PCI_DMA_TODEVICE);
-+					       first_len, DMA_TO_DEVICE);
- 		if (dma_mapping_error(&cp->pdev->dev, first_mapping))
- 			goto out_dma_error;
- 
-@@ -826,7 +826,7 @@ static netdev_tx_t cp_start_xmit (struct sk_buff *skb,
- 			len = skb_frag_size(this_frag);
- 			mapping = dma_map_single(&cp->pdev->dev,
- 						 skb_frag_address(this_frag),
--						 len, PCI_DMA_TODEVICE);
-+						 len, DMA_TO_DEVICE);
- 			if (dma_mapping_error(&cp->pdev->dev, mapping)) {
- 				unwind_tx_frag_mapping(cp, skb, first_entry, entry);
- 				goto out_dma_error;
-@@ -1069,7 +1069,7 @@ static int cp_refill_rx(struct cp_private *cp)
- 			goto err_out;
- 
- 		mapping = dma_map_single(&cp->pdev->dev, skb->data,
--					 cp->rx_buf_sz, PCI_DMA_FROMDEVICE);
-+					 cp->rx_buf_sz, DMA_FROM_DEVICE);
- 		if (dma_mapping_error(&cp->pdev->dev, mapping)) {
- 			kfree_skb(skb);
- 			goto err_out;
-@@ -1139,7 +1139,7 @@ static void cp_clean_rings (struct cp_private *cp)
- 		if (cp->rx_skb[i]) {
- 			desc = cp->rx_ring + i;
- 			dma_unmap_single(&cp->pdev->dev,le64_to_cpu(desc->addr),
--					 cp->rx_buf_sz, PCI_DMA_FROMDEVICE);
-+					 cp->rx_buf_sz, DMA_FROM_DEVICE);
- 			dev_kfree_skb_any(cp->rx_skb[i]);
- 		}
- 	}
-@@ -1151,7 +1151,7 @@ static void cp_clean_rings (struct cp_private *cp)
- 			desc = cp->tx_ring + i;
- 			dma_unmap_single(&cp->pdev->dev,le64_to_cpu(desc->addr),
- 					 le32_to_cpu(desc->opts1) & 0xffff,
+diff --git a/drivers/net/ethernet/mellanox/mlx4/en_tx.c b/drivers/net/ethernet/mellanox/mlx4/en_tx.c
+index 31b74bddb7cd..c56b9dba4c71 100644
+--- a/drivers/net/ethernet/mellanox/mlx4/en_tx.c
++++ b/drivers/net/ethernet/mellanox/mlx4/en_tx.c
+@@ -297,12 +297,12 @@ u32 mlx4_en_free_tx_desc(struct mlx4_en_priv *priv,
+ 			dma_unmap_single(priv->ddev,
+ 					 tx_info->map0_dma,
+ 					 tx_info->map0_byte_count,
 -					 PCI_DMA_TODEVICE);
 +					 DMA_TO_DEVICE);
- 			if (le32_to_cpu(desc->opts1) & LastFrag)
- 				dev_kfree_skb_any(skb);
- 			cp->dev->stats.tx_dropped++;
-@@ -1945,24 +1945,17 @@ static int cp_init_one (struct pci_dev *pdev, const struct pci_device_id *ent)
- 
- 	/* Configure DMA attributes. */
- 	if ((sizeof(dma_addr_t) > 4) &&
--	    !pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(64)) &&
--	    !pci_set_dma_mask(pdev, DMA_BIT_MASK(64))) {
-+	    !dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64))) {
- 		pci_using_dac = 1;
- 	} else {
- 		pci_using_dac = 0;
- 
--		rc = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
-+		rc = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
- 		if (rc) {
- 			dev_err(&pdev->dev,
- 				"No usable DMA configuration, aborting\n");
- 			goto err_out_res;
+ 		else
+ 			dma_unmap_page(priv->ddev,
+ 				       tx_info->map0_dma,
+ 				       tx_info->map0_byte_count,
+-				       PCI_DMA_TODEVICE);
++				       DMA_TO_DEVICE);
+ 		/* Optimize the common case when there are no wraparounds */
+ 		if (likely((void *)tx_desc +
+ 			   (tx_info->nr_txbb << LOG_TXBB_SIZE) <= end)) {
+@@ -311,7 +311,7 @@ u32 mlx4_en_free_tx_desc(struct mlx4_en_priv *priv,
+ 				dma_unmap_page(priv->ddev,
+ 					(dma_addr_t)be64_to_cpu(data->addr),
+ 					be32_to_cpu(data->byte_count),
+-					PCI_DMA_TODEVICE);
++					DMA_TO_DEVICE);
+ 			}
+ 		} else {
+ 			if ((void *)data >= end)
+@@ -325,7 +325,7 @@ u32 mlx4_en_free_tx_desc(struct mlx4_en_priv *priv,
+ 				dma_unmap_page(priv->ddev,
+ 					(dma_addr_t)be64_to_cpu(data->addr),
+ 					be32_to_cpu(data->byte_count),
+-					PCI_DMA_TODEVICE);
++					DMA_TO_DEVICE);
+ 			}
  		}
--		rc = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(32));
--		if (rc) {
--			dev_err(&pdev->dev,
--				"No usable consistent DMA configuration, aborting\n");
--			goto err_out_res;
--		}
+ 	}
+@@ -831,7 +831,7 @@ static bool mlx4_en_build_dma_wqe(struct mlx4_en_priv *priv,
+ 
+ 		dma = dma_map_single(ddev, skb->data +
+ 				     lso_header_size, byte_count,
+-				     PCI_DMA_TODEVICE);
++				     DMA_TO_DEVICE);
+ 		if (dma_mapping_error(ddev, dma))
+ 			goto tx_drop_unmap;
+ 
+@@ -853,7 +853,7 @@ static bool mlx4_en_build_dma_wqe(struct mlx4_en_priv *priv,
+ 		++data;
+ 		dma_unmap_page(ddev, (dma_addr_t)be64_to_cpu(data->addr),
+ 			       be32_to_cpu(data->byte_count),
+-			       PCI_DMA_TODEVICE);
++			       DMA_TO_DEVICE);
  	}
  
- 	cp->cpcmd = (pci_using_dac ? PCIDAC : 0) |
+ 	return false;
+@@ -1170,7 +1170,7 @@ netdev_tx_t mlx4_en_xmit_frame(struct mlx4_en_rx_ring *rx_ring,
+ 	tx_info->nr_bytes = max_t(unsigned int, length, ETH_ZLEN);
+ 
+ 	dma_sync_single_range_for_device(priv->ddev, dma, frame->page_offset,
+-					 length, PCI_DMA_TODEVICE);
++					 length, DMA_TO_DEVICE);
+ 
+ 	data->addr = cpu_to_be64(dma + frame->page_offset);
+ 	dma_wmb();
+diff --git a/drivers/net/ethernet/mellanox/mlx4/main.c b/drivers/net/ethernet/mellanox/mlx4/main.c
+index 7267c6c6d2e2..5a6b0fcaf7f8 100644
+--- a/drivers/net/ethernet/mellanox/mlx4/main.c
++++ b/drivers/net/ethernet/mellanox/mlx4/main.c
+@@ -3806,24 +3806,15 @@ static int __mlx4_init_one(struct pci_dev *pdev, int pci_dev_data,
+ 
+ 	pci_set_master(pdev);
+ 
+-	err = pci_set_dma_mask(pdev, DMA_BIT_MASK(64));
++	err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
+ 	if (err) {
+ 		dev_warn(&pdev->dev, "Warning: couldn't set 64-bit PCI DMA mask\n");
+-		err = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
++		err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
+ 		if (err) {
+ 			dev_err(&pdev->dev, "Can't set PCI DMA mask, aborting\n");
+ 			goto err_release_regions;
+ 		}
+ 	}
+-	err = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(64));
+-	if (err) {
+-		dev_warn(&pdev->dev, "Warning: couldn't set 64-bit consistent PCI DMA mask\n");
+-		err = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(32));
+-		if (err) {
+-			dev_err(&pdev->dev, "Can't set consistent PCI DMA mask, aborting\n");
+-			goto err_release_regions;
+-		}
+-	}
+ 
+ 	/* Allow large DMA segments, up to the firmware limit of 1 GB */
+ 	dma_set_max_seg_size(&pdev->dev, 1024 * 1024 * 1024);
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/main.c b/drivers/net/ethernet/mellanox/mlx5/core/main.c
+index 80cabf9b1787..79482824c64f 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/main.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/main.c
+@@ -252,28 +252,16 @@ static int set_dma_caps(struct pci_dev *pdev)
+ {
+ 	int err;
+ 
+-	err = pci_set_dma_mask(pdev, DMA_BIT_MASK(64));
++	err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
+ 	if (err) {
+ 		dev_warn(&pdev->dev, "Warning: couldn't set 64-bit PCI DMA mask\n");
+-		err = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
++		err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
+ 		if (err) {
+ 			dev_err(&pdev->dev, "Can't set PCI DMA mask, aborting\n");
+ 			return err;
+ 		}
+ 	}
+ 
+-	err = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(64));
+-	if (err) {
+-		dev_warn(&pdev->dev,
+-			 "Warning: couldn't set 64-bit consistent PCI DMA mask\n");
+-		err = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(32));
+-		if (err) {
+-			dev_err(&pdev->dev,
+-				"Can't set consistent PCI DMA mask, aborting\n");
+-			return err;
+-		}
+-	}
+-
+ 	dma_set_max_seg_size(&pdev->dev, 2u * 1024 * 1024 * 1024);
+ 	return err;
+ }
 -- 
 2.30.2
 
