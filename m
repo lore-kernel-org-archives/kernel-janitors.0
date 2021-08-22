@@ -5,38 +5,38 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96170C4338F
-	for <kernel-janitors@archiver.kernel.org>; Sun, 22 Aug 2021 15:09:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC9CEC4338F
+	for <kernel-janitors@archiver.kernel.org>; Sun, 22 Aug 2021 18:49:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7CE096124B
-	for <kernel-janitors@archiver.kernel.org>; Sun, 22 Aug 2021 15:09:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B101261220
+	for <kernel-janitors@archiver.kernel.org>; Sun, 22 Aug 2021 18:49:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234149AbhHVPKd (ORCPT
+        id S232272AbhHVSuG (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 22 Aug 2021 11:10:33 -0400
-Received: from smtp13.smtpout.orange.fr ([80.12.242.135]:45887 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S233549AbhHVPKd (ORCPT
+        Sun, 22 Aug 2021 14:50:06 -0400
+Received: from out02.smtpout.orange.fr ([193.252.22.211]:46814 "EHLO
+        out.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232245AbhHVSuF (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 22 Aug 2021 11:10:33 -0400
+        Sun, 22 Aug 2021 14:50:05 -0400
 Received: from pop-os.home ([90.126.253.178])
-        by mwinf5d74 with ME
-        id kf9q2500B3riaq203f9q96; Sun, 22 Aug 2021 17:09:50 +0200
+        by mwinf5d51 with ME
+        id kipM250033riaq203ipMMG; Sun, 22 Aug 2021 20:49:23 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 22 Aug 2021 17:09:50 +0200
+X-ME-Date: Sun, 22 Aug 2021 20:49:23 +0200
 X-ME-IP: 90.126.253.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     doshir@vmware.com, pv-drivers@vmware.com, davem@davemloft.net,
-        kuba@kernel.org
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     bhelgaas@google.com, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, x86@kernel.org, hpa@zytor.com
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] vmxnet3: switch from 'pci_' to 'dma_' API
-Date:   Sun, 22 Aug 2021 17:09:48 +0200
-Message-Id: <ef30cd7e2d3c14460ff5bc7ba6224d464722e8d9.1629644906.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] x86/PCI: sta2x11: switch from 'pci_' to 'dma_' API
+Date:   Sun, 22 Aug 2021 20:49:20 +0200
+Message-Id: <99656452963ba3c63a6cb12e151279d81da365eb.1629658069.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -51,10 +51,6 @@ The patch has been generated with the coccinelle script below.
 It has been hand modified to use 'dma_set_mask_and_coherent()' instead of
 'pci_set_dma_mask()/pci_set_consistent_dma_mask()' when applicable.
 This is less verbose.
-
-The explicit 'err = -EIO;' has been removed because
-'dma_set_mask_and_coherent()' returns 0 or -EIO, so its return code can be
-used directly.
 
 It has been compile tested.
 
@@ -180,174 +176,23 @@ Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 If needed, see post from Christoph Hellwig on the kernel-janitors ML:
    https://marc.info/?l=kernel-janitors&m=158745678307186&w=4
 ---
- drivers/net/vmxnet3/vmxnet3_drv.c | 47 +++++++++++++------------------
- 1 file changed, 20 insertions(+), 27 deletions(-)
+ arch/x86/pci/sta2x11-fixup.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/net/vmxnet3/vmxnet3_drv.c b/drivers/net/vmxnet3/vmxnet3_drv.c
-index e3c6b7e3bfdd..142f70670f5c 100644
---- a/drivers/net/vmxnet3/vmxnet3_drv.c
-+++ b/drivers/net/vmxnet3/vmxnet3_drv.c
-@@ -314,10 +314,10 @@ vmxnet3_unmap_tx_buf(struct vmxnet3_tx_buf_info *tbi,
- {
- 	if (tbi->map_type == VMXNET3_MAP_SINGLE)
- 		dma_unmap_single(&pdev->dev, tbi->dma_addr, tbi->len,
--				 PCI_DMA_TODEVICE);
-+				 DMA_TO_DEVICE);
- 	else if (tbi->map_type == VMXNET3_MAP_PAGE)
- 		dma_unmap_page(&pdev->dev, tbi->dma_addr, tbi->len,
--			       PCI_DMA_TODEVICE);
-+			       DMA_TO_DEVICE);
- 	else
- 		BUG_ON(tbi->map_type != VMXNET3_MAP_NONE);
+diff --git a/arch/x86/pci/sta2x11-fixup.c b/arch/x86/pci/sta2x11-fixup.c
+index 7d2525691854..101081ad64b6 100644
+--- a/arch/x86/pci/sta2x11-fixup.c
++++ b/arch/x86/pci/sta2x11-fixup.c
+@@ -146,8 +146,7 @@ static void sta2x11_map_ep(struct pci_dev *pdev)
+ 		dev_err(dev, "sta2x11: could not set DMA offset\n");
  
-@@ -585,7 +585,7 @@ vmxnet3_rq_alloc_rx_buf(struct vmxnet3_rx_queue *rq, u32 ring_idx,
- 				rbi->dma_addr = dma_map_single(
- 						&adapter->pdev->dev,
- 						rbi->skb->data, rbi->len,
--						PCI_DMA_FROMDEVICE);
-+						DMA_FROM_DEVICE);
- 				if (dma_mapping_error(&adapter->pdev->dev,
- 						      rbi->dma_addr)) {
- 					dev_kfree_skb_any(rbi->skb);
-@@ -609,7 +609,7 @@ vmxnet3_rq_alloc_rx_buf(struct vmxnet3_rx_queue *rq, u32 ring_idx,
- 				rbi->dma_addr = dma_map_page(
- 						&adapter->pdev->dev,
- 						rbi->page, 0, PAGE_SIZE,
--						PCI_DMA_FROMDEVICE);
-+						DMA_FROM_DEVICE);
- 				if (dma_mapping_error(&adapter->pdev->dev,
- 						      rbi->dma_addr)) {
- 					put_page(rbi->page);
-@@ -723,7 +723,7 @@ vmxnet3_map_pkt(struct sk_buff *skb, struct vmxnet3_tx_ctx *ctx,
- 		tbi->map_type = VMXNET3_MAP_SINGLE;
- 		tbi->dma_addr = dma_map_single(&adapter->pdev->dev,
- 				skb->data + buf_offset, buf_size,
--				PCI_DMA_TODEVICE);
-+				DMA_TO_DEVICE);
- 		if (dma_mapping_error(&adapter->pdev->dev, tbi->dma_addr))
- 			return -EFAULT;
+ 	dev->bus_dma_limit = max_amba_addr;
+-	pci_set_consistent_dma_mask(pdev, max_amba_addr);
+-	pci_set_dma_mask(pdev, max_amba_addr);
++	dma_set_mask_and_coherent(&pdev->dev, max_amba_addr);
  
-@@ -1449,7 +1449,7 @@ vmxnet3_rq_rx_complete(struct vmxnet3_rx_queue *rq,
- 				new_dma_addr =
- 					dma_map_single(&adapter->pdev->dev,
- 						       new_skb->data, rbi->len,
--						       PCI_DMA_FROMDEVICE);
-+						       DMA_FROM_DEVICE);
- 				if (dma_mapping_error(&adapter->pdev->dev,
- 						      new_dma_addr)) {
- 					dev_kfree_skb(new_skb);
-@@ -1467,7 +1467,7 @@ vmxnet3_rq_rx_complete(struct vmxnet3_rx_queue *rq,
- 				dma_unmap_single(&adapter->pdev->dev,
- 						 rbi->dma_addr,
- 						 rbi->len,
--						 PCI_DMA_FROMDEVICE);
-+						 DMA_FROM_DEVICE);
- 
- 				/* Immediate refill */
- 				rbi->skb = new_skb;
-@@ -1546,7 +1546,7 @@ vmxnet3_rq_rx_complete(struct vmxnet3_rx_queue *rq,
- 				new_dma_addr = dma_map_page(&adapter->pdev->dev,
- 							    new_page,
- 							    0, PAGE_SIZE,
--							    PCI_DMA_FROMDEVICE);
-+							    DMA_FROM_DEVICE);
- 				if (dma_mapping_error(&adapter->pdev->dev,
- 						      new_dma_addr)) {
- 					put_page(new_page);
-@@ -1559,7 +1559,7 @@ vmxnet3_rq_rx_complete(struct vmxnet3_rx_queue *rq,
- 
- 				dma_unmap_page(&adapter->pdev->dev,
- 					       rbi->dma_addr, rbi->len,
--					       PCI_DMA_FROMDEVICE);
-+					       DMA_FROM_DEVICE);
- 
- 				vmxnet3_append_frag(ctx->skb, rcd, rbi);
- 
-@@ -1677,13 +1677,13 @@ vmxnet3_rq_cleanup(struct vmxnet3_rx_queue *rq,
- 			if (rxd->btype == VMXNET3_RXD_BTYPE_HEAD &&
- 					rq->buf_info[ring_idx][i].skb) {
- 				dma_unmap_single(&adapter->pdev->dev, rxd->addr,
--						 rxd->len, PCI_DMA_FROMDEVICE);
-+						 rxd->len, DMA_FROM_DEVICE);
- 				dev_kfree_skb(rq->buf_info[ring_idx][i].skb);
- 				rq->buf_info[ring_idx][i].skb = NULL;
- 			} else if (rxd->btype == VMXNET3_RXD_BTYPE_BODY &&
- 					rq->buf_info[ring_idx][i].page) {
- 				dma_unmap_page(&adapter->pdev->dev, rxd->addr,
--					       rxd->len, PCI_DMA_FROMDEVICE);
-+					       rxd->len, DMA_FROM_DEVICE);
- 				put_page(rq->buf_info[ring_idx][i].page);
- 				rq->buf_info[ring_idx][i].page = NULL;
- 			}
-@@ -2419,7 +2419,7 @@ vmxnet3_set_mc(struct net_device *netdev)
- 							&adapter->pdev->dev,
- 							new_table,
- 							sz,
--							PCI_DMA_TODEVICE);
-+							DMA_TO_DEVICE);
- 				if (!dma_mapping_error(&adapter->pdev->dev,
- 						       new_table_pa)) {
- 					new_mode |= VMXNET3_RXM_MCAST;
-@@ -2455,7 +2455,7 @@ vmxnet3_set_mc(struct net_device *netdev)
- 
- 	if (new_table_pa_valid)
- 		dma_unmap_single(&adapter->pdev->dev, new_table_pa,
--				 rxConf->mfTableLen, PCI_DMA_TODEVICE);
-+				 rxConf->mfTableLen, DMA_TO_DEVICE);
- 	kfree(new_table);
- }
- 
-@@ -3438,19 +3438,12 @@ vmxnet3_probe_device(struct pci_dev *pdev,
- 	adapter->rx_ring_size = VMXNET3_DEF_RX_RING_SIZE;
- 	adapter->rx_ring2_size = VMXNET3_DEF_RX_RING2_SIZE;
- 
--	if (pci_set_dma_mask(pdev, DMA_BIT_MASK(64)) == 0) {
--		if (pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(64)) != 0) {
--			dev_err(&pdev->dev,
--				"pci_set_consistent_dma_mask failed\n");
--			err = -EIO;
--			goto err_set_mask;
--		}
-+	if (dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64)) == 0) {
- 		dma64 = true;
- 	} else {
--		if (pci_set_dma_mask(pdev, DMA_BIT_MASK(32)) != 0) {
--			dev_err(&pdev->dev,
--				"pci_set_dma_mask failed\n");
--			err = -EIO;
-+		err = dma_set_mask(&pdev->dev, DMA_BIT_MASK(32));
-+		if (err) {
-+			dev_err(&pdev->dev, "dma_set_mask failed\n");
- 			goto err_set_mask;
- 		}
- 		dma64 = false;
-@@ -3459,7 +3452,7 @@ vmxnet3_probe_device(struct pci_dev *pdev,
- 	spin_lock_init(&adapter->cmd_lock);
- 	adapter->adapter_pa = dma_map_single(&adapter->pdev->dev, adapter,
- 					     sizeof(struct vmxnet3_adapter),
--					     PCI_DMA_TODEVICE);
-+					     DMA_TO_DEVICE);
- 	if (dma_mapping_error(&adapter->pdev->dev, adapter->adapter_pa)) {
- 		dev_err(&pdev->dev, "Failed to map dma\n");
- 		err = -EFAULT;
-@@ -3713,7 +3706,7 @@ vmxnet3_probe_device(struct pci_dev *pdev,
- 			  adapter->shared, adapter->shared_pa);
- err_alloc_shared:
- 	dma_unmap_single(&adapter->pdev->dev, adapter->adapter_pa,
--			 sizeof(struct vmxnet3_adapter), PCI_DMA_TODEVICE);
-+			 sizeof(struct vmxnet3_adapter), DMA_TO_DEVICE);
- err_set_mask:
- 	free_netdev(netdev);
- 	return err;
-@@ -3781,7 +3774,7 @@ vmxnet3_remove_device(struct pci_dev *pdev)
- 			  sizeof(struct Vmxnet3_DriverShared),
- 			  adapter->shared, adapter->shared_pa);
- 	dma_unmap_single(&adapter->pdev->dev, adapter->adapter_pa,
--			 sizeof(struct vmxnet3_adapter), PCI_DMA_TODEVICE);
-+			 sizeof(struct vmxnet3_adapter), DMA_TO_DEVICE);
- 	free_netdev(netdev);
- }
- 
+ 	/* Configure AHB mapping */
+ 	pci_write_config_dword(pdev, AHB_PEXLBASE(0), 0);
 -- 
 2.30.2
 
