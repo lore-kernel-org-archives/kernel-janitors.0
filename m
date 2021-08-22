@@ -5,39 +5,36 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8179DC4320A
-	for <kernel-janitors@archiver.kernel.org>; Sun, 22 Aug 2021 19:38:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 721F7C4338F
+	for <kernel-janitors@archiver.kernel.org>; Sun, 22 Aug 2021 20:03:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5D7A661266
-	for <kernel-janitors@archiver.kernel.org>; Sun, 22 Aug 2021 19:38:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A44561267
+	for <kernel-janitors@archiver.kernel.org>; Sun, 22 Aug 2021 20:03:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231149AbhHVTi7 (ORCPT
+        id S231654AbhHVUDo (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 22 Aug 2021 15:38:59 -0400
-Received: from smtp04.smtpout.orange.fr ([80.12.242.126]:39197 "EHLO
+        Sun, 22 Aug 2021 16:03:44 -0400
+Received: from smtp04.smtpout.orange.fr ([80.12.242.126]:33263 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229565AbhHVTi6 (ORCPT
+        with ESMTP id S229640AbhHVUDo (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 22 Aug 2021 15:38:58 -0400
+        Sun, 22 Aug 2021 16:03:44 -0400
 Received: from pop-os.home ([90.126.253.178])
         by mwinf5d51 with ME
-        id kjeE250013riaq203jeEec; Sun, 22 Aug 2021 21:38:16 +0200
+        id kk302500A3riaq203k30rr; Sun, 22 Aug 2021 22:03:01 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 22 Aug 2021 21:38:16 +0200
+X-ME-Date: Sun, 22 Aug 2021 22:03:01 +0200
 X-ME-IP: 90.126.253.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     syniurge@gmail.com, nehal-bakulchandra.shah@amd.com,
-        shyam-sundar.s-k@amd.com, seth.heasley@intel.com,
-        nhorman@tuxdriver.com
-Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
+To:     tomas.winkler@intel.com, arnd@arndb.de, gregkh@linuxfoundation.org
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] i2c: switch from 'pci_' to 'dma_' API
-Date:   Sun, 22 Aug 2021 21:38:12 +0200
-Message-Id: <fad542b558afc45496f7a7ba581593cd46e68f7c.1629660967.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] mei: switch from 'pci_' to 'dma_' API
+Date:   Sun, 22 Aug 2021 22:02:59 +0200
+Message-Id: <d4d442f06c602230e8145a531647bbfee69a1e31.1629662528.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -48,12 +45,6 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 The wrappers in include/linux/pci-dma-compat.h should go away.
 
 The patch has been generated with the coccinelle script below.
-
-It has been hand modified to use 'dma_set_mask_and_coherent()' instead of
-'pci_set_dma_mask()/pci_set_consistent_dma_mask()' when applicable.
-This is less verbose.
-
-While at it a 'dev_err()' message has been slightly simplified.
 
 It has been compile tested.
 
@@ -179,49 +170,25 @@ Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 If needed, see post from Christoph Hellwig on the kernel-janitors ML:
    https://marc.info/?l=kernel-janitors&m=158745678307186&w=4
 ---
- drivers/i2c/busses/i2c-amd-mp2-pci.c |  4 ++--
- drivers/i2c/busses/i2c-ismt.c        | 12 +++++-------
- 2 files changed, 7 insertions(+), 9 deletions(-)
+ drivers/misc/mei/pci-txe.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-amd-mp2-pci.c b/drivers/i2c/busses/i2c-amd-mp2-pci.c
-index ce130a821ea5..adf0e8c1ec01 100644
---- a/drivers/i2c/busses/i2c-amd-mp2-pci.c
-+++ b/drivers/i2c/busses/i2c-amd-mp2-pci.c
-@@ -307,9 +307,9 @@ static int amd_mp2_pci_init(struct amd_mp2_dev *privdata,
- 
- 	pci_set_master(pci_dev);
- 
--	rc = pci_set_dma_mask(pci_dev, DMA_BIT_MASK(64));
-+	rc = dma_set_mask(&pci_dev->dev, DMA_BIT_MASK(64));
- 	if (rc) {
--		rc = pci_set_dma_mask(pci_dev, DMA_BIT_MASK(32));
-+		rc = dma_set_mask(&pci_dev->dev, DMA_BIT_MASK(32));
- 		if (rc)
- 			goto err_dma_mask;
- 	}
-diff --git a/drivers/i2c/busses/i2c-ismt.c b/drivers/i2c/busses/i2c-ismt.c
-index a6187cbec2c9..f4820fd3dc13 100644
---- a/drivers/i2c/busses/i2c-ismt.c
-+++ b/drivers/i2c/busses/i2c-ismt.c
-@@ -918,13 +918,11 @@ ismt_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 		return -ENODEV;
+diff --git a/drivers/misc/mei/pci-txe.c b/drivers/misc/mei/pci-txe.c
+index aec0483b8e72..fa20d9a27813 100644
+--- a/drivers/misc/mei/pci-txe.c
++++ b/drivers/misc/mei/pci-txe.c
+@@ -69,9 +69,9 @@ static int mei_txe_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 		goto end;
  	}
  
--	if ((pci_set_dma_mask(pdev, DMA_BIT_MASK(64)) != 0) ||
--	    (pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(64)) != 0)) {
--		if ((pci_set_dma_mask(pdev, DMA_BIT_MASK(32)) != 0) ||
--		    (pci_set_consistent_dma_mask(pdev,
--						 DMA_BIT_MASK(32)) != 0)) {
--			dev_err(&pdev->dev, "pci_set_dma_mask fail %p\n",
--				pdev);
-+	err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
-+	if (err) {
-+		err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
-+		if (err) {
-+			dev_err(&pdev->dev, "dma_set_mask fail\n");
- 			return -ENODEV;
- 		}
- 	}
+-	err = pci_set_dma_mask(pdev, DMA_BIT_MASK(36));
++	err = dma_set_mask(&pdev->dev, DMA_BIT_MASK(36));
+ 	if (err) {
+-		err = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
++		err = dma_set_mask(&pdev->dev, DMA_BIT_MASK(32));
+ 		if (err) {
+ 			dev_err(&pdev->dev, "No suitable DMA available.\n");
+ 			goto end;
 -- 
 2.30.2
 
