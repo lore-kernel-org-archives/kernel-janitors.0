@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8497BC4338F
-	for <kernel-janitors@archiver.kernel.org>; Sun, 22 Aug 2021 13:48:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E9A6C4338F
+	for <kernel-janitors@archiver.kernel.org>; Sun, 22 Aug 2021 14:04:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5F96A6120C
-	for <kernel-janitors@archiver.kernel.org>; Sun, 22 Aug 2021 13:48:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00F83610E6
+	for <kernel-janitors@archiver.kernel.org>; Sun, 22 Aug 2021 14:04:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232636AbhHVNtZ (ORCPT
+        id S232128AbhHVOFA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 22 Aug 2021 09:49:25 -0400
-Received: from smtp13.smtpout.orange.fr ([80.12.242.135]:59429 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S232503AbhHVNtZ (ORCPT
+        Sun, 22 Aug 2021 10:05:00 -0400
+Received: from out07.smtpout.orange.fr ([193.252.22.91]:23524 "EHLO
+        out.smtpout.orange.fr" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S231659AbhHVOE7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 22 Aug 2021 09:49:25 -0400
+        Sun, 22 Aug 2021 10:04:59 -0400
 Received: from pop-os.home ([90.126.253.178])
         by mwinf5d74 with ME
-        id kdoe250033riaq203doewr; Sun, 22 Aug 2021 15:48:42 +0200
+        id ke4E250053riaq203e4Edf; Sun, 22 Aug 2021 16:04:16 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 22 Aug 2021 15:48:42 +0200
+X-ME-Date: Sun, 22 Aug 2021 16:04:16 +0200
 X-ME-IP: 90.126.253.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     oakad@yahoo.com, ulf.hansson@linaro.org, brucechang@via.com.tw,
-        HaraldWelte@viatech.com
-Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     sanju.mehta@amd.com, Shyam-sundar.S-k@amd.com, jdmason@kudzu.us,
+        dave.jiang@intel.com, allenbh@gmail.com, fancer.lancer@gmail.com
+Cc:     linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] mmc: switch from 'pci_' to 'dma_' API
-Date:   Sun, 22 Aug 2021 15:48:37 +0200
-Message-Id: <b617f284e2ab8b6b48fff150eba1638641646edd.1629640046.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] NTB: switch from 'pci_' to 'dma_' API
+Date:   Sun, 22 Aug 2021 16:04:12 +0200
+Message-Id: <6a1db73ba4e46958cb40d3766eff771ef5d7a11b.1629640974.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -171,81 +171,106 @@ Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
 If needed, see post from Christoph Hellwig on the kernel-janitors ML:
    https://marc.info/?l=kernel-janitors&m=158745678307186&w=4
----
- drivers/mmc/host/tifm_sd.c   | 16 ++++++++--------
- drivers/mmc/host/via-sdmmc.c |  4 ++--
- 2 files changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/mmc/host/tifm_sd.c b/drivers/mmc/host/tifm_sd.c
-index 9fdf7ea06e3f..63917070b1a7 100644
---- a/drivers/mmc/host/tifm_sd.c
-+++ b/drivers/mmc/host/tifm_sd.c
-@@ -669,8 +669,8 @@ static void tifm_sd_request(struct mmc_host *mmc, struct mmc_request *mrq)
+This patch is mostly mechanical and compile tested. I hope it is ok to
+update the "drivers/ntb/hw/" directory all at once.
+---
+ drivers/ntb/hw/amd/ntb_hw_amd.c    | 12 ++----------
+ drivers/ntb/hw/idt/ntb_hw_idt.c    | 15 ++-------------
+ drivers/ntb/hw/intel/ntb_hw_gen1.c | 12 ++----------
+ 3 files changed, 6 insertions(+), 33 deletions(-)
+
+diff --git a/drivers/ntb/hw/amd/ntb_hw_amd.c b/drivers/ntb/hw/amd/ntb_hw_amd.c
+index 71428d8cbcfc..87847c380051 100644
+--- a/drivers/ntb/hw/amd/ntb_hw_amd.c
++++ b/drivers/ntb/hw/amd/ntb_hw_amd.c
+@@ -1176,22 +1176,14 @@ static int amd_ntb_init_pci(struct amd_ntb_dev *ndev,
  
- 			if(1 != tifm_map_sg(sock, &host->bounce_buf, 1,
- 					    r_data->flags & MMC_DATA_WRITE
--					    ? PCI_DMA_TODEVICE
--					    : PCI_DMA_FROMDEVICE)) {
-+					    ? DMA_TO_DEVICE
-+					    : DMA_FROM_DEVICE)) {
- 				pr_err("%s : scatterlist map failed\n",
- 				       dev_name(&sock->dev));
- 				mrq->cmd->error = -ENOMEM;
-@@ -680,15 +680,15 @@ static void tifm_sd_request(struct mmc_host *mmc, struct mmc_request *mrq)
- 						   r_data->sg_len,
- 						   r_data->flags
- 						   & MMC_DATA_WRITE
--						   ? PCI_DMA_TODEVICE
--						   : PCI_DMA_FROMDEVICE);
-+						   ? DMA_TO_DEVICE
-+						   : DMA_FROM_DEVICE);
- 			if (host->sg_len < 1) {
- 				pr_err("%s : scatterlist map failed\n",
- 				       dev_name(&sock->dev));
- 				tifm_unmap_sg(sock, &host->bounce_buf, 1,
- 					      r_data->flags & MMC_DATA_WRITE
--					      ? PCI_DMA_TODEVICE
--					      : PCI_DMA_FROMDEVICE);
-+					      ? DMA_TO_DEVICE
-+					      : DMA_FROM_DEVICE);
- 				mrq->cmd->error = -ENOMEM;
- 				goto err_out;
- 			}
-@@ -762,10 +762,10 @@ static void tifm_sd_end_cmd(struct tasklet_struct *t)
- 		} else {
- 			tifm_unmap_sg(sock, &host->bounce_buf, 1,
- 				      (r_data->flags & MMC_DATA_WRITE)
--				      ? PCI_DMA_TODEVICE : PCI_DMA_FROMDEVICE);
-+				      ? DMA_TO_DEVICE : DMA_FROM_DEVICE);
- 			tifm_unmap_sg(sock, r_data->sg, r_data->sg_len,
- 				      (r_data->flags & MMC_DATA_WRITE)
--				      ? PCI_DMA_TODEVICE : PCI_DMA_FROMDEVICE);
-+				      ? DMA_TO_DEVICE : DMA_FROM_DEVICE);
+ 	pci_set_master(pdev);
+ 
+-	rc = pci_set_dma_mask(pdev, DMA_BIT_MASK(64));
++	rc = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
+ 	if (rc) {
+-		rc = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
++		rc = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
+ 		if (rc)
+ 			goto err_dma_mask;
+ 		dev_warn(&pdev->dev, "Cannot DMA highmem\n");
+ 	}
+ 
+-	rc = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(64));
+-	if (rc) {
+-		rc = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(32));
+-		if (rc)
+-			goto err_dma_mask;
+-		dev_warn(&pdev->dev, "Cannot DMA consistent highmem\n");
+-	}
+-
+ 	ndev->self_mmio = pci_iomap(pdev, 0, 0);
+ 	if (!ndev->self_mmio) {
+ 		rc = -EIO;
+diff --git a/drivers/ntb/hw/idt/ntb_hw_idt.c b/drivers/ntb/hw/idt/ntb_hw_idt.c
+index e7a4c2aa8baa..733557231ed0 100644
+--- a/drivers/ntb/hw/idt/ntb_hw_idt.c
++++ b/drivers/ntb/hw/idt/ntb_hw_idt.c
+@@ -2640,26 +2640,15 @@ static int idt_init_pci(struct idt_ntb_dev *ndev)
+ 	int ret;
+ 
+ 	/* Initialize the bit mask of PCI/NTB DMA */
+-	ret = pci_set_dma_mask(pdev, DMA_BIT_MASK(64));
++	ret = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
+ 	if (ret != 0) {
+-		ret = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
++		ret = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
+ 		if (ret != 0) {
+ 			dev_err(&pdev->dev, "Failed to set DMA bit mask\n");
+ 			return ret;
  		}
+ 		dev_warn(&pdev->dev, "Cannot set DMA highmem bit mask\n");
+ 	}
+-	ret = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(64));
+-	if (ret != 0) {
+-		ret = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(32));
+-		if (ret != 0) {
+-			dev_err(&pdev->dev,
+-				"Failed to set consistent DMA bit mask\n");
+-			return ret;
+-		}
+-		dev_warn(&pdev->dev,
+-			"Cannot set consistent DMA highmem bit mask\n");
+-	}
  
- 		r_data->bytes_xfered = r_data->blocks
-diff --git a/drivers/mmc/host/via-sdmmc.c b/drivers/mmc/host/via-sdmmc.c
-index c32df5530b94..88662a90ed96 100644
---- a/drivers/mmc/host/via-sdmmc.c
-+++ b/drivers/mmc/host/via-sdmmc.c
-@@ -491,7 +491,7 @@ static void via_sdc_preparedata(struct via_crdr_mmc_host *host,
+ 	/*
+ 	 * Enable the device advanced error reporting. It's not critical to
+diff --git a/drivers/ntb/hw/intel/ntb_hw_gen1.c b/drivers/ntb/hw/intel/ntb_hw_gen1.c
+index 093dd20057b9..e5f14e20a9ff 100644
+--- a/drivers/ntb/hw/intel/ntb_hw_gen1.c
++++ b/drivers/ntb/hw/intel/ntb_hw_gen1.c
+@@ -1771,22 +1771,14 @@ static int intel_ntb_init_pci(struct intel_ntb_dev *ndev, struct pci_dev *pdev)
  
- 	count = dma_map_sg(mmc_dev(host->mmc), data->sg, data->sg_len,
- 		((data->flags & MMC_DATA_READ) ?
--		PCI_DMA_FROMDEVICE : PCI_DMA_TODEVICE));
-+		DMA_FROM_DEVICE : DMA_TO_DEVICE));
- 	BUG_ON(count != 1);
+ 	pci_set_master(pdev);
  
- 	via_set_ddma(host, sg_dma_address(data->sg), sg_dma_len(data->sg),
-@@ -638,7 +638,7 @@ static void via_sdc_finish_data(struct via_crdr_mmc_host *host)
+-	rc = pci_set_dma_mask(pdev, DMA_BIT_MASK(64));
++	rc = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
+ 	if (rc) {
+-		rc = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
++		rc = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
+ 		if (rc)
+ 			goto err_dma_mask;
+ 		dev_warn(&pdev->dev, "Cannot DMA highmem\n");
+ 	}
  
- 	dma_unmap_sg(mmc_dev(host->mmc), data->sg, data->sg_len,
- 		((data->flags & MMC_DATA_READ) ?
--		PCI_DMA_FROMDEVICE : PCI_DMA_TODEVICE));
-+		DMA_FROM_DEVICE : DMA_TO_DEVICE));
- 
- 	if (data->stop)
- 		via_sdc_send_command(host, data->stop);
+-	rc = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(64));
+-	if (rc) {
+-		rc = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(32));
+-		if (rc)
+-			goto err_dma_mask;
+-		dev_warn(&pdev->dev, "Cannot DMA consistent highmem\n");
+-	}
+-
+ 	ndev->self_mmio = pci_iomap(pdev, 0, 0);
+ 	if (!ndev->self_mmio) {
+ 		rc = -EIO;
 -- 
 2.30.2
 
