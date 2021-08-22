@@ -5,37 +5,38 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 691B0C4320A
-	for <kernel-janitors@archiver.kernel.org>; Sun, 22 Aug 2021 20:17:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E84F0C4320A
+	for <kernel-janitors@archiver.kernel.org>; Sun, 22 Aug 2021 20:21:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3EC816127B
-	for <kernel-janitors@archiver.kernel.org>; Sun, 22 Aug 2021 20:17:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2B2D61266
+	for <kernel-janitors@archiver.kernel.org>; Sun, 22 Aug 2021 20:21:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232799AbhHVUSg (ORCPT
+        id S232903AbhHVUV4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 22 Aug 2021 16:18:36 -0400
-Received: from smtp04.smtpout.orange.fr ([80.12.242.126]:58260 "EHLO
+        Sun, 22 Aug 2021 16:21:56 -0400
+Received: from smtp04.smtpout.orange.fr ([80.12.242.126]:57719 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231644AbhHVUSf (ORCPT
+        with ESMTP id S229654AbhHVUV4 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 22 Aug 2021 16:18:35 -0400
+        Sun, 22 Aug 2021 16:21:56 -0400
 Received: from pop-os.home ([90.126.253.178])
         by mwinf5d51 with ME
-        id kkHr250033riaq203kHrnH; Sun, 22 Aug 2021 22:17:52 +0200
+        id kkMC2500K3riaq203kMDvK; Sun, 22 Aug 2021 22:21:14 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 22 Aug 2021 22:17:52 +0200
+X-ME-Date: Sun, 22 Aug 2021 22:21:14 +0200
 X-ME-IP: 90.126.253.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     davem@davemloft.net
-Cc:     sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     nehal-bakulchandra.shah@amd.com, basavaraj.natikar@amd.com,
+        jikos@kernel.org, benjamin.tissoires@redhat.com
+Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] sparc: switch from 'pci_' to 'dma_' API
-Date:   Sun, 22 Aug 2021 22:17:49 +0200
-Message-Id: <aa28186920a1bb964ca03723e482f130cd8e9322.1629663425.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] HID: amd_sfh: switch from 'pci_' to 'dma_' API
+Date:   Sun, 22 Aug 2021 22:21:11 +0200
+Message-Id: <439924a3414563a6ccc26eddb75efba6f54521c4.1629663605.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -46,6 +47,8 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 The wrappers in include/linux/pci-dma-compat.h should go away.
 
 The patch has been generated with the coccinelle script below.
+
+It has been compile tested.
 
 @@
 @@
@@ -170,21 +173,24 @@ If needed, see post from Christoph Hellwig on the kernel-janitors ML:
 
 It is *NOT* been compile tested, but it looks safe enough!
 ---
- arch/sparc/kernel/ioport.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/hid/amd-sfh-hid/amd_sfh_pcie.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/sparc/kernel/ioport.c b/arch/sparc/kernel/ioport.c
-index 8e1d72a16759..ad9f8eb844c7 100644
---- a/arch/sparc/kernel/ioport.c
-+++ b/arch/sparc/kernel/ioport.c
-@@ -369,7 +369,7 @@ void arch_dma_free(struct device *dev, size_t size, void *cpu_addr,
- void arch_sync_dma_for_cpu(phys_addr_t paddr, size_t size,
- 		enum dma_data_direction dir)
- {
--	if (dir != PCI_DMA_TODEVICE)
-+	if (dir != DMA_TO_DEVICE)
- 		dma_make_coherent(paddr, PAGE_ALIGN(size));
- }
+diff --git a/drivers/hid/amd-sfh-hid/amd_sfh_pcie.c b/drivers/hid/amd-sfh-hid/amd_sfh_pcie.c
+index 8d68796aa905..fa313c75a8a0 100644
+--- a/drivers/hid/amd-sfh-hid/amd_sfh_pcie.c
++++ b/drivers/hid/amd-sfh-hid/amd_sfh_pcie.c
+@@ -229,9 +229,9 @@ static int amd_mp2_pci_probe(struct pci_dev *pdev, const struct pci_device_id *i
+ 
+ 	privdata->mmio = pcim_iomap_table(pdev)[2];
+ 	pci_set_master(pdev);
+-	rc = pci_set_dma_mask(pdev, DMA_BIT_MASK(64));
++	rc = dma_set_mask(&pdev->dev, DMA_BIT_MASK(64));
+ 	if (rc) {
+-		rc = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
++		rc = dma_set_mask(&pdev->dev, DMA_BIT_MASK(32));
+ 		return rc;
+ 	}
  
 -- 
 2.30.2
