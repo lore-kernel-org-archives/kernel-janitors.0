@@ -6,45 +6,44 @@ X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
 	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 423DFC432BE
-	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Aug 2021 11:01:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D869C4320E
+	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Aug 2021 11:10:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2D9D26136F
-	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Aug 2021 11:01:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 272EA60FE6
+	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Aug 2021 11:10:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236541AbhHWLBj (ORCPT
+        id S236415AbhHWLK7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 23 Aug 2021 07:01:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58606 "EHLO mail.kernel.org"
+        Mon, 23 Aug 2021 07:10:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236235AbhHWLAy (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 23 Aug 2021 07:00:54 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 09C20613B1;
-        Mon, 23 Aug 2021 11:00:08 +0000 (UTC)
+        id S234865AbhHWLK5 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 23 Aug 2021 07:10:57 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPS id 4BB2F6136F;
+        Mon, 23 Aug 2021 11:10:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1629716408;
-        bh=8HGclWzR81QL4Yk4wfsRv82YFp1to8I/OHLbpHAmeII=;
+        s=k20201202; t=1629717015;
+        bh=diVsrQ7QHH8aTtcONyWLa4u5SXaOaypgsSkK0i8mBP8=;
         h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=tRs+aHuhvSIxuuStj4nSWbyxYIzDqOBVNjqvH7KX6gUBT1twOhZyQQlHMQpkhHqKo
-         hBVC/vSB1BIfzlG/2H60MA9kNNHmZpp6cYBMXLZwRmtdXJ+Cw5MCXXvN9MM05o0VFY
-         U5WRDAYEOUk4we9Uz+54FHPgS9pb4NEwL7Asfu0NJxjER3ksEJaYE5jL6hlW2Ykj2O
-         M1uYNejaon+mtbMImYW7C9j4VDCq5vdNr+RjYEEbCtLNeiet2AIxISI6e9nRfxiH75
-         GRq6rGtNalZk11HUFkeBkkmNVK0XVAHsWfsqySGsZfbf0xIe/88sdOsRi4scmMijeh
-         ts/qLJ3U/aoWQ==
+        b=mPdw/Fy+SrzjzKgxzy57hnxrtxEgUht/yoTFYPxjLNBAZizQ/vqmesNdBYYmYvWwB
+         eJdu2nkbTtovCI/NHai0hETrHut009JhR0hpcWBzlByyg+LhkaCnovL3b5N1K/eZhm
+         V7T/0nkLLhYGOM+e2WoSdJtq1LlNDiCirfO4kcFIaLE6ZdwCBJutm5lK1wTqHNOJBI
+         vWnFDhJ3LJ12j7ipTFD0Jo5LG7tp/MBKK+PEfWDUXh+b+VzV9+1aZHn7CpVA6ZaxTv
+         dRCumE+9kpIrv8IscGUhhc6spf/aeZ3ZVZehSXy38/JSlWQr41EwkUIYKrcQPeviFo
+         zIWoR31dW5SMA==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net: wwan: iosm: switch from 'pci_' to 'dma_' API
+Subject: Re: [PATCH] net/mellanox: switch from 'pci_' to 'dma_' API
 From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <162971640799.3591.7646976374159678225.git-patchwork-notify@kernel.org>
-Date:   Mon, 23 Aug 2021 11:00:07 +0000
-References: <a0a70eb0a65f16d870ecf2a14d7a8e931bc63d2e.1629579202.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <a0a70eb0a65f16d870ecf2a14d7a8e931bc63d2e.1629579202.git.christophe.jaillet@wanadoo.fr>
+Message-Id: <162971701525.8269.6988684791167013796.git-patchwork-notify@kernel.org>
+Date:   Mon, 23 Aug 2021 11:10:15 +0000
+References: <33167c57d1aaec10f130fe7604d6db3a43cfa381.1629659490.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <33167c57d1aaec10f130fe7604d6db3a43cfa381.1629659490.git.christophe.jaillet@wanadoo.fr>
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     m.chetan.kumar@intel.com, linuxwwan@intel.com,
-        loic.poulain@linaro.org, ryazanov.s.a@gmail.com,
-        johannes@sipsolutions.net, davem@davemloft.net, kuba@kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+Cc:     tariqt@nvidia.com, davem@davemloft.net, kuba@kernel.org,
+        saeedm@nvidia.com, leon@kernel.org, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
@@ -54,21 +53,20 @@ Hello:
 
 This patch was applied to netdev/net-next.git (refs/heads/master):
 
-On Sat, 21 Aug 2021 22:54:57 +0200 you wrote:
+On Sun, 22 Aug 2021 21:12:41 +0200 you wrote:
 > The wrappers in include/linux/pci-dma-compat.h should go away.
 > 
-> The patch has been generated with the coccinelle script below and has been
-> hand modified to replace GFP_ with a correct flag.
-> It has been compile tested.
+> The patch has been generated with the coccinelle script below.
 > 
-> 'ipc_protocol_init()' can use GFP_KERNEL, because this flag is already used
-> by a 'kzalloc()' call a few lines above.
+> It has been hand modified to use 'dma_set_mask_and_coherent()' instead of
+> 'pci_set_dma_mask()/pci_set_consistent_dma_mask()' when applicable.
+> This is less verbose.
 > 
 > [...]
 
 Here is the summary with links:
-  - net: wwan: iosm: switch from 'pci_' to 'dma_' API
-    https://git.kernel.org/netdev/net-next/c/44ee76581dec
+  - net/mellanox: switch from 'pci_' to 'dma_' API
+    https://git.kernel.org/netdev/net-next/c/eb9c5c0d3a73
 
 You are awesome, thank you!
 --
