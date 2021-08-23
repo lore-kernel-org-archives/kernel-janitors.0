@@ -5,70 +5,70 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BCF8C4320A
-	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Aug 2021 17:51:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5916C432BE
+	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Aug 2021 17:53:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1CA0F613A7
-	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Aug 2021 17:51:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D131261391
+	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Aug 2021 17:53:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231901AbhHWRvz (ORCPT
+        id S231454AbhHWRye (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 23 Aug 2021 13:51:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48912 "EHLO
+        Mon, 23 Aug 2021 13:54:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231843AbhHWRvz (ORCPT
+        with ESMTP id S231997AbhHWRyc (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 23 Aug 2021 13:51:55 -0400
-Received: from mail-ot1-x336.google.com (mail-ot1-x336.google.com [IPv6:2607:f8b0:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B788C061575;
-        Mon, 23 Aug 2021 10:51:12 -0700 (PDT)
-Received: by mail-ot1-x336.google.com with SMTP id g66-20020a9d12c8000000b0051aeba607f1so30013348otg.11;
-        Mon, 23 Aug 2021 10:51:12 -0700 (PDT)
+        Mon, 23 Aug 2021 13:54:32 -0400
+Received: from mail-ot1-x331.google.com (mail-ot1-x331.google.com [IPv6:2607:f8b0:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3384C061575;
+        Mon, 23 Aug 2021 10:53:49 -0700 (PDT)
+Received: by mail-ot1-x331.google.com with SMTP id c19-20020a9d6153000000b0051829acbfc7so38489274otk.9;
+        Mon, 23 Aug 2021 10:53:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=3rREAyPOKdLF6NDEzn+rP2y6ycvNQqshJTP26LTwLYA=;
-        b=AUOWTbDAsF2kSoMy1ltDzWDDka9y3jbqDIiddEymQ6xYDkzCjOrs3Arh+mUPc2ULzX
-         pZ1Xyx4b0a6z4NiVFlfzzt+OYk/qf+uWcy4I1I9eym7owd7esqPvyqFI5M+P/6yZTn3F
-         oiIaHKx3XYPXtNJo9ZfB2mFN0V/lhzcrJhGJuRMblyskmXqnN+f3MpAUsKjLhJZCYIaR
-         Oekero8asdPtUvYhgt67HWgtdK9pzdNpd4nbp6Fad+KR19d//l5Zw2zgGylV3CZ6B4Fx
-         14lQ0Mao5BL3xPVWPNAIXrLsdhNVNySHY68tiW2WXSVA1+QBaEXinzXxCAQHy5mJnVl4
-         nM1A==
+        bh=ZQomryc6rUW/QpCZz/zN784OOX3FK9mSd+n7gkdCcUg=;
+        b=GYZKfIhnP/AUtsvBuwr4kKzf4C0u22P7lBumXF8aw3bfjh5Z8ibPee+tK0DTd/i+tH
+         Xzfn5AlKUEl9UKolkHjDra8eUNQDqsVRmV7pU0JCEBYkRMuHt680TczIex1v+gNYWaAW
+         8FqMh/nNhzVl3y5pb9I4rV0VuRwRUUi7whivD9A4IjFQmuSWyUMByO0fJU8cBnbIkVL1
+         Fmesa9dGHwq8j7lIpcehH/9s7AqtoIhpRCJvuGjM1Nduw5KIm/jg4cqjFGQGKPaTliE6
+         BmBVlT5zW7csd0eoAP7y3PY0pIO1Lf616U3OyGHekNFENFLvxQj2u/yjVBc8Es3p/Hm5
+         5rHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=3rREAyPOKdLF6NDEzn+rP2y6ycvNQqshJTP26LTwLYA=;
-        b=B3j0cvCUapeUqStaAs+TTfad9CVOinwmNZAGDpa0U11oZug5B7QeSsI2O8mwc8igjH
-         W5uvu9kuhAWHUCwZCLhF4OdoJB3xN/22MfBX6qKnCLQErAiNys1ng8X4EWeLzBA14bWu
-         BOAibftHHeJt0D/2UeCXbkUKde7qR7Xi4m5KF4xp9q5tdZydPUZtu9+rjhcPVMqf2mLr
-         6+LDcmnyd1bicC15DD6wvwYCvSHbr3cAZmA5+Wj4cMmyA5wz54H4LdK2uC1pDLhC5yqH
-         MR58BXx4driXF63ENySPgSfaTN/ILresiNR3WyyovN7YGhHBH5GzGH8OgAZnjGZyPN9m
-         BcHg==
-X-Gm-Message-State: AOAM533Q6Qg1ApYpdsLzuMu3nOrLooysK0zCTVl5d5t/6ly4Kc/0F89r
-        DXNBrrnuTLSKb7xZoi1WIi+51Ji0FFZxHMbLv7I=
-X-Google-Smtp-Source: ABdhPJyCzesKPtsp+veFGNMoo192/z38L5TnShuXRKh6DQbbg8b3d22M+M90/KZ4CSNKrPdy52aVEtHwkBUmmgc7BFc=
-X-Received: by 2002:a05:6808:483:: with SMTP id z3mr11942026oid.5.1629741071769;
- Mon, 23 Aug 2021 10:51:11 -0700 (PDT)
+        bh=ZQomryc6rUW/QpCZz/zN784OOX3FK9mSd+n7gkdCcUg=;
+        b=f/mdWmfP4k8lX/eIicmrfL3OgTiCJz53XyGcnSesfaZUMtqMFF9T8k2VNDp2gSb/+U
+         t6ghtZUm+TuilmQqIXigqEEAdzbgU/lYbHrxxs0I9aGd/eYcmxyFqyx7DuXaY6hzl3iL
+         mvgMm0VdqMK4iB37mmu9dVwGwiNtfBuOBcDXqbuYO1yITegT0+kIADzUfSlqKLNM0EBE
+         /dzF3zgX7+clj6tkT4/yGbKPANNEMlWFvPG77w2y422B1cQJDXtwyIwoloWjFxj/mVki
+         h1hxscIXUrOi4eBlhI7qwHj30XF0nVuTdXfi2jPfZrNKQNRJnZcyaAznALWePYvkBuIT
+         s1mA==
+X-Gm-Message-State: AOAM531udwyiOvyxDMtg9Hrco+xA0zZUCfiNgwH6Fqjjv3Ey0foh4pkJ
+        pNaU8G94v0lSVZaUr7ZGLeN2jogLdjKGnrvXKy4=
+X-Google-Smtp-Source: ABdhPJwujOOZljA91OYN5H6dukXF63lJ2O87nAd49AlEjNXKsEKPf59CWweVy6tO5kbpZma/LC108skbsGrZelu1rDI=
+X-Received: by 2002:a9d:4c15:: with SMTP id l21mr15572911otf.311.1629741229119;
+ Mon, 23 Aug 2021 10:53:49 -0700 (PDT)
 MIME-Version: 1.0
-References: <d959876c2c61827a0607f5de29fdec10c47dcd86.1629667175.git.christophe.jaillet@wanadoo.fr>
- <4421bb63-3e77-0646-a647-c387a5df060c@amd.com>
-In-Reply-To: <4421bb63-3e77-0646-a647-c387a5df060c@amd.com>
+References: <1187ca1dbaa74ca4a87db9496061243e9a810faa.1629667363.git.christophe.jaillet@wanadoo.fr>
+ <cd7b5eb2-24c1-d54d-d6dd-c529d3eb140f@amd.com>
+In-Reply-To: <cd7b5eb2-24c1-d54d-d6dd-c529d3eb140f@amd.com>
 From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Mon, 23 Aug 2021 13:51:00 -0400
-Message-ID: <CADnq5_Mz1c68XToo4MKy-Xq70ZcLUiM95uqB9Wa_6buM6vkLgA@mail.gmail.com>
-Subject: Re: [PATCH] drm/amdgpu: switch from 'pci_' to 'dma_' API
+Date:   Mon, 23 Aug 2021 13:53:38 -0400
+Message-ID: <CADnq5_NU=DKqiHURbB70No94wi-qz7YbwA11_18DbCXPfxWzLQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/radeon: switch from 'pci_' to 'dma_' API
 To:     =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
 Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
         "Deucher, Alexander" <alexander.deucher@amd.com>,
         xinhui pan <Xinhui.Pan@amd.com>,
         Dave Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
         Maling list - DRI developers 
         <dri-devel@lists.freedesktop.org>,
         LKML <linux-kernel@vger.kernel.org>,
@@ -83,10 +83,10 @@ Applied.  Thanks!
 
 Alex
 
-On Mon, Aug 23, 2021 at 2:16 AM Christian K=C3=B6nig
+On Mon, Aug 23, 2021 at 2:17 AM Christian K=C3=B6nig
 <christian.koenig@amd.com> wrote:
 >
-> Am 22.08.21 um 23:21 schrieb Christophe JAILLET:
+> Am 22.08.21 um 23:23 schrieb Christophe JAILLET:
 > > The wrappers in include/linux/pci-dma-compat.h should go away.
 > >
 > > The patch has been generated with the coccinelle script below.
@@ -213,43 +213,47 @@ On Mon, Aug 23, 2021 at 2:16 AM Christian K=C3=B6nig
 >
 > Reviewed-by: Christian K=C3=B6nig <christian.koenig@amd.com>
 >
+> Should we pick them up or do you want to push them upstream?
+>
+> Regards,
+> Christian.
+>
 > > ---
 > > If needed, see post from Christoph Hellwig on the kernel-janitors ML:
 > >     https://marc.info/?l=3Dkernel-janitors&m=3D158745678307186&w=3D4
 > > ---
-> >   drivers/gpu/drm/amd/amdgpu/amdgpu_gart.c | 6 +++---
+> >   drivers/gpu/drm/radeon/radeon_device.c | 6 +++---
 > >   1 file changed, 3 insertions(+), 3 deletions(-)
 > >
-> > diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gart.c b/drivers/gpu/drm=
-/amd/amdgpu/amdgpu_gart.c
-> > index b36405170ff3..76efd5f8950f 100644
-> > --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gart.c
-> > +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gart.c
-> > @@ -76,7 +76,7 @@ static int amdgpu_gart_dummy_page_init(struct amdgpu_=
-device *adev)
-> >       if (adev->dummy_page_addr)
-> >               return 0;
-> >       adev->dummy_page_addr =3D dma_map_page(&adev->pdev->dev, dummy_pa=
-ge, 0,
-> > -                                          PAGE_SIZE, PCI_DMA_BIDIRECTI=
-ONAL);
-> > +                                          PAGE_SIZE, DMA_BIDIRECTIONAL=
-);
-> >       if (dma_mapping_error(&adev->pdev->dev, adev->dummy_page_addr)) {
-> >               dev_err(&adev->pdev->dev, "Failed to DMA MAP the dummy pa=
+> > diff --git a/drivers/gpu/drm/radeon/radeon_device.c b/drivers/gpu/drm/r=
+adeon/radeon_device.c
+> > index ac8c3251b616..4f0fbf667431 100644
+> > --- a/drivers/gpu/drm/radeon/radeon_device.c
+> > +++ b/drivers/gpu/drm/radeon/radeon_device.c
+> > @@ -785,7 +785,7 @@ int radeon_dummy_page_init(struct radeon_device *rd=
+ev)
+> >       if (rdev->dummy_page.page =3D=3D NULL)
+> >               return -ENOMEM;
+> >       rdev->dummy_page.addr =3D dma_map_page(&rdev->pdev->dev, rdev->du=
+mmy_page.page,
+> > -                                     0, PAGE_SIZE, PCI_DMA_BIDIRECTION=
+AL);
+> > +                                     0, PAGE_SIZE, DMA_BIDIRECTIONAL);
+> >       if (dma_mapping_error(&rdev->pdev->dev, rdev->dummy_page.addr)) {
+> >               dev_err(&rdev->pdev->dev, "Failed to DMA MAP the dummy pa=
 ge\n");
-> >               adev->dummy_page_addr =3D 0;
-> > @@ -96,8 +96,8 @@ void amdgpu_gart_dummy_page_fini(struct amdgpu_device=
- *adev)
+> >               __free_page(rdev->dummy_page.page);
+> > @@ -808,8 +808,8 @@ void radeon_dummy_page_fini(struct radeon_device *r=
+dev)
 > >   {
-> >       if (!adev->dummy_page_addr)
+> >       if (rdev->dummy_page.page =3D=3D NULL)
 > >               return;
-> > -     pci_unmap_page(adev->pdev, adev->dummy_page_addr,
-> > -                    PAGE_SIZE, PCI_DMA_BIDIRECTIONAL);
-> > +     dma_unmap_page(&adev->pdev->dev, adev->dummy_page_addr, PAGE_SIZE=
+> > -     pci_unmap_page(rdev->pdev, rdev->dummy_page.addr,
+> > -                     PAGE_SIZE, PCI_DMA_BIDIRECTIONAL);
+> > +     dma_unmap_page(&rdev->pdev->dev, rdev->dummy_page.addr, PAGE_SIZE=
 ,
 > > +                    DMA_BIDIRECTIONAL);
-> >       adev->dummy_page_addr =3D 0;
+> >       __free_page(rdev->dummy_page.page);
+> >       rdev->dummy_page.page =3D NULL;
 > >   }
-> >
 >
