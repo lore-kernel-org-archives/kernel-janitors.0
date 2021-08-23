@@ -2,73 +2,114 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C47BC4320A
-	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Aug 2021 11:10:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C50EC4320A
+	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Aug 2021 16:15:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3896861374
-	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Aug 2021 11:10:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38AC2613DA
+	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Aug 2021 16:15:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236380AbhHWLK6 (ORCPT
+        id S230004AbhHWQQS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 23 Aug 2021 07:10:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60500 "EHLO mail.kernel.org"
+        Mon, 23 Aug 2021 12:16:18 -0400
+Received: from foss.arm.com ([217.140.110.172]:55018 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236171AbhHWLK5 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 23 Aug 2021 07:10:57 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 5551260FE6;
-        Mon, 23 Aug 2021 11:10:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1629717015;
-        bh=uS0Sjvh8f0Gai+BJ6zkK6AdR8qljsXQuXeW8LgxHIbg=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=p8oxnZluV2/Wwlkvax8CutbYURln7FQ8KwR9ck/m4gM+i8Pg9d57aa49mzKBCpQl3
-         ptvcOq03ITF4u21y3NulHSlq0ITiNSiIgp3dCMrAp6UJIBpE+KnFQ7vu+ZJJsmjOB3
-         JOaIs5LzolAjdnubIWy7ZIZUNZ3gyWjny0NVRObsv28dx+so1FyX+NopTPBHsHglPG
-         4m8zBqy5TvzpAlvVXFsUhADB0QnurY1hm/4/keTZ5svlC20R50xmglMOoETAZAwe5Z
-         kEqvN8Hfpk1EdRPaH9xxtxhzdVJmoL/soz/RBKturjqLWo+qWPKGasbvsToyM8Uk+d
-         TLzqNRMtylK5A==
-Content-Type: text/plain; charset="utf-8"
+        id S229755AbhHWQQR (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 23 Aug 2021 12:16:17 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BBB9F11D4;
+        Mon, 23 Aug 2021 09:15:34 -0700 (PDT)
+Received: from lpieralisi (e121166-lin.cambridge.arm.com [10.1.196.255])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F313E3F5A1;
+        Mon, 23 Aug 2021 09:15:32 -0700 (PDT)
+Date:   Mon, 23 Aug 2021 17:15:27 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Rob Herring <robh@kernel.org>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Kever Yang <kever.yang@rock-chips.com>,
+        Simon Xue <xxm@rock-chips.com>, linux-pci@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2] PCI: rockchip-dwc: Potential error pointer
+ dereference in probe
+Message-ID: <20210823161527.GA8289@lpieralisi>
+References: <20210813141257.GB7722@kadam>
+ <20210813142648.GA12057@kili>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net: 8139cp: switch from 'pci_' to 'dma_' API
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <162971701529.8269.10434461713833292262.git-patchwork-notify@kernel.org>
-Date:   Mon, 23 Aug 2021 11:10:15 +0000
-References: <7d235ccb64d5713b2eec38f10e75d425c15ceef7.1629658846.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <7d235ccb64d5713b2eec38f10e75d425c15ceef7.1629658846.git.christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     davem@davemloft.net, kuba@kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210813142648.GA12057@kili>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
-
-This patch was applied to netdev/net-next.git (refs/heads/master):
-
-On Sun, 22 Aug 2021 21:02:23 +0200 you wrote:
-> The wrappers in include/linux/pci-dma-compat.h should go away.
+On Fri, Aug 13, 2021 at 05:26:48PM +0300, Dan Carpenter wrote:
+> If devm_regulator_get_optional() returns -ENODEV then it would lead
+> to an error pointer dereference on the next line and in the error
+> handling code.
 > 
-> The patch has been generated with the coccinelle script below.
+> Fixes: e1229e884e19 ("PCI: rockchip-dwc: Add Rockchip RK356X host controller driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> v2: The -ENODEV from devm_regulator_get_optional() has to be handled
+>     specially.
 > 
-> It has been hand modified to use 'dma_set_mask_and_coherent()' instead of
-> 'pci_set_dma_mask()/pci_set_consistent_dma_mask()' when applicable.
-> This is less verbose.
+>  drivers/pci/controller/dwc/pcie-dw-rockchip.c | 17 ++++++++++-------
+>  1 file changed, 10 insertions(+), 7 deletions(-)
+
+I squashed it in with the patch that is fixing, thanks a lot.
+
+Lorenzo
+
+> diff --git a/drivers/pci/controller/dwc/pcie-dw-rockchip.c b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+> index 20cef2e06f66..c9b341e55cbb 100644
+> --- a/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+> +++ b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+> @@ -224,15 +224,17 @@ static int rockchip_pcie_probe(struct platform_device *pdev)
+>  
+>  	/* DON'T MOVE ME: must be enable before PHY init */
+>  	rockchip->vpcie3v3 = devm_regulator_get_optional(dev, "vpcie3v3");
+> -	if (IS_ERR(rockchip->vpcie3v3))
+> +	if (IS_ERR(rockchip->vpcie3v3)) {
+>  		if (PTR_ERR(rockchip->vpcie3v3) != -ENODEV)
+>  			return dev_err_probe(dev, PTR_ERR(rockchip->vpcie3v3),
+>  					"failed to get vpcie3v3 regulator\n");
+> -
+> -	ret = regulator_enable(rockchip->vpcie3v3);
+> -	if (ret) {
+> -		dev_err(dev, "failed to enable vpcie3v3 regulator\n");
+> -		return ret;
+> +		rockchip->vpcie3v3 = NULL;
+> +	} else {
+> +		ret = regulator_enable(rockchip->vpcie3v3);
+> +		if (ret) {
+> +			dev_err(dev, "failed to enable vpcie3v3 regulator\n");
+> +			return ret;
+> +		}
+>  	}
+>  
+>  	ret = rockchip_pcie_phy_init(rockchip);
+> @@ -255,7 +257,8 @@ static int rockchip_pcie_probe(struct platform_device *pdev)
+>  deinit_phy:
+>  	rockchip_pcie_phy_deinit(rockchip);
+>  disable_regulator:
+> -	regulator_disable(rockchip->vpcie3v3);
+> +	if (rockchip->vpcie3v3)
+> +		regulator_disable(rockchip->vpcie3v3);
+>  
+>  	return ret;
+>  }
+> -- 
+> 2.20.1
 > 
-> [...]
-
-Here is the summary with links:
-  - net: 8139cp: switch from 'pci_' to 'dma_' API
-    https://git.kernel.org/netdev/net-next/c/a0991bf441d5
-
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
