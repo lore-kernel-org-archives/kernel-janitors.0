@@ -2,92 +2,254 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BF00C4320E
-	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Aug 2021 17:38:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BCF8C4320A
+	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Aug 2021 17:51:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 679506138B
-	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Aug 2021 17:38:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CA0F613A7
+	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Aug 2021 17:51:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231688AbhHWRjG (ORCPT
+        id S231901AbhHWRvz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 23 Aug 2021 13:39:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47742 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230154AbhHWRjF (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 23 Aug 2021 13:39:05 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 2662B6136F;
-        Mon, 23 Aug 2021 17:38:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1629740302;
-        bh=00YwudNE7MR/TP/XvuAZxtNITWiXbC+Ci4XZyCUewy0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X8icCSmOFJ5Pw98KDv4nkG7yd5EuXm0NfskwmHuTJWGvSuh1k+oEnRXKO53hdiduf
-         yHLo+WCWt2rJmDidJL6T42lKNArYegyF6Jjsv8sHA+A8QHABxxtvNMUD8fbwOs9STN
-         eGQVYNGrWuTwB0LT8U9Q7Nf3QSVr0kiHyCRztFRMBiY4559LVVMNqgbAJDojwqyygr
-         vUJuR9T0vONXL8zIdnR4E8vqJu/+7L5ebQnK4ZdA7EzMnQIPUeAuUMnP35SliqnLma
-         rO0BMZEl4SQdyqot6XJXmHGrnhm3bNR+xgFjbMssZV1+bUEwWomgnNNfpYaH19lVbm
-         yhFXTSIruTyYg==
-From:   Mark Brown <broonie@kernel.org>
-To:     linux-arm-kernel@lists.infradead.org,
-        Jon Lin <jon.lin@rock-chips.com>,
-        Chris Morgan <macromorgan@hotmail.com>,
-        linux-rockchip@lists.infradead.org, linux-spi@vger.kernel.org,
-        Heiko Stuebner <heiko@sntech.de>,
-        Colin King <colin.king@canonical.com>
-Cc:     Mark Brown <broonie@kernel.org>, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] spi: rockchip-sfc: Fix assigned but never used return error codes
-Date:   Mon, 23 Aug 2021 18:37:50 +0100
-Message-Id: <162974017516.3286.9365314960815127788.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20210818141051.36320-1-colin.king@canonical.com>
-References: <20210818141051.36320-1-colin.king@canonical.com>
+        Mon, 23 Aug 2021 13:51:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48912 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231843AbhHWRvz (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 23 Aug 2021 13:51:55 -0400
+Received: from mail-ot1-x336.google.com (mail-ot1-x336.google.com [IPv6:2607:f8b0:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B788C061575;
+        Mon, 23 Aug 2021 10:51:12 -0700 (PDT)
+Received: by mail-ot1-x336.google.com with SMTP id g66-20020a9d12c8000000b0051aeba607f1so30013348otg.11;
+        Mon, 23 Aug 2021 10:51:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=3rREAyPOKdLF6NDEzn+rP2y6ycvNQqshJTP26LTwLYA=;
+        b=AUOWTbDAsF2kSoMy1ltDzWDDka9y3jbqDIiddEymQ6xYDkzCjOrs3Arh+mUPc2ULzX
+         pZ1Xyx4b0a6z4NiVFlfzzt+OYk/qf+uWcy4I1I9eym7owd7esqPvyqFI5M+P/6yZTn3F
+         oiIaHKx3XYPXtNJo9ZfB2mFN0V/lhzcrJhGJuRMblyskmXqnN+f3MpAUsKjLhJZCYIaR
+         Oekero8asdPtUvYhgt67HWgtdK9pzdNpd4nbp6Fad+KR19d//l5Zw2zgGylV3CZ6B4Fx
+         14lQ0Mao5BL3xPVWPNAIXrLsdhNVNySHY68tiW2WXSVA1+QBaEXinzXxCAQHy5mJnVl4
+         nM1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=3rREAyPOKdLF6NDEzn+rP2y6ycvNQqshJTP26LTwLYA=;
+        b=B3j0cvCUapeUqStaAs+TTfad9CVOinwmNZAGDpa0U11oZug5B7QeSsI2O8mwc8igjH
+         W5uvu9kuhAWHUCwZCLhF4OdoJB3xN/22MfBX6qKnCLQErAiNys1ng8X4EWeLzBA14bWu
+         BOAibftHHeJt0D/2UeCXbkUKde7qR7Xi4m5KF4xp9q5tdZydPUZtu9+rjhcPVMqf2mLr
+         6+LDcmnyd1bicC15DD6wvwYCvSHbr3cAZmA5+Wj4cMmyA5wz54H4LdK2uC1pDLhC5yqH
+         MR58BXx4driXF63ENySPgSfaTN/ILresiNR3WyyovN7YGhHBH5GzGH8OgAZnjGZyPN9m
+         BcHg==
+X-Gm-Message-State: AOAM533Q6Qg1ApYpdsLzuMu3nOrLooysK0zCTVl5d5t/6ly4Kc/0F89r
+        DXNBrrnuTLSKb7xZoi1WIi+51Ji0FFZxHMbLv7I=
+X-Google-Smtp-Source: ABdhPJyCzesKPtsp+veFGNMoo192/z38L5TnShuXRKh6DQbbg8b3d22M+M90/KZ4CSNKrPdy52aVEtHwkBUmmgc7BFc=
+X-Received: by 2002:a05:6808:483:: with SMTP id z3mr11942026oid.5.1629741071769;
+ Mon, 23 Aug 2021 10:51:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <d959876c2c61827a0607f5de29fdec10c47dcd86.1629667175.git.christophe.jaillet@wanadoo.fr>
+ <4421bb63-3e77-0646-a647-c387a5df060c@amd.com>
+In-Reply-To: <4421bb63-3e77-0646-a647-c387a5df060c@amd.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Mon, 23 Aug 2021 13:51:00 -0400
+Message-ID: <CADnq5_Mz1c68XToo4MKy-Xq70ZcLUiM95uqB9Wa_6buM6vkLgA@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdgpu: switch from 'pci_' to 'dma_' API
+To:     =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        "Deucher, Alexander" <alexander.deucher@amd.com>,
+        xinhui pan <Xinhui.Pan@amd.com>,
+        Dave Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 18 Aug 2021 15:10:51 +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently there are two places where the error return variable ret is
-> being assigned -ETIMEDOUT on timeout errors and this value is not
-> being returned. Fix this by returning -ETIMEDOUT rather than redundantly
-> assiging it to ret.
-> 
-> [...]
+Applied.  Thanks!
 
-Applied to
+Alex
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-
-Thanks!
-
-[1/1] spi: rockchip-sfc: Fix assigned but never used return error codes
-      commit: 745649c59a0d1fde9dcc02286f23f8c78a1f724d
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+On Mon, Aug 23, 2021 at 2:16 AM Christian K=C3=B6nig
+<christian.koenig@amd.com> wrote:
+>
+> Am 22.08.21 um 23:21 schrieb Christophe JAILLET:
+> > The wrappers in include/linux/pci-dma-compat.h should go away.
+> >
+> > The patch has been generated with the coccinelle script below.
+> >
+> > It has been compile tested.
+> >
+> > @@
+> > @@
+> > -    PCI_DMA_BIDIRECTIONAL
+> > +    DMA_BIDIRECTIONAL
+> >
+> > @@
+> > @@
+> > -    PCI_DMA_TODEVICE
+> > +    DMA_TO_DEVICE
+> >
+> > @@
+> > @@
+> > -    PCI_DMA_FROMDEVICE
+> > +    DMA_FROM_DEVICE
+> >
+> > @@
+> > @@
+> > -    PCI_DMA_NONE
+> > +    DMA_NONE
+> >
+> > @@
+> > expression e1, e2, e3;
+> > @@
+> > -    pci_alloc_consistent(e1, e2, e3)
+> > +    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
+> >
+> > @@
+> > expression e1, e2, e3;
+> > @@
+> > -    pci_zalloc_consistent(e1, e2, e3)
+> > +    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
+> >
+> > @@
+> > expression e1, e2, e3, e4;
+> > @@
+> > -    pci_free_consistent(e1, e2, e3, e4)
+> > +    dma_free_coherent(&e1->dev, e2, e3, e4)
+> >
+> > @@
+> > expression e1, e2, e3, e4;
+> > @@
+> > -    pci_map_single(e1, e2, e3, e4)
+> > +    dma_map_single(&e1->dev, e2, e3, e4)
+> >
+> > @@
+> > expression e1, e2, e3, e4;
+> > @@
+> > -    pci_unmap_single(e1, e2, e3, e4)
+> > +    dma_unmap_single(&e1->dev, e2, e3, e4)
+> >
+> > @@
+> > expression e1, e2, e3, e4, e5;
+> > @@
+> > -    pci_map_page(e1, e2, e3, e4, e5)
+> > +    dma_map_page(&e1->dev, e2, e3, e4, e5)
+> >
+> > @@
+> > expression e1, e2, e3, e4;
+> > @@
+> > -    pci_unmap_page(e1, e2, e3, e4)
+> > +    dma_unmap_page(&e1->dev, e2, e3, e4)
+> >
+> > @@
+> > expression e1, e2, e3, e4;
+> > @@
+> > -    pci_map_sg(e1, e2, e3, e4)
+> > +    dma_map_sg(&e1->dev, e2, e3, e4)
+> >
+> > @@
+> > expression e1, e2, e3, e4;
+> > @@
+> > -    pci_unmap_sg(e1, e2, e3, e4)
+> > +    dma_unmap_sg(&e1->dev, e2, e3, e4)
+> >
+> > @@
+> > expression e1, e2, e3, e4;
+> > @@
+> > -    pci_dma_sync_single_for_cpu(e1, e2, e3, e4)
+> > +    dma_sync_single_for_cpu(&e1->dev, e2, e3, e4)
+> >
+> > @@
+> > expression e1, e2, e3, e4;
+> > @@
+> > -    pci_dma_sync_single_for_device(e1, e2, e3, e4)
+> > +    dma_sync_single_for_device(&e1->dev, e2, e3, e4)
+> >
+> > @@
+> > expression e1, e2, e3, e4;
+> > @@
+> > -    pci_dma_sync_sg_for_cpu(e1, e2, e3, e4)
+> > +    dma_sync_sg_for_cpu(&e1->dev, e2, e3, e4)
+> >
+> > @@
+> > expression e1, e2, e3, e4;
+> > @@
+> > -    pci_dma_sync_sg_for_device(e1, e2, e3, e4)
+> > +    dma_sync_sg_for_device(&e1->dev, e2, e3, e4)
+> >
+> > @@
+> > expression e1, e2;
+> > @@
+> > -    pci_dma_mapping_error(e1, e2)
+> > +    dma_mapping_error(&e1->dev, e2)
+> >
+> > @@
+> > expression e1, e2;
+> > @@
+> > -    pci_set_dma_mask(e1, e2)
+> > +    dma_set_mask(&e1->dev, e2)
+> >
+> > @@
+> > expression e1, e2;
+> > @@
+> > -    pci_set_consistent_dma_mask(e1, e2)
+> > +    dma_set_coherent_mask(&e1->dev, e2)
+> >
+> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>
+> Reviewed-by: Christian K=C3=B6nig <christian.koenig@amd.com>
+>
+> > ---
+> > If needed, see post from Christoph Hellwig on the kernel-janitors ML:
+> >     https://marc.info/?l=3Dkernel-janitors&m=3D158745678307186&w=3D4
+> > ---
+> >   drivers/gpu/drm/amd/amdgpu/amdgpu_gart.c | 6 +++---
+> >   1 file changed, 3 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gart.c b/drivers/gpu/drm=
+/amd/amdgpu/amdgpu_gart.c
+> > index b36405170ff3..76efd5f8950f 100644
+> > --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gart.c
+> > +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gart.c
+> > @@ -76,7 +76,7 @@ static int amdgpu_gart_dummy_page_init(struct amdgpu_=
+device *adev)
+> >       if (adev->dummy_page_addr)
+> >               return 0;
+> >       adev->dummy_page_addr =3D dma_map_page(&adev->pdev->dev, dummy_pa=
+ge, 0,
+> > -                                          PAGE_SIZE, PCI_DMA_BIDIRECTI=
+ONAL);
+> > +                                          PAGE_SIZE, DMA_BIDIRECTIONAL=
+);
+> >       if (dma_mapping_error(&adev->pdev->dev, adev->dummy_page_addr)) {
+> >               dev_err(&adev->pdev->dev, "Failed to DMA MAP the dummy pa=
+ge\n");
+> >               adev->dummy_page_addr =3D 0;
+> > @@ -96,8 +96,8 @@ void amdgpu_gart_dummy_page_fini(struct amdgpu_device=
+ *adev)
+> >   {
+> >       if (!adev->dummy_page_addr)
+> >               return;
+> > -     pci_unmap_page(adev->pdev, adev->dummy_page_addr,
+> > -                    PAGE_SIZE, PCI_DMA_BIDIRECTIONAL);
+> > +     dma_unmap_page(&adev->pdev->dev, adev->dummy_page_addr, PAGE_SIZE=
+,
+> > +                    DMA_BIDIRECTIONAL);
+> >       adev->dummy_page_addr =3D 0;
+> >   }
+> >
+>
