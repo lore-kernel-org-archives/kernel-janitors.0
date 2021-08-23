@@ -4,46 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BC2EC4320A
-	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Aug 2021 11:10:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CB14C4338F
+	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Aug 2021 11:10:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 153BA6137D
-	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Aug 2021 11:10:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 252366136F
+	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Aug 2021 11:10:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236502AbhHWLLD (ORCPT
+        id S236462AbhHWLLB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 23 Aug 2021 07:11:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60548 "EHLO mail.kernel.org"
+        Mon, 23 Aug 2021 07:11:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60554 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236327AbhHWLK6 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        id S236338AbhHWLK6 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
         Mon, 23 Aug 2021 07:10:58 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 8CFBE613B1;
+Received: by mail.kernel.org (Postfix) with ESMTPS id 9436E613B3;
         Mon, 23 Aug 2021 11:10:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1629717015;
-        bh=5mnGAY1S2smK5cym/PowpIkQEKvf0bvBIurkYoyPCs8=;
+        bh=JIsdeovlEQV2y6xWAw1Frvg3XwKaQTW6JRoR4Z5ro4s=;
         h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=rgvjcbYD/CmLFZGxWO63BZI4GHMkLmTltc9WzrhZM56+7rIm0kxb4zHXsSRQ8gPSe
-         scIjOE7HpcIG/bFot7sfWODt3izhAr4Aqy8TfShoSIq7Mt9INr5irRB/Jre5CS7RUg
-         kN9ozejydwVJx0+ihZHw1EqFeSb+hnvqP22JtLe+we6OuX0uKJatRhQh7DKpKSx8lD
-         XZ1VkzI7+HVOoL9DLZvhDP2nOaBiJnKJBBtMnFJqUohv5pBq69xkPeuM/pewB8kt3o
-         odpAV4D//s4KihIBOVxZIPXZHw3+UvK1MqQpuV9BEAm+yp65e5Oo3KWwcrWYYfm5+0
-         n8w2M5F/Aow7g==
+        b=ix1YqcomnExU2bdEuSDSUSh23XIJYTdgCBsWNE/gUwrwKU3SUo1Xli0ysmmwu6zZf
+         +52knXCODQ9KZaA2yM0cBVoiLjcBGBeHL/121ILI0Q+cb2C1FMP+La2k6howMzV4+g
+         tc5KhxYAbYL7r3hHwUdzwTFDBfy2rCMTc0JMJLSUX44fmzbJ9wHfBuAgcZCp9cwiim
+         kj2eUNyJi5oIAPab+lJ8CxXnRzg88afqMHj+IDP5F3D82fEc1hY5UC2+XNxIK2xVVj
+         3hQo8BEj/wYfvosQksZbpJMB77mi2DjSrPMkt/RKHRu5GGW19l3sZ5F2tNwdh9r3Vp
+         bD4WdMScLtDyw==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] vmxnet3: switch from 'pci_' to 'dma_' API
+Subject: Re: [PATCH] qlcnic: switch from 'pci_' to 'dma_' API
 From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <162971701551.8269.10344194039542238601.git-patchwork-notify@kernel.org>
+Message-Id: <162971701555.8269.16969253034297567411.git-patchwork-notify@kernel.org>
 Date:   Mon, 23 Aug 2021 11:10:15 +0000
-References: <ef30cd7e2d3c14460ff5bc7ba6224d464722e8d9.1629644906.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <ef30cd7e2d3c14460ff5bc7ba6224d464722e8d9.1629644906.git.christophe.jaillet@wanadoo.fr>
+References: <31df87ec75de7cdb52941c46f5b08beea603db67.1629664882.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <31df87ec75de7cdb52941c46f5b08beea603db67.1629664882.git.christophe.jaillet@wanadoo.fr>
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     doshir@vmware.com, pv-drivers@vmware.com, davem@davemloft.net,
-        kuba@kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc:     shshaikh@marvell.com, manishc@marvell.com,
+        GR-Linux-NIC-Dev@marvell.com, davem@davemloft.net, kuba@kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -52,7 +53,7 @@ Hello:
 
 This patch was applied to netdev/net-next.git (refs/heads/master):
 
-On Sun, 22 Aug 2021 17:09:48 +0200 you wrote:
+On Sun, 22 Aug 2021 22:42:45 +0200 you wrote:
 > The wrappers in include/linux/pci-dma-compat.h should go away.
 > 
 > The patch has been generated with the coccinelle script below.
@@ -64,8 +65,8 @@ On Sun, 22 Aug 2021 17:09:48 +0200 you wrote:
 > [...]
 
 Here is the summary with links:
-  - vmxnet3: switch from 'pci_' to 'dma_' API
-    https://git.kernel.org/netdev/net-next/c/bf7bec462035
+  - qlcnic: switch from 'pci_' to 'dma_' API
+    https://git.kernel.org/netdev/net-next/c/a14e39041b20
 
 You are awesome, thank you!
 --
