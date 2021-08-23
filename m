@@ -2,156 +2,107 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48387C4320A
-	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Aug 2021 19:47:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE0A0C4338F
+	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Aug 2021 20:27:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 26AC6613D0
-	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Aug 2021 19:47:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE5406103A
+	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Aug 2021 20:27:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231422AbhHWTsa (ORCPT
+        id S232464AbhHWU2O (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 23 Aug 2021 15:48:30 -0400
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:31355
-        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229558AbhHWTs3 (ORCPT
+        Mon, 23 Aug 2021 16:28:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56712 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231569AbhHWU2O (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 23 Aug 2021 15:48:29 -0400
-IronPort-HdrOrdr: =?us-ascii?q?A9a23=3At5RJlKF3m7FQqAzapLqE78eALOsnbusQ8zAX?=
- =?us-ascii?q?PiFKOHhom6Oj/PxG8M5w6fawslcssRIb6LW90cu7IU80nKQdibX5f43SPzUO01?=
- =?us-ascii?q?HHEGgN1+ffKnHbak/D398Y5ONbf69yBMaYNzVHpMzxiTPWL+od?=
-X-IronPort-AV: E=Sophos;i="5.84,326,1620684000"; 
-   d="scan'208";a="390942565"
-Received: from 173.121.68.85.rev.sfr.net (HELO hadrien) ([85.68.121.173])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Aug 2021 21:47:44 +0200
-Date:   Mon, 23 Aug 2021 21:47:44 +0200 (CEST)
-From:   Julia Lawall <julia.lawall@inria.fr>
-X-X-Sender: jll@hadrien
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        gustavo.pimentel@synopsys.com, vkoul@kernel.org,
-        vireshk@kernel.org, wangzhou1@hisilicon.com, logang@deltatee.com,
-        dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] dmaengine: switch from 'pci_' to 'dma_' API
-In-Reply-To: <fe9d57ff-bd44-3cee-516e-6815213ef467@wanadoo.fr>
-Message-ID: <alpine.DEB.2.22.394.2108232145590.17496@hadrien>
-References: <547fae4abef1ca3bf2198ca68e6c361b4d02f13c.1629635852.git.christophe.jaillet@wanadoo.fr> <YSNOTX68ltbt2hwf@smile.fi.intel.com> <fe9d57ff-bd44-3cee-516e-6815213ef467@wanadoo.fr>
-User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
+        Mon, 23 Aug 2021 16:28:14 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E560FC061575;
+        Mon, 23 Aug 2021 13:27:30 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id c129-20020a1c35870000b02902e6b6135279so872261wma.0;
+        Mon, 23 Aug 2021 13:27:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bIcLXpEM37ywSUnR+r6MN9eaKbHaPN9c26DZBTA5Was=;
+        b=oZ0dUV1PkpAzHK+44jGVy1MnwEmzrUrYnCAEEC3OOuNdmnd1f+ORs4dd3Db/O6Yh8i
+         WPMR1fzieRRP8gdF64qMYJ1YpdFjEHflGslInBWBu3TUigBDUszFFW8mpVC+HlpJN9Mo
+         bxybwp55U3Ra6/Dt6lk018gGy9CFlr6S0CLJYKdWFzzGVejueaBGYdBZeSlbT/MXoPbz
+         vSTo60CN2sKp3vGk7O/9nLg0Ble10UttnFQ6QP2qYJzDtcdbL5ll/9TTLvLXluhm95VY
+         GKdFrRedPozW8ai03fOIqNJ8yZysyTSNO0p3tP02VIS2y8XYTVbfgiknyr6gFFlYaSaC
+         kliQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bIcLXpEM37ywSUnR+r6MN9eaKbHaPN9c26DZBTA5Was=;
+        b=SsCYSACmD32cI2p55QsEr1eXTPQQrzQT3AIzO/LBJ+nSUXlI31mKBSYEosh2b3YXBS
+         KjPB75pb51mEIAeD/YwqhY0DWh/kZNZc86FJROgwlX2mQINaUm+r1zPqpGAwm922bZP4
+         xJNR0pf6OIsoCCFBYZZXyQ/eJLwXJgh4piRkYEbF2L6k7USd6RChkQokWKnIctz6/MvU
+         zT/tiUOjZUee9/QfQHU4TBdG0pmf5d9e9uKDAO+sOQuoizWpC6QPq8FcZRDH1idtMIqd
+         zW1dOQT3Q1evh5yvksK9y1zsKcKTikHoJbUvObsVvv+OEhJpB2q1hplDEGDSrfo0JYLj
+         gUNw==
+X-Gm-Message-State: AOAM530qxnPMQvW6IQMNWkMhiAfnmOEtAO4avU820rpm07j3hQuaoNlh
+        YVTkhTH//S7QhFXiMBGC+wc=
+X-Google-Smtp-Source: ABdhPJwhDuUJBKWKofbT5kwxWtHMrfYPc1x9WzLluiMk0oTiJIsI+zWYG2KHtZsW9On/0SLZCOkSZA==
+X-Received: by 2002:a05:600c:4896:: with SMTP id j22mr411938wmp.170.1629750449410;
+        Mon, 23 Aug 2021 13:27:29 -0700 (PDT)
+Received: from localhost.localdomain (arl-84-90-178-246.netvisao.pt. [84.90.178.246])
+        by smtp.gmail.com with ESMTPSA id o6sm15842832wru.92.2021.08.23.13.27.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Aug 2021 13:27:29 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        Florian Westphal <fw@strlen.de>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org
+Cc:     netdev@vger.kernel.org,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] netfilter: x_tables: handle xt_register_template() returning an error value
+Date:   Mon, 23 Aug 2021 22:27:29 +0200
+Message-Id: <20210823202729.2009-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-1370404212-1629748065=:17496"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Commit fdacd57c79b7 ("netfilter: x_tables: never register tables by
+default") introduces the function xt_register_template(), and in one case,
+a call to that function was missing the error-case handling.
 
---8323329-1370404212-1629748065=:17496
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Handle when xt_register_template() returns an error value.
 
+This was identified with the clang-analyzer's Dead-Store analysis.
 
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ net/ipv4/netfilter/iptable_mangle.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-On Mon, 23 Aug 2021, Christophe JAILLET wrote:
+diff --git a/net/ipv4/netfilter/iptable_mangle.c b/net/ipv4/netfilter/iptable_mangle.c
+index b52a4c8a14fc..40417a3f930b 100644
+--- a/net/ipv4/netfilter/iptable_mangle.c
++++ b/net/ipv4/netfilter/iptable_mangle.c
+@@ -112,6 +112,8 @@ static int __init iptable_mangle_init(void)
+ {
+ 	int ret = xt_register_template(&packet_mangler,
+ 				       iptable_mangle_table_init);
++	if (ret < 0)
++		return ret;
+ 
+ 	mangle_ops = xt_hook_ops_alloc(&packet_mangler, iptable_mangle_hook);
+ 	if (IS_ERR(mangle_ops)) {
+-- 
+2.26.2
 
-> Le 23/08/2021 à 09:29, Andy Shevchenko a écrit :
-> > On Sun, Aug 22, 2021 at 02:40:22PM +0200, Christophe JAILLET wrote:
-> > > The wrappers in include/linux/pci-dma-compat.h should go away.
-> > >
-> > > The patch has been generated with the coccinelle script below.
-> > >
-> > > It has been hand modified to use 'dma_set_mask_and_coherent()' instead of
-> > > 'pci_set_dma_mask()/pci_set_consistent_dma_mask()' when applicable.
-> > > This is less verbose.
-> > >
-> > > It has been compile tested.
-> >
-> > > @@
-> > > expression e1, e2;
-> > > @@
-> > > -    pci_set_consistent_dma_mask(e1, e2)
-> > > +    dma_set_coherent_mask(&e1->dev, e2)
-> >
-> > Can we, please, replace this long noise in the commit message with a link to
-> > a
-> > script in coccinelle data base?
->
-> Hi,
->
-> There is no script in the coccinelle data base up to now, and there is no
-> point in adding one now.
-> The goal of these patches is to remove a deprecated API, so when the job will
-> be finished, this script would be of no use and would be removed.
->
-> However, I agree that the script as-is is noisy.
->
-> I'll replace it with a link to a message already available in lore.
-
-You can perhaps include a script that represents a very typical case or
-the specific case that is relevant to the patch.
-
-julia
-
-
->
-> >
-> > And the same comment for any future submission that are based on the scripts
-> > (esp. coccinelle ones).
->
-> I usually don't add my coccinelle scripts in the log, but I've been told times
-> ago that adding them was a good practice (that I have never followed...).
->
-> In this particular case, I thought it was helpful for a reviewer to see how
-> the automated part had been processed.
->
-> >
-> > ...
-> >
-> > > This patch is mostly mechanical and compile tested. I hope it is ok to
-> > > update the "drivers/dma/" directory all at once.
-> >
-> > There is another discussion with Hellwig [1] about 64-bit DMA mask,
-> > i.e. it doesn't fail anymore,
->
-> Yes, I'm aware of this thread.
->
-> I've not taken it into account for 2 reasons:
->    - it goes beyond the goal of these patches (i.e. the removal of a
-> deprecated API)
->    - I *was* not 100% confident about [1].
->
-> I *was* giving credit to comment such as [2]. And the pattern "if 64 bits
-> fails, then switch to 32 bits" is really common.
-> Maybe it made sense in the past and has remained as-is.
->
->
-> However, since then I've looked at all the architecture specific
-> implementation of 'dma_supported()' and [1] looks indeed correct :)
->
->
-> I propose to make these changes in another serie which will mention [1] and
-> see the acceptance rate in the different subsystems. (i.e. even if the patch
-> is correct, removing what looks like straightforward code may puzzle a few of
-> us)
->
-> I would start it once "pci-dma-compat.h" has been removed.
->
-> Do you agree, or do you want it integrated in the WIP?
->
-> Anyway, thanks for the review and comments.
->
-> CJ
->
-> > so you need to rework drivers accordingly.
-> >
-> > [1]: https://lkml.org/lkml/2021/6/7/398
-> >
->
-> [2]:
-> https://elixir.bootlin.com/linux/v5.14-rc7/source/drivers/infiniband/hw/hfi1/pcie.c#L98
->
---8323329-1370404212-1629748065=:17496--
