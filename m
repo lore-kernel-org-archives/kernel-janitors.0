@@ -2,112 +2,138 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0414AC4338F
-	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Aug 2021 19:08:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51ECEC4320A
+	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Aug 2021 19:26:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CE372613D0
-	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Aug 2021 19:08:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A34D611AF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Aug 2021 19:26:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231516AbhHWTJZ (ORCPT
+        id S230192AbhHWT0y (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 23 Aug 2021 15:09:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46594 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230192AbhHWTJY (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 23 Aug 2021 15:09:24 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id F3728613CF;
-        Mon, 23 Aug 2021 19:08:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1629745721;
-        bh=PLG7FBxLuX3/LDs1ORyJPnau1dlijqlSmrYO3kxYDQY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UZBMhhNaNnCs4NE6zyqjsZZQxflcfOT+aeFIwthe59yd++NKXgNiiDUNewOphuTcl
-         FRpHqiSUWD3fCHobPQPxMuCt8YX5UyPw1HkOInJbUZ7jQwoWOMB1eEKdzo3LR3PqPU
-         6Zi6xRwAO3tMbQAMGtJFo+wnAisYpNOtZbMkBcZNFCRD1eEpLwxGq71kYRvwRd/jAp
-         POWEVkB21/X2AqkjLwAdpJPNZ/6bJh9lrE6kowljzhbZfkN0GuSxv6VV3FY51zV7uc
-         6e6nGlj10YjA06DZ8O4S360qjcLgVoReT8FKoUGwz9SSiTk1CgjHF2A6zVKZUGhXCi
-         pslslOiTjA18A==
-Date:   Mon, 23 Aug 2021 12:08:37 -0700
-From:   Nathan Chancellor <nathan@kernel.org>
-To:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc:     John Harrison <John.C.Harrison@intel.com>,
-        Matthew Brost <matthew.brost@intel.com>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com,
-        kernel-janitors@vger.kernel.org,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: [Intel-gfx] [PATCH] drm/i915/selftest: Fix use of err in
- igt_reset_{fail, nop}_engine()
-Message-ID: <YSPyNZ3I1LgvDYSw@Ryzen-9-3900X.localdomain>
-References: <20210813171158.2665823-1-nathan@kernel.org>
+        Mon, 23 Aug 2021 15:26:54 -0400
+Received: from smtp11.smtpout.orange.fr ([80.12.242.133]:56064 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230377AbhHWT0x (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 23 Aug 2021 15:26:53 -0400
+Received: from [192.168.1.18] ([90.126.253.178])
+        by mwinf5d46 with ME
+        id l7S6250083riaq2037S6H5; Mon, 23 Aug 2021 21:26:09 +0200
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 23 Aug 2021 21:26:09 +0200
+X-ME-IP: 90.126.253.178
+Subject: Re: [PATCH] dmaengine: switch from 'pci_' to 'dma_' API
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     gustavo.pimentel@synopsys.com, vkoul@kernel.org,
+        vireshk@kernel.org, wangzhou1@hisilicon.com, logang@deltatee.com,
+        dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <547fae4abef1ca3bf2198ca68e6c361b4d02f13c.1629635852.git.christophe.jaillet@wanadoo.fr>
+ <YSNOTX68ltbt2hwf@smile.fi.intel.com>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Message-ID: <fe9d57ff-bd44-3cee-516e-6815213ef467@wanadoo.fr>
+Date:   Mon, 23 Aug 2021 21:26:06 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210813171158.2665823-1-nathan@kernel.org>
+In-Reply-To: <YSNOTX68ltbt2hwf@smile.fi.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Ping? This is a pretty clear bug and it is not fixed in -next or
-drm-intel at this point.
+Le 23/08/2021 à 09:29, Andy Shevchenko a écrit :
+> On Sun, Aug 22, 2021 at 02:40:22PM +0200, Christophe JAILLET wrote:
+>> The wrappers in include/linux/pci-dma-compat.h should go away.
+>>
+>> The patch has been generated with the coccinelle script below.
+>>
+>> It has been hand modified to use 'dma_set_mask_and_coherent()' instead of
+>> 'pci_set_dma_mask()/pci_set_consistent_dma_mask()' when applicable.
+>> This is less verbose.
+>>
+>> It has been compile tested.
+> 
+>> @@
+>> expression e1, e2;
+>> @@
+>> -    pci_set_consistent_dma_mask(e1, e2)
+>> +    dma_set_coherent_mask(&e1->dev, e2)
+> 
+> Can we, please, replace this long noise in the commit message with a link to a
+> script in coccinelle data base?
 
-On Fri, Aug 13, 2021 at 10:11:58AM -0700, Nathan Chancellor wrote:
-> Clang warns:
+Hi,
+
+There is no script in the coccinelle data base up to now, and there is 
+no point in adding one now.
+The goal of these patches is to remove a deprecated API, so when the job 
+will be finished, this script would be of no use and would be removed.
+
+However, I agree that the script as-is is noisy.
+
+I'll replace it with a link to a message already available in lore.
+
 > 
-> In file included from drivers/gpu/drm/i915/gt/intel_reset.c:1514:
-> drivers/gpu/drm/i915/gt/selftest_hangcheck.c:465:62: warning: variable
-> 'err' is uninitialized when used here [-Wuninitialized]
->         pr_err("[%s] Create context failed: %d!\n", engine->name, err);
->                                                                   ^~~
+> And the same comment for any future submission that are based on the scripts
+> (esp. coccinelle ones).
+
+I usually don't add my coccinelle scripts in the log, but I've been told 
+times ago that adding them was a good practice (that I have never 
+followed...).
+
+In this particular case, I thought it was helpful for a reviewer to see 
+how the automated part had been processed.
+
+> 
 > ...
-> drivers/gpu/drm/i915/gt/selftest_hangcheck.c:580:62: warning: variable
-> 'err' is uninitialized when used here [-Wuninitialized]
->         pr_err("[%s] Create context failed: %d!\n", engine->name, err);
->                                                                   ^~~
-> ...
-> 2 warnings generated.
 > 
-> This appears to be a copy and paste issue. Use ce directly using the %pe
-> specifier to pretty print the error code so that err is not used
-> uninitialized in these functions.
+>> This patch is mostly mechanical and compile tested. I hope it is ok to
+>> update the "drivers/dma/" directory all at once.
 > 
-> Fixes: 3a7b72665ea5 ("drm/i915/selftest: Bump selftest timeouts for hangcheck")
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
-> ---
->  drivers/gpu/drm/i915/gt/selftest_hangcheck.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> There is another discussion with Hellwig [1] about 64-bit DMA mask,
+> i.e. it doesn't fail anymore,
+
+Yes, I'm aware of this thread.
+
+I've not taken it into account for 2 reasons:
+    - it goes beyond the goal of these patches (i.e. the removal of a 
+deprecated API)
+    - I *was* not 100% confident about [1].
+
+I *was* giving credit to comment such as [2]. And the pattern "if 64 
+bits fails, then switch to 32 bits" is really common.
+Maybe it made sense in the past and has remained as-is.
+
+
+However, since then I've looked at all the architecture specific 
+implementation of 'dma_supported()' and [1] looks indeed correct :)
+
+
+I propose to make these changes in another serie which will mention [1] 
+and see the acceptance rate in the different subsystems. (i.e. even if 
+the patch is correct, removing what looks like straightforward code may 
+puzzle a few of us)
+
+I would start it once "pci-dma-compat.h" has been removed.
+
+Do you agree, or do you want it integrated in the WIP?
+
+Anyway, thanks for the review and comments.
+
+CJ
+
+> so you need to rework drivers accordingly.
 > 
-> diff --git a/drivers/gpu/drm/i915/gt/selftest_hangcheck.c b/drivers/gpu/drm/i915/gt/selftest_hangcheck.c
-> index 08f011f893b2..2c1ed32ca5ac 100644
-> --- a/drivers/gpu/drm/i915/gt/selftest_hangcheck.c
-> +++ b/drivers/gpu/drm/i915/gt/selftest_hangcheck.c
-> @@ -462,7 +462,7 @@ static int igt_reset_nop_engine(void *arg)
->  
->  		ce = intel_context_create(engine);
->  		if (IS_ERR(ce)) {
-> -			pr_err("[%s] Create context failed: %d!\n", engine->name, err);
-> +			pr_err("[%s] Create context failed: %pe!\n", engine->name, ce);
->  			return PTR_ERR(ce);
->  		}
->  
-> @@ -577,7 +577,7 @@ static int igt_reset_fail_engine(void *arg)
->  
->  		ce = intel_context_create(engine);
->  		if (IS_ERR(ce)) {
-> -			pr_err("[%s] Create context failed: %d!\n", engine->name, err);
-> +			pr_err("[%s] Create context failed: %pe!\n", engine->name, ce);
->  			return PTR_ERR(ce);
->  		}
->  
+> [1]: https://lkml.org/lkml/2021/6/7/398
 > 
-> base-commit: 927dfdd09d8c03ba100ed0c8c3915f8e1d1f5556
-> -- 
-> 2.33.0.rc2
+
+[2]: 
+https://elixir.bootlin.com/linux/v5.14-rc7/source/drivers/infiniband/hw/hfi1/pcie.c#L98
