@@ -2,88 +2,63 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D899C4338F
-	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Aug 2021 21:30:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB60AC432BE
+	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Aug 2021 22:26:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 81424613D2
-	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Aug 2021 21:30:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE60561373
+	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Aug 2021 22:26:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232894AbhHWVb3 (ORCPT
+        id S233182AbhHWW1S (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 23 Aug 2021 17:31:29 -0400
-Received: from out07.smtpout.orange.fr ([193.252.22.91]:55915 "EHLO
-        out.smtpout.orange.fr" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S232772AbhHWVb2 (ORCPT
+        Mon, 23 Aug 2021 18:27:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55656 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233155AbhHWW1O (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 23 Aug 2021 17:31:28 -0400
-Received: from pop-os.home ([90.126.253.178])
-        by mwinf5d73 with ME
-        id l9Wh250043riaq2039WhxJ; Mon, 23 Aug 2021 23:30:43 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 23 Aug 2021 23:30:43 +0200
-X-ME-IP: 90.126.253.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     James.Bottomley@HansenPartnership.com, deller@gmx.de,
-        sudipm.mukherjee@gmail.com, sumit.semwal@linaro.org,
-        christian.koenig@amd.com
-Cc:     linux-parisc@vger.kernel.org, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] parisc/parport_gsc: switch from 'pci_' to 'dma_' API
-Date:   Mon, 23 Aug 2021 23:30:39 +0200
-Message-Id: <93b21629db55629ec3d384e8184c4a9dd0270c11.1629754126.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Mon, 23 Aug 2021 18:27:14 -0400
+Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [IPv6:2a0a:51c0:0:12e:520::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BEDFC06175F;
+        Mon, 23 Aug 2021 15:26:31 -0700 (PDT)
+Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
+        (envelope-from <fw@strlen.de>)
+        id 1mIIOf-0005pk-Qx; Tue, 24 Aug 2021 00:26:26 +0200
+Date:   Tue, 24 Aug 2021 00:26:25 +0200
+From:   Florian Westphal <fw@strlen.de>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        Florian Westphal <fw@strlen.de>,
+        netfilter-devel@vger.kernel.org, netdev@vger.kernel.org,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] netfilter: x_tables: handle xt_register_template()
+ returning an error value
+Message-ID: <20210823222625.GB23869@breakpoint.cc>
+References: <20210823202729.2009-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210823202729.2009-1-lukas.bulwahn@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The wrappers in include/linux/pci-dma-compat.h should go away.
+Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+> Commit fdacd57c79b7 ("netfilter: x_tables: never register tables by
+> default") introduces the function xt_register_template(), and in one case,
+> a call to that function was missing the error-case handling.
+> 
+> Handle when xt_register_template() returns an error value.
+> 
+> This was identified with the clang-analyzer's Dead-Store analysis.
 
-The patch has been generated with the coccinelle script below.
+Fixes: fdacd57c79b7 ("netfilter: x_tables: never register tables by > default")
+Reviewed-by: Florian Westphal <fw@strlen.de>
 
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_free_consistent(e1, e2, e3, e4)
-+    dma_free_coherent(&e1->dev, e2, e3, e4)
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-If needed, see post from Christoph Hellwig on the kernel-janitors ML:
-   https://marc.info/?l=kernel-janitors&m=158745678307186&w=4
-
-This has *NOT* been compile tested because I don't have the needed
-configuration.
-ssdfs
----
- drivers/parport/parport_gsc.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/parport/parport_gsc.c b/drivers/parport/parport_gsc.c
-index 1e43b3f399a8..db912fa6b6df 100644
---- a/drivers/parport/parport_gsc.c
-+++ b/drivers/parport/parport_gsc.c
-@@ -390,9 +390,8 @@ static int __exit parport_remove_chip(struct parisc_device *dev)
- 		if (p->irq != PARPORT_IRQ_NONE)
- 			free_irq(p->irq, p);
- 		if (priv->dma_buf)
--			pci_free_consistent(priv->dev, PAGE_SIZE,
--					    priv->dma_buf,
--					    priv->dma_handle);
-+			dma_free_coherent(&priv->dev->dev, PAGE_SIZE,
-+					  priv->dma_buf, priv->dma_handle);
- 		kfree (p->private_data);
- 		parport_put_port(p);
- 		kfree (ops); /* hope no-one cached it */
--- 
-2.30.2
-
+This needs to go to nf-next.
