@@ -2,119 +2,101 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 305E2C4338F
-	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Aug 2021 08:06:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB9B5C4320A
+	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Aug 2021 08:09:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1591D611C8
-	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Aug 2021 08:06:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9040A61378
+	for <kernel-janitors@archiver.kernel.org>; Mon, 23 Aug 2021 08:09:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235488AbhHWIHh (ORCPT
+        id S235353AbhHWIKA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 23 Aug 2021 04:07:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53784 "EHLO
+        Mon, 23 Aug 2021 04:10:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54320 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235353AbhHWIHg (ORCPT
+        with ESMTP id S235283AbhHWIJz (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 23 Aug 2021 04:07:36 -0400
-Received: from mail-yb1-xb33.google.com (mail-yb1-xb33.google.com [IPv6:2607:f8b0:4864:20::b33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE0DBC061757
-        for <kernel-janitors@vger.kernel.org>; Mon, 23 Aug 2021 01:06:54 -0700 (PDT)
-Received: by mail-yb1-xb33.google.com with SMTP id n126so19165070ybf.6
-        for <kernel-janitors@vger.kernel.org>; Mon, 23 Aug 2021 01:06:54 -0700 (PDT)
+        Mon, 23 Aug 2021 04:09:55 -0400
+Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 072FBC061575;
+        Mon, 23 Aug 2021 01:09:13 -0700 (PDT)
+Received: by mail-pf1-x433.google.com with SMTP id w68so14652385pfd.0;
+        Mon, 23 Aug 2021 01:09:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=D/zCG9ivFnH5oqg7ao6RBT5SBq8GrO87iHWo6rWwoX4=;
-        b=M4olpOi5c6kiBdUGJ3UItw1G0SBvluTYJzZRYymjprivaDsdZK6MnPhB8usOxlLa7w
-         W2zaXqSeW3Jbn7b+OoyNQJbyiMKgp6tjk8VW9oUJtXG9+PNzpYoGoNDvj79Ic4bi/zMs
-         E3cwLugJU1+jXscaCQzEhdeyGlKrRByY59Psvoep+iZZ+oQWNrQoockrhDzNpQ06//oH
-         mVIGNe/UcjjLC0Z2pnb8RYE0BiDcpzktqUuX44YXiSZRTvMJmfJFaQRkkyA3SXMuTnH6
-         CEybtA554/XPXAYQ8Rs9CoiP9lXB8cAZYwSJzqWIlTxxzX+uD1Jlp936JYAYSWl2ry/7
-         Bctw==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=w4BKx4lb7KmQZA85sKpEbdTzNjkorEefzZzY1FyEeO4=;
+        b=BdGh7T+q5hSXKMlVprVx2rILWkvtYa67421TokaBqUQfCxLXgPktfu904jCnDTcXtn
+         VrZRkgY8QdvYNMIQ0qDddPG8aKCATiGKerreUeeEqXQfAerlxNq8BQjLwVo/yRko/uRq
+         2hBl7yf/5H1ovMqEGM6HRNAfzSoL2KDe5Ib/JhMazOEtrviCxvDVUOdNpTxJnDgIM9m7
+         KfVda6YWuQID0ge/OmbGbXa+sq2qUH+a+jXakNE8bFzyGtw8P99hRUmEhi8sn7+mp1Mf
+         x8Gry8oNgSXgceHWe5U5CCyWlE9F3w7cJlMvssZqebMX8AZDIVIqn33sSikdvTEhX9TD
+         pmfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=D/zCG9ivFnH5oqg7ao6RBT5SBq8GrO87iHWo6rWwoX4=;
-        b=t2dq2Ue06EGSdNPx1oiVBUN78DmRKxAYInNTkii72wMIOIW7viLcIug/5lynLD4uuQ
-         wNTvEkI8+uZSCDH5a3bvprxuWV83gwCZykUULNocyt5cqZkrPoPx2fY4FCe3FofpfAi8
-         SCGaNFirrftIFqbtm/jSaTUUYOPta7wZhpraL4OuAgirhexkvQRYGPRWhyRwfxLfuXCX
-         eevnM6D/ffTR0RXyZISi43ydTQdM0otccaCvIv9vL/UjJ+H7FhqXeT26HXFqrKZ2mQUI
-         MYNuyNTEF1FUeNNd5dmQr+87M+TRA3b+L5VRHxYDYBvyJlkZpaN5CU9dAXitrnJ9vPeW
-         ms2w==
-X-Gm-Message-State: AOAM530qKY0OlzcZhkOYcy6Nu9FXJ5DfgU5G5Dnxq0leSfcOSVMh6STc
-        WOYZ/jA5H1giTFX2NotEz7E3yZ8TfH5OOcGqcPYSVw==
-X-Google-Smtp-Source: ABdhPJzFQqLG99qfpoMaXnaBRKXLdVxUqfwc1eLs6IWkwE8rXnfq1pJ040CA+QX5zWWtABZR4cqJRYtZ2jB0Ao4oFHI=
-X-Received: by 2002:a25:21c5:: with SMTP id h188mr40272726ybh.23.1629706013975;
- Mon, 23 Aug 2021 01:06:53 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=w4BKx4lb7KmQZA85sKpEbdTzNjkorEefzZzY1FyEeO4=;
+        b=K7sbpH+N0POxJArdPhAZQkIQj/P6nFklSkZh29ve3YiZnpbGvQ/UTHK5ffyyyAl+Nz
+         gSRXpy+gwroJdu50pgI1IFihcRgE+GL2PKEkJOf/4RCQSar9SePAAuNNRKzztBiEzHwI
+         lbf3S3deXzwbHowTDyNBZtb8uD4/urFTas0vxSCzu69gCS2E15Qx6b+OIWJPgcoY1bTT
+         pdBw0LO0vxrDJiivkG1aWI4IPU1/1/k5F2YxJqNpe1wXUxGGIBZF8BR/1oU2GLyOz72d
+         bkHAHkZqfQMVWtCwDe4IYYNnAylS8gaY5B+2FjbYmehdpICT3LEnXyq0w0CFVE5Pnd52
+         f4LA==
+X-Gm-Message-State: AOAM531SzW82K+EDpzxQtgqj3aiovQjAxD78qAINJmL31px2AbhP/lLT
+        IQ3E2tJwuM7ZC3aRjuhpGvIat14aKNg=
+X-Google-Smtp-Source: ABdhPJwPAIet1ix3vaoJYqo99unSUG9QDGLWncvOyqRaW2B+0yQCYtsba51pXxr7Or7t8GRWeXpEZw==
+X-Received: by 2002:a63:6983:: with SMTP id e125mr30894685pgc.389.1629706152631;
+        Mon, 23 Aug 2021 01:09:12 -0700 (PDT)
+Received: from [192.168.3.7] (softbank219203027033.bbtec.net. [219.203.27.33])
+        by smtp.gmail.com with ESMTPSA id x19sm15438507pfo.40.2021.08.23.01.09.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Aug 2021 01:09:12 -0700 (PDT)
+Subject: Re: [PATCH] media: switch from 'pci_' to 'dma_' API
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        mchehab@kernel.org
+Cc:     linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <71a7e0029ce28ec748eb045c8381d354011cebe6.1629623093.git.christophe.jaillet@wanadoo.fr>
+From:   Akihiro TSUKADA <tskd08@gmail.com>
+Message-ID: <25694cb6-ef03-7ef4-f096-257bcb560bbb@gmail.com>
+Date:   Mon, 23 Aug 2021 17:09:08 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-References: <cover.1629472813.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <cover.1629472813.git.christophe.jaillet@wanadoo.fr>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Mon, 23 Aug 2021 10:06:43 +0200
-Message-ID: <CAMpxmJXO595xXbyG4fnc1ckadPOt4d0SXJ8qD7KuSP1XP5dFzA@mail.gmail.com>
-Subject: Re: [PATCH 0/3] gpio: mpc8xxx: Fix 3 errors related to the error
- handling path of the 'mpc8xxx_probe()'
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        alexandru.marginean@nxp.com, Laurentiu.Tudor@nxp.com,
-        Hui Song <hui.song_1@nxp.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Ran Wang <ran.wang_1@nxp.com>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors <kernel-janitors@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <71a7e0029ce28ec748eb045c8381d354011cebe6.1629623093.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=iso-2022-jp
+Content-Language: en-US-large
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Aug 20, 2021 at 5:37 PM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> This has been split in 3 patches because:
->   - the root issue of patch 1 and 3 is not the same commit as the one for patch 2.
->   - the strategy to fix the issues is not the same
->      - patch 1: add a new call in the rror handling path
->      - patch 3: switch to a resource managed function
->
-> They could be merged together if easier to review. The subject would then be
-> something like "gpio: mpc8xxx: Fix the error handling path of 'mpc8xxx_probe()'"
->
-> If prefered, 'devm_add_action_or_reset()' could be used to switch the probe to
-> a fully managed resource function and remove the 'remove' function.
-> That's mostly a matter of taste.
->
-> If such an option is preferred, I'm a bit puzzled by the
-> 'irq_set_chained_handler_and_data()' call in the remove function because I
-> don't see why it is there.
-> Also see the comment at the end of patch 1 also related to this function call.
->
->
-> Christophe JAILLET (3):
->   gpio: mpc8xxx: Fix a resources leak in the error handling path of
->     'mpc8xxx_probe()'
->   gpio: mpc8xxx: Fix a potential double iounmap call in
->     'mpc8xxx_probe()'
->   gpio: mpc8xxx: Use 'devm_gpiochip_add_data()' to simplify the code and
->     avoid a leak
->
->  drivers/gpio/gpio-mpc8xxx.c | 13 +++++--------
->  1 file changed, 5 insertions(+), 8 deletions(-)
->
-> --
-> 2.30.2
->
+>  drivers/media/pci/pt1/pt1.c                   |  2 +-
 
-Hi Christophe,
+> diff --git a/drivers/media/pci/pt1/pt1.c b/drivers/media/pci/pt1/pt1.c
+> index f2aa36814fba..121a4a92ea10 100644
+> --- a/drivers/media/pci/pt1/pt1.c
+> +++ b/drivers/media/pci/pt1/pt1.c
+> @@ -1340,7 +1340,7 @@ static int pt1_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+>  	if (ret < 0)
+>  		goto err;
+>  
+> -	ret = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
+> +	ret = dma_set_mask(&pdev->dev, DMA_BIT_MASK(32));
+>  	if (ret < 0)
+>  		goto err_pci_disable_device;
+>  
 
-These look good but I'm leaving for a couple days in an hour so I
-won't be able to send a PR to Linus before the next release. I'll make
-these part of my regular PR for the upcoming merge window.
+Acked-by: Akihiro Tsukada <tskd08@gmail.com>
+Tested-by: Akihiro Tsukada <tskd08@gmail.com>
 
-Bart
+--
+tsukada
