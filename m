@@ -8,146 +8,143 @@ X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AFC1C432BE
-	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Aug 2021 16:03:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B8DFC4338F
+	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Aug 2021 16:38:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 689A761220
-	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Aug 2021 16:03:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCA4A61368
+	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Aug 2021 16:38:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238456AbhHXQDl (ORCPT
+        id S232186AbhHXQjk (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 24 Aug 2021 12:03:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43434 "EHLO
+        Tue, 24 Aug 2021 12:39:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238413AbhHXQDd (ORCPT
+        with ESMTP id S229830AbhHXQjj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 24 Aug 2021 12:03:33 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1682C061757;
-        Tue, 24 Aug 2021 09:02:48 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id x27so46584667lfu.5;
-        Tue, 24 Aug 2021 09:02:48 -0700 (PDT)
+        Tue, 24 Aug 2021 12:39:39 -0400
+Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EB43C061757;
+        Tue, 24 Aug 2021 09:38:55 -0700 (PDT)
+Received: by mail-lj1-x232.google.com with SMTP id l18so31169169lji.12;
+        Tue, 24 Aug 2021 09:38:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=poU6UxSe+vqBcMpX3p5PAXt32In/R0qv0Zl1gWkMej0=;
-        b=u48N+5kK/p3O1LusihjD74avPElDU4N3bsljZPgfQZ0p0zH+fHDGLBt1RxRnIeCAaw
-         CjqxonXgj/EL8EtOarJIBQg6Fc8xtLCWY7K6oe4pHvCbQx/Gk+Qdp+s2PUsEEijQhqaI
-         v6EDsIyuAFHeR22fDLix8Q92iduNYMpyzNiKb+DBg8GgwQmfk3BrqPunz7Zl0RKiwSeM
-         SZceBqvuUUWOFoJ+LHKCadWF7dRt2sdpNIiQh/y86BB8L9ADAqGgVzQZJi48nD3ANJK6
-         2ehmjqblhq8AAk4IWUfyCndVZMKWXLObW6tK64FCuoqZKVAik1Ll2Afk0U2Wtdac+CuQ
-         zfPA==
+        bh=WcbXWm6oOaII+80v56ACkIrGHjl86sgP+RyMxyJ09A8=;
+        b=VgxR+vLNCWaXX9vH/TiuNk1s8Blpj/bHixJKjJU8IGBVkICQ7DLFmkxnyRWOxZ/0uw
+         daB4SlrZ4MqsYuoMQpI0of0QMv4MM3OcWX065ZRTbRMTnRPsngLy2R6JpCcMoijeHmP/
+         0JslrMM3Yx9RR1/AWzAffIk322NP1mjsmufc1i8I56HpqDrpSZXXxx1rEBF1C8LC3D75
+         Zda4qNu88qlU9byf/V5g1l7NeH9wpfbtRuydUbiHRc48uhnh+i8/WXvV6rOrgbp0xFXr
+         yGyCK1zFOFfv9CNLimnl9JfCMGVHaQxG22WTaV5/QM6xw736/WAyZ6HL7Vl+PMeMRJRg
+         sHog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=poU6UxSe+vqBcMpX3p5PAXt32In/R0qv0Zl1gWkMej0=;
-        b=ksQuAgFlZcUaeK82KkmgK4eI2ppnaXj2RFBPKCp+xY3Dkeijr0W6XdnQXaCYE1mvF/
-         vNKkc2rOWqD24dX3eReErsBDr+o/C3oTLa6mWyZklkrMt6PxUWxW54DzwwQC76z6B7np
-         RMCxTGE6itanVJhLhCONd1a+Q7HNCw2bL7l5dB7N+QZr+meUGPpR9mL6vSH0UONl8HmI
-         VMQBCxRV/KBOdwgQTt8Nl8f9PQUmjBovg34cEDnOKyRUpeQW9H0Fg462APUHaQhKturA
-         cpX19Zi7XXVORDpbq5sOsREeWmpZwfkkQxd01FTKFqyWvWEfnqHrJMUSb4oAgxCzuRzY
-         3uvw==
-X-Gm-Message-State: AOAM531dkS9tR+zHVM8xe2+TEbcmn8++WFE8yXAIdFxnY1v/7ADqGs28
-        4SSs1csuaJ7EqjnMeIzDRLg=
-X-Google-Smtp-Source: ABdhPJwAdruZqs4SZAUqfnw1zEdXAYFJFJPv5dblFrUIB2G03WennhJ9xl9YqYQjF4ZN0VfUNDfZ/Q==
-X-Received: by 2002:ac2:5091:: with SMTP id f17mr28576173lfm.42.1629820966958;
-        Tue, 24 Aug 2021 09:02:46 -0700 (PDT)
+        bh=WcbXWm6oOaII+80v56ACkIrGHjl86sgP+RyMxyJ09A8=;
+        b=T59u8Aq5QgRUz6xrSXn0SBzHMYKAIWVnFjw+OOCIrSvyGStTMdx0Izglr+ofJtFfNW
+         VWPmtCAN5Suzhfjqcq9d9GAWgBchQ56Th85YZ9wVHrLQfMUwHujds2xB+aqpgZp4bA10
+         ePut7kSEuElQ7QoY5ILVmK19IFSjqojNi/SXvaedHgZhXB324t8TWYaGX0I2BMlaocnS
+         1/CmDbXstMyXXkgKO81YfXiOAuRwoOU5XfTxN3UuOJF8v1my5wlwJNQ+ipnqxBjbl/S6
+         S63X9LqzRXqUnK693xvWIJ4QPupVo4ZlevRPzqVvvqPgmdxnWgB5QIM3Flqvquz8EJGj
+         Ulrg==
+X-Gm-Message-State: AOAM5311yJDAOCwzLX0DbhZkZp6zAp8JyxcgVCyFTbHYS0e3W72sQZwo
+        0Eyk1cnyWY29wqCJD0vVIQE=
+X-Google-Smtp-Source: ABdhPJzDvjUxWIex+xrOYK6wlSZ+gkF2dbG3MzCDm/VmX9bJU/GDpgRr9W5Bxm5NUsP2QJiV2bruUQ==
+X-Received: by 2002:a05:651c:235:: with SMTP id z21mr31938880ljn.462.1629823133430;
+        Tue, 24 Aug 2021 09:38:53 -0700 (PDT)
 Received: from kari-VirtualBox (85-23-89-224.bb.dnainternet.fi. [85.23.89.224])
-        by smtp.gmail.com with ESMTPSA id y5sm1238590ljd.38.2021.08.24.09.02.45
+        by smtp.gmail.com with ESMTPSA id o16sm210439lfu.45.2021.08.24.09.38.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Aug 2021 09:02:46 -0700 (PDT)
-Date:   Tue, 24 Aug 2021 19:02:44 +0300
+        Tue, 24 Aug 2021 09:38:52 -0700 (PDT)
+Date:   Tue, 24 Aug 2021 19:38:51 +0300
 From:   Kari Argillander <kari.argillander@gmail.com>
 To:     Dan Carpenter <dan.carpenter@oracle.com>
 Cc:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
         ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] fs/ntfs3: add checks for allocation failure
-Message-ID: <20210824160244.ruutwl3nq6b5feec@kari-VirtualBox>
-References: <20210824115236.GJ31143@kili>
+Subject: Re: [PATCH] fs/ntfs3: fix an error code in ntfs_get_acl_ex()
+Message-ID: <20210824163851.hfbjqqpztgk4ngd5@kari-VirtualBox>
+References: <20210824114858.GH31143@kili>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210824115236.GJ31143@kili>
+In-Reply-To: <20210824114858.GH31143@kili>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Aug 24, 2021 at 02:52:36PM +0300, Dan Carpenter wrote:
-> Add a check for when the kzalloc() in init_rsttbl() fails.  Some of
-> the callers checked for NULL and some did not.  I went down the call
-> tree and added NULL checks where ever they were missing.
+On Tue, Aug 24, 2021 at 02:48:58PM +0300, Dan Carpenter wrote:
+> The ntfs_get_ea() function returns negative error codes or on success
+
+Not reletad to this patch but ntfs_get_wsl_perm() seems quite bug
+because in there ntfs_get_ea use is not checked at all.
+
+Also ntfs_getxattr() should probably send errno if ntfs_get_ea() is 0.
+
+> it returns the length.  In the original code a zero length return was
+> treated as -ENODATA and results in a NULL return.  But it should be
+> treated as an invalid length and result in an PTR_ERR(-EINVAL) return.
 > 
-> Fixes: b46acd6a6a62 ("fs/ntfs3: Add NTFS journal")
+> Fixes: be71b5cba2e6 ("fs/ntfs3: Add attrib operations")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Seems ok. It is not easist file to follow. log_replay is monster and
-it should be refactor in some point. I'm certain that many more bugs
-will be founded there. Also at least community does not have very good
-testing interface for this. 
-
-Reviewed-by: Kari Argillander <kari.argillander@gmail.com>
-
-> ---
->  fs/ntfs3/fslog.c | 21 ++++++++++++++++++---
->  1 file changed, 18 insertions(+), 3 deletions(-)
 > 
-> diff --git a/fs/ntfs3/fslog.c b/fs/ntfs3/fslog.c
-> index 397ba6a956e7..209fe6ddead0 100644
-> --- a/fs/ntfs3/fslog.c
-> +++ b/fs/ntfs3/fslog.c
-> @@ -807,7 +807,11 @@ static inline struct RESTART_TABLE *init_rsttbl(u16 esize, u16 used)
->  	u32 off;
->  	u32 bytes = esize * used + sizeof(struct RESTART_TABLE);
->  	u32 lf = sizeof(struct RESTART_TABLE) + (used - 1) * esize;
-> -	struct RESTART_TABLE *t = ntfs_zalloc(bytes);
-> +	struct RESTART_TABLE *t;
-> +
-> +	t = ntfs_zalloc(bytes);
-> +	if (!t)
-> +		return NULL;
+> I'm not super familiar with this code.  Please review this one
+> extra carefully.  I think it's theoretical because hopefully
+> ntfs_get_ea() doesn't ever return invalid lengths.
+
+ntfs_get_ea() will return 0 if no info and this can happend quite
+easily in my eyes. 
+
+Here's snippets
+
+ntfs_read_ea()
+{
+	attr_info =
+		ni_find_attr(ni, NULL, &le, ATTR_EA_INFO, NULL, 0, NULL, NULL);
+	attr_ea =
+		ni_find_attr(ni, attr_info, &le, ATTR_EA, NULL, 0, NULL, NULL);
+
+	if (!attr_ea || !attr_info)
+		return 0;	
+}
+
+ntfs_get_ea()
+{
+	len = 0;
+	err = ntfs_read_ea(ni, &ea_all, 0, &info);
+	if (err)
+		goto out;
+	if (!info)
+		goto out;
+out:
+	return err ? err : len;
+}
+
+> 
+>  fs/ntfs3/xattr.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/ntfs3/xattr.c b/fs/ntfs3/xattr.c
+> index 9239c388050e..e8ed38d0c4c9 100644
+> --- a/fs/ntfs3/xattr.c
+> +++ b/fs/ntfs3/xattr.c
+> @@ -521,7 +521,7 @@ static struct posix_acl *ntfs_get_acl_ex(struct user_namespace *mnt_userns,
+>  		ni_unlock(ni);
 >  
->  	t->size = cpu_to_le16(esize);
->  	t->used = cpu_to_le16(used);
-> @@ -831,7 +835,11 @@ static inline struct RESTART_TABLE *extend_rsttbl(struct RESTART_TABLE *tbl,
->  	u16 esize = le16_to_cpu(tbl->size);
->  	__le32 osize = cpu_to_le32(bytes_per_rt(tbl));
->  	u32 used = le16_to_cpu(tbl->used);
-> -	struct RESTART_TABLE *rt = init_rsttbl(esize, used + add);
-> +	struct RESTART_TABLE *rt;
-> +
-> +	rt = init_rsttbl(esize, used + add);
-> +	if (!rt)
-> +		return NULL;
->  
->  	memcpy(rt + 1, tbl + 1, esize * used);
->  
-> @@ -864,8 +872,11 @@ static inline void *alloc_rsttbl_idx(struct RESTART_TABLE **tbl)
->  	__le32 *e;
->  	struct RESTART_TABLE *t = *tbl;
->  
-> -	if (!t->first_free)
-> +	if (!t->first_free) {
->  		*tbl = t = extend_rsttbl(t, 16, ~0u);
-> +		if (!t)
-> +			return NULL;
-> +	}
->  
->  	off = le32_to_cpu(t->first_free);
->  
-> @@ -4482,6 +4493,10 @@ int log_replay(struct ntfs_inode *ni, bool *initialized)
->  		}
->  
->  		dp = alloc_rsttbl_idx(&dptbl);
-> +		if (!dp) {
-> +			err = -ENOMEM;
-> +			goto out;
-> +		}
->  		dp->target_attr = cpu_to_le32(t16);
->  		dp->transfer_len = cpu_to_le32(t32 << sbi->cluster_bits);
->  		dp->lcns_follow = cpu_to_le32(t32);
+>  	/* Translate extended attribute to acl */
+> -	if (err > 0) {
+> +	if (err >= 0) {
+
+So now if err (size) is 0 it will try to get acl. Didn't you just say
+that you want to return PTR_ERR(-EINVAL)?
+
+So overall good finding but maybe more work is needed with this one.
+
+>  		acl = posix_acl_from_xattr(mnt_userns, buf, err);
+>  		if (!IS_ERR(acl))
+>  			set_cached_acl(inode, type, acl);
 > -- 
 > 2.20.1
 > 
