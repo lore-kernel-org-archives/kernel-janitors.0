@@ -2,287 +2,153 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3375C4320E
-	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Aug 2021 14:57:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AFC1C432BE
+	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Aug 2021 16:03:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C109761246
-	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Aug 2021 14:57:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 689A761220
+	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Aug 2021 16:03:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238103AbhHXO6Q (ORCPT
+        id S238456AbhHXQDl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 24 Aug 2021 10:58:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56252 "EHLO
+        Tue, 24 Aug 2021 12:03:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238083AbhHXO6O (ORCPT
+        with ESMTP id S238413AbhHXQDd (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 24 Aug 2021 10:58:14 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CC99C0617AF
-        for <kernel-janitors@vger.kernel.org>; Tue, 24 Aug 2021 07:57:30 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id j4so11280160lfg.9
-        for <kernel-janitors@vger.kernel.org>; Tue, 24 Aug 2021 07:57:29 -0700 (PDT)
+        Tue, 24 Aug 2021 12:03:33 -0400
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1682C061757;
+        Tue, 24 Aug 2021 09:02:48 -0700 (PDT)
+Received: by mail-lf1-x129.google.com with SMTP id x27so46584667lfu.5;
+        Tue, 24 Aug 2021 09:02:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tFuAhHRvSBhDz+fiasoL7jf1i1KSqv23Xjdy8dyIAuM=;
-        b=mhEK3xD5kfM/MMWdqfiXtqpFYXTaguDWW0o7KXfSaguSDL6W+DN8rYV5nlh2e0uSuv
-         gU8R0CFXWwEdyDWgVS+mP34Z25JeZYBkWgcIkWkg2q9r59ojChEVC8BI15W8ax3sYEKh
-         o6OkjoIF/FvUhQjXQHa9JEnNHSUPK7i4+OO9Mxmu7JJ1yOpzMKH9+8n3Pr3FoXNLgGQN
-         MvJ8CqBPORqEJ2XFQYPVorB06suFtuZXEl4yBpRKYH34jCbhsydcFlSNSi46xEBkO0cK
-         OSBErhFDEcjtQCKYtym4RX4h8ly33sjVON9/LCFaT5Z8FPPWWS41b7QzX5I13h8tUL63
-         o2Bg==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=poU6UxSe+vqBcMpX3p5PAXt32In/R0qv0Zl1gWkMej0=;
+        b=u48N+5kK/p3O1LusihjD74avPElDU4N3bsljZPgfQZ0p0zH+fHDGLBt1RxRnIeCAaw
+         CjqxonXgj/EL8EtOarJIBQg6Fc8xtLCWY7K6oe4pHvCbQx/Gk+Qdp+s2PUsEEijQhqaI
+         v6EDsIyuAFHeR22fDLix8Q92iduNYMpyzNiKb+DBg8GgwQmfk3BrqPunz7Zl0RKiwSeM
+         SZceBqvuUUWOFoJ+LHKCadWF7dRt2sdpNIiQh/y86BB8L9ADAqGgVzQZJi48nD3ANJK6
+         2ehmjqblhq8AAk4IWUfyCndVZMKWXLObW6tK64FCuoqZKVAik1Ll2Afk0U2Wtdac+CuQ
+         zfPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tFuAhHRvSBhDz+fiasoL7jf1i1KSqv23Xjdy8dyIAuM=;
-        b=J4BartG/qiJhGMuRhTCfcMBQmCN6Tmzcnhfntw3Kn+TRlcOwMwcNYeZHC/WI3TNd/2
-         cPk9+GDKMLWd94xbycskKHl7bAztxlA6062HdjKdhvESKKm9SWe0Xl8WFMcORydkkt8s
-         wsy7sScUaD91PFthjkNVxrDpIjKwmHhZ544DmbFNbRLQVoT5DBzBWIrEk/sPRW3RNGQk
-         1Rd95tZIDoA9kyThPwlu0luPaKPLphFVxbQ0iIBysp0/Nu5xdF0ZJt/yXcpHFBAt2n1p
-         5U7Msg9l+YJwzTfX9P2egqeoij1FL+nF6iFSp8BlLvqXyPcN0q1O3jlX2Mr2I7cVbnT0
-         Hiuw==
-X-Gm-Message-State: AOAM531OrtYHyOCI8+M7D4AuvutfIKzMDfGDO/ZhTJ/t6S0ZBbhhP6m7
-        XxrJ91E7nQtxleq+2fZl82S7bOBnQSkoMyj5J0l8jA==
-X-Google-Smtp-Source: ABdhPJzBtOEeU09sJuUqAdfTBw1y5ZBxo0r+z7rrGFgSd3VtlxoiEk+AzaqMmuQlh5WB1UfpJMTen1+JY+z+bHMaK+c=
-X-Received: by 2002:ac2:5b9e:: with SMTP id o30mr3762491lfn.400.1629817048379;
- Tue, 24 Aug 2021 07:57:28 -0700 (PDT)
-MIME-Version: 1.0
-References: <b617f284e2ab8b6b48fff150eba1638641646edd.1629640046.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <b617f284e2ab8b6b48fff150eba1638641646edd.1629640046.git.christophe.jaillet@wanadoo.fr>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 24 Aug 2021 16:56:52 +0200
-Message-ID: <CAPDyKFpnWQJ7fGF_QBq-_KE7Hc-Wc0U3cc89EHyHBPx+4t1j1A@mail.gmail.com>
-Subject: Re: [PATCH] mmc: switch from 'pci_' to 'dma_' API
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Alex Dubov <oakad@yahoo.com>, Bruce Chang <brucechang@via.com.tw>,
-        Harald Welte <HaraldWelte@viatech.com>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=poU6UxSe+vqBcMpX3p5PAXt32In/R0qv0Zl1gWkMej0=;
+        b=ksQuAgFlZcUaeK82KkmgK4eI2ppnaXj2RFBPKCp+xY3Dkeijr0W6XdnQXaCYE1mvF/
+         vNKkc2rOWqD24dX3eReErsBDr+o/C3oTLa6mWyZklkrMt6PxUWxW54DzwwQC76z6B7np
+         RMCxTGE6itanVJhLhCONd1a+Q7HNCw2bL7l5dB7N+QZr+meUGPpR9mL6vSH0UONl8HmI
+         VMQBCxRV/KBOdwgQTt8Nl8f9PQUmjBovg34cEDnOKyRUpeQW9H0Fg462APUHaQhKturA
+         cpX19Zi7XXVORDpbq5sOsREeWmpZwfkkQxd01FTKFqyWvWEfnqHrJMUSb4oAgxCzuRzY
+         3uvw==
+X-Gm-Message-State: AOAM531dkS9tR+zHVM8xe2+TEbcmn8++WFE8yXAIdFxnY1v/7ADqGs28
+        4SSs1csuaJ7EqjnMeIzDRLg=
+X-Google-Smtp-Source: ABdhPJwAdruZqs4SZAUqfnw1zEdXAYFJFJPv5dblFrUIB2G03WennhJ9xl9YqYQjF4ZN0VfUNDfZ/Q==
+X-Received: by 2002:ac2:5091:: with SMTP id f17mr28576173lfm.42.1629820966958;
+        Tue, 24 Aug 2021 09:02:46 -0700 (PDT)
+Received: from kari-VirtualBox (85-23-89-224.bb.dnainternet.fi. [85.23.89.224])
+        by smtp.gmail.com with ESMTPSA id y5sm1238590ljd.38.2021.08.24.09.02.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Aug 2021 09:02:46 -0700 (PDT)
+Date:   Tue, 24 Aug 2021 19:02:44 +0300
+From:   Kari Argillander <kari.argillander@gmail.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH] fs/ntfs3: add checks for allocation failure
+Message-ID: <20210824160244.ruutwl3nq6b5feec@kari-VirtualBox>
+References: <20210824115236.GJ31143@kili>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210824115236.GJ31143@kili>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, 22 Aug 2021 at 15:48, Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> The wrappers in include/linux/pci-dma-compat.h should go away.
->
-> The patch has been generated with the coccinelle script below.
->
-> It has been compile tested.
->
->
-> @@
-> @@
-> -    PCI_DMA_BIDIRECTIONAL
-> +    DMA_BIDIRECTIONAL
->
-> @@
-> @@
-> -    PCI_DMA_TODEVICE
-> +    DMA_TO_DEVICE
->
-> @@
-> @@
-> -    PCI_DMA_FROMDEVICE
-> +    DMA_FROM_DEVICE
->
-> @@
-> @@
-> -    PCI_DMA_NONE
-> +    DMA_NONE
->
-> @@
-> expression e1, e2, e3;
-> @@
-> -    pci_alloc_consistent(e1, e2, e3)
-> +    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
->
-> @@
-> expression e1, e2, e3;
-> @@
-> -    pci_zalloc_consistent(e1, e2, e3)
-> +    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
->
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_free_consistent(e1, e2, e3, e4)
-> +    dma_free_coherent(&e1->dev, e2, e3, e4)
->
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_map_single(e1, e2, e3, e4)
-> +    dma_map_single(&e1->dev, e2, e3, e4)
->
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_unmap_single(e1, e2, e3, e4)
-> +    dma_unmap_single(&e1->dev, e2, e3, e4)
->
-> @@
-> expression e1, e2, e3, e4, e5;
-> @@
-> -    pci_map_page(e1, e2, e3, e4, e5)
-> +    dma_map_page(&e1->dev, e2, e3, e4, e5)
->
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_unmap_page(e1, e2, e3, e4)
-> +    dma_unmap_page(&e1->dev, e2, e3, e4)
->
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_map_sg(e1, e2, e3, e4)
-> +    dma_map_sg(&e1->dev, e2, e3, e4)
->
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_unmap_sg(e1, e2, e3, e4)
-> +    dma_unmap_sg(&e1->dev, e2, e3, e4)
->
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_dma_sync_single_for_cpu(e1, e2, e3, e4)
-> +    dma_sync_single_for_cpu(&e1->dev, e2, e3, e4)
->
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_dma_sync_single_for_device(e1, e2, e3, e4)
-> +    dma_sync_single_for_device(&e1->dev, e2, e3, e4)
->
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_dma_sync_sg_for_cpu(e1, e2, e3, e4)
-> +    dma_sync_sg_for_cpu(&e1->dev, e2, e3, e4)
->
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_dma_sync_sg_for_device(e1, e2, e3, e4)
-> +    dma_sync_sg_for_device(&e1->dev, e2, e3, e4)
->
-> @@
-> expression e1, e2;
-> @@
-> -    pci_dma_mapping_error(e1, e2)
-> +    dma_mapping_error(&e1->dev, e2)
->
-> @@
-> expression e1, e2;
-> @@
-> -    pci_set_dma_mask(e1, e2)
-> +    dma_set_mask(&e1->dev, e2)
->
-> @@
-> expression e1, e2;
-> @@
-> -    pci_set_consistent_dma_mask(e1, e2)
-> +    dma_set_coherent_mask(&e1->dev, e2)
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+On Tue, Aug 24, 2021 at 02:52:36PM +0300, Dan Carpenter wrote:
+> Add a check for when the kzalloc() in init_rsttbl() fails.  Some of
+> the callers checked for NULL and some did not.  I went down the call
+> tree and added NULL checks where ever they were missing.
+> 
+> Fixes: b46acd6a6a62 ("fs/ntfs3: Add NTFS journal")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied for next, thanks!
+Seems ok. It is not easist file to follow. log_replay is monster and
+it should be refactor in some point. I'm certain that many more bugs
+will be founded there. Also at least community does not have very good
+testing interface for this. 
 
-Kind regards
-Uffe
-
+Reviewed-by: Kari Argillander <kari.argillander@gmail.com>
 
 > ---
-> If needed, see post from Christoph Hellwig on the kernel-janitors ML:
->    https://marc.info/?l=kernel-janitors&m=158745678307186&w=4
-> ---
->  drivers/mmc/host/tifm_sd.c   | 16 ++++++++--------
->  drivers/mmc/host/via-sdmmc.c |  4 ++--
->  2 files changed, 10 insertions(+), 10 deletions(-)
->
-> diff --git a/drivers/mmc/host/tifm_sd.c b/drivers/mmc/host/tifm_sd.c
-> index 9fdf7ea06e3f..63917070b1a7 100644
-> --- a/drivers/mmc/host/tifm_sd.c
-> +++ b/drivers/mmc/host/tifm_sd.c
-> @@ -669,8 +669,8 @@ static void tifm_sd_request(struct mmc_host *mmc, struct mmc_request *mrq)
->
->                         if(1 != tifm_map_sg(sock, &host->bounce_buf, 1,
->                                             r_data->flags & MMC_DATA_WRITE
-> -                                           ? PCI_DMA_TODEVICE
-> -                                           : PCI_DMA_FROMDEVICE)) {
-> +                                           ? DMA_TO_DEVICE
-> +                                           : DMA_FROM_DEVICE)) {
->                                 pr_err("%s : scatterlist map failed\n",
->                                        dev_name(&sock->dev));
->                                 mrq->cmd->error = -ENOMEM;
-> @@ -680,15 +680,15 @@ static void tifm_sd_request(struct mmc_host *mmc, struct mmc_request *mrq)
->                                                    r_data->sg_len,
->                                                    r_data->flags
->                                                    & MMC_DATA_WRITE
-> -                                                  ? PCI_DMA_TODEVICE
-> -                                                  : PCI_DMA_FROMDEVICE);
-> +                                                  ? DMA_TO_DEVICE
-> +                                                  : DMA_FROM_DEVICE);
->                         if (host->sg_len < 1) {
->                                 pr_err("%s : scatterlist map failed\n",
->                                        dev_name(&sock->dev));
->                                 tifm_unmap_sg(sock, &host->bounce_buf, 1,
->                                               r_data->flags & MMC_DATA_WRITE
-> -                                             ? PCI_DMA_TODEVICE
-> -                                             : PCI_DMA_FROMDEVICE);
-> +                                             ? DMA_TO_DEVICE
-> +                                             : DMA_FROM_DEVICE);
->                                 mrq->cmd->error = -ENOMEM;
->                                 goto err_out;
->                         }
-> @@ -762,10 +762,10 @@ static void tifm_sd_end_cmd(struct tasklet_struct *t)
->                 } else {
->                         tifm_unmap_sg(sock, &host->bounce_buf, 1,
->                                       (r_data->flags & MMC_DATA_WRITE)
-> -                                     ? PCI_DMA_TODEVICE : PCI_DMA_FROMDEVICE);
-> +                                     ? DMA_TO_DEVICE : DMA_FROM_DEVICE);
->                         tifm_unmap_sg(sock, r_data->sg, r_data->sg_len,
->                                       (r_data->flags & MMC_DATA_WRITE)
-> -                                     ? PCI_DMA_TODEVICE : PCI_DMA_FROMDEVICE);
-> +                                     ? DMA_TO_DEVICE : DMA_FROM_DEVICE);
->                 }
->
->                 r_data->bytes_xfered = r_data->blocks
-> diff --git a/drivers/mmc/host/via-sdmmc.c b/drivers/mmc/host/via-sdmmc.c
-> index c32df5530b94..88662a90ed96 100644
-> --- a/drivers/mmc/host/via-sdmmc.c
-> +++ b/drivers/mmc/host/via-sdmmc.c
-> @@ -491,7 +491,7 @@ static void via_sdc_preparedata(struct via_crdr_mmc_host *host,
->
->         count = dma_map_sg(mmc_dev(host->mmc), data->sg, data->sg_len,
->                 ((data->flags & MMC_DATA_READ) ?
-> -               PCI_DMA_FROMDEVICE : PCI_DMA_TODEVICE));
-> +               DMA_FROM_DEVICE : DMA_TO_DEVICE));
->         BUG_ON(count != 1);
->
->         via_set_ddma(host, sg_dma_address(data->sg), sg_dma_len(data->sg),
-> @@ -638,7 +638,7 @@ static void via_sdc_finish_data(struct via_crdr_mmc_host *host)
->
->         dma_unmap_sg(mmc_dev(host->mmc), data->sg, data->sg_len,
->                 ((data->flags & MMC_DATA_READ) ?
-> -               PCI_DMA_FROMDEVICE : PCI_DMA_TODEVICE));
-> +               DMA_FROM_DEVICE : DMA_TO_DEVICE));
->
->         if (data->stop)
->                 via_sdc_send_command(host, data->stop);
-> --
-> 2.30.2
->
+>  fs/ntfs3/fslog.c | 21 ++++++++++++++++++---
+>  1 file changed, 18 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/ntfs3/fslog.c b/fs/ntfs3/fslog.c
+> index 397ba6a956e7..209fe6ddead0 100644
+> --- a/fs/ntfs3/fslog.c
+> +++ b/fs/ntfs3/fslog.c
+> @@ -807,7 +807,11 @@ static inline struct RESTART_TABLE *init_rsttbl(u16 esize, u16 used)
+>  	u32 off;
+>  	u32 bytes = esize * used + sizeof(struct RESTART_TABLE);
+>  	u32 lf = sizeof(struct RESTART_TABLE) + (used - 1) * esize;
+> -	struct RESTART_TABLE *t = ntfs_zalloc(bytes);
+> +	struct RESTART_TABLE *t;
+> +
+> +	t = ntfs_zalloc(bytes);
+> +	if (!t)
+> +		return NULL;
+>  
+>  	t->size = cpu_to_le16(esize);
+>  	t->used = cpu_to_le16(used);
+> @@ -831,7 +835,11 @@ static inline struct RESTART_TABLE *extend_rsttbl(struct RESTART_TABLE *tbl,
+>  	u16 esize = le16_to_cpu(tbl->size);
+>  	__le32 osize = cpu_to_le32(bytes_per_rt(tbl));
+>  	u32 used = le16_to_cpu(tbl->used);
+> -	struct RESTART_TABLE *rt = init_rsttbl(esize, used + add);
+> +	struct RESTART_TABLE *rt;
+> +
+> +	rt = init_rsttbl(esize, used + add);
+> +	if (!rt)
+> +		return NULL;
+>  
+>  	memcpy(rt + 1, tbl + 1, esize * used);
+>  
+> @@ -864,8 +872,11 @@ static inline void *alloc_rsttbl_idx(struct RESTART_TABLE **tbl)
+>  	__le32 *e;
+>  	struct RESTART_TABLE *t = *tbl;
+>  
+> -	if (!t->first_free)
+> +	if (!t->first_free) {
+>  		*tbl = t = extend_rsttbl(t, 16, ~0u);
+> +		if (!t)
+> +			return NULL;
+> +	}
+>  
+>  	off = le32_to_cpu(t->first_free);
+>  
+> @@ -4482,6 +4493,10 @@ int log_replay(struct ntfs_inode *ni, bool *initialized)
+>  		}
+>  
+>  		dp = alloc_rsttbl_idx(&dptbl);
+> +		if (!dp) {
+> +			err = -ENOMEM;
+> +			goto out;
+> +		}
+>  		dp->target_attr = cpu_to_le32(t16);
+>  		dp->transfer_len = cpu_to_le32(t32 << sbi->cluster_bits);
+>  		dp->lcns_follow = cpu_to_le32(t32);
+> -- 
+> 2.20.1
+> 
+> 
