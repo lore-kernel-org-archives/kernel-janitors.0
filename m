@@ -2,100 +2,139 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C824C432BE
-	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Aug 2021 10:24:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C84A8C4320A
+	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Aug 2021 11:13:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 750B4610FB
-	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Aug 2021 10:24:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2F3C61357
+	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Aug 2021 11:13:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236308AbhHXKZm (ORCPT
+        id S236274AbhHXLNp (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 24 Aug 2021 06:25:42 -0400
-Received: from foss.arm.com ([217.140.110.172]:33562 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236139AbhHXKZl (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 24 Aug 2021 06:25:41 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AF647101E;
-        Tue, 24 Aug 2021 03:24:57 -0700 (PDT)
-Received: from [10.57.15.112] (unknown [10.57.15.112])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F1DC63F66F;
-        Tue, 24 Aug 2021 03:24:55 -0700 (PDT)
-Subject: Re: [PATCH] parisc/parport_gsc: switch from 'pci_' to 'dma_' API
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        James.Bottomley@HansenPartnership.com, deller@gmx.de,
-        sudipm.mukherjee@gmail.com, sumit.semwal@linaro.org,
-        christian.koenig@amd.com
-Cc:     linux-parisc@vger.kernel.org, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <93b21629db55629ec3d384e8184c4a9dd0270c11.1629754126.git.christophe.jaillet@wanadoo.fr>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <1a6f5b12-7cf2-cdb8-7a60-20c2d2ee38f3@arm.com>
-Date:   Tue, 24 Aug 2021 11:24:54 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        Tue, 24 Aug 2021 07:13:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59874 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236068AbhHXLNo (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 24 Aug 2021 07:13:44 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C18FCC061757;
+        Tue, 24 Aug 2021 04:13:00 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id h4so529166wro.7;
+        Tue, 24 Aug 2021 04:13:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qDZfUArbodzeHWOl6Bya6lgiV/+V5CqHIHSjhK1z5X8=;
+        b=aXKB0+CCppOl6lpuwF+svXZF7VUrIonGhpW1mMFol5aX5OTjiMrABgyCtWMwyjvFJd
+         ZswLE3jfG/FkWedcykiRgfg/fODu3Ekwg258OKzB/v96tUyzhTMDex0Us2hd9DcpGIk5
+         1FuTD2G8wozKsoZ8I8zkwq0AqbWz3r7OWsk6wLGAaB0tQmOwDmRSh2rdN13RAhN7sZqI
+         mzSKTycmXtyahITBT0hIwDjp73Qe3Jmdrp9dIlFdn2q5syKvXq+HLDXDTHqdGKHG8cwd
+         WEXyl5WFku5//HXPNMk5fEk2/b1LutUuvKUHLnVVv6Rg4+htk8MTYWYI+J/s5MKQc4AJ
+         /IEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qDZfUArbodzeHWOl6Bya6lgiV/+V5CqHIHSjhK1z5X8=;
+        b=ZHpOi0ymudCbbsMoisgnhwwtLL0eRlf7eNNWMj12xl/ADGqSOCT6yvc5cWbrh0mGyG
+         UeP7ToVQbGa3A8nfTZd1CXRN7Xe7bqsUoKaJ49k6o4dG4XeGqD+gqWZKUKwuAZjTK3vw
+         2+Wao9yt5DmUD8C4w2PWSHjWgCuWOWgowDbXQL9XfjHxmdjWBILQ1hKIbssbNsP+j3cn
+         xTiYQskvxr807NwQkrozOX2Kuvp3GOwgzM+wRxb6eN8KbV0k33rRi7D1s7xeDezCn86M
+         fVHvNgdhF3U655eBl8qGEGX6ZnEE7ZO4d1h9MyJVN9dJoyrlCJ2vnp8N+kgzF+vKL1v/
+         kSPA==
+X-Gm-Message-State: AOAM533Kl2pxhHRJovGHj3xr4dnZLg0MYRSuelhd3FRq8UlvXK9V85OL
+        +X3XHvQ/Ih0BNCAO/k4YPfCTB5nUeZE=
+X-Google-Smtp-Source: ABdhPJwy9DItNoTJrTVRYRN0NxBKv3BMNLiw+zQ/kayJXbZYU88H0ww2u3osa5ZQ5icQCAewrwUc3g==
+X-Received: by 2002:a05:6000:92:: with SMTP id m18mr12320749wrx.293.1629803579325;
+        Tue, 24 Aug 2021 04:12:59 -0700 (PDT)
+Received: from localhost.localdomain (arl-84-90-178-246.netvisao.pt. [84.90.178.246])
+        by smtp.gmail.com with ESMTPSA id t14sm6328727wrw.59.2021.08.24.04.12.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Aug 2021 04:12:58 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Jeff Layton <jlayton@kernel.org>, linux-fsdevel@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] fs: clean up after mandatory file locking support removal
+Date:   Tue, 24 Aug 2021 13:12:59 +0200
+Message-Id: <20210824111259.13077-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-In-Reply-To: <93b21629db55629ec3d384e8184c4a9dd0270c11.1629754126.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 2021-08-23 22:30, Christophe JAILLET wrote:
-> The wrappers in include/linux/pci-dma-compat.h should go away.
-> 
-> The patch has been generated with the coccinelle script below.
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_free_consistent(e1, e2, e3, e4)
-> +    dma_free_coherent(&e1->dev, e2, e3, e4)
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> If needed, see post from Christoph Hellwig on the kernel-janitors ML:
->     https://marc.info/?l=kernel-janitors&m=158745678307186&w=4
-> 
-> This has *NOT* been compile tested because I don't have the needed
-> configuration.
-> ssdfs
-> ---
->   drivers/parport/parport_gsc.c | 5 ++---
->   1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/parport/parport_gsc.c b/drivers/parport/parport_gsc.c
-> index 1e43b3f399a8..db912fa6b6df 100644
-> --- a/drivers/parport/parport_gsc.c
-> +++ b/drivers/parport/parport_gsc.c
-> @@ -390,9 +390,8 @@ static int __exit parport_remove_chip(struct parisc_device *dev)
->   		if (p->irq != PARPORT_IRQ_NONE)
->   			free_irq(p->irq, p);
->   		if (priv->dma_buf)
-> -			pci_free_consistent(priv->dev, PAGE_SIZE,
-> -					    priv->dma_buf,
-> -					    priv->dma_handle);
-> +			dma_free_coherent(&priv->dev->dev, PAGE_SIZE,
-> +					  priv->dma_buf, priv->dma_handle);
+Commit 3efee0567b4a ("fs: remove mandatory file locking support") removes
+some operations in functions rw_verify_area() and remap_verify_area().
 
-Hmm, seeing a free on its own made me wonder where the corresponding 
-alloc was, but on closer inspection it seems there isn't one. AFAICS 
-priv->dma_buf is only ever assigned with NULL (and priv->dev doesn't 
-seem to be assigned at all), so this could likely just be removed. In 
-fact it looks like all the references to DMA in this driver are just 
-copy-paste from parport_pc and unused.
+As these functions are now simplified, do some syntactic clean-up as
+follow-up to the removal as well, which was pointed out by compiler
+warnings and static analysis.
 
-Robin.
+No functional change.
 
->   		kfree (p->private_data);
->   		parport_put_port(p);
->   		kfree (ops); /* hope no-one cached it */
-> 
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Jeff, please pick this clean-up patch on top of the commit above.
+
+ fs/read_write.c  | 10 +++-------
+ fs/remap_range.c |  2 --
+ 2 files changed, 3 insertions(+), 9 deletions(-)
+
+diff --git a/fs/read_write.c b/fs/read_write.c
+index ffe821b8588e..af057c57bdc6 100644
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -365,12 +365,8 @@ SYSCALL_DEFINE5(llseek, unsigned int, fd, unsigned long, offset_high,
+ 
+ int rw_verify_area(int read_write, struct file *file, const loff_t *ppos, size_t count)
+ {
+-	struct inode *inode;
+-	int retval = -EINVAL;
+-
+-	inode = file_inode(file);
+ 	if (unlikely((ssize_t) count < 0))
+-		return retval;
++		return -EINVAL;
+ 
+ 	/*
+ 	 * ranged mandatory locking does not apply to streams - it makes sense
+@@ -381,12 +377,12 @@ int rw_verify_area(int read_write, struct file *file, const loff_t *ppos, size_t
+ 
+ 		if (unlikely(pos < 0)) {
+ 			if (!unsigned_offsets(file))
+-				return retval;
++				return -EINVAL;
+ 			if (count >= -pos) /* both values are in 0..LLONG_MAX */
+ 				return -EOVERFLOW;
+ 		} else if (unlikely((loff_t) (pos + count) < 0)) {
+ 			if (!unsigned_offsets(file))
+-				return retval;
++				return -EINVAL;
+ 		}
+ 	}
+ 
+diff --git a/fs/remap_range.c b/fs/remap_range.c
+index ec6d26c526b3..6d4a9beaa097 100644
+--- a/fs/remap_range.c
++++ b/fs/remap_range.c
+@@ -99,8 +99,6 @@ static int generic_remap_checks(struct file *file_in, loff_t pos_in,
+ static int remap_verify_area(struct file *file, loff_t pos, loff_t len,
+ 			     bool write)
+ {
+-	struct inode *inode = file_inode(file);
+-
+ 	if (unlikely(pos < 0 || len < 0))
+ 		return -EINVAL;
+ 
+-- 
+2.26.2
+
