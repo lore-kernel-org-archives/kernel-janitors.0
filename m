@@ -2,115 +2,116 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEE8DC4338F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Aug 2021 09:52:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E62FC4338F
+	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Aug 2021 10:04:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C891760FD8
-	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Aug 2021 09:52:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E2596125F
+	for <kernel-janitors@archiver.kernel.org>; Tue, 24 Aug 2021 10:04:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235895AbhHXJxV convert rfc822-to-8bit (ORCPT
+        id S235935AbhHXKFU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 24 Aug 2021 05:53:21 -0400
-Received: from mga11.intel.com ([192.55.52.93]:59868 "EHLO mga11.intel.com"
+        Tue, 24 Aug 2021 06:05:20 -0400
+Received: from foss.arm.com ([217.140.110.172]:33312 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235859AbhHXJxV (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 24 Aug 2021 05:53:21 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10085"; a="214153229"
-X-IronPort-AV: E=Sophos;i="5.84,346,1620716400"; 
-   d="scan'208";a="214153229"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Aug 2021 02:52:37 -0700
-X-IronPort-AV: E=Sophos;i="5.84,346,1620716400"; 
-   d="scan'208";a="526567561"
-Received: from kmulhall-mobl2.ger.corp.intel.com (HELO localhost) ([10.252.39.114])
-  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Aug 2021 02:52:34 -0700
-Content-Type: text/plain; charset="utf-8"
+        id S235905AbhHXKFS (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 24 Aug 2021 06:05:18 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4A5C0101E;
+        Tue, 24 Aug 2021 03:04:33 -0700 (PDT)
+Received: from [10.57.15.112] (unknown [10.57.15.112])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 66B393F66F;
+        Tue, 24 Aug 2021 03:04:31 -0700 (PDT)
+Subject: Re: [PATCH] drm/i915: switch from 'pci_' to 'dma_' API
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
+        rodrigo.vivi@intel.com, airlied@linux.ie, daniel@ffwll.ch,
+        zhenyuw@linux.intel.com, zhi.a.wang@intel.com
+Cc:     intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        intel-gvt-dev@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <dbf1018fb773785e0b3b40e601246ed6438e645e.1629666258.git.christophe.jaillet@wanadoo.fr>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <0cd61d5b-ac88-31e8-99ad-143af480416f@arm.com>
+Date:   Tue, 24 Aug 2021 11:04:25 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <YSPyNZ3I1LgvDYSw@Ryzen-9-3900X.localdomain>
-References: <20210813171158.2665823-1-nathan@kernel.org> <YSPyNZ3I1LgvDYSw@Ryzen-9-3900X.localdomain>
-Subject: Re: [Intel-gfx] [PATCH] drm/i915/selftest: Fix use of err in igt_reset_{fail, nop}_engine()
-Cc:     John Harrison <John.C.Harrison@intel.com>,
-        Matthew Brost <matthew.brost@intel.com>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com,
-        kernel-janitors@vger.kernel.org,
-        Dan Carpenter <dan.carpenter@oracle.com>
-To:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>
-From:   Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-Message-ID: <162979875184.5663.3119766810404831323@jlahtine-mobl.ger.corp.intel.com>
-User-Agent: alot/0.8.1
-Date:   Tue, 24 Aug 2021 12:52:31 +0300
+In-Reply-To: <dbf1018fb773785e0b3b40e601246ed6438e645e.1629666258.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Quoting Nathan Chancellor (2021-08-23 22:08:37)
-> Ping? This is a pretty clear bug and it is not fixed in -next or
-> drm-intel at this point.
+Hi,
 
-Pushed to drm-intel-gt-next with my R-b.
+FWIW this patch itself looks fine, but it does highlight some things 
+which could be further cleaned up if anyone's interested...
 
-Regards, Joonas
+On 2021-08-22 22:06, Christophe JAILLET wrote:
+[...]
+> diff --git a/drivers/gpu/drm/i915/gt/intel_region_lmem.c b/drivers/gpu/drm/i915/gt/intel_region_lmem.c
+> index a74b72f50cc9..afb35d2e5c73 100644
+> --- a/drivers/gpu/drm/i915/gt/intel_region_lmem.c
+> +++ b/drivers/gpu/drm/i915/gt/intel_region_lmem.c
+> @@ -32,7 +32,7 @@ static int init_fake_lmem_bar(struct intel_memory_region *mem)
+>   	mem->remap_addr = dma_map_resource(i915->drm.dev,
+>   					   mem->region.start,
+>   					   mem->fake_mappable.size,
+> -					   PCI_DMA_BIDIRECTIONAL,
+> +					   DMA_BIDIRECTIONAL,
+>   					   DMA_ATTR_FORCE_CONTIGUOUS);
 
-> On Fri, Aug 13, 2021 at 10:11:58AM -0700, Nathan Chancellor wrote:
-> > Clang warns:
-> > 
-> > In file included from drivers/gpu/drm/i915/gt/intel_reset.c:1514:
-> > drivers/gpu/drm/i915/gt/selftest_hangcheck.c:465:62: warning: variable
-> > 'err' is uninitialized when used here [-Wuninitialized]
-> >         pr_err("[%s] Create context failed: %d!\n", engine->name, err);
-> >                                                                   ^~~
-> > ...
-> > drivers/gpu/drm/i915/gt/selftest_hangcheck.c:580:62: warning: variable
-> > 'err' is uninitialized when used here [-Wuninitialized]
-> >         pr_err("[%s] Create context failed: %d!\n", engine->name, err);
-> >                                                                   ^~~
-> > ...
-> > 2 warnings generated.
-> > 
-> > This appears to be a copy and paste issue. Use ce directly using the %pe
-> > specifier to pretty print the error code so that err is not used
-> > uninitialized in these functions.
-> > 
-> > Fixes: 3a7b72665ea5 ("drm/i915/selftest: Bump selftest timeouts for hangcheck")
-> > Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > Signed-off-by: Nathan Chancellor <nathan@kernel.org>
-> > ---
-> >  drivers/gpu/drm/i915/gt/selftest_hangcheck.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/i915/gt/selftest_hangcheck.c b/drivers/gpu/drm/i915/gt/selftest_hangcheck.c
-> > index 08f011f893b2..2c1ed32ca5ac 100644
-> > --- a/drivers/gpu/drm/i915/gt/selftest_hangcheck.c
-> > +++ b/drivers/gpu/drm/i915/gt/selftest_hangcheck.c
-> > @@ -462,7 +462,7 @@ static int igt_reset_nop_engine(void *arg)
-> >  
-> >               ce = intel_context_create(engine);
-> >               if (IS_ERR(ce)) {
-> > -                     pr_err("[%s] Create context failed: %d!\n", engine->name, err);
-> > +                     pr_err("[%s] Create context failed: %pe!\n", engine->name, ce);
-> >                       return PTR_ERR(ce);
-> >               }
-> >  
-> > @@ -577,7 +577,7 @@ static int igt_reset_fail_engine(void *arg)
-> >  
-> >               ce = intel_context_create(engine);
-> >               if (IS_ERR(ce)) {
-> > -                     pr_err("[%s] Create context failed: %d!\n", engine->name, err);
-> > +                     pr_err("[%s] Create context failed: %pe!\n", engine->name, ce);
-> >                       return PTR_ERR(ce);
-> >               }
-> >  
-> > 
-> > base-commit: 927dfdd09d8c03ba100ed0c8c3915f8e1d1f5556
-> > -- 
-> > 2.33.0.rc2
+DMA_ATTR_FORCE_CONTIGUOUS is nonsensical here (and below) as it is only 
+meaningful for coherent buffers allocated by dma_alloc_attrs().
+
+>   	if (dma_mapping_error(i915->drm.dev, mem->remap_addr)) {
+>   		drm_mm_remove_node(&mem->fake_mappable);
+> @@ -62,7 +62,7 @@ static void release_fake_lmem_bar(struct intel_memory_region *mem)
+>   	dma_unmap_resource(mem->i915->drm.dev,
+>   			   mem->remap_addr,
+>   			   mem->fake_mappable.size,
+> -			   PCI_DMA_BIDIRECTIONAL,
+> +			   DMA_BIDIRECTIONAL,
+>   			   DMA_ATTR_FORCE_CONTIGUOUS);
+>   }
+>   
+[...]
+> diff --git a/drivers/gpu/drm/i915/i915_gem_gtt.c b/drivers/gpu/drm/i915/i915_gem_gtt.c
+> index 36489be4896b..cd5f2348a187 100644
+> --- a/drivers/gpu/drm/i915/i915_gem_gtt.c
+> +++ b/drivers/gpu/drm/i915/i915_gem_gtt.c
+> @@ -30,7 +30,7 @@ int i915_gem_gtt_prepare_pages(struct drm_i915_gem_object *obj,
+>   	do {
+>   		if (dma_map_sg_attrs(obj->base.dev->dev,
+>   				     pages->sgl, pages->nents,
+> -				     PCI_DMA_BIDIRECTIONAL,
+> +				     DMA_BIDIRECTIONAL,
+>   				     DMA_ATTR_SKIP_CPU_SYNC |
+>   				     DMA_ATTR_NO_KERNEL_MAPPING |
+>   				     DMA_ATTR_NO_WARN))
+
+Similarly DMA_ATTR_NO_KERNEL_MAPPING and DMA_ATTR_NO_WARN are also for 
+coherent allocations rather than streaming mappings.
+
+I'll see if I can whip up a patch to make the API documentation clearer...
+
+Thanks,
+Robin.
+
+> @@ -64,7 +64,7 @@ void i915_gem_gtt_finish_pages(struct drm_i915_gem_object *obj,
+>   		usleep_range(100, 250);
+>   
+>   	dma_unmap_sg(i915->drm.dev, pages->sgl, pages->nents,
+> -		     PCI_DMA_BIDIRECTIONAL);
+> +		     DMA_BIDIRECTIONAL);
+>   }
+>   
+>   /**
+> 
