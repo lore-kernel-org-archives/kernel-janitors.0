@@ -2,115 +2,126 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-23.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37E5DC4320A
-	for <kernel-janitors@archiver.kernel.org>; Wed, 25 Aug 2021 16:49:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3B1FC432BE
+	for <kernel-janitors@archiver.kernel.org>; Wed, 25 Aug 2021 22:24:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 18AB760FC1
-	for <kernel-janitors@archiver.kernel.org>; Wed, 25 Aug 2021 16:49:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84329610D1
+	for <kernel-janitors@archiver.kernel.org>; Wed, 25 Aug 2021 22:24:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230490AbhHYQt5 (ORCPT
+        id S230406AbhHYWZ1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 25 Aug 2021 12:49:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46296 "EHLO
+        Wed, 25 Aug 2021 18:25:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37954 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230363AbhHYQtz (ORCPT
+        with ESMTP id S229890AbhHYWZ1 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 25 Aug 2021 12:49:55 -0400
-Received: from mail-oo1-xc29.google.com (mail-oo1-xc29.google.com [IPv6:2607:f8b0:4864:20::c29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89D54C061757;
-        Wed, 25 Aug 2021 09:49:09 -0700 (PDT)
-Received: by mail-oo1-xc29.google.com with SMTP id m11-20020a056820034b00b0028bb60b551fso9258ooe.5;
-        Wed, 25 Aug 2021 09:49:09 -0700 (PDT)
+        Wed, 25 Aug 2021 18:25:27 -0400
+Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05DD1C0613C1
+        for <kernel-janitors@vger.kernel.org>; Wed, 25 Aug 2021 15:24:40 -0700 (PDT)
+Received: by mail-lj1-x233.google.com with SMTP id c12so1335237ljr.5
+        for <kernel-janitors@vger.kernel.org>; Wed, 25 Aug 2021 15:24:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=0PnOjcm9Fuu9oRLVmMOTan/jdn80kkK21Ga9ki6Awwk=;
-        b=oLKBYXOX8Zl+nQIQ14XImUuWQDtAypiP2IN8YZ51Fwze2diqVC9UNIFVWk6OBBzEy4
-         yi8ypOx5PPoYDrOalicVkFtXLnmzo7MOKuVAKUDCC509ce6bcN7HA+yTIjxZWRwpQPEj
-         KgpFu0POrV2wkwhXSReVmSi/UADcgH8GPIiA+BM60Gmjc3RaMwoKlfUty1Isj/SlfIN+
-         9ZNlcqEhis7iVsoL2PHQ7gQTQB/MZ2jco6pv08+KJDaN2HLmF73HnE9o657+z2oIYSS5
-         MhI4oEU0I2a8ObpWDWd//HUEpCnag3hF9Bx17N4KR6cV088YU5BcaXhiE1yJHD28G2O1
-         mgdw==
+        bh=Pefv3vqeuX4St3jq1M8WoFYRA23I6Vantt927BxIQWs=;
+        b=BP2XN95TUO4FCewyvtBSKoUYV91MsxpU7QgGaCD8hT4gXyDLb7kDO2ZfMsI+o6H6uT
+         cGujPLV11zoBwI+6fSX5RqN6E6pMYPmbgdvZw/qW2Ceoq3yhpO+TFh1gbpwudDndGhRQ
+         f8VDUVrrlMiDt3klbqiesvqgz4Dod5LHAg6XC/inw8ieM9rmeq3U16BO8c0Ek5I3Y6ac
+         jMr9lur+B9S78rtq8scQZah6tVGPrFXHRh+grDxsCfrtuOQHX+ZSdmrCltFNo23eo9YI
+         R/ZdZwf1Yt7N0dVwz/2kZj9Y237lH8Xb1UYCsCuyMZXU7m1b83YOEtjHVXEEnS/yMAwg
+         FhcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=0PnOjcm9Fuu9oRLVmMOTan/jdn80kkK21Ga9ki6Awwk=;
-        b=ZjfT3e/g4PI9S/Plqj+QKbk7V3EPmODAej86Z/DQ4S3nHY9AvsKHQwQHu390YmMpI3
-         L3wTVbPeSV0KzR+mRKO0/vIJnS/HE32X7YSsc7+vAK0wigeEIS7IY4gj1kYWqmpPL5WJ
-         pJLKNod7LQ93+UeWLQHQg3o+ixHpJjeczZo56pnx8NKcDuZzl21nwJMEUe21y/GJGMet
-         IAFofUFxx7/ogFEIhJID4Bm8tmb35SrDmLJ73c4ZAr2Hbmo7l5zywK1T+XXFONenFCjr
-         A4KK/AaYWbIxoyG7myHKYqx1kXXgSMCvywuXMWTmGOlfSwOC/irkrevZhb43qRpyx1UB
-         2XVw==
-X-Gm-Message-State: AOAM532izYGiITjkOZlHhSKjEup9gsKwi+RA1NVb+Zcud9UFbU3ekZMd
-        TQ8Wx6m9LgE4/k5mbfmsjjdPUQarKbBz1SjWBOM=
-X-Google-Smtp-Source: ABdhPJxtlTki/sGBLa9DFM+o5O7lTh25DEiF6j7B6Xps5jPXQTiyNItJ0IZv26fJlktcUUknHJZV96yu5azfwgaPN+4=
-X-Received: by 2002:a4a:ba86:: with SMTP id d6mr35250933oop.61.1629910148947;
- Wed, 25 Aug 2021 09:49:08 -0700 (PDT)
+        bh=Pefv3vqeuX4St3jq1M8WoFYRA23I6Vantt927BxIQWs=;
+        b=YDhhmsTeSGr/uTS7FUbmCcc87pxBVPFSJTrnVQtDcLLwEUDMibg+OpIcCai/g+BTZw
+         23AgPbaupxvNSujJ3GvVwizMZ4bUSROAPeOM84KCAcoT0gWqcu7tVWSg4H5wbVNcPNsZ
+         u5QSiEiUs6ENDLzQ41XaHl8JOUNd3hcJH594WcZAfQG0wlSgrOkjoPMs7o4HQ9yZvc9v
+         ojpK6BkBzkqJljD+lZApH8wOHc+PiDtlOxsZqJSF+thPvNL4/2yVNvI1yZIyxt91M6JH
+         NUGEq3gA/4GF7mrpm/NdbPtbjv/jthhbT/P5FjUDOldVwf4SdXgTYVsQwiN2edNKJLxm
+         aRFg==
+X-Gm-Message-State: AOAM531OHFGnq2+2N1g65PgBVzUUUWRVwdfvomX+XfGqZ0ZWzxlrUD35
+        zzKuue72FnGgUXkjtYRG3osvOZ4p1QuQfDUD6zzXcw==
+X-Google-Smtp-Source: ABdhPJx+FeHmFusBrwqx+OAc5/miMkJd27ZcnkZ41M9LlffmghNx66RVZdIkPMCYD61NPk+oQjdmqd+mdM+X1Z3/b2E=
+X-Received: by 2002:a2e:a788:: with SMTP id c8mr401858ljf.116.1629930279047;
+ Wed, 25 Aug 2021 15:24:39 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210825113615.14555-1-colin.king@canonical.com> <feed4359-c682-bb13-5584-6f34bb9960eb@amd.com>
-In-Reply-To: <feed4359-c682-bb13-5584-6f34bb9960eb@amd.com>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Wed, 25 Aug 2021 12:48:57 -0400
-Message-ID: <CADnq5_OTr97_PXPENkT2aZs9xAueFt=2wreDQh9U-MB_zR2c9g@mail.gmail.com>
-Subject: Re: [PATCH][next] drm/amd/display: fix spelling mistake "alidation"
- -> "validation"
-To:     Harry Wentland <harry.wentland@amd.com>
-Cc:     Colin King <colin.king@canonical.com>, Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        xinhui pan <Xinhui.Pan@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>, kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
+References: <20210822103107.28974-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20210822103107.28974-1-lukas.bulwahn@gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Wed, 25 Aug 2021 15:24:27 -0700
+Message-ID: <CAKwvOdk4iqT0pW7eLQyQggWMkfeJENTeavehexeCO86yjDcXyw@mail.gmail.com>
+Subject: Re: [PATCH] crypto: sha512: remove imaginary and mystifying clearing
+ of variables
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org,
+        Nathan Chancellor <nathan@kernel.org>,
+        clang-built-linux@googlegroups.com,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Applied.  Thanks!
+On Sun, Aug 22, 2021 at 3:31 AM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+>
+> The function sha512_transform() assigns all local variables to 0 before
+> returning to its caller with the intent to erase sensitive data.
+>
+> However, make clang-analyzer warns that all these assignments are dead
+> stores, and as commit 7a4295f6c9d5 ("crypto: lib/sha256 - Don't clear
+> temporary variables") already points out for sha256_transform():
+>
+>   The assignments to clear a through h and t1/t2 are optimized out by the
+>   compiler because they are unused after the assignments.
+>
+>   Clearing individual scalar variables is unlikely to be useful, as they
+>   may have been assigned to registers, and even if stack spilling was
+>   required, there may be compiler-generated temporaries that are
+>   impossible to clear in any case.
+>
+> This applies here again as well. Drop meaningless clearing of local
+> variables and avoid this way that the code suggests that data is erased,
+> which simply does not happen.
+>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-Alex
+Thanks for the patch!
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
 
-On Wed, Aug 25, 2021 at 10:09 AM Harry Wentland <harry.wentland@amd.com> wrote:
+> ---
+>  crypto/sha512_generic.c | 3 ---
+>  1 file changed, 3 deletions(-)
 >
-> On 2021-08-25 7:36 a.m., Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> >
-> > There is a spelling mistake in a DC_LOG_WARNING message. Fix it.
-> >
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> diff --git a/crypto/sha512_generic.c b/crypto/sha512_generic.c
+> index c72d72ad828e..be70e76d6d86 100644
+> --- a/crypto/sha512_generic.c
+> +++ b/crypto/sha512_generic.c
+> @@ -143,9 +143,6 @@ sha512_transform(u64 *state, const u8 *input)
 >
-> Reviewed-by: Harry Wentland <harry.wentland@amd.com>
+>         state[0] += a; state[1] += b; state[2] += c; state[3] += d;
+>         state[4] += e; state[5] += f; state[6] += g; state[7] += h;
+> -
+> -       /* erase our data */
+> -       a = b = c = d = e = f = g = h = t1 = t2 = 0;
+>  }
 >
-> Harry
+>  static void sha512_generic_block_fn(struct sha512_state *sst, u8 const *src,
+> --
+> 2.26.2
 >
-> > ---
-> >  drivers/gpu/drm/amd/display/dc/dcn31/dcn31_resource.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/amd/display/dc/dcn31/dcn31_resource.c b/drivers/gpu/drm/amd/display/dc/dcn31/dcn31_resource.c
-> > index 3223a1ff2292..91cbc0922ad4 100644
-> > --- a/drivers/gpu/drm/amd/display/dc/dcn31/dcn31_resource.c
-> > +++ b/drivers/gpu/drm/amd/display/dc/dcn31/dcn31_resource.c
-> > @@ -1999,7 +1999,7 @@ bool dcn31_validate_bandwidth(struct dc *dc,
-> >       goto validate_out;
-> >
-> >  validate_fail:
-> > -     DC_LOG_WARNING("Mode Validation Warning: %s failed alidation.\n",
-> > +     DC_LOG_WARNING("Mode Validation Warning: %s failed validation.\n",
-> >               dml_get_status_message(context->bw_ctx.dml.vba.ValidationStatus[context->bw_ctx.dml.vba.soc.num_states]));
-> >
-> >       BW_VAL_TRACE_SKIP(fail);
-> >
->
+
+
+-- 
+Thanks,
+~Nick Desaulniers
