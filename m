@@ -2,83 +2,110 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.7 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B8CEC432BE
-	for <kernel-janitors@archiver.kernel.org>; Wed, 25 Aug 2021 11:36:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4655AC4338F
+	for <kernel-janitors@archiver.kernel.org>; Wed, 25 Aug 2021 12:57:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 06A2F61178
-	for <kernel-janitors@archiver.kernel.org>; Wed, 25 Aug 2021 11:36:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B50D61153
+	for <kernel-janitors@archiver.kernel.org>; Wed, 25 Aug 2021 12:57:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239643AbhHYLhF (ORCPT
+        id S241005AbhHYM6H (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 25 Aug 2021 07:37:05 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:38870
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S237446AbhHYLhD (ORCPT
+        Wed, 25 Aug 2021 08:58:07 -0400
+Received: from mail-wm1-f50.google.com ([209.85.128.50]:36358 "EHLO
+        mail-wm1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240078AbhHYM6G (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 25 Aug 2021 07:37:03 -0400
-Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 47F213F072;
-        Wed, 25 Aug 2021 11:36:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1629891375;
-        bh=zo+G5iadB49U+2sdl2YTpWA23bkDMXVrOHPwSen0oq8=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=FnQLClw4ahcH9/00HhmoJhcdDd+0cBFgoPxvqa70H6459yZvUVYYLECLM2dvY+5+L
-         UAlZicYe/dYaE5jK7OsWTZh7z2AgWFGi4Y8F4jQXhdZRZXetwYaX1KXlQEcNJepDF4
-         HHn6GoTh6IJ10cLIgmTZubqCwD0ILAziOet+6eFS9mon/cmtHRFyElpjt4nBonQRVc
-         0S4/Mykc3sj76Rm4Yg5ATdxVAQj6JJkWy7I7+3ffXUZtvQ4fqRCiIvNoDqbkMTmFYd
-         2G/Qw7/Qxa1XtBomhZ5BQCbSS4LJv31PTpPhhcDN10C0a5gmlqi8IEp793lfn72Q+X
-         sBVJ8nnbbWztw==
-From:   Colin King <colin.king@canonical.com>
-To:     Harry Wentland <harry.wentland@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Xinhui.Pan@amd.com, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/amd/display: fix spelling mistake "alidation" -> "validation"
-Date:   Wed, 25 Aug 2021 12:36:15 +0100
-Message-Id: <20210825113615.14555-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.32.0
+        Wed, 25 Aug 2021 08:58:06 -0400
+Received: by mail-wm1-f50.google.com with SMTP id 79-20020a1c0452000000b002e6cf79e572so4254309wme.1;
+        Wed, 25 Aug 2021 05:57:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=IG8qKdffC7gdvGfE8uAq0sKcTN9fnBfsEwkWoC4/ddk=;
+        b=C6ZjJ4aBPE8EQ92uTG+NflfUFhxxSFW973calEllJL8UbczEqk2Fifv5aDdNpDoN0V
+         ouvRzZTEFP544d3Fcv1Q0rfRcZ/yo2hbL1DebHBBRxZHYlqwA1PTpGZw8E9VbUKK2UT9
+         JaEQPiasqj5e28QKZK+t6p1ZY2JDmgqq8cYdj+yIa3rdAalfMs8Ncpv2T+8etnszzf3v
+         le2/ZoUsFFHKL7lkMyJFW75pH64pbUlAIx7M5QsMzR47bkwPLl0uplh2498Qkiq/hWh1
+         20H8duLDG933CSei0RPA3XRyW+3GyBuJMKcx9Vrw58m1IrvlSsnHn0mvQOx0sFnnj3WX
+         YijA==
+X-Gm-Message-State: AOAM5307okU0l0Nalusx/2WeAqHGZFu1CPbUciFqZ2NAZ9XWLs+YIhvh
+        UO9g2fkoP0+OMyvjDJWhNFr6b5TPQD8=
+X-Google-Smtp-Source: ABdhPJydt2KoXOb8cPtUG5GcXDzc+2AOh9dS7oyCgSRxmxv2oZRFP4uz0TchHSZa3V2LqedKady1TA==
+X-Received: by 2002:a7b:c048:: with SMTP id u8mr9239781wmc.113.1629896239498;
+        Wed, 25 Aug 2021 05:57:19 -0700 (PDT)
+Received: from ?IPv6:2a0b:e7c0:0:107::70f? ([2a0b:e7c0:0:107::70f])
+        by smtp.gmail.com with ESMTPSA id h6sm6086473wmq.5.2021.08.25.05.57.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Aug 2021 05:57:18 -0700 (PDT)
+Subject: Re: [PATCH] mxser: use semi-colons instead of commas
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <20210825072435.GB13013@kili>
+From:   Jiri Slaby <jirislaby@kernel.org>
+Message-ID: <cf2ce3bc-323d-b622-214a-62cd012f29ad@kernel.org>
+Date:   Wed, 25 Aug 2021 14:57:17 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210825072435.GB13013@kili>
+Content-Type: text/plain; charset=iso-8859-2; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On 25. 08. 21, 9:24, Dan Carpenter wrote:
+> This code works, but it's cleaner to use semi-colons at the end of
+> a statement instead of a comma.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-There is a spelling mistake in a DC_LOG_WARNING message. Fix it.
+Acked-by: Jiri Slaby <jirislaby@kernel.org>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpu/drm/amd/display/dc/dcn31/dcn31_resource.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> ---
+>   drivers/tty/mxser.c | 12 ++++++------
+>   1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/tty/mxser.c b/drivers/tty/mxser.c
+> index 335e4e50d679..1216f3985e18 100644
+> --- a/drivers/tty/mxser.c
+> +++ b/drivers/tty/mxser.c
+> @@ -1039,12 +1039,12 @@ static int mxser_get_serial_info(struct tty_struct *tty,
+>   	if (closing_wait != ASYNC_CLOSING_WAIT_NONE)
+>   		closing_wait = jiffies_to_msecs(closing_wait) / 10;
+>   
+> -	ss->type = info->type,
+> -	ss->line = tty->index,
+> -	ss->port = info->ioaddr,
+> -	ss->irq = info->board->irq,
+> -	ss->flags = info->port.flags,
+> -	ss->baud_base = MXSER_BAUD_BASE,
+> +	ss->type = info->type;
+> +	ss->line = tty->index;
+> +	ss->port = info->ioaddr;
+> +	ss->irq = info->board->irq;
+> +	ss->flags = info->port.flags;
+> +	ss->baud_base = MXSER_BAUD_BASE;
+>   	ss->close_delay = close_delay;
+>   	ss->closing_wait = closing_wait;
+>   	ss->custom_divisor = MXSER_CUSTOM_DIVISOR,
+> 
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dcn31/dcn31_resource.c b/drivers/gpu/drm/amd/display/dc/dcn31/dcn31_resource.c
-index 3223a1ff2292..91cbc0922ad4 100644
---- a/drivers/gpu/drm/amd/display/dc/dcn31/dcn31_resource.c
-+++ b/drivers/gpu/drm/amd/display/dc/dcn31/dcn31_resource.c
-@@ -1999,7 +1999,7 @@ bool dcn31_validate_bandwidth(struct dc *dc,
- 	goto validate_out;
- 
- validate_fail:
--	DC_LOG_WARNING("Mode Validation Warning: %s failed alidation.\n",
-+	DC_LOG_WARNING("Mode Validation Warning: %s failed validation.\n",
- 		dml_get_status_message(context->bw_ctx.dml.vba.ValidationStatus[context->bw_ctx.dml.vba.soc.num_states]));
- 
- 	BW_VAL_TRACE_SKIP(fail);
+
 -- 
-2.32.0
-
+js
+suse labs
