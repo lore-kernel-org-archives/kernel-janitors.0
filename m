@@ -7,48 +7,45 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5641C4320A
-	for <kernel-janitors@archiver.kernel.org>; Thu, 26 Aug 2021 11:26:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63DDBC432BE
+	for <kernel-janitors@archiver.kernel.org>; Thu, 26 Aug 2021 11:57:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BCC9960FD9
-	for <kernel-janitors@archiver.kernel.org>; Thu, 26 Aug 2021 11:26:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 455BB60E97
+	for <kernel-janitors@archiver.kernel.org>; Thu, 26 Aug 2021 11:57:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242347AbhHZL1J (ORCPT
+        id S242323AbhHZL6J (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 26 Aug 2021 07:27:09 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:36474
+        Thu, 26 Aug 2021 07:58:09 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:38038
         "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S242303AbhHZL1B (ORCPT
+        by vger.kernel.org with ESMTP id S236119AbhHZL6C (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 26 Aug 2021 07:27:01 -0400
+        Thu, 26 Aug 2021 07:58:02 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id D9AA03F044;
-        Thu, 26 Aug 2021 11:26:11 +0000 (UTC)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 87F6B3F0A4;
+        Thu, 26 Aug 2021 11:57:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1629977171;
-        bh=BOfv1mWZucvdeO+2RiG1GUgsxmx8e5VDjoBIMqK5l0s=;
+        s=20210705; t=1629979034;
+        bh=a3acIGJr3hQUfONLqqFcyO2uTusRuVEX83eJahhUr4w=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=Y3YjSEgvmcKuAagE7kzuOI8dH/Zix7iP2PU0sh6qgONNmsEdBJY0lJmJo8iNaY527
-         nJJ4FHc0piCHPZBSJLbOkBLg4/AkeOwHhvH/wULTDCxudSlTPZGx2OyeZKjp3pmSP9
-         bwjmTfXDCZZfz0+rxshp0Ek9M6P9LiDJXq9TtFjb4BKvvMrmi51PDGtzVYTMwpgkww
-         q5FMPrpFVndd79wZl9bX/Yq+oJNNV5YfxAl+7A7yoBzFqc+pjcmKKyKb/OP1CILvDT
-         wSow8pCjCiDmZRNBOdweVr63wcw+JPri8f25906su2+9l71kBVNbQJJskxWBWxSd1F
-         2XNXn4B36Qd9g==
+        b=Xr8aA242snZrTfuqtdWETW3Qx3QZrtlG4rNaE8HLy1qdAOWirh125tp+QwrqWBpny
+         Uxkr4nAxX5RAMKZgYDkOXrFgm1Q6B32LoMGb4pa04YNfcQbsHGiu9wbg/Fvu/iOPis
+         lFKSzqdFha4ToN1NyWDZTEyBLBrdXOPpAbL3hkMu0bJMnCweaLx6ztI2luCaNUaAIL
+         zmAQ/qMGMe0L4DDS5np1uNVz/UKuovjG9e3jM52oxjr29sFs6vbRcKm76t69UB72Iq
+         nYjkx7G3KbPtgDnqsIIs7kZHEBVcqlViWahtvXUepJRMC6JWMYi2sc9qlbYXd5V1VU
+         xMLvFs7TxjWEA==
 From:   Colin King <colin.king@canonical.com>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
+To:     Jens Axboe <axboe@kernel.dk>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] ASoC: mediatek: mt8195: Fix spelling mistake "bitwiedh" -> "bitwidth"
-Date:   Thu, 26 Aug 2021 12:26:11 +0100
-Message-Id: <20210826112611.10356-1-colin.king@canonical.com>
+Subject: [PATCH] scsi: core: Fix spelling mistake "does'nt" -> "doesn't"
+Date:   Thu, 26 Aug 2021 12:57:14 +0100
+Message-Id: <20210826115714.11844-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -59,26 +56,26 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-There is a spelling mistake in a dev_dbg message. Fix it.
+There is a spelling mistake in a literal string. Fix it.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- sound/soc/mediatek/mt8195/mt8195-dai-etdm.c | 2 +-
+ drivers/scsi/sr_ioctl.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/mediatek/mt8195/mt8195-dai-etdm.c b/sound/soc/mediatek/mt8195/mt8195-dai-etdm.c
-index bd9876cf02c8..7378e42f2766 100644
---- a/sound/soc/mediatek/mt8195/mt8195-dai-etdm.c
-+++ b/sound/soc/mediatek/mt8195/mt8195-dai-etdm.c
-@@ -1909,7 +1909,7 @@ static int mtk_dai_etdm_configure(struct mtk_base_afe *afe,
- 		__func__, etdm_data->format, etdm_data->data_mode,
- 		etdm_data->lrck_inv, etdm_data->lrck_width, etdm_data->bck_inv,
- 		etdm_data->clock_mode, etdm_data->slave_mode);
--	dev_dbg(afe->dev, "%s rate %u channels %u bitwiedh %u, id %d\n",
-+	dev_dbg(afe->dev, "%s rate %u channels %u bitwidth %u, id %d\n",
- 		__func__, rate, channels, bit_width, dai_id);
- 
- 	etdm_channels = (etdm_data->data_mode == MTK_DAI_ETDM_DATA_ONE_PIN) ?
+diff --git a/drivers/scsi/sr_ioctl.c b/drivers/scsi/sr_ioctl.c
+index 79d9aa2df528..ddd00efc4882 100644
+--- a/drivers/scsi/sr_ioctl.c
++++ b/drivers/scsi/sr_ioctl.c
+@@ -523,7 +523,7 @@ static int sr_read_sector(Scsi_CD *cd, int lba, int blksize, unsigned char *dest
+ 			return rc;
+ 		cd->readcd_known = 0;
+ 		sr_printk(KERN_INFO, cd,
+-			  "CDROM does'nt support READ CD (0xbe) command\n");
++			  "CDROM doesn't support READ CD (0xbe) command\n");
+ 		/* fall & retry the other way */
+ 	}
+ 	/* ... if this fails, we switch the blocksize using MODE SELECT */
 -- 
 2.32.0
 
