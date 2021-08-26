@@ -5,46 +5,46 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03414C432BE
-	for <kernel-janitors@archiver.kernel.org>; Thu, 26 Aug 2021 12:22:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B77ABC4320A
+	for <kernel-janitors@archiver.kernel.org>; Thu, 26 Aug 2021 12:25:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D801B61076
-	for <kernel-janitors@archiver.kernel.org>; Thu, 26 Aug 2021 12:22:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9EDAD61073
+	for <kernel-janitors@archiver.kernel.org>; Thu, 26 Aug 2021 12:25:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242539AbhHZMXM (ORCPT
+        id S240986AbhHZMZu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 26 Aug 2021 08:23:12 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:39730
+        Thu, 26 Aug 2021 08:25:50 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:39816
         "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234453AbhHZMXL (ORCPT
+        by vger.kernel.org with ESMTP id S240725AbhHZMZt (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 26 Aug 2021 08:23:11 -0400
+        Thu, 26 Aug 2021 08:25:49 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 661573F051;
-        Thu, 26 Aug 2021 12:22:23 +0000 (UTC)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id D43033F051;
+        Thu, 26 Aug 2021 12:25:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1629980543;
-        bh=hzj/AgwawxnfAiYUQP6Ph16Yf+1fzvWWBLo3a/kuqmo=;
+        s=20210705; t=1629980700;
+        bh=s+hrSkGmeiLA9/GhpGpUgimq/yCOJD7q2NZj6bIs8Go=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=WLGM31GcZ1TTHdAtx8vZylB2E+onRuDkULSNLAe42mIkc0dwcBTDrKOfjjpXyIHkc
-         w3++rkyAYkY6coNAUiPmqf2vcFChkpOT6OboYCYD4GPB4EQrqI/ZJICoi+f4shsaUy
-         hkG7jCLyv0xAMfHMhCh27+80EC2Ob4bvu9i/XnHl9k9Fk6BU1ntX718wg3gF4WObKZ
-         jyfohHU7z4r6wb5JBWxeVfwZpkQo13lU/xUsnG9lGUS4isgxQ4glXhlQqC8RRIl9So
-         JCFmzg/alaKi//q1v1Trzsj7iHnHWIDTBFSJzGzhHgo1G1TJcnH5m49N3fTOmjIXkX
-         b5wd05jow95vg==
+        b=em2kgWn3xT3trjNWtti14jeqDNC1cJ5v1/l14oomj6FMht9ct/DSe7AyP880XB8V5
+         MawUkYO+Fe9zVq8ixNxTHlwCeAXhmU/LAEp59SA6M2PQyyuhA8ShAaBa060ydnE8FA
+         rkFoQAWyu2IW/L/XJ5mMOLUIOTJBkCfy66sPLC/HVnvjjUGDNIqbdLLyCUzD51T1Ji
+         BYsWF/AujgPSHq7vAXqUqRyktm25hvM/jiks+Iez0K80JqZtpnjQcbxYYNPmhX3ng4
+         DzPCr2ZIGYh8QdApHuAz2xfS2rP6ZMEDN/pVGwTCXrR/ELwTn6OfU+nm2AAlWgKEuT
+         VZKWWtFlTXBJQ==
 From:   Colin King <colin.king@canonical.com>
-To:     Minas Harutyunyan <hminas@synopsys.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org
+To:     Vinod Koul <vkoul@kernel.org>,
+        Zhen Lei <thunder.leizhen@huawei.com>,
+        Baokun Li <libaokun1@huawei.com>, dmaengine@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] usb: dwc2: Fix spelling mistake "was't" -> "wasn't"
-Date:   Thu, 26 Aug 2021 13:22:23 +0100
-Message-Id: <20210826122223.13533-1-colin.king@canonical.com>
+Subject: [PATCH] dmaengine: fsl-dpaa2-qdma: Fix spelling mistake "faile" -> "failed"
+Date:   Thu, 26 Aug 2021 13:25:00 +0100
+Message-Id: <20210826122500.13743-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -55,26 +55,26 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-There is a spelling mistake in a deb_dbg message. Fix it.
+There is a spelling mistake in a dev_err error message. Fix it.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/usb/dwc2/core.c | 2 +-
+ drivers/dma/fsl-dpaa2-qdma/dpaa2-qdma.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/dwc2/core.c b/drivers/usb/dwc2/core.c
-index 272ae5722c86..cf0bcd0dc320 100644
---- a/drivers/usb/dwc2/core.c
-+++ b/drivers/usb/dwc2/core.c
-@@ -295,7 +295,7 @@ void dwc2_hib_restore_common(struct dwc2_hsotg *hsotg, int rem_wakeup,
- 	if (dwc2_hsotg_wait_bit_set(hsotg, GINTSTS, GINTSTS_RESTOREDONE,
- 				    20000)) {
- 		dev_dbg(hsotg->dev,
--			"%s: Restore Done wan't generated here\n",
-+			"%s: Restore Done wasn't generated here\n",
- 			__func__);
- 	} else {
- 		dev_dbg(hsotg->dev, "restore done  generated here\n");
+diff --git a/drivers/dma/fsl-dpaa2-qdma/dpaa2-qdma.c b/drivers/dma/fsl-dpaa2-qdma/dpaa2-qdma.c
+index a0358f2c5cbb..8dd40d00a672 100644
+--- a/drivers/dma/fsl-dpaa2-qdma/dpaa2-qdma.c
++++ b/drivers/dma/fsl-dpaa2-qdma/dpaa2-qdma.c
+@@ -701,7 +701,7 @@ static int dpaa2_qdma_probe(struct fsl_mc_device *dpdmai_dev)
+ 	/* DPDMAI enable */
+ 	err = dpdmai_enable(priv->mc_io, 0, dpdmai_dev->mc_handle);
+ 	if (err) {
+-		dev_err(dev, "dpdmai_enable() faile\n");
++		dev_err(dev, "dpdmai_enable() failed\n");
+ 		goto err_enable;
+ 	}
+ 
 -- 
 2.32.0
 
