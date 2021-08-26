@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B77ABC4320A
-	for <kernel-janitors@archiver.kernel.org>; Thu, 26 Aug 2021 12:25:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98593C432BE
+	for <kernel-janitors@archiver.kernel.org>; Thu, 26 Aug 2021 12:27:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9EDAD61073
-	for <kernel-janitors@archiver.kernel.org>; Thu, 26 Aug 2021 12:25:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7164C6108E
+	for <kernel-janitors@archiver.kernel.org>; Thu, 26 Aug 2021 12:27:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240986AbhHZMZu (ORCPT
+        id S241514AbhHZM1r (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 26 Aug 2021 08:25:50 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:39816
+        Thu, 26 Aug 2021 08:27:47 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:40008
         "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S240725AbhHZMZt (ORCPT
+        by vger.kernel.org with ESMTP id S234321AbhHZM1r (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 26 Aug 2021 08:25:49 -0400
+        Thu, 26 Aug 2021 08:27:47 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id D43033F051;
-        Thu, 26 Aug 2021 12:25:00 +0000 (UTC)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 010C03F051;
+        Thu, 26 Aug 2021 12:26:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1629980700;
-        bh=s+hrSkGmeiLA9/GhpGpUgimq/yCOJD7q2NZj6bIs8Go=;
+        s=20210705; t=1629980819;
+        bh=qTmiDvDlAU0GlgPB8TPRAtXI2em1asDn/cxSyM9O4IU=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=em2kgWn3xT3trjNWtti14jeqDNC1cJ5v1/l14oomj6FMht9ct/DSe7AyP880XB8V5
-         MawUkYO+Fe9zVq8ixNxTHlwCeAXhmU/LAEp59SA6M2PQyyuhA8ShAaBa060ydnE8FA
-         rkFoQAWyu2IW/L/XJ5mMOLUIOTJBkCfy66sPLC/HVnvjjUGDNIqbdLLyCUzD51T1Ji
-         BYsWF/AujgPSHq7vAXqUqRyktm25hvM/jiks+Iez0K80JqZtpnjQcbxYYNPmhX3ng4
-         DzPCr2ZIGYh8QdApHuAz2xfS2rP6ZMEDN/pVGwTCXrR/ELwTn6OfU+nm2AAlWgKEuT
-         VZKWWtFlTXBJQ==
+        b=A1MP1K/EdSgaASXjb148/FmL/TS/0CQpFlx6DOWQzvQCdMI7omSXfToziyl7vffsH
+         8qY4FLDuoQUZFT6ve4Q7Bz19wjMu/rhcdLsGYX91CvVJGRgsqzChfCD3NZ8+NNIvAw
+         CJd+eJ/NvZs1bcFt+Lsggb5s2y5d7sY2gunYYG+c9xa0qYD8VTWTK76kFFqBQP4c5V
+         StIqLhbkiEZEcZM6x2Nx+b1nYwvxNbHZrtDC/F8JkfjwAlFfb9nTmur9K/ThoAXx8Y
+         PWrhvPOQHZ64k85kv8802E/Jkgbijsz/+WteizQbOPIIl6ar6F1k66cK+P+bqLdVLi
+         dP3cJfOmQoTKw==
 From:   Colin King <colin.king@canonical.com>
-To:     Vinod Koul <vkoul@kernel.org>,
-        Zhen Lei <thunder.leizhen@huawei.com>,
-        Baokun Li <libaokun1@huawei.com>, dmaengine@vger.kernel.org
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-usb@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] dmaengine: fsl-dpaa2-qdma: Fix spelling mistake "faile" -> "failed"
-Date:   Thu, 26 Aug 2021 13:25:00 +0100
-Message-Id: <20210826122500.13743-1-colin.king@canonical.com>
+Subject: [PATCH] usb: renesas_usbhs: Fix spelling mistake "faile" -> "failed"
+Date:   Thu, 26 Aug 2021 13:26:58 +0100
+Message-Id: <20210826122658.13914-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -59,20 +59,20 @@ There is a spelling mistake in a dev_err error message. Fix it.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/dma/fsl-dpaa2-qdma/dpaa2-qdma.c | 2 +-
+ drivers/usb/renesas_usbhs/fifo.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/dma/fsl-dpaa2-qdma/dpaa2-qdma.c b/drivers/dma/fsl-dpaa2-qdma/dpaa2-qdma.c
-index a0358f2c5cbb..8dd40d00a672 100644
---- a/drivers/dma/fsl-dpaa2-qdma/dpaa2-qdma.c
-+++ b/drivers/dma/fsl-dpaa2-qdma/dpaa2-qdma.c
-@@ -701,7 +701,7 @@ static int dpaa2_qdma_probe(struct fsl_mc_device *dpdmai_dev)
- 	/* DPDMAI enable */
- 	err = dpdmai_enable(priv->mc_io, 0, dpdmai_dev->mc_handle);
- 	if (err) {
--		dev_err(dev, "dpdmai_enable() faile\n");
-+		dev_err(dev, "dpdmai_enable() failed\n");
- 		goto err_enable;
+diff --git a/drivers/usb/renesas_usbhs/fifo.c b/drivers/usb/renesas_usbhs/fifo.c
+index a3c2b01ccf7b..10607e273879 100644
+--- a/drivers/usb/renesas_usbhs/fifo.c
++++ b/drivers/usb/renesas_usbhs/fifo.c
+@@ -366,7 +366,7 @@ static int usbhs_dcp_dir_switch_to_write(struct usbhs_pkt *pkt, int *is_done)
+ 
+ 	ret = usbhsf_fifo_select(pipe, fifo, 1);
+ 	if (ret < 0) {
+-		dev_err(dev, "%s() faile\n", __func__);
++		dev_err(dev, "%s() failed\n", __func__);
+ 		return ret;
  	}
  
 -- 
