@@ -5,46 +5,44 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98593C432BE
-	for <kernel-janitors@archiver.kernel.org>; Thu, 26 Aug 2021 12:27:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF0EAC432BE
+	for <kernel-janitors@archiver.kernel.org>; Thu, 26 Aug 2021 12:32:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7164C6108E
-	for <kernel-janitors@archiver.kernel.org>; Thu, 26 Aug 2021 12:27:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 814526109F
+	for <kernel-janitors@archiver.kernel.org>; Thu, 26 Aug 2021 12:32:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241514AbhHZM1r (ORCPT
+        id S240894AbhHZMdj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 26 Aug 2021 08:27:47 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:40008
+        Thu, 26 Aug 2021 08:33:39 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:40546
         "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234321AbhHZM1r (ORCPT
+        by vger.kernel.org with ESMTP id S233929AbhHZMdj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 26 Aug 2021 08:27:47 -0400
+        Thu, 26 Aug 2021 08:33:39 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 010C03F051;
-        Thu, 26 Aug 2021 12:26:58 +0000 (UTC)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 2F7133F110;
+        Thu, 26 Aug 2021 12:32:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1629980819;
-        bh=qTmiDvDlAU0GlgPB8TPRAtXI2em1asDn/cxSyM9O4IU=;
+        s=20210705; t=1629981171;
+        bh=W0lg45bTtebDuSNmM32sWa9HP+79TQBsgPJFOHIQ2uA=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=A1MP1K/EdSgaASXjb148/FmL/TS/0CQpFlx6DOWQzvQCdMI7omSXfToziyl7vffsH
-         8qY4FLDuoQUZFT6ve4Q7Bz19wjMu/rhcdLsGYX91CvVJGRgsqzChfCD3NZ8+NNIvAw
-         CJd+eJ/NvZs1bcFt+Lsggb5s2y5d7sY2gunYYG+c9xa0qYD8VTWTK76kFFqBQP4c5V
-         StIqLhbkiEZEcZM6x2Nx+b1nYwvxNbHZrtDC/F8JkfjwAlFfb9nTmur9K/ThoAXx8Y
-         PWrhvPOQHZ64k85kv8802E/Jkgbijsz/+WteizQbOPIIl6ar6F1k66cK+P+bqLdVLi
-         dP3cJfOmQoTKw==
+        b=lD8wEaKfd529nx3M+PD9i8bBdLU0hteBGTOkJRJEqiRpfvALsaEmHWHs2vNN5efWA
+         B7K9PyKQ++bcdodbEYVNw488anAvj16XN6eYkcisLF6fSMiZ3nIfLLevCDjrg+7f5q
+         pRqjr3k/zIKCd6O3/tEdfTW60ulUpqEhM9I26084WrEnYumgQUfwJr5NDYPImwOqZn
+         yI4V5f0BKKAu/3AEwdG25pNxi83n/1hdy/XFVPmL3PsVJm6wJ7c79E1Kj4mEaDgFBu
+         WnCBYuFajap2OScCYcK2XInKY8L0BoIdftkOqMMVbD7WWuaalIILGEYrJv/5tSkpmW
+         Hujs2aQAkK7Tw==
 From:   Colin King <colin.king@canonical.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-usb@vger.kernel.org
+To:     Lee Jones <lee.jones@linaro.org>
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] usb: renesas_usbhs: Fix spelling mistake "faile" -> "failed"
-Date:   Thu, 26 Aug 2021 13:26:58 +0100
-Message-Id: <20210826122658.13914-1-colin.king@canonical.com>
+Subject: [PATCH] mfd: ti_am335x_tscadc: Fix spelling mistake "atleast" -> "at least"
+Date:   Thu, 26 Aug 2021 13:32:50 +0100
+Message-Id: <20210826123250.14234-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -55,24 +53,24 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-There is a spelling mistake in a dev_err error message. Fix it.
+There is a spelling mistake in a dev_err message. Fix it.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/usb/renesas_usbhs/fifo.c | 2 +-
+ drivers/mfd/ti_am335x_tscadc.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/renesas_usbhs/fifo.c b/drivers/usb/renesas_usbhs/fifo.c
-index a3c2b01ccf7b..10607e273879 100644
---- a/drivers/usb/renesas_usbhs/fifo.c
-+++ b/drivers/usb/renesas_usbhs/fifo.c
-@@ -366,7 +366,7 @@ static int usbhs_dcp_dir_switch_to_write(struct usbhs_pkt *pkt, int *is_done)
- 
- 	ret = usbhsf_fifo_select(pipe, fifo, 1);
- 	if (ret < 0) {
--		dev_err(dev, "%s() faile\n", __func__);
-+		dev_err(dev, "%s() failed\n", __func__);
- 		return ret;
+diff --git a/drivers/mfd/ti_am335x_tscadc.c b/drivers/mfd/ti_am335x_tscadc.c
+index 55adc379f94b..825bd5884a18 100644
+--- a/drivers/mfd/ti_am335x_tscadc.c
++++ b/drivers/mfd/ti_am335x_tscadc.c
+@@ -158,7 +158,7 @@ static	int ti_tscadc_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 	if (total_channels == 0) {
+-		dev_err(&pdev->dev, "Need atleast one channel.\n");
++		dev_err(&pdev->dev, "Need at least one channel.\n");
+ 		return -EINVAL;
  	}
  
 -- 
