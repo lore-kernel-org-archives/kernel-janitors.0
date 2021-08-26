@@ -2,134 +2,120 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-25.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19843C432BE
-	for <kernel-janitors@archiver.kernel.org>; Thu, 26 Aug 2021 13:19:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61D5BC432BE
+	for <kernel-janitors@archiver.kernel.org>; Thu, 26 Aug 2021 13:59:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EF5E660FD8
-	for <kernel-janitors@archiver.kernel.org>; Thu, 26 Aug 2021 13:19:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33C096103A
+	for <kernel-janitors@archiver.kernel.org>; Thu, 26 Aug 2021 13:59:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242551AbhHZNTp (ORCPT
+        id S242788AbhHZN7t (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 26 Aug 2021 09:19:45 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:45742 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S242341AbhHZNTg (ORCPT
+        Thu, 26 Aug 2021 09:59:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53138 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S242741AbhHZN7s (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 26 Aug 2021 09:19:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1629983928;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=AeJY4uWzCABawf4ZbixV2+0MN+zGVDJXlDf8jzwd11c=;
-        b=XFCsO+paXOsOYwMss0UX+/zTCzXElqaKs4Zk3vRvnLq3+aWIdrBf+nlGWmE4wwOKtwmGXi
-        ttpeOlx1xYYb3NYcXXL0kxQaZNZHcUpqXy1DeJxu7fdwqXc1Jrpi/xjs9jUGikCVQC6Slc
-        bMEdPSHz8OCfRzrEGMBbQbBEkCvyCxI=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-396-MTd7iU5cM2upMO3sK2pB0A-1; Thu, 26 Aug 2021 09:18:47 -0400
-X-MC-Unique: MTd7iU5cM2upMO3sK2pB0A-1
-Received: by mail-ej1-f69.google.com with SMTP id gg1-20020a170906e281b029053d0856c4cdso1168142ejb.15
-        for <kernel-janitors@vger.kernel.org>; Thu, 26 Aug 2021 06:18:47 -0700 (PDT)
+        Thu, 26 Aug 2021 09:59:48 -0400
+Received: from mail-oi1-x232.google.com (mail-oi1-x232.google.com [IPv6:2607:f8b0:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A651CC061757;
+        Thu, 26 Aug 2021 06:59:01 -0700 (PDT)
+Received: by mail-oi1-x232.google.com with SMTP id 6so4645227oiy.8;
+        Thu, 26 Aug 2021 06:59:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=n7hw0jCCHtsmEbmjYK6iUSNhSF4LV+gMWc2sAWoGTZg=;
+        b=jkzy3pdJ8giXAzvcrjfw87you5EUZpR6+D4TssCas8iYn0Q7Q6tjtj/LCiuXtRWQTA
+         fsmQb6n3Cm/9PB6OfFxAtjsY/phj4M8WQSVYqOpuwhad5UMEbM7NShE1yZq7YwfrHLYs
+         MpUkG8Pc4ZIoTLxSK6gQe3jgPCUpoAowVczVLsYk3uwRRNIu7gAMFhjTLN6kncCHnxG0
+         dIrpiKIGoaC6zLYGLeBzR7bhoIyTdoBjXPHw/7PyQatnaW+ZHMPamV6umDh9sH317jfM
+         2nJe+z4TYfh9PpU5RKy7Hcrxo7LI4iCZQW7bXclejo7/syzEsJbhAQhFKDAaXPVdVbL+
+         YUAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=AeJY4uWzCABawf4ZbixV2+0MN+zGVDJXlDf8jzwd11c=;
-        b=AnjcPWxcbaXPfeL9u6jyR8v8CftY25w62vjk0/PxJ3Z8Fhki3U60MQpHR99pQhN3dW
-         k5VMaGg9llHLxqapwROWLP6krBvmJlr60DV2qU6w7M9zmU3Dn52qgKe1/kaCR9jmmknW
-         okIeAf8Li24C+S9AdVmvHZuu0BHNIKz+eWROfQelYD94Wh9aIz7YFo1GH4TFkKf2eHDT
-         0Vqe5uZ+Ddp0NAeXo63JWxInVaGM/uS5cKp2UwmKzSbqA/wGoWG+YHn6CTsBuSDfbYh7
-         nEjbYlrvmeVEmgjcoPzcfHtaUN3EPGYWGl/Nlc40DWAA6kPAdn/iD4m5Tj+A6Akk0jTK
-         Gklw==
-X-Gm-Message-State: AOAM531uEadXtGFWLSr92WugW5OoozmDUdZxhlp3AgnH6tzyWncpG0I4
-        OT6KB7eZvmHF7+EDb8Vw0vKrplvKFnP9QAQC3asW8wWPthfnF5UAHk0kTKDl1bGaton1A83XxA8
-        1o3IAPE0ZbPTe3AjRha6fmJgsATfsBXG9xlVRKlkVxHS9ZPIJCZ6k/anTnHNsjTxbb0lQR/0r8P
-        ZLsbx6
-X-Received: by 2002:a05:6402:18ec:: with SMTP id x44mr4244188edy.331.1629983925959;
-        Thu, 26 Aug 2021 06:18:45 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJw0X3Esc06i+Mi9e86vh5yakOKVggNelNdzjsF9q/36McaFl3K6G/4NcEcp1LmGk6WPXsDpWQ==
-X-Received: by 2002:a05:6402:18ec:: with SMTP id x44mr4244165edy.331.1629983925733;
-        Thu, 26 Aug 2021 06:18:45 -0700 (PDT)
-Received: from x1.localdomain (2001-1c00-0c1e-bf00-1054-9d19-e0f0-8214.cable.dynamic.v6.ziggo.nl. [2001:1c00:c1e:bf00:1054:9d19:e0f0:8214])
-        by smtp.gmail.com with ESMTPSA id q9sm1410462ejf.70.2021.08.26.06.18.44
+        bh=n7hw0jCCHtsmEbmjYK6iUSNhSF4LV+gMWc2sAWoGTZg=;
+        b=jQ3B77ujaCg/anaTYXLgtCphLEhVI6L0xunC7KJXeG/OwM2mXBsPNW0CadAyxSM8V1
+         2Ejj0qrb44Vv7piqncEXzxkvPJt831tyYahge/xs+tg5yIu0YBEFdW385ZbcbQ/CoPcJ
+         /PeTpXlaw1+cmA5ls3W/rDzRTRdSO0bOye5j7YzsnqRkngh5Jpu7bYFcJSjFDkz5k5A6
+         gG7hOetcrwm5ujQjSgzx6k6EPpUnH+xPiSOkoc6g/1wqd3kHdqwFPxK/FumDBw9aBnbB
+         IKIlsGR9CpDsMEoiDGts73fsQIbENt285uWAgKBdU9A0HpI2Y2wM0/MVnXUEc7tGCRwA
+         1KuA==
+X-Gm-Message-State: AOAM5303QLIJKyyjjP6QW8Z561jHpp8s/PO6xgWcuFvghCKPBBNqn0SL
+        BG+mbScMbmiZs5uujWnQ4Uh2BTu2YIQ=
+X-Google-Smtp-Source: ABdhPJxFyf96T4DyDdxYtQDBdhA/gogFb6jsw0yRgmIGYQ/LNiKzHWx3APgBJ0Jhvq04ehlkfY1dMg==
+X-Received: by 2002:a05:6808:f90:: with SMTP id o16mr2494438oiw.37.1629986340486;
+        Thu, 26 Aug 2021 06:59:00 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id i1sm612273oiy.25.2021.08.26.06.58.59
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Aug 2021 06:18:44 -0700 (PDT)
-Subject: Re: [PATCH] platform/x86: ISST: use semi-colons instead of commas
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc:     Mark Gross <mgross@linux.intel.com>,
-        platform-driver-x86@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <20210825072357.GA12957@kili>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <672791e3-0e54-1b8d-4c56-f4bae0a8537d@redhat.com>
-Date:   Thu, 26 Aug 2021 15:18:44 +0200
+        Thu, 26 Aug 2021 06:59:00 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Subject: Re: [PATCH] usb: typec: tcpm: Fix spelling mistake "atleast" -> "at
+ least"
+To:     Colin King <colin.king@canonical.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210826123959.14838-1-colin.king@canonical.com>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <8c559341-b3f8-048c-9dc1-47749ea35e74@roeck-us.net>
+Date:   Thu, 26 Aug 2021 06:58:58 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.11.0
 MIME-Version: 1.0
-In-Reply-To: <20210825072357.GA12957@kili>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20210826123959.14838-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi,
-
-On 8/25/21 9:23 AM, Dan Carpenter wrote:
-> The code works the same either way, but it's better to use semi-colons
-> to separate statements.
+On 8/26/21 5:39 AM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> There are spelling mistakes in a comment and a literal string.
+> Fix them.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Thank you for your patch, I've applied this patch to my review-hans 
-branch:
-https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
-
-Note it will show up in my review-hans branch once I've pushed my
-local branch there, which might take a while.
-
-Once I've run some tests on this branch the patches there will be
-added to the platform-drivers-x86/for-next branch and eventually
-will be included in the pdx86 pull-request to Linus for the next
-merge-window.
-
-Regards,
-
-Hans
-
-
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
 > ---
->  drivers/platform/x86/intel_speed_select_if/isst_if_common.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+>   drivers/usb/typec/tcpm/tcpm.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/platform/x86/intel_speed_select_if/isst_if_common.c b/drivers/platform/x86/intel_speed_select_if/isst_if_common.c
-> index 8a4d52a9028d..c9a85eb2e860 100644
-> --- a/drivers/platform/x86/intel_speed_select_if/isst_if_common.c
-> +++ b/drivers/platform/x86/intel_speed_select_if/isst_if_common.c
-> @@ -265,9 +265,9 @@ static int isst_if_get_platform_info(void __user *argp)
->  {
->  	struct isst_if_platform_info info;
->  
-> -	info.api_version = ISST_IF_API_VERSION,
-> -	info.driver_version = ISST_IF_DRIVER_VERSION,
-> -	info.max_cmds_per_ioctl = ISST_IF_CMD_LIMIT,
-> +	info.api_version = ISST_IF_API_VERSION;
-> +	info.driver_version = ISST_IF_DRIVER_VERSION;
-> +	info.max_cmds_per_ioctl = ISST_IF_CMD_LIMIT;
->  	info.mbox_supported = punit_callbacks[ISST_IF_DEV_MBOX].registered;
->  	info.mmio_supported = punit_callbacks[ISST_IF_DEV_MMIO].registered;
->  
+> diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
+> index 049f4c61ee82..b981fc39fa3c 100644
+> --- a/drivers/usb/typec/tcpm/tcpm.c
+> +++ b/drivers/usb/typec/tcpm/tcpm.c
+> @@ -278,7 +278,7 @@ struct pd_mode_data {
+>    * @req_max_curr: Requested max current of the port partner
+>    * @req_out_volt: Requested output voltage to the port partner
+>    * @req_op_curr: Requested operating current to the port partner
+> - * @supported: Parter has atleast one APDO hence supports PPS
+> + * @supported: Parter has at least one APDO hence supports PPS
+>    * @active: PPS mode is active
+>    */
+>   struct pd_pps_data {
+> @@ -2050,7 +2050,7 @@ enum pdo_err {
+>   
+>   static const char * const pdo_err_msg[] = {
+>   	[PDO_ERR_NO_VSAFE5V] =
+> -	" err: source/sink caps should atleast have vSafe5V",
+> +	" err: source/sink caps should at least have vSafe5V",
+>   	[PDO_ERR_VSAFE5V_NOT_FIRST] =
+>   	" err: vSafe5V Fixed Supply Object Shall always be the first object",
+>   	[PDO_ERR_PDO_TYPE_NOT_IN_ORDER] =
 > 
 
