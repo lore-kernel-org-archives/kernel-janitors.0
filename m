@@ -2,85 +2,107 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-20.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F20E0C432BE
-	for <kernel-janitors@archiver.kernel.org>; Thu, 26 Aug 2021 19:24:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40C00C4320A
+	for <kernel-janitors@archiver.kernel.org>; Thu, 26 Aug 2021 21:13:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D8A5761052
-	for <kernel-janitors@archiver.kernel.org>; Thu, 26 Aug 2021 19:24:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FFC061038
+	for <kernel-janitors@archiver.kernel.org>; Thu, 26 Aug 2021 21:13:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243412AbhHZTZU (ORCPT
+        id S243650AbhHZVOl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 26 Aug 2021 15:25:20 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50364 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243342AbhHZTZU (ORCPT
+        Thu, 26 Aug 2021 17:14:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40600 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S243642AbhHZVOj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 26 Aug 2021 15:25:20 -0400
-X-Greylist: delayed 2709 seconds by postgrey-1.27 at vger.kernel.org; Thu, 26 Aug 2021 15:25:19 EDT
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:
-        To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=I4nxBP5jaafm6BB+agXz3TbfW0EQ6exBVO8JfJK1BFI=; b=nY0l6Yqt4WwxEbZbpVORBQZT/R
-        n9Y968HlQWW8J8///jTZSdTRjs+Jf5JojtMc/XYvDRaiTij8ADk7TjBdVpYRgAxR6LvKvsU+drnu9
-        kJ9Tt59n3OdoQOixOnGMAWfgokxKC0h9VxB1Hbu3yDc8h+vwXc5tyW1Ct/lBWfr2vj3c=;
-Received: from 188.30.109.46.threembb.co.uk ([188.30.109.46] helo=fitzroy.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1mJKHR-00FYOJ-J1; Thu, 26 Aug 2021 18:39:13 +0000
-Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id 281A3D14302; Thu, 26 Aug 2021 19:30:25 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     bgoswami@codeaurora.org, perex@perex.cz,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        srinivas.kandagatla@linaro.org, tiwai@suse.com, vkoul@kernel.org,
-        lgirdwood@gmail.com
-Cc:     Mark@sirena.org.uk, Brown@sirena.org.uk, broonie@kernel.org,
-        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] ASoC: wcd9335: Firx some resources leak in the probe and remove function
-Date:   Thu, 26 Aug 2021 19:30:25 +0100
-Message-Id: <163000225499.699341.15649110189101404680.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <cover.1629091028.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1629091028.git.christophe.jaillet@wanadoo.fr>
+        Thu, 26 Aug 2021 17:14:39 -0400
+Received: from mail-il1-x12c.google.com (mail-il1-x12c.google.com [IPv6:2607:f8b0:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CFC6C061757
+        for <kernel-janitors@vger.kernel.org>; Thu, 26 Aug 2021 14:13:52 -0700 (PDT)
+Received: by mail-il1-x12c.google.com with SMTP id v2so4691327ilg.12
+        for <kernel-janitors@vger.kernel.org>; Thu, 26 Aug 2021 14:13:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=YnNHkI0gHMxJbA+95byWCLpuUzCuKxcTdcXyfiGVjUM=;
+        b=e0vW1Xx1Is2NIpawZnNrC08LPD6fxUsKtJcyEjVpb2WVMF/GNz2YgUvjaW641LK2Jd
+         3KSdxWgmNGuAR2NxBh/xbs+c3JVxHRK91pLvahGhQQjEx9sDeKs4+4UuZ4nABz2Z+RTQ
+         5j1fqYj0DBJz9zI+xOZHBX5k2uh4UgYWSke/E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=YnNHkI0gHMxJbA+95byWCLpuUzCuKxcTdcXyfiGVjUM=;
+        b=Ezd3sCkVutAbTqIbKvmzPTp7Ocwomc0u2KB9qub4oxr23Fwtmqrppqkp2Uy6b7GE7K
+         0FUmd2N56UA5DoFbTCXIt1AmtAeSfrd69Z+dNR313wFOeEwSOY2RzQ2MplfrvHJ/naB3
+         5R4gFUr360B9fn38DmqaAYuHscr6M5UfUhed1YW70cuoIRvlhEht2pIphe7wjh6AtFlG
+         k7pod7WhxDctNOda+t5FxMCiPYX3ckMLe0GfgUJgrFCgqT4SPH6wTbz5oy9aKBeV4ZEA
+         LNDW9CdSaBLuNNPDDToO+u4A+B9HoHP7YsAhKFTF1TfaDUyjTEjko4qmUVDTSPqZXzJd
+         qVkA==
+X-Gm-Message-State: AOAM5338g5zoHvSh8Ci2cLUPTGett/Kq8xJN/oLlrcCIMvjgZ+Byp8jH
+        lGnIHb/vKCJF0BH1dUNnAfmyhvK1QZj5cdM7
+X-Google-Smtp-Source: ABdhPJz5oXSrZWxoTTWZQvMf5h7OZQw2WyM2uqVRfptjmUsM1ETSh/FCcRmm+2MkK8kmJvjwtQ1w0A==
+X-Received: by 2002:a92:c60b:: with SMTP id p11mr4013224ilm.65.1630012431656;
+        Thu, 26 Aug 2021 14:13:51 -0700 (PDT)
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
+        by smtp.gmail.com with ESMTPSA id y11sm2133002iol.49.2021.08.26.14.13.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 26 Aug 2021 14:13:51 -0700 (PDT)
+Subject: Re: [PATCH] selftests: safesetid: Fix spelling mistake "cant" ->
+ "can't"
+To:     Colin King <colin.king@canonical.com>,
+        Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Shuah Khan <skhan@linuxfoundation.org>
+References: <20210826121445.13062-1-colin.king@canonical.com>
+From:   Shuah Khan <skhan@linuxfoundation.org>
+Message-ID: <a7e0507d-7e16-6e40-41eb-66141c1359ca@linuxfoundation.org>
+Date:   Thu, 26 Aug 2021 15:13:50 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210826121445.13062-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Mark Brown,,, <broonie@kernel.org>
-
-On Mon, 16 Aug 2021 07:25:01 +0200, Christophe JAILLET wrote:
-> The first 2 patches are sraightforward and look logical to me.
+On 8/26/21 6:14 AM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> However, the 3rd one in purely speculative. It is based on the fact that a
-> comment states that we enable some irqs on some slave ports. That said, it writes
-> 0xFF in some registers.
+> There is a spelling mistake in an error message. Fix it.
 > 
-> So, I guess that we should disable these irqs when the driver is removed. That
-> said, writing 0x00 at the same place looks logical to me.
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>   tools/testing/selftests/safesetid/safesetid-test.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> [...]
+> diff --git a/tools/testing/selftests/safesetid/safesetid-test.c b/tools/testing/selftests/safesetid/safesetid-test.c
+> index 0c4d50644c13..4b809c93ba36 100644
+> --- a/tools/testing/selftests/safesetid/safesetid-test.c
+> +++ b/tools/testing/selftests/safesetid/safesetid-test.c
+> @@ -152,7 +152,7 @@ static void write_policies(void)
+>   
+>   	fd = open(add_whitelist_policy_file, O_WRONLY);
+>   	if (fd < 0)
+> -		die("cant open add_whitelist_policy file\n");
+> +		die("can't open add_whitelist_policy file\n");
+>   	written = write(fd, policy_str, strlen(policy_str));
+>   	if (written != strlen(policy_str)) {
+>   		if (written >= 0) {
+> 
 
-Applied, thanks!
+Thanks. Queuing this up for Linux 5.15-rc1.
 
-[1/3] ASoC: wcd9335: Fix a double irq free in the remove function
-      commit: 7a6a723e98aa45f393e6add18f7309dfffa1b0e2
-[2/3] ASoC: wcd9335: Fix a memory leak in the error handling path of the probe function
-      commit: fc6fc81caa63900cef9ebb8b2e365c3ed5a9effb
-[3/3] ASoC: wcd9335: Disable irq on slave ports in the remove function
-      commit: d3efd26af2e044ff2b48d38bb871630282d77e60
-
-Best regards,
--- 
-Mark Brown,,, <broonie@kernel.org>
+thanks,
+-- Shuah
