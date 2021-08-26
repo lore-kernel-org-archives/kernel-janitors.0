@@ -5,47 +5,47 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7478FC4320E
-	for <kernel-janitors@archiver.kernel.org>; Thu, 26 Aug 2021 12:37:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE828C432BE
+	for <kernel-janitors@archiver.kernel.org>; Thu, 26 Aug 2021 12:40:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5C631610C7
-	for <kernel-janitors@archiver.kernel.org>; Thu, 26 Aug 2021 12:37:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83FC3610A4
+	for <kernel-janitors@archiver.kernel.org>; Thu, 26 Aug 2021 12:40:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242078AbhHZMi0 (ORCPT
+        id S242049AbhHZMkt (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 26 Aug 2021 08:38:26 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:56148
+        Thu, 26 Aug 2021 08:40:49 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:56268
         "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S241261AbhHZMiX (ORCPT
+        by vger.kernel.org with ESMTP id S240770AbhHZMks (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 26 Aug 2021 08:38:23 -0400
+        Thu, 26 Aug 2021 08:40:48 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id BD0673F245;
-        Thu, 26 Aug 2021 12:37:35 +0000 (UTC)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id A83393F245;
+        Thu, 26 Aug 2021 12:39:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1629981455;
-        bh=8sFGVg+g2UkWDPsJWhC3mA0fD7X/I5c9eQbr5g4WoBs=;
+        s=20210705; t=1629981599;
+        bh=TKF+42ZxrWYsLD4ysTzhSy+xn6UWr/AHBlUXLt4dSZk=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=vKmFcEbilp8tNcVPatyFCMn1BJvAoxsUhtxrZRVp3WwbGu9UBkoBcu2NTcS84FJta
-         YwcAHgHJxwgSc5BiXVoMedGXmTJkEO/7+vShI63pPKYFA/EZsVqlixmOs6yiwyaLzz
-         RoOkbN72JKLtoPBGhuXQfCt8MrPChIi5zgz+HX0o2dKbgJZdlhr223MBzPw5jStObQ
-         nPTmT/pyIQdlqQh2PMDf+ckQVS0y1rh7KbM4pbGNrvyEcaPUtGT75XkRe9VLD3EaC2
-         UhOyr8qXtfBITPpBPOVd7QBaJnHpcHeVgNfTvUcaaaH0WuDN/mtH1f+h62qoTU0XBO
-         3H296puhfnZEw==
+        b=rxUlkGiLXpfYa8vyM8fgzMeu6qaskz6I1UBFgrx0ayQmf0kAg40uEeQsusT3MY/8/
+         K+CEQDTLoV2oN14f0Z6ccV5wn1eQT4hOg8jsEr2/TwkpRKAia8+arSEl/jVHG1EArf
+         VaeWLtdT12C6m2mXgcZwzPN3zLp/CD0sNoXH7tYlGWWmZkH01ceadfHsvsq+e5Fd2B
+         24AN6b/D3jPfqQtr0uT1aKWD9X7JqnoCehsavXdpIWsNJGqTRKtbnGms5zv7fZ2+Na
+         Q8Y2CJyMMucfeRfEkDwRvYjnyQi9C0ynL6uXXBXC1frKhUHFZqUJD8ZLUPJYNil4Jt
+         lF+VvjxOJlTJA==
 From:   Colin King <colin.king@canonical.com>
-To:     Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-remoteproc@vger.kernel.org
+To:     Guenter Roeck <linux@roeck-us.net>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] remoteproc: Fix spelling mistake "atleast" -> "at least"
-Date:   Thu, 26 Aug 2021 13:37:35 +0100
-Message-Id: <20210826123735.14650-1-colin.king@canonical.com>
+Subject: [PATCH] usb: typec: tcpm: Fix spelling mistake "atleast" -> "at least"
+Date:   Thu, 26 Aug 2021 13:39:59 +0100
+Message-Id: <20210826123959.14838-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -56,40 +56,36 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-There are spelling mistakes dev_err messages. Fix them.
+There are spelling mistakes in a comment and a literal string.
+Fix them.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/remoteproc/ti_k3_dsp_remoteproc.c | 2 +-
- drivers/remoteproc/ti_k3_r5_remoteproc.c  | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/usb/typec/tcpm/tcpm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-index fd4eb67a6681..c352fa277c8d 100644
---- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-+++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-@@ -481,7 +481,7 @@ static int k3_dsp_reserved_mem_init(struct k3_dsp_rproc *kproc)
- 		return -EINVAL;
- 	}
- 	if (num_rmems < 2) {
--		dev_err(dev, "device needs atleast two memory regions to be defined, num = %d\n",
-+		dev_err(dev, "device needs at least two memory regions to be defined, num = %d\n",
- 			num_rmems);
- 		return -EINVAL;
- 	}
-diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-index 71615210df3e..6499302d00c3 100644
---- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
-+++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-@@ -876,7 +876,7 @@ static int k3_r5_reserved_mem_init(struct k3_r5_rproc *kproc)
- 		return -EINVAL;
- 	}
- 	if (num_rmems < 2) {
--		dev_err(dev, "device needs atleast two memory regions to be defined, num = %d\n",
-+		dev_err(dev, "device needs at least two memory regions to be defined, num = %d\n",
- 			num_rmems);
- 		return -EINVAL;
- 	}
+diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
+index 049f4c61ee82..b981fc39fa3c 100644
+--- a/drivers/usb/typec/tcpm/tcpm.c
++++ b/drivers/usb/typec/tcpm/tcpm.c
+@@ -278,7 +278,7 @@ struct pd_mode_data {
+  * @req_max_curr: Requested max current of the port partner
+  * @req_out_volt: Requested output voltage to the port partner
+  * @req_op_curr: Requested operating current to the port partner
+- * @supported: Parter has atleast one APDO hence supports PPS
++ * @supported: Parter has at least one APDO hence supports PPS
+  * @active: PPS mode is active
+  */
+ struct pd_pps_data {
+@@ -2050,7 +2050,7 @@ enum pdo_err {
+ 
+ static const char * const pdo_err_msg[] = {
+ 	[PDO_ERR_NO_VSAFE5V] =
+-	" err: source/sink caps should atleast have vSafe5V",
++	" err: source/sink caps should at least have vSafe5V",
+ 	[PDO_ERR_VSAFE5V_NOT_FIRST] =
+ 	" err: vSafe5V Fixed Supply Object Shall always be the first object",
+ 	[PDO_ERR_PDO_TYPE_NOT_IN_ORDER] =
 -- 
 2.32.0
 
