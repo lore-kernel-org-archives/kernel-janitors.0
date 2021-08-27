@@ -2,83 +2,144 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74C61C4320A
-	for <kernel-janitors@archiver.kernel.org>; Fri, 27 Aug 2021 16:34:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BE69C432BE
+	for <kernel-janitors@archiver.kernel.org>; Fri, 27 Aug 2021 17:17:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5616C60F25
-	for <kernel-janitors@archiver.kernel.org>; Fri, 27 Aug 2021 16:34:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1ADC060F44
+	for <kernel-janitors@archiver.kernel.org>; Fri, 27 Aug 2021 17:17:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231854AbhH0Qf2 (ORCPT
+        id S240167AbhH0RRt (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 27 Aug 2021 12:35:28 -0400
-Received: from smtp13.smtpout.orange.fr ([80.12.242.135]:34846 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S229962AbhH0Qf1 (ORCPT
+        Fri, 27 Aug 2021 13:17:49 -0400
+Received: from relayfre-01.paragon-software.com ([176.12.100.13]:37578 "EHLO
+        relayfre-01.paragon-software.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S239899AbhH0RRs (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 27 Aug 2021 12:35:27 -0400
-Received: from [192.168.1.18] ([90.126.253.178])
-        by mwinf5d74 with ME
-        id mgaY2500Q3riaq203gaZQx; Fri, 27 Aug 2021 18:34:37 +0200
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 27 Aug 2021 18:34:37 +0200
-X-ME-IP: 90.126.253.178
-Subject: Re: [PATCH v2] iio: adc128s052: Simplify 'adc128_probe()'
+        Fri, 27 Aug 2021 13:17:48 -0400
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id 8B5A942C;
+        Fri, 27 Aug 2021 20:16:57 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paragon-software.com; s=mail; t=1630084617;
+        bh=aKDGBWbxN6juVo3fEnLuKdso5Um1Is+UUWiB/hlPvxg=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To;
+        b=nMT53Rx2IyypXu0kTAPoH6O5BkKpNTOTYTMT3ynbQcZLPUCO9oOHIak2/ByYhQVYY
+         yWi73i2UwNK8VidYS5QCXAAOVdDgjxkDjdHDhmx8gIJ71kMpFmLiQWLBxCXcHgIjLs
+         /6oDqf+7AllwEIOXHc/YPISLMbxlaz4UoazwxsC8=
+Received: from vdlg-exch-02.paragon-software.com (172.30.1.105) by
+ vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Fri, 27 Aug 2021 20:16:57 +0300
+Received: from vdlg-exch-02.paragon-software.com ([fe80::586:6d72:3fe5:bd9b])
+ by vdlg-exch-02.paragon-software.com ([fe80::586:6d72:3fe5:bd9b%12]) with
+ mapi id 15.01.2176.009; Fri, 27 Aug 2021 20:16:57 +0300
+From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     jic23@kernel.org, lars@metafoo.de, ardeleanalex@gmail.com,
-        andy.shevchenko@gmail.com, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <d769321da74eea17a1260b48d4ab16f416b37c74.1630002390.git.christophe.jaillet@wanadoo.fr>
- <20210827073536.GD1931@kadam>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Message-ID: <9bd1b2a1-1d86-3907-e62b-f1ecc2dc9995@wanadoo.fr>
-Date:   Fri, 27 Aug 2021 18:34:32 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
-MIME-Version: 1.0
-In-Reply-To: <20210827073536.GD1931@kadam>
-Content-Type: text/plain; charset=utf-8; format=flowed
+CC:     "ntfs3@lists.linux.dev" <ntfs3@lists.linux.dev>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Subject: RE: [PATCH] fs/ntfs3: add checks for allocation failure
+Thread-Topic: [PATCH] fs/ntfs3: add checks for allocation failure
+Thread-Index: AQHXmN6VFXy+PyddQ0qyTjMLzsfUaKuHnNlw
+Date:   Fri, 27 Aug 2021 17:16:57 +0000
+Message-ID: <433bf776e8cf4fcc8dc9c1db4e43151b@paragon-software.com>
+References: <20210824115236.GJ31143@kili>
+In-Reply-To: <20210824115236.GJ31143@kili>
+Accept-Language: ru-RU, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.30.0.26]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 27/08/2021 à 09:35, Dan Carpenter a écrit :
-> On Thu, Aug 26, 2021 at 08:28:08PM +0200, Christophe JAILLET wrote:
->> @@ -172,13 +167,23 @@ static int adc128_probe(struct spi_device *spi)
->>   	ret = regulator_enable(adc->reg);
->>   	if (ret < 0)
->>   		return ret;
->> -	ret = devm_add_action_or_reset(&spi->dev, adc128_disable_regulator, adc->reg);
->> -	if (ret)
->> -		return ret;
->>   
->>   	mutex_init(&adc->lock);
->>   
->> -	return devm_iio_device_register(&spi->dev, indio_dev);
->> +	ret = iio_device_register(indio_dev);
->> +
->> +	return ret;
-> 
-> Since you're resending anyway then please do:
-> 
-> 	return iio_device_register(indio_dev);
-> 
-> regards,
-> dan carpenter
-> 
-> 
+> From: Dan Carpenter <dan.carpenter@oracle.com>
+> Sent: Tuesday, August 24, 2021 2:53 PM
+> To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+> Cc: ntfs3@lists.linux.dev; linux-kernel@vger.kernel.org; kernel-janitors@=
+vger.kernel.org
+> Subject: [PATCH] fs/ntfs3: add checks for allocation failure
+>=20
+> Add a check for when the kzalloc() in init_rsttbl() fails.  Some of
+> the callers checked for NULL and some did not.  I went down the call
+> tree and added NULL checks where ever they were missing.
+>=20
+> Fixes: b46acd6a6a62 ("fs/ntfs3: Add NTFS journal")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  fs/ntfs3/fslog.c | 21 ++++++++++++++++++---
+>  1 file changed, 18 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/fs/ntfs3/fslog.c b/fs/ntfs3/fslog.c
+> index 397ba6a956e7..209fe6ddead0 100644
+> --- a/fs/ntfs3/fslog.c
+> +++ b/fs/ntfs3/fslog.c
+> @@ -807,7 +807,11 @@ static inline struct RESTART_TABLE *init_rsttbl(u16 =
+esize, u16 used)
+>  	u32 off;
+>  	u32 bytes =3D esize * used + sizeof(struct RESTART_TABLE);
+>  	u32 lf =3D sizeof(struct RESTART_TABLE) + (used - 1) * esize;
+> -	struct RESTART_TABLE *t =3D ntfs_zalloc(bytes);
+> +	struct RESTART_TABLE *t;
+> +
+> +	t =3D ntfs_zalloc(bytes);
+> +	if (!t)
+> +		return NULL;
+>=20
+>  	t->size =3D cpu_to_le16(esize);
+>  	t->used =3D cpu_to_le16(used);
+> @@ -831,7 +835,11 @@ static inline struct RESTART_TABLE *extend_rsttbl(st=
+ruct RESTART_TABLE *tbl,
+>  	u16 esize =3D le16_to_cpu(tbl->size);
+>  	__le32 osize =3D cpu_to_le32(bytes_per_rt(tbl));
+>  	u32 used =3D le16_to_cpu(tbl->used);
+> -	struct RESTART_TABLE *rt =3D init_rsttbl(esize, used + add);
+> +	struct RESTART_TABLE *rt;
+> +
+> +	rt =3D init_rsttbl(esize, used + add);
+> +	if (!rt)
+> +		return NULL;
+>=20
+>  	memcpy(rt + 1, tbl + 1, esize * used);
+>=20
+> @@ -864,8 +872,11 @@ static inline void *alloc_rsttbl_idx(struct RESTART_=
+TABLE **tbl)
+>  	__le32 *e;
+>  	struct RESTART_TABLE *t =3D *tbl;
+>=20
+> -	if (!t->first_free)
+> +	if (!t->first_free) {
+>  		*tbl =3D t =3D extend_rsttbl(t, 16, ~0u);
+> +		if (!t)
+> +			return NULL;
+> +	}
+>=20
+>  	off =3D le32_to_cpu(t->first_free);
+>=20
+> @@ -4482,6 +4493,10 @@ int log_replay(struct ntfs_inode *ni, bool *initia=
+lized)
+>  		}
+>=20
+>  		dp =3D alloc_rsttbl_idx(&dptbl);
+> +		if (!dp) {
+> +			err =3D -ENOMEM;
+> +			goto out;
+> +		}
+>  		dp->target_attr =3D cpu_to_le32(t16);
+>  		dp->transfer_len =3D cpu_to_le32(t32 << sbi->cluster_bits);
+>  		dp->lcns_follow =3D cpu_to_le32(t32);
+> --
+> 2.20.1
 
-Hi Dan,
-This v2 should not be taken into account.
-I've sent a v3 just after which already implements what you propose.
+Hi Dan! Thanks, applied :)
 
-Other comments on this v3 are welcome.
-
-CJ
+Best regards
