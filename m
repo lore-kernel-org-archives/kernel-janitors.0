@@ -6,36 +6,45 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
 	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 510A3C43214
-	for <kernel-janitors@archiver.kernel.org>; Fri, 27 Aug 2021 13:23:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFF03C43216
+	for <kernel-janitors@archiver.kernel.org>; Fri, 27 Aug 2021 13:28:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3ACF861027
-	for <kernel-janitors@archiver.kernel.org>; Fri, 27 Aug 2021 13:23:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8F3660F91
+	for <kernel-janitors@archiver.kernel.org>; Fri, 27 Aug 2021 13:28:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245302AbhH0NYA (ORCPT
+        id S245286AbhH0N3c (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 27 Aug 2021 09:24:00 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:48723 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S245212AbhH0NXw (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 27 Aug 2021 09:23:52 -0400
+        Fri, 27 Aug 2021 09:29:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34930 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S245350AbhH0N3U (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 27 Aug 2021 09:29:20 -0400
+Received: from ozlabs.org (bilbo.ozlabs.org [IPv6:2401:3900:2:1::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CA5AC061757;
+        Fri, 27 Aug 2021 06:28:31 -0700 (PDT)
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4Gx0lB0y5Yz9tkd;
-        Fri, 27 Aug 2021 23:23:02 +1000 (AEST)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4Gx0sS3ky9z9s1l;
+        Fri, 27 Aug 2021 23:28:28 +1000 (AEST)
 From:   Michael Ellerman <patch-notifications@ellerman.id.au>
-To:     Zheng Yongjun <zhengyongjun3@huawei.com>,
+To:     Michael Neuling <mikey@neuling.org>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Paul Mackerras <paulus@ozlabs.org>, kvm-ppc@vger.kernel.org,
         Michael Ellerman <mpe@ellerman.id.au>,
-        Shuah Khan <shuah@kernel.org>
-Cc:     linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
-In-Reply-To: <20210326064808.3262568-1-zhengyongjun3@huawei.com>
-References: <20210326064808.3262568-1-zhengyongjun3@huawei.com>
-Subject: Re: [PATCH -next] selftests/powerpc: Remove duplicated include from tm-poison.c
-Message-Id: <163007013895.52768.7064716282025160989.b4-ty@ellerman.id.au>
-Date:   Fri, 27 Aug 2021 23:15:38 +1000
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        linuxppc-dev@lists.ozlabs.org
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <20210819113954.17515-1-lukas.bulwahn@gmail.com>
+References: <20210819113954.17515-1-lukas.bulwahn@gmail.com>
+Subject: Re: [PATCH v2 0/2] Kconfig symbol fixes on powerpc
+Message-Id: <163007088913.57684.694810119971696811.b4-ty@ellerman.id.au>
+Date:   Fri, 27 Aug 2021 23:28:09 +1000
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -43,16 +52,20 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 26 Mar 2021 14:48:08 +0800, Zheng Yongjun wrote:
-> Remove duplicated include.
+On Thu, 19 Aug 2021 13:39:52 +0200, Lukas Bulwahn wrote:
+> The script ./scripts/checkkconfigsymbols.py warns on invalid references to
+> Kconfig symbols (often, minor typos, name confusions or outdated references).
 > 
+> This patch series addresses all issues reported by
+> ./scripts/checkkconfigsymbols.py in ./drivers/usb/ for Kconfig and Makefile
+> files. Issues in the Kconfig and Makefile files indicate some shortcomings in
+> the overall build definitions, and often are true actionable issues to address.
 > 
-> 
-> 
+> [...]
 
-Applied to powerpc/next.
+Patch 2 applied to powerpc/fixes.
 
-[1/1] selftests/powerpc: Remove duplicated include from tm-poison.c
-      https://git.kernel.org/powerpc/c/6af0b5570b59ce8dd1608a8e48f59eff3f4bdd04
+[2/2] powerpc: rectify selection to ARCH_ENABLE_SPLIT_PMD_PTLOCK
+      https://git.kernel.org/powerpc/c/310d2e83cb9b7f1e7232319880e3fcb57592fa10
 
 cheers
