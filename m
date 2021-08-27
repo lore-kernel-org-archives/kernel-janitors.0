@@ -7,35 +7,35 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D33DC432BE
-	for <kernel-janitors@archiver.kernel.org>; Fri, 27 Aug 2021 20:01:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D894C432BE
+	for <kernel-janitors@archiver.kernel.org>; Fri, 27 Aug 2021 20:06:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 61E41606A5
-	for <kernel-janitors@archiver.kernel.org>; Fri, 27 Aug 2021 20:01:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 046F960F92
+	for <kernel-janitors@archiver.kernel.org>; Fri, 27 Aug 2021 20:06:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231460AbhH0UBu (ORCPT
+        id S231317AbhH0UHa (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 27 Aug 2021 16:01:50 -0400
-Received: from smtp13.smtpout.orange.fr ([80.12.242.135]:33331 "EHLO
+        Fri, 27 Aug 2021 16:07:30 -0400
+Received: from smtp13.smtpout.orange.fr ([80.12.242.135]:29120 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S231420AbhH0UBu (ORCPT
+        with ESMTP id S231167AbhH0UHa (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 27 Aug 2021 16:01:50 -0400
+        Fri, 27 Aug 2021 16:07:30 -0400
 Received: from pop-os.home ([90.126.253.178])
         by mwinf5d77 with ME
-        id mk0z250053riaq203k0zhT; Fri, 27 Aug 2021 22:00:59 +0200
+        id mk6e2500A3riaq203k6fzR; Fri, 27 Aug 2021 22:06:39 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 27 Aug 2021 22:00:59 +0200
+X-ME-Date: Fri, 27 Aug 2021 22:06:39 +0200
 X-ME-IP: 90.126.253.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     davem@davemloft.net, kuba@kernel.org, arnd@arndb.de
+To:     davem@davemloft.net, kuba@kernel.org, gregkh@linuxfoundation.org
 Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] fddi: switch from 'pci_' to 'dma_' API
-Date:   Fri, 27 Aug 2021 22:00:57 +0200
-Message-Id: <abc49c24a591b4701dd39fa76506cfdf19aff3cd.1630094399.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] niu: switch from 'pci_' to 'dma_' API
+Date:   Fri, 27 Aug 2021 22:06:37 +0200
+Message-Id: <24bff575e35f3f5990d7c53741000a3ed29fb60a.1630094750.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -52,27 +52,25 @@ Lawall in [2].
 A coccinelle script has been used to perform the needed transformation
 Only relevant parts are given below.
 
+It has been hand modified to use 'dma_set_mask_and_coherent()' instead of
+'pci_set_dma_mask()/pci_set_consistent_dma_mask()' when applicable.
+This is less verbose.
+
+Finally, the now useless 'dma_mask' variable has been removed.
+
 It has been compile tested.
 
-@@ @@
--    PCI_DMA_TODEVICE
-+    DMA_TO_DEVICE
-
-@@ @@
--    PCI_DMA_FROMDEVICE
-+    DMA_FROM_DEVICE
+@@
+expression e1, e2;
+@@
+-    pci_set_dma_mask(e1, e2)
++    dma_set_mask(&e1->dev, e2)
 
 @@
-expression e1, e2, e3, e4;
+expression e1, e2;
 @@
--    pci_map_single(e1, e2, e3, e4)
-+    dma_map_single(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_unmap_single(e1, e2, e3, e4)
-+    dma_unmap_single(&e1->dev, e2, e3, e4)
+-    pci_set_consistent_dma_mask(e1, e2)
++    dma_set_coherent_mask(&e1->dev, e2)
 
 
 [1]: https://lore.kernel.org/kernel-janitors/20200421081257.GA131897@infradead.org/
@@ -80,110 +78,43 @@ expression e1, e2, e3, e4;
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/net/fddi/skfp/skfddi.c | 41 ++++++++++++++++------------------
- 1 file changed, 19 insertions(+), 22 deletions(-)
+ drivers/net/ethernet/sun/niu.c | 14 +++-----------
+ 1 file changed, 3 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/net/fddi/skfp/skfddi.c b/drivers/net/fddi/skfp/skfddi.c
-index f62e98fada1a..c5cb421f9890 100644
---- a/drivers/net/fddi/skfp/skfddi.c
-+++ b/drivers/net/fddi/skfp/skfddi.c
-@@ -1174,8 +1174,8 @@ static void send_queued_packets(struct s_smc *smc)
+diff --git a/drivers/net/ethernet/sun/niu.c b/drivers/net/ethernet/sun/niu.c
+index 1501e8906be4..a68a01d1b2b1 100644
+--- a/drivers/net/ethernet/sun/niu.c
++++ b/drivers/net/ethernet/sun/niu.c
+@@ -9722,7 +9722,6 @@ static int niu_pci_init_one(struct pci_dev *pdev,
+ 	struct net_device *dev;
+ 	struct niu *np;
+ 	int err;
+-	u64 dma_mask;
  
- 		txd = (struct s_smt_fp_txd *) HWM_GET_CURR_TXD(smc, queue);
+ 	niu_driver_version();
  
--		dma_address = pci_map_single(&bp->pdev, skb->data,
--					     skb->len, PCI_DMA_TODEVICE);
-+		dma_address = dma_map_single(&(&bp->pdev)->dev, skb->data,
-+					     skb->len, DMA_TO_DEVICE);
- 		if (frame_status & LAN_TX) {
- 			txd->txd_os.skb = skb;			// save skb
- 			txd->txd_os.dma_addr = dma_address;	// save dma mapping
-@@ -1184,8 +1184,8 @@ static void send_queued_packets(struct s_smc *smc)
-                       frame_status | FIRST_FRAG | LAST_FRAG | EN_IRQ_EOF);
+@@ -9777,18 +9776,11 @@ static int niu_pci_init_one(struct pci_dev *pdev,
+ 		PCI_EXP_DEVCTL_FERE | PCI_EXP_DEVCTL_URRE |
+ 		PCI_EXP_DEVCTL_RELAX_EN);
  
- 		if (!(frame_status & LAN_TX)) {		// local only frame
--			pci_unmap_single(&bp->pdev, dma_address,
--					 skb->len, PCI_DMA_TODEVICE);
-+			dma_unmap_single(&(&bp->pdev)->dev, dma_address,
-+					 skb->len, DMA_TO_DEVICE);
- 			dev_kfree_skb_irq(skb);
- 		}
- 		spin_unlock_irqrestore(&bp->DriverLock, Flags);
-@@ -1467,8 +1467,9 @@ void dma_complete(struct s_smc *smc, volatile union s_fp_descr *descr, int flag)
- 		if (r->rxd_os.skb && r->rxd_os.dma_addr) {
- 			int MaxFrameSize = bp->MaxFrameSize;
- 
--			pci_unmap_single(&bp->pdev, r->rxd_os.dma_addr,
--					 MaxFrameSize, PCI_DMA_FROMDEVICE);
-+			dma_unmap_single(&(&bp->pdev)->dev,
-+					 r->rxd_os.dma_addr, MaxFrameSize,
-+					 DMA_FROM_DEVICE);
- 			r->rxd_os.dma_addr = 0;
- 		}
- 	}
-@@ -1503,8 +1504,8 @@ void mac_drv_tx_complete(struct s_smc *smc, volatile struct s_smt_fp_txd *txd)
- 	txd->txd_os.skb = NULL;
- 
- 	// release the DMA mapping
--	pci_unmap_single(&smc->os.pdev, txd->txd_os.dma_addr,
--			 skb->len, PCI_DMA_TODEVICE);
-+	dma_unmap_single(&(&smc->os.pdev)->dev, txd->txd_os.dma_addr,
-+			 skb->len, DMA_TO_DEVICE);
- 	txd->txd_os.dma_addr = 0;
- 
- 	smc->os.MacStat.gen.tx_packets++;	// Count transmitted packets.
-@@ -1707,10 +1708,9 @@ void mac_drv_requeue_rxd(struct s_smc *smc, volatile struct s_smt_fp_rxd *rxd,
- 				skb_reserve(skb, 3);
- 				skb_put(skb, MaxFrameSize);
- 				v_addr = skb->data;
--				b_addr = pci_map_single(&smc->os.pdev,
--							v_addr,
--							MaxFrameSize,
--							PCI_DMA_FROMDEVICE);
-+				b_addr = dma_map_single(&(&smc->os.pdev)->dev,
-+							v_addr, MaxFrameSize,
-+							DMA_FROM_DEVICE);
- 				rxd->rxd_os.dma_addr = b_addr;
- 			} else {
- 				// no skb available, use local buffer
-@@ -1723,10 +1723,8 @@ void mac_drv_requeue_rxd(struct s_smc *smc, volatile struct s_smt_fp_rxd *rxd,
- 			// we use skb from old rxd
- 			rxd->rxd_os.skb = skb;
- 			v_addr = skb->data;
--			b_addr = pci_map_single(&smc->os.pdev,
--						v_addr,
--						MaxFrameSize,
--						PCI_DMA_FROMDEVICE);
-+			b_addr = dma_map_single(&(&smc->os.pdev)->dev, v_addr,
-+						MaxFrameSize, DMA_FROM_DEVICE);
- 			rxd->rxd_os.dma_addr = b_addr;
- 		}
- 		hwm_rx_frag(smc, v_addr, b_addr, MaxFrameSize,
-@@ -1778,10 +1776,8 @@ void mac_drv_fill_rxd(struct s_smc *smc)
- 			skb_reserve(skb, 3);
- 			skb_put(skb, MaxFrameSize);
- 			v_addr = skb->data;
--			b_addr = pci_map_single(&smc->os.pdev,
--						v_addr,
--						MaxFrameSize,
--						PCI_DMA_FROMDEVICE);
-+			b_addr = dma_map_single(&(&smc->os.pdev)->dev, v_addr,
-+						MaxFrameSize, DMA_FROM_DEVICE);
- 			rxd->rxd_os.dma_addr = b_addr;
- 		} else {
- 			// no skb available, use local buffer
-@@ -1838,8 +1834,9 @@ void mac_drv_clear_rxd(struct s_smc *smc, volatile struct s_smt_fp_rxd *rxd,
- 			skfddi_priv *bp = &smc->os;
- 			int MaxFrameSize = bp->MaxFrameSize;
- 
--			pci_unmap_single(&bp->pdev, rxd->rxd_os.dma_addr,
--					 MaxFrameSize, PCI_DMA_FROMDEVICE);
-+			dma_unmap_single(&(&bp->pdev)->dev,
-+					 rxd->rxd_os.dma_addr, MaxFrameSize,
-+					 DMA_FROM_DEVICE);
- 
- 			dev_kfree_skb(skb);
- 			rxd->rxd_os.skb = NULL;
+-	dma_mask = DMA_BIT_MASK(44);
+-	err = pci_set_dma_mask(pdev, dma_mask);
+-	if (!err) {
++	err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(44));
++	if (!err)
+ 		dev->features |= NETIF_F_HIGHDMA;
+-		err = pci_set_consistent_dma_mask(pdev, dma_mask);
+-		if (err) {
+-			dev_err(&pdev->dev, "Unable to obtain 44 bit DMA for consistent allocations, aborting\n");
+-			goto err_out_release_parent;
+-		}
+-	}
+ 	if (err) {
+-		err = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
++		err = dma_set_mask(&pdev->dev, DMA_BIT_MASK(32));
+ 		if (err) {
+ 			dev_err(&pdev->dev, "No usable DMA configuration, aborting\n");
+ 			goto err_out_release_parent;
 -- 
 2.30.2
 
