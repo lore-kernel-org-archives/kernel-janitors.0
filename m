@@ -2,110 +2,174 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB248C432BE
-	for <kernel-janitors@archiver.kernel.org>; Fri, 27 Aug 2021 18:59:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0A59C43214
+	for <kernel-janitors@archiver.kernel.org>; Fri, 27 Aug 2021 19:56:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AC62960EFF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 27 Aug 2021 18:59:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB8C260F92
+	for <kernel-janitors@archiver.kernel.org>; Fri, 27 Aug 2021 19:56:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230458AbhH0TAF (ORCPT
+        id S231587AbhH0T52 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 27 Aug 2021 15:00:05 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:60044
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230383AbhH0TAF (ORCPT
+        Fri, 27 Aug 2021 15:57:28 -0400
+Received: from smtp13.smtpout.orange.fr ([80.12.242.135]:18635 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S231589AbhH0T50 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 27 Aug 2021 15:00:05 -0400
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net [80.193.200.194])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 55A493F0B8;
-        Fri, 27 Aug 2021 18:59:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1630090755;
-        bh=z7f03Sa4CCURuujvzK1MHTPz7baSRU44/y891L4NA0Q=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=pj9RbSMRCtpUrJwJPi9lYfFXOhFAhSpw//ztg0Nb0qNHt9wZCC4fZbilnKxbnWOry
-         UxYO2SjZePd4BhCOjCM5ri/a8dO20qwj5qzs41V8nvl7iUHMc6Ro7D5w8SEDaPf4Cr
-         GO7AG77xzK3ZZdIOJWlKmgBJn/gjVv63yOToWJI3FBh0jN4tLpUAKxEGPYuKeSKRFe
-         ej/IBwc/J2NChP5bB9MGQBkzqhm1y76ceYayNkZidrXmHui9yZHvOBBlHFsGcsDNlw
-         GnUo0FDJM2WJTRHNmfOHyJkD9AFSlxDbCx4G2wlX9YEHRTcAhsW0VXLUcfBPc3rECq
-         RpgGzSzbQeW9g==
-From:   Colin King <colin.king@canonical.com>
-To:     Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Xinhui.Pan@amd.com, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/amdgpu/swsmu: fix spelling mistake "minimun" -> "minimum"
-Date:   Fri, 27 Aug 2021 19:59:14 +0100
-Message-Id: <20210827185914.507508-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.32.0
+        Fri, 27 Aug 2021 15:57:26 -0400
+Received: from pop-os.home ([90.126.253.178])
+        by mwinf5d77 with ME
+        id mjwU2500F3riaq203jwVS9; Fri, 27 Aug 2021 21:56:35 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 27 Aug 2021 21:56:35 +0200
+X-ME-IP: 90.126.253.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     kou.ishizaki@toshiba.co.jp, geoff@infradead.org,
+        davem@davemloft.net, kuba@kernel.org
+Cc:     netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] net: spider_net: switch from 'pci_' to 'dma_' API
+Date:   Fri, 27 Aug 2021 21:56:28 +0200
+Message-Id: <60abc3d0c8b4ef8368a4d63326a25a5cb3cd218c.1630094078.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+In [1], Christoph Hellwig has proposed to remove the wrappers in
+include/linux/pci-dma-compat.h.
 
-There are three identical spelling mistakes in dev_err messages.
-Fix these.
+Some reasons why this API should be removed have been given by Julia
+Lawall in [2].
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+A coccinelle script has been used to perform the needed transformation
+Only relevant parts are given below.
+
+@@ @@
+-    PCI_DMA_BIDIRECTIONAL
++    DMA_BIDIRECTIONAL
+
+@@ @@
+-    PCI_DMA_TODEVICE
++    DMA_TO_DEVICE
+
+@@ @@
+-    PCI_DMA_FROMDEVICE
++    DMA_FROM_DEVICE
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_map_single(e1, e2, e3, e4)
++    dma_map_single(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_single(e1, e2, e3, e4)
++    dma_unmap_single(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2;
+@@
+-    pci_dma_mapping_error(e1, e2)
++    dma_mapping_error(&e1->dev, e2)
+
+
+[1]: https://lore.kernel.org/kernel-janitors/20200421081257.GA131897@infradead.org/
+[2]: https://lore.kernel.org/kernel-janitors/alpine.DEB.2.22.394.2007120902170.2424@hadrien/
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/gpu/drm/amd/pm/swsmu/smu11/vangogh_ppt.c     | 2 +-
- drivers/gpu/drm/amd/pm/swsmu/smu12/renoir_ppt.c      | 2 +-
- drivers/gpu/drm/amd/pm/swsmu/smu13/yellow_carp_ppt.c | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+It has *not* been compile tested because I don't have the needed
+configuration or cross-compiler. However, the modification is completely
+mechanical and done by coccinelle.
+---
+ drivers/net/ethernet/toshiba/spider_net.c | 27 +++++++++++++----------
+ 1 file changed, 15 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/pm/swsmu/smu11/vangogh_ppt.c b/drivers/gpu/drm/amd/pm/swsmu/smu11/vangogh_ppt.c
-index ad52f7ecfb87..629bb8e926fb 100644
---- a/drivers/gpu/drm/amd/pm/swsmu/smu11/vangogh_ppt.c
-+++ b/drivers/gpu/drm/amd/pm/swsmu/smu11/vangogh_ppt.c
-@@ -1869,7 +1869,7 @@ static int vangogh_od_edit_dpm_table(struct smu_context *smu, enum PP_OD_DPM_TAB
- 		} else {
- 			if (smu->gfx_actual_hard_min_freq > smu->gfx_actual_soft_max_freq) {
- 				dev_err(smu->adev->dev,
--					"The setting minimun sclk (%d) MHz is greater than the setting maximum sclk (%d) MHz\n",
-+					"The setting minimum sclk (%d) MHz is greater than the setting maximum sclk (%d) MHz\n",
- 					smu->gfx_actual_hard_min_freq,
- 					smu->gfx_actual_soft_max_freq);
- 				return -EINVAL;
-diff --git a/drivers/gpu/drm/amd/pm/swsmu/smu12/renoir_ppt.c b/drivers/gpu/drm/amd/pm/swsmu/smu12/renoir_ppt.c
-index b39138041141..5aa175e12a78 100644
---- a/drivers/gpu/drm/amd/pm/swsmu/smu12/renoir_ppt.c
-+++ b/drivers/gpu/drm/amd/pm/swsmu/smu12/renoir_ppt.c
-@@ -426,7 +426,7 @@ static int renoir_od_edit_dpm_table(struct smu_context *smu,
- 		} else {
- 			if (smu->gfx_actual_hard_min_freq > smu->gfx_actual_soft_max_freq) {
- 				dev_err(smu->adev->dev,
--					"The setting minimun sclk (%d) MHz is greater than the setting maximum sclk (%d) MHz\n",
-+					"The setting minimum sclk (%d) MHz is greater than the setting maximum sclk (%d) MHz\n",
- 					smu->gfx_actual_hard_min_freq,
- 					smu->gfx_actual_soft_max_freq);
- 				return -EINVAL;
-diff --git a/drivers/gpu/drm/amd/pm/swsmu/smu13/yellow_carp_ppt.c b/drivers/gpu/drm/amd/pm/swsmu/smu13/yellow_carp_ppt.c
-index 0f17c2522c85..627ba2eec7fd 100644
---- a/drivers/gpu/drm/amd/pm/swsmu/smu13/yellow_carp_ppt.c
-+++ b/drivers/gpu/drm/amd/pm/swsmu/smu13/yellow_carp_ppt.c
-@@ -731,7 +731,7 @@ static int yellow_carp_od_edit_dpm_table(struct smu_context *smu, enum PP_OD_DPM
- 		} else {
- 			if (smu->gfx_actual_hard_min_freq > smu->gfx_actual_soft_max_freq) {
- 				dev_err(smu->adev->dev,
--					"The setting minimun sclk (%d) MHz is greater than the setting maximum sclk (%d) MHz\n",
-+					"The setting minimum sclk (%d) MHz is greater than the setting maximum sclk (%d) MHz\n",
- 					smu->gfx_actual_hard_min_freq,
- 					smu->gfx_actual_soft_max_freq);
- 				return -EINVAL;
+diff --git a/drivers/net/ethernet/toshiba/spider_net.c b/drivers/net/ethernet/toshiba/spider_net.c
+index 087f0af56c50..66d4e024d11e 100644
+--- a/drivers/net/ethernet/toshiba/spider_net.c
++++ b/drivers/net/ethernet/toshiba/spider_net.c
+@@ -354,9 +354,10 @@ spider_net_free_rx_chain_contents(struct spider_net_card *card)
+ 	descr = card->rx_chain.head;
+ 	do {
+ 		if (descr->skb) {
+-			pci_unmap_single(card->pdev, descr->hwdescr->buf_addr,
++			dma_unmap_single(&card->pdev->dev,
++					 descr->hwdescr->buf_addr,
+ 					 SPIDER_NET_MAX_FRAME,
+-					 PCI_DMA_BIDIRECTIONAL);
++					 DMA_BIDIRECTIONAL);
+ 			dev_kfree_skb(descr->skb);
+ 			descr->skb = NULL;
+ 		}
+@@ -411,9 +412,9 @@ spider_net_prepare_rx_descr(struct spider_net_card *card,
+ 	if (offset)
+ 		skb_reserve(descr->skb, SPIDER_NET_RXBUF_ALIGN - offset);
+ 	/* iommu-map the skb */
+-	buf = pci_map_single(card->pdev, descr->skb->data,
+-			SPIDER_NET_MAX_FRAME, PCI_DMA_FROMDEVICE);
+-	if (pci_dma_mapping_error(card->pdev, buf)) {
++	buf = dma_map_single(&card->pdev->dev, descr->skb->data,
++			     SPIDER_NET_MAX_FRAME, DMA_FROM_DEVICE);
++	if (dma_mapping_error(&card->pdev->dev, buf)) {
+ 		dev_kfree_skb_any(descr->skb);
+ 		descr->skb = NULL;
+ 		if (netif_msg_rx_err(card) && net_ratelimit())
+@@ -653,8 +654,9 @@ spider_net_prepare_tx_descr(struct spider_net_card *card,
+ 	dma_addr_t buf;
+ 	unsigned long flags;
+ 
+-	buf = pci_map_single(card->pdev, skb->data, skb->len, PCI_DMA_TODEVICE);
+-	if (pci_dma_mapping_error(card->pdev, buf)) {
++	buf = dma_map_single(&card->pdev->dev, skb->data, skb->len,
++			     DMA_TO_DEVICE);
++	if (dma_mapping_error(&card->pdev->dev, buf)) {
+ 		if (netif_msg_tx_err(card) && net_ratelimit())
+ 			dev_err(&card->netdev->dev, "could not iommu-map packet (%p, %i). "
+ 				  "Dropping packet\n", skb->data, skb->len);
+@@ -666,7 +668,8 @@ spider_net_prepare_tx_descr(struct spider_net_card *card,
+ 	descr = card->tx_chain.head;
+ 	if (descr->next == chain->tail->prev) {
+ 		spin_unlock_irqrestore(&chain->lock, flags);
+-		pci_unmap_single(card->pdev, buf, skb->len, PCI_DMA_TODEVICE);
++		dma_unmap_single(&card->pdev->dev, buf, skb->len,
++				 DMA_TO_DEVICE);
+ 		return -ENOMEM;
+ 	}
+ 	hwdescr = descr->hwdescr;
+@@ -822,8 +825,8 @@ spider_net_release_tx_chain(struct spider_net_card *card, int brutal)
+ 
+ 		/* unmap the skb */
+ 		if (skb) {
+-			pci_unmap_single(card->pdev, buf_addr, skb->len,
+-					PCI_DMA_TODEVICE);
++			dma_unmap_single(&card->pdev->dev, buf_addr, skb->len,
++					 DMA_TO_DEVICE);
+ 			dev_consume_skb_any(skb);
+ 		}
+ 	}
+@@ -1165,8 +1168,8 @@ spider_net_decode_one_descr(struct spider_net_card *card)
+ 	/* unmap descriptor */
+ 	hw_buf_addr = hwdescr->buf_addr;
+ 	hwdescr->buf_addr = 0xffffffff;
+-	pci_unmap_single(card->pdev, hw_buf_addr,
+-			SPIDER_NET_MAX_FRAME, PCI_DMA_FROMDEVICE);
++	dma_unmap_single(&card->pdev->dev, hw_buf_addr, SPIDER_NET_MAX_FRAME,
++			 DMA_FROM_DEVICE);
+ 
+ 	if ( (status == SPIDER_NET_DESCR_RESPONSE_ERROR) ||
+ 	     (status == SPIDER_NET_DESCR_PROTECTION_ERROR) ||
 -- 
-2.32.0
+2.30.2
 
