@@ -2,206 +2,237 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ADFBC432BE
-	for <kernel-janitors@archiver.kernel.org>; Fri, 27 Aug 2021 20:13:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E15AC432BE
+	for <kernel-janitors@archiver.kernel.org>; Fri, 27 Aug 2021 20:36:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4272A60EFF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 27 Aug 2021 20:13:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D56B60FF2
+	for <kernel-janitors@archiver.kernel.org>; Fri, 27 Aug 2021 20:36:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231256AbhH0UNz (ORCPT
+        id S231671AbhH0Uhr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 27 Aug 2021 16:13:55 -0400
-Received: from smtp13.smtpout.orange.fr ([80.12.242.135]:25124 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S231174AbhH0UNt (ORCPT
+        Fri, 27 Aug 2021 16:37:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49176 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231317AbhH0Uhr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 27 Aug 2021 16:13:49 -0400
-Received: from [192.168.1.18] ([90.126.253.178])
-        by mwinf5d77 with ME
-        id mkCy2500K3riaq203kCyHe; Fri, 27 Aug 2021 22:12:59 +0200
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 27 Aug 2021 22:12:59 +0200
-X-ME-IP: 90.126.253.178
-Subject: Re: [PATCH] mei: switch from 'pci_' to 'dma_' API
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     tomas.winkler@intel.com, arnd@arndb.de,
+        Fri, 27 Aug 2021 16:37:47 -0400
+Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97CF4C0613D9;
+        Fri, 27 Aug 2021 13:36:57 -0700 (PDT)
+Received: by mail-lj1-x22f.google.com with SMTP id p15so13571242ljn.3;
+        Fri, 27 Aug 2021 13:36:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=uvuYXAVCQEZqw1nKK2OO3GZfBdchkFmag0EOn0maiaU=;
+        b=vB4jlwlUCB5pzinOcnNinVlhvUqZ4vmDRTEJte3hLxEZcAkdehuu7kWPCRAWlWBvkr
+         yA094g6mGJC4/CS1jC0jyPJavfA7xh0eHUyYrTs06d93rbZahMA2vH3GBCSjXks8v6O2
+         SCgTiS1lDNUu9/zNNujgs85SU+bcFlQyGCOuIlp3JQGPQ1i4aeCdxGvReaWzhRqTOJp3
+         V9FTmzsh6Q+fBkLhpzM6+5/QpWeKbYEQmw21yPTWsjrsBldEq4QnNeoJ1fTEG/rXCoCy
+         cHtUK0nXi9YtjUZ8wW20bYgV51maUHU8n4t7kxpsr8ahxPG7lJYgTPm/4FvTbR30KvuZ
+         yuTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=uvuYXAVCQEZqw1nKK2OO3GZfBdchkFmag0EOn0maiaU=;
+        b=LpI5BtGt/KENqcN68FMg/RY+lWPZ1KEQ7hZmjYtPD5TaYtYKmyOEqz6W/BRDsuMfue
+         mnAwttOlkHyoEPT9Prp+/fFdCCUwb/x6nHC5gBefADKJU9rF9Z8N+TSRP5f6h+E04F9s
+         UaHeRPiIwYuKuvcdqur5Yt7/3uKu91SiuDetz4DsHSdl6yhHeQR6hqAmMvy2jDSQdyO0
+         wkB7xCY/zJlNm9Q9o/tsSSGaz/alejmSAvfJMgxm2CDi6XcCta6zewBZJd0F0W0PXB/E
+         O6e/pdBJX+um9LP1S55hoxlcjNi9nS1dbYVrk3xaSk21uxnKgmcYFZZbnL9qXUkJ31Gv
+         A6VA==
+X-Gm-Message-State: AOAM530IG8sjqNKoc/ECtmkbdDUg+BrBD1vbjenxex1yhhmVxWd5GYRY
+        RkSK5ISBCIHwBGSrmnm5opVH9668TvW0LQ==
+X-Google-Smtp-Source: ABdhPJwCNBqGeDfMPczEECqeGszRyfUN9hujSQU+BqKcvL+V50rigtwbjmj9tchkcFW/uTHmeFPnhw==
+X-Received: by 2002:a05:651c:2006:: with SMTP id s6mr9020803ljo.171.1630096614686;
+        Fri, 27 Aug 2021 13:36:54 -0700 (PDT)
+Received: from kari-VirtualBox (87-95-21-3.bb.dnainternet.fi. [87.95.21.3])
+        by smtp.gmail.com with ESMTPSA id bt29sm687080lfb.4.2021.08.27.13.36.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Aug 2021 13:36:54 -0700 (PDT)
+Date:   Fri, 27 Aug 2021 23:36:51 +0300
+From:   Kari Argillander <kari.argillander@gmail.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     tomas.winkler@intel.com, arnd@arndb.de, gregkh@linuxfoundation.org,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] mei: switch from 'pci_' to 'dma_' API
+Message-ID: <20210827203651.nzr2yrneg5rjo76k@kari-VirtualBox>
 References: <d4d442f06c602230e8145a531647bbfee69a1e31.1629662528.git.christophe.jaillet@wanadoo.fr>
- <YST3d2kFISWty5EI@kroah.com>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Message-ID: <39e04750-a15d-37ec-6fa1-82591331702c@wanadoo.fr>
-Date:   Fri, 27 Aug 2021 22:12:58 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
 MIME-Version: 1.0
-In-Reply-To: <YST3d2kFISWty5EI@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d4d442f06c602230e8145a531647bbfee69a1e31.1629662528.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 24/08/2021 à 15:43, Greg KH a écrit :
-> On Sun, Aug 22, 2021 at 10:02:59PM +0200, Christophe JAILLET wrote:
->> The wrappers in include/linux/pci-dma-compat.h should go away.
->>
->> The patch has been generated with the coccinelle script below.
->>
->> It has been compile tested.
->>
->>
->> @@
->> @@
->> -    PCI_DMA_BIDIRECTIONAL
->> +    DMA_BIDIRECTIONAL
->>
->> @@
->> @@
->> -    PCI_DMA_TODEVICE
->> +    DMA_TO_DEVICE
->>
->> @@
->> @@
->> -    PCI_DMA_FROMDEVICE
->> +    DMA_FROM_DEVICE
->>
->> @@
->> @@
->> -    PCI_DMA_NONE
->> +    DMA_NONE
->>
->> @@
->> expression e1, e2, e3;
->> @@
->> -    pci_alloc_consistent(e1, e2, e3)
->> +    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
->>
->> @@
->> expression e1, e2, e3;
->> @@
->> -    pci_zalloc_consistent(e1, e2, e3)
->> +    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
->>
->> @@
->> expression e1, e2, e3, e4;
->> @@
->> -    pci_free_consistent(e1, e2, e3, e4)
->> +    dma_free_coherent(&e1->dev, e2, e3, e4)
->>
->> @@
->> expression e1, e2, e3, e4;
->> @@
->> -    pci_map_single(e1, e2, e3, e4)
->> +    dma_map_single(&e1->dev, e2, e3, e4)
->>
->> @@
->> expression e1, e2, e3, e4;
->> @@
->> -    pci_unmap_single(e1, e2, e3, e4)
->> +    dma_unmap_single(&e1->dev, e2, e3, e4)
->>
->> @@
->> expression e1, e2, e3, e4, e5;
->> @@
->> -    pci_map_page(e1, e2, e3, e4, e5)
->> +    dma_map_page(&e1->dev, e2, e3, e4, e5)
->>
->> @@
->> expression e1, e2, e3, e4;
->> @@
->> -    pci_unmap_page(e1, e2, e3, e4)
->> +    dma_unmap_page(&e1->dev, e2, e3, e4)
->>
->> @@
->> expression e1, e2, e3, e4;
->> @@
->> -    pci_map_sg(e1, e2, e3, e4)
->> +    dma_map_sg(&e1->dev, e2, e3, e4)
->>
->> @@
->> expression e1, e2, e3, e4;
->> @@
->> -    pci_unmap_sg(e1, e2, e3, e4)
->> +    dma_unmap_sg(&e1->dev, e2, e3, e4)
->>
->> @@
->> expression e1, e2, e3, e4;
->> @@
->> -    pci_dma_sync_single_for_cpu(e1, e2, e3, e4)
->> +    dma_sync_single_for_cpu(&e1->dev, e2, e3, e4)
->>
->> @@
->> expression e1, e2, e3, e4;
->> @@
->> -    pci_dma_sync_single_for_device(e1, e2, e3, e4)
->> +    dma_sync_single_for_device(&e1->dev, e2, e3, e4)
->>
->> @@
->> expression e1, e2, e3, e4;
->> @@
->> -    pci_dma_sync_sg_for_cpu(e1, e2, e3, e4)
->> +    dma_sync_sg_for_cpu(&e1->dev, e2, e3, e4)
->>
->> @@
->> expression e1, e2, e3, e4;
->> @@
->> -    pci_dma_sync_sg_for_device(e1, e2, e3, e4)
->> +    dma_sync_sg_for_device(&e1->dev, e2, e3, e4)
->>
->> @@
->> expression e1, e2;
->> @@
->> -    pci_dma_mapping_error(e1, e2)
->> +    dma_mapping_error(&e1->dev, e2)
->>
->> @@
->> expression e1, e2;
->> @@
->> -    pci_set_dma_mask(e1, e2)
->> +    dma_set_mask(&e1->dev, e2)
->>
->> @@
->> expression e1, e2;
->> @@
->> -    pci_set_consistent_dma_mask(e1, e2)
->> +    dma_set_coherent_mask(&e1->dev, e2)
->>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+On Sun, Aug 22, 2021 at 10:02:59PM +0200, Christophe JAILLET wrote:
+> The wrappers in include/linux/pci-dma-compat.h should go away.
 > 
-> That is a lot of different things in one changelog text, yet you really
-> only did a replacement for pci_set_dma_mask here.  Please clean up the
-> changelog to reflect what you did, and most importantly, _WHY_ you are
-> doing it.
+> The patch has been generated with the coccinelle script below.
 > 
-> thanks,
+> It has been compile tested.
+
+This should not be in commit message. It is unrelevant after this patch
+is merged. It should be between
+---
+<here>
+---
+
+It is still good info to give.
+
+Argillander
+
 > 
-> greg k-h
 > 
-
-Hi,
-
-thx for the feed-back.
-
-I've continued my serie and just sent "[PATCH] niu: switch from 'pci_' 
-to 'dma_' API" where you are also in copy.
-
-I've tried to improve the log message in it, giving references of why 
-these clean-ups are done (proposed by Christoph Hellwig) and some 
-reasons of why it is a good idea (argumentation from Julia Lawall)
-
-The long coccinelle script has been reduced to only relevant parts.
-
-I hope that this new version is good enough.
-
-
-Comments on the "niu" drivers will also be taken into account when I 
-will send a v2 for patches you have commented on.
-
-CJ
+> @@
+> @@
+> -    PCI_DMA_BIDIRECTIONAL
+> +    DMA_BIDIRECTIONAL
+> 
+> @@
+> @@
+> -    PCI_DMA_TODEVICE
+> +    DMA_TO_DEVICE
+> 
+> @@
+> @@
+> -    PCI_DMA_FROMDEVICE
+> +    DMA_FROM_DEVICE
+> 
+> @@
+> @@
+> -    PCI_DMA_NONE
+> +    DMA_NONE
+> 
+> @@
+> expression e1, e2, e3;
+> @@
+> -    pci_alloc_consistent(e1, e2, e3)
+> +    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
+> 
+> @@
+> expression e1, e2, e3;
+> @@
+> -    pci_zalloc_consistent(e1, e2, e3)
+> +    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
+> 
+> @@
+> expression e1, e2, e3, e4;
+> @@
+> -    pci_free_consistent(e1, e2, e3, e4)
+> +    dma_free_coherent(&e1->dev, e2, e3, e4)
+> 
+> @@
+> expression e1, e2, e3, e4;
+> @@
+> -    pci_map_single(e1, e2, e3, e4)
+> +    dma_map_single(&e1->dev, e2, e3, e4)
+> 
+> @@
+> expression e1, e2, e3, e4;
+> @@
+> -    pci_unmap_single(e1, e2, e3, e4)
+> +    dma_unmap_single(&e1->dev, e2, e3, e4)
+> 
+> @@
+> expression e1, e2, e3, e4, e5;
+> @@
+> -    pci_map_page(e1, e2, e3, e4, e5)
+> +    dma_map_page(&e1->dev, e2, e3, e4, e5)
+> 
+> @@
+> expression e1, e2, e3, e4;
+> @@
+> -    pci_unmap_page(e1, e2, e3, e4)
+> +    dma_unmap_page(&e1->dev, e2, e3, e4)
+> 
+> @@
+> expression e1, e2, e3, e4;
+> @@
+> -    pci_map_sg(e1, e2, e3, e4)
+> +    dma_map_sg(&e1->dev, e2, e3, e4)
+> 
+> @@
+> expression e1, e2, e3, e4;
+> @@
+> -    pci_unmap_sg(e1, e2, e3, e4)
+> +    dma_unmap_sg(&e1->dev, e2, e3, e4)
+> 
+> @@
+> expression e1, e2, e3, e4;
+> @@
+> -    pci_dma_sync_single_for_cpu(e1, e2, e3, e4)
+> +    dma_sync_single_for_cpu(&e1->dev, e2, e3, e4)
+> 
+> @@
+> expression e1, e2, e3, e4;
+> @@
+> -    pci_dma_sync_single_for_device(e1, e2, e3, e4)
+> +    dma_sync_single_for_device(&e1->dev, e2, e3, e4)
+> 
+> @@
+> expression e1, e2, e3, e4;
+> @@
+> -    pci_dma_sync_sg_for_cpu(e1, e2, e3, e4)
+> +    dma_sync_sg_for_cpu(&e1->dev, e2, e3, e4)
+> 
+> @@
+> expression e1, e2, e3, e4;
+> @@
+> -    pci_dma_sync_sg_for_device(e1, e2, e3, e4)
+> +    dma_sync_sg_for_device(&e1->dev, e2, e3, e4)
+> 
+> @@
+> expression e1, e2;
+> @@
+> -    pci_dma_mapping_error(e1, e2)
+> +    dma_mapping_error(&e1->dev, e2)
+> 
+> @@
+> expression e1, e2;
+> @@
+> -    pci_set_dma_mask(e1, e2)
+> +    dma_set_mask(&e1->dev, e2)
+> 
+> @@
+> expression e1, e2;
+> @@
+> -    pci_set_consistent_dma_mask(e1, e2)
+> +    dma_set_coherent_mask(&e1->dev, e2)
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> If needed, see post from Christoph Hellwig on the kernel-janitors ML:
+>    https://marc.info/?l=kernel-janitors&m=158745678307186&w=4
+> ---
+>  drivers/misc/mei/pci-txe.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/misc/mei/pci-txe.c b/drivers/misc/mei/pci-txe.c
+> index aec0483b8e72..fa20d9a27813 100644
+> --- a/drivers/misc/mei/pci-txe.c
+> +++ b/drivers/misc/mei/pci-txe.c
+> @@ -69,9 +69,9 @@ static int mei_txe_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+>  		goto end;
+>  	}
+>  
+> -	err = pci_set_dma_mask(pdev, DMA_BIT_MASK(36));
+> +	err = dma_set_mask(&pdev->dev, DMA_BIT_MASK(36));
+>  	if (err) {
+> -		err = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
+> +		err = dma_set_mask(&pdev->dev, DMA_BIT_MASK(32));
+>  		if (err) {
+>  			dev_err(&pdev->dev, "No suitable DMA available.\n");
+>  			goto end;
+> -- 
+> 2.30.2
+> 
