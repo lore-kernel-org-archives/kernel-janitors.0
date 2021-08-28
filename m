@@ -2,237 +2,72 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E15AC432BE
-	for <kernel-janitors@archiver.kernel.org>; Fri, 27 Aug 2021 20:36:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82DB6C432BE
+	for <kernel-janitors@archiver.kernel.org>; Sat, 28 Aug 2021 01:35:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1D56B60FF2
-	for <kernel-janitors@archiver.kernel.org>; Fri, 27 Aug 2021 20:36:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58A01604DC
+	for <kernel-janitors@archiver.kernel.org>; Sat, 28 Aug 2021 01:35:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231671AbhH0Uhr (ORCPT
+        id S232979AbhH1Bgm (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 27 Aug 2021 16:37:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49176 "EHLO
+        Fri, 27 Aug 2021 21:36:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231317AbhH0Uhr (ORCPT
+        with ESMTP id S230238AbhH1Bgl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 27 Aug 2021 16:37:47 -0400
-Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97CF4C0613D9;
-        Fri, 27 Aug 2021 13:36:57 -0700 (PDT)
-Received: by mail-lj1-x22f.google.com with SMTP id p15so13571242ljn.3;
-        Fri, 27 Aug 2021 13:36:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=uvuYXAVCQEZqw1nKK2OO3GZfBdchkFmag0EOn0maiaU=;
-        b=vB4jlwlUCB5pzinOcnNinVlhvUqZ4vmDRTEJte3hLxEZcAkdehuu7kWPCRAWlWBvkr
-         yA094g6mGJC4/CS1jC0jyPJavfA7xh0eHUyYrTs06d93rbZahMA2vH3GBCSjXks8v6O2
-         SCgTiS1lDNUu9/zNNujgs85SU+bcFlQyGCOuIlp3JQGPQ1i4aeCdxGvReaWzhRqTOJp3
-         V9FTmzsh6Q+fBkLhpzM6+5/QpWeKbYEQmw21yPTWsjrsBldEq4QnNeoJ1fTEG/rXCoCy
-         cHtUK0nXi9YtjUZ8wW20bYgV51maUHU8n4t7kxpsr8ahxPG7lJYgTPm/4FvTbR30KvuZ
-         yuTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=uvuYXAVCQEZqw1nKK2OO3GZfBdchkFmag0EOn0maiaU=;
-        b=LpI5BtGt/KENqcN68FMg/RY+lWPZ1KEQ7hZmjYtPD5TaYtYKmyOEqz6W/BRDsuMfue
-         mnAwttOlkHyoEPT9Prp+/fFdCCUwb/x6nHC5gBefADKJU9rF9Z8N+TSRP5f6h+E04F9s
-         UaHeRPiIwYuKuvcdqur5Yt7/3uKu91SiuDetz4DsHSdl6yhHeQR6hqAmMvy2jDSQdyO0
-         wkB7xCY/zJlNm9Q9o/tsSSGaz/alejmSAvfJMgxm2CDi6XcCta6zewBZJd0F0W0PXB/E
-         O6e/pdBJX+um9LP1S55hoxlcjNi9nS1dbYVrk3xaSk21uxnKgmcYFZZbnL9qXUkJ31Gv
-         A6VA==
-X-Gm-Message-State: AOAM530IG8sjqNKoc/ECtmkbdDUg+BrBD1vbjenxex1yhhmVxWd5GYRY
-        RkSK5ISBCIHwBGSrmnm5opVH9668TvW0LQ==
-X-Google-Smtp-Source: ABdhPJwCNBqGeDfMPczEECqeGszRyfUN9hujSQU+BqKcvL+V50rigtwbjmj9tchkcFW/uTHmeFPnhw==
-X-Received: by 2002:a05:651c:2006:: with SMTP id s6mr9020803ljo.171.1630096614686;
-        Fri, 27 Aug 2021 13:36:54 -0700 (PDT)
-Received: from kari-VirtualBox (87-95-21-3.bb.dnainternet.fi. [87.95.21.3])
-        by smtp.gmail.com with ESMTPSA id bt29sm687080lfb.4.2021.08.27.13.36.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Aug 2021 13:36:54 -0700 (PDT)
-Date:   Fri, 27 Aug 2021 23:36:51 +0300
-From:   Kari Argillander <kari.argillander@gmail.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     tomas.winkler@intel.com, arnd@arndb.de, gregkh@linuxfoundation.org,
+        Fri, 27 Aug 2021 21:36:41 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9B01C0613D9;
+        Fri, 27 Aug 2021 18:35:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description;
+        bh=AxcZIHM6WRdQHLVjEv6VID2r686OxIA9JRn4iceNx/k=; b=JzMfwkMosdaUNdn/1Yel4T4CIK
+        nWisCh3pB4LKYN9lmwe3kcW3y3RMi10xxn6rv9ZKQHMOEzo7YeR6slfz9vwI6zdJaT9QpwTkMDLG0
+        FVlxc+oMw9bT3aYZHXCILsRugcuKgDA/pNOPr3WKN/CR/4TZWLX8LOvM8JIY8Tw7/RAXbZ5+EvLLl
+        ELs2nfKhbOuHAJWozZXROlf+LlMshSqceKQyZsvz2IaQ/0W++3UqEREICbu9Lr6NKfgCs3fCgy/t0
+        lY3tapkuG51RveCTItRCp2mSHKi2NHvMx/tFOfQn5IG43PTS4CpRFFlnS1B9TvB8gRsXu+E89GAV5
+        n/4ThJsQ==;
+Received: from [2602:306:c5a2:a380:51a9:8dca:e324:214f]
+        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mJnFP-00FBZe-Bc; Sat, 28 Aug 2021 01:35:14 +0000
+Subject: Re: [PATCH] net: spider_net: switch from 'pci_' to 'dma_' API
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        kou.ishizaki@toshiba.co.jp, davem@davemloft.net, kuba@kernel.org
+Cc:     netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] mei: switch from 'pci_' to 'dma_' API
-Message-ID: <20210827203651.nzr2yrneg5rjo76k@kari-VirtualBox>
-References: <d4d442f06c602230e8145a531647bbfee69a1e31.1629662528.git.christophe.jaillet@wanadoo.fr>
+References: <60abc3d0c8b4ef8368a4d63326a25a5cb3cd218c.1630094078.git.christophe.jaillet@wanadoo.fr>
+From:   Geoff Levand <geoff@infradead.org>
+Message-ID: <4f3113d1-b76e-a085-df2d-fd97d4b45faf@infradead.org>
+Date:   Fri, 27 Aug 2021 18:34:59 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d4d442f06c602230e8145a531647bbfee69a1e31.1629662528.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <60abc3d0c8b4ef8368a4d63326a25a5cb3cd218c.1630094078.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, Aug 22, 2021 at 10:02:59PM +0200, Christophe JAILLET wrote:
-> The wrappers in include/linux/pci-dma-compat.h should go away.
-> 
-> The patch has been generated with the coccinelle script below.
-> 
-> It has been compile tested.
+Hi Christophe,
 
-This should not be in commit message. It is unrelevant after this patch
-is merged. It should be between
----
-<here>
----
+On 8/27/21 12:56 PM, Christophe JAILLET wrote:
+> It has *not* been compile tested because I don't have the needed
+> configuration or cross-compiler.
 
-It is still good info to give.
+The powerpc ppc64_defconfig has CONFIG_SPIDER_NET set. My
+tdd-builder Docker image has the needed gcc-powerpc-linux-gnu
+cross compiler to build ppc64_defconfig:
 
-Argillander
+  https://hub.docker.com/r/glevand/tdd-builder
 
-> 
-> 
-> @@
-> @@
-> -    PCI_DMA_BIDIRECTIONAL
-> +    DMA_BIDIRECTIONAL
-> 
-> @@
-> @@
-> -    PCI_DMA_TODEVICE
-> +    DMA_TO_DEVICE
-> 
-> @@
-> @@
-> -    PCI_DMA_FROMDEVICE
-> +    DMA_FROM_DEVICE
-> 
-> @@
-> @@
-> -    PCI_DMA_NONE
-> +    DMA_NONE
-> 
-> @@
-> expression e1, e2, e3;
-> @@
-> -    pci_alloc_consistent(e1, e2, e3)
-> +    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
-> 
-> @@
-> expression e1, e2, e3;
-> @@
-> -    pci_zalloc_consistent(e1, e2, e3)
-> +    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_free_consistent(e1, e2, e3, e4)
-> +    dma_free_coherent(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_map_single(e1, e2, e3, e4)
-> +    dma_map_single(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_unmap_single(e1, e2, e3, e4)
-> +    dma_unmap_single(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4, e5;
-> @@
-> -    pci_map_page(e1, e2, e3, e4, e5)
-> +    dma_map_page(&e1->dev, e2, e3, e4, e5)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_unmap_page(e1, e2, e3, e4)
-> +    dma_unmap_page(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_map_sg(e1, e2, e3, e4)
-> +    dma_map_sg(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_unmap_sg(e1, e2, e3, e4)
-> +    dma_unmap_sg(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_dma_sync_single_for_cpu(e1, e2, e3, e4)
-> +    dma_sync_single_for_cpu(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_dma_sync_single_for_device(e1, e2, e3, e4)
-> +    dma_sync_single_for_device(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_dma_sync_sg_for_cpu(e1, e2, e3, e4)
-> +    dma_sync_sg_for_cpu(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_dma_sync_sg_for_device(e1, e2, e3, e4)
-> +    dma_sync_sg_for_device(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2;
-> @@
-> -    pci_dma_mapping_error(e1, e2)
-> +    dma_mapping_error(&e1->dev, e2)
-> 
-> @@
-> expression e1, e2;
-> @@
-> -    pci_set_dma_mask(e1, e2)
-> +    dma_set_mask(&e1->dev, e2)
-> 
-> @@
-> expression e1, e2;
-> @@
-> -    pci_set_consistent_dma_mask(e1, e2)
-> +    dma_set_coherent_mask(&e1->dev, e2)
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> If needed, see post from Christoph Hellwig on the kernel-janitors ML:
->    https://marc.info/?l=kernel-janitors&m=158745678307186&w=4
-> ---
->  drivers/misc/mei/pci-txe.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/misc/mei/pci-txe.c b/drivers/misc/mei/pci-txe.c
-> index aec0483b8e72..fa20d9a27813 100644
-> --- a/drivers/misc/mei/pci-txe.c
-> +++ b/drivers/misc/mei/pci-txe.c
-> @@ -69,9 +69,9 @@ static int mei_txe_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
->  		goto end;
->  	}
->  
-> -	err = pci_set_dma_mask(pdev, DMA_BIT_MASK(36));
-> +	err = dma_set_mask(&pdev->dev, DMA_BIT_MASK(36));
->  	if (err) {
-> -		err = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
-> +		err = dma_set_mask(&pdev->dev, DMA_BIT_MASK(32));
->  		if (err) {
->  			dev_err(&pdev->dev, "No suitable DMA available.\n");
->  			goto end;
-> -- 
-> 2.30.2
-> 
+-Geoff
+ 
