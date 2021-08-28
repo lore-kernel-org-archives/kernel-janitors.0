@@ -2,194 +2,99 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D90E5C432BE
-	for <kernel-janitors@archiver.kernel.org>; Sat, 28 Aug 2021 11:28:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66FD7C4320E
+	for <kernel-janitors@archiver.kernel.org>; Sat, 28 Aug 2021 15:06:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B57CD60EBD
-	for <kernel-janitors@archiver.kernel.org>; Sat, 28 Aug 2021 11:28:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 489E660ED3
+	for <kernel-janitors@archiver.kernel.org>; Sat, 28 Aug 2021 15:06:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234254AbhH1L3s (ORCPT
+        id S230060AbhH1PHT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 28 Aug 2021 07:29:48 -0400
-Received: from smtp05.smtpout.orange.fr ([80.12.242.127]:21068 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234104AbhH1L3n (ORCPT
+        Sat, 28 Aug 2021 11:07:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39598 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229813AbhH1PHS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 28 Aug 2021 07:29:43 -0400
-Received: from pop-os.home ([90.126.253.178])
-        by mwinf5d25 with ME
-        id mzUp2500J3riaq203zUqo8; Sat, 28 Aug 2021 13:28:51 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 28 Aug 2021 13:28:51 +0200
-X-ME-IP: 90.126.253.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     davem@davemloft.net, kuba@kernel.org
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] net: pasemi: Remove usage of the deprecated "pci-dma-compat.h" API
-Date:   Sat, 28 Aug 2021 13:28:48 +0200
-Message-Id: <bc6cd281eae024b26fd9c7ef6678d2d1dc9d74fd.1630150008.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Sat, 28 Aug 2021 11:07:18 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8984C061756;
+        Sat, 28 Aug 2021 08:06:27 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id g18so7677802wrc.11;
+        Sat, 28 Aug 2021 08:06:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=message-id:date:from:user-agent:mime-version:to:cc:subject
+         :references:in-reply-to:content-transfer-encoding;
+        bh=P+sg7S7rHtibXd9SvMMU8OB3sAkFT9CGekE5f8GWaSk=;
+        b=VLL/oSRtQyhtWyKcRpL6P0TbfvRG1byUhQFdCgiucIOxbAqHEkBp81PL3hKb0ME2Jm
+         frBHAUIEBJN/CNfh/42Jvii3hS7KTJaobwLN15JjEp9HdLHf3LWnh4v5zPFp0V1hAFg8
+         05fdC+yZXvyLIxpdu/VyJym17vUi/bV8aUf/sb9UQrnMfB+RrboXtMpYYwq1+HxbsJM3
+         EpCP4ePGqsEDelEk+ydcpAivi1P9IA7BYwtWZNd3cZI6ECOUQ4+/vAgGuNEnu5Taav5u
+         r0UbjceV4XWMAz8FvPqdHC/kLnrVWfHHJ3NJXDV0BjoW6G/6j+g6IeuxCjMu+DQAAw2E
+         XMaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:from:user-agent:mime-version:to
+         :cc:subject:references:in-reply-to:content-transfer-encoding;
+        bh=P+sg7S7rHtibXd9SvMMU8OB3sAkFT9CGekE5f8GWaSk=;
+        b=VmukoRRIwpOLjMVQ8gojAbbE7sFMJaNhisAYY1eqW0yDUSEZ4YXioAkIT6dtXicQb1
+         tSBoczJXEgUtCd52o0wfQz/oTML6wSA+YBGh+etDteXdWG6UPbNFLdAX6CEOLO7dXNwV
+         Ejv0x0Gbocjo6GRYqbflrmKFWW7BpYCTOhhYzobA+npzlbm2QPveHU5tE/ue4bHP4jv1
+         CSIJpVPJaoBoXgXKawyFCOdg0Xq6crQKdr/ftS6tbWDjCqNHLPCquOwyMr9qBWaJ7EL1
+         owJHSQBV6FUPX6qQEg/EYNr6FyfyLaaRzvrRvCV7BbcHXdZY4qnPUOR1oBCKZk8xMtmM
+         3iQQ==
+X-Gm-Message-State: AOAM532HkJQzgBpsvcRaZep5GIpr/KrFrbDYY//5IrmXE9gUNZJVmkPZ
+        g3DKCIADXl7vwSievJnGIJxDSd6Z04w=
+X-Google-Smtp-Source: ABdhPJynHoMKI44Vh5Z6kUneExJjpl8WCT5BX9QnjFuPExvYnT3liESzgpAFEZHnMAkRSlsFVlJ4Bg==
+X-Received: by 2002:adf:b745:: with SMTP id n5mr16817319wre.338.1630163186411;
+        Sat, 28 Aug 2021 08:06:26 -0700 (PDT)
+Received: from [89.139.98.169] (89-139-98-169.bb.netvision.net.il. [89.139.98.169])
+        by smtp.gmail.com with ESMTPSA id o8sm12752010wmq.21.2021.08.28.08.06.24
+        (version=TLS1 cipher=AES128-SHA bits=128/128);
+        Sat, 28 Aug 2021 08:06:25 -0700 (PDT)
+Message-ID: <612A50C4.2080209@gmail.com>
+Date:   Sat, 28 Aug 2021 18:05:40 +0300
+From:   Eli Billauer <eli.billauer@gmail.com>
+User-Agent: Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.1.12) Gecko/20100907 Fedora/3.0.7-1.fc12 Thunderbird/3.0.7
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+CC:     arnd@arndb.de, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH v1 0/4] char: xillybus: Remove usage of the deprecated
+ 'pci-dma-compat.h' API
+References: <cover.1630083668.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1630083668.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-In [1], Christoph Hellwig has proposed to remove the wrappers in
-include/linux/pci-dma-compat.h.
+On 27/08/21 20:17, Christophe JAILLET wrote:
+> In [1], Christoph Hellwig has proposed to remove the wrappers in
+> include/linux/pci-dma-compat.h.
+>    
+Xillybus' driver is an example for why this is a good idea. But has this 
+been decided upon? Are we sure that there isn't a single platform where 
+the DMA mapping for PCI is different from non-PCI, and that such 
+platform will never be?
 
-Some reasons why this API should be removed have been given by Julia
-Lawall in [2].
+If so, is there any reference to that decision?
 
-A coccinelle script has been used to perform the needed transformation
-Only relevant parts are given below.
+I think the best way is to put a comment at the top of pci-dma-compat.h 
+saying that the functions in that header file are deprecated and will go 
+away soon. That would, more than anything else, convince people like me 
+to get rid of those PCI-DMA function calls.
 
-An 'unlikely()' has been removed when calling 'dma_mapping_error()' because
-this function, which is inlined, already has such an annotation.
+The bonus is that the discussion on the patch inserting that comment, 
+along with the decision to apply or reject it, will become the 
+authoritative word on this matter.
 
-
-@@ @@
--    PCI_DMA_TODEVICE
-+    DMA_TO_DEVICE
-
-@@ @@
--    PCI_DMA_FROMDEVICE
-+    DMA_FROM_DEVICE
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_map_single(e1, e2, e3, e4)
-+    dma_map_single(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_unmap_single(e1, e2, e3, e4)
-+    dma_unmap_single(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4, e5;
-@@
--    pci_map_page(e1, e2, e3, e4, e5)
-+    dma_map_page(&e1->dev, e2, e3, e4, e5)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_unmap_page(e1, e2, e3, e4)
-+    dma_unmap_page(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2;
-@@
--    pci_dma_mapping_error(e1, e2)
-+    dma_mapping_error(&e1->dev, e2)
-
-
-[1]: https://lore.kernel.org/kernel-janitors/20200421081257.GA131897@infradead.org/
-[2]: https://lore.kernel.org/kernel-janitors/alpine.DEB.2.22.394.2007120902170.2424@hadrien/
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-It has been compile tested.
----
- drivers/net/ethernet/pasemi/pasemi_mac.c | 32 ++++++++++++------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/net/ethernet/pasemi/pasemi_mac.c b/drivers/net/ethernet/pasemi/pasemi_mac.c
-index 040a15a828b4..04a27ba26cc7 100644
---- a/drivers/net/ethernet/pasemi/pasemi_mac.c
-+++ b/drivers/net/ethernet/pasemi/pasemi_mac.c
-@@ -247,12 +247,13 @@ static int pasemi_mac_unmap_tx_skb(struct pasemi_mac *mac,
- 	int f;
- 	struct pci_dev *pdev = mac->dma_pdev;
- 
--	pci_unmap_single(pdev, dmas[0], skb_headlen(skb), PCI_DMA_TODEVICE);
-+	dma_unmap_single(&pdev->dev, dmas[0], skb_headlen(skb), DMA_TO_DEVICE);
- 
- 	for (f = 0; f < nfrags; f++) {
- 		const skb_frag_t *frag = &skb_shinfo(skb)->frags[f];
- 
--		pci_unmap_page(pdev, dmas[f+1], skb_frag_size(frag), PCI_DMA_TODEVICE);
-+		dma_unmap_page(&pdev->dev, dmas[f + 1], skb_frag_size(frag),
-+			       DMA_TO_DEVICE);
- 	}
- 	dev_kfree_skb_irq(skb);
- 
-@@ -548,10 +549,8 @@ static void pasemi_mac_free_rx_buffers(struct pasemi_mac *mac)
- 	for (i = 0; i < RX_RING_SIZE; i++) {
- 		info = &RX_DESC_INFO(rx, i);
- 		if (info->skb && info->dma) {
--			pci_unmap_single(mac->dma_pdev,
--					 info->dma,
--					 info->skb->len,
--					 PCI_DMA_FROMDEVICE);
-+			dma_unmap_single(&mac->dma_pdev->dev, info->dma,
-+					 info->skb->len, DMA_FROM_DEVICE);
- 			dev_kfree_skb_any(info->skb);
- 		}
- 		info->dma = 0;
-@@ -600,11 +599,11 @@ static void pasemi_mac_replenish_rx_ring(struct net_device *dev,
- 		if (unlikely(!skb))
- 			break;
- 
--		dma = pci_map_single(mac->dma_pdev, skb->data,
-+		dma = dma_map_single(&mac->dma_pdev->dev, skb->data,
- 				     mac->bufsz - LOCAL_SKB_ALIGN,
--				     PCI_DMA_FROMDEVICE);
-+				     DMA_FROM_DEVICE);
- 
--		if (unlikely(pci_dma_mapping_error(mac->dma_pdev, dma))) {
-+		if (dma_mapping_error(&mac->dma_pdev->dev, dma)) {
- 			dev_kfree_skb_irq(info->skb);
- 			break;
- 		}
-@@ -741,8 +740,9 @@ static int pasemi_mac_clean_rx(struct pasemi_mac_rxring *rx,
- 
- 		len = (macrx & XCT_MACRX_LLEN_M) >> XCT_MACRX_LLEN_S;
- 
--		pci_unmap_single(pdev, dma, mac->bufsz - LOCAL_SKB_ALIGN,
--				 PCI_DMA_FROMDEVICE);
-+		dma_unmap_single(&pdev->dev, dma,
-+				 mac->bufsz - LOCAL_SKB_ALIGN,
-+				 DMA_FROM_DEVICE);
- 
- 		if (macrx & XCT_MACRX_CRC) {
- 			/* CRC error flagged */
-@@ -1444,10 +1444,10 @@ static int pasemi_mac_start_tx(struct sk_buff *skb, struct net_device *dev)
- 
- 	nfrags = skb_shinfo(skb)->nr_frags;
- 
--	map[0] = pci_map_single(mac->dma_pdev, skb->data, skb_headlen(skb),
--				PCI_DMA_TODEVICE);
-+	map[0] = dma_map_single(&mac->dma_pdev->dev, skb->data,
-+				skb_headlen(skb), DMA_TO_DEVICE);
- 	map_size[0] = skb_headlen(skb);
--	if (pci_dma_mapping_error(mac->dma_pdev, map[0]))
-+	if (dma_mapping_error(&mac->dma_pdev->dev, map[0]))
- 		goto out_err_nolock;
- 
- 	for (i = 0; i < nfrags; i++) {
-@@ -1534,8 +1534,8 @@ static int pasemi_mac_start_tx(struct sk_buff *skb, struct net_device *dev)
- 	spin_unlock_irqrestore(&txring->lock, flags);
- out_err_nolock:
- 	while (nfrags--)
--		pci_unmap_single(mac->dma_pdev, map[nfrags], map_size[nfrags],
--				 PCI_DMA_TODEVICE);
-+		dma_unmap_single(&mac->dma_pdev->dev, map[nfrags],
-+				 map_size[nfrags], DMA_TO_DEVICE);
- 
- 	return NETDEV_TX_BUSY;
- }
--- 
-2.30.2
-
+Thanks,
+    Eli
