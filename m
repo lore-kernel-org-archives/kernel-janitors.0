@@ -2,110 +2,194 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88C32C432BE
-	for <kernel-janitors@archiver.kernel.org>; Sat, 28 Aug 2021 07:47:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D90E5C432BE
+	for <kernel-janitors@archiver.kernel.org>; Sat, 28 Aug 2021 11:28:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 622BF61008
-	for <kernel-janitors@archiver.kernel.org>; Sat, 28 Aug 2021 07:47:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B57CD60EBD
+	for <kernel-janitors@archiver.kernel.org>; Sat, 28 Aug 2021 11:28:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233382AbhH1Hry (ORCPT
+        id S234254AbhH1L3s (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 28 Aug 2021 03:47:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56010 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230208AbhH1Hry (ORCPT
+        Sat, 28 Aug 2021 07:29:48 -0400
+Received: from smtp05.smtpout.orange.fr ([80.12.242.127]:21068 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234104AbhH1L3n (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 28 Aug 2021 03:47:54 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0CF8C0613D9;
-        Sat, 28 Aug 2021 00:47:03 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id q11so13890250wrr.9;
-        Sat, 28 Aug 2021 00:47:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=AK9mFIjyJpl3hXe9Hogzqd/0krNaNdau3tE1oAPxLAs=;
-        b=FmFYVV/lxsJ0deuAFIdO4cUnBFNYVdrTzwVm+GLV/zi+BHTq0/mFHfVLoPMUHT8kpK
-         kN8LSNnqAlWJEijL+CFu61aut4oq8y7/Eurwi2hkW3cNVJi7kfhFJ9366PAIGK3QYTQ3
-         +m1gwqg2EiGnvj7O5D/6SwASdarXWRf1KtQappCEWwzuD+c+ltRQjiDKVNci28+t4i3a
-         qDK55/E3WzuKL1Xc8DNY+tPZZmQrb9P5f4Tzsyb3uQHCARMmLlWzuoHF5apbNwJ3N5ny
-         63iwsWjdMxlNjQODdOlouEAAy9X1j6lgR0tXppBJcmlYZTxMB6j209kqaSrejsTUuy7j
-         /q+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=AK9mFIjyJpl3hXe9Hogzqd/0krNaNdau3tE1oAPxLAs=;
-        b=btvzdszomV7235bngW1RJmGQvBmqZ77ObR6llAg0r4a5SlcsbcYcf2MheCFAYsmzoU
-         GF+ILVNWUq3s1cv78nNoAm1hoz9AaSE0H99bLjeIuexyF1ceoYAWRdFGcU7Gi2a/ovE9
-         DUTYZmuob3e5Fk/K1pv0SA23lGhSQmwpnt7Wrn7t0JijtKvQyj6nkJE2HH9HsQAQIx/M
-         PnFcxl20LDsd/rZuZYrdtVLLcXjOXzTm5r6FkTFBbhOXbrih/3nNjJbkZXR873zUji2D
-         Z4g4u8eeh5HaFRHW9E5MLCKGW6ux+sOijGdoCCnsrzzZTTA5xu8e9AYxdsaXMnxEINmy
-         Yt1A==
-X-Gm-Message-State: AOAM533RmA2iNq79zMCMFkS1aW9lfe1M940JBzELDeNBwZrrhQynwkoW
-        agkyakEYNybE8Fej9Pvc7380COyC/RVEeLnFdps=
-X-Google-Smtp-Source: ABdhPJyRKqyMBnxGsZalCT7QKyEmbB7zs5Qk5AAamZiUAHWAq1pdzdmZWEg7ZZtKaDGJr962vltPF0J3ENklyaDc7Gk=
-X-Received: by 2002:adf:b7c2:: with SMTP id t2mr5643419wre.375.1630136822435;
- Sat, 28 Aug 2021 00:47:02 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210822103107.28974-1-lukas.bulwahn@gmail.com> <20210827083842.GF21571@gondor.apana.org.au>
-In-Reply-To: <20210827083842.GF21571@gondor.apana.org.au>
-From:   Sandy Harris <sandyinchina@gmail.com>
-Date:   Sat, 28 Aug 2021 15:46:50 +0800
-Message-ID: <CACXcFm=sRBr6cORdyntuOum6n4dJpKv+vTZSi98_JrDWWKF1NQ@mail.gmail.com>
-Subject: Re: [PATCH] crypto: sha512: remove imaginary and mystifying clearing
- of variables
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        clang-built-linux@googlegroups.com,
+        Sat, 28 Aug 2021 07:29:43 -0400
+Received: from pop-os.home ([90.126.253.178])
+        by mwinf5d25 with ME
+        id mzUp2500J3riaq203zUqo8; Sat, 28 Aug 2021 13:28:51 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 28 Aug 2021 13:28:51 +0200
+X-ME-IP: 90.126.253.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     davem@davemloft.net, kuba@kernel.org
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] net: pasemi: Remove usage of the deprecated "pci-dma-compat.h" API
+Date:   Sat, 28 Aug 2021 13:28:48 +0200
+Message-Id: <bc6cd281eae024b26fd9c7ef6678d2d1dc9d74fd.1630150008.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Aug 27, 2021 at 4:40 PM Herbert Xu <herbert@gondor.apana.org.au> wrote:
->
-> On Sun, Aug 22, 2021 at 12:31:07PM +0200, Lukas Bulwahn wrote:
-> > The function sha512_transform() assigns all local variables to 0 before
-> > returning to its caller with the intent to erase sensitive data.
-> > ....
-> >
-> >   The assignments to clear a through h and t1/t2 are optimized out by the
-> >   compiler because they are unused after the assignments.
+In [1], Christoph Hellwig has proposed to remove the wrappers in
+include/linux/pci-dma-compat.h.
 
-Just no.
+Some reasons why this API should be removed have been given by Julia
+Lawall in [2].
 
-You are right, there is a problem here. I thank you for pointing it
-out & I've already fixed it in some of my own code.
+A coccinelle script has been used to perform the needed transformation
+Only relevant parts are given below.
 
-However, I think your solution is dead wrong. You are correct that
-these assignments are useless because the compiler will optimise them
-out, and that's a problem. However, it is not at all "mistiifying";
-they are there for an obvious reason, to avoid leaving state that
-might be useful to an enemy. That is quite a small risk, but then it
-is a small mitigation, so worth doing.
+An 'unlikely()' has been removed when calling 'dma_mapping_error()' because
+this function, which is inlined, already has such an annotation.
 
-The correct solution is not to just remove the assignments, but rather
-to replace them with code that will not be optimised away, force the
-compiler to do what we need. We already do that for operations that
-clear various arrays and structures, using memzero_explicit() rather
-than memset(). Similarly, we should replace the assignments with calls
-to this macro:
 
-/*
-    clear a variable
-    in a way the compiler will not optimise out
-*/
-#define clear(x)  memzero_explicit( &x, sizeof(x) )
+@@ @@
+-    PCI_DMA_TODEVICE
++    DMA_TO_DEVICE
+
+@@ @@
+-    PCI_DMA_FROMDEVICE
++    DMA_FROM_DEVICE
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_map_single(e1, e2, e3, e4)
++    dma_map_single(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_single(e1, e2, e3, e4)
++    dma_unmap_single(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4, e5;
+@@
+-    pci_map_page(e1, e2, e3, e4, e5)
++    dma_map_page(&e1->dev, e2, e3, e4, e5)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_page(e1, e2, e3, e4)
++    dma_unmap_page(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2;
+@@
+-    pci_dma_mapping_error(e1, e2)
++    dma_mapping_error(&e1->dev, e2)
+
+
+[1]: https://lore.kernel.org/kernel-janitors/20200421081257.GA131897@infradead.org/
+[2]: https://lore.kernel.org/kernel-janitors/alpine.DEB.2.22.394.2007120902170.2424@hadrien/
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+It has been compile tested.
+---
+ drivers/net/ethernet/pasemi/pasemi_mac.c | 32 ++++++++++++------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/net/ethernet/pasemi/pasemi_mac.c b/drivers/net/ethernet/pasemi/pasemi_mac.c
+index 040a15a828b4..04a27ba26cc7 100644
+--- a/drivers/net/ethernet/pasemi/pasemi_mac.c
++++ b/drivers/net/ethernet/pasemi/pasemi_mac.c
+@@ -247,12 +247,13 @@ static int pasemi_mac_unmap_tx_skb(struct pasemi_mac *mac,
+ 	int f;
+ 	struct pci_dev *pdev = mac->dma_pdev;
+ 
+-	pci_unmap_single(pdev, dmas[0], skb_headlen(skb), PCI_DMA_TODEVICE);
++	dma_unmap_single(&pdev->dev, dmas[0], skb_headlen(skb), DMA_TO_DEVICE);
+ 
+ 	for (f = 0; f < nfrags; f++) {
+ 		const skb_frag_t *frag = &skb_shinfo(skb)->frags[f];
+ 
+-		pci_unmap_page(pdev, dmas[f+1], skb_frag_size(frag), PCI_DMA_TODEVICE);
++		dma_unmap_page(&pdev->dev, dmas[f + 1], skb_frag_size(frag),
++			       DMA_TO_DEVICE);
+ 	}
+ 	dev_kfree_skb_irq(skb);
+ 
+@@ -548,10 +549,8 @@ static void pasemi_mac_free_rx_buffers(struct pasemi_mac *mac)
+ 	for (i = 0; i < RX_RING_SIZE; i++) {
+ 		info = &RX_DESC_INFO(rx, i);
+ 		if (info->skb && info->dma) {
+-			pci_unmap_single(mac->dma_pdev,
+-					 info->dma,
+-					 info->skb->len,
+-					 PCI_DMA_FROMDEVICE);
++			dma_unmap_single(&mac->dma_pdev->dev, info->dma,
++					 info->skb->len, DMA_FROM_DEVICE);
+ 			dev_kfree_skb_any(info->skb);
+ 		}
+ 		info->dma = 0;
+@@ -600,11 +599,11 @@ static void pasemi_mac_replenish_rx_ring(struct net_device *dev,
+ 		if (unlikely(!skb))
+ 			break;
+ 
+-		dma = pci_map_single(mac->dma_pdev, skb->data,
++		dma = dma_map_single(&mac->dma_pdev->dev, skb->data,
+ 				     mac->bufsz - LOCAL_SKB_ALIGN,
+-				     PCI_DMA_FROMDEVICE);
++				     DMA_FROM_DEVICE);
+ 
+-		if (unlikely(pci_dma_mapping_error(mac->dma_pdev, dma))) {
++		if (dma_mapping_error(&mac->dma_pdev->dev, dma)) {
+ 			dev_kfree_skb_irq(info->skb);
+ 			break;
+ 		}
+@@ -741,8 +740,9 @@ static int pasemi_mac_clean_rx(struct pasemi_mac_rxring *rx,
+ 
+ 		len = (macrx & XCT_MACRX_LLEN_M) >> XCT_MACRX_LLEN_S;
+ 
+-		pci_unmap_single(pdev, dma, mac->bufsz - LOCAL_SKB_ALIGN,
+-				 PCI_DMA_FROMDEVICE);
++		dma_unmap_single(&pdev->dev, dma,
++				 mac->bufsz - LOCAL_SKB_ALIGN,
++				 DMA_FROM_DEVICE);
+ 
+ 		if (macrx & XCT_MACRX_CRC) {
+ 			/* CRC error flagged */
+@@ -1444,10 +1444,10 @@ static int pasemi_mac_start_tx(struct sk_buff *skb, struct net_device *dev)
+ 
+ 	nfrags = skb_shinfo(skb)->nr_frags;
+ 
+-	map[0] = pci_map_single(mac->dma_pdev, skb->data, skb_headlen(skb),
+-				PCI_DMA_TODEVICE);
++	map[0] = dma_map_single(&mac->dma_pdev->dev, skb->data,
++				skb_headlen(skb), DMA_TO_DEVICE);
+ 	map_size[0] = skb_headlen(skb);
+-	if (pci_dma_mapping_error(mac->dma_pdev, map[0]))
++	if (dma_mapping_error(&mac->dma_pdev->dev, map[0]))
+ 		goto out_err_nolock;
+ 
+ 	for (i = 0; i < nfrags; i++) {
+@@ -1534,8 +1534,8 @@ static int pasemi_mac_start_tx(struct sk_buff *skb, struct net_device *dev)
+ 	spin_unlock_irqrestore(&txring->lock, flags);
+ out_err_nolock:
+ 	while (nfrags--)
+-		pci_unmap_single(mac->dma_pdev, map[nfrags], map_size[nfrags],
+-				 PCI_DMA_TODEVICE);
++		dma_unmap_single(&mac->dma_pdev->dev, map[nfrags],
++				 map_size[nfrags], DMA_TO_DEVICE);
+ 
+ 	return NETDEV_TX_BUSY;
+ }
+-- 
+2.30.2
+
