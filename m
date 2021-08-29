@@ -2,98 +2,79 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88374C432BE
-	for <kernel-janitors@archiver.kernel.org>; Sat, 28 Aug 2021 21:26:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A266C432BE
+	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 00:10:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6712960E77
-	for <kernel-janitors@archiver.kernel.org>; Sat, 28 Aug 2021 21:26:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 54A7460E93
+	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 00:10:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232819AbhH1V1f (ORCPT
+        id S233423AbhH2AKs (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 28 Aug 2021 17:27:35 -0400
-Received: from mout.kundenserver.de ([212.227.126.130]:47959 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232532AbhH1V1e (ORCPT
+        Sat, 28 Aug 2021 20:10:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45088 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232561AbhH2AKr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 28 Aug 2021 17:27:34 -0400
-Received: from mail-wr1-f45.google.com ([209.85.221.45]) by
- mrelayeu.kundenserver.de (mreue011 [213.165.67.97]) with ESMTPSA (Nemesis) id
- 1MQdtO-1mgjKe2KGs-00Ng03; Sat, 28 Aug 2021 23:26:42 +0200
-Received: by mail-wr1-f45.google.com with SMTP id u16so16201750wrn.5;
-        Sat, 28 Aug 2021 14:26:42 -0700 (PDT)
-X-Gm-Message-State: AOAM530A0LiUb5m55CRPyLg2BpilximUExHXKjFmbgu5kb36U/dW/UEl
-        /Fvaq/T9nepORjziTFtMXobrY6W5ELwjGkfp0Sk=
-X-Google-Smtp-Source: ABdhPJwvDnsDJcn3wIhFHRhkw8EPD/pggXR8T4gD9Xh87dD/CiOcm+8HpoR7LLiItw7WlQGpC2ld22sA7ZHK6OreHnU=
-X-Received: by 2002:adf:b781:: with SMTP id s1mr10383658wre.165.1630186002171;
- Sat, 28 Aug 2021 14:26:42 -0700 (PDT)
+        Sat, 28 Aug 2021 20:10:47 -0400
+Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DBD1C061756;
+        Sat, 28 Aug 2021 17:09:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+        :In-Reply-To:MIME-Version:Date:Message-ID:References:Cc:To:From:Subject:
+        Sender:Reply-To:Content-ID:Content-Description;
+        bh=EaN8NsPelxHrvU9ofAOrjRtk0WsMGCySofzS1ta0LL8=; b=rFQSsr9R9EiuFOn4iq4RDbszO7
+        fyAMZk8WbJPtAI5zR8nO3a/p5REX476tl9mC/UH8580CwSQfLkMSlgN2ofiTAfvpvHYLvVGLgNj3q
+        fUyByVWWnobgsvT/b1BFUsbw30727eWMcT0TBqpNfsEmY+hd40IqiJZDZfeqD9qtMgTgHDb69Y40j
+        PrDWB2Eckw+rxIiKParyR5aKp5+phAvcgnQkT15EfsMUnEEuiu1iKO5MC0TqLhWbs5x1BV3m7nn3/
+        h41FF2qzwS1rRMm9wVruv/GESqJVJBuSuenrOFDSvNiell4ywVuotbiUnt+wQTXcL7mHgmGGlSwUu
+        24a09n6Q==;
+Received: from [2602:306:c5a2:a380:1dfb:b2e0:5ace:2d5]
+        by desiato.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mK8OU-00DzjX-2F; Sun, 29 Aug 2021 00:09:50 +0000
+Subject: Re: [PATCH] net: spider_net: switch from 'pci_' to 'dma_' API
+From:   Geoff Levand <geoff@infradead.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        kou.ishizaki@toshiba.co.jp, davem@davemloft.net, kuba@kernel.org
+Cc:     netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <60abc3d0c8b4ef8368a4d63326a25a5cb3cd218c.1630094078.git.christophe.jaillet@wanadoo.fr>
+ <4f3113d1-b76e-a085-df2d-fd97d4b45faf@infradead.org>
+Message-ID: <2b1a0085-de94-dc41-9b9d-3ba1fcdbb6f4@infradead.org>
+Date:   Sat, 28 Aug 2021 17:09:45 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-References: <cover.1630083668.git.christophe.jaillet@wanadoo.fr> <612A50C4.2080209@gmail.com>
-In-Reply-To: <612A50C4.2080209@gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Sat, 28 Aug 2021 23:26:26 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a1=tZkb-rxj5Ys_FgUa=qoKPD6fpPjEMHXDL0QwwS0zgg@mail.gmail.com>
-Message-ID: <CAK8P3a1=tZkb-rxj5Ys_FgUa=qoKPD6fpPjEMHXDL0QwwS0zgg@mail.gmail.com>
-Subject: Re: [PATCH v1 0/4] char: xillybus: Remove usage of the deprecated
- 'pci-dma-compat.h' API
-To:     Eli Billauer <eli.billauer@gmail.com>
-Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Arnd Bergmann <arnd@arndb.de>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:SfZd/6/VPd+vpSJtwx98oNSjKSxpNw4Dj18VzVx1viyfokFzESd
- wka5xkyUfXDzcKtpH8aY2+X0PEqBErPaEnz4+VoHk5bLlU5LkRkSZBSKTYFWEVUgupriGZr
- 3LxbfkIaxA3aQbAUcEK5SrWFo1dNzrClxdomhxEQYivC47fZ/PDIXCxm63jbIV5YWykJXB8
- KlDSXErMH0zSjSTmJ1DOw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:m86IDzp4oNs=:ZyFwd5QinI1i2btLgw+xMm
- qgb98PObe1/9td3pZRMt8C6PpPs3+SiiyMAJEIVwm6f9zdMNt0axPXkl8748nGRRLVy5XG1di
- E+VyHckvfm0NQkZOXJcHGmlzpuYgEcMXdw/f2Fj7+BYKSGXANvL+L8H6A1PFcO6+K4iY5tCb9
- 1AwNKlXPQp29r8JHxH8Lmc2nHp5JNsxsYTHYvUMfE83mDyZqRG0dZXjFtn3p+3g9Kj4uSv6oz
- OfO8shRm4lZeAmTof4MTvUyrkN52+zBUg6fGWnPwv1Fk1jkKpxkPCJHR2sxQ+fM4L/R1K+dK4
- BGCREerzvECjJXTzgSN/s4Fg3cDGJ7GCMf3q/9XXieHBhXJ1zEaqUTZZxFna+Hii4TbT9VpXr
- bR9PSKFEm4U47kAO0DvbKg8M+CpOhAfw/c1GaHLtEJcZUt4+uWC9bzdftET7kGYLDC2P0OBtx
- 5+Bu4vuD1VwAqWbofZVaTABX1kCefzmiNj6nGALzpIn1OE6uqku6LDqGPLcUdutj22/uijEP9
- Q875mTbRj0IjpqC2aMPqEuRWEw5+tMIg1qtZePGmb66mEFqcL5rBpFI3nWx+W/EAZO+w4/+EH
- dYAVDcLUIQfW+dCqTkLjUhUAXq1elmlMHlJJPHgv4vt0YL5OENNT7MNWViCVUN1+Buq0N5Ktg
- 3BESG7asFqp1knedtjrYXGMP7kF1BAqVeRP5bdxQPDw8bPLeud+rGtqce7pch/GR71/Lshjz7
- ECsq9TFYg+IEcUONwTwf4jFA/69kH+uPrio4jA==
+In-Reply-To: <4f3113d1-b76e-a085-df2d-fd97d4b45faf@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, Aug 28, 2021 at 5:07 PM Eli Billauer <eli.billauer@gmail.com> wrote:
->
-> On 27/08/21 20:17, Christophe JAILLET wrote:
-> > In [1], Christoph Hellwig has proposed to remove the wrappers in
-> > include/linux/pci-dma-compat.h.
-> >
-> Xillybus' driver is an example for why this is a good idea. But has this
-> been decided upon? Are we sure that there isn't a single platform where
-> the DMA mapping for PCI is different from non-PCI, and that such
-> platform will never be?
+Hi Christophe,
 
-Yes.
+On 8/27/21 6:34 PM, Geoff Levand wrote:
+> On 8/27/21 12:56 PM, Christophe JAILLET wrote:
+>> It has *not* been compile tested because I don't have the needed
+>> configuration or cross-compiler.
+> 
+> The powerpc ppc64_defconfig has CONFIG_SPIDER_NET set. My
+> tdd-builder Docker image has the needed gcc-powerpc-linux-gnu
+> cross compiler to build ppc64_defconfig:
+> 
+>   https://hub.docker.com/r/glevand/tdd-builder
 
-> If so, is there any reference to that decision?
+Just to follow up, I applied your patch to v5.14-rc7 and built
+ppc64_defconfig. No warnings or errors were seen.
 
-The documentation was updated 11 years ago to only describe the modern
-linux/dma-mapping.h interfaces and mark the old bus-specific ones as
-no longer recommended, see 216bf58f4092 ("Documentation: convert
-PCI-DMA-mapping.txt to use the generic DMA API").
+Thanks for your contribution.
 
-> I think the best way is to put a comment at the top of pci-dma-compat.h
-> saying that the functions in that header file are deprecated and will go
-> away soon. That would, more than anything else, convince people like me
-> to get rid of those PCI-DMA function calls.
+Acked-by: Geoff Levand <geoff@infradead.org>
 
-The only reason for keeping the old interface around any day longer would
-be to identify drivers that have been unmaintained for the past decade
-and ignored all the previous cleanup patches that got sent to them.
-
-       Arnd
