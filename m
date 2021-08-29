@@ -7,49 +7,46 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DB40C432BE
-	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 18:05:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50070C432BE
+	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 18:18:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 20BCB60ED4
-	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 18:05:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2939260F44
+	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 18:18:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229904AbhH2SGC (ORCPT
+        id S235765AbhH2STd (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 29 Aug 2021 14:06:02 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:53932
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230010AbhH2SGA (ORCPT
+        Sun, 29 Aug 2021 14:19:33 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:51934
+        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234080AbhH2STT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 29 Aug 2021 14:06:00 -0400
+        Sun, 29 Aug 2021 14:19:19 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 51ABC3F101;
-        Sun, 29 Aug 2021 18:05:06 +0000 (UTC)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id C5B413F045;
+        Sun, 29 Aug 2021 18:18:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1630260306;
-        bh=5xRSsNwOwnDTizm0g7YvHUz989lGjI0HmFERSykg4No=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=icGu6xT/3v5EVTU5eqCoiS/SUT+GBzzk8C4C9vrqV61fCfSUuUGGYZnyuqjGXIXAa
-         4ZRGqPTwazDTaFZy1rGaSRECho8HDeHCu2RuyjgrzI69ai6oME51A+l2rgNUhseVHi
-         rnNgiYgJ/zorLayPh/KZcnBida0W/Sld/xz8xm1qBXNpDYbIFj6em5lEyXmnUHYNY8
-         ZurntEBcQjn9D/ipmZjUlJ1fV6RXqEzyYuFn+fF7rXoTqpENEun7YCB93e+lRCvs6l
-         g//5nexOWoZXT5YYRQhHU5f5/84ExrlUqsf6J/BH+20dBbGToMErhg7RJKHTSfBsrB
-         irryICpIp5aLQ==
+        s=20210705; t=1630261104;
+        bh=vtkJ21NZ5st7A9TNC1m9k0qYl+hOlEeJL7XpCm/xgCY=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
+        b=n5Gdta2xWHAf2lVWJZlToICeRn9N8LKE7cGo3s8RYytWs/f/HRT3eZG+s2Bs2RCsi
+         mvEoKXzOA0Kqkbe5ZMob+i2kZEhZ+EskpSF12M5cdpJtJYQ6zeEMaWMDsFJMI00+d4
+         FQPMR+9X0sZGPU2pqcolNp+oVIt2PqokyoXkpibKN0Lze7pUh5fDi3jMaHb5xRmmcj
+         G59t77FMNRIoRA95SCP7KkvymYLW/sRyYFm43TKAyqSx7uJy56ptKJs6lwnk+budNf
+         GHH/+4acq9FQ0I4IXOBAEpihCIme6MkzihPPUfkomW5vctpIGU+VMCZUB9lpweDCYG
+         hczhQxHixvV3A==
 From:   Colin King <colin.king@canonical.com>
-To:     Ping-Ke Shih <pkshih@realtek.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+To:     Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Xiubo Li <xiubli@redhat.com>, ceph-devel@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] rtlwifi: rtl8192de: Fix uninitialized variable place
-Date:   Sun, 29 Aug 2021 19:05:03 +0100
-Message-Id: <20210829180503.533934-1-colin.king@canonical.com>
+Subject: [PATCH][next] ceph: Fix dereference of null pointer cf
+Date:   Sun, 29 Aug 2021 19:18:24 +0100
+Message-Id: <20210829181824.534447-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
@@ -57,30 +54,30 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-In the case where chnl <= 14 variable place is not initialized and
-the function returns an uninitialized value. This fixes an earlier
-cleanup where I introduced this bug. My bad.
+Currently in the case where kmem_cache_alloc fails the null pointer
+cf is dereferenced when assigning cf->is_capsnap = false. Fix this
+by adding a null pointer check and return path.
 
-Addresses-Coverity: ("Uninitialized scalar variable")
-Fixes: 369956ae5720 ("rtlwifi: rtl8192de: Remove redundant variable initializations")
+Addresses-Coverity: ("Dereference null return")
+Fixes: b2f9fa1f3bd8 ("ceph: correctly handle releasing an embedded cap flush")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/wireless/realtek/rtlwifi/rtl8192de/phy.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/ceph/caps.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/phy.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/phy.c
-index 8ae69d914312..b32fa7a75f17 100644
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/phy.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/phy.c
-@@ -896,7 +896,7 @@ static void _rtl92d_ccxpower_index_check(struct ieee80211_hw *hw,
+diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+index 39db97f149b9..eceb3ceaac48 100644
+--- a/fs/ceph/caps.c
++++ b/fs/ceph/caps.c
+@@ -1746,6 +1746,8 @@ struct ceph_cap_flush *ceph_alloc_cap_flush(void)
+ 	struct ceph_cap_flush *cf;
  
- static u8 _rtl92c_phy_get_rightchnlplace(u8 chnl)
- {
--	u8 place;
-+	u8 place = chnl;
- 
- 	if (chnl > 14) {
- 		for (place = 14; place < sizeof(channel5g); place++) {
+ 	cf = kmem_cache_alloc(ceph_cap_flush_cachep, GFP_KERNEL);
++	if (!cf)
++		return NULL;
+ 	cf->is_capsnap = false;
+ 	return cf;
+ }
 -- 
 2.32.0
 
