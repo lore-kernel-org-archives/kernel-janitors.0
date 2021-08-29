@@ -7,36 +7,34 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E06DC432BE
-	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 09:43:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A6B3C432BE
+	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 09:52:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1F1F8600CC
-	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 09:43:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5246E60C51
+	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 09:52:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234996AbhH2Jok (ORCPT
+        id S235088AbhH2JxS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 29 Aug 2021 05:44:40 -0400
-Received: from smtp05.smtpout.orange.fr ([80.12.242.127]:23721 "EHLO
+        Sun, 29 Aug 2021 05:53:18 -0400
+Received: from smtp05.smtpout.orange.fr ([80.12.242.127]:53188 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234981AbhH2Jok (ORCPT
+        with ESMTP id S229990AbhH2JxS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 29 Aug 2021 05:44:40 -0400
+        Sun, 29 Aug 2021 05:53:18 -0400
 Received: from pop-os.home ([90.126.253.178])
         by mwinf5d25 with ME
-        id nMjk2500F3riaq203MjlN5; Sun, 29 Aug 2021 11:43:46 +0200
+        id nMsR250023riaq203MsR3T; Sun, 29 Aug 2021 11:52:25 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 29 Aug 2021 11:43:46 +0200
+X-ME-Date: Sun, 29 Aug 2021 11:52:25 +0200
 X-ME-IP: 90.126.253.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     rth@twiddle.net, ink@jurassic.park.msu.ru, mattst88@gmail.com,
-        arnd@arndb.de
-Cc:     linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
+To:     mchehab+huawei@kernel.org
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] sparc: Remove usage of the deprecated "pci-dma-compat.h" API
-Date:   Sun, 29 Aug 2021 11:43:43 +0200
-Message-Id: <18ab2b83b05b50a00ef673e320c8ddc0d19f099a.1630230112.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] media: v4l2-pci-skeleton: Remove usage of the deprecated "pci-dma-compat.h" API
+Date:   Sun, 29 Aug 2021 11:52:23 +0200
+Message-Id: <7191e316ea3b61b6a015d063d2b068a9f4a965aa.1630230428.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -53,25 +51,11 @@ Lawall in [2].
 A coccinelle script has been used to perform the needed transformation
 Only relevant parts are given below.
 
-@@ @@
--    PCI_DMA_BIDIRECTIONAL
-+    DMA_BIDIRECTIONAL
-
-@@ @@
--    PCI_DMA_NONE
-+    DMA_NONE
-
 @@
-expression e1, e2, e3, e4;
+expression e1, e2;
 @@
--    pci_unmap_single(e1, e2, e3, e4)
-+    dma_unmap_single(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_unmap_sg(e1, e2, e3, e4)
-+    dma_unmap_sg(&e1->dev, e2, e3, e4)
+-    pci_set_dma_mask(e1, e2)
++    dma_set_mask(&e1->dev, e2)
 
 
 [1]: https://lore.kernel.org/kernel-janitors/20200421081257.GA131897@infradead.org/
@@ -79,70 +63,27 @@ expression e1, e2, e3, e4;
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-It has *not* been compile tested. However the modifications are done with
-coccinelle without any other modification.
----
- arch/alpha/kernel/pci_iommu.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+It has been compile tested.
 
-diff --git a/arch/alpha/kernel/pci_iommu.c b/arch/alpha/kernel/pci_iommu.c
-index 21f9ac101324..e83a02ed5267 100644
---- a/arch/alpha/kernel/pci_iommu.c
-+++ b/arch/alpha/kernel/pci_iommu.c
-@@ -333,7 +333,7 @@ static dma_addr_t alpha_pci_map_page(struct device *dev, struct page *page,
- 	struct pci_dev *pdev = alpha_gendev_to_pci(dev);
- 	int dac_allowed;
- 
--	BUG_ON(dir == PCI_DMA_NONE);
-+	BUG_ON(dir == DMA_NONE);
- 
- 	dac_allowed = pdev ? pci_dac_dma_supported(pdev, pdev->dma_mask) : 0; 
- 	return pci_map_single_1(pdev, (char *)page_address(page) + offset, 
-@@ -356,7 +356,7 @@ static void alpha_pci_unmap_page(struct device *dev, dma_addr_t dma_addr,
- 	struct pci_iommu_arena *arena;
- 	long dma_ofs, npages;
- 
--	BUG_ON(dir == PCI_DMA_NONE);
-+	BUG_ON(dir == DMA_NONE);
- 
- 	if (dma_addr >= __direct_map_base
- 	    && dma_addr < __direct_map_base + __direct_map_size) {
-@@ -460,7 +460,7 @@ static void alpha_pci_free_coherent(struct device *dev, size_t size,
- 				    unsigned long attrs)
- {
- 	struct pci_dev *pdev = alpha_gendev_to_pci(dev);
--	pci_unmap_single(pdev, dma_addr, size, PCI_DMA_BIDIRECTIONAL);
-+	dma_unmap_single(&pdev->dev, dma_addr, size, DMA_BIDIRECTIONAL);
- 	free_pages((unsigned long)cpu_addr, get_order(size));
- 
- 	DBGA2("pci_free_consistent: [%llx,%zx] from %ps\n",
-@@ -639,7 +639,7 @@ static int alpha_pci_map_sg(struct device *dev, struct scatterlist *sg,
- 	dma_addr_t max_dma;
- 	int dac_allowed;
- 
--	BUG_ON(dir == PCI_DMA_NONE);
-+	BUG_ON(dir == DMA_NONE);
- 
- 	dac_allowed = dev ? pci_dac_dma_supported(pdev, pdev->dma_mask) : 0;
- 
-@@ -702,7 +702,7 @@ static int alpha_pci_map_sg(struct device *dev, struct scatterlist *sg,
- 	/* Some allocation failed while mapping the scatterlist
- 	   entries.  Unmap them now.  */
- 	if (out > start)
--		pci_unmap_sg(pdev, start, out - start, dir);
-+		dma_unmap_sg(&pdev->dev, start, out - start, dir);
- 	return -ENOMEM;
- }
- 
-@@ -722,7 +722,7 @@ static void alpha_pci_unmap_sg(struct device *dev, struct scatterlist *sg,
- 	dma_addr_t max_dma;
- 	dma_addr_t fbeg, fend;
- 
--	BUG_ON(dir == PCI_DMA_NONE);
-+	BUG_ON(dir == DMA_NONE);
- 
- 	if (! alpha_mv.mv_pci_tbi)
- 		return;
+get_maintainer.pl is not really helpful for this patch. I've picked up what made
+sense to me from previous commit.
+---
+ samples/v4l/v4l2-pci-skeleton.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/samples/v4l/v4l2-pci-skeleton.c b/samples/v4l/v4l2-pci-skeleton.c
+index 3fa6582b4a68..6311b7465220 100644
+--- a/samples/v4l/v4l2-pci-skeleton.c
++++ b/samples/v4l/v4l2-pci-skeleton.c
+@@ -766,7 +766,7 @@ static int skeleton_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	ret = pci_enable_device(pdev);
+ 	if (ret)
+ 		return ret;
+-	ret = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
++	ret = dma_set_mask(&pdev->dev, DMA_BIT_MASK(32));
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "no suitable DMA available.\n");
+ 		goto disable_pci;
 -- 
 2.30.2
 
