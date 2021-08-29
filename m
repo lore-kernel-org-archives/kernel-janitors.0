@@ -2,88 +2,75 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A6B3C432BE
-	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 09:52:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85002C432BE
+	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 10:00:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5246E60C51
-	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 09:52:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66C7660F39
+	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 10:00:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235088AbhH2JxS (ORCPT
+        id S235111AbhH2KA6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 29 Aug 2021 05:53:18 -0400
-Received: from smtp05.smtpout.orange.fr ([80.12.242.127]:53188 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229990AbhH2JxS (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 29 Aug 2021 05:53:18 -0400
-Received: from pop-os.home ([90.126.253.178])
-        by mwinf5d25 with ME
-        id nMsR250023riaq203MsR3T; Sun, 29 Aug 2021 11:52:25 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 29 Aug 2021 11:52:25 +0200
-X-ME-IP: 90.126.253.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     mchehab+huawei@kernel.org
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] media: v4l2-pci-skeleton: Remove usage of the deprecated "pci-dma-compat.h" API
-Date:   Sun, 29 Aug 2021 11:52:23 +0200
-Message-Id: <7191e316ea3b61b6a015d063d2b068a9f4a965aa.1630230428.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Sun, 29 Aug 2021 06:00:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36200 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235029AbhH2KA5 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Sun, 29 Aug 2021 06:00:57 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPS id D1B1760E94;
+        Sun, 29 Aug 2021 10:00:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1630231205;
+        bh=bf39DLPRpFLQLU7qP5hJ8jEJigQQ58cqA7mArihAzHI=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=XDOIdamjCukLyzXwBGBwUr7N4AE0LkGS5un8qP0JZWMuJTlNo74Zcb8kONKanUJ/J
+         8idhdeFLCvR/KLIAqcpr33/clrbbrUe4h38k+bi71AUhmKLzUo8xASaKwhER+6tpAz
+         GkO9Rd+yjwg6jnJPNXtjrYjsdOkXweR1vDdgkj5bJeeEsEDeX3QbzxSdW+gX6jX+Ck
+         qmM8iTGflfe0xQHrhklYjnQqu/+YihOW+HrGhoZkIqsftM8vxG0Z4ACrLe6Q4Nm3o0
+         DEny1xkkfWrjo0EZCbCggf5++dcY+VtHv6AtUKJ27Q2yUjljrKw/ab0LGIXswrjYU4
+         eGl59FqixqcKA==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] fddi: switch from 'pci_' to 'dma_' API
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <163023120581.23170.4945897183136463788.git-patchwork-notify@kernel.org>
+Date:   Sun, 29 Aug 2021 10:00:05 +0000
+References: <abc49c24a591b4701dd39fa76506cfdf19aff3cd.1630094399.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <abc49c24a591b4701dd39fa76506cfdf19aff3cd.1630094399.git.christophe.jaillet@wanadoo.fr>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     davem@davemloft.net, kuba@kernel.org, arnd@arndb.de,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-In [1], Christoph Hellwig has proposed to remove the wrappers in
-include/linux/pci-dma-compat.h.
+Hello:
 
-Some reasons why this API should be removed have been given by Julia
-Lawall in [2].
+This patch was applied to netdev/net-next.git (refs/heads/master):
 
-A coccinelle script has been used to perform the needed transformation
-Only relevant parts are given below.
+On Fri, 27 Aug 2021 22:00:57 +0200 you wrote:
+> In [1], Christoph Hellwig has proposed to remove the wrappers in
+> include/linux/pci-dma-compat.h.
+> 
+> Some reasons why this API should be removed have been given by Julia
+> Lawall in [2].
+> 
+> A coccinelle script has been used to perform the needed transformation
+> Only relevant parts are given below.
+> 
+> [...]
 
-@@
-expression e1, e2;
-@@
--    pci_set_dma_mask(e1, e2)
-+    dma_set_mask(&e1->dev, e2)
+Here is the summary with links:
+  - fddi: switch from 'pci_' to 'dma_' API
+    https://git.kernel.org/netdev/net-next/c/a3ba7fd1d3bf
 
+You are awesome, thank you!
+--
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-[1]: https://lore.kernel.org/kernel-janitors/20200421081257.GA131897@infradead.org/
-[2]: https://lore.kernel.org/kernel-janitors/alpine.DEB.2.22.394.2007120902170.2424@hadrien/
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-It has been compile tested.
-
-get_maintainer.pl is not really helpful for this patch. I've picked up what made
-sense to me from previous commit.
----
- samples/v4l/v4l2-pci-skeleton.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/samples/v4l/v4l2-pci-skeleton.c b/samples/v4l/v4l2-pci-skeleton.c
-index 3fa6582b4a68..6311b7465220 100644
---- a/samples/v4l/v4l2-pci-skeleton.c
-+++ b/samples/v4l/v4l2-pci-skeleton.c
-@@ -766,7 +766,7 @@ static int skeleton_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	ret = pci_enable_device(pdev);
- 	if (ret)
- 		return ret;
--	ret = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
-+	ret = dma_set_mask(&pdev->dev, DMA_BIT_MASK(32));
- 	if (ret) {
- 		dev_err(&pdev->dev, "no suitable DMA available.\n");
- 		goto disable_pci;
--- 
-2.30.2
 
