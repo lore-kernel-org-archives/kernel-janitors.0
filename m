@@ -2,208 +2,75 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91E43C432BE
-	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 11:47:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D3D7C432BE
+	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 12:25:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 69A0360524
-	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 11:47:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EAD7960C51
+	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 12:25:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235297AbhH2Lsh (ORCPT
+        id S235251AbhH2M0Y (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 29 Aug 2021 07:48:37 -0400
-Received: from m43-7.mailgun.net ([69.72.43.7]:46696 "EHLO m43-7.mailgun.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235208AbhH2Lsg (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 29 Aug 2021 07:48:36 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1630237665; h=Date: Message-Id: Cc: To: References:
- In-Reply-To: From: Subject: Content-Transfer-Encoding: MIME-Version:
- Content-Type: Sender; bh=wiNv/bL6XeE4L6+OaqStsterPHowAAdviE3eH7NnQ/w=;
- b=M7yYzzeMQqtqnqJIWjrI+rbAnfTMx6iSrnGAdN7UADJiYncV0/7HFo0lUsj/t2nag2Is4Q5C
- 3OsSvPGR8YLdQArwhzN1L5fL3odrgLqxfRQ3APIGQsM8v+kO3VoG6+0XGhekdfzH8YfHL3Vu
- 6k1g1BxKimK0E6/t2ngDQq0tXyE=
-X-Mailgun-Sending-Ip: 69.72.43.7
-X-Mailgun-Sid: WyI5NDExNyIsICJrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n06.prod.us-east-1.postgun.com with SMTP id
- 612b73d5f61b2f864bde2b8d (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Sun, 29 Aug 2021 11:47:33
- GMT
-Sender: kvalo=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id BA9E2C43617; Sun, 29 Aug 2021 11:47:32 +0000 (UTC)
-Received: from tykki.adurom.net (tynnyri.adurom.net [51.15.11.48])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Sun, 29 Aug 2021 08:26:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36434 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234988AbhH2M0Y (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Sun, 29 Aug 2021 08:26:24 -0400
+Received: from ozlabs.org (ozlabs.org [IPv6:2401:3900:2:1::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1137DC061575;
+        Sun, 29 Aug 2021 05:25:32 -0700 (PDT)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        (Authenticated sender: kvalo)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id CEBB2C4338F;
-        Sun, 29 Aug 2021 11:47:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org CEBB2C4338F
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4GyCMn077Bz9sW5;
+        Sun, 29 Aug 2021 22:25:24 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+        s=201909; t=1630239927;
+        bh=iBAjFvolmNyY2XZ92vAE2fPLtdbfMKz7ggBJnDVP5XY=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=mkjRa/NB8vHgxfdu3l/F8pbrud+Fo5BKagyM0uRxjeTOdt8OWy59q2UNYjRakpxqa
+         dtZGfZqT5BFbFBdansxFhWr6CYpmbCfg6wsQJWj3sdUWBf2lGB0Jr/5AX/ZSSiiw5m
+         E8e9/0clEWAiKoSw2m9J5glNTV70KW+bMPOKzgHqPLF/Fn1tcxgHQ8ZWEUJBCMugAW
+         zuJ6BQyAw7JV3eF3B2QYbjxsyWhCYKpq3PA46OB7Y4ciO4LOiSypNuZMzfFVycKrEI
+         vFw9FGhvXCkDKyqpR5DaCNMwcR0hMTHNWrUvJCHXtGDxlNR+yig+pDPIe50oc/8Y5m
+         3xYOxVFdfehsg==
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        kou.ishizaki@toshiba.co.jp, geoff@infradead.org,
+        davem@davemloft.net, kuba@kernel.org
+Cc:     netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: spider_net: switch from 'pci_' to 'dma_' API
+In-Reply-To: <90220a35-bd0a-ccf3-91b1-c2a459c447e7@csgroup.eu>
+References: <60abc3d0c8b4ef8368a4d63326a25a5cb3cd218c.1630094078.git.christophe.jaillet@wanadoo.fr>
+ <90220a35-bd0a-ccf3-91b1-c2a459c447e7@csgroup.eu>
+Date:   Sun, 29 Aug 2021 22:25:19 +1000
+Message-ID: <871r6cfnf4.fsf@mpe.ellerman.id.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] intel: switch from 'pci_' to 'dma_' API
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <f55043d0c847bfae60087707778563cf732a7bf9.1629619229.git.christophe.jaillet@wanadoo.fr>
-References: <f55043d0c847bfae60087707778563cf732a7bf9.1629619229.git.christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     stf_xl@wp.pl, davem@davemloft.net, kuba@kernel.org,
-        luciano.coelho@intel.com, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.7.3
-Message-Id: <20210829114732.BA9E2C43617@smtp.codeaurora.org>
-Date:   Sun, 29 Aug 2021 11:47:32 +0000 (UTC)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+Christophe Leroy <christophe.leroy@csgroup.eu> writes:
+> Le 27/08/2021 =C3=A0 21:56, Christophe JAILLET a =C3=A9crit=C2=A0:
+>> ---
+>> It has *not* been compile tested because I don't have the needed
+>> configuration or cross-compiler. However, the modification is completely
+>> mechanical and done by coccinelle.
+>
+> All you need is at https://mirrors.edge.kernel.org/pub/tools/crosstool/
 
-> The wrappers in include/linux/pci-dma-compat.h should go away.
-> 
-> The patch has been generated with the coccinelle script below.
-> 
-> It has been hand modified to use 'dma_set_mask_and_coherent()' instead of
-> 'pci_set_dma_mask()/pci_set_consistent_dma_mask()' when applicable.
-> This is less verbose.
-> 
-> It has been compile tested.
-> 
-> 
-> @@
-> @@
-> -    PCI_DMA_BIDIRECTIONAL
-> +    DMA_BIDIRECTIONAL
-> 
-> @@
-> @@
-> -    PCI_DMA_TODEVICE
-> +    DMA_TO_DEVICE
-> 
-> @@
-> @@
-> -    PCI_DMA_FROMDEVICE
-> +    DMA_FROM_DEVICE
-> 
-> @@
-> @@
-> -    PCI_DMA_NONE
-> +    DMA_NONE
-> 
-> @@
-> expression e1, e2, e3;
-> @@
-> -    pci_alloc_consistent(e1, e2, e3)
-> +    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
-> 
-> @@
-> expression e1, e2, e3;
-> @@
-> -    pci_zalloc_consistent(e1, e2, e3)
-> +    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_free_consistent(e1, e2, e3, e4)
-> +    dma_free_coherent(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_map_single(e1, e2, e3, e4)
-> +    dma_map_single(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_unmap_single(e1, e2, e3, e4)
-> +    dma_unmap_single(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4, e5;
-> @@
-> -    pci_map_page(e1, e2, e3, e4, e5)
-> +    dma_map_page(&e1->dev, e2, e3, e4, e5)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_unmap_page(e1, e2, e3, e4)
-> +    dma_unmap_page(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_map_sg(e1, e2, e3, e4)
-> +    dma_map_sg(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_unmap_sg(e1, e2, e3, e4)
-> +    dma_unmap_sg(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_dma_sync_single_for_cpu(e1, e2, e3, e4)
-> +    dma_sync_single_for_cpu(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_dma_sync_single_for_device(e1, e2, e3, e4)
-> +    dma_sync_single_for_device(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_dma_sync_sg_for_cpu(e1, e2, e3, e4)
-> +    dma_sync_sg_for_cpu(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_dma_sync_sg_for_device(e1, e2, e3, e4)
-> +    dma_sync_sg_for_device(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2;
-> @@
-> -    pci_dma_mapping_error(e1, e2)
-> +    dma_mapping_error(&e1->dev, e2)
-> 
-> @@
-> expression e1, e2;
-> @@
-> -    pci_set_dma_mask(e1, e2)
-> +    dma_set_mask(&e1->dev, e2)
-> 
-> @@
-> expression e1, e2;
-> @@
-> -    pci_set_consistent_dma_mask(e1, e2)
-> +    dma_set_coherent_mask(&e1->dev, e2)
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+There's also some instructions here for using distro toolchains:
 
-Patch applied to wireless-drivers-next.git, thanks.
+https://github.com/linuxppc/wiki/wiki/Building-powerpc-kernels
 
-ebe9e6514b40 intel: switch from 'pci_' to 'dma_' API
-
--- 
-https://patchwork.kernel.org/project/linux-wireless/patch/f55043d0c847bfae60087707778563cf732a7bf9.1629619229.git.christophe.jaillet@wanadoo.fr/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+cheers
