@@ -2,88 +2,72 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A78DEC432BE
-	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 07:13:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFBD3C432BE
+	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 08:01:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8C81F60F38
-	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 07:13:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93D7B60E94
+	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 08:01:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234832AbhH2HOE (ORCPT
+        id S234785AbhH2ICD (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 29 Aug 2021 03:14:04 -0400
-Received: from so254-9.mailgun.net ([198.61.254.9]:12685 "EHLO
-        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234796AbhH2HN5 (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 29 Aug 2021 03:13:57 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1630221186; h=Date: Message-Id: Cc: To: References:
- In-Reply-To: From: Subject: Content-Transfer-Encoding: MIME-Version:
- Content-Type: Sender; bh=AVWGNT7tRSSLenpvopz6gPJLfeDmo/Fgk1wnlvMrLcM=;
- b=uSTCmGmATuo0zmDxEqriu4MbYsXlAMSsWjMhY0HANZQAyOVd/5gKxghnyQgLDgXJokWqshJp
- pZFU8wMfuHHCe+9+KsEi0xNtmcSSUhJLu1DYQL8/IWJr8T+N0IUN6lXcJLiz6i1ioSNd6aKT
- 2ssofSl97SssUZE9UrBMlVsKR4k=
-X-Mailgun-Sending-Ip: 198.61.254.9
-X-Mailgun-Sid: WyI5NDExNyIsICJrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n03.prod.us-east-1.postgun.com with SMTP id
- 612b337cd6653df7672df0aa (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Sun, 29 Aug 2021 07:13:00
- GMT
-Sender: kvalo=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 9AE75C43616; Sun, 29 Aug 2021 07:12:59 +0000 (UTC)
-Received: from tykki.adurom.net (tynnyri.adurom.net [51.15.11.48])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 949EEC43460;
-        Sun, 29 Aug 2021 07:12:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org 949EEC43460
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Sun, 29 Aug 2021 04:02:03 -0400
+Received: from pegase2.c-s.fr ([93.17.235.10]:41675 "EHLO pegase2.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232155AbhH2ICC (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Sun, 29 Aug 2021 04:02:02 -0400
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+        by localhost (Postfix) with ESMTP id 4Gy5Vr4nytz9sVn;
+        Sun, 29 Aug 2021 10:01:08 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+        by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 8bMiWTobom5H; Sun, 29 Aug 2021 10:01:08 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase2.c-s.fr (Postfix) with ESMTP id 4Gy5Vr3pKlz9sVH;
+        Sun, 29 Aug 2021 10:01:08 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 63E878B767;
+        Sun, 29 Aug 2021 10:01:08 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id uyQ1It10e89s; Sun, 29 Aug 2021 10:01:08 +0200 (CEST)
+Received: from [192.168.4.90] (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id D4BB68B763;
+        Sun, 29 Aug 2021 10:01:07 +0200 (CEST)
+Subject: Re: [PATCH] net: spider_net: switch from 'pci_' to 'dma_' API
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        kou.ishizaki@toshiba.co.jp, geoff@infradead.org,
+        davem@davemloft.net, kuba@kernel.org
+Cc:     netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+References: <60abc3d0c8b4ef8368a4d63326a25a5cb3cd218c.1630094078.git.christophe.jaillet@wanadoo.fr>
+From:   Christophe Leroy <christophe.leroy@csgroup.eu>
+Message-ID: <90220a35-bd0a-ccf3-91b1-c2a459c447e7@csgroup.eu>
+Date:   Sun, 29 Aug 2021 10:01:02 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] ath6kl: wmi: fix an error code in ath6kl_wmi_sync_point()
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20210813113438.GB30697@kili>
-References: <20210813113438.GB30697@kili>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Raja Mani <rmani@qca.qualcomm.com>,
-        Vasanthakumar Thiagarajan <vthiagar@qca.qualcomm.com>,
-        Suraj Sumangala <surajs@qca.qualcomm.com>,
-        linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
-User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.7.3
-Message-Id: <20210829071259.9AE75C43616@smtp.codeaurora.org>
-Date:   Sun, 29 Aug 2021 07:12:59 +0000 (UTC)
+In-Reply-To: <60abc3d0c8b4ef8368a4d63326a25a5cb3cd218c.1630094078.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-> This error path is unlikely because of it checked for NULL and
-> returned -ENOMEM earlier in the function.  But it should return
-> an error code here as well if we ever do hit it because of a
-> race condition or something.
-> 
-> Fixes: bdcd81707973 ("Add ath6kl cleaned up driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-Patch applied to ath-next branch of ath.git, thanks.
+Le 27/08/2021 à 21:56, Christophe JAILLET a écrit :
+> ---
+> It has *not* been compile tested because I don't have the needed
+> configuration or cross-compiler. However, the modification is completely
+> mechanical and done by coccinelle.
 
-fd6729ec534c ath6kl: wmi: fix an error code in ath6kl_wmi_sync_point()
+All you need is at https://mirrors.edge.kernel.org/pub/tools/crosstool/
 
--- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20210813113438.GB30697@kili/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+Christophe
