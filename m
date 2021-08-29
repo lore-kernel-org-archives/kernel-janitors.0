@@ -7,48 +7,46 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D8CCC432BE
-	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 16:46:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED905C432BE
+	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 16:51:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4493560F23
-	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 16:46:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C898260F46
+	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 16:51:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229904AbhH2QrS (ORCPT
+        id S235747AbhH2Qwo (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 29 Aug 2021 12:47:18 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:51312
+        Sun, 29 Aug 2021 12:52:44 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:51518
         "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229687AbhH2QrR (ORCPT
+        by vger.kernel.org with ESMTP id S229692AbhH2Qwn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 29 Aug 2021 12:47:17 -0400
+        Sun, 29 Aug 2021 12:52:43 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 534B23F07E;
-        Sun, 29 Aug 2021 16:46:24 +0000 (UTC)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id A40EF3F232;
+        Sun, 29 Aug 2021 16:51:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1630255584;
-        bh=/glC/Zr2Yum31WUjvWeKRvl5aOrxqgWHFdI8zR2w0oE=;
+        s=20210705; t=1630255910;
+        bh=grqiVd1tHlP+USP8A2T1/Sgex7wgmkoi/169ON1QGFo=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=aYdeTekWHuWLpZ0NvfmCtzdzQeaO9SVV8L8K0KZQqoAKpqed6/h7fMZPcJ1HZbdiI
-         Hy9TKT8k0YD4bjq0YILmg8iMCPiAt2fSAanoZJ/6hceoxihoQrHmoZMU5uQROtS2rg
-         hr/VqIUSgVrHbLGimZF95S40pwZ2S1cJ0Vbdf3UD3EZ0dlrh27sUSoAElOy9zZTa+O
-         /j6NoSZHR5pznsZvi81CywwNsPEIqXHacM7HtDgpK0VRdnduVaKdCy0uv+iJVw+/q0
-         Z9X0Npomu/CwslDQb7gAX1D63HhWBCuX+DOTww2KCbjreUp4G2LERR4zJ2f/xtEWd6
-         2a8RBzmas7YTQ==
+        b=DFIObwuVGBDJaynj2jjtTKqsbRui4u0iozrVIURyd/OrrdaYujBj3D5zD/fOUHEaH
+         GGlBe1MqHriShWafIgsno4tkZf4YXoZFLWi4KlIM45KxvYa5OQuGWJJU/PINIFg1ND
+         9RcVn0LW/SHrP4hfbwFy43XC563Rg7dbNp73qzmQGV0z1ugzMvmDob9MO6Bc5oOvQI
+         kSpECAP+LvKWuwnJtIFubVvFdDATJM3v3+H+F3WQCQTV9+66LZfRKIUYSljlG7qDNJ
+         3Bazue+b3XSOAdeppp0eEARe0mo2+o6FtwRWX7Ko9frHv4GT1O8ElVJ9VXI/9RcvHT
+         XYz0MhKjnJWzw==
 From:   Colin King <colin.king@canonical.com>
-To:     Harry Wentland <harry.wentland@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Xinhui.Pan@amd.com, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
+To:     Jesse Brandeburg <jesse.brandeburg@intel.com>,
+        Tony Nguyen <anthony.l.nguyen@intel.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/amd/display: Fix unused initialization of pointer sink
-Date:   Sun, 29 Aug 2021 17:46:24 +0100
-Message-Id: <20210829164624.531391-1-colin.king@canonical.com>
+Subject: [PATCH][next] igc: remove redundant continue statement
+Date:   Sun, 29 Aug 2021 17:51:50 +0100
+Message-Id: <20210829165150.531678-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -59,29 +57,27 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Pointer sink is being inintialized with a value that is never read,
-it is later being re-assigned a new value. Remove the redundant
-initialization.
+The continue statement at the end of a for-loop has no effect,
+remove it.
 
-Addresses-Coverity: ("Unused value")
+Addresses-Coverity: ("Continue has no effect")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/intel/igc/igc_ptp.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-index e1e57e7465a7..9331c19fe9cb 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-@@ -10917,7 +10917,7 @@ void amdgpu_dm_update_freesync_caps(struct drm_connector *connector,
- 	struct amdgpu_dm_connector *amdgpu_dm_connector =
- 			to_amdgpu_dm_connector(connector);
- 	struct dm_connector_state *dm_con_state = NULL;
--	struct dc_sink *sink = amdgpu_dm_connector->dc_sink;
-+	struct dc_sink *sink;
+diff --git a/drivers/net/ethernet/intel/igc/igc_ptp.c b/drivers/net/ethernet/intel/igc/igc_ptp.c
+index 0f021909b430..b615a980f563 100644
+--- a/drivers/net/ethernet/intel/igc/igc_ptp.c
++++ b/drivers/net/ethernet/intel/igc/igc_ptp.c
+@@ -860,7 +860,6 @@ static int igc_phc_get_syncdevicetime(ktime_t *device,
+ 			 * so write the previous error status to clear it.
+ 			 */
+ 			wr32(IGC_PTM_STAT, stat);
+-			continue;
+ 		}
+ 	} while (--count);
  
- 	struct drm_device *dev = connector->dev;
- 	struct amdgpu_device *adev = drm_to_adev(dev);
 -- 
 2.32.0
 
