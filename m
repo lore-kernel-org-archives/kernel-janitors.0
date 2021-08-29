@@ -2,103 +2,98 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32444C432BE
-	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 08:23:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C2ADC432BE
+	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 08:32:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 107C660F36
-	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 08:23:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3EEF960F42
+	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 08:32:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234788AbhH2IY2 (ORCPT
+        id S234835AbhH2IdI (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 29 Aug 2021 04:24:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39494 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232155AbhH2IY2 (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 29 Aug 2021 04:24:28 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A3F4C061756;
-        Sun, 29 Aug 2021 01:23:36 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id q14so17536770wrp.3;
-        Sun, 29 Aug 2021 01:23:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=message-id:date:from:user-agent:mime-version:to:cc:subject
-         :references:in-reply-to:content-transfer-encoding;
-        bh=TinTxBGGYceb6/8jQNfG0B2WM8DTWHd+X/Zt0ongoKI=;
-        b=Krx3/JDXhi7ffSvtEk9h4+dF+DSkY4xPUVgsvCO4/SVQFhTBIxFUM8rMyRLbB5f0GK
-         0HaKUeBxHp++xT3mVzt0nkQbZFpCGHLdadrgZGltGA9F2AugaKr+RsVglEpb6e6xRwdJ
-         nFvn53R8OpZ3jueWpQQszvTRxgCn+8tcMXa2y9SMMBP0t62BwyAgmhSvhDXvVqYHWDR4
-         fZHYTnxXQesVh+vzrLGtZly0vn4wL0ReSO7vzXoCYsl9qjhY08X8uh+xyPUGXRubcORV
-         Dv1yHMEZ8y/Kqkhj8qo1qAuHpoNUM8/0yUpDedNhH1Gjci0snrjKcSaxLQjniiKjYqQA
-         fZzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:from:user-agent:mime-version:to
-         :cc:subject:references:in-reply-to:content-transfer-encoding;
-        bh=TinTxBGGYceb6/8jQNfG0B2WM8DTWHd+X/Zt0ongoKI=;
-        b=haeoR4ByKSm8WA3/qnOaNQnRvz7p5nurlkmGsrUEVq3FmGn0Rdt0uG9qjcFKLHZjSM
-         3CaVqrEgSjhuU9s0AAqFxPcT+nTDPiQKfdp7i3tYZYFjta9/oCQ46ooHDtxrXvNuj2Nv
-         bZFMlrZJICObw3+jpypho8Ud6oLZmCG1PwBpQlhbtRG5B3YJyKc5bfleMNPySjZYOc/U
-         8Wx6h2ihRmPGb3VrAzFj+036TFkRWYD7MTs3IKQsU8zr2ucqHFjloi2huXU7spl2q/xY
-         HDeX4YY/7hQyrAOoWNquStTogjWa2Z+0uKmi7FX9rLVs8IhGqeARIt739MxxH4j0tIiW
-         q/bQ==
-X-Gm-Message-State: AOAM532B6FhCh265jwtelhE+ZVpAZCT/teczbRwQLLgtLd6drA+0qcg6
-        9EIsiARG5ta6mV5psy5gFao=
-X-Google-Smtp-Source: ABdhPJy8o+XmSdFIDv4hFYAuadm9F1r4D+Fk81cu43FJ1vta++Tm6/rI+oHbnQa3qaQmzl47eVqDrQ==
-X-Received: by 2002:adf:b781:: with SMTP id s1mr14088916wre.319.1630225414651;
-        Sun, 29 Aug 2021 01:23:34 -0700 (PDT)
-Received: from [89.139.98.169] (89-139-98-169.bb.netvision.net.il. [89.139.98.169])
-        by smtp.gmail.com with ESMTPSA id l19sm3031891wmj.34.2021.08.29.01.23.33
-        (version=TLS1 cipher=AES128-SHA bits=128/128);
-        Sun, 29 Aug 2021 01:23:34 -0700 (PDT)
-Message-ID: <612B43EA.2090009@gmail.com>
-Date:   Sun, 29 Aug 2021 11:23:06 +0300
-From:   Eli Billauer <eli.billauer@gmail.com>
-User-Agent: Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.1.12) Gecko/20100907 Fedora/3.0.7-1.fc12 Thunderbird/3.0.7
+        Sun, 29 Aug 2021 04:33:08 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:50590 "EHLO m43-7.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234788AbhH2IdH (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Sun, 29 Aug 2021 04:33:07 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1630225936; h=Date: Message-Id: Cc: To: References:
+ In-Reply-To: From: Subject: Content-Transfer-Encoding: MIME-Version:
+ Content-Type: Sender; bh=sDPTy8KAE9CIK5/hJskuePHV4t04MtL3PTjzg1WFFFE=;
+ b=GI0IXmTbiwBWUI4jsB8jZHX0Yfj43sLQ347ZT0POU9iVM+HW5Zam/qow9SjtVXflX92p5bm8
+ Uef6o9ngb1Sxb8N/O0yXECs7aA23U7cBd8mAoANxzszyMT+TAcUdQSAGf2hNndzVQwvzYdLP
+ DA2Htq8lMthLAz6dq9QH4v71v9U=
+X-Mailgun-Sending-Ip: 69.72.43.7
+X-Mailgun-Sid: WyI5NDExNyIsICJrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n05.prod.us-west-2.postgun.com with SMTP id
+ 612b460f40d2129ac1b87136 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Sun, 29 Aug 2021 08:32:15
+ GMT
+Sender: kvalo=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 90630C43617; Sun, 29 Aug 2021 08:32:15 +0000 (UTC)
+Received: from tykki.adurom.net (tynnyri.adurom.net [51.15.11.48])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9F7DFC4338F;
+        Sun, 29 Aug 2021 08:32:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org 9F7DFC4338F
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-CC:     gregkh <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH v1 0/4] char: xillybus: Remove usage of the deprecated
- 'pci-dma-compat.h' API
-References: <cover.1630083668.git.christophe.jaillet@wanadoo.fr> <612A50C4.2080209@gmail.com> <CAK8P3a1=tZkb-rxj5Ys_FgUa=qoKPD6fpPjEMHXDL0QwwS0zgg@mail.gmail.com>
-In-Reply-To: <CAK8P3a1=tZkb-rxj5Ys_FgUa=qoKPD6fpPjEMHXDL0QwwS0zgg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] rsi: make array fsm_state static const,
+ makes object smaller
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20210819125018.8577-1-colin.king@canonical.com>
+References: <20210819125018.8577-1-colin.king@canonical.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Amitkumar Karwar <amitkarwar@gmail.com>,
+        Siva Rebbagondla <siva8118@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.7.3
+Message-Id: <20210829083215.90630C43617@smtp.codeaurora.org>
+Date:   Sun, 29 Aug 2021 08:32:15 +0000 (UTC)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 29/08/21 00:26, Arnd Bergmann wrote:
->
-> The documentation was updated 11 years ago to only describe the modern
-> linux/dma-mapping.h interfaces and mark the old bus-specific ones as
-> no longer recommended, see 216bf58f4092 ("Documentation: convert
-> PCI-DMA-mapping.txt to use the generic DMA API").
->    
-Thanks, Arnd. That's exactly the kind of reference I was asking about.
+Colin King <colin.king@canonical.com> wrote:
 
-And of course, a thanks goes to Christophe as well for drawing my 
-attention to this issue. A bit surprising it didn't happen back in 2013, 
-when the driver was included in the kernel. Or possibly in 2014, when it 
-went out of staging.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Don't populate the array fsm_state on the stack but instead it
+> static const. Makes the object code smaller by 154 bytes:
+> 
+> Before:
+>    text	   data	    bss	    dec	    hex	filename
+>    9213	   3904	      0	  13117	   333d	.../wireless/rsi/rsi_91x_debugfs.o
+> 
+> After:
+>    text	   data	    bss	    dec	    hex	filename
+>    8995	   3968	      0	  12963	   32a3	.../wireless/rsi/rsi_91x_debugfs.o
+> 
+> (gcc version 10.3.0)
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-As for this patch set, three out of four patches make modifications in 
-functions that should be deleted altogether. Their only purpose is to 
-wrap DMA-related calls made by the core driver, so that the pci_* API is 
-used for PCI devices, and the dma_* API otherwise. As it turns out, this 
-was a lot of nonsense code from day one.
+Patch applied to wireless-drivers-next.git, thanks.
 
-I'll prepare a patch that removes all this.
+f4c813641897 rsi: make array fsm_state static const, makes object smaller
 
-Thanks again,
-    Eli
+-- 
+https://patchwork.kernel.org/project/linux-wireless/patch/20210819125018.8577-1-colin.king@canonical.com/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
