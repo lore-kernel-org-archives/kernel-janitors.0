@@ -2,77 +2,86 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.5 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 000B4C4320E
-	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 15:53:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D8CCC432BE
+	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 16:46:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CED6660F45
-	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 15:53:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4493560F23
+	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 16:46:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235762AbhH2Pyd (ORCPT
+        id S229904AbhH2QrS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 29 Aug 2021 11:54:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41664 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235738AbhH2Pyc (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 29 Aug 2021 11:54:32 -0400
-Received: from jic23-huawei (cpc108967-cmbg20-2-0-cust86.5-4.cable.virginm.net [81.101.6.87])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Sun, 29 Aug 2021 12:47:18 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:51312
+        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229687AbhH2QrR (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Sun, 29 Aug 2021 12:47:17 -0400
+Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E772E60F42;
-        Sun, 29 Aug 2021 15:53:37 +0000 (UTC)
-Date:   Sun, 29 Aug 2021 16:56:53 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Sean Nyekjaer <sean.nyekjaer@prevas.dk>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] iio: dac: fix an error code in probe()
-Message-ID: <20210829165653.36c65f7c@jic23-huawei>
-In-Reply-To: <20210816183954.GB2068@kili>
-References: <20210816183954.GB2068@kili>
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.30; x86_64-pc-linux-gnu)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 534B23F07E;
+        Sun, 29 Aug 2021 16:46:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1630255584;
+        bh=/glC/Zr2Yum31WUjvWeKRvl5aOrxqgWHFdI8zR2w0oE=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=aYdeTekWHuWLpZ0NvfmCtzdzQeaO9SVV8L8K0KZQqoAKpqed6/h7fMZPcJ1HZbdiI
+         Hy9TKT8k0YD4bjq0YILmg8iMCPiAt2fSAanoZJ/6hceoxihoQrHmoZMU5uQROtS2rg
+         hr/VqIUSgVrHbLGimZF95S40pwZ2S1cJ0Vbdf3UD3EZ0dlrh27sUSoAElOy9zZTa+O
+         /j6NoSZHR5pznsZvi81CywwNsPEIqXHacM7HtDgpK0VRdnduVaKdCy0uv+iJVw+/q0
+         Z9X0Npomu/CwslDQb7gAX1D63HhWBCuX+DOTww2KCbjreUp4G2LERR4zJ2f/xtEWd6
+         2a8RBzmas7YTQ==
+From:   Colin King <colin.king@canonical.com>
+To:     Harry Wentland <harry.wentland@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Xinhui.Pan@amd.com, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] drm/amd/display: Fix unused initialization of pointer sink
+Date:   Sun, 29 Aug 2021 17:46:24 +0100
+Message-Id: <20210829164624.531391-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, 16 Aug 2021 21:39:54 +0300
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> If we have an unexpected number of channels then return -EINVAL instead
-> of returning success.
-> 
-> Fixes: df38a4a72a3b ("iio: dac: add TI DAC5571 family support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Given I'm not going to be doing another fixes pull for 5.14 (bit late afterall!)
-I've rebased the fixes-togreg branch to match staging/staging-next which will
-go in during the merge window + applied this on top.
+Pointer sink is being inintialized with a value that is never read,
+it is later being re-assigned a new value. Remove the redundant
+initialization.
 
-Thanks,
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Jonathan
-
-> ---
->  drivers/iio/dac/ti-dac5571.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/iio/dac/ti-dac5571.c b/drivers/iio/dac/ti-dac5571.c
-> index 2a5ba1b08a1d..546a4cf6c5ef 100644
-> --- a/drivers/iio/dac/ti-dac5571.c
-> +++ b/drivers/iio/dac/ti-dac5571.c
-> @@ -350,6 +350,7 @@ static int dac5571_probe(struct i2c_client *client,
->  		data->dac5571_pwrdwn = dac5571_pwrdwn_quad;
->  		break;
->  	default:
-> +		ret = -EINVAL;
->  		goto err;
->  	}
->  
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+index e1e57e7465a7..9331c19fe9cb 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+@@ -10917,7 +10917,7 @@ void amdgpu_dm_update_freesync_caps(struct drm_connector *connector,
+ 	struct amdgpu_dm_connector *amdgpu_dm_connector =
+ 			to_amdgpu_dm_connector(connector);
+ 	struct dm_connector_state *dm_con_state = NULL;
+-	struct dc_sink *sink = amdgpu_dm_connector->dc_sink;
++	struct dc_sink *sink;
+ 
+ 	struct drm_device *dev = connector->dev;
+ 	struct amdgpu_device *adev = drm_to_adev(dev);
+-- 
+2.32.0
 
