@@ -2,79 +2,79 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A266C432BE
-	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 00:10:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C5C0C4320A
+	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 04:00:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 54A7460E93
-	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 00:10:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 344FA60E94
+	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 04:00:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233423AbhH2AKs (ORCPT
+        id S232018AbhH2EBh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 28 Aug 2021 20:10:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45088 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232561AbhH2AKr (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 28 Aug 2021 20:10:47 -0400
-Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DBD1C061756;
-        Sat, 28 Aug 2021 17:09:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
-        :In-Reply-To:MIME-Version:Date:Message-ID:References:Cc:To:From:Subject:
-        Sender:Reply-To:Content-ID:Content-Description;
-        bh=EaN8NsPelxHrvU9ofAOrjRtk0WsMGCySofzS1ta0LL8=; b=rFQSsr9R9EiuFOn4iq4RDbszO7
-        fyAMZk8WbJPtAI5zR8nO3a/p5REX476tl9mC/UH8580CwSQfLkMSlgN2ofiTAfvpvHYLvVGLgNj3q
-        fUyByVWWnobgsvT/b1BFUsbw30727eWMcT0TBqpNfsEmY+hd40IqiJZDZfeqD9qtMgTgHDb69Y40j
-        PrDWB2Eckw+rxIiKParyR5aKp5+phAvcgnQkT15EfsMUnEEuiu1iKO5MC0TqLhWbs5x1BV3m7nn3/
-        h41FF2qzwS1rRMm9wVruv/GESqJVJBuSuenrOFDSvNiell4ywVuotbiUnt+wQTXcL7mHgmGGlSwUu
-        24a09n6Q==;
-Received: from [2602:306:c5a2:a380:1dfb:b2e0:5ace:2d5]
-        by desiato.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mK8OU-00DzjX-2F; Sun, 29 Aug 2021 00:09:50 +0000
-Subject: Re: [PATCH] net: spider_net: switch from 'pci_' to 'dma_' API
-From:   Geoff Levand <geoff@infradead.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        kou.ishizaki@toshiba.co.jp, davem@davemloft.net, kuba@kernel.org
-Cc:     netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <60abc3d0c8b4ef8368a4d63326a25a5cb3cd218c.1630094078.git.christophe.jaillet@wanadoo.fr>
- <4f3113d1-b76e-a085-df2d-fd97d4b45faf@infradead.org>
-Message-ID: <2b1a0085-de94-dc41-9b9d-3ba1fcdbb6f4@infradead.org>
-Date:   Sat, 28 Aug 2021 17:09:45 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Sun, 29 Aug 2021 00:01:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33818 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229483AbhH2EBe (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Sun, 29 Aug 2021 00:01:34 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D01A160E73;
+        Sun, 29 Aug 2021 04:00:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1630209642;
+        bh=vriY2Miz0l2axx3o8K+06y1G4BysaSccyvC+2MeU4KQ=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=K/ruHj619h7zhcKBZSFm+meS73aqX6g23Cgzf0IYWTo9yS3Ytm5qVzubhGEyEdKsu
+         BNvALFhKoia7bLSB2w+GdOWdh0yig/9Y+juFpqicjrSVFJtWYKjn4TPMzInkFN+iFG
+         B/LFJibTr2aP8XiaqoO7gW2wxKzC3P1wgfyx7dGbKTcAk+aR7ZH+MUX1ix16x8uxUN
+         JNU0jFsf2O/axv/BPVyzcX6FlUcEZHTwuS346pxL4U/Dqx6pII7y6/slFHXRMe+RUp
+         p/4NpCT1IadX5AVKPfK7L9WV4/IZinsKnDa0pSrOY40M8EfX8VUbkLo0gnzOvshJgY
+         bSUHr/BQqF8yw==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <4f3113d1-b76e-a085-df2d-fd97d4b45faf@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20210816135930.11810-1-lukas.bulwahn@gmail.com>
+References: <20210816135930.11810-1-lukas.bulwahn@gmail.com>
+Subject: Re: [PATCH] clk: qcom: adjust selects for SM_VIDEOCC_8150 and SM_VIDEOCC_8250
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+Date:   Sat, 28 Aug 2021 21:00:41 -0700
+Message-ID: <163020964167.2676726.11842390922063654401@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Christophe,
+Quoting Lukas Bulwahn (2021-08-16 06:59:30)
+> Commit 5658e8cf1a8a ("clk: qcom: add video clock controller driver for
+> SM8150") and commit 0e94711a1f29 ("clk: qcom: add video clock controller
+> driver for SM8250") add config SM_VIDEOCC_8150 and config SM_VIDEOCC_8250,
+> which select the non-existing configs SDM_GCC_8150 and SDM_GCC_8250,
+> respectively.
+>=20
+> Hence, ./scripts/checkkconfigsymbols.py warns:
+>=20
+> SDM_GCC_8150
+> Referencing files: drivers/clk/qcom/Kconfig
+>=20
+> SDM_GCC_8250
+> Referencing files: drivers/clk/qcom/Kconfig
+>=20
+> It is probably just a typo (or naming confusion of using SM_GCC_xxx and
+> SDM_GCC_xxx for various Qualcomm clock drivers) in the config definitions
+> for config SM_VIDEOCC_8150 and SM_VIDEOCC_8250, and intends to select the
+> existing SM_GCC_8150 and SM_GCC_8250, respectively.
+>=20
+> Adjust the selects to the existing configs.
+>=20
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
 
-On 8/27/21 6:34 PM, Geoff Levand wrote:
-> On 8/27/21 12:56 PM, Christophe JAILLET wrote:
->> It has *not* been compile tested because I don't have the needed
->> configuration or cross-compiler.
-> 
-> The powerpc ppc64_defconfig has CONFIG_SPIDER_NET set. My
-> tdd-builder Docker image has the needed gcc-powerpc-linux-gnu
-> cross compiler to build ppc64_defconfig:
-> 
->   https://hub.docker.com/r/glevand/tdd-builder
-
-Just to follow up, I applied your patch to v5.14-rc7 and built
-ppc64_defconfig. No warnings or errors were seen.
-
-Thanks for your contribution.
-
-Acked-by: Geoff Levand <geoff@infradead.org>
-
+Applied to clk-next
