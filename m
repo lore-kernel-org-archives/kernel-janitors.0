@@ -2,89 +2,75 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-10.5 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B0E6C4320E
-	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 15:28:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F040EC4320E
+	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 15:44:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2518C606A5
-	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 15:28:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF81360F45
+	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 15:44:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235606AbhH2P3F (ORCPT
+        id S235593AbhH2Pp2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 29 Aug 2021 11:29:05 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:48766
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235561AbhH2P3F (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 29 Aug 2021 11:29:05 -0400
-Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        Sun, 29 Aug 2021 11:45:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39944 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231216AbhH2Pp1 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Sun, 29 Aug 2021 11:45:27 -0400
+Received: from jic23-huawei (cpc108967-cmbg20-2-0-cust86.5-4.cable.virginm.net [81.101.6.87])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id AD4BB3F339;
-        Sun, 29 Aug 2021 15:28:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1630250891;
-        bh=gqWXc3i3SzkWPvLgtgv3WIqDOFamnAqAjp2Txwu5dQg=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=k8/wq/0SIHgDBR4R6/Zhu4Z50CubNdLU4lPFeErPqovkNTBRElPzgunSrsqo+eJPG
-         VJV3a36tEs98rVxR+q4MUmD3b/CNTFcb4UJRah8+5OKOTzGwwD2i3NDDrlmSYK/MdE
-         AbQlJKdt5tQaak4iQpdI9ZEJyHPd8ACKVSHjR6HCVnMHUcYIFHKllTHpF1/Bql1WEc
-         ndWO0qWljnmeeT99HTPcl4rRQp3SQV54olWP9INV4gnni9h1JanVfHMnTpN77TMWol
-         qVbiW5Ug0+F2XRECojsc4T2Lo+ygDG+KmbTjRrhqBV59JXfoEwpwr0ib54dR7iywj/
-         93EoRVB/seeiQ==
-From:   Colin King <colin.king@canonical.com>
-To:     Vinod Koul <vkoul@kernel.org>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        dmaengine@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] dmaengine: sh: Fix unused initialization of pointer lmdesc
-Date:   Sun, 29 Aug 2021 16:28:11 +0100
-Message-Id: <20210829152811.529766-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.32.0
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B0CB60E94;
+        Sun, 29 Aug 2021 15:44:32 +0000 (UTC)
+Date:   Sun, 29 Aug 2021 16:47:48 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        linux-iio <linux-iio@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] iio: gyro: remove dead config dependencies on
+ INPUT_MPU3050
+Message-ID: <20210829164748.710e3da6@jic23-huawei>
+In-Reply-To: <CACRpkdaemTruXS3PTz3z_hpkvBYvi802dF6VBDq+fLEyxZStrQ@mail.gmail.com>
+References: <20210817081330.9645-1-lukas.bulwahn@gmail.com>
+        <CACRpkdaemTruXS3PTz3z_hpkvBYvi802dF6VBDq+fLEyxZStrQ@mail.gmail.com>
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Tue, 17 Aug 2021 22:11:36 +0200
+Linus Walleij <linus.walleij@linaro.org> wrote:
 
-Pointer lmdesc is being inintialized with a value that is never read,
-it is later being re-assigned a new value. Fix this by initializing
-it with the latter value.
+> On Tue, Aug 17, 2021 at 10:13 AM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+> 
+> > Commit b1fe0cf06f92 ("Input: delete MPU3050 driver") deletes the superseded
+> > MPU3050 driver and its corresponding config INPUT_MPU3050.
+> >
+> > The dependencies on the superseding driver in ./drivers/iio/gyro/Kconfig
+> > to ensure that the two drivers are not built into the same kernel is a dead
+> > dependency and not required anymore.
+> >
+> > So, remove those config dependencies on INPUT_MPU3050 for MPU3050_I2C.
+> >
+> > This issue was detected with ./scripts/checkkconfigsymbols.py.
+> >
+> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>  
+> 
+> Oops my leftover.
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> 
+> Yours,
+> Linus Walleij
 
-Addresses-Coverity: ("Unused value")
-Fixes: 550c591a89a1 ("dmaengine: sh: Add DMAC driver for RZ/G2L SoC")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/dma/sh/rz-dmac.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Applied,
 
-diff --git a/drivers/dma/sh/rz-dmac.c b/drivers/dma/sh/rz-dmac.c
-index 11986a8d22fc..3d1c239de306 100644
---- a/drivers/dma/sh/rz-dmac.c
-+++ b/drivers/dma/sh/rz-dmac.c
-@@ -308,12 +308,10 @@ static void rz_dmac_prepare_desc_for_memcpy(struct rz_dmac_chan *channel)
- {
- 	struct dma_chan *chan = &channel->vc.chan;
- 	struct rz_dmac *dmac = to_rz_dmac(chan->device);
--	struct rz_lmdesc *lmdesc = channel->lmdesc.base;
-+	struct rz_lmdesc *lmdesc = channel->lmdesc.tail;
- 	struct rz_dmac_desc *d = channel->desc;
- 	u32 chcfg = CHCFG_MEM_COPY;
- 
--	lmdesc = channel->lmdesc.tail;
--
- 	/* prepare descriptor */
- 	lmdesc->sa = d->src;
- 	lmdesc->da = d->dest;
--- 
-2.32.0
+Thanks,
 
