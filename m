@@ -2,82 +2,84 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED905C432BE
-	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 16:51:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79ABBC43214
+	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 16:58:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C898260F46
-	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 16:51:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51B0060F46
+	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 16:58:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235747AbhH2Qwo (ORCPT
+        id S235846AbhH2Q7k (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 29 Aug 2021 12:52:44 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:51518
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229692AbhH2Qwn (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 29 Aug 2021 12:52:43 -0400
-Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        Sun, 29 Aug 2021 12:59:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54740 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229467AbhH2Q7j (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Sun, 29 Aug 2021 12:59:39 -0400
+Received: from jic23-huawei (cpc108967-cmbg20-2-0-cust86.5-4.cable.virginm.net [81.101.6.87])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id A40EF3F232;
-        Sun, 29 Aug 2021 16:51:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1630255910;
-        bh=grqiVd1tHlP+USP8A2T1/Sgex7wgmkoi/169ON1QGFo=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=DFIObwuVGBDJaynj2jjtTKqsbRui4u0iozrVIURyd/OrrdaYujBj3D5zD/fOUHEaH
-         GGlBe1MqHriShWafIgsno4tkZf4YXoZFLWi4KlIM45KxvYa5OQuGWJJU/PINIFg1ND
-         9RcVn0LW/SHrP4hfbwFy43XC563Rg7dbNp73qzmQGV0z1ugzMvmDob9MO6Bc5oOvQI
-         kSpECAP+LvKWuwnJtIFubVvFdDATJM3v3+H+F3WQCQTV9+66LZfRKIUYSljlG7qDNJ
-         3Bazue+b3XSOAdeppp0eEARe0mo2+o6FtwRWX7Ko9frHv4GT1O8ElVJ9VXI/9RcvHT
-         XYz0MhKjnJWzw==
-From:   Colin King <colin.king@canonical.com>
-To:     Jesse Brandeburg <jesse.brandeburg@intel.com>,
-        Tony Nguyen <anthony.l.nguyen@intel.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] igc: remove redundant continue statement
-Date:   Sun, 29 Aug 2021 17:51:50 +0100
-Message-Id: <20210829165150.531678-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.32.0
+        by mail.kernel.org (Postfix) with ESMTPSA id BC74760698;
+        Sun, 29 Aug 2021 16:58:43 +0000 (UTC)
+Date:   Sun, 29 Aug 2021 18:01:58 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Colin King <colin.king@canonical.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH][next] iio: adc: Fix -EBUSY timeout error return
+Message-ID: <20210829180136.58a11601@jic23-huawei>
+In-Reply-To: <CA+V-a8ugKC8z2=0usUca4eYFLTHEorxdtmdmbE5vXZDo_Ob5vA@mail.gmail.com>
+References: <20210817172111.495897-1-colin.king@canonical.com>
+        <OSZPR01MB7019DD199CB1B9A4521A3C28AAFF9@OSZPR01MB7019.jpnprd01.prod.outlook.com>
+        <CAHp75VdWFTi4oSWG45NunJwpe=LdMhAMEAEJh21ML2QXszgS+A@mail.gmail.com>
+        <CA+V-a8ugKC8z2=0usUca4eYFLTHEorxdtmdmbE5vXZDo_Ob5vA@mail.gmail.com>
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Thu, 19 Aug 2021 18:39:02 +0100
+"Lad, Prabhakar" <prabhakar.csengg@gmail.com> wrote:
 
-The continue statement at the end of a for-loop has no effect,
-remove it.
+> On Thu, Aug 19, 2021 at 6:21 PM Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
+> >
+> > On Wed, Aug 18, 2021 at 6:51 PM Prabhakar Mahadev Lad
+> > <prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+> >  
+> > > with the subject changed to above: Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>  
+> >  
+> Again with the above fixed:
+> Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> 
+> > Always put your tags in a single tag per single line. This will allow
+> > tools to catch them up automatically.
+> >  
+> My bad, fixed that now.
 
-Addresses-Coverity: ("Continue has no effect")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/ethernet/intel/igc/igc_ptp.c | 1 -
- 1 file changed, 1 deletion(-)
+Tweaked patch name as suggested and applied to the fixes-togreg branch of iio.git
 
-diff --git a/drivers/net/ethernet/intel/igc/igc_ptp.c b/drivers/net/ethernet/intel/igc/igc_ptp.c
-index 0f021909b430..b615a980f563 100644
---- a/drivers/net/ethernet/intel/igc/igc_ptp.c
-+++ b/drivers/net/ethernet/intel/igc/igc_ptp.c
-@@ -860,7 +860,6 @@ static int igc_phc_get_syncdevicetime(ktime_t *device,
- 			 * so write the previous error status to clear it.
- 			 */
- 			wr32(IGC_PTM_STAT, stat);
--			continue;
- 		}
- 	} while (--count);
- 
--- 
-2.32.0
+Too late to sneak this in pre merge window, so I'll do it after rc1.
+
+Thanks,
+
+Jonathan
+
+> 
+> Cheers,
+> Prabhakar
 
