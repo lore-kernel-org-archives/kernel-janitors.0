@@ -2,420 +2,85 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C925CC432BE
-	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 17:40:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DB40C432BE
+	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 18:05:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A1C8260F4B
-	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 17:40:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20BCB60ED4
+	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 18:05:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229955AbhH2Rlk (ORCPT
+        id S229904AbhH2SGC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 29 Aug 2021 13:41:40 -0400
-Received: from smtprelay0131.hostedemail.com ([216.40.44.131]:38060 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S229665AbhH2Rlk (ORCPT
+        Sun, 29 Aug 2021 14:06:02 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:53932
+        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230010AbhH2SGA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 29 Aug 2021 13:41:40 -0400
-Received: from omf19.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay04.hostedemail.com (Postfix) with ESMTP id B923A18027C9F;
-        Sun, 29 Aug 2021 17:40:46 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf19.hostedemail.com (Postfix) with ESMTPA id 66BFF20D75C;
-        Sun, 29 Aug 2021 17:40:45 +0000 (UTC)
-Message-ID: <26dc72d60681346bf6db245a649b7e049e125d74.camel@perches.com>
-Subject: Re: [PATCH][next] igc: remove redundant continue statement
-From:   Joe Perches <joe@perches.com>
-To:     Colin King <colin.king@canonical.com>,
-        Jesse Brandeburg <jesse.brandeburg@intel.com>,
-        Tony Nguyen <anthony.l.nguyen@intel.com>,
+        Sun, 29 Aug 2021 14:06:00 -0400
+Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 51ABC3F101;
+        Sun, 29 Aug 2021 18:05:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1630260306;
+        bh=5xRSsNwOwnDTizm0g7YvHUz989lGjI0HmFERSykg4No=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=icGu6xT/3v5EVTU5eqCoiS/SUT+GBzzk8C4C9vrqV61fCfSUuUGGYZnyuqjGXIXAa
+         4ZRGqPTwazDTaFZy1rGaSRECho8HDeHCu2RuyjgrzI69ai6oME51A+l2rgNUhseVHi
+         rnNgiYgJ/zorLayPh/KZcnBida0W/Sld/xz8xm1qBXNpDYbIFj6em5lEyXmnUHYNY8
+         ZurntEBcQjn9D/ipmZjUlJ1fV6RXqEzyYuFn+fF7rXoTqpENEun7YCB93e+lRCvs6l
+         g//5nexOWoZXT5YYRQhHU5f5/84ExrlUqsf6J/BH+20dBbGToMErhg7RJKHTSfBsrB
+         irryICpIp5aLQ==
+From:   Colin King <colin.king@canonical.com>
+To:     Ping-Ke Shih <pkshih@realtek.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         "David S . Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>,
-        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Sun, 29 Aug 2021 10:40:44 -0700
-In-Reply-To: <20210829165150.531678-1-colin.king@canonical.com>
-References: <20210829165150.531678-1-colin.king@canonical.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.40.0-1 
+Subject: [PATCH][next] rtlwifi: rtl8192de: Fix uninitialized variable place
+Date:   Sun, 29 Aug 2021 19:05:03 +0100
+Message-Id: <20210829180503.533934-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Server: rspamout04
-X-Rspamd-Queue-Id: 66BFF20D75C
-X-Stat-Signature: j6to1aadtpf6rbmut9wqbdy98ukofpuf
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX1+PkvHXoZZ9biqHpZEZ8UQ0r++6zlQvJLM=
-X-HE-Tag: 1630258845-918920
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, 2021-08-29 at 17:51 +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The continue statement at the end of a for-loop has no effect,
-> remove it.
+From: Colin Ian King <colin.king@canonical.com>
 
-There seem to be a few of this type of use in the kernel.
+In the case where chnl <= 14 variable place is not initialized and
+the function returns an uninitialized value. This fixes an earlier
+cleanup where I introduced this bug. My bad.
 
-Many are in switch {} default: continue uses inside loops where there
-is no additional statement after the switch statement ends.
+Addresses-Coverity: ("Uninitialized scalar variable")
+Fixes: 369956ae5720 ("rtlwifi: rtl8192de: Remove redundant variable initializations")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/realtek/rtlwifi/rtl8192de/phy.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The continue is obviously safe and even perhaps preferred as statements
-_might_ be added after the switch end or test/continue use.
-
-But perhaps those should be converted to break;
-
-For instance: drivers/gpu/drm/zte/zx_vou.c
-
-static void zx_overlay_init(struct drm_device *drm, struct zx_vou_hw *vou)
-{
-	struct device *dev = vou->dev;
-	struct zx_plane *zplane;
-	int i;
-	int ret;
-
-	/*
-	 * VL0 has some quirks on scaling support which need special handling.
-	 * Let's leave it out for now.
-	 */
-	for (i = 1; i < VL_NUM; i++) {
-		zplane = devm_kzalloc(dev, sizeof(*zplane), GFP_KERNEL);
-		if (!zplane) {
-			DRM_DEV_ERROR(dev, "failed to allocate zplane %d\n", i);
-			return;
-		}
-
-		zplane->layer = vou->osd + OSD_VL_OFFSET(i);
-		zplane->hbsc = vou->osd + HBSC_VL_OFFSET(i);
-		zplane->rsz = vou->otfppu + RSZ_VL_OFFSET(i);
-		zplane->bits = &zx_vl_bits[i];
-
-		ret = zx_plane_init(drm, zplane, DRM_PLANE_TYPE_OVERLAY);
-		if (ret) {
-			DRM_DEV_ERROR(dev, "failed to init overlay %d\n", i);
-			continue;
-		}
-	}
-}
-
-Here's a grep using grep version 2.5.4 that finds these
-(with some false positives)
-
-$ grep-2.5.4 -rP --include=*.[ch] -n '\t{3,3}continue;\n\t{2,2}\}\n\t{1,1}\}' *
-arch/x86/events/intel/core.c:3408:			continue;
-		}
-	}
-arch/arm/mach-at91/pm.c:801:			continue;
-		}
-	}
-arch/powerpc/xmon/xmon.c:973:			continue;
-		}
-	}
-arch/powerpc/platforms/ps3/mm.c:450:			continue;
-		}
-	}
-arch/powerpc/platforms/powernv/opal-irqchip.c:286:			continue;
-		}
-	}
-drivers/net/vxlan.c:807:			continue;
-		}
-	}
-drivers/net/hamradio/6pack.c:450:			continue;
-		}
-	}
-drivers/net/wireless/ath/ath11k/mac.c:5369:			continue;
-		}
-	}
-drivers/net/wireless/ath/ath11k/mac.c:5403:			continue;
-		}
-	}
-drivers/net/wireless/ath/ath10k/mac.c:8646:			continue;
-		}
-	}
-drivers/net/wireless/ath/ath10k/mac.c:8687:			continue;
-		}
-	}
-drivers/net/geneve.c:513:			continue;
-		}
-	}
-drivers/net/ethernet/ti/netcp_core.c:331:			continue;
-		}
-	}
-drivers/net/ethernet/neterion/s2io.c:1392:			continue;
-		}
-	}
-drivers/net/ethernet/toshiba/ps3_gelic_wireless.c:1722:				continue;
-		}
-	}
-drivers/net/ethernet/mellanox/mlx5/core/en_tc.c:1633:			continue;
-		}
-	}
-drivers/net/ethernet/intel/ixgbe/ixgbe_main.c:9386:				continue;
-		}
-	}
-drivers/target/iscsi/iscsi_target_erl1.c:341:			continue;
-		}
-	}
-drivers/cpufreq/powernow-k8.c:848:			continue;
-		}
-	}
-drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:3179:			continue;
-		}
-	}
-drivers/iommu/intel/iommu.c:3082:			continue;
-		}
-	}
-drivers/soc/ti/knav_qmss_queue.c:724:			continue;
-		}
-	}
-drivers/mmc/host/vub300.c:561:			continue;
-		}
-	}
-drivers/mmc/host/vub300.c:1885:			continue;
-		}
-	}
-drivers/staging/rtl8188eu/core/rtw_efuse.c:552:			continue;
-		}
-	}
-drivers/staging/greybus/audio_helper.c:184:			continue;
-		}
-	}
-drivers/block/rbd.c:2443:			continue;
-		}
-	}
-drivers/clk/sunxi/clk-sun8i-bus-gates.c:89:			continue;
-		}
-	}
-drivers/clk/sunxi/clk-mod0.c:348:			continue;
-		}
-	}
-drivers/pci/controller/pci-hyperv.c:2056:			continue;
-		}
-	}
-drivers/scsi/mvumi.c:1595:				continue;
-		}
-	}
-drivers/scsi/fnic/fnic_fcs.c:654:			continue;
-		}
-	}
-drivers/scsi/qla4xxx/ql4_os.c:2795:			continue;
-		}
-	}
-drivers/scsi/megaraid/megaraid_mm.c:545:			continue;
-		}
-	}
-drivers/scsi/libsas/sas_expander.c:1202:			continue;
-		}
-	}
-drivers/usb/typec/tcpm/tcpm.c:3236:			continue;
-		}
-	}
-drivers/usb/host/fotg210-hcd.c:504:			continue;
-		}
-	}
-drivers/usb/host/ehci-dbg.c:610:			continue;
-		}
-	}
-drivers/usb/host/ohci-at91.c:549:			continue;
-		}
-	}
-drivers/usb/serial/mos7840.c:539:			continue;
-		}
-	}
-drivers/zorro/zorro.c:212:			continue;
-		}
-	}
-drivers/iio/dac/ad5592r-base.c:561:			continue;
-		}
-	}
-drivers/infiniband/hw/hfi1/init.c:1023:				continue;
-		}
-	}
-drivers/char/agp/isoch.c:377:				continue;
-		}
-	}
-drivers/gpu/drm/zte/zx_vou.c:666:			continue;
-		}
-	}
-drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c:10133:			continue;
-		}
-	}
-drivers/gpu/drm/nouveau/nvkm/subdev/i2c/base.c:360:			continue;
-		}
-	}
-drivers/tty/serial/jsm/jsm_neo.c:1227:			continue;
-		}
-	}
-drivers/platform/x86/sony-laptop.c:1413:			continue;
-		}
-	}
-drivers/platform/x86/sony-laptop.c:1494:			continue;
-		}
-	}
-drivers/platform/x86/sony-laptop.c:1532:			continue;
-		}
-	}
-drivers/spi/spi-fsi.c:438:			continue;
-		}
-	} while (seq_state && (seq_state != SPI_FSI_STATUS_SEQ_STATE_IDLE));
-drivers/comedi/drivers/ni_usb6501.c:497:			continue;
-		}
-	}
-drivers/comedi/drivers/vmk80xx.c:663:			continue;
-		}
-	}
-drivers/video/fbdev/core/fbcon.c:508:			continue;
-		}
-	}
-drivers/mtd/ubi/block.c:640:			continue;
-		}
-	}
-drivers/mtd/nand/raw/davinci_nand.c:337:			continue;
-		}
-	}
-drivers/mtd/parsers/bcm47xxpart.c:248:			continue;
-		}
-	}
-drivers/nvdimm/badrange.c:158:			continue;
-		}
-	}
-drivers/isdn/hardware/mISDN/hfcsusb.c:1927:			continue;
-		}
-	}
-drivers/input/joystick/grip.c:316:			continue;
-		}
-	}
-drivers/greybus/interface.c:1148:			continue;
-		}
-	}
-drivers/i2c/busses/i2c-powermac.c:366:			continue;
-		}
-	}
-drivers/pinctrl/pinctrl-zynq.c:1101:			continue;
-		}
-	}
-drivers/pinctrl/pinctrl-at91-pio4.c:895:			continue;
-		}
-	}
-drivers/bluetooth/btusb.c:1658:			continue;
-		}
-	}
-drivers/bluetooth/btusb.c:4302:			continue;
-		}
-	}
-drivers/bluetooth/btusb.c:4519:			continue;
-		}
-	}
-drivers/acpi/processor_perflib.c:617:			continue;
-		}
-	}
-drivers/leds/leds-da9052.c:139:			continue;
-		}
-	}
-fs/xfs/libxfs/xfs_sb.c:906:			continue;
-		}
-	}
-fs/9p/v9fs.c:369:			continue;
-		}
-	}
-fs/unicode/mkutf8data.c:1972:			continue;
-		}
-	}
-fs/unicode/mkutf8data.c:2032:			continue;
-		}
-	}
-fs/unicode/mkutf8data.c:2087:			continue;
-		}
-	}
-fs/unicode/mkutf8data.c:2285:			continue;
-		}
-	}
-fs/ocfs2/buffer_head_io.c:332:			continue;
-		}
-	}
-kernel/bpf/syscall.c:3432:			continue;
-		}
-	}
-kernel/range.c:109:			continue;
-		}
-	}
-kernel/trace/trace_events.c:2626:			continue;
-		}
-	}
-lib/test_rhashtable.c:437:				continue;
-		}
-	}
-net/dsa/dsa2.c:831:			continue;
-		}
-	}
-net/wireless/util.c:942:			continue;
-		}
-	}
-net/9p/client.c:214:			continue;
-		}
-	}
-net/9p/trans_fd.c:805:			continue;
-		}
-	}
-net/9p/trans_rdma.c:232:			continue;
-		}
-	}
-net/ipv4/fou.c:422:			continue;
-		}
-	}
-net/ipv4/udp_offload.c:557:			continue;
-		}
-	}
-net/ethernet/eth.c:438:			continue;
-		}
-	}
-net/tipc/name_distr.c:358:			continue;
-		}
-	}
-samples/seccomp/bpf-helper.c:57:			continue;
-		}
-	}
-tools/perf/builtin-script.c:3106:			continue;
-		}
-	}
-tools/perf/util/parse-events.c:505:				continue;
-		}
-	}
-tools/perf/util/jitdump.c:708:			continue;
-		}
-	}
-tools/perf/ui/browsers/hists.c:3543:			continue;
-		}
-	}
-tools/testing/radix-tree/regression3.c:54:			continue;
-		}
-	}
-tools/testing/radix-tree/regression3.c:67:			continue;
-		}
-	}
-tools/testing/selftests/net/mptcp/mptcp_connect.c:371:			continue;
-		}
-	}
-tools/testing/selftests/net/timestamping.c:546:			continue;
-		}
-	}
-tools/testing/selftests/powerpc/nx-gzip/gzip_vas.c:252:			continue;
-		}
-	}
-tools/power/cpupower/lib/cpupower.c:177:			continue;
-		}
-	}
-tools/lib/bpf/libbpf.c:7417:			continue;
-		}
-	}
-tools/lib/bpf/btf.c:928:			continue;
-		}
-	}
-tools/lib/bpf/linker.c:835:			continue;
-		}
-	}
-
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/phy.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/phy.c
+index 8ae69d914312..b32fa7a75f17 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/phy.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/phy.c
+@@ -896,7 +896,7 @@ static void _rtl92d_ccxpower_index_check(struct ieee80211_hw *hw,
+ 
+ static u8 _rtl92c_phy_get_rightchnlplace(u8 chnl)
+ {
+-	u8 place;
++	u8 place = chnl;
+ 
+ 	if (chnl > 14) {
+ 		for (place = 14; place < sizeof(channel5g); place++) {
+-- 
+2.32.0
 
