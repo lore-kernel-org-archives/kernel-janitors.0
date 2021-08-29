@@ -2,84 +2,61 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79ABBC43214
-	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 16:58:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ECF8C432BE
+	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 17:01:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 51B0060F46
-	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 16:58:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0EA1860724
+	for <kernel-janitors@archiver.kernel.org>; Sun, 29 Aug 2021 17:01:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235846AbhH2Q7k (ORCPT
+        id S230116AbhH2RCH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 29 Aug 2021 12:59:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54740 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229467AbhH2Q7j (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 29 Aug 2021 12:59:39 -0400
-Received: from jic23-huawei (cpc108967-cmbg20-2-0-cust86.5-4.cable.virginm.net [81.101.6.87])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BC74760698;
-        Sun, 29 Aug 2021 16:58:43 +0000 (UTC)
-Date:   Sun, 29 Aug 2021 18:01:58 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Colin King <colin.king@canonical.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH][next] iio: adc: Fix -EBUSY timeout error return
-Message-ID: <20210829180136.58a11601@jic23-huawei>
-In-Reply-To: <CA+V-a8ugKC8z2=0usUca4eYFLTHEorxdtmdmbE5vXZDo_Ob5vA@mail.gmail.com>
-References: <20210817172111.495897-1-colin.king@canonical.com>
-        <OSZPR01MB7019DD199CB1B9A4521A3C28AAFF9@OSZPR01MB7019.jpnprd01.prod.outlook.com>
-        <CAHp75VdWFTi4oSWG45NunJwpe=LdMhAMEAEJh21ML2QXszgS+A@mail.gmail.com>
-        <CA+V-a8ugKC8z2=0usUca4eYFLTHEorxdtmdmbE5vXZDo_Ob5vA@mail.gmail.com>
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.30; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Sun, 29 Aug 2021 13:02:07 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:51570 "EHLO
+        mail.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229467AbhH2RCG (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Sun, 29 Aug 2021 13:02:06 -0400
+Received: from localhost (cpc147930-brnt3-2-0-cust60.4-2.cable.virginm.net [86.15.196.61])
+        by mail.monkeyblade.net (Postfix) with ESMTPSA id A8B7F4D0F3490;
+        Sun, 29 Aug 2021 10:01:12 -0700 (PDT)
+Date:   Sun, 29 Aug 2021 18:01:06 +0100 (BST)
+Message-Id: <20210829.180106.1562823752050321630.davem@davemloft.net>
+To:     jiwonaid0@gmail.com
+Cc:     yoshfuji@linux-ipv6.org, dsahern@kernel.org, kuba@kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] ipv6: add spaces for accept_ra_min_hop_limit
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20210829053544.51149-1-jiwonaid0@gmail.com>
+References: <20210829053544.51149-1-jiwonaid0@gmail.com>
+X-Mailer: Mew version 6.8 on Emacs 27.2
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.2 (mail.monkeyblade.net [0.0.0.0]); Sun, 29 Aug 2021 10:01:14 -0700 (PDT)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 19 Aug 2021 18:39:02 +0100
-"Lad, Prabhakar" <prabhakar.csengg@gmail.com> wrote:
+From: jiwonaid0@gmail.com
+Date: Sun, 29 Aug 2021 14:35:44 +0900
 
-> On Thu, Aug 19, 2021 at 6:21 PM Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
-> >
-> > On Wed, Aug 18, 2021 at 6:51 PM Prabhakar Mahadev Lad
-> > <prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
-> >  
-> > > with the subject changed to above: Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>  
-> >  
-> Again with the above fixed:
-> Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> From: Jiwon Kim <jiwonaid0@gmail.com>
 > 
-> > Always put your tags in a single tag per single line. This will allow
-> > tools to catch them up automatically.
-> >  
-> My bad, fixed that now.
-
-Tweaked patch name as suggested and applied to the fixes-togreg branch of iio.git
-
-Too late to sneak this in pre merge window, so I'll do it after rc1.
-
-Thanks,
-
-Jonathan
-
+> The checkpatch reported
+> ERROR: spaces required around that '=' (ctx:VxW)
+> from the net/ipv6/addrconf.c.
 > 
-> Cheers,
-> Prabhakar
+> So, spaces are added for accept_ra_min_hop_limit.
+> 
+> Signed-off-by: Jiwon Kim <jiwonaid0@gmail.com>
+
+Please don't do this it breaks the vertical alignbment of the right hand side of
+the assignments.
+
+Thanks.
 
