@@ -2,129 +2,105 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76A10C432BE
-	for <kernel-janitors@archiver.kernel.org>; Mon, 30 Aug 2021 02:01:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F97BC432BE
+	for <kernel-janitors@archiver.kernel.org>; Mon, 30 Aug 2021 08:13:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 590CF60F23
-	for <kernel-janitors@archiver.kernel.org>; Mon, 30 Aug 2021 02:01:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4A7961004
+	for <kernel-janitors@archiver.kernel.org>; Mon, 30 Aug 2021 08:13:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236202AbhH3CCB (ORCPT
+        id S234591AbhH3IOl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 29 Aug 2021 22:02:01 -0400
-Received: from rtits2.realtek.com ([211.75.126.72]:48675 "EHLO
-        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235552AbhH3CCB (ORCPT
+        Mon, 30 Aug 2021 04:14:41 -0400
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:52588
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234166AbhH3IOl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 29 Aug 2021 22:02:01 -0400
-Authenticated-By: 
-X-SpamFilter-By: ArmorX SpamTrap 5.73 with qID 17U20muI6026661, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (rtexh36503.realtek.com.tw[172.21.6.25])
-        by rtits2.realtek.com.tw (8.15.2/2.71/5.88) with ESMTPS id 17U20muI6026661
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Mon, 30 Aug 2021 10:00:48 +0800
-Received: from RTEXMBS01.realtek.com.tw (172.21.6.94) by
- RTEXH36503.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.14; Mon, 30 Aug 2021 10:00:47 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXMBS01.realtek.com.tw (172.21.6.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2106.2; Mon, 30 Aug 2021 10:00:46 +0800
-Received: from RTEXMBS04.realtek.com.tw ([fe80::cdd5:82a3:e854:7098]) by
- RTEXMBS04.realtek.com.tw ([fe80::cdd5:82a3:e854:7098%5]) with mapi id
- 15.01.2106.013; Mon, 30 Aug 2021 10:00:46 +0800
-From:   Pkshih <pkshih@realtek.com>
+        Mon, 30 Aug 2021 04:14:41 -0400
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com [209.85.128.70])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 77A873F046
+        for <kernel-janitors@vger.kernel.org>; Mon, 30 Aug 2021 08:13:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1630311226;
+        bh=eSx3NUMPq83UK+z5+YBa3OObfzdkGkOX4S8bufFEz/Y=;
+        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+         In-Reply-To:Content-Type;
+        b=uEs3c3XaIrWd7WC+tPWJ45z5sYhMy6uLbBtZDqircY0A8aflGyqix0UpTy55CNbpj
+         45aX2Ss+RfrlYxXgnNQbrZ1Kn0QFcD74PwEQ10iuFkhD7b8p131hd2pDTeYF42+n2r
+         rZ4m3SCR+pn362X/UCMAyPOzTslhAWtLSkbu0WE64R9Dmk5JJPCZBherh2an5phK0+
+         FJg4cEwsQ6cyI2bUpczr3/RIO+5LrHvcTjPYYB2ZeHuBS8NikYUFA9/zWeyqQ/Eii9
+         Ym6wl+FmlHwKQuksD39x/M2nx1poWX8kqxR7ECN5kzGeMSUBpj/BRDlRqgoYRgqktj
+         Q5lgI9kV8NGwQ==
+Received: by mail-wm1-f70.google.com with SMTP id u14-20020a7bcb0e0000b0290248831d46e4so4248557wmj.6
+        for <kernel-janitors@vger.kernel.org>; Mon, 30 Aug 2021 01:13:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=eSx3NUMPq83UK+z5+YBa3OObfzdkGkOX4S8bufFEz/Y=;
+        b=P4OQ6VZM5ARco82VvhkMDtd5TzwRTCbutv0vFbENJIMvhwVOW+zqkDCIsPRbdAA/av
+         3+c0ahNZzHlep3+XooZwBc0Kn401IUdIObSHlf6OUaATvT11wImTMTbF2Nynq8eApWq/
+         mx8WN+iP7brd8A1WKME+8NPudmu23ybve3IEz2uze7kTtDIYjacuZUvXzyDaCguYf6Bl
+         KK2TpdL9Uq0r0ZNJrgtRwiPs1fKvzOjMpgg6+3RjEcr4en56fC5l3Q2/aRzy0ZKeyrEO
+         2fuTw+qX7yb0p6gkPzRDpL9RodF4/Kd5PE5xPbSlv6DF3DEvmEr/C9dird3ect5kpX6S
+         3IRg==
+X-Gm-Message-State: AOAM5303ospTkrHoufi9Xw8deveS9+iOt2bHKOaupmH3hlnELpPwWZw4
+        CsPBftxPQQFt2DNrWsH0uQ9uTqc8+HU1JyoRQPR1xqs/u2CzFu6derd8xa6+bkr0Zn1nOWXtN+K
+        PCY/xeEML6YnHcjmVoUFRQKJF/jwaHI6M65Jr3iXUUTmu0g==
+X-Received: by 2002:a05:600c:428a:: with SMTP id v10mr31271896wmc.25.1630311223532;
+        Mon, 30 Aug 2021 01:13:43 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJz6olxhDfz1lLDwfzLkp8OUNUr1AoxOLKW23LNJzBGbO3TIlKX5j+QsdumWOsvWLwaJ3ofS5Q==
+X-Received: by 2002:a05:600c:428a:: with SMTP id v10mr31271886wmc.25.1630311223430;
+        Mon, 30 Aug 2021 01:13:43 -0700 (PDT)
+Received: from [192.168.3.211] ([79.98.112.211])
+        by smtp.gmail.com with ESMTPSA id l1sm12582917wrb.15.2021.08.30.01.13.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Aug 2021 01:13:43 -0700 (PDT)
+Subject: Re: [PATCH] ASoC: samsung: s3c24xx_simtec: fix spelling mistake
+ "devicec" -> "device"
 To:     Colin King <colin.king@canonical.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-CC:     "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH][next] rtlwifi: rtl8192de: Fix uninitialized variable place
-Thread-Topic: [PATCH][next] rtlwifi: rtl8192de: Fix uninitialized variable
- place
-Thread-Index: AQHXnQBql2HJfhVS0UOTvovudWzUtauLSmYw
-Date:   Mon, 30 Aug 2021 02:00:46 +0000
-Message-ID: <9f09efe170cb450aa7a1927af58f005e@realtek.com>
-References: <20210829180503.533934-1-colin.king@canonical.com>
-In-Reply-To: <20210829180503.533934-1-colin.king@canonical.com>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.21.69.146]
-x-kse-serverinfo: RTEXMBS01.realtek.com.tw, 9
-x-kse-attachmentfiltering-interceptor-info: no applicable attachment filtering
- rules found
-x-kse-antivirus-interceptor-info: scan successful
-x-kse-antivirus-info: =?utf-8?B?Q2xlYW4sIGJhc2VzOiAyMDIxLzgvMjkg5LiL5Y2IIDExOjE4OjAw?=
-x-kse-bulkmessagesfiltering-scan-result: protection disabled
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210827185003.507006-1-colin.king@canonical.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Message-ID: <db203d28-5a90-401a-962a-aaebae5b6cb2@canonical.com>
+Date:   Mon, 30 Aug 2021 10:13:42 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-X-KSE-ServerInfo: RTEXH36503.realtek.com.tw, 9
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: protection disabled
-X-KSE-AntiSpam-Outbound-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 5.9.20, Database issued on: 08/30/2021 01:49:33
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 0
-X-KSE-AntiSpam-Info: Lua profiles 165836 [Aug 29 2021]
-X-KSE-AntiSpam-Info: Version: 5.9.20.0
-X-KSE-AntiSpam-Info: Envelope from: pkshih@realtek.com
-X-KSE-AntiSpam-Info: LuaCore: 457 457 f9912fc467375383fbac52a53ade5bbe1c769e2a
-X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;patchwork.kernel.org:7.1.1;127.0.0.199:7.1.2;realtek.com:7.1.1
-X-KSE-AntiSpam-Info: Rate: 0
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 08/30/2021 01:51:00
+In-Reply-To: <20210827185003.507006-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-DQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IENvbGluIEtpbmcgW21haWx0
-bzpjb2xpbi5raW5nQGNhbm9uaWNhbC5jb21dDQo+IFNlbnQ6IE1vbmRheSwgQXVndXN0IDMwLCAy
-MDIxIDI6MDUgQU0NCj4gVG86IFBrc2hpaDsgS2FsbGUgVmFsbzsgRGF2aWQgUyAuIE1pbGxlcjsg
-SmFrdWIgS2ljaW5za2k7IGxpbnV4LXdpcmVsZXNzQHZnZXIua2VybmVsLm9yZzsNCj4gbmV0ZGV2
-QHZnZXIua2VybmVsLm9yZw0KPiBDYzoga2VybmVsLWphbml0b3JzQHZnZXIua2VybmVsLm9yZzsg
-bGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZw0KPiBTdWJqZWN0OiBbUEFUQ0hdW25leHRdIHJ0
-bHdpZmk6IHJ0bDgxOTJkZTogRml4IHVuaW5pdGlhbGl6ZWQgdmFyaWFibGUgcGxhY2UNCj4gDQo+
-IEZyb206IENvbGluIElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQo+IA0KPiBJ
-biB0aGUgY2FzZSB3aGVyZSBjaG5sIDw9IDE0IHZhcmlhYmxlIHBsYWNlIGlzIG5vdCBpbml0aWFs
-aXplZCBhbmQNCj4gdGhlIGZ1bmN0aW9uIHJldHVybnMgYW4gdW5pbml0aWFsaXplZCB2YWx1ZS4g
-VGhpcyBmaXhlcyBhbiBlYXJsaWVyDQo+IGNsZWFudXAgd2hlcmUgSSBpbnRyb2R1Y2VkIHRoaXMg
-YnVnLiBNeSBiYWQuDQo+IA0KPiBBZGRyZXNzZXMtQ292ZXJpdHk6ICgiVW5pbml0aWFsaXplZCBz
-Y2FsYXIgdmFyaWFibGUiKQ0KPiBGaXhlczogMzY5OTU2YWU1NzIwICgicnRsd2lmaTogcnRsODE5
-MmRlOiBSZW1vdmUgcmVkdW5kYW50IHZhcmlhYmxlIGluaXRpYWxpemF0aW9ucyIpDQo+IFNpZ25l
-ZC1vZmYtYnk6IENvbGluIElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQo+IC0t
-LQ0KPiAgZHJpdmVycy9uZXQvd2lyZWxlc3MvcmVhbHRlay9ydGx3aWZpL3J0bDgxOTJkZS9waHku
-YyB8IDIgKy0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigt
-KQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L3dpcmVsZXNzL3JlYWx0ZWsvcnRsd2lm
-aS9ydGw4MTkyZGUvcGh5LmMNCj4gYi9kcml2ZXJzL25ldC93aXJlbGVzcy9yZWFsdGVrL3J0bHdp
-ZmkvcnRsODE5MmRlL3BoeS5jDQo+IGluZGV4IDhhZTY5ZDkxNDMxMi4uYjMyZmE3YTc1ZjE3IDEw
-MDY0NA0KPiAtLS0gYS9kcml2ZXJzL25ldC93aXJlbGVzcy9yZWFsdGVrL3J0bHdpZmkvcnRsODE5
-MmRlL3BoeS5jDQo+ICsrKyBiL2RyaXZlcnMvbmV0L3dpcmVsZXNzL3JlYWx0ZWsvcnRsd2lmaS9y
-dGw4MTkyZGUvcGh5LmMNCj4gQEAgLTg5Niw3ICs4OTYsNyBAQCBzdGF0aWMgdm9pZCBfcnRsOTJk
-X2NjeHBvd2VyX2luZGV4X2NoZWNrKHN0cnVjdCBpZWVlODAyMTFfaHcgKmh3LA0KPiANCj4gIHN0
-YXRpYyB1OCBfcnRsOTJjX3BoeV9nZXRfcmlnaHRjaG5scGxhY2UodTggY2hubCkNCj4gIHsNCj4g
-LQl1OCBwbGFjZTsNCj4gKwl1OCBwbGFjZSA9IGNobmw7DQo+IA0KPiAgCWlmIChjaG5sID4gMTQp
-IHsNCj4gIAkJZm9yIChwbGFjZSA9IDE0OyBwbGFjZSA8IHNpemVvZihjaGFubmVsNWcpOyBwbGFj
-ZSsrKSB7DQoNCk5hdGhhbiBDaGFuY2VsbG9yIGhhcyBzZW50IGEgcGF0Y2ggWzFdIHRvIGZpeCB0
-aGlzLCBhbmQgdGhlIHBhdGNoIA0KaGFzIGJlZW4gbWVyZ2VkLg0KDQpbMV0gaHR0cHM6Ly9wYXRj
-aHdvcmsua2VybmVsLm9yZy9wcm9qZWN0L2xpbnV4LXdpcmVsZXNzL3BhdGNoLzIwMjEwODIzMjIy
-MDE0Ljc2NDU1Ny0xLW5hdGhhbkBrZXJuZWwub3JnLw0KDQotLQ0KUGluZy1LZQ0KDQo=
+On 27/08/2021 20:50, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> There is a spelling mistake in a dev_err error message. Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  sound/soc/samsung/s3c24xx_simtec.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+
+
+Best regards,
+Krzysztof
