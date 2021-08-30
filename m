@@ -2,87 +2,92 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7A4DC4320E
-	for <kernel-janitors@archiver.kernel.org>; Mon, 30 Aug 2021 21:22:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6259C43214
+	for <kernel-janitors@archiver.kernel.org>; Mon, 30 Aug 2021 21:26:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AE97060E77
-	for <kernel-janitors@archiver.kernel.org>; Mon, 30 Aug 2021 21:22:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF96460525
+	for <kernel-janitors@archiver.kernel.org>; Mon, 30 Aug 2021 21:26:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237338AbhH3VX3 (ORCPT
+        id S238223AbhH3V1Q (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 30 Aug 2021 17:23:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60488 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230025AbhH3VX3 (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 30 Aug 2021 17:23:29 -0400
-Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F579C061575;
-        Mon, 30 Aug 2021 14:22:35 -0700 (PDT)
-Received: by mail-pl1-x629.google.com with SMTP id q21so9328649plq.3;
-        Mon, 30 Aug 2021 14:22:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Gx+f4gzusOR2tKDAjP+xRdZLA8qcZC7Zt4eF0MKqKkE=;
-        b=kSFwC6ghrMGuitpn0a8H2GVELVDGijuc5FFwWEaRdUGP7/BdPnxM5ROqRN4U/LxOhN
-         PPuEyeyQ+nEv6NHcrrxQbCHzVCiTtFYWOSqIZticf4p0otUb+TD7srPGdQcxnpE/GOom
-         4UtMwfupQ04OQq4CAukW8grcmsNIEeQ3TRv7bm/6yN6BSWcKBGfKqewBA9d6cUmMXJdm
-         Y3guRAILw6Vyggnk6alt3aNyvv8BNC/hkh7Kd/8ADnDFQijgSgji9w6ywK1KOl607p3i
-         jRvtCDwR0d6lEBC5ZrrJ/WsqBcdmeOYQcq7Diiub9UZC7Zrw8fhLkHkTAXnDiLZvQBrr
-         hHvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Gx+f4gzusOR2tKDAjP+xRdZLA8qcZC7Zt4eF0MKqKkE=;
-        b=ntmogueqS2uYC0Pw6qZnC1ee9n+QeL4xbyRMrJACN/a0l1QCFEBZg+ZNeESboKk8eP
-         hTrwtZAgJoVF2irKu0SEQfyuepFe/4N6chUYC1ryjdpMGJiZHW9rigJ3OivW4IgatSS0
-         4kva85W/WDh1brja4AjxMsjYoK8szmpl2AXXgksX62n4RMceetRS8QnHaBydbBZLzgDh
-         /QnziYdjtBMJ4EuhmUJ+cWN/9moPNjbqblBk+cYVslWom/bB50++v7fldJkS3HdyWFTa
-         20ZCETr4vXxu/bwc1eYtBaGh8cQ97Pb+O+tv9Ct4X27MpHBTc7fpbPqCHiqA1CV2rPvi
-         frNQ==
-X-Gm-Message-State: AOAM531HQ2I2PBWXPNhbNZEl9wcYBiGQjKDoHj6G3RDnBTkGAC6fYYll
-        OOBIXxfTaVpUJ2X+fWdSnokpt7Forco=
-X-Google-Smtp-Source: ABdhPJyHyA632gLgZPODsAAy+mqta2nstfTR1ytg9szYz7gZ7lFT/QHuZ9+oomn8TCRoe5BsEf/5tQ==
-X-Received: by 2002:a17:90a:5b0f:: with SMTP id o15mr1174799pji.97.1630358554604;
-        Mon, 30 Aug 2021 14:22:34 -0700 (PDT)
-Received: from google.com ([2620:15c:202:201:771a:afc8:2e96:23dd])
-        by smtp.gmail.com with ESMTPSA id v6sm8417193pfu.0.2021.08.30.14.22.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Aug 2021 14:22:33 -0700 (PDT)
-Date:   Mon, 30 Aug 2021 14:22:31 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     linux-input@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] input: remove dead CSR Prima2 PWRC driver
-Message-ID: <YS1MFw+WTXk/6o2A@google.com>
-References: <20210817072842.8640-1-lukas.bulwahn@gmail.com>
+        Mon, 30 Aug 2021 17:27:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50702 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S237570AbhH3V1E (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 30 Aug 2021 17:27:04 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 17E2060525;
+        Mon, 30 Aug 2021 21:26:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1630358770;
+        bh=cwTDsHGL0uCYft5qpdHjbNIwp0MPLb/NeC4IlzXPbNo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=OMD/Bldtwbh0cz/ugaAzy2JQL4ouL+iaip75YWkIFQ8b+5yOX9e/Sm7s9m0CO0S35
+         f4wSUfenfLbeIIHKb/WHUGRD4vI5x8vqGqR1CacYIkeP5cIFUBxb5v5xSzxVIXAkPd
+         SL4U5Oe9cI+FWcIc79vcLiOe3p/if2utElIM1AtJ3KOzAcBlP+j6F0gk+Drzyb3JBl
+         C0bclGwPCDDS/p+QLwg249mQJGwBQzFIIXgYJxxpEpDwAVoLdTTpUc73I/LlaVqbiD
+         UREItm5+4jmn30vushExlpp7P9aEj2Yxcp80pzgmSe5ldp02gs1805F2he6eVy0lu9
+         qcBZYrVbBQHVg==
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 7C8224007E; Mon, 30 Aug 2021 18:26:07 -0300 (-03)
+Date:   Mon, 30 Aug 2021 18:26:07 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-perf-users@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf header: Fix spelling mistake "cant'" -> "can't"
+Message-ID: <YS1M75hgstYhaOHd@kernel.org>
+References: <20210826121801.13281-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210817072842.8640-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20210826121801.13281-1-colin.king@canonical.com>
+X-Url:  http://acmel.wordpress.com
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Aug 17, 2021 at 09:28:42AM +0200, Lukas Bulwahn wrote:
-> Commit f3a732843acc ("ARM: remove sirf prima2/atlas platforms") removes
-> the config ARCH_SIRF in ./arch/arm/mach-prima2/Kconfig.
+Em Thu, Aug 26, 2021 at 01:18:01PM +0100, Colin King escreveu:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Hence, since then, the corresponding CSR Prima2 PWRC Driver is dead code.
-> Remove this dead driver.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> There is a spelling mistake in a warning message. Fix it.
 
-Applied, thank you.
+Thanks, applied.
+
+- Arnaldo
+
+ 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  tools/perf/util/header.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+> index 563dec72adeb..9016541c55f9 100644
+> --- a/tools/perf/util/header.c
+> +++ b/tools/perf/util/header.c
+> @@ -1284,7 +1284,7 @@ static int memory_node__read(struct memory_node *n, unsigned long idx)
+>  
+>  	dir = opendir(path);
+>  	if (!dir) {
+> -		pr_warning("failed: cant' open memory sysfs data\n");
+> +		pr_warning("failed: can't open memory sysfs data\n");
+>  		return -1;
+>  	}
+>  
+> -- 
+> 2.32.0
 
 -- 
-Dmitry
+
+- Arnaldo
