@@ -2,186 +2,292 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB213C4320E
-	for <kernel-janitors@archiver.kernel.org>; Tue, 31 Aug 2021 08:19:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CB1CC432BE
+	for <kernel-janitors@archiver.kernel.org>; Tue, 31 Aug 2021 08:22:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AC44F60F6C
-	for <kernel-janitors@archiver.kernel.org>; Tue, 31 Aug 2021 08:19:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D3B260FC0
+	for <kernel-janitors@archiver.kernel.org>; Tue, 31 Aug 2021 08:22:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240229AbhHaIUW (ORCPT
+        id S240253AbhHaIXV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 31 Aug 2021 04:20:22 -0400
-Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:22164 "EHLO
+        Tue, 31 Aug 2021 04:23:21 -0400
+Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:51160 "EHLO
         mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233064AbhHaIUR (ORCPT
+        by vger.kernel.org with ESMTP id S240109AbhHaIXU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 31 Aug 2021 04:20:17 -0400
+        Tue, 31 Aug 2021 04:23:20 -0400
 Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 17V56Lvc013840;
-        Tue, 31 Aug 2021 08:19:20 GMT
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 17V56JXO013830;
+        Tue, 31 Aug 2021 08:22:20 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : content-type : in-reply-to : mime-version;
- s=corp-2021-07-09; bh=Yd+EhFqRYN+2zCp/uKMVCxlgTVsR2M1NYROiyI9Tp0Y=;
- b=Pl+VtRViSwbTKvf8dvKskOpfHVvILExNT2HCoP4qC813lB9fCKWwfxxqWQBGdU5K8EGK
- KV+Flh0+k9/pvYQRZ9F31YeRZnlcPTxdtCM7qoH1+EU3IMZdbm2nVpn0S0zEy6ZBw4AB
- YifqSvrVhnJco47ItE+brvg3DKfuPY8ZL+gZStcWdp8c5FXd7nv0Mh0xEAj0QU5EPM9A
- JmNCKJ/IPmytNzCf5mxb+626jwbW/5TWsuAdhOJ6eYbU14viaJ4CL43KQtQP2gC0XiqW
- jzHdsVz3OXmt7a6QtusVM/7A7jf6YofaNaREsQuhKrvnNzezKD3KJG9SNbvGhCfxRRH1 zQ== 
+ : subject : message-id : content-type : mime-version; s=corp-2021-07-09;
+ bh=7nsLgLAk9cFd8zr4G2OEpexIKOsNlj5V8prmKJ7oDf8=;
+ b=auczSb7rJLZw1CuNr0YLU/ykvURQASc7ulufiuVCIiwjzi7lfNmZiuTl+NyYg02AvUIX
+ kL1EAp+UGrongn+AI9LyQYlSlLegYrfUd3V9vUeuaoNFOVoRQZPdvWLHvfPabmlBguFi
+ ott9OJ44L722Z0F0RWEyyqstqwm4xmuuixVq7hhUZz5sV4mAKaEC8ZOL7rsvoYypQwgZ
+ JvjstTjFTXXhTW5A39CJNEE8E5yHr3IH5t4qQFD+e4tZwKGI1RUlZKn+va8OxSh1Gb7b
+ Lce5Vn5b9dFm7Raq84v0LF0fAk3q3ngUX6n0i5gWOJw8nEvx3sWmhMIA1NAa7UtyERqm 5g== 
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : content-type : in-reply-to : mime-version;
- s=corp-2020-01-29; bh=Yd+EhFqRYN+2zCp/uKMVCxlgTVsR2M1NYROiyI9Tp0Y=;
- b=i5MlggFnCKdO8xmveO07wDtN+xBVhrm1fEiLE8K6XGo1uLxXguQpE6jeK1rmjf0b/dsN
- QEFqWKvFULJpp+Bs5FwsYUsbSmfVZUlnIshXrbAAxd8INazRLHIyVJIL5mZYeRkMIdIG
- 4dkirdWpAwXLo6qPd1YirfbWPOW2C0O7CF/tVZGXWeItznY1jfs/cZp+QI8K3ETA+Xyv
- M+Va402KfSxk3/kTkrB9UORSd76OXOGDgXrXd5ae9KBPcHDNFRKUs3hp9qp9Jl6vTOek
- Sdj/K4JXjCOmIT8NfoLJn46nH229fDVnhSBj9mkX+rxJZPSEvhFPBfaeVToGWz0WXCD9 nw== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by mx0b-00069f02.pphosted.com with ESMTP id 3ase028bqa-1
+ : subject : message-id : content-type : mime-version; s=corp-2020-01-29;
+ bh=7nsLgLAk9cFd8zr4G2OEpexIKOsNlj5V8prmKJ7oDf8=;
+ b=e2d7SHQcWJyi1/m6lqvF1wYhVNF4d5aYQVeuim1VTGy9Y1WOaOf9eBIJ5me79Z2aTXUj
+ T0O6sMrLFIAUaQK9yCHPAQDPM5CXraGLCpwk2t0kcpwFfrzIa0W7Z5LOKHBq7JTT8gCa
+ 9uqEDW8I/CFVhoLwIKL7MLt1XB/dEq2BfABi9/haYBzgRlCf4DRI1DBU95pcGArFyICD
+ chJpixigF2qxzfeJo5vpDmQDAQL+4Z7sNgZj+MoCoSLHIB3/P3lCUfMtDJ5lzkPisC61
+ o/jzHrr/WtoUCqySxQQs+8EjkMUisOlQb11bYqP5NMk15SL7G5/p18+EEdRfR5sw9PWq ow== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3ase028bxc-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 31 Aug 2021 08:19:20 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 17V8Fj8f099183;
-        Tue, 31 Aug 2021 08:19:19 GMT
-Received: from nam02-sn1-obe.outbound.protection.outlook.com (mail-sn1anam02lp2046.outbound.protection.outlook.com [104.47.57.46])
-        by aserp3030.oracle.com with ESMTP id 3aqb6dec06-1
+        Tue, 31 Aug 2021 08:22:20 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 17V8Fbhi128852;
+        Tue, 31 Aug 2021 08:22:19 GMT
+Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2046.outbound.protection.outlook.com [104.47.66.46])
+        by aserp3020.oracle.com with ESMTP id 3aqcy4a73t-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 31 Aug 2021 08:19:19 +0000
+        Tue, 31 Aug 2021 08:22:19 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=J1QtBD2JskpzRtoW+FKgeGmTQIeYcLYuI67bTn2qjezA3GkGICRmb8XGLWdic/XdG0/6a2mKOPHAeYilEe6ugwJwQN5MGxu19oN9kquoOiKP2+1C2cGl0fuuW43B+1Li+MFD+CPXUMrtaPNS3eGDbTzTGTSsmoXc445TLRL82xDM4Eqcu/kHAujMMeTfbJ9/cKtRcx3CkGsS8F9Q8EtF/aD/qkS7rCSSeadbT4gFtMf3kFz1SWCuDT83fe35Hj8luRrnu8eMeQczzm64/odqJEjphvVWry/TFivlAjZ4omq/Bnx4S91MlmH3nR3t8EOh/6ZrKmyK1jcHfwfd6yJNuA==
+ b=M0znO8SGtDYXiVE3Dh303iD1moxuUpOskx3xJ4KXGAN+Pv5IK2TqGg03QJyCGdViqGmj2b78fcMLmfhIxt8YqfmuEB+yOYzXMXQ/0NNOGUN94nFgMi/1hmIk/J12ELEMfHqVZT4h9IgdmYl6oshEu9x+PLJE/GWqIHqFNP+5dx3e5HLSN5ylS+8LsC5UXpWV0/T8BG3TA1YzfzF8KCrIbMq8Dlp9AttqbCpDKntUxqybmmMS6gaBnct5TwuzJ7ZFF4jv8rH/xyI6Cjj9AOjnvJVRKQnzWIDiFnYRtxQeUw3Q0sYmVfzT/QIAErp4cPQR46NHCSBVisI88hIZT7k+cA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Yd+EhFqRYN+2zCp/uKMVCxlgTVsR2M1NYROiyI9Tp0Y=;
- b=mVHCWjQgys6ewJvee4kbagMchdy7LCI3j+bmfG92isAflei8ZTj6BKrzUGgPFzQdIDNtkotqBwb8VKW0PhwmgtBCw7EnTJZp1B0HgdbPuBgRB/Zw7Fo34/DgB2U8bPYufvvkvtwS6qa02bib4yAad3Ebhc4PI7mszN80FB0EZLkHL7JmJNLMOJ3eI/WlwS1cdlzwAwfPas01vJ/74Tw9PaUEm+1iUeGwhGPwbatNus6Dlh1SS58SqRoD8oJMb9PhoUxGU5mIZIedaIh0ac74ySMMokItYf+s23aI5lIvEORpBVtKxz6OslJBlPtVF7ao3c8CjMLIpufFEsfeOsrJ7w==
+ bh=7nsLgLAk9cFd8zr4G2OEpexIKOsNlj5V8prmKJ7oDf8=;
+ b=jKxLxD08mSPdwGyQzdIMIg/L9jb/e6U6kjHxvwrOGhXnIg/Muae80ovV9MJSWK8uZOy4/bhBqSWKS/DgoskrrmHzO/a3NzoJXNcWP6Pnh6hdDxRW+Qzk+pe4Ai6cgEBfJIIfdEA4WmET/sg2B90nK1UQSPqW3DrCPHRj9OFFbQPgJVQT8XzY0dt9F46sUck0x8B57/VbA+40ukwaesf1LbvMTD1F/0OolLc6s4kUZsWvKXojVVUaoAT7Z1FkP1o2SaNrKFWyRROQ8yfM0Wvkd8e4E1l7ck0OfyUyGqGwIsTyvS3Y1HUjNFpGc5woOi0z/TL2idzqgW1LQb8+PHqysw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
  dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Yd+EhFqRYN+2zCp/uKMVCxlgTVsR2M1NYROiyI9Tp0Y=;
- b=eXg8hpCorOCn3yd1xwiKGAM/ZB3VDDAYPUgVTE4x/JsP5adpx7EKsoKRKQFRLYjcN75NCruQH9TWUQuDopwjwEa1isbV/8OfubyQOHieRHcS+LaUW/1J6B8iym0wld3WSxG2+qhWr0qqWOaXxH1xvQBRuzGs/lklI3KNajmzP6Q=
-Authentication-Results: intel.com; dkim=none (message not signed)
- header.d=none;intel.com; dmarc=none action=none header.from=oracle.com;
+ bh=7nsLgLAk9cFd8zr4G2OEpexIKOsNlj5V8prmKJ7oDf8=;
+ b=lnbSEYGpnKgZmEhWqGAxNnBy4YpuVfEhALnvnIwJhStzE1oNfnMvLA61rc22xDW0ghNsnop9wC3svUfCQNvCvyeBMDiTi5e+SmQrCrmISlWwzP/XUE3uTssLJH/5sd8waThmo2Z7p4KwEVtJNo/TokrMJTIEu9MBL+zak2mgi4c=
+Authentication-Results: infradead.org; dkim=none (message not signed)
+ header.d=none;infradead.org; dmarc=none action=none header.from=oracle.com;
 Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
  (2603:10b6:301:2d::28) by CO6PR10MB5412.namprd10.prod.outlook.com
  (2603:10b6:303:13c::19) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4457.21; Tue, 31 Aug
- 2021 08:19:18 +0000
+ 2021 08:22:17 +0000
 Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
  ([fe80::5820:e42b:73d7:4268]) by MWHPR1001MB2365.namprd10.prod.outlook.com
  ([fe80::5820:e42b:73d7:4268%7]) with mapi id 15.20.4478.019; Tue, 31 Aug 2021
- 08:19:17 +0000
-Date:   Tue, 31 Aug 2021 11:18:49 +0300
+ 08:22:17 +0000
+Date:   Tue, 31 Aug 2021 11:21:52 +0300
 From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Luca Coelho <luciano.coelho@intel.com>,
-        Johannes Berg <johannes.berg@intel.com>
-Cc:     Kalle Valo <kvalo@codeaurora.org>,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Sara Sharon <sara.sharon@intel.com>,
-        Mordechay Goodstein <mordechay.goodstein@intel.com>,
-        Nathan Errera <nathan.errera@intel.com>,
-        Dan Halperin <Dan1.Halperin@intel.com>,
-        Naftali Goldstein <naftali.goldstein@intel.com>,
-        linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH 2/2] iwlwifi: mvm: d3: missing unlock in
- iwl_mvm_wowlan_program_keys()
-Message-ID: <20210831081849.GB9846@kili>
+To:     peterz@infradead.org
+Cc:     kernel-janitors@vger.kernel.org
+Subject: [bug report] locking/rtmutex: Return success on deadlock for
+ ww_mutex waiters
+Message-ID: <20210831082152.GC9846@kili>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210831081802.GA9846@kili>
-X-Mailer: git-send-email haha only kidding
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-ClientProxiedBy: LO4P123CA0403.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:189::12) To MWHPR1001MB2365.namprd10.prod.outlook.com
+X-ClientProxiedBy: LO4P123CA0214.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:1a5::21) To MWHPR1001MB2365.namprd10.prod.outlook.com
  (2603:10b6:301:2d::28)
 MIME-Version: 1.0
-Received: from kili (2a02:6900:8208:1848::11d1) by LO4P123CA0403.GBRP123.PROD.OUTLOOK.COM (2603:10a6:600:189::12) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4478.17 via Frontend Transport; Tue, 31 Aug 2021 08:19:12 +0000
+Received: from kili (2a02:6900:8208:1848::11d1) by LO4P123CA0214.GBRP123.PROD.OUTLOOK.COM (2603:10a6:600:1a5::21) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4457.17 via Frontend Transport; Tue, 31 Aug 2021 08:22:15 +0000
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 60264798-69f4-435e-76cb-08d96c5806e1
+X-MS-Office365-Filtering-Correlation-Id: 6fa98da6-eb0b-411f-2254-08d96c5871d5
 X-MS-TrafficTypeDiagnostic: CO6PR10MB5412:
 X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <CO6PR10MB5412999064E7640A8645334A8ECC9@CO6PR10MB5412.namprd10.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:773;
+X-Microsoft-Antispam-PRVS: <CO6PR10MB541294F42BAAA7EF9F3D06D68ECC9@CO6PR10MB5412.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:608;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: GXEbIzobsY8QgLvvCzfAuorbJgHcrW0r/ilU1HtFxft1GRYG9FXU8nguajHm9wep3bnxM1gxg//jNj4FransYPkiYtNpEjiaq6baCiKKlSTYIKgOm+qBf/xjMEktSZ7ljRtjzn8+0fZ4GxUxbn75TmvQJ/CzNG+1Uk42aP4sFirlzMuIAbOCqRnFTsjqrTj4e6XhA7dOcaQrdwTm7/r6hAoYf3FAudLn0Fo9XUU5e/3qce0MjCNMwEEW4O4WE1nd423Vac/Jl62YYOUfWtbnq+WmVYeyld1gbhxEwe6PQjdl5kOBL5Q/06ohK3uFNTuKU2xnwHNcmOSzwGsKUh4wYCeq4paWxGZDw0Uk3FG/3ihetOPQWcM9iGW7QM55LnYlOHs01Fk8UWSw+9PXDyQwY59YNGdiOXD/G8+GG7c4iF4qkx7a/K+I3pNUPynpV5cmkT9frAVjnG7lPZgnRCcwKXTCwjmkAwEamOdtXgMjpg8V+H/fnSeKYzuzNxD5udSub60VK75fwfuHBMYYcBvQ4UTw3cFU8wB2i82Uz70dS0qQdDpDIhxnb2oZj/nGqEQoxD3v3Gal/U2q1uUESr59thrDC6cjPGE+0DRaZYDnwuuSM34EB8lWy0idahUfyOLCH1TkK+jkZ0MD1FKyz9hF8w==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(136003)(366004)(39860400002)(346002)(396003)(376002)(2906002)(6666004)(86362001)(66476007)(110136005)(33656002)(9686003)(54906003)(5660300002)(7416002)(66556008)(8936002)(4326008)(38100700002)(4744005)(186003)(66946007)(8676002)(44832011)(33716001)(478600001)(83380400001)(55016002)(52116002)(9576002)(1076003)(6496006)(316002);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: 4qlq9OqWHviCAuRrNfaJUEMz07HWppmMWs+spcZUN9fPhTDQqPLVAoN4KIW3mkbcW9tskcayMqT+1ODO1reDNGQevIInaIcNlwkciGE5r76hCU/qswf5zM0cRXU72ZSQ54XgBCgcmv+hDcN1mb3XCY+GemDv9s61smzM+G+pRPNIfGPRbuxuK1+83Nxq3PkVY68lKOoHNyHgjp6/NWF67DJR6nqG8bEOm+8gGQlyNA7ZgUor3Jc5rkthgI6FilzA+AEsowIC+8J4TN5vw+ONF53iOGmOxyEl09Tn17pNkGg2rk4KJAz+MWEKjEyAOEQNNu4ZEWmC8rYoKn2i6+ccVQf4ZvChv3Pt8wfdq9mUbCypk0u4ftJ+Dm5Cc+pnBVjfR/ilkE//PiORL6g1Ege0Rghp34NNN9qGYoybWPPiXQqDoDhIve0yJ7wCtT9KQiVf7jXpXD5BWtG/a1ZfYbtxgWOI7QesvPsmLMZawuyiVqvHHzlccEQpXEPpwKtMEv9bX0KPaXrXUIVgq9+VNPQccQ6HTAut4SLaoy5Br5zPxkqXew28EabugnyQ/7ts4DTVr6h+oOnyHrQcFgsKh2A6iNXGJVExKXUWse1J/z5QXF6zsSfYa3hh8EUmPr6gFqgBAABmUBqFBW0tjFrAxox60w==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(136003)(366004)(39860400002)(346002)(396003)(376002)(2906002)(6666004)(86362001)(6916009)(66476007)(33656002)(9686003)(5660300002)(66556008)(8936002)(4326008)(38100700002)(186003)(66946007)(8676002)(44832011)(33716001)(478600001)(83380400001)(55016002)(52116002)(9576002)(1076003)(6496006)(316002);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Ow9nLBeWZENVni+zsilsPUaAumrTvKt1gH4RluxjaEBSZxHLszjt2yFF+Tmr?=
- =?us-ascii?Q?5HOr8SPkAyHFNbTZJQ1QCgec0ew4EIO4L0Sl8KMBmZAyHDgdziDL28xK1Azz?=
- =?us-ascii?Q?5syODXI+cLvmiy8Q+Fv4wnU6ZjMKwBmroOt72SUG1anjz8H/BnA15XqBbm5Z?=
- =?us-ascii?Q?wX/ZEDBOZriglzenvXSbXempNWhs+BWUeluoBjhFrPtt2VVP4BCLiosxmk/w?=
- =?us-ascii?Q?m1ieKCYY+0EaRd9kwmx/gZdZ8Nwtb+BHvvIQVzfXKqSjnK3vF6V6F6SVQuY4?=
- =?us-ascii?Q?hk1fBkZBpjdLiKfdV/uPGrchWJHczosuN60CENTYUgEK4OQ2a2Ivm74Al24M?=
- =?us-ascii?Q?opADKXb5G4IVpPRu57/Nqdbys9cFwoohc08ufepREj51A4OFIwwTGEr373ec?=
- =?us-ascii?Q?otny4xMmAi+W+eTxhF8megjwPBP1BBRrRpCebrPmYjRxCvXUHj5im/W8W2CG?=
- =?us-ascii?Q?6ebZ47SbZuo8rtNOHQiGPfuaUBbogPn7P5/+mdvrP71X5UdCdJpZ+m1Qflen?=
- =?us-ascii?Q?gWQPVnnxAroR6edlxwU+szU2MmJzIqJnHnU16aqjyzBrvljTJk1c7CpGwxUR?=
- =?us-ascii?Q?EZU8WG4xtcValmp3nCjCX/N9m3WNFjwzyVCzvvrBgEnpD7FBN6IlzsLj03b1?=
- =?us-ascii?Q?o/qitQMyYBiNMCchsdAkKEYTfWVCICtuFaa6AInZJKehsuPXe+qzcdtY1Jxn?=
- =?us-ascii?Q?Nl6Ic5IeH/ehC/1c3+6LWSyEanK5WKnRkQ8rHBzGi+Dr+kiB41wRfC4N8b4x?=
- =?us-ascii?Q?wg4EYfnUWt7fwZW80u6f64Cw3CJgsGKDT81C+QV2sctdpxK4+D/xUfCdJuvt?=
- =?us-ascii?Q?yEas6PsRy24/fYr2JoyeqFEr3wZ7ageOKCqXNk2k5gFSqXamDtB3tVG8fRZk?=
- =?us-ascii?Q?9EdGOKEgfyuEvwwHJjYDEnSZvjo20JMt3CilNd5l7+fSo5oSMeNkfXzDevLD?=
- =?us-ascii?Q?lsVXjlclIdJAvFqRE1syTfiw2yVm5CRqenZCuQdDG/W2eiL/Cz3G+CkvB7al?=
- =?us-ascii?Q?oBZKBwPPRBuiVYQ9lHvsMs5rNrZFaJ4BvpsQbOMTW1bwRCsgjKqwTWjfD+Hj?=
- =?us-ascii?Q?8K2cuMJ2xI4xgeWwQYyq2lisiHbiyq9IXv5n23FXfMAmq9k0MHkteJbQ5MU5?=
- =?us-ascii?Q?1cC/KdGUy0IQ78P6m02H6oPnygzsi4zbdAzzsj92ciArYSWM3PIJjH4wP1ow?=
- =?us-ascii?Q?SDnNFjdVqzQ43aJJnFxTHA+pgY1O7f5bDQR/hxBdnbqlUwzscXTRC8XzgOpX?=
- =?us-ascii?Q?fUQ+3TeT3pQodOU14grjGf0GJwj3ibE98DHjMmIFsDNs+l+U9i3pnQ5TpUIu?=
- =?us-ascii?Q?BvcxtngX+4V03yhUNC3ZZAkLHNn5a3s/tZEW73mhQ9Sj1MuE0+FXHClkwsNO?=
- =?us-ascii?Q?j3IXB2w=3D?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?OL3mD1kz+ZzoYyHGlFddRxu47b8/kgmxDMF6Av75pwEnxDdsdBRNjheUkDU9?=
+ =?us-ascii?Q?VFU2VPKk3u37i9TKN6dw9UZU0jbGwr9m4SVMpjqwKkQPIYJ0ponubGsTeBRl?=
+ =?us-ascii?Q?4MOUq/joMcneXq43Om23yntIqIoBhG6UzASx9Jsy84QOtnjnKq9xqEulK1Vu?=
+ =?us-ascii?Q?wbscjnr3BqBzN+NIwJjmmzDUCSOvyaq5vlZuDQbellB5gvL7TMlrGNb+/jyc?=
+ =?us-ascii?Q?40gq+8pXuB9vBO61mwUH7lbvEn1QDpM3yMvgkwMjlsjaqHdVWBRtJsQRjnXQ?=
+ =?us-ascii?Q?wyK8LhSr9ypa2KuOwRmJNwpvNRJDV0O+JVJuSvX2guaXfwMBU4xW21NuMNo4?=
+ =?us-ascii?Q?4SbohEuVhyrVAZ/kuK1+FmFpp9+wXzoAMtGq2E9YR3HAtWAPUSlvR8d2vDKk?=
+ =?us-ascii?Q?3V2FZTsqd8GgzK4xSBri5r4JAJf1Bj19sGYf9VUU8W+S2uIDONs4Q2OCNppg?=
+ =?us-ascii?Q?V0ZCzolLlSJXwD/2goiVjoG/ibopZD375L1nVeSeiJC6uciepf0u5YtlCxB8?=
+ =?us-ascii?Q?22HVirjVH2JPFsRu7cEf5e9THz+jIQtdZuKgCFPjSgno8FFPEl+VN/n/eEHu?=
+ =?us-ascii?Q?cNlJz0JV0HkG8aLbymFRlmFiSBl9r7fj9/cQd9aq30ZIo1dsGF9u86JZon7f?=
+ =?us-ascii?Q?uvy4/viGo9+XcvSO4QpGhSlvxXTLUY70qvbdz3NmOJ2hDm4+jkzldhutjBju?=
+ =?us-ascii?Q?9l8/gAh2PYx45ofkyxv9sWf60LqOlVVfiQzTwjlrlChxWQOdvjcP/q8Xqa4C?=
+ =?us-ascii?Q?2waKkPq0NkqhNMkTERzw0VatHHphRhkZRon/J06ak3vBePZX04lOtpVDReKg?=
+ =?us-ascii?Q?dLCMOip3GtSQkXFyLaE3RxYg1iHinlvakbXrR+Sd5vZr8SmPzckl4o0265Fq?=
+ =?us-ascii?Q?czuqb2PpAhoM37BRbWeLfUGoYVRGqkIOxmyBgggiLa4d2HzzENsr7FOt53/z?=
+ =?us-ascii?Q?4MY3VboajzAXeAAHNDUZAn4svSqalxgaodr7AXvXHpUCdpYawixDqkmo5I5N?=
+ =?us-ascii?Q?UIlZrn1js4n73bEOjQAPhPUyq4tZLuJmbRLbEmyc455fk7pkoJjQLS0U4Srs?=
+ =?us-ascii?Q?OM2B8+0FaGYI1N3Z31gjZv1pLvY9o1lL+Uml394X2eq7fCxMSFg9m7Wu9nT2?=
+ =?us-ascii?Q?BDGSB+r6E+yNj0OF8NJ6Ck+8O7Gz+paOEm2sNHcTQPtXp2hD03lp3S/1r9KS?=
+ =?us-ascii?Q?z7+9jy2KsVrjBAhiryn9yZ5/mCW1TeCS/R9Qh6F1YHC4gSH2it94syPQqiiH?=
+ =?us-ascii?Q?RPmVjR4udZuU9jJxmd3vAPlpU87QiGkgm5DIGpVBkXmdw6wxgm8MDPrRrEVo?=
+ =?us-ascii?Q?4AGMgSlCnUF8gNE6gjQCrGlVCp0cz5mER8bHJHtZBjMcjRdza6uJ+W872DG+?=
+ =?us-ascii?Q?DyUjFPk=3D?=
 X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 60264798-69f4-435e-76cb-08d96c5806e1
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6fa98da6-eb0b-411f-2254-08d96c5871d5
 X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Aug 2021 08:19:17.9276
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Aug 2021 08:22:17.3490
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2NUkgda7MbDIZ99LInZz4bFixyJYc9GQ5mLDcvDyUEgwAuNso/FkH3nj2FfPYG4TtBZIgOBtz13p6bSWVhJkBBgwxrbotK9Q7gbM4tb5QLk=
+X-MS-Exchange-CrossTenant-UserPrincipalName: tlscJDQZCQkVG6y+aP0GCbbPRGA92ec6EMx8e+b+2dmwn26xaLVX0Bk4dkrd8bzF23MMTmZpnVIvUOw5ZRdEjvGjg1PbxKyIAU44PLtk6QY=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO6PR10MB5412
 X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10092 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 phishscore=0 suspectscore=0
- adultscore=0 mlxscore=0 mlxlogscore=999 malwarescore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2107140000
- definitions=main-2108310047
-X-Proofpoint-GUID: VRCXGZSsloA6FlLj4eO27lLB25eMLUzd
-X-Proofpoint-ORIG-GUID: VRCXGZSsloA6FlLj4eO27lLB25eMLUzd
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 suspectscore=0
+ phishscore=0 mlxscore=0 malwarescore=0 mlxlogscore=999 bulkscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2107140000 definitions=main-2108310047
+X-Proofpoint-GUID: 4cPp3NUay-xSgK9p45QAMMnzYptR9J7v
+X-Proofpoint-ORIG-GUID: 4cPp3NUay-xSgK9p45QAMMnzYptR9J7v
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This code was refactored and the mutex_unlock(&mvm->mutex); was
-accidentally deleted.
+Hello Peter Zijlstra,
 
-Fixes: af3aab9ce298 ("iwlwifi: mvm: d3: make key reprogramming iteration optional")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/net/wireless/intel/iwlwifi/mvm/d3.c | 1 +
- 1 file changed, 1 insertion(+)
+This is a semi-automatic email about new static checker warnings.
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/d3.c b/drivers/net/wireless/intel/iwlwifi/mvm/d3.c
-index 6e3a63a5a75c..9f706fffb592 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/d3.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/d3.c
-@@ -160,6 +160,7 @@ static void iwl_mvm_wowlan_program_keys(struct ieee80211_hw *hw,
- 		mvm->ptk_icvlen = key->icv_len;
- 		mvm->gtk_ivlen = key->iv_len;
- 		mvm->gtk_icvlen = key->icv_len;
-+		mutex_unlock(&mvm->mutex);
- 
- 		/* don't upload key again */
- 		return;
--- 
-2.20.1
+The patch a055fcc132d4: "locking/rtmutex: Return success on deadlock
+for ww_mutex waiters" from Aug 26, 2021, leads to the following
+Smatch complaint:
 
+    kernel/locking/rtmutex.c:756 rt_mutex_adjust_prio_chain()
+    error: we previously assumed 'orig_waiter' could be null (see line 644)
+
+kernel/locking/rtmutex.c
+   643		 */
+   644		if (orig_waiter && !rt_mutex_owner(orig_lock))
+                    ^^^^^^^^^^^
+A lot of this code assumes "orig_waiter" can be NULL.
+
+   645			goto out_unlock_pi;
+   646	
+   647		/*
+   648		 * We dropped all locks after taking a refcount on @task, so
+   649		 * the task might have moved on in the lock chain or even left
+   650		 * the chain completely and blocks now on an unrelated lock or
+   651		 * on @orig_lock.
+   652		 *
+   653		 * We stored the lock on which @task was blocked in @next_lock,
+   654		 * so we can detect the chain change.
+   655		 */
+   656		if (next_lock != waiter->lock)
+   657			goto out_unlock_pi;
+   658	
+   659		/*
+   660		 * There could be 'spurious' loops in the lock graph due to ww_mutex,
+   661		 * consider:
+   662		 *
+   663		 *   P1: A, ww_A, ww_B
+   664		 *   P2: ww_B, ww_A
+   665		 *   P3: A
+   666		 *
+   667		 * P3 should not return -EDEADLK because it gets trapped in the cycle
+   668		 * created by P1 and P2 (which will resolve -- and runs into
+   669		 * max_lock_depth above). Therefore disable detect_deadlock such that
+   670		 * the below termination condition can trigger once all relevant tasks
+   671		 * are boosted.
+   672		 *
+   673		 * Even when we start with ww_mutex we can disable deadlock detection,
+   674		 * since we would supress a ww_mutex induced deadlock at [6] anyway.
+   675		 * Supressing it here however is not sufficient since we might still
+   676		 * hit [6] due to adjustment driven iteration.
+   677		 *
+   678		 * NOTE: if someone were to create a deadlock between 2 ww_classes we'd
+   679		 * utterly fail to report it; lockdep should.
+   680		 */
+   681		if (IS_ENABLED(CONFIG_PREEMPT_RT) && waiter->ww_ctx && detect_deadlock)
+   682			detect_deadlock = false;
+   683	
+   684		/*
+   685		 * Drop out, when the task has no waiters. Note,
+   686		 * top_waiter can be NULL, when we are in the deboosting
+   687		 * mode!
+   688		 */
+   689		if (top_waiter) {
+   690			if (!task_has_pi_waiters(task))
+   691				goto out_unlock_pi;
+   692			/*
+   693			 * If deadlock detection is off, we stop here if we
+   694			 * are not the top pi waiter of the task. If deadlock
+   695			 * detection is enabled we continue, but stop the
+   696			 * requeueing in the chain walk.
+   697			 */
+   698			if (top_waiter != task_top_pi_waiter(task)) {
+   699				if (!detect_deadlock)
+   700					goto out_unlock_pi;
+   701				else
+   702					requeue = false;
+   703			}
+   704		}
+   705	
+   706		/*
+   707		 * If the waiter priority is the same as the task priority
+   708		 * then there is no further priority adjustment necessary.  If
+   709		 * deadlock detection is off, we stop the chain walk. If its
+   710		 * enabled we continue, but stop the requeueing in the chain
+   711		 * walk.
+   712		 */
+   713		if (rt_mutex_waiter_equal(waiter, task_to_waiter(task))) {
+   714			if (!detect_deadlock)
+   715				goto out_unlock_pi;
+   716			else
+   717				requeue = false;
+   718		}
+   719	
+   720		/*
+   721		 * [4] Get the next lock
+   722		 */
+   723		lock = waiter->lock;
+   724		/*
+   725		 * [5] We need to trylock here as we are holding task->pi_lock,
+   726		 * which is the reverse lock order versus the other rtmutex
+   727		 * operations.
+   728		 */
+   729		if (!raw_spin_trylock(&lock->wait_lock)) {
+   730			raw_spin_unlock_irq(&task->pi_lock);
+   731			cpu_relax();
+   732			goto retry;
+   733		}
+   734	
+   735		/*
+   736		 * [6] check_exit_conditions_2() protected by task->pi_lock and
+   737		 * lock->wait_lock.
+   738		 *
+   739		 * Deadlock detection. If the lock is the same as the original
+   740		 * lock which caused us to walk the lock chain or if the
+   741		 * current lock is owned by the task which initiated the chain
+   742		 * walk, we detected a deadlock.
+   743		 */
+   744		if (lock == orig_lock || rt_mutex_owner(lock) == top_task) {
+                    ^^^^^^^^^^^^^^^^^
+This might mean it's a false positive, but Smatch isn't clever enough to
+figure it out.  And I'm stupid too!  Plus lazy...  and ugly.
+
+   745			ret = -EDEADLK;
+   746	
+   747			/*
+   748			 * When the deadlock is due to ww_mutex; also see above. Don't
+   749			 * report the deadlock and instead let the ww_mutex wound/die
+   750			 * logic pick which of the contending threads gets -EDEADLK.
+   751			 *
+   752			 * NOTE: assumes the cycle only contains a single ww_class; any
+   753			 * other configuration and we fail to report; also, see
+   754			 * lockdep.
+   755			 */
+   756			if (IS_ENABLED(CONFIG_PREEMPT_RT) && orig_waiter->ww_ctx)
+                                                             ^^^^^^^^^^^^^^^^^^^
+Unchecked dereference.
+
+   757				ret = 0;
+   758	
+
+regards,
+dan carpenter
