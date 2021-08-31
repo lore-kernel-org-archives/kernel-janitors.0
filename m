@@ -2,92 +2,75 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6259C43214
-	for <kernel-janitors@archiver.kernel.org>; Mon, 30 Aug 2021 21:26:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15ADEC432BE
+	for <kernel-janitors@archiver.kernel.org>; Tue, 31 Aug 2021 03:40:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CF96460525
-	for <kernel-janitors@archiver.kernel.org>; Mon, 30 Aug 2021 21:26:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E345E61039
+	for <kernel-janitors@archiver.kernel.org>; Tue, 31 Aug 2021 03:40:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238223AbhH3V1Q (ORCPT
+        id S239603AbhHaDlC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 30 Aug 2021 17:27:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50702 "EHLO mail.kernel.org"
+        Mon, 30 Aug 2021 23:41:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43996 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237570AbhH3V1E (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 30 Aug 2021 17:27:04 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 17E2060525;
-        Mon, 30 Aug 2021 21:26:10 +0000 (UTC)
+        id S239585AbhHaDlA (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 30 Aug 2021 23:41:00 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPS id 8B9AF60462;
+        Tue, 31 Aug 2021 03:40:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1630358770;
-        bh=cwTDsHGL0uCYft5qpdHjbNIwp0MPLb/NeC4IlzXPbNo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=OMD/Bldtwbh0cz/ugaAzy2JQL4ouL+iaip75YWkIFQ8b+5yOX9e/Sm7s9m0CO0S35
-         f4wSUfenfLbeIIHKb/WHUGRD4vI5x8vqGqR1CacYIkeP5cIFUBxb5v5xSzxVIXAkPd
-         SL4U5Oe9cI+FWcIc79vcLiOe3p/if2utElIM1AtJ3KOzAcBlP+j6F0gk+Drzyb3JBl
-         C0bclGwPCDDS/p+QLwg249mQJGwBQzFIIXgYJxxpEpDwAVoLdTTpUc73I/LlaVqbiD
-         UREItm5+4jmn30vushExlpp7P9aEj2Yxcp80pzgmSe5ldp02gs1805F2he6eVy0lu9
-         qcBZYrVbBQHVg==
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 7C8224007E; Mon, 30 Aug 2021 18:26:07 -0300 (-03)
-Date:   Mon, 30 Aug 2021 18:26:07 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-perf-users@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf header: Fix spelling mistake "cant'" -> "can't"
-Message-ID: <YS1M75hgstYhaOHd@kernel.org>
-References: <20210826121801.13281-1-colin.king@canonical.com>
+        s=k20201202; t=1630381205;
+        bh=QMA1pgfvnMOipT1nI60E9hxKbksLelRwRSZMWdWwcQw=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=Ko55ltK0/St1KwTbHgfzVAAxQI8aDwz4cQfqyXw1my9YY0p2LJJSPEWv7J5n4WFbL
+         NNmRrVuxL4zRdovdUZCihSdreLa0xZyNxCXsl4lmVDAWZEygUUV62oDA0W5zEubDYi
+         U3X+LY3Qyp+TOTenm/ip/UDcfbkeeNipc5nN4s/pkBH6IJWQbrBjqk9wsWu/7GQRDo
+         zL0if8NZfRhuGQbjPaKbOpL91jHycIVnc1Y7PPQvDm3pFZLOoeKQi90wtpxlemzMk1
+         OlLXDlBKVKfRRFMqdyRJQEf8jqKjyc0cOMLthGK2kF83twqV0V32wjp38OSOvleq1d
+         LSg9zUZO1GsVg==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210826121801.13281-1-colin.king@canonical.com>
-X-Url:  http://acmel.wordpress.com
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] net: pasemi: Remove usage of the deprecated
+ "pci-dma-compat.h" API
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <163038120552.6773.17379374369003836648.git-patchwork-notify@kernel.org>
+Date:   Tue, 31 Aug 2021 03:40:05 +0000
+References: <bc6cd281eae024b26fd9c7ef6678d2d1dc9d74fd.1630150008.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <bc6cd281eae024b26fd9c7ef6678d2d1dc9d74fd.1630150008.git.christophe.jaillet@wanadoo.fr>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     davem@davemloft.net, kuba@kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Em Thu, Aug 26, 2021 at 01:18:01PM +0100, Colin King escreveu:
-> From: Colin Ian King <colin.king@canonical.com>
+Hello:
+
+This patch was applied to netdev/net-next.git (refs/heads/master):
+
+On Sat, 28 Aug 2021 13:28:48 +0200 you wrote:
+> In [1], Christoph Hellwig has proposed to remove the wrappers in
+> include/linux/pci-dma-compat.h.
 > 
-> There is a spelling mistake in a warning message. Fix it.
-
-Thanks, applied.
-
-- Arnaldo
-
- 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  tools/perf/util/header.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Some reasons why this API should be removed have been given by Julia
+> Lawall in [2].
 > 
-> diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-> index 563dec72adeb..9016541c55f9 100644
-> --- a/tools/perf/util/header.c
-> +++ b/tools/perf/util/header.c
-> @@ -1284,7 +1284,7 @@ static int memory_node__read(struct memory_node *n, unsigned long idx)
->  
->  	dir = opendir(path);
->  	if (!dir) {
-> -		pr_warning("failed: cant' open memory sysfs data\n");
-> +		pr_warning("failed: can't open memory sysfs data\n");
->  		return -1;
->  	}
->  
-> -- 
-> 2.32.0
+> A coccinelle script has been used to perform the needed transformation
+> Only relevant parts are given below.
+> 
+> [...]
 
--- 
+Here is the summary with links:
+  - net: pasemi: Remove usage of the deprecated "pci-dma-compat.h" API
+    https://git.kernel.org/netdev/net-next/c/a16ef91aa61a
 
-- Arnaldo
+You are awesome, thank you!
+--
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
