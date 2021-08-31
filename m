@@ -2,113 +2,130 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82FCBC432BE
-	for <kernel-janitors@archiver.kernel.org>; Tue, 31 Aug 2021 13:42:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B820C4320E
+	for <kernel-janitors@archiver.kernel.org>; Tue, 31 Aug 2021 14:15:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5510B61008
-	for <kernel-janitors@archiver.kernel.org>; Tue, 31 Aug 2021 13:42:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3AF7860E98
+	for <kernel-janitors@archiver.kernel.org>; Tue, 31 Aug 2021 14:15:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237475AbhHaNnd (ORCPT
+        id S235756AbhHaOQr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 31 Aug 2021 09:43:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54506 "EHLO
+        Tue, 31 Aug 2021 10:16:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34716 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237059AbhHaNnb (ORCPT
+        with ESMTP id S233132AbhHaOQq (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 31 Aug 2021 09:43:31 -0400
-Received: from mail-io1-xd2e.google.com (mail-io1-xd2e.google.com [IPv6:2607:f8b0:4864:20::d2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5C1EC061575;
-        Tue, 31 Aug 2021 06:42:35 -0700 (PDT)
-Received: by mail-io1-xd2e.google.com with SMTP id b7so24847104iob.4;
-        Tue, 31 Aug 2021 06:42:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/T4oXxIZKVXcXuK4xo4FO0eUgZsswaNawbX1ar73vJY=;
-        b=YTCuGPHaE/M2F5PZEGC2L/zzZfxy8dVhvnvzZYwmm3xf/Gi20rmsGYkpJDmB90B4GE
-         4bpFmfkAv2xpClmwba0vZOETrmpy+Jt5aPHvLEa/EWIUVsU9vARzdaHo17c1Ky/3nOcn
-         4UDb4aTJxLkkDsl5GD9o45Z5T8qdupa/rudoBBguEqQV85qCZ4xY6tCkW7/WrK9RhuCH
-         +qItJnHKxj1EuTt/5U3we6rWvlpyPDRPMnWvTC9c8m6QsgQQHeVlv4sUkwXrlh0SX/IN
-         prZ47i+a4W74xrFP8hdS3ftnYHW5mGCm2ca2ZWiDldixcHFDj2u0u1qHlWzMNo2Lw8xJ
-         IAXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/T4oXxIZKVXcXuK4xo4FO0eUgZsswaNawbX1ar73vJY=;
-        b=KXQjDSTP0qQdxiy0XAbUe61kUcma1a86qRU9uqEoirtFwN0nCcCAsXCOZKOXt1nlZp
-         SRHTnai+MIXhPWE5a5KdgKFGvLlrsAERydZcxGmZ8FIOxRQ4DhXXXmS0ATEZpPrN/SA3
-         Ijvq/RNC+17PAel36pdvaCom2VRtWae9RSgO/iqpmBw8Mkb38nKJSN+ozBjgucJuEYhm
-         B0dYo7ia1lQQSdkl5TOOjdTkHmLt43OpVi0LxgaeeP5IY9y8xY9t2VFyzEOGrsYLLEQq
-         Cyu2aiXRo82ig5qyadMeIkC8TS/BS9KZ9AaZDbULBJoPKeYLqdlrYHFtgv762fN8tgwA
-         T78Q==
-X-Gm-Message-State: AOAM5320JST4x3J1kbrkXCokYVUN6FvlJV+n54zOB20TnxZ3ntba+uL6
-        K3R3k0K2Q+4m5StU4AGJ0SCcawxg8Mv7SQv6zA0=
-X-Google-Smtp-Source: ABdhPJw4lII5+mP2IjiI7gw8j7KxgaPU/kBhn676pl7jR3vSimgmTPlFzm6EAay+u/ZodVqWYPpPEyk5+ENo17HBD/0=
-X-Received: by 2002:a05:6602:2597:: with SMTP id p23mr22902651ioo.195.1630417355164;
- Tue, 31 Aug 2021 06:42:35 -0700 (PDT)
+        Tue, 31 Aug 2021 10:16:46 -0400
+Received: from bombadil.infradead.org (unknown [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86DACC061575;
+        Tue, 31 Aug 2021 07:15:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description;
+        bh=IwVDVSRkq1mFvqFDRXC6n97YzWiMMq7IqL+KsJFCFj8=; b=K470W4XhRu+mM5sEymp8eI9GN1
+        xU8xY5adCX3qk2QPAAfWhccgmlxGztHB60LYsV170iclqt4THGE88flMwvp2s0oQAMRGlpcb2mATm
+        91mJHXW7mXL/mgzTM3J7EEVTEeldbYqoBTS2JnLdC0eQk4WvFDAndl6X1JQ8VEiX6rYK+k+yPJZes
+        HAea/iKXN7+Zaz7/jCCn29S/OtDxPpaQRVgeBglS48+smmkjOou7zIvEoU0oTbgDvjo5eiw1m7W8y
+        QTUWOsMmUXv4vyfzORGOhO0Vormeehtjkcz7Ux0CVEggRApV9nXVdURPzHBzybiigSPHao/qFRoq3
+        2L8Bb/Ew==;
+Received: from [2601:1c0:6280:3f0::aa0b]
+        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mL4YI-002Wks-Bb; Tue, 31 Aug 2021 14:15:50 +0000
+Subject: Re: [PATCH RESEND v3] Trivial comment fix for the CRC ITU-T polynom
+To:     Roger Knecht <roger@norberthealth.com>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Jiri Kosina <trivial@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+        linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20210831130702.31526-1-roger@norberthealth.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <6ba219b5-0a9d-610e-0670-232e5d3d4ad3@infradead.org>
+Date:   Tue, 31 Aug 2021 07:15:49 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-References: <0c5910979f39225d5d8fe68c9ab1c147c68ddee1.1629314734.git.christophe.jaillet@wanadoo.fr>
- <f8a4a6897deb0c8cb2e576580790303550f15fcd.1629314734.git.christophe.jaillet@wanadoo.fr>
- <c56617ff-5d74-9b07-4bcc-25f3dd2aca64@gmail.com>
-In-Reply-To: <c56617ff-5d74-9b07-4bcc-25f3dd2aca64@gmail.com>
-From:   Alan Cooper <alcooperx@gmail.com>
-Date:   Tue, 31 Aug 2021 09:42:37 -0400
-Message-ID: <CAOGqxeXrkv2-7CX34QMQgmtkOwQo2fmmDYbKxJ3hUNAB3gXkEQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] usb: bdc: Fix a resource leak in the error handling
- path of 'bdc_probe()'
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        ": Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20210831130702.31526-1-roger@norberthealth.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Aug 20, 2021 at 4:03 PM Florian Fainelli <f.fainelli@gmail.com> wrote:
->
->
->
-> On 8/18/2021 9:32 PM, Christophe JAILLET wrote:
-> > If an error occurs after a successful 'clk_prepare_enable()' call, it must
-> > be undone by a corresponding 'clk_disable_unprepare()' call.
-> > This call is already present in the remove function.
-> >
-> > Add this call in the error handling path and reorder the code so that the
-> > 'clk_prepare_enable()' call happens later in the function.
-> > The goal is to have as much managed resources functions as possible
-> > before the 'clk_prepare_enable()' call in order to keep the error handling
-> > path simple.
-> >
-> > While at it, remove the now unneeded 'clk' variable.
-> >
-> > Fixes: c87dca047849 ("usb: bdc: Add clock enable for new chips with a separate BDC clock")
-> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->
-> Acked-by: Florian Fainelli <f.fainelli@gmail.com>
->
-> > ---
-> > Review with care.
-> > I don't like shuffling code like that because of possible side effect.
-> > Moving the code related to this clk looks fine to me, but who knows...
->
-> There are no register accesses until bdc_phy_init() gets called, so this
-> looks fine to me. Al knows this code better than I do though, so it
-> would be better to wait for his Acked-by tag.
+On 8/31/21 6:07 AM, Roger Knecht wrote:
+> This patch fixes a small typo in the CRC ITU-T polynom documentation.
+> 
+> The code comment says that the polynom is x^16 + x^12 + x^15 + 1, but the
+> correct polynom is x^16 + x^12 + x^5 + 1.
+> 
+> Quote from page 2 in the ITU-T V.41 specification:
+>    "2 Encoding and checking process
+> 
+>    The service bits and information bits, taken in conjunction, correspond
+>    to the coefficients of a message polynomial having terms from x^(n-1)
+>    (n = total number of bits in a block or sequence) down to x^16. This
+>    polynomial is divided, modulo 2, by the generating polynomial
+>    x^16 + x^12 + x^5 + 1. [...]"
+> 
+> Source: https://www.itu.int/rec/T-REC-V.41-198811-I/en
+> 
+> The hex polynom 0x1021 and CRC code implementation are correct.
+> 
+> Signed-off-by: Roger Knecht <roger@norberthealth.com>
+> ---
+> Changes for the resend:
+>    - Moved "changes and thanks" out of the commit message.
+> 
+> Thanks,
+> Roger
+> 
+>   include/linux/crc-itu-t.h | 2 +-
+>   lib/crc-itu-t.c           | 2 +-
+>   2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/linux/crc-itu-t.h b/include/linux/crc-itu-t.h
+> index a4367051e192..2f991a427ade 100644
+> --- a/include/linux/crc-itu-t.h
+> +++ b/include/linux/crc-itu-t.h
+> @@ -4,7 +4,7 @@
+>    *
+>    * Implements the standard CRC ITU-T V.41:
+>    *   Width 16
+> - *   Poly  0x1021 (x^16 + x^12 + x^15 + 1)
+> + *   Poly  0x1021 (x^16 + x^12 + x^5 + 1)
+>    *   Init  0
+>    */
+>   
+> diff --git a/lib/crc-itu-t.c b/lib/crc-itu-t.c
+> index 1974b355c148..56e6e0d63d1e 100644
+> --- a/lib/crc-itu-t.c
+> +++ b/lib/crc-itu-t.c
+> @@ -7,7 +7,7 @@
+>   #include <linux/module.h>
+>   #include <linux/crc-itu-t.h>
+>   
+> -/** CRC table for the CRC ITU-T V.41 0x1021 (x^16 + x^12 + x^15 + 1) */
+> +/** CRC table for the CRC ITU-T V.41 0x1021 (x^16 + x^12 + x^5 + 1) */
+>   const u16 crc_itu_t_table[256] = {
+>   	0x0000, 0x1021, 0x2042, 0x3063, 0x4084, 0x50a5, 0x60c6, 0x70e7,
+>   	0x8108, 0x9129, 0xa14a, 0xb16b, 0xc18c, 0xd1ad, 0xe1ce, 0xf1ef,
 
-This is safe.
-Acked-by: Al Cooper <alcooperx@gmail.com>
 
-> --
-> Florian
+I should have noticed this earlier:
+
+Please change the /** to a simple /*.
+/** means "beginning of kernel-doc comment" and this is not
+a kernel-doc comment.
+
+Thanks.
+
+-- 
+~Randy
+
