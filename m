@@ -2,100 +2,127 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16086C4320E
-	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Sep 2021 05:29:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46FB6C432BE
+	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Sep 2021 08:10:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F15DF60F3A
-	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Sep 2021 05:29:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2DC856103A
+	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Sep 2021 08:10:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241980AbhIAFaJ (ORCPT
+        id S242985AbhIAILr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 1 Sep 2021 01:30:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57798 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S241855AbhIAFaI (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 1 Sep 2021 01:30:08 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 43AC46101A;
-        Wed,  1 Sep 2021 05:29:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1630474152;
-        bh=vFRoMnI5E+T7ANwFPqrpfWz6ZduToH4v9Fpy76sOXh8=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=DQ7+z0gNZSAym9NhdpMsP0Dkg8zmBa1RYsiKh1YWlnWidxbVE6pFVdReF+C6WGXqg
-         vDyttXJ85q+kDa60FNUSRSWFmIFjB2kkwklL7NdUSMsLGoiZNqBIj3SyDY3EsKBiE2
-         qszPhn88cvMdraAQJXKgIxL3UFhguEm04EiV7jD/Re0kfnffb6VKC8hUv/pHmEcsCU
-         oZe/L1korV9GLClR9wP12bmwZxvLIY47LQyOIaqpeyUjax8qVj8pWsWFiFjD9Tf/sh
-         lBjE96uY9ieAhGb0ongAb5Xclo98+i0wHWI4ARLEBmim0p7c0Qnw2fZu5LMWtHwEJL
-         voQoXaMi4HVVw==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210830115931.GH12231@kadam>
-References: <545df946044fc1fc05a4217cdf0054be7a79e49e.1619161112.git.christophe.jaillet@wanadoo.fr> <163021483704.2676726.2051426762011017819@swboyd.mtv.corp.google.com> <20210830115931.GH12231@kadam>
-Subject: Re: [PATCH] clk: mvebu: ap-cpu-clk: Fix a memory leak in error handling paths
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Julia.Lawall@inria.fr, gregory.clement@bootlin.com,
-        lee.jones@linaro.org, mturquette@baylibre.com,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
+        Wed, 1 Sep 2021 04:11:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53610 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S242975AbhIAILr (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 1 Sep 2021 04:11:47 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1788C061575;
+        Wed,  1 Sep 2021 01:10:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=UgE8oOhcYItxHRaauZXzcwpXXnO6S/obdfdZNIGK2Do=; b=QevioqBDRV8/nKus9Pug5tKlNu
+        AZ4DiCNiajHdIj07MCyAdy3mNlq76VE16WWDJ3Y5eOHLLnvIdvm1pESHDMpHa6ZO5oEcaAUN50QKa
+        hivgaGlPqumUNuCIMOeT4xK2whX+mO5t0i+Gjfs74ndrwhW2K6LSOqr9ZZJ+68SBgjrn+4tWprhw4
+        GwFVKo6icE5+yZidn6MwcbWW8efynMNrkr7s+VCO6bwheb675Un54nJjZPUBJLxvuqxuwhEDGQ5oF
+        NYQeyABJGn5kCDPtf8nqk0z+kL5ediPFl+/cNbvT7hw2o5nBtctnk/EAKxVhL0MfWaG+U9PSwAkyh
+        EHED9TPA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mLLJY-0021cZ-Ej; Wed, 01 Sep 2021 08:09:58 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id CDBC830030A;
+        Wed,  1 Sep 2021 10:09:43 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id B36C720AEBF26; Wed,  1 Sep 2021 10:09:43 +0200 (CEST)
+Date:   Wed, 1 Sep 2021 10:09:43 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
 To:     Dan Carpenter <dan.carpenter@oracle.com>
-Date:   Tue, 31 Aug 2021 22:29:10 -0700
-Message-ID: <163047415097.42057.17295321906417094458@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+Cc:     kernel-janitors@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: [bug report] locking/rtmutex: Return success on deadlock for
+ ww_mutex waiters
+Message-ID: <YS81R45p7mYbhmrT@hirez.programming.kicks-ass.net>
+References: <20210831082152.GC9846@kili>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210831082152.GC9846@kili>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Quoting Dan Carpenter (2021-08-30 04:59:31)
-> On Sat, Aug 28, 2021 at 10:27:17PM -0700, Stephen Boyd wrote:
-> > Quoting Christophe JAILLET (2021-04-23 00:02:26)
-> > > If we exit the for_each_of_cpu_node loop early, the reference on the
-> > > current node must be decremented, otherwise there is a leak.
-> > >=20
-> > > Fixes: f756e362d938 ("clk: mvebu: add CPU clock driver for Armada 7K/=
-8K")
-> > > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > > ---
-> > > Also, I wonder if the drivers in drivers/clk/mvebu are used by anyone.
-> > > In order to compile-test the changes, I also had to change the 'bool'=
- in Kconfig
-> > > by 'bool "blah"'. Without this change, it was not possible to set
-> > > CONFIG_ARMADA_AP_CPU_CLK required by Makefile.
-> > >=20
-> > > I don't know if I did something wrong, if it is an issue only on my e=
-nvironment
-> > > or if something got broken at some time in the build chain but it loo=
-ks
-> > > spurious.
-> > >=20
-> > > If I'm right and that these drivers never compile and no-one noticed =
-it,
-> > > maybe removing them is better than fixing some unlikely issues and st=
-yle.
-> > > If these drivers should stay, Kconfig may need some love from someone.
-> >=20
-> > Nobody has said anything on this patch. So I'm not really sure what's
-> > going on. Probably we never take the error path, or the whole system
-> > fails to boot?
->=20
-> You probably take this one.
->=20
->    106                  /* If cpu2 or cpu3 is enabled */
->    107                  if (cpu & APN806_CLUSTER_NUM_MASK) {
->    108                          nclusters =3D 2;
->    109  +                       of_node_put(dn);
->    110                          break;
->    111                  }
->=20
-> But, yeah, probably on one carse of "dn" can't be freed in real life.
->=20
-> Still probably worth fixing though just for correctness.  Otherwise it
-> makes static analysis less effective if people deliberately leave bugs
-> in the code.
+On Tue, Aug 31, 2021 at 11:21:52AM +0300, Dan Carpenter wrote:
+> Hello Peter Zijlstra,
 
-Thanks. Can we turn that into a Reviewed-by?
+Hi Dan :-)
+
+> This is a semi-automatic email about new static checker warnings.
+> 
+> The patch a055fcc132d4: "locking/rtmutex: Return success on deadlock
+> for ww_mutex waiters" from Aug 26, 2021, leads to the following
+> Smatch complaint:
+> 
+>     kernel/locking/rtmutex.c:756 rt_mutex_adjust_prio_chain()
+>     error: we previously assumed 'orig_waiter' could be null (see line 644)
+> 
+> kernel/locking/rtmutex.c
+>    643		 */
+>    644		if (orig_waiter && !rt_mutex_owner(orig_lock))
+>                     ^^^^^^^^^^^
+> A lot of this code assumes "orig_waiter" can be NULL.
+> 
+
+>    735		/*
+>    736		 * [6] check_exit_conditions_2() protected by task->pi_lock and
+>    737		 * lock->wait_lock.
+>    738		 *
+>    739		 * Deadlock detection. If the lock is the same as the original
+>    740		 * lock which caused us to walk the lock chain or if the
+>    741		 * current lock is owned by the task which initiated the chain
+>    742		 * walk, we detected a deadlock.
+>    743		 */
+>    744		if (lock == orig_lock || rt_mutex_owner(lock) == top_task) {
+>                     ^^^^^^^^^^^^^^^^^
+> This might mean it's a false positive, but Smatch isn't clever enough to
+> figure it out.  And I'm stupid too!  Plus lazy...  and ugly.
+> 
+>    745			ret = -EDEADLK;
+>    746	
+>    747			/*
+>    748			 * When the deadlock is due to ww_mutex; also see above. Don't
+>    749			 * report the deadlock and instead let the ww_mutex wound/die
+>    750			 * logic pick which of the contending threads gets -EDEADLK.
+>    751			 *
+>    752			 * NOTE: assumes the cycle only contains a single ww_class; any
+>    753			 * other configuration and we fail to report; also, see
+>    754			 * lockdep.
+>    755			 */
+>    756			if (IS_ENABLED(CONFIG_PREEMPT_RT) && orig_waiter->ww_ctx)
+>                                                              ^^^^^^^^^^^^^^^^^^^
+> Unchecked dereference.
+
+
+This is difficult... and I'm glad you flagged it. The normal de-boost
+path is through rt_mutex_adjust_prio() and that has: .orig_lock == NULL
+&& .orig_waiter == NULL. And as such it would never trigger the above
+case.
+
+However, there is remove_waiter() which is called on rt_mutex_lock()'s
+failure paths and that doesn't have .orig_lock == NULL, and as such
+*could* conceivably trigger this.
+
+Let me figure out what the right thing to do is.
+
+Thanks!
