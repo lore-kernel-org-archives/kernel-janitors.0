@@ -2,62 +2,95 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDDABC432BE
-	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Sep 2021 18:26:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DEFCC432BE
+	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Sep 2021 20:24:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C3DF360F92
-	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Sep 2021 18:26:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2FC4360FE6
+	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Sep 2021 20:24:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231887AbhIAS1k (ORCPT
+        id S230329AbhIAUZi (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 1 Sep 2021 14:27:40 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:40814 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230373AbhIAS1j (ORCPT
+        Wed, 1 Sep 2021 16:25:38 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:56488 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229653AbhIAUZi (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 1 Sep 2021 14:27:39 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: tonyk)
-        with ESMTPSA id 924CB1F43FDB
-Subject: Re: [PATCH][next] futex: fix assigned ret variable that is never read
+        Wed, 1 Sep 2021 16:25:38 -0400
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 01E52202E2;
+        Wed,  1 Sep 2021 20:24:32 +0000 (UTC)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4B66313B03;
+        Wed,  1 Sep 2021 20:24:30 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id F//bCH7hL2FmBgAAMHmgww
+        (envelope-from <dave@stgolabs.net>); Wed, 01 Sep 2021 20:24:30 +0000
+Date:   Wed, 1 Sep 2021 13:24:25 -0700
+From:   Davidlohr Bueso <dave@stgolabs.net>
 To:     Colin King <colin.king@canonical.com>
-Cc:     kernel-janitors@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Davidlohr Bueso <dave@stgolabs.net>,
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
         Darren Hart <dvhart@infradead.org>,
-        Peter Zijlstra <peterz@infradead.org>
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] futex: fix assigned ret variable that is never read
+Message-ID: <20210901202425.v5sym64dqjzakimb@offworld>
 References: <20210818131840.34262-1-colin.king@canonical.com>
-From:   =?UTF-8?Q?Andr=c3=a9_Almeida?= <andrealmeid@collabora.com>
-Message-ID: <5682c44f-3a02-c2b1-25d3-36db34b00356@collabora.com>
-Date:   Wed, 1 Sep 2021 15:26:34 -0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
 In-Reply-To: <20210818131840.34262-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+User-Agent: NeoMutt/20201120
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Colin,
+On Wed, 18 Aug 2021, Colin King wrote:
 
-Às 10:18 de 18/08/21, Colin King escreveu:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently the check on the rt_waiter and top_waiter->pi_state is
-> assigning an error return code to ret but this later gets re-assigned,
-> hence the check is currently ineffective. I believe the original
-> intent was to return -EINVAL rather than assign it to ret. Fix this.
-> 
-> Addresses-Coverity: ("Unused value")
-> Fixes: dc7109aaa233 ("futex: Validate waiter correctly in futex_proxy_trylock_atomic()")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>> ---
+>From: Colin Ian King <colin.king@canonical.com>
+>
+>Currently the check on the rt_waiter and top_waiter->pi_state is
+>assigning an error return code to ret but this later gets re-assigned,
+>hence the check is currently ineffective. I believe the original
+>intent was to return -EINVAL rather than assign it to ret. Fix this.
 
-Reviewed-by: André Almeida <andrealmeid@collabora.com>
+LGTM.
+
+Acked-by: Davidlohr Bueso <dbueso@suse.de>
+
+>
+>Addresses-Coverity: ("Unused value")
+>Fixes: dc7109aaa233 ("futex: Validate waiter correctly in futex_proxy_trylock_atomic()")
+>Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>---
+> kernel/futex.c | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
+>
+>diff --git a/kernel/futex.c b/kernel/futex.c
+>index e7b4c6121da4..30e7daebaec8 100644
+>--- a/kernel/futex.c
+>+++ b/kernel/futex.c
+>@@ -2025,7 +2025,7 @@ futex_proxy_trylock_atomic(u32 __user *pifutex, struct futex_hash_bucket *hb1,
+>	 * and waiting on the 'waitqueue' futex which is always !PI.
+>	 */
+>	if (!top_waiter->rt_waiter || top_waiter->pi_state)
+>-		ret = -EINVAL;
+>+		return -EINVAL;
+>
+>	/* Ensure we requeue to the expected futex. */
+>	if (!match_futex(top_waiter->requeue_pi_key, key2))
+>--
+>2.32.0
+>
