@@ -2,89 +2,62 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E36BCC4320A
-	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Sep 2021 18:15:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDDABC432BE
+	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Sep 2021 18:26:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C6C07610F7
-	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Sep 2021 18:15:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3DF360F92
+	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Sep 2021 18:26:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344738AbhIASQ0 (ORCPT
+        id S231887AbhIAS1k (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 1 Sep 2021 14:16:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52770 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1345027AbhIASQY (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 1 Sep 2021 14:16:24 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 55BA3610E8;
-        Wed,  1 Sep 2021 18:15:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1630520127;
-        bh=3L67LVXG3RetBW0+Au0YysC6Ac0wjuq3UwkXEFY4DSo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fWvVE/FUPAGe9f6U4fr7EPTzUZofW55UT/vXCXcjLEI4QnfG36ZeAvbdLkZ8Sok2X
-         Es31UEQ5WSqSJ6b7L8pzJom9FQy+tQsyWS1JjzNmpeIVVACSSQLNVmUbB26KhuDn3X
-         5E76ujvdIIOqDs02/bCMVHFQGLRVLyHrQBSBoJMvWljKgtHumyrZS9slYyMg5XbO/5
-         c19F7O4bA+TnCaycPGRx+M2KBjeTWWw0y2eQaqNfhVBn2GM/MEoTBB6MoXc1vemB+E
-         Y4uSLSi89oXErPlWzX1SxaD9ecyZrP+6HV7hmRzY0Q71sVL9S76T+ioHcNChGYXRnV
-         64vxdd5bR1MBw==
-From:   Mark Brown <broonie@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Colin King <colin.king@canonical.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
-Cc:     Mark Brown <broonie@kernel.org>, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ASoC: samsung: s3c24xx_simtec: fix spelling mistake "devicec" -> "device"
-Date:   Wed,  1 Sep 2021 19:14:44 +0100
-Message-Id: <163051912510.21630.1337130075674390913.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20210827185003.507006-1-colin.king@canonical.com>
-References: <20210827185003.507006-1-colin.king@canonical.com>
+        Wed, 1 Sep 2021 14:27:40 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:40814 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230373AbhIAS1j (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 1 Sep 2021 14:27:39 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: tonyk)
+        with ESMTPSA id 924CB1F43FDB
+Subject: Re: [PATCH][next] futex: fix assigned ret variable that is never read
+To:     Colin King <colin.king@canonical.com>
+Cc:     kernel-janitors@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Darren Hart <dvhart@infradead.org>,
+        Peter Zijlstra <peterz@infradead.org>
+References: <20210818131840.34262-1-colin.king@canonical.com>
+From:   =?UTF-8?Q?Andr=c3=a9_Almeida?= <andrealmeid@collabora.com>
+Message-ID: <5682c44f-3a02-c2b1-25d3-36db34b00356@collabora.com>
+Date:   Wed, 1 Sep 2021 15:26:34 -0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20210818131840.34262-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 27 Aug 2021 19:50:03 +0100, Colin King wrote:
+Hi Colin,
+
+Às 10:18 de 18/08/21, Colin King escreveu:
 > From: Colin Ian King <colin.king@canonical.com>
 > 
-> There is a spelling mistake in a dev_err error message. Fix it.
+> Currently the check on the rt_waiter and top_waiter->pi_state is
+> assigning an error return code to ret but this later gets re-assigned,
+> hence the check is currently ineffective. I believe the original
+> intent was to return -EINVAL rather than assign it to ret. Fix this.
 > 
-> 
+> Addresses-Coverity: ("Unused value")
+> Fixes: dc7109aaa233 ("futex: Validate waiter correctly in futex_proxy_trylock_atomic()")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>> ---
 
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/1] ASoC: samsung: s3c24xx_simtec: fix spelling mistake "devicec" -> "device"
-      commit: 2a6a0a03117ee349308ab77ac0925fdca8ef32f5
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+Reviewed-by: André Almeida <andrealmeid@collabora.com>
