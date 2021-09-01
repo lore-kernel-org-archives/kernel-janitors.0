@@ -2,94 +2,100 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03848C432BE
-	for <kernel-janitors@archiver.kernel.org>; Tue, 31 Aug 2021 20:16:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16086C4320E
+	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Sep 2021 05:29:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DA5CB60FED
-	for <kernel-janitors@archiver.kernel.org>; Tue, 31 Aug 2021 20:16:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F15DF60F3A
+	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Sep 2021 05:29:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240910AbhHaURc (ORCPT
+        id S241980AbhIAFaJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 31 Aug 2021 16:17:32 -0400
-Received: from smtp11.smtpout.orange.fr ([80.12.242.133]:35213 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240331AbhHaURc (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 31 Aug 2021 16:17:32 -0400
-Received: from pop-os.home ([90.126.253.178])
-        by mwinf5d21 with ME
-        id oLGX250083riaq203LGXua; Tue, 31 Aug 2021 22:16:32 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 31 Aug 2021 22:16:32 +0200
-X-ME-IP: 90.126.253.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     arnd@arndb.de, gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH v2] misc: rtsx: Remove usage of the deprecated "pci-dma-compat.h" API
-Date:   Tue, 31 Aug 2021 22:16:30 +0200
-Message-Id: <95752079d0e2bb1613f0f3a53f13f642f5c72572.1630440769.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Wed, 1 Sep 2021 01:30:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57798 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S241855AbhIAFaI (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 1 Sep 2021 01:30:08 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 43AC46101A;
+        Wed,  1 Sep 2021 05:29:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1630474152;
+        bh=vFRoMnI5E+T7ANwFPqrpfWz6ZduToH4v9Fpy76sOXh8=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=DQ7+z0gNZSAym9NhdpMsP0Dkg8zmBa1RYsiKh1YWlnWidxbVE6pFVdReF+C6WGXqg
+         vDyttXJ85q+kDa60FNUSRSWFmIFjB2kkwklL7NdUSMsLGoiZNqBIj3SyDY3EsKBiE2
+         qszPhn88cvMdraAQJXKgIxL3UFhguEm04EiV7jD/Re0kfnffb6VKC8hUv/pHmEcsCU
+         oZe/L1korV9GLClR9wP12bmwZxvLIY47LQyOIaqpeyUjax8qVj8pWsWFiFjD9Tf/sh
+         lBjE96uY9ieAhGb0ongAb5Xclo98+i0wHWI4ARLEBmim0p7c0Qnw2fZu5LMWtHwEJL
+         voQoXaMi4HVVw==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20210830115931.GH12231@kadam>
+References: <545df946044fc1fc05a4217cdf0054be7a79e49e.1619161112.git.christophe.jaillet@wanadoo.fr> <163021483704.2676726.2051426762011017819@swboyd.mtv.corp.google.com> <20210830115931.GH12231@kadam>
+Subject: Re: [PATCH] clk: mvebu: ap-cpu-clk: Fix a memory leak in error handling paths
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Julia.Lawall@inria.fr, gregory.clement@bootlin.com,
+        lee.jones@linaro.org, mturquette@baylibre.com,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Date:   Tue, 31 Aug 2021 22:29:10 -0700
+Message-ID: <163047415097.42057.17295321906417094458@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-In [1], Christoph Hellwig has proposed to remove the wrappers in
-include/linux/pci-dma-compat.h.
+Quoting Dan Carpenter (2021-08-30 04:59:31)
+> On Sat, Aug 28, 2021 at 10:27:17PM -0700, Stephen Boyd wrote:
+> > Quoting Christophe JAILLET (2021-04-23 00:02:26)
+> > > If we exit the for_each_of_cpu_node loop early, the reference on the
+> > > current node must be decremented, otherwise there is a leak.
+> > >=20
+> > > Fixes: f756e362d938 ("clk: mvebu: add CPU clock driver for Armada 7K/=
+8K")
+> > > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> > > ---
+> > > Also, I wonder if the drivers in drivers/clk/mvebu are used by anyone.
+> > > In order to compile-test the changes, I also had to change the 'bool'=
+ in Kconfig
+> > > by 'bool "blah"'. Without this change, it was not possible to set
+> > > CONFIG_ARMADA_AP_CPU_CLK required by Makefile.
+> > >=20
+> > > I don't know if I did something wrong, if it is an issue only on my e=
+nvironment
+> > > or if something got broken at some time in the build chain but it loo=
+ks
+> > > spurious.
+> > >=20
+> > > If I'm right and that these drivers never compile and no-one noticed =
+it,
+> > > maybe removing them is better than fixing some unlikely issues and st=
+yle.
+> > > If these drivers should stay, Kconfig may need some love from someone.
+> >=20
+> > Nobody has said anything on this patch. So I'm not really sure what's
+> > going on. Probably we never take the error path, or the whole system
+> > fails to boot?
+>=20
+> You probably take this one.
+>=20
+>    106                  /* If cpu2 or cpu3 is enabled */
+>    107                  if (cpu & APN806_CLUSTER_NUM_MASK) {
+>    108                          nclusters =3D 2;
+>    109  +                       of_node_put(dn);
+>    110                          break;
+>    111                  }
+>=20
+> But, yeah, probably on one carse of "dn" can't be freed in real life.
+>=20
+> Still probably worth fixing though just for correctness.  Otherwise it
+> makes static analysis less effective if people deliberately leave bugs
+> in the code.
 
-Some reasons why this API should be removed have been given by Julia
-Lawall in [2].
-
-Finally, Arnd Bergmann reminded that the documentation was updated 11 years
-ago to only describe the modern linux/dma-mapping.h interfaces and mark the
-old bus-specific ones as no longer recommended, see commit 216bf58f4092
-("Documentation: convert PCI-DMA-mapping.txt to use the generic DMA API").
-
-A coccinelle script has been used to perform the needed transformation
-Only relevant parts are given below.
-
-@@
-expression e1, e2;
-@@
--    pci_set_dma_mask(e1, e2)
-+    dma_set_mask(&e1->dev, e2)
-
-
-[1]: https://lore.kernel.org/kernel-janitors/20200421081257.GA131897@infradead.org/
-[2]: https://lore.kernel.org/kernel-janitors/alpine.DEB.2.22.394.2007120902170.2424@hadrien/
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-It is *NOT* been compile tested, but it looks safe enough!
-
-v2: Change Subject to be more explicit
-    Keep only relevant part of the coccinelle script
-    Try to improve the commit message to give some reason of why this change is done
----
- drivers/misc/cardreader/rtsx_pcr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/misc/cardreader/rtsx_pcr.c b/drivers/misc/cardreader/rtsx_pcr.c
-index baf83594a01d..8c72eb590f79 100644
---- a/drivers/misc/cardreader/rtsx_pcr.c
-+++ b/drivers/misc/cardreader/rtsx_pcr.c
-@@ -1536,7 +1536,7 @@ static int rtsx_pci_probe(struct pci_dev *pcidev,
- 		pci_name(pcidev), (int)pcidev->vendor, (int)pcidev->device,
- 		(int)pcidev->revision);
- 
--	ret = pci_set_dma_mask(pcidev, DMA_BIT_MASK(32));
-+	ret = dma_set_mask(&pcidev->dev, DMA_BIT_MASK(32));
- 	if (ret < 0)
- 		return ret;
- 
--- 
-2.30.2
-
+Thanks. Can we turn that into a Reviewed-by?
