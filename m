@@ -7,48 +7,45 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA78BC433FE
-	for <kernel-janitors@archiver.kernel.org>; Thu,  2 Sep 2021 22:42:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 515BAC433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu,  2 Sep 2021 22:48:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CFADA600EF
-	for <kernel-janitors@archiver.kernel.org>; Thu,  2 Sep 2021 22:42:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 319B06054F
+	for <kernel-janitors@archiver.kernel.org>; Thu,  2 Sep 2021 22:48:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347809AbhIBWnU (ORCPT
+        id S1348521AbhIBWs7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 2 Sep 2021 18:43:20 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:33754
+        Thu, 2 Sep 2021 18:48:59 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:33924
         "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1347699AbhIBWnP (ORCPT
+        by vger.kernel.org with ESMTP id S1347772AbhIBWs7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 2 Sep 2021 18:43:15 -0400
+        Thu, 2 Sep 2021 18:48:59 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 3EA8740178;
-        Thu,  2 Sep 2021 22:42:15 +0000 (UTC)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 0E04940178;
+        Thu,  2 Sep 2021 22:47:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1630622535;
-        bh=hzMq+mvgujqtRWYknQ4NY0yiqZ+ExiooC1lQTywchwE=;
+        s=20210705; t=1630622879;
+        bh=3iDBfRvhomh9X+gFCqZtgh0m4po45XBVC3v+ri4pzy8=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=uxKD3uOgVi+8FJ+7BuL1LJyvOwg4JeNgZkrdPWJWo9kFm6REg6WCpnH/2wbi8HLHl
-         qEIrchxaFj5hdvG54iFOWNTrD9mWHJ/j5ikQYMDNvGbTRk61USfNhwIDTXNQeCpdFs
-         rB6eX2QVBP2iTurAPZfqm0s9MGvFUkbneAGGQ9GrKkoehg42ev39nKN8eDvLVyTerw
-         kzuScPLHVXf4GJ77HMYvyJPn0ymjWNZXDFdanTe5NV0S44y3V/MnPV3SepLOKGYatk
-         Cs+HZ83X0cQwmzPZD9hCz5EpqwKTlV+t3ERiUziQpz+3H8Yzs5//lBh5BrnTKWOc+w
-         zBftdCfzMvioA==
+        b=Gc4ayHRKr1vSqhh5tEj1ZQ3g7lpw+dtOyjwt++ZFrfwC/pMTtbxhK/co7yj8OCHdS
+         M0ktAzfJTdhkuH55J5lLq/S/vi8G6EV/ldipDTNWoO522oMl8HmQlnsXm/an9X1Xh3
+         H9dYfYK7vkBgGCsNAdBN+f5Y+e/8OD+UniNsCdNTJcIyB632HUpSvZ+8guCQY/oHme
+         eRtZ0WaYVyZ9NVaIby2LT0SgPmBWohpzI8qVVDJGVxKp8DTzo532ym65otNmV9XGrV
+         naTPEMqcLaNEaY18BxfWlDxzrDAKBkV6pveFC6kMPHyq5e0Qv2pf69umsSm3/Lqodh
+         /8DzeBjW+IV/A==
 From:   Colin King <colin.king@canonical.com>
-To:     Sathya Prakash <sathya.prakash@broadcom.com>,
-        Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
-        Suganath Prabu Subramani 
-        <suganath-prabu.subramani@broadcom.com>,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org
+To:     Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ruslan Bilovol <ruslan.bilovol@gmail.com>,
+        linux-usb@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: mpt3sas: clean up some inconsistent indenting
-Date:   Thu,  2 Sep 2021 23:42:15 +0100
-Message-Id: <20210902224215.57286-1-colin.king@canonical.com>
+Subject: [PATCH] usb: gadget: f_uac2: clean up some inconsistent indenting
+Date:   Thu,  2 Sep 2021 23:47:58 +0100
+Message-Id: <20210902224758.57600-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -59,42 +56,53 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-There are a couple of statements where the indentation is not correct,
-clean these up. Remove a redundant break statement.
+There are bunch of statements where the indentation is not correct,
+clean these up.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/scsi/mpt3sas/mpt3sas_ctl.c   | 2 +-
- drivers/scsi/mpt3sas/mpt3sas_scsih.c | 3 +--
- 2 files changed, 2 insertions(+), 3 deletions(-)
+ drivers/usb/gadget/function/f_uac2.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/scsi/mpt3sas/mpt3sas_ctl.c b/drivers/scsi/mpt3sas/mpt3sas_ctl.c
-index 770b241d7bb2..1b79f01f03a4 100644
---- a/drivers/scsi/mpt3sas/mpt3sas_ctl.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_ctl.c
-@@ -2178,7 +2178,7 @@ mpt3sas_send_diag_release(struct MPT3SAS_ADAPTER *ioc, u8 buffer_type,
- 		mpt3sas_check_cmd_timeout(ioc,
- 		    ioc->ctl_cmds.status, mpi_request,
- 		    sizeof(Mpi2DiagReleaseRequest_t)/4, reset_needed);
--		 *issue_reset = reset_needed;
-+		*issue_reset = reset_needed;
- 		rc = -EFAULT;
- 		goto out;
+diff --git a/drivers/usb/gadget/function/f_uac2.c b/drivers/usb/gadget/function/f_uac2.c
+index 3c34995276e7..8659784dcc78 100644
+--- a/drivers/usb/gadget/function/f_uac2.c
++++ b/drivers/usb/gadget/function/f_uac2.c
+@@ -743,15 +743,15 @@ static void setup_headers(struct f_uac2_opts *opts,
+ 		headers[i++] = USBDHDR(&out_clk_src_desc);
+ 		headers[i++] = USBDHDR(&usb_out_it_desc);
+ 
+-    if (FUOUT_EN(opts))
+-      headers[i++] = USBDHDR(out_feature_unit_desc);
+-  }
++		if (FUOUT_EN(opts))
++			headers[i++] = USBDHDR(out_feature_unit_desc);
++	}
+ 
+ 	if (EPIN_EN(opts)) {
+ 		headers[i++] = USBDHDR(&io_in_it_desc);
+ 
+-    if (FUIN_EN(opts))
+-      headers[i++] = USBDHDR(in_feature_unit_desc);
++		if (FUIN_EN(opts))
++			headers[i++] = USBDHDR(in_feature_unit_desc);
+ 
+ 		headers[i++] = USBDHDR(&usb_in_ot_desc);
  	}
-diff --git a/drivers/scsi/mpt3sas/mpt3sas_scsih.c b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-index 2f82b1e629af..d383d4a03436 100644
---- a/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-@@ -10749,8 +10749,7 @@ _mpt3sas_fw_work(struct MPT3SAS_ADAPTER *ioc, struct fw_event_work *fw_event)
- 	case MPI2_EVENT_PCIE_TOPOLOGY_CHANGE_LIST:
- 		_scsih_pcie_topology_change_event(ioc, fw_event);
- 		ioc->current_event = NULL;
--			return;
--	break;
-+		return;
- 	}
- out:
- 	fw_event_work_put(fw_event);
+@@ -759,10 +759,10 @@ static void setup_headers(struct f_uac2_opts *opts,
+ 	if (EPOUT_EN(opts))
+ 		headers[i++] = USBDHDR(&io_out_ot_desc);
+ 
+-  if (FUOUT_EN(opts) || FUIN_EN(opts))
+-      headers[i++] = USBDHDR(ep_int_desc);
++	if (FUOUT_EN(opts) || FUIN_EN(opts))
++		headers[i++] = USBDHDR(ep_int_desc);
+ 
+-  if (EPOUT_EN(opts)) {
++	if (EPOUT_EN(opts)) {
+ 		headers[i++] = USBDHDR(&std_as_out_if0_desc);
+ 		headers[i++] = USBDHDR(&std_as_out_if1_desc);
+ 		headers[i++] = USBDHDR(&as_out_hdr_desc);
 -- 
 2.32.0
 
