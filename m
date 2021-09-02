@@ -2,90 +2,79 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F033FC433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu,  2 Sep 2021 20:38:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9456FC433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu,  2 Sep 2021 21:26:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CB519610A0
-	for <kernel-janitors@archiver.kernel.org>; Thu,  2 Sep 2021 20:38:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E2B76108E
+	for <kernel-janitors@archiver.kernel.org>; Thu,  2 Sep 2021 21:26:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343915AbhIBUjT (ORCPT
+        id S1346729AbhIBV1i (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 2 Sep 2021 16:39:19 -0400
-Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:22541 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234544AbhIBUjS (ORCPT
+        Thu, 2 Sep 2021 17:27:38 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:59366
+        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S245379AbhIBV1i (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 2 Sep 2021 16:39:18 -0400
-Received: from pop-os.home ([90.126.253.178])
-        by mwinf5d54 with ME
-        id p8eC2500A3riaq2038eDGc; Thu, 02 Sep 2021 22:38:16 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 02 Sep 2021 22:38:16 +0200
-X-ME-IP: 90.126.253.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     luciano.coelho@intel.com, kvalo@codeaurora.org,
-        davem@davemloft.net, kuba@kernel.org, johannes.berg@intel.com,
-        pierre-louis.bossart@linux.intel.com, drorx.moshe@intel.com
-Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] iwlwifi: pnvm: Fix a memory leak in 'iwl_pnvm_get_from_fs()'
-Date:   Thu,  2 Sep 2021 22:38:11 +0200
-Message-Id: <1b5d80f54c1dbf85710fd285243932943b498fe7.1630614969.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Thu, 2 Sep 2021 17:27:38 -0400
+Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 4927D3F112;
+        Thu,  2 Sep 2021 21:26:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1630617992;
+        bh=E0+rjETp1q3bF8ZXs+1AdT+BHFcfxbmgeeVYX//s5wE=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=MkRRkl08bMgIfGvpGCeikhiC1LBLteA04+O8lK+1IjhGyLbwS8lBHyX1iuvHyl8QE
+         65XKOtGSGaQpipZBucZKrwcYgPkigcJwq6T79FyBRa0SYjl6IQOf5CZvova+nvYJKS
+         gREk0bWrL9Q6KrdQjxMSq1FqZK588z7iOhqaKSIP6t1Z+v77sSBNAqvsB2CMDFzCVb
+         AdEwg+1cBk6kAFxqy2z7kDm78JzmuvtNvOJ5OxA6NNEiN1LCmgvY/TleHuEkw5Hqq8
+         JJcA6nkXeu4hEVJDTB4hnkbLkDL84ih2cnsXGusn8w63JZPwCc1EcXrcB6iPRW9IFU
+         lsuDC6SAWKOSA==
+From:   Colin King <colin.king@canonical.com>
+To:     Alex Williamson <alex.williamson@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, kvm@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] vfio/pci: add missing identifier name in argument of function prototype
+Date:   Thu,  2 Sep 2021 22:26:31 +0100
+Message-Id: <20210902212631.54260-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-A firmware is requested but never released in this function. This leads to
-a memory leak in the normal execution path.
+From: Colin Ian King <colin.king@canonical.com>
 
-Add the missing 'release_firmware()' call.
-Also introduce a temp variable (new_len) in order to keep the value of
-'pnvm->size' after the firmware has been released.
+The function prototype is missing an identifier name. Add one.
 
-Fixes: cdda18fbbefa ("iwlwifi: pnvm: move file loading code to a separate function")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/wireless/intel/iwlwifi/fw/pnvm.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/vfio/pci/vfio_pci_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/fw/pnvm.c b/drivers/net/wireless/intel/iwlwifi/fw/pnvm.c
-index 314ed90c23dd..dde22bdc8703 100644
---- a/drivers/net/wireless/intel/iwlwifi/fw/pnvm.c
-+++ b/drivers/net/wireless/intel/iwlwifi/fw/pnvm.c
-@@ -231,6 +231,7 @@ static int iwl_pnvm_get_from_fs(struct iwl_trans *trans, u8 **data, size_t *len)
- {
- 	const struct firmware *pnvm;
- 	char pnvm_name[MAX_PNVM_NAME];
-+	size_t new_len;
- 	int ret;
- 
- 	iwl_pnvm_get_fs_name(trans, pnvm_name, sizeof(pnvm_name));
-@@ -242,11 +243,14 @@ static int iwl_pnvm_get_from_fs(struct iwl_trans *trans, u8 **data, size_t *len)
- 		return ret;
- 	}
- 
-+	new_len = pnvm->size;
- 	*data = kmemdup(pnvm->data, pnvm->size, GFP_KERNEL);
-+	release_firmware(pnvm);
-+
- 	if (!*data)
- 		return -ENOMEM;
- 
--	*len = pnvm->size;
-+	*len = new_len;
- 
- 	return 0;
+diff --git a/drivers/vfio/pci/vfio_pci_core.c b/drivers/vfio/pci/vfio_pci_core.c
+index 68198e0f2a63..a03b5a99c2da 100644
+--- a/drivers/vfio/pci/vfio_pci_core.c
++++ b/drivers/vfio/pci/vfio_pci_core.c
+@@ -565,7 +565,7 @@ static bool vfio_pci_dev_below_slot(struct pci_dev *pdev, struct pci_slot *slot)
  }
+ 
+ struct vfio_pci_walk_info {
+-	int (*fn)(struct pci_dev *, void *data);
++	int (*fn)(struct pci_dev *pdev, void *data);
+ 	void *data;
+ 	struct pci_dev *pdev;
+ 	bool slot;
 -- 
-2.30.2
+2.32.0
 
