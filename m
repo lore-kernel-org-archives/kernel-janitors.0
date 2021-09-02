@@ -7,44 +7,46 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9456FC433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu,  2 Sep 2021 21:26:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9A96C433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu,  2 Sep 2021 21:45:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6E2B76108E
-	for <kernel-janitors@archiver.kernel.org>; Thu,  2 Sep 2021 21:26:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 837D8610A0
+	for <kernel-janitors@archiver.kernel.org>; Thu,  2 Sep 2021 21:45:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346729AbhIBV1i (ORCPT
+        id S1347139AbhIBVqM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 2 Sep 2021 17:27:38 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:59366
-        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S245379AbhIBV1i (ORCPT
+        Thu, 2 Sep 2021 17:46:12 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:59708
+        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S244085AbhIBVqM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 2 Sep 2021 17:27:38 -0400
+        Thu, 2 Sep 2021 17:46:12 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 4927D3F112;
-        Thu,  2 Sep 2021 21:26:32 +0000 (UTC)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id ECE8F3FE71;
+        Thu,  2 Sep 2021 21:45:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1630617992;
-        bh=E0+rjETp1q3bF8ZXs+1AdT+BHFcfxbmgeeVYX//s5wE=;
+        s=20210705; t=1630619112;
+        bh=s9p5QLB1+aDHhWrCWaZs6bVSkWVQnpCvcnaOFCjNF1w=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=MkRRkl08bMgIfGvpGCeikhiC1LBLteA04+O8lK+1IjhGyLbwS8lBHyX1iuvHyl8QE
-         65XKOtGSGaQpipZBucZKrwcYgPkigcJwq6T79FyBRa0SYjl6IQOf5CZvova+nvYJKS
-         gREk0bWrL9Q6KrdQjxMSq1FqZK588z7iOhqaKSIP6t1Z+v77sSBNAqvsB2CMDFzCVb
-         AdEwg+1cBk6kAFxqy2z7kDm78JzmuvtNvOJ5OxA6NNEiN1LCmgvY/TleHuEkw5Hqq8
-         JJcA6nkXeu4hEVJDTB4hnkbLkDL84ih2cnsXGusn8w63JZPwCc1EcXrcB6iPRW9IFU
-         lsuDC6SAWKOSA==
+        b=uqdIoGDigSHGeux/F/gdDe1/0r9C8ZJjDg/Zssuiyaf7iStZADcs8G1Agx+zAG0Zz
+         DavD3If6UqRelNJ7Iyu3VYe4DxH/B5WA/JhdMMOoWqblbAs0ideETSSn2WfrtcCmEg
+         PQKlH8kp5ziQ+8jNGWGV/KsHB6TQpsi4h2C7voTwuCBigjptd8reBUmcjWdo1HDL83
+         xgQ+AEE2pNYMB5ceNhLrugjnODd1AkQOPa47EKmWfAviEipmR1aQkIL4Hgh1vTH5Hr
+         bvLNmiZJ0p0KseS3Bkd2I9mPoACChBoB9/6UajHNv1c4yL6MjC9OlccsaMZJyjMsAE
+         iZpzC0q9yQ7/A==
 From:   Colin King <colin.king@canonical.com>
-To:     Alex Williamson <alex.williamson@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, kvm@vger.kernel.org
+To:     Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Xinhui.Pan@amd.com, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] vfio/pci: add missing identifier name in argument of function prototype
-Date:   Thu,  2 Sep 2021 22:26:31 +0100
-Message-Id: <20210902212631.54260-1-colin.king@canonical.com>
+Subject: [PATCH][next] drm/amdgpu: clean up inconsistent indenting
+Date:   Thu,  2 Sep 2021 22:45:10 +0100
+Message-Id: <20210902214510.55070-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -55,26 +57,32 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The function prototype is missing an identifier name. Add one.
+There are a couple of statements that are indented one character
+too deeply, clean these up.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/vfio/pci/vfio_pci_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/vfio/pci/vfio_pci_core.c b/drivers/vfio/pci/vfio_pci_core.c
-index 68198e0f2a63..a03b5a99c2da 100644
---- a/drivers/vfio/pci/vfio_pci_core.c
-+++ b/drivers/vfio/pci/vfio_pci_core.c
-@@ -565,7 +565,7 @@ static bool vfio_pci_dev_below_slot(struct pci_dev *pdev, struct pci_slot *slot)
- }
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
+index d6aa032890ee..a573424a6e0b 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
+@@ -60,10 +60,9 @@ static vm_fault_t amdgpu_gem_fault(struct vm_fault *vmf)
+ 			goto unlock;
+ 		}
  
- struct vfio_pci_walk_info {
--	int (*fn)(struct pci_dev *, void *data);
-+	int (*fn)(struct pci_dev *pdev, void *data);
- 	void *data;
- 	struct pci_dev *pdev;
- 	bool slot;
+-		 ret = ttm_bo_vm_fault_reserved(vmf, vmf->vma->vm_page_prot,
+-						TTM_BO_VM_NUM_PREFAULT, 1);
+-
+-		 drm_dev_exit(idx);
++		ret = ttm_bo_vm_fault_reserved(vmf, vmf->vma->vm_page_prot,
++					       TTM_BO_VM_NUM_PREFAULT, 1);
++		drm_dev_exit(idx);
+ 	} else {
+ 		ret = ttm_bo_vm_dummy_page(vmf, vmf->vma->vm_page_prot);
+ 	}
 -- 
 2.32.0
 
