@@ -2,84 +2,90 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4F45C83027
-	for <kernel-janitors@archiver.kernel.org>; Thu,  2 Sep 2021 16:40:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F033FC433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu,  2 Sep 2021 20:38:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AF331610D2
-	for <kernel-janitors@archiver.kernel.org>; Thu,  2 Sep 2021 16:40:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB519610A0
+	for <kernel-janitors@archiver.kernel.org>; Thu,  2 Sep 2021 20:38:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346440AbhIBQlS (ORCPT
+        id S1343915AbhIBUjT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 2 Sep 2021 12:41:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39988 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1346439AbhIBQlL (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 2 Sep 2021 12:41:11 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 01D26610A2;
-        Thu,  2 Sep 2021 16:40:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1630600813;
-        bh=vVhA0D1FxuCLM+gcPg9dcutVf4j6oM8l2T75ajcYUOI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=Enoq2d/lXJKhBWZeMumZGYzpLxuekbgv5ybGMt9jz+j8UnDaMOC2g9YRIpA7e+Sl6
-         6vvoVy7gNlbfEBVaLRZZY01mB70jxnNIZBB6HL5CqjBlL8QxmZFiR1nx52t1LTIrYZ
-         UfcK9nVY4lxu+AmwwP7VQJZTkSwsz2Us7suu1gJWMSTyM9a+QWNgJnf2rYjmIKgJnp
-         vsMYYhMxyQYg7xNYlCtKazxJTvuovCfN7l2vSdwbIswCGUMAPI8idif+4b2UuotCRB
-         c53+LxEfS2Xx3hSjgosuG0Vv4rZcWQHb1rn9qugqscpbm8yDoaoxkWao1aurPkr7aL
-         Nmrq5/XNvMEwA==
-Date:   Thu, 2 Sep 2021 11:40:11 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     bhelgaas@google.com, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH] x86/PCI: sta2x11: switch from 'pci_' to 'dma_' API
-Message-ID: <20210902164011.GA340793@bjorn-Precision-5520>
+        Thu, 2 Sep 2021 16:39:19 -0400
+Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:22541 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234544AbhIBUjS (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 2 Sep 2021 16:39:18 -0400
+Received: from pop-os.home ([90.126.253.178])
+        by mwinf5d54 with ME
+        id p8eC2500A3riaq2038eDGc; Thu, 02 Sep 2021 22:38:16 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 02 Sep 2021 22:38:16 +0200
+X-ME-IP: 90.126.253.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     luciano.coelho@intel.com, kvalo@codeaurora.org,
+        davem@davemloft.net, kuba@kernel.org, johannes.berg@intel.com,
+        pierre-louis.bossart@linux.intel.com, drorx.moshe@intel.com
+Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] iwlwifi: pnvm: Fix a memory leak in 'iwl_pnvm_get_from_fs()'
+Date:   Thu,  2 Sep 2021 22:38:11 +0200
+Message-Id: <1b5d80f54c1dbf85710fd285243932943b498fe7.1630614969.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <99656452963ba3c63a6cb12e151279d81da365eb.1629658069.git.christophe.jaillet@wanadoo.fr>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-[+cc Christoph]
+A firmware is requested but never released in this function. This leads to
+a memory leak in the normal execution path.
 
-On Sun, Aug 22, 2021 at 08:49:20PM +0200, Christophe JAILLET wrote:
-> The wrappers in include/linux/pci-dma-compat.h should go away.
-> ...
+Add the missing 'release_firmware()' call.
+Also introduce a temp variable (new_len) in order to keep the value of
+'pnvm->size' after the firmware has been released.
 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Fixes: cdda18fbbefa ("iwlwifi: pnvm: move file loading code to a separate function")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/wireless/intel/iwlwifi/fw/pnvm.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-Applied to pci/misc for v5.15, thanks!
+diff --git a/drivers/net/wireless/intel/iwlwifi/fw/pnvm.c b/drivers/net/wireless/intel/iwlwifi/fw/pnvm.c
+index 314ed90c23dd..dde22bdc8703 100644
+--- a/drivers/net/wireless/intel/iwlwifi/fw/pnvm.c
++++ b/drivers/net/wireless/intel/iwlwifi/fw/pnvm.c
+@@ -231,6 +231,7 @@ static int iwl_pnvm_get_from_fs(struct iwl_trans *trans, u8 **data, size_t *len)
+ {
+ 	const struct firmware *pnvm;
+ 	char pnvm_name[MAX_PNVM_NAME];
++	size_t new_len;
+ 	int ret;
+ 
+ 	iwl_pnvm_get_fs_name(trans, pnvm_name, sizeof(pnvm_name));
+@@ -242,11 +243,14 @@ static int iwl_pnvm_get_from_fs(struct iwl_trans *trans, u8 **data, size_t *len)
+ 		return ret;
+ 	}
+ 
++	new_len = pnvm->size;
+ 	*data = kmemdup(pnvm->data, pnvm->size, GFP_KERNEL);
++	release_firmware(pnvm);
++
+ 	if (!*data)
+ 		return -ENOMEM;
+ 
+-	*len = pnvm->size;
++	*len = new_len;
+ 
+ 	return 0;
+ }
+-- 
+2.30.2
 
-> ---
-> If needed, see post from Christoph Hellwig on the kernel-janitors ML:
->    https://marc.info/?l=kernel-janitors&m=158745678307186&w=4
-> ---
->  arch/x86/pci/sta2x11-fixup.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/pci/sta2x11-fixup.c b/arch/x86/pci/sta2x11-fixup.c
-> index 7d2525691854..101081ad64b6 100644
-> --- a/arch/x86/pci/sta2x11-fixup.c
-> +++ b/arch/x86/pci/sta2x11-fixup.c
-> @@ -146,8 +146,7 @@ static void sta2x11_map_ep(struct pci_dev *pdev)
->  		dev_err(dev, "sta2x11: could not set DMA offset\n");
->  
->  	dev->bus_dma_limit = max_amba_addr;
-> -	pci_set_consistent_dma_mask(pdev, max_amba_addr);
-> -	pci_set_dma_mask(pdev, max_amba_addr);
-> +	dma_set_mask_and_coherent(&pdev->dev, max_amba_addr);
->  
->  	/* Configure AHB mapping */
->  	pci_write_config_dword(pdev, AHB_PEXLBASE(0), 0);
-> -- 
-> 2.30.2
-> 
