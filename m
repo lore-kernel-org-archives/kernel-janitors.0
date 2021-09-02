@@ -5,38 +5,38 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9A96C433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu,  2 Sep 2021 21:45:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D644C433FE
+	for <kernel-janitors@archiver.kernel.org>; Thu,  2 Sep 2021 21:51:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 837D8610A0
-	for <kernel-janitors@archiver.kernel.org>; Thu,  2 Sep 2021 21:45:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3AD21610F9
+	for <kernel-janitors@archiver.kernel.org>; Thu,  2 Sep 2021 21:51:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347139AbhIBVqM (ORCPT
+        id S1347579AbhIBVwa (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 2 Sep 2021 17:46:12 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:59708
+        Thu, 2 Sep 2021 17:52:30 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:60192
         "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S244085AbhIBVqM (ORCPT
+        by vger.kernel.org with ESMTP id S1347582AbhIBVw1 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 2 Sep 2021 17:46:12 -0400
+        Thu, 2 Sep 2021 17:52:27 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id ECE8F3FE71;
-        Thu,  2 Sep 2021 21:45:11 +0000 (UTC)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 1371E3F22D;
+        Thu,  2 Sep 2021 21:51:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1630619112;
-        bh=s9p5QLB1+aDHhWrCWaZs6bVSkWVQnpCvcnaOFCjNF1w=;
+        s=20210705; t=1630619488;
+        bh=cItgUpS2AQ9mIN7Iv9RVBAc7PAHB+grKWA9BcWmqIBc=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=uqdIoGDigSHGeux/F/gdDe1/0r9C8ZJjDg/Zssuiyaf7iStZADcs8G1Agx+zAG0Zz
-         DavD3If6UqRelNJ7Iyu3VYe4DxH/B5WA/JhdMMOoWqblbAs0ideETSSn2WfrtcCmEg
-         PQKlH8kp5ziQ+8jNGWGV/KsHB6TQpsi4h2C7voTwuCBigjptd8reBUmcjWdo1HDL83
-         xgQ+AEE2pNYMB5ceNhLrugjnODd1AkQOPa47EKmWfAviEipmR1aQkIL4Hgh1vTH5Hr
-         bvLNmiZJ0p0KseS3Bkd2I9mPoACChBoB9/6UajHNv1c4yL6MjC9OlccsaMZJyjMsAE
-         iZpzC0q9yQ7/A==
+        b=IPwMjkBO+TUYphxUis4Ia4y95JMr0Cy4WvMbdb91YA1ZPQV1cXwsST+vFcIfvZfEa
+         slniXUFEUD3iKimJ+Xaav53XX24wBFdPxCF1cIX88P+npqUqXuFcXhMls0vWjxoDJG
+         z5EJxhtPtYOJIoGNn6FmTe9R9UeDxC4jB5+hVw0s4Jmyim0qXAk6coxQ2LF4i1YeAC
+         KlpfqrpCdj5PHeMCMi35kPBXK3ZxalxJGY/HqwamBG46JAcE3jTnmOP5a6jtRSWvVg
+         +gjXdxPbA2lDQwVmC0vcn7Slmdi7hqU4WPUIfMocjdlg/PuR5/d3GqmBe3FdGVBIUA
+         eid2uTihgfRAw==
 From:   Colin King <colin.king@canonical.com>
 To:     Alex Deucher <alexander.deucher@amd.com>,
         =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
@@ -44,9 +44,9 @@ To:     Alex Deucher <alexander.deucher@amd.com>,
         Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
         dri-devel@lists.freedesktop.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/amdgpu: clean up inconsistent indenting
-Date:   Thu,  2 Sep 2021 22:45:10 +0100
-Message-Id: <20210902214510.55070-1-colin.king@canonical.com>
+Subject: [PATCH][next] drm/amdgpu: sdma: clean up identation
+Date:   Thu,  2 Sep 2021 22:51:27 +0100
+Message-Id: <20210902215127.55330-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -57,32 +57,32 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-There are a couple of statements that are indented one character
-too deeply, clean these up.
+There is a statement that is indented incorrectly. Clean it up.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/sdma_v5_2.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
-index d6aa032890ee..a573424a6e0b 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
-@@ -60,10 +60,9 @@ static vm_fault_t amdgpu_gem_fault(struct vm_fault *vmf)
- 			goto unlock;
- 		}
+diff --git a/drivers/gpu/drm/amd/amdgpu/sdma_v5_2.c b/drivers/gpu/drm/amd/amdgpu/sdma_v5_2.c
+index 779f5c911e11..e4a96e7e386d 100644
+--- a/drivers/gpu/drm/amd/amdgpu/sdma_v5_2.c
++++ b/drivers/gpu/drm/amd/amdgpu/sdma_v5_2.c
+@@ -375,10 +375,10 @@ static void sdma_v5_2_ring_emit_ib(struct amdgpu_ring *ring,
+  */
+ static void sdma_v5_2_ring_emit_mem_sync(struct amdgpu_ring *ring)
+ {
+-    uint32_t gcr_cntl =
+-		    SDMA_GCR_GL2_INV | SDMA_GCR_GL2_WB | SDMA_GCR_GLM_INV |
+-			SDMA_GCR_GL1_INV | SDMA_GCR_GLV_INV | SDMA_GCR_GLK_INV |
+-			SDMA_GCR_GLI_INV(1);
++	uint32_t gcr_cntl = SDMA_GCR_GL2_INV | SDMA_GCR_GL2_WB |
++			    SDMA_GCR_GLM_INV | SDMA_GCR_GL1_INV |
++			    SDMA_GCR_GLV_INV | SDMA_GCR_GLK_INV |
++			    SDMA_GCR_GLI_INV(1);
  
--		 ret = ttm_bo_vm_fault_reserved(vmf, vmf->vma->vm_page_prot,
--						TTM_BO_VM_NUM_PREFAULT, 1);
--
--		 drm_dev_exit(idx);
-+		ret = ttm_bo_vm_fault_reserved(vmf, vmf->vma->vm_page_prot,
-+					       TTM_BO_VM_NUM_PREFAULT, 1);
-+		drm_dev_exit(idx);
- 	} else {
- 		ret = ttm_bo_vm_dummy_page(vmf, vmf->vma->vm_page_prot);
- 	}
+ 	/* flush entire cache L0/L1/L2, this can be optimized by performance requirement */
+ 	amdgpu_ring_write(ring, SDMA_PKT_HEADER_OP(SDMA_OP_GCR_REQ));
 -- 
 2.32.0
 
