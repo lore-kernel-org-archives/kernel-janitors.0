@@ -2,87 +2,80 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD8D8C433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu,  2 Sep 2021 22:02:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A82C3C433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu,  2 Sep 2021 22:17:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 94C8F60724
-	for <kernel-janitors@archiver.kernel.org>; Thu,  2 Sep 2021 22:02:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85C1D610D2
+	for <kernel-janitors@archiver.kernel.org>; Thu,  2 Sep 2021 22:17:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234074AbhIBWDo (ORCPT
+        id S1344075AbhIBWSq (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 2 Sep 2021 18:03:44 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:60398
+        Thu, 2 Sep 2021 18:18:46 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:60880
         "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232827AbhIBWDo (ORCPT
+        by vger.kernel.org with ESMTP id S236148AbhIBWSq (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 2 Sep 2021 18:03:44 -0400
-Received: from [10.172.193.212] (1.general.cking.uk.vpn [10.172.193.212])
+        Thu, 2 Sep 2021 18:18:46 -0400
+Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 0B9CA3F042;
-        Thu,  2 Sep 2021 22:02:44 +0000 (UTC)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id E69C43F231;
+        Thu,  2 Sep 2021 22:17:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1630620164;
-        bh=gsJFTztF9GceLOLBONfz4P+vNdtOnoxVKuUu34GIhYs=;
-        h=Subject:From:To:Cc:References:Message-ID:Date:MIME-Version:
-         In-Reply-To:Content-Type;
-        b=azlAvWbmqeT774jKollb4hL0VVErvYvKsaWz9nfuDtx7liu2sqSSR4h14RzzXOlic
-         o5eg2QknVstBjiDaLl0BWJ6GWoqowQoEBTRcW2Tx87RJZkWZTwXP6YoRA9rxdy9wPx
-         xJWGjslti7MfRAeZAEmIY8X9T8elRB8bdpKTVajHcdk4GNBLV1y62KJqngAB2yq3T4
-         W9DKJmlWS3pBHdDTAgvCy9zR1UtJtD6BDvD0+3B9HziYitj5Cs3B0IobSRTV8RkV9m
-         F7oyM8L6WTdtGesuQqh70Xx5tGYB8GR6QTpUHbqr3gySTJ0FPk88qx+rAWfo6tY2FT
-         ZVeFtdCBQhfQA==
-Subject: NAK: [PATCH][next] media: pvrusb2: add newline between two statements
-From:   Colin Ian King <colin.king@canonical.com>
-To:     Mike Isely <isely@pobox.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org
+        s=20210705; t=1630621065;
+        bh=rkLqk2H3cfzfe0pZb/HQsYkLLWbNkb74kYaENpGnHRs=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=QxLVZAJ7jNAVxsh60jcOMAf1wJ28usLdkpHLTN2vJSNmfbkoz3bYfscZEWRXdCBjl
+         yPTawrC59vBZtsPCJSYjNXRmPmjAwNmrhtv1sQ/67J3ioW5QvgoZ7qS8VPQHX/Szdr
+         JX0eHQaGXmSoq97rdJmwbwpr4o5sHCRQF2K4u9dDaq0HbLwMpHywfjvKDCUwkk1DE0
+         aXh5B7XZdDJH+cCqAd7mcHgr926MhbmlK87LpaiFooRfCy54VbZmBEN7R0qgaWaaaB
+         i1GoBpMTbHAeRsUnoD5DhO7+wZbRLOk4QwESbo5BodLA7NR2fjYB+wmWSCyLDN/MGx
+         PEfOPxsH4jcBw==
+From:   Colin King <colin.king@canonical.com>
+To:     Steffen Klassert <klassert@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210902220112.55824-1-colin.king@canonical.com>
-Message-ID: <52c324ad-2467-9edc-c386-bc5a086cecbc@canonical.com>
-Date:   Thu, 2 Sep 2021 23:02:43 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+Subject: [PATCH] net: 3com: 3c59x: clean up inconsistent indenting
+Date:   Thu,  2 Sep 2021 23:17:45 +0100
+Message-Id: <20210902221745.56194-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-In-Reply-To: <20210902220112.55824-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 02/09/2021 23:01, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There are two statements on the same line, add a newline to clean
-> this up.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/media/usb/pvrusb2/pvrusb2-hdw.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/usb/pvrusb2/pvrusb2-hdw.c b/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
-> index d38dee1792e4..ca00b7fe1e7f 100644
-> --- a/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
-> +++ b/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
-> @@ -1727,7 +1727,8 @@ int pvr2_hdw_set_streaming(struct pvr2_hdw *hdw,int enable_flag)
->  				   enable_flag ? "enable" : "disable");
->  		}
->  		pvr2_hdw_state_sched(hdw);
-> -	} while (0); LOCK_GIVE(hdw->big_lock);
-> +	} while (0);
-> +	LOCK_GIVE(hdw->big_lock);
->  	if ((ret = pvr2_hdw_wait(hdw,0)) < 0) return ret;
->  	if (enable_flag) {
->  		while ((st = hdw->master_state) != PVR2_STATE_RUN) {
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-ignore, V2 being sent in a moment.
+There is a statement that is not indented correctly, add in the
+missing tab.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/3com/3c59x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/3com/3c59x.c b/drivers/net/ethernet/3com/3c59x.c
+index 17c16333a412..7b0ae9efc004 100644
+--- a/drivers/net/ethernet/3com/3c59x.c
++++ b/drivers/net/ethernet/3com/3c59x.c
+@@ -2786,7 +2786,7 @@ static void
+ dump_tx_ring(struct net_device *dev)
+ {
+ 	if (vortex_debug > 0) {
+-	struct vortex_private *vp = netdev_priv(dev);
++		struct vortex_private *vp = netdev_priv(dev);
+ 		void __iomem *ioaddr = vp->ioaddr;
+ 
+ 		if (vp->full_bus_master_tx) {
+-- 
+2.32.0
+
