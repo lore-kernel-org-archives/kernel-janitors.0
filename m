@@ -7,48 +7,44 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D746C433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu,  2 Sep 2021 21:57:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80583C433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu,  2 Sep 2021 22:01:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 25DE460F12
-	for <kernel-janitors@archiver.kernel.org>; Thu,  2 Sep 2021 21:57:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6455C6056B
+	for <kernel-janitors@archiver.kernel.org>; Thu,  2 Sep 2021 22:01:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347663AbhIBV6i (ORCPT
+        id S1347981AbhIBWCR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 2 Sep 2021 17:58:38 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:60362
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S243139AbhIBV6h (ORCPT
+        Thu, 2 Sep 2021 18:02:17 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:60300
+        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1347978AbhIBWCO (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 2 Sep 2021 17:58:37 -0400
+        Thu, 2 Sep 2021 18:02:14 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 9E16C3F07E;
-        Thu,  2 Sep 2021 21:57:37 +0000 (UTC)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 6CB763F042;
+        Thu,  2 Sep 2021 22:01:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1630619857;
-        bh=RrGb14526Hzdi2/6F7zzMyJp4jDW7pX9lwkBYSkcqpM=;
+        s=20210705; t=1630620073;
+        bh=grOwvcWt8tznJgNbJD2ehdQ/weYaXz3I2MtUbnGwXhI=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=coaFRyxoT+NWg1LTsanYt1sed4BgbKdeHv4iRV+tv1YdVLbj+1qp8qoLAVUFZXKfD
-         tA7nQjAsIvGYP01nwDOzhGMR4j9pRsxNpSSYn8yqfBbw5p4kccz6jweZEF8mDtvSrQ
-         hIbQtv2yaNnTK/odnQDg0Tqh4qah7EbhpRBFKxuAYgBuU3Rq70f3ckrvBd2Ehw90On
-         dBcBh+ymObVnS8XVihxM9isHp4RYDgIkffT/wg+0yLCqwRFivGjwQkosjHCEDmxBCF
-         wSXh7lCdcuKRJ9j2uPmSKWd3Q8g98UXvRE93lgBrPiznazVlJkKJ72/1F3wbedZOrr
-         sCQHRUzFgEWlw==
+        b=jxxutEXHPKQABu1nvpBzxExg5Vjdya3D1c5xe/Ge+JwGOaYpT/V8a8yM2Xzm8ACCi
+         kI/pzkdcm3YWDc92bRckxCSvHEgWtOi+CZubjZMkC2YoxMnaBhQIYi7Uhwo6KAvGmb
+         fMC7a7DzXVsnpX1h8ab2pk2U+SGJKdl7cd1fEy1mAR0hD2HbhmOb+Ymk5BJ1d86zhB
+         PsAVe6HuJtXRWULQzMwaSfahlMXD507YIWifLizY8I1tgNgYixkxxBc44dEq1S5mQm
+         h/wwxKgrnXg/UTh4I4rlPSGBe0sDGcSJmH3hjcL8aKxbDqrwOaCj+3CRR3B2wVDrHU
+         2bRaUp9mgzfdA==
 From:   Colin King <colin.king@canonical.com>
-To:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+To:     Mike Isely <isely@pobox.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/i915: clean up inconsistent indenting
-Date:   Thu,  2 Sep 2021 22:57:37 +0100
-Message-Id: <20210902215737.55570-1-colin.king@canonical.com>
+Subject: [PATCH][next] media: pvrusb2: add newline between two statements
+Date:   Thu,  2 Sep 2021 23:01:12 +0100
+Message-Id: <20210902220112.55824-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -59,27 +55,28 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-There is a statement that is indented one character too deeply,
-clean this up.
+There are two statements on the same line, add a newline to clean
+this up.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/gpu/drm/i915/gt/intel_execlists_submission.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/usb/pvrusb2/pvrusb2-hdw.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/i915/gt/intel_execlists_submission.c b/drivers/gpu/drm/i915/gt/intel_execlists_submission.c
-index de5f9c86b9a4..aeb324b701ec 100644
---- a/drivers/gpu/drm/i915/gt/intel_execlists_submission.c
-+++ b/drivers/gpu/drm/i915/gt/intel_execlists_submission.c
-@@ -2565,7 +2565,7 @@ __execlists_context_pre_pin(struct intel_context *ce,
- 	if (!__test_and_set_bit(CONTEXT_INIT_BIT, &ce->flags)) {
- 		lrc_init_state(ce, engine, *vaddr);
- 
--		 __i915_gem_object_flush_map(ce->state->obj, 0, engine->context_size);
-+		__i915_gem_object_flush_map(ce->state->obj, 0, engine->context_size);
- 	}
- 
- 	return 0;
+diff --git a/drivers/media/usb/pvrusb2/pvrusb2-hdw.c b/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
+index d38dee1792e4..ca00b7fe1e7f 100644
+--- a/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
++++ b/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
+@@ -1727,7 +1727,8 @@ int pvr2_hdw_set_streaming(struct pvr2_hdw *hdw,int enable_flag)
+ 				   enable_flag ? "enable" : "disable");
+ 		}
+ 		pvr2_hdw_state_sched(hdw);
+-	} while (0); LOCK_GIVE(hdw->big_lock);
++	} while (0);
++	LOCK_GIVE(hdw->big_lock);
+ 	if ((ret = pvr2_hdw_wait(hdw,0)) < 0) return ret;
+ 	if (enable_flag) {
+ 		while ((st = hdw->master_state) != PVR2_STATE_RUN) {
 -- 
 2.32.0
 
