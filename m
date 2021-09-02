@@ -7,44 +7,47 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C51A7C433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu,  2 Sep 2021 22:26:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBC0FC433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu,  2 Sep 2021 22:36:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9F74B61041
-	for <kernel-janitors@archiver.kernel.org>; Thu,  2 Sep 2021 22:26:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A258A610A0
+	for <kernel-janitors@archiver.kernel.org>; Thu,  2 Sep 2021 22:36:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347634AbhIBW06 (ORCPT
+        id S1347724AbhIBWhp (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 2 Sep 2021 18:26:58 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:32908
+        Thu, 2 Sep 2021 18:37:45 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:33242
         "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231642AbhIBW05 (ORCPT
+        by vger.kernel.org with ESMTP id S1347586AbhIBWho (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 2 Sep 2021 18:26:57 -0400
+        Thu, 2 Sep 2021 18:37:44 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 7E5923F33E;
-        Thu,  2 Sep 2021 22:25:57 +0000 (UTC)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id AA6B53F22D;
+        Thu,  2 Sep 2021 22:36:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1630621557;
-        bh=kfwb3fgdKLU7ink68zjUIyiYNzChTEoc7/7Uc+lGVGw=;
+        s=20210705; t=1630622203;
+        bh=ItSWBKpEcyPhijBkfmewmMxSZj7fC2HDkvdQMHVWVXY=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=BI4vakcFz6PXBTMh+9ZxQJHpD6sKVryZWSbZnLeEsWzJH39qFYApomjZNFZ0QTj2c
-         dR+7hrwX7Y8zkx2C5wjmUf3WzqUKDG4Pvx2+8LcDOscUESfTCpaaOEfqHNsDPyR7Z6
-         aeu6zaNEBiRwdYN/JS6LxhqlqfRKjSCLYz8V9/dcLbFcnGE9p+T6FRQc8YuLsyWvRD
-         8dPdjvHjOUCPAEQeUDkAj2uSDMNy9LzXO6juMeAI4YNJfm00ZpQiXmI/OzCXP0cr5d
-         PYFinAyY1HHk98NAlzkHG9E8Qv29EQbYx6a+B6jf2w/iFTZvyGhT+LRQFutcQgqNca
-         b7H8mxwDISySw==
+        b=uR1lXjluYE0eoxPlx0MmQ9y2le+SsrE78vD06IEMJQiWh9Zoi4probJ6CV+WuSXTU
+         lmpAHoLmUitY5bVav6OWa8Ar2jWeyaoGAWq1Fd19u3A3pjgU/VOhkVQK2rUNBu/jXZ
+         OdR5wKBgDWyKQ1FAaDfD6M2DlB72hqXOJ/jDo3CgyZ82iLgp3yFWOnwgpMeypBC1lh
+         TR3ekeqR7Hd9Lh1qaLYHQXm3eYxORkME6K0yrTXm7B8sFtob/9fUffCL+F9V1nGLqy
+         Wrcf6FZ6ThN6ivNo538EDtTCiUBprT4KEliXbkJOv+xCu/GGWiOsggWn/h2YSaWU+u
+         T5cym8AzZgFrQ==
 From:   Colin King <colin.king@canonical.com>
-To:     "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-        netdev@vger.kernel.org
+To:     Kashyap Desai <kashyap.desai@broadcom.com>,
+        Sumit Saxena <sumit.saxena@broadcom.com>,
+        Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        megaraidlinux.pdl@broadcom.com, linux-scsi@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drivers: net: smc911x: clean up inconsistent indenting
-Date:   Thu,  2 Sep 2021 23:25:57 +0100
-Message-Id: <20210902222557.56483-1-colin.king@canonical.com>
+Subject: [PATCH] scsi: megaraid: clean up some inconsistent indenting
+Date:   Thu,  2 Sep 2021 23:36:43 +0100
+Message-Id: <20210902223643.56979-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -55,72 +58,36 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-There are various function arguments that are not indented correctly,
-clean these up with correct indentation.
+There are a few statements where the indentation is not correct,
+clean these up.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/ethernet/smsc/smc911x.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/scsi/megaraid/megaraid_sas_base.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/smsc/smc911x.c b/drivers/net/ethernet/smsc/smc911x.c
-index 22cdbf12c823..b38056ed8371 100644
---- a/drivers/net/ethernet/smsc/smc911x.c
-+++ b/drivers/net/ethernet/smsc/smc911x.c
-@@ -1550,7 +1550,7 @@ static int smc911x_ethtool_getregslen(struct net_device *dev)
- }
+diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c b/drivers/scsi/megaraid/megaraid_sas_base.c
+index e4298bf4a482..880b51a6f7dd 100644
+--- a/drivers/scsi/megaraid/megaraid_sas_base.c
++++ b/drivers/scsi/megaraid/megaraid_sas_base.c
+@@ -1916,7 +1916,7 @@ void megasas_set_dynamic_target_properties(struct scsi_device *sdev,
+ 		raid = MR_LdRaidGet(ld, local_map_ptr);
  
- static void smc911x_ethtool_getregs(struct net_device *dev,
--										 struct ethtool_regs* regs, void *buf)
-+				    struct ethtool_regs *regs, void *buf)
- {
- 	struct smc911x_local *lp = netdev_priv(dev);
- 	unsigned long flags;
-@@ -1600,7 +1600,7 @@ static int smc911x_ethtool_wait_eeprom_ready(struct net_device *dev)
- }
+ 		if (raid->capability.ldPiMode == MR_PROT_INFO_TYPE_CONTROLLER)
+-		blk_queue_update_dma_alignment(sdev->request_queue, 0x7);
++			blk_queue_update_dma_alignment(sdev->request_queue, 0x7);
  
- static inline int smc911x_ethtool_write_eeprom_cmd(struct net_device *dev,
--													int cmd, int addr)
-+						   int cmd, int addr)
- {
- 	struct smc911x_local *lp = netdev_priv(dev);
- 	int ret;
-@@ -1614,7 +1614,7 @@ static inline int smc911x_ethtool_write_eeprom_cmd(struct net_device *dev,
- }
+ 		mr_device_priv_data->is_tm_capable =
+ 			raid->capability.tmCapable;
+@@ -8033,7 +8033,7 @@ static void megasas_detach_one(struct pci_dev *pdev)
  
- static inline int smc911x_ethtool_read_eeprom_byte(struct net_device *dev,
--													u8 *data)
-+						   u8 *data)
- {
- 	struct smc911x_local *lp = netdev_priv(dev);
- 	int ret;
-@@ -1626,7 +1626,7 @@ static inline int smc911x_ethtool_read_eeprom_byte(struct net_device *dev,
- }
- 
- static inline int smc911x_ethtool_write_eeprom_byte(struct net_device *dev,
--													 u8 data)
-+						    u8 data)
- {
- 	struct smc911x_local *lp = netdev_priv(dev);
- 	int ret;
-@@ -1638,7 +1638,7 @@ static inline int smc911x_ethtool_write_eeprom_byte(struct net_device *dev,
- }
- 
- static int smc911x_ethtool_geteeprom(struct net_device *dev,
--									  struct ethtool_eeprom *eeprom, u8 *data)
-+				     struct ethtool_eeprom *eeprom, u8 *data)
- {
- 	u8 eebuf[SMC911X_EEPROM_LEN];
- 	int i, ret;
-@@ -1654,7 +1654,7 @@ static int smc911x_ethtool_geteeprom(struct net_device *dev,
- }
- 
- static int smc911x_ethtool_seteeprom(struct net_device *dev,
--									   struct ethtool_eeprom *eeprom, u8 *data)
-+				     struct ethtool_eeprom *eeprom, u8 *data)
- {
- 	int i, ret;
- 
+ 	if (instance->adapter_type != MFI_SERIES) {
+ 		megasas_release_fusion(instance);
+-			pd_seq_map_sz = sizeof(struct MR_PD_CFG_SEQ_NUM_SYNC) +
++		pd_seq_map_sz = sizeof(struct MR_PD_CFG_SEQ_NUM_SYNC) +
+ 				(sizeof(struct MR_PD_CFG_SEQ) *
+ 					(MAX_PHYSICAL_DEVICES - 1));
+ 		for (i = 0; i < 2 ; i++) {
 -- 
 2.32.0
 
