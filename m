@@ -7,43 +7,45 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14F41C433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu,  2 Sep 2021 22:56:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58161C433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu,  2 Sep 2021 23:00:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DE1C96108E
-	for <kernel-janitors@archiver.kernel.org>; Thu,  2 Sep 2021 22:56:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36648610FB
+	for <kernel-janitors@archiver.kernel.org>; Thu,  2 Sep 2021 23:00:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347832AbhIBW5Y (ORCPT
+        id S1347855AbhIBXBN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 2 Sep 2021 18:57:24 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:34106
+        Thu, 2 Sep 2021 19:01:13 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:34162
         "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232684AbhIBW5X (ORCPT
+        by vger.kernel.org with ESMTP id S232013AbhIBXBL (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 2 Sep 2021 18:57:23 -0400
+        Thu, 2 Sep 2021 19:01:11 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 7F08A3F355;
-        Thu,  2 Sep 2021 22:56:23 +0000 (UTC)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id C12D03F355;
+        Thu,  2 Sep 2021 23:00:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1630623383;
-        bh=LSEKeaSDQ1GT7tY9vov/U+ekVIymsacQFSJsNSyYZuU=;
+        s=20210705; t=1630623611;
+        bh=zxH+g8t4PZrVfiI57swIAzkUwA2FmWiTdfMr+NnQJMA=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=UszIlSz4z3N74cHzsTz7PQ9Rnu2TwTQy1kW3+8I/a78Br5T1Yubv52jneNfePS99e
-         xtmbTejSoiT+DJHfYC3D7SQZIW5c8G0wQaG2fM3e/DAJhnGWF67JThm20kIU7OfDpN
-         plXDU6RP2xRT7JoDofmcQn1USDK3OdL1PZIl/eoL0TdOG92As2HbFEleOd8RY+Ug/8
-         ay/SxGNi81hQEe35NR7+QYnTh0nlNxClLq2zCEiidwiFWxGmCb5zqD9r7POJYBTvLk
-         rxmIZ0+nXWq5JxkulOnSh3k/mOxxZECs+QKPKbsNX6PbGP22Wbiqc2N2tDiRKfhGt/
-         miFoV0s3QOFtg==
+        b=B80WzTLnZUHU54B0/LAdvPgTRMM17lpanljV2PalqiZcLX3kvNYmQz9LM45ZT/cpP
+         nBHJybLbbtLsbPtUpKzLOK9+FXvHcojxLRqUk9/1MALKekXeGsjgZTrWFTb8PfU/4j
+         w90jfBfu7hzqT6nw0pt67Qp3KyPt8Y0ILh1NDqsb0msr1NHXCs3zDETgE4825N5h8h
+         pw8Ofjf572el9rCvtXkIOndN6ZqR/apG1eL66RgpvPGP1Nlz+FizlTJ2KwE2Z7iRsa
+         zRmKGd87d2THrlonp9uo+voBbP+nyamGxtXk1zNiP4PYWdTrx9WWHxeaZ27TUzG5It
+         8jr4b3eiQwEfA==
 From:   Colin King <colin.king@canonical.com>
-To:     "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
+To:     Jon Maloy <jmaloy@redhat.com>, Ying Xue <ying.xue@windriver.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+        tipc-discussion@lists.sourceforge.net
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] skbuff: clean up inconsistent indenting
-Date:   Thu,  2 Sep 2021 23:56:23 +0100
-Message-Id: <20210902225623.58209-1-colin.king@canonical.com>
+Subject: [PATCH] tipc: clean up inconsistent indenting
+Date:   Fri,  3 Sep 2021 00:00:11 +0100
+Message-Id: <20210902230011.58478-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -59,22 +61,22 @@ clean this up.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- net/core/skbuff.c | 2 +-
+ net/tipc/socket.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/core/skbuff.c b/net/core/skbuff.c
-index f9311762cc47..2170bea2c7de 100644
---- a/net/core/skbuff.c
-+++ b/net/core/skbuff.c
-@@ -3884,7 +3884,7 @@ struct sk_buff *skb_segment_list(struct sk_buff *skb,
- 		skb_push(nskb, -skb_network_offset(nskb) + offset);
+diff --git a/net/tipc/socket.c b/net/tipc/socket.c
+index e3105ba407c7..a0a27d87f631 100644
+--- a/net/tipc/socket.c
++++ b/net/tipc/socket.c
+@@ -1426,7 +1426,7 @@ static int __tipc_sendmsg(struct socket *sock, struct msghdr *m, size_t dlen)
+ 	if (ua) {
+ 		if (!tipc_uaddr_valid(ua, m->msg_namelen))
+ 			return -EINVAL;
+-		 atype = ua->addrtype;
++		atype = ua->addrtype;
+ 	}
  
- 		skb_release_head_state(nskb);
--		 __copy_skb_header(nskb, skb);
-+		__copy_skb_header(nskb, skb);
- 
- 		skb_headers_offset_update(nskb, skb_headroom(nskb) - skb_headroom(skb));
- 		skb_copy_from_linear_data_offset(skb, -tnl_hlen,
+ 	/* If socket belongs to a communication group follow other paths */
 -- 
 2.32.0
 
