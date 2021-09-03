@@ -2,80 +2,117 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50D4CC433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri,  3 Sep 2021 13:25:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DDFFC433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri,  3 Sep 2021 14:46:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3118260FDC
-	for <kernel-janitors@archiver.kernel.org>; Fri,  3 Sep 2021 13:25:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 796C460F56
+	for <kernel-janitors@archiver.kernel.org>; Fri,  3 Sep 2021 14:46:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235608AbhICN0A (ORCPT
+        id S1349049AbhICOrH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 3 Sep 2021 09:26:00 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:33254
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235169AbhICN0A (ORCPT
+        Fri, 3 Sep 2021 10:47:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42074 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230332AbhICOrF (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 3 Sep 2021 09:26:00 -0400
-Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 1463F4060A;
-        Fri,  3 Sep 2021 13:24:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1630675499;
-        bh=sfWVSkiVXrsH15ykdL6F1vaX2G6vomR361T+ZKMS4bk=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=ayvrDtnfNQ1bjF5hZ4vvzMrfEXmqcD90XQojCtdQ4D7WyR3ZXwUKLxHGOpl8KlDnF
-         l9FosKX/xPMdlnrg+VwCujg7vzhUBzNYZMMT49rJxfa210CYhUJDpf0bNh6yJyLmex
-         XIz4zLm+lfBDId6qSzP4cJl4cZ7DwvCwVRx5KILRpymhY/r5vwDSdXlVqkGR8G/ol8
-         46eRbkWUv5rGtIbXxplLSznxSbQTPoBTLcn7vgEY589J+acVPm46RBLmp180H16WiA
-         yUYBFWs3o30RPxhVrYKbMFjWWLoU5L2VE+Oi0mayvNlIT/DNiJfaC2Zew9BKedNGHk
-         hAIu0mKDjKs5g==
-From:   Colin King <colin.king@canonical.com>
-To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        ntfs3@lists.linux.dev
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] fs/ntfs3: Remove redundant initialization of variable err
-Date:   Fri,  3 Sep 2021 14:24:58 +0100
-Message-Id: <20210903132458.14342-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.32.0
+        Fri, 3 Sep 2021 10:47:05 -0400
+Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D36CC061575;
+        Fri,  3 Sep 2021 07:46:05 -0700 (PDT)
+Received: by mail-lj1-x22a.google.com with SMTP id s3so9946927ljp.11;
+        Fri, 03 Sep 2021 07:46:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=iNqobfro7OKzCHlE+ueste6F4lAQYDNz3YZQNe0s7dU=;
+        b=FbgW7NwtvajiLnGoaMmhlDH5/uBbf1qmObSH5E/hHzIFvyikRu51F1trXnepspUoJT
+         yJb+hOYC81u7xYkr5eNzAZLLA+d4HPbjlfbNNESBDYuh3LfnihT8i/S/Y+eKIKDbhtf5
+         g+8hsfPQ4gdjGurrJAWTspoUIPw6hcid2lOjQrmG2GInWQShCaHzXk5au3RUCmm3Vhkn
+         nLzPCWHkqPkNZ7ynuGU6wD1Z5/aCfuMQqBCpHZoqVm/nCep7x6pcGU5pO9vjOhn0wqCk
+         h109089zTIRx6o9hh4CFKQTfgg+4C8DM2iBnUaa1laUKDZJW/v2ajkSyJyM99n8/AEKs
+         znGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=iNqobfro7OKzCHlE+ueste6F4lAQYDNz3YZQNe0s7dU=;
+        b=J0SNoTA5Tk/u+3Un9P19hjclpQneQyKEBRD93Hohql80OBHdh/wjgzEfFPqJq/khs0
+         t8OjhfUJS17/jExioDb8f+Qg/0RwcX8gIXmJyUcqwqptuB51QnkNf20sbqsivnOq9Cu3
+         Tr1z0cT5g0AbMatp45JVicZiokl9jAyYmxgkzY4vkYxpbijhWYNQxSqW+H7cdZ3u1lzY
+         r3FCxlWZa+8huGgUYfu79YpWgMatlBgpZ8tnnIStITwtkHhWRFey/5OQGR58DdEo2yzf
+         Fdj0Al1+wX0y/rOjL8zqPabVu/IPw1dyrg5xZQ5zA8Zm1j9v7PFA3r8KZ+rjYIl1NIk3
+         MWdg==
+X-Gm-Message-State: AOAM530nyFx9OOqs/2x3h4uzG9D4SBcZKaEYscCkgm4hCrmsYrA5EDEO
+        etBJ42fFj4WkNdpceJXf+lpKAD9LgbeDcQ==
+X-Google-Smtp-Source: ABdhPJy9LfCNoBvM62pq4as9H3XZW5V4z2XdwFa4/LA49+UUyWD8Gc9+AHU04fT21rTFWQ1hQAQ3mA==
+X-Received: by 2002:a05:651c:54c:: with SMTP id q12mr3261368ljp.369.1630680363432;
+        Fri, 03 Sep 2021 07:46:03 -0700 (PDT)
+Received: from kari-VirtualBox (85-23-89-224.bb.dnainternet.fi. [85.23.89.224])
+        by smtp.gmail.com with ESMTPSA id f20sm644300ljc.81.2021.09.03.07.46.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Sep 2021 07:46:02 -0700 (PDT)
+Date:   Fri, 3 Sep 2021 17:46:01 +0300
+From:   Kari Argillander <kari.argillander@gmail.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        ntfs3@lists.linux.dev, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] fs/ntfs3: Remove redundant initialization of
+ variable err
+Message-ID: <20210903144601.jrqsjeaetxm3bcr3@kari-VirtualBox>
+References: <20210903132458.14342-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210903132458.14342-1-colin.king@canonical.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Fri, Sep 03, 2021 at 02:24:58PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The variable err is being initialized with a value that is never read, it
+> is being updated later on. The assignment is redundant and can be removed.
+> 
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-The variable err is being initialized with a value that is never read, it
-is being updated later on. The assignment is redundant and can be removed.
+Reviewed-by: Kari Argillander <kari.argillander@gmail.com>
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- fs/ntfs3/index.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Please note Konstantin that you should not yet, put this to master. You
+can collect these already, but if ntfs3 get merged to 5.15 we will start
+start master again later. You could but these in example devel if you
+want.
 
-diff --git a/fs/ntfs3/index.c b/fs/ntfs3/index.c
-index 0daca9adc54c..b1175542d854 100644
---- a/fs/ntfs3/index.c
-+++ b/fs/ntfs3/index.c
-@@ -1401,7 +1401,7 @@ int indx_find_raw(struct ntfs_index *indx, struct ntfs_inode *ni,
- static int indx_create_allocate(struct ntfs_index *indx, struct ntfs_inode *ni,
- 				CLST *vbn)
- {
--	int err = -ENOMEM;
-+	int err;
- 	struct ntfs_sb_info *sbi = ni->mi.sbi;
- 	struct ATTRIB *bitmap;
- 	struct ATTRIB *alloc;
--- 
-2.32.0
+Then we also need branch just for bug fixes. Example this will have to
+go to 5.16 because it is not bug fix. Our master is our for-next branch
+so this will go there when time comes.
 
+> ---
+>  fs/ntfs3/index.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/ntfs3/index.c b/fs/ntfs3/index.c
+> index 0daca9adc54c..b1175542d854 100644
+> --- a/fs/ntfs3/index.c
+> +++ b/fs/ntfs3/index.c
+> @@ -1401,7 +1401,7 @@ int indx_find_raw(struct ntfs_index *indx, struct ntfs_inode *ni,
+>  static int indx_create_allocate(struct ntfs_index *indx, struct ntfs_inode *ni,
+>  				CLST *vbn)
+>  {
+> -	int err = -ENOMEM;
+> +	int err;
+>  	struct ntfs_sb_info *sbi = ni->mi.sbi;
+>  	struct ATTRIB *bitmap;
+>  	struct ATTRIB *alloc;
+> -- 
+> 2.32.0
+> 
