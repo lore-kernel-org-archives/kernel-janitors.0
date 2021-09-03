@@ -2,75 +2,84 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC09DC4332F
-	for <kernel-janitors@archiver.kernel.org>; Fri,  3 Sep 2021 11:10:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AA62C433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri,  3 Sep 2021 11:35:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B45D46109E
-	for <kernel-janitors@archiver.kernel.org>; Fri,  3 Sep 2021 11:10:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7819E610CF
+	for <kernel-janitors@archiver.kernel.org>; Fri,  3 Sep 2021 11:35:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348822AbhICLLI (ORCPT
+        id S1349240AbhICLgh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 3 Sep 2021 07:11:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55012 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1348680AbhICLLG (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 3 Sep 2021 07:11:06 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id C1635610E8;
-        Fri,  3 Sep 2021 11:10:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1630667406;
-        bh=h4H94yW0VSymggzI9FEGPvnbJ659Wl3ttWLZkKY42j0=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=QMQe27wG8yCS3apy4TcXW4aVJLBWGjFDPA+CanrOPTsROyQp31mnJcodIc3heQIHG
-         +gwjMxTe/j3cDcGOmSs7umkACrUe0yy2udzoK2qLONJUf3ZoVArq6NjZ2I7nHBxZpu
-         WBDftI0j61MHaVfgvzgpa/Pdw1cyUyk0ipyibpchwA24uZ1JEPDkN9/iyA5asDGmMs
-         um9+Im7TiDzVqcjTSA6u2Kcbu8MGV6bAUUxWzirON2X0ZIbAiFCuCAjv4tDNvObaqi
-         xLKeUJ2NsYRrqF/03WJ1GK8hIN6jR7lWX+JvT5+9rlSUHbBpO+CDcm+Ddtmc3KcUrT
-         8ul3CH2RuRKDA==
-Content-Type: text/plain; charset="utf-8"
+        Fri, 3 Sep 2021 07:36:37 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:56620
+        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235188AbhICLgg (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 3 Sep 2021 07:36:36 -0400
+Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id DFE733F230;
+        Fri,  3 Sep 2021 11:35:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1630668935;
+        bh=RpO7O/bcjJi+T/4w2buAEbwHzIyG3tU0FQCVmx+2zYQ=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=An9LYalhwn54ptxDDDkj+aH5C6XyScm7bSIt12vTe64zvkr2Qo6Csz6tn6AipkyEF
+         Woe/TqzCZ4YYtks6FAFtdu43Dwl+MyHFCD7r7C1uaVqZkNsPhKFK/DVHItHnu61NJC
+         TqHOcS1V6KS/mBTd/kWVVzW47lrEAXu27aIdukolu/aevcz1Z3w0/k6nPLBjbXGBv3
+         xPvVsQSeUK8gTmGmGmsA3/Mk8mtz90jy+GR3t+DwK+0BTX6vJiPqDq2NQckQGN1Qo7
+         /wapxVwk092Npa4JLP53rmIC9Uss7WL26AcplPRXjUC4cDqhPLihNTmdx7WvKItIS+
+         z0EMpCxK1Z53Q==
+From:   Colin King <colin.king@canonical.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] io_uring: Fix a read of ununitialized pointer tctx
+Date:   Fri,  3 Sep 2021 12:35:35 +0100
+Message-Id: <20210903113535.11257-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] tipc: clean up inconsistent indenting
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <163066740675.18620.6699167919203164424.git-patchwork-notify@kernel.org>
-Date:   Fri, 03 Sep 2021 11:10:06 +0000
-References: <20210902230011.58478-1-colin.king@canonical.com>
-In-Reply-To: <20210902230011.58478-1-colin.king@canonical.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     jmaloy@redhat.com, ying.xue@windriver.com, davem@davemloft.net,
-        kuba@kernel.org, netdev@vger.kernel.org,
-        tipc-discussion@lists.sourceforge.net,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+From: Colin Ian King <colin.king@canonical.com>
 
-This patch was applied to netdev/net.git (refs/heads/master):
+In the unlikely case where ctx->flags & IORING_SETUP_SQPOLL is true
+and sqd is NULL the pointer tctx is not assigned a valid value and
+can contain a garbage value when it is dereferenced. Fix this by
+initializing it to NULL.
 
-On Fri,  3 Sep 2021 00:00:11 +0100 you wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a statement that is indented one character too deeply,
-> clean this up.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> 
-> [...]
+Addresses-Coverity: ("Uninitialized pointer read")
+Fixes: 9e30726065ea ("io_uring: ensure IORING_REGISTER_IOWQ_MAX_WORKERS works with SQPOLL")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/io_uring.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Here is the summary with links:
-  - tipc: clean up inconsistent indenting
-    https://git.kernel.org/netdev/net/c/743902c54461
-
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 132dd38e89ce..843362bebd8c 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -10525,7 +10525,7 @@ static int io_register_iowq_max_workers(struct io_ring_ctx *ctx,
+ 					void __user *arg)
+ {
+ 	struct io_sq_data *sqd = NULL;
+-	struct io_uring_task *tctx;
++	struct io_uring_task *tctx = NULL;
+ 	__u32 new_count[2];
+ 	int i, ret;
+ 
+-- 
+2.32.0
 
