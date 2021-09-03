@@ -2,117 +2,107 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.9 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DDFFC433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri,  3 Sep 2021 14:46:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EA5AC433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri,  3 Sep 2021 15:14:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 796C460F56
-	for <kernel-janitors@archiver.kernel.org>; Fri,  3 Sep 2021 14:46:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1031B610D2
+	for <kernel-janitors@archiver.kernel.org>; Fri,  3 Sep 2021 15:14:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349049AbhICOrH (ORCPT
+        id S1349566AbhICPP2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 3 Sep 2021 10:47:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42074 "EHLO
+        Fri, 3 Sep 2021 11:15:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48554 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230332AbhICOrF (ORCPT
+        with ESMTP id S236549AbhICPP1 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 3 Sep 2021 10:47:05 -0400
-Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D36CC061575;
-        Fri,  3 Sep 2021 07:46:05 -0700 (PDT)
-Received: by mail-lj1-x22a.google.com with SMTP id s3so9946927ljp.11;
-        Fri, 03 Sep 2021 07:46:05 -0700 (PDT)
+        Fri, 3 Sep 2021 11:15:27 -0400
+Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D245C061760
+        for <kernel-janitors@vger.kernel.org>; Fri,  3 Sep 2021 08:14:28 -0700 (PDT)
+Received: by mail-pl1-x636.google.com with SMTP id bg1so3468477plb.13
+        for <kernel-janitors@vger.kernel.org>; Fri, 03 Sep 2021 08:14:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=iNqobfro7OKzCHlE+ueste6F4lAQYDNz3YZQNe0s7dU=;
-        b=FbgW7NwtvajiLnGoaMmhlDH5/uBbf1qmObSH5E/hHzIFvyikRu51F1trXnepspUoJT
-         yJb+hOYC81u7xYkr5eNzAZLLA+d4HPbjlfbNNESBDYuh3LfnihT8i/S/Y+eKIKDbhtf5
-         g+8hsfPQ4gdjGurrJAWTspoUIPw6hcid2lOjQrmG2GInWQShCaHzXk5au3RUCmm3Vhkn
-         nLzPCWHkqPkNZ7ynuGU6wD1Z5/aCfuMQqBCpHZoqVm/nCep7x6pcGU5pO9vjOhn0wqCk
-         h109089zTIRx6o9hh4CFKQTfgg+4C8DM2iBnUaa1laUKDZJW/v2ajkSyJyM99n8/AEKs
-         znGg==
+        d=pensando.io; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=Zg/5XIA6AOIvCKf28eKv1Mz/3KXT2akr96LQrUcvm3E=;
+        b=eX1Ye6X9od4Y6LQMOHXLDkXdsCuAfE/9BDFzmczzVIMNZJJW3PSL7C1VWu4DFqmhEf
+         EoJacDRG8C1kRM+fK2ZQA9mE5Ccw0CQLFXDgCZOOJwed0m4A+b4XbjOvV0ki4qLuhMrs
+         MmSDENQZjHf5yWne5RlOSE5eTQRjaIwPTJsBS/7i0wu1u0t2bXUbX0uupOb81QWIIKA9
+         yIQuOl+2MTZhWaqmmldx9/q2Lvk3EjyzO1yktN6acRYBoTeURFyO2r4dwOkKLJy7mRC0
+         J/y09SVMk0L/RVJlGszpvPrrZO3+yadKLQeQP+KhUC16lWxa/Fz1AjBeMAh+YAL9+GDr
+         C22A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=iNqobfro7OKzCHlE+ueste6F4lAQYDNz3YZQNe0s7dU=;
-        b=J0SNoTA5Tk/u+3Un9P19hjclpQneQyKEBRD93Hohql80OBHdh/wjgzEfFPqJq/khs0
-         t8OjhfUJS17/jExioDb8f+Qg/0RwcX8gIXmJyUcqwqptuB51QnkNf20sbqsivnOq9Cu3
-         Tr1z0cT5g0AbMatp45JVicZiokl9jAyYmxgkzY4vkYxpbijhWYNQxSqW+H7cdZ3u1lzY
-         r3FCxlWZa+8huGgUYfu79YpWgMatlBgpZ8tnnIStITwtkHhWRFey/5OQGR58DdEo2yzf
-         Fdj0Al1+wX0y/rOjL8zqPabVu/IPw1dyrg5xZQ5zA8Zm1j9v7PFA3r8KZ+rjYIl1NIk3
-         MWdg==
-X-Gm-Message-State: AOAM530nyFx9OOqs/2x3h4uzG9D4SBcZKaEYscCkgm4hCrmsYrA5EDEO
-        etBJ42fFj4WkNdpceJXf+lpKAD9LgbeDcQ==
-X-Google-Smtp-Source: ABdhPJy9LfCNoBvM62pq4as9H3XZW5V4z2XdwFa4/LA49+UUyWD8Gc9+AHU04fT21rTFWQ1hQAQ3mA==
-X-Received: by 2002:a05:651c:54c:: with SMTP id q12mr3261368ljp.369.1630680363432;
-        Fri, 03 Sep 2021 07:46:03 -0700 (PDT)
-Received: from kari-VirtualBox (85-23-89-224.bb.dnainternet.fi. [85.23.89.224])
-        by smtp.gmail.com with ESMTPSA id f20sm644300ljc.81.2021.09.03.07.46.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Sep 2021 07:46:02 -0700 (PDT)
-Date:   Fri, 3 Sep 2021 17:46:01 +0300
-From:   Kari Argillander <kari.argillander@gmail.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        ntfs3@lists.linux.dev, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] fs/ntfs3: Remove redundant initialization of
- variable err
-Message-ID: <20210903144601.jrqsjeaetxm3bcr3@kari-VirtualBox>
-References: <20210903132458.14342-1-colin.king@canonical.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=Zg/5XIA6AOIvCKf28eKv1Mz/3KXT2akr96LQrUcvm3E=;
+        b=bV3pkh2DMoz6vc3RmfTAopu6fMwfFdiDthIAdQENhZ6RK2vn8nliKZ06JgQ62mAhlw
+         FNWHjUGCRa0YfIwvW1VywfBLC9JWZMYnJxm+b0sySKbLmeEKw6KuX7UlKDZYqVsg0KbY
+         Wnt/ckAEcmgTs6DMpX0FeBPr2fBhK+cvdIDX7Pl6X1ucNiTLLfPw5zO6eMdxVkUE07ZD
+         zAsw1BTX3yHhtS6U82+CrcWaGPFfrEa+4sVSPmSNewW65D+OR230Wl1nuGOaEd8ZZFe7
+         xy6KQgZJJsJcrOwdc3UGNLqxbbdltKsrrGLn0TJzzVzAbMxmKD6jg3YcrkkSEc0meGfi
+         dufA==
+X-Gm-Message-State: AOAM533d1Q8OPAZOzV+it7l/OdbqfIZD5YlIsPydit4Y6fByAB84gq21
+        qvWqG9a+7BX+4Jl9+ot2Za18yXGnbPGRFg==
+X-Google-Smtp-Source: ABdhPJwLMXobar8pQBxWMm+INz/w+EbHQCYCIQ9vclZBAbeXoX4ljXzPmAbE2yIjtOd5uamloOTybA==
+X-Received: by 2002:a17:902:7e88:b0:138:f5b2:2df9 with SMTP id z8-20020a1709027e8800b00138f5b22df9mr3339879pla.48.1630682067368;
+        Fri, 03 Sep 2021 08:14:27 -0700 (PDT)
+Received: from Shannons-MacBook-Pro.local ([50.53.47.17])
+        by smtp.gmail.com with ESMTPSA id l12sm5517244pji.36.2021.09.03.08.14.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 03 Sep 2021 08:14:27 -0700 (PDT)
+Subject: Re: [PATCH net-next] ionic: fix a sleeping in atomic bug
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     drivers@pensando.io, "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Allen Hubbe <allenbh@pensando.io>, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <20210903131856.GA25934@kili>
+From:   Shannon Nelson <snelson@pensando.io>
+Message-ID: <9ff5b195-decd-a49d-29e7-02c407cf4c0d@pensando.io>
+Date:   Fri, 3 Sep 2021 08:14:25 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210903132458.14342-1-colin.king@canonical.com>
+In-Reply-To: <20210903131856.GA25934@kili>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Sep 03, 2021 at 02:24:58PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable err is being initialized with a value that is never read, it
-> is being updated later on. The assignment is redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+On 9/3/21 6:18 AM, Dan Carpenter wrote:
+> This code is holding spin_lock_bh(&lif->rx_filters.lock); so the
+> allocation needs to be atomic.
+>
+> Fixes: 969f84394604 ("ionic: sync the filters in the work task")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Reviewed-by: Kari Argillander <kari.argillander@gmail.com>
-
-Please note Konstantin that you should not yet, put this to master. You
-can collect these already, but if ntfs3 get merged to 5.15 we will start
-start master again later. You could but these in example devel if you
-want.
-
-Then we also need branch just for bug fixes. Example this will have to
-go to 5.16 because it is not bug fix. Our master is our for-next branch
-so this will go there when time comes.
+Signed-off-by: Shannon Nelson <snelson@pensando.io>
 
 > ---
->  fs/ntfs3/index.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/ntfs3/index.c b/fs/ntfs3/index.c
-> index 0daca9adc54c..b1175542d854 100644
-> --- a/fs/ntfs3/index.c
-> +++ b/fs/ntfs3/index.c
-> @@ -1401,7 +1401,7 @@ int indx_find_raw(struct ntfs_index *indx, struct ntfs_inode *ni,
->  static int indx_create_allocate(struct ntfs_index *indx, struct ntfs_inode *ni,
->  				CLST *vbn)
->  {
-> -	int err = -ENOMEM;
-> +	int err;
->  	struct ntfs_sb_info *sbi = ni->mi.sbi;
->  	struct ATTRIB *bitmap;
->  	struct ATTRIB *alloc;
-> -- 
-> 2.32.0
-> 
+>   drivers/net/ethernet/pensando/ionic/ionic_rx_filter.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/net/ethernet/pensando/ionic/ionic_rx_filter.c b/drivers/net/ethernet/pensando/ionic/ionic_rx_filter.c
+> index 7e3a5634c161..25ecfcfa1281 100644
+> --- a/drivers/net/ethernet/pensando/ionic/ionic_rx_filter.c
+> +++ b/drivers/net/ethernet/pensando/ionic/ionic_rx_filter.c
+> @@ -318,7 +318,7 @@ void ionic_rx_filter_sync(struct ionic_lif *lif)
+>   			if (f->state == IONIC_FILTER_STATE_NEW ||
+>   			    f->state == IONIC_FILTER_STATE_OLD) {
+>   				sync_item = devm_kzalloc(dev, sizeof(*sync_item),
+> -							 GFP_KERNEL);
+> +							 GFP_ATOMIC);
+>   				if (!sync_item)
+>   					goto loop_out;
+>   
+
