@@ -7,91 +7,86 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CD97C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sat,  4 Sep 2021 07:34:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21CFEC433F5
+	for <kernel-janitors@archiver.kernel.org>; Sat,  4 Sep 2021 11:37:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1FBCA61056
-	for <kernel-janitors@archiver.kernel.org>; Sat,  4 Sep 2021 07:34:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE28C61051
+	for <kernel-janitors@archiver.kernel.org>; Sat,  4 Sep 2021 11:37:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350852AbhIDHf4 (ORCPT
+        id S236320AbhIDLij (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 4 Sep 2021 03:35:56 -0400
-Received: from smtp04.smtpout.orange.fr ([80.12.242.126]:27571 "EHLO
+        Sat, 4 Sep 2021 07:38:39 -0400
+Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:50047 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234128AbhIDHf4 (ORCPT
+        with ESMTP id S235615AbhIDLii (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 4 Sep 2021 03:35:56 -0400
+        Sat, 4 Sep 2021 07:38:38 -0400
 Received: from pop-os.home ([90.126.253.178])
-        by mwinf5d51 with ME
-        id pjat2500E3riaq203jat7U; Sat, 04 Sep 2021 09:34:54 +0200
+        by mwinf5d31 with ME
+        id pndZ250093riaq203ndZ3n; Sat, 04 Sep 2021 13:37:35 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 04 Sep 2021 09:34:54 +0200
+X-ME-Date: Sat, 04 Sep 2021 13:37:35 +0200
 X-ME-IP: 90.126.253.178
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     sgoutham@marvell.com, lcherian@marvell.com, gakula@marvell.com,
-        jerinj@marvell.com, hkelam@marvell.com, sbhatta@marvell.com,
-        davem@davemloft.net, kuba@kernel.org, skori@marvell.com
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     ohad@wizery.com, bjorn.andersson@linaro.org,
+        mathieu.poirier@linaro.org, james.quinlan@broadcom.com
+Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 2/2] octeontx2-af: Fix some memory leaks in the error handling path of 'cgx_lmac_init()'
-Date:   Sat,  4 Sep 2021 09:34:51 +0200
-Message-Id: <2211b712ceaf313e69740ec9374ce6190c4fa00a.1630738450.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] remoteproc: Fix a memory leak in an error handling path in 'rproc_handle_vdev()'
+Date:   Sat,  4 Sep 2021 13:37:32 +0200
+Message-Id: <e6d0dad6620da4fdf847faa903f79b735d35f262.1630755377.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <37f3e7e21a1c0f29244b807e5b995b2abeec6c3e.1630738450.git.christophe.jaillet@wanadoo.fr>
-References: <37f3e7e21a1c0f29244b807e5b995b2abeec6c3e.1630738450.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Memory allocated before 'lmac' is stored in 'cgx->lmac_idmap[]' must be
-freed explicitly. Otherwise, in case of error, it will leak.
+If 'copy_dma_range_map() fails, the memory allocated for 'rvdev' will leak.
+Move the 'copy_dma_range_map()' call after the device registration so
+that 'rproc_rvdev_release()' can be called to free some resources.
 
-Rename the 'err_irq' label to better describe what is done at this place in
-the error handling path.
+Also, branch to the error handling path if 'copy_dma_range_map()' instead
+of a direct return to avoid some other leaks.
 
-Fixes: 6f14078e3ee5 ("octeontx2-af: DMAC filter support in MAC block")
+Fixes: e0d072782c73 ("dma-mapping: introduce DMA range map, supplanting dma_pfn_offset")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/net/ethernet/marvell/octeontx2/af/cgx.c | 8 +++++---
+Compile tested only.
+Review with care. I don't like to move code around because of possible
+side-effect.
+---
+ drivers/remoteproc/remoteproc_core.c | 8 +++++---
  1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/marvell/octeontx2/af/cgx.c b/drivers/net/ethernet/marvell/octeontx2/af/cgx.c
-index 7f3d01059e19..34a089b71e55 100644
---- a/drivers/net/ethernet/marvell/octeontx2/af/cgx.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/af/cgx.c
-@@ -1487,7 +1487,7 @@ static int cgx_lmac_init(struct cgx *cgx)
- 				MAX_DMAC_ENTRIES_PER_CGX / cgx->lmac_count;
- 		err = rvu_alloc_bitmap(&lmac->mac_to_index_bmap);
- 		if (err)
--			return err;
-+			goto err_name_free;
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 502b6604b757..775df165eb45 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -556,9 +556,6 @@ static int rproc_handle_vdev(struct rproc *rproc, void *ptr,
+ 	/* Initialise vdev subdevice */
+ 	snprintf(name, sizeof(name), "vdev%dbuffer", rvdev->index);
+ 	rvdev->dev.parent = &rproc->dev;
+-	ret = copy_dma_range_map(&rvdev->dev, rproc->dev.parent);
+-	if (ret)
+-		return ret;
+ 	rvdev->dev.release = rproc_rvdev_release;
+ 	dev_set_name(&rvdev->dev, "%s#%s", dev_name(rvdev->dev.parent), name);
+ 	dev_set_drvdata(&rvdev->dev, rvdev);
+@@ -568,6 +565,11 @@ static int rproc_handle_vdev(struct rproc *rproc, void *ptr,
+ 		put_device(&rvdev->dev);
+ 		return ret;
+ 	}
++
++	ret = copy_dma_range_map(&rvdev->dev, rproc->dev.parent);
++	if (ret)
++		goto free_rvdev;
++
+ 	/* Make device dma capable by inheriting from parent's capabilities */
+ 	set_dma_ops(&rvdev->dev, get_dma_ops(rproc->dev.parent));
  
- 		/* Reserve first entry for default MAC address */
- 		set_bit(0, lmac->mac_to_index_bmap.bmap);
-@@ -1497,7 +1497,7 @@ static int cgx_lmac_init(struct cgx *cgx)
- 		spin_lock_init(&lmac->event_cb_lock);
- 		err = cgx_configure_interrupt(cgx, lmac, lmac->lmac_id, false);
- 		if (err)
--			goto err_irq;
-+			goto err_bitmap_free;
- 
- 		/* Add reference */
- 		cgx->lmac_idmap[lmac->lmac_id] = lmac;
-@@ -1507,7 +1507,9 @@ static int cgx_lmac_init(struct cgx *cgx)
- 
- 	return cgx_lmac_verify_fwi_version(cgx);
- 
--err_irq:
-+err_bitmap_free:
-+	rvu_free_bitmap(&lmac->mac_to_index_bmap);
-+err_name_free:
- 	kfree(lmac->name);
- err_lmac_free:
- 	kfree(lmac);
 -- 
 2.30.2
 
