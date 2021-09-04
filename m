@@ -2,85 +2,86 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E43AC433F5
-	for <kernel-janitors@archiver.kernel.org>; Sat,  4 Sep 2021 06:20:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32DEEC433F5
+	for <kernel-janitors@archiver.kernel.org>; Sat,  4 Sep 2021 06:22:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5A87360C3E
-	for <kernel-janitors@archiver.kernel.org>; Sat,  4 Sep 2021 06:20:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04BCA60F4C
+	for <kernel-janitors@archiver.kernel.org>; Sat,  4 Sep 2021 06:22:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232541AbhIDGVZ (ORCPT
+        id S234147AbhIDGXK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 4 Sep 2021 02:21:25 -0400
-Received: from smtp05.smtpout.orange.fr ([80.12.242.127]:46941 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229998AbhIDGVZ (ORCPT
+        Sat, 4 Sep 2021 02:23:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55284 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229994AbhIDGXJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 4 Sep 2021 02:21:25 -0400
-Received: from pop-os.home ([90.126.253.178])
-        by mwinf5d24 with ME
-        id piLL2500Y3riaq203iLLfp; Sat, 04 Sep 2021 08:20:21 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 04 Sep 2021 08:20:21 +0200
-X-ME-IP: 90.126.253.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     laurent.pinchart@ideasonboard.com, mchehab@kernel.org,
-        ribalda@chromium.org
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] media: uvcvideo: Fix a memory leak in error handling code in 'uvc_gpio_parse()'
-Date:   Sat,  4 Sep 2021 08:20:18 +0200
-Message-Id: <4c96691f21293dea1c3584f80a58138e2a2f9219.1630736273.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Sat, 4 Sep 2021 02:23:09 -0400
+Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C62FC061575;
+        Fri,  3 Sep 2021 23:22:08 -0700 (PDT)
+Received: by mail-pl1-x629.google.com with SMTP id n4so789846plh.9;
+        Fri, 03 Sep 2021 23:22:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=MFtTjA6Me4v1EtwNQS0lXGHS3dDY/uqJ4MgL2eljH48=;
+        b=HKTtEgntHKc8fUKUfuzEsdDhdpV7qmlpHlNiYX0A1pqipagEVSNkGIqNQ2y6mj/QwB
+         HgVOt1rtGx/S5MPo2EJ+I+/R4+4pribV+sRrJ4kXNqQDW2LFE1EyIzBBuB/OaFCoortV
+         l/Osg+jE9xlojSzhonhanRAdLgAEhrA62Qa+WPQ87lVsRhRwZYnwSQZIc22lkruE8XEQ
+         72ZfoNSN2qeaSQnLDhhl0amYYpF+wPFDR01/2U/Jl36dGXpLleW27NGdhxhHMcPdWb6d
+         Fpg89akppquPgZO7T22o62bBuOEHTAOpZBaPW1IBfh0qusJBCvUlQ9oYnIou8ZxtvZmt
+         GHvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=MFtTjA6Me4v1EtwNQS0lXGHS3dDY/uqJ4MgL2eljH48=;
+        b=C5504WCLTTjXv0QMuL8ZK68EIzjM+4iH76KRSUmzAo9mRSHMVSpLMrbOCId1GGG1Bl
+         4iJaxV/Q9dQTQVnwqrX3Ts86oji9Q7KGbnDOz+iOLEoYX+75mVbegzqpx+QrgGoKWBr0
+         821UlEqaGYy16OWgiHdekCsmwM8dKKUBbid3ZtBOtvMQL3WaalHSoLIe82fvi5bAIEm9
+         Z/TMz4Q6RsqGdGtBn4u9+j1x3dHbpiQHunECVQBkZWzawj1lYE56fjLGQ+ZI+R8EICLv
+         lAWp8wpeycZMkvOCFTRM29ZPHSFDZSwRrJYpQobXGmheUPjSJ0ul0GygepN5wzh67o+e
+         G29Q==
+X-Gm-Message-State: AOAM532MPCxD25c5Hv6Duha72VFxrw0D46QqzcWq+qKc5DnyQlTkzzXl
+        dm0Y73FHkYNqvy5K2ydHagnwFowIV8o=
+X-Google-Smtp-Source: ABdhPJy+IZNPdqThOmjNh73zbmQsz9xGJcjqRqUZpYS7ltr9Gom2rEyypN11uP1Rk23Em669CSC4QQ==
+X-Received: by 2002:a17:902:c246:b0:136:c582:ebd with SMTP id 6-20020a170902c24600b00136c5820ebdmr2012973plg.61.1630736527870;
+        Fri, 03 Sep 2021 23:22:07 -0700 (PDT)
+Received: from google.com ([2620:15c:202:201:44a5:4d4e:ed46:daa])
+        by smtp.gmail.com with ESMTPSA id j17sm1209072pfn.148.2021.09.03.23.22.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Sep 2021 23:22:06 -0700 (PDT)
+Date:   Fri, 3 Sep 2021 23:22:04 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Input: Fix spelling mistake in Kconfig "Modul" ->
+ "Module"
+Message-ID: <YTMQjL1i0FMtVCii@google.com>
+References: <20210704095702.37567-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210704095702.37567-1-colin.king@canonical.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Memory allocated in 'uvc_alloc_entity()' should be freed if an error
-occurs after it.
+On Sun, Jul 04, 2021 at 10:57:02AM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> There is a spelling mistake in the Kconfig text. Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Reorder the code in order to avoid the leak.
+Applied, thank you.
 
-Fixes: 2886477ff987 ("media: uvcvideo: Implement UVC_EXT_GPIO_UNIT")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/media/usb/uvc/uvc_driver.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-index b1b055784f8d..a4c45424ba7e 100644
---- a/drivers/media/usb/uvc/uvc_driver.c
-+++ b/drivers/media/usb/uvc/uvc_driver.c
-@@ -1533,10 +1533,6 @@ static int uvc_gpio_parse(struct uvc_device *dev)
- 	if (IS_ERR_OR_NULL(gpio_privacy))
- 		return PTR_ERR_OR_ZERO(gpio_privacy);
- 
--	unit = uvc_alloc_entity(UVC_EXT_GPIO_UNIT, UVC_EXT_GPIO_UNIT_ID, 0, 1);
--	if (!unit)
--		return -ENOMEM;
--
- 	irq = gpiod_to_irq(gpio_privacy);
- 	if (irq < 0) {
- 		if (irq != EPROBE_DEFER)
-@@ -1545,6 +1541,10 @@ static int uvc_gpio_parse(struct uvc_device *dev)
- 		return irq;
- 	}
- 
-+	unit = uvc_alloc_entity(UVC_EXT_GPIO_UNIT, UVC_EXT_GPIO_UNIT_ID, 0, 1);
-+	if (!unit)
-+		return -ENOMEM;
-+
- 	unit->gpio.gpio_privacy = gpio_privacy;
- 	unit->gpio.irq = irq;
- 	unit->gpio.bControlSize = 1;
 -- 
-2.30.2
-
+Dmitry
