@@ -2,77 +2,93 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-21.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E15F1C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sat,  4 Sep 2021 12:10:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A608FC4332F
+	for <kernel-janitors@archiver.kernel.org>; Sun,  5 Sep 2021 06:12:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B960B61054
-	for <kernel-janitors@archiver.kernel.org>; Sat,  4 Sep 2021 12:10:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B479610C8
+	for <kernel-janitors@archiver.kernel.org>; Sun,  5 Sep 2021 06:12:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236132AbhIDMLH (ORCPT
+        id S232151AbhIEGNE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 4 Sep 2021 08:11:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44444 "EHLO mail.kernel.org"
+        Sun, 5 Sep 2021 02:13:04 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:38890 "EHLO m43-7.mailgun.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234198AbhIDMLH (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 4 Sep 2021 08:11:07 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id CB96861056;
-        Sat,  4 Sep 2021 12:10:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1630757405;
-        bh=/VFOJSeSZrSvxsBdyRd/+3bUuYlEWW2sfz8PdUhiDec=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=kHi/XRz7M0GeHNRu5MHVZ2I7K3fNZO5JdX0XN0CDTiplDYGlCw180DkELIWcut6DT
-         GU0cpU9t/iMm+Z7Eoxp4EK7WPIHXwomHui+Uci7UeRojk1bQKQKUWlFZKUtxgnh6SK
-         DBVjtNult17zGgHsxsiBQHKkiguZRK1xzHrMJC2qs2XffMFDOjvCty+UWqt8+YVOBD
-         3jxUUBd3fPChOuznhnPOm9no7MSD7A+s4Q+8MmG2JXdtvuk34NHdb+FzDuRefC/3gN
-         UhPSJ7O9ZgulG3rQxtgiHhROkNbBacHexopJJxm5JkWSi1uAKMJ/dTGPeTwTFv9egY
-         XeAEx7NYAfmSQ==
+        id S230427AbhIEGNE (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Sun, 5 Sep 2021 02:13:04 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1630822322; h=Date: Message-Id: Cc: To: References:
+ In-Reply-To: From: Subject: Content-Transfer-Encoding: MIME-Version:
+ Content-Type: Sender; bh=ECiXLk/29oWzHj/i402TCaubZLema0VXpywFNl85Os4=;
+ b=Z4VDdJERNWzsslvWw78jl7cJ1JHn63a2GzN744wQDgFW/4DLW5cLEqRGrKi23ZUfHvFEY3yw
+ w+exvHFPjFrOUBS5O7oNtIVN53Uy0sV5m4qNrZ7CCtsCusSKzYNdR+sQkYKOMKwLSYM53njq
+ tPP7vjUL50Dz/8KbvJYFZ5X03kM=
+X-Mailgun-Sending-Ip: 69.72.43.7
+X-Mailgun-Sid: WyI5NDExNyIsICJrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n02.prod.us-east-1.postgun.com with SMTP id
+ 61345f8f1567234b8c99f675 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Sun, 05 Sep 2021 06:11:27
+ GMT
+Sender: kvalo=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 8B6F9C43618; Sun,  5 Sep 2021 06:11:26 +0000 (UTC)
+Received: from tykki.adurom.net (tynnyri.adurom.net [51.15.11.48])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0EE14C4338F;
+        Sun,  5 Sep 2021 06:11:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org 0EE14C4338F
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=codeaurora.org
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH 1/2] octeontx2-af: Add a 'rvu_free_bitmap()' function
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <163075740577.14004.1501295822330235080.git-patchwork-notify@kernel.org>
-Date:   Sat, 04 Sep 2021 12:10:05 +0000
-References: <37f3e7e21a1c0f29244b807e5b995b2abeec6c3e.1630738450.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <37f3e7e21a1c0f29244b807e5b995b2abeec6c3e.1630738450.git.christophe.jaillet@wanadoo.fr>
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] iwlwifi: pnvm: Fix a memory leak in
+ 'iwl_pnvm_get_from_fs()'
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <1b5d80f54c1dbf85710fd285243932943b498fe7.1630614969.git.christophe.jaillet@wanadoo.fr>
+References: <1b5d80f54c1dbf85710fd285243932943b498fe7.1630614969.git.christophe.jaillet@wanadoo.fr>
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     sgoutham@marvell.com, lcherian@marvell.com, gakula@marvell.com,
-        jerinj@marvell.com, hkelam@marvell.com, sbhatta@marvell.com,
-        davem@davemloft.net, kuba@kernel.org, skori@marvell.com,
+Cc:     luciano.coelho@intel.com, davem@davemloft.net, kuba@kernel.org,
+        johannes.berg@intel.com, pierre-louis.bossart@linux.intel.com,
+        drorx.moshe@intel.com, linux-wireless@vger.kernel.org,
         netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.7.3
+Message-Id: <20210905061126.8B6F9C43618@smtp.codeaurora.org>
+Date:   Sun,  5 Sep 2021 06:11:26 +0000 (UTC)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
 
-This series was applied to netdev/net.git (refs/heads/master):
-
-On Sat,  4 Sep 2021 09:34:41 +0200 you wrote:
-> In order to match 'rvu_alloc_bitmap()', add a 'rvu_free_bitmap()' function
+> A firmware is requested but never released in this function. This leads to
+> a memory leak in the normal execution path.
 > 
+> Add the missing 'release_firmware()' call.
+> Also introduce a temp variable (new_len) in order to keep the value of
+> 'pnvm->size' after the firmware has been released.
+> 
+> Fixes: cdda18fbbefa ("iwlwifi: pnvm: move file loading code to a separate function")
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/net/ethernet/marvell/octeontx2/af/rvu.c | 5 +++++
->  drivers/net/ethernet/marvell/octeontx2/af/rvu.h | 1 +
->  2 files changed, 6 insertions(+)
+> Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Acked-by: Luca Coelho <luca@coelho.fi>
 
-Here is the summary with links:
-  - [1/2] octeontx2-af: Add a 'rvu_free_bitmap()' function
-    https://git.kernel.org/netdev/net/c/d863ca67bb6e
-  - [2/2] octeontx2-af: Fix some memory leaks in the error handling path of 'cgx_lmac_init()'
-    https://git.kernel.org/netdev/net/c/ecbd690b52dc
+Patch applied to wireless-drivers.git, thanks.
 
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+45010c080e6e iwlwifi: pnvm: Fix a memory leak in 'iwl_pnvm_get_from_fs()'
 
+-- 
+https://patchwork.kernel.org/project/linux-wireless/patch/1b5d80f54c1dbf85710fd285243932943b498fe7.1630614969.git.christophe.jaillet@wanadoo.fr/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
