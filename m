@@ -8,313 +8,109 @@ X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EA9AC433EF
-	for <kernel-janitors@archiver.kernel.org>; Sun,  5 Sep 2021 11:11:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68C18C433F5
+	for <kernel-janitors@archiver.kernel.org>; Sun,  5 Sep 2021 15:35:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6399260F14
-	for <kernel-janitors@archiver.kernel.org>; Sun,  5 Sep 2021 11:11:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D6A9600AA
+	for <kernel-janitors@archiver.kernel.org>; Sun,  5 Sep 2021 15:35:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237767AbhIELM5 (ORCPT
+        id S236937AbhIEPhB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 5 Sep 2021 07:12:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35780 "EHLO
+        Sun, 5 Sep 2021 11:37:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230145AbhIELM4 (ORCPT
+        with ESMTP id S229566AbhIEPhA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 5 Sep 2021 07:12:56 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7ED67C061575;
-        Sun,  5 Sep 2021 04:11:53 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id s10so7542943lfr.11;
-        Sun, 05 Sep 2021 04:11:53 -0700 (PDT)
+        Sun, 5 Sep 2021 11:37:00 -0400
+Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39EF8C061575;
+        Sun,  5 Sep 2021 08:35:57 -0700 (PDT)
+Received: by mail-lj1-x22d.google.com with SMTP id w4so6824344ljh.13;
+        Sun, 05 Sep 2021 08:35:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=+U3UCSNl0YCQFxJbxthaYAnyClY/Df6RLpX0xQi9nss=;
-        b=KAHeikv6jYS9vB9RItJDvLfB1r61Gr0xUZ09IZd68sKzTWinBnsYuhdoplPzNDyUN6
-         944LYLVhKCAuqALA8OxBCjsyK1j1Vb9AjxxjP+1benvTokzRCwQ1D0+K+S73IUqjUscY
-         75BeA459SmujHarF6uqbVIewzlCGhrNxWteIAYmOy+SF/KuAeVH1XVpaRcSHjfgHB1Ry
-         FSkQfT1lkR4q3BIhOHKZclnzTP0vlCaSE3Jx0ZeKccGHXkSUfV67lsTYDdeF9wsNNpMs
-         q+feujqKvK1+qklPVJxLyfXgC4WTfP9isV/BJHIJlPOUyy8G8R1nGPmYq3Ilh5DDy9Pk
-         2TbQ==
+        bh=cITEr3eddlLeZ9kM0AgouAgtRcaj2tOTljG3ru0dFVk=;
+        b=YvT6EUl+6q/tevvH91tqDHe0BY2TlIpFiqapTRBIHV3z8tn9j5pf0SPvO1sG1b2sxf
+         iaezoaedL05/u2H39uGplnVmzXte564JdxvThJOqJ28P4557Y5E857esx4e65FERp5JF
+         eoCWDaxEQdZv52Ts3Zenr9UKED98uSJ0MXYqmSf7bsHRN1m2lteZiyvH8dNklAFjlljR
+         dYmTQHRA1QwD/jFkADWcuOq3/5tXsjfwYHjyWdAtpRRbDTYhTKc9E4ZZtTHPiB7yRR5j
+         eMmQSZMbfUsX/9Ji9iOnc3PQQihz+s+6hLCnpiE+vP2TwmnMAt/C+Ejop/YMEECuhcKj
+         ECyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=+U3UCSNl0YCQFxJbxthaYAnyClY/Df6RLpX0xQi9nss=;
-        b=lf0un+4l7iWcU4viG2P4IXpoufuW88Db3FY4kwtSQukMNI2YNcmXn3Qkm4gMCHYmYf
-         L0Xe8wvafvnDyEhK3IPDFeJUq4o80dQtT49qqSiM1rCavjzNvc2sRnHWup6yzNgaIVtj
-         19R64T0KVhbPMSo9yxqLiMpy5hppemdEsuXR/3gaBS38zSvsVyw5qlSc8a87gCWJfgCM
-         k//MzjcO5wztsbELEoLr9WrpRI4MPyPVXhDdOYqJU3X0RagLFdJMVJAgrZ3YOaBfkibl
-         DXk3uGnbKEp0XoXCZpc/OzjyoWu8TQ8kemhw/8mJsKsXM73Ck7Sv8jWCyQuRf9MElrwo
-         FuWg==
-X-Gm-Message-State: AOAM532DWN5DJiI2u5vNGzKWZ8FvilaoGD+frC/yk7XCK0isRlaVdpGA
-        Uk7MYg4Vuc8j6xvUlCWPiKo=
-X-Google-Smtp-Source: ABdhPJz/o/N9suu58Kfxg3LSyezuIuzh4johk13WESXNiNb8FhTlFyjqwJcNQmzSC+XwWAfz0pDG0g==
-X-Received: by 2002:a05:6512:3d0d:: with SMTP id d13mr5793425lfv.513.1630840311782;
-        Sun, 05 Sep 2021 04:11:51 -0700 (PDT)
+        bh=cITEr3eddlLeZ9kM0AgouAgtRcaj2tOTljG3ru0dFVk=;
+        b=Y0ePE1UquQzJlUqqC/kwyA75LA+SdHmyD5uAWPXQzkT/5KJZhafwrW+uK2blO9Zew4
+         PcprKSlUeZyQe/+vs3/sIvYRP4Wsr+4VJ/TWigN37KFBXDQNUWMK9iDy/RT9MjKaeut2
+         a1o0T/996PuF/bFIcW65hQ/51OR0wAdcHLHSnIdvC6UUf2As4imBT685WW2qTx0VQOwB
+         jyA5wGm38qB7HaJb4Jx+T3ERyriF72M5iWQsJmPHEzZyMxCoAv+HFICxPYExFu6rjPZa
+         9OzIlQCsDQMJEJ/PzWKjT7nY5mRHICCEOylWa45Na4iDmS97TY2EU5lDSlB8vK3bmG7T
+         gOKQ==
+X-Gm-Message-State: AOAM532Io3/Wd8/uyZ8aEhd+e/ZlsqjWoRHXRRwTzavGPSdML3FaFaHh
+        BCH1JNCmTCQGD7TLMnD75fQ=
+X-Google-Smtp-Source: ABdhPJyCf0n/bQHL8GFb1eHjvQyZ6xpoQk9kEMnUbR8RzaSGvc+SIQ9GwDXBROucDrGWXnT0qV6f1A==
+X-Received: by 2002:a2e:a908:: with SMTP id j8mr6880398ljq.77.1630856155629;
+        Sun, 05 Sep 2021 08:35:55 -0700 (PDT)
 Received: from mobilestation ([95.79.127.110])
-        by smtp.gmail.com with ESMTPSA id l11sm460515lfg.39.2021.09.05.04.11.50
+        by smtp.gmail.com with ESMTPSA id d24sm669456ljj.8.2021.09.05.08.35.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 Sep 2021 04:11:51 -0700 (PDT)
-Date:   Sun, 5 Sep 2021 14:11:49 +0300
+        Sun, 05 Sep 2021 08:35:55 -0700 (PDT)
+Date:   Sun, 5 Sep 2021 18:35:53 +0300
 From:   Serge Semin <fancer.lancer@gmail.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     sanju.mehta@amd.com, Shyam-sundar.S-k@amd.com, jdmason@kudzu.us,
-        dave.jiang@intel.com, allenbh@gmail.com,
-        linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] NTB: switch from 'pci_' to 'dma_' API
-Message-ID: <20210905111149.atqgurplzy472thz@mobilestation>
-References: <6a1db73ba4e46958cb40d3766eff771ef5d7a11b.1629640974.git.christophe.jaillet@wanadoo.fr>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
+        Jon Mason <jdmason@kudzu.us>,
+        Dave Jiang <dave.jiang@intel.com>, linux-ntb@googlegroups.com,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ntb: ntb_pingpong: remove redundant initialization of
+ variables msg_data and spad_data
+Message-ID: <20210905153553.nmmgv7w3t3oeqtca@mobilestation>
+References: <20210609112128.184667-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6a1db73ba4e46958cb40d3766eff771ef5d7a11b.1629640974.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20210609112128.184667-1-colin.king@canonical.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Christophe
-
-On Sun, Aug 22, 2021 at 04:04:12PM +0200, Christophe JAILLET wrote:
-> The wrappers in include/linux/pci-dma-compat.h should go away.
+On Wed, Jun 09, 2021 at 12:21:28PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> The patch has been generated with the coccinelle script below.
+> The variables msg_data and spad_data are being initialized with values
+> that are never read, they are being updated later on. The initializations
+> are redundant and can be removed.
 > 
-> It has been compile tested.
-
-Thanks for the clean up. Explicit Ack for the IDT-part is below.
-
-> 
-> 
-> @@
-> @@
-> -    PCI_DMA_BIDIRECTIONAL
-> +    DMA_BIDIRECTIONAL
-> 
-> @@
-> @@
-> -    PCI_DMA_TODEVICE
-> +    DMA_TO_DEVICE
-> 
-> @@
-> @@
-> -    PCI_DMA_FROMDEVICE
-> +    DMA_FROM_DEVICE
-> 
-> @@
-> @@
-> -    PCI_DMA_NONE
-> +    DMA_NONE
-> 
-> @@
-> expression e1, e2, e3;
-> @@
-> -    pci_alloc_consistent(e1, e2, e3)
-> +    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
-> 
-> @@
-> expression e1, e2, e3;
-> @@
-> -    pci_zalloc_consistent(e1, e2, e3)
-> +    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_free_consistent(e1, e2, e3, e4)
-> +    dma_free_coherent(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_map_single(e1, e2, e3, e4)
-> +    dma_map_single(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_unmap_single(e1, e2, e3, e4)
-> +    dma_unmap_single(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4, e5;
-> @@
-> -    pci_map_page(e1, e2, e3, e4, e5)
-> +    dma_map_page(&e1->dev, e2, e3, e4, e5)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_unmap_page(e1, e2, e3, e4)
-> +    dma_unmap_page(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_map_sg(e1, e2, e3, e4)
-> +    dma_map_sg(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_unmap_sg(e1, e2, e3, e4)
-> +    dma_unmap_sg(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_dma_sync_single_for_cpu(e1, e2, e3, e4)
-> +    dma_sync_single_for_cpu(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_dma_sync_single_for_device(e1, e2, e3, e4)
-> +    dma_sync_single_for_device(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_dma_sync_sg_for_cpu(e1, e2, e3, e4)
-> +    dma_sync_sg_for_cpu(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_dma_sync_sg_for_device(e1, e2, e3, e4)
-> +    dma_sync_sg_for_device(&e1->dev, e2, e3, e4)
-> 
-> @@
-> expression e1, e2;
-> @@
-> -    pci_dma_mapping_error(e1, e2)
-> +    dma_mapping_error(&e1->dev, e2)
-> 
-> @@
-> expression e1, e2;
-> @@
-> -    pci_set_dma_mask(e1, e2)
-> +    dma_set_mask(&e1->dev, e2)
-> 
-> @@
-> expression e1, e2;
-> @@
-> -    pci_set_consistent_dma_mask(e1, e2)
-> +    dma_set_coherent_mask(&e1->dev, e2)
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
-> If needed, see post from Christoph Hellwig on the kernel-janitors ML:
->    https://marc.info/?l=kernel-janitors&m=158745678307186&w=4
-> 
-> This patch is mostly mechanical and compile tested. I hope it is ok to
-> update the "drivers/ntb/hw/" directory all at once.
-> ---
->  drivers/ntb/hw/amd/ntb_hw_amd.c    | 12 ++----------
+>  drivers/ntb/test/ntb_pingpong.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
->  drivers/ntb/hw/idt/ntb_hw_idt.c    | 15 ++-------------
-
+Wow, missed this in my emails log. Thanks for the cleanup.
 Acked-by: Serge Semin <fancer.lancer@gmail.com>
 
--Sergey
-
->  drivers/ntb/hw/intel/ntb_hw_gen1.c | 12 ++----------
->  3 files changed, 6 insertions(+), 33 deletions(-)
 > 
-> diff --git a/drivers/ntb/hw/amd/ntb_hw_amd.c b/drivers/ntb/hw/amd/ntb_hw_amd.c
-> index 71428d8cbcfc..87847c380051 100644
-> --- a/drivers/ntb/hw/amd/ntb_hw_amd.c
-> +++ b/drivers/ntb/hw/amd/ntb_hw_amd.c
-> @@ -1176,22 +1176,14 @@ static int amd_ntb_init_pci(struct amd_ntb_dev *ndev,
+> diff --git a/drivers/ntb/test/ntb_pingpong.c b/drivers/ntb/test/ntb_pingpong.c
+> index 2164e8492772..8aeca7914050 100644
+> --- a/drivers/ntb/test/ntb_pingpong.c
+> +++ b/drivers/ntb/test/ntb_pingpong.c
+> @@ -187,7 +187,7 @@ static void pp_ping(struct pp_ctx *pp)
 >  
->  	pci_set_master(pdev);
+>  static void pp_pong(struct pp_ctx *pp)
+>  {
+> -	u32 msg_data = -1, spad_data = -1;
+> +	u32 msg_data, spad_data;
+>  	int pidx = 0;
 >  
-> -	rc = pci_set_dma_mask(pdev, DMA_BIT_MASK(64));
-> +	rc = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
->  	if (rc) {
-> -		rc = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
-> +		rc = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
->  		if (rc)
->  			goto err_dma_mask;
->  		dev_warn(&pdev->dev, "Cannot DMA highmem\n");
->  	}
->  
-> -	rc = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(64));
-> -	if (rc) {
-> -		rc = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(32));
-> -		if (rc)
-> -			goto err_dma_mask;
-> -		dev_warn(&pdev->dev, "Cannot DMA consistent highmem\n");
-> -	}
-> -
->  	ndev->self_mmio = pci_iomap(pdev, 0, 0);
->  	if (!ndev->self_mmio) {
->  		rc = -EIO;
-> diff --git a/drivers/ntb/hw/idt/ntb_hw_idt.c b/drivers/ntb/hw/idt/ntb_hw_idt.c
-> index e7a4c2aa8baa..733557231ed0 100644
-> --- a/drivers/ntb/hw/idt/ntb_hw_idt.c
-> +++ b/drivers/ntb/hw/idt/ntb_hw_idt.c
-> @@ -2640,26 +2640,15 @@ static int idt_init_pci(struct idt_ntb_dev *ndev)
->  	int ret;
->  
->  	/* Initialize the bit mask of PCI/NTB DMA */
-> -	ret = pci_set_dma_mask(pdev, DMA_BIT_MASK(64));
-> +	ret = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
->  	if (ret != 0) {
-> -		ret = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
-> +		ret = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
->  		if (ret != 0) {
->  			dev_err(&pdev->dev, "Failed to set DMA bit mask\n");
->  			return ret;
->  		}
->  		dev_warn(&pdev->dev, "Cannot set DMA highmem bit mask\n");
->  	}
-> -	ret = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(64));
-> -	if (ret != 0) {
-> -		ret = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(32));
-> -		if (ret != 0) {
-> -			dev_err(&pdev->dev,
-> -				"Failed to set consistent DMA bit mask\n");
-> -			return ret;
-> -		}
-> -		dev_warn(&pdev->dev,
-> -			"Cannot set consistent DMA highmem bit mask\n");
-> -	}
->  
->  	/*
->  	 * Enable the device advanced error reporting. It's not critical to
-> diff --git a/drivers/ntb/hw/intel/ntb_hw_gen1.c b/drivers/ntb/hw/intel/ntb_hw_gen1.c
-> index 093dd20057b9..e5f14e20a9ff 100644
-> --- a/drivers/ntb/hw/intel/ntb_hw_gen1.c
-> +++ b/drivers/ntb/hw/intel/ntb_hw_gen1.c
-> @@ -1771,22 +1771,14 @@ static int intel_ntb_init_pci(struct intel_ntb_dev *ndev, struct pci_dev *pdev)
->  
->  	pci_set_master(pdev);
->  
-> -	rc = pci_set_dma_mask(pdev, DMA_BIT_MASK(64));
-> +	rc = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
->  	if (rc) {
-> -		rc = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
-> +		rc = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
->  		if (rc)
->  			goto err_dma_mask;
->  		dev_warn(&pdev->dev, "Cannot DMA highmem\n");
->  	}
->  
-> -	rc = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(64));
-> -	if (rc) {
-> -		rc = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(32));
-> -		if (rc)
-> -			goto err_dma_mask;
-> -		dev_warn(&pdev->dev, "Cannot DMA consistent highmem\n");
-> -	}
-> -
->  	ndev->self_mmio = pci_iomap(pdev, 0, 0);
->  	if (!ndev->self_mmio) {
->  		rc = -EIO;
+>  	/* Read pong data */
 > -- 
-> 2.30.2
+> 2.31.1
 > 
+> -- 
+> You received this message because you are subscribed to the Google Groups "linux-ntb" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to linux-ntb+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/linux-ntb/20210609112128.184667-1-colin.king%40canonical.com.
