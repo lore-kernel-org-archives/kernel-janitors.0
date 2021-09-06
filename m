@@ -2,89 +2,105 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58287C433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon,  6 Sep 2021 13:44:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0291C433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon,  6 Sep 2021 16:51:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3AACC60F6B
-	for <kernel-janitors@archiver.kernel.org>; Mon,  6 Sep 2021 13:44:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B268A6103D
+	for <kernel-janitors@archiver.kernel.org>; Mon,  6 Sep 2021 16:51:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242794AbhIFNpy (ORCPT
+        id S238249AbhIFQw6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 6 Sep 2021 09:45:54 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:46740
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S242778AbhIFNpw (ORCPT
+        Mon, 6 Sep 2021 12:52:58 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:38134 "EHLO
+        galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237374AbhIFQw4 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 6 Sep 2021 09:45:52 -0400
-Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 3C1ED3F345;
-        Mon,  6 Sep 2021 13:44:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1630935879;
-        bh=8DL2qBORypWZtnKc7Sgib1seutdYE18F1Y8uSU1Gt14=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=bg9pefK6YpNHhudukgg4nBsh9CuQhtd8PQSQCs9Rv6bvnMP0EXxJIRbcZX53rGKG2
-         fyJ262nzAxdT/oR0OZeaFioaiFndcsHIfNl9oLLicdaBJiRyJD4NcbDu5FeetkQmqW
-         5wpYAwDBB7/5B4JiKUkPMNsHZNfwv2/pPITV6rvAcXqgI4wGF+iR0RKk15V7y8yC/V
-         TXZ8HD4FMVSfG2fhG7Ucnyp/0u+Kw61BXxiJriZ5+UKjKiajQjxX/7HrxPVNoRF19t
-         AfZpOY2Sr9RXdvVkJrmGCz7GaKcTqT0OpvbnRrCof7XpgsUmHhkwbZM7v/cA+RTg2G
-         xwK4LESjdODqQ==
-From:   Colin King <colin.king@canonical.com>
-To:     Namjae Jeon <linkinjeon@kernel.org>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Steve French <sfrench@samba.org>,
-        Hyunchul Lee <hyc.lee@gmail.com>, linux-cifs@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] ksmbd: add missing assignments to ret on ndr_read_int64 read calls
-Date:   Mon,  6 Sep 2021 14:44:38 +0100
-Message-Id: <20210906134438.14250-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.32.0
+        Mon, 6 Sep 2021 12:52:56 -0400
+Date:   Mon, 6 Sep 2021 18:51:49 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1630947110;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=dM6ZSxX+kqnXOlRxcZetuOZenpkaZFK+WdaWLO/jTjc=;
+        b=cLrkL2oCbyMh3dFWYBOJZfHGLZQ4s6bizS6StIRX9HYFjByiABp3s+EGpWmHU7AMyOovwD
+        KfQBlGVb3A3FLvgP3EwtUH9W4VEhHXIuByi8AQEKaki4S1q0sa5scET1cuaFl1MxXkgM7H
+        cteLfpPHAmuFbYUhlct2Y8G4ASvVlwLYDUHLpO3NfJR0CLPNkgJDbJB5pRb0XqgOUa+RZO
+        PUcKRzpk/q3FtNEEsE9g1OreEnmy83g0BJiGb56IvQEdwIGgXt5kmcUGyESsSSuzWGxG8T
+        LU3N8ZYnaAR+OIS3NDmDRijncQB9Jk5/EOloiEzsvtc07Z7bFqlw4jWbV1inJg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1630947110;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=dM6ZSxX+kqnXOlRxcZetuOZenpkaZFK+WdaWLO/jTjc=;
+        b=lvCTpbODJzaioPBX7fth65pZCas1S3RIGhZp3IoXhE7zMA4OdYcOkdqXY9ukCjpkdrWUxL
+        jqvOOPrx8lhZlUCQ==
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        kernel-janitors@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] locking/rtmutex: Fix ww_mutex deadlock check
+Message-ID: <20210906165149.4b6ghzxnoqfm6ram@linutronix.de>
+References: <20210831082152.GC9846@kili>
+ <YS81R45p7mYbhmrT@hirez.programming.kicks-ass.net>
+ <YS9La56fHMiCCo75@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <YS9La56fHMiCCo75@hirez.programming.kicks-ass.net>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On 2021-09-01 11:44:11 [+0200], Peter Zijlstra wrote:
+> Subject: locking/rtmutex: Fix ww_mutex deadlock check
+> 
+> Dan reported that rt_mutex_adjust_prio_chain() can be called with
+> .orig_waiter == NULL however commit a055fcc132d4 ("locking/rtmutex:
+> Return success on deadlock for ww_mutex waiters") unconditionally
+> dereferences it.
+> 
+> Since both call-sites that have .orig_waiter == NULL don't care for the
+> return value, simply disable the deadlock squash by adding the NULL
+> check.
+> 
+> Notably, both callers use the deadlock condition as a termination
+> condition for the iteration; once detected, we're sure (de)boosting is
+> done. Arguably [3] would be a more natural termination point, but I'm
+> not sure adding a third deadlock detection state would improve the code.
+> 
+> Fixes: a055fcc132d4 ("locking/rtmutex: Return success on deadlock for ww_mutex waiters")
+> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 
-Currently there are two ndr_read_int64 calls where ret is being checked
-for failure but ret is not being assigned a return value from the call.
-Static analyis is reporting the checks on ret as dead code.  Fix this.
+It sounds reasonable and I don't see any fallout in the testsuite so
 
-Addresses-Coverity: ("Logical dead code")
-Fixes: 303fff2b8c77 ("ksmbd: add validation for ndr read/write functions")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- fs/ksmbd/ndr.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+  Acked-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-diff --git a/fs/ksmbd/ndr.c b/fs/ksmbd/ndr.c
-index a476de291f62..8317f7ca402b 100644
---- a/fs/ksmbd/ndr.c
-+++ b/fs/ksmbd/ndr.c
-@@ -275,11 +275,11 @@ int ndr_decode_dos_attr(struct ndr *n, struct xattr_dos_attrib *da)
- 		if (ret)
- 			return ret;
- 
--		ndr_read_int64(n, NULL);
-+		ret = ndr_read_int64(n, NULL);
- 		if (ret)
- 			return ret;
- 
--		ndr_read_int64(n, NULL);
-+		ret = ndr_read_int64(n, NULL);
- 		if (ret)
- 			return ret;
- 
--- 
-2.32.0
+> ---
+>  kernel/locking/rtmutex.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/kernel/locking/rtmutex.c b/kernel/locking/rtmutex.c
+> index 8eabdc79602b..6bb116c559b4 100644
+> --- a/kernel/locking/rtmutex.c
+> +++ b/kernel/locking/rtmutex.c
+> @@ -753,7 +753,7 @@ static int __sched rt_mutex_adjust_prio_chain(struct task_struct *task,
+>  		 * other configuration and we fail to report; also, see
+>  		 * lockdep.
+>  		 */
+> -		if (IS_ENABLED(CONFIG_PREEMPT_RT) && orig_waiter->ww_ctx)
+> +		if (IS_ENABLED(CONFIG_PREEMPT_RT) && orig_waiter && orig_waiter->ww_ctx)
+>  			ret = 0;
+>  
+>  		raw_spin_unlock(&lock->wait_lock);
 
+Sebastian
