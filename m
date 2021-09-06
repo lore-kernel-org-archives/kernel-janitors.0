@@ -2,105 +2,113 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0291C433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon,  6 Sep 2021 16:51:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E666C433FE
+	for <kernel-janitors@archiver.kernel.org>; Mon,  6 Sep 2021 18:03:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B268A6103D
-	for <kernel-janitors@archiver.kernel.org>; Mon,  6 Sep 2021 16:51:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 340926103D
+	for <kernel-janitors@archiver.kernel.org>; Mon,  6 Sep 2021 18:03:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238249AbhIFQw6 (ORCPT
+        id S244364AbhIFSE6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 6 Sep 2021 12:52:58 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:38134 "EHLO
-        galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237374AbhIFQw4 (ORCPT
+        Mon, 6 Sep 2021 14:04:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53294 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S244371AbhIFSE5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 6 Sep 2021 12:52:56 -0400
-Date:   Mon, 6 Sep 2021 18:51:49 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1630947110;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=dM6ZSxX+kqnXOlRxcZetuOZenpkaZFK+WdaWLO/jTjc=;
-        b=cLrkL2oCbyMh3dFWYBOJZfHGLZQ4s6bizS6StIRX9HYFjByiABp3s+EGpWmHU7AMyOovwD
-        KfQBlGVb3A3FLvgP3EwtUH9W4VEhHXIuByi8AQEKaki4S1q0sa5scET1cuaFl1MxXkgM7H
-        cteLfpPHAmuFbYUhlct2Y8G4ASvVlwLYDUHLpO3NfJR0CLPNkgJDbJB5pRb0XqgOUa+RZO
-        PUcKRzpk/q3FtNEEsE9g1OreEnmy83g0BJiGb56IvQEdwIGgXt5kmcUGyESsSSuzWGxG8T
-        LU3N8ZYnaAR+OIS3NDmDRijncQB9Jk5/EOloiEzsvtc07Z7bFqlw4jWbV1inJg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1630947110;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=dM6ZSxX+kqnXOlRxcZetuOZenpkaZFK+WdaWLO/jTjc=;
-        b=lvCTpbODJzaioPBX7fth65pZCas1S3RIGhZp3IoXhE7zMA4OdYcOkdqXY9ukCjpkdrWUxL
-        jqvOOPrx8lhZlUCQ==
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        kernel-janitors@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] locking/rtmutex: Fix ww_mutex deadlock check
-Message-ID: <20210906165149.4b6ghzxnoqfm6ram@linutronix.de>
-References: <20210831082152.GC9846@kili>
- <YS81R45p7mYbhmrT@hirez.programming.kicks-ass.net>
- <YS9La56fHMiCCo75@hirez.programming.kicks-ass.net>
+        Mon, 6 Sep 2021 14:04:57 -0400
+Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F374DC061757;
+        Mon,  6 Sep 2021 11:03:51 -0700 (PDT)
+Received: by mail-io1-xd34.google.com with SMTP id f6so9692218iox.0;
+        Mon, 06 Sep 2021 11:03:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4H8KJdOpjjzwiqRcJLFHWd3PQAAxrT81eJ9GkExltUo=;
+        b=iEGT4+Q+JXOHwwU9fdZ+0nJsvP0CY1sRAqY4AFrmrfTKeOdLZZCHsVgD3Uys1crhEg
+         3x0b0Iqgr73vQVlkCj6GahFd5q4Hsjic20HUbUbWUMxRU00/EerPViKlkf1gcZUv350H
+         R9gtbgehmuzA52W4+CXODfoFb2PG2YH9gP9kHd8GPSf1m+OzHMh/eYSY4vpyy5mi+F4T
+         mwqMVYAbI0a90fdDqKw1PfdNo9nGrdVqMOQZuKO9CgQGcUPHT9YG9sC2rvuBKDQbdNkw
+         eTiCyFe0COBiW3jk2szaFZLRE3ED+6mehauI0LshOZeb4NztEwKGI1P04w9ZDad3owtj
+         lyXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4H8KJdOpjjzwiqRcJLFHWd3PQAAxrT81eJ9GkExltUo=;
+        b=pc+a219J7Jg4O0XgY0IgDIkygrmqp4cDj1kjcjcBWMFx54CFULLviAPH6tNOfJTF7k
+         gxw4xMtEoswqKniQ06ZNG9CMwDgHYDbeSAlKVFdRH1mXweVzC7+RA6hPShid8OdbgMEM
+         MGTuKy3r72+fMb9/feIOjEhXhjiacVytkNUX56g0UZbXZdcltREaPi7jzLbu4OUR8Eif
+         HnCu+GysDRI6ksixzFmV7a62xGPYxn/JLU8yFNHp+tFEkJpNkdQTK0RDjVBFMc9VIXYn
+         5l1HJIMh0YwdNYrEDOLaWycwO0MLnnTV6xAXzw73x+faPLoMurCSgJWYsNSy2jRmcg29
+         TM2Q==
+X-Gm-Message-State: AOAM5304OIkb4XcTQmcgytlUaD5O6FvhLGDjC1NtO0eX8S4PYm4rnrk5
+        oYGwVVrZx+/K3O/ZXtCOqmeoHIbKwb1qqn+6ZRo=
+X-Google-Smtp-Source: ABdhPJw783yUnhBinIrQN1PoywcVAxvPqJZP2rGxk3d0PWxbTSrFU4j1s/qRM2lWQnoTCcr8MUgHRd1KAvAW0m0+2TE=
+X-Received: by 2002:a05:6638:2257:: with SMTP id m23mr12049282jas.137.1630951431431;
+ Mon, 06 Sep 2021 11:03:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <YS9La56fHMiCCo75@hirez.programming.kicks-ass.net>
+References: <20210906094301.GB10957@kili>
+In-Reply-To: <20210906094301.GB10957@kili>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Mon, 6 Sep 2021 20:03:24 +0200
+Message-ID: <CAOi1vP9bbs++zmcSJ=hb+PfR5-=QQbicHNNDu0uzcD_7XRG44g@mail.gmail.com>
+Subject: Re: [PATCH] ceph: fix off by one bugs in unsafe_request_wait()
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Jeff Layton <jlayton@kernel.org>, Xiubo Li <xiubli@redhat.com>,
+        Ceph Development <ceph-devel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 2021-09-01 11:44:11 [+0200], Peter Zijlstra wrote:
-> Subject: locking/rtmutex: Fix ww_mutex deadlock check
-> 
-> Dan reported that rt_mutex_adjust_prio_chain() can be called with
-> .orig_waiter == NULL however commit a055fcc132d4 ("locking/rtmutex:
-> Return success on deadlock for ww_mutex waiters") unconditionally
-> dereferences it.
-> 
-> Since both call-sites that have .orig_waiter == NULL don't care for the
-> return value, simply disable the deadlock squash by adding the NULL
-> check.
-> 
-> Notably, both callers use the deadlock condition as a termination
-> condition for the iteration; once detected, we're sure (de)boosting is
-> done. Arguably [3] would be a more natural termination point, but I'm
-> not sure adding a third deadlock detection state would improve the code.
-> 
-> Fixes: a055fcc132d4 ("locking/rtmutex: Return success on deadlock for ww_mutex waiters")
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-
-It sounds reasonable and I don't see any fallout in the testsuite so
-
-  Acked-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-
+On Mon, Sep 6, 2021 at 11:43 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+>
+> The "> max" tests should be ">= max" to prevent an out of bounds access
+> on the next lines.
+>
+> Fixes: e1a4541ec0b9 ("ceph: flush the mdlog before waiting on unsafe reqs")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > ---
->  kernel/locking/rtmutex.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/locking/rtmutex.c b/kernel/locking/rtmutex.c
-> index 8eabdc79602b..6bb116c559b4 100644
-> --- a/kernel/locking/rtmutex.c
-> +++ b/kernel/locking/rtmutex.c
-> @@ -753,7 +753,7 @@ static int __sched rt_mutex_adjust_prio_chain(struct task_struct *task,
->  		 * other configuration and we fail to report; also, see
->  		 * lockdep.
->  		 */
-> -		if (IS_ENABLED(CONFIG_PREEMPT_RT) && orig_waiter->ww_ctx)
-> +		if (IS_ENABLED(CONFIG_PREEMPT_RT) && orig_waiter && orig_waiter->ww_ctx)
->  			ret = 0;
->  
->  		raw_spin_unlock(&lock->wait_lock);
+>  fs/ceph/caps.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> index 26c5029629a4..ebbad9080422 100644
+> --- a/fs/ceph/caps.c
+> +++ b/fs/ceph/caps.c
+> @@ -2260,7 +2260,7 @@ static int unsafe_request_wait(struct inode *inode)
+>                         list_for_each_entry(req, &ci->i_unsafe_dirops,
+>                                             r_unsafe_dir_item) {
+>                                 s = req->r_session;
+> -                               if (unlikely(s->s_mds > max)) {
+> +                               if (unlikely(s->s_mds >= max)) {
+>                                         spin_unlock(&ci->i_unsafe_lock);
+>                                         goto retry;
+>                                 }
+> @@ -2274,7 +2274,7 @@ static int unsafe_request_wait(struct inode *inode)
+>                         list_for_each_entry(req, &ci->i_unsafe_iops,
+>                                             r_unsafe_target_item) {
+>                                 s = req->r_session;
+> -                               if (unlikely(s->s_mds > max)) {
+> +                               if (unlikely(s->s_mds >= max)) {
+>                                         spin_unlock(&ci->i_unsafe_lock);
+>                                         goto retry;
+>                                 }
+> --
+> 2.20.1
+>
 
-Sebastian
+Applied.
+
+Thanks,
+
+                Ilya
