@@ -5,62 +5,62 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ACB5C433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Sep 2021 16:58:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20CDAC433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Sep 2021 16:59:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 14B29610A3
-	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Sep 2021 16:58:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0BCF561090
+	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Sep 2021 16:59:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345488AbhIGQ7c (ORCPT
+        id S1345260AbhIGRAU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 7 Sep 2021 12:59:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49742 "EHLO
+        Tue, 7 Sep 2021 13:00:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49942 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345481AbhIGQ7c (ORCPT
+        with ESMTP id S232621AbhIGRAU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 7 Sep 2021 12:59:32 -0400
-Received: from mail-oi1-x233.google.com (mail-oi1-x233.google.com [IPv6:2607:f8b0:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DB8EC061575;
-        Tue,  7 Sep 2021 09:58:24 -0700 (PDT)
-Received: by mail-oi1-x233.google.com with SMTP id n27so13646322oij.0;
-        Tue, 07 Sep 2021 09:58:24 -0700 (PDT)
+        Tue, 7 Sep 2021 13:00:20 -0400
+Received: from mail-oo1-xc2a.google.com (mail-oo1-xc2a.google.com [IPv6:2607:f8b0:4864:20::c2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BACABC061575;
+        Tue,  7 Sep 2021 09:59:13 -0700 (PDT)
+Received: by mail-oo1-xc2a.google.com with SMTP id b5-20020a4ac285000000b0029038344c3dso3120128ooq.8;
+        Tue, 07 Sep 2021 09:59:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=SvBBnr80NWkvIsim2a+nqfVn5CtPkVnz5CJmaxVXNrY=;
-        b=Abd3ZEMoBaLVMobq1zM2GvTELFuBOdk0S3vpbSCxkgJNnKeu+2tR5aK7EHe5z1W7u/
-         Y6wly0x/Ke3x94C4VGIo6nZklRVuFaMh0aCZ3zm/HRCW9tLGkZMvzKw0RPEiEjUrsFF2
-         nJHJJI/y/dSSmMneRYatqOF9FtuEXKLrYgQp8dSwtaoeIA0LJjxhcSLMS0fPvt0jHc+1
-         wEukmpABWoOV0D8McUMdS0jW74Is6mblYGKY9ZHgdfhTn4V1CexKgsUMaOhOT0gzyPZT
-         MHQDHeZOZHqDKOi4NReUMYcnLTKwR4L/ENUH80tqRrKp9kipnZRze6toFyi7ENCblZ2h
-         /rGA==
+        bh=yGhlEcWAmkOIUP0KcWj+kobRkgQf1kC9BN+bCXhgInU=;
+        b=nlLEhmuIw37kyWO+W+izNA5oEpC//ZXt13F33/D9ZojjKBXu73jbv61UPIGkmMgC0Q
+         cqi/3dW9asI+eDILJr4YhiagPZRYuvXqJBQaGqDuw13uX5tZjt5Yotki/TL+OGsKV0WZ
+         PdHoZtrACfkVJXMmm3NyxzI6yE2TzHF+RSaCXPpHoObGjlJw5sL1aF3gFqRhX9Hf55cr
+         eGBb+pO4tUabBBFmO7F5jaHGVzhj+4KgykGgEBLWghNS5E8XpNROulgLRXRv3HM5RwUR
+         0PANTYfuyEEh+VfW95UX8p93dEnGnb+JQm8tVRLliu5Gg06/pZC7tz+i7RXXZGgYXelH
+         XLNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=SvBBnr80NWkvIsim2a+nqfVn5CtPkVnz5CJmaxVXNrY=;
-        b=kTdjMFO36D9k9sIz3XTnbQp6P74wS4FXuqCEtyA/HI7DaC5rmAiu3GJji9VUykBnRi
-         mVbB110hi6pZGcNdQYVwQ74MyGr0F0FQpCQORYgEIdVcDxvGWjZfilg+KsvLQVEpYfPk
-         OBexVLn2St72yGj/MVC3UWtdCqk3NlNfjC8xjmC+n9u5YRGX1ThjIH8ZT1fXLBMT2Dei
-         f3KOGALS4Wb8KgLpTA236kJTM8SZ/w+9643K/OGVg4DtTk25MZ77uBE8Zti0jyvKXBlq
-         vhZ3IuvFp6CmPsoua21edmbKSnviknKIXReWtK9BufUtfqad5fs22VO069Xnwdue8w6v
-         9Xeg==
-X-Gm-Message-State: AOAM532rIe87x52P6QfSRpefmhci7JKteisvskSRe+uCOOTO6TT4EV59
-        8knPaKqU1n5Y6B/lWg0gI07p8vEZYqGflYI1wjo=
-X-Google-Smtp-Source: ABdhPJwX8AvM29XUfK/LG2v17nA8C38ihZmRL2Sr0hMbXUNbjSSiBrR/yt0fFsp0N/OneIDzRpPT8sV003ExuGTJp2c=
-X-Received: by 2002:aca:ab06:: with SMTP id u6mr2611956oie.120.1631033903838;
- Tue, 07 Sep 2021 09:58:23 -0700 (PDT)
+        bh=yGhlEcWAmkOIUP0KcWj+kobRkgQf1kC9BN+bCXhgInU=;
+        b=IqrLWKTTxcIl5MA5M6bip8OQ138JYBsglDcYUu9L3czg1+hT/eYLB8MfRUaRmiqZxu
+         7XY0ypriTJxQMepeUu8hUwhLZM3jW7ybBhhBsmlmFBZ02UnRKeRHK/yBd1/B9aT1V1J4
+         BRuLxtdNzHgQqgOJiZaoTSjA5eunN1TebVpHx1DJzcL/1f1SRo28Ptefn6ERuQ7YT0gN
+         yjaS6GJRZ7k8HOYyP/WQwChbcHXA7ikCutVUm7n941A9MmR6EaqysZKwUfOzLv03wIwx
+         gLAR3hE5L0KR4qQPlBFJgdlmNFkN7BtW8idUPsiSMExO8dOfsVBg64GdgS25Gp3fxBqX
+         O0wQ==
+X-Gm-Message-State: AOAM532xDJ7NtiqUqfs6QoIPCpBv3m0cVUZgvxzUXR+W1vx1B8UTNELG
+        oepK6UeaP+KVolO7dtwb710i1FQxsOtEfgMv+XA=
+X-Google-Smtp-Source: ABdhPJztexkmO6F4hC0uTaplz22vYnXIkvWMVIv6HMvkULpmAknxRcB9k8FShKGIQZf3yT5nYu9/1rtbZGwuoyMMmrA=
+X-Received: by 2002:a4a:d794:: with SMTP id c20mr692176oou.23.1631033953123;
+ Tue, 07 Sep 2021 09:59:13 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210902214510.55070-1-colin.king@canonical.com> <62384d80-8ef8-35bb-083e-61036d989efc@amd.com>
-In-Reply-To: <62384d80-8ef8-35bb-083e-61036d989efc@amd.com>
+References: <20210902215127.55330-1-colin.king@canonical.com> <bb5105f8-2ec6-e494-8764-3dcc5fc0681b@amd.com>
+In-Reply-To: <bb5105f8-2ec6-e494-8764-3dcc5fc0681b@amd.com>
 From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Tue, 7 Sep 2021 12:58:12 -0400
-Message-ID: <CADnq5_NgVEO6JhSmY=Fyz0QVjt1gYLmPb1G7u0k4aGp37+Vf2Q@mail.gmail.com>
-Subject: Re: [PATCH][next] drm/amdgpu: clean up inconsistent indenting
+Date:   Tue, 7 Sep 2021 12:59:02 -0400
+Message-ID: <CADnq5_Psv9HG5C=9OwaXY64uRLnmJ4NjnsbviG6zwvpdmuNcRA@mail.gmail.com>
+Subject: Re: [PATCH][next] drm/amdgpu: sdma: clean up identation
 To:     =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
 Cc:     Colin King <colin.king@canonical.com>,
         Alex Deucher <alexander.deucher@amd.com>,
@@ -84,43 +84,41 @@ Alex
 On Fri, Sep 3, 2021 at 2:31 AM Christian K=C3=B6nig <christian.koenig@amd.c=
 om> wrote:
 >
-> Am 02.09.21 um 23:45 schrieb Colin King:
+> Am 02.09.21 um 23:51 schrieb Colin King:
 > > From: Colin Ian King <colin.king@canonical.com>
 > >
-> > There are a couple of statements that are indented one character
-> > too deeply, clean these up.
+> > There is a statement that is indented incorrectly. Clean it up.
 > >
 > > Signed-off-by: Colin Ian King <colin.king@canonical.com>
 >
 > Reviewed-by: Christian K=C3=B6nig <christian.koenig@amd.com>
 >
 > > ---
-> >   drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c | 7 +++----
-> >   1 file changed, 3 insertions(+), 4 deletions(-)
+> >   drivers/gpu/drm/amd/amdgpu/sdma_v5_2.c | 8 ++++----
+> >   1 file changed, 4 insertions(+), 4 deletions(-)
 > >
-> > diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c b/drivers/gpu/drm/=
-amd/amdgpu/amdgpu_gem.c
-> > index d6aa032890ee..a573424a6e0b 100644
-> > --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
-> > +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
-> > @@ -60,10 +60,9 @@ static vm_fault_t amdgpu_gem_fault(struct vm_fault *=
-vmf)
-> >                       goto unlock;
-> >               }
+> > diff --git a/drivers/gpu/drm/amd/amdgpu/sdma_v5_2.c b/drivers/gpu/drm/a=
+md/amdgpu/sdma_v5_2.c
+> > index 779f5c911e11..e4a96e7e386d 100644
+> > --- a/drivers/gpu/drm/amd/amdgpu/sdma_v5_2.c
+> > +++ b/drivers/gpu/drm/amd/amdgpu/sdma_v5_2.c
+> > @@ -375,10 +375,10 @@ static void sdma_v5_2_ring_emit_ib(struct amdgpu_=
+ring *ring,
+> >    */
+> >   static void sdma_v5_2_ring_emit_mem_sync(struct amdgpu_ring *ring)
+> >   {
+> > -    uint32_t gcr_cntl =3D
+> > -                 SDMA_GCR_GL2_INV | SDMA_GCR_GL2_WB | SDMA_GCR_GLM_INV=
+ |
+> > -                     SDMA_GCR_GL1_INV | SDMA_GCR_GLV_INV | SDMA_GCR_GL=
+K_INV |
+> > -                     SDMA_GCR_GLI_INV(1);
+> > +     uint32_t gcr_cntl =3D SDMA_GCR_GL2_INV | SDMA_GCR_GL2_WB |
+> > +                         SDMA_GCR_GLM_INV | SDMA_GCR_GL1_INV |
+> > +                         SDMA_GCR_GLV_INV | SDMA_GCR_GLK_INV |
+> > +                         SDMA_GCR_GLI_INV(1);
 > >
-> > -              ret =3D ttm_bo_vm_fault_reserved(vmf, vmf->vma->vm_page_=
-prot,
-> > -                                             TTM_BO_VM_NUM_PREFAULT, 1=
-);
-> > -
-> > -              drm_dev_exit(idx);
-> > +             ret =3D ttm_bo_vm_fault_reserved(vmf, vmf->vma->vm_page_p=
-rot,
-> > +                                            TTM_BO_VM_NUM_PREFAULT, 1)=
-;
-> > +             drm_dev_exit(idx);
-> >       } else {
-> >               ret =3D ttm_bo_vm_dummy_page(vmf, vmf->vma->vm_page_prot)=
-;
-> >       }
+> >       /* flush entire cache L0/L1/L2, this can be optimized by performa=
+nce requirement */
+> >       amdgpu_ring_write(ring, SDMA_PKT_HEADER_OP(SDMA_OP_GCR_REQ));
 >
