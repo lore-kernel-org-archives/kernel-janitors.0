@@ -2,98 +2,116 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85D27C433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Sep 2021 08:00:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09D02C433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Sep 2021 08:02:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6313461101
-	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Sep 2021 08:00:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4C696108E
+	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Sep 2021 08:02:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241375AbhIGIBt (ORCPT
+        id S241896AbhIGIDQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 7 Sep 2021 04:01:49 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:39262 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S231366AbhIGIBs (ORCPT
+        Tue, 7 Sep 2021 04:03:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38660 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S241848AbhIGIC2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 7 Sep 2021 04:01:48 -0400
-X-UUID: 289a8e123b5d49daab79ec2ce6a8031d-20210907
-X-UUID: 289a8e123b5d49daab79ec2ce6a8031d-20210907
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
-        (envelope-from <trevor.wu@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 312245765; Tue, 07 Sep 2021 16:00:39 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs05n1.mediatek.inc (172.21.101.15) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Tue, 7 Sep 2021 16:00:37 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by mtkcas07.mediatek.inc
- (172.21.101.84) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 7 Sep
- 2021 16:00:37 +0800
-Received: from mtksdccf07 (172.21.84.99) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Tue, 7 Sep 2021 16:00:37 +0800
-Message-ID: <27ca1a1e99193b543102df03f7c256063468f693.camel@mediatek.com>
-Subject: Re: [PATCH] ASoC: mediatek: mt8195: Fix unused initialization of
- pointer etdm_data
-From:   Trevor Wu <trevor.wu@mediatek.com>
-To:     Colin King <colin.king@canonical.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <alsa-devel@alsa-project.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>
-CC:     <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Date:   Tue, 7 Sep 2021 16:00:37 +0800
-In-Reply-To: <20210903114928.11743-1-colin.king@canonical.com>
-References: <20210903114928.11743-1-colin.king@canonical.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
+        Tue, 7 Sep 2021 04:02:28 -0400
+Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0279CC061575
+        for <kernel-janitors@vger.kernel.org>; Tue,  7 Sep 2021 01:01:17 -0700 (PDT)
+Received: by mail-pf1-x42d.google.com with SMTP id j16so7530874pfc.2
+        for <kernel-janitors@vger.kernel.org>; Tue, 07 Sep 2021 01:01:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=7IDhp7jfxW98v1H50axBekjDR8YpqP2dPr8s2ARoy/A=;
+        b=N7Jw8DWL0CZZrN1sOPtEOeXIy7FS3/PxTfgdw0fZ5ebxYZHDgYHhFB9eZBjhnzRQ2y
+         pqPd6vt+M/ksb7aCjk/QhECBz9fnt/ogGaXXnXFMWYp3l/8IlymIeZLqMRQqO9Gf2Wvy
+         Peoey6R5r5VqKYtjaMqGjxxwi5d6aa7EHlqVE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=7IDhp7jfxW98v1H50axBekjDR8YpqP2dPr8s2ARoy/A=;
+        b=I1RSf1mJkMGzNxBvSPK12Tue5TGxXZ3bwNSeXULUMzFb5rubtbezo7rA9g+OjOB0Gd
+         HUPM+r/t8/JZDiIEaQYAkpyqI8TFhz1AsTkgGwsrcLueDD398Hi6UlCWhuzeuQPe0f09
+         eeM9q7QnE0auUY1flkFztanUoWzdbAAw9mLDspcveDtAoO5BUsp8YPfKbt85YehoB3/5
+         0MQSQN0fNN/8hZY1lLMFFnBKimaAHGwZrxIQQ2vYQ0QCuoJL0fn8Mnkt2FZtmQ8nK/uQ
+         pL+YkrOABnPTMdqycoc6QtLEBykSbCSS/4qfs9fh9g6QqAcSzIZQV5kNiqHt0BWsMqCw
+         Xf3g==
+X-Gm-Message-State: AOAM531kM98ssxDrCy/f0kupX539FSeBFBeUlLBIRsaMUy9R5t0TXMFK
+        vZ+NxcBhMww0s74qeEZy6i3MJA==
+X-Google-Smtp-Source: ABdhPJwNmtitZ76t5J7Bc3PuBxmEJFilWNhnXqLgWp2Habp3cbZT6H+xNf4tuVKwFkBDgjEPjWvVYw==
+X-Received: by 2002:a65:400c:: with SMTP id f12mr15651190pgp.296.1631001676517;
+        Tue, 07 Sep 2021 01:01:16 -0700 (PDT)
+Received: from google.com ([2409:10:2e40:5100:4040:44a5:1453:e72c])
+        by smtp.gmail.com with ESMTPSA id c4sm8137319pga.4.2021.09.07.01.01.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Sep 2021 01:01:15 -0700 (PDT)
+Date:   Tue, 7 Sep 2021 17:01:11 +0900
+From:   Sergey Senozhatsky <senozhatsky@chromium.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Namjae Jeon <linkinjeon@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Steve French <sfrench@samba.org>,
+        Hyunchul Lee <hyc.lee@gmail.com>, linux-cifs@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] ksmbd: potential uninitialized error code in
+ set_file_basic_info()
+Message-ID: <YTccRzi/j+7t2eB9@google.com>
+References: <20210907073340.GC18254@kili>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210907073340.GC18254@kili>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 2021-09-03 at 12:49 +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On (21/09/07 10:33), Dan Carpenter wrote:
 > 
-> The pointer etdm_data is being inintialized with a value that is
-> never
-> read, it is later being re-assigned a new value. Remove the redundant
-> initialization.
+> Smatch complains that there are some paths where "rc" is not set.
 > 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Fixes: eb5784f0c6ef ("ksmbd: ensure error is surfaced in set_file_basic_info()")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > ---
->  sound/soc/mediatek/mt8195/mt8195-dai-etdm.c | 2 +-
+>  fs/ksmbd/smb2pdu.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/sound/soc/mediatek/mt8195/mt8195-dai-etdm.c
-> b/sound/soc/mediatek/mt8195/mt8195-dai-etdm.c
-> index 7378e42f2766..ac591d453e1e 100644
-> --- a/sound/soc/mediatek/mt8195/mt8195-dai-etdm.c
-> +++ b/sound/soc/mediatek/mt8195/mt8195-dai-etdm.c
-> @@ -2094,7 +2094,7 @@ static int mtk_dai_etdm_set_sysclk(struct
-> snd_soc_dai *dai,
->  {
->  	struct mtk_base_afe *afe = snd_soc_dai_get_drvdata(dai);
->  	struct mt8195_afe_private *afe_priv = afe->platform_priv;
-> -	struct mtk_dai_etdm_priv *etdm_data = afe_priv->dai_priv[dai-
-> >id];
-> +	struct mtk_dai_etdm_priv *etdm_data;
->  	int dai_id;
+> diff --git a/fs/ksmbd/smb2pdu.c b/fs/ksmbd/smb2pdu.c
+> index a350e1cef7f4..c86164dc70bb 100644
+> --- a/fs/ksmbd/smb2pdu.c
+> +++ b/fs/ksmbd/smb2pdu.c
+> @@ -5444,7 +5444,7 @@ static int set_file_basic_info(struct ksmbd_file *fp, char *buf,
+>  	struct file *filp;
+>  	struct inode *inode;
+>  	struct user_namespace *user_ns;
+> -	int rc;
+> +	int rc = 0;
 >  
->  	dev_dbg(dai->dev, "%s id %d freq %u, dir %d\n",
+>  	if (!(fp->daccess & FILE_WRITE_ATTRIBUTES_LE))
+>  		return -EACCES;
 
-Acked-by: Trevor Wu <trevor.wu@mediatek.com>
+It sort of feels like that `rc' is not needed there at all. It's being used in
 
-Thanks.
+               rc = ksmbd_vfs_set_dos_attrib_xattr(user_ns,
+                                                   filp->f_path.dentry, &da);
+               if (rc)
+                      ksmbd_debug(SMB,
+                                 "failed to restore file attribute in EA\n");
 
+and in
+
+               rc = setattr_prepare(user_ns, dentry, &attrs);
+               if (rc)
+                        return -EINVAL;
+
+Either it should be used more, and probably be a return value, or we can
+just remove it.
