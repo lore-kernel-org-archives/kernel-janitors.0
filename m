@@ -5,50 +5,48 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A264C433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Sep 2021 10:47:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6176AC433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Sep 2021 10:59:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E2797610FE
-	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Sep 2021 10:47:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B87460F6D
+	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Sep 2021 10:59:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244992AbhIGKsG (ORCPT
+        id S1343645AbhIGLAf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 7 Sep 2021 06:48:06 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:54950
+        Tue, 7 Sep 2021 07:00:35 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:56410
         "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S244744AbhIGKsG (ORCPT
+        by vger.kernel.org with ESMTP id S1343706AbhIGLAV (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 7 Sep 2021 06:48:06 -0400
+        Tue, 7 Sep 2021 07:00:21 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id C2CE94017C;
-        Tue,  7 Sep 2021 10:46:58 +0000 (UTC)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 8867841A67;
+        Tue,  7 Sep 2021 10:59:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1631011618;
-        bh=fX1N3TOwZMxrjPJFX3uSNd2JDuJSiQ0i8IY9scgNe1k=;
+        s=20210705; t=1631012353;
+        bh=Nbbb7rLVgfd4DDptZCzReFRmpedOnCrgnNcVj4VWs3M=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=JrlWUbgVLY2tqzUxKRhjSIHz19gPT1essAZw/2RXf4i+t6cfwtRTl1RP6z4H+cr9H
-         OmWsVdcqeo+TYRK7puMWmnNLNjT4/lTI2NeUnbpe+Trf1EfWqIP14FvcRTRHpmR0/n
-         FsBwV6l3p/x280hMSizkX3pa2K6cm/dWozO30y4CVZ5Ujv+sB6LNRW/tHv57Su+iKU
-         E/nPzPavrxOxhWIXoqMtSpJLhYe7Tv1vwOT2Iy1F3u+CzPhJ1Akp+lcXrasQcbY/gX
-         2TJ4fZGW7GVaYQGENY1ysE9d8A1j7SfDN1CAHT2OFq4NhOP498CFAeUCZajITdWz1/
-         S0PklCe4WiwQA==
+        b=TR+TFdvPZ4rVGF1NV9aD6EJssenTUuVJYmAjN+S+HYRHgEYgqiffLDyqOd4pQISnv
+         6R0UdwG4JcdLDF+Dh0loz2Y07tP2ulWSapTj4EOqbGCkrQr0jHzZvbFVUIi5uGgd2u
+         uzc0R3tvZfCRfFO38Hi5KDjHPVK23ncXjwISeI7HaMTG5XeRSB3nmCrz/emy0rqeaa
+         0LRMYrWXgJHBS9IRpWDZT56HmlteMNU0lg+w6a5Zuyoq3QBeuBE3tO7TFWE8Z1W2OV
+         +9jwydBF5v+2vTku/wmSr27NpwihMQSESNc1buQz3YFpcPvdZTSWNDj8KTebZXNKGZ
+         x0N7eljChCiRg==
 From:   Colin King <colin.king@canonical.com>
-To:     Luca Coelho <luciano.coelho@intel.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Wey-Yi Guy <wey-yi.w.guy@intel.com>,
-        "John W . Linville" <linville@tuxdriver.com>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+To:     Borislav Petkov <bp@alien8.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Tony Luck <tony.luck@intel.com>,
+        James Morse <james.morse@arm.com>,
+        Robert Richter <rric@kernel.org>, linux-edac@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] iwlwifi: Fix -EIO error code that is never returned
-Date:   Tue,  7 Sep 2021 11:46:58 +0100
-Message-Id: <20210907104658.14706-1-colin.king@canonical.com>
+Subject: [PATCH] EDAC/device: Remove redundant initialization of pointer dev_ctl
+Date:   Tue,  7 Sep 2021 11:59:13 +0100
+Message-Id: <20210907105913.15077-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -59,30 +57,28 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Currently the error -EIO is being assinged to variable ret when
-the READY_BIT is not set but the function iwlagn_mac_start returns
-0 rather than ret. Fix this by returning ret instead of 0.
+The variable dev_ctl is being initialized with a value that is never
+read, it is being updated later on. The assignment is redundant and
+can be removed.
 
 Addresses-Coverity: ("Unused value")
-Fixes: 7335613ae27a ("iwlwifi: move all mac80211 related functions to one place")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/wireless/intel/iwlwifi/dvm/mac80211.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/edac/edac_device.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/dvm/mac80211.c b/drivers/net/wireless/intel/iwlwifi/dvm/mac80211.c
-index 75e7665773c5..90fe4adca492 100644
---- a/drivers/net/wireless/intel/iwlwifi/dvm/mac80211.c
-+++ b/drivers/net/wireless/intel/iwlwifi/dvm/mac80211.c
-@@ -304,7 +304,7 @@ static int iwlagn_mac_start(struct ieee80211_hw *hw)
+diff --git a/drivers/edac/edac_device.c b/drivers/edac/edac_device.c
+index 8c4d947fb848..a337f7afc3b9 100644
+--- a/drivers/edac/edac_device.c
++++ b/drivers/edac/edac_device.c
+@@ -75,7 +75,6 @@ struct edac_device_ctl_info *edac_device_alloc_ctl_info(
+ 	 * provide if we could simply hardcode everything into a single struct.
+ 	 */
+ 	p = NULL;
+-	dev_ctl = edac_align_ptr(&p, sizeof(*dev_ctl), 1);
  
- 	priv->is_open = 1;
- 	IWL_DEBUG_MAC80211(priv, "leave\n");
--	return 0;
-+	return ret;
- }
- 
- static void iwlagn_mac_stop(struct ieee80211_hw *hw)
+ 	/* Calc the 'end' offset past end of ONE ctl_info structure
+ 	 * which will become the start of the 'instance' array
 -- 
 2.32.0
 
