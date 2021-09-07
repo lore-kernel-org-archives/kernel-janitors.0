@@ -2,94 +2,67 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53D2CC433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Sep 2021 00:08:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D81ABC433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Sep 2021 05:09:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 257516109F
-	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Sep 2021 00:08:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B56A5610A6
+	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Sep 2021 05:09:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230169AbhIGAJO (ORCPT
+        id S233560AbhIGFKd (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 6 Sep 2021 20:09:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48194 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236056AbhIGAJM (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 6 Sep 2021 20:09:12 -0400
-Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A78FC061575
-        for <kernel-janitors@vger.kernel.org>; Mon,  6 Sep 2021 17:08:07 -0700 (PDT)
-Received: by mail-pl1-x62a.google.com with SMTP id k17so4738095pls.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 06 Sep 2021 17:08:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=XqRu0z2Qhjs0mvuVTfdyLCxvW6UnsTdZLsaV7CaJajk=;
-        b=THPVv3KV4fHAZh2jKOoVbmjvS6USvkg8tEoqpY5g9Ay7RDaDs8eVm3CzahyCyXiYCE
-         dmioefCdKHamm8A6OzNKzXS5vWjfQQy+xE7Lwv5raZkRzyamp54HMrPnS0STdGg8bbQU
-         Ucig9U2TvVdoi/I1y+jmnWbqFS1T4gJh6GDL0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=XqRu0z2Qhjs0mvuVTfdyLCxvW6UnsTdZLsaV7CaJajk=;
-        b=ehZHvHFrSsivdDhJiJnWTRpuxVwO4BUH2dlDfB9jwjEyt4gh0Y5hYEW0e3rO9KXGBk
-         sS+PgoxdzMV1VHJrqhEg3KiHwwQIJ8ifIqblG9LMwOi7AuQ0lexuPl7fPL9hvFjs0ErN
-         BP9meowaRGQxmwIB7n5fsETo/YjhbOMd3U5PalNtloqmFxkYjgx1et8g6+nGMZtN/tnT
-         oNrp/0rOO1VfBp1AZzYbsm4Q1NbNeOnqx5E9y0GnK8Cfi8XIlr/RfwuMkNRKTdM2lws4
-         CzK7xX06txmIOBJXXbkQQc6FWPAS/0D1r8W+oItN8V2f5SwWbc1u6ODmEY1KC+vAHyfo
-         zBvw==
-X-Gm-Message-State: AOAM532nkzLWlWLY6oGROhBsVIGFXH974Xt5a8j880kVM9iNT5fUc8sd
-        W0GHl1OH/f43zyQ7OXGMElnhlg==
-X-Google-Smtp-Source: ABdhPJygBpZDHO0khjmYw+va4z4BztjolHbfaxw2Uf52dv0IQawbfJU1o5SPyVNemqlLGCKhb1LIcg==
-X-Received: by 2002:a17:902:7145:b0:137:2e25:5bf0 with SMTP id u5-20020a170902714500b001372e255bf0mr12564988plm.10.1630973286689;
-        Mon, 06 Sep 2021 17:08:06 -0700 (PDT)
-Received: from google.com ([2409:10:2e40:5100:4040:44a5:1453:e72c])
-        by smtp.gmail.com with ESMTPSA id 141sm11395031pgg.16.2021.09.06.17.08.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Sep 2021 17:08:06 -0700 (PDT)
-Date:   Tue, 7 Sep 2021 09:08:01 +0900
-From:   Sergey Senozhatsky <senozhatsky@chromium.org>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Namjae Jeon <linkinjeon@kernel.org>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Steve French <sfrench@samba.org>,
-        Hyunchul Lee <hyc.lee@gmail.com>, linux-cifs@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] ksmbd: add missing assignments to ret on
- ndr_read_int64 read calls
-Message-ID: <YTatYScZNOYHxruf@google.com>
-References: <20210906134438.14250-1-colin.king@canonical.com>
+        Tue, 7 Sep 2021 01:10:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49020 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229456AbhIGFKd (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 7 Sep 2021 01:10:33 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 669BA60ED8;
+        Tue,  7 Sep 2021 05:09:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1630991367;
+        bh=mEugUUF482isrPkyfakL5zZXLLtBswRZY2wS26w4QIM=;
+        h=References:From:To:Cc:Subject:Date:In-reply-to:From;
+        b=Odu3b0RZ50n6TSSMEyg4dTkqkOFtJ0juULU82TziQxF8d9VPRSShEHMaqVjim/qte
+         IMR+4idTLde0LhOGMrSq3trRTsaRWAbilhY4nPccHqWuyjHQrLHSVDS9/7v9BW0Zdq
+         yx6Sc8z/PVCL/6I1oir4E0fO1iCUpmA0WZttfisYCxqDX3lTV30/WDg0ZzTUFQW2uC
+         snEO4e241FBTLKdnKrGrdf3rQiMvLMgb2N7X+60Qr0cfdSkyiWkYGMJZ1jMc3KHwxg
+         WrEiy7bD7w7Op7FFftjv9bSpSfuRaeS3bVak6NTn7YyA2SJdK2urJPon/xD3SyOvOF
+         6vOvdRVSPgg0A==
+References: <20210906094221.GA10957@kili>
+User-agent: mu4e 1.6.5; emacs 27.2
+From:   Felipe Balbi <balbi@kernel.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] usb: gadget: r8a66597: fix a loop in set_feature()
+Date:   Tue, 07 Sep 2021 08:09:12 +0300
+In-reply-to: <20210906094221.GA10957@kili>
+Message-ID: <871r61c6pn.fsf@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210906134438.14250-1-colin.king@canonical.com>
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On (21/09/06 14:44), Colin King wrote:
-[..]
-> @@ -275,11 +275,11 @@ int ndr_decode_dos_attr(struct ndr *n, struct xattr_dos_attrib *da)
->  		if (ret)
->  			return ret;
->  
-> -		ndr_read_int64(n, NULL);
-> +		ret = ndr_read_int64(n, NULL);
->  		if (ret)
->  			return ret;
->  
-> -		ndr_read_int64(n, NULL);
-> +		ret = ndr_read_int64(n, NULL);
->  		if (ret)
->  			return ret;
 
-A pretty nice catch by that static analyzer tool.
+Dan Carpenter <dan.carpenter@oracle.com> writes:
 
-Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+> This loop is supposed to loop until if reads something other than
+> CS_IDST or until it times out after 30,000 attempts.  But because of
+> the || vs && bug, it will never time out and instead it will loop a
+> minimum of 30,000 times.
+>
+> This bug is quite old but the code is only used in USB_DEVICE_TEST_MODE
+> so it probably doesn't affect regular usage.
+>
+> Fixes: 96fe53ef5498 ("usb: gadget: r8a66597-udc: add support for TEST_MODE")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+Acked-by: Felipe Balbi <balbi@kernel.org>
+
+-- 
+balbi
