@@ -2,67 +2,184 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D81ABC433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Sep 2021 05:09:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B779C433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Sep 2021 07:29:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B56A5610A6
-	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Sep 2021 05:09:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FDC66109D
+	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Sep 2021 07:29:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233560AbhIGFKd (ORCPT
+        id S233953AbhIGHaw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 7 Sep 2021 01:10:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49020 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229456AbhIGFKd (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 7 Sep 2021 01:10:33 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 669BA60ED8;
-        Tue,  7 Sep 2021 05:09:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1630991367;
-        bh=mEugUUF482isrPkyfakL5zZXLLtBswRZY2wS26w4QIM=;
-        h=References:From:To:Cc:Subject:Date:In-reply-to:From;
-        b=Odu3b0RZ50n6TSSMEyg4dTkqkOFtJ0juULU82TziQxF8d9VPRSShEHMaqVjim/qte
-         IMR+4idTLde0LhOGMrSq3trRTsaRWAbilhY4nPccHqWuyjHQrLHSVDS9/7v9BW0Zdq
-         yx6Sc8z/PVCL/6I1oir4E0fO1iCUpmA0WZttfisYCxqDX3lTV30/WDg0ZzTUFQW2uC
-         snEO4e241FBTLKdnKrGrdf3rQiMvLMgb2N7X+60Qr0cfdSkyiWkYGMJZ1jMc3KHwxg
-         WrEiy7bD7w7Op7FFftjv9bSpSfuRaeS3bVak6NTn7YyA2SJdK2urJPon/xD3SyOvOF
-         6vOvdRVSPgg0A==
-References: <20210906094221.GA10957@kili>
-User-agent: mu4e 1.6.5; emacs 27.2
-From:   Felipe Balbi <balbi@kernel.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] usb: gadget: r8a66597: fix a loop in set_feature()
-Date:   Tue, 07 Sep 2021 08:09:12 +0300
-In-reply-to: <20210906094221.GA10957@kili>
-Message-ID: <871r61c6pn.fsf@kernel.org>
+        Tue, 7 Sep 2021 03:30:52 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:55908
+        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232056AbhIGHau (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 7 Sep 2021 03:30:50 -0400
+Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 440BA3F101;
+        Tue,  7 Sep 2021 07:29:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1630999782;
+        bh=CjLbqfN2yNEt3Pqk3AxMfUe2cR3Bz7R0AKeNAxMZH7A=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=QkMEZc8EUHRnRNRiU8nDWQT+444XlNfVh1HLMT95XSmUyVJT8YFE8WieWt7p0dMQj
+         MHOT6F/xATR6AlRhhu92+fKS3DTu3AE0B4MOpI+/58tlBbKJMl/0N0jdZ90Pqfkpjt
+         +HA66J7892yL+6LnGDmjZHakrJtX/KuYad2r3ocdpC5EGZngGoGI1u41Xl+9GZJ/5e
+         c9EKo6rMwczHXkRET/l3mJUc+s3fnc0Nd3ujJbF2cjaDf8AysqQ7vrWjPaUisrcCP1
+         4rcfgqT8QIDW27Msf+gJQPZaYgT09Xtsw4QOagibeTQ5vsDrJYVLLFFxnmmY12dBV2
+         9OmL2mN8xO1DQ==
+From:   Colin King <colin.king@canonical.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] scripts/spelling.txt: add more spellings to spelling.txt
+Date:   Tue,  7 Sep 2021 08:29:41 +0100
+Message-Id: <20210907072941.7033-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-Dan Carpenter <dan.carpenter@oracle.com> writes:
+Some of the more common spelling mistakes and typos that I've found
+while fixing up spelling mistakes in the kernel in the past few months.
 
-> This loop is supposed to loop until if reads something other than
-> CS_IDST or until it times out after 30,000 attempts.  But because of
-> the || vs && bug, it will never time out and instead it will loop a
-> minimum of 30,000 times.
->
-> This bug is quite old but the code is only used in USB_DEVICE_TEST_MODE
-> so it probably doesn't affect regular usage.
->
-> Fixes: 96fe53ef5498 ("usb: gadget: r8a66597-udc: add support for TEST_MODE")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ scripts/spelling.txt | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-Acked-by: Felipe Balbi <balbi@kernel.org>
-
+diff --git a/scripts/spelling.txt b/scripts/spelling.txt
+index 17fdc620d548..fd8f07317b8e 100644
+--- a/scripts/spelling.txt
++++ b/scripts/spelling.txt
+@@ -178,6 +178,7 @@ assum||assume
+ assumtpion||assumption
+ asuming||assuming
+ asycronous||asynchronous
++asychronous||asynchronous
+ asynchnous||asynchronous
+ asynchromous||asynchronous
+ asymetric||asymmetric
+@@ -241,6 +242,7 @@ beter||better
+ betweeen||between
+ bianries||binaries
+ bitmast||bitmask
++bitwiedh||bitwidth
+ boardcast||broadcast
+ borad||board
+ boundry||boundary
+@@ -265,7 +267,10 @@ calucate||calculate
+ calulate||calculate
+ cancelation||cancellation
+ cancle||cancel
++cant||can't
++cant'||can't
+ canot||cannot
++cann't||can't
+ capabilites||capabilities
+ capabilties||capabilities
+ capabilty||capability
+@@ -501,6 +506,7 @@ disble||disable
+ disgest||digest
+ disired||desired
+ dispalying||displaying
++dissable||disable
+ diplay||display
+ directon||direction
+ direcly||directly
+@@ -595,6 +601,7 @@ exceded||exceeded
+ exceds||exceeds
+ exceeed||exceed
+ excellant||excellent
++exchnage||exchange
+ execeeded||exceeded
+ execeeds||exceeds
+ exeed||exceed
+@@ -938,6 +945,7 @@ migrateable||migratable
+ milliseonds||milliseconds
+ minium||minimum
+ minimam||minimum
++minimun||minimum
+ miniumum||minimum
+ minumum||minimum
+ misalinged||misaligned
+@@ -956,6 +964,7 @@ mmnemonic||mnemonic
+ mnay||many
+ modfiy||modify
+ modifer||modifier
++modul||module
+ modulues||modules
+ momery||memory
+ memomry||memory
+@@ -1154,6 +1163,7 @@ programable||programmable
+ programers||programmers
+ programm||program
+ programms||programs
++progres||progress
+ progresss||progress
+ prohibitted||prohibited
+ prohibitting||prohibiting
+@@ -1328,6 +1338,7 @@ servive||service
+ setts||sets
+ settting||setting
+ shapshot||snapshot
++shoft||shift
+ shotdown||shutdown
+ shoud||should
+ shouldnt||shouldn't
+@@ -1439,6 +1450,7 @@ syfs||sysfs
+ symetric||symmetric
+ synax||syntax
+ synchonized||synchronized
++synchronization||synchronization
+ synchronuously||synchronously
+ syncronize||synchronize
+ syncronized||synchronized
+@@ -1521,6 +1533,7 @@ unexpexted||unexpected
+ unfortunatelly||unfortunately
+ unifiy||unify
+ uniterrupted||uninterrupted
++uninterruptable||uninterruptible
+ unintialized||uninitialized
+ unitialized||uninitialized
+ unkmown||unknown
+@@ -1553,6 +1566,7 @@ unuseful||useless
+ unvalid||invalid
+ upate||update
+ upsupported||unsupported
++useable||usable
+ usefule||useful
+ usefull||useful
+ usege||usage
+@@ -1574,6 +1588,7 @@ varient||variant
+ vaule||value
+ verbse||verbose
+ veify||verify
++verfication||verification
+ veriosn||version
+ verisons||versions
+ verison||version
+@@ -1586,6 +1601,7 @@ visiters||visitors
+ vitual||virtual
+ vunerable||vulnerable
+ wakeus||wakeups
++was't||wasn't
+ wathdog||watchdog
+ wating||waiting
+ wiat||wait
 -- 
-balbi
+2.32.0
+
