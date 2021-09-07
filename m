@@ -2,76 +2,125 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5291AC4332F
-	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Sep 2021 13:10:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ACB5C433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Sep 2021 16:58:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3D552610C8
-	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Sep 2021 13:10:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14B29610A3
+	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Sep 2021 16:58:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344659AbhIGNLN (ORCPT
+        id S1345488AbhIGQ7c (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 7 Sep 2021 09:11:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37236 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1344507AbhIGNLM (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 7 Sep 2021 09:11:12 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 832E660524;
-        Tue,  7 Sep 2021 13:10:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631020206;
-        bh=TS0Q+JC5+rbsAfXB/DgZ/VfullCGD0MlVd1QbRr/ckk=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=ij5ydPCxaCWxFVvcK+lEHOY3HUKAtqsHaYDwBDH+Tkx4nSfsVJXmyWuiVMgxMol0M
-         W6rKtxoU53Bg+xu+lF1X2vpOftCpOiK+OJmaB//z2GAchT6lr7mG2SlzuX0dNqFWwP
-         YuOcpjX8o8NbzO1BMNj/91hmp5+6dXccrXGvWhzhYB3iP49C724V8sz9PXeCOc/aQG
-         b2bmLIqucO2StXgvj2mObNXVWLARhMafbGxVMqitDajCWYAhO3Pk+1gBJbLxMK4sh7
-         rUGDaTodewaYxbJqBz18vklkw4KKidJa8GnIiMy7i1UjaznBBQIGtePqstTWlxLDaM
-         HWjC+IpR/4W4w==
-Content-Type: text/plain; charset="utf-8"
+        Tue, 7 Sep 2021 12:59:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49742 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1345481AbhIGQ7c (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 7 Sep 2021 12:59:32 -0400
+Received: from mail-oi1-x233.google.com (mail-oi1-x233.google.com [IPv6:2607:f8b0:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DB8EC061575;
+        Tue,  7 Sep 2021 09:58:24 -0700 (PDT)
+Received: by mail-oi1-x233.google.com with SMTP id n27so13646322oij.0;
+        Tue, 07 Sep 2021 09:58:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=SvBBnr80NWkvIsim2a+nqfVn5CtPkVnz5CJmaxVXNrY=;
+        b=Abd3ZEMoBaLVMobq1zM2GvTELFuBOdk0S3vpbSCxkgJNnKeu+2tR5aK7EHe5z1W7u/
+         Y6wly0x/Ke3x94C4VGIo6nZklRVuFaMh0aCZ3zm/HRCW9tLGkZMvzKw0RPEiEjUrsFF2
+         nJHJJI/y/dSSmMneRYatqOF9FtuEXKLrYgQp8dSwtaoeIA0LJjxhcSLMS0fPvt0jHc+1
+         wEukmpABWoOV0D8McUMdS0jW74Is6mblYGKY9ZHgdfhTn4V1CexKgsUMaOhOT0gzyPZT
+         MHQDHeZOZHqDKOi4NReUMYcnLTKwR4L/ENUH80tqRrKp9kipnZRze6toFyi7ENCblZ2h
+         /rGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=SvBBnr80NWkvIsim2a+nqfVn5CtPkVnz5CJmaxVXNrY=;
+        b=kTdjMFO36D9k9sIz3XTnbQp6P74wS4FXuqCEtyA/HI7DaC5rmAiu3GJji9VUykBnRi
+         mVbB110hi6pZGcNdQYVwQ74MyGr0F0FQpCQORYgEIdVcDxvGWjZfilg+KsvLQVEpYfPk
+         OBexVLn2St72yGj/MVC3UWtdCqk3NlNfjC8xjmC+n9u5YRGX1ThjIH8ZT1fXLBMT2Dei
+         f3KOGALS4Wb8KgLpTA236kJTM8SZ/w+9643K/OGVg4DtTk25MZ77uBE8Zti0jyvKXBlq
+         vhZ3IuvFp6CmPsoua21edmbKSnviknKIXReWtK9BufUtfqad5fs22VO069Xnwdue8w6v
+         9Xeg==
+X-Gm-Message-State: AOAM532rIe87x52P6QfSRpefmhci7JKteisvskSRe+uCOOTO6TT4EV59
+        8knPaKqU1n5Y6B/lWg0gI07p8vEZYqGflYI1wjo=
+X-Google-Smtp-Source: ABdhPJwX8AvM29XUfK/LG2v17nA8C38ihZmRL2Sr0hMbXUNbjSSiBrR/yt0fFsp0N/OneIDzRpPT8sV003ExuGTJp2c=
+X-Received: by 2002:aca:ab06:: with SMTP id u6mr2611956oie.120.1631033903838;
+ Tue, 07 Sep 2021 09:58:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] ieee802154: Remove redundant initialization of variable ret
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <163102020649.3494.1324550414949481903.git-patchwork-notify@kernel.org>
-Date:   Tue, 07 Sep 2021 13:10:06 +0000
-References: <20210907102814.14169-1-colin.king@canonical.com>
-In-Reply-To: <20210907102814.14169-1-colin.king@canonical.com>
-To:     Colin Ian King <colin.king@canonical.com>
-Cc:     alex.aring@gmail.com, stefan@datenfreihafen.org,
-        davem@davemloft.net, kuba@kernel.org, linux-wpan@vger.kernel.org,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+References: <20210902214510.55070-1-colin.king@canonical.com> <62384d80-8ef8-35bb-083e-61036d989efc@amd.com>
+In-Reply-To: <62384d80-8ef8-35bb-083e-61036d989efc@amd.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Tue, 7 Sep 2021 12:58:12 -0400
+Message-ID: <CADnq5_NgVEO6JhSmY=Fyz0QVjt1gYLmPb1G7u0k4aGp37+Vf2Q@mail.gmail.com>
+Subject: Re: [PATCH][next] drm/amdgpu: clean up inconsistent indenting
+To:     =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Cc:     Colin King <colin.king@canonical.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        xinhui pan <Xinhui.Pan@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>, kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+Applied.  Thanks!
 
-This patch was applied to netdev/net.git (refs/heads/master):
+Alex
 
-On Tue,  7 Sep 2021 11:28:14 +0100 you wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable ret is being initialized with a value that is never read, it
-> is being updated later on. The assignment is redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> 
-> [...]
-
-Here is the summary with links:
-  - ieee802154: Remove redundant initialization of variable ret
-    https://git.kernel.org/netdev/net/c/0f77f2defaf6
-
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+On Fri, Sep 3, 2021 at 2:31 AM Christian K=C3=B6nig <christian.koenig@amd.c=
+om> wrote:
+>
+> Am 02.09.21 um 23:45 schrieb Colin King:
+> > From: Colin Ian King <colin.king@canonical.com>
+> >
+> > There are a couple of statements that are indented one character
+> > too deeply, clean these up.
+> >
+> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>
+> Reviewed-by: Christian K=C3=B6nig <christian.koenig@amd.com>
+>
+> > ---
+> >   drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c | 7 +++----
+> >   1 file changed, 3 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c b/drivers/gpu/drm/=
+amd/amdgpu/amdgpu_gem.c
+> > index d6aa032890ee..a573424a6e0b 100644
+> > --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
+> > +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
+> > @@ -60,10 +60,9 @@ static vm_fault_t amdgpu_gem_fault(struct vm_fault *=
+vmf)
+> >                       goto unlock;
+> >               }
+> >
+> > -              ret =3D ttm_bo_vm_fault_reserved(vmf, vmf->vma->vm_page_=
+prot,
+> > -                                             TTM_BO_VM_NUM_PREFAULT, 1=
+);
+> > -
+> > -              drm_dev_exit(idx);
+> > +             ret =3D ttm_bo_vm_fault_reserved(vmf, vmf->vma->vm_page_p=
+rot,
+> > +                                            TTM_BO_VM_NUM_PREFAULT, 1)=
+;
+> > +             drm_dev_exit(idx);
+> >       } else {
+> >               ret =3D ttm_bo_vm_dummy_page(vmf, vmf->vma->vm_page_prot)=
+;
+> >       }
+>
