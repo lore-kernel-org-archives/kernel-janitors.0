@@ -2,184 +2,180 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B779C433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Sep 2021 07:29:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8EAAC433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Sep 2021 07:32:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6FDC66109D
-	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Sep 2021 07:29:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9314C610CB
+	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Sep 2021 07:32:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233953AbhIGHaw (ORCPT
+        id S231429AbhIGHdp (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 7 Sep 2021 03:30:52 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:55908
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232056AbhIGHau (ORCPT
+        Tue, 7 Sep 2021 03:33:45 -0400
+Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:32718 "EHLO
+        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231208AbhIGHdo (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 7 Sep 2021 03:30:50 -0400
-Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 440BA3F101;
-        Tue,  7 Sep 2021 07:29:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1630999782;
-        bh=CjLbqfN2yNEt3Pqk3AxMfUe2cR3Bz7R0AKeNAxMZH7A=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=QkMEZc8EUHRnRNRiU8nDWQT+444XlNfVh1HLMT95XSmUyVJT8YFE8WieWt7p0dMQj
-         MHOT6F/xATR6AlRhhu92+fKS3DTu3AE0B4MOpI+/58tlBbKJMl/0N0jdZ90Pqfkpjt
-         +HA66J7892yL+6LnGDmjZHakrJtX/KuYad2r3ocdpC5EGZngGoGI1u41Xl+9GZJ/5e
-         c9EKo6rMwczHXkRET/l3mJUc+s3fnc0Nd3ujJbF2cjaDf8AysqQ7vrWjPaUisrcCP1
-         4rcfgqT8QIDW27Msf+gJQPZaYgT09Xtsw4QOagibeTQ5vsDrJYVLLFFxnmmY12dBV2
-         9OmL2mN8xO1DQ==
-From:   Colin King <colin.king@canonical.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] scripts/spelling.txt: add more spellings to spelling.txt
-Date:   Tue,  7 Sep 2021 08:29:41 +0100
-Message-Id: <20210907072941.7033-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.32.0
+        Tue, 7 Sep 2021 03:33:44 -0400
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1874o4tu014901;
+        Tue, 7 Sep 2021 07:32:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : content-type : mime-version; s=corp-2021-07-09;
+ bh=tjMSRucp3xNXzF/CWhUxH7yncNmcV+FA5hk9p9/OWBQ=;
+ b=sKtbVdR73EPTedHXdk6o9UHFSRJzfK1aN5rOtvs7sFD1yMivlovXSIGdajDygcuOawJN
+ kCNiueuDrHbS4rsayYOn/m2C7luyo8NDnPcJ7xZ1xqvcZ5BJMIFDksyngqqJgfIn2Qvr
+ z6BXJ8kghcyrq9+zvlsRAA+AxHHwYQy4CdmlRctkzgUFbG2MZZq2jsCqHgdOam6Rzi81
+ pig50wx6MOuDpcMIPGRR/OHyGic6bnzsExBu1bE4J1hxS66zW+atQAqqxV5yddZzM7IK
+ GX4Qh9bG/c6BOJhYVtZAwcgD4nrJRaAG0g9WT9TfWp5mhCY4Twu1mq08z1Xf0K9VA6to wA== 
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : content-type : mime-version; s=corp-2020-01-29;
+ bh=tjMSRucp3xNXzF/CWhUxH7yncNmcV+FA5hk9p9/OWBQ=;
+ b=xt3wQYKa6+ic6FH8/xetnkpqwGfmDq7cBsFbMrkfuCcjeWMfxpGl+X2EHNx4NO1zjY1O
+ hrHhKMP9qTduoFCkdII4gPq2CkD/1ZDgRVQTy6oWvDfWJskHnayyAMqdM22n4+4LGX0G
+ TZvjcj1tz5olEEGYy+a9f4l08052quhiDFqBtYmN6FqS8lUXTPlwABy28LGcoayirAUH
+ 2VjPnmuX7WtjyeNZA+iWQgjA0kQU16zKnpuzPMQHTmXY33ONeNYHABTdMC3wx08lt+hK
+ 7O5nLdGV3fDysLpXPXNHJ5ZGHXPCMRl4v2Xd4jyF+7uJ56P3JVH2o3Hb5Lx/9syvm2FS jQ== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3ax1de8a0q-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 07 Sep 2021 07:32:35 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 1877Uj61120161;
+        Tue, 7 Sep 2021 07:32:33 GMT
+Received: from nam02-sn1-obe.outbound.protection.outlook.com (mail-sn1anam02lp2040.outbound.protection.outlook.com [104.47.57.40])
+        by userp3030.oracle.com with ESMTP id 3auwwwdh6u-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 07 Sep 2021 07:32:33 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=frFNr0NekENpOJdFiDnmuTaXIrub/2BJlRL4hNH9PgvlbS2gi4NUmKOWEsm6s/lPHgLm77J3g8tn1FC69lQEH3SPDHZE0hhe5l8GSNsLMtugs/d0U/9MjUuI8LRNNnrh0B+uerUDMcCBjX+xphHnc68f4yxoTBRtEwTp1/bqGi8F/BzLQ/oDvfwCQiZX+7ElOSEFD8wsDsdSaTrdN+IuzZypKUbBJ/WcigyYm2/XY8Z7PeHzB1SG/FnU1WRFXvD6JIMeUj7fsKZ6H7RqA+NpWPVYXcsbvObdVKtUML/n1LP7X5SiQ9iE0wCkReG10PyE9aeXjOZEw/cpKaf9vktnGA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901; h=From:Date:Subject:Message-ID:Content-Type:MIME-Version;
+ bh=tjMSRucp3xNXzF/CWhUxH7yncNmcV+FA5hk9p9/OWBQ=;
+ b=KZL1l3lIxnOH9A2eJ6cDW2k6C5AYEHYanX4MWRAYrnxB36EDir8p5q1pDLmHBFMXtTT/FzEMPECGQBBu5KAdbQDKl65dAl+bVIWdUZP3UsZJi6qb7f/VQYBdpySlEvM8upjpex3Gob8QtD5FuUnpYiSx6GxnzEvKs8bpxIyqQdeizhW3sMqNtaV7IH/euCqiJa3SlN56aDse+n1/I553YarFXEt3oSCH4NdcEjFYwW/IOljOjDeOf/SAsfy6UbxpNWYnZ0HbSHJNQDEeI/Cph9HDPxOHs8NUFe02px/gAkmq/wLPib5zf+zOmhbrsdKlmzZDoec7OavxyVL0PuKZmw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tjMSRucp3xNXzF/CWhUxH7yncNmcV+FA5hk9p9/OWBQ=;
+ b=kW7djNC3bMzPkIegl/YuiUKIae9y8EwhyJIwtUTgyBOXT4xvfjPUF3A2wf/+47Tp74xApnnh9eDxwZWQ6v1/fAb7qBWo3cBjHFurcTeXUdom3N0bBnLKSB8feNEjcj1+LQFLz+RQo/H+qBqcP0naBl44ZGFEPCSotpCbhj9IZtA=
+Authentication-Results: redhat.com; dkim=none (message not signed)
+ header.d=none;redhat.com; dmarc=none action=none header.from=oracle.com;
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ (2603:10b6:301:2d::28) by MWHPR10MB1775.namprd10.prod.outlook.com
+ (2603:10b6:301:a::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4478.21; Tue, 7 Sep
+ 2021 07:32:32 +0000
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::5820:e42b:73d7:4268]) by MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::5820:e42b:73d7:4268%7]) with mapi id 15.20.4478.025; Tue, 7 Sep 2021
+ 07:32:32 +0000
+Date:   Tue, 7 Sep 2021 10:32:24 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Xie Yongji <xieyongji@bytedance.com>
+Cc:     Jason Wang <jasowang@redhat.com>,
+        virtualization@lists.linux-foundation.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] vduse: missing error code in vduse_init()
+Message-ID: <20210907073223.GA18254@kili>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-ClientProxiedBy: ZR0P278CA0058.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:21::9) To MWHPR1001MB2365.namprd10.prod.outlook.com
+ (2603:10b6:301:2d::28)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Received: from kili (62.8.83.99) by ZR0P278CA0058.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:21::9) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4478.19 via Frontend Transport; Tue, 7 Sep 2021 07:32:29 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: d4e8fc4c-6163-41b1-c974-08d971d1a73f
+X-MS-TrafficTypeDiagnostic: MWHPR10MB1775:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <MWHPR10MB17759D5C254D6FB44512FBAC8ED39@MWHPR10MB1775.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:2000;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: wKF4AEYyxN6+uwrr8YTrMoGzggaNk0y+6e86L7ckkK64fFv6gLV/INPwjXgk9ZJN8ztM0SDwZxWps5bf7CtwlMsrJ0nMhAhLLF3Gq0YFAVVn4y0r5HyfrHzGlVtKCJIC3Y75BOgcX8X/5vysuQRm6b0jKBy8+o/xW3NijZeWU5HaCkhzqk2DxkfNfBcHgB8DiQMXFhZPhZcJ4dfWpww45gXAMv/zxs0DU0QymQI4SkBkyPcGoetM8NQXi3MMFTuC5/STRGbZ8v/i1705GzzZm6LcwtcBoxrD+Y456eGOsQkTX9tFingMJ5Z2d1ODyQ7jUY7iTyxUIz3v2TqGVstsh5VPUSEcHotRnfny4qxxaZAAI1q5Wwcnt+XncR0GSpwzRIMCmUMtz4+8oIby3eAiM5YJtwAyfx+5CWQQMV1L8tCkbC/5lNiRePGMYghfsQEwB/hiijbla1DUE/tfDU/onEPuYOfKTm2H1IrXc798Q36si5PT+WEq725+bQkpNOn1FntyviwqKgqLApylzlXk8QNYvbVn2NsKZVP/dSt4GJ0mVlWWGcSn9Tav0MAWyeAOD76w+jZdo3tZpwrN5o0YaFj7SAY5WnpNxyhPjGW2siTvm1mihJjSbL5jE/WGq5OjG/XsHz9CWea47zJlnF+qkfvLJopjwI5Bdl0eDVZmyzgat4F8kcc4h6z4oDtoHJ16CisGiqXtLTdaA9qtT+brjQ==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(316002)(86362001)(38350700002)(38100700002)(4744005)(66556008)(66476007)(66946007)(5660300002)(508600001)(55016002)(9686003)(6666004)(4326008)(52116002)(110136005)(2906002)(6496006)(33656002)(44832011)(9576002)(186003)(8936002)(8676002)(26005)(83380400001)(33716001)(956004)(1076003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?wxsgw2yc7rl2XRPigIVG7rBheNOlckTyrmKkB+KtW8e/0jYeN89CNou8bapw?=
+ =?us-ascii?Q?Dks4W7KKigED7ycmMZa32PBouX84yMlf90jMtbm6M4O1vOvNNKiwyxtIoTUR?=
+ =?us-ascii?Q?wFFPeobkwGhRUulxeOqFlzQk9ajtsWMLDuh4v/DpHAiBoD9QM0NhpVAed+Un?=
+ =?us-ascii?Q?YShV6MAr3BkOPdCzYl/j/AOgT6GmgBjEaq/53uUl4f6RD8Dmcd65HZhQoTcN?=
+ =?us-ascii?Q?2oqvT31HIHe3ZLKBiZpeBUt6yRcVhFBFEYRAImsFMjflQqH/xY2NtQGTAIlU?=
+ =?us-ascii?Q?KgjO86eLolotZjVuqt7btnynfMUL7N9U8v4v2d9C7WU6gihQLOg8XkRc68kO?=
+ =?us-ascii?Q?wacLqDRD32u3hO4QDppTEX8bad6qfcAO8Or7eTZsjC9ei+Zqd+oekV0jWors?=
+ =?us-ascii?Q?v8wyHi8BlM/ZFKAYZFMBhbizAVJzBXdomckypdAol6pDjFDfJTrbMXqfLUok?=
+ =?us-ascii?Q?Y6U6IGB4dLwhzUz2peSR6EHTCeallep8Wz+dOT912DSDNhC1tdH4/JjD9yB5?=
+ =?us-ascii?Q?9l7pE/HFqYAj0F3EY+biHi3esKG3w9d9nDGh4hV02WoVF7kR2xvz7FHPVQVm?=
+ =?us-ascii?Q?Z4961SFdNme0U6t6TSf8qU0a4SsQHnaOvTB9ZDkCgD4kTHzP55qWi4oET0MH?=
+ =?us-ascii?Q?Z1H1N7jhXIiso7mpAP56DM6Ya4zUIP9hW9oUASzYCyszgIR0KVdt9AAI+gQP?=
+ =?us-ascii?Q?AKb9MCkGR054/lPoAhdfioisrIQSnmFxosR8i4RELeK0WG19f7G1+G4iuwP4?=
+ =?us-ascii?Q?95G5rcZ2J1TSLtcKn8TJaYNMltePQtfuIzI2fF7TObiY6G+W2mv5XfLz/BOH?=
+ =?us-ascii?Q?110FZR5cTK4+v93MIKrdNSyZ6pzChPveXQRi4ceEQEF1NIJNIrmHjLf+hAuM?=
+ =?us-ascii?Q?k7wLzHBSK3NKdFIvlHUfbe5vwx5THhG2vmmyKtAOsXlL2fJW8TRPHsJfr/Jr?=
+ =?us-ascii?Q?wi0Ur8R6fBMqLICPd87EKDI+sMTsS4yxkTx9OTWnvfj2K3g8DsfJCGnMcFQE?=
+ =?us-ascii?Q?gBKsXiEVuDDbSjhikiCfc6Kve3G9f7sOm3DiF0WiZlg8lMQseP8Y36XkwOXq?=
+ =?us-ascii?Q?uywDphLEXS2NlCms3kiRMhjz4Oi0I2+tNZdwwX8H1U9H3u/f/v1/jR3QamVa?=
+ =?us-ascii?Q?7GFQ1eESogjKdV0chSdlP133t+G0Dd6vUHVgfjvcPrrGJfo6pdeEf/zrjK1U?=
+ =?us-ascii?Q?n8BUqOeGmrm9ufuQpriQlYCuGOxZpY2JPLdl+01W5Ga4EB2oztg2ayqs6beW?=
+ =?us-ascii?Q?G647ILwiP2HnM/ujMwgV/yLoncu5jFPCUczSwOWGugdSI+jrCYvFYsee5D7L?=
+ =?us-ascii?Q?UNnNIM+XPEhBETqmme6dL1W3?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d4e8fc4c-6163-41b1-c974-08d971d1a73f
+X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Sep 2021 07:32:32.0703
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: D7cmEElSfmG/crG2xPAhUNKC5kbVn22yg5Zy74MdCYlN9HB7Dcpw1kN8GqiK73TaWjpQvrsvyFCfg0vCnDnRktag+7Uxf6o6+YSWgRhdsvg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR10MB1775
+X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10099 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 spamscore=0 mlxlogscore=999
+ adultscore=0 bulkscore=0 suspectscore=0 malwarescore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2108310000
+ definitions=main-2109070049
+X-Proofpoint-GUID: wneSwl-Vg52DENdt8VX4ORxGZ4JVJ1Xg
+X-Proofpoint-ORIG-GUID: wneSwl-Vg52DENdt8VX4ORxGZ4JVJ1Xg
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+This should return -ENOMEM if alloc_workqueue() fails.  Currently it
+returns success.
 
-Some of the more common spelling mistakes and typos that I've found
-while fixing up spelling mistakes in the kernel in the past few months.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: b66219796563 ("vduse: Introduce VDUSE - vDPA Device in Userspace")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- scripts/spelling.txt | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ drivers/vdpa/vdpa_user/vduse_dev.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/scripts/spelling.txt b/scripts/spelling.txt
-index 17fdc620d548..fd8f07317b8e 100644
---- a/scripts/spelling.txt
-+++ b/scripts/spelling.txt
-@@ -178,6 +178,7 @@ assum||assume
- assumtpion||assumption
- asuming||assuming
- asycronous||asynchronous
-+asychronous||asynchronous
- asynchnous||asynchronous
- asynchromous||asynchronous
- asymetric||asymmetric
-@@ -241,6 +242,7 @@ beter||better
- betweeen||between
- bianries||binaries
- bitmast||bitmask
-+bitwiedh||bitwidth
- boardcast||broadcast
- borad||board
- boundry||boundary
-@@ -265,7 +267,10 @@ calucate||calculate
- calulate||calculate
- cancelation||cancellation
- cancle||cancel
-+cant||can't
-+cant'||can't
- canot||cannot
-+cann't||can't
- capabilites||capabilities
- capabilties||capabilities
- capabilty||capability
-@@ -501,6 +506,7 @@ disble||disable
- disgest||digest
- disired||desired
- dispalying||displaying
-+dissable||disable
- diplay||display
- directon||direction
- direcly||directly
-@@ -595,6 +601,7 @@ exceded||exceeded
- exceds||exceeds
- exceeed||exceed
- excellant||excellent
-+exchnage||exchange
- execeeded||exceeded
- execeeds||exceeds
- exeed||exceed
-@@ -938,6 +945,7 @@ migrateable||migratable
- milliseonds||milliseconds
- minium||minimum
- minimam||minimum
-+minimun||minimum
- miniumum||minimum
- minumum||minimum
- misalinged||misaligned
-@@ -956,6 +964,7 @@ mmnemonic||mnemonic
- mnay||many
- modfiy||modify
- modifer||modifier
-+modul||module
- modulues||modules
- momery||memory
- memomry||memory
-@@ -1154,6 +1163,7 @@ programable||programmable
- programers||programmers
- programm||program
- programms||programs
-+progres||progress
- progresss||progress
- prohibitted||prohibited
- prohibitting||prohibiting
-@@ -1328,6 +1338,7 @@ servive||service
- setts||sets
- settting||setting
- shapshot||snapshot
-+shoft||shift
- shotdown||shutdown
- shoud||should
- shouldnt||shouldn't
-@@ -1439,6 +1450,7 @@ syfs||sysfs
- symetric||symmetric
- synax||syntax
- synchonized||synchronized
-+synchronization||synchronization
- synchronuously||synchronously
- syncronize||synchronize
- syncronized||synchronized
-@@ -1521,6 +1533,7 @@ unexpexted||unexpected
- unfortunatelly||unfortunately
- unifiy||unify
- uniterrupted||uninterrupted
-+uninterruptable||uninterruptible
- unintialized||uninitialized
- unitialized||uninitialized
- unkmown||unknown
-@@ -1553,6 +1566,7 @@ unuseful||useless
- unvalid||invalid
- upate||update
- upsupported||unsupported
-+useable||usable
- usefule||useful
- usefull||useful
- usege||usage
-@@ -1574,6 +1588,7 @@ varient||variant
- vaule||value
- verbse||verbose
- veify||verify
-+verfication||verification
- veriosn||version
- verisons||versions
- verison||version
-@@ -1586,6 +1601,7 @@ visiters||visitors
- vitual||virtual
- vunerable||vulnerable
- wakeus||wakeups
-+was't||wasn't
- wathdog||watchdog
- wating||waiting
- wiat||wait
+diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_user/vduse_dev.c
+index 5c25ff6483ad..fcd7de8dd1f2 100644
+--- a/drivers/vdpa/vdpa_user/vduse_dev.c
++++ b/drivers/vdpa/vdpa_user/vduse_dev.c
+@@ -1593,8 +1593,10 @@ static int vduse_init(void)
+ 
+ 	vduse_irq_wq = alloc_workqueue("vduse-irq",
+ 				WQ_HIGHPRI | WQ_SYSFS | WQ_UNBOUND, 0);
+-	if (!vduse_irq_wq)
++	if (!vduse_irq_wq) {
++		ret = -ENOMEM;
+ 		goto err_wq;
++	}
+ 
+ 	ret = vduse_domain_init();
+ 	if (ret)
 -- 
-2.32.0
+2.20.1
 
