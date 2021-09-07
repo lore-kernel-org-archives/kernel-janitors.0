@@ -5,44 +5,48 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B33CBC433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Sep 2021 10:18:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19B8CC433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Sep 2021 10:28:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 98CC8610FE
-	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Sep 2021 10:18:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00ED561101
+	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Sep 2021 10:28:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245568AbhIGKTi (ORCPT
+        id S245636AbhIGK3X (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 7 Sep 2021 06:19:38 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:49194
-        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S245372AbhIGKTi (ORCPT
+        Tue, 7 Sep 2021 06:29:23 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:58974
+        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S245750AbhIGK3W (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 7 Sep 2021 06:19:38 -0400
+        Tue, 7 Sep 2021 06:29:22 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id DDD163F04C;
-        Tue,  7 Sep 2021 10:18:30 +0000 (UTC)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id A17E53F106;
+        Tue,  7 Sep 2021 10:28:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1631009910;
-        bh=AOzGaLqMVON6gOAw8oKfQg6yGECJe/N3Saup0Kinv8s=;
+        s=20210705; t=1631010494;
+        bh=0lEHRp9RVZruXFRyj3O2UNGVIAi8zooypFTJKD7Bh+Q=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=m8ENZ8KbDNC1PrFPdM6wBfFZrRs1uI67+u1TFsT33+wOVxtgoxu1xJscqU0JU+QvR
-         pJ1nms5hdWvIo0DkqNb7tiv/bRT1huHkj9MA4XlOQeCjTurxMNuBonjLoXvgxxqJKP
-         hZgFKruezWpkGSbUifkbSKnJXFbJl7wpyl1d4ErNWujxMFSbOb92CJxapfQ5+FuBUP
-         UQsXk6Za/1j020T+JEI3Ok7k2W90JkmyDLCDC2g07Y5BcHTMzwk27TI9HB2/vscWYj
-         L6WJaYxx0hMsl9HsTj3+OhXiAYqc5vlYnjSXFMRpLw/6+KZtGLJhHZNLUBQsIOJXDJ
-         aUUAueO3E9Tuw==
+        b=qzUbiDogJk/qrbWcv63BZLtFTmBLBI6fqRT3d4wqf9tVB6mxDIUq/qWtVNgcX7dB+
+         TaatYDD1Rw7S8CZL0jxk50ojKSTgZ3VwsYHVk53XgSjA1eLYs9hqZHwTxQfn2C5PLS
+         QGPPm1Loqc9f5fxt6motPj1QsFvsbBLpvdoVkQB5WWHOr96Tb00F+MGp2nc/hD/VBa
+         Yfr7xny09Ikrx3YJuZmX4wOSxgfkqxFzU7N51BNYgqBKBHbzA85LNZboNS9Xr+DeqL
+         8S7ZHTVuRTMkZl7zrV5195QpLUV0IblJhdMo2vwyI0ZZMAesy345OxpjroTc/Cx71o
+         GjPdWj6JOmjpg==
 From:   Colin King <colin.king@canonical.com>
-To:     Jens Axboe <axboe@kernel.dk>, linux-ide@vger.kernel.org
+To:     Alexander Aring <alex.aring@gmail.com>,
+        Stefan Schmidt <stefan@datenfreihafen.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, linux-wpan@vger.kernel.org,
+        netdev@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] pata_legacy: Remove redundant initialization of variable timing
-Date:   Tue,  7 Sep 2021 11:18:30 +0100
-Message-Id: <20210907101830.13736-1-colin.king@canonical.com>
+Subject: [PATCH] ieee802154: Remove redundant initialization of variable ret
+Date:   Tue,  7 Sep 2021 11:28:14 +0100
+Message-Id: <20210907102814.14169-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -53,28 +57,27 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The variable timing is being initialized with a value that is never
-read, it is being updated later on. The assignment is redundant and
-can be removed.
+The variable ret is being initialized with a value that is never read, it
+is being updated later on. The assignment is redundant and can be removed.
 
 Addresses-Coverity: ("Unused value")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/ata/pata_legacy.c | 2 +-
+ net/mac802154/iface.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/ata/pata_legacy.c b/drivers/ata/pata_legacy.c
-index c3e6592712c4..bb5694ecdfba 100644
---- a/drivers/ata/pata_legacy.c
-+++ b/drivers/ata/pata_legacy.c
-@@ -815,7 +815,7 @@ static void winbond_set_piomode(struct ata_port *ap, struct ata_device *adev)
- 	struct legacy_data *ld_winbond = ap->host->private_data;
- 	int active, recovery;
- 	u8 reg;
--	int timing = 0x88 + (ap->port_no * 4) + (adev->devno * 2);
-+	int timing;
+diff --git a/net/mac802154/iface.c b/net/mac802154/iface.c
+index 1cf5ac09edcb..323d3d2d986f 100644
+--- a/net/mac802154/iface.c
++++ b/net/mac802154/iface.c
+@@ -617,7 +617,7 @@ ieee802154_if_add(struct ieee802154_local *local, const char *name,
+ {
+ 	struct net_device *ndev = NULL;
+ 	struct ieee802154_sub_if_data *sdata = NULL;
+-	int ret = -ENOMEM;
++	int ret;
  
- 	reg = winbond_readcfg(ld_winbond->timing, 0x81);
+ 	ASSERT_RTNL();
  
 -- 
 2.32.0
