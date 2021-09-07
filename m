@@ -8,62 +8,63 @@ X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20CDAC433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Sep 2021 16:59:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 628A2C433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Sep 2021 17:06:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0BCF561090
-	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Sep 2021 16:59:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41CE460EE1
+	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Sep 2021 17:06:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345260AbhIGRAU (ORCPT
+        id S1345130AbhIGRHP (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 7 Sep 2021 13:00:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49942 "EHLO
+        Tue, 7 Sep 2021 13:07:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232621AbhIGRAU (ORCPT
+        with ESMTP id S1344942AbhIGRHO (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 7 Sep 2021 13:00:20 -0400
-Received: from mail-oo1-xc2a.google.com (mail-oo1-xc2a.google.com [IPv6:2607:f8b0:4864:20::c2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BACABC061575;
-        Tue,  7 Sep 2021 09:59:13 -0700 (PDT)
-Received: by mail-oo1-xc2a.google.com with SMTP id b5-20020a4ac285000000b0029038344c3dso3120128ooq.8;
-        Tue, 07 Sep 2021 09:59:13 -0700 (PDT)
+        Tue, 7 Sep 2021 13:07:14 -0400
+Received: from mail-oi1-x233.google.com (mail-oi1-x233.google.com [IPv6:2607:f8b0:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26495C061575;
+        Tue,  7 Sep 2021 10:06:08 -0700 (PDT)
+Received: by mail-oi1-x233.google.com with SMTP id s20so13654693oiw.3;
+        Tue, 07 Sep 2021 10:06:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=yGhlEcWAmkOIUP0KcWj+kobRkgQf1kC9BN+bCXhgInU=;
-        b=nlLEhmuIw37kyWO+W+izNA5oEpC//ZXt13F33/D9ZojjKBXu73jbv61UPIGkmMgC0Q
-         cqi/3dW9asI+eDILJr4YhiagPZRYuvXqJBQaGqDuw13uX5tZjt5Yotki/TL+OGsKV0WZ
-         PdHoZtrACfkVJXMmm3NyxzI6yE2TzHF+RSaCXPpHoObGjlJw5sL1aF3gFqRhX9Hf55cr
-         eGBb+pO4tUabBBFmO7F5jaHGVzhj+4KgykGgEBLWghNS5E8XpNROulgLRXRv3HM5RwUR
-         0PANTYfuyEEh+VfW95UX8p93dEnGnb+JQm8tVRLliu5Gg06/pZC7tz+i7RXXZGgYXelH
-         XLNg==
+         :cc;
+        bh=LvLnME+IjjXBdlapd7qwu3ckCRmUspxnvArgV5vhrZs=;
+        b=p7bvjkWXysVTS4dKlzkBHNI0Mh2Ex6LJErKRsDYC6PVaIdcwIhfzGMNcrVeAvjcB2N
+         lPjSwJBCVFki7J736XxBScmH+iYS31DmnOhzzHcq+Yrql2ayrSwZprAv3+CImVQSQVCQ
+         psPhSwmoRy0mL7JL4baFLy0N5j4thDzc/tRP2ooL7dF7FFtRCVI4fGbNjrKgzP29Nwal
+         BTpKD44nZRaJRiNT6o/tqQzfFxbUi1TKdMNL/cj5LpMvVNKwKK4+UCmfO/FU9Fa3Z22n
+         GYhUyvfOQim9/RaYGbZsfFOElPt2QDnQVQkkHEaJJzLSTqlgovAAl4l0CJaGhCJio3D9
+         R8sw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
+        d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=yGhlEcWAmkOIUP0KcWj+kobRkgQf1kC9BN+bCXhgInU=;
-        b=IqrLWKTTxcIl5MA5M6bip8OQ138JYBsglDcYUu9L3czg1+hT/eYLB8MfRUaRmiqZxu
-         7XY0ypriTJxQMepeUu8hUwhLZM3jW7ybBhhBsmlmFBZ02UnRKeRHK/yBd1/B9aT1V1J4
-         BRuLxtdNzHgQqgOJiZaoTSjA5eunN1TebVpHx1DJzcL/1f1SRo28Ptefn6ERuQ7YT0gN
-         yjaS6GJRZ7k8HOYyP/WQwChbcHXA7ikCutVUm7n941A9MmR6EaqysZKwUfOzLv03wIwx
-         gLAR3hE5L0KR4qQPlBFJgdlmNFkN7BtW8idUPsiSMExO8dOfsVBg64GdgS25Gp3fxBqX
-         O0wQ==
-X-Gm-Message-State: AOAM532xDJ7NtiqUqfs6QoIPCpBv3m0cVUZgvxzUXR+W1vx1B8UTNELG
-        oepK6UeaP+KVolO7dtwb710i1FQxsOtEfgMv+XA=
-X-Google-Smtp-Source: ABdhPJztexkmO6F4hC0uTaplz22vYnXIkvWMVIv6HMvkULpmAknxRcB9k8FShKGIQZf3yT5nYu9/1rtbZGwuoyMMmrA=
-X-Received: by 2002:a4a:d794:: with SMTP id c20mr692176oou.23.1631033953123;
- Tue, 07 Sep 2021 09:59:13 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=LvLnME+IjjXBdlapd7qwu3ckCRmUspxnvArgV5vhrZs=;
+        b=TOE8K5UlMm2wcZ9ABSIYytgSJ+F4QFWquzxD17EFrtceJ7gBAUPgfJQ6c3YCbo6GMA
+         T+eCax0Cwu86K8cmhE+OKx116k1EZMHvI/TKTrwwoREc7JvssZn0MHDQiRKTTOQmVnSc
+         QUIjzFw6YkQwbPkupLjsLqPU14IY23zJBnANHmEI2js3WdW4mGfTDN/Ls9Cq+e5TbU5G
+         FE8SJ8NrFm/7JVHMmGJTL7Uhjp6dsx2yorBjjSA4pbj57sV7O/UygSj+uqFhHPyLTrQj
+         1jC1ulCutbrvy9L/zWMh4UrEek+zkYYLtx3MMxYKZW/aYOJt+JmrqL5eXQAKDcJS/egA
+         CgwQ==
+X-Gm-Message-State: AOAM532ZEGq+/YB+aRVv7psT8rszEydeB86608QZQHQOXDWeeZm2HvMM
+        dshN5VHMfZN1sEKB3+24HtLNga3PxIwwZAo8JnUpM/fy
+X-Google-Smtp-Source: ABdhPJx3mbR9TZRmahMq3/ZF7VUfLVN5NKyz2LJ9Td2mGx+cyp97pCLl0NghVieRW05ckB4pOBB81dxwCcF4itvsl08=
+X-Received: by 2002:a05:6808:483:: with SMTP id z3mr3622068oid.5.1631034367521;
+ Tue, 07 Sep 2021 10:06:07 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210902215127.55330-1-colin.king@canonical.com> <bb5105f8-2ec6-e494-8764-3dcc5fc0681b@amd.com>
-In-Reply-To: <bb5105f8-2ec6-e494-8764-3dcc5fc0681b@amd.com>
+References: <20210907110913.15499-1-colin.king@canonical.com>
+In-Reply-To: <20210907110913.15499-1-colin.king@canonical.com>
 From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Tue, 7 Sep 2021 12:59:02 -0400
-Message-ID: <CADnq5_Psv9HG5C=9OwaXY64uRLnmJ4NjnsbviG6zwvpdmuNcRA@mail.gmail.com>
-Subject: Re: [PATCH][next] drm/amdgpu: sdma: clean up identation
-To:     =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Cc:     Colin King <colin.king@canonical.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+Date:   Tue, 7 Sep 2021 13:05:56 -0400
+Message-ID: <CADnq5_PsA5KsH5D2=-GKLgq2HQ-_5x=-0SJF3htvKEzK5cKVYQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/radeon/ci_dpm: Remove redundant initialization of
+ variables hi_sidd, lo_sidd
+To:     Colin King <colin.king@canonical.com>
+Cc:     Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
         xinhui pan <Xinhui.Pan@amd.com>,
         David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>,
@@ -72,7 +73,6 @@ Cc:     Colin King <colin.king@canonical.com>,
         <dri-devel@lists.freedesktop.org>, kernel-janitors@vger.kernel.org,
         LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -81,44 +81,34 @@ Applied.  Thanks!
 
 Alex
 
-On Fri, Sep 3, 2021 at 2:31 AM Christian K=C3=B6nig <christian.koenig@amd.c=
-om> wrote:
+On Tue, Sep 7, 2021 at 7:09 AM Colin King <colin.king@canonical.com> wrote:
 >
-> Am 02.09.21 um 23:51 schrieb Colin King:
-> > From: Colin Ian King <colin.king@canonical.com>
-> >
-> > There is a statement that is indented incorrectly. Clean it up.
-> >
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> From: Colin Ian King <colin.king@canonical.com>
 >
-> Reviewed-by: Christian K=C3=B6nig <christian.koenig@amd.com>
+> The variables hi_sidd and lo_sidd are being initialized with a values
+> that are never read, they are being updated later on. The assignments
+> are redundant and can be removed.
 >
-> > ---
-> >   drivers/gpu/drm/amd/amdgpu/sdma_v5_2.c | 8 ++++----
-> >   1 file changed, 4 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/amd/amdgpu/sdma_v5_2.c b/drivers/gpu/drm/a=
-md/amdgpu/sdma_v5_2.c
-> > index 779f5c911e11..e4a96e7e386d 100644
-> > --- a/drivers/gpu/drm/amd/amdgpu/sdma_v5_2.c
-> > +++ b/drivers/gpu/drm/amd/amdgpu/sdma_v5_2.c
-> > @@ -375,10 +375,10 @@ static void sdma_v5_2_ring_emit_ib(struct amdgpu_=
-ring *ring,
-> >    */
-> >   static void sdma_v5_2_ring_emit_mem_sync(struct amdgpu_ring *ring)
-> >   {
-> > -    uint32_t gcr_cntl =3D
-> > -                 SDMA_GCR_GL2_INV | SDMA_GCR_GL2_WB | SDMA_GCR_GLM_INV=
- |
-> > -                     SDMA_GCR_GL1_INV | SDMA_GCR_GLV_INV | SDMA_GCR_GL=
-K_INV |
-> > -                     SDMA_GCR_GLI_INV(1);
-> > +     uint32_t gcr_cntl =3D SDMA_GCR_GL2_INV | SDMA_GCR_GL2_WB |
-> > +                         SDMA_GCR_GLM_INV | SDMA_GCR_GL1_INV |
-> > +                         SDMA_GCR_GLV_INV | SDMA_GCR_GLK_INV |
-> > +                         SDMA_GCR_GLI_INV(1);
-> >
-> >       /* flush entire cache L0/L1/L2, this can be optimized by performa=
-nce requirement */
-> >       amdgpu_ring_write(ring, SDMA_PKT_HEADER_OP(SDMA_OP_GCR_REQ));
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/gpu/drm/radeon/ci_dpm.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/radeon/ci_dpm.c b/drivers/gpu/drm/radeon/ci_dpm.c
+> index f0cfb58da467..ac006bed4743 100644
+> --- a/drivers/gpu/drm/radeon/ci_dpm.c
+> +++ b/drivers/gpu/drm/radeon/ci_dpm.c
+> @@ -390,8 +390,7 @@ static int ci_min_max_v_gnbl_pm_lid_from_bapm_vddc(struct radeon_device *rdev)
+>  static int ci_populate_bapm_vddc_base_leakage_sidd(struct radeon_device *rdev)
+>  {
+>         struct ci_power_info *pi = ci_get_pi(rdev);
+> -       u16 hi_sidd = pi->smc_powertune_table.BapmVddCBaseLeakageHiSidd;
+> -       u16 lo_sidd = pi->smc_powertune_table.BapmVddCBaseLeakageLoSidd;
+> +       u16 hi_sidd, lo_sidd;
+>         struct radeon_cac_tdp_table *cac_tdp_table =
+>                 rdev->pm.dpm.dyn_state.cac_tdp_table;
+>
+> --
+> 2.32.0
 >
