@@ -5,50 +5,44 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BF1DC433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu,  9 Sep 2021 12:46:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2288C433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu,  9 Sep 2021 14:01:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 562DC611C3
-	for <kernel-janitors@archiver.kernel.org>; Thu,  9 Sep 2021 12:46:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95C5261215
+	for <kernel-janitors@archiver.kernel.org>; Thu,  9 Sep 2021 14:01:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346922AbhIIMrc (ORCPT
+        id S245638AbhIIOCi (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 9 Sep 2021 08:47:32 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:55346
-        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1354087AbhIIMgx (ORCPT
+        Thu, 9 Sep 2021 10:02:38 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:35842
+        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1345439AbhIIOBM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 9 Sep 2021 08:36:53 -0400
+        Thu, 9 Sep 2021 10:01:12 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id DD42D3F236;
-        Thu,  9 Sep 2021 12:35:41 +0000 (UTC)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id B9DD2401A4;
+        Thu,  9 Sep 2021 13:59:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1631190942;
-        bh=FqEPgbVip3uJ9vLzL9gy1Fy4mq+BOs8Bf6pvkaNj/h0=;
+        s=20210705; t=1631195995;
+        bh=k3mt0waMENh6y68J+JpXCf3sDS7Ly3J1EHRKsMbqoIw=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=S9bSkDgZD/m1C2u56+xlFAItzob/UkO3PvI2JbDZ+QNu719DriTryZlE3sXgFmjwT
-         fBWE2jiTGWPcO8W/Z/ai8NCga9Ewiv5hL9mZMOfUnpJjuMqxnEj+2r8e1YK70ll2J9
-         0KA7d900zxtaUlE1CNnfAskmAZdh/c1UZXrr2gjli4+Yuma+fXnL+wlK0C4pOIFZUl
-         Tsm82TKqFhF0uPsnlL+xLgenq6PIiNr8OEsoTxKLFz1XiIFDt2St61gVXnrtWpEarB
-         N5S1sRTzJ/CYOZoiYnh8d8sgRw1M/DRc3C35+IrppqX8KWM4HSRXmCRHhkXEID9XzT
-         EviXagULtL5ig==
+        b=b7ft1PKlq+dc3a9uungOPU7pCA1XxRYmUobKnhnVFah1qIyi6dJrDBFR+pMXUQ+KH
+         XkG4hWIK4dvD5KqBbxXpFE6yyvnlsLH4negNuG8M9MUQMdMmlOGo5rVVhZ7RCVv/K4
+         IIVeZrqeE2l+u/vX6oHwKMxY50TY2dsK5I9BEMysJp83UcpWc/lBtIt1VTc58m8+7z
+         I0JYU2S8VwZMrFaH34Sfk3P7wDyBwaNcWcgaN+4yK/jC5pCOQiWpU+W0Ju8QtYfedQ
+         FVgxGCaSlySyrZ1rCtRG/ESLVrz9lgnkLVOEw9UIzpda9X8yS+5GRt8HOfkC8KQo+D
+         MHytnEIzJsxBg==
 From:   Colin King <colin.king@canonical.com>
-To:     Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-        Chethan T N <chethan.tumkur.narayan@intel.com>,
-        Kiran K <kiran.k@intel.com>,
-        Srivatsa Ravishankar <ravishankar.srivatsa@intel.com>,
-        linux-bluetooth@vger.kernel.org
+To:     Neil Brown <neilb@suse.de>
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] Bluetooth: btintel: Fix incorrect out of memory check
-Date:   Thu,  9 Sep 2021 13:35:41 +0100
-Message-Id: <20210909123541.34779-1-colin.king@canonical.com>
+Subject: [PATCH] md/raid6 algorithms: scale test duration for speedier boots
+Date:   Thu,  9 Sep 2021 14:59:55 +0100
+Message-Id: <20210909135955.5881-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -59,30 +53,116 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Currently *ven_data is being assigned the return from a kmalloc call but
-the out-of-memory check is checking ven_data and not *ven_data. Fix this
-by adding the missing dereference * operator,
+The original code runs for a set run time based on the duration of
+2^RAID6_TIME_JIFFIES_LG2. The default kernel value for
+RAID6_TIME_JIFFIES_LG2 is 4, however, emperical testing shows that a
+value of 3.5 is the sweet spot for getting consistent benchmarking
+results and speeding up the run time of the benchmarking.
 
-Addresses-Coverity: ("Dereference null return")
-Fixes: 70dd978952bc ("Bluetooth: btintel: Define a callback to fetch codec config data")
+To achieve 2^3.5 we use the following:
+   2^3.5 = 2^4 / 2^0.5
+         = 2^4 / sqrt(2)
+         = 2^4 * 0.707106781
+
+Too keep this as integer math that is as accurate as required and avoiding
+overflow, this becomes:
+         = 2^4 * 181 / 256
+         = (2^4 * 181) >> 8
+
+We also need to scale down perf by the same factor, however, to
+get a good approximate integer result without an overflow we scale
+by 2^4.0 * sqrt(2) =
+         = 2 ^ 4 * 1.41421356237
+         = 2 ^ 4 * 1448 / 1024
+         = (2 ^ 4 * 1448) >> 10
+
+This has been tested on 2 AWS instances, a small t2 and a medium m3
+with 30 boot tests each and compared to the same instances booted 30
+times on an umodified kernel. In all results, we get the same
+algorithms being selected and a 100% consistent result over the 30
+boots, showing that this optimised jiffy timing scaling does not break
+the original functionality.
+
+On the t2.small we see a saving of ~0.126 seconds and t3.medium a saving of
+~0.18 seconds.
+
+Tested on a 4 CPU VM on an 8 thread Xeon server; seeing a saving of ~0.35
+seconds (average over 50 boots).
+
+The testing included double checking the algorithm chosen by the optimized
+selection and seeing the same as pre-optimised version.
+
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/bluetooth/btintel.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ lib/raid6/algos.c | 20 ++++++++++++--------
+ 1 file changed, 12 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/bluetooth/btintel.c b/drivers/bluetooth/btintel.c
-index 115bb2d07a8d..9359bff47296 100644
---- a/drivers/bluetooth/btintel.c
-+++ b/drivers/bluetooth/btintel.c
-@@ -2176,7 +2176,7 @@ static int btintel_get_codec_config_data(struct hci_dev *hdev,
+diff --git a/lib/raid6/algos.c b/lib/raid6/algos.c
+index 6d5e5000fdd7..5d5b04632168 100644
+--- a/lib/raid6/algos.c
++++ b/lib/raid6/algos.c
+@@ -152,6 +152,10 @@ static inline const struct raid6_calls *raid6_choose_gen(
+ 
+ 	for (bestgenperf = 0, bestxorperf = 0, best = NULL, algo = raid6_algos; *algo; algo++) {
+ 		if (!best || (*algo)->prefer >= best->prefer) {
++			/* 2 ^ (RAID6_TIME_JIFFIES_LG2 - 0.5) */
++			const unsigned long raid6_time_jiffies =
++				((1 << RAID6_TIME_JIFFIES_LG2) * 181) >> 8;
++
+ 			if ((*algo)->valid && !(*algo)->valid())
+ 				continue;
+ 
+@@ -167,7 +171,7 @@ static inline const struct raid6_calls *raid6_choose_gen(
+ 			while ((j1 = jiffies) == j0)
+ 				cpu_relax();
+ 			while (time_before(jiffies,
+-					    j1 + (1<<RAID6_TIME_JIFFIES_LG2))) {
++					    j1 + raid6_time_jiffies)) {
+ 				(*algo)->gen_syndrome(disks, PAGE_SIZE, *dptrs);
+ 				perf++;
+ 			}
+@@ -178,8 +182,8 @@ static inline const struct raid6_calls *raid6_choose_gen(
+ 				best = *algo;
+ 			}
+ 			pr_info("raid6: %-8s gen() %5ld MB/s\n", (*algo)->name,
+-				(perf * HZ * (disks-2)) >>
+-				(20 - PAGE_SHIFT + RAID6_TIME_JIFFIES_LG2));
++				(((perf * HZ * (disks-2)) >>
++				 (20 - 16 + RAID6_TIME_JIFFIES_LG2)) * 1448) >> 10);
+ 
+ 			if (!(*algo)->xor_syndrome)
+ 				continue;
+@@ -191,7 +195,7 @@ static inline const struct raid6_calls *raid6_choose_gen(
+ 			while ((j1 = jiffies) == j0)
+ 				cpu_relax();
+ 			while (time_before(jiffies,
+-					    j1 + (1<<RAID6_TIME_JIFFIES_LG2))) {
++					    j1 + raid6_time_jiffies)) {
+ 				(*algo)->xor_syndrome(disks, start, stop,
+ 						      PAGE_SIZE, *dptrs);
+ 				perf++;
+@@ -202,8 +206,8 @@ static inline const struct raid6_calls *raid6_choose_gen(
+ 				bestxorperf = perf;
+ 
+ 			pr_info("raid6: %-8s xor() %5ld MB/s\n", (*algo)->name,
+-				(perf * HZ * (disks-2)) >>
+-				(20 - PAGE_SHIFT + RAID6_TIME_JIFFIES_LG2 + 1));
++				(((perf * HZ * (disks-2)) >>
++				 (20 - 16 + RAID6_TIME_JIFFIES_LG2 + 1)) * 1448) >> 10);
+ 		}
  	}
  
- 	*ven_data = kmalloc(sizeof(__u8), GFP_KERNEL);
--	if (!ven_data) {
-+	if (!*ven_data) {
- 		err = -ENOMEM;
- 		goto error;
- 	}
+@@ -215,8 +219,8 @@ static inline const struct raid6_calls *raid6_choose_gen(
+ 				(20 - PAGE_SHIFT+RAID6_TIME_JIFFIES_LG2));
+ 			if (best->xor_syndrome)
+ 				pr_info("raid6: .... xor() %ld MB/s, rmw enabled\n",
+-					(bestxorperf * HZ * (disks-2)) >>
+-					(20 - PAGE_SHIFT + RAID6_TIME_JIFFIES_LG2 + 1));
++					(((bestxorperf * HZ * (disks-2)) >>
++					 (20 - 16 + RAID6_TIME_JIFFIES_LG2 + 1)) * 1448) >> 10);
+ 		} else
+ 			pr_info("raid6: skip pq benchmark and using algorithm %s\n",
+ 				best->name);
 -- 
 2.32.0
 
