@@ -2,87 +2,87 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4D18C433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu,  9 Sep 2021 09:42:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BF1DC433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu,  9 Sep 2021 12:46:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 83F1B61179
-	for <kernel-janitors@archiver.kernel.org>; Thu,  9 Sep 2021 09:42:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 562DC611C3
+	for <kernel-janitors@archiver.kernel.org>; Thu,  9 Sep 2021 12:46:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232995AbhIIJn4 (ORCPT
+        id S1346922AbhIIMrc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 9 Sep 2021 05:43:56 -0400
-Received: from so254-9.mailgun.net ([198.61.254.9]:26495 "EHLO
-        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229927AbhIIJn4 (ORCPT
+        Thu, 9 Sep 2021 08:47:32 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:55346
+        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1354087AbhIIMgx (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 9 Sep 2021 05:43:56 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1631180567; h=Content-Type: MIME-Version: Message-ID:
- In-Reply-To: Date: References: Subject: Cc: To: From: Sender;
- bh=0QtdvAHb9aruE1j0Hq+zGQ6FzXUVEAUnOuOiAwUKuHE=; b=sX5UJBE/Gu15YWjMi+tmIvq6y0BewGkMxMQR9y1+M/qo2Ok4OUm5ObLjNQk0xrEj9qKblGLp
- 2QYMDRyFWSHpUoBB0p0UQHtJL6SMJtjg0UX6kfH/n2H7tuQwsfve6MiDahk46dbvHU0r5QAc
- XsqRdym52tPceOfVUXBTV4GNz5w=
-X-Mailgun-Sending-Ip: 198.61.254.9
-X-Mailgun-Sid: WyI5NDExNyIsICJrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n01.prod.us-east-1.postgun.com with SMTP id
- 6139d705843a8a1032d4ab99 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 09 Sep 2021 09:42:29
- GMT
-Sender: kvalo=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 26557C43617; Thu,  9 Sep 2021 09:42:29 +0000 (UTC)
-Received: from tykki (tynnyri.adurom.net [51.15.11.48])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Thu, 9 Sep 2021 08:36:53 -0400
+Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        (Authenticated sender: kvalo)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 6C64EC4338F;
-        Thu,  9 Sep 2021 09:42:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org 6C64EC4338F
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Arend van Spriel <aspriel@gmail.com>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Chi-hsien Lin <chi-hsien.lin@infineon.com>,
-        Wright Feng <wright.feng@infineon.com>,
-        Chung-hsien Hsu <chung-hsien.hsu@infineon.com>,
-        Hans deGoede <hdegoede@redhat.com>,
-        linux-wireless@vger.kernel.org,
-        brcm80211-dev-list.pdl@broadcom.com,
-        SHA-cyfmac-dev-list@infineon.com, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v3] brcmfmac: fix "board_type" in brcmf_of_probe()
-References: <YNCHELb14+eNV94n@mwanda> <20210908131254.GJ1935@kadam>
-Date:   Thu, 09 Sep 2021 12:42:22 +0300
-In-Reply-To: <20210908131254.GJ1935@kadam> (Dan Carpenter's message of "Wed, 8
-        Sep 2021 16:12:54 +0300")
-Message-ID: <87v93a13wh.fsf@codeaurora.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id DD42D3F236;
+        Thu,  9 Sep 2021 12:35:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1631190942;
+        bh=FqEPgbVip3uJ9vLzL9gy1Fy4mq+BOs8Bf6pvkaNj/h0=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=S9bSkDgZD/m1C2u56+xlFAItzob/UkO3PvI2JbDZ+QNu719DriTryZlE3sXgFmjwT
+         fBWE2jiTGWPcO8W/Z/ai8NCga9Ewiv5hL9mZMOfUnpJjuMqxnEj+2r8e1YK70ll2J9
+         0KA7d900zxtaUlE1CNnfAskmAZdh/c1UZXrr2gjli4+Yuma+fXnL+wlK0C4pOIFZUl
+         Tsm82TKqFhF0uPsnlL+xLgenq6PIiNr8OEsoTxKLFz1XiIFDt2St61gVXnrtWpEarB
+         N5S1sRTzJ/CYOZoiYnh8d8sgRw1M/DRc3C35+IrppqX8KWM4HSRXmCRHhkXEID9XzT
+         EviXagULtL5ig==
+From:   Colin King <colin.king@canonical.com>
+To:     Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+        Chethan T N <chethan.tumkur.narayan@intel.com>,
+        Kiran K <kiran.k@intel.com>,
+        Srivatsa Ravishankar <ravishankar.srivatsa@intel.com>,
+        linux-bluetooth@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] Bluetooth: btintel: Fix incorrect out of memory check
+Date:   Thu,  9 Sep 2021 13:35:41 +0100
+Message-Id: <20210909123541.34779-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> writes:
+From: Colin Ian King <colin.king@canonical.com>
 
-> This patch is still needed.
+Currently *ven_data is being assigned the return from a kmalloc call but
+the out-of-memory check is checking ven_data and not *ven_data. Fix this
+by adding the missing dereference * operator,
 
-I don't see v3 in patchwork[1], but I do see v2. I don't know what
-happened, but please resend the patch as v4.
+Addresses-Coverity: ("Dereference null return")
+Fixes: 70dd978952bc ("Bluetooth: btintel: Define a callback to fetch codec config data")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/bluetooth/btintel.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-[1] https://patchwork.kernel.org/project/linux-wireless/list/?series=&submitter=37111&state=*&q=&archive=&delegate=
-
+diff --git a/drivers/bluetooth/btintel.c b/drivers/bluetooth/btintel.c
+index 115bb2d07a8d..9359bff47296 100644
+--- a/drivers/bluetooth/btintel.c
++++ b/drivers/bluetooth/btintel.c
+@@ -2176,7 +2176,7 @@ static int btintel_get_codec_config_data(struct hci_dev *hdev,
+ 	}
+ 
+ 	*ven_data = kmalloc(sizeof(__u8), GFP_KERNEL);
+-	if (!ven_data) {
++	if (!*ven_data) {
+ 		err = -ENOMEM;
+ 		goto error;
+ 	}
 -- 
-https://patchwork.kernel.org/project/linux-wireless/list/
+2.32.0
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
