@@ -2,81 +2,122 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D71EC433F5
-	for <kernel-janitors@archiver.kernel.org>; Wed,  8 Sep 2021 19:56:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FFC9C4332F
+	for <kernel-janitors@archiver.kernel.org>; Thu,  9 Sep 2021 06:02:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7247B604DC
-	for <kernel-janitors@archiver.kernel.org>; Wed,  8 Sep 2021 19:56:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67EBB61176
+	for <kernel-janitors@archiver.kernel.org>; Thu,  9 Sep 2021 06:02:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241984AbhIHT5J (ORCPT
+        id S1351049AbhIIGDR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 8 Sep 2021 15:57:09 -0400
-Received: from smtp13.smtpout.orange.fr ([80.12.242.135]:57209 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S235060AbhIHT5J (ORCPT
+        Thu, 9 Sep 2021 02:03:17 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:22922 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1351007AbhIIGDP (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 8 Sep 2021 15:57:09 -0400
-Received: from pop-os.home ([90.126.253.178])
-        by mwinf5d75 with ME
-        id rXvy250043riaq203XvyeH; Wed, 08 Sep 2021 21:55:59 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 08 Sep 2021 21:55:59 +0200
-X-ME-IP: 90.126.253.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     haver@linux.ibm.com, arnd@arndb.de, gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] misc: genwqe: Fixes DMA mask setting
-Date:   Wed,  8 Sep 2021 21:55:56 +0200
-Message-Id: <be49835baa8ba6daba5813b399edf6300f7fdbda.1631130862.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Thu, 9 Sep 2021 02:03:15 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 1895XYsd160903;
+        Thu, 9 Sep 2021 02:02:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=subject : to : cc :
+ references : from : message-id : date : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=Bniqri9MMZkWL4BcC80wpYalGB3I9kfht9xfS/+NPuA=;
+ b=fnrm/lYQqShOZO23oZuijEowgc3frhlDwQ5LyTprvvXE1N+qmQ5ycNyHdB4+rjmgkOWW
+ a7R1CUGNraOvu9tfIadu33AGU0RovGYDp6VbqaCV6ybut3X0KDuNMuLmDFCeTH7Aq5u6
+ yLgYsYRSXW+PrlVH9qgrByNu5JXgCt1iMd0xIzMdBK8T3D/RP64M71aeJ5B091TMINGU
+ TTC2Moefnxd3zT3dmRtSjgl+vrRMhEIZi6SbHGheMtgpueTbac4B/IWNhUeppN4qMgsB
+ gN51T2wB7oKaiKWOZ/lIIz6XeO8CFZgoUezGwmzijHbC/0q5mrYjRHHU4CYgOE7pIT+h CA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3ay3cwttcf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 09 Sep 2021 02:02:06 -0400
+Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 1895qk8U030249;
+        Thu, 9 Sep 2021 02:02:05 -0400
+Received: from ppma02fra.de.ibm.com (47.49.7a9f.ip4.static.sl-reverse.com [159.122.73.71])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3ay3cwttbs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 09 Sep 2021 02:02:05 -0400
+Received: from pps.filterd (ppma02fra.de.ibm.com [127.0.0.1])
+        by ppma02fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1895wHS9018989;
+        Thu, 9 Sep 2021 06:02:03 GMT
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
+        by ppma02fra.de.ibm.com with ESMTP id 3axcnk84d7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 09 Sep 2021 06:02:03 +0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 189620oK50266522
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 9 Sep 2021 06:02:00 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 65F5042047;
+        Thu,  9 Sep 2021 06:02:00 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C04074204F;
+        Thu,  9 Sep 2021 06:01:59 +0000 (GMT)
+Received: from [9.171.14.134] (unknown [9.171.14.134])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  9 Sep 2021 06:01:59 +0000 (GMT)
+Subject: Re: [PATCH] s390/ism: switch from 'pci_' to 'dma_' API
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        jwi@linux.ibm.com, hca@linux.ibm.com, gor@linux.ibm.com,
+        borntraeger@de.ibm.com
+Cc:     linux-s390@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <04d96a44cad009f15334876321aa236dc169b24c.1629753393.git.christophe.jaillet@wanadoo.fr>
+From:   Karsten Graul <kgraul@linux.ibm.com>
+Organization: IBM Deutschland Research & Development GmbH
+Message-ID: <e57bb882-fc43-e24e-361b-1fd26996aebe@linux.ibm.com>
+Date:   Thu, 9 Sep 2021 08:02:01 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
+In-Reply-To: <04d96a44cad009f15334876321aa236dc169b24c.1629753393.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: _6SuNhk299Qng7ujndXRjzl6QAYjp0dx
+X-Proofpoint-ORIG-GUID: k4QMLt1AAXR98gcYOiMUX9-KvP5U18HV
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
+ definitions=2021-09-09_01:2021-09-07,2021-09-09 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ suspectscore=0 spamscore=0 mlxscore=0 impostorscore=0 phishscore=0
+ adultscore=0 lowpriorityscore=0 bulkscore=0 clxscore=1011 malwarescore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2109030001 definitions=main-2109090033
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 505b08777d78 ("misc: genwqe: Use dma_set_mask_and_coherent to simplify code")
-changed the logic in the code.
+On 23/08/2021 23:17, Christophe JAILLET wrote:
+> The wrappers in include/linux/pci-dma-compat.h should go away.
+> 
+> The patch has been generated with the coccinelle script below.
+> 
+> @@
+> expression e1, e2;
+> @@
+> -    pci_set_dma_mask(e1, e2)
+> +    dma_set_mask(&e1->dev, e2)
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> If needed, see post from Christoph Hellwig on the kernel-janitors ML:
+>    https://marc.info/?l=kernel-janitors&m=158745678307186&w=4
+> 
+> This has *NOT* been compile tested because I don't have the needed
+> configuration.
+> ---
+>  drivers/s390/net/ism_drv.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Instead of a ||, a && should have been used to keep the code the same.
-
-Fixes: 505b08777d78 ("misc: genwqe: Use dma_set_mask_and_coherent to simplify code")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Also as reported in [1], setting a 64 bits DMA mask never fails if
-dev->dma_mask is non-NULL.
-So the code could be simplified further.
-
-Even if told twice that it is safe, and checking the code in the different
-platforms, I'm still unsure about it :(
-
-So I first post the fix to the bug I've introduced (sorry about that).
-Should it be confirmed another time that removing the 32-bits case is safe,
-then I'll send a v2 which does the additional clean-up.
----
- drivers/misc/genwqe/card_base.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/misc/genwqe/card_base.c b/drivers/misc/genwqe/card_base.c
-index 2e1befbd1ad9..693981891870 100644
---- a/drivers/misc/genwqe/card_base.c
-+++ b/drivers/misc/genwqe/card_base.c
-@@ -1090,7 +1090,7 @@ static int genwqe_pci_setup(struct genwqe_dev *cd)
- 
- 	/* check for 64-bit DMA address supported (DAC) */
- 	/* check for 32-bit DMA address supported (SAC) */
--	if (dma_set_mask_and_coherent(&pci_dev->dev, DMA_BIT_MASK(64)) ||
-+	if (dma_set_mask_and_coherent(&pci_dev->dev, DMA_BIT_MASK(64)) &&
- 	    dma_set_mask_and_coherent(&pci_dev->dev, DMA_BIT_MASK(32))) {
- 		dev_err(&pci_dev->dev,
- 			"err: neither DMA32 nor DMA64 supported\n");
--- 
-2.30.2
-
+Thank you for the patch. I compile tested successfully, we will 
+include the patch in our next submission for the net-next tree.
