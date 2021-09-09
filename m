@@ -2,167 +2,86 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2288C433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu,  9 Sep 2021 14:01:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6272C433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu,  9 Sep 2021 14:06:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 95C5261215
-	for <kernel-janitors@archiver.kernel.org>; Thu,  9 Sep 2021 14:01:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C79F600CC
+	for <kernel-janitors@archiver.kernel.org>; Thu,  9 Sep 2021 14:06:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245638AbhIIOCi (ORCPT
+        id S1351631AbhIIOGT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 9 Sep 2021 10:02:38 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:35842
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1345439AbhIIOBM (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 9 Sep 2021 10:01:12 -0400
-Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id B9DD2401A4;
-        Thu,  9 Sep 2021 13:59:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1631195995;
-        bh=k3mt0waMENh6y68J+JpXCf3sDS7Ly3J1EHRKsMbqoIw=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=b7ft1PKlq+dc3a9uungOPU7pCA1XxRYmUobKnhnVFah1qIyi6dJrDBFR+pMXUQ+KH
-         XkG4hWIK4dvD5KqBbxXpFE6yyvnlsLH4negNuG8M9MUQMdMmlOGo5rVVhZ7RCVv/K4
-         IIVeZrqeE2l+u/vX6oHwKMxY50TY2dsK5I9BEMysJp83UcpWc/lBtIt1VTc58m8+7z
-         I0JYU2S8VwZMrFaH34Sfk3P7wDyBwaNcWcgaN+4yK/jC5pCOQiWpU+W0Ju8QtYfedQ
-         FVgxGCaSlySyrZ1rCtRG/ESLVrz9lgnkLVOEw9UIzpda9X8yS+5GRt8HOfkC8KQo+D
-         MHytnEIzJsxBg==
-From:   Colin King <colin.king@canonical.com>
-To:     Neil Brown <neilb@suse.de>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] md/raid6 algorithms: scale test duration for speedier boots
-Date:   Thu,  9 Sep 2021 14:59:55 +0100
-Message-Id: <20210909135955.5881-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.32.0
+        Thu, 9 Sep 2021 10:06:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54112 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1347423AbhIIOFk (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 9 Sep 2021 10:05:40 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 35F42610CE;
+        Thu,  9 Sep 2021 14:04:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1631196266;
+        bh=pGpjj5u0nbLuEIQ38PvtmlM+kx5pkkkUe+ofiClLvS8=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=u72g2CRRbWi2lJwGYEYCMi5OQHCbEAsg+LEKSD6rd/lMoOK5sK2LvIIwTywetkAD/
+         NzYHSWHWjc188padd4jwM+sd0if2dPCjoqGn0Ynj3aUEz3lpjl3XG3TuhNAhPBwqGj
+         59lCZKOGgFHSsH5KwXCXIW80WKRKmnP4fF4MTxn0pjZxB6UKS6JjmmFQTfkdEjeCWD
+         PEIgfhj9D2Zwx3IJpjgEGD19DLrvGOlqnSYmVssLBXnKbXr8mlKi4PFxj+Gp8HjN32
+         HIH9ZWlM7UX3R9lsT/KrIKlj8/dxvzV7crC2p1XHS/InQQO8oFGXaa4GIe17WpcEJF
+         QNVNE3zP3WvNA==
+Message-ID: <f92e564c91755b0df70ae9b2237a034fe98f00c5.camel@kernel.org>
+Subject: Re: [PATCH] tpm: Check for integer overflow in
+ tpm2_map_response_body()
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Peter Huewe <peterhuewe@gmx.de>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        linux-integrity@vger.kernel.org, kernel-janitors@vger.kernel.org
+Date:   Thu, 09 Sep 2021 17:04:24 +0300
+In-Reply-To: <20210908053356.GB28725@kili>
+References: <20210908053356.GB28725@kili>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.36.5-0ubuntu1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Wed, 2021-09-08 at 08:33 +0300, Dan Carpenter wrote:
+> The "4 * be32_to_cpu(data->count)" multiplication can potentially
+> overflow which would lead to memory corruption.  Add a check for that.
+>=20
+> Fixes: 745b361e989a ("tpm: infrastructure for TPM spaces")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  drivers/char/tpm/tpm2-space.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>=20
+> diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.=
+c
+> index 784b8b3cb903..97e916856cf3 100644
+> --- a/drivers/char/tpm/tpm2-space.c
+> +++ b/drivers/char/tpm/tpm2-space.c
+> @@ -455,6 +455,9 @@ static int tpm2_map_response_body(struct tpm_chip *ch=
+ip, u32 cc, u8 *rsp,
+>  	if (be32_to_cpu(data->capability) !=3D TPM2_CAP_HANDLES)
+>  		return 0;
+> =20
+> +	if (be32_to_cpu(data->count) > (UINT_MAX - TPM_HEADER_SIZE - 9) / 4)
+> +		return -EFAULT;
+> +
+>  	if (len !=3D TPM_HEADER_SIZE + 9 + 4 * be32_to_cpu(data->count))
+>  		return -EFAULT;
+> =20
 
-The original code runs for a set run time based on the duration of
-2^RAID6_TIME_JIFFIES_LG2. The default kernel value for
-RAID6_TIME_JIFFIES_LG2 is 4, however, emperical testing shows that a
-value of 3.5 is the sweet spot for getting consistent benchmarking
-results and speeding up the run time of the benchmarking.
+Thanks!
 
-To achieve 2^3.5 we use the following:
-   2^3.5 = 2^4 / 2^0.5
-         = 2^4 / sqrt(2)
-         = 2^4 * 0.707106781
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-Too keep this as integer math that is as accurate as required and avoiding
-overflow, this becomes:
-         = 2^4 * 181 / 256
-         = (2^4 * 181) >> 8
-
-We also need to scale down perf by the same factor, however, to
-get a good approximate integer result without an overflow we scale
-by 2^4.0 * sqrt(2) =
-         = 2 ^ 4 * 1.41421356237
-         = 2 ^ 4 * 1448 / 1024
-         = (2 ^ 4 * 1448) >> 10
-
-This has been tested on 2 AWS instances, a small t2 and a medium m3
-with 30 boot tests each and compared to the same instances booted 30
-times on an umodified kernel. In all results, we get the same
-algorithms being selected and a 100% consistent result over the 30
-boots, showing that this optimised jiffy timing scaling does not break
-the original functionality.
-
-On the t2.small we see a saving of ~0.126 seconds and t3.medium a saving of
-~0.18 seconds.
-
-Tested on a 4 CPU VM on an 8 thread Xeon server; seeing a saving of ~0.35
-seconds (average over 50 boots).
-
-The testing included double checking the algorithm chosen by the optimized
-selection and seeing the same as pre-optimised version.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- lib/raid6/algos.c | 20 ++++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
-
-diff --git a/lib/raid6/algos.c b/lib/raid6/algos.c
-index 6d5e5000fdd7..5d5b04632168 100644
---- a/lib/raid6/algos.c
-+++ b/lib/raid6/algos.c
-@@ -152,6 +152,10 @@ static inline const struct raid6_calls *raid6_choose_gen(
- 
- 	for (bestgenperf = 0, bestxorperf = 0, best = NULL, algo = raid6_algos; *algo; algo++) {
- 		if (!best || (*algo)->prefer >= best->prefer) {
-+			/* 2 ^ (RAID6_TIME_JIFFIES_LG2 - 0.5) */
-+			const unsigned long raid6_time_jiffies =
-+				((1 << RAID6_TIME_JIFFIES_LG2) * 181) >> 8;
-+
- 			if ((*algo)->valid && !(*algo)->valid())
- 				continue;
- 
-@@ -167,7 +171,7 @@ static inline const struct raid6_calls *raid6_choose_gen(
- 			while ((j1 = jiffies) == j0)
- 				cpu_relax();
- 			while (time_before(jiffies,
--					    j1 + (1<<RAID6_TIME_JIFFIES_LG2))) {
-+					    j1 + raid6_time_jiffies)) {
- 				(*algo)->gen_syndrome(disks, PAGE_SIZE, *dptrs);
- 				perf++;
- 			}
-@@ -178,8 +182,8 @@ static inline const struct raid6_calls *raid6_choose_gen(
- 				best = *algo;
- 			}
- 			pr_info("raid6: %-8s gen() %5ld MB/s\n", (*algo)->name,
--				(perf * HZ * (disks-2)) >>
--				(20 - PAGE_SHIFT + RAID6_TIME_JIFFIES_LG2));
-+				(((perf * HZ * (disks-2)) >>
-+				 (20 - 16 + RAID6_TIME_JIFFIES_LG2)) * 1448) >> 10);
- 
- 			if (!(*algo)->xor_syndrome)
- 				continue;
-@@ -191,7 +195,7 @@ static inline const struct raid6_calls *raid6_choose_gen(
- 			while ((j1 = jiffies) == j0)
- 				cpu_relax();
- 			while (time_before(jiffies,
--					    j1 + (1<<RAID6_TIME_JIFFIES_LG2))) {
-+					    j1 + raid6_time_jiffies)) {
- 				(*algo)->xor_syndrome(disks, start, stop,
- 						      PAGE_SIZE, *dptrs);
- 				perf++;
-@@ -202,8 +206,8 @@ static inline const struct raid6_calls *raid6_choose_gen(
- 				bestxorperf = perf;
- 
- 			pr_info("raid6: %-8s xor() %5ld MB/s\n", (*algo)->name,
--				(perf * HZ * (disks-2)) >>
--				(20 - PAGE_SHIFT + RAID6_TIME_JIFFIES_LG2 + 1));
-+				(((perf * HZ * (disks-2)) >>
-+				 (20 - 16 + RAID6_TIME_JIFFIES_LG2 + 1)) * 1448) >> 10);
- 		}
- 	}
- 
-@@ -215,8 +219,8 @@ static inline const struct raid6_calls *raid6_choose_gen(
- 				(20 - PAGE_SHIFT+RAID6_TIME_JIFFIES_LG2));
- 			if (best->xor_syndrome)
- 				pr_info("raid6: .... xor() %ld MB/s, rmw enabled\n",
--					(bestxorperf * HZ * (disks-2)) >>
--					(20 - PAGE_SHIFT + RAID6_TIME_JIFFIES_LG2 + 1));
-+					(((bestxorperf * HZ * (disks-2)) >>
-+					 (20 - 16 + RAID6_TIME_JIFFIES_LG2 + 1)) * 1448) >> 10);
- 		} else
- 			pr_info("raid6: skip pq benchmark and using algorithm %s\n",
- 				best->name);
--- 
-2.32.0
+/Jarkko
 
