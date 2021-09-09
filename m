@@ -2,87 +2,85 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0530AC433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu,  9 Sep 2021 18:02:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01A35C433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu,  9 Sep 2021 20:23:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DB304610C9
-	for <kernel-janitors@archiver.kernel.org>; Thu,  9 Sep 2021 18:02:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE6D961186
+	for <kernel-janitors@archiver.kernel.org>; Thu,  9 Sep 2021 20:23:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242874AbhIISDN (ORCPT
+        id S1344553AbhIIUYh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 9 Sep 2021 14:03:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37488 "EHLO
+        Thu, 9 Sep 2021 16:24:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41576 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241252AbhIISDM (ORCPT
+        with ESMTP id S1344117AbhIIUYf (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 9 Sep 2021 14:03:12 -0400
-Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50B04C061574
-        for <kernel-janitors@vger.kernel.org>; Thu,  9 Sep 2021 11:02:03 -0700 (PDT)
-Received: by mail-pg1-x52b.google.com with SMTP id h3so1753681pgb.7
-        for <kernel-janitors@vger.kernel.org>; Thu, 09 Sep 2021 11:02:03 -0700 (PDT)
+        Thu, 9 Sep 2021 16:24:35 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B15CAC061574
+        for <kernel-janitors@vger.kernel.org>; Thu,  9 Sep 2021 13:23:25 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id k5-20020a05600c1c8500b002f76c42214bso2434894wms.3
+        for <kernel-janitors@vger.kernel.org>; Thu, 09 Sep 2021 13:23:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=dJQXSJ02QMh+Wh7r1j+JbzURrGUV/gl8Hy7GcnqmOCI=;
-        b=l/yR86TfFYKMMSesXKkjFyGszNrXtteqULk8eK5GjHYPDdsbR43JcpmjHS1f3NAmxD
-         QD3Kol0cxHDikvOQDK8v2qEPw0Vn9VNa4YmNhlWEoUTOGgv33+lmPPQ16WHIzgQB1oAC
-         Xo+RE0uy9dyt2wsE7qbPMXw5wC3k2KHgExJYHuC/awA9XMW4mRr6uOYeve7AVPgpuZra
-         1RAa6h5XYx99F+k3uOLWAbU4AQk1NTUUTsSZ++QA5GUjwsCn//HxcjTSDfyBHE8iZ8TK
-         8zW2z9RSxQnvnljsOM4mws/JI1THcrY+J5isVCIuudNuF8zzfU/ORIpWBbMlR3lGfasV
-         h+IA==
+        d=broadcom.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hY9cVDnQ9Sjc0TjO+9qEkskm3/AdxrBljV6BEMKcDlM=;
+        b=BLgrFVI+L7xFGagya5o45sZBcXtuNZnPp57KgWq0lxxxgzxqTHR2a22QOWn86swyqX
+         INJq9JFR0DX8kmlYp0wViFnhOEKwWGem4DGSdO/wm8MTIEleuYojToGVZhMMqjhNH+45
+         xpFi+qZSO/zevovxcl2SHmuN8dIPGClfIuL4o=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=dJQXSJ02QMh+Wh7r1j+JbzURrGUV/gl8Hy7GcnqmOCI=;
-        b=NwW7XcmOo+eOYMA8NjZR1cCzWSNvuPWJrbJdvwdFXiFAnqjXlxn3xgFcoNleMvbd6T
-         fa/CUeYRfdqnEaxop73r/UU8by3W7g3I+FM+LLY2dp5G8pT30TYjP9cqXvk3IEKCfcjt
-         /5tAwWQW0oDqlTdgL0M1/X3CTzZboAPgwms6UTfNz1s4j++3htmXFChSxql+Z8e624eu
-         2J3RUUpqvOyWDohGT9LEebWrFMevG0DgOV/4zuDpS1KD7zhOU4AnaIK/spxMXhB6ZCbq
-         gMracse34NEGNc6tuE02318L4hj9qaFdXimYBq9uX31C+rx6E/qvvOsdyC7rWPeDuUE/
-         K/ww==
-X-Gm-Message-State: AOAM533k2fafMtQv0YV9Opf9Zc2qmcBKBo2E6vXC/14EtexPNcF0lCUi
-        aT5w1dXcxywULxZKzr2tpTepJA==
-X-Google-Smtp-Source: ABdhPJypPX2nDxAW3yVEJa6gTathAPgYr+otR+hNxtAmfzad85U54J1YqFfluXKmhDFTlwErlZGh5w==
-X-Received: by 2002:aa7:8617:0:b0:3f2:3cb2:33bc with SMTP id p23-20020aa78617000000b003f23cb233bcmr4338983pfn.36.1631210522767;
-        Thu, 09 Sep 2021 11:02:02 -0700 (PDT)
-Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id p12sm2788993pff.106.2021.09.09.11.02.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Sep 2021 11:02:01 -0700 (PDT)
-Date:   Thu, 9 Sep 2021 12:01:59 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     ohad@wizery.com, bjorn.andersson@linaro.org,
-        james.quinlan@broadcom.com, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hY9cVDnQ9Sjc0TjO+9qEkskm3/AdxrBljV6BEMKcDlM=;
+        b=BQ0iHzqXvSGWoQj08OvM0AkU1i+FFvV4dyd204Lq78SgxmuKenm/isCWyj0/6FCgcJ
+         8GTOtsjWkc9IzJVZqhXo/m7uVPFTjRcteJAJJuop7I8LsnzSLUssHIP+ip6DleP5cwVg
+         UbaTVU8c0leaOj1CtkuZ5khXgxEH198iz9zAIAP3iZD0hE6pKPT6WJtmTb6CzmiEO/a0
+         MUx7/felUP8M/i4J/p8kj20lmQoFa40VBfRFqjtzJAennPq/DJx3m2dmLtiFXdhtgAoJ
+         FBT9F8z72qBwbYSaFkAlCtB3UtKw45zDSEhvyJQ+tqWscW2WMe+wDwKSDV0ECifSBgRH
+         t0HQ==
+X-Gm-Message-State: AOAM532cEXk4ihHwKWZYMj8eAZ7uTgfzwr0g/8xBuDd2MEujcH0VOqTT
+        lkwhnn+Y6gQwDlAUySc1tzmcceopLSTfkr9Kfy2tNA==
+X-Google-Smtp-Source: ABdhPJwBKS/nzcklSgTcmWAUbTNg6rAPoE2TkrRoT0FoG5ejhYLzJZR0AmTjZ0/Rlh2Fm2C61ogF444RffHBmN/e9ME=
+X-Received: by 2002:a1c:1fd3:: with SMTP id f202mr4879371wmf.44.1631219003266;
+ Thu, 09 Sep 2021 13:23:23 -0700 (PDT)
+MIME-Version: 1.0
+References: <e6d0dad6620da4fdf847faa903f79b735d35f262.1630755377.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <e6d0dad6620da4fdf847faa903f79b735d35f262.1630755377.git.christophe.jaillet@wanadoo.fr>
+From:   Jim Quinlan <james.quinlan@broadcom.com>
+Date:   Thu, 9 Sep 2021 16:23:11 -0400
+Message-ID: <CA+-6iNzjXUxKitFobmVFE0bKO_gpNMYLF6MqK5CroPoKGCyJ4A@mail.gmail.com>
 Subject: Re: [PATCH] remoteproc: Fix a memory leak in an error handling path
  in 'rproc_handle_vdev()'
-Message-ID: <20210909180159.GA1388472@p14s>
-References: <e6d0dad6620da4fdf847faa903f79b735d35f262.1630755377.git.christophe.jaillet@wanadoo.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e6d0dad6620da4fdf847faa903f79b735d35f262.1630755377.git.christophe.jaillet@wanadoo.fr>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        "open list:REMOTE PROCESSOR REMOTEPROC SUBSYSTEM" 
+        <linux-remoteproc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, Sep 04, 2021 at 01:37:32PM +0200, Christophe JAILLET wrote:
+On Sat, Sep 4, 2021 at 7:37 AM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+>
 > If 'copy_dma_range_map() fails, the memory allocated for 'rvdev' will leak.
 > Move the 'copy_dma_range_map()' call after the device registration so
 > that 'rproc_rvdev_release()' can be called to free some resources.
-> 
+>
 > Also, branch to the error handling path if 'copy_dma_range_map()' instead
 > of a direct return to avoid some other leaks.
-> 
+>
 > Fixes: e0d072782c73 ("dma-mapping: introduce DMA range map, supplanting dma_pfn_offset")
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
@@ -92,38 +90,36 @@ On Sat, Sep 04, 2021 at 01:37:32PM +0200, Christophe JAILLET wrote:
 > ---
 >  drivers/remoteproc/remoteproc_core.c | 8 +++++---
 >  1 file changed, 5 insertions(+), 3 deletions(-)
-> 
+>
 > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
 > index 502b6604b757..775df165eb45 100644
 > --- a/drivers/remoteproc/remoteproc_core.c
 > +++ b/drivers/remoteproc/remoteproc_core.c
 > @@ -556,9 +556,6 @@ static int rproc_handle_vdev(struct rproc *rproc, void *ptr,
->  	/* Initialise vdev subdevice */
->  	snprintf(name, sizeof(name), "vdev%dbuffer", rvdev->index);
->  	rvdev->dev.parent = &rproc->dev;
-> -	ret = copy_dma_range_map(&rvdev->dev, rproc->dev.parent);
-> -	if (ret)
-> -		return ret;
->  	rvdev->dev.release = rproc_rvdev_release;
->  	dev_set_name(&rvdev->dev, "%s#%s", dev_name(rvdev->dev.parent), name);
->  	dev_set_drvdata(&rvdev->dev, rvdev);
+>         /* Initialise vdev subdevice */
+>         snprintf(name, sizeof(name), "vdev%dbuffer", rvdev->index);
+>         rvdev->dev.parent = &rproc->dev;
+> -       ret = copy_dma_range_map(&rvdev->dev, rproc->dev.parent);
+> -       if (ret)
+> -               return ret;
+>         rvdev->dev.release = rproc_rvdev_release;
+>         dev_set_name(&rvdev->dev, "%s#%s", dev_name(rvdev->dev.parent), name);
+>         dev_set_drvdata(&rvdev->dev, rvdev);
 > @@ -568,6 +565,11 @@ static int rproc_handle_vdev(struct rproc *rproc, void *ptr,
->  		put_device(&rvdev->dev);
->  		return ret;
->  	}
+>                 put_device(&rvdev->dev);
+>                 return ret;
+>         }
 > +
-> +	ret = copy_dma_range_map(&rvdev->dev, rproc->dev.parent);
-> +	if (ret)
-> +		goto free_rvdev;
+> +       ret = copy_dma_range_map(&rvdev->dev, rproc->dev.parent);
+> +       if (ret)
+> +               goto free_rvdev;
 > +
+LGTM, thanks.
+Reviewed-by: Jim Quinlan <james.quinlan@broadcom.com>
 
-Good catch.
-
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-
->  	/* Make device dma capable by inheriting from parent's capabilities */
->  	set_dma_ops(&rvdev->dev, get_dma_ops(rproc->dev.parent));
->  
-> -- 
+>         /* Make device dma capable by inheriting from parent's capabilities */
+>         set_dma_ops(&rvdev->dev, get_dma_ops(rproc->dev.parent));
+>
+> --
 > 2.30.2
-> 
+>
