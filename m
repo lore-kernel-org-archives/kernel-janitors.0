@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 143DBC433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 10 Sep 2021 12:00:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23D0DC433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri, 10 Sep 2021 12:15:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DD17F610E9
-	for <kernel-janitors@archiver.kernel.org>; Fri, 10 Sep 2021 12:00:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EEA04611C0
+	for <kernel-janitors@archiver.kernel.org>; Fri, 10 Sep 2021 12:15:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232952AbhIJMBi (ORCPT
+        id S233072AbhIJMQq (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 10 Sep 2021 08:01:38 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:33108
-        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232613AbhIJMBh (ORCPT
+        Fri, 10 Sep 2021 08:16:46 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:37878
+        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232941AbhIJMQp (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 10 Sep 2021 08:01:37 -0400
+        Fri, 10 Sep 2021 08:16:45 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id EDC3340198;
-        Fri, 10 Sep 2021 12:00:23 +0000 (UTC)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id AF3223F328;
+        Fri, 10 Sep 2021 12:15:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1631275224;
-        bh=uBCGG54tKUGFtWWVoZuFFm7JRT/gA4rrE2H2EHpPDZM=;
+        s=20210705; t=1631276132;
+        bh=WH5acUJXrOaRqz+J2404Ycvly8mHVPMOcA9T/AX5FBw=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=J5EuyL/+CWw5L3xaTcyKxzjcidpwr2fZ//FyZmkpXGM4QRjUzfd5Cd+v6ijB2oY/8
-         5V7fHOT8IlhuCwVd/B6OCu1bhpeXsRx1u06zukuQNBYWWxUk+DjKtOKTtUMLR1Mvst
-         vVbf/EEzI4P2nUV4KZa0ct3221BvcyHLjKdWnagzcZbZNKR8NvAdany7pEgvCM0YMA
-         vm7dBvCPlHzlara0D/O4ksvtARSgARcjqMh/QK/uuQMgrPE3cBVW4vZMcPmRPn8NxC
-         PFuFsFzUYr+gJhKWQTm42JLCZ6Klyo/Qywdvq1NzJm7KO84EEXdvZ8MzU4TTFzs4pa
-         cRWXy3SG6MgeA==
+        b=b0PPT3Tadgfgm16gBw637065w4w47RlmElz/m56mi5dfOfRt8xW8x5u7Uxzzzg6aS
+         0qRdyU2IWl2rVPnw1aoqI3eJfEU8Ecgsa2EVZC18VWDS71FJbiY8UvCWSdT/4T6yx7
+         SyVjA/lwqnpfjTNH8pTdsAUPcosdbBRQVJNtm0pZTCuQ4TNz2ekL2lj6JT7Iy128g1
+         l2jtkPXn2npVaNbKyx9zfxDYHDQPs5HUJwWe832vmcFO2gXXN1VxBlfr67jG9amtCm
+         p4Vjlt8jg8B9BSaXdGOaFHWd2SKSFKN/vy4t99XyVNOBrlhKtKFWqrlqF8hJTSEnZL
+         RZjPidX5CVeHg==
 From:   Colin King <colin.king@canonical.com>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        linux-mtd@lists.infradead.org
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] mtd: mtdswap: Remove redundant assignment of pointer eb
-Date:   Fri, 10 Sep 2021 13:00:23 +0100
-Message-Id: <20210910120023.46308-1-colin.king@canonical.com>
+Subject: [PATCH] crypto: img-hash: remove need for error return variable ret
+Date:   Fri, 10 Sep 2021 13:15:32 +0100
+Message-Id: <20210910121532.50366-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -56,27 +55,49 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The pointer eb is being assigned a value that is never read, it is
-being updated later on. The assignment is redundant and can be removed.
+The assignment to error return variable ret and then the jump to
+an error exit path can be simplified by just returning the error
+return at the failure point. This allows variable ret and the
+error return path to be removed. This cleans up a static analysis
+warninng that variable ret is being assigned (value never being
+used) and being re-assigned later.
 
 Addresses-Coverity: ("Unused value")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/mtd/mtdswap.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/crypto/img-hash.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-diff --git a/drivers/mtd/mtdswap.c b/drivers/mtd/mtdswap.c
-index 7e309270ddd4..e86b04bc1d6b 100644
---- a/drivers/mtd/mtdswap.c
-+++ b/drivers/mtd/mtdswap.c
-@@ -716,7 +716,6 @@ static int mtdswap_move_block(struct mtdswap_dev *d, unsigned int oldblock,
- 		return ret;
- 	}
+diff --git a/drivers/crypto/img-hash.c b/drivers/crypto/img-hash.c
+index aa4c7b2af3e2..d8e82d69745d 100644
+--- a/drivers/crypto/img-hash.c
++++ b/drivers/crypto/img-hash.c
+@@ -674,14 +674,12 @@ static int img_hash_digest(struct ahash_request *req)
+ static int img_hash_cra_init(struct crypto_tfm *tfm, const char *alg_name)
+ {
+ 	struct img_hash_ctx *ctx = crypto_tfm_ctx(tfm);
+-	int err = -ENOMEM;
  
--	eb = d->eb_data + *newblock / d->pages_per_eblk;
- 	d->page_data[page] = *newblock;
- 	d->revmap[oldblock] = PAGE_UNDEF;
- 	eb = d->eb_data + oldblock / d->pages_per_eblk;
+ 	ctx->fallback = crypto_alloc_ahash(alg_name, 0,
+ 					   CRYPTO_ALG_NEED_FALLBACK);
+ 	if (IS_ERR(ctx->fallback)) {
+ 		pr_err("img_hash: Could not load fallback driver.\n");
+-		err = PTR_ERR(ctx->fallback);
+-		goto err;
++		return PTR_ERR(ctx->fallback);
+ 	}
+ 	crypto_ahash_set_reqsize(__crypto_ahash_cast(tfm),
+ 				 sizeof(struct img_hash_request_ctx) +
+@@ -689,9 +687,6 @@ static int img_hash_cra_init(struct crypto_tfm *tfm, const char *alg_name)
+ 				 IMG_HASH_DMA_THRESHOLD);
+ 
+ 	return 0;
+-
+-err:
+-	return err;
+ }
+ 
+ static int img_hash_cra_md5_init(struct crypto_tfm *tfm)
 -- 
 2.32.0
 
