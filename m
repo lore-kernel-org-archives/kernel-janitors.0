@@ -2,76 +2,79 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10919C433F5
-	for <kernel-janitors@archiver.kernel.org>; Fri, 10 Sep 2021 13:50:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7FADC433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri, 10 Sep 2021 16:14:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EC851611C9
-	for <kernel-janitors@archiver.kernel.org>; Fri, 10 Sep 2021 13:50:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A87AD6124C
+	for <kernel-janitors@archiver.kernel.org>; Fri, 10 Sep 2021 16:14:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233702AbhIJNvT (ORCPT
+        id S229898AbhIJQP5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 10 Sep 2021 09:51:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54720 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233554AbhIJNvR (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 10 Sep 2021 09:51:17 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 7C0FA611CC;
-        Fri, 10 Sep 2021 13:50:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631281806;
-        bh=ymTAeqeU7FRew1jvpRLg04g6PljeHQDtqM1TeeA2uD8=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=YziWsMZyCrHuu7t/EODgFm7nVtE5FBhn4gIkSiZZenzJKVonoYRYHNApzFOz0O20X
-         Yh6eBQaZH3pYjyTeDVX0IjNSEROSFMq/9SdPpOU189TgIqn4d5B3zzpeWSOahRcO2d
-         pdAoKCGBRgphAx0Rv6lhtdvGnIXuCprdfHcFt3mawi3/CSxjanbI5fUV+VxqMd6XeG
-         hHcfWH+0+02XbKCWVFmvUiokZPhHgOEnwR7UzaHtdCHpw9VyqgG0Uu85882tyanng2
-         4Sg2BkM7HoTyTl5cbY1Zejx/LbHRiw8lx9pwo2+9y/hS9uVqFhhTfhbOZgNtPeCzpK
-         maGQ6NkKmq4sA==
-Content-Type: text/plain; charset="utf-8"
+        Fri, 10 Sep 2021 12:15:57 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:47068
+        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231331AbhIJQPb (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 10 Sep 2021 12:15:31 -0400
+Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 967A43F236;
+        Fri, 10 Sep 2021 16:14:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1631290458;
+        bh=+Q2vTAAq7QHzyF1atFoswScUho+hy4URUfVAKgzhNG0=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=KQR9Q4qFS2yP4to8uPWyNIpCloyS5WrQq81a/D1CEl+vzqL77bGSIF4Xecl520BHu
+         Exo30Opr387nVOkgBggz7MChTc8DOpdyGtSJ8qzpOSshY56H7/2+bS+O/3Xl6kiqWZ
+         QBFPRWMQahGsAXLbjazl/SpREv71zDmVgD3e25q3SHRgCY6u8MxdpQAmI4UN49H/Df
+         utE8p5Gx8PwYkLdoHCFf+KRN/e6EU0oGrwVSdu1xPsJStTCgl/2nN5RvH/oNntAaRa
+         9TZHqV2yQGVW0BtvUhfcKseAdnvc4iYWBzFWoN/RY37f2+XwTx2qddgDvf1VVCjYWC
+         8WeslW+HN1QAA==
+From:   Colin King <colin.king@canonical.com>
+To:     Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] PCI: Remove redundant initialization of variable rc
+Date:   Fri, 10 Sep 2021 17:14:17 +0100
+Message-Id: <20210910161417.91001-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] qlcnic: Remove redundant initialization of variable ret
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <163128180645.19053.13072280068396330579.git-patchwork-notify@kernel.org>
-Date:   Fri, 10 Sep 2021 13:50:06 +0000
-References: <20210910111511.33796-1-colin.king@canonical.com>
-In-Reply-To: <20210910111511.33796-1-colin.king@canonical.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     shshaikh@marvell.com, manishc@marvell.com,
-        GR-Linux-NIC-Dev@marvell.com, davem@davemloft.net,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+From: Colin Ian King <colin.king@canonical.com>
 
-This patch was applied to netdev/net.git (refs/heads/master):
+The variable rc is being initialized with a value that is never read, it
+is being updated later on. The assignment is redundant and can be removed.
 
-On Fri, 10 Sep 2021 12:15:11 +0100 you wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable ret is being initialized with a value that is never read, it
-> is being updated later on. The assignment is redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> 
-> [...]
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/pci/pci.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Here is the summary with links:
-  - qlcnic: Remove redundant initialization of variable ret
-    https://git.kernel.org/netdev/net/c/666eb96d85dc
-
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index ce2ab62b64cf..cd8cb94cc450 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -5288,7 +5288,7 @@ const struct attribute_group pci_dev_reset_method_attr_group = {
+  */
+ int __pci_reset_function_locked(struct pci_dev *dev)
+ {
+-	int i, m, rc = -ENOTTY;
++	int i, m, rc;
+ 
+ 	might_sleep();
+ 
+-- 
+2.32.0
 
