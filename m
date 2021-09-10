@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23D0DC433F5
-	for <kernel-janitors@archiver.kernel.org>; Fri, 10 Sep 2021 12:15:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FE50C433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri, 10 Sep 2021 12:25:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EEA04611C0
-	for <kernel-janitors@archiver.kernel.org>; Fri, 10 Sep 2021 12:15:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42ED0611CA
+	for <kernel-janitors@archiver.kernel.org>; Fri, 10 Sep 2021 12:25:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233072AbhIJMQq (ORCPT
+        id S233035AbhIJM0r (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 10 Sep 2021 08:16:46 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:37878
+        Fri, 10 Sep 2021 08:26:47 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:39008
         "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232941AbhIJMQp (ORCPT
+        by vger.kernel.org with ESMTP id S232876AbhIJM0q (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 10 Sep 2021 08:16:45 -0400
+        Fri, 10 Sep 2021 08:26:46 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id AF3223F328;
-        Fri, 10 Sep 2021 12:15:32 +0000 (UTC)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id E2DB53F224;
+        Fri, 10 Sep 2021 12:25:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1631276132;
-        bh=WH5acUJXrOaRqz+J2404Ycvly8mHVPMOcA9T/AX5FBw=;
+        s=20210705; t=1631276734;
+        bh=S5A5gVxFvNReba+sgmKpBhRQvbi0HishvH1Pn0fy9V0=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=b0PPT3Tadgfgm16gBw637065w4w47RlmElz/m56mi5dfOfRt8xW8x5u7Uxzzzg6aS
-         0qRdyU2IWl2rVPnw1aoqI3eJfEU8Ecgsa2EVZC18VWDS71FJbiY8UvCWSdT/4T6yx7
-         SyVjA/lwqnpfjTNH8pTdsAUPcosdbBRQVJNtm0pZTCuQ4TNz2ekL2lj6JT7Iy128g1
-         l2jtkPXn2npVaNbKyx9zfxDYHDQPs5HUJwWe832vmcFO2gXXN1VxBlfr67jG9amtCm
-         p4Vjlt8jg8B9BSaXdGOaFHWd2SKSFKN/vy4t99XyVNOBrlhKtKFWqrlqF8hJTSEnZL
-         RZjPidX5CVeHg==
+        b=v+ZTMRGFzHJB+bxVdKXF4l5ly6MyYjdY8uqXPC7bCBiVzpkLD4lsmVT4k+t424lvI
+         ClPHaUSXDEE2YVKE12C5Jyv/Gncqdxrt10t9MwRkdDY8R2xtLSCMloodi96R0oTdQy
+         yYurP++OzKFFubBDpvG5trls2dyubFgpqKiPq6djZcDhJSDNuKvCna0YiZp+EEKgXO
+         L9hzNfI9GUpmd6fRnR3tEHgtf9zkfQgMjhEoOx2OYFagtR2cqd/jHXwfG8/cBvk9fN
+         6nsj+Jmo52yzFLZe5yI5WN5blkz1qSrhRxY+vcW8pgrZYifhTzo0I7chhw1dFx+G33
+         VhQwkK5xYiurA==
 From:   Colin King <colin.king@canonical.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org
+To:     Mike Marshall <hubcap@omnibond.com>,
+        Martin Brandenburg <martin@omnibond.com>,
+        devel@lists.orangefs.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] crypto: img-hash: remove need for error return variable ret
-Date:   Fri, 10 Sep 2021 13:15:32 +0100
-Message-Id: <20210910121532.50366-1-colin.king@canonical.com>
+Subject: [PATCH] orangefs: Remove redundant initialization of variable ret
+Date:   Fri, 10 Sep 2021 13:25:34 +0100
+Message-Id: <20210910122534.51449-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -55,49 +55,28 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The assignment to error return variable ret and then the jump to
-an error exit path can be simplified by just returning the error
-return at the failure point. This allows variable ret and the
-error return path to be removed. This cleans up a static analysis
-warninng that variable ret is being assigned (value never being
-used) and being re-assigned later.
+The variable ret is being initialized with a value that is never read, it
+is being updated later on. The assignment is redundant and can be removed.
 
 Addresses-Coverity: ("Unused value")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/crypto/img-hash.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ fs/orangefs/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/crypto/img-hash.c b/drivers/crypto/img-hash.c
-index aa4c7b2af3e2..d8e82d69745d 100644
---- a/drivers/crypto/img-hash.c
-+++ b/drivers/crypto/img-hash.c
-@@ -674,14 +674,12 @@ static int img_hash_digest(struct ahash_request *req)
- static int img_hash_cra_init(struct crypto_tfm *tfm, const char *alg_name)
+diff --git a/fs/orangefs/super.c b/fs/orangefs/super.c
+index 2f2e430461b2..897fb6c3f161 100644
+--- a/fs/orangefs/super.c
++++ b/fs/orangefs/super.c
+@@ -475,7 +475,7 @@ struct dentry *orangefs_mount(struct file_system_type *fst,
+ 			   const char *devname,
+ 			   void *data)
  {
- 	struct img_hash_ctx *ctx = crypto_tfm_ctx(tfm);
--	int err = -ENOMEM;
- 
- 	ctx->fallback = crypto_alloc_ahash(alg_name, 0,
- 					   CRYPTO_ALG_NEED_FALLBACK);
- 	if (IS_ERR(ctx->fallback)) {
- 		pr_err("img_hash: Could not load fallback driver.\n");
--		err = PTR_ERR(ctx->fallback);
--		goto err;
-+		return PTR_ERR(ctx->fallback);
- 	}
- 	crypto_ahash_set_reqsize(__crypto_ahash_cast(tfm),
- 				 sizeof(struct img_hash_request_ctx) +
-@@ -689,9 +687,6 @@ static int img_hash_cra_init(struct crypto_tfm *tfm, const char *alg_name)
- 				 IMG_HASH_DMA_THRESHOLD);
- 
- 	return 0;
--
--err:
--	return err;
- }
- 
- static int img_hash_cra_md5_init(struct crypto_tfm *tfm)
+-	int ret = -EINVAL;
++	int ret;
+ 	struct super_block *sb = ERR_PTR(-EINVAL);
+ 	struct orangefs_kernel_op_s *new_op;
+ 	struct dentry *d = ERR_PTR(-EINVAL);
 -- 
 2.32.0
 
