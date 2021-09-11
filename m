@@ -2,82 +2,112 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.5 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E03CC433F5
-	for <kernel-janitors@archiver.kernel.org>; Fri, 10 Sep 2021 16:58:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE1A3C433FE
+	for <kernel-janitors@archiver.kernel.org>; Sat, 11 Sep 2021 15:39:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 73E586108B
-	for <kernel-janitors@archiver.kernel.org>; Fri, 10 Sep 2021 16:58:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7D5761206
+	for <kernel-janitors@archiver.kernel.org>; Sat, 11 Sep 2021 15:39:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231137AbhIJQ75 (ORCPT
+        id S232458AbhIKPkh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 10 Sep 2021 12:59:57 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:49050
-        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230465AbhIJQ75 (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 10 Sep 2021 12:59:57 -0400
-Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        Sat, 11 Sep 2021 11:40:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51410 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230265AbhIKPkg (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Sat, 11 Sep 2021 11:40:36 -0400
+Received: from jic23-huawei (cpc108967-cmbg20-2-0-cust86.5-4.cable.virginm.net [81.101.6.87])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 2B6AB3F04C;
-        Fri, 10 Sep 2021 16:58:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1631293125;
-        bh=P4J0uP+mvBeCpdSBmGVI2spIor3xRsNEZjAeWnGcryo=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=DG0kXV2QncuQ1VkQGiYLOTf9w1Tq0m32MF9+mIoDus8+TlQsxzFSx60hPb0Z3FuBS
-         QXY0iK7RHnjsUf1xSKjirRw7M7F5LsycIOLQFNMFI5bCgV/VSmRxZUFhO+G/mXcd2I
-         peMd159lomSA/M121gSRQcD8nGudZEOJCnhazk++veFYTGmg71/l9KPSBZAMndj5Lw
-         /IEslUJGu7bV03tcEnqV3W+xZB2rmrX9DmTGcZENeo50SufQVD4w0IPS4sXnKKpYMH
-         EumnL09/TEMUbMY24PRfpm6zMctAQRS8uyXQEuDpwXnRpT0AGP1BVaA3HZdGRZCg3j
-         aO0YVOmw1aafg==
-From:   Colin King <colin.king@canonical.com>
-To:     dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] video: fbdev: atyfb: Remove assigned but never used variable statements
-Date:   Fri, 10 Sep 2021 17:58:44 +0100
-Message-Id: <20210910165844.98940-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.32.0
+        by mail.kernel.org (Postfix) with ESMTPSA id 03B70610F8;
+        Sat, 11 Sep 2021 15:39:21 +0000 (UTC)
+Date:   Sat, 11 Sep 2021 16:42:53 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Karol Wrona <k.wrona@samsung.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] iio: ssp_sensors: add more range checking in
+ ssp_parse_dataframe()
+Message-ID: <20210911164253.260be729@jic23-huawei>
+In-Reply-To: <20210909091336.GA26312@kili>
+References: <20210909091336.GA26312@kili>
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Thu, 9 Sep 2021 12:13:36 +0300
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-There are a couple of statements where local variables are being assigned
-values that are never read because the function returns immediately after
-the assignment. Clean up the code by removing them.
+> The "idx" is validated at the start of the loop but it gets incremented
+> during the iteration so it needs to be checked again.
+> 
+> Fixes: 50dd64d57eee ("iio: common: ssp_sensors: Add sensorhub driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/video/fbdev/aty/mach64_gx.c | 2 --
- 1 file changed, 2 deletions(-)
+This is only a fix if we assume that the len value check is there
+as a protection against buffer overrun rather than as a termination condition
+that occurs when parsing a valid record.
 
-diff --git a/drivers/video/fbdev/aty/mach64_gx.c b/drivers/video/fbdev/aty/mach64_gx.c
-index 9c37e28fb78b..d06d24830080 100644
---- a/drivers/video/fbdev/aty/mach64_gx.c
-+++ b/drivers/video/fbdev/aty/mach64_gx.c
-@@ -352,10 +352,8 @@ static int aty_var_to_pll_18818(const struct fb_info *info, u32 vclk_per,
- 	post_divider = 1;
- 
- 	if (MHz100 > MAX_FREQ_2595) {
--		MHz100 = MAX_FREQ_2595;
- 		return -EINVAL;
- 	} else if (MHz100 < ABS_MIN_FREQ_2595) {
--		program_bits = 0;	/* MHz100 = 257 */
- 		return -EINVAL;
- 	} else {
- 		while (MHz100 < MIN_FREQ_2595) {
--- 
-2.32.0
+There is more paranoid checking in ssp_print_mc_debug() so it seems we aren't assuming
+valid data in there at least.
+
+Still is this perhaps a case of hardening rather than a fix or am I missing something?
+
+As an aside, if that ssp_print_mcu_debug() reads a negative char it is then
+returned directly so we get a random small negative number as the error code which
+isn't going to be very useful.
+
+Jonathan
+
+
+> ---
+>  drivers/iio/common/ssp_sensors/ssp_spi.c | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iio/common/ssp_sensors/ssp_spi.c b/drivers/iio/common/ssp_sensors/ssp_spi.c
+> index 4864c38b8d1c..387551eac184 100644
+> --- a/drivers/iio/common/ssp_sensors/ssp_spi.c
+> +++ b/drivers/iio/common/ssp_sensors/ssp_spi.c
+> @@ -273,6 +273,8 @@ static int ssp_parse_dataframe(struct ssp_data *data, char *dataframe, int len)
+>  	for (idx = 0; idx < len;) {
+>  		switch (dataframe[idx++]) {
+>  		case SSP_MSG2AP_INST_BYPASS_DATA:
+> +			if (idx >= len)
+> +				return -EPROTO;
+>  			sd = dataframe[idx++];
+>  			if (sd < 0 || sd >= SSP_SENSOR_MAX) {
+>  				dev_err(SSP_DEV,
+> @@ -282,10 +284,13 @@ static int ssp_parse_dataframe(struct ssp_data *data, char *dataframe, int len)
+>  
+>  			if (indio_devs[sd]) {
+>  				spd = iio_priv(indio_devs[sd]);
+> -				if (spd->process_data)
+> +				if (spd->process_data) {
+> +					if (idx >= len)
+> +						return -EPROTO;
+>  					spd->process_data(indio_devs[sd],
+>  							  &dataframe[idx],
+>  							  data->timestamp);
+> +				}
+>  			} else {
+>  				dev_err(SSP_DEV, "no client for frame\n");
+>  			}
+> @@ -293,6 +298,8 @@ static int ssp_parse_dataframe(struct ssp_data *data, char *dataframe, int len)
+>  			idx += ssp_offset_map[sd];
+>  			break;
+>  		case SSP_MSG2AP_INST_DEBUG_DATA:
+> +			if (idx >= len)
+> +				return -EPROTO;
+>  			sd = ssp_print_mcu_debug(dataframe, &idx, len);
+>  			if (sd) {
+>  				dev_err(SSP_DEV,
 
