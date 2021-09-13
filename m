@@ -2,100 +2,93 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92461C433FE
-	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Sep 2021 09:47:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F829C433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Sep 2021 10:55:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 63D0060F46
-	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Sep 2021 09:47:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A44961029
+	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Sep 2021 10:55:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238809AbhIMJsi (ORCPT
+        id S239428AbhIMK4Z (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 13 Sep 2021 05:48:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55420 "EHLO mail.kernel.org"
+        Mon, 13 Sep 2021 06:56:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52144 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S238757AbhIMJsg (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 13 Sep 2021 05:48:36 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id DC5576101B;
-        Mon, 13 Sep 2021 09:47:19 +0000 (UTC)
-Date:   Mon, 13 Sep 2021 11:47:17 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Namjae Jeon <linkinjeon@kernel.org>
-Cc:     Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Steve French <sfrench@samba.org>,
-        Hyunchul Lee <hyc.lee@gmail.com>, linux-cifs@vger.kernel.org,
+        id S239305AbhIMK4U (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 13 Sep 2021 06:56:20 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 0E90861004;
+        Mon, 13 Sep 2021 10:55:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1631530504;
+        bh=adzHkMe7QmqPw8mLlHRzTAcZPu5KFFN4TF0NE5fBBzI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=j8Ntwz91WlimLio4nImgaFi/iKuvbcXXcsfwl/+3mdXBR6WtISZlRBF9WYxKnj0PI
+         iqihBxsZWawgUnhmJp8KLd9knRR7kL3jJy06N8qwYplhfmPn+EbVqdJhCg3E8Ye58L
+         aTRTMIXtz6so53Of6/XP/YQdO1lAcn17qHE3GvS7MSzqb9L2wvrMdIZixEcUU+nmdF
+         MAM+tKWA644giBPOl2YJa+QTVyndPvljFoHMIlBNeswnlDF76gUz1XoFZGUVIMRSrH
+         Yyn8Z6VMncU42MfgtJ0tLf8j51eul68NtespESTVcRVltD3yrBIqHKCqmflY4KxxwK
+         K3AWl5v1bW4Gw==
+From:   Mark Brown <broonie@kernel.org>
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        linux-arm-kernel@lists.infradead.org,
+        Colin King <colin.king@canonical.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.com>,
+        linux-mediatek@lists.infradead.org
+Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] ksmbd: potential uninitialized error code in
- set_file_basic_info()
-Message-ID: <20210913094717.nt3dt53sdmdjvcpf@wittgenstein>
-References: <20210907073340.GC18254@kili>
- <YTccRzi/j+7t2eB9@google.com>
- <CAKYAXd9rQU-u6q2ptqfGjFAND_VCRY4GqyF6th_b0u8Q__ckJQ@mail.gmail.com>
+Subject: Re: [PATCH] ASoC: mediatek: mt8195: Fix unused initialization of pointer etdm_data
+Date:   Mon, 13 Sep 2021 11:53:24 +0100
+Message-Id: <163152996585.45703.6144242874194833843.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20210903114928.11743-1-colin.king@canonical.com>
+References: <20210903114928.11743-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAKYAXd9rQU-u6q2ptqfGjFAND_VCRY4GqyF6th_b0u8Q__ckJQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Sep 07, 2021 at 05:09:08PM +0900, Namjae Jeon wrote:
-> 2021-09-07 17:01 GMT+09:00, Sergey Senozhatsky <senozhatsky@chromium.org>:
-> > On (21/09/07 10:33), Dan Carpenter wrote:
-> >>
-> >> Smatch complains that there are some paths where "rc" is not set.
-> >>
-> >> Fixes: eb5784f0c6ef ("ksmbd: ensure error is surfaced in
-> >> set_file_basic_info()")
-> >> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> >> ---
-> >>  fs/ksmbd/smb2pdu.c | 2 +-
-> >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>
-> >> diff --git a/fs/ksmbd/smb2pdu.c b/fs/ksmbd/smb2pdu.c
-> >> index a350e1cef7f4..c86164dc70bb 100644
-> >> --- a/fs/ksmbd/smb2pdu.c
-> >> +++ b/fs/ksmbd/smb2pdu.c
-> >> @@ -5444,7 +5444,7 @@ static int set_file_basic_info(struct ksmbd_file
-> >> *fp, char *buf,
-> >>  	struct file *filp;
-> >>  	struct inode *inode;
-> >>  	struct user_namespace *user_ns;
-> >> -	int rc;
-> >> +	int rc = 0;
-> >>
-> >>  	if (!(fp->daccess & FILE_WRITE_ATTRIBUTES_LE))
-> >>  		return -EACCES;
-> >
-> > It sort of feels like that `rc' is not needed there at all. It's being used
-> > in
-> >
-> >                rc = ksmbd_vfs_set_dos_attrib_xattr(user_ns,
-> >                                                    filp->f_path.dentry,
-> > &da);
-> >                if (rc)
-> >                       ksmbd_debug(SMB,
-> >                                  "failed to restore file attribute in
-> > EA\n");
-> >
-> > and in
-> >
-> >                rc = setattr_prepare(user_ns, dentry, &attrs);
-> >                if (rc)
-> >                         return -EINVAL;
-> >
-> > Either it should be used more, and probably be a return value, or we can
-> > just remove it.
-> This patch is correct. But I have already fixed it.
-> You can understand it if you check #ksmbd-for-next branch, not master.
+On Fri, 3 Sep 2021 12:49:28 +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> https://git.samba.org/?p=ksmbd.git;a=shortlog;h=refs/heads/ksmbd-for-next
+> The pointer etdm_data is being inintialized with a value that is never
+> read, it is later being re-assigned a new value. Remove the redundant
+> initialization.
+> 
+> 
+> [...]
 
-Thanks for fixing it. I was out on vacation last week.
+Applied to
 
-Christian
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/1] ASoC: mediatek: mt8195: Fix unused initialization of pointer etdm_data
+      commit: d67bbdda25c4156da079312a3594a41770123abd
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
