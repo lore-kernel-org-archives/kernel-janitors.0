@@ -2,93 +2,103 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F829C433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Sep 2021 10:55:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A2A8C433F5
+	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Sep 2021 11:02:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7A44961029
-	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Sep 2021 10:55:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD2CC61051
+	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Sep 2021 11:02:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239428AbhIMK4Z (ORCPT
+        id S239387AbhIMLDQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 13 Sep 2021 06:56:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52144 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S239305AbhIMK4U (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 13 Sep 2021 06:56:20 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 0E90861004;
-        Mon, 13 Sep 2021 10:55:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631530504;
-        bh=adzHkMe7QmqPw8mLlHRzTAcZPu5KFFN4TF0NE5fBBzI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j8Ntwz91WlimLio4nImgaFi/iKuvbcXXcsfwl/+3mdXBR6WtISZlRBF9WYxKnj0PI
-         iqihBxsZWawgUnhmJp8KLd9knRR7kL3jJy06N8qwYplhfmPn+EbVqdJhCg3E8Ye58L
-         aTRTMIXtz6so53Of6/XP/YQdO1lAcn17qHE3GvS7MSzqb9L2wvrMdIZixEcUU+nmdF
-         MAM+tKWA644giBPOl2YJa+QTVyndPvljFoHMIlBNeswnlDF76gUz1XoFZGUVIMRSrH
-         Yyn8Z6VMncU42MfgtJ0tLf8j51eul68NtespESTVcRVltD3yrBIqHKCqmflY4KxxwK
-         K3AWl5v1bW4Gw==
-From:   Mark Brown <broonie@kernel.org>
-To:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        linux-arm-kernel@lists.infradead.org,
-        Colin King <colin.king@canonical.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.com>,
-        linux-mediatek@lists.infradead.org
-Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] ASoC: mediatek: mt8195: Fix unused initialization of pointer etdm_data
-Date:   Mon, 13 Sep 2021 11:53:24 +0100
-Message-Id: <163152996585.45703.6144242874194833843.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20210903114928.11743-1-colin.king@canonical.com>
-References: <20210903114928.11743-1-colin.king@canonical.com>
+        Mon, 13 Sep 2021 07:03:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54752 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239199AbhIMLDQ (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 13 Sep 2021 07:03:16 -0400
+X-Greylist: delayed 63 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 13 Sep 2021 04:02:00 PDT
+Received: from lb2-smtp-cloud7.xs4all.net (lb2-smtp-cloud7.xs4all.net [IPv6:2001:888:0:108::2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7580DC061574
+        for <kernel-janitors@vger.kernel.org>; Mon, 13 Sep 2021 04:02:00 -0700 (PDT)
+Received: from cust-b5b5937f ([IPv6:fc0c:c16d:66b8:757f:c639:739b:9d66:799d])
+        by smtp-cloud7.xs4all.net with ESMTPA
+        id PjhmmYP8EpQdWPjhnm2dc0; Mon, 13 Sep 2021 13:00:55 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s2;
+        t=1631530855; bh=cm4tx5E2BMsTJ0Uz8+lXiGq9cjmJ24vFtRs50dHXAxI=;
+        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
+         Subject;
+        b=qLjkwpaGG8Dyqcmi2ZZZsEBn64tHzuCTK3vVSpY44P8mpSN7AY7EzaVbtGML1eMcJ
+         j00YGk2wAWPyEonPYY94TOcDEOpya8O4jSXpPFsPm0wULyhu/SjXS3jl+3K5uLfvnq
+         oqHMYHYIF7g0cuox4r1aIoxY1dG4lWz07HzP0R91Hs1ZQSftrOxRMuvuvcB8MtbiRk
+         wrHXXOoto5XPj+N795ObgAjH9hJeclZDlHfoGoMS6rQvDlQCgWWoJZY02zYIl8gdAu
+         XL0O5X4ok9otMWoieYykBa/nHPsSoLPKffX838/fGLQ8k18iwScLrqSCjvbGtWjvYb
+         ygGkUUnKpyQJQ==
+Subject: Re: NAK: [PATCH][next] media: pvrusb2: add newline between two
+ statements
+To:     Colin Ian King <colin.king@canonical.com>,
+        Mike Isely <isely@pobox.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210902220112.55824-1-colin.king@canonical.com>
+ <52c324ad-2467-9edc-c386-bc5a086cecbc@canonical.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <82d125bd-9d16-803d-754b-48aa79fde06c@xs4all.nl>
+Date:   Mon, 13 Sep 2021 13:00:54 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <52c324ad-2467-9edc-c386-bc5a086cecbc@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4xfBeyTGiasCGZOBOFh6cvtajmiKhRwxPqolSr9CzM0/PjMgMxmpoUM8fOyt9kwNb6N+e9+eigom8z+HBX3CLrt9r4LCccjw1nufd7Er92cNlRaiB6hzOh
+ pXD/MyPDAKRg7jwEoGdQJ0Ff9+1kK5yHRMJH9Qh8zlLrudY6a25nbSnqbmaSp+BgDSuhrvna5gCvJ4sN0E7J0Yi8mXDxLdeJF8FL4LTaAaNpNoE2a1LiVNxA
+ qcNpplKTbLMaAOJqTrMV172xOx+ZuyieC7CQ+BMzVp1rVKklUwOnlZgFDglh8bXCacMwJwZwvfkMl7XPC+M5VRzD868NyqVviL5yR0Fj9TC7iFuvA2XmNykc
+ ILseXcHiSvb/BmwydQOed/tbg7coLEvO5f4wHdHBE/hYELvc3ZQHOGsqe2VaORhTcoT+mfyxgBdabnHxcubY3JGNqdYuUYCQyD92MAfYCFDXiIR7M88NedOQ
+ /QGR8IpUTQvAva4D
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 3 Sep 2021 12:49:28 +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On 03/09/2021 00:02, Colin Ian King wrote:
+> On 02/09/2021 23:01, Colin King wrote:
+>> From: Colin Ian King <colin.king@canonical.com>
+>>
+>> There are two statements on the same line, add a newline to clean
+>> this up.
+>>
+>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>> ---
+>>  drivers/media/usb/pvrusb2/pvrusb2-hdw.c | 3 ++-
+>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/media/usb/pvrusb2/pvrusb2-hdw.c b/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
+>> index d38dee1792e4..ca00b7fe1e7f 100644
+>> --- a/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
+>> +++ b/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
+>> @@ -1727,7 +1727,8 @@ int pvr2_hdw_set_streaming(struct pvr2_hdw *hdw,int enable_flag)
+>>  				   enable_flag ? "enable" : "disable");
+>>  		}
+>>  		pvr2_hdw_state_sched(hdw);
+>> -	} while (0); LOCK_GIVE(hdw->big_lock);
+>> +	} while (0);
+>> +	LOCK_GIVE(hdw->big_lock);
+>>  	if ((ret = pvr2_hdw_wait(hdw,0)) < 0) return ret;
+>>  	if (enable_flag) {
+>>  		while ((st = hdw->master_state) != PVR2_STATE_RUN) {
+>>
 > 
-> The pointer etdm_data is being inintialized with a value that is never
-> read, it is later being re-assigned a new value. Remove the redundant
-> initialization.
-> 
-> 
-> [...]
+> ignore, V2 being sent in a moment.
 
-Applied to
+I haven't seen a V2 yet... In any case, I've rejected this patch in patchwork.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+Regards,
 
-Thanks!
-
-[1/1] ASoC: mediatek: mt8195: Fix unused initialization of pointer etdm_data
-      commit: d67bbdda25c4156da079312a3594a41770123abd
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+	Hans
