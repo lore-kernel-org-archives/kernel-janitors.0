@@ -5,45 +5,44 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60AE7C433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed, 15 Sep 2021 11:14:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0F07C433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed, 15 Sep 2021 11:19:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 30A2F6126A
-	for <kernel-janitors@archiver.kernel.org>; Wed, 15 Sep 2021 11:14:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8034660EFF
+	for <kernel-janitors@archiver.kernel.org>; Wed, 15 Sep 2021 11:19:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237506AbhIOLQB (ORCPT
+        id S232746AbhIOLVM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 15 Sep 2021 07:16:01 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:43616
-        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232540AbhIOLQA (ORCPT
+        Wed, 15 Sep 2021 07:21:12 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:54650
+        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232699AbhIOLVM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 15 Sep 2021 07:16:00 -0400
+        Wed, 15 Sep 2021 07:21:12 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 7BFE94017C;
-        Wed, 15 Sep 2021 11:14:40 +0000 (UTC)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 0F8483F245;
+        Wed, 15 Sep 2021 11:19:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1631704480;
-        bh=Fp6H35IjoT3mECXHByd6yKzh01Y2sDKWM5xmkRDANwQ=;
+        s=20210705; t=1631704792;
+        bh=WVCnoP1McqLMZ2VjfLfuYtx94nrxfK/vPmHsWXhCKjg=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=gI98WkmyoQBxWNNT/QyrodHm9Um6RctiaN1H8Xfm7AUIrnB00hIxMCZ0zqg9eTxqT
-         bLkoABCLAQE4b7WUyB2VYfi5qjQxXRRqxcpEVVsN6Z7tQjIqJS1h1Z29C1aPSrrve7
-         sEWGIs9nVeZ8RK2ao1WHVegeTFvHtSejQtYXVobrrnGGl1gZ+0MMeyyy124O0IVvFa
-         G1iH50Xd8/BL0JC80oiQRKfHNT0NgUzLseVgE+Du44YtbZwo0a41s9wJYu5PQwpFbN
-         9bMlnTBWUfpbzvWaT7+PyNKuuhbYMXyK6SDWr136w/FNnCjIdGn/yrYgnJ7/xWMmkT
-         aI2avB8G6nJjQ==
+        b=C6IAgxupSeHodhJuUrda+Quo8wDS56uxJLCwwNvI5D1UOWVlTWOB/BLXhyu3FD58D
+         3cjIOi3qwV1/dycmxoNQ/24ipUDKxs3glkXjerlSGzGPa7JRWajQ9qSw24u3tP3zpZ
+         Gkr/SQRfWGzFBfYfayvkXfpcNnXt7+8HvUelSNtG5FsqhPRnA4bvXgyrr/WfqPEuHx
+         zE5jX17yedgNqPfxwQG1v7JjKdjrD/quDAuOWQN5JqlrcMPDsQ8n/cWUWS70gVtG8y
+         XUzZc76EbUqpGoUAem7+cOSGTKoKee1CxN19ePYZMo3y9901YQPessJL3TbiN0N57L
+         kPg/0ydduttBg==
 From:   Colin King <colin.king@canonical.com>
-To:     Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com
+To:     Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] dm-clone: make array descs static
-Date:   Wed, 15 Sep 2021 12:14:40 +0100
-Message-Id: <20210915111440.12011-1-colin.king@canonical.com>
+Subject: [PATCH] dmaengine: sh: make array descs static
+Date:   Wed, 15 Sep 2021 12:19:51 +0100
+Message-Id: <20210915111951.12326-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -54,38 +53,37 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Don't populate the read-only array descs on the stack but instead it
-static and add extra const. Also makes the object code smaller by 66
-bytes:
+Don't populate the read-only array ds_lut on the stack but instead it
+static. Also makes the object code smaller by 163 bytes:
 
 Before:
    text    data     bss     dec     hex filename
-  42382   11140     512   54034    d312 ./drivers/md/dm-clone-target.o
+  23508    4796       0   28304    6e90 ./drivers/dma/sh/rz-dmac.o
 
 After:
    text    data     bss     dec     hex filename
-  42220   11236     512   53968    d2d0 ./drivers/md/dm-clone-target.o
+  23281    4860       0   28141    6ded ./drivers/dma/sh/rz-dmac.o
 
 (gcc version 11.2.0)
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/md/dm-clone-target.c | 2 +-
+ drivers/dma/sh/rz-dmac.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/md/dm-clone-target.c b/drivers/md/dm-clone-target.c
-index 84dbe08ad205..29f74b2a5cd2 100644
---- a/drivers/md/dm-clone-target.c
-+++ b/drivers/md/dm-clone-target.c
-@@ -161,7 +161,7 @@ static const char *clone_device_name(struct clone *clone)
- 
- static void __set_clone_mode(struct clone *clone, enum clone_metadata_mode new_mode)
+diff --git a/drivers/dma/sh/rz-dmac.c b/drivers/dma/sh/rz-dmac.c
+index f9f30cbeccbe..005f1a3ff634 100644
+--- a/drivers/dma/sh/rz-dmac.c
++++ b/drivers/dma/sh/rz-dmac.c
+@@ -573,7 +573,7 @@ static void rz_dmac_issue_pending(struct dma_chan *chan)
+ static u8 rz_dmac_ds_to_val_mapping(enum dma_slave_buswidth ds)
  {
--	const char *descs[] = {
-+	static const char * const descs[] = {
- 		"read-write",
- 		"read-only",
- 		"fail"
+ 	u8 i;
+-	const enum dma_slave_buswidth ds_lut[] = {
++	static const enum dma_slave_buswidth ds_lut[] = {
+ 		DMA_SLAVE_BUSWIDTH_1_BYTE,
+ 		DMA_SLAVE_BUSWIDTH_2_BYTES,
+ 		DMA_SLAVE_BUSWIDTH_4_BYTES,
 -- 
 2.32.0
 
