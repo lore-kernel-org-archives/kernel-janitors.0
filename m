@@ -2,94 +2,81 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6966DC433F5
-	for <kernel-janitors@archiver.kernel.org>; Wed, 15 Sep 2021 11:56:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A75FC433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed, 15 Sep 2021 14:28:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4A4F96127C
-	for <kernel-janitors@archiver.kernel.org>; Wed, 15 Sep 2021 11:56:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 34DBC61185
+	for <kernel-janitors@archiver.kernel.org>; Wed, 15 Sep 2021 14:28:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232927AbhIOL5V (ORCPT
+        id S237369AbhIOO3o (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 15 Sep 2021 07:57:21 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:57538
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232824AbhIOL5U (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 15 Sep 2021 07:57:20 -0400
-Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id B922B3F0FD;
-        Wed, 15 Sep 2021 11:56:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1631706960;
-        bh=T3Sy3dbkoW1c6lX4amXfpg9ipcXLCPsjdqsntxzJicU=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=fHLld2aUFMEMnKu7+I0xQkjb6+KKpW7tF7cDixgJujhwrUFIh1Ll46N2E9x2PztK0
-         6DOxRgrLeAsK8qTCygcnwz2ZXP52iAozDHt7ogfD77PM1Zyx0WI//txdzV0f2j2EhF
-         DasdZ99KP+Le5dBZYS1Ox/iGuFwsV+1xbTIEf7JDl2X4KqO+2lpSjQSFwsSPOEx7fw
-         lmkJnjZSYH8z3CJbKAOoMjo4TTB63PRRmdOxXcxK0udEolZcyMEayfhv2uNzF41eQo
-         dHj05BK0GG6Yw8kE7KPDr+FD8btMf3hzvpPeP+iirh3GL2QQ4ELvIxonOEdVqgqnpz
-         3Ca+BNF93sj7w==
-From:   Colin King <colin.king@canonical.com>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] media: mb86a20s: make arrays static const
-Date:   Wed, 15 Sep 2021 12:56:00 +0100
-Message-Id: <20210915115600.14553-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.32.0
+        Wed, 15 Sep 2021 10:29:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38048 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233745AbhIOO3n (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 15 Sep 2021 10:29:43 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 84E77600D4;
+        Wed, 15 Sep 2021 14:28:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1631716104;
+        bh=kfJU4DmlyzawdZyI9Kq1CSsGWjWckx9XpdmWINhLsw4=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=rS1hUC466pf4VPtpvb40ZWgqie8XarWbFM9gvM3mN+pbJ6hY2DWNMDSX5+5ku37Ir
+         5r6FzxpqniNh6aoAJMMbbeGsPfKivBiP/4RxI/ec/CgJ4xANchPVw0nmm10hl9I8Zn
+         CfJotfCkiPGIwXAJfnZt3nSi5GFKFeNfwNjdrguia/03xuJ4KaNb13W5ozF6Yd45Qy
+         o+p0vlUWH+3o4w1cHf7a0flG4iCnvS3hqtu8SZFW+a8Se/KD7L+XtKnUlF9zzmf1ir
+         Wla4DnciviQb3Bo3GA/WwO5LJS5a31PAllcRCeLcN/eCHS1Cw+loZjrEqajY8rcDp3
+         BJCnIJlSjSl7A==
+Date:   Wed, 15 Sep 2021 16:28:21 +0200 (CEST)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+cc:     nehal-bakulchandra.shah@amd.com, basavaraj.natikar@amd.com,
+        benjamin.tissoires@redhat.com, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] HID: amd_sfh: switch from 'pci_' to 'dma_' API
+In-Reply-To: <439924a3414563a6ccc26eddb75efba6f54521c4.1629663605.git.christophe.jaillet@wanadoo.fr>
+Message-ID: <nycvar.YFH.7.76.2109151628040.15944@cbobk.fhfr.pm>
+References: <439924a3414563a6ccc26eddb75efba6f54521c4.1629663605.git.christophe.jaillet@wanadoo.fr>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Sun, 22 Aug 2021, Christophe JAILLET wrote:
 
-Don't populate the read-only arrays on the stack but instead them
-static const. Also makes the object code smaller by 154 bytes:
+> The wrappers in include/linux/pci-dma-compat.h should go away.
+> 
+> The patch has been generated with the coccinelle script below.
+> 
+> It has been compile tested.
+[ ... snip ... ]
+> diff --git a/drivers/hid/amd-sfh-hid/amd_sfh_pcie.c b/drivers/hid/amd-sfh-hid/amd_sfh_pcie.c
+> index 8d68796aa905..fa313c75a8a0 100644
+> --- a/drivers/hid/amd-sfh-hid/amd_sfh_pcie.c
+> +++ b/drivers/hid/amd-sfh-hid/amd_sfh_pcie.c
+> @@ -229,9 +229,9 @@ static int amd_mp2_pci_probe(struct pci_dev *pdev, const struct pci_device_id *i
+>  
+>  	privdata->mmio = pcim_iomap_table(pdev)[2];
+>  	pci_set_master(pdev);
+> -	rc = pci_set_dma_mask(pdev, DMA_BIT_MASK(64));
+> +	rc = dma_set_mask(&pdev->dev, DMA_BIT_MASK(64));
+>  	if (rc) {
+> -		rc = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
+> +		rc = dma_set_mask(&pdev->dev, DMA_BIT_MASK(32));
+>  		return rc;
+>  	}
+>  
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
-  42949	  22424	      0	  65373	   ff5d	media/dvb-frontends/mb86a20s.o
+Applied, thanks.
 
-After:
-   text	   data	    bss	    dec	    hex	filename
-  42731	  22488	      0	  65219	   fec3	media/dvb-frontends/mb86a20s.o
-
-(gcc version 11.2.0)
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/media/dvb-frontends/mb86a20s.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/media/dvb-frontends/mb86a20s.c b/drivers/media/dvb-frontends/mb86a20s.c
-index a7faf0cf8788..b74b9afed9a2 100644
---- a/drivers/media/dvb-frontends/mb86a20s.c
-+++ b/drivers/media/dvb-frontends/mb86a20s.c
-@@ -444,11 +444,11 @@ static int mb86a20s_get_interleaving(struct mb86a20s_state *state,
- 				     unsigned layer)
- {
- 	int rc;
--	int interleaving[] = {
-+	static const int interleaving[] = {
- 		0, 1, 2, 4, 8
- 	};
- 
--	static unsigned char reg[] = {
-+	static const unsigned char reg[] = {
- 		[0] = 0x88,	/* Layer A */
- 		[1] = 0x8c,	/* Layer B */
- 		[2] = 0x90,	/* Layer C */
 -- 
-2.32.0
+Jiri Kosina
+SUSE Labs
 
