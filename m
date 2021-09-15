@@ -2,81 +2,122 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A75FC433F5
-	for <kernel-janitors@archiver.kernel.org>; Wed, 15 Sep 2021 14:28:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 595C3C433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed, 15 Sep 2021 15:18:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 34DBC61185
-	for <kernel-janitors@archiver.kernel.org>; Wed, 15 Sep 2021 14:28:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2558260F6D
+	for <kernel-janitors@archiver.kernel.org>; Wed, 15 Sep 2021 15:18:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237369AbhIOO3o (ORCPT
+        id S234215AbhIOPTl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 15 Sep 2021 10:29:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38048 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233745AbhIOO3n (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 15 Sep 2021 10:29:43 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 84E77600D4;
-        Wed, 15 Sep 2021 14:28:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631716104;
-        bh=kfJU4DmlyzawdZyI9Kq1CSsGWjWckx9XpdmWINhLsw4=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=rS1hUC466pf4VPtpvb40ZWgqie8XarWbFM9gvM3mN+pbJ6hY2DWNMDSX5+5ku37Ir
-         5r6FzxpqniNh6aoAJMMbbeGsPfKivBiP/4RxI/ec/CgJ4xANchPVw0nmm10hl9I8Zn
-         CfJotfCkiPGIwXAJfnZt3nSi5GFKFeNfwNjdrguia/03xuJ4KaNb13W5ozF6Yd45Qy
-         o+p0vlUWH+3o4w1cHf7a0flG4iCnvS3hqtu8SZFW+a8Se/KD7L+XtKnUlF9zzmf1ir
-         Wla4DnciviQb3Bo3GA/WwO5LJS5a31PAllcRCeLcN/eCHS1Cw+loZjrEqajY8rcDp3
-         BJCnIJlSjSl7A==
-Date:   Wed, 15 Sep 2021 16:28:21 +0200 (CEST)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-cc:     nehal-bakulchandra.shah@amd.com, basavaraj.natikar@amd.com,
-        benjamin.tissoires@redhat.com, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] HID: amd_sfh: switch from 'pci_' to 'dma_' API
-In-Reply-To: <439924a3414563a6ccc26eddb75efba6f54521c4.1629663605.git.christophe.jaillet@wanadoo.fr>
-Message-ID: <nycvar.YFH.7.76.2109151628040.15944@cbobk.fhfr.pm>
-References: <439924a3414563a6ccc26eddb75efba6f54521c4.1629663605.git.christophe.jaillet@wanadoo.fr>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        Wed, 15 Sep 2021 11:19:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42916 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234082AbhIOPTl (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 15 Sep 2021 11:19:41 -0400
+Received: from mail-oi1-x230.google.com (mail-oi1-x230.google.com [IPv6:2607:f8b0:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 108E4C061574;
+        Wed, 15 Sep 2021 08:18:22 -0700 (PDT)
+Received: by mail-oi1-x230.google.com with SMTP id w19so4600632oik.10;
+        Wed, 15 Sep 2021 08:18:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=s47povPHC17mzUM43hPaNuCVlnjcb1YymD4IzB2Fw7Q=;
+        b=H5F4SycB3G6lDTgS54F9rM3ChhQpYgNJ6rzJ/MlpVYRsFh4NNy5t+vxycNUk4J0bpq
+         uBSSBADO+WczlshwtZ9iWPmfOFEaesG+uiSGFNXgrt7if6pt3y+UW4z0HmSkjepr/+f7
+         Kth7/1V45EdcFF3f2QSrCBiiCjKYWskPav4ZPn0L2mmZkrO285uPXregr24jHwNOQuB9
+         kSnBN0ykE54FkubHzqkmKCFgqkW7zIDKKyjTmqs07MQ+uLzfKs35ta6efet5njFOOm2Z
+         kcpnBzuHIZQSNGenejWwO4/lSwy2G2Bp7z5SWsNUMdsCNGlBb732df9SwZWKKh+VyQ43
+         mxBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=s47povPHC17mzUM43hPaNuCVlnjcb1YymD4IzB2Fw7Q=;
+        b=6rUbMaeOZP52ly5tW1xr89yajO57HGwuGQ9xqD3Fr39bRkgZoQ+YJMCRZD45y0l2yG
+         44tKJWKsybG8nfnEgcFLPYIJ42Uwy6OajnOnJkQa+4hAYZ0brH0CD16dPRdkb4D5W7iO
+         XiAmiIs/YG60wu5VjTFvsE8Xr120U40aCEXB88Rm0Sg+KeYeAW3q6s3PboaW+MOjkdLn
+         qsNT6eAhWb28z4Zgd8QlwZMfXC7HwxRJFYiYqVDtzXwP9nskRqFIKKp4gT1PCCDxWXdy
+         IGc9TMutR0qUjrrN5Oe0tB6l01LXpJ3y06FIMyebhd3cxppGxBMrobdWzU0OPHZ1WZs1
+         x0pw==
+X-Gm-Message-State: AOAM533kK0agiEBScz4xxgyMa98VmSYbJ/ZLrzkydPFxJcrpdbi82Eh3
+        nBC9BEVisfDHGPub9kDv97OM5swzSxCGnwjSKB8=
+X-Google-Smtp-Source: ABdhPJxN8y+U7oRECmZ+npqb9JFoI4RVReJOjBfUtqj5GftKFCmqUXmsC34nY5tds3nkg43tIAEhcR6O12emBYoBCQs=
+X-Received: by 2002:aca:706:: with SMTP id 6mr5449830oih.5.1631719101439; Wed,
+ 15 Sep 2021 08:18:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20210915113611.13620-1-colin.king@canonical.com>
+In-Reply-To: <20210915113611.13620-1-colin.king@canonical.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Wed, 15 Sep 2021 11:18:10 -0400
+Message-ID: <CADnq5_NW11tad5-jVEEL4CDUcOm==2zsUMN+v594fKdSg5JErQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/radeon: make array encoded_lanes static
+To:     Colin King <colin.king@canonical.com>
+Cc:     Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        xinhui pan <Xinhui.Pan@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>, kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, 22 Aug 2021, Christophe JAILLET wrote:
+On Wed, Sep 15, 2021 at 7:36 AM Colin King <colin.king@canonical.com> wrote:
+>
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> Don't populate the read-only array encoded_lanes on the stack but instead it
+> static. Also makes the object code smaller by 97 bytes:
+>
+> Before:
+>    text    data    bss     dec    hex filename
+>   38899    8064      0   46963   b773 ./drivers/gpu/drm/radeon/r600_dpm.o
+>
+> After:
+>    text    data    bss     dec    hex filename
+>   38738    8128      0   46866   b712 ./drivers/gpu/drm/radeon/r600_dpm.o
+>
+> (gcc version 11.2.0)
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-> The wrappers in include/linux/pci-dma-compat.h should go away.
-> 
-> The patch has been generated with the coccinelle script below.
-> 
-> It has been compile tested.
-[ ... snip ... ]
-> diff --git a/drivers/hid/amd-sfh-hid/amd_sfh_pcie.c b/drivers/hid/amd-sfh-hid/amd_sfh_pcie.c
-> index 8d68796aa905..fa313c75a8a0 100644
-> --- a/drivers/hid/amd-sfh-hid/amd_sfh_pcie.c
-> +++ b/drivers/hid/amd-sfh-hid/amd_sfh_pcie.c
-> @@ -229,9 +229,9 @@ static int amd_mp2_pci_probe(struct pci_dev *pdev, const struct pci_device_id *i
->  
->  	privdata->mmio = pcim_iomap_table(pdev)[2];
->  	pci_set_master(pdev);
-> -	rc = pci_set_dma_mask(pdev, DMA_BIT_MASK(64));
-> +	rc = dma_set_mask(&pdev->dev, DMA_BIT_MASK(64));
->  	if (rc) {
-> -		rc = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
-> +		rc = dma_set_mask(&pdev->dev, DMA_BIT_MASK(32));
->  		return rc;
->  	}
->  
+Applied.  Thanks!
 
-Applied, thanks.
+Alex
 
--- 
-Jiri Kosina
-SUSE Labs
-
+> ---
+>  drivers/gpu/drm/radeon/r600_dpm.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/radeon/r600_dpm.c b/drivers/gpu/drm/radeon/r600_dpm.c
+> index fd4226b99862..9d2bcb9551e6 100644
+> --- a/drivers/gpu/drm/radeon/r600_dpm.c
+> +++ b/drivers/gpu/drm/radeon/r600_dpm.c
+> @@ -1361,7 +1361,9 @@ u16 r600_get_pcie_lane_support(struct radeon_device *rdev,
+>
+>  u8 r600_encode_pci_lane_width(u32 lanes)
+>  {
+> -       u8 encoded_lanes[] = { 0, 1, 2, 0, 3, 0, 0, 0, 4, 0, 0, 0, 5, 0, 0, 0, 6 };
+> +       static const u8 encoded_lanes[] = {
+> +               0, 1, 2, 0, 3, 0, 0, 0, 4, 0, 0, 0, 5, 0, 0, 0, 6
+> +       };
+>
+>         if (lanes > 16)
+>                 return 0;
+> --
+> 2.32.0
+>
