@@ -5,248 +5,193 @@ X-Spam-Level:
 X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50447C433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 16 Sep 2021 13:31:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6073FC433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 16 Sep 2021 13:55:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 360B96120F
-	for <kernel-janitors@archiver.kernel.org>; Thu, 16 Sep 2021 13:31:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A07761244
+	for <kernel-janitors@archiver.kernel.org>; Thu, 16 Sep 2021 13:55:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240027AbhIPNc5 (ORCPT
+        id S237935AbhIPN4q (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 16 Sep 2021 09:32:57 -0400
-Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:42536 "EHLO
+        Thu, 16 Sep 2021 09:56:46 -0400
+Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:64640 "EHLO
         mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239621AbhIPNc5 (ORCPT
+        by vger.kernel.org with ESMTP id S237820AbhIPN4o (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 16 Sep 2021 09:32:57 -0400
+        Thu, 16 Sep 2021 09:56:44 -0400
 Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 18GDCrsc030302;
-        Thu, 16 Sep 2021 13:29:33 GMT
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 18GDhssU031045;
+        Thu, 16 Sep 2021 13:54:29 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
  : subject : message-id : content-type : mime-version; s=corp-2021-07-09;
- bh=WYBU4bsVufnTKrXlKG+jGVBT3Tc0lXO5xMob4CsUuIU=;
- b=NCQ14vacZfxAlmMF/azn/GFm5Yg96wgdvlohM53BzJkxYvSBhcouvAhpTGXFd+3guhYY
- DX0/OGSdJIadQtr8bIA90dCsOR/RRCkKNB68iyGuKmx5Gx5jh+MQju1TafO2fVvz7xQG
- PWWDEDwSIsCQS8hHmNvKX/d2U1ts8MNzBR+EVm/h5vJ68RofeX9BRiXJ4XnOMJT8p+lY
- Mti/u//oo5bN4ZFHlm9bNhD/x3odhJy7QQeDy4CJU/8tdDTWJ/BnkrjkYrEOZPNtswga
- XBnuuj7zoHu+p/A5zJOQZytNF9K8HQdPxOg6BceGR3UCcDt/tT7CF8hua8ybVTd5eXPH 0w== 
+ bh=pZXGNZ3mOtEcJxo05PY8o4KapNueSfCsIvH2QwFbtQA=;
+ b=FQ0vL11KZwZOxKEmXnEJu3pL64SiR0X4aprAKZWos58x/t0lZDovdr2GEdNfcYyD7CtN
+ rah0GGXz9VQ6LtUQvunltDXNTn9siekm1HxOQ2iUFss1r+eBzmnZB2n9in3z7DaPDTy3
+ oiolex85nrpE+vwh00mjtrY3V2zo4bXXEGKqlM/jNSgsibmIVbrL3DomCeZR+6Up4vUl
+ kpcw7pMFiagQrwuQRGNx7TjCLaek91tQpXuQ4JDT2iEJSIpT5tMeauYmFaeb3VmWkS/z
+ Dmj+ikUu9a7SA79vGtn4heSFVY0tS35e1mH6IW6wsQ3FK8l/T9PDEWLN8d5u7Au/PAvs WA== 
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
  : subject : message-id : content-type : mime-version; s=corp-2020-01-29;
- bh=WYBU4bsVufnTKrXlKG+jGVBT3Tc0lXO5xMob4CsUuIU=;
- b=T9+jjgwp4KvEIU6d6y7TI/UYRrIuZolsnS8npR2dxJOYPqyCOwzPIdG3JUA7DTVa2OJ2
- A3tOG+4z/YqjuhagVlq4vA+gki72eJnrkMD5hX9y2X2E4CZTjhPIwX6H8/IJeSB8DADA
- +Pf8dhs73cUtuLt+SpWOmn1/WUqUzrALQXTEp896p0VVNeL98FieKHOp2UXKbtLKffCn
- J6TX9qSwG1Dm1xis/VO1LAx1a491NeoXYMQb8HjiSxLLmnCrP3/HnHCx/FsiIH3S7AeH
- UDM0uChMB6tBLSEFQDu4GxTeaKdTOaJz0XTn2UjnlIAVoTrmyNwS/xwu91ZHNc1H6lyT mA== 
+ bh=pZXGNZ3mOtEcJxo05PY8o4KapNueSfCsIvH2QwFbtQA=;
+ b=fR/8RLD2IY8fSObsNplGgtQGDmI0fWjSubO+yIYcZVLhXA63SeUA+Zsvi603DJs9W9eo
+ rhfiUeS7Wmsl0OFK8YLlGwxW3wtp0Bqd3zmO0autSTLRFsl04w5CVCTWX5Brs5EdEA9b
+ tyEY4W2rdMyWtj0l4jfGgaNQam9FnIef0fdg/tuPEMGRv2xBsGzv53dUDzFs/ahOlmlI
+ HoJGjuBpeSHtsejVQXieTThcBw0agxN/R2w/zwyGRpNpl57IiN7DcjD6DnC5kLFG7AdU
+ 5N3zr4PR2tdc+ht17Kl/A/BK8EcmhH5YlXSydF0ViCC2yFJHWQ9MDIXJPTkLIv7rIIGy 6A== 
 Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by mx0b-00069f02.pphosted.com with ESMTP id 3b3tnht3tq-1
+        by mx0b-00069f02.pphosted.com with ESMTP id 3b3tnht7ng-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 16 Sep 2021 13:29:32 +0000
+        Thu, 16 Sep 2021 13:54:28 +0000
 Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 18GDQmeY144712;
-        Thu, 16 Sep 2021 13:29:32 GMT
-Received: from nam04-bn8-obe.outbound.protection.outlook.com (mail-bn8nam08lp2047.outbound.protection.outlook.com [104.47.74.47])
-        by aserp3020.oracle.com with ESMTP id 3b0m99be3v-1
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 18GDogJn035123;
+        Thu, 16 Sep 2021 13:54:28 GMT
+Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2109.outbound.protection.outlook.com [104.47.70.109])
+        by aserp3020.oracle.com with ESMTP id 3b0m99cdbx-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 16 Sep 2021 13:29:31 +0000
+        Thu, 16 Sep 2021 13:54:28 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=LdFCR+T4rxtnHJinmAPbBmfok90J7Ej61qgR1p4mKDYZ4bkm8GHJbMSe0Z55zduabtBsForT12gz42o/t2Cvn8H54qNwgEnsVqqvaQ7iMtzdnz3lwMKxrtLRu7ODdM2TqON2QFlY1jeqmSegMjJ/NAh17hxAUeSbvaFe5qf0isGg24ToMyIxtJ1IRIln4+XgJOHWW0FX+1AC0g2rMu0q79+yp6EdCWcDCS+GRVhmSzO6NAqdR6YZFprDFppohwkwUmh9aSEuLybi8m5dhrjWHH8eL62yrdzC5kE1iKxtK7PCDWHpNmnBnLm/6FcfCCsmf17Pj0W/hDdq1ARaE1GNfg==
+ b=MP3PHk/QO6hSHsOZfxxDDzvwdSAn2niC+LhRhvCAXoAotgkTF6wXy1rGNcJSS5qzL0b4L7IFRUgmexRwdTsgOMrNN1/+b4dCrdVuleFyEPtkayhvbTGQfSLJJrmPg9vgMZqWMSGn6iy+a8LX6NJnRhmj5NkjEq8cQirgJD0H+GIHByq5oHk/Z/kgEZWBT0F+ah9sYj8b+fAgNpbtrTXT4RmWfcCecQXs7FVCOnZpglg5DgcG4KAC4Ck2W0yls8T1aCnQghS9B0ISr/SLQtO1TFPwN9y6Xn8OmnLlV3N3eZmy0X0ITXEFpxWr+qaSmkR6wbaSOLdpQ6IXaZgGpCj+XQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901; h=From:Date:Subject:Message-ID:Content-Type:MIME-Version;
- bh=WYBU4bsVufnTKrXlKG+jGVBT3Tc0lXO5xMob4CsUuIU=;
- b=aY7SuY7D5wwws/OFprHWncVnQbxkIo0uHRqavhe9kaAPtgFFygcZMEnsnfFbQZtEzM9mcAPVMBWaFuZSyGEj0i2Kc22gbYUlBQVbTrbnsqQZzthEwHueDcxipq95yhbvWEBAGvfsclENmX/0pCUQet0IHd3b0x4uz+5xTe0XJyBLgXc6r9ARlelHshH+WByszYQR03XbuJ07BY50Y+uajXaXddZwu6AOv2GofGg1dw/osouRNPetR4QggTkYI057uoojVXl9ichuLWU5GwsRR/wz1IqtmR4PNipRV07nHNV4sjAwk36+UwHC5o4e26FYC814MUdJIvM8duHkjuQ5ZA==
+ bh=pZXGNZ3mOtEcJxo05PY8o4KapNueSfCsIvH2QwFbtQA=;
+ b=b8vFXkRJ4Fog7hqejyFEmgfhS59snWr/+t71U7ILNgM6EgIC19gIMSiYfTFkw7vJzJ/qiiZIXauOCbOKMfiUaM/rjlU0/2XylOwXYMFMHYKe6wjwJYBylIQYkL+UOYpIQTfwVMX0r1ELz6GXNmZiqaKXlDwHstTLMhA867XWkVPGuMvwhtIBaZuagq5LOhGuvxCOhavuhrULO54hnm/Ip3YLPYgUesRxu2zbmH31Gn+uiVIPZDUhHEGu4XEGUC4761yVLqQweYUyi0r+fLZGxdj7WMYx1X9brzVlmbgrzSqNaU3sfpK+M2Lc50FvX8B+zkp/GYPTKpbkb4wiMfSGjQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
  dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WYBU4bsVufnTKrXlKG+jGVBT3Tc0lXO5xMob4CsUuIU=;
- b=cQKxbPnZJIawuH5ALDj1x91qEudfUkw8gV+TIad9cUUWoQOaD/Btj3azVvlyHnXo+Pl6GdHg0ArnWz5+VeHsGUIOxEwi4udIXWBkYXae1V4Klnpd5HDNiNScm07khDJeIK3yZ4AYqARGaNdcwtGPkb7+n5HaOBlzFY+dGXCiKXc=
-Authentication-Results: oracle.com; dkim=none (message not signed)
- header.d=none;oracle.com; dmarc=none action=none header.from=oracle.com;
-Received: from MWHPR1001MB2365.namprd10.prod.outlook.com (10.174.166.156) by
- MWHPR10MB1773.namprd10.prod.outlook.com (10.172.52.16) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.4523.14; Thu, 16 Sep 2021 13:29:29 +0000
+ bh=pZXGNZ3mOtEcJxo05PY8o4KapNueSfCsIvH2QwFbtQA=;
+ b=h+BUFfsc7Wmi3kBiznnXshx/Nv1L13CPe8GdO4Ynjb0QUIR5RegHf2n6YM3L0+QlOd6KMpd8+9GKSD0dOgmcJxUV2xXPNK7CrfM3eRUNRraKdjclhcssWJI+Wmanf5TuNuoazgSvwC4woVsGydS8vdiFBdxiFwoclt1F+MJmo6U=
+Authentication-Results: marvell.com; dkim=none (message not signed)
+ header.d=none;marvell.com; dmarc=none action=none header.from=oracle.com;
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ (2603:10b6:301:2d::28) by CO1PR10MB4642.namprd10.prod.outlook.com
+ (2603:10b6:303:6f::5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4523.14; Thu, 16 Sep
+ 2021 13:54:26 +0000
 Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
  ([fe80::d409:11b5:5eb2:6be9]) by MWHPR1001MB2365.namprd10.prod.outlook.com
  ([fe80::d409:11b5:5eb2:6be9%5]) with mapi id 15.20.4523.016; Thu, 16 Sep 2021
- 13:29:29 +0000
-Date:   Thu, 16 Sep 2021 16:29:19 +0300
+ 13:54:26 +0000
+Date:   Thu, 16 Sep 2021 16:54:15 +0300
 From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Andrew Morton <akpm@osdl.org>, Antonino Daplas <adaplas@pol.net>,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] fbdev: fix printing in fb_cvt_print_name()
-Message-ID: <20210916132919.GG25094@kili>
+To:     Ariel Elior <aelior@marvell.com>
+Cc:     GR-everest-linux-l2@marvell.com,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH net-next] qede: cleanup printing in qede_log_probe()
+Message-ID: <20210916135415.GH25094@kili>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-ClientProxiedBy: ZR0P278CA0060.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:21::11) To MWHPR1001MB2365.namprd10.prod.outlook.com
+X-ClientProxiedBy: ZRAP278CA0006.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:10::16) To MWHPR1001MB2365.namprd10.prod.outlook.com
  (2603:10b6:301:2d::28)
 MIME-Version: 1.0
-Received: from kili (62.8.83.99) by ZR0P278CA0060.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:21::11) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4523.16 via Frontend Transport; Thu, 16 Sep 2021 13:29:26 +0000
+Received: from kili (62.8.83.99) by ZRAP278CA0006.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:10::16) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4523.14 via Frontend Transport; Thu, 16 Sep 2021 13:54:23 +0000
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 4cbcade6-cab6-4a30-4026-08d9791602b4
-X-MS-TrafficTypeDiagnostic: MWHPR10MB1773:
+X-MS-Office365-Filtering-Correlation-Id: d9551aa7-fd85-41cc-7240-08d979197f1b
+X-MS-TrafficTypeDiagnostic: CO1PR10MB4642:
 X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <MWHPR10MB1773B5F8CEA97FEAB11B1AEA8EDC9@MWHPR10MB1773.namprd10.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
+X-Microsoft-Antispam-PRVS: <CO1PR10MB4642D1221DC959BECE336C968EDC9@CO1PR10MB4642.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:1227;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: H0u9r71l6DL9Y9KkI9AR41S1c3Fx8PwuMbDhm8+LjBqVc67gz14MqTOHXcNu8N9p/E/qbiaxB/7QhEKqdcQk5ikQ4FSS3l5ARnaTsCb0p69D++cTYjZT7UVMY6UL27rpebE8XHaIqJpuBBr7gO9Ws5NwkDPmHAeZ5uDHldiAk7DEJcuEIMvhE+0S4hoGh/UjpebUl8XfC9/1SlkktXFR7/mj4T4dPxxA9oyOSz/hgBm/WDD6pkP4+2I7CR82S4xfDVFXFwgIFTru09yGFZm+RiyGLkGcRjfWUvYbX/DBZKNzdQ+Qj2FTmS9GdmvUf6Sklt5Zgks83ZLwsNfkDVcCeiUuUijlVV9WNQmQr9STIHwb15KRVQXZdMJthTyHDPUKe5kkvTHKY7VlgmPVRovRZ397sPuyTKNIJ1MIWqvZqOe5b4qrK6bcExrNf++r0skvstFNfHySOBoJbD8QJno0OSbp3viL4m6LCKZgCC6vJg1uu/mv3t3e0yMzVP7Fd3rEkYyXc+teZJN6cfmbx0Z0vZaj8kgb0OwatPlpCH51rGDOcwNWDQFZQbbx3Q2k1elgZjnu7NAr056V3Bs0WRD6EPhkC04yMXTaSuJ03ZhGXWwSbagou26ugb6bCyMrC999YQ553awa28QxPBXkBr0URyrqFejQon8ncynyJVgC6dNKbcdw2dQUUzep1sk5mxiGRFrk2mycjNAtx9DE6pzLcQ==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(1076003)(86362001)(508600001)(33656002)(66476007)(66556008)(9576002)(6666004)(5660300002)(38350700002)(38100700002)(83380400001)(33716001)(55016002)(54906003)(44832011)(6200100001)(316002)(2906002)(6862004)(6496006)(4326008)(956004)(52116002)(26005)(186003)(9686003)(66946007)(8936002)(8676002);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: 2xWvgwC+HOxOAEcKAIaDyjRVermqMJUkZaMsNz9VUnpcuG/h8H1xrG6bb1d32Ekrhbm8g/5oOLvdXipB0xJRKIIAXEKu7fsmyUIRJZf0PTpd3WskuKLPQdCHPkwUWIKh8VHBkccMUOqX20B+Cyl26i7LNAYOplM3E8AqGFyKKDOUN85eRE115ypQuAkYQ428ZDKjjtsNW7kUilhoLzJJvdxYBMeAwSO20WDt1chyScPCNSP+qW+B8fhPd55PuQLL22WKXsGd9wYLQa63atufVE+Ad5UOk/13nNAeYfxtWDPt+PIMqv3yNXu0Puz7zhzs0oMMTEDcQ8DojgMkqrFfVeHkk9oTx4a1NIqT6tKwPbjvixp6jkvwJPph3+QjzawWQ0iZTpfkr3x3Hm7jNJKQS1mx3jdHasDzhNstAm6Z8Chr/nGMmikWw43fBdbws17FpTsLCQq/qRLL+ZIEnOIpe1ajNmHiIRHgFyQ/MttYXdD8jV5WdVduYjqOUaByZ73UBafbw8j4L2qztppCBjOqatGKt58cyoF0pws2ohJvegnnFM1j4NT5YgHXwFT4ZQrS4Z9Fk3VyxxJNrZhREdUOe9HeiKr+hH557KxVa/vwJgO8th+bd6dapC0GaJJdqTawnZ59XSL34g84asMzJHdUjXhLcP0t1/CWUn3M0gg6zA+D1qiayJrvEvT+AUbJu0mHIDEQYZszdDiCSduEs8w4AQ==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(38100700002)(66556008)(26005)(5660300002)(6666004)(38350700002)(2906002)(66476007)(66946007)(44832011)(33656002)(6496006)(956004)(54906003)(508600001)(86362001)(316002)(52116002)(8676002)(33716001)(6916009)(9576002)(83380400001)(8936002)(186003)(9686003)(4326008)(1076003)(55016002);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?htdSKRCOASc+xeLaXA5Ac8GRTkWZAEgUogc96JQwMzGgVO9vybYH1Kkv5PKT?=
- =?us-ascii?Q?ybU/4VlRIcSeQSO8xoQSpGqIP+eHajxR9tzcbEt8dYItN43/+ic1QyOCwDnp?=
- =?us-ascii?Q?EVSuXX4N4kPIBDI35ZbS6dVteMGvxBgDC5L1HOxqKS5qmYT3q2QhESauVGBV?=
- =?us-ascii?Q?96k41KqelvAr7NUqKrH1wb3Bwy5IriLQp9A9146Yb7WD//7vWUnb3QZkFYAR?=
- =?us-ascii?Q?9E9phSxblgOkfWTtpe41sVDOaG38DFwvPs9MRJYs62hi1nVTTwGkuzM7LM64?=
- =?us-ascii?Q?BZZwJKjMINeGBMi4qRIWxj4z5T7uPpa3EyRDbVuJiO19Qn59/3HPfIGcc8VU?=
- =?us-ascii?Q?eZpzoH2fbhmQenEwtZaObEkY7Msx/fIBSnRDSARpn2M8LjJ4E+fj6xleTGQ+?=
- =?us-ascii?Q?MXWphzDfSxZv/bRrwiKEZVNoAMASnh0DPmmH3gexVuSyDdBzoZEl7vqtVOjJ?=
- =?us-ascii?Q?QNNnjbhkxXZlrrTDOBoNv2vUG9s44XUA3cIT5KbmdOJCZ7D57+wHZOm54fGw?=
- =?us-ascii?Q?r7rZAG7ychcm8DBrsBN2/8A4KzKMmJd5vQ09N6lDB8NHRIK8fzmkHkKd3NR6?=
- =?us-ascii?Q?Raypbz23p/Z6NBqIAokKCjkh1MCsIwxq5GOpOYzH9qsQgybsYnHBIN0xfAFZ?=
- =?us-ascii?Q?X2vIjc48qGHfo9m9PaNtIqseYYsv/U48dUY+TTbaS+Rpdi+M0crJYZTttx7F?=
- =?us-ascii?Q?JVVIz8BJ+FoMYJIA0R3o/N6FZcgUxWWLR+zOLkGFNZ7YyYxtv1Enytwmuz37?=
- =?us-ascii?Q?tOguM7j2nGx9Z0QJi0pMpOlVhTXPIqmjm0GzEauEBxY/kiBtcrNrHEmh3uK1?=
- =?us-ascii?Q?VnVncFH9F78np1r/3/E8l5ZEfEGRKb0wxT69xcMw5UyjGVdDjcdO8WMmzmtk?=
- =?us-ascii?Q?28AeK+hr0hk2dqWi6Z4oZJiBMDXMYZf6bLfYpxlWomR+w42TCQ9ARW71PI+P?=
- =?us-ascii?Q?Hiut68ZC3WBuMcGHm0/dTEPmRCpqjkpcc+VDcyhZhsfV/ZPDZLwlTdNOOhNN?=
- =?us-ascii?Q?USjzEjk6i9Ns0xOkAvaPjtOtNqjequzURHZptdYT7DUormHBLgPH+YXWAW7V?=
- =?us-ascii?Q?sZRoMa0ODEflIJKSaDj5vTRyPKkXlDSzwBEhj2bqlT6+0InOPwMRBIvMEx6z?=
- =?us-ascii?Q?/C6HrL6r2/2I+Q9zG2ETz5ZjauVJ6xOur9wLsxfpVDR862rhiMXOrx92FZmy?=
- =?us-ascii?Q?pjyWa5pmdLzEc37lZS8g3gnVsg/Hs6iAZZL4k3mKvoMzcf5gZ8h/ZYHgL/Oz?=
- =?us-ascii?Q?xSSHdyhBU1puumoF5SNnA9z9oRgqjDslPckVC5p7LU7kRQDXeCbcJ36MbA2C?=
- =?us-ascii?Q?iiSAShxeDDmfiVuZTRkNd15Q?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?cE3Wi6N3KPSvZirQZaZuCwn6GZ2UcYhD7+g1DQFo4DRQqAecB7ceVuGA6mMe?=
+ =?us-ascii?Q?WU4knYYEWov3iK7FJrWRtfaEG65zY3qjNNm/QkgnWUhjQqkvBmCT9fgQN6B/?=
+ =?us-ascii?Q?mQeaUMQSp0RzP2BUUKD5P/yQZ8Xq+Vjyxpeae8zkou3VhyIkeQteiw9baqe6?=
+ =?us-ascii?Q?HgNsAOP+LKFJRicpHObQYAT1nz1XNm1+p0NvaYKw3Fba0wRfMO2FWQX+pGDh?=
+ =?us-ascii?Q?aen03OUzeU3bxOWCFivSFR1FowR+TbQUwukQHOMA0E9p3EIQiSGjhz0tcgdt?=
+ =?us-ascii?Q?lK3DvXUuJVW6Canz4QDwFJkee+WJgeysxDr+KeoNrVn6SWbwNsx7M1c1eBpd?=
+ =?us-ascii?Q?4nPeLdJ6RDG3ftTsTmrvnMQccklD54y28MLyI2+2YcmWwG3P+iw1arSPKbN9?=
+ =?us-ascii?Q?iJc3L+s0pi/MSAPAON0ZBLaCVHDqUAXplJvb6Tqe+gHAuMQFvzG9dJx0u8c2?=
+ =?us-ascii?Q?t7w8HNgDGGzyBwjWe9/ueiIVdxhGwh9CSn6FrL8Ra968BhS1e+GDJxd1ik6v?=
+ =?us-ascii?Q?hT8OIVKoagPH/ETqqWep7MidpIDc8E0dDCAtwVQMH0Oi9VVNEHKf61EJZCT4?=
+ =?us-ascii?Q?KfBksQFS6CIL3Ax+sgeXakWjwJSRwJe/tcT33JHTJnjFFSwTp/cp3fOoXY5r?=
+ =?us-ascii?Q?ABkEOpQl4hw8U7hTY4t5i+zNlhGSjd4CgPF8PHikTVcLbyJoUFxFpFUHX4Cg?=
+ =?us-ascii?Q?LpXjTdHAZhu90/hrvmkEuprimjpSEXOAW1gRwJsB0UmF8C4VheqjGLBEvrlH?=
+ =?us-ascii?Q?Z+salvrqtvFygmEmATxgdwbLXilu2H6t8O4NyY1MOw0ACSwCfJ/XB3WxzEWf?=
+ =?us-ascii?Q?3hjAiBCtzm45E0CEBAlyk55gcVqE6+pfbRnD6JdLiVleIDlRUyMwfFMEF1JX?=
+ =?us-ascii?Q?tNfEhvHAr4vitTW2lh+TZKksi0mqqThMCtDIXs/sHY+onnRBejqXpqYN62dq?=
+ =?us-ascii?Q?o9VZ8KjDqdXoUWurPJeVS8nMgL13Y/lgS5XCxmc4zJgHNtYOY/3yRAWKaAyq?=
+ =?us-ascii?Q?nWYm6EaL6qzCOSSstKo8jmObTzPfPgXmojHEfzHyZ870JvqHxLqANf8/fkgD?=
+ =?us-ascii?Q?ULDKuQaTx20nV6o0G8NfE7KjzEC56KsZndDA7Lw41c3AIE93aQHqtsDwwU5o?=
+ =?us-ascii?Q?v6hpmLCgSuBouGln1mhjDanmitFzqKKZt4uUIsHhYPRI/GAIXtxVe6SbbuVO?=
+ =?us-ascii?Q?fAdu8csCmN8PkjuoO6kxcOqZNplyGS0Lns+/FdtvxCcLXCCS8LYCZ8whBF/E?=
+ =?us-ascii?Q?hpdN//8+0HppOxZ7brVe1DHTfvEvtXrqa8U4Zy4ZRpo42npcRohaqJHjoVtd?=
+ =?us-ascii?Q?aTBXJUo4Jo4RnwyDVx1C+KWj?=
 X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4cbcade6-cab6-4a30-4026-08d9791602b4
+X-MS-Exchange-CrossTenant-Network-Message-Id: d9551aa7-fd85-41cc-7240-08d979197f1b
 X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2021 13:29:29.3583
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2021 13:54:26.4313
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: PJkjo7K1SDl9tjO7F8sHiuu7DbL+Con5r06r/Vf74ZFTxn9NvG9zZ7g0fM8Dr2W+cDFNVOWFoZ9rbpVCP3iFMfvyYV6T2Wv7tDH1s9zq9yo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR10MB1773
-X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10108 signatures=668682
+X-MS-Exchange-CrossTenant-UserPrincipalName: ykdUP+qEKPQFsgWfTelpw/nqKGyIf7P3f6NqFmZdjyfg4lHqvY8VPG1VZ6vUBy1ZrksVo3f+RyFgq/4rGZhWpJichlxJsufjKiPRrnbR2JQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR10MB4642
+X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10109 signatures=668682
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 malwarescore=0
  adultscore=0 mlxscore=0 mlxlogscore=999 suspectscore=0 bulkscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2109030001
- definitions=main-2109160086
-X-Proofpoint-GUID: OsUH_42FkBQYX7IBaPTG5edto35KDFai
-X-Proofpoint-ORIG-GUID: OsUH_42FkBQYX7IBaPTG5edto35KDFai
+ definitions=main-2109160089
+X-Proofpoint-GUID: F5gM3S39GHlBPCKthbe-5dipFU-ffHdq
+X-Proofpoint-ORIG-GUID: F5gM3S39GHlBPCKthbe-5dipFU-ffHdq
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This code has two bugs:
-1) "cnt" is 255 but the size of the buffer is 256 so the last byte is
-   not used.
-2) If we try to print more than 255 characters then "cnt" will be
-   negative and that will trigger a WARN() in snprintf(). The fix for
-   this is to use scnprintf() instead of snprintf().
+This code use strlen(buf) to find the number of characters printed.
+That's sort of ugly and unnecessary because we can just use the
+return from scnprintf() instead.
 
-We can re-write this code to be cleaner:
-1) Rename "offset" to "off" because that's shorter.
-2) Get rid of the "cnt" variable and just use "size - off" directly.
-3) Get rid of the "read" variable and just increment "off" directly.
+Also since strlen() does not count the NUL terminator, that means
+"QEDE_FW_VER_STR_SIZE - strlen(buf)" is never going to be zero so
+that condition can be removed.
 
-Fixes: 96fe6a2109db ("[PATCH] fbdev: Add VESA Coordinated Video Timings (CVT) support")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/video/fbdev/core/fbcvt.c | 53 +++++++++++++-------------------
- 1 file changed, 21 insertions(+), 32 deletions(-)
+ drivers/net/ethernet/qlogic/qede/qede_main.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/video/fbdev/core/fbcvt.c b/drivers/video/fbdev/core/fbcvt.c
-index 55d2bd0ce5c0..64843464c661 100644
---- a/drivers/video/fbdev/core/fbcvt.c
-+++ b/drivers/video/fbdev/core/fbcvt.c
-@@ -214,9 +214,11 @@ static u32 fb_cvt_aspect_ratio(struct fb_cvt_data *cvt)
- static void fb_cvt_print_name(struct fb_cvt_data *cvt)
+diff --git a/drivers/net/ethernet/qlogic/qede/qede_main.c b/drivers/net/ethernet/qlogic/qede/qede_main.c
+index 9837bdb89cd4..e188ff5277a5 100644
+--- a/drivers/net/ethernet/qlogic/qede/qede_main.c
++++ b/drivers/net/ethernet/qlogic/qede/qede_main.c
+@@ -1087,9 +1087,9 @@ static void qede_log_probe(struct qede_dev *edev)
  {
- 	u32 pixcount, pixcount_mod;
--	int cnt = 255, offset = 0, read = 0;
--	u8 *buf = kzalloc(256, GFP_KERNEL);
-+	int size = 256;
-+	int off = 0;
-+	u8 *buf;
+ 	struct qed_dev_info *p_dev_info = &edev->dev_info.common;
+ 	u8 buf[QEDE_FW_VER_STR_SIZE];
+-	size_t left_size;
++	int off;
  
-+	buf = kzalloc(size, GFP_KERNEL);
- 	if (!buf)
- 		return;
+-	snprintf(buf, QEDE_FW_VER_STR_SIZE,
++	off = scnprintf(buf, QEDE_FW_VER_STR_SIZE,
+ 		 "Storm FW %d.%d.%d.%d, Management FW %d.%d.%d.%d",
+ 		 p_dev_info->fw_major, p_dev_info->fw_minor, p_dev_info->fw_rev,
+ 		 p_dev_info->fw_eng,
+@@ -1102,9 +1102,8 @@ static void qede_log_probe(struct qede_dev *edev)
+ 		 (p_dev_info->mfw_rev & QED_MFW_VERSION_0_MASK) >>
+ 		 QED_MFW_VERSION_0_OFFSET);
  
-@@ -224,43 +226,30 @@ static void fb_cvt_print_name(struct fb_cvt_data *cvt)
- 	pixcount_mod = (cvt->xres * (cvt->yres/cvt->interlace)) % 1000000;
- 	pixcount_mod /= 1000;
- 
--	read = snprintf(buf+offset, cnt, "fbcvt: %dx%d@%d: CVT Name - ",
--			cvt->xres, cvt->yres, cvt->refresh);
--	offset += read;
--	cnt -= read;
-+	off += scnprintf(buf + off, size - off, "fbcvt: %dx%d@%d: CVT Name - ",
-+			    cvt->xres, cvt->yres, cvt->refresh);
- 
--	if (cvt->status)
--		snprintf(buf+offset, cnt, "Not a CVT standard - %d.%03d Mega "
--			 "Pixel Image\n", pixcount, pixcount_mod);
-+	if (cvt->status) {
-+		off += scnprintf(buf + off, size - off,
-+				 "Not a CVT standard - %d.%03d Mega Pixel Image\n",
-+				 pixcount, pixcount_mod);
--	else {
-+	} else {
--		if (pixcount) {
--			read = snprintf(buf+offset, cnt, "%d", pixcount);
--			cnt -= read;
--			offset += read;
--		}
-+		if (pixcount)
-+			off += scnprintf(buf + off, size - off, "%d", pixcount);
- 
--		read = snprintf(buf+offset, cnt, ".%03dM", pixcount_mod);
--		cnt -= read;
--		offset += read;
-+		off += scnprintf(buf + off, size - off, ".%03dM", pixcount_mod);
- 
- 		if (cvt->aspect_ratio == 0)
--			read = snprintf(buf+offset, cnt, "3");
-+			off += scnprintf(buf + off, size - off, "3");
- 		else if (cvt->aspect_ratio == 3)
--			read = snprintf(buf+offset, cnt, "4");
-+			off += scnprintf(buf + off, size - off, "4");
- 		else if (cvt->aspect_ratio == 1 || cvt->aspect_ratio == 4)
--			read = snprintf(buf+offset, cnt, "9");
-+			off += scnprintf(buf + off, size - off, "9");
- 		else if (cvt->aspect_ratio == 2)
--			read = snprintf(buf+offset, cnt, "A");
-+			off += scnprintf(buf + off, size - off, "A");
--		else
--			read = 0;
--		cnt -= read;
--		offset += read;
--
--		if (cvt->flags & FB_CVT_FLAG_REDUCED_BLANK) {
--			read = snprintf(buf+offset, cnt, "-R");
--			cnt -= read;
--			offset += read;
--		}
-+
-+		if (cvt->flags & FB_CVT_FLAG_REDUCED_BLANK)
-+			off += scnprintf(buf + off, size - off, "-R");
- 	}
- 
- 	printk(KERN_INFO "%s\n", buf);
+-	left_size = QEDE_FW_VER_STR_SIZE - strlen(buf);
+-	if (p_dev_info->mbi_version && left_size)
+-		snprintf(buf + strlen(buf), left_size,
++	if (p_dev_info->mbi_version)
++		off += scnprintf(buf + off, sizeof(buf) - off,
+ 			 " [MBI %d.%d.%d]",
+ 			 (p_dev_info->mbi_version & QED_MBI_VERSION_2_MASK) >>
+ 			 QED_MBI_VERSION_2_OFFSET,
 -- 
 2.20.1
 
