@@ -2,50 +2,50 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F206C433F5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4B76C433EF
 	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Sep 2021 13:10:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E60EF61216
-	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Sep 2021 13:10:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D7CE61216
+	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Sep 2021 13:10:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239528AbhIQNLa (ORCPT
+        id S239766AbhIQNLa (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
         Fri, 17 Sep 2021 09:11:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52042 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:52076 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231996AbhIQNL3 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        id S239437AbhIQNL3 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
         Fri, 17 Sep 2021 09:11:29 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 85C5F611C3;
+Received: by mail.kernel.org (Postfix) with ESMTPS id A95C461244;
         Fri, 17 Sep 2021 13:10:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1631884207;
-        bh=rDTFn2UKx0UnyZmbSFXPTqMv4y3lllgPganfYTecDtc=;
+        bh=22a6frHwC5B5eVeWZSTWqj0kiBOFvgiEgv0duN1p1NQ=;
         h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=ECT5r+g2vy8ryi7OX7EIY2jzHzRwairDR7G65ptIUk0n2vYgzIOF+8mGmaV80j3sT
-         b5PV/tYYMizowx/6VSpiZJkLnD8nDo6eptRw8dpm70w3SoChBDlFRHL32DUT0i/YUW
-         tTha+6X4jruOyOiJKSKF7+iBstzP6xRn05bZ2fqt0x7LyGCtkB2kRNxDOLG9CxuKfj
-         ulZtCVVSsSRcE2/eMi0YCOyua43ppcCMqPP/lNla2OQi7r1ZFuxPhxvdRMFi29gIAc
-         b/Fl62TJMYe9fBJfGJK66gUWLDWomkZqbaujGPhph1cH6625njH7hbi+m4QxR479MD
-         da+6U8tD8KNUQ==
+        b=EpuGKL2o5cZKI5SN7weHGi1nhWGA+br5/vGm6NEqQkKCVm0f/ou5jNM5p63PGp4qX
+         n3mkrkU5AcOhimNWpti12Pal6FmIwT9njNpU0VZZj8nqRmIZlJdHIiUrDKv4D4tkgc
+         6zd6/2TCc4kyQ2EXb8bzuXfpvo/jlfLXtzcQ9ytIhBD7ENLQMLK0xx4FLBSakLt2vl
+         HZJEjetzD013oip1EvB+5C64QGJot+YsgWhL+FfUe8+1+cJ4xIDYGKSOMRGXQPhEJ5
+         yUPuJdw4XHC2cKY6T1Cw9HhQl3EW0xxgEBxVoESxDa7FUsCeh+FGyJNtiQ90LBj8FC
+         7UEV9tZslIVdQ==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH][next] octeontx2-af: Remove redundant initialization of
- variable blkaddr
+Subject: Re: [PATCH][next] octeontx2-af: Fix uninitialized variable val
 From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <163188420747.25822.3507781673338733348.git-patchwork-notify@kernel.org>
+Message-Id: <163188420759.25822.16149249786336509355.git-patchwork-notify@kernel.org>
 Date:   Fri, 17 Sep 2021 13:10:07 +0000
-References: <20210917120333.48074-1-colin.king@canonical.com>
-In-Reply-To: <20210917120333.48074-1-colin.king@canonical.com>
+References: <20210917115747.47695-1-colin.king@canonical.com>
+In-Reply-To: <20210917115747.47695-1-colin.king@canonical.com>
 To:     Colin King <colin.king@canonical.com>
 Cc:     sgoutham@marvell.com, lcherian@marvell.com, gakula@marvell.com,
         jerinj@marvell.com, hkelam@marvell.com, sbhatta@marvell.com,
-        davem@davemloft.net, kuba@kernel.org, netdev@vger.kernel.org,
+        davem@davemloft.net, kuba@kernel.org, schalla@marvell.com,
+        vvelumuri@marvell.com, netdev@vger.kernel.org,
         kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
@@ -55,21 +55,19 @@ Hello:
 
 This patch was applied to netdev/net-next.git (refs/heads/master):
 
-On Fri, 17 Sep 2021 13:03:33 +0100 you wrote:
+On Fri, 17 Sep 2021 12:57:47 +0100 you wrote:
 > From: Colin Ian King <colin.king@canonical.com>
 > 
-> The variable blkaddr is being initialized with a value that is never
-> read, it is being updated later on in a for-loop. The assignment is
-> redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> In the case where the condition !is_rvu_otx2(rvu) is false variable
+> val is not initialized and can contain a garbage value. Fix this by
+> initializing val to zero and bit-wise or'ing in BIT_ULL(51) to val
+> for the true condition case of !is_rvu_otx2(rvu).
 > 
 > [...]
 
 Here is the summary with links:
-  - [next] octeontx2-af: Remove redundant initialization of variable blkaddr
-    https://git.kernel.org/netdev/net-next/c/3503e673db23
+  - [next] octeontx2-af: Fix uninitialized variable val
+    https://git.kernel.org/netdev/net-next/c/d853f1d3c900
 
 You are awesome, thank you!
 --
