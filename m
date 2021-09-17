@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C419DC433F5
-	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Sep 2021 11:57:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 331FEC433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Sep 2021 12:03:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9AED9610C8
-	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Sep 2021 11:57:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F39161029
+	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Sep 2021 12:03:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242786AbhIQL7Q (ORCPT
+        id S242854AbhIQME5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 17 Sep 2021 07:59:16 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:33546
+        Fri, 17 Sep 2021 08:04:57 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:34436
         "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229680AbhIQL7L (ORCPT
+        by vger.kernel.org with ESMTP id S235036AbhIQME4 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 17 Sep 2021 07:59:11 -0400
+        Fri, 17 Sep 2021 08:04:56 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 229914017A;
-        Fri, 17 Sep 2021 11:57:48 +0000 (UTC)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 83D263F101;
+        Fri, 17 Sep 2021 12:03:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1631879868;
-        bh=hR4B8r8uer+fz73h+7NGa/3G9CuLaPmiXvhN/2mcDKA=;
+        s=20210705; t=1631880213;
+        bh=qKExn8zNk6nsAIHi1Nyl0mehaAZ/+D0UQp34tRUlXHM=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=bGjEZgpI0g3lIT+GTjeTqPHfM+bEWC5Hrg8hmsNtwM/BOXw2/g0sSovrmCHn/DIGq
-         zkOSJDP6lPA5ilBPs1ueuftwNh6eDeaZ0sXtsuKR14VviHeEdVGTr/LzNa38dHP0Jg
-         DLg8j99u34i54FFyyn3COika721xwy6Sy137jhxtuIooPJiHftFivggUKelxj9/Zqg
-         SvHCsC27EATAwpO2k6LC9P6SI9KFrVQatXTIhMG7rCaX+VNS2TT114HR9hsLJPnd+x
-         Z6qJJNs49/6+5FB5Vszcibjinsw95O6hhw6Ew65y9tZcgR0cPiytxZe9kf38TmF3eM
-         BkJawhnXA4zzw==
+        b=J0xfL2A0sgFrs4khVn+6rd5dfU4WfKc2r70vQ0BLAb6vESII+zzT+Urq+Qnm2YDeV
+         o+cxdc1v7DCNDOTaTjev2TfdQZmZ/4tSeErZSYI5vhsjws1GtZaiu+mtdbYuhBnPO6
+         vDJkOnOCkxkIkN27P9gdiiSSCcEkgN9gLSACBEsddQ4hL1qBtchuOkmhx/RJ2MMLFZ
+         deBsBz1DwOFohnZPqalQ6EMUqqKJTXr5Ju8ZnZ9tPpQkd9Ui/vyXxxiFOUpTANQ9io
+         ZzSSRv2BIW99tpL+27p8PsVOroK/QtuQ2/EjIyCFiCsWuTLuD41SmUUMWFPUO4Tf9G
+         SGA1M2MnhONgQ==
 From:   Colin King <colin.king@canonical.com>
 To:     Sunil Goutham <sgoutham@marvell.com>,
         Linu Cherian <lcherian@marvell.com>,
@@ -45,14 +45,11 @@ To:     Sunil Goutham <sgoutham@marvell.com>,
         hariprasad <hkelam@marvell.com>,
         Subbaraya Sundeep <sbhatta@marvell.com>,
         "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Srujana Challa <schalla@marvell.com>,
-        Vidya Sagar Velumuri <vvelumuri@marvell.com>,
-        netdev@vger.kernel.org
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] octeontx2-af: Fix uninitialized variable val
-Date:   Fri, 17 Sep 2021 12:57:47 +0100
-Message-Id: <20210917115747.47695-1-colin.king@canonical.com>
+Subject: [PATCH][next] octeontx2-af: Remove redundant initialization of variable blkaddr
+Date:   Fri, 17 Sep 2021 13:03:33 +0100
+Message-Id: <20210917120333.48074-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -63,34 +60,29 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-In the case where the condition !is_rvu_otx2(rvu) is false variable
-val is not initialized and can contain a garbage value. Fix this by
-initializing val to zero and bit-wise or'ing in BIT_ULL(51) to val
-for the true condition case of !is_rvu_otx2(rvu).
+The variable blkaddr is being initialized with a value that is never
+read, it is being updated later on in a for-loop. The assignment is
+redundant and can be removed.
 
-Addresses-Coverity: ("Uninitialized scalar variable")
-Fixes: 4b5a3ab17c6c ("octeontx2-af: Hardware configuration for inline IPsec")
+Addresses-Coverity: ("Unused value")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/marvell/octeontx2/af/rvu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c
-index ea3e03fa55d4..29b15b544bdc 100644
---- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c
-@@ -4596,9 +4596,10 @@ static void nix_inline_ipsec_cfg(struct rvu *rvu, struct nix_inline_ipsec_cfg *r
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu.c
+index 3bba8bc91f35..5909173ff788 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/rvu.c
++++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu.c
+@@ -1294,7 +1294,7 @@ int rvu_get_blkaddr_from_slot(struct rvu *rvu, int blktype, u16 pcifunc,
+ 	int numlfs, total_lfs = 0, nr_blocks = 0;
+ 	int i, num_blkaddr[BLK_COUNT] = { 0 };
+ 	struct rvu_block *block;
+-	int blkaddr = -ENODEV;
++	int blkaddr;
+ 	u16 start_slot;
  
- 	cpt_idx = (blkaddr == BLKADDR_NIX0) ? 0 : 1;
- 	if (req->enable) {
-+		val = 0;
- 		/* Enable context prefetching */
- 		if (!is_rvu_otx2(rvu))
--			val = BIT_ULL(51);
-+			val |= BIT_ULL(51);
- 
- 		/* Set OPCODE and EGRP */
- 		val |= FIELD_PREP(IPSEC_GEN_CFG_EGRP, req->gen_cfg.egrp);
+ 	if (!is_blktype_attached(pfvf, blktype))
 -- 
 2.32.0
 
