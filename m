@@ -7,46 +7,52 @@ X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 094F4C433F5
-	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Sep 2021 11:49:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C419DC433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Sep 2021 11:57:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E2EC561212
-	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Sep 2021 11:49:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9AED9610C8
+	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Sep 2021 11:57:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242026AbhIQLuz (ORCPT
+        id S242786AbhIQL7Q (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 17 Sep 2021 07:50:55 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:48114
-        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S240718AbhIQLuy (ORCPT
+        Fri, 17 Sep 2021 07:59:16 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:33546
+        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229680AbhIQL7L (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 17 Sep 2021 07:50:54 -0400
+        Fri, 17 Sep 2021 07:59:11 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id E0DF13F234;
-        Fri, 17 Sep 2021 11:49:30 +0000 (UTC)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 229914017A;
+        Fri, 17 Sep 2021 11:57:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1631879371;
-        bh=o1svmj9FW/O2TpubDpCCd4h+o8vOHM4Lf/k/ntltkBU=;
+        s=20210705; t=1631879868;
+        bh=hR4B8r8uer+fz73h+7NGa/3G9CuLaPmiXvhN/2mcDKA=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=TSh3v888gsqV6LgYPkJE5Vaus/eAXBbSz7yjRySiVtJGM296jgVE1E+f/PtzRSd6B
-         nsMJ/0pedoPcNB8UIRHMImuR7EZwIpRLn0A4r1fODbMgRZjWI7xkd1ZOvt/hVld7uk
-         N9PZIo2Vt5ICKhaY0ZoQxQsp5vwbYFUAAo5IrdzdaDjkGGYdOMdsWgJikMGLqMl2SQ
-         lg9jPIFuuDUldswHMj3DtaWlspoBN18R8MRZAdqYj25f9lRSiOtKp5YjZWnPegdZrS
-         1TzvXKUdpuJJFWGbWos+L3ssb9MfAKr58l0jaIehyfms7rsHkXfRuFuRhqaAfrot3x
-         IOxt9JZNt6x4A==
+        b=bGjEZgpI0g3lIT+GTjeTqPHfM+bEWC5Hrg8hmsNtwM/BOXw2/g0sSovrmCHn/DIGq
+         zkOSJDP6lPA5ilBPs1ueuftwNh6eDeaZ0sXtsuKR14VviHeEdVGTr/LzNa38dHP0Jg
+         DLg8j99u34i54FFyyn3COika721xwy6Sy137jhxtuIooPJiHftFivggUKelxj9/Zqg
+         SvHCsC27EATAwpO2k6LC9P6SI9KFrVQatXTIhMG7rCaX+VNS2TT114HR9hsLJPnd+x
+         Z6qJJNs49/6+5FB5Vszcibjinsw95O6hhw6Ew65y9tZcgR0cPiytxZe9kf38TmF3eM
+         BkJawhnXA4zzw==
 From:   Colin King <colin.king@canonical.com>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Ricardo Ribalda <ribalda@chromium.org>,
-        linux-media@vger.kernel.org
+To:     Sunil Goutham <sgoutham@marvell.com>,
+        Linu Cherian <lcherian@marvell.com>,
+        Geetha sowjanya <gakula@marvell.com>,
+        Jerin Jacob <jerinj@marvell.com>,
+        hariprasad <hkelam@marvell.com>,
+        Subbaraya Sundeep <sbhatta@marvell.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Srujana Challa <schalla@marvell.com>,
+        Vidya Sagar Velumuri <vvelumuri@marvell.com>,
+        netdev@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] media: uvcvideo: Fix memory leak of object map on error exit path
-Date:   Fri, 17 Sep 2021 12:49:30 +0100
-Message-Id: <20210917114930.47261-1-colin.king@canonical.com>
+Subject: [PATCH][next] octeontx2-af: Fix uninitialized variable val
+Date:   Fri, 17 Sep 2021 12:57:47 +0100
+Message-Id: <20210917115747.47695-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -57,35 +63,34 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Currently when the allocation of map->name fails the error exit path
-does not kfree the previously allocated object map. Fix this by
-setting ret to -ENOMEM and taking the free_map exit error path to
-ensure map is kfree'd.
+In the case where the condition !is_rvu_otx2(rvu) is false variable
+val is not initialized and can contain a garbage value. Fix this by
+initializing val to zero and bit-wise or'ing in BIT_ULL(51) to val
+for the true condition case of !is_rvu_otx2(rvu).
 
-Addresses-Coverity: ("Resource leak")
-Fixes: 07adedb5c606 ("media: uvcvideo: Use control names from framework")
+Addresses-Coverity: ("Uninitialized scalar variable")
+Fixes: 4b5a3ab17c6c ("octeontx2-af: Hardware configuration for inline IPsec")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/media/usb/uvc/uvc_v4l2.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
-index f4e4aff8ddf7..711556d13d03 100644
---- a/drivers/media/usb/uvc/uvc_v4l2.c
-+++ b/drivers/media/usb/uvc/uvc_v4l2.c
-@@ -44,8 +44,10 @@ static int uvc_ioctl_ctrl_map(struct uvc_video_chain *chain,
- 	if (v4l2_ctrl_get_name(map->id) == NULL) {
- 		map->name = kmemdup(xmap->name, sizeof(xmap->name),
- 				    GFP_KERNEL);
--		if (!map->name)
--			return -ENOMEM;
-+		if (!map->name) {
-+			ret = -ENOMEM;
-+			goto free_map;
-+		}
- 	}
- 	memcpy(map->entity, xmap->entity, sizeof(map->entity));
- 	map->selector = xmap->selector;
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c
+index ea3e03fa55d4..29b15b544bdc 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c
++++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c
+@@ -4596,9 +4596,10 @@ static void nix_inline_ipsec_cfg(struct rvu *rvu, struct nix_inline_ipsec_cfg *r
+ 
+ 	cpt_idx = (blkaddr == BLKADDR_NIX0) ? 0 : 1;
+ 	if (req->enable) {
++		val = 0;
+ 		/* Enable context prefetching */
+ 		if (!is_rvu_otx2(rvu))
+-			val = BIT_ULL(51);
++			val |= BIT_ULL(51);
+ 
+ 		/* Set OPCODE and EGRP */
+ 		val |= FIELD_PREP(IPSEC_GEN_CFG_EGRP, req->gen_cfg.egrp);
 -- 
 2.32.0
 
