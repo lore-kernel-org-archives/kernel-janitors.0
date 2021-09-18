@@ -2,126 +2,125 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF46BC433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Sep 2021 19:52:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AF64C4332F
+	for <kernel-janitors@archiver.kernel.org>; Sat, 18 Sep 2021 05:20:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D2D4C60F6E
-	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Sep 2021 19:52:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CDC6610D1
+	for <kernel-janitors@archiver.kernel.org>; Sat, 18 Sep 2021 05:20:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344683AbhIQTxl (ORCPT
+        id S235072AbhIRFV6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 17 Sep 2021 15:53:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54034 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344620AbhIQTxj (ORCPT
+        Sat, 18 Sep 2021 01:21:58 -0400
+Received: from smtp13.smtpout.orange.fr ([80.12.242.135]:17104 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S234631AbhIRFV6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 17 Sep 2021 15:53:39 -0400
-Received: from mail-il1-x135.google.com (mail-il1-x135.google.com [IPv6:2607:f8b0:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9C70C0617BE
-        for <kernel-janitors@vger.kernel.org>; Fri, 17 Sep 2021 12:51:15 -0700 (PDT)
-Received: by mail-il1-x135.google.com with SMTP id a20so11455263ilq.7
-        for <kernel-janitors@vger.kernel.org>; Fri, 17 Sep 2021 12:51:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=AO8stvH6wLQIPUW7jVtw5X0QFxjdUv6SibSuWzk36Rk=;
-        b=VdePcfsHpNUgpbkw8TARXrR7jC9aG7x/7YmP5iPfWGD+cqXy5vsT4cDu7rBnNIcEY2
-         yD1T4FDdiBbNu07dGt+Oo3Pl1m8rZFXCp+kenOQL8Rh0DIeOT2An+WrcS2OP1CWRny+j
-         kNopwuwAZdjru1KuowyYEC1EjO5qwmF9ztCrY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=AO8stvH6wLQIPUW7jVtw5X0QFxjdUv6SibSuWzk36Rk=;
-        b=fWa5FCg6pd0GL3DSATHoj3R3kODr2tgFcfe1b5Xyo7GHgEuWUBJUlGJmpOLEqZHjsk
-         aMMsz4qGXFr7KTV1P7Vg2lYKWWFHBe+ylrUrjQNyqPJoyc1q1iNPaVBlRLsxUmujHpcT
-         KMV4cBeMjO5dnIcoKkCvCPbn5I0szTFKayF3m2zuq35MyfTX3LH9VYLjYOnzMCBCa7XZ
-         GcbeU7J7jWRIDprw1Mn2vDjQefehcVtTpPpherGo+qBEyMLfW6dfG9ZKMTu7u4/PqMyg
-         g3M3hmGmy3T7lztdmB0HFfFrKkkF6buGaH67gPyBr3iCjkecO1+JWQKJ3YL7FpHGW/NK
-         M+oA==
-X-Gm-Message-State: AOAM531byFQZwWdkHjLFo0pAsosCijOTyJpox5SrXns1HH+nhtgcsTNb
-        5B5ftm5qYDVSvobqr4vjKNwNgo0LWJnvyw==
-X-Google-Smtp-Source: ABdhPJyxyQReKKz4tu84Bwe+qlE7F4CIESIh45rd5v0L1v5hVcAdHTQynCIkZLr09Y8vMdCCH8kOrw==
-X-Received: by 2002:a05:6e02:1bc9:: with SMTP id x9mr9430081ilv.168.1631908274376;
-        Fri, 17 Sep 2021 12:51:14 -0700 (PDT)
-Received: from mail-il1-f170.google.com (mail-il1-f170.google.com. [209.85.166.170])
-        by smtp.gmail.com with ESMTPSA id i14sm3879041iog.47.2021.09.17.12.51.12
-        for <kernel-janitors@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Sep 2021 12:51:13 -0700 (PDT)
-Received: by mail-il1-f170.google.com with SMTP id h29so11513037ila.2
-        for <kernel-janitors@vger.kernel.org>; Fri, 17 Sep 2021 12:51:12 -0700 (PDT)
-X-Received: by 2002:a05:6e02:2141:: with SMTP id d1mr5491891ilv.242.1631908271903;
- Fri, 17 Sep 2021 12:51:11 -0700 (PDT)
+        Sat, 18 Sep 2021 01:21:58 -0400
+Received: from pop-os.home ([90.126.248.220])
+        by mwinf5d65 with ME
+        id vHLW2500H4m3Hzu03HLWDZ; Sat, 18 Sep 2021 07:20:32 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 18 Sep 2021 07:20:32 +0200
+X-ME-IP: 90.126.248.220
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     haver@linux.ibm.com, arnd@arndb.de, gregkh@linuxfoundation.org
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH v2] misc: genwqe: Remove usage of the deprecated "pci-dma-compat.h" API
+Date:   Sat, 18 Sep 2021 07:20:28 +0200
+Message-Id: <590154f2ab113088346ae76c3f13f8b1cbebccbb.1631942274.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-References: <20210917114930.47261-1-colin.king@canonical.com>
-In-Reply-To: <20210917114930.47261-1-colin.king@canonical.com>
-From:   Ricardo Ribalda <ribalda@chromium.org>
-Date:   Fri, 17 Sep 2021 21:51:01 +0200
-X-Gmail-Original-Message-ID: <CANiDSCv7okdqtfMpjPB9Gg+RvUSqsondN_-jo3xCNn7bRAaq0Q@mail.gmail.com>
-Message-ID: <CANiDSCv7okdqtfMpjPB9Gg+RvUSqsondN_-jo3xCNn7bRAaq0Q@mail.gmail.com>
-Subject: Re: [PATCH][next] media: uvcvideo: Fix memory leak of object map on
- error exit path
-To:     Colin King <colin.king@canonical.com>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Collin
+In [1], Christoph Hellwig has proposed to remove the wrappers in
+include/linux/pci-dma-compat.h.
 
-Thanks for catching it up.
+Some reasons why this API should be removed have been given by Julia
+Lawall in [2].
 
-On Fri, 17 Sept 2021 at 13:49, Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Currently when the allocation of map->name fails the error exit path
-> does not kfree the previously allocated object map. Fix this by
-> setting ret to -ENOMEM and taking the free_map exit error path to
-> ensure map is kfree'd.
->
-> Addresses-Coverity: ("Resource leak")
-> Fixes: 07adedb5c606 ("media: uvcvideo: Use control names from framework")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Reviewed-by: Ricardo Ribalda <ribalda@chromium.org>
+Finally, Arnd Bergmann reminded that the documentation was updated 11 years
+ago to only describe the modern linux/dma-mapping.h interfaces and mark the
+old bus-specific ones as no longer recommended, see commit 216bf58f4092
+("Documentation: convert PCI-DMA-mapping.txt to use the generic DMA API").
 
-> ---
->  drivers/media/usb/uvc/uvc_v4l2.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
-> index f4e4aff8ddf7..711556d13d03 100644
-> --- a/drivers/media/usb/uvc/uvc_v4l2.c
-> +++ b/drivers/media/usb/uvc/uvc_v4l2.c
-> @@ -44,8 +44,10 @@ static int uvc_ioctl_ctrl_map(struct uvc_video_chain *chain,
->         if (v4l2_ctrl_get_name(map->id) == NULL) {
->                 map->name = kmemdup(xmap->name, sizeof(xmap->name),
->                                     GFP_KERNEL);
-> -               if (!map->name)
-> -                       return -ENOMEM;
-> +               if (!map->name) {
-> +                       ret = -ENOMEM;
-> +                       goto free_map;
-> +               }
->         }
->         memcpy(map->entity, xmap->entity, sizeof(map->entity));
->         map->selector = xmap->selector;
-> --
-> 2.32.0
->
+A coccinelle script has been used to perform the needed transformation
+Only relevant parts are given below.
 
+@@ @@
+-    PCI_DMA_BIDIRECTIONAL
++    DMA_BIDIRECTIONAL@@
 
---
-Ricardo Ribalda
+@@
+expression e1, e2, e3, e4, e5;
+@@
+-    pci_map_page(e1, e2, e3, e4, e5)
++    dma_map_page(&e1->dev, e2, e3, e4, e5)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_page(e1, e2, e3, e4)
++    dma_unmap_page(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2;
+@@
+-    pci_dma_mapping_error(e1, e2)
++    dma_mapping_error(&e1->dev, e2)
+
+[1]: https://lore.kernel.org/kernel-janitors/20200421081257.GA131897@infradead.org/
+[2]: https://lore.kernel.org/kernel-janitors/alpine.DEB.2.22.394.2007120902170.2424@hadrien/
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+v2: Change Subject to be more explicit
+    Keep only relevant part of the coccinelle script
+    Try to improve the commit message to give some reason of why this change is done
+---
+ drivers/misc/genwqe/card_utils.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/misc/genwqe/card_utils.c b/drivers/misc/genwqe/card_utils.c
+index 039b923d1d60..1167463f26fb 100644
+--- a/drivers/misc/genwqe/card_utils.c
++++ b/drivers/misc/genwqe/card_utils.c
+@@ -233,8 +233,8 @@ static void genwqe_unmap_pages(struct genwqe_dev *cd, dma_addr_t *dma_list,
+ 	struct pci_dev *pci_dev = cd->pci_dev;
+ 
+ 	for (i = 0; (i < num_pages) && (dma_list[i] != 0x0); i++) {
+-		pci_unmap_page(pci_dev, dma_list[i],
+-			       PAGE_SIZE, PCI_DMA_BIDIRECTIONAL);
++		dma_unmap_page(&pci_dev->dev, dma_list[i], PAGE_SIZE,
++			       DMA_BIDIRECTIONAL);
+ 		dma_list[i] = 0x0;
+ 	}
+ }
+@@ -251,12 +251,12 @@ static int genwqe_map_pages(struct genwqe_dev *cd,
+ 		dma_addr_t daddr;
+ 
+ 		dma_list[i] = 0x0;
+-		daddr = pci_map_page(pci_dev, page_list[i],
++		daddr = dma_map_page(&pci_dev->dev, page_list[i],
+ 				     0,	 /* map_offs */
+ 				     PAGE_SIZE,
+-				     PCI_DMA_BIDIRECTIONAL);  /* FIXME rd/rw */
++				     DMA_BIDIRECTIONAL);  /* FIXME rd/rw */
+ 
+-		if (pci_dma_mapping_error(pci_dev, daddr)) {
++		if (dma_mapping_error(&pci_dev->dev, daddr)) {
+ 			dev_err(&pci_dev->dev,
+ 				"[%s] err: no dma addr daddr=%016llx!\n",
+ 				__func__, (long long)daddr);
+-- 
+2.30.2
+
