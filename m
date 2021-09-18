@@ -6,68 +6,69 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBEBCC433EF
-	for <kernel-janitors@archiver.kernel.org>; Sat, 18 Sep 2021 09:41:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79224C433F5
+	for <kernel-janitors@archiver.kernel.org>; Sat, 18 Sep 2021 09:42:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B1C8260F6C
-	for <kernel-janitors@archiver.kernel.org>; Sat, 18 Sep 2021 09:41:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F42760F6C
+	for <kernel-janitors@archiver.kernel.org>; Sat, 18 Sep 2021 09:42:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238686AbhIRJm3 (ORCPT
+        id S242169AbhIRJnm (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 18 Sep 2021 05:42:29 -0400
-Received: from mout.kundenserver.de ([217.72.192.74]:34963 "EHLO
+        Sat, 18 Sep 2021 05:43:42 -0400
+Received: from mout.kundenserver.de ([212.227.17.24]:37023 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238420AbhIRJm2 (ORCPT
+        with ESMTP id S241035AbhIRJnm (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 18 Sep 2021 05:42:28 -0400
-Received: from mail-wr1-f45.google.com ([209.85.221.45]) by
- mrelayeu.kundenserver.de (mreue106 [213.165.67.113]) with ESMTPSA (Nemesis)
- id 1MGyl3-1mexEi2OBv-00E894; Sat, 18 Sep 2021 11:41:03 +0200
-Received: by mail-wr1-f45.google.com with SMTP id d21so19168349wra.12;
-        Sat, 18 Sep 2021 02:41:03 -0700 (PDT)
-X-Gm-Message-State: AOAM5333rzB5ir+X0d5Gt9bT5adFqMlnJEXGClhPEBDShKRZ5IQL2aTw
-        RAHIas0baG949VVU7TvmG+fyqz/TYWp6cyEYzeg=
-X-Google-Smtp-Source: ABdhPJx9yqI+1/9/BGcNvj+UPWnFAxrQw73U1HxZSwhNOnNNiyPOuaYL8RQiCFPVaYCRRHWPncR7qh7DTzY4XWN92IQ=
-X-Received: by 2002:a05:6000:1561:: with SMTP id 1mr7487499wrz.369.1631958063252;
- Sat, 18 Sep 2021 02:41:03 -0700 (PDT)
+        Sat, 18 Sep 2021 05:43:42 -0400
+Received: from mail-wr1-f43.google.com ([209.85.221.43]) by
+ mrelayeu.kundenserver.de (mreue108 [213.165.67.113]) with ESMTPSA (Nemesis)
+ id 1MTANt-1mK9701lmR-00UYMC; Sat, 18 Sep 2021 11:42:17 +0200
+Received: by mail-wr1-f43.google.com with SMTP id x6so19159879wrv.13;
+        Sat, 18 Sep 2021 02:42:17 -0700 (PDT)
+X-Gm-Message-State: AOAM533jnJIcH+3ryCS+tLAA1esDpPZqzEfk4e3a9gSV/2DdlofrDPp1
+        WhbKi/4mAH0SHYVcQSHr8E2XvJGjiV6cyPIn3Ig=
+X-Google-Smtp-Source: ABdhPJxOTRhwnweDX3x9m+r1bO3Ej/hbtqdpKs97FHH8vQkjZVo5XvP0r2/Q2sqCW5InspIuMtw1ABFi5lhtbVdPvW4=
+X-Received: by 2002:adf:c10b:: with SMTP id r11mr17199913wre.336.1631958137049;
+ Sat, 18 Sep 2021 02:42:17 -0700 (PDT)
 MIME-Version: 1.0
-References: <c6f280927835c5677cc0367fccdc0ef54b307bd8.1631943364.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <c6f280927835c5677cc0367fccdc0ef54b307bd8.1631943364.git.christophe.jaillet@wanadoo.fr>
+References: <590154f2ab113088346ae76c3f13f8b1cbebccbb.1631942274.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <590154f2ab113088346ae76c3f13f8b1cbebccbb.1631942274.git.christophe.jaillet@wanadoo.fr>
 From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Sat, 18 Sep 2021 11:40:47 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a3=0kJamjC3Fd_xHx==AXs-_k77gpYkhZz6VEa31K6iOQ@mail.gmail.com>
-Message-ID: <CAK8P3a3=0kJamjC3Fd_xHx==AXs-_k77gpYkhZz6VEa31K6iOQ@mail.gmail.com>
-Subject: Re: [PATCH v2] mei: Remove usage of the deprecated "pci-dma-compat.h" API
+Date:   Sat, 18 Sep 2021 11:42:01 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a3umbVdPv1omKd5p1gH3JzUEB_MJrK0xQmXok8iSY_haA@mail.gmail.com>
+Message-ID: <CAK8P3a3umbVdPv1omKd5p1gH3JzUEB_MJrK0xQmXok8iSY_haA@mail.gmail.com>
+Subject: Re: [PATCH v2] misc: genwqe: Remove usage of the deprecated
+ "pci-dma-compat.h" API
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     "Winkler, Tomas" <tomas.winkler@intel.com>,
+Cc:     Frank Haverkamp <haver@linux.ibm.com>,
         Arnd Bergmann <arnd@arndb.de>,
         gregkh <gregkh@linuxfoundation.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         kernel-janitors@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:aRHOdbpH6fsglEmrF1NTwMM2llsFNWYF2GO1h2C24KAvivt0VFC
- lf7RvzIgimM7txwOXL29U62pUX2WnwDwA9KEoUq59AhYg6ohTvUUagBI5GV1/Cw4bHxoztp
- uA9lBCeeszkupgUhJ5Z9Pabeo0huk5IPKC5TVzbOGRhYKL5YlwDHqXzrSMAlURtVhGLHjdp
- A0q55Nk4mqkHu1ay7MbYw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:rzKSYP4C1fY=:48v6u8SUodSB8u4efnR1kg
- Z2tMe3uj/ENKOIUQ25M9haukuRBGDr/6jx+E+xe0FhYPB+80HyvTIQaJ+2lohhsarAZj892Y/
- B5c3mbSCyP4Rq9IxJxJ0oI+vd19zehA7o08B6vPpemqMSfLf/Nu6XMBV24RI5Kjf4oPZZSWez
- KgtEHTFkEatWT12NJQ2JGNKYLF41hWFWNjrFnwV5ftwxepNadVqrRrQbSlw5GY4g7zuWNEltA
- QxHgBcpOZkzgZL/4poheJ/I4Cvn8VAO4RONRhiPD6k8kdmujgU0St7FohxCo3LP9+pmordGV+
- sahQFdpHEOGMPNOMgByrt+a3d3dYUzEOBU0GSApOLiL8HsRK6U8E2QTw698UlBWY1TJrcp0TS
- 9VbsNAyFIU4ZaTCfYyIn2WC1XP0cOYl8syPK1qeI8QoMFovr3uvVGfIztJrY7sGgt9tSl8B64
- A9jx1EngWpHTnfFI67bg9ymd46QMDapjxWIodKCFLUPBipwB479/lLku9c15XxHjymsbHQ1PT
- sfNRB8/sgPJ2s9K+vzxjfukRYj37thikAjXdpIRZztMxtI8hAv6Oxvswe1WZaeCXugh3YsYPm
- GSWIiXUP1+vnAUpF3Z6r61S4ECNKwVFuawh4nyHjmSRD3+rjEa7t17mAtGePQpovMNmSiRMw9
- QaTbsHXSaE52GEQhsaSjS1QuAjwkaPmrR8mvnQigab0PDY19z88gdt8ufCwPopJVchs+p3bBr
- yQhG2Rk0tS6MgxXqPzzHb6yI72MVMiXFHxUUM/zdq6oCEp53xorUCkhqH0pRBkWXHTaeQDbG2
- B5fNHn9/wkkj3zckpvb09qjAlmNA2jwyQTj8qu48wi8KTXTaUptzUVzq6w/WPfV4XCgapdEfJ
- Tm0tuqkcsV5Vdt0lH8mQ==
+X-Provags-ID: V03:K1:pjpwytd8PrGqU2IIAAKQReoe1IxNveszuMTvnCsZuSKYcvkSI0C
+ 52nyF68qelzPQNi9c4sqtKsJdruHShN64eMtC2GwdDnUwo2x9t22ruhH4HiGz3GtfWc1cSm
+ uBEDt/24JQDeB2AjElA7ZsJ3+quu+Rlg/2Q0emWNVY1HHP+bpTDuIiPVcAqqQMau3kYaq69
+ zQrYmkndkPY+zaGA3jGlw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:fqtXNmgupR0=:OjzA8FQsD4hJoDfkSNpc+W
+ JOKtitgaAtjWoKQtytpjMrZzAZqOpunW5xjHT5kFA3aQbG2AGT59LiGHNXD6tLhOfr0pPi9jT
+ 9J6kXjzxdHH/1xo6Rbm2iYKhO2vsJymOmg8mmyLuzi52Rq/tShYpBXqOFeL16StEzX5c8ckX6
+ GUwrbqiHAbf51wUc6VSzmM3EciBmrnbO6l8s5A8iTmF3QIiMLxiHS/vw7UJAKsgFZXiFS6hLE
+ q1T1aMC2ddJQxnAukPHsc9aaUM+D7+BipFrpmEFp4kRovcDPBkKSzvkmfAJ3K/hv91wUtki9P
+ fOozrEmbHctFZl8Ke0U3sT1Zo9bq8O4OV8ARtvW9CtXVFw9J+wJdekfxznU1Rix7zS8BD3fAy
+ cRGNOHAijxuOrb+PGI+jE/v8IweRKfftGj5xxQdDlicijZRlXcPcj3O2i7sJP8gZ0hGa4XYoL
+ DZItuvm4IW+wXgcWwUiRN4/uquJIOrKmwHUhmSiDMNyJuG2Hu7gqRGNFNcKTjFZ0MF4aR3GlJ
+ sce6hVnAuShLICyA3CdLjpBwxpNmaUhVqyY1bqO+cYckoJvX5D4haAP7BTT58xxYMnBTvwMfm
+ mIQs4UOAgRRQLO7ZDX8NMVYk9B5vDuu5yAy44GkMZWD/0E69dCRtzwHi1pCGKMkX/2vqRmMAV
+ PqVfmqToBIx5UY9Mt7DK0bbOoT5jPO8oSHmgYRBFYh3WRXTrsq9T+e6JwKhv6a97JI+X7Twcm
+ 0P5joSKq19btKvhlcCSKOjM+48gAgJV3ELfwexaUlPoSTbVQUDjY/ncVuMTKv9QdToFwisCEc
+ zPa2Df4E63vfMKVyzIPIpbyA56zTh8Vj3qU+k2xPt0wjizwKRhZXYg+FALUTV7K3YeejozhTU
+ qi0Z6mmgdDJ9ML3Du1sQ==
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, Sep 18, 2021 at 7:36 AM Christophe JAILLET
+On Sat, Sep 18, 2021 at 7:20 AM Christophe JAILLET
 <christophe.jaillet@wanadoo.fr> wrote:
 >
 > In [1], Christoph Hellwig has proposed to remove the wrappers in
@@ -80,23 +81,14 @@ On Sat, Sep 18, 2021 at 7:36 AM Christophe JAILLET
 > ago to only describe the modern linux/dma-mapping.h interfaces and mark the
 > old bus-specific ones as no longer recommended, see commit 216bf58f4092
 > ("Documentation: convert PCI-DMA-mapping.txt to use the generic DMA API").
->
-> A coccinelle script has been used to perform the needed transformation
-> Only relevant parts are given below.
->
-> @@
-> expression e1, e2;
-> @@
-> -    pci_set_dma_mask(e1, e2)
-> +    dma_set_mask(&e1->dev, e2)
->
-> [1]: https://lore.kernel.org/kernel-janitors/20200421081257.GA131897@infradead.org/
-> [2]: https://lore.kernel.org/kernel-janitors/alpine.DEB.2.22.394.2007120902170.2424@hadrien/
+...
 >
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> v2: Change Subject to be more explicit
->     Keep only relevant part of the coccinelle script
->     Try to improve the commit message to give some reason of why this change is done
 
 Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+
+How much is left now overall? Are you getting close enough that the
+remaining patches to remove the header can be done as a short series and
+merged through Andrew's -mm tree?
+
+       Arnd
