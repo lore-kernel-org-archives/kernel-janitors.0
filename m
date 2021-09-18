@@ -6,66 +6,68 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87CF1C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sat, 18 Sep 2021 09:39:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBEBCC433EF
+	for <kernel-janitors@archiver.kernel.org>; Sat, 18 Sep 2021 09:41:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 67A7960F45
-	for <kernel-janitors@archiver.kernel.org>; Sat, 18 Sep 2021 09:39:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1C8260F6C
+	for <kernel-janitors@archiver.kernel.org>; Sat, 18 Sep 2021 09:41:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238434AbhIRJkj (ORCPT
+        id S238686AbhIRJm3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 18 Sep 2021 05:40:39 -0400
-Received: from mout.kundenserver.de ([212.227.126.131]:51569 "EHLO
+        Sat, 18 Sep 2021 05:42:29 -0400
+Received: from mout.kundenserver.de ([217.72.192.74]:34963 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238420AbhIRJkj (ORCPT
+        with ESMTP id S238420AbhIRJm2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 18 Sep 2021 05:40:39 -0400
-Received: from mail-wr1-f50.google.com ([209.85.221.50]) by
- mrelayeu.kundenserver.de (mreue012 [213.165.67.97]) with ESMTPSA (Nemesis) id
- 1MTfgb-1mJbFn2wdZ-00U1XR; Sat, 18 Sep 2021 11:39:14 +0200
-Received: by mail-wr1-f50.google.com with SMTP id t18so19270184wrb.0;
-        Sat, 18 Sep 2021 02:39:14 -0700 (PDT)
-X-Gm-Message-State: AOAM533NydKSw7cjeik02C7zp5qSe4KhEsNrszk6ZtdShAxefc2IyS3e
-        dDJ3gAk2JpiivgjuFwgKKL8ecWIqOB2sJ+FsIyw=
-X-Google-Smtp-Source: ABdhPJxYge8PPe/SGv/bK8exLLx5Gjb0c2/3o2pUnyS5weWY0uy9cXxNavng5G5bkYB8AoL+9okvaAFCvaSB4NJ4IK8=
-X-Received: by 2002:adf:c10b:: with SMTP id r11mr17188561wre.336.1631957954380;
- Sat, 18 Sep 2021 02:39:14 -0700 (PDT)
+        Sat, 18 Sep 2021 05:42:28 -0400
+Received: from mail-wr1-f45.google.com ([209.85.221.45]) by
+ mrelayeu.kundenserver.de (mreue106 [213.165.67.113]) with ESMTPSA (Nemesis)
+ id 1MGyl3-1mexEi2OBv-00E894; Sat, 18 Sep 2021 11:41:03 +0200
+Received: by mail-wr1-f45.google.com with SMTP id d21so19168349wra.12;
+        Sat, 18 Sep 2021 02:41:03 -0700 (PDT)
+X-Gm-Message-State: AOAM5333rzB5ir+X0d5Gt9bT5adFqMlnJEXGClhPEBDShKRZ5IQL2aTw
+        RAHIas0baG949VVU7TvmG+fyqz/TYWp6cyEYzeg=
+X-Google-Smtp-Source: ABdhPJx9yqI+1/9/BGcNvj+UPWnFAxrQw73U1HxZSwhNOnNNiyPOuaYL8RQiCFPVaYCRRHWPncR7qh7DTzY4XWN92IQ=
+X-Received: by 2002:a05:6000:1561:: with SMTP id 1mr7487499wrz.369.1631958063252;
+ Sat, 18 Sep 2021 02:41:03 -0700 (PDT)
 MIME-Version: 1.0
-References: <b5296677f92f7bace957e66479b3d57a5a824ca1.1631942796.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <b5296677f92f7bace957e66479b3d57a5a824ca1.1631942796.git.christophe.jaillet@wanadoo.fr>
+References: <c6f280927835c5677cc0367fccdc0ef54b307bd8.1631943364.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <c6f280927835c5677cc0367fccdc0ef54b307bd8.1631943364.git.christophe.jaillet@wanadoo.fr>
 From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Sat, 18 Sep 2021 11:38:59 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a2G8Lze=0CkdL8o7OH5M-oyKPmee9x3YcdFAa4KJvDtxA@mail.gmail.com>
-Message-ID: <CAK8P3a2G8Lze=0CkdL8o7OH5M-oyKPmee9x3YcdFAa4KJvDtxA@mail.gmail.com>
-Subject: Re: [PATCH v2] tifm: Remove usage of the deprecated
- "pci-dma-compat.h" API
+Date:   Sat, 18 Sep 2021 11:40:47 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a3=0kJamjC3Fd_xHx==AXs-_k77gpYkhZz6VEa31K6iOQ@mail.gmail.com>
+Message-ID: <CAK8P3a3=0kJamjC3Fd_xHx==AXs-_k77gpYkhZz6VEa31K6iOQ@mail.gmail.com>
+Subject: Re: [PATCH v2] mei: Remove usage of the deprecated "pci-dma-compat.h" API
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Alex Dubov <oakad@yahoo.com>, Arnd Bergmann <arnd@arndb.de>,
+Cc:     "Winkler, Tomas" <tomas.winkler@intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
         gregkh <gregkh@linuxfoundation.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         kernel-janitors@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:Iga7UAyM3Rg5IdVoU9FCxalWrmmUgvZPTOgWk5KLJOMoZb3BvzO
- MP9V+V8rWYX7p+yHVjZCStvqcpwBa2n4lZIKwsYzSppraY5znEaGJL2UyrbyQDjqjlqIegc
- poQpVY/RqVcMOmaGFAeKGn4ib/aSaN7JmFyvPhYcug0NwSKYqpy6/EAAH+IefZwOjb8kQXO
- 7jzMVIrH/DJFErIH8LcZg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:7D1WEudNtng=:F63KcyBQ+q3pV6hlFDcANg
- ER9HTZuATsxbUoUNNPx9RFX2EQkbeVhD4269n6Lsk/dg8WqV2jm9s7kYi9t0HuSUju9YU8BlO
- kiZMSVrG6dvP9TkX6WQwxxp2OIczmKkjhrtauS45Wg72OJHZS0ON4+XwglTYXfCKFl73cn9CM
- sF7EfwGeZ29vb37fWQQK844vLDZmEkIklMPpYCxuo/0QZSQyMY3wf62mot9vR7jPiuKtrH2Pi
- gyOi8A/n74oieIezH4C5xqH3hU4PwmyGA3vzKIjSdXxD8eqVDY1VkzOi9yK1p1v18p6Q+RPUP
- vVKJSb1IrWJBEgCE+Ffwh8Lo3Sa98N1ZJUx1fb/vX6DBvoKB5XoE3pCejgdM1NgrjGAkkF1VD
- xIVDuCQ0bG6gIpcGmDMd3SoZ1LhV0hJNLt0WBNsLRT4g7PeF6qUvBnZQrIo62jcE1yOCVvWYT
- peiJ+HopBxRqZYRWeczd30oWnBvFOhGRdQ4pvBfOqE7hcW3DC8/D2Ka1UJkP63klZ4YR1aN4g
- w3W768lk7CTjo3sVA555uwPCkvhYppLiisbBuOIIh+Ev8IOZjPWIHra64vw5sQkvSk8N3GdwL
- 49ot6MEh2Jb0SovgKmV3B6kNxdY1w2ydpZ6OVjp07eWl45fHlB/O02FhNbCtmiybWJfBbXGD8
- E8Fa63GzCPuVtmxxXBem4K4MKQV5QaeA5OKKZWs51c6NglWgfgGlc71UplBs1Bsc6dVEkQKZ6
- wDW+oGcQ/rVW8Mdia5GfdfTBlWIfE/u0p3QhgA==
+X-Provags-ID: V03:K1:aRHOdbpH6fsglEmrF1NTwMM2llsFNWYF2GO1h2C24KAvivt0VFC
+ lf7RvzIgimM7txwOXL29U62pUX2WnwDwA9KEoUq59AhYg6ohTvUUagBI5GV1/Cw4bHxoztp
+ uA9lBCeeszkupgUhJ5Z9Pabeo0huk5IPKC5TVzbOGRhYKL5YlwDHqXzrSMAlURtVhGLHjdp
+ A0q55Nk4mqkHu1ay7MbYw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:rzKSYP4C1fY=:48v6u8SUodSB8u4efnR1kg
+ Z2tMe3uj/ENKOIUQ25M9haukuRBGDr/6jx+E+xe0FhYPB+80HyvTIQaJ+2lohhsarAZj892Y/
+ B5c3mbSCyP4Rq9IxJxJ0oI+vd19zehA7o08B6vPpemqMSfLf/Nu6XMBV24RI5Kjf4oPZZSWez
+ KgtEHTFkEatWT12NJQ2JGNKYLF41hWFWNjrFnwV5ftwxepNadVqrRrQbSlw5GY4g7zuWNEltA
+ QxHgBcpOZkzgZL/4poheJ/I4Cvn8VAO4RONRhiPD6k8kdmujgU0St7FohxCo3LP9+pmordGV+
+ sahQFdpHEOGMPNOMgByrt+a3d3dYUzEOBU0GSApOLiL8HsRK6U8E2QTw698UlBWY1TJrcp0TS
+ 9VbsNAyFIU4ZaTCfYyIn2WC1XP0cOYl8syPK1qeI8QoMFovr3uvVGfIztJrY7sGgt9tSl8B64
+ A9jx1EngWpHTnfFI67bg9ymd46QMDapjxWIodKCFLUPBipwB479/lLku9c15XxHjymsbHQ1PT
+ sfNRB8/sgPJ2s9K+vzxjfukRYj37thikAjXdpIRZztMxtI8hAv6Oxvswe1WZaeCXugh3YsYPm
+ GSWIiXUP1+vnAUpF3Z6r61S4ECNKwVFuawh4nyHjmSRD3+rjEa7t17mAtGePQpovMNmSiRMw9
+ QaTbsHXSaE52GEQhsaSjS1QuAjwkaPmrR8mvnQigab0PDY19z88gdt8ufCwPopJVchs+p3bBr
+ yQhG2Rk0tS6MgxXqPzzHb6yI72MVMiXFHxUUM/zdq6oCEp53xorUCkhqH0pRBkWXHTaeQDbG2
+ B5fNHn9/wkkj3zckpvb09qjAlmNA2jwyQTj8qu48wi8KTXTaUptzUVzq6w/WPfV4XCgapdEfJ
+ Tm0tuqkcsV5Vdt0lH8mQ==
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, Sep 18, 2021 at 7:32 AM Christophe JAILLET
+On Sat, Sep 18, 2021 at 7:36 AM Christophe JAILLET
 <christophe.jaillet@wanadoo.fr> wrote:
 >
 > In [1], Christoph Hellwig has proposed to remove the wrappers in
@@ -81,18 +83,6 @@ On Sat, Sep 18, 2021 at 7:32 AM Christophe JAILLET
 >
 > A coccinelle script has been used to perform the needed transformation
 > Only relevant parts are given below.
->
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_map_sg(e1, e2, e3, e4)
-> +    dma_map_sg(&e1->dev, e2, e3, e4)
->
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_unmap_sg(e1, e2, e3, e4)
-> +    dma_unmap_sg(&e1->dev, e2, e3, e4)
 >
 > @@
 > expression e1, e2;
