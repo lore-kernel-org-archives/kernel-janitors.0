@@ -5,45 +5,49 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 104D3C4167E
-	for <kernel-janitors@archiver.kernel.org>; Mon, 20 Sep 2021 18:34:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 319A8C433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 20 Sep 2021 18:43:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EEA2961268
-	for <kernel-janitors@archiver.kernel.org>; Mon, 20 Sep 2021 18:34:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1940B60ED7
+	for <kernel-janitors@archiver.kernel.org>; Mon, 20 Sep 2021 18:43:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353377AbhITSgF (ORCPT
+        id S1382499AbhITSpW (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 20 Sep 2021 14:36:05 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:58342
-        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1352878AbhITSdg (ORCPT
+        Mon, 20 Sep 2021 14:45:22 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:39008
+        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1353270AbhITSnV (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 20 Sep 2021 14:33:36 -0400
+        Mon, 20 Sep 2021 14:43:21 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 230D040D43;
-        Mon, 20 Sep 2021 18:32:07 +0000 (UTC)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id CE4204018A;
+        Mon, 20 Sep 2021 18:41:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1632162727;
-        bh=rzsf7Jp4zHlHmSebOdtNBwl34AtYTI7DgNFSHbuOgVM=;
+        s=20210705; t=1632163312;
+        bh=RJZDrQJzd/PSuwhwBqk2LEL2gE5VbirT5KM+/uoAMZM=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=Qb8fYSlJ8nKGhRjg6/JFOAyLW8c2X/N7QD5K6NAHoo1fYZhPnH+yStMXyTq1detjR
-         Ta5MLirQWbq9wT72eIZGXws+njLXTjI7AnGZ2wXFziTfsa0fcmZWXBMTwZ8G0pPxq6
-         LKgTNhF0jndI0xjC2yAVmz4JQIim/Y/GzYwF4H05FbcBH7xwxe2QYq28hI06+qa8vW
-         JtB7nt6ev9izRImzmjxyv+S0R8t9enTB3OgOj3Tws1YGoucISkjncx4U0sC/c9AgiK
-         kVYa7tU+pLvKtLEdZxpi7Rgx3VtI8q0KwsGpWRueYisin86kBG9Xsc2ErM2mvntopA
-         uM4za9dDg4syw==
+        b=GJt9l1cX84J2OP93j5YuUFiPQVNMKb3ZV1UjuSiApMhiEzNho20YzONtFWFl47Kvj
+         KZq6nr7iBQBlyhVu+gpYlXjG20kCNSqxBMxZBdZMi51yhrVV+h/aYL4eAqWjnqlCuD
+         WCCTOaFWc4k3zLACjF1atwK1eyKnvR3CfMer690J8IKq6+j4eOXoaqXDOvWRRCgQOy
+         x9YAjM1Xj5ihTYbYjSgcyEZ0K53T48Vgk5iF7lYXs0MGoaml9M6w40eq4rPALAMerh
+         wwwrD/jCqWjCLOWq8z0mOL3EhLsHzq1MHgG0gstz9yJBLrIsrjanG4bBkJ+RC2yQ3Y
+         Qkc/+igRL9p8A==
 From:   Colin King <colin.king@canonical.com>
-To:     "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Banajit Goswami <bgoswami@codeaurora.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: target: Fix spelling mistake "CONFLIFT" -> "CONFLICT"
-Date:   Mon, 20 Sep 2021 19:32:06 +0100
-Message-Id: <20210920183206.17477-1-colin.king@canonical.com>
+Subject: [PATCH] ASoC: qdsp6: q6afe-dai: Fix spelling mistake "Fronend" -> "Frontend"
+Date:   Mon, 20 Sep 2021 19:41:52 +0100
+Message-Id: <20210920184152.18109-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -54,26 +58,24 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-There is a spelling mistake in a dev_err message. Fix it.
+There is a spelling mistake in the module description. Fix it.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/target/target_core_pr.c | 2 +-
+ sound/soc/qcom/qdsp6/q6afe-dai.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/target/target_core_pr.c b/drivers/target/target_core_pr.c
-index 4b94b085625b..3829b61b56c1 100644
---- a/drivers/target/target_core_pr.c
-+++ b/drivers/target/target_core_pr.c
-@@ -269,7 +269,7 @@ target_scsi2_reservation_reserve(struct se_cmd *cmd)
- 	spin_lock(&dev->dev_reservation_lock);
- 	if (dev->reservation_holder &&
- 	    dev->reservation_holder->se_node_acl != sess->se_node_acl) {
--		pr_err("SCSI-2 RESERVATION CONFLIFT for %s fabric\n",
-+		pr_err("SCSI-2 RESERVATION CONFLICT for %s fabric\n",
- 			tpg->se_tpg_tfo->fabric_name);
- 		pr_err("Original reserver LUN: %llu %s\n",
- 			cmd->se_lun->unpacked_lun,
+diff --git a/sound/soc/qcom/qdsp6/q6afe-dai.c b/sound/soc/qcom/qdsp6/q6afe-dai.c
+index ac8f7324e94b..8b664cbf6fa6 100644
+--- a/sound/soc/qcom/qdsp6/q6afe-dai.c
++++ b/sound/soc/qcom/qdsp6/q6afe-dai.c
+@@ -1747,5 +1747,5 @@ static struct platform_driver q6afe_dai_platform_driver = {
+ };
+ module_platform_driver(q6afe_dai_platform_driver);
+ 
+-MODULE_DESCRIPTION("Q6 Audio Fronend dai driver");
++MODULE_DESCRIPTION("Q6 Audio Frontend dai driver");
+ MODULE_LICENSE("GPL v2");
 -- 
 2.32.0
 
