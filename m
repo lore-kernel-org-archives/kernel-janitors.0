@@ -5,47 +5,47 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BC1AC433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon, 20 Sep 2021 18:11:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 209B4C433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 20 Sep 2021 18:30:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 397BB61A03
-	for <kernel-janitors@archiver.kernel.org>; Mon, 20 Sep 2021 18:11:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04BD6600D4
+	for <kernel-janitors@archiver.kernel.org>; Mon, 20 Sep 2021 18:30:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376555AbhITSMy (ORCPT
+        id S1380058AbhITScL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 20 Sep 2021 14:12:54 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:35254
+        Mon, 20 Sep 2021 14:32:11 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:37174
         "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1359090AbhITSKv (ORCPT
+        by vger.kernel.org with ESMTP id S1352646AbhITSaH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 20 Sep 2021 14:10:51 -0400
+        Mon, 20 Sep 2021 14:30:07 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id F0B5B3F328;
-        Mon, 20 Sep 2021 18:09:21 +0000 (UTC)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 54A813F328;
+        Mon, 20 Sep 2021 18:28:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1632161362;
-        bh=1MOw3pBn5yZn8i9TpCdyOmpabZHlCyzS2R0H6XOTRXI=;
+        s=20210705; t=1632162518;
+        bh=RZrZe46PibOc6VV+U13ENsWARYzoTyYCxHt8wFyjnVY=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=cVCLcvTM2TVoMt16SXlVJ71+YWdYtMotLXo0nRN7RYm++zX6WyllppDB/mzX4YSvv
-         iY/oW26nPG3lA2FiQMr+Rwj1GsQqw8EP+/aUWT6wFjRzVS9VRfkGCGN9/BJ373g/+n
-         mp2/uv+wQ/l3kmXH+2bKwpkt5XhNVDawgPJDzOsiPiU8aOBvBFfokch693AfrFnCxa
-         TfYwfLIMMncYel61/1CNJ9CvZwoOS5IYojZz/H+OGyO/Dc1HrHZjLTZRuL7rSRRroC
-         nnIBD7Mn6zV+Zw+ocFh5Q9mKPLUdXisCkcYa2mKxbSgSLBOO2w6h4uQZ3TrOTbfugp
-         MGyjCRNxGTQrw==
+        b=HutSIyPrh96ZCXYSLHh5fbc4BXZoKkqxTxEyn0XgHY9+qdmgTxjcNgTdN1ytrlRXO
+         t/IoT45as39vaoJ7si2Sjwt++gU1RbHsGIDmgSn4SzBVGlyect26dM9p9RuQwz9rR5
+         aYMbiZaCIDoYLZeY1ct3s0gI+z+TxJ+S3vdAKL/Q/mJp0oUCMEZ1Iq1PcnQcn8Hntr
+         LzJOq9XXWI6w2IzKfr0ft4G6DbiCbSIYdL8A9DtkJbNnmns0MCSEILKWR/kLUrMdLk
+         tZgT8HHxDHAXos/RzC4Dd5fjmjFU/VyyXy13u36adcVDsN8qKbXjUaY5F0DBqgOH0T
+         l2TRfIGnJweQQ==
 From:   Colin King <colin.king@canonical.com>
-To:     Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Vadim Pasternak <vadimp@nvidia.com>,
-        linux-hwmon@vger.kernel.org
+To:     Zhou Wang <wangzhou1@hisilicon.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] hwmon: (mlxreg-fan): Fix out of bounds read on array fan->pwm
-Date:   Mon, 20 Sep 2021 19:09:21 +0100
-Message-Id: <20210920180921.16246-1-colin.king@canonical.com>
+Subject: [PATCH] crypto: hisilicon: Fix spelling mistake "COMSUMED" -> "CONSUMED"
+Date:   Mon, 20 Sep 2021 19:28:38 +0100
+Message-Id: <20210920182838.17218-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -56,31 +56,26 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Array fan->pwm[] is MLXREG_FAN_MAX_PWM elements in size, however the
-for-loop has a off-by-one error causing index i to be out of range
-causing an out of bounds read on the array. Fix this by replacing
-the <= operator with < in the for-loop.
+There is a spelling mistake in a literal string. Fix it.
 
-Addresses-Coverity: ("Out-of-bounds read")
-Fixes: 35edbaab3bbf ("hwmon: (mlxreg-fan) Extend driver to support multiply cooling devices")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/hwmon/mlxreg-fan.c | 2 +-
+ drivers/crypto/hisilicon/zip/zip_main.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hwmon/mlxreg-fan.c b/drivers/hwmon/mlxreg-fan.c
-index 35228ed112d7..feab9ec6a6ca 100644
---- a/drivers/hwmon/mlxreg-fan.c
-+++ b/drivers/hwmon/mlxreg-fan.c
-@@ -554,7 +554,7 @@ static int mlxreg_fan_cooling_config(struct device *dev, struct mlxreg_fan *fan)
- {
- 	int i, j;
- 
--	for (i = 0; i <= MLXREG_FAN_MAX_PWM; i++) {
-+	for (i = 0; i < MLXREG_FAN_MAX_PWM; i++) {
- 		struct mlxreg_fan_pwm *pwm = &fan->pwm[i];
- 
- 		if (!pwm->connected)
+diff --git a/drivers/crypto/hisilicon/zip/zip_main.c b/drivers/crypto/hisilicon/zip/zip_main.c
+index 7148201ce76e..873971ef9aee 100644
+--- a/drivers/crypto/hisilicon/zip/zip_main.c
++++ b/drivers/crypto/hisilicon/zip/zip_main.c
+@@ -218,7 +218,7 @@ static const struct debugfs_reg32 hzip_dfx_regs[] = {
+ 	{"HZIP_AVG_DELAY                 ",  0x28ull},
+ 	{"HZIP_MEM_VISIBLE_DATA          ",  0x30ull},
+ 	{"HZIP_MEM_VISIBLE_ADDR          ",  0x34ull},
+-	{"HZIP_COMSUMED_BYTE             ",  0x38ull},
++	{"HZIP_CONSUMED_BYTE             ",  0x38ull},
+ 	{"HZIP_PRODUCED_BYTE             ",  0x40ull},
+ 	{"HZIP_COMP_INF                  ",  0x70ull},
+ 	{"HZIP_PRE_OUT                   ",  0x78ull},
 -- 
 2.32.0
 
