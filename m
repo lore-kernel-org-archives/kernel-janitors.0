@@ -2,79 +2,115 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CC2EC433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon, 20 Sep 2021 18:55:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A234C433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue, 21 Sep 2021 12:22:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 26D48606A5
-	for <kernel-janitors@archiver.kernel.org>; Mon, 20 Sep 2021 18:55:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4718661100
+	for <kernel-janitors@archiver.kernel.org>; Tue, 21 Sep 2021 12:22:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1385990AbhITS4a (ORCPT
+        id S232525AbhIUMXf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 20 Sep 2021 14:56:30 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:39484
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1385710AbhITSv4 (ORCPT
+        Tue, 21 Sep 2021 08:23:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35014 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229984AbhIUMXe (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 20 Sep 2021 14:51:56 -0400
-Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 5636A3F070;
-        Mon, 20 Sep 2021 18:50:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1632163828;
-        bh=hWL01eU+1x8jZvPaNXNGLcO6ryJi/d3u2BcpeV4Iedw=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=u+lNmK6LN5+EzY3T/OYTyWigcduw1rxE+le88nYqE2NOJDtCkkBKd0n8b4O6BIelu
-         zMRTKczs8PF/V2tYGN4skVrFyHI15EQwc4SJNla10KMpVWAeB0mgdLb9zEnyR5hfuh
-         xPmmTKAtFiyOMvSdhkDBq/09LOvG5D3Crnu7LfY4+/56OY1AL45Xe1CHZU81WMaBls
-         Qz33AYj4VloPYZozeGgCwDLKtIn4HP1n6eqKa+YjjejfowKdRcBfdgfmbxAjPPdOGN
-         54rqgOlLZoOYIK6nx2SsucsnmhHCwx/2trReIAkPZRzUL1tkg1/dhCwhYu/utOL7fT
-         WkdnInaucwkkg==
-From:   Colin King <colin.king@canonical.com>
-To:     "Rafael J . Wysocki" <rafael@kernel.org>,
-        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] Documentation: ACPI: Fix spelling mistake "Millenium" -> "Millennium"
-Date:   Mon, 20 Sep 2021 19:50:28 +0100
-Message-Id: <20210920185028.18738-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.32.0
+        Tue, 21 Sep 2021 08:23:34 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68253C061574;
+        Tue, 21 Sep 2021 05:22:06 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id t8so38596786wrq.4;
+        Tue, 21 Sep 2021 05:22:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5M2bRv2kmamfcOnSq0h86eu6NBUQ+EJzp0SymobeTak=;
+        b=DFvrS0QYGhxB0DmDAsfqXwyI+pX2mHkxCYq+b45Yg8wY4PUEJnCOtxBrHoy/2jXbyB
+         FgO0R+5uEjOde54sTR4+NH06OD095RdLgTqqo0TaL/sbZbswFwbEo2MaS96vxse+lbuP
+         bgjGTlbdOAvXj7sy2hN/xYD6UhEdZzKlUJFydFO9B7VIOYMjO4RMQh6BbdQNS+h+EbJ6
+         Wlb/88coA7F8iNaT0OPMEbaiuVcT2vslSjXODVshGWrgO26idvmiGYXqyaIAlvqgB5f4
+         DOiEUssCsmgnE2FhUf55C6ecskd67exeNlR2lIM9QvRxb7HVqHbTmETxRH87WSCnwgnZ
+         EN5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5M2bRv2kmamfcOnSq0h86eu6NBUQ+EJzp0SymobeTak=;
+        b=jSL+oH7JjlVUb8t/tDpLeeGIxbAUY/Jv6nt1WwrmyRISP0J0V5ghz9tpkUbUjQYqfC
+         p6OtRdBFoNN9GVeaQd4ioOXdo+n+EwSlMGldR/UzlJJPw3uPVo+ybIk+XdIbr5LK/YCO
+         XBKyv8mwYJoBDk5pz52mciWNGgpJ//g74G0QllGWJkmGawLA8L+0YEKrLf0N9oWEUi+4
+         vA9r1BvrL84BniDqqoARMvlX5uiowYIuNUbMv5qh4NNwKdLjwN+LF/4Wo2/fGqGqn2Ps
+         ZlcVY6y6L9bsLw0beG51kDrszsHFP4gWgkPltY9aLumDEZsxk/oPoKNBh7j4nJsRjbRL
+         9hcQ==
+X-Gm-Message-State: AOAM532pSFpGOoffwzkl0lSz24BwJyD6HZGKzAYP0PuUbtg3vw9cqyup
+        QzLtXN/jYwT4EXhIajdnKhY=
+X-Google-Smtp-Source: ABdhPJxH/FHabvrYaa7eWfww74FZM0cp4SKhlS2u1GpqB0+l22TAx/x2zXu3m8WRvLuGV1egPRURkg==
+X-Received: by 2002:a1c:4c13:: with SMTP id z19mr4357450wmf.154.1632226924831;
+        Tue, 21 Sep 2021 05:22:04 -0700 (PDT)
+Received: from localhost.localdomain (i59F67ACA.versanet.de. [89.246.122.202])
+        by smtp.gmail.com with ESMTPSA id 20sm2999829wme.46.2021.09.21.05.22.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Sep 2021 05:22:04 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Markuss Broks <markuss.broks@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, phone-devel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: fix typo in DRM DRIVER FOR SAMSUNG S6D27A1 PANELS
+Date:   Tue, 21 Sep 2021 14:21:46 +0200
+Message-Id: <20210921122146.13132-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Commit ebd8cbf1fb96 ("drm/panel: s6d27a1: Add driver for Samsung S6D27A1
+display panel") introduces a new section DRM DRIVER FOR SAMSUNG S6D27A1
+PANELS with a minor typo in one of its file entries.
 
-There is a spelling mistake in the documentation with the Windows
-Millennium edition. Fix it.
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains:
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+  warning: no file matches  F:  driver/gpu/drm/panel/panel-samsung-s6d27a1.c
+
+So, repair the entry and make get_maintainer.pl happy.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- Documentation/firmware-guide/acpi/osi.rst | 2 +-
+applies cleanly on next-20210920
+
+Linus, please pick this minor quick clean-up patch on drm-misc-next
+(on top of the commit mentioned above).
+
+ MAINTAINERS | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/firmware-guide/acpi/osi.rst b/Documentation/firmware-guide/acpi/osi.rst
-index 29e9ef79ebc0..05869c0045d7 100644
---- a/Documentation/firmware-guide/acpi/osi.rst
-+++ b/Documentation/firmware-guide/acpi/osi.rst
-@@ -74,7 +74,7 @@ The ACPI BIOS flow would include an evaluation of _OS, and the AML
- interpreter in the kernel would return to it a string identifying the OS:
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 2b990794ec35..1c486baf9c8d 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6045,7 +6045,7 @@ DRM DRIVER FOR SAMSUNG S6D27A1 PANELS
+ M:	Markuss Broks <markuss.broks@gmail.com>
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/display/panel/samsung,s6d27a1.yaml
+-F:	driver/gpu/drm/panel/panel-samsung-s6d27a1.c
++F:	drivers/gpu/drm/panel/panel-samsung-s6d27a1.c
  
- Windows 98, SE: "Microsoft Windows"
--Windows ME: "Microsoft WindowsME:Millenium Edition"
-+Windows ME: "Microsoft WindowsME:Millennium Edition"
- Windows NT: "Microsoft Windows NT"
- 
- The idea was on a platform tasked with running multiple OS's,
+ DRM DRIVER FOR SITRONIX ST7703 PANELS
+ M:	Guido Günther <agx@sigxcpu.org>
 -- 
-2.32.0
+2.26.2
 
