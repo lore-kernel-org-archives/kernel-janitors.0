@@ -2,115 +2,110 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A234C433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue, 21 Sep 2021 12:22:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E506C433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue, 21 Sep 2021 13:40:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4718661100
-	for <kernel-janitors@archiver.kernel.org>; Tue, 21 Sep 2021 12:22:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78D0D611BD
+	for <kernel-janitors@archiver.kernel.org>; Tue, 21 Sep 2021 13:40:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232525AbhIUMXf (ORCPT
+        id S233189AbhIUNlw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 21 Sep 2021 08:23:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35014 "EHLO
+        Tue, 21 Sep 2021 09:41:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229984AbhIUMXe (ORCPT
+        with ESMTP id S233119AbhIUNlv (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 21 Sep 2021 08:23:34 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68253C061574;
-        Tue, 21 Sep 2021 05:22:06 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id t8so38596786wrq.4;
-        Tue, 21 Sep 2021 05:22:06 -0700 (PDT)
+        Tue, 21 Sep 2021 09:41:51 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 975ADC061574
+        for <kernel-janitors@vger.kernel.org>; Tue, 21 Sep 2021 06:40:22 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id eg28so51877375edb.1
+        for <kernel-janitors@vger.kernel.org>; Tue, 21 Sep 2021 06:40:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=5M2bRv2kmamfcOnSq0h86eu6NBUQ+EJzp0SymobeTak=;
-        b=DFvrS0QYGhxB0DmDAsfqXwyI+pX2mHkxCYq+b45Yg8wY4PUEJnCOtxBrHoy/2jXbyB
-         FgO0R+5uEjOde54sTR4+NH06OD095RdLgTqqo0TaL/sbZbswFwbEo2MaS96vxse+lbuP
-         bgjGTlbdOAvXj7sy2hN/xYD6UhEdZzKlUJFydFO9B7VIOYMjO4RMQh6BbdQNS+h+EbJ6
-         Wlb/88coA7F8iNaT0OPMEbaiuVcT2vslSjXODVshGWrgO26idvmiGYXqyaIAlvqgB5f4
-         DOiEUssCsmgnE2FhUf55C6ecskd67exeNlR2lIM9QvRxb7HVqHbTmETxRH87WSCnwgnZ
-         EN5g==
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=hy0PolOjfaXYxlg2doenD/4mEsnT0y4Wgn5+QthoNgQ=;
+        b=mXOd8Uuve41DKLvJrr6/QoaBIEC98yneQWLoPVx38AYsBq1kgX4II0RB8nur8E3FFd
+         02ourtfGk+JaJRPJ4PiZNcJzErw7nj6ut4k0mh75Oe08Wz1jT2Sds4c8ME2Ui6kyA+0r
+         T7GKMPTxoYgvgi/7XR1kA+a07Ko6GDhqZgU4cgNhtL6whEr5iKu2GKtqL6nNtcDrTXkJ
+         RzO3vYQvY39KnW3a5I6O2e9syhpCvLsETc0FHOcWSxnZQoim2XK4MIlhiGWRNm+ex+Tj
+         CmGFSsM5cDH4dZw1CwzPwIRvr6jjA1x4Jc+xtlmK1XmvJA8frCmUT1IJq02Tb8zR6NT9
+         mQVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=5M2bRv2kmamfcOnSq0h86eu6NBUQ+EJzp0SymobeTak=;
-        b=jSL+oH7JjlVUb8t/tDpLeeGIxbAUY/Jv6nt1WwrmyRISP0J0V5ghz9tpkUbUjQYqfC
-         p6OtRdBFoNN9GVeaQd4ioOXdo+n+EwSlMGldR/UzlJJPw3uPVo+ybIk+XdIbr5LK/YCO
-         XBKyv8mwYJoBDk5pz52mciWNGgpJ//g74G0QllGWJkmGawLA8L+0YEKrLf0N9oWEUi+4
-         vA9r1BvrL84BniDqqoARMvlX5uiowYIuNUbMv5qh4NNwKdLjwN+LF/4Wo2/fGqGqn2Ps
-         ZlcVY6y6L9bsLw0beG51kDrszsHFP4gWgkPltY9aLumDEZsxk/oPoKNBh7j4nJsRjbRL
-         9hcQ==
-X-Gm-Message-State: AOAM532pSFpGOoffwzkl0lSz24BwJyD6HZGKzAYP0PuUbtg3vw9cqyup
-        QzLtXN/jYwT4EXhIajdnKhY=
-X-Google-Smtp-Source: ABdhPJxH/FHabvrYaa7eWfww74FZM0cp4SKhlS2u1GpqB0+l22TAx/x2zXu3m8WRvLuGV1egPRURkg==
-X-Received: by 2002:a1c:4c13:: with SMTP id z19mr4357450wmf.154.1632226924831;
-        Tue, 21 Sep 2021 05:22:04 -0700 (PDT)
-Received: from localhost.localdomain (i59F67ACA.versanet.de. [89.246.122.202])
-        by smtp.gmail.com with ESMTPSA id 20sm2999829wme.46.2021.09.21.05.22.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Sep 2021 05:22:04 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Markuss Broks <markuss.broks@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, phone-devel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: fix typo in DRM DRIVER FOR SAMSUNG S6D27A1 PANELS
-Date:   Tue, 21 Sep 2021 14:21:46 +0200
-Message-Id: <20210921122146.13132-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.26.2
+        bh=hy0PolOjfaXYxlg2doenD/4mEsnT0y4Wgn5+QthoNgQ=;
+        b=Z5LiQ+aj+PZ7bpPFgtsuZvF3Okhvedk28HlqgflQMdHbG13znel4QrQfvWYvIFnzAC
+         NaPbw8OfWusZKJapaLq75IjGGZ8NgQjBK0kPOrKFFGC7doZ5S7laxFT6OMuKcid8sqJB
+         oRmiA1yvnA+GJBZGdCY6y/x/xkI1jHV2ffLKcC3cnBAehBcOd9kdo9mo5mlLe5A+hxZp
+         qnjZ+g7V7CJjgiVhRwn7vTMldD6S9au+jHQbFMKKpSpsqmys+OLSgEu/i6ikLLweUX+2
+         HoOmW+HnbDx790NbIx6Mu05U5hnaP2vwg0P4WnIFCn1ySHgjsdW038P5WZKpPNLcH17K
+         v7zw==
+X-Gm-Message-State: AOAM531l7FC0KI8jKmwvbuWGusShuEizZYW7ApHszQAk8wSXhx7ktjni
+        QcnxQJK+G0mtDwkN3EOi0PGoSg==
+X-Google-Smtp-Source: ABdhPJxzci9Rw5XMfFMzir7le7QhtInOzGHLhYgrNyW2wx7vWHnfoqwW/vAgOw35Y2R00vHPEVnFWg==
+X-Received: by 2002:a50:d84c:: with SMTP id v12mr34819451edj.203.1632231544394;
+        Tue, 21 Sep 2021 06:39:04 -0700 (PDT)
+Received: from [192.168.86.34] (cpc86377-aztw32-2-0-cust226.18-1.cable.virginm.net. [92.233.226.227])
+        by smtp.googlemail.com with ESMTPSA id i20sm8475321eds.14.2021.09.21.06.39.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Sep 2021 06:39:03 -0700 (PDT)
+Subject: Re: [PATCH] ASoC: qdsp6: q6afe-dai: Fix spelling mistake "Fronend" ->
+ "Frontend"
+To:     Colin King <colin.king@canonical.com>,
+        Banajit Goswami <bgoswami@codeaurora.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210920184152.18109-1-colin.king@canonical.com>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <ccecfbda-c328-22ad-7a00-0f1980fe7589@linaro.org>
+Date:   Tue, 21 Sep 2021 14:39:02 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210920184152.18109-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit ebd8cbf1fb96 ("drm/panel: s6d27a1: Add driver for Samsung S6D27A1
-display panel") introduces a new section DRM DRIVER FOR SAMSUNG S6D27A1
-PANELS with a minor typo in one of its file entries.
 
-Hence, ./scripts/get_maintainer.pl --self-test=patterns complains:
 
-  warning: no file matches  F:  driver/gpu/drm/panel/panel-samsung-s6d27a1.c
+On 20/09/2021 19:41, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> There is a spelling mistake in the module description. Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-So, repair the entry and make get_maintainer.pl happy.
+Reviewed-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-applies cleanly on next-20210920
-
-Linus, please pick this minor quick clean-up patch on drm-misc-next
-(on top of the commit mentioned above).
-
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 2b990794ec35..1c486baf9c8d 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6045,7 +6045,7 @@ DRM DRIVER FOR SAMSUNG S6D27A1 PANELS
- M:	Markuss Broks <markuss.broks@gmail.com>
- S:	Maintained
- F:	Documentation/devicetree/bindings/display/panel/samsung,s6d27a1.yaml
--F:	driver/gpu/drm/panel/panel-samsung-s6d27a1.c
-+F:	drivers/gpu/drm/panel/panel-samsung-s6d27a1.c
- 
- DRM DRIVER FOR SITRONIX ST7703 PANELS
- M:	Guido Günther <agx@sigxcpu.org>
--- 
-2.26.2
-
+> ---
+>   sound/soc/qcom/qdsp6/q6afe-dai.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/sound/soc/qcom/qdsp6/q6afe-dai.c b/sound/soc/qcom/qdsp6/q6afe-dai.c
+> index ac8f7324e94b..8b664cbf6fa6 100644
+> --- a/sound/soc/qcom/qdsp6/q6afe-dai.c
+> +++ b/sound/soc/qcom/qdsp6/q6afe-dai.c
+> @@ -1747,5 +1747,5 @@ static struct platform_driver q6afe_dai_platform_driver = {
+>   };
+>   module_platform_driver(q6afe_dai_platform_driver);
+>   
+> -MODULE_DESCRIPTION("Q6 Audio Fronend dai driver");
+> +MODULE_DESCRIPTION("Q6 Audio Frontend dai driver");
+>   MODULE_LICENSE("GPL v2");
+> 
