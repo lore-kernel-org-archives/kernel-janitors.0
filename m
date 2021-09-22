@@ -2,94 +2,122 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 742D8C433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed, 22 Sep 2021 13:17:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE663C433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed, 22 Sep 2021 16:35:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4D9A361090
-	for <kernel-janitors@archiver.kernel.org>; Wed, 22 Sep 2021 13:17:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB491611C6
+	for <kernel-janitors@archiver.kernel.org>; Wed, 22 Sep 2021 16:35:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231663AbhIVNS6 (ORCPT
+        id S236638AbhIVQhR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 22 Sep 2021 09:18:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40518 "EHLO
+        Wed, 22 Sep 2021 12:37:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58752 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230413AbhIVNS5 (ORCPT
+        with ESMTP id S234140AbhIVQhQ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 22 Sep 2021 09:18:57 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6C62C061574
-        for <kernel-janitors@vger.kernel.org>; Wed, 22 Sep 2021 06:17:27 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id d6so6611173wrc.11
-        for <kernel-janitors@vger.kernel.org>; Wed, 22 Sep 2021 06:17:27 -0700 (PDT)
+        Wed, 22 Sep 2021 12:37:16 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CF98C061574;
+        Wed, 22 Sep 2021 09:35:46 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id t8so8719858wrq.4;
+        Wed, 22 Sep 2021 09:35:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=FPfmBJzHT+JaocXdsOVwjR5yIsUZhr27wAcmXc5LLyw=;
-        b=Hz+9GFA/nDOvS6b2pvrs/o4qttiLDv/3qcOO+yBAaGVnYaz56kHxvOvQuptlQqjKHz
-         vhsztXkx1i27riCnpY9UKPZsCNFylntcNak9k4JvLz3AkHe5CTTLb1vzTvEiu2YhsZDl
-         IutxxV+bVcBxfoOuIWHKH05knX5RJN02doZjdxqQxOrVpaiQO7/qPDEQ8FxBFmLfMds3
-         c6Yj44fO9b23HJCnxfcIxNFGFP+StM31QNUigrNmaf4f2Kz8Hk9d3kybPmaJVuJyJBgi
-         SWkHIOaxqJEsV4t8Xu2O9kIF0EVr1iOjhqX7Jt6Yw8XKPBDd16SR9VJJGX70IUGjx+3I
-         F/og==
+        d=gmail.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=XdQgCWF+HbG2xPtwVWVByVbos5CxGYFvNsMZE3cxEp8=;
+        b=JlrBGgWRjSNrAFP2UtKXrI5eKubObLSYQAXO9P1SFT661XJ0iXdB6D2OSKjk4o2BqK
+         YnKVQavDm81Er7abThInPnhii2sd+fKmz4ReYpp+Hq4BZH4YzFsofaoZmd560yhWRsya
+         xgZsW3wqrjwQ2iqf8kzkUMloY/u0Qxnm0uAhjE8R6zWizV6nEDAMjVAO078OktsG0X6n
+         XSxw/eAZRj09tSUBKtFJHNVHCrjvCA6ooACft9G+tePoP2+1F0sdoN+q4K71GVNgdanc
+         stBkDvSOcU8CnUFaPPFP5Cu9B+gCgCfFRlj9zmOsm0kN/j1iA031nRwnjCqIsVbldlKb
+         s8ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=FPfmBJzHT+JaocXdsOVwjR5yIsUZhr27wAcmXc5LLyw=;
-        b=pJZZI3QYZLfqBGag7R04f61BLUpxx0vIHmQPQynibKyULXCXN/uKr84HUbLL3qfHdW
-         kB91Kc5KtXNfH2e/3Xld6Zk7CNMr5DL85srJM5QFJfr1sktql9vQQnL6Nk879qC5LGcB
-         lV3sMtqaJb0GfOUh07tl71g7yJj0Fs8VkYtAyBXhdjYpihAW5xP+VesNccbUpY920bh3
-         jLqUwNmaoWuaYQKm1JR7+NnHQ+wxJEReoar1uK0V9pSipgAk1oifJKlxgPCyeZLRCtgp
-         2UOnbMzByO8rCFyaImH83lK11HrwoOLlGDUccJsljXhRq6tDedzliBGbiGdmc3vwX8sY
-         DJeg==
-X-Gm-Message-State: AOAM530CojF7KTyjAvzd8tKPH91F7q1VvSDd0KruhwQku5KVEUjgccGf
-        TTBg99h2KZbMevWcNOMuj+A9iQ==
-X-Google-Smtp-Source: ABdhPJxnCGGSJkeD7rng8f/uNJHmNF+Jg0efhKKJmNzWkc9UJw6VAEz47CT0ALJuUJUwR2WZVMeoOQ==
-X-Received: by 2002:a5d:56cf:: with SMTP id m15mr41644241wrw.240.1632316646386;
-        Wed, 22 Sep 2021 06:17:26 -0700 (PDT)
-Received: from google.com ([95.148.6.233])
-        by smtp.gmail.com with ESMTPSA id g131sm1993221wme.22.2021.09.22.06.17.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Sep 2021 06:17:25 -0700 (PDT)
-Date:   Wed, 22 Sep 2021 14:17:23 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Colin King <colin.king@canonical.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=XdQgCWF+HbG2xPtwVWVByVbos5CxGYFvNsMZE3cxEp8=;
+        b=DBIBKtKcCAr+BN77RWaWiDzAEcjhHoLHG0AeLvLX2WWCxyxerdH85nurH7JAVLB5MH
+         1q/fCJ+LGy/O1qaE6Gfo782OUuwvWCYIvekXvv4HnFUYu7B9ir3SCwMsZKkYJyLTvpRS
+         Y1AH4Rl3moA8lJ9zQibQsBdcIbVBVRrVoXJTP1IJrqTT3daBbp1kh/B6Ydg0KlGt+Twg
+         FJE3mhgSz6SZP8/4/1k70SwZ3RhzSrblo3Jmeh85fOyCv9WhDqfXdGinpESaRfjHo28D
+         ROvYayxny3uybnnHCbqqgynk+7vmg5KZOT0+CnmXAxgLwPjWqv0/zy0tXReGSmsgJb9o
+         +Usg==
+X-Gm-Message-State: AOAM530lK5RLc+gUvkJPEnYmavv1PTDEcvCl1My/KlWIUBoIgr+SZg//
+        Jm967X+UNPgfKDBQRVwbj0rp2jlQXg==
+X-Google-Smtp-Source: ABdhPJwVxjQpNqvuAwLwUaVV8QWAF0/MVmZ7ssPoivZ0DMahLg1fiWqMHLnVwcAMUFpfKJhOcE3iYA==
+X-Received: by 2002:adf:d084:: with SMTP id y4mr585418wrh.249.1632328544941;
+        Wed, 22 Sep 2021 09:35:44 -0700 (PDT)
+Received: from ?IPv6:2a02:810b:f40:4200:c404:3070:bbbd:746b? ([2a02:810b:f40:4200:c404:3070:bbbd:746b])
+        by smtp.gmail.com with ESMTPSA id y11sm3261447wrg.18.2021.09.22.09.35.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 Sep 2021 09:35:44 -0700 (PDT)
+Subject: Re: [PATCH][next] drm/rockchip: Remove redundant assignment of
+ pointer connector
+To:     Colin King <colin.king@canonical.com>,
+        Sandy Huang <hjc@rock-chips.com>,
+        =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mfd: ti_am335x_tscadc: Fix spelling mistake "atleast" ->
- "at least"
-Message-ID: <YUss4+szE8241hP4@google.com>
-References: <20210826123250.14234-1-colin.king@canonical.com>
+References: <20210922112416.182134-1-colin.king@canonical.com>
+From:   Alex Bee <knaerzche@gmail.com>
+Message-ID: <27c79f7a-8e4c-fad8-c6cf-a89793f2e3c6@gmail.com>
+Date:   Wed, 22 Sep 2021 18:35:38 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210826123250.14234-1-colin.king@canonical.com>
+In-Reply-To: <20210922112416.182134-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 26 Aug 2021, Colin King wrote:
-
+Hi Colin,
+Am 22.09.21 um 13:24 schrieb Colin King:
 > From: Colin Ian King <colin.king@canonical.com>
 > 
-> There is a spelling mistake in a dev_err message. Fix it.
+> The pointer connector is being assigned a value that is never
+> read, it is being updated immediately afterwards. The assignment
+> is redundant and can be removed.
+
+The pointer to the connector is used in rockchip_rgb_fini for 
+drm_connector_cleanup.
+It's pretty much the same for the encoder, btw.
+
+Regards,
+
+Alex
 > 
+> Addresses-Coverity: ("Unused value")
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
->  drivers/mfd/ti_am335x_tscadc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>   drivers/gpu/drm/rockchip/rockchip_rgb.c | 1 -
+>   1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_rgb.c b/drivers/gpu/drm/rockchip/rockchip_rgb.c
+> index 09be9678f2bd..18fb84068a64 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_rgb.c
+> +++ b/drivers/gpu/drm/rockchip/rockchip_rgb.c
+> @@ -150,7 +150,6 @@ struct rockchip_rgb *rockchip_rgb_init(struct device *dev,
+>   	if (ret)
+>   		goto err_free_encoder;
+>   
+> -	connector = &rgb->connector;
+>   	connector = drm_bridge_connector_init(rgb->drm_dev, encoder);
+>   	if (IS_ERR(connector)) {
+>   		DRM_DEV_ERROR(drm_dev->dev,
+> 
 
-Applied, thanks.
-
--- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
