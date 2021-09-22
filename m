@@ -2,124 +2,85 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24B87C433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed, 22 Sep 2021 11:05:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FC50C433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed, 22 Sep 2021 11:24:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0E992610D1
-	for <kernel-janitors@archiver.kernel.org>; Wed, 22 Sep 2021 11:05:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73DA561107
+	for <kernel-janitors@archiver.kernel.org>; Wed, 22 Sep 2021 11:24:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235300AbhIVLHM (ORCPT
+        id S235576AbhIVLZv (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 22 Sep 2021 07:07:12 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:41966 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234760AbhIVLHM (ORCPT
+        Wed, 22 Sep 2021 07:25:51 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:41896
+        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235439AbhIVLZu (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 22 Sep 2021 07:07:12 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 7BB051FDBF;
-        Wed, 22 Sep 2021 11:05:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1632308741; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=b+udigm40KHZJVQTzXlcTfCO7RvsQCctT/JAZ2L6RNM=;
-        b=ROuCbz/zASY0C21Iq3JWTpT1lbydws2dxQCYPM8DtBE9We7OqunRsnRDXjFxPtdish+XHX
-        /KIfPeUJgm8KB57ToUCToRt4Vl8eRQ/EZW00JGWXg+8AbA6ejsXnaZ3/A1cZ+UPuE2oDo+
-        7SXHmpCnU+FUBdeDAQ4lkthiSchJ4FE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1632308741;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=b+udigm40KHZJVQTzXlcTfCO7RvsQCctT/JAZ2L6RNM=;
-        b=r5VdHn4p6cxnsVKcgZjaLdn4cUJvvnwZU02FqDlS60yAXk+glJZO2atKkEZQfO2CJe13SO
-        IcjE/O2OBJFCacCg==
-Received: from quack2.suse.cz (unknown [10.163.43.118])
-        by relay2.suse.de (Postfix) with ESMTP id 6820FA3B8B;
-        Wed, 22 Sep 2021 11:05:41 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 4B54E1E37A2; Wed, 22 Sep 2021 13:05:41 +0200 (CEST)
-Date:   Wed, 22 Sep 2021 13:05:41 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Jan Kara <jack@suse.com>, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] ext2: fix sleeping in atomic bugs on error
-Message-ID: <20210922110541.GA23575@quack2.suse.cz>
-References: <20210921203233.GA16529@kili>
+        Wed, 22 Sep 2021 07:25:50 -0400
+Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 8EC1C4015E;
+        Wed, 22 Sep 2021 11:24:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1632309856;
+        bh=jPiivGMCA0vYpmru2UiRTorDKmvF0y0XmHoBEgYPsvQ=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=KJUyde2+TnzqFPXbbGunQw+OLCxj1A1Rkqd798wGAdaZD5z94siUroSYJbHTyEK81
+         DR+F9sQ9R5GjyjsjVX1sac8kpOt5oAjNkmH9STDWXE2mimYQQaHeGDUduvR2GOdNyP
+         NXXh6hg9xQ9yrTtEiExlBed3M6d92XwUhRTfHOKUqSkZgeW8JDzfqLQYTwFRPToz3S
+         K/Gk+bJJjvO+X7McFfGCVqMELivjQRUFZt3GpsnNVOL/V8Y4E9q3kH3AWdpc/ovHEF
+         /YeepV7gfW7WoCKbzgbWp+F6f1FtoCvepWSAMqVq1UTM6Oz2CES0eXtFsTpdum7rtJ
+         5+TtwFAd7G8mA==
+From:   Colin King <colin.king@canonical.com>
+To:     Sandy Huang <hjc@rock-chips.com>,
+        =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] drm/rockchip: Remove redundant assignment of pointer connector
+Date:   Wed, 22 Sep 2021 12:24:16 +0100
+Message-Id: <20210922112416.182134-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210921203233.GA16529@kili>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue 21-09-21 23:32:33, Dan Carpenter wrote:
-> The ext2_error() function syncs the filesystem so it sleeps.  The caller
-> is holding a spinlock so it's not allowed to sleep.
-> 
->    ext2_statfs() <- disables preempt
->    -> ext2_count_free_blocks()
->       -> ext2_get_group_desc()
-> 
-> Fix this by using WARN() to print an error message and a stack trace
-> instead of using ext2_error().
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks! I've added the patch to my tree.
+The pointer connector is being assigned a value that is never
+read, it is being updated immediately afterwards. The assignment
+is redundant and can be removed.
 
-								Honza
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/rockchip/rockchip_rgb.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-> ---
-> v2: The first version disabled the sync in ext2_error()
-> 
->  fs/ext2/balloc.c | 14 ++++++--------
->  1 file changed, 6 insertions(+), 8 deletions(-)
-> 
-> diff --git a/fs/ext2/balloc.c b/fs/ext2/balloc.c
-> index 1f3f4326bf3c..c17ccc19b938 100644
-> --- a/fs/ext2/balloc.c
-> +++ b/fs/ext2/balloc.c
-> @@ -48,10 +48,9 @@ struct ext2_group_desc * ext2_get_group_desc(struct super_block * sb,
->  	struct ext2_sb_info *sbi = EXT2_SB(sb);
->  
->  	if (block_group >= sbi->s_groups_count) {
-> -		ext2_error (sb, "ext2_get_group_desc",
-> -			    "block_group >= groups_count - "
-> -			    "block_group = %d, groups_count = %lu",
-> -			    block_group, sbi->s_groups_count);
-> +		WARN(1, "block_group >= groups_count - "
-> +		     "block_group = %d, groups_count = %lu",
-> +		     block_group, sbi->s_groups_count);
->  
->  		return NULL;
->  	}
-> @@ -59,10 +58,9 @@ struct ext2_group_desc * ext2_get_group_desc(struct super_block * sb,
->  	group_desc = block_group >> EXT2_DESC_PER_BLOCK_BITS(sb);
->  	offset = block_group & (EXT2_DESC_PER_BLOCK(sb) - 1);
->  	if (!sbi->s_group_desc[group_desc]) {
-> -		ext2_error (sb, "ext2_get_group_desc",
-> -			    "Group descriptor not loaded - "
-> -			    "block_group = %d, group_desc = %lu, desc = %lu",
-> -			     block_group, group_desc, offset);
-> +		WARN(1, "Group descriptor not loaded - "
-> +		     "block_group = %d, group_desc = %lu, desc = %lu",
-> +		      block_group, group_desc, offset);
->  		return NULL;
->  	}
->  
-> -- 
-> 2.20.1
-> 
+diff --git a/drivers/gpu/drm/rockchip/rockchip_rgb.c b/drivers/gpu/drm/rockchip/rockchip_rgb.c
+index 09be9678f2bd..18fb84068a64 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_rgb.c
++++ b/drivers/gpu/drm/rockchip/rockchip_rgb.c
+@@ -150,7 +150,6 @@ struct rockchip_rgb *rockchip_rgb_init(struct device *dev,
+ 	if (ret)
+ 		goto err_free_encoder;
+ 
+-	connector = &rgb->connector;
+ 	connector = drm_bridge_connector_init(rgb->drm_dev, encoder);
+ 	if (IS_ERR(connector)) {
+ 		DRM_DEV_ERROR(drm_dev->dev,
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.32.0
+
