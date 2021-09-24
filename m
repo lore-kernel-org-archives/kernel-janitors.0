@@ -2,45 +2,43 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CBBDC433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 24 Sep 2021 22:31:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1E81C433FE
+	for <kernel-janitors@archiver.kernel.org>; Fri, 24 Sep 2021 22:51:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 395EF60E8B
-	for <kernel-janitors@archiver.kernel.org>; Fri, 24 Sep 2021 22:31:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACFFD6125F
+	for <kernel-janitors@archiver.kernel.org>; Fri, 24 Sep 2021 22:51:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344978AbhIXWdX (ORCPT
+        id S1345675AbhIXWwr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 24 Sep 2021 18:33:23 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:59744
-        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1344648AbhIXWdW (ORCPT
+        Fri, 24 Sep 2021 18:52:47 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:35338
+        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232123AbhIXWwr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 24 Sep 2021 18:33:22 -0400
+        Fri, 24 Sep 2021 18:52:47 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 40C6340CE5;
-        Fri, 24 Sep 2021 22:31:47 +0000 (UTC)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 039723F357;
+        Fri, 24 Sep 2021 22:51:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1632522707;
-        bh=rzGYj3f3dq+rwc/jntwBYDzOH59hU0hlbUOuW+nkjSg=;
+        s=20210705; t=1632523872;
+        bh=H1PiKCNuxQ0GvKHiEV6SAbFHNf1V73jtCVIifnLCxdo=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=eNib87XF65Sr7MzU8Z/ck+9KMUyOGsQM57ZV29oHT3FYywLNR5zGyNNrLrfTx20ZR
-         kcJ4m3FYOakxqTdR9AUZadTEVqDpYN/bnoqJRpyIKBvHv8BZ/FWRyTwzMdQnEHE55U
-         XGfMM0g2DjmgJNLzStopc8zp7eDTQoa88DpECncp65gCq4Pj1SJ/Sm5uvdaq/tzZTZ
-         NItidVtv4l5Z4L11ZDCLWsX7trZljmUVmG+GnFp+hh64t+4ZFrooGuLDMrLtFaudtD
-         Eqousu8tA0OOGOhvQsfwBPxaLsL2LRV7ejYGpwPVqpbT/sjI385uXkwHtlpdkeezuI
-         u+BKdXw+zuFVg==
+        b=mz6DLpcFvPNspezRYs8cAvMfYvQHHgZ2Ac1YsY6DUcZwKegRodWan4MS7k3xCcrUo
+         Yw61oGMNE7U3Zz8L2GIjEWQlihAqOiaFxBpIE03KzWrS3l8ZDKvn+4YotYNISl5HqD
+         Qnxe0Y61HJ5ENpYWuAIgJuSdHbmXRZAl6+HH9+EMTwusPkR4tFVIF8IW/eG67+M+tx
+         qH66HziuaMBp8FFQS7XnD3r1ihvLSvDWgpNVLa/LTrE1UOz1gidnqOSL0TePWpu0kF
+         kYluugAoMQtBNmDEKsmjjSR1v3c5orRlbeQ41eLE8+cUwbqN6CoEd26s3lLBheC1PR
+         s2UCYRDF1WBtA==
 From:   Colin King <colin.king@canonical.com>
-To:     Yisen Zhuang <yisen.zhuang@huawei.com>,
-        Salil Mehta <salil.mehta@huawei.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
+To:     Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] net: hns: Fix spelling mistake "maped" -> "mapped"
-Date:   Fri, 24 Sep 2021 23:31:46 +0100
-Message-Id: <20210924223146.142240-1-colin.king@canonical.com>
+Subject: [PATCH] mmc: sdhci-pci-o2micro: Fix spelling mistake "unsupport" -> "unsupported"
+Date:   Fri, 24 Sep 2021 23:51:11 +0100
+Message-Id: <20210924225111.143112-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -51,26 +49,27 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-There is a spelling mistake in a dev_err error message. Fix it.
+There is a spelling mistake in a pr_info message. Fix it. Also
+put msi in capital letters.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/ethernet/hisilicon/hns_mdio.c | 2 +-
+ drivers/mmc/host/sdhci-pci-o2micro.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns_mdio.c b/drivers/net/ethernet/hisilicon/hns_mdio.c
-index 3e54017a2a5b..07fdab58001d 100644
---- a/drivers/net/ethernet/hisilicon/hns_mdio.c
-+++ b/drivers/net/ethernet/hisilicon/hns_mdio.c
-@@ -354,7 +354,7 @@ static int hns_mdio_reset(struct mii_bus *bus)
+diff --git a/drivers/mmc/host/sdhci-pci-o2micro.c b/drivers/mmc/host/sdhci-pci-o2micro.c
+index 51d55a87aebe..f045c1ee4667 100644
+--- a/drivers/mmc/host/sdhci-pci-o2micro.c
++++ b/drivers/mmc/host/sdhci-pci-o2micro.c
+@@ -489,7 +489,7 @@ static void sdhci_pci_o2_enable_msi(struct sdhci_pci_chip *chip,
  
- 	if (dev_of_node(bus->parent)) {
- 		if (!mdio_dev->subctrl_vbase) {
--			dev_err(&bus->dev, "mdio sys ctl reg has not maped\n");
-+			dev_err(&bus->dev, "mdio sys ctl reg has not mapped\n");
- 			return -ENODEV;
- 		}
- 
+ 	ret = pci_find_capability(chip->pdev, PCI_CAP_ID_MSI);
+ 	if (!ret) {
+-		pr_info("%s: unsupport msi, use INTx irq\n",
++		pr_info("%s: unsupported MSI, use INTx irq\n",
+ 			mmc_hostname(host->mmc));
+ 		return;
+ 	}
 -- 
 2.32.0
 
