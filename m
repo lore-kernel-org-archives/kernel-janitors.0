@@ -2,81 +2,99 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8D17C433F5
-	for <kernel-janitors@archiver.kernel.org>; Fri, 24 Sep 2021 16:22:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4781C433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri, 24 Sep 2021 18:57:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 93621610FD
-	for <kernel-janitors@archiver.kernel.org>; Fri, 24 Sep 2021 16:22:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B657961050
+	for <kernel-janitors@archiver.kernel.org>; Fri, 24 Sep 2021 18:57:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347317AbhIXQXj (ORCPT
+        id S1345549AbhIXS7D (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 24 Sep 2021 12:23:39 -0400
-Received: from mail-ot1-f49.google.com ([209.85.210.49]:41584 "EHLO
-        mail-ot1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347172AbhIXQXh (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 24 Sep 2021 12:23:37 -0400
-Received: by mail-ot1-f49.google.com with SMTP id 97-20020a9d006a000000b00545420bff9eso13805912ota.8;
-        Fri, 24 Sep 2021 09:22:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YcKXSgBtoVcxtHCKOtPHnRdujaEI6ZLYYWV1g18BTr8=;
-        b=Lr/U/Ma205yjlXaM0Q7YccOIBZrpkkX4OEJXiguhRHjeGd/m9nvFyEMhHYpI/xCy15
-         ZNwvNo6fGInC/kY04QuvnlXLL+PmxrsaLIb7/5CY5m/C5B8izVMSBf8lcwpuFNbqKrIT
-         xlzF12jTGJZuga0SSzuTxMzgNl9hE+bCoBe1wivej9dM8ke+rckqTUQI+0we7Mj3/6BY
-         dN9PdnQ4JLKUeZ5odPQQvT3XkbxOfkoTzTXe7HUhGo3qGRprIy0aWPnjH3eymsHjNGs2
-         mcUohMxIXpksmWpvHtl/vLlb9xRxTliur0obBr6S/7zIA6OpCcARBxtl9+aVjxOENGKv
-         dcBg==
-X-Gm-Message-State: AOAM531UYPgj+kcbtaM4XS08JqYvh14Ch1nMAE42InMCp5B7kUQFWAcW
-        G1I5XYa7uijo4gJG+9JpybkcRA55cqV8xbAJJ0c=
-X-Google-Smtp-Source: ABdhPJxjjGGJ3jArOANw1ZAOou2DF9Wa1ntjMZBW0pdESRYxjxL0t/0yjAeEoYELHdGqUVIAPcTvF4Gn/qtQ1rGAcEM=
-X-Received: by 2002:a05:6830:82b:: with SMTP id t11mr4806932ots.319.1632500524066;
- Fri, 24 Sep 2021 09:22:04 -0700 (PDT)
+        Fri, 24 Sep 2021 14:59:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49066 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1344443AbhIXS7C (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 24 Sep 2021 14:59:02 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 1981760D07;
+        Fri, 24 Sep 2021 18:57:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1632509849;
+        bh=LlpHW03U0YmN05wPrOIk/YYMzF21XuR4WEXiqq7ZvYQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=urInHIhBPMhlY/fikeuG1UmuYttvcViUvqwWQVQZZRnu9HdelbmK1KbyDssj8O0lh
+         brEG3fSbOtEjXRqkjpHJsHuVDR2AXgQzd76y2Pz6v6LpVBImrrz8DO6uJwnjT9RSS+
+         qf7/+HeNDk4aXO2Z5sUEJiQrihotmexrowVkiIQwYtabJUDClds061+QucJYM34w9H
+         7p9s8M7jmYyz6lChJZWRse3ZlovwZkWaTjwuv/MlVbTnEU8fvZ3MGjY5VyLrbQQ2hA
+         au7//VL7MQWbJMOFcxVBo59+sIsfa+OdMQemTJycqfAvz5atQVrTdyw2EelxHLAsdM
+         XhEuk9TFldrLw==
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id E063D410A1; Fri, 24 Sep 2021 15:57:26 -0300 (-03)
+Date:   Fri, 24 Sep 2021 15:57:26 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Ian Rogers <irogers@google.com>
+Cc:     Colin King <colin.king@canonical.com>, Paul Clarke <pc@us.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-perf-users@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf vendor events: Fix spelling mistake "icach" ->
+ "icache"
+Message-ID: <YU4fli+fSiZYYyS3@kernel.org>
+References: <20210916081314.41751-1-colin.king@canonical.com>
+ <CAP-5=fXC9kb_6Xsfw17SHp1TeFJSi_uCotAtBSFRqCSWOZpk7A@mail.gmail.com>
 MIME-Version: 1.0
-References: <20210920185028.18738-1-colin.king@canonical.com>
-In-Reply-To: <20210920185028.18738-1-colin.king@canonical.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Fri, 24 Sep 2021 18:21:53 +0200
-Message-ID: <CAJZ5v0jH9PXm-abLj7MzC--OH+2kgwR8TBF0EcV8=Xh87215Xw@mail.gmail.com>
-Subject: Re: [PATCH] Documentation: ACPI: Fix spelling mistake "Millenium" -> "Millennium"
-To:     Colin King <colin.king@canonical.com>
-Cc:     "Rafael J . Wysocki" <rafael@kernel.org>,
-        Len Brown <lenb@kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAP-5=fXC9kb_6Xsfw17SHp1TeFJSi_uCotAtBSFRqCSWOZpk7A@mail.gmail.com>
+X-Url:  http://acmel.wordpress.com
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Sep 20, 2021 at 8:50 PM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> There is a spelling mistake in the documentation with the Windows
-> Millennium edition. Fix it.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  Documentation/firmware-guide/acpi/osi.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/Documentation/firmware-guide/acpi/osi.rst b/Documentation/firmware-guide/acpi/osi.rst
-> index 29e9ef79ebc0..05869c0045d7 100644
-> --- a/Documentation/firmware-guide/acpi/osi.rst
-> +++ b/Documentation/firmware-guide/acpi/osi.rst
-> @@ -74,7 +74,7 @@ The ACPI BIOS flow would include an evaluation of _OS, and the AML
->  interpreter in the kernel would return to it a string identifying the OS:
->
->  Windows 98, SE: "Microsoft Windows"
-> -Windows ME: "Microsoft WindowsME:Millenium Edition"
-> +Windows ME: "Microsoft WindowsME:Millennium Edition"
->  Windows NT: "Microsoft Windows NT"
->
->  The idea was on a platform tasked with running multiple OS's,
-> --
+Em Sat, Sep 18, 2021 at 12:46:16PM -0700, Ian Rogers escreveu:
+> On Thu, Sep 16, 2021 at 1:13 AM Colin King <colin.king@canonical.com> wrote:
+> >
+> > From: Colin Ian King <colin.king@canonical.com>
+> >
+> > There is a spelling mistake in the description text, fix it.
+> >
+> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> 
+> Acked-by: Ian Rogers <irogers@google.com>
 
-Applied as 5.16 material, thanks!
+Thanks, applied.
+
+- Arnaldo
+
+ 
+> Thanks,
+> Ian
+> 
+> > ---
+> >  tools/perf/pmu-events/arch/powerpc/power8/other.json | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/tools/perf/pmu-events/arch/powerpc/power8/other.json b/tools/perf/pmu-events/arch/powerpc/power8/other.json
+> > index 84a0cedf1fd9..f1f2965f6775 100644
+> > --- a/tools/perf/pmu-events/arch/powerpc/power8/other.json
+> > +++ b/tools/perf/pmu-events/arch/powerpc/power8/other.json
+> > @@ -1046,7 +1046,7 @@
+> >    {
+> >      "EventCode": "0x4e010",
+> >      "EventName": "PM_GCT_NOSLOT_IC_L3MISS",
+> > -    "BriefDescription": "Gct empty for this thread due to icach l3 miss",
+> > +    "BriefDescription": "Gct empty for this thread due to icache l3 miss",
+> >      "PublicDescription": ""
+> >    },
+> >    {
+> > --
+> > 2.32.0
+> >
+
+-- 
+
+- Arnaldo
