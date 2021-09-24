@@ -2,99 +2,85 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4781C433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 24 Sep 2021 18:57:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39A3EC433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri, 24 Sep 2021 20:14:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B657961050
-	for <kernel-janitors@archiver.kernel.org>; Fri, 24 Sep 2021 18:57:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C68261050
+	for <kernel-janitors@archiver.kernel.org>; Fri, 24 Sep 2021 20:14:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345549AbhIXS7D (ORCPT
+        id S1348377AbhIXUQQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 24 Sep 2021 14:59:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49066 "EHLO mail.kernel.org"
+        Fri, 24 Sep 2021 16:16:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50042 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1344443AbhIXS7C (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 24 Sep 2021 14:59:02 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 1981760D07;
-        Fri, 24 Sep 2021 18:57:29 +0000 (UTC)
+        id S1347121AbhIXUQQ (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 24 Sep 2021 16:16:16 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id AD2AC61038;
+        Fri, 24 Sep 2021 20:14:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1632509849;
-        bh=LlpHW03U0YmN05wPrOIk/YYMzF21XuR4WEXiqq7ZvYQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=urInHIhBPMhlY/fikeuG1UmuYttvcViUvqwWQVQZZRnu9HdelbmK1KbyDssj8O0lh
-         brEG3fSbOtEjXRqkjpHJsHuVDR2AXgQzd76y2Pz6v6LpVBImrrz8DO6uJwnjT9RSS+
-         qf7/+HeNDk4aXO2Z5sUEJiQrihotmexrowVkiIQwYtabJUDClds061+QucJYM34w9H
-         7p9s8M7jmYyz6lChJZWRse3ZlovwZkWaTjwuv/MlVbTnEU8fvZ3MGjY5VyLrbQQ2hA
-         au7//VL7MQWbJMOFcxVBo59+sIsfa+OdMQemTJycqfAvz5atQVrTdyw2EelxHLAsdM
-         XhEuk9TFldrLw==
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id E063D410A1; Fri, 24 Sep 2021 15:57:26 -0300 (-03)
-Date:   Fri, 24 Sep 2021 15:57:26 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ian Rogers <irogers@google.com>
-Cc:     Colin King <colin.king@canonical.com>, Paul Clarke <pc@us.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-perf-users@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf vendor events: Fix spelling mistake "icach" ->
- "icache"
-Message-ID: <YU4fli+fSiZYYyS3@kernel.org>
-References: <20210916081314.41751-1-colin.king@canonical.com>
- <CAP-5=fXC9kb_6Xsfw17SHp1TeFJSi_uCotAtBSFRqCSWOZpk7A@mail.gmail.com>
+        s=k20201202; t=1632514482;
+        bh=RfOq/uRmKEudceSfMEIFKjCXwyHbqJJ+oZLIM7/SLxo=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=nyTLVn3RvNUQmmx5v0g5UYdTSu0wV1A63CLEB41lwZnxBIESCumsq3c33TpW1hl7J
+         CcjrCwrYo8iM0B4Tuo175SGqACuk9W44yEdV6EvyKxsnheOO62jHuD/XXqf3XWXxvH
+         DLnYKVPShh9ojvtFvFDOn6I2MxpDu/xfSaEb+QIVeNBuuCtzSSvHOXQICzEd8kt6mk
+         7ypg0O5owk203/CSPezrLfw59aqIOFz9K2tjPrBgPiD6svldP80RngmrKQWegrT9WW
+         Ezq4J/gdSsd68FA6GgoJypI0pUA29UjghELapbd9FwHwLVvJJ2tO8JQFo6sOfo4fSx
+         4DACDrchEL27w==
+Date:   Fri, 24 Sep 2021 13:14:41 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Samuel Ortiz <sameo@linux.intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "John W. Linville" <linville@tuxdriver.com>,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net] nfc: avoid potential race condition
+Message-ID: <20210924131441.6598ba3a@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+In-Reply-To: <47358bea-e761-b823-dfbd-cd8e0a2a69a6@canonical.com>
+References: <20210923065051.GA25122@kili>
+        <3760c70c-299c-89bf-5a4a-22e8d564ef92@canonical.com>
+        <20210923122220.GB2083@kadam>
+        <47358bea-e761-b823-dfbd-cd8e0a2a69a6@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAP-5=fXC9kb_6Xsfw17SHp1TeFJSi_uCotAtBSFRqCSWOZpk7A@mail.gmail.com>
-X-Url:  http://acmel.wordpress.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Em Sat, Sep 18, 2021 at 12:46:16PM -0700, Ian Rogers escreveu:
-> On Thu, Sep 16, 2021 at 1:13 AM Colin King <colin.king@canonical.com> wrote:
-> >
-> > From: Colin Ian King <colin.king@canonical.com>
-> >
-> > There is a spelling mistake in the description text, fix it.
-> >
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+On Fri, 24 Sep 2021 10:21:33 +0200 Krzysztof Kozlowski wrote:
+> On 23/09/2021 14:22, Dan Carpenter wrote:
+> > On Thu, Sep 23, 2021 at 09:26:51AM +0200, Krzysztof Kozlowski wrote:  
+> >> On 23/09/2021 08:50, Dan Carpenter wrote:  
+>  [...]  
+> >>
+> >> I think the difference between this llcp_sock code and above transport,
+> >> is lack of writer to llcp_sock->local with whom you could race.
+> >>
+> >> Commits c0cfa2d8a788fcf4 and 6a2c0962105ae8ce causing the
+> >> multi-transport race show nicely assigns to vsk->transport when module
+> >> is unloaded.
+> >>
+> >> Here however there is no writer to llcp_sock->local, except bind and
+> >> connect and their error paths. The readers which you modify here, have
+> >> to happen after bind/connect. You cannot have getsockopt() or release()
+> >> before bind/connect, can you? Unless you mean here the bind error path,
+> >> where someone calls getsockopt() in the middle of bind()? Is it even
+> >> possible?
+> >>  
+> > 
+> > I don't know if this is a real issue either.
+> > 
+> > Racing with bind would be harmless.  The local pointer would be NULL and
+> > it would return harmlessly.  You would have to race with release and
+> > have a third trying to release local devices.  (Again that might be
+> > wild imagination.  It may not be possible).  
 > 
-> Acked-by: Ian Rogers <irogers@google.com>
-
-Thanks, applied.
-
-- Arnaldo
-
- 
-> Thanks,
-> Ian
+> Indeed. The code looks reasonable, though, so even if race is not really
+> reproducible:
 > 
-> > ---
-> >  tools/perf/pmu-events/arch/powerpc/power8/other.json | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/tools/perf/pmu-events/arch/powerpc/power8/other.json b/tools/perf/pmu-events/arch/powerpc/power8/other.json
-> > index 84a0cedf1fd9..f1f2965f6775 100644
-> > --- a/tools/perf/pmu-events/arch/powerpc/power8/other.json
-> > +++ b/tools/perf/pmu-events/arch/powerpc/power8/other.json
-> > @@ -1046,7 +1046,7 @@
-> >    {
-> >      "EventCode": "0x4e010",
-> >      "EventName": "PM_GCT_NOSLOT_IC_L3MISS",
-> > -    "BriefDescription": "Gct empty for this thread due to icach l3 miss",
-> > +    "BriefDescription": "Gct empty for this thread due to icache l3 miss",
-> >      "PublicDescription": ""
-> >    },
-> >    {
-> > --
-> > 2.32.0
-> >
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 
--- 
-
-- Arnaldo
+Would you mind making a call if this is net (which will mean stable) or
+net-next material (without the Fixes tags) and reposting? Thanks! :)
